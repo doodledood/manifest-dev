@@ -1,0 +1,43 @@
+{
+  "name": "manifest-dev",
+  "version": "0.27.2",
+  "description": "Manifest-driven workflows for structured task execution with verification gates.",
+  "keywords": [
+    "manifest",
+    "define",
+    "verification",
+    "invariants",
+    "deliverables",
+    "acceptance-criteria",
+    "autonomous",
+    "approach",
+    "trade-offs",
+    "do"
+  ],
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "description": "Prevent premature stops during /do workflow when verification incomplete",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uvx --from ${CLAUDE_PLUGIN_ROOT}/hooks stop-do-hook"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "description": "Gate /escalate calls - require /verify before escalation",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uvx --from ${CLAUDE_PLUGIN_ROOT}/hooks pretool-escalate-hook"
+          }
+        ]
+      }
+    ]
+  }
+}

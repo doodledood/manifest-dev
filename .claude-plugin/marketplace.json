@@ -1,0 +1,13 @@
+{
+  "name": "manifest-dev-marketplace",
+  "owner": {
+    "name": "doodledood",
+    "email": "doodledood@github.com"
+  },
+  "metadata": {
+    "description": "Verification-first manifest workflows for Claude Code"
+  },
+  "plugins": [
+    { "name": "manifest-dev", "source": "./claude-plugins/manifest-dev" }
+  ]
+}
