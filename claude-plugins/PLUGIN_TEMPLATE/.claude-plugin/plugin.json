@@ -1,0 +1,13 @@
+{
+  "name": "plugin-template",
+  "description": "A template for creating new Claude Code plugins",
+  "version": "1.2.0",
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com"
+  },
+  "homepage": "https://github.com/doodledood/manifest-dev",
+  "repository": "https://github.com/doodledood/manifest-dev",
+  "license": "MIT",
+  "keywords": ["template", "starter", "example"]
+}
