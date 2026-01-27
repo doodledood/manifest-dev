@@ -24,6 +24,7 @@ Read before building plugins:
 
 - **@docs/CUSTOMER.md** - Who we build for, messaging guidelines
 - **docs/LLM_CODING_CAPABILITIES.md** - LLM strengths/limitations, informs workflow design
+- **@docs/PROMPTING.md** - First-principles prompting. **Read this before creating, updating, or discussing any prompt** (skills, agents, system prompts, or prompt strategy).
 
 ## Repository Structure
 
