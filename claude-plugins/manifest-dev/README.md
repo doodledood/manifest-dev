@@ -69,8 +69,8 @@ A structured approach to task definition and execution:
 
 | Skill | Description |
 |-------|-------------|
-| `/define` | Manifest builder - YOU generate candidates, user validates (no open-ended questions) |
-| `/do` | Manifest executor - iterates deliverables, satisfies ACs, calls /verify |
+| `/define` | Manifest builder with verification criteria. Converts known requirements into Deliverables + Invariants. Outputs executable manifest. |
+| `/do` | Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass. |
 
 ### Task-Specific Guidance
 
@@ -80,7 +80,9 @@ A structured approach to task definition and execution:
 |-----------|------|-------------|
 | Code | `skills/define/tasks/CODING.md` | APIs, features, fixes, refactors, tests |
 | Document | `skills/define/tasks/DOCUMENT.md` | Specs, proposals, reports, articles, docs |
-| Other | (none) | Research, analysis, or doesn't fit above |
+| Blog | `skills/define/tasks/BLOG.md` | Blog posts, content writing |
+| Research | `skills/define/tasks/RESEARCH.md` | Research tasks, analysis, investigation |
+| Other | (none) | Doesn't fit above categories |
 
 The universal flow (core principles, manifest schema) works without any task file.
 
@@ -88,16 +90,33 @@ The universal flow (core principles, manifest schema) works without any task fil
 
 | Skill | Purpose |
 |-------|---------|
-| `/verify` | Runs all verifications, reports by type and deliverable |
-| `/done` | Outputs hierarchical completion summary |
-| `/escalate` | Structured escalation with type-aware context |
+| `/verify` | Manifest verification runner. Spawns parallel verifiers for Global Invariants and Acceptance Criteria. |
+| `/done` | Completion marker. Outputs hierarchical execution summary showing Global Invariants respected and all Deliverables completed. |
+| `/escalate` | Structured escalation with evidence. Surfaces blocking issues for human decision, referencing the Manifest hierarchy. |
 
 ## Agents
 
+### Core Workflow
+
 | Agent | Purpose |
 |-------|---------|
-| `criteria-checker` | Verifies a single criterion with type awareness |
-| `manifest-verifier` | Reviews manifests for gaps, outputs actionable continuation steps |
+| `criteria-checker` | Read-only verification agent. Validates a single criterion using commands, codebase analysis, file inspection, reasoning, or web research. Returns structured PASS/FAIL. |
+| `manifest-verifier` | Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe. |
+
+### Code Reviewers
+
+Specialized review agents spawned in parallel during `/verify`:
+
+| Agent | Focus |
+|-------|-------|
+| `code-bugs-reviewer` | Audits code changes for logical bugs without making modifications |
+| `code-coverage-reviewer` | Verifies code changes have adequate test coverage, reports gaps |
+| `code-maintainability-reviewer` | DRY violations, coupling, cohesion, consistency, dead code, architectural boundaries |
+| `code-simplicity-reviewer` | Unnecessary complexity, over-engineering, cognitive burden |
+| `code-testability-reviewer` | Code that requires excessive mocking, business logic hard to verify in isolation |
+| `type-safety-reviewer` | TypeScript type holes, opportunities to make invalid states unrepresentable |
+| `claude-md-adherence-reviewer` | Verifies code changes comply with CLAUDE.md instructions and project standards |
+| `docs-reviewer` | Audits documentation accuracy against recent code changes |
 
 ## Hooks
 

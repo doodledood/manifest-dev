@@ -1,0 +1,1 @@
+../../claude-plugins/manifest-dev/agents/code-coverage-reviewer.md
