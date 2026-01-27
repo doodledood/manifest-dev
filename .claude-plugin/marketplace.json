@@ -1,0 +1,13 @@
+{
+  "name": "manifest-dev-marketplace",
+  "owner": {
+    "name": "doodledood",
+    "email": "doodledood@github.com"
+  },
+  "metadata": {
+    "description": "Manifest-driven development workflows for Claude Code. Front-load the thinking so AI agents get it right the first time."
+  },
+  "plugins": [
+    { "name": "manifest-dev", "source": "./claude-plugins/manifest-dev" }
+  ]
+}
