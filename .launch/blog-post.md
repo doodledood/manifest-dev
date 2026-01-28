@@ -39,7 +39,7 @@ This is manifest-driven development.
 Manifest-driven development separates three concerns:
 
 1. **WHAT** needs to be built (deliverables with acceptance criteria)
-2. **RULES** that must always be followed (global invariants)
+2. **CONSTRAINTS** that must never be violated (global invariants)
 3. **HOW** to verify each criterion (automated checks)
 
 The workflow:

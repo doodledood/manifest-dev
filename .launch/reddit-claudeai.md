@@ -32,7 +32,7 @@ When you define *what success looks like*, Claude has flexibility to adapt. You'
 
 Instead of detailed implementation steps, I define:
 - What the output must do (acceptance criteria)
-- Rules that must always be followed (invariants)
+- Constraints that must never be violated (invariants)
 - How to verify each criterion (automated checks)
 
 Then I let Claude implement toward those criteria. A verify-fix loop handles cleanup. What fails gets fixed. What passes is locked in.
