@@ -37,3 +37,15 @@ The human analogy being selectively applied (ignoring ongoing course correction)
 Flexibility cutting both ways is true but there's explicitly built-in structure. We have process guidance and stuff like general constraints and initial approach. It's not a free for all.
 
 Generality beyond coding has been tried with the define/do flow and it works. You just need to use llm-as-judges proxies (not perfect but better than doing nothing). For example during manifest building for a research doc you encode what a good research report looks like from your eyes - be it citations from real articles, good topic coverage, etc. The manifest also has the ability to do manual verification baked in.
+
+One of the ideas is to invest in the define process so that you can fire and forget in the do verify fix phase. This has the side effect of also freeing you meaning do is running to define many things in parallel if you wish increasing throughout apart from the process itself which makes this more efficient anyways.
+
+Also unrelated to that - investment in infrastructure may prove very beneficial for verifications.
+
+Investing time building a good manifest has many extra benefits one of which is it helps you understand the task its nuances and even high level better so its easier later to code review with less chance of overwhelm. It's a known problem that using AI atrophies your knowledge of the code it produces because you don't get involved to some degree. The define phase forces involvement - you can't define acceptance criteria without understanding what you want. So when the code comes back, you're reviewing against criteria you deeply thought through, not trying to understand AI-generated code cold.
+
+This process also encourages refinement over time. When you get the final PR, let's say it passed all your criteria but still other people commented things that are true and need to be addressed. Or you actually find that you failed it anyway because of a criteria you didn't think of. In that case you can go back and encode your extra concerns as more review agents or points to consider for next time in your CLAUDE.md making the next PR more likely to cover more things you should care about.
+
+This replaces plan/implement that is present in most harnesses like Claude Code. This could get extra meta if you want it to. For example you can define a manifest that when /do executed produces another manifest you can call /do on. Like a manifest that creates a manifest that creates prompts following best practices. Think like generators of code generators as an example.
+
+It's actually recommended to NOT babysit after you invested time in the define phase. It's expected for it to not get it right the first time - that's exactly what the fix-verify loop is there for. No interventions needed. It doesn't get to the result usually in a straight line. Resist the urge to jump in.
