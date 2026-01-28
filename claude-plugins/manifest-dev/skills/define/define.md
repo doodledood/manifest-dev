@@ -207,5 +207,7 @@ Manifests support amendments during execution:
 ```text
 Manifest complete: /tmp/manifest-{timestamp}.md
 
-To execute: /do /tmp/manifest-{timestamp}.md
+To execute: /do /tmp/manifest-{timestamp}.md [log-file-path if iterating]
 ```
+
+If this was an iteration on a previous manifest that had an execution log, include the log file path in the suggestion.
