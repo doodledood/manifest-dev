@@ -12,7 +12,6 @@ claude plugins install manifest-dev@manifest-dev-marketplace
 # Use
 /define <what you want to build>
 /do <manifest-path>
-/verify
 ```
 
 **Pro tip**: Run `/do` in a fresh session after `/define` completes—or at minimum, `/compact` before starting. The manifest is your external state; the session doesn't need to remember the conversation.
