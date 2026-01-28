@@ -98,44 +98,54 @@ You answer. The AI probes deeper on areas where your answers were vague. It surf
 The output is a manifest:
 
 ```markdown
-# Manifest: User Authentication
+# Definition: User Authentication
 
-## Intent
-Add password-based authentication to the existing Express app with
-JWT sessions. Users can register, log in, and log out.
+## 1. Intent & Context
+- **Goal:** Add password-based authentication to existing Express app
+  with JWT sessions. Users can register, log in, and log out.
 
-## Global Invariants (The Rules)
-- [INV-1] Passwords are never stored in plaintext
-- [INV-2] All auth endpoints rate-limited (max 5 attempts/minute)
-- [INV-3] JWT secrets not hardcoded (env variable)
+## 3. Global Invariants (The Constitution)
+- [INV-G1] Passwords never stored in plaintext
+  ```yaml
+  verify:
+    method: bash
+    command: "grep -r 'password' src/ | grep -v 'hashedPassword' | grep -v '.test.'"
+  ```
+- [INV-G2] All auth endpoints rate-limited (max 5 attempts/minute)
+- [INV-G3] JWT secrets from env variable, not hardcoded
+  ```yaml
+  verify:
+    method: bash
+    command: "grep -r 'JWT_SECRET\\|process.env' src/routes/auth.ts"
+  ```
 
-## Deliverables
+## 6. Deliverables (The Work)
 
-### D1: User Model & Migration
-**File:** src/models/user.ts
+### Deliverable 1: User Model & Migration
 **Acceptance Criteria:**
 - [AC-1.1] User model has id, email, hashedPassword, createdAt
+  ```yaml
+  verify:
+    method: bash
+    command: "grep -E 'id|email|hashedPassword|createdAt' src/models/user.ts"
+  ```
 - [AC-1.2] Email has unique constraint
-- [AC-1.3] Migration creates users table with proper indexes
+- [AC-1.3] Migration creates users table with indexes
 
-### D2: Auth Endpoints
-**File:** src/routes/auth.ts
+### Deliverable 2: Auth Endpoints
 **Acceptance Criteria:**
 - [AC-2.1] POST /register creates user, returns 201
 - [AC-2.2] POST /login validates credentials, returns JWT
-- [AC-2.3] POST /logout invalidates session (if stateful) or instructs client to discard token
-- [AC-2.4] Invalid credentials return 401, not 500
-- [AC-2.5] Registration with existing email returns 409
-
-### D3: Auth Middleware
-**File:** src/middleware/auth.ts
-**Acceptance Criteria:**
-- [AC-3.1] Middleware extracts and validates JWT from Authorization header
-- [AC-3.2] Invalid/expired token returns 401
-- [AC-3.3] Valid token attaches user to request object
+- [AC-2.3] Invalid credentials return 401, not 500
+  ```yaml
+  verify:
+    method: subagent
+    agent: general-purpose
+    prompt: "Check auth routes for proper error handling. 401 for auth failures, not 500."
+  ```
 ```
 
-Each acceptance criterion has a verification method—a test to run, a grep to check, or an LLM-as-judge prompt that evaluates the output.
+Every criterion has a verification method—bash commands, grep checks, or LLM-as-judge prompts. The manifest also includes sections for Approach (execution order, risks, trade-offs), Process Guidance (non-verifiable constraints), and Known Assumptions.
 
 Now `/do` executes against this manifest. The AI implements with flexibility. `/verify` checks every criterion. What fails gets fixed. What passes is locked in.
 
