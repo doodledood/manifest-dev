@@ -196,6 +196,8 @@ Here's what changes when you adopt manifest-driven development:
 
 **It's dead simple to use.** All the complexity lives in the implementation—you never see it. Run `/define`, answer the interview questions, run `/do`, go grab coffee. That's it. No prompt engineering. No babysitting. Just follow along.
 
+**Resist the urge to intervene.** It won't nail everything on the first pass—that's expected. The verify-fix loop exists precisely for this. You invested in define; now let the loop run. It rarely gets there in a straight line, but it gets there.
+
 The goal isn't perfect output on the first try. It's reducing friction to get there. Fewer iterations. Less debugging. More shipping.
 
 ---
