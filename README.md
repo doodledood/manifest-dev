@@ -332,53 +332,6 @@ Hooks enforce:
 
 **Resist the urge to intervene.** It won't nail everything on the first pass—that's expected. The verify-fix loop exists precisely for this. You invested in define; now let the loop run. It rarely gets there in a straight line, but it gets there.
 
-## Repository Structure
-
-```
-manifest-dev/
-├── .claude-plugin/
-│   └── marketplace.json         # Marketplace configuration
-├── claude-plugins/
-│   └── manifest-dev/            # The manifest-dev plugin
-│       ├── .claude-plugin/
-│       │   └── plugin.json      # Plugin metadata (v0.27.2)
-│       ├── agents/              # Specialized review agents
-│       │   ├── criteria-checker.md
-│       │   ├── manifest-verifier.md
-│       │   ├── code-bugs-reviewer.md
-│       │   ├── code-maintainability-reviewer.md
-│       │   ├── code-simplicity-reviewer.md
-│       │   ├── code-testability-reviewer.md
-│       │   ├── code-coverage-reviewer.md
-│       │   ├── type-safety-reviewer.md
-│       │   ├── docs-reviewer.md
-│       │   └── claude-md-adherence-reviewer.md
-│       ├── skills/              # Core workflow skills
-│       │   ├── define/          # Interview-driven manifest creation
-│       │   │   ├── SKILL.md
-│       │   │   └── tasks/       # Task-specific guidance
-│       │   │       ├── CODING.md
-│       │   │       ├── DOCUMENT.md
-│       │   │       ├── BLOG.md
-│       │   │       └── RESEARCH.md
-│       │   ├── do/              # Manifest execution
-│       │   ├── verify/          # Criteria verification
-│       │   ├── done/            # Completion summary
-│       │   └── escalate/        # Structured escalation
-│       └── hooks/               # Workflow enforcement
-│           ├── hook_utils.py    # Shared transcript parsing
-│           ├── stop_do_hook.py  # Blocks premature stopping
-│           └── pretool_escalate_hook.py  # Gates escalation
-├── docs/                        # Research & guidelines
-│   ├── CUSTOMER.md              # Who we build for
-│   ├── LLM_CODING_CAPABILITIES.md  # LLM strengths/limitations
-│   ├── LLM_TRAINING.md          # How LLMs are trained
-│   └── PROMPTING.md             # First-principles prompting
-├── tests/
-│   └── hooks/                   # Hook test suite
-└── README.md
-```
-
 ## Who This Is For
 
 Experienced developers frustrated by hype-driven AI coding tools. If you're tired of chasing the latest "game-changing" prompt that produces code you spend hours debugging, this offers a grounded alternative.
