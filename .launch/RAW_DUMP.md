@@ -28,7 +28,7 @@ Of course getting to 100% is not always possible and shouldn't be strived for - 
 
 You can encode your way of viewing things into an llm as a judge and even if it's not perfect and it's a proxy it's good enough. The goal is not to get to the final artifact in one shot but reduce friction and have fewer iterations in total to get to the finish line. We need the first iteration to land us closer than before to the finish line.
 
-Fix loop degradation is a theoretical concern - in practice after a few weeks of actual production implementations I haven't run into it yet. Maybe a problem in theory but hasn't materialized.
+Fix loop degradation is a theoretical concern - in practice after sustained production use I haven't run into it yet. Maybe a problem in theory but hasn't materialized.
 
 Cold start / bootstrapping is a true problem. Some of it is alleviated by code exploration and web research etc.
 

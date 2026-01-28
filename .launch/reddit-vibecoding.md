@@ -4,7 +4,7 @@
 
 ## Title
 
-How I stopped losing hours to cleanup by adding structure to vibe coding
+What years of AI coding taught me: you can keep the vibe and still ship clean code
 
 ---
 
@@ -12,7 +12,7 @@ How I stopped losing hours to cleanup by adding structure to vibe coding
 
 I love vibe coding. That flow state where you're riffing with the AI, ideas becoming code in real-time—it's genuinely fun. I don't want to lose that.
 
-But I kept running into the same problem: the initial session feels productive, then I'd spend hours afterward debugging edge cases, fixing inconsistencies, or realizing the AI "finished" with critical pieces half-done.
+But after years of AI workflows, I kept running into the same problem: the initial session feels productive, then I'd spend hours afterward debugging edge cases, fixing inconsistencies, or realizing the AI "finished" with critical pieces half-done.
 
 So I tried something different. Not replacing the vibe—adding structure around it.
 
@@ -42,8 +42,6 @@ And the verification catches cleanup before I even look at the code. The fix loo
 
 This isn't "stop vibe coding." It's structured vibe coding. The creative exploration is still there. You're just defining the destination first so you don't wander forever.
 
-I packaged the workflow as a Claude Code plugin (though the concept works with any AI tool). Blog post explaining it more + worked example: [BLOG_URL]
+I eventually packaged this workflow as a Claude Code plugin (though the concept works with any AI tool). Blog post with more detail + worked example: [BLOG_URL]
 
 Repo: https://github.com/doodledood/manifest-dev
-
-Curious what structures others have layered on top of vibe coding. What's helped you keep the flow without drowning in cleanup?

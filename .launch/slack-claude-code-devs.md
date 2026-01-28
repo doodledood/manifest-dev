@@ -4,11 +4,17 @@
 
 Hey team—
 
-Been working on something I think might be useful for your Claude Code workflows.
+Sharing something that's helped me significantly with Claude Code—might be useful for your workflows too.
 
-**What it is:**
+**The problem it solves:**
 
-A plugin called `manifest-dev` that adds a structured workflow on top of Claude Code. The core idea: instead of going straight to implementation, you define acceptance criteria first, then let Claude implement toward those criteria, then verify automatically.
+After years of AI workflows, I kept hitting the same wall: Claude would "finish" but leave edge cases or subtle issues I'd spend hours debugging. The core issue wasn't Claude—it was how I was framing tasks.
+
+**What changed:**
+
+Instead of specifying implementation steps, I started defining acceptance criteria first: what would make me actually accept this code as done? Then let Claude implement toward those criteria with flexibility, and verify automatically.
+
+This surfaces latent criteria I'd miss ("should there be rate limiting?") and catches issues before I review.
 
 **The flow:**
 - `/define <task>` — Claude interviews you about what you want, surfaces latent criteria
@@ -16,21 +22,16 @@ A plugin called `manifest-dev` that adds a structured workflow on top of Claude 
 - `/verify` — Automated checks against each AC
 - Fix loop until done
 
-**Why I built it:**
+Try `/define <something you're working on>` and see what the interview surfaces—it's often the most valuable part.
 
-I kept hitting the same problem—Claude would "finish" but leave edge cases or subtle issues I'd spend hours debugging. Defining acceptance criteria upfront and verifying against them automatically reduced that friction significantly.
+Happy to answer questions or hear feedback if you try it.
 
-**How to try it:**
-
+**Links:**
 ```bash
 claude plugins add github.com/doodledood/manifest-dev
 claude plugins install manifest-dev@manifest-dev-marketplace
 ```
 
-Then run `/define <something you're working on>` and see what the interview surfaces.
-
-Wrote up the full thinking behind it: [BLOG_URL]
+Full writeup: [BLOG_URL]
 
 Repo: https://github.com/doodledood/manifest-dev
-
-Happy to answer questions or hear feedback if you try it.
