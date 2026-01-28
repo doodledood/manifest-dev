@@ -24,4 +24,16 @@ And we can utilize this to interview us and help us both define what we know and
 
 We don't always think of all the ACs we actually care about (latent criteria).
 
-Of course getting to 100% is not always possible and shouldn't be strived for - some things are simply not known in advance and that's ok. What we can do is try hard to get to 90% first cover all the interesting things and then when the artifact is done we can do another round of these with more information after we had uncovered some of the unknown unknowns.
+Of course getting to 100% is not always possible and shouldn't be strived for - some things are simply not known in advance and that's ok. What we can do is try hard to get to a good enough point first cover all the interesting things and then when the artifact is done we can do another round of these with more information after we had uncovered some of the unknown unknowns. The goal is not full coverage (probably impossible) but getting to a good enough point where we can start and reliably end up close to the finish line.
+
+You can encode your way of viewing things into an llm as a judge and even if it's not perfect and it's a proxy it's good enough. The goal is not to get to the final artifact in one shot but reduce friction and have fewer iterations in total to get to the finish line. We need the first iteration to land us closer than before to the finish line.
+
+Fix loop degradation is a theoretical concern - in practice after a few weeks of actual production implementations I haven't run into it yet. Maybe a problem in theory but hasn't materialized.
+
+Cold start / bootstrapping is a true problem. Some of it is alleviated by code exploration and web research etc.
+
+The human analogy being selectively applied (ignoring ongoing course correction) is fair. For that reason there's a proxy that verifies the spec and also the whole thing is done in iterations. We can finish and build on the manifest in a second loop.
+
+Flexibility cutting both ways is true but there's explicitly built-in structure. We have process guidance and stuff like general constraints and initial approach. It's not a free for all.
+
+Generality beyond coding has been tried with the define/do flow and it works. You just need to use llm-as-judges proxies (not perfect but better than doing nothing). For example during manifest building for a research doc you encode what a good research report looks like from your eyes - be it citations from real articles, good topic coverage, etc. The manifest also has the ability to do manual verification baked in.
