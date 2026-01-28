@@ -97,7 +97,7 @@ You answer. The AI probes deeper on areas where your answers were vague. It surf
 
 The output is a manifest:
 
-```markdown
+````markdown
 # Definition: User Authentication
 
 ## 1. Intent & Context
@@ -143,7 +143,7 @@ The output is a manifest:
     agent: general-purpose
     prompt: "Check auth routes for proper error handling. 401 for auth failures, not 500."
   ```
-```
+````
 
 Every criterion has a verification method—bash commands, grep checks, or LLM-as-judge prompts. The manifest also includes sections for Approach (execution order, risks, trade-offs), Process Guidance (non-verifiable constraints), and Known Assumptions.
 
