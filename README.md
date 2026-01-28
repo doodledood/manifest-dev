@@ -2,6 +2,31 @@
 
 Front-load the thinking so AI agents get it right the first time.
 
+## Quick Start
+
+```bash
+# Install
+claude plugins add github.com/doodledood/manifest-dev
+claude plugins install manifest-dev@manifest-dev-marketplace
+
+# Use
+/define <what you want to build>
+/do <manifest-path>
+/verify
+```
+
+**Pro tip**: Run `/do` in a fresh session after `/define` completes—or at minimum, `/compact` before starting. The manifest is your external state; the session doesn't need to remember the conversation.
+
+## Contents
+
+- [The Problem](#the-problem)
+- [The Mindset Shift](#the-mindset-shift)
+- [How It Works](#how-it-works)
+- [What /define Produces](#what-define-produces)
+- [Plugin Architecture](#plugin-architecture)
+- [The Benefits](#the-benefits)
+- [Who This Is For](#who-this-is-for)
+
 ## The Problem
 
 You give the agent a task. It generates code. The code looks reasonable. You ship it. Two days later you're debugging something that should have been obvious—or worse, realizing the AI "finished" but left critical pieces incomplete.
@@ -42,7 +67,8 @@ Manifest-driven development separates three concerns:
 
 The loop continues until everything passes—or until a blocker requires human intervention.
 
-## Why This Works
+<details>
+<summary><strong>Why This Works (LLM First Principles)</strong></summary>
 
 LLMs aren't general reasoners. They're goal-oriented pattern matchers trained through reinforcement learning. This has implications:
 
@@ -56,30 +82,7 @@ LLMs aren't general reasoners. They're goal-oriented pattern matchers trained th
 
 This isn't a hack around LLM limitations. It's a design that treats those limitations as first principles.
 
-## Installation
-
-```bash
-# Add the marketplace
-claude plugins add github.com/doodledood/manifest-dev
-
-# Install the plugin
-claude plugins install manifest-dev@manifest-dev-marketplace
-```
-
-## Quick Start
-
-```bash
-# Start a define session
-/define <what you want to build>
-
-# After manifest is ready, execute
-/do <manifest-path>
-
-# Verify and fix until done
-/verify
-```
-
-**Pro tip**: Run `/do` in a fresh session after `/define` completes—or at minimum, `/compact` before starting execution. Long define sessions accumulate context that can cause drift during implementation. The manifest is your external state; the session doesn't need to remember the conversation that produced it.
+</details>
 
 ## What /define Produces
 
@@ -264,57 +267,28 @@ Hooks enforce workflow integrity—the AI can't skip steps:
 
 ## Workflow Diagram
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                              /define                                     │
-│  ┌─────────┐    ┌───────────┐    ┌──────────┐    ┌──────────────────┐  │
-│  │  Task   │───▶│ Interview │───▶│ Generate │───▶│ manifest-verifier│  │
-│  │ Request │    │  (probe   │    │ manifest │    │  (validate gaps) │  │
-│  └─────────┘    │  criteria)│    └──────────┘    └────────┬─────────┘  │
-│                 └───────────┘                              │            │
-│                      │                                     │            │
-│              Task classification                   /tmp/manifest-*.md  │
-│           (Code/Document/Blog/Research)                    │            │
-└────────────────────────────────────────────────────────────│────────────┘
-                                                             │
-                         ┌───────────────────────────────────┘
-                         ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                               /do                                        │
-│  ┌──────────┐    ┌────────────────┐    ┌───────────────┐               │
-│  │ Read     │───▶│ Execute        │───▶│ Log progress  │──┐            │
-│  │ manifest │    │ deliverable    │    │ (disaster     │  │            │
-│  └──────────┘    │ (watch R-* risks)│  │  recovery)    │  │            │
-│       ▲          └────────────────┘    └───────────────┘  │            │
-│       │                 │                                  │            │
-│       │      Risk detected?──▶ Consult T-* trade-offs     │            │
-│       │                 │      └──▶ ACs achievable?       │            │
-│       │                 │           Yes: Adjust, continue │            │
-│       │                 │           No: /escalate         │            │
-│       │                 │                                  │            │
-│       │              ┌──┴──────────────────────────────────┘            │
-│       │              ▼                                                  │
-│       │         ┌─────────┐                                             │
-│       │         │ /verify │◀──────────────────────────────┐            │
-│       │         └────┬────┘                               │            │
-│       │              │                                    │            │
-│       │    ┌─────────┴─────────┐                          │            │
-│       │    ▼                   ▼                          │            │
-│  ┌─────────────┐       ┌────────────┐       ┌──────────┐ │            │
-│  │ All pass    │       │ Failures   │       │ Blocker  │ │            │
-│  │             │       │            │       │          │ │            │
-│  │   /done     │       │ Fix loop   │───────│/escalate │ │            │
-│  └─────────────┘       │ (targeted) │       │(evidence)│ │            │
-│                        └─────┬──────┘       └──────────┘ │            │
-│                              │                            │            │
-│                              └────────────────────────────┘            │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph define ["/define"]
+        A[Task Request] --> B[Interview]
+        B --> C[Generate Manifest]
+        C --> D[manifest-verifier]
+    end
 
-Hooks enforce:
-• Can't stop without /verify passing or /escalate
-• Can't /escalate without running /verify first
-• Progress logged for disaster recovery (context loss)
+    D --> E[manifest.md]
+
+    subgraph do ["/do"]
+        E --> F[Execute Deliverable]
+        F --> G[/verify]
+        G --> H{Result?}
+        H -->|All pass| I[/done]
+        H -->|Failures| J[Fix Loop]
+        J --> G
+        H -->|Blocker| K[/escalate]
+    end
 ```
+
+**Hooks enforce:** Can't stop without `/verify` passing or `/escalate`. Can't `/escalate` without running `/verify` first.
 
 ## The Benefits
 
