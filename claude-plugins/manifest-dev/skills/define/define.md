@@ -28,23 +28,14 @@ If no arguments provided, ask: "What would you like to build or change?"
 
 ## Existing Manifest Feedback
 
-**Detect existing manifest context**: If input references a previous manifest (file path, "the manifest", "update the definition", feedback on prior work), treat the existing manifest as **source of truth**.
+If input references a previous manifest (file path, "the manifest", "update the definition", feedback on prior work):
 
-**Ask user** (with recommended default):
-> "I see feedback on an existing manifest. How should I proceed?
-> 1. **(Recommended)** Build on existing manifest — incorporate your feedback as amendments/additions
-> 2. Start fresh — create new manifest from scratch
->
-> The existing manifest captures validated decisions. Building on it preserves that work."
+**The existing manifest is source of truth.** It contains validated decisions. Default to building on it — incorporate feedback while preserving what's already settled. Don't re-interview for unchanged areas.
 
-**If building on existing** (recommended path):
-1. Read the existing manifest in full
-2. Identify what feedback changes: new criteria, modified criteria, scope changes, clarifications
-3. Incorporate changes while preserving unchanged validated decisions
-4. Focus on **what** changed and **why** — don't re-interview for already-settled questions
-5. Re-run manifest-verifier on updated manifest
-
-**If starting fresh**: Proceed with standard flow below. Note: user loses validated decisions from prior manifest.
+**Ask user**:
+> "I see feedback on an existing manifest. Should I:
+> 1. **(Recommended)** Build on existing — incorporate feedback, preserve validated decisions
+> 2. Start fresh — new manifest from scratch (loses prior work)"
 
 ## Task Classification
 
