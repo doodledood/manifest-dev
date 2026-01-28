@@ -34,8 +34,6 @@ Not because it removes AI limitations—but because it works with them.
 
 I wrote up the full approach with a worked example.
 
-#AICoding #SoftwareEngineering #DevTools #ClaudeCode
-
 ---
 
 ## First Comment

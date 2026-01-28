@@ -57,5 +57,3 @@ The interview phase surfaces stuff I'd miss. "Should there be rate limiting?" (Y
 I eventually packaged this workflow as a Claude Code plugin. Blog post with full approach + worked example: [BLOG_URL]
 
 Repo: https://github.com/doodledood/manifest-dev
-
-Curious if others have tried similar structured approaches. What's worked for you?

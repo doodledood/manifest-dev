@@ -27,8 +27,6 @@ The define phase catches stuff you'd miss. The verification catches issues befor
 
 The concept applies to any AI coding tool—Claude Code, Cursor, Copilot, etc. The workflow is what matters, not the specific tool.
 
-Happy to chat more if anyone's interested—or hear what structured approaches others have tried.
-
 **If you want to try it:**
 
 I packaged it as a Claude Code plugin: https://github.com/doodledood/manifest-dev

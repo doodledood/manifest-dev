@@ -42,8 +42,6 @@ And the verification catches cleanup before I even look at the code. The fix loo
 
 This isn't "stop vibe coding." It's structured vibe coding. The creative exploration is still there. You're just defining the destination first so you don't wander forever.
 
-Curious what structures others have layered on top of vibe coding. What's helped you keep the flow without drowning in cleanup?
-
 I eventually packaged this workflow as a Claude Code plugin (though the concept works with any AI tool). Blog post with more detail + worked example: [BLOG_URL]
 
 Repo: https://github.com/doodledood/manifest-dev
