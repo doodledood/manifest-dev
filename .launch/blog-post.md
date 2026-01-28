@@ -14,7 +14,7 @@ If you've spent any time with AI coding tools in the past year, you know the pat
 
 This is the vibe coding hangover. We got excited about the speed. We ignored the cleanup cost.
 
-The frustrating part: the tools are getting smarter. Claude, GPT-4, the latest models—they can genuinely code. The 15% success rate on complex tasks isn't because the models are dumb. It's because we're throwing them into deep water without defining what "done" actually means.
+The frustrating part: the tools are getting smarter. Claude, GPT, the latest models—they can genuinely code. But we're throwing them into deep water without defining what "done" actually means.
 
 ---
 
@@ -193,6 +193,8 @@ Here's what changes when you adopt manifest-driven development:
 **You stay connected to your codebase.** The define phase forces involvement—you can't write acceptance criteria without understanding what you want. When the code comes back, you're reviewing against criteria you thought through, not parsing AI-generated code cold. This combats the atrophy problem where heavy AI assistance means losing touch with your own code.
 
 **Your process compounds.** When a PR passes verification but reviewers still find issues, encode those as new review agents or CLAUDE.md guidelines. Next time, the system catches what you missed. The process gets smarter with use.
+
+**It's dead simple to use.** All the complexity lives in the implementation—you never see it. Run `/define`, answer the interview questions, run `/do`, go grab coffee. That's it. No prompt engineering. No babysitting. Just follow along.
 
 The goal isn't perfect output on the first try. It's reducing friction to get there. Fewer iterations. Less debugging. More shipping.
 
