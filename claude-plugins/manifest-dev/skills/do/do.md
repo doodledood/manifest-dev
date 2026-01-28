@@ -13,9 +13,13 @@ Execute a Manifest: satisfy all Deliverables' Acceptance Criteria while followin
 
 ## Input
 
-`$ARGUMENTS` = manifest file path (REQUIRED)
+`$ARGUMENTS` = manifest file path (REQUIRED), optionally with execution log path
 
-If no arguments: Output error "Usage: /do <manifest-file-path>"
+If no arguments: Output error "Usage: /do <manifest-file-path> [log-file-path]"
+
+## Existing Execution Log
+
+If input includes a log file path (iteration on previous work): **treat it as source of truth**. It contains prior execution history. Continue from where it left off—append to the same log, don't restart.
 
 ## Principles
 
