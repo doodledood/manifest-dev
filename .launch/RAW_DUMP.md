@@ -37,3 +37,7 @@ The human analogy being selectively applied (ignoring ongoing course correction)
 Flexibility cutting both ways is true but there's explicitly built-in structure. We have process guidance and stuff like general constraints and initial approach. It's not a free for all.
 
 Generality beyond coding has been tried with the define/do flow and it works. You just need to use llm-as-judges proxies (not perfect but better than doing nothing). For example during manifest building for a research doc you encode what a good research report looks like from your eyes - be it citations from real articles, good topic coverage, etc. The manifest also has the ability to do manual verification baked in.
+
+One of the ideas is to invest in the define process so that you can fire and forget in the do verify fix phase. This has the side effect of also freeing you meaning do is running to define many things in parallel if you wish increasing throughout apart from the process itself which makes this more efficient anyways.
+
+Also unrelated to that - investment in infrastructure may prove very beneficial for verifications.
