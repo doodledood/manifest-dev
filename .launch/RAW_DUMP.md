@@ -41,3 +41,5 @@ Generality beyond coding has been tried with the define/do flow and it works. Yo
 One of the ideas is to invest in the define process so that you can fire and forget in the do verify fix phase. This has the side effect of also freeing you meaning do is running to define many things in parallel if you wish increasing throughout apart from the process itself which makes this more efficient anyways.
 
 Also unrelated to that - investment in infrastructure may prove very beneficial for verifications.
+
+Investing time building a good manifest has many extra benefits one of which is it helps you understand the task its nuances and even high level better so its easier later to code review with less chance of overwhelm. It's a known problem that using AI atrophies your knowledge of the code it produces because you don't get involved to some degree. The define phase forces involvement - you can't define acceptance criteria without understanding what you want. So when the code comes back, you're reviewing against criteria you deeply thought through, not trying to understand AI-generated code cold.
