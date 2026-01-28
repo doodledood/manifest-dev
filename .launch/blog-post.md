@@ -192,6 +192,8 @@ Here's what changes when you adopt manifest-driven development:
 
 **You stay connected to your codebase.** The define phase forces involvement—you can't write acceptance criteria without understanding what you want. When the code comes back, you're reviewing against criteria you thought through, not parsing AI-generated code cold. This combats the atrophy problem where heavy AI assistance means losing touch with your own code.
 
+**Your process compounds.** When a PR passes verification but reviewers still find issues, encode those as new review agents or CLAUDE.md guidelines. Next time, the system catches what you missed. The process gets smarter with use.
+
 The goal isn't perfect output on the first try. It's reducing friction to get there. Fewer iterations. Less debugging. More shipping.
 
 ---
