@@ -28,14 +28,7 @@ If no arguments provided, ask: "What would you like to build or change?"
 
 ## Existing Manifest Feedback
 
-If input references a previous manifest (file path, "the manifest", "update the definition", feedback on prior work):
-
-**The existing manifest is source of truth.** It contains validated decisions. Default to building on it — incorporate feedback while preserving what's already settled. Don't re-interview for unchanged areas.
-
-**Ask user**:
-> "I see feedback on an existing manifest. Should I:
-> 1. **(Recommended)** Build on existing — incorporate feedback, preserve validated decisions
-> 2. Start fresh — new manifest from scratch (loses prior work)"
+If input references a previous manifest: **treat it as source of truth**. It contains validated decisions — default to building on it, preserving what's settled. Confirm approach with user if unclear.
 
 ## Task Classification
 
