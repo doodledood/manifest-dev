@@ -31,7 +31,7 @@ When you define *what success looks like*, Claude has flexibility to adapt. You'
 **What this looks like in practice:**
 
 Instead of detailed implementation steps, I define:
-- What the output must do (acceptance criteria)
+- What the output must do and must NOT do (acceptance criteria)
 - Constraints that must never be violated (invariants)
 - How to verify each criterion (automated checks)
 

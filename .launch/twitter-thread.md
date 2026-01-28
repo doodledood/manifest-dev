@@ -32,7 +32,7 @@ The fix: define acceptance criteria, not implementation steps.
 ---
 
 ## Tweet 4
-Specify WHAT the output must do.
+Specify WHAT the output must do—and must NOT.
 Let the AI figure out HOW.
 Then verify it hit the bar.
 

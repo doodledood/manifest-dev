@@ -28,7 +28,7 @@ This isn't just semantic wordplay. It's a fundamental shift in where you invest 
 
 When you ask "how should the LLM do this?", you end up micromanaging the implementation. You write detailed plans. You specify function names and types. You try to puppeteer the AI through every step. And the moment something unexpected happens—which it always does—the rigid plan breaks down. The AI starts using `any` types, adding `// @ts-ignore` comments, bending reality to satisfy the letter of your instructions while violating the spirit.
 
-When you ask "what would make me accept this?", you define success criteria. You specify what the output must do, not how it must be built. You encode your quality standards as verifiable acceptance criteria. Then you let the AI figure out the implementation—and you verify whether it hit the bar.
+When you ask "what would make me accept this?", you define success criteria. You specify what the output must do and must not do—not how it must be built. You encode your quality standards as verifiable acceptance criteria. Then you let the AI figure out the implementation—and you verify whether it hit the bar.
 
 This is manifest-driven development.
 
