@@ -9,43 +9,38 @@ user-invocable: true
 
 Execute a Manifest: satisfy all Deliverables' Acceptance Criteria while following Process Guidance and Approach direction, then verify everything passes (including Global Invariants).
 
+**Why quality execution matters**: The manifest front-loaded the thinking—criteria are already defined. Your job is implementation that passes verification on first attempt. Every verification failure is rework.
+
 ## Input
 
-`$ARGUMENTS` = manifest file path (REQUIRED), optionally with execution log path for iterations
+`$ARGUMENTS` = manifest file path (REQUIRED)
 
-If no arguments: Output error "Usage: /do <manifest-file-path> [log-file-path]"
-
-## Existing Execution Log
-
-If input includes a log file path (iteration on previous work): **treat it as source of truth**. It contains execution history and decisions made. Continue from where it left off—don't restart.
-
-When iterating:
-1. Read the existing log to understand prior work
-2. Append new progress to the same log (don't create a new file)
-3. Focus on what changed or failed in the previous attempt
+If no arguments: Output error "Usage: /do <manifest-file-path>"
 
 ## Principles
 
-**Manifest says WHAT, you decide HOW** — ACs define success. Work toward them however makes sense. Architecture guides direction, doesn't constrain tactics.
-
-**On failure, target specifically** — Fix the failing criterion. Don't restart. Don't touch passing criteria. Verify the fix before re-running full verification.
-
-**Consult trade-offs when risks materialize** — When R-* risks appear, use T-* trade-offs for decision criteria. Log adjustments.
+| Principle | Rule |
+|-----------|------|
+| **ACs define success** | Work toward acceptance criteria however makes sense. Manifest says WHAT, you decide HOW. |
+| **Architecture is direction** | Follow approach's architecture as starting direction. Adapt tactics freely—architecture guides, doesn't constrain. |
+| **Target failures specifically** | On verification failure, fix the specific failing criterion. Don't restart. Don't touch passing criteria. |
+| **Verify fixes first** | After fixing a failure, confirm the fix works before re-running full verification. |
+| **Trade-offs guide adjustment** | When risks (R-*) materialize, consult trade-offs (T-*) for decision criteria. Log adjustments with rationale. |
 
 ## Constraints
 
-**Log after every action** — Write to execution log after each AC attempt. The log is disaster recovery—if context is lost, another agent reading only the log could resume.
+**Log after every action** - Write to execution log immediately after each AC attempt. No exceptions. This is disaster recovery—if context is lost, the log is the only record of what happened.
 
-**Must call /verify** — Invoke manifest-dev:verify with manifest and log paths. Can't declare done without it.
+**Must call /verify** - Can't declare done without verification. Invoke manifest-dev:verify with manifest and log paths.
 
-**Escalate only when contract is broken** — If ACs can't be met as written, escalate. If ACs remain achievable, adjust and continue.
+**Escalation boundary** - Escalate only when ACs can't be met as written (contract broken). If ACs remain achievable, adjust and continue autonomously.
 
-## Execution Log
+**Refresh before verify** - Read full execution log before calling /verify to restore context.
 
-Externalize progress to survive context loss.
+## Memento Pattern
 
-**New execution**: Create `/tmp/do-log-{timestamp}.md` at start.
+Externalize progress to survive context loss. The log IS the disaster recovery mechanism.
 
-**Iteration**: Reuse existing log file from input. Append, don't overwrite.
+**Execution log**: Create `/tmp/do-log-{timestamp}.md` at start. After EACH AC attempt, append what happened and the outcome. Goal: another agent reading only the log could resume work.
 
-**After each AC**: Log what happened and the outcome. Read full log before calling /verify.
+**Todos**: Create from manifest (deliverables → ACs). Follow execution order from Approach. Update todo status after logging (log first, todo second).
