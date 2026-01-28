@@ -7,3 +7,7 @@ The approach of planning an implementation down to code or even exact type level
 Besides all this it's well documented that current LLMs don't explore enough, are lacking (as of Jan 2026) in the memory department, suffering from context rot issues. It is getting better but we still have to account for it.
 
 In an AGI ideal world you won't have to verify anything and you just give a goal and come back to a perfect result. In reality it may never get there. Swarms of humans are as close to AGI as there is currently and yet they too have processes and structures that admit the individual isn't perfect. Hence why there are development methodologies and qa fix cycles during this development cycle. If we take humans as a state to strive towards (in the mean time, while machines are still behind) we can probably assume we'll need this for the forrseeable future.
+
+And this is not just applicable to coding. A manifest can be made for any task using the same loop. Want to research something? Define the research document you want produced with the relevant ACs (citations included, etc). Same for writing a blog post. Etc. it's a general purpose way of getting to the artifact you will accept.
+
+Kind of a more opinionated alternative to plan/code modes.
