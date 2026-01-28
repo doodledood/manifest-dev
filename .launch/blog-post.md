@@ -1,6 +1,6 @@
-# Manifest-Driven Development: What I Learned After Weeks of Shipping with AI Agents
+# Manifest-Driven Development: What I Learned After Years of AI Workflows
 
-Here's what I've learned after weeks of production use with AI coding agents: the problem isn't the AI. The problem is how we're framing what we want.
+Here's what I've learned after years of building with AI coding agents: the problem isn't the AI. The problem is how we're framing what we want.
 
 We keep asking "how do I get the LLM to implement this feature properly?" when we should be asking "what would make me accept this PR in full?"
 
@@ -151,21 +151,35 @@ Now `/do` executes against this manifest. The AI implements with flexibility. `/
 
 ---
 
+## The Big Shift
+
+Here's what changes when you adopt this approach:
+
+**Your first pass lands closer to done.** Verification catches issues before you see them. The fix loop handles cleanup automatically.
+
+**You can trust the output.** Not because the AI is infallible, but because every acceptance criterion has been verified. You know what was checked.
+
+**You can parallelize.** While one manifest is executing, you can define the next. The define phase is where your judgment matters. The do-verify-fix phase runs on its own.
+
+**You stop chasing hype.** The workflow is grounded in how LLMs actually work. It's not magic. It's engineering.
+
+**You stay connected to your codebase.** The define phase forces involvement—you can't write acceptance criteria without understanding what you want. When the code comes back, you're reviewing against criteria you thought through, not parsing AI-generated code cold. This combats the atrophy problem where heavy AI assistance means losing touch with your own code.
+
+**Your process compounds.** When a PR passes verification but reviewers still find issues, encode those as new review agents or CLAUDE.md guidelines. Next time, the system catches what you missed. The process gets smarter with use.
+
+**It's dead simple to use.** All the complexity lives in the implementation—you never see it. Run `/define`, answer the interview questions, run `/do`, go grab coffee. That's it. No prompt engineering. No babysitting. Just follow along.
+
+**Resist the urge to intervene.** It won't nail everything on the first pass—that's expected. The verify-fix loop exists precisely for this. You invested in define; now let the loop run. It rarely gets there in a straight line, but it gets there.
+
+The goal isn't perfect output on the first try. It's reducing friction to get there. Fewer iterations. Less debugging. More shipping.
+
+---
+
 ## Try It
 
-Manifest-driven development is the core workflow of the `manifest-dev` plugin for Claude Code.
+Manifest-driven development isn't the final answer. But after years of iterating on AI workflows, it's the most reliable approach I've found to ship quality code with AI agents. Not because it removes the AI's limitations—but because it works with them.
 
-Install it:
-
-```bash
-# Add the marketplace
-claude plugins add github.com/doodledood/manifest-dev
-
-# Install the plugin
-claude plugins install manifest-dev@manifest-dev-marketplace
-```
-
-Then use it:
+I packaged this as a Claude Code plugin. The workflow:
 
 ```bash
 # Start a define session
@@ -188,42 +202,19 @@ The plugin includes:
 
 It's opinionated by design. The workflow is structured so you can invest heavily in the define phase, then fire and forget during execution. You're not babysitting the AI—you're verifying its output against criteria you defined upfront.
 
----
-
-## The Big Shift
-
-Here's what changes when you adopt manifest-driven development:
-
-**Your first pass lands closer to done.** Verification catches issues before you see them. The fix loop handles cleanup automatically.
-
-**You can trust the output.** Not because the AI is infallible, but because every acceptance criterion has been verified. You know what was checked.
-
-**You can parallelize.** While one manifest is executing, you can define the next. The define phase is where your judgment matters. The do-verify-fix phase runs on its own.
-
-**You stop chasing hype.** The workflow is grounded in how LLMs actually work. It's not magic. It's engineering.
-
-**You stay connected to your codebase.** The define phase forces involvement—you can't write acceptance criteria without understanding what you want. When the code comes back, you're reviewing against criteria you thought through, not parsing AI-generated code cold. This combats the atrophy problem where heavy AI assistance means losing touch with your own code.
-
-**Your process compounds.** When a PR passes verification but reviewers still find issues, encode those as new review agents or CLAUDE.md guidelines. Next time, the system catches what you missed. The process gets smarter with use.
-
-**It's dead simple to use.** All the complexity lives in the implementation—you never see it. Run `/define`, answer the interview questions, run `/do`, go grab coffee. That's it. No prompt engineering. No babysitting. Just follow along.
-
-**Resist the urge to intervene.** It won't nail everything on the first pass—that's expected. The verify-fix loop exists precisely for this. You invested in define; now let the loop run. It rarely gets there in a straight line, but it gets there.
-
-The goal isn't perfect output on the first try. It's reducing friction to get there. Fewer iterations. Less debugging. More shipping.
+If this resonates, try `/define` on your next task and see what the interview surfaces.
 
 ---
 
-## What's Next
+**Get Started**
 
-If this resonates:
+```bash
+claude plugins add github.com/doodledood/manifest-dev
+claude plugins install manifest-dev@manifest-dev-marketplace
+```
 
-1. **Try it**: Install the plugin, run `/define` on your next task, and see what the interview surfaces
-2. **Star the repo**: [github.com/doodledood/manifest-dev](https://github.com/doodledood/manifest-dev)
-3. **Follow along**: I share what I'm learning as I build this at [@aviramk](https://twitter.com/aviramk)
+Repo: [github.com/doodledood/manifest-dev](https://github.com/doodledood/manifest-dev)
 
-Manifest-driven development isn't the final answer. But after weeks of production use, it's the most reliable way I've found to ship quality code with AI agents. Not because it removes the AI's limitations—but because it works with them.
-
----
+I share what I'm learning as I build this at [@aviramk](https://twitter.com/aviramk)
 
 *[BLOG_URL] — I write about building with AI agents, first-principles workflows, and what actually works.*

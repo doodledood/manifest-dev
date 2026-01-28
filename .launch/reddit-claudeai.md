@@ -4,46 +4,57 @@
 
 ## Title
 
-I built a Claude Code plugin after getting frustrated with how I was using AI agents—here's what changed
+The mindset shift that fixed how I work with AI agents (after years of trying different approaches)
 
 ---
 
 ## Body
 
-After weeks of using Claude Code for production work, I kept running into the same problem: I'd give it a task, it'd generate reasonable-looking code, and then I'd spend hours debugging edge cases or realizing it "finished" with critical pieces missing.
+After years of building with AI coding tools, I kept hitting the same wall: Claude generates code, it looks reasonable, I ship it—then hours later I'm debugging something that should have been obvious. Or worse, realizing it "finished" with critical pieces missing.
 
-The issue wasn't Claude. The issue was me—I was framing tasks wrong.
+The issue wasn't Claude. It was me—I was asking the wrong question.
 
-**The reframe that worked:**
+**The shift:**
 
-Instead of thinking "how do I get Claude to implement this properly?", I started asking "what would make me accept this PR in full?"
+I stopped asking "how do I get Claude to implement this properly?"
 
-That shift led me to build a workflow I call manifest-driven development:
+I started asking "what would make me accept this PR in full?"
 
-1. **Define** — Claude interviews you about what you want. Not just what you say, but the latent criteria you'd reject a PR for but wouldn't think to specify upfront. (Things like "did you add rate limiting?" or "is error handling consistent?")
+That reframe changes where you invest your energy.
 
-2. **Manifest** — The output is a structured document: deliverables, acceptance criteria, global invariants, verification methods.
+**Why it matters:**
 
-3. **Do** — Claude implements toward the acceptance criteria with flexibility on the how.
+When you specify *how* to implement, you end up micromanaging. Rigid plans break when reality gets messy. Claude starts using `any` types and `@ts-ignore` to satisfy your instructions while violating the spirit.
 
-4. **Verify** — Automated checks run against every criterion. What fails gets flagged specifically.
+When you define *what success looks like*, Claude has flexibility to adapt. You're defining the destination, not the path.
 
-5. **Fix loop** — Failed criteria get fixed. What passes is locked in. Loop until done.
+**What this looks like in practice:**
 
-**Why it helped me:**
+Instead of detailed implementation steps, I define:
+- What the output must do (acceptance criteria)
+- Rules that must always be followed (invariants)
+- How to verify each criterion (automated checks)
 
-- The interview surfaces stuff I'd miss. Latent criteria come out of the conversation, not my upfront thinking.
-- Verification catches issues before I review. The fix loop handles cleanup.
-- I can trust the output more—not because Claude is perfect, but because I know what was checked.
-- I can fire and forget during execution because I invested in the define phase.
+Then I let Claude implement toward those criteria. A verify-fix loop handles cleanup. What fails gets fixed. What passes is locked in.
+
+**The key insight:**
+
+The interview phase surfaces stuff I'd miss. "Should there be rate limiting?" (Yes—I'd reject a PR without it, but I wouldn't have specified it.) Those latent criteria come out of the conversation, not my upfront thinking.
 
 **What it doesn't fix:**
 
-- Won't help if you're doing one-off quick tasks (overkill)
-- Requires upfront investment in the define phase
+- Won't help for one-off quick tasks (overkill)
+- Requires upfront investment in defining criteria
 - Verification is only as good as your criteria—garbage in, garbage out
 
-I packaged this as a Claude Code plugin. Blog post with the full approach + worked example: [BLOG_URL]
+**What actually changed for me:**
+
+- First pass lands closer to done
+- I trust the output (I know what was checked)
+- I can fire and forget during execution because I invested in the define phase
+- The process compounds—encode what I miss as new criteria
+
+I eventually packaged this workflow as a Claude Code plugin. Blog post with full approach + worked example: [BLOG_URL]
 
 Repo: https://github.com/doodledood/manifest-dev
 
