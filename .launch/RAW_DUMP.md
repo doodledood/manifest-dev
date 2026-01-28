@@ -17,3 +17,11 @@ The big caveat: if we start thinking not "how do I get the llm to implement this
 And this is not just applicable to coding. A manifest can be made for any task using the same loop. Want to research something? Define the research document you want produced with the relevant ACs (citations included, etc). Same for writing a blog post. Etc. it's a general purpose way of getting to the artifact you will accept.
 
 Kind of a more opinionated alternative to plan/code modes.
+
+Humans are not that good at thinking upfront about all things. It's very mentally draining to do it right. Gladly the llm is good at that. It never gives up or gets tired.
+
+And we can utilize this to interview us and help us both define what we know and try to strive towards helping us uncover why we don't know (known unknowns) to create a definition of what will make us accept the artifact.
+
+We don't always think of all the ACs we actually care about (latent criteria).
+
+Of course getting to 100% is not always possible and shouldn't be strived for - some things are simply not known in advance and that's ok. What we can do is try hard to get to 90% first cover all the interesting things and then when the artifact is done we can do another round of these with more information after we had uncovered some of the unknown unknowns.
