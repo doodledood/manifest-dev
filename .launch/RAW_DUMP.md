@@ -8,6 +8,12 @@ Besides all this it's well documented that current LLMs don't explore enough, ar
 
 In an AGI ideal world you won't have to verify anything and you just give a goal and come back to a perfect result. In reality it may never get there. Swarms of humans are as close to AGI as there is currently and yet they too have processes and structures that admit the individual isn't perfect. Hence why there are development methodologies and qa fix cycles during this development cycle. If we take humans as a state to strive towards (in the mean time, while machines are still behind) we can probably assume we'll need this for the forrseeable future.
 
+Like actual humans specs define acceptance criteria we can borrow this idea and massage it so it's ideal for an llm
+If we can define exactly what needs to be done, and most importantly how exactly to verify it we can then have the llm freely do its thing being flexible in achieving the criteria (which can be both negative and positive) and once it's done have a verify - fix loop all automated.
+Now this is neat because many problems are then taken off the table - you worry about llm producing
+Code that is not maintainable? Hard to read? Not based on deep exploration? Incomplete? Encode each as acceptance criteria or global invariants and watch the fix loop get there in the shape you want.  You can encode your specific needs inside a custom "reviewer" agent and set the verification method to that and assuming  you did a good job replicating your thoughts - the final pr will adhere. Since it won't stop until all AC are fulfilled or an impossibility is reached at which point a human intervention may be needed (for example a feature cannot be verified because the env is not set up properly)
+The big caveat: if we start thinking not "how do I get the llm to implement this feature properly" but "what would make me accept this PR in full" we make a mindset shift that is super beneficial IMO
+
 And this is not just applicable to coding. A manifest can be made for any task using the same loop. Want to research something? Define the research document you want produced with the relevant ACs (citations included, etc). Same for writing a blog post. Etc. it's a general purpose way of getting to the artifact you will accept.
 
 Kind of a more opinionated alternative to plan/code modes.
