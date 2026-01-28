@@ -26,6 +26,10 @@ Output: `/tmp/manifest-{timestamp}.md`
 
 If no arguments provided, ask: "What would you like to build or change?"
 
+## Existing Manifest Feedback
+
+If input references a previous manifest: **treat it as source of truth**. It contains validated decisions — default to building on it, preserving what's settled. Confirm approach with user if unclear.
+
 ## Task Classification
 
 After parsing input, classify the deliverable type:
