@@ -178,6 +178,8 @@ Then use it:
 /verify
 ```
 
+**Pro tip**: Run `/do` in a fresh session after `/define` completes—or at minimum, `/compact` before starting execution. Long define sessions accumulate context that can cause drift during implementation. The manifest is your external state; the session doesn't need to remember the conversation that produced it.
+
 The plugin includes:
 - **/define**: Interview-driven manifest creation
 - **/do**: Execution with verification loops
