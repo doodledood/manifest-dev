@@ -190,6 +190,8 @@ Here's what changes when you adopt manifest-driven development:
 
 **You stop chasing hype.** The workflow is grounded in how LLMs actually work. It's not magic. It's engineering.
 
+**You stay connected to your codebase.** The define phase forces involvement—you can't write acceptance criteria without understanding what you want. When the code comes back, you're reviewing against criteria you thought through, not parsing AI-generated code cold. This combats the atrophy problem where heavy AI assistance means losing touch with your own code.
+
 The goal isn't perfect output on the first try. It's reducing friction to get there. Fewer iterations. Less debugging. More shipping.
 
 ---
