@@ -87,7 +87,7 @@ The interview classifies your task (Code, Document, Blog, Research) and loads ta
 
 Here's an example manifest:
 
-```markdown
+````markdown
 # Definition: User Authentication
 
 ## 1. Intent & Context
@@ -158,7 +158,7 @@ Here's an example manifest:
     agent: code-bugs-reviewer
     prompt: "Check auth routes return 401 for auth failures, not 500"
   ```
-```
+````
 
 ## The Manifest Schema
 
