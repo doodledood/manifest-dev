@@ -14,10 +14,6 @@
     "trade-offs",
     "do"
   ],
-  "commands": [
-    "skills/define/define.md",
-    "skills/do/do.md"
-  ],
   "hooks": {
     "Stop": [
       {

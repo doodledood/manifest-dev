@@ -9,5 +9,13 @@
   },
   "plugins": [
     { "name": "manifest-dev", "source": "./claude-plugins/manifest-dev" }
+  ],
+  "skills": [
+    "./claude-plugins/manifest-dev/skills/define",
+    "./claude-plugins/manifest-dev/skills/do"
+  ],
+  "commands": [
+    "./claude-plugins/manifest-dev/skills/define/define.md",
+    "./claude-plugins/manifest-dev/skills/do/do.md"
   ]
 }
