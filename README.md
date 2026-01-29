@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.png" alt="Manifest Dev Logo" width="120">
+</p>
+
 # Manifest-Driven Development
 
 Front-load the thinking so AI agents get it right the first time.
