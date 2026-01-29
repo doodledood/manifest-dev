@@ -343,6 +343,187 @@ class TestStopHookApiErrors:
         assert result["decision"] == "block"
 
 
+class TestStopHookLoopDetection:
+    """Tests for infinite loop detection and prevention."""
+
+    def test_allows_after_three_short_outputs(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Stop should be allowed after 3+ consecutive short outputs (loop detected)."""
+        short_outputs = [
+            {
+                "type": "assistant",
+                "message": {"content": [{"type": "text", "text": "."}]},
+            },
+            {
+                "type": "assistant",
+                "message": {"content": [{"type": "text", "text": "Done."}]},
+            },
+            {
+                "type": "assistant",
+                "message": {"content": [{"type": "text", "text": "Waiting."}]},
+            },
+        ]
+        transcript_path = temp_transcript([user_do_command] + short_outputs)
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        assert result is not None
+        assert result["decision"] == "allow"
+        assert "loop" in result["reason"].lower()
+
+    def test_blocks_with_two_short_outputs(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Stop should still be blocked with only 2 consecutive short outputs."""
+        short_outputs = [
+            {
+                "type": "assistant",
+                "message": {"content": [{"type": "text", "text": "."}]},
+            },
+            {
+                "type": "assistant",
+                "message": {"content": [{"type": "text", "text": "Done."}]},
+            },
+        ]
+        transcript_path = temp_transcript([user_do_command] + short_outputs)
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        assert result is not None
+        assert result["decision"] == "block"
+        # Message should mention /verify and /escalate options
+        assert "/verify" in result["systemMessage"]
+        assert "/escalate" in result["systemMessage"]
+
+    def test_substantial_output_breaks_loop_pattern(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Substantial output should reset the loop counter."""
+        transcript_path = temp_transcript([
+            user_do_command,
+            # Two short outputs
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+            # Substantial output breaks the pattern
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "x" * 150}]}},
+            # Only one short output after substantial
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+        ])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        # Should block because only 1 consecutive short output after substantial
+        assert result is not None
+        assert result["decision"] == "block"
+
+    def test_tool_use_breaks_loop_pattern(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Non-Skill tool use should reset the loop counter."""
+        transcript_path = temp_transcript([
+            user_do_command,
+            # Two short outputs
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+            # Tool use (not Skill) breaks the pattern
+            {
+                "type": "assistant",
+                "message": {
+                    "content": [
+                        {"type": "text", "text": "Let me check"},
+                        {"type": "tool_use", "name": "Read", "input": {"path": "/tmp/foo"}},
+                    ]
+                },
+            },
+            # Only one short output after tool use
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+        ])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        # Should block because only 1 consecutive short output after tool use
+        assert result is not None
+        assert result["decision"] == "block"
+
+    def test_escalate_skill_allows_stop_even_in_loop(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Calling /escalate (via Skill) should allow stop regardless of loop pattern."""
+        transcript_path = temp_transcript([
+            user_do_command,
+            # Short outputs with an escalate call in the middle
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+            {
+                "type": "assistant",
+                "message": {
+                    "content": [
+                        {"type": "text", "text": "x"},
+                        {"type": "tool_use", "name": "Skill", "input": {"skill": "escalate"}},
+                    ]
+                },
+            },
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+        ])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        # Should allow because /escalate was called (proper workflow completion)
+        # Loop detection doesn't apply when /escalate was invoked
+        assert result is None
+
+    def test_non_escalate_skill_does_not_break_loop_pattern(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Skill tool use for non-completion skills should not reset loop counter."""
+        transcript_path = temp_transcript([
+            user_do_command,
+            # Three short outputs with a non-escalate Skill call
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+            {
+                "type": "assistant",
+                "message": {
+                    "content": [
+                        {"type": "text", "text": "x"},
+                        # Some other skill, not escalate/done
+                        {"type": "tool_use", "name": "Skill", "input": {"skill": "some-other-skill"}},
+                    ]
+                },
+            },
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "."}]}},
+        ])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        # Should allow because 3 consecutive short outputs (Skill doesn't reset counter)
+        assert result is not None
+        assert result["decision"] == "allow"
+
+
 class TestStopHookEdgeCases:
     """Tests for edge cases and error handling."""
 

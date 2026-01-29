@@ -116,3 +116,24 @@ All automated criteria pass.
 
 Please review and confirm completion.
 ```
+
+### User-Requested Pause
+
+User explicitly asked to stop mid-workflow (e.g., "commit so I can deploy", "stop here for now"). No 3-attempt evidence needed—just explain the pause.
+
+```markdown
+## Escalation: User-Requested Pause
+
+**Reason:** [what user asked for]
+**Current state:** [what's done, what's pending]
+
+### Progress Summary
+- Completed: [ACs done]
+- In progress: [current work]
+- Remaining: [ACs not started]
+
+### To Resume
+[How to continue - e.g., "/do <manifest> <log>" or specific next steps]
+```
+
+**When to use**: User interrupts workflow for legitimate reasons (deploy, review, break). Not a blocker—just a handoff.

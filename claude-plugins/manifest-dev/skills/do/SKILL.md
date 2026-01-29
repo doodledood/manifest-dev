@@ -37,7 +37,9 @@ If input includes a log file path (iteration on previous work): **treat it as so
 
 **Must call /verify** - Can't declare done without verification. Invoke manifest-dev:verify with manifest and log paths.
 
-**Escalation boundary** - Escalate only when ACs can't be met as written (contract broken). If ACs remain achievable, adjust and continue autonomously.
+**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), or (2) user requests a pause mid-workflow. If ACs remain achievable and no user interrupt, continue autonomously.
+
+**Stop requires /escalate** - During /do, you cannot stop without calling /verify→/done or /escalate. If you need to pause (user requested, waiting on external action), call /escalate with "User-Requested Pause" format. Short outputs like "Done." or "Waiting." will be blocked.
 
 **Refresh before verify** - Read full execution log before calling /verify to restore context.
 
