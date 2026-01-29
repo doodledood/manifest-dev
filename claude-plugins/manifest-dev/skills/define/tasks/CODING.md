@@ -2,6 +2,10 @@
 
 Task-specific guidance for code deliverables: features, APIs, fixes, refactors, tests.
 
+## Multi-Repo
+
+When spanning repos: capture per-repo project gates (lint/test/build differ), probe for cross-repo contracts to verify, scope reviewers to changed files within each repo.
+
 ## Code Quality Gates
 
 Surface which quality aspects matter. Mark recommended defaults based on task context.

@@ -32,21 +32,26 @@ If input references a previous manifest: **treat it as source of truth**. It con
 
 ## Task Classification
 
-After parsing input, classify the deliverable type:
+After parsing input, identify **all applicable domains** (multi-select):
 
-| Type | Indicators | Action |
-|------|------------|--------|
-| **Code** | Files, APIs, features, fixes, refactors, tests | Read `tasks/CODING.md` |
-| **Document** | Specs, proposals, reports, formal docs | Read `tasks/DOCUMENT.md` |
-| **Research** | Investigations, analyses, comparisons, competitive reviews | Read `tasks/RESEARCH.md` |
-| **Blog** | Blog posts, articles, tutorials, newsletters | Read `tasks/BLOG.md` |
-| **Other** | Doesn't fit above | Proceed with universal flow |
+| Domain | Indicators | Guidance File |
+|--------|------------|---------------|
+| **Code** | Files, APIs, features, fixes, refactors, tests | `tasks/CODING.md` |
+| **Document** | Specs, proposals, reports, formal docs | `tasks/DOCUMENT.md` |
+| **Research** | Investigations, analyses, comparisons | `tasks/RESEARCH.md` |
+| **Blog** | Blog posts, articles, tutorials | `tasks/BLOG.md` |
 
-**Confirm with user**: "This appears to be a [TYPE] deliverable. Correct?" If user indicates a different type or "none of these", adjust accordingly.
+**Multi-select, zero-or-more**: Tasks may span domains, fit one, or fit none. Read applicable task files and synthesize. If none fit, proceed with universal flow—core principles and manifest schema work for any deliverable.
 
-**If task file exists**: Read it and incorporate domain-specific guidance into the interview.
+## Multi-Repo Scope
 
-**If no task file applies**: Proceed with universal flow—the core principles and manifest schema work for any deliverable.
+When task spans multiple repositories, capture during intent:
+
+- **Which repos** and their roles
+- **Cross-repo constraints** (dependencies, coordination requirements)
+- **Per-repo differences** (different rules, conventions, verification needs)
+
+Scope deliverables and verification to repo context. Cross-repo invariants get explicit verification checking both sides.
 
 ## Principles
 
@@ -172,6 +177,7 @@ Three categories, each covering **output** or **process**:
 *Ordered by execution order from Approach, or by dependency then importance.*
 
 ### Deliverable 1: [Name]
+*[If multi-repo: specify repo scope]*
 
 **Acceptance Criteria:**
 - [AC-1.1] Description: ... | Verify: ...
