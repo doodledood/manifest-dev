@@ -20,27 +20,18 @@ Surface these dimensions that the general /define flow won't naturally cover:
 - **Success criteria**: What does "done" look like? Cleaner structure? Better performance? Easier testing? Vague goals lead to endless refactoring.
 - **Incremental strategy**: One big change or series of small changes? Each approach has different risk profiles.
 
-## Refactor Quality Gates
+## Quality Gates
 
-| Aspect | Agent | Threshold |
-|--------|-------|-----------|
-| Behavior preservation | code-bugs-reviewer | No functional changes detected outside explicit scope |
-| Test coverage | code-coverage-reviewer | Tests cover preserved behavior; no coverage regression |
-| Maintainability | code-maintainability-reviewer | Improvement over baseline (the point of refactoring) |
+Use FEATURE.md quality gates table. For refactors, emphasize:
+- **code-bugs-reviewer**: Critical—must detect unintended behavior changes
+- **code-maintainability-reviewer**: The point of refactoring—should show improvement
+- **code-coverage-reviewer**: Tests must cover preserved behavior
 
 **Critical gate**: If no tests verify the preserved behavior, probe whether "write characterization tests" should be a prerequisite deliverable.
 
-**Encoding**: Add selected gates as Global Invariants:
-```yaml
-verify:
-  method: subagent
-  agent: [agent-name-from-table]
-  prompt: "Verify refactor preserves behavior / achieves structural goal"
-```
-
 ## Project Gates
 
-Same as FEATURE.md—existing tests must still pass. For refactors, this is THE critical gate, not a nice-to-have.
+Same as FEATURE.md. For refactors, passing tests is THE critical gate—proof behavior is preserved.
 
 ## Refactor-Specific Risks
 

@@ -14,25 +14,20 @@ Surface these dimensions that the general /define flow won't naturally cover:
 - **Impact and workarounds**: Who's affected? How severely? Any temporary workarounds? Informs fix urgency and scope.
 - **Related symptoms**: Other issues that might share the same root cause? Batch opportunities.
 
-## Bug Quality Gates
+## Quality Gates
 
+Use FEATURE.md quality gates table. For bug fixes, emphasize:
+- **code-bugs-reviewer**: Critical—fix must not introduce new bugs
+- **code-coverage-reviewer**: Regression test should cover the fix
+
+**Bug-specific addition**:
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
-| Regression prevention | code-bugs-reviewer | Fix doesn't introduce new bugs; no HIGH/CRITICAL |
 | Root cause addressed | general-purpose | Fix addresses cause, not just symptom |
-| Test coverage | code-coverage-reviewer | Regression test covers the fix |
-
-**Encoding**: Add selected gates as Global Invariants with subagent verification:
-```yaml
-verify:
-  method: subagent
-  agent: [agent-name-from-table]
-  prompt: "Review bug fix for [quality aspect]"
-```
 
 ## Project Gates
 
-Same as CODING.md—extract verifiable commands (typecheck, lint, test) from project configuration. Critical for bugs: existing tests must still pass.
+Same as FEATURE.md. Critical for bugs: existing tests must still pass.
 
 ## Bug-Specific Risks
 
