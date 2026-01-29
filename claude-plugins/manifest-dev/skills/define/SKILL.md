@@ -39,6 +39,7 @@ After parsing input, identify **all applicable domains** (multi-select):
 | **Feature** | New functionality, APIs, enhancements | `tasks/FEATURE.md` |
 | **Bug** | Defects, errors, regressions, "not working", "broken" | `tasks/BUG.md` |
 | **Refactor** | Restructuring, reorganization, "clean up", pattern changes | `tasks/REFACTOR.md` |
+| **Prompting** | LLM prompts, skills, agents, system instructions | `tasks/PROMPTING.md` |
 | **Document** | Specs, proposals, reports, formal docs | `tasks/DOCUMENT.md` |
 | **Research** | Investigations, analyses, comparisons | `tasks/RESEARCH.md` |
 | **Blog** | Blog posts, articles, tutorials | `tasks/BLOG.md` |
