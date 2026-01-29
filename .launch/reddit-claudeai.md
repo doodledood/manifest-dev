@@ -54,6 +54,6 @@ The interview phase surfaces stuff I'd miss. "Should there be rate limiting?" (Y
 - I can fire and forget during execution because I invested in the define phase
 - The process compounds—encode what I miss as new criteria
 
-I eventually packaged this workflow as a Claude Code plugin. Blog post with full approach + worked example: [BLOG_URL]
+I eventually packaged this workflow as a Claude Code plugin. Blog post with full approach + worked example: aviramk.dev/blog/manifest-driven-development
 
 Repo: https://github.com/doodledood/manifest-dev

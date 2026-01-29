@@ -32,6 +32,6 @@ claude plugins add github.com/doodledood/manifest-dev
 claude plugins install manifest-dev@manifest-dev-marketplace
 ```
 
-Full writeup: [BLOG_URL]
+Full writeup: aviramk.dev/blog/manifest-driven-development
 
 Repo: https://github.com/doodledood/manifest-dev

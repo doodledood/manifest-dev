@@ -40,6 +40,6 @@ I wrote up the full approach with a worked example.
 
 Full writeup with worked example and the Claude Code plugin:
 
-[BLOG_URL]
+aviramk.dev/scrolly/manifest-driven-development
 
 Repo: github.com/doodledood/manifest-dev

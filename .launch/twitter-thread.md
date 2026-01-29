@@ -69,7 +69,7 @@ What actually changed for me:
 
 I packaged this as a Claude Code plugin. Deeper dive + worked example:
 
-[BLOG_URL]
+aviramk.dev/scrolly/manifest-driven-development
 
 Code: github.com/doodledood/manifest-dev
 

@@ -31,4 +31,4 @@ The concept applies to any AI coding tool—Claude Code, Cursor, Copilot, etc. T
 
 I packaged it as a Claude Code plugin: https://github.com/doodledood/manifest-dev
 
-Full writeup with worked example: [BLOG_URL]
+Full writeup with worked example: aviramk.dev/blog/manifest-driven-development
