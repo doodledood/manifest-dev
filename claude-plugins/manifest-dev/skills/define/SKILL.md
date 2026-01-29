@@ -36,7 +36,8 @@ After parsing input, identify **all applicable domains** (multi-select):
 
 | Domain | Indicators | Guidance File |
 |--------|------------|---------------|
-| **Code** | Files, APIs, features, fixes, refactors, tests | `tasks/CODING.md` |
+| **Code** | Files, APIs, features, refactors, tests | `tasks/CODING.md` |
+| **Bug** | Defects, errors, regressions, "not working", "broken" | `tasks/BUG.md` |
 | **Document** | Specs, proposals, reports, formal docs | `tasks/DOCUMENT.md` |
 | **Research** | Investigations, analyses, comparisons | `tasks/RESEARCH.md` |
 | **Blog** | Blog posts, articles, tutorials | `tasks/BLOG.md` |
