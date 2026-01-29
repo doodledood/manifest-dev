@@ -15,7 +15,7 @@
     "./claude-plugins/manifest-dev/skills/do"
   ],
   "commands": [
-    "./claude-plugins/manifest-dev/skills/define/define.md",
-    "./claude-plugins/manifest-dev/skills/do/do.md"
+    "./claude-plugins/manifest-dev/skills/define/",
+    "./claude-plugins/manifest-dev/skills/do/"
   ]
 }
