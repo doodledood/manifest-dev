@@ -52,6 +52,8 @@ When you ask "what would make me accept this?", you define success criteria. You
 
 This is manifest-driven development.
 
+If you know spec-driven development, this is a cousin—adapted for LLM execution. The manifest is a spec, but ephemeral: it drives one task, then the code is the source of truth. No spec maintenance. No drift problem.
+
 ## How It Works
 
 Manifest-driven development separates three concerns:
