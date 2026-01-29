@@ -1,6 +1,6 @@
-# CODING Task Guidance
+# FEATURE Task Guidance
 
-Task-specific guidance for code deliverables: features, APIs, fixes, refactors, tests.
+Task-specific guidance for new functionality: features, APIs, refactors, enhancements.
 
 ## Multi-Repo
 
@@ -44,7 +44,7 @@ verify:
 
 Probe for testable endpoints, health checks, test data. If actionable, encode as Global Invariant with bash verification.
 
-## Coding-Specific AC Patterns
+## Feature-Specific AC Patterns
 
 **Functional**
 - "API endpoint X returns Y when Z"
