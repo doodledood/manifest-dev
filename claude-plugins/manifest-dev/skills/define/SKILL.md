@@ -41,11 +41,7 @@ After parsing input, identify **all applicable domains** (multi-select):
 | **Research** | Investigations, analyses, comparisons | `tasks/RESEARCH.md` |
 | **Blog** | Blog posts, articles, tutorials | `tasks/BLOG.md` |
 
-**Multi-select by default**: Tasks often span domains. A feature implementation may include code + documentation. A technical blog post may require research + blog guidance. Read all applicable task files and synthesize their guidance.
-
-**Confirm with user**: "This task spans [DOMAINS]. I'll incorporate guidance from each. Correct?" Adjust if user indicates otherwise.
-
-**If no domain applies**: Proceed with universal flow—the core principles and manifest schema work for any deliverable.
+**Multi-select, zero-or-more**: Tasks may span domains, fit one, or fit none. Read applicable task files and synthesize. If none fit, proceed with universal flow—core principles and manifest schema work for any deliverable.
 
 ## Multi-Repo Scope
 
