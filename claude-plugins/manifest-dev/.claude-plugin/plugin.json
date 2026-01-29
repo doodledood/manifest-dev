@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.29.4",
+  "version": "0.29.5",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
@@ -14,7 +14,13 @@
     "trade-offs",
     "do"
   ],
-  "skills": "./skills/",
+  "skills": [
+    "./skills/define/",
+    "./skills/do/",
+    "./skills/done/",
+    "./skills/escalate/",
+    "./skills/verify/"
+  ],
   "commands": [
     "./skills/define/",
     "./skills/do/"
