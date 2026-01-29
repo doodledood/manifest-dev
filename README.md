@@ -278,12 +278,12 @@ flowchart TB
 
     subgraph do ["/do"]
         E --> F[Execute Deliverable]
-        F --> G[/verify]
+        F --> G["/verify"]
         G --> H{Result?}
-        H -->|All pass| I[/done]
+        H -->|All pass| I["/done"]
         H -->|Failures| J[Fix Loop]
         J --> G
-        H -->|Blocker| K[/escalate]
+        H -->|Blocker| K["/escalate"]
     end
 ```
 
