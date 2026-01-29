@@ -47,11 +47,11 @@ After parsing input, identify **all applicable domains** (multi-select):
 
 When task spans multiple repositories, capture during intent:
 
-- **Which repos** and their roles (primary, dependent)
-- **Cross-repo constraints** (API contracts, shared types, deployment order)
-- **Per-repo differences** (different CLAUDE.md rules, project gates, languages)
+- **Which repos** and their roles
+- **Cross-repo constraints** (dependencies, coordination requirements)
+- **Per-repo differences** (different rules, conventions, verification needs)
 
-Scope deliverables and verification to repo context. Cross-repo invariants (e.g., "API matches client") get explicit verification checking both sides.
+Scope deliverables and verification to repo context. Cross-repo invariants get explicit verification checking both sides.
 
 ## Principles
 
