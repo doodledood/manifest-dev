@@ -1,80 +1,28 @@
 # BLOG Task Guidance
 
-Task-specific guidance for blog deliverables: blog posts, articles, tutorials, newsletters.
+Blog posts, articles, tutorials, newsletters.
 
-## Blog-Specific Interview Probes
-
-Surface these dimensions that the general /define flow won't naturally cover:
-
-- **Content format**: Tutorial, opinion/thought-leadership, comparison, announcement, case study? Format drives structure expectations and evidence requirements.
-- **Voice & brand docs**: Check for AUTHOR_VOICE.md, BRAND_GUIDELINES.md, or similar. If found, confirm as verification source (encode as INV-G). If not found, probe for tone (conversational vs. formal), personality, and anti-patterns.
-- **Audience technical depth**: What concepts can be assumed known? What needs explanation? What jargon is acceptable? This affects every sentence—not just "who reads this" but "what do they already know."
-- **SEO/GEO requirements**: Target keywords? Must be optimized for AI citation platforms (Google AI Overviews, ChatGPT, Perplexity)? Check for SEO_STRATEGY.md. If SEO matters, encode keyword and structure constraints.
-- **Anti-slop stance**: Blog content is highly vulnerable to generic AI output. Probe: what makes this piece sound like a real person, not an AI? Specific experiences, opinions, data, contrarian takes? Encode as INV-G or PG.
-
-## Blog Quality Gates
+## Quality Gates
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
-| Voice compliance | general-purpose | Matches AUTHOR_VOICE.md / BRAND_GUIDELINES.md tone, vocabulary, and anti-patterns (if docs exist) |
-| Anti-slop | general-purpose | No hedge words, filler phrases, generic listicle patterns, or corporate-speak; reads as human-written |
-| Readability | general-purpose | Accessible to target audience, scannable with clear structure |
-| Engagement | general-purpose | Opening hook, maintained interest, clear call-to-action |
-| SEO | general-purpose | Title, meta description, keyword usage, heading structure optimized |
+| Voice compliance | general-purpose | Matches AUTHOR_VOICE.md / brand docs if they exist |
+| Anti-slop | general-purpose | No hedge words, filler phrases, generic listicle patterns |
+| Readability | general-purpose | Accessible to target audience, scannable structure |
+| Engagement | general-purpose | Opening hook, maintained interest, clear CTA |
+| SEO | general-purpose | Title, meta, keywords, headings optimized (if SEO matters) |
 
-**Encoding**: Add selected gates as Global Invariants with subagent verification:
-```yaml
-verify:
-  method: subagent
-  agent: general-purpose
-  model: opus
-  prompt: "Review blog post for [quality aspect]. If voice/brand docs exist, verify compliance. Flag any generic AI-sounding phrasing, hedge words ('It's worth noting', 'In today's landscape'), or filler."
-```
+## Risks
 
-## Blog-Specific Risks
+- **AI slop** - generic phrasing, hedge words, meaningless transitions; probe: what makes this sound human?
+- **Wrong depth** - too technical or too shallow; probe: what does audience already know?
+- **Missing hook** - reader bounces before value; probe: what's the opening grab?
+- **Disembodied voice** - lacks specific experiences, opinions, data; probe: check for AUTHOR_VOICE.md?
+- **SEO vs readability** - keyword stuffing hurts prose; probe: how much does SEO matter?
 
-These are blog failure modes the general pre-mortem won't surface:
+## Trade-offs
 
-- **AI slop**: Generic phrasing, hedge words, meaningless transitions, listicle-ification—content that reads as machine-generated
-- **Wrong depth**: Too technical for audience (lost) or too shallow (insulting)
-- **Missing hook**: Reader bounces before reaching the value
-- **Scope creep**: Covering too many topics shallowly instead of one topic deeply
-- **Disembodied voice**: Content lacks specific experiences, opinions, or data that make it feel authored by a real person
-
-## Blog-Specific Trade-offs
-
-- **Depth vs. accessibility**: Deep technical detail vs. broader audience reach
-- **SEO vs. natural flow**: Keyword optimization vs. readable prose
-- **Comprehensive vs. scannable**: Covering everything vs. clear, focused structure
-- **Opinionated vs. balanced**: Strong stance (more engaging) vs. neutral presentation (broader appeal)
-
-## Blog-Specific AC Patterns
-
-**Structure**
-- "Title under 60 characters, includes [target keyword]"
-- "Opening hook in first paragraph—specific problem, surprising fact, or contrarian claim"
-- "Subheadings enable scanning; reader can get value from headings alone"
-- "Ends with clear call-to-action"
-
-**Content**
-- "Includes [N] actionable takeaways the reader can apply immediately"
-- "Technical concepts explained for [audience level] using concrete examples"
-- "Specific data, examples, or experiences support key claims (not generic assertions)"
-
-**Voice**
-- "Complies with AUTHOR_VOICE.md / BRAND_GUIDELINES.md (if exists)"
-- "No hedge words or filler phrases ('It's important to note', 'In the ever-evolving world of')"
-- "Reads as authored by a person with opinions, not generated by AI"
-
-**SEO** (when applicable)
-- "Meta description under 160 characters"
-- "Target keyword in title, first paragraph, and at least one subheading"
-- "Internal/external links where relevant"
-
-## Blog-Specific Process Guidance Patterns
-
-Encode relevant items as PG-*:
-
-- "If AUTHOR_VOICE.md or BRAND_GUIDELINES.md exists, read before writing and use as reference throughout"
-- "Write outline first; confirm structure before drafting prose"
-- "After drafting, re-read for AI slop: remove hedge words, filler transitions, and generic phrasing"
+- Depth vs accessibility
+- SEO vs natural flow
+- Opinionated vs balanced
+- Comprehensive vs scannable
