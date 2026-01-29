@@ -2,6 +2,14 @@
 
 New functionality: features, APIs, enhancements.
 
+## Interview Focus
+
+Surface what the general flow won't:
+- **Breaking changes** - does this change existing contracts (API, DB schema, config)? Who consumes them?
+- **Migration path** - if breaking, what's the deprecation/migration strategy?
+- **Security surface** - does this touch auth, user data, external input? Security review needed?
+- **Observability** - how will you know this works in production? Logs, metrics, alerts?
+
 ## Quality Gates
 
 Surface which matter for this task. Check CLAUDE.md for project-specific preferences.
@@ -28,3 +36,17 @@ Probe for testable endpoints, health checks, test data. If actionable, encode as
 ## Multi-Repo
 
 When spanning repos: per-repo project gates differ, cross-repo contracts need verification, scope reviewers to changed files per repo.
+
+## Risks
+
+- **Scope creep** - feature expands beyond original intent
+- **Breaking consumers** - downstream integrations fail silently
+- **Missing edge cases** - happy path works, edge cases crash
+- **Over-engineering** - building flexibility nobody asked for
+
+## Trade-offs
+
+- Scope vs time
+- Flexibility vs simplicity
+- Feature completeness vs ship date
+- New abstraction vs inline solution
