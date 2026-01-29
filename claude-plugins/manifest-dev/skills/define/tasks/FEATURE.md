@@ -1,14 +1,10 @@
 # FEATURE Task Guidance
 
-Task-specific guidance for new functionality: features, APIs, refactors, enhancements.
+New functionality: features, APIs, enhancements.
 
-## Multi-Repo
+## Quality Gates
 
-When spanning repos: capture per-repo project gates (lint/test/build differ), probe for cross-repo contracts to verify, scope reviewers to changed files within each repo.
-
-## Code Quality Gates
-
-Surface which quality aspects matter. Mark recommended defaults based on task context.
+Surface which matter for this task. Check CLAUDE.md for project-specific preferences.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
@@ -18,45 +14,13 @@ Surface which quality aspects matter. Mark recommended defaults based on task co
 | Simplicity | code-simplicity-reviewer | no HIGH/CRITICAL |
 | Test coverage | code-coverage-reviewer | no HIGH/CRITICAL |
 | Testability | code-testability-reviewer | no HIGH/CRITICAL |
-| Documentation | docs-reviewer | no MEDIUM+ (max severity is MEDIUM) |
+| Documentation | docs-reviewer | no MEDIUM+ |
 | CLAUDE.md adherence | claude-md-adherence-reviewer | no HIGH/CRITICAL |
-
-**Filter through project preferences**: CLAUDE.md is auto-loaded into context—check it for quality gate preferences. Users may have disabled certain default gates (e.g., "skip documentation checks") or added custom ones (e.g., "always run security scan"). Exclude disabled gates from the selection, and include any custom gates the user has defined.
-
-**Encoding**: Add selected quality gates as Global Invariants with subagent verification:
-```yaml
-verify:
-  method: subagent
-  agent: [agent-name-from-table]
-  prompt: "Review for [quality aspect] issues in the changed files"
-```
 
 ## Project Gates
 
-Extract verifiable commands from project configuration (typecheck, lint, test, format). Add as Global Invariants with bash verification:
-```yaml
-verify:
-  method: bash
-  command: "[command from CLAUDE.md]"
-```
+Extract from CLAUDE.md: typecheck, lint, test, format commands. These become Global Invariants.
 
-## E2E Verification
+## Multi-Repo
 
-Probe for testable endpoints, health checks, test data. If actionable, encode as Global Invariant with bash verification.
-
-## Feature-Specific AC Patterns
-
-**Functional**
-- "API endpoint X returns Y when Z"
-- "Clicking [element] triggers [behavior]"
-- "Function handles [edge case] by [behavior]"
-
-**Non-Functional**
-- "Response time < Nms"
-- "Memory usage stays below X"
-- "All handlers follow [Pattern] pattern"
-
-**Process**
-- "Changelog entry added"
-- "Migration script included"
-- "README updated with new usage"
+When spanning repos: per-repo project gates differ, cross-repo contracts need verification, scope reviewers to changed files per repo.
