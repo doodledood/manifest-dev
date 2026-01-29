@@ -58,6 +58,8 @@ The workflow:
 
 The loop continues until everything passes—or until a blocker requires human intervention.
 
+If you know spec-driven development, this is a cousin—adapted for LLM execution. The manifest is a spec, but ephemeral: it drives one task, then the code is the source of truth. No spec maintenance. No drift problem. The interview surfaces criteria you'd miss. The verify-fix loop enforces them.
+
 ---
 
 ## Why This Works (The LLM Science)

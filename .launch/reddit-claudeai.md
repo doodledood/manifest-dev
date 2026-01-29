@@ -37,6 +37,8 @@ Instead of detailed implementation steps, I define:
 
 Then I let Claude implement toward those criteria. A verify-fix loop handles cleanup. What fails gets fixed. What passes is locked in.
 
+If you know spec-driven development, this is a cousin—adapted for LLMs. Key difference: the manifest is ephemeral. It drives one task, then the code is truth. No spec maintenance.
+
 **The key insight:**
 
 The interview phase surfaces stuff I'd miss. "Should there be rate limiting?" (Yes—I'd reject a PR without it, but I wouldn't have specified it.) Those latent criteria come out of the conversation, not my upfront thinking.
