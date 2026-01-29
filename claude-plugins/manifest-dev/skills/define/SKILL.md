@@ -132,7 +132,6 @@ Three categories, each covering **output** or **process**:
 ## 1. Intent & Context
 - **Goal:** [High-level purpose]
 - **Mental Model:** [Key concepts to understand]
-- **Repos:** [If multi-repo - list repos with roles, omit for single-repo]
 
 ## 2. Approach (Complex Tasks Only)
 *Validated implementation direction. Omit for simple tasks.*
