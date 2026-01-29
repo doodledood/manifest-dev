@@ -21,6 +21,10 @@ Surface which matter for this task. Check CLAUDE.md for project-specific prefere
 
 Extract from CLAUDE.md: typecheck, lint, test, format commands. These become Global Invariants.
 
+## E2E Verification
+
+Probe for testable endpoints, health checks, test data. If actionable, encode as Global Invariant.
+
 ## Multi-Repo
 
 When spanning repos: per-repo project gates differ, cross-repo contracts need verification, scope reviewers to changed files per repo.
