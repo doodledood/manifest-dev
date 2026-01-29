@@ -10,13 +10,6 @@ Every refactor must establish:
 
 Without both, refactoring is gambling.
 
-## Interview Focus
-
-- **Preserved behavior** - what exactly must not change
-- **Verification method** - existing tests? characterization tests? If no tests, red flag
-- **Scope boundaries** - what's in/out; refactors expand easily
-- **Success criteria** - what "done" looks like; vague goals → endless refactoring
-
 ## Quality Gates
 
 Use FEATURE.md table. Emphasize:
@@ -28,10 +21,10 @@ If no tests exist, probe: should "write characterization tests" be prerequisite?
 
 ## Risks
 
-- **Behavior regression** - #1 risk; changed behavior disguised as cleanup
-- **Scope creep** - "while I'm here" expansions
-- **No verification** - refactoring without tests is hope
-- **Vague goal** - "cleaner code" leads to endless churn
+- **Behavior regression** - changed behavior disguised as cleanup; probe: what exactly must not change?
+- **No verification** - refactoring without tests is hope; probe: how will preservation be verified?
+- **Scope creep** - "while I'm here" expansions; probe: what's explicitly in/out?
+- **Vague goal** - "cleaner code" leads to endless churn; probe: what does done look like?
 
 ## Trade-offs
 
