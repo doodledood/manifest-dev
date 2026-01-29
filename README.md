@@ -4,7 +4,9 @@
 
 # Manifest-Driven Development
 
-Front-load the thinking so AI agents get it right the first time.
+Define what you'd accept. Verify until it's done.
+
+Stop micromanaging AI implementation. Define acceptance criteria, let the verify-fix loop handle the rest.
 
 ## Quick Start
 
