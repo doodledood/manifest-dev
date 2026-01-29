@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="assets/logo.png" alt="Manifest Dev Logo" width="120">
+  <picture>
+    <img src="assets/logo.png" alt="Manifest Dev Logo" width="120" style="background: transparent;">
+  </picture>
 </p>
 
 # Manifest-Driven Development
