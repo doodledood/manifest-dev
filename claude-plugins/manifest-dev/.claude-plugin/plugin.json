@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.34.0",
+  "version": "0.35.0",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
@@ -28,16 +28,6 @@
       }
     ],
     "PreToolUse": [
-      {
-        "matcher": "Skill",
-        "description": "Gate /escalate calls - require /verify before escalation",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "uvx --from ${CLAUDE_PLUGIN_ROOT}/hooks pretool-escalate-hook"
-          }
-        ]
-      },
       {
         "matcher": "Skill",
         "description": "Remind to read manifest/log in full before verification",
