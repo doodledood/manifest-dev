@@ -6,7 +6,6 @@ requires-python = ">=3.10"
 
 [project.scripts]
 stop-do-hook = "stop_do_hook:main"
-pretool-escalate-hook = "pretool_escalate_hook:main"
 post-compact-hook = "post_compact_hook:main"
 pretool-verify-hook = "pretool_verify_hook:main"
 
