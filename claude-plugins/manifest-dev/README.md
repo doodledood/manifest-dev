@@ -124,6 +124,8 @@ Specialized review agents spawned in parallel during `/verify`:
 |------|---------|
 | `stop_do_hook.py` | Enforces verification before stopping |
 | `pretool_escalate_hook.py` | Enforces /verify before /escalate |
+| `post_compact_hook.py` | Restores /do workflow context after session compaction |
+| `pretool_verify_hook.py` | Reminds to read manifest/log before verification |
 
 ## Workflow
 
