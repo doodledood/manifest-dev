@@ -1,11 +1,21 @@
-# GIF Recording Script: `/define` Demo
+# GIF Recording Script: Full Workflow Demo
 
 ## Specs
 
-- **Length**: 30-45 seconds when played (can be sped up 1.5-2x)
+- **Length**: 45-60 seconds when played (can be sped up 1.5-2x)
 - **Resolution**: 1200x800 or similar (readable on mobile)
 - **Tool**: asciinema + gif conversion, or native screen recording
 - **Font size**: Large enough to read on Twitter/LinkedIn mobile
+
+---
+
+## The Differentiator
+
+**NOT the interview** — "ask me questions" prompts are already trending.
+
+**THE ACTUAL HOOK**: Define criteria once → automated verify-fix loop runs until done → fire and forget.
+
+The GIF must show the *payoff*: you invest upfront, then walk away while it works.
 
 ---
 
@@ -13,153 +23,154 @@
 
 **Use case**: Adding a CLI flag to an existing tool
 
-This is relatable (every dev has done it) and small enough to show the full flow quickly.
+Small enough to show full loop in one GIF.
 
 ---
 
 ## Script
 
-### Frame 1: Invocation (2-3 sec)
+### Act 1: Define (Compressed) — 10-12 sec
+
+Show define is thorough but don't dwell. Speed through.
 
 ```
-$ claude
-
 > /define add a --dry-run flag to the deploy command
 ```
 
-### Frame 2: Claude Explores (3-4 sec)
-
-Show Claude's thinking briefly:
-
+Quick montage (sped up 2-3x):
 ```
-I'll explore the existing deploy command to understand the current
-structure before we define criteria...
+Exploring src/commands/deploy.ts...
 
-Reading src/commands/deploy.ts...
-Found: deploy command with --env and --force flags
-```
+Questions:
+1. What should --dry-run output? > 1a
+2. Should --dry-run run pre-checks? > yes
+3. Compatible with --force? > yes
 
-### Frame 3: First Interview Question (5-6 sec)
-
-```
-A few questions to nail down the requirements:
-
-1. What should --dry-run output?
-   a) Just "would deploy X" summary (Recommended)
-   b) Full diff of what would change
-   c) Both, controlled by verbosity flag
-
-2. Should --dry-run be compatible with --force?
-   a) Yes, allow it (Recommended - no harm in dry run)
-   b) No, error if both provided
+✓ Manifest: /tmp/manifest-123.md
+  • 4 acceptance criteria
+  • 2 global invariants
+  • All automated verification
 ```
 
-### Frame 4: User Response (2 sec)
+### Act 2: Do — 8-10 sec
+
+This is where "fire and forget" becomes visible.
 
 ```
-> 1a, and good catch on the --force thing - 2a
+> /do /tmp/manifest-123.md
 ```
 
-### Frame 5: Latent Criteria Discovery — THE AHA MOMENT (6-8 sec)
-
-This is the hook. Show Claude surfacing something non-obvious:
-
+Show it working autonomously (sped up):
 ```
-One thing that often gets missed with --dry-run flags:
+Implementing --dry-run flag...
 
-If the deploy command has side effects before the actual deploy
-(like fetching latest config or validating credentials), should
---dry-run:
+✓ Added --dry-run to argument parser
+✓ Implemented dry run logic in deploy()
+✓ Updated help text
 
-   a) Skip ALL side effects (pure dry run)
-   b) Run pre-checks but skip the deploy (Recommended - catches
-      config errors early)
-   c) Let me check what side effects exist first
-
-This matters because users often expect --dry-run to catch
-problems, not just print what would happen.
+Running verification...
 ```
 
-### Frame 6: User Responds (2 sec)
+### Act 3: Verify-Fix Loop — THE MONEY SHOT — 15-20 sec
+
+This is the differentiator. Show it catching something and fixing it.
 
 ```
-> Didn't think of that. 2b - run pre-checks.
+Verifying against manifest...
+
+✓ AC-1.1: --dry-run outputs summary         PASS
+✓ AC-1.2: Pre-checks run in dry-run mode    PASS
+✗ AC-1.3: Compatible with --force flag      FAIL
+  → --force currently overrides --dry-run
+
+Fixing AC-1.3...
 ```
 
-### Frame 7: Manifest Output (5-6 sec)
-
-Show the manifest being written with key acceptance criteria visible:
+Brief pause — let this sink in. Then:
 
 ```
-Writing manifest...
+Fixed: --dry-run now takes precedence over --force
 
-✓ Manifest complete: /tmp/manifest-1706612345.md
+Re-verifying...
 
-Deliverable: --dry-run flag for deploy command
+✓ AC-1.1: --dry-run outputs summary         PASS
+✓ AC-1.2: Pre-checks run in dry-run mode    PASS
+✓ AC-1.3: Compatible with --force flag      PASS
+✓ AC-1.4: No deployment in dry-run mode     PASS
+✓ INV-G1: Existing flags unchanged          PASS
+✓ INV-G2: All tests pass                    PASS
 
-Acceptance Criteria:
-• AC-1.1: --dry-run outputs "Would deploy: {summary}"
-• AC-1.2: --dry-run runs pre-deploy validation (config, creds)
-• AC-1.3: --dry-run is compatible with --force flag
-• AC-1.4: No actual deployment occurs when --dry-run is set
-
-Global Invariants:
-• INV-G1: Existing --env and --force flags unchanged
-• INV-G2: All tests pass
-
-To execute: /do /tmp/manifest-1706612345.md
+All criteria met. Done.
 ```
 
-### Frame 8: End Card (2-3 sec)
-
-```
->
-
-```
-
-Hold on empty prompt briefly, or fade to:
+### Act 4: End Card — 3-4 sec
 
 ```
 manifest-driven development
 github.com/doodledood/manifest-dev
 ```
 
+Or just hold on the "All criteria met. Done." for impact.
+
 ---
 
-## Key Moments to Nail
+## Key Moments
 
-1. **Frame 5 is the money shot** — Claude surfacing the pre-check insight is the differentiator. This is "latent criteria" in action. Time it so viewers can read it.
+1. **Act 1 should feel fast** — "I defined it, moving on." Don't linger on the interview.
 
-2. **Keep user responses short** — Shows the user isn't doing heavy lifting.
+2. **Act 3 is the payoff** — The FAIL → fix → PASS sequence shows the system working. This is what no one else has. Slow down here.
 
-3. **The manifest output** — Proves the interview produced something concrete and actionable.
+3. **The checkmarks at the end** — Visual proof that criteria from Act 1 were actually verified. Connects the loop.
+
+---
+
+## The Story Arc
+
+| Act | Message | Pacing |
+|-----|---------|--------|
+| 1. Define | "I told it what done looks like" | Fast (compressed) |
+| 2. Do | "It's working autonomously" | Medium |
+| 3. Verify-Fix | "It caught a bug AND fixed it" | Slow (let it land) |
+| 4. Done | "All criteria met" | Hold for impact |
 
 ---
 
 ## Recording Tips
 
-- **Speed up exploration/typing**, slow down on Frame 5 (the insight)
-- If using asciinema: record at normal speed, then use `asciinema-edit` to adjust timing
-- Consider a subtle highlight/flash when the insight appears
-- Test on phone screen before finalizing — must be readable
+- **Speed up Act 1 and Act 2** — these are setup
+- **Normal speed or slow for Act 3** — this is the hook
+- The FAIL → fix → PASS sequence should be readable
+- Consider a brief flash/highlight on "FAIL" then "PASS"
+- Test on phone screen before finalizing
 
 ---
 
-## Alternate Hooks (A/B Test)
+## Alternate Framings
 
-If you want to test different tasks:
+**If 60 sec is too long**, cut Act 1 further:
 
-**Alt A: Bug fix**
 ```
-/define fix: users see stale data after logout/login
-```
-Insight: "Should we also invalidate cached API responses, or just local state?"
+> /define add --dry-run flag
 
-**Alt B: API endpoint**
+[3 sec montage]
+
+✓ Manifest ready: 4 criteria, all automated
 ```
-/define add DELETE /users/:id endpoint
+
+Then spend more time on Act 3.
+
+**If you want more drama**, show TWO failures:
+
 ```
-Insight: "Should deletion be hard delete or soft delete? What about audit trail requirements?"
+✗ AC-1.3: Compatible with --force    FAIL
+✗ AC-1.4: No deployment occurs       FAIL
+
+Fixing...
+
+[both fixed]
+
+All criteria met.
+```
 
 ---
 
@@ -167,4 +178,4 @@ Insight: "Should deletion be hard delete or soft delete? What about audit trail 
 
 - Convert to GIF or MP4 (Twitter/LinkedIn both support video)
 - Keep under 15MB for Twitter
-- Add subtle loop or fade at end
+- The loop should feel satisfying — end on "Done" or fade cleanly
