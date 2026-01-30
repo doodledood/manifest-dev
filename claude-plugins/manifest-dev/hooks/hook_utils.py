@@ -270,11 +270,12 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
 
                 # Check for /do (user command or skill call)
                 if is_user_skill_command(data, "do") or is_skill_invocation(data, "do"):
-                    # New /do resets the flow
+                    # New /do resets the flow (including do_args)
                     has_do = True
                     has_verify = False
                     has_done = False
                     has_escalate = False
+                    do_args = None
 
                     # Extract args from user command or skill call
                     args = extract_user_command_args(data, "do")

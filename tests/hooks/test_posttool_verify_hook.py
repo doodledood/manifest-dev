@@ -99,7 +99,7 @@ class TestPosttoolVerifyHookOutputs:
         assert result.returncode == 0
         output = json.loads(result.stdout)
         assert "hookSpecificOutput" in output
-        assert "additionalSystemPromptContent" in output["hookSpecificOutput"]
+        assert "additionalContext" in output["hookSpecificOutput"]
 
     def test_reminder_contains_verify_args(self):
         """Reminder should contain the verify arguments."""
@@ -113,7 +113,7 @@ class TestPosttoolVerifyHookOutputs:
         result = run_posttool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         assert "/tmp/manifest.md" in context
         assert "/tmp/do-log.md" in context
 
@@ -129,7 +129,7 @@ class TestPosttoolVerifyHookOutputs:
         result = run_posttool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         assert "<system-reminder>" in context
         assert "</system-reminder>" in context
 
@@ -145,7 +145,7 @@ class TestPosttoolVerifyHookOutputs:
         result = run_posttool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         assert "AC-" in context or "acceptance criteria" in context.lower()
 
     def test_reminder_mentions_global_invariants(self):
@@ -160,7 +160,7 @@ class TestPosttoolVerifyHookOutputs:
         result = run_posttool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         assert "INV-G" in context or "invariant" in context.lower()
 
 
@@ -180,7 +180,7 @@ class TestPosttoolVerifyHookSkillNameVariants:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         assert "/tmp/manifest.md" in context
 
     def test_handles_full_skill_name(self):
@@ -196,7 +196,7 @@ class TestPosttoolVerifyHookSkillNameVariants:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         assert "/tmp/manifest.md" in context
 
 
@@ -215,7 +215,7 @@ class TestPosttoolVerifyHookArgsVariants:
         result = run_posttool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         assert "/tmp/manifest.md" in context
         assert "/tmp/log.md" in context
         # Args are displayed as-is
@@ -234,7 +234,7 @@ class TestPosttoolVerifyHookArgsVariants:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         # Should still have a reminder about verification
         assert "verification" in context.lower() or "AC-" in context
 
@@ -250,7 +250,7 @@ class TestPosttoolVerifyHookArgsVariants:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         assert "verification" in context.lower() or "AC-" in context
 
     def test_handles_manifest_only(self):
@@ -266,7 +266,7 @@ class TestPosttoolVerifyHookArgsVariants:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalSystemPromptContent"]
+        context = output["hookSpecificOutput"]["additionalContext"]
         assert "/tmp/manifest.md" in context
 
 

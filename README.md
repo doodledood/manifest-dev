@@ -254,6 +254,8 @@ Hooks enforce workflow integrity—the AI can't skip steps:
 |------|-------|---------|
 | `stop_do_hook` | Stop command | Blocks premature stopping. Can't stop without verification passing or proper escalation. |
 | `pretool_escalate_hook` | `/escalate` invocation | Requires `/verify` before `/escalate`. No lazy escalation without attempting verification. |
+| `post_compact_hook` | Session compaction | Restores /do workflow context after compaction. Reminds to re-read manifest and log. |
+| `posttool_verify_hook` | `/verify` invocation | Ensures manifest and log are in context for accurate verification. |
 
 **Stop hook decision matrix:**
 - API error → Allow (system failure)

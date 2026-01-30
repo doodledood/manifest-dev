@@ -61,7 +61,8 @@ def main() -> None:
 
     output = {
         "hookSpecificOutput": {
-            "additionalSystemPromptContent": context,
+            "hookEventName": "PostToolUse",
+            "additionalContext": context,
         }
     }
     print(json.dumps(output))
