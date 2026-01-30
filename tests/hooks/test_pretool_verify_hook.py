@@ -1,7 +1,7 @@
 """
-Tests for manifest-dev posttool_verify_hook.
+Tests for manifest-dev pretool_verify_hook.
 
-Tests the PostToolUse hook that reminds to read manifest/log before verification.
+Tests the PreToolUse hook that reminds to read manifest/log before verification.
 """
 
 from __future__ import annotations
@@ -20,12 +20,12 @@ HOOKS_DIR = (
 )
 
 
-def run_posttool_verify_hook(hook_input: dict[str, Any]) -> subprocess.CompletedProcess:
-    """Helper to run the posttool-verify hook with given input."""
+def run_pretool_verify_hook(hook_input: dict[str, Any]) -> subprocess.CompletedProcess:
+    """Helper to run the pretool-verify hook with given input."""
     stdin_data = json.dumps(hook_input)
 
     result = subprocess.run(
-        [sys.executable, str(HOOKS_DIR / "posttool_verify_hook.py")],
+        [sys.executable, str(HOOKS_DIR / "pretool_verify_hook.py")],
         input=stdin_data,
         capture_output=True,
         text=True,
@@ -34,7 +34,7 @@ def run_posttool_verify_hook(hook_input: dict[str, Any]) -> subprocess.Completed
     return result
 
 
-class TestPosttoolVerifyHookNoOutput:
+class TestPretoolVerifyHookNoOutput:
     """Tests for cases where the hook should not output anything."""
 
     def test_no_output_for_non_skill_tool(self):
@@ -43,7 +43,7 @@ class TestPosttoolVerifyHookNoOutput:
             "tool_name": "Read",
             "tool_input": {"file_path": "/tmp/foo.txt"},
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         assert result.stdout.strip() == ""
@@ -54,7 +54,7 @@ class TestPosttoolVerifyHookNoOutput:
             "tool_name": "Skill",
             "tool_input": {"skill": "manifest-dev:do", "args": "/tmp/manifest.md"},
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         assert result.stdout.strip() == ""
@@ -65,7 +65,7 @@ class TestPosttoolVerifyHookNoOutput:
             "tool_name": "Skill",
             "tool_input": {"skill": "manifest-dev:done"},
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         assert result.stdout.strip() == ""
@@ -76,13 +76,13 @@ class TestPosttoolVerifyHookNoOutput:
             "tool_name": "Skill",
             "tool_input": {"skill": "manifest-dev:escalate", "args": "blocking issue"},
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         assert result.stdout.strip() == ""
 
 
-class TestPosttoolVerifyHookOutputs:
+class TestPretoolVerifyHookOutputs:
     """Tests for verify skill reminder outputs."""
 
     def test_outputs_reminder_for_verify_skill(self):
@@ -94,7 +94,7 @@ class TestPosttoolVerifyHookOutputs:
                 "args": "/tmp/manifest.md /tmp/do-log.md",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
@@ -110,7 +110,7 @@ class TestPosttoolVerifyHookOutputs:
                 "args": "/tmp/manifest.md /tmp/do-log.md",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
@@ -126,7 +126,7 @@ class TestPosttoolVerifyHookOutputs:
                 "args": "/tmp/manifest.md /tmp/do-log.md",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
@@ -142,7 +142,7 @@ class TestPosttoolVerifyHookOutputs:
                 "args": "/tmp/manifest.md /tmp/do-log.md",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
@@ -157,14 +157,14 @@ class TestPosttoolVerifyHookOutputs:
                 "args": "/tmp/manifest.md /tmp/do-log.md",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
         assert "INV-G" in context or "invariant" in context.lower()
 
 
-class TestPosttoolVerifyHookSkillNameVariants:
+class TestPretoolVerifyHookSkillNameVariants:
     """Tests for different verify skill name formats."""
 
     def test_handles_short_skill_name(self):
@@ -176,7 +176,7 @@ class TestPosttoolVerifyHookSkillNameVariants:
                 "args": "/tmp/manifest.md /tmp/log.md",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
@@ -192,7 +192,7 @@ class TestPosttoolVerifyHookSkillNameVariants:
                 "args": "/tmp/manifest.md /tmp/log.md",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
@@ -200,7 +200,7 @@ class TestPosttoolVerifyHookSkillNameVariants:
         assert "/tmp/manifest.md" in context
 
 
-class TestPosttoolVerifyHookArgsVariants:
+class TestPretoolVerifyHookArgsVariants:
     """Tests for different argument formats."""
 
     def test_handles_scope_flag_in_args(self):
@@ -212,7 +212,7 @@ class TestPosttoolVerifyHookArgsVariants:
                 "args": "/tmp/manifest.md /tmp/log.md --scope=files",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
@@ -230,7 +230,7 @@ class TestPosttoolVerifyHookArgsVariants:
                 "args": "",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
@@ -246,7 +246,7 @@ class TestPosttoolVerifyHookArgsVariants:
                 "skill": "manifest-dev:verify",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
@@ -262,7 +262,7 @@ class TestPosttoolVerifyHookArgsVariants:
                 "args": "/tmp/manifest.md",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
@@ -270,13 +270,13 @@ class TestPosttoolVerifyHookArgsVariants:
         assert "/tmp/manifest.md" in context
 
 
-class TestPosttoolVerifyHookEdgeCases:
-    """Edge case tests for the posttool-verify hook."""
+class TestPretoolVerifyHookEdgeCases:
+    """Edge case tests for the pretool-verify hook."""
 
     def test_handles_invalid_json_stdin(self):
         """Should handle invalid JSON in stdin gracefully."""
         result = subprocess.run(
-            [sys.executable, str(HOOKS_DIR / "posttool_verify_hook.py")],
+            [sys.executable, str(HOOKS_DIR / "pretool_verify_hook.py")],
             input="not valid json",
             capture_output=True,
             text=True,
@@ -288,7 +288,7 @@ class TestPosttoolVerifyHookEdgeCases:
     def test_handles_empty_stdin(self):
         """Should handle empty stdin gracefully."""
         result = subprocess.run(
-            [sys.executable, str(HOOKS_DIR / "posttool_verify_hook.py")],
+            [sys.executable, str(HOOKS_DIR / "pretool_verify_hook.py")],
             input="",
             capture_output=True,
             text=True,
@@ -302,7 +302,7 @@ class TestPosttoolVerifyHookEdgeCases:
         hook_input = {
             "tool_input": {"skill": "manifest-dev:verify"},
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         assert result.stdout.strip() == ""
@@ -312,7 +312,7 @@ class TestPosttoolVerifyHookEdgeCases:
         hook_input = {
             "tool_name": "Skill",
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.returncode == 0
         assert result.stdout.strip() == ""
@@ -326,6 +326,6 @@ class TestPosttoolVerifyHookEdgeCases:
                 "args": "/tmp/manifest.md /tmp/log.md",
             },
         }
-        result = run_posttool_verify_hook(hook_input)
+        result = run_pretool_verify_hook(hook_input)
 
         assert result.stderr == ""

@@ -37,16 +37,14 @@
             "command": "uvx --from ${CLAUDE_PLUGIN_ROOT}/hooks pretool-escalate-hook"
           }
         ]
-      }
-    ],
-    "PostToolUse": [
+      },
       {
         "matcher": "Skill",
         "description": "Remind to read manifest/log in full before verification",
         "hooks": [
           {
             "type": "command",
-            "command": "uvx --from ${CLAUDE_PLUGIN_ROOT}/hooks posttool-verify-hook"
+            "command": "uvx --from ${CLAUDE_PLUGIN_ROOT}/hooks pretool-verify-hook"
           }
         ]
       }

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-PostToolUse hook that reminds Claude to read manifest/log for verification.
+PreToolUse hook that reminds Claude to read manifest/log for verification.
 
-When /verify is called, this hook adds a system reminder to ensure the manifest
-and execution log are in full context for accurate verification. This is especially
-important after long sessions where the manifest details may have drifted from memory.
+When /verify is about to be called, this hook adds a system reminder to ensure
+the manifest and execution log are in full context for accurate verification.
+This is especially important after long sessions where manifest details may have
+drifted from memory.
 
-Registered as PostToolUse hook with "Skill" matcher.
+Registered as PreToolUse hook with "Skill" matcher.
 """
 
 from __future__ import annotations
@@ -16,16 +17,16 @@ import sys
 
 from hook_utils import build_system_reminder
 
-VERIFY_CONTEXT_REMINDER = """VERIFICATION CONTEXT CHECK: Before spawning verifiers, ensure you have the full context.
+VERIFY_CONTEXT_REMINDER = """VERIFICATION CONTEXT CHECK: You are about to run /verify.
 
-The /verify was invoked with: {verify_args}
+Arguments: {verify_args}
 
-Read the manifest and execution log in FULL if not recently loaded. You need ALL acceptance criteria (AC-*) and global invariants (INV-G*) in context for accurate verification."""
+BEFORE spawning verifiers, read the manifest and execution log in FULL if not recently loaded. You need ALL acceptance criteria (AC-*) and global invariants (INV-G*) in context to spawn the correct verifiers."""
 
 
-VERIFY_CONTEXT_REMINDER_MINIMAL = """VERIFICATION CONTEXT CHECK: Before spawning verifiers, read the manifest and execution log in FULL if not recently loaded.
+VERIFY_CONTEXT_REMINDER_MINIMAL = """VERIFICATION CONTEXT CHECK: You are about to run /verify.
 
-You need ALL acceptance criteria (AC-*) and global invariants (INV-G*) in context for accurate verification."""
+BEFORE spawning verifiers, read the manifest and execution log in FULL if not recently loaded. You need ALL acceptance criteria (AC-*) and global invariants (INV-G*) in context to spawn the correct verifiers."""
 
 
 def main() -> None:
@@ -61,7 +62,7 @@ def main() -> None:
 
     output = {
         "hookSpecificOutput": {
-            "hookEventName": "PostToolUse",
+            "hookEventName": "PreToolUse",
             "additionalContext": context,
         }
     }

@@ -8,7 +8,7 @@ requires-python = ">=3.10"
 stop-do-hook = "stop_do_hook:main"
 pretool-escalate-hook = "pretool_escalate_hook:main"
 post-compact-hook = "post_compact_hook:main"
-posttool-verify-hook = "posttool_verify_hook:main"
+pretool-verify-hook = "pretool_verify_hook:main"
 
 [build-system]
 requires = ["hatchling"]
