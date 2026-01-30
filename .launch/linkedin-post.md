@@ -2,6 +2,12 @@
 
 ---
 
+## Media
+
+**GIF**: Terminal recording of `/define` interview (same asset as Twitter)
+
+---
+
 ## Post Body
 
 We're asking AI the wrong question.
