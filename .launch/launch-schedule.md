@@ -9,7 +9,7 @@ Blog is the anchor. Everything else references it. Publish blog first, then casc
 ## Day 0 (Preparation)
 
 **Before launch:**
-- [ ] Record GIF of `/define` in terminal (for Twitter visual)
+- [ ] Record GIF of `/define` in terminal (for Twitter + LinkedIn)
 - [ ] Verify blog is live at aviramk.com/blog
 - [ ] Prep all posts in draft mode on each platform
 
@@ -23,9 +23,9 @@ Blog is the anchor. Everything else references it. Publish blog first, then casc
 - Why: Sets the anchor. All other content links here. Tuesday/Wednesday avoids Monday chaos and Friday dropoff.
 
 ### Mid-Morning (9:30 AM EST)
-**X/Twitter Thread**
-- Post the 5-7 tweet thread
-- Why: Research shows Tue-Thu 9-11 AM EST is optimal for dev Twitter engagement. Gives blog a couple hours to be indexed before driving traffic.
+**X/Twitter Post**
+- Post single tweet with GIF demo (link in reply)
+- Why: Research shows Tue-Thu 9-11 AM EST is optimal for dev Twitter engagement. Single posts with media outperform threads algorithmically.
 
 ### Early Afternoon (2:00 PM EST)
 **LinkedIn Post**
@@ -65,7 +65,7 @@ Blog is the anchor. Everything else references it. Publish blog first, then casc
 | Platform | Day | Time (EST) | Rationale |
 |----------|-----|------------|-----------|
 | Blog | Day 1 | 8:00 AM | Anchor content, needs to be live first |
-| X/Twitter | Day 1 | 9:30 AM | Optimal engagement window (9-11 AM Tue-Thu) |
+| X/Twitter | Day 1 | 9:30 AM | Single post + GIF; optimal window (9-11 AM Tue-Thu) |
 | LinkedIn | Day 1 | 2:00 PM | Secondary peak, staggers from Twitter |
 | r/ClaudeAI | Day 2 | 10:00 AM | Let blog build traction first |
 | r/vibecoding | Day 2 | 2:00 PM | Different timezone, test framing |
