@@ -30,6 +30,7 @@ If no arguments provided, ask: "What would you like to build or change?"
 
 | Domain | Indicators | Guidance File |
 |--------|------------|---------------|
+| **Coding** | Any code change (base for Feature, Bug, Refactor) | `tasks/CODING.md` |
 | **Feature** | New functionality, APIs, enhancements | `tasks/FEATURE.md` |
 | **Bug** | Defects, errors, regressions, "not working", "broken" | `tasks/BUG.md` |
 | **Refactor** | Restructuring, reorganization, "clean up", pattern changes | `tasks/REFACTOR.md` |
@@ -38,7 +39,7 @@ If no arguments provided, ask: "What would you like to build or change?"
 | **Research** | Investigations, analyses, comparisons | `tasks/RESEARCH.md` |
 | **Blog** | Blog posts, articles, tutorials | `tasks/BLOG.md` |
 
-Zero-or-more domains may apply. Task files contain domain-specific guidance—criteria you wouldn't know to probe for otherwise. If no domain matches, proceed with universal flow.
+**Composition**: Code-change tasks combine CODING.md (base quality gates) with domain-specific guidance. Domains aren't mutually exclusive—a "bug fix that requires refactoring" benefits from both BUG.md and REFACTOR.md. Related domains compound coverage.
 
 ## Existing Manifest Feedback
 

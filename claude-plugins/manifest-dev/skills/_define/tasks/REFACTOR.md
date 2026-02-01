@@ -10,14 +10,9 @@ Every refactor must establish:
 
 Without both, refactoring is gambling.
 
-## Quality Gates
+## Characterization Tests
 
-Use FEATURE.md table. Emphasize:
-- **code-bugs-reviewer** - detect unintended behavior changes
-- **code-maintainability-reviewer** - the point of refactoring
-- **code-coverage-reviewer** - tests must cover preserved behavior
-
-If no tests exist, probe: should "write characterization tests" be prerequisite?
+If no tests exist, probe: should "write characterization tests" be prerequisite deliverable?
 
 ## Risks
 
