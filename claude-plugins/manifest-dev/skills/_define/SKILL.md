@@ -73,6 +73,8 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 ## Constraints
 
+**All questions use AskUserQuestion** - Never output questions as plain text. Every user question goes through AskUserQuestion with 2-4 options, one marked "(Recommended)".
+
 **Task files supplement probing** - Task files add domain-specific risks and trade-offs as prompts—angles you might not think to check. They don't constrain what to ask; probing adapts to the specific task.
 
 **Discoverable unknowns — search first** - Facts about the project (existing structure, patterns, conventions, prior decisions) are discoverable. Exhaust exploration before asking the user. Only ask about discoverable facts when: multiple plausible candidates exist, searches yield nothing but the fact is needed, or the ambiguity is actually about intent not fact. When asking, present what you found and recommend one option.
