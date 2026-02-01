@@ -2,13 +2,9 @@
 
 Defect resolution, regression fixes, error corrections.
 
-## Quality Gates
+## Root Cause Verification
 
-Use FEATURE.md table. Emphasize:
-- **code-bugs-reviewer** - fix must not introduce new bugs
-- **code-coverage-reviewer** - regression test covers the fix
-
-Add: root cause verification (fix addresses cause, not symptom).
+Fix must address cause, not symptom. Probe: what's the actual root cause vs. where the error surfaces?
 
 ## Risks
 
