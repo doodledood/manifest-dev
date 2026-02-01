@@ -1,6 +1,6 @@
 ---
-description: 'Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass. Use when you have a manifest from /define.'
-user-invocable: true
+description: 'Manifest executor implementation. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass.'
+user-invocable: false
 ---
 
 # /do - Manifest Executor

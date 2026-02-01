@@ -1,6 +1,6 @@
 ---
-description: 'Manifest builder with verification criteria. Converts known requirements into Deliverables + Invariants. Use when you need done criteria, acceptance tests, quality gates—not for requirements discovery. Outputs executable manifest.'
-user-invocable: true
+description: 'Manifest builder implementation. Converts known requirements into Deliverables + Invariants with verification criteria.'
+user-invocable: false
 ---
 
 # /define - Manifest Builder
