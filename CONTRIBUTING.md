@@ -5,11 +5,12 @@ Thank you for your interest in contributing! This guide will help you add plugin
 ## Quick Start
 
 1. **Fork and clone** the repository
-2. **Create a branch**: `git checkout -b plugin/your-plugin-name`
-3. **Use the template**: Copy `claude-plugins/PLUGIN_TEMPLATE` as your starting point
-4. **Develop your plugin** following the structure below
-5. **Test locally** before submitting
-6. **Submit a PR** with your plugin
+2. **Set up development environment**: `./scripts/setup.sh && source .venv/bin/activate`
+3. **Create a branch**: `git checkout -b plugin/your-plugin-name`
+4. **Use the template**: Copy `claude-plugins/PLUGIN_TEMPLATE` as your starting point
+5. **Develop your plugin** following the structure below
+6. **Test locally** before submitting
+7. **Submit a PR** with your plugin
 
 ## Plugin Development Process
 

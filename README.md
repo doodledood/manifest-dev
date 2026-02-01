@@ -334,6 +334,10 @@ Experienced developers frustrated by hype-driven AI coding tools. If you're tire
 ## Development
 
 ```bash
+# Setup (first time)
+./scripts/setup.sh
+source .venv/bin/activate
+
 # Lint, format, typecheck
 ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
 
