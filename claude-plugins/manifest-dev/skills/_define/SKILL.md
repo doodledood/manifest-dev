@@ -41,6 +41,8 @@ If no arguments provided, ask: "What would you like to build or change?"
 
 **Composition**: Code-change tasks combine CODING.md (base quality gates) with domain-specific guidance. Domains aren't mutually exclusive—a "bug fix that requires refactoring" benefits from both BUG.md and REFACTOR.md. Related domains compound coverage.
 
+**Task files are supplementary, not exhaustive**. Probing is adaptive—driven by the specific task, user responses, and what you discover. Task files add angles you might not think to check; they don't replace judgment about what matters for this task.
+
 ## Existing Manifest Feedback
 
 If input references a previous manifest: **treat it as source of truth**. It contains validated decisions — default to building on it, preserving what's settled. Confirm approach with user if unclear.
@@ -61,7 +63,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 2. **Validated** - You drive the interview. Generate concrete candidates; learn from user reactions.
 
-3. **Domain-grounded** - Task files surface what to probe for in each domain. Explore existing materials for patterns/constraints. Latent criteria emerge from domain understanding—you can't surface what you don't know.
+3. **Domain-grounded** - Understand the domain before probing. Task files add angles to consider; exploration reveals patterns/constraints. Latent criteria emerge from domain understanding—you can't surface what you don't know.
 
 4. **Complete** - Surface hidden requirements through outside view (what typically fails in similar projects?), pre-mortem (what could go wrong?), and non-obvious probing (what hasn't user considered?).
 
@@ -71,7 +73,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 ## Constraints
 
-**Domain guidance informs probing** - Task files shape what you ask. Probing without domain context misses criteria you wouldn't think to check.
+**Task files supplement probing** - Task files add domain-specific risks and trade-offs as prompts—angles you might not think to check. They don't constrain what to ask; probing adapts to the specific task.
 
 **Discoverable unknowns — search first** - Facts about the project (existing structure, patterns, conventions, prior decisions) are discoverable. Exhaust exploration before asking the user. Only ask about discoverable facts when: multiple plausible candidates exist, searches yield nothing but the fact is needed, or the ambiguity is actually about intent not fact. When asking, present what you found and recommend one option.
 
