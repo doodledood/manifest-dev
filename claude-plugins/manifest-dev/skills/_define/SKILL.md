@@ -26,13 +26,7 @@ Output: `/tmp/manifest-{timestamp}.md`
 
 If no arguments provided, ask: "What would you like to build or change?"
 
-## Existing Manifest Feedback
-
-If input references a previous manifest: **treat it as source of truth**. It contains validated decisions — default to building on it, preserving what's settled. Confirm approach with user if unclear.
-
-## Task Classification
-
-After parsing input, identify **all applicable domains** (multi-select):
+## Domain Guidance
 
 | Domain | Indicators | Guidance File |
 |--------|------------|---------------|
@@ -44,7 +38,11 @@ After parsing input, identify **all applicable domains** (multi-select):
 | **Research** | Investigations, analyses, comparisons | `tasks/RESEARCH.md` |
 | **Blog** | Blog posts, articles, tutorials | `tasks/BLOG.md` |
 
-**Multi-select, zero-or-more**: Tasks may span domains, fit one, or fit none. Read applicable task files and synthesize. If none fit, proceed with universal flow—core principles and manifest schema work for any deliverable.
+Zero-or-more domains may apply. Task files contain domain-specific guidance—criteria you wouldn't know to probe for otherwise. If no domain matches, proceed with universal flow.
+
+## Existing Manifest Feedback
+
+If input references a previous manifest: **treat it as source of truth**. It contains validated decisions — default to building on it, preserving what's settled. Confirm approach with user if unclear.
 
 ## Multi-Repo Scope
 
@@ -62,7 +60,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 2. **Validated** - You drive the interview. Generate concrete candidates; learn from user reactions.
 
-3. **Domain-grounded** - Before probing for criteria, understand the domain: explore existing materials for patterns/constraints, research unfamiliar domains, ask for context. Latent criteria emerge from domain understanding—you can't surface what you don't know.
+3. **Domain-grounded** - Task files surface what to probe for in each domain. Explore existing materials for patterns/constraints. Latent criteria emerge from domain understanding—you can't surface what you don't know.
 
 4. **Complete** - Surface hidden requirements through outside view (what typically fails in similar projects?), pre-mortem (what could go wrong?), and non-obvious probing (what hasn't user considered?).
 
@@ -71,6 +69,8 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 6. **Efficient** - Every question must pass a quality gate: it **materially changes the manifest**, **locks an assumption**, or **chooses between meaningful trade-offs**. If a question fails all three, don't ask it. One missed criterion costs more than one extra question—err toward asking, but never ask trivia. Prioritize questions that split the space—scope and constraints before details.
 
 ## Constraints
+
+**Domain guidance informs probing** - Task files shape what you ask. Probing without domain context misses criteria you wouldn't think to check.
 
 **Discoverable unknowns — search first** - Facts about the project (existing structure, patterns, conventions, prior decisions) are discoverable. Exhaust exploration before asking the user. Only ask about discoverable facts when: multiple plausible candidates exist, searches yield nothing but the fact is needed, or the ambiguity is actually about intent not fact. When asking, present what you found and recommend one option.
 
