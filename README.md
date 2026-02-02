@@ -13,9 +13,9 @@ Stop micromanaging AI implementation. Define acceptance criteria, let the verify
 ## Quick Start
 
 ```bash
-# Install
-claude plugins add github.com/doodledood/manifest-dev
-claude plugins install manifest-dev@manifest-dev-marketplace
+# Install (run inside Claude Code)
+/plugin marketplace add doodledood/manifest-dev
+/plugin install manifest-dev@manifest-dev-marketplace
 
 # Use
 /define <what you want to build>
