@@ -1,6 +1,6 @@
 ---
-description: 'Manifest builder implementation. Converts known requirements into Deliverables + Invariants with verification criteria.'
-user-invocable: false
+name: define
+description: 'Manifest builder. Converts known requirements into Deliverables + Invariants with verification criteria.'
 ---
 
 # /define - Manifest Builder

@@ -1,6 +1,6 @@
 ---
-description: 'Manifest executor implementation. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass.'
-user-invocable: false
+name: do
+description: 'Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass.'
 ---
 
 # /do - Manifest Executor
