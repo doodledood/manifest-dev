@@ -363,4 +363,4 @@ MIT
 
 *Built by developers who understand LLM limitations—and design around them.*
 
-Follow along: [@aviramk](https://twitter.com/aviramk)
+Follow along: [@aviramkofman](https://x.com/aviramkofman)
