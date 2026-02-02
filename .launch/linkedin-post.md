@@ -18,11 +18,9 @@ Ask: "What would make me accept this PR in full?"
 
 That reframe flips where you invest energy—from micromanaging implementation to defining what success looks like.
 
-After years of AI workflows, I kept hitting the same wall: AI generates code, it looks reasonable, I ship it—then hours later I'm debugging something that should have been obvious.
+Here's the thing: modern LLMs are trained to be goal-oriented. They're remarkably good at satisfying stated criteria. The bottleneck isn't capability anymore—it's clarity on what done looks like, and how to reliably verify it.
 
-The problem wasn't the AI. It was how I framed tasks.
-
-Rigid implementation plans break when reality gets messy. Acceptance criteria don't—they define the destination, not the path.
+Rigid implementation plans break when reality gets messy. They force the AI to follow your path even when a better one exists. Acceptance criteria don't—they define the destination, not the route.
 
 I call this manifest-driven development:
 
@@ -31,20 +29,20 @@ I call this manifest-driven development:
 
 Two commands. The verify-fix loop is internal. You define the bar; AI iterates until it clears.
 
-What changed for me:
+If this sounds like spec-driven development—it is, adapted for LLMs. Key differences: manifests are ephemeral (no maintenance), the interview surfaces criteria you wouldn't write yourself, and verification is automated. Same DNA, different context.
+
+What this enables:
 • First pass lands closer to done
-• I trust the output (I know what was checked)
-• Process compounds—encode what I miss as new criteria
+• Trust the output (you know what was checked)
+• Fire and forget—invest in defining, not babysitting
 
-Not because it removes AI limitations—but because it works with them.
-
-I wrote up the full approach with a worked example.
+Full approach + worked example in comments.
 
 ---
 
 ## First Comment
 
-Full writeup with worked example and the Claude Code plugin:
+Full approach with worked example:
 
 aviramk.dev/scrolly/manifest-driven-development
 
