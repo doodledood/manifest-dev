@@ -4,16 +4,16 @@
 
 Hey all—
 
-Wanted to share an approach I've been using for AI-assisted coding that's helped reduce the "AI generated it but now I'm debugging for hours" problem.
+Sharing an approach that's helped me get better first-pass output from AI coding tools.
 
-**The core idea:**
-
-After years of AI workflows, I found the issue wasn't the AI—it was how I was framing tasks.
+**The reframe:**
 
 Stop asking "how do I get the AI to code this properly?"
 Start asking "what would make me accept this PR?"
 
-That reframe changes everything. Instead of giving the AI implementation instructions, define acceptance criteria—what would make you actually accept the output as done. Then let the AI implement toward those criteria.
+Modern LLMs are goal-oriented—they're good at satisfying stated criteria. The bottleneck isn't capability, it's clarity on what done looks like and how to verify it.
+
+Instead of implementation instructions, define acceptance criteria. Then let the AI implement toward those criteria.
 
 **The workflow:**
 

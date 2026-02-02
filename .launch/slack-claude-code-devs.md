@@ -4,27 +4,24 @@
 
 Hey team—
 
-Sharing something that's helped me significantly with Claude Code—might be useful for your workflows too.
+Sharing a workflow that's helped me get better first-pass output from AI coding tools.
 
-**The problem it solves:**
+**The reframe:**
 
-After years of AI workflows, I kept hitting the same wall: Claude would "finish" but leave edge cases or subtle issues I'd spend hours debugging. The core issue wasn't Claude—it was how I was framing tasks.
+Stop asking "how do I get the AI to implement this properly?"
+Start asking "what would make me accept this PR?"
 
-**What changed:**
-
-I stopped asking "how do I get Claude to implement this properly?" and started asking "what would make me accept this PR?"
-
-That reframe changes everything. Instead of specifying implementation steps, I define acceptance criteria first. Then let Claude implement toward those criteria—the verify-fix loop is automated.
+Modern LLMs are goal-oriented—they're good at satisfying stated criteria. The bottleneck isn't capability, it's clarity on what done looks like and how to verify it.
 
 **The flow:**
-- `/define <task>` — Claude interviews you, surfaces what you'd actually reject a PR for
-- `/do` — Claude implements, verifies against criteria, fixes failures—until done
+- `/define <task>` — AI interviews you, surfaces what you'd actually reject a PR for
+- `/do` — AI implements, verifies against criteria, fixes failures—until done
 
 Two commands. The rest is automated.
 
-Try `/define <something you're working on>` and see what the interview surfaces—it's often the most valuable part.
+Try `/define <something you're working on>` and see what the interview surfaces—often the most valuable part.
 
-Happy to answer questions or hear feedback if you try it.
+Happy to answer questions if you try it.
 
 **Links:**
 ```bash
