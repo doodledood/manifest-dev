@@ -253,7 +253,6 @@ Hooks enforce workflow integrity—the AI can't skip steps:
 | Hook | Event | Purpose |
 |------|-------|---------|
 | `stop_do_hook` | Stop command | Blocks premature stopping. Can't stop without verification passing or proper escalation. |
-| `pretool_escalate_hook` | `/escalate` invocation | Requires `/verify` before `/escalate`. No lazy escalation without attempting verification. |
 | `post_compact_hook` | Session compaction | Restores /do workflow context after compaction. Reminds to re-read manifest and log. |
 | `pretool_verify_hook` | `/verify` invocation | Ensures manifest and log are in context before spawning verifiers. |
 
@@ -271,7 +270,10 @@ Hooks enforce workflow integrity—the AI can't skip steps:
 
 | Task Type | Guidance | Quality Gates |
 |-----------|----------|---------------|
-| **Code** | `tasks/CODING.md` | Bug detection, type safety, maintainability, simplicity, test coverage, testability, CLAUDE.md adherence |
+| **Feature** | `tasks/FEATURE.md` + `CODING.md` | Bug detection, type safety, maintainability, simplicity, test coverage, testability, CLAUDE.md adherence |
+| **Bug** | `tasks/BUG.md` + `CODING.md` | Bug fix verification, regression prevention, root cause analysis |
+| **Refactor** | `tasks/REFACTOR.md` + `CODING.md` | Behavior preservation, maintainability, simplicity |
+| **Prompting** | `tasks/PROMPTING.md` | Prompt quality criteria |
 | **Document** | `tasks/DOCUMENT.md` | Structure completeness, audience fit, clarity, consistency, accuracy |
 | **Blog** | `tasks/BLOG.md` | Blog-specific quality criteria |
 | **Research** | `tasks/RESEARCH.md` | Research-specific criteria (citations, topic coverage) |
