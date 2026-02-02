@@ -61,6 +61,13 @@ Complex tasks need validated direction. Flag when:
 - Competing concerns discussed but no trade-offs (T-*) captured
 - High-risk task but no risk areas (R-*) defined
 
+### Pre-mortem scenario resolution
+
+Failure scenarios raised must be resolved, not left dangling. Flag when:
+- Failure scenario discussed in log but no corresponding INV, AC, R-*, or explicit out-of-scope decision
+- Only immediate/obvious failure modes explored (no downstream, timing, or stakeholder impacts)
+- Scenarios logged but lack disposition (encoded, scoped out, or mitigated)
+
 ### Assumptions audit
 
 Known Assumptions (ASM-*) must be genuinely low-impact. Flag when:
