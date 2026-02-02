@@ -20,6 +20,14 @@ Blog posts, articles, tutorials, newsletters.
 - **Disembodied voice** - lacks specific experiences, opinions, data; probe: check for AUTHOR_VOICE.md?
 - **SEO vs readability** - keyword stuffing hurts prose; probe: how much does SEO matter?
 
+## Scenario Prompts
+
+Consider these failure scenarios when probing:
+
+- **Lost at transition** - hook works but reader bounces in the middle; probe: does each section earn the next?
+- **Missing credibility signal** - no reason to trust the author; probe: what authority or experience backs this?
+- **Actionable clarity gap** - interesting content but reader doesn't know what to do with it; probe: what should reader do after reading?
+
 ## Trade-offs
 
 - Depth vs accessibility

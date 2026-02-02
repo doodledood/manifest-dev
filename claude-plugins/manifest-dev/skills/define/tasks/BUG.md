@@ -14,6 +14,14 @@ Fix must address cause, not symptom. Probe: what's the actual root cause vs. whe
 - **Whack-a-mole** - fix introduces bug elsewhere
 - **Incomplete fix** - works for reported case, fails edge cases
 
+## Scenario Prompts
+
+Consider these failure scenarios when probing:
+
+- **Regression elsewhere** - fix works but breaks unrelated code that depended on buggy behavior; probe: what else calls this code?
+- **Lurking root cause** - symptom fixed but underlying issue remains; probe: why did this bug exist in the first place?
+- **Data corruption already happened** - bug fixed but bad data persists; probe: do we need migration or cleanup?
+
 ## Trade-offs
 
 - Minimal patch vs proper fix

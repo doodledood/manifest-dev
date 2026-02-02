@@ -21,6 +21,14 @@ If no tests exist, probe: should "write characterization tests" be prerequisite 
 - **Scope creep** - "while I'm here" expansions; probe: what's explicitly in/out?
 - **Vague goal** - "cleaner code" leads to endless churn; probe: what does done look like?
 
+## Scenario Prompts
+
+Consider these failure scenarios when probing:
+
+- **Semantic drift** - behavior subtly changed but tests pass because they're also wrong; probe: do tests verify behavior or just lack of crashes?
+- **Downstream breakage** - refactored code works but callers break; probe: what depends on this? Any implicit contracts?
+- **Lost optimization** - cleaner code but performance regressed; probe: was there a reason for the "ugly" code?
+
 ## Trade-offs
 
 - Incremental vs big bang

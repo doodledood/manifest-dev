@@ -69,7 +69,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 5. **Directed** - For complex tasks, establish validated implementation direction (Approach) before execution. Architecture defines direction, not step-by-step script. Trade-offs enable autonomous adjustment.
 
-6. **Efficient** - Every question must pass a quality gate: it **materially changes the manifest**, **locks an assumption**, or **chooses between meaningful trade-offs**. If a question fails all three, don't ask it. One missed criterion costs more than one extra question—err toward asking, but never ask trivia. Prioritize questions that split the space—scope and constraints before details.
+6. **Efficient** - Comprehensive coverage is the goal—long interviews are fine if questions earn their place. Efficient means **question quality**: each question should maximally reduce uncertainty, split the decision space, or surface constraints. It does NOT mean brevity or minimizing questions. Every question must pass a quality gate: it **materially changes the manifest**, **locks an assumption**, or **chooses between meaningful trade-offs**. If a question fails all three, don't ask it. One missed criterion costs more than one extra question—err toward asking, but never ask trivia. Prioritize questions that split the space—scope and constraints before details.
 
 ## Constraints
 
@@ -97,7 +97,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 **Batch related questions** - Group related questions into a single turn rather than asking one at a time. Batching keeps momentum and reduces round-trips without sacrificing depth. Each batch should cover a coherent topic area—don't mix unrelated concerns in one batch.
 
-**Stop when converged** - Err on more probing. Convergence requires: pre-mortem checked, domain understood, edge cases probed, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
+**Stop when converged** - Err on more probing. Convergence requires: pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), domain understood, edge cases probed, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
 
 **Verify before finalizing** - After writing manifest, verify completeness using the manifest-verifier agent with the manifest and discovery log as input. If status is CONTINUE, ask the outputted questions, log new answers, update manifest, re-verify. Loop until COMPLETE or user signals "enough".
 
@@ -120,6 +120,63 @@ After defining deliverables, probe for implementation direction. Skip for simple
 **When to include Approach**: Multi-deliverable tasks, unfamiliar domains, architectural decisions, high-risk implementations. The interview naturally reveals if it's needed.
 
 **Architecture vs Process Guidance**: Architecture = structural decisions (components, patterns, structure). Process Guidance = methodology constraints (tools, manual vs automated). "Add executive summary section covering X, Y, Z" is Architecture. "No bullet points in summary sections" is Process Guidance.
+
+## Pre-Mortem Protocol
+
+Pre-mortems surface latent criteria—requirements users don't know they have until the right failure scenario makes them obvious. This isn't a checkbox; it's the backbone of comprehensive probing.
+
+**The exercise**: "Imagine this task has failed, or the deliverable was rejected. What went wrong?"
+
+### Failure Dimensions
+
+These are lenses for generating scenarios—prompts to activate failure imagination, not a checklist to complete. Apply whichever dimensions are relevant; skip those that genuinely don't apply. If no scenarios emerge from one dimension, move to another—the goal is coverage, not completeness per dimension.
+
+| Dimension | What to imagine | Example scenario |
+|-----------|-----------------|------------------|
+| **Technical** | What breaks at the code/system level? | Race condition under concurrent access; memory leak at scale |
+| **Integration** | What breaks at boundaries? | API contract violated; schema migration breaks consumers |
+| **Stakeholder** | What causes rejection by users/reviewers? | Doesn't match mental model; missing expected capability |
+| **Timing** | What fails later that works now? | Works today, breaks at scale; passes review, fails in production |
+| **Edge cases** | What inputs/conditions weren't considered? | Empty input, unicode, malformed data, timeout, concurrent modification |
+| **Dependencies** | What external factors cause failure? | Upstream API changes; library deprecation; environment drift |
+
+Task files add domain-specific failure dimensions. Consult them for angles you might miss.
+
+### Generating Scenarios
+
+For each relevant dimension, generate concrete failure scenarios. Be specific—"something breaks" is useless; "the scheduler runs a job twice when the server restarts mid-execution" is actionable.
+
+When logging scenarios, capture what matters:
+- **What fails** (the specific scenario)
+- **Likelihood and impact** (to prioritize probing)
+- **What question this raises** (what to ask the user)
+
+Example log entry:
+```
+DIMENSION: Timing
+SCENARIO: Feature works in dev but rate limits hit in production due to external API calls
+LIKELIHOOD: Medium | IMPACT: High
+QUESTION: Are there external API calls? What are the rate limits? Do we need caching or fallback?
+```
+
+### Scenario Disposition
+
+Every scenario worth logging must resolve to one of:
+
+1. **Encoded as criterion** — becomes INV-G*, AC-*, or Risk Area with detection
+2. **Explicitly out of scope** — user confirmed it's acceptable risk for this task
+3. **Mitigated by approach** — architecture choice eliminates the failure mode
+
+No dangling scenarios. If you logged it, resolve it.
+
+### When Is Pre-Mortem Complete?
+
+Pre-mortem probing converges when:
+- Relevant dimensions have been considered (not all—relevant)
+- Generated scenarios have dispositions (encoded, out of scope, or mitigated)
+- User confirms no major failure modes were missed
+
+"I can't think of more scenarios" after trying multiple dimensions = converged. "I haven't tried thinking about it" = not converged.
 
 ## What the Manifest Needs
 

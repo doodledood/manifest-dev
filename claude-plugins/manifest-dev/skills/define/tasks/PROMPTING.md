@@ -31,6 +31,14 @@ Prompts are manifests: **WHAT and WHY, not HOW**. State goals and constraints. T
 - Principles vs examples
 - Trust capability vs enforce discipline
 
+## Scenario Prompts
+
+Consider these failure scenarios when probing:
+
+- **Context rot** - critical instruction forgotten by model mid-execution; probe: is this a long prompt? Any multi-step workflows?
+- **Ambiguous interpretation** - instruction parsed differently than intended; probe: could this be read two ways?
+- **Capability assumption** - prompt assumes model can do something it can't reliably do; probe: is this within model strengths?
+
 ## Multi-Phase Prompts
 
 If prompt accumulates findings across steps, needs memento pattern:

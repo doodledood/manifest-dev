@@ -25,6 +25,14 @@ CLAUDE.md specifies project gates (typecheck, lint, test, format). These become 
 
 Probe for testable endpoints, health checks, test data. If actionable, encode as Global Invariant.
 
+## Scenario Prompts
+
+Consider these failure scenarios when probing:
+
+- **Silent regression** - behavior changes but tests still pass; probe: are there behaviors not covered by tests?
+- **Environment drift** - works locally, fails in CI or production; probe: any environment-specific config, secrets, or dependencies?
+- **Performance cliff** - correct output but unacceptable latency/memory at scale; probe: what's the expected load? Any hot paths?
+
 ## Multi-Repo
 
 When spanning repos: per-repo project gates differ, cross-repo contracts need verification, scope reviewers to changed files per repo.

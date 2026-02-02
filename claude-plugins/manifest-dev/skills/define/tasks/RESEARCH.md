@@ -22,6 +22,14 @@ Investigations, analyses, comparisons, technology evaluations.
 - **Coverage gap** - sub-question has no authoritative sources
 - **Conflicting authorities** - high-authority sources contradict; probe: present both or resolve?
 
+## Scenario Prompts
+
+Consider these failure scenarios when probing:
+
+- **Conclusion unsupported** - findings don't actually support the recommendation; probe: does evidence lead to conclusion?
+- **Key question unaddressed** - stakeholder's real concern not answered; probe: what decision does this research inform?
+- **Outdated by publication** - fast-moving topic evolved since research began; probe: will this still be accurate when delivered?
+
 ## Trade-offs
 
 - Depth vs breadth
