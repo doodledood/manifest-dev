@@ -24,6 +24,8 @@ Before a session, I now spend 10-15 minutes defining acceptance criteria. Not im
 
 Then I let the AI vibe toward those criteria. It still has flexibility. I'm not micromanaging the implementation. But now there's a bar.
 
+Here's the thing—modern AI is actually good at hitting goals. The bottleneck isn't capability, it's knowing what done looks like. Once you define that clearly, the AI can iterate until it gets there.
+
 The verify-fix loop runs automatically. When something fails, it gets fixed. What passes is locked in.
 
 **What surprised me:**

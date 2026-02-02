@@ -24,6 +24,8 @@ That one question changes everything.
 
 **Why it matters:**
 
+Modern LLMs are trained to be goal-oriented—they're good at satisfying stated criteria. The bottleneck isn't capability anymore. It's clarity on what done looks like, and how to reliably verify it.
+
 When you define what done looks like, two things happen:
 
 1. The interview surfaces latent criteria—stuff you'd reject code for but wouldn't think to specify. "Should there be rate limiting?" (Yes—I'd reject a PR without it, but I wouldn't have said it upfront.)
