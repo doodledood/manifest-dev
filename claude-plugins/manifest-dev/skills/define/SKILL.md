@@ -142,9 +142,16 @@ These are lenses for generating scenarios—prompts to activate failure imaginat
 
 Task files add domain-specific failure dimensions. Consult them for angles you might miss.
 
-### Generating Scenarios
+### Generating and Presenting Scenarios
 
 For each relevant dimension, generate concrete failure scenarios. Be specific—"something breaks" is useless; "the scheduler runs a job twice when the server restarts mid-execution" is actionable.
+
+**Present scenarios to the user, not just derived questions.** The scenario itself triggers thinking. Compare:
+
+- Weak: "Are there any race conditions we should worry about?"
+- Strong: "I'm imagining a scenario where two users submit orders at the same moment and both get assigned the same order number. Does concurrent access happen here?"
+
+The concrete scenario helps users recognize whether it applies and often triggers related concerns they wouldn't have surfaced from an abstract question.
 
 When logging scenarios, capture what matters:
 - **What fails** (the specific scenario)
@@ -158,6 +165,8 @@ SCENARIO: Feature works in dev but rate limits hit in production due to external
 LIKELIHOOD: Medium | IMPACT: High
 QUESTION: Are there external API calls? What are the rate limits? Do we need caching or fallback?
 ```
+
+When presenting to user: "I'm imagining this failing because we hit external API rate limits in production that we never see in dev. Are there external API calls? Do we know the rate limits?"
 
 ### Scenario Disposition
 
