@@ -140,7 +140,7 @@ These are lenses for generating scenarios—prompts to activate failure imaginat
 | **Edge cases** | What inputs/conditions weren't considered? | Empty input, unicode, malformed data, timeout, concurrent modification |
 | **Dependencies** | What external factors cause failure? | Upstream API changes; library deprecation; environment drift |
 
-Task files add domain-specific failure dimensions. Consult them for angles you might miss.
+Task files add domain-specific failure scenarios. Use them as fuel for imagination—pick what's relevant, skip what isn't. They're not exhaustive or mandatory.
 
 ### Generating and Presenting Scenarios
 

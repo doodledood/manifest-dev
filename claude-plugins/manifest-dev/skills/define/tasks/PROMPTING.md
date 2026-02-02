@@ -33,8 +33,6 @@ Prompts are manifests: **WHAT and WHY, not HOW**. State goals and constraints. T
 
 ## Scenario Prompts
 
-Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
-
 - **Context rot** - critical instruction forgotten mid-execution; probe: long prompt? multi-step workflow?
 - **Ambiguous interpretation** - instruction parsed differently than intended; probe: could this be read two ways?
 - **Capability assumption** - assumes model can do something unreliably; probe: within model strengths?

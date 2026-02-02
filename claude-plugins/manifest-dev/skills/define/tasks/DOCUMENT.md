@@ -21,8 +21,6 @@ Specs, proposals, reports, formal documentation.
 
 ## Scenario Prompts
 
-Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
-
 - **Stale on arrival** - accurate when written, outdated by publication; probe: how fast does this domain change?
 - **Wrong reader assumptions** - too much or too little context; probe: what does reader already know?
 - **Missing stakeholder concern** - answers wrong questions; probe: what will stakeholders look for?

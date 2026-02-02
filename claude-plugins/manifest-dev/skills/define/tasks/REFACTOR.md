@@ -23,8 +23,6 @@ If no tests exist, probe: should "write characterization tests" be prerequisite 
 
 ## Scenario Prompts
 
-Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
-
 - **Semantic drift** - behavior subtly changed, tests pass anyway; probe: do tests verify behavior or just no crashes?
 - **Downstream breakage** - refactored code works, callers break; probe: what depends on this? implicit contracts?
 - **Lost optimization** - cleaner but slower; probe: was "ugly" code intentionally optimized?

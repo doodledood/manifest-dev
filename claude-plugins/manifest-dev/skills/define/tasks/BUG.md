@@ -16,8 +16,6 @@ Fix must address cause, not symptom. Probe: what's the actual root cause vs. whe
 
 ## Scenario Prompts
 
-Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
-
 - **Regression elsewhere** - fix breaks code depending on buggy behavior; probe: what else calls this?
 - **Lurking root cause** - symptom fixed, cause remains; probe: why did this bug exist?
 - **Data corruption persists** - bug fixed, bad data still there; probe: need migration/cleanup?

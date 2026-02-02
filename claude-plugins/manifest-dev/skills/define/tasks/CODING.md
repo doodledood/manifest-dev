@@ -27,8 +27,6 @@ Probe for testable endpoints, health checks, test data. If actionable, encode as
 
 ## Scenario Prompts
 
-Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
-
 - **Silent regression** - behavior changes but tests pass; probe: behaviors not covered by tests?
 - **Environment drift** - works locally, fails in CI/prod; probe: env-specific config, secrets, dependencies?
 - **Performance cliff** - correct but slow at scale; probe: expected load? hot paths?

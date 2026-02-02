@@ -12,8 +12,6 @@ New functionality: features, APIs, enhancements.
 
 ## Scenario Prompts
 
-Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
-
 - **Mental model mismatch** - works as built, not as expected; probe: what does user think this does?
 - **Partial state corruption** - crashes midway, data inconsistent; probe: what if it fails halfway?
 - **Invisible dependency** - relies on unguaranteed assumption; probe: what must be true for this to work?

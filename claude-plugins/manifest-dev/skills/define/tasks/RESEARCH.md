@@ -24,8 +24,6 @@ Investigations, analyses, comparisons, technology evaluations.
 
 ## Scenario Prompts
 
-Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
-
 - **Conclusion unsupported** - findings don't support recommendation; probe: does evidence lead to conclusion?
 - **Key question unaddressed** - stakeholder's real concern not answered; probe: what decision does this inform?
 - **Outdated by publication** - topic evolved since research began; probe: will this be accurate when delivered?

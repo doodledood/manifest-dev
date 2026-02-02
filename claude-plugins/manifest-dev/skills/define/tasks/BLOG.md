@@ -22,8 +22,6 @@ Blog posts, articles, tutorials, newsletters.
 
 ## Scenario Prompts
 
-Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
-
 - **Lost at transition** - hook works, reader bounces in middle; probe: does each section earn the next?
 - **Missing credibility signal** - no reason to trust author; probe: what authority/experience backs this?
 - **Actionable clarity gap** - interesting but unclear what to do; probe: what should reader do after?
