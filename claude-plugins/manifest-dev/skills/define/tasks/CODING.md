@@ -27,11 +27,18 @@ Probe for testable endpoints, health checks, test data. If actionable, encode as
 
 ## Scenario Prompts
 
-Consider these failure scenarios when probing:
+Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
 
-- **Silent regression** - behavior changes but tests still pass; probe: are there behaviors not covered by tests?
-- **Environment drift** - works locally, fails in CI or production; probe: any environment-specific config, secrets, or dependencies?
-- **Performance cliff** - correct output but unacceptable latency/memory at scale; probe: what's the expected load? Any hot paths?
+- **Silent regression** - behavior changes but tests pass; probe: behaviors not covered by tests?
+- **Environment drift** - works locally, fails in CI/prod; probe: env-specific config, secrets, dependencies?
+- **Performance cliff** - correct but slow at scale; probe: expected load? hot paths?
+- **Security gap** - auth bypass, injection, data exposure; probe: user input? external data? permission checks?
+- **Concurrency bug** - race condition, deadlock, lost update; probe: parallel access? shared state?
+- **Dependency conflict** - version mismatch, breaking upgrade; probe: pinned versions? transitive deps?
+- **Breaking implicit contract** - callers depend on undocumented behavior; probe: who calls this? what do they assume?
+- **Error swallowed** - failure silent, no logging, bad state persists; probe: error paths tested? observability?
+- **Config mismatch** - feature flags, env vars differ across environments; probe: config parity?
+- **Observability blindspot** - works but can't tell when it breaks in prod; probe: metrics? alerts? logs?
 
 ## Multi-Repo
 

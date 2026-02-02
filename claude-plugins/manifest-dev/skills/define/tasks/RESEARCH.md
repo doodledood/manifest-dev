@@ -24,11 +24,21 @@ Investigations, analyses, comparisons, technology evaluations.
 
 ## Scenario Prompts
 
-Consider these failure scenarios when probing:
+Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
 
-- **Conclusion unsupported** - findings don't actually support the recommendation; probe: does evidence lead to conclusion?
-- **Key question unaddressed** - stakeholder's real concern not answered; probe: what decision does this research inform?
-- **Outdated by publication** - fast-moving topic evolved since research began; probe: will this still be accurate when delivered?
+- **Conclusion unsupported** - findings don't support recommendation; probe: does evidence lead to conclusion?
+- **Key question unaddressed** - stakeholder's real concern not answered; probe: what decision does this inform?
+- **Outdated by publication** - topic evolved since research began; probe: will this be accurate when delivered?
+- **Scope creep dilutes** - research too broad, depth sacrificed; probe: what's the core question?
+- **Wrong comparison criteria** - alternatives compared on wrong dimensions; probe: what matters for decision?
+- **Missing alternative** - obvious option not considered; probe: what else could solve this?
+- **Hidden framing bias** - question structure predetermines answer; probe: could question be asked differently?
+- **Actionability gap** - interesting findings, unclear what to do; probe: what action should follow?
+- **Audience mismatch** - too technical or too shallow for reader; probe: who consumes this? expertise level?
+- **Confidence overstated** - presented as certain, actually uncertain; probe: what's the confidence level?
+- **Context missing** - findings true in isolation, not in our context; probe: does this apply to our situation?
+- **Single-source dependency** - key claim rests on one source; probe: corroborated elsewhere?
+- **Methodology gap** - how conclusions reached is unclear; probe: can someone reproduce this?
 
 ## Trade-offs
 

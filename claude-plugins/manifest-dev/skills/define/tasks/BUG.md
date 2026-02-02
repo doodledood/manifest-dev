@@ -16,11 +16,20 @@ Fix must address cause, not symptom. Probe: what's the actual root cause vs. whe
 
 ## Scenario Prompts
 
-Consider these failure scenarios when probing:
+Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
 
-- **Regression elsewhere** - fix works but breaks unrelated code that depended on buggy behavior; probe: what else calls this code?
-- **Lurking root cause** - symptom fixed but underlying issue remains; probe: why did this bug exist in the first place?
-- **Data corruption already happened** - bug fixed but bad data persists; probe: do we need migration or cleanup?
+- **Regression elsewhere** - fix breaks code depending on buggy behavior; probe: what else calls this?
+- **Lurking root cause** - symptom fixed, cause remains; probe: why did this bug exist?
+- **Data corruption persists** - bug fixed, bad data still there; probe: need migration/cleanup?
+- **Wrong reproduction** - incomplete repro leads to wrong diagnosis; probe: exact steps to trigger?
+- **Timing-dependent** - bug hides under different conditions; probe: load? timing? data volume?
+- **Performance regression** - fix works but slower; probe: acceptable perf impact?
+- **Edge case missed** - fix covers reported case, not variants; probe: other inputs that could trigger?
+- **Multiple bugs masquerading** - one symptom, multiple causes; probe: is this definitely one bug?
+- **Fix correct, tests wrong** - tests pass because they encoded bug; probe: do tests verify correct behavior?
+- **Customer communication gap** - bug fixed, customer not informed; probe: who reported? need follow-up?
+- **Recurrence likely** - same class of bug will happen again; probe: systemic fix possible?
+- **Hotfix vs proper fix** - pressure to ship fast vs fix right; probe: acceptable to patch now, fix later?
 
 ## Trade-offs
 

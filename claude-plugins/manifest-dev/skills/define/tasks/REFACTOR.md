@@ -23,11 +23,20 @@ If no tests exist, probe: should "write characterization tests" be prerequisite 
 
 ## Scenario Prompts
 
-Consider these failure scenarios when probing:
+Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
 
-- **Semantic drift** - behavior subtly changed but tests pass because they're also wrong; probe: do tests verify behavior or just lack of crashes?
-- **Downstream breakage** - refactored code works but callers break; probe: what depends on this? Any implicit contracts?
-- **Lost optimization** - cleaner code but performance regressed; probe: was there a reason for the "ugly" code?
+- **Semantic drift** - behavior subtly changed, tests pass anyway; probe: do tests verify behavior or just no crashes?
+- **Downstream breakage** - refactored code works, callers break; probe: what depends on this? implicit contracts?
+- **Lost optimization** - cleaner but slower; probe: was "ugly" code intentionally optimized?
+- **Implicit contract broken** - undocumented behavior others relied on; probe: any callers outside this repo?
+- **Test coverage gap** - refactor correct, tests insufficient to catch regression; probe: coverage adequate?
+- **Parallel change conflict** - someone else editing same code; probe: any in-flight work touching this?
+- **Rollback impossible** - refactor ships, can't easily undo; probe: incremental? feature-flaggable?
+- **Migration stuck halfway** - incremental refactor abandoned mid-way; probe: what's the completion path?
+- **Abstraction premature** - new abstraction doesn't fit future needs; probe: confident this is the right shape?
+- **Scope creep** - "while I'm here" expands endlessly; probe: what's explicitly in/out of scope?
+- **Characterization gap** - no tests to capture current behavior; probe: need to write tests first?
+- **Review burden** - change too large to review effectively; probe: can this be split?
 
 ## Trade-offs
 

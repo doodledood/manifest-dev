@@ -33,11 +33,21 @@ Prompts are manifests: **WHAT and WHY, not HOW**. State goals and constraints. T
 
 ## Scenario Prompts
 
-Consider these failure scenarios when probing:
+Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
 
-- **Context rot** - critical instruction forgotten by model mid-execution; probe: is this a long prompt? Any multi-step workflows?
+- **Context rot** - critical instruction forgotten mid-execution; probe: long prompt? multi-step workflow?
 - **Ambiguous interpretation** - instruction parsed differently than intended; probe: could this be read two ways?
-- **Capability assumption** - prompt assumes model can do something it can't reliably do; probe: is this within model strengths?
+- **Capability assumption** - assumes model can do something unreliably; probe: within model strengths?
+- **Conflicting instructions** - two rules can't both be satisfied; probe: priority clear? edge cases?
+- **Edge case unhandled** - prompt works for typical input, fails on unusual; probe: what weird inputs are possible?
+- **Wrong model assumption** - prompt tuned for one model, used with another; probe: model-specific behaviors?
+- **Overfitting to examples** - follows examples too literally; probe: are examples representative?
+- **Error handling gap** - no guidance when things go wrong; probe: what should happen on failure?
+- **State management missing** - multi-step loses track; probe: needs memento pattern? externalized state?
+- **Tool use unclear** - model doesn't know when/how to use tools; probe: tool guidance explicit?
+- **Guardrail too loose** - harmful output possible; probe: what outputs must never happen?
+- **Guardrail too tight** - valid use cases blocked; probe: false positives acceptable?
+- **Verbosity mismatch** - too long or too terse for use case; probe: output length expectations?
 
 ## Multi-Phase Prompts
 

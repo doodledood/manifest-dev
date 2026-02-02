@@ -22,11 +22,21 @@ Blog posts, articles, tutorials, newsletters.
 
 ## Scenario Prompts
 
-Consider these failure scenarios when probing:
+Directions for pre-mortem probing—not exhaustive, not mandatory. Pick what's relevant.
 
-- **Lost at transition** - hook works but reader bounces in the middle; probe: does each section earn the next?
-- **Missing credibility signal** - no reason to trust the author; probe: what authority or experience backs this?
-- **Actionable clarity gap** - interesting content but reader doesn't know what to do with it; probe: what should reader do after reading?
+- **Lost at transition** - hook works, reader bounces in middle; probe: does each section earn the next?
+- **Missing credibility signal** - no reason to trust author; probe: what authority/experience backs this?
+- **Actionable clarity gap** - interesting but unclear what to do; probe: what should reader do after?
+- **Clickbait disappointment** - title promises more than content delivers; probe: does content match headline?
+- **Factual error damages trust** - one wrong claim undermines all; probe: claims verified?
+- **Tone mismatch** - doesn't sound like author/brand; probe: check AUTHOR_VOICE.md? brand guidelines?
+- **Length mismatch** - too long/short for platform norms; probe: expected length? reading context?
+- **Wall of text** - no visual breaks, reader fatigues; probe: headers? images? whitespace?
+- **No clear takeaway** - reader finishes, nothing sticks; probe: what's the one thing to remember?
+- **Wrong expertise assumption** - assumes knowledge reader lacks; probe: what does audience know?
+- **Missing context for sharing** - content good, but no social hook; probe: what makes someone share this?
+- **CTA unclear** - reader convinced but doesn't know next step; probe: what's the call to action?
+- **Evergreen vs timely confusion** - mixing dated and lasting content; probe: shelf life? update plan?
 
 ## Trade-offs
 
