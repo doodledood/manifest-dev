@@ -8,6 +8,8 @@ Stop asking "how do I get the AI to code this properly?"
 
 Start asking "what would make me accept this PR?"
 
+That one question changes everything.
+
 [GIF: /define interview surfacing acceptance criteria in terminal]
 
 ---
@@ -16,13 +18,15 @@ Start asking "what would make me accept this PR?"
 
 Packaged this as a Claude Code plugin.
 
-/define → surfaces what you actually care about
-/do → AI implements with flexibility
-/verify → automated checks until done
+/define → AI interviews you, surfaces what you'd actually reject a PR for
+/do → AI implements, verifies, fixes failures—until done
+
+Two commands. The rest is automated.
+No handholding or babysitting.
 
 Deep dive + worked example: aviramk.dev/scrolly/manifest-driven-development
 
-Code: github.com/doodledood/manifest-dev
+Claude Code plugin: github.com/doodledood/manifest-dev
 
 ---
 
@@ -39,4 +43,4 @@ Code: github.com/doodledood/manifest-dev
 
 **Alternative hooks to test**:
 - "AI agents keep missing the obvious. The fix isn't better prompts—it's better acceptance criteria."
-- "Define what done looks like. Let the AI figure out how. Verify it hit the bar. Repeat."
+- "The question isn't how to prompt the AI. It's what would make you accept the output."

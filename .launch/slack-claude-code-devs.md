@@ -12,15 +12,15 @@ After years of AI workflows, I kept hitting the same wall: Claude would "finish"
 
 **What changed:**
 
-Instead of specifying implementation steps, I started defining acceptance criteria first: what would make me actually accept this code as done? Then let Claude implement toward those criteria with flexibility, and verify automatically.
+I stopped asking "how do I get Claude to implement this properly?" and started asking "what would make me accept this PR?"
 
-This surfaces latent criteria I'd miss ("should there be rate limiting?") and catches issues before I review.
+That reframe changes everything. Instead of specifying implementation steps, I define acceptance criteria first. Then let Claude implement toward those criteria—the verify-fix loop is automated.
 
 **The flow:**
-- `/define <task>` — Claude interviews you about what you want, surfaces latent criteria
-- `/do <manifest>` — Claude implements toward the criteria
-- `/verify` — Automated checks against each AC
-- Fix loop until done
+- `/define <task>` — Claude interviews you, surfaces what you'd actually reject a PR for
+- `/do` — Claude implements, verifies against criteria, fixes failures—until done
+
+Two commands. The rest is automated.
 
 Try `/define <something you're working on>` and see what the interview surfaces—it's often the most valuable part.
 
@@ -32,6 +32,6 @@ claude plugins add github.com/doodledood/manifest-dev
 claude plugins install manifest-dev@manifest-dev-marketplace
 ```
 
-Full writeup: aviramk.dev/blog/manifest-driven-development
+Full writeup: aviramk.dev/scrolly/manifest-driven-development
 
-Repo: https://github.com/doodledood/manifest-dev
+Claude Code plugin: https://github.com/doodledood/manifest-dev

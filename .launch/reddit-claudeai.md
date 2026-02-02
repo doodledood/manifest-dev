@@ -20,13 +20,17 @@ I stopped asking "how do I get Claude to implement this properly?"
 
 I started asking "what would make me accept this PR in full?"
 
-That reframe changes where you invest your energy.
+That one question changes everything.
 
 **Why it matters:**
 
-When you specify *how* to implement, you end up micromanaging. Rigid plans break when reality gets messy. Claude starts using `any` types and `@ts-ignore` to satisfy your instructions while violating the spirit.
+When you define what done looks like, two things happen:
 
-When you define *what success looks like*, Claude has flexibility to adapt. You're defining the destination, not the path.
+1. The interview surfaces latent criteria—stuff you'd reject code for but wouldn't think to specify. "Should there be rate limiting?" (Yes—I'd reject a PR without it, but I wouldn't have said it upfront.)
+
+2. Claude has flexibility to adapt. You're not micromanaging the path. You're defining the destination.
+
+When you specify *how* to implement, you end up micromanaging. Rigid plans break when reality gets messy. Claude starts using `any` types and `@ts-ignore` to satisfy your instructions while violating the spirit.
 
 **What this looks like in practice:**
 
@@ -35,13 +39,9 @@ Instead of detailed implementation steps, I define:
 - Constraints that must never be violated (invariants)
 - How to verify each criterion (automated checks)
 
-Then I let Claude implement toward those criteria. A verify-fix loop handles cleanup. What fails gets fixed. What passes is locked in.
+Then I let Claude implement toward those criteria. The verify-fix loop is automated—what fails gets fixed, what passes is locked in.
 
 If you know spec-driven development, this is a cousin—adapted for LLMs. Key difference: the manifest is ephemeral. It drives one task, then the code is truth. No spec maintenance.
-
-**The key insight:**
-
-The interview phase surfaces stuff I'd miss. "Should there be rate limiting?" (Yes—I'd reject a PR without it, but I wouldn't have specified it.) Those latent criteria come out of the conversation, not my upfront thinking.
 
 **What it doesn't fix:**
 
@@ -56,6 +56,8 @@ The interview phase surfaces stuff I'd miss. "Should there be rate limiting?" (Y
 - I can fire and forget during execution because I invested in the define phase
 - The process compounds—encode what I miss as new criteria
 
-I eventually packaged this workflow as a Claude Code plugin. Blog post with full approach + worked example: aviramk.dev/blog/manifest-driven-development
+I eventually packaged this workflow as a Claude Code plugin. Two commands: `/define` (AI interviews you, surfaces criteria) and `/do` (AI implements, verifies, fixes—until done).
 
-Repo: https://github.com/doodledood/manifest-dev
+Blog post with full approach + worked example: aviramk.dev/scrolly/manifest-driven-development
+
+Claude Code plugin: https://github.com/doodledood/manifest-dev

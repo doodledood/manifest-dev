@@ -16,7 +16,7 @@ Instead of "how do I get the AI to code this properly?"
 
 Ask: "What would make me accept this PR in full?"
 
-That reframe changes everything.
+That reframe flips where you invest energy—from micromanaging implementation to defining what success looks like.
 
 After years of AI workflows, I kept hitting the same wall: AI generates code, it looks reasonable, I ship it—then hours later I'm debugging something that should have been obvious.
 
@@ -26,10 +26,10 @@ Rigid implementation plans break when reality gets messy. Acceptance criteria do
 
 I call this manifest-driven development:
 
-→ Define: LLM interviews you, surfaces latent criteria you'd reject code for but wouldn't think to specify
-→ Do: AI implements toward those criteria with flexibility
-→ Verify: Automated checks against every criterion
-→ Fix: What fails gets fixed. What passes is locked.
+→ Define: AI interviews you, surfaces latent criteria you'd reject code for but wouldn't think to specify
+→ Do: AI implements, verifies against criteria, fixes failures—until every criterion passes
+
+Two commands. The verify-fix loop is internal. You define the bar; AI iterates until it clears.
 
 What changed for me:
 • First pass lands closer to done
@@ -48,4 +48,4 @@ Full writeup with worked example and the Claude Code plugin:
 
 aviramk.dev/scrolly/manifest-driven-development
 
-Repo: github.com/doodledood/manifest-dev
+Claude Code plugin: github.com/doodledood/manifest-dev
