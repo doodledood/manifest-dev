@@ -524,6 +524,144 @@ class TestStopHookLoopDetection:
         assert result["decision"] == "allow"
 
 
+class TestStopHookInvocationPatterns:
+    """Tests for various skill invocation patterns."""
+
+    def test_detects_short_command_name(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+    ):
+        """Should detect /do via short command-name (/<skill> without plugin prefix)."""
+        # This is the actual format produced when users type /do
+        user_do_short = {
+            "type": "user",
+            "message": {
+                "content": "<command-name>/do</command-name><command-args>/tmp/define.md</command-args>"
+            },
+        }
+        transcript_path = temp_transcript([user_do_short])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        # Should block because /do detected but no /done
+        assert result is not None
+        assert result["decision"] == "block"
+
+    def test_detects_ismeta_skill_expansion(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+    ):
+        """Should detect /do via isMeta skill expansion."""
+        # This is the actual format when skill content is injected
+        ismeta_do_expansion = {
+            "type": "user",
+            "isMeta": True,
+            "message": {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Base directory for this skill: /path/to/plugins/skills/do\n\n# /do - Manifest Executor\n\n...",
+                    }
+                ]
+            },
+        }
+        transcript_path = temp_transcript([ismeta_do_expansion])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        # Should block because /do detected but no /done
+        assert result is not None
+        assert result["decision"] == "block"
+
+    def test_detects_combined_command_and_ismeta(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        assistant_skill_done: dict[str, Any],
+    ):
+        """Should handle combined command-name + isMeta (real world pattern)."""
+        # Real world pattern: command line followed by isMeta expansion
+        user_do_command_line = {
+            "type": "user",
+            "message": {
+                "content": "<command-name>/do</command-name><command-args>/tmp/define.md</command-args>"
+            },
+        }
+        ismeta_expansion = {
+            "type": "user",
+            "isMeta": True,
+            "message": {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Base directory for this skill: /path/to/plugins/skills/do\n\n# /do - Manifest Executor\n\n...",
+                    }
+                ]
+            },
+        }
+        transcript_path = temp_transcript([
+            user_do_command_line,
+            ismeta_expansion,
+            assistant_skill_done,
+        ])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        # Should allow because /done was called
+        assert result is None
+
+    def test_second_do_resets_after_done(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        assistant_skill_done: dict[str, Any],
+    ):
+        """Second /do (via isMeta) should reset state after first /done."""
+        first_do = {
+            "type": "user",
+            "message": {
+                "content": "<command-name>/do</command-name><command-args>/tmp/first.md</command-args>"
+            },
+        }
+        second_do_command = {
+            "type": "user",
+            "message": {
+                "content": "<command-name>/do</command-name><command-args>/tmp/second.md</command-args>"
+            },
+        }
+        second_do_ismeta = {
+            "type": "user",
+            "isMeta": True,
+            "message": {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Base directory for this skill: /path/to/plugins/skills/do\n\n# /do - Manifest Executor",
+                    }
+                ]
+            },
+        }
+        transcript_path = temp_transcript([
+            first_do,
+            assistant_skill_done,  # Complete first /do
+            second_do_command,
+            second_do_ismeta,
+            # No /done for second /do
+        ])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        # Should block because second /do has no /done
+        assert result is not None
+        assert result["decision"] == "block"
+
+
 class TestStopHookEdgeCases:
     """Tests for edge cases and error handling."""
 

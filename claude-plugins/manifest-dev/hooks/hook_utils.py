@@ -78,16 +78,37 @@ def get_skill_call_args(line_data: dict[str, Any], skill_name: str) -> str | Non
     return None
 
 
-def is_skill_invocation(line_data: dict[str, Any], skill_name: str) -> bool:
-    """Check if this line contains a Skill tool call for the given skill."""
-    return get_skill_call_args(line_data, skill_name) is not None or (
-        line_data.get("type") == "assistant"
-        and _has_skill_call_without_args(line_data, skill_name)
-    )
+def was_skill_invoked(line_data: dict[str, Any], skill_name: str) -> bool:
+    """
+    Check if this transcript line represents a skill invocation.
+
+    Detects ALL invocation patterns:
+    1. Model Skill tool call (assistant message with Skill tool_use)
+    2. User isMeta skill expansion (isMeta=true with skills/{name} in path)
+    3. User command-name tag (/<skill> or /plugin:skill format)
+
+    Args:
+        line_data: Parsed transcript line
+        skill_name: Skill name to check (e.g., "do", "verify")
+
+    Returns:
+        True if this line invokes the specified skill
+    """
+    msg_type = line_data.get("type")
+
+    # Pattern 1: Model Skill tool call
+    if msg_type == "assistant":
+        return _is_skill_tool_call(line_data, skill_name)
+
+    # Patterns 2 & 3: User invocations
+    if msg_type == "user":
+        return _is_user_skill_invocation(line_data, skill_name)
+
+    return False
 
 
-def _has_skill_call_without_args(line_data: dict[str, Any], skill_name: str) -> bool:
-    """Check for skill call that may have no args field at all."""
+def _is_skill_tool_call(line_data: dict[str, Any], skill_name: str) -> bool:
+    """Check if assistant message contains a Skill tool call for the given skill."""
     message = line_data.get("message", {})
     content = message.get("content", [])
 
@@ -105,19 +126,59 @@ def _has_skill_call_without_args(line_data: dict[str, Any], skill_name: str) -> 
         tool_input = block.get("input", {})
         skill = tool_input.get("skill", "")
 
+        # Match "skill-name" or "plugin:skill-name"
         if skill == skill_name or skill.endswith(f":{skill_name}"):
             return True
 
     return False
 
 
-def is_user_skill_command(line_data: dict[str, Any], skill_name: str) -> bool:
-    """Check if this line is a user command invoking the skill."""
+def _is_user_skill_invocation(line_data: dict[str, Any], skill_name: str) -> bool:
+    """Check if user message represents a skill invocation."""
+    text = get_message_text(line_data)
+
+    # Pattern 2: isMeta skill expansion (most reliable for user-invoked)
+    if line_data.get("isMeta"):
+        if "Base directory for this skill:" in text:
+            # Match skills/{skill-name} or skills/{skill-name}/
+            pattern = rf"skills/{re.escape(skill_name)}(?:/|\s|$)"
+            if re.search(pattern, text):
+                return True
+
+    # Pattern 3: command-name tags (various formats)
+    # Match /<skill> or /plugin:skill
+    return (
+        f"<command-name>/{skill_name}</command-name>" in text
+        or f"<command-name>/manifest-dev:{skill_name}" in text
+    )
+
+
+# Legacy aliases for backward compatibility
+def is_skill_invocation(line_data: dict[str, Any], skill_name: str) -> bool:
+    """Check if this line contains a Skill tool call for the given skill."""
+    if line_data.get("type") != "assistant":
+        return False
+    return _is_skill_tool_call(line_data, skill_name)
+
+
+def is_ismeta_skill_expansion(line_data: dict[str, Any], skill_name: str) -> bool:
+    """Check if this line is an isMeta skill expansion for the given skill."""
     if line_data.get("type") != "user":
         return False
+    if not line_data.get("isMeta"):
+        return False
+    return _is_user_skill_invocation(line_data, skill_name)
 
-    text = get_message_text(line_data)
-    return f"<command-name>/manifest-dev:{skill_name}" in text
+
+def is_user_skill_command(line_data: dict[str, Any], skill_name: str) -> bool:
+    """
+    Check if this line is a user command invoking the skill.
+
+    Detects skill invocations via isMeta expansion (primary) or command-name tags (fallback).
+    """
+    if line_data.get("type") != "user":
+        return False
+    return _is_user_skill_invocation(line_data, skill_name)
 
 
 def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str | None:
@@ -125,21 +186,33 @@ def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str
     Extract arguments from a user skill command.
 
     Returns the raw arguments string, or None if not the specified skill command.
+    Handles both command-args tags and isMeta expansion formats.
     """
     if line_data.get("type") != "user":
         return None
 
     text = get_message_text(line_data)
 
-    if f"<command-name>/manifest-dev:{skill_name}" not in text:
+    # Check if this is a command with matching skill name
+    has_command = (
+        f"<command-name>/{skill_name}</command-name>" in text
+        or f"<command-name>/manifest-dev:{skill_name}" in text
+    )
+
+    if not has_command:
         return None
 
-    # Extract arguments after the command tag
+    # Try command-args tag first (most explicit)
+    match = re.search(r"<command-args>(.*?)</command-args>", text, re.DOTALL)
+    if match:
+        return match.group(1).strip() or None
+
+    # Fallback: content after command-name tag
     match = re.search(r"</command-name>\s*(.+?)(?:<|$)", text)
-    if not match:
-        return None
+    if match:
+        return match.group(1).strip() or None
 
-    return match.group(1).strip()
+    return None
 
 
 def has_recent_api_error(transcript_path: str) -> bool:
@@ -268,32 +341,34 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
                 except json.JSONDecodeError:
                     continue
 
-                # Check for /do (user command or skill call)
-                if is_user_skill_command(data, "do") or is_skill_invocation(data, "do"):
-                    # New /do resets the flow (including do_args)
-                    has_do = True
-                    has_verify = False
-                    has_done = False
-                    has_escalate = False
-                    do_args = None
-
-                    # Extract args from user command or skill call
+                # Check for /do (any invocation pattern)
+                if was_skill_invoked(data, "do"):
+                    # Extract args first before deciding if this is a new /do
                     args = extract_user_command_args(data, "do")
                     if not args:
                         args = get_skill_call_args(data, "do")
-                    if args:
-                        do_args = args
 
-                # Check for /verify after /do
-                if has_do and is_skill_invocation(data, "verify"):
+                    # isMeta skill expansions follow command-name lines for the same /do
+                    # Only reset state if this line has args OR we don't have /do yet
+                    # This prevents the isMeta line from clearing args set by command-name line
+                    is_new_do = not has_do or args is not None
+
+                    if is_new_do:
+                        has_do = True
+                        has_verify = False
+                        has_done = False
+                        has_escalate = False
+                        if args:
+                            do_args = args
+
+                # Check for /verify, /done, /escalate after /do (any invocation pattern)
+                if has_do and was_skill_invoked(data, "verify"):
                     has_verify = True
 
-                # Check for /done after /do
-                if has_do and is_skill_invocation(data, "done"):
+                if has_do and was_skill_invoked(data, "done"):
                     has_done = True
 
-                # Check for /escalate after /do
-                if has_do and is_skill_invocation(data, "escalate"):
+                if has_do and was_skill_invoked(data, "escalate"):
                     has_escalate = True
 
     except FileNotFoundError:
