@@ -146,10 +146,10 @@ def _is_user_skill_invocation(line_data: dict[str, Any], skill_name: str) -> boo
                 return True
 
     # Pattern 3: command-name tags (various formats)
-    # Match /<skill> or /any-plugin:skill
+    # Match /<skill> or /manifest-dev:skill (only our plugin)
     return (
         f"<command-name>/{skill_name}</command-name>" in text
-        or f":{skill_name}</command-name>" in text  # any plugin prefix
+        or f"<command-name>/manifest-dev:{skill_name}</command-name>" in text
     )
 
 
@@ -193,10 +193,10 @@ def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str
 
     text = get_message_text(line_data)
 
-    # Check if this is a command with matching skill name
+    # Check if this is a command with matching skill name (only our plugin)
     has_command = (
         f"<command-name>/{skill_name}</command-name>" in text
-        or f":{skill_name}</command-name>" in text  # any plugin prefix
+        or f"<command-name>/manifest-dev:{skill_name}</command-name>" in text
     )
 
     if not has_command:

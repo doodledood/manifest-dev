@@ -661,12 +661,12 @@ class TestStopHookInvocationPatterns:
         assert result is not None
         assert result["decision"] == "block"
 
-    def test_detects_any_plugin_prefix(
+    def test_ignores_other_plugin_prefix(
         self,
         experimental_hook_path: Path,
         temp_transcript,
     ):
-        """Should detect /do with any plugin prefix, not just manifest-dev."""
+        """Should NOT detect /do from other plugins - only manifest-dev:do or /do."""
         user_do_other_plugin = {
             "type": "user",
             "message": {
@@ -678,9 +678,8 @@ class TestStopHookInvocationPatterns:
 
         result = run_hook(experimental_hook_path, hook_input)
 
-        # Should block because /do detected (any plugin prefix)
-        assert result is not None
-        assert result["decision"] == "block"
+        # Should allow - not our plugin's /do
+        assert result is None
 
 
 class TestStopHookEdgeCases:
