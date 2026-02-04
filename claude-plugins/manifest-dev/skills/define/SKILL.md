@@ -9,7 +9,7 @@ description: 'Manifest builder. Plan work, scope tasks, spec out requirements. C
 
 Build a **comprehensive Manifest** that captures:
 - **What we build** (Deliverables with Acceptance Criteria)
-- **How we'll get there** (Approach - validated direction)
+- **How we'll get there** (Approach - initial direction, expect adjustment)
 - **Rules we must follow** (Global Invariants)
 
 **Why thoroughness matters**: Every criterion discovered NOW is one fewer rejection during implementation/review. The goal is a deliverable that passes review on first submission—no "oh, I also needed X" after the work is done.
@@ -71,7 +71,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 4. **Complete** - Surface hidden requirements through outside view (what typically fails in similar projects?), pre-mortem (what could go wrong?), and non-obvious probing (what hasn't user considered?).
 
-5. **Directed** - For complex tasks, establish validated implementation direction (Approach) before execution. Architecture defines direction, not step-by-step script. Trade-offs enable autonomous adjustment.
+5. **Directed** - For complex tasks, establish initial implementation direction (Approach) before execution. Architecture defines starting direction, not step-by-step script. Trade-offs enable autonomous adjustment when reality diverges.
 
 6. **Efficient** - Question quality, not brevity. Each question must: materially change the manifest, lock an assumption, or choose between meaningful trade-offs. If it fails all three, don't ask. One missed criterion costs more than one extra question—err toward asking, never ask trivia. Prioritize questions that split the space—scope and constraints before details.
 
@@ -111,7 +111,9 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 ## Approach Section (Complex Tasks)
 
-After defining deliverables, probe for implementation direction. Skip for simple tasks with obvious approach.
+After defining deliverables, probe for **initial** implementation direction. Skip for simple tasks with obvious approach.
+
+**Why "initial"**: Approach provides starting direction, not a rigid plan. Plans break when hitting reality—unexpected constraints, better patterns discovered, dependencies that don't work as expected. The goal is enough direction to start confidently, with trade-offs documented so implementation can adjust autonomously when reality diverges.
 
 **Architecture** - Generate concrete options based on existing patterns. "Given the intent, here are approaches: [A], [B], [C]. Which fits best?" Architecture is direction (structure, patterns, flow), not step-by-step script.
 
@@ -261,9 +263,9 @@ Three categories, each covering **output** or **process**:
 - **Mental Model:** [Key concepts to understand]
 
 ## 2. Approach (Complex Tasks Only)
-*Validated implementation direction. Omit for simple tasks.*
+*Initial direction, not rigid plan. Provides enough to start confidently; expect adjustment when reality diverges.*
 
-- **Architecture:** [High-level HOW - validated direction, not step-by-step]
+- **Architecture:** [High-level HOW - starting direction, not step-by-step]
 
 - **Execution Order:**
   - D1 → D2 → D3

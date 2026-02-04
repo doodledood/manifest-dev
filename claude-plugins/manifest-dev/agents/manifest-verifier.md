@@ -55,7 +55,7 @@ User statements and discovered insights must appear in the manifest. Flag when:
 
 ### Approach for complexity
 
-Complex tasks need validated direction. Flag when:
+Complex tasks need initial direction (expect adjustment when reality diverges). Flag when:
 - Multiple deliverables but no execution order or dependencies
 - Architectural decisions implicit rather than explicit
 - Competing concerns discussed but no trade-offs (T-*) captured
