@@ -7,7 +7,7 @@ description: 'Manifest executor. Iterates through Deliverables satisfying Accept
 
 ## Goal
 
-Execute a Manifest: satisfy all Deliverables' Acceptance Criteria while following Process Guidance and Approach direction, then verify everything passes (including Global Invariants).
+Execute a Manifest: satisfy all Deliverables' Acceptance Criteria while following Process Guidance and using Approach as initial direction (adapting when reality diverges), then verify everything passes (including Global Invariants).
 
 **Why quality execution matters**: The manifest front-loaded the thinking—criteria are already defined. Your job is implementation that passes verification on first attempt. Every verification failure is rework.
 
@@ -26,7 +26,7 @@ If input includes a log file path (iteration on previous work): **treat it as so
 | Principle | Rule |
 |-----------|------|
 | **ACs define success** | Work toward acceptance criteria however makes sense. Manifest says WHAT, you decide HOW. |
-| **Architecture is direction** | Follow approach's architecture as starting direction. Adapt tactics freely—architecture guides, doesn't constrain. |
+| **Approach is initial, not rigid** | Approach provides starting direction, but plans break when hitting reality. Adapt freely when you discover better patterns, unexpected constraints, or dependencies that don't work as expected. Log adjustments with rationale. |
 | **Target failures specifically** | On verification failure, fix the specific failing criterion. Don't restart. Don't touch passing criteria. |
 | **Verify fixes first** | After fixing a failure, confirm the fix works before re-running full verification. |
 | **Trade-offs guide adjustment** | When risks (R-*) materialize, consult trade-offs (T-*) for decision criteria. Log adjustments with rationale. |
@@ -49,4 +49,4 @@ Externalize progress to survive context loss. The log IS the disaster recovery m
 
 **Execution log**: Create `/tmp/do-log-{timestamp}.md` at start. After EACH AC attempt, append what happened and the outcome. Goal: another agent reading only the log could resume work.
 
-**Todos**: Create from manifest (deliverables → ACs). Follow execution order from Approach. Update todo status after logging (log first, todo second).
+**Todos**: Create from manifest (deliverables → ACs). Start with execution order from Approach (adjust if dependencies require). Update todo status after logging (log first, todo second).
