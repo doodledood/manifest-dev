@@ -661,6 +661,27 @@ class TestStopHookInvocationPatterns:
         assert result is not None
         assert result["decision"] == "block"
 
+    def test_detects_any_plugin_prefix(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+    ):
+        """Should detect /do with any plugin prefix, not just manifest-dev."""
+        user_do_other_plugin = {
+            "type": "user",
+            "message": {
+                "content": "<command-name>/other-plugin:do</command-name><command-args>/tmp/define.md</command-args>"
+            },
+        }
+        transcript_path = temp_transcript([user_do_other_plugin])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        # Should block because /do detected (any plugin prefix)
+        assert result is not None
+        assert result["decision"] == "block"
+
 
 class TestStopHookEdgeCases:
     """Tests for edge cases and error handling."""
