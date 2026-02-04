@@ -23,7 +23,12 @@ CLAUDE.md specifies project gates (typecheck, lint, test, format). These become 
 
 ## E2E Verification
 
-Probe for testable endpoints, health checks, test data. If actionable, encode as Global Invariant.
+Before defaulting to manual E2E verification:
+- **Test data** - often discoverable; probe: existing test users/accounts? can research via project tools (queries, test fixtures, admin panels)?
+- **Environment** - probe: which environment for e2e tests (dev, staging, production read-only)?
+- **Automation feasibility** - probe: can tests be scripted? existing health checks or testable endpoints?
+
+Manual only when automated E2E is truly not feasible and user confirms no test data exists.
 
 ## Scenario Prompts
 
