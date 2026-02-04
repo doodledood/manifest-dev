@@ -21,9 +21,9 @@ A structured approach to task definition and execution:
 - **Mental Model:** [Key concepts/architecture]
 
 ## 2. Approach (Complex Tasks Only)
-*Validated implementation direction.*
+*Initial direction, not rigid plan. Expect adjustment when reality diverges.*
 
-- **Architecture:** [High-level HOW - validated direction]
+- **Architecture:** [High-level HOW - starting direction]
 - **Execution Order:** D1 → D2 → D3 | Rationale: [why]
 - **Risk Areas:**
   - [R-1] [What could go wrong] | Detect: [how you'd know]
