@@ -105,7 +105,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 **Verify before finalizing** - After writing manifest, invoke manifest-verifier with the manifest and discovery log. If status is CONTINUE, ask the outputted questions, log new answers, update manifest, re-verify. Loop until COMPLETE or user signals "enough".
 
-**Insights become criteria** - Outside view findings, pre-mortem risks, non-obvious discoveries → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to task file content — quality gates, risks, and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
+**Insights become criteria** - Domain grounding findings, outside view findings, pre-mortem risks, non-obvious discoveries → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to task file content — quality gates, risks, and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
 
 **Automate verification** - Use automated methods (commands, subagent review). When using general-purpose subagent, default to opus model (verification requires nuanced judgment). When a criterion seems to require manual verification, probe the user: suggest how it could be made automatable, or ask if they have ideas. Manual only as a last resort or when the user explicitly requests it.
 
@@ -151,7 +151,7 @@ IMPLICATIONS FOR TASK: [how this shapes what we build]
 
 **Confirm before encoding** — discovered patterns are candidates, not confirmed invariants. Present to user: "I found [pattern]. Should this be a hard constraint for this task?"
 
-**Convergence**: Domain grounding converges when pre-mortem scenarios can be project-specific rather than generic. If your scenarios could apply to any codebase ("race condition", "breaking change"), you haven't grounded enough. If your scenarios reference specific modules, patterns, or conventions, you have.
+**Convergence**: Domain grounding converges when you understand the affected area well enough to generate project-specific failure scenarios—not generic ones. If you can only imagine generic failures ("race condition", "breaking change"), you haven't grounded enough. If you can imagine failures that reference specific modules, patterns, or conventions in this codebase, you have.
 
 ## Outside View Protocol
 
