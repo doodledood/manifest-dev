@@ -58,6 +58,8 @@ User statements and discovered insights must appear in the manifest. Flag when:
 Complex tasks need initial direction (expect adjustment when reality diverges). Flag when:
 - Multiple deliverables but no execution order or dependencies
 - Architectural decisions implicit rather than explicit
+- Architectural choice affects multiple deliverables but manifest doesn't identify which deliverables depend on it or what changes if the choice proves wrong
+- Deliverables have producer-consumer dependencies but no specification of the interface between them (data shape, contract, or integration point)
 - Competing concerns discussed but no trade-offs (T-*) captured
 - High-risk task but no risk areas (R-*) defined
 
