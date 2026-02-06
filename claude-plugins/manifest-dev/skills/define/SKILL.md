@@ -69,7 +69,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 3. **Domain-grounded** - Understand the domain before probing. Task files add angles to consider; exploration reveals patterns/constraints. Latent criteria emerge from domain understanding—you can't surface what you don't know.
 
-4. **Complete** - Surface hidden requirements through outside view (what typically fails in similar projects?), pre-mortem (what could go wrong?), and non-obvious probing (what hasn't user considered?).
+4. **Complete** - Surface hidden requirements through domain grounding (what exists and constrains us?), outside view (what typically fails in similar projects?), pre-mortem (what could go wrong?), and non-obvious probing (what hasn't user considered?).
 
 5. **Directed** - For complex tasks, establish initial implementation direction (Approach) before execution. Architecture defines starting direction, not step-by-step script. Trade-offs enable autonomous adjustment when reality diverges.
 
@@ -81,7 +81,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 **Task files supplement probing** - Task files add domain-specific risks and trade-offs as prompts—angles you might not think to check. They don't constrain what to ask; probing adapts to the specific task.
 
-**Discoverable unknowns — search first** - Facts about the project (existing structure, patterns, conventions, prior decisions) are discoverable. Exhaust exploration before asking the user. Only ask about discoverable facts when: multiple plausible candidates exist, searches yield nothing but the fact is needed, or the ambiguity is actually about intent not fact. When asking, present what you found and recommend one option.
+**Discoverable unknowns — search first** - Facts about the project (existing structure, patterns, conventions, prior decisions) are discoverable through Domain Grounding. Don't ask the user about facts you could discover. Only ask about discoverable facts when: multiple plausible candidates exist, searches yield nothing but the fact is needed, or the ambiguity is actually about intent not fact. When asking, present what you found and recommend one option.
 
 **Preference unknowns — ask early** - Trade-offs, priorities, scope decisions, and style preferences cannot be discovered through exploration. Ask these directly. Provide concrete options with a recommended default. If genuinely low-impact and the user signals "enough", proceed with the recommended default and record as a Known Assumption in the manifest.
 
@@ -101,11 +101,11 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 **Batch related questions** - Group related questions into a single turn rather than asking one at a time. Batching keeps momentum and reduces round-trips without sacrificing depth. Each batch should cover a coherent topic area—don't mix unrelated concerns in one batch.
 
-**Stop when converged** - Err on more probing. Convergence requires: pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), domain understood, edge cases probed, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
+**Stop when converged** - Err on more probing. Convergence requires: domain grounded (pre-mortem scenarios are project-specific, not generic), pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), edge cases probed, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
 
 **Verify before finalizing** - After writing manifest, invoke manifest-verifier with the manifest and discovery log. If status is CONTINUE, ask the outputted questions, log new answers, update manifest, re-verify. Loop until COMPLETE or user signals "enough".
 
-**Insights become criteria** - Outside view findings, pre-mortem risks, non-obvious discoveries → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to task file content — quality gates, risks, and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
+**Insights become criteria** - Domain grounding findings, outside view findings, pre-mortem risks, non-obvious discoveries → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to task file content — quality gates, risks, and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
 
 **Automate verification** - Use automated methods (commands, subagent review). When using general-purpose subagent, default to opus model (verification requires nuanced judgment). When a criterion seems to require manual verification, probe the user: suggest how it could be made automatable, or ask if they have ideas. Manual only as a last resort or when the user explicitly requests it.
 
@@ -127,13 +127,41 @@ After defining deliverables, probe for **initial** implementation direction. Ski
 
 **Architecture vs Process Guidance**: Architecture = structural decisions (components, patterns, structure). Process Guidance = methodology constraints (tools, manual vs automated). "Add executive summary section covering X, Y, Z" is Architecture. "No bullet points in summary sections" is Process Guidance.
 
+## Domain Grounding Protocol
+
+Before imagining failure, understand what exists. Latent criteria emerge from domain understanding—you can't surface what you don't know.
+
+**The exercise**: "What already exists in the relevant area? What patterns, conventions, and constraints are in place?"
+
+Explore the areas relevant to the task. Surface:
+- **Existing patterns** — how similar things are currently done
+- **Structure** — components, dependencies, boundaries in the affected area
+- **Constraints** — implicit conventions, assumed invariants, existing contracts
+- **Prior decisions** — why things are the way they are, when discoverable
+
+What "exploration" means depends on the domain. For code tasks, explore the codebase. For research, the existing knowledge landscape. For content, the audience and existing publications. Task files add domain-specific exploration angles.
+
+**Scoping**: Explore what's relevant to the task description, not the entire domain. Focus on the affected area and its immediate context.
+
+Log findings to the discovery file:
+```
+DOMAIN GROUNDING: [area explored]
+PATTERNS FOUND: [existing conventions, approaches]
+CONSTRAINTS FOUND: [what the existing context assumes or requires]
+IMPLICATIONS FOR TASK: [how this shapes what we build]
+```
+
+**Confirm before encoding** — discovered patterns are candidates, not confirmed invariants. Present to user: "I found [pattern]. Should this be a hard constraint for this task?"
+
+**Convergence**: Domain grounding converges when you understand the affected area well enough to generate project-specific failure scenarios—not generic ones. If you can only imagine generic failures, you haven't grounded enough. If you can imagine failures that reference specific components, patterns, or conventions in this context, you have.
+
 ## Outside View Protocol
 
 Before imagining failure, establish what typically fails in this class of task.
 
 **The exercise**: "What's the reference class? What usually goes wrong?"
 
-Identify the task type (refactor, feature, bug fix, etc.). Search for evidence: prior similar tasks, domain knowledge, task file warnings. What issues emerged post-delivery? What patterns caused rejection?
+Identify the task type (refactor, feature, bug fix, etc.). Ground the reference class in what domain grounding revealed—"refactor of a tightly-coupled module with no tests" is a better reference class than "refactor." Search for evidence: prior similar tasks, domain knowledge, task file warnings. What issues emerged post-delivery? What patterns caused rejection?
 
 Log the reference class and its known failure modes. Pre-mortem scenarios inherit these as priors—a refactor that "typically introduces regressions" starts with that as high-likelihood.
 
@@ -162,7 +190,7 @@ These are lenses for generating scenarios—prompts to activate failure imaginat
 | **Edge cases** | What inputs/conditions weren't considered? | Empty input, unicode, malformed data, timeout, concurrent modification |
 | **Dependencies** | What external factors cause failure? | Upstream API changes; library deprecation; environment drift |
 
-Task files add domain-specific failure scenarios. Use them as fuel for imagination—pick what's relevant, skip what isn't. They're not exhaustive or mandatory.
+Task files add domain-specific failure scenarios. Use them as fuel for imagination—pick what's relevant, skip what isn't. They're not exhaustive or mandatory. Scenarios grounded in domain grounding findings are higher signal than generic templates—task file prompts + domain context = project-specific failure modes.
 
 ### Generating and Presenting Scenarios
 
