@@ -37,9 +37,11 @@ Surface-level coverage with gaps is worse than deep coverage of fewer areas. Fla
 ### Domain grounding before criteria
 
 Latent requirements emerge from domain understanding. Flag when:
+- Code-change task but log shows no domain grounding of the affected area (no exploration of existing patterns, architecture, or constraints)
 - Task involves external services but log shows no cross-service investigation
 - Technical task but Mental Model is generic (could apply to any project)
 - New data field but no exploration of where data originates or how it flows
+- Domain grounding findings logged but not confirmed with user before encoding as invariants
 
 ### Edge cases for new capabilities
 
@@ -51,7 +53,7 @@ User statements and discovered insights must appear in the manifest. Flag when:
 - User stated a preference/constraint with no corresponding INV, AC, or PG
 - Technical discovery encoded as invariant without user confirmation ("Discovered ≠ confirmed")
 - Process constraint (how to work) placed in INV instead of Process Guidance
-- Insights from outside view/pre-mortem logged but not converted to criteria
+- Insights from domain grounding/outside view/pre-mortem logged but not converted to criteria
 
 ### Approach for complexity
 
@@ -67,6 +69,7 @@ Complex tasks need initial direction (expect adjustment when reality diverges). 
 
 Pre-mortem should be grounded in evidence, not pure imagination. Flag when:
 - No reference class identified (what type of task is this?)
+- Reference class is generic when domain grounding revealed specific context (e.g., "refactor" instead of "refactor of a tightly-coupled module with no tests")
 - No base rate failures logged (what typically goes wrong in this class?)
 - Pre-mortem scenarios don't inherit from known failure patterns
 
