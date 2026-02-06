@@ -131,27 +131,29 @@ After defining deliverables, probe for **initial** implementation direction. Ski
 
 Before imagining failure, understand what exists. Latent criteria emerge from domain understanding—you can't surface what you don't know.
 
-**The exercise**: "What does the relevant existing system look like? What patterns, conventions, and constraints are already in place?"
+**The exercise**: "What already exists in the relevant area? What patterns, conventions, and constraints are in place?"
 
-Explore the areas of the codebase relevant to the task. Surface:
-- **Existing patterns** — how similar things are currently done (naming, structure, error handling, testing approaches)
-- **Architecture** — components, dependencies, boundaries in the affected area
-- **Constraints embedded in code** — implicit conventions, assumed invariants, existing contracts
+Explore the areas relevant to the task. Surface:
+- **Existing patterns** — how similar things are currently done
+- **Structure** — components, dependencies, boundaries in the affected area
+- **Constraints** — implicit conventions, assumed invariants, existing contracts
 - **Prior decisions** — why things are the way they are, when discoverable
 
-**Scoping**: Explore what's relevant to the task description, not the entire codebase. If the task is "add a new hook," explore existing hooks, their patterns, and their test coverage—not unrelated modules.
+What "exploration" means depends on the domain. For code tasks, explore the codebase. For research, the existing knowledge landscape. For content, the audience and existing publications. Task files add domain-specific exploration angles.
+
+**Scoping**: Explore what's relevant to the task description, not the entire domain. Focus on the affected area and its immediate context.
 
 Log findings to the discovery file:
 ```
 DOMAIN GROUNDING: [area explored]
 PATTERNS FOUND: [existing conventions, approaches]
-CONSTRAINTS FOUND: [what the existing code assumes or requires]
+CONSTRAINTS FOUND: [what the existing context assumes or requires]
 IMPLICATIONS FOR TASK: [how this shapes what we build]
 ```
 
 **Confirm before encoding** — discovered patterns are candidates, not confirmed invariants. Present to user: "I found [pattern]. Should this be a hard constraint for this task?"
 
-**Convergence**: Domain grounding converges when you understand the affected area well enough to generate project-specific failure scenarios—not generic ones. If you can only imagine generic failures ("race condition", "breaking change"), you haven't grounded enough. If you can imagine failures that reference specific modules, patterns, or conventions in this codebase, you have.
+**Convergence**: Domain grounding converges when you understand the affected area well enough to generate project-specific failure scenarios—not generic ones. If you can only imagine generic failures, you haven't grounded enough. If you can imagine failures that reference specific components, patterns, or conventions in this context, you have.
 
 ## Outside View Protocol
 

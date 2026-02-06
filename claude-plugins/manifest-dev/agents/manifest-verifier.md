@@ -37,9 +37,9 @@ Surface-level coverage with gaps is worse than deep coverage of fewer areas. Fla
 ### Domain grounding before criteria
 
 Latent requirements emerge from domain understanding. Flag when:
-- Code-change task but log shows no domain grounding of the affected area (no exploration of existing patterns, architecture, or constraints)
+- Log shows no domain grounding of the affected area (no exploration of existing patterns, structure, or constraints)
 - Task involves external services but log shows no cross-service investigation
-- Technical task but Mental Model is generic (could apply to any project)
+- Mental Model is generic (could apply to any project)
 - New data field but no exploration of where data originates or how it flows
 - Domain grounding findings logged but not confirmed with user before encoding as invariants
 
