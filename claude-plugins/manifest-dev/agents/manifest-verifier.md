@@ -122,6 +122,16 @@ Interpretation drift must be caught early. Flag when:
 - Multiple topic areas covered but no synthesis/confirmation checkpoint in log
 - Complex requirements discussed without "Here's what I've established" summary to user
 
+### Task file structure coverage
+
+Task file structures (quality gates, reviewer agents, risks, scenarios, trade-offs) are presumed relevant and must be resolved — presented for user selection or explicitly skipped with justification. Flag when:
+- Task type identified (feature, bug, refactor, etc.) but corresponding task files not read or engaged with
+- CODING.md quality gates table (reviewer agents + thresholds) not presented to user for selection on code-change tasks
+- Domain-specific structures (FEATURE.md risks, BUG.md root cause gates, REFACTOR.md characterization tests, etc.) not resolved
+- Structures skipped without logged justification (silent drops)
+- Selected quality gates not traceable to INV-G* or AC-* with matching verification (agent, threshold)
+- Log shows task file structures "noted" or "considered" but never presented to user — engagement requires selection or explicit skip, not acknowledgment
+
 ### Approach constraints coverage
 
 Beyond WHAT to build, HOW constraints need probing. Flag when:

@@ -43,9 +43,9 @@ Domain-specific guidance available in:
 
 **Composition**: Code-change tasks combine CODING.md (base quality gates) with domain-specific guidance. Domains aren't mutually exclusive—a "bug fix that requires refactoring" benefits from both BUG.md and REFACTOR.md. Related domains compound coverage.
 
-**Task files are supplementary, not exhaustive**. Probing is adaptive—driven by the specific task, user responses, and what you discover. Task files add angles you might not think to check; they don't replace judgment about what matters for this task.
+**Task file structures are presumed relevant.** Task files contain quality gates, reviewer agents, risks, scenarios, and trade-offs. These are angles you won't think to check on your own — they exist precisely because they're easy to miss. Every table and checklist in applicable task files must be **resolved**: either presented to the user for selection, or explicitly skipped with logged reasoning (e.g., "CODING.md testability gate skipped: task is prompt-only, no code changes"). Silent drops are the failure mode — not over-asking.
 
-**Actionable structures in task files** — Task files contain quality gates, risks, scenarios, trade-offs, and other structures that inform probing. Engage with what's relevant to the task — these are angles you might not think to check on your own. When task files contain tables or checklists specifically, those require explicit user selection (see constraint: **Encode task file structures**).
+Probing beyond task files is adaptive — driven by the specific task, user responses, and what you discover. Task files don't cap what to ask; they set a floor.
 
 ## Existing Manifest Feedback
 
@@ -79,9 +79,11 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 **All questions use AskUserQuestion** - Every user question goes through AskUserQuestion (tool limit: 2-4 options), one marked "(Recommended)". Never ask open-ended questions—they're cognitively demanding. Present concrete options the user can accept, reject, or adjust.
 
-**Task files supplement probing** - Task files add domain-specific risks and trade-offs as prompts—angles you might not think to check. They don't constrain what to ask; probing adapts to the specific task.
+**Resolve all task file structures** — After reading task files, extract every table and checklist (quality gates, reviewer agents with thresholds, risk lists, scenario prompts). For each structure, either:
+1. **Present to user** for selection via AskUserQuestion — selected items encoded as INV-G* or AC-*, unselected items explicitly scoped out
+2. **Skip with logged justification** — when a structure genuinely doesn't apply to this task, log why (e.g., "CODING.md type-safety gate: project is Python, no type system") and move on
 
-**Encode task file structures** — After reading task files, extract every table and checklist (quality gates, reviewer agents with thresholds, risk lists, scenario prompts). Present each to the user for selection via AskUserQuestion. Selected items must be encoded as INV-G* or AC-*. Unselected items are explicitly scoped out. Don't defer to synthesis—these are structural decisions that compound when missed.
+Don't defer to synthesis — these are structural decisions that compound when missed. The flexibility is in justifying what to skip, not in whether to engage.
 
 **Discoverable unknowns — search first** - Facts about the project (existing structure, patterns, conventions, prior decisions) are discoverable through Domain Grounding. Don't ask the user about facts you could discover. Only ask about discoverable facts when: multiple plausible candidates exist, searches yield nothing but the fact is needed, or the ambiguity is actually about intent not fact. When asking, present what you found and recommend one option.
 
