@@ -120,7 +120,7 @@ Read full log before synthesis. Unresolved `- [ ]` items must be addressed first
 
 **Batch related questions** - Group related questions into a single turn rather than asking one at a time. Batching keeps momentum and reduces round-trips without sacrificing depth. Each batch should cover a coherent topic area—don't mix unrelated concerns in one batch.
 
-**Stop when converged** - Err on more probing. Convergence requires: domain grounded (pre-mortem scenarios are project-specific, not generic), pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), edge cases probed, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
+**Stop when converged** - Err on more probing. Convergence requires: domain grounded (pre-mortem scenarios are project-specific, not generic), pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), edge cases probed, no unresolved `- [ ]` items in the log, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
 
 **Verify before finalizing** - After writing manifest, invoke manifest-verifier with the manifest and discovery log. If status is CONTINUE, ask the outputted questions, log new answers, update manifest, re-verify. Loop until COMPLETE or user signals "enough".
 
@@ -162,15 +162,17 @@ What "exploration" means depends on the domain. For code tasks, explore the code
 
 **Scoping**: Explore what's relevant to the task description, not the entire domain. Focus on the affected area and its immediate context.
 
-Log findings to the discovery file:
+Log findings to the discovery file — both narrative context and pending items:
 ```
 DOMAIN GROUNDING: [area explored]
 PATTERNS FOUND: [existing conventions, approaches]
 CONSTRAINTS FOUND: [what the existing context assumes or requires]
 IMPLICATIONS FOR TASK: [how this shapes what we build]
-```
 
-**Confirm before encoding** — discovered patterns are candidates, not confirmed invariants. Present to user: "I found [pattern]. Should this be a hard constraint for this task?"
+Pending:
+- [ ] Confirm: [pattern X] as constraint?
+- [ ] Confirm: [convention Y] as invariant?
+```
 
 **Convergence**: Domain grounding converges when you understand the affected area well enough to generate project-specific failure scenarios—not generic ones. If you can only imagine generic failures, you haven't grounded enough. If you can imagine failures that reference specific components, patterns, or conventions in this context, you have.
 
@@ -234,7 +236,7 @@ Example log entry:
 DIMENSION: Timing
 SCENARIO: Feature works in dev but rate limits hit in production due to external API calls
 LIKELIHOOD: Medium | IMPACT: High
-QUESTION: External API rate limits → Options: "APIs exist, need to verify limits (Recommended)", "No external APIs", "APIs exist, limits known and safe", "Real risk - add caching/fallback to invariants"
+- [ ] Ask user: External API rate limits → Options: "Real risk - add to invariants (Recommended)", "No external APIs", "APIs exist, limits known and safe", "Out of scope"
 ```
 
 When presenting to user: "I'm imagining this failing because we hit external API rate limits in production. How does this apply?" → Options as above.
