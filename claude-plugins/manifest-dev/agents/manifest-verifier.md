@@ -54,6 +54,7 @@ User statements and discovered insights must appear in the manifest. Flag when:
 - Technical discovery encoded as invariant without user confirmation ("Discovered ≠ confirmed")
 - Process constraint (how to work) placed in INV instead of Process Guidance
 - Insights from domain grounding/outside view/pre-mortem logged but not converted to criteria
+- Discovery log contains unresolved pending items (`- [ ]`) that weren't presented, encoded, or scoped out before synthesis
 
 ### Approach for complexity
 
@@ -131,8 +132,8 @@ Task file structures (quality gates, reviewer agents, risks, scenarios, trade-of
 - Structures skipped without logged justification (silent drops)
 - Selected quality gates not traceable to INV-G* or AC-* with matching verification (agent, threshold)
 - Log shows task file structures "noted" or "considered" but never presented to user — engagement requires selection or explicit skip, not acknowledgment
-- Log missing TASK FILE STRUCTURES checklist (structures should be logged as pending immediately after reading task files)
-- Log contains unchecked `- [ ]` items in the task file structures section at time of synthesis
+- Log missing pending items for task file structures (should be logged as `- [ ]` immediately after reading task files)
+- Log contains unresolved `- [ ]` items at time of synthesis (applies to all pending items, not just task files — see Explicit → Encoded)
 
 ### Approach constraints coverage
 
