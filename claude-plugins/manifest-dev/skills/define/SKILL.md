@@ -79,9 +79,11 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 **All questions use AskUserQuestion** - Every user question goes through AskUserQuestion (tool limit: 2-4 options), one marked "(Recommended)". Never ask open-ended questions—they're cognitively demanding. Present concrete options the user can accept, reject, or adjust.
 
-**Resolve all task file structures** — After reading task files, extract every table and checklist (quality gates, reviewer agents with thresholds, risk lists, scenario prompts). For each structure, either:
+**Resolve all task file structures** — After reading task files, extract every table and checklist (quality gates, reviewer agents with thresholds, risk lists, scenario prompts). **Immediately log all extracted structures as pending resolution items** in the discovery log (see log format below). Then, as the interview progresses, resolve each by either:
 1. **Present to user** for selection via AskUserQuestion — selected items encoded as INV-G* or AC-*, unselected items explicitly scoped out
 2. **Skip with logged justification** — when a structure genuinely doesn't apply to this task, log why (e.g., "CODING.md type-safety gate: project is Python, no type system") and move on
+
+Update the log entry from PENDING to RESOLVED or SKIPPED as each structure is addressed. Before synthesis, read the full log — any PENDING items are unresolved and must be addressed first. The log is the working checklist, not your memory.
 
 Don't defer to synthesis — these are structural decisions that compound when missed. The flexibility is in justifying what to skip, not in whether to engage.
 
@@ -100,6 +102,17 @@ Don't defer to synthesis — these are structural decisions that compound when m
 **Probe input artifacts** - When input references external documents (file paths, URLs), ask: "Should [document] be a verification source?" If yes, encode as Global Invariant.
 
 **Log after every action** - Write to `/tmp/define-discovery-{timestamp}.md` immediately after each discovery (domain findings, interview answers, exploration insights). Goal: another agent reading only the log could resume the interview. Read full log before synthesis.
+
+After reading task files, log all extracted structures as pending:
+```
+TASK FILE STRUCTURES (from CODING.md, FEATURE.md, ...):
+- [ ] CODING: bug detection → code-bugs-reviewer | no HIGH/CRITICAL
+- [ ] CODING: type safety → type-safety-reviewer | no HIGH/CRITICAL
+- [ ] FEATURE: requirements traceability
+- [ ] FEATURE: scope creep risk
+...
+```
+Update as resolved: `- [x] CODING: bug detection → AC-1.3` or `- [~] CODING: type safety → SKIPPED: Python project, no type system`. Before synthesis, scan for unchecked items.
 
 **Confirm understanding periodically** - Before transitioning to a new topic area or after resolving a cluster of related questions, synthesize your current understanding back to the user: "Here's what I've established so far: [summary]. Correct?" This catches interpretation drift early—a misunderstanding in round 2 compounds through round 8 if never checked.
 

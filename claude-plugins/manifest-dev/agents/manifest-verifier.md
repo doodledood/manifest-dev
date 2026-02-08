@@ -131,6 +131,8 @@ Task file structures (quality gates, reviewer agents, risks, scenarios, trade-of
 - Structures skipped without logged justification (silent drops)
 - Selected quality gates not traceable to INV-G* or AC-* with matching verification (agent, threshold)
 - Log shows task file structures "noted" or "considered" but never presented to user — engagement requires selection or explicit skip, not acknowledgment
+- Log missing TASK FILE STRUCTURES checklist (structures should be logged as pending immediately after reading task files)
+- Log contains unchecked `- [ ]` items in the task file structures section at time of synthesis
 
 ### Approach constraints coverage
 
