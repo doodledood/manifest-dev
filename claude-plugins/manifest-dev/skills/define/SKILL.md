@@ -45,7 +45,7 @@ Domain-specific guidance available in:
 
 **Task files are supplementary, not exhaustive**. Probing is adaptive—driven by the specific task, user responses, and what you discover. Task files add angles you might not think to check; they don't replace judgment about what matters for this task.
 
-**Actionable structures in task files** - When task files contain tables or checklists (e.g., quality gates, review criteria), present them to the user for selection early in probing. These are structural decisions—deciding late causes rework.
+**Actionable structures in task files** — Task files contain quality gates, risks, scenarios, trade-offs, and other structures that inform probing. Engage with what's relevant to the task — these are angles you might not think to check on your own. When task files contain tables or checklists specifically, those require explicit user selection (see constraint: **Encode task file structures**).
 
 ## Existing Manifest Feedback
 
@@ -80,6 +80,8 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 **All questions use AskUserQuestion** - Every user question goes through AskUserQuestion (tool limit: 2-4 options), one marked "(Recommended)". Never ask open-ended questions—they're cognitively demanding. Present concrete options the user can accept, reject, or adjust.
 
 **Task files supplement probing** - Task files add domain-specific risks and trade-offs as prompts—angles you might not think to check. They don't constrain what to ask; probing adapts to the specific task.
+
+**Encode task file structures** — After reading task files, extract every table and checklist (quality gates, reviewer agents with thresholds, risk lists, scenario prompts). Present each to the user for selection via AskUserQuestion. Selected items must be encoded as INV-G* or AC-*. Unselected items are explicitly scoped out. Don't defer to synthesis—these are structural decisions that compound when missed.
 
 **Discoverable unknowns — search first** - Facts about the project (existing structure, patterns, conventions, prior decisions) are discoverable through Domain Grounding. Don't ask the user about facts you could discover. Only ask about discoverable facts when: multiple plausible candidates exist, searches yield nothing but the fact is needed, or the ambiguity is actually about intent not fact. When asking, present what you found and recommend one option.
 

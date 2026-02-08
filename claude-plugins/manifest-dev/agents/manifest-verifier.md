@@ -142,6 +142,24 @@ Manifest needs scannable summary before user approval. Flag when:
 - Summary hides detail behind counts ("8 verifications") or abstractions ("3 deliverables covering auth")
 - Verification methods not shown inline with criteria they verify
 
+### Schema conformance
+
+Manifest must match the schema in `/skills/define/SKILL.md`. Flag when:
+- Required sections missing (Intent & Context, Global Invariants, Deliverables)
+- IDs don't follow format: INV-G{N}, AC-{D}.{N}, PG-{N}, ASM-{N}, R-{N}, T-{N}
+- Verify blocks use invalid methods (valid: bash, codebase, subagent, research, manual)
+- Duplicate IDs across sections
+- Criteria missing verify blocks
+- Summary table counts don't match actual criteria count
+
+### Downstream consumability
+
+/do and /verify must parse the manifest without ambiguity. Flag when:
+- ID patterns appear outside their canonical sections (e.g., AC-* in Summary duplicating Section 6)
+- Ad-hoc sections not in the schema that could confuse /do deliverable extraction
+- Verify block YAML malformed or missing required fields
+- Separator patterns (like `---`) that could break frontmatter detection
+
 ## Constraints
 
 - Every gap must have an actionable question or probe
