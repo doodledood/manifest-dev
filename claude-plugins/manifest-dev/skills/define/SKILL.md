@@ -122,8 +122,6 @@ Read full log before synthesis. Unresolved `- [ ]` items must be addressed first
 
 **Stop when converged** - Err on more probing. Convergence requires: domain grounded (pre-mortem scenarios are project-specific, not generic), pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), edge cases probed, no unresolved `- [ ]` items in the log, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
 
-**Verify before finalizing** - After writing manifest, invoke manifest-verifier with the manifest and discovery log. If status is CONTINUE, ask the outputted questions, log new answers, update manifest, re-verify. Loop until COMPLETE or user signals "enough".
-
 **Insights become criteria** - Domain grounding findings, outside view findings, pre-mortem risks, non-obvious discoveries → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to task file content — quality gates, risks, and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
 
 **Automate verification** - Use automated methods (commands, subagent review). When using general-purpose subagent, default to opus model (verification requires nuanced judgment). When a criterion seems to require manual verification, probe the user: suggest how it could be made automatable, or ask if they have ideas. Manual only as a last resort or when the user explicitly requests it.
@@ -385,6 +383,23 @@ Three categories, each covering **output** or **process**:
 Manifests support amendments during execution:
 - Reference original ID: "INV-G1.1 amends INV-G1"
 - Track in manifest: `## Amendments`
+
+## Verification Loop
+
+After writing the manifest, invoke the manifest-verifier agent. Pass only the file paths — no summary, framing, or commentary:
+
+```
+Invoke the manifest-dev:manifest-verifier agent with: "Manifest: /tmp/manifest-{timestamp}.md | Log: /tmp/define-discovery-{timestamp}.md"
+```
+
+The verifier returns **CONTINUE** or **COMPLETE**:
+
+- **CONTINUE**: Present the verifier's questions to the user, log answers to the discovery file, update the manifest, then invoke the verifier again.
+- **COMPLETE**: Proceed to summary for approval.
+
+Repeat until COMPLETE or user signals "enough".
+
+Do not paraphrase, filter, or editorialize the verifier's questions — present them directly. Do not add context, justification, or steering to the invocation. The verifier sees what you may have missed; let it assess independently.
 
 ## Summary for Approval
 
