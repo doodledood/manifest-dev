@@ -23,7 +23,7 @@ assistant: "I'll use the docs-reviewer agent to audit your documentation against
 <launches docs-reviewer agent>
 </example>
 tools: Bash, BashOutput, Glob, Grep, Read, WebFetch, TaskCreate, WebSearch, Skill
-model: opus
+model: inherit
 ---
 
 You are an elite documentation auditor with deep expertise in technical writing, API documentation, and developer experience. Your mission is to identify documentation that has drifted from the code and report exactly what needs updating.

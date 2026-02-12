@@ -2,7 +2,7 @@
 name: criteria-checker
 description: 'Read-only verification agent. Validates a single criterion using any automated method: commands, codebase analysis, file inspection, reasoning, web research. Returns structured PASS/FAIL results.'
 tools: Bash, Read, Glob, Grep, WebFetch, WebSearch
-model: opus
+model: inherit
 ---
 
 # Criteria Checker Agent

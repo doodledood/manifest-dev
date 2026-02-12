@@ -2,7 +2,7 @@
 name: manifest-verifier
 description: 'Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe so interview can continue.'
 tools: Read, Grep, Glob
-model: opus
+model: inherit
 ---
 
 # Manifest Verifier Agent
