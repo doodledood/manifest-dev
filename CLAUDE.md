@@ -132,6 +132,10 @@ When adding agents, skills, or hooks:
 
 **README Guidelines**: Keep READMEs high-level (overview, what it does, how to use). Avoid implementation details that require frequent updates -- readers can explore code for specifics.
 
+## File Operations
+
+Prefer `cp` and `mv` bash commands over the Write tool when duplicating or moving files. Much faster for large files. Use Edit after `cp`/`mv` if changes are needed.
+
 ## Before PR
 
 ```bash
