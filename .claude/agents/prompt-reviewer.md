@@ -9,7 +9,7 @@ Review LLM prompts. Report findings without modifying files.
 
 ## Foundation
 
-**First**: Invoke `prompt-engineering:prompt-engineering` to load the principles. Review the prompt against those principles (WHAT/WHY not HOW, trust capability/enforce discipline, information density, avoid arbitrary values, issue types, anti-patterns).
+**First**: Invoke `prompt-engineering` to load the principles. Review the prompt against those principles (WHAT/WHY not HOW, trust capability/enforce discipline, information density, avoid arbitrary values, issue types, anti-patterns).
 
 ## Input
 
