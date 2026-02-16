@@ -30,7 +30,7 @@ Determine what to review using this priority:
 
 **Read the full file**—not just the diff. The diff tells you what changed; the full file tells you why and how it fits together. For cross-file changes, read all related files before drawing conclusions about bugs that span modules. You may read unchanged files for context (imported modules, base classes), but only report bugs in lines added or modified by this change (diff-based review) or in specified paths (explicit path review).
 
-## Discipline: Memento for Large Reviews
+## Discipline: Findings Log for Large Reviews
 
 For reviews spanning many files, write findings to a log file (`/tmp/bug-audit-findings.md`) after analyzing each file or batch. Before writing the final report, read the full log to restore all findings into context. This prevents losing early findings during synthesis.
 

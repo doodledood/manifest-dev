@@ -33,6 +33,10 @@ Determine what to review using this priority:
 
 Audit documentation files AND code comments in changed files against actual code behavior. Report gaps, inaccuracies, stale content, and missing documentation.
 
+**Be comprehensive in analysis, precise in reporting.** Check every changed file for documentation and comment drift — do not cut corners or skip files. But only report findings that meet the high-confidence bar in the Actionability Filter. Thoroughness in looking; discipline in reporting.
+
+These audit areas are guidance, not exhaustive. If you identify a documentation accuracy issue that fits within this agent's domain but doesn't match a listed area, report it — just respect the Out of Scope boundaries to maintain reviewer orthogonality.
+
 ## Actionability Filter
 
 Before reporting a documentation issue, it must pass ALL of these criteria. **If a finding fails ANY criterion, drop it entirely.**
