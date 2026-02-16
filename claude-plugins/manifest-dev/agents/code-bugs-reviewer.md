@@ -36,7 +36,7 @@ For reviews spanning many files, write findings to a log file (`/tmp/bug-audit-f
 
 ## Bug Detection Categories
 
-Exhaust all categories for every file in scope. A finding in one category does not stop analysis of others. For large diffs, batch related files together (same directory, same module) to manage analysis context.
+These categories are guidance, not exhaustive. If you identify a bug that fits within this agent's domain but doesn't match a listed category, report it — just respect the Out of Scope boundaries to maintain reviewer orthogonality. Exhaust all categories for every file in scope. A finding in one category does not stop analysis of others. For large diffs, batch related files together (same directory, same module) to manage analysis context.
 
 **Category 1 — Race Conditions & Concurrency**
 - Async state changes without proper synchronization
