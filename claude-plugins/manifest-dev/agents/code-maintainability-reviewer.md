@@ -62,10 +62,6 @@ Determine what to review using this priority:
 
 **Scope boundaries**: Focus on application logic. Skip generated files (files in build/dist directories, files with "auto-generated" or "DO NOT EDIT" headers, or patterns like `*.generated.*`, `__generated__/`), lock files, and vendored dependencies.
 
-## Discipline: Full File Context
-
-**Read the full file**—not just the diff. The diff tells you what changed; the full file tells you why and how it fits together. For cross-file changes, read all related files before drawing conclusions about duplication or patterns.
-
 High-churn files deserve extra scrutiny since issues there have outsized impact. Files that always change together with files outside your scope may indicate coupling—note in the "Related Concerns" section.
 
 ## Actionability Filter

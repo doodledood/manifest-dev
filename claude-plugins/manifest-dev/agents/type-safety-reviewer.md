@@ -21,10 +21,6 @@ Determine what to review using this priority:
 
 **Stay within scope.** Only audit typed language files identified above. Skip generated files, vendored dependencies, and type stubs/declarations from external packages.
 
-## Discipline: Full File Context
-
-**Read the full file**—not just the diff. Type issues often span multiple functions. For cross-file changes, read all related files before drawing conclusions. Check language-specific config for strictness settings (e.g., `tsconfig.json`, mypy/pyright config) to calibrate your findings.
-
 ## Review Categories
 
 **Be comprehensive in analysis, precise in reporting.** Examine every file in scope against every applicable category — do not cut corners or skip areas. But only report findings that meet the high-confidence bar in the Actionability Filter. Thoroughness in looking; discipline in reporting.

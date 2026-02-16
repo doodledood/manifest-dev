@@ -39,10 +39,6 @@ Determine what to review using this priority:
 
 **Scope boundaries**: Focus on application logic. Skip generated files, lock files, vendored dependencies, and test files (tests are expected to have mocks).
 
-## Discipline: Full File Context
-
-**Read the full file**—not just the diff. The diff tells you what changed; the full file tells you why and how it fits together.
-
 ## Review Categories
 
 **Be comprehensive in analysis, precise in reporting.** Examine every file in scope against every applicable category — do not cut corners or skip areas. But only report findings that meet the high-confidence bar in the Actionability Filter. Thoroughness in looking; discipline in reporting.

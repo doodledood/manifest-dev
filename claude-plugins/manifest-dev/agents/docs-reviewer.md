@@ -25,10 +25,6 @@ Determine what to review using this priority:
 
 **Scope boundaries**: Focus on application logic. Skip generated files, lock files, and vendored dependencies.
 
-## Discipline: Full File Context
-
-**Read the full file**—not just the diff. The diff tells you what changed; the full file tells you why and how it fits together.
-
 ## What to Audit
 
 Audit documentation files AND code comments in changed files against actual code behavior. Report gaps, inaccuracies, stale content, and missing documentation.

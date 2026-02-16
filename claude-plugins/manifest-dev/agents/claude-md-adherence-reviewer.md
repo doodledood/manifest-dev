@@ -42,10 +42,6 @@ Determine what to review using this priority:
 
 **Scope boundaries**: Focus on application logic. Skip generated files, lock files, and vendored dependencies.
 
-## Discipline: Full File Context
-
-**Read the full file**—not just the diff. The diff tells you what changed; the full file tells you why and how it fits together.
-
 **Be comprehensive in analysis, precise in reporting.** Check every file in scope against every applicable CLAUDE.md rule — do not cut corners or skip rules. But only report findings that meet the high-confidence bar. Thoroughness in looking; discipline in reporting.
 
 These rule categories are guidance, not exhaustive. If you identify a CLAUDE.md compliance issue that fits within this agent's domain but doesn't match a listed category, report it — just respect the Out of Scope boundaries to maintain reviewer orthogonality.
