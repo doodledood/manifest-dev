@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.46.4",
+  "version": "0.47.4",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
