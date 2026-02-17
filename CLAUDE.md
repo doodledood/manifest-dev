@@ -132,6 +132,22 @@ When adding agents, skills, or hooks:
 
 **README Guidelines**: Keep READMEs high-level (overview, what it does, how to use). Avoid implementation details that require frequent updates -- readers can explore code for specifics.
 
+### Task Files for /define
+
+Task files provide domain-specific probing guidance for `/define`. They live in `skills/define/tasks/` and follow a composition model:
+
+**Base files** provide universal quality gates for a domain (e.g., `CODING.md` for code, `WRITING.md` for prose). **Overlay files** add content-type specificity on top (e.g., `BLOG.md` composes with `WRITING.md`, `FEATURE.md` composes with `CODING.md`).
+
+**Required sections**: Quality Gates (table with Agent + Threshold), Risks (bullet list with probes), Scenario Prompts (bullet list with probes), Trade-offs (bullet list). Optional additions: Context to Discover, Anti-Patterns.
+
+**Self-contained**: Task files encode all domain knowledge inline. The consumer is `/define`'s interview process, not the user. Content should be probing fuel (angles to check) not execution instructions (how to do the work).
+
+**When creating/modifying task files**:
+1. Read existing task files for structural patterns (PROMPTING.md is the richest example)
+2. Update the domain guidance table in `skills/define/SKILL.md` (add row, update Composition paragraph)
+3. If creating a base file, update overlay files to remove content that moved to the base
+4. Bump plugin version, update READMEs per sync checklist
+
 ## File Operations
 
 Prefer `cp` and `mv` bash commands over the Write tool when duplicating or moving files. Much faster for large files. Use Edit after `cp`/`mv` if changes are needed.

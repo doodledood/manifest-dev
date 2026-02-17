@@ -95,7 +95,7 @@ This isn't a hack around LLM limitations. It's a design that treats those limita
 
 ## What /define Produces
 
-The interview classifies your task (Code, Document, Blog, Research) and loads task-specific guidance. It probes for latent criteria—things you'd reject in a PR but wouldn't think to specify upfront. A `manifest-verifier` agent validates the manifest for gaps before output.
+The interview classifies your task (Code, Writing, Document, Blog, Research) and loads task-specific guidance. It probes for latent criteria—things you'd reject in a PR but wouldn't think to specify upfront. A `manifest-verifier` agent validates the manifest for gaps before output.
 
 Here's an example manifest:
 
@@ -275,8 +275,9 @@ Hooks enforce workflow integrity—the AI can't skip steps:
 | **Bug** | `tasks/BUG.md` + `CODING.md` | Bug fix verification, regression prevention, root cause analysis |
 | **Refactor** | `tasks/REFACTOR.md` + `CODING.md` | Behavior preservation, maintainability, simplicity |
 | **Prompting** | `tasks/PROMPTING.md` | Prompt quality criteria |
-| **Document** | `tasks/DOCUMENT.md` | Structure completeness, audience fit, clarity, consistency, accuracy |
-| **Blog** | `tasks/BLOG.md` | Blog-specific quality criteria |
+| **Writing** | `tasks/WRITING.md` | Prose quality, AI tells, vocabulary, anti-patterns, craft fundamentals (base for Blog, Document) |
+| **Document** | `tasks/DOCUMENT.md` + `WRITING.md` | Structure completeness, consistency |
+| **Blog** | `tasks/BLOG.md` + `WRITING.md` | Engagement, SEO |
 | **Research** | `tasks/RESEARCH.md` | Research-specific criteria (citations, topic coverage) |
 
 ## Workflow Diagram

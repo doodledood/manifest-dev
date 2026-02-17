@@ -79,8 +79,9 @@ A structured approach to task definition and execution:
 | Task Type | File | When Loaded |
 |-----------|------|-------------|
 | Code | `skills/define/tasks/CODING.md` | APIs, features, fixes, refactors, tests |
-| Document | `skills/define/tasks/DOCUMENT.md` | Specs, proposals, reports, articles, docs |
-| Blog | `skills/define/tasks/BLOG.md` | Blog posts, content writing |
+| Writing | `skills/define/tasks/WRITING.md` | Prose, articles, emails, marketing copy, social media (base for Blog, Document) |
+| Document | `skills/define/tasks/DOCUMENT.md` | Specs, proposals, reports, formal docs (+ WRITING.md base) |
+| Blog | `skills/define/tasks/BLOG.md` | Blog posts, tutorials, newsletters (+ WRITING.md base) |
 | Research | `skills/define/tasks/RESEARCH.md` | Research tasks, analysis, investigation |
 | Other | (none) | Doesn't fit above categories |
 

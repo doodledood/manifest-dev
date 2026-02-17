@@ -37,11 +37,12 @@ Domain-specific guidance available in:
 | **Bug** | Defects, errors, regressions, "not working", "broken" | `tasks/BUG.md` |
 | **Refactor** | Restructuring, reorganization, "clean up", pattern changes | `tasks/REFACTOR.md` |
 | **Prompting** | LLM prompts, skills, agents, system instructions | `tasks/PROMPTING.md` |
-| **Document** | Specs, proposals, reports, formal docs | `tasks/DOCUMENT.md` |
+| **Writing** | Prose, articles, emails, marketing copy, social media, creative writing (base for Blog, Document) | `tasks/WRITING.md` |
+| **Document** | Specs, proposals, reports, formal docs (base: Writing) | `tasks/DOCUMENT.md` |
 | **Research** | Investigations, analyses, comparisons | `tasks/RESEARCH.md` |
-| **Blog** | Blog posts, articles, tutorials | `tasks/BLOG.md` |
+| **Blog** | Blog posts, articles, tutorials (base: Writing) | `tasks/BLOG.md` |
 
-**Composition**: Code-change tasks combine CODING.md (base quality gates) with domain-specific guidance. Domains aren't mutually exclusive—a "bug fix that requires refactoring" benefits from both BUG.md and REFACTOR.md. Related domains compound coverage.
+**Composition**: Code-change tasks combine CODING.md (base quality gates) with domain-specific guidance. Text-authoring tasks combine WRITING.md (base prose quality) with content-type guidance—a "blog post" benefits from both WRITING.md and BLOG.md, a "technical proposal" from both WRITING.md and DOCUMENT.md. Domains aren't mutually exclusive—a "bug fix that requires refactoring" benefits from both BUG.md and REFACTOR.md. Related domains compound coverage.
 
 **Task file structures are presumed relevant.** Task files contain quality gates, reviewer agents, risks, scenarios, and trade-offs. These are angles you won't think to check on your own — they exist precisely because they're easy to miss. Every table and checklist in applicable task files must be **resolved**: either presented to the user for selection, or explicitly skipped with logged reasoning (e.g., "CODING.md testability gate skipped: task is prompt-only, no code changes"). Silent drops are the failure mode — not over-asking.
 
