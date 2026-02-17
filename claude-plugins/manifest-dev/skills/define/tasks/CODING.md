@@ -15,6 +15,7 @@ CLAUDE.md may specify project-specific preferences.
 | Test coverage | code-coverage-reviewer | no HIGH/CRITICAL |
 | Testability | code-testability-reviewer | no HIGH/CRITICAL |
 | Documentation | docs-reviewer | no MEDIUM+ |
+| Design fitness | code-design-reviewer | no HIGH/CRITICAL |
 | CLAUDE.md adherence | claude-md-adherence-reviewer | no HIGH/CRITICAL |
 
 ## Project Gates

@@ -237,6 +237,7 @@ Built-in agents for quality verification via `subagent` method:
 | `manifest-verifier` | Validates manifest completeness during `/define` |
 | `code-bugs-reviewer` | Race conditions, data loss, edge cases, logic errors, resource leaks |
 | `code-maintainability-reviewer` | DRY violations, coupling, cohesion, dead code, consistency |
+| `code-design-reviewer` | Design fitness—reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, PR coherence |
 | `code-simplicity-reviewer` | Over-engineering, premature optimization, cognitive complexity |
 | `code-testability-reviewer` | Excessive mocking requirements, logic buried in IO, hidden dependencies |
 | `code-coverage-reviewer` | Test coverage gaps in changed code |

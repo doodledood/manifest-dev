@@ -112,6 +112,7 @@ Specialized review agents spawned in parallel during `/verify`:
 | `code-bugs-reviewer` | Audits code changes for logical bugs without making modifications |
 | `code-coverage-reviewer` | Verifies code changes have adequate test coverage, reports gaps |
 | `code-maintainability-reviewer` | DRY violations, coupling, cohesion, consistency, dead code, architectural boundaries |
+| `code-design-reviewer` | Design fitness—reinvented wheels, code vs configuration boundary, under-engineering, interface foresight |
 | `code-simplicity-reviewer` | Unnecessary complexity, over-engineering, cognitive burden |
 | `code-testability-reviewer` | Code that requires excessive mocking, business logic hard to verify in isolation |
 | `type-safety-reviewer` | TypeScript type holes, opportunities to make invalid states unrepresentable |

@@ -49,6 +49,7 @@ Do NOT report on (handled by other agents):
 - **Functional bugs** → code-bugs-reviewer
 - **Test coverage gaps** → code-coverage-reviewer
 - **CLAUDE.md compliance** → claude-md-adherence-reviewer
+- **Design fitness** (reinvented wheels, code vs configuration boundary, under-engineering, interface foresight) → code-design-reviewer
 
 ## Scope Rules
 
@@ -113,7 +114,6 @@ Classify every issue with one of these severity levels:
 - Low function cohesion: function name doesn't match behavior (misleading), or function does multiple distinct operations that could be separate functions
 - Low type cohesion: type spanning unrelated domains, or property that clearly belongs to a different concept (e.g., `billingAddress` on `AuthToken`)
 - Long parameter lists without parameter object
-- Hard-coded external service URLs/endpoints that should be configurable
 - Unexplained `@ts-ignore`/`eslint-disable` in new code—likely hiding a real bug
 - Extensibility risk where 2+ sibling components already exist and each manually implements the same cross-cutting behavior—evidence the concern belongs at a higher level
 - Hidden contract in main API paths: function fetches external state instead of receiving it as a parameter, hiding the dependency from callers
