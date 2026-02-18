@@ -10,6 +10,8 @@ Investigations, analyses, comparisons, technology evaluations. Default posture: 
 
 **LLMs cannot find their own errors but CAN correct them when pointed out** — This error-detection asymmetry is the empirical justification for multi-agent adversarial verification. Independent agents checking each other's work is structurally correct.
 
+**Multi-agent research yields 90.2% improvement over single-agent** — For multi-facet research, delegate orthogonal sub-topics to parallel web-researcher sub-agents (each gets assigned AND excluded scope). Main agent decomposes, coordinates, and synthesizes — never researches directly. Probe for process guidance: agent delegation strategy, convergence criteria, adversarial verification depth.
+
 **Ecological rationality boundary** — Simple heuristics outperform formal frameworks in well-structured environments (Gigerenzer). Formal rigor adds value in novel, uncertain, multi-source synthesis — which is the target use case for deep research. Match rigor to task complexity.
 
 ## Quality Gates
@@ -141,6 +143,7 @@ Investigations, analyses, comparisons, technology evaluations. Default posture: 
 - **Forced false consensus** — open questions resolved as if factual, premature convergence into a single position when genuine uncertainty exists; probe: are we forcing agreement where disagreement is the honest finding?
 - **Over-hedging** — adversarial rounds push toward excessive qualification and underconfidence, watering down well-supported conclusions; probe: has adversarial review made the research more accurate, or just less decisive?
 - **Context missing** — findings are generic, not grounded in specific constraints; probe: does this apply to our situation?
+- **Single-agent tunnel vision** — research done by one agent without parallel sub-agents misses content due to query path dependence and recall gaps (60-72%); probe: does this task have multiple facets that would benefit from parallel web-researcher sub-agents?
 
 ## Trade-offs
 
