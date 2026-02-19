@@ -46,9 +46,10 @@ Domain-specific guidance available in:
 
 **Task file structures are presumed relevant.** Task files contain quality gates, reviewer agents, risks, scenarios, and trade-offs. These are angles you won't think to check on your own — they exist precisely because they're easy to miss. Every table and checklist in applicable task files must be **resolved**: either presented to the user for selection, or explicitly skipped with logged reasoning (e.g., "CODING.md testability gate skipped: task is prompt-only, no code changes"). Silent drops are the failure mode — not over-asking.
 
-**Task file content types.** Three categories, each handled differently:
+**Task file content types.** Four categories, each handled differently:
 - **Resolvable** (tables/checklists: quality gates, risks, scenarios, trade-offs) — resolve via interview, encode as INV/AC or explicitly skip.
 - **Compressed awareness** (bold-labeled one-line domain summaries, not tables/checklists) — informs your probing; no resolution needed.
+- **Process guidance hints** (counter-instinctive practices labeled as PG candidates) — practices LLMs would get wrong without explicit guidance. Present applicable hints as a batch after scenarios; selected items become PG-* in the manifest.
 - **Reference files** (`references/*.md`) — detailed lookup data for `/verify` agents. Do not load during the interview.
 
 Probing beyond task files is adaptive — driven by the specific task, user responses, and what you discover. Task files don't cap what to ask; they set a floor.
@@ -425,7 +426,14 @@ Before asking for approval, output a scannable summary that enables full manifes
 - Abstracting instead of compressing ("3 deliverables covering auth")
 - Omitting "obvious" things that could still be wrong
 
+**After presenting the summary**, wait for the user's response. User responses mean:
+- **Approval** (e.g., "looks good", "approved") → proceed to Complete
+- **Feedback** (e.g., "also add X", "change Y", "use Z skill in process") → revise the manifest, re-present summary. Do not implement.
+- **Explicit /do invocation** → /define is done; /do takes over
+
 ## Complete
+
+/define ends here. Output the manifest path and stop.
 
 ```text
 Manifest complete: /tmp/manifest-{timestamp}.md
