@@ -1,0 +1,21 @@
+{
+  "name": "manifest-dev",
+  "version": "0.1.0",
+  "description": "Verification-first manifest workflows for Gemini",
+  "author": "manifest-dev marketplace contributors",
+  "type": "extension",
+  "entrypoint": "GEMINI.md",
+  "capabilities": [
+    "agents",
+    "skills",
+    "hooks"
+  ],
+  "directories": {
+    "plugins": "claude-plugins",
+    "hooks": "hooks",
+    "tests": "tests"
+  },
+  "compatibility": {
+    "gemini": ">=1.5"
+  }
+}
