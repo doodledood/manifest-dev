@@ -6,7 +6,7 @@
 
 # Manifest-Driven Development
 
-Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
+Stop iterating with the model after implementation. Define what you'd accept, run two commands, ship it.
 
 ## Quick Start
 
