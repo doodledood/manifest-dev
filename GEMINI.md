@@ -14,7 +14,21 @@ ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
 pytest tests/hooks/ -v
 
 # Test Gemini extension locally
-# (Placeholder for Gemini-specific testing commands)
+# The repo includes a `gemini-extension.json` and root-level `skills/` and
+# `hooks/` directories (symlinks) so Gemini tools that support extensions can
+# discover agents, skills, and hooks without custom paths.
+#
+# Example workflow (adjust to your Gemini CLI/tooling):
+#
+# From repo root
+# 1) Add/refresh this extension in your Gemini tool
+#    (replace with your CLI's extension install command)
+#    e.g.: gemini extensions add .
+#
+# 2) Start a new session and invoke the skills by name
+#    e.g., run the Define → Do → Verify loop
+#    gemini run "Use define to create a manifest for <task>"
+#    gemini run "Use do with ./manifest.md and write logs to ./manifest.log"
 ```
 
 ## Foundational Documents
@@ -49,3 +63,7 @@ ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
 # Run hook tests if hooks were modified
 pytest tests/hooks/ -v
 ```
+
+## Notes
+- The `directories` in `gemini-extension.json` point to `claude-plugins` (for plugin-style content) and `hooks`/`tests` at the repo root. The root-level `hooks` symlink points at `claude-plugins/manifest-dev/hooks`.
+- If your CLI expects a different command surface, map the skills 1:1: `define`, `do`, `verify`, `done`, `escalate`.

@@ -24,6 +24,21 @@ Stop micromanaging AI implementation. Define acceptance criteria, let the verify
 
 **Pro tip**: Run `/do` in a fresh session after `/define` completes—or at minimum, `/compact` before starting. The manifest is your external state; the session doesn't need to remember the conversation.
 
+## Codex
+
+This repo now exposes a root `skills/` directory (symlinked to the same skills used by the Claude plugin) so it can be installed as Codex skills.
+
+- Install via $skill-installer: "Install Codex skills from GitHub repo `kinnrot/manifest-dev`" and select `define`, `do`, `verify`, `done`, `escalate`.
+- Manual: copy or symlink folders under `skills/` into `$CODEX_HOME/skills/`.
+
+See CODEX.md for details.
+
+## Gemini CLI
+
+Gemini extension metadata (`gemini-extension.json`) is included. Root-level `skills/` and `hooks/` symlinks allow Gemini tools that support extensions to discover agents, skills, and hooks.
+
+Refer to GEMINI.md for example CLI workflows.
+
 ## Contents
 
 - [The Problem](#the-problem)
