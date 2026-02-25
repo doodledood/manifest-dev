@@ -15,6 +15,7 @@ Front-load the thinking so AI agents get it right the first time.
 | Plugin | What It Does |
 |--------|--------------|
 | `manifest-dev` | Verification-first manifest workflows. Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
+| `manifest-dev-collab` | Slack-based team collaboration on define/do workflows. Orchestrates stakeholder Q&A, PR review, and QA sign-off through dedicated channels. |
 
 ## Plugin Details
 
@@ -33,6 +34,15 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 **Hooks** prevent premature stopping -- can't stop without verification passing or proper escalation.
 
 **Task guidance** with domain-specific quality gates, risks, and scenarios. Reference material in `tasks/references/research/` provides detailed evidence for `/verify` agents.
+
+### manifest-dev-collab
+
+Team collaboration on define/do workflows through Slack.
+
+**Core skill:**
+- `/slack-collab` - Orchestrates stakeholder collaboration through a dedicated Slack channel with structured threads for Q&A, progress, PR review, and QA sign-off.
+
+**Prerequisites:** Slack MCP server configured and `manifest-dev` plugin installed.
 
 ## Contributing
 
