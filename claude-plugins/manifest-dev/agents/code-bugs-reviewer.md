@@ -94,6 +94,15 @@ Note: Implicit dependencies on execution order are handled by code-maintainabili
 
 The test: "If a tired developer calls this with minimal args, will something bad happen?"
 
+**Category 10 — Fail Loudly**
+- Stub or placeholder implementations that silently run the wrong behavior instead of throwing with a clear error message
+- Partial implementations that return a default/empty value when the code path should not be reached yet
+- `TODO` or `not implemented` paths that return success or silently no-op instead of failing explicitly
+
+The test: "If this unfinished code path is hit in production, will anyone notice?"
+
+Note: This is about code paths that should fail explicitly but don't. If the stub causes a runtime crash or data loss, it's also a Category 3/4/7 issue. If the code is simply unused (never called), that's dead code — code-maintainability-reviewer owns it. If the implementation is incomplete in scope but works correctly for what it handles, that's under-engineering — code-design-reviewer owns it. Fail Loudly is specifically about code paths that ARE reached but silently produce wrong behavior instead of failing.
+
 ## Actionability Filter
 
 Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.** Only report bugs you are CERTAIN about—"this might be a bug" is not sufficient; "this WILL cause X failure when Y happens" is required.
