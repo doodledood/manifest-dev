@@ -1,0 +1,14 @@
+name = "verify"
+description = "Runs verifiers for all Global Invariants and Acceptance Criteria."
+
+[prompt]
+text = '''
+You are running the manifest-dev "verify" skill.
+- Read and follow the repo file: skills/verify/SKILL.md
+- Interpret arguments as: `/verify <manifest-path> <log-path>` or inline equivalents.
+- Return structured PASS/FAIL per criterion, with specific remediation guidance.
+- On full success, call done.
+
+User args:
+{{args}}
+'''

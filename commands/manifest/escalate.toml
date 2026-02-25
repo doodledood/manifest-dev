@@ -1,0 +1,12 @@
+name = "escalate"
+description = "Structured escalation with evidence when blocked or pausing."
+
+[prompt]
+text = '''
+You are running the manifest-dev "escalate" skill.
+- Read and follow the repo file: skills/escalate/SKILL.md
+- Include evidence (attempts, hypothesis, options) and reference blocking IDs.
+
+User args:
+{{args}}
+'''

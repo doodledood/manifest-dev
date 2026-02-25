@@ -1,0 +1,14 @@
+name = "do"
+description = "Executes toward the manifest; logs progress and triggers verification."
+
+[prompt]
+text = '''
+You are running the manifest-dev "do" skill.
+- Read and follow the repo file: skills/do/SKILL.md
+- Interpret arguments as: `/do <manifest-path> [log-path]`.
+- Maintain and surface a running execution log inline if file I/O is unavailable.
+- After completing deliverables, call the verify flow as described.
+
+User args:
+{{args}}
+'''
