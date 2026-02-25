@@ -140,8 +140,9 @@ Task files provide domain-specific hints for `/define`. They live in `skills/def
 
 **Required sections**: Quality Gates (table with Agent + Threshold), Risks (bullet list with probes), Scenario Prompts (bullet list with probes), Trade-offs (bullet list). Optional additions: Context to Discover, Anti-Patterns, Defaults.
 
-**Content types**: Task files contain four categories:
-- *Resolvable* (tables/checklists: quality gates, risks, scenarios, trade-offs) — resolved by `/define` via the interview.
+**Content types**: Task files contain five categories:
+- *Quality gates* (tables with Agent + Threshold) — auto-included as INV-G*/AC-* by `/define`. Omitted with logged reasoning if clearly inapplicable. User reviews manifest.
+- *Resolvable* (tables/checklists: risks, scenarios, trade-offs) — resolved by `/define` via the interview.
 - *Compressed awareness* (bold-labeled one-line domain summaries) — informs probing without requiring resolution.
 - *Process guidance hints* (counter-instinctive practices) — Two modes: **candidates** (labeled as PG candidates, presented as batch, user selects) and **defaults** (`## Defaults` section, included in manifest without probing, user reviews manifest). Both become PG-* in the manifest.
 - *Reference files* (`references/*.md`) — detailed lookup data for `/verify` agents. Not loaded during `/define`.
@@ -152,7 +153,7 @@ Task files provide domain-specific hints for `/define`. They live in `skills/def
 - *"Would this ever NOT apply to a task of this type?"* → If always applies, it's not a scenario/risk — move to Defaults (process) or Quality Gates (verifiable).
 - *"Can you verify this from the output alone?"* → If yes, it's a Quality Gate, not a Default. Defaults are for non-verifiable process practices.
 - *"Does the probe have only one valid answer?"* → If yes, it shouldn't be probed. Move to Defaults or Quality Gates.
-- *No item should appear in multiple content types.* If a selectable gate and a Default say the same thing, one must go — the contradiction confuses `/define` (auto-include vs probe).
+- *No item should appear in multiple content types.* If a quality gate and a Default say the same thing, one must go — the encoding conflicts (INV/AC vs PG).
 
 **When creating/modifying task files**:
 1. Read existing task files for structural patterns (BUG.md and WRITING.md show the Defaults pattern)

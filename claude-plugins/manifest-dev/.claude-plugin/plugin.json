@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.54.1",
+  "version": "0.55.1",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
@@ -22,7 +22,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uvx --from ${CLAUDE_PLUGIN_ROOT}/hooks stop-do-hook"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stop_do_hook.py"
           }
         ]
       }
@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uvx --from ${CLAUDE_PLUGIN_ROOT}/hooks pretool-verify-hook"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/pretool_verify_hook.py"
           }
         ]
       }
@@ -46,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uvx --from ${CLAUDE_PLUGIN_ROOT}/hooks post-compact-hook"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/post_compact_hook.py"
           }
         ]
       }

@@ -1,17 +1,60 @@
 # manifest-dev
 
-Manifest-driven workflows separating **what to build** (Deliverables) from **rules to follow** (Global Invariants).
+Tell Claude what "done" looks like. Let it work. Check the result.
 
-## Overview
+## Quick Start
 
-A structured approach to task definition and execution:
+```
+/define "add rate limiting to the API"
+/do manifest.md
+```
 
-1. **Approach** (complex tasks) - Validated implementation direction: architecture, execution order, risks, trade-offs
-2. **Global Invariants** - Rules that apply to the ENTIRE task (e.g., "tests must pass")
-3. **Deliverables** - Specific items to complete, each with **Acceptance Criteria**
+That's it. `/define` interviews you and builds a manifest. `/do` executes it. Two commands.
+
+## The Mindset Shift
+
+Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
+
+"What would make me accept this PR?" "What rules can't be broken?" "How would I know each piece is done?" That's what `/define` asks you. Architecture might come up too, but the pillar is acceptance, not implementation. What does good enough look like?
+
+This works because LLMs are surprisingly good at execution when they know exactly what's expected. They're bad at reading your mind. The manifest closes that gap before a single line of code gets written. Compare that with plan mode, where you're thinking about *how* and still iterating with the model long after implementation starts.
+
+The interview phase is slow. It catches the gaps that blow up after implementation.
+
+## How It Works
+
+```mermaid
+flowchart TD
+    A["/define 'task'"] --> B["Interview"]
+    B --> C["Manifest file"]
+    C --> D["/do manifest.md"]
+    D --> E{"For each Deliverable"}
+    E --> F["Satisfy ACs"]
+    F --> G["/verify"]
+    G -->|failures| H["Fix specific criterion"]
+    H --> G
+    G -->|all pass| I["/done"]
+    E -->|risk detected| J["Consult trade-offs, adjust approach"]
+    J -->|ACs achievable| E
+    J -->|stuck| K["/escalate"]
+```
+
+---
+
+Everything below is reference. You don't need any of it to get started.
+
+---
+
+## The Manifest
+
+The manifest has three moving parts:
+
+1. **Approach** (complex tasks) -- Validated implementation direction: architecture, execution order, risks, trade-offs
+2. **Global Invariants** -- Rules that apply to the ENTIRE task (e.g., "tests must pass")
+3. **Deliverables** -- Specific items to complete, each with **Acceptance Criteria**
    - ACs can be positive ("user can log in") or negative ("passwords are hashed")
 
-## The Manifest Schema
+### Schema
 
 ```markdown
 # Definition: [Title]
@@ -42,7 +85,7 @@ A structured approach to task definition and execution:
   - [AC-1.2] Description | Verify: [method]
 ```
 
-## ID Scheme
+### ID Scheme
 
 | Type | Pattern | Purpose | Used By |
 |------|---------|---------|---------|
@@ -52,50 +95,42 @@ A structured approach to task definition and execution:
 | Trade-off | T-{N} | Decision criteria for adjustment | /do (consulted) |
 | Acceptance Criteria | AC-{D}.{N} | Deliverable completion | /verify (verified) |
 
-## Interview Philosophy
-
-**YOU generate, user validates.** Users have surface-level knowledge. Don't ask open-ended questions - generate candidates from domain knowledge, present concrete options, learn from reactions.
-
-**Phase order** (high info-gain first):
-1. Intent & Context (task type, scope, risk)
-2. Deliverables (what are we building?)
-3. Acceptance Criteria (how do we know each is done?)
-4. Approach (complex tasks: architecture, execution order, risks, trade-offs)
-5. Global Invariants & Process Guidance (auto-detect + generate candidates)
-
 ## Skills
-
-### User-Invocable
 
 | Skill | Description |
 |-------|-------------|
-| `/define` | Manifest builder with verification criteria. Converts known requirements into Deliverables + Invariants. Outputs executable manifest. |
-| `/do` | Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass. |
+| `/define` | Interviews you, builds an executable manifest with verification criteria |
+| `/do` | Works through the manifest autonomously, verifies everything passes |
+| `/verify` | Runs all verifiers in parallel (you rarely call this directly; `/do` handles it) |
+| `/done` | Prints what got done and what was verified |
+| `/escalate` | When something's blocked, surfaces the issue for you to decide |
 
 ### Task-Specific Guidance
 
-`/define` is domain-agnostic and works for any deliverable type. Task-specific guidance is loaded conditionally:
+`/define` works for any task. Domain-specific guidance loads automatically when relevant:
 
 | Task Type | File | When Loaded |
 |-----------|------|-------------|
 | Code | `skills/define/tasks/CODING.md` | APIs, features, fixes, refactors, tests |
-| Writing | `skills/define/tasks/WRITING.md` | Prose, articles, emails, marketing copy, social media (base for Blog, Document) |
-| Document | `skills/define/tasks/DOCUMENT.md` | Specs, proposals, reports, formal docs (+ WRITING.md base) |
-| Blog | `skills/define/tasks/BLOG.md` | Blog posts, tutorials, newsletters (+ WRITING.md base) |
-| Research | `skills/define/tasks/research/RESEARCH.md` + source files | Research tasks, analysis, investigation. Source-specific guidance in `tasks/research/sources/` |
+| Writing | `skills/define/tasks/WRITING.md` | Prose, articles, marketing copy (base for Blog, Document) |
+| Document | `skills/define/tasks/DOCUMENT.md` | Specs, proposals, formal docs (+ WRITING.md base) |
+| Blog | `skills/define/tasks/BLOG.md` | Blog posts, tutorials (+ WRITING.md base) |
+| Research | `skills/define/tasks/research/RESEARCH.md` + source files | Research, analysis, investigation. Source-specific guidance in `tasks/research/sources/` |
 | Other | (none) | Doesn't fit above categories |
 
-The universal flow (core principles, manifest schema) works without any task file.
+The universal flow works without any task file. Task files contain condensed domain knowledge that `/define` uses during probing. Full reference material for `/verify` agents lives in `skills/define/tasks/references/`.
 
-Task files use compressed domain awareness for probing; full reference material lives in `skills/define/tasks/references/` for `/verify` agents (e.g., `references/research/` contains meta-research evidence across 7 disciplines).
+## How the Interview Works
 
-### Internal
+`/define` doesn't ask you to brainstorm from scratch. It proposes things, you react. It already knows a lot about common task shapes, so it generates candidates and you correct, approve, or reject them. Faster than staring at a blank prompt.
 
-| Skill | Purpose |
-|-------|---------|
-| `/verify` | Manifest verification runner. Spawns parallel verifiers for Global Invariants and Acceptance Criteria. |
-| `/done` | Completion marker. Outputs hierarchical execution summary showing Global Invariants respected and all Deliverables completed. |
-| `/escalate` | Structured escalation with evidence. Surfaces blocking issues for human decision, referencing the Manifest hierarchy. |
+It walks through these in order, starting with whatever gives the most signal:
+
+1. Intent & Context (what kind of task, how big, what could go wrong)
+2. Deliverables (what are we building?)
+3. Acceptance Criteria (how do we know each piece is done?)
+4. Approach (for complex tasks: architecture, execution order, risks, trade-offs)
+5. Global Invariants & Process Guidance (rules that apply everywhere, detected automatically)
 
 ## Agents
 
@@ -108,14 +143,14 @@ Task files use compressed domain awareness for probing; full reference material 
 
 ### Code Reviewers
 
-Specialized review agents spawned in parallel during `/verify`:
+These run in parallel during `/verify`:
 
 | Agent | Focus |
 |-------|-------|
 | `code-bugs-reviewer` | Audits code changes for logical bugs without making modifications |
 | `code-coverage-reviewer` | Verifies code changes have adequate test coverage, reports gaps |
 | `code-maintainability-reviewer` | DRY violations, coupling, cohesion, consistency, dead code, architectural boundaries |
-| `code-design-reviewer` | Design fitness—reinvented wheels, code vs configuration boundary, under-engineering, interface foresight |
+| `code-design-reviewer` | Design fitness: reinvented wheels, code vs configuration boundary, under-engineering, interface foresight |
 | `code-simplicity-reviewer` | Unnecessary complexity, over-engineering, cognitive burden |
 | `code-testability-reviewer` | Code that requires excessive mocking, business logic hard to verify in isolation |
 | `type-safety-reviewer` | TypeScript type holes, opportunities to make invalid states unrepresentable |
@@ -124,43 +159,4 @@ Specialized review agents spawned in parallel during `/verify`:
 
 ## Hooks
 
-| Hook | Purpose |
-|------|---------|
-| `stop_do_hook.py` | Enforces verification before stopping |
-| `post_compact_hook.py` | Restores /do workflow context after session compaction |
-| `pretool_verify_hook.py` | Reminds to read manifest/log before verification |
-
-## Workflow
-
-```
-/define "task" → Interview → Manifest file
-                    │
-                    ├─ Intent & Context
-                    ├─ Deliverables (with ACs)
-                    ├─ Approach (complex tasks: architecture, order, risks, trade-offs)
-                    └─ Global Invariants & Process Guidance
-                                   ↓
-/do manifest.md → Follow execution order, watch for risks
-                    │
-                    ├─ Risk detected? → Consult trade-offs → Adjust approach
-                    │                   (ACs achievable? Continue : /escalate)
-                    │
-                    └─ For each Deliverable: Satisfy ACs
-                                   ↓
-                  /verify → (failures) → Fix specific criterion → /verify again
-                         ↓
-                  All pass → /done
-                         ↓
-                  (stuck) → /escalate
-```
-
-## Execution Semantics
-
-| Phase | Check | Failure Impact |
-|-------|-------|----------------|
-| After each deliverable | Acceptance Criteria | Deliverable incomplete |
-| Final verification | Global Invariants + all ACs | Must all pass for /done |
-
-## Status
-
-Use when you want quality-focused autonomous execution with clear separation of constraints and deliverables.
+Three hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before verification runs. `post_compact_hook.py` restores `/do` context if the session gets compacted. And `pretool_verify_hook.py` nudges agents to actually read the manifest before verifying anything.

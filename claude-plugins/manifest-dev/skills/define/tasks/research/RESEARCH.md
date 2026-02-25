@@ -98,6 +98,7 @@ When no source file exists for a relevant source type, the general quality gates
 | Protocol deviation tracking | Departures from original research plan documented with rationale — pre-registration's value comes from making deviations visible, not preventing them |
 | Linchpin analysis | Claims whose failure would collapse most conclusions identified and targeted for strongest verification effort |
 | Outside view | Reference class identified — "how often do claims of this sort hold?" applied after initial conclusions to counter anchoring and base rate neglect |
+| Adversarial convergence | Adversarial findings descended in severity across waves — not merely absent. Final wave attacked from new angles. Conclusions became more accurate, not more hedged (bipolar check) |
 
 ## Risks
 

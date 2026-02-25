@@ -6,9 +6,7 @@
 
 # Manifest-Driven Development
 
-Define what you'd accept. Verify until it's done.
-
-Stop micromanaging AI implementation. Define acceptance criteria, let the verify-fix loop handle the rest.
+Stop iterating with the model after implementation. Define what you'd accept, run two commands, ship it.
 
 ## Quick Start
 
@@ -21,6 +19,8 @@ Stop micromanaging AI implementation. Define acceptance criteria, let the verify
 /define <what you want to build>
 /do <manifest-path>
 ```
+
+Two commands. `/define` interviews you and builds a manifest. `/do` executes it. That's the whole workflow.
 
 **Pro tip**: Run `/do` in a fresh session after `/define` completes—or at minimum, `/compact` before starting. The manifest is your external state; the session doesn't need to remember the conversation.
 
@@ -48,7 +48,6 @@ Refer to GEMINI.md for example CLI workflows.
 - [Plugin Architecture](#plugin-architecture)
 - [The Benefits](#the-benefits)
 - [Who This Is For](#who-this-is-for)
-
 ## The Problem
 
 You give the agent a task. It generates code. The code looks reasonable. You ship it. Two days later you're debugging something that should have been obvious—or worse, realizing the AI "finished" but left critical pieces incomplete.
@@ -59,60 +58,93 @@ The tools are getting smarter. Claude, GPT, the latest models—they can genuine
 
 ## The Mindset Shift
 
-**Stop thinking about how to make the AI implement correctly. Start defining what would make you accept the output.**
+Instead of telling the AI *how* to build something, you tell it what you'd accept.
 
-When you ask "how should the LLM do this?", you end up micromanaging the implementation. You write detailed plans. You specify function names and types. You try to puppeteer the AI through every step. The moment something unexpected happens—the plan breaks down. The AI starts using `any` types, adding `// @ts-ignore` comments, bending reality to satisfy the letter of your instructions while violating the spirit.
-
-When you ask "what would make me accept this?", you define success criteria. You specify what the output must do, not how it must be built. You encode your quality standards as verifiable acceptance criteria. Then you let the AI figure out the implementation—and you verify whether it hit the bar.
-
-This is manifest-driven development.
-
-If you know spec-driven development, this is a cousin—adapted for LLM execution. The manifest is a spec, but ephemeral: it drives one task, then the code is the source of truth. No spec maintenance. No drift problem.
+Say you need a login page. The old way: "use React Hook Form, validate with Zod, show inline errors, disable the button while submitting." You've made every design decision upfront. The manifest way: "invalid credentials show an error without clearing the password field" and "the form can't be submitted twice." You define the bar. The AI picks how to clear it. Automated verification confirms it did.
 
 ## How It Works
 
-Manifest-driven development separates three concerns:
-
-1. **WHAT** needs to be built (deliverables with acceptance criteria)
-2. **RULES** that must always be followed (global invariants)
-3. **HOW** to verify each criterion (automated checks)
-
+```mermaid
+flowchart TD
+    A["/define 'task'"] --> B["Interview"]
+    B --> C["Manifest file"]
+    C --> D["/do manifest.md"]
+    D --> E{"For each Deliverable"}
+    E --> F["Satisfy ACs"]
+    F --> G["/verify"]
+    G -->|failures| H["Fix specific criterion"]
+    H --> G
+    G -->|all pass| I["/done"]
+    E -->|risk detected| J["Consult trade-offs, adjust approach"]
+    J -->|ACs achievable| E
+    J -->|stuck| K["/escalate"]
 ```
-/define → Interview → Manifest → /do → Execute → /verify → Fix loop → /done
-```
 
-**Define**: An LLM interviews you to surface what you actually want. Not just what you say you want—your latent criteria. The stuff you'd reject in a PR but wouldn't think to specify upfront.
+`/define` interviews you to surface what you actually want. The stuff you'd reject in a PR but wouldn't think to specify upfront. Then `/do` implements toward those acceptance criteria, flexible on *how* but not on *what*.
 
-**Do**: The AI implements toward the acceptance criteria. It has flexibility on the how. It doesn't have flexibility on the what.
+After each deliverable, `/verify` runs automated checks against every criterion. Failing checks say exactly what's wrong. The AI fixes what failed, only what failed, and the loop continues until everything passes or a blocker needs your attention.
 
-**Verify**: Automated checks run against every criterion. Failing checks get specific—they say exactly what's wrong.
+## What Changes
 
-**Fix**: The AI fixes what failed. Only what failed. It doesn't restart. It doesn't touch passing criteria.
+Your first pass lands closer to done. Issues get caught by verification before you see them, and the fix loop handles cleanup without your involvement. Every acceptance criterion has been verified, and you know what was checked.
 
-The loop continues until everything passes—or until a blocker requires human intervention.
+While one manifest executes, you can define the next. The define phase is where your judgment matters; the do-verify-fix phase runs on its own. Writing acceptance criteria also forces you to stay engaged with your own code, which matters when heavy AI usage starts making your codebase feel foreign.
+
+Resist the urge to intervene during `/do`. It won't nail everything on the first pass. That's expected. You invested in define; let the loop run.
+
+## Who This Is For
+
+If you've burned out on the weekly "game-changing AI coding tool" cycle and just want something that works, this is for you. Experienced developers who care more about output quality than execution speed. People who've learned the hard way that AI-generated code needs guardrails more than cheerleading.
+
+We build around how LLMs actually work, not how we wish they worked. That means investing upfront for better results, not optimizing for token cost or raw speed. If you're counting every cent per token or want the fastest possible output regardless of quality, this probably isn't your thing.
+
+---
+
+Everything below is reference. You don't need any of it to get started.
+
+---
+
+## Going Deeper
 
 <details>
-<summary><strong>Why This Works (LLM First Principles)</strong></summary>
+<summary><strong>The problem this solves</strong></summary>
 
-LLMs aren't general reasoners. They're goal-oriented pattern matchers trained through reinforcement learning. This has implications:
+You plan a feature with the agent. It implements. The code looks reasonable. Then you review it and half the things aren't how you'd want them: wrong error handling patterns, conventions ignored, edge cases skipped. You send it back. It fixes some things, breaks others. Two or three rounds later you're satisfied, but you've spent more time reviewing and iterating than you saved.
 
-**They're trained on goals, not processes.** RL during training made them fundamentally goal-oriented. Clear acceptance criteria play to their strength. Rigid step-by-step plans fight their nature.
+The models can code. But we're throwing them into deep water without defining what "done" actually means. So the review-iterate loop eats the productivity gains.
 
-**They can't hold all the nuances.** Neither can you. Some implementation details only surface once you're deep in the code. A rigid plan can't account for unknowns. Acceptance criteria can—because they define the destination, not the path.
-
-**They suffer from context drift.** Long sessions cause "context rot"—the model loses track of earlier instructions. Manifest-driven development compensates with external state (the manifest file) and verification that catches drift before it ships.
-
-**They don't know when they're wrong.** LLMs can't express genuine uncertainty. They'll confidently produce broken code. The verify-fix loop doesn't rely on the AI knowing it failed—it relies on automated checks catching failures.
-
-This isn't a hack around LLM limitations. It's a design that treats those limitations as first principles.
+Manifest-dev front-loads that review energy into `/define`. You spell out acceptance criteria and invariants before implementation starts. The do phase becomes mechanical, and the output lands closer to what you'd accept as a reviewer.
 
 </details>
 
+<details>
+<summary><strong>Why this works (LLM first principles)</strong></summary>
+
+LLMs are goal-oriented pattern matchers trained through reinforcement learning, not general reasoners. Clear acceptance criteria play to that strength. Rigid step-by-step plans fall apart because neither you nor the model can predict every detail upfront. Acceptance criteria focus on outcomes and leave implementation open.
+
+There's also the drift problem. Long sessions cause the model to lose track of earlier instructions. The manifest compensates with external state and verification that catches drift before it ships. And since LLMs can't express genuine uncertainty (they'll confidently produce broken code), the verify-fix loop doesn't rely on the AI knowing it failed. It relies on automated checks catching failures.
+
+These are design constraints, and the workflow treats them that way.
+
+</details>
+
+<details>
+<summary><strong>Process Guidance and Approach</strong></summary>
+
+The manifest also supports Process Guidance and an initial Approach (architecture, execution order). These are exactly what they sound like: recommendations, not requirements. Hints to help the model make better decisions while it's still not AGI. The acceptance criteria are the contract; the guidance is optimization on top.
+
+This is spec-driven development adapted for LLM execution. The manifest is a spec, but ephemeral: it drives one task, then the code is the source of truth. No spec maintenance. No drift.
+
+</details>
+
+**Pro tip**: Run `/do` in a fresh session after `/define` completes, or at minimum, `/compact` before starting. The manifest is your external state; the session doesn't need to remember the conversation.
+
 ## What /define Produces
 
-The interview classifies your task (Code, Writing, Document, Blog, Research) and loads task-specific guidance. It probes for latent criteria—things you'd reject in a PR but wouldn't think to specify upfront. A `manifest-verifier` agent validates the manifest for gaps before output.
+The interview classifies your task (Code, Writing, Document, Blog, Research) and loads task-specific guidance. It probes for your latent criteria, the standards you hold but wouldn't think to spell out. A `manifest-verifier` agent validates the manifest for gaps before output.
 
-Here's an example manifest:
+<details>
+<summary><strong>Example manifest</strong></summary>
 
 ````markdown
 # Definition: User Authentication
@@ -187,14 +219,16 @@ Here's an example manifest:
   ```
 ````
 
+</details>
+
 ## The Manifest Schema
 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
-| **Intent & Context** | Goal and mental model | — |
+| **Intent & Context** | Goal and mental model | -- |
 | **Approach** | Architecture, execution order, risks, trade-offs | `R-{N}`, `T-{N}` |
 | **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
-| **Process Guidance** | Non-verifiable constraints on how to work | `PG-{N}` |
+| **Process Guidance** | Non-verifiable recommendations for how to work | `PG-{N}` |
 | **Known Assumptions** | Low-impact items with defaults | `ASM-{N}` |
 | **Deliverables** | Ordered work items with acceptance criteria | `AC-{D}.{N}` |
 
@@ -236,27 +270,27 @@ verify:
 
 | Skill | Type | Description |
 |-------|------|-------------|
-| `/define` | User-invoked | Interview-driven manifest creation. Classifies task type, probes for latent criteria, generates manifest with verification methods. |
-| `/do` | User-invoked | Autonomous execution against manifest. Follows execution order, watches for risks, logs progress for disaster recovery. |
-| `/verify` | Internal | Spawns parallel verifiers for all criteria. Routes to `criteria-checker` agents based on verification method. |
-| `/done` | Internal | Outputs hierarchical completion summary mirroring manifest structure. |
-| `/escalate` | Internal | Structured escalation when blockers require human intervention. Requires evidence: 3+ attempted approaches, failure reasons, hypothesis, resolution options. |
+| `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, outputs manifest with verification methods |
+| `/do` | User-invoked | Executes against manifest. Follows execution order, watches for risks, logs progress for disaster recovery |
+| `/verify` | Internal | Spawns parallel verifiers for all criteria. Routes to `criteria-checker` agents based on verification method |
+| `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure |
+| `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |
 
-### Specialized Review Agents
+### Review Agents
 
 Built-in agents for quality verification via `subagent` method:
 
 | Agent | Focus |
 |-------|-------|
-| `criteria-checker` | Core verifier—validates single criterion using bash/codebase/subagent/research methods |
+| `criteria-checker` | Core verifier: validates single criterion using bash/codebase/subagent/research methods |
 | `manifest-verifier` | Validates manifest completeness during `/define` |
 | `code-bugs-reviewer` | Race conditions, data loss, edge cases, logic errors, resource leaks |
 | `code-maintainability-reviewer` | DRY violations, coupling, cohesion, dead code, consistency |
-| `code-design-reviewer` | Design fitness—reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, PR coherence |
+| `code-design-reviewer` | Design fitness: reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, PR coherence |
 | `code-simplicity-reviewer` | Over-engineering, premature optimization, cognitive complexity |
 | `code-testability-reviewer` | Excessive mocking requirements, logic buried in IO, hidden dependencies |
 | `code-coverage-reviewer` | Test coverage gaps in changed code |
-| `type-safety-reviewer` | TypeScript type safety—`any` abuse, invalid states representable, narrowing issues |
+| `type-safety-reviewer` | TypeScript type safety: `any` abuse, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
 | `claude-md-adherence-reviewer` | Compliance with CLAUDE.md project rules |
 
@@ -264,7 +298,7 @@ Each reviewer returns structured output with severity levels (Critical, High, Me
 
 ### Workflow Enforcement Hooks
 
-Hooks enforce workflow integrity—the AI can't skip steps:
+Hooks enforce workflow integrity. The AI can't skip steps:
 
 | Hook | Event | Purpose |
 |------|-------|---------|
@@ -272,17 +306,9 @@ Hooks enforce workflow integrity—the AI can't skip steps:
 | `post_compact_hook` | Session compaction | Restores /do workflow context after compaction. Reminds to re-read manifest and log. |
 | `pretool_verify_hook` | `/verify` invocation | Ensures manifest and log are in context before spawning verifiers. |
 
-**Stop hook decision matrix:**
-- API error → Allow (system failure)
-- No `/do` active → Allow (not in workflow)
-- `/do` + `/done` → Allow (verified complete)
-- `/do` + `/escalate` → Allow (properly escalated)
-- `/do` only → Block (must verify)
-- `/do` + `/verify` with failures → Block (fix first)
-
 ### Task-Specific Guidance
 
-`/define` loads conditional guidance based on task classification:
+`/define` loads guidance based on task classification:
 
 | Task Type | Guidance | Quality Gates |
 |-----------|----------|---------------|
@@ -293,62 +319,7 @@ Hooks enforce workflow integrity—the AI can't skip steps:
 | **Writing** | `tasks/WRITING.md` | Prose quality, AI tells, vocabulary, anti-patterns, craft fundamentals (base for Blog, Document) |
 | **Document** | `tasks/DOCUMENT.md` + `WRITING.md` | Structure completeness, consistency |
 | **Blog** | `tasks/BLOG.md` + `WRITING.md` | Engagement, SEO |
-| **Research** | `tasks/research/RESEARCH.md` + source files | Source-agnostic research methodology (rigor, evidence, multi-agent). Source-specific guidance in `tasks/research/sources/` (e.g., `SOURCE_WEB.md`). Reference material in `tasks/references/research/` |
-
-## Workflow Diagram
-
-```mermaid
-flowchart TB
-    subgraph define ["/define"]
-        A[Task Request] --> B[Interview]
-        B --> C[Generate Manifest]
-        C --> D[manifest-verifier]
-    end
-
-    D --> E[manifest.md]
-
-    subgraph do ["/do"]
-        E --> F[Execute Deliverable]
-        F --> G["/verify"]
-        G --> H{Result?}
-        H -->|All pass| I["/done"]
-        H -->|Failures| J[Fix Loop]
-        J --> G
-        H -->|Blocker| K["/escalate"]
-    end
-```
-
-**Hooks enforce:** Can't stop without `/verify` passing or `/escalate`. Can't `/escalate` without running `/verify` first.
-
-## The Benefits
-
-**Your first pass lands closer to done.** Verification catches issues before you see them. The fix loop handles cleanup automatically.
-
-**You can trust the output.** Not because the AI is infallible, but because every acceptance criterion has been verified. You know what was checked.
-
-**You can parallelize.** While one manifest is executing, you can define the next. The define phase is where your judgment matters. The do-verify-fix phase runs on its own.
-
-**You stay connected to your codebase.** The define phase forces involvement—you can't write acceptance criteria without understanding what you want. This combats the atrophy problem where heavy AI assistance means losing touch with your own code.
-
-**Your process compounds.** When a PR passes verification but reviewers still find issues, encode those as new review agents or CLAUDE.md guidelines. Next time, the system catches what you missed.
-
-**It's dead simple to use.** Run `/define`, answer the interview questions, run `/do`, go grab coffee. No prompt engineering. No babysitting.
-
-**Resist the urge to intervene.** It won't nail everything on the first pass—that's expected. The verify-fix loop exists precisely for this. You invested in define; now let the loop run. It rarely gets there in a straight line, but it gets there.
-
-## Who This Is For
-
-Experienced developers frustrated by hype-driven AI coding tools. If you're tired of chasing the latest "game-changing" prompt that produces code you spend hours debugging, this offers a grounded alternative.
-
-**Our approach:**
-- Workflows designed around how LLMs actually work, not how we wish they worked
-- Quality over speed—invest upfront, ship with confidence
-- Simple to use, sophisticated under the hood
-
-**Not for:**
-- Cost optimizers (workflows may use more tokens for better results)
-- Speed-first developers (we prioritize quality over raw speed)
-- Hype chasers (we're grounded and realistic)
+| **Research** | `tasks/research/RESEARCH.md` + source files | Source-agnostic research methodology. Source-specific guidance in `tasks/research/sources/` |
 
 ## Development
 
@@ -378,6 +349,6 @@ MIT
 
 ---
 
-*Built by developers who understand LLM limitations—and design around them.*
+*Built by developers who understand LLM limitations, and design around them.*
 
 Follow along: [@aviramkofman](https://x.com/aviramkofman)
