@@ -443,7 +443,6 @@ When `$ARGUMENTS` contains a `COLLAB_CONTEXT:` block, the interview runs through
 COLLAB_CONTEXT:
   channel_id: <slack-channel-id>
   owner_handle: <@owner>
-  poll_interval: <seconds, default 60>
   threads:
     stakeholders:
       <@handle>: <thread-ts>
@@ -456,7 +455,10 @@ COLLAB_CONTEXT:
 
 ### Overrides When Active
 
-**Questions → Slack MCP tools.** Do NOT use the AskUserQuestion tool. Instead, use Slack MCP tools to post questions to the appropriate stakeholder thread as a thread reply. Present options as a numbered list in the message. Tag the stakeholder with their @handle. To collect the response, poll the thread at `poll_interval` seconds, reading replies. Treat the most recent reply from the tagged stakeholder as the answer.
+**Questions → Slack + exit.** Do NOT use the AskUserQuestion tool. Instead:
+1. Post the question to the appropriate stakeholder thread via Slack MCP tools. Present options as a numbered list. Tag the stakeholder with their @handle.
+2. **Immediately exit** with structured JSON output: `{"status": "waiting_for_response", "thread_ts": "<thread-ts>", "target_handle": "<@handle>", "question_summary": "<brief summary>"}`. Do NOT poll or wait for a response yourself.
+3. The orchestrator will poll Slack and resume your session with the stakeholder's response. When you receive a follow-up message containing the response, continue the interview from where you left off.
 
 **Question routing.** Route each question to the stakeholder(s) whose role/expertise is most relevant:
 - Questions for a **single stakeholder**: post to their dedicated thread from `threads.stakeholders` (keyed by their @handle).
@@ -467,7 +469,7 @@ COLLAB_CONTEXT:
 
 **Discovery log and manifest → local only.** Write to `/tmp/define-discovery-{timestamp}.md` and `/tmp/manifest-{timestamp}.md` as normal. Do NOT post logs or artifacts to Slack. Slack is only for stakeholder Q&A.
 
-**Polling for responses.** After posting a question, wait `poll_interval` seconds, then read the thread replies. Repeat until a response from the targeted stakeholder (or the owner) appears. There is no timeout — wait indefinitely.
+**Completion.** When the interview is complete and the manifest is written, exit with: `{"status": "complete", "manifest_path": "<path>", "discovery_log_path": "<path>"}`.
 
 **Everything else unchanged.** The entire /define methodology (Domain Grounding, Outside View, Pre-Mortem, Backcasting, Adversarial Self-Review, Convergence criteria, Verification Loop, all Principles and other Constraints) applies exactly as written. Only the interaction channel changes.
 

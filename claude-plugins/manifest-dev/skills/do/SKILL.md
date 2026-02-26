@@ -61,7 +61,6 @@ When `$ARGUMENTS` contains a `COLLAB_CONTEXT:` block, escalation runs through Sl
 COLLAB_CONTEXT:
   channel_id: <slack-channel-id>
   owner_handle: <@owner>
-  poll_interval: <seconds, default 60>
   threads:
     stakeholders:
       <@handle>: <thread-ts>
@@ -76,7 +75,12 @@ COLLAB_CONTEXT:
 
 **Execution log and verification results → local only.** Write to `/tmp/do-log-{timestamp}.md` as normal. Do NOT post logs or verification results to Slack. Slack is only for escalations.
 
-**Escalation → Slack MCP tools.** Do NOT use AskUserQuestion for escalations. When escalating (ACs can't be met, or need owner decision), use Slack MCP tools to post the escalation to the owner's stakeholder thread (identified by `owner_handle` in `threads.stakeholders` map) as a thread reply. Tag the owner with their @handle. Include: what's blocked, what was tried, options for resolution. Poll at `poll_interval` for the owner's response. Continue after they respond.
+**Escalation → Slack + exit.** Do NOT use AskUserQuestion for escalations. When escalating (ACs can't be met, or need owner decision):
+1. Post the escalation to the owner's stakeholder thread (identified by `owner_handle` in `threads.stakeholders` map) as a thread reply. Tag the owner with their @handle. Include: what's blocked, what was tried, options for resolution.
+2. **Immediately exit** with structured JSON output: `{"status": "escalation_pending", "thread_ts": "<thread-ts>", "escalation_summary": "<brief summary>"}`. Do NOT poll or wait for a response yourself.
+3. The orchestrator will poll Slack and resume your session with the owner's response. When you receive a follow-up message containing the response, continue execution from where you left off.
+
+**Completion.** When execution finishes (all deliverables done, /verify passed), exit with: `{"status": "complete", "do_log_path": "<path>"}`.
 
 **Todos remain local.** The Todos mechanism (create from manifest, update status after logging) continues to work locally as written. Todos are working memory, not stakeholder-visible artifacts.
 

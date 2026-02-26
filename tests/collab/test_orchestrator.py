@@ -1,8 +1,8 @@
 """Unit tests for the slack-collab orchestrator's deterministic logic.
 
 Tests cover state management, phase transitions, error handling,
-and COLLAB_CONTEXT construction. No Slack or Claude CLI needed —
-all subprocess calls are mocked.
+COLLAB_CONTEXT construction, and session-resume patterns. No Slack or
+Claude CLI needed — all subprocess calls are mocked.
 """
 
 import importlib.util
@@ -46,7 +46,6 @@ def sample_state():
         "channel_id": "C12345",
         "channel_name": "collab-rate-limit-20260226",
         "owner_handle": "@alice",
-        "poll_interval": 60,
         "stakeholders": [
             {"handle": "@alice", "name": "Alice", "role": "backend"},
             {"handle": "@bob", "name": "Bob", "role": "frontend"},
@@ -64,6 +63,8 @@ def sample_state():
         "discovery_log_path": None,
         "pr_url": None,
         "has_qa": True,
+        "define_session_id": None,
+        "execute_session_id": None,
     }
 
 
@@ -95,9 +96,14 @@ class TestNewState:
         assert state["manifest_path"] is None
         assert state["pr_url"] is None
 
-    def test_default_poll_interval(self):
+    def test_no_poll_interval_in_state(self):
         state = orch.new_state("task", "run1")
-        assert state["poll_interval"] == orch.DEFAULT_POLL_INTERVAL
+        assert "poll_interval" not in state
+
+    def test_session_ids_initialized_to_none(self):
+        state = orch.new_state("task", "run1")
+        assert state["define_session_id"] is None
+        assert state["execute_session_id"] is None
 
 
 class TestSaveAndLoadState:
@@ -142,6 +148,15 @@ class TestSaveAndLoadState:
         assert loaded["phase"] == "define"
         assert loaded["manifest_path"] == "/tmp/manifest-123.md"
         assert loaded["channel_id"] == "C12345"
+
+    def test_session_ids_persisted(self, sample_state, tmp_state_dir):
+        sample_state["define_session_id"] = "abc123"
+        sample_state["execute_session_id"] = "def456"
+        orch.save_state(sample_state)
+        path = tmp_state_dir / f"collab-state-{sample_state['run_id']}.json"
+        loaded = orch.load_state(path)
+        assert loaded["define_session_id"] == "abc123"
+        assert loaded["execute_session_id"] == "def456"
 
 
 # ---------------------------------------------------------------------------
@@ -341,6 +356,45 @@ class TestInvokeClaude:
         result = orch.invoke_claude("test")
         assert result["manifest_path"] == "/tmp/manifest.md"
 
+    @patch("slack_collab_orchestrator.subprocess.run")
+    def test_session_id_passed_in_command(self, mock_run):
+        """Verify --session-id is included when session_id is provided."""
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout=json.dumps({"type": "result", "result": "{}"}),
+            stderr="",
+        )
+        orch.invoke_claude("test", session_id="sess123")
+        cmd = mock_run.call_args[0][0]
+        assert "--session-id" in cmd
+        assert "sess123" in cmd
+
+    @patch("slack_collab_orchestrator.subprocess.run")
+    def test_resume_session_id_passed_in_command(self, mock_run):
+        """Verify --resume is included when resume_session_id is provided."""
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout=json.dumps({"type": "result", "result": "{}"}),
+            stderr="",
+        )
+        orch.invoke_claude("test", resume_session_id="sess456")
+        cmd = mock_run.call_args[0][0]
+        assert "--resume" in cmd
+        assert "sess456" in cmd
+
+    @patch("slack_collab_orchestrator.subprocess.run")
+    def test_no_session_flags_by_default(self, mock_run):
+        """Verify no session flags when neither is provided."""
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout=json.dumps({"type": "result", "result": "{}"}),
+            stderr="",
+        )
+        orch.invoke_claude("test")
+        cmd = mock_run.call_args[0][0]
+        assert "--session-id" not in cmd
+        assert "--resume" not in cmd
+
 
 # ---------------------------------------------------------------------------
 # COLLAB_CONTEXT construction tests
@@ -353,7 +407,10 @@ class TestBuildCollabContext:
         assert ctx.startswith("COLLAB_CONTEXT:")
         assert "channel_id: C12345" in ctx
         assert "owner_handle: @alice" in ctx
-        assert "poll_interval: 60" in ctx
+
+    def test_no_poll_interval_in_context(self, sample_state):
+        ctx = orch.build_collab_context(sample_state)
+        assert "poll_interval" not in ctx
 
     def test_context_has_stakeholder_threads(self, sample_state):
         ctx = orch.build_collab_context(sample_state)
@@ -379,12 +436,11 @@ class TestBuildCollabContext:
         ctx = orch.build_collab_context(sample_state)
         lines = ctx.split("\n")
         assert lines[0] == "COLLAB_CONTEXT:"
-        # Verify indentation
+        # Verify indentation — no poll_interval line
         assert lines[1].startswith("  channel_id:")
         assert lines[2].startswith("  owner_handle:")
-        assert lines[3].startswith("  poll_interval:")
-        assert lines[4] == "  threads:"
-        assert lines[5] == "    stakeholders:"
+        assert lines[3] == "  threads:"
+        assert lines[4] == "    stakeholders:"
 
     def test_context_all_fields_populated(self, sample_state):
         """No empty/None values in the context output."""
@@ -437,3 +493,48 @@ class TestExtractPrUrl:
 
     def test_returns_none_for_invalid_json(self):
         assert orch._extract_pr_url("{invalid json") is None
+
+
+# ---------------------------------------------------------------------------
+# Schema tests
+# ---------------------------------------------------------------------------
+
+
+class TestSchemas:
+    def test_define_output_schema_has_status_field(self):
+        schema = json.loads(orch.DEFINE_OUTPUT_SCHEMA)
+        assert "status" in schema["properties"]
+        assert schema["properties"]["status"]["enum"] == [
+            "waiting_for_response",
+            "complete",
+        ]
+
+    def test_do_output_schema_has_status_field(self):
+        schema = json.loads(orch.DO_OUTPUT_SCHEMA)
+        assert "status" in schema["properties"]
+        assert schema["properties"]["status"]["enum"] == [
+            "escalation_pending",
+            "complete",
+        ]
+
+    def test_define_output_schema_has_waiting_fields(self):
+        schema = json.loads(orch.DEFINE_OUTPUT_SCHEMA)
+        props = schema["properties"]
+        assert "thread_ts" in props
+        assert "target_handle" in props
+        assert "question_summary" in props
+
+    def test_do_output_schema_has_escalation_fields(self):
+        schema = json.loads(orch.DO_OUTPUT_SCHEMA)
+        props = schema["properties"]
+        assert "thread_ts" in props
+        assert "escalation_summary" in props
+
+    def test_thread_response_schema_exists(self):
+        schema = json.loads(orch.THREAD_RESPONSE_SCHEMA)
+        assert "has_response" in schema["properties"]
+        assert "response_text" in schema["properties"]
+
+    def test_preflight_schema_no_poll_interval(self):
+        schema = json.loads(orch.PREFLIGHT_SCHEMA)
+        assert "poll_interval" not in schema["properties"]

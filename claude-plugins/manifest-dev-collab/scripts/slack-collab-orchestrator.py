@@ -5,12 +5,16 @@ Deterministic shell that controls phase transitions, invokes Claude Code CLI
 for intelligent work, persists state to JSON for crash recovery, and polls
 Slack for approvals via Claude CLI calls.
 
+Claude Code never polls Slack itself. When /define or /do needs a Slack
+response, it posts the question/escalation and returns JSON. This script
+polls Slack and resumes the Claude session with ``--resume <session-id>``.
+
 Usage:
     python3 slack-collab-orchestrator.py "task description"
     python3 slack-collab-orchestrator.py --resume /tmp/collab-state-xxx.json
 
 Assumptions:
-    - `claude` CLI is on PATH and functional
+    - ``claude`` CLI is on PATH and functional
     - Slack MCP server is pre-configured in user's Claude Code settings
     - Python 3.8+ (uses walrus operator, f-strings, pathlib)
     - /tmp is writable and persists for workflow duration
@@ -18,12 +22,15 @@ Assumptions:
     - Slack MCP provides: create_channel, invite_to_channel, post_message,
       read_messages/read_thread_replies
     - Slack message character limit ~4000 chars
+    - ``--session-id <uuid>`` sets a Claude CLI session UUID
+    - ``--resume <session-id>`` continues a session with full context
 """
 
 import argparse
 import contextlib
 import json
 import logging
+import re
 import subprocess
 import sys
 import textwrap
@@ -36,11 +43,11 @@ from typing import Any
 # Constants
 # ---------------------------------------------------------------------------
 
-# Subprocess timeouts per phase (seconds)
+# Subprocess timeouts (seconds)
 TIMEOUT_PREFLIGHT = 300  # 5 min
-TIMEOUT_DEFINE = 14400  # 4 hr
-TIMEOUT_DO = 7200  # 2 hr
-TIMEOUT_POLL = 120  # 2 min
+TIMEOUT_DEFINE_TURN = 1800  # 30 min per define turn (interview step)
+TIMEOUT_DO_TURN = 3600  # 1 hr per do turn (execution step)
+TIMEOUT_POLL = 120  # 2 min (short Claude CLI calls: read Slack, check PR)
 TIMEOUT_PR = 1800  # 30 min
 TIMEOUT_POST = 120  # 2 min
 
@@ -55,7 +62,7 @@ PHASES = [
     "done",
 ]
 
-DEFAULT_POLL_INTERVAL = 60  # seconds
+DEFAULT_POLL_INTERVAL = 60  # seconds between Slack polls
 
 MAX_PR_FIX_ATTEMPTS = 3
 
@@ -80,7 +87,6 @@ PREFLIGHT_SCHEMA = json.dumps(
             "channel_id": {"type": "string"},
             "channel_name": {"type": "string"},
             "owner_handle": {"type": "string"},
-            "poll_interval": {"type": "number"},
             "stakeholders": {
                 "type": "array",
                 "items": {
@@ -104,14 +110,39 @@ PREFLIGHT_SCHEMA = json.dumps(
     }
 )
 
+# Define output: union of "waiting_for_response" and "complete"
 DEFINE_OUTPUT_SCHEMA = json.dumps(
     {
         "type": "object",
         "properties": {
+            "status": {
+                "type": "string",
+                "enum": ["waiting_for_response", "complete"],
+            },
+            "thread_ts": {"type": "string"},
+            "target_handle": {"type": "string"},
+            "question_summary": {"type": "string"},
             "manifest_path": {"type": "string"},
             "discovery_log_path": {"type": "string"},
         },
-        "required": ["manifest_path"],
+        "required": ["status"],
+    }
+)
+
+# Do/Execute output: union of "escalation_pending" and "complete"
+DO_OUTPUT_SCHEMA = json.dumps(
+    {
+        "type": "object",
+        "properties": {
+            "status": {
+                "type": "string",
+                "enum": ["escalation_pending", "complete"],
+            },
+            "thread_ts": {"type": "string"},
+            "escalation_summary": {"type": "string"},
+            "do_log_path": {"type": "string"},
+        },
+        "required": ["status"],
     }
 )
 
@@ -123,6 +154,19 @@ POLL_SCHEMA = json.dumps(
             "feedback": {"type": ["string", "null"]},
         },
         "required": ["approved"],
+    }
+)
+
+# Schema for reading Slack thread responses
+THREAD_RESPONSE_SCHEMA = json.dumps(
+    {
+        "type": "object",
+        "properties": {
+            "has_response": {"type": "boolean"},
+            "response_text": {"type": ["string", "null"]},
+            "responder_handle": {"type": ["string", "null"]},
+        },
+        "required": ["has_response"],
     }
 )
 
@@ -164,13 +208,14 @@ def new_state(task: str, run_id: str) -> dict[str, Any]:
         "channel_id": None,
         "channel_name": None,
         "owner_handle": None,
-        "poll_interval": DEFAULT_POLL_INTERVAL,
         "stakeholders": [],
         "threads": {"stakeholders": {}},
         "manifest_path": None,
         "discovery_log_path": None,
         "pr_url": None,
         "has_qa": False,
+        "define_session_id": None,
+        "execute_session_id": None,
     }
 
 
@@ -213,11 +258,15 @@ def invoke_claude(
     *,
     json_schema: str | None = None,
     timeout: int = TIMEOUT_POLL,
+    session_id: str | None = None,
+    resume_session_id: str | None = None,
 ) -> dict[str, Any]:
     """Call Claude Code CLI and return parsed JSON output.
 
     Uses: -p --dangerously-skip-permissions --output-format json
     Optionally: --json-schema for validated structured output.
+    Optionally: --session-id to set session UUID (first call).
+    Optionally: --resume to continue an existing session.
 
     Returns the parsed JSON dict from stdout.
     Exits on non-zero return code, timeout, or invalid JSON.
@@ -232,6 +281,10 @@ def invoke_claude(
     ]
     if json_schema:
         cmd.extend(["--json-schema", json_schema])
+    if session_id:
+        cmd.extend(["--session-id", session_id])
+    if resume_session_id:
+        cmd.extend(["--resume", resume_session_id])
 
     log.debug("Invoking Claude CLI (timeout=%ds):\n%s", timeout, prompt[:500])
 
@@ -295,7 +348,6 @@ def build_collab_context(state: dict[str, Any]) -> str:
       COLLAB_CONTEXT:
         channel_id: <id>
         owner_handle: <@owner>
-        poll_interval: <seconds>
         threads:
           stakeholders:
             <@handle>: <thread-ts>
@@ -303,12 +355,13 @@ def build_collab_context(state: dict[str, Any]) -> str:
           - handle: <@handle>
             name: <name>
             role: <role>
+
+    No poll_interval — Python owns all polling.
     """
     lines = [
         "COLLAB_CONTEXT:",
         f"  channel_id: {state['channel_id']}",
         f"  owner_handle: {state['owner_handle']}",
-        f"  poll_interval: {state['poll_interval']}",
         "  threads:",
         "    stakeholders:",
     ]
@@ -320,6 +373,57 @@ def build_collab_context(state: dict[str, Any]) -> str:
         lines.append(f"      name: {s['name']}")
         lines.append(f"      role: {s['role']}")
     return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Slack thread polling
+# ---------------------------------------------------------------------------
+
+
+def poll_slack_thread(
+    channel_id: str,
+    thread_ts: str,
+    target_handle: str,
+    owner_handle: str,
+) -> str:
+    """Poll a Slack thread until a response from target or owner appears.
+
+    Uses short Claude CLI calls to read Slack. Python drives the sleep loop.
+    Returns the response text.
+    """
+    while True:
+        time.sleep(DEFAULT_POLL_INTERVAL)
+
+        check_prompt = textwrap.dedent(f"""\
+            Read the replies in Slack channel {channel_id}, thread {thread_ts}.
+            Check if {target_handle} (or the owner {owner_handle}) has posted
+            a reply after the most recent question.
+
+            - If a response exists: set has_response=true and include the
+              response_text and responder_handle
+            - If no response yet: set has_response=false
+            {SECURITY_INSTRUCTIONS}""")
+
+        data = invoke_claude(
+            check_prompt, json_schema=THREAD_RESPONSE_SCHEMA, timeout=TIMEOUT_POLL
+        )
+
+        if data.get("has_response"):
+            response_text = data.get("response_text", "")
+            responder = data.get("responder_handle", target_handle)
+            log.info(
+                "Response from %s in thread %s: %s",
+                responder,
+                thread_ts,
+                response_text[:200],
+            )
+            return response_text
+
+        log.debug(
+            "No response yet in thread %s, polling again in %ds...",
+            thread_ts,
+            DEFAULT_POLL_INTERVAL,
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -389,7 +493,6 @@ def phase_preflight(state: dict[str, Any]) -> None:
     state["channel_id"] = data["channel_id"]
     state["channel_name"] = data.get("channel_name", "")
     state["owner_handle"] = data.get("owner_handle", "")
-    state["poll_interval"] = data.get("poll_interval", DEFAULT_POLL_INTERVAL)
     state["stakeholders"] = data["stakeholders"]
     state["threads"] = data.get("threads", {"stakeholders": {}})
     state["has_qa"] = any(s.get("is_qa", False) for s in data["stakeholders"])
@@ -399,33 +502,92 @@ def phase_preflight(state: dict[str, Any]) -> None:
 
 
 def phase_define(state: dict[str, Any]) -> None:
-    """Phase 1: Run /define with COLLAB_CONTEXT.
+    """Phase 1: Run /define with COLLAB_CONTEXT via session-resume loop.
 
-    Invokes Claude CLI with /define + task + COLLAB_CONTEXT block.
-    /define runs its full interview via Slack MCP tools.
+    Generates a session UUID. First call launches /define with --session-id.
+    When /define returns "waiting_for_response", Python polls Slack for the
+    stakeholder's answer, then resumes the session with --resume <session-id>.
+    Loops until /define returns "complete" with a manifest_path.
     """
     log.info("=== Phase 1: Define ===")
     collab_context = build_collab_context(state)
     task = state["task"]
 
-    prompt = f"/define {task}\n\n{collab_context}"
-
-    data = invoke_claude(
-        prompt, json_schema=DEFINE_OUTPUT_SCHEMA, timeout=TIMEOUT_DEFINE
-    )
-
-    manifest_path = data.get("manifest_path", "")
-    if not manifest_path or not Path(manifest_path).exists():
-        log.error(
-            "Define phase did not produce a valid manifest. Got: %s", manifest_path
-        )
-        raise SystemExit(1)
-
-    state["manifest_path"] = manifest_path
-    state["discovery_log_path"] = data.get("discovery_log_path", "")
-    state["phase"] = "manifest_review"
+    # Generate session ID for conversation continuity
+    session_id = state.get("define_session_id") or uuid.uuid4().hex
+    state["define_session_id"] = session_id
     save_state(state)
-    log.info("Define complete. Manifest: %s", manifest_path)
+
+    # First invocation — launch /define
+    prompt = f"/define {task}\n\n{collab_context}"
+    is_first_call = True
+
+    while True:
+        if is_first_call:
+            data = invoke_claude(
+                prompt,
+                json_schema=DEFINE_OUTPUT_SCHEMA,
+                timeout=TIMEOUT_DEFINE_TURN,
+                session_id=session_id,
+            )
+            is_first_call = False
+        else:
+            # Resume session with the stakeholder response
+            data = invoke_claude(
+                prompt,
+                json_schema=DEFINE_OUTPUT_SCHEMA,
+                timeout=TIMEOUT_DEFINE_TURN,
+                resume_session_id=session_id,
+            )
+
+        status = data.get("status", "")
+
+        if status == "complete":
+            manifest_path = data.get("manifest_path", "")
+            if not manifest_path or not Path(manifest_path).exists():
+                log.error(
+                    "Define phase returned 'complete' but no valid manifest. Got: %s",
+                    manifest_path,
+                )
+                raise SystemExit(1)
+
+            state["manifest_path"] = manifest_path
+            state["discovery_log_path"] = data.get("discovery_log_path", "")
+            state["phase"] = "manifest_review"
+            save_state(state)
+            log.info("Define complete. Manifest: %s", manifest_path)
+            return
+
+        if status == "waiting_for_response":
+            thread_ts = data.get("thread_ts", "")
+            target_handle = data.get("target_handle", "")
+            question_summary = data.get("question_summary", "")
+            log.info(
+                "Define waiting for response from %s (thread %s): %s",
+                target_handle,
+                thread_ts,
+                question_summary[:200],
+            )
+
+            # Python polls Slack for the response
+            response_text = poll_slack_thread(
+                state["channel_id"],
+                thread_ts,
+                target_handle,
+                state["owner_handle"],
+            )
+
+            # Build the resume prompt with the stakeholder's response
+            prompt = (
+                f"Stakeholder {target_handle} responded:\n\n"
+                f"{response_text}\n\n"
+                f"Continue the /define interview from where you left off."
+            )
+            continue
+
+        # Unexpected status
+        log.error("Define phase returned unexpected status: %s", status)
+        raise SystemExit(1)
 
 
 def phase_manifest_review(state: dict[str, Any]) -> None:
@@ -437,7 +599,6 @@ def phase_manifest_review(state: dict[str, Any]) -> None:
     log.info("=== Phase 2: Manifest Review ===")
     manifest_path = state["manifest_path"]
     channel_id = state["channel_id"]
-    poll_interval = state["poll_interval"]
 
     # Read manifest content for posting
     try:
@@ -467,7 +628,7 @@ def phase_manifest_review(state: dict[str, Any]) -> None:
 
     # Poll loop for approval
     while True:
-        time.sleep(poll_interval)
+        time.sleep(DEFAULT_POLL_INTERVAL)
 
         check_prompt = textwrap.dedent(f"""\
             Read the latest messages in Slack channel {channel_id}.
@@ -495,6 +656,7 @@ def phase_manifest_review(state: dict[str, Any]) -> None:
             # Loop back to define with feedback — re-invoke define phase
             # passing previous manifest as existing manifest context
             state["phase"] = "define"
+            state["define_session_id"] = None  # Fresh session for re-define
             state["task"] = (
                 f"{state['task']}\n\n"
                 f"Existing manifest (needs revision): {manifest_path}\n"
@@ -506,52 +668,84 @@ def phase_manifest_review(state: dict[str, Any]) -> None:
             phase_manifest_review(state)
             return
 
-        log.debug("No response yet, polling again in %ds...", poll_interval)
+        log.debug("No response yet, polling again in %ds...", DEFAULT_POLL_INTERVAL)
 
 
 def phase_execute(state: dict[str, Any]) -> None:
-    """Phase 3: Run /do with COLLAB_CONTEXT.
+    """Phase 3: Run /do with COLLAB_CONTEXT via session-resume loop.
 
-    Invokes Claude CLI with /do + manifest path + COLLAB_CONTEXT block.
-    /do executes the manifest with escalations via Slack MCP tools.
+    Generates a session UUID. First call launches /do with --session-id.
+    When /do returns "escalation_pending", Python polls Slack for the
+    owner's response, then resumes the session with --resume <session-id>.
+    Loops until /do returns "complete".
     """
     log.info("=== Phase 3: Execute ===")
     collab_context = build_collab_context(state)
     manifest_path = state["manifest_path"]
 
-    prompt = f"/do {manifest_path}\n\n{collab_context}"
-
-    # /do does not produce structured JSON output — it executes the manifest
-    # We use a relaxed invocation (no --json-schema) and just check exit code
-    cmd = [
-        "claude",
-        "-p",
-        prompt,
-        "--dangerously-skip-permissions",
-    ]
-    log.debug("Invoking Claude CLI for /do (timeout=%ds)", TIMEOUT_DO)
-
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=TIMEOUT_DO)
-    except subprocess.TimeoutExpired as exc:
-        log.error("Execute phase timed out after %ds", TIMEOUT_DO)
-        state["phase"] = "execute"
-        save_state(state)
-        raise SystemExit(1) from exc
-
-    if result.returncode != 0:
-        log.error(
-            "Execute phase failed (exit %d)\nstderr: %s",
-            result.returncode,
-            result.stderr[:2000],
-        )
-        state["phase"] = "execute"
-        save_state(state)
-        raise SystemExit(1)
-
-    state["phase"] = "pr"
+    # Generate session ID for conversation continuity
+    session_id = state.get("execute_session_id") or uuid.uuid4().hex
+    state["execute_session_id"] = session_id
     save_state(state)
-    log.info("Execution complete.")
+
+    # First invocation — launch /do
+    prompt = f"/do {manifest_path}\n\n{collab_context}"
+    is_first_call = True
+
+    while True:
+        if is_first_call:
+            data = invoke_claude(
+                prompt,
+                json_schema=DO_OUTPUT_SCHEMA,
+                timeout=TIMEOUT_DO_TURN,
+                session_id=session_id,
+            )
+            is_first_call = False
+        else:
+            data = invoke_claude(
+                prompt,
+                json_schema=DO_OUTPUT_SCHEMA,
+                timeout=TIMEOUT_DO_TURN,
+                resume_session_id=session_id,
+            )
+
+        status = data.get("status", "")
+
+        if status == "complete":
+            state["do_log_path"] = data.get("do_log_path", "")
+            state["phase"] = "pr"
+            save_state(state)
+            log.info("Execution complete.")
+            return
+
+        if status == "escalation_pending":
+            thread_ts = data.get("thread_ts", "")
+            escalation_summary = data.get("escalation_summary", "")
+            log.info(
+                "Escalation pending (thread %s): %s",
+                thread_ts,
+                escalation_summary[:200],
+            )
+
+            # Python polls Slack for the owner's response
+            response_text = poll_slack_thread(
+                state["channel_id"],
+                thread_ts,
+                state["owner_handle"],
+                state["owner_handle"],
+            )
+
+            # Build the resume prompt with the owner's response
+            prompt = (
+                f"Owner {state['owner_handle']} responded to escalation:\n\n"
+                f"{response_text}\n\n"
+                f"Continue execution from where you left off."
+            )
+            continue
+
+        # Unexpected status
+        log.error("Execute phase returned unexpected status: %s", status)
+        raise SystemExit(1)
 
 
 def phase_pr(state: dict[str, Any]) -> None:
@@ -563,7 +757,6 @@ def phase_pr(state: dict[str, Any]) -> None:
     log.info("=== Phase 4: PR ===")
     channel_id = state["channel_id"]
     manifest_path = state["manifest_path"]
-    poll_interval = state["poll_interval"]
     owner_handle = state["owner_handle"]
 
     # Create PR
@@ -614,7 +807,7 @@ def phase_pr(state: dict[str, Any]) -> None:
     # Poll for PR approval
     fix_attempts = 0
     while True:
-        time.sleep(poll_interval)
+        time.sleep(DEFAULT_POLL_INTERVAL)
 
         check_prompt = textwrap.dedent(f"""\
             Check the status of the pull request. Use `gh pr view` to see if it
@@ -664,7 +857,7 @@ def phase_pr(state: dict[str, Any]) -> None:
                     {SECURITY_INSTRUCTIONS}""")
                 invoke_claude(fix_prompt, timeout=TIMEOUT_PR)
 
-        log.debug("PR not yet approved, polling again in %ds...", poll_interval)
+        log.debug("PR not yet approved, polling again in %ds...", DEFAULT_POLL_INTERVAL)
 
 
 def phase_qa(state: dict[str, Any]) -> None:
@@ -672,7 +865,6 @@ def phase_qa(state: dict[str, Any]) -> None:
     log.info("=== Phase 5: QA ===")
     channel_id = state["channel_id"]
     pr_url = state.get("pr_url", "")
-    poll_interval = state["poll_interval"]
     owner_handle = state["owner_handle"]
 
     qa_handles = " ".join(
@@ -695,7 +887,7 @@ def phase_qa(state: dict[str, Any]) -> None:
     # Poll for QA sign-off
     fix_attempts = 0
     while True:
-        time.sleep(poll_interval)
+        time.sleep(DEFAULT_POLL_INTERVAL)
 
         check_prompt = textwrap.dedent(f"""\
             Read the latest messages in Slack channel {channel_id}.
@@ -740,7 +932,9 @@ def phase_qa(state: dict[str, Any]) -> None:
                     {SECURITY_INSTRUCTIONS}""")
                 invoke_claude(fix_prompt, timeout=TIMEOUT_PR)
 
-        log.debug("QA not yet signed off, polling again in %ds...", poll_interval)
+        log.debug(
+            "QA not yet signed off, polling again in %ds...", DEFAULT_POLL_INTERVAL
+        )
 
 
 def phase_done(state: dict[str, Any]) -> None:
@@ -773,8 +967,6 @@ def phase_done(state: dict[str, Any]) -> None:
 
 def _extract_pr_url(output: str) -> str | None:
     """Best-effort extraction of a PR URL from Claude CLI output."""
-    import re
-
     # Try JSON parse first
     try:
         data = json.loads(output.strip())
