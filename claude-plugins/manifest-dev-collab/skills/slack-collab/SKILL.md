@@ -95,41 +95,35 @@ pending_items: none
 
 ## Phase 2: Define
 
-**Construct COLLAB_CONTEXT.** Build the context block from the thread registry:
+**Update State thread.** Post a reply: `current_phase: DEFINE`
+
+**Invoke /define.** Build a COLLAB_CONTEXT scoped to /define's needs:
 
 ```
 COLLAB_CONTEXT:
   channel_id: {channel_id}
-  channel_name: {channel_name}
-  owner_slack_handle: {owner_handle}
-  state_thread_id: {state_thread_ts}
-  process_log_thread_id: {process_log_thread_ts}
-  manifest_thread_id: {manifest_thread_ts}
-  execution_thread_id: {execution_thread_ts}
-  verification_thread_id: {verification_thread_ts}
-  pr_review_thread_id: {pr_review_thread_ts}
+  owner_handle: {owner_handle}
   poll_interval: {poll_interval}
-  stakeholder_threads:
-    {handle}: {thread_ts}
-    {handle1+handle2}: {thread_ts}
+  threads:
+    process_log: {process_log_thread_ts}
+    manifest: {manifest_thread_ts}
+    stakeholders:
+      {handle}: {thread_ts}
+      {handle1+handle2}: {thread_ts}
   stakeholders:
     - handle: {handle}
       name: {name}
       role: {role}
-      is_qa: {true/false}
 ```
 
-**Update State thread.** Post a reply: `current_phase: DEFINE`
+Invoke the manifest-dev:define skill with: "{task_description}\n\n{COLLAB_CONTEXT block}"
 
-**Invoke /define.** Invoke the manifest-dev:define skill with: "{task_description}\n\n{COLLAB_CONTEXT block}"
+/define will run its full methodology, ask questions via Slack MCP tools in stakeholder threads, and dual-write all outputs (discovery log to /tmp + process_log thread, manifest to /tmp + manifest thread).
 
-/define will run its full methodology (domain grounding, pre-mortem, backcasting, etc.) but route all questions through Slack threads and log to the Process Log thread.
-
-**Post manifest for review.** After /define completes and writes the manifest to /tmp:
-1. Read the manifest file.
-2. Post to the Manifest thread. Try file upload first. If file upload is not available, post as a code block (properly escape all backticks inside the manifest). If content exceeds ~4000 chars, split across numbered replies: "Manifest (1/N)", "Manifest (2/N)", etc.
-3. Post a message to the main channel: "📄 Manifest ready for review. Please check the Manifest thread and share feedback. {owner_handle} — when ready, reply 'approved' in the Manifest thread to proceed."
-4. Tag all stakeholders.
+**Post manifest for review.** After /define completes:
+1. Verify the manifest was posted to the Manifest thread. If not, read from /tmp and post it (code block; split across numbered replies if >4000 chars).
+2. Post to the main channel: "📄 Manifest ready for review. Please check the Manifest thread and share feedback. {owner_handle} — when ready, reply 'approved' in the Manifest thread to proceed."
+3. Tag all stakeholders.
 
 **Poll for approval.** Poll the Manifest thread at `poll_interval`:
 - If the **owner** replies with approval (e.g., "approved", "lgtm", "looks good"): proceed to Phase 3.
@@ -143,9 +137,27 @@ COLLAB_CONTEXT:
 
 **Update State thread.** Post a reply: `current_phase: EXECUTE`
 
-**Invoke /do.** Invoke the manifest-dev:do skill with: "{manifest_path}\n\n{COLLAB_CONTEXT block}"
+**Invoke /do.** Build a COLLAB_CONTEXT scoped to /do's needs:
 
-/do will execute the manifest, posting progress to the Execution thread and escalations to the main channel.
+```
+COLLAB_CONTEXT:
+  channel_id: {channel_id}
+  owner_handle: {owner_handle}
+  poll_interval: {poll_interval}
+  threads:
+    execution: {execution_thread_ts}
+    verification: {verification_thread_ts}
+    stakeholders:
+      {handle}: {thread_ts}
+  stakeholders:
+    - handle: {handle}
+      name: {name}
+      role: {role}
+```
+
+Invoke the manifest-dev:do skill with: "{manifest_path}\n\n{COLLAB_CONTEXT block}"
+
+/do will execute the manifest, dual-writing progress to /tmp + execution thread and posting escalations to the main channel via Slack MCP tools.
 
 ---
 

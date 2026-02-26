@@ -53,40 +53,34 @@ Externalize progress to survive context loss. The log IS the disaster recovery m
 
 ## Collaboration Mode
 
-When `$ARGUMENTS` contains a `COLLAB_CONTEXT:` block, execution logging and escalation route through Slack instead of local files. If no `COLLAB_CONTEXT:` block is present, ignore this section entirely — all other sections apply as written.
+When `$ARGUMENTS` contains a `COLLAB_CONTEXT:` block, execution logging and escalation run through Slack in addition to local files. If no `COLLAB_CONTEXT:` block is present, ignore this section entirely — all other sections apply as written.
 
-### COLLAB_CONTEXT Format (Consumer)
+### COLLAB_CONTEXT Format
 
 ```
 COLLAB_CONTEXT:
   channel_id: <slack-channel-id>
-  channel_name: <channel-name>
-  owner_slack_handle: <@owner>
-  state_thread_id: <thread-ts>
-  process_log_thread_id: <thread-ts>
-  manifest_thread_id: <thread-ts>
-  execution_thread_id: <thread-ts>
-  verification_thread_id: <thread-ts>
-  pr_review_thread_id: <thread-ts>
+  owner_handle: <@owner>
   poll_interval: <seconds, default 60>
-  stakeholder_threads:
-    <@handle>: <thread-ts>
-    <@handle1+@handle2>: <thread-ts>
+  threads:
+    execution: <thread-ts>
+    verification: <thread-ts>
+    stakeholders:
+      <@handle>: <thread-ts>
   stakeholders:
     - handle: <@handle>
       name: <display-name>
       role: <role/expertise>
-      is_qa: <true/false>
 ```
 
 ### Overrides When Active
 
-**Execution log → dual-write.** Still write to `/tmp/do-log-{timestamp}.md` (needed by /verify, /escalate, and "Refresh before verify"). Additionally, post each AC attempt outcome as a thread reply to `execution_thread_id` — the Slack thread is the stakeholder-visible mirror. Both destinations get the same content.
+**Execution log → dual-write.** Write to `/tmp/do-log-{timestamp}.md` as normal (needed by /verify, /escalate, and "Refresh before verify"). Additionally, post each AC attempt outcome as a thread reply to `threads.execution` — the Slack thread is the stakeholder-visible mirror. Both destinations get the same content.
 
-**Escalation → Slack.** When escalating (ACs can't be met, or need owner decision), post the escalation to the main channel (`channel_id`) as a new message, tagging the owner with `owner_slack_handle`. Include: what's blocked, what was tried, options for resolution. Poll at `poll_interval` for the owner's response. Continue after they respond.
+**Escalation → Slack MCP tools.** Do NOT use AskUserQuestion for escalations. When escalating (ACs can't be met, or need owner decision), use Slack MCP tools to post the escalation to the main channel (`channel_id`) as a new message, tagging the owner with `owner_handle`. Include: what's blocked, what was tried, options for resolution. Poll at `poll_interval` for the owner's response. Continue after they respond.
 
-**Verification results → Slack.** After /verify completes, post results as thread replies to `verification_thread_id`. Include pass/fail status for each criterion.
+**Verification results → dual-write.** After /verify completes, post results as thread replies to `threads.verification`. Include pass/fail status for each criterion.
 
 **Todos remain local.** The Todos mechanism (create from manifest, update status after logging) continues to work locally as written. Todos are working memory, not stakeholder-visible artifacts.
 
-**Everything else unchanged.** All Principles, other Constraints, the Memento Pattern, and the /verify→/done or /escalate requirement apply exactly as written. Only the escalation channel changes; log files are dual-written to both local and Slack.
+**Everything else unchanged.** All Principles, other Constraints, the Memento Pattern, and the /verify→/done or /escalate requirement apply exactly as written. Only the escalation channel changes; all outputs are dual-written to both local files and Slack.

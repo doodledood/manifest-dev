@@ -435,50 +435,45 @@ Before asking for approval, output a scannable summary that enables full manifes
 
 ## Collaboration Mode
 
-When `$ARGUMENTS` contains a `COLLAB_CONTEXT:` block, the entire interview runs through Slack instead of local interaction. If no `COLLAB_CONTEXT:` block is present, ignore this section entirely — all other sections apply as written.
+When `$ARGUMENTS` contains a `COLLAB_CONTEXT:` block, the interview runs through Slack in addition to local files. If no `COLLAB_CONTEXT:` block is present, ignore this section entirely — all other sections apply as written.
 
-### COLLAB_CONTEXT Format (Consumer)
+### COLLAB_CONTEXT Format
 
 ```
 COLLAB_CONTEXT:
   channel_id: <slack-channel-id>
-  channel_name: <channel-name>
-  owner_slack_handle: <@owner>
-  state_thread_id: <thread-ts>
-  process_log_thread_id: <thread-ts>
-  manifest_thread_id: <thread-ts>
-  execution_thread_id: <thread-ts>
-  verification_thread_id: <thread-ts>
-  pr_review_thread_id: <thread-ts>
+  owner_handle: <@owner>
   poll_interval: <seconds, default 60>
-  stakeholder_threads:
-    <@handle>: <thread-ts>
-    <@handle1+@handle2>: <thread-ts>
+  threads:
+    process_log: <thread-ts>
+    manifest: <thread-ts>
+    stakeholders:
+      <@handle>: <thread-ts>
+      <@handle1+@handle2>: <thread-ts>
   stakeholders:
     - handle: <@handle>
       name: <display-name>
       role: <role/expertise>
-      is_qa: <true/false>
 ```
 
 ### Overrides When Active
 
-**AskUserQuestion → Slack threads.** Instead of using the AskUserQuestion tool, post questions to the appropriate stakeholder thread as a thread reply. Present options as a numbered list in the message. Tag the stakeholder with their @handle. To collect the response, poll the thread at `poll_interval` seconds, reading replies. Treat the most recent reply from the tagged stakeholder as the answer.
+**Questions → Slack MCP tools.** Do NOT use the AskUserQuestion tool. Instead, use Slack MCP tools to post questions to the appropriate stakeholder thread as a thread reply. Present options as a numbered list in the message. Tag the stakeholder with their @handle. To collect the response, poll the thread at `poll_interval` seconds, reading replies. Treat the most recent reply from the tagged stakeholder as the answer.
 
 **Question routing.** Route each question to the stakeholder(s) whose role/expertise is most relevant:
-- Questions for a **single stakeholder**: post to their dedicated thread from `stakeholder_threads` (keyed by their @handle).
-- Questions for **multiple stakeholders**: post to the shared combination thread from `stakeholder_threads` (keyed by `@handle1+@handle2`). Tag all relevant stakeholders.
+- Questions for a **single stakeholder**: post to their dedicated thread from `threads.stakeholders` (keyed by their @handle).
+- Questions for **multiple stakeholders**: post to the shared combination thread from `threads.stakeholders` (keyed by `@handle1+@handle2`). Tag all relevant stakeholders.
 - Questions where the right stakeholder is **unclear**: post to the owner's thread and ask them to redirect.
 
-**Owner override.** The owner (identified by `owner_slack_handle`) can reply in any stakeholder's thread to answer on their behalf. If the owner replies, treat their answer as authoritative and proceed. Log that the owner answered in place of the stakeholder.
+**Owner override.** The owner (identified by `owner_handle`) can reply in any stakeholder's thread to answer on their behalf. If the owner replies, treat their answer as authoritative and proceed. Log that the owner answered in place of the stakeholder.
 
-**Discovery log → dual-write.** Still write to `/tmp/define-discovery-{timestamp}.md` (needed by the Verification Loop's manifest-verifier invocation). Additionally, post each discovery log entry as a thread reply to `process_log_thread_id` — the Slack thread is the stakeholder-visible mirror. Both destinations get the same content.
+**Discovery log → dual-write.** Write to `/tmp/define-discovery-{timestamp}.md` as normal (needed by the Verification Loop's manifest-verifier invocation). Additionally, post each discovery log entry as a thread reply to `threads.process_log` — the Slack thread is the stakeholder-visible mirror. Both destinations get the same content.
 
-**Manifest output.** Still write the manifest to `/tmp/manifest-{timestamp}.md` (needed for /verify and downstream /do). The orchestrator (/slack-collab) handles posting it to the Manifest thread in Slack.
+**Manifest → dual-write.** Write the manifest to `/tmp/manifest-{timestamp}.md` as normal (needed for /verify and downstream /do). Additionally, post the completed manifest to `threads.manifest`. If content exceeds ~4000 chars, split across numbered replies.
 
 **Polling for responses.** After posting a question, wait `poll_interval` seconds, then read the thread replies. Repeat until a response from the targeted stakeholder (or the owner) appears. There is no timeout — wait indefinitely.
 
-**Everything else unchanged.** The entire /define methodology (Domain Grounding, Outside View, Pre-Mortem, Backcasting, Adversarial Self-Review, Convergence criteria, Verification Loop, all Principles and other Constraints) applies exactly as written. Only the interaction channel changes; log files are dual-written to both local and Slack.
+**Everything else unchanged.** The entire /define methodology (Domain Grounding, Outside View, Pre-Mortem, Backcasting, Adversarial Self-Review, Convergence criteria, Verification Loop, all Principles and other Constraints) applies exactly as written. Only the interaction channel changes; all outputs are dual-written to both local files and Slack.
 
 ## Complete
 
