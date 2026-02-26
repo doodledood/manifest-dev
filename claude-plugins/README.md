@@ -40,9 +40,9 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 Team collaboration on define/do workflows through Slack.
 
 **Core skill:**
-- `/slack-collab` - Orchestrates stakeholder collaboration through a dedicated Slack channel with structured threads for Q&A, progress, PR review, and QA sign-off.
+- `/slack-collab` - Launches a Python orchestrator that drives collaborative define/do workflows through Slack. Handles stakeholder Q&A, manifest review, PR review, and QA sign-off.
 
-**Prerequisites:** Slack MCP server configured and `manifest-dev` plugin installed.
+**Prerequisites:** Slack MCP server configured, `manifest-dev` plugin installed, Python 3.8+.
 
 ## Contributing
 
