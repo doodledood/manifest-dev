@@ -25,7 +25,7 @@ Run locally before touching Slack.
 
 **Step 4: QA needed?** Ask via AskUserQuestion: "Is a QA phase needed after PR approval?" If yes, identify which stakeholders are QA (or add QA-specific stakeholders).
 
-**Step 5: Owner.** The person running this skill is the owner. Ask for their Slack handle via AskUserQuestion if not already known.
+**Step 5: Owner.** The person running this skill is the owner. Determine their Slack handle automatically — check Slack MCP tools (e.g., auth test, list users), git config, CLAUDE.md, or repo docs. Only ask via AskUserQuestion as a last resort if no handle can be resolved.
 
 **Step 6: Sensitive content warning.** Inform the owner: "Task content will be visible to all invited stakeholders and potentially workspace admins. Proceed?" via AskUserQuestion.
 
