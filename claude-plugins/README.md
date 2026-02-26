@@ -33,7 +33,7 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 
 **Hooks** prevent premature stopping -- can't stop without verification passing or proper escalation.
 
-**Task guidance** with domain-specific quality gates, risks, and scenarios. Reference material in `tasks/references/research/` provides detailed evidence for `/verify` agents.
+**Task guidance** with domain-specific quality gates, risks, and scenarios. Reference material in `tasks/references/research/` provides detailed evidence for `/verify` agents. Collaboration mode instructions in `skills/*/references/COLLABORATION_MODE.md` (progressive disclosure — only loaded when collab is active).
 
 ### manifest-dev-collab
 

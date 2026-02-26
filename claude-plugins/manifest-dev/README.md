@@ -159,7 +159,7 @@ These run in parallel during `/verify`:
 
 ## Collaboration Mode
 
-Both `/define` and `/do` support a collaboration mode activated by passing a `COLLAB_CONTEXT` block in arguments. When active, AskUserQuestion routes through Slack threads and log files route through Slack thread comments. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `COLLAB_CONTEXT` is present, behavior is unchanged.
+Both `/define` and `/do` support a collaboration mode activated by passing a `COLLAB_CONTEXT` block in arguments. Full instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when collab is active). When active, questions and escalations route through Slack via a session-resume pattern: Claude posts to Slack, exits with structured JSON, and the orchestrator resumes the session with the response. Logs and manifests stay local. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `COLLAB_CONTEXT` is present, behavior is unchanged.
 
 ## Hooks
 

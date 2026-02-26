@@ -11,17 +11,11 @@ Launch the Python orchestrator that drives a full define → do → PR → revie
 
 ## What to Do
 
-Run the orchestrator script via the Bash tool with `run_in_background` set to true. The script path is `scripts/slack-collab-orchestrator.py` relative to this plugin's root directory.
+Run the orchestrator script in the background. The script lives at `scripts/slack-collab-orchestrator.py` relative to this plugin's root directory (one level up from `SKILL.md`'s location: `${CLAUDE_PLUGIN_ROOT}/../scripts/`).
 
-**New workflow:**
-```
-Bash(command="python3 ${CLAUDE_PLUGIN_ROOT}/../scripts/slack-collab-orchestrator.py '<task>'", run_in_background=true)
-```
+**New workflow:** Run the script with the task description as the argument. Use `run_in_background` so the user gets control back immediately.
 
-**Resume a crashed workflow:**
-```
-Bash(command="python3 ${CLAUDE_PLUGIN_ROOT}/../scripts/slack-collab-orchestrator.py --resume <state-file-path>", run_in_background=true)
-```
+**Resume a crashed workflow:** If `$ARGUMENTS` starts with `--resume`, run the script with `--resume <state-file-path>` instead of a task description.
 
 After launching, tell the user:
 - The workflow has started and is running in the background.

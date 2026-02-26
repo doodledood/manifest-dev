@@ -1053,9 +1053,17 @@ def main() -> None:
         if not state_file.exists():
             print(f"Error: State file not found: {state_file}", file=sys.stderr)
             sys.exit(1)
-        state = load_state(state_file)
-        log_path = Path(f"/tmp/collab-log-{state['run_id']}.log")
+        # Extract run_id from filename (collab-state-<run_id>.json) and setup
+        # logging BEFORE load_state, so any errors during load are logged to file.
+        stem = state_file.stem  # e.g. "collab-state-abc123"
+        run_id_from_name = (
+            stem.replace("collab-state-", "")
+            if stem.startswith("collab-state-")
+            else stem
+        )
+        log_path = Path(f"/tmp/collab-log-{run_id_from_name}.log")
         setup_logging(log_path)
+        state = load_state(state_file)
         log.info(
             "Resuming from phase '%s' (run_id=%s)", state["phase"], state["run_id"]
         )

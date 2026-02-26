@@ -28,6 +28,7 @@ Read before building plugins:
 
 ## Repository Structure
 
+- `.manifest/` - Final manifests from `/define` sessions (committed to repo). Named `{descriptive-kebab-name}-{YYYY-MM-DD}.md`. Discovery logs and execution logs stay in `/tmp/` (working files, not committed).
 - `.claude-plugin/marketplace.json` - Registry of all plugins
 - `claude-plugins/` - Individual plugins, each with `.claude-plugin/plugin.json`
 - `pyproject.toml` - Python tooling config (ruff, black, mypy)
