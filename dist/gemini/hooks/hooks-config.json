@@ -1,0 +1,49 @@
+{
+  "hooks": {
+    "AfterAgent": [
+      {
+        "matcher": ".*",
+        "sequential": true,
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $GEMINI_PROJECT_DIR/hooks/stop_do_hook.py",
+            "name": "stop-do-hook",
+            "timeout": 60000,
+            "description": "Blocks premature stops during /do workflow"
+          }
+        ]
+      }
+    ],
+    "BeforeTool": [
+      {
+        "matcher": "activate_skill",
+        "sequential": true,
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $GEMINI_PROJECT_DIR/hooks/pretool_verify_hook.py",
+            "name": "pretool-verify-hook",
+            "timeout": 60000,
+            "description": "Adds context reminder before /verify"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": ".*",
+        "sequential": true,
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $GEMINI_PROJECT_DIR/hooks/post_compact_hook.py",
+            "name": "post-compact-hook",
+            "timeout": 60000,
+            "description": "Restores /do context after session compaction"
+          }
+        ]
+      }
+    ]
+  }
+}

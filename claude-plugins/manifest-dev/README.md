@@ -104,6 +104,7 @@ The manifest has three moving parts:
 | `/verify` | Runs all verifiers in parallel (you rarely call this directly; `/do` handles it) |
 | `/done` | Prints what got done and what was verified |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
+| `/sync-tools` | Generates multi-CLI distribution under `dist/` (Gemini CLI, OpenCode, Codex CLI) |
 
 ### Task-Specific Guidance
 
@@ -160,6 +161,10 @@ These run in parallel during `/verify`:
 ## Collaboration Mode
 
 Both `/define` and `/do` support a collaboration mode activated by passing a `COLLAB_CONTEXT` block in arguments. Full instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when collab is active). When active, questions and escalations route through Slack via a session-resume pattern: Claude posts to Slack, exits with structured JSON, and the orchestrator resumes the session with the response. Logs and manifests stay local. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `COLLAB_CONTEXT` is present, behavior is unchanged.
+
+## Multi-CLI Distribution
+
+Run `/sync-tools` to generate native packages under `dist/` for Gemini CLI, OpenCode, and Codex CLI. The Claude Code plugin is the single source of truth; `/sync-tools` converts agents (tool name mapping), adapts hooks (protocol translation), and copies skills unchanged (universal format). See per-CLI READMEs in `dist/` for installation and feature parity details.
 
 ## Hooks
 

@@ -11,11 +11,22 @@ Stop iterating with the model after implementation. Define what you'd accept, ru
 ## Quick Start
 
 ```bash
-# Install (run inside Claude Code)
+# Claude Code (primary)
 /plugin marketplace add doodledood/manifest-dev
 /plugin install manifest-dev@manifest-dev-marketplace
 
-# Use
+# Gemini CLI
+gemini extensions install https://github.com/doodledood/manifest-dev/dist/gemini
+
+# OpenCode
+npx skills add https://github.com/doodledood/manifest-dev --all -a opencode
+
+# Codex CLI (skills only)
+npx skills add https://github.com/doodledood/manifest-dev --all
+```
+
+Then use it:
+```bash
 /define <what you want to build>
 /do <manifest-path>
 ```
@@ -230,11 +241,24 @@ verify:
   instructions: "Verify the login flow works in staging"
 ```
 
+## Multi-CLI Support
+
+The Claude Code plugin is the source of truth. Per-CLI distributions under `dist/` provide native packages for other AI coding CLIs.
+
+| CLI | Skills | Agents | Hooks | Details |
+|-----|--------|--------|-------|---------|
+| Claude Code | Full | Full | Full | Primary target |
+| Gemini CLI | Full | Full (converted) | Full (adapted) | [dist/gemini/README.md](dist/gemini/README.md) |
+| OpenCode | Full | Full (converted) | Stubs (JS/TS rewrite needed) | [dist/opencode/README.md](dist/opencode/README.md) |
+| Codex CLI | Full | Descriptions only | Not available | [dist/codex/README.md](dist/codex/README.md) |
+
+Run `/sync-tools` in Claude Code to regenerate `dist/` after plugin changes.
+
 ## Available Plugins
 
 | Plugin | Description |
 |--------|-------------|
-| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, review agents, workflow hooks |
+| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, review agents, workflow hooks. Multi-CLI distribution via `/sync-tools`. |
 | `manifest-dev-collab` | Slack-based team collaboration on define/do workflows via `/slack-collab`. Python orchestrator drives phases; Claude handles intelligent work. |
 
 ## Plugin Architecture

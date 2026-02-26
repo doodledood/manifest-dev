@@ -5,7 +5,7 @@ __pycache__/
 *.so
 .Python
 build/
-dist/
+# dist/ intentionally NOT ignored — contains committed multi-CLI distributions
 eggs/
 *.egg-info/
 *.egg
