@@ -50,3 +50,7 @@ Externalize progress to survive context loss. The log IS the disaster recovery m
 **Execution log**: Create `/tmp/do-log-{timestamp}.md` at start. After EACH AC attempt, append what happened and the outcome. Goal: another agent reading only the log could resume work.
 
 **Todos**: Create from manifest (deliverables → ACs). Start with execution order from Approach (adjust if dependencies require). Update todo status after logging (log first, todo second).
+
+## Collaboration Mode
+
+When `$ARGUMENTS` contains a `COLLAB_CONTEXT:` block, read `references/COLLABORATION_MODE.md` for full collaboration mode instructions. If no `COLLAB_CONTEXT:` block is present, ignore this — all other sections apply as written.

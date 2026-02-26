@@ -157,6 +157,10 @@ These run in parallel during `/verify`:
 | `claude-md-adherence-reviewer` | Verifies code changes comply with CLAUDE.md instructions and project standards |
 | `docs-reviewer` | Audits documentation accuracy against recent code changes |
 
+## Collaboration Mode
+
+Both `/define` and `/do` support a collaboration mode activated by passing a `COLLAB_CONTEXT` block in arguments. Full instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when collab is active). When active, questions and escalations route through Slack via a session-resume pattern: Claude posts to Slack, exits with structured JSON, and the orchestrator resumes the session with the response. Logs and manifests stay local. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `COLLAB_CONTEXT` is present, behavior is unchanged.
+
 ## Hooks
 
 Three hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before verification runs. `post_compact_hook.py` restores `/do` context if the session gets compacted. And `pretool_verify_hook.py` nudges agents to actually read the manifest before verifying anything.

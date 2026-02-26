@@ -1,0 +1,15 @@
+{
+  "name": "manifest-dev-collab",
+  "version": "0.2.1",
+  "description": "Slack-based collaborative define/do workflow. Orchestrates team collaboration through dedicated Slack channels with structured threads for stakeholder Q&A, progress tracking, PR review, and QA sign-off.",
+  "keywords": [
+    "slack",
+    "collaboration",
+    "team",
+    "define",
+    "workflow",
+    "stakeholders",
+    "review",
+    "orchestrator"
+  ]
+}

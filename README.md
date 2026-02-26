@@ -230,6 +230,13 @@ verify:
   instructions: "Verify the login flow works in staging"
 ```
 
+## Available Plugins
+
+| Plugin | Description |
+|--------|-------------|
+| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, review agents, workflow hooks |
+| `manifest-dev-collab` | Slack-based team collaboration on define/do workflows via `/slack-collab`. Python orchestrator drives phases; Claude handles intelligent work. |
+
 ## Plugin Architecture
 
 ### Core Skills
