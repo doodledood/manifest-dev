@@ -688,13 +688,13 @@
     command: "ls .manifest/*.md 2>/dev/null | grep -q '2026' && echo PASS || echo FAIL"
   ```
 
-- [AC-9.2] /define SKILL.md outputs final manifests to `.manifest/{descriptive-name}-{YYYY-MM-DD}.md`. Discovery logs stay in `/tmp/`. The Complete section references `.manifest/` for the manifest path | Verify: subagent review
+- [AC-9.2] /define SKILL.md output path is unchanged (`/tmp/manifest-{timestamp}.md`). The `.manifest/` convention is project-level via CLAUDE.md, not baked into the skill | Verify: subagent review
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read claude-plugins/manifest-dev/skills/define/SKILL.md. Verify: (1) Final manifest output path is .manifest/ with a descriptive name and date (not /tmp/) (2) Discovery log path is still /tmp/ (3) The Complete section shows the .manifest/ path for the manifest (4) The skill instructs creating .manifest/ directory if it doesn't exist"
+    prompt: "Read claude-plugins/manifest-dev/skills/define/SKILL.md. Verify: (1) Final manifest output path is /tmp/manifest-{timestamp}.md (NOT .manifest/) (2) Discovery log path is /tmp/ (3) The Complete section references /tmp/ for the manifest path (4) No references to .manifest/ in the skill file"
   ```
 
 - [AC-9.3] /do SKILL.md execution logs stay in `/tmp/` — no path change needed | Verify: subagent review
@@ -706,13 +706,13 @@
     prompt: "Read claude-plugins/manifest-dev/skills/do/SKILL.md. Verify: (1) Execution log path is still /tmp/do-log-{timestamp}.md (2) No references to .manifest/ for execution logs"
   ```
 
-- [AC-9.4] CLAUDE.md documents `.manifest/` directory — final manifests committed here, logs stay in /tmp/ | Verify: subagent review
+- [AC-9.4] CLAUDE.md has a project-level "Manifest Archival" section instructing sessions to copy final manifests from `/tmp/` to `.manifest/` with a descriptive name and date. Logs stay in /tmp/ | Verify: subagent review
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read CLAUDE.md. Verify it documents the .manifest/ directory: (1) States that final manifests are saved to .manifest/ (2) States that discovery logs and execution logs stay in /tmp/ (3) Mentions these manifest files are committed to the repo (4) Information is concise and maximally useful for future /define sessions"
+    prompt: "Read CLAUDE.md. Verify: (1) Has a 'Manifest Archival' section with instructions to copy final manifests from /tmp/ to .manifest/ (2) Shows the cp command with descriptive-kebab-name and date format (3) States discovery logs and execution logs stay in /tmp/ (4) This is a project-level convention, not a change to the /define skill itself"
   ```
 
 ## Amendments
@@ -749,19 +749,19 @@
 
 **Verification path changes:** All verification prompts that reference "Collaboration Mode section of SKILL.md" must be updated to reference the `references/COLLABORATION_MODE.md` file instead. INV-G1 and INV-G2 must verify the main SKILL.md now has only the brief reference, not the full content. INV-G3 must check the reference files for COLLAB_CONTEXT format consistency.
 
-### Amendment 3: Save final manifests to `.manifest/` instead of `/tmp/`
+### Amendment 3: Archive final manifests to `.manifest/` (project-level convention)
 
-**Rationale:** Final manifests should be committed to the repo, not lost in `/tmp/`. Move to a `.manifest/` directory in the project root so manifests are version-controlled and persist across sessions. Discovery logs and execution logs stay in `/tmp/` — they're working files, not artifacts worth committing.
+**Rationale:** Final manifests should be committed to the repo, not lost in `/tmp/`. Add a `.manifest/` directory and a CLAUDE.md instruction to copy manifests there after `/define` completes. This is a **project-level convention** — the `/define` skill itself keeps outputting to `/tmp/` (it's a generic skill used across projects). Discovery logs and execution logs stay in `/tmp/` — they're working files, not artifacts worth committing.
 
 **Changes:**
 - Create `.manifest/` directory
 - Copy the current manifest to `.manifest/` with a meaningful name including a date (e.g., `.manifest/slack-collab-python-orchestrator-2026-02-26.md`)
-- Update CLAUDE.md: Add a section documenting `.manifest/` directory — final manifests are saved here, committed to the repo.
-- /define SKILL.md: Change manifest output path from `/tmp/manifest-{timestamp}.md` to `.manifest/{descriptive-name}-{YYYY-MM-DD}.md`. Discovery logs stay in `/tmp/`. The Complete section references `.manifest/` for the manifest path.
+- Update CLAUDE.md: Add a "Manifest Archival" section instructing future sessions to copy final manifests from `/tmp/` to `.manifest/` with a descriptive name and date.
+- /define SKILL.md: NO changes — keeps outputting to `/tmp/manifest-{timestamp}.md`
 - /do SKILL.md: No path changes needed — execution logs stay in `/tmp/`.
 - Python orchestrator: No change needed — reads manifest_path from /define's output JSON.
 
 **New deliverable: D9**
 
 **Affected ACs:** New AC-9.1 through AC-9.4
-**Affected INVs:** INV-G1 (define's manifest output path changed), INV-G11 (CLAUDE.md updated)
+**Affected INVs:** INV-G11 (CLAUDE.md updated)

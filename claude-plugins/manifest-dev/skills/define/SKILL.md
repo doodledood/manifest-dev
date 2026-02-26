@@ -18,7 +18,7 @@ Comprehensive means surfacing **latent criteria**—requirements the user doesn'
 
 Aim for high coverage. Amendments handle what emerges during implementation.
 
-Output: `.manifest/{descriptive-kebab-name}-{YYYY-MM-DD}.md` (create `.manifest/` directory if it doesn't exist)
+Output: `/tmp/manifest-{timestamp}.md`
 
 ## Input
 
@@ -398,7 +398,7 @@ Manifests support amendments during execution:
 After writing the manifest, invoke the manifest-verifier agent. Pass only the file paths — no summary, framing, or commentary:
 
 ```
-Invoke the manifest-dev:manifest-verifier agent with: "Manifest: .manifest/{name}-{date}.md | Log: /tmp/define-discovery-{timestamp}.md"
+Invoke the manifest-dev:manifest-verifier agent with: "Manifest: /tmp/manifest-{timestamp}.md | Log: /tmp/define-discovery-{timestamp}.md"
 ```
 
 The verifier returns **CONTINUE** or **COMPLETE**:
@@ -442,9 +442,9 @@ When `$ARGUMENTS` contains a `COLLAB_CONTEXT:` block, read `references/COLLABORA
 /define ends here. Output the manifest path and stop.
 
 ```text
-Manifest complete: .manifest/{descriptive-kebab-name}-{YYYY-MM-DD}.md
+Manifest complete: /tmp/manifest-{timestamp}.md
 
-To execute: /do .manifest/{descriptive-kebab-name}-{YYYY-MM-DD}.md [log-file-path if iterating]
+To execute: /do /tmp/manifest-{timestamp}.md [log-file-path if iterating]
 ```
 
 If this was an iteration on a previous manifest that had an execution log, include the log file path in the suggestion.

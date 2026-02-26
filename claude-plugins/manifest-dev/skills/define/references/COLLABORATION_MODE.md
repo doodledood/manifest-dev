@@ -32,7 +32,7 @@ COLLAB_CONTEXT:
 
 **Owner override.** The owner (identified by `owner_handle`) can reply in any stakeholder's thread to answer on their behalf. If the owner replies, treat their answer as authoritative and proceed. Log that the owner answered in place of the stakeholder.
 
-**Discovery log and manifest → local only.** Write discovery log to `/tmp/define-discovery-{timestamp}.md` and manifest to `.manifest/` as normal. Do NOT post logs or artifacts to Slack. Slack is only for stakeholder Q&A.
+**Discovery log and manifest → local only.** Write discovery log to `/tmp/define-discovery-{timestamp}.md` and manifest to `/tmp/manifest-{timestamp}.md` as normal. Do NOT post logs or artifacts to Slack. Slack is only for stakeholder Q&A.
 
 **Completion.** When the interview is complete and the manifest is written, exit with: `{"status": "complete", "manifest_path": "<path>", "discovery_log_path": "<path>"}`.
 
