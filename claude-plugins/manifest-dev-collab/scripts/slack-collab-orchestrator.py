@@ -713,12 +713,9 @@ def phase_pr(state: dict[str, Any]) -> None:
     )
     invoke_claude(post_prompt, timeout=TIMEOUT_POST)
 
-    # Poll for PR approval
-    fix_attempts = 0
-    while True:
-        time.sleep(DEFAULT_POLL_INTERVAL)
-
-        check_prompt = textwrap.dedent(
+    # Poll for PR approval with feedback-fix-escalate loop
+    _poll_for_approval(
+        check_prompt_fn=lambda: textwrap.dedent(
             f"""\
             Check the status of the pull request. Use `gh pr view` to see if it
             has been approved, has review comments, or changes requested.
@@ -728,51 +725,31 @@ def phase_pr(state: dict[str, Any]) -> None:
               and include the feedback summary
             - If still pending: set approved=false and feedback=null
             {SECURITY_INSTRUCTIONS}"""
-        )
+        ),
+        fix_prompt_fn=lambda fb: textwrap.dedent(
+            f"""\
+            Fix the following PR review comments and push the changes:
+            {fb[:2000]}
 
-        data = invoke_claude(
-            check_prompt, json_schema=POLL_SCHEMA, timeout=TIMEOUT_POLL
-        )
+            Then post a summary of what was fixed to Slack channel
+            {channel_id}.
+            {SECURITY_INSTRUCTIONS}"""
+        ),
+        escalate_prompt_fn=lambda fb: textwrap.dedent(
+            f"""\
+            Post to Slack channel {channel_id}:
+            "I've attempted {MAX_PR_FIX_ATTEMPTS} fixes for PR review
+            comments but the issues persist. {owner_handle} — please
+            advise on how to proceed.
 
-        if data.get("approved"):
-            log.info("PR approved!")
-            state["phase"] = "qa" if state.get("has_qa") else "done"
-            save_state(state)
-            return
+            Latest feedback: {fb[:1000]}"
+            {SECURITY_INSTRUCTIONS}"""
+        ),
+        label="PR",
+    )
 
-        feedback = data.get("feedback")
-        if feedback:
-            fix_attempts += 1
-            if fix_attempts > MAX_PR_FIX_ATTEMPTS:
-                # Escalate to owner
-                escalate_prompt = textwrap.dedent(
-                    f"""\
-                    Post to Slack channel {channel_id}:
-                    "I've attempted {MAX_PR_FIX_ATTEMPTS} fixes for PR review
-                    comments but the issues persist. {owner_handle} — please
-                    advise on how to proceed.
-
-                    Latest feedback: {feedback[:1000]}"
-                    {SECURITY_INSTRUCTIONS}"""
-                )
-                invoke_claude(escalate_prompt, timeout=TIMEOUT_POST)
-                # Reset counter and wait for owner guidance
-                fix_attempts = 0
-
-            else:
-                # Attempt to fix
-                fix_prompt = textwrap.dedent(
-                    f"""\
-                    Fix the following PR review comments and push the changes:
-                    {feedback[:2000]}
-
-                    Then post a summary of what was fixed to Slack channel
-                    {channel_id}.
-                    {SECURITY_INSTRUCTIONS}"""
-                )
-                invoke_claude(fix_prompt, timeout=TIMEOUT_PR)
-
-        log.debug("PR not yet approved, polling again in %ds...", DEFAULT_POLL_INTERVAL)
+    state["phase"] = "qa" if state.get("has_qa") else "done"
+    save_state(state)
 
 
 def phase_qa(state: dict[str, Any]) -> None:
@@ -801,12 +778,9 @@ def phase_qa(state: dict[str, Any]) -> None:
     )
     invoke_claude(post_prompt, timeout=TIMEOUT_POST)
 
-    # Poll for QA sign-off
-    fix_attempts = 0
-    while True:
-        time.sleep(DEFAULT_POLL_INTERVAL)
-
-        check_prompt = textwrap.dedent(
+    # Poll for QA sign-off with feedback-fix-escalate loop
+    _poll_for_approval(
+        check_prompt_fn=lambda: textwrap.dedent(
             f"""\
             Read the latest messages in Slack channel {channel_id}.
             Check if QA stakeholders ({qa_handles}) have signed off
@@ -816,48 +790,30 @@ def phase_qa(state: dict[str, Any]) -> None:
             - If issues reported: set approved=false and include the issue text
             - If no response yet: set approved=false and feedback=null
             {SECURITY_INSTRUCTIONS}"""
-        )
+        ),
+        fix_prompt_fn=lambda fb: textwrap.dedent(
+            f"""\
+            Fix the following QA issues and push the changes:
+            {fb[:2000]}
 
-        data = invoke_claude(
-            check_prompt, json_schema=POLL_SCHEMA, timeout=TIMEOUT_POLL
-        )
+            Then post a summary of what was fixed to Slack channel
+            {channel_id}.
+            {SECURITY_INSTRUCTIONS}"""
+        ),
+        escalate_prompt_fn=lambda fb: textwrap.dedent(
+            f"""\
+            Post to Slack channel {channel_id}:
+            "I've attempted {MAX_PR_FIX_ATTEMPTS} QA fixes but issues
+            persist. {owner_handle} — please advise.
 
-        if data.get("approved"):
-            log.info("QA approved!")
-            state["phase"] = "done"
-            save_state(state)
-            return
+            Latest issues: {fb[:1000]}"
+            {SECURITY_INSTRUCTIONS}"""
+        ),
+        label="QA",
+    )
 
-        feedback = data.get("feedback")
-        if feedback:
-            fix_attempts += 1
-            if fix_attempts > MAX_PR_FIX_ATTEMPTS:
-                escalate_prompt = textwrap.dedent(
-                    f"""\
-                    Post to Slack channel {channel_id}:
-                    "I've attempted {MAX_PR_FIX_ATTEMPTS} QA fixes but issues
-                    persist. {owner_handle} — please advise.
-
-                    Latest issues: {feedback[:1000]}"
-                    {SECURITY_INSTRUCTIONS}"""
-                )
-                invoke_claude(escalate_prompt, timeout=TIMEOUT_POST)
-                fix_attempts = 0
-            else:
-                fix_prompt = textwrap.dedent(
-                    f"""\
-                    Fix the following QA issues and push the changes:
-                    {feedback[:2000]}
-
-                    Then post a summary of what was fixed to Slack channel
-                    {channel_id}.
-                    {SECURITY_INSTRUCTIONS}"""
-                )
-                invoke_claude(fix_prompt, timeout=TIMEOUT_PR)
-
-        log.debug(
-            "QA not yet signed off, polling again in %ds...", DEFAULT_POLL_INTERVAL
-        )
+    state["phase"] = "done"
+    save_state(state)
 
 
 def phase_done(state: dict[str, Any]) -> None:
@@ -898,6 +854,49 @@ def _validate_output_file(path: str) -> bool:
     return p.exists() and p.stat().st_size > 0
 
 
+def _poll_for_approval(
+    *,
+    check_prompt_fn: Any,  # Callable[[], str]
+    fix_prompt_fn: Any,  # Callable[[str], str]
+    escalate_prompt_fn: Any,  # Callable[[str], str]
+    label: str,
+) -> None:
+    """Shared feedback-fix-escalate polling loop used by PR and QA phases.
+
+    Args:
+        check_prompt_fn: Returns the prompt to check for approval/feedback.
+        fix_prompt_fn: Given feedback text, returns the prompt to fix issues.
+        escalate_prompt_fn: Given feedback text, returns the escalation prompt.
+        label: Human-readable label for logging (e.g. "PR", "QA").
+    """
+    fix_attempts = 0
+    while True:
+        time.sleep(DEFAULT_POLL_INTERVAL)
+
+        data = invoke_claude(
+            check_prompt_fn(), json_schema=POLL_SCHEMA, timeout=TIMEOUT_POLL
+        )
+
+        if data.get("approved"):
+            log.info("%s approved!", label)
+            return
+
+        feedback = data.get("feedback")
+        if feedback:
+            fix_attempts += 1
+            if fix_attempts > MAX_PR_FIX_ATTEMPTS:
+                invoke_claude(escalate_prompt_fn(feedback), timeout=TIMEOUT_POST)
+                fix_attempts = 0
+            else:
+                invoke_claude(fix_prompt_fn(feedback), timeout=TIMEOUT_PR)
+
+        log.debug(
+            "%s not yet approved, polling again in %ds...",
+            label,
+            DEFAULT_POLL_INTERVAL,
+        )
+
+
 def _extract_pr_url(output: str) -> str | None:
     """Best-effort extraction of a PR URL from Claude CLI output."""
     # Try JSON parse first
@@ -919,14 +918,6 @@ def _extract_pr_url(output: str) -> str | None:
     # Fallback: regex for GitHub PR URL
     match = re.search(r"https://github\.com/[^\s\"']+/pull/\d+", output)
     return match.group(0) if match else None
-
-
-def next_phase_index(current_phase: str) -> int:
-    """Return the index of the phase AFTER current_phase in PHASES."""
-    try:
-        return PHASES.index(current_phase)
-    except ValueError:
-        return 0
 
 
 # ---------------------------------------------------------------------------

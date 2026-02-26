@@ -165,29 +165,30 @@ class TestSaveAndLoadState:
 
 
 class TestPhaseTransitions:
-    def test_next_phase_index_preflight(self):
-        assert orch.next_phase_index("preflight") == 0
+    def test_phases_index_preflight(self):
+        assert orch.PHASES.index("preflight") == 0
 
-    def test_next_phase_index_define(self):
-        assert orch.next_phase_index("define") == 1
+    def test_phases_index_define(self):
+        assert orch.PHASES.index("define") == 1
 
-    def test_next_phase_index_manifest_review(self):
-        assert orch.next_phase_index("manifest_review") == 2
+    def test_phases_index_manifest_review(self):
+        assert orch.PHASES.index("manifest_review") == 2
 
-    def test_next_phase_index_execute(self):
-        assert orch.next_phase_index("execute") == 3
+    def test_phases_index_execute(self):
+        assert orch.PHASES.index("execute") == 3
 
-    def test_next_phase_index_pr(self):
-        assert orch.next_phase_index("pr") == 4
+    def test_phases_index_pr(self):
+        assert orch.PHASES.index("pr") == 4
 
-    def test_next_phase_index_qa(self):
-        assert orch.next_phase_index("qa") == 5
+    def test_phases_index_qa(self):
+        assert orch.PHASES.index("qa") == 5
 
-    def test_next_phase_index_done(self):
-        assert orch.next_phase_index("done") == 6
+    def test_phases_index_done(self):
+        assert orch.PHASES.index("done") == 6
 
-    def test_next_phase_index_unknown_defaults_to_zero(self):
-        assert orch.next_phase_index("unknown") == 0
+    def test_phases_index_unknown_raises(self):
+        with pytest.raises(ValueError):
+            orch.PHASES.index("unknown")
 
     def test_phases_list_order(self):
         expected = [
