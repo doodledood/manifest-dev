@@ -1,8 +1,9 @@
-"""Unit tests for the slack-collab orchestrator's deterministic logic.
+"""Unit tests for the slack-collab orchestrator's deterministic logic (V2 Agent Teams).
 
 Tests cover state management, phase transitions, error handling,
-COLLAB_CONTEXT construction, session-resume patterns, and all phase
-functions. No Slack or Claude CLI needed — all subprocess calls are mocked.
+COLLAB_CONTEXT construction, Agent Teams environment setup, file validation,
+and all phase functions. No Slack or Claude CLI needed — all subprocess calls
+are mocked.
 """
 
 import importlib.util
@@ -39,7 +40,7 @@ _spec.loader.exec_module(orch)
 
 @pytest.fixture()
 def sample_state():
-    """A fully populated state dict for testing."""
+    """A fully populated state dict for testing (V2 — no session IDs)."""
     return {
         "run_id": "abc123def456",
         "task": "Add rate limiting to the API",
@@ -64,8 +65,6 @@ def sample_state():
         "discovery_log_path": None,
         "pr_url": None,
         "has_qa": True,
-        "define_session_id": None,
-        "execute_session_id": None,
     }
 
 
@@ -101,10 +100,19 @@ class TestNewState:
         state = orch.new_state("task", "run1")
         assert "poll_interval" not in state
 
-    def test_session_ids_initialized_to_none(self):
+    def test_no_session_ids_in_state(self):
+        """V2: Agent Teams teammates manage their own lifecycle — no session IDs."""
         state = orch.new_state("task", "run1")
-        assert state["define_session_id"] is None
-        assert state["execute_session_id"] is None
+        assert "define_session_id" not in state
+        assert "execute_session_id" not in state
+
+    def test_has_qa_defaults_false(self):
+        state = orch.new_state("task", "run1")
+        assert state["has_qa"] is False
+
+    def test_threads_initialized_empty(self):
+        state = orch.new_state("task", "run1")
+        assert state["threads"] == {"stakeholders": {}}
 
 
 class TestSaveAndLoadState:
@@ -150,15 +158,6 @@ class TestSaveAndLoadState:
         assert loaded["manifest_path"] == "/tmp/manifest-123.md"
         assert loaded["channel_id"] == "C12345"
 
-    def test_session_ids_persisted(self, sample_state, tmp_state_dir):
-        sample_state["define_session_id"] = "abc123"
-        sample_state["execute_session_id"] = "def456"
-        orch.save_state(sample_state)
-        path = tmp_state_dir / f"collab-state-{sample_state['run_id']}.json"
-        loaded = orch.load_state(path)
-        assert loaded["define_session_id"] == "abc123"
-        assert loaded["execute_session_id"] == "def456"
-
 
 # ---------------------------------------------------------------------------
 # Phase transition tests
@@ -166,29 +165,30 @@ class TestSaveAndLoadState:
 
 
 class TestPhaseTransitions:
-    def test_next_phase_index_preflight(self):
-        assert orch.next_phase_index("preflight") == 0
+    def test_phases_index_preflight(self):
+        assert orch.PHASES.index("preflight") == 0
 
-    def test_next_phase_index_define(self):
-        assert orch.next_phase_index("define") == 1
+    def test_phases_index_define(self):
+        assert orch.PHASES.index("define") == 1
 
-    def test_next_phase_index_manifest_review(self):
-        assert orch.next_phase_index("manifest_review") == 2
+    def test_phases_index_manifest_review(self):
+        assert orch.PHASES.index("manifest_review") == 2
 
-    def test_next_phase_index_execute(self):
-        assert orch.next_phase_index("execute") == 3
+    def test_phases_index_execute(self):
+        assert orch.PHASES.index("execute") == 3
 
-    def test_next_phase_index_pr(self):
-        assert orch.next_phase_index("pr") == 4
+    def test_phases_index_pr(self):
+        assert orch.PHASES.index("pr") == 4
 
-    def test_next_phase_index_qa(self):
-        assert orch.next_phase_index("qa") == 5
+    def test_phases_index_qa(self):
+        assert orch.PHASES.index("qa") == 5
 
-    def test_next_phase_index_done(self):
-        assert orch.next_phase_index("done") == 6
+    def test_phases_index_done(self):
+        assert orch.PHASES.index("done") == 6
 
-    def test_next_phase_index_unknown_defaults_to_zero(self):
-        assert orch.next_phase_index("unknown") == 0
+    def test_phases_index_unknown_raises(self):
+        with pytest.raises(ValueError):
+            orch.PHASES.index("unknown")
 
     def test_phases_list_order(self):
         expected = [
@@ -290,8 +290,6 @@ class TestInvokeClaude:
 
     @patch("slack_collab_orchestrator.subprocess.run")
     def test_error_on_timeout(self, mock_run):
-        import subprocess
-
         mock_run.side_effect = subprocess.TimeoutExpired(cmd="claude", timeout=120)
         with pytest.raises(SystemExit):
             orch.invoke_claude("test prompt", timeout=120)
@@ -354,34 +352,43 @@ class TestInvokeClaude:
         assert result["manifest_path"] == "/tmp/manifest.md"
 
     @patch("slack_collab_orchestrator.subprocess.run")
-    def test_session_id_passed_in_command(self, mock_run):
-        """Verify --session-id is included when session_id is provided."""
+    def test_extra_env_passed_to_subprocess(self, mock_run):
+        """V2: extra_env merges with os.environ for subprocess call."""
         mock_run.return_value = MagicMock(
             returncode=0,
             stdout=json.dumps({"type": "result", "result": "{}"}),
             stderr="",
         )
-        orch.invoke_claude("test", session_id="sess123")
-        cmd = mock_run.call_args[0][0]
-        assert "--session-id" in cmd
-        assert "sess123" in cmd
+        orch.invoke_claude("test", extra_env={"MY_VAR": "1"})
+        call_kwargs = mock_run.call_args[1]
+        assert call_kwargs["env"] is not None
+        assert call_kwargs["env"]["MY_VAR"] == "1"
 
     @patch("slack_collab_orchestrator.subprocess.run")
-    def test_resume_session_id_passed_in_command(self, mock_run):
-        """Verify --resume is included when resume_session_id is provided."""
+    def test_no_extra_env_passes_none(self, mock_run):
+        """Without extra_env, env=None (inherit from parent process)."""
         mock_run.return_value = MagicMock(
             returncode=0,
             stdout=json.dumps({"type": "result", "result": "{}"}),
             stderr="",
         )
-        orch.invoke_claude("test", resume_session_id="sess456")
-        cmd = mock_run.call_args[0][0]
-        assert "--resume" in cmd
-        assert "sess456" in cmd
+        orch.invoke_claude("test")
+        call_kwargs = mock_run.call_args[1]
+        assert call_kwargs["env"] is None
 
     @patch("slack_collab_orchestrator.subprocess.run")
-    def test_no_session_flags_by_default(self, mock_run):
-        """Verify no session flags when neither is provided."""
+    def test_json_schema_included_in_command(self, mock_run):
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout=json.dumps({"type": "result", "result": "{}"}),
+            stderr="",
+        )
+        orch.invoke_claude("test", json_schema='{"type":"object"}')
+        cmd = mock_run.call_args[0][0]
+        assert "--json-schema" in cmd
+
+    @patch("slack_collab_orchestrator.subprocess.run")
+    def test_no_json_schema_by_default(self, mock_run):
         mock_run.return_value = MagicMock(
             returncode=0,
             stdout=json.dumps({"type": "result", "result": "{}"}),
@@ -389,8 +396,39 @@ class TestInvokeClaude:
         )
         orch.invoke_claude("test")
         cmd = mock_run.call_args[0][0]
-        assert "--session-id" not in cmd
-        assert "--resume" not in cmd
+        assert "--json-schema" not in cmd
+
+
+# ---------------------------------------------------------------------------
+# File validation tests
+# ---------------------------------------------------------------------------
+
+
+class TestValidateOutputFile:
+    def test_empty_path_returns_false(self):
+        assert orch._validate_output_file("") is False
+
+    def test_none_path_returns_false(self):
+        # Path("") would fail, but the function checks `if not path` first
+        assert orch._validate_output_file("") is False
+
+    def test_nonexistent_file_returns_false(self):
+        assert orch._validate_output_file("/tmp/nonexistent-file-99999.md") is False
+
+    def test_empty_file_returns_false(self, tmp_path):
+        empty = tmp_path / "empty.md"
+        empty.write_text("")
+        assert orch._validate_output_file(str(empty)) is False
+
+    def test_valid_file_returns_true(self, tmp_path):
+        valid = tmp_path / "manifest.md"
+        valid.write_text("# Manifest\nContent here")
+        assert orch._validate_output_file(str(valid)) is True
+
+    def test_single_byte_file_returns_true(self, tmp_path):
+        minimal = tmp_path / "minimal.md"
+        minimal.write_text("x")
+        assert orch._validate_output_file(str(minimal)) is True
 
 
 # ---------------------------------------------------------------------------
@@ -433,7 +471,6 @@ class TestBuildCollabContext:
         ctx = orch.build_collab_context(sample_state)
         lines = ctx.split("\n")
         assert lines[0] == "COLLAB_CONTEXT:"
-        # Verify indentation — no poll_interval line
         assert lines[1].startswith("  channel_id:")
         assert lines[2].startswith("  owner_handle:")
         assert lines[3] == "  threads:"
@@ -493,48 +530,110 @@ class TestExtractPrUrl:
 
 
 # ---------------------------------------------------------------------------
-# Schema tests
+# Schema tests (V2 — simplified, no union types)
 # ---------------------------------------------------------------------------
 
 
 class TestSchemas:
-    def test_define_output_schema_has_status_field(self):
-        schema = json.loads(orch.DEFINE_OUTPUT_SCHEMA)
-        assert "status" in schema["properties"]
-        assert schema["properties"]["status"]["enum"] == [
-            "waiting_for_response",
-            "complete",
-        ]
-
-    def test_do_output_schema_has_status_field(self):
-        schema = json.loads(orch.DO_OUTPUT_SCHEMA)
-        assert "status" in schema["properties"]
-        assert schema["properties"]["status"]["enum"] == [
-            "escalation_pending",
-            "complete",
-        ]
-
-    def test_define_output_schema_has_waiting_fields(self):
+    def test_define_output_schema_is_simple(self):
+        """V2: Define schema has manifest_path and discovery_log_path only."""
         schema = json.loads(orch.DEFINE_OUTPUT_SCHEMA)
         props = schema["properties"]
-        assert "thread_ts" in props
-        assert "target_handle" in props
-        assert "question_summary" in props
+        assert "manifest_path" in props
+        assert "discovery_log_path" in props
+        # No V1 fields
+        assert "status" not in props
+        assert "thread_ts" not in props
+        assert "target_handle" not in props
+        assert "question_summary" not in props
 
-    def test_do_output_schema_has_escalation_fields(self):
+    def test_define_output_schema_required_fields(self):
+        schema = json.loads(orch.DEFINE_OUTPUT_SCHEMA)
+        assert schema["required"] == ["manifest_path"]
+
+    def test_do_output_schema_is_simple(self):
+        """V2: Do schema has do_log_path only."""
         schema = json.loads(orch.DO_OUTPUT_SCHEMA)
         props = schema["properties"]
-        assert "thread_ts" in props
-        assert "escalation_summary" in props
+        assert "do_log_path" in props
+        # No V1 fields
+        assert "status" not in props
+        assert "thread_ts" not in props
+        assert "escalation_summary" not in props
 
-    def test_thread_response_schema_exists(self):
-        schema = json.loads(orch.THREAD_RESPONSE_SCHEMA)
-        assert "has_response" in schema["properties"]
-        assert "response_text" in schema["properties"]
+    def test_do_output_schema_required_fields(self):
+        schema = json.loads(orch.DO_OUTPUT_SCHEMA)
+        assert schema["required"] == ["do_log_path"]
+
+    def test_no_thread_response_schema(self):
+        """V2: THREAD_RESPONSE_SCHEMA should not exist (no poll_slack_thread)."""
+        assert not hasattr(orch, "THREAD_RESPONSE_SCHEMA")
 
     def test_preflight_schema_no_poll_interval(self):
         schema = json.loads(orch.PREFLIGHT_SCHEMA)
         assert "poll_interval" not in schema["properties"]
+
+    def test_poll_schema_exists(self):
+        schema = json.loads(orch.POLL_SCHEMA)
+        assert "approved" in schema["properties"]
+        assert "feedback" in schema["properties"]
+
+
+# ---------------------------------------------------------------------------
+# Agent Teams environment setup tests
+# ---------------------------------------------------------------------------
+
+
+class TestAgentTeamsEnv:
+    def test_agent_teams_env_var_constant(self):
+        assert orch.AGENT_TEAMS_ENV_VAR == "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
+
+    def test_define_phase_passes_agent_teams_env(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        """Verify define phase sets Agent Teams env var."""
+        manifest = tmp_path / "manifest.md"
+        manifest.write_text("# Manifest")
+        resp = {"manifest_path": str(manifest)}
+
+        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
+            orch.phase_define(sample_state)
+
+        kwargs = mock_ic.call_args[1]
+        assert kwargs["extra_env"] == {orch.AGENT_TEAMS_ENV_VAR: "1"}
+
+    def test_execute_phase_passes_agent_teams_env(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        """Verify execute phase sets Agent Teams env var."""
+        sample_state["manifest_path"] = "/tmp/manifest.md"
+        log_file = tmp_path / "do-log.md"
+        log_file.write_text("# Log")
+        resp = {"do_log_path": str(log_file)}
+
+        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
+            orch.phase_execute(sample_state)
+
+        kwargs = mock_ic.call_args[1]
+        assert kwargs["extra_env"] == {orch.AGENT_TEAMS_ENV_VAR: "1"}
+
+    def test_preflight_does_not_set_agent_teams_env(
+        self, sample_state, tmp_state_dir
+    ):
+        """Preflight uses standard invoke_claude without Agent Teams."""
+        preflight_data = {
+            "channel_id": "C99",
+            "channel_name": "collab-test",
+            "owner_handle": "@owner",
+            "stakeholders": [{"handle": "@dev", "name": "Dev", "role": "dev"}],
+            "threads": {"stakeholders": {"@dev": "111.001"}},
+            "slack_mcp_available": True,
+        }
+        with patch.object(orch, "invoke_claude", return_value=preflight_data) as mock_ic:
+            orch.phase_preflight(sample_state)
+
+        kwargs = mock_ic.call_args[1]
+        assert "extra_env" not in kwargs or kwargs.get("extra_env") is None
 
 
 # ---------------------------------------------------------------------------
@@ -543,10 +642,7 @@ class TestSchemas:
 
 
 def _make_invoke_mock(responses):
-    """Return a side_effect function that yields from *responses* in order.
-
-    Each item is a dict that invoke_claude would return.
-    """
+    """Return a side_effect function that yields from *responses* in order."""
     it = iter(responses)
 
     def side_effect(prompt, **kwargs):
@@ -651,7 +747,7 @@ class TestPhasePreflight:
 
 
 # ---------------------------------------------------------------------------
-# Phase: define (session-resume loop)
+# Phase: define (V2 — Agent Teams, single call + file validation)
 # ---------------------------------------------------------------------------
 
 
@@ -659,159 +755,118 @@ class TestPhaseDefine:
     def test_complete_on_first_call(self, sample_state, tmp_state_dir, tmp_path):
         manifest = tmp_path / "manifest.md"
         manifest.write_text("# Manifest")
-        complete_resp = {
-            "status": "complete",
+        resp = {
             "manifest_path": str(manifest),
             "discovery_log_path": "/tmp/log.md",
         }
-        with patch.object(orch, "invoke_claude", return_value=complete_resp):
+        with patch.object(orch, "invoke_claude", return_value=resp):
             orch.phase_define(sample_state)
 
         assert sample_state["manifest_path"] == str(manifest)
         assert sample_state["phase"] == "manifest_review"
-        assert sample_state["define_session_id"] is not None
+        assert sample_state["discovery_log_path"] == "/tmp/log.md"
 
-    def test_session_resume_loop(self, sample_state, tmp_state_dir, tmp_path):
-        """Simulate: first call → waiting_for_response → poll → resume → complete."""
+    def test_retries_once_on_missing_manifest(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        """If first call returns nonexistent file, retries once."""
         manifest = tmp_path / "manifest.md"
         manifest.write_text("# Manifest")
 
-        responses = [
-            {
-                "status": "waiting_for_response",
-                "thread_ts": "111.001",
-                "target_handle": "@bob",
-                "question_summary": "What framework?",
-            },
-            {
-                "status": "complete",
-                "manifest_path": str(manifest),
-            },
-        ]
+        call_count = {"n": 0}
 
-        with (
-            patch.object(
-                orch, "invoke_claude", side_effect=_make_invoke_mock(responses)
-            ),
-            patch.object(orch, "poll_slack_thread", return_value="Use React"),
-        ):
+        def fake_invoke(prompt, **kwargs):
+            call_count["n"] += 1
+            if call_count["n"] == 1:
+                return {"manifest_path": "/tmp/nonexistent-999.md"}
+            return {"manifest_path": str(manifest)}
+
+        with patch.object(orch, "invoke_claude", side_effect=fake_invoke):
             orch.phase_define(sample_state)
 
-        assert sample_state["phase"] == "manifest_review"
+        assert call_count["n"] == 2
         assert sample_state["manifest_path"] == str(manifest)
 
-    def test_multiple_resume_rounds(self, sample_state, tmp_state_dir, tmp_path):
-        """Three rounds of questions before complete."""
-        manifest = tmp_path / "manifest.md"
-        manifest.write_text("# Manifest")
+    def test_retries_once_on_empty_manifest(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        """If first call returns empty file, retries once."""
+        empty_manifest = tmp_path / "empty.md"
+        empty_manifest.write_text("")
+        good_manifest = tmp_path / "good.md"
+        good_manifest.write_text("# Manifest")
 
-        responses = [
-            {
-                "status": "waiting_for_response",
-                "thread_ts": "111.001",
-                "target_handle": "@bob",
-                "question_summary": "Q1?",
-            },
-            {
-                "status": "waiting_for_response",
-                "thread_ts": "111.002",
-                "target_handle": "@alice",
-                "question_summary": "Q2?",
-            },
-            {
-                "status": "waiting_for_response",
-                "thread_ts": "111.003",
-                "target_handle": "@bob",
-                "question_summary": "Q3?",
-            },
-            {"status": "complete", "manifest_path": str(manifest)},
-        ]
+        call_count = {"n": 0}
 
-        with (
-            patch.object(
-                orch, "invoke_claude", side_effect=_make_invoke_mock(responses)
-            ),
-            patch.object(orch, "poll_slack_thread", return_value="Answer"),
-        ):
+        def fake_invoke(prompt, **kwargs):
+            call_count["n"] += 1
+            if call_count["n"] == 1:
+                return {"manifest_path": str(empty_manifest)}
+            return {"manifest_path": str(good_manifest)}
+
+        with patch.object(orch, "invoke_claude", side_effect=fake_invoke):
             orch.phase_define(sample_state)
 
-        assert sample_state["phase"] == "manifest_review"
+        assert call_count["n"] == 2
+        assert sample_state["manifest_path"] == str(good_manifest)
 
-    def test_invalid_manifest_path_exits(self, sample_state, tmp_state_dir):
-        complete_resp = {
-            "status": "complete",
-            "manifest_path": "/tmp/nonexistent-manifest-999.md",
-        }
+    def test_exits_after_retry_failure(self, sample_state, tmp_state_dir):
+        """If both calls return invalid files, exits."""
+        resp = {"manifest_path": "/tmp/nonexistent-999.md"}
         with (
-            patch.object(orch, "invoke_claude", return_value=complete_resp),
+            patch.object(orch, "invoke_claude", return_value=resp),
             pytest.raises(SystemExit),
         ):
             orch.phase_define(sample_state)
 
-    def test_unexpected_status_exits(self, sample_state, tmp_state_dir):
-        bad_resp = {"status": "unknown_status"}
-        with (
-            patch.object(orch, "invoke_claude", return_value=bad_resp),
-            pytest.raises(SystemExit),
-        ):
-            orch.phase_define(sample_state)
-
-    def test_session_id_generated_and_stored(
-        self, sample_state, tmp_state_dir, tmp_path
-    ):
+    def test_uses_agent_teams_timeout(self, sample_state, tmp_state_dir, tmp_path):
         manifest = tmp_path / "m.md"
         manifest.write_text("x")
-        resp = {"status": "complete", "manifest_path": str(manifest)}
-        with patch.object(orch, "invoke_claude", return_value=resp):
-            orch.phase_define(sample_state)
-        assert sample_state["define_session_id"] is not None
-        assert len(sample_state["define_session_id"]) == 32  # uuid hex
+        resp = {"manifest_path": str(manifest)}
 
-    def test_reuses_existing_session_id(self, sample_state, tmp_state_dir, tmp_path):
-        manifest = tmp_path / "m.md"
-        manifest.write_text("x")
-        sample_state["define_session_id"] = "existing_session"
-        resp = {"status": "complete", "manifest_path": str(manifest)}
-        with patch.object(orch, "invoke_claude", return_value=resp):
-            orch.phase_define(sample_state)
-        assert sample_state["define_session_id"] == "existing_session"
-
-    def test_first_call_uses_session_id_not_resume(
-        self, sample_state, tmp_state_dir, tmp_path
-    ):
-        manifest = tmp_path / "m.md"
-        manifest.write_text("x")
-        resp = {"status": "complete", "manifest_path": str(manifest)}
         with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
             orch.phase_define(sample_state)
-        # First call should use session_id=, not resume_session_id=
-        kwargs = mock_ic.call_args[1]
-        assert kwargs.get("session_id") is not None
-        assert kwargs.get("resume_session_id") is None
 
-    def test_resume_call_uses_resume_flag(self, sample_state, tmp_state_dir, tmp_path):
+        kwargs = mock_ic.call_args[1]
+        assert kwargs["timeout"] == orch.TIMEOUT_DEFINE
+
+    def test_uses_define_output_schema(self, sample_state, tmp_state_dir, tmp_path):
         manifest = tmp_path / "m.md"
         manifest.write_text("x")
-        responses = [
-            {
-                "status": "waiting_for_response",
-                "thread_ts": "111.001",
-                "target_handle": "@bob",
-                "question_summary": "Q?",
-            },
-            {"status": "complete", "manifest_path": str(manifest)},
-        ]
-        with (
-            patch.object(
-                orch, "invoke_claude", side_effect=_make_invoke_mock(responses)
-            ) as mock_ic,
-            patch.object(orch, "poll_slack_thread", return_value="Answer"),
-        ):
+        resp = {"manifest_path": str(manifest)}
+
+        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
             orch.phase_define(sample_state)
-        # Second call should use resume_session_id=, not session_id=
-        second_call_kwargs = mock_ic.call_args_list[1][1]
-        assert second_call_kwargs.get("resume_session_id") is not None
-        assert second_call_kwargs.get("session_id") is None
+
+        kwargs = mock_ic.call_args[1]
+        assert kwargs["json_schema"] == orch.DEFINE_OUTPUT_SCHEMA
+
+    def test_lead_prompt_contains_task_and_collab_context(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        manifest = tmp_path / "m.md"
+        manifest.write_text("x")
+        resp = {"manifest_path": str(manifest)}
+
+        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
+            orch.phase_define(sample_state)
+
+        prompt = mock_ic.call_args[0][0]
+        assert sample_state["task"] in prompt
+        assert "COLLAB_CONTEXT:" in prompt
+        assert "teammate" in prompt.lower()
+        assert "/define" in prompt
+
+    def test_no_session_id_in_state_after_define(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        """V2: No session IDs stored — Agent Teams handles lifecycle."""
+        manifest = tmp_path / "m.md"
+        manifest.write_text("x")
+        resp = {"manifest_path": str(manifest)}
+        with patch.object(orch, "invoke_claude", return_value=resp):
+            orch.phase_define(sample_state)
+        assert "define_session_id" not in sample_state
 
 
 # ---------------------------------------------------------------------------
@@ -825,9 +880,8 @@ class TestPhaseManifestReview:
         manifest.write_text("# Manifest content")
         sample_state["manifest_path"] = str(manifest)
 
-        # First call = post manifest, second call = check approval
         responses = [
-            {},  # post_prompt response (ignored)
+            {},  # post manifest
             {"approved": True},
         ]
         with (
@@ -846,14 +900,15 @@ class TestPhaseManifestReview:
             orch.phase_manifest_review(sample_state)
 
     def test_feedback_triggers_redefine(self, sample_state, tmp_state_dir, tmp_path):
+        """Feedback sets state['phase'] to 'define' and returns (no recursion)."""
         manifest = tmp_path / "manifest.md"
         manifest.write_text("# Manifest content")
         sample_state["manifest_path"] = str(manifest)
+        sample_state["phase"] = "manifest_review"
 
-        # post manifest, first poll = feedback, then re-define + re-review
         responses = [
             {},  # post manifest
-            {"approved": False, "feedback": "Add error handling section"},
+            {"approved": False, "feedback": "Fix X"},
         ]
 
         with (
@@ -861,57 +916,13 @@ class TestPhaseManifestReview:
                 orch, "invoke_claude", side_effect=_make_invoke_mock(responses)
             ),
             patch.object(orch.time, "sleep"),
-            patch.object(orch, "phase_define"),
-            # Recursive call to phase_manifest_review — mock it to avoid loop
-            patch.object(orch, "phase_manifest_review"),
         ):
-            # Call the real function but the recursive calls are mocked
-            orch.phase_manifest_review.__wrapped__ = None  # prevent recursion
-            # We need to call the actual function body, but it recurses.
-            # Instead, test the state mutation and verify re-define was called.
-            # Let's use a different approach: just verify the state changes.
-            pass
+            orch.phase_manifest_review(sample_state)
 
-        # Better approach: test state mutation directly
-        sample_state["manifest_path"] = str(manifest)
-        sample_state["phase"] = "manifest_review"
-        call_count = {"n": 0}
-
-        def fake_invoke(prompt, **kwargs):
-            call_count["n"] += 1
-            if call_count["n"] == 1:
-                return {}  # post manifest
-            if call_count["n"] == 2:
-                return {"approved": False, "feedback": "Fix X"}
-            return {}
-
-        define_called = {"called": False}
-
-        def fake_define(state):
-            define_called["called"] = True
-            state["phase"] = "manifest_review"
-
-        review_recursion = {"count": 0}
-        real_review = orch.phase_manifest_review
-
-        def fake_review(state):
-            review_recursion["count"] += 1
-            if review_recursion["count"] > 1:
-                # Second call = simulate approval
-                state["phase"] = "execute"
-                return
-            return real_review(state)
-
-        with (
-            patch.object(orch, "invoke_claude", side_effect=fake_invoke),
-            patch.object(orch.time, "sleep"),
-            patch.object(orch, "phase_define", side_effect=fake_define),
-            patch.object(orch, "phase_manifest_review", side_effect=fake_review),
-        ):
-            fake_review(sample_state)
-
-        assert define_called["called"]
+        assert sample_state["phase"] == "define"
         assert "Fix X" in sample_state["task"]
+        # Verify original_task is preserved for bounded growth
+        assert "original_task" in sample_state
 
     def test_no_response_keeps_polling(self, sample_state, tmp_state_dir, tmp_path):
         manifest = tmp_path / "manifest.md"
@@ -920,9 +931,9 @@ class TestPhaseManifestReview:
 
         responses = [
             {},  # post manifest
-            {"approved": False, "feedback": None},  # no response
-            {"approved": False, "feedback": None},  # no response
-            {"approved": True},  # approved
+            {"approved": False, "feedback": None},
+            {"approved": False, "feedback": None},
+            {"approved": True},
         ]
         with (
             patch.object(
@@ -936,111 +947,117 @@ class TestPhaseManifestReview:
 
 
 # ---------------------------------------------------------------------------
-# Phase: execute (session-resume loop)
+# Phase: execute (V2 — Agent Teams, single call + file validation)
 # ---------------------------------------------------------------------------
 
 
 class TestPhaseExecute:
-    def test_complete_on_first_call(self, sample_state, tmp_state_dir):
+    def test_complete_on_first_call(self, sample_state, tmp_state_dir, tmp_path):
         sample_state["manifest_path"] = "/tmp/manifest.md"
-        resp = {"status": "complete", "do_log_path": "/tmp/do-log.md"}
+        log_file = tmp_path / "do-log.md"
+        log_file.write_text("# Execution log")
+        resp = {"do_log_path": str(log_file)}
+
         with patch.object(orch, "invoke_claude", return_value=resp):
             orch.phase_execute(sample_state)
 
         assert sample_state["phase"] == "pr"
-        assert sample_state["do_log_path"] == "/tmp/do-log.md"
+        assert sample_state["do_log_path"] == str(log_file)
 
-    def test_escalation_resume_loop(self, sample_state, tmp_state_dir):
+    def test_retries_once_on_missing_log_file(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
         sample_state["manifest_path"] = "/tmp/manifest.md"
-        responses = [
-            {
-                "status": "escalation_pending",
-                "thread_ts": "111.001",
-                "escalation_summary": "Can't meet AC-2.3",
-            },
-            {"status": "complete", "do_log_path": "/tmp/log.md"},
-        ]
-        with (
-            patch.object(
-                orch, "invoke_claude", side_effect=_make_invoke_mock(responses)
-            ),
-            patch.object(orch, "poll_slack_thread", return_value="Skip AC-2.3"),
-        ):
+        log_file = tmp_path / "do-log.md"
+        log_file.write_text("# Log")
+
+        call_count = {"n": 0}
+
+        def fake_invoke(prompt, **kwargs):
+            call_count["n"] += 1
+            if call_count["n"] == 1:
+                return {"do_log_path": "/tmp/nonexistent-log-999.md"}
+            return {"do_log_path": str(log_file)}
+
+        with patch.object(orch, "invoke_claude", side_effect=fake_invoke):
             orch.phase_execute(sample_state)
 
-        assert sample_state["phase"] == "pr"
+        assert call_count["n"] == 2
+        assert sample_state["do_log_path"] == str(log_file)
 
-    def test_multiple_escalation_rounds(self, sample_state, tmp_state_dir):
+    def test_exits_after_retry_failure(self, sample_state, tmp_state_dir):
         sample_state["manifest_path"] = "/tmp/manifest.md"
-        responses = [
-            {
-                "status": "escalation_pending",
-                "thread_ts": "111.001",
-                "escalation_summary": "Blocked on API",
-            },
-            {
-                "status": "escalation_pending",
-                "thread_ts": "111.002",
-                "escalation_summary": "Need DB access",
-            },
-            {"status": "complete", "do_log_path": "/tmp/log.md"},
-        ]
-        with (
-            patch.object(
-                orch, "invoke_claude", side_effect=_make_invoke_mock(responses)
-            ),
-            patch.object(orch, "poll_slack_thread", return_value="Granted"),
-        ):
-            orch.phase_execute(sample_state)
+        resp = {"do_log_path": "/tmp/nonexistent-log-999.md"}
 
-        assert sample_state["phase"] == "pr"
-
-    def test_unexpected_status_exits(self, sample_state, tmp_state_dir):
-        sample_state["manifest_path"] = "/tmp/manifest.md"
-        resp = {"status": "garbage"}
         with (
             patch.object(orch, "invoke_claude", return_value=resp),
             pytest.raises(SystemExit),
         ):
             orch.phase_execute(sample_state)
 
-    def test_session_id_generated_and_stored(self, sample_state, tmp_state_dir):
+    def test_empty_log_path_triggers_retry(self, sample_state, tmp_state_dir, tmp_path):
+        """Empty do_log_path triggers retry; exits if retry also fails."""
         sample_state["manifest_path"] = "/tmp/manifest.md"
-        resp = {"status": "complete", "do_log_path": "/tmp/log.md"}
-        with patch.object(orch, "invoke_claude", return_value=resp):
-            orch.phase_execute(sample_state)
-        assert sample_state["execute_session_id"] is not None
-        assert len(sample_state["execute_session_id"]) == 32
+        resp = {"do_log_path": ""}
 
-    def test_first_call_uses_session_id(self, sample_state, tmp_state_dir):
-        sample_state["manifest_path"] = "/tmp/manifest.md"
-        resp = {"status": "complete", "do_log_path": "/tmp/log.md"}
-        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
-            orch.phase_execute(sample_state)
-        kwargs = mock_ic.call_args[1]
-        assert kwargs.get("session_id") is not None
-        assert kwargs.get("resume_session_id") is None
-
-    def test_resume_call_uses_resume_flag(self, sample_state, tmp_state_dir):
-        sample_state["manifest_path"] = "/tmp/manifest.md"
-        responses = [
-            {
-                "status": "escalation_pending",
-                "thread_ts": "111.001",
-                "escalation_summary": "Blocked",
-            },
-            {"status": "complete", "do_log_path": "/tmp/log.md"},
-        ]
         with (
-            patch.object(
-                orch, "invoke_claude", side_effect=_make_invoke_mock(responses)
-            ) as mock_ic,
-            patch.object(orch, "poll_slack_thread", return_value="OK"),
+            patch.object(orch, "invoke_claude", return_value=resp),
+            pytest.raises(SystemExit),
         ):
             orch.phase_execute(sample_state)
-        second_kwargs = mock_ic.call_args_list[1][1]
-        assert second_kwargs.get("resume_session_id") is not None
-        assert second_kwargs.get("session_id") is None
+
+    def test_uses_agent_teams_timeout(self, sample_state, tmp_state_dir, tmp_path):
+        sample_state["manifest_path"] = "/tmp/manifest.md"
+        log_file = tmp_path / "log.md"
+        log_file.write_text("x")
+        resp = {"do_log_path": str(log_file)}
+
+        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
+            orch.phase_execute(sample_state)
+
+        kwargs = mock_ic.call_args[1]
+        assert kwargs["timeout"] == orch.TIMEOUT_EXECUTE
+
+    def test_uses_do_output_schema(self, sample_state, tmp_state_dir, tmp_path):
+        sample_state["manifest_path"] = "/tmp/manifest.md"
+        log_file = tmp_path / "log.md"
+        log_file.write_text("x")
+        resp = {"do_log_path": str(log_file)}
+
+        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
+            orch.phase_execute(sample_state)
+
+        kwargs = mock_ic.call_args[1]
+        assert kwargs["json_schema"] == orch.DO_OUTPUT_SCHEMA
+
+    def test_lead_prompt_contains_manifest_and_collab_context(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        sample_state["manifest_path"] = "/tmp/manifest.md"
+        log_file = tmp_path / "log.md"
+        log_file.write_text("x")
+        resp = {"do_log_path": str(log_file)}
+
+        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
+            orch.phase_execute(sample_state)
+
+        prompt = mock_ic.call_args[0][0]
+        assert "/tmp/manifest.md" in prompt
+        assert "COLLAB_CONTEXT:" in prompt
+        assert "teammate" in prompt.lower()
+        assert "/do" in prompt
+
+    def test_no_session_id_in_state_after_execute(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        """V2: No session IDs stored."""
+        sample_state["manifest_path"] = "/tmp/manifest.md"
+        log_file = tmp_path / "log.md"
+        log_file.write_text("x")
+        resp = {"do_log_path": str(log_file)}
+        with patch.object(orch, "invoke_claude", return_value=resp):
+            orch.phase_execute(sample_state)
+        assert "execute_session_id" not in sample_state
 
 
 # ---------------------------------------------------------------------------
@@ -1053,25 +1070,13 @@ class TestPhasePr:
         sample_state["manifest_path"] = "/tmp/manifest.md"
         sample_state["phase"] = "pr"
 
-        pr_output = json.dumps(
-            {
-                "type": "result",
-                "result": json.dumps({"pr_url": "https://github.com/org/repo/pull/42"}),
-            }
-        )
-        mock_subprocess = MagicMock(returncode=0, stdout=pr_output, stderr="")
-
         invoke_responses = [
+            {"pr_url": "https://github.com/org/repo/pull/42"},  # create PR
             {},  # post PR to Slack
-            {"approved": True},  # PR approved
+            {"approved": True},
         ]
 
         with (
-            patch.object(
-                orch.subprocess,
-                "run",
-                return_value=mock_subprocess,
-            ),
             patch.object(
                 orch, "invoke_claude", side_effect=_make_invoke_mock(invoke_responses)
             ),
@@ -1080,23 +1085,19 @@ class TestPhasePr:
             orch.phase_pr(sample_state)
 
         assert sample_state["pr_url"] == "https://github.com/org/repo/pull/42"
-        # has_qa=True in sample_state, so next phase = qa
         assert sample_state["phase"] == "qa"
 
     def test_pr_approval_skips_qa_when_no_qa(self, sample_state, tmp_state_dir):
         sample_state["manifest_path"] = "/tmp/manifest.md"
         sample_state["has_qa"] = False
 
-        pr_output = json.dumps({"type": "result", "result": "{}"})
-        mock_subprocess = MagicMock(returncode=0, stdout=pr_output, stderr="")
-
         invoke_responses = [
+            {},  # create PR
             {},  # post PR
             {"approved": True},
         ]
 
         with (
-            patch.object(orch.subprocess, "run", return_value=mock_subprocess),
             patch.object(
                 orch, "invoke_claude", side_effect=_make_invoke_mock(invoke_responses)
             ),
@@ -1109,18 +1110,15 @@ class TestPhasePr:
     def test_pr_feedback_triggers_fix(self, sample_state, tmp_state_dir):
         sample_state["manifest_path"] = "/tmp/manifest.md"
 
-        pr_output = json.dumps({"type": "result", "result": "{}"})
-        mock_subprocess = MagicMock(returncode=0, stdout=pr_output, stderr="")
-
         invoke_responses = [
+            {},  # create PR
             {},  # post PR
-            {"approved": False, "feedback": "Fix typo in README"},  # review comment
+            {"approved": False, "feedback": "Fix typo in README"},
             {},  # fix applied
-            {"approved": True},  # approved after fix
+            {"approved": True},
         ]
 
         with (
-            patch.object(orch.subprocess, "run", return_value=mock_subprocess),
             patch.object(
                 orch, "invoke_claude", side_effect=_make_invoke_mock(invoke_responses)
             ),
@@ -1133,24 +1131,21 @@ class TestPhasePr:
     def test_pr_escalates_after_max_attempts(self, sample_state, tmp_state_dir):
         sample_state["manifest_path"] = "/tmp/manifest.md"
 
-        pr_output = json.dumps({"type": "result", "result": "{}"})
-        mock_subprocess = MagicMock(returncode=0, stdout=pr_output, stderr="")
-
         invoke_responses = [
+            {},  # create PR
             {},  # post PR
-            {"approved": False, "feedback": "Fix A"},  # attempt 1
+            {"approved": False, "feedback": "Fix A"},
             {},  # fix 1
-            {"approved": False, "feedback": "Fix B"},  # attempt 2
+            {"approved": False, "feedback": "Fix B"},
             {},  # fix 2
-            {"approved": False, "feedback": "Fix C"},  # attempt 3
+            {"approved": False, "feedback": "Fix C"},
             {},  # fix 3
-            {"approved": False, "feedback": "Still broken"},  # attempt 4 > max
-            {},  # escalation posted to Slack
-            {"approved": True},  # finally approved after owner helps
+            {"approved": False, "feedback": "Still broken"},  # > max
+            {},  # escalation posted
+            {"approved": True},
         ]
 
         with (
-            patch.object(orch.subprocess, "run", return_value=mock_subprocess),
             patch.object(
                 orch, "invoke_claude", side_effect=_make_invoke_mock(invoke_responses)
             ),
@@ -1161,24 +1156,21 @@ class TestPhasePr:
         assert sample_state["phase"] == "qa"
 
     def test_pr_creation_failure_exits(self, sample_state, tmp_state_dir):
+        """invoke_claude raises SystemExit on CLI failure."""
         sample_state["manifest_path"] = "/tmp/manifest.md"
-        mock_subprocess = MagicMock(returncode=1, stdout="", stderr="error")
 
         with (
-            patch.object(orch.subprocess, "run", return_value=mock_subprocess),
+            patch.object(orch, "invoke_claude", side_effect=SystemExit(1)),
             pytest.raises(SystemExit),
         ):
             orch.phase_pr(sample_state)
 
     def test_pr_creation_timeout_exits(self, sample_state, tmp_state_dir):
+        """invoke_claude raises SystemExit on timeout."""
         sample_state["manifest_path"] = "/tmp/manifest.md"
 
         with (
-            patch.object(
-                orch.subprocess,
-                "run",
-                side_effect=subprocess.TimeoutExpired(cmd="claude", timeout=1800),
-            ),
+            patch.object(orch, "invoke_claude", side_effect=SystemExit(1)),
             pytest.raises(SystemExit),
         ):
             orch.phase_pr(sample_state)
@@ -1256,8 +1248,8 @@ class TestPhaseQa:
         sample_state["pr_url"] = "https://github.com/org/repo/pull/1"
         invoke_responses = [
             {},  # post QA request
-            {"approved": False, "feedback": None},  # no response
-            {"approved": False, "feedback": None},  # no response
+            {"approved": False, "feedback": None},
+            {"approved": False, "feedback": None},
             {"approved": True},
         ]
         with (
@@ -1286,72 +1278,8 @@ class TestPhaseDone:
         sample_state["pr_url"] = None
         with patch.object(orch, "invoke_claude", return_value={}) as mock_ic:
             orch.phase_done(sample_state)
-        # Should still complete without error
         assert sample_state["phase"] == "done"
         assert mock_ic.called
-
-
-# ---------------------------------------------------------------------------
-# poll_slack_thread
-# ---------------------------------------------------------------------------
-
-
-class TestPollSlackThread:
-    def test_returns_response_immediately(self):
-        resp = {
-            "has_response": True,
-            "response_text": "Use PostgreSQL",
-            "responder_handle": "@bob",
-        }
-        with (
-            patch.object(orch, "invoke_claude", return_value=resp),
-            patch.object(orch.time, "sleep"),
-        ):
-            result = orch.poll_slack_thread("C1", "111.001", "@bob", "@alice")
-        assert result == "Use PostgreSQL"
-
-    def test_polls_until_response(self):
-        responses = [
-            {"has_response": False},
-            {"has_response": False},
-            {
-                "has_response": True,
-                "response_text": "Yes",
-                "responder_handle": "@bob",
-            },
-        ]
-        with (
-            patch.object(
-                orch, "invoke_claude", side_effect=_make_invoke_mock(responses)
-            ),
-            patch.object(orch.time, "sleep") as mock_sleep,
-        ):
-            result = orch.poll_slack_thread("C1", "111.001", "@bob", "@alice")
-
-        assert result == "Yes"
-        assert mock_sleep.call_count == 3  # sleep before each poll
-
-    def test_owner_can_respond_for_target(self):
-        resp = {
-            "has_response": True,
-            "response_text": "I'll answer for Bob: use Redis",
-            "responder_handle": "@alice",
-        }
-        with (
-            patch.object(orch, "invoke_claude", return_value=resp),
-            patch.object(orch.time, "sleep"),
-        ):
-            result = orch.poll_slack_thread("C1", "111.001", "@bob", "@alice")
-        assert "Redis" in result
-
-    def test_empty_response_text_still_returns(self):
-        resp = {"has_response": True, "response_text": "", "responder_handle": "@bob"}
-        with (
-            patch.object(orch, "invoke_claude", return_value=resp),
-            patch.object(orch.time, "sleep"),
-        ):
-            result = orch.poll_slack_thread("C1", "111.001", "@bob", "@alice")
-        assert result == ""
 
 
 # ---------------------------------------------------------------------------
@@ -1372,7 +1300,6 @@ class TestRunExceptionHandling:
         ):
             orch.run(sample_state)
 
-        # Verify state was saved
         state_file = tmp_state_dir / f"collab-state-{sample_state['run_id']}.json"
         assert state_file.exists()
 
@@ -1398,8 +1325,6 @@ class TestRunExceptionHandling:
         def mock_phase(name):
             def fn(state):
                 phases_called.append(name)
-                # Real phase functions set state["phase"] to their OWN name;
-                # run() drives ordering via the PHASES list.
                 state["phase"] = name
 
             return fn
@@ -1416,7 +1341,6 @@ class TestRunExceptionHandling:
             "manifest_review",
             "execute",
             "pr",
-            # qa is included because has_qa=True
             "qa",
             "done",
         ]
@@ -1510,8 +1434,6 @@ class TestMain:
 
         def tracking_setup(log_path):
             call_order.append("setup_logging")
-            # Don't actually set up logging in tests
-            return None
 
         def tracking_load(path):
             call_order.append("load_state")
@@ -1586,13 +1508,28 @@ class TestSecurityInstructions:
         assert "SECURITY" in prompt
         assert "untrusted" in prompt.lower() or "NEVER expose" in prompt
 
-    def test_security_appended_to_poll_prompt(self):
-        resp = {"has_response": True, "response_text": "yes", "responder_handle": "@x"}
-        with (
-            patch.object(orch, "invoke_claude", return_value=resp) as mock_ic,
-            patch.object(orch.time, "sleep"),
-        ):
-            orch.poll_slack_thread("C1", "111.001", "@x", "@owner")
+    def test_security_in_define_lead_prompt(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        """V2: Security instructions in the lead session prompt for define."""
+        manifest = tmp_path / "m.md"
+        manifest.write_text("x")
+        resp = {"manifest_path": str(manifest)}
+        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
+            orch.phase_define(sample_state)
+        prompt = mock_ic.call_args[0][0]
+        assert "SECURITY" in prompt
+
+    def test_security_in_execute_lead_prompt(
+        self, sample_state, tmp_state_dir, tmp_path
+    ):
+        """V2: Security instructions in the lead session prompt for execute."""
+        sample_state["manifest_path"] = "/tmp/manifest.md"
+        log_file = tmp_path / "log.md"
+        log_file.write_text("x")
+        resp = {"do_log_path": str(log_file)}
+        with patch.object(orch, "invoke_claude", return_value=resp) as mock_ic:
+            orch.phase_execute(sample_state)
         prompt = mock_ic.call_args[0][0]
         assert "SECURITY" in prompt
 
@@ -1617,6 +1554,16 @@ class TestSecurityInstructions:
         ):
             orch.phase_manifest_review(sample_state)
 
-        # Both post and poll prompts should include SECURITY
         for p in prompts_seen:
             assert "SECURITY" in p
+
+
+# ---------------------------------------------------------------------------
+# No poll_slack_thread in V2
+# ---------------------------------------------------------------------------
+
+
+class TestNoPollSlackThread:
+    def test_poll_slack_thread_does_not_exist(self):
+        """V2: poll_slack_thread function was removed (teammates poll themselves)."""
+        assert not hasattr(orch, "poll_slack_thread")
