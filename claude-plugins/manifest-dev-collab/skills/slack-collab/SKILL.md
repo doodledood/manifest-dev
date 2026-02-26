@@ -25,11 +25,11 @@ Run locally before touching Slack.
 
 **Step 4: QA needed?** Ask via AskUserQuestion: "Is a QA phase needed after PR approval?" If yes, identify which stakeholders are QA (or add QA-specific stakeholders).
 
-**Step 5: Polling interval.** Ask via AskUserQuestion: "Polling interval for Slack responses?" Default: 60 seconds. User can specify a different value.
+**Step 5: Owner.** The person running this skill is the owner. Ask for their Slack handle via AskUserQuestion if not already known.
 
-**Step 6: Owner.** The person running this skill is the owner. Ask for their Slack handle via AskUserQuestion if not already known.
+**Step 6: Sensitive content warning.** Inform the owner: "Task content will be visible to all invited stakeholders and potentially workspace admins. Proceed?" via AskUserQuestion.
 
-**Step 7: Sensitive content warning.** Inform the owner: "Task content will be visible to all invited stakeholders and potentially workspace admins. Proceed?" via AskUserQuestion.
+**Polling interval.** Default: 60 seconds. No need to ask — the user can specify a different interval mid-workflow if they want.
 
 ---
 
