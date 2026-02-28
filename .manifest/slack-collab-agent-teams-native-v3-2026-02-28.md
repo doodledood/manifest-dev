@@ -194,13 +194,13 @@
     prompt: "Read claude-plugins/manifest-dev-collab/skills/slack-collab/SKILL.md. Verify YAML frontmatter has: name (kebab-case, max 64 chars), description (max 1024 chars, action-oriented). Verify user-invocable is true (or defaulted)."
   ```
 
-- [INV-G10] Agent definitions declare all needed tools in frontmatter | Verify: subagent review
+- [INV-G10] Agent definitions inherit tools from invoking context (no tools frontmatter) | Verify: subagent review
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read each agent definition: claude-plugins/manifest-dev-collab/agents/slack-coordinator.md, define-worker.md, executor.md. For each agent, identify every capability mentioned in the prompt (messaging, Slack MCP tools, file reading/writing, skill invocation, subagent spawning, bash commands). Verify ALL identified capabilities have corresponding tools declared in the frontmatter. Agents run in isolation — missing tool declarations cause silent failures."
+    prompt: "Read each agent definition: claude-plugins/manifest-dev-collab/agents/slack-coordinator.md, define-worker.md, executor.md. Verify that NONE of them declare a 'tools' field in their YAML frontmatter — they inherit all tools from the invoking context."
   ```
 
 - [INV-G11] Prompt clarity: No contradictory instructions within or across modified files | Verify: subagent review
@@ -236,7 +236,7 @@
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Review all changed and new files against CLAUDE.md instructions. Check: kebab-case naming, plugin structure conventions, version bump requirements, README sync checklist, skill frontmatter format, agent tool declarations."
+    prompt: "Review all changed and new files against CLAUDE.md instructions. Check: kebab-case naming, plugin structure conventions, version bump requirements, README sync checklist, skill frontmatter format, agent definitions (tools inherited, not declared)."
   ```
 
 - [INV-G15] Python orchestrator and tests fully removed — no orphan files | Verify: bash
@@ -372,7 +372,7 @@
     prompt: "Read claude-plugins/manifest-dev-collab/agents/executor.md. Verify: (1) Primary task: invoke /do skill with manifest path + TEAM_CONTEXT (2) Messages slack-coordinator for escalations during /do (3) Creates PR after execution completes (4) Fixes QA issues received from define-worker (5) Never touches Slack directly (6) Frontmatter declares all needed tools (Skill invocation, messaging, bash for git/gh, file read/write, subagent spawning for verification)"
   ```
 
-- [AC-2.4] All agent definitions declare tools in frontmatter | Verify: covered by INV-G10
+- [AC-2.4] Agent definitions omit tools frontmatter (inherit from invoking context) | Verify: covered by INV-G10
 
 ### Deliverable 3: Update COLLABORATION_MODE.md Files
 
