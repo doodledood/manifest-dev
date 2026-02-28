@@ -40,9 +40,11 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 Team collaboration on define/do workflows through Slack.
 
 **Core skill:**
-- `/slack-collab` - Launches a Python orchestrator that drives collaborative define/do workflows through Slack. Handles stakeholder Q&A, manifest review, PR review, and QA sign-off.
+- `/slack-collab` - Agent Teams native orchestrator for collaborative define/do workflows through Slack. Spawns specialized teammates (slack-coordinator, define-worker, executor) that coordinate via mailbox messaging.
 
-**Prerequisites:** Slack MCP server configured, `manifest-dev` plugin installed, Python 3.8+.
+**Agents:** `slack-coordinator` (Slack I/O), `define-worker` (/define + manifest authority), `executor` (/do + PR + QA fixes)
+
+**Prerequisites:** Slack MCP server configured, `manifest-dev` plugin installed, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` env var.
 
 ## Contributing
 

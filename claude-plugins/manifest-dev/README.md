@@ -159,7 +159,7 @@ These run in parallel during `/verify`:
 
 ## Collaboration Mode
 
-Both `/define` and `/do` support a collaboration mode activated by passing a `COLLAB_CONTEXT` block in arguments. Full instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when collab is active). When active, questions and escalations route through Slack via post-and-poll: the teammate posts to a Slack thread, sleeps, polls for a response, and continues autonomously. Logs and manifests stay local. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `COLLAB_CONTEXT` is present, behavior is unchanged.
+Both `/define` and `/do` support a team collaboration mode activated by passing a `TEAM_CONTEXT` block in arguments. Full instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when collab is active). When active, questions and escalations route through the coordinator teammate via mailbox messaging instead of AskUserQuestion. Skills don't know about Slack — the coordinator handles all external communication. Logs and manifests stay local. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `TEAM_CONTEXT` is present, behavior is unchanged.
 
 ## Hooks
 
