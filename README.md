@@ -22,6 +22,40 @@ Stop iterating with the model after implementation. Define what you'd accept, ru
 
 Two commands. `/define` interviews you and builds a manifest. `/do` executes it. That's the whole workflow.
 
+**Pro tip**: Run `/do` in a fresh session after `/define` completes—or at minimum, `/compact` before starting. The manifest is your external state; the session doesn't need to remember the conversation.
+
+## Codex
+
+This repo now exposes a root `skills/` directory (symlinked to the same skills used by the Claude plugin) so it can be installed as Codex skills.
+
+- Install via $skill-installer: "Install Codex skills from GitHub repo `kinnrot/manifest-dev`" and select `define`, `do`, `verify`, `done`, `escalate`.
+- Manual: copy or symlink folders under `skills/` into `$CODEX_HOME/skills/`.
+
+See CODEX.md for details.
+
+## Gemini CLI
+
+Gemini extension metadata (`gemini-extension.json`) is included. Root-level `skills/` and `hooks/` symlinks allow Gemini tools that support extensions to discover agents, skills, and hooks.
+
+Refer to GEMINI.md for example CLI workflows.
+
+## Contents
+
+- [The Problem](#the-problem)
+- [The Mindset Shift](#the-mindset-shift)
+- [How It Works](#how-it-works)
+- [What /define Produces](#what-define-produces)
+- [Plugin Architecture](#plugin-architecture)
+- [The Benefits](#the-benefits)
+- [Who This Is For](#who-this-is-for)
+## The Problem
+
+You give the agent a task. It generates code. The code looks reasonable. You ship it. Two days later you're debugging something that should have been obvious—or worse, realizing the AI "finished" but left critical pieces incomplete.
+
+This is the vibe coding hangover. We got excited about the speed. We ignored the cleanup cost.
+
+The tools are getting smarter. Claude, GPT, the latest models—they can genuinely code. But we're throwing them into deep water without defining what "done" actually means.
+
 ## The Mindset Shift
 
 Instead of telling the AI *how* to build something, you tell it what you'd accept.

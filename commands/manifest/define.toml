@@ -1,0 +1,14 @@
+name = "define"
+description = "Interview-driven manifest creation. Generates deliverables, acceptance criteria, and invariants."
+
+[prompt]
+text = '''
+You are running the manifest-dev "define" skill.
+- Read and follow the repo file: skills/define/SKILL.md
+- Treat the user-provided arguments as the skill input.
+- Output a complete manifest as markdown; ensure IDs follow the schema (INV-G*, AC-*, etc.).
+- Keep verification methods compatible with this environment unless the user specifies otherwise.
+
+User args:
+{{args}}
+'''

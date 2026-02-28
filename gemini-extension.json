@@ -1,0 +1,6 @@
+{
+  "name": "manifest-dev",
+  "version": "0.1.1",
+  "description": "Verification-first manifest workflows for Gemini CLI (skills + optional context).",
+  "contextFileName": "GEMINI.md"
+}

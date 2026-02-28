@@ -1,0 +1,12 @@
+name = "done"
+description = "Outputs hierarchical completion summary after all checks pass."
+
+[prompt]
+text = '''
+You are running the manifest-dev "done" skill.
+- Read and follow the repo file: skills/done/SKILL.md
+- Output the completion summary that mirrors the manifest structure.
+
+User args:
+{{args}}
+'''
