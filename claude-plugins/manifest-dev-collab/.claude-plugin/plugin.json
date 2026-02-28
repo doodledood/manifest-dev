@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-collab",
-  "version": "0.3.0",
-  "description": "Slack-based collaborative define/do workflow. Orchestrates team collaboration through dedicated Slack channels with structured threads for stakeholder Q&A, progress tracking, PR review, and QA sign-off.",
+  "version": "1.0.0",
+  "description": "Slack-based collaborative define/do workflow via Agent Teams. Lead orchestrator spawns specialized teammates (slack-coordinator, define-worker, executor) that coordinate via mailbox messaging for stakeholder Q&A, manifest review, PR review, and QA sign-off.",
   "keywords": [
     "slack",
     "collaboration",

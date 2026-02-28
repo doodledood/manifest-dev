@@ -235,7 +235,7 @@ verify:
 | Plugin | Description |
 |--------|-------------|
 | `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, review agents, workflow hooks |
-| `manifest-dev-collab` | Slack-based team collaboration on define/do workflows via `/slack-collab`. Python orchestrator drives phases; Claude handles intelligent work. |
+| `manifest-dev-collab` | Slack-based team collaboration on define/do workflows via `/slack-collab`. Agent Teams native — lead orchestrator spawns specialized teammates (slack-coordinator, define-worker, executor). |
 
 ## Plugin Architecture
 
