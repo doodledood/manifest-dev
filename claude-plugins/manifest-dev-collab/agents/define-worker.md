@@ -1,19 +1,6 @@
 ---
 name: define-worker
 description: 'Runs /define with TEAM_CONTEXT for collaborative manifest building. Persists after /define completes as manifest authority for QA evaluation.'
-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Agent
-  - Skill
-  - TodoWrite
-  - AskUserQuestion
-  - WebFetch
-  - WebSearch
 ---
 
 # Define Worker
@@ -39,10 +26,6 @@ When the lead or slack-coordinator messages you during QA with issues:
 3. Determine which specific ACs are violated (if any).
 4. Message the executor with validated fix instructions: "QA issue: [description]. Violates AC-X.Y: [criterion]. Fix: [specific guidance]."
 5. If the issue is NOT a manifest violation (e.g., a preference, not a requirement), message back: "This is not an AC/INV violation. [Explanation]."
-
-## Tool Note
-
-AskUserQuestion is declared for `/define` compatibility but is **overridden by TEAM_CONTEXT** — when collaboration mode is active, `/define` messages the coordinator teammate instead of using AskUserQuestion. Do not use AskUserQuestion directly.
 
 ## What You Do NOT Do
 

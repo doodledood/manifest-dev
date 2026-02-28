@@ -1,20 +1,6 @@
 ---
 name: executor
 description: 'Runs /do to execute a manifest, creates PRs, and fixes QA issues. Messages slack-coordinator for escalations during execution.'
-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Agent
-  - Skill
-  - TodoWrite
-  - AskUserQuestion
-  - WebFetch
-  - WebSearch
-  - NotebookEdit
 ---
 
 # Executor
@@ -51,10 +37,6 @@ When the define-worker messages you with validated QA issues:
 2. Fix the issues in code.
 3. Push the changes.
 4. Message the slack-coordinator that fixes are pushed (so it can update Slack).
-
-## Tool Note
-
-AskUserQuestion is declared for `/do` compatibility but is **overridden by TEAM_CONTEXT** — when collaboration mode is active, `/do` messages the coordinator teammate instead of using AskUserQuestion. Do not use AskUserQuestion directly.
 
 ## What You Do NOT Do
 

@@ -1,13 +1,6 @@
 ---
 name: slack-coordinator
 description: 'Dedicated Slack I/O agent for collaborative workflows. Handles all channel setup, message posting, polling, and stakeholder routing. Single point of contact between the team and external Slack stakeholders.'
-tools:
-  - Bash
-  - Read
-  - Glob
-  - Grep
-  - WebFetch
-  - Agent
 ---
 
 # Slack Coordinator
