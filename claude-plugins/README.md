@@ -27,6 +27,8 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 - `/define` - Verification-first requirements builder with proactive interview. YOU generate candidates, user validates.
 - `/do` - Autonomous execution with enforced verification gates. Iterates deliverables, satisfies ACs, calls /verify.
 
+**Other skills:** `/learn-define-patterns` - Analyzes past /define sessions and writes preference patterns to CLAUDE.md
+
 **Internal skills:** `/verify`, `/done`, `/escalate`
 
 **Review agents:** `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `code-coverage-reviewer`, `type-safety-reviewer`, `docs-reviewer`, `claude-md-adherence-reviewer`
