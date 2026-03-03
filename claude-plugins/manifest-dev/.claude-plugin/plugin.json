@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.60.0",
+  "version": "0.62.0",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
@@ -13,11 +13,11 @@
     "approach",
     "trade-offs",
     "do",
+    "learn",
+    "patterns",
+    "preferences",
     "multi-cli",
     "distribution",
-    "gemini-cli",
-    "opencode",
-    "codex-cli",
     "sync-tools"
   ],
   "hooks": {

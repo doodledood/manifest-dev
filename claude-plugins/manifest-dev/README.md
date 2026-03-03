@@ -104,6 +104,7 @@ The manifest has three moving parts:
 | `/verify` | Runs all verifiers in parallel (you rarely call this directly; `/do` handles it) |
 | `/done` | Prints what got done and what was verified |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
+| `/learn-define-patterns` | Analyzes recent /define sessions, extracts user preference patterns, writes them to CLAUDE.md |
 | `/sync-tools` | Generates multi-CLI distribution under `dist/` (Gemini CLI, OpenCode, Codex CLI) |
 
 ### Task-Specific Guidance
@@ -141,6 +142,7 @@ It walks through these in order, starting with whatever gives the most signal:
 |-------|---------|
 | `criteria-checker` | Read-only verification agent. Validates a single criterion using commands, codebase analysis, file inspection, reasoning, or web research. Returns structured PASS/FAIL. |
 | `manifest-verifier` | Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe. |
+| `define-session-analyzer` | Analyzes a single /define session transcript for user preference patterns. Spawned by `/learn-define-patterns`. |
 
 ### Code Reviewers
 
@@ -160,7 +162,7 @@ These run in parallel during `/verify`:
 
 ## Collaboration Mode
 
-Both `/define` and `/do` support a collaboration mode activated by passing a `COLLAB_CONTEXT` block in arguments. Full instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when collab is active). When active, questions and escalations route through Slack via a session-resume pattern: Claude posts to Slack, exits with structured JSON, and the orchestrator resumes the session with the response. Logs and manifests stay local. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `COLLAB_CONTEXT` is present, behavior is unchanged.
+Both `/define` and `/do` support a team collaboration mode activated by passing a `TEAM_CONTEXT` block in arguments. Full instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when collab is active). When active, questions and escalations route through the coordinator teammate via mailbox messaging instead of AskUserQuestion. Skills don't know about Slack — the coordinator handles all external communication. Logs and manifests stay local. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `TEAM_CONTEXT` is present, behavior is unchanged.
 
 ## Multi-CLI Distribution
 

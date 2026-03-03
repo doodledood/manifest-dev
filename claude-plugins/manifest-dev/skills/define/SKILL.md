@@ -435,7 +435,7 @@ Before asking for approval, output a scannable summary that enables full manifes
 
 ## Collaboration Mode
 
-When `$ARGUMENTS` contains a `COLLAB_CONTEXT:` block, read `references/COLLABORATION_MODE.md` for full collaboration mode instructions. If no `COLLAB_CONTEXT:` block is present, ignore this — all other sections apply as written.
+When `$ARGUMENTS` contains a `TEAM_CONTEXT:` block, read `references/COLLABORATION_MODE.md` for full collaboration mode instructions. If no `TEAM_CONTEXT:` block is present, ignore this — all other sections apply as written.
 
 ## Complete
 

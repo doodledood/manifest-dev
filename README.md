@@ -259,7 +259,7 @@ Run `/sync-tools` in Claude Code to regenerate `dist/` after plugin changes.
 | Plugin | Description |
 |--------|-------------|
 | `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, review agents, workflow hooks. Multi-CLI distribution via `/sync-tools`. |
-| `manifest-dev-collab` | Slack-based team collaboration on define/do workflows via `/slack-collab`. Python orchestrator drives phases; Claude handles intelligent work. |
+| `manifest-dev-collab` | Slack-based team collaboration on define/do workflows via `/slack-collab`. Agent Teams native — lead orchestrator spawns specialized teammates (slack-coordinator, define-worker, executor). |
 
 ## Plugin Architecture
 
@@ -272,6 +272,7 @@ Run `/sync-tools` in Claude Code to regenerate `dist/` after plugin changes.
 | `/verify` | Internal | Spawns parallel verifiers for all criteria. Routes to `criteria-checker` agents based on verification method |
 | `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure |
 | `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |
+| `/learn-define-patterns` | User-invoked | Analyzes recent /define sessions, extracts user preference patterns, writes them to CLAUDE.md for future /define sessions |
 
 ### Review Agents
 
@@ -290,6 +291,7 @@ Built-in agents for quality verification via `subagent` method:
 | `type-safety-reviewer` | TypeScript type safety: `any` abuse, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
 | `claude-md-adherence-reviewer` | Compliance with CLAUDE.md project rules |
+| `define-session-analyzer` | Analyzes a single /define session transcript for user preference patterns. Spawned by `/learn-define-patterns` |
 
 Each reviewer returns structured output with severity levels (Critical, High, Medium, Low) and specific fix guidance.
 
