@@ -31,26 +31,21 @@ Hooks run through `gemini_adapter.py` which translates between Gemini and Claude
 
 ## Install / Update
 
-### One Command (recommended)
+### Everything (one command, no clone needed)
 ```bash
-# From the dist/gemini directory:
-bash install.sh
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
 ```
 
-Installs skills, agents, hooks, and GEMINI.md context file. Idempotent — run again to update.
+Installs skills, agents, hooks, context file, and extension manifest. Run again to update.
+
+### Skills only
+```bash
+npx skills add doodledood/manifest-dev --all -a gemini-cli
+```
 
 ### As Gemini Extension
 ```bash
-# Install from GitHub
-gemini extensions install https://github.com/<org>/manifest-dev/dist/gemini
-
-# Or link locally
-gemini extensions link ./dist/gemini
-```
-
-### Skills Only
-```bash
-npx skills add <github-url> --all -a gemini-cli
+gemini extensions install https://github.com/doodledood/manifest-dev/dist/gemini
 ```
 
 ### Required Configuration
@@ -79,4 +74,4 @@ Merge `hooks/hooks.json` entries into your settings.json hooks section.
 
 ## Source
 
-This is a generated distribution from [manifest-dev](https://github.com/<org>/manifest-dev) for Claude Code. The Claude Code plugin is the source of truth.
+This is a generated distribution from [manifest-dev](https://github.com/doodledood/manifest-dev) for Claude Code. The Claude Code plugin is the source of truth.

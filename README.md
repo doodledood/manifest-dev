@@ -15,14 +15,14 @@ Stop iterating with the model after implementation. Define what you'd accept, ru
 /plugin marketplace add doodledood/manifest-dev
 /plugin install manifest-dev@manifest-dev-marketplace
 
-# Gemini CLI
-gemini extensions install https://github.com/doodledood/manifest-dev/dist/gemini
+# Gemini CLI — everything (skills, agents, hooks)
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
 
-# OpenCode
-npx skills add https://github.com/doodledood/manifest-dev --all -a opencode
+# OpenCode — everything (skills, agents, commands, plugin stubs)
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 
-# Codex CLI (skills only)
-npx skills add https://github.com/doodledood/manifest-dev --all
+# Codex CLI — everything (skills, TOML stubs, rules, config)
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
 ```
 
 Then use it:
@@ -243,16 +243,16 @@ verify:
 
 ## Multi-CLI Support
 
-The Claude Code plugin is the source of truth. Per-CLI distributions under `dist/` provide native packages for other AI coding CLIs.
+The Claude Code plugin is the source of truth. Per-CLI distributions under `dist/` provide native packages for other AI coding CLIs. Each has a one-command remote installer — run again to update.
 
-| CLI | Skills | Agents | Hooks | Details |
-|-----|--------|--------|-------|---------|
-| Claude Code | Full | Full | Full | Primary target |
-| Gemini CLI | Full | Full (converted) | Full (adapted) | [dist/gemini/README.md](dist/gemini/README.md) |
-| OpenCode | Full | Full (converted) | Stubs (JS/TS rewrite needed) | [dist/opencode/README.md](dist/opencode/README.md) |
-| Codex CLI | Full | Descriptions only | Not available | [dist/codex/README.md](dist/codex/README.md) |
+| CLI | Install | Skills | Agents | Hooks | Details |
+|-----|---------|--------|--------|-------|---------|
+| Claude Code | `/plugin install` | Full | Full | Full | Primary target |
+| Gemini CLI | `curl .../gemini/install.sh \| bash` | Full | Full (converted) | Full (adapted) | [README](dist/gemini/README.md) |
+| OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | Stubs | [README](dist/opencode/README.md) |
+| Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | Not available | [README](dist/codex/README.md) |
 
-Run `/sync-tools` in Claude Code to regenerate `dist/` after plugin changes.
+**Keeping distributions in sync**: After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. The sync skill reads reference files with per-CLI conversion rules and produces the full distribution for each target.
 
 ## Available Plugins
 

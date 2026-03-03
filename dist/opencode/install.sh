@@ -1,63 +1,79 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# manifest-dev installer/updater for OpenCode
-# Run: bash install.sh
-# Or:  curl -sSL <raw-url>/install.sh | bash
+# manifest-dev for OpenCode — install or update everything
+#
+# Remote:  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
+# Local:   bash dist/opencode/install.sh
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO="doodledood/manifest-dev"
+BRANCH="main"
+DIST_PATH="dist/opencode"
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TMP_DIR"' EXIT
 
-echo "Installing manifest-dev for OpenCode..."
+echo "manifest-dev installer for OpenCode"
+echo "====================================="
 
-# Detect project vs global install
-if [ -d ".opencode" ] || [ -d ".git" ]; then
-  TARGET=".opencode"
-  echo "  Target: project (.opencode/)"
-else
-  TARGET="$HOME/.config/opencode"
-  echo "  Target: global (~/.config/opencode/)"
+# --- Download ---
+echo "Downloading from github.com/$REPO..."
+curl -fsSL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" | tar -xz -C "$TMP_DIR" --strip-components=1
+SRC="$TMP_DIR/$DIST_PATH"
+
+if [ ! -d "$SRC" ]; then
+  echo "Error: $DIST_PATH not found in archive" >&2
+  exit 1
 fi
 
-# Skills
+# --- Detect target ---
+if [ -d ".opencode" ] || [ -d ".git" ]; then
+  TARGET=".opencode"
+  echo "Installing to project: .opencode/"
+else
+  TARGET="$HOME/.config/opencode"
+  echo "Installing globally: ~/.config/opencode/"
+fi
+
+# --- Skills ---
 mkdir -p "$TARGET/skills"
-cp -r "$SCRIPT_DIR/skills/"* "$TARGET/skills/"
-echo "  Skills: $(ls "$SCRIPT_DIR/skills/" | wc -l | tr -d ' ') installed"
+cp -r "$SRC/skills/"* "$TARGET/skills/"
+echo "  Skills: $(ls "$SRC/skills/" | wc -l | tr -d ' ') installed"
 
-# Agents
+# --- Agents ---
 mkdir -p "$TARGET/agents"
-cp -r "$SCRIPT_DIR/agents/"* "$TARGET/agents/"
-echo "  Agents: $(ls "$SCRIPT_DIR/agents/" | wc -l | tr -d ' ') installed"
+cp -r "$SRC/agents/"* "$TARGET/agents/"
+echo "  Agents: $(ls "$SRC/agents/" | wc -l | tr -d ' ') installed"
 
-# Commands
+# --- Commands ---
 mkdir -p "$TARGET/commands"
-cp -r "$SCRIPT_DIR/commands/"* "$TARGET/commands/"
-echo "  Commands: $(ls "$SCRIPT_DIR/commands/" | wc -l | tr -d ' ') installed"
+cp -r "$SRC/commands/"* "$TARGET/commands/"
+echo "  Commands: $(ls "$SRC/commands/" | wc -l | tr -d ' ') installed"
 
-# Plugins (stubs — won't overwrite existing implementations)
+# --- Plugins (hook stubs — won't overwrite manual ports) ---
 mkdir -p "$TARGET/plugins"
-for f in "$SCRIPT_DIR/plugins/"*; do
+for f in "$SRC/plugins/"*; do
   fname=$(basename "$f")
-  if [ -f "$TARGET/plugins/$fname" ] && [ "$fname" = "index.ts" ]; then
-    echo "  Plugins: index.ts exists — skipping (won't overwrite manual port)"
+  if [ "$fname" = "index.ts" ] && [ -f "$TARGET/plugins/$fname" ]; then
+    echo "  Plugins: index.ts exists — skipped (won't overwrite manual port)"
   else
     cp "$f" "$TARGET/plugins/$fname"
   fi
 done
-echo "  Plugins: stubs installed (see HOOK_SPEC.md for implementation guide)"
+echo "  Plugins: stubs installed (see HOOK_SPEC.md to implement)"
 
-# Install plugin dependencies if bun available
+# --- Install plugin deps ---
 if [ -f "$TARGET/plugins/package.json" ]; then
   if command -v bun &>/dev/null; then
-    (cd "$TARGET/plugins" && bun install --silent 2>/dev/null) && echo "  Dependencies: installed via bun" || echo "  Dependencies: bun install failed — run manually: cd $TARGET/plugins && bun install"
+    (cd "$TARGET/plugins" && bun install --silent 2>/dev/null) && echo "  Deps: installed via bun" || echo "  Deps: run manually: cd $TARGET/plugins && bun install"
   else
-    echo "  Dependencies: bun not found — run: cd $TARGET/plugins && npm install"
+    echo "  Deps: bun not found — run: cd $TARGET/plugins && npm install"
   fi
 fi
 
-# AGENTS.md
-cp "$SCRIPT_DIR/AGENTS.md" "./AGENTS.md" 2>/dev/null || cp "$SCRIPT_DIR/AGENTS.md" "$TARGET/AGENTS.md"
+# --- Context file ---
+cp "$SRC/AGENTS.md" "./AGENTS.md" 2>/dev/null || cp "$SRC/AGENTS.md" "$TARGET/AGENTS.md"
 echo "  Context: AGENTS.md installed"
 
 echo ""
-echo "Done! Skills and agents are ready to use."
-echo "Hooks are stubs only — see plugins/HOOK_SPEC.md to implement."
+echo "Done! Restart OpenCode to activate."
+echo "Hook stubs need manual TypeScript port — see plugins/HOOK_SPEC.md."

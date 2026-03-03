@@ -1,42 +1,60 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# manifest-dev installer/updater for Codex CLI
-# Run: bash install.sh
-# Or:  curl -sSL <raw-url>/install.sh | bash
+# manifest-dev for Codex CLI — install or update everything
+#
+# Remote:  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
+# Local:   bash dist/codex/install.sh
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO="doodledood/manifest-dev"
+BRANCH="main"
+DIST_PATH="dist/codex"
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TMP_DIR"' EXIT
 
-echo "Installing manifest-dev for Codex CLI..."
+echo "manifest-dev installer for Codex CLI"
+echo "======================================"
 
-# Skills → .agents/skills/ (Codex standard path)
+# --- Download ---
+echo "Downloading from github.com/$REPO..."
+curl -fsSL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" | tar -xz -C "$TMP_DIR" --strip-components=1
+SRC="$TMP_DIR/$DIST_PATH"
+
+if [ ! -d "$SRC" ]; then
+  echo "Error: $DIST_PATH not found in archive" >&2
+  exit 1
+fi
+
+# --- Skills ---
 mkdir -p ".agents/skills"
-cp -r "$SCRIPT_DIR/skills/"* ".agents/skills/"
-echo "  Skills: $(ls "$SCRIPT_DIR/skills/" | wc -l | tr -d ' ') installed"
+cp -r "$SRC/skills/"* ".agents/skills/"
+echo "  Skills: $(ls "$SRC/skills/" | wc -l | tr -d ' ') installed"
 
-# AGENTS.md
-cp "$SCRIPT_DIR/AGENTS.md" "./AGENTS.md"
+# --- AGENTS.md ---
+cp "$SRC/AGENTS.md" "./AGENTS.md"
 echo "  Context: AGENTS.md installed"
 
-# Agent TOML stubs
+# --- Agent TOML stubs ---
 mkdir -p ".codex/agents"
-cp "$SCRIPT_DIR/agents/"*.toml ".codex/agents/"
-echo "  Agents: $(ls "$SCRIPT_DIR/agents/" | wc -l | tr -d ' ') TOML stubs installed"
+cp "$SRC/agents/"*.toml ".codex/agents/"
+echo "  Agents: $(ls "$SRC/agents/"*.toml | wc -l | tr -d ' ') TOML stubs installed"
 
-# Execution rules
+# --- Execution rules ---
 mkdir -p ".codex/rules"
-cp "$SCRIPT_DIR/rules/default.rules" ".codex/rules/"
+cp "$SRC/rules/default.rules" ".codex/rules/"
 echo "  Rules: default.rules installed"
 
-# Config — don't overwrite, just remind
+# --- Config (don't overwrite existing) ---
 if [ -f ".codex/config.toml" ]; then
-  echo "  Config: .codex/config.toml exists — merge manually from dist/codex/config.toml"
+  echo "  Config: .codex/config.toml exists — merge manually from downloaded config"
+  echo "          Tip: cat $SRC/config.toml"
 else
-  cp "$SCRIPT_DIR/config.toml" ".codex/config.toml"
+  mkdir -p ".codex"
+  cp "$SRC/config.toml" ".codex/config.toml"
   echo "  Config: config.toml installed"
 fi
 
 echo ""
 echo "Done! Skills are ready to use."
-echo "Agent TOML stubs and rules provide multi-agent support (limited to shell + apply_patch)."
-echo "Hooks are not available — Codex hook system expected mid-March 2026."
+echo "Agent TOML stubs provide multi-agent support (limited to shell + apply_patch)."
+echo "Hooks not available — Codex hook system expected mid-2026."

@@ -33,29 +33,19 @@ The Python hook logic must be manually ported to TypeScript. The spec documents 
 
 ## Install / Update
 
-### One Command (recommended)
+### Everything (one command, no clone needed)
 ```bash
-# From the dist/opencode directory:
-bash install.sh
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 ```
 
-Installs skills, agents, commands, plugin stubs, and AGENTS.md. Idempotent — run again to update. Won't overwrite manually ported index.ts.
+Installs skills, agents, commands, plugin stubs, and AGENTS.md. Run again to update. Won't overwrite manually ported index.ts.
 
-### Skills Only (works natively)
-OpenCode reads `.claude/skills/` natively, so Claude Code skills already work without conversion:
+### Skills only
 ```bash
-npx skills add <github-url> --all -a opencode
+npx skills add doodledood/manifest-dev --all -a opencode
 ```
 
-### Manual
-```bash
-cp -r dist/opencode/skills/* .opencode/skills/
-cp -r dist/opencode/agents/* .opencode/agents/
-cp -r dist/opencode/commands/* .opencode/commands/
-cp -r dist/opencode/plugins/* .opencode/plugins/
-cp dist/opencode/AGENTS.md ./AGENTS.md
-cd .opencode/plugins && bun install
-```
+OpenCode also reads `.claude/skills/` natively, so Claude Code skills work without conversion.
 
 ## Feature Parity
 
@@ -78,4 +68,4 @@ cd .opencode/plugins && bun install
 
 ## Source
 
-This is a generated distribution from [manifest-dev](https://github.com/<org>/manifest-dev) for Claude Code. The Claude Code plugin is the source of truth.
+This is a generated distribution from [manifest-dev](https://github.com/doodledood/manifest-dev) for Claude Code. The Claude Code plugin is the source of truth.

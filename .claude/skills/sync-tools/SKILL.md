@@ -6,87 +6,68 @@ user-invocable: true
 
 # /sync-tools — Multi-CLI Distribution Generator
 
-Generate distribution packages for Gemini CLI, OpenCode, and Codex CLI from the Claude Code plugin source of truth.
+Generate distribution packages for Gemini CLI, OpenCode, and Codex CLI from the Claude Code plugin.
 
-**Input**: `$ARGUMENTS` — optional CLI name (gemini, opencode, codex) to sync a single target. Empty = sync all three.
+**Input**: `$ARGUMENTS` — optional CLI name (gemini, opencode, codex) to sync one target. Empty = all three.
 
-## Source and Output
+## Paths
 
-- **Source** (read-only): `claude-plugins/manifest-dev/` — skills, agents, hooks
-- **Output**: `dist/{gemini,opencode,codex}/` — per-CLI distributions
-- **Reference files**: `claude-plugins/manifest-dev/skills/sync-tools/references/{gemini,opencode,codex}-cli.md`
+| Role | Path |
+|------|------|
+| Source (read-only) | `claude-plugins/manifest-dev/` |
+| Output | `dist/{gemini,opencode,codex}/` |
+| Conversion rules | `.claude/skills/sync-tools/references/{cli}-cli.md` |
+| GitHub repo | `doodledood/manifest-dev` |
 
-Never modify files under `claude-plugins/manifest-dev/`. Only write to `dist/`.
+## Scope
+
+Only sync `claude-plugins/manifest-dev/`. Never sync other plugins (e.g., `manifest-dev-collab` — uses Agent Teams/Slack, inherently incompatible). Never modify source files. Skip `sync-tools` skill from output (meta-tool).
 
 ## Per-CLI Processing
 
-For each target CLI, read the corresponding reference file in `references/`. The reference file contains the complete conversion rules: tool name mappings, frontmatter format, hook protocol differences, directory structure, installation commands, and known limitations.
+For each target CLI, read its reference file first. The reference file is **the single source of truth** for conversion rules — tool name mappings, frontmatter format, hook protocol, directory structure, and limitations. Do not duplicate conversion logic here; follow the reference.
 
-### Phase 1: Skills
+### Per-component goals
 
-Copy all skill directories from `claude-plugins/manifest-dev/skills/` to the CLI's dist output. SKILL.md files are copied **unchanged** — the Agent Skills Open Standard ensures universal compatibility. Copy subdirectories (scripts/, references/, assets/, tasks/) recursively.
+| Component | Goal |
+|-----------|------|
+| **Skills** | Copy unchanged (Agent Skills Open Standard = universal). Include all subdirectories. |
+| **Agents** | Convert frontmatter per reference file. Keep prompt body unchanged. |
+| **Hooks** | Adapt to target hook protocol per reference file. Generate stubs + behavioral spec where full adaptation isn't automatable. |
+| **Commands** | Generate command files from user-invocable skills (`user-invocable: true`, the default). Per reference file. |
+| **Context file** | Workflow overview + agent descriptions in the CLI's native context format per reference file. |
+| **README** | Component table, install instructions, feature parity table, required config, link to GitHub repo. |
+| **Install script** | Idempotent `install.sh` that copies all components to the CLI's standard locations. |
+| **CLI extras** | Extension manifests, plugin configs, execution rules — per reference file. |
 
-Exception: skip the `sync-tools` skill itself — it's a meta-tool, not useful on other CLIs.
+### README install section
 
-### Phase 2: Agents
+Remote install (no clone needed) must be the primary method. Use the repo from the Paths table with the standard skills installer (`npx skills add`). Include CLI-native install methods from the reference file as alternatives. Full distribution install via `install.sh` as secondary.
 
-Read each agent file from `claude-plugins/manifest-dev/agents/`. Convert frontmatter per the reference file's conversion rules. Keep the prompt body (everything below frontmatter) unchanged.
+### Install script constraints
 
-- **Gemini CLI**: Convert tool names, add required fields (name, kind, model, temperature, max_turns, timeout_mins). Write to `dist/gemini/agents/`.
-- **OpenCode**: Convert tools array to boolean object with lowercase names, add mode: subagent. Write to `dist/opencode/agents/`.
-- **Codex CLI**: Agents are incompatible. Instead, generate a single `AGENTS.md` describing all agents (name, description, purpose, tools used). Write to `dist/codex/AGENTS.md`.
+- Idempotent (safe to re-run for updates)
+- Never overwrite user-customized files
 
-If an agent declares a tool not in the reference file's mapping table, log a warning and pass the tool name through unchanged (the target CLI will ignore unknown tools gracefully).
+## Constraints
 
-### Phase 3: Hooks
+| Constraint | Why |
+|-----------|-----|
+| Frontmatter conversion must work in both bash and zsh | macOS default shell is zsh; bash-only constructs break |
+| Reference files are authoritative for conversion rules | Avoids two sources of truth — update one place |
+| Unmapped agent tools pass through unchanged | Target CLI ignores unknown tools gracefully |
+| Empty component sets skip gracefully | Codex has no hooks — note in README, don't error |
 
-Read each hook file from `claude-plugins/manifest-dev/hooks/`. Adapt per the reference file's protocol.
+## Progress Log
 
-- **Gemini CLI**: Generate adapted Python hooks with the JSON output format adapter described in the reference file. Map hook event names and tool name matchers per the reference. Write to `dist/gemini/hooks/` with a `hooks.json` configuration file.
-- **OpenCode**: Hooks require JS/TS rewrite (not automatable). Generate: (1) a hook stub file (`dist/opencode/hooks/index.ts`) with correct OpenCode plugin structure and event bindings, (2) a behavioral spec (`dist/opencode/hooks/HOOK_SPEC.md`) documenting what each hook does, what events it responds to, and what decisions it makes.
-- **Codex CLI**: No hooks possible. Skip entirely — document in README.
+Write to `/tmp/sync-tools-{timestamp}.md` after each CLI: counts, warnings, what was generated. Read the full log before writing the final summary.
 
-Skip `hook_utils.py` shared utilities — inline relevant logic into adapted hooks or include as a helper file.
+## Output
 
-### Phase 4: Per-CLI README
+Summary table after all CLIs processed:
 
-Generate a README.md for each CLI in `dist/{cli}/README.md` containing:
-
-1. What this distribution contains and what's included/excluded
-2. Installation instructions specific to this CLI (from reference file)
-3. Feature parity table: what works fully, what works with limitations, what's missing and WHY
-4. Any required configuration (e.g., Gemini's experimental.enableAgents flag)
-5. Link back to the main repo for Claude Code users
-
-### Phase 5: CLI-Specific Extras
-
-- **Gemini CLI**: Generate `dist/gemini/gemini-extension.json` manifest with name, version, description.
-- **OpenCode**: No extras needed.
-- **Codex CLI**: No extras needed.
-
-## Progress Logging
-
-Create a log at `/tmp/sync-tools-{timestamp}.md`. After completing each CLI, append:
-- Which CLI was processed
-- Number of skills, agents, hooks processed
-- Any warnings (unmapped tools, skipped components, errors)
-- Summary of what was generated
-
-Read the full log before writing the final summary output.
-
-## Edge Cases
-
-- **Skills with subdirectories** (define/ has tasks/, sync-tools/ has references/): copy the entire skill directory tree recursively.
-- **Agent with tools not in mapping table**: log warning, pass through unchanged.
-- **Empty component sets** (Codex has no hooks): skip gracefully, note in README.
-- **hook_utils.py**: shared utility — Gemini hooks may need inlined logic from it. Read hook_utils.py to understand what functions the hooks import, then include relevant code in the adapted hooks.
-
-## Output Summary
-
-After all CLIs are processed, output a summary table:
-
-| CLI | Skills | Agents | Hooks | Status |
-|-----|--------|--------|-------|--------|
-| Gemini | N copied | N converted | N adapted | Complete |
-| OpenCode | N copied | N converted | stubs only | Complete |
-| Codex | N copied | AGENTS.md | none | Complete |
+| CLI | Skills | Agents | Hooks | Commands | Status |
+|-----|--------|--------|-------|----------|--------|
+| Gemini | N | N converted | N adapted | — | Complete |
+| OpenCode | N | N converted | stubs | N | Complete |
+| Codex | N | AGENTS.md + N TOML | none | — | Complete |

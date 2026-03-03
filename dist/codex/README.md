@@ -31,29 +31,16 @@ Per-agent TOML configuration files for Codex's multi-agent system. These approxi
 
 ## Install / Update
 
-### One Command (recommended)
+### Everything (one command, no clone needed)
 ```bash
-# From the dist/codex directory:
-bash install.sh
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
 ```
 
-Installs skills, AGENTS.md, agent TOML stubs, execution rules, and config. Idempotent — run again to update. Won't overwrite existing config.toml.
+Installs skills, AGENTS.md, agent TOML stubs, execution rules, and config. Run again to update. Won't overwrite existing config.toml.
 
-### Skills Only
+### Skills only
 ```bash
-npx skills add <github-url> --all
-
-# Or Codex skill-installer (within session)
-$skill-installer --repo <url> --path skills/<name>
-```
-
-### Manual
-```bash
-cp -r dist/codex/skills/* .agents/skills/
-cp dist/codex/AGENTS.md ./AGENTS.md
-mkdir -p .codex/agents && cp dist/codex/agents/*.toml .codex/agents/
-mkdir -p .codex/rules && cp dist/codex/rules/default.rules .codex/rules/
-# Merge dist/codex/config.toml into .codex/config.toml
+npx skills add doodledood/manifest-dev --all -a codex
 ```
 
 ## Feature Parity
@@ -81,4 +68,4 @@ When Codex ships hooks, this distribution should expand significantly.
 
 ## Source
 
-This is a generated distribution from [manifest-dev](https://github.com/<org>/manifest-dev) for Claude Code. The Claude Code plugin is the source of truth.
+This is a generated distribution from [manifest-dev](https://github.com/doodledood/manifest-dev) for Claude Code. The Claude Code plugin is the source of truth.

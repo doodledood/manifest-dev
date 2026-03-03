@@ -1,46 +1,66 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# manifest-dev installer/updater for Gemini CLI
-# Run: bash install.sh
-# Or:  curl -sSL <raw-url>/install.sh | bash
+# manifest-dev for Gemini CLI — install or update everything
+#
+# Remote:  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
+# Local:   bash dist/gemini/install.sh
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO="doodledood/manifest-dev"
+BRANCH="main"
+DIST_PATH="dist/gemini"
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TMP_DIR"' EXIT
 
-echo "Installing manifest-dev for Gemini CLI..."
+echo "manifest-dev installer for Gemini CLI"
+echo "======================================"
 
-# Detect project vs global install
-if [ -d ".gemini" ] || [ -d ".git" ]; then
-  TARGET=".gemini"
-  echo "  Target: project (.gemini/)"
-else
-  TARGET="$HOME/.gemini"
-  echo "  Target: global (~/.gemini/)"
+# --- Download ---
+echo "Downloading from github.com/$REPO..."
+curl -fsSL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" | tar -xz -C "$TMP_DIR" --strip-components=1
+SRC="$TMP_DIR/$DIST_PATH"
+
+if [ ! -d "$SRC" ]; then
+  echo "Error: $DIST_PATH not found in archive" >&2
+  exit 1
 fi
 
-# Skills
+# --- Detect target ---
+if [ -d ".gemini" ] || [ -d ".git" ]; then
+  TARGET=".gemini"
+  echo "Installing to project: .gemini/"
+else
+  TARGET="$HOME/.gemini"
+  echo "Installing globally: ~/.gemini/"
+fi
+
+# --- Skills ---
 mkdir -p "$TARGET/skills"
-cp -r "$SCRIPT_DIR/skills/"* "$TARGET/skills/"
-echo "  Skills: $(ls "$SCRIPT_DIR/skills/" | wc -l | tr -d ' ') installed"
+cp -r "$SRC/skills/"* "$TARGET/skills/"
+echo "  Skills: $(ls "$SRC/skills/" | wc -l | tr -d ' ') installed"
 
-# Agents
+# --- Agents ---
 mkdir -p "$TARGET/agents"
-cp -r "$SCRIPT_DIR/agents/"* "$TARGET/agents/"
-echo "  Agents: $(ls "$SCRIPT_DIR/agents/" | wc -l | tr -d ' ') installed"
+cp -r "$SRC/agents/"* "$TARGET/agents/"
+echo "  Agents: $(ls "$SRC/agents/" | wc -l | tr -d ' ') installed"
 
-# Hooks
+# --- Hooks ---
 mkdir -p "$TARGET/hooks"
-cp "$SCRIPT_DIR/hooks/"*.py "$TARGET/hooks/"
-cp "$SCRIPT_DIR/hooks/hooks.json" "$TARGET/hooks/"
-echo "  Hooks: adapter + $(ls "$SCRIPT_DIR/hooks/"*.py | wc -l | tr -d ' ') hooks installed"
+cp "$SRC/hooks/"*.py "$TARGET/hooks/"
+cp "$SRC/hooks/hooks.json" "$TARGET/hooks/"
+echo "  Hooks: $(ls "$SRC/hooks/"*.py | wc -l | tr -d ' ') hooks + adapter installed"
 
-# Context file
-cp "$SCRIPT_DIR/GEMINI.md" "$TARGET/GEMINI.md"
+# --- Context file ---
+cp "$SRC/GEMINI.md" "$TARGET/GEMINI.md"
 echo "  Context: GEMINI.md installed"
 
-# Check enableAgents
+# --- Extension manifest ---
+cp "$SRC/gemini-extension.json" "$TARGET/gemini-extension.json" 2>/dev/null || true
+
 echo ""
-echo "Done! Make sure your settings.json includes:"
+echo "Done! Restart Gemini CLI to activate."
+echo ""
+echo "Required: add to your settings.json:"
 echo '  { "experimental": { "enableAgents": true } }'
 echo ""
-echo "And merge hooks/hooks.json entries into your settings.json hooks section."
+echo "Then merge hooks/hooks.json into your settings.json hooks section."
