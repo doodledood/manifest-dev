@@ -15,10 +15,7 @@
     "do",
     "learn",
     "patterns",
-    "preferences",
-    "multi-cli",
-    "distribution",
-    "sync-tools"
+    "preferences"
   ],
   "hooks": {
     "Stop": [

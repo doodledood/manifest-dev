@@ -27,7 +27,7 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 - `/define` - Verification-first requirements builder with proactive interview. YOU generate candidates, user validates.
 - `/do` - Autonomous execution with enforced verification gates. Iterates deliverables, satisfies ACs, calls /verify.
 
-**Other skills:** `/learn-define-patterns` - Analyzes past /define sessions and writes preference patterns to CLAUDE.md | `/sync-tools` — sync plugin to multi-CLI distributions
+**Other skills:** `/learn-define-patterns` - Analyzes past /define sessions and writes preference patterns to CLAUDE.md
 
 **Internal skills:** `/verify`, `/done`, `/escalate`
 

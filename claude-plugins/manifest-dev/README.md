@@ -105,7 +105,6 @@ The manifest has three moving parts:
 | `/done` | Prints what got done and what was verified |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
 | `/learn-define-patterns` | Analyzes recent /define sessions, extracts user preference patterns, writes them to CLAUDE.md |
-| `/sync-tools` | Generates multi-CLI distribution under `dist/` (Gemini CLI, OpenCode, Codex CLI) |
 
 ### Task-Specific Guidance
 
@@ -166,7 +165,7 @@ Both `/define` and `/do` support a team collaboration mode activated by passing 
 
 ## Multi-CLI Distribution
 
-Run `/sync-tools` to generate native packages under `dist/` for Gemini CLI, OpenCode, and Codex CLI. The Claude Code plugin is the single source of truth; `/sync-tools` converts agents (tool name mapping), adapts hooks (protocol translation), and copies skills unchanged (universal format). See per-CLI READMEs in `dist/` for installation and feature parity details.
+Multi-CLI distributions under `dist/` for Gemini CLI, OpenCode, and Codex CLI are maintained at the repo level via `/sync-tools` (in `.claude/skills/`). The Claude Code plugin is the single source of truth; `/sync-tools` converts agents, adapts hooks, and copies skills unchanged. See per-CLI READMEs in `dist/` for installation and feature parity.
 
 ## Hooks
 
