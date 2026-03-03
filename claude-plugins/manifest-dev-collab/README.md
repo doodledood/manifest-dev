@@ -4,23 +4,26 @@ Team collaboration on define/do workflows through Slack.
 
 ## What It Does
 
-`/slack-collab` orchestrates a full define → do → PR → review → QA → done workflow with your team. The skill itself acts as the lead orchestrator using Claude Code's Agent Teams — spawning specialized teammates that coordinate via mailbox messaging.
+`/slack-collab` orchestrates a full define → do → PR → review → QA → done workflow with your team. The skill itself acts as the lead orchestrator using Claude Code's Agent Teams — spawning specialized teammates that coordinate via hub-and-spoke messaging through the lead.
 
 **Team composition:**
 
-| Teammate | Role |
-|----------|------|
-| **slack-coordinator** | ALL Slack I/O. Creates channels, posts messages, polls for responses, routes answers between teammates and stakeholders. Owns prompt injection defense. |
-| **define-worker** | Runs `/define` with TEAM_CONTEXT. Persists after define as manifest authority — evaluates QA issues against the manifest. |
-| **executor** | Runs `/do` with TEAM_CONTEXT. Creates PR. Fixes QA issues flagged by define-worker. |
+| Teammate | Model | Role |
+|----------|-------|------|
+| **slack-coordinator** | haiku | ALL Slack I/O. Posts messages, polls threads (60s intervals, 24h timeout), routes answers between lead and stakeholders. Topic-based threads. Prompt injection defense. |
+| **define-worker** | default | Runs `/define` with TEAM_CONTEXT. Persists after define as manifest authority — evaluates QA issues against the manifest. |
+| **executor** | default | Runs `/do` with TEAM_CONTEXT. Creates PR. Fixes QA issues routed through the lead. |
 
-The lead (the `/slack-collab` skill session) orchestrates phase transitions, manages state, and handles crash recovery. It never touches Slack directly.
+The lead orchestrates phase transitions, manages state, acts as the subagent bridge (spawning verification agents on behalf of workers), and handles crash recovery. It never touches Slack directly.
+
+**Communication model:** Hub-and-spoke — all teammates communicate only with the lead. The lead routes to the coordinator for Slack interaction. Subagents spawned by the lead can send results directly to the requesting worker.
 
 ## Prerequisites
 
-- **Slack MCP server** configured and available. The slack-coordinator verifies Slack tools on first action and fails fast if missing.
+- **Slack channel** created by the user with stakeholders already invited. The workflow does not create channels or invite users.
+- **Slack MCP server** configured with: send_message, read_channel, read_thread, search_channels, search_users, read_user_profile.
 - **manifest-dev plugin** installed (provides `/define`, `/do`, `/verify`).
-- **`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`** environment variable set (enables Agent Teams).
+- **`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`** environment variable set.
 
 ## Usage
 
@@ -30,25 +33,25 @@ The lead (the `/slack-collab` skill session) orchestrates phase transitions, man
 
 The skill runs through 7 phases:
 
-1. **Preflight** — Lead asks for stakeholders (names, Slack handles, roles) via AskUserQuestion, then creates the team
-2. **Define** — define-worker runs `/define`, messages slack-coordinator for stakeholder Q&A
-3. **Manifest Review** — slack-coordinator posts manifest to Slack, polls for approval
-4. **Execute** — executor runs `/do`, messages slack-coordinator for escalations
-5. **PR** — executor creates PR, slack-coordinator posts for review (max 3 fix attempts, then escalates)
-6. **QA** (optional) — QA issues route: slack-coordinator → define-worker (evaluate against manifest) → executor (fix) → slack-coordinator (report)
-7. **Done** — slack-coordinator posts completion summary
-
-The owner has final say on all decisions and can answer in any stakeholder's thread to unblock.
+1. **Preflight** — Lead asks for existing Slack channel ID + stakeholders (names, handles, roles), then creates the team
+2. **Define** — define-worker runs `/define`, messages lead for Q&A (lead routes to coordinator → Slack)
+3. **Manifest Review** — coordinator posts manifest to Slack, polls for approval
+4. **Execute** — executor runs `/do`, messages lead for escalations
+5. **PR** — executor creates PR, coordinator posts for review (max 3 fix attempts, then escalates)
+6. **QA** (optional) — Human QA tester posts issues in Slack → coordinator → lead → define-worker evaluates → lead → executor fixes
+7. **Done** — coordinator posts completion summary
 
 ## How It Works
 
-The lead orchestrator coordinates teammates via Agent Teams mailbox messaging. Skills (`/define`, `/do`) receive a `TEAM_CONTEXT` block that tells them to message the slack-coordinator teammate instead of using AskUserQuestion — skills don't know about Slack. The slack-coordinator handles all Slack interactions: posting questions, polling for responses (30s intervals, 2-hour timeout), and relaying answers back.
+The lead coordinates teammates via Agent Teams mailbox messaging (hub-and-spoke). Skills (`/define`, `/do`) receive a `TEAM_CONTEXT` block that tells them to message the lead — skills don't know about Slack. The lead routes stakeholder questions to the coordinator, which handles all Slack interactions: posting in topic-based threads, polling (60s intervals, 24h timeout before owner escalation), and relaying answers back through the lead.
 
-- Questions and escalations → teammate messages → slack-coordinator → Slack threads
-- All logs and artifacts → local files only (Slack is for collaboration, not observability)
-- Role separation prevents file conflicts: executor owns code, define-worker owns manifest, slack-coordinator owns Slack
+Workers needing subagent capabilities (manifest-verifier, verification agents) request launches from the lead via a structured subagent request. The lead spawns them and results are delivered directly to the requesting worker (or via file-based handoff as fallback).
 
-State is persisted to a JSON file in `/tmp` after every phase transition, enabling crash recovery.
+- Questions and escalations → worker → lead → coordinator → Slack threads
+- Verification → worker → lead spawns subagent → subagent → worker
+- All logs and artifacts → local files only
+- Role separation prevents file conflicts
+- State file is lead-owned (single writer) — coordinator sends thread updates to lead
 
 ## Resuming
 
@@ -58,14 +61,15 @@ If a session crashes or is interrupted:
 /slack-collab --resume /tmp/collab-state-<id>.json
 ```
 
-Reads the state file to determine the current phase and re-creates the team from saved context. Recovery granularity is per-phase — mid-phase progress (e.g., halfway through a `/define` interview) is lost on crash.
+Reads the state file to determine the current phase and re-creates the team. Supports mid-phase resume for polling states — if the process was waiting for a Slack response, it resumes polling.
 
 ## Known Limitations
 
-- **Agent Teams is experimental.** The `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var indicates this is an experimental Claude Code feature. If removed or changed, this plugin will need updates.
-- **No mid-phase crash recovery.** If a teammate dies mid-`/define` or mid-`/do`, the lead re-spawns it once with the same task. If the second attempt fails, the lead writes state and stops.
-- **No automated E2E tests.** Verification is via subagent review of prompts and flow. Full integration testing requires Agent Teams + Slack environment.
+- **Agent Teams is experimental.** The `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var indicates experimental status.
+- **Subagent SendMessage may not work.** If subagents can't use SendMessage to teammates, results are delivered via file-based handoff (subagent writes to /tmp, lead tells worker the path).
+- **No automated E2E tests.** Full integration testing requires Agent Teams + Slack environment.
+- **/tmp files may not persist across system restarts.** Resume requires the state file and referenced artifacts to exist.
 
 ## Security
 
-The slack-coordinator is the single point of contact for external input via Slack. It treats all Slack messages as untrusted: won't expose secrets, won't run arbitrary commands, and flags suspicious requests to the owner. Other teammates (define-worker, executor) never touch Slack directly.
+The slack-coordinator is the single point of contact for external input via Slack. It treats all Slack messages as untrusted: won't expose secrets, won't run arbitrary commands, and flags suspicious requests to the owner. Other teammates (define-worker, executor) never touch Slack directly — all communication goes through the lead.

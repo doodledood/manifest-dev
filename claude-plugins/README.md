@@ -15,7 +15,7 @@ Front-load the thinking so AI agents get it right the first time.
 | Plugin | What It Does |
 |--------|--------------|
 | `manifest-dev` | Verification-first manifest workflows. Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
-| `manifest-dev-collab` | Slack-based team collaboration on define/do workflows. Orchestrates stakeholder Q&A, PR review, and QA sign-off through dedicated channels. |
+| `manifest-dev-collab` | Slack-based team collaboration on define/do workflows. Orchestrates stakeholder Q&A, PR review, and QA sign-off through topic-based threads in a user-provided Slack channel. |
 
 ## Plugin Details
 
