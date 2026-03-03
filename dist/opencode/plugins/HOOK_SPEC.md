@@ -1,89 +1,156 @@
 # Hook Behavioral Specification
 
-This document describes the intended behavior of each hook from the Claude Code manifest-dev plugin. Use this as a reference when implementing the TypeScript plugin stubs in `index.ts`.
+This document specifies the exact behavior that must be implemented in `index.ts` when porting from the Python hooks in `claude-plugins/manifest-dev/hooks/`.
 
-## Hook 1: Verify Context Reminder
+## Hook 1: Pre-Tool Verify (pretool_verify_hook.py)
 
-**Claude Code event**: PreToolUse (matcher: Skill)
-**OpenCode event**: `tool.execute.before` (check tool === "skill")
+**OpenCode event**: `tool.execute.before`
 
-**Behavior**:
-- Triggers when the Skill tool is called with skill name "verify" or "*:verify"
-- Injects a system reminder telling Claude to read the manifest and execution log in FULL before spawning verifiers
-- Does NOT block the tool call — only adds context
-- If the skill has arguments (e.g., a specific manifest path), includes them in the reminder
-
-**Key logic** (from `pretool_verify_hook.py`):
-1. Check `tool_name === "Skill"` and `tool_input.skill` matches "verify" or ends with ":verify"
-2. Extract `tool_input.args` if present
-3. Output `additionalContext` with a reminder template
-
-## Hook 2: Stop/Do Workflow Enforcement
-
-**Claude Code event**: Stop
-**OpenCode event**: `session.idle` (partial — NOT blocking in OpenCode)
+**Trigger condition**: The tool being called is `skill` AND the skill name is `verify` (or ends with `:verify`).
 
 **Behavior**:
-- Blocks premature session stops during active /do workflows
-- Decision matrix:
-  - API error (last assistant message has `isApiErrorMessage=true`) → ALLOW
-  - No /do in transcript → ALLOW
-  - /do + /done → ALLOW (verified complete)
-  - /do + /escalate → ALLOW (properly escalated)
-  - /do only → BLOCK (must verify first)
-  - /do + /verify only → BLOCK (verify may have found failures)
-- Infinite loop detection: If 3+ consecutive short assistant outputs (<100 chars, no meaningful tool use), ALLOW with warning to break the loop
-- Short outputs include attempted /escalate calls (Skill tool uses don't count as "meaningful")
+1. Extract the skill arguments (file paths to manifest and log)
+2. Inject a system-level reminder into the conversation context:
 
-**Key logic** (from `stop_do_hook.py` + `hook_utils.py`):
-1. `has_recent_api_error(transcript_path)` — check last assistant for API errors
-2. `parse_do_flow(transcript_path)` — returns DoFlowState with has_do, has_verify, has_done, has_escalate
-3. `count_consecutive_short_outputs(transcript_path)` — loop detection
+```
+VERIFICATION CONTEXT CHECK: You are about to run /verify.
 
-**OpenCode limitation**: `session.idle` cannot block the session from stopping. This is a known gap. Consider alternative approaches:
-- Use `tool.execute.before` on ALL tools to check workflow state and inject reminders
-- Use a custom tool that the agent must call before completing
+Arguments: {verify_args}
 
-## Hook 3: Post-Compact Recovery
+BEFORE spawning verifiers, read the manifest and execution log in FULL
+if not recently loaded. You need ALL acceptance criteria (AC-*) and
+global invariants (INV-G*) in context to spawn the correct verifiers.
+```
 
-**Claude Code event**: SessionStart (triggered after compaction)
+If no arguments are present, use a minimal version without the Arguments line.
+
+**NOT a blocker**: This hook injects context only. It does NOT abort the tool call.
+
+**OpenCode implementation notes**:
+- In `tool.execute.before`, you can mutate `args` or set `args.abort` to block
+- For context injection without blocking, you may need to use `ctx.client` to send a system message, or prepend to the tool's input
+- The exact injection mechanism depends on OpenCode plugin API capabilities
+
+---
+
+## Hook 2: Stop-Do Enforcement (stop_do_hook.py)
+
+**OpenCode event**: `session.idle`
+
+**Trigger condition**: Session is about to become idle (agent wants to stop responding).
+
+**Behavior** (decision tree):
+
+1. **No transcript available** -> Allow stop
+2. **Recent API error detected** -> Allow stop (system failure, not voluntary)
+3. **No /do invocation in transcript** -> Allow stop (not in workflow)
+4. **Has /do AND has /done** -> Allow stop (verified complete)
+5. **Has /do AND has /escalate** -> Allow stop (properly escalated)
+6. **Has /do, 3+ consecutive short outputs** -> Allow with warning:
+   ```
+   WARNING: Stop allowed to break infinite loop. The /do workflow
+   was NOT properly completed. Next time, call /escalate when blocked
+   instead of minimal outputs.
+   ```
+7. **Has /do but no /done or /escalate** -> Block with message:
+   ```
+   Stop blocked: /do workflow requires formal exit.
+   Options: (1) Run /verify to check criteria - if all pass, /verify calls /done.
+   (2) Call /escalate - for blocking issues OR user-requested pauses.
+   Short outputs will be blocked. Choose one.
+   ```
+
+**Transcript parsing requirements**:
+- Detect skill invocations by searching for tool calls where `tool_name` is `Skill` (or `skill` in OpenCode) and `skill` argument matches `do`, `done`, `escalate`, `verify`
+- A "short output" is an assistant message shorter than ~100 characters
+- "Consecutive short outputs" means the last N assistant messages are all short
+
+**OpenCode implementation notes**:
+- `session.idle` is NOT a blocking event in OpenCode (unlike Claude Code's Stop hook)
+- To enforce the block pattern, you may need to:
+  - Use `tui.toast.show` to display a warning
+  - Use `tui.prompt.append` to inject a follow-up prompt
+  - Or use `chat.message` to inject a system message that continues the conversation
+- This is the most complex hook to port and may require OpenCode plugin API extensions
+
+---
+
+## Hook 3: Post-Compact Recovery (post_compact_hook.py)
+
 **OpenCode event**: `experimental.session.compacting`
 
+**Trigger condition**: Session context is being compacted (compressed to save tokens).
+
 **Behavior**:
-- Detects when session compaction occurs during an active /do workflow
-- Injects a reminder to re-read the manifest and execution log
-- Only activates if /do was invoked but neither /done nor /escalate was called
-- Includes the original /do arguments in the reminder if available
 
-**Key logic** (from `post_compact_hook.py` + `hook_utils.py`):
-1. `parse_do_flow(transcript_path)` — check for active /do workflow
-2. If `state.has_do` and not `state.has_done` and not `state.has_escalate`:
-   - Build recovery reminder with `state.do_args` if available
-   - Output `additionalContext` with the reminder
+1. **No transcript available** -> No action
+2. **No /do invocation in transcript** -> No action
+3. **Has /do AND has /done or /escalate** -> No action (workflow complete)
+4. **Has /do, active workflow** -> Inject recovery reminder:
 
-## Transcript Parsing (hook_utils.py)
+If /do arguments are available:
+```
+This session was compacted during an active /do workflow.
+Context may have been lost.
 
-The hooks depend on `hook_utils.py` for transcript parsing. Key functions:
+CRITICAL: Before continuing, read the manifest and execution log in FULL.
 
-### `parse_do_flow(transcript_path) → DoFlowState`
-Reads JSONL transcript line by line. Tracks:
-- `/do` invocations (resets flow state on each new `/do`)
-- `/verify`, `/done`, `/escalate` after the most recent `/do`
-- Detects skill invocations via three patterns:
-  1. Assistant Skill tool_use blocks
-  2. User isMeta skill expansions
-  3. User command-name tags
+The /do was invoked with: {do_args}
 
-### `count_consecutive_short_outputs(transcript_path) → int`
-Counts consecutive short assistant outputs from end of transcript.
-"Short" = <100 chars text AND no meaningful tool uses (Skill calls excluded).
+1. Read the manifest file - contains deliverables, acceptance criteria, and approach
+2. Check /tmp/ for your execution log (do-log-*.md) and read it to recover progress
 
-### `has_recent_api_error(transcript_path) → bool`
-Checks if the last assistant message has `isApiErrorMessage=true`.
+Do not restart completed work. Resume from where you left off.
+```
 
-## Implementation Notes
+If /do arguments are not available, use fallback:
+```
+This session was compacted during an active /do workflow.
+Context may have been lost.
 
-- All hooks read the JSONL transcript file at `transcript_path`
-- Transcript format: one JSON object per line, with `type` (user/assistant/tool_result)
-- Claude Code hooks use JSON stdout for output; OpenCode uses return values from event handlers
-- When porting, replace `sys.stdin` JSON parsing with function parameters and `print(json.dumps(...))` with return values
+CRITICAL: Before continuing, recover your workflow context:
+
+1. Check /tmp/ for execution logs matching do-log-*.md
+2. The log references the manifest file path - read both in FULL
+
+Do not restart completed work. Resume from where you left off.
+```
+
+**OpenCode implementation notes**:
+- `experimental.session.compacting` is experimental and may change
+- Context injection can likely use the event's output mechanism
+- This is the simplest hook to port
+
+---
+
+## Shared Utilities (hook_utils.py)
+
+The Python hooks share utilities that need TypeScript equivalents:
+
+### `parse_do_flow(transcript_path)`
+Parses a session transcript and returns:
+- `has_do: boolean` - Whether /do was invoked
+- `has_done: boolean` - Whether /done was called after /do
+- `has_escalate: boolean` - Whether /escalate was called after /do
+- `has_verify: boolean` - Whether /verify was called after /do
+- `do_args: string | null` - Arguments passed to /do
+
+### `count_consecutive_short_outputs(transcript_path)`
+Counts consecutive short assistant messages from the end of the transcript. A "short" message is under ~100 characters.
+
+### `has_recent_api_error(transcript_path)`
+Checks if the most recent messages include an API error (overloaded, rate limit, etc.).
+
+### `build_system_reminder(content)`
+Wraps content in a system reminder format. In OpenCode, this likely maps to a system message injection.
+
+---
+
+## Gap Analysis
+
+| Capability | Claude Code | OpenCode | Status |
+|-----------|-------------|----------|--------|
+| Block stop | Stop hook returns `decision: block` | No blocking session.idle | GAP - needs workaround |
+| Inject context | `additionalContext` in hook output | `chat.message` or `tui.prompt.append` | Needs testing |
+| Read transcript | `transcript_path` in hook input | Session history via `ctx.client` | Needs API check |
+| System reminder | Custom format wrapping | System message injection | Likely supported |

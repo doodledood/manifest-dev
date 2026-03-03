@@ -1,66 +1,110 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
-# manifest-dev for Gemini CLI — install or update everything
 #
-# Remote:  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
-# Local:   bash dist/gemini/install.sh
+# manifest-dev Gemini CLI Extension Installer
+#
+# Idempotent installer that downloads and installs the manifest-dev
+# extension for Gemini CLI. Safe to run multiple times.
+#
+# Usage:
+#   curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
+#
+# What it does:
+#   1. Downloads the latest dist/gemini from the repo
+#   2. Installs to ~/.gemini/extensions/manifest-dev/
+#   3. Never overwrites user customizations in GEMINI.md
+#
+set -euo pipefail
 
 REPO="doodledood/manifest-dev"
 BRANCH="main"
-DIST_PATH="dist/gemini"
+INSTALL_DIR="${HOME}/.gemini/extensions/manifest-dev"
 TMP_DIR=$(mktemp -d)
-trap 'rm -rf "$TMP_DIR"' EXIT
 
-echo "manifest-dev installer for Gemini CLI"
-echo "======================================"
+cleanup() {
+    rm -rf "$TMP_DIR"
+}
+trap cleanup EXIT
 
-# --- Download ---
-echo "Downloading from github.com/$REPO..."
-curl -fsSL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" | tar -xz -C "$TMP_DIR" --strip-components=1
-SRC="$TMP_DIR/$DIST_PATH"
+echo "==> Downloading manifest-dev extension..."
 
-if [ ! -d "$SRC" ]; then
-  echo "Error: $DIST_PATH not found in archive" >&2
-  exit 1
+# Download repo tarball
+TARBALL_URL="https://github.com/${REPO}/archive/refs/heads/${BRANCH}.tar.gz"
+curl -fsSL "$TARBALL_URL" -o "${TMP_DIR}/repo.tar.gz"
+
+# Extract dist/gemini from tarball
+tar xzf "${TMP_DIR}/repo.tar.gz" -C "$TMP_DIR"
+
+# Find the extracted directory (manifest-dev-main or similar)
+EXTRACTED_DIR=$(ls -d "${TMP_DIR}"/manifest-dev-*/ 2>/dev/null | head -1)
+if [ -z "$EXTRACTED_DIR" ]; then
+    echo "ERROR: Could not find extracted repo directory" >&2
+    exit 1
 fi
 
-# --- Detect target ---
-if [ -d ".gemini" ] || [ -d ".git" ]; then
-  TARGET=".gemini"
-  echo "Installing to project: .gemini/"
-else
-  TARGET="$HOME/.gemini"
-  echo "Installing globally: ~/.gemini/"
+SOURCE_DIR="${EXTRACTED_DIR}dist/gemini"
+if [ ! -d "$SOURCE_DIR" ]; then
+    echo "ERROR: dist/gemini not found in downloaded repo" >&2
+    exit 1
 fi
 
-# --- Skills ---
-mkdir -p "$TARGET/skills"
-cp -r "$SRC/skills/"* "$TARGET/skills/"
-echo "  Skills: $(ls "$SRC/skills/" | wc -l | tr -d ' ') installed"
+# Create install directory
+mkdir -p "$INSTALL_DIR"
 
-# --- Agents ---
-mkdir -p "$TARGET/agents"
-cp -r "$SRC/agents/"* "$TARGET/agents/"
-echo "  Agents: $(ls "$SRC/agents/" | wc -l | tr -d ' ') installed"
+echo "==> Installing to ${INSTALL_DIR}..."
 
-# --- Hooks ---
-mkdir -p "$TARGET/hooks"
-cp "$SRC/hooks/"*.py "$TARGET/hooks/"
-cp "$SRC/hooks/hooks.json" "$TARGET/hooks/"
-echo "  Hooks: $(ls "$SRC/hooks/"*.py | wc -l | tr -d ' ') hooks + adapter installed"
+# Copy agents (always overwrite -- these are managed by the extension)
+if [ -d "${SOURCE_DIR}/agents" ]; then
+    rm -rf "${INSTALL_DIR}/agents"
+    cp -r "${SOURCE_DIR}/agents" "${INSTALL_DIR}/agents"
+    echo "    agents/ ($(ls "${INSTALL_DIR}/agents" | wc -l | tr -d ' ') files)"
+fi
 
-# --- Context file ---
-cp "$SRC/GEMINI.md" "$TARGET/GEMINI.md"
-echo "  Context: GEMINI.md installed"
+# Copy skills (always overwrite)
+if [ -d "${SOURCE_DIR}/skills" ]; then
+    rm -rf "${INSTALL_DIR}/skills"
+    cp -r "${SOURCE_DIR}/skills" "${INSTALL_DIR}/skills"
+    echo "    skills/ ($(ls "${INSTALL_DIR}/skills" | wc -l | tr -d ' ') dirs)"
+fi
 
-# --- Extension manifest ---
-cp "$SRC/gemini-extension.json" "$TARGET/gemini-extension.json" 2>/dev/null || true
+# Copy hooks (always overwrite)
+if [ -d "${SOURCE_DIR}/hooks" ]; then
+    rm -rf "${INSTALL_DIR}/hooks"
+    cp -r "${SOURCE_DIR}/hooks" "${INSTALL_DIR}/hooks"
+    chmod +x "${INSTALL_DIR}/hooks/"*.py 2>/dev/null || true
+    echo "    hooks/ ($(ls "${INSTALL_DIR}/hooks" | wc -l | tr -d ' ') files)"
+fi
+
+# Copy extension manifest (always overwrite)
+if [ -f "${SOURCE_DIR}/gemini-extension.json" ]; then
+    cp "${SOURCE_DIR}/gemini-extension.json" "${INSTALL_DIR}/gemini-extension.json"
+    echo "    gemini-extension.json"
+fi
+
+# Copy GEMINI.md only if it doesn't exist (preserve user customizations)
+if [ -f "${SOURCE_DIR}/GEMINI.md" ]; then
+    if [ ! -f "${INSTALL_DIR}/GEMINI.md" ]; then
+        cp "${SOURCE_DIR}/GEMINI.md" "${INSTALL_DIR}/GEMINI.md"
+        echo "    GEMINI.md (new)"
+    else
+        echo "    GEMINI.md (skipped -- preserving existing)"
+    fi
+fi
+
+# Copy README
+if [ -f "${SOURCE_DIR}/README.md" ]; then
+    cp "${SOURCE_DIR}/README.md" "${INSTALL_DIR}/README.md"
+    echo "    README.md"
+fi
 
 echo ""
-echo "Done! Restart Gemini CLI to activate."
+echo "==> Installation complete!"
 echo ""
-echo "Required: add to your settings.json:"
-echo '  { "experimental": { "enableAgents": true } }'
+echo "Next steps:"
+echo "  1. Enable agents in settings.json:"
+echo '     { "experimental": { "enableAgents": true } }'
 echo ""
-echo "Then merge hooks/hooks.json into your settings.json hooks section."
+echo "  2. Merge hooks into your settings.json (see hooks/hooks.json)"
+echo ""
+echo "  3. Start using: gemini> /define my task"
+echo ""
+echo "Installed to: ${INSTALL_DIR}"

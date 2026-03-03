@@ -4,14 +4,13 @@ description: 'Reviews /define manifests for gaps and outputs actionable continua
 kind: local
 tools:
   - read_file
-  - search_file_content
+  - grep_search
   - glob
 model: inherit
 temperature: 0.2
 max_turns: 15
 timeout_mins: 5
 ---
-
 
 # Manifest Verifier Agent
 

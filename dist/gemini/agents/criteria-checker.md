@@ -6,7 +6,7 @@ tools:
   - run_shell_command
   - read_file
   - glob
-  - search_file_content
+  - grep_search
   - web_fetch
   - google_web_search
 model: inherit
@@ -14,7 +14,6 @@ temperature: 0.2
 max_turns: 15
 timeout_mins: 5
 ---
-
 
 # Criteria Checker Agent
 

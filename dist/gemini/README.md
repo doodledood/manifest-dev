@@ -1,55 +1,41 @@
 # manifest-dev for Gemini CLI
 
-Verification-first manifest workflows adapted for Gemini CLI. Define tasks, execute them, verify acceptance criteria, and complete with confidence.
+Verification-first manifest workflows for Gemini CLI. Define tasks with acceptance criteria, execute against them, verify with parallel agents.
 
-## What's Included
+## Components
 
-| Component | Count | Status |
-|-----------|-------|--------|
-| Skills | 6 | Full compatibility (Agent Skills Open Standard) |
-| Agents | 12 | Converted (frontmatter adapted, prompts unchanged) |
-| Hooks | 3 | Adapted via Python adapter (gemini_adapter.py) |
-| Extension manifest | 1 | gemini-extension.json |
+| Type | Count | Details |
+|------|-------|---------|
+| Skills | 6 | define, do, verify, done, escalate, learn-define-patterns |
+| Agents | 12 | criteria-checker, manifest-verifier, 8 code reviewers, docs-reviewer, define-session-analyzer |
+| Hooks | 3 | pretool-verify, stop-do-enforcement, post-compact-recovery |
 
-### Skills (copied unchanged)
-- **define** — Manifest builder with interview-driven scoping
-- **do** — Manifest executor, iterates through deliverables
-- **verify** — Spawns parallel verification agents
-- **done** — Completion marker with execution summary
-- **escalate** — Structured escalation with evidence
-- **learn-define-patterns** — Extracts user preference patterns from /define sessions
+## Install
 
-### Agents (converted frontmatter)
-All 12 agents converted with Gemini CLI tool names and required fields. Review agents are read-only verification subagents spawned by `/verify`.
+### Option 1: Remote installer (recommended)
 
-### Hooks (adapted)
-- **stop_do_hook** → AfterAgent: Blocks premature stops during /do workflows
-- **pretool_verify_hook** → BeforeTool: Adds context reminder before /verify
-- **post_compact_hook** → SessionStart: Recovers /do context after compaction
-
-Hooks run through `gemini_adapter.py` which translates between Gemini and Claude Code hook protocols.
-
-## Install / Update
-
-### Everything (one command, no clone needed)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
 ```
 
-Installs skills, agents, hooks, context file, and extension manifest. Run again to update.
+### Option 2: Skills only (via npx)
 
-### Skills only
 ```bash
-npx skills add doodledood/manifest-dev --all -a gemini-cli
+npx skills add https://github.com/doodledood/manifest-dev --all -a gemini-cli
 ```
 
-### As Gemini Extension
+### Option 3: Gemini extensions
+
 ```bash
 gemini extensions install https://github.com/doodledood/manifest-dev/dist/gemini
+# Or link locally:
+gemini extensions link ./dist/gemini
 ```
 
-### Required Configuration
-Add to your Gemini CLI settings.json:
+## Required Configuration
+
+Enable agents in your `~/.gemini/settings.json`:
+
 ```json
 {
   "experimental": {
@@ -58,20 +44,54 @@ Add to your Gemini CLI settings.json:
 }
 ```
 
-Merge `hooks/hooks.json` entries into your settings.json hooks section.
+Merge `hooks/hooks.json` into your settings.json hooks section for full workflow enforcement.
 
 ## Feature Parity
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Skills (define/do/verify/done/escalate) | Full | Agent Skills Open Standard |
-| Verification agents | Full | Frontmatter converted, prompts unchanged |
-| Stop enforcement hook | Full | Via AfterAgent + adapter |
-| Verify context hook | Full | Via BeforeTool + adapter |
-| Post-compact recovery | Full | Via SessionStart + adapter |
-| $ARGUMENTS in skills | Missing | Not supported by Gemini CLI |
-| SubagentStart/Stop hooks | Missing | No equivalent Gemini events |
+| Feature | Claude Code | Gemini CLI |
+|---------|------------|------------|
+| Skills (6) | Full | Full (copy unchanged) |
+| Agents (12) | Full | Full (frontmatter converted) |
+| Hooks (3) | Full | Full (adapter layer) |
+| Subagent spawning | Agent tool | Named tool per agent |
+| Todo management | TaskCreate/Update | write_todos |
+| File search | Grep | grep_search |
+| Web search | WebSearch | google_web_search |
+| Skill invocation | Skill | activate_skill |
+| Team management | TeamCreate/SendMessage | Not supported |
+| Worktrees | EnterWorktree | Not supported |
 
-## Source
+## Workflow
 
-This is a generated distribution from [manifest-dev](https://github.com/doodledood/manifest-dev) for Claude Code. The Claude Code plugin is the source of truth.
+```
+/define → produces manifest with acceptance criteria
+    |
+/do → executes against manifest, tracks progress
+    |
+/verify → parallel verification with 12 specialized agents
+    |
+/done (all pass) or /escalate (blocked)
+```
+
+## Agent Tool Mapping
+
+Tools were converted from Claude Code names to Gemini CLI equivalents:
+
+| Claude Code | Gemini CLI |
+|------------|------------|
+| Bash / BashOutput | run_shell_command |
+| Read | read_file |
+| Write | write_file |
+| Edit | replace |
+| Grep | grep_search |
+| Glob | glob |
+| WebFetch | web_fetch |
+| WebSearch | google_web_search |
+| Skill | activate_skill |
+| TaskCreate | write_todos |
+
+## Repository
+
+Main repo: [github.com/doodledood/manifest-dev](https://github.com/doodledood/manifest-dev)
+
+This distribution is auto-generated from the Claude Code plugin source. See the main repo for documentation, issues, and contributions.

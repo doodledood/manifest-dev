@@ -1,7 +1,8 @@
 # manifest-dev execution policy rules for Codex CLI
 # Safe defaults for verification-focused workflows
 
-# Allow read operations
+# --- Allow: read operations ---
+
 prefix_rule(
     pattern = ["cat"],
     decision = "allow",
@@ -9,9 +10,21 @@ prefix_rule(
 )
 
 prefix_rule(
-    pattern = ["grep"],
+    pattern = ["head"],
     decision = "allow",
-    justification = "Search operations are safe",
+    justification = "File reading is safe",
+)
+
+prefix_rule(
+    pattern = ["tail"],
+    decision = "allow",
+    justification = "File reading is safe",
+)
+
+prefix_rule(
+    pattern = ["ls"],
+    decision = "allow",
+    justification = "Directory listing is safe",
 )
 
 prefix_rule(
@@ -20,33 +33,41 @@ prefix_rule(
     justification = "File discovery is safe",
 )
 
-# Allow git read operations
 prefix_rule(
-    pattern = ["git", ["status", "log", "diff", "show", "branch"]],
+    pattern = ["grep"],
     decision = "allow",
-    justification = "Git read operations are safe",
+    justification = "Search operations are safe",
 )
 
-# Prompt for git write operations
-prefix_rule(
-    pattern = ["git", ["push", "commit", "reset", "rebase"]],
-    decision = "prompt",
-    justification = "Git write operations need confirmation",
-)
+# --- Allow: git operations ---
 
-# Prompt for file modifications
 prefix_rule(
-    pattern = ["rm"],
-    decision = "prompt",
-    justification = "File deletion requires confirmation",
-)
-
-# Allow Python for running tests and linting
-prefix_rule(
-    pattern = ["python3"],
+    pattern = ["git"],
     decision = "allow",
-    justification = "Python execution for tests and scripts",
+    justification = "Git operations are safe for verification workflows",
 )
+
+# --- Allow: package managers (read/install) ---
+
+prefix_rule(
+    pattern = ["npm"],
+    decision = "allow",
+    justification = "npm operations for dependency management",
+)
+
+prefix_rule(
+    pattern = ["yarn"],
+    decision = "allow",
+    justification = "yarn operations for dependency management",
+)
+
+prefix_rule(
+    pattern = ["pnpm"],
+    decision = "allow",
+    justification = "pnpm operations for dependency management",
+)
+
+# --- Allow: test and lint tooling ---
 
 prefix_rule(
     pattern = ["pytest"],
@@ -57,5 +78,75 @@ prefix_rule(
 prefix_rule(
     pattern = ["ruff"],
     decision = "allow",
-    justification = "Linting is safe",
+    justification = "Python linting is safe",
+)
+
+prefix_rule(
+    pattern = ["black"],
+    decision = "allow",
+    justification = "Python formatting is safe",
+)
+
+prefix_rule(
+    pattern = ["mypy"],
+    decision = "allow",
+    justification = "Type checking is safe",
+)
+
+# --- Prompt: destructive or write operations ---
+
+prefix_rule(
+    pattern = ["rm"],
+    decision = "prompt",
+    justification = "File deletion requires confirmation",
+)
+
+prefix_rule(
+    pattern = ["mv"],
+    decision = "prompt",
+    justification = "File move/rename requires confirmation",
+)
+
+prefix_rule(
+    pattern = ["cp"],
+    decision = "prompt",
+    justification = "File copy requires confirmation",
+)
+
+prefix_rule(
+    pattern = ["tee"],
+    decision = "prompt",
+    justification = "File write requires confirmation",
+)
+
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "Pushing to remote requires confirmation",
+)
+
+# --- Forbidden: network modification ---
+
+prefix_rule(
+    pattern = ["iptables"],
+    decision = "forbidden",
+    justification = "Network modification not allowed",
+)
+
+prefix_rule(
+    pattern = ["ip6tables"],
+    decision = "forbidden",
+    justification = "Network modification not allowed",
+)
+
+prefix_rule(
+    pattern = ["ifconfig"],
+    decision = "forbidden",
+    justification = "Network interface modification not allowed",
+)
+
+prefix_rule(
+    pattern = ["route"],
+    decision = "forbidden",
+    justification = "Routing table modification not allowed",
 )

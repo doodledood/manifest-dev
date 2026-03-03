@@ -9,52 +9,53 @@ max_threads = 6
 max_depth = 1
 
 # Agent role definitions — see agents/*.toml for per-role config
+
+[agents.criteria-checker]
+description = "Validates a single acceptance criterion or global invariant (PASS/FAIL)"
+config_file = "agents/criteria-checker.toml"
+
 [agents.code-bugs-reviewer]
-description = "Audits code changes for logical bugs"
+description = "Audits code changes for logical bugs, race conditions, data loss, edge cases"
 config_file = "agents/code-bugs-reviewer.toml"
 
-[agents.code-coverage-reviewer]
-description = "Verifies test coverage for code changes"
-config_file = "agents/code-coverage-reviewer.toml"
-
 [agents.code-design-reviewer]
-description = "Audits design fitness of code changes"
+description = "Audits design fitness — reinvented wheels, misplaced responsibilities, under-engineering"
 config_file = "agents/code-design-reviewer.toml"
 
-[agents.code-maintainability-reviewer]
-description = "Audits code maintainability"
-config_file = "agents/code-maintainability-reviewer.toml"
-
 [agents.code-simplicity-reviewer]
-description = "Identifies unnecessary complexity"
+description = "Identifies unnecessary complexity, over-engineering, cognitive burden"
 config_file = "agents/code-simplicity-reviewer.toml"
 
+[agents.code-maintainability-reviewer]
+description = "Audits DRY violations, coupling, cohesion, consistency, dead code"
+config_file = "agents/code-maintainability-reviewer.toml"
+
+[agents.code-coverage-reviewer]
+description = "Verifies test coverage for code changes, reports gaps"
+config_file = "agents/code-coverage-reviewer.toml"
+
 [agents.code-testability-reviewer]
-description = "Identifies testability issues"
+description = "Identifies testability issues — excessive mocking, logic buried in IO"
 config_file = "agents/code-testability-reviewer.toml"
 
 [agents.type-safety-reviewer]
-description = "Audits type safety across typed languages"
+description = "Audits type safety — any abuse, invalid states, exhaustiveness gaps"
 config_file = "agents/type-safety-reviewer.toml"
 
 [agents.docs-reviewer]
-description = "Audits documentation accuracy"
+description = "Audits documentation accuracy against code changes"
 config_file = "agents/docs-reviewer.toml"
 
 [agents.claude-md-adherence-reviewer]
-description = "Verifies CLAUDE.md compliance"
+description = "Verifies compliance with CLAUDE.md project rules"
 config_file = "agents/claude-md-adherence-reviewer.toml"
 
-[agents.criteria-checker]
-description = "Validates a single acceptance criterion"
-config_file = "agents/criteria-checker.toml"
-
 [agents.manifest-verifier]
-description = "Reviews manifests for gaps"
+description = "Reviews /define manifests for gaps, returns continuation questions"
 config_file = "agents/manifest-verifier.toml"
 
 [agents.define-session-analyzer]
-description = "Analyzes /define sessions for patterns"
+description = "Analyzes /define sessions to extract user preference patterns"
 config_file = "agents/define-session-analyzer.toml"
 
 # Read CLAUDE.md as fallback for AGENTS.md

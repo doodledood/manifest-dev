@@ -1,7 +1,7 @@
 {
-  "name": "manifest-dev-hooks",
+  "name": "manifest-dev-opencode-plugin",
   "version": "0.1.0",
-  "description": "manifest-dev workflow enforcement hooks for OpenCode",
+  "private": true,
   "dependencies": {
     "@opencode-ai/plugin": "latest"
   }

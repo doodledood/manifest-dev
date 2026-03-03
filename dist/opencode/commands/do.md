@@ -1,6 +1,5 @@
 ---
-description: Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria.
-subtask: true
+description: 'Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass.'
 ---
 
-$ARGUMENTS
+Invoke the do skill with: "$ARGUMENTS"

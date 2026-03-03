@@ -1,14 +1,12 @@
 ---
 description: 'Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe so interview can continue.'
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   read: true
   grep: true
   glob: true
 ---
-
 
 # Manifest Verifier Agent
 
@@ -52,11 +50,11 @@ Latent requirements emerge from domain understanding. Flag when:
 
 New fields, APIs, or features have characteristic failure modes. Flag when the manifest lacks coverage for failure modes typical to what's being built.
 
-### Explicit → Encoded
+### Explicit -> Encoded
 
 User statements and discovered insights must appear in the manifest. Flag when:
 - User stated a preference/constraint with no corresponding INV, AC, or PG
-- Technical discovery encoded as invariant without user confirmation ("Discovered ≠ confirmed")
+- Technical discovery encoded as invariant without user confirmation ("Discovered != confirmed")
 - Process constraint (how to work) placed in INV instead of Process Guidance
 - Insights from domain grounding/outside view/pre-mortem logged but not converted to criteria
 - Discovery log contains unresolved pending items (`- [ ]`) that weren't presented, encoded, or scoped out before synthesis
@@ -138,7 +136,7 @@ Task file structures (quality gates, reviewer agents, risks, scenarios, trade-of
 - Selected quality gates not traceable to INV-G* or AC-* with matching verification (agent, threshold)
 - Log shows task file structures "noted" or "considered" but never presented to user — engagement requires selection or explicit skip, not acknowledgment
 - Log missing pending items for task file structures (should be logged as `- [ ]` immediately after reading task files)
-- Log contains unresolved `- [ ]` items at time of synthesis (applies to all pending items, not just task files — see Explicit → Encoded)
+- Log contains unresolved `- [ ]` items at time of synthesis (applies to all pending items, not just task files — see Explicit -> Encoded)
 
 ### Approach constraints coverage
 
@@ -197,7 +195,7 @@ Status: COMPLETE | CONTINUE
 1. [Specific question with rationale]
 
 **Gaps found:**
-- [Principle]: [What's missing] → [Question or probe to fill it]
+- [Principle]: [What's missing] -> [Question or probe to fill it]
 ```
 
 ## Status Logic

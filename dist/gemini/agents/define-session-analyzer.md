@@ -4,7 +4,7 @@ description: 'Analyze a single /define session transcript to extract user prefer
 kind: local
 tools:
   - read_file
-  - search_file_content
+  - grep_search
   - glob
   - run_shell_command
   - write_file
@@ -13,7 +13,6 @@ temperature: 0.2
 max_turns: 15
 timeout_mins: 5
 ---
-
 
 # Define Session Analyzer
 

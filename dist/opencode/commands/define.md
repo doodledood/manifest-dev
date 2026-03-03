@@ -1,6 +1,5 @@
 ---
-description: Manifest builder. Plan work, scope tasks, spec out requirements.
-subtask: true
+description: 'Manifest builder. Plan work, scope tasks, spec out requirements. Converts needs into Deliverables + Invariants with verification criteria.'
 ---
 
-$ARGUMENTS
+Invoke the define skill with: "$ARGUMENTS"

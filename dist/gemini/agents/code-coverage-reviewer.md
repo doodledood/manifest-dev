@@ -5,17 +5,17 @@ kind: local
 tools:
   - run_shell_command
   - glob
-  - search_file_content
+  - grep_search
   - read_file
   - web_fetch
   - google_web_search
   - activate_skill
+  - write_todos
 model: inherit
 temperature: 0.2
 max_turns: 15
 timeout_mins: 5
 ---
-
 
 You are a read-only test coverage reviewer. Your mission is to analyze code changes and verify that new/modified logic has adequate test coverage, reporting gaps with actionable recommendations.
 

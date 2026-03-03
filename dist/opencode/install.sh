@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
-# manifest-dev for OpenCode — install or update everything
+# manifest-dev installer for OpenCode CLI
+# Idempotent — safe to re-run. Downloads from GitHub, copies components.
 #
-# Remote:  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
-# Local:   bash dist/opencode/install.sh
+# Usage:
+#   curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
+#
+# Or clone and run locally:
+#   bash dist/opencode/install.sh
+
+set -euo pipefail
 
 REPO="doodledood/manifest-dev"
 BRANCH="main"
@@ -54,7 +58,13 @@ mkdir -p "$TARGET/plugins"
 for f in "$SRC/plugins/"*; do
   fname=$(basename "$f")
   if [ "$fname" = "index.ts" ] && [ -f "$TARGET/plugins/$fname" ]; then
-    echo "  Plugins: index.ts exists — skipped (won't overwrite manual port)"
+    # Check if the existing file has been manually ported (no TODOs remaining)
+    if grep -q "TODO: Port from" "$TARGET/plugins/$fname" 2>/dev/null; then
+      cp "$f" "$TARGET/plugins/$fname"
+      echo "  Plugins: index.ts updated (still contains TODOs)"
+    else
+      echo "  Plugins: index.ts exists — skipped (won't overwrite manual port)"
+    fi
   else
     cp "$f" "$TARGET/plugins/$fname"
   fi
@@ -65,8 +75,10 @@ echo "  Plugins: stubs installed (see HOOK_SPEC.md to implement)"
 if [ -f "$TARGET/plugins/package.json" ]; then
   if command -v bun &>/dev/null; then
     (cd "$TARGET/plugins" && bun install --silent 2>/dev/null) && echo "  Deps: installed via bun" || echo "  Deps: run manually: cd $TARGET/plugins && bun install"
+  elif command -v npm &>/dev/null; then
+    (cd "$TARGET/plugins" && npm install --silent 2>/dev/null) && echo "  Deps: installed via npm" || echo "  Deps: run manually: cd $TARGET/plugins && npm install"
   else
-    echo "  Deps: bun not found — run: cd $TARGET/plugins && npm install"
+    echo "  Deps: bun/npm not found — run: cd $TARGET/plugins && bun install"
   fi
 fi
 
@@ -76,4 +88,12 @@ echo "  Context: AGENTS.md installed"
 
 echo ""
 echo "Done! Restart OpenCode to activate."
+echo ""
+echo "Components installed to $TARGET/:"
+echo "  skills/    - 6 skills (define, do, done, escalate, learn-define-patterns, verify)"
+echo "  agents/    - 12 agents (code reviewers, criteria-checker, manifest-verifier, etc.)"
+echo "  commands/  - 3 commands (/define, /do, /learn-define-patterns)"
+echo "  plugins/   - Hook stubs (require manual TS porting — see HOOK_SPEC.md)"
+echo "  AGENTS.md  - Workflow overview and agent descriptions"
+echo ""
 echo "Hook stubs need manual TypeScript port — see plugins/HOOK_SPEC.md."

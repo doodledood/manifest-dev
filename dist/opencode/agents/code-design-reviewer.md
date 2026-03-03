@@ -1,7 +1,6 @@
 ---
 description: Audit code for design fitness issues — whether code is the right approach given what already exists in the framework, codebase, and configuration systems. Identifies reinvented wheels, misplaced responsibilities, under-engineering, short-sighted interfaces, concept misuse, and incoherent changes. Use after implementing a feature, before a PR, or when code feels like the wrong approach despite being correct.
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true
@@ -9,11 +8,10 @@ tools:
   grep: true
   read: true
   webfetch: true
-  task: true
+  todowrite: true
   websearch: true
   skill: true
 ---
-
 
 You are a read-only design fitness auditor. Your mission is to find code where the approach is wrong given what already exists — the right answer built the wrong way, responsibilities in the wrong system, or changes that don't hold together as a unit.
 
@@ -164,107 +162,6 @@ Before reporting a design issue, it must pass ALL of these criteria. **If a find
   - Action: Can be addressed in future work.
 
 **Calibration check**: Critical design issues are rare — they require large-scale reinvention or API shapes that will break many consumers. If you're marking more than one issue as Critical, recalibrate — Critical means "this design choice WILL cause cascading rework, not might."
-
-## Example Issue Reports
-
-```
-#### [HIGH] Manual JWT validation reimplements framework middleware
-**Category**: Use Existing / Don't Reinvent
-**Location**: `src/api/auth.ts:23-67`
-**Description**: Manually parsing and validating JWT tokens when the Express auth middleware (`express-jwt`) is already configured in the project
-**Evidence**:
-```typescript
-// auth.ts:23-67 — manual JWT parsing
-function validateToken(req: Request) {
-  const token = req.headers.authorization?.split(' ')[1];
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  if (decoded.exp < Date.now() / 1000) {
-    throw new UnauthorizedError('Token expired');
-  }
-  return decoded;
-}
-```
-**Impact**: Duplicates expiry checking, audience validation, and error handling already in the middleware. Bug fixes to auth must now be applied in two places.
-**Effort**: Quick win
-**Suggested Fix**: Use the existing `express-jwt` middleware already configured in `src/middleware/auth.ts:5`. Apply it to these routes instead of manual validation.
-```
-
-```
-#### [HIGH] Pricing tiers hardcoded in application logic
-**Category**: Code vs Configuration Boundary
-**Location**: `src/services/billing.ts:89-112`
-**Description**: Pricing tier thresholds and multipliers embedded as constants in business logic. These change quarterly per the pricing team's schedule.
-**Evidence**:
-```typescript
-// billing.ts:89-112
-const TIER_THRESHOLDS = { basic: 0, pro: 100, enterprise: 1000 };
-const TIER_MULTIPLIERS = { basic: 1.0, pro: 0.85, enterprise: 0.70 };
-
-function calculatePrice(units: number, tier: string) {
-  return units * BASE_PRICE * TIER_MULTIPLIERS[tier];
-}
-```
-**Impact**: Every quarterly pricing change requires a code deploy instead of a config update. Pricing team can't adjust without engineering involvement.
-**Effort**: Moderate refactor
-**Suggested Fix**: Move tier definitions to the existing pricing config in `config/pricing.yaml` (already used for base prices). Load at startup, not embedded in code.
-```
-
-```
-#### [MEDIUM] New notification API only returns success boolean
-**Category**: Interface / Contract Foresight
-**Location**: `src/api/notifications.ts:45`
-**Description**: `sendNotification()` returns `boolean` but the two existing callers already need to distinguish between "sent", "queued", and "failed" (one caller logs the distinction, the other retries only on transient failures).
-**Evidence**:
-```typescript
-// notifications.ts:45
-async function sendNotification(userId: string, message: string): Promise<boolean> {
-  // internally distinguishes queued vs sent vs failed, but collapses to boolean
-}
-
-// caller in orders.ts:78 — works around boolean return
-const sent = await sendNotification(userId, msg);
-if (!sent) {
-  // Can't tell if transient failure (retry) or permanent (don't retry)
-  // TODO: need more info from sendNotification
-}
-```
-**Impact**: Callers already need richer return info. Boolean will be replaced with a result type soon, breaking both callers.
-**Effort**: Quick win
-**Suggested Fix**: Return a result type: `{ status: 'sent' | 'queued' | 'failed'; error?: string }`. Both callers can then handle their cases without workarounds.
-```
-
-```
-#### [MEDIUM] Notification service only handles email when SMS and push are already in use
-**Category**: Under-engineering
-**Location**: `src/services/notification-service.ts:15-40`
-**Description**: New notification service only implements email delivery, but the product already uses SMS (`src/sms/sender.ts`) and push notifications (`src/push/client.ts`) across 4 features. Callers will immediately need to add SMS/push support.
-**Evidence**:
-```typescript
-// notification-service.ts:15-40
-class NotificationService {
-  async notify(userId: string, message: string, channel: string) {
-    // Only email implemented — SMS and push already used elsewhere
-    await this.emailClient.send(userId, message);
-  }
-}
-
-// Meanwhile, existing code in src/sms/sender.ts and src/push/client.ts
-// shows SMS and push are active channels used by orders, alerts, auth, and billing
-```
-**Impact**: Every caller that needs SMS or push (most of them, based on existing usage) will need to work around this or wait for follow-up work. The service will be extended immediately after shipping.
-**Effort**: Moderate refactor
-**Suggested Fix**: Support all three channels from the start. The SMS and push clients already exist — the service just needs to route to them based on the `channel` parameter.
-```
-
-```
-#### [HIGH] PR mixes auth refactor with unrelated billing UI changes
-**Category**: PR-Level Coherence
-**Location**: PR scope — 14 files across `src/auth/`, `src/billing/`, `src/components/`
-**Description**: PR contains two unrelated changes: (1) refactoring auth token refresh logic (7 files), (2) updating billing dashboard UI components (7 files). Neither depends on the other.
-**Impact**: Reviewers must context-switch between auth security logic and UI changes. If billing changes need revert, auth changes are lost too. Blame history mixes unrelated changes.
-**Effort**: Moderate refactor
-**Suggested Fix**: Split into two PRs: one for auth token refresh, one for billing UI. Each is independently reviewable and revertable.
-```
 
 ## Output Format
 
