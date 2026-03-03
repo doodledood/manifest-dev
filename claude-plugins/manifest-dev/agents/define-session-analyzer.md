@@ -2,7 +2,6 @@
 name: define-session-analyzer
 description: 'Analyze a single /define session transcript to extract user preference patterns. Spawned by learn-define-patterns skill for parallel per-session analysis.'
 tools: Read, Grep, Glob, Bash, Write
-model: inherit
 ---
 
 # Define Session Analyzer

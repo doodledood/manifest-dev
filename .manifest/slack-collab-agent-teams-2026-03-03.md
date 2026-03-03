@@ -7,15 +7,15 @@
 - **Goal:** Collaborative define/do workflow via Slack using Agent Teams. Lead orchestrator spawns specialized teammates (slack-coordinator, define-worker, executor) that coordinate via mailbox messaging for stakeholder Q&A, manifest review, PR review, and QA sign-off.
 
 - **Mental Model:**
-  - **Lead** = the `/slack-collab` skill session. Pure orchestrator. Asks preflight questions, creates team, manages phases, writes state file, acts as subagent bridge (spawns subagents on behalf of workers). Never touches Slack directly.
-  - **slack-coordinator** (haiku model) = dedicated Slack I/O teammate. Posts messages, polls threads, routes stakeholder answers to lead. Active polling at 60-second intervals. Main channel is thread-only — coordinator posts parent messages, stakeholders reply in threads. Topic-based threads (one per question/review topic).
-  - **define-worker** = runs `/define` with TEAM_CONTEXT. Messages lead for all communication (stakeholder Q&A routed through lead → coordinator). Requests verification subagent launches from lead. Persists as manifest authority for QA evaluation.
-  - **executor** = runs `/do` with TEAM_CONTEXT. Messages lead for all communication (escalations routed through lead → coordinator). Requests verification subagent launches from lead. Creates PR. Fixes QA issues routed through lead.
+  - **Lead** = the `/slack-collab` skill session. Pure orchestrator. Asks preflight questions, creates team, manages phases, writes state file, acts as subagent bridge (spawns subagents on behalf of workers). **NEVER uses Slack MCP tools directly** — all Slack interaction routes through the slack-coordinator. Terminates all teammates via shutdown_request in Phase 6.
+  - **slack-coordinator** (haiku model, spawned via `subagent_type: manifest-dev-collab:slack-coordinator`) = dedicated Slack I/O teammate. Posts messages, polls threads, routes stakeholder answers to lead. Continuous polling at 60-second intervals — starts after first thread, runs until shutdown_request. Each item (question, review, phase transition) gets its own parent message in the main channel (no mega-thread). Tags only relevant stakeholders per thread to minimize notifications (stakeholders have channel muted).
+  - **define-worker** (spawned via `subagent_type: manifest-dev-collab:define-worker`, model omitted = inherits parent) = runs `/define` with TEAM_CONTEXT. Messages lead for all communication (stakeholder Q&A routed through lead → coordinator). Requests verification subagent launches from lead. Persists as manifest authority for QA evaluation.
+  - **executor** (spawned via `subagent_type: manifest-dev-collab:executor`, model omitted = inherits parent) = runs `/do` with TEAM_CONTEXT. Messages lead for all communication (escalations routed through lead → coordinator). Requests verification subagent launches from lead. Creates PR. Fixes QA issues routed through lead. Does NOT run /verify or spawn verification agents locally.
   - **Hub-and-spoke** = all teammate communication flows through the lead. No direct teammate↔teammate messaging. The lead is the communication hub.
   - **Subagent bridge** = workers needing subagent capabilities (manifest-verifier, criteria-checkers) request launches from lead. Subagents send results directly to the requesting worker via SendMessage (if feasible) or write to `/tmp/subagent-result-{id}.md` and lead tells worker the file path (fallback).
   - **TEAM_CONTEXT** = behavior switch. Tells `/define` and `/do` to message the lead instead of using AskUserQuestion. Format includes `lead` name, `coordinator` name, and `role`.
   - **State file** = crash/resume recovery. JSON at `/tmp/collab-state-{run_id}.json`. Written by lead (single writer) after phase transitions and thread updates. Supports mid-phase resume.
-  - **Active polling** = coordinator polls Slack threads every 60 seconds. 24-hour timeout before escalating unanswered questions to owner. No Slack notification API available.
+  - **Active polling** = coordinator polls Slack threads every 60 seconds continuously from first thread until shutdown_request. 24-hour timeout before escalating unanswered questions to owner. No Slack notification API available.
   - **Channel** = user-provided. No channel creation or invite available in Slack MCP. User must create channel and ensure stakeholders are members before starting.
 
 - **TEAM_CONTEXT Format:**
@@ -36,7 +36,7 @@
 │  │   - Existing Slack channel ID (no creation)
 │  │   - Stakeholders (names, Slack handles, roles)
 │  │   - QA needs
-│  ├─ Create team: slack-coord (haiku), define-worker, executor
+│  ├─ Create team via subagent_type: slack-coord (haiku), define-worker, executor
 │  ├─ Message slack-coord: "Post intro to channel, create
 │  │   topic threads for initial Q&A"
 │  ├─ Coord sends thread_ts values to lead
@@ -83,7 +83,9 @@
 │  └─ Lead writes state file
 │
 └─ PHASE 6: DONE
-   ├─ Lead messages coord: "Post completion summary"
+   ├─ Lead messages coord: "Post completion summary" (tag all)
+   ├─ Lead sends shutdown_request to all 3 teammates
+   ├─ Lead waits for shutdown confirmations
    └─ Lead writes final state, tells user workflow complete
 ```
 
@@ -302,13 +304,13 @@
     prompt: "Read SKILL.md. Verify preflight gathers stakeholder info and passes the full roster to slack-coordinator in its spawn prompt as a routing table."
   ```
 
-- [AC-1.3] Creates team with 3 teammates. Coordinator spawned with haiku model. Define-worker and executor use default model.
+- [AC-1.3] Creates team with 3 teammates via `subagent_type` identifiers (manifest-dev-collab:slack-coordinator, manifest-dev-collab:define-worker, manifest-dev-collab:executor). Coordinator spawned with model: haiku. Define-worker and executor omit model (inherits parent).
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read SKILL.md. Verify team creation spawns 3 teammates with agent file references. Verify slack-coordinator specifies model: haiku. Verify define-worker and executor do not specify haiku."
+    prompt: "Read SKILL.md. Verify team creation spawns 3 teammates via subagent_type identifiers (manifest-dev-collab:*). Verify slack-coordinator specifies model: haiku. Verify define-worker and executor omit model (inherits parent). No 'agents/*.md' file path references."
   ```
 
 - [AC-1.4] Hub-and-spoke communication model explicitly stated. Teammates only message lead.
@@ -438,13 +440,13 @@
     prompt: "Read slack-coordinator.md. Verify channel creation NOT listed as responsibility. Expects channel_id from lead."
   ```
 
-- [AC-2.2] Active polling: sleep 60 seconds between polls. Poll all tracked threads.
+- [AC-2.2] Continuous polling: starts after first thread creation, runs until shutdown_request. Sleep 60 seconds between polls. Polls ALL tracked threads. Never stops on its own.
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read slack-coordinator.md. Verify polling interval is 60 seconds (not 30). Polls all tracked threads."
+    prompt: "Read slack-coordinator.md. Verify: (1) polling starts after first thread (2) continuous until shutdown_request (3) 60-second interval (4) polls ALL tracked threads (5) never stops on its own — no phase-based resets or pauses."
   ```
 
 - [AC-2.3] Escalation timeout: 24 hours before escalating to owner.

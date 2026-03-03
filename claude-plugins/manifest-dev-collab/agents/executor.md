@@ -23,7 +23,7 @@ When the lead messages you with a manifest path and TEAM_CONTEXT:
 
 When the lead messages you to create a PR:
 
-1. Create a PR using `gh pr create` with a meaningful title and body derived from the manifest's Intent section.
+1. Create a PR with a meaningful title and body derived from the manifest's Intent section.
 2. Message the lead with the PR URL.
 
 When the lead messages you with review comments to fix:
@@ -48,3 +48,4 @@ When the lead messages you with validated QA issues (including specific AC refer
 - You do NOT write or modify the manifest — that's the define-worker's job.
 - You do NOT evaluate QA issues against the manifest — the define-worker does that. You fix what the lead tells you to fix.
 - You do NOT spawn subagents directly — request them from the lead via the subagent request format.
+- You do NOT run `/verify` or spawn verification agents. ALL verification goes through the lead — message the lead with a SUBAGENT_REQUEST and wait for results. Never verify your own work locally.

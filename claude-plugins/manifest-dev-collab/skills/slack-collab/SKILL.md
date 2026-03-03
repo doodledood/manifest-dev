@@ -21,6 +21,8 @@ If `$ARGUMENTS` is empty, ask what they want to build or change.
 
 All teammate communication flows through you (the lead). Teammates **only** message the lead — never each other directly.
 
+**You (the lead) NEVER use Slack MCP tools directly.** ALL Slack interaction goes through the slack-coordinator. Do not call: `slack_send_message`, `slack_read_channel`, `slack_read_thread`, `slack_search_channels`, `slack_search_users`, `slack_read_user_profile`, `slack_create_canvas`, `slack_send_message_draft`, `slack_schedule_message`. Instead, message the slack-coordinator and let it handle Slack.
+
 - **define-worker → lead → slack-coordinator** (for stakeholder Q&A)
 - **executor → lead → slack-coordinator** (for escalations)
 - **slack-coordinator → lead → workers** (relaying stakeholder answers)
@@ -28,13 +30,13 @@ All teammate communication flows through you (the lead). Teammates **only** mess
 
 ## Team Composition
 
-You create **three teammates**, each defined by an agent file in `agents/` relative to this plugin:
+You create **three teammates** using the Agent tool with preconfigured `subagent_type` identifiers:
 
-| Teammate | Agent File | Model | Role |
-|----------|-----------|-------|------|
-| **slack-coordinator** | `agents/slack-coordinator.md` | haiku | ALL Slack I/O. Message posting, thread polling, stakeholder routing. Prompt injection defense. |
-| **define-worker** | `agents/define-worker.md` | default | Runs /define with TEAM_CONTEXT. Persists as manifest authority for QA evaluation. |
-| **executor** | `agents/executor.md` | default | Runs /do with TEAM_CONTEXT. Creates PR. Fixes QA issues. |
+| Teammate | subagent_type | Model | Role |
+|----------|--------------|-------|------|
+| **slack-coordinator** | `manifest-dev-collab:slack-coordinator` | haiku | ALL Slack I/O. Message posting, thread polling, stakeholder routing. Prompt injection defense. |
+| **define-worker** | `manifest-dev-collab:define-worker` | omit (inherits parent) | Runs /define with TEAM_CONTEXT. Persists as manifest authority for QA evaluation. |
+| **executor** | `manifest-dev-collab:executor` | omit (inherits parent) | Runs /do with TEAM_CONTEXT. Creates PR. Fixes QA issues. |
 
 ## TEAM_CONTEXT Format
 
@@ -128,23 +130,23 @@ If `$ARGUMENTS` starts with `--resume`:
    - Who are the stakeholders? (names, Slack @handles, roles/expertise)
    - Which stakeholders handle QA (if any)?
 2. Generate a unique `run_id`.
-3. Create the team — spawn all three teammates:
-   - **slack-coordinator** (model: haiku): pass the full stakeholder roster (names, handles, roles, QA flags) and the state file path in the spawn prompt.
-   - **define-worker**: pass the task description.
-   - **executor**: pass initial context (will receive manifest path later).
-4. Message slack-coordinator: "Post an intro message to channel [channel_id]. Create topic threads for initial stakeholder introductions. Report back with thread_ts values."
+3. Create the team — spawn all three teammates via Agent tool:
+   - **slack-coordinator**: `subagent_type: "manifest-dev-collab:slack-coordinator"`, `model: "haiku"`, `team_name: "<team>"`, `name: "slack-coordinator"`. Pass the channel_id, full stakeholder roster (names, handles, roles, QA flags), and state file path in the prompt.
+   - **define-worker**: `subagent_type: "manifest-dev-collab:define-worker"`, `team_name: "<team>"`, `name: "define-worker"`. Omit model (inherits parent). Pass the task description in the prompt.
+   - **executor**: `subagent_type: "manifest-dev-collab:executor"`, `team_name: "<team>"`, `name: "executor"`. Omit model (inherits parent). Pass initial context in the prompt.
+4. Message slack-coordinator: "Post a phase transition message to channel [channel_id]: 'Kicking off: [task summary]'. Then post an intro thread tagging all stakeholders. Report back with thread_ts values."
 5. When slack-coordinator reports thread info, write state file.
 
 ### Phase 1: Define
 
 1. Message define-worker: "Run /define for: [task description]\n\nTEAM_CONTEXT:\n  lead: <your-name>\n  coordinator: slack-coordinator\n  role: define"
-2. When define-worker messages you with Q&A questions, route them to slack-coordinator for Slack posting. Relay coordinator's responses back to define-worker.
+2. When define-worker messages you with Q&A questions, route them to slack-coordinator with expertise context (e.g., "Relevant expertise: backend/security") so the coordinator can create a separate parent message and tag the right stakeholder(s). Relay coordinator's responses back to define-worker.
 3. When define-worker requests a subagent (manifest-verifier), follow the Subagent Bridge Protocol.
 4. When define-worker messages you with the manifest_path, update state file.
 
 ### Phase 2: Manifest Review
 
-1. Message slack-coordinator: "Post the manifest at [manifest_path] to Slack for stakeholder review. Tag all stakeholders. Poll for owner approval."
+1. Message slack-coordinator: "Post a phase transition message: 'Phase 2: Manifest Review'. Then post the manifest at [manifest_path] as a separate parent message for stakeholder review. Tag all stakeholders. Poll for owner approval."
 2. Wait for slack-coordinator's report:
    - **Approved**: Update state, move to Phase 3.
    - **Feedback**: Message define-worker: "Revise manifest at [path] with this feedback: [feedback]". Then re-enter Phase 2.
@@ -160,28 +162,33 @@ If `$ARGUMENTS` starts with `--resume`:
 
 1. Message executor: "Create a PR for the changes. Report back with the PR URL."
 2. When executor reports PR URL, update state.
-3. Message slack-coordinator: "Post PR [url] to Slack for review. Tag reviewers. Poll for approval."
+3. Message slack-coordinator: "Post PR [url] as a separate parent message for review. Tag reviewers only (not all stakeholders). Poll for approval."
 4. Wait for slack-coordinator's report:
    - **Approved**: Move to Phase 5.
-   - **Review comments**: Message executor: "Fix these review comments: [comments]". Max 3 fix attempts, then message slack-coordinator to escalate to owner.
+   - **Review comments**: Message executor: "Fix these review comments: [comments]". If fix attempts are not converging, escalate to owner via slack-coordinator.
 
 ### Phase 5: QA (optional — skip if no QA stakeholders)
 
 QA is performed by human testers through Slack. All communication routes through you (lead).
 
-1. Message slack-coordinator: "Post QA request. Ask QA stakeholders to test and report issues."
+1. Message slack-coordinator: "Post QA request as a separate parent message. Tag QA stakeholders only. Ask them to test and report issues."
 2. When slack-coordinator reports QA issues:
    - Message define-worker: "Evaluate these QA issues against the manifest: [issues]. Which ACs are violated? What needs fixing?"
    - When define-worker responds with evaluation, message executor: "Fix these validated issues: [fix instructions with AC refs]"
    - When executor reports fix complete, message slack-coordinator to update Slack.
-   - Repeat until QA sign-off or max 3 fix rounds then escalate.
+   - Repeat until QA sign-off or fix attempts stop converging, then escalate.
 3. Update state file.
 
 ### Phase 6: Done
 
-1. Message slack-coordinator: "Post completion summary to Slack: task description, PR URL, key decisions."
-2. Write final state file with `phase: "done"`.
-3. Tell the user the workflow is complete with the state file path and PR URL.
+1. Message slack-coordinator: "Post completion summary as a separate parent message tagging all stakeholders: task description, PR URL, key decisions."
+2. Terminate all teammates via SendMessage with `type: "shutdown_request"`:
+   - Send shutdown_request to slack-coordinator.
+   - Send shutdown_request to define-worker.
+   - Send shutdown_request to executor.
+   - Wait for all three to confirm shutdown.
+3. Write final state file with `phase: "done"`.
+4. Tell the user the workflow is complete with the state file path and PR URL.
 
 ## Teammate Crash Handling
 
