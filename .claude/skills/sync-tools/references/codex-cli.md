@@ -7,9 +7,9 @@ Reference for converting Claude Code plugin components to Codex CLI format (v0.1
 | Component | Phase 1 (Deterministic) | Phase 2 (LLM) |
 |-----------|------------------------|----------------|
 | Skills | Copy unchanged | — |
-| Agents | Generate TOML config stubs | Generate developer_instructions content |
+| Agents | Generate TOML with full prompt body as developer_instructions | — |
 | Hooks | Impossible (no hook system) | — |
-| Multi-agent | Generate role TOML files | Infer per-role instructions |
+| Multi-agent | Generate role TOML files with full prompt bodies | — |
 | AGENTS.md | Generate from agents/CLAUDE.md | Enrich with workflow descriptions |
 | Execution rules | Generate .rules stubs | — |
 | MCP config | Generate config.toml snippet | — |
@@ -163,10 +163,19 @@ model = "gpt-5.3-codex"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 developer_instructions = """
-You are a code reviewer focused on correctness, security, and test coverage.
-Review the code changes and report findings with severity levels.
+<full Claude Code agent prompt body here — embedded verbatim>
+
+# Code Review Agent
+
+## Review Categories
+...all categories, actionability filters, severity guidelines, output formats...
+
+## Out of Scope
+...cross-reviewer boundaries...
 """
 ```
+
+The `developer_instructions` field holds the **full** agent prompt body as a multi-line TOML string. Do not summarize or truncate.
 
 **Built-in roles** (user-defined override these):
 | Role | Purpose |
@@ -182,9 +191,9 @@ Review the code changes and report findings with severity levels.
 - `sandbox_mode` — read-only/workspace-write/danger-full-access
 - `developer_instructions` — multi-line string (system prompt equivalent)
 
-**Phase 1** (deterministic): Generate skeleton TOML with name, description from Claude Code agent frontmatter. Set `sandbox_mode: "read-only"` for review agents.
+**Phase 1** (deterministic): Generate TOML with name, description from Claude Code agent frontmatter, and full prompt body as `developer_instructions`. Set `sandbox_mode: "read-only"` for review agents.
 
-**Phase 2** (LLM): Generate `developer_instructions` content by summarizing the Claude Code agent's prompt body into Codex-appropriate instructions. Key differences: Codex default tools are `shell_command`, `apply_patch`, `update_plan`, `request_user_input`, `web_search`, `view_image` — instructions should leverage these. Experimental file tools (`read_file`, `list_dir`, `grep_files`) may also be available.
+**Phase 2** (LLM): Embed the Claude Code agent's full prompt body into `developer_instructions` as a multi-line TOML string (`"""\n...\n"""`). Keep the prompt body as identical as possible — categories, actionability filters, severity guidelines, output formats, out-of-scope sections are the core value. Only changes allowed: tool name references (use Codex names: `shell_command`, `apply_patch`, `update_plan`, `request_user_input`, `web_search`, `view_image`; experimental: `read_file`, `list_dir`, `grep_files`), and genuinely unsupported features (document as limitation, don't remove). Do NOT summarize, truncate, or rewrite the prompt body.
 
 ### AGENTS.md Generation
 
