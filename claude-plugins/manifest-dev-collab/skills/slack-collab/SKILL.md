@@ -134,12 +134,14 @@ If `$ARGUMENTS` starts with `--resume`:
 ### Phase 0: Preflight (Lead alone — no team yet)
 
 1. Ask the user via AskUserQuestion:
-   - What is the existing Slack channel ID? (User must create the channel and ensure stakeholders are members before starting.)
+   - What is the Slack channel name or ID? (User must create the channel and ensure stakeholders are members before starting.)
    - Who are the stakeholders? (names, Slack @handles, roles/expertise)
    - Which stakeholders handle QA (if any)?
+
+   If the user provides a channel name instead of an ID, spawn the slack-coordinator first (step 3), then ask it to look up the channel ID via `slack_search_channels`. Do NOT use Slack MCP tools yourself — even for lookups.
 2. Generate a unique `run_id`.
 3. Create the team — spawn all three teammates via Agent tool:
-   - **slack-coordinator**: `subagent_type: "manifest-dev-collab:slack-coordinator"`, `model: "haiku"`, `team_name: "<team>"`, `name: "slack-coordinator"`. Pass the channel_id, full stakeholder roster (names, handles, roles, QA flags), and state file path in the prompt.
+   - **slack-coordinator**: `subagent_type: "manifest-dev-collab:slack-coordinator"`, `model: "sonnet"`, `team_name: "<team>"`, `name: "slack-coordinator"`. Pass the channel_id, full stakeholder roster (names, handles, roles, QA flags), and state file path in the prompt.
    - **define-worker**: `subagent_type: "manifest-dev-collab:define-worker"`, `team_name: "<team>"`, `name: "define-worker"`. Omit model (inherits parent). Pass the task description in the prompt.
    - **executor**: `subagent_type: "manifest-dev-collab:executor"`, `team_name: "<team>"`, `name: "executor"`. Omit model (inherits parent). Pass initial context in the prompt.
 4. Message slack-coordinator: "Post a phase transition message to channel [channel_id]: 'Kicking off: [task summary]'. Then post an intro thread tagging all stakeholders. Report back with thread_ts values."
@@ -205,3 +207,18 @@ Monitor teammate status. If a teammate fails or crashes:
 2. If it fails again, write state file and inform the user. They can resume later with `--resume`.
 
 Do not retry infinitely.
+
+## What You (the Lead) Do and Do NOT Do
+
+**You do:**
+- Orchestrate phases and route messages between teammates
+- Spawn and manage subagents via the Subagent Bridge Protocol
+- Write and maintain the state file
+- Escalate to the user when teammates fail
+
+**You do NOT:**
+- Use ANY Slack MCP tools — not even for lookups. ALL Slack interaction goes through the slack-coordinator, including channel/user searches during preflight.
+- Run /define or /do yourself — the define-worker and executor do that.
+- Write code, create files, or modify the codebase.
+- Make task decisions — you relay stakeholder input to the right worker.
+- Post to Slack directly when the coordinator is down — you escalate to the user instead.

@@ -34,10 +34,16 @@ When the lead messages you during QA with issues:
 4. Message the lead with your evaluation: "QA issue: [description]. Violates AC-X.Y: [criterion]. Fix: [specific guidance]."
 5. If the issue is NOT a manifest violation (e.g., a preference, not a requirement), message the lead: "This is not an AC/INV violation. [Explanation]."
 
-## What You Do NOT Do
+## What You Do and Do NOT Do
 
-- You do NOT touch Slack directly. All communication goes through the lead.
-- You do NOT message other teammates (coordinator, executor). Only the lead.
-- You do NOT write code or modify the codebase (beyond the manifest and discovery log in /tmp).
-- You do NOT create PRs or fix code issues — that's the executor's job.
-- You do NOT spawn subagents directly — request them from the lead via the subagent request format.
+**You do:**
+- Run /define to build the manifest
+- Evaluate QA issues against the manifest (as manifest authority)
+- Message the lead via SendMessage for all communication
+
+**You do NOT:**
+- Use any Slack MCP tools — no `slack_send_message`, `slack_read_channel`, etc. All Slack goes through the lead → coordinator.
+- Message other teammates (coordinator, executor) — only the lead.
+- Write code or modify the codebase (beyond the manifest and discovery log in /tmp).
+- Create PRs or fix code issues — that's the executor's job.
+- Spawn subagents directly — request them from the lead via the subagent request format.
