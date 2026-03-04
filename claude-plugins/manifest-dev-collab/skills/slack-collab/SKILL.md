@@ -28,6 +28,16 @@ All teammate communication flows through you (the lead). Teammates **only** mess
 - **slack-coordinator → lead → workers** (relaying stakeholder answers)
 - **Exception**: Subagents you spawn can SendMessage directly to the requesting worker (see Subagent Bridge).
 
+## How You Interact with the Coordinator
+
+The coordinator runs a **continuous event loop** — once kicked off in Phase 0, it polls Slack forever and relays stakeholder responses as they arrive. You feed it tasks throughout the workflow:
+
+- **To post something**: Message the coordinator with content to post. It posts, confirms back with message_ts, adds the thread to its poll list, and resumes polling.
+- **To get updates**: You don't ask — the coordinator relays stakeholder responses to you automatically as it finds them during polling.
+- **Across phases**: When a new phase starts, message the coordinator with the phase transition content and any new threads to track. It handles the post and continues polling all threads (old and new).
+
+The coordinator is always running. You never need to tell it to "start polling" after Phase 0 — it's already polling.
+
 ## Coordinator Failure Escalation
 
 If the slack-coordinator fails to respond after 2 messages (goes idle without acting on your request):
@@ -144,8 +154,8 @@ If `$ARGUMENTS` starts with `--resume`:
    - **slack-coordinator**: `subagent_type: "manifest-dev-collab:slack-coordinator"`, `model: "sonnet"`, `team_name: "<team>"`, `name: "slack-coordinator"`. Pass the channel_id, full stakeholder roster (names, handles, roles, QA flags), and state file path in the prompt.
    - **define-worker**: `subagent_type: "manifest-dev-collab:define-worker"`, `team_name: "<team>"`, `name: "define-worker"`. Omit model (inherits parent). Pass the task description in the prompt.
    - **executor**: `subagent_type: "manifest-dev-collab:executor"`, `team_name: "<team>"`, `name: "executor"`. Omit model (inherits parent). Pass initial context in the prompt.
-4. Message slack-coordinator: "Post a phase transition message to channel [channel_id]: 'Kicking off: [task summary]'. Then post an intro thread tagging all stakeholders. Report back with thread_ts values."
-5. When slack-coordinator reports thread info, write state file.
+4. Message slack-coordinator: "Post a kickoff message to channel [channel_id]: 'Kicking off: [task summary]'. Then post an intro thread tagging all stakeholders. Start your poll loop — report back with thread_ts values and keep polling for stakeholder responses from now on."
+5. When slack-coordinator reports thread info, write state file. The coordinator is now running its event loop — you can message it at any time to post new content, and it will relay stakeholder responses as they arrive.
 
 ### Phase 1: Define
 
@@ -156,8 +166,8 @@ If `$ARGUMENTS` starts with `--resume`:
 
 ### Phase 2: Manifest Review
 
-1. Message slack-coordinator: "Post a phase transition message: 'Phase 2: Manifest Review'. Then post the manifest at [manifest_path] as a separate parent message for stakeholder review. Tag all stakeholders. Poll for owner approval."
-2. Wait for slack-coordinator's report:
+1. Message slack-coordinator: "Post a phase transition message: 'Phase 2: Manifest Review'. Then post the manifest at [manifest_path] as a separate parent message for stakeholder review. Tag all stakeholders."
+2. The coordinator is already polling — wait for it to relay stakeholder responses:
    - **Approved**: Update state, move to Phase 3.
    - **Feedback**: Message define-worker: "Revise manifest at [path] with this feedback: [feedback]". Then re-enter Phase 2.
 
@@ -172,8 +182,8 @@ If `$ARGUMENTS` starts with `--resume`:
 
 1. Message executor: "Create a PR for the changes. Report back with the PR URL."
 2. When executor reports PR URL, update state.
-3. Message slack-coordinator: "Post PR [url] as a separate parent message for review. Tag reviewers only (not all stakeholders). Poll for approval."
-4. Wait for slack-coordinator's report:
+3. Message slack-coordinator: "Post PR [url] as a separate parent message for review. Tag reviewers only (not all stakeholders)."
+4. The coordinator is already polling — wait for it to relay reviewer responses:
    - **Approved**: Move to Phase 5.
    - **Review comments**: Message executor: "Fix these review comments: [comments]". If fix attempts are not converging, escalate to owner via slack-coordinator.
 
