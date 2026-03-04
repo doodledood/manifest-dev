@@ -32,7 +32,7 @@ SKILLS = [
 ]
 
 AGENTS = [
-    "claude-md-adherence-reviewer",
+    "context-file-adherence-reviewer",
     "code-maintainability-reviewer",
     "code-testability-reviewer",
     "code-simplicity-reviewer",

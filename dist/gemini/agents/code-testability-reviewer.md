@@ -119,7 +119,7 @@ Do NOT report on (handled by other agents):
 - **Test coverage gaps** (missing tests) → code-coverage-reviewer
 - **Functional bugs** (runtime errors) → code-bugs-reviewer
 - **Documentation** (stale comments) → docs-reviewer
-- **CLAUDE.md compliance** → claude-md-adherence-reviewer
+- **Context file compliance** → context-file-adherence-reviewer
 
 Focus exclusively on whether code is **designed** to be testable, not whether tests exist.
 

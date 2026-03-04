@@ -438,6 +438,17 @@ find "$TARGET/commands" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>
 
 Component names on disk will have `-manifest-dev` suffix after install.
 
+## Context File Adaptation
+
+During sync, replace remaining `CLAUDE.md` references that mean "this CLI's context file" with `AGENTS.md`:
+- Agent content: any "CLAUDE.md" that refers to the project context file → `AGENTS.md`
+- Context file (AGENTS.md): references to context file names
+- README: references to context file names
+- Skills (operational only): instructions like "write to CLAUDE.md" → "write to AGENTS.md". Leave research/reference content unchanged.
+- Do NOT replace "CLAUDE.md" when it refers to Claude Code's own file (e.g., in comparative text or research).
+
+The `context-file-adherence-reviewer` agent already uses generic "context file" language — no special handling needed for its content.
+
 ## Known Limitations
 
 1. **Hooks require manual JS/TS rewrite** — Python hooks cannot run in Bun. Generated stubs provide structure; HOOK_SPEC.md provides behavioral intent.

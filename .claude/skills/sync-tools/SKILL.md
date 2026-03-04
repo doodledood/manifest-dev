@@ -31,8 +31,8 @@ For each target CLI, read its reference file first. The reference file is **the 
 
 | Component | Goal |
 |-----------|------|
-| **Skills** | Copy unchanged (Agent Skills Open Standard = universal). Include all subdirectories. |
-| **Agents** | Convert frontmatter per reference file. Keep prompt body as identical as possible to Claude Code original — categories, actionability filters, severity guidelines, output formats, out-of-scope sections are the core value. Only change: frontmatter format, namespace suffix, genuinely unsupported features (document as limitation, don't remove). |
+| **Skills** | Copy unchanged (Agent Skills Open Standard = universal). Include all subdirectories. Replace operational CLAUDE.md references (e.g., "write to CLAUDE.md") with CLI context file name per reference file. Leave research/reference content unchanged. |
+| **Agents** | Convert frontmatter per reference file. Keep prompt body as identical as possible to Claude Code original — categories, actionability filters, severity guidelines, output formats, out-of-scope sections are the core value. Only change: frontmatter format, namespace suffix, context file name (CLAUDE.md → CLI name per reference file), genuinely unsupported features (document as limitation, don't remove). |
 | **Hooks** | Adapt to target hook protocol per reference file. Generate stubs + behavioral spec where full adaptation isn't automatable. |
 | **Commands** | Generate command files from user-invocable skills (`user-invocable: true`, the default). Per reference file. |
 | **Context file** | Workflow overview + agent descriptions in the CLI's native context format per reference file. |

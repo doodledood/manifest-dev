@@ -60,7 +60,7 @@ Do NOT report on (handled by other agents):
 - **Documentation accuracy** → docs-reviewer
 - **Functional bugs** → code-bugs-reviewer
 - **Test coverage gaps** → code-coverage-reviewer
-- **CLAUDE.md compliance** → claude-md-adherence-reviewer
+- **Context file compliance** → context-file-adherence-reviewer
 - **Design fitness** (reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, concept misuse/overloading) → code-design-reviewer
 
 ## Scope Rules
@@ -313,7 +313,7 @@ Do not fabricate issues to fill the report. A clean review is a valid outcome.
 
 - **Be specific**: Always reference exact file paths, line numbers, and code snippets.
 - **Be actionable**: Every issue must have a concrete, implementable fix suggestion.
-- **Consider context**: Account for project conventions from CLAUDE.md files and existing patterns.
+- **Consider context**: Account for project conventions from GEMINI.md files and existing patterns.
 - **Avoid false positives**: Always read full files before flagging issues. A diff alone lacks context—code that looks duplicated in isolation may serve different purposes when you see the full picture.
 - **Avoid these common false positives**:
   - Test file duplication (test setup repetition is often intentional for isolation)

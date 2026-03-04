@@ -115,7 +115,7 @@ Do NOT report on (handled by other agents):
 - **Testability design** (logic buried in IO, mock friction) → code-testability-reviewer
 - **Test coverage gaps** (missing tests) → code-coverage-reviewer
 - **Documentation accuracy** (stale docs, wrong comments) → docs-reviewer
-- **CLAUDE.md compliance** (project rule violations) → claude-md-adherence-reviewer
+- **Context file compliance** (project rule violations) → context-file-adherence-reviewer
 
 **Key distinctions from neighboring agents:**
 - **Maintainability** asks: "Is this well-organized for future changes?" (DRY, coupling, consistency, boundary leakage)

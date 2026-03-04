@@ -70,10 +70,10 @@ Audits documentation and code comments for accuracy against recent code changes.
 
 **Codex approximation**: Use `shell_command` to diff docs against code changes, grep for references to changed APIs/functions in documentation files.
 
-### claude-md-adherence-reviewer
-Verifies that code changes comply with CLAUDE.md instructions and project standards. Focuses on outcome-based rules (code quality requirements) rather than workflow processes. Only reports violations with exact rule citations from CLAUDE.md.
+### context-file-adherence-reviewer
+Verifies that code changes comply with context file (AGENTS.md) instructions and project standards. Focuses on outcome-based rules (code quality requirements) rather than workflow processes. Only reports violations with exact rule citations from the project context file.
 
-**Codex approximation**: Use `shell_command` to read CLAUDE.md files, then compare changed code against stated rules. On Codex, AGENTS.md and CLAUDE.md (via `project_doc_fallback_filenames`) are automatically loaded.
+**Codex approximation**: Use `shell_command` to read AGENTS.md and other context files, then compare changed code against stated rules. On Codex, AGENTS.md is automatically loaded as the project context file.
 
 ---
 

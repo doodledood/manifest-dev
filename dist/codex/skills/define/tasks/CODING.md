@@ -4,7 +4,7 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-CLAUDE.md may specify project-specific preferences.
+AGENTS.md may specify project-specific preferences.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
@@ -16,11 +16,11 @@ CLAUDE.md may specify project-specific preferences.
 | Testability | code-testability-reviewer | no HIGH/CRITICAL |
 | Documentation | docs-reviewer | no MEDIUM+ |
 | Design fitness | code-design-reviewer | no HIGH/CRITICAL |
-| CLAUDE.md adherence | claude-md-adherence-reviewer | no HIGH/CRITICAL |
+| Context file adherence | context-file-adherence-reviewer | no HIGH/CRITICAL |
 
 ## Project Gates
 
-CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+AGENTS.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 

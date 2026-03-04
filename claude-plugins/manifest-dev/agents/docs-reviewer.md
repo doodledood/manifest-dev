@@ -140,7 +140,7 @@ Do NOT report on (handled by other agents):
 - **Over-engineering / complexity** (premature abstraction, cognitive complexity) → code-simplicity-reviewer
 - **Type safety** → type-safety-reviewer
 - **Test coverage gaps** → code-coverage-reviewer
-- **CLAUDE.md compliance** (except doc-related rules) → claude-md-adherence-reviewer
+- **Context file compliance** (except doc-related rules) → context-file-adherence-reviewer
 
 ## Edge Cases
 

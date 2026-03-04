@@ -156,7 +156,7 @@ These run in parallel during `/verify`:
 | `code-simplicity-reviewer` | Unnecessary complexity, over-engineering, cognitive burden |
 | `code-testability-reviewer` | Code that requires excessive mocking, business logic hard to verify in isolation |
 | `type-safety-reviewer` | TypeScript type holes, opportunities to make invalid states unrepresentable |
-| `claude-md-adherence-reviewer` | Verifies code changes comply with CLAUDE.md instructions and project standards |
+| `context-file-adherence-reviewer` | Verifies code changes comply with CLAUDE.md instructions and project standards |
 | `docs-reviewer` | Audits documentation accuracy against recent code changes |
 
 ## Collaboration Mode

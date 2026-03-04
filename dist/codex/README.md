@@ -42,7 +42,7 @@ Per-agent TOML configuration files for Codex's multi-agent system. Each agent ha
 | code-testability-reviewer | Excessive mocking, logic buried in IO, hidden deps | read-only |
 | type-safety-reviewer | any abuse, invalid states, narrowing gaps, nullability | read-only |
 | docs-reviewer | Documentation accuracy against code changes | read-only |
-| claude-md-adherence-reviewer | Compliance with CLAUDE.md project rules | read-only |
+| context-file-adherence-reviewer | Compliance with AGENTS.md project rules | read-only |
 | manifest-verifier | Manifest completeness during /define | read-only |
 | define-session-analyzer | User preference patterns from /define sessions | workspace-write |
 
@@ -154,7 +154,7 @@ dist/codex/
 │   ├── code-testability-reviewer.toml
 │   ├── type-safety-reviewer.toml
 │   ├── docs-reviewer.toml
-│   ├── claude-md-adherence-reviewer.toml
+│   ├── context-file-adherence-reviewer.toml
 │   ├── manifest-verifier.toml
 │   └── define-session-analyzer.toml
 ├── rules/                            # Execution policy
@@ -162,6 +162,7 @@ dist/codex/
 ├── config.toml                       # Multi-agent + project config
 ├── AGENTS.md                         # Agent descriptions + workflow guide
 ├── install.sh                        # Idempotent installer
+├── install_helpers.py                # Namespace helper for install
 └── README.md                         # This file
 ```
 

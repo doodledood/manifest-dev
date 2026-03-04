@@ -46,9 +46,9 @@ config_file = "agents/type-safety-reviewer.toml"
 description = "Audits documentation accuracy against code changes"
 config_file = "agents/docs-reviewer.toml"
 
-[agents.claude-md-adherence-reviewer]
-description = "Verifies compliance with CLAUDE.md project rules"
-config_file = "agents/claude-md-adherence-reviewer.toml"
+[agents.context-file-adherence-reviewer]
+description = "Verifies compliance with context file (AGENTS.md) project rules"
+config_file = "agents/context-file-adherence-reviewer.toml"
 
 [agents.manifest-verifier]
 description = "Reviews /define manifests for gaps, returns continuation questions"

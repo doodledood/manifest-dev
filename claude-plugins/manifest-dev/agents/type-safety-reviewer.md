@@ -87,7 +87,7 @@ Do NOT report on (handled by other agents):
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Documentation accuracy** → docs-reviewer
 - **Test coverage gaps** → code-coverage-reviewer
-- **CLAUDE.md compliance** → claude-md-adherence-reviewer
+- **Context file compliance** → context-file-adherence-reviewer
 
 ## Severity Classification
 

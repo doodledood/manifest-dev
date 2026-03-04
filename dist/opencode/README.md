@@ -7,7 +7,7 @@ Verification-first manifest workflows for OpenCode. Plan work thoroughly with `/
 | Type | Count | Description |
 |------|-------|-------------|
 | Skills | 6 | define, do, done, escalate, learn-define-patterns, verify |
-| Agents | 12 | criteria-checker, 8 code reviewers, manifest-verifier, claude-md-adherence-reviewer, define-session-analyzer |
+| Agents | 12 | criteria-checker, 8 code reviewers, manifest-verifier, context-file-adherence-reviewer, define-session-analyzer |
 | Commands | 3 | /define, /do, /learn-define-patterns |
 | Hook stubs | 4 | pretool-verify, stop-do, post-compact, todo-tracking (require manual TS porting) |
 
@@ -107,7 +107,7 @@ dist/opencode/
     code-testability-reviewer.md
     type-safety-reviewer.md
     docs-reviewer.md
-    claude-md-adherence-reviewer.md
+    context-file-adherence-reviewer.md
     manifest-verifier.md
     define-session-analyzer.md
   commands/              # 3 user-invoked commands

@@ -66,7 +66,7 @@ Do NOT report on (handled by other agents):
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Type safety** → type-safety-reviewer
 - **Documentation** → docs-reviewer
-- **CLAUDE.md compliance** → claude-md-adherence-reviewer
+- **Context file compliance** → context-file-adherence-reviewer
 
 Note: Testability design patterns (functional core / imperative shell, business logic entangled with IO) are handled by code-testability-reviewer. This agent focuses on whether tests EXIST for the changed code, not whether code is designed to be testable.
 

@@ -52,7 +52,7 @@ Specialized reviewers spawned by /verify for code quality criteria. Each covers 
 
 ### Project Standards
 
-**claude-md-adherence-reviewer** -- Verify code changes comply with CLAUDE.md instructions and project standards. Audits against outcome-based rules defined in CLAUDE.md files.
+**context-file-adherence-reviewer** -- Verify code changes comply with context file instructions (CLAUDE.md, AGENTS.md, GEMINI.md) and project standards. Audits against outcome-based rules defined in the project's context files.
 
 ### Learning
 

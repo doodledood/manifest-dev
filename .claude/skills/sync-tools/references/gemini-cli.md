@@ -354,6 +354,17 @@ find "$DIR/agents" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/
 
 Component names on disk will have `-manifest-dev` suffix after install. The hooks directory is extension-private and doesn't need selective cleanup.
 
+## Context File Adaptation
+
+During sync, replace remaining `CLAUDE.md` references that mean "this CLI's context file" with `GEMINI.md`:
+- Agent content: any "CLAUDE.md" that refers to the project context file → `GEMINI.md`
+- Context file (GEMINI.md): references to context file names
+- README: references to context file names
+- Skills (operational only): instructions like "write to CLAUDE.md" → "write to GEMINI.md". Leave research/reference content unchanged.
+- Do NOT replace "CLAUDE.md" when it refers to Claude Code's own file (e.g., in comparative text or research).
+
+The `context-file-adherence-reviewer` agent already uses generic "context file" language — no special handling needed for its content.
+
 ## Known Limitations
 
 1. **Agents experimental** — Require enableAgents flag. API may change.

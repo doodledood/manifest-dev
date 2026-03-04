@@ -48,7 +48,7 @@ Do NOT report on (handled by other agents):
 - **Documentation accuracy** → docs-reviewer
 - **Functional bugs** → code-bugs-reviewer
 - **Test coverage gaps** → code-coverage-reviewer
-- **CLAUDE.md compliance** → claude-md-adherence-reviewer
+- **Context file compliance** → context-file-adherence-reviewer
 - **Design fitness** (reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, concept misuse/overloading) → code-design-reviewer
 
 ## Scope Rules

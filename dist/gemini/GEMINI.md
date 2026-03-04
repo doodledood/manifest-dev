@@ -45,7 +45,7 @@ Agents run as subagents callable by tool name. Require `"experimental": { "enabl
 | `code-testability-reviewer` | Testability design -- mock friction, logic buried in IO |
 | `type-safety-reviewer` | Type holes, invalid states, narrowing gaps |
 | `docs-reviewer` | Documentation accuracy against code changes |
-| `claude-md-adherence-reviewer` | GEMINI.md / project rule compliance |
+| `context-file-adherence-reviewer` | Context file / project rule compliance |
 | `define-session-analyzer` | Extracts user preference patterns from /define sessions |
 
 ### Hooks (3)

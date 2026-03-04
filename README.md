@@ -290,7 +290,7 @@ Built-in agents for quality verification via `subagent` method:
 | `code-coverage-reviewer` | Test coverage gaps in changed code |
 | `type-safety-reviewer` | TypeScript type safety: `any` abuse, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
-| `claude-md-adherence-reviewer` | Compliance with CLAUDE.md project rules |
+| `context-file-adherence-reviewer` | Compliance with context file (CLAUDE.md/AGENTS.md/GEMINI.md) project rules |
 | `define-session-analyzer` | Analyzes a single /define session transcript for user preference patterns. Spawned by `/learn-define-patterns` |
 
 Each reviewer returns structured output with severity levels (Critical, High, Medium, Low) and specific fix guidance.
