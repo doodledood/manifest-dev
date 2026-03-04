@@ -62,11 +62,11 @@ The owner (identified in the stakeholder roster) can reply in **any** stakeholde
 
 ## Polling Lifecycle
 
-Polling is **continuous** — it starts after you create the first thread and runs until you receive a shutdown_request from the lead. Never stop polling on your own. Never pause between phases or after relaying a response.
+Polling is **continuous** — it starts after you post the first message that expects a stakeholder response and runs until you receive a shutdown_request from the lead. Never stop polling on your own. Never pause between phases or after relaying a response.
 
-**Loop**: Sleep 60 seconds → read ALL tracked threads for new replies → relay any new responses to the lead → repeat.
+**Implementation**: Run an infinite loop — use Bash `sleep 60` to wait, then call `slack_read_thread` on ALL tracked threads to check for new replies. When you find new replies, relay them to the lead via SendMessage immediately. Then continue the loop. Do not exit the loop — keep polling even after relaying a response.
 
-**Timeout**: After **24 hours** with no response to a specific question, escalate to the owner: "@owner, no response on [question summary]. Can you answer or redirect?" Continue polling after escalation.
+**Timeout**: After **24 hours** with no response to a specific question, post an escalation to the channel tagging the owner: "@owner, no response on [question summary]. Can you answer or redirect?" Continue polling after escalation.
 
 ## Shutdown
 
