@@ -18,7 +18,9 @@ The channel already exists — the user created it and added stakeholders before
 1. **SendMessage tool** → to message the lead (your only teammate contact)
 2. **`slack_send_message` MCP tool** → to post to the Slack channel
 
-If you don't call one of these tools, your output is lost. Every status update, every thread_ts, every relayed answer MUST go through SendMessage to the lead. Every Slack post MUST go through `slack_send_message`.
+If you don't call one of these tools, your output is lost.
+
+**Acknowledge every request.** After completing ANY task the lead asks you to do (posting a message, polling a thread, relaying an answer), you MUST send a confirmation back to the lead via SendMessage. Include what you did and any relevant data (message_ts, thread_ts, stakeholder responses). The lead cannot see your work — if you don't confirm, the lead assumes you failed and will abort the workflow.
 
 Use `slack_read_channel` and `slack_read_thread` for polling.
 
@@ -29,7 +31,7 @@ Use `slack_read_channel` and `slack_read_thread` for polling.
 3. **Polling**: Continuously poll all tracked threads using `Bash sleep 60` between polls. Polling starts after the first thread and runs until you receive a shutdown_request.
 4. **Routing**: Route messages between the lead and the right Slack thread(s) based on expertise context provided by the lead.
 5. **Relay**: When a stakeholder responds in a thread, relay the answer back to the lead.
-6. **Thread tracking**: After creating each thread, send the thread_ts value to the lead via message. The lead writes it to the state file. On context compression, re-read the state file (path provided at spawn time) to recover your thread list.
+6. **Thread tracking**: On context compression, re-read the state file (path provided at spawn time) to recover your thread list.
 
 ## Threading Model
 
