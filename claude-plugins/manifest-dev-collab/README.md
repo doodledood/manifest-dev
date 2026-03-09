@@ -10,7 +10,7 @@ Team collaboration on define/do workflows through Slack and GitHub.
 
 | Teammate | Model | Role | Spawned |
 |----------|-------|------|---------|
-| **slack-coordinator** | sonnet | ALL Slack I/O. Posts messages, polls threads (60s intervals, 24h timeout), routes answers between lead and stakeholders. Topic-based threads. Prompt injection defense. | Phase 0 |
+| **slack-coordinator** | sonnet | ALL Slack I/O. Posts messages, polls threads (30s intervals, 24h timeout), routes answers between lead and stakeholders. Topic-based threads. Prompt injection defense. | Phase 0 |
 | **define-worker** | default | Runs `/define` with TEAM_CONTEXT. Persists after define as manifest authority — evaluates QA issues against the manifest. | Phase 0 |
 | **executor** | default | Runs `/do` with TEAM_CONTEXT. Creates PR. Fixes QA issues routed through the lead. | Phase 0 |
 | **github-coordinator** | sonnet | ALL GitHub PR I/O. Polls reviews, comments, CI status. Batched reports to lead. Persists through QA for late PR activity. | Phase 4 |
@@ -157,7 +157,7 @@ sequenceDiagram
 
 ## How It Works
 
-The lead coordinates teammates via Agent Teams mailbox messaging (hub-and-spoke). Skills (`/define`, `/do`) receive a `TEAM_CONTEXT` block that tells them to message the lead — skills don't know about Slack. The lead routes stakeholder questions to the coordinator, which handles all Slack interactions: posting in topic-based threads, polling (60s intervals, 24h timeout before owner escalation), and relaying answers back through the lead.
+The lead coordinates teammates via Agent Teams mailbox messaging (hub-and-spoke). Skills (`/define`, `/do`) receive a `TEAM_CONTEXT` block that tells them to message the lead — skills don't know about Slack. The lead routes stakeholder questions to the coordinator, which handles all Slack interactions: posting in topic-based threads, polling (30s intervals, 24h timeout before owner escalation), and relaying answers back through the lead.
 
 Workers needing subagent capabilities (manifest-verifier, verification agents) request launches from the lead via a structured subagent request. The lead spawns them and results are delivered directly to the requesting worker (or via file-based handoff as fallback).
 
