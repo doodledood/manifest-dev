@@ -737,3 +737,120 @@ class TestStopHookEdgeCases:
 
         # Should allow (fail open) on parsing errors
         assert result is None
+
+
+class TestStopHookTeamMode:
+    """Tests for team-mode verification delegation behavior."""
+
+    @pytest.fixture
+    def user_do_with_team_context(self) -> dict[str, Any]:
+        """User message invoking /do with TEAM_CONTEXT."""
+        return {
+            "type": "user",
+            "message": {
+                "content": (
+                    "<command-name>/manifest-dev:do</command-name>"
+                    "<command-args>/tmp/manifest.md "
+                    "TEAM_CONTEXT:\n  lead: team-lead\n  coordinator: slack-coordinator\n  role: execute"
+                    "</command-args>"
+                )
+            },
+        }
+
+    def test_allows_verify_with_team_context(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        assistant_skill_verify: dict[str, Any],
+    ):
+        """In team mode, /do + /verify should ALLOW stop (verification delegated to lead)."""
+        user_do_team = {
+            "type": "user",
+            "message": {
+                "content": (
+                    "<command-name>/manifest-dev:do</command-name>"
+                    "<command-args>/tmp/manifest.md "
+                    "TEAM_CONTEXT:\n  lead: team-lead\n  coordinator: slack-coordinator\n  role: execute"
+                    "</command-args>"
+                )
+            },
+        }
+        transcript_path = temp_transcript([user_do_team, assistant_skill_verify])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        assert result is not None
+        assert result["decision"] == "allow"
+        assert "team" in result["reason"].lower() or "delegat" in result["reason"].lower()
+
+    def test_blocks_without_verify_even_in_team_mode(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+    ):
+        """In team mode, /do without /verify should still BLOCK."""
+        user_do_team = {
+            "type": "user",
+            "message": {
+                "content": (
+                    "<command-name>/manifest-dev:do</command-name>"
+                    "<command-args>/tmp/manifest.md "
+                    "TEAM_CONTEXT:\n  lead: team-lead\n  coordinator: slack-coordinator\n  role: execute"
+                    "</command-args>"
+                )
+            },
+        }
+        transcript_path = temp_transcript([user_do_team])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        assert result is not None
+        assert result["decision"] == "block"
+
+    def test_still_blocks_verify_without_team_context(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+        assistant_skill_verify: dict[str, Any],
+    ):
+        """Without TEAM_CONTEXT, /do + /verify should still BLOCK (solo mode behavior unchanged)."""
+        transcript_path = temp_transcript([user_do_command, assistant_skill_verify])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        assert result is not None
+        assert result["decision"] == "block"
+
+    def test_team_context_via_skill_tool_call(
+        self,
+        experimental_hook_path: Path,
+        temp_transcript,
+        assistant_skill_verify: dict[str, Any],
+    ):
+        """Should detect TEAM_CONTEXT in Skill tool call args."""
+        assistant_do_with_team = {
+            "type": "assistant",
+            "message": {
+                "content": [
+                    {
+                        "type": "tool_use",
+                        "name": "Skill",
+                        "input": {
+                            "skill": "manifest-dev:do",
+                            "args": "/tmp/manifest.md TEAM_CONTEXT:\n  lead: team-lead",
+                        },
+                    }
+                ]
+            },
+        }
+        transcript_path = temp_transcript([assistant_do_with_team, assistant_skill_verify])
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook(experimental_hook_path, hook_input)
+
+        assert result is not None
+        assert result["decision"] == "allow"

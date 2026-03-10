@@ -22,6 +22,7 @@ class DoFlowState:
     has_done: bool  # /done was called after last /do
     has_escalate: bool  # /escalate was called after last /do
     do_args: str | None  # raw arguments from /do invocation
+    has_team_context: bool  # /do args contain TEAM_CONTEXT block
 
 
 def build_system_reminder(content: str) -> str:
@@ -329,6 +330,7 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
     has_done = False
     has_escalate = False
     do_args: str | None = None
+    has_team_context = False
 
     try:
         with open(transcript_path, encoding="utf-8") as f:
@@ -360,6 +362,7 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
                         has_escalate = False
                         if args:
                             do_args = args
+                            has_team_context = "TEAM_CONTEXT" in args
 
                 # Check for /verify, /done, /escalate after /do (any invocation pattern)
                 if has_do and was_skill_invoked(data, "verify"):
@@ -378,6 +381,7 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
             has_done=False,
             has_escalate=False,
             do_args=None,
+            has_team_context=False,
         )
     except OSError:
         return DoFlowState(
@@ -386,6 +390,7 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
             has_done=False,
             has_escalate=False,
             do_args=None,
+            has_team_context=False,
         )
 
     return DoFlowState(
@@ -394,4 +399,5 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
         has_done=has_done,
         has_escalate=has_escalate,
         do_args=do_args,
+        has_team_context=has_team_context,
     )

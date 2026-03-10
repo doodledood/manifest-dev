@@ -73,3 +73,7 @@ Report verification results grouped by Global Invariants first, then by Delivera
 **On success with manual** - List manual criteria with how-to-verify from manifest, suggest /escalate.
 
 **On full success** - Call /done.
+
+## Collaboration Mode
+
+When `$ARGUMENTS` contains a `TEAM_CONTEXT:` block, read `references/COLLABORATION_MODE.md` for full collaboration mode instructions. If no `TEAM_CONTEXT:` block is present, ignore this — all other sections apply as written.

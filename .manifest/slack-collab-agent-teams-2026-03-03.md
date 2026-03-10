@@ -8,14 +8,16 @@
 
 - **Mental Model:**
   - **Lead** = the `/slack-collab` skill session. Pure orchestrator. Asks preflight questions, creates team, manages phases, writes state file, acts as subagent bridge (spawns subagents on behalf of workers). **NEVER uses Slack MCP tools directly** — all Slack interaction routes through the slack-coordinator. Terminates all teammates via shutdown_request in Phase 6.
-  - **slack-coordinator** (haiku model, spawned via `subagent_type: manifest-dev-collab:slack-coordinator`) = dedicated Slack I/O teammate. Posts messages, polls threads, routes stakeholder answers to lead. Continuous polling at 60-second intervals — starts after first thread, runs until shutdown_request. Each item (question, review, phase transition) gets its own parent message in the main channel (no mega-thread). Tags only relevant stakeholders per thread to minimize notifications (stakeholders have channel muted).
+  - **slack-coordinator** (sonnet model, spawned via `subagent_type: manifest-dev-collab:slack-coordinator`) = dedicated Slack I/O teammate. Posts messages, sends DMs, polls threads and DM conversations, routes stakeholder answers to lead. Continuous split-sleep polling at 30-second intervals (two 15s halves with mailbox check between) — starts after first thread, runs until shutdown_request. Checks for lead messages 3 times per poll cycle (before polling, after polling, mid-sleep). Each item (question, review, phase transition) gets its own parent message in the main channel (no mega-thread). Tags only relevant stakeholders per thread to minimize notifications (stakeholders have channel muted).
   - **define-worker** (spawned via `subagent_type: manifest-dev-collab:define-worker`, model omitted = inherits parent) = runs `/define` with TEAM_CONTEXT. Messages lead for all communication (stakeholder Q&A routed through lead → coordinator). Requests verification subagent launches from lead. Persists as manifest authority for QA evaluation.
-  - **executor** (spawned via `subagent_type: manifest-dev-collab:executor`, model omitted = inherits parent) = runs `/do` with TEAM_CONTEXT. Messages lead for all communication (escalations routed through lead → coordinator). Requests verification subagent launches from lead. Creates PR. Fixes QA issues routed through lead. Does NOT run /verify or spawn verification agents locally.
+  - **executor** (spawned via `subagent_type: manifest-dev-collab:executor`, model omitted = inherits parent) = MUST invoke `/do` via Skill tool (never implement directly). Messages lead for escalations (routed through lead → coordinator). Runs /verify locally (has all tools inherited from lead, including Agent tool for spawning criteria-checkers). Creates PR. Fixes QA issues routed through lead.
   - **Hub-and-spoke** = all teammate communication flows through the lead. No direct teammate↔teammate messaging. The lead is the communication hub.
-  - **Subagent bridge** = workers needing subagent capabilities (manifest-verifier, criteria-checkers) request launches from lead. Subagents send results directly to the requesting worker via SendMessage (if feasible) or write to `/tmp/subagent-result-{id}.md` and lead tells worker the file path (fallback).
+  - **Subagent bridge** = define-worker requests manifest-verifier launches from lead. Subagents send results directly to the requesting worker via SendMessage (if feasible) or write to `/tmp/subagent-result-{id}.md` and lead tells worker the file path (fallback). Exception: executor runs /verify locally and spawns its own criteria-checkers — verification doesn't go through the bridge.
   - **TEAM_CONTEXT** = behavior switch. Tells `/define` and `/do` to message the lead instead of using AskUserQuestion. Format includes `lead` name, `coordinator` name, and `role`.
   - **State file** = crash/resume recovery. JSON at `/tmp/collab-state-{run_id}.json`. Written by lead (single writer) after phase transitions and thread updates. Supports mid-phase resume.
-  - **Active polling** = coordinator polls Slack threads every 60 seconds continuously from first thread until shutdown_request. 24-hour timeout before escalating unanswered questions to owner. No Slack notification API available.
+  - **Active polling** = coordinators poll continuously with 30-second split-sleep cycles (sleep 15 → check mailbox → sleep 15). Never increase the interval. 24-hour timeout before escalating unanswered questions to owner. No Slack notification API available.
+  - **User comms after Phase 0** = once the team is spawned, ALL user communication goes through the slack-coordinator → Slack. No terminal output or AskUserQuestion during the workflow. Only exception: coordinator failure escalation.
+  - **github-coordinator** (sonnet model, spawned via `subagent_type: manifest-dev-collab:github-coordinator`) = dedicated GitHub I/O teammate. Polls PR reviews, comments, CI status. Spawned in Phase 4 after PR creation. Same split-sleep polling pattern as slack-coordinator.
   - **Channel** = user-provided. No channel creation or invite available in Slack MCP. User must create channel and ensure stakeholders are members before starting.
 
 - **TEAM_CONTEXT Format:**
@@ -61,9 +63,8 @@
 ├─ PHASE 3: EXECUTE
 │  ├─ Lead messages executor: "Run /do for [manifest_path]
 │  │   TEAM_CONTEXT: lead: <name>, coordinator: slack-coordinator, role: execute"
-│  ├─ executor runs /do, messages lead for escalations
-│  ├─ executor requests verification → lead spawns subagents
-│  ├─ Subagents send results directly to executor (or file fallback)
+│  ├─ executor runs /do (MUST invoke via Skill tool), messages lead for escalations
+│  ├─ executor runs /verify locally (inherits all tools from lead)
 │  ├─ executor completes, messages lead
 │  └─ Lead writes state file
 │
@@ -178,11 +179,13 @@
     command: "grep -riE 'create_channel|invite_to_channel' claude-plugins/manifest-dev-collab/ claude-plugins/manifest-dev/skills/define/references/COLLABORATION_MODE.md claude-plugins/manifest-dev/skills/do/references/COLLABORATION_MODE.md && echo 'FAIL: found channel creation API references' || echo 'PASS'"
   ```
 
-- [INV-G9] No DM references — no file instructs sending direct messages outside the shared channel.
+- [INV-G9] ~~No DM references~~ **AMENDED**: Slack-coordinator supports DMs. DM capability is limited to the slack-coordinator — no other agent sends DMs. Workers and lead still never touch Slack directly.
   ```yaml
   verify:
-    method: bash
-    command: "grep -riE 'send a dm|send dm|private message|direct message to user' claude-plugins/manifest-dev-collab/ claude-plugins/manifest-dev/skills/define/references/COLLABORATION_MODE.md claude-plugins/manifest-dev/skills/do/references/COLLABORATION_MODE.md && echo 'FAIL: found DM references' || echo 'PASS'"
+    method: subagent
+    agent: general-purpose
+    model: opus
+    prompt: "Read all agent files in claude-plugins/manifest-dev-collab/agents/. Verify only slack-coordinator.md references DM capability. define-worker.md and executor.md must NOT reference sending DMs."
   ```
 
 - [INV-G10] Subagent request format consistent — format in SKILL.md (lead side) matches format in COLLABORATION_MODE.md files (worker side).
@@ -232,7 +235,7 @@
     method: subagent
     agent: docs-reviewer
     model: opus
-    prompt: "Compare README.md files (root, claude-plugins/, manifest-dev-collab/, manifest-dev/) with actual agent and skill files. Verify READMEs accurately describe: user provides channel, hub-and-spoke communication, subagent bridge, 60s polling, 24h timeout, topic-based threads, haiku coordinator. No stale references to Python orchestrator, COLLAB_CONTEXT, session-resume, channel creation, or DMs."
+    prompt: "Compare README.md files (root, claude-plugins/, manifest-dev-collab/, manifest-dev/) with actual agent and skill files. Verify READMEs accurately describe: user provides channel, hub-and-spoke communication, subagent bridge (executor self-verifies), 30s split-sleep polling, DM capability, 24h timeout, topic-based threads, sonnet coordinators, github-coordinator. No stale references to Python orchestrator, COLLAB_CONTEXT, session-resume, channel creation, haiku model, or 60s polling."
   ```
 
 - [INV-G16] CLAUDE.md adherence — kebab-case, version bumps, README sync, frontmatter conventions.
@@ -279,7 +282,7 @@
 - [ASM-3] Teammates inherit Slack MCP from project context | Impact if wrong: coordinator can't use Slack
 - [ASM-4] /define and /do invoked via Skill tool inside teammates work normally | Impact if wrong: workers follow methodology from agent prompt instead
 - [ASM-5] One lead can manage 3 teammates simultaneously | Impact if wrong: reduce to 2 (merge roles)
-- [ASM-6] Agent frontmatter tool declarations not present (pre-existing gap, out of scope) | Impact if wrong: follow-up task
+- [ASM-6] Agent frontmatter omits tools: — agents inherit all tools from lead context | Impact if wrong: agents may lack needed tools
 
 ## 6. Deliverables (The Work)
 
@@ -304,13 +307,13 @@
     prompt: "Read SKILL.md. Verify preflight gathers stakeholder info and passes the full roster to slack-coordinator in its spawn prompt as a routing table."
   ```
 
-- [AC-1.3] Creates team with 3 teammates via `subagent_type` identifiers (manifest-dev-collab:slack-coordinator, manifest-dev-collab:define-worker, manifest-dev-collab:executor). Coordinator spawned with model: haiku. Define-worker and executor omit model (inherits parent).
+- [AC-1.3] Creates team with 3 teammates via `subagent_type` identifiers (manifest-dev-collab:slack-coordinator, manifest-dev-collab:define-worker, manifest-dev-collab:executor). Coordinator spawned with model: sonnet. Define-worker and executor omit model (inherits parent). github-coordinator spawned in Phase 4 with model: sonnet.
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read SKILL.md. Verify team creation spawns 3 teammates via subagent_type identifiers (manifest-dev-collab:*). Verify slack-coordinator specifies model: haiku. Verify define-worker and executor omit model (inherits parent). No 'agents/*.md' file path references."
+    prompt: "Read SKILL.md. Verify team creation spawns 3 teammates in Phase 0 via subagent_type identifiers (manifest-dev-collab:*). Verify slack-coordinator specifies model: sonnet. Verify define-worker and executor omit model (inherits parent). Verify github-coordinator spawned in Phase 4 with model: sonnet."
   ```
 
 - [AC-1.4] Hub-and-spoke communication model explicitly stated. Teammates only message lead.
@@ -421,11 +424,29 @@
     prompt: "Read SKILL.md Prerequisites. Verify it lists only available Slack MCP tools (send_message, read_channel, read_thread, search_channels, search_users, read_user_profile). No create_channel or invite_to_channel."
   ```
 
-- [AC-1.16] No references to channel creation, invite_to_channel, DMs, COLLAB_CONTEXT, or Python orchestrator.
+- [AC-1.16] No references to channel creation, invite_to_channel, COLLAB_CONTEXT, or Python orchestrator. (DMs are now supported via slack-coordinator.)
   ```yaml
   verify:
     method: bash
     command: "grep -iE 'create.channel|invite.channel|COLLAB_CONTEXT|orchestrator\\.py' claude-plugins/manifest-dev-collab/skills/slack-collab/SKILL.md && echo 'FAIL' || echo 'PASS'"
+  ```
+
+- [AC-1.17] "User Communication After Phase 0" section: all user comms through slack-coordinator, not terminal. Only exception: coordinator failure escalation.
+  ```yaml
+  verify:
+    method: subagent
+    agent: general-purpose
+    model: opus
+    prompt: "Read SKILL.md. Verify a section stating all user communication after Phase 0 goes through slack-coordinator. No terminal output or AskUserQuestion during workflow. Only exception: coordinator failure escalation."
+  ```
+
+- [AC-1.18] Subagent Bridge Protocol notes executor self-verifies (runs /verify locally). Bridge applies to define-worker and non-verification subagent needs only.
+  ```yaml
+  verify:
+    method: subagent
+    agent: general-purpose
+    model: opus
+    prompt: "Read SKILL.md Subagent Bridge Protocol. Verify it notes executor runs /verify locally (not through bridge). Bridge applies to define-worker's manifest-verifier and other non-verification needs."
   ```
 
 ### Deliverable 2: Slack Coordinator Agent
@@ -440,13 +461,13 @@
     prompt: "Read slack-coordinator.md. Verify channel creation NOT listed as responsibility. Expects channel_id from lead."
   ```
 
-- [AC-2.2] Continuous polling: starts after first thread creation, runs until shutdown_request. Sleep 60 seconds between polls. Polls ALL tracked threads. Never stops on its own.
+- [AC-2.2] Continuous polling: starts after first thread creation, runs until shutdown_request. Split-sleep 30-second cycle (two 15s halves with mailbox check between). Polls ALL tracked threads and DM conversations. Never stops on its own. Never increases the interval.
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read slack-coordinator.md. Verify: (1) polling starts after first thread (2) continuous until shutdown_request (3) 60-second interval (4) polls ALL tracked threads (5) never stops on its own — no phase-based resets or pauses."
+    prompt: "Read slack-coordinator.md. Verify: (1) polling starts after first thread (2) continuous until shutdown_request (3) 30-second split-sleep cycle (two 15s halves with mailbox check between) (4) polls ALL tracked threads and DM conversations (5) never stops on its own (6) never increases the interval (7) checks for lead messages at least 3 times per cycle."
   ```
 
 - [AC-2.3] Escalation timeout: 24 hours before escalating to owner.
@@ -512,11 +533,20 @@
     prompt: "Read slack-coordinator.md. Verify long content handling: split messages >4000 chars into [1/N], [2/N] format."
   ```
 
-- [AC-2.10] No references to channel creation, DMs, or direct teammate messaging.
+- [AC-2.10] No references to channel creation or direct teammate messaging. DMs are supported.
   ```yaml
   verify:
     method: bash
     command: "grep -iE 'create_channel|invite_to_channel' claude-plugins/manifest-dev-collab/agents/slack-coordinator.md && echo 'FAIL' || echo 'PASS'"
+  ```
+
+- [AC-2.11] DM capability: "Direct Messages" section explains how to send DMs (user ID as channel), add DM conversations to poll list. "Lead interrupts" includes DMs. "What You Do" lists DM capability.
+  ```yaml
+  verify:
+    method: subagent
+    agent: general-purpose
+    model: opus
+    prompt: "Read slack-coordinator.md. Verify: (1) Direct Messages section exists with DM procedure (2) Lead interrupts lists DMs (3) What You Do includes DM capability and DM polling."
   ```
 
 ### Deliverable 3: Define Worker Agent
@@ -577,13 +607,13 @@
     prompt: "Read executor.md. Verify: invokes /do with TEAM_CONTEXT, messages lead (not coordinator or define-worker) for all communication."
   ```
 
-- [AC-4.2] Verification delegation: messages lead for verification with manifest path and scope. Does not run /verify locally.
+- [AC-4.2] ~~Verification delegation to lead~~ **AMENDED**: Executor runs /verify locally (has all tools inherited from lead). MUST invoke /do via Skill tool — never implement directly. Contains WHY rationale (execution logs, hooks enforcement, /verify).
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read executor.md. Verify: messages lead for verification (not running /verify locally). Request includes manifest path and scope."
+    prompt: "Read executor.md. Verify: (1) MUST language requiring /do invocation via Skill tool (2) Do NOT prohibition against direct implementation (3) WHY rationale covering execution logs, stop_do_hook enforcement, and /verify (4) 'Do NOT' section does NOT prohibit /verify or subagent spawning."
   ```
 
 - [AC-4.3] QA issues received from lead (not define-worker directly).
@@ -595,13 +625,13 @@
     prompt: "Read executor.md. Verify QA issues come from lead, not define-worker directly."
   ```
 
-- [AC-4.4] Receives verification results from subagents (SendMessage) or from lead (file path fallback).
+- [AC-4.4] ~~Receives verification results from lead~~ **AMENDED**: Runs /verify locally. Verification results are local to executor context.
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read executor.md. Verify it handles receiving results via SendMessage from subagent OR via lead message with file path."
+    prompt: "Read executor.md. Verify the executor runs /verify locally per COLLABORATION_MODE.md. No mention of receiving verification results from the lead."
   ```
 
 - [AC-4.5] Creates PR, fixes review comments (max 3 attempts), fixes QA issues.
@@ -680,13 +710,13 @@
     prompt: "Read claude-plugins/manifest-dev/skills/do/references/COLLABORATION_MODE.md. Verify: activated by TEAM_CONTEXT, escalations message lead, not coordinator directly."
   ```
 
-- [AC-6.2] Verification delegates to lead: messages lead with verification request (not calling /verify locally). Subagent request format documented.
+- [AC-6.2] ~~Verification delegates to lead~~ **AMENDED**: Verification runs locally. Executor invokes /verify in its own context (has all tools inherited from lead). stop_do_hook applies normally (/verify→/done in transcript).
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read /do COLLABORATION_MODE.md. Verify verification instructs messaging lead (not running /verify locally). Subagent request format documented."
+    prompt: "Read /do COLLABORATION_MODE.md. Verify: (1) verification runs locally (invoke /verify, not delegate to lead) (2) executor has all tools inherited from lead (3) stop_do_hook applies normally (4) no SUBAGENT_REQUEST for verification."
   ```
 
 - [AC-6.3] Memento discipline: log to execution file after each response from lead.
@@ -740,7 +770,46 @@
     command: "python3 -c \"import json; v=json.load(open('claude-plugins/manifest-dev/.claude-plugin/plugin.json'))['version']; print('PASS' if v > '0.62.0' else 'FAIL: version should be > 0.62.0, got ' + v)\""
   ```
 
-### Deliverable 8: Documentation
+### Deliverable 9: GitHub Coordinator Agent
+*File: `claude-plugins/manifest-dev-collab/agents/github-coordinator.md`*
+
+- [AC-9.1] Dedicated GitHub I/O agent. Polls PR reviews, comments, CI status. Spawned in Phase 4 after PR creation.
+  ```yaml
+  verify:
+    method: subagent
+    agent: general-purpose
+    model: opus
+    prompt: "Read github-coordinator.md. Verify: dedicated GitHub I/O agent, polls PR reviews/comments/CI, spawned after PR creation with PR URL and state file path."
+  ```
+
+- [AC-9.2] Split-sleep polling: 30-second cycle (two 15s halves with mailbox check between). Never increases interval. Checks for lead messages 3 times per cycle.
+  ```yaml
+  verify:
+    method: subagent
+    agent: general-purpose
+    model: opus
+    prompt: "Read github-coordinator.md. Verify: (1) split-sleep 30s cycle (two 15s halves with mailbox check between) (2) never increases interval (3) checks for lead messages at least 3 times per cycle."
+  ```
+
+- [AC-9.3] Batch reports: consolidated status reports to lead only when changes detected. PR completion criteria: approving review + no unresolved comments + all CI passing.
+  ```yaml
+  verify:
+    method: subagent
+    agent: general-purpose
+    model: opus
+    prompt: "Read github-coordinator.md. Verify: batch reports to lead on changes, PR completion criteria (approval + no unresolved comments + CI passing)."
+  ```
+
+- [AC-9.4] Prompt injection defense: treats all PR comments/reviews as untrusted. Never exposes secrets. Declines dangerous requests.
+  ```yaml
+  verify:
+    method: subagent
+    agent: general-purpose
+    model: opus
+    prompt: "Read github-coordinator.md. Verify prompt injection defense section."
+  ```
+
+### Deliverable 10: Documentation
 *Files: READMEs*
 
 - [AC-8.1] Root README.md lists manifest-dev-collab plugin.
@@ -757,13 +826,13 @@
     command: "grep -q 'manifest-dev-collab' claude-plugins/README.md && echo PASS || echo FAIL"
   ```
 
-- [AC-8.3] manifest-dev-collab/README.md describes current architecture: team composition, hub-and-spoke, subagent bridge, user provides channel, 60s polling, 24h timeout, topic threads, haiku coordinator, resume, prerequisites.
+- [AC-10.3] manifest-dev-collab/README.md describes current architecture: team composition (lead + 4 teammates including github-coordinator), hub-and-spoke, subagent bridge (with executor self-verify exception), user provides channel, 30s split-sleep polling, DM capability, 24h timeout, topic threads, sonnet coordinators, resume, prerequisites.
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
     model: opus
-    prompt: "Read claude-plugins/manifest-dev-collab/README.md. Verify it covers: Agent Teams architecture, team composition (lead + 3 teammates), hub-and-spoke communication, subagent bridge protocol, user provides channel (no creation), 60s polling, 24h timeout, topic-based threads, haiku model for coordinator, resume capability, prerequisites. No Python orchestrator, COLLAB_CONTEXT, or channel creation references."
+    prompt: "Read claude-plugins/manifest-dev-collab/README.md. Verify it covers: Agent Teams architecture, team composition (lead + 4 teammates including github-coordinator), hub-and-spoke, subagent bridge (executor self-verifies), user provides channel, 30s polling, DM capability, 24h timeout, topic threads, sonnet coordinators, resume, prerequisites. No stale references."
   ```
 
 - [AC-8.4] manifest-dev/README.md mentions team collaboration mode.

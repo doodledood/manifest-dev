@@ -15,7 +15,7 @@ Front-load the thinking so AI agents get it right the first time.
 | Plugin | What It Does |
 |--------|--------------|
 | `manifest-dev` | Verification-first manifest workflows with multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
-| `manifest-dev-collab` | Slack-based team collaboration on define/do workflows. Orchestrates stakeholder Q&A, PR review, and QA sign-off through topic-based threads in a user-provided Slack channel. |
+| `manifest-dev-collab` | Slack and GitHub team collaboration on define/do workflows. Orchestrates stakeholder Q&A, GitHub PR review monitoring, and QA sign-off through topic-based threads in a user-provided Slack channel. |
 
 ## Plugin Details
 
@@ -39,14 +39,14 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 
 ### manifest-dev-collab
 
-Team collaboration on define/do workflows through Slack.
+Team collaboration on define/do workflows through Slack and GitHub.
 
 **Core skill:**
-- `/slack-collab` - Agent Teams native orchestrator for collaborative define/do workflows through Slack. Spawns specialized teammates (slack-coordinator, define-worker, executor) that coordinate via mailbox messaging.
+- `/slack-collab` - Agent Teams native orchestrator for collaborative define/do workflows through Slack and GitHub. Spawns specialized teammates (slack-coordinator, github-coordinator, define-worker, executor) that coordinate via mailbox messaging.
 
-**Agents:** `slack-coordinator` (Slack I/O), `define-worker` (/define + manifest authority), `executor` (/do + PR + QA fixes)
+**Agents:** `slack-coordinator` (Slack I/O), `github-coordinator` (GitHub PR I/O), `define-worker` (/define + manifest authority), `executor` (/do + PR + QA fixes)
 
-**Prerequisites:** Slack MCP server configured, `manifest-dev` plugin installed, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` env var.
+**Prerequisites:** Slack MCP server configured, GitHub access via `gh` CLI or GitHub MCP server, `manifest-dev` plugin installed, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` env var.
 
 ## Contributing
 
