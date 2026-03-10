@@ -123,7 +123,7 @@ Do NOT report on (handled by other agents):
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Documentation quality** → docs-reviewer
 - **Test coverage gaps** → code-coverage-reviewer
-- **CLAUDE.md compliance** → claude-md-adherence-reviewer
+- **Context file compliance** → context-file-adherence-reviewer
 - Security vulnerabilities requiring static analysis (injection, auth design) → separate security audit
 - Performance optimizations (unless causing functional bugs)
 

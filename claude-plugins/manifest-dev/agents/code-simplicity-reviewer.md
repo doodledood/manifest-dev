@@ -77,7 +77,7 @@ Do NOT report on (handled by other agents):
 - **Type safety** (any/unknown, invalid states) → type-safety-reviewer
 - **Documentation accuracy** → docs-reviewer
 - **Test coverage gaps** → code-coverage-reviewer
-- **CLAUDE.md compliance** → claude-md-adherence-reviewer
+- **Context file compliance** → context-file-adherence-reviewer
 
 **Key distinction from maintainability:**
 - **Maintainability** asks: "Is this well-organized for future changes?" (DRY, coupling, cohesion, consistency, dead code)

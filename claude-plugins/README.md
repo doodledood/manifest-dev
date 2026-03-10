@@ -14,7 +14,7 @@ Front-load the thinking so AI agents get it right the first time.
 
 | Plugin | What It Does |
 |--------|--------------|
-| `manifest-dev` | Verification-first manifest workflows. Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
+| `manifest-dev` | Verification-first manifest workflows with multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
 | `manifest-dev-collab` | Slack and GitHub team collaboration on define/do workflows. Orchestrates stakeholder Q&A, GitHub PR review monitoring, and QA sign-off through topic-based threads in a user-provided Slack channel. |
 
 ## Plugin Details
@@ -31,7 +31,7 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 
 **Internal skills:** `/verify`, `/done`, `/escalate`
 
-**Review agents:** `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `code-coverage-reviewer`, `type-safety-reviewer`, `docs-reviewer`, `claude-md-adherence-reviewer`
+**Review agents:** `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `code-coverage-reviewer`, `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
 
 **Hooks** prevent premature stopping -- can't stop without verification passing or proper escalation.
 

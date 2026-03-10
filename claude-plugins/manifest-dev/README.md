@@ -156,12 +156,16 @@ These run in parallel during `/verify`:
 | `code-simplicity-reviewer` | Unnecessary complexity, over-engineering, cognitive burden |
 | `code-testability-reviewer` | Code that requires excessive mocking, business logic hard to verify in isolation |
 | `type-safety-reviewer` | TypeScript type holes, opportunities to make invalid states unrepresentable |
-| `claude-md-adherence-reviewer` | Verifies code changes comply with CLAUDE.md instructions and project standards |
+| `context-file-adherence-reviewer` | Verifies code changes comply with CLAUDE.md instructions and project standards |
 | `docs-reviewer` | Audits documentation accuracy against recent code changes |
 
 ## Collaboration Mode
 
 Both `/define` and `/do` support a team collaboration mode activated by passing a `TEAM_CONTEXT` block in arguments. Full instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when collab is active). When active, questions and escalations route through the coordinator teammate via mailbox messaging instead of AskUserQuestion. Skills don't know about Slack — the coordinator handles all external communication. Logs and manifests stay local. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `TEAM_CONTEXT` is present, behavior is unchanged.
+
+## Multi-CLI Distribution
+
+Multi-CLI distributions under `dist/` for Gemini CLI, OpenCode, and Codex CLI are maintained at the repo level via `/sync-tools` (in `.claude/skills/`). The Claude Code plugin is the single source of truth; `/sync-tools` converts agents, adapts hooks, and copies skills unchanged. See per-CLI READMEs in `dist/` for installation and feature parity.
 
 ## Hooks
 

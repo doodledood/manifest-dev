@@ -11,11 +11,22 @@ Stop iterating with the model after implementation. Define what you'd accept, ru
 ## Quick Start
 
 ```bash
-# Install (run inside Claude Code)
+# Claude Code (primary)
 /plugin marketplace add doodledood/manifest-dev
 /plugin install manifest-dev@manifest-dev-marketplace
 
-# Use
+# Gemini CLI — everything (skills, agents, hooks)
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
+
+# OpenCode — everything (skills, agents, commands, plugin stubs)
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
+
+# Codex CLI — everything (skills, TOML stubs, rules, config)
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
+```
+
+Then use it:
+```bash
 /define <what you want to build>
 /do <manifest-path>
 ```
@@ -230,6 +241,19 @@ verify:
   instructions: "Verify the login flow works in staging"
 ```
 
+## Multi-CLI Support
+
+The Claude Code plugin is the source of truth. Per-CLI distributions under `dist/` provide native packages for other AI coding CLIs. Each has a one-command remote installer — run again to update.
+
+| CLI | Install | Skills | Agents | Hooks | Details |
+|-----|---------|--------|--------|-------|---------|
+| Claude Code | `/plugin install` | Full | Full | Full | Primary target |
+| Gemini CLI | `curl .../gemini/install.sh \| bash` | Full | Full (converted) | Full (adapted) | [README](dist/gemini/README.md) |
+| OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | Stubs | [README](dist/opencode/README.md) |
+| Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | Not available | [README](dist/codex/README.md) |
+
+**Keeping distributions in sync**: After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. The sync skill reads reference files with per-CLI conversion rules and produces the full distribution for each target.
+
 ## Available Plugins
 
 | Plugin | Description |
@@ -266,7 +290,7 @@ Built-in agents for quality verification via `subagent` method:
 | `code-coverage-reviewer` | Test coverage gaps in changed code |
 | `type-safety-reviewer` | TypeScript type safety: `any` abuse, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
-| `claude-md-adherence-reviewer` | Compliance with CLAUDE.md project rules |
+| `context-file-adherence-reviewer` | Compliance with context file (CLAUDE.md/AGENTS.md/GEMINI.md) project rules |
 | `define-session-analyzer` | Analyzes a single /define session transcript for user preference patterns. Spawned by `/learn-define-patterns` |
 
 Each reviewer returns structured output with severity levels (Critical, High, Medium, Low) and specific fix guidance.
