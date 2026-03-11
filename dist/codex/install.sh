@@ -11,7 +11,11 @@ REPO="doodledood/manifest-dev"
 BRANCH="main"
 DIST_PATH="dist/codex"
 INSTALL_ROOT="${CODEX_HOME:-$HOME/.codex}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_SOURCE="${BASH_SOURCE[0]-}"
+SCRIPT_DIR=""
+if [ -n "$SCRIPT_SOURCE" ] && [ -f "$SCRIPT_SOURCE" ]; then
+  SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)"
+fi
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -19,7 +23,7 @@ echo "manifest-dev installer for Codex CLI"
 echo "======================================"
 echo ""
 
-if [ -f "$SCRIPT_DIR/install_helpers.py" ] && [ -d "$SCRIPT_DIR/skills" ] && [ -d "$SCRIPT_DIR/agents" ] && [ -f "$SCRIPT_DIR/config.toml" ]; then
+if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/install_helpers.py" ] && [ -d "$SCRIPT_DIR/skills" ] && [ -d "$SCRIPT_DIR/agents" ] && [ -f "$SCRIPT_DIR/config.toml" ]; then
   echo "Using local dist/codex from $SCRIPT_DIR..."
   SRC="$TMP_DIR/local-dist"
   mkdir -p "$SRC"

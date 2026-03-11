@@ -18,7 +18,7 @@ Stop iterating with the model after implementation. Define what you'd accept, ru
 # Gemini CLI — everything (skills, agents, hooks)
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
 
-# OpenCode — everything (skills, agents, commands, plugin stubs)
+# OpenCode — everything (skills, agents, commands, plugin)
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 
 # Codex CLI — everything (skills, TOML stubs, rules, config)
@@ -32,6 +32,16 @@ Then use it:
 ```
 
 Two commands. `/define` interviews you and builds a manifest. `/do` executes it. That's the whole workflow.
+
+If you use zsh and want easy upgrade commands for the non-Claude distributions, add this to `~/.zshrc`:
+
+```zsh
+alias upgrade-manifest-dev-codex='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash'
+alias upgrade-manifest-dev-gemini='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash'
+alias upgrade-manifest-dev-opencode='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash'
+```
+
+Then run `source ~/.zshrc` once, and future updates are just `upgrade-manifest-dev-codex`, `upgrade-manifest-dev-gemini`, or `upgrade-manifest-dev-opencode`.
 
 ## The Mindset Shift
 

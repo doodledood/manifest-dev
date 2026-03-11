@@ -20,7 +20,11 @@ REPO="doodledood/manifest-dev"
 BRANCH="main"
 INSTALL_DIR="${HOME}/.gemini/extensions/manifest-dev"
 SETTINGS_FILE="${HOME}/.gemini/settings.json"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_SOURCE="${BASH_SOURCE[0]-}"
+SCRIPT_DIR=""
+if [ -n "$SCRIPT_SOURCE" ] && [ -f "$SCRIPT_SOURCE" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)"
+fi
 TMP_DIR=$(mktemp -d)
 
 cleanup() {
@@ -28,7 +32,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-if [ -f "$SCRIPT_DIR/install_helpers.py" ] && [ -d "$SCRIPT_DIR/skills" ] && [ -d "$SCRIPT_DIR/agents" ] && [ -d "$SCRIPT_DIR/hooks" ] && [ -f "$SCRIPT_DIR/gemini-extension.json" ]; then
+if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/install_helpers.py" ] && [ -d "$SCRIPT_DIR/skills" ] && [ -d "$SCRIPT_DIR/agents" ] && [ -d "$SCRIPT_DIR/hooks" ] && [ -f "$SCRIPT_DIR/gemini-extension.json" ]; then
     echo "==> Using local dist/gemini from ${SCRIPT_DIR}..."
     SOURCE_DIR="${TMP_DIR}/local-dist"
     mkdir -p "$SOURCE_DIR"
