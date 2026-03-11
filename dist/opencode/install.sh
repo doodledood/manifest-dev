@@ -77,8 +77,7 @@ if [ "$ACTION" = "uninstall" ]; then
   fi
   rm -f \
     "$TARGET/plugins/manifest-dev.ts" \
-    "$TARGET/plugins/manifest-dev.HOOK_SPEC.md" \
-    "$TARGET/plugins/index.ts.manifest-dev-legacy.bak"
+    "$TARGET/plugins/manifest-dev.HOOK_SPEC.md"
   rm -rf "$TARGET/plugins/manifest-dev"
 
   if [ -f "$TARGET/opencode.json" ]; then

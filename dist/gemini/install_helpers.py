@@ -53,7 +53,12 @@ TEXT_EXTENSIONS = {".md", ".py", ".ts", ".json", ".toml", ".rules", ".txt"}
 
 # Files to never patch (they ARE the namespace tooling).
 SKIP_FILES = {"install_helpers.py", "install.sh"}
-STATE_VERSION = 1
+STATE_VERSION = 2
+MANAGED_HOOK_NAMES = {
+    "pretool-verify",
+    "stop-do-enforcement",
+    "post-compact-recovery",
+}
 
 
 def _build_regex() -> tuple[dict[str, str], re.Pattern[str]]:
@@ -225,6 +230,7 @@ def _build_settings_state(
     return {
         "version": STATE_VERSION,
         "settings_existed": settings_existed,
+        "original_experimental": dict(experimental) if isinstance(experimental, dict) else None,
         "experimental": {
             "enableAgents": {
                 "present": enable_agents_present,
@@ -233,6 +239,73 @@ def _build_settings_state(
         },
         "hooks_added": {},
     }
+
+
+def _normalize_state(
+    settings: dict[str, object],
+    state: dict[str, object],
+    settings_existed: bool,
+) -> dict[str, object]:
+    if (
+        isinstance(state.get("experimental"), dict)
+        and "original_experimental" in state
+        and isinstance(state.get("hooks_added"), dict)
+    ):
+        return {
+            "version": STATE_VERSION,
+            "settings_existed": bool(state.get("settings_existed", settings_existed)),
+            "original_experimental": state.get("original_experimental"),
+            "experimental": state["experimental"],
+            "hooks_added": state["hooks_added"],
+        }
+
+    normalized = _build_settings_state(settings, settings_existed)
+    exp_state = state.get("experimental", {})
+    if isinstance(exp_state, dict) and "enableAgents" in exp_state:
+        normalized["experimental"] = exp_state
+        current_experimental = settings.get("experimental")
+        if isinstance(current_experimental, dict):
+            migrated_experimental = dict(current_experimental)
+            enable_agents_state = exp_state.get("enableAgents")
+            if isinstance(enable_agents_state, dict):
+                if enable_agents_state.get("present"):
+                    migrated_experimental["enableAgents"] = enable_agents_state.get("value")
+                else:
+                    migrated_experimental.pop("enableAgents", None)
+            normalized["original_experimental"] = migrated_experimental
+    hooks_added = state.get("hooks_added", {})
+    if isinstance(hooks_added, dict):
+        normalized["hooks_added"] = hooks_added
+    normalized["settings_existed"] = bool(state.get("settings_existed", settings_existed))
+    return normalized
+
+
+def _collect_hook_names(entries: list[object]) -> set[str]:
+    names: set[str] = set()
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        hooks = entry.get("hooks")
+        if not isinstance(hooks, list):
+            continue
+        for hook in hooks:
+            if isinstance(hook, dict):
+                name = hook.get("name")
+                if isinstance(name, str):
+                    names.add(name)
+    return names
+
+
+def _entry_contains_named_hook(entry: object, names: set[str]) -> bool:
+    if not isinstance(entry, dict):
+        return False
+    hooks = entry.get("hooks")
+    if not isinstance(hooks, list):
+        return False
+    for hook in hooks:
+        if isinstance(hook, dict) and hook.get("name") in names:
+            return True
+    return False
 
 
 def merge_settings(
@@ -249,7 +322,7 @@ def merge_settings(
         settings = json.loads(dest_path.read_text(encoding="utf-8"))
     else:
         settings = {}
-    state = _load_state(state_path) or _build_settings_state(settings, settings_existed)
+    state = _normalize_state(settings, _load_state(state_path), settings_existed)
 
     experimental = settings.setdefault("experimental", {})
     if not isinstance(experimental, dict):
@@ -306,7 +379,7 @@ def unmerge_settings(
 
     source_data = json.loads(Path(source_hooks_path).read_text(encoding="utf-8"))
     settings = json.loads(dest_path.read_text(encoding="utf-8"))
-    state = _load_state(state_path)
+    state = _normalize_state(settings, _load_state(state_path), dest_path.exists())
 
     hooks = settings.get("hooks")
     if isinstance(hooks, dict):
@@ -320,10 +393,12 @@ def unmerge_settings(
                     continue
 
                 removal_markers = {_canonical_json(entry) for entry in entries}
+                removal_names = _collect_hook_names(entries) & MANAGED_HOOK_NAMES
                 filtered = [
                     entry
                     for entry in existing_entries
                     if _canonical_json(entry) not in removal_markers
+                    and not _entry_contains_named_hook(entry, removal_names)
                 ]
                 if filtered:
                     hooks[event_name] = filtered
@@ -339,14 +414,20 @@ def unmerge_settings(
         enable_agents_state = None
         if isinstance(exp_state, dict):
             enable_agents_state = exp_state.get("enableAgents")
+        original_experimental = state.get("original_experimental")
 
         if isinstance(enable_agents_state, dict):
             present = bool(enable_agents_state.get("present"))
             previous_value = enable_agents_state.get("value")
             current_value = experimental.get("enableAgents")
+            current_without_enable = dict(experimental)
+            current_without_enable.pop("enableAgents", None)
 
             if not present:
-                if current_value is True:
+                if current_value is True and (
+                    (original_experimental is None and not current_without_enable)
+                    or current_without_enable == original_experimental
+                ):
                     experimental.pop("enableAgents", None)
             elif "enableAgents" not in experimental:
                 experimental["enableAgents"] = previous_value

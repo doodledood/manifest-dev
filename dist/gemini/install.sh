@@ -21,6 +21,7 @@ BRANCH="main"
 INSTALL_DIR="${HOME}/.gemini/extensions/manifest-dev"
 SETTINGS_FILE="${HOME}/.gemini/settings.json"
 STATE_FILE="${INSTALL_DIR}/install-state.json"
+GLOBAL_STATE_FILE="${HOME}/.gemini/manifest-dev-install-state.json"
 SCRIPT_SOURCE="${BASH_SOURCE[0]-}"
 SCRIPT_DIR=""
 if [ -n "$SCRIPT_SOURCE" ] && [ -f "$SCRIPT_SOURCE" ]; then
@@ -74,16 +75,21 @@ python3 "${SOURCE_DIR}/install_helpers.py" namespace "$SOURCE_DIR" gemini
 
 if [ "$ACTION" = "uninstall" ]; then
     echo "==> Removing manifest-dev Gemini extension..."
+    ACTIVE_STATE_FILE="$STATE_FILE"
+    if [ ! -f "$ACTIVE_STATE_FILE" ] && [ -f "$GLOBAL_STATE_FILE" ]; then
+        ACTIVE_STATE_FILE="$GLOBAL_STATE_FILE"
+    fi
 
     if [ -f "$SETTINGS_FILE" ]; then
         cp "$SETTINGS_FILE" "$SETTINGS_FILE.pre-manifest-dev-uninstall.bak"
-        python3 "${SOURCE_DIR}/install_helpers.py" unmerge-settings "${SOURCE_DIR}/hooks/hooks.json" "$SETTINGS_FILE" "$STATE_FILE"
+        python3 "${SOURCE_DIR}/install_helpers.py" unmerge-settings "${SOURCE_DIR}/hooks/hooks.json" "$SETTINGS_FILE" "$ACTIVE_STATE_FILE"
         echo "    settings.json (manifest-dev hooks removed, backup at settings.json.pre-manifest-dev-uninstall.bak)"
-    elif [ -f "$STATE_FILE" ]; then
-        rm -f "$STATE_FILE"
+    elif [ -f "$STATE_FILE" ] || [ -f "$GLOBAL_STATE_FILE" ]; then
+        rm -f "$STATE_FILE" "$GLOBAL_STATE_FILE"
     fi
 
     rm -rf "$INSTALL_DIR"
+    rm -f "$GLOBAL_STATE_FILE"
     rmdir "$(dirname "$INSTALL_DIR")" 2>/dev/null || true
     rmdir "${HOME}/.gemini" 2>/dev/null || true
 
@@ -148,6 +154,9 @@ if [ -f "$SETTINGS_FILE" ]; then
 else
     python3 "${SOURCE_DIR}/install_helpers.py" merge-settings "${INSTALL_DIR}/hooks/hooks.json" "$SETTINGS_FILE" "$STATE_FILE"
     echo "    settings.json (created with enableAgents + manifest-dev hooks)"
+fi
+if [ -f "$STATE_FILE" ]; then
+    cp "$STATE_FILE" "$GLOBAL_STATE_FILE"
 fi
 
 echo ""

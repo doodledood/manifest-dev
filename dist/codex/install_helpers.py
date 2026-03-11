@@ -56,11 +56,17 @@ SKIP_FILES = {"install_helpers.py", "install.sh"}
 
 MANAGED_CONFIG_START = "# >>> manifest-dev managed config >>>"
 MANAGED_CONFIG_END = "# <<< manifest-dev managed config <<<"
+MANAGED_STATE_PREFIX = "# manifest-dev-shared-state: "
 CONFIG_HEADER = (
     "# manifest-dev configuration for Codex CLI\n"
     "# Merge relevant sections into your .codex/config.toml\n"
 )
-STATE_VERSION = 1
+STATE_VERSION = 2
+DEFAULT_SHARED_VALUES = {
+    "features.multi_agent": "true",
+    "agents.max_threads": "6",
+    "agents.max_depth": "1",
+}
 
 
 def _build_regex() -> tuple[dict[str, str], re.Pattern[str]]:
@@ -238,12 +244,32 @@ def _table_list_contains_value(text: str, table_name: str, key: str, value: str)
     return f'"{value}"' in current_value
 
 
+def _parse_quoted_list(raw_value: str | None) -> list[str] | None:
+    if raw_value is None:
+        return None
+    return re.findall(r'"([^"]*)"', raw_value)
+
+
 def _strip_managed_config_block(text: str) -> str:
     pattern = re.compile(
         rf"\n?{re.escape(MANAGED_CONFIG_START)}\n.*?\n{re.escape(MANAGED_CONFIG_END)}\n?",
         flags=re.DOTALL,
     )
     return pattern.sub("\n", text)
+
+
+def _extract_embedded_state(text: str) -> dict[str, object]:
+    match = re.search(
+        rf"{re.escape(MANAGED_CONFIG_START)}\n{re.escape(MANAGED_STATE_PREFIX)}(.*?)\n",
+        text,
+        flags=re.DOTALL,
+    )
+    if not match:
+        return {}
+    try:
+        return json.loads(match.group(1))
+    except json.JSONDecodeError:
+        return {}
 
 
 def _strip_manifest_agent_tables(text: str) -> str:
@@ -433,25 +459,58 @@ def _build_config_state(existing_text: str, config_existed: bool) -> dict[str, o
     return {
         "version": STATE_VERSION,
         "config_existed": config_existed,
-        "added_keys": {
-            "features.multi_agent": _get_table_key_value(existing_text, "features", "multi_agent")
-            is None,
-            "agents.max_threads": _get_table_key_value(existing_text, "agents", "max_threads")
-            is None,
-            "agents.max_depth": _get_table_key_value(existing_text, "agents", "max_depth")
-            is None,
+        "original_keys": {
+            "features.multi_agent": _get_table_key_value(existing_text, "features", "multi_agent"),
+            "agents.max_threads": _get_table_key_value(existing_text, "agents", "max_threads"),
+            "agents.max_depth": _get_table_key_value(existing_text, "agents", "max_depth"),
         },
-        "added_list_values": {
-            "agents.project_doc_fallback_filenames": []
-            if _table_list_contains_value(
-                existing_text,
-                "agents",
-                "project_doc_fallback_filenames",
-                "CLAUDE.md",
-            )
-            else ["CLAUDE.md"],
+        "original_lists": {
+            "agents.project_doc_fallback_filenames": _parse_quoted_list(
+                _get_table_key_value(
+                    existing_text,
+                    "agents",
+                    "project_doc_fallback_filenames",
+                )
+            ),
         },
     }
+
+
+def _normalize_state(existing_text: str, state: dict[str, object], config_existed: bool) -> dict[str, object]:
+    if isinstance(state.get("original_keys"), dict) and isinstance(state.get("original_lists"), dict):
+        return {
+            "version": STATE_VERSION,
+            "config_existed": bool(state.get("config_existed", config_existed)),
+            "original_keys": state["original_keys"],
+            "original_lists": state["original_lists"],
+        }
+
+    added_keys = state.get("added_keys", {})
+    added_lists = state.get("added_list_values", {})
+    if not isinstance(added_keys, dict) or not isinstance(added_lists, dict):
+        return _build_config_state(existing_text, config_existed)
+
+    normalized = _build_config_state(existing_text, config_existed)
+    original_keys = normalized.get("original_keys", {})
+    if isinstance(original_keys, dict):
+        for key in DEFAULT_SHARED_VALUES:
+            if added_keys.get(key):
+                original_keys[key] = None
+
+    current_list = _parse_quoted_list(
+        _get_table_key_value(existing_text, "agents", "project_doc_fallback_filenames")
+    )
+    original_lists = normalized.get("original_lists", {})
+    if isinstance(original_lists, dict):
+        if isinstance(current_list, list) and "CLAUDE.md" in current_list and "CLAUDE.md" in added_lists.get("agents.project_doc_fallback_filenames", []):
+            original_lists["agents.project_doc_fallback_filenames"] = [
+                item for item in current_list if item != "CLAUDE.md"
+            ]
+        else:
+            original_lists["agents.project_doc_fallback_filenames"] = current_list
+
+    normalized["config_existed"] = bool(state.get("config_existed", config_existed))
+    return normalized
 
 
 def merge_config(
@@ -461,17 +520,18 @@ def merge_config(
 ) -> None:
     source_text = Path(source_config_path).read_text(encoding="utf-8")
     managed_tables = _extract_managed_agent_tables(source_text).rstrip()
-    managed_block = (
-        f"{MANAGED_CONFIG_START}\n"
-        f"{managed_tables}\n"
-        f"{MANAGED_CONFIG_END}\n"
-    )
 
     dest_path = Path(dest_config_path)
     config_existed = dest_path.exists()
     existing_text = dest_path.read_text(encoding="utf-8") if config_existed else ""
     merged_text = existing_text if config_existed else CONFIG_HEADER
-    state = _load_state(state_path) or _build_config_state(existing_text, config_existed)
+    state = _normalize_state(existing_text, _load_state(state_path), config_existed)
+    managed_block = (
+        f"{MANAGED_CONFIG_START}\n"
+        f"{MANAGED_STATE_PREFIX}{json.dumps(state, sort_keys=True)}\n"
+        f"{managed_tables}\n"
+        f"{MANAGED_CONFIG_END}\n"
+    )
 
     merged_text = _strip_managed_config_block(merged_text)
     merged_text = _strip_manifest_agent_tables(merged_text)
@@ -505,47 +565,57 @@ def unmerge_config(dest_config_path: str, state_path: str | None = None) -> None
     if not dest_path.exists():
         return
 
-    state = _load_state(state_path)
-    merged_text = dest_path.read_text(encoding="utf-8")
-    merged_text = _strip_managed_config_block(merged_text)
+    current_text = dest_path.read_text(encoding="utf-8")
+    loaded_state = _load_state(state_path)
+    if not loaded_state:
+        loaded_state = _extract_embedded_state(current_text)
+    state = _normalize_state(current_text, loaded_state, dest_path.exists())
+
+    merged_text = _strip_managed_config_block(current_text)
     merged_text = _strip_manifest_agent_tables(merged_text)
 
-    added_keys = state.get("added_keys", {})
-    if isinstance(added_keys, dict):
-        if added_keys.get("features.multi_agent"):
+    original_keys = state.get("original_keys", {})
+    if not isinstance(original_keys, dict):
+        original_keys = {}
+    for dotted_key, default_value in DEFAULT_SHARED_VALUES.items():
+        table_name, key = dotted_key.split(".", 1)
+        current_value = _get_table_key_value(merged_text, table_name, key)
+        if original_keys.get(dotted_key) is None and current_value == default_value:
             merged_text = _remove_key_from_table(
                 merged_text,
-                "features",
-                "multi_agent",
-                "true",
-            )
-        if added_keys.get("agents.max_threads"):
-            merged_text = _remove_key_from_table(
-                merged_text,
-                "agents",
-                "max_threads",
-                "6",
-            )
-        if added_keys.get("agents.max_depth"):
-            merged_text = _remove_key_from_table(
-                merged_text,
-                "agents",
-                "max_depth",
-                "1",
+                table_name,
+                key,
+                default_value,
             )
 
-    added_list_values = state.get("added_list_values", {})
-    if isinstance(added_list_values, dict):
-        values = added_list_values.get("agents.project_doc_fallback_filenames", [])
-        if isinstance(values, list):
-            for value in values:
-                if isinstance(value, str):
-                    merged_text = _remove_list_value_from_table(
-                        merged_text,
-                        "agents",
-                        "project_doc_fallback_filenames",
-                        value,
-                    )
+    original_lists = state.get("original_lists", {})
+    if not isinstance(original_lists, dict):
+        original_lists = {}
+    current_list = _parse_quoted_list(
+        _get_table_key_value(
+            merged_text,
+            "agents",
+            "project_doc_fallback_filenames",
+        )
+    )
+    original_list = original_lists.get("agents.project_doc_fallback_filenames")
+    if isinstance(current_list, list) and "CLAUDE.md" in current_list:
+        if original_list is None:
+            if current_list == ["CLAUDE.md"]:
+                merged_text = _remove_list_value_from_table(
+                    merged_text,
+                    "agents",
+                    "project_doc_fallback_filenames",
+                    "CLAUDE.md",
+                )
+        elif isinstance(original_list, list):
+            if [item for item in current_list if item != "CLAUDE.md"] == original_list:
+                merged_text = _remove_list_value_from_table(
+                    merged_text,
+                    "agents",
+                    "project_doc_fallback_filenames",
+                    "CLAUDE.md",
+                )
 
     merged_text = _remove_empty_table(merged_text, "features")
     merged_text = _remove_empty_table(merged_text, "agents")
