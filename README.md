@@ -39,9 +39,10 @@ If you use zsh and want easy upgrade commands for the non-Claude distributions, 
 alias upgrade-manifest-dev-codex='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash'
 alias upgrade-manifest-dev-gemini='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash'
 alias upgrade-manifest-dev-opencode='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash'
+alias upgrade-manifest-dev-all='upgrade-manifest-dev-codex && upgrade-manifest-dev-gemini && upgrade-manifest-dev-opencode'
 ```
 
-Then run `source ~/.zshrc` once, and future updates are just `upgrade-manifest-dev-codex`, `upgrade-manifest-dev-gemini`, or `upgrade-manifest-dev-opencode`.
+Then run `source ~/.zshrc` once. Future updates are just `upgrade-manifest-dev-codex`, `upgrade-manifest-dev-gemini`, `upgrade-manifest-dev-opencode`, or `upgrade-manifest-dev-all` for all three.
 
 ## The Mindset Shift
 
