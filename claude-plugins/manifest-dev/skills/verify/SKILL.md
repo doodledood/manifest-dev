@@ -52,9 +52,7 @@ Under `economy`, defer this broad-reviewer set on the first pass unless a criter
 
 This deferral never overrides criteria that explicitly require one of those named agents.
 
-Under `economy`, repeated failure of the same criterion is a trigger to reintroduce deferred reviewers.
-
-Reintroduce deferred reviewers when the same criterion fails twice.
+Under `economy`, if the same criterion fails twice, reintroduce the deferred broad-reviewer set.
 
 Reintroduce deferred reviewers when multiple unrelated criteria fail.
 

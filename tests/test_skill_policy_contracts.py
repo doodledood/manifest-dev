@@ -56,7 +56,15 @@ def test_verify_skill_documents_economy_staged_fanout_contract() -> None:
         "- `code-design-reviewer`\n- `code-maintainability-reviewer`\n- `code-simplicity-reviewer`\n- `code-testability-reviewer`\n- `docs-reviewer`\n- `context-file-adherence-reviewer`\n- `type-safety-reviewer`\n- `code-coverage-reviewer`"
         in skill_text
     )
-    assert "Reintroduce deferred reviewers when the same criterion fails twice." in skill_text
+    assert (
+        "Under `economy`, if the same criterion fails twice, reintroduce the deferred broad-reviewer set."
+        in skill_text
+    )
+    assert (
+        "Under `economy`, repeated failure of the same criterion is a trigger to reintroduce deferred reviewers."
+        not in skill_text
+    )
+    assert "Reintroduce deferred reviewers when the same criterion fails twice." not in skill_text
     assert "Reintroduce deferred reviewers when multiple unrelated criteria fail." in skill_text
     assert "Reintroduce deferred reviewers when a failure suggests design-level ambiguity." in skill_text
     assert "Policy may change orchestration, never completion semantics: every criterion still needs verification." in skill_text
@@ -82,6 +90,10 @@ def test_repeat_failure_guidance_stays_explicit_and_recommendation_only() -> Non
     assert "recommendation-only" in do_skill_text
     assert "automatic model switching" in do_skill_text
     assert (
-        "Under `economy`, repeated failure of the same criterion is a trigger to reintroduce deferred reviewers."
+        "Under `economy`, if the same criterion fails twice, reintroduce the deferred broad-reviewer set."
         in verify_skill_text
+    )
+    assert (
+        "Under `economy`, repeated failure of the same criterion is a trigger to reintroduce deferred reviewers."
+        not in verify_skill_text
     )
