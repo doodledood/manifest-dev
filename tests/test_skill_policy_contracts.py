@@ -109,15 +109,23 @@ def test_verify_skill_routes_failures_by_verification_method() -> None:
         in skill_text
     )
     assert (
-        "If that `subagent` criterion fails again, reintroduce the deferred reviewer set or emit stronger-model guidance when the failure suggests the named path is no longer sufficient."
+        "If that `subagent` criterion fails again, treat it as the same-criterion-failed-twice case: reintroduce the deferred broad-reviewer set."
         in skill_text
+    )
+    assert (
+        "If that `subagent` criterion fails again, reintroduce the deferred reviewer set or emit stronger-model guidance when the failure suggests the named path is no longer sufficient."
+        not in skill_text
     )
     assert (
         "For `research` failures under `economy`, treat them as potentially high-ambiguity rather than purely mechanical retries."
         in skill_text
     )
     assert (
-        "Retry a `research` criterion once with tighter scope or better source targeting; if it still cannot be resolved confidently, emit stronger-model guidance or escalate."
+        "Retry a `research` criterion once with tighter scope or better source targeting; if it still cannot be resolved confidently, report it as a failed automated criterion."
+        in skill_text
+    )
+    assert (
+        "If unresolved `research` work reveals a genuinely manual follow-up criterion from the manifest, surface that separate manual handoff for `/escalate`; do not treat unresolved research as a passing result."
         in skill_text
     )
     assert (
@@ -128,3 +136,4 @@ def test_verify_skill_routes_failures_by_verification_method() -> None:
         "Manual verification never becomes automated just because policy routing is active."
         in skill_text
     )
+    assert "emit stronger-model guidance or escalate." not in skill_text
