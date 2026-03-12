@@ -13,9 +13,24 @@ Execute a Manifest: satisfy all Deliverables' Acceptance Criteria while followin
 
 ## Input
 
-`$ARGUMENTS` = manifest file path (REQUIRED), optionally with execution log path
+`$ARGUMENTS` = manifest file path (REQUIRED), optionally with execution log path and `--policy=<name>`
 
 If no arguments: Output error "Usage: /do <manifest-file-path> [log-file-path]"
+
+## Execution Policy
+
+Accepted execution policies for v1: `economy`, `balanced`, `max-quality`.
+
+If policy is omitted, default to backward-compatible current behavior and record `policy_source: default`.
+
+If an unknown policy is supplied, warn and fall back to backward-compatible current behavior.
+
+Precedence rules:
+
+- Fresh run with explicit CLI policy: use it and record `policy_source: cli`.
+- Fresh run with no CLI policy: use the default behavior and record `policy_source: default`.
+- If resuming with an existing execution log, treat the log as the source of truth for active policy.
+- If CLI policy conflicts with the log policy on resume, keep the log value, warn, and do not switch policy mid-run.
 
 ## Existing Execution Log
 
@@ -49,7 +64,17 @@ Externalize progress to survive context loss. The log IS the disaster recovery m
 
 **Execution log**: Create `/tmp/do-log-{timestamp}.md` at start. After EACH AC attempt, append what happened and the outcome. Goal: another agent reading only the log could resume work.
 
+Execution log entries must record both `active_policy` and `policy_source`.
+
 **Todos**: Create from manifest (deliverables → ACs). Start with execution order from Approach (adjust if dependencies require). Update todo status after logging (log first, todo second).
+
+## Policy Checkpoints
+
+Checkpoint guidance about model choice must remain recommendation-only.
+
+Do not claim automatic model switching or automatic effort changes.
+
+When policy suggests a cheaper or stronger path, frame it as a user recommendation or checkpoint note, not as a direct runtime control.
 
 ## Collaboration Mode
 
