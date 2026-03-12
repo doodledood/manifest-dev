@@ -33,6 +33,14 @@ Then use it:
 
 Two commands. `/define` interviews you and builds a manifest. `/do` executes it. That's the whole workflow.
 
+If you want to tune execution intensity for a run, `/do` also accepts an optional `--policy=` flag:
+
+```bash
+/do <manifest-path> --policy=balanced
+```
+
+Supported modes are `economy`, `balanced`, and `max-quality`. If you omit the flag, behavior stays backward-compatible with the existing default. Policy guidance can recommend a stronger model or review path, but it does not automatically switch models or control quotas. Telemetry-aware guidance is optional and additive.
+
 If you use zsh and want easy upgrade commands for the non-Claude distributions, add this to `~/.zshrc`:
 
 ```zsh

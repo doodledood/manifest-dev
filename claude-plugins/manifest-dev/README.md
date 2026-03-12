@@ -11,6 +11,14 @@ Tell Claude what "done" looks like. Let it work. Check the result.
 
 That's it. `/define` interviews you and builds a manifest. `/do` executes it. Two commands.
 
+Optional execution policy:
+
+```
+/do manifest.md --policy=balanced
+```
+
+Execution policy lets you choose how aggressively `/do` and `/verify` spend verification effort during a run. It changes orchestration guidance, not the contract for completion.
+
 ## The Mindset Shift
 
 Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
@@ -105,6 +113,32 @@ The manifest has three moving parts:
 | `/done` | Prints what got done and what was verified |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
 | `/learn-define-patterns` | Analyzes recent /define sessions, extracts user preference patterns, writes them to CLAUDE.md |
+
+## Execution Policy
+
+`/do` accepts an optional `--policy=<name>` flag for execution-policy guidance.
+
+Supported modes for v1:
+
+| Policy | Intent |
+|--------|--------|
+| `economy` | Lower-cost verification posture first; may defer some broad reviewers until failures justify wider fan-out |
+| `balanced` | General-purpose middle ground for routine work |
+| `max-quality` | Stronger verification breadth when you want the highest review intensity |
+
+If no policy is provided, `/do` keeps the backward-compatible default behavior. Existing runs also keep their recorded policy when resumed from an execution log.
+
+Execution policy is guidance for how `/do` and `/verify` stage work. It does not change completion semantics: acceptance criteria and global invariants still need to pass.
+
+### Model Guidance
+
+Policy checkpoints may recommend a stronger model or stronger review path when cheap retries are no longer paying off. That guidance is recommendation-only.
+
+The plugin does not promise automatic model switching, automatic effort switching, or automatic quota control.
+
+### Telemetry-Aware Guidance
+
+Telemetry-aware behavior is additive guidance only. It can inform recommendations when available, but it is not required to use execution policies and it is not a separate control plane.
 
 ### Task-Specific Guidance
 
