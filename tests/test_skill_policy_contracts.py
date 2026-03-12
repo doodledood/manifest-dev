@@ -97,3 +97,34 @@ def test_repeat_failure_guidance_stays_explicit_and_recommendation_only() -> Non
         "Under `economy`, repeated failure of the same criterion is a trigger to reintroduce deferred reviewers."
         not in verify_skill_text
     )
+
+
+def test_verify_skill_routes_failures_by_verification_method() -> None:
+    skill_text = (
+        ROOT / "claude-plugins" / "manifest-dev" / "skills" / "verify" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+
+    assert (
+        "For `subagent` failures under `economy`, if the failing criterion explicitly named that verifier, rerun that criterion's named-agent path first instead of immediately adding unrelated broad reviewers."
+        in skill_text
+    )
+    assert (
+        "If that `subagent` criterion fails again, reintroduce the deferred reviewer set or emit stronger-model guidance when the failure suggests the named path is no longer sufficient."
+        in skill_text
+    )
+    assert (
+        "For `research` failures under `economy`, treat them as potentially high-ambiguity rather than purely mechanical retries."
+        in skill_text
+    )
+    assert (
+        "Retry a `research` criterion once with tighter scope or better source targeting; if it still cannot be resolved confidently, emit stronger-model guidance or escalate."
+        in skill_text
+    )
+    assert (
+        "For `manual` criteria, do not invent retry or downgrade heuristics: keep surfacing them for `/escalate` exactly as manual handoff work."
+        in skill_text
+    )
+    assert (
+        "Manual verification never becomes automated just because policy routing is active."
+        in skill_text
+    )

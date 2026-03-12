@@ -58,6 +58,18 @@ Reintroduce deferred reviewers when multiple unrelated criteria fail.
 
 Reintroduce deferred reviewers when a failure suggests design-level ambiguity.
 
+For `subagent` failures under `economy`, if the failing criterion explicitly named that verifier, rerun that criterion's named-agent path first instead of immediately adding unrelated broad reviewers.
+
+If that `subagent` criterion fails again, reintroduce the deferred reviewer set or emit stronger-model guidance when the failure suggests the named path is no longer sufficient.
+
+For `research` failures under `economy`, treat them as potentially high-ambiguity rather than purely mechanical retries.
+
+Retry a `research` criterion once with tighter scope or better source targeting; if it still cannot be resolved confidently, emit stronger-model guidance or escalate.
+
+For `manual` criteria, do not invent retry or downgrade heuristics: keep surfacing them for `/escalate` exactly as manual handoff work.
+
+Manual verification never becomes automated just because policy routing is active.
+
 ## Verification Methods
 
 | Type | What | Handler |
