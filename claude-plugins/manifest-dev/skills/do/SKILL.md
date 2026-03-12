@@ -15,7 +15,7 @@ Execute a Manifest: satisfy all Deliverables' Acceptance Criteria while followin
 
 `$ARGUMENTS` = manifest file path (REQUIRED), optionally with execution log path and `--policy=<name>`
 
-If no arguments: Output error "Usage: /do <manifest-file-path> [log-file-path]"
+If no arguments: Output error "Usage: /do <manifest-file-path> [log-file-path] [--policy=<name>]"
 
 ## Execution Policy
 
