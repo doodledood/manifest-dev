@@ -33,6 +33,8 @@ Then use it:
 
 Two commands. `/define` interviews you and builds a manifest. `/do` executes it. That's the whole workflow.
 
+Control interview depth with `--interview minimal|autonomous|thorough` (default: thorough). Thorough asks everything. Minimal asks scope and high-impact items. Autonomous builds the manifest without asking, presents it for approval.
+
 If you use zsh and want easy upgrade commands for the non-Claude distributions, add this to `~/.zshrc`:
 
 ```zsh

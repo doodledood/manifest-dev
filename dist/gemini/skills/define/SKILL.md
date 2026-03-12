@@ -22,7 +22,9 @@ Output: `/tmp/manifest-{timestamp}.md`
 
 ## Input
 
-`$ARGUMENTS` = task description, optionally with context/research
+`$ARGUMENTS` = task description, optionally with context/research and `--interview <level>`
+
+Parse `--interview` from arguments (can appear anywhere). Valid values: `minimal`, `autonomous`, `thorough`. Default: `thorough`. Invalid value → error and halt: "Invalid interview style '<value>'. Valid styles: minimal | autonomous | thorough"
 
 If no arguments provided, ask: "What would you like to build or change?"
 
@@ -103,6 +105,12 @@ After understanding the task, calibrate interview depth:
 
 When uncertain, default to Standard. User can signal "enough" to compress at any point.
 
+## Interview Style
+
+Resolve interview style from `--interview` argument → default `thorough`.
+
+If style is not `thorough`: read `references/INTERVIEW_STYLES.md` for style routing, auto-decided item encoding, and dynamic style shift rules. Follow those rules for the remainder of this /define run.
+
 ## Constraints
 
 **All questions use AskUserQuestion** - Every user question goes through AskUserQuestion (tool limit: 2-4 options), one marked "(Recommended)". Never ask open-ended questions—they're cognitively demanding. Present concrete options the user can accept, reject, or adjust.
@@ -148,9 +156,6 @@ Read full log before synthesis. Unresolved `- [ ]` items must be addressed first
 **Confirm understanding periodically** - Before transitioning to a new topic area or after resolving a cluster of related questions, synthesize your current understanding back to the user: "Here's what I've established so far: [summary]. Correct?" This catches interpretation drift early—a misunderstanding in round 2 compounds through round 8 if never checked.
 
 **Batch related questions** - Group related questions into a single turn rather than asking one at a time. Batching keeps momentum and reduces round-trips without sacrificing depth. Each batch should cover a coherent topic area—don't mix unrelated concerns in one batch.
-
-**Fast-track signal** — If the user signals they want minimal interview ("just build it", "I trust your judgment", "keep this quick"), compress to: one round of high-priority questions (scope + constraints), encode reasonable defaults as Known Assumptions, and proceed to synthesis. Log compressed areas so the manifest-verifier can flag gaps the user chose to skip.
-
 **Stop when converged** - Err on more probing. Convergence requires: domain grounded (pre-mortem scenarios are project-specific, not generic), pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), edge cases probed, no unresolved `- [ ]` items in the log, quality gates from task files encoded as INV-G* (or omitted with logged reasoning), Defaults encoded as PG-*, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
 
 **Insights become criteria** - Domain grounding findings, outside view findings, pre-mortem risks, non-obvious discoveries → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to Resolvable task file content — risks and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.

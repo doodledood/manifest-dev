@@ -99,7 +99,7 @@ The manifest has three moving parts:
 
 | Skill | Description |
 |-------|-------------|
-| `/define` | Interviews you, builds an executable manifest with verification criteria |
+| `/define` | Interviews you, builds an executable manifest with verification criteria. `--interview minimal\|autonomous\|thorough` controls questioning depth (default: thorough). |
 | `/do` | Works through the manifest autonomously, verifies everything passes |
 | `/verify` | Runs all verifiers in parallel (you rarely call this directly; `/do` handles it) |
 | `/done` | Prints what got done and what was verified |
