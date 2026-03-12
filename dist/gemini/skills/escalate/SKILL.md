@@ -1,6 +1,6 @@
 ---
 name: escalate
-description: 'Structured escalation with evidence. Surfaces blocking issues for human decision, referencing the Manifest hierarchy.'
+description: 'Structured escalation within the /do workflow. Surfaces blocking issues for human decision with evidence, referencing the Manifest hierarchy. Called by /do when criteria are blocked or user requests a pause, not directly.'
 user-invocable: false
 ---
 
@@ -117,6 +117,29 @@ All automated criteria pass.
 Please review and confirm completion.
 ```
 
+### Proposed Amendment
+
+During implementation, you discovered a criterion should change — not because it's blocking, but because reality revealed a better formulation. No 3-attempt evidence needed — just rationale.
+
+```markdown
+## Escalation: Proposed Amendment to [ID]
+
+**Current criterion:** [current wording]
+**Proposed change:** [new wording]
+
+### Rationale
+[What you discovered during implementation that motivates this change]
+
+### Impact
+- Deliverables affected: [which ones]
+- Work already done: [what would need to change if approved]
+
+### Requesting
+Approve amendment, reject and continue with current criterion, or adjust.
+```
+
+**When to use**: You CAN meet the criterion as written, but discovered it should be different. Approach pivots don't need this — just log and adapt. Use this when the manifest's criteria themselves should change.
+
 ### User-Requested Pause
 
 User explicitly asked to stop mid-workflow (e.g., "commit so I can deploy", "stop here for now"). No 3-attempt evidence needed—just explain the pause.
@@ -137,3 +160,7 @@ User explicitly asked to stop mid-workflow (e.g., "commit so I can deploy", "sto
 ```
 
 **When to use**: User interrupts workflow for legitimate reasons (deploy, review, break). Not a blocker—just a handoff.
+
+## Collaboration Mode
+
+In team mode, /do routes escalations through the lead teammate directly — /escalate is not invoked. The escalation templates above still define the expected content structure; /do uses them when composing messages to the lead.

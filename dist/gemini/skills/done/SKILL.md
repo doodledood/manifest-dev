@@ -1,6 +1,6 @@
 ---
 name: done
-description: 'Completion marker. Outputs hierarchical execution summary showing Global Invariants respected and all Deliverables completed.'
+description: 'Completion marker for the /do workflow. Outputs hierarchical execution summary showing Global Invariants respected and all Deliverables completed. Called by /verify after all criteria pass, not directly.'
 user-invocable: false
 ---
 
@@ -66,5 +66,10 @@ Manifest execution verified complete.
 ## Principles
 
 1. **Mirror manifest structure** - Hierarchy should match: Intent → Global Invariants → Deliverables
-2. **Show evidence** - Link changes to deliverables
+2. **Show evidence** - Link changes to deliverables, describe behavioral changes (not just file lists)
 3. **Adapt detail to complexity** - Simple task = condensed output. Complex task = full hierarchy.
+4. **Called by /verify only** - /done is the final step after /verify confirms all criteria pass. If the execution log doesn't show verification, something went wrong upstream.
+
+## Collaboration Mode
+
+In team mode, /done output goes through the calling context (/verify → /do → lead). No special routing needed — just produce the summary as normal.

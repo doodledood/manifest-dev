@@ -1,6 +1,6 @@
 ---
 name: verify
-description: 'Manifest verification runner. Spawns parallel verifiers for Global Invariants and Acceptance Criteria. Called by the `do` skill, not directly by users.'
+description: 'Manifest verification runner. Spawns parallel verifiers for Global Invariants and Acceptance Criteria. Called by /do, not directly by users.'
 user-invocable: false
 ---
 
@@ -10,9 +10,9 @@ Orchestrate verification of all criteria from a Manifest by spawning parallel ve
 
 **User request**: $ARGUMENTS
 
-Format: `<manifest-file-path> <execution-log-path> [--scope=files]`
+Format: `<manifest-file-path> <execution-log-path>`
 
-If paths missing: Return error "Expected arguments: <manifest-path> <log-path>"
+If paths missing: Return error "Usage: /verify <manifest-path> <log-path>"
 
 ## Principles
 
@@ -46,6 +46,10 @@ Note: criteria-checker handles any automated verification requiring commands, fi
 
 Note: PG-* items guide HOW to work. Followed during execution by the `do` skill, not checked by `verify`.
 
+## Agent Failures
+
+If a verification agent crashes, times out, or returns unusable output, treat the criterion as FAIL with a note that verification itself failed (not the criterion). Include the error in the failure details so /do can distinguish "criterion didn't pass" from "couldn't check."
+
 ## Never Do
 
 - Skip criteria (even "obvious" ones)
@@ -58,8 +62,8 @@ Note: PG-* items guide HOW to work. Followed during execution by the `do` skill,
 |-----------|--------|
 | Any Global Invariant failed | Return all failures, globals highlighted |
 | Any AC failed | Return failures grouped by deliverable |
-| All automated pass, manual exists | Return manual criteria and instruct the caller to use the `escalate` skill |
-| All pass | Transition to the `done` skill |
+| All automated pass, manual exists | Return manual criteria, hint to call the `escalate` skill |
+| All pass | Call the `done` skill |
 
 ## Output Format
 
@@ -70,9 +74,9 @@ Report verification results grouped by Global Invariants first, then by Delivera
 - Verification method
 - Failure details: location, expected vs actual, fix hint
 
-**On success with manual** - List manual criteria with how-to-verify from manifest, and suggest the `escalate` skill.
+**On success with manual** - List manual criteria with how-to-verify from manifest, suggest the `escalate` skill.
 
-**On full success** - Transition to the `done` skill.
+**On full success** - Call the `done` skill.
 
 ## Collaboration Mode
 

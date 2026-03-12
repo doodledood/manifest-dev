@@ -10,7 +10,7 @@ Orchestrate verification of all criteria from a Manifest by spawning parallel ve
 
 **User request**: $ARGUMENTS
 
-Format: `<manifest-file-path> <execution-log-path> [--scope=files]`
+Format: `<manifest-file-path> <execution-log-path>`
 
 If paths missing: Return error "Usage: /verify <manifest-path> <log-path>"
 
@@ -45,6 +45,10 @@ Note: criteria-checker handles any automated verification requiring commands, fi
 | Process Guidance | PG-{N} | Not verified (guidance only) |
 
 Note: PG-* items guide HOW to work. Followed during /do, not checked by /verify.
+
+## Agent Failures
+
+If a verification agent crashes, times out, or returns unusable output, treat the criterion as FAIL with a note that verification itself failed (not the criterion). Include the error in the failure details so /do can distinguish "criterion didn't pass" from "couldn't check."
 
 ## Never Do
 

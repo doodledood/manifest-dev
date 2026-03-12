@@ -1,6 +1,6 @@
 ---
 name: do
-description: 'Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass.'
+description: 'Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass. Use when executing a manifest, running a plan, implementing a defined task.'
 ---
 
 # /do - Manifest Executor
@@ -37,11 +37,13 @@ If input includes a log file path (iteration on previous work): **treat it as so
 
 **Must call /verify** - Can't declare done without verification. Invoke manifest-dev:verify with manifest and log paths.
 
-**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), or (2) user requests a pause mid-workflow. If ACs remain achievable and no user interrupt, continue autonomously.
+**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, or (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type). If ACs remain achievable as written and no user interrupt, continue autonomously. Approach pivots don't require escalation — log adjustments with rationale and continue.
 
 **Stop requires /escalate** - During /do, you cannot stop without calling /verify→/done or /escalate. If you need to pause (user requested, waiting on external action), call /escalate with "User-Requested Pause" format. Short outputs like "Done." or "Waiting." will be blocked.
 
 **Refresh before verify** - Read full execution log before calling /verify to restore context.
+
+**Refresh between deliverables** - Before starting a new deliverable, re-read the manifest's deliverable section and relevant execution log entries. Context degrades gradually across a long session — don't rely on what you remember from D1 when starting D3.
 
 ## Memento Pattern
 

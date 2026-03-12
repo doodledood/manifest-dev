@@ -1,6 +1,6 @@
 ---
 name: do
-description: 'Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass.'
+description: 'Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass. Use when executing a manifest, running a plan, implementing a defined task.'
 ---
 
 # /do - Manifest Executor
@@ -15,7 +15,7 @@ Execute a Manifest: satisfy all Deliverables' Acceptance Criteria while followin
 
 `$ARGUMENTS` = manifest file path (REQUIRED), optionally with execution log path
 
-If no arguments: Output error "Expected arguments: <manifest-file-path> [log-file-path]"
+If no arguments: Output error "Usage: /do <manifest-file-path> [log-file-path]"
 
 ## Existing Execution Log
 
@@ -37,11 +37,13 @@ If input includes a log file path (iteration on previous work): **treat it as so
 
 **Must invoke the `verify` skill** - Can't declare done without verification. Invoke the `verify` skill with the manifest and log paths.
 
-**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), or (2) user requests a pause mid-workflow. If ACs remain achievable and no user interrupt, continue autonomously.
+**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, or (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type). If ACs remain achievable as written and no user interrupt, continue autonomously. Approach pivots don't require escalation — log adjustments with rationale and continue.
 
-**Formal exit required** - During `do`, you cannot stop without either invoking `verify` and reaching `done`, or invoking the `escalate` skill. If you need to pause (user requested, waiting on external action), use the `escalate` skill with "User-Requested Pause" format. Short outputs like "Done." or "Waiting." will be blocked.
+**Stop requires escalation** - During `do`, you cannot stop without either invoking `verify` and reaching `done`, or invoking the `escalate` skill. If you need to pause (user requested, waiting on external action), use the `escalate` skill with "User-Requested Pause" format. Short outputs like "Done." or "Waiting." will be blocked.
 
-**Refresh before verification** - Read the full execution log before invoking the `verify` skill to restore context.
+**Refresh before verify** - Read the full execution log before invoking the `verify` skill to restore context.
+
+**Refresh between deliverables** - Before starting a new deliverable, re-read the manifest's deliverable section and relevant execution log entries. Context degrades gradually across a long session — don't rely on what you remember from D1 when starting D3.
 
 ## Memento Pattern
 
