@@ -24,6 +24,40 @@ If paths missing: Return error "Usage: /verify <manifest-path> <log-path>"
 | **Globals are critical** | Global Invariant failures mean task failure. Highlight prominently. |
 | **Actionable feedback** | Pass through file:line, expected vs actual, fix hints. |
 
+## Policy Context
+
+Read the execution log as the source of truth for active policy context.
+
+If no policy context is available, use the baseline/default broad parallel behavior.
+
+Policy may change orchestration, never completion semantics: every criterion still needs verification.
+
+## Policy-Aware Orchestration
+
+Baseline/default behavior: launch broad parallel verification coverage in a single message, consistent with the existing max-parallelism workflow.
+
+Under `economy`, first pass always runs `criteria-checker` for automated `bash`, `codebase`, and `research` criteria.
+
+Under `economy`, first pass also runs any named `subagent` verifier explicitly required by a criterion.
+
+Under `economy`, defer this broad-reviewer set on the first pass unless a criterion explicitly requires one of them:
+- `code-design-reviewer`
+- `code-maintainability-reviewer`
+- `code-simplicity-reviewer`
+- `code-testability-reviewer`
+- `docs-reviewer`
+- `context-file-adherence-reviewer`
+- `type-safety-reviewer`
+- `code-coverage-reviewer`
+
+This deferral never overrides criteria that explicitly require one of those named agents.
+
+Reintroduce deferred reviewers when the same criterion fails twice.
+
+Reintroduce deferred reviewers when multiple unrelated criteria fail.
+
+Reintroduce deferred reviewers when a failure suggests design-level ambiguity.
+
 ## Verification Methods
 
 | Type | What | Handler |
