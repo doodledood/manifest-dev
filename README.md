@@ -133,7 +133,23 @@ This is spec-driven development adapted for LLM execution. The manifest is a spe
 
 </details>
 
-**Pro tip**: Run `/do` in a fresh session after `/define` completes, or at minimum, `/compact` before starting. The manifest is your external state; the session doesn't need to remember the conversation.
+### Best Practice: Two Sessions, One Source of Truth
+
+Run `/define` and `/do` in separate sessions. The define session holds your intent; the do session holds implementation state. Keep both open.
+
+When `/do` finishes and something's off: a missed edge case, a reviewer comment, a bug you didn't anticipate. Don't patch it ad hoc. Go back to the define session. Encode the issue as an acceptance criterion in the manifest. Then re-run `/do` against the updated manifest in the do session.
+
+This closes the loop properly. The fix gets the same verification treatment as everything else. The manifest stays the single source of truth for what "done" means. And if something regresses on a later pass, the criterion catches it.
+
+**Example**: You ship a login feature. A reviewer flags that error messages leak whether an email exists in the system.
+
+1. **Define session**: add `[AC-2.4] Authentication errors return a generic message regardless of whether the account exists` with a verification method
+2. **Do session**: run `/do` against the updated manifest
+3. `/verify` confirms the fix. It will also catch it if it regresses in a future change.
+
+Every round trip through the manifest grows your verification surface. Bug fixes and late requirements become checked criteria. The manifest accumulates what "done" means for this task, and nothing falls through because you fixed it outside the loop.
+
+The do session doesn't need to remember the define conversation. The manifest is external state. Run `/do` in a fresh session after `/define`, or at minimum `/compact` before starting.
 
 ## What /define Produces
 
