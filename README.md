@@ -133,6 +133,22 @@ This is spec-driven development adapted for LLM execution. The manifest is a spe
 
 </details>
 
+<details>
+<summary><strong>Execution Modes</strong></summary>
+
+`/do` supports `--mode efficient|balanced|thorough` to control verification intensity. Default is `thorough` (current behavior). Only pass `--mode` when you explicitly want to trade verification depth for quota savings.
+
+| Mode | What changes | When to use |
+|------|-------------|-------------|
+| **thorough** (default) | Full verification: all quality gates, all models inherit from session, unlimited parallelism and fix loops | Most tasks. Don't change unless you have a reason. |
+| **balanced** | Same models, but limits parallelism (max 4 concurrent verifiers) and fix loops (max 2) | Long-running tasks where you want to limit concurrent quota burn |
+| **efficient** | Uses haiku for criteria-checker, skips quality gate reviewers, sequential verification, max 1 fix loop | Quick iterations where speed matters more than verification depth |
+
+Set per-execution: `/do manifest.md --mode balanced`
+Set in manifest: add `mode: balanced` to the Intent & Context section.
+
+</details>
+
 ### Best Practice: Two Sessions, One Source of Truth
 
 Run `/define` and `/do` in separate sessions. The define session holds your intent; the do session holds implementation state. Keep both open.

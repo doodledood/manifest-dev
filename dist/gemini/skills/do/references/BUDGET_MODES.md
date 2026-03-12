@@ -1,0 +1,42 @@
+# Execution Modes
+
+Execution modes control verification intensity across the manifest-dev workflow (/define, /do, /verify). The mode affects subagent model selection, quality gate inclusion, parallelism, fix-verify loop limits, and manifest validation depth. It does NOT affect what gets built — only how thoroughly the output is verified.
+
+## Mode Routing Table
+
+| Dimension | efficient | balanced | thorough (default) |
+|-----------|-----------|----------|--------------------|
+| Criteria-checker model | inherit | inherit | inherit |
+| Quality gate reviewers | SKIPPED | inherit | inherit |
+| Verification parallelism | Sequential (one at a time) | Batched (max 4 concurrent) | All at once (single message) |
+| Fix-verify loops | Max 1 | Max 2 | Unlimited |
+| /define manifest-verifier | SKIPPED | Runs once (no repeat loop) | Runs (with repeat loop) |
+| Escalation | Auto-escalate after 2 failures per criterion; cap 3 total | Escalate after loop limit hit | None |
+
+**Why these levels exist**: thorough preserves the current quality bar (default). balanced saves quota by limiting parallelism and verification cycles while keeping full model capability. efficient maximizes savings by using a lighter verification pass and skipping reviewer agents — accept this only when iteration speed matters more than verification depth.
+
+## Escalation Rules
+
+**Efficient mode**: When a criterion fails twice, auto-escalate that criterion's verifier to use more thorough checking. Track total escalations — after 3 in a single /do run, suggest to the user: "Efficient mode is escalating frequently. Consider switching to balanced." This prevents runaway costs from repeated escalation.
+
+**Balanced mode**: When the fix-verify loop limit (2) is hit, escalate via the `escalate` skill. The fix isn't converging — human judgment needed.
+
+**Thorough mode**: No escalation mechanism. Unlimited loops, full model capability.
+
+## Verification Parallelism
+
+These override the `verify` skill's default "launch all verifiers in a single message" rule:
+
+- **efficient**: Launch verifiers one at a time. Minimizes concurrent quota usage.
+- **balanced**: Launch in batches of max 4 concurrent verifiers. When any batch completes, launch the next batch.
+- **thorough**: Launch all verifiers in a single message (current default behavior).
+
+## Override Precedence
+
+Three rules govern how mode interacts with other settings:
+
+1. **Criterion-level model wins**: When a manifest criterion specifies `model:` in its verify block, that overrides the mode's model routing. Mode sets defaults; criterion-level `model:` is explicit intent.
+
+2. **Explicit model overrides skip**: In efficient mode, quality gate reviewers are skipped. But if a criterion explicitly sets `model:` (e.g., `model: specific-model`), it runs even when efficient mode would otherwise skip it. The explicit model signals the user deliberately wants this verification.
+
+3. **Global Invariants always run**: "Reviewers SKIPPED" in efficient mode applies only to deliverable-level quality gate reviewer agents (code-bugs-reviewer, type-safety-reviewer, etc.). Global Invariant (INV-G*) verification agents always run regardless of mode — they are constitutional constraints.

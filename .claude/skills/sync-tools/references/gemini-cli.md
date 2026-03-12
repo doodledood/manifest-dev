@@ -376,3 +376,4 @@ The `context-file-adherence-reviewer` agent already uses generic "context file" 
 6. **`grep_search` is canonical** — Source code (`base-declarations.ts`) defines `GREP_TOOL_NAME = 'grep_search'`. The docs index page showing `search_file_content` is stale. Always use `grep_search`.
 7. **`generalist` not `generalist_agent`** — The built-in subagent tool name is `generalist`, not `generalist_agent`.
 8. **TaskCreate ≠ Agent** — Claude Code's TaskCreate/TaskUpdate/TaskGet/TaskList are todo management tools (map to `write_todos`), NOT subagent tools. Only `Agent` maps to subagent names.
+9. **Model tier routing is Claude Code-only** — `BUDGET_MODES.md` references Claude model names (haiku, sonnet, opus). Replace all with `inherit` during sync. Gemini supports `model: inherit` natively. Execution mode parallelism, loop limits, and gate-skipping still apply.

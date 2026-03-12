@@ -106,6 +106,18 @@ The manifest has three moving parts:
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
 | `/learn-define-patterns` | Analyzes recent /define sessions, extracts user preference patterns, writes them to CLAUDE.md |
 
+### Execution Modes
+
+`/do` supports `--mode efficient|balanced|thorough` (default: thorough). Controls verification intensity — cheaper modes use less quota at the cost of verification depth. Only specify when you explicitly want to change it.
+
+| Mode | Key Differences |
+|------|----------------|
+| **thorough** | Full verification, all quality gates, unlimited parallelism (default) |
+| **balanced** | Same models, limited parallelism (max 4), limited fix loops (max 2) |
+| **efficient** | Haiku for verification, skips reviewer agents, sequential, max 1 fix loop |
+
+See `skills/do/references/BUDGET_MODES.md` for full routing table and escalation rules.
+
 ### Task-Specific Guidance
 
 `/define` works for any task. Domain-specific guidance loads automatically when relevant:

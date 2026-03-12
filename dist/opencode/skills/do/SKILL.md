@@ -1,6 +1,6 @@
 ---
 name: do
-description: 'Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass. Use when executing a manifest, running a plan, implementing a defined task.'
+description: 'Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies all ACs and Global Invariants pass. Optional --mode efficient|balanced|thorough controls verification intensity (default: thorough). Only pass --mode when the user explicitly requests a different mode. Use when executing a manifest, running a plan, implementing a defined task.'
 ---
 
 # /do - Manifest Executor
@@ -13,9 +13,17 @@ Execute a Manifest: satisfy all Deliverables' Acceptance Criteria while followin
 
 ## Input
 
-`$ARGUMENTS` = manifest file path (REQUIRED), optionally with execution log path
+`$ARGUMENTS` = manifest file path (REQUIRED), optionally with execution log path and `--mode <level>`
 
-If no arguments: Output error "Usage: /do <manifest-file-path> [log-file-path]"
+If no arguments: Output error "Usage: /do <manifest-file-path> [log-file-path] [--mode efficient|balanced|thorough]"
+
+## Execution Mode
+
+Resolve mode from (highest precedence first): `--mode` argument → manifest `mode:` field → default `thorough`.
+
+Invalid mode value → error and halt: "Invalid mode '<value>'. Valid modes: efficient | balanced | thorough"
+
+If mode is not `thorough`: read `references/BUDGET_MODES.md` for routing rules, escalation logic, and parallelism overrides. Follow those rules for the remainder of this /do run.
 
 ## Existing Execution Log
 
@@ -35,9 +43,11 @@ If input includes a log file path (iteration on previous work): **treat it as so
 
 **Log after every action** - Write to execution log immediately after each AC attempt. No exceptions. This is disaster recovery—if context is lost, the log is the only record of what happened.
 
-**Must invoke the `verify` skill** - Can't declare done without verification. Invoke the `verify` skill with the manifest and log paths.
+**Must invoke the `verify` skill** - Can't declare done without verification. Invoke the `verify` skill with the manifest, log paths, and the resolved mode: `/verify <manifest> <log> --mode <level>`.
 
-**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, or (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type). If ACs remain achievable as written and no user interrupt, continue autonomously. Approach pivots don't require escalation — log adjustments with rationale and continue.
+**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type), or (4) mode-specific fix-verify loop limit is reached (see `references/BUDGET_MODES.md`). If ACs remain achievable as written and no user interrupt, continue autonomously. Approach pivots don't require escalation — log adjustments with rationale and continue.
+
+**Mode-aware loop tracking** - Track fix-verify iteration count and escalation count in the execution log. When mode limits are reached, follow the escalation rules in `references/BUDGET_MODES.md`. In efficient mode, also track total escalations and suggest mode switch after 3.
 
 **Stop requires escalation** - During `do`, you cannot stop without either invoking `verify` and reaching `done`, or invoking the `escalate` skill. If you need to pause (user requested, waiting on external action), use the `escalate` skill with "User-Requested Pause" format. Short outputs like "Done." or "Waiting." will be blocked.
 

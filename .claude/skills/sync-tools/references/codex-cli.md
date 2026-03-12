@@ -436,3 +436,4 @@ The `context-file-adherence-reviewer` agent already uses generic "context file" 
 9. **Notify is fire-and-forget** — Cannot block or modify agent behavior.
 10. **Experimental tools availability** — `read_file`, `list_dir`, `grep_files` are gated server-side by model's `experimental_supported_tools`. Not all users may have access.
 11. **TaskCreate ≠ Agent** — Claude Code's TaskCreate/TaskUpdate/TaskGet/TaskList map to `update_plan` (todo), NOT to `spawn_agent` (multi-agent).
+12. **Model tier routing is Claude Code-only** — `BUDGET_MODES.md` references Claude model names (haiku, sonnet, opus). Replace all with `inherit` during sync. Codex has no runtime `inherit` — use the default model configured in the role's TOML. Execution mode parallelism, loop limits, and gate-skipping still apply.

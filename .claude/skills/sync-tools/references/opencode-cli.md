@@ -461,3 +461,4 @@ The `context-file-adherence-reviewer` agent already uses generic "context file" 
 13. **TaskCreate ≠ Agent** — Claude Code's TaskCreate/TaskUpdate/TaskGet/TaskList are todo management tools (map to `todowrite`/`todoread`), NOT subagent tools. Only `Agent` maps to `task`.
 14. **apply_patch vs edit/write** — GPT models get `apply_patch` instead of `edit`/`write`. Non-GPT models (Anthropic, etc.) get `edit`/`write`. The swap is automatic in OpenCode's registry.
 15. **tui.prompt.append is NOT context injection** — It fills the TUI input field, not system messages. Use `experimental.chat.system.transform` for system context.
+16. **Model tier routing is Claude Code-only** — `BUDGET_MODES.md` references Claude model names (haiku, sonnet, opus). Replace all with `inherit` during sync. OpenCode is provider-agnostic — all tiers use the session model. Execution mode parallelism, loop limits, and gate-skipping still apply.

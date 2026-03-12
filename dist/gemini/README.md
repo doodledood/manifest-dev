@@ -143,6 +143,20 @@ Tools converted from Claude Code names to Gemini CLI equivalents:
 | Skill | `activate_skill` | Agent-only |
 | TaskCreate/Update/Get/List | `write_todos` | Single tool for all todo ops |
 
+## Execution Modes
+
+Control verification intensity with `--mode`:
+
+| Mode | Verification | Parallelism | Best For |
+|------|-------------|-------------|----------|
+| **thorough** (default) | Full reviewer agents, unlimited fix loops | All at once | Production-quality work |
+| **balanced** | Full model capability, capped loops | Batched (max 4) | Standard development |
+| **efficient** | Skips reviewer subagents, lighter checks | Sequential | Quick iterations, low-risk changes |
+
+Usage: `/do <manifest> [log] --mode balanced`
+
+Mode can also be set in the manifest's `mode:` field during `/define`. The `--mode` flag on `/do` takes precedence.
+
 ## Workflow
 
 ```

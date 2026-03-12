@@ -131,6 +131,20 @@ rm -rf "$TMP_DIR"
 | Project context | CLAUDE.md | AGENTS.md + CLAUDE.md fallback | project_doc_fallback_filenames config |
 | Notify (fire-and-forget) | N/A | agent-turn-complete event | Observability only, no blocking |
 
+## Execution Modes
+
+Control verification intensity with `--mode`:
+
+| Mode | Verification | Parallelism | Best For |
+|------|-------------|-------------|----------|
+| **thorough** (default) | Full reviewer agents, unlimited fix loops | All at once | Production-quality work |
+| **balanced** | Full model capability, capped loops | Batched (max 4) | Standard development |
+| **efficient** | Skips reviewer subagents, lighter checks | Sequential | Quick iterations, low-risk changes |
+
+Usage: `/do <manifest> [log] --mode balanced`
+
+Mode can also be set in the manifest's `mode:` field during `/define`. The `--mode` flag on `/do` takes precedence.
+
 ## Known Limitations
 
 1. **Skills are the only fully compatible component** -- agents are TOML stubs with approximated instructions, hooks are impossible without a hook system.
@@ -155,6 +169,8 @@ dist/codex/
 │   ├── do/
 │   │   ├── SKILL.md
 │   │   └── references/
+│   │       ├── BUDGET_MODES.md
+│   │       └── COLLABORATION_MODE.md
 │   ├── verify/
 │   │   └── SKILL.md
 │   ├── done/

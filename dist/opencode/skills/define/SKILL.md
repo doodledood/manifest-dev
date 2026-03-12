@@ -339,6 +339,7 @@ Three categories, each covering **output** or **process**:
 ## 1. Intent & Context
 - **Goal:** [High-level purpose]
 - **Mental Model:** [Key concepts to understand]
+- **Mode:** efficient | balanced | thorough *(optional, default: thorough — controls verification intensity during /do)*
 
 ## 2. Approach (Complex Tasks Only)
 *Initial direction, not rigid plan. Provides enough to start confidently; expect adjustment when reality diverges.*
@@ -417,7 +418,13 @@ Manifests support amendments during execution:
 
 ## Verification Loop
 
-After writing the manifest, invoke the manifest-verifier agent. Pass only the file paths — no summary, framing, or commentary:
+After writing the manifest, check the manifest's `mode:` field and the `/define manifest-verifier` row in `skills/do/references/BUDGET_MODES.md`:
+
+- **efficient**: Skip the manifest-verifier. Proceed directly to Summary for Approval.
+- **balanced**: Run the manifest-verifier **once**. If it returns CONTINUE, present its questions, update the manifest, then proceed to Summary for Approval (no repeat loop).
+- **thorough** (default, or unspecified): Run the manifest-verifier with the full repeat loop until COMPLETE.
+
+When running the verifier, pass only the file paths — no summary, framing, or commentary:
 
 ```
 Invoke the manifest-dev:manifest-verifier agent with: "Manifest: /tmp/manifest-{timestamp}.md | Log: /tmp/define-discovery-{timestamp}.md"

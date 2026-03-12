@@ -81,6 +81,20 @@ cp /tmp/manifest-dev/dist/opencode/plugins/HOOK_SPEC.md .opencode/plugins/manife
 | Web research | WebFetch + WebSearch | `webfetch` + `websearch` | WebSearch requires Exa AI key in OpenCode |
 | Session storage | JSONL transcript files | SQLite database | In-memory state tracking replaces transcript parsing |
 
+## Execution Modes
+
+Control verification intensity with `--mode`:
+
+| Mode | Verification | Parallelism | Best For |
+|------|-------------|-------------|----------|
+| **thorough** (default) | Full reviewer agents, unlimited fix loops | All at once | Production-quality work |
+| **balanced** | Full model capability, capped loops | Batched (max 4) | Standard development |
+| **efficient** | Skips reviewer subagents, lighter checks | Sequential | Quick iterations, low-risk changes |
+
+Usage: `/do <manifest> [log] --mode balanced`
+
+Mode can also be set in the manifest's `mode:` field during `/define`. The `--mode` flag on `/do` takes precedence.
+
 ## Known Limitations
 
 1. **Tool blocking uses throw, not abort.** To block a tool call in `tool.execute.before`, **throw new Error("reason")**. The error message becomes the tool result seen by the LLM. The `args.abort` pattern documented elsewhere is incorrect. Confirmed from source code and issue #5894.
