@@ -31,6 +31,10 @@ def test_verify_skill_documents_economy_staged_fanout_contract() -> None:
         ROOT / "claude-plugins" / "manifest-dev" / "skills" / "verify" / "SKILL.md"
     ).read_text(encoding="utf-8")
 
+    assert (
+        "| **Maximize parallelism** | Launch all verifiers in a SINGLE message with multiple Task tool calls. Never launch one at a time. |"
+        not in skill_text
+    )
     assert "Read the execution log as the source of truth for active policy context." in skill_text
     assert (
         "Under `economy`, first pass always runs `criteria-checker` for automated `bash`, `codebase`, and `research` criteria."
@@ -53,3 +57,7 @@ def test_verify_skill_documents_economy_staged_fanout_contract() -> None:
     assert "Reintroduce deferred reviewers when a failure suggests design-level ambiguity." in skill_text
     assert "Policy may change orchestration, never completion semantics: every criterion still needs verification." in skill_text
     assert "If no policy context is available, use the baseline/default broad parallel behavior." in skill_text
+    assert (
+        "Baseline/default behavior: launch broad parallel verification coverage in a single message, consistent with the existing max-parallelism workflow."
+        in skill_text
+    )

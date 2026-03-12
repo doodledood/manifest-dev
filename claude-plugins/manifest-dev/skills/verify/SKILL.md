@@ -20,7 +20,7 @@ If paths missing: Return error "Usage: /verify <manifest-path> <log-path>"
 |-----------|------|
 | **Orchestrate, don't verify** | Spawn agents to verify. You coordinate results, never run checks yourself. |
 | **ALL criteria, no exceptions** | Every INV-G* and AC-*.* criterion MUST be verified. Skipping any criterion is a critical failure. |
-| **Maximize parallelism** | Launch all verifiers in a SINGLE message with multiple Task tool calls. Never launch one at a time. |
+| **Policy-aware fan-out** | Use the active policy to decide verification breadth. Baseline/default behavior can use broad parallel fan-out, while lower-cost policies may stage or defer reviewers. |
 | **Globals are critical** | Global Invariant failures mean task failure. Highlight prominently. |
 | **Actionable feedback** | Pass through file:line, expected vs actual, fix hints. |
 
