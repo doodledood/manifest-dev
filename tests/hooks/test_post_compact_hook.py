@@ -435,3 +435,4 @@ class TestPostCompactHookEdgeCases:
         context = output["hookSpecificOutput"]["additionalContext"]
         # Should still have a reminder about checking /tmp for logs
         assert "do-log" in context or "/tmp" in context
+        assert "recover the active policy" in context.lower()

@@ -36,7 +36,7 @@ DO_WORKFLOW_RECOVERY_FALLBACK = """This session was compacted during an active /
 CRITICAL: Before continuing, recover your workflow context:
 
 1. Check /tmp/ for execution logs matching do-log-*.md
-2. The log references the manifest file path - read both in FULL
+2. The log references the manifest file path - read both in FULL and recover the active policy from the execution log
 
 Do not restart completed work. Resume from where you left off."""
 
