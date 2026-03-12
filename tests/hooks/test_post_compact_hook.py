@@ -239,6 +239,27 @@ class TestPostCompactHookWithActiveDoWorkflow:
         assert "/tmp/manifest.md" in context
         assert "/tmp/do-log.md" in context
 
+    def test_recovery_reminder_mentions_policy_context(self, tmp_path: Path):
+        """Recovery reminder should mention recovering policy context from the log."""
+        lines = [
+            {
+                "type": "user",
+                "message": {
+                    "content": (
+                        "<command-name>/manifest-dev:do</command-name> "
+                        "/tmp/manifest.md /tmp/do-log.md --policy economy"
+                    )
+                },
+            }
+        ]
+        result = run_post_compact_hook(transcript_lines=lines, tmp_path=tmp_path)
+
+        output = json.loads(result.stdout)
+        context = output["hookSpecificOutput"]["additionalContext"]
+        assert "recover the active policy" in context.lower()
+        assert "economy" in context
+        assert "execution log" in context.lower()
+
 
 class TestPostCompactHookArgsExtraction:
     """Tests for /do args extraction from various formats."""

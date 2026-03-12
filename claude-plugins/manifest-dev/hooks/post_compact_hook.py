@@ -26,7 +26,7 @@ CRITICAL: Before continuing, read the manifest and execution log in FULL.
 The /do was invoked with: {do_args}
 
 1. Read the manifest file - contains deliverables, acceptance criteria, and approach
-2. Check /tmp/ for your execution log (do-log-*.md) and read it to recover progress
+2. Check /tmp/ for your execution log (do-log-*.md) and read it to recover progress and recover the active policy from the execution log
 
 Do not restart completed work. Resume from where you left off."""
 
