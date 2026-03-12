@@ -24,6 +24,10 @@ def test_do_skill_documents_execution_policy_contract() -> None:
     assert "Execution log entries must record both `active_policy` and `policy_source`." in skill_text
     assert "Checkpoint guidance about model choice must remain recommendation-only." in skill_text
     assert "Do not claim automatic model switching or automatic effort changes." in skill_text
+    assert (
+        "When the same criterion fails repeatedly, stop repeating cheap retries and emit a checkpoint recommending a stronger model or stronger review path."
+        in skill_text
+    )
 
 
 def test_verify_skill_documents_economy_staged_fanout_contract() -> None:
@@ -60,4 +64,24 @@ def test_verify_skill_documents_economy_staged_fanout_contract() -> None:
     assert (
         "Baseline/default behavior: launch broad parallel verification coverage in a single message, consistent with the existing max-parallelism workflow."
         in skill_text
+    )
+
+
+def test_repeat_failure_guidance_stays_explicit_and_recommendation_only() -> None:
+    do_skill_text = (
+        ROOT / "claude-plugins" / "manifest-dev" / "skills" / "do" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    verify_skill_text = (
+        ROOT / "claude-plugins" / "manifest-dev" / "skills" / "verify" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+
+    assert (
+        "When the same criterion fails repeatedly, stop repeating cheap retries and emit a checkpoint recommending a stronger model or stronger review path."
+        in do_skill_text
+    )
+    assert "recommendation-only" in do_skill_text
+    assert "automatic model switching" in do_skill_text
+    assert (
+        "Under `economy`, repeated failure of the same criterion is a trigger to reintroduce deferred reviewers."
+        in verify_skill_text
     )

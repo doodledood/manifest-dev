@@ -74,6 +74,8 @@ Checkpoint guidance about model choice must remain recommendation-only.
 
 Do not claim automatic model switching or automatic effort changes.
 
+When the same criterion fails repeatedly, stop repeating cheap retries and emit a checkpoint recommending a stronger model or stronger review path.
+
 When policy suggests a cheaper or stronger path, frame it as a user recommendation or checkpoint note, not as a direct runtime control.
 
 ## Collaboration Mode
