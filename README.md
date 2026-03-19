@@ -326,6 +326,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 | Plugin | Description |
 |--------|-------------|
 | `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, review agents, workflow hooks. Includes workflow task files for PR review, CI, collaboration, and QA lifecycle support via `--medium`. Mid-execution manifest amendments via `--amend` flag and UserPromptSubmit hook. |
+| `manifest-dev-tools` | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. |
 
 ## Plugin Architecture
 

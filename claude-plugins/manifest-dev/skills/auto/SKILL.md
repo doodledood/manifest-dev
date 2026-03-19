@@ -18,7 +18,7 @@ If `--interview` is present in arguments: error and halt: "--interview is not su
 
 If no arguments provided: error and halt: "Usage: /auto <task description> [--mode efficient|balanced|thorough]"
 
-Parse `--mode` from arguments if present — this will be passed to /do. The remaining text after flag extraction is the task description.
+Parse `--mode` from arguments if present. `--mode` will be passed to /do. The remaining text after flag extraction is the task description.
 
 ## Flow
 

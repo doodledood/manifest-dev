@@ -1,0 +1,11 @@
+{
+  "name": "manifest-dev-tools",
+  "version": "0.1.0",
+  "description": "Post-processing utilities for manifest workflows. ADR synthesis from session transcripts.",
+  "keywords": [
+    "adr",
+    "architecture-decision-records",
+    "post-processing",
+    "manifest"
+  ]
+}

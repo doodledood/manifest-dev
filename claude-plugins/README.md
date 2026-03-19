@@ -15,6 +15,7 @@ Front-load the thinking so AI agents get it right the first time.
 | Plugin | What It Does |
 |--------|--------------|
 | `manifest-dev` | Verification-first manifest workflows with phased verification (fast checks first, e2e/deploy-dependent later) and multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
+| `manifest-dev-tools` | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. |
 
 ## Plugin Details
 
@@ -35,6 +36,13 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 **Hooks** enforce workflow integrity: prevent premature stopping, restore context after compaction, nudge manifest reads before verification, track execution log updates, and detect manifest amendments during `/do`.
 
 **Task guidance** with domain-specific quality gates, risks, and scenarios. Reference material in `tasks/references/research/` provides detailed evidence for `/verify` agents. Collaboration mode instructions in `skills/*/references/COLLABORATION_MODE.md` (progressive disclosure — only loaded when collab is active).
+
+### manifest-dev-tools
+
+Post-processing utilities that operate on the outputs of the manifest workflow.
+
+**Skills:**
+- `/adr` - Synthesize Architecture Decision Records from session transcripts via multi-agent extraction pipeline (architecture, trade-offs, scope/constraints lenses + synthesis gatekeeper). Writes individual MADR files.
 
 ## Contributing
 

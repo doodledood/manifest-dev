@@ -512,6 +512,7 @@ When `--medium` is not `local`, read `references/COLLABORATION_MODE.md` for rout
 
 ```text
 Manifest complete: /tmp/manifest-{timestamp}.md
+Session: ~/.claude/projects/<dir>/<session-id>.jsonl
 
 To execute: /do /tmp/manifest-{timestamp}.md [log-file-path if iterating]
 ```
