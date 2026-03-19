@@ -1,10 +1,10 @@
 # manifest-dev-collab
 
-Team collaboration on define/do workflows through Slack and GitHub.
+Team collaboration on define/do workflows through Slack and GitHub or GitLab.
 
 ## What It Does
 
-`/slack-collab` orchestrates a full define → do → PR → review → QA → done workflow with your team. The skill itself acts as the lead orchestrator using Claude Code's Agent Teams — spawning specialized teammates that coordinate via hub-and-spoke messaging through the lead.
+`/slack-collab` orchestrates a full define → do → PR/MR → review → QA → done workflow with your team through Slack and GitHub or GitLab. The skill itself acts as the lead orchestrator using Claude Code's Agent Teams — spawning specialized teammates that coordinate via hub-and-spoke messaging through the lead. Use `--vcs github` (default) or `--vcs gitlab` to select the VCS backend.
 
 **Team composition:**
 
@@ -14,7 +14,8 @@ Team collaboration on define/do workflows through Slack and GitHub.
 | **manifest-define-worker** | default | Runs `/define` with TEAM_CONTEXT. Persists as manifest authority — evaluates PR review comments (Phase 4) and QA issues (Phase 5). Can amend the manifest during PR review. | Phase 0 |
 | **manifest-executor** | default | Runs `/do` with TEAM_CONTEXT. Code implementation only. Creates PR. Rejects out-of-scope tasks (e2e, deploy, logs). | Phase 0 |
 | *ad-hoc teammates* | varies | Lead spawns on-the-fly for tasks that don't fit existing roles (e.g., e2e-runner, deploy-monitor). | As needed |
-| **github-coordinator** | sonnet | ALL GitHub PR I/O. Lean diff polling, bot vs human comment labeling, full PR state reporting. State file recovery on compaction. | Phase 4 |
+| **github-coordinator** | sonnet | ALL GitHub PR I/O. Lean diff polling, bot vs human comment labeling, full PR state reporting. State file recovery on compaction. | Phase 4 (GitHub) |
+| **gitlab-coordinator** | sonnet | ALL GitLab MR I/O. Lean diff polling, bot vs human note labeling, full MR state reporting. State file recovery on compaction. | Phase 4 (GitLab) |
 
 The lead is the **autonomous orchestrator** — it processes coordinator reports immediately, decides what actions to take, and instructs teammates to execute. Teammates are pollers and doers, not decision-makers. The lead sends intent and context to coordinators (not verbatim messages). The owner is the unblocker and final authority.
 
@@ -27,13 +28,14 @@ The lead is the **autonomous orchestrator** — it processes coordinator reports
 - **Review-fix loop automation** — findings → classify → fix → re-review, driven autonomously by the lead
 - **Strict role boundaries** — manifest-executor is code-only; out-of-scope tasks get rejected
 
-**Communication model:** Hub-and-spoke — all teammates communicate only with the lead. The lead routes to the slack-coordinator for Slack interaction and to the github-coordinator for GitHub PR monitoring.
+**Communication model:** Hub-and-spoke — all teammates communicate only with the lead. The lead routes to the slack-coordinator for Slack interaction and to the VCS coordinator (based on `--vcs` selection) for PR/MR monitoring.
 
 ## Prerequisites
 
 - **Slack channel** created by the user with stakeholders already invited. The workflow does not create channels or invite users.
 - **Slack MCP server** configured with: send_message, read_channel, read_thread, search_channels, search_users, read_user_profile.
-- **GitHub access** via `gh` CLI (authenticated) or GitHub MCP server. Used for PR review monitoring in Phase 4+.
+- **GitHub access** via `gh` CLI (authenticated) or GitHub MCP server — when using `--vcs github` (default). Used for PR review monitoring in Phase 4+.
+- **GitLab access** via `glab` CLI (authenticated) or GitLab MCP server — when using `--vcs gitlab`. Used for MR review monitoring in Phase 4+.
 - **manifest-dev plugin** installed (provides `/define`, `/do`, `/verify`).
 - **`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`** environment variable set.
 
@@ -43,7 +45,8 @@ The lead is the **autonomous orchestrator** — it processes coordinator reports
 /slack-collab add rate limiting to the API
 ```
 
-**Optional flags** (forwarded to downstream skills):
+**Optional flags:**
+- `--vcs github|gitlab` — select VCS backend (default: github)
 - `--interview <level>` — forwarded to `/define` (controls interview depth: `minimal | autonomous | thorough`)
 - `--mode <level>` — forwarded to `/do` (controls verification intensity: `efficient | balanced | thorough`)
 
@@ -59,8 +62,8 @@ The skill runs through 7 phases:
 2. **Define** — define-worker runs `/define`, messages lead for Q&A (lead routes to slack-coordinator → Slack)
 3. **Manifest Review** — slack-coordinator posts manifest to Slack, polls for approval
 4. **Execute** — manifest-executor runs `/do`, messages lead for escalations
-5. **PR Review** — manifest-executor creates PR, github-coordinator monitors (bot/human labeled). Fix loop: github-coordinator → lead → manifest-define-worker evaluates (can amend manifest) → executor fixes. Bot comments: fix or resolve, no discussion. Human comments: comment and wait for approval. CI triage: base-branch comparison, empty commit for transient failures.
-6. **QA** (optional) — Human QA via Slack + github-coordinator still monitors PR. Both fix loops operate in parallel.
+5. **PR/MR Review** — manifest-executor creates PR (GitHub) or MR (GitLab), VCS coordinator monitors (bot/human labeled). Fix loop: VCS coordinator → lead → manifest-define-worker evaluates (can amend manifest) → executor fixes. Bot comments: fix or resolve, no discussion. Human comments: comment and wait for approval. CI triage: base-branch comparison, empty commit for transient failures.
+6. **QA** (optional) — Human QA via Slack + VCS coordinator still monitors PR/MR. Both fix loops operate in parallel.
 7. **Done** — slack-coordinator posts completion summary, all teammates shut down
 
 ## Architecture
@@ -78,26 +81,31 @@ graph TB
             EX["manifest-executor<br/>(default)"]
         end
 
-        subgraph "Phase 4+ Teammate"
+        subgraph "Phase 4+ Teammate (one per run)"
             GC["github-coordinator<br/>(sonnet)"]
+            GLC["gitlab-coordinator<br/>(sonnet)"]
         end
     end
 
     Slack[(Slack Channel)]
     GitHub[(GitHub PR)]
+    GitLab[(GitLab MR)]
     Codebase[(Codebase)]
 
     User <-->|"preflight + escalations"| Lead
 
     Lead <-->|"post/poll requests"| SC
     Lead <-->|"/define Q&A + QA eval"| DW
-    Lead <-->|"/do + PR + fixes"| EX
+    Lead <-->|"/do + PR/MR + fixes"| EX
     Lead <-->|"PR status reports"| GC
+    Lead <-->|"MR status reports"| GLC
 
     SC <-->|"messages + threads"| Slack
     GC <-->|"reviews + CI + comments"| GitHub
-    EX -->|"code changes + PR creation"| Codebase
+    GLC <-->|"approvals + pipelines + notes"| GitLab
+    EX -->|"code changes + PR/MR creation"| Codebase
     EX -->|"create PR + push"| GitHub
+    EX -->|"create MR + push"| GitLab
     DW -->|"manifest"| Codebase
 ```
 
@@ -206,4 +214,4 @@ Reads the state file to determine the current phase and re-creates the team. Sup
 
 ## Security
 
-Both coordinators are the single points of contact for external input. The slack-coordinator treats all Slack messages as untrusted; the github-coordinator treats all PR comments and review bodies as untrusted. Neither exposes secrets, runs arbitrary commands, or accepts dangerous requests — suspicious content is flagged to the owner. Other teammates (manifest-define-worker, manifest-executor) never touch Slack or GitHub directly — all communication goes through the lead.
+All coordinators are the single points of contact for external input. The slack-coordinator treats all Slack messages as untrusted; the github-coordinator treats all PR comments and review bodies as untrusted; the gitlab-coordinator treats all MR notes and discussion bodies as untrusted. None expose secrets, run arbitrary commands, or accept dangerous requests — suspicious content is flagged to the owner. Other teammates (manifest-define-worker, manifest-executor) never touch Slack, GitHub, or GitLab directly — all communication goes through the lead.

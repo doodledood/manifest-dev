@@ -1,10 +1,11 @@
 {
   "name": "manifest-dev-collab",
-  "version": "1.11.0",
-  "description": "Slack and GitHub collaborative define/do workflow via Agent Teams. Autonomous lead orchestrator spawns specialized and ad-hoc teammates that coordinate via mailbox messaging. Features: phase-anchored Slack threading, intent-based delegation, dynamic teammate spawning, verification hard gates, idle suppression, and strict role boundaries.",
+  "version": "1.12.0",
+  "description": "Slack and GitHub/GitLab collaborative define/do workflow via Agent Teams. Autonomous lead orchestrator spawns specialized and ad-hoc teammates that coordinate via mailbox messaging. Features: phase-anchored Slack threading, intent-based delegation, dynamic teammate spawning, verification hard gates, idle suppression, strict role boundaries, and VCS-agnostic PR/MR review.",
   "keywords": [
     "slack",
     "github",
+    "gitlab",
     "collaboration",
     "team",
     "define",
@@ -12,6 +13,7 @@
     "stakeholders",
     "review",
     "orchestrator",
-    "pr-review"
+    "pr-review",
+    "mr-review"
   ]
 }
