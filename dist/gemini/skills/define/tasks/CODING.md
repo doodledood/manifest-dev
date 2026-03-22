@@ -24,12 +24,16 @@ GEMINI.md specifies project gates (typecheck, lint, test, format). These become 
 
 ## E2E Verification
 
-Before defaulting to manual E2E verification:
+E2E verification encodes as ACs on the relevant deliverable(s), not as a separate deliverable or process guidance. E2E is verification of the work, not work itself.
+
+Before encoding e2e ACs, probe:
 - **Test data** - often discoverable; probe: existing test users/accounts? can research via project tools (queries, test fixtures, admin panels)?
 - **Environment** - probe: which environment for e2e tests (dev, staging, production read-only)?
 - **Automation feasibility** - probe: can tests be scripted? existing health checks or testable endpoints?
 
-Manual only when automated E2E is truly not feasible and user confirms no test data exists.
+When probing yields actionable findings, encode as ACs on the deliverable being verified. Each e2e AC should specify the test scenario and expected outcome (e.g., "AC-1.4: POST /api/orders returns 201 with valid payload on staging").
+
+Manual verification only when automated E2E is truly not feasible and user confirms no test data exists.
 
 ## Scenario Prompts
 
@@ -48,9 +52,3 @@ Manual only when automated E2E is truly not feasible and user confirms no test d
 ## Multi-Repo
 
 When spanning repos: per-repo project gates differ, cross-repo contracts need verification, scope reviewers to changed files per repo.
-
-## Defaults
-
-*Domain best practices for this task type.*
-
-- **E2E verification report** — Default to a report file with test scenarios, results, and evidence per scenario
