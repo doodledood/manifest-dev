@@ -38,6 +38,22 @@ Mode defaults to `thorough` if not provided.
 
 Note: criteria-checker handles any automated verification requiring commands, file analysis, reasoning, or web research.
 
+## Agent Prompt Composition
+
+When spawning verifier agents, pass only the criterion's manifest data. Do not add your own framing.
+
+**Include**: Criterion ID, description, verification method, and the verify block's `command:` or `prompt:` field verbatim. Add file scope when the criterion targets specific files.
+
+**Never add**:
+- Severity thresholds ("only report medium+ issues", "focus on critical findings")
+- Implementation context ("the code was refactored to...", "this was implemented by...")
+- Opinions or expectations ("this should pass", "this is likely fine")
+- Leading language ("verify this important constraint", "carefully check this critical rule")
+- Task summaries ("check that the auth module correctly handles...")
+- Suggested outcomes ("confirm that X works correctly")
+
+The verify block's `prompt:` field is manifest-authored — pass it verbatim. These rules target language you add beyond what the manifest specifies.
+
 ## Criterion Types
 
 | Type | Pattern | Failure Impact |
