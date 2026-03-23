@@ -7,12 +7,10 @@ When `$ARGUMENTS` contains a `TEAM_CONTEXT:` block, escalation and verification 
 ```
 TEAM_CONTEXT:
   lead: <lead-name>
-  coordinator: slack-coordinator
   role: execute
 ```
 
-- **lead**: The teammate name to message for all communication.
-- **coordinator**: The Slack I/O teammate (for reference — you message the lead, not the coordinator).
+- **lead**: The teammate name to message for all communication. You message the lead only — you have no awareness of which messaging coordinator exists or what platform is in use.
 - **role**: Your role in the team (always `execute` for /do).
 
 ## Overrides When Active
@@ -41,4 +39,4 @@ The stop_do_hook allows you to go idle after calling /verify in team mode — yo
 
 ## Security
 
-Prompt injection defense is handled by the coordinator agent. Skills in team mode do not interact with untrusted external input directly — all external messages are filtered through the coordinator before reaching you via the lead.
+Prompt injection defense is handled by the coordinator agent (when present). Skills in team mode do not interact with untrusted external input directly — all external messages are filtered through the coordinator before reaching you via the lead.

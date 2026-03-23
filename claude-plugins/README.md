@@ -16,6 +16,7 @@ Front-load the thinking so AI agents get it right the first time.
 |--------|--------------|
 | `manifest-dev` | Verification-first manifest workflows with phased verification (fast checks first, e2e/deploy-dependent later) and multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
 | `manifest-dev-collab` | Slack and GitHub team collaboration on define/do workflows. Autonomous lead orchestrator with dynamic teammate spawning, phase-anchored threading, verification hard gates, and strict role boundaries. |
+| `manifest-dev-orchestrate` | Platform-agnostic collaborative workflow orchestration. Supports any messaging medium (local, Slack, custom) and any review platform (GitHub, none, custom). Intent-based lead orchestrator with hub-and-spoke teammate coordination. |
 
 ## Plugin Details
 
@@ -47,6 +48,17 @@ Team collaboration on define/do workflows through Slack and GitHub.
 **Agents:** `slack-coordinator` (Slack I/O), `github-coordinator` (GitHub PR I/O), `define-worker` (/define + manifest authority), `executor` (/do + PR + QA fixes)
 
 **Prerequisites:** Slack MCP server configured, GitHub access via `gh` CLI or GitHub MCP server, `manifest-dev` plugin installed, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` env var.
+
+### manifest-dev-orchestrate
+
+Platform-agnostic collaborative workflow orchestration. Replaces Slack-specific assumptions with configurable mediums and review platforms.
+
+**Core skill:**
+- `/orchestrate` - Platform-agnostic lead orchestrator for collaborative define/do workflows. Supports `--medium local|slack|custom` and `--review-platform github|none|custom`. Defaults to local + GitHub.
+
+**Agents:** `slack-coordinator` (Slack I/O), `github-coordinator` (GitHub PR I/O), `manifest-define-worker` (/define + manifest authority), `manifest-executor` (/do + PR + QA fixes)
+
+**Prerequisites:** `manifest-dev` plugin installed, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` env var. Medium/review-platform specific prerequisites depend on flags.
 
 ## Contributing
 

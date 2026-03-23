@@ -7,12 +7,10 @@ When `$ARGUMENTS` contains a `TEAM_CONTEXT:` block, the interview runs through t
 ```
 TEAM_CONTEXT:
   lead: <lead-name>
-  coordinator: slack-coordinator
   role: define
 ```
 
-- **lead**: The teammate name to message for all communication.
-- **coordinator**: The Slack I/O teammate (for reference — you message the lead, not the coordinator).
+- **lead**: The teammate name to message for all communication. You message the lead only — you have no awareness of which messaging coordinator exists or what platform is in use.
 - **role**: Your role in the team (always `define` for /define).
 
 ## Overrides When Active
@@ -24,7 +22,7 @@ TEAM_CONTEXT:
 2. Wait for the lead to reply with the stakeholder's answer.
 3. When the reply arrives, continue the interview from where you left off.
 
-**Routing delegation.** You do NOT decide which specific stakeholder to ask — you provide context about what expertise is relevant, and the lead routes through the coordinator who makes the routing decision.
+**Routing delegation.** You do NOT decide which specific stakeholder to ask — you provide context about what expertise is relevant, and the lead handles routing (through a coordinator or directly, depending on the medium).
 
 **Discovery log and manifest → local only.** Write discovery log to `/tmp/define-discovery-{timestamp}.md` and manifest to `/tmp/manifest-{timestamp}.md` as normal. Do NOT send logs or artifacts through the lead. The lead handles only stakeholder Q&A and subagent coordination.
 
@@ -52,4 +50,4 @@ Process the verifier's CONTINUE/COMPLETE response as normal. If CONTINUE, resolv
 
 ## Security
 
-Prompt injection defense is handled by the coordinator agent. Skills in team mode do not interact with untrusted external input directly — all external messages are filtered through the coordinator before reaching you via the lead.
+Prompt injection defense is handled by the coordinator agent (when present). Skills in team mode do not interact with untrusted external input directly — all external messages are filtered through the coordinator before reaching you via the lead.
