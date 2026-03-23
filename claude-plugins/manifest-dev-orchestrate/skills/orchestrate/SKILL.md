@@ -127,7 +127,7 @@ If any coordinator fails to respond after 2 messages (goes idle without acting o
 
 ## Team Composition
 
-You spawn teammates using the orchestration backend (Agent Teams: `TeamCreate` + Agent tool with `team_name`). Workers are always spawned in Phase 0. Coordinators are spawned based on the medium and review-platform configuration.
+You spawn teammates using the orchestration backend (Agent tool with `team_name`). Workers are always spawned in Phase 0. Coordinators are spawned based on the medium and review-platform configuration.
 
 | Teammate | subagent_type | Model | Role | Spawned |
 |----------|--------------|-------|------|---------|
@@ -145,7 +145,7 @@ When a task arises that doesn't fit any existing teammate's role (e.g., staging 
 **How to spawn**: Use the Agent tool with `team_name` and compose a prompt that includes:
 - **Role**: What this teammate does (e.g., "You are the e2e-runner — validate staging endpoints")
 - **Tools it needs**: What MCP tools, CLI commands, or APIs it should use
-- **Communication rules**: "Message only the lead via SendMessage. Report findings, wait for instructions, execute, confirm."
+- **Communication rules**: "Message only the lead. Report findings, wait for instructions, execute, confirm."
 - **Hub-and-spoke compliance**: "You do NOT message other teammates. You do NOT make decisions — you report and execute."
 - **Scope boundary**: What it does and does NOT do
 
@@ -180,13 +180,13 @@ SUBAGENT_REQUEST:
 ```
 
 **Your response as lead:**
-1. Spawn the subagent via Agent tool with `team_name` set to the current team. Instruct the subagent to send its full results directly to `target_teammate` via SendMessage, and return only a brief summary to you.
+1. Spawn the subagent via Agent tool with `team_name` set to the current team. Instruct the subagent to message `target_teammate` directly with its full results, and return only a brief summary to you.
 2. Log the request and summary to `/tmp/collab-subagent-log-{run_id}.md`.
 3. Launch multiple subagents in parallel using `run_in_background` when possible.
 
-**Feasibility test:** On the first subagent launch, verify the subagent can SendMessage to a teammate. If it fails, switch to file-based handoff for all subsequent launches.
+**Feasibility test:** On the first subagent launch, verify the subagent can message a teammate directly. If it fails, switch to file-based handoff for all subsequent launches.
 
-**File-based fallback:** When SendMessage is not feasible:
+**File-based fallback:** When direct messaging is not feasible:
 1. Instruct the subagent to write results to `/tmp/subagent-result-{run_id}-{request_id}.md`.
 2. When the subagent completes, message the requesting worker: "Results at [file path]."
 
@@ -247,7 +247,7 @@ Log all subagent interactions to `/tmp/collab-subagent-log-{run_id}.md`. Format:
 ## [timestamp] Subagent: <type> for <worker>
 Request: <brief description>
 Result summary: <brief summary>
-Delivery: SendMessage to <worker> | File at <path>
+Delivery: Direct message to <worker> | File at <path>
 ```
 
 ## Resume
@@ -279,7 +279,7 @@ If `$ARGUMENTS` starts with `--resume`:
 
 2. Generate a unique `run_id`.
 
-3. **Create the team** via the orchestration backend (Agent Teams: `TeamCreate(team_name: "<run_id>", description: "<task summary>")`). This MUST succeed before spawning any teammates. If it fails, abort and tell the user.
+3. **Create the team** via the orchestration backend (create a team with name `<run_id>` and description `<task summary>`). This MUST succeed before spawning any teammates. If it fails, abort and tell the user.
 
 4. **Spawn workers** — each MUST include `team_name: "<run_id>"`:
    - **manifest-define-worker**: `subagent_type: "manifest-dev-orchestrate:manifest-define-worker"`, `team_name: "<run_id>"`, `name: "manifest-define-worker"`. Omit model (inherits parent). Pass the task description in the prompt.
