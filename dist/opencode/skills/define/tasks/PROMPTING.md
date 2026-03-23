@@ -8,22 +8,30 @@ Prompts are manifests: **WHAT and WHY, not HOW**. State goals and constraints. T
 
 ## Quality Gates
 
-| Gate | Threshold | Verify |
-|------|-----------|--------|
-| Clarity | No ambiguous instructions, no vague language, no implicit expectations | Read each instruction aloud—flag any with multiple valid interpretations |
-| No conflicts | No contradictory rules, no priority collisions, edge cases covered | Identify all MUST/SHOULD rules, check for pairs that can't both be satisfied |
-| Structure | Critical rules surfaced prominently, clear hierarchy, no unintentional redundancy | Skim first and last paragraphs only—are critical rules visible? |
-| Information density | Every word earns its place | Remove each sentence—if nothing is lost, it didn't earn its place |
-| No anti-patterns | No prescriptive HOW, arbitrary limits, capability instructions, weak language | Scan for HOW language, arbitrary numbers, tool names, "try to"/"maybe" |
-| Invocation fit | Prompt's expected trigger, caller identity, and output consumer match actual deployment context | Compare prompt's assumptions against where it runs (auto-invoked vs user-facing, output to human vs agent) |
-| Domain context | Domain terms, conventions, and constraints captured—not guessed | Check domain-specific language against source material or user confirmation |
-| Complexity fit | Prompt complexity matches the task—not over-engineered, not under-specified | Compare prompt structure depth to task difficulty |
-| Memento (if multi-phase) | Multi-step prompts externalize state correctly | Verify log-after-each-step and read-before-synthesis disciplines present |
-| Description (if skill/agent) | Description follows What + When + Triggers pattern | Check description drives correct auto-invocation |
-| Edge case coverage | Prompt handles boundary inputs and unusual conditions, not just the happy path | Identify edge cases from domain; verify prompt addresses each |
-| Model-prompt fit | Prompt stays within model capabilities—doesn't assume unreliable behaviors | Flag instructions requiring capabilities the model doesn't reliably have |
-| Guardrail calibration | Safety boundaries neither too loose (harmful output possible) nor too tight (valid use cases blocked) | Test boundary cases—does the guardrail correctly allow/block? |
-| Output calibration | Output format, length, and detail level match the use case and consumer | Compare expected output characteristics against actual consumer needs |
+When prompt-reviewer agent is available, use it as the single gate:
+
+| Aspect | Agent | Threshold |
+|--------|-------|-----------|
+| Prompt quality | prompt-reviewer | no MEDIUM+ |
+
+When prompt-reviewer is not available, encode these as individual criteria verified via general-purpose subagent:
+
+| Gate | Threshold |
+|------|-----------|
+| Clarity | No ambiguous instructions, no vague language, no implicit expectations |
+| No conflicts | No contradictory rules, no priority collisions, edge cases covered |
+| Structure | Critical rules surfaced prominently, clear hierarchy, no unintentional redundancy |
+| Information density | Every word earns its place |
+| No anti-patterns | No prescriptive HOW, arbitrary limits, capability instructions, weak language |
+| Invocation fit | Prompt's trigger, caller identity, and output consumer match deployment context |
+| Domain context | Domain terms, conventions, and constraints captured—not guessed |
+| Complexity fit | Prompt complexity matches the task—not over-engineered, not under-specified |
+| Memento (if multi-phase) | Multi-step prompts externalize state correctly |
+| Description (if skill/agent) | Description follows What + When + Triggers pattern |
+| Edge case coverage | Handles boundary inputs and unusual conditions, not just the happy path |
+| Model-prompt fit | Stays within model capabilities—doesn't assume unreliable behaviors |
+| Guardrail calibration | Safety boundaries neither too loose nor too tight |
+| Output calibration | Output format, length, and detail level match the use case and consumer |
 
 ## Context to Discover
 

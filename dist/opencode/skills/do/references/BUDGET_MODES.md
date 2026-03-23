@@ -13,7 +13,7 @@ Execution modes control verification intensity across the manifest-dev workflow 
 | /define manifest-verifier | SKIPPED | Runs once (no repeat loop) | Runs (with repeat loop) |
 | Escalation | Auto-escalate after 2 failures per criterion; cap 3 total | Escalate after loop limit hit | None |
 
-**Why these levels exist**: thorough preserves the current quality bar (default). balanced saves quota by limiting parallelism and verification cycles while keeping full model capability. efficient maximizes savings by using a lighter verification pass and skipping reviewer agents — accept this only when iteration speed matters more than verification depth.
+**Why these levels exist**: thorough preserves the current quality bar (default). balanced saves quota by limiting parallelism and verification cycles while keeping full model capability. efficient maximizes savings by using a cheaper model for verification and skipping reviewer agents — accept this only when iteration speed matters more than verification depth.
 
 ## Escalation Rules
 
@@ -25,11 +25,19 @@ Execution modes control verification intensity across the manifest-dev workflow 
 
 ## Verification Parallelism
 
-These override /verify's default "launch all verifiers in a single message" rule:
+Mode parallelism applies **within each phase**. Phases always run in ascending order — Phase N+1 only starts when all Phase N criteria pass. Within a phase:
 
 - **efficient**: Launch verifiers one at a time. Minimizes concurrent quota usage.
 - **balanced**: Launch in batches of max 4 concurrent verifiers. When any batch completes, launch the next batch.
-- **thorough**: Launch all verifiers in a single message (current default behavior).
+- **thorough**: Launch all verifiers in a single message.
+
+## Phase × Loop Limits
+
+Fix-verify loop limits apply **per-phase**. Each phase has its own loop counter.
+
+- In balanced mode (max 2 loops): Phase 1 can fail/fix twice, Phase 2 can fail/fix twice independently.
+- A Phase 2 fix that regresses Phase 1 increments Phase 1's counter (the failure IS in Phase 1).
+- Phase doesn't change efficient-mode skip rules — the skip/run decision is based on criterion type (INV-G* always run, deliverable-level reviewer ACs skipped in efficient), not phase number.
 
 ## Override Precedence
 

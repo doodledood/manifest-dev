@@ -47,7 +47,9 @@ If input includes a log file path (iteration on previous work): **treat it as so
 
 **Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type), or (4) mode-specific fix-verify loop limit is reached (see `references/BUDGET_MODES.md`). If ACs remain achievable as written and no user interrupt, continue autonomously. Approach pivots don't require escalation — log adjustments with rationale and continue.
 
-**Mode-aware loop tracking** - Track fix-verify iteration count and escalation count in the execution log. When mode limits are reached, follow the escalation rules in `references/BUDGET_MODES.md`. In efficient mode, also track total escalations and suggest mode switch after 3.
+**Mode-aware loop tracking** - Track fix-verify iteration count and escalation count in the execution log. Loop counters are per-phase — each phase has its own counter. When mode limits are reached for a phase, follow the escalation rules in `references/BUDGET_MODES.md`. In efficient mode, also track total escalations and suggest mode switch after 3.
+
+**Phase-aware verification** - /verify runs criteria in phases (ascending by `phase:` field, default 1). It may report "Phase N failed, Phase N+1 not run." After fixing failures, /verify restarts from Phase 1 to catch regressions — a fix for a Phase 2 failure could break Phase 1 criteria. If a Phase 2 fix regresses Phase 1, Phase 1's loop counter increments (the failure IS in Phase 1).
 
 **Stop requires /escalate** - During /do, you cannot stop without calling /verify→/done or /escalate. If you need to pause (user requested, waiting on external action), call /escalate with "User-Requested Pause" format. Short outputs like "Done." or "Waiting." will be blocked.
 

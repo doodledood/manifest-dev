@@ -23,7 +23,7 @@ Verification-first manifest workflows. Plan work thoroughly, execute against cri
 3. **/verify** spawns parallel verification agents to check every criterion
 4. **/done** outputs completion summary (called by /verify on success)
 5. **/escalate** surfaces blocking issues with structured evidence (called when stuck)
-6. **/auto** chains /define and /do into a single autonomous flow — defines the task without user interview, auto-approves the manifest, and immediately executes
+6. **/auto** chains /define and /do into a single autonomous flow -- defines the task without user interview, auto-approves the manifest, and immediately executes
 
 ## Agents (12)
 

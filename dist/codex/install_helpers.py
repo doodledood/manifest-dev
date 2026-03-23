@@ -10,13 +10,13 @@ vs /done) and idempotency (won't double-suffix on re-run).
 
 Usage:
     python3 install_helpers.py namespace <dir> [codex|gemini|opencode]
-    python3 install_helpers.py merge-config <source-config> <dest-config>
+    python3 install_helpers.py merge-settings <source-hooks> <dest-settings>
 """
 
 from __future__ import annotations
 
-import json
 import os
+import json
 import re
 import sys
 from pathlib import Path
@@ -54,19 +54,11 @@ TEXT_EXTENSIONS = {".md", ".py", ".ts", ".json", ".toml", ".rules", ".txt"}
 
 # Files to never patch (they ARE the namespace tooling).
 SKIP_FILES = {"install_helpers.py", "install.sh"}
-
-MANAGED_CONFIG_START = "# >>> manifest-dev managed config >>>"
-MANAGED_CONFIG_END = "# <<< manifest-dev managed config <<<"
-MANAGED_STATE_PREFIX = "# manifest-dev-shared-state: "
-CONFIG_HEADER = (
-    "# manifest-dev configuration for Codex CLI\n"
-    "# Merge relevant sections into your .codex/config.toml\n"
-)
 STATE_VERSION = 2
-DEFAULT_SHARED_VALUES = {
-    "features.multi_agent": "true",
-    "max_threads": "6",
-    "max_depth": "1",
+MANAGED_HOOK_NAMES = {
+    "pretool-verify",
+    "stop-do-enforcement",
+    "post-compact-recovery",
 }
 
 
@@ -206,311 +198,8 @@ def patch_files(base: Path) -> None:
                 fpath.write_text(patched, encoding="utf-8")
 
 
-def _extract_managed_agent_tables(source_text: str) -> str:
-    matches = list(re.finditer(r"(?m)^\[agents\.[^\]]+\]\s*$", source_text))
-    if not matches:
-        raise ValueError("No [agents.<name>] tables found in source config.")
-    return source_text[matches[0].start() :].strip() + "\n"
-
-
-def _table_pattern(table_name: str) -> re.Pattern[str]:
-    return re.compile(rf"(?ms)^(\[{re.escape(table_name)}\]\n)(.*?)(?=^\[|\Z)")
-
-
-def _table_match(text: str, table_name: str) -> re.Match[str] | None:
-    return _table_pattern(table_name).search(text)
-
-
-def _get_table_body(text: str, table_name: str) -> str | None:
-    match = _table_match(text, table_name)
-    if not match:
-        return None
-    return match.group(2)
-
-
-def _get_table_key_value(text: str, table_name: str, key: str) -> str | None:
-    body = _get_table_body(text, table_name)
-    if body is None:
-        return None
-    match = re.search(rf"(?m)^{re.escape(key)}\s*=\s*(.*)$", body)
-    if not match:
-        return None
-    return match.group(1).strip()
-
-
-def _parse_quoted_list(raw_value: str | None) -> list[str] | None:
-    if raw_value is None:
-        return None
-    return re.findall(r'"([^"]*)"', raw_value)
-
-
-def _split_root_prefix(text: str) -> tuple[str, str]:
-    match = re.search(r"(?m)^\[", text)
-    if not match:
-        return text, ""
-    return text[: match.start()], text[match.start() :]
-
-
-def _get_root_key_value(text: str, key: str) -> str | None:
-    root, _rest = _split_root_prefix(text)
-    match = re.search(rf"(?m)^{re.escape(key)}\s*=\s*(.*)$", root)
-    if not match:
-        return None
-    return match.group(1).strip()
-
-
-def _get_shared_key_value(text: str, key: str) -> str | None:
-    root_value = _get_root_key_value(text, key)
-    if root_value is not None:
-        return root_value
-    return _get_table_key_value(text, "agents", key)
-
-
-def _strip_managed_config_block(text: str) -> str:
-    pattern = re.compile(
-        rf"\n?{re.escape(MANAGED_CONFIG_START)}\n.*?\n{re.escape(MANAGED_CONFIG_END)}\n?",
-        flags=re.DOTALL,
-    )
-    return pattern.sub("\n", text)
-
-
-def _extract_embedded_state(text: str) -> dict[str, object]:
-    match = re.search(
-        rf"{re.escape(MANAGED_CONFIG_START)}\n{re.escape(MANAGED_STATE_PREFIX)}(.*?)\n",
-        text,
-        flags=re.DOTALL,
-    )
-    if not match:
-        return {}
-    try:
-        return json.loads(match.group(1))
-    except json.JSONDecodeError:
-        return {}
-
-
-def _strip_manifest_agent_tables(text: str) -> str:
-    names = "|".join(re.escape(f"{name}{SUFFIX}") for name in AGENTS)
-    pattern = re.compile(
-        rf"(?ms)^\[agents\.(?:{names})\]\n.*?(?=^\[|\Z)",
-    )
-    return pattern.sub("", text)
-
-
-def _strip_manifest_header(text: str) -> str:
-    if text.startswith(CONFIG_HEADER):
-        text = text[len(CONFIG_HEADER) :]
-    return text
-
-
-def _upsert_key_in_table_body(body: str, key: str, value: str) -> str:
-    line = f"{key} = {value}"
-    pattern = re.compile(rf"(?m)^{re.escape(key)}\s*=.*$")
-    if pattern.search(body):
-        return pattern.sub(line, body, count=1)
-
-    if body and not body.endswith("\n"):
-        body += "\n"
-    return body + line + "\n"
-
-
-def _has_key_in_table_body(body: str, key: str) -> bool:
-    pattern = re.compile(rf"(?m)^{re.escape(key)}\s*=.*$")
-    return pattern.search(body) is not None
-
-
-def _ensure_missing_table_keys(
-    text: str,
-    table_name: str,
-    keys: list[tuple[str, str]],
-) -> str:
-    match = _table_match(text, table_name)
-    if match:
-        body = match.group(2)
-        for key, value in keys:
-            if not _has_key_in_table_body(body, key):
-                body = _upsert_key_in_table_body(body, key, value)
-        return text[: match.start()] + match.group(1) + body + text[match.end() :]
-
-    if text and not text.endswith("\n"):
-        text += "\n"
-    if text.strip():
-        text += "\n"
-    lines = [f"[{table_name}]"] + [f"{key} = {value}" for key, value in keys]
-    return text + "\n".join(lines) + "\n"
-
-
-def _ensure_list_value_in_table(
-    text: str,
-    table_name: str,
-    key: str,
-    value: str,
-) -> str:
-    match = _table_match(text, table_name)
-    list_value = f'["{value}"]'
-    if not match:
-        return _ensure_missing_table_keys(text, table_name, [(key, list_value)])
-
-    header, body = match.group(1), match.group(2)
-    key_pattern = re.compile(rf"(?m)^({re.escape(key)}\s*=\s*)(\[.*\])$")
-    key_match = key_pattern.search(body)
-    if not key_match:
-        body = _upsert_key_in_table_body(body, key, list_value)
-        return text[: match.start()] + header + body + text[match.end() :]
-
-    existing_list = key_match.group(2)
-    if f'"{value}"' in existing_list:
-        return text
-
-    inner = existing_list[1:-1].strip()
-    merged_list = f'[{inner}, "{value}"]' if inner else list_value
-    body = key_pattern.sub(rf"\1{merged_list}", body, count=1)
-    return text[: match.start()] + header + body + text[match.end() :]
-
-
-def _upsert_root_key(text: str, key: str, value: str) -> str:
-    root, rest = _split_root_prefix(text)
-    line = f"{key} = {value}"
-    pattern = re.compile(rf"(?m)^{re.escape(key)}\s*=.*$")
-    if pattern.search(root):
-        root = pattern.sub(line, root, count=1)
-    else:
-        if root and not root.endswith("\n"):
-            root += "\n"
-        root += line + "\n"
-    return root + rest
-
-
-def _ensure_missing_root_keys(text: str, keys: list[tuple[str, str]]) -> str:
-    for key, value in keys:
-        if _get_root_key_value(text, key) is None:
-            text = _upsert_root_key(text, key, value)
-    return text
-
-
-def _ensure_root_list_value(text: str, key: str, value: str) -> str:
-    current_value = _get_root_key_value(text, key)
-    if current_value is None:
-        return _upsert_root_key(text, key, f'["{value}"]')
-
-    items = _parse_quoted_list(current_value) or []
-    if value in items:
-        return text
-
-    items.append(value)
-    rendered = "[" + ", ".join(f'"{item}"' for item in items) + "]"
-    return _upsert_root_key(text, key, rendered)
-
-
-def _remove_key_from_table(
-    text: str,
-    table_name: str,
-    key: str,
-    expected_value: str | None = None,
-) -> str:
-    match = _table_match(text, table_name)
-    if not match:
-        return text
-
-    header, body = match.group(1), match.group(2)
-    key_pattern = re.compile(rf"(?m)^({re.escape(key)}\s*=\s*)(.*)$")
-    key_match = key_pattern.search(body)
-    if not key_match:
-        return text
-
-    current_value = key_match.group(2).strip()
-    if expected_value is not None and current_value != expected_value:
-        return text
-
-    body = key_pattern.sub("", body, count=1)
-    body = re.sub(r"\n{3,}", "\n\n", body).lstrip("\n")
-    return text[: match.start()] + header + body + text[match.end() :]
-
-
-def _remove_root_key(text: str, key: str, expected_value: str | None = None) -> str:
-    root, rest = _split_root_prefix(text)
-    pattern = re.compile(rf"(?m)^({re.escape(key)}\s*=\s*)(.*)$")
-    match = pattern.search(root)
-    if not match:
-        return text
-
-    current_value = match.group(2).strip()
-    if expected_value is not None and current_value != expected_value:
-        return text
-
-    root = pattern.sub("", root, count=1)
-    root = re.sub(r"\n{3,}", "\n\n", root).lstrip("\n")
-    return root + rest
-
-
-def _remove_list_value_from_table(text: str, table_name: str, key: str, value: str) -> str:
-    match = _table_match(text, table_name)
-    if not match:
-        return text
-
-    header, body = match.group(1), match.group(2)
-    key_pattern = re.compile(rf"(?m)^({re.escape(key)}\s*=\s*)(\[.*\])$")
-    key_match = key_pattern.search(body)
-    if not key_match:
-        return text
-
-    items = re.findall(r'"([^"]*)"', key_match.group(2))
-    if value not in items:
-        return text
-
-    items = [item for item in items if item != value]
-    if items:
-        rendered = "[" + ", ".join(f'"{item}"' for item in items) + "]"
-        body = key_pattern.sub(rf"\1{rendered}", body, count=1)
-    else:
-        body = key_pattern.sub("", body, count=1)
-
-    body = re.sub(r"\n{3,}", "\n\n", body).lstrip("\n")
-    return text[: match.start()] + header + body + text[match.end() :]
-
-
-def _remove_root_list_value(text: str, key: str, value: str) -> str:
-    current_value = _get_root_key_value(text, key)
-    if current_value is None:
-        return text
-
-    items = _parse_quoted_list(current_value) or []
-    if value not in items:
-        return text
-
-    items = [item for item in items if item != value]
-    if items:
-        rendered = "[" + ", ".join(f'"{item}"' for item in items) + "]"
-        return _upsert_root_key(text, key, rendered)
-    return _remove_root_key(text, key)
-
-
-def _remove_empty_table(text: str, table_name: str) -> str:
-    match = _table_match(text, table_name)
-    if not match:
-        return text
-    if match.group(2).strip():
-        return text
-    return text[: match.start()] + text[match.end() :]
-
-
-def _migrate_legacy_agent_shared_settings(text: str) -> str:
-    for key in ("max_threads", "max_depth", "project_doc_fallback_filenames"):
-        legacy_value = _get_table_key_value(text, "agents", key)
-        if legacy_value is None:
-            continue
-        if _get_root_key_value(text, key) is None:
-            text = _upsert_root_key(text, key, legacy_value)
-        text = _remove_key_from_table(text, "agents", key)
-    return _remove_empty_table(text, "agents")
-
-
-def _normalize_config_text(text: str) -> str:
-    text = text.replace("\r\n", "\n")
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    text = text.lstrip("\n").rstrip()
-    if not text:
-        return ""
-    return text + "\n"
+def _canonical_json(value: object) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
 
 
 def _load_state(state_path: str | None) -> dict[str, object]:
@@ -528,52 +217,223 @@ def _write_state(state_path: str | None, state: dict[str, object]) -> None:
     Path(state_path).write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
 
 
-def _build_config_state(existing_text: str, config_existed: bool) -> dict[str, object]:
+def _build_settings_state(
+    settings: dict[str, object],
+    settings_existed: bool,
+) -> dict[str, object]:
+    experimental = settings.get("experimental")
+    enable_agents_present = False
+    enable_agents_value: object | None = None
+    if isinstance(experimental, dict) and "enableAgents" in experimental:
+        enable_agents_present = True
+        enable_agents_value = experimental.get("enableAgents")
+
     return {
         "version": STATE_VERSION,
-        "config_existed": config_existed,
-        "original_keys": {
-            "features.multi_agent": _get_table_key_value(existing_text, "features", "multi_agent"),
-            "max_threads": _get_shared_key_value(existing_text, "max_threads"),
-            "max_depth": _get_shared_key_value(existing_text, "max_depth"),
+        "settings_existed": settings_existed,
+        "original_experimental": dict(experimental) if isinstance(experimental, dict) else None,
+        "experimental": {
+            "enableAgents": {
+                "present": enable_agents_present,
+                "value": enable_agents_value,
+            }
         },
-        "original_lists": {
-            "project_doc_fallback_filenames": _parse_quoted_list(
-                _get_shared_key_value(
-                    existing_text,
-                    "project_doc_fallback_filenames",
-                )
-            ),
-        },
+        "hooks_added": {},
     }
 
 
-def _normalize_state(existing_text: str, state: dict[str, object], config_existed: bool) -> dict[str, object]:
-    if not isinstance(state.get("original_keys"), dict) or not isinstance(state.get("original_lists"), dict):
-        return _build_config_state(existing_text, config_existed)
-
-    original_keys = dict(state["original_keys"])
-    if "max_threads" not in original_keys and "agents.max_threads" in original_keys:
-        original_keys["max_threads"] = original_keys.pop("agents.max_threads")
-    if "max_depth" not in original_keys and "agents.max_depth" in original_keys:
-        original_keys["max_depth"] = original_keys.pop("agents.max_depth")
-
-    original_lists = dict(state["original_lists"])
-    legacy_fallback_key = "agents.project_doc_fallback_filenames"
-    if (
-        "project_doc_fallback_filenames" not in original_lists
-        and legacy_fallback_key in original_lists
+def _normalize_state(
+    settings: dict[str, object],
+    state: dict[str, object],
+    settings_existed: bool,
+) -> dict[str, object]:
+    if not (
+        isinstance(state.get("experimental"), dict)
+        and "original_experimental" in state
+        and isinstance(state.get("hooks_added"), dict)
     ):
-        original_lists["project_doc_fallback_filenames"] = original_lists.pop(
-            legacy_fallback_key
-        )
+        return _build_settings_state(settings, settings_existed)
 
     return {
         "version": STATE_VERSION,
-        "config_existed": bool(state.get("config_existed", config_existed)),
-        "original_keys": original_keys,
-        "original_lists": original_lists,
+        "settings_existed": bool(state.get("settings_existed", settings_existed)),
+        "original_experimental": state.get("original_experimental"),
+        "experimental": dict(state["experimental"]),
+        "hooks_added": dict(state["hooks_added"]),
     }
+
+
+def _collect_hook_names(entries: list[object]) -> set[str]:
+    names: set[str] = set()
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        hooks = entry.get("hooks")
+        if not isinstance(hooks, list):
+            continue
+        for hook in hooks:
+            if isinstance(hook, dict):
+                name = hook.get("name")
+                if isinstance(name, str):
+                    names.add(name)
+    return names
+
+
+def _entry_contains_named_hook(entry: object, names: set[str]) -> bool:
+    if not isinstance(entry, dict):
+        return False
+    hooks = entry.get("hooks")
+    if not isinstance(hooks, list):
+        return False
+    for hook in hooks:
+        if isinstance(hook, dict) and hook.get("name") in names:
+            return True
+    return False
+
+
+def merge_settings(
+    source_hooks_path: str,
+    dest_settings_path: str,
+    state_path: str | None = None,
+) -> None:
+    """Merge manifest-dev's Gemini settings requirements additively."""
+    source_data = json.loads(Path(source_hooks_path).read_text(encoding="utf-8"))
+
+    dest_path = Path(dest_settings_path)
+    settings_existed = dest_path.exists()
+    if settings_existed:
+        settings = json.loads(dest_path.read_text(encoding="utf-8"))
+    else:
+        settings = {}
+    state = _normalize_state(settings, _load_state(state_path), settings_existed)
+
+    experimental = settings.setdefault("experimental", {})
+    if not isinstance(experimental, dict):
+        raise ValueError("'experimental' must be an object when present")
+    experimental["enableAgents"] = True
+
+    hooks = settings.setdefault("hooks", {})
+    if not isinstance(hooks, dict):
+        raise ValueError("'hooks' must be an object when present")
+
+    source_hooks = source_data.get("hooks", {})
+    if not isinstance(source_hooks, dict):
+        raise ValueError("Source hooks.json must contain a top-level 'hooks' object")
+
+    hooks_added = state.setdefault("hooks_added", {})
+    if not isinstance(hooks_added, dict):
+        raise ValueError("State hooks_added must be an object when present")
+
+    for event_name, event_entries in source_hooks.items():
+        if not isinstance(event_entries, list):
+            raise ValueError(f"hooks.{event_name} must be a list")
+
+        existing_entries = hooks.setdefault(event_name, [])
+        if not isinstance(existing_entries, list):
+            raise ValueError(f"settings.hooks.{event_name} must be a list when present")
+
+        seen = {_canonical_json(entry) for entry in existing_entries}
+        recorded = hooks_added.setdefault(event_name, [])
+        if not isinstance(recorded, list):
+            raise ValueError(f"State hooks_added.{event_name} must be a list when present")
+        recorded_seen = {_canonical_json(entry) for entry in recorded}
+        for entry in event_entries:
+            marker = _canonical_json(entry)
+            if marker not in seen:
+                existing_entries.append(entry)
+                seen.add(marker)
+                if marker not in recorded_seen:
+                    recorded.append(entry)
+                    recorded_seen.add(marker)
+
+    dest_path.write_text(json.dumps(settings, indent=2) + "\n", encoding="utf-8")
+    _write_state(state_path, state)
+
+
+def unmerge_settings(
+    source_hooks_path: str,
+    dest_settings_path: str,
+    state_path: str | None = None,
+) -> None:
+    """Remove manifest-dev's Gemini settings requirements additively."""
+    dest_path = Path(dest_settings_path)
+    if not dest_path.exists():
+        return
+
+    source_data = json.loads(Path(source_hooks_path).read_text(encoding="utf-8"))
+    settings = json.loads(dest_path.read_text(encoding="utf-8"))
+    state = _normalize_state(settings, _load_state(state_path), dest_path.exists())
+
+    hooks = settings.get("hooks")
+    if isinstance(hooks, dict):
+        removal_hooks = state.get("hooks_added", source_data.get("hooks", {}))
+        if isinstance(removal_hooks, dict):
+            for event_name, entries in removal_hooks.items():
+                existing_entries = hooks.get(event_name)
+                if not isinstance(existing_entries, list):
+                    continue
+                if not isinstance(entries, list):
+                    continue
+
+                removal_markers = {_canonical_json(entry) for entry in entries}
+                removal_names = _collect_hook_names(entries) & MANAGED_HOOK_NAMES
+                filtered = [
+                    entry
+                    for entry in existing_entries
+                    if _canonical_json(entry) not in removal_markers
+                    and not _entry_contains_named_hook(entry, removal_names)
+                ]
+                if filtered:
+                    hooks[event_name] = filtered
+                else:
+                    hooks.pop(event_name, None)
+
+        if not hooks:
+            settings.pop("hooks", None)
+
+    experimental = settings.get("experimental")
+    if isinstance(experimental, dict):
+        exp_state = state.get("experimental", {})
+        enable_agents_state = None
+        if isinstance(exp_state, dict):
+            enable_agents_state = exp_state.get("enableAgents")
+        original_experimental = state.get("original_experimental")
+
+        if isinstance(enable_agents_state, dict):
+            present = bool(enable_agents_state.get("present"))
+            previous_value = enable_agents_state.get("value")
+            current_value = experimental.get("enableAgents")
+            current_without_enable = dict(experimental)
+            current_without_enable.pop("enableAgents", None)
+
+            if not present:
+                if current_value is True and (
+                    (original_experimental is None and not current_without_enable)
+                    or current_without_enable == original_experimental
+                ):
+                    experimental.pop("enableAgents", None)
+            elif "enableAgents" not in experimental:
+                experimental["enableAgents"] = previous_value
+            else:
+                experimental["enableAgents"] = previous_value
+
+        if not experimental:
+            settings.pop("experimental", None)
+
+    if settings:
+        dest_path.write_text(json.dumps(settings, indent=2) + "\n", encoding="utf-8")
+    elif not state.get("settings_existed", True):
+        dest_path.unlink()
+    else:
+        dest_path.write_text("{}\n", encoding="utf-8")
+
+    if state_path:
+        state_file = Path(state_path)
+        if state_file.exists():
+            state_file.unlink()
+
+
+# ── Codex config merge (TOML) ───────────────────────────────────────
 
 
 def merge_config(
@@ -581,121 +441,108 @@ def merge_config(
     dest_config_path: str,
     state_path: str | None = None,
 ) -> None:
-    source_text = Path(source_config_path).read_text(encoding="utf-8")
-    managed_tables = _extract_managed_agent_tables(source_text).rstrip()
-
+    """Merge manifest-dev's Codex config sections into an existing config.toml."""
+    source_path = Path(source_config_path)
     dest_path = Path(dest_config_path)
-    config_existed = dest_path.exists()
-    existing_text = dest_path.read_text(encoding="utf-8") if config_existed else ""
-    existing_text = _migrate_legacy_agent_shared_settings(existing_text)
-    merged_text = existing_text if config_existed else CONFIG_HEADER
-    state = _normalize_state(existing_text, _load_state(state_path), config_existed)
-    managed_block = (
-        f"{MANAGED_CONFIG_START}\n"
-        f"{MANAGED_STATE_PREFIX}{json.dumps(state, sort_keys=True)}\n"
-        f"{managed_tables}\n"
-        f"{MANAGED_CONFIG_END}\n"
-    )
 
-    merged_text = _strip_managed_config_block(merged_text)
-    merged_text = _strip_manifest_agent_tables(merged_text)
-    merged_text = _ensure_missing_table_keys(
-        merged_text,
-        "features",
-        [("multi_agent", "true")],
-    )
-    merged_text = _ensure_missing_root_keys(
-        merged_text,
-        [
-            ("max_threads", "6"),
-            ("max_depth", "1"),
-        ],
-    )
-    merged_text = _ensure_root_list_value(
-        merged_text,
-        "project_doc_fallback_filenames",
-        "CLAUDE.md",
-    )
+    source_text = source_path.read_text(encoding="utf-8")
 
-    merged_text = merged_text.rstrip() + "\n\n" + managed_block
-    dest_path.write_text(merged_text, encoding="utf-8")
-    _write_state(state_path, state)
+    if dest_path.exists():
+        dest_text = dest_path.read_text(encoding="utf-8")
+    else:
+        dest_text = ""
+
+    # Simple TOML merge: append sections that don't exist yet
+    # Check for manifest-dev marker sections
+    marker = "# manifest-dev configuration"
+    if marker in dest_text:
+        # Already merged — replace the manifest-dev block
+        # Find start of manifest-dev section and replace to end or next non-manifest section
+        lines = dest_text.split("\n")
+        new_lines: list[str] = []
+        in_manifest_block = False
+        for line in lines:
+            if marker in line:
+                in_manifest_block = True
+                continue
+            if in_manifest_block:
+                # Skip until we find a line that's clearly not ours
+                # (non-empty, non-comment, not starting with known manifest-dev keys)
+                continue
+            new_lines.append(line)
+        dest_text = "\n".join(new_lines).strip()
+
+    if dest_text and not dest_text.endswith("\n"):
+        dest_text += "\n"
+
+    merged = dest_text + "\n" + source_text if dest_text.strip() else source_text
+    dest_path.write_text(merged, encoding="utf-8")
+
+    if state_path:
+        _write_state(state_path, {"version": STATE_VERSION, "merged": True})
 
 
-def unmerge_config(dest_config_path: str, state_path: str | None = None) -> None:
+def unmerge_config(
+    dest_config_path: str,
+    state_path: str | None = None,
+) -> None:
+    """Remove manifest-dev sections from Codex config.toml."""
     dest_path = Path(dest_config_path)
     if not dest_path.exists():
         return
 
-    current_text = _migrate_legacy_agent_shared_settings(
-        dest_path.read_text(encoding="utf-8")
-    )
-    loaded_state = _load_state(state_path)
-    if not loaded_state:
-        loaded_state = _extract_embedded_state(current_text)
-    state = _normalize_state(current_text, loaded_state, dest_path.exists())
+    text = dest_path.read_text(encoding="utf-8")
+    lines = text.split("\n")
+    new_lines: list[str] = []
+    skip_section = False
 
-    merged_text = _strip_managed_config_block(current_text)
-    merged_text = _strip_manifest_agent_tables(merged_text)
+    for line in lines:
+        # Detect manifest-dev sections
+        if line.strip().startswith("[agents.") and any(
+            agent in line for agent in [
+                "criteria-checker", "code-bugs-reviewer", "code-design-reviewer",
+                "code-simplicity-reviewer", "code-maintainability-reviewer",
+                "code-coverage-reviewer", "code-testability-reviewer",
+                "type-safety-reviewer", "docs-reviewer",
+                "context-file-adherence-reviewer", "manifest-verifier",
+                "define-session-analyzer",
+            ]
+        ):
+            skip_section = True
+            continue
+        if skip_section:
+            if line.strip().startswith("[") and not line.strip().startswith("[agents."):
+                skip_section = False
+            elif line.strip().startswith("[agents."):
+                # Another agent section — check if it's ours
+                if not any(agent in line for agent in [
+                    "criteria-checker", "code-bugs-reviewer", "code-design-reviewer",
+                    "code-simplicity-reviewer", "code-maintainability-reviewer",
+                    "code-coverage-reviewer", "code-testability-reviewer",
+                    "type-safety-reviewer", "docs-reviewer",
+                    "context-file-adherence-reviewer", "manifest-verifier",
+                    "define-session-analyzer",
+                ]):
+                    skip_section = False
+                else:
+                    continue
+            else:
+                continue
 
-    original_keys = state.get("original_keys", {})
-    if not isinstance(original_keys, dict):
-        original_keys = {}
-    for dotted_key, default_value in DEFAULT_SHARED_VALUES.items():
-        if "." in dotted_key:
-            table_name, key = dotted_key.split(".", 1)
-            current_value = _get_table_key_value(merged_text, table_name, key)
-            if original_keys.get(dotted_key) is None and current_value == default_value:
-                merged_text = _remove_key_from_table(
-                    merged_text,
-                    table_name,
-                    key,
-                    default_value,
-                )
-        else:
-            current_value = _get_root_key_value(merged_text, dotted_key)
-            if original_keys.get(dotted_key) is None and current_value == default_value:
-                merged_text = _remove_root_key(
-                    merged_text,
-                    dotted_key,
-                    default_value,
-                )
+        # Remove manifest-dev specific top-level settings
+        if "# manifest-dev configuration" in line:
+            skip_section = True
+            continue
+        if line.strip() == "project_doc_fallback_filenames" and "CLAUDE.md" in line:
+            continue
 
-    original_lists = state.get("original_lists", {})
-    if not isinstance(original_lists, dict):
-        original_lists = {}
-    current_list = _parse_quoted_list(
-        _get_root_key_value(
-            merged_text,
-            "project_doc_fallback_filenames",
-        )
-    )
-    original_list = original_lists.get("project_doc_fallback_filenames")
-    if isinstance(current_list, list) and "CLAUDE.md" in current_list:
-        if original_list is None:
-            if current_list == ["CLAUDE.md"]:
-                merged_text = _remove_root_list_value(
-                    merged_text,
-                    "project_doc_fallback_filenames",
-                    "CLAUDE.md",
-                )
-        elif isinstance(original_list, list):
-            if [item for item in current_list if item != "CLAUDE.md"] == original_list:
-                merged_text = _remove_root_list_value(
-                    merged_text,
-                    "project_doc_fallback_filenames",
-                    "CLAUDE.md",
-                )
+        new_lines.append(line)
 
-    merged_text = _remove_empty_table(merged_text, "features")
-    merged_text = _remove_empty_table(merged_text, "agents")
-    merged_text = _strip_manifest_header(merged_text)
-    merged_text = _normalize_config_text(merged_text)
-
-    if merged_text:
-        dest_path.write_text(merged_text, encoding="utf-8")
+    result = "\n".join(new_lines).strip()
+    if result:
+        dest_path.write_text(result + "\n", encoding="utf-8")
     else:
-        dest_path.unlink()
+        dest_path.write_text("{}\n", encoding="utf-8")
 
     if state_path:
         state_file = Path(state_path)
@@ -726,6 +573,14 @@ def namespace(base_dir: str, cli_type: str = "gemini") -> None:
 if __name__ == "__main__":
     if len(sys.argv) >= 3 and sys.argv[1] == "namespace":
         namespace(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "gemini")
+    elif len(sys.argv) == 4 and sys.argv[1] == "merge-settings":
+        merge_settings(sys.argv[2], sys.argv[3])
+    elif len(sys.argv) == 5 and sys.argv[1] == "merge-settings":
+        merge_settings(sys.argv[2], sys.argv[3], sys.argv[4])
+    elif len(sys.argv) == 4 and sys.argv[1] == "unmerge-settings":
+        unmerge_settings(sys.argv[2], sys.argv[3])
+    elif len(sys.argv) == 5 and sys.argv[1] == "unmerge-settings":
+        unmerge_settings(sys.argv[2], sys.argv[3], sys.argv[4])
     elif len(sys.argv) == 4 and sys.argv[1] == "merge-config":
         merge_config(sys.argv[2], sys.argv[3])
     elif len(sys.argv) == 5 and sys.argv[1] == "merge-config":
@@ -736,11 +591,11 @@ if __name__ == "__main__":
         unmerge_config(sys.argv[2], sys.argv[3])
     else:
         print(
-            (
-                f"Usage: {sys.argv[0]} namespace <dir> [codex|gemini|opencode]\n"
-                f"   or: {sys.argv[0]} merge-config <source-config> <dest-config> [state-file]\n"
-                f"   or: {sys.argv[0]} unmerge-config <dest-config> [state-file]"
-            ),
+            f"Usage: {sys.argv[0]} namespace <dir> [codex|gemini|opencode]\n"
+            f"       {sys.argv[0]} merge-settings <source-hooks> <dest-settings> [state-file]\n"
+            f"       {sys.argv[0]} unmerge-settings <source-hooks> <dest-settings> [state-file]\n"
+            f"       {sys.argv[0]} merge-config <source-config> <dest-config> [state-file]\n"
+            f"       {sys.argv[0]} unmerge-config <dest-config> [state-file]",
             file=sys.stderr,
         )
         sys.exit(1)

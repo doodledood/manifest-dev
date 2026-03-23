@@ -163,6 +163,17 @@ Read full log before synthesis. Unresolved `- [ ]` items must be addressed first
 
 **Automate verification** - Use automated methods (commands, subagent review). When using general-purpose subagent, default to `inherit`. When a criterion seems to require manual verification, probe the user: suggest how it could be made automatable, or ask if they have ideas. Manual only as a last resort or when the user explicitly requests it.
 
+**Assign verification phases** - Each criterion's verify block has an optional `phase:` field (numeric, default 1). /verify runs phases in ascending order — Phase N+1 only runs when all Phase N criteria pass.
+
+The principle: **group criteria by iteration speed — faster feedback loops run first.** Criteria that fail fast and are cheap to re-run should be in earlier phases. Criteria that are slow, expensive, deploy-dependent, or require human judgment should be in later phases. The number of phases and their values depend on the task — use as many or as few as the iteration speed differences warrant.
+
+Example reasoning for a typical coding task:
+- **Fastest (default phase)**: Agent reviewers (code-bugs-reviewer, etc.) and criteria-checker bash/codebase checks — seconds to run, any code change can immediately be re-verified.
+- **Slower (later phase)**: E2e tests — usually require deployment, any code change invalidates them, and they act as a seal on the whole system. Running them before cheaper checks pass wastes deploy cycles.
+- **Slowest (even later phase)**: Manual verification — requires human judgment, can take hours or days. Only run after all automated verification passes.
+
+Omit `phase:` for the fastest criteria (phase 1 is the default). Only set `phase:` explicitly for criteria that should run later. Non-contiguous phases are valid — /verify skips gaps.
+
 ## Approach Section (Complex Tasks)
 
 After defining deliverables, probe for **initial** implementation direction. Skip for simple tasks with obvious approach.
@@ -371,6 +382,7 @@ Three categories, each covering **output** or **process**:
   ```yaml
   verify:
     method: bash | codebase | subagent | research | manual
+    phase: "[numeric, optional, default 1 — higher phases run after lower phases pass]"
     command: "[if bash]"
     agent: "[if subagent]"
     model: "[if subagent, default inherit]"
@@ -398,6 +410,7 @@ Three categories, each covering **output** or **process**:
   ```yaml
   verify:
     method: bash | codebase | subagent | research | manual
+    phase: "[numeric, optional, default 1]"
     [details]
   ```
 

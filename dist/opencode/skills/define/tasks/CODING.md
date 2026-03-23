@@ -4,7 +4,7 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-AGENTS.md may specify project-specific preferences.
+CLAUDE.md may specify project-specific preferences.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
@@ -16,24 +16,26 @@ AGENTS.md may specify project-specific preferences.
 | Testability | code-testability-reviewer | no MEDIUM+ |
 | Documentation | docs-reviewer | no MEDIUM+ |
 | Design fitness | code-design-reviewer | no MEDIUM+ |
-| AGENTS.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
+| CLAUDE.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
 
 ## Project Gates
 
-AGENTS.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 
-E2E verification encodes as ACs on the relevant deliverable(s), not as a separate deliverable or process guidance. E2E is verification of the work, not work itself.
+E2E verification encodes as Global Invariants (INV-G*), not as deliverable ACs or separate deliverables. E2E verifies the system works end-to-end — it's a constitutional constraint, not per-deliverable success criteria.
 
-Before encoding e2e ACs, probe:
+Each e2e test case gets its own INV-G*. Together, the set of e2e invariants represents the complete e2e testing plan (e.g., INV-G5: login flow, INV-G6: order creation, INV-G7: checkout flow).
+
+E2e tests are slow and often deploy-dependent — assign them a later phase than fast automated checks (lint, tests, code review agents). Manual e2e should be in an even later phase (human-dependent, slowest iteration). Only use manual when automated E2E is truly not feasible and user confirms no test data exists.
+
+Before encoding e2e invariants, probe:
 - **Test data** - often discoverable; probe: existing test users/accounts? can research via project tools (queries, test fixtures, admin panels)?
 - **Environment** - probe: which environment for e2e tests (dev, staging, production read-only)?
 - **Automation feasibility** - probe: can tests be scripted? existing health checks or testable endpoints?
 
-When probing yields actionable findings, encode as ACs on the deliverable being verified. Each e2e AC should specify the test scenario and expected outcome (e.g., "AC-1.4: POST /api/orders returns 201 with valid payload on staging").
-
-Manual verification only when automated E2E is truly not feasible and user confirms no test data exists.
+When probing yields actionable findings, encode each test case as an INV-G*. Each should specify the scenario and expected outcome (e.g., "INV-G5: E2E login flow — POST /auth/login returns 200 with valid credentials on staging").
 
 ## Scenario Prompts
 

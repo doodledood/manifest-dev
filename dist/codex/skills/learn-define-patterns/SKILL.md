@@ -1,6 +1,6 @@
 ---
 name: learn-define-patterns
-description: 'Analyze recent /define sessions to extract user preference patterns and write them to CLAUDE.md. Use when you want to learn from past define sessions, extract define patterns, improve future defines, or capture define preferences.'
+description: 'Analyze recent /define sessions to extract user preference patterns and write them to AGENTS.md. Use when you want to learn from past define sessions, extract define patterns, improve future defines, or capture define preferences.'
 user-invocable: true
 ---
 
@@ -8,7 +8,7 @@ user-invocable: true
 
 # Goal
 
-Analyze recent `/define` session transcripts, extract patterns in how the user approaches `/define` interviews (probing preferences, trade-off defaults, recurring invariants, process guidance, quality gate adjustments), and write generalizable patterns to CLAUDE.md as `## /define Preferences`. Future `/define` sessions see these preferences automatically because CLAUDE.md is loaded into context.
+Analyze recent `/define` session transcripts, extract patterns in how the user approaches `/define` interviews (probing preferences, trade-off defaults, recurring invariants, process guidance, quality gate adjustments), and write generalizable patterns to AGENTS.md as `## /define Preferences`. Future `/define` sessions see these preferences automatically because AGENTS.md is loaded into context.
 
 # Why This Matters
 
@@ -22,8 +22,8 @@ Every `/define` session, users make the same corrections, add the same invariant
 | **Merge, never overwrite** | If a `## /define Preferences` section already exists, merge new patterns with existing ones. Never blindly overwrite. |
 | **Semantic deduplication** | When merging, identify patterns that say the same thing in different words and consolidate them. Don't just check for exact text matches. |
 | **Standard markdown only** | Output uses `##` headers, `###` subheaders, `- ` bullets, and `<!-- date -->` HTML comments. No custom syntax, no YAML, no special parsing. |
-| **Ask write target** | Ask the user which CLAUDE.md to write to: project CLAUDE.md, user `~/.claude/CLAUDE.md`, or both. Never assume. |
-| **Diff preview before write** | Show the user exactly what will be added or changed in CLAUDE.md before writing. |
+| **Ask write target** | Ask the user which AGENTS.md to write to: project AGENTS.md, user `~/.codex/AGENTS.md`, or both. Never assume. |
+| **Diff preview before write** | Show the user exactly what will be added or changed in AGENTS.md before writing. |
 | **Clean up temp files** | Delete per-session analysis files from `/tmp/` after aggregation is complete. |
 
 # Session Discovery
@@ -54,7 +54,7 @@ The final output is a unified set of user preferences derived from all analyzed 
 - Choice of write target: project CLAUDE.md, user `~/.claude/CLAUDE.md`, or both
 - Diff/preview of exact changes before writing
 
-# CLAUDE.md Output Format
+# AGENTS.md Output Format
 
 ```markdown
 ## /define Preferences
