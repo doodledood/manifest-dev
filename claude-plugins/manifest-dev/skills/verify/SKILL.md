@@ -22,7 +22,7 @@ Mode defaults to `thorough` if not provided.
 |-----------|------|
 | **Orchestrate, don't verify** | Spawn agents to verify. You coordinate results, never run checks yourself. |
 | **ALL criteria, no exceptions** | Every INV-G* and AC-*.* criterion MUST be verified. Skipping any criterion is a critical failure. |
-| **Maximize parallelism** | Launch all verifiers in a SINGLE message with multiple Task tool calls. Never launch one at a time. **Overridden by mode** — see Mode-Aware Verification below. |
+| **Maximize parallelism within phase** | Launch all same-phase verifiers in a SINGLE message. Never launch one at a time within a phase. Phases run sequentially — see Phased Execution below. **Parallelism within each phase overridden by mode** — see Mode-Aware Verification. |
 | **Globals are critical** | Global Invariant failures mean task failure. Highlight prominently. |
 | **Actionable feedback** | Pass through file:line, expected vs actual, fix hints. |
 
@@ -68,6 +68,21 @@ Note: PG-* items guide HOW to work. Followed during /do, not checked by /verify.
 
 If a verification agent crashes, times out, or returns unusable output, treat the criterion as FAIL with a note that verification itself failed (not the criterion). Include the error in the failure details so /do can distinguish "criterion didn't pass" from "couldn't check."
 
+## Phased Execution
+
+Criteria have an optional `phase:` field (numeric, default 1). Phases run in ascending order — Phase N+1 only launches when all Phase N criteria pass.
+
+**Execution rules:**
+- Group all criteria (INV-G* and AC-*) by their `phase:` value. Missing `phase:` = phase 1.
+- Run the lowest phase first. Within that phase, apply parallelism rules (mode-dependent).
+- If all criteria in the current phase pass, proceed to the next phase.
+- If any criterion in the current phase fails, return failures immediately with phase context. Do not run later phases — let /do enter the fix loop faster.
+- Non-contiguous phases (e.g., 1 and 3, no 2) are valid — skip to the next existing phase.
+
+**Phase failure reporting:** When a phase fails, include the phase number in the failure report and note which later phases were not run (e.g., "Phase 1: 2 failures. Phase 2: not run (3 criteria pending).").
+
+**Backward compatibility:** Manifests without any `phase:` fields have all criteria in phase 1 — identical to current behavior (all criteria run together per mode parallelism).
+
 ## Mode-Aware Verification
 
 When `--mode` is not `thorough`, these rules override default behavior:
@@ -83,7 +98,8 @@ When `--mode` is not `thorough`, these rules override default behavior:
 ## Never Do
 
 - Skip criteria (even "obvious" ones) — unless mode explicitly allows (efficient mode skips deliverable-level reviewer subagents)
-- Launch verifiers sequentially across multiple messages — unless mode requires it (efficient = sequential, balanced = batched)
+- Launch verifiers sequentially across multiple messages within the same phase — unless mode requires it (efficient = sequential, balanced = batched)
+- Run later-phase criteria when an earlier phase has failures
 - Verify criteria yourself instead of spawning agents
 
 ## Outcome Handling
@@ -97,16 +113,17 @@ When `--mode` is not `thorough`, these rules override default behavior:
 
 ## Output Format
 
-Report verification results grouped by Global Invariants first, then by Deliverable.
+Report verification results grouped by phase, then by Global Invariants first, then by Deliverable within each phase.
 
-**On failure** - Show for each failed criterion:
+**On phase failure** - Show the phase that failed, then for each failed criterion:
 - Criterion ID and description
 - Verification method
 - Failure details: location, expected vs actual, fix hint
+- Note later phases not run and their pending criteria count.
 
 **On success with manual** - List manual criteria with how-to-verify from manifest, suggest /escalate.
 
-**On full success** - Call /done.
+**On full success** (all phases pass) - Call /done.
 
 ## Collaboration Mode
 
