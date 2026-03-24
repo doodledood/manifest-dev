@@ -35,6 +35,8 @@ Platform-agnostic collaborative workflow orchestration.
 
 Workers (define-worker, executor) are **medium-blind** — they message the lead only, with no awareness of which coordinator exists or what platform is in use.
 
+**Lead role boundary:** The lead orchestrates but never executes operational tasks (builds, tests, git operations, deploy monitoring, API polling). All execution is delegated to teammates — existing workers or ad-hoc teammates spawned on-the-fly.
+
 ## Prerequisites
 
 - **manifest-dev plugin** installed (provides `/define`, `/do`, `/verify`).
