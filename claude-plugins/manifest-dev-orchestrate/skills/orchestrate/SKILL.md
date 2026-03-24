@@ -19,7 +19,7 @@ Orchestrate a full define → do → PR → review → QA → done workflow. You
 
 `--resume` must appear first when present (existing behavior). All other flags can appear anywhere in the remaining arguments. Flags persist in state and reach the appropriate teammate (see Phase 1, Phase 3). Flag values are forwarded verbatim where applicable — `/define` and `/do` validate their own flags.
 
-**Defaults**: No flags → `--medium local --review-platform github` (solo mode with GitHub review).
+**Defaults**: No flags → `--medium local --review-platform github`, no `--interview` flag forwarded (`/define` uses its own default). `--auto` implies `--interview autonomous` per AUTO_MODE.md — this is the only implicit interview setting.
 
 If `$ARGUMENTS` is empty (no task description and no `--resume`), ask what they want to build or change.
 
@@ -163,7 +163,7 @@ TEAM_CONTEXT:
   role: define|execute
 ```
 
-This tells the skill to message the lead (you) instead of using AskUserQuestion. Workers are medium-blind — they message the lead only, with no awareness of which coordinator exists or what messaging platform is in use. You route to the appropriate coordinator (or handle directly in local mode).
+This tells the skill to message the lead (you) instead of using AskUserQuestion. TEAM_CONTEXT changes the **communication channel** (how questions are routed), NOT the **interview style** (whether questions are asked). Interview style is controlled solely by the `--interview` flag. Workers are medium-blind — they message the lead only, with no awareness of which coordinator exists or what messaging platform is in use. You route to the appropriate coordinator (or handle directly in local mode).
 
 ## Subagent Bridge Protocol
 
@@ -298,7 +298,11 @@ If `$ARGUMENTS` starts with `--resume`:
 
 ### Phase 1: Define
 
-1. Message manifest-define-worker with the task description, TEAM_CONTEXT block, and the `--interview` flag if one was parsed. Example: "Run /define for: [task description] --interview minimal\n\nTEAM_CONTEXT:\n  lead: <your-name>\n  role: define"
+1. Message manifest-define-worker with the task description and TEAM_CONTEXT block. Include the `--interview` flag **only** if one was explicitly parsed from user arguments or implied by `--auto`.
+
+   Default (no `--interview` flag): "Run /define for: [task description]\n\nTEAM_CONTEXT:\n  lead: <your-name>\n  role: define"
+
+   With explicit flag: "Run /define for: [task description] --interview minimal\n\nTEAM_CONTEXT:\n  lead: <your-name>\n  role: define"
 2. When manifest-define-worker messages you with Q&A questions:
    - **With messaging coordinator**: Route to the messaging coordinator with expertise context (e.g., "Relevant expertise: backend/security") so it can create a message and tag the right stakeholder(s). Relay coordinator's responses back to manifest-define-worker.
    - **Local mode**: Present questions to the user via AskUserQuestion. Relay answers back to manifest-define-worker.
@@ -487,3 +491,4 @@ Otherwise, stay quiet and let humans drive. Don't lecture, don't dominate, don't
 - **Continue if the orchestration backend fails or is unavailable** — abort and tell the user
 - **Fall back to regular subagents** — this skill has no subagent fallback
 - **Compose verbatim platform-native messages** — send intent and context to coordinators, let them compose the actual messages
+- **Assume autonomous interview without explicit trigger** — only two paths lead to `--interview autonomous`: the user passes `--auto` (which implies it per AUTO_MODE.md) or the user explicitly passes `--interview autonomous`. Without one of these, do not forward any `--interview` flag — `/define` uses its own default
