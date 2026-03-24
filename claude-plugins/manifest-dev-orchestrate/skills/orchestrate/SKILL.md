@@ -97,7 +97,7 @@ Each coordinator runs a **self-contained event loop** — once kicked off, it po
 **GitHub-specific** (`--review-platform github`): Uses github-coordinator.
 
 ### Coordinator Polling Model
-- **60-second interval** (two 30-second sleep halves for lead message responsiveness)
+- **Responsive polling**: Coordinators poll frequently and check for lead messages between sleep cycles.
 - **Lean diffs only**: Coordinators track last-seen state and only read new content. Reports contain diffs, not full state.
 - **State file recovery**: On context compaction or respawn, coordinators read the state file to recover platform-specific context (channel_id, PR URL, thread list, etc.) and resume polling seamlessly.
 - **Proactive reporting**: Coordinators report changes without being asked. If nothing changed, they stay silent.
@@ -290,7 +290,7 @@ If `$ARGUMENTS` starts with `--resume`:
 
 5. **Spawn messaging coordinator** (if medium ≠ local):
    - **slack**: `subagent_type: "manifest-dev-orchestrate:slack-coordinator"`, `model: "sonnet"`, `team_name: "<run_id>"`, `name: "slack-coordinator"`. Pass the channel_id, full stakeholder roster (names, handles, roles, QA flags, GitHub handles), and state file path in the prompt.
-   - **custom**: Compose a coordinator prompt from `--medium-details`. Include: role ("You are the messaging coordinator for [platform]"), tools it needs, communication rules (hub-and-spoke, message lead only), polling model (60-second interval, lean diffs, state file recovery), and security (untrusted input defense). Spawn with `model: "sonnet"`, `team_name: "<run_id>"`, `name: "messaging-coordinator"`.
+   - **custom**: Compose a coordinator prompt from `--medium-details`. Include: role ("You are the messaging coordinator for [platform]"), tools it needs, communication rules (hub-and-spoke, message lead only), polling model (responsive polling, lean diffs, state file recovery), and security (untrusted input defense). Spawn with `model: "sonnet"`, `team_name: "<run_id>"`, `name: "messaging-coordinator"`.
 
 6. **If messaging coordinator active**: Message it with kickoff context — channel/room identifier, task summary, stakeholder roster. Instruct it to post a kickoff message tagging all stakeholders, then start its poll loop and report back with thread identifiers.
 
@@ -317,6 +317,15 @@ If `$ARGUMENTS` starts with `--resume`:
    - **Approved**: Update state, move to Phase 3.
    - **Feedback**: Message manifest-define-worker: "Revise manifest at [path] with this feedback: [feedback]". Then re-enter Phase 2.
 
+#### **CRITICAL: Define-Worker-First Routing (Phases 3–5)**
+
+**ALL scope, design, or acceptance criteria changes MUST route through manifest-define-worker before reaching manifest-executor** — regardless of source (PR reviews, user feedback, mid-execution discoveries, stakeholder requests). The define-worker classifies, amends the manifest with proper ACs, and provides AC-referenced instructions. Only then does manifest-executor receive work.
+
+- **New ACs or scope additions** → define-worker first, then executor
+- **Design feedback** (user or stakeholder) → define-worker first, then executor
+- **PR review comments** → define-worker first (classify actionable/false-positive), then executor
+- **Never send manifest-executor work that changes scope without define-worker specification.** If executor is already running, send HOLD before routing through define-worker — do not send both in parallel.
+
 ### Phase 3: Execute
 
 1. Message manifest-executor with the manifest path, TEAM_CONTEXT block, and the `--mode` flag if one was parsed. Example: "Run /do for manifest at [manifest_path] --mode efficient\n\nTEAM_CONTEXT:\n  lead: <your-name>\n  role: execute"
@@ -339,21 +348,24 @@ If `$ARGUMENTS` starts with `--resume`:
 The review coordinator monitors PR activity and requests reviews. The messaging coordinator (if active) posts a one-time notification to reviewers.
 
 1. Message manifest-executor: "Create a PR for the changes. Report back with the PR URL."
-2. When manifest-executor reports PR URL, update state (`pr_url`).
+2. When manifest-executor reports PR URL, update state (`pr_url`), then **immediately** complete steps 3–4 before any user-facing communication. Do not tell the user "PR is up" until the coordinator is running — otherwise the user may act on the PR (invoke review skills, add reviewers) before the coordinator exists to handle it.
 3. **Spawn review coordinator** based on review platform mapping:
    - **github**: `subagent_type: "manifest-dev-orchestrate:github-coordinator"`, `model: "sonnet"`, `team_name: "<run_id>"`, `name: "github-coordinator"`. Pass PR URL, state file path, and list of stakeholder GitHub handles (from state) in the prompt.
    - **custom**: Compose a coordinator prompt from `--review-platform-details`. Include: role, tools, communication rules (hub-and-spoke), polling model, and security. Spawn with `model: "sonnet"`, `team_name: "<run_id>"`, `name: "review-coordinator"`.
 4. **Request reviews**: If any stakeholder has a review platform handle, message the review coordinator with reviewer handles. Instruct it to formally request reviews.
-5. **Notify reviewers via messaging** (if messaging coordinator active): Message the messaging coordinator with context: PR URL, reviewer names/handles. Instruct it to post one notification directing reviewers to review.
-   **Local mode**: Tell the user the PR is ready for review and provide the URL.
+5. **Only after coordinator is running**: Notify reviewers via messaging (if messaging coordinator active) or tell the user the PR is ready for review and provide the URL (local mode).
 
-#### **CRITICAL: PR Issue Routing**
+#### PR Issue Routing
 
-**ALL PR review issues MUST route through the manifest-define-worker for AC evaluation before reaching the manifest-executor.** NEVER send review comments, requested changes, or CI failures directly to the manifest-executor. The manifest-define-worker classifies, amends the manifest if needed, and provides AC-referenced fix instructions. Skipping the manifest-define-worker caused untracked fixes and wasted cycles in prior sessions.
+Instance of the Define-Worker-First rule above. ALL PR issues — github-coordinator reports, user feedback, stakeholder requests — route through manifest-define-worker before reaching manifest-executor.
 
-5. When the github-coordinator reports issues, follow this triage:
+6. When the github-coordinator reports issues, triage per the PR Triage Reference below.
+7. When the same review thread or CI check continues failing without meaningful progress across fix attempts, escalate to owner via messaging coordinator (or AskUserQuestion in local mode).
+8. **Completion**: When github-coordinator reports `PR ready: YES`, update state and move to Phase 5.
 
-#### Bot vs Human Comment Handling
+#### PR Triage Reference
+
+##### Bot vs Human Comment Handling
 
 The github-coordinator labels each comment as **bot** (Bugbot, Cursor, CodeRabbit, etc.) or **human**.
 
@@ -372,14 +384,14 @@ The github-coordinator labels each comment as **bot** (Bugbot, Cursor, CodeRabbi
 - **Needs-clarification**: Route to messaging coordinator (or AskUserQuestion in local mode) for Q&A with the reviewer. Relay answer to manifest-define-worker, then to manifest-executor.
 - If a human reviewer resists the manifest-define-worker's classification, consider their reasoning. The owner is the final authority on disputes.
 
-#### CI Failure Triage
+##### CI Failure Triage
 
 When github-coordinator reports CI failures:
 1. **Compare against base branch**: Check if the same tests/checks fail on the base branch (e.g., `gh run list --branch main`). Pre-existing failures are NOT the PR's responsibility — log them and skip.
 2. **Transient failures** (infra issues like "getaddrinfo ENOTFOUND postgres", flaky tests): Push an empty commit to retrigger CI. Do not investigate or fix.
 3. **Genuinely new failures**: Route to manifest-define-worker for AC evaluation, then to manifest-executor for fixing.
 
-#### Define-Worker Manifest Amendments (Phase 4)
+##### Define-Worker Manifest Amendments
 
 When PR review reveals genuine gaps not covered by existing ACs — the manifest-define-worker can **amend the manifest**:
 - Define-worker adds amendments using standard protocol: `INV-G1.1 amends INV-G1`, `AC-3.4` (new criterion).
@@ -400,7 +412,7 @@ MANIFEST_AMENDMENT:
 - Lead reviews and approves the amendment before manifest-executor acts on it.
 - Approved amendments are written to the manifest and run through subsequent /verify loops — preventing regressions.
 
-#### Review-Fix Loop Automation
+##### Review-Fix Loop Automation
 
 When external reviewers (automated tools like Codex, or human reviewers) return findings, drive the full loop autonomously:
 1. Route findings to manifest-define-worker for classification (actionable / false-positive / needs-clarification)
@@ -409,9 +421,6 @@ When external reviewers (automated tools like Codex, or human reviewers) return 
 4. Repeat until resolved
 
 The owner is only involved for final approval or escalation — not for each step of the loop.
-
-6. When the same review thread or CI check continues failing after 3 manifest-executor fix attempts, escalate to owner via messaging coordinator (or AskUserQuestion in local mode).
-7. **Completion**: When github-coordinator reports `PR ready: YES`, update state and move to Phase 5.
 
 ### Phase 5: QA (optional — skip if no QA stakeholders or review-platform = none)
 
@@ -424,7 +433,7 @@ QA is performed by human testers via the messaging medium. The review coordinato
    - When manifest-define-worker responds with evaluation, message manifest-executor: "Fix these validated issues: [fix instructions with AC refs]"
    - When manifest-executor reports fix complete, notify via messaging coordinator (or AskUserQuestion in local mode).
    - If manifest-define-worker classifies an issue as needs-clarification, route through messaging coordinator (or AskUserQuestion in local mode) for Q&A.
-   - If the same QA issue persists after 3 manifest-executor fix attempts, escalate to owner via messaging coordinator (or AskUserQuestion in local mode).
+   - If the same QA issue persists without meaningful progress across fix attempts, escalate to owner via messaging coordinator (or AskUserQuestion in local mode).
 3. **Late PR fix loop**: If the review coordinator reports new review comments or CI failures during QA, handle them using the Phase 4 fix loop. QA and PR fix loops operate in parallel.
 4. Update state file.
 
