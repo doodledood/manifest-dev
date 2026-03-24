@@ -66,7 +66,8 @@ Workers (define-worker, executor) are **medium-blind** — they message the lead
 /orchestrate --review-platform custom --review-platform-details "GitLab at gitlab.example.com" add rate limiting
 ```
 
-**Additional flags** (forwarded to downstream skills):
+**Additional flags:**
+- `--auto` — agent acts as the owner across all phases (owner decisions automated, external stakeholders still participate)
 - `--interview <level>` → `/define` (`minimal | autonomous | thorough`)
 - `--mode <level>` → `/do` (`efficient | balanced | thorough`)
 
