@@ -7,9 +7,13 @@ description: 'Craft or update LLM prompts from first principles. Use when creati
 
 Create or update an LLM prompt. Prompts act as manifests: clear goal, clear constraints, freedom in execution.
 
+**If no request provided**: Ask the user whether they want to create a new prompt, update an existing one, or review prompt structure.
+
 **If creating**: Discover goal, constraints, and structure through targeted questions.
 
 **If updating**: Read existing prompt, identify issues against principles, make targeted fixes.
+
+**If creating or updating a skill**: Read `references/skills.md` for skill-specific architecture patterns (folder structure, progressive disclosure, gotchas, setup config, description-as-trigger, skill type awareness) before proceeding.
 
 ## Context Discovery
 
@@ -107,19 +111,9 @@ For prompts involving accumulated findings across steps:
 | LLM Limitation | Pattern Response |
 |----------------|------------------|
 | Context rot (middle content lost) | Write findings to log after EACH step |
-| Working memory (5-10 items max) | Todo lists externalize tracked areas |
+| Working memory is limited | Todo lists externalize tracked areas |
 | Synthesis failure at scale | Read full log BEFORE final output |
 | Recency bias | Refresh moves findings to context end |
-
-**Structure when memento applies**:
-```
-- [ ] Create log /tmp/{workflow}-*.md
-- [ ] {Area 1}→log; done when {criteria}
-- [ ] {Area 2}→log; done when {criteria}
-- [ ] (expand: areas as discovered)
-- [ ] Refresh: read full log    ← Never skip
-- [ ] Synthesize→artifact; done when complete
-```
 
 **Key disciplines**:
 - `→log` after each collection step (discipline, not capability)
@@ -153,6 +147,10 @@ description: 'What it does. When to use. Trigger terms.'
 | Principle | Rule |
 |-----------|------|
 | {Discipline} | {Enforcement} |
+
+## Gotchas
+
+{Known failure modes Claude hits — specific, actionable, observed}
 
 ## Never Do
 
@@ -190,6 +188,14 @@ description: 'Craft or update LLM prompts from first principles. Use when creati
 - Include trigger terms users say
 - Specify when to use
 - Under 1024 chars
+
+## Gotchas
+
+- **Rewriting working language for style**: Claude rewrites clear, working prompt text for stylistic preference. If existing language is unambiguous and effective, don't touch it.
+- **Skipping context discovery when the task seems obvious**: Claude jumps to writing/editing without probing. Even "simple" prompt tasks have hidden constraints — force discovery before producing output.
+- **Over-engineering simple prompts**: A 3-line prompt doesn't need 10 sections, a memento pattern, and a validation checklist. Match complexity to the task.
+- **Converting principles into rigid rules**: "Stop when converged" becomes "Max 5 iterations." Principles give flexibility; rigid rules create edge cases.
+- **Adding examples for behaviors Claude already knows**: Examples earn their place only when they demonstrate non-obvious or counter-intuitive behavior.
 
 ## Validation Checklist
 
