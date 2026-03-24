@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev-orchestrate",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Platform-agnostic collaborative define/do workflow orchestration. Supports any messaging medium (local, Slack, custom) and any review platform (GitHub, none, custom) with sensible defaults. Intent-based lead orchestrator spawns specialized teammates that coordinate via hub-and-spoke messaging.",
   "keywords": [
     "orchestration",

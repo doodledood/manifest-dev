@@ -15,6 +15,7 @@ Orchestrate a full define → do → PR → review → QA → done workflow. You
 - `--resume <state-file-path>` — resume an interrupted workflow
 - `--interview <level>` — forwarded to `/define` (controls interview depth: `minimal | autonomous | thorough`)
 - `--mode <level>` — forwarded to `/do` (controls verification intensity: `efficient | balanced | thorough`)
+- `--auto` — agent acts as the owner across all phases. Read `references/AUTO_MODE.md` when this flag is present.
 
 `--resume` must appear first when present (existing behavior). All other flags can appear anywhere in the remaining arguments. Flags persist in state and reach the appropriate teammate (see Phase 1, Phase 3). Flag values are forwarded verbatim where applicable — `/define` and `/do` validate their own flags.
 
@@ -29,6 +30,7 @@ Validate flags before proceeding:
 - `--review-platform custom` without `--review-platform-details` → error: "Custom review platform requires --review-platform-details describing your review system."
 - `--medium <unknown>` (not in mapping table) → error: "Unknown medium '<value>'. Valid options: local, slack, custom. Use --medium custom --medium-details '...' for unsupported platforms."
 - `--medium slack` without Slack MCP server configured → error: "Slack medium requires Slack MCP server. Configure it with: send_message, read_channel, read_thread, search_channels, search_users, read_user_profile."
+- `--auto` is a boolean flag (no value). If followed by what looks like a value (not another flag or the task description), treat the next token as part of the task description — `--auto` consumes no argument.
 
 ## Prerequisites
 
@@ -229,6 +231,7 @@ Re-read the state file before each phase transition to guard against context com
     "pr_ready": false
   },
   "flags": {
+    "auto": false,
     "interview": null,
     "mode": null
   },
@@ -254,7 +257,7 @@ Delivery: Direct message to <worker> | File at <path>
 
 If `$ARGUMENTS` starts with `--resume`:
 1. Read the state file at the provided path.
-2. Restore `medium` and `review_platform` config from state file. Restore flags from `state.flags` (default to `{"interview": null, "mode": null}` if the key is missing). If `--medium`, `--review-platform`, `--interview`, or `--mode` flags are also provided alongside `--resume`, they override the stored values.
+2. Restore `medium` and `review_platform` config from state file. Restore flags from `state.flags` (default to `{"auto": false, "interview": null, "mode": null}` if the key is missing). If `--auto`, `--medium`, `--review-platform`, `--interview`, or `--mode` flags are also provided alongside `--resume`, they override the stored values. When `auto` is true (from state or override), read `references/AUTO_MODE.md` and apply its behavioral deltas.
 3. Create the team (spawn teammates via orchestration backend), then re-spawn workers (manifest-define-worker, manifest-executor) with existing context in their spawn prompts.
 4. If `medium.type` ≠ `local`, spawn the appropriate messaging coordinator using the medium mapping table and `medium_state` from the state file.
 5. If resuming from Phase 4 or later and `pr_url` is set, and `review_platform.type` ≠ `none`, spawn the appropriate review coordinator with the PR URL from the state file.
