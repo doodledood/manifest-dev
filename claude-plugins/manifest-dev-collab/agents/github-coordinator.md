@@ -74,16 +74,17 @@ Each poll cycle, check ALL of these — they are separate API surfaces:
 
 **Label each comment as bot or human** based on author. Known bots: Bugbot, Cursor, CodeRabbit, Dependabot, Renovate, and any author with `[bot]` suffix or app-type account.
 
-**Batch report format** (send to lead only when changes detected):
+**Batch report format** — unified across VCS coordinators (send to lead only when changes detected):
 ```
-PR STATUS UPDATE:
+VCS STATUS UPDATE:
   Reviews: [approved: N, changes_requested: N, pending: N]
   Comments: [new_bot: N, new_human: N, unresolved: N]
     - [bot] Bugbot: "potential null dereference in foo.ts:42" (thread #123)
     - [human] @reviewer: "rename this variable" (thread #456)
-  CI checks: [passing: N, failing: N, pending: N] [failure details if any]
+  CI status: [passing: N, failing: N, pending: N]
+    - FAILING: <check-name> — "<error details>" (run #789)
   Discussions: [resolved: N, unresolved: N]
-  PR ready: YES/NO [which criteria not met]
+  Ready: YES/NO [unmet: <criteria list>]
 ```
 
 ## PR Completion Criteria
@@ -94,7 +95,7 @@ The PR is ready to move forward when ALL three conditions are met:
 2. **No unresolved comment threads**
 3. **All CI checks passing**
 
-When all three are met, include `PR ready: YES` in your batch report.
+When all three are met, include `Ready: YES` in your batch report.
 
 ## Polling Rules
 
