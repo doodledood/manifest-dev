@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.67.2",
+  "version": "0.69.1",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
@@ -39,6 +39,50 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/pretool_verify_hook.py"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "description": "Check for manifest amendments when user provides input during /do workflow",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/prompt_submit_hook.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "TaskUpdate",
+        "description": "Remind to update execution log after task progress during /do",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttool_log_hook.py"
+          }
+        ]
+      },
+      {
+        "matcher": "TaskCreate",
+        "description": "Remind to update execution log after task creation during /do",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttool_log_hook.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "description": "Remind to update execution log after workflow skill calls during /do",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttool_log_hook.py"
           }
         ]
       }

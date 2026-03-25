@@ -136,6 +136,18 @@ See `skills/do/references/BUDGET_MODES.md` for full routing table and escalation
 | Research | `skills/define/tasks/research/RESEARCH.md` + source files | Research, analysis, investigation. Source-specific guidance in `tasks/research/sources/` |
 | Other | (none) | Doesn't fit above categories |
 
+**Workflow task files** add a process/lifecycle dimension orthogonal to the domain files above:
+
+| Task Type | File | When Loaded |
+|-----------|------|-------------|
+| Workflow | `skills/define/tasks/workflow/WORKFLOW.md` | Multi-step process, review/approval/CI, external deps, `--medium` flag |
+| Collaboration | `skills/define/tasks/workflow/COLLABORATION.md` | Team/stakeholders, `--medium` non-local |
+| Slack | `skills/define/tasks/workflow/messaging/SLACK.md` | `--medium slack` |
+| GitHub Review | `skills/define/tasks/workflow/code-review/GITHUB.md` | Default for code + workflow, or explicit GitHub/PR |
+| GitLab Review | `skills/define/tasks/workflow/code-review/GITLAB.md` | GitLab, MR, `--review-platform gitlab` |
+
+A dev workflow with review composes: CODING + FEATURE + WORKFLOW + GITHUB. Workflow files are only loaded when workflow indicators are present — solo dev tasks with no review get no workflow files.
+
 The universal flow works without any task file. Task files contain condensed domain knowledge that `/define` uses during probing. Full reference material for `/verify` agents lives in `skills/define/tasks/references/`.
 
 ## How the Interview Works
@@ -178,7 +190,9 @@ These run in parallel during `/verify`:
 
 ## Collaboration Mode
 
-Both `/define` and `/do` support a team collaboration mode activated by passing a `TEAM_CONTEXT` block in arguments. Full instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when collab is active). When active, questions and escalations route through the coordinator teammate via mailbox messaging instead of AskUserQuestion. Skills don't know about Slack — the coordinator handles all external communication. Logs and manifests stay local. This is used by the `/slack-collab` skill in the `manifest-dev-collab` plugin. When no `TEAM_CONTEXT` is present, behavior is unchanged.
+`/define` supports `--medium <platform>` (default: local). When a non-local medium is specified (e.g., `--medium slack`, `--medium discord`), questions route through that platform's tools instead of AskUserQuestion. The medium is encoded in the manifest's Intent section so `/do` knows the communication channel for updates and escalations. Accepts any value — the LLM adapts to whatever medium is specified.
+
+Full routing instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when medium is non-local).
 
 ## Multi-CLI Distribution
 
@@ -186,4 +200,4 @@ Multi-CLI distributions under `dist/` for Gemini CLI, OpenCode, and Codex CLI ar
 
 ## Hooks
 
-Three hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before verification runs. `post_compact_hook.py` restores `/do` context if the session gets compacted. And `pretool_verify_hook.py` nudges agents to actually read the manifest before verifying anything.
+Four hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before verification runs. `post_compact_hook.py` restores `/do` context if the session gets compacted. `pretool_verify_hook.py` nudges agents to actually read the manifest before verifying anything. And `prompt_submit_hook.py` reminds the model to check for manifest amendments when the user provides input during `/do` — enabling the autonomous Self-Amendment flow (`/escalate` → `/define --amend` → `/do` resume).

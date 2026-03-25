@@ -10,7 +10,7 @@ Decision matrix:
 - No /do: ALLOW (not in flow)
 - /do + /done: ALLOW (verified complete)
 - /do + /escalate: ALLOW (properly escalated)
-- /do + /verify + TEAM_CONTEXT: ALLOW (verification delegated to lead)
+- /do + /verify + non-local medium: ALLOW (escalation posted to medium)
 - /do only: BLOCK (must verify first)
 - /do + /verify only: BLOCK (verify returned failures, keep working)
 """
@@ -54,21 +54,35 @@ def main() -> None:
     if state.has_done:
         sys.exit(0)
 
-    # /escalate was called - properly escalated, allow stop
-    if state.has_escalate:
+    # /escalate was called — but Self-Amendment must continue to /define --amend
+    if state.has_escalate and not state.has_self_amendment:
         sys.exit(0)
 
-    # Team mode: /verify was called and verification is delegated to the lead.
-    # The executor goes idle (not terminates) while the lead spawns verification
-    # teammates. The lead will wake the executor with results.
-    if state.has_team_context and state.has_verify:
+    # Self-Amendment escalation — block stop, must continue to /define --amend
+    if state.has_self_amendment:
+        output = {
+            "decision": "block",
+            "reason": "Self-Amendment in progress",
+            "systemMessage": (
+                "Stop blocked: Self-Amendment escalation requires "
+                "/define --amend before stopping. Invoke "
+                "/define --amend <manifest-path> to update the manifest, "
+                "then resume /do."
+            ),
+        }
+        print(json.dumps(output))
+        sys.exit(0)
+
+    # Non-local medium: /verify was called and escalation posted to the medium.
+    # The user will re-invoke /do when the external blocker clears.
+    if state.has_collab_mode and state.has_verify:
         output = {
             "decision": "allow",
-            "reason": "Team mode: verification delegated to lead",
+            "reason": "Non-local medium: escalation posted to medium",
             "systemMessage": (
-                "Verification delegated to the team lead. "
-                "The lead will spawn verification teammates and relay results. "
-                "You will receive a message with VERIFICATION_RESULT when complete."
+                "Escalation posted to the communication medium. "
+                "The user will re-invoke /do with the execution log path "
+                "when the external blocker clears."
             ),
         }
         print(json.dumps(output))

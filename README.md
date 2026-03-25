@@ -325,8 +325,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 
 | Plugin | Description |
 |--------|-------------|
-| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, review agents, workflow hooks |
-| `manifest-dev-orchestrate` | Platform-agnostic collaborative workflow orchestration via `/orchestrate`. Supports any messaging medium (local, Slack, custom) and review platform (GitHub, GitLab, none, custom). Intent-based lead orchestrator with configurable coordinator spawning. |
+| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, review agents, workflow hooks. Includes workflow task files for PR review, CI, collaboration, and QA lifecycle support via `--medium`. Mid-execution manifest amendments via `--amend` flag and UserPromptSubmit hook. |
 
 ## Plugin Architecture
 

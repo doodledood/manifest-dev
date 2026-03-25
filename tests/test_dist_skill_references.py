@@ -9,6 +9,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
+
+
 def namespace_dist(tmp_path: Path, cli: str) -> Path:
     tmp_path.mkdir(parents=True, exist_ok=True)
     src = DIST / cli
@@ -28,9 +30,13 @@ def test_namespaced_skill_handoffs_are_installed_safely(tmp_path: Path) -> None:
     for cli in ("codex", "opencode", "gemini"):
         dist_dir = namespace_dist(tmp_path / cli, cli)
 
-        define_text = (dist_dir / "skills" / "define-manifest-dev" / "SKILL.md").read_text()
+        define_text = (
+            dist_dir / "skills" / "define-manifest-dev" / "SKILL.md"
+        ).read_text()
         do_text = (dist_dir / "skills" / "do-manifest-dev" / "SKILL.md").read_text()
-        verify_text = (dist_dir / "skills" / "verify-manifest-dev" / "SKILL.md").read_text()
+        verify_text = (
+            dist_dir / "skills" / "verify-manifest-dev" / "SKILL.md"
+        ).read_text()
         escalate_text = (
             dist_dir / "skills" / "escalate-manifest-dev" / "SKILL.md"
         ).read_text()
@@ -52,8 +58,14 @@ def test_namespaced_skill_handoffs_are_installed_safely(tmp_path: Path) -> None:
         assert "**Stop requires /escalate**" not in do_text
         assert "calling /verify" not in do_text
 
-        assert 'Return error "Usage: /verify <manifest-path> <log-path>"' not in verify_text
-        assert "| `manual` | Set aside for human verification | /escalate |" not in verify_text
+        assert (
+            'Return error "Usage: /verify <manifest-path> <log-path>"'
+            not in verify_text
+        )
+        assert (
+            "| `manual` | Set aside for human verification | /escalate |"
+            not in verify_text
+        )
         assert "| All pass | Call /done |" not in verify_text
         assert "suggest /escalate." not in verify_text
         assert "**On full success** - Call /done." not in verify_text
@@ -159,7 +171,10 @@ def test_sync_tools_docs_require_complete_additive_installs() -> None:
     ).read_text()
 
     assert "do not ship stubs or require manual post-install wiring" in sync_text
-    assert "Generate complete plugin module placed in the local plugin directory" in opencode_ref
+    assert (
+        "Generate complete plugin module placed in the local plugin directory"
+        in opencode_ref
+    )
     assert "install.sh` must merge" in gemini_ref
 
 
@@ -185,7 +200,10 @@ def test_verification_model_defaults_to_inherit_across_source_and_dist() -> None
 
     for path in verifier_paths:
         text = path.read_text()
-        assert "doesn't specify `model: inherit` for general-purpose judgment tasks" in text
+        assert (
+            "doesn't specify `model: inherit` for general-purpose judgment tasks"
+            in text
+        )
         assert "opus model for general-purpose judgment tasks" not in text
 
 
@@ -295,10 +313,7 @@ def test_gemini_installer_merges_settings_additively(tmp_path: Path) -> None:
     assert merged["experimental"]["otherFlag"] is True
     assert merged["experimental"]["enableAgents"] is True
     before_tool = merged["hooks"]["BeforeTool"]
-    assert any(
-        hook["hooks"][0]["name"] == "custom-before-tool"
-        for hook in before_tool
-    )
+    assert any(hook["hooks"][0]["name"] == "custom-before-tool" for hook in before_tool)
     assert any(
         hook["hooks"][0]["name"] == "pretool-verify"
         and hook["hooks"][0]["command"].endswith("gemini_adapter.py BeforeTool")

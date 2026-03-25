@@ -21,8 +21,9 @@ class DoFlowState:
     has_verify: bool  # /verify was called after last /do
     has_done: bool  # /done was called after last /do
     has_escalate: bool  # /escalate was called after last /do
+    has_self_amendment: bool  # last /escalate was Self-Amendment (not blocking/pause)
     do_args: str | None  # raw arguments from /do invocation
-    has_team_context: bool  # /do args contain TEAM_CONTEXT block
+    has_collab_mode: bool  # /do uses non-local medium (--medium not local)
 
 
 def build_system_reminder(content: str) -> str:
@@ -157,34 +158,6 @@ def _is_user_skill_invocation(line_data: dict[str, Any], skill_name: str) -> boo
         f"<command-name>/{skill_name}</command-name>" in text
         or f"<command-name>/manifest-dev:{skill_name}</command-name>" in text
     )
-
-
-# Legacy aliases for backward compatibility
-def is_skill_invocation(line_data: dict[str, Any], skill_name: str) -> bool:
-    """Check if this line contains a Skill tool call for the given skill."""
-    if line_data.get("type") != "assistant":
-        return False
-    return _is_skill_tool_call(line_data, skill_name)
-
-
-def is_ismeta_skill_expansion(line_data: dict[str, Any], skill_name: str) -> bool:
-    """Check if this line is an isMeta skill expansion for the given skill."""
-    if line_data.get("type") != "user":
-        return False
-    if not line_data.get("isMeta"):
-        return False
-    return _is_user_skill_invocation(line_data, skill_name)
-
-
-def is_user_skill_command(line_data: dict[str, Any], skill_name: str) -> bool:
-    """
-    Check if this line is a user command invoking the skill.
-
-    Detects skill invocations via isMeta expansion (primary) or command-name tags (fallback).
-    """
-    if line_data.get("type") != "user":
-        return False
-    return _is_user_skill_invocation(line_data, skill_name)
 
 
 def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str | None:
@@ -337,8 +310,9 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
     has_verify = False
     has_done = False
     has_escalate = False
+    has_self_amendment = False
     do_args: str | None = None
-    has_team_context = False
+    has_collab_mode = False
     # Tracks whether assistant has responded since the last /do invocation.
     # Used to detect interrupted /do: if the user interrupts before the
     # assistant responds, /do never started processing.
@@ -372,10 +346,13 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
                         has_verify = False
                         has_done = False
                         has_escalate = False
+                        has_self_amendment = False
                         do_turn_has_response = False
                         if args:
                             do_args = args
-                            has_team_context = "TEAM_CONTEXT" in args
+                            has_collab_mode = bool(
+                                re.search(r"--medium\s+(?!local(?:\s|$))\S+", args)
+                            )
 
                     # For assistant Skill tool calls (Pattern 1), the /do
                     # invocation IS an assistant message — mark as responded.
@@ -395,7 +372,7 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
                         if "[Request interrupted by user]" in text:
                             has_do = False
                             do_args = None
-                            has_team_context = False
+                            has_collab_mode = False
 
                 # Check for /verify, /done, /escalate after /do (any invocation pattern)
                 if has_do and was_skill_invoked(data, "verify"):
@@ -406,24 +383,22 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
 
                 if has_do and was_skill_invoked(data, "escalate"):
                     has_escalate = True
+                    # Detect Self-Amendment by checking escalate args
+                    esc_args = get_skill_call_args(data, "escalate")
+                    if not esc_args:
+                        esc_args = extract_user_command_args(data, "escalate")
+                    if esc_args and "self-amendment" in esc_args.lower():
+                        has_self_amendment = True
 
-    except FileNotFoundError:
-        return DoFlowState(
-            has_do=False,
-            has_verify=False,
-            has_done=False,
-            has_escalate=False,
-            do_args=None,
-            has_team_context=False,
-        )
     except OSError:
         return DoFlowState(
             has_do=False,
             has_verify=False,
             has_done=False,
             has_escalate=False,
+            has_self_amendment=False,
             do_args=None,
-            has_team_context=False,
+            has_collab_mode=False,
         )
 
     return DoFlowState(
@@ -431,6 +406,7 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
         has_verify=has_verify,
         has_done=has_done,
         has_escalate=has_escalate,
+        has_self_amendment=has_self_amendment,
         do_args=do_args,
-        has_team_context=has_team_context,
+        has_collab_mode=has_collab_mode,
     )

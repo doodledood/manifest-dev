@@ -8,12 +8,13 @@ from pathlib import Path
 
 import pytest
 
-
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
 
 
-def run_installer(cli: str, env: dict[str, str], action: str = "install") -> subprocess.CompletedProcess[str]:
+def run_installer(
+    cli: str, env: dict[str, str], action: str = "install"
+) -> subprocess.CompletedProcess[str]:
     cmd = ["bash", str(DIST / cli / "install.sh")]
     if action != "install":
         cmd.append(action)
@@ -62,7 +63,10 @@ def test_codex_uninstall_removes_only_manifest_dev_and_reverts_added_config(
 
     installed_config = config_path.read_text(encoding="utf-8")
     assert "preview_feature = true" in installed_config
-    assert 'project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]' in installed_config
+    assert (
+        'project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]'
+        in installed_config
+    )
     assert "multi_agent = true" in installed_config
     assert "max_threads = 6" in installed_config
     assert "max_depth = 1" in installed_config
@@ -151,7 +155,9 @@ def test_codex_uninstall_uses_embedded_state_when_state_file_is_missing(
     assert not (codex_dir / "config.toml").exists()
 
 
-def test_codex_uninstall_preserves_user_kept_fallback_list_changes(tmp_path: Path) -> None:
+def test_codex_uninstall_preserves_user_kept_fallback_list_changes(
+    tmp_path: Path,
+) -> None:
     env = os.environ.copy()
     env["HOME"] = str(tmp_path / "home")
 
@@ -186,13 +192,13 @@ def test_codex_install_migrates_legacy_agents_table_to_runtime_valid_config(
     config_path.parent.mkdir(parents=True, exist_ok=True)
     config_path.write_text(
         (
-            '[features]\n'
-            'multi_agent = true\n\n'
-            '[agents]\n'
-            'max_threads = 6\n'
-            'max_depth = 1\n'
+            "[features]\n"
+            "multi_agent = true\n\n"
+            "[agents]\n"
+            "max_threads = 6\n"
+            "max_depth = 1\n"
             'project_doc_fallback_filenames = ["CLAUDE.md"]\n\n'
-            '[agents.criteria-checker-manifest-dev]\n'
+            "[agents.criteria-checker-manifest-dev]\n"
             'description = "x"\n'
             'config_file = "agents/criteria-checker-manifest-dev.toml"\n'
         ),
@@ -223,8 +229,8 @@ def test_codex_install_migrates_legacy_agents_table_to_runtime_valid_config(
 
     migrated = config_path.read_text(encoding="utf-8")
     assert "\n[agents]\n" not in f"\n{migrated}"
-    assert 'max_threads = 6' in migrated
-    assert 'max_depth = 1' in migrated
+    assert "max_threads = 6" in migrated
+    assert "max_depth = 1" in migrated
     assert 'project_doc_fallback_filenames = ["CLAUDE.md"]' in migrated
 
     result = subprocess.run(

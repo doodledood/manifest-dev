@@ -65,6 +65,16 @@ Externalize progress to survive context loss. The log IS the disaster recovery m
 
 **Todos**: Create from manifest (deliverables → ACs). Start with execution order from Approach (adjust if dependencies require). Update todo status after logging (log first, todo second).
 
+## Mid-Execution Amendment
+
+**When to trigger** — User input or a PR review comment changes scope: new requirements, contradicted ACs, missing coverage. Clarifications and confirmations are NOT amendments — only act when the manifest's criteria themselves need to change.
+
+**Amendment flow** — Amend the manifest autonomously via Self-Amendment escalation and `/define --amend <manifest-path> --from-do`, then resume with the updated manifest and existing log. Log the trigger before amending. No human wait — the entire cycle is autonomous.
+
+**PR review comments** — Same trigger. During the review phase, a comment that contradicts or extends the manifest is an amendment trigger.
+
+**Amendment loop guard** (R-7) — If Self-Amendment escalations repeat without new external input (user messages or PR comments) between them, the amendments are likely oscillating — escalate as "Proposed Amendment" for human decision instead.
+
 ## Collaboration Mode
 
-When `$ARGUMENTS` contains a `TEAM_CONTEXT:` block, read `references/COLLABORATION_MODE.md` for full collaboration mode instructions. If no `TEAM_CONTEXT:` block is present, ignore this — all other sections apply as written.
+When the manifest's `Medium:` field is not `local`, read `references/COLLABORATION_MODE.md` for routing rules. If medium is `local` (default) or absent, ignore this — all other sections apply as written.

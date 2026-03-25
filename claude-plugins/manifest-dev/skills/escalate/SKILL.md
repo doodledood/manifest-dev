@@ -1,6 +1,6 @@
 ---
 name: escalate
-description: 'Structured escalation within the /do workflow. Surfaces blocking issues for human decision with evidence, referencing the Manifest hierarchy. Called by /do when criteria are blocked or user requests a pause, not directly.'
+description: 'Structured escalation within the /do workflow. Surfaces blocking issues, scope changes, and workflow pauses with evidence, referencing the Manifest hierarchy. Called by /do, not directly.'
 user-invocable: false
 ---
 
@@ -8,7 +8,7 @@ user-invocable: false
 
 ## Goal
 
-Surface a blocking issue for human decision with structured evidence, referencing the Manifest hierarchy.
+Structure escalation events during /do execution — blocking issues, scope changes, and workflow pauses — with evidence and clear next steps.
 
 ## Input
 
@@ -139,6 +139,32 @@ Approve amendment, reject and continue with current criterion, or adjust.
 ```
 
 **When to use**: You CAN meet the criterion as written, but discovered it should be different. Approach pivots don't need this — just log and adapt. Use this when the manifest's criteria themselves should change.
+
+**vs Self-Amendment**: If the USER or a reviewer triggered the change, use Self-Amendment instead — that proceeds autonomously without human approval.
+
+### Self-Amendment
+
+User input or a PR review comment contradicts or extends the manifest. No 3-attempt evidence needed — this is a scope change, not a blocker.
+
+```markdown
+## Escalation: Self-Amendment
+
+**Trigger:** [user message or PR comment that contradicts/extends the manifest]
+**Affected items:** [which INV-G*, AC-*, PG-* items are contradicted or need additions]
+
+### What changed
+[Concise description of the scope change — what the user/reviewer wants that the manifest doesn't cover or contradicts]
+
+### Manifest path
+[Path to manifest file]
+
+### Execution log path
+[Path to execution log]
+```
+
+**When to use**: The USER or a REVIEWER triggered a scope change — they said something that contradicts or extends the manifest. This is a mechanical exit, not a decision point. /do handles the amendment flow after this escalation.
+
+**vs Proposed Amendment**: If YOU discovered the criterion should change (no user/reviewer trigger), use Proposed Amendment instead — that requires human approval.
 
 ### User-Requested Pause
 

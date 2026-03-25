@@ -9,29 +9,14 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
-from pathlib import Path
 from typing import Any
 
-import pytest
-
-# Path to the hooks directory
-HOOKS_DIR = (
-    Path(__file__).parent.parent.parent / "claude-plugins" / "manifest-dev" / "hooks"
-)
+from hook_test_helpers import HOOKS_DIR, run_hook_raw
 
 
 def run_pretool_verify_hook(hook_input: dict[str, Any]) -> subprocess.CompletedProcess:
     """Helper to run the pretool-verify hook with given input."""
-    stdin_data = json.dumps(hook_input)
-
-    result = subprocess.run(
-        [sys.executable, str(HOOKS_DIR / "pretool_verify_hook.py")],
-        input=stdin_data,
-        capture_output=True,
-        text=True,
-        cwd=str(HOOKS_DIR),
-    )
-    return result
+    return run_hook_raw("pretool_verify_hook.py", hook_input)
 
 
 class TestPretoolVerifyHookNoOutput:

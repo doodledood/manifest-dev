@@ -44,19 +44,14 @@ Each plugin can contain:
 
 ### Hooks
 
-Hooks are Python scripts in `hooks/` that respond to Claude Code events. Shared utilities live in `hook_utils.py`.
-
-**Hook structure** (manifest-dev):
-- `hook_utils.py` - Shared transcript parsing for skill invocation detection
-- `stop_do_hook.py` - Blocks premature stops during /do workflow when verification incomplete
-- `pretool_escalate_hook.py` - Gates /escalate calls, requires /verify before escalation
+Hooks are Python scripts in `hooks/` that respond to Claude Code events. Shared utilities live in `hook_utils.py`. All hooks use `parse_do_flow()` to detect active `/do` workflows and follow a fail-open pattern (silent exit on errors).
 
 **When modifying hooks**:
 1. Run tests: `pytest tests/hooks/ -v`
 2. Run linting: `ruff check --fix claude-plugins/manifest-dev/hooks/ && black claude-plugins/manifest-dev/hooks/`
 3. Run type check: `mypy claude-plugins/manifest-dev/hooks/`
 
-**Test coverage**: Tests in `tests/hooks/` cover edge cases (invalid JSON, missing files, malformed transcripts), workflow detection, todo state extraction, and hook output format. Add tests for any new hook logic.
+**Test coverage**: Tests in `tests/hooks/` cover edge cases (invalid JSON, missing files, malformed transcripts), workflow detection, and hook output format. Add tests for any new hook logic.
 
 ### Skills
 
@@ -136,7 +131,7 @@ When adding agents, skills, or hooks:
 
 Task files provide domain-specific hints for `/define`. They live in `skills/define/tasks/` and follow a composition model:
 
-**Base files** provide universal quality gates for a domain (e.g., `CODING.md` for code, `WRITING.md` for prose). **Overlay files** add content-type specificity on top (e.g., `BLOG.md` composes with `WRITING.md`, `FEATURE.md` composes with `CODING.md`). **Research** composes `tasks/research/RESEARCH.md` with source-type files in `tasks/research/sources/`.
+**Base files** provide universal quality gates for a domain (e.g., `CODING.md` for code, `WRITING.md` for prose). **Overlay files** add content-type specificity on top (e.g., `BLOG.md` composes with `WRITING.md`, `FEATURE.md` composes with `CODING.md`). **Research** composes `tasks/research/RESEARCH.md` with source-type files in `tasks/research/sources/`. **Workflow** files (`tasks/workflow/`) add the process/lifecycle dimension orthogonal to domain files — `WORKFLOW.md` (base lifecycle), `COLLABORATION.md` (stakeholder overlay), `messaging/SLACK.md` (Slack patterns), `code-review/GITHUB.md` (PR/CI/review with bot/human handling defaults), `code-review/GITLAB.md` (MR equivalent). A dev workflow composes CODING + FEATURE + WORKFLOW + GITHUB. Workflow files are only loaded when workflow indicators are present (review/approval/CI mentions, `--medium` flag).
 
 **Required sections**: Quality Gates (table with Agent + Threshold), Risks (bullet list with probes), Scenario Prompts (bullet list with probes), Trade-offs (bullet list). Optional additions: Context to Discover, Anti-Patterns, Defaults.
 
