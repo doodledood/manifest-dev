@@ -159,34 +159,6 @@ def _is_user_skill_invocation(line_data: dict[str, Any], skill_name: str) -> boo
     )
 
 
-# Legacy aliases for backward compatibility
-def is_skill_invocation(line_data: dict[str, Any], skill_name: str) -> bool:
-    """Check if this line contains a Skill tool call for the given skill."""
-    if line_data.get("type") != "assistant":
-        return False
-    return _is_skill_tool_call(line_data, skill_name)
-
-
-def is_ismeta_skill_expansion(line_data: dict[str, Any], skill_name: str) -> bool:
-    """Check if this line is an isMeta skill expansion for the given skill."""
-    if line_data.get("type") != "user":
-        return False
-    if not line_data.get("isMeta"):
-        return False
-    return _is_user_skill_invocation(line_data, skill_name)
-
-
-def is_user_skill_command(line_data: dict[str, Any], skill_name: str) -> bool:
-    """
-    Check if this line is a user command invoking the skill.
-
-    Detects skill invocations via isMeta expansion (primary) or command-name tags (fallback).
-    """
-    if line_data.get("type") != "user":
-        return False
-    return _is_user_skill_invocation(line_data, skill_name)
-
-
 def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str | None:
     """
     Extract arguments from a user skill command.
@@ -409,15 +381,6 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
                 if has_do and was_skill_invoked(data, "escalate"):
                     has_escalate = True
 
-    except FileNotFoundError:
-        return DoFlowState(
-            has_do=False,
-            has_verify=False,
-            has_done=False,
-            has_escalate=False,
-            do_args=None,
-            has_collab_mode=False,
-        )
     except OSError:
         return DoFlowState(
             has_do=False,

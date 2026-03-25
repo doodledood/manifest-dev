@@ -14,10 +14,7 @@ from typing import Any
 
 import pytest
 
-# Path to the hooks directory
-HOOKS_DIR = (
-    Path(__file__).parent.parent.parent / "claude-plugins" / "manifest-dev" / "hooks"
-)
+from hook_test_helpers import HOOKS_DIR, run_hook_raw
 
 
 def run_post_compact_hook(
@@ -26,7 +23,6 @@ def run_post_compact_hook(
     tmp_path: Path | None = None,
 ) -> subprocess.CompletedProcess:
     """Helper to run the post-compact hook with given transcript."""
-    # Create transcript file if lines provided
     if transcript_lines is not None and tmp_path is not None:
         transcript_file = tmp_path / "transcript.jsonl"
         with open(transcript_file, "w", encoding="utf-8") as f:
@@ -34,18 +30,8 @@ def run_post_compact_hook(
                 f.write(json.dumps(line) + "\n")
         transcript_path = str(transcript_file)
 
-    # Prepare stdin input
     hook_input = {"transcript_path": transcript_path or ""}
-    stdin_data = json.dumps(hook_input)
-
-    result = subprocess.run(
-        [sys.executable, str(HOOKS_DIR / "post_compact_hook.py")],
-        input=stdin_data,
-        capture_output=True,
-        text=True,
-        cwd=str(HOOKS_DIR),
-    )
-    return result
+    return run_hook_raw("post_compact_hook.py", hook_input)
 
 
 @pytest.fixture
@@ -84,23 +70,6 @@ def assistant_skill_do() -> dict[str, Any]:
                         "skill": "manifest-dev:do",
                         "args": "/tmp/manifest.md /tmp/do-log.md",
                     },
-                }
-            ]
-        },
-    }
-
-
-@pytest.fixture
-def assistant_skill_done() -> dict[str, Any]:
-    """Assistant Skill tool call for done."""
-    return {
-        "type": "assistant",
-        "message": {
-            "content": [
-                {
-                    "type": "tool_use",
-                    "name": "Skill",
-                    "input": {"skill": "manifest-dev:done"},
                 }
             ]
         },

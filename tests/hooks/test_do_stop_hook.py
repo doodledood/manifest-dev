@@ -6,134 +6,11 @@ Tests the stop hook that enforces verification-first workflow for /do.
 
 from __future__ import annotations
 
-import json
-import subprocess
-import sys
-from pathlib import Path
 from typing import Any
 
 import pytest
 
-# Add manifest-dev hooks directory to path
-EXPERIMENTAL_HOOKS_DIR = (
-    Path(__file__).parent.parent.parent / "claude-plugins" / "manifest-dev" / "hooks"
-)
-
-
-@pytest.fixture
-def experimental_hook_path() -> Path:
-    """Path to the stop_do_hook.py script."""
-    return EXPERIMENTAL_HOOKS_DIR / "stop_do_hook.py"
-
-
-@pytest.fixture
-def temp_transcript(tmp_path: Path):
-    """Factory fixture for creating temporary transcript files."""
-
-    def _create_transcript(lines: list[dict[str, Any]]) -> str:
-        transcript_file = tmp_path / "transcript.jsonl"
-        with open(transcript_file, "w", encoding="utf-8") as f:
-            for line in lines:
-                f.write(json.dumps(line) + "\n")
-        return str(transcript_file)
-
-    return _create_transcript
-
-
-@pytest.fixture
-def user_do_command() -> dict[str, Any]:
-    """User message invoking /do."""
-    return {
-        "type": "user",
-        "message": {
-            "content": "<command-name>/manifest-dev:do</command-name> /tmp/define.md"
-        },
-    }
-
-
-@pytest.fixture
-def assistant_skill_do() -> dict[str, Any]:
-    """Assistant Skill tool call for do."""
-    return {
-        "type": "assistant",
-        "message": {
-            "content": [
-                {
-                    "type": "tool_use",
-                    "name": "Skill",
-                    "input": {"skill": "manifest-dev:do", "args": "/tmp/define.md"},
-                }
-            ]
-        },
-    }
-
-
-@pytest.fixture
-def assistant_skill_verify() -> dict[str, Any]:
-    """Assistant Skill tool call for verify."""
-    return {
-        "type": "assistant",
-        "message": {
-            "content": [
-                {
-                    "type": "tool_use",
-                    "name": "Skill",
-                    "input": {"skill": "manifest-dev:verify", "args": "/tmp/define.md"},
-                }
-            ]
-        },
-    }
-
-
-@pytest.fixture
-def assistant_skill_done() -> dict[str, Any]:
-    """Assistant Skill tool call for done."""
-    return {
-        "type": "assistant",
-        "message": {
-            "content": [
-                {
-                    "type": "tool_use",
-                    "name": "Skill",
-                    "input": {"skill": "manifest-dev:done"},
-                }
-            ]
-        },
-    }
-
-
-@pytest.fixture
-def assistant_skill_escalate() -> dict[str, Any]:
-    """Assistant Skill tool call for escalate."""
-    return {
-        "type": "assistant",
-        "message": {
-            "content": [
-                {
-                    "type": "tool_use",
-                    "name": "Skill",
-                    "input": {
-                        "skill": "manifest-dev:escalate",
-                        "args": "AC-5 blocking",
-                    },
-                }
-            ]
-        },
-    }
-
-
-def run_hook(hook_path: Path, hook_input: dict[str, Any]) -> dict[str, Any] | None:
-    """Run the hook script and return parsed output, or None if no output."""
-    result = subprocess.run(
-        [sys.executable, str(hook_path)],
-        input=json.dumps(hook_input),
-        capture_output=True,
-        text=True,
-        cwd=str(EXPERIMENTAL_HOOKS_DIR),
-    )
-    if result.stdout.strip():
-        return json.loads(result.stdout)
-    return None
+from hook_test_helpers import run_hook
 
 
 class TestStopHookBlocking:
@@ -141,7 +18,6 @@ class TestStopHookBlocking:
 
     def test_blocks_without_done(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -149,7 +25,7 @@ class TestStopHookBlocking:
         transcript_path = temp_transcript([user_do_command])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "block"
@@ -157,7 +33,6 @@ class TestStopHookBlocking:
 
     def test_blocks_with_verify_only(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         assistant_skill_verify: dict[str, Any],
@@ -166,7 +41,7 @@ class TestStopHookBlocking:
         transcript_path = temp_transcript([user_do_command, assistant_skill_verify])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "block"
@@ -177,7 +52,6 @@ class TestStopHookAllowing:
 
     def test_allows_with_done(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         assistant_skill_verify: dict[str, Any],
@@ -193,14 +67,13 @@ class TestStopHookAllowing:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # None means no output, which means allow (exit 0)
         assert result is None
 
     def test_allows_with_escalate(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         assistant_skill_verify: dict[str, Any],
@@ -216,13 +89,12 @@ class TestStopHookAllowing:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is None
 
     def test_allows_no_do(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
     ):
         """Stop should be allowed when no /do in transcript."""
@@ -231,7 +103,7 @@ class TestStopHookAllowing:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is None
 
@@ -241,7 +113,6 @@ class TestStopHookFreshStack:
 
     def test_fresh_stack(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         assistant_skill_done: dict[str, Any],
@@ -263,7 +134,7 @@ class TestStopHookFreshStack:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should block because second /do has no /done
         assert result is not None
@@ -275,7 +146,6 @@ class TestStopHookApiErrors:
 
     def test_allows_stop_on_api_error(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -296,14 +166,13 @@ class TestStopHookApiErrors:
         transcript_path = temp_transcript([user_do_command, api_error_message])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # None means no output, which means allow (exit 0)
         assert result is None
 
     def test_blocks_after_api_error_recovery(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -332,7 +201,7 @@ class TestStopHookApiErrors:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should block because /do is in progress and no /done (api error is no longer recent)
         assert result is not None
@@ -340,7 +209,6 @@ class TestStopHookApiErrors:
 
     def test_allows_api_error_with_explicit_false_flag(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -355,7 +223,7 @@ class TestStopHookApiErrors:
         transcript_path = temp_transcript([user_do_command, normal_message])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should block because /do is in progress and no /done
         assert result is not None
@@ -367,7 +235,6 @@ class TestStopHookLoopDetection:
 
     def test_allows_after_three_short_outputs(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -389,7 +256,7 @@ class TestStopHookLoopDetection:
         transcript_path = temp_transcript([user_do_command] + short_outputs)
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "allow"
@@ -397,7 +264,6 @@ class TestStopHookLoopDetection:
 
     def test_blocks_with_two_short_outputs(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -415,7 +281,7 @@ class TestStopHookLoopDetection:
         transcript_path = temp_transcript([user_do_command] + short_outputs)
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "block"
@@ -425,7 +291,6 @@ class TestStopHookLoopDetection:
 
     def test_substantial_output_breaks_loop_pattern(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -456,7 +321,7 @@ class TestStopHookLoopDetection:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should block because only 1 consecutive short output after substantial
         assert result is not None
@@ -464,7 +329,6 @@ class TestStopHookLoopDetection:
 
     def test_tool_use_breaks_loop_pattern(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -504,7 +368,7 @@ class TestStopHookLoopDetection:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should block because only 1 consecutive short output after tool use
         assert result is not None
@@ -512,7 +376,6 @@ class TestStopHookLoopDetection:
 
     def test_escalate_skill_allows_stop_even_in_loop(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -546,7 +409,7 @@ class TestStopHookLoopDetection:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should allow because /escalate was called (proper workflow completion)
         # Loop detection doesn't apply when /escalate was invoked
@@ -554,7 +417,6 @@ class TestStopHookLoopDetection:
 
     def test_non_escalate_skill_does_not_break_loop_pattern(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
@@ -589,7 +451,7 @@ class TestStopHookLoopDetection:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should allow because 3 consecutive short outputs (Skill doesn't reset counter)
         assert result is not None
@@ -601,7 +463,6 @@ class TestStopHookInvocationPatterns:
 
     def test_detects_short_command_name(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
     ):
         """Should detect /do via short command-name (/<skill> without plugin prefix)."""
@@ -615,7 +476,7 @@ class TestStopHookInvocationPatterns:
         transcript_path = temp_transcript([user_do_short])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should block because /do detected but no /done
         assert result is not None
@@ -623,7 +484,6 @@ class TestStopHookInvocationPatterns:
 
     def test_detects_ismeta_skill_expansion(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
     ):
         """Should detect /do via isMeta skill expansion."""
@@ -643,7 +503,7 @@ class TestStopHookInvocationPatterns:
         transcript_path = temp_transcript([ismeta_do_expansion])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should block because /do detected but no /done
         assert result is not None
@@ -651,7 +511,6 @@ class TestStopHookInvocationPatterns:
 
     def test_define_expansion_referencing_do_does_not_trigger(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
     ):
         """isMeta /define expansion referencing skills/do/ in body should NOT detect /do."""
@@ -681,14 +540,13 @@ class TestStopHookInvocationPatterns:
         transcript_path = temp_transcript([ismeta_define_expansion])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should ALLOW — no /do invocation, just /define referencing a /do file path
         assert result is None
 
     def test_detects_combined_command_and_ismeta(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         assistant_skill_done: dict[str, Any],
     ):
@@ -721,14 +579,13 @@ class TestStopHookInvocationPatterns:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should allow because /done was called
         assert result is None
 
     def test_second_do_resets_after_done(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         assistant_skill_done: dict[str, Any],
     ):
@@ -768,7 +625,7 @@ class TestStopHookInvocationPatterns:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should block because second /do has no /done
         assert result is not None
@@ -776,7 +633,6 @@ class TestStopHookInvocationPatterns:
 
     def test_ignores_other_plugin_prefix(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
     ):
         """Should NOT detect /do from other plugins - only manifest-dev:do or /do."""
@@ -789,7 +645,7 @@ class TestStopHookInvocationPatterns:
         transcript_path = temp_transcript([user_do_other_plugin])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should allow - not our plugin's /do
         assert result is None
@@ -800,42 +656,38 @@ class TestStopHookEdgeCases:
 
     def test_empty_transcript(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
     ):
         """Should allow stop on empty transcript."""
         transcript_path = temp_transcript([])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is None
 
     def test_missing_transcript(
         self,
-        experimental_hook_path: Path,
     ):
         """Should allow stop on missing transcript."""
         hook_input = {"transcript_path": "/nonexistent/path.jsonl"}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is None
 
     def test_no_transcript_path(
         self,
-        experimental_hook_path: Path,
     ):
         """Should allow stop when no transcript_path provided."""
         hook_input = {}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is None
 
     def test_malformed_json_in_transcript(
         self,
-        experimental_hook_path: Path,
         tmp_path: Path,
     ):
         """Should handle malformed JSON in transcript gracefully."""
@@ -846,7 +698,7 @@ class TestStopHookEdgeCases:
 
         hook_input = {"transcript_path": str(transcript_file)}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should allow (fail open) on parsing errors
         assert result is None
@@ -857,7 +709,6 @@ class TestStopHookCollabMode:
 
     def test_allows_verify_with_medium_slack(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         assistant_skill_verify: dict[str, Any],
     ):
@@ -875,7 +726,7 @@ class TestStopHookCollabMode:
         transcript_path = temp_transcript([user_do_medium, assistant_skill_verify])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "allow"
@@ -883,7 +734,6 @@ class TestStopHookCollabMode:
 
     def test_blocks_without_verify_even_with_medium(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
     ):
         """With --medium slack, /do without /verify should still BLOCK."""
@@ -900,14 +750,13 @@ class TestStopHookCollabMode:
         transcript_path = temp_transcript([user_do_medium])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "block"
 
     def test_still_blocks_verify_without_medium(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         assistant_skill_verify: dict[str, Any],
@@ -916,14 +765,13 @@ class TestStopHookCollabMode:
         transcript_path = temp_transcript([user_do_command, assistant_skill_verify])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "block"
 
     def test_medium_via_skill_tool_call(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         assistant_skill_verify: dict[str, Any],
     ):
@@ -948,14 +796,13 @@ class TestStopHookCollabMode:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "allow"
 
     def test_medium_local_does_not_trigger_collab(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         assistant_skill_verify: dict[str, Any],
     ):
@@ -973,7 +820,7 @@ class TestStopHookCollabMode:
         transcript_path = temp_transcript([user_do_local, assistant_skill_verify])
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "block"
@@ -1065,7 +912,6 @@ class TestStopHookInterruptHandling:
 
     def test_allows_stop_after_interrupted_do(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         user_interrupt: dict[str, Any],
@@ -1079,14 +925,13 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should ALLOW — /do was cancelled by interrupt before assistant processed it
         assert result is None
 
     def test_blocks_when_do_interrupted_after_assistant_response(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         assistant_working: dict[str, Any],
@@ -1102,7 +947,7 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should BLOCK — /do was active and assistant was working
         assert result is not None
@@ -1110,7 +955,6 @@ class TestStopHookInterruptHandling:
 
     def test_interrupted_do_then_reinvoked_still_blocks(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         user_interrupt: dict[str, Any],
@@ -1134,7 +978,7 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should BLOCK — second /do is active and has no /done
         assert result is not None
@@ -1142,7 +986,6 @@ class TestStopHookInterruptHandling:
 
     def test_session_reproduction_do_interrupted_then_define_continues(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         user_interrupt: dict[str, Any],
@@ -1185,14 +1028,13 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should ALLOW — /do was cancelled by interrupt, assistant is doing /define work
         assert result is None
 
     def test_allows_stop_after_interrupted_do_then_regular_messages(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         user_interrupt: dict[str, Any],
@@ -1216,14 +1058,13 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should ALLOW — /do was cancelled
         assert result is None
 
     def test_multiple_interrupts(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         user_interrupt: dict[str, Any],
@@ -1248,14 +1089,13 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should ALLOW — both /do invocations were cancelled
         assert result is None
 
     def test_assistant_skill_do_then_interrupted_still_blocks(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         assistant_skill_do: dict[str, Any],
         user_interrupt: dict[str, Any],
@@ -1273,7 +1113,7 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should BLOCK — assistant was already processing /do
         assert result is not None
@@ -1281,7 +1121,6 @@ class TestStopHookInterruptHandling:
 
     def test_interrupted_do_with_ismeta_expansion(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_interrupt: dict[str, Any],
         ismeta_do_expansion: dict[str, Any],
@@ -1305,14 +1144,13 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should ALLOW — /do + isMeta was interrupted before assistant processed
         assert result is None
 
     def test_interrupted_do_then_done_reinvoked_and_completed(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_do_command: dict[str, Any],
         user_interrupt: dict[str, Any],
@@ -1338,14 +1176,13 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should ALLOW — second /do was properly completed with /done
         assert result is None
 
     def test_interrupt_without_do_is_harmless(
         self,
-        experimental_hook_path: Path,
         temp_transcript,
         user_interrupt: dict[str, Any],
     ):
@@ -1362,7 +1199,7 @@ class TestStopHookInterruptHandling:
         )
         hook_input = {"transcript_path": transcript_path}
 
-        result = run_hook(experimental_hook_path, hook_input)
+        result = run_hook("stop_do_hook.py", hook_input)
 
         # Should ALLOW — no /do in transcript
         assert result is None
