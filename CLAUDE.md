@@ -51,6 +51,7 @@ Hooks are Python scripts in `hooks/` that respond to Claude Code events. Shared 
 - `stop_do_hook.py` - Blocks premature stops during /do workflow when verification incomplete
 - `pretool_verify_hook.py` - Reminds to read manifest/log in full before running /verify
 - `prompt_submit_hook.py` - Reminds to check for manifest amendments when user provides input during /do
+- `posttool_log_hook.py` - Reminds to update execution log after milestone tool calls (TaskUpdate, TaskCreate, TodoWrite, Skill) during /do
 
 **When modifying hooks**:
 1. Run tests: `pytest tests/hooks/ -v`
