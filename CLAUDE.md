@@ -44,21 +44,14 @@ Each plugin can contain:
 
 ### Hooks
 
-Hooks are Python scripts in `hooks/` that respond to Claude Code events. Shared utilities live in `hook_utils.py`.
-
-**Hook structure** (manifest-dev):
-- `hook_utils.py` - Shared transcript parsing for skill invocation detection
-- `stop_do_hook.py` - Blocks premature stops during /do workflow when verification incomplete
-- `pretool_verify_hook.py` - Reminds to read manifest/log in full before running /verify
-- `prompt_submit_hook.py` - Reminds to check for manifest amendments when user provides input during /do
-- `posttool_log_hook.py` - Reminds to update execution log after milestone tool calls (TaskUpdate, TaskCreate, TodoWrite, Skill) during /do
+Hooks are Python scripts in `hooks/` that respond to Claude Code events. Shared utilities live in `hook_utils.py`. All hooks use `parse_do_flow()` to detect active `/do` workflows and follow a fail-open pattern (silent exit on errors).
 
 **When modifying hooks**:
 1. Run tests: `pytest tests/hooks/ -v`
 2. Run linting: `ruff check --fix claude-plugins/manifest-dev/hooks/ && black claude-plugins/manifest-dev/hooks/`
 3. Run type check: `mypy claude-plugins/manifest-dev/hooks/`
 
-**Test coverage**: Tests in `tests/hooks/` cover edge cases (invalid JSON, missing files, malformed transcripts), workflow detection, todo state extraction, and hook output format. Add tests for any new hook logic.
+**Test coverage**: Tests in `tests/hooks/` cover edge cases (invalid JSON, missing files, malformed transcripts), workflow detection, and hook output format. Add tests for any new hook logic.
 
 ### Skills
 
