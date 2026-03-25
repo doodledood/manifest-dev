@@ -22,13 +22,15 @@ Output: `/tmp/manifest-{timestamp}.md`
 
 ## Input
 
-`$ARGUMENTS` = task description, optionally with context/research, `--interview <level>`, and `--medium <type>`
+`$ARGUMENTS` = task description, optionally with context/research, `--interview <level>`, `--medium <type>`, and `--amend <manifest-path>`
 
 Parse `--interview` from arguments (can appear anywhere). Valid values: `minimal`, `autonomous`, `thorough`. Default: `thorough`. Invalid value → error and halt: "Invalid interview style '<value>'. Valid styles: minimal | autonomous | thorough"
 
 Parse `--medium` from arguments (can appear anywhere). Accepts any value — the LLM adapts to whatever medium is specified (e.g., `slack`, `discord`, `email`, `teams`). Default: `local` (AskUserQuestion). When a task file exists for the medium (e.g., `tasks/workflow/messaging/SLACK.md` for slack), load it for platform-specific probing fuel.
 
 When medium is not `local`: read `references/COLLABORATION_MODE.md` for routing rules. The medium is encoded in the manifest's Intent section as `Medium: <value>` so `/do` knows the communication channel.
+
+Parse `--amend <manifest-path>` from arguments (can appear anywhere). When present, /define operates on the existing manifest at the given path — see Amendment Mode section below.
 
 If no arguments provided, ask: "What would you like to build or change?"
 
@@ -75,6 +77,10 @@ Probing beyond task files is adaptive — driven by the specific task, user resp
 ## Existing Manifest Feedback
 
 If input references a previous manifest: **treat it as source of truth**. It contains validated decisions — default to building on it, preserving what's settled. Confirm approach with user if unclear.
+
+## Amendment Mode
+
+When `--amend <manifest-path>` is present: read `references/AMENDMENT_MODE.md` for amendment rules. /define modifies the existing manifest instead of building from scratch.
 
 ## Multi-Repo Scope
 
@@ -368,6 +374,7 @@ Three categories, each covering **output** or **process**:
 - **Goal:** [High-level purpose]
 - **Mental Model:** [Key concepts to understand]
 - **Mode:** efficient | balanced | thorough *(optional, default: thorough — controls verification intensity during /do)*
+- **Interview:** minimal | autonomous | thorough *(optional, default: thorough — recorded so --amend can inherit the original interview style)*
 - **Medium:** local | &lt;any platform&gt; *(optional, default: local — controls communication channel for /do escalations and updates)*
 
 ## 2. Approach (Complex Tasks Only)

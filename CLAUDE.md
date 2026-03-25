@@ -49,7 +49,8 @@ Hooks are Python scripts in `hooks/` that respond to Claude Code events. Shared 
 **Hook structure** (manifest-dev):
 - `hook_utils.py` - Shared transcript parsing for skill invocation detection
 - `stop_do_hook.py` - Blocks premature stops during /do workflow when verification incomplete
-- `pretool_escalate_hook.py` - Gates /escalate calls, requires /verify before escalation
+- `pretool_verify_hook.py` - Reminds to read manifest/log in full before running /verify
+- `prompt_submit_hook.py` - Reminds to check for manifest amendments when user provides input during /do
 
 **When modifying hooks**:
 1. Run tests: `pytest tests/hooks/ -v`

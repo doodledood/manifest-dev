@@ -19,6 +19,7 @@ Base guidance for tasks with a multi-step lifecycle: produce → review → appr
 
 - **Review rejection after passing verification** — all automated checks pass but human reviewer rejects for reasons not covered by ACs; probe: what would a reviewer check that automated gates don't?
 - **E2E requires deployment** — E2E/integration tests need a running environment (staging, preview, local docker); probe: does E2E need a deployment? which environment? how to monitor deploy readiness before running tests?
+- **Mid-execution scope change** — user says "also do X" or reviewer requests something not in the manifest during execution; probe: should scope changes be auto-amended or require explicit user approval? how complex are likely mid-execution changes?
 - **Phase 3 context decay** — by review phase, implementation context has degraded; probe: how complex is this task? will review handling need full implementation context?
 
 ## Trade-offs

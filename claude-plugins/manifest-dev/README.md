@@ -200,4 +200,4 @@ Multi-CLI distributions under `dist/` for Gemini CLI, OpenCode, and Codex CLI ar
 
 ## Hooks
 
-Three hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before verification runs. `post_compact_hook.py` restores `/do` context if the session gets compacted. And `pretool_verify_hook.py` nudges agents to actually read the manifest before verifying anything.
+Four hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before verification runs. `post_compact_hook.py` restores `/do` context if the session gets compacted. `pretool_verify_hook.py` nudges agents to actually read the manifest before verifying anything. And `prompt_submit_hook.py` reminds the model to check for manifest amendments when the user provides input during `/do` — enabling the autonomous Self-Amendment flow (`/escalate` → `/define --amend` → `/do` resume).
