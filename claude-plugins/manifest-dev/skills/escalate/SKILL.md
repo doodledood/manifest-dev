@@ -156,13 +156,10 @@ User input or a PR review comment contradicts or extends the manifest. No 3-atte
 [Concise description of the scope change — what the user/reviewer wants that the manifest doesn't cover or contradicts]
 
 ### Manifest path
-[Path to manifest file for /define --amend]
+[Path to manifest file]
 
 ### Execution log path
-[Path to execution log for /do resume]
-
-### Next step
-Proceeding to /define --amend.
+[Path to execution log]
 ```
 
 **When to use**: The USER or a REVIEWER triggered a scope change — they said something that contradicts or extends the manifest. This is a mechanical exit, not a decision point. /do handles the amendment flow after this escalation.

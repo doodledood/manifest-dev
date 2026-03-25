@@ -26,14 +26,9 @@ User calls `/define --amend <manifest>` directly. Full interactive mode:
 
 ### 2. From /do (Autonomous Fast Path)
 
-After Self-Amendment escalation from /do. Detectable from conversation context — /do just called /escalate Self-Amendment. In this context:
-- Inherit `--interview` style from manifest metadata
-- Make targeted changes based on the escalation context (what the user/reviewer said, which items are affected)
-- Skip the verification loop (no manifest-verifier invocation)
-- Skip summary-for-approval (auto-approve)
-- Write updated manifest in-place (same path)
-- Log the amendment in the manifest's `## Amendments` section
-- Return manifest path immediately so /do can resume
+After Self-Amendment escalation from /do. Detectable from conversation context — /do just called /escalate Self-Amendment.
+
+In /do context, amendment is autonomous and fast — no user approval gates (verification loop, summary approval). Inherit interview style from manifest metadata. Make targeted changes based on the escalation context. Write updated manifest in-place so /do can resume immediately. Log the amendment in the manifest's `## Amendments` section.
 
 ## What to Preserve
 
