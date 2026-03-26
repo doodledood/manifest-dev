@@ -129,7 +129,7 @@ Before reporting a finding, it must pass ALL of these criteria. **If it fails AN
 ## Out of Scope
 
 Do NOT report on (handled by other agents):
-- **Intent divergence** (does the change achieve its goal?) → change-intent-reviewer
+- **Intent-behavior divergence** (does the change achieve its goal?) → change-intent-reviewer
 - **Mechanical code defects** (race conditions, resource leaks, null handling) → code-bugs-reviewer
 - **Type system improvements** (better type definitions, narrower types) → type-safety-reviewer
 - **Code organization** (DRY, coupling, consistency) → code-maintainability-reviewer

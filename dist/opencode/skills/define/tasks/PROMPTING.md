@@ -8,10 +8,9 @@ Prompts are manifests: **WHAT and WHY, not HOW**. State goals and constraints. T
 
 ## Quality Gates
 
-When prompt-reviewer agent is available, use it as the single gate:
-
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
+| Intent analysis | change-intent-reviewer | no LOW+ |
 | Prompt quality | prompt-reviewer | no MEDIUM+ |
 
 When prompt-reviewer is not available, encode these as individual criteria verified via general-purpose subagent:
@@ -32,6 +31,15 @@ When prompt-reviewer is not available, encode these as individual criteria verif
 | Model-prompt fit | Stays within model capabilities—doesn't assume unreliable behaviors |
 | Guardrail calibration | Safety boundaries neither too loose nor too tight |
 | Output calibration | Output format, length, and detail level match the use case and consumer |
+
+When the task involves creating or updating a skill, also apply:
+
+| Gate | Threshold |
+|------|-----------|
+| Folder architecture | Skill is a directory with SKILL.md + appropriate companions (references, assets, scripts) — not a standalone file |
+| Progressive disclosure | Domain knowledge and reference data in companion files, not front-loaded into SKILL.md |
+| Gotchas section | Contains observed failure modes — specific, actionable, grounded in real behavior (not theoretical) |
+| Description as trigger | Description field is a trigger specification (what + when + trigger terms), not a human-readable summary |
 
 ## Context to Discover
 
@@ -102,6 +110,13 @@ Prompt decisions often involve trade-offs—surface these during discovery:
 | Flexibility vs specificity | Should output vary or follow strict format? |
 | Principles vs examples | Learn from rules or from demonstrations? |
 | Trust capability vs enforce discipline | What guardrails are actually needed? |
+
+## Defaults
+
+*Skill architecture practices. Apply when task involves creating or updating a skill.*
+
+- **Identify skill type** — Determine which category the skill falls into (Library/API, Verification, Data, Business Process, Scaffolding, Code Quality, CI/CD, Runbook, Infra Ops) and match architecture to its core pattern
+- **Assess config needs** — If skill requires user-specific configuration (IDs, names, preferences), persist in a config file within the skill directory rather than re-asking each session
 
 ## When Updating Prompts
 
