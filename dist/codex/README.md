@@ -7,7 +7,7 @@ Verification-first manifest workflows adapted for Codex CLI.
 | Component | Count | Status |
 |-----------|-------|--------|
 | Skills | 7 | Full compatibility (Agent Skills Open Standard) |
-| Agents | 12 TOML stubs + reference AGENTS.md | Multi-agent config + bundled reference guide |
+| Agents | 14 TOML stubs + reference AGENTS.md | Multi-agent config + bundled reference guide |
 | Execution rules | 1 | Starlark .rules file |
 | Config | 1 | Multi-agent TOML config |
 | Hooks | 0 | Not available (Codex has no hook system yet) |

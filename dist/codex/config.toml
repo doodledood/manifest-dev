@@ -14,8 +14,12 @@ project_doc_fallback_filenames = ["CLAUDE.md"]
 description = "Validates a single acceptance criterion or global invariant (PASS/FAIL)"
 config_file = "agents/criteria-checker.toml"
 
+[agents.change-intent-reviewer]
+description = "Adversarially analyzes whether changes achieve their stated intent"
+config_file = "agents/change-intent-reviewer.toml"
+
 [agents.code-bugs-reviewer]
-description = "Audits code changes for logical bugs, race conditions, data loss, edge cases"
+description = "Audits code changes for mechanical defects -- runtime failures, resource issues, structural flaws"
 config_file = "agents/code-bugs-reviewer.toml"
 
 [agents.code-design-reviewer]
@@ -37,6 +41,10 @@ config_file = "agents/code-coverage-reviewer.toml"
 [agents.code-testability-reviewer]
 description = "Identifies testability issues -- excessive mocking, logic buried in IO"
 config_file = "agents/code-testability-reviewer.toml"
+
+[agents.contracts-reviewer]
+description = "Verifies API and interface contract correctness with evidence"
+config_file = "agents/contracts-reviewer.toml"
 
 [agents.type-safety-reviewer]
 description = "Audits type safety -- any abuse, invalid states, exhaustiveness gaps"
