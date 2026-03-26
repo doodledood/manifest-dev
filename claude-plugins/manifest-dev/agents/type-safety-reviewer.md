@@ -81,7 +81,9 @@ Before reporting a type safety issue, it must pass ALL of these criteria. **If a
 ## Out of Scope
 
 Do NOT report on (handled by other agents):
-- **Runtime bugs** (will this crash?) → code-bugs-reviewer
+- **Intent-behavior divergence** (does the change achieve its goal?) → change-intent-reviewer
+- **Mechanical code defects** (race conditions, resource leaks, null handling) → code-bugs-reviewer
+- **API contract correctness** (wrong params, consumer breakage) → contracts-reviewer
 - **Code organization** (DRY, coupling, consistency) → code-maintainability-reviewer
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Documentation accuracy** → docs-reviewer

@@ -7,7 +7,7 @@ Verification-first manifest workflows for OpenCode. Use the `/define`, `/do`, `/
 | Type | Count | Description |
 |------|-------|-------------|
 | Skills | 7 | auto, define, do, done, escalate, learn-define-patterns, verify |
-| Agents | 12 | criteria-checker, 8 code reviewers, manifest-verifier, context-file-adherence-reviewer, define-session-analyzer |
+| Agents | 14 | criteria-checker, 10 code reviewers, manifest-verifier, context-file-adherence-reviewer, define-session-analyzer |
 | Commands | 4 | /auto, /define, /do, /learn-define-patterns |
 | Plugin | 1 | OpenCode hook plugin implementing pretool-verify, stop-do, post-compact, and todo tracking |
 

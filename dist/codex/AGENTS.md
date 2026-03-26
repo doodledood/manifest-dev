@@ -28,8 +28,13 @@ Read-only verification agent. Validates a single acceptance criterion or global 
 
 ## Code Review Agents
 
+### change-intent-reviewer
+Adversarially analyzes whether code, prompt, or config changes achieve their stated intent. Reconstructs change intent from diff context, then systematically attacks the logic to find behavioral divergences -- where behavior won't match what the author expects. Produces a structured intent analysis report.
+
+**Codex approximation**: Use `shell_command` to run `git diff origin/main...HEAD` and `git log`, then read files for context. Reconstruct intent from diffs, commit messages, tests, and comments. Report divergences in the structured format.
+
 ### code-bugs-reviewer
-Audits code changes for logical bugs -- race conditions, data loss, edge cases, logic errors, error handling gaps, state inconsistencies, resource leaks, dangerous defaults, and fail-loudly violations. Produces a structured bug report with severity ratings (Critical/High/Medium/Low). Read-only: analyzes `git diff` output and source files without modifying anything.
+Audits code changes for mechanical defects -- runtime failures, resource issues, and structural code flaws. Focuses on defects detectable from code patterns (race conditions, resource leaks, edge cases, dangerous defaults, fail-loudly violations) rather than intent-behavior analysis. Produces a structured bug report with severity ratings (Critical/High/Medium/Low). Read-only: analyzes `git diff` output and source files without modifying anything.
 
 **Codex approximation**: Use `shell_command` to run `git diff origin/main...HEAD`, then read files for context. Report findings in the structured bug report format.
 
@@ -49,14 +54,19 @@ Comprehensive maintainability audit focusing on code organization: DRY violation
 **Codex approximation**: Use `shell_command` for broad codebase searches (grep for patterns, find for structure). Cross-reference changed code against existing patterns.
 
 ### code-coverage-reviewer
-Verifies that code changes have adequate test coverage. Analyzes the diff between current branch and main, identifies logic changes, and reports coverage gaps with specific recommendations for what tests to write.
+Verifies that code changes have adequate test coverage by proactively enumerating edge cases from the code's logic. Analyzes the diff, derives specific test scenarios with concrete inputs and expected outputs, and reports coverage gaps.
 
-**Codex approximation**: Use `shell_command` to run `git diff`, identify changed logic, then search for corresponding test files. Run test suites if available to check coverage.
+**Codex approximation**: Use `shell_command` to run `git diff`, identify changed logic, then search for corresponding test files. Derive concrete test scenarios from code paths. Run test suites if available to check coverage.
 
 ### code-testability-reviewer
 Identifies testability issues -- code requiring excessive mocking, business logic buried in IO operations, non-deterministic inputs, hidden dependencies, and tight coupling that makes verification difficult. Suggests structural improvements to reduce test friction.
 
 **Codex approximation**: Analyze changed code via `shell_command` (git diff + file reading), identify functions with high IO/mock requirements.
+
+### contracts-reviewer
+Verifies API and interface contract correctness with evidence. Checks both outbound (code calls external/internal APIs correctly per documentation) and inbound (changes don't break consumers of your interfaces). Evidence-based -- cites actual API docs or codebase definitions.
+
+**Codex approximation**: Use `shell_command` to run `git diff` and identify API calls and interface changes. Use `web_search` to fetch external API documentation. Search the codebase for consumers of changed interfaces. Report violations with evidence citations.
 
 ### type-safety-reviewer
 Audits code for type safety issues across typed languages (TypeScript, Python, Java/Kotlin, Go, Rust, C#). Identifies `any` abuse, invalid states representable in the type system, missing exhaustiveness checks, nullability gaps, and opportunities to push runtime checks into compile-time guarantees.

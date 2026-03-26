@@ -35,6 +35,7 @@ SKILLS = [
 ]
 
 AGENTS = [
+    "change-intent-reviewer",
     "context-file-adherence-reviewer",
     "code-maintainability-reviewer",
     "code-testability-reviewer",
@@ -42,6 +43,7 @@ AGENTS = [
     "code-coverage-reviewer",
     "code-design-reviewer",
     "code-bugs-reviewer",
+    "contracts-reviewer",
     "type-safety-reviewer",
     "define-session-analyzer",
     "manifest-verifier",
@@ -503,6 +505,7 @@ def unmerge_config(
                 "criteria-checker", "code-bugs-reviewer", "code-design-reviewer",
                 "code-simplicity-reviewer", "code-maintainability-reviewer",
                 "code-coverage-reviewer", "code-testability-reviewer",
+                "change-intent-reviewer", "contracts-reviewer",
                 "type-safety-reviewer", "docs-reviewer",
                 "context-file-adherence-reviewer", "manifest-verifier",
                 "define-session-analyzer",
@@ -519,6 +522,7 @@ def unmerge_config(
                     "criteria-checker", "code-bugs-reviewer", "code-design-reviewer",
                     "code-simplicity-reviewer", "code-maintainability-reviewer",
                     "code-coverage-reviewer", "code-testability-reviewer",
+                    "change-intent-reviewer", "contracts-reviewer",
                     "type-safety-reviewer", "docs-reviewer",
                     "context-file-adherence-reviewer", "manifest-verifier",
                     "define-session-analyzer",

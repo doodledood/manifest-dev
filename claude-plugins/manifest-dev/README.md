@@ -178,8 +178,10 @@ These run in parallel during `/verify`:
 
 | Agent | Focus |
 |-------|-------|
-| `code-bugs-reviewer` | Audits code changes for logical bugs without making modifications |
-| `code-coverage-reviewer` | Verifies code changes have adequate test coverage, reports gaps |
+| `change-intent-reviewer` | Adversarial intent analysis: reconstructs what a change tries to achieve, finds where behavior diverges from intent |
+| `contracts-reviewer` | Bidirectional API/interface contract verification with evidence from documentation and codebase |
+| `code-bugs-reviewer` | Mechanical code defects: race conditions, data loss, edge cases, resource leaks, dangerous defaults |
+| `code-coverage-reviewer` | Test coverage with proactive edge case enumeration — derives specific test scenarios from code logic |
 | `code-maintainability-reviewer` | DRY violations, coupling, cohesion, consistency, dead code, architectural boundaries |
 | `code-design-reviewer` | Design fitness: reinvented wheels, code vs configuration boundary, under-engineering, interface foresight |
 | `code-simplicity-reviewer` | Unnecessary complexity, over-engineering, cognitive burden |

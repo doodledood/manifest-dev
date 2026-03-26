@@ -40,9 +40,15 @@ Note: criteria-checker handles any automated verification requiring commands, fi
 
 ## Agent Prompt Composition
 
-When spawning verifier agents, pass only the criterion's manifest data. Do not add your own framing.
+When spawning verifier agents, pass the criterion's manifest data. Do not add your own framing.
 
 **Include**: Criterion ID, description, verification method, and the verify block's `command:` or `prompt:` field verbatim. Add file scope when the criterion targets specific files.
+
+**Optional context file paths**: When a manifest file, discovery log, or execution log exists, you may append their file paths as optional reference material. Present them neutrally — agents can read them if useful for understanding scope or context, but are not required to.
+
+Format: `Optional context — manifest: <path>, discovery log: <path>, execution log: <path>`
+
+Only include paths that exist. This is informational, not directive — agents decide whether the context is relevant to their review.
 
 **Never add**:
 - Severity thresholds ("only report medium+ issues", "focus on critical findings")
@@ -51,8 +57,9 @@ When spawning verifier agents, pass only the criterion's manifest data. Do not a
 - Leading language ("verify this important constraint", "carefully check this critical rule")
 - Task summaries ("check that the auth module correctly handles...")
 - Suggested outcomes ("confirm that X works correctly")
+- Interpretations of manifest intent ("the goal is to...", "this change is about...")
 
-The verify block's `prompt:` field is manifest-authored — pass it verbatim. These rules target language you add beyond what the manifest specifies.
+The verify block's `prompt:` field is manifest-authored — pass it verbatim. These rules target language you add beyond what the manifest specifies. The optional context file paths are raw references, not framing — they provide access to source material without steering the agent's analysis.
 
 ## Criterion Types
 

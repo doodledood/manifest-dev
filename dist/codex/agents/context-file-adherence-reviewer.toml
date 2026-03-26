@@ -87,7 +87,9 @@ Determine which CLI you're running in to know which context file to prioritize:
 ## Out of Scope
 
 Do NOT report on (handled by other agents):
-- **Code bugs** → code-bugs-reviewer
+- **Intent-behavior divergence** (does the change achieve its goal?) → change-intent-reviewer
+- **Mechanical code defects** (race conditions, resource leaks, null handling) → code-bugs-reviewer
+- **API contract correctness** (wrong params, consumer breakage) → contracts-reviewer
 - **General maintainability** (not specified in context file) → code-maintainability-reviewer
 - **Over-engineering / complexity** (not specified in context file) → code-simplicity-reviewer
 - **Type safety** → type-safety-reviewer

@@ -7,7 +7,7 @@ Verification-first manifest workflows for Gemini CLI, delivered as extension-man
 | Type | Count | Details |
 |------|-------|---------|
 | Skills | 7 | auto, define, do, verify, done, escalate, learn-define-patterns |
-| Agents | 12 | criteria-checker, manifest-verifier, 8 code reviewers, docs-reviewer, define-session-analyzer |
+| Agents | 14 | criteria-checker, manifest-verifier, 10 code reviewers, docs-reviewer, define-session-analyzer |
 | Hooks | 3 | pretool-verify, stop-do-enforcement, post-compact-recovery |
 
 ## Install

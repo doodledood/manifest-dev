@@ -69,11 +69,13 @@ Layers that add complexity without value. Focus on **local indirection within a 
 ## Out of Scope
 
 Do NOT report on (handled by other agents):
+- **Intent-behavior divergence** (does the change achieve its goal?) → change-intent-reviewer
 - **DRY violations** (duplicate code) → code-maintainability-reviewer
 - **Dead code** (unused functions) → code-maintainability-reviewer
 - **Coupling/cohesion** (module dependencies) → code-maintainability-reviewer
 - **Consistency issues** (mixed patterns across codebase) → code-maintainability-reviewer
-- **Functional bugs** (incorrect behavior) → code-bugs-reviewer
+- **Mechanical code defects** (race conditions, resource leaks, null handling) → code-bugs-reviewer
+- **API contract correctness** (wrong params, consumer breakage) → contracts-reviewer
 - **Type safety** (any/unknown, invalid states) → type-safety-reviewer
 - **Documentation accuracy** → docs-reviewer
 - **Test coverage gaps** → code-coverage-reviewer

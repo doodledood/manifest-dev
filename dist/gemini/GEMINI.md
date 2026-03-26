@@ -30,7 +30,7 @@ Skills live in `skills/{skill-name}/SKILL.md`. Gemini activates them via `activa
 | `escalate` | Structured escalation when blocked |
 | `learn-define-patterns` | Analyze past sessions to learn user preferences |
 
-### Agents (12)
+### Agents (14)
 
 Agents run as subagents callable by tool name. The installer enables `"experimental": { "enableAgents": true }` automatically in `~/.gemini/settings.json`; manual installs must make the equivalent settings change.
 
@@ -38,12 +38,14 @@ Agents run as subagents callable by tool name. The installer enables `"experimen
 |-------|---------|
 | `criteria-checker` | Validates a single criterion (PASS/FAIL) |
 | `manifest-verifier` | Reviews manifests for gaps |
-| `code-bugs-reviewer` | Logical bugs, race conditions, edge cases |
+| `change-intent-reviewer` | Intent-behavior divergence -- does the change achieve its goal |
+| `code-bugs-reviewer` | Mechanical defects -- runtime failures, resource issues, structural flaws |
 | `code-design-reviewer` | Design fitness -- right approach given what exists |
 | `code-simplicity-reviewer` | Unnecessary complexity, over-engineering |
 | `code-maintainability-reviewer` | DRY, coupling, cohesion, consistency, dead code |
-| `code-coverage-reviewer` | Test coverage gaps for changed code |
+| `code-coverage-reviewer` | Test coverage with proactive edge case enumeration |
 | `code-testability-reviewer` | Testability design -- mock friction, logic buried in IO |
+| `contracts-reviewer` | API and interface contract correctness with evidence |
 | `type-safety-reviewer` | Type holes, invalid states, narrowing gaps |
 | `docs-reviewer` | Documentation accuracy against code changes |
 | `context-file-adherence-reviewer` | Context file / project rule compliance |

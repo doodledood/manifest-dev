@@ -38,6 +38,7 @@ These categories are guidance, not exhaustive. If you identify a maintainability
 ## Out of Scope
 
 Do NOT report on (handled by other agents):
+- **Intent-behavior divergence** (does the change achieve its goal?) → change-intent-reviewer
 - **Over-engineering / YAGNI** → code-simplicity-reviewer
 - **Cognitive complexity** → code-simplicity-reviewer
 - **Unnecessary indirection** → code-simplicity-reviewer
@@ -45,7 +46,8 @@ Do NOT report on (handled by other agents):
 - **Testability design patterns** → code-testability-reviewer
 - **Type safety issues** → type-safety-reviewer
 - **Documentation accuracy** → docs-reviewer
-- **Functional bugs** → code-bugs-reviewer
+- **Mechanical code defects** (race conditions, resource leaks, null handling) → code-bugs-reviewer
+- **API contract correctness** (wrong params, consumer breakage) → contracts-reviewer
 - **Test coverage gaps** → code-coverage-reviewer
 - **Context file compliance** → context-file-adherence-reviewer
 - **Design fitness** (reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, concept misuse/overloading) → code-design-reviewer

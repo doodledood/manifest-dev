@@ -4,23 +4,34 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-CLAUDE.md may specify project-specific preferences.
+AGENTS.md may specify project-specific preferences.
+
+### Base Gates (always applicable)
+
+Defect-finding agents use `no LOW+` — every verified defect is worth fixing. Quality/advisory agents use `no MEDIUM+` — their Low findings are acceptable trade-offs.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
-| Bug detection | code-bugs-reviewer | no MEDIUM+ |
-| Type safety | type-safety-reviewer | no MEDIUM+ |
+| Intent analysis | change-intent-reviewer | no LOW+ |
+| Mechanical bug detection | code-bugs-reviewer | no LOW+ |
 | Maintainability | code-maintainability-reviewer | no MEDIUM+ |
 | Simplicity | code-simplicity-reviewer | no MEDIUM+ |
 | Test coverage | code-coverage-reviewer | no MEDIUM+ |
 | Testability | code-testability-reviewer | no MEDIUM+ |
 | Documentation | docs-reviewer | no MEDIUM+ |
 | Design fitness | code-design-reviewer | no MEDIUM+ |
-| CLAUDE.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
+| AGENTS.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
+
+### Conditional Gates (when applicable)
+
+| Aspect | Agent | Threshold | Condition |
+|--------|-------|-----------|-----------|
+| Contract correctness | contracts-reviewer | no LOW+ | When code calls external/internal APIs, changes public interfaces, or crosses service boundaries |
+| Type safety | type-safety-reviewer | no LOW+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
 
 ## Project Gates
 
-CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+AGENTS.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 
