@@ -18,7 +18,13 @@ Two content pillars, both updated after each interview step:
 
 ## Experience
 
-**Visual mood**: A calm thinking space — muted palette, generous whitespace, clear typographic hierarchy. The visualization complements the terminal without competing for attention. It should feel like a focused companion, not a control panel.
+**Visual mood**: A calm thinking space — generous whitespace, clear typographic hierarchy. The visualization complements the terminal without competing for attention. It should feel like a focused companion, not a control panel.
+
+**Typography**: Choose distinctive, refined fonts — not generic defaults (Inter, Roboto, Arial, system fonts). Pair a clean display font with a readable body font. Typography is the single biggest lever between "looks AI-generated" and "looks designed."
+
+**Color & atmosphere**: Commit to a cohesive palette using CSS variables. A dominant tone with sharp accents outperforms timid, evenly-distributed colors. Create depth — subtle gradients, layered transparencies, or texture — rather than flat solid backgrounds. Avoid cliched color schemes, particularly purple gradients on white.
+
+**Motion**: Focus on high-impact moments — a well-orchestrated initial reveal with staggered animations creates more delight than scattered micro-interactions. Coverage state transitions (foggy → clear) should animate smoothly. Prefer CSS-only solutions.
 
 **Progress and momentum**: As the interview advances, explored areas should feel increasingly solid and clear. The user should sense "we're getting somewhere" — fog lifting, coverage growing, gaps narrowing. This rewards engagement and encourages the user to volunteer information proactively.
 
@@ -26,9 +32,10 @@ Two content pillars, both updated after each interview step:
 
 ## Avoid
 
+- **Generic AI aesthetics** — Inter font, purple gradient, rounded cards on white. If it looks like every other AI-generated page, it's wrong. Make intentional design choices.
 - **Wall of text** — rationale as dense paragraphs nobody reads. Use structure, not prose.
 - **Information overload** — showing everything at once. Reveal progressively as the interview unfolds.
-- **Clinical sterility** — technically correct but lifeless. Craft matters — the visualization should feel like something a human designed, not a debug dump.
+- **Flat, lifeless surfaces** — solid white/gray backgrounds with no depth. Add atmosphere through subtle gradients, texture, or layered elements.
 - **Jarring transitions** — full page reloads, content jumping, scroll position lost. Updates should feel invisible.
 
 ## Lifecycle
