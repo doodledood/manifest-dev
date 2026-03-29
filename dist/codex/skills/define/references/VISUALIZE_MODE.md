@@ -1,7 +1,5 @@
 # Visualize Mode — /define
 
-This file is loaded when `--visualize` is present and medium is `local`. If `--visualize` is absent, this file should not have been loaded.
-
 ## Purpose
 
 The define interview can feel like an interrogation. The user answers questions in a terminal without seeing the bigger picture — why each question matters, what's been explored, what's still foggy. The visualization is a **companion window** that makes the model's reasoning visible.

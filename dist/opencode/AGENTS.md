@@ -2,7 +2,7 @@
 
 Verification-first manifest workflows. Plan work thoroughly, execute against criteria, verify everything passes.
 
-Version: 0.71.0
+Version: 0.74.0
 
 ## Workflow Overview
 

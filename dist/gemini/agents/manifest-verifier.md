@@ -7,9 +7,11 @@ tools:
   - grep_search
   - glob
 model: inherit
+temperature: 0.2
 max_turns: 15
 timeout_mins: 5
 ---
+
 # Manifest Verifier Agent
 
 **User request**: $ARGUMENTS
@@ -111,7 +113,7 @@ Known Assumptions (ASM-*) must be genuinely low-impact. Flag when:
 
 ### Question format discipline
 
-Questions must use AskUserQuestion with concrete options. Flag when:
+Questions must present structured options with concrete choices. Flag when:
 - Log shows open-ended questions without concrete options
 - Questions lack a recommended option (single-select should have one "(Recommended)")
 - User asked about discoverable facts that could have been searched first

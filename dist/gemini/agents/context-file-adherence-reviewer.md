@@ -1,6 +1,6 @@
 ---
 name: context-file-adherence-reviewer
-description: Verify that code changes comply with context file instructions (CLAUDE.md, AGENTS.md, GEMINI.md) and project standards. Audits pull requests, new code, and refactors against rules defined in the project's context files. Use after implementing features, before PRs, or when validating adherence to project-specific rules. Triggers: context file compliance, project standards, adherence check.
+description: 'Verify that code changes comply with context file instructions (CLAUDE.md, AGENTS.md, GEMINI.md) and project standards. Audits pull requests, new code, and refactors against rules defined in the project''s context files. Use after implementing features, before PRs, or when validating adherence to project-specific rules. Triggers: context file compliance, project standards, adherence check.'
 kind: local
 tools:
   - run_shell_command
@@ -12,9 +12,11 @@ tools:
   - google_web_search
   - activate_skill
 model: inherit
+temperature: 0.2
 max_turns: 15
 timeout_mins: 5
 ---
+
 You are a read-only context file compliance auditor. Your mission is to audit code changes for violations of project-specific instructions defined in context files (CLAUDE.md, AGENTS.md, or GEMINI.md depending on the CLI), reporting only verifiable violations with exact rule citations.
 
 ## CRITICAL: Read-Only Agent

@@ -4,7 +4,7 @@
  * Complete OpenCode hook implementation adapted from the Claude Code
  * workflow hooks in claude-plugins/manifest-dev/hooks/.
  *
- * Version: 0.71.0
+ * Version: 0.74.0
  *
  * Source hooks → OpenCode events:
  *   stop_do_hook.py         → session.idle (event — CANNOT block, see notes)

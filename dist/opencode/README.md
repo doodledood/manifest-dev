@@ -2,7 +2,7 @@
 
 Verification-first manifest workflows for OpenCode. Use the `/define`, `/do`, `/auto`, and `/learn-define-patterns` commands, and let the workflow invoke the `verify`, `done`, and `escalate` skills as needed.
 
-Version: 0.71.0
+Version: 0.74.0
 
 ## Components
 

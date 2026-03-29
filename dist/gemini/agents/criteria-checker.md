@@ -10,9 +10,11 @@ tools:
   - web_fetch
   - google_web_search
 model: inherit
+temperature: 0.2
 max_turns: 15
 timeout_mins: 5
 ---
+
 # Criteria Checker Agent
 
 Verify a SINGLE criterion from a Manifest. You are READ-ONLY—check, don't modify. Spawned by /verify in parallel.

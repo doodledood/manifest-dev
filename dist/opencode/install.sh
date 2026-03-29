@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# manifest-dev installer for OpenCode CLI (v0.71.0)
+# manifest-dev installer for OpenCode CLI (v0.74.0)
 # Idempotent, additive install. Safe to re-run for updates.
 #
 # Usage:
@@ -27,7 +27,7 @@ ACTION="${1:-install}"
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-echo "manifest-dev installer for OpenCode (v0.71.0)"
+echo "manifest-dev installer for OpenCode (v0.74.0)"
 echo "================================================"
 
 case "$ACTION" in
