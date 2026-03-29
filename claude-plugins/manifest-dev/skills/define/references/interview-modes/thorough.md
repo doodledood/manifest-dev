@@ -39,6 +39,16 @@ Before transitioning to a new topic area or after resolving a cluster of related
 
 Exploration results are presented as conclusions with options. Share what you found, then offer choices for how to encode it. "I found X — should this be a hard constraint?" with concrete options via AskUserQuestion.
 
+## Log Entry Format
+
+When logging pending scenarios, capture the specific AskUserQuestion options that will be presented:
+
+```
+- [ ] Ask user: External API rate limits → Options: "Real risk - add to invariants (Recommended)", "No external APIs", "APIs exist, limits known and safe", "Out of scope"
+```
+
+When presenting a logged scenario to the user: "I'm imagining this failing because [concrete scenario]. How does this apply?" → Options as above.
+
 ## Convergence
 
 Err on more probing. Convergence requires: domain grounded (pre-mortem scenarios are project-specific, not generic), pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), edge cases probed, no unresolved `- [ ]` items in the log, quality gates from task files encoded as INV-G* (or omitted with logged reasoning), Defaults encoded as PG-*, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.

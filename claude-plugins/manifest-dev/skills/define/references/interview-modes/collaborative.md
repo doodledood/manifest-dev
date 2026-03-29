@@ -1,6 +1,6 @@
 # Interview Mode: Collaborative
 
-> **Status**: Placeholder — this mode is not yet implemented. Using `--interview collaborative` will load this file, but the behavioral instructions are forthcoming. For now, fall back to thorough mode behavior.
+> **Status**: Placeholder — this mode is not yet implemented. Notify the user: "Collaborative mode is not yet implemented — falling back to thorough mode." Then load and follow `interview-modes/thorough.md` instead.
 
 Co-discovery through transparent brainstorming. Model shares findings with reasoning as they emerge, building shared understanding. User contributes naturally when they have relevant context.
 
