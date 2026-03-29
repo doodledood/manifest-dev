@@ -306,8 +306,6 @@ LIKELIHOOD: Medium | IMPACT: High
 - [ ] Ask user: External API rate limits — resolve disposition
 ```
 
-Present scenarios and resolve dispositions. The active interview mode defines how scenarios are presented — question format, discussion style, and how the user engages with dispositions.
-
 ### Scenario Disposition
 
 Every scenario worth logging must resolve to one of:
