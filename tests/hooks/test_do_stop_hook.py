@@ -551,7 +551,7 @@ class TestStopHookInvocationPatterns:
         temp_transcript,
     ):
         """isMeta /define expansion referencing skills/do/ in body should NOT detect /do."""
-        # Real bug: /define SKILL.md references "skills/do/references/BUDGET_MODES.md"
+        # Real bug: /define SKILL.md references "../do/references/execution-modes/"
         # in its body text. The isMeta regex was matching this as a /do invocation.
         ismeta_define_expansion = {
             "type": "user",
@@ -567,7 +567,7 @@ class TestStopHookInvocationPatterns:
                             "## Verification Loop\n\n"
                             "After writing the manifest, check the manifest's `mode:` field "
                             "and the `/define manifest-verifier` row in "
-                            "`skills/do/references/BUDGET_MODES.md`.\n\n"
+                            "`../do/references/execution-modes/`.\n\n"
                             "To execute: /do /tmp/manifest-{timestamp}.md"
                         ),
                     }
@@ -966,7 +966,7 @@ class TestStopHookInterruptHandling:
                             "/path/to/plugins/skills/define\n\n"
                             "# /define - Manifest Builder\n\n"
                             "Build a comprehensive Manifest...\n\n"
-                            "Check `skills/do/references/BUDGET_MODES.md`.\n\n"
+                            "Check `../do/references/execution-modes/`.\n\n"
                             "To execute: /do /tmp/manifest-{timestamp}.md"
                         ),
                     }
