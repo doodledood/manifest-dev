@@ -14,7 +14,7 @@ Two interaction types:
 
 2. **Decision locking** — When a finding needs to become a manifest item, use AskUserQuestion (tool limit: 2-4 options, one marked "(Recommended)") to lock the decision. Only lock after sufficient shared understanding.
 
-Don't front-load options before the user understands the problem space. Share the finding and reasoning first, then lock.
+Don't front-load options before the user understands the problem space. Share the finding and reasoning first, then lock. This applies equally to Resolvable task file structures — share the structure and its relevance transparently, then lock the disposition via AskUserQuestion.
 
 **Scenario presentation**: Share your reasoning transparently before presenting options:
 

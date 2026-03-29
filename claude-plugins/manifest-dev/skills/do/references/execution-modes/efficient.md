@@ -18,11 +18,16 @@ Sequential — launch verifiers one at a time within each phase. Minimizes concu
 
 ## Fix-Verify Loops
 
-Max 1 per phase. If a criterion fails and the fix doesn't pass on re-verify, escalate.
+Max 1 per phase.
 
 ## Escalation
 
-Auto-escalate after 2 failures per criterion — upgrade that criterion's verifier from haiku to inherit (session model). Track total escalations across the run. After 3 total escalations, suggest to the user: "Efficient mode is escalating frequently. Consider switching to balanced."
+Two-stage escalation:
+
+1. **Model upgrade**: When a criterion fails twice at haiku, auto-upgrade that criterion's verifier to inherit (session model) and re-verify. This is automatic — no user involvement.
+2. **User escalation**: If the criterion still fails after the model upgrade, escalate to the user via /escalate.
+
+Track total model upgrades across the run. After 3 total upgrades, suggest to the user: "Efficient mode is escalating frequently. Consider switching to balanced."
 
 ## Manifest Verification (/define)
 
