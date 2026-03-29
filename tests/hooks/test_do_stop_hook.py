@@ -741,8 +741,8 @@ class TestStopHookEdgeCases:
         assert result is None
 
 
-class TestStopHookCollabMode:
-    """Tests for non-local medium collaboration mode behavior."""
+class TestStopHookMediumRouting:
+    """Tests for non-local medium routing behavior."""
 
     def test_allows_verify_with_medium_slack(
         self,
