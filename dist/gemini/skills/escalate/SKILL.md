@@ -187,6 +187,6 @@ User explicitly asked to stop mid-workflow (e.g., "commit so I can deploy", "sto
 
 **When to use**: User interrupts workflow for legitimate reasons (deploy, review, break). Not a blocker—just a handoff.
 
-## Collaboration Mode
+## Medium Routing
 
-In team mode, /do routes escalations through the lead teammate directly — /escalate is not invoked. The escalation templates above still define the expected content structure; /do uses them when composing messages to the lead.
+When medium is non-local, /do routes escalations through the medium directly — /escalate is not invoked. The escalation templates above still define the expected content structure; /do uses them when composing messages to the channel.

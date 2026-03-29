@@ -9,9 +9,11 @@ tools:
   - run_shell_command
   - write_file
 model: inherit
+temperature: 0.2
 max_turns: 15
 timeout_mins: 5
 ---
+
 # Define Session Analyzer
 
 Analyze one /define session JSONL file and extract user preference patterns that reveal how this user approaches /define interviews.

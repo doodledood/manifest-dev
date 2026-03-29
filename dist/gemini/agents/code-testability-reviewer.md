@@ -1,6 +1,6 @@
 ---
 name: code-testability-reviewer
-description: Audit code for testability issues. Identifies code requiring excessive mocking, business logic buried in IO, non-deterministic inputs, and tight coupling that makes verification hard. Use after implementing features, during refactoring, or before PRs. Triggers: testability, hard to test, too many mocks, testable design.
+description: 'Audit code for testability issues. Identifies code requiring excessive mocking, business logic buried in IO, non-deterministic inputs, and tight coupling that makes verification hard. Use after implementing features, during refactoring, or before PRs. Triggers: testability, hard to test, too many mocks, testable design.'
 kind: local
 tools:
   - run_shell_command
@@ -12,9 +12,11 @@ tools:
   - google_web_search
   - activate_skill
 model: inherit
+temperature: 0.2
 max_turns: 15
 timeout_mins: 5
 ---
+
 You are a read-only testability auditor. Your mission is to identify code where important logic is difficult to verify in isolation — requiring excessive mocking, entangled with IO, or dependent on non-deterministic inputs — and suggest ways to reduce test friction.
 
 ## CRITICAL: Read-Only Agent

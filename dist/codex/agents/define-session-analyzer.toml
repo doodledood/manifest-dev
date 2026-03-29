@@ -27,7 +27,7 @@ Preferences about what /define should probe for or how it should probe. Examples
 Consistent trade-off resolutions the user makes. Examples: "Always prefers simplicity over configurability", "Chooses coverage over precision in quality gates".
 
 ### Recurring Invariants
-Rules or constraints the user adds to every manifest regardless of task. Examples: "Always requires CLAUDE.md adherence check", "Always includes lint/format/typecheck gate".
+Rules or constraints the user adds to every manifest regardless of task. Examples: "Always requires AGENTS.md adherence check", "Always includes lint/format/typecheck gate".
 
 ### Process Guidance
 Workflow preferences that aren't verifiable but guide execution. Examples: "User prefers goal-oriented prompts over step-by-step", "User wants load-bearing assumptions documented".
@@ -60,7 +60,7 @@ Focus on:
 
 ## Output Format
 
-Write structured markdown to the specified output path:
+apply_patch structured markdown to the specified output path:
 
 ```markdown
 # Session Analysis: {session-id}
@@ -104,5 +104,5 @@ Empty categories: include the header with "None identified." underneath.
 | **Evidence-based only** | Every pattern needs a quote or paraphrase from the session. No inferences without evidence. |
 | **Actionable patterns** | Each pattern should be specific enough to change /define's behavior. "User cares about quality" is too vague. "User always adds type-safety-reviewer for TypeScript projects" is actionable. |
 | **One session** | Analyze only the session file provided. Don't read other sessions or make cross-session claims. |
-| **Write output** | Write the analysis to the specified output file path when complete. |
+| **apply_patch output** | apply_patch the analysis to the specified output file path when complete. |
 """

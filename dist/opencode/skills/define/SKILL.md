@@ -24,15 +24,13 @@ Output: `/tmp/manifest-{timestamp}.md`
 
 `$ARGUMENTS` = task description, optionally with context/research, `--interview <level>`, `--medium <type>`, `--amend <manifest-path>`, and `--visualize`
 
-Parse `--interview` from arguments (can appear anywhere). Valid values: `minimal`, `autonomous`, `thorough`. Default: `thorough`. Invalid value → error and halt: "Invalid interview style '<value>'. Valid styles: minimal | autonomous | thorough"
+Parse `--interview` from arguments (can appear anywhere). Valid values: `minimal`, `autonomous`, `thorough`, `collaborative`. Default: `thorough`. Invalid value → error and halt: "Invalid interview style '<value>'. Valid styles: minimal | autonomous | thorough | collaborative"
 
-Parse `--medium` from arguments (can appear anywhere). Accepts any value — the LLM adapts to whatever medium is specified (e.g., `slack`, `discord`, `email`, `teams`). Default: `local` (AskUserQuestion). When a task file exists for the medium (e.g., `tasks/workflow/messaging/SLACK.md` for slack), load it for platform-specific probing fuel.
+Parse `--medium` from arguments (can appear anywhere). Accepts any value — the LLM adapts to whatever medium is specified (e.g., `slack`, `discord`, `email`, `teams`). Default: `local`. Load the messaging file immediately — see Medium Routing section below.
 
-When medium is not `local`: read `references/COLLABORATION_MODE.md` for routing rules. The medium is encoded in the manifest's Intent section as `Medium: <value>` so `/do` knows the communication channel.
+Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do` flag (optional, used with `--amend`) signals the autonomous fast path.
 
-Parse `--amend <manifest-path>` from arguments (can appear anywhere). When present, /define operates on the existing manifest at the given path — see Amendment Mode section below. `--from-do` flag (optional, used with `--amend`) signals the autonomous fast path — no user approval gates.
-
-Parse `--visualize` from arguments (can appear anywhere). Boolean flag (no value). Default: off. When present and medium is `local`: read `references/VISUALIZE_MODE.md` for visualization setup and update instructions. When medium is not `local`, `--visualize` is silently ignored (user isn't at a terminal).
+Parse `--visualize` from arguments (can appear anywhere). Boolean flag (no value). Default: off.
 
 If no arguments provided, ask: "What would you like to build or change?"
 
@@ -82,7 +80,7 @@ If input references a previous manifest: **treat it as source of truth**. It con
 
 ## Amendment Mode
 
-When `--amend <manifest-path>` is present: read `references/AMENDMENT_MODE.md` for amendment rules. /define modifies the existing manifest instead of building from scratch.
+When `--amend <manifest-path>` is present: read `references/AMENDMENT_MODE.md` for amendment rules.
 
 ## Multi-Repo Scope
 
@@ -98,7 +96,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 1. **Verifiable** - Every Invariant and AC has a verification method (bash, subagent, manual). Constraints that can't be verified from output go in Process Guidance.
 
-2. **Validated** - You drive the interview. Generate concrete candidates; learn from user reactions.
+2. **Validated** - Generate concrete candidates; learn from user reactions. The interview mode defines how findings are shared and decisions are made — see the active interview mode file for behavioral specifics.
 
 3. **Domain-grounded** - Understand the domain before probing. Task files add angles to consider; exploration reveals patterns/constraints. Latent criteria emerge from domain understanding—you can't surface what you don't know.
 
@@ -110,7 +108,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 ## Interview Flow
 
-Domain Grounding → Outside View → Pre-Mortem → Backcasting → Adversarial Self-Review (skip for simple tasks). Protocols are sequential—each feeds the next. Domain Grounding reveals context that makes Outside View specific. Outside View establishes base rates that make Pre-Mortem grounded. Pre-Mortem surfaces failures that Backcasting complements with positive dependencies.
+The interview covers these protocols: Domain Grounding, Outside View, Pre-Mortem, Backcasting, Adversarial Self-Review (skip for simple tasks). The active interview mode defines the flow structure — whether protocols run sequentially, interleaved, or organically. See the interview mode file for flow specifics.
 
 ## Complexity Triage
 
@@ -128,14 +126,24 @@ When uncertain, default to Standard. User can signal "enough" to compress at any
 
 Resolve interview style from `--interview` argument → default `thorough`.
 
-If style is not `thorough`: read `references/INTERVIEW_STYLES.md` for style routing, auto-decided item encoding, and dynamic style shift rules. Follow those rules for the remainder of this /define run.
+Load the interview mode file for behavioral specifics:
+- `thorough` (default): read `references/interview-modes/thorough.md`
+- `collaborative`: read `references/interview-modes/collaborative.md`
+- `minimal`: read `references/interview-modes/minimal.md`
+- `autonomous`: read `references/interview-modes/autonomous.md`
+
+Follow the loaded interview mode's rules for question format, flow structure, checkpoint behavior, finding-sharing, and convergence for the remainder of this /define run.
+
+**Auto-decided items**: When interview style causes an item to be auto-decided (agent picks recommended option instead of asking), encode it normally as INV/AC/PG with an "(auto)" annotation, AND list it in the Known Assumptions section with the reasoning for the chosen option.
+
+**Style is dynamic**: The `--interview` flag sets the starting posture, not a rigid lock. Shift when the user's behavior signals a different mode: thorough/collaborative user says "enough" or "just build it" → shift to autonomous. Autonomous user asks questions or requests probing → shift to thorough. Thorough user starts contributing reasoning and context beyond picking options → shift to collaborative. Collaborative user says "just decide" → shift to autonomous, or "I want to decide everything" → shift to thorough. When the user or verifier gives feedback on an autonomous manifest, auto-resolve the concerns and stay in autonomous mode unless the user explicitly requests more interaction. Log any style shift to the discovery file.
 
 ## Constraints
 
-**All questions use AskUserQuestion** - Every user question goes through AskUserQuestion (tool limit: 2-4 options), one marked "(Recommended)". Never ask open-ended questions—they're cognitively demanding. Present concrete options the user can accept, reject, or adjust.
+**Decisions lock through structured options** - Questions that lock manifest content (encoding decisions, scope boundaries, trade-offs) present 2-4 concrete options, one marked "(Recommended)". The messaging file defines the tool; the interview mode defines when to present options, how to share findings, and how to discuss before locking.
 
 **Resolve all Resolvable task file structures** — After reading task files, extract every Resolvable table and checklist (risk lists, scenario prompts, trade-offs) and log each as a pending item. Quality gates and `## Defaults` are not Resolvable — auto-include them (quality gates as INV-G*, Defaults as PG-*), omitting clearly inapplicable ones with logged reasoning. Resolve each Resolvable item by either:
-1. **Present to user** for selection via AskUserQuestion — selected items encoded as INV-G* or AC-*, unselected items explicitly scoped out
+1. **Present to user** for selection with structured options — selected items encoded as INV-G* or AC-*, unselected items explicitly scoped out
 2. **Skip with logged justification** — when a structure genuinely doesn't apply to this task, log why (e.g., "CODING.md concurrency risk: single-threaded CLI tool, no concurrent access")
 
 Don't defer to synthesis — these are structural decisions that compound when missed. The flexibility is in justifying what to skip, not in whether to engage.
@@ -146,7 +154,7 @@ Don't defer to synthesis — these are structural decisions that compound when m
 
 **Mark a recommended option** - Every question with options must include a recommended default. For single-select, mark exactly one "(Recommended)". For multi-select, mark sensible defaults or none if all equally valid. Reduces cognitive load — users accept, reject, or adjust rather than evaluating from scratch.
 
-**Confirm before encoding** - When you discover constraints from exploration (structural patterns, conventions, existing boundaries), present them to the user before encoding as invariants. "I found X—should this be a hard constraint?" Discovered ≠ confirmed.
+**Confirm before encoding** - When you discover constraints from exploration (structural patterns, conventions, existing boundaries), present them to the user before encoding as invariants. "I found X—should this be a hard constraint?" Discovered ≠ confirmed. This applies to exploration-discovered constraints, not to task-file quality gates and Defaults (which are auto-included per the rules above).
 
 **Encode explicit constraints** - When users state preferences, requirements, or constraints (not clarifying remarks or exploratory responses), these must map to an INV or AC. "Single-author writing only" → process invariant. "Target < 1500 words" → acceptance criterion. Don't let explicit constraints get lost in the interview log.
 
@@ -172,11 +180,11 @@ Log pending items as they emerge — from any source:
 
 Read full log before synthesis. Unresolved `- [ ]` items must be addressed first.
 
-**Confirm understanding periodically** - Before transitioning to a new topic area or after resolving a cluster of related questions, synthesize your current understanding back to the user: "Here's what I've established so far: [summary]. Correct?" This catches interpretation drift early—a misunderstanding in round 2 compounds through round 8 if never checked.
+**Confirm understanding periodically** - Before transitioning to a new topic area or after resolving a cluster of related questions, synthesize your current understanding. The active interview mode defines the checkpoint format — how understanding is shared and what invitation for contribution is offered.
 
 **Batch related questions** - Group related questions into a single turn rather than asking one at a time. Batching keeps momentum and reduces round-trips without sacrificing depth. Each batch should cover a coherent topic area—don't mix unrelated concerns in one batch.
 
-**Stop when converged** - Err on more probing. Convergence requires: domain grounded (pre-mortem scenarios are project-specific, not generic), pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), edge cases probed, no unresolved `- [ ]` items in the log, quality gates from task files encoded as INV-G* (or omitted with logged reasoning), Defaults encoded as PG-*, and no obvious areas left unexplored. Only then, if very confident further questions would yield nothing new, move to synthesis. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
+**Stop when converged** - The checklist below defines WHAT must be true for convergence. The active interview mode defines HOW aggressively to pursue it (probing style, synthesis threshold). Convergence requires: domain grounded (pre-mortem scenarios are project-specific, not generic), pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), edge cases probed, no unresolved `- [ ]` items in the log, quality gates from task files encoded as INV-G* (or omitted with logged reasoning), Defaults encoded as PG-*, and no obvious areas left unexplored. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
 
 **Insights become criteria** - Domain grounding findings, outside view findings, pre-mortem risks, non-obvious discoveries → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to Resolvable task file content — risks and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
 
@@ -213,7 +221,7 @@ After defining deliverables, probe for **initial** implementation direction. Ski
 
 ## Domain Grounding Protocol
 
-Before imagining failure, understand what exists. Latent criteria emerge from domain understanding—you can't surface what you don't know.
+Understand what exists in the affected area. Latent criteria emerge from domain understanding—you can't surface what you don't know.
 
 **The exercise**: "What already exists in the relevant area? What patterns, conventions, and constraints are in place?"
 
@@ -243,7 +251,7 @@ Pending:
 
 ## Outside View Protocol
 
-Before imagining failure, establish what typically fails in this class of task.
+Establish what typically fails in this class of task.
 
 **The exercise**: "What's the reference class? What usually goes wrong?"
 
@@ -282,14 +290,9 @@ Task files add domain-specific failure scenarios. Use them as fuel for imaginati
 
 For each relevant dimension, generate concrete failure scenarios. Be specific—"something breaks" is useless; "the scheduler runs a job twice when the server restarts mid-execution" is actionable.
 
-**Present scenarios to the user with concrete options.** The scenario itself triggers thinking, but don't ask open-ended questions—offer dispositions to choose from:
+**Present scenarios and resolve dispositions.** The active interview mode defines how scenarios are presented — question format, discussion style, and how the user engages with dispositions.
 
-- Weak: "Are there any race conditions we should worry about?"
-- Strong: "I'm imagining two users submitting orders simultaneously and both getting the same order number. How should we handle this?" → Options: "Real risk - add to invariants (Recommended)", "Not possible (single-threaded)", "Already handled (describe how)", "Out of scope for this task"
-
-The concrete scenario helps users recognize whether it applies. The options reduce cognitive load—users pick a disposition rather than formulating a response.
-
-**Mental model alignment**: Before finalizing deliverables, present your understanding and check for mismatch: "Here's what 'done' looks like: [concrete description]. Does this match your expectation?" → Options: "Yes, that's right (Recommended)", "Mostly, but also need [X]", "No, I expected [different thing]". Mismatches are latent criteria—expectations they didn't state.
+**Mental model alignment**: Before finalizing deliverables, check for mismatch between your understanding and the user's expectation. Mismatches are latent criteria — expectations they didn't state. The active interview mode defines the format for this alignment check.
 
 When logging scenarios, capture what matters:
 - **What fails** (the specific scenario)
@@ -301,10 +304,8 @@ Example log entry:
 DIMENSION: Timing
 SCENARIO: Feature works in dev but rate limits hit in production due to external API calls
 LIKELIHOOD: Medium | IMPACT: High
-- [ ] Ask user: External API rate limits → Options: "Real risk - add to invariants (Recommended)", "No external APIs", "APIs exist, limits known and safe", "Out of scope"
+- [ ] Ask user: External API rate limits — resolve disposition
 ```
-
-When presenting to user: "I'm imagining this failing because we hit external API rate limits in production. How does this apply?" → Options as above.
 
 ### Scenario Disposition
 
@@ -327,18 +328,18 @@ Pre-mortem probing converges when:
 
 ## Backcasting Protocol
 
-After pre-mortem, backcast to surface positive dependencies.
+Surface positive dependencies — what has to go right for the task to succeed.
 
 **The exercise**: "Imagine this task succeeded on first review. What had to go right?"
 
-Pre-mortem asks "what broke?" Backcasting asks "what held?" This reveals load-bearing assumptions you haven't examined.
+Where pre-mortem asks "what broke?", backcasting asks "what held?" This reveals load-bearing assumptions you haven't examined.
 
 Focus on implicit assumptions:
 - What existing infrastructure/tooling are you relying on?
 - What user behavior are you assuming?
 - What needs to stay stable that could change?
 
-For each positive dependency, present to user with disposition options: "This assumes [X] remains stable. How should we handle?" → Options: "Safe assumption - log as Known Assumption (Recommended)", "Verify it holds before proceeding", "Encode as invariant", "Actually a risk - add to pre-mortem".
+For each positive dependency, resolve its disposition — whether it's a safe assumption, needs verification, should be encoded as an invariant, or is actually a risk. The active interview mode defines how dependencies are presented and resolved.
 
 Converges when load-bearing assumptions are surfaced and each is verified, encoded, or logged as Known Assumption.
 
@@ -352,7 +353,7 @@ Pre-mortem imagines external failures. Adversarial self-review imagines process 
 - "Temporary" solutions that become permanent
 - Process shortcuts that erode quality
 
-For each pattern identified, present to user: "This task is susceptible to [pattern]. Should we guard against it?" → Options: "Yes - add as Process Guidance (Recommended)", "Yes - add as verifiable Invariant", "Low risk for this task", "Already covered by [existing constraint]".
+For each pattern identified, resolve its disposition — whether to add as Process Guidance, encode as a verifiable Invariant, accept as low risk, or note it's already covered. The active interview mode defines how patterns are presented and resolved.
 
 Skip for simple tasks. Use for tasks with scope risk, process complexity, or history of scope creep.
 
@@ -376,7 +377,7 @@ Three categories, each covering **output** or **process**:
 - **Goal:** [High-level purpose]
 - **Mental Model:** [Key concepts to understand]
 - **Mode:** efficient | balanced | thorough *(optional, default: thorough — controls verification intensity during /do)*
-- **Interview:** minimal | autonomous | thorough *(optional, default: thorough — recorded so --amend can inherit the original interview style)*
+- **Interview:** minimal | autonomous | thorough | collaborative *(optional, default: thorough — recorded so --amend can inherit the original interview style)*
 - **Medium:** local | &lt;any platform&gt; *(optional, default: local — controls communication channel for /do escalations and updates)*
 
 ## 2. Approach (Complex Tasks Only)
@@ -458,11 +459,7 @@ Manifests support amendments during execution:
 
 ## Verification Loop
 
-After writing the manifest, check the manifest's `mode:` field and the `/define manifest-verifier` row in `skills/do/references/BUDGET_MODES.md`:
-
-- **efficient**: Skip the manifest-verifier. Proceed directly to Summary for Approval.
-- **balanced**: Run the manifest-verifier **once**. If it returns CONTINUE, present its questions, update the manifest, then proceed to Summary for Approval (no repeat loop).
-- **thorough** (default, or unspecified): Run the manifest-verifier with the full repeat loop until COMPLETE.
+After writing the manifest, check the manifest's `mode:` field and load the execution mode file from `../do/references/execution-modes/` for the resolved mode (default: `thorough`). Follow the mode's "Manifest Verification (/define)" section for whether to run the manifest-verifier and how many cycles.
 
 When running the verifier, pass only the file paths — no summary, framing, or commentary:
 
@@ -502,9 +499,22 @@ Before asking for approval, output a scannable summary that enables full manifes
 - **Feedback** (e.g., "also add X", "change Y", "use Z skill in process") → revise the manifest, re-present summary. Do not implement.
 - **Explicit /do invocation** → /define is done; /do takes over
 
-## Collaboration Mode
+## Medium Routing
 
-When `--medium` is not `local`, read `references/COLLABORATION_MODE.md` for routing rules. If medium is `local` (default), ignore this — all other sections apply as written.
+Load the messaging file for the resolved medium:
+- `local` (default): read `references/messaging/LOCAL.md`
+- `slack`: read `references/messaging/SLACK.md`
+- Any other value: do NOT use AskUserQuestion — adapt to the platform using available MCP tools, CLI commands, or whatever the environment provides. Post numbered options, poll for responses, log findings after each response. Ask user locally (AskUserQuestion) for the channel/destination on first question only.
+
+The messaging file defines HOW to interact (tool, format, polling). The interview mode file defines WHAT to interact about (questions, flow, convergence).
+
+The medium is encoded in the manifest's Intent section as `Medium: <value>` so `/do` knows the communication channel. When a task file exists for the medium (e.g., `tasks/workflow/messaging/SLACK.md` for slack), also load it for platform-specific probing fuel.
+
+## Visualization
+
+When `--visualize` is present and medium is `local`: read `references/VISUALIZE_MODE.md` for visualization behavior.
+
+When medium is not `local`, `--visualize` is silently ignored (user isn't at a terminal).
 
 ## Complete
 
@@ -512,6 +522,7 @@ When `--medium` is not `local`, read `references/COLLABORATION_MODE.md` for rout
 
 ```text
 Manifest complete: /tmp/manifest-{timestamp}.md
+Session: ~/.claude/projects/<dir>/<session-id>.jsonl
 
 To execute: /do /tmp/manifest-{timestamp}.md [log-file-path if iterating]
 ```

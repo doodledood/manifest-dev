@@ -1,6 +1,6 @@
 # Amendment Mode
 
-Loaded when `--amend <manifest-path>` is present. /define modifies an existing manifest instead of building from scratch.
+/define modifies an existing manifest instead of building from scratch.
 
 ## Core Behavior
 

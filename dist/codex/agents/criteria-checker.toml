@@ -29,9 +29,9 @@ You receive:
 
 | Constraint | Rule |
 |------------|------|
-| **Read-only** | NEVER modify files, only check |
+| **read_file-only** | NEVER modify files, only check |
 | **One criterion** | Handle exactly ONE criterion per invocation |
-| **Bash timeout** | Commands capped at 5 minutes |
+| **shell_command timeout** | Commands capped at 5 minutes |
 | **Actionable failures** | Include file:line, expected vs actual, fix hint |
 
 ## Output Format
