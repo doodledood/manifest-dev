@@ -12,7 +12,13 @@ Verification-first manifest workflows for Gemini CLI, delivered as extension-man
 
 ## Install
 
-### Option 1: Remote installer (recommended)
+### Option 1: npx (recommended)
+
+```bash
+npx skills add https://github.com/doodledood/manifest-dev --all -a gemini-cli
+```
+
+### Option 2: Shell installer
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
@@ -20,16 +26,10 @@ curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/g
 
 Re-running the installer updates the extension in `~/.gemini/extensions/manifest-dev/`. The installer merges `experimental.enableAgents = true` and the manifest-dev hook registrations into `~/.gemini/settings.json` additively. No post-install edits are required.
 
-### Uninstall
+#### Uninstall (shell installer)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash -s -- uninstall
-```
-
-### Option 2: Skills only (via npx)
-
-```bash
-npx skills add https://github.com/doodledood/manifest-dev --all -a gemini-cli
 ```
 
 ### Option 3: Gemini extensions install
@@ -91,4 +91,4 @@ gemini extensions link ./dist/gemini
 
 Main repo: [github.com/doodledood/manifest-dev](https://github.com/doodledood/manifest-dev)
 
-This distribution is auto-generated from the Claude Code plugin source at version 0.71.0.
+This distribution is auto-generated from the Claude Code plugin source at version 0.74.0.
