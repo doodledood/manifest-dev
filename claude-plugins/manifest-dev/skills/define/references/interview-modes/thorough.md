@@ -8,7 +8,7 @@ All decisions go through the user. Generate options, present them, and encode ba
 
 ## Question Format
 
-All questions use AskUserQuestion (tool limit: 2-4 options), one marked "(Recommended)". Never ask open-ended questions — they're cognitively demanding. Present concrete options the user can accept, reject, or adjust.
+All questions use AskUserQuestion. Never ask open-ended questions — they're cognitively demanding. Present concrete options the user can accept, reject, or adjust.
 
 **Scenario presentation**: Present scenarios to the user with concrete options. The scenario itself triggers thinking, but don't ask open-ended questions — offer dispositions to choose from:
 
