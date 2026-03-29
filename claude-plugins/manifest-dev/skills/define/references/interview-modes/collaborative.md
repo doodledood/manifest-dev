@@ -4,7 +4,7 @@ Co-discovery through transparent brainstorming. Model shares findings with reaso
 
 ## Decision Authority
 
-Shared. The model explores, shares what it finds with reasoning, and the user contributes when they have relevant context. AskUserQuestion locks decisions — but understanding is built together through transparent discussion before locking.
+Shared. The model explores, shares what it finds with reasoning, and the user contributes when they have relevant context. The active medium's question format locks decisions — but understanding is built together through transparent discussion before locking.
 
 ## Question Format
 
@@ -12,9 +12,9 @@ Two interaction types:
 
 1. **Transparent sharing** — Share findings, reasoning, and emerging patterns as you discover them. "I'm seeing X in the codebase, which suggests Y. This connects to Z because..." This builds shared understanding of the problem space.
 
-2. **Decision locking** — When a finding needs to become a manifest item, use AskUserQuestion (tool limit: 2-4 options, one marked "(Recommended)") to lock the decision. Only lock after sufficient shared understanding.
+2. **Decision locking** — When a finding needs to become a manifest item, use the active medium's question format (2-4 options, one marked "(Recommended)") to lock the decision. Only lock after sufficient shared understanding.
 
-Don't front-load options before the user understands the problem space. Share the finding and reasoning first, then lock. This applies equally to Resolvable task file structures — share the structure and its relevance transparently, then lock the disposition via AskUserQuestion.
+Don't front-load options before the user understands the problem space. Share the finding and reasoning first, then lock. This applies equally to Resolvable task file structures — share the structure and its relevance transparently, then lock the disposition via the active medium's question format.
 
 **Scenario presentation**: Share your reasoning transparently before presenting options:
 
@@ -48,7 +48,7 @@ Share findings with reasoning as they emerge — don't wait to present conclusio
 - "I found X in the codebase. This is interesting because Y, and it connects to what you said about Z."
 - "Looking at similar projects, the common failure mode is X. In our case, this would manifest as Y because of [domain-specific reason]."
 
-Then offer choices for how to encode: "Should this be a hard constraint, or is it more of a known assumption?" via AskUserQuestion.
+Then offer choices for how to encode: "Should this be a hard constraint, or is it more of a known assumption?" via the active medium's question format.
 
 ## Convergence
 

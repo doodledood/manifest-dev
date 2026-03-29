@@ -70,6 +70,6 @@ Manifest execution verified complete.
 3. **Adapt detail to complexity** - Simple task = condensed output. Complex task = full hierarchy.
 4. **Called by /verify only** - /done is the final step after /verify confirms all criteria pass. If the execution log doesn't show verification, something went wrong upstream.
 
-## Collaboration Mode
+## Medium Routing
 
-In team mode, /done output goes through the calling context (/verify → /do → lead). No special routing needed — just produce the summary as normal.
+When medium is non-local, /done output goes through the calling context (/verify → /do). No special routing needed — just produce the summary as normal.

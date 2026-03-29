@@ -26,7 +26,7 @@ Output: `/tmp/manifest-{timestamp}.md`
 
 Parse `--interview` from arguments (can appear anywhere). Valid values: `minimal`, `autonomous`, `thorough`, `collaborative`. Default: `thorough`. Invalid value → error and halt: "Invalid interview style '<value>'. Valid styles: minimal | autonomous | thorough | collaborative"
 
-Parse `--medium` from arguments (can appear anywhere). Accepts any value — the LLM adapts to whatever medium is specified (e.g., `slack`, `discord`, `email`, `teams`). Default: `local` (AskUserQuestion).
+Parse `--medium` from arguments (can appear anywhere). Accepts any value — the LLM adapts to whatever medium is specified (e.g., `slack`, `discord`, `email`, `teams`). Default: `local`.
 
 Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do` flag (optional, used with `--amend`) signals the autonomous fast path.
 
@@ -140,10 +140,10 @@ Follow the loaded interview mode's rules for question format, flow structure, ch
 
 ## Constraints
 
-**Decisions go through AskUserQuestion** - Questions that lock manifest content (encoding decisions, scope boundaries, trade-offs) use AskUserQuestion (tool limit: 2-4 options), one marked "(Recommended)". The active interview mode defines the full interaction style — when to use AskUserQuestion, how to share findings, and how to discuss before locking.
+**Decisions go through the active medium's question format** - Questions that lock manifest content (encoding decisions, scope boundaries, trade-offs) use the active medium's question format (2-4 options, one marked "(Recommended)"). The active interview mode defines the full interaction style — when to present options, how to share findings, and how to discuss before locking.
 
 **Resolve all Resolvable task file structures** — After reading task files, extract every Resolvable table and checklist (risk lists, scenario prompts, trade-offs) and log each as a pending item. Quality gates and `## Defaults` are not Resolvable — auto-include them (quality gates as INV-G*, Defaults as PG-*), omitting clearly inapplicable ones with logged reasoning. Resolve each Resolvable item by either:
-1. **Present to user** for selection via AskUserQuestion — selected items encoded as INV-G* or AC-*, unselected items explicitly scoped out
+1. **Present to user** for selection via the active medium's question format — selected items encoded as INV-G* or AC-*, unselected items explicitly scoped out
 2. **Skip with logged justification** — when a structure genuinely doesn't apply to this task, log why (e.g., "CODING.md concurrency risk: single-threaded CLI tool, no concurrent access")
 
 Don't defer to synthesis — these are structural decisions that compound when missed. The flexibility is in justifying what to skip, not in whether to engage.
@@ -499,11 +499,16 @@ Before asking for approval, output a scannable summary that enables full manifes
 - **Feedback** (e.g., "also add X", "change Y", "use Z skill in process") → revise the manifest, re-present summary. Do not implement.
 - **Explicit /do invocation** → /define is done; /do takes over
 
-## Collaboration Mode
+## Medium Routing
 
-When `--medium` is not `local`: read `references/COLLABORATION_MODE.md` for routing rules that override the interaction channel.
+Load the messaging file for the resolved medium:
+- `local` (default): read `tasks/workflow/messaging/LOCAL.md`
+- `slack`: read `tasks/workflow/messaging/SLACK_MESSAGING.md`
+- Any other value: read `tasks/workflow/messaging/GENERIC.md`
 
-The medium is encoded in the manifest's Intent section as `Medium: <value>` so `/do` knows the communication channel. When a task file exists for the medium (e.g., `tasks/workflow/messaging/SLACK.md` for slack), load it for platform-specific probing fuel.
+The messaging file defines HOW to interact (tool, format, polling). The interview mode file defines WHAT to interact about (questions, flow, convergence).
+
+The medium is encoded in the manifest's Intent section as `Medium: <value>` so `/do` knows the communication channel. When a task file exists for the medium (e.g., `tasks/workflow/messaging/SLACK.md` for slack), also load it for platform-specific probing fuel.
 
 ## Visualization
 

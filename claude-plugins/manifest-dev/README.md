@@ -190,11 +190,15 @@ These run in parallel during `/verify`:
 | `context-file-adherence-reviewer` | Verifies code changes comply with CLAUDE.md instructions and project standards |
 | `docs-reviewer` | Audits documentation accuracy against recent code changes |
 
-## Collaboration Mode
+## Medium Routing
 
-`/define` supports `--medium <platform>` (default: local). When a non-local medium is specified (e.g., `--medium slack`, `--medium discord`), questions route through that platform's tools instead of AskUserQuestion. The medium is encoded in the manifest's Intent section so `/do` knows the communication channel for updates and escalations. Accepts any value — the LLM adapts to whatever medium is specified.
+`/define` supports `--medium <platform>` (default: local). The medium determines how the interview interacts with users — which tool to use, how to post questions, how to poll for responses. Each medium has a messaging file in `tasks/workflow/messaging/`:
 
-Full routing instructions live in `references/COLLABORATION_MODE.md` under each skill (progressive disclosure — only loaded when medium is non-local).
+- `local` (default): `LOCAL.md` — terminal interaction via AskUserQuestion
+- `slack`: `SLACK_MESSAGING.md` — Slack MCP tools for posting and polling
+- Any other value: `GENERIC.md` — adapts to the platform's available tools
+
+The medium is encoded in the manifest's Intent section so `/do` and `/verify` know the communication channel for updates and results. `/do` and `/verify` handle non-local medium behavior inline (posting updates, results, escalations).
 
 ## Multi-CLI Distribution
 

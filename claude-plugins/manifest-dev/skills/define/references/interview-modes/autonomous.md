@@ -8,7 +8,7 @@ All decisions auto-resolved. Pick the recommended option for every item. No ques
 
 ## Question Format
 
-No AskUserQuestion calls during the interview. All findings are resolved autonomously. The only user interaction is the final manifest presentation.
+No user-facing questions during the interview. All findings are resolved autonomously. The only user interaction is the final manifest presentation.
 
 ## Interview Flow
 

@@ -8,7 +8,7 @@ Ask the user for scope boundaries, hard constraints, and items where multiple op
 
 ## Question Format
 
-Use AskUserQuestion only when the decision materially affects scope or has no clear recommended choice. For all other items, pick the recommended option and log it as auto-decided.
+Use the active medium's question format only when the decision materially affects scope or has no clear recommended choice. For all other items, pick the recommended option and log it as auto-decided.
 
 ## Interview Flow
 

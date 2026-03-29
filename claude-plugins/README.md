@@ -35,7 +35,7 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 
 **Hooks** enforce workflow integrity: prevent premature stopping, restore context after compaction, nudge manifest reads before verification, track execution log updates, and detect manifest amendments during `/do`.
 
-**Task guidance** with domain-specific quality gates, risks, and scenarios. Reference material in `tasks/references/research/` provides detailed evidence for `/verify` agents. Collaboration mode instructions in `skills/*/references/COLLABORATION_MODE.md` (progressive disclosure — only loaded when collab is active).
+**Task guidance** with domain-specific quality gates, risks, and scenarios. Reference material in `tasks/references/research/` provides detailed evidence for `/verify` agents. Medium-specific messaging files in `tasks/workflow/messaging/` (LOCAL.md, SLACK_MESSAGING.md, GENERIC.md) define interaction mechanics per platform.
 
 ### manifest-dev-tools
 
