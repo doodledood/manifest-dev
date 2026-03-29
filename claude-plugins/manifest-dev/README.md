@@ -192,10 +192,12 @@ These run in parallel during `/verify`:
 
 ## Medium Routing
 
-`/define` supports `--medium <platform>` (default: local). The medium determines how the interview interacts with users — which tool to use, how to post questions, how to poll for responses. Each medium has a messaging file in `references/messaging/`:
+`/define` supports `--medium <platform>` (default: local). The medium determines how the interview interacts with users — which tool to use, how to post questions, how to poll for responses. Each supported medium has a messaging file in `references/messaging/`:
 
 - `local` (default): `LOCAL.md` — terminal interaction via AskUserQuestion
-- Any non-local value: `REMOTE.md` — adapts to the platform's available tools (Slack MCP, Discord, etc.)
+- `slack`: `SLACK.md` — Slack MCP tools for posting and polling
+
+Other medium values get inline fallback guidance in the routing section.
 
 The medium is encoded in the manifest's Intent section so `/do` and `/verify` know the communication channel for updates and results. `/do` and `/verify` handle non-local medium behavior inline (posting updates, results, escalations).
 

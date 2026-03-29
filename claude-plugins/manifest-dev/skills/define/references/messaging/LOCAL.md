@@ -1,6 +1,6 @@
 # LOCAL Messaging — Terminal Interaction
 
-Default medium. The user is at a terminal in the same session.
+The user is at a terminal in the same session.
 
 ## Interaction Tool
 

@@ -503,7 +503,8 @@ Before asking for approval, output a scannable summary that enables full manifes
 
 Load the messaging file for the resolved medium:
 - `local` (default): read `references/messaging/LOCAL.md`
-- Any non-local value: read `references/messaging/REMOTE.md`
+- `slack`: read `references/messaging/SLACK.md`
+- Any other value: do NOT use AskUserQuestion — adapt to the platform using available MCP tools, CLI commands, or whatever the environment provides. Post numbered options, poll for responses, log findings after each response. Ask user locally (AskUserQuestion) for the channel/destination on first question only.
 
 The messaging file defines HOW to interact (tool, format, polling). The interview mode file defines WHAT to interact about (questions, flow, convergence).
 
