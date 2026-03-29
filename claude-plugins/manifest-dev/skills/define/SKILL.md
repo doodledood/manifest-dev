@@ -128,14 +128,17 @@ When uncertain, default to Standard. User can signal "enough" to compress at any
 
 Resolve interview style from `--interview` argument → default `thorough`.
 
-Read `references/INTERVIEW_STYLES.md` for the style routing table, auto-decided item encoding, and dynamic style shift rules.
-
 Load the interview mode file for behavioral specifics:
 - `thorough` (default): read `references/interview-modes/thorough.md`
 - `collaborative`: read `references/interview-modes/collaborative.md`
-- `minimal`, `autonomous`: behavior defined in `references/INTERVIEW_STYLES.md` (compact — no separate mode file)
+- `minimal`: read `references/interview-modes/minimal.md`
+- `autonomous`: read `references/interview-modes/autonomous.md`
 
 Follow the loaded interview mode's rules for question format, flow structure, checkpoint behavior, finding-sharing, and convergence for the remainder of this /define run.
+
+**Auto-decided items**: When interview style causes an item to be auto-decided (agent picks recommended option instead of asking), encode it normally as INV/AC/PG with an "(auto)" annotation, AND list it in the Known Assumptions section with the reasoning for the chosen option.
+
+**Style is dynamic**: The `--interview` flag sets the starting posture, not a rigid lock. If a user on autonomous explicitly asks questions or requests probing, engage. If a user on thorough signals "enough" or says "just build it", shift to autonomous for the remainder of the session. When the user or verifier gives feedback on an autonomous manifest, auto-resolve the concerns and stay in autonomous mode unless the user explicitly requests more interaction. Log any style shift to the discovery file.
 
 ## Constraints
 
