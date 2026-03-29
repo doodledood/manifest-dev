@@ -502,9 +502,9 @@ Before asking for approval, output a scannable summary that enables full manifes
 ## Medium Routing
 
 Load the messaging file for the resolved medium:
-- `local` (default): read `tasks/workflow/messaging/LOCAL.md`
-- `slack`: read `tasks/workflow/messaging/SLACK_MESSAGING.md`
-- Any other value: read `tasks/workflow/messaging/GENERIC.md`
+- `local` (default): read `references/messaging/LOCAL.md`
+- `slack`: read `references/messaging/SLACK_MESSAGING.md`
+- Any other value: read `references/messaging/GENERIC.md`
 
 The messaging file defines HOW to interact (tool, format, polling). The interview mode file defines WHAT to interact about (questions, flow, convergence).
 

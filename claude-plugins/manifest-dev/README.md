@@ -192,7 +192,7 @@ These run in parallel during `/verify`:
 
 ## Medium Routing
 
-`/define` supports `--medium <platform>` (default: local). The medium determines how the interview interacts with users — which tool to use, how to post questions, how to poll for responses. Each medium has a messaging file in `tasks/workflow/messaging/`:
+`/define` supports `--medium <platform>` (default: local). The medium determines how the interview interacts with users — which tool to use, how to post questions, how to poll for responses. Each medium has a messaging file in `references/messaging/`:
 
 - `local` (default): `LOCAL.md` — terminal interaction via AskUserQuestion
 - `slack`: `SLACK_MESSAGING.md` — Slack MCP tools for posting and polling
