@@ -121,7 +121,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 | **balanced** | Same models, limited parallelism (max 4), limited fix loops (max 2) |
 | **efficient** | Haiku for verification, skips reviewer agents, sequential, max 1 fix loop |
 
-See `skills/do/references/BUDGET_MODES.md` for full routing table and escalation rules.
+See `skills/do/references/execution-modes/` for per-mode behavioral details.
 
 ### Task-Specific Guidance
 

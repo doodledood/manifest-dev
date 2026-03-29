@@ -461,11 +461,7 @@ Manifests support amendments during execution:
 
 ## Verification Loop
 
-After writing the manifest, check the manifest's `mode:` field and the `/define manifest-verifier` row in `skills/do/references/BUDGET_MODES.md`:
-
-- **efficient**: Skip the manifest-verifier. Proceed directly to Summary for Approval.
-- **balanced**: Run the manifest-verifier **once**. If it returns CONTINUE, present its questions, update the manifest, then proceed to Summary for Approval (no repeat loop).
-- **thorough** (default, or unspecified): Run the manifest-verifier with the full repeat loop until COMPLETE.
+After writing the manifest, check the manifest's `mode:` field and load the execution mode file from `skills/do/references/execution-modes/` for the resolved mode (default: `thorough`). Follow the mode's "Manifest Verification (/define)" section for whether to run the manifest-verifier and how many cycles.
 
 When running the verifier, pass only the file paths — no summary, framing, or commentary:
 

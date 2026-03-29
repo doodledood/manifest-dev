@@ -23,7 +23,19 @@ Resolve mode from (highest precedence first): `--mode` argument → manifest `mo
 
 Invalid mode value → error and halt: "Invalid mode '<value>'. Valid modes: efficient | balanced | thorough"
 
-If mode is not `thorough`: read `references/BUDGET_MODES.md` for routing rules, escalation logic, and parallelism overrides. Follow those rules for the remainder of this /do run.
+Load the execution mode file for behavioral specifics:
+- `thorough` (default): read `references/execution-modes/thorough.md`
+- `balanced`: read `references/execution-modes/balanced.md`
+- `efficient`: read `references/execution-modes/efficient.md`
+
+Follow the loaded mode's rules for model routing, verification parallelism, fix-verify loop limits, and escalation for the remainder of this /do run.
+
+**Override precedence** (applies to all modes):
+1. **Criterion-level model wins**: When a manifest criterion specifies `model:` in its verify block, that overrides the mode's model routing.
+2. **Explicit model overrides skip**: If a criterion explicitly sets `model:`, it runs even when the mode would otherwise skip it.
+3. **Global Invariants always run**: INV-G* verification runs regardless of mode — constitutional constraints.
+
+**Phase × loop interaction**: Fix-verify loop limits apply per-phase. Each phase has its own loop counter. A fix for a later phase that regresses an earlier phase increments the earlier phase's counter.
 
 ## Existing Execution Log
 
@@ -45,9 +57,9 @@ If input includes a log file path (iteration on previous work): **treat it as so
 
 **Must call /verify** - Can't declare done without verification. Invoke manifest-dev:verify with manifest, log paths, and the resolved mode: `/verify <manifest> <log> --mode <level>`.
 
-**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type), or (4) mode-specific fix-verify loop limit is reached (see `references/BUDGET_MODES.md`). If ACs remain achievable as written and no user interrupt, continue autonomously. Approach pivots don't require escalation — log adjustments with rationale and continue.
+**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type), or (4) the active execution mode's fix-verify loop limit is reached. If ACs remain achievable as written and no user interrupt, continue autonomously. Approach pivots don't require escalation — log adjustments with rationale and continue.
 
-**Mode-aware loop tracking** - Track fix-verify iteration count and escalation count in the execution log. Loop counters are per-phase — each phase has its own counter. When mode limits are reached for a phase, follow the escalation rules in `references/BUDGET_MODES.md`. In efficient mode, also track total escalations and suggest mode switch after 3.
+**Mode-aware loop tracking** - Track fix-verify iteration count and escalation count in the execution log. Loop counters are per-phase. When the active execution mode's limits are reached, follow its escalation rules.
 
 **Phase-aware verification** - /verify runs criteria in phases (ascending by `phase:` field, default 1). It may report "Phase N failed, Phase N+1 not run." After fixing failures, /verify restarts from Phase 1 to catch regressions — a fix for a Phase 2 failure could break Phase 1 criteria. If a Phase 2 fix regresses Phase 1, Phase 1's loop counter increments (the failure IS in Phase 1).
 
