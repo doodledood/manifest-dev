@@ -142,7 +142,7 @@ Follow the loaded interview mode's rules for question format, flow structure, ch
 
 ## Constraints
 
-**All questions go through AskUserQuestion** - Every question to the user goes through AskUserQuestion (tool limit: 2-4 options), one marked "(Recommended)". The active interview mode defines question format, discussion style, and presentation behavior.
+**Decisions go through AskUserQuestion** - Questions that lock manifest content (encoding decisions, scope boundaries, trade-offs) use AskUserQuestion (tool limit: 2-4 options), one marked "(Recommended)". The active interview mode defines the full interaction style — when to use AskUserQuestion, how to share findings, and how to discuss before locking.
 
 **Resolve all Resolvable task file structures** — After reading task files, extract every Resolvable table and checklist (risk lists, scenario prompts, trade-offs) and log each as a pending item. Quality gates and `## Defaults` are not Resolvable — auto-include them (quality gates as INV-G*, Defaults as PG-*), omitting clearly inapplicable ones with logged reasoning. Resolve each Resolvable item by either:
 1. **Present to user** for selection via AskUserQuestion — selected items encoded as INV-G* or AC-*, unselected items explicitly scoped out
@@ -223,7 +223,7 @@ After defining deliverables, probe for **initial** implementation direction. Ski
 
 ## Domain Grounding Protocol
 
-Before imagining failure, understand what exists. Latent criteria emerge from domain understanding—you can't surface what you don't know.
+Understand what exists in the affected area. Latent criteria emerge from domain understanding—you can't surface what you don't know.
 
 **The exercise**: "What already exists in the relevant area? What patterns, conventions, and constraints are in place?"
 
@@ -253,7 +253,7 @@ Pending:
 
 ## Outside View Protocol
 
-Before imagining failure, establish what typically fails in this class of task.
+Establish what typically fails in this class of task.
 
 **The exercise**: "What's the reference class? What usually goes wrong?"
 
@@ -292,7 +292,7 @@ Task files add domain-specific failure scenarios. Use them as fuel for imaginati
 
 For each relevant dimension, generate concrete failure scenarios. Be specific—"something breaks" is useless; "the scheduler runs a job twice when the server restarts mid-execution" is actionable.
 
-**Present scenarios and resolve dispositions.** The active interview mode defines how scenarios are presented — question format, discussion style, and how the user engages with dispositions. Be specific with scenarios — "something breaks" is useless; concrete failures are actionable.
+**Present scenarios and resolve dispositions.** The active interview mode defines how scenarios are presented — question format, discussion style, and how the user engages with dispositions.
 
 **Mental model alignment**: Before finalizing deliverables, check for mismatch between your understanding and the user's expectation. Mismatches are latent criteria — expectations they didn't state. The active interview mode defines the format for this alignment check.
 
@@ -330,11 +330,11 @@ Pre-mortem probing converges when:
 
 ## Backcasting Protocol
 
-After pre-mortem, backcast to surface positive dependencies.
+Surface positive dependencies — what has to go right for the task to succeed.
 
 **The exercise**: "Imagine this task succeeded on first review. What had to go right?"
 
-Pre-mortem asks "what broke?" Backcasting asks "what held?" This reveals load-bearing assumptions you haven't examined.
+Where pre-mortem asks "what broke?", backcasting asks "what held?" This reveals load-bearing assumptions you haven't examined.
 
 Focus on implicit assumptions:
 - What existing infrastructure/tooling are you relying on?
