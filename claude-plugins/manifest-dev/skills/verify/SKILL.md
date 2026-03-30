@@ -44,7 +44,7 @@ When spawning verifier agents, pass the criterion's manifest data. Do not add yo
 
 **Include**: Criterion ID, description, verification method, and the verify block's `command:` or `prompt:` field verbatim. Add file scope when the criterion targets specific files.
 
-**Optional context file paths**: When a manifest file, discovery log, or execution log exists, you may append their file paths as optional reference material. Present them neutrally — agents can read them if useful for understanding scope or context, but are not required to.
+**Optional context file paths**: When a manifest file, discovery log, or execution log exists, append their file paths as optional reference material. Present them neutrally — agents can read them if useful for understanding scope or context, but are not required to.
 
 Format: `Optional context — manifest: <path>, discovery log: <path>, execution log: <path>`
 
