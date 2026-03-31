@@ -22,15 +22,13 @@ Output: `/tmp/manifest-{timestamp}.md`
 
 ## Input
 
-`$ARGUMENTS` = task description, optionally with context/research, `--interview <level>`, `--medium <type>`, `--amend <manifest-path>`, and `--visualize`
+`$ARGUMENTS` = task description, optionally with context/research, `--interview <level>`, `--medium <type>`, `--amend <manifest-path>`
 
 Parse `--interview` from arguments (can appear anywhere). Valid values: `minimal`, `autonomous`, `thorough`, `collaborative`. Default: `thorough`. Invalid value → error and halt: "Invalid interview style '<value>'. Valid styles: minimal | autonomous | thorough | collaborative"
 
 Parse `--medium` from arguments (can appear anywhere). Accepts any value — the LLM adapts to whatever medium is specified (e.g., `slack`, `discord`, `email`, `teams`). Default: `local`. Load the messaging file immediately — see Medium Routing section below.
 
 Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do` flag (optional, used with `--amend`) signals the autonomous fast path.
-
-Parse `--visualize` from arguments (can appear anywhere). Boolean flag (no value). Default: off.
 
 If no arguments provided, ask: "What would you like to build or change?"
 
@@ -510,19 +508,12 @@ The messaging file defines HOW to interact (tool, format, polling). The intervie
 
 The medium is encoded in the manifest's Intent section as `Medium: <value>` so `/do` knows the communication channel. When a task file exists for the medium (e.g., `tasks/workflow/messaging/SLACK.md` for slack), also load it for platform-specific probing fuel.
 
-## Visualization
-
-When `--visualize` is present and medium is `local`: read `references/VISUALIZE_MODE.md` for visualization behavior.
-
-When medium is not `local`, `--visualize` is silently ignored (user isn't at a terminal).
-
 ## Complete
 
 /define ends here. Output the manifest path and stop.
 
 ```text
 Manifest complete: /tmp/manifest-{timestamp}.md
-Session: ~/.claude/projects/<dir>/<session-id>.jsonl
 
 To execute: /do /tmp/manifest-{timestamp}.md [log-file-path if iterating]
 ```

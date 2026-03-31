@@ -4,13 +4,13 @@ The user is at a terminal in the same session.
 
 ## Interaction Tool
 
-Use `AskUserQuestion` for all decision-locking interactions. This is the tool that presents structured options to the user.
+Use `AskUserQuestion` whenever you need input from the user — decisions, confirmations, clarifications, direction. This is the tool that presents structured options to the user.
 
 ## Format Constraints
 
 - Numbered options per question, one marked "(Recommended)" — count constraint defined in SKILL.md
-- Decision-locking questions always present concrete options the user can accept, reject, or adjust — never open-ended for decisions
-- Checkpoints, finding-sharing, and transparent discussion use normal conversation (not AskUserQuestion) — only lock decisions with the tool
+- Questions always present concrete options the user can accept, reject, or adjust — never open-ended when you need a specific answer
+- Checkpoints, finding-sharing, and transparent discussion use normal conversation (not AskUserQuestion) — use the tool only when you need something back from the user
 
 ## Channel Bootstrap
 
