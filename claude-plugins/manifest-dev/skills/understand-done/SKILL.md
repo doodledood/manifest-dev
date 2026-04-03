@@ -1,6 +1,7 @@
 ---
 name: understand-done
-description: 'User-only command to end an active /understand session. Never auto-invoke — only the user decides when understanding is complete.'
+description: 'End an active /understand session. Stops principles reinforcement reminders.'
+disable-model-invocation: true
 user-invocable: true
 ---
 
