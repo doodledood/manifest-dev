@@ -268,12 +268,14 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
       if (uState.active && !uState.isComplete) {
         output.system.push(
           `<system-reminder>/understand active. Self-check before responding:\n` +
+          `- Are you asking the user something you could investigate yourself?\n` +
           `- Are you claiming something you haven't verified?\n` +
+          `- Do your claims and findings actually fit together, or are you smoothing over a contradiction?\n` +
           `- Are you agreeing just to be agreeable?\n` +
           `- Are you proposing when you should be exploring?\n` +
           `- Are you filling the user's uncertainty with your confidence?\n\n` +
-          `Principles: investigate before claiming, name verified vs inferred, ` +
-          `surface seams, sit with fog.</system-reminder>`
+          `Principles: come prepared, name verified vs inferred, ` +
+          `incoherence is a signal, sit with fog.</system-reminder>`
         )
       }
     },
@@ -314,13 +316,13 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
             `This session was compacted during an active /understand session. Context may have been lost.\n\n` +
             `You are in an /understand session about: ${uState.understandArgs}\n\n` +
             `Re-read the /understand skill to restore your cognitive stance. ` +
-            `Truth-convergence is your north star — investigate before claiming, surface seams, resist premature synthesis.`
+            `Truth-convergence is your north star — come prepared, incoherence is a signal, resist premature synthesis.`
           )
         } else {
           output.context.push(
             `This session was compacted during an active /understand session. Context may have been lost.\n\n` +
             `Re-read the /understand skill to restore your cognitive stance. ` +
-            `Truth-convergence is your north star — investigate before claiming, surface seams, resist premature synthesis.`
+            `Truth-convergence is your north star — come prepared, incoherence is a signal, resist premature synthesis.`
           )
         }
       }

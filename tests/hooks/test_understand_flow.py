@@ -437,7 +437,7 @@ class TestUnderstandPromptHookOutput:
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
         assert "verified" in context.lower()
-        assert "investigate before claiming" in context.lower()
+        assert "come prepared" in context.lower()
 
 
 class TestUnderstandPromptHookNoOutput:
