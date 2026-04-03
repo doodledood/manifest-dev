@@ -76,7 +76,7 @@ Compare against base branch first:
 
 ### Routing
 
-**Manifest-aware mode:** For actionable items, determine affected deliverable(s) by examining what files/code the comment targets against the manifest's deliverable structure (include all potentially affected when ambiguous). Amend manifest via `/define --amend <manifest-path> --from-do`, then invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>` (use the `--log` path if provided, otherwise locate the most recent `/tmp/do-log-*.md` or from conversation context). If `/do` escalates, stop the loop and report the blocker with enough context for the user to resume. Push changes and reply to the comment.
+**Manifest-aware mode:** For actionable items (review comments or CI failures), determine affected deliverable(s) — for comments, examine what files/code the comment targets; for CI failures, analyze the failure output to identify which code caused it. Match against the manifest's deliverable structure (include all potentially affected when ambiguous). Amend manifest via `/define --amend <manifest-path> --from-do`, then invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>` (use the `--log` path if provided, otherwise locate the most recent `/tmp/do-log-*.md` or from conversation context). If `/do` escalates, stop the loop and report the blocker with enough context for the user to resume. Push changes and reply to the comment.
 
 **Babysit mode:** Fix directly, push, reply.
 
