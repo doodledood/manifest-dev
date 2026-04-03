@@ -26,6 +26,15 @@ class DoFlowState:
     has_collab_mode: bool  # /do uses non-local medium (--medium not local)
 
 
+@dataclass
+class UnderstandFlowState:
+    """State of the /understand workflow from transcript parsing."""
+
+    has_understand: bool  # /understand was invoked
+    is_complete: bool  # /understand-done called or workflow skill started after
+    understand_args: str | None  # raw arguments from /understand invocation
+
+
 def build_system_reminder(content: str) -> str:
     """Wrap content in a system-reminder tag."""
     return f"<system-reminder>{content}</system-reminder>"
