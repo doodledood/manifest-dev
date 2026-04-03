@@ -40,5 +40,3 @@ The remaining text after flag extraction is the task description.
 ## Failure Handling
 
 If /define does not produce a manifest path, stop and report the failure. Do not invoke /do without a valid manifest.
-
-If /do escalates and `--tend-pr` was specified, report why /tend-pr was skipped (see step 4 above).

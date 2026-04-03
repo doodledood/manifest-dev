@@ -139,18 +139,6 @@ See `skills/do/references/execution-modes/` for per-mode behavioral details.
 | Research | `skills/define/tasks/research/RESEARCH.md` + source files | Research, analysis, investigation. Source-specific guidance in `tasks/research/sources/` |
 | Other | (none) | Doesn't fit above categories |
 
-**Workflow task files** add a process/lifecycle dimension orthogonal to the domain files above:
-
-| Task Type | File | When Loaded |
-|-----------|------|-------------|
-| Workflow | `skills/define/tasks/workflow/WORKFLOW.md` | Multi-step process, review/approval/CI, external deps, `--medium` flag |
-| Collaboration | `skills/define/tasks/workflow/COLLABORATION.md` | Team/stakeholders, `--medium` non-local |
-| Slack | `skills/define/tasks/workflow/messaging/SLACK.md` | `--medium slack` |
-| GitHub Review | `skills/define/tasks/workflow/code-review/GITHUB.md` | Default for code + workflow, or explicit GitHub/PR |
-| GitLab Review | `skills/define/tasks/workflow/code-review/GITLAB.md` | GitLab, MR, `--review-platform gitlab` |
-
-A dev workflow with review composes: CODING + FEATURE + WORKFLOW + GITHUB. Workflow files are only loaded when workflow indicators are present — solo dev tasks with no review get no workflow files.
-
 The universal flow works without any task file. Task files contain condensed domain knowledge that `/define` uses during probing. Full reference material for `/verify` agents lives in `skills/define/tasks/references/`.
 
 ## How the Interview Works
@@ -195,14 +183,7 @@ These run in parallel during `/verify`:
 
 ## Medium Routing
 
-`/define` supports `--medium <platform>` (default: local). The medium determines how the interview interacts with users — which tool to use, how to post questions, how to poll for responses. Each supported medium has a messaging file in `references/messaging/`:
-
-- `local` (default): `LOCAL.md` — terminal interaction via AskUserQuestion
-- `slack`: `SLACK.md` — Slack MCP tools for posting and polling
-
-Other medium values get inline fallback guidance in the routing section.
-
-The medium is encoded in the manifest's Intent section so `/do` and `/verify` know the communication channel for updates and results. `/do` and `/verify` handle non-local medium behavior inline (posting updates, results, escalations).
+`/define` supports `--medium <platform>` (default: local). Currently only `local` is supported — all interaction happens in the terminal via AskUserQuestion. The medium is encoded in the manifest's Intent section for downstream skills.
 
 ## Multi-CLI Distribution
 

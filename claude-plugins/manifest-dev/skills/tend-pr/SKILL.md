@@ -33,116 +33,66 @@ Two modes:
 
 ## Setup Phase
 
-1. **Read context.** In manifest-aware mode: read the manifest and its execution log. In babysit mode: identify the PR from arguments or context.
+Ensure a non-draft PR exists for the current branch, a log file at `/tmp/tend-pr-log-{pr-number}.md` is created, and the polling loop is started. Use the manifest's Intent section for PR title/description when available, otherwise generate from the branch diff.
 
-2. **Ensure PR exists.** If no PR exists for the current branch, create one. Use the manifest's Intent section for title/description if available, otherwise generate from the branch diff.
+Output the PR link: "PR ready for review: <url>"
 
-3. **Mark ready for review.** If the PR is in draft state, mark it ready for review.
-
-4. **Report.** Output the PR link to the user: "PR ready for review: <url>"
-
-5. **Create log.** Create `/tmp/tend-pr-log-{pr-number}.md` for cross-iteration state.
-
-6. **Start loop.** Invoke the manifest-dev:loop skill with the configured interval to start the polling loop. Each iteration executes the Loop Iteration section below. If `/loop` is not available, fall back to a manual loop: execute the Loop Iteration, then `sleep` for the interval duration, and repeat.
+Start the loop via the `/loop` skill (built-in) with the configured interval. If `/loop` is not available, fall back to a manual loop with `sleep`. Each iteration executes the Loop Iteration section below.
 
 ## Loop Iteration
 
-Each iteration follows this structure:
+Each iteration: detect what changed since last check, classify and route each event, update PR state, report status.
 
-### 1. Concurrency Guard
+**Constraints:**
+- Concurrency guard prevents overlapping iterations. Use a lock file at `/tmp/tend-pr-lock-{pr-number}` — skip iteration if lock exists and isn't stale (significantly older than the polling interval). Remove stale locks.
+- Skip iteration when nothing changed (no new comments, CI changes, or reviews).
+- Stop loop when: PR is merged or closed, merge-ready (see below), or `/do` escalates.
 
-Check for `/tmp/tend-pr-lock-{pr-number}`. If the lock file exists and is less than 30 minutes old, skip this iteration (previous iteration still running). If stale (>30 minutes), remove it. Create the lock file at iteration start, remove it at iteration end.
+**Terminal states:** Merged → log and stop. Closed → log, stop, report. Draft → skip iteration.
 
-### 2. Read State
+### Comment Classification
 
-- In manifest-aware mode: re-read the manifest and execution log (they may have been amended by a prior iteration).
-- Read current PR state: open/closed/merged, CI status, review status, unresolved threads, new comments since last iteration.
+Label source first (bot vs human — read `references/known-bots.md`), then classify intent (read `references/classification-examples.md`):
 
-### 3. Check PR State
+- **Actionable**: Genuine issue to fix. In manifest-aware mode → amend manifest + scoped `/do`. In babysit mode → fix directly.
+- **False positive**: Intentional or not a problem. Reply explaining why. Bot → resolve thread. Human → leave open for reviewer.
+- **Uncertain**: Ambiguous. Reply asking for clarification, leave thread open. Blocks merge-readiness.
 
-- **Merged**: Log "PR already merged." Remove lock. Stop the loop.
-- **Closed**: Log "PR closed." Remove lock. Stop the loop. Report to user.
-- **Draft**: Log "PR in draft state — skipping iteration." Remove lock. Continue loop.
-- **Nothing new**: If no new comments, no CI status changes, no new reviews since last iteration — log "Nothing new." Remove lock. Continue loop.
+### CI Failure Triage
 
-### 4. Classify Events
+Compare against base branch first:
 
-Process each new event (comment, review, CI status change):
+- **Pre-existing**: Same failure on base → skip.
+- **Infrastructure**: Flaky/timeout/runner → retrigger.
+- **Code-caused**: New failure from PR → actionable.
 
-#### Comment Classification
+### Routing
 
-**Step 1: Label source.** Read `references/known-bots.md` to determine if the commenter is a bot or human.
+**Manifest-aware mode:** For actionable items, determine affected deliverable(s) by examining what files/code the comment targets against the manifest's deliverable structure (include all potentially affected when ambiguous). Amend manifest via `/define --amend <manifest-path> --from-do`, then invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>`. If `/do` escalates, stop the loop and report the blocker with enough context for the user to resume. Push changes and reply to the comment.
 
-**Step 2: Classify intent.** Read `references/classification-examples.md` and classify each comment as:
+**Babysit mode:** Fix directly, push, reply.
 
-- **Actionable**: The comment identifies a genuine issue that should be fixed. In manifest-aware mode, this triggers manifest amendment + scoped `/do`. In babysit mode, fix directly.
-- **False positive**: The comment flags something that is intentional or not actually a problem. Reply explaining why, then:
-  - Bot comment → resolve the thread
-  - Human comment → leave thread open for the reviewer to decide
-- **Uncertain**: The comment is ambiguous — could be actionable or false positive but you're not confident. Reply asking for clarification, leave thread open. Uncertain comments block merge-readiness.
+**False positives:** Reply with explanation. Resolve bot threads, leave human threads open.
 
-#### CI Failure Triage
+**Uncertain:** Reply asking for clarification, leave open.
 
-Compare CI results against the base branch:
+### Merge Conflicts
 
-- **Pre-existing failure**: Same test/check fails on the base branch → skip (not caused by this PR).
-- **Infrastructure failure**: Flaky test, network timeout, runner issue → retrigger the CI job.
-- **Code-caused failure**: New failure introduced by PR changes → actionable. Route through amendment (manifest-aware) or fix directly (babysit).
+Update the PR branch by merging the base branch in. Prefer merge over rebase to preserve review comment history (see Gotchas). Flag ambiguous conflicts to the user.
 
-### 5. Route
+### PR Description Sync
 
-For each actionable item:
+After changes, rewrite "what changed" sections to reflect the current diff. Preserve manual context (issue references, motivation, deployment notes). Update title if scope changed significantly.
 
-**Manifest-aware mode:**
-1. Determine which deliverable(s) the comment targets by examining what files/code it references against the manifest's deliverable structure. If ambiguous, include all potentially affected deliverables.
-2. Amend the manifest: invoke `/define --amend <manifest-path> --from-do` with context about the review comment or CI failure. The amendment adds a regression AC or adjusts an existing AC.
-3. Execute scoped `/do`: invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>`.
-4. If `/do` escalates (calls `/escalate` instead of `/done`): stop the loop, log the blocker with full context, report to user: "Blocked: <reason>. Re-invoke /tend-pr after resolving." Include enough context for the user to understand and resume.
-5. Push changes and reply to the comment explaining the fix.
+### Status Report
 
-**Babysit mode:**
-1. Fix the issue directly in the codebase.
-2. Push changes and reply to the comment explaining the fix.
+Append to `/tmp/tend-pr-log-{pr-number}.md`: timestamp, actions taken, skipped items, remaining blockers, current PR state.
 
-For false positives: reply with explanation. Resolve bot threads, leave human threads open.
+### Merge Readiness
 
-For uncertain items: reply asking for clarification, leave thread open.
-
-### 6. Merge Conflict Resolution
-
-If the PR branch has merge conflicts with the base branch, update the branch by merging the base branch into it. Resolve conflicts preserving PR changes where intent is clear, or flag ambiguous conflicts to the user.
-
-Prefer merge over rebase to preserve review comment history (see Gotchas).
-
-### 7. PR Description Sync
-
-After making changes, update the PR description:
-- Rewrite "what changed" sections to reflect the current diff.
-- Preserve manual context: issue references, motivation, deployment notes, any content the author explicitly added.
-- Update the PR title if the scope changed significantly.
-
-### 8. Status Report
-
-Append to `/tmp/tend-pr-log-{pr-number}.md`:
-- Timestamp
-- Actions taken (fixes, replies, CI retriggers)
-- Skipped items (pre-existing CI, nothing-new iterations)
-- Remaining blockers (uncertain comments, pending CI, awaiting review)
-- Current PR state (CI status, review status, unresolved thread count)
-
-### 9. Merge Readiness Check
-
-If ALL of the following are true:
-- All CI checks pass
-- At least one approval with no changes-requested reviews
-- No unresolved threads (including uncertain comments)
-- No pending `/do` runs
-
-Then: stop the loop and ask the user: "PR is merge-ready. All CI green, approved, no unresolved threads. Merge?"
+When ALL conditions are met — CI green, at least one human approval (no changes-requested), no unresolved threads (including uncertain), no pending `/do` runs — stop the loop and ask: "PR is merge-ready. All CI green, approved, no unresolved threads. Merge?"
 
 **Never merge without explicit user confirmation.**
-
-Remove the lock file.
 
 ## Security
 
@@ -151,7 +101,7 @@ Remove the lock file.
 
 ## Gotchas
 
-- **Bot comments repeat after push.** Bots (linters, security scanners) re-scan after every push. The same finding may reappear. Track which findings you've already addressed (by content, not by comment ID) to avoid infinite fix loops. If findings keep recurring after 3 fix attempts, treat as uncertain and flag.
+- **Bot comments repeat after push.** Bots (linters, security scanners) re-scan after every push. The same finding may reappear. Track which findings you've already addressed (by content, not by comment ID) to avoid infinite fix loops. If a finding keeps recurring despite targeted fixes, treat as uncertain and flag to the user.
 - **Thread resolution is permanent.** Once a thread is resolved, it can't easily be un-resolved. Only resolve threads when confident the issue is addressed (actionable + fixed) or clearly a false positive (bot only). Never resolve human threads — let the reviewer do it.
 - **Rebase rewrites history.** If you rebase or force-push, existing review comments may become orphaned (attached to commits that no longer exist). Prefer merge-based branch updates over rebases when possible.
 - **Concurrent iteration overlap.** The concurrency guard (lock file) prevents overlapping iterations. If an iteration takes longer than the interval, the next iteration skips. The 30-minute stale lock timeout handles crashed iterations.
