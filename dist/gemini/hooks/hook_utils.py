@@ -456,13 +456,15 @@ def parse_understand_flow(transcript_path: str) -> UnderstandFlowState:
                         args = get_skill_call_args(data, "understand")
 
                     # Avoid resetting on isMeta expansion of the same invocation
-                    is_new_understand = not has_understand or args is not None
+                    # But always reset if previous session is complete
+                    is_new_understand = (
+                        not has_understand or is_complete or args is not None
+                    )
 
                     if is_new_understand:
                         has_understand = True
                         is_complete = False
-                        if args:
-                            understand_args = args
+                        understand_args = args
 
                 # Check for /understand-done (explicit completion)
                 if has_understand and not is_complete:

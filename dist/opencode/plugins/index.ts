@@ -214,7 +214,7 @@ export const ManifestDevPlugin: Plugin = async (ctx) => {
         understandState.hasUnderstand = true
         understandState.isComplete = false
         const uArgs = (args.args as any)?.args?.trim?.() || null
-        if (uArgs) understandState.understandArgs = uArgs
+        understandState.understandArgs = uArgs
       }
 
       // Track /understand-done (explicit completion)
