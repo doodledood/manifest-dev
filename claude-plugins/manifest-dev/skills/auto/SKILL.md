@@ -33,7 +33,7 @@ The remaining text after flag extraction is the task description.
 
 3. **Execute** — Note the manifest file path from /define's completion output. Invoke the manifest-dev:do skill with: "<manifest-path>" (append `--mode <level>` if --mode was specified in the original /auto arguments).
 
-4. **Tend PR** (only when `--tend-pr` is present) — After /do completes successfully (calls `/done`, not `/escalate`), invoke the manifest-dev:tend-pr skill with: "<manifest-path> --log <execution-log-path>" (using the execution log path from /do's output). Append `--platform <platform>`, `--interval <duration>`, and `--reviewers <usernames>` if specified in the original /auto arguments.
+4. **Tend PR** (only when `--tend-pr` is present) — After /do completes successfully (calls `/done`, not `/escalate`), invoke the manifest-dev:tend-pr skill with: "<manifest-path> --log <execution-log-path>" (the execution log path is available from the conversation context — /do logged its creation at the start of execution). Append `--platform <platform>`, `--interval <duration>`, and `--reviewers <usernames>` if specified in the original /auto arguments.
 
    If /do escalates instead of completing: do NOT invoke /tend-pr. Report to user: "/do escalated — skipping /tend-pr. Reason: <escalation reason from /do>. Resolve the blocker and re-invoke /tend-pr manually with the manifest path."
 

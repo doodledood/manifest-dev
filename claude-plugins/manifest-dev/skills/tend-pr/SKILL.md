@@ -29,7 +29,7 @@ Two modes:
 - `--platform`: PR platform. Default: `github`. Controls how PR operations (create, read comments, check CI) are performed.
 - `--interval`: Polling interval for `/loop`. Default: `10m`. Accepts duration format (e.g. `5m`, `15m`).
 - `--reviewers`: Comma-separated usernames to request review from (e.g. `--reviewers alice,bob`). Optional — if omitted, no reviewers are requested.
-- `--log`: Path to the `/do` execution log from a prior run. Used in manifest-aware mode to pass to scoped `/do` invocations. Optional — if omitted, match by timestamp (manifest filename timestamp matches log filename in `/tmp/do-log-*.md`) or from conversation context.
+- `--log`: Path to the `/do` execution log from a prior run. Used in manifest-aware mode to pass to scoped `/do` invocations. Optional — if omitted, locate the most recent `/tmp/do-log-*.md` or from conversation context.
 
 **Errors:**
 - No argument, no manifest inferrable, and no open PR for current branch: "Error: No manifest or open PR found. Provide a manifest path or PR URL. Usage: /tend-pr <manifest-path-or-pr-url> [--platform github] [--interval 10m] [--reviewers user1,user2]"
@@ -76,7 +76,7 @@ Compare against base branch first:
 
 ### Routing
 
-**Manifest-aware mode:** For actionable items, determine affected deliverable(s) by examining what files/code the comment targets against the manifest's deliverable structure (include all potentially affected when ambiguous). Amend manifest via `/define --amend <manifest-path> --from-do`, then invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>` (use the `--log` path if provided, otherwise match by timestamp from `/tmp/do-log-*.md` or conversation context). If `/do` escalates, stop the loop and report the blocker with enough context for the user to resume. Push changes and reply to the comment.
+**Manifest-aware mode:** For actionable items, determine affected deliverable(s) by examining what files/code the comment targets against the manifest's deliverable structure (include all potentially affected when ambiguous). Amend manifest via `/define --amend <manifest-path> --from-do`, then invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>` (use the `--log` path if provided, otherwise locate the most recent `/tmp/do-log-*.md` or from conversation context). If `/do` escalates, stop the loop and report the blocker with enough context for the user to resume. Push changes and reply to the comment.
 
 **Babysit mode:** Fix directly, push, reply.
 
@@ -100,7 +100,7 @@ Append to `/tmp/tend-pr-log-{pr-number}.md`: timestamp, actions taken, skipped i
 
 When ALL conditions are met — CI green, at least one human approval (no changes-requested), no unresolved threads (including uncertain), no pending `/do` runs — stop the loop and ask: "PR is merge-ready. All CI green, approved, no unresolved threads. Merge?"
 
-**Stale uncertain escalation:** If an uncertain comment has received no reply for several consecutive iterations, escalate to the user: "Uncertain comment from @reviewer has had no reply for [duration]. Continue waiting, dismiss, or address?" This prevents indefinite loops when reviewers are unresponsive.
+**Stale thread escalation:** If an uncertain comment has received no reply for several consecutive iterations, or an actionable comment was fixed (pushed + replied) but the thread remains unresolved for several consecutive iterations, escalate to the user: "Thread from @reviewer unresolved for [duration]: [uncertain — no reply / fixed — awaiting reviewer resolution]. Continue waiting, resolve, or ping reviewer?" This prevents indefinite loops when reviewers are unresponsive.
 
 **Never merge without explicit user confirmation.**
 
@@ -114,7 +114,7 @@ When ALL conditions are met — CI green, at least one human approval (no change
 - **Bot comments repeat after push.** Bots (linters, security scanners) re-scan after every push. The same finding may reappear. Track which findings you've already addressed (by content, not by comment ID) to avoid infinite fix loops. If a finding keeps recurring despite targeted fixes, treat as uncertain and flag to the user.
 - **Thread resolution is permanent.** Once a thread is resolved, it can't easily be un-resolved. Only resolve threads when confident the issue is addressed (actionable + fixed) or clearly a false positive (bot only). Never resolve human threads — let the reviewer do it.
 - **Rebase rewrites history.** If you rebase or force-push, existing review comments may become orphaned (attached to commits that no longer exist). Prefer merge-based branch updates over rebases when possible.
-- **Concurrent iteration overlap.** The concurrency guard (lock file) prevents overlapping iterations. If an iteration takes longer than the interval, the next iteration skips. The 30-minute stale lock timeout handles crashed iterations.
+- **Concurrent iteration overlap.** The concurrency guard (lock file) prevents overlapping iterations. If an iteration takes longer than the interval, the next iteration skips. A lock significantly older than the polling interval is considered stale and removed (handles crashed iterations).
 - **Draft PRs.** If a PR is in draft state, skip the iteration — the author may not want review feedback yet.
 - **Closed/deleted PRs.** If the PR is closed or the branch is deleted, stop the loop and report.
 - **Empty diff.** If the PR has no diff (e.g., all changes reverted), report to user rather than attempting to process.
