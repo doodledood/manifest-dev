@@ -478,7 +478,7 @@ Before asking for approval, explain the plan the way you'd explain it to a senio
 
 2. **Rules that always hold** — State the invariants as plain rules, not coded entries. Example: "Explicit flags always override --auto defaults. Every owner-replacing decision gets logged with reasoning. Auto mode halts on truly unresolvable issues — it's not silent-failure mode."
 
-3. **Architecture sketch** — Include an ASCII diagram when the task involves structure, flow, or dependencies worth visualizing. Skip it for simple tasks where a diagram would be noise.
+3. **Architecture sketch** — Include an ASCII diagram when the task has multiple components with inter-component flow or dependencies. Skip for single-deliverable tasks.
 
 **The test**: If the summary reads like a compressed manifest, rewrite it. If it reads like something you'd actually say to a colleague, it's right.
 
