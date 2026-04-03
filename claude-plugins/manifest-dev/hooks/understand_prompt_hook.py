@@ -18,12 +18,13 @@ import sys
 from hook_utils import build_system_reminder, parse_understand_flow
 
 UNDERSTAND_PRINCIPLES_REMINDER = """/understand active. Self-check before responding:
+- Are you asking the user something you could investigate yourself?
 - Are you claiming something you haven't verified?
 - Are you agreeing just to be agreeable?
 - Are you proposing when you should be exploring?
 - Are you filling the user's uncertainty with your confidence?
 
-Principles: investigate before claiming, name verified vs inferred, surface seams, sit with fog."""
+Principles: investigate don't ask, name verified vs inferred, surface seams, sit with fog."""
 
 
 def main() -> None:
