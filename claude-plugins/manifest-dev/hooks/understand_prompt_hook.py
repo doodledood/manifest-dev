@@ -27,29 +27,31 @@ def main() -> None:
     try:
         stdin_data = sys.stdin.read()
         hook_input = json.loads(stdin_data)
-    except (json.JSONDecodeError, OSError):
-        sys.exit(0)
 
-    transcript_path = hook_input.get("transcript_path", "")
-    if not transcript_path:
-        sys.exit(0)
+        transcript_path = hook_input.get("transcript_path", "")
+        if not transcript_path:
+            sys.exit(0)
 
-    state = parse_understand_flow(transcript_path)
+        state = parse_understand_flow(transcript_path)
 
-    # Only inject when /understand is active and not completed
-    if not state.has_understand or state.is_complete:
-        sys.exit(0)
+        # Only inject when /understand is active and not completed
+        if not state.has_understand or state.is_complete:
+            sys.exit(0)
 
-    context = build_system_reminder(UNDERSTAND_PRINCIPLES_REMINDER)
+        context = build_system_reminder(UNDERSTAND_PRINCIPLES_REMINDER)
 
-    output = {
-        "hookSpecificOutput": {
-            "hookEventName": "UserPromptSubmit",
-            "additionalContext": context,
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "UserPromptSubmit",
+                "additionalContext": context,
+            }
         }
-    }
-    print(json.dumps(output))
-    sys.exit(0)
+        print(json.dumps(output))
+        sys.exit(0)
+
+    except Exception:
+        # Fail open — never block normal operation on error
+        sys.exit(0)
 
 
 if __name__ == "__main__":
