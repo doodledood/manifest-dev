@@ -32,9 +32,11 @@ The /do was invoked with: {do_args}
 Do not restart completed work. Resume from where you left off."""
 
 
-UNDERSTAND_RECOVERY_REMINDER = """This session was compacted during an active /understand session. Context may have been lost.
+UNDERSTAND_RECOVERY_REMINDER_PREFIX = """This session was compacted during an active /understand session. Context may have been lost.
 
-You are in an /understand session about: {understand_args}
+You are in an /understand session about: """
+
+UNDERSTAND_RECOVERY_REMINDER_SUFFIX = """
 
 Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — investigate before claiming, surface seams, resist premature synthesis."""
 
@@ -87,9 +89,9 @@ def main() -> None:
     if understand_state.has_understand and not understand_state.is_complete:
         if understand_state.understand_args:
             reminders.append(
-                UNDERSTAND_RECOVERY_REMINDER.format(
-                    understand_args=understand_state.understand_args
-                )
+                UNDERSTAND_RECOVERY_REMINDER_PREFIX
+                + understand_state.understand_args
+                + UNDERSTAND_RECOVERY_REMINDER_SUFFIX
             )
         else:
             reminders.append(UNDERSTAND_RECOVERY_FALLBACK)
