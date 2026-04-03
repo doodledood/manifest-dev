@@ -28,7 +28,7 @@ Every `/define` session, users make the same corrections, add the same invariant
 
 # Session Discovery
 
-Session JSONL files live at `~/.claude/projects/{project-path-encoded}/{session-id}.jsonl`. Find recent sessions containing `/define` activity. If `$ARGUMENTS` specifies a session count, use that; otherwise use enough recent sessions for meaningful pattern signal.
+Session JSONL files live at `~/.gemini/tmp/{project-hash}/chats/session-*.jsonl`. Find recent sessions containing `/define` activity. If `$ARGUMENTS` specifies a session count, use that; otherwise use enough recent sessions for meaningful pattern signal.
 
 **No sessions found**: Tell the user: "No /define sessions found in recent session history. Run a few /define sessions first, then try again."
 

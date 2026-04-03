@@ -1,66 +1,70 @@
-# manifest-dev configuration for Codex CLI
-# Merge relevant sections into your .codex/config.toml
+# manifest-dev Codex CLI configuration
+# Merge this into your project's .codex/config.toml
 
 [features]
 multi_agent = true
 
+[agents]
 max_threads = 6
 max_depth = 1
 
-# Agent role definitions -- see agents/*.toml for per-role config
-
-[agents.criteria-checker]
-description = "Validates a single acceptance criterion or global invariant (PASS/FAIL)"
-config_file = "agents/criteria-checker.toml"
-
 [agents.change-intent-reviewer]
-description = "Adversarially analyzes whether changes achieve their stated intent"
+description = "Adversarially analyze whether code, prompt, or config changes achieve their stated intent"
 config_file = "agents/change-intent-reviewer.toml"
 
 [agents.code-bugs-reviewer]
-description = "Audits code changes for mechanical defects -- runtime failures, resource issues, structural flaws"
+description = "Audit code changes for mechanical defects — runtime failures, resource issues, and structural code flaws"
 config_file = "agents/code-bugs-reviewer.toml"
 
-[agents.code-design-reviewer]
-description = "Audits design fitness -- reinvented wheels, misplaced responsibilities, under-engineering"
-config_file = "agents/code-design-reviewer.toml"
-
-[agents.code-simplicity-reviewer]
-description = "Identifies unnecessary complexity, over-engineering, cognitive burden"
-config_file = "agents/code-simplicity-reviewer.toml"
-
-[agents.code-maintainability-reviewer]
-description = "Audits DRY violations, coupling, cohesion, consistency, dead code"
-config_file = "agents/code-maintainability-reviewer.toml"
-
 [agents.code-coverage-reviewer]
-description = "Verifies test coverage for code changes, reports gaps"
+description = "Verify that code changes have adequate test coverage by proactively enumerating edge cases"
 config_file = "agents/code-coverage-reviewer.toml"
 
+[agents.code-design-reviewer]
+description = "Audit code for design fitness issues — right approach given what already exists"
+config_file = "agents/code-design-reviewer.toml"
+
+[agents.code-maintainability-reviewer]
+description = "Comprehensive maintainability audit: DRY, coupling, cohesion, consistency, dead code, boundaries"
+config_file = "agents/code-maintainability-reviewer.toml"
+
+[agents.code-simplicity-reviewer]
+description = "Audit code for unnecessary complexity, over-engineering, and cognitive burden"
+config_file = "agents/code-simplicity-reviewer.toml"
+
 [agents.code-testability-reviewer]
-description = "Identifies testability issues -- excessive mocking, logic buried in IO"
+description = "Audit code for testability issues — excessive mocking, logic buried in IO, non-deterministic inputs"
 config_file = "agents/code-testability-reviewer.toml"
 
-[agents.contracts-reviewer]
-description = "Verifies API and interface contract correctness with evidence"
-config_file = "agents/contracts-reviewer.toml"
-
-[agents.type-safety-reviewer]
-description = "Audits type safety -- any abuse, invalid states, exhaustiveness gaps"
-config_file = "agents/type-safety-reviewer.toml"
-
-[agents.docs-reviewer]
-description = "Audits documentation accuracy against code changes"
-config_file = "agents/docs-reviewer.toml"
-
 [agents.context-file-adherence-reviewer]
-description = "Verifies compliance with context file (AGENTS.md) project rules"
+description = "Verify that code changes comply with context file instructions and project standards"
 config_file = "agents/context-file-adherence-reviewer.toml"
 
-[agents.manifest-verifier]
-description = "Reviews /define manifests for gaps, returns continuation questions"
-config_file = "agents/manifest-verifier.toml"
+[agents.contracts-reviewer]
+description = "Verify API and interface contract correctness with evidence"
+config_file = "agents/contracts-reviewer.toml"
+
+[agents.criteria-checker]
+description = "Read-only verification agent. Validates a single criterion using any automated method"
+config_file = "agents/criteria-checker.toml"
 
 [agents.define-session-analyzer]
-description = "Analyzes /define sessions to extract user preference patterns"
+description = "Analyze a single /define session transcript to extract user preference patterns"
 config_file = "agents/define-session-analyzer.toml"
+
+[agents.docs-reviewer]
+description = "Audit documentation and code comments for accuracy against recent code changes"
+config_file = "agents/docs-reviewer.toml"
+
+[agents.manifest-verifier]
+description = "Reviews /define manifests for gaps and outputs actionable continuation steps"
+config_file = "agents/manifest-verifier.toml"
+
+[agents.type-safety-reviewer]
+description = "Audit code for type safety issues across typed languages"
+config_file = "agents/type-safety-reviewer.toml"
+
+# MCP Servers (none required — add your own as needed)
+# [mcp_servers.example]
+# command = "npx"
+# args = ["-y", "package-name"]

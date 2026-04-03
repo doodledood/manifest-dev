@@ -20,7 +20,7 @@ Defect-finding agents use `no LOW+` — every verified defect is worth fixing. Q
 | Testability | code-testability-reviewer | no MEDIUM+ |
 | Documentation | docs-reviewer | no MEDIUM+ |
 | Design fitness | code-design-reviewer | no MEDIUM+ |
-| GEMINI.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
+| Context file adherence | context-file-adherence-reviewer | no MEDIUM+ |
 
 ### Conditional Gates (when applicable)
 

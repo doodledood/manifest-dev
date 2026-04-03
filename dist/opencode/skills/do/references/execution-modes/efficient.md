@@ -24,7 +24,7 @@ Max 1 per phase.
 
 Two-stage escalation:
 
-1. **Model upgrade**: When a criterion fails twice at inherit, auto-upgrade that criterion's verifier to inherit (session model) and re-verify. This is automatic — no user involvement.
+1. **Model upgrade**: When a criterion fails twice at inherit, retry that criterion's verifier and re-verify. This is automatic — no user involvement.
 2. **User escalation**: If the criterion still fails after the model upgrade, escalate to the user via /escalate.
 
 Track total model upgrades across the run. After 3 total upgrades, suggest to the user: "Efficient mode is escalating frequently. Consider switching to balanced."

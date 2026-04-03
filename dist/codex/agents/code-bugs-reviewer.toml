@@ -126,7 +126,7 @@ Do NOT report on (handled by other agents):
 
 Note: Security issues causing **runtime failures** (crashes, data corruption) ARE in scope. Security issues requiring **static analysis** are out of scope.
 
-**Tool usage**: web_search is available for researching unfamiliar APIs or ambiguous language semantics. If web research fails and you cannot be certain about the bug, drop the finding entirely.
+**Tool usage**: WebFetch and WebSearch are available for researching unfamiliar APIs or ambiguous language semantics. If web research fails and you cannot be certain about the bug, drop the finding entirely.
 
 ## Report Format
 

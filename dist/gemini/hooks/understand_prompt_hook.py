@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 """
-UserPromptSubmit hook that reinforces /understand principles.
+BeforeAgent hook that reinforces /understand principles.
 
-When user submits a message during an active /understand session, this hook
-injects a concise system reminder to combat sycophantic drift and premature
-convergence. The full skill is already in context — this is a nudge, not
-re-teaching.
-
-Registered as UserPromptSubmit hook (no matcher — fires on every prompt).
+Gemini CLI adaptation: Registered as BeforeAgent hook (no matcher).
+Uses Gemini's additionalContext for context injection.
 """
 
 from __future__ import annotations
@@ -46,7 +42,7 @@ def main() -> None:
 
         output = {
             "hookSpecificOutput": {
-                "hookEventName": "UserPromptSubmit",
+                "hookEventName": "BeforeAgent",
                 "additionalContext": context,
             }
         }

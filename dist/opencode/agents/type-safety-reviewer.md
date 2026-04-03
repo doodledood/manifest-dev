@@ -1,6 +1,7 @@
 ---
-description: Audit code for type safety issues across typed languages (TypeScript, Python, Java/Kotlin, Go, Rust, C#). Identifies type holes that let bugs through, opportunities to make invalid states unrepresentable, and ways to push runtime checks into compile-time guarantees. Use when reviewing type safety, strengthening types before a PR, or auditing code for type holes.
+description: "Audit code for type safety issues across typed languages (TypeScript, Python, Java/Kotlin, Go, Rust, C#). Identifies type holes that let bugs through, opportunities to make invalid states unrepresentable, and ways to push runtime checks into compile-time guarantees. Use when reviewing type safety, strengthening types before a PR, or auditing code for type holes."
 mode: subagent
+model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true

@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 """
-PostToolUse hook that reminds Claude to update the execution log.
+AfterTool hook that reminds the model to update the execution log.
 
-When a milestone tool call completes during an active /do workflow, this hook
-injects a system reminder to log what just happened. Targets progress signals:
-- TaskUpdate, TaskCreate, TodoWrite — task management milestones
-- Skill calls (verify, escalate, done, define) — workflow transitions
-
-Registered as PostToolUse hook with matchers for each target tool.
+Gemini CLI adaptation: Registered as AfterTool hook with matchers
+for activate_skill and write_todos.
 """
 
 from __future__ import annotations
@@ -29,9 +25,8 @@ Update the execution log NOW with what just happened, decisions made, and outcom
 
 
 def _is_workflow_skill(tool_input: dict[str, Any]) -> bool:
-    """Check if a Skill call is a workflow-significant skill."""
+    """Check if a skill call is a workflow-significant skill."""
     skill = tool_input.get("skill", "")
-    # Match "skill-name" or "plugin:skill-name"
     skill_base = skill.split(":")[-1] if ":" in skill else skill
     return skill_base in WORKFLOW_SKILLS
 
@@ -50,8 +45,8 @@ def main() -> None:
     if not transcript_path:
         sys.exit(0)
 
-    # For Skill calls, only remind for workflow-significant skills
-    if tool_name == "Skill":
+    # For skill calls (activate_skill), only remind for workflow-significant skills
+    if tool_name == "activate_skill":
         tool_input = hook_input.get("tool_input", {})
         if not _is_workflow_skill(tool_input):
             sys.exit(0)
@@ -64,7 +59,7 @@ def main() -> None:
 
     # Build skill detail for the reminder
     skill_detail = ""
-    if tool_name == "Skill":
+    if tool_name == "activate_skill":
         tool_input = hook_input.get("tool_input", {})
         skill = tool_input.get("skill", "")
         skill_detail = f" (skill: {skill})"
@@ -74,7 +69,7 @@ def main() -> None:
 
     output = {
         "hookSpecificOutput": {
-            "hookEventName": "PostToolUse",
+            "hookEventName": "AfterTool",
             "additionalContext": context,
         }
     }

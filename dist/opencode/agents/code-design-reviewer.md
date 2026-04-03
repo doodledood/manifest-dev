@@ -1,6 +1,7 @@
 ---
-description: Audit code for design fitness issues — whether code is the right approach given what already exists in the framework, codebase, and configuration systems. Identifies reinvented wheels, misplaced responsibilities, under-engineering, short-sighted interfaces, concept misuse, and incoherent changes. Use after implementing a feature, before a PR, or when code feels like the wrong approach despite being correct.
+description: "Audit code for design fitness issues — whether code is the right approach given what already exists in the framework, codebase, and configuration systems. Identifies reinvented wheels, misplaced responsibilities, under-engineering, short-sighted interfaces, concept misuse, and incoherent changes. Use after implementing a feature, before a PR, or when code feels like the wrong approach despite being correct."
 mode: subagent
+model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true
