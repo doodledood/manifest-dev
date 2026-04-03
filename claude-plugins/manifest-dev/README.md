@@ -106,7 +106,8 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 | `/define` | Interviews you, builds an executable manifest with verification criteria. `--interview minimal\|autonomous\|thorough` controls interview style (default: thorough). |
 | `/do` | Works through the manifest autonomously, verifies everything passes |
 | `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` and `--tend-pr` pass-through. |
-| `/tend-pr` | Tends a PR through review to merge-readiness. Classifies comments (bot/human, actionable/FP/uncertain), fixes issues, tends CI, syncs PR description. Manifest-aware mode with scoped `/do`, or babysit mode without a manifest. |
+| `/tend-pr` | Sets up PR for review and starts a polling loop. Manifest-aware mode with scoped `/do`, or babysit mode without a manifest. |
+| `/tend-pr-tick` | Single iteration of PR tending (classify comments, route fixes, tend CI). Called by `/loop` via `/tend-pr` — not user-invocable. |
 | `/verify` | Runs verifiers phased by iteration speed — fast checks first, e2e/deploy-dependent later. Only advances to the next phase when the current one passes. (You rarely call this directly; `/do` handles it.) |
 | `/done` | Prints what got done and what was verified |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
