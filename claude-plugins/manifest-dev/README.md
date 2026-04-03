@@ -103,6 +103,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 
 | Skill | Description |
 |-------|-------------|
+| `/understand` | Collaborative deep understanding of any topic. Truth-convergent thinking partner mode — investigates before claiming, surfaces gaps, resists premature synthesis. Use when understanding IS the goal. End with `/understand-done`. |
 | `/define` | Interviews you, builds an executable manifest with verification criteria. `--interview minimal\|autonomous\|thorough\|collaborative` controls interview style (default: thorough). |
 | `/do` | Works through the manifest autonomously, verifies everything passes |
 | `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` pass-through. |

@@ -27,6 +27,10 @@ curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/c
 
 Then use it:
 ```bash
+# Understand something deeply before acting
+/understand <topic or problem>
+
+# Define what to build, then execute
 /define <what you want to build>
 /do <manifest-path>
 
@@ -34,7 +38,7 @@ Then use it:
 /auto <what you want to build>
 ```
 
-Two commands. `/define` interviews you and builds a manifest. `/do` executes it. That's the whole workflow. `/auto` chains both — define autonomously, auto-approve, execute — in a single command.
+`/understand` is your thinking partner — truth-convergent, investigates before claiming, surfaces gaps. Use it when understanding IS the goal, or before `/define` when the problem space is foggy. Two commands handle the rest: `/define` interviews you and builds a manifest. `/do` executes it. `/auto` chains both — define autonomously, auto-approve, execute — in a single command.
 
 Control interview depth with `--interview minimal|autonomous|thorough|collaborative` (default: thorough). Thorough asks everything. Minimal asks scope and high-impact items. Autonomous builds the manifest without asking, presents it for approval.
 

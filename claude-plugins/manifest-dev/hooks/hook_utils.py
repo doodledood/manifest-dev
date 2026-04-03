@@ -419,3 +419,72 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
         do_args=do_args,
         has_collab_mode=has_collab_mode,
     )
+
+
+# Workflow skills that end an /understand session when invoked after it
+_WORKFLOW_SKILLS = ("define", "do", "auto")
+
+
+def parse_understand_flow(transcript_path: str) -> UnderstandFlowState:
+    """
+    Parse transcript to determine the state of /understand workflow.
+
+    Tracks the most recent /understand invocation and what happened after it.
+    Each new /understand resets the flow state.
+    /understand-done or a workflow skill (/define, /do, /auto) marks completion.
+    """
+    has_understand = False
+    is_complete = False
+    understand_args: str | None = None
+
+    try:
+        with open(transcript_path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    data = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+
+                # Check for /understand invocation
+                if was_skill_invoked(data, "understand"):
+                    # Extract args
+                    args = extract_user_command_args(data, "understand")
+                    if not args:
+                        args = get_skill_call_args(data, "understand")
+
+                    # Avoid resetting on isMeta expansion of the same invocation
+                    is_new_understand = not has_understand or args is not None
+
+                    if is_new_understand:
+                        has_understand = True
+                        is_complete = False
+                        if args:
+                            understand_args = args
+
+                # Check for /understand-done (explicit completion)
+                if has_understand and not is_complete:
+                    if was_skill_invoked(data, "understand-done"):
+                        is_complete = True
+
+                # Check for workflow skills that implicitly end /understand
+                if has_understand and not is_complete:
+                    for skill in _WORKFLOW_SKILLS:
+                        if was_skill_invoked(data, skill):
+                            is_complete = True
+                            break
+
+    except OSError:
+        return UnderstandFlowState(
+            has_understand=False,
+            is_complete=False,
+            understand_args=None,
+        )
+
+    return UnderstandFlowState(
+        has_understand=has_understand,
+        is_complete=is_complete,
+        understand_args=understand_args,
+    )

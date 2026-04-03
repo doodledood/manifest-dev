@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.75.0",
+  "version": "0.76.0",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
@@ -16,7 +16,8 @@
     "learn",
     "patterns",
     "preferences",
-    "auto"
+    "auto",
+    "understand"
   ],
   "hooks": {
     "Stop": [
@@ -51,6 +52,16 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/prompt_submit_hook.py"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "description": "Reinforce /understand principles to combat sycophantic drift",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/understand_prompt_hook.py"
           }
         ]
       }

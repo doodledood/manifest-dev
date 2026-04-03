@@ -24,12 +24,13 @@ Front-load the thinking so AI agents get it right the first time.
 Manifest-driven workflows separating **what to build** (Deliverables) from **rules to follow** (Global Invariants).
 
 **Core skills:**
+- `/understand` - Collaborative deep understanding. Truth-convergent thinking partner mode for any topic. Investigates before claiming, surfaces gaps, resists premature synthesis.
 - `/define` - Verification-first requirements builder with proactive interview. Supports `--interview minimal|autonomous|thorough|collaborative` (default: thorough) to control questioning depth.
 - `/do` - Autonomous execution with enforced verification gates. Iterates deliverables, satisfies ACs, calls /verify.
 
 **Other skills:** `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command | `/learn-define-patterns` - Analyzes past /define sessions and writes preference patterns to CLAUDE.md
 
-**Internal skills:** `/verify`, `/done`, `/escalate`
+**Internal skills:** `/verify`, `/done`, `/escalate`, `/understand-done`
 
 **Review agents:** `criteria-checker`, `manifest-verifier`, `define-session-analyzer`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `code-coverage-reviewer`, `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
 

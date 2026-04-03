@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Post-compact hook that restores /do workflow context after compaction.
+Post-compact hook that restores workflow context after compaction.
 
-When the session is compacted during a /do workflow, the manifest and log
-may be lost from context. This hook detects active /do workflows and
-reminds Claude to re-read the manifest and log files.
+When the session is compacted during an active /do or /understand workflow,
+context may be lost. This hook detects active workflows and reminds Claude
+to re-read relevant files and restore the correct cognitive stance.
 
 Registered as SessionStart hook with "compact" matcher.
 """
@@ -17,6 +17,7 @@ import sys
 from hook_utils import (
     build_system_reminder,
     parse_do_flow,
+    parse_understand_flow,
 )
 
 DO_WORKFLOW_RECOVERY_REMINDER = """This session was compacted during an active /do workflow. Context may have been lost.
@@ -29,6 +30,18 @@ The /do was invoked with: {do_args}
 2. Check /tmp/ for your execution log (do-log-*.md) and read it to recover progress
 
 Do not restart completed work. Resume from where you left off."""
+
+
+UNDERSTAND_RECOVERY_REMINDER = """This session was compacted during an active /understand session. Context may have been lost.
+
+You are in an /understand session about: {understand_args}
+
+Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — investigate before claiming, surface seams, resist premature synthesis."""
+
+
+UNDERSTAND_RECOVERY_FALLBACK = """This session was compacted during an active /understand session. Context may have been lost.
+
+Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — investigate before claiming, surface seams, resist premature synthesis."""
 
 
 DO_WORKFLOW_RECOVERY_FALLBACK = """This session was compacted during an active /do workflow. Context may have been lost.
@@ -56,23 +69,35 @@ def main() -> None:
     if not transcript_path:
         sys.exit(0)
 
-    state = parse_do_flow(transcript_path)
+    do_state = parse_do_flow(transcript_path)
+    understand_state = parse_understand_flow(transcript_path)
 
-    # Not in /do workflow - nothing to do
-    if not state.has_do:
-        sys.exit(0)
-
-    # /do workflow completed - no need to recover
-    if state.has_done or state.has_escalate:
-        sys.exit(0)
+    reminders: list[str] = []
 
     # Active /do workflow - build recovery reminder
-    if state.do_args:
-        reminder = DO_WORKFLOW_RECOVERY_REMINDER.format(do_args=state.do_args)
-    else:
-        reminder = DO_WORKFLOW_RECOVERY_FALLBACK
+    if do_state.has_do and not do_state.has_done and not do_state.has_escalate:
+        if do_state.do_args:
+            reminders.append(
+                DO_WORKFLOW_RECOVERY_REMINDER.format(do_args=do_state.do_args)
+            )
+        else:
+            reminders.append(DO_WORKFLOW_RECOVERY_FALLBACK)
 
-    context = build_system_reminder(reminder)
+    # Active /understand session - build re-grounding reminder
+    if understand_state.has_understand and not understand_state.is_complete:
+        if understand_state.understand_args:
+            reminders.append(
+                UNDERSTAND_RECOVERY_REMINDER.format(
+                    understand_args=understand_state.understand_args
+                )
+            )
+        else:
+            reminders.append(UNDERSTAND_RECOVERY_FALLBACK)
+
+    if not reminders:
+        sys.exit(0)
+
+    context = build_system_reminder("\n\n".join(reminders))
 
     output = {
         "hookSpecificOutput": {
