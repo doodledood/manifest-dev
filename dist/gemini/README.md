@@ -6,9 +6,9 @@ Verification-first manifest workflows for Gemini CLI, delivered as extension-man
 
 | Type | Count | Details |
 |------|-------|---------|
-| Skills | 7 | auto, define, do, verify, done, escalate, learn-define-patterns |
+| Skills | 9 | auto, define, do, verify, done, escalate, learn-define-patterns, understand, understand-done |
 | Agents | 14 | criteria-checker, manifest-verifier, 10 code reviewers, docs-reviewer, define-session-analyzer |
-| Hooks | 5 | pretool-verify, posttool-log, stop-do-enforcement, prompt-submit-amendment, post-compact-recovery |
+| Hooks | 6 | pretool-verify, posttool-log, stop-do-enforcement, prompt-submit-amendment, post-compact-recovery, understand-prompt-reinforce |
 
 ## Install
 
@@ -68,13 +68,14 @@ gemini extensions link ./dist/gemini
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Skills (define, do, verify, done, escalate, auto, learn-define-patterns) | Full | All 7 skills with all subdirectories |
+| Skills (define, do, verify, done, escalate, auto, learn-define-patterns, understand, understand-done) | Full | All 9 skills with all subdirectories |
 | Agents (14 reviewers + verifiers) | Full | Frontmatter converted to Gemini format |
 | Hook: stop-do-enforcement | Full | AfterAgent deny/retry protocol |
 | Hook: pretool-verify | Full | BeforeTool context injection |
 | Hook: post-compact-recovery | Full | SessionStart context recovery |
 | Hook: prompt-submit-amendment | Full | BeforeAgent amendment check |
 | Hook: posttool-log | Full | AfterTool execution log reminder |
+| Hook: understand-prompt-reinforce | Full | BeforeAgent principles reminder |
 | $ARGUMENTS in skills | Limited | Claude Code extension only; Gemini passes args via activate_skill |
 | Execution modes (thorough/balanced/efficient) | Full | Model tier names replaced with `inherit` |
 
@@ -91,4 +92,4 @@ gemini extensions link ./dist/gemini
 
 Main repo: [github.com/doodledood/manifest-dev](https://github.com/doodledood/manifest-dev)
 
-This distribution is auto-generated from the Claude Code plugin source at version 0.74.0.
+This distribution is auto-generated from the Claude Code plugin source at version 0.77.0.

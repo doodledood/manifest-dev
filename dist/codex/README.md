@@ -1,12 +1,12 @@
 # manifest-dev for Codex CLI
 
-Verification-first manifest workflows adapted for Codex CLI (v0.71.0).
+Verification-first manifest workflows adapted for Codex CLI (v0.77.0).
 
 ## What's Included
 
 | Component | Count | Status |
 |-----------|-------|--------|
-| Skills | 7 | Full compatibility (Agent Skills Open Standard) |
+| Skills | 9 | Full compatibility (Agent Skills Open Standard) |
 | Agents | 14 TOML stubs + reference AGENTS.md | Multi-agent config with full prompt bodies |
 | Execution rules | 1 | Starlark .rules file |
 | Config | 1 | Multi-agent TOML config |
@@ -43,6 +43,8 @@ curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/c
 | done | Completion marker with execution summary | No |
 | escalate | Structured escalation for blocking issues | No |
 | learn-define-patterns | Extract user preferences from past /define sessions | Yes |
+| understand | Collaborative deep understanding -- truth-convergent thinking partner | Yes |
+| understand-done | End an active /understand session | Yes |
 
 ## Agents (TOML stubs)
 
@@ -97,4 +99,4 @@ curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/c
 
 ## Source
 
-Generated distribution from [manifest-dev](https://github.com/doodledood/manifest-dev) v0.71.0. The Claude Code plugin is the source of truth.
+Generated distribution from [manifest-dev](https://github.com/doodledood/manifest-dev) v0.77.0. The Claude Code plugin is the source of truth.

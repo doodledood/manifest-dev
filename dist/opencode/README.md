@@ -1,17 +1,17 @@
 # manifest-dev for OpenCode CLI
 
-Verification-first manifest workflows for OpenCode. Use the `/define`, `/do`, `/auto`, and `/learn-define-patterns` commands, and let the workflow invoke the `verify`, `done`, and `escalate` skills as needed.
+Verification-first manifest workflows for OpenCode. Use the `/define`, `/do`, `/auto`, `/understand`, and `/learn-define-patterns` commands, and let the workflow invoke the `verify`, `done`, `escalate`, and `understand-done` skills as needed.
 
-Version: 0.74.0
+Version: 0.77.0
 
 ## Components
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 7 | auto, define, do, done, escalate, learn-define-patterns, verify |
+| Skills | 9 | auto, define, do, done, escalate, learn-define-patterns, understand, understand-done, verify |
 | Agents | 14 | criteria-checker, 10 code reviewers, manifest-verifier, context-file-adherence-reviewer, define-session-analyzer |
-| Commands | 4 | /auto, /define, /do, /learn-define-patterns |
-| Plugin | 1 | Workflow enforcement hooks (stop-do, verify-context, post-compact, amendment-check, log-reminder) |
+| Commands | 5 | /auto, /define, /do, /learn-define-patterns, /understand |
+| Plugin | 1 | Workflow enforcement hooks (stop-do, verify-context, post-compact, amendment-check, log-reminder, understand-prompt) |
 
 ## Install
 
@@ -53,7 +53,7 @@ cp dist/opencode/plugins/HOOK_SPEC.md .opencode/plugins/manifest-dev.HOOK_SPEC.m
 
 | Feature | Claude Code | OpenCode |
 |---------|-------------|----------|
-| Skills (define, do, verify, auto, done, escalate, learn-define-patterns) | Full | Full |
+| Skills (define, do, verify, auto, done, escalate, learn-define-patterns, understand, understand-done) | Full | Full |
 | Agents (14 reviewers + verifiers) | Full | Full |
 | User-invocable commands | Slash commands | Commands (`.opencode/commands/`) |
 | Stop enforcement | Blocking hook | Best-effort re-engagement (fire-and-forget) |
