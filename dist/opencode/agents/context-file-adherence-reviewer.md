@@ -1,6 +1,7 @@
 ---
-description: Verify that code changes comply with context file instructions (CLAUDE.md, AGENTS.md, GEMINI.md) and project standards. Audits pull requests, new code, and refactors against rules defined in the project's context files. Use after implementing features, before PRs, or when validating adherence to project-specific rules. Triggers: context file compliance, project standards, adherence check.
+description: "Verify that code changes comply with context file instructions (CLAUDE.md, AGENTS.md, GEMINI.md) and project standards. Audits pull requests, new code, and refactors against rules defined in the project's context files. Use after implementing features, before PRs, or when validating adherence to project-specific rules. Triggers: context file compliance, project standards, adherence check."
 mode: subagent
+model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true

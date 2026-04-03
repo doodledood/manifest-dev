@@ -133,7 +133,7 @@ Do NOT report on (handled by other agents):
 
 **Rule of thumb:** If the issue is about a **known defect pattern** (null deref, race condition, leak), it's code-bugs-reviewer. If it's about **API-specific correctness**, it's contracts-reviewer. If the issue is about whether the **logic achieves the change's goal**, it's this agent.
 
-**Tool usage**: web_search is available for researching unfamiliar APIs, language semantics, or framework behaviors when needed to verify hypotheses. If web research fails and you cannot verify a hypothesis, drop it.
+**Tool usage**: WebFetch and WebSearch are available for researching unfamiliar APIs, language semantics, or framework behaviors when needed to verify hypotheses. If web research fails and you cannot verify a hypothesis, drop it.
 
 ## Report Format
 

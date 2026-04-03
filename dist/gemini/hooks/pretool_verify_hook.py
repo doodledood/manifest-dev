@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 """
-PreToolUse hook that reminds Claude to read manifest/log for verification.
+BeforeTool hook that reminds the model to read manifest/log for verification.
 
-When /verify is about to be called, this hook adds a system reminder to ensure
-the manifest and execution log are in full context for accurate verification.
-This is especially important after long sessions where manifest details may have
-drifted from memory.
-
-Registered as PreToolUse hook with "Skill" matcher.
+Gemini CLI adaptation: Registered as BeforeTool hook with
+matcher for activate_skill.
 """
 
 from __future__ import annotations
@@ -31,16 +27,15 @@ BEFORE spawning verifiers, read the manifest and execution log in FULL if not re
 
 def main() -> None:
     """Main hook entry point."""
-    # Read hook input from stdin
     try:
         stdin_data = sys.stdin.read()
         hook_input = json.loads(stdin_data)
     except (json.JSONDecodeError, OSError):
         sys.exit(0)
 
-    # Only apply to Skill tool calls
+    # Only apply to activate_skill tool calls
     tool_name = hook_input.get("tool_name", "")
-    if tool_name != "Skill":
+    if tool_name != "activate_skill":
         sys.exit(0)
 
     tool_input = hook_input.get("tool_input", {})
@@ -62,7 +57,7 @@ def main() -> None:
 
     output = {
         "hookSpecificOutput": {
-            "hookEventName": "PreToolUse",
+            "hookEventName": "BeforeTool",
             "additionalContext": context,
         }
     }

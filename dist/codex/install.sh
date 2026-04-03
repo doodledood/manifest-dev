@@ -1,145 +1,182 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# manifest-dev for Codex CLI -- idempotent installer
-# All components are namespaced with -manifest-dev suffix to avoid collisions.
-#
-# Remote:  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
-# Local:   bash dist/codex/install.sh
+# manifest-dev Codex CLI installer
+# Idempotent: safe to run multiple times.
+# Installs skills, agents, rules, config, and AGENTS.md with -manifest-dev namespacing.
 
-REPO="doodledood/manifest-dev"
-BRANCH="main"
-DIST_PATH="dist/codex"
-INSTALL_ROOT="${CODEX_HOME:-$HOME/.codex}"
-STATE_FILE="$INSTALL_ROOT/manifest-dev-install-state.json"
-SCRIPT_SOURCE="${BASH_SOURCE[0]-}"
-SCRIPT_DIR=""
-if [ -n "$SCRIPT_SOURCE" ] && [ -f "$SCRIPT_SOURCE" ]; then
-  SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)"
-fi
-ACTION="${1:-install}"
-TMP_DIR=$(mktemp -d)
-trap 'rm -rf "$TMP_DIR"' EXIT
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="${1:-.}"
 
-echo "manifest-dev installer for Codex CLI (v0.71.0)"
-echo "================================================"
+# Resolve to absolute path
+PROJECT_ROOT="$(cd "$PROJECT_ROOT" && pwd)"
+
+echo "manifest-dev Codex CLI installer"
+echo "================================"
+echo "Source:  $SCRIPT_DIR"
+echo "Target:  $PROJECT_ROOT"
 echo ""
 
-case "$ACTION" in
-  install|uninstall)
-    ;;
-  *)
-    echo "Usage: bash install.sh [install|uninstall]" >&2
-    exit 1
-    ;;
-esac
+# Directories
+SKILLS_DEST="$PROJECT_ROOT/.agents/skills"
+AGENTS_DEST="$PROJECT_ROOT/.codex/agents"
+RULES_DEST="$PROJECT_ROOT/.codex/rules"
+CONFIG_DEST="$PROJECT_ROOT/.codex/config.toml"
 
-if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/install_helpers.py" ] && [ -d "$SCRIPT_DIR/skills" ] && [ -d "$SCRIPT_DIR/agents" ] && [ -f "$SCRIPT_DIR/config.toml" ]; then
-  echo "Using local dist/codex from $SCRIPT_DIR..."
-  SRC="$TMP_DIR/local-dist"
-  mkdir -p "$SRC"
-  cp -R "$SCRIPT_DIR"/. "$SRC"/
+# --------------------------------------------------------------------------
+# Step 1: Selective cleanup of previous manifest-dev installs
+# --------------------------------------------------------------------------
+echo "[1/6] Cleaning previous manifest-dev installs..."
+
+# Remove only manifest-dev namespaced skills
+find "$SKILLS_DEST" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
+
+# Remove only manifest-dev namespaced agent TOMLs
+find "$AGENTS_DEST" -maxdepth 1 -name "*-manifest-dev*" -type f -exec rm -f {} + 2>/dev/null || true
+
+echo "  Done."
+
+# --------------------------------------------------------------------------
+# Step 2: Install skills with namespacing
+# --------------------------------------------------------------------------
+echo "[2/6] Installing skills..."
+
+mkdir -p "$SKILLS_DEST"
+
+python3 "$SCRIPT_DIR/install_helpers.py" 2>/dev/null || true
+
+# Use Python for namespaced install
+python3 - "$SCRIPT_DIR" "$SKILLS_DEST" << 'PYEOF'
+import sys
+sys.path.insert(0, sys.argv[1])
+from install_helpers import install_skills
+installed = install_skills(sys.argv[1], sys.argv[2])
+for s in installed:
+    print(f"  Installed skill: {s}")
+print(f"  {len(installed)} skills installed.")
+PYEOF
+
+# --------------------------------------------------------------------------
+# Step 3: Install agent TOMLs with namespacing
+# --------------------------------------------------------------------------
+echo "[3/6] Installing agents..."
+
+mkdir -p "$AGENTS_DEST"
+
+python3 - "$SCRIPT_DIR" "$AGENTS_DEST" << 'PYEOF'
+import sys
+sys.path.insert(0, sys.argv[1])
+from install_helpers import install_agents
+installed = install_agents(sys.argv[1], sys.argv[2])
+for a in installed:
+    print(f"  Installed agent: {a}")
+print(f"  {len(installed)} agents installed.")
+PYEOF
+
+# --------------------------------------------------------------------------
+# Step 4: Install rules
+# --------------------------------------------------------------------------
+echo "[4/6] Installing rules..."
+
+mkdir -p "$RULES_DEST"
+
+python3 - "$SCRIPT_DIR" "$RULES_DEST" << 'PYEOF'
+import sys
+sys.path.insert(0, sys.argv[1])
+from install_helpers import install_rules
+installed = install_rules(sys.argv[1], sys.argv[2])
+for r in installed:
+    print(f"  Installed rule: {r}")
+print(f"  {len(installed)} rules installed.")
+PYEOF
+
+# --------------------------------------------------------------------------
+# Step 5: Merge config.toml additively
+# --------------------------------------------------------------------------
+echo "[5/6] Merging config.toml..."
+
+mkdir -p "$(dirname "$CONFIG_DEST")"
+
+if [ -f "$CONFIG_DEST" ]; then
+    # Additive merge: append manifest-dev sections if not already present
+    if grep -q "agents.change-intent-reviewer" "$CONFIG_DEST" 2>/dev/null; then
+        echo "  Config already contains manifest-dev agent entries. Skipping merge."
+    else
+        echo "" >> "$CONFIG_DEST"
+        echo "# --- manifest-dev additions (auto-merged) ---" >> "$CONFIG_DEST"
+        cat "$SCRIPT_DIR/config.toml" >> "$CONFIG_DEST"
+        echo "  Appended manifest-dev config to existing config.toml."
+    fi
 else
-  echo "Downloading from github.com/$REPO ($BRANCH)..."
-  curl -fsSL "https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz" \
-    | tar -xz -C "$TMP_DIR" --strip-components=1
-
-  SRC="$TMP_DIR/$DIST_PATH"
+    cp "$SCRIPT_DIR/config.toml" "$CONFIG_DEST"
+    echo "  Created new config.toml."
 fi
 
-if [ ! -d "$SRC" ]; then
-  echo "Error: $DIST_PATH not found in archive" >&2
-  exit 1
-fi
+# Patch config.toml agent references with namespace suffix
+python3 - "$CONFIG_DEST" << 'PYEOF'
+import sys
+import re
 
-if [ "$ACTION" = "uninstall" ]; then
-  echo "Removing manifest-dev-managed Codex files from $INSTALL_ROOT..."
+config_path = sys.argv[1]
+SUFFIX = "-manifest-dev"
 
-  find "$INSTALL_ROOT/skills" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
-  find "$INSTALL_ROOT/agents" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
-  rm -f "$INSTALL_ROOT/rules/manifest-dev.rules"
+with open(config_path, "r") as f:
+    content = f.read()
 
-  if [ -f "$INSTALL_ROOT/config.toml" ]; then
-    cp "$INSTALL_ROOT/config.toml" "$INSTALL_ROOT/config.toml.pre-manifest-dev-uninstall.bak"
-    python3 "$SRC/install_helpers.py" unmerge-config "$INSTALL_ROOT/config.toml" "$STATE_FILE"
-    echo "Config: manifest-dev sections removed (backup at $INSTALL_ROOT/config.toml.pre-manifest-dev-uninstall.bak)"
-  elif [ -f "$STATE_FILE" ]; then
-    rm -f "$STATE_FILE"
-  fi
+# Only patch manifest-dev agent entries that aren't already namespaced
+agent_names = [
+    "change-intent-reviewer", "code-bugs-reviewer", "code-coverage-reviewer",
+    "code-design-reviewer", "code-maintainability-reviewer", "code-simplicity-reviewer",
+    "code-testability-reviewer", "context-file-adherence-reviewer", "contracts-reviewer",
+    "criteria-checker", "define-session-analyzer", "docs-reviewer",
+    "manifest-verifier", "type-safety-reviewer",
+]
 
-  rmdir "$INSTALL_ROOT/skills" 2>/dev/null || true
-  rmdir "$INSTALL_ROOT/agents" 2>/dev/null || true
-  rmdir "$INSTALL_ROOT/rules" 2>/dev/null || true
-  rmdir "$INSTALL_ROOT" 2>/dev/null || true
+for name in agent_names:
+    # Patch [agents.name] headers
+    content = content.replace(
+        f"[agents.{name}]",
+        f"[agents.{name}{SUFFIX}]"
+    )
+    # Patch config_file references
+    content = content.replace(
+        f'config_file = "agents/{name}.toml"',
+        f'config_file = "agents/{name}{SUFFIX}.toml"'
+    )
 
-  echo ""
-  echo "======================================"
-  echo "Done!"
-  echo ""
-  echo "Removed manifest-dev-managed Codex files only."
-  exit 0
-fi
+with open(config_path, "w") as f:
+    f.write(content)
 
-# --- Namespace components in source before installing ---
-echo ""
-echo "Namespacing components..."
-python3 "$SRC/install_helpers.py" namespace "$SRC" codex
+print("  Patched config.toml with namespace suffixes.")
+PYEOF
 
-# --- Skills (selective cleanup: remove only our namespaced dirs) ---
-echo ""
-echo "Installing skills..."
-mkdir -p "$INSTALL_ROOT/skills"
-find "$INSTALL_ROOT/skills" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
-for skill_dir in "$SRC/skills/"*/; do
-  skill_name=$(basename "$skill_dir")
-  cp -r "$skill_dir" "$INSTALL_ROOT/skills/$skill_name"
-  echo "  + $skill_name"
-done
-echo "  Skills: $(ls -d "$SRC/skills/"*/ | wc -l | tr -d ' ') installed to $INSTALL_ROOT/skills/"
+# --------------------------------------------------------------------------
+# Step 6: Copy AGENTS.md
+# --------------------------------------------------------------------------
+echo "[6/6] Installing AGENTS.md..."
 
-# --- Agent TOML stubs (selective cleanup: remove only our namespaced files) ---
-echo ""
-echo "Installing agent TOML stubs..."
-mkdir -p "$INSTALL_ROOT/agents"
-find "$INSTALL_ROOT/agents" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
-for toml_file in "$SRC/agents/"*.toml; do
-  toml_name=$(basename "$toml_file")
-  cp "$toml_file" "$INSTALL_ROOT/agents/$toml_name"
-  echo "  + $toml_name"
-done
-echo "  Agents: $(ls "$SRC/agents/"*.toml | wc -l | tr -d ' ') TOML stubs installed to $INSTALL_ROOT/agents/"
-
-# --- Execution rules ---
-echo ""
-echo "Installing execution rules..."
-mkdir -p "$INSTALL_ROOT/rules"
-cp "$SRC/rules/default.rules" "$INSTALL_ROOT/rules/manifest-dev.rules"
-echo "  Rules: manifest-dev.rules installed to $INSTALL_ROOT/rules/"
-
-# --- Config (merge into existing config — backs up existing first) ---
-echo ""
-mkdir -p "$INSTALL_ROOT"
-if [ -f "$INSTALL_ROOT/config.toml" ]; then
-  cp "$INSTALL_ROOT/config.toml" "$INSTALL_ROOT/config.toml.bak"
-  python3 "$SRC/install_helpers.py" merge-config "$SRC/config.toml" "$INSTALL_ROOT/config.toml" "$STATE_FILE"
-  echo "Config: config.toml merged (backup at $INSTALL_ROOT/config.toml.bak)"
+if [ -f "$PROJECT_ROOT/AGENTS.md" ]; then
+    # Append if not already present
+    if grep -q "manifest-dev Agents" "$PROJECT_ROOT/AGENTS.md" 2>/dev/null; then
+        echo "  AGENTS.md already contains manifest-dev section. Skipping."
+    else
+        echo "" >> "$PROJECT_ROOT/AGENTS.md"
+        cat "$SCRIPT_DIR/AGENTS.md" >> "$PROJECT_ROOT/AGENTS.md"
+        echo "  Appended manifest-dev section to existing AGENTS.md."
+    fi
 else
-  python3 "$SRC/install_helpers.py" merge-config "$SRC/config.toml" "$INSTALL_ROOT/config.toml" "$STATE_FILE"
-  echo "Config: config.toml installed to $INSTALL_ROOT/"
+    cp "$SCRIPT_DIR/AGENTS.md" "$PROJECT_ROOT/AGENTS.md"
+    echo "  Created new AGENTS.md."
 fi
 
 echo ""
-echo "======================================"
-echo "Done!"
+echo "Installation complete!"
 echo ""
-echo "What's installed (all suffixed with -manifest-dev):"
-echo "  - 7 skills in $INSTALL_ROOT/skills/ (define-manifest-dev, do-manifest-dev, etc.)"
-echo "  - 14 TOML agent stubs in $INSTALL_ROOT/agents/ (multi-agent config)"
-echo "  - Execution rules in $INSTALL_ROOT/rules/manifest-dev.rules"
-echo "  - Config in $INSTALL_ROOT/config.toml (multi-agent enabled, 14 agents registered)"
+echo "Installed components:"
+echo "  Skills:  $SKILLS_DEST/*-manifest-dev/"
+echo "  Agents:  $AGENTS_DEST/*-manifest-dev.toml"
+echo "  Rules:   $RULES_DEST/"
+echo "  Config:  $CONFIG_DEST"
+echo "  Docs:    $PROJECT_ROOT/AGENTS.md"
 echo ""
-echo "Skills are ready to use. Agents use 6 default tools:"
-echo "  shell_command, apply_patch, update_plan, request_user_input, web_search, view_image"
-echo ""
-echo "Hooks are not available -- Codex has no hook system yet (Issue #2109)."
-echo "Run this script again to update. Existing config.toml is backed up and merged."
+echo "To verify: codex execpolicy check --pretty --rules $RULES_DEST/default.rules -- git status"

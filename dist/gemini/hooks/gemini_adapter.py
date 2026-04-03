@@ -1,466 +1,165 @@
 #!/usr/bin/env python3
 """
-Gemini CLI hook adapter.
+Gemini CLI adapter for manifest-dev hooks.
 
-Thin translation layer between Gemini CLI hook protocol and existing
-Claude Code hook scripts. Maps events, tool names, and output formats
-so the same Python hook logic works on both CLIs.
+Translates between Claude Code hook protocol and Gemini CLI hook protocol.
+Wraps existing hook logic so the same behavioral intent works on both platforms.
 
-Usage:
-    python3 gemini_adapter.py <event>
+Claude Code → Gemini CLI translations:
+- hookSpecificOutput.permissionDecision: "deny" → top-level decision: "deny"
+- hookSpecificOutput.permissionDecisionReason → reason
+- hookSpecificOutput.additionalContext → hookSpecificOutput.additionalContext
+- decision: "block" (Stop hook) → decision: "deny" with reason (AfterAgent)
+- transcript_path parsing: JSONL with user/gemini types instead of user/assistant
+- Tool names: Skill → activate_skill, Bash/BashOutput → run_shell_command, etc.
 
-Events:
-    BeforeTool   - maps to pretool_verify_hook (PreToolUse equivalent)
-    AfterTool    - maps to posttool_log_hook (PostToolUse equivalent)
-    AfterAgent   - maps to stop_do_hook (Stop equivalent)
-    BeforeAgent  - maps to prompt_submit_hook + understand_prompt_hook (UserPromptSubmit equivalents)
-    SessionStart - maps to post_compact_hook (source=resume only)
-
-Protocol (Gemini CLI):
-    Input:  JSON on stdin
-    Output: JSON on stdout (exit 0 only), debug/errors on stderr only
-    Exit codes:
-        0  = allow (parse stdout for output JSON)
-        1  = non-blocking warning (stderr = warning text)
-        2+ = blocking (stderr = reason for block)
-
-AfterAgent deny/retry protocol:
-    - decision: "deny" rejects the model's response
-    - reason field becomes a new prompt for the agent to correct
-    - hookSpecificOutput.clearContext: true clears LLM memory from rejected turn
-    - Next AfterAgent input will have stop_hook_active: true (retry sequence)
-    - Hooks must implement retry limits to avoid infinite loops
-
-Transcript format:
-    Gemini CLI uses JSONL at transcript_path with record types:
-        user, gemini (not "assistant"), message_update
+Gemini CLI protocol:
+- Input: JSON on stdin
+- Output: JSON on stdout (NOTHING else — debug on stderr only)
+- Exit codes: 0 = success, 1 = non-blocking warning, 2+ = blocking
 """
 
 from __future__ import annotations
 
 import json
-import os
-import re
 import sys
 from typing import Any
 
-# --------------------------------------------------------------------------- #
-# Tool-name mapping (Gemini -> Claude Code)
-# --------------------------------------------------------------------------- #
-
-GEMINI_TO_CLAUDE_TOOLS: dict[str, str] = {
-    "run_shell_command": "Bash",
-    "read_file": "Read",
-    "write_file": "Write",
-    "replace": "Edit",
-    "grep_search": "Grep",
-    "glob": "Glob",
-    "web_fetch": "WebFetch",
-    "google_web_search": "WebSearch",
-    "activate_skill": "Skill",
-    "write_todos": "TaskCreate",
-    "ask_user": "AskUserQuestion",
-    "enter_plan_mode": "EnterPlanMode",
-    "exit_plan_mode": "ExitPlanMode",
+# Claude Code → Gemini CLI tool name mapping
+TOOL_NAME_MAP = {
+    "Skill": "activate_skill",
+    "Bash": "run_shell_command",
+    "BashOutput": "run_shell_command",
+    "Read": "read_file",
+    "Write": "write_file",
+    "Edit": "replace",
+    "Grep": "grep_search",
+    "Glob": "glob",
+    "WebFetch": "web_fetch",
+    "WebSearch": "google_web_search",
+    "TodoWrite": "write_todos",
+    "TodoRead": "write_todos",
+    "TaskCreate": "write_todos",
+    "TaskUpdate": "write_todos",
+    "TaskGet": "write_todos",
+    "TaskList": "write_todos",
+    "AskUserQuestion": "ask_user",
 }
 
-CLAUDE_TO_GEMINI_TOOLS: dict[str, str] = {v: k for k, v in GEMINI_TO_CLAUDE_TOOLS.items()}
+# Reverse mapping for input translation
+GEMINI_TO_CLAUDE_TOOL = {v: k for k, v in TOOL_NAME_MAP.items()}
+# Fix: activate_skill should map to Skill
+GEMINI_TO_CLAUDE_TOOL["activate_skill"] = "Skill"
+GEMINI_TO_CLAUDE_TOOL["run_shell_command"] = "Bash"
 
 
-# --------------------------------------------------------------------------- #
-# Helpers
-# --------------------------------------------------------------------------- #
-
-# Regex to strip <system-reminder> wrappers.
-# Gemini additionalContext is plain text -- no XML tags needed.
-_SYSTEM_REMINDER_RE = re.compile(
-    r"<system-reminder>(.*?)</system-reminder>", re.DOTALL
-)
+def read_gemini_input() -> dict[str, Any]:
+    """Read and parse Gemini CLI hook input from stdin."""
+    try:
+        stdin_data = sys.stdin.read()
+        return json.loads(stdin_data)
+    except (json.JSONDecodeError, OSError):
+        return {}
 
 
-def _strip_system_reminder(text: str) -> str:
-    """Remove <system-reminder> wrapper tags from context text.
-
-    Claude Code hooks use build_system_reminder() which wraps content in
-    <system-reminder> tags.  Gemini CLI additionalContext is plain text --
-    these tags would be passed literally and confuse the model.
+def translate_input_to_claude(gemini_input: dict[str, Any]) -> dict[str, Any]:
     """
-    match = _SYSTEM_REMINDER_RE.search(text)
-    if match:
-        return match.group(1).strip()
-    return text
+    Translate Gemini CLI hook input to Claude Code hook input format.
 
+    Gemini provides: session_id, transcript_path, cwd, hook_event_name, timestamp,
+                     tool_name, tool_input, prompt, etc.
+    Claude expects: tool_name (PascalCase), tool_input, transcript_path, etc.
+    """
+    claude_input = dict(gemini_input)
 
-def _translate_input(gemini_input: dict[str, Any], event: str) -> dict[str, Any]:
-    """Convert Gemini hook input to the format Claude Code hooks expect."""
-    claude_input: dict[str, Any] = {}
-
-    # Universal fields
-    claude_input["transcript_path"] = gemini_input.get("transcript_path", "")
-    claude_input["cwd"] = gemini_input.get("cwd", os.getcwd())
-    claude_input["session_id"] = gemini_input.get("session_id", "")
-
-    if event == "BeforeTool":
-        # Map tool_name back to Claude Code names
-        gemini_tool = gemini_input.get("tool_name", "")
-        claude_input["tool_name"] = GEMINI_TO_CLAUDE_TOOLS.get(gemini_tool, gemini_tool)
-        claude_input["tool_input"] = gemini_input.get("tool_input", {})
-
-    elif event == "AfterTool":
-        # Map tool_name back to Claude Code names
-        gemini_tool = gemini_input.get("tool_name", "")
-        claude_input["tool_name"] = GEMINI_TO_CLAUDE_TOOLS.get(gemini_tool, gemini_tool)
-        claude_input["tool_input"] = gemini_input.get("tool_input", {})
-        claude_input["tool_response"] = gemini_input.get("tool_response", {})
-
-    elif event == "AfterAgent":
-        # Stop equivalent -- pass through prompt info
-        claude_input["prompt"] = gemini_input.get("prompt", "")
-        claude_input["prompt_response"] = gemini_input.get("prompt_response", "")
-        # Pass through stop_hook_active so hooks can detect retry sequences
-        if gemini_input.get("stop_hook_active"):
-            claude_input["stop_hook_active"] = True
-
-    elif event == "BeforeAgent":
-        # UserPromptSubmit equivalent
-        claude_input["prompt"] = gemini_input.get("prompt", "")
-
-    elif event == "SessionStart":
-        claude_input["source"] = gemini_input.get("source", "startup")
+    # Translate tool names from Gemini to Claude format
+    tool_name = gemini_input.get("tool_name", "")
+    if tool_name in GEMINI_TO_CLAUDE_TOOL:
+        claude_input["tool_name"] = GEMINI_TO_CLAUDE_TOOL[tool_name]
 
     return claude_input
 
 
-def _translate_output(claude_output: dict[str, Any], event: str) -> dict[str, Any]:
-    """Convert Claude Code hook output to Gemini hook format.
+def translate_output_to_gemini(
+    claude_output: dict[str, Any],
+    event_type: str,
+) -> dict[str, Any]:
+    """
+    Translate Claude Code hook output to Gemini CLI hook output format.
 
-    Returns a dict with optional '_block' and '_block_reason' keys for the
-    caller to know which exit code to use. The caller must pop these keys
-    before writing stdout.
+    Key translations:
+    - Claude's hookSpecificOutput.permissionDecision → Gemini's top-level decision
+    - Claude's decision: "block" → Gemini's decision: "deny"
+    - Claude's systemMessage stays as systemMessage
+    - Claude's additionalContext → Gemini's hookSpecificOutput.additionalContext
     """
     gemini_output: dict[str, Any] = {}
 
-    # Map permission decision to Gemini's decision field
+    # Handle top-level decision
+    decision = claude_output.get("decision")
+    if decision == "block":
+        gemini_output["decision"] = "deny"
+    elif decision == "allow":
+        gemini_output["decision"] = "allow"
+
+    # Handle reason
+    reason = claude_output.get("reason")
+    if reason:
+        gemini_output["reason"] = reason
+
+    # Handle systemMessage (displayed to user, not injected into model)
+    system_message = claude_output.get("systemMessage")
+    if system_message:
+        gemini_output["systemMessage"] = system_message
+
+    # Handle hookSpecificOutput
     hook_specific = claude_output.get("hookSpecificOutput", {})
 
-    if event == "BeforeTool":
-        perm = hook_specific.get("permissionDecision", "")
-        if perm == "deny":
+    if hook_specific:
+        gemini_hook_specific: dict[str, Any] = {}
+
+        # Map hookEventName
+        claude_event = hook_specific.get("hookEventName", "")
+        event_map = {
+            "PreToolUse": "BeforeTool",
+            "PostToolUse": "AfterTool",
+            "SessionStart": "SessionStart",
+            "UserPromptSubmit": "BeforeAgent",
+        }
+        gemini_event = event_map.get(claude_event, event_type)
+        gemini_hook_specific["hookEventName"] = gemini_event
+
+        # Permission decision → top-level decision
+        perm_decision = hook_specific.get("permissionDecision")
+        if perm_decision == "deny":
             gemini_output["decision"] = "deny"
-            gemini_output["reason"] = hook_specific.get(
-                "permissionDecisionReason", "Blocked by hook"
-            )
-        # Pass through additionalContext (stripped of system-reminder wrappers)
-        ctx = hook_specific.get("additionalContext", "")
-        if ctx:
-            ctx = _strip_system_reminder(ctx)
-            gemini_output.setdefault("hookSpecificOutput", {})
-            gemini_output["hookSpecificOutput"]["hookEventName"] = "BeforeTool"
-            gemini_output["hookSpecificOutput"]["additionalContext"] = ctx
-        # Support tool_input modification (BeforeTool can override model args)
-        tool_input_override = hook_specific.get("tool_input")
-        if tool_input_override:
-            gemini_output.setdefault("hookSpecificOutput", {})
-            gemini_output["hookSpecificOutput"]["hookEventName"] = "BeforeTool"
-            gemini_output["hookSpecificOutput"]["tool_input"] = tool_input_override
+        perm_reason = hook_specific.get("permissionDecisionReason")
+        if perm_reason:
+            gemini_output["reason"] = perm_reason
 
-    elif event == "AfterTool":
-        # Pass through additionalContext (stripped of system-reminder wrappers)
-        ctx = hook_specific.get("additionalContext", "")
-        if ctx:
-            ctx = _strip_system_reminder(ctx)
-            gemini_output["hookSpecificOutput"] = {
-                "hookEventName": "AfterTool",
-                "additionalContext": ctx,
-            }
+        # additionalContext passes through
+        additional_context = hook_specific.get("additionalContext")
+        if additional_context:
+            gemini_hook_specific["additionalContext"] = additional_context
 
-    elif event == "AfterAgent":
-        decision = claude_output.get("decision", "")
-        if decision == "block":
-            gemini_output["decision"] = "deny"
-            reason = claude_output.get("reason", "")
-            gemini_output["reason"] = reason
-            # clearContext: force agent to reason from file state on retry
-            gemini_output["hookSpecificOutput"] = {
-                "hookEventName": "AfterAgent",
-                "clearContext": True,
-            }
-            # Signal to caller: use exit code 2 with reason on stderr
-            gemini_output["_block"] = True
-            gemini_output["_block_reason"] = reason
-        elif decision == "allow":
-            gemini_output["decision"] = "allow"
+        # tool_input override passes through for BeforeTool
+        tool_input = hook_specific.get("tool_input")
+        if tool_input:
+            gemini_hook_specific["tool_input"] = tool_input
 
-        msg = claude_output.get("systemMessage", "")
-        if msg:
-            gemini_output["systemMessage"] = msg
-
-    elif event == "BeforeAgent":
-        # Pass through additionalContext (stripped of system-reminder wrappers)
-        ctx = hook_specific.get("additionalContext", "")
-        if ctx:
-            ctx = _strip_system_reminder(ctx)
-            gemini_output["hookSpecificOutput"] = {
-                "hookEventName": "BeforeAgent",
-                "additionalContext": ctx,
-            }
-
-    elif event == "SessionStart":
-        ctx = hook_specific.get("additionalContext", "")
-        if ctx:
-            ctx = _strip_system_reminder(ctx)
-            gemini_output["hookSpecificOutput"] = {
-                "hookEventName": "SessionStart",
-                "additionalContext": ctx,
-            }
+        if gemini_hook_specific:
+            gemini_output["hookSpecificOutput"] = gemini_hook_specific
 
     return gemini_output
 
 
-def _patch_transcript_for_claude(transcript_path: str) -> str:
-    """Create a patched copy of the Gemini JSONL transcript for Claude hooks.
+def output_and_exit(output: dict[str, Any], blocking: bool = False) -> None:
+    """Write JSON output to stdout and exit with appropriate code."""
+    if output:
+        print(json.dumps(output))
 
-    Gemini CLI uses record type "gemini" for assistant messages while
-    Claude Code hooks expect "assistant".  This creates a temp file with
-    the type field patched so hook_utils parsing works correctly.
-
-    Returns the path to the patched file (or the original if patching fails).
-    """
-    if not transcript_path or not os.path.isfile(transcript_path):
-        return transcript_path
-
-    import tempfile
-
-    try:
-        patched_lines: list[str] = []
-        with open(transcript_path, encoding="utf-8") as f:
-            for line in f:
-                stripped = line.strip()
-                if not stripped:
-                    patched_lines.append(line)
-                    continue
-                try:
-                    record = json.loads(stripped)
-                except json.JSONDecodeError:
-                    patched_lines.append(line)
-                    continue
-
-                # Patch "gemini" -> "assistant" for Claude hook compatibility
-                if record.get("type") == "gemini":
-                    record["type"] = "assistant"
-                    patched_lines.append(json.dumps(record) + "\n")
-                else:
-                    patched_lines.append(line)
-
-        # Write to temp file in same directory for fast I/O
-        dir_name = os.path.dirname(transcript_path) or "/tmp"
-        fd, patched_path = tempfile.mkstemp(
-            suffix=".jsonl", prefix="patched_", dir=dir_name
-        )
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            f.writelines(patched_lines)
-
-        return patched_path
-
-    except (OSError, IOError):
-        # Fall back to original on any error
-        return transcript_path
-
-
-def _cleanup_patched(patched_path: str, original_path: str) -> None:
-    """Remove the patched transcript temp file if it differs from original."""
-    if patched_path != original_path:
-        try:
-            os.unlink(patched_path)
-        except OSError:
-            pass
-
-
-def _run_hook(hook_main, gemini_input: dict[str, Any], event: str) -> dict[str, Any] | None:
-    """Run a Claude Code hook function and capture its output.
-
-    Translates input, patches transcript, runs the hook, and returns
-    the translated Gemini output (or None if no output).
-    """
-    claude_input = _translate_input(gemini_input, event)
-
-    # Patch transcript for Claude hook compatibility (gemini -> assistant)
-    original_transcript = claude_input.get("transcript_path", "")
-    patched_transcript = _patch_transcript_for_claude(original_transcript)
-    claude_input["transcript_path"] = patched_transcript
-
-    from unittest.mock import patch
-    import io
-
-    stdin_data = json.dumps(claude_input)
-    captured = io.StringIO()
-
-    try:
-        with patch("sys.stdin", io.StringIO(stdin_data)), \
-             patch("sys.stdout", captured), \
-             patch("sys.exit"):
-            hook_main()
-    except SystemExit:
-        pass
-    finally:
-        _cleanup_patched(patched_transcript, original_transcript)
-
-    claude_output_str = captured.getvalue().strip()
-    if claude_output_str:
-        try:
-            claude_output = json.loads(claude_output_str)
-            return _translate_output(claude_output, event)
-        except json.JSONDecodeError:
-            pass
-
-    return None
-
-
-# --------------------------------------------------------------------------- #
-# Event dispatchers
-# --------------------------------------------------------------------------- #
-
-
-def _run_before_tool(gemini_input: dict[str, Any]) -> None:
-    """Dispatch BeforeTool -> pretool_verify_hook."""
-    # Only process activate_skill (Skill) calls
-    if gemini_input.get("tool_name") != "activate_skill":
-        sys.exit(0)
-
-    from pretool_verify_hook import main as _pretool_main
-
-    gemini_output = _run_hook(_pretool_main, gemini_input, "BeforeTool")
-    if gemini_output:
-        print(json.dumps(gemini_output))
-
-    sys.exit(0)
-
-
-def _run_after_tool(gemini_input: dict[str, Any]) -> None:
-    """Dispatch AfterTool -> posttool_log_hook."""
-    from posttool_log_hook import main as _posttool_main
-
-    gemini_output = _run_hook(_posttool_main, gemini_input, "AfterTool")
-    if gemini_output:
-        print(json.dumps(gemini_output))
-
-    sys.exit(0)
-
-
-def _run_after_agent(gemini_input: dict[str, Any]) -> None:
-    """Dispatch AfterAgent -> stop_do_hook."""
-    from stop_do_hook import main as _stop_main
-
-    gemini_output = _run_hook(_stop_main, gemini_input, "AfterAgent")
-    if gemini_output:
-        # AfterAgent blocking: exit 2 with reason on stderr
-        if gemini_output.pop("_block", False):
-            block_reason = gemini_output.pop("_block_reason", "Blocked by hook")
-            # Write allow/deny JSON to stdout for Gemini to parse
-            print(json.dumps(gemini_output))
-            # Write reason to stderr (Gemini uses this as feedback prompt)
-            print(block_reason, file=sys.stderr)
-            sys.exit(2)
-        else:
-            # Remove internal keys if somehow present
-            gemini_output.pop("_block_reason", None)
-            print(json.dumps(gemini_output))
-
-    sys.exit(0)
-
-
-def _run_before_agent(gemini_input: dict[str, Any]) -> None:
-    """Dispatch BeforeAgent -> prompt_submit_hook + understand_prompt_hook.
-
-    Both Claude Code hooks are UserPromptSubmit handlers. Their
-    additionalContext outputs are merged into a single BeforeAgent response.
-    """
-    from prompt_submit_hook import main as _prompt_main
-    from understand_prompt_hook import main as _understand_main
-
-    combined_context_parts: list[str] = []
-
-    # Run prompt_submit_hook (amendment check during /do)
-    prompt_output = _run_hook(_prompt_main, gemini_input, "BeforeAgent")
-    if prompt_output:
-        ctx = (prompt_output.get("hookSpecificOutput") or {}).get("additionalContext", "")
-        if ctx:
-            combined_context_parts.append(ctx)
-
-    # Run understand_prompt_hook (sycophancy drift reinforcement during /understand)
-    understand_output = _run_hook(_understand_main, gemini_input, "BeforeAgent")
-    if understand_output:
-        ctx = (understand_output.get("hookSpecificOutput") or {}).get("additionalContext", "")
-        if ctx:
-            combined_context_parts.append(ctx)
-
-    if combined_context_parts:
-        gemini_output = {
-            "hookSpecificOutput": {
-                "hookEventName": "BeforeAgent",
-                "additionalContext": "\n\n".join(combined_context_parts),
-            }
-        }
-        print(json.dumps(gemini_output))
-
-    sys.exit(0)
-
-
-def _run_session_start(gemini_input: dict[str, Any]) -> None:
-    """Dispatch SessionStart (source=resume) -> post_compact_hook."""
-    # Only handle "resume" source (post-compaction recovery)
-    # "startup" and "clear" don't need compact recovery
-    source = gemini_input.get("source", "startup")
-    if source != "resume":
-        sys.exit(0)
-
-    from post_compact_hook import main as _compact_main
-
-    gemini_output = _run_hook(_compact_main, gemini_input, "SessionStart")
-    if gemini_output:
-        print(json.dumps(gemini_output))
-
-    sys.exit(0)
-
-
-# --------------------------------------------------------------------------- #
-# Main
-# --------------------------------------------------------------------------- #
-
-
-def main() -> None:
-    """Entry point. First CLI arg is the Gemini event name."""
-    if len(sys.argv) < 2:
-        print("Usage: gemini_adapter.py <event>", file=sys.stderr)
+    # Exit code: 0 = success, 2 = blocking
+    if blocking:
         sys.exit(2)
-
-    event = sys.argv[1]
-
-    try:
-        stdin_data = sys.stdin.read()
-        gemini_input = json.loads(stdin_data) if stdin_data.strip() else {}
-    except (json.JSONDecodeError, OSError):
-        gemini_input = {}
-
-    # Add the hooks directory to sys.path so imports work
-    hooks_dir = os.path.dirname(os.path.abspath(__file__))
-    if hooks_dir not in sys.path:
-        sys.path.insert(0, hooks_dir)
-
-    if event == "BeforeTool":
-        _run_before_tool(gemini_input)
-    elif event == "AfterTool":
-        _run_after_tool(gemini_input)
-    elif event == "AfterAgent":
-        _run_after_agent(gemini_input)
-    elif event == "BeforeAgent":
-        _run_before_agent(gemini_input)
-    elif event == "SessionStart":
-        _run_session_start(gemini_input)
     else:
-        # Unknown event -- pass through silently
         sys.exit(0)
-
-
-if __name__ == "__main__":
-    main()

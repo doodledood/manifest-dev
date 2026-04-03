@@ -1,6 +1,7 @@
 ---
-description: Verify that code changes have adequate test coverage by proactively enumerating edge cases from the code's logic. Analyzes the diff, derives specific test scenarios with concrete inputs and expected outputs, and reports coverage gaps. Use after implementing a feature, before a PR, or when reviewing code quality. Triggers: check coverage, test coverage, coverage gaps, are my changes tested, what should I test.
+description: "Verify that code changes have adequate test coverage by proactively enumerating edge cases from the code's logic. Analyzes the diff, derives specific test scenarios with concrete inputs and expected outputs, and reports coverage gaps. Use after implementing a feature, before a PR, or when reviewing code quality. Triggers: check coverage, test coverage, coverage gaps, are my changes tested, what should I test."
 mode: subagent
+model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true

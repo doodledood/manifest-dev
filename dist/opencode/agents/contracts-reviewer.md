@@ -1,6 +1,7 @@
 ---
-description: Verify API and interface contract correctness with evidence. Checks both outbound (code calls external/internal APIs correctly per documentation) and inbound (changes don't break consumers of your interfaces). Evidence-based — cites actual API docs or codebase definitions. Use when reviewing API integrations, interface changes, or cross-service boundaries. Triggers: API review, contract check, integration review, consumer impact, breaking changes.
+description: "Verify API and interface contract correctness with evidence. Checks both outbound (code calls external/internal APIs correctly per documentation) and inbound (changes don't break consumers of your interfaces). Evidence-based — cites actual API docs or codebase definitions. Use when reviewing API integrations, interface changes, or cross-service boundaries. Triggers: API review, contract check, integration review, consumer impact, breaking changes."
 mode: subagent
+model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true

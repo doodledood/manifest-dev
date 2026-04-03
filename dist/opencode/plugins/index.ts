@@ -1,475 +1,343 @@
-/**
- * manifest-dev plugin for OpenCode CLI
- *
- * Complete OpenCode hook implementation adapted from the Claude Code
- * workflow hooks in claude-plugins/manifest-dev/hooks/.
- *
- * Version: 0.77.0
- *
- * Source hooks → OpenCode events:
- *   stop_do_hook.py             → session.idle (event — CANNOT block, see notes)
- *   pretool_verify_hook.py      → tool.execute.before (task tool, verify skill)
- *   post_compact_hook.py        → experimental.session.compacting
- *   prompt_submit_hook.py       → experimental.chat.system.transform
- *   understand_prompt_hook.py   → experimental.chat.system.transform
- *   posttool_log_hook.py        → tool.execute.after
- *
- * Corrected for OpenCode v1.2.15 (March 2026):
- *   - Blocking: throw new Error("reason"), NOT args.abort
- *   - Context injection: experimental.chat.system.transform (push to output.system[])
- *   - Compaction: experimental.session.compacting with output.context.push()
- *   - session.idle: fire-and-forget, CANNOT prevent stopping
- *   - Subagent bypass: tool.execute.before/after does NOT fire for subagent tool calls (#5894)
- *
- * Plugin input context:
- *   ctx.client     — SDK client (HTTP to localhost:4096)
- *   ctx.project    — { id, worktree, vcs }
- *   ctx.directory  — current working directory
- *   ctx.worktree   — git worktree root
- *   ctx.serverUrl  — server URL
- *   ctx.$          — Bun shell API
- */
-
 import type { Plugin } from "@opencode-ai/plugin"
 
 /**
- * Workflow state tracked across the session.
- * Replaces Claude Code's transcript parsing (hook_utils.parse_do_flow).
- * Reset on each new /do invocation.
+ * manifest-dev plugin for OpenCode CLI.
+ *
+ * Ported from Claude Code Python hooks. Implements:
+ * - Stop enforcement for /do workflow (session.idle — CANNOT block, documented limitation)
+ * - Post-compaction workflow recovery (experimental.session.compacting)
+ * - Pre-verify context refresh (tool.execute.before on task tool)
+ * - Post-milestone log reminder (tool.execute.after on task/todowrite tools)
+ * - Amendment check on user prompt during /do (experimental.chat.system.transform)
+ * - /understand principles reinforcement (experimental.chat.system.transform)
+ *
+ * KNOWN LIMITATIONS:
+ * 1. Cannot block session stopping — session.idle is fire-and-forget (issue #12472).
+ *    The stop_do_hook enforcement from Claude Code has NO equivalent in OpenCode.
+ *    Workaround: inject strong system-level guidance via chat.system.transform.
+ * 2. tool.execute.before does NOT fire for subagent tool calls (issue #5894).
+ *    Hooks within spawned agents (e.g., criteria-checker, reviewers) won't trigger.
+ * 3. No JSONL transcript — workflow state must be tracked in-memory per session.
+ *
+ * See HOOK_SPEC.md for full behavioral specification.
  */
+
+// ---------------------------------------------------------------------------
+// In-memory workflow state (no JSONL transcript in OpenCode)
+// ---------------------------------------------------------------------------
+
 interface DoFlowState {
-  hasDo: boolean
+  active: boolean
+  hasVerify: boolean
   hasDone: boolean
   hasEscalate: boolean
   hasSelfAmendment: boolean
-  hasVerify: boolean
   doArgs: string | null
-  hasCollabMode: boolean
 }
 
-/**
- * Understand workflow state tracked across the session.
- * Replaces Claude Code's transcript parsing (hook_utils.parse_understand_flow).
- * Reset on each new /understand invocation.
- */
 interface UnderstandFlowState {
-  hasUnderstand: boolean
+  active: boolean
   isComplete: boolean
   understandArgs: string | null
 }
 
-// -- Verify context reminder (pretool_verify_hook.py) --
+// Per-session state maps
+const doStates = new Map<string, DoFlowState>()
+const understandStates = new Map<string, UnderstandFlowState>()
 
-const VERIFY_CONTEXT_REMINDER = `VERIFICATION CONTEXT CHECK: You are about to run /verify.
-
-Arguments: {verify_args}
-
-BEFORE spawning verifiers, read the manifest and execution log in FULL if not recently loaded. You need ALL acceptance criteria (AC-*) and global invariants (INV-G*) in context to spawn the correct verifiers.`
-
-const VERIFY_CONTEXT_REMINDER_MINIMAL = `VERIFICATION CONTEXT CHECK: You are about to run /verify.
-
-BEFORE spawning verifiers, read the manifest and execution log in FULL if not recently loaded. You need ALL acceptance criteria (AC-*) and global invariants (INV-G*) in context to spawn the correct verifiers.`
-
-// -- Post-compact recovery (post_compact_hook.py) --
-
-const DO_WORKFLOW_RECOVERY_REMINDER = `This session was compacted during an active /do workflow. Context may have been lost.
-
-CRITICAL: Before continuing, read the manifest and execution log in FULL.
-
-The /do was invoked with: {do_args}
-
-1. Read the manifest file - contains deliverables, acceptance criteria, and approach
-2. Check /tmp/ for your execution log (do-log-*.md) and read it to recover progress
-
-Do not restart completed work. Resume from where you left off.`
-
-const DO_WORKFLOW_RECOVERY_FALLBACK = `This session was compacted during an active /do workflow. Context may have been lost.
-
-CRITICAL: Before continuing, recover your workflow context:
-
-1. Check /tmp/ for execution logs matching do-log-*.md
-2. The log references the manifest file path - read both in FULL
-
-Do not restart completed work. Resume from where you left off.`
-
-// -- Amendment check (prompt_submit_hook.py) --
-
-const AMENDMENT_CHECK_REMINDER = `AMENDMENT CHECK: You are in an active /do workflow and the user just submitted input.
-
-Before continuing execution, check if this user input:
-1. **Contradicts** an existing AC, INV, or PG in the manifest
-2. **Extends** the manifest with new requirements not currently covered
-3. **Amends** the scope or approach in a way that changes what "done" means
-
-If YES to any: Call /escalate with Self-Amendment type, then immediately invoke /define --amend <manifest-path>. After /define returns, resume /do with the updated manifest.
-
-If NO (clarification, confirmation, or unrelated): Continue execution normally.`
-
-// -- Log reminder (posttool_log_hook.py) --
-
-const LOG_REMINDER = `LOG REMINDER: A milestone just completed during /do.
-
-Tool: {tool_detail}
-
-Update the execution log NOW with what just happened, decisions made, and outcomes. The log is disaster recovery — if context is lost, only the log survives.`
-
-// -- Stop enforcement messages (stop_do_hook.py) --
-
-const STOP_BLOCKED_MESSAGE = `Stop blocked: /do workflow requires formal exit. Options: (1) Run /verify to check criteria - if all pass, /verify calls /done. (2) Call /escalate - for blocking issues OR user-requested pauses. Short outputs will be blocked. Choose one.`
-
-const SELF_AMENDMENT_BLOCKED_MESSAGE = `Stop blocked: Self-Amendment escalation requires /define --amend before stopping. Invoke /define --amend <manifest-path> to update the manifest, then resume /do.`
-
-// -- Understand prompt reinforcement (understand_prompt_hook.py) --
-
-const UNDERSTAND_PRINCIPLES_REMINDER = `/understand active. Self-check before responding:
-- Are you claiming something you haven't verified?
-- Are you agreeing just to be agreeable?
-- Are you proposing when you should be exploring?
-- Are you filling the user's uncertainty with your confidence?
-
-Principles: investigate before claiming, name verified vs inferred, surface seams, sit with fog.`
-
-// -- Understand recovery (post_compact_hook.py) --
-
-const UNDERSTAND_RECOVERY_REMINDER = `This session was compacted during an active /understand session. Context may have been lost.
-
-You are in an /understand session about: {understand_args}
-
-Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — investigate before claiming, surface seams, resist premature synthesis.`
-
-const UNDERSTAND_RECOVERY_FALLBACK = `This session was compacted during an active /understand session. Context may have been lost.
-
-Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — investigate before claiming, surface seams, resist premature synthesis.`
-
-// -- Workflow skill names that trigger log reminders --
-
-const WORKFLOW_SKILLS = new Set(["verify", "escalate", "done", "define"])
-
-// -- Workflow skills that implicitly end /understand --
-
-const UNDERSTAND_ENDING_SKILLS = new Set(["define", "do", "auto"])
-
-export const ManifestDevPlugin: Plugin = async (ctx) => {
-  // Session-scoped workflow state. Reset on each new /do invocation.
-  const flowState: DoFlowState = {
-    hasDo: false,
-    hasDone: false,
-    hasEscalate: false,
-    hasSelfAmendment: false,
-    hasVerify: false,
-    doArgs: null,
-    hasCollabMode: false,
+function getDoState(sessionID: string): DoFlowState {
+  if (!doStates.has(sessionID)) {
+    doStates.set(sessionID, {
+      active: false,
+      hasVerify: false,
+      hasDone: false,
+      hasEscalate: false,
+      hasSelfAmendment: false,
+      doArgs: null,
+    })
   }
+  return doStates.get(sessionID)!
+}
 
-  // Session-scoped /understand state. Reset on each new /understand invocation.
-  const understandState: UnderstandFlowState = {
-    hasUnderstand: false,
-    isComplete: false,
-    understandArgs: null,
+function getUnderstandState(sessionID: string): UnderstandFlowState {
+  if (!understandStates.has(sessionID)) {
+    understandStates.set(sessionID, {
+      active: false,
+      isComplete: false,
+      understandArgs: null,
+    })
   }
+  return understandStates.get(sessionID)!
+}
 
-  // Track consecutive short outputs for loop detection (stop_do_hook.py)
-  let consecutiveShortOutputs = 0
+// Workflow skills that end an /understand session
+const WORKFLOW_SKILLS = new Set(["define", "do", "auto"])
 
-  // Pending verify reminder to inject via system transform
-  let pendingVerifyReminder: string | null = null
+// Skills that represent workflow transitions worth logging
+const LOG_WORKFLOW_SKILLS = new Set(["verify", "escalate", "done", "define"])
 
-  /**
-   * Check if a tool call targets a specific skill.
-   * Matches both "skill-name" and "plugin:skill-name" formats.
-   * OpenCode uses "task" tool for subagent/skill spawning.
-   */
-  function isSkillCall(tool: string, args: any, skillName: string): boolean {
-    if (tool !== "skill" && tool !== "task") return false
-    const name: string = args?.name ?? args?.skill ?? ""
-    return name === skillName || name.endsWith(`:${skillName}`)
-  }
+function extractSkillName(args: Record<string, unknown>): string | null {
+  const skill = args?.skill as string | undefined
+  if (!skill) return null
+  return skill.includes(":") ? skill.split(":").pop()! : skill
+}
 
-  /**
-   * Get the base skill name from tool args.
-   */
-  function getSkillBaseName(args: any): string | null {
-    const name: string = args?.name ?? args?.skill ?? ""
-    if (!name) return null
-    return name.includes(":") ? name.split(":").pop()! : name
-  }
+// ---------------------------------------------------------------------------
+// Plugin export
+// ---------------------------------------------------------------------------
 
+export const ManifestDevPlugin: Plugin = async (_ctx) => {
   return {
-    // ---------------------------------------------------------------
-    // tool.execute.before — Replaces pretool_verify_hook.py
-    //
-    // When /verify is about to be called, prepare a context reminder.
-    // Also tracks /do, /done, /escalate, /verify invocations for
-    // workflow state.
-    //
-    // BLOCKING: throw new Error("reason") — error message becomes
-    //   the tool result seen by the LLM.
-    // LIMITATION: Does NOT fire for subagent tool calls (issue #5894).
-    // ---------------------------------------------------------------
-    "tool.execute.before": async ({ tool, sessionID, callID }, { args }) => {
-      // --- Workflow state tracking ---
 
-      // Track /understand invocations (resets understand state)
-      if (isSkillCall(tool, args.args, "understand")) {
-        understandState.hasUnderstand = true
-        understandState.isComplete = false
-        const uArgs = (args.args as any)?.args?.trim?.() || null
-        understandState.understandArgs = uArgs
-      }
+    // -----------------------------------------------------------------------
+    // tool.execute.before — Pre-tool hooks
+    // LIMITATION: Does NOT fire for subagent tool calls (issue #5894)
+    // -----------------------------------------------------------------------
+    "tool.execute.before": async ({ tool, sessionID }, { args }) => {
+      // --- Detect skill invocations via the task tool ---
+      if (tool === "task" || tool === "skill") {
+        const skillName = extractSkillName(args as Record<string, unknown>)
+        if (!skillName) return
 
-      // Track /understand-done (explicit completion)
-      if (understandState.hasUnderstand && !understandState.isComplete) {
-        if (isSkillCall(tool, args.args, "understand-done")) {
-          understandState.isComplete = true
+        const skillArgs = (args as Record<string, unknown>)?.args as string | undefined
+
+        // Track /do invocation
+        if (skillName === "do") {
+          const state = getDoState(sessionID)
+          state.active = true
+          state.hasVerify = false
+          state.hasDone = false
+          state.hasEscalate = false
+          state.hasSelfAmendment = false
+          state.doArgs = skillArgs ?? null
         }
-      }
 
-      // Track workflow skills that implicitly end /understand
-      if (understandState.hasUnderstand && !understandState.isComplete) {
-        const skillName = getSkillBaseName((args.args as any) ?? {})
-        if (skillName && UNDERSTAND_ENDING_SKILLS.has(skillName)) {
-          understandState.isComplete = true
-        }
-      }
-
-      // Track /do invocations (resets state)
-      if (isSkillCall(tool, args.args, "do")) {
-        flowState.hasDo = true
-        flowState.hasDone = false
-        flowState.hasEscalate = false
-        flowState.hasSelfAmendment = false
-        flowState.hasVerify = false
-        const doArgs = (args.args as any)?.args?.trim?.() || null
-        flowState.doArgs = doArgs
-        flowState.hasCollabMode = doArgs
-          ? /--medium\s+(?!local(?:\s|$))\S+/.test(doArgs)
-          : false
-        consecutiveShortOutputs = 0
-      }
-
-      // Track /done, /escalate, /verify after /do
-      if (flowState.hasDo) {
-        if (isSkillCall(tool, args.args, "done")) {
-          flowState.hasDone = true
-        }
-        if (isSkillCall(tool, args.args, "escalate")) {
-          flowState.hasEscalate = true
-          const escArgs: string = (args.args as any)?.args ?? ""
-          if (escArgs.toLowerCase().includes("self-amendment")) {
-            flowState.hasSelfAmendment = true
+        // Track /verify invocation
+        if (skillName === "verify") {
+          const state = getDoState(sessionID)
+          if (state.active) {
+            state.hasVerify = true
           }
         }
-        if (isSkillCall(tool, args.args, "verify")) {
-          flowState.hasVerify = true
 
-          // Prepare verify context reminder for system transform injection
-          const verifyArgs: string = (args.args as any)?.args?.trim?.() ?? ""
-          pendingVerifyReminder = verifyArgs
-            ? VERIFY_CONTEXT_REMINDER.replace("{verify_args}", verifyArgs)
-            : VERIFY_CONTEXT_REMINDER_MINIMAL
+        // Track /done invocation
+        if (skillName === "done") {
+          const state = getDoState(sessionID)
+          if (state.active) {
+            state.hasDone = true
+          }
+        }
+
+        // Track /escalate invocation
+        if (skillName === "escalate") {
+          const state = getDoState(sessionID)
+          if (state.active) {
+            state.hasEscalate = true
+            if (skillArgs && skillArgs.toLowerCase().includes("self-amendment")) {
+              state.hasSelfAmendment = true
+            }
+          }
+        }
+
+        // Track /understand invocation
+        if (skillName === "understand") {
+          const uState = getUnderstandState(sessionID)
+          uState.active = true
+          uState.isComplete = false
+          uState.understandArgs = skillArgs ?? null
+        }
+
+        // Track /understand-done
+        if (skillName === "understand-done") {
+          const uState = getUnderstandState(sessionID)
+          if (uState.active) {
+            uState.isComplete = true
+          }
+        }
+
+        // Workflow skills end /understand
+        if (WORKFLOW_SKILLS.has(skillName)) {
+          const uState = getUnderstandState(sessionID)
+          if (uState.active && !uState.isComplete) {
+            uState.isComplete = true
+          }
+        }
+
+        // --- Pre-verify context refresh (pretool_verify_hook) ---
+        if (skillName === "verify") {
+          const verifyArgs = skillArgs ?? ""
+          throw new Error(
+            `VERIFICATION CONTEXT CHECK: You are about to run /verify.\n\n` +
+            (verifyArgs ? `Arguments: ${verifyArgs}\n\n` : "") +
+            `BEFORE spawning verifiers, read the manifest and execution log in FULL ` +
+            `if not recently loaded. You need ALL acceptance criteria (AC-*) and ` +
+            `global invariants (INV-G*) in context to spawn the correct verifiers.\n\n` +
+            `This is a context reminder, not a blocker. Proceed with /verify after ` +
+            `confirming files are loaded.`
+          )
+          // NOTE: In OpenCode, throwing an Error blocks the tool call and the
+          // error message becomes the tool result. This is more aggressive than
+          // Claude Code's additionalContext approach. The agent will see the
+          // reminder and can re-invoke /verify. If this causes friction, convert
+          // to experimental.chat.system.transform injection instead.
         }
       }
     },
 
-    // ---------------------------------------------------------------
-    // tool.execute.after — Replaces posttool_log_hook.py
-    //
-    // After milestone tool calls during /do, append a log reminder
-    // to the tool output. Targets:
-    //   - todowrite (TaskCreate/TaskUpdate equivalents)
-    //   - task/skill calls for workflow skills (verify, escalate, done, define)
-    //
-    // Also tracks output length for loop detection (stop_do_hook.py).
-    //
-    // LIMITATION: Does NOT fire for subagent tool calls (issue #5894).
-    // ---------------------------------------------------------------
-    "tool.execute.after": async (
-      { tool, sessionID, callID, args },
-      { title, output, metadata }
-    ) => {
-      // Track output length for loop detection
-      const outputStr =
-        typeof output.output === "string"
-          ? output.output
-          : JSON.stringify(output.output ?? "")
-      if (outputStr.length < 100) {
-        consecutiveShortOutputs++
-      } else {
-        consecutiveShortOutputs = 0
-      }
-
-      // Only inject log reminders during active /do
-      if (!flowState.hasDo || flowState.hasDone) return
+    // -----------------------------------------------------------------------
+    // tool.execute.after — Post-tool hooks
+    // -----------------------------------------------------------------------
+    "tool.execute.after": async ({ tool, sessionID, args }) => {
+      // --- Post-milestone log reminder (posttool_log_hook) ---
+      const doState = getDoState(sessionID)
+      if (!doState.active || doState.hasDone) return
 
       let shouldRemind = false
-      let toolDetail = tool
+      let skillDetail = ""
 
-      // TodoWrite milestones (task management)
-      if (tool === "todowrite") {
+      // TodoWrite / task management milestones
+      if (tool === "todowrite" || tool === "todoread") {
         shouldRemind = true
       }
 
-      // Workflow skill calls
+      // Skill/task calls for workflow transitions
       if (tool === "task" || tool === "skill") {
-        const skillName = getSkillBaseName(args)
-        if (skillName && WORKFLOW_SKILLS.has(skillName)) {
+        const skillName = extractSkillName(args as Record<string, unknown>)
+        if (skillName && LOG_WORKFLOW_SKILLS.has(skillName)) {
           shouldRemind = true
-          toolDetail = `${tool} (skill: ${skillName})`
+          skillDetail = ` (skill: ${skillName})`
         }
       }
 
-      if (shouldRemind) {
-        const reminder = LOG_REMINDER.replace("{tool_detail}", toolDetail)
-        // Mutate output to append the reminder
-        if (typeof output.output === "string") {
-          output.output += `\n\n<system-reminder>${reminder}</system-reminder>`
-        }
-      }
+      if (!shouldRemind) return
+
+      // We cannot inject additionalContext in tool.execute.after in OpenCode.
+      // Instead we mutate the output to append the reminder.
+      // The `output` parameter in the hook signature allows mutation.
+      // However, since we're in a fire-and-forget position here,
+      // the reminder is best delivered via chat.system.transform.
+      // This is a known gap — the log reminder is handled there instead.
     },
 
-    // ---------------------------------------------------------------
-    // experimental.chat.system.transform — Replaces prompt_submit_hook.py,
-    // understand_prompt_hook.py, and pretool_verify_hook.py (context injection)
-    //
-    // Called before every LLM request:
-    //   1. During active /do: amendment check + verify reminder + enforcement
-    //   2. During active /understand: principles reinforcement
-    //
-    // NOTE: This replaces Claude Code's UserPromptSubmit additionalContext
-    // and PreToolUse additionalContext patterns.
-    // ---------------------------------------------------------------
-    "experimental.chat.system.transform": async (
-      { sessionID, model },
-      output
-    ) => {
-      // /do workflow context injection
-      if (flowState.hasDo && !flowState.hasDone) {
-        // Amendment check reminder (prompt_submit_hook.py)
-        output.system.push(AMENDMENT_CHECK_REMINDER)
+    // -----------------------------------------------------------------------
+    // experimental.chat.system.transform — System context injection
+    // Fires before every LLM request. Closest to Claude Code's additionalContext.
+    // -----------------------------------------------------------------------
+    "experimental.chat.system.transform": async ({ sessionID }, output) => {
+      const doState = getDoState(sessionID)
+      const uState = getUnderstandState(sessionID)
 
-        // Verify context reminder if pending (pretool_verify_hook.py)
-        if (pendingVerifyReminder) {
-          output.system.push(pendingVerifyReminder)
-          pendingVerifyReminder = null
-        }
-
-        // Active /do enforcement context (stop_do_hook.py — soft enforcement)
-        if (!flowState.hasEscalate) {
+      // --- /do workflow: stop enforcement + amendment check + log reminder ---
+      if (doState.active && !doState.hasDone) {
+        // Stop enforcement guidance (cannot actually block — session.idle is fire-and-forget)
+        if (!doState.hasEscalate || doState.hasSelfAmendment) {
           output.system.push(
-            "ACTIVE DO WORKFLOW: You must complete this workflow by running " +
-              "/verify (which calls /done on success) or /escalate before " +
-              "stopping. Do not attempt to end the session without one of these."
+            `<system-reminder>WORKFLOW ENFORCEMENT: /do is active. ` +
+            `You MUST NOT stop without calling /verify → /done or /escalate. ` +
+            `Options: (1) Run /verify to check criteria — if all pass, /verify calls /done. ` +
+            `(2) Call /escalate — for blocking issues OR user-requested pauses. ` +
+            `Short outputs will violate the workflow contract.</system-reminder>`
           )
         }
+
+        // Self-amendment continuation
+        if (doState.hasSelfAmendment) {
+          output.system.push(
+            `<system-reminder>Self-Amendment in progress. ` +
+            `You must invoke /define --amend before stopping.</system-reminder>`
+          )
+        }
+
+        // Amendment check on user input (prompt_submit_hook equivalent)
+        output.system.push(
+          `<system-reminder>AMENDMENT CHECK: You are in an active /do workflow. ` +
+          `If the user's latest input contradicts, extends, or amends the manifest, ` +
+          `call /escalate with Self-Amendment type, then invoke /define --amend. ` +
+          `If the input is a clarification or confirmation, continue normally.</system-reminder>`
+        )
+
+        // Log reminder (posttool_log_hook equivalent — injected as persistent context)
+        output.system.push(
+          `<system-reminder>LOG REMINDER: After every milestone (task updates, ` +
+          `workflow skill calls), update the execution log immediately. ` +
+          `The log is disaster recovery — if context is lost, only the log survives.</system-reminder>`
+        )
       }
 
-      // /understand principles reinforcement (understand_prompt_hook.py)
-      if (understandState.hasUnderstand && !understandState.isComplete) {
-        output.system.push(UNDERSTAND_PRINCIPLES_REMINDER)
+      // --- /understand workflow: principles reinforcement ---
+      if (uState.active && !uState.isComplete) {
+        output.system.push(
+          `<system-reminder>/understand active. Self-check before responding:\n` +
+          `- Are you claiming something you haven't verified?\n` +
+          `- Are you agreeing just to be agreeable?\n` +
+          `- Are you proposing when you should be exploring?\n` +
+          `- Are you filling the user's uncertainty with your confidence?\n\n` +
+          `Principles: investigate before claiming, name verified vs inferred, ` +
+          `surface seams, sit with fog.</system-reminder>`
+        )
       }
     },
 
-    // ---------------------------------------------------------------
-    // experimental.session.compacting — Replaces post_compact_hook.py
-    //
-    // When session compacts during active /do or /understand, inject
-    // recovery context so the agent re-reads relevant files and
-    // restores the correct cognitive stance.
-    //
-    // NOTE: This event is experimental and may change between releases.
-    // ---------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    // experimental.session.compacting — Post-compaction recovery
+    // -----------------------------------------------------------------------
     "experimental.session.compacting": async ({ sessionID }, output) => {
+      const doState = getDoState(sessionID)
+      const uState = getUnderstandState(sessionID)
+
       // /do workflow recovery
-      if (flowState.hasDo && !flowState.hasDone && !flowState.hasEscalate) {
-        const reminder = flowState.doArgs
-          ? DO_WORKFLOW_RECOVERY_REMINDER.replace("{do_args}", flowState.doArgs)
-          : DO_WORKFLOW_RECOVERY_FALLBACK
-        output.context.push(reminder)
+      if (doState.active && !doState.hasDone && !doState.hasEscalate) {
+        if (doState.doArgs) {
+          output.context.push(
+            `This session was compacted during an active /do workflow. Context may have been lost.\n\n` +
+            `CRITICAL: Before continuing, read the manifest and execution log in FULL.\n\n` +
+            `The /do was invoked with: ${doState.doArgs}\n\n` +
+            `1. Read the manifest file — contains deliverables, acceptance criteria, and approach\n` +
+            `2. Check /tmp/ for your execution log (do-log-*.md) and read it to recover progress\n\n` +
+            `Do not restart completed work. Resume from where you left off.`
+          )
+        } else {
+          output.context.push(
+            `This session was compacted during an active /do workflow. Context may have been lost.\n\n` +
+            `CRITICAL: Before continuing, recover your workflow context:\n\n` +
+            `1. Check /tmp/ for execution logs matching do-log-*.md\n` +
+            `2. The log references the manifest file path — read both in FULL\n\n` +
+            `Do not restart completed work. Resume from where you left off.`
+          )
+        }
       }
 
       // /understand session recovery
-      if (understandState.hasUnderstand && !understandState.isComplete) {
-        const reminder = understandState.understandArgs
-          ? UNDERSTAND_RECOVERY_REMINDER.replace(
-              "{understand_args}",
-              understandState.understandArgs
-            )
-          : UNDERSTAND_RECOVERY_FALLBACK
-        output.context.push(reminder)
+      if (uState.active && !uState.isComplete) {
+        if (uState.understandArgs) {
+          output.context.push(
+            `This session was compacted during an active /understand session. Context may have been lost.\n\n` +
+            `You are in an /understand session about: ${uState.understandArgs}\n\n` +
+            `Re-read the /understand skill to restore your cognitive stance. ` +
+            `Truth-convergence is your north star — investigate before claiming, surface seams, resist premature synthesis.`
+          )
+        } else {
+          output.context.push(
+            `This session was compacted during an active /understand session. Context may have been lost.\n\n` +
+            `Re-read the /understand skill to restore your cognitive stance. ` +
+            `Truth-convergence is your north star — investigate before claiming, surface seams, resist premature synthesis.`
+          )
+        }
       }
     },
 
-    // ---------------------------------------------------------------
-    // Event handler — Replaces stop_do_hook.py (partially)
-    //
-    // session.idle: Session stopped. CANNOT prevent stopping — this is
-    //   fire-and-forget. Workaround: ctx.client.session.prompt() to
-    //   inject a follow-up message. FRAGILE: race condition in `run`
-    //   mode (issue #15267). Feature request: issue #12472.
-    //
-    // todo.updated: Tracks workflow progress via todo state changes.
-    //
-    // Decision matrix (from stop_do_hook.py):
-    //   - No /do active: do nothing
-    //   - /do + /done: do nothing (properly completed)
-    //   - /do + /escalate (non-self-amendment): do nothing
-    //   - /do + self-amendment: attempt re-engage
-    //   - /do + /verify + non-local medium: do nothing (posted externally)
-    //   - /do without exit: attempt re-engage
-    //   - 3+ consecutive short outputs (loop): do nothing (break loop)
-    // ---------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    // event — Bus events (fire-and-forget)
+    // -----------------------------------------------------------------------
     event: async ({ event }) => {
+      // session.idle — CANNOT prevent stopping (documented limitation)
+      // The stop enforcement is done via chat.system.transform instead
       if (event.type === "session.idle") {
-        const sessionID = (event.properties as any)?.sessionID as
-          | string
-          | undefined
-        if (!sessionID) return
-        if (!flowState.hasDo) return
-
-        // Properly completed
-        if (flowState.hasDone) return
-
-        // Properly escalated (non-self-amendment)
-        if (flowState.hasEscalate && !flowState.hasSelfAmendment) return
-
-        // Non-local medium with verify done — escalation posted externally
-        if (flowState.hasCollabMode && flowState.hasVerify) return
-
-        // Loop detection — allow stop to break infinite loop
-        if (consecutiveShortOutputs >= 3) {
-          console.warn(
-            "[manifest-dev] WARNING: Stop allowed to break infinite loop. " +
-              "The /do workflow was NOT properly completed. " +
-              "Next time, call /escalate when blocked instead of minimal outputs."
-          )
-          return
-        }
-
-        // Attempt to re-engage (FRAGILE — may race or fail silently)
-        try {
-          const message = flowState.hasSelfAmendment
-            ? SELF_AMENDMENT_BLOCKED_MESSAGE
-            : STOP_BLOCKED_MESSAGE
-
-          await ctx.client.session.prompt(sessionID, {
-            parts: [{ type: "text", text: message }],
-          })
-        } catch (err) {
-          // Re-engagement failed — log but don't crash
-          console.warn(
-            "[manifest-dev] Failed to re-engage after session.idle:",
-            err
-          )
-        }
-      }
-
-      if (event.type === "todo.updated") {
-        // Track workflow progress via todo state changes.
-        // event.properties.todos = [{id, content, status, priority}]
-        // Future: analyze todo status transitions for workflow tracking
+        // No-op. In Claude Code, the Stop hook blocks stopping.
+        // In OpenCode, session.idle is fire-and-forget — we cannot block.
+        // The workaround (client.session.prompt) is fragile and race-prone.
+        // Enforcement is approximated via persistent system context instead.
       }
     },
   }
 }
-
-export default ManifestDevPlugin

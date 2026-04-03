@@ -26,7 +26,7 @@ Output: `/tmp/manifest-{timestamp}.md`
 
 Parse `--interview` from arguments (can appear anywhere). Valid values: `minimal`, `autonomous`, `thorough`. Default: `thorough`. Invalid value → error and halt: "Invalid interview style '<value>'. Valid styles: minimal | autonomous | thorough"
 
-Parse `--medium` from arguments (can appear anywhere). Accepts any value — the LLM adapts to whatever medium is specified (e.g., `slack`, `discord`, `email`, `teams`). Default: `local`. Load the messaging file immediately — see Medium Routing section below.
+Parse `--medium` from arguments (can appear anywhere). Currently only `local` is supported (default). Other mediums may be added in the future. If a non-local value is provided, error and halt: "Medium '<value>' not yet supported. Currently supported: local". See Medium Routing section below.
 
 Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do` flag (optional, used with `--amend`) signals the autonomous fast path.
 
@@ -47,15 +47,8 @@ Domain-specific guidance available in:
 | **Document** | Specs, proposals, reports, formal docs (base: Writing) | `tasks/DOCUMENT.md` |
 | **Research** | Investigations, analyses, comparisons | `tasks/research/RESEARCH.md` |
 | **Blog** | Blog posts, articles, tutorials (base: Writing) | `tasks/BLOG.md` |
-| **Workflow** | Multi-step process, review/approval/CI/collaboration, external dependencies, `--medium` flag present | `tasks/workflow/WORKFLOW.md` |
-| **Collaboration** | Team/stakeholders/multiple people, `--medium` non-local | `tasks/workflow/COLLABORATION.md` |
-| **Slack** | `--medium slack` | `tasks/workflow/messaging/SLACK.md` |
-| **GitHub Review** | Default for code tasks with workflow (CODING + WORKFLOW), or explicit GitHub/PR mention | `tasks/workflow/code-review/GITHUB.md` |
-| **GitLab Review** | GitLab, MR, merge request, `--review-platform gitlab` | `tasks/workflow/code-review/GITLAB.md` |
 
 **Composition**: Code-change tasks combine CODING.md (base quality gates) with domain-specific guidance. Text-authoring tasks combine WRITING.md (base prose quality) with content-type guidance—a "blog post" benefits from both WRITING.md and BLOG.md, a "technical proposal" from both WRITING.md and DOCUMENT.md. Research tasks compose RESEARCH.md (base research methodology) with source-type files—when web research is identified as relevant, load `tasks/research/sources/SOURCE_WEB.md` alongside `tasks/research/RESEARCH.md`. RESEARCH.md's Data Sources table lists available source files and probes which sources apply. Domains aren't mutually exclusive—a "bug fix that requires refactoring" benefits from both BUG.md and REFACTOR.md. Related domains compound coverage.
-
-**Workflow composition** is orthogonal to domain composition—workflow files add the process/lifecycle dimension (produce → review → approve → deliver), while domain files add the quality dimension (code quality, prose quality, etc.). A dev workflow composes CODING + FEATURE + WORKFLOW + GITHUB. A blog with Slack review composes WRITING + BLOG + WORKFLOW + COLLABORATION + SLACK. Workflow files are only loaded when workflow indicators are present—a solo dev task with no review/CI/collaboration gets no workflow files. GitHub Review is the default code review platform for any CODING + WORKFLOW composition; it is only suppressed when another platform is specified (`--review-platform gitlab`) or review is explicitly excluded (`--review-platform none`).
 
 **Exception**: PROMPTING tasks do NOT compose with CODING.md unless the task also changes executable code. PROMPTING.md has its own quality gates (prompt-reviewer, clarity, structure, etc.). When a task changes both prompts AND code, apply both PROMPTING.md and CODING.md gates, scoping each to the relevant files.
 
@@ -375,7 +368,7 @@ Three categories, each covering **output** or **process**:
 - **Mental Model:** [Key concepts to understand]
 - **Mode:** efficient | balanced | thorough *(optional, default: thorough — controls verification intensity during /do)*
 - **Interview:** minimal | autonomous | thorough *(optional, default: thorough — recorded so --amend can inherit the original interview style)*
-- **Medium:** local | &lt;any platform&gt; *(optional, default: local — controls communication channel for /do escalations and updates)*
+- **Medium:** local *(optional, default: local — currently only local is supported)*
 
 ## 2. Approach (Complex Tasks Only)
 *Initial direction, not rigid plan. Provides enough to start confidently; expect adjustment when reality diverges.*
@@ -475,21 +468,26 @@ Do not paraphrase, filter, or editorialize the verifier's questions — present 
 
 ## Summary for Approval
 
-Before asking for approval, output a scannable summary that enables full manifest review without reading the structured document.
+Digest the manifest into a scannable summary the user can approve at a glance. The summary answers "do you understand and agree with this plan?" — not "review every acceptance criterion." The manifest has the details; the summary is the human-readable version.
 
-**Goal**: User can catch any mistake—wrong deliverable scope, missing AC, wrong verification method, bad assumption, incorrect flow—by scanning the summary alone.
+**Voice**: Plain language. No manifest codes (D1, AC-1.1, INV-G3), no YAML blocks, no structured-document vocabulary.
 
-**Requirements**:
-- Expose all manifest content (deliverables, ACs, invariants, assumptions, verification methods)
-- Show verification inline with what it verifies—user must judge if verification method fits the criterion
-- Include ASCII diagram showing structure, flow, and dependencies
-- Optimize for human scanning speed, not AI parsing
-- Adapt presentation to the task—no fixed template
+**Four blocks**:
+
+- **The plan** — One-line headline of what's being done and why.
+- **What I'll build** — Bullet list of work items. Group related items naturally; don't enumerate every sub-task.
+- **Guardrails** — Bullet list of invariants as plain rules. Example: "Existing behavior untouched when --auto is absent. Explicit flags always override --auto defaults. Agent halts on truly unresolvable issues — not silent-failure mode."
+- **How I'll verify** — Brief description of verification approach. Example: "criteria-checker cross-references docs for contradictions, prompt-reviewer checks prompt quality."
+
+Include an ASCII architecture diagram when the task has multiple components with inter-component flow. Skip for single-deliverable tasks.
+
+**The test**: If the summary reads like a compressed manifest, rewrite it. If it reads like something you'd say to a colleague, it's right.
 
 **Anti-patterns**:
+- Manifest cosplay — codes, YAML, structured labels dressed up as prose
+- Enumerating every acceptance criterion instead of digesting
 - Hiding detail behind counts ("8 automated verifications")
-- Abstracting instead of compressing ("3 deliverables covering auth")
-- Omitting "obvious" things that could still be wrong
+- Abstracting instead of showing ("3 deliverables covering auth")
 
 **After presenting the summary**, wait for the user's response. User responses mean:
 - **Approval** (e.g., "looks good", "approved") → proceed to Complete
@@ -500,12 +498,10 @@ Before asking for approval, output a scannable summary that enables full manifes
 
 Load the messaging file for the resolved medium:
 - `local` (default): read `references/messaging/LOCAL.md`
-- `slack`: read `references/messaging/SLACK.md`
-- Any other value: do NOT use AskUserQuestion — adapt to the platform using available MCP tools, CLI commands, or whatever the environment provides. Post numbered options, poll for responses, log findings after each response. Ask user locally (AskUserQuestion) for the channel/destination on first question only.
 
 The messaging file defines HOW to interact (tool, format, polling). The interview mode file defines WHAT to interact about (questions, flow, convergence).
 
-The medium is encoded in the manifest's Intent section as `Medium: <value>` so `/do` knows the communication channel. When a task file exists for the medium (e.g., `tasks/workflow/messaging/SLACK.md` for slack), also load it for platform-specific probing fuel.
+The medium is encoded in the manifest's Intent section as `Medium: <value>` so downstream skills know the communication channel.
 
 ## Complete
 

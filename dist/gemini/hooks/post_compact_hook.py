@@ -2,11 +2,8 @@
 """
 Post-compact hook that restores workflow context after compaction.
 
-When the session is compacted during an active /do or /understand workflow,
-context may be lost. This hook detects active workflows and reminds Claude
-to re-read relevant files and restore the correct cognitive stance.
-
-Registered as SessionStart hook with "compact" matcher.
+Gemini CLI adaptation: Registered as PreCompress or SessionStart hook.
+Uses Gemini's additionalContext for context injection.
 """
 
 from __future__ import annotations
@@ -58,7 +55,6 @@ Do not restart completed work. Resume from where you left off."""
 
 def main() -> None:
     """Main hook entry point."""
-    # Read hook input from stdin
     try:
         stdin_data = sys.stdin.read()
         hook_input = json.loads(stdin_data)
@@ -67,7 +63,6 @@ def main() -> None:
 
     transcript_path = hook_input.get("transcript_path", "")
 
-    # If no transcript, we can't detect /do workflow
     if not transcript_path:
         sys.exit(0)
 

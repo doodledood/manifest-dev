@@ -1,168 +1,128 @@
 #!/usr/bin/env bash
+# manifest-dev installer for Gemini CLI
 #
-# manifest-dev Gemini CLI Extension Installer
-#
-# Idempotent installer that downloads and installs the manifest-dev
-# extension for Gemini CLI. Safe to run multiple times.
+# Idempotent — safe to re-run. Copies skills, agents, hooks to target directory.
+# Uses install_helpers.py for namespacing (adds -manifest-dev suffix).
+# Merges settings additively — never overwrites user config.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
-#
-# What it does:
-#   1. Downloads the latest dist/gemini from the repo
-#   2. Namespaces all components with -manifest-dev suffix (avoids collisions)
-#   3. Installs to ~/.gemini/extensions/manifest-dev/
-#   4. Merges enableAgents + hooks into ~/.gemini/settings.json additively
-#
+#   ./install.sh              # Install to project .gemini/
+#   ./install.sh --global     # Install to ~/.gemini/
+#   ./install.sh --dir <path> # Install to custom directory
+
 set -euo pipefail
 
-REPO="doodledood/manifest-dev"
-BRANCH="main"
-INSTALL_DIR="${HOME}/.gemini/extensions/manifest-dev"
-SETTINGS_FILE="${HOME}/.gemini/settings.json"
-STATE_FILE="${INSTALL_DIR}/install-state.json"
-GLOBAL_STATE_FILE="${HOME}/.gemini/manifest-dev-install-state.json"
-SCRIPT_SOURCE="${BASH_SOURCE[0]-}"
-SCRIPT_DIR=""
-if [ -n "$SCRIPT_SOURCE" ] && [ -f "$SCRIPT_SOURCE" ]; then
-    SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)"
-fi
-ACTION="${1:-install}"
-TMP_DIR=$(mktemp -d)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NAMESPACE="manifest-dev"
 
-cleanup() {
-    rm -rf "$TMP_DIR"
-}
-trap cleanup EXIT
+# Parse arguments
+INSTALL_DIR=""
+GLOBAL=false
 
-case "$ACTION" in
-    install|uninstall)
-        ;;
-    *)
-        echo "Usage: bash install.sh [install|uninstall]" >&2
-        exit 1
-        ;;
-esac
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --global)
+            GLOBAL=true
+            shift
+            ;;
+        --dir)
+            INSTALL_DIR="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: ./install.sh [--global | --dir <path>]"
+            exit 1
+            ;;
+    esac
+done
 
-if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/install_helpers.py" ] && [ -d "$SCRIPT_DIR/skills" ] && [ -d "$SCRIPT_DIR/agents" ] && [ -d "$SCRIPT_DIR/hooks" ] && [ -f "$SCRIPT_DIR/gemini-extension.json" ]; then
-    echo "==> Using local dist/gemini from ${SCRIPT_DIR}..."
-    SOURCE_DIR="${TMP_DIR}/local-dist"
-    mkdir -p "$SOURCE_DIR"
-    cp -R "$SCRIPT_DIR"/. "$SOURCE_DIR"/
+# Determine install directory
+if [[ -n "$INSTALL_DIR" ]]; then
+    TARGET="$INSTALL_DIR"
+elif [[ "$GLOBAL" == "true" ]]; then
+    TARGET="$HOME/.gemini"
 else
-    echo "==> Downloading manifest-dev extension..."
-
-    TARBALL_URL="https://github.com/${REPO}/archive/refs/heads/${BRANCH}.tar.gz"
-    curl -fsSL "$TARBALL_URL" -o "${TMP_DIR}/repo.tar.gz"
-
-    tar xzf "${TMP_DIR}/repo.tar.gz" -C "$TMP_DIR"
-
-    EXTRACTED_DIR=$(ls -d "${TMP_DIR}"/manifest-dev-*/ 2>/dev/null | head -1)
-    if [ -z "$EXTRACTED_DIR" ]; then
-        echo "ERROR: Could not find extracted repo directory" >&2
-        exit 1
-    fi
-
-    SOURCE_DIR="${EXTRACTED_DIR}dist/gemini"
-    if [ ! -d "$SOURCE_DIR" ]; then
-        echo "ERROR: dist/gemini not found in downloaded repo" >&2
-        exit 1
-    fi
+    TARGET=".gemini"
 fi
 
-echo "==> Namespacing components..."
-python3 "${SOURCE_DIR}/install_helpers.py" namespace "$SOURCE_DIR" gemini
+echo "manifest-dev installer for Gemini CLI"
+echo "======================================"
+echo "Source:  $SCRIPT_DIR"
+echo "Target:  $TARGET"
+echo ""
 
-if [ "$ACTION" = "uninstall" ]; then
-    echo "==> Removing manifest-dev Gemini extension..."
-    ACTIVE_STATE_FILE="$STATE_FILE"
-    if [ ! -f "$ACTIVE_STATE_FILE" ] && [ -f "$GLOBAL_STATE_FILE" ]; then
-        ACTIVE_STATE_FILE="$GLOBAL_STATE_FILE"
-    fi
+# Create directories
+mkdir -p "$TARGET/skills"
+mkdir -p "$TARGET/agents"
+mkdir -p "$TARGET/hooks"
 
-    if [ -f "$SETTINGS_FILE" ]; then
-        cp "$SETTINGS_FILE" "$SETTINGS_FILE.pre-manifest-dev-uninstall.bak"
-        python3 "${SOURCE_DIR}/install_helpers.py" unmerge-settings "${SOURCE_DIR}/hooks/hooks.json" "$SETTINGS_FILE" "$ACTIVE_STATE_FILE"
-        echo "    settings.json (manifest-dev hooks removed, backup at settings.json.pre-manifest-dev-uninstall.bak)"
-    elif [ -f "$STATE_FILE" ] || [ -f "$GLOBAL_STATE_FILE" ]; then
-        rm -f "$STATE_FILE" "$GLOBAL_STATE_FILE"
-    fi
+# --- Selective cleanup of previous manifest-dev installation ---
+echo "Cleaning previous manifest-dev installation..."
+find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}" -type d -exec rm -rf {} + 2>/dev/null || true
+find "$TARGET/agents" -maxdepth 1 -name "*-${NAMESPACE}*" -exec rm -rf {} + 2>/dev/null || true
+# Hooks directory: clean manifest-dev hook files
+rm -f "$TARGET/hooks/gemini_adapter.py" 2>/dev/null || true
+rm -f "$TARGET/hooks/hook_utils.py" 2>/dev/null || true
+rm -f "$TARGET/hooks/post_compact_hook.py" 2>/dev/null || true
+rm -f "$TARGET/hooks/posttool_log_hook.py" 2>/dev/null || true
+rm -f "$TARGET/hooks/pretool_verify_hook.py" 2>/dev/null || true
+rm -f "$TARGET/hooks/prompt_submit_hook.py" 2>/dev/null || true
+rm -f "$TARGET/hooks/stop_do_hook.py" 2>/dev/null || true
+rm -f "$TARGET/hooks/understand_prompt_hook.py" 2>/dev/null || true
 
-    rm -rf "$INSTALL_DIR"
-    rm -f "$GLOBAL_STATE_FILE"
-    rmdir "$(dirname "$INSTALL_DIR")" 2>/dev/null || true
-    rmdir "${HOME}/.gemini" 2>/dev/null || true
+# --- Copy hooks (no namespacing needed — extension-private) ---
+echo "Installing hooks..."
+cp "$SCRIPT_DIR/hooks/gemini_adapter.py" "$TARGET/hooks/"
+cp "$SCRIPT_DIR/hooks/hook_utils.py" "$TARGET/hooks/"
+cp "$SCRIPT_DIR/hooks/post_compact_hook.py" "$TARGET/hooks/"
+cp "$SCRIPT_DIR/hooks/posttool_log_hook.py" "$TARGET/hooks/"
+cp "$SCRIPT_DIR/hooks/pretool_verify_hook.py" "$TARGET/hooks/"
+cp "$SCRIPT_DIR/hooks/prompt_submit_hook.py" "$TARGET/hooks/"
+cp "$SCRIPT_DIR/hooks/stop_do_hook.py" "$TARGET/hooks/"
+cp "$SCRIPT_DIR/hooks/understand_prompt_hook.py" "$TARGET/hooks/"
 
-    echo ""
-    echo "==> Uninstall complete!"
-    echo ""
-    echo "Removed manifest-dev-managed Gemini files only."
-    exit 0
-fi
+# --- Namespace and install skills + agents ---
+echo "Installing skills and agents (with -${NAMESPACE} namespace)..."
+python3 "$SCRIPT_DIR/install_helpers.py" "$SCRIPT_DIR" "$TARGET"
 
-mkdir -p "$INSTALL_DIR"
-
-echo "==> Installing to ${INSTALL_DIR}..."
-
-if [ -d "${SOURCE_DIR}/agents" ]; then
-    mkdir -p "${INSTALL_DIR}/agents"
-    find "${INSTALL_DIR}/agents" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
-    cp -r "${SOURCE_DIR}/agents/"* "${INSTALL_DIR}/agents/"
-    echo "    agents/ ($(ls "${INSTALL_DIR}/agents" | wc -l | tr -d ' ') files)"
-fi
-
-if [ -d "${SOURCE_DIR}/skills" ]; then
-    mkdir -p "${INSTALL_DIR}/skills"
-    find "${INSTALL_DIR}/skills" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
-    cp -r "${SOURCE_DIR}/skills/"* "${INSTALL_DIR}/skills/"
-    echo "    skills/ ($(ls "${INSTALL_DIR}/skills" | wc -l | tr -d ' ') dirs)"
-fi
-
-if [ -d "${SOURCE_DIR}/hooks" ]; then
-    rm -rf "${INSTALL_DIR}/hooks"
-    cp -r "${SOURCE_DIR}/hooks" "${INSTALL_DIR}/hooks"
-    chmod +x "${INSTALL_DIR}/hooks/"*.py 2>/dev/null || true
-    echo "    hooks/ ($(ls "${INSTALL_DIR}/hooks" | wc -l | tr -d ' ') files)"
-fi
-
-if [ -f "${SOURCE_DIR}/gemini-extension.json" ]; then
-    cp "${SOURCE_DIR}/gemini-extension.json" "${INSTALL_DIR}/gemini-extension.json"
-    echo "    gemini-extension.json"
-fi
-
-if [ -f "${SOURCE_DIR}/GEMINI.md" ]; then
-    if [ -f "${INSTALL_DIR}/GEMINI.md" ]; then
-        cp "${INSTALL_DIR}/GEMINI.md" "${INSTALL_DIR}/GEMINI.md.bak"
-        cp "${SOURCE_DIR}/GEMINI.md" "${INSTALL_DIR}/GEMINI.md"
-        echo "    GEMINI.md (updated, backup at GEMINI.md.bak)"
-    else
-        cp "${SOURCE_DIR}/GEMINI.md" "${INSTALL_DIR}/GEMINI.md"
-        echo "    GEMINI.md (new)"
-    fi
-fi
-
-if [ -f "${SOURCE_DIR}/README.md" ]; then
-    cp "${SOURCE_DIR}/README.md" "${INSTALL_DIR}/README.md"
-    echo "    README.md"
-fi
-
-mkdir -p "$(dirname "$SETTINGS_FILE")"
-if [ -f "$SETTINGS_FILE" ]; then
-    cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
-    python3 "${SOURCE_DIR}/install_helpers.py" merge-settings "${INSTALL_DIR}/hooks/hooks.json" "$SETTINGS_FILE" "$STATE_FILE"
-    echo "    settings.json (merged, backup at settings.json.bak)"
+# --- Copy GEMINI.md if not exists ---
+if [[ ! -f "$TARGET/GEMINI.md" ]]; then
+    echo "Installing GEMINI.md..."
+    cp "$SCRIPT_DIR/GEMINI.md" "$TARGET/GEMINI.md"
 else
-    python3 "${SOURCE_DIR}/install_helpers.py" merge-settings "${INSTALL_DIR}/hooks/hooks.json" "$SETTINGS_FILE" "$STATE_FILE"
-    echo "    settings.json (created with enableAgents + manifest-dev hooks)"
-fi
-if [ -f "$STATE_FILE" ]; then
-    cp "$STATE_FILE" "$GLOBAL_STATE_FILE"
+    echo "GEMINI.md already exists — skipping (not overwriting user file)"
 fi
 
+# --- Merge settings ---
+echo "Merging settings..."
+SETTINGS_FILE="$TARGET/settings.json"
+HOOKS_JSON="$SCRIPT_DIR/hooks/hooks.json"
+
+# Use Python helper to merge settings additively
+python3 -c "
+import sys
+sys.path.insert(0, '${SCRIPT_DIR}')
+from pathlib import Path
+from install_helpers import patch_hooks_json, merge_settings
+
+hooks_config = patch_hooks_json(Path('${HOOKS_JSON}'), '${TARGET}/hooks')
+merge_settings(Path('${SETTINGS_FILE}'), hooks_config)
+print('  Settings merged successfully')
+"
+
 echo ""
-echo "==> Installation complete!"
+echo "Installation complete!"
 echo ""
-echo "No manual settings changes are required."
-echo "Start a Gemini session and ask it to use the define-manifest-dev skill for your task."
+echo "Components installed:"
+echo "  Skills:  $(find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}" -type d 2>/dev/null | wc -l) skills"
+echo "  Agents:  $(find "$TARGET/agents" -maxdepth 1 -name "*-${NAMESPACE}.md" -type f 2>/dev/null | wc -l) agents"
+echo "  Hooks:   8 hook scripts"
 echo ""
-echo "Installed to: ${INSTALL_DIR}"
+echo "Required: enableAgents must be true in settings.json"
+echo "  (already set by this installer)"
+echo ""
+echo "To uninstall:"
+echo "  find \"$TARGET/skills\" -maxdepth 1 -name \"*-${NAMESPACE}\" -type d -exec rm -rf {} +"
+echo "  find \"$TARGET/agents\" -maxdepth 1 -name \"*-${NAMESPACE}*\" -exec rm -rf {} +"
+echo "  # Then remove hook entries from settings.json manually"

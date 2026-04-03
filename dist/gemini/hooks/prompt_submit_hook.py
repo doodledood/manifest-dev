@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 """
-UserPromptSubmit hook that reminds Claude to check for manifest amendments.
+BeforeAgent hook that reminds the model to check for manifest amendments.
 
-When user submits a message during an active /do workflow, this hook injects
-a system reminder to check if the input contradicts or extends the manifest.
-If so, /do should escalate and invoke /define --amend.
-
-Registered as UserPromptSubmit hook (no matcher — fires on every prompt).
+Gemini CLI adaptation: Registered as BeforeAgent hook (no matcher).
+Uses Gemini's additionalContext for context injection.
 """
 
 from __future__ import annotations
@@ -51,7 +48,7 @@ def main() -> None:
 
     output = {
         "hookSpecificOutput": {
-            "hookEventName": "UserPromptSubmit",
+            "hookEventName": "BeforeAgent",
             "additionalContext": context,
         }
     }

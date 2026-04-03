@@ -1,6 +1,7 @@
 ---
-description: Analyze a single /define session transcript to extract user preference patterns. Spawned by learn-define-patterns skill for parallel per-session analysis.
+description: "Analyze a single /define session transcript to extract user preference patterns. Spawned by learn-define-patterns skill for parallel per-session analysis."
 mode: subagent
+model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true

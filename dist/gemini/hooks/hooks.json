@@ -7,10 +7,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${extensionPath}/hooks/gemini_adapter.py BeforeTool",
+            "command": "python3 ${extensionPath}/hooks/pretool_verify_hook.py",
             "name": "pretool-verify",
-            "timeout": 60000,
-            "description": "Adds context reminder before /verify"
+            "timeout": 10000,
+            "description": "Reminds model to read manifest before running /verify"
           }
         ]
       }
@@ -22,38 +22,43 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${extensionPath}/hooks/gemini_adapter.py AfterTool",
+            "command": "python3 ${extensionPath}/hooks/posttool_log_hook.py",
             "name": "posttool-log",
-            "timeout": 60000,
-            "description": "Reminds agent to update execution log after milestone tool calls"
+            "timeout": 10000,
+            "description": "Reminds model to update execution log after milestones"
           }
         ]
       }
     ],
     "AfterAgent": [
       {
-        "sequential": true,
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${extensionPath}/hooks/gemini_adapter.py AfterAgent",
-            "name": "stop-do-enforcement",
-            "timeout": 60000,
-            "description": "Blocks premature stops during /do workflow"
+            "command": "python3 ${extensionPath}/hooks/stop_do_hook.py",
+            "name": "stop-do",
+            "timeout": 10000,
+            "description": "Enforces /do workflow completion before stopping"
           }
         ]
       }
     ],
     "BeforeAgent": [
       {
-        "sequential": true,
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${extensionPath}/hooks/gemini_adapter.py BeforeAgent",
+            "command": "python3 ${extensionPath}/hooks/prompt_submit_hook.py",
             "name": "prompt-submit-amendment",
-            "timeout": 60000,
-            "description": "Checks for manifest amendments during /do and reinforces /understand principles"
+            "timeout": 10000,
+            "description": "Checks for manifest amendments on user input during /do"
+          },
+          {
+            "type": "command",
+            "command": "python3 ${extensionPath}/hooks/understand_prompt_hook.py",
+            "name": "understand-prompt",
+            "timeout": 10000,
+            "description": "Reinforces /understand principles during active sessions"
           }
         ]
       }
@@ -61,14 +66,26 @@
     "SessionStart": [
       {
         "matcher": "resume",
-        "sequential": true,
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${extensionPath}/hooks/gemini_adapter.py SessionStart",
-            "name": "post-compact-recovery",
-            "timeout": 60000,
-            "description": "Recovers /do and /understand context after compaction (source=resume)"
+            "command": "python3 ${extensionPath}/hooks/post_compact_hook.py",
+            "name": "post-compact",
+            "timeout": 10000,
+            "description": "Restores workflow context after session resume/compact"
+          }
+        ]
+      }
+    ],
+    "PreCompress": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${extensionPath}/hooks/post_compact_hook.py",
+            "name": "pre-compress-recovery",
+            "timeout": 10000,
+            "description": "Restores workflow context after compaction"
           }
         ]
       }

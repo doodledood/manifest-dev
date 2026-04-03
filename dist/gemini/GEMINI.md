@@ -1,91 +1,64 @@
-# GEMINI.md
+# manifest-dev — Verification-First Manifest Workflows
 
-## Extension Overview
+## Workflow Overview
 
-manifest-dev -- verification-first manifest workflows for Gemini CLI, with agents, skills, and hooks.
+manifest-dev provides structured workflows for planning, executing, and verifying development tasks through manifests — documents that capture what to build, how to verify it, and what rules to follow.
 
-## Workflow
+### Core Workflow
 
-The core loop: **define -> do -> verify -> done/escalate**
+1. **Define** (`/define`) — Build a manifest through structured interview: deliverables, acceptance criteria, global invariants, process guidance
+2. **Execute** (`/do`) — Implement the manifest: satisfy acceptance criteria, follow process guidance, use approach as initial direction
+3. **Verify** (`/verify`) — Spawn parallel verifiers for all criteria. On success, calls `/done`. On failure, fix and re-verify
+4. **Auto** (`/auto`) — End-to-end: `/define` (autonomous) then `/do` in a single command
 
-1. `define` -- Interview-driven task specification producing a manifest with acceptance criteria, invariants, and verification methods
-2. `do` -- Execute against the manifest, tracking progress in an execution log
-3. `verify` -- Parallel verification of all criteria using specialized agents
-4. `done` -- Formal completion after all criteria pass
-5. `escalate` -- Structured handoff when blocked
+### Supporting Skills
 
-## Components
+- **`/understand`** — Collaborative deep understanding before acting. Truth-convergence over helpfulness
+- **`/escalate`** — Structured escalation during `/do`: blocking issues, scope changes, pauses
+- **`/done`** — Completion marker with hierarchical execution summary
+- **`/tend-pr`** — PR lifecycle automation: classify comments, route fixes, tend CI, sync description
+- **`/learn-define-patterns`** — Extract user preferences from past `/define` sessions into GEMINI.md
 
-### Skills (7)
+### Agents
 
-Skills live in `skills/{skill-name}/SKILL.md`. Gemini activates them via `activate_skill`; this extension does not rely on user-facing slash commands.
-
-| Skill | Description |
-|-------|-------------|
-| `auto` | End-to-end autonomous execution: define then do in one command |
-| `define` | Interactive interview producing a verification manifest |
-| `do` | Execute implementation against a manifest |
-| `verify` | Parallel verification of manifest criteria |
-| `done` | Formal completion with summary |
-| `escalate` | Structured escalation when blocked |
-| `learn-define-patterns` | Analyze past sessions to learn user preferences |
-
-### Agents (14)
-
-Agents run as subagents callable by tool name. The installer enables `"experimental": { "enableAgents": true }` automatically in `~/.gemini/settings.json`; manual installs must make the equivalent settings change.
+Specialized review agents for code quality verification:
 
 | Agent | Purpose |
 |-------|---------|
-| `criteria-checker` | Validates a single criterion (PASS/FAIL) |
-| `manifest-verifier` | Reviews manifests for gaps |
-| `change-intent-reviewer` | Intent-behavior divergence -- does the change achieve its goal |
-| `code-bugs-reviewer` | Mechanical defects -- runtime failures, resource issues, structural flaws |
-| `code-design-reviewer` | Design fitness -- right approach given what exists |
-| `code-simplicity-reviewer` | Unnecessary complexity, over-engineering |
-| `code-maintainability-reviewer` | DRY, coupling, cohesion, consistency, dead code |
-| `code-coverage-reviewer` | Test coverage with proactive edge case enumeration |
-| `code-testability-reviewer` | Testability design -- mock friction, logic buried in IO |
-| `contracts-reviewer` | API and interface contract correctness with evidence |
-| `type-safety-reviewer` | Type holes, invalid states, narrowing gaps |
-| `docs-reviewer` | Documentation accuracy against code changes |
-| `context-file-adherence-reviewer` | Context file / project rule compliance |
-| `define-session-analyzer` | Extracts user preference patterns from `define` sessions |
+| change-intent-reviewer | Adversarial intent-behavior divergence analysis |
+| code-bugs-reviewer | Mechanical defect detection (race conditions, leaks, edge cases) |
+| code-coverage-reviewer | Test coverage gap analysis with concrete scenarios |
+| code-design-reviewer | Design fitness: right approach given what exists |
+| code-maintainability-reviewer | DRY, coupling, cohesion, consistency, dead code |
+| code-simplicity-reviewer | Unnecessary complexity and over-engineering |
+| code-testability-reviewer | Test friction: mock count, IO-buried logic |
+| context-file-adherence-reviewer | Compliance with GEMINI.md project rules |
+| contracts-reviewer | API contract correctness with evidence |
+| criteria-checker | Single criterion PASS/FAIL verification |
+| define-session-analyzer | Per-session preference pattern extraction |
+| docs-reviewer | Documentation accuracy against code changes |
+| manifest-verifier | Manifest gap detection with actionable questions |
+| type-safety-reviewer | Type holes across typed languages |
 
-### Hooks (5)
+### Hooks
 
-Hooks enforce workflow discipline via the Gemini CLI hook protocol. The installer merges the `hooks/hooks.json` registrations into `~/.gemini/settings.json` automatically; manual installs must make the equivalent settings change.
+Event-driven hooks enforce workflow discipline:
 
-| Hook | Event | Purpose |
-|------|-------|---------|
-| `pretool-verify` | BeforeTool (activate_skill) | Reminds the agent to load the manifest before `verify` |
-| `posttool-log` | AfterTool (activate_skill, write_todos) | Reminds agent to update execution log after milestone tool calls |
-| `stop-do-enforcement` | AfterAgent | Blocks premature stops during `do` |
-| `prompt-submit-amendment` | BeforeAgent | Checks for manifest amendments when user submits input during `do` |
-| `post-compact-recovery` | SessionStart (resume) | Recovers `do` context after compaction |
+- **stop-do** — Blocks premature stop during `/do` (requires `/verify` or `/escalate`)
+- **pretool-verify** — Reminds model to load manifest before `/verify`
+- **posttool-log** — Reminds model to update execution log after milestones
+- **prompt-submit-amendment** — Checks for manifest amendments on user input
+- **understand-prompt** — Reinforces `/understand` principles against sycophantic drift
+- **post-compact** — Restores workflow context after session compaction
 
-## Tool Mapping
+## Configuration
 
-Agent tools use Gemini CLI internal names:
+Requires in `~/.gemini/settings.json`:
 
-| Gemini CLI Tool | Purpose |
-|-----------------|---------|
-| `run_shell_command` | Execute shell commands |
-| `read_file` | Read file contents |
-| `write_file` | Write file contents |
-| `replace` | Edit file (old_string/new_string) |
-| `grep_search` | Search file contents |
-| `glob` | Find files by pattern |
-| `web_fetch` | Fetch web content |
-| `google_web_search` | Google search |
-| `activate_skill` | Invoke a skill |
-| `write_todos` | Todo/task management |
-
-## Manifest Archival
-
-After the `define` skill completes, copy the final manifest from `/tmp/` to `.manifest/` with a descriptive name:
-
-```bash
-cp /tmp/manifest-{timestamp}.md .manifest/{descriptive-kebab-name}-{YYYY-MM-DD}.md
+```json
+{
+  "experimental": {
+    "enableAgents": true
+  }
+}
 ```
-
-Manifests are committed to the repo for future reference. Discovery and execution logs stay in `/tmp/`.
