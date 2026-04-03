@@ -468,21 +468,26 @@ Do not paraphrase, filter, or editorialize the verifier's questions — present 
 
 ## Summary for Approval
 
-Before asking for approval, output a scannable summary that enables full manifest review without reading the structured document.
+Digest the manifest into a scannable summary the user can approve at a glance. The summary answers "do you understand and agree with this plan?" — not "review every acceptance criterion." The manifest has the details; the summary is the human-readable version.
 
-**Goal**: User can catch any mistake—wrong deliverable scope, missing AC, wrong verification method, bad assumption, incorrect flow—by scanning the summary alone.
+**Voice**: Plain language. No manifest codes (D1, AC-1.1, INV-G3), no YAML blocks, no structured-document vocabulary.
 
-**Requirements**:
-- Expose all manifest content (deliverables, ACs, invariants, assumptions, verification methods)
-- Show verification inline with what it verifies—user must judge if verification method fits the criterion
-- Include ASCII diagram showing structure, flow, and dependencies
-- Optimize for human scanning speed, not AI parsing
-- Adapt presentation to the task—no fixed template
+**Four blocks**:
+
+- **The plan** — One-line headline of what's being done and why.
+- **What I'll build** — Bullet list of work items. Group related items naturally; don't enumerate every sub-task.
+- **Guardrails** — Bullet list of invariants as plain rules. Example: "Existing behavior untouched when --auto is absent. Explicit flags always override --auto defaults. Agent halts on truly unresolvable issues — not silent-failure mode."
+- **How I'll verify** — Brief description of verification approach. Example: "criteria-checker cross-references docs for contradictions, prompt-reviewer checks prompt quality."
+
+Include an ASCII architecture diagram when the task has multiple components with inter-component flow. Skip for single-deliverable tasks.
+
+**The test**: If the summary reads like a compressed manifest, rewrite it. If it reads like something you'd say to a colleague, it's right.
 
 **Anti-patterns**:
+- Manifest cosplay — codes, YAML, structured labels dressed up as prose
+- Enumerating every acceptance criterion instead of digesting
 - Hiding detail behind counts ("8 automated verifications")
-- Abstracting instead of compressing ("3 deliverables covering auth")
-- Omitting "obvious" things that could still be wrong
+- Abstracting instead of showing ("3 deliverables covering auth")
 
 **After presenting the summary**, wait for the user's response. User responses mean:
 - **Approval** (e.g., "looks good", "approved") → proceed to Complete
