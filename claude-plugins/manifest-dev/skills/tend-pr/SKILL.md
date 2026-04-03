@@ -56,7 +56,7 @@ Each iteration: detect what changed since last check, classify and route each ev
 - Skip iteration when nothing changed (no new comments, CI changes, or reviews).
 - Stop loop when: PR is merged or closed, merge-ready (see below), or `/do` escalates.
 
-**Terminal states:** Merged → log and stop. Closed → log, stop, report. Draft → skip iteration.
+**Terminal states:** Merged → log and stop. Closed → log, stop, report. Draft → log, stop, report ("PR converted to draft — pausing /tend-pr. Re-invoke when ready.").
 
 ### Comment Classification
 
@@ -117,6 +117,6 @@ Determine merge requirements from the platform's merge state (e.g., GitHub branc
 - **Thread resolution is permanent.** Once a thread is resolved, it can't easily be un-resolved. Only resolve threads when confident the issue is addressed (actionable + fixed) or clearly a false positive (bot only). Never resolve human threads — let the reviewer do it.
 - **Rebase rewrites history.** If you rebase or force-push, existing review comments may become orphaned (attached to commits that no longer exist). Prefer merge-based branch updates over rebases when possible.
 - **Concurrent iteration overlap.** The concurrency guard (lock file) prevents overlapping iterations. If an iteration takes longer than the interval, the next iteration skips. A lock significantly older than the polling interval is considered stale and removed (handles crashed iterations).
-- **Draft PRs.** If a PR is in draft state, skip the iteration — the author may not want review feedback yet.
+- **Draft PRs.** If a PR is converted to draft during the loop, stop and report — the author may not want review feedback yet. Re-invoke when the PR is marked ready.
 - **Closed/deleted PRs.** If the PR is closed or the branch is deleted, stop the loop and report.
 - **Empty diff.** If the PR has no diff (e.g., all changes reverted), report to user rather than attempting to process.
