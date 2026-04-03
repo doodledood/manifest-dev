@@ -131,7 +131,7 @@ When adding agents, skills, or hooks:
 
 Task files provide domain-specific hints for `/define`. They live in `skills/define/tasks/` and follow a composition model:
 
-**Base files** provide universal quality gates for a domain (e.g., `CODING.md` for code, `WRITING.md` for prose). **Overlay files** add content-type specificity on top (e.g., `BLOG.md` composes with `WRITING.md`, `FEATURE.md` composes with `CODING.md`). **Research** composes `tasks/research/RESEARCH.md` with source-type files in `tasks/research/sources/`. **Workflow** files (`tasks/workflow/`) add the process/lifecycle dimension orthogonal to domain files — `WORKFLOW.md` (base lifecycle), `COLLABORATION.md` (stakeholder overlay), `messaging/SLACK.md` (Slack patterns), `code-review/GITHUB.md` (PR/CI/review with bot/human handling defaults), `code-review/GITLAB.md` (MR equivalent). A dev workflow composes CODING + FEATURE + WORKFLOW + GITHUB. Workflow files are only loaded when workflow indicators are present (review/approval/CI mentions, `--medium` flag).
+**Base files** provide universal quality gates for a domain (e.g., `CODING.md` for code, `WRITING.md` for prose). **Overlay files** add content-type specificity on top (e.g., `BLOG.md` composes with `WRITING.md`, `FEATURE.md` composes with `CODING.md`). **Research** composes `tasks/research/RESEARCH.md` with source-type files in `tasks/research/sources/`.
 
 **Required sections**: Quality Gates (table with Agent + Threshold), Risks (bullet list with probes), Scenario Prompts (bullet list with probes), Trade-offs (bullet list). Optional additions: Context to Discover, Anti-Patterns, Defaults.
 

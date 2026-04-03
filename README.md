@@ -34,6 +34,9 @@ Then use it:
 # Or go end-to-end autonomously:
 /auto <what you want to build>
 
+# Tend a PR through review:
+/tend-pr <manifest-path-or-pr-url>
+
 # Optional: understand something deeply before acting
 /understand <topic or problem>
 ```
@@ -329,7 +332,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 
 | Plugin | Description |
 |--------|-------------|
-| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, review agents, workflow hooks. Includes workflow task files for PR review, CI, collaboration, and QA lifecycle support via `--medium`. Mid-execution manifest amendments via `--amend` flag and UserPromptSubmit hook. |
+| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, `/tend-pr`, review agents, workflow hooks. Mid-execution manifest amendments via `--amend` flag and UserPromptSubmit hook. |
 | `manifest-dev-tools` | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. |
 
 ## Plugin Architecture
@@ -340,7 +343,9 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 |-------|------|-------------|
 | `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, outputs manifest with verification methods |
 | `/do` | User-invoked | Executes against manifest. Follows execution order, watches for risks, logs progress for disaster recovery |
-| `/auto` | User-invoked | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do`. Supports `--mode` pass-through |
+| `/auto` | User-invoked | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do`. Supports `--mode` and `--tend-pr` pass-through |
+| `/tend-pr` | User-invoked | Sets up PR for review and starts polling loop. Manifest-aware or babysit mode |
+| `/tend-pr-tick` | Internal | Single iteration of PR tending (classify, route, fix). Called by `/loop` via `/tend-pr` |
 | `/verify` | Internal | Spawns verifiers for all criteria, phased by iteration speed (fast checks first, e2e/deploy-dependent later). Routes to `criteria-checker` agents based on verification method |
 | `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure |
 | `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |
@@ -395,18 +400,6 @@ Hooks enforce workflow integrity. The AI can't skip steps:
 | **Document** | `tasks/DOCUMENT.md` + `WRITING.md` | Structure completeness, consistency |
 | **Blog** | `tasks/BLOG.md` + `WRITING.md` | Engagement, SEO |
 | **Research** | `tasks/research/RESEARCH.md` + source files | Source-agnostic research methodology. Source-specific guidance in `tasks/research/sources/` |
-
-**Workflow task files** add a process/lifecycle dimension orthogonal to the domain files above:
-
-| Task Type | Guidance | When Loaded |
-|-----------|----------|-------------|
-| **Workflow** | `tasks/workflow/WORKFLOW.md` | Multi-step process, review/approval/CI, external deps, `--medium` flag |
-| **Collaboration** | `tasks/workflow/COLLABORATION.md` | Team/stakeholders, `--medium` non-local |
-| **Slack** | `tasks/workflow/messaging/SLACK.md` | `--medium slack` |
-| **GitHub Review** | `tasks/workflow/code-review/GITHUB.md` | Default for code + workflow, or explicit GitHub/PR |
-| **GitLab Review** | `tasks/workflow/code-review/GITLAB.md` | GitLab, MR, `--review-platform gitlab` |
-
-A dev workflow with review composes: CODING + FEATURE + WORKFLOW + GITHUB. Workflow files are only loaded when workflow indicators are present — solo dev tasks with no review get no workflow files.
 
 ## Development
 

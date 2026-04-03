@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.77.0",
+  "version": "0.78.0",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
@@ -17,7 +17,8 @@
     "patterns",
     "preferences",
     "auto",
-    "understand"
+    "understand",
+    "tend-pr"
   ],
   "hooks": {
     "Stop": [

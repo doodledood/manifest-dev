@@ -105,7 +105,9 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 |-------|-------------|
 | `/define` | Interviews you, builds an executable manifest with verification criteria. `--interview minimal\|autonomous\|thorough` controls interview style (default: thorough). |
 | `/do` | Works through the manifest autonomously, verifies everything passes |
-| `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` pass-through. |
+| `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` and `--tend-pr` pass-through. |
+| `/tend-pr` | Sets up PR for review and starts a polling loop. Manifest-aware mode with scoped `/do`, or babysit mode without a manifest. |
+| `/tend-pr-tick` | Single iteration of PR tending (classify comments, route fixes, tend CI). Called by `/loop` via `/tend-pr` — not user-invocable. |
 | `/verify` | Runs verifiers phased by iteration speed — fast checks first, e2e/deploy-dependent later. Only advances to the next phase when the current one passes. (You rarely call this directly; `/do` handles it.) |
 | `/done` | Prints what got done and what was verified |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
@@ -137,18 +139,6 @@ See `skills/do/references/execution-modes/` for per-mode behavioral details.
 | Blog | `skills/define/tasks/BLOG.md` | Blog posts, tutorials (+ WRITING.md base) |
 | Research | `skills/define/tasks/research/RESEARCH.md` + source files | Research, analysis, investigation. Source-specific guidance in `tasks/research/sources/` |
 | Other | (none) | Doesn't fit above categories |
-
-**Workflow task files** add a process/lifecycle dimension orthogonal to the domain files above:
-
-| Task Type | File | When Loaded |
-|-----------|------|-------------|
-| Workflow | `skills/define/tasks/workflow/WORKFLOW.md` | Multi-step process, review/approval/CI, external deps, `--medium` flag |
-| Collaboration | `skills/define/tasks/workflow/COLLABORATION.md` | Team/stakeholders, `--medium` non-local |
-| Slack | `skills/define/tasks/workflow/messaging/SLACK.md` | `--medium slack` |
-| GitHub Review | `skills/define/tasks/workflow/code-review/GITHUB.md` | Default for code + workflow, or explicit GitHub/PR |
-| GitLab Review | `skills/define/tasks/workflow/code-review/GITLAB.md` | GitLab, MR, `--review-platform gitlab` |
-
-A dev workflow with review composes: CODING + FEATURE + WORKFLOW + GITHUB. Workflow files are only loaded when workflow indicators are present — solo dev tasks with no review get no workflow files.
 
 The universal flow works without any task file. Task files contain condensed domain knowledge that `/define` uses during probing. Full reference material for `/verify` agents lives in `skills/define/tasks/references/`.
 
@@ -194,14 +184,7 @@ These run in parallel during `/verify`:
 
 ## Medium Routing
 
-`/define` supports `--medium <platform>` (default: local). The medium determines how the interview interacts with users — which tool to use, how to post questions, how to poll for responses. Each supported medium has a messaging file in `references/messaging/`:
-
-- `local` (default): `LOCAL.md` — terminal interaction via AskUserQuestion
-- `slack`: `SLACK.md` — Slack MCP tools for posting and polling
-
-Other medium values get inline fallback guidance in the routing section.
-
-The medium is encoded in the manifest's Intent section so `/do` and `/verify` know the communication channel for updates and results. `/do` and `/verify` handle non-local medium behavior inline (posting updates, results, escalations).
+`/define` supports `--medium <platform>` (default: local). Currently only `local` is supported — all interaction happens in the terminal via AskUserQuestion. The medium is encoded in the manifest's Intent section for downstream skills.
 
 ## Multi-CLI Distribution
 
