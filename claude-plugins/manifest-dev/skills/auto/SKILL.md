@@ -12,7 +12,7 @@ Chain `/define` and `/do` into a single autonomous flow. The full /define proces
 
 ## Input
 
-`$ARGUMENTS` = task description (REQUIRED), optionally with `--mode efficient|balanced|thorough`, `--tend-pr`, `--medium <platform>`, `--interval <duration>`
+`$ARGUMENTS` = task description (REQUIRED), optionally with `--mode efficient|balanced|thorough`, `--tend-pr`, `--medium <platform>`, `--interval <duration>`, `--reviewers <usernames>`
 
 If `--interview` is present in arguments: error and halt: "--interview is not supported by /auto. /auto always uses autonomous mode. Use /define for custom interview styles."
 
@@ -21,7 +21,7 @@ If no arguments provided: error and halt: "Usage: /auto <task description> [--mo
 Parse flags from arguments if present:
 - `--mode` will be passed to /do.
 - `--tend-pr` enables PR lifecycle automation after /do completes.
-- `--medium` and `--interval` are only used when `--tend-pr` is present — passed to /tend-pr.
+- `--medium`, `--interval`, and `--reviewers` are only used when `--tend-pr` is present — passed to /tend-pr.
 
 The remaining text after flag extraction is the task description.
 
@@ -33,7 +33,7 @@ The remaining text after flag extraction is the task description.
 
 3. **Execute** — Note the manifest file path from /define's completion output. Invoke the manifest-dev:do skill with: "<manifest-path>" (append `--mode <level>` if --mode was specified in the original /auto arguments).
 
-4. **Tend PR** (only when `--tend-pr` is present) — After /do completes successfully (calls `/done`, not `/escalate`), invoke the manifest-dev:tend-pr skill with: "<manifest-path>" (append `--medium <platform>` and `--interval <duration>` if specified in the original /auto arguments).
+4. **Tend PR** (only when `--tend-pr` is present) — After /do completes successfully (calls `/done`, not `/escalate`), invoke the manifest-dev:tend-pr skill with: "<manifest-path>" (append `--medium <platform>`, `--interval <duration>`, and `--reviewers <usernames>` if specified in the original /auto arguments).
 
    If /do escalates instead of completing: do NOT invoke /tend-pr. Report to user: "/do escalated — skipping /tend-pr. Reason: <escalation reason from /do>. Resolve the blocker and re-invoke /tend-pr manually with the manifest path."
 

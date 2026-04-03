@@ -16,24 +16,31 @@ Two modes:
 
 ## Input
 
-`$ARGUMENTS` = manifest path, PR URL, or omitted. Optionally with `--medium <platform>` and `--interval <duration>`.
+`$ARGUMENTS` = manifest path, PR URL, or omitted. Optionally with `--medium <platform>`, `--interval <duration>`, and `--reviewers <usernames>`.
 
 **Mode detection:**
 1. If argument is a file path ending in `.md` pointing to an existing manifest → **manifest-aware mode**
 2. If no argument but conversation context contains a manifest path from a prior `/do` or `/define` run → **manifest-aware mode** (use the inferred manifest)
 3. If argument is a PR URL or no manifest is inferrable → **babysit mode** (identify the PR from the argument URL or from the current branch)
 
+**PR resolution (babysit mode without a PR URL argument):** Look up the open PR for the current branch. If no open PR exists, error and halt — babysit mode requires an existing PR to tend (it does not create PRs).
+
 **Flags:**
 - `--medium`: PR platform. Default: `github`. Controls how PR operations (create, read comments, check CI) are performed.
 - `--interval`: Polling interval for `/loop`. Default: `10m`. Accepts duration format (e.g. `5m`, `15m`).
+- `--reviewers`: Comma-separated usernames to request review from (e.g. `--reviewers alice,bob`). Optional — if omitted, no reviewers are requested.
 
 **Errors:**
-- No argument and no PR identifiable from context: "Error: Provide a manifest path or PR URL. Usage: /tend-pr <manifest-path-or-pr-url> [--medium github] [--interval 10m]"
+- No argument, no manifest inferrable, and no open PR for current branch: "Error: No manifest or open PR found. Provide a manifest path or PR URL. Usage: /tend-pr <manifest-path-or-pr-url> [--medium github] [--interval 10m] [--reviewers user1,user2]"
 - `--medium` value not supported: "Error: Medium '<value>' not yet supported. Currently supported: github"
 
 ## Setup Phase
 
-Ensure a non-draft PR exists for the current branch, a log file at `/tmp/tend-pr-log-{pr-number}.md` is created, and the polling loop is started. Use the manifest's Intent section for PR title/description when available, otherwise generate from the branch diff.
+**Manifest-aware mode:** Ensure a non-draft PR exists for the current branch — create one if none exists. Use the manifest's Intent section for PR title/description. If `--reviewers` was provided, request review from those users.
+
+**Babysit mode:** The PR must already exist (resolved during input). If `--reviewers` was provided, request review from those users.
+
+Create a log file at `/tmp/tend-pr-log-{pr-number}.md`.
 
 Output the PR link: "PR ready for review: <url>"
 
