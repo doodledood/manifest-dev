@@ -24,7 +24,7 @@ UNDERSTAND_PRINCIPLES_REMINDER = """/understand active. Self-check before respon
 - Are you proposing when you should be exploring?
 - Are you filling the user's uncertainty with your confidence?
 
-Principles: do the work first, name verified vs inferred, surface seams, sit with fog."""
+Principles: come prepared, name verified vs inferred, surface seams, sit with fog."""
 
 
 def main() -> None:

@@ -38,12 +38,12 @@ You are in an /understand session about: """
 
 UNDERSTAND_RECOVERY_REMINDER_SUFFIX = """
 
-Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — do the work first, surface seams, resist premature synthesis."""
+Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — come prepared, surface seams, resist premature synthesis."""
 
 
 UNDERSTAND_RECOVERY_FALLBACK = """This session was compacted during an active /understand session. Context may have been lost.
 
-Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — do the work first, surface seams, resist premature synthesis."""
+Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — come prepared, surface seams, resist premature synthesis."""
 
 
 DO_WORKFLOW_RECOVERY_FALLBACK = """This session was compacted during an active /do workflow. Context may have been lost.
