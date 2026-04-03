@@ -376,12 +376,12 @@ class TestUnderstandPromptHookOutput:
         assert output["hookSpecificOutput"]["hookEventName"] == "UserPromptSubmit"
         context = output["hookSpecificOutput"]["additionalContext"]
         assert "system-reminder" in context
-        assert "Truth-convergence" in context
+        assert "understand" in context.lower()
 
     def test_reminder_content(
         self, temp_transcript, user_understand_command, assistant_text
     ):
-        """Reminder should contain key principles."""
+        """Reminder should contain self-check questions and principles."""
         transcript_path = temp_transcript([user_understand_command, assistant_text])
         hook_input = {"transcript_path": transcript_path}
 
@@ -389,8 +389,8 @@ class TestUnderstandPromptHookOutput:
 
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
-        assert "Investigate before claiming" in context
-        assert "don't reassure" in context.lower() or "reassure" in context.lower()
+        assert "verified" in context.lower()
+        assert "investigate before claiming" in context.lower()
 
 
 class TestUnderstandPromptHookNoOutput:

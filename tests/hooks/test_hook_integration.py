@@ -815,7 +815,7 @@ class TestUnderstandLifecycle:
         reminder = run_understand_prompt(transcript)
         assert reminder is not None
         ctx = reminder["hookSpecificOutput"]["additionalContext"]
-        assert "Truth-convergence" in ctx
+        assert "understand" in ctx.lower()
 
         # /do hooks should NOT fire — no /do active
         amendment = run_prompt_submit(transcript)
@@ -852,7 +852,7 @@ class TestUnderstandLifecycle:
         assert recovery is not None
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
         assert "the auth flow" in ctx
-        assert "Truth-convergence" in ctx or "understand" in ctx.lower()
+        assert "understand" in ctx.lower() or "understand" in ctx.lower()
 
 
 class TestUnderstandToDefineTransition:

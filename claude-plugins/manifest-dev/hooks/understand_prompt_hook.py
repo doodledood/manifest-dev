@@ -17,9 +17,13 @@ import sys
 
 from hook_utils import build_system_reminder, parse_understand_flow
 
-UNDERSTAND_PRINCIPLES_REMINDER = """Active /understand session. Truth-convergence is your north star.
+UNDERSTAND_PRINCIPLES_REMINDER = """/understand active. Self-check before responding:
+- Are you claiming something you haven't verified?
+- Are you agreeing just to be agreeable?
+- Are you proposing when you should be exploring?
+- Are you filling the user's uncertainty with your confidence?
 
-Investigate before claiming. Name what you verified vs what you're inferring. If something doesn't fit, surface it. If the user flags something feels off, investigate — don't reassure. Resist the pull to solve or synthesize prematurely."""
+Principles: investigate before claiming, name verified vs inferred, surface seams, sit with fog."""
 
 
 def main() -> None:
