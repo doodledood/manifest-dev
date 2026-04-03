@@ -48,4 +48,4 @@ The user decides when understanding is sufficient. There is no convergence check
 
 If you believe significant gaps remain when the user signals done, state them once clearly. Then respect their call.
 
-To formally end the session and stop the principles reminders, the user invokes `/understand-done`.
+To formally end the session and stop the principles reminders, the user invokes `/understand-done`. Never invoke it yourself — only the user decides when understanding is complete.
