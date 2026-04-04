@@ -9,13 +9,13 @@ description: 'Manifest executor. Iterates through Deliverables satisfying Accept
 
 Execute a Manifest: satisfy all Deliverables' Acceptance Criteria while following Process Guidance and using Approach as initial direction (adapting when reality diverges), then verify everything passes (including Global Invariants).
 
-**Why quality execution matters**: The manifest front-loaded the thinking—criteria are already defined. Your job is implementation that passes verification on first attempt. Every verification failure is rework.
-
 ## Input
 
 `$ARGUMENTS` = manifest file path (REQUIRED), optionally with execution log path, `--mode <level>`, and `--scope <deliverable-ids>`
 
 If no arguments: Output error "Usage: /do <manifest-file-path> [log-file-path] [--mode efficient|balanced|thorough] [--scope D1,D2,...]"
+
+Read the manifest file fully before any execution.
 
 ## Execution Mode
 
@@ -35,8 +35,6 @@ Follow the loaded mode's rules for model routing, verification parallelism, fix-
 2. **Explicit model overrides skip**: If a criterion explicitly sets `model:`, it runs even when the mode would otherwise skip it.
 3. **Global Invariants always run**: INV-G* verification runs regardless of mode — constitutional constraints.
 
-**Phase × loop interaction**: Fix-verify loop limits apply per-phase. Each phase has its own loop counter. A fix for a later phase that regresses an earlier phase increments the earlier phase's counter.
-
 ## Existing Execution Log
 
 If input includes a log file path (iteration on previous work): **treat it as source of truth**. It contains prior execution history. Continue from where it left off—append to the same log, don't restart.
@@ -54,7 +52,7 @@ When `--scope` is NOT provided, ignore this section entirely — no reference fi
 | Principle | Rule |
 |-----------|------|
 | **ACs define success** | Work toward acceptance criteria however makes sense. Manifest says WHAT, you decide HOW. |
-| **Approach is initial, not rigid** | Approach provides starting direction, but plans break when hitting reality. Adapt freely when you discover better patterns, unexpected constraints, or dependencies that don't work as expected. Log adjustments with rationale. |
+| **Approach is initial, not rigid** | Approach provides starting direction, but adapt freely when reality diverges. No escalation needed — log adjustments with rationale. |
 | **Target failures specifically** | On verification failure, fix the specific failing criterion. Don't restart. Don't touch passing criteria. |
 | **Verify fixes first** | After fixing a failure, confirm the fix works before re-running full verification. |
 | **Trade-offs guide adjustment** | When risks (R-*) materialize, consult trade-offs (T-*) for decision criteria. Log adjustments with rationale. |
@@ -65,25 +63,25 @@ When `--scope` is NOT provided, ignore this section entirely — no reference fi
 
 **Must call /verify** - Can't declare done without verification. Invoke manifest-dev:verify with manifest, log paths, and the resolved mode: `/verify <manifest> <log> --mode <level>`.
 
-**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type), or (4) the active execution mode's fix-verify loop limit is reached. If ACs remain achievable as written and no user interrupt, continue autonomously. Approach pivots don't require escalation — log adjustments with rationale and continue.
+**Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type), or (4) the active execution mode's fix-verify loop limit is reached. If ACs remain achievable as written and no user interrupt, continue autonomously.
 
-**Mode-aware loop tracking** - Track fix-verify iteration count and escalation count in the execution log. Loop counters are per-phase. When the active execution mode's limits are reached, follow its escalation rules.
+**Mode-aware loop tracking** - Track fix-verify iteration count and escalation count in the execution log. When the active execution mode's limits are reached, follow its escalation rules.
 
-**Phase-aware verification** - /verify runs criteria in phases (ascending by `phase:` field, default 1). It may report "Phase N failed, Phase N+1 not run." After fixing failures, /verify restarts from Phase 1 to catch regressions — a fix for a Phase 2 failure could break Phase 1 criteria. If a Phase 2 fix regresses Phase 1, Phase 1's loop counter increments (the failure IS in Phase 1).
+**Phase-aware verification** - /verify runs criteria in phases (ascending by `phase:` field, default 1). It may report "Phase N failed, Phase N+1 not run." After fixing failures, /verify restarts from Phase 1 to catch regressions. Loop limits apply per-phase; regressions increment the broken phase's counter, not the phase that caused them.
 
-**Stop requires /escalate** - During /do, you cannot stop without calling /verify→/done or /escalate. If you need to pause (user requested, waiting on external action), call /escalate with "User-Requested Pause" format. Short outputs like "Done." or "Waiting." will be blocked.
-
-**Refresh before verify** - Read full execution log before calling /verify to restore context.
-
-**Refresh between deliverables** - Before starting a new deliverable, re-read the manifest's deliverable section and relevant execution log entries. Context degrades gradually across a long session — don't rely on what you remember from D1 when starting D3.
+**Stop requires /escalate** - During /do, you cannot stop without calling /verify→/done or /escalate. If you need to pause, call /escalate with "User-Requested Pause" format. Bare outputs like "Done." or "Waiting." are not valid exits.
 
 ## Memento Pattern
 
-Externalize progress to survive context loss. The log IS the disaster recovery mechanism.
+Externalize progress to survive context loss.
 
 **Execution log**: Create `/tmp/do-log-{timestamp}.md` at start. After EACH AC attempt, append what happened and the outcome. Goal: another agent reading only the log could resume work.
 
 **Todos**: Create from manifest (deliverables → ACs). Start with execution order from Approach (adjust if dependencies require). Update todo status after logging (log first, todo second).
+
+**Refresh before verify** - Read full execution log before calling /verify to restore context.
+
+**Refresh between deliverables** - Before starting a new deliverable, re-read the manifest's deliverable section and relevant log entries. Context degrades across long sessions.
 
 ## Mid-Execution Amendment
 
@@ -91,10 +89,4 @@ Externalize progress to survive context loss. The log IS the disaster recovery m
 
 **Amendment flow** — Amend the manifest autonomously via Self-Amendment escalation and `/define --amend <manifest-path> --from-do`, then resume with the updated manifest and existing log. Log the trigger before amending. No human wait — the entire cycle is autonomous.
 
-**PR review comments** — Same trigger. During the review phase, a comment that contradicts or extends the manifest is an amendment trigger.
-
 **Amendment loop guard** (R-7) — If Self-Amendment escalations repeat without new external input (user messages or PR comments) between them, the amendments are likely oscillating — escalate as "Proposed Amendment" for human decision instead.
-
-## Medium Routing
-
-Currently only `local` medium is supported. All updates, escalation, and interaction happen in the local terminal session.
