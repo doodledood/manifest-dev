@@ -8,7 +8,7 @@ CLAUDE.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
-Defect-finding agents use `no LOW+` — every verified defect is worth fixing. Quality/advisory agents use `no MEDIUM+` — their Low findings are acceptable trade-offs.
+Defect-finding agents: every finding at Low severity or above fails the gate (`no LOW+`). Quality/advisory agents: findings at Medium or above fail the gate (`no MEDIUM+`) — their Low findings are acceptable trade-offs.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
@@ -35,18 +35,9 @@ CLAUDE.md specifies project gates (typecheck, lint, test, format). These become 
 
 ## E2E Verification
 
-E2E verification encodes as Global Invariants (INV-G*), not as deliverable ACs or separate deliverables. E2E verifies the system works end-to-end — it's a constitutional constraint, not per-deliverable success criteria.
+**E2E encoding**: E2E verification encodes as Global Invariants (INV-G*), not as deliverable ACs or separate deliverables. Each e2e test case gets its own INV-G*, specifying the scenario and expected outcome.
 
-Each e2e test case gets its own INV-G*. Together, the set of e2e invariants represents the complete e2e testing plan (e.g., INV-G5: login flow, INV-G6: order creation, INV-G7: checkout flow).
-
-E2e tests are slow and often deploy-dependent — assign them a later phase than fast automated checks (lint, tests, code review agents). Manual e2e should be in an even later phase (human-dependent, slowest iteration). Only use manual when automated E2E is truly not feasible and user confirms no test data exists.
-
-Before encoding e2e invariants, probe:
-- **Test data** - often discoverable; probe: existing test users/accounts? can research via project tools (queries, test fixtures, admin panels)?
-- **Environment** - probe: which environment for e2e tests (dev, staging, production read-only)?
-- **Automation feasibility** - probe: can tests be scripted? existing health checks or testable endpoints?
-
-When probing yields actionable findings, encode each test case as an INV-G*. Each should specify the scenario and expected outcome (e.g., "INV-G5: E2E login flow — POST /auth/login returns 200 with valid credentials on staging").
+**E2E phasing**: E2e tests are slow and often deploy-dependent — assign them a later phase than fast automated checks. Manual e2e goes in an even later phase. Only use manual when automated E2E is truly not feasible and user confirms no test data exists.
 
 ## Scenario Prompts
 
@@ -61,6 +52,29 @@ When probing yields actionable findings, encode each test case as an INV-G*. Eac
 - **Config mismatch** - feature flags, env vars differ across environments; probe: config parity?
 - **Observability blindspot** - works but can't tell when it breaks in prod; probe: metrics? alerts? logs?
 - **E2E verification gap** - unit gates pass, integration fails; probe: integration points without test coverage? cross-service dependencies?
+- **E2E test data missing** - no test users/accounts discoverable; probe: existing test fixtures? admin panels? can research via project tools?
+- **E2E environment unclear** - which environment for e2e tests; probe: dev, staging, production read-only?
+- **E2E automation infeasible** - can tests be scripted; probe: existing health checks or testable endpoints?
+
+## Risks
+
+- **Scope underestimation** - change touches more files/systems than expected; probe: what's the blast radius?
+- **Test gap** - changed code has no test coverage; probe: what tests exist for this area?
+- **Implicit dependency** - code relies on undocumented behavior or ordering; probe: what assumptions does this code make?
+
+## Trade-offs
+
+- Fix in place vs refactor first
+- Test depth vs implementation speed
+- Minimal change vs thorough cleanup
+- Performance vs readability
+
+## Defaults
+
+*Domain best practices for this task type.*
+
+- **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
+- **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
 
 ## Multi-Repo
 

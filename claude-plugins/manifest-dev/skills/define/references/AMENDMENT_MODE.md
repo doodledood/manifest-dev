@@ -28,7 +28,7 @@ User calls `/define --amend <manifest>` directly. Full interactive mode:
 
 Triggered by `--from-do` flag (e.g., `/define --amend <manifest> --from-do`). This flag is set by /do after Self-Amendment escalation — it signals deterministically that this is an autonomous amendment, not an interactive session.
 
-In /do context, amendment is autonomous and fast — no user approval gates (verification loop, summary approval). Inherit interview style from manifest metadata. Make targeted changes based on the escalation context. Write updated manifest in-place so /do can resume immediately. Log the amendment in the manifest's `## Amendments` section.
+In /do context, amendment is autonomous and fast — no user approval gates (verification loop, summary approval). Make targeted changes based on the escalation context. Write updated manifest in-place so /do can resume immediately. Log the amendment in the manifest's `## Amendments` section.
 
 ## What to Preserve
 

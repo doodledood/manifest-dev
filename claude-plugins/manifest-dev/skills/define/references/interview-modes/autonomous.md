@@ -12,7 +12,7 @@ No user-facing questions during the interview. All findings are resolved autonom
 
 ## Interview Flow
 
-Address all coverage goals internally. Assess existing context, probe gaps, log findings and resolutions to the discovery file. Do not pause for user input.
+Address all coverage goals internally. Resolve unknowns through exploration (search, file reads) before falling back to the recommended option — autonomous means no user questions, not no investigation. Log findings and resolutions to the discovery file.
 
 ## Checkpoint Behavior
 
@@ -24,4 +24,4 @@ All findings are resolved autonomously and encoded directly. The manifest itself
 
 ## Convergence
 
-Apply SKILL.md's convergence checklist autonomously. Move to synthesis as soon as the checklist is satisfied. When uncertain between options, pick the recommended one and log the reasoning in Known Assumptions.
+Apply SKILL.md's convergence checklist autonomously. Move to synthesis as soon as the checklist is satisfied. When uncertain between options, pick the recommended one and log the reasoning in Known Assumptions. When a convergence test requires user preference that can't be inferred from context, pick the recommended option and proceed.

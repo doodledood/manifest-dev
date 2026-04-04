@@ -10,12 +10,7 @@ AI text is measurably more predictable, less varied, and narrower in vocabulary 
 
 | Aspect | Agent | Fallback | Threshold |
 |--------|-------|----------|-----------|
-| Vocabulary | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no MEDIUM+ |
-| Structure | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no MEDIUM+ |
-| Tone | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no MEDIUM+ |
-| Rhetoric | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no MEDIUM+ |
-| Craft | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no MEDIUM+ |
-| Negative space | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no MEDIUM+ |
+| Vocabulary, Structure, Tone, Rhetoric, Craft, Negative space | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no MEDIUM+ |
 | Voice compliance | general-purpose | — | Matches AUTHOR_VOICE.md (conditional: only when doc exists) |
 | Readability | general-purpose | — | Accessible to target audience, scannable structure |
 | Anti-slop | general-purpose | — | No kill-list vocabulary, hedge words, filler phrases, generic phrasing |
@@ -55,7 +50,7 @@ Writer substance is ~70% of output quality; editing ~20%; prompting ~10%. No amo
 
 **Model-Specific Signatures** — ChatGPT: formal, heavy em-dashes, "delve." Gemini: conversational, simple. Claude: literary, flexible. Deepseek: heavy em-dashes, ChatGPT-like.
 
-**Four-Layer Editing** — Five steps surface-to-substance: word-level (kill-list), sentence-level (pattern breaking), structural (meta-commentary removal), content (lived experience), final check (read aloud).
+**Multi-Layer Editing** — Surface-to-substance: word-level (kill-list), sentence-level (pattern breaking), structural (meta-commentary removal), content (lived experience), final check (read aloud).
 
 **Negative Space** — AI identified by absence: lived experience, sensory specificity, silence/subtext, genuine messiness, unique perspective.
 
@@ -64,18 +59,13 @@ Writer substance is ~70% of output quality; editing ~20%; prompting ~10%. No amo
 ## Risks
 
 - **Hollow output** — content passes review but lacks writer's genuine substance; probe: was the 70% (writer input) actually provided?
-- **Wrong depth** — too technical or too shallow for readers; probe: what does audience already know?
 - **Disembodied voice** — lacks specific experiences, opinions, data; probe: check for AUTHOR_VOICE.md?
-- **Wrong audience** — language and depth don't match reader; probe: who reads this, what do they know?
 
 ## Scenario Prompts
 
-- **Hollow output without substance** — polished prose, no actual insight or lived experience; probe: what writer-specific substance went in before generation?
-- **Voice inconsistency** — tone shifts between sections, or doesn't match AUTHOR_VOICE.md; probe: consistent voice throughout? voice doc consulted?
-- **Tone mismatch** — doesn't sound like author/brand; probe: check AUTHOR_VOICE.md? brand guidelines?
+- **Voice inconsistency** — tone shifts between sections, or doesn't match AUTHOR_VOICE.md; probe: consistent voice throughout? voice doc consulted? brand guidelines?
 - **Missing credibility signal** — no reason to trust author; probe: what authority/experience backs this?
-- **Wrong reader assumptions** — assumes knowledge reader lacks; probe: what does audience know?
-- **Missing prerequisites** — assumes knowledge reader doesn't have; probe: what must reader know first?
+- **Wrong reader assumptions** — assumes knowledge reader lacks or doesn't have; probe: what does audience know? what must reader know first?
 - **Missing examples** — abstract explanation, no concrete cases; probe: would examples help?
 - **Buried critical info** — important details hidden in middle; probe: what must reader not miss?
 - **Relentless positivity kills credibility** — everything framed as great; no honest assessment; probe: are weaknesses acknowledged?
@@ -94,5 +84,5 @@ Writer substance is ~70% of output quality; editing ~20%; prompting ~10%. No amo
 
 *Domain best practices for this task type.*
 
-- **Four-layer editing** — Edit beyond vocabulary: word-level (kill-list), sentence-level (structure), paragraph-level (rhetoric/tone), content-level (substance). Never just word replacement
+- **Multi-layer editing** — Edit beyond vocabulary: word-level (kill-list), sentence-level (structure), paragraph-level (rhetoric/tone), content-level (substance). Never just word replacement
 - **Kill-list cross-check** — Full vocabulary kill-list applied to output

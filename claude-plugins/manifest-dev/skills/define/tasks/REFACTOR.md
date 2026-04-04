@@ -6,18 +6,6 @@ Restructuring without behavior change.
 
 No additional quality gates beyond CODING.md base.
 
-## The Contract
-
-Every refactor must establish:
-1. What behavior is preserved (specific, verifiable)
-2. How preservation is verified (tests, comparison)
-
-Without both, refactoring is gambling.
-
-## Characterization Tests
-
-If no tests exist, probe: should "write characterization tests" be prerequisite deliverable?
-
 ## Risks
 
 - **Behavior regression** - changed behavior disguised as cleanup; probe: what exactly must not change?
@@ -37,15 +25,15 @@ If no tests exist, probe: should "write characterization tests" be prerequisite 
 
 ## Trade-offs
 
-- Incremental vs big bang
-- Perfect structure vs good-enough
-- Scope vs time
-- Refactor now vs feature first
+- Incremental vs big bang; probe: can this be split into safe, reviewable chunks?
+- Perfect structure vs good-enough; probe: what level of cleanup is warranted?
+- Scope vs time; probe: what's explicitly in/out of scope?
+- Refactor now vs feature first; probe: does the feature depend on the refactor?
 
 ## Defaults
 
 *Domain best practices for this task type.*
 
-- **Verification plan** — How behavior preservation is verified (existing tests, characterization tests, comparison). Every refactor needs this before starting
+- **Establish behavior contract** — Define exactly what behavior is preserved and how preservation is verified (existing tests, characterization tests, comparison). Every refactor needs this before starting
 - **Identify consumers** — All callers and dependents of refactored code identified; implicit contracts surfaced
-- **Assess test coverage** — Coverage adequate for the refactored area; characterization tests written if gaps exist
+- **Characterization tests if gaps exist** — When no tests cover the refactored area, write characterization tests as a prerequisite deliverable

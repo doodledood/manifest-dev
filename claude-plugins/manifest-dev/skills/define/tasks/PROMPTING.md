@@ -31,6 +31,7 @@ When prompt-reviewer is not available, encode these as individual criteria verif
 | Model-prompt fit | Stays within model capabilities—doesn't assume unreliable behaviors |
 | Guardrail calibration | Safety boundaries neither too loose nor too tight |
 | Output calibration | Output format, length, and detail level match the use case and consumer |
+| Emotional tone | Low arousal—no urgency language, excessive praise, or pressure framing; "trusted advisor" tone; failure normalized in iterative prompts |
 
 When the task involves creating or updating a skill, also apply:
 
@@ -53,23 +54,6 @@ Before defining a prompt, probe for these—missing context creates ambiguous pr
 | **Edge cases** | Unusual inputs, error handling, boundary conditions | What weird inputs are possible? |
 | **Constraints** | Hard limits (length, format, tone), non-negotiables | What MUST never happen? What limits exist? |
 | **Integration context** | Where prompt fits, what comes before/after | What triggers this? What consumes the output? |
-
-## Issue Types
-
-### Clarity
-- **Ambiguous instructions** - multiple valid interpretations; probe: could this be read two ways?
-- **Vague language** - "be helpful", "use good judgment", "when appropriate"; probe: what specifically?
-- **Implicit expectations** - unstated assumptions; probe: what does "good" mean here?
-
-### Conflict
-- **Contradictory rules** - "Be concise" vs "Explain thoroughly"; probe: which wins?
-- **Priority collisions** - two MUST rules that can't both be satisfied; probe: priority clear?
-- **Edge case gaps** - rules don't cover a situation; probe: what happens when X?
-
-### Structure
-- **Buried critical info** - important rules hidden in middle; probe: would skimming miss this?
-- **No hierarchy** - all instructions treated as equal priority; probe: what's most important?
-- **Unintentional redundancy** - same thing said multiple ways (note: repetition can be intentional emphasis)
 
 ## Anti-Patterns
 
@@ -99,6 +83,8 @@ Pre-mortem fuel—imagine the prompt failing:
 - **Verbosity mismatch** - output too long or too terse for use case; probe: output length expectations?
 - **Regression on update** - change fixes one issue but silently breaks existing behavior that was correct; probe: what currently works that this change could affect?
 - **Composition conflict** - prompt works in isolation but contradicts system instructions, tool definitions, or other prompts it's embedded with; probe: what else will be in context when this runs?
+- **Emotional tone miscalibrated** - urgency language, excessive praise, or pressure framing triggers sycophancy or corner-cutting; probe: does the opening set a calm, direct tone? any high-stakes framing that could be read as pressure?
+- **Over-engineering on update** - change addresses one issue but doubles prompt length or adds edge cases that won't happen; probe: is this change proportional to the problem?
 
 ## Trade-offs
 
@@ -113,80 +99,25 @@ Prompt decisions often involve trade-offs—surface these during discovery:
 
 ## Defaults
 
-*Skill architecture practices. Apply when task involves creating or updating a skill.*
+*Domain best practices for this task type.*
 
 - **Identify skill type** — Determine which category the skill falls into (Library/API, Verification, Data, Business Process, Scaffolding, Code Quality, CI/CD, Runbook, Infra Ops) and match architecture to its core pattern
 - **Assess config needs** — If skill requires user-specific configuration (IDs, names, preferences), persist in a config file within the skill directory rather than re-asking each session
-
-## When Updating Prompts
-
-If the task is updating an existing prompt (not creating new):
-
-**High-signal changes only**: Every change must address a real failure mode or materially improve clarity. Don't change for the sake of change.
-
-**Right-sized changes**: Don't overcorrect. One edge case doesn't warrant restructuring.
-
-**Questions to probe**:
-- Does this change address a real failure mode?
-- Am I adding complexity to solve a rare case?
-- Can this be said in fewer words?
-- Am I turning a principle into a rigid rule?
-
-**Over-engineering warning signs** (probe if present):
-- Prompt length doubled or tripled
-- Adding edge cases that won't happen
-- "Improving" clear language into verbose language
-- Adding examples for obvious behaviors
-
-## Prompt Structure Guidance
-
-### Skills/Agents
-
-If creating a skill or agent, probe for:
-- **Name**: kebab-case, max 64 chars
-- **Description**: What it does + When to use + Trigger terms (under 1024 chars)
-- **Mission**: One-line WHAT, not HOW
-- **Empty input handling**: What happens with no arguments?
-- **Multi-phase**: Does it need memento pattern (log file)?
-
-### System Instructions
-
-If creating system instructions, probe for:
-- **Role**: Identity and purpose
-- **Approach**: Principles for thinking, not procedures
-- **Constraints**: MUST > SHOULD > PREFER hierarchy
-- **Output**: Format requirements if any
-
-### Skill Description Pattern
-
-Descriptions drive auto-invocation. Pattern: **What + When + Triggers**
-
-Weak: "Helps with prompts"
-Strong: "Craft or update LLM prompts from first principles. Use when creating new prompts, updating existing ones, or reviewing prompt structure."
+- **High-signal changes only** (updates) — Every change must address a real failure mode or materially improve clarity. Don't change for the sake of change. Don't overcorrect — one edge case doesn't warrant restructuring
+- **Probe for memento needs** — Multi-phase prompts that accumulate findings need externalized state; probe: does this prompt span multiple steps?
+- **Define empty input behavior** — What happens when the prompt receives no arguments; probe: should it ask, error, or use defaults?
+- **Calibrate emotional tone** — Keep arousal low (avoid urgency language, excessive praise, pressure framing). Target "trusted advisor" tone. Normalize failure in iterative prompts. Opening framing propagates into response planning
 
 ## Multi-Phase Prompts
 
-If prompt accumulates findings across steps, needs memento pattern:
+If prompt accumulates findings across steps, probe for memento pattern needs:
 
-| LLM Limitation | Pattern Response |
-|----------------|------------------|
-| Context rot (middle content lost) | Write findings to log after EACH step |
-| Working memory is limited | Todo lists externalize tracked areas |
-| Synthesis failure at scale | Read full log BEFORE final output |
-| Recency bias | Refresh moves findings to context end |
+| LLM Limitation | What memento must achieve |
+|----------------|--------------------------|
+| Context rot (middle content lost) | Findings externalized after each step |
+| Working memory is limited | Tracked areas externalized |
+| Synthesis failure at scale | Full log read before final output |
+| Recency bias | Refresh mechanism moves findings to context end |
 
-Structure when memento applies:
-```
-- [ ] Create log /tmp/{workflow}-*.md
-- [ ] {Area 1}→log; done when {criteria}
-- [ ] {Area 2}→log; done when {criteria}
-- [ ] (expand: areas as discovered)
-- [ ] Refresh: read full log    ← Never skip
-- [ ] Synthesize→artifact; done when complete
-```
-
-Key disciplines:
-- `→log` after each collection step (discipline, not capability)
-- `Refresh: read full log` before synthesis (restores context)
-- Acceptance criteria on each todo ("; done when X")
+Key disciplines: log after each collection step, read full log before synthesis, acceptance criteria on each tracked item.
 
