@@ -189,18 +189,6 @@ description: 'Craft or update LLM prompts from first principles. Use when creati
 - Specify when to use
 - Under 1024 chars
 
-## Emotional Tone
-
-Prompts shape the model's internal emotional state before generation begins. Research on transformer internals shows emotion concept representations that causally influence behavior — including sycophancy, reward hacking, and misalignment. These principles help calibrate the emotional context a prompt creates.
-
-| Principle | What It Means | Why |
-|-----------|---------------|-----|
-| **Keep arousal low** | Avoid urgency language ("CRITICAL", "you MUST"), excessive praise ("you're amazing at this!"), and pressure framing. | High-arousal emotions causally drive sycophancy (positive arousal) or corner-cutting and misalignment (negative arousal). |
-| **Opening framing propagates** | The emotional tone set in a prompt's opening persists into the model's response planning. A tense opening produces a tense response. | Emotional context from early tokens propagates through later processing layers, even when subsequent content is neutral. |
-| **Normalize failure in iterative prompts** | For agentic or multi-step prompts, explicitly frame failure as acceptable: "if this approach doesn't work, try another." | Repeated failures build desperation that causally drives reward hacking and corner-cutting solutions. |
-| **Sycophancy-harshness tradeoff** | Pushing toward warmth and positivity increases sycophancy. Pushing away from warmth increases bluntness and harshness. Aim for a "trusted advisor" tone — honest pushback delivered with care. | Positive-valence emotion representations causally increase agreement-seeking behavior; their absence produces unnecessary harshness. |
-| **Avoid unintended high-stakes framing** | The model reads semantic intensity, not surface patterns. "This is critical to my career" or "failure is not an option" activates negative emotion representations even if intended as motivation. | Emotion representations respond to the meaning of situations — quantities, stakes, consequences — not to keywords. |
-
 ## Gotchas
 
 - **Rewriting working language for style**: Claude rewrites clear, working prompt text for stylistic preference. If existing language is unambiguous and effective, don't touch it.
