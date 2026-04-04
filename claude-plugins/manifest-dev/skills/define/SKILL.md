@@ -190,7 +190,7 @@ Read full log before synthesis. Unresolved `- [ ]` items must be addressed first
 **Stop when converged** - The checklist below defines WHAT must be true for convergence. The active interview mode defines HOW aggressively to pursue it (probing style, synthesis threshold). Items resolved from any source count equally — understanding from conversation context, prior research, or fresh exploration all satisfy coverage goals. Convergence requires:
 - **Domain understanding** sufficient: failure scenarios are project-specific, not generic
 - **Reference class** identified: base-rate failures acknowledged
-- **Failure modes** covered: scenarios have dispositions (encoded, scoped out, or mitigated)
+- **Failure modes** covered: scenarios have dispositions (encoded, scoped out, or mitigated); mental model alignment checked
 - **Positive dependencies** surfaced: load-bearing assumptions resolved (verified, encoded, or logged as ASM)
 - Edge cases probed
 - No unresolved `- [ ]` items in the log
@@ -200,7 +200,7 @@ Read full log before synthesis. Unresolved `- [ ]` items must be addressed first
 
 Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
 
-**Insights become criteria** - Domain grounding findings, outside view findings, pre-mortem risks, non-obvious discoveries → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to Resolvable task file content — risks and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
+**Insights become criteria** - Domain understanding findings, reference class insights, failure mode scenarios, positive dependency discoveries, non-obvious angles → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to Resolvable task file content — risks and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
 
 **Automate verification** - Use automated methods (commands, subagent review). When using general-purpose subagent, default to `inherit`. When a criterion seems to require manual verification, probe the user: suggest how it could be made automatable, or ask if they have ideas. Manual only as a last resort or when the user explicitly requests it.
 

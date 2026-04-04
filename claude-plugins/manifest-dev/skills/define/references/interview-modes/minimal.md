@@ -16,7 +16,7 @@ Coverage goals are the same as thorough mode. Assess existing understanding, pro
 
 ## Checkpoint Behavior
 
-One checkpoint after domain grounding (scope confirmation) and one before synthesis (final review of auto-decided items). Keep checkpoints brief — summarize what was auto-decided and invite corrections.
+One checkpoint after domain understanding is established (scope confirmation) and one before synthesis (final review of auto-decided items). Keep checkpoints brief — summarize what was auto-decided and invite corrections.
 
 ## Finding Sharing
 
