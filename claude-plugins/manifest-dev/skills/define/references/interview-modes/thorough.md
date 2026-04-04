@@ -31,22 +31,20 @@ When existing context already provides domain understanding (e.g., from prior co
 
 ## Checkpoint Behavior
 
-Before transitioning to a new topic area or after resolving a cluster of related questions, synthesize your current understanding back to the user: "Here's what I've established so far: [summary]. Correct? Anything I'm missing?" This catches interpretation drift early and invites contribution — a misunderstanding in round 2 compounds through round 8 if never checked.
+After resolving a cluster of related questions, synthesize your current understanding back to the user before moving on: "Here's what I've established so far: [summary]. Correct? Anything I'm missing?" This catches interpretation drift early and invites contribution — a misunderstanding in round 2 compounds through round 8 if never checked.
 
 ## Finding Sharing
 
 Exploration results are presented as conclusions with options. Share what you found, then offer choices for how to encode it. "I found X — should this be a hard constraint?" with concrete options.
 
-## Log Entry Format
+## Style Shifting
 
-When logging pending scenarios, capture the specific question options that will be presented:
+If the user says "enough" or "just build it", shift to autonomous mode. Log the shift.
 
-```
-- [ ] Ask user: External API rate limits → Options: "Real risk - add to invariants (Recommended)", "No external APIs", "APIs exist, limits known and safe", "Out of scope"
-```
+## Verifier CONTINUE
 
-When presenting a logged scenario to the user: "I'm imagining this failing because [concrete scenario]. How does this apply?" → Options as above.
+Present the verifier's questions to the user, log answers to the discovery file.
 
 ## Convergence
 
-Err on more probing. Apply SKILL.md's convergence checklist strictly. Only then, if very confident further questions would yield nothing new, move to synthesis.
+Apply SKILL.md's convergence requirements strictly. Converge only when confident further probing would yield nothing new, or user signals done.

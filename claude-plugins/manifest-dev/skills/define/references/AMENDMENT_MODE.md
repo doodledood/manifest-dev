@@ -6,6 +6,8 @@
 
 Read the manifest at the given path. Existing decisions (ACs, INVs, PGs, Approach, Trade-offs) are preserved unless directly contradicted by the change request. Make targeted changes — only items affected by the amendment are updated. Add new items, modify contradicted items, or remove items that no longer apply.
 
+**Coverage goals apply scoped to the change** — not the full manifest. Existing manifest content satisfies goals for unchanged areas.
+
 ## What Triggers Amendment
 
 The conversation context contains the reason — a user's message, a PR review comment, or an explicit change request. Read this context and determine what to change.
@@ -28,7 +30,7 @@ User calls `/define --amend <manifest>` directly. Full interactive mode:
 
 Triggered by `--from-do` flag (e.g., `/define --amend <manifest> --from-do`). This flag is set by /do after Self-Amendment escalation — it signals deterministically that this is an autonomous amendment, not an interactive session.
 
-In /do context, amendment is autonomous and fast — no user approval gates (verification loop, summary approval). Inherit interview style from manifest metadata. Make targeted changes based on the escalation context. Write updated manifest in-place so /do can resume immediately. Log the amendment in the manifest's `## Amendments` section.
+In /do context, amendment is autonomous and fast — no user approval gates (verification loop, summary approval). Make targeted changes based on the escalation context. Write updated manifest in-place so /do can resume immediately. Log the amendment in the manifest's `## Amendments` section.
 
 ## What to Preserve
 

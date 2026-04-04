@@ -4,7 +4,7 @@ User decides scope, constraints, and high-impact items. Agent auto-resolves the 
 
 ## Decision Authority
 
-Ask the user for scope boundaries, hard constraints, and items where multiple options are equally valid (no clear recommended choice). Auto-resolve everything else by picking the recommended option.
+Ask the user when: (a) the decision materially changes scope or hard constraints, or (b) no recommended option exists because the trade-off depends entirely on user context/preference that can't be inferred. Auto-resolve everything else by picking the recommended option.
 
 ## Question Format
 
@@ -22,6 +22,14 @@ One checkpoint after domain understanding is established (scope confirmation) an
 
 Share only findings that require user input. Auto-decided findings are logged silently and surfaced in the final checkpoint for review.
 
+## Style Shifting
+
+If the user starts asking detailed questions or requesting deeper probing, shift to thorough. If the user says "enough" or "just build it", shift to autonomous. Log any shift.
+
+## Verifier CONTINUE
+
+Present the verifier's questions to the user, log answers to the discovery file.
+
 ## Convergence
 
-Converge quickly. Apply SKILL.md's convergence checklist but don't probe beyond what's needed for scope and constraints. Move to synthesis once high-impact items are resolved.
+All five coverage goals apply, but auto-resolve low-impact items. Converge quickly — move to synthesis once scope, constraints, and irreversible decisions are resolved.
