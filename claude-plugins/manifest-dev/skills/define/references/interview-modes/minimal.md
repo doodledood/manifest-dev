@@ -12,11 +12,11 @@ Present structured options only when the decision materially affects scope or ha
 
 ## Interview Flow
 
-Protocols run in the same order as thorough mode but compressed. Auto-resolve low-impact findings. Only surface findings that affect scope, hard constraints, or have ambiguous trade-offs.
+Coverage goals are the same as thorough mode. Assess existing understanding, probe gaps adaptively. Auto-resolve low-impact findings. Only surface findings that affect scope, hard constraints, or have ambiguous trade-offs.
 
 ## Checkpoint Behavior
 
-One checkpoint after domain grounding (scope confirmation) and one before synthesis (final review of auto-decided items). Keep checkpoints brief — summarize what was auto-decided and invite corrections.
+One checkpoint after domain understanding is established (scope confirmation) and one before synthesis (final review of auto-decided items). Keep checkpoints brief — summarize what was auto-decided and invite corrections.
 
 ## Finding Sharing
 

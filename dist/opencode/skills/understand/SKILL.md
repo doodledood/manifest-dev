@@ -108,4 +108,4 @@ If the session has been going long and things feel like they're converging, shar
 
 If you believe significant gaps remain when the user signals done, state them once clearly. Then respect their call.
 
-To formally end the session and stop the principles reminders, the user invokes `/understand-done`. Never invoke it yourself — only the user decides when understanding is complete.
+To formally end the session and stop the principles reminders, invoke `/understand-done`. The user can invoke it directly, and you can invoke it when the conversation has naturally concluded — the user has signaled satisfaction ("got it", "thanks, that clears it up"), moved on to a different topic, or started acting on the understanding (e.g., writing code, invoking /define). If significant gaps remain, flag them before invoking. When in doubt, ask rather than ending prematurely.

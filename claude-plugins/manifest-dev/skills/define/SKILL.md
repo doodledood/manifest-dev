@@ -91,7 +91,7 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 3. **Domain-grounded** - Understand the domain before probing. Task files add angles to consider; exploration reveals patterns/constraints. Latent criteria emerge from domain understanding—you can't surface what you don't know.
 
-4. **Complete** - Surface hidden requirements through domain grounding (what exists and constrains us?), outside view (what typically fails in similar projects?), pre-mortem (what could go wrong?), and non-obvious probing (what hasn't user considered?).
+4. **Complete** - Surface hidden requirements by ensuring: the domain is understood (what exists and constrains us), the reference class is identified (what typically fails in similar projects), failure modes are anticipated (what could go wrong), positive dependencies are surfaced (what must go right), and non-obvious angles are probed (what hasn't the user considered). These are coverage goals, not sequential steps — understanding from any source (conversation, research, prior sessions, task files) counts toward them.
 
 5. **Directed** - For complex tasks, establish initial implementation direction (Approach) before execution. Architecture defines starting direction, not step-by-step script. Trade-offs enable autonomous adjustment when reality diverges.
 
@@ -99,17 +99,17 @@ Scope deliverables and verification to repo context. Cross-repo invariants get e
 
 ## Interview Flow
 
-The interview covers these protocols: Domain Grounding, Outside View, Pre-Mortem, Backcasting, Adversarial Self-Review (skip for simple tasks). The active interview mode defines the flow structure — whether protocols run sequentially, interleaved, or organically. See the interview mode file for flow specifics.
+The interview ensures five coverage goals are met: Domain Understanding, Reference Class Awareness, Failure Mode Coverage, Positive Dependency Coverage, and Process Self-Audit (skip for simple tasks). These are states of sufficient understanding, not steps to execute. Existing context — from conversation history, arguments, prior research, task files, or any other source — counts toward coverage. The interview probes gaps, not territory already covered. The active interview mode defines how gaps are probed and decisions are made. See the interview mode file for specifics.
 
 ## Complexity Triage
 
 After understanding the task, calibrate interview depth:
 
-| Complexity | Indicators | Protocols |
-|------------|-----------|-----------|
-| **Simple** | Single file, obvious approach, low risk | Domain Grounding + quick Pre-Mortem |
-| **Standard** | Multi-file, clear domain, moderate risk | All protocols, lightweight Adversarial |
-| **Complex** | Multi-deliverable, unfamiliar domain, high risk, multi-repo | All protocols including Approach section |
+| Complexity | Indicators | Coverage Depth |
+|------------|-----------|----------------|
+| **Simple** | Single file, obvious approach, low risk | Domain understanding + quick failure scan. Other goals likely satisfied by existing context. |
+| **Standard** | Multi-file, clear domain, moderate risk | All coverage goals addressed. Failure modes and positive dependencies get explicit attention. |
+| **Complex** | Multi-deliverable, unfamiliar domain, high risk, multi-repo | All coverage goals addressed with depth. Approach section included. Process self-audit mandatory. |
 
 When uncertain, default to Standard. User can signal "enough" to compress at any point.
 
@@ -132,13 +132,13 @@ Follow the loaded interview mode's rules for question format, flow structure, ch
 
 **Decisions lock through structured options** - Questions that lock manifest content (encoding decisions, scope boundaries, trade-offs) present 2-4 concrete options, one marked "(Recommended)". The messaging file defines the tool; the interview mode defines when to present options, how to share findings, and how to discuss before locking.
 
-**Resolve all Resolvable task file structures** — After reading task files, extract every Resolvable table and checklist (risk lists, scenario prompts, trade-offs) and log each as a pending item. Quality gates and `## Defaults` are not Resolvable — auto-include them (quality gates as INV-G*, Defaults as PG-*), omitting clearly inapplicable ones with logged reasoning. Resolve each Resolvable item by either:
+**Resolve all Resolvable task file structures** — After reading task files, extract every Resolvable table and checklist (risk lists, scenario prompts, trade-offs) and log each. Items already resolved in conversation context (e.g., a risk discussed and decided in a prior /understand session) are logged as `- [x]` RESOLVED (from context) with source — not re-probed. Remaining unresolved items are logged as `- [ ]` PENDING. Quality gates and `## Defaults` are not Resolvable — auto-include them (quality gates as INV-G*, Defaults as PG-*), omitting clearly inapplicable ones with logged reasoning. Resolve each pending Resolvable item by either:
 1. **Present to user** for selection with structured options — selected items encoded as INV-G* or AC-*, unselected items explicitly scoped out
 2. **Skip with logged justification** — when a structure genuinely doesn't apply to this task, log why (e.g., "CODING.md concurrency risk: single-threaded CLI tool, no concurrent access")
 
 Don't defer to synthesis — these are structural decisions that compound when missed. The flexibility is in justifying what to skip, not in whether to engage.
 
-**Discoverable unknowns — search first** - Facts about the project (existing structure, patterns, conventions, prior decisions) are discoverable through Domain Grounding. Don't ask the user about facts you could discover. Only ask about discoverable facts when: multiple plausible candidates exist, searches yield nothing but the fact is needed, or the ambiguity is actually about intent not fact. When asking, present what you found and recommend one option.
+**Discoverable unknowns — search first** - Facts about the project (existing structure, patterns, conventions, prior decisions) are discoverable through exploration. Don't ask the user about facts you could discover. Only ask about discoverable facts when: multiple plausible candidates exist, searches yield nothing but the fact is needed, or the ambiguity is actually about intent not fact. When asking, present what you found and recommend one option.
 
 **Preference unknowns — ask early** - Trade-offs, priorities, scope decisions, and style preferences cannot be discovered through exploration. Ask these directly. Provide concrete options with a recommended default. If genuinely low-impact and the user signals "enough", proceed with the recommended default and record as a Known Assumption in the manifest.
 
@@ -154,6 +154,19 @@ Don't defer to synthesis — these are structural decisions that compound when m
 
 **Log is working memory** - Write to `/tmp/define-discovery-{timestamp}.md` immediately after each discovery. The log is not a narrative record — it's the source of truth for what's been found and what still needs resolution. Another agent reading only the log could resume the interview.
 
+**Seed from existing context.** Before probing, assess what's already understood from all available sources: conversation history, arguments, prior research, task files, existing manifests. Write an initial Context Assessment section:
+
+```
+## Context Assessment
+SOURCES: [conversation context | arguments | prior research | task files | ...]
+ALREADY UNDERSTOOD:
+- [x] RESOLVED (from context): [item] — [source and reasoning]
+GAPS IDENTIFIED:
+- [ ] PENDING: [what's missing and why it matters]
+```
+
+The interview begins at the gaps, not at the beginning. Items resolved from context are as valid as items resolved through probing — the coverage goal is the same regardless of how it was reached. Before marking a coverage goal as met from context, verify you can produce concrete evidence — name specific patterns, scenarios, or findings. Vague confidence doesn't count.
+
 Every actionable item gets logged with resolution status:
 - `- [ ]` PENDING — needs resolution (present to user, probe further, or encode)
 - `- [x]` RESOLVED — encoded as INV/AC/PG/ASM, confirmed by user, or answered
@@ -162,21 +175,32 @@ Every actionable item gets logged with resolution status:
 Log pending items as they emerge — from any source:
 - Auto-included items after reading task files (quality gates as INV/AC, Defaults as PG — log as `- [x]` RESOLVED)
 - Resolvable task file structures after reading task files (risks, scenarios, trade-offs)
-- Domain grounding findings needing user confirmation before encoding
-- Pre-mortem scenarios needing disposition (encode, scope out, or mitigate)
+- Findings needing user confirmation before encoding
+- Failure scenarios needing disposition (encode, scope out, or mitigate)
 - User constraints needing INV/AC/PG mapping
-- Backcasting assumptions needing resolution
+- Assumptions needing resolution
 - Follow-up questions triggered by earlier answers
 
 Read full log before synthesis. Unresolved `- [ ]` items must be addressed first.
 
-**Confirm understanding periodically** - Before transitioning to a new topic area or after resolving a cluster of related questions, synthesize your current understanding. The active interview mode defines the checkpoint format — how understanding is shared and what invitation for contribution is offered.
+**Confirm understanding periodically** - After resolving a cluster of related questions, synthesize your current understanding. The active interview mode defines the checkpoint format — how understanding is shared and what invitation for contribution is offered.
 
 **Batch related questions** - Group related questions into a single turn rather than asking one at a time. Batching keeps momentum and reduces round-trips without sacrificing depth. Each batch should cover a coherent topic area—don't mix unrelated concerns in one batch.
 
-**Stop when converged** - The checklist below defines WHAT must be true for convergence. The active interview mode defines HOW aggressively to pursue it (probing style, synthesis threshold). Convergence requires: domain grounded (pre-mortem scenarios are project-specific, not generic), pre-mortem scenarios logged with dispositions (see Pre-Mortem Protocol), edge cases probed, no unresolved `- [ ]` items in the log, quality gates from task files encoded as INV-G* (or omitted with logged reasoning), Defaults encoded as PG-*, and no obvious areas left unexplored. Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
+**Stop when converged** - The checklist below defines WHAT must be true for convergence. The active interview mode defines HOW aggressively to pursue it (probing style, synthesis threshold). Items resolved from any source count equally — understanding from conversation context, prior research, or fresh exploration all satisfy coverage goals. Convergence requires:
+- **Domain understanding** sufficient: failure scenarios are project-specific, not generic
+- **Reference class** identified: base-rate failures acknowledged
+- **Failure modes** covered: scenarios have dispositions (encoded, scoped out, or mitigated); mental model alignment checked
+- **Positive dependencies** surfaced: load-bearing assumptions resolved (verified, encoded, or logged as ASM)
+- Edge cases probed
+- No unresolved `- [ ]` items in the log
+- Quality gates from task files encoded as INV-G* (or omitted with logged reasoning)
+- Defaults encoded as PG-*
+- No obvious coverage gaps remaining
 
-**Insights become criteria** - Domain grounding findings, outside view findings, pre-mortem risks, non-obvious discoveries → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to Resolvable task file content — risks and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
+Remaining low-impact unknowns that don't warrant further probing are recorded as Known Assumptions in the manifest. User can signal "enough" to override.
+
+**Insights become criteria** - Domain understanding findings, reference class insights, failure mode scenarios, positive dependency discoveries, non-obvious angles → convert to INV-G* or AC-*. Don't include insights that aren't encoded as criteria. This applies equally to Resolvable task file content — risks and scenario dispositions must be traceable to manifest criteria or they're aspirational, not enforced.
 
 **Automate verification** - Use automated methods (commands, subagent review). When using general-purpose subagent, default to `inherit`. When a criterion seems to require manual verification, probe the user: suggest how it could be made automatable, or ask if they have ideas. Manual only as a last resort or when the user explicitly requests it.
 
@@ -209,143 +233,88 @@ After defining deliverables, probe for **initial** implementation direction. Ski
 
 **Architecture vs Process Guidance**: Architecture = structural decisions (components, patterns, structure). Process Guidance = methodology constraints (tools, manual vs automated). "Add executive summary section covering X, Y, Z" is Architecture. "No bullet points in summary sections" is Process Guidance.
 
-## Domain Grounding Protocol
+## Coverage Goal: Domain Understanding
 
-Understand what exists in the affected area. Latent criteria emerge from domain understanding—you can't surface what you don't know.
+**What must be true:** You understand the affected area well enough to generate project-specific failure scenarios — not generic ones. You know existing patterns, structure, constraints, and prior decisions relevant to the task.
 
-**The exercise**: "What already exists in the relevant area? What patterns, conventions, and constraints are in place?"
+Understanding comes from any source — conversation context, prior research, code exploration, documentation, user-provided arguments, task files. If the conversation already contains domain context, that understanding is real. Don't re-discover what's already known.
 
-Explore the areas relevant to the task. Surface:
+**What to assess:**
 - **Existing patterns** — how similar things are currently done
 - **Structure** — components, dependencies, boundaries in the affected area
 - **Constraints** — implicit conventions, assumed invariants, existing contracts
 - **Prior decisions** — why things are the way they are, when discoverable
 
-What "exploration" means depends on the domain. For code tasks, explore the codebase. For research, the existing knowledge landscape. For content, the audience and existing publications. Task files add domain-specific exploration angles.
+When understanding is insufficient, fill gaps through whatever means fits the domain — read code, search the web, read docs, ask the user targeted questions about what exploration can't reveal. Scope to what's relevant to the task, not the entire domain.
 
-**Scoping**: Explore what's relevant to the task description, not the entire domain. Focus on the affected area and its immediate context.
+**Convergence test:** Can you generate failure scenarios that reference specific components, patterns, or conventions in this context? If yes, domain understanding is sufficient. If you can only imagine generic failures, gaps remain.
 
-Log findings to the discovery file — both narrative context and pending items:
-```
-DOMAIN GROUNDING: [area explored]
-PATTERNS FOUND: [existing conventions, approaches]
-CONSTRAINTS FOUND: [what the existing context assumes or requires]
-IMPLICATIONS FOR TASK: [how this shapes what we build]
+## Coverage Goal: Reference Class Awareness
 
-Pending:
-- [ ] Confirm: [pattern X] as constraint?
-- [ ] Confirm: [convention Y] as invariant?
-```
+**What must be true:** You know what type of task this is, what typically fails in that class, and those base-rate failures inform your failure mode coverage.
 
-**Convergence**: Domain grounding converges when you understand the affected area well enough to generate project-specific failure scenarios—not generic ones. If you can only imagine generic failures, you haven't grounded enough. If you can imagine failures that reference specific components, patterns, or conventions in this context, you have.
+Task classification may already be clear from conversation context. Prior research or user-provided context may already describe known failure patterns. Task file warnings are a source. Only probe when the reference class is unclear or base-rate failures are unknown.
 
-## Outside View Protocol
+**What to assess:** Ground the reference class in domain understanding — "refactor of a tightly-coupled module with no tests" is useful; "refactor" is too generic. The reference class should be specific enough that its failure patterns are actionable. Log the reference class and known failure modes — these become priors for failure mode coverage.
 
-Establish what typically fails in this class of task.
+**Convergence test:** Can you name the reference class and its most common failure modes? If yes, this goal is met. Often satisfiable in a single assessment step, especially when domain understanding is already strong.
 
-**The exercise**: "What's the reference class? What usually goes wrong?"
+## Coverage Goal: Failure Mode Coverage
 
-Identify the task type (refactor, feature, bug fix, etc.). Ground the reference class in what domain grounding revealed—"refactor of a tightly-coupled module with no tests" is a better reference class than "refactor." Search for evidence: prior similar tasks, domain knowledge, task file warnings. What issues emerged post-delivery? What patterns caused rejection?
+**What must be true:** Failure modes have been anticipated with concrete scenarios, and each has a disposition — encoded as criterion, explicitly scoped out, or mitigated by approach. No dangling scenarios. Mental model alignment checked — your understanding of "done" matches the user's expectation.
 
-Log the reference class and its known failure modes. Pre-mortem scenarios inherit these as priors—a refactor that "typically introduces regressions" starts with that as high-likelihood.
+Failure scenarios may already exist from conversation context, prior research, or task file review. When they do, verify dispositions are resolved and encode. When gaps exist, generate new scenarios — imagine the task has failed or been rejected, and be specific about what went wrong.
 
-```
-REFERENCE CLASS: [task type]
-BASE RATE FAILURES: [what typically goes wrong]
-SOURCE: [prior tasks | domain knowledge | task file]
-```
-
-## Pre-Mortem Protocol
-
-Pre-mortems surface latent criteria—requirements users don't know they have until the right failure scenario makes them obvious. This isn't a checkbox; it's the backbone of comprehensive probing.
-
-**The exercise**: "Imagine this task has failed, or the deliverable was rejected. What went wrong?"
-
-### Failure Dimensions
-
-These are lenses for generating scenarios—prompts to activate failure imagination, not a checklist to complete. Apply whichever dimensions are relevant; skip those that genuinely don't apply. If no scenarios emerge from one dimension, move to another—the goal is coverage, not completeness per dimension.
+**Failure dimensions** — lenses for generating scenarios when gaps exist:
 
 | Dimension | What to imagine | Example scenario |
 |-----------|-----------------|------------------|
 | **Technical** | What breaks at the code/system level? | Race condition under concurrent access; memory leak at scale |
 | **Integration** | What breaks at boundaries? | API contract violated; schema migration breaks consumers |
-| **Stakeholder** | What causes rejection even if technically correct? | Doesn't match reviewer's mental model; solves stated problem but not underlying need; correct scope but wrong emphasis |
+| **Stakeholder** | What causes rejection even if technically correct? | Doesn't match reviewer's mental model; correct scope but wrong emphasis |
 | **Timing** | What fails later that works now? | Works today, breaks at scale; passes review, fails in production |
 | **Edge cases** | What inputs/conditions weren't considered? | Empty input, unicode, malformed data, timeout, concurrent modification |
 | **Dependencies** | What external factors cause failure? | Upstream API changes; library deprecation; environment drift |
 
-Task files add domain-specific failure scenarios. Use them as fuel for imagination—pick what's relevant, skip what isn't. They're not exhaustive or mandatory. Scenarios grounded in domain grounding findings are higher signal than generic templates—task file prompts + domain context = project-specific failure modes.
+Task files add domain-specific failure scenarios. Scenarios grounded in domain understanding are higher signal than generic templates.
 
-### Generating and Presenting Scenarios
-
-For each relevant dimension, generate concrete failure scenarios. Be specific—"something breaks" is useless; "the scheduler runs a job twice when the server restarts mid-execution" is actionable.
-
-**Present scenarios and resolve dispositions.** The active interview mode defines how scenarios are presented — question format, discussion style, and how the user engages with dispositions.
-
-**Mental model alignment**: Before finalizing deliverables, check for mismatch between your understanding and the user's expectation. Mismatches are latent criteria — expectations they didn't state. The active interview mode defines the format for this alignment check.
-
-When logging scenarios, capture what matters:
-- **What fails** (the specific scenario)
-- **Likelihood and impact** (to prioritize probing)
-- **What question this raises** (what to ask the user)
-
-Example log entry:
-```
-DIMENSION: Timing
-SCENARIO: Feature works in dev but rate limits hit in production due to external API calls
-LIKELIHOOD: Medium | IMPACT: High
-- [ ] Ask user: External API rate limits — resolve disposition
-```
-
-### Scenario Disposition
-
-Every scenario worth logging must resolve to one of:
-
+**Scenario disposition** — every scenario resolves to one of:
 1. **Encoded as criterion** — becomes INV-G*, AC-*, or Risk Area with detection
-2. **Explicitly out of scope** — user confirmed it's acceptable risk for this task
+2. **Explicitly out of scope** — user confirmed it's acceptable risk
 3. **Mitigated by approach** — architecture choice eliminates the failure mode
 
-No dangling scenarios. If you logged it, resolve it.
+The active interview mode defines how scenarios are presented and dispositions resolved.
 
-### When Is Pre-Mortem Complete?
+**Convergence test:** Relevant failure dimensions considered, all scenarios have dispositions, and user confirms no major failure modes were missed.
 
-Pre-mortem probing converges when:
-- Relevant dimensions have been considered (not all—relevant)
-- Generated scenarios have dispositions (encoded, out of scope, or mitigated)
-- User confirms no major failure modes were missed
+## Coverage Goal: Positive Dependency Coverage
 
-"I can't think of more scenarios" after trying multiple dimensions = converged. "I haven't tried thinking about it" = not converged.
+**What must be true:** Load-bearing assumptions — what must go right for the task to succeed — are surfaced and each is resolved: verified, encoded as invariant, or logged as Known Assumption.
 
-## Backcasting Protocol
+Where failure mode coverage asks "what broke?", positive dependencies ask "what held?" This reveals assumptions you haven't examined. Prior conversation or research may have already surfaced these.
 
-Surface positive dependencies — what has to go right for the task to succeed.
-
-**The exercise**: "Imagine this task succeeded on first review. What had to go right?"
-
-Where pre-mortem asks "what broke?", backcasting asks "what held?" This reveals load-bearing assumptions you haven't examined.
-
-Focus on implicit assumptions:
+**What to assess:**
 - What existing infrastructure/tooling are you relying on?
 - What user behavior are you assuming?
 - What needs to stay stable that could change?
 
-For each positive dependency, resolve its disposition — whether it's a safe assumption, needs verification, should be encoded as an invariant, or is actually a risk. The active interview mode defines how dependencies are presented and resolved.
+The active interview mode defines how dependencies are presented and resolved.
 
-Converges when load-bearing assumptions are surfaced and each is verified, encoded, or logged as Known Assumption.
+**Convergence test:** Load-bearing assumptions surfaced and each has a disposition.
 
-## Adversarial Self-Review
+## Coverage Goal: Process Self-Audit
 
-Red-team yourself: if you wanted this task to fail subtly, what decisions would you make that look reasonable individually?
+**What must be true:** Process self-sabotage patterns — decisions that look reasonable individually but compound into failure — are identified and resolved. Skip for simple tasks.
 
-Pre-mortem imagines external failures. Adversarial self-review imagines process self-sabotage—patterns that compound:
+Where failure mode coverage imagines external failures, process self-audit imagines internal sabotage:
 - Small scope additions ("just one more thing")
 - Edge cases deferred ("we'll handle that later")
 - "Temporary" solutions that become permanent
 - Process shortcuts that erode quality
 
-For each pattern identified, resolve its disposition — whether to add as Process Guidance, encode as a verifiable Invariant, accept as low risk, or note it's already covered. The active interview mode defines how patterns are presented and resolved.
+For each pattern, resolve its disposition — add as Process Guidance, encode as verifiable Invariant, accept as low risk, or note it's already covered. The active interview mode defines how patterns are presented and resolved.
 
-Skip for simple tasks. Use for tasks with scope risk, process complexity, or history of scope creep.
+**Convergence test:** Scope-risky tasks have process risks identified and resolved. Simple tasks can skip this goal entirely.
 
 ## What the Manifest Needs
 

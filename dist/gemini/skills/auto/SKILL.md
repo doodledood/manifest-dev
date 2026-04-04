@@ -1,6 +1,6 @@
 ---
 name: auto
-description: 'End-to-end autonomous execution: /define → auto-approve → /do in a single command. Add --tend-pr to continue through PR review lifecycle. Use when you want to define and execute a task without manual intervention during planning. Triggers: auto, autonomous define and do, end-to-end, just build it.'
+description: 'End-to-end autonomous execution: /define → auto-approve → /do in a single command. Infers task from conversation context when no arguments provided. Add --tend-pr to continue through PR review lifecycle. Use when you want to define and execute a task without manual intervention during planning. Triggers: auto, autonomous define and do, end-to-end, just build it.'
 user-invocable: true
 ---
 
@@ -8,22 +8,20 @@ user-invocable: true
 
 ## Goal
 
-Chain `/define` and `/do` into a single autonomous flow. The full /define process runs — all protocols, all probing, all logging — the model answers its own questions instead of the user. After the manifest is built and verified, auto-approve and immediately launch /do.
+Chain `/define` and `/do` into a single autonomous flow. The full /define process runs — all coverage goals, all probing, all logging — the model answers its own questions instead of the user. After the manifest is built and verified, auto-approve and immediately launch /do.
 
 ## Input
 
-`$ARGUMENTS` = task description (REQUIRED), optionally with `--mode efficient|balanced|thorough`, `--tend-pr`, `--platform <platform>`, `--interval <duration>`, `--reviewers <usernames>`
+`$ARGUMENTS` = task description (optional — inferred from conversation context if absent), optionally with `--mode efficient|balanced|thorough`, `--tend-pr`, `--platform <platform>`, `--interval <duration>`, `--reviewers <usernames>`
 
 If `--interview` is present in arguments: error and halt: "--interview is not supported by /auto. /auto always uses autonomous mode. Use /define for custom interview styles."
-
-If no arguments provided: error and halt: "Usage: /auto <task description> [--mode efficient|balanced|thorough] [--tend-pr [--platform github] [--interval 10m]]"
 
 Parse flags from arguments if present:
 - `--mode` will be passed to /do.
 - `--tend-pr` enables PR lifecycle automation after /do completes.
 - `--platform`, `--interval`, and `--reviewers` are only used when `--tend-pr` is present — passed to /tend-pr.
 
-The remaining text after flag extraction is the task description.
+The remaining text after flag extraction is the task description (`$TASK_DESCRIPTION`). If `$TASK_DESCRIPTION` is empty (no arguments provided, or only flags provided): infer the task from conversation context. Summarize the discussed task into a concrete task description and use that as `$TASK_DESCRIPTION`. If there is no conversation context (fresh session with just `/auto` and nothing else), error and halt: "No task description provided and no conversation context to infer from. Usage: /auto <task description> [--mode efficient|balanced|thorough] [--tend-pr [--platform github] [--interval 10m]]"
 
 ## Flow
 

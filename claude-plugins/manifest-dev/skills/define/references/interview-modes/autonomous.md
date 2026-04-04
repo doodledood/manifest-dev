@@ -12,7 +12,7 @@ No user-facing questions during the interview. All findings are resolved autonom
 
 ## Interview Flow
 
-Run all protocols internally. Log findings and resolutions to the discovery file. Do not pause for user input between protocols.
+Address all coverage goals internally. Assess existing context, probe gaps, log findings and resolutions to the discovery file. Do not pause for user input.
 
 ## Checkpoint Behavior
 

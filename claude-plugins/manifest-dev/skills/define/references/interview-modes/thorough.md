@@ -19,17 +19,15 @@ The concrete scenario helps users recognize whether it applies. The options redu
 
 **Mental model alignment**: Before finalizing deliverables, present your understanding and check for mismatch: "Here's what 'done' looks like: [concrete description]. Does this match your expectation?" → Options: "Yes, that's right (Recommended)", "Mostly, but also need [X]", "No, I expected [different thing]". Mismatches are latent criteria — expectations they didn't state.
 
-**Backcasting presentation**: For each positive dependency, present to user with disposition options: "This assumes [X] remains stable. How should we handle?" → Options: "Safe assumption - log as Known Assumption (Recommended)", "Verify it holds before proceeding", "Encode as invariant", "Actually a risk - add to pre-mortem".
+**Positive dependency presentation**: For each positive dependency, present to user with disposition options: "This assumes [X] remains stable. How should we handle?" → Options: "Safe assumption - log as Known Assumption (Recommended)", "Verify it holds before proceeding", "Encode as invariant", "Actually a risk - add to failure modes".
 
-**Adversarial self-review presentation**: For each pattern identified, present to user: "This task is susceptible to [pattern]. Should we guard against it?" → Options: "Yes - add as Process Guidance (Recommended)", "Yes - add as verifiable Invariant", "Low risk for this task", "Already covered by [existing constraint]".
+**Process self-audit presentation**: For each pattern identified, present to user: "This task is susceptible to [pattern]. Should we guard against it?" → Options: "Yes - add as Process Guidance (Recommended)", "Yes - add as verifiable Invariant", "Low risk for this task", "Already covered by [existing constraint]".
 
 ## Interview Flow
 
-Protocols are sequential — each feeds the next:
+Coverage goals build on each other — domain understanding makes reference class identification specific, reference class awareness grounds failure imagination, failure coverage reveals positive dependencies to examine. But the flow is adaptive, not sequential. Assess what's already covered from context, then probe gaps in whatever order serves the task.
 
-Domain Grounding → Outside View → Pre-Mortem → Backcasting → Adversarial Self-Review (skip for simple tasks).
-
-Domain Grounding reveals context that makes Outside View specific. Outside View establishes base rates that make Pre-Mortem grounded. Pre-Mortem surfaces failures that Backcasting complements with positive dependencies.
+When existing context already provides domain understanding (e.g., from prior conversation, research, or user-provided arguments), begin probing from wherever the gaps are. Don't re-walk covered ground.
 
 ## Checkpoint Behavior
 
