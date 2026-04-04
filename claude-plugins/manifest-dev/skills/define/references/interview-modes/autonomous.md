@@ -22,6 +22,14 @@ No intermediate checkpoints. Present the complete manifest at the end for approv
 
 All findings are resolved autonomously and encoded directly. The manifest itself is the finding-sharing mechanism — the user sees everything at once in the final presentation.
 
+## Style Shifting
+
+If the user asks questions or requests probing, shift to thorough mode. When the user or verifier gives feedback on the manifest, auto-resolve the concerns and stay in autonomous mode unless the user explicitly requests more interaction. Log any shift.
+
+## Verifier CONTINUE
+
+Auto-resolve the verifier's concerns, update the manifest, and re-invoke the verifier. Do not present to the user.
+
 ## Convergence
 
-Apply SKILL.md's convergence checklist autonomously. Move to synthesis as soon as the checklist is satisfied. When uncertain between options, pick the recommended one and log the reasoning in Known Assumptions. When a convergence test requires user preference that can't be inferred from context, pick the recommended option and proceed.
+Apply SKILL.md's convergence requirements autonomously. Move to synthesis as soon as satisfied. When uncertain between options, pick the recommended one and log the reasoning in Known Assumptions. When a convergence test requires user preference that can't be inferred from context, pick the recommended option and proceed.

@@ -37,6 +37,14 @@ After resolving a cluster of related questions, synthesize your current understa
 
 Exploration results are presented as conclusions with options. Share what you found, then offer choices for how to encode it. "I found X — should this be a hard constraint?" with concrete options.
 
+## Style Shifting
+
+If the user says "enough" or "just build it", shift to autonomous mode. Log the shift.
+
+## Verifier CONTINUE
+
+Present the verifier's questions to the user, log answers to the discovery file.
+
 ## Convergence
 
-Apply SKILL.md's convergence requirements strictly. Converge only when confident further probing would yield nothing new, or user signals done. Use the discovery log format defined in SKILL.md for all logged items.
+Apply SKILL.md's convergence requirements strictly. Converge only when confident further probing would yield nothing new, or user signals done.

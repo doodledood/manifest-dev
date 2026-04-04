@@ -199,7 +199,7 @@ Follow the loaded interview mode's rules for question format, flow structure, ch
 
 **Auto-decided items**: When interview style causes an item to be auto-decided (agent picks recommended option instead of asking), encode it normally as INV/AC/PG with an "(auto)" annotation, AND list it in the Known Assumptions section with the reasoning for the chosen option.
 
-**Style is dynamic**: The `--interview` flag sets the starting posture, not a rigid lock. Shift when the user's behavior signals a different mode: thorough user says "enough" or "just build it" → shift to autonomous. Autonomous user asks questions or requests probing → shift to thorough. When the user or verifier gives feedback on an autonomous manifest, auto-resolve the concerns and stay in autonomous mode unless the user explicitly requests more interaction. After a style shift, follow the new mode's convergence rules from that point forward. Log any style shift to the discovery file.
+**Style is dynamic**: The `--interview` flag sets the starting posture, not a rigid lock. Shift when the user's behavior signals a different mode. After a style shift, follow the new mode's rules from that point forward. Log any style shift to the discovery file.
 
 ## Constraints
 
@@ -389,7 +389,7 @@ Invoke the manifest-dev:manifest-verifier agent with: "Manifest: /tmp/manifest-{
 
 The verifier returns **CONTINUE** or **COMPLETE**:
 
-- **CONTINUE**: In autonomous mode, auto-resolve the verifier's concerns, update the manifest, and re-invoke the verifier. In other modes, present the verifier's questions to the user, log answers to the discovery file, update the manifest, then invoke the verifier again.
+- **CONTINUE**: The active interview mode defines how to handle this — see the mode file for whether to present to the user or auto-resolve. Log answers/resolutions to the discovery file, update the manifest, then invoke the verifier again.
 - **COMPLETE**: Proceed to summary for approval.
 
 Repeat until COMPLETE or user signals "enough".

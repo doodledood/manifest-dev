@@ -22,6 +22,14 @@ One checkpoint after domain understanding is established (scope confirmation) an
 
 Share only findings that require user input. Auto-decided findings are logged silently and surfaced in the final checkpoint for review.
 
+## Style Shifting
+
+If the user starts asking detailed questions or requesting deeper probing, shift to thorough. If the user says "enough" or "just build it", shift to autonomous. Log any shift.
+
+## Verifier CONTINUE
+
+Present the verifier's questions to the user, log answers to the discovery file.
+
 ## Convergence
 
-All five coverage goals apply (same as thorough), but auto-resolve low-impact items. Converge quickly — move to synthesis once scope, constraints, and irreversible decisions are resolved.
+All five coverage goals apply, but auto-resolve low-impact items. Converge quickly — move to synthesis once scope, constraints, and irreversible decisions are resolved.
