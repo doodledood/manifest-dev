@@ -33,14 +33,14 @@ Surface-level coverage with gaps is worse than deep coverage of fewer areas. Fla
 - Topics mentioned but not probed for edge cases
 - User constraints stated in log but not encoded in manifest (INV, AC, or PG)
 
-### Domain grounding before criteria
+### Domain understanding before criteria
 
 Latent requirements emerge from domain understanding. Flag when:
-- Log shows no domain grounding of the affected area (no exploration of existing patterns, structure, or constraints)
+- Log shows no domain understanding of the affected area (no exploration of existing patterns, structure, or constraints — from any source)
 - Task involves external services but log shows no cross-service investigation
 - Mental Model is generic (could apply to any project)
 - New data field but no exploration of where data originates or how it flows
-- Domain grounding findings logged but not confirmed with user before encoding as invariants
+- Domain understanding findings logged but not confirmed with user before encoding as invariants
 
 ### Edge cases for new capabilities
 
@@ -52,7 +52,7 @@ User statements and discovered insights must appear in the manifest. Flag when:
 - User stated a preference/constraint with no corresponding INV, AC, or PG
 - Technical discovery encoded as invariant without user confirmation ("Discovered ≠ confirmed")
 - Process constraint (how to work) placed in INV instead of Process Guidance
-- Insights from domain grounding/outside view/pre-mortem logged but not converted to criteria
+- Insights from domain understanding, reference class analysis, or failure mode coverage logged but not converted to criteria
 - Discovery log contains unresolved pending items (`- [ ]`) that weren't presented, encoded, or scoped out before synthesis
 
 ### Approach for complexity
@@ -65,15 +65,15 @@ Complex tasks need initial direction (expect adjustment when reality diverges). 
 - Competing concerns discussed but no trade-offs (T-*) captured
 - High-risk task but no risk areas (R-*) defined
 
-### Outside view grounding
+### Reference class grounding
 
-Pre-mortem should be grounded in evidence, not pure imagination. Flag when:
+Failure mode coverage should be grounded in evidence, not pure imagination. Flag when:
 - No reference class identified (what type of task is this?)
-- Reference class is generic when domain grounding revealed specific context (e.g., "refactor" instead of "refactor of a tightly-coupled module with no tests")
+- Reference class is generic when domain understanding revealed specific context (e.g., "refactor" instead of "refactor of a tightly-coupled module with no tests")
 - No base rate failures logged (what typically goes wrong in this class?)
-- Pre-mortem scenarios don't inherit from known failure patterns
+- Failure scenarios don't inherit from known failure patterns
 
-### Pre-mortem scenario resolution
+### Failure mode coverage
 
 Failure scenarios raised must be resolved, not left dangling. Flag when:
 - Failure scenario discussed in log but no corresponding INV, AC, R-*, or explicit out-of-scope decision
@@ -81,17 +81,17 @@ Failure scenarios raised must be resolved, not left dangling. Flag when:
 - Scenarios logged but lack disposition (encoded, scoped out, or mitigated)
 - No mental model alignment check (user's vision of "done" vs deliverable definitions)
 
-### Backcasting coverage
+### Positive dependency coverage
 
 Positive dependencies (what must go right) should be surfaced. Flag when:
-- Log shows no backcasting exercise for non-trivial tasks
+- Non-trivial task but positive dependencies not examined (from any source — log, context, or manifest)
 - Implicit assumptions about infrastructure, tooling, or user behavior not examined
 - Load-bearing assumptions not resolved (verified, encoded as invariant, or logged as ASM)
 
-### Adversarial self-review
+### Process self-audit coverage
 
 Process self-sabotage patterns should be considered for scope-risky tasks. Flag when:
-- Scope-risky task (multi-deliverable, open-ended, history of creep) but no adversarial self-review in log
+- Scope-risky task (multi-deliverable, open-ended, history of creep) but process risks not examined
 - Patterns like scope creep, deferred edge cases, or "temporary" solutions not addressed
 - No Process Guidance guards against identified self-sabotage patterns
 

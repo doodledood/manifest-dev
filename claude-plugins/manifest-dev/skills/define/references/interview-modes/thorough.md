@@ -25,11 +25,9 @@ The concrete scenario helps users recognize whether it applies. The options redu
 
 ## Interview Flow
 
-Protocols are sequential — each feeds the next:
+Coverage goals build on each other — domain understanding makes reference class identification specific, reference class awareness grounds failure imagination, failure coverage reveals positive dependencies to examine. But the flow is adaptive, not sequential. Assess what's already covered from context, then probe gaps in whatever order serves the task.
 
-Domain Grounding → Outside View → Pre-Mortem → Backcasting → Adversarial Self-Review (skip for simple tasks).
-
-Domain Grounding reveals context that makes Outside View specific. Outside View establishes base rates that make Pre-Mortem grounded. Pre-Mortem surfaces failures that Backcasting complements with positive dependencies.
+When existing context already provides domain understanding (e.g., from prior conversation, research, or user-provided arguments), begin probing from wherever the gaps are. Don't re-walk covered ground.
 
 ## Checkpoint Behavior
 

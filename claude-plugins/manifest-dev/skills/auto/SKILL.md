@@ -8,7 +8,7 @@ user-invocable: true
 
 ## Goal
 
-Chain `/define` and `/do` into a single autonomous flow. The full /define process runs — all protocols, all probing, all logging — the model answers its own questions instead of the user. After the manifest is built and verified, auto-approve and immediately launch /do.
+Chain `/define` and `/do` into a single autonomous flow. The full /define process runs — all coverage goals, all probing, all logging — the model answers its own questions instead of the user. After the manifest is built and verified, auto-approve and immediately launch /do.
 
 ## Input
 
