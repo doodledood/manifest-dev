@@ -2,7 +2,7 @@
 """
 Post-compact hook that restores workflow context after compaction.
 
-When the session is compacted during an active /do or /understand workflow,
+When the session is compacted during an active /do or /figure-out workflow,
 context may be lost. This hook detects active workflows and reminds Claude
 to re-read relevant files and restore the correct cognitive stance.
 
@@ -17,7 +17,7 @@ import sys
 from hook_utils import (
     build_system_reminder,
     parse_do_flow,
-    parse_understand_flow,
+    parse_figure_out_flow,
 )
 
 DO_WORKFLOW_RECOVERY_REMINDER = """This session was compacted during an active /do workflow. Context may have been lost.
@@ -32,18 +32,18 @@ The /do was invoked with: {do_args}
 Do not restart completed work. Resume from where you left off."""
 
 
-UNDERSTAND_RECOVERY_REMINDER_PREFIX = """This session was compacted during an active /understand session. Context may have been lost.
+FIGURE_OUT_RECOVERY_REMINDER_PREFIX = """This session was compacted during an active /figure-out session. Context may have been lost.
 
-You are in an /understand session about: """
+You are in a /figure-out session about: """
 
-UNDERSTAND_RECOVERY_REMINDER_SUFFIX = """
+FIGURE_OUT_RECOVERY_REMINDER_SUFFIX = """
 
-Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — come prepared, incoherence is a signal, resist premature synthesis."""
+Re-read the /figure-out skill to restore your cognitive stance. Truth-convergence is your north star — come prepared, incoherence is a signal, resist premature synthesis."""
 
 
-UNDERSTAND_RECOVERY_FALLBACK = """This session was compacted during an active /understand session. Context may have been lost.
+FIGURE_OUT_RECOVERY_FALLBACK = """This session was compacted during an active /figure-out session. Context may have been lost.
 
-Re-read the /understand skill to restore your cognitive stance. Truth-convergence is your north star — come prepared, incoherence is a signal, resist premature synthesis."""
+Re-read the /figure-out skill to restore your cognitive stance. Truth-convergence is your north star — come prepared, incoherence is a signal, resist premature synthesis."""
 
 
 DO_WORKFLOW_RECOVERY_FALLBACK = """This session was compacted during an active /do workflow. Context may have been lost.
@@ -72,7 +72,7 @@ def main() -> None:
         sys.exit(0)
 
     do_state = parse_do_flow(transcript_path)
-    understand_state = parse_understand_flow(transcript_path)
+    figure_out_state = parse_figure_out_flow(transcript_path)
 
     reminders: list[str] = []
 
@@ -85,16 +85,16 @@ def main() -> None:
         else:
             reminders.append(DO_WORKFLOW_RECOVERY_FALLBACK)
 
-    # Active /understand session - build re-grounding reminder
-    if understand_state.has_understand and not understand_state.is_complete:
-        if understand_state.understand_args:
+    # Active /figure-out session - build re-grounding reminder
+    if figure_out_state.has_figure_out and not figure_out_state.is_complete:
+        if figure_out_state.figure_out_args:
             reminders.append(
-                UNDERSTAND_RECOVERY_REMINDER_PREFIX
-                + understand_state.understand_args
-                + UNDERSTAND_RECOVERY_REMINDER_SUFFIX
+                FIGURE_OUT_RECOVERY_REMINDER_PREFIX
+                + figure_out_state.figure_out_args
+                + FIGURE_OUT_RECOVERY_REMINDER_SUFFIX
             )
         else:
-            reminders.append(UNDERSTAND_RECOVERY_FALLBACK)
+            reminders.append(FIGURE_OUT_RECOVERY_FALLBACK)
 
     if not reminders:
         sys.exit(0)

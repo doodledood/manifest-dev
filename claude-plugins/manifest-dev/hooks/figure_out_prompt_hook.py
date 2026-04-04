@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-UserPromptSubmit hook that reinforces /understand principles.
+UserPromptSubmit hook that reinforces /figure-out principles.
 
-When user submits a message during an active /understand session, this hook
+When user submits a message during an active /figure-out session, this hook
 injects a concise system reminder to combat sycophantic drift and premature
 convergence. The full skill is already in context — this is a nudge, not
 re-teaching.
@@ -15,14 +15,14 @@ from __future__ import annotations
 import json
 import sys
 
-from hook_utils import build_system_reminder, parse_understand_flow
+from hook_utils import build_system_reminder, parse_figure_out_flow
 
-UNDERSTAND_PRINCIPLES_REMINDER = """/understand active. Self-check before responding:
+FIGURE_OUT_PRINCIPLES_REMINDER = """/figure-out active. Self-check before responding:
 - Are you asking the user something you could investigate yourself?
 - Are you claiming something you haven't verified?
 - Do your claims and findings actually fit together, or are you smoothing over a contradiction?
 - Are you agreeing just to be agreeable?
-- Are you proposing when you should be exploring?
+- Are you jumping to solutions before the problem is figured out?
 - Are you filling the user's uncertainty with your confidence?
 
 Principles: come prepared, name verified vs inferred, incoherence is a signal, sit with fog."""
@@ -38,13 +38,13 @@ def main() -> None:
         if not transcript_path:
             sys.exit(0)
 
-        state = parse_understand_flow(transcript_path)
+        state = parse_figure_out_flow(transcript_path)
 
-        # Only inject when /understand is active and not completed
-        if not state.has_understand or state.is_complete:
+        # Only inject when /figure-out is active and not completed
+        if not state.has_figure_out or state.is_complete:
             sys.exit(0)
 
-        context = build_system_reminder(UNDERSTAND_PRINCIPLES_REMINDER)
+        context = build_system_reminder(FIGURE_OUT_PRINCIPLES_REMINDER)
 
         output = {
             "hookSpecificOutput": {

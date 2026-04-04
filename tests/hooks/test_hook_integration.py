@@ -2,7 +2,7 @@
 Integration tests for manifest-dev hooks.
 
 Tests realistic user scenarios where multiple hooks fire on the same transcript.
-Each test simulates a real /do or /understand session and verifies all hooks
+Each test simulates a real /do or /figure-out session and verifies all hooks
 behave correctly together — no contradictory reminders, correct state transitions,
 proper interaction between hooks at each lifecycle stage.
 
@@ -11,8 +11,8 @@ Hook inventory:
 - pretool_verify_hook.py (PreToolUse/Skill) — reminds to read manifest before /verify
 - posttool_log_hook.py (PostToolUse/TaskUpdate,TaskCreate,TodoWrite,Skill) — reminds to log
 - prompt_submit_hook.py (UserPromptSubmit) — checks for manifest amendments
-- understand_prompt_hook.py (UserPromptSubmit) — reinforces /understand principles
-- post_compact_hook.py (SessionStart/compact) — restores /do or /understand context after compaction
+- figure_out_prompt_hook.py (UserPromptSubmit) — reinforces /figure-out principles
+- post_compact_hook.py (SessionStart/compact) — restores /do or /figure-out context after compaction
 """
 
 from __future__ import annotations
@@ -761,15 +761,15 @@ class TestPretoolVerifyIsolation:
         assert result is not None
 
 
-# --- /understand hook helpers ---
+# --- /figure-out hook helpers ---
 
 
-def run_understand_prompt(transcript_path: str) -> dict[str, Any] | None:
-    return run_hook("understand_prompt_hook.py", {"transcript_path": transcript_path})
+def run_figure_out_prompt(transcript_path: str) -> dict[str, Any] | None:
+    return run_hook("figure_out_prompt_hook.py", {"transcript_path": transcript_path})
 
 
-def user_understand(args: str | None = "the latency problem") -> dict[str, Any]:
-    content = "<command-name>/manifest-dev:understand</command-name>"
+def user_figure_out(args: str | None = "the latency problem") -> dict[str, Any]:
+    content = "<command-name>/manifest-dev:figure-out</command-name>"
     if args:
         content += f"<command-args>{args}</command-args>"
     return {
@@ -778,11 +778,11 @@ def user_understand(args: str | None = "the latency problem") -> dict[str, Any]:
     }
 
 
-def user_understand_done() -> dict[str, Any]:
+def user_figure_out_done() -> dict[str, Any]:
     return {
         "type": "user",
         "message": {
-            "content": "<command-name>/manifest-dev:understand-done</command-name>"
+            "content": "<command-name>/manifest-dev:figure-out-done</command-name>"
         },
     }
 
@@ -796,24 +796,24 @@ def user_define(args: str = "build a widget") -> dict[str, Any]:
     }
 
 
-# === /understand INTEGRATION TESTS ===
+# === /figure-out INTEGRATION TESTS ===
 
 
-class TestUnderstandLifecycle:
-    """Full /understand session: invoke → principles fire → understand-done → hooks stop."""
+class TestFigureOutLifecycle:
+    """Full /figure-out session: invoke → principles fire → figure-out-done → hooks stop."""
 
-    def test_full_understand_lifecycle(self, tmp_path: Path):
-        """Simulate complete /understand session with hook transitions."""
-        # Phase 1: /understand invoked
+    def test_full_figure_out_lifecycle(self, tmp_path: Path):
+        """Simulate complete /figure-out session with hook transitions."""
+        # Phase 1: /figure-out invoked
         transcript = make_transcript(
-            tmp_path, [user_understand(), assistant_text("Let me investigate...")]
+            tmp_path, [user_figure_out(), assistant_text("Let me investigate...")]
         )
 
         # Principles reminder fires
-        reminder = run_understand_prompt(transcript)
+        reminder = run_figure_out_prompt(transcript)
         assert reminder is not None
         ctx = reminder["hookSpecificOutput"]["additionalContext"]
-        assert "understand" in ctx.lower()
+        assert "figure-out" in ctx.lower()
 
         # /do hooks should NOT fire — no /do active
         amendment = run_prompt_submit(transcript)
@@ -822,26 +822,26 @@ class TestUnderstandLifecycle:
         stop_result = run_stop_hook(transcript)
         assert stop_result is None  # allow stop — not in /do
 
-        # Phase 2: /understand-done called
+        # Phase 2: /figure-out-done called
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand(),
+                user_figure_out(),
                 assistant_text("Let me investigate..."),
-                user_understand_done(),
+                user_figure_out_done(),
             ],
         )
 
         # Principles reminder stops
-        reminder = run_understand_prompt(transcript)
+        reminder = run_figure_out_prompt(transcript)
         assert reminder is None
 
-    def test_understand_compaction_recovery(self, tmp_path: Path):
-        """After compaction during /understand, re-grounding reminder fires."""
+    def test_figure_out_compaction_recovery(self, tmp_path: Path):
+        """After compaction during /figure-out, re-grounding reminder fires."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand("the auth flow"),
+                user_figure_out("the auth flow"),
                 assistant_text("Investigating authentication..."),
             ],
         )
@@ -850,18 +850,18 @@ class TestUnderstandLifecycle:
         assert recovery is not None
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
         assert "the auth flow" in ctx
-        assert "understand" in ctx.lower() or "understand" in ctx.lower()
+        assert "figure-out" in ctx.lower()
 
 
-class TestUnderstandToDefineTransition:
-    """/understand → /define transition: understand hooks stop, define hooks don't fire (no /do)."""
+class TestFigureOutToDefineTransition:
+    """/figure-out → /define transition: figure-out hooks stop, define hooks don't fire (no /do)."""
 
-    def test_understand_hooks_stop_when_define_starts(self, tmp_path: Path):
-        """/define after /understand should stop understand hooks."""
+    def test_figure_out_hooks_stop_when_define_starts(self, tmp_path: Path):
+        """/define after /figure-out should stop figure-out hooks."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand(),
+                user_figure_out(),
                 assistant_text("I understand the problem now."),
                 user_define("build auth system"),
                 assistant_text("Let me define..."),
@@ -869,19 +869,19 @@ class TestUnderstandToDefineTransition:
         )
 
         # Understand principles should NOT fire — /define started
-        reminder = run_understand_prompt(transcript)
+        reminder = run_figure_out_prompt(transcript)
         assert reminder is None
 
         # /do amendment check should NOT fire — no /do active
         amendment = run_prompt_submit(transcript)
         assert amendment is None
 
-    def test_understand_then_define_then_do(self, tmp_path: Path):
-        """Full pipeline: /understand → /define → /do. Each hook fires in its context."""
+    def test_figure_out_then_define_then_do(self, tmp_path: Path):
+        """Full pipeline: /figure-out → /define → /do. Each hook fires in its context."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand(),
+                user_figure_out(),
                 assistant_text("Let me investigate the codebase to understand the architecture. " * 3),
                 user_define("build it"),
                 assistant_text("Starting the define interview to capture requirements. " * 3),
@@ -891,7 +891,7 @@ class TestUnderstandToDefineTransition:
         )
 
         # Understand hooks off (define then do started after)
-        reminder = run_understand_prompt(transcript)
+        reminder = run_figure_out_prompt(transcript)
         assert reminder is None
 
         # /do hooks on
@@ -903,21 +903,21 @@ class TestUnderstandToDefineTransition:
         assert stop_result["decision"] == "block"
 
 
-class TestUnderstandDoNonInterference:
-    """/understand and /do hooks don't interfere with each other."""
+class TestFigureOutDoNonInterference:
+    """/figure-out and /do hooks don't interfere with each other."""
 
-    def test_understand_during_no_do(self, tmp_path: Path):
-        """/understand active without /do — only understand hooks fire."""
+    def test_figure_out_during_no_do(self, tmp_path: Path):
+        """/figure-out active without /do — only figure-out hooks fire."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand(),
+                user_figure_out(),
                 assistant_text("Investigating..."),
             ],
         )
 
         # Understand hooks fire
-        reminder = run_understand_prompt(transcript)
+        reminder = run_figure_out_prompt(transcript)
         assert reminder is not None
 
         # /do hooks silent
@@ -927,8 +927,8 @@ class TestUnderstandDoNonInterference:
         log_reminder = run_posttool_log("TaskUpdate", transcript)
         assert log_reminder is None
 
-    def test_do_without_understand(self, tmp_path: Path):
-        """/do active without /understand — only do hooks fire."""
+    def test_do_without_figure_out(self, tmp_path: Path):
+        """/do active without /figure-out — only do hooks fire."""
         transcript = make_transcript(
             tmp_path,
             [
@@ -945,24 +945,24 @@ class TestUnderstandDoNonInterference:
         assert log_reminder is not None
 
         # Understand hooks silent
-        reminder = run_understand_prompt(transcript)
+        reminder = run_figure_out_prompt(transcript)
         assert reminder is None
 
-    def test_understand_then_do_only_do_hooks(self, tmp_path: Path):
-        """/understand completed, then /do — only /do hooks fire."""
+    def test_figure_out_then_do_only_do_hooks(self, tmp_path: Path):
+        """/figure-out completed, then /do — only /do hooks fire."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand(),
+                user_figure_out(),
                 assistant_text("Got it."),
-                user_understand_done(),
+                user_figure_out_done(),
                 user_do("/tmp/manifest.md"),
                 assistant_text("Executing..."),
             ],
         )
 
         # Understand hooks off
-        reminder = run_understand_prompt(transcript)
+        reminder = run_figure_out_prompt(transcript)
         assert reminder is None
 
         # /do hooks on
@@ -974,17 +974,17 @@ class TestUnderstandDoNonInterference:
         assert stop_result["decision"] == "block"
 
 
-class TestUnderstandCompactionWithDo:
-    """Compaction with both /understand and /do in transcript."""
+class TestFigureOutCompactionWithDo:
+    """Compaction with both /figure-out and /do in transcript."""
 
-    def test_compaction_with_understand_completed_and_do_active(self, tmp_path: Path):
-        """/understand done, /do active — compaction restores /do context only."""
+    def test_compaction_with_figure_out_completed_and_do_active(self, tmp_path: Path):
+        """/figure-out done, /do active — compaction restores /do context only."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand("the auth flow"),
+                user_figure_out("the auth flow"),
                 assistant_text("Understood."),
-                user_understand_done(),
+                user_figure_out_done(),
                 user_do("/tmp/manifest.md /tmp/do-log.md"),
                 assistant_text("Working..."),
             ],
@@ -995,15 +995,15 @@ class TestUnderstandCompactionWithDo:
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
         # /do context should be present
         assert "/tmp/manifest.md" in ctx
-        # /understand context should NOT be present (it completed)
+        # /figure-out context should NOT be present (it completed)
         assert "the auth flow" not in ctx
 
-    def test_compaction_with_understand_active_no_do(self, tmp_path: Path):
-        """/understand active, no /do — compaction restores /understand context only."""
+    def test_compaction_with_figure_out_active_no_do(self, tmp_path: Path):
+        """/figure-out active, no /do — compaction restores /figure-out context only."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand("deployment pipeline"),
+                user_figure_out("deployment pipeline"),
                 assistant_text("Investigating..."),
             ],
         )
@@ -1013,14 +1013,14 @@ class TestUnderstandCompactionWithDo:
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
         assert "deployment pipeline" in ctx
         # No /do context
-        assert "manifest" not in ctx.lower() or "understand" in ctx.lower()
+        assert "manifest" not in ctx.lower() or "figure-out" in ctx.lower()
 
-    def test_compaction_with_understand_no_args(self, tmp_path: Path):
-        """/understand without args — compaction uses fallback (no 'about:' line)."""
+    def test_compaction_with_figure_out_no_args(self, tmp_path: Path):
+        """/figure-out without args — compaction uses fallback (no 'about:' line)."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand(None),
+                user_figure_out(None),
                 assistant_text("Let me investigate..."),
             ],
         )
@@ -1028,15 +1028,15 @@ class TestUnderstandCompactionWithDo:
         recovery = run_post_compact(transcript)
         assert recovery is not None
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
-        assert "understand" in ctx.lower()
+        assert "figure-out" in ctx.lower()
         assert "about:" not in ctx
 
-    def test_compaction_understand_then_do_only_do_recovery(self, tmp_path: Path):
-        """/understand then /do — /do implicitly ends understand, only /do restored."""
+    def test_compaction_figure_out_then_do_only_do_recovery(self, tmp_path: Path):
+        """/figure-out then /do — /do implicitly ends figure-out, only /do restored."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_understand("the auth flow"),
+                user_figure_out("the auth flow"),
                 assistant_text("Investigating auth..." + " detailed analysis" * 20),
                 user_do("/tmp/manifest.md /tmp/do-log.md"),
                 assistant_text("Working on AC-1.1, implementing auth changes with tests." * 3),
@@ -1046,6 +1046,6 @@ class TestUnderstandCompactionWithDo:
         recovery = run_post_compact(transcript)
         assert recovery is not None
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
-        # Only /do should be present — /do starting ended /understand
+        # Only /do should be present — /do starting ended /figure-out
         assert "/tmp/manifest.md" in ctx
         assert "the auth flow" not in ctx

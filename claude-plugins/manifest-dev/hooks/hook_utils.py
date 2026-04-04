@@ -27,12 +27,12 @@ class DoFlowState:
 
 
 @dataclass
-class UnderstandFlowState:
-    """State of the /understand workflow from transcript parsing."""
+class FigureOutFlowState:
+    """State of the /figure-out workflow from transcript parsing."""
 
-    has_understand: bool  # /understand was invoked
-    is_complete: bool  # /understand-done called or workflow skill started after
-    understand_args: str | None  # raw arguments from /understand invocation
+    has_figure_out: bool  # /figure-out was invoked
+    is_complete: bool  # /figure-out-done called or workflow skill started after
+    figure_out_args: str | None  # raw arguments from /figure-out invocation
 
 
 def build_system_reminder(content: str) -> str:
@@ -421,21 +421,21 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
     )
 
 
-# Workflow skills that end an /understand session when invoked after it
+# Workflow skills that end a /figure-out session when invoked after it
 _WORKFLOW_SKILLS = ("define", "do", "auto")
 
 
-def parse_understand_flow(transcript_path: str) -> UnderstandFlowState:
+def parse_figure_out_flow(transcript_path: str) -> FigureOutFlowState:
     """
-    Parse transcript to determine the state of /understand workflow.
+    Parse transcript to determine the state of /figure-out workflow.
 
-    Tracks the most recent /understand invocation and what happened after it.
-    Each new /understand resets the flow state.
-    /understand-done or a workflow skill (/define, /do, /auto) marks completion.
+    Tracks the most recent /figure-out invocation and what happened after it.
+    Each new /figure-out resets the flow state.
+    /figure-out-done or a workflow skill (/define, /do, /auto) marks completion.
     """
-    has_understand = False
+    has_figure_out = False
     is_complete = False
-    understand_args: str | None = None
+    figure_out_args: str | None = None
 
     try:
         with open(transcript_path, encoding="utf-8") as f:
@@ -448,45 +448,45 @@ def parse_understand_flow(transcript_path: str) -> UnderstandFlowState:
                 except json.JSONDecodeError:
                     continue
 
-                # Check for /understand invocation
-                if was_skill_invoked(data, "understand"):
+                # Check for /figure-out invocation
+                if was_skill_invoked(data, "figure-out"):
                     # Extract args
-                    args = extract_user_command_args(data, "understand")
+                    args = extract_user_command_args(data, "figure-out")
                     if not args:
-                        args = get_skill_call_args(data, "understand")
+                        args = get_skill_call_args(data, "figure-out")
 
                     # Avoid resetting on isMeta expansion of the same invocation
                     # But always reset if previous session is complete
-                    is_new_understand = (
-                        not has_understand or is_complete or args is not None
+                    is_new_figure_out = (
+                        not has_figure_out or is_complete or args is not None
                     )
 
-                    if is_new_understand:
-                        has_understand = True
+                    if is_new_figure_out:
+                        has_figure_out = True
                         is_complete = False
-                        understand_args = args
+                        figure_out_args = args
 
-                # Check for /understand-done (explicit completion)
-                if has_understand and not is_complete:
-                    if was_skill_invoked(data, "understand-done"):
+                # Check for /figure-out-done (explicit completion)
+                if has_figure_out and not is_complete:
+                    if was_skill_invoked(data, "figure-out-done"):
                         is_complete = True
 
-                # Check for workflow skills that implicitly end /understand
-                if has_understand and not is_complete:
+                # Check for workflow skills that implicitly end /figure-out
+                if has_figure_out and not is_complete:
                     for skill in _WORKFLOW_SKILLS:
                         if was_skill_invoked(data, skill):
                             is_complete = True
                             break
 
     except OSError:
-        return UnderstandFlowState(
-            has_understand=False,
+        return FigureOutFlowState(
+            has_figure_out=False,
             is_complete=False,
-            understand_args=None,
+            figure_out_args=None,
         )
 
-    return UnderstandFlowState(
-        has_understand=has_understand,
+    return FigureOutFlowState(
+        has_figure_out=has_figure_out,
         is_complete=is_complete,
-        understand_args=understand_args,
+        figure_out_args=figure_out_args,
     )

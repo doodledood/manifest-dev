@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/understand_prompt_hook.py"
+            "command": "python3 claude-plugins/manifest-dev/hooks/figure_out_prompt_hook.py"
           }
         ]
       }

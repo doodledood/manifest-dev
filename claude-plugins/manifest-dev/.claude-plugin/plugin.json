@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.83.2",
+  "version": "0.84.0",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
@@ -17,7 +17,7 @@
     "patterns",
     "preferences",
     "auto",
-    "understand",
+    "figure-out",
     "tend-pr"
   ],
   "hooks": {
@@ -58,11 +58,11 @@
       },
       {
         "matcher": "",
-        "description": "Reinforce /understand principles to combat sycophantic drift",
+        "description": "Reinforce /figure-out principles to combat sycophantic drift",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/understand_prompt_hook.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/figure_out_prompt_hook.py"
           }
         ]
       }

@@ -46,7 +46,7 @@ Each plugin can contain:
 
 ### Hooks
 
-Hooks are Python scripts in `hooks/` that respond to Claude Code events. Shared utilities live in `hook_utils.py`. Hooks use `parse_do_flow()` and/or `parse_understand_flow()` to detect active workflows and follow a fail-open pattern (silent exit on errors).
+Hooks are Python scripts in `hooks/` that respond to Claude Code events. Shared utilities live in `hook_utils.py`. Hooks use `parse_do_flow()` and/or `parse_figure_out_flow()` to detect active workflows and follow a fail-open pattern (silent exit on errors).
 
 **When modifying hooks**:
 1. Run tests: `pytest tests/hooks/ -v`

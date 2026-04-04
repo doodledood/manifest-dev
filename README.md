@@ -37,11 +37,11 @@ Then use it:
 # Tend a PR through review:
 /tend-pr <manifest-path-or-pr-url>
 
-# Optional: understand something deeply before acting
-/understand <topic or problem>
+# Optional: figure something out before acting
+/figure-out <topic or problem>
 ```
 
-`/define` interviews you and builds a manifest. `/do` executes it. `/auto` chains both — define autonomously, auto-approve, execute — in a single command. `/understand` is optional — a truth-convergent thinking partner for when understanding IS the goal, or before `/define` when the problem space is foggy.
+`/define` interviews you and builds a manifest. `/do` executes it. `/auto` chains both — define autonomously, auto-approve, execute — in a single command. `/figure-out` is optional — a truth-convergent thinking partner for when figuring it out IS the goal, or before `/define` when the problem space is foggy.
 
 Control interview depth with `--interview minimal|autonomous|thorough` (default: thorough). Thorough asks everything. Minimal asks scope and high-impact items. Autonomous builds the manifest without asking, presents it for approval.
 

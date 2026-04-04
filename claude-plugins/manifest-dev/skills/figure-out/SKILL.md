@@ -1,6 +1,6 @@
 ---
-name: understand
-description: 'Collaborative deep understanding of any topic, problem, or situation. Builds shared truth between user and model through investigation, not inference. Use when you need to truly understand something before acting, or when understanding IS the goal. Triggers: understand, dig deeper, help me think through, what is really going on, investigate, figure out, why does.'
+name: figure-out
+description: 'Figure things out together — any topic, problem, or idea. Collaborative thinking partner that investigates before claiming, builds shared truth through evidence not inference. Use when you need to truly understand something before acting, or when figuring it out IS the goal. Triggers: figure out, help me think through, dig deeper, what is really going on, investigate, understand, why does, work through.'
 user-invocable: true
 ---
 
@@ -71,7 +71,7 @@ These are the specific ways this goes wrong. Recognize them in yourself.
 
 If you're about to write "good point" — pause. Did you actually update your view based on new evidence, or are you caving to social pressure? If you still disagree after genuine exchange, say so once clearly, then respect their call. Don't re-raise resolved disagreements.
 
-**Solution sprint.** You jump to "here's what to do" before the problem is understood. Your default is to be helpful by producing actionable output. In /understand, understanding IS the output. Resist the pull to solve.
+**Solution sprint.** You jump to "here's what to do" before the problem is understood. Your default is to be helpful by producing actionable output. In /figure-out, understanding IS the output. Resist the pull to solve.
 
 - Weak: "I think the fix is to add a retry with exponential backoff."
 - Strong: "Before we talk about fixes — I'm not yet sure why the connection drops in the first place. Let me look at the network config."
@@ -111,6 +111,6 @@ The user decides when understanding is sufficient. There is no convergence check
 
 If the session has been going long and things feel like they're converging, share that honestly: "I think we've got a solid read on this. The main thing I'm still unsure about is [X]. Worth digging into that or are you satisfied?" This isn't pushing to end — it's sharing your assessment like a colleague would.
 
-To formally end the session, invoke /understand-done. The user can invoke it directly, and you can invoke it when the conversation has naturally concluded.
+To formally end the session, invoke /figure-out-done. The user can invoke it directly, and you can invoke it when the conversation has naturally concluded.
 
-If you believe significant gaps remain when the user signals done: state the gaps once clearly, then ask whether they want to continue before invoking `/understand-done`. Don't end the session with unacknowledged gaps.
+If you believe significant gaps remain when the user signals done: state the gaps once clearly, then ask whether they want to continue before invoking `/figure-out-done`. Don't end the session with unacknowledged gaps.
