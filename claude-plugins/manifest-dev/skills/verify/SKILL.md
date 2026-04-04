@@ -1,6 +1,6 @@
 ---
 name: verify
-description: 'Manifest verification runner. Spawns parallel verifiers for Global Invariants and Acceptance Criteria. Optional --mode efficient|balanced|thorough controls parallelism and model routing (default: thorough). Called by /do, not directly by users.'
+description: 'Spawns parallel verifiers for Global Invariants and Acceptance Criteria from a Manifest.'
 user-invocable: false
 ---
 
@@ -8,35 +8,24 @@ user-invocable: false
 
 Orchestrate verification of all criteria from a Manifest by spawning parallel verifiers. Report results grouped by type.
 
-**User request**: $ARGUMENTS
+**Input**: $ARGUMENTS
 
 Format: `<manifest-file-path> <execution-log-path> [--mode efficient|balanced|thorough]`
 
-If paths missing: Return error "Usage: /verify <manifest-path> <log-path> [--mode efficient|balanced|thorough]"
-
-Mode defaults to `thorough` if not provided.
+Both paths required — return usage error if missing. Mode defaults to `thorough` if not provided.
 
 ## Principles
 
 | Principle | Rule |
 |-----------|------|
-| **Orchestrate, don't verify** | Spawn agents to verify. You coordinate results, never run checks yourself. |
+| **Orchestrate, don't verify** | Spawn agents to verify. You aggregate results and coordinate, never run checks yourself. |
 | **ALL criteria, no exceptions** | Every INV-G* and AC-*.* criterion MUST be verified. Skipping any criterion is a critical failure. |
 | **Parallelism per mode** | The active execution mode defines how many verifiers to launch concurrently within each phase. Phases always run sequentially — see Phased Execution below. |
-| **Globals are critical** | Global Invariant failures mean task failure. Highlight prominently. |
 | **Actionable feedback** | Pass through file:line, expected vs actual, fix hints. |
 
-## Verification Methods
+## Verification Routing
 
-| Type | What | Handler |
-|------|------|---------|
-| `bash` | Shell commands (tests, lint, typecheck) | criteria-checker |
-| `codebase` | Code pattern checks | criteria-checker |
-| `subagent` | Specialized reviewer agents | Named agent (e.g., code-bugs-reviewer) |
-| `research` | External info (API docs, dependencies) | criteria-checker |
-| `manual` | Set aside for human verification | /escalate |
-
-Note: criteria-checker handles any automated verification requiring commands, file analysis, reasoning, or web research.
+Route `manual` criteria to /escalate. Route `subagent` criteria to the named agent specified in the criterion. All other types (`bash`, `codebase`, `research`) spawn criteria-checker agents. If a criterion has no verification type, default to criteria-checker.
 
 ## Agent Prompt Composition
 
@@ -80,7 +69,7 @@ If a verification agent crashes, times out, or returns unusable output, treat th
 Criteria have an optional `phase:` field (numeric, default 1). Phases run in ascending order — Phase N+1 only launches when all Phase N criteria pass.
 
 **Execution rules:**
-- Group all criteria (INV-G* and AC-*) by their `phase:` value. Missing `phase:` = phase 1.
+- Group all criteria (INV-G* and AC-*) by their `phase:` value.
 - Run the lowest phase first. Within that phase, apply parallelism rules (mode-dependent).
 - If all criteria in the current phase pass, proceed to the next phase.
 - If any criterion in the current phase fails, return failures immediately with phase context. Do not run later phases — let /do enter the fix loop faster.
@@ -92,43 +81,22 @@ Criteria have an optional `phase:` field (numeric, default 1). Phases run in asc
 
 ## Mode-Aware Verification
 
-Load the execution mode file for the resolved mode. Mode files live in the /do skill's references:
-- `thorough` (default): read `../do/references/execution-modes/thorough.md`
-- `balanced`: read `../do/references/execution-modes/balanced.md`
-- `efficient`: read `../do/references/execution-modes/efficient.md`
+Load the mode file at `../do/references/execution-modes/{mode}.md` (default: `thorough`). Follow its rules for verification parallelism, model routing, and quality gate inclusion. The mode file defines which verifiers to skip, what model to use for criteria-checker agents, and how many concurrent verifiers to launch per phase. If mode file cannot be loaded, return an error to the caller immediately — do not attempt any verification.
 
-Follow the mode's rules for verification parallelism, model routing, and quality gate inclusion. The mode file defines which verifiers to skip, what model to use for criteria-checker agents, and how many concurrent verifiers to launch per phase.
+## Gotchas
 
-## Never Do
-
-- Skip criteria unless the active execution mode explicitly allows it
-- Violate the active mode's parallelism rules (launching all at once when mode says sequential, or vice versa)
-- Run later-phase criteria when an earlier phase has failures
-- Verify criteria yourself instead of spawning agents
+- **Mode parallelism is bidirectional** — launching all at once when mode says sequential is wrong, but so is going sequential when mode says parallel. Follow the mode file exactly.
+- **Agent crash ≠ criterion pass** — if a verifier fails to run, the criterion fails too. Never treat "couldn't check" as "passed."
 
 ## Outcome Handling
+
+Group results by phase, then Global Invariants first, then by Deliverable.
 
 | Condition | Action |
 |-----------|--------|
 | Any Global Invariant failed | Return all failures, globals highlighted |
 | Any AC failed | Return failures grouped by deliverable |
-| All automated pass, manual exists | Return manual criteria, hint to call /escalate |
+| All automated pass, manual exists | List manual criteria with how-to-verify, suggest /escalate |
 | All pass | Call /done |
 
-## Output Format
-
-Report verification results grouped by phase, then by Global Invariants first, then by Deliverable within each phase.
-
-**On phase failure** - Show the phase that failed, then for each failed criterion:
-- Criterion ID and description
-- Verification method
-- Failure details: location, expected vs actual, fix hint
-- Note later phases not run and their pending criteria count.
-
-**On success with manual** - List manual criteria with how-to-verify from manifest, suggest /escalate.
-
-**On full success** (all phases pass) - Call /done.
-
-## Medium Routing
-
-Currently only `local` medium is supported. All verification runs locally in the terminal session.
+**On phase failure**: Show the failed phase, then for each failed criterion: ID, description, verification method, failure details (location, expected vs actual, fix hint). Note later phases not run and their pending criteria count.
