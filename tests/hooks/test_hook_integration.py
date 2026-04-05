@@ -2,17 +2,18 @@
 Integration tests for manifest-dev hooks.
 
 Tests realistic user scenarios where multiple hooks fire on the same transcript.
-Each test simulates a real /do or /figure-out session and verifies all hooks
+Each test simulates a real /do, /figure-out, or /define session and verifies all hooks
 behave correctly together — no contradictory reminders, correct state transitions,
 proper interaction between hooks at each lifecycle stage.
 
 Hook inventory:
 - stop_do_hook.py (Stop) — blocks premature stops
 - pretool_verify_hook.py (PreToolUse/Skill) — reminds to read manifest before /verify
+- thinking_disciplines_pretool_hook.py (PreToolUse/AskUserQuestion) — reinforces disciplines before questions
 - posttool_log_hook.py (PostToolUse/TaskUpdate,TaskCreate,TodoWrite,Skill) — reminds to log
 - prompt_submit_hook.py (UserPromptSubmit) — checks for manifest amendments
-- figure_out_prompt_hook.py (UserPromptSubmit) — reinforces /figure-out principles
-- post_compact_hook.py (SessionStart/compact) — restores /do or /figure-out context after compaction
+- thinking_disciplines_prompt_hook.py (UserPromptSubmit) — reinforces thinking disciplines
+- post_compact_hook.py (SessionStart/compact) — restores /do or thinking disciplines context after compaction
 """
 
 from __future__ import annotations
@@ -761,11 +762,19 @@ class TestPretoolVerifyIsolation:
         assert result is not None
 
 
-# --- /figure-out hook helpers ---
+# --- Thinking disciplines hook helpers ---
 
 
-def run_figure_out_prompt(transcript_path: str) -> dict[str, Any] | None:
-    return run_hook("figure_out_prompt_hook.py", {"transcript_path": transcript_path})
+def run_thinking_disciplines_prompt(transcript_path: str) -> dict[str, Any] | None:
+    return run_hook(
+        "thinking_disciplines_prompt_hook.py", {"transcript_path": transcript_path}
+    )
+
+
+def run_thinking_disciplines_pretool(transcript_path: str) -> dict[str, Any] | None:
+    return run_hook(
+        "thinking_disciplines_pretool_hook.py", {"transcript_path": transcript_path}
+    )
 
 
 def user_figure_out(args: str | None = "the latency problem") -> dict[str, Any]:
@@ -778,11 +787,11 @@ def user_figure_out(args: str | None = "the latency problem") -> dict[str, Any]:
     }
 
 
-def user_figure_out_done() -> dict[str, Any]:
+def user_stop_thinking_disciplines() -> dict[str, Any]:
     return {
         "type": "user",
         "message": {
-            "content": "<command-name>/manifest-dev:figure-out-done</command-name>"
+            "content": "<command-name>/manifest-dev:stop-thinking-disciplines</command-name>"
         },
     }
 
@@ -796,24 +805,85 @@ def user_define(args: str = "build a widget") -> dict[str, Any]:
     }
 
 
-# === /figure-out INTEGRATION TESTS ===
+def thinking_disciplines_skill_call() -> dict[str, Any]:
+    """Assistant Skill tool call invoking thinking-disciplines."""
+    return {
+        "type": "assistant",
+        "message": {
+            "content": [
+                {
+                    "type": "tool_use",
+                    "name": "Skill",
+                    "input": {"skill": "manifest-dev:thinking-disciplines"},
+                }
+            ]
+        },
+    }
 
 
-class TestFigureOutLifecycle:
-    """Full /figure-out session: invoke → principles fire → figure-out-done → hooks stop."""
+def thinking_disciplines_ismeta() -> dict[str, Any]:
+    """isMeta expansion for thinking-disciplines skill."""
+    return {
+        "type": "user",
+        "isMeta": True,
+        "message": {
+            "content": (
+                "Base directory for this skill: "
+                "/home/user/manifest-dev/claude-plugins/manifest-dev/skills/thinking-disciplines\n\n"
+                "Adopt these disciplines for the duration of this session..."
+            )
+        },
+    }
+
+
+def ask_user_question_tool() -> dict[str, Any]:
+    """Assistant AskUserQuestion tool call."""
+    return {
+        "type": "assistant",
+        "message": {
+            "content": [
+                {
+                    "type": "tool_use",
+                    "name": "AskUserQuestion",
+                    "input": {
+                        "question": "What authentication approach do you prefer?",
+                        "options": ["OAuth2", "JWT", "Session-based"],
+                    },
+                }
+            ]
+        },
+    }
+
+
+# === THINKING DISCIPLINES INTEGRATION TESTS ===
+
+
+class TestFigureOutWithThinkingDisciplines:
+    """Full /figure-out session: invokes thinking-disciplines → hooks fire → stop → hooks stop."""
 
     def test_full_figure_out_lifecycle(self, tmp_path: Path):
-        """Simulate complete /figure-out session with hook transitions."""
-        # Phase 1: /figure-out invoked
+        """Simulate /figure-out session with thinking-disciplines hook transitions."""
+        # Phase 1: /figure-out invoked → assistant invokes thinking-disciplines
         transcript = make_transcript(
-            tmp_path, [user_figure_out(), assistant_text("Let me investigate...")]
+            tmp_path,
+            [
+                user_figure_out(),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                assistant_text("Let me investigate..."),
+            ],
         )
 
-        # Principles reminder fires
-        reminder = run_figure_out_prompt(transcript)
+        # Thinking disciplines reminder fires
+        reminder = run_thinking_disciplines_prompt(transcript)
         assert reminder is not None
         ctx = reminder["hookSpecificOutput"]["additionalContext"]
-        assert "figure-out" in ctx.lower()
+        assert "Truth over helpfulness" in ctx
+
+        # AskUserQuestion reminder also fires
+        pretool = run_thinking_disciplines_pretool(transcript)
+        assert pretool is not None
+        assert pretool["hookSpecificOutput"]["hookEventName"] == "PreToolUse"
 
         # /do hooks should NOT fire — no /do active
         amendment = run_prompt_submit(transcript)
@@ -822,26 +892,33 @@ class TestFigureOutLifecycle:
         stop_result = run_stop_hook(transcript)
         assert stop_result is None  # allow stop — not in /do
 
-        # Phase 2: /figure-out-done called
+        # Phase 2: /stop-thinking-disciplines called
         transcript = make_transcript(
             tmp_path,
             [
                 user_figure_out(),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
                 assistant_text("Let me investigate..."),
-                user_figure_out_done(),
+                user_stop_thinking_disciplines(),
             ],
         )
 
-        # Principles reminder stops
-        reminder = run_figure_out_prompt(transcript)
+        # Thinking disciplines reminders stop
+        reminder = run_thinking_disciplines_prompt(transcript)
         assert reminder is None
 
+        pretool = run_thinking_disciplines_pretool(transcript)
+        assert pretool is None
+
     def test_figure_out_compaction_recovery(self, tmp_path: Path):
-        """After compaction during /figure-out, re-grounding reminder fires."""
+        """After compaction during /figure-out with thinking-disciplines, recovery fires."""
         transcript = make_transcript(
             tmp_path,
             [
                 user_figure_out("the auth flow"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
                 assistant_text("Investigating authentication..."),
             ],
         )
@@ -849,52 +926,163 @@ class TestFigureOutLifecycle:
         recovery = run_post_compact(transcript)
         assert recovery is not None
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
-        assert "the auth flow" in ctx
-        assert "figure-out" in ctx.lower()
+        assert "thinking-disciplines" in ctx.lower()
 
 
-class TestFigureOutToDefineTransition:
-    """/figure-out → /define transition: figure-out hooks stop, define hooks don't fire (no /do)."""
+class TestDefineWithThinkingDisciplines:
+    """/define invokes thinking-disciplines → hooks fire throughout → /do deactivates."""
 
-    def test_figure_out_hooks_stop_when_define_starts(self, tmp_path: Path):
-        """/define after /figure-out should stop figure-out hooks."""
+    def test_full_define_lifecycle(self, tmp_path: Path):
+        """/define with thinking-disciplines: hooks fire throughout the interview."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_figure_out(),
-                assistant_text("I understand the problem now."),
                 user_define("build auth system"),
-                assistant_text("Let me define..."),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                assistant_text("Starting the define interview..."),
+                # User answers questions, assistant asks more
+                user_message("OAuth2 preferred"),
+                ask_user_question_tool(),
             ],
         )
 
-        # Understand principles should NOT fire — /define started
-        reminder = run_figure_out_prompt(transcript)
-        assert reminder is None
+        # Thinking disciplines hooks fire throughout /define
+        reminder = run_thinking_disciplines_prompt(transcript)
+        assert reminder is not None
 
-        # /do amendment check should NOT fire — no /do active
+        # AskUserQuestion pretool hook fires during /define
+        pretool = run_thinking_disciplines_pretool(transcript)
+        assert pretool is not None
+        ctx = pretool["hookSpecificOutput"]["additionalContext"]
+        assert "Truth over helpfulness" in ctx
+
+        # /do hooks should NOT fire — no /do active
         amendment = run_prompt_submit(transcript)
         assert amendment is None
 
-    def test_figure_out_then_define_then_do(self, tmp_path: Path):
-        """Full pipeline: /figure-out → /define → /do. Each hook fires in its context."""
+    def test_define_then_do_deactivates_thinking_disciplines(self, tmp_path: Path):
+        """/define session ends, /do starts — thinking disciplines deactivate."""
         transcript = make_transcript(
             tmp_path,
             [
-                user_figure_out(),
-                assistant_text("Let me investigate the codebase to understand the architecture. " * 3),
-                user_define("build it"),
-                assistant_text("Starting the define interview to capture requirements. " * 3),
+                user_define("build auth system"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                substantial_work("Interview complete. Manifest written to /tmp/manifest.md."),
                 user_do("/tmp/manifest.md"),
-                assistant_text("Working on AC-1.1: implementing the feature with full test coverage and documentation updates. " * 3),
+                substantial_work("Working on AC-1.1: implementing the auth feature..."),
             ],
         )
 
-        # Understand hooks off (define then do started after)
-        reminder = run_figure_out_prompt(transcript)
+        # Thinking disciplines OFF (deactivated by /do)
+        reminder = run_thinking_disciplines_prompt(transcript)
         assert reminder is None
 
-        # /do hooks on
+        # /do hooks ON
+        amendment = run_prompt_submit(transcript)
+        assert amendment is not None
+
+        stop_result = run_stop_hook(transcript)
+        assert stop_result is not None
+        assert stop_result["decision"] == "block"
+
+    def test_define_compaction_recovery_with_thinking_disciplines(self, tmp_path: Path):
+        """Compaction during /define with thinking disciplines active — recovery fires."""
+        transcript = make_transcript(
+            tmp_path,
+            [
+                user_define("build a feature"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                assistant_text("Conducting the interview..."),
+            ],
+        )
+
+        recovery = run_post_compact(transcript)
+        assert recovery is not None
+        ctx = recovery["hookSpecificOutput"]["additionalContext"]
+        assert "thinking-disciplines" in ctx.lower()
+
+        # Thinking disciplines hooks still fire after recovery
+        reminder = run_thinking_disciplines_prompt(transcript)
+        assert reminder is not None
+
+    def test_ask_user_question_during_define_interview(self, tmp_path: Path):
+        """AskUserQuestion during /define interview — pretool hook injects reminder."""
+        transcript = make_transcript(
+            tmp_path,
+            [
+                user_define("build auth system"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                assistant_text("I need to understand your authentication requirements."),
+                ask_user_question_tool(),
+                user_message("I want OAuth2 with refresh tokens"),
+                assistant_text("Let me ask about the token storage strategy."),
+            ],
+        )
+
+        pretool = run_thinking_disciplines_pretool(transcript)
+        assert pretool is not None
+        ctx = pretool["hookSpecificOutput"]["additionalContext"]
+        assert "system-reminder" in ctx
+
+
+class TestFigureOutDefineDoFullPipeline:
+    """/figure-out → /define → /do full pipeline with thinking disciplines."""
+
+    def test_full_pipeline_thinking_disciplines_transitions(self, tmp_path: Path):
+        """Full pipeline: thinking disciplines active through /figure-out and /define, off for /do."""
+        transcript = make_transcript(
+            tmp_path,
+            [
+                # /figure-out invokes thinking-disciplines
+                user_figure_out("the auth problem"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                assistant_text(
+                    "Let me investigate the codebase to understand the architecture. " * 3
+                ),
+                # /define also invokes thinking-disciplines (re-invocation — still active)
+                user_define("build auth system"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                assistant_text(
+                    "Starting the define interview to capture requirements. " * 3
+                ),
+            ],
+        )
+
+        # KEY BEHAVIORAL CHANGE: thinking disciplines STAY active throughout /define
+        # (old behavior: /define deactivated /figure-out hooks)
+        reminder = run_thinking_disciplines_prompt(transcript)
+        assert reminder is not None
+
+        # Now /do starts — deactivates thinking disciplines
+        transcript = make_transcript(
+            tmp_path,
+            [
+                user_figure_out("the auth problem"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                assistant_text("Investigated the problem." * 5),
+                user_define("build auth system"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                assistant_text("Manifest written." * 5),
+                user_do("/tmp/manifest.md"),
+                assistant_text(
+                    "Working on AC-1.1: implementing auth changes with tests." * 3
+                ),
+            ],
+        )
+
+        # Thinking disciplines OFF (deactivated by /do)
+        reminder = run_thinking_disciplines_prompt(transcript)
+        assert reminder is None
+
+        # /do hooks ON
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
 
@@ -903,21 +1091,23 @@ class TestFigureOutToDefineTransition:
         assert stop_result["decision"] == "block"
 
 
-class TestFigureOutDoNonInterference:
-    """/figure-out and /do hooks don't interfere with each other."""
+class TestThinkingDisciplinesDoNonInterference:
+    """Thinking disciplines and /do hooks don't interfere with each other."""
 
-    def test_figure_out_during_no_do(self, tmp_path: Path):
-        """/figure-out active without /do — only figure-out hooks fire."""
+    def test_thinking_disciplines_active_without_do(self, tmp_path: Path):
+        """Thinking disciplines active without /do — only disciplines hooks fire."""
         transcript = make_transcript(
             tmp_path,
             [
                 user_figure_out(),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
                 assistant_text("Investigating..."),
             ],
         )
 
-        # Understand hooks fire
-        reminder = run_figure_out_prompt(transcript)
+        # Thinking disciplines hooks fire
+        reminder = run_thinking_disciplines_prompt(transcript)
         assert reminder is not None
 
         # /do hooks silent
@@ -927,8 +1117,8 @@ class TestFigureOutDoNonInterference:
         log_reminder = run_posttool_log("TaskUpdate", transcript)
         assert log_reminder is None
 
-    def test_do_without_figure_out(self, tmp_path: Path):
-        """/do active without /figure-out — only do hooks fire."""
+    def test_do_without_thinking_disciplines(self, tmp_path: Path):
+        """/do active without thinking-disciplines — only do hooks fire."""
         transcript = make_transcript(
             tmp_path,
             [
@@ -944,28 +1134,30 @@ class TestFigureOutDoNonInterference:
         log_reminder = run_posttool_log("TaskUpdate", transcript)
         assert log_reminder is not None
 
-        # Understand hooks silent
-        reminder = run_figure_out_prompt(transcript)
+        # Thinking disciplines hooks silent
+        reminder = run_thinking_disciplines_prompt(transcript)
         assert reminder is None
 
-    def test_figure_out_then_do_only_do_hooks(self, tmp_path: Path):
-        """/figure-out completed, then /do — only /do hooks fire."""
+    def test_thinking_disciplines_deactivated_by_do(self, tmp_path: Path):
+        """Thinking disciplines deactivated by /do — /do hooks take over cleanly."""
         transcript = make_transcript(
             tmp_path,
             [
                 user_figure_out(),
-                assistant_text("Got it."),
-                user_figure_out_done(),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                substantial_work("Got it. Let me investigate the codebase thoroughly."),
+                user_stop_thinking_disciplines(),
                 user_do("/tmp/manifest.md"),
-                assistant_text("Executing..."),
+                substantial_work("Executing AC-1.1: implementing the feature..."),
             ],
         )
 
-        # Understand hooks off
-        reminder = run_figure_out_prompt(transcript)
+        # Thinking disciplines OFF
+        reminder = run_thinking_disciplines_prompt(transcript)
         assert reminder is None
 
-        # /do hooks on
+        # /do hooks ON
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
 
@@ -974,17 +1166,19 @@ class TestFigureOutDoNonInterference:
         assert stop_result["decision"] == "block"
 
 
-class TestFigureOutCompactionWithDo:
-    """Compaction with both /figure-out and /do in transcript."""
+class TestThinkingDisciplinesCompactionWithDo:
+    """Compaction with thinking disciplines and /do in transcript."""
 
-    def test_compaction_with_figure_out_completed_and_do_active(self, tmp_path: Path):
-        """/figure-out done, /do active — compaction restores /do context only."""
+    def test_compaction_thinking_disciplines_done_do_active(self, tmp_path: Path):
+        """Thinking disciplines deactivated, /do active — only /do recovery."""
         transcript = make_transcript(
             tmp_path,
             [
                 user_figure_out("the auth flow"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
                 assistant_text("Understood."),
-                user_figure_out_done(),
+                user_stop_thinking_disciplines(),
                 user_do("/tmp/manifest.md /tmp/do-log.md"),
                 assistant_text("Working..."),
             ],
@@ -993,17 +1187,19 @@ class TestFigureOutCompactionWithDo:
         recovery = run_post_compact(transcript)
         assert recovery is not None
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
-        # /do context should be present
+        # /do context present
         assert "/tmp/manifest.md" in ctx
-        # /figure-out context should NOT be present (it completed)
-        assert "the auth flow" not in ctx
+        # Thinking disciplines not present (deactivated before /do)
+        assert "thinking-disciplines" not in ctx.lower()
 
-    def test_compaction_with_figure_out_active_no_do(self, tmp_path: Path):
-        """/figure-out active, no /do — compaction restores /figure-out context only."""
+    def test_compaction_thinking_disciplines_active_no_do(self, tmp_path: Path):
+        """Thinking disciplines active, no /do — thinking disciplines recovery only."""
         transcript = make_transcript(
             tmp_path,
             [
                 user_figure_out("deployment pipeline"),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
                 assistant_text("Investigating..."),
             ],
         )
@@ -1011,41 +1207,28 @@ class TestFigureOutCompactionWithDo:
         recovery = run_post_compact(transcript)
         assert recovery is not None
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
-        assert "deployment pipeline" in ctx
-        # No /do context
-        assert "manifest" not in ctx.lower() or "figure-out" in ctx.lower()
+        assert "thinking-disciplines" in ctx.lower()
 
-    def test_compaction_with_figure_out_no_args(self, tmp_path: Path):
-        """/figure-out without args — compaction uses fallback (no 'about:' line)."""
-        transcript = make_transcript(
-            tmp_path,
-            [
-                user_figure_out(None),
-                assistant_text("Let me investigate..."),
-            ],
-        )
-
-        recovery = run_post_compact(transcript)
-        assert recovery is not None
-        ctx = recovery["hookSpecificOutput"]["additionalContext"]
-        assert "figure-out" in ctx.lower()
-        assert "about:" not in ctx
-
-    def test_compaction_figure_out_then_do_only_do_recovery(self, tmp_path: Path):
-        """/figure-out then /do — /do implicitly ends figure-out, only /do restored."""
+    def test_compaction_do_deactivates_thinking_disciplines(self, tmp_path: Path):
+        """/do deactivates thinking-disciplines — only /do recovery after compaction."""
         transcript = make_transcript(
             tmp_path,
             [
                 user_figure_out("the auth flow"),
-                assistant_text("Investigating auth..." + " detailed analysis" * 20),
+                thinking_disciplines_skill_call(),
+                thinking_disciplines_ismeta(),
+                assistant_text("Investigated." + " detailed analysis" * 20),
                 user_do("/tmp/manifest.md /tmp/do-log.md"),
-                assistant_text("Working on AC-1.1, implementing auth changes with tests." * 3),
+                assistant_text(
+                    "Working on AC-1.1, implementing auth changes with tests." * 3
+                ),
             ],
         )
 
         recovery = run_post_compact(transcript)
         assert recovery is not None
         ctx = recovery["hookSpecificOutput"]["additionalContext"]
-        # Only /do should be present — /do starting ended /figure-out
+        # /do context present (deactivated thinking disciplines)
         assert "/tmp/manifest.md" in ctx
-        assert "the auth flow" not in ctx
+        # Thinking disciplines not present (deactivated by /do)
+        assert "thinking-disciplines" not in ctx.lower()

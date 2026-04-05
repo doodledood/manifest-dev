@@ -32,7 +32,7 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 
 **Other skills:** `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command (add `--tend-pr` for PR lifecycle) | `/tend-pr` - Tends a PR through review to merge-readiness, manifest-aware or babysit mode | `/learn-define-patterns` - Analyzes past /define sessions and writes preference patterns to CLAUDE.md
 
-**Internal skills:** `/verify`, `/done`, `/escalate`, `/figure-out-done`, `/tend-pr-tick`
+**Internal skills:** `/verify`, `/done`, `/escalate`, `/stop-thinking-disciplines`, `/tend-pr-tick`, `thinking-disciplines`
 
 **Review agents:** `criteria-checker`, `manifest-verifier`, `define-session-analyzer`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `code-coverage-reviewer`, `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
 

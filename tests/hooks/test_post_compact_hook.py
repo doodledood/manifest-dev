@@ -13,7 +13,6 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-
 from hook_test_helpers import HOOKS_DIR, run_hook_raw
 
 

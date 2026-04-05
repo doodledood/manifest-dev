@@ -113,7 +113,9 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
 | `/learn-define-patterns` | Analyzes recent /define sessions, extracts user preference patterns, writes them to CLAUDE.md |
 
-**Optional:** `/figure-out` — figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, and resists premature synthesis. Use when figuring it out IS the goal, or before `/define` when the problem space is foggy. End with `/figure-out-done`.
+**Optional:** `/figure-out` — figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, and resists premature synthesis. Use when figuring it out IS the goal, or before `/define` when the problem space is foggy. End with `/stop-thinking-disciplines`.
+
+**Internal:** `thinking-disciplines` — core thinking disciplines invoked by `/figure-out` and `/define`. Not user-invocable.
 
 ### Execution Modes
 

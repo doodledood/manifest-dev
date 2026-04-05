@@ -27,12 +27,10 @@ class DoFlowState:
 
 
 @dataclass
-class FigureOutFlowState:
-    """State of the /figure-out workflow from transcript parsing."""
+class ThinkingDisciplinesState:
+    """State of thinking disciplines from transcript parsing."""
 
-    has_figure_out: bool  # /figure-out was invoked
-    is_complete: bool  # /figure-out-done called or workflow skill started after
-    figure_out_args: str | None  # raw arguments from /figure-out invocation
+    is_active: bool  # thinking-disciplines skill was invoked and not yet deactivated
 
 
 def build_system_reminder(content: str) -> str:
@@ -421,21 +419,21 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
     )
 
 
-# Workflow skills that end a /figure-out session when invoked after it
-_WORKFLOW_SKILLS = ("define", "do", "auto")
+# Skills that deactivate thinking disciplines
+_THINKING_DEACTIVATORS = ("stop-thinking-disciplines", "do")
 
 
-def parse_figure_out_flow(transcript_path: str) -> FigureOutFlowState:
+def parse_thinking_disciplines_flow(
+    transcript_path: str,
+) -> ThinkingDisciplinesState:
     """
-    Parse transcript to determine the state of /figure-out workflow.
+    Parse transcript to determine if thinking disciplines are active.
 
-    Tracks the most recent /figure-out invocation and what happened after it.
-    Each new /figure-out resets the flow state.
-    /figure-out-done or a workflow skill (/define, /do, /auto) marks completion.
+    Activates when thinking-disciplines skill is invoked (by any skill).
+    Deactivates when /stop-thinking-disciplines or /do is invoked.
+    Reactivates if thinking-disciplines is invoked again after deactivation.
     """
-    has_figure_out = False
-    is_complete = False
-    figure_out_args: str | None = None
+    is_active = False
 
     try:
         with open(transcript_path, encoding="utf-8") as f:
@@ -448,45 +446,20 @@ def parse_figure_out_flow(transcript_path: str) -> FigureOutFlowState:
                 except json.JSONDecodeError:
                     continue
 
-                # Check for /figure-out invocation
-                if was_skill_invoked(data, "figure-out"):
-                    # Extract args
-                    args = extract_user_command_args(data, "figure-out")
-                    if not args:
-                        args = get_skill_call_args(data, "figure-out")
+                # Check for thinking-disciplines activation
+                if was_skill_invoked(data, "thinking-disciplines"):
+                    # isMeta expansion follows the initial invocation —
+                    # don't toggle off/on, just ensure active
+                    is_active = True
 
-                    # Avoid resetting on isMeta expansion of the same invocation
-                    # But always reset if previous session is complete
-                    is_new_figure_out = (
-                        not has_figure_out or is_complete or args is not None
-                    )
-
-                    if is_new_figure_out:
-                        has_figure_out = True
-                        is_complete = False
-                        figure_out_args = args
-
-                # Check for /figure-out-done (explicit completion)
-                if has_figure_out and not is_complete:
-                    if was_skill_invoked(data, "figure-out-done"):
-                        is_complete = True
-
-                # Check for workflow skills that implicitly end /figure-out
-                if has_figure_out and not is_complete:
-                    for skill in _WORKFLOW_SKILLS:
+                # Check for deactivation
+                if is_active:
+                    for skill in _THINKING_DEACTIVATORS:
                         if was_skill_invoked(data, skill):
-                            is_complete = True
+                            is_active = False
                             break
 
     except OSError:
-        return FigureOutFlowState(
-            has_figure_out=False,
-            is_complete=False,
-            figure_out_args=None,
-        )
+        return ThinkingDisciplinesState(is_active=False)
 
-    return FigureOutFlowState(
-        has_figure_out=has_figure_out,
-        is_complete=is_complete,
-        figure_out_args=figure_out_args,
-    )
+    return ThinkingDisciplinesState(is_active=is_active)

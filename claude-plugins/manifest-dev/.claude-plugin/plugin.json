@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.84.0",
+  "version": "0.85.0",
   "description": "Manifest-driven workflows for structured task execution with verification gates.",
   "keywords": [
     "manifest",
@@ -43,6 +43,16 @@
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/pretool_verify_hook.py"
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "description": "Reinforce thinking disciplines before asking user questions",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/thinking_disciplines_pretool_hook.py"
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -58,11 +68,11 @@
       },
       {
         "matcher": "",
-        "description": "Reinforce /figure-out principles to combat sycophantic drift",
+        "description": "Reinforce thinking disciplines to combat sycophantic drift",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/figure_out_prompt_hook.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/thinking_disciplines_prompt_hook.py"
           }
         ]
       }
@@ -102,7 +112,7 @@
     "SessionStart": [
       {
         "matcher": "compact",
-        "description": "Restore /do workflow context after compaction",
+        "description": "Restore /do and thinking disciplines context after compaction",
         "hooks": [
           {
             "type": "command",

@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-
 from hook_test_helpers import run_hook
 
 
