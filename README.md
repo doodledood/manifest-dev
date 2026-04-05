@@ -349,7 +349,10 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 | `/verify` | Internal | Spawns verifiers for all criteria, phased by iteration speed (fast checks first, e2e/deploy-dependent later). Routes to `criteria-checker` agents based on verification method |
 | `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure |
 | `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |
+| `/figure-out` | User-invoked | Collaborative thinking partner for any topic. Investigates before claiming, surfaces gaps, resists premature synthesis |
 | `/learn-define-patterns` | User-invoked | Analyzes recent /define sessions, extracts user preference patterns, writes them to CLAUDE.md for future /define sessions |
+| `thinking-disciplines` | Internal | Core thinking disciplines for rigorous collaborative reasoning. Invoked by `/figure-out` and `/define` |
+| `/stop-thinking-disciplines` | User-invoked | Deactivates thinking disciplines mode |
 
 ### Review Agents
 
@@ -385,6 +388,8 @@ Hooks enforce workflow integrity. The AI can't skip steps:
 | `pretool_verify_hook` | `/verify` invocation | Ensures manifest and log are in context before spawning verifiers. |
 | `posttool_log_hook` | Task progress | Reminds to update execution log after task updates, task creation, or workflow skill calls during `/do`. |
 | `prompt_submit_hook` | User input during `/do` | Detects manifest amendments when user provides input during `/do` — enables the autonomous Self-Amendment flow. |
+| `thinking_disciplines_prompt_hook` | User input | Reinforces thinking disciplines on each user message when active (during `/figure-out` or `/define`). |
+| `thinking_disciplines_pretool_hook` | AskUserQuestion | Reinforces thinking disciplines before asking user questions — the moment where sycophantic drift is most likely. |
 
 ### Task-Specific Guidance
 
