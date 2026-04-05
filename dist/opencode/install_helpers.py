@@ -20,7 +20,8 @@ SUFFIX = "-manifest-dev"
 SKILL_NAMES = [
     "auto", "define", "do", "done", "escalate",
     "learn-define-patterns", "tend-pr", "tend-pr-tick",
-    "figure-out", "figure-out-done", "verify",
+    "figure-out", "stop-thinking-disciplines",
+    "thinking-disciplines", "verify",
 ]
 
 # Agent filenames (without .md)
@@ -36,7 +37,7 @@ AGENT_NAMES = [
 # Command filenames (without .md)
 COMMAND_NAMES = [
     "auto", "define", "do", "learn-define-patterns",
-    "tend-pr", "figure-out", "figure-out-done",
+    "tend-pr", "figure-out", "stop-thinking-disciplines",
 ]
 
 

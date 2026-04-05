@@ -6,9 +6,9 @@ Verification-first manifest workflows for Gemini CLI. Plan work with structured 
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 11 | Workflow skills: define, do, verify, auto, figure-out, escalate, done, tend-pr, tend-pr-tick, learn-define-patterns, figure-out-done |
+| Skills | 13 | Workflow skills: define, do, verify, auto, figure-out, escalate, done, tend-pr, tend-pr-tick, learn-define-patterns, thinking-disciplines, stop-thinking-disciplines |
 | Agents | 14 | Specialized review agents for code quality verification |
-| Hooks | 7 | Event-driven hooks enforcing workflow discipline |
+| Hooks | 8 | Event-driven hooks enforcing workflow discipline |
 
 ## Installation
 
@@ -51,9 +51,9 @@ The `install.sh` script sets this automatically.
 
 | Feature | Claude Code | Gemini CLI | Notes |
 |---------|-------------|------------|-------|
-| Skills | All 11 | All 11 | Copied unchanged |
+| Skills | All 13 | All 13 | Copied unchanged |
 | Agents | All 14 | All 14 | Frontmatter converted |
-| Hooks | 7 hooks | 7 hooks | Adapted to Gemini event model |
+| Hooks | 8 hooks | 8 hooks | Adapted to Gemini event model |
 | Stop enforcement | PreToolUse/Stop | BeforeTool/AfterAgent | Retry counter for loop prevention |
 | Context injection | additionalContext | additionalContext | Same mechanism |
 | Transcript parsing | JSONL (user/assistant) | JSONL (user/gemini) | Adapter normalizes |
@@ -81,7 +81,7 @@ The `install.sh` script sets this automatically.
 3. `/verify` — Spawns parallel verifier agents for all criteria
 4. `/auto` — Chains define and do autonomously
 
-Supporting skills: `/figure-out` for deep investigation, `/escalate` for blocking issues, `/tend-pr` for PR lifecycle automation.
+Supporting skills: `/figure-out` for deep investigation (end with `/stop-thinking-disciplines`), `/escalate` for blocking issues, `/tend-pr` for PR lifecycle automation.
 
 ## Repository
 

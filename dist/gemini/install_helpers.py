@@ -22,7 +22,8 @@ SUFFIX = f"-{NAMESPACE}"
 SKILL_NAMES = [
     "auto", "define", "do", "done", "escalate",
     "learn-define-patterns", "tend-pr", "tend-pr-tick",
-    "figure-out", "figure-out-done", "verify",
+    "figure-out", "stop-thinking-disciplines",
+    "thinking-disciplines", "verify",
 ]
 
 # Agent filenames (without .md)

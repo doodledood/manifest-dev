@@ -9,6 +9,8 @@ This project uses a **define -> do -> verify -> done** workflow, powered by skil
 3. **/verify** -- Parallel verification of all criteria. Spawns agents (listed below) for quality gate checks.
 4. **/done** -- Completion checkpoint. Confirms all criteria pass and produces a summary.
 
+Supporting skills: /auto (end-to-end autonomous), /figure-out (collaborative deep understanding — end with /stop-thinking-disciplines), /escalate (structured escalation), /tend-pr (PR lifecycle), /learn-define-patterns (preference extraction). Internal: thinking-disciplines (core disciplines invoked by /figure-out and /define).
+
 Skills handle the workflow orchestration. Agents listed below are used for verification and analysis.
 
 ## Code Review Agents

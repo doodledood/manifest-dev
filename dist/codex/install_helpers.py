@@ -64,7 +64,8 @@ def patch_cross_references(file_path: str) -> None:
         "tend-pr",
         "tend-pr-tick",
         "figure-out",
-        "figure-out-done",
+        "stop-thinking-disciplines",
+        "thinking-disciplines",
         "verify",
     ]
 
