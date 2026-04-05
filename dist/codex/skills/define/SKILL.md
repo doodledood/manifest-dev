@@ -5,6 +5,8 @@ description: 'Manifest builder. Plan work, scope tasks, spec out requirements, b
 
 # /define - Manifest Builder
 
+Invoke the manifest-dev:thinking-disciplines skill. Apply throughout the entire interview — not just domain understanding, but every question, every assessment, every synthesis.
+
 ## Goal
 
 Build a **comprehensive Manifest** that captures:

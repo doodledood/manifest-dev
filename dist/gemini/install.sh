@@ -71,6 +71,8 @@ rm -f "$TARGET/hooks/prompt_submit_hook.py" 2>/dev/null || true
 rm -f "$TARGET/hooks/stop_do_hook.py" 2>/dev/null || true
 rm -f "$TARGET/hooks/understand_prompt_hook.py" 2>/dev/null || true
 rm -f "$TARGET/hooks/figure_out_prompt_hook.py" 2>/dev/null || true
+rm -f "$TARGET/hooks/thinking_disciplines_prompt_hook.py" 2>/dev/null || true
+rm -f "$TARGET/hooks/thinking_disciplines_pretool_hook.py" 2>/dev/null || true
 
 # --- Copy hooks (no namespacing needed — extension-private) ---
 echo "Installing hooks..."
@@ -81,7 +83,8 @@ cp "$SCRIPT_DIR/hooks/posttool_log_hook.py" "$TARGET/hooks/"
 cp "$SCRIPT_DIR/hooks/pretool_verify_hook.py" "$TARGET/hooks/"
 cp "$SCRIPT_DIR/hooks/prompt_submit_hook.py" "$TARGET/hooks/"
 cp "$SCRIPT_DIR/hooks/stop_do_hook.py" "$TARGET/hooks/"
-cp "$SCRIPT_DIR/hooks/figure_out_prompt_hook.py" "$TARGET/hooks/"
+cp "$SCRIPT_DIR/hooks/thinking_disciplines_prompt_hook.py" "$TARGET/hooks/"
+cp "$SCRIPT_DIR/hooks/thinking_disciplines_pretool_hook.py" "$TARGET/hooks/"
 
 # --- Namespace and install skills + agents ---
 echo "Installing skills and agents (with -${NAMESPACE} namespace)..."
@@ -118,7 +121,7 @@ echo ""
 echo "Components installed:"
 echo "  Skills:  $(find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}" -type d 2>/dev/null | wc -l) skills"
 echo "  Agents:  $(find "$TARGET/agents" -maxdepth 1 -name "*-${NAMESPACE}.md" -type f 2>/dev/null | wc -l) agents"
-echo "  Hooks:   8 hook scripts"
+echo "  Hooks:   9 hook scripts"
 echo ""
 echo "Required: enableAgents must be true in settings.json"
 echo "  (already set by this installer)"

@@ -14,7 +14,7 @@ import sys
 from hook_utils import (
     build_system_reminder,
     parse_do_flow,
-    parse_figure_out_flow,
+    parse_thinking_disciplines_flow,
 )
 
 DO_WORKFLOW_RECOVERY_REMINDER = """This session was compacted during an active /do workflow. Context may have been lost.
@@ -29,20 +29,6 @@ The /do was invoked with: {do_args}
 Do not restart completed work. Resume from where you left off."""
 
 
-FIGURE_OUT_RECOVERY_REMINDER_PREFIX = """This session was compacted during an active /figure-out session. Context may have been lost.
-
-You are in an /figure-out session about: """
-
-FIGURE_OUT_RECOVERY_REMINDER_SUFFIX = """
-
-Re-read the /figure-out skill to restore your cognitive stance. Truth-convergence is your north star — come prepared, incoherence is a signal, resist premature synthesis."""
-
-
-FIGURE_OUT_RECOVERY_FALLBACK = """This session was compacted during an active /figure-out session. Context may have been lost.
-
-Re-read the /figure-out skill to restore your cognitive stance. Truth-convergence is your north star — come prepared, incoherence is a signal, resist premature synthesis."""
-
-
 DO_WORKFLOW_RECOVERY_FALLBACK = """This session was compacted during an active /do workflow. Context may have been lost.
 
 CRITICAL: Before continuing, recover your workflow context:
@@ -53,57 +39,55 @@ CRITICAL: Before continuing, recover your workflow context:
 Do not restart completed work. Resume from where you left off."""
 
 
+THINKING_DISCIPLINES_RECOVERY_REMINDER = """Thinking disciplines are active. Re-read the thinking-disciplines skill to restore your cognitive stance."""
+
+
 def main() -> None:
     """Main hook entry point."""
     try:
         stdin_data = sys.stdin.read()
         hook_input = json.loads(stdin_data)
-    except (json.JSONDecodeError, OSError):
-        hook_input = {}
 
-    transcript_path = hook_input.get("transcript_path", "")
+        transcript_path = hook_input.get("transcript_path", "")
 
-    if not transcript_path:
-        sys.exit(0)
+        if not transcript_path:
+            sys.exit(0)
 
-    do_state = parse_do_flow(transcript_path)
-    figure_out_state = parse_figure_out_flow(transcript_path)
+        do_state = parse_do_flow(transcript_path)
+        thinking_state = parse_thinking_disciplines_flow(transcript_path)
 
-    reminders: list[str] = []
+        reminders: list[str] = []
 
-    # Active /do workflow - build recovery reminder
-    if do_state.has_do and not do_state.has_done and not do_state.has_escalate:
-        if do_state.do_args:
-            reminders.append(
-                DO_WORKFLOW_RECOVERY_REMINDER.format(do_args=do_state.do_args)
-            )
-        else:
-            reminders.append(DO_WORKFLOW_RECOVERY_FALLBACK)
+        # Active /do workflow - build recovery reminder
+        if do_state.has_do and not do_state.has_done and not do_state.has_escalate:
+            if do_state.do_args:
+                reminders.append(
+                    DO_WORKFLOW_RECOVERY_REMINDER.format(do_args=do_state.do_args)
+                )
+            else:
+                reminders.append(DO_WORKFLOW_RECOVERY_FALLBACK)
 
-    # Active /figure-out session - build re-grounding reminder
-    if figure_out_state.has_figure_out and not figure_out_state.is_complete:
-        if figure_out_state.figure_out_args:
-            reminders.append(
-                FIGURE_OUT_RECOVERY_REMINDER_PREFIX
-                + figure_out_state.figure_out_args
-                + FIGURE_OUT_RECOVERY_REMINDER_SUFFIX
-            )
-        else:
-            reminders.append(FIGURE_OUT_RECOVERY_FALLBACK)
+        # Active thinking disciplines - build re-grounding reminder
+        if thinking_state.is_active:
+            reminders.append(THINKING_DISCIPLINES_RECOVERY_REMINDER)
 
-    if not reminders:
-        sys.exit(0)
+        if not reminders:
+            sys.exit(0)
 
-    context = build_system_reminder("\n\n".join(reminders))
+        context = build_system_reminder("\n\n".join(reminders))
 
-    output = {
-        "hookSpecificOutput": {
-            "hookEventName": "SessionStart",
-            "additionalContext": context,
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "SessionStart",
+                "additionalContext": context,
+            }
         }
-    }
-    print(json.dumps(output))
-    sys.exit(0)
+        print(json.dumps(output))
+        sys.exit(0)
+
+    except Exception:
+        # Fail open — never block normal operation on error
+        sys.exit(0)
 
 
 if __name__ == "__main__":

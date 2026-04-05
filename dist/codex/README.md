@@ -6,7 +6,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 
 | Type | Count | Notes |
 |------|-------|-------|
-| Skills | 11 | Full compatibility (Agent Skills Open Standard) |
+| Skills | 13 | Full compatibility (Agent Skills Open Standard) |
 | Agents | 14 | TOML config stubs with full prompt bodies |
 | Hooks | 0 | Not supported by Codex CLI (Issue #2109) |
 | Rules | 1 | Starlark execution policy |
@@ -24,7 +24,8 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | tend-pr | PR tending workflow |
 | tend-pr-tick | PR tending tick (periodic check) |
 | figure-out | Collaborative deep understanding |
-| figure-out-done | End an active /figure-out session |
+| thinking-disciplines | Core thinking disciplines (internal, not user-invocable) |
+| stop-thinking-disciplines | Deactivate thinking disciplines |
 | verify | Parallel verification of all criteria |
 
 ### Agents
@@ -111,7 +112,8 @@ dist/codex/
 │   ├── tend-pr/
 │   ├── tend-pr-tick/
 │   ├── figure-out/
-│   ├── figure-out-done/
+│   ├── stop-thinking-disciplines/
+│   ├── thinking-disciplines/
 │   └── verify/
 ├── agents/                          # 14 TOML config stubs
 │   ├── change-intent-reviewer.toml

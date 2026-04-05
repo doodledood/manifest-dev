@@ -6,9 +6,9 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 11 | Core workflow skills (define, do, verify, etc.) |
+| Skills | 13 | Core workflow skills (define, do, verify, etc.) |
 | Agents | 14 | Specialized reviewer and verification agents |
-| Commands | 7 | User-invocable slash commands |
+| Commands | 8 | User-invocable slash commands |
 | Plugin | 1 | TypeScript hook plugin for workflow enforcement |
 | Context | 1 | AGENTS.md workflow overview |
 
@@ -71,8 +71,9 @@ After installation, invoke workflows via slash commands:
 /define-manifest-dev     Plan and scope a task
 /do-manifest-dev         Execute a manifest
 /auto-manifest-dev       End-to-end autonomous execution
-/figure-out-manifest-dev Deep collaborative understanding
-/tend-pr-manifest-dev    PR lifecycle automation
+/figure-out-manifest-dev              Deep collaborative understanding
+/stop-thinking-disciplines-manifest-dev End thinking disciplines session
+/tend-pr-manifest-dev                 PR lifecycle automation
 ```
 
 ## Feature Parity with Claude Code
@@ -87,7 +88,7 @@ After installation, invoke workflows via slash commands:
 | Pre-verify refresh | Full | Full | tool.execute.before (main agent only) |
 | Log reminders | Full | Approximate | Persistent system context vs event-driven |
 | Amendment check | Full | Approximate | Persistent system context vs per-prompt |
-| /figure-out reinforcement | Full | Approximate | Persistent system context vs per-prompt |
+| Thinking disciplines reinforcement | Full | Approximate | Persistent system context vs per-prompt |
 | Subagent hooks | Full | Missing | tool.execute.before/after don't fire in subagents |
 
 ## Known Limitations
@@ -118,25 +119,26 @@ dist/opencode/
 │   ├── docs-reviewer.md
 │   ├── manifest-verifier.md
 │   └── type-safety-reviewer.md
-├── commands/                        # 7 user commands
+├── commands/                        # 8 user commands
 │   ├── auto.md
 │   ├── define.md
 │   ├── do.md
+│   ├── figure-out.md
 │   ├── learn-define-patterns.md
-│   ├── tend-pr.md
-│   ├── figure-out-done.md
-│   └── figure-out.md
-├── skills/                          # 11 skills (with subdirectories)
+│   ├── stop-thinking-disciplines.md
+│   └── tend-pr.md
+├── skills/                          # 13 skills (with subdirectories)
 │   ├── auto/
 │   ├── define/
 │   ├── do/
 │   ├── done/
 │   ├── escalate/
+│   ├── figure-out/
 │   ├── learn-define-patterns/
+│   ├── stop-thinking-disciplines/
 │   ├── tend-pr/
 │   ├── tend-pr-tick/
-│   ├── figure-out/
-│   ├── figure-out-done/
+│   ├── thinking-disciplines/
 │   └── verify/
 ├── plugins/
 │   ├── index.ts                     # Hook plugin
