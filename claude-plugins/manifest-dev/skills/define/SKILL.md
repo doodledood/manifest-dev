@@ -5,7 +5,9 @@ description: 'Manifest builder. Plan work, scope tasks, spec out requirements, b
 
 # /define - Manifest Builder
 
-Invoke the manifest-dev:thinking-disciplines skill. Apply throughout the entire interview — not just domain understanding, but every question, every assessment, every synthesis.
+## Prerequisites
+
+If thinking disciplines are not already active in this session, invoke the manifest-dev:thinking-disciplines skill. Do not begin the interview until disciplines are active. Apply throughout — every question, assessment, and synthesis.
 
 ## Goal
 
