@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/stop_do_hook.py"
+            "command": "bash -c 'ROOT=$(git rev-parse --show-toplevel) && python3 \"$ROOT/claude-plugins/manifest-dev/hooks/stop_do_hook.py\"'"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/pretool_verify_hook.py"
+            "command": "bash -c 'ROOT=$(git rev-parse --show-toplevel) && python3 \"$ROOT/claude-plugins/manifest-dev/hooks/pretool_verify_hook.py\"'"
           }
         ]
       },
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/thinking_disciplines_pretool_hook.py"
+            "command": "bash -c 'ROOT=$(git rev-parse --show-toplevel) && python3 \"$ROOT/claude-plugins/manifest-dev/hooks/thinking_disciplines_pretool_hook.py\"'"
           }
         ]
       }
@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/prompt_submit_hook.py"
+            "command": "bash -c 'ROOT=$(git rev-parse --show-toplevel) && python3 \"$ROOT/claude-plugins/manifest-dev/hooks/prompt_submit_hook.py\"'"
           }
         ]
       },
@@ -46,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/thinking_disciplines_prompt_hook.py"
+            "command": "bash -c 'ROOT=$(git rev-parse --show-toplevel) && python3 \"$ROOT/claude-plugins/manifest-dev/hooks/thinking_disciplines_prompt_hook.py\"'"
           }
         ]
       }
@@ -57,7 +57,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/posttool_log_hook.py"
+            "command": "bash -c 'ROOT=$(git rev-parse --show-toplevel) && python3 \"$ROOT/claude-plugins/manifest-dev/hooks/posttool_log_hook.py\"'"
           }
         ]
       },
@@ -66,7 +66,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/posttool_log_hook.py"
+            "command": "bash -c 'ROOT=$(git rev-parse --show-toplevel) && python3 \"$ROOT/claude-plugins/manifest-dev/hooks/posttool_log_hook.py\"'"
           }
         ]
       },
@@ -75,7 +75,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/posttool_log_hook.py"
+            "command": "bash -c 'ROOT=$(git rev-parse --show-toplevel) && python3 \"$ROOT/claude-plugins/manifest-dev/hooks/posttool_log_hook.py\"'"
           }
         ]
       }
@@ -86,7 +86,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/post_compact_hook.py"
+            "command": "bash -c 'ROOT=$(git rev-parse --show-toplevel) && python3 \"$ROOT/claude-plugins/manifest-dev/hooks/post_compact_hook.py\"'"
           }
         ]
       }
