@@ -6,6 +6,7 @@ Tests the stop hook that enforces verification-first workflow for /do.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import pytest
