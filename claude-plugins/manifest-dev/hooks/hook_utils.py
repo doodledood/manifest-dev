@@ -8,6 +8,7 @@ Contains transcript parsing for skill invocation detection.
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass
 from typing import Any
@@ -301,6 +302,79 @@ def count_consecutive_short_outputs(transcript_path: str) -> int:
             break
 
     return consecutive_short
+
+
+def record_stop_block(
+    session_id: str,
+    transcript_path: str,
+    state_dir: str = "/tmp",
+) -> int:
+    """
+    Track consecutive stop-hook blocks per session, keyed on transcript mtime.
+
+    Each call increments a per-session counter stored at
+    ``{state_dir}/manifest-dev-stop-blocks-{session_id}.json``. The counter
+    resets to 1 when the transcript's on-disk mtime advances between
+    invocations.
+
+    This independence from transcript content matters: the existing
+    ``count_consecutive_short_outputs`` helper relies on the model's
+    short-output pattern being visible in the transcript, but Claude Code
+    flushes assistant output to disk only at user-prompt boundaries. During
+    a long ``/do → /verify → /done`` chain with no intervening user prompt,
+    the model's recent invocations remain buffered in memory and are
+    invisible to the hook. Counting blocks (which the hook itself observes)
+    rather than transcript content makes the loop-escape independent of
+    that flush timing.
+
+    Args:
+        session_id: Stable identifier for the current Claude Code session.
+            Hook input typically provides this as ``hook_input["session_id"]``.
+        transcript_path: Path to the on-disk transcript file. Used only for
+            its mtime — not parsed.
+        state_dir: Directory for the per-session counter file. Defaults to
+            ``/tmp``; tests override.
+
+    Returns:
+        The number of consecutive blocks observed without the transcript
+        advancing. ``1`` on the first block of a fresh stretch.
+    """
+    state_path = os.path.join(state_dir, f"manifest-dev-stop-blocks-{session_id}.json")
+
+    try:
+        tx_mtime = os.path.getmtime(transcript_path)
+    except OSError:
+        tx_mtime = 0.0
+
+    state: dict[str, Any] = {"count": 0, "transcript_mtime": 0.0}
+    if os.path.exists(state_path):
+        try:
+            with open(state_path, encoding="utf-8") as f:
+                loaded = json.load(f)
+            if isinstance(loaded, dict):
+                state = loaded
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    prior_mtime = state.get("transcript_mtime", 0.0)
+    if isinstance(prior_mtime, (int, float)) and prior_mtime == tx_mtime:
+        # Transcript has not advanced since the previous block — keep counting
+        prior_count = state.get("count", 0)
+        if not isinstance(prior_count, int):
+            prior_count = 0
+        new_count = prior_count + 1
+    else:
+        # Transcript advanced (model output reached disk) — fresh stretch
+        new_count = 1
+
+    new_state = {"count": new_count, "transcript_mtime": tx_mtime}
+    try:
+        with open(state_path, "w", encoding="utf-8") as f:
+            json.dump(new_state, f)
+    except OSError:
+        pass
+
+    return new_count
 
 
 def parse_do_flow(transcript_path: str) -> DoFlowState:

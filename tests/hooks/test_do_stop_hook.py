@@ -1266,3 +1266,288 @@ class TestStopHookInterruptHandling:
 
         # Should ALLOW — no /do in transcript
         assert result is None
+
+
+class TestStopHookStaleTranscriptEscape:
+    """
+    Tests for the transcript-stale escape valve in stop_do_hook.
+
+    The model's `/verify` and `/done` Skill invocations land in the
+    transcript only when Claude Code flushes the .jsonl, and that flush
+    happens at user-prompt boundaries. A self-contained
+    `/do → /verify → /done` chain (no user prompt between) leaves the
+    model's calls buffered in memory — invisible to this hook. The
+    short-output loop detector also fails in that case because the model's
+    `.` retries are equally invisible.
+
+    The escape valve here counts hook invocations themselves (not transcript
+    content). When a stretch of N consecutive blocks all see the same
+    transcript mtime, escape with a diagnostic message that names both
+    plausible causes (stale flush vs. genuinely stuck model).
+    """
+
+    def _block_n_times(
+        self,
+        transcript_path: str,
+        session_id: str,
+        n: int,
+        env: dict[str, str] | None = None,
+    ) -> dict[str, Any] | None:
+        """Invoke the hook n times back-to-back and return the final result."""
+        import os
+        import shutil
+
+        # Clean any prior counter state for this session so the test starts fresh.
+        state_path = f"/tmp/manifest-dev-stop-blocks-{session_id}.json"
+        if os.path.exists(state_path):
+            os.remove(state_path)
+
+        hook_input = {
+            "transcript_path": transcript_path,
+            "session_id": session_id,
+        }
+
+        import json as _json
+        import subprocess
+
+        from hook_test_helpers import HOOKS_DIR
+
+        result = None
+        for _ in range(n):
+            run_env = os.environ.copy()
+            if env:
+                run_env.update(env)
+
+            r = subprocess.run(
+                [shutil.which("python") or "python3", str(HOOKS_DIR / "stop_do_hook.py")],
+                input=_json.dumps(hook_input),
+                capture_output=True,
+                text=True,
+                cwd=str(HOOKS_DIR),
+                env=run_env,
+            )
+            assert r.returncode == 0, f"hook crashed: {r.stderr}"
+            result = _json.loads(r.stdout) if r.stdout.strip() else None
+        return result
+
+    def test_blocks_below_threshold(
+        self,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Blocks under threshold still BLOCK with the standard message."""
+        transcript_path = temp_transcript([user_do_command])
+
+        result = self._block_n_times(transcript_path, "sess-below", n=4)
+
+        assert result is not None
+        assert result["decision"] == "block"
+        assert "verify" in result["systemMessage"].lower()
+
+    def test_escapes_at_threshold(
+        self,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """At the default threshold (5) the hook ALLOWS with diagnostic warning."""
+        transcript_path = temp_transcript([user_do_command])
+
+        result = self._block_n_times(transcript_path, "sess-at", n=5)
+
+        assert result is not None
+        assert "decision" not in result, "should allow (omit decision)"
+        assert "5 blocks" in result["reason"] or "5 consecutive" in result["systemMessage"]
+        assert "transcript" in result["systemMessage"].lower()
+
+    def test_diagnostic_names_both_causes(
+        self,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """The escape message must explain both buffering and stuck-model paths."""
+        transcript_path = temp_transcript([user_do_command])
+
+        result = self._block_n_times(transcript_path, "sess-msg", n=5)
+
+        assert result is not None
+        msg = result["systemMessage"]
+        # Cause (a): buffering / flush timing
+        assert "flush" in msg.lower() or "buffer" in msg.lower()
+        # Cause (b): genuinely stuck model
+        assert "stuck" in msg.lower() or "genuinely" in msg.lower()
+        # Diagnostic should mention the execution log
+        assert "do-log" in msg.lower() or "execution log" in msg.lower()
+
+    def test_env_var_threshold_override(
+        self,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """MANIFEST_DEV_STOP_MAX_STALE_BLOCKS env var should override the default."""
+        transcript_path = temp_transcript([user_do_command])
+
+        # With threshold=2, escape on the 2nd block, not the 5th.
+        result = self._block_n_times(
+            transcript_path,
+            "sess-env",
+            n=2,
+            env={"MANIFEST_DEV_STOP_MAX_STALE_BLOCKS": "2"},
+        )
+
+        assert result is not None
+        assert "decision" not in result, "should allow at threshold=2"
+
+    def test_counter_resets_when_transcript_advances(
+        self,
+        tmp_path,
+        user_do_command: dict[str, Any],
+    ):
+        """When transcript mtime changes between blocks, counter must reset."""
+        import json as _json
+        import os
+        import time
+
+        # Write initial transcript (with a /do invocation)
+        transcript_file = tmp_path / "transcript.jsonl"
+        with open(transcript_file, "w", encoding="utf-8") as f:
+            f.write(_json.dumps(user_do_command) + "\n")
+        transcript_path = str(transcript_file)
+
+        # Block 4 times — should not yet escape (threshold 5)
+        result_pre = self._block_n_times(transcript_path, "sess-reset", n=4)
+        assert result_pre is not None
+        assert result_pre["decision"] == "block"
+
+        # Advance transcript mtime by appending a new line
+        time.sleep(0.01)  # ensure mtime tick
+        with open(transcript_file, "a", encoding="utf-8") as f:
+            f.write(_json.dumps({"type": "user", "message": {"content": "hi"}}) + "\n")
+        os.utime(transcript_file, None)  # bump mtime explicitly
+        time.sleep(0.01)
+
+        # First block after transcript advance: counter resets to 1 → still BLOCK
+        result_after = self._block_n_times(
+            transcript_path, "sess-reset", n=1
+        )
+        assert result_after is not None
+        assert result_after["decision"] == "block", (
+            "counter should have reset after transcript advanced; "
+            f"got {result_after}"
+        )
+
+
+class TestRecordStopBlock:
+    """Unit tests for hook_utils.record_stop_block in isolation."""
+
+    def test_first_call_returns_one(self, tmp_path):
+        """First call for a fresh session returns 1."""
+        import sys
+
+        sys.path.insert(0, str(HOOKS_DIR))
+        from hook_utils import record_stop_block
+
+        transcript = tmp_path / "tx.jsonl"
+        transcript.write_text("hello\n")
+
+        count = record_stop_block(
+            "fresh-session", str(transcript), state_dir=str(tmp_path)
+        )
+        assert count == 1
+
+    def test_repeated_calls_increment_when_mtime_static(self, tmp_path):
+        """Repeated calls without transcript mtime change increment the counter."""
+        import sys
+
+        sys.path.insert(0, str(HOOKS_DIR))
+        from hook_utils import record_stop_block
+
+        transcript = tmp_path / "tx.jsonl"
+        transcript.write_text("hello\n")
+
+        c1 = record_stop_block("sess-A", str(transcript), state_dir=str(tmp_path))
+        c2 = record_stop_block("sess-A", str(transcript), state_dir=str(tmp_path))
+        c3 = record_stop_block("sess-A", str(transcript), state_dir=str(tmp_path))
+        assert (c1, c2, c3) == (1, 2, 3)
+
+    def test_counter_resets_when_mtime_advances(self, tmp_path):
+        """Counter resets to 1 when the transcript mtime changes."""
+        import os
+        import sys
+        import time
+
+        sys.path.insert(0, str(HOOKS_DIR))
+        from hook_utils import record_stop_block
+
+        transcript = tmp_path / "tx.jsonl"
+        transcript.write_text("v1\n")
+
+        c1 = record_stop_block("sess-B", str(transcript), state_dir=str(tmp_path))
+        c2 = record_stop_block("sess-B", str(transcript), state_dir=str(tmp_path))
+        assert (c1, c2) == (1, 2)
+
+        # Advance mtime
+        time.sleep(0.02)
+        transcript.write_text("v2\n")
+        os.utime(str(transcript), None)
+        time.sleep(0.02)
+
+        c3 = record_stop_block("sess-B", str(transcript), state_dir=str(tmp_path))
+        assert c3 == 1, f"counter should reset on mtime advance; got {c3}"
+
+    def test_sessions_are_independent(self, tmp_path):
+        """Different session_ids maintain independent counters."""
+        import sys
+
+        sys.path.insert(0, str(HOOKS_DIR))
+        from hook_utils import record_stop_block
+
+        transcript = tmp_path / "tx.jsonl"
+        transcript.write_text("hello\n")
+
+        record_stop_block("session-1", str(transcript), state_dir=str(tmp_path))
+        record_stop_block("session-1", str(transcript), state_dir=str(tmp_path))
+        c2_session1 = record_stop_block(
+            "session-1", str(transcript), state_dir=str(tmp_path)
+        )
+        c1_session2 = record_stop_block(
+            "session-2", str(transcript), state_dir=str(tmp_path)
+        )
+        assert c2_session1 == 3
+        assert c1_session2 == 1, "session-2 counter should be independent"
+
+    def test_missing_transcript_does_not_raise(self, tmp_path):
+        """Missing transcript file is tolerated; counter still advances."""
+        import sys
+
+        sys.path.insert(0, str(HOOKS_DIR))
+        from hook_utils import record_stop_block
+
+        c1 = record_stop_block(
+            "sess-missing", "/nonexistent/transcript.jsonl", state_dir=str(tmp_path)
+        )
+        c2 = record_stop_block(
+            "sess-missing", "/nonexistent/transcript.jsonl", state_dir=str(tmp_path)
+        )
+        # Both calls see mtime=0 (missing), so counter increments
+        assert (c1, c2) == (1, 2)
+
+    def test_corrupt_state_file_starts_fresh(self, tmp_path):
+        """A corrupt counter file is treated as a fresh stretch."""
+        import sys
+
+        sys.path.insert(0, str(HOOKS_DIR))
+        from hook_utils import record_stop_block
+
+        transcript = tmp_path / "tx.jsonl"
+        transcript.write_text("hello\n")
+        state_file = tmp_path / "manifest-dev-stop-blocks-sess-corrupt.json"
+        state_file.write_text("not valid json {{")
+
+        count = record_stop_block(
+            "sess-corrupt", str(transcript), state_dir=str(tmp_path)
+        )
+        assert count == 1
+
+
+# Module-scope import for the unit-test class above.
+from hook_test_helpers import HOOKS_DIR  # noqa: E402

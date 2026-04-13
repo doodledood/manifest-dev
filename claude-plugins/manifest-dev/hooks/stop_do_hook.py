@@ -18,13 +18,21 @@ Decision matrix:
 from __future__ import annotations
 
 import json
+import os
 import sys
 
 from hook_utils import (
     count_consecutive_short_outputs,
     has_recent_api_error,
     parse_do_flow,
+    record_stop_block,
 )
+
+# Maximum number of consecutive blocks to allow before escaping with a
+# diagnostic warning when the transcript is not advancing. This is the
+# independent-of-transcript-content escape valve. Override with the
+# environment variable below.
+MAX_STALE_BLOCKS_DEFAULT = 5
 
 
 def main() -> None:
@@ -99,6 +107,45 @@ def main() -> None:
                 "WARNING: Stop allowed to break infinite loop. "
                 "The /do workflow was NOT properly completed. "
                 "Next time, call /escalate when blocked instead of minimal outputs."
+            ),
+        }
+        print(json.dumps(output))
+        sys.exit(0)
+
+    # Transcript-stale escape valve. The short-output check above relies on
+    # the model's `.` outputs being visible in the on-disk transcript, but
+    # the transcript only flushes to disk at user-prompt boundaries — so a
+    # long /do → /verify → /done chain with no user prompt between leaves
+    # the model's recent invocations buffered in memory, invisible to this
+    # hook. Counting our own block invocations (independent of transcript
+    # content) catches that case: when we've blocked N times without the
+    # transcript advancing, something needs human inspection regardless of
+    # whether the buffered work succeeded or genuinely got stuck.
+    session_id = hook_input.get("session_id", "default")
+    max_stale_blocks = int(
+        os.environ.get("MANIFEST_DEV_STOP_MAX_STALE_BLOCKS", MAX_STALE_BLOCKS_DEFAULT)
+    )
+    stale_blocks = record_stop_block(session_id, transcript_path)
+    if stale_blocks >= max_stale_blocks:
+        output = {
+            "reason": (
+                f"Allowed after {stale_blocks} blocks with no transcript movement"
+            ),
+            "systemMessage": (
+                f"WARNING: Stop hook allowed after {stale_blocks} consecutive "
+                "blocks without the on-disk transcript advancing. Two likely "
+                "causes:\n"
+                "  (a) The model's /verify or /done invocations completed but "
+                "the transcript hasn't flushed them to disk (Claude Code "
+                "flushes the .jsonl on user-prompt boundaries; long workflows "
+                "with no user input keep the buffer in memory). Work may "
+                "actually be complete — inspect the execution log "
+                "(/tmp/do-log-*.md) for the /verify outcome.\n"
+                "  (b) The model is genuinely stuck and not calling /done or "
+                "/escalate. Treat the run as incomplete and check "
+                "Deliverables.\n"
+                "Override threshold via MANIFEST_DEV_STOP_MAX_STALE_BLOCKS "
+                f"(default {MAX_STALE_BLOCKS_DEFAULT})."
             ),
         }
         print(json.dumps(output))
