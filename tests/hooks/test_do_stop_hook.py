@@ -1296,7 +1296,7 @@ class TestStopHookStaleTranscriptEscape:
     ) -> dict[str, Any] | None:
         """Invoke the hook n times back-to-back and return the final result."""
         import os
-        import shutil
+        import sys
 
         # Clean any prior counter state for this session so the test starts fresh.
         state_path = f"/tmp/manifest-dev-stop-blocks-{session_id}.json"
@@ -1316,11 +1316,13 @@ class TestStopHookStaleTranscriptEscape:
         result = None
         for _ in range(n):
             run_env = os.environ.copy()
+            # Clear env var so tests assuming the default threshold are deterministic
+            run_env.pop("MANIFEST_DEV_STOP_MAX_STALE_BLOCKS", None)
             if env:
                 run_env.update(env)
 
             r = subprocess.run(
-                [shutil.which("python") or "python3", str(HOOKS_DIR / "stop_do_hook.py")],
+                [sys.executable, str(HOOKS_DIR / "stop_do_hook.py")],
                 input=_json.dumps(hook_input),
                 capture_output=True,
                 text=True,
@@ -1406,7 +1408,6 @@ class TestStopHookStaleTranscriptEscape:
         """When transcript mtime changes between blocks, counter must reset."""
         import json as _json
         import os
-        import time
 
         # Write initial transcript (with a /do invocation)
         transcript_file = tmp_path / "transcript.jsonl"
@@ -1419,12 +1420,11 @@ class TestStopHookStaleTranscriptEscape:
         assert result_pre is not None
         assert result_pre["decision"] == "block"
 
-        # Advance transcript mtime by appending a new line
-        time.sleep(0.01)  # ensure mtime tick
+        # Advance transcript mtime with explicit future timestamp
+        prior_mtime = os.path.getmtime(transcript_file)
         with open(transcript_file, "a", encoding="utf-8") as f:
             f.write(_json.dumps({"type": "user", "message": {"content": "hi"}}) + "\n")
-        os.utime(transcript_file, None)  # bump mtime explicitly
-        time.sleep(0.01)
+        os.utime(transcript_file, (prior_mtime + 1, prior_mtime + 1))
 
         # First block after transcript advance: counter resets to 1 → still BLOCK
         result_after = self._block_n_times(
@@ -1474,7 +1474,6 @@ class TestRecordStopBlock:
         """Counter resets to 1 when the transcript mtime changes."""
         import os
         import sys
-        import time
 
         sys.path.insert(0, str(HOOKS_DIR))
         from hook_utils import record_stop_block
@@ -1486,11 +1485,10 @@ class TestRecordStopBlock:
         c2 = record_stop_block("sess-B", str(transcript), state_dir=str(tmp_path))
         assert (c1, c2) == (1, 2)
 
-        # Advance mtime
-        time.sleep(0.02)
+        # Advance mtime with explicit future timestamp
+        prior_mtime = os.path.getmtime(transcript)
         transcript.write_text("v2\n")
-        os.utime(str(transcript), None)
-        time.sleep(0.02)
+        os.utime(str(transcript), (prior_mtime + 1, prior_mtime + 1))
 
         c3 = record_stop_block("sess-B", str(transcript), state_dir=str(tmp_path))
         assert c3 == 1, f"counter should reset on mtime advance; got {c3}"

@@ -122,9 +122,14 @@ def main() -> None:
     # transcript advancing, something needs human inspection regardless of
     # whether the buffered work succeeded or genuinely got stuck.
     session_id = hook_input.get("session_id", "default")
-    max_stale_blocks = int(
-        os.environ.get("MANIFEST_DEV_STOP_MAX_STALE_BLOCKS", MAX_STALE_BLOCKS_DEFAULT)
-    )
+    try:
+        max_stale_blocks = int(
+            os.environ.get(
+                "MANIFEST_DEV_STOP_MAX_STALE_BLOCKS", MAX_STALE_BLOCKS_DEFAULT
+            )
+        )
+    except (ValueError, TypeError):
+        max_stale_blocks = MAX_STALE_BLOCKS_DEFAULT
     stale_blocks = record_stop_block(session_id, transcript_path)
     if stale_blocks >= max_stale_blocks:
         output = {
