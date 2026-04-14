@@ -37,7 +37,7 @@ For each target CLI, read its reference file first. The reference file is **the 
 | **Commands** | Generate command files from user-invocable skills (`user-invocable: true`, the default). Per reference file. |
 | **Context file** | Workflow overview + agent descriptions in the CLI's native context format per reference file. |
 | **README** | Component table, install instructions, feature parity table, required config, link to GitHub repo. |
-| **Install script** | Idempotent `install.sh` that copies all components to the CLI's standard locations. |
+| **Install script** | `install.sh` and `install_helpers.py` are **infrastructure files** — update incrementally, never regenerate. They contain logic not derivable from source (piped execution detection, temp dir cloning, cleanup traps, argument parsing, settings merging). Only modify sections that reflect changed components (step counts, file lists, component names). |
 | **CLI extras** | Extension manifests, plugin configs, execution rules — per reference file. |
 
 ### README install section
@@ -46,6 +46,7 @@ Remote install (no clone needed) must be the primary method. Use the repo from t
 
 ### Install script constraints
 
+- **Incremental updates only**: `install.sh` and `install_helpers.py` are maintained infrastructure — read existing content, modify only what changed. Never rewrite from scratch. Regression risk: infrastructure logic (piped `curl | bash` support, trap handlers, argument parsing) is invisible to component-level sync and will be lost on regeneration.
 - Idempotent (safe to re-run for updates)
 - Never overwrite user-owned shared entrypoints or config files; merge shared config additively
 - Only replace installer-managed namespaced files or extension-private files owned by this distribution
@@ -58,6 +59,7 @@ Remote install (no clone needed) must be the primary method. Use the repo from t
 
 | Constraint | Why |
 |-----------|-----|
+| `install.sh` and `install_helpers.py` are infrastructure — update incrementally, never regenerate | These contain manually-added logic (piped execution, traps, arg parsing) not derivable from source. Regeneration causes silent regressions. |
 | Frontmatter conversion must work in both bash and zsh | macOS default shell is zsh; bash-only constructs break |
 | Reference files are authoritative for conversion rules | Avoids two sources of truth — update one place |
 | Unmapped agent tools pass through unchanged | Target CLI ignores unknown tools gracefully |
