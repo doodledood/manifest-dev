@@ -74,11 +74,12 @@ def user_message(text: str) -> dict[str, Any]:
 
 
 def assistant_text(text: str = "Working on the task...") -> dict[str, Any]:
-    """Assistant text response.
+    """Assistant text response (no tool use — classified as idle by loop detection).
 
-    NOTE: stop_do_hook's loop detection considers outputs < 100 chars with no
-    non-Skill tool_use as "short". 3+ consecutive short outputs triggers loop
-    escape. Use substantial_work() for messages that should break the loop pattern.
+    NOTE: stop_do_hook's loop detection counts consecutive idle outputs (no
+    non-Skill tool_use). 3+ consecutive idle outputs triggers the escape valve.
+    Text length is irrelevant. Use substantial_work() for messages with tool use
+    that should reset the idle counter.
     """
     return {"type": "assistant", "message": {"content": text}}
 
@@ -429,7 +430,7 @@ class TestMediumRoutingLifecycle:
         stop_result = run_stop_hook(transcript)
         assert stop_result is not None
         assert "decision" not in stop_result  # omit decision = allow
-        assert "medium" in stop_result.get("systemMessage", "").lower()
+        assert "external" in stop_result.get("systemMessage", "").lower()
 
 
 class TestMultipleDoSessions:
@@ -492,7 +493,7 @@ class TestLoopDetectionInteraction:
     def test_loop_detection_allows_stop_after_repeated_short_outputs(
         self, tmp_path: Path
     ):
-        """After 3+ short outputs, stop is allowed to break infinite loop."""
+        """After 3+ consecutive idle outputs, stop is allowed to break loop."""
         transcript = make_transcript(
             tmp_path,
             [
@@ -506,15 +507,13 @@ class TestLoopDetectionInteraction:
         stop_result = run_stop_hook(transcript)
         assert stop_result is not None
         assert "decision" not in stop_result  # omit decision = allow
-        assert "loop" in stop_result.get("reason", "").lower()
+        assert "idle" in stop_result.get("reason", "").lower() or "loop" in stop_result.get("reason", "").lower()
 
     def test_substantial_output_breaks_loop_pattern(self, tmp_path: Path):
-        """A non-Skill tool use between short outputs resets loop detection.
+        """A non-Skill tool use between idle outputs resets the idle counter.
 
-        NOTE: Loop detection considers < 100 chars with no non-Skill tool_use
-        as "short". Only non-Skill tool_use (Read, Edit, Write, Bash, etc.)
-        breaks the loop pattern. Pure text, even long text, is still "short"
-        if under 100 chars.
+        Only non-Skill tool_use (Read, Edit, Write, Bash, etc.) counts as
+        productive. Text-only outputs are idle regardless of length.
         """
         transcript = make_transcript(
             tmp_path,
@@ -1066,14 +1065,14 @@ class TestFigureOutDefineDoFullPipeline:
                 user_figure_out("the auth problem"),
                 thinking_disciplines_skill_call(),
                 thinking_disciplines_ismeta(),
-                assistant_text("Investigated the problem." * 5),
+                substantial_work("Investigated the problem by reading codebase."),
                 user_define("build auth system"),
                 thinking_disciplines_skill_call(),
                 thinking_disciplines_ismeta(),
-                assistant_text("Manifest written." * 5),
+                substantial_work("Manifest written after exploring code."),
                 user_do("/tmp/manifest.md"),
-                assistant_text(
-                    "Working on AC-1.1: implementing auth changes with tests." * 3
+                substantial_work(
+                    "Working on AC-1.1: implementing auth changes with tests."
                 ),
             ],
         )

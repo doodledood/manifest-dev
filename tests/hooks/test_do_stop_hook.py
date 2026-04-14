@@ -267,15 +267,15 @@ class TestStopHookApiErrors:
 
 
 class TestStopHookLoopDetection:
-    """Tests for infinite loop detection and prevention."""
+    """Tests for idle loop detection and prevention."""
 
-    def test_allows_after_three_short_outputs(
+    def test_allows_after_three_idle_outputs(
         self,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
-        """Stop should be allowed after 3+ consecutive short outputs (loop detected)."""
-        short_outputs = [
+        """Stop should be allowed after 3+ consecutive idle outputs (no tool use)."""
+        idle_outputs = [
             {
                 "type": "assistant",
                 "message": {"content": [{"type": "text", "text": "."}]},
@@ -289,22 +289,22 @@ class TestStopHookLoopDetection:
                 "message": {"content": [{"type": "text", "text": "Waiting."}]},
             },
         ]
-        transcript_path = temp_transcript([user_do_command] + short_outputs)
+        transcript_path = temp_transcript([user_do_command] + idle_outputs)
         hook_input = {"transcript_path": transcript_path}
 
         result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert "decision" not in result  # omit decision = allow
-        assert "loop" in result["reason"].lower()
+        assert "idle" in result["reason"].lower() or "loop" in result["reason"].lower()
 
-    def test_blocks_with_two_short_outputs(
+    def test_blocks_with_two_idle_outputs(
         self,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
-        """Stop should still be blocked with only 2 consecutive short outputs."""
-        short_outputs = [
+        """Stop should still be blocked with only 2 consecutive idle outputs."""
+        idle_outputs = [
             {
                 "type": "assistant",
                 "message": {"content": [{"type": "text", "text": "."}]},
@@ -314,44 +314,51 @@ class TestStopHookLoopDetection:
                 "message": {"content": [{"type": "text", "text": "Done."}]},
             },
         ]
-        transcript_path = temp_transcript([user_do_command] + short_outputs)
+        transcript_path = temp_transcript([user_do_command] + idle_outputs)
         hook_input = {"transcript_path": transcript_path}
 
         result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is not None
         assert result["decision"] == "block"
-        # Message should mention /verify and /escalate options
         assert "/verify" in result["systemMessage"]
         assert "/escalate" in result["systemMessage"]
 
-    def test_substantial_output_breaks_loop_pattern(
+    def test_long_text_without_tools_is_idle(
         self,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
-        """Substantial output should reset the loop counter."""
+        """Long text-only output (>100 chars) should still be classified as idle.
+
+        This is the core fix — previously, text >= 100 chars was classified as
+        "substantial" even without tool use, which caused a deadlock when the
+        model wrote long explanations while waiting for background agents.
+        """
         transcript_path = temp_transcript(
             [
                 user_do_command,
-                # Two short outputs
+                # Three long text-only outputs — all idle despite length
                 {
                     "type": "assistant",
-                    "message": {"content": [{"type": "text", "text": "."}]},
+                    "message": {"content": [{"type": "text", "text": "x" * 200}]},
                 },
                 {
                     "type": "assistant",
-                    "message": {"content": [{"type": "text", "text": "."}]},
+                    "message": {
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "I'm waiting for background agents to complete. "
+                                "They were launched in parallel and I'll be notified "
+                                "when each finishes.",
+                            }
+                        ]
+                    },
                 },
-                # Substantial output breaks the pattern
                 {
                     "type": "assistant",
                     "message": {"content": [{"type": "text", "text": "x" * 150}]},
-                },
-                # Only one short output after substantial
-                {
-                    "type": "assistant",
-                    "message": {"content": [{"type": "text", "text": "."}]},
                 },
             ]
         )
@@ -359,29 +366,29 @@ class TestStopHookLoopDetection:
 
         result = run_hook("stop_do_hook.py", hook_input)
 
-        # Should block because only 1 consecutive short output after substantial
+        # Should allow — 3 consecutive idle outputs despite long text
         assert result is not None
-        assert result["decision"] == "block"
+        assert "decision" not in result  # omit decision = allow
 
-    def test_tool_use_breaks_loop_pattern(
+    def test_tool_use_breaks_idle_pattern(
         self,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
-        """Non-Skill tool use should reset the loop counter."""
+        """Non-Skill tool use should reset the idle counter."""
         transcript_path = temp_transcript(
             [
                 user_do_command,
-                # Two short outputs
+                # Two idle outputs
                 {
                     "type": "assistant",
-                    "message": {"content": [{"type": "text", "text": "."}]},
+                    "message": {"content": [{"type": "text", "text": "x" * 200}]},
                 },
                 {
                     "type": "assistant",
                     "message": {"content": [{"type": "text", "text": "."}]},
                 },
-                # Tool use (not Skill) breaks the pattern
+                # Tool use (not Skill) makes this output productive — resets counter
                 {
                     "type": "assistant",
                     "message": {
@@ -395,7 +402,7 @@ class TestStopHookLoopDetection:
                         ]
                     },
                 },
-                # Only one short output after tool use
+                # Only one idle output after productive
                 {
                     "type": "assistant",
                     "message": {"content": [{"type": "text", "text": "."}]},
@@ -406,20 +413,64 @@ class TestStopHookLoopDetection:
 
         result = run_hook("stop_do_hook.py", hook_input)
 
-        # Should block because only 1 consecutive short output after tool use
+        # Should block because only 1 consecutive idle output after tool use
         assert result is not None
         assert result["decision"] == "block"
+
+    def test_skill_only_with_long_text_is_idle(
+        self,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Skill-only tool use with long text should still be classified as idle.
+
+        Skill calls (like /escalate attempts) don't count as meaningful tool use,
+        so a message with only Skill tool_use is idle regardless of text length.
+        """
+        transcript_path = temp_transcript(
+            [
+                user_do_command,
+                {
+                    "type": "assistant",
+                    "message": {"content": [{"type": "text", "text": "x" * 200}]},
+                },
+                {
+                    "type": "assistant",
+                    "message": {
+                        "content": [
+                            {"type": "text", "text": "x" * 150},
+                            {
+                                "type": "tool_use",
+                                "name": "Skill",
+                                "input": {"skill": "some-other-skill"},
+                            },
+                        ]
+                    },
+                },
+                {
+                    "type": "assistant",
+                    "message": {"content": [{"type": "text", "text": "x" * 100}]},
+                },
+            ]
+        )
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook("stop_do_hook.py", hook_input)
+
+        # Should allow — 3 consecutive idle outputs (Skill doesn't count as productive)
+        assert result is not None
+        assert "decision" not in result  # omit decision = allow
 
     def test_escalate_skill_allows_stop_even_in_loop(
         self,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
-        """Calling /escalate (via Skill) should allow stop regardless of loop pattern."""
+        """Calling /escalate (via Skill) should allow stop regardless of idle pattern."""
         transcript_path = temp_transcript(
             [
                 user_do_command,
-                # Short outputs with an escalate call in the middle
+                # Idle outputs with an escalate call in the middle
                 {
                     "type": "assistant",
                     "message": {"content": [{"type": "text", "text": "."}]},
@@ -448,19 +499,18 @@ class TestStopHookLoopDetection:
         result = run_hook("stop_do_hook.py", hook_input)
 
         # Should allow because /escalate was called (proper workflow completion)
-        # Loop detection doesn't apply when /escalate was invoked
         assert result is None
 
-    def test_non_escalate_skill_does_not_break_loop_pattern(
+    def test_non_escalate_skill_does_not_break_idle_pattern(
         self,
         temp_transcript,
         user_do_command: dict[str, Any],
     ):
-        """Skill tool use for non-completion skills should not reset loop counter."""
+        """Skill tool use for non-completion skills should not reset idle counter."""
         transcript_path = temp_transcript(
             [
                 user_do_command,
-                # Three short outputs with a non-escalate Skill call
+                # Three idle outputs with a non-escalate Skill call
                 {
                     "type": "assistant",
                     "message": {"content": [{"type": "text", "text": "."}]},
@@ -470,7 +520,6 @@ class TestStopHookLoopDetection:
                     "message": {
                         "content": [
                             {"type": "text", "text": "x"},
-                            # Some other skill, not escalate/done
                             {
                                 "type": "tool_use",
                                 "name": "Skill",
@@ -489,7 +538,7 @@ class TestStopHookLoopDetection:
 
         result = run_hook("stop_do_hook.py", hook_input)
 
-        # Should allow because 3 consecutive short outputs (Skill doesn't reset counter)
+        # Should allow because 3 consecutive idle outputs (Skill doesn't reset counter)
         assert result is not None
         assert "decision" not in result  # omit decision = allow
 

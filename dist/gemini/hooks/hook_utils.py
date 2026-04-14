@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """
-Shared utilities for manifest-dev hooks (Gemini CLI adaptation).
+Shared utilities for manifest-dev hooks.
 
 Contains transcript parsing for skill invocation detection.
-Adapted for Gemini CLI's JSONL transcript format where message types
-are 'user' and 'gemini' instead of 'user' and 'assistant'.
 """
 
 from __future__ import annotations
@@ -40,28 +38,10 @@ def build_system_reminder(content: str) -> str:
     return f"<system-reminder>{content}</system-reminder>"
 
 
-def _normalize_type(msg_type: str) -> str:
-    """Normalize Gemini message types to Claude Code equivalents.
-
-    Gemini uses 'gemini' for model responses; Claude Code uses 'assistant'.
-    """
-    if msg_type == "gemini":
-        return "assistant"
-    return msg_type
-
-
 def get_message_text(line_data: dict[str, Any]) -> str:
-    """Extract text content from a message line.
-
-    Handles both Claude Code format (message.content) and
-    Gemini CLI format (content array at top level).
-    """
-    # Gemini format: content is at top level
-    content = line_data.get("content", [])
-    if not content:
-        # Claude format fallback: content inside message
-        message = line_data.get("message", {})
-        content = message.get("content", [])
+    """Extract text content from a message line."""
+    message = line_data.get("message", {})
+    content = message.get("content", [])
 
     if isinstance(content, str):
         return content
@@ -70,27 +50,21 @@ def get_message_text(line_data: dict[str, Any]) -> str:
     for block in content:
         if isinstance(block, dict) and block.get("type") == "text":
             text += block.get("text", "")
-        elif isinstance(block, dict) and "text" in block:
-            text += block.get("text", "")
     return text
 
 
 def get_skill_call_args(line_data: dict[str, Any], skill_name: str) -> str | None:
     """
-    Get arguments from a skill tool call for the given skill.
+    Get arguments from a Skill tool call for the given skill.
 
     Returns the args string if found, None otherwise.
     Matches both "skill-name" and "plugin:skill-name" formats.
-    Handles both Claude Code (Skill tool_use) and Gemini CLI (activate_skill) formats.
     """
-    msg_type = _normalize_type(line_data.get("type", ""))
-    if msg_type != "assistant":
+    if line_data.get("type") != "assistant":
         return None
 
-    content = line_data.get("content", [])
-    if not content:
-        message = line_data.get("message", {})
-        content = message.get("content", [])
+    message = line_data.get("message", {})
+    content = message.get("content", [])
 
     if isinstance(content, str):
         return None
@@ -100,10 +74,7 @@ def get_skill_call_args(line_data: dict[str, Any], skill_name: str) -> str | Non
             continue
         if block.get("type") != "tool_use":
             continue
-
-        tool_name = block.get("name", "")
-        # Match both Claude Code (Skill) and Gemini CLI (activate_skill)
-        if tool_name not in ("Skill", "activate_skill"):
+        if block.get("name") != "Skill":
             continue
 
         tool_input = block.get("input", {})
@@ -121,7 +92,7 @@ def was_skill_invoked(line_data: dict[str, Any], skill_name: str) -> bool:
     Check if this transcript line represents a skill invocation.
 
     Detects ALL invocation patterns:
-    1. Model skill tool call (assistant/gemini message with tool_use)
+    1. Model Skill tool call (assistant message with Skill tool_use)
     2. User isMeta skill expansion (isMeta=true with skills/{name} in path)
     3. User command-name tag (/<skill> or /plugin:skill format)
 
@@ -132,9 +103,9 @@ def was_skill_invoked(line_data: dict[str, Any], skill_name: str) -> bool:
     Returns:
         True if this line invokes the specified skill
     """
-    msg_type = _normalize_type(line_data.get("type", ""))
+    msg_type = line_data.get("type")
 
-    # Pattern 1: Model skill tool call
+    # Pattern 1: Model Skill tool call
     if msg_type == "assistant":
         return _is_skill_tool_call(line_data, skill_name)
 
@@ -146,11 +117,9 @@ def was_skill_invoked(line_data: dict[str, Any], skill_name: str) -> bool:
 
 
 def _is_skill_tool_call(line_data: dict[str, Any], skill_name: str) -> bool:
-    """Check if assistant/gemini message contains a skill tool call."""
-    content = line_data.get("content", [])
-    if not content:
-        message = line_data.get("message", {})
-        content = message.get("content", [])
+    """Check if assistant message contains a Skill tool call for the given skill."""
+    message = line_data.get("message", {})
+    content = message.get("content", [])
 
     if isinstance(content, str):
         return False
@@ -160,9 +129,7 @@ def _is_skill_tool_call(line_data: dict[str, Any], skill_name: str) -> bool:
             continue
         if block.get("type") != "tool_use":
             continue
-
-        tool_name = block.get("name", "")
-        if tool_name not in ("Skill", "activate_skill"):
+        if block.get("name") != "Skill":
             continue
 
         tool_input = block.get("input", {})
@@ -182,6 +149,9 @@ def _is_user_skill_invocation(line_data: dict[str, Any], skill_name: str) -> boo
     # Pattern 2: isMeta skill expansion (most reliable for user-invoked)
     if line_data.get("isMeta"):
         if "Base directory for this skill:" in text:
+            # Only search the "Base directory" line — the body may reference
+            # other skills' files (e.g., skills/do/references/...) which would
+            # false-positive if we searched the entire text.
             for line in text.split("\n"):
                 if "Base directory for this skill:" in line:
                     pattern = rf"skills/{re.escape(skill_name)}(?:/|\s|$)"
@@ -204,12 +174,12 @@ def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str
     Returns the raw arguments string, or None if not the specified skill command.
     Handles both command-args tags and isMeta expansion formats.
     """
-    msg_type = _normalize_type(line_data.get("type", ""))
-    if msg_type != "user":
+    if line_data.get("type") != "user":
         return None
 
     text = get_message_text(line_data)
 
+    # Check if this is a command with matching skill name (only our plugin)
     has_command = (
         f"<command-name>/{skill_name}</command-name>" in text
         or f"<command-name>/manifest-dev:{skill_name}</command-name>" in text
@@ -218,10 +188,12 @@ def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str
     if not has_command:
         return None
 
+    # Try command-args tag first (most explicit)
     match = re.search(r"<command-args>(.*?)</command-args>", text, re.DOTALL)
     if match:
         return match.group(1).strip() or None
 
+    # Fallback: content after command-name tag
     match = re.search(r"</command-name>\s*(.+?)(?:<|$)", text)
     if match:
         return match.group(1).strip() or None
@@ -231,11 +203,12 @@ def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str
 
 def has_recent_api_error(transcript_path: str) -> bool:
     """
-    Check if the most recent model message was an API error.
+    Check if the most recent assistant message was an API error.
 
-    API errors are marked with isApiErrorMessage=true.
+    API errors (like 529 Overloaded) are marked with isApiErrorMessage=true.
+    These are system failures, not voluntary stops, so hooks should allow them.
     """
-    last_model_is_error = False
+    last_assistant_is_error = False
 
     try:
         with open(transcript_path, encoding="utf-8") as f:
@@ -248,24 +221,35 @@ def has_recent_api_error(transcript_path: str) -> bool:
                 except json.JSONDecodeError:
                     continue
 
-                msg_type = _normalize_type(data.get("type", ""))
-                if msg_type == "assistant":
-                    last_model_is_error = data.get("isApiErrorMessage", False)
+                # Track if the last assistant message was an API error
+                if data.get("type") == "assistant":
+                    last_assistant_is_error = data.get("isApiErrorMessage", False)
 
     except (FileNotFoundError, OSError):
         return False
 
-    return last_model_is_error
+    return last_assistant_is_error
 
 
-def count_consecutive_short_outputs(transcript_path: str) -> int:
+def count_consecutive_idle_outputs(transcript_path: str) -> int:
     """
-    Count consecutive short model outputs at the end of the transcript.
+    Count consecutive idle assistant outputs at the end of the transcript.
 
-    Detects infinite loop pattern where the agent outputs minimal content
-    repeatedly because it's trying to stop but getting blocked by hooks.
+    This detects loop patterns where the agent is stuck — either outputting
+    minimal content or writing long explanations without doing productive work.
+    Productive work means using tools (Read, Edit, Bash, Agent, etc.).
+
+    An "idle" output is an assistant message with no meaningful tool use
+    (only text, or text with Skill-only tool calls). Text length is irrelevant —
+    a 200-char explanation of why the model is waiting is just as idle as ".".
+
+    Skill invocations are excluded from "meaningful" tool use because /escalate
+    attempts are Skill calls and shouldn't mask the stuck pattern.
+
+    Returns the count of consecutive idle outputs from the end.
     """
-    output_types: list[str] = []
+    # Collect all assistant output classifications
+    output_types: list[str] = []  # 'idle' or 'productive'
 
     try:
         with open(transcript_path, encoding="utf-8") as f:
@@ -278,48 +262,41 @@ def count_consecutive_short_outputs(transcript_path: str) -> int:
                 except json.JSONDecodeError:
                     continue
 
-                msg_type = _normalize_type(data.get("type", ""))
-                if msg_type != "assistant":
+                if data.get("type") != "assistant":
                     continue
 
-                content = data.get("content", [])
-                if not content:
-                    message = data.get("message", {})
-                    content = message.get("content", [])
+                message = data.get("message", {})
+                content = message.get("content", [])
 
-                text_len = 0
+                # Check for meaningful tool uses
                 has_meaningful_tool = False
 
-                if isinstance(content, str):
-                    text_len = len(content.strip())
-                elif isinstance(content, list):
+                if isinstance(content, list):
                     for block in content:
                         if isinstance(block, dict):
-                            if block.get("type") == "text":
-                                text_len += len(block.get("text", "").strip())
-                            elif "text" in block:
-                                text_len += len(block.get("text", "").strip())
-                            elif block.get("type") == "tool_use":
+                            if block.get("type") == "tool_use":
                                 tool_name = block.get("name", "")
-                                if tool_name not in ("Skill", "activate_skill"):
+                                if tool_name != "Skill":
                                     has_meaningful_tool = True
 
-                if has_meaningful_tool or text_len >= 100:
-                    output_types.append("substantial")
+                # Classify: only tool use makes an output productive
+                if has_meaningful_tool:
+                    output_types.append("productive")
                 else:
-                    output_types.append("short")
+                    output_types.append("idle")
 
     except (FileNotFoundError, OSError):
         return 0
 
-    consecutive_short = 0
+    # Count consecutive idle outputs from the end
+    consecutive_idle = 0
     for output_type in reversed(output_types):
-        if output_type == "short":
-            consecutive_short += 1
+        if output_type == "idle":
+            consecutive_idle += 1
         else:
             break
 
-    return consecutive_short
+    return consecutive_idle
 
 
 def parse_do_flow(transcript_path: str) -> DoFlowState:
@@ -328,6 +305,9 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
 
     Tracks the most recent /do invocation and what happened after it.
     Each new /do resets the flow state.
+
+    Handles user interrupts: if /do is invoked but the user interrupts
+    before the assistant responds, the /do is considered cancelled.
     """
     has_do = False
     has_verify = False
@@ -336,6 +316,9 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
     has_self_amendment = False
     do_args: str | None = None
     has_collab_mode = False
+    # Tracks whether assistant has responded since the last /do invocation.
+    # Used to detect interrupted /do: if the user interrupts before the
+    # assistant responds, /do never started processing.
     do_turn_has_response = False
 
     try:
@@ -349,11 +332,16 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
                 except json.JSONDecodeError:
                     continue
 
+                # Check for /do (any invocation pattern)
                 if was_skill_invoked(data, "do"):
+                    # Extract args first before deciding if this is a new /do
                     args = extract_user_command_args(data, "do")
                     if not args:
                         args = get_skill_call_args(data, "do")
 
+                    # isMeta skill expansions follow command-name lines for the same /do
+                    # Only reset state if this line has args OR we don't have /do yet
+                    # This prevents the isMeta line from clearing args set by command-name line
                     is_new_do = not has_do or args is not None
 
                     if is_new_do:
@@ -369,23 +357,27 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
                                 re.search(r"--medium\s+(?!local(?:\s|$))\S+", args)
                             )
 
-                    msg_type = _normalize_type(data.get("type", ""))
-                    if msg_type == "assistant":
+                    # For assistant Skill tool calls (Pattern 1), the /do
+                    # invocation IS an assistant message — mark as responded.
+                    if data.get("type") == "assistant":
                         do_turn_has_response = True
 
-                msg_type = _normalize_type(data.get("type", ""))
+                # Track assistant responses after /do to detect interrupted /do
                 if has_do and not do_turn_has_response:
-                    if msg_type == "assistant":
+                    if data.get("type") == "assistant":
                         do_turn_has_response = True
 
+                # Detect user interrupt: if /do was invoked but the assistant
+                # never responded, the /do was cancelled by the interrupt.
                 if has_do and not do_turn_has_response:
-                    if msg_type == "user":
+                    if data.get("type") == "user":
                         text = get_message_text(data)
                         if "[Request interrupted by user]" in text:
                             has_do = False
                             do_args = None
                             has_collab_mode = False
 
+                # Check for /verify, /done, /escalate after /do (any invocation pattern)
                 if has_do and was_skill_invoked(data, "verify"):
                     has_verify = True
 
@@ -394,6 +386,7 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
 
                 if has_do and was_skill_invoked(data, "escalate"):
                     has_escalate = True
+                    # Detect Self-Amendment by checking escalate args
                     esc_args = get_skill_call_args(data, "escalate")
                     if not esc_args:
                         esc_args = extract_user_command_args(data, "escalate")
@@ -426,12 +419,15 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
 _THINKING_DEACTIVATORS = ("stop-thinking-disciplines", "do")
 
 
-def parse_thinking_disciplines_flow(transcript_path: str) -> ThinkingDisciplinesState:
+def parse_thinking_disciplines_flow(
+    transcript_path: str,
+) -> ThinkingDisciplinesState:
     """
-    Parse transcript to determine the state of thinking disciplines.
+    Parse transcript to determine if thinking disciplines are active.
 
-    Activation: thinking-disciplines skill was invoked.
-    Deactivation: stop-thinking-disciplines or do skill was invoked after activation.
+    Activates when thinking-disciplines skill is invoked (by any skill).
+    Deactivates when /stop-thinking-disciplines or /do is invoked.
+    Reactivates if thinking-disciplines is invoked again after deactivation.
     """
     is_active = False
 
@@ -448,6 +444,8 @@ def parse_thinking_disciplines_flow(transcript_path: str) -> ThinkingDisciplines
 
                 # Check for thinking-disciplines activation
                 if was_skill_invoked(data, "thinking-disciplines"):
+                    # isMeta expansion follows the initial invocation —
+                    # don't toggle off/on, just ensure active
                     is_active = True
 
                 # Check for deactivation

@@ -53,9 +53,4 @@ Build the tick arguments based on mode:
 
 Invoke the `/loop` skill with: `<interval> /tend-pr-tick <tick-arguments>`
 
-When `/tend-pr-tick` outputs a `STOP:` signal:
-- `STOP: merge-ready` → Ask user: "PR is merge-ready. Merge?" **Never merge without explicit user confirmation.**
-- `STOP: merged` → Report: "PR was merged."
-- `STOP: closed` → Report: "PR was closed."
-- `STOP: draft` → Report: "PR converted to draft — pausing. Re-invoke /tend-pr when ready."
-- `STOP: escalation — <reason>` → Report the blocker with enough context for the user to resume.
+The tick handles its own lifecycle — terminal states (merge-ready, merged, closed, draft, escalation) are handled within the tick, including user interaction and loop termination.

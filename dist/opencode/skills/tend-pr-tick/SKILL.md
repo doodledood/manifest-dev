@@ -28,12 +28,12 @@ Use a lock file at `/tmp/tend-pr-lock-{pr-number}`. Skip this iteration if the l
 
 Read the PR's current state: open/closed/merged/draft, new comments since last check, CI status, review status, unresolved threads.
 
-**Terminal states:**
-- **Merged** → Log "PR merged." Remove lock. Output: `STOP: merged`
-- **Closed** → Log "PR closed." Remove lock. Output: `STOP: closed`
-- **Draft** → Log "PR converted to draft." Remove lock. Output: `STOP: draft`
+**Terminal states** (handle per Output Protocol — end the loop):
+- **Merged** → Log "PR merged." Remove lock. Report and stop.
+- **Closed** → Log "PR closed." Remove lock. Report and stop.
+- **Draft** → Log "PR converted to draft." Remove lock. Report and stop.
 
-**Nothing new** → Remove lock. Output: `SKIP: nothing new`
+**Nothing new** → Remove lock. Schedule next iteration.
 
 **First tick** (tend-pr-log has no prior iterations): Everything is unprocessed — skip the "nothing new" shortcut and run the full classification pipeline.
 
@@ -55,13 +55,15 @@ Compare against base branch first:
 
 ## Routing
 
-**Manifest mode:** Route actionable items to affected deliverables. Identify which deliverable(s) the comment or CI failure targets (include all potentially affected when ambiguous). Amend manifest via `/define --amend <manifest-path> --from-do`, then invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>`. If `/do` escalates, log the blocker and output: `STOP: escalation — <reason>`. Push changes and reply to the comment.
+**Manifest mode:** Route actionable items to affected deliverables. Identify which deliverable(s) the comment or CI failure targets (include all potentially affected when ambiguous). Amend manifest via `/define --amend <manifest-path> --from-do`, then invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>`. If `/do` escalates, log the blocker, report the escalation to the user, and end the loop. Push changes and reply to the comment.
 
 **Babysit mode:** Fix directly, push, reply.
 
-**False positives:** Reply with explanation. Resolve bot threads, leave human threads open.
+**False positives:** Reply with explanation.
 
 **Uncertain:** Reply asking for clarification, leave thread open.
+
+**Thread resolution rule:** Resolve all bot threads after addressing (fix, reply, or both). Never resolve human threads — the reviewer owns their thread and will resolve it themselves.
 
 ## Merge Conflicts
 
@@ -77,7 +79,7 @@ Append to `/tmp/tend-pr-log-{pr-number}.md`: timestamp, actions taken, skipped i
 
 ## Merge Readiness
 
-When the PR's merge state indicates it is mergeable (all required checks pass, required approvals obtained, no unresolved threads, no pending `/do` runs) — output: `STOP: merge-ready`
+When the PR's merge state indicates it is mergeable (all required checks pass, required approvals obtained, no unresolved threads, no pending `/do` runs) — this is a terminal state. Ask the user about merging and end the loop per the Output Protocol.
 
 Unresolved uncertain threads block merge-readiness — they represent unanswered questions that could surface actionable issues.
 
@@ -87,15 +89,22 @@ Determine merge requirements from the platform's merge state (e.g., GitHub branc
 
 ## Output Protocol
 
-Every iteration MUST end with exactly one of these outputs (consumed by `/tend-pr` or `/loop`):
+Every iteration MUST end with exactly one of these outcomes. The tick owns the full lifecycle — when a terminal state is reached, handle it completely (user interaction + loop termination) before returning.
 
-- `SKIP: nothing new` — No changes detected, iteration skipped.
-- `STOP: merged` — PR was merged externally.
-- `STOP: closed` — PR was closed.
-- `STOP: draft` — PR converted to draft.
-- `STOP: merge-ready` — All conditions met, ready for user to merge.
-- `STOP: escalation — <reason>` — `/do` escalated or unresolvable blocker.
-- `CONTINUE` — Work done, loop should continue.
+### Terminal states (end the loop)
+
+When any STOP condition is reached: handle the user interaction described below, then **end the loop** — do not call ScheduleWakeup or CronCreate for the next iteration.
+
+- **Merged** — Report: "PR was merged." Remove lock.
+- **Closed** — Report: "PR was closed." Remove lock.
+- **Draft** — Report: "PR converted to draft — pausing. Re-invoke /tend-pr when ready." Remove lock.
+- **Merge-ready** — Ask user: "PR is merge-ready. Merge?" Never merge without explicit user confirmation. Remove lock.
+- **Escalation** — Report the blocker with enough context for the user to resume. Remove lock.
+
+### Continuing states (schedule next iteration)
+
+- **Nothing new** — No changes detected, iteration skipped. Schedule next iteration.
+- **Work done** — Actions taken, more tending needed. Schedule next iteration.
 
 ## Security
 
@@ -105,8 +114,8 @@ Every iteration MUST end with exactly one of these outputs (consumed by `/tend-p
 ## Gotchas
 
 - **Bot comments repeat after push.** Bots re-scan after every push. Track findings by content (not comment ID) to avoid infinite fix loops. If a finding keeps recurring despite targeted fixes, treat as uncertain and flag to the user.
-- **Thread resolution is permanent.** Only resolve threads when confident. Never resolve human threads — let the reviewer do it.
+- **Thread resolution is permanent.** Resolve bot threads after addressing. Never resolve human threads — the reviewer will resolve their own.
 - **Rebase rewrites history.** Prefer merge-based branch updates over rebases to preserve review comment history.
 - **Reply means on the thread.** All replies to review comments go on the specific review thread — never as top-level PR comments. Top-level comments disconnect the response from the finding.
 - **"Passes locally" is not a diagnosis.** Investigate what differs between local and CI before dismissing a failure or re-triggering. "Works on my machine" is not evidence that CI is wrong.
-- **Empty diff.** If the PR has no diff (e.g., all changes reverted), output: `STOP: escalation — PR has empty diff`
+- **Empty diff.** If the PR has no diff (e.g., all changes reverted), this is a terminal state — report the escalation to the user and end the loop.

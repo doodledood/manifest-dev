@@ -21,7 +21,7 @@ import json
 import sys
 
 from hook_utils import (
-    count_consecutive_short_outputs,
+    count_consecutive_idle_outputs,
     has_recent_api_error,
     parse_do_flow,
 )
@@ -64,10 +64,10 @@ def main() -> None:
             "decision": "block",
             "reason": "Self-Amendment in progress",
             "systemMessage": (
-                "Stop blocked: Self-Amendment escalation requires "
-                "/define --amend before stopping. Invoke "
-                "/define --amend <manifest-path> to update the manifest, "
-                "then resume /do."
+                "Self-Amendment in progress — the manifest needs updating "
+                "before execution can continue. "
+                "Run /define --amend <manifest-path> to apply the amendment, "
+                "then resume /do with the updated manifest."
             ),
         }
         print(json.dumps(output))
@@ -77,40 +77,41 @@ def main() -> None:
     # The user will re-invoke /do when the external blocker clears.
     if state.has_collab_mode and state.has_verify:
         output = {
-            "reason": "Non-local medium: escalation posted to medium",
+            "reason": "Non-local medium: escalation posted externally",
             "systemMessage": (
-                "Escalation posted to the communication medium. "
+                "Verification results posted to the external review channel. "
                 "The user will re-invoke /do with the execution log path "
-                "when the external blocker clears."
+                "once the blocker is resolved."
             ),
         }
         print(json.dumps(output))
         sys.exit(0)
 
     # /do was called but neither /done nor /escalate
-    # Check for infinite loop pattern before blocking
-    consecutive_short = count_consecutive_short_outputs(transcript_path)
+    # Check for idle loop pattern before blocking
+    consecutive_idle = count_consecutive_idle_outputs(transcript_path)
 
-    # If we've had 3+ consecutive short outputs, we're in a loop - allow with warning
-    if consecutive_short >= 3:
+    # If we've had 3+ consecutive idle outputs (no tool use), we're stuck - allow
+    if consecutive_idle >= 3:
         output = {
-            "reason": "Loop detected - allowing stop to prevent infinite loop",
+            "reason": "Idle loop detected — allowing stop",
             "systemMessage": (
-                "WARNING: Stop allowed to break infinite loop. "
-                "The /do workflow was NOT properly completed. "
-                "Next time, call /escalate when blocked instead of minimal outputs."
+                "Idle loop detected — stop allowed. "
+                "If waiting for background agents, collect their results "
+                "and resume with /verify. "
+                "If genuinely blocked, call /escalate to formally pause."
             ),
         }
         print(json.dumps(output))
         sys.exit(0)
 
-    # Provide guidance - same message regardless of attempt count
-    # Clear directive: /verify or /escalate, nothing else
+    # Provide guidance — clear directive toward /verify or /escalate
     system_message = (
-        "Stop blocked: /do workflow requires formal exit. "
-        "Options: (1) Run /verify to check criteria - if all pass, /verify calls /done. "
-        "(2) Call /escalate - for blocking issues OR user-requested pauses. "
-        "Short outputs will be blocked. Choose one."
+        "Active /do workflow — formal exit required. "
+        "If implementation is complete, run /verify to check criteria. "
+        "If blocked or waiting for async work (background agents, external input), "
+        "call /escalate to pause. "
+        "Continuing without tool use will trigger the idle escape valve."
     )
 
     output = {

@@ -34,7 +34,7 @@ interface DoFlowState {
   hasSelfAmendment: boolean
   doArgs: string | null
   hasCollabMode: boolean // --medium not local (non-local collaboration)
-  consecutiveShortOutputs: number // loop detection counter
+  consecutiveIdleOutputs: number // loop detection counter
 }
 
 interface ThinkingDisciplinesState {
@@ -55,7 +55,7 @@ function getDoState(sessionID: string): DoFlowState {
       hasSelfAmendment: false,
       doArgs: null,
       hasCollabMode: false,
-      consecutiveShortOutputs: 0,
+      consecutiveIdleOutputs: 0,
     })
   }
   return doStates.get(sessionID)!
@@ -105,7 +105,7 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
           state.hasEscalate = false
           state.hasSelfAmendment = false
           state.doArgs = skillArgs ?? null
-          state.consecutiveShortOutputs = 0
+          state.consecutiveIdleOutputs = 0
           // Detect --medium flag for non-local collaboration mode
           state.hasCollabMode = skillArgs
             ? /--medium\s+(?!local(?:\s|$))\S+/.test(skillArgs)
@@ -227,29 +227,29 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
         if (doState.hasSelfAmendment) {
           // Self-Amendment escalation — must continue to /define --amend
           output.system.push(
-            `<system-reminder>Stop blocked: Self-Amendment escalation requires ` +
-            `/define --amend before stopping. Invoke ` +
-            `/define --amend <manifest-path> to update the manifest, ` +
-            `then resume /do.</system-reminder>`
+            `<system-reminder>Self-Amendment in progress — the manifest needs updating ` +
+            `before execution can continue. ` +
+            `Run /define --amend <manifest-path> to apply the amendment, ` +
+            `then resume /do with the updated manifest.</system-reminder>`
           )
         } else if (doState.hasEscalate) {
           // Non-self-amendment escalation — properly escalated, allow stop
           // No enforcement message needed
         } else if (doState.hasCollabMode && doState.hasVerify) {
-          // Non-local medium: /verify posted escalation to the medium
+          // Non-local medium: /verify posted escalation externally
           output.system.push(
-            `<system-reminder>Escalation posted to the communication medium. ` +
+            `<system-reminder>Verification results posted to the external review channel. ` +
             `The user will re-invoke /do with the execution log path ` +
-            `when the external blocker clears.</system-reminder>`
+            `once the blocker is resolved.</system-reminder>`
           )
         } else {
           // No exit condition met — enforce workflow
           output.system.push(
-            `<system-reminder>WORKFLOW ENFORCEMENT: /do is active. ` +
-            `You MUST NOT stop without calling /verify → /done or /escalate. ` +
-            `Options: (1) Run /verify to check criteria — if all pass, /verify calls /done. ` +
-            `(2) Call /escalate — for blocking issues OR user-requested pauses. ` +
-            `Short outputs will be blocked. Choose one.</system-reminder>`
+            `<system-reminder>Active /do workflow — formal exit required. ` +
+            `If implementation is complete, run /verify to check criteria. ` +
+            `If blocked or waiting for async work (background agents, external input), ` +
+            `call /escalate to pause. ` +
+            `Continuing without tool use will trigger the idle escape valve.</system-reminder>`
           )
         }
 

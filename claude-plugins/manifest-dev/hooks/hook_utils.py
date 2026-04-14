@@ -231,22 +231,25 @@ def has_recent_api_error(transcript_path: str) -> bool:
     return last_assistant_is_error
 
 
-def count_consecutive_short_outputs(transcript_path: str) -> int:
+def count_consecutive_idle_outputs(transcript_path: str) -> int:
     """
-    Count consecutive short assistant outputs at the end of the transcript.
+    Count consecutive idle assistant outputs at the end of the transcript.
 
-    This detects the infinite loop pattern where the agent outputs minimal
-    content (like "." or "Done.") repeatedly because it's trying to stop
-    but getting blocked by hooks.
+    This detects loop patterns where the agent is stuck — either outputting
+    minimal content or writing long explanations without doing productive work.
+    Productive work means using tools (Read, Edit, Bash, Agent, etc.).
 
-    A "short output" is an assistant message with:
-    - Less than 100 characters of text
-    - No tool uses (or only Skill tool use which might be an /escalate attempt)
+    An "idle" output is an assistant message with no meaningful tool use
+    (only text, or text with Skill-only tool calls). Text length is irrelevant —
+    a 200-char explanation of why the model is waiting is just as idle as ".".
 
-    Returns the count of consecutive short outputs from the end.
+    Skill invocations are excluded from "meaningful" tool use because /escalate
+    attempts are Skill calls and shouldn't mask the stuck pattern.
+
+    Returns the count of consecutive idle outputs from the end.
     """
     # Collect all assistant output classifications
-    output_types: list[str] = []  # 'short' or 'substantial'
+    output_types: list[str] = []  # 'idle' or 'productive'
 
     try:
         with open(transcript_path, encoding="utf-8") as f:
@@ -265,42 +268,35 @@ def count_consecutive_short_outputs(transcript_path: str) -> int:
                 message = data.get("message", {})
                 content = message.get("content", [])
 
-                # Get text content length and check for meaningful tool uses
-                text_len = 0
+                # Check for meaningful tool uses
                 has_meaningful_tool = False
 
-                if isinstance(content, str):
-                    text_len = len(content.strip())
-                elif isinstance(content, list):
+                if isinstance(content, list):
                     for block in content:
                         if isinstance(block, dict):
-                            if block.get("type") == "text":
-                                text_len += len(block.get("text", "").strip())
-                            elif block.get("type") == "tool_use":
+                            if block.get("type") == "tool_use":
                                 tool_name = block.get("name", "")
-                                # Skill invocations don't count as "meaningful" for loop detection
-                                # because /escalate attempts would be Skill calls
                                 if tool_name != "Skill":
                                     has_meaningful_tool = True
 
-                # Classify this output
-                if has_meaningful_tool or text_len >= 100:
-                    output_types.append("substantial")
+                # Classify: only tool use makes an output productive
+                if has_meaningful_tool:
+                    output_types.append("productive")
                 else:
-                    output_types.append("short")
+                    output_types.append("idle")
 
     except (FileNotFoundError, OSError):
         return 0
 
-    # Count consecutive short outputs from the end
-    consecutive_short = 0
+    # Count consecutive idle outputs from the end
+    consecutive_idle = 0
     for output_type in reversed(output_types):
-        if output_type == "short":
-            consecutive_short += 1
+        if output_type == "idle":
+            consecutive_idle += 1
         else:
             break
 
-    return consecutive_short
+    return consecutive_idle
 
 
 def parse_do_flow(transcript_path: str) -> DoFlowState:
