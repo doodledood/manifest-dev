@@ -444,21 +444,8 @@ def _build_config_state(existing_text: str, config_existed: bool) -> dict[str, o
         "added_keys": {
             "features.multi_agent": _get_table_key_value(existing_text, "features", "multi_agent")
             is None,
-            "agents.max_threads": _get_table_key_value(existing_text, "agents", "max_threads")
-            is None,
-            "agents.max_depth": _get_table_key_value(existing_text, "agents", "max_depth")
-            is None,
         },
-        "added_list_values": {
-            "agents.project_doc_fallback_filenames": []
-            if _table_list_contains_value(
-                existing_text,
-                "agents",
-                "project_doc_fallback_filenames",
-                "CLAUDE.md",
-            )
-            else ["CLAUDE.md"],
-        },
+        "added_list_values": {},
     }
 
 
@@ -488,20 +475,9 @@ def merge_config(
         "features",
         [("multi_agent", "true")],
     )
-    merged_text = _ensure_missing_table_keys(
-        merged_text,
-        "agents",
-        [
-            ("max_threads", "6"),
-            ("max_depth", "1"),
-        ],
-    )
-    merged_text = _ensure_list_value_in_table(
-        merged_text,
-        "agents",
-        "project_doc_fallback_filenames",
-        "CLAUDE.md",
-    )
+    # Note: max_threads, max_depth, project_doc_fallback_filenames are root-level
+    # keys in modern Codex, NOT under [agents]. Do not add them under [agents] —
+    # Codex treats all [agents.*] entries as agent role definitions.
 
     merged_text = merged_text.rstrip() + "\n\n" + managed_block
     dest_path.write_text(merged_text, encoding="utf-8")
@@ -527,36 +503,10 @@ def unmerge_config(dest_config_path: str, state_path: str | None = None) -> None
                 "multi_agent",
                 "true",
             )
-        if added_keys.get("agents.max_threads"):
-            merged_text = _remove_key_from_table(
-                merged_text,
-                "agents",
-                "max_threads",
-                "6",
-            )
-        if added_keys.get("agents.max_depth"):
-            merged_text = _remove_key_from_table(
-                merged_text,
-                "agents",
-                "max_depth",
-                "1",
-            )
-
-    added_list_values = state.get("added_list_values", {})
-    if isinstance(added_list_values, dict):
-        values = added_list_values.get("agents.project_doc_fallback_filenames", [])
-        if isinstance(values, list):
-            for value in values:
-                if isinstance(value, str):
-                    merged_text = _remove_list_value_from_table(
-                        merged_text,
-                        "agents",
-                        "project_doc_fallback_filenames",
-                        value,
-                    )
+        # Note: max_threads, max_depth, project_doc_fallback_filenames are root-level
+        # keys — not managed under [agents] anymore. Skip removal.
 
     merged_text = _remove_empty_table(merged_text, "features")
-    merged_text = _remove_empty_table(merged_text, "agents")
     merged_text = _strip_manifest_header(merged_text)
     merged_text = _normalize_config_text(merged_text)
 

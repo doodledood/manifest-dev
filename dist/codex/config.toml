@@ -4,10 +4,6 @@
 [features]
 multi_agent = true
 
-[agents]
-max_threads = 6
-max_depth = 1
-
 [agents.change-intent-reviewer]
 description = "Adversarially analyze whether code, prompt, or config changes achieve their stated intent"
 config_file = "agents/change-intent-reviewer.toml"
