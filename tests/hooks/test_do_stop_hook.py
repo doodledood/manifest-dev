@@ -6,11 +6,16 @@ Tests the stop hook that enforces verification-first workflow for /do.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any
 
 import pytest
-from hook_test_helpers import run_hook
+from hook_test_helpers import HOOKS_DIR, run_hook
+
+# Make hook modules importable for direct unit tests (TestRecordStopBlock)
+sys.path.insert(0, str(HOOKS_DIR))
+from hook_utils import record_stop_block  # noqa: E402
 
 
 class TestStopHookBlocking:
@@ -1293,14 +1298,20 @@ class TestStopHookStaleTranscriptEscape:
         session_id: str,
         n: int,
         env: dict[str, str] | None = None,
+        *,
+        clean: bool = True,
     ) -> dict[str, Any] | None:
         """Invoke the hook n times back-to-back and return the final result."""
         import os
         import sys
+        import tempfile
 
         # Clean any prior counter state for this session so the test starts fresh.
-        state_path = f"/tmp/manifest-dev-stop-blocks-{session_id}.json"
-        if os.path.exists(state_path):
+        state_path = os.path.join(
+            tempfile.gettempdir(),
+            f"manifest-dev-stop-blocks-{session_id}.json",
+        )
+        if clean and os.path.exists(state_path):
             os.remove(state_path)
 
         hook_input = {
@@ -1400,6 +1411,54 @@ class TestStopHookStaleTranscriptEscape:
         assert result is not None
         assert "decision" not in result, "should allow at threshold=2"
 
+    def test_invalid_env_var_falls_back_to_default(
+        self,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Non-numeric MANIFEST_DEV_STOP_MAX_STALE_BLOCKS falls back to default 5."""
+        transcript_path = temp_transcript([user_do_command])
+
+        # With "abc", int() would raise ValueError — should fall back to 5.
+        # 4 blocks should still BLOCK (under default threshold).
+        result = self._block_n_times(
+            transcript_path,
+            "sess-invalid-env",
+            n=4,
+            env={"MANIFEST_DEV_STOP_MAX_STALE_BLOCKS": "abc"},
+        )
+
+        assert result is not None
+        assert result["decision"] == "block", (
+            "invalid env var should fall back to default threshold; "
+            f"got {result}"
+        )
+
+    def test_missing_session_id_uses_default(
+        self,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Hook input without session_id should use 'default' and still function."""
+        import json as _json
+        import subprocess
+
+        transcript_path = temp_transcript([user_do_command])
+        hook_input = {"transcript_path": transcript_path}  # no session_id
+
+        r = subprocess.run(
+            [sys.executable, str(HOOKS_DIR / "stop_do_hook.py")],
+            input=_json.dumps(hook_input),
+            capture_output=True,
+            text=True,
+            cwd=str(HOOKS_DIR),
+        )
+        assert r.returncode == 0, f"hook crashed: {r.stderr}"
+        result = _json.loads(r.stdout) if r.stdout.strip() else None
+
+        assert result is not None
+        assert result["decision"] == "block"
+
     def test_counter_resets_when_transcript_advances(
         self,
         tmp_path,
@@ -1426,9 +1485,11 @@ class TestStopHookStaleTranscriptEscape:
             f.write(_json.dumps({"type": "user", "message": {"content": "hi"}}) + "\n")
         os.utime(transcript_file, (prior_mtime + 1, prior_mtime + 1))
 
-        # First block after transcript advance: counter resets to 1 → still BLOCK
+        # First block after transcript advance: counter resets to 1 → still BLOCK.
+        # clean=False preserves the counter state from the first 4 blocks so we
+        # actually test that mtime advancement resets the counter.
         result_after = self._block_n_times(
-            transcript_path, "sess-reset", n=1
+            transcript_path, "sess-reset", n=1, clean=False
         )
         assert result_after is not None
         assert result_after["decision"] == "block", (
@@ -1442,11 +1503,6 @@ class TestRecordStopBlock:
 
     def test_first_call_returns_one(self, tmp_path):
         """First call for a fresh session returns 1."""
-        import sys
-
-        sys.path.insert(0, str(HOOKS_DIR))
-        from hook_utils import record_stop_block
-
         transcript = tmp_path / "tx.jsonl"
         transcript.write_text("hello\n")
 
@@ -1457,11 +1513,6 @@ class TestRecordStopBlock:
 
     def test_repeated_calls_increment_when_mtime_static(self, tmp_path):
         """Repeated calls without transcript mtime change increment the counter."""
-        import sys
-
-        sys.path.insert(0, str(HOOKS_DIR))
-        from hook_utils import record_stop_block
-
         transcript = tmp_path / "tx.jsonl"
         transcript.write_text("hello\n")
 
@@ -1473,10 +1524,6 @@ class TestRecordStopBlock:
     def test_counter_resets_when_mtime_advances(self, tmp_path):
         """Counter resets to 1 when the transcript mtime changes."""
         import os
-        import sys
-
-        sys.path.insert(0, str(HOOKS_DIR))
-        from hook_utils import record_stop_block
 
         transcript = tmp_path / "tx.jsonl"
         transcript.write_text("v1\n")
@@ -1495,11 +1542,6 @@ class TestRecordStopBlock:
 
     def test_sessions_are_independent(self, tmp_path):
         """Different session_ids maintain independent counters."""
-        import sys
-
-        sys.path.insert(0, str(HOOKS_DIR))
-        from hook_utils import record_stop_block
-
         transcript = tmp_path / "tx.jsonl"
         transcript.write_text("hello\n")
 
@@ -1516,11 +1558,6 @@ class TestRecordStopBlock:
 
     def test_missing_transcript_does_not_raise(self, tmp_path):
         """Missing transcript file is tolerated; counter still advances."""
-        import sys
-
-        sys.path.insert(0, str(HOOKS_DIR))
-        from hook_utils import record_stop_block
-
         c1 = record_stop_block(
             "sess-missing", "/nonexistent/transcript.jsonl", state_dir=str(tmp_path)
         )
@@ -1532,11 +1569,6 @@ class TestRecordStopBlock:
 
     def test_corrupt_state_file_starts_fresh(self, tmp_path):
         """A corrupt counter file is treated as a fresh stretch."""
-        import sys
-
-        sys.path.insert(0, str(HOOKS_DIR))
-        from hook_utils import record_stop_block
-
         transcript = tmp_path / "tx.jsonl"
         transcript.write_text("hello\n")
         state_file = tmp_path / "manifest-dev-stop-blocks-sess-corrupt.json"
@@ -1546,7 +1578,3 @@ class TestRecordStopBlock:
             "sess-corrupt", str(transcript), state_dir=str(tmp_path)
         )
         assert count == 1
-
-
-# Module-scope import for the unit-test class above.
-from hook_test_helpers import HOOKS_DIR  # noqa: E402

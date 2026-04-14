@@ -10,6 +10,8 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
+import tempfile
 from dataclasses import dataclass
 from typing import Any
 
@@ -307,7 +309,7 @@ def count_consecutive_short_outputs(transcript_path: str) -> int:
 def record_stop_block(
     session_id: str,
     transcript_path: str,
-    state_dir: str = "/tmp",
+    state_dir: str | None = None,
 ) -> int:
     """
     Track consecutive stop-hook blocks per session, keyed on transcript mtime.
@@ -339,7 +341,12 @@ def record_stop_block(
         The number of consecutive blocks observed without the transcript
         advancing. ``1`` on the first block of a fresh stretch.
     """
-    state_path = os.path.join(state_dir, f"manifest-dev-stop-blocks-{session_id}.json")
+    if state_dir is None:
+        state_dir = tempfile.gettempdir()
+    # Sanitize session_id to prevent path traversal (defense-in-depth;
+    # session_id comes from Claude Code's hook runtime, not user input).
+    safe_id = os.path.basename(session_id) or "default"
+    state_path = os.path.join(state_dir, f"manifest-dev-stop-blocks-{safe_id}.json")
 
     try:
         tx_mtime = os.path.getmtime(transcript_path)
@@ -353,10 +360,19 @@ def record_stop_block(
                 loaded = json.load(f)
             if isinstance(loaded, dict):
                 state = loaded
-        except (json.JSONDecodeError, OSError):
-            pass
+        except (json.JSONDecodeError, OSError) as exc:
+            print(
+                f"manifest-dev: corrupt stop-block state, resetting: {exc}",
+                file=sys.stderr,
+            )
 
     prior_mtime = state.get("transcript_mtime", 0.0)
+    # Float equality is stable here: json roundtrips preserve float64, and
+    # APFS/ext4/tmpfs have sub-second mtime resolution.  On coarse-resolution
+    # filesystems (FAT32, some NFS), two writes within the same second would
+    # look identical — the counter wouldn't reset even though the transcript
+    # genuinely advanced.  In practice this is unlikely to cause a false
+    # escape (would need N blocks within one second).
     if isinstance(prior_mtime, (int, float)) and prior_mtime == tx_mtime:
         # Transcript has not advanced since the previous block — keep counting
         prior_count = state.get("count", 0)
@@ -371,8 +387,11 @@ def record_stop_block(
     try:
         with open(state_path, "w", encoding="utf-8") as f:
             json.dump(new_state, f)
-    except OSError:
-        pass
+    except OSError as exc:
+        print(
+            f"manifest-dev: failed to write stop-block state: {exc}",
+            file=sys.stderr,
+        )
 
     return new_count
 

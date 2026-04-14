@@ -40,8 +40,12 @@ def main() -> None:
     try:
         stdin_data = sys.stdin.read()
         hook_input = json.loads(stdin_data)
-    except (json.JSONDecodeError, OSError):
-        # On any error, allow stop (fail open)
+    except (json.JSONDecodeError, OSError) as exc:
+        # Fail open, but leave a breadcrumb for debugging
+        print(
+            f"manifest-dev: stop hook failed to parse stdin, allowing stop: {exc}",
+            file=sys.stderr,
+        )
         sys.exit(0)
 
     transcript_path = hook_input.get("transcript_path", "")
@@ -145,7 +149,7 @@ def main() -> None:
                 "flushes the .jsonl on user-prompt boundaries; long workflows "
                 "with no user input keep the buffer in memory). Work may "
                 "actually be complete — inspect the execution log "
-                "(/tmp/do-log-*.md) for the /verify outcome.\n"
+                f"(/tmp/do-log-*-{session_id[-8:]}.md) for the /verify outcome.\n"
                 "  (b) The model is genuinely stuck and not calling /done or "
                 "/escalate. Treat the run as incomplete and check "
                 "Deliverables.\n"
