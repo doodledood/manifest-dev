@@ -1,5 +1,5 @@
-model = "gpt-5.3-codex"
-model_reasoning_effort = "xhigh"
+name = "context-file-adherence-reviewer"
+description = "Verify that code changes comply with context file instructions and project standards"
 sandbox_mode = "read-only"
 developer_instructions = """
 

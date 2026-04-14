@@ -159,8 +159,8 @@ config_file = "agents/code-reviewer.toml"
 
 **Per-role TOML** (`agents/code-reviewer.toml`):
 ```toml
-model = "gpt-5.3-codex"
-model_reasoning_effort = "xhigh"
+name = "code-reviewer"
+description = "Reviews code for bugs, design issues, and test coverage"
 sandbox_mode = "read-only"
 developer_instructions = """
 <full Claude Code agent prompt body here — embedded verbatim>
@@ -175,6 +175,10 @@ developer_instructions = """
 """
 ```
 
+**Required fields**: `name`, `description`, `developer_instructions`. All three are mandatory — Codex rejects agent TOMLs missing any of them.
+
+**Omit `model` and `model_reasoning_effort`** — they inherit from the parent session when absent. This ensures agents always use whatever model the user configured, without hardcoding versions that go stale.
+
 The `developer_instructions` field holds the **full** agent prompt body as a multi-line TOML string. Do not summarize or truncate.
 
 **Built-in roles** (user-defined override these):
@@ -185,13 +189,13 @@ The `developer_instructions` field holds the **full** agent prompt body as a mul
 | `explorer` | Read-heavy codebase exploration |
 | `monitor` | Long-running task monitoring |
 
-**Per-role override fields**:
-- `model` — model ID
-- `model_reasoning_effort` — minimal/low/medium/high/xhigh
+**Per-role optional fields** (all inherit from parent session when omitted):
+- `model` — model ID (omit to inherit)
+- `model_reasoning_effort` — minimal/low/medium/high/xhigh (omit to inherit)
 - `sandbox_mode` — read-only/workspace-write/danger-full-access
-- `developer_instructions` — multi-line string (system prompt equivalent)
+- `nickname_candidates`, `mcp_servers`, `skills.config` — also inherit
 
-**Phase 1** (deterministic): Generate TOML with name, description from Claude Code agent frontmatter, and full prompt body as `developer_instructions`. Set `sandbox_mode: "read-only"` for review agents.
+**Phase 1** (deterministic): Generate TOML with `name`, `description` from Claude Code agent frontmatter, and full prompt body as `developer_instructions`. Omit `model` and `model_reasoning_effort` (inherit from session). Set `sandbox_mode: "read-only"` for review agents.
 
 **Phase 2** (LLM): Embed the Claude Code agent's full prompt body into `developer_instructions` as a multi-line TOML string (`"""\n...\n"""`). Keep the prompt body as identical as possible — categories, actionability filters, severity guidelines, output formats, out-of-scope sections are the core value. Only changes allowed: tool name references (use Codex names: `shell_command`, `apply_patch`, `update_plan`, `request_user_input`, `web_search`, `view_image`; experimental: `read_file`, `list_dir`, `grep_files`), and genuinely unsupported features (document as limitation, don't remove). Do NOT summarize, truncate, or rewrite the prompt body.
 
@@ -436,4 +440,4 @@ The `context-file-adherence-reviewer` agent already uses generic "context file" 
 9. **Notify is fire-and-forget** — Cannot block or modify agent behavior.
 10. **Experimental tools availability** — `read_file`, `list_dir`, `grep_files` are gated server-side by model's `experimental_supported_tools`. Not all users may have access.
 11. **TaskCreate ≠ Agent** — Claude Code's TaskCreate/TaskUpdate/TaskGet/TaskList map to `update_plan` (todo), NOT to `spawn_agent` (multi-agent).
-12. **Model tier routing is Claude Code-only** — `execution-modes/efficient.md` references Claude model names (haiku, sonnet, opus). Replace all with `inherit` during sync. Codex has no runtime `inherit` — use the default model configured in the role's TOML. Execution mode parallelism, loop limits, and gate-skipping still apply.
+12. **Model tier routing is Claude Code-only** — `execution-modes/efficient.md` references Claude model names (haiku, sonnet, opus). Replace all with `inherit` during sync. In per-role TOMLs, omit `model` and `model_reasoning_effort` to inherit from the parent session. Execution mode parallelism, loop limits, and gate-skipping still apply.
