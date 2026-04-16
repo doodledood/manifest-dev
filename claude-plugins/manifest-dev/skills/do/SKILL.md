@@ -35,6 +35,12 @@ Follow the loaded mode's rules for model routing, verification parallelism, fix-
 2. **Explicit model overrides skip**: If a criterion explicitly sets `model:`, it runs even when the mode would otherwise skip it.
 3. **Global Invariants always run**: INV-G* verification runs regardless of mode — constitutional constraints.
 
+## Cache Strategy Passthrough
+
+Read the manifest's `cache:` field from the Intent section. Valid values: `none`, `manifest`, `max`. When present, pass it as `--cache <value>` when invoking /verify. When absent, do not pass `--cache` — let /verify use its default (`none`).
+
+**Append-only log constraint (max mode)**: When `cache:` is `max`, the execution log is inlined as part of the cached prefix. During fix-verify cycles, only **append** new entries to the log — never modify or delete earlier portions. Editing earlier log content invalidates the cached prefix, forcing all agents to pay full cache-write cost.
+
 ## Existing Execution Log
 
 If input includes a log file path (iteration on previous work): **treat it as source of truth**. It contains prior execution history. Continue from where it left off—append to the same log, don't restart.
@@ -61,7 +67,7 @@ When `--scope` is NOT provided, ignore this section entirely — no reference fi
 
 **Log after every action** - Write to execution log immediately after each AC attempt. No exceptions. This is disaster recovery—if context is lost, the log is the only record of what happened.
 
-**Must call /verify** - Can't declare done without verification. Invoke manifest-dev:verify with manifest, log paths, the resolved mode, and an optional scope per the rules below: `/verify <manifest> <log> --mode <level> [--scope D2,D3]`. Never pass `--final` from /do — that flag is internal to /verify (auto-triggered after a selective green pass) and exists to enforce the hard final gate. /done is unreachable without a full-mode green pass; /verify owns the selective→full chain.
+**Must call /verify** - Can't declare done without verification. Invoke manifest-dev:verify with manifest, log paths, the resolved mode, an optional cache strategy, and an optional scope per the rules below: `/verify <manifest> <log> --mode <level> [--cache <strategy>] [--scope D2,D3]`. Never pass `--final` from /do — that flag is internal to /verify (auto-triggered after a selective green pass) and exists to enforce the hard final gate. /done is unreachable without a full-mode green pass; /verify owns the selective→full chain.
 
 **Selective verification + fix-loop scope** - /verify supports two modes (see verify SKILL.md for full contract):
 - *First pass on fresh /do* — invoke without `--scope` and without `--final`. Selective mode degenerates to full (nothing to narrow). Equivalent to today's behavior.

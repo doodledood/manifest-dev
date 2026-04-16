@@ -385,6 +385,7 @@ Three categories, each covering **output** or **process**:
 - **Mode:** efficient | balanced | thorough *(optional, default: thorough — controls verification intensity during /do)*
 - **Interview:** minimal | autonomous | thorough *(optional, default: thorough — recorded so --amend can inherit the original interview style)*
 - **Medium:** local *(optional, default: local — currently only local is supported)*
+- **Cache:** none | manifest | max *(optional, default: none — controls caching intensity during /verify)*
 - **Repos:** *(optional, multi-repo only — see `references/MULTI_REPO.md`; omit for single-repo manifests)*
     - name1: /absolute/path/to/repo1
     - name2: /absolute/path/to/repo2

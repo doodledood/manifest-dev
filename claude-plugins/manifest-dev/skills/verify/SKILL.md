@@ -10,9 +10,17 @@ Orchestrate verification of all criteria from a Manifest by spawning parallel ve
 
 **Input**: $ARGUMENTS
 
-Format: `<manifest-file-path> <execution-log-path> [--mode efficient|balanced|thorough] [--scope D1,D2,...] [--final] [--deferred]`
+Format: `<manifest-file-path> <execution-log-path> [--mode efficient|balanced|thorough] [--cache none|manifest|max] [--scope D1,D2,...] [--final] [--deferred]`
 
 Both paths required — return usage error if missing. Mode defaults to `thorough` if not provided. `--scope` and `--final` are mutually exclusive (final is full by definition); when both appear, treat as final. `--deferred` runs only `method: deferred-auto` criteria — see "Deferred-Auto Criteria" below.
+
+### Cache Strategy
+
+Parse `--cache` from arguments. Valid values: `none`, `manifest`, `max`. When absent, default to `none`.
+
+Invalid value → error and halt: "Invalid cache strategy '<value>'. Valid strategies: none | manifest | max"
+
+When `--cache` resolves to `manifest` or `max`, load `references/CACHING.md` and follow its rules for warmup, prompt composition, grouping, and launch strategy. When `none`, skip all caching behavior — no CACHING.md loaded, no warmup, no grouping changes.
 
 ## Selective vs Full Verification
 
@@ -51,6 +59,18 @@ When spawning verifier agents, pass the criterion's manifest data. Do not add yo
 Format: `Optional context — manifest: <path>, discovery log: <path>, execution log: <path>`
 
 Only include paths that exist. This is informational, not directive — agents decide whether the context is relevant to their review.
+
+### Cache-Aware Prompt Composition
+
+When `--cache` is `manifest` or `max`, agent prompts are restructured to maximize cache hits:
+
+1. **Shared static prefix first** — inline the full manifest content at the start of every agent prompt within a cache group. For `max` mode, also inline the execution log content after the manifest. This prefix must be **byte-identical** across all agents in a group — no per-agent modifications, timestamps, or dynamic content in the prefix portion.
+
+2. **Per-criterion data last** — the criterion ID, description, verification method, and prompt/command follow after the shared prefix. This is the only part that varies between agents in a group.
+
+The boundary between prefix and per-criterion data must be clear. Everything before the criterion-specific content is cached; everything after is unique per agent.
+
+**Context file paths**: When caching is active and content is inlined as the shared prefix, do not also append the "Optional context" file paths for inlined files — the content is already present. Only append paths for context files NOT inlined (e.g., discovery log, or execution log in `manifest` mode where only the manifest is inlined).
 
 **Never add**:
 - Severity thresholds ("only report medium+ issues", "focus on critical findings")
@@ -100,9 +120,45 @@ Criteria have an optional `phase:` field (numeric, default 1). Phases run in asc
 
 Load the mode file at `../do/references/execution-modes/{mode}.md` (default: `thorough`). Follow its rules for verification parallelism, model routing, and quality gate inclusion. The mode file defines which verifiers to skip, what model to use for criteria-checker agents, and how many concurrent verifiers to launch per phase. If mode file cannot be loaded, return an error to the caller immediately — do not attempt any verification.
 
+## Cache-Aware Verification (manifest and max modes)
+
+Skip this entire section when `--cache` is `none`. These steps only apply when caching is active.
+
+### Warmup Step
+
+Before launching real verifiers:
+
+1. Spawn the `cache-warmup` agent with: the shared context file paths (manifest, and execution log if `max`), the `references/CACHING.md` path (for threshold lookup), the target model (the model most verification agents will use), and the requested cache strategy.
+2. Parse the warmup agent's structured output.
+3. If the warmup recommends `proceed`: continue with the requested cache strategy.
+4. If the warmup recommends `downgrade-to-none`: switch to `--cache none` behavior for this run. Log the reason.
+5. **On warmup failure** (crash, timeout, unparseable output): fall back to `--cache none` behavior. Log the failure and proceed with verification using standard prompt composition and mode-defined parallelism. Never block verification on a warmup failure.
+
+### Grouped Launch Strategy
+
+When caching is active, partition the **current phase's** criteria into cache groups by `(agent_type, model)` per CACHING.md's grouping rules. Grouping applies per-phase — each phase computes its own groups from its criteria. Then launch within each group:
+
+1. Launch the **first agent** in the group. Wait for its response to begin (confirming cache write).
+2. Launch **remaining agents** in the group — they hit the cached prefix.
+3. Repeat for the next group.
+
+Groups targeting different models can launch concurrently (their caches are isolated). Groups targeting the same model launch sequentially for cross-group cache hits on shared system prompt content.
+
+**Precedence rule**: When `--cache` is `manifest` or `max`, the grouped launch strategy overrides the execution mode's parallelism rules. The mode defines concurrent verifier count; caching overrides this with group-aware staggered launch to ensure cache hits. When `--cache` is `none`, the mode's parallelism rules apply without modification.
+
+### Cache Observability
+
+When caching is active, log the following to the execution log before launching verifiers:
+
+- **Cache strategy**: the resolved `--cache` value (after warmup recommendation)
+- **Cache groups**: the (agent_type, model) groups and which criteria are in each
+- **Launch order**: the order groups and agents within groups will be launched
+
+This provides an audit trail for debugging cache effectiveness and understanding launch behavior.
+
 ## Gotchas
 
-- **Mode parallelism is bidirectional** — launching all at once when mode says sequential is wrong, but so is going sequential when mode says parallel. Follow the mode file exactly.
+- **Mode parallelism is bidirectional** — launching all at once when mode says sequential is wrong, but so is going sequential when mode says parallel. Follow the mode file exactly. Exception: when `--cache` is active, the grouped launch strategy takes precedence over mode parallelism.
 - **Agent crash ≠ criterion pass** — if a verifier fails to run, the criterion fails too. Never treat "couldn't check" as "passed."
 
 ## Outcome Handling

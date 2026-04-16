@@ -349,7 +349,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 | `/auto` | User-invoked | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do`. Supports `--mode` and `--tend-pr` pass-through |
 | `/tend-pr` | User-invoked | Sets up PR for review and starts polling loop. Manifest-aware or babysit mode |
 | `/tend-pr-tick` | User-invoked | Single iteration of PR tending (classify, route, fix). Called by `/loop` via `/tend-pr`; also user-invocable for single-tick runs. PR-comment routing follows the same default-to-amend reflex as in-session feedback. |
-| `/verify` | Internal | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed (fast checks first, e2e/deploy-dependent later). |
+| `/verify` | Internal | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed (fast checks first, e2e/deploy-dependent later). Supports `--cache none\|manifest\|max` for prompt caching across verification agents.|
 | `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |
 | `/figure-out` | User-invoked | Collaborative thinking partner for any topic. Investigates before claiming, surfaces gaps, resists premature synthesis |
@@ -364,6 +364,7 @@ Built-in agents for quality verification via `subagent` method:
 | Agent | Focus |
 |-------|-------|
 | `criteria-checker` | Core verifier: validates single criterion using bash/codebase/subagent/research methods |
+| `cache-warmup` | Cache viability gauge: estimates shared context token footprint, recommends cache strategy. Spawned by `/verify` when `--cache` is active |
 | `manifest-verifier` | Validates manifest completeness during `/define` |
 | `change-intent-reviewer` | Adversarial intent analysis: reconstructs change intent, finds behavioral divergences across code, prompts, and config |
 | `contracts-reviewer` | Bidirectional API/interface contract verification with evidence from docs and codebase |
