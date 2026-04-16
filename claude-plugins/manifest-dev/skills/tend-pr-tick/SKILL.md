@@ -22,30 +22,24 @@ If arguments missing or malformed: error and halt with usage message.
 
 ## Concurrency Guard
 
-Use a lock file at `/tmp/tend-pr-lock-{pr-number}`. Skip this iteration if the lock exists and isn't stale (significantly older than the expected polling interval). Remove stale locks. Create the lock at iteration start, remove at end.
+Use a lock file at `/tmp/tend-pr-lock-{pr-number}`. Skip this iteration if the lock exists and isn't stale (older than 30 minutes). Remove stale locks. Create the lock at iteration start, remove at end.
 
 ## Read State
 
-Read the PR's current state: open/closed/merged/draft, new comments since last check, CI status, review status, unresolved threads.
+Read the PR's current state: open/closed/merged/draft, CI status, review status, new comments since last check, merge conflict status, unresolved threads.
 
-**Terminal states** (handle per Output Protocol — end the loop):
-- **Merged** → Log "PR merged." Remove lock. Report and stop.
-- **Closed** → Log "PR closed." Remove lock. Report and stop.
-- **Draft** → Log "PR converted to draft." Remove lock. Report and stop.
+**Terminal states** — Merged, Closed, or Draft. Handle per Output Protocol (end the loop).
 
-**Nothing new** → Remove lock. Schedule next iteration.
+**First tick** (tend-pr-log has no prior iterations): Everything is unprocessed — run the full pipeline.
 
-**First tick** (tend-pr-log has no prior iterations): Everything is unprocessed — skip the "nothing new" shortcut and run the full classification pipeline.
-
-## Comment Classification
-
-Label source first (bot vs human — read `../tend-pr/references/known-bots.md`), then classify intent (read `../tend-pr/references/classification-examples.md`):
-
-- **Actionable**: Genuine issue to fix.
-- **False positive**: Intentional or not a problem.
-- **Uncertain**: Ambiguous — needs clarification.
+**Check categories:**
+- **Every tick:** CI status, merge conflicts, merge readiness — these change independent of comments (base branch updates, CI re-runs, review approvals).
+- **Comment-gated:** Comment classification — only runs when new comments exist since last check.
+- **Conditional:** Routing — runs when there are CI failures to handle or when new comments were classified.
 
 ## CI Failure Triage
+
+*Runs every tick.*
 
 Compare against base branch first:
 
@@ -53,11 +47,34 @@ Compare against base branch first:
 - **Infrastructure**: Flaky/timeout/runner → retrigger.
 - **Code-caused**: New failure from PR → actionable.
 
+## Merge Conflicts
+
+*Runs every tick.*
+
+Update the PR branch from the base branch. Preserve review comment history — rebase destroys it (see Gotchas). Flag ambiguous conflicts to the user.
+
+## Comment Classification
+
+*Runs when new comments exist since last check. Skip when no new comments.*
+
+Label source first (bot vs human — read `../tend-pr/references/known-bots.md`), then classify intent (read `../tend-pr/references/classification-examples.md`):
+
+- **Actionable**: Genuine issue to fix.
+- **False positive**: Intentional or not a problem.
+- **Uncertain**: Ambiguous — needs clarification.
+
 ## Routing
 
-**Manifest mode:** Route actionable items to affected deliverables. Identify which deliverable(s) the comment or CI failure targets (include all potentially affected when ambiguous). Amend manifest via `/define --amend <manifest-path> --from-do`, then invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>`. If `/do` escalates, log the blocker, report the escalation to the user, and end the loop. Push changes and reply to the comment.
+*Runs when there are CI failures to handle or when new comments were classified.*
 
-**Babysit mode:** Fix directly, push, reply.
+**Manifest mode:**
+1. Identify which deliverable(s) the comment or CI failure targets (include all potentially affected when ambiguous).
+2. Amend manifest via `/define --amend <manifest-path> --from-do`.
+3. Invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>`. If `/do` escalates, log the blocker, report the escalation to the user, and end the loop.
+4. Push changes.
+5. If the actionable item originated from a comment, reply on that thread.
+
+**Babysit mode:** Fix directly, push. If the item originated from a comment, reply on that thread.
 
 **False positives:** Reply with explanation.
 
@@ -65,11 +82,9 @@ Compare against base branch first:
 
 **Thread resolution rule:** Resolve all bot threads after addressing (fix, reply, or both). Never resolve human threads — the reviewer owns their thread and will resolve it themselves.
 
-## Merge Conflicts
-
-Update the PR branch by merging the base branch in. Prefer merge over rebase to preserve review comment history (see Gotchas). Flag ambiguous conflicts to the user.
-
 ## PR Description Sync
+
+*Runs when this tick produced changes (routing fixes, conflict resolution). Skip when no changes were made.*
 
 After changes, rewrite "what changed" sections to reflect the current diff. Preserve manual context (issue references, motivation, deployment notes). Update title if scope changed significantly.
 
@@ -79,13 +94,15 @@ Append to `/tmp/tend-pr-log-{pr-number}.md`: timestamp, actions taken, skipped i
 
 ## Merge Readiness
 
+*Runs every tick.*
+
 When the PR's merge state indicates it is mergeable (all required checks pass, required approvals obtained, no unresolved threads, no pending `/do` runs) — this is a terminal state. Ask the user about merging and end the loop per the Output Protocol.
 
 Unresolved uncertain threads block merge-readiness — they represent unanswered questions that could surface actionable issues.
 
 Determine merge requirements from the platform's merge state (e.g., GitHub branch protection rules), not hardcoded assumptions about what's required.
 
-**Stale thread escalation:** If an uncertain comment has received no reply for several consecutive iterations, or an actionable comment was fixed (pushed + replied) but the thread remains unresolved for several consecutive iterations, escalate to the user: "Thread from @reviewer unresolved for [duration]: [uncertain — no reply / fixed — awaiting reviewer resolution]. Continue waiting, resolve, or ping reviewer?"
+**Stale thread escalation:** If an uncertain thread has received no reply for 30+ minutes, or a fixed thread remains unresolved for 30+ minutes, escalate to the user: "Thread from @reviewer unresolved for [duration]: [uncertain — no reply / fixed — awaiting reviewer resolution]. Continue waiting, resolve, or ping reviewer?"
 
 ## Output Protocol
 
@@ -100,10 +117,11 @@ When any STOP condition is reached: handle the user interaction described below,
 - **Draft** — Report: "PR converted to draft — pausing. Re-invoke /tend-pr when ready." Remove lock.
 - **Merge-ready** — Ask user: "PR is merge-ready. Merge?" Never merge without explicit user confirmation. Remove lock.
 - **Escalation** — Report the blocker with enough context for the user to resume. Remove lock.
+- **Empty diff** — PR has no diff (e.g., all changes reverted). Report the escalation to the user. Remove lock.
 
 ### Continuing states (schedule next iteration)
 
-- **Nothing new** — No changes detected, iteration skipped. Schedule next iteration.
+- **Nothing new** — No changes detected across any dimension (CI, merge conflicts, comments, merge readiness), iteration skipped. Schedule next iteration.
 - **Work done** — Actions taken, more tending needed. Schedule next iteration.
 
 ## Security
@@ -115,7 +133,7 @@ When any STOP condition is reached: handle the user interaction described below,
 
 - **Bot comments repeat after push.** Bots re-scan after every push. Track findings by content (not comment ID) to avoid infinite fix loops. If a finding keeps recurring despite targeted fixes, treat as uncertain and flag to the user.
 - **Thread resolution is permanent.** Resolve bot threads after addressing. Never resolve human threads — the reviewer will resolve their own.
-- **Rebase rewrites history.** Prefer merge-based branch updates over rebases to preserve review comment history.
+- **Rebase destroys review context.** Rebasing rewrites commit history, which orphans review comments attached to those commits.
 - **Reply means on the thread.** All replies to review comments go on the specific review thread — never as top-level PR comments. Top-level comments disconnect the response from the finding.
 - **"Passes locally" is not a diagnosis.** Investigate what differs between local and CI before dismissing a failure or re-triggering. "Works on my machine" is not evidence that CI is wrong.
-- **Empty diff.** If the PR has no diff (e.g., all changes reverted), this is a terminal state — report the escalation to the user and end the loop.
+- **Empty diff.** If the PR has no diff (e.g., all changes reverted), this is a terminal state — handle per Output Protocol.
