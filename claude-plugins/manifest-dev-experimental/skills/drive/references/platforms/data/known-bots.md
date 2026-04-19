@@ -1,5 +1,7 @@
 # Known Bots
 
+> **Source of truth:** `claude-plugins/manifest-dev/skills/tend-pr/references/known-bots.md`. This file is a copy kept in sync intentionally (the experimental plugin's github adapter duplicates `tend-pr-tick` semantics per `T-1`). If you edit one, edit the other.
+
 Use this reference to determine whether a PR commenter is a bot or human.
 
 ## Identification Rules

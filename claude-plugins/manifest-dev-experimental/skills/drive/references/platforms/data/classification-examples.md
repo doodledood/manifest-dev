@@ -1,5 +1,7 @@
 # Comment Classification Examples
 
+> **Source of truth:** `claude-plugins/manifest-dev/skills/tend-pr/references/classification-examples.md`. This file is a copy kept in sync intentionally (the experimental plugin's github adapter duplicates `tend-pr-tick` semantics per `T-1`). If you edit one, edit the other.
+
 Use these examples to classify PR comments as actionable, false positive, or uncertain.
 
 ## Actionable
