@@ -1,0 +1,24 @@
+{
+  "name": "manifest-dev-experimental",
+  "version": "0.1.0",
+  "description": "Experimental tick-based cron-driven manifest runner. Ships /drive + /drive-tick: a stateless, wide-tick driver that takes a manifest (or PR in babysit mode) to a terminal state through pluggable platform and sink adapters. Coexists with manifest-dev — nothing deprecated.",
+  "keywords": [
+    "drive",
+    "tick",
+    "loop",
+    "autonomous",
+    "experimental",
+    "manifest",
+    "cron",
+    "adapters",
+    "platforms",
+    "sinks"
+  ],
+  "author": {
+    "name": "doodledood",
+    "email": "doodledood@github.com"
+  },
+  "homepage": "https://github.com/doodledood/manifest-dev",
+  "repository": "https://github.com/doodledood/manifest-dev",
+  "license": "MIT"
+}
