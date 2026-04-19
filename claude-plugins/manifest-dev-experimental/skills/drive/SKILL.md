@@ -141,15 +141,13 @@ Seed header includes: manifest path, mode (manifest|babysit), platform, sink, ba
 
 ## /loop Kickoff
 
-After all pre-flight, bootstrap, and log initialization succeed, invoke `/loop` with the configured interval and `/drive-tick` plus flag-based arguments (no positional args — optional flags can be absent without disturbing the rest of the invocation):
+After all pre-flight, bootstrap, and log initialization succeed, invoke `/loop` with the configured interval and `/drive-tick` plus its flag-based arguments:
 
 ```
-Invoke the /loop skill with: "<interval> /drive-tick --run-id <run-id> --mode <mode> --platform <platform> --sink <sink> --log <log-path> --interval <interval> --max-ticks <N> [--manifest <manifest-path>] [--pr <pr-number>]"
+Invoke the /loop skill with: "<interval> /drive-tick --run-id <run-id> --mode <mode> --platform <platform> --sink <sink> --log <log-path> --max-ticks <N> [--manifest <manifest-path>] [--pr <pr-number>]"
 ```
 
-Include `--manifest` only in manifest mode; include `--pr` only when platform is github. The `--interval` is passed through so the tick can schedule its own next iteration with the same cadence.
-
-Then exit. `/drive` returns after /loop acknowledges the schedule — it does not wait for tick completion.
+Include `--manifest` only in manifest mode; include `--pr` only when platform is github. Then exit — `/drive` does not wait for tick completion.
 
 Print the run summary to the terminal:
 

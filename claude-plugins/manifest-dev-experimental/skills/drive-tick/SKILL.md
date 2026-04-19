@@ -1,6 +1,6 @@
 ---
 name: drive-tick
-description: 'Single iteration of /drive. Reads full execution log (memento), loads platform + sink adapters, checks terminal states, handles inbox, implements inline, verifies via manifest-dev:verify, fixes, amends if scope shifts, commits, and either ends the loop on terminal state/budget exhaust or schedules the next tick via /loop. Trigger-agnostic — works whether invoked by /loop, manually, or external infra. Triggers: drive tick, run one drive iteration, advance the drive loop.'
+description: 'Single iteration of /drive. Reads full execution log (memento), loads platform + sink adapters, checks terminal states, handles inbox, implements inline, verifies via manifest-dev:verify, fixes, amends if scope shifts, commits, and ends the loop on terminal state or budget exhaust — otherwise returns for the next scheduled iteration. Triggers: drive tick, run one drive iteration, advance the drive loop.'
 user-invocable: true
 ---
 
@@ -10,11 +10,11 @@ user-invocable: true
 
 Execute one stateless pass of the drive loop: read full state (log, git, adapter-specific), decide one wide action, apply it, log the outcome, then end the loop (terminal state or budget exhaust) or schedule the next tick via `/loop`.
 
-Trigger-agnostic — does not care who invoked it (cron via `/loop`, a user running it manually for debug, or future external infrastructure).
+Same shape whether invoked by `/loop`'s cron or by the user manually for debug.
 
 ## Input
 
-`$ARGUMENTS` = `--run-id <id> --mode <manifest|babysit> --platform <none|github> --sink <local> --log <path> --interval <duration> --max-ticks <N> [--manifest <path>] [--pr <number>]`
+`$ARGUMENTS` = `--run-id <id> --mode <manifest|babysit> --platform <none|github> --sink <local> --log <path> --max-ticks <N> [--manifest <path>] [--pr <number>]`
 
 All args are flag-based (no positional ordering) to avoid brittleness when optional args are absent:
 
@@ -23,7 +23,6 @@ All args are flag-based (no positional ordering) to avoid brittleness when optio
 - `--platform`: `none` | `github`.
 - `--sink`: `local`.
 - `--log`: Required. Execution log path created by `/drive`.
-- `--interval`: Required. Configured tick interval from `/drive` (e.g., `30m`). Passed to `/loop` when scheduling the next tick.
 - `--max-ticks`: Required. Tick budget cap from `/drive`.
 - `--manifest`: Required when `--mode manifest`.
 - `--pr`: Required when `--platform github`.
@@ -55,7 +54,7 @@ If `prior count ≥ --max-ticks`:
 - Append `## BUDGET EXHAUSTED — loop ending after {N} completed ticks` to the log with timestamp and run-id.
 - Invoke the sink's escalate contract with a BUDGET_EXHAUSTED message.
 - Remove the lock.
-- End the loop — do NOT call `/loop` to schedule further ticks.
+- End the loop — do not schedule the next iteration.
 
 Concretely: with `--max-ticks 100`, the 100th tick runs normally and appends its entry. The 101st tick sees `prior count == 100` and ends the loop without doing any action. Budget is "max completed work ticks," not "max attempts."
 
@@ -99,12 +98,12 @@ Execute these phases in order. Sections below describe each in detail; this over
 
 1. **Concurrency Guard** — acquire lock (or exit silently if held).
 2. **Memento Pattern** — read the full execution log top-to-bottom.
-3. **Budget Check** — count prior completed ticks; end loop if budget exhausted.
+3. **Budget Check** — count prior completed ticks; end the loop if budget exhausted.
 4. **Load Adapters** — platform + sink + adapter data files.
 5. **Read State** — adapter-produced state report + manifest (manifest mode).
 6. **Crash Recovery** — reconcile uncommitted WIP against last log entry, or flag and exit.
-7. **Action Decision Tree** — one of seven steps below produces this tick's action.
-8. **Output Protocol** — append log entry for the outcome; release lock; schedule next or end loop.
+7. **Action Decision Tree** — the tick takes the appropriate action based on state.
+8. **Output Protocol** — append a log entry for the outcome; release the lock; end the loop (terminal) or schedule next iteration (continuing).
 
 ## Action Decision Tree
 
@@ -184,15 +183,9 @@ After implementation/verify/fix passes in github mode, run the platform adapter'
 - Reply on threads that originated actionable comments in this tick.
 - Update requested reviewers if configured.
 
-### 7. Schedule Next
+### 7. Continue
 
-If none of the above yielded a terminal state, schedule the next tick via `/loop` — passing the same flag-based args this tick received:
-
-```
-Invoke the /loop skill with: "<interval> /drive-tick --run-id <id> --mode <mode> --platform <platform> --sink <sink> --log <log-path> --interval <interval> --max-ticks <N> [--manifest <path>] [--pr <number>]"
-```
-
-Append a `continuing` outcome log entry (see Output Protocol).
+If none of the above yielded a terminal state, the tick returns. Append a `continuing` outcome log entry (see Output Protocol). Mirrors `tend-pr-tick`'s pattern.
 
 ## Amendment
 
@@ -227,23 +220,23 @@ Retry push on network failure per project git protocol (exponential backoff 2s/4
 
 Every tick ends with EXACTLY one of these outcomes, and appends a log entry for each:
 
-### Terminal (ends loop)
+### Terminal (end the loop)
 
 - Appended log block: `## Tick N — Terminal: <state-name>` with timestamp, detected state summary, action taken, sink notification target.
 - Lock removed.
-- `/loop` NOT invoked. Loop ends.
+- Do not schedule the next iteration. Loop ends.
 
-### Continuing (schedules next)
+### Continuing (schedule next iteration)
 
 - Appended log block: `## Tick N — Continuing` with timestamp, detected state summary, action taken (implementation / verify / fix / inbox / tend-pr), HEAD after action.
 - Lock removed.
-- `/loop` invoked with next-tick args.
+- Return. The next iteration is scheduled.
 
 ### Skipped (lock held)
 
 - Appended log block: `## Tick N — Skipped (lock held)` with timestamp and reason (active lock, TOCTOU race).
 - Lock NOT modified (it belongs to another tick).
-- `/loop` NOT invoked — the existing tick owns next scheduling.
+- Return without scheduling — the active tick owns next scheduling.
 
 ### Error (unrecoverable)
 
@@ -252,7 +245,7 @@ Used when a Skill invocation fails unrecoverably (e.g., `manifest-dev:verify` cr
 - Appended log block: `## Tick N — Error: <reason>` with timestamp, the step where the error occurred, and any diagnostic context.
 - Invoke sink's escalate contract with `TICK_ERROR` (if the sink itself is still writable).
 - Lock removed.
-- `/loop` NOT invoked. Loop ends. The user re-invokes `/drive` after resolving the root cause.
+- Do not schedule the next iteration. Loop ends. The user re-invokes `/drive` after resolving the root cause.
 
 Every outcome produces a log entry. Silent ticks make "working" indistinguishable from "hung" — the log is the observability channel.
 
