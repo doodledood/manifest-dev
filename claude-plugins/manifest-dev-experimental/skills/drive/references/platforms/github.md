@@ -116,7 +116,7 @@ See `./data/classification-examples.md` for concrete examples across bot types a
 
 1. Identify which deliverable(s) the comment targets. Include all potentially affected when ambiguous.
 2. Amend manifest via `manifest-dev:define --amend <manifest-path> --from-do`.
-3. Implementation + verify + fix follow `/drive-tick`'s action decision tree and intra-tick re-verify rule (stages M/V/F).
+3. Implementation + verify + fix follow `/drive-tick`'s action decision tree and intra-tick re-verify rule.
 4. Push changes.
 5. If the actionable item originated from a comment, reply on that thread once the fix is committed.
 

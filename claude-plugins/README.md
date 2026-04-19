@@ -54,10 +54,10 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 
 **Skills:**
 - `/drive` - Wrapper that parses args, resolves base branch, pre-flights `/loop`, bootstraps branch/commit/PR (github mode), then hands control to `/loop` for repeated `/drive-tick` invocations.
-- `/drive-tick` - The per-iteration brain. Reads full log (memento), loads platform + sink adapters, checks terminal states, handles inbox, implements inline, verifies via `manifest-dev:verify`, fixes, amends if scope shifts, commits, and schedules the next tick — or ends on terminal state / budget exhaust.
+- `/drive-tick` - The per-iteration brain. Reads full log (memento), loads platform + sink adapters, checks terminal states, handles inbox, implements inline, verifies via `manifest-dev:verify`, fixes, amends if scope shifts, commits, and returns for the next scheduled iteration — or ends on terminal state / budget exhaust.
 
 **Adapters:**
-- Platforms: `none` (local branch only), `github` (PR bootstrap + tend — full duplication of `tend-pr-tick`'s classification, CI triage, PR sync, thread resolution, merge-ready semantics).
+- Platforms: `none` (local branch only), `github` (PR bootstrap + tend — preserves `tend-pr-tick`'s classification, CI triage, PR sync, thread resolution, and merge-ready semantics adapted to the adapter contract).
 - Sinks: `local` (log-file escalations).
 
 **Design:** No plugin-specific hooks. No auto-escalation on no-progress. Cross-tick convergence replaces `/do`'s internal fix-verify loop. `--interval` bounded ≥ 30m (matches lock TTL to prevent parallel ticks). `--max-ticks` budget cap (default 100) prevents cost runaway.

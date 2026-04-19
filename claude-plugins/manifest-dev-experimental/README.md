@@ -78,7 +78,7 @@ Adding a new adapter = copy an existing one, adjust the sections. See `skills/dr
 
 If `/drive` proves out, a later manifest can deprecate the overlapping skills. For now, pick the one that fits.
 
-`manifest-dev-experimental` requires `manifest-dev` version **0.87.0 or newer** to be installed: the tick invokes `manifest-dev:verify` and `manifest-dev:define --amend --from-do` as Skill tool calls, and the github adapter duplicates logic from `manifest-dev:tend-pr-tick`.
+`manifest-dev-experimental` requires the `manifest-dev` plugin installed: the tick invokes `manifest-dev:verify` and `manifest-dev:define --amend --from-do` as Skill tool calls, and the github adapter preserves `manifest-dev:tend-pr-tick`'s semantics (classification, CI triage, PR sync, thread resolution, merge-ready) adapted to the adapter contract.
 
 ## Dependencies checked before bootstrap
 

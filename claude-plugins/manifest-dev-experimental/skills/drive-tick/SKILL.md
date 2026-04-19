@@ -56,9 +56,7 @@ If `prior completed count ≥ --max-ticks`:
 - Remove the lock.
 - End the loop — do not schedule the next iteration.
 
-Concretely: with `--max-ticks 100`, the 100th completed tick runs normally and appends its entry. The 101st tick sees `prior completed == 100` and ends the loop without doing any action. Budget counts completed work, not attempts.
-
-This is a terminal state. No budget check override from within a tick.
+This is a terminal state. No override from within a tick.
 
 ## Load Adapters
 
@@ -94,28 +92,26 @@ If the working tree has uncommitted changes at tick start (HEAD is authoritative
 
 ## Tick Execution Order (top-level)
 
-Execute these phases in order. Sections below describe each in detail; this overview is the single source of truth for the ordering.
+Execute these phases in order. Sections below describe each in detail:
 
-1. **Concurrency Guard** — acquire lock (or exit silently if held).
-2. **Memento Pattern** — read the full execution log top-to-bottom.
-3. **Budget Check** — count prior completed ticks; end the loop if budget exhausted.
-4. **Load Adapters** — platform + sink + adapter data files.
-5. **Read State** — adapter-produced state report + manifest (manifest mode).
-6. **Crash Recovery** — reconcile uncommitted WIP against last log entry, or flag and exit.
-7. **Action Decision Tree** — a 7-stage sub-tree (T→I→M→V→F→P→C; see below). The decision tree does the work; it does not emit the log entry.
-8. **Output Protocol** — append a log entry for the outcome; release the lock; end the loop (terminal) or return for the next scheduled iteration (continuing).
-
-To avoid collision with the top-level numbering, the Action Decision Tree's sub-stages are labeled **T / I / M / V / F / P / C** (see the section). Cross-references elsewhere in this file use the letter labels.
+- **Concurrency Guard** — acquire lock (or exit silently if held).
+- **Memento Pattern** — read the full execution log top-to-bottom.
+- **Budget Check** — count prior completed ticks; end the loop if budget exhausted.
+- **Load Adapters** — platform + sink + adapter data files.
+- **Read State** — adapter-produced state report + manifest (manifest mode).
+- **Crash Recovery** — reconcile uncommitted WIP against last log entry, or flag and exit.
+- **Action Decision Tree** — Terminal Check → Inbox Handling → Implementation Pass → Verify → Fix → Tend PR → Continue. The decision tree does the work; it does not emit the log entry.
+- **Output Protocol** — append a log entry for the outcome; release the lock; end the loop (terminal) or return for the next scheduled iteration (continuing).
 
 ## Action Decision Tree
 
-A single tick runs through seven ordered stages. The tick ends only at stage **T** (terminal state) or **Budget Check** exhaustion; otherwise it proceeds through every stage and exits at stage **C** via the Output Protocol.
+A single tick runs through seven ordered stages. The tick ends only at Terminal State Check or Budget Check exhaustion; otherwise it proceeds through every stage and exits at Continue via the Output Protocol.
 
-**Intra-tick re-verify rule (manifest mode only):** code changes produced by stage **I** (inbox) or stage **M** (implementation) are followed by stage **V** (verify) in the same tick. Code changes produced by stage **F** (fix) are NOT re-verified in this tick — the tick commits/pushes and proceeds to stage **C**, deferring re-verify to the next tick. This preserves cross-tick convergence (no internal fix-verify loop in a single tick).
+**Intra-tick re-verify rule (manifest mode only):** code changes produced by Inbox Handling or Implementation Pass are followed by Verify in the same tick. Code changes produced by Fix are NOT re-verified in this tick — the tick commits/pushes and proceeds to Continue, deferring re-verify to the next tick. This preserves cross-tick convergence (no internal fix-verify loop in a single tick).
 
-**Babysit mode skips stages M, V, and F.** There is no manifest to implement against, no manifest to verify against, and no verify-output to fix against. Babysit-mode ticks run: stage T → I → P → C. Fixes in babysit come from inbox handling (code changes driven by PR comments), not from verify failures.
+**Babysit mode skips Implementation Pass, Verify, and Fix.** There is no manifest to implement against, no manifest to verify against, and no verify-output to fix against. Babysit-mode ticks run: Terminal Check → Inbox Handling → Tend PR → Continue. Fixes in babysit come from inbox handling (code changes driven by PR comments), not from verify failures.
 
-### T. Terminal State Check
+### Terminal State Check
 
 Ask the platform adapter: "Is the current state terminal?" Adapter returns either `Not terminal: <reason>` or `Terminal: <state-name>`.
 
@@ -167,7 +163,7 @@ If the most recent verify failed (any phase), identify failing criteria from ver
 - For criteria where the expected output is wrong → consider whether a manifest amendment is needed (see Amendment).
 - Log each fix attempt with AC id and outcome.
 
-After fixes: commit, push, and proceed to stage C (no re-verify in this tick). The next tick will re-verify — this is the cross-tick convergence rule (no internal fix-verify loop inside a single tick).
+After fixes: commit, push, and proceed to Continue (no re-verify in this tick). The next tick will re-verify — this is the cross-tick convergence rule (no internal fix-verify loop inside a single tick).
 
 ### P. Tend PR (github platform only)
 
@@ -189,7 +185,7 @@ Amendment flow:
 
 1. Append `## Amendment Trigger — <reason>` to log with source (user message / PR comment / CI failure) and which manifest section needs updating.
 2. Invoke `manifest-dev:define --amend <manifest-path> --from-do`.
-3. Re-enter the Action Decision Tree at stage **V** (Verify) against the amended manifest — do not restart at stage T; terminal checks already ran, and amendments do not invalidate the inbox already processed.
+3. Re-enter the Action Decision Tree at Verify against the amended manifest — do not restart at Terminal Check; terminal checks already ran, and amendments do not invalidate the inbox already processed.
 
 ### Amendment Loop Guard
 

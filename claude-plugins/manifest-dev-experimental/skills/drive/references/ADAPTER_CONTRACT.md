@@ -11,6 +11,18 @@ This contract exists so `/drive-tick` stays lean and adapters stay pluggable. Co
 - **Diffable.** A state report is also what gets appended to the log — operator can read what the tick saw without special tooling.
 - **No leaky abstractions.** Adapter owns how it gets the data; tick owns what to do with it.
 
+## Division of labor
+
+| Owner | Responsibilities |
+|---|---|
+| **Adapter (platform)** | How to fetch platform state (git, PR, CI, comments), what sections appear in the state report, the enumeration of platform-specific terminal states, inbox-handling rules, platform-specific write-outputs (commit/push/PR/comments). |
+| **Adapter (sink)** | How to send escalation and status notifications, escalation code table, self-description block. |
+| **`/drive-tick`** | Reading the execution log, reading the manifest, invoking adapter instructions, running the action decision tree, committing locally, calling `manifest-dev:verify`, amendment loop-guard counting, output-protocol log emission. |
+
+**If the state report's `## Terminal Check` disagrees with what the tick would infer from git/PR state, the adapter is authoritative.** The tick does not override the adapter's terminal verdict.
+
+**Adapters do NOT re-read the execution log.** The tick has already loaded it in the Memento step; adapters rely on that read.
+
 ## Platform adapter contract
 
 **Purpose:** a platform adapter tells the tick how to bootstrap the run, read current state, detect terminal conditions, handle inbox events, and write outputs for a specific platform (none, github, gitlab, ...).
