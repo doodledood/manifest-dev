@@ -79,7 +79,9 @@ Per the platform adapter's **Read State** contract, produce a markdown state rep
 - `## CI/Checks` — current CI status (omit if N/A).
 - `## PR State` — PR status (omit if no PR).
 
-In addition to adapter-produced sections, read the manifest (manifest mode) in full, and skim the full log to locate: last-verified-commit, last amendment sequence, prior failing criteria, prior escalations.
+In manifest mode, also read the manifest file in full — `/verify` and `Implementation Pass` both depend on the current manifest contents.
+
+Note: the full execution log was already read in the Memento Pattern step. Adapters should rely on that read; the tick owns log reading and does not repeat it per adapter.
 
 ## Crash Recovery
 
@@ -91,11 +93,26 @@ If the working tree has uncommitted changes at tick start (HEAD is authoritative
 
 HEAD is never force-reset. Git state is authoritative.
 
+## Tick Execution Order (top-level)
+
+Execute these phases in order. Sections below describe each in detail; this overview is the single source of truth for the ordering.
+
+1. **Concurrency Guard** — acquire lock (or exit silently if held).
+2. **Memento Pattern** — read the full execution log top-to-bottom.
+3. **Budget Check** — count prior completed ticks; end loop if budget exhausted.
+4. **Load Adapters** — platform + sink + adapter data files.
+5. **Read State** — adapter-produced state report + manifest (manifest mode).
+6. **Crash Recovery** — reconcile uncommitted WIP against last log entry, or flag and exit.
+7. **Action Decision Tree** — one of seven steps below produces this tick's action.
+8. **Output Protocol** — append log entry for the outcome; release lock; schedule next or end loop.
+
 ## Action Decision Tree
 
-Wide tick — the tick can perform multiple phases (inbox, implementation, verify, fix, tend-pr) in a single pass. Check the steps in order and fall through after each step completes; the tick ends only on terminal state (step 1), budget exhaust, or when step 7 schedules the next iteration.
+Wide tick — the tick can perform multiple phases in a single pass. Check the steps in order and fall through after each step completes; the tick ends only on terminal state (step 1), budget exhaust, or when step 7 schedules the next iteration.
 
-**Intra-tick verify rule:** after code changes in this tick (from inbox handling, implementation, or fix), the tick continues into step 4 (Verify) within the same iteration — it does NOT defer verification to the next tick. Only when everything in steps 2–6 is complete does the tick reach step 7 Schedule Next.
+**Intra-tick re-verify rule (manifest mode only):** after code changes in this tick from inbox handling OR implementation, the tick continues into step 4 (Verify) within the same iteration. After code changes from step 5 Fix, the tick does NOT re-verify in the same iteration — it commits/pushes and falls through to step 7 Schedule Next, deferring re-verify to the next tick. This preserves cross-tick convergence on the fix path (no internal fix-verify loop inside a single tick).
+
+**Babysit mode skips steps 3, 4, and 5.** There is no manifest to implement against, no manifest to verify against, and no verify-output to fix against. Babysit-mode ticks run: step 1 Terminal Check → step 2 Inbox Handling → step 6 Tend PR → step 7 Schedule Next. Fixes in babysit come from inbox handling (code changes driven by PR comments), not from verify failures.
 
 ### 1. Terminal State Check
 
@@ -130,7 +147,9 @@ If the manifest has unsatisfied deliverables/ACs that the log shows have not bee
 
 After the pass: fall through to Verify.
 
-### 4. Verify
+### 4. Verify (manifest mode only)
+
+Babysit mode skips this step — no manifest to verify.
 
 If the current HEAD has advanced since the last-verified-commit logged (or no prior verify exists):
 
@@ -145,7 +164,9 @@ Invoke the manifest-dev:verify skill with: "<manifest-path> <log-path> --mode <m
 
 Record the current HEAD as `last-verified-commit` in the log with verify's verdict (pass/fail/phase-N-failed).
 
-### 5. Fix
+### 5. Fix (manifest mode only)
+
+Babysit mode skips this step — babysit fixes come from inbox handling (step 2), not from verify-failure diagnostics.
 
 If the most recent verify failed (any phase), identify failing criteria from verify's output. Fix each failing criterion inline (no `manifest-dev:do` call):
 
@@ -153,7 +174,7 @@ If the most recent verify failed (any phase), identify failing criteria from ver
 - For criteria where the expected output is wrong → consider whether a manifest amendment is needed (see Amendment).
 - Log each fix attempt with AC id and outcome.
 
-After fixes: continue to commit/push, then fall through (the next tick will re-verify).
+After fixes: commit, push, and fall through to step 7 Schedule Next. **Do NOT re-verify in this tick.** The next tick will re-verify — this is the cross-tick convergence rule (no internal fix-verify loop inside a single tick).
 
 ### 6. Tend PR (github platform only)
 
@@ -223,6 +244,15 @@ Every tick ends with EXACTLY one of these outcomes, and appends a log entry for 
 - Appended log block: `## Tick N — Skipped (lock held)` with timestamp and reason (active lock, TOCTOU race).
 - Lock NOT modified (it belongs to another tick).
 - `/loop` NOT invoked — the existing tick owns next scheduling.
+
+### Error (unrecoverable)
+
+Used when a Skill invocation fails unrecoverably (e.g., `manifest-dev:verify` crashes), the sink write fails, or a push exceeds its retry budget.
+
+- Appended log block: `## Tick N — Error: <reason>` with timestamp, the step where the error occurred, and any diagnostic context.
+- Invoke sink's escalate contract with `TICK_ERROR` (if the sink itself is still writable).
+- Lock removed.
+- `/loop` NOT invoked. Loop ends. The user re-invokes `/drive` after resolving the root cause.
 
 Every outcome produces a log entry. Silent ticks make "working" indistinguishable from "hung" — the log is the observability channel.
 

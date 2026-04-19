@@ -39,8 +39,8 @@ Produced every tick. Returns a markdown state report with all five sections popu
 - `mcp__github__get_commit` or `mcp__github__list_commits` (CI check statuses on HEAD)
 - `mcp__github__pull_request_read` with comments view (inline + top-level + formal review comments)
 - Base branch CI status for triage (pre-existing vs. new failures)
-- Execution log — full read, top-to-bottom
-- Manifest (manifest mode)
+- Execution log — already loaded by the tick's Memento Pattern step; adapter relies on the tick's read rather than reopening the file
+- Manifest (manifest mode) — tick reads this during its Read State step; adapter consumes via the tick
 
 ### Output — state report
 
