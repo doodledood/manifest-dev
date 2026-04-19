@@ -2,31 +2,16 @@
 
 GitHub PR lifecycle mode. `/drive` bootstraps a branch + empty commit + PR; subsequent ticks tend the PR (comments, CI, reviews) while also implementing/verifying/fixing per the manifest (in manifest mode) or per conversation context (in babysit mode). Terminal when the PR is merged, closed, drafted, merge-ready (with user confirm), has an empty diff, or hits an escalation-worthy condition.
 
-This adapter **duplicates `manifest-dev:tend-pr-tick`'s logic verbatim** — classification rules, CI triage, PR description sync, thread resolution, merge readiness — adapted to the adapter contract (state-report sections instead of `/loop`-tick wording). Experimental plugin is self-contained; data files (`./data/known-bots.md`, `./data/classification-examples.md`) are local copies so the plugin doesn't reach into manifest-dev's directories at runtime.
+This adapter preserves `manifest-dev:tend-pr-tick`'s semantics — classification, CI triage, PR description sync, thread resolution, merge-ready logic — adapted to the adapter contract. Notable adaptations: `/do` invocation is replaced by `/drive-tick`'s inline action decision tree; tick-lifecycle wording is replaced by state-report sections and sink codes. Experimental plugin is self-contained; data files (`./data/known-bots.md`, `./data/classification-examples.md`) are local copies so the plugin doesn't reach into manifest-dev's directories at runtime.
 
 ## Bootstrap
 
-Performed by `/drive` (the wrapper) before any tick fires.
+Performed by `/drive` before any tick fires — see `drive/SKILL.md` §Pre-flight and §Branch + Bootstrap for the authoritative procedure (MCP tool availability, remote check, base resolution, branch creation, clean-tree check, empty commit, push retry policy).
 
-### Manifest mode
+Github-specific bootstrap deviations from the generic flow:
 
-1. **Pre-flight** (at `/drive` level, before any bootstrap): `mcp__github__*` tools loaded; `git config remote.origin.url` resolves; base branch resolved via `git symbolic-ref refs/remotes/origin/HEAD` → `main` fallback → error.
-2. **Branch resolution:**
-   - If current branch == base: create `claude/<manifest-title-slug>-<4-char-hash>` and check it out.
-   - If current branch != base: use current as-is.
-3. **Uncommitted-changes check:** refuse if the working tree is dirty.
-4. **Empty commit:** `git commit --allow-empty -m "drive: bootstrap for <manifest-title>"`.
-5. **Push:** `git push -u origin <branch-name>`. Retry on network failure (2s/4s/8s/16s exponential backoff). Never `--force`.
-6. **Open PR:** `mcp__github__create_pull_request` with base = resolved base, head = current branch, title = manifest `## 1. Intent & Context` Goal line, body references manifest path and links. If `mcp__github__list_pull_requests` already shows an open PR for this branch, **reuse** — don't double-open.
-7. **Capture PR number** for run-id construction: `gh-{repo-owner}-{repo-name}-{pr-number}`.
-
-### Babysit mode
-
-1. Skip branch/commit/push/PR creation entirely — user is already on a branch with an open PR.
-2. Look up current branch's open PR via `mcp__github__list_pull_requests` (head = current branch, state = open).
-   - Zero open PRs → error: "No open PR for current branch. Babysit mode requires an existing open PR."
-   - Multiple open PRs → error: "Multiple open PRs for current branch. Resolve ambiguity before invoking /drive."
-3. Capture PR number.
+- **Manifest mode:** after the empty bootstrap commit and push, open a PR via GitHub MCP (base = resolved base, head = current branch, title from the manifest's Goal, body referencing the manifest path). If an open PR already exists for the current branch, reuse it. Capture the PR number for run-id construction (`gh-{repo-owner}-{repo-name}-{pr-number}`).
+- **Babysit mode:** skip branch creation / commit / push / PR creation. The user is already on a branch with an open PR; `/drive`'s pre-flight looked it up and captured the PR number.
 
 ## Read State
 
@@ -59,7 +44,7 @@ Requested reviewers: <list | none>
 ## CI/Checks
 <Summary: N passing, N failing, N pending, N skipped>
 Per-check status (failing only): <check-name: reason, base-status>
-Flexibility: <if CI config is missing on PR, note it>
+Note: <optional — e.g., "no CI configured on this PR">
 
 ## Inbox
 New since last tick (per log's last_seen_ts):
@@ -92,8 +77,8 @@ Six terminal states on this platform. Each has specific detection and tick actio
 
 ### `merge-ready`
 
-- **Detection:** Platform's native merge-state indicates all required checks pass, required approvals obtained, no unresolved threads, no pending `/do`-style work, mergeable conflicts = none. Use the platform's merge-state query — do not hardcode assumptions about what's required.
-- **Tick action:** Escalate via sink with `MERGE_READY_PROMPT` code: "PR #<number> is merge-ready." Append `## Tick N — Terminal: merge-ready` to the log. Remove lock. Do NOT invoke `/loop`. Loop ends. The tick **never merges autonomously** — the user reviews the escalation (for the `local` sink, by tailing the log) and manually merges via `gh pr merge` or re-invokes `/drive` if they want the loop to handle post-merge cleanup. v0 has no interactive prompt mechanism; a future sink adapter (e.g., `slack`) could add one.
+- **Detection:** Platform's native merge-state indicates all required checks pass, required approvals obtained, no unresolved threads, no pending manifest work (manifest mode), mergeable conflicts = none. Use the platform's merge-state query — do not hardcode assumptions about what's required.
+- **Tick action:** Escalate via sink with `MERGE_READY_PROMPT` code: "PR #<number> is merge-ready." Append `## Tick N — Terminal: merge-ready` to the log. Remove lock. Loop ends. The tick **never merges autonomously** — the user reviews the escalation (for the `local` sink, by tailing the log) and merges manually via `gh pr merge`. v0 has no interactive prompt mechanism; a future sink adapter (e.g., `slack`) could add one.
 - **Unresolved uncertain threads block merge-readiness** — they represent unanswered questions that could surface actionable issues. Do not mark merge-ready while such threads exist.
 
 ### `empty-diff`
@@ -131,7 +116,7 @@ See `./data/classification-examples.md` for concrete examples across bot types a
 
 1. Identify which deliverable(s) the comment targets. Include all potentially affected when ambiguous.
 2. Amend manifest via `manifest-dev:define --amend <manifest-path> --from-do`.
-3. Implementation + verify + fix follow via the tick's normal action decision tree (next tick or this tick, depending on where inbox handling lands).
+3. Implementation + verify + fix follow `/drive-tick`'s action decision tree and intra-tick re-verify rule (stages M/V/F).
 4. Push changes.
 5. If the actionable item originated from a comment, reply on that thread once the fix is committed.
 
@@ -158,11 +143,13 @@ See `./data/classification-examples.md` for concrete examples across bot types a
 
 ### Stale thread escalation
 
-If an uncertain thread has received no reply for 30+ minutes, OR a fixed thread remains unresolved for 30+ minutes, escalate via sink:
+If an uncertain thread has received no reply past the staleness window, OR a fixed thread remains unresolved past that window, escalate via sink with code `STALE_THREAD`:
 
 ```
 Thread from @<reviewer> unresolved for <duration>: <uncertain — no reply | fixed — awaiting reviewer resolution>. Continue waiting, resolve, or ping reviewer?
 ```
+
+The staleness window defaults to 30 minutes; adjust here if your workflow needs a different cadence. Loop continues after escalate (not a terminal state) — the tick keeps tending while waiting.
 
 ## CI Failure Triage
 
@@ -180,7 +167,7 @@ Also runs every tick as part of state reading.
 
 - **No conflicts:** nothing to do.
 - **Conflicts:** update the PR branch from the base. Prefer `git merge origin/<base>` over `git rebase` — rebase destroys review-comment anchors by rewriting commit history. Only rebase when a reviewer explicitly requests it.
-- **Ambiguous conflicts** (the tick cannot confidently resolve): escalate via sink with an UNRESOLVED_CONFLICT message; end tick.
+- **Ambiguous conflicts** (the tick cannot confidently resolve): escalate via sink with code `UNRESOLVED_CONFLICT`. This maps to the `escalation` terminal state — loop ends; user resolves the conflict manually and re-invokes `/drive` to resume.
 
 ## PR Description Sync
 

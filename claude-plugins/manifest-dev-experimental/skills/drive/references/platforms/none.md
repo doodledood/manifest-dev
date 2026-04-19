@@ -6,15 +6,9 @@ Use when you want `/drive`'s cron-driven convergence without the overhead of a P
 
 ## Bootstrap
 
-Performed by `/drive` (the wrapper) before any tick fires. The `none` platform's bootstrap is minimal.
+Performed by `/drive` before any tick fires — see `drive/SKILL.md` §Branch + Bootstrap for the authoritative procedure (base resolution, branch creation, clean-tree check, empty commit).
 
-1. **Base branch resolution** — see `/drive`'s base-resolution rules. If `--base <branch>` is provided, use it; else `git symbolic-ref refs/remotes/origin/HEAD`; else literal `main`; else error.
-2. **Branch resolution:**
-   - If current branch == base: create a new branch named `claude/<manifest-title-slug>-<4-char-hash>` and check it out.
-   - If current branch != base: use current branch as-is. Do not modify.
-3. **Uncommitted changes check:** refuse to bootstrap if the working tree has uncommitted changes ("Uncommitted changes on current branch. Commit, stash, or discard before starting /drive.").
-4. **Empty commit:** `git commit --allow-empty -m "drive: bootstrap for <manifest-title>"`. Establishes a clean HEAD for tick 0 to reason about.
-5. **No push, no PR.** Remote state is not modified by this platform.
+The `none` platform's only deviation from the generic bootstrap: **no push, no PR.** Remote state is never modified by this platform.
 
 ## Read State
 
@@ -39,7 +33,7 @@ Uncommitted changes: <none | summary — M path/to/file>
 <Terminal: all-verify-pass | Terminal: escalation | Not terminal: <reason>>
 ```
 
-The Terminal Check is produced by consulting the log: if the most recent `manifest-dev:verify` invocation returned all-pass and HEAD has not advanced since, it's terminal. Otherwise not terminal.
+The Terminal Check is produced by consulting the log: if the most recent `manifest-dev:verify` entry recorded all-pass AND the current HEAD matches that entry's `last-verified-commit`, it's terminal. Otherwise not terminal.
 
 ## Terminal States
 
@@ -59,15 +53,13 @@ No other terminal states on this platform. In particular, there is no "merged" s
 
 ## Inbox Handling
 
-**N/A — no inbox on this platform.** There is no PR, no comment stream, no async channel. User mid-flight feedback is not supported in v0 for `none` mode. User stops the loop by talking to Claude at the session level (Claude can remove the lock and refuse to re-invoke `/loop`).
-
-The tick's action decision tree skips inbox handling entirely when this adapter is active.
+No inbox on this platform. The tick's action decision tree skips inbox handling when this adapter is active.
 
 ## Write Outputs
 
-Ticks that produce code changes (implementation, fix, crash recovery) follow this procedure:
+Ticks that produce code changes (implementation, fix, crash recovery):
 
-1. **Stage and commit** with a descriptive message (`drive: implement AC-3.4 (crash recovery semantics)`, `drive: fix failing verify on INV-G6`, etc.).
+1. **Stage and commit** with a message that ties the commit to the manifest criterion or action (principle, not a prescribed template).
 2. **No push.** The branch stays local.
 3. **Append HEAD to log:** new commit sha + single-line summary so the next tick can detect HEAD advance.
 
@@ -75,7 +67,6 @@ Never force-reset. Never push to base. Never amend a commit that exists in the l
 
 ## Gotchas
 
-- **No mid-flight user input.** If you're running in this mode and want to correct course, stop the loop (Claude session interruption) and re-invoke `/drive` after making manual adjustments. v0 deliberately avoids terminal-channel inbox complexity.
-- **Loop runs forever in continuing-states** until verify passes or you stop it. Budget cap (`--max-ticks`, default 100) is the guard against runaway cost. If the manifest is unsatisfiable as written, the tick will keep trying — the cap catches this.
-- **Verify-pass is sticky until HEAD advances.** Once a verify-pass terminal state fires, the loop ends. If you push new commits locally later that break things, `/drive` is no longer watching — re-invoke it.
-- **`## Inbox`, `## CI/Checks`, `## PR State` sections are deliberately absent** from this platform's state report. The tick's adapter-loading logic must handle the absence gracefully (not treat missing sections as errors).
+- **No mid-flight user input.** To correct course in this mode, stop the loop (Claude session interruption) and re-invoke `/drive` after making manual adjustments. v0 deliberately avoids terminal-channel inbox complexity.
+- **Verify-pass is sticky until HEAD advances.** Once a verify-pass terminal state fires, the loop ends. Local commits made afterward are not watched — re-invoke `/drive` to resume.
+- **`## Inbox`, `## CI/Checks`, `## PR State` sections are deliberately absent** from this platform's state report. Adapter-loading logic must treat missing sections as normal, not as errors.

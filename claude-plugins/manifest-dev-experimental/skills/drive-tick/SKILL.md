@@ -44,19 +44,19 @@ Lock file: `/tmp/drive-lock-{run-id}`. **Lock TTL = 30 minutes** — this consta
    - If exists and older than 30 min → stale → remove it.
 2. Create lock: write current timestamp + PID to `/tmp/drive-lock-{run-id}`.
 3. **TOCTOU check**: immediately read the lock back. If the contents don't match what was just written → another tick raced → exit silently (same lock-held-skip log entry).
-4. Tick proceeds. On exit (any outcome — terminal, continuing, error), remove the lock.
+4. Tick proceeds. On exit remove the lock — EXCEPT on the Skipped outcome (lock held by another tick; leave it alone).
 
 ## Budget Check
 
-Count prior *completed* tick entries in the log (entries with a `## Tick N —` heading or equivalent). The current tick has not yet appended its entry, so it is not counted.
+Count prior completed tick entries in the log. **Completed** = outcomes `Terminal`, `Continuing`, or `Error`. **Skipped (lock held)** entries do NOT count toward budget — they represent declined invocations, not work. Tick numbers are monotonic across the run (the next tick is `N = prior-completed-count + 1`, even across resumes after crash recovery).
 
-If `prior count ≥ --max-ticks`:
+If `prior completed count ≥ --max-ticks`:
 - Append `## BUDGET EXHAUSTED — loop ending after {N} completed ticks` to the log with timestamp and run-id.
-- Invoke the sink's escalate contract with a BUDGET_EXHAUSTED message.
+- Invoke the sink's escalate contract with a `BUDGET_EXHAUSTED` message.
 - Remove the lock.
 - End the loop — do not schedule the next iteration.
 
-Concretely: with `--max-ticks 100`, the 100th tick runs normally and appends its entry. The 101st tick sees `prior count == 100` and ends the loop without doing any action. Budget is "max completed work ticks," not "max attempts."
+Concretely: with `--max-ticks 100`, the 100th completed tick runs normally and appends its entry. The 101st tick sees `prior completed == 100` and ends the loop without doing any action. Budget counts completed work, not attempts.
 
 This is a terminal state. No budget check override from within a tick.
 
@@ -87,10 +87,10 @@ Note: the full execution log was already read in the Memento Pattern step. Adapt
 If the working tree has uncommitted changes at tick start (HEAD is authoritative; changes exist beyond HEAD):
 
 1. Read the last Actions block in the log.
-2. If the uncommitted changes are consistent with what the last entry claimed was in-progress (e.g., last entry said "implementing AC-3.4" and the diff touches relevant files): commit them with message "drive: resume from crashed prior tick (was: <prior action>)". Append a `## Crash Recovery — committed WIP` log entry.
-3. If the changes are inconsistent or ambiguous: append `## UNCOMMITTED CHANGES FROM PRIOR TICK — review manually` to the log, invoke sink escalate, release lock, and exit. Do NOT schedule next tick. Do NOT force-reset or discard uncommitted work.
+2. If the uncommitted changes are clearly consistent with what the last entry claimed was in-progress (e.g., last entry said "implementing AC-3.4" and the diff touches relevant files): commit them with a message identifying this as crash-recovery for the prior action. Append a `## Crash Recovery — committed WIP` log entry.
+3. Otherwise (inconsistent, ambiguous, or uncertain): append `## UNCOMMITTED CHANGES FROM PRIOR TICK — review manually` to the log, invoke sink escalate, release lock, and exit. Do NOT schedule next tick. Do NOT force-reset or discard uncommitted work.
 
-HEAD is never force-reset. Git state is authoritative.
+**Bias:** when uncertain, treat as inconsistent. A manually-reviewed escalation is recoverable; an incorrect auto-commit is not. HEAD is never force-reset. Git state is authoritative.
 
 ## Tick Execution Order (top-level)
 
@@ -102,18 +102,20 @@ Execute these phases in order. Sections below describe each in detail; this over
 4. **Load Adapters** — platform + sink + adapter data files.
 5. **Read State** — adapter-produced state report + manifest (manifest mode).
 6. **Crash Recovery** — reconcile uncommitted WIP against last log entry, or flag and exit.
-7. **Action Decision Tree** — the tick takes the appropriate action based on state.
-8. **Output Protocol** — append a log entry for the outcome; release the lock; end the loop (terminal) or schedule next iteration (continuing).
+7. **Action Decision Tree** — a 7-stage sub-tree (T→I→M→V→F→P→C; see below). The decision tree does the work; it does not emit the log entry.
+8. **Output Protocol** — append a log entry for the outcome; release the lock; end the loop (terminal) or return for the next scheduled iteration (continuing).
+
+To avoid collision with the top-level numbering, the Action Decision Tree's sub-stages are labeled **T / I / M / V / F / P / C** (see the section). Cross-references elsewhere in this file use the letter labels.
 
 ## Action Decision Tree
 
-Wide tick — the tick can perform multiple phases in a single pass. Check the steps in order and fall through after each step completes; the tick ends only on terminal state (step 1), budget exhaust, or when step 7 schedules the next iteration.
+A single tick runs through seven ordered stages. The tick ends only at stage **T** (terminal state) or **Budget Check** exhaustion; otherwise it proceeds through every stage and exits at stage **C** via the Output Protocol.
 
-**Intra-tick re-verify rule (manifest mode only):** after code changes in this tick from inbox handling OR implementation, the tick continues into step 4 (Verify) within the same iteration. After code changes from step 5 Fix, the tick does NOT re-verify in the same iteration — it commits/pushes and falls through to step 7 Schedule Next, deferring re-verify to the next tick. This preserves cross-tick convergence on the fix path (no internal fix-verify loop inside a single tick).
+**Intra-tick re-verify rule (manifest mode only):** code changes produced by stage **I** (inbox) or stage **M** (implementation) are followed by stage **V** (verify) in the same tick. Code changes produced by stage **F** (fix) are NOT re-verified in this tick — the tick commits/pushes and proceeds to stage **C**, deferring re-verify to the next tick. This preserves cross-tick convergence (no internal fix-verify loop in a single tick).
 
-**Babysit mode skips steps 3, 4, and 5.** There is no manifest to implement against, no manifest to verify against, and no verify-output to fix against. Babysit-mode ticks run: step 1 Terminal Check → step 2 Inbox Handling → step 6 Tend PR → step 7 Schedule Next. Fixes in babysit come from inbox handling (code changes driven by PR comments), not from verify failures.
+**Babysit mode skips stages M, V, and F.** There is no manifest to implement against, no manifest to verify against, and no verify-output to fix against. Babysit-mode ticks run: stage T → I → P → C. Fixes in babysit come from inbox handling (code changes driven by PR comments), not from verify failures.
 
-### 1. Terminal State Check
+### T. Terminal State Check
 
 Ask the platform adapter: "Is the current state terminal?" Adapter returns either `Not terminal: <reason>` or `Terminal: <state-name>`.
 
@@ -126,15 +128,13 @@ On terminal:
 - Invoke sink's escalate or report-status (per adapter's "What the tick takes on detection").
 - Remove lock, end loop. **Do not schedule next tick.**
 
-### 2. Inbox Handling (platform adapter)
+### I. Inbox Handling (platform adapter)
 
 If the platform has an inbox and the adapter's state report shows new events, consume them per the adapter's **Inbox Handling** contract. For `github`, this includes bot/human classification, actionable/FP/uncertain triage, and thread replies.
 
 Inbox handling can produce code changes (fix classification), manifest amendments (scope shift), or replies (no-op). Log per-event.
 
-If inbox handling produced no changes and no replies, fall through to next check.
-
-### 3. Implementation Pass (manifest mode only)
+### M. Implementation Pass (manifest mode only)
 
 If the manifest has unsatisfied deliverables/ACs that the log shows have not been attempted yet, perform a wide implementation pass INLINE — no `manifest-dev:do` invocation.
 
@@ -144,11 +144,7 @@ If the manifest has unsatisfied deliverables/ACs that the log shows have not bee
 - Continue to next AC.
 - Whole pass happens within this tick session.
 
-After the pass: fall through to Verify.
-
-### 4. Verify (manifest mode only)
-
-Babysit mode skips this step — no manifest to verify.
+### V. Verify (manifest mode only)
 
 If the current HEAD has advanced since the last-verified-commit logged (or no prior verify exists):
 
@@ -163,9 +159,7 @@ Invoke the manifest-dev:verify skill with: "<manifest-path> <log-path> --mode <m
 
 Record the current HEAD as `last-verified-commit` in the log with verify's verdict (pass/fail/phase-N-failed).
 
-### 5. Fix (manifest mode only)
-
-Babysit mode skips this step — babysit fixes come from inbox handling (step 2), not from verify-failure diagnostics.
+### F. Fix (manifest mode only)
 
 If the most recent verify failed (any phase), identify failing criteria from verify's output. Fix each failing criterion inline (no `manifest-dev:do` call):
 
@@ -173,9 +167,9 @@ If the most recent verify failed (any phase), identify failing criteria from ver
 - For criteria where the expected output is wrong → consider whether a manifest amendment is needed (see Amendment).
 - Log each fix attempt with AC id and outcome.
 
-After fixes: commit, push, and fall through to step 7 Schedule Next. **Do NOT re-verify in this tick.** The next tick will re-verify — this is the cross-tick convergence rule (no internal fix-verify loop inside a single tick).
+After fixes: commit, push, and proceed to stage C (no re-verify in this tick). The next tick will re-verify — this is the cross-tick convergence rule (no internal fix-verify loop inside a single tick).
 
-### 6. Tend PR (github platform only)
+### P. Tend PR (github platform only)
 
 After implementation/verify/fix passes in github mode, run the platform adapter's **Write Outputs** contract for PR hygiene:
 - PR description sync (rewrite "what changed" sections to reflect current diff).
@@ -183,9 +177,9 @@ After implementation/verify/fix passes in github mode, run the platform adapter'
 - Reply on threads that originated actionable comments in this tick.
 - Update requested reviewers if configured.
 
-### 7. Continue
+### C. Continue
 
-If none of the above yielded a terminal state, the tick returns. Append a `continuing` outcome log entry (see Output Protocol). Mirrors `tend-pr-tick`'s pattern.
+If no earlier stage declared a terminal state, proceed to the Output Protocol with outcome `continuing`. The log entry and lock release are owned by the Output Protocol, not this stage.
 
 ## Amendment
 
@@ -195,7 +189,7 @@ Amendment flow:
 
 1. Append `## Amendment Trigger — <reason>` to log with source (user message / PR comment / CI failure) and which manifest section needs updating.
 2. Invoke `manifest-dev:define --amend <manifest-path> --from-do`.
-3. Continue action decision tree with the amended manifest.
+3. Re-enter the Action Decision Tree at stage **V** (Verify) against the amended manifest — do not restart at stage T; terminal checks already ran, and amendments do not invalidate the inbox already processed.
 
 ### Amendment Loop Guard
 

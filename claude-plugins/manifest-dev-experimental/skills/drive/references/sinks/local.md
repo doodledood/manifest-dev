@@ -8,12 +8,12 @@ v0 default and only supported sink.
 
 ```markdown
 ## Escalation Target
-Escalations are appended to the run log at `/tmp/drive-log-{run-id}.md` as a `## ESCALATION` marker block. No external notifications. User tails the log to observe.
+Escalations are appended to the run log at `/tmp/drive-log-{run-id}.md` as a `## ESCALATION — <CODE>` marker block. No external notifications. User tails the log to observe.
 ```
 
 ## Escalate
 
-Called by `/drive-tick` when something blocking emerges: amendment-loop guard tripped, budget exhausted, crash-recovery inconsistency detected, unresolved merge conflict, stale uncertain thread (github), merge-ready prompt awaiting user decision, or empty-diff terminal.
+Called by `/drive-tick` when something blocking emerges: amendment-loop guard tripped, budget exhausted, crash-recovery inconsistency detected (all platforms); stale uncertain thread, merge-ready prompt, empty-diff terminal, unresolved merge conflict (github platform only).
 
 ### Format
 
@@ -38,22 +38,23 @@ Append this block to the run log (`/tmp/drive-log-{run-id}.md`):
 
 Use a stable uppercase code so operators can grep the log. At minimum:
 
-| Code | When |
-|---|---|
-| `AMENDMENT_LOOP_GUARD` | Three consecutive self-amendments without external input. |
-| `BUDGET_EXHAUSTED` | Tick count reached `--max-ticks`. |
-| `CRASH_RECOVERY_INCONSISTENT` | Uncommitted WIP does not match the last log entry. |
-| `UNRESOLVED_CONFLICT` | github platform: merge conflict the tick can't confidently resolve. |
-| `STALE_THREAD` | github platform: uncertain thread with no reply for 30+ min, or fixed-thread unresolved for 30+ min. |
-| `MERGE_READY_PROMPT` | github platform: PR is merge-ready; awaiting user confirmation. |
-| `EMPTY_DIFF` | github platform: PR has no diff. |
-| `PROPOSED_AMENDMENT` | Scope change the tick does not want to auto-apply; user to decide. |
+| Code | Terminal? | When |
+|---|---|---|
+| `AMENDMENT_LOOP_GUARD` | Yes | Consecutive self-amendments without external input reached the guard threshold (defined in `drive-tick/SKILL.md`). |
+| `BUDGET_EXHAUSTED` | Yes | Tick count reached `--max-ticks`. |
+| `CRASH_RECOVERY_INCONSISTENT` | Yes | Uncommitted WIP does not match the last log entry; user must review manually. |
+| `UNRESOLVED_CONFLICT` | Yes | github platform: merge conflict the tick can't confidently resolve. Maps to the `escalation` terminal state. |
+| `EMPTY_DIFF` | Yes | github platform: PR has no diff. |
+| `MERGE_READY_PROMPT` | Yes | github platform: PR is merge-ready; awaiting user confirmation. Loop ends; user merges manually. |
+| `PROPOSED_AMENDMENT` | Yes | Scope change the tick does not want to auto-apply; user to decide. |
+| `STALE_THREAD` | No | github platform: uncertain thread with no reply after the staleness window defined by the github adapter, or fixed-thread unresolved past that window. Loop continues. |
+| `TICK_ERROR` | Yes | Unrecoverable Skill / push / sink failure within a tick. |
 
-Additional codes can be added as needed; follow the same `UPPERCASE_SNAKE_CASE` shape.
+Additional codes can be added; follow the same `UPPERCASE_SNAKE_CASE` shape.
 
 ### Behavior after escalate
 
-`escalate` is side-effect-only — it appends the block to the log. It does NOT end the loop; the caller (tick's decision tree) decides whether to end the loop (usually yes, for terminal escalations like `BUDGET_EXHAUSTED`, `EMPTY_DIFF`).
+`escalate` is side-effect-only — it appends the block to the log. It does NOT end the loop on its own; the caller decides loop end based on the code's Terminal column above.
 
 ## Report Status
 
@@ -75,14 +76,14 @@ Append this block to the run log:
 
 ### Status codes
 
-| Code | When |
-|---|---|
-| `MANIFEST_SATISFIED` | `none` platform reached `all-verify-pass`. Terminal. |
-| `PR_MERGED` | github platform: PR was merged. Terminal. |
-| `PR_CLOSED` | github platform: PR was closed without merge. Terminal. |
-| `PR_DRAFTED` | github platform: PR converted to draft. Terminal. |
-| `TICK_COMPLETED` | Continuing-state tick successfully performed an action. |
-| `TICK_SKIPPED` | Lock was held; this tick exited silently. |
+| Code | Terminal? | When |
+|---|---|---|
+| `MANIFEST_SATISFIED` | Yes | `none` platform reached `all-verify-pass`. |
+| `PR_MERGED` | Yes | github platform: PR was merged. |
+| `PR_CLOSED` | Yes | github platform: PR was closed without merge. |
+| `PR_DRAFTED` | Yes | github platform: PR converted to draft. |
+| `TICK_COMPLETED` | No | Continuing-state tick successfully performed an action. |
+| `TICK_SKIPPED` | No | Lock was held; this tick exited silently. |
 
 ## Why sink and log both
 
@@ -92,6 +93,5 @@ When future sinks are added (e.g., `slack`), the log discipline stays unchanged 
 
 ## Gotchas
 
-- **Sink never silences the log.** If `escalate` or `report-status` fails for any reason (disk full, permission error on `/tmp`), the failure is itself an escalation-worthy condition — `/drive-tick` should catch the sink failure and, at minimum, attempt to write the failure to the log directly before exiting.
-- **Order: log entry first, sink second.** The tick's action log entry (`## Tick N — ...`) always precedes the sink call. If the sink fails, the log still records what happened.
-- **No buffering.** `local` sink writes immediately (append to file, flush). No batching. Partial log is valuable; deferred log is useless.
+- **Sink raises on failure.** If `escalate` or `report-status` fails (disk full, permission error on `/tmp`), the sink raises — it does NOT swallow the error. Failure handling is the tick's responsibility (see `drive-tick/SKILL.md` §Output Protocol → Error).
+- **No buffering.** `local` sink writes immediately (append + flush). No batching. Partial log is valuable; deferred log is useless.

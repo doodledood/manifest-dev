@@ -6,8 +6,8 @@ Cron-driven, tick-based driver that takes a manifest (or PR in babysit mode) all
 
 ## What it ships
 
-- **`/drive`** — user-invocable wrapper. Parses args, validates mode, resolves base branch, pre-flights `/loop`, bootstraps (branch + empty commit + PR for github; branch + commit for none), then kicks off `/loop`.
-- **`/drive-tick`** — the per-iteration brain. Lean (≤300 lines). Each tick: grab lock, read the full execution log (memento), read state via platform adapter, check terminal states, handle inbox, implement inline, invoke `manifest-dev:verify`, fix failures, amend manifest if scope shifts, commit, push, schedule next — or end on terminal state or budget exhaust.
+- **`/drive`** — user-invocable wrapper. Parses args, validates mode, resolves base branch, pre-flights `/loop` and `manifest-dev`, bootstraps (branch + empty commit + PR for github; branch + empty commit for none), then kicks off `/loop`.
+- **`/drive-tick`** — the per-iteration brain. Lean. Each tick: grab lock, read the full execution log (memento), read state via platform adapter, check terminal states, handle inbox, implement inline, invoke `manifest-dev:verify`, fix failures, amend manifest if scope shifts, commit, push — and either return for the next scheduled iteration or end on terminal state or budget exhaust.
 - **Pluggable adapters** — `skills/drive/references/platforms/{none,github}.md` and `skills/drive/references/sinks/local.md` follow a consistent markdown-state-report contract. Adding a new platform or sink is a copy-and-adjust.
 
 ## Mode matrix
@@ -15,7 +15,7 @@ Cron-driven, tick-based driver that takes a manifest (or PR in babysit mode) all
 | Mode | `--platform none` | `--platform github` |
 |---|---|---|
 | **manifest** (manifest path provided) | Valid. Local branch, no PR. Terminal = all `/verify` pass. | Valid. Bootstrap PR with empty commit; tend comments/CI; terminal = merge-ready. |
-| **babysit** (no manifest path) | **Rejected at invocation** — no manifest, no PR, no async input means nothing to observe. | Valid. Looks up current branch's open PR; errors if missing. Terminal = merge-ready. |
+| **babysit** (no manifest path) | **Rejected at invocation** — no manifest + no PR = nothing to observe. | Valid. Looks up current branch's open PR; errors if missing. Terminal = merge-ready. |
 
 ## Quick usage
 
@@ -36,9 +36,9 @@ All flags:
 |---|---|---|
 | `--platform` | `none` | `none` \| `github` |
 | `--sink` | `local` | `local` |
-| `--base` | auto-detect | Override when `git symbolic-ref refs/remotes/origin/HEAD` and `main` both fail |
-| `--interval` | `30m` | Min `30m` (matches lock TTL — prevents parallel ticks). Max `24h`. |
-| `--max-ticks` | `100` | Tick budget. `1`–`10000`. Exceeding = escalate + end loop. |
+| `--base` | auto-detect | Override when detection from `origin/HEAD` or `main` fails |
+| `--interval` | `30m` | Minimum `30m` (matches lock TTL — prevents parallel ticks). No upper bound enforced. |
+| `--max-ticks` | `100` | Positive integer. Tick budget — exceeding it escalates via sink and ends the loop. |
 
 ## Observing progress
 
@@ -63,7 +63,7 @@ Two adapter axes live inside the skill. Triggers are external (the wrapper kicks
 | **Platforms** | How state is read/written (branch, PR, comments, CI) | `none`, `github` | `gitlab`, `bitbucket` |
 | **Sinks** | Where escalations/status go | `local` (log file) | `slack`, `discord`, `email` |
 
-Each adapter returns a **markdown-formatted state report** with fixed section headings (`## Git State`, `## Inbox`, `## Terminal Check`, `## CI/Checks`, `## PR State` for platforms; `## Escalation Target` for sinks). The tick consumes the report directly — no structured-data marshalling.
+Each adapter returns a **markdown-formatted state report**. Platforms must include `## Git State` and `## Terminal Check`; `## Inbox`, `## CI/Checks`, and `## PR State` are included when applicable. Sinks expose `## Escalation Target` on-demand for documentation. The tick consumes the report directly — no structured-data marshalling.
 
 Adding a new adapter = copy an existing one, adjust the sections. See `skills/drive/references/ADAPTER_CONTRACT.md`.
 
@@ -80,15 +80,16 @@ If `/drive` proves out, a later manifest can deprecate the overlapping skills. F
 
 `manifest-dev-experimental` requires `manifest-dev` version **0.87.0 or newer** to be installed: the tick invokes `manifest-dev:verify` and `manifest-dev:define --amend --from-do` as Skill tool calls, and the github adapter duplicates logic from `manifest-dev:tend-pr-tick`.
 
-## /loop dependency contract
+## Dependencies checked before bootstrap
 
-`/drive` hands control to `/loop` after bootstrap. `/drive` pre-flights `/loop` availability via ToolSearch before any bootstrap side-effects and errors if missing. The driver relies on `/loop` to:
+`/drive` performs pre-flight checks before any branch/commit/push/PR side effects. It errors actionably if any of these are missing:
 
-- Schedule the next `/drive-tick` invocation at the configured interval.
-- Deliver the tick args verbatim on each wake.
-- Persist `/tmp/` across tick sessions (same assumption `tend-pr-tick` relies on).
+- **`/loop` skill** — the cron scheduler that invokes `/drive-tick` on the configured interval.
+- **`manifest-dev:verify` and `manifest-dev:define`** — for per-tick verification and mid-tick manifest amendments.
+- **GitHub MCP tools** (when `--platform github`) — for PR create/read/comment operations.
+- **`/tmp/` persistence across sessions** — the tick reads its log from `/tmp/drive-log-{run-id}.md` on every wake (same assumption `tend-pr-tick` relies on).
 
-`/loop` is outside `/drive`'s control. If cron fires stop firing (host sleep, session ended), `/drive` has no automatic recovery — the tail of `/tmp/drive-log-{run-id}.md` will go stale. Check the log; re-invoke `/drive` to resume.
+If `/loop`'s cron stops firing (host sleep, session ended), `/drive` has no automatic recovery — `/tmp/drive-log-{run-id}.md` will go stale. Check the log; re-invoke `/drive` to resume.
 
 ## Recommended `.claude/settings.json` permissions
 
@@ -99,11 +100,7 @@ If `/drive` proves out, a later manifest can deprecate the overlapping skills. F
   "permissions": {
     "deny": [
       "Bash(git push --force*)",
-      "Bash(git push --force-with-lease*)",
-      "Bash(git push*:main)",
-      "Bash(git push*:master)",
-      "Bash(rm -rf /*)",
-      "Bash(rm -rf ~/*)"
+      "Bash(git push --force-with-lease*)"
     ],
     "ask": [
       "Bash(gh pr merge*)",
@@ -115,9 +112,9 @@ If `/drive` proves out, a later manifest can deprecate the overlapping skills. F
 }
 ```
 
-Adjust to your workflow. These are **not enforced by the plugin** — they're Claude Code gates. Without them, a runaway or misconfigured tick could force-push, push to main, or merge unreviewed.
+Adjust to your workflow. These are **not enforced by the plugin** — they're Claude Code gates. Without them, a runaway or misconfigured tick could force-push, push to main, or merge unreviewed. General system hardening (e.g., blocking `rm -rf` outside the project) belongs in your base settings, not a plugin-specific snippet.
 
-## V0 Scope — what is NOT in v0
+## v0 scope — what is NOT in v0
 
 - **Sinks beyond `local`**: Slack, Discord, email sinks are deferred. Escalations go to the log only.
 - **Platforms beyond `github`**: GitLab, Bitbucket, Jira. v0 ships `none` and `github`.
@@ -133,13 +130,13 @@ Adjust to your workflow. These are **not enforced by the plugin** — they're Cl
 - **Lock TOCTOU.** Two ticks may see a stale lock simultaneously and both acquire. The tick re-verifies lock ownership immediately after creation (reads back PID/timestamp); mismatch → exit silently. Rare duplicate work is possible.
 - **Crash recovery keeps WIP.** If a prior tick crashed mid-implementation, uncommitted working-tree changes persist. The next tick commits them if the last log entry is consistent with the WIP shape; otherwise it logs a manual-review flag and exits. Never force-resets.
 - **Bot comments repeat after push.** Track findings by content, not comment ID. Same rule as `tend-pr-tick`.
-- **Amendment oscillation.** If the tick self-amends the manifest 3 times without new external input (user message or PR comment) between attempts, it escalates via the sink rather than continuing. See R-3.
-- **Budget exhaust is terminal.** Default 100 ticks. When the tick count in the log reaches `--max-ticks`, the tick logs `BUDGET EXHAUSTED`, escalates via the sink, removes the lock, and ends the loop.
+- **Amendment oscillation.** If the tick self-amends the manifest repeatedly without new external input (user message or PR comment), it escalates via the sink rather than continuing. Threshold and exact semantics are in `skills/drive-tick/SKILL.md` §Amendment Loop Guard.
+- **Budget exhaust is terminal.** Default `--max-ticks 100`. When the completed-tick count in the log reaches the budget, the tick logs `BUDGET EXHAUSTED`, escalates via the sink, removes the lock, and ends the loop.
 - **Same-second `none`-mode collisions.** Run IDs in none mode are `local-{timestamp}-{4-char-random}` specifically to avoid collision when two runs start within one second. Github mode uses `gh-{owner}-{repo}-{pr}` to avoid cross-repo PR-number collision when `/tmp` is shared.
 
 ## Rolling back
 
-The plugin stores no durable state beyond transient `/tmp/drive-log-*` and `/tmp/drive-lock-*` files. To uninstall: remove the entry from `.claude-plugin/marketplace.json` and run `/plugin` to uninstall. Any in-flight `/drive` runs should be stopped first (talk to Claude at the session level).
+The plugin stores no durable state beyond transient `/tmp/drive-log-*` and `/tmp/drive-lock-*` files. To uninstall: run `/plugin` and uninstall `manifest-dev-experimental`. Any in-flight `/drive` runs should be stopped first (talk to Claude at the session level).
 
 ## See also
 

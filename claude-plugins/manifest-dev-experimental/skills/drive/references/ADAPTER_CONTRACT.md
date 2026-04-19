@@ -29,7 +29,7 @@ How the `/drive` wrapper bootstraps the run for this platform. Covers:
 
 #### Read State
 
-What the tick reads at the start of each iteration, and which state-report sections it produces. Minimum: `## Git State` and `## Terminal Check`. Platforms with remote state add `## Inbox`, `## CI/Checks`, `## PR State`.
+What the tick reads at the start of each iteration, and which state-report sections it produces. The contract for section shape is below under "Required state-report sections."
 
 #### Terminal States
 
@@ -40,7 +40,7 @@ The full enumeration of terminal conditions this platform recognizes. Each termi
 
 #### Inbox Handling
 
-How the adapter's inbox is consumed per tick. For platforms without an inbox (`none`), this section explicitly states "N/A — no inbox on this platform." For platforms with one (`github`), this specifies classification rules, filtering, reply mechanics.
+How the adapter's inbox is consumed per tick. Platforms without an inbox state that fact and the tick skips inbox handling when the adapter is active. Platforms with an inbox specify classification rules, filtering, and reply mechanics.
 
 #### Write Outputs
 
@@ -72,7 +72,9 @@ And when applicable:
 ```
 
 **Required on every platform**: `## Git State`, `## Terminal Check`.
-**Optional (include when applicable)**: `## Inbox`, `## CI/Checks`, `## PR State`.
+**Optional (each independently included when applicable)**: `## Inbox`, `## CI/Checks`, `## PR State`. A platform may include any subset of these.
+
+**Section order is not significant.** The tick keys on heading names, not position. Adapters may order sections for readability.
 
 ### Example state report — `none` platform
 
@@ -111,6 +113,8 @@ Not terminal: 1 actionable human thread, 1 bot suggestion pending classification
 
 **Purpose:** a sink adapter tells the tick where to send escalations and status updates. Not every tick calls the sink — only escalation paths and budget exhaust.
 
+**Invariant:** the execution log is the authoritative cross-tick state and is ALWAYS written by the tick. Sink `Escalate` and `Report Status` are additive notification channels — never a replacement for the log. Sinks fail independently of logging; a broken sink must not lose the log entry.
+
 ### Required sections
 
 #### Escalate
@@ -124,9 +128,9 @@ How the tick escalates a blocker (manifest amendment loop, budget exhaust, unres
 
 How the tick reports routine status (every tick, including lock-held skips) through this sink. Note that in v0 all sinks also must append a status entry to the execution log — the sink's `Report Status` is _additive_ escalation-class notification, not a replacement for the log.
 
-### Required state-report section
+### Self-description section
 
-When the adapter is asked to describe its target (e.g., for inclusion in the plugin README or log header), it returns:
+Unlike the platform state report (produced every tick at runtime), the sink's `## Escalation Target` block is produced on-demand for documentation headers (README, log header) — not per-tick. When asked to describe its target, the adapter returns:
 
 ```markdown
 ## Escalation Target
@@ -142,12 +146,7 @@ Escalations are appended to the run log at /tmp/drive-log-{run-id}.md with a "##
 
 ## What the tick expects
 
-`/drive-tick` loads the resolved adapter files at the start of each iteration. It does NOT re-derive adapter semantics from scratch — it reads the adapter's markdown and follows what it says.
-
-Order of adapter loading in a tick:
-1. Load `../drive/references/platforms/<platform>.md`
-2. Load `../drive/references/sinks/<sink>.md`
-3. Load any adapter-referenced data files (e.g., github adapter loads `./data/known-bots.md` and `./data/classification-examples.md`)
+`/drive-tick` loads the resolved adapter files at the start of each iteration and follows the markdown. It does NOT re-derive adapter semantics from scratch. The tick owns the loading sequence; see `drive-tick/SKILL.md` §Load Adapters.
 
 If an adapter file is missing, the tick errors: `Adapter not found: <path>. Check --platform / --sink values and plugin installation.`
 
