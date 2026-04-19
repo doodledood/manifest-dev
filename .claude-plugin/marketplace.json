@@ -9,6 +9,7 @@
   },
   "plugins": [
     { "name": "manifest-dev", "source": "./claude-plugins/manifest-dev" },
-    { "name": "manifest-dev-tools", "source": "./claude-plugins/manifest-dev-tools" }
+    { "name": "manifest-dev-tools", "source": "./claude-plugins/manifest-dev-tools" },
+    { "name": "manifest-dev-experimental", "source": "./claude-plugins/manifest-dev-experimental" }
   ]
 }

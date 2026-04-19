@@ -195,3 +195,7 @@ Multi-CLI distributions under `dist/` for Gemini CLI, OpenCode, and Codex CLI ar
 ## Hooks
 
 Seven hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before verification runs. `post_compact_hook.py` restores `/do` and thinking disciplines context if the session gets compacted. `pretool_verify_hook.py` nudges agents to actually read the manifest before verifying anything. `posttool_log_hook.py` reminds the model to update the execution log after task progress during `/do`. `prompt_submit_hook.py` reminds the model to check for manifest amendments when the user provides input during `/do` — enabling the autonomous Self-Amendment flow (`/escalate` → `/define --amend` → `/do` resume). `thinking_disciplines_prompt_hook.py` reinforces thinking disciplines on each user message during `/figure-out` or `/define`. `thinking_disciplines_pretool_hook.py` reinforces disciplines before AskUserQuestion — the moment where sycophantic drift is most likely.
+
+## See also
+
+- [`manifest-dev-experimental`](../manifest-dev-experimental) — experimental cron-driven alternative to `/do` + `/tend-pr`. Ships `/drive` + `/drive-tick`: a stateless wide-tick loop with pluggable platform and sink adapters. Coexists with this plugin; nothing deprecated.

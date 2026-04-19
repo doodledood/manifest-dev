@@ -334,6 +334,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 |--------|-------------|
 | `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, `/tend-pr`, review agents, workflow hooks. Mid-execution manifest amendments via `--amend` flag and UserPromptSubmit hook. |
 | `manifest-dev-tools` | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. |
+| `manifest-dev-experimental` | **Experimental.** Cron-driven, tick-based manifest runner (`/drive` + `/drive-tick`) with pluggable platform (`none`, `github`) and sink (`local`) adapters. Takes a manifest (or PR in babysit mode) to a terminal state via repeated stateless ticks — cross-tick convergence replaces `/do`'s internal fix-verify-loop hooks. Coexists with `manifest-dev`; nothing deprecated. |
 
 ## Plugin Architecture
 
