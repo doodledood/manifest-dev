@@ -20,15 +20,15 @@ Coexists with `/do`, `/tend-pr`, `/auto` — does not replace them.
 - `--platform` — `none` (default) or `github`. `none` = local branch only, no PR. `github` = bootstrap PR, tend comments/CI.
 - `--sink` — `local` (default). Where escalations and status notifications go.
 - `--base` — Override base branch auto-detection.
-- `--interval` — Default `30m`. Minimum `30m` (matches lock TTL — below this, a wide tick exceeding interval could parallelize with a fresh cron fire). No upper bound enforced.
-- `--max-ticks` — Default `100`. Positive integer. Tick budget cap — once exceeded, tick escalates via sink and ends loop. Prevents silent cost runaway.
+- `--interval` — Default `30m`. Range `30m`–`24h` inclusive. Minimum matches lock TTL (below this, a wide tick exceeding interval could parallelize with a fresh cron fire). Upper bound catches obvious typos.
+- `--max-ticks` — Default `100`. Positive integer, `1`–`10000` inclusive. Tick budget cap — once exceeded, tick escalates via sink and ends loop. Prevents silent cost runaway.
 
 ### Usage error messages
 
 - `--platform <unknown>`: "Platform '<value>' not supported. Supported: none | github"
 - `--sink <unknown>`: "Sink '<value>' not supported. Supported: local"
-- `--interval` below `30m`: "Interval '<value>' below minimum. Must be ≥ 30m (matches lock TTL to prevent parallel ticks)."
-- `--max-ticks` not a positive integer: "--max-ticks must be a positive integer."
+- `--interval` outside `30m`–`24h`: "Interval '<value>' out of range. Must be between 30m and 24h."
+- `--max-ticks` outside `1`–`10000`: "--max-ticks must be a positive integer between 1 and 10000."
 
 ## Mode Resolution
 

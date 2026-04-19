@@ -2,7 +2,7 @@
 
 GitHub PR lifecycle mode. `/drive` bootstraps a branch + empty commit + PR; subsequent ticks tend the PR (comments, CI, reviews) while also implementing/verifying/fixing per the manifest (in manifest mode) or per conversation context (in babysit mode). Terminal when the PR is merged, closed, drafted, merge-ready (with user confirm), has an empty diff, or hits an escalation-worthy condition.
 
-This adapter preserves `manifest-dev:tend-pr-tick`'s semantics — classification, CI triage, PR description sync, thread resolution, merge-ready logic — adapted to the adapter contract. Notable adaptations: `/do` invocation is replaced by `/drive-tick`'s inline action decision tree; tick-lifecycle wording is replaced by state-report sections and sink codes. Experimental plugin is self-contained; data files (`./data/known-bots.md`, `./data/classification-examples.md`) are local copies so the plugin doesn't reach into manifest-dev's directories at runtime.
+Data files referenced by this adapter: `./data/known-bots.md` (bot identification), `./data/classification-examples.md` (intent classification examples).
 
 ## Bootstrap
 

@@ -2,15 +2,6 @@
 
 All platform and sink adapters follow a single interface: **return a markdown-formatted state report with fixed section headings.** `/drive-tick` consumes the report directly — no structured-data marshalling, no tool-call wrappers, no parsed YAML.
 
-This contract exists so `/drive-tick` stays lean and adapters stay pluggable. Copy an existing adapter, adjust its sections, add it to the platform/sink registry — done.
-
-## Why markdown state reports?
-
-- **Lean tick.** Tick reads a markdown file, follows the instructions inside. No new data shape to learn per adapter.
-- **Composable.** Adapters can share section shapes (e.g., `## Git State` looks the same across `none`, `github`, future `gitlab`).
-- **Diffable.** A state report is also what gets appended to the log — operator can read what the tick saw without special tooling.
-- **No leaky abstractions.** Adapter owns how it gets the data; tick owns what to do with it.
-
 ## Division of labor
 
 | Owner | Responsibilities |

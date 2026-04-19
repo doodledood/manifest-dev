@@ -71,7 +71,7 @@ Append this block to the run log:
 **Tick:** <tick-number>
 **Action:** <brief action summary — "implemented AC-3.4", "verified, all phases pass", "fixed failing lint on file X", "inbox: classified 2 comments, replied to 1, fixed 1", "lock held — skipped">
 **HEAD:** <current-sha>
-**Next:** <"scheduled next tick in <interval>" | "terminal: <state>" | "skipped — lock held">
+**Next:** <"scheduled next tick" | "terminal: <state>" | "skipped — lock held">
 ```
 
 ### Status codes
@@ -84,12 +84,6 @@ Append this block to the run log:
 | `PR_DRAFTED` | Yes | github platform: PR converted to draft. |
 | `TICK_COMPLETED` | No | Continuing-state tick successfully performed an action. |
 | `TICK_SKIPPED` | No | Lock was held; this tick exited silently. |
-
-## Why sink and log both
-
-The log is the source of truth. The sink is the observer channel. In v0, the sink for `local` writes to the same file — redundant, but consistent with future sinks (Slack, email) where the log stays local and the sink ships a human-readable notification out-of-band.
-
-When future sinks are added (e.g., `slack`), the log discipline stays unchanged — every tick still writes to the log. The sink additionally posts to Slack. Tooling that depends on the log does not change.
 
 ## Gotchas
 

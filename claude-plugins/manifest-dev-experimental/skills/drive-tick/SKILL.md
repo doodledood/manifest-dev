@@ -113,11 +113,7 @@ A single tick runs through seven ordered stages. The tick ends only at Terminal 
 
 ### Terminal State Check
 
-Ask the platform adapter: "Is the current state terminal?" Adapter returns either `Not terminal: <reason>` or `Terminal: <state-name>`.
-
-Terminal states are platform-specific (documented in each adapter):
-- `none`: `all-verify-pass`, `escalation`.
-- `github`: `merged`, `closed`, `draft`, `merge-ready`, `empty-diff`, `escalation`.
+Ask the platform adapter: "Is the current state terminal?" Adapter returns either `Not terminal: <reason>` or `Terminal: <state-name>`. Terminal-state names are defined exclusively by each platform adapter; the tick does not enumerate them.
 
 On terminal, invoke the sink method (escalate or report-status) with the code the adapter names for that state. The log entry and lock release are emitted by the Output Protocol's Terminal block — not here. Do not schedule the next tick.
 
@@ -182,7 +178,7 @@ Amendment flow:
 
 1. Append `## Amendment Trigger — <reason>` to log with source (user message / PR comment / CI failure) and which manifest section needs updating.
 2. Invoke `manifest-dev:define --amend <manifest-path> --from-do`.
-3. Re-enter the Action Decision Tree at Verify against the amended manifest — do not restart at Terminal Check; terminal checks already ran, and amendments do not invalidate the inbox already processed.
+3. Re-enter the Action Decision Tree at Implementation Pass against the amended manifest — new ACs introduced by the amendment will be picked up there; then Verify will re-check the amended criteria. Do not restart at Terminal Check; terminal checks already ran, and amendments do not invalidate the inbox already processed.
 
 ### Amendment Loop Guard
 
