@@ -20,14 +20,14 @@ Coexists with `/do`, `/tend-pr`, `/auto` — does not replace them.
 - `--platform` — `none` (default) or `github`. `none` = local branch only, no PR. `github` = bootstrap PR, tend comments/CI.
 - `--sink` — `local` (default). Where escalations and status notifications go.
 - `--base` — Override base branch auto-detection.
-- `--interval` — Default `30m`. Range `30m`–`24h` inclusive. Minimum matches lock TTL (below this, a wide tick exceeding interval could parallelize with a fresh cron fire). Upper bound catches obvious typos.
+- `--interval` — Default `15m`. Range `15m`–`24h` inclusive. The lower bound is set so that the cron fires at a cadence useful for typical ticks (most complete in well under 15m); the parallelization ceiling comes from the lock TTL (see Gotchas), not from this floor. Upper bound catches obvious typos.
 - `--max-ticks` — Default `100`. Positive integer, `1`–`10000` inclusive. Tick budget cap — once exceeded, tick escalates via sink and ends loop. Prevents silent cost runaway.
 
 ### Usage error messages
 
 - `--platform <unknown>`: "Platform '<value>' not supported. Supported: none | github"
 - `--sink <unknown>`: "Sink '<value>' not supported. Supported: local"
-- `--interval` outside `30m`–`24h`: "Interval '<value>' out of range. Must be between 30m and 24h."
+- `--interval` outside `15m`–`24h`: "Interval '<value>' out of range. Must be between 15m and 24h."
 - `--max-ticks` outside `1`–`10000`: "--max-ticks must be a positive integer between 1 and 10000."
 
 ## Mode Resolution
@@ -109,7 +109,7 @@ Print a run summary to the terminal: run-id, mode, platform, sink, interval, bud
 
 - **`/loop` reliability is outside /drive's control.** If cron stops firing (session ends, host sleeps), ticks stop. No automatic recovery — the log will go stale. Re-invoke `/drive` to resume. The tick is designed to pick up from log state.
 - **Base branch auto-detection can fail** on repos with unusual configurations (detached HEAD on remote, no `origin/HEAD`, no `main` branch). The error is explicit — no silent fallback to `master`. Pass `--base <branch>` to override.
-- **Interval/TTL coupling.** `--interval ≥ 30m` is enforced at invocation because the lock TTL is 30m. If a wide tick takes longer than the interval, a second cron fire could acquire a stale lock and parallelize work. The enforcement reduces this risk but does not eliminate it for real ticks exceeding 30m (accepted v0 limit).
+- **Lock TTL parallelization ceiling.** The lock TTL is 30m (see `drive-tick/SKILL.md` §Concurrency Guard). A tick that runs longer than 30m leaves a stale lock behind; the next cron fire — at whatever interval — can then acquire that stale lock and start a second tick in parallel with the still-running first one. The `--interval` floor (15m) does not change this ceiling; it only affects how often cron fires. Accepted v0 limit. Keep ticks under 30m to stay safe.
 - **Run-id collision mitigations.** Github-mode run-ids are qualified by repo owner/name to avoid collision when `/tmp` is shared across multiple repositories with overlapping PR numbers. None-mode run-ids include a 4-char random suffix to avoid collision when two none-mode runs start within the same second.
 - **Budget exhaust stops the loop.** If the tick count in the log reaches `--max-ticks`, the tick escalates via the sink and ends the loop. Budget prevents silent cost runaway; raise `--max-ticks` explicitly if a run genuinely needs more ticks.
 - **No explicit stop command.** `/drive` relies on Claude Code session-level interruption (user talks to Claude, who removes the lock if needed) or terminal states (merge, verify-pass, budget exhaust). Closing the Claude Code session also stops `/loop` from scheduling further ticks.

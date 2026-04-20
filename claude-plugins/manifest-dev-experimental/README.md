@@ -37,7 +37,7 @@ All flags:
 | `--platform` | `none` | `none` \| `github` |
 | `--sink` | `local` | `local` |
 | `--base` | auto-detect | Override when detection from `origin/HEAD` or `main` fails |
-| `--interval` | `30m` | Minimum `30m` (matches lock TTL — prevents parallel ticks). No upper bound enforced. |
+| `--interval` | `15m` | Minimum `15m`, maximum `24h`. The parallelization ceiling is the 30m lock TTL, not this floor — ticks that run past 30m can still parallelize a fresh cron fire. |
 | `--max-ticks` | `100` | Positive integer. Tick budget — exceeding it escalates via sink and ends the loop. |
 
 ## Observing progress
@@ -126,7 +126,7 @@ Adjust to your workflow. These are **not enforced by the plugin** — they're Cl
 ## Gotchas
 
 - **`/loop` reliability is outside the plugin's control.** If the cron host sleeps or the Claude Code session ends, ticks stop. No recovery.
-- **Long ticks (>30m) risk parallel execution.** The 30m lock TTL clears a stale lock after 30 min; if a real tick is still running at that point, the next cron fire will start a second tick. `--interval` is bounded ≥ 30m at invocation to minimize this, but a 60-min implementation pass can still parallelize. Accepted v0 limitation.
+- **Long ticks (>30m) risk parallel execution.** The 30m lock TTL clears a stale lock after 30 min; if a real tick is still running at that point, the next cron fire will start a second tick. `--interval` has no role in this ceiling — whether you fire every 15m or every 2h, a tick exceeding 30m can still parallelize with the next fire. Accepted v0 limitation.
 - **Lock TOCTOU.** Two ticks may see a stale lock simultaneously and both acquire. The tick re-verifies lock ownership immediately after creation (reads back PID/timestamp); mismatch → exit silently. Rare duplicate work is possible.
 - **Crash recovery keeps WIP.** If a prior tick crashed mid-implementation, uncommitted working-tree changes persist. The next tick commits them if the last log entry is consistent with the WIP shape; otherwise it logs a manual-review flag and exits. Never force-resets.
 - **Bot comments repeat after push.** Track findings by content, not comment ID. Same rule as `tend-pr-tick`.

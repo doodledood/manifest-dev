@@ -153,13 +153,64 @@ The staleness window defaults to 30 minutes; adjust here if your workflow needs 
 
 ## CI Failure Triage
 
-Runs every tick as part of state reading. Compare against base branch first (so pre-existing failures aren't attributed to this PR):
+Invoked by the tick's **CI Triage + Retrigger** stage (see `drive-tick/SKILL.md` §Action Decision Tree) on any failing checks surfaced in §Read State's `## CI/Checks`. Classification below is read-only; the retrigger action and log entry are produced by the same stage using the rules that follow. Compare against base branch first (so pre-existing failures aren't attributed to this PR). Base branch CI status is readable via `mcp__github__get_commit` on the base HEAD.
 
-- **Pre-existing:** same failure visible on base → skip. Not this PR's responsibility.
-- **Infrastructure:** flaky timeout, runner outage, transient network error → retrigger via `mcp__github__*` check-run APIs.
-- **Code-caused:** new failure introduced by commits in this PR → actionable. Feed into fix logic.
+### Classification
 
-Base branch CI status is readable via `mcp__github__get_commit` on the base HEAD.
+Every failing check gets exactly one classification:
+
+- **Pre-existing:** failure reproduces consistently on base → skip. Not this PR's responsibility. No retrigger.
+- **Infrastructure:** confident flaky timeout, runner outage, or transient network error on this PR → eligible for retrigger (see below). If base is also flaking intermittently on the same check (i.e., base passes sometimes, fails sometimes), classify as Infrastructure here rather than Pre-existing — an intermittent base failure is not consistent-on-base, and retriggering is still the right action. (This reclassification covers what the manifest AC-1.1 calls "Pre-existing-but-flaking-on-rerun" — folded into Infrastructure because both end at the same retrigger action.)
+- **Code-caused:** new failure introduced by commits in this PR → actionable. Feed into fix logic. **Never retrigger** — retriggering would hide a real bug.
+- **Uncertain:** classification isn't confident (mixed signals, unfamiliar failure shape, diagnosis inconclusive) → **do NOT retrigger**. Escalate via sink with code `CI_UNCERTAIN` naming the failing check and what made the classification uncertain. Loop continues (not terminal) — the next tick may have more signal.
+
+### Retrigger (Infrastructure only)
+
+When a failure is confidently classified as Infrastructure, retrigger using the first applicable method:
+
+1. **Native check-run rerun** — when the failing check is a GitHub Actions run. Use `mcp__github__*` check-run rerun APIs. Leaves no extra commit in history.
+2. **Empty-commit push** — when the failing check is an external status (Argo, CircleCI, Jenkins, Buildkite, GitHub Apps that only react to push events) where the native rerun API does not apply. Use:
+   ```
+   git commit --allow-empty -m "chore: retrigger CI [drive]"
+   git push
+   ```
+   The `[drive]` tag makes these commits distinguishable from user-authored ones for downstream tooling. Push semantics inherit §Write Outputs (retry with exponential backoff, never `--force`, append new HEAD sha to log). PR description sync (§Write Outputs step 4) is skipped when the only commits produced this tick are retrigger-only empty commits — there is no new diff to describe.
+
+### Per-run cap
+
+**Maximum 10 CI retriggers per run** (where "run" means "per log-file lifetime" — see reset note below). The tick counts prior `### CI Retrigger` entries in the execution log (memento pattern — same counting approach as budget-check and the amendment-loop guard).
+
+- If the prior count is `< 10`: retrigger using the method above, then append a log entry (see format below) before the next tick fires.
+- If the prior count is `≥ 10`: do NOT retrigger. Escalate via sink with code `CI_RETRIGGER_EXHAUSTED` naming the still-failing check(s). **Maps to the `escalation` terminal state** — loop ends. Without the terminal mapping, subsequent cron fires would keep re-escalating the same exhaustion event and burn the tick budget silently. The cap is **per-run**, not per-external-signal — a new user commit or reviewer push within the same run does **not** reset the counter. Because the github-mode run-id is deterministic per PR (`gh-{owner}-{repo}-{pr-number}`) and `/drive` appends to an existing log rather than overwriting, simply re-invoking `/drive` on the same PR does NOT reset the counter — prior `### CI Retrigger` entries still count. To reset the counter after exhaustion, the user must first remove those entries from `/tmp/drive-log-{run-id}.md` (or delete the log entirely, knowing it clears all prior state — completed-tick count, last-verified-commit, etc.) before re-invoking. No flag adjusts this cap in v0; if the user believes the cap should not apply (e.g., a genuinely intermittent external system), they intervene manually or edit this file (`github.md`).
+
+### Log-entry format
+
+Every executed retrigger is recorded with this header (one entry per retrigger action, not per classified check):
+
+```
+### CI Retrigger — <method> (count: <N>/10)
+```
+
+Placeholders — substitute before writing:
+- `<method>` — one of `check-run-rerun` or `empty-commit`.
+- `<N>` — the 1-indexed count of this retrigger within the run (i.e., `prior count + 1`). Write the number literally: `1`, `2`, …, `10`. Do not leave the literal `N` in the header.
+- `10` — the per-run cap constant; do not vary.
+
+The body includes timestamp, the failing check name(s) triggering the retrigger, the classification rationale in one sentence, and the resulting action (commit sha for empty-commit, rerun request id for check-run-rerun). The cap counter reads against the literal prefix `### CI Retrigger —` (before the method) — keep that prefix exact so future ticks can count entries reliably.
+
+When the tick escalates an uncertain classification via sink, it additionally writes a log entry with this header (independent of whatever the sink itself records):
+
+```
+### CI Uncertain — <check-name>
+```
+
+One entry per uncertain escalation. `<check-name>` is the exact check name as reported in `## CI/Checks`. The dedup grep for uncertain escalations (see `drive-tick/SKILL.md` §CI Triage + Retrigger step 2) keys on this prefix plus the check name — keep the prefix exact and the check-name substitution faithful so future ticks can dedup reliably.
+
+### Accepted v0 limitations
+
+- **Retrigger-only ticks count against `--max-ticks`.** A long run with chronic external-status flakes can consume both the 10-retrigger cap AND tick-budget slots. If this becomes a practical issue, the user raises `--max-ticks` or intervenes. Future adapter versions may exclude retrigger-only ticks from the completed-tick count.
+- **Native-first iteration can starve empty-commit retriggers under tight cap.** When the cap is tight (e.g., prior count 9, multiple native candidates), native runs consume slots before the single-slot empty-commit action is considered. Intentional: native rerun is leaner per action and less disruptive to history. Users preferring "maximize checks covered per slot" can reorder in this file.
+- **Push-restarts-all-checks assumption.** Stage T step 0 assumes a push restarts required status checks (true on typical GitHub setups). For checks keyed off non-push events, retrigger is deferred by one tick rather than skipped permanently — next tick's fresh state surfaces the still-failing check for step 5.
 
 ## Merge Conflicts
 
@@ -171,7 +222,7 @@ Also runs every tick as part of state reading.
 
 ## PR Description Sync
 
-Runs only when this tick produced changes (committed a fix, implementation pass, or conflict resolution). Skipped when nothing changed.
+Runs only when this tick produced changes (committed a fix, implementation pass, or conflict resolution). Skipped when nothing changed. **Exception**: a tick whose only commits are retrigger-only empty commits skips description sync — there is no new diff to describe (see §CI Failure Triage → Retrigger).
 
 After changes:
 
