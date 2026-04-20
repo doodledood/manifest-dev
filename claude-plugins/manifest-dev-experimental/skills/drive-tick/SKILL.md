@@ -37,7 +37,7 @@ Never decide an action based on only the last few entries. Tick behavior depends
 
 ## Concurrency Guard
 
-Lock file: `/tmp/drive-lock-{run-id}`. **Lock TTL = 30 minutes** — this constant is mirrored by `/drive`'s `--interval ≥ 30m` validation so that a fresh cron fire cannot race an in-progress tick under normal conditions. If a real tick exceeds 30m (wide implementation passes can), a subsequent cron fire WILL acquire the stale lock and parallelize — accepted v0 limitation; see Gotchas.
+Lock file: `/tmp/drive-lock-{run-id}`. **Lock TTL = 30 minutes.** The TTL governs parallelization: as long as a tick finishes within 30m, subsequent cron fires during that window see a live lock and skip silently — regardless of the configured `--interval`. If a real tick exceeds 30m (wide implementation passes can), a subsequent cron fire WILL acquire the stale lock and parallelize — accepted v0 limitation; see Gotchas.
 
 1. Check if lock exists:
    - If exists and modification time is newer than 30 minutes ago → another tick is active → exit silently (do NOT schedule next; `/loop` will fire again at the normal interval). Append a `lock-held-skip` entry to the log per the Output Protocol.
@@ -100,16 +100,16 @@ Execute these phases in order. Sections below describe each in detail:
 - **Load Adapters** — platform + sink + adapter data files.
 - **Read State** — adapter-produced state report + manifest (manifest mode).
 - **Crash Recovery** — reconcile uncommitted WIP against last log entry, or flag and exit.
-- **Action Decision Tree** — Terminal Check → Inbox Handling → Implementation Pass → Verify → Fix → Tend PR → Continue. The decision tree does the work; it does not emit the log entry.
+- **Action Decision Tree** — Terminal Check → Inbox Handling → Implementation Pass → Verify → Fix → CI Triage + Retrigger → Tend PR → Continue. The decision tree does the work; it does not emit the log entry.
 - **Output Protocol** — append a log entry for the outcome; release the lock; end the loop (terminal) or return for the next scheduled iteration (continuing).
 
 ## Action Decision Tree
 
-A single tick runs through seven ordered stages. The tick ends only at Terminal State Check or Budget Check exhaustion; otherwise it proceeds through every stage and exits at Continue via the Output Protocol.
+A single tick runs through the stages below in order. The tick ends only at Terminal State Check or Budget Check exhaustion; otherwise it proceeds through every stage and exits at Continue via the Output Protocol.
 
-**Intra-tick re-verify rule (manifest mode only):** code changes produced by Inbox Handling or Implementation Pass are followed by Verify in the same tick. Code changes produced by Fix are NOT re-verified in this tick — the tick commits/pushes and proceeds to Continue, deferring re-verify to the next tick. This preserves cross-tick convergence (no internal fix-verify loop in a single tick).
+**Intra-tick re-verify rule (manifest mode only):** code changes produced by Inbox Handling or Implementation Pass are followed by Verify in the same tick. Code changes produced by Fix are NOT re-verified in this tick — the tick commits/pushes and proceeds to CI Triage + Retrigger, then Tend PR, then Continue, deferring re-verify to the next tick. This preserves cross-tick convergence (no internal fix-verify loop in a single tick).
 
-**Babysit mode skips Implementation Pass, Verify, and Fix.** There is no manifest to implement against, no manifest to verify against, and no verify-output to fix against. Babysit-mode ticks run: Terminal Check → Inbox Handling → Tend PR → Continue. Fixes in babysit come from inbox handling (code changes driven by PR comments), not from verify failures.
+**Babysit mode skips Implementation Pass, Verify, and Fix.** There is no manifest to implement against, no manifest to verify against, and no verify-output to fix against. Babysit-mode ticks run: Terminal Check → Inbox Handling → CI Triage + Retrigger → Tend PR → Continue. Fixes in babysit come from inbox handling (code changes driven by PR comments), not from verify failures.
 
 ### Terminal State Check
 
@@ -156,12 +156,26 @@ If the most recent verify failed (any phase), identify failing criteria from ver
 - For criteria where the expected output is wrong → consider whether a manifest amendment is needed (see Amendment).
 - Log each fix attempt with AC id and outcome.
 
-After fixes: commit, push, and proceed to Continue (no re-verify in this tick). The next tick will re-verify — this is the cross-tick convergence rule (no internal fix-verify loop inside a single tick).
+After fixes: commit, push, then proceed to CI Triage + Retrigger → Tend PR → Continue (no re-verify in this tick). The next tick will re-verify — this is the cross-tick convergence rule (no internal fix-verify loop inside a single tick).
 
-### P. Tend PR (github platform only)
+### T. CI Triage + Retrigger (platform adapter contract)
 
-After implementation/verify/fix passes in github mode, run the platform adapter's **Write Outputs** contract for PR hygiene:
-- PR description sync (rewrite "what changed" sections to reflect current diff).
+Runs when the platform adapter exposes a `CI Failure Triage` contract (currently: github). The tick owns the *when*; the adapter owns the *how* (classification rules, retrigger methods, batching, cap value, log formats).
+
+1. **Skip on code-pushing ticks.** If this tick produced any code-changing commit (Implementation Pass, Fix, or Inbox-driven fix — anything other than retrigger-only empty commits), skip this stage entirely and proceed to Tend PR. Rationale: on typical platforms, a push restarts CI, so running the triage contract now would target superseded runs. `## CI/Checks` from §Read State also reflects pre-push state. Accepted v0 limitation: if the push does not restart a particular failing check, retrigger is deferred by one tick. Retrigger-only empty commits do NOT trigger this skip.
+
+2. **Skip when there's nothing to triage.** If `## CI/Checks` reports zero failing checks (or the platform omits the section entirely), skip this stage.
+
+3. **Invoke the adapter's `CI Failure Triage` contract.** The adapter performs classification, escalates uncertain with dedup, retriggers eligible checks (subject to the cap the adapter defines), logs each action in the adapter-defined format, and returns one of two signals:
+   - `continue` — proceed to the next stage.
+   - `terminal(<code>)` — the adapter invoked sink escalate with the named terminal code (e.g., `CI_RETRIGGER_EXHAUSTED`). End the loop via the Output Protocol's Terminal block rather than continuing to Tend PR.
+
+4. **Verify-skip for retrigger-only commits (manifest mode only).** If the adapter performed at least one empty-commit retrigger this tick AND produced no other commits AND a prior verify verdict exists in the log, update `last-verified-commit` to the new HEAD sha (carrying forward the prior verdict) so the next tick's stage V sees no unverified change. If no prior verdict exists or the adapter produced zero commits (HEAD didn't move), omit the carry-forward. Babysit mode has no stage V; this step is a no-op there.
+
+### P. Tend PR (platform adapter contract)
+
+Runs when the platform adapter exposes a `Write Outputs` contract (currently: github). After CI triage (when the adapter returned `continue` rather than `terminal`), invoke the contract for PR hygiene:
+- PR description sync (rewrite "what changed" sections to reflect current diff). Skipped when the only commits this tick are retrigger-only empty commits — there is nothing new to describe.
 - Thread resolution (resolve bot threads that have been addressed; never resolve human threads).
 - Reply on threads that originated actionable comments in this tick.
 - Update requested reviewers if configured.
@@ -236,7 +250,7 @@ Every outcome produces a log entry. Silent ticks make "working" indistinguishabl
 ## Gotchas
 
 - **Bot comments repeat after push.** Bots re-scan each commit. Track findings by content (not comment ID) to avoid infinite fix loops. If a finding recurs despite targeted fixes, treat as uncertain and escalate via sink.
-- **Lock TTL mismatch parallelizes ticks.** If a real tick exceeds 30 min (the stale-lock threshold), a subsequent cron fire can acquire a stale lock and start a second tick. `/drive` enforces `--interval ≥ 30m` to reduce the window, but 60+ minute ticks can still parallelize. Accepted v0 limitation.
+- **Lock TTL parallelizes long ticks.** If a real tick exceeds 30 min (the stale-lock threshold), a subsequent cron fire can acquire the stale lock and start a second tick in parallel. `--interval` has no effect on this — the ceiling is set by tick duration versus the lock TTL. Accepted v0 limitation.
 - **Lock TOCTOU.** Two ticks can see a stale lock simultaneously. Mitigation: read back the lock immediately after writing it and compare contents — mismatch means the other tick won. Rare duplicate work remains possible in the narrow race window.
 - **User pushes between ticks.** Tick reads fresh git state every iteration. User's commits become input to the next tick's verify — if they introduce regressions, normal fix flow addresses them; if they resolve pending work, the tick observes that and moves on.
 - **Empty diff is terminal** (github platform). A PR with no diff (e.g., all changes reverted) is a terminal state — the platform adapter reports this; the tick escalates and ends the loop.

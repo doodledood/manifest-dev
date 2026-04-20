@@ -60,7 +60,7 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 - Platforms: `none` (local branch only), `github` (PR bootstrap + tend — preserves `tend-pr-tick`'s classification, CI triage, PR sync, thread resolution, and merge-ready semantics adapted to the adapter contract).
 - Sinks: `local` (log-file escalations).
 
-**Design:** No plugin-specific hooks. No auto-escalation on no-progress. Cross-tick convergence replaces `/do`'s internal fix-verify loop. `--interval` bounded ≥ 30m (matches lock TTL to prevent parallel ticks). `--max-ticks` budget cap (default 100) prevents cost runaway.
+**Design:** No plugin-specific hooks. No auto-escalation on no-progress. Cross-tick convergence replaces `/do`'s internal fix-verify loop. `--interval` defaults to 15m (bounded 15m–24h); the 30m lock TTL is the real parallelization ceiling. `--max-ticks` budget cap (default 100) prevents cost runaway. CI failures classified as infrastructure/flaky are auto-retriggered (native rerun or empty-commit push) up to 10 times per run before escalating.
 
 **Coexistence:** `/drive` does NOT replace `/do`, `/tend-pr`, `/tend-pr-tick`, or `/auto`. Pick whichever fits your workflow.
 
