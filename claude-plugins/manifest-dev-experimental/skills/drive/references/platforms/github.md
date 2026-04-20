@@ -153,7 +153,7 @@ The staleness window defaults to 30 minutes; adjust here if your workflow needs 
 
 ## CI Failure Triage
 
-Invoked by the tick's **CI Triage + Retrigger** stage (see `drive-tick/SKILL.md` §Action Decision Tree) on any failing checks surfaced in §Read State's `## CI/Checks`. Classification below is read-only; the retrigger action and log entry are produced by the same stage using the rules that follow. Compare against base branch first (so pre-existing failures aren't attributed to this PR). Base branch CI status is readable via `mcp__github__get_commit` on the base HEAD.
+Invoked by the tick's **CI Triage + Retrigger** stage (see `drive-tick/SKILL.md` §Action Decision Tree) on the failing-checks list from §Read State's `## CI/Checks`. Classification below specifies the decision rules; the retrigger action and log entry are emitted by the tick-invoked algorithm using those rules. Compare against base branch first (so pre-existing failures aren't attributed to this PR). Base branch CI status is readable via `mcp__github__get_commit` on the base HEAD.
 
 ### Classification
 
@@ -164,17 +164,35 @@ Every failing check gets exactly one classification:
 - **Code-caused:** new failure introduced by commits in this PR → actionable. Feed into fix logic. **Never retrigger** — retriggering would hide a real bug.
 - **Uncertain:** classification isn't confident (mixed signals, unfamiliar failure shape, diagnosis inconclusive) → **do NOT retrigger**. Escalate via sink with code `CI_UNCERTAIN` naming the failing check and what made the classification uncertain. Loop continues (not terminal) — the next tick may have more signal.
 
-### Retrigger (Infrastructure only)
+### Retrigger methods
 
-When a failure is confidently classified as Infrastructure, retrigger using the first applicable method:
+Two retrigger methods, keyed to the failing check's type:
 
-1. **Native check-run rerun** — when the failing check is a GitHub Actions run. Use `mcp__github__*` check-run rerun APIs. Leaves no extra commit in history.
+1. **Native check-run rerun** — when the failing check is a GitHub Actions run. Use `mcp__github__*` check-run rerun APIs. Leaves no extra commit in history. One call = one retrigger action, covers one check.
 2. **Empty-commit push** — when the failing check is an external status (Argo, CircleCI, Jenkins, Buildkite, GitHub Apps that only react to push events) where the native rerun API does not apply. Use:
    ```
    git commit --allow-empty -m "chore: retrigger CI [drive]"
    git push
    ```
-   The `[drive]` tag makes these commits distinguishable from user-authored ones for downstream tooling. Push semantics inherit §Write Outputs (retry with exponential backoff, never `--force`, append new HEAD sha to log). PR description sync (§Write Outputs step 4) is skipped when the only commits produced this tick are retrigger-only empty commits — there is no new diff to describe.
+   The `[drive]` tag makes these commits distinguishable from user-authored ones for downstream tooling. Push semantics inherit §Write Outputs (retry with exponential backoff, never `--force`, append new HEAD sha to log). PR description sync (§Write Outputs step 4) is skipped when the only commits produced this tick are retrigger-only empty commits — there is no new diff to describe. One push = one retrigger action, covers every external-status check failing on this tick simultaneously.
+
+### Retrigger algorithm (per-tick)
+
+This is the `CI Failure Triage` contract that `drive-tick` §T invokes. **Inputs**: the failing-checks list from §Read State's `## CI/Checks`, and the prior retrigger count computed by grepping `### CI Retrigger —` entries in the execution log. **Outputs**: zero or more retriggers performed with matching `### CI Retrigger` log entries; zero or more `### CI Uncertain — <check-name>` log entries; and a return signal — `continue` or `terminal(<code>)` — consumed by `drive-tick` §T.
+
+1. **Classify** each failing check per §Classification.
+2. **Escalate uncertain (dedup)** — for each Uncertain classification, if no prior `### CI Uncertain — <this-check-name>` entry exists in the log, invoke sink escalate with code `CI_UNCERTAIN` and write the `### CI Uncertain — <check-name>` log entry. Never retrigger uncertain.
+3. **Drop code-caused and pre-existing** — these produce no action here (code-caused goes through Fix earlier in the tick; pre-existing is skipped entirely).
+4. **Pre-check cap** — if prior count `≥ 10` and at least one failing check is Infrastructure, invoke sink escalate with code `CI_RETRIGGER_EXHAUSTED` naming the still-failing check(s). Signal **terminal exit** (`escalation` state) back to the tick. Skip steps 5–6.
+5. **Retrigger Infrastructure checks** — partition Infrastructure classifications into a native-rerun group (GitHub Actions checks) and an empty-commit group (external statuses). Maintain an in-tick counter starting at `prior count`.
+   - For each check in the native-rerun group in `## CI/Checks` order: if `counter < 10`, invoke native rerun, increment counter by 1, write one `### CI Retrigger` log entry.
+   - If the empty-commit group is non-empty and `counter < 10`: perform **one** empty-commit push covering every check in the group. Increment counter by 1 (per action, not per check). Write one `### CI Retrigger` log entry whose body lists every covered check name.
+   - If the counter reaches 10 mid-loop with infrastructure checks still un-retriggered, invoke sink escalate with `CI_RETRIGGER_EXHAUSTED` naming the un-retriggered check(s) and signal **terminal exit** back to the tick. If the counter reaches 10 exactly with nothing pending, return to the tick normally — a future tick's step 4 handles future exhaustion cases.
+6. **Return** `continue` if no terminal signal was raised in step 4 or 5; `terminal(CI_RETRIGGER_EXHAUSTED)` otherwise.
+
+Log-entry emission is handled inline in step 2 (uncertain) and step 5 (retrigger) per §Log-entry format — no separate logging step.
+
+The tick owns when the contract runs (see `drive-tick/SKILL.md` §T), the skip-on-code-pushing-ticks decision, terminal-exit plumbing via the Output Protocol, and `last-verified-commit` carryforward when the only commits produced are retrigger-only empty commits.
 
 ### Per-run cap
 
