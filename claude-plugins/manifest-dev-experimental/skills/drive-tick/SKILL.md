@@ -1,6 +1,6 @@
 ---
 name: drive-tick
-description: 'Single iteration of /drive. Reads full execution log (memento), loads platform + sink adapters, checks terminal states, handles inbox, implements inline, verifies via manifest-dev:verify, fixes, amends if scope shifts, commits, and ends the loop on terminal state or budget exhaust — otherwise returns for the next scheduled iteration. Triggers: drive tick, run one drive iteration, advance the drive loop.'
+description: 'Single iteration of /drive. Reads full execution log (memento), loads platform + sink adapters, checks terminal states, handles inbox (code-change asks route via Amendment), delegates the full implement + verify + fix loop to /do within the tick (intra-tick convergence), runs CI triage + tend PR, ends the loop on terminal state or budget exhaust — otherwise returns for the next scheduled iteration. Triggers: drive tick, run one drive iteration, advance the drive loop.'
 user-invocable: true
 ---
 
@@ -33,15 +33,13 @@ Missing required args → error with usage message and halt.
 
 **Read the full execution log top-to-bottom before any state decision.** The log IS the cross-tick state. No JSON state blobs, no side channels — just the log. This is the first action after lock acquisition, always.
 
-Never decide an action based on only the last few entries. Tick behavior depends on: tick count (for budget), last-verified-commit, last amendment timestamps, last-reported terminal status, accumulated escalations.
+Never decide an action based on only the last few entries. Tick behavior depends on: tick count (for budget), prior `execution-complete-head: <sha>` lines (for retrigger-only skip and subsequent-tick terminal detection — drive-tick writes these when /do's response contains `## Execution Complete`), `retrigger-empty-commit: <sha>` markers from CI Triage, last-reported terminal status, accumulated escalations.
 
 ## Concurrency Guard
 
-Lock file: `/tmp/drive-lock-{run-id}`. **Lock TTL = 30 minutes.** The TTL governs parallelization: as long as a tick finishes within 30m, subsequent cron fires during that window see a live lock and skip silently — regardless of the configured `--interval`. If a real tick exceeds 30m (wide implementation passes can), a subsequent cron fire WILL acquire the stale lock and parallelize — accepted v0 limitation; see Gotchas.
+Lock file: `/tmp/drive-lock-{run-id}`. A single Do Invocation can run long (full /do convergence), and parallel ticks on the same repo would corrupt git state — so the lock is honored until explicitly cleared. Stale locks after crashes are surfaced by `/drive` pre-flight (see `drive/SKILL.md` §Pre-flight).
 
-1. Check if lock exists:
-   - If exists and modification time is newer than 30 minutes ago → another tick is active → exit silently (do NOT schedule next; `/loop` will fire again at the normal interval). Append a `lock-held-skip` entry to the log per the Output Protocol.
-   - If exists and older than 30 min → stale → remove it.
+1. If `/tmp/drive-lock-{run-id}` exists → another tick is active → exit silently (do NOT schedule next; `/loop` will fire again at the normal interval). Append a `lock-held-skip` entry to the log per the Output Protocol.
 2. Create lock: write current timestamp + PID to `/tmp/drive-lock-{run-id}`.
 3. **TOCTOU check**: immediately read the lock back. If the contents don't match what was just written → another tick raced → exit silently (same lock-held-skip log entry).
 4. Tick proceeds. On exit remove the lock — EXCEPT on the Skipped outcome (lock held by another tick; leave it alone).
@@ -76,7 +74,7 @@ Per the platform adapter's **Read State** contract, produce a markdown state rep
 - `## CI/Checks` — current CI status (omit if N/A).
 - `## PR State` — PR status (omit if no PR).
 
-In manifest mode, also read the manifest file in full — `/verify` and `Implementation Pass` both depend on the current manifest contents.
+In manifest mode, also read the manifest file in full — the Do Invocation stage passes it to /do, and Amendment edits it directly.
 
 Note: the full execution log was already read in the Memento Pattern step. Adapters should rely on that read; the tick owns log reading and does not repeat it per adapter.
 
@@ -96,20 +94,18 @@ Execute these phases in order. Sections below describe each in detail:
 
 - **Concurrency Guard** — acquire lock (or exit silently if held).
 - **Memento Pattern** — read the full execution log top-to-bottom.
-- **Budget Check** — count prior completed ticks; end the loop if budget exhausted.
+- **Budget Check** — count prior completed tick entries; end the loop if budget exhausted.
 - **Load Adapters** — platform + sink + adapter data files.
 - **Read State** — adapter-produced state report + manifest (manifest mode).
 - **Crash Recovery** — reconcile uncommitted WIP against last log entry, or flag and exit.
-- **Action Decision Tree** — Terminal Check → Inbox Handling → Implementation Pass → Verify → Fix → CI Triage + Retrigger → Tend PR → Continue. The decision tree does the work; it does not emit the log entry.
+- **Action Decision Tree** — Terminal Check → Inbox Handling → Do Invocation → CI Triage + Retrigger → Tend PR → Continue. The decision tree does the work; it does not emit the log entry.
 - **Output Protocol** — append a log entry for the outcome; release the lock; end the loop (terminal) or return for the next scheduled iteration (continuing).
 
 ## Action Decision Tree
 
-A single tick runs through the stages below in order. The tick ends only at Terminal State Check or Budget Check exhaustion; otherwise it proceeds through every stage and exits at Continue via the Output Protocol.
+A single tick runs through the stages below in order. The tick ends only at: (1) Terminal State Check — adapter declares terminal at tick start; (2) a terminal `## Escalation:` marker emitted by /do during Do Invocation (any type except `Self-Amendment`); (3) adapter-signalled terminal from CI Triage (e.g., `CI_RETRIGGER_EXHAUSTED`); (4) Budget Check exhaustion; (5) Crash Recovery flagging inconsistency. Sink escalations emitted by Inbox Handling (e.g., `BABYSIT_CODE_REQUEST`, `STALE_THREAD`) and by the adapter as non-terminal (`CI_UNCERTAIN`) do NOT end the loop. `## Execution Complete` from /do does NOT end the tick — drive-tick proceeds through CI Triage + Tend PR; the adapter's Terminal State Check fires on subsequent ticks.
 
-**Intra-tick re-verify rule (manifest mode only):** code changes produced by Inbox Handling or Implementation Pass are followed by Verify in the same tick. Code changes produced by Fix are NOT re-verified in this tick — the tick commits/pushes and proceeds to CI Triage + Retrigger, then Tend PR, then Continue, deferring re-verify to the next tick. This preserves cross-tick convergence (no internal fix-verify loop in a single tick).
-
-**Babysit mode skips Implementation Pass, Verify, and Fix.** There is no manifest to implement against, no manifest to verify against, and no verify-output to fix against. Babysit-mode ticks run: Terminal Check → Inbox Handling → CI Triage + Retrigger → Tend PR → Continue. Fixes in babysit come from inbox handling (code changes driven by PR comments), not from verify failures.
+**Babysit mode skips Do Invocation.** There is no manifest, so /do is never invoked. Babysit-mode ticks run: Terminal Check → Inbox Handling → CI Triage + Retrigger → Tend PR → Continue. Inbox events that would require code changes have no manifest to amend — the tick escalates via sink for human intervention.
 
 ### Terminal State Check
 
@@ -121,48 +117,41 @@ On terminal, invoke the sink method (escalate or report-status) with the code th
 
 If the platform has an inbox and the adapter's state report shows new events, consume them per the adapter's **Inbox Handling** contract. For `github`, this includes bot/human classification, actionable/FP/uncertain triage, and thread replies.
 
-Inbox handling can produce code changes (fix classification), manifest amendments (scope shift), or replies (no-op). Log per-event.
+**No inline code edits.** Inbox Handling never edits code directly. Events that don't require code changes (thread replies, acknowledgements, label updates) still happen inline. Log per-event.
 
-### M. Implementation Pass (manifest mode only)
+Code-change routing (manifest mode): ask routes through Amendment (see `## Amendment`) — amendment adds/modifies ACs; Do Invocation later in this tick implements them. Babysit mode: handled by the platform adapter (see §Action Decision Tree babysit flow + adapter's §Inbox Handling).
 
-If the manifest has unsatisfied deliverables/ACs that the log shows have not been attempted yet, perform a wide implementation pass INLINE — no `manifest-dev:do` invocation.
 
-- Iterate deliverables per `## 2. Approach` Execution Order.
-- Within each deliverable, iterate ACs.
-- For each AC, implement what it requires, then append a log entry: `### AC-<id>: <brief outcome>` with timestamp and any notes.
-- Continue to next AC.
-- Whole pass happens within this tick session.
+### D. Do Invocation (manifest mode only)
 
-### V. Verify (manifest mode only)
-
-If the current HEAD has advanced since the last-verified-commit logged (or no prior verify exists):
-
-Invoke `manifest-dev:verify` via Skill tool:
+Delegate the full implementation + verify + fix loop to `/do`:
 
 ```
-Invoke the manifest-dev:verify skill with: "<manifest-path> <log-path> --mode <mode>"
+Invoke the manifest-dev:do skill with: "<manifest-path> <drive-log-path>"
 ```
 
-- Mode from manifest `mode:` field (default `thorough`).
-- Do NOT pass phase hints or attempt to scope verify to previously-failed criteria. Verify owns its phase contract.
+No `--mode` flag — /do inherits from the manifest's `mode:` field. The log path is drive's unified execution log so /do's per-AC entries coexist with drive's tick markers; drive-tick reads the same log at the start of every tick (Memento Pattern).
 
-Record the current HEAD as `last-verified-commit` in the log with verify's verdict (pass/fail/phase-N-failed).
+**Exit detection.** After /do returns, inspect `/do`'s Skill-tool response text (the output stream — /done and /escalate render their markers into the caller's response, not into the log file) and classify by literal marker:
 
-### F. Fix (manifest mode only)
+- `## Execution Complete` in the response (emitted by /done) → manifest convergence complete this tick. Drive-tick appends a line `execution-complete-head: <sha>` to the execution log (current HEAD sha at the moment /do reported complete), so subsequent ticks can read this via the memento pattern without re-parsing /do's response. **Do not route to Terminal here.** Whether this tick ends the loop is the platform adapter's call: in `none` mode, the adapter's Terminal State Check observes the marker on the next tick and declares `all-verify-pass`; in `github` mode, drive keeps tending the PR until the adapter declares `merge-ready`, `merged`, `closed`, `draft`, `empty-diff`, or `escalation`. Proceed to CI Triage + Tend PR.
+- `## Escalation: <type>` in the response (emitted by /escalate) → map by type. **Only `Self-Amendment` is non-terminal** (/do re-runs internally after self-amending; drive-tick does not end on this). **Any other `## Escalation:` heading is terminal** — this covers all the types /escalate actually emits: `Acceptance Criteria [AC-*.*] Blocking`, `Global Invariant [INV-G*] Blocking`, `Manual Criteria Require Human Review`, `Proposed Amendment to [ID]`, `User-Requested Pause`, plus any future type. Invoke the sink's escalate contract passing type + summary, then end via Output Protocol's Terminal block. Matching is by anchor: if the text after `## Escalation:` begins with `Self-Amendment`, it's non-terminal; anything else is terminal. If the response contains only a Self-Amendment marker, treat as Continuing.
+- Neither marker present → Continuing. /do stopped without declaring done or escalating (e.g., intermediate state). The next tick re-invokes /do, which resumes via the memento log.
 
-If the most recent verify failed (any phase), identify failing criteria from verify's output. Fix each failing criterion inline (no `manifest-dev:do` call):
+**Retrigger-only skip.** CI Triage + Retrigger runs AFTER Do Invocation in the tick order, so the skip fires on a tick whose **prior** tick produced only a retrigger-empty-commit. Skip Do Invocation when all three conditions hold:
+1. A prior tick's CI Triage emitted a `retrigger-empty-commit: <sha>` log line that is the most recent commit-producing log entry — i.e., no non-retrigger commit appears in the log after it.
+2. Inbox Handling this tick did not trigger an Amendment (which would require /do to implement new/modified ACs).
+3. The most recent `execution-complete-head: <sha>` line exists (see Exit detection above for how it's emitted) AND all commits since that sha are retrigger-empty-commits.
 
-- For criteria with actionable diagnostic → edit the affected file(s).
-- For criteria where the expected output is wrong → consider whether a manifest amendment is needed (see Amendment).
-- Log each fix attempt with AC id and outcome.
+Under those conditions nothing has changed for /do to act on; invoking it would waste tokens re-verifying an unchanged-at-the-source-level state. If any condition fails, run Do Invocation normally.
 
-After fixes: commit, push, then proceed to CI Triage + Retrigger → Tend PR → Continue (no re-verify in this tick). The next tick will re-verify — this is the cross-tick convergence rule (no internal fix-verify loop inside a single tick).
+**/do composition caveat.** If /do returns with a genuinely malformed response (e.g., tool-call error, partial output cut off, or output containing neither /done nor /escalate markers while /do's log shows AC attempts that don't roll up) — NOT the normal Continuing case above — escalate to the user via the sink rather than patching /do in drive-tick. /do's contract is owned by `manifest-dev:do`; divergence is a bug to surface.
 
 ### T. CI Triage + Retrigger (platform adapter contract)
 
 Runs when the platform adapter exposes a `CI Failure Triage` contract (currently: github). The tick owns the *when*; the adapter owns the *how* (classification rules, retrigger methods, batching, cap value, log formats).
 
-1. **Skip on code-pushing ticks.** If this tick produced any code-changing commit (Implementation Pass, Fix, or Inbox-driven fix — anything other than retrigger-only empty commits), skip this stage entirely and proceed to Tend PR. Rationale: on typical platforms, a push restarts CI, so running the triage contract now would target superseded runs. `## CI/Checks` from §Read State also reflects pre-push state. Accepted v0 limitation: if the push does not restart a particular failing check, retrigger is deferred by one tick. Retrigger-only empty commits do NOT trigger this skip.
+1. **Skip on code-pushing ticks.** If this tick produced any non-retrigger commit (from Do Invocation's /do run), skip this stage and proceed to Tend PR. Rationale: a push restarts CI, so running the triage contract now would target superseded runs. `## CI/Checks` from §Read State also reflects pre-push state. Accepted v0 limitation: if the push does not restart a particular failing check, retrigger is deferred by one tick. Retrigger-only empty commits do NOT trigger this skip.
 
 2. **Skip when there's nothing to triage.** If `## CI/Checks` reports zero failing checks (or the platform omits the section entirely), skip this stage.
 
@@ -170,7 +159,7 @@ Runs when the platform adapter exposes a `CI Failure Triage` contract (currently
    - `continue` — proceed to the next stage.
    - `terminal(<code>)` — the adapter invoked sink escalate with the named terminal code (e.g., `CI_RETRIGGER_EXHAUSTED`). End the loop via the Output Protocol's Terminal block rather than continuing to Tend PR.
 
-4. **Verify-skip for retrigger-only commits (manifest mode only).** If the adapter performed at least one empty-commit retrigger this tick AND produced no other commits AND a prior verify verdict exists in the log, update `last-verified-commit` to the new HEAD sha (carrying forward the prior verdict) so the next tick's stage V sees no unverified change. If no prior verdict exists or the adapter produced zero commits (HEAD didn't move), omit the carry-forward. Babysit mode has no stage V; this step is a no-op there.
+4. **Retrigger-empty-commit marker.** For every empty-commit retrigger the adapter creates, it MUST emit a log line `retrigger-empty-commit: <sha>`. Consumed by §D Retrigger-only skip. Adapters that retrigger via non-empty means emit nothing; adapters retriggering empty without the marker forfeit the skip optimization (correctness preserved).
 
 ### P. Tend PR (platform adapter contract)
 
@@ -186,27 +175,21 @@ If no earlier stage declared a terminal state, proceed to the Output Protocol wi
 
 ## Amendment
 
-Triggered when the tick detects: (a) user input in conversation contradicting an AC, (b) a PR review comment demanding a change the manifest doesn't anticipate, (c) a CI failure caused by a manifest-level gap. Clarifications and confirmations are NOT amendments.
+**Manifest mode only** (see §Action Decision Tree babysit flow for babysit routing).
+
+Triggered when the tick detects: (a) user input in conversation contradicting an AC, (b) a PR review comment demanding a change the manifest doesn't anticipate, (c) an Inbox Handling event requesting a code change (per §I). Clarifications and confirmations are NOT amendments. CI failures are handled by §T CI Triage (classification + retrigger + escalation when uncertain), not by Amendment — if a CI check represents a manifest-level gap, the user adds it by re-invoking `/define --amend` externally.
 
 Amendment flow:
 
-1. Append `## Amendment Trigger — <reason>` to log with source (user message / PR comment / CI failure) and which manifest section needs updating.
+1. Append `## Amendment Trigger — <reason>` to log with source (user message / PR comment / Inbox event) and which manifest section needs updating.
 2. Invoke `manifest-dev:define --amend <manifest-path> --from-do`.
-3. Re-enter the Action Decision Tree at Implementation Pass against the amended manifest — new ACs introduced by the amendment will be picked up there; then Verify will re-check the amended criteria. Do not restart at Terminal Check; terminal checks already ran, and amendments do not invalidate the inbox already processed.
+3. Continue with the Do Invocation stage against the amended manifest. /do picks up the new/modified ACs via its memento log.
 
-### Amendment Loop Guard
-
-Track self-amendments (no external input between them — no new user message, no new PR comment):
-- Count consecutive self-amendments since the last external input.
-- If count reaches **3** (one attempt + one refinement + one rewrite without any new user/reviewer signal), escalate as `PROPOSED_AMENDMENT` via the sink instead of amending again. Halt the tick. Do not schedule next.
-
-Why 3: lets the tick try an amendment, refine it once based on verify/CI feedback, and attempt a correction — then hand back to a human rather than continue oscillating. Raise in the manifest or in a future `--amendment-guard` flag if your workflow benefits from more rounds before human review.
-
-External input resets the counter to 0.
+Bounding pathological amendment oscillation is delegated to `--max-ticks` (cross-tick budget) and /do's fix-verify loop-limit (within-tick). No separate amendment-count guard — if oscillation is observed, surface via the sink; reintroducing a guard is a design change, not a workaround.
 
 ## Commit + Push
 
-After any code change (implementation, fix, inbox-driven edit): invoke the platform adapter's **Write Outputs** contract. The adapter owns commit + push semantics per platform. The tick does not enumerate them here.
+After any code change (any commit produced by /do during Do Invocation, or a retrigger-empty-commit from CI Triage): invoke the platform adapter's **Write Outputs** contract. The adapter owns commit + push semantics per platform. The tick does not enumerate them here.
 
 ## Output Protocol
 
@@ -220,7 +203,7 @@ Every tick ends with EXACTLY one of these outcomes, and appends a log entry for 
 
 ### Continuing (schedule next iteration)
 
-- Appended log block: `## Tick N — Continuing` with timestamp, detected state summary, action taken (implementation / verify / fix / inbox / tend-pr), HEAD after action.
+- Appended log block: `## Tick N — Continuing` with timestamp, detected state summary, action taken (do / inbox-amendment / ci-retrigger / tend-pr / no-op), HEAD after action.
 - Lock removed.
 - Return. The next iteration is scheduled.
 
@@ -232,7 +215,7 @@ Every tick ends with EXACTLY one of these outcomes, and appends a log entry for 
 
 ### Error (unrecoverable)
 
-Used when a Skill invocation fails unrecoverably (e.g., `manifest-dev:verify` crashes), the sink write fails, or a push exceeds its retry budget.
+Used when a Skill invocation fails unrecoverably (e.g., `manifest-dev:do` or `manifest-dev:define --amend` crashes), the sink write fails, or a push exceeds its retry budget.
 
 - Appended log block: `## Tick N — Error: <reason>` with timestamp, the step where the error occurred, and any diagnostic context.
 - Invoke sink's escalate contract with `TICK_ERROR` (if the sink itself is still writable).
@@ -250,10 +233,8 @@ Every outcome produces a log entry. Silent ticks make "working" indistinguishabl
 ## Gotchas
 
 - **Bot comments repeat after push.** Bots re-scan each commit. Track findings by content (not comment ID) to avoid infinite fix loops. If a finding recurs despite targeted fixes, treat as uncertain and escalate via sink.
-- **Lock TTL parallelizes long ticks.** If a real tick exceeds 30 min (the stale-lock threshold), a subsequent cron fire can acquire the stale lock and start a second tick in parallel. `--interval` has no effect on this — the ceiling is set by tick duration versus the lock TTL. Accepted v0 limitation.
-- **Lock TOCTOU.** Two ticks can see a stale lock simultaneously. Mitigation: read back the lock immediately after writing it and compare contents — mismatch means the other tick won. Rare duplicate work remains possible in the narrow race window.
-- **User pushes between ticks.** Tick reads fresh git state every iteration. User's commits become input to the next tick's verify — if they introduce regressions, normal fix flow addresses them; if they resolve pending work, the tick observes that and moves on.
+- **User pushes between ticks.** Tick reads fresh git state every iteration. User's commits become input to the next tick's /do invocation — regressions are addressed by /do's fix loop; pending work resolutions are observed and the tick moves on.
 - **Empty diff is terminal** (github platform). A PR with no diff (e.g., all changes reverted) is a terminal state — the platform adapter reports this; the tick escalates and ends the loop.
 - **Rebase destroys review context.** Rebasing rewrites commit history, orphaning review comments attached to those commits. The github adapter documents what to do (prefer merge-base updates; only rebase when a reviewer explicitly requests it).
-- **Amendment oscillation.** Self-amendments without new external input hit the Amendment Loop Guard threshold and escalate. This protects against loops where the tick and the manifest keep disagreeing on the same issue.
+- **Amendment oscillation** — see §Amendment.
 - **Budget exhaust is terminal.** `--max-ticks` caps cost runaway. Default 100 ticks. When reached, the tick escalates via sink and ends the loop. Raise `--max-ticks` explicitly for genuinely long runs — don't bypass the check.

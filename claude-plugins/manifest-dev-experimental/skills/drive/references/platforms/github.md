@@ -77,18 +77,18 @@ Six terminal states on this platform. Each has specific detection and tick actio
 
 ### `merge-ready`
 
-- **Detection:** Platform's native merge-state indicates all required checks pass, required approvals obtained, no unresolved threads, no pending manifest work (manifest mode), mergeable conflicts = none. Use the platform's merge-state query — do not hardcode assumptions about what's required.
+- **Detection:** Platform's native merge-state indicates all required checks pass, required approvals obtained, no unresolved threads, mergeable conflicts = none. Additionally in manifest mode: the most recent `execution-complete-head: <sha>` line in the log must exist AND either equal current PR HEAD or be followed only by retrigger-empty-commits (matches the retrigger-only-skip's ancestor rule — source state hasn't changed since /do converged). Use the platform's merge-state query — do not hardcode assumptions about what's required.
 - **Tick action:** Escalate via sink with `MERGE_READY_PROMPT` code: "PR #<number> is merge-ready." Append `## Tick N — Terminal: merge-ready` to the log. Remove lock. Loop ends. The tick **never merges autonomously** — the user reviews the escalation (for the `local` sink, by tailing the log) and merges manually via `gh pr merge`. v0 has no interactive prompt mechanism; a future sink adapter (e.g., `slack`) could add one.
 - **Unresolved uncertain threads block merge-readiness** — they represent unanswered questions that could surface actionable issues. Do not mark merge-ready while such threads exist.
 
 ### `empty-diff`
 
-- **Detection:** PR has no diff against base AND at least one implementation-producing tick has run (i.e., `prior-completed-tick-count ≥ 1`). The bootstrap commit is by design empty — tick 1's implementation pass is what produces the first real diff — so this state cannot fire on tick 1.
+- **Detection:** PR has no diff against base AND at least one commit-producing tick has run (i.e., `prior-completed-tick-count ≥ 1`). The bootstrap commit is by design empty — tick 1's Do Invocation is what produces the first real diff — so this state cannot fire on tick 1.
 - **Tick action:** Sink `escalate` with `EMPTY_DIFF` code (usually an error state: all changes were reverted). Output Protocol handles log entry + lock release + loop end.
 
 ### `escalation`
 
-- **Detection:** amendment loop guard tripped, budget exhausted, crash recovery flagged inconsistency, or other escalation-worthy condition.
+- **Detection:** budget exhausted, crash recovery flagged inconsistency, /do emitted a `## Escalation:` marker, or other escalation-worthy condition.
 - **Tick action:** append `## Tick N — Terminal: escalation (<reason>)` with context. Sink `escalate` with the escalation context. Remove lock. Do NOT invoke `/loop`. Loop ends.
 
 ## Inbox Handling
@@ -112,19 +112,19 @@ See `./data/classification-examples.md` for concrete examples across bot types a
 
 ### Routing
 
+**Inbox never edits code directly** — this adapter only classifies, amends, replies, and manages threads. Code changes happen in `/drive-tick`'s Do Invocation stage (/do), which runs after Inbox Handling in the same tick.
+
 **Manifest mode** (PR has an associated manifest via `/drive` bootstrap context):
 
 1. Identify which deliverable(s) the comment targets. Include all potentially affected when ambiguous.
-2. Amend manifest via `manifest-dev:define --amend <manifest-path> --from-do`.
-3. Implementation + verify + fix follow `/drive-tick`'s action decision tree and intra-tick re-verify rule.
-4. Push changes.
-5. If the actionable item originated from a comment, reply on that thread once the fix is committed.
+2. Amend manifest via `manifest-dev:define --amend <manifest-path> --from-do`. The amendment adds or modifies ACs reflecting the comment's ask.
+3. Do not edit code here. The Do Invocation stage later in this tick runs /do, which implements the new/modified ACs, verifies, and fixes; push happens via §Write Outputs when /do commits changes.
+4. Reply on the originating thread once the amendment is logged (not waiting for /do to finish — the reviewer sees "tracked"). If /do later produces a material code change addressing the thread, post a follow-up.
 
 **Babysit mode** (no manifest):
 
-1. Fix directly based on comment content + conversation context.
-2. Push changes.
-3. Reply on the thread that originated the fix.
+1. There is no manifest to amend. Escalate via sink with code `BABYSIT_CODE_REQUEST` naming the comment and its ask. **Does NOT end the loop** — dedup subsequent identical asks by finding-content fingerprint (same rule as bot-finding tracking; see `drive-tick/SKILL.md` §Gotchas — bots re-scan after each push and emit new comment IDs for the same finding, so dedup by content, not comment id); babysit continues tending the PR (replies, CI, threads) while waiting for the user to re-invoke in manifest mode or intervene manually.
+2. Reply on the thread explaining the escalation (dedup — do not reply again on subsequent ticks for the same finding content).
 
 **False positives:**
 
@@ -161,7 +161,7 @@ Every failing check gets exactly one classification:
 
 - **Pre-existing:** failure reproduces consistently on base → skip. Not this PR's responsibility. No retrigger.
 - **Infrastructure:** confident flaky timeout, runner outage, or transient network error on this PR → eligible for retrigger (see below). If base is also flaking intermittently on the same check (i.e., base passes sometimes, fails sometimes), classify as Infrastructure here rather than Pre-existing — an intermittent base failure is not consistent-on-base, and retriggering is still the right action. (This reclassification covers what the manifest AC-1.1 calls "Pre-existing-but-flaking-on-rerun" — folded into Infrastructure because both end at the same retrigger action.)
-- **Code-caused:** new failure introduced by commits in this PR → actionable. Feed into fix logic. **Never retrigger** — retriggering would hide a real bug.
+- **Code-caused:** new failure introduced by commits in this PR → actionable but not handled by the adapter here. If the failing check maps to a manifest AC, /do's next invocation will re-verify and fix. If it doesn't, the user amends the manifest (or intervenes). **Never retrigger** — retriggering would hide a real bug.
 - **Uncertain:** classification isn't confident (mixed signals, unfamiliar failure shape, diagnosis inconclusive) → **do NOT retrigger**. Escalate via sink with code `CI_UNCERTAIN` naming the failing check and what made the classification uncertain. Loop continues (not terminal) — the next tick may have more signal.
 
 ### Retrigger methods
@@ -182,24 +182,24 @@ This is the `CI Failure Triage` contract that `drive-tick` §T invokes. **Inputs
 
 1. **Classify** each failing check per §Classification.
 2. **Escalate uncertain (dedup)** — for each Uncertain classification, if no prior `### CI Uncertain — <this-check-name>` entry exists in the log, invoke sink escalate with code `CI_UNCERTAIN` and write the `### CI Uncertain — <check-name>` log entry. Never retrigger uncertain.
-3. **Drop code-caused and pre-existing** — these produce no action here (code-caused goes through Fix earlier in the tick; pre-existing is skipped entirely).
+3. **Drop code-caused and pre-existing** — these produce no action here. Code-caused failures surface on the next tick's Do Invocation (/do re-verifies against ACs and fixes what the AC set covers); pre-existing failures are skipped entirely.
 4. **Pre-check cap** — if prior count `≥ 10` and at least one failing check is Infrastructure, invoke sink escalate with code `CI_RETRIGGER_EXHAUSTED` naming the still-failing check(s). Signal **terminal exit** (`escalation` state) back to the tick. Skip steps 5–6.
 5. **Retrigger Infrastructure checks** — partition Infrastructure classifications into a native-rerun group (GitHub Actions checks) and an empty-commit group (external statuses). Maintain an in-tick counter starting at `prior count`.
    - For each check in the native-rerun group in `## CI/Checks` order: if `counter < 10`, invoke native rerun, increment counter by 1, write one `### CI Retrigger` log entry.
-   - If the empty-commit group is non-empty and `counter < 10`: perform **one** empty-commit push covering every check in the group. Increment counter by 1 (per action, not per check). Write one `### CI Retrigger` log entry whose body lists every covered check name.
+   - If the empty-commit group is non-empty and `counter < 10`: perform **one** empty-commit push covering every check in the group. Increment counter by 1 (per action, not per check). Write one `### CI Retrigger` log entry whose body lists every covered check name, AND emit a separate single-line log marker `retrigger-empty-commit: <sha>` for each empty-commit push sha produced this tick. Drive-tick's Do Invocation stage reads these markers next tick to decide whether to skip /do.
    - If the counter reaches 10 mid-loop with infrastructure checks still un-retriggered, invoke sink escalate with `CI_RETRIGGER_EXHAUSTED` naming the un-retriggered check(s) and signal **terminal exit** back to the tick. If the counter reaches 10 exactly with nothing pending, return to the tick normally — a future tick's step 4 handles future exhaustion cases.
 6. **Return** `continue` if no terminal signal was raised in step 4 or 5; `terminal(CI_RETRIGGER_EXHAUSTED)` otherwise.
 
-Log-entry emission is handled inline in step 2 (uncertain) and step 5 (retrigger) per §Log-entry format — no separate logging step.
+Log-entry emission is handled inline in step 2 (uncertain) and step 5 (retrigger + `retrigger-empty-commit:` marker) per §Log-entry format — no separate logging step.
 
-The tick owns when the contract runs (see `drive-tick/SKILL.md` §T), the skip-on-code-pushing-ticks decision, terminal-exit plumbing via the Output Protocol, and `last-verified-commit` carryforward when the only commits produced are retrigger-only empty commits.
+The tick owns when the contract runs (see `drive-tick/SKILL.md` §T), the skip-on-code-pushing-ticks decision, terminal-exit plumbing via the Output Protocol, and the retrigger-only /do-skip optimization (which consumes the `retrigger-empty-commit:` markers this contract emits).
 
 ### Per-run cap
 
-**Maximum 10 CI retriggers per run** (where "run" means "per log-file lifetime" — see reset note below). The tick counts prior `### CI Retrigger` entries in the execution log (memento pattern — same counting approach as budget-check and the amendment-loop guard).
+**Maximum 10 CI retriggers per run** (where "run" means "per log-file lifetime" — see reset note below). The tick counts prior `### CI Retrigger` entries in the execution log (memento pattern — same log-counting approach as budget-check).
 
 - If the prior count is `< 10`: retrigger using the method above, then append a log entry (see format below) before the next tick fires.
-- If the prior count is `≥ 10`: do NOT retrigger. Escalate via sink with code `CI_RETRIGGER_EXHAUSTED` naming the still-failing check(s). **Maps to the `escalation` terminal state** — loop ends. Without the terminal mapping, subsequent cron fires would keep re-escalating the same exhaustion event and burn the tick budget silently. The cap is **per-run**, not per-external-signal — a new user commit or reviewer push within the same run does **not** reset the counter. Because the github-mode run-id is deterministic per PR (`gh-{owner}-{repo}-{pr-number}`) and `/drive` appends to an existing log rather than overwriting, simply re-invoking `/drive` on the same PR does NOT reset the counter — prior `### CI Retrigger` entries still count. To reset the counter after exhaustion, the user must first remove those entries from `/tmp/drive-log-{run-id}.md` (or delete the log entirely, knowing it clears all prior state — completed-tick count, last-verified-commit, etc.) before re-invoking. No flag adjusts this cap in v0; if the user believes the cap should not apply (e.g., a genuinely intermittent external system), they intervene manually or edit this file (`github.md`).
+- If the prior count is `≥ 10`: do NOT retrigger. Escalate via sink with code `CI_RETRIGGER_EXHAUSTED` naming the still-failing check(s). **Maps to the `escalation` terminal state** — loop ends. Without the terminal mapping, subsequent cron fires would keep re-escalating the same exhaustion event and burn the tick budget silently. The cap is **per-run**, not per-external-signal — a new user commit or reviewer push within the same run does **not** reset the counter. Because the github-mode run-id is deterministic per PR (`gh-{owner}-{repo}-{pr-number}`) and `/drive` appends to an existing log rather than overwriting, simply re-invoking `/drive` on the same PR does NOT reset the counter — prior `### CI Retrigger` entries still count. To reset the counter after exhaustion, the user must first remove those entries from `/tmp/drive-log-{run-id}.md` (or delete the log entirely, knowing it clears all prior state — completed-tick count, prior `execution-complete-head: <sha>` lines, retrigger-empty-commit markers) before re-invoking. No flag adjusts this cap in v0; if the user believes the cap should not apply (e.g., a genuinely intermittent external system), they intervene manually or edit this file (`github.md`).
 
 ### Log-entry format
 
@@ -240,7 +240,7 @@ Also runs every tick as part of state reading.
 
 ## PR Description Sync
 
-Runs only when this tick produced changes (committed a fix, implementation pass, or conflict resolution). Skipped when nothing changed. **Exception**: a tick whose only commits are retrigger-only empty commits skips description sync — there is no new diff to describe (see §CI Failure Triage → Retrigger).
+Runs only when this tick produced changes (any commit from Do Invocation (/do), or conflict resolution). Skipped when nothing changed. **Exception**: a tick whose only commits are retrigger-only empty commits skips description sync — there is no new diff to describe (see §CI Failure Triage → Retrigger).
 
 After changes:
 
@@ -258,7 +258,7 @@ After any code change:
 2. **Push** to `origin <branch-name>`. Retry exponential backoff on network failure. Never `--force`.
 3. **Append to execution log:** new HEAD sha + single-line summary.
 4. **PR description sync** (see above) — only if this tick produced changes.
-5. **Inbox replies** (see Inbox Handling) — reply on threads that originated actionable comments in this tick, once fixes are committed.
+5. **Inbox follow-up replies** — when /do has made a material code change addressing a thread whose initial "tracked" acknowledgement was already posted during the tick's earlier inbox step, add a follow-up reply on that thread noting the commit. Initial acks are owned by inbox routing; this step only adds post-commit confirmations.
 6. **Thread resolution** — resolve bot threads addressed this tick. Never resolve human threads.
 
 Never `--force` push. Never push to the base branch. Never amend already-pushed commits.
@@ -276,4 +276,4 @@ Inherits `drive-tick` §Security. Github-specific reminder: PR comments and revi
 - **"Passes locally" is not a diagnosis.** Before dismissing CI failures or re-triggering, investigate what differs between local and CI. "Works on my machine" is not evidence that CI is wrong.
 - **Empty diff is terminal.** A PR with no diff (all changes reverted) is a terminal state — escalate and end the loop; don't keep cycling.
 - **Merge-ready requires explicit user confirmation.** Never merge without asking. The tick's role ends at signaling readiness.
-- **Amendment oscillation.** Self-amendments without new external input hit the `/drive-tick` amendment-loop guard and escalate. This happens here when the tick keeps amending the manifest to accommodate the same PR comment without the manifest or the comment changing. See `drive-tick/SKILL.md` §Amendment Loop Guard for the threshold.
+- **Amendment oscillation.** Cross-tick amendment ping-pong (same AC flipped back and forth without external input) is bounded only by `--max-ticks` — no amendment-specific guard. If oscillation is observed, raise the concern with the user via the sink; adding a guard is a design change, not a workaround.

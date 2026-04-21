@@ -2,12 +2,12 @@
 
 > **Status:** Experimental. Coexists with [`manifest-dev`](../manifest-dev/); nothing deprecated.
 
-Cron-driven, tick-based driver that takes a manifest (or PR in babysit mode) all the way to a terminal state through repeated stateless ticks. Replaces `/do`'s monolithic fix-verify-loop-hook pattern with cross-tick convergence.
+Cron-driven, tick-based driver that takes a manifest (or PR in babysit mode) all the way to a terminal state through repeated stateless ticks. Each tick delegates the full implement + verify + fix loop to `/do` (intra-tick convergence), then runs orchestration stages (inbox, CI triage, tend PR) around it.
 
 ## What it ships
 
-- **`/drive`** — user-invocable wrapper. Parses args, validates mode, resolves base branch, pre-flights `/loop` and `manifest-dev`, bootstraps (branch + empty commit + PR for github; branch + empty commit for none), then kicks off `/loop`.
-- **`/drive-tick`** — the per-iteration brain. Lean. Each tick: grab lock, read the full execution log (memento), read state via platform adapter, check terminal states, handle inbox, implement inline, invoke `manifest-dev:verify`, fix failures, amend manifest if scope shifts, commit, push — and either return for the next scheduled iteration or end on terminal state or budget exhaust.
+- **`/drive`** — user-invocable wrapper. Parses args, validates mode, resolves base branch, pre-flights `/loop`, `manifest-dev`, and stale locks, bootstraps (branch + empty commit + PR for github; branch + empty commit for none), then kicks off `/loop`.
+- **`/drive-tick`** — the per-iteration brain. Lean orchestration. Each tick: grab lock, read the full execution log (memento), read state via platform adapter, check terminal states, handle inbox (amendments — no inline code edits), invoke `/do` for the full manifest-convergence loop, run CI triage + tend PR via the adapter, and either return for the next scheduled iteration or end on terminal state or budget exhaust.
 - **Pluggable adapters** — `skills/drive/references/platforms/{none,github}.md` and `skills/drive/references/sinks/local.md` follow a consistent markdown-state-report contract. Adding a new platform or sink is a copy-and-adjust.
 
 ## Mode matrix
@@ -37,7 +37,7 @@ All flags:
 | `--platform` | `none` | `none` \| `github` |
 | `--sink` | `local` | `local` |
 | `--base` | auto-detect | Override when detection from `origin/HEAD` or `main` fails |
-| `--interval` | `15m` | Minimum `15m`, maximum `24h`. The parallelization ceiling is the 30m lock TTL, not this floor — ticks that run past 30m can still parallelize a fresh cron fire. |
+| `--interval` | `15m` | Minimum `15m`, maximum `24h`. The lock is honored indefinitely — while a tick runs, subsequent cron fires during that window exit silently. The interval is a floor on poll frequency, not a hard cadence. |
 | `--max-ticks` | `100` | Positive integer. Tick budget — exceeding it escalates via sink and ends the loop. |
 
 ## Observing progress
@@ -52,7 +52,7 @@ tail -f /tmp/drive-log-gh-owner-repo-42.md
 tail -f /tmp/drive-log-local-*.md
 ```
 
-If the log hasn't updated for a while, either the tick is still running (≤30m) or `/loop` has failed silently — see Gotchas.
+If the log hasn't updated for a while, either a tick is still running (ticks can run long when `/do` is converging) or `/loop` has failed silently — see Gotchas.
 
 ## Composition model
 
@@ -78,14 +78,14 @@ Adding a new adapter = copy an existing one, adjust the sections. See `skills/dr
 
 If `/drive` proves out, a later manifest can deprecate the overlapping skills. For now, pick the one that fits.
 
-`manifest-dev-experimental` requires the `manifest-dev` plugin installed: the tick invokes `manifest-dev:verify` and `manifest-dev:define --amend --from-do` as Skill tool calls, and the github adapter preserves `manifest-dev:tend-pr-tick`'s semantics (classification, CI triage, PR sync, thread resolution, merge-ready) adapted to the adapter contract.
+`manifest-dev-experimental` requires the `manifest-dev` plugin installed: the tick invokes `manifest-dev:do` (which internally runs the full verify-fix loop via `manifest-dev:verify`) and `manifest-dev:define --amend --from-do` as Skill tool calls, and the github adapter preserves `manifest-dev:tend-pr-tick`'s semantics (classification, CI triage, PR sync, thread resolution, merge-ready) adapted to the adapter contract.
 
 ## Dependencies checked before bootstrap
 
 `/drive` performs pre-flight checks before any branch/commit/push/PR side effects. It errors actionably if any of these are missing:
 
 - **`/loop` skill** — the cron scheduler that invokes `/drive-tick` on the configured interval.
-- **`manifest-dev:verify` and `manifest-dev:define`** — for per-tick verification and mid-tick manifest amendments.
+- **`manifest-dev:do`, `manifest-dev:verify`, and `manifest-dev:define`** — `/do` runs the full verify-fix loop per tick; `/verify` backs it; `/define --amend --from-do` handles mid-tick manifest amendments.
 - **GitHub MCP tools** (when `--platform github`) — for PR create/read/comment operations.
 - **`/tmp/` persistence across sessions** — the tick reads its log from `/tmp/drive-log-{run-id}.md` on every wake (same assumption `tend-pr-tick` relies on).
 
@@ -121,16 +121,16 @@ Adjust to your workflow. These are **not enforced by the plugin** — they're Cl
 - **Triggers beyond cron**: no webhook listeners, no event-based ticks. External infrastructure can invoke `/drive-tick` directly, but no integration is shipped.
 - **Terminal-channel user input**: no `/tell` command, no inbox file. PR comments are the only async input channel (github mode). Local mode has no mid-flight input — user stops by talking to Claude at the session level.
 - **Correctness-during-work hooks**: `manifest-dev`'s `/do` ships `PreToolUse` / `PostToolUse` hooks that enforce process and log discipline. `manifest-dev-experimental` ships **none**. `/verify` is the sole gate; bad work in a tick is caught by the next tick's verify and fixed by the tick after.
-- **Auto-escalation on no-progress**: loop runs indefinitely in continuing-states until a terminal state, budget exhaust, or user stop. Amendment oscillation has its own guard (escalates after 3 self-amendments without external input).
+- **Auto-escalation on no-progress**: loop runs indefinitely in continuing-states until a terminal state, budget exhaust, or user stop. No amendment-specific oscillation guard — `--max-ticks` is the cross-tick bound; `/do`'s fix-verify loop-limit is the within-tick bound.
 
 ## Gotchas
 
 - **`/loop` reliability is outside the plugin's control.** If the cron host sleeps or the Claude Code session ends, ticks stop. No recovery.
-- **Long ticks (>30m) risk parallel execution.** The 30m lock TTL clears a stale lock after 30 min; if a real tick is still running at that point, the next cron fire will start a second tick. `--interval` has no role in this ceiling — whether you fire every 15m or every 2h, a tick exceeding 30m can still parallelize with the next fire. Accepted v0 limitation.
-- **Lock TOCTOU.** Two ticks may see a stale lock simultaneously and both acquire. The tick re-verifies lock ownership immediately after creation (reads back PID/timestamp); mismatch → exit silently. Rare duplicate work is possible.
+- **Stale locks require manual cleanup.** Locks have no TTL — a crashed or interrupted tick leaves its lock behind. The next `/drive` run halts with the lock path + timestamp + manual-removal instructions. Never auto-cleared; the user confirms no live tick exists before removing.
+- **Lock TOCTOU.** Two ticks may race on lock creation and both think they acquired. The tick re-verifies lock ownership immediately after creation (reads back PID/timestamp); mismatch → exit silently. Rare duplicate work is possible.
 - **Crash recovery keeps WIP.** If a prior tick crashed mid-implementation, uncommitted working-tree changes persist. The next tick commits them if the last log entry is consistent with the WIP shape; otherwise it logs a manual-review flag and exits. Never force-resets.
 - **Bot comments repeat after push.** Track findings by content, not comment ID. Same rule as `tend-pr-tick`.
-- **Amendment oscillation.** If the tick self-amends the manifest repeatedly without new external input (user message or PR comment), it escalates via the sink rather than continuing. Exact threshold and semantics live in `skills/drive-tick/SKILL.md` §Amendment Loop Guard — the one place the number is defined.
+- **Amendment oscillation.** Cross-tick amendment ping-pong is bounded only by `--max-ticks` — no amendment-specific guard in v0. If observed in practice, the concern surfaces via the sink; reintroducing a guard is a design change, not a workaround.
 - **Budget exhaust is terminal.** Default `--max-ticks 100`. When the completed-tick count in the log reaches the budget, the tick logs `BUDGET EXHAUSTED`, escalates via the sink, removes the lock, and ends the loop.
 - **Same-second `none`-mode collisions.** Run IDs in none mode are `local-{timestamp}-{4-char-random}` specifically to avoid collision when two runs start within one second. Github mode uses `gh-{owner}-{repo}-{pr}` to avoid cross-repo PR-number collision when `/tmp` is shared.
 

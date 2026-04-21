@@ -1,6 +1,6 @@
 ---
 name: drive
-description: 'Experimental cron-driven manifest runner. Bootstraps branch/PR state and kicks off /loop to repeatedly invoke /drive-tick until a terminal state (all verify pass for none mode, merge-ready for github mode) or budget exhaust. Wide ticks, cross-tick convergence, no flow-control hooks. Use when you want /define → green without babysitting, or to autonomously tend a PR. Triggers: drive, run autonomously, take it to green, cron this to completion.'
+description: 'Experimental cron-driven manifest runner. Bootstraps branch/PR state and kicks off /loop to repeatedly invoke /drive-tick until a terminal state (all verify pass for none mode, merge-ready for github mode) or budget exhaust. Wide ticks with intra-tick convergence — /drive-tick delegates the full verify-fix loop to /do per tick. Use when you want /define → green without babysitting, or to autonomously tend a PR. Triggers: drive, run autonomously, take it to green, cron this to completion.'
 user-invocable: true
 ---
 
@@ -20,7 +20,7 @@ Coexists with `/do`, `/tend-pr`, `/auto` — does not replace them.
 - `--platform` — `none` (default) or `github`. `none` = local branch only, no PR. `github` = bootstrap PR, tend comments/CI.
 - `--sink` — `local` (default). Where escalations and status notifications go.
 - `--base` — Override base branch auto-detection.
-- `--interval` — Default `15m`. Range `15m`–`24h` inclusive. The lower bound is set so that the cron fires at a cadence useful for typical ticks (most complete in well under 15m); the parallelization ceiling comes from the lock TTL (see Gotchas), not from this floor. Upper bound catches obvious typos.
+- `--interval` — Default `15m`. Range `15m`–`24h` inclusive. The lower bound is set so that the cron fires at a cadence useful for typical ticks. While a tick holds its lock, subsequent cron fires exit silently — so the interval is a floor for poll frequency, not a hard cadence. Upper bound catches obvious typos.
 - `--max-ticks` — Default `100`. Positive integer, `1`–`10000` inclusive. Tick budget cap — once exceeded, tick escalates via sink and ends loop. Prevents silent cost runaway.
 
 ### Usage error messages
@@ -45,11 +45,17 @@ Coexists with `/do`, `/tend-pr`, `/auto` — does not replace them.
 All pre-flight checks run BEFORE any branch creation, commit, push, or PR operation. If any check fails, the wrapper errors actionably and exits without modifying repository state.
 
 - **`/loop` available.** Error: "/loop skill not found — ensure a loop provider is installed."
-- **`manifest-dev:verify` and `manifest-dev:define` available** (needed for verify invocations and mid-tick amendments). Error: "manifest-dev skills not found — /drive requires manifest-dev."
+- **`manifest-dev:do`, `manifest-dev:verify`, and `manifest-dev:define` available** (drive-tick invokes `manifest-dev:do` directly and `manifest-dev:define --amend` during Amendment; `manifest-dev:verify` is required transitively by `/do`). Error: "manifest-dev skills not found — /drive requires manifest-dev."
 - **Inside a git repo.** Error: "Not inside a git repository."
 - **Manifest mode: manifest file readable and parseable** as a `manifest-dev:define` manifest. Error: "Manifest not found, unreadable, or malformed: <path>"
 - **`--platform github`:** `origin` remote configured (error: "No `origin` remote configured — required for --platform github") AND GitHub MCP tools loaded (error: "GitHub MCP not loaded — required for --platform github") AND, in babysit mode, exactly one open PR for the current branch (see Babysit Mode below).
 - **`--platform none`:** nothing beyond the git repo check.
+- **Resolve run-id (read-only lookup, no side effects).** In github mode, query for an existing open PR on the current branch via GitHub MCP (no PR creation). Use the returned PR number to compute `gh-{owner}-{repo}-{pr-number}`. If no open PR exists (first-time run on this branch), skip to bootstrap — no lock can exist for an unresolved run-id. In none mode, compute `local-{UTC-timestamp}-{4-char-random}` (fresh run-id every invocation — see §Run ID).
+- **No conflicting lock for the resolved run-id.** Once the run-id is known, if `/tmp/drive-lock-{run-id}` exists, /drive halts with an error message naming the lock path, creation timestamp, and recorded PID. Three branches by PID liveness (via `kill -0 <pid>`):
+  - **Alive** (signal succeeds): "A /drive run is already active for this PR — wait for it to complete or stop it at the Claude session level."
+  - **Dead** (signal returns ESRCH): "A prior /drive run was interrupted or crashed. Remove the lock file and re-invoke /drive to resume."
+  - **Ambiguous** (EPERM or liveness introspection unsupported — e.g., cross-UID containers): "Cannot determine whether the PID is live. If you're sure no other /drive is running, remove the lock file; otherwise wait."
+  /drive never removes the lock itself — the user confirms before clearing.
 
 ## Base Branch Resolution
 
@@ -109,7 +115,7 @@ Print a run summary to the terminal: run-id, mode, platform, sink, interval, bud
 
 - **`/loop` reliability is outside /drive's control.** If cron stops firing (session ends, host sleeps), ticks stop. No automatic recovery — the log will go stale. Re-invoke `/drive` to resume. The tick is designed to pick up from log state.
 - **Base branch auto-detection can fail** on repos with unusual configurations (detached HEAD on remote, no `origin/HEAD`, no `main` branch). The error is explicit — no silent fallback to `master`. Pass `--base <branch>` to override.
-- **Lock TTL parallelization ceiling.** The lock TTL is 30m (see `drive-tick/SKILL.md` §Concurrency Guard). A tick that runs longer than 30m leaves a stale lock behind; the next cron fire — at whatever interval — can then acquire that stale lock and start a second tick in parallel with the still-running first one. The `--interval` floor (15m) does not change this ceiling; it only affects how often cron fires. Accepted v0 limit. Keep ticks under 30m to stay safe.
+- **Stale lock after crash** — see §Pre-flight.
 - **Run-id collision mitigations.** Github-mode run-ids are qualified by repo owner/name to avoid collision when `/tmp` is shared across multiple repositories with overlapping PR numbers. None-mode run-ids include a 4-char random suffix to avoid collision when two none-mode runs start within the same second.
 - **Budget exhaust stops the loop.** If the tick count in the log reaches `--max-ticks`, the tick escalates via the sink and ends the loop. Budget prevents silent cost runaway; raise `--max-ticks` explicitly if a run genuinely needs more ticks.
 - **No explicit stop command.** `/drive` relies on Claude Code session-level interruption (user talks to Claude, who removes the lock if needed) or terminal states (merge, verify-pass, budget exhaust). Closing the Claude Code session also stops `/loop` from scheduling further ticks.
