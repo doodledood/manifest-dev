@@ -6,7 +6,7 @@ All platform and sink adapters follow a single interface: **return a markdown-fo
 
 | Owner | Responsibilities |
 |---|---|
-| **Adapter (platform)** | How to fetch platform state (git, PR, CI, comments), what sections appear in the state report, the enumeration of platform-specific terminal states, inbox-handling rules, platform-specific write-outputs (commit/push/PR/comments). |
+| **Adapter (platform)** | How to fetch platform state (git, PR, CI, comments), what sections appear in the state report, the enumeration of platform-specific terminal states, inbox-handling rules, platform-specific write-outputs (commit/push/PR/comments), thread-hygiene rules (resolve/reopen semantics for platforms with threads). |
 | **Adapter (sink)** | How to send escalation and status notifications, escalation code table, self-description block. |
 | **`/drive-tick`** | Reading the execution log, reading the manifest, invoking adapter instructions, running the action decision tree, committing locally, calling `manifest-dev:verify`, amendment loop-guard counting, output-protocol log emission. |
 
@@ -47,7 +47,11 @@ How the adapter's inbox is consumed per tick. Platforms without an inbox state t
 
 #### Write Outputs
 
-What commit / push / reply / description-update operations the tick performs after making changes, per platform.
+What commit / push / reply / description-update operations the tick performs after making changes, per platform. Gated on code changes — skipped entirely on ticks with no commits.
+
+#### Thread Hygiene
+
+When the platform has review threads (comments that can be resolved/reopened), the adapter defines how unaddressed threads are resolved after they've been acted on. Runs every tick, invoked by drive-tick §P strictly after Write Outputs completes. Independent of code changes — this is what resolves bot threads on inbox-only ticks (FP replies, no commits). Platforms without thread-state semantics (e.g., `none`) omit this section; the tick skips Thread Hygiene invocation when absent.
 
 ### Required state-report sections
 

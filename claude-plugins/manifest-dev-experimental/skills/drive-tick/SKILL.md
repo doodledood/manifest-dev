@@ -103,7 +103,19 @@ Execute these phases in order. Sections below describe each in detail:
 
 ## Action Decision Tree
 
-A single tick runs through the stages below in order. The tick ends only at: (1) Terminal State Check — adapter declares terminal at tick start; (2) a terminal `## Escalation:` marker emitted by /do during Do Invocation (any type except `Self-Amendment`); (3) adapter-signalled terminal from CI Triage (e.g., `CI_RETRIGGER_EXHAUSTED`); (4) Budget Check exhaustion; (5) Crash Recovery flagging inconsistency. Sink escalations emitted by Inbox Handling (e.g., `BABYSIT_CODE_REQUEST`, `STALE_THREAD`) and by the adapter as non-terminal (`CI_UNCERTAIN`) do NOT end the loop. `## Execution Complete` from /do does NOT end the tick — drive-tick proceeds through CI Triage + Tend PR; the adapter's Terminal State Check fires on subsequent ticks.
+A single tick runs through the stages below in order. The tick ends only at one of these terminal exits:
+
+| # | Terminal exit | Trigger |
+|---|---|---|
+| 1 | Adapter-declared terminal at tick start | §Terminal State Check (see below) |
+| 2 | /do emits a terminal `## Escalation:` marker | §D Do Invocation, any type except `Self-Amendment` |
+| 3 | Adapter-signalled terminal from CI Triage | §T (e.g., `CI_RETRIGGER_EXHAUSTED`) |
+| 4 | Budget Check exhaustion | §Budget Check |
+| 5 | Crash Recovery flags inconsistency | §Crash Recovery |
+
+**Non-terminal escalations** (do NOT end the loop): sink escalations from Inbox Handling (e.g., `BABYSIT_CODE_REQUEST`, `STALE_THREAD`) and adapter-reported non-terminals (`CI_UNCERTAIN`).
+
+**`## Execution Complete` from /do does NOT end the tick** — drive-tick proceeds through CI Triage + Tend PR; the adapter's Terminal State Check fires on subsequent ticks.
 
 **Babysit mode skips Do Invocation.** There is no manifest, so /do is never invoked. Babysit-mode ticks run: Terminal Check → Inbox Handling → CI Triage + Retrigger → Tend PR → Continue. Inbox events that would require code changes have no manifest to amend — the tick escalates via sink for human intervention.
 
@@ -132,11 +144,18 @@ Invoke the manifest-dev:do skill with: "<manifest-path> <drive-log-path>"
 
 No `--mode` flag — /do inherits from the manifest's `mode:` field. The log path is drive's unified execution log so /do's per-AC entries coexist with drive's tick markers; drive-tick reads the same log at the start of every tick (Memento Pattern).
 
-**Exit detection.** After /do returns, inspect `/do`'s Skill-tool response text (the output stream — /done and /escalate render their markers into the caller's response, not into the log file) and classify by literal marker:
+**Exit detection.** After /do returns, inspect /do's Skill-tool response text (the output stream — /done and /escalate render their markers into the caller's response, not into the log file) and classify by literal marker:
 
-- `## Execution Complete` in the response (emitted by /done) → manifest convergence complete this tick. Drive-tick appends a line `execution-complete-head: <sha>` to the execution log (current HEAD sha at the moment /do reported complete), so subsequent ticks can read this via the memento pattern without re-parsing /do's response. **Do not route to Terminal here.** Whether this tick ends the loop is the platform adapter's call: in `none` mode, the adapter's Terminal State Check observes the marker on the next tick and declares `all-verify-pass`; in `github` mode, drive keeps tending the PR until the adapter declares `merge-ready`, `merged`, `closed`, `draft`, `empty-diff`, or `escalation`. Proceed to CI Triage + Tend PR.
-- `## Escalation: <type>` in the response (emitted by /escalate) → map by type. **Only `Self-Amendment` is non-terminal** (/do re-runs internally after self-amending; drive-tick does not end on this). **Any other `## Escalation:` heading is terminal** — this covers all the types /escalate actually emits: `Acceptance Criteria [AC-*.*] Blocking`, `Global Invariant [INV-G*] Blocking`, `Manual Criteria Require Human Review`, `Proposed Amendment to [ID]`, `User-Requested Pause`, plus any future type. Invoke the sink's escalate contract passing type + summary, then end via Output Protocol's Terminal block. Matching is by anchor: if the text after `## Escalation:` begins with `Self-Amendment`, it's non-terminal; anything else is terminal. If the response contains only a Self-Amendment marker, treat as Continuing.
-- Neither marker present → Continuing. /do stopped without declaring done or escalating (e.g., intermediate state). The next tick re-invokes /do, which resumes via the memento log.
+| Marker in /do response | Classification | Tick action |
+|---|---|---|
+| `## Execution Complete` | Continuing (manifest convergence this tick) | Append `execution-complete-head: <sha>` line to the log; proceed to CI Triage + Tend PR |
+| `## Escalation: Self-Amendment` | Continuing (/do self-amends internally) | No action beyond logging; proceed to CI Triage + Tend PR |
+| `## Escalation: <any other type>` | **Terminal** | Invoke sink escalate with type + summary; end via Output Protocol's Terminal block |
+| Neither marker | Continuing (intermediate state) | No action; next tick re-invokes /do |
+
+**Notes on the terminal `## Escalation:` row.** This covers every type /escalate emits: `Acceptance Criteria [AC-*.*] Blocking`, `Global Invariant [INV-G*] Blocking`, `Manual Criteria Require Human Review`, `Proposed Amendment to [ID]`, `User-Requested Pause`, plus any future type. Matching is by anchor — if the text after `## Escalation:` begins with `Self-Amendment`, non-terminal; anything else, terminal.
+
+**Why `## Execution Complete` is not routed to Terminal here.** Whether this tick ends the loop is the platform adapter's call. In `none` mode the adapter's Terminal State Check observes the `execution-complete-head:` marker on the next tick and declares `all-verify-pass`. In `github` mode drive keeps tending the PR until the adapter declares `merge-ready`, `merged`, `closed`, `draft`, `empty-diff`, or `escalation`. The `execution-complete-head: <sha>` line (current HEAD sha at the moment /do reported complete) is the durable memento for this decision across ticks.
 
 **Retrigger-only skip.** CI Triage + Retrigger runs AFTER Do Invocation in the tick order, so the skip fires on a tick whose **prior** tick produced only a retrigger-empty-commit. Skip Do Invocation when all three conditions hold:
 1. A prior tick's CI Triage emitted a `retrigger-empty-commit: <sha>` log line that is the most recent commit-producing log entry — i.e., no non-retrigger commit appears in the log after it.
@@ -145,7 +164,9 @@ No `--mode` flag — /do inherits from the manifest's `mode:` field. The log pat
 
 Under those conditions nothing has changed for /do to act on; invoking it would waste tokens re-verifying an unchanged-at-the-source-level state. If any condition fails, run Do Invocation normally.
 
-**/do composition caveat.** If /do returns with a genuinely malformed response (e.g., tool-call error, partial output cut off, or output containing neither /done nor /escalate markers while /do's log shows AC attempts that don't roll up) — NOT the normal Continuing case above — escalate to the user via the sink rather than patching /do in drive-tick. /do's contract is owned by `manifest-dev:do`; divergence is a bug to surface.
+**Cross-adapter marker contract.** The `retrigger-empty-commit: <sha>` log line is emitted by the platform adapter's CI Failure Triage step (see `drive/references/platforms/github.md` §CI Failure Triage → Retrigger algorithm). This skip consumes that marker by contract, not by peeking at platform internals — the marker IS the public interface between adapter and tick for this optimization. Adapters that do not emit the marker forfeit the optimization; correctness is preserved regardless (§T re-triggers next tick, /do re-verifies). The marker's presence in drive-tick is the cross-cutting concern it was designed to be.
+
+**/do composition caveat.** If /do returns with a genuinely malformed response (e.g., tool-call error, partial output cut off, or output containing neither /done nor /escalate markers while /do's log shows AC attempts that don't roll up) — NOT the normal Continuing case above — escalate via the sink with code `DO_MALFORMED_RESPONSE` rather than patching /do in drive-tick. Maps to the `escalation` terminal state — loop ends; user re-invokes `/drive` after resolving the root cause upstream in `manifest-dev:do`. /do's contract is owned by `manifest-dev:do`; divergence is a bug to surface there, not paper over here.
 
 ### T. CI Triage + Retrigger (platform adapter contract)
 
@@ -161,13 +182,14 @@ Runs when the platform adapter exposes a `CI Failure Triage` contract (currently
 
 4. **Retrigger-empty-commit marker.** For every empty-commit retrigger the adapter creates, it MUST emit a log line `retrigger-empty-commit: <sha>`. Consumed by §D Retrigger-only skip. Adapters that retrigger via non-empty means emit nothing; adapters retriggering empty without the marker forfeit the skip optimization (correctness preserved).
 
-### P. Tend PR (platform adapter contract)
+### P. Tend PR (platform adapter contracts)
 
-Runs when the platform adapter exposes a `Write Outputs` contract (currently: github). After CI triage (when the adapter returned `continue` rather than `terminal`), invoke the contract for PR hygiene:
-- PR description sync (rewrite "what changed" sections to reflect current diff). Skipped when the only commits this tick are retrigger-only empty commits — there is nothing new to describe.
-- Thread resolution (resolve bot threads that have been addressed; never resolve human threads).
-- Reply on threads that originated actionable comments in this tick.
-- Update requested reviewers if configured.
+Runs when the platform adapter exposes `Write Outputs` and `Thread Hygiene` contracts (currently: github). After CI triage (when the adapter returned `continue` rather than `terminal`), invoke the two contracts in order:
+
+1. **Write Outputs** — **gated on code changes this tick.** Handles commit, push, execution-log append, PR description sync, inbox follow-up replies, and updating requested reviewers if configured. Skipped entirely on ticks with no code changes. On retrigger-only ticks (only commits are retrigger-empty-commits), PR description sync within this contract is skipped — there is no new diff to describe.
+2. **Thread Hygiene** — **runs every tick**, strictly after Write Outputs completes (never before, never in parallel). Resolves bot threads whose disposition is "addressed" per the adapter's rules. Never resolves human threads. Independent of whether code changed this tick — this is what resolves bot threads on FP-reply-only ticks where §I Inbox Handling posted a reply but produced no commit. On retrigger-only ticks, Thread Hygiene no-ops (no new disposition data).
+
+Both contracts are invoked at the tick level; the adapter owns how each one is realized on its platform.
 
 ### C. Continue
 
@@ -232,9 +254,8 @@ Every outcome produces a log entry. Silent ticks make "working" indistinguishabl
 
 ## Gotchas
 
-- **Bot comments repeat after push.** Bots re-scan each commit. Track findings by content (not comment ID) to avoid infinite fix loops. If a finding recurs despite targeted fixes, treat as uncertain and escalate via sink.
+Tick-level failure modes owned by drive-tick. Platform-specific gotchas (bot comment repetition, rebase anchoring, empty-diff terminal, thread-resolution permanence) are owned by the platform adapter (currently `platforms/github.md` §Gotchas). Cross-reference the adapter for those; do not restate them here — duplication across files drifts.
+
 - **User pushes between ticks.** Tick reads fresh git state every iteration. User's commits become input to the next tick's /do invocation — regressions are addressed by /do's fix loop; pending work resolutions are observed and the tick moves on.
-- **Empty diff is terminal** (github platform). A PR with no diff (e.g., all changes reverted) is a terminal state — the platform adapter reports this; the tick escalates and ends the loop.
-- **Rebase destroys review context.** Rebasing rewrites commit history, orphaning review comments attached to those commits. The github adapter documents what to do (prefer merge-base updates; only rebase when a reviewer explicitly requests it).
 - **Amendment oscillation** — see §Amendment.
 - **Budget exhaust is terminal.** `--max-ticks` caps cost runaway. Default 100 ticks. When reached, the tick escalates via sink and ends the loop. Raise `--max-ticks` explicitly for genuinely long runs — don't bypass the check.

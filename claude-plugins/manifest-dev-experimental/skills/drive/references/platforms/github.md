@@ -4,6 +4,17 @@ GitHub PR lifecycle mode. `/drive` bootstraps a branch + empty commit + PR; subs
 
 Data files referenced by this adapter: `./data/known-bots.md` (bot identification), `./data/classification-examples.md` (intent classification examples).
 
+## Tunables
+
+Intentional defaults the user can override by editing this file. Principle: cap conservatively to prevent cost runaway while tolerating genuine transient infra; the numbers below are starting points, not invariants.
+
+| Knob | Default | Governs |
+|---|---|---|
+| `CI_RETRIGGER_CAP` | 10 per run | §CI Failure Triage — max Infrastructure retriggers per log-file lifetime before `CI_RETRIGGER_EXHAUSTED` |
+| `STALE_THREAD_WINDOW` | 30 minutes | §Stale thread escalation — how long an uncertain reply or fixed-but-unresolved thread waits before `STALE_THREAD` escalation |
+
+Both values are referenced literally in the sections that use them. Change here AND in the referencing section if tuning.
+
 ## Bootstrap
 
 Performed by `/drive` before any tick fires — see `drive/SKILL.md` §Pre-flight and §Branch + Bootstrap for the authoritative procedure (MCP tool availability, remote check, base resolution, branch creation, clean-tree check, empty commit, push retry policy).
@@ -77,7 +88,12 @@ Six terminal states on this platform. Each has specific detection and tick actio
 
 ### `merge-ready`
 
-- **Detection:** Platform's native merge-state indicates all required checks pass, required approvals obtained, no unresolved threads, mergeable conflicts = none. Additionally in manifest mode: the most recent `execution-complete-head: <sha>` line in the log must exist AND either equal current PR HEAD or be followed only by retrigger-empty-commits (matches the retrigger-only-skip's ancestor rule — source state hasn't changed since /do converged). Use the platform's merge-state query — do not hardcode assumptions about what's required.
+- **Detection:** Merge-ready requires all of the following preconditions:
+  1. **Platform merge-state is green** — use GitHub's native merge-state query (required checks pass, required approvals obtained, no unresolved threads, mergeable conflicts = none). Do not hardcode assumptions about what's required.
+  2. **Manifest-mode extra**: the most recent `execution-complete-head: <sha>` line in the log must exist.
+  3. **Manifest-mode extra**: that `execution-complete-head` sha must either equal current PR HEAD, or be followed in the log only by retrigger-empty-commits (matches the retrigger-only-skip's ancestor rule — source state hasn't changed since /do converged).
+
+  Babysit-mode omits preconditions (2) and (3) since there is no manifest.
 - **Tick action:** Escalate via sink with `MERGE_READY_PROMPT` code: "PR #<number> is merge-ready." Append `## Tick N — Terminal: merge-ready` to the log. Remove lock. Loop ends. The tick **never merges autonomously** — the user reviews the escalation (for the `local` sink, by tailing the log) and merges manually via `gh pr merge`. v0 has no interactive prompt mechanism; a future sink adapter (e.g., `slack`) could add one.
 - **Unresolved uncertain threads block merge-readiness** — they represent unanswered questions that could surface actionable issues. Do not mark merge-ready while such threads exist.
 
@@ -136,10 +152,21 @@ See `./data/classification-examples.md` for concrete examples across bot types a
 1. Reply asking for clarification.
 2. Leave thread open.
 
-### Thread resolution rules
+### Disposition log
 
-- **Bot threads:** resolve after addressing (fix, reply, or both). Bots don't resolve their own threads.
-- **Human threads:** **never resolve.** The reviewer owns their thread and will resolve it themselves. Resolving a human's thread is rude and breaks review workflow.
+Every classified comment emits one disposition log line to the tick's execution log, prefixed `### Inbox — ` for a stable anchor. §Thread Hygiene consumes these entries via the memento pattern across ticks.
+
+Fields:
+- `thread-id`: GitHub review-thread id of the originating thread.
+- `source`: `bot` or `human`.
+- `bot-name`: bot login when `source=bot`; omitted otherwise.
+- `classification`: `FP` | `Actionable` | `Uncertain`.
+- `fingerprint`: content hash of the comment body, per the §Gotchas finding-content hashing rule (same hash used for dedup).
+- `tick`: tick number of this classification.
+
+One line per classified comment, across all routing branches (Manifest-mode Actionable, Babysit-mode Actionable, FP, Uncertain, Human). Human comments are still logged for completeness; §Thread Hygiene filters them out before resolving.
+
+Thread state changes on GitHub are owned by §Thread Hygiene — §Inbox Handling itself never resolves or reopens threads.
 
 ### Stale thread escalation
 
@@ -187,19 +214,24 @@ This is the `CI Failure Triage` contract that `drive-tick` §T invokes. **Inputs
 5. **Retrigger Infrastructure checks** — partition Infrastructure classifications into a native-rerun group (GitHub Actions checks) and an empty-commit group (external statuses). Maintain an in-tick counter starting at `prior count`.
    - For each check in the native-rerun group in `## CI/Checks` order: if `counter < 10`, invoke native rerun, increment counter by 1, write one `### CI Retrigger` log entry.
    - If the empty-commit group is non-empty and `counter < 10`: perform **one** empty-commit push covering every check in the group. Increment counter by 1 (per action, not per check). Write one `### CI Retrigger` log entry whose body lists every covered check name, AND emit a separate single-line log marker `retrigger-empty-commit: <sha>` for each empty-commit push sha produced this tick. Drive-tick's Do Invocation stage reads these markers next tick to decide whether to skip /do.
-   - If the counter reaches 10 mid-loop with infrastructure checks still un-retriggered, invoke sink escalate with `CI_RETRIGGER_EXHAUSTED` naming the un-retriggered check(s) and signal **terminal exit** back to the tick. If the counter reaches 10 exactly with nothing pending, return to the tick normally — a future tick's step 4 handles future exhaustion cases.
+   - **Counter-at-cap semantics.** Terminal exit fires only when `counter == 10` AND infrastructure checks remain un-retriggered — in that case invoke sink escalate with `CI_RETRIGGER_EXHAUSTED` naming the un-retriggered check(s) and signal **terminal exit** back to the tick. When `counter == 10` with nothing pending this tick, return to the tick normally; a future tick's step 4 handles future exhaustion if it arises.
 6. **Return** `continue` if no terminal signal was raised in step 4 or 5; `terminal(CI_RETRIGGER_EXHAUSTED)` otherwise.
 
 Log-entry emission is handled inline in step 2 (uncertain) and step 5 (retrigger + `retrigger-empty-commit:` marker) per §Log-entry format — no separate logging step.
 
 The tick owns when the contract runs (see `drive-tick/SKILL.md` §T), the skip-on-code-pushing-ticks decision, terminal-exit plumbing via the Output Protocol, and the retrigger-only /do-skip optimization (which consumes the `retrigger-empty-commit:` markers this contract emits).
 
-### Per-run cap
+### Per-run cap — reset semantics
 
-**Maximum 10 CI retriggers per run** (where "run" means "per log-file lifetime" — see reset note below). The tick counts prior `### CI Retrigger` entries in the execution log (memento pattern — same log-counting approach as budget-check).
+The retrigger/escalate flow itself (when to retrigger, when to escalate, terminal mapping) is owned by the §Retrigger algorithm above. This section documents the unique reset and scope semantics that algorithm relies on.
 
-- If the prior count is `< 10`: retrigger using the method above, then append a log entry (see format below) before the next tick fires.
-- If the prior count is `≥ 10`: do NOT retrigger. Escalate via sink with code `CI_RETRIGGER_EXHAUSTED` naming the still-failing check(s). **Maps to the `escalation` terminal state** — loop ends. Without the terminal mapping, subsequent cron fires would keep re-escalating the same exhaustion event and burn the tick budget silently. The cap is **per-run**, not per-external-signal — a new user commit or reviewer push within the same run does **not** reset the counter. Because the github-mode run-id is deterministic per PR (`gh-{owner}-{repo}-{pr-number}`) and `/drive` appends to an existing log rather than overwriting, simply re-invoking `/drive` on the same PR does NOT reset the counter — prior `### CI Retrigger` entries still count. To reset the counter after exhaustion, the user must first remove those entries from `/tmp/drive-log-{run-id}.md` (or delete the log entirely, knowing it clears all prior state — completed-tick count, prior `execution-complete-head: <sha>` lines, retrigger-empty-commit markers) before re-invoking. No flag adjusts this cap in v0; if the user believes the cap should not apply (e.g., a genuinely intermittent external system), they intervene manually or edit this file (`github.md`).
+**"Run" scope.** The 10-retrigger cap is **per-run**, not per-external-signal — a new user commit or reviewer push within the same run does **not** reset the counter. "Run" means "per log-file lifetime." The tick counts prior `### CI Retrigger` entries in the execution log (memento pattern, same as budget-check).
+
+**Re-invoking `/drive` does not reset.** The github-mode run-id is deterministic per PR (`gh-{owner}-{repo}-{pr-number}`), and `/drive` appends to an existing log rather than overwriting. Prior `### CI Retrigger` entries still count.
+
+**Manual reset.** To reset the counter after exhaustion, the user must remove those entries from `/tmp/drive-log-{run-id}.md` before re-invoking. Deleting the log entirely is also valid but clears ALL prior state (completed-tick count, prior `execution-complete-head: <sha>` lines, retrigger-empty-commit markers).
+
+**No flag override in v0.** If the cap should not apply (e.g., genuinely intermittent external system), the user intervenes manually or edits this file.
 
 ### Log-entry format
 
@@ -232,11 +264,11 @@ One entry per uncertain escalation. `<check-name>` is the exact check name as re
 
 ## Merge Conflicts
 
-Also runs every tick as part of state reading.
+Detected every tick during §Read State (the adapter surfaces conflict status from the PR summary); resolution is performed by the tick executing the adapter's merge rules below.
 
 - **No conflicts:** nothing to do.
-- **Conflicts:** update the PR branch from the base. Prefer `git merge origin/<base>` over `git rebase` — rebase destroys review-comment anchors by rewriting commit history. Only rebase when a reviewer explicitly requests it.
-- **Ambiguous conflicts** (the tick cannot confidently resolve): escalate via sink with code `UNRESOLVED_CONFLICT`. This maps to the `escalation` terminal state — loop ends; user resolves the conflict manually and re-invokes `/drive` to resume.
+- **Conflicts:** the tick updates the PR branch from the base by running `git merge origin/<base>`. Prefer `git merge` over `git rebase` — rebase destroys review-comment anchors by rewriting commit history. Rebase ONLY when a reviewer explicitly requests it AND acknowledges the resulting loss of comment anchoring. This is the single authoritative statement of the rule; §Gotchas cross-references this section.
+- **Ambiguous conflicts:** when the `git merge` attempt produces conflict markers the tick cannot confidently resolve mechanically (e.g., overlapping edits requiring semantic understanding), the tick aborts the merge (`git merge --abort`) and escalates via sink with code `UNRESOLVED_CONFLICT`. This maps to the `escalation` terminal state — loop ends; user resolves the conflict manually and re-invokes `/drive` to resume.
 
 ## PR Description Sync
 
@@ -250,6 +282,33 @@ After changes:
 
 Use `mcp__github__update_pull_request` for the sync.
 
+## Thread Hygiene
+
+**Runs every tick**, invoked by `drive-tick/SKILL.md` §P (Tend PR) **strictly after §Write Outputs completes**. Independent of whether code changed this tick — this is the contract that resolves bot threads after their dispositions are logged, including on FP-reply-only ticks that produce no commits.
+
+### Contract
+
+- **Trigger**: every tick, as the final adapter invocation in §P. Never invoked in parallel with §Write Outputs; never before.
+- **Inputs**: unresolved threads on the PR (from §Read State) + per-thread disposition log entries emitted by §Inbox Handling across prior ticks (read via the memento pattern from the execution log, grepping for the stable `### Inbox — ` prefix) + commit state on HEAD.
+- **Never touches human threads** — reviewers own their threads and resolve them themselves. Disposition log entries with `source=human` are filtered out before any resolve decision.
+
+### Resolution rules
+
+For each unresolved bot thread on the PR, look up its disposition log entry (by thread id, falling back to content fingerprint) and apply:
+
+- **False positive (FP)** — resolve. The reply posted by §Inbox Handling IS the addressing; no commit is required. An FP-reply-only tick resolves the thread by end of the tick.
+- **Actionable** — resolve only when a **disposition-linked commit** exists on HEAD. A disposition-linked commit is a commit /do made while implementing an AC that was added or modified in response to this thread's disposition log entry. Detection: read /do's per-AC log entries (same execution log, memento pattern) — if an entry names this thread's fingerprint or the AC traceable to this thread's amendment and the AC has landed on HEAD, the commit is disposition-linked. The §Write Outputs `Inbox follow-up replies` step uses the same definition (it posts a confirmation reply only when a disposition-linked commit lands). If the disposition entry exists but no disposition-linked commit has landed yet, leave the thread open — §Stale thread escalation may trigger later if the staleness window is exceeded.
+- **Uncertain** — never resolve. Thread stays open until the reviewer clarifies and a subsequent tick reclassifies the comment as FP or Actionable.
+- **Human (any classification)** — never resolve, regardless of whether the human's comment has been addressed by a commit. The reviewer resolves their own thread.
+
+### Retrigger-only tick behavior
+
+On a tick whose only commit is a retrigger-empty-commit (CI retrigger, no inbox processing), Thread Hygiene **no-ops**. There is no new disposition data this tick; prior-tick dispositions were already acted on by the ticks that produced them.
+
+### Relationship with §Stale thread escalation
+
+Thread Hygiene resolves aggressively when the addressing signal is clear. §Stale thread escalation remains the safety net for the cases Thread Hygiene deliberately leaves open: uncertain bot threads awaiting reviewer clarification, Actionable bot threads whose fix has not yet landed past the staleness window, and human-fix threads pending reviewer resolve. The two are complementary, not redundant.
+
 ## Write Outputs
 
 After any code change:
@@ -259,7 +318,8 @@ After any code change:
 3. **Append to execution log:** new HEAD sha + single-line summary.
 4. **PR description sync** (see above) — only if this tick produced changes.
 5. **Inbox follow-up replies** — when /do has made a material code change addressing a thread whose initial "tracked" acknowledgement was already posted during the tick's earlier inbox step, add a follow-up reply on that thread noting the commit. Initial acks are owned by inbox routing; this step only adds post-commit confirmations.
-6. **Thread resolution** — resolve bot threads addressed this tick. Never resolve human threads.
+
+Thread state on GitHub (resolve/reopen) is owned by §Thread Hygiene, which runs immediately after this contract completes — not by §Write Outputs.
 
 Never `--force` push. Never push to the base branch. Never amend already-pushed commits.
 
@@ -270,8 +330,8 @@ Inherits `drive-tick` §Security. Github-specific reminder: PR comments and revi
 ## Gotchas
 
 - **Bot comments repeat after push.** Bots re-scan the PR after every commit. Track findings by content (hash the message), not comment ID, to avoid infinite fix loops on repeating bot suggestions. If a finding recurs despite targeted fixes, classify as uncertain and escalate.
-- **Thread resolution is permanent.** Once resolved, it can't be reopened via API without a human in the loop on most setups. Resolve bot threads after addressing; never resolve human threads.
-- **Rebase destroys review context.** Rebasing rewrites commit history, which orphans review comments attached to those commits. Prefer merge-base updates. Only rebase when a reviewer explicitly requests it AND accepts the loss of comment anchoring.
+- **Thread resolution is permanent.** Once resolved, it can't be reopened via API without a human in the loop on most setups. §Thread Hygiene resolves bot threads after addressing; never resolves human threads. Be conservative: if the addressing signal is ambiguous, leave the thread open and let §Stale thread escalation surface it.
+- **Rebase destroys review context.** Rebasing rewrites commit history, which orphans review comments attached to those commits. See §Merge Conflicts for the authoritative rule — summary: prefer merge-base updates; rebase only with explicit reviewer consent.
 - **Reply means on the thread.** All replies go on the specific review thread — never as top-level PR comments. Top-level comments disconnect the response from the finding and make it look like the tick didn't address the review.
 - **"Passes locally" is not a diagnosis.** Before dismissing CI failures or re-triggering, investigate what differs between local and CI. "Works on my machine" is not evidence that CI is wrong.
 - **Empty diff is terminal.** A PR with no diff (all changes reverted) is a terminal state — escalate and end the loop; don't keep cycling.
