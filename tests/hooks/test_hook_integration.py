@@ -167,12 +167,12 @@ class TestHappyPathLifecycle:
         # User submits input during work — amendment check fires
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
-        assert "AMENDMENT CHECK" in amendment["hookSpecificOutput"]["additionalContext"]
+        assert "user message arrived during" in amendment["hookSpecificOutput"]["additionalContext"]
 
         # TaskUpdate happens — log reminder fires
         log_reminder = run_posttool_log("TaskUpdate", transcript)
         assert log_reminder is not None
-        assert "LOG REMINDER" in log_reminder["hookSpecificOutput"]["additionalContext"]
+        assert "milestone-shaped tool call" in log_reminder["hookSpecificOutput"]["additionalContext"]
 
         # Stop attempted before verify — blocked
         stop_result = run_stop_hook(transcript)
@@ -183,7 +183,7 @@ class TestHappyPathLifecycle:
         verify_reminder = run_pretool_verify("manifest-dev:verify", "/tmp/manifest.md")
         assert verify_reminder is not None
         assert (
-            "VERIFICATION CONTEXT CHECK"
+            "/verify appears to be starting"
             in verify_reminder["hookSpecificOutput"]["additionalContext"]
         )
 
@@ -194,7 +194,7 @@ class TestHappyPathLifecycle:
             {"skill": "manifest-dev:verify", "args": "/tmp/manifest.md"},
         )
         assert log_after_verify is not None
-        assert "LOG REMINDER" in log_after_verify["hookSpecificOutput"]["additionalContext"]
+        assert "milestone-shaped tool call" in log_after_verify["hookSpecificOutput"]["additionalContext"]
 
         # Phase 4: /done called — update transcript
         transcript = make_transcript(
@@ -754,7 +754,7 @@ class TestPretoolVerifyIsolation:
     def test_reminder_for_verify_with_prefix(self):
         result = run_pretool_verify("manifest-dev:verify", "/tmp/manifest.md")
         assert result is not None
-        assert "VERIFICATION" in result["hookSpecificOutput"]["additionalContext"]
+        assert "/verify appears to be starting" in result["hookSpecificOutput"]["additionalContext"]
 
     def test_reminder_for_verify_without_prefix(self):
         result = run_pretool_verify("verify", "/tmp/manifest.md")

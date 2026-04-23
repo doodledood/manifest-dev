@@ -155,13 +155,14 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
         if (skillName === "verify") {
           const verifyArgs = skillArgs ?? ""
           throw new Error(
-            `VERIFICATION CONTEXT CHECK: You are about to run /verify.\n\n` +
+            `/verify appears to be starting.\n\n` +
             (verifyArgs ? `Arguments: ${verifyArgs}\n\n` : "") +
-            `BEFORE spawning verifiers, read the manifest and execution log in FULL ` +
-            `if not recently loaded. You need ALL acceptance criteria (AC-*) and ` +
-            `global invariants (INV-G*) in context to spawn the correct verifiers.\n\n` +
-            `This is a context reminder, not a blocker. Proceed with /verify after ` +
-            `confirming files are loaded.`
+            `Before spawning verifiers, the manifest and execution log may need ` +
+            `to be in full context — if they haven't been read recently, loading ` +
+            `them surfaces every acceptance criterion (AC-*) and global invariant ` +
+            `(INV-G*) so the right verifiers get spawned. If they're already in ` +
+            `context from recent work, proceed with /verify directly.\n\n` +
+            `This is a context reminder, not a blocker.`
           )
           // NOTE: In OpenCode, throwing an Error blocks the tool call and the
           // error message becomes the tool result. This is more aggressive than
@@ -227,10 +228,12 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
         if (doState.hasSelfAmendment) {
           // Self-Amendment escalation — must continue to /define --amend
           output.system.push(
-            `<system-reminder>Self-Amendment in progress — the manifest needs updating ` +
-            `before execution can continue. ` +
-            `Run /define --amend <manifest-path> to apply the amendment, ` +
-            `then resume /do with the updated manifest.</system-reminder>`
+            `<system-reminder>A Self-Amendment escalation appears active — the ` +
+            `manifest looks like it needs revision before /do can continue. ` +
+            `/define --amend <manifest-path> applies the amendment; then resume ` +
+            `/do with the updated manifest. If the escalation was already resolved ` +
+            `and this hook is misreading the transcript, proceed — the flow will ` +
+            `close on the next /done or /escalate.</system-reminder>`
           )
         } else if (doState.hasEscalate) {
           // Non-self-amendment escalation — properly escalated, allow stop
@@ -245,32 +248,39 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
         } else {
           // No exit condition met — enforce workflow
           output.system.push(
-            `<system-reminder>Active /do workflow — formal exit required. ` +
-            `If implementation is complete, run /verify to check criteria. ` +
-            `If blocked or waiting for async work (background agents, external input), ` +
-            `call /escalate to pause. ` +
-            `Continuing without tool use will trigger the idle escape valve.</system-reminder>`
+            `<system-reminder>/do appears unfinished — no /verify, /done, or ` +
+            `/escalate detected since the last /do invocation. If implementation ` +
+            `looks complete, running /verify against the manifest will check the ` +
+            `acceptance criteria. If waiting on async work or otherwise blocked, ` +
+            `/escalate formally pauses the flow. If the flow is already closed ` +
+            `and this hook is misreading the transcript, proceed — the idle-loop ` +
+            `escape valve will release the stop after 3 idle outputs.</system-reminder>`
           )
         }
 
         // Amendment check on user input (prompt_submit_hook equivalent)
         output.system.push(
-          `<system-reminder>AMENDMENT CHECK: You are in an active /do workflow. ` +
-          `If the user's latest input contradicts, extends, or amends the manifest: ` +
-          `(1) Contradicts an existing AC, INV, or PG in the manifest, ` +
-          `(2) Extends the manifest with new requirements not currently covered, or ` +
-          `(3) Amends the scope or approach in a way that changes what "done" means — ` +
-          `call /escalate with Self-Amendment type, then invoke /define --amend <manifest-path>. ` +
-          `After /define returns, resume /do with the updated manifest. ` +
-          `If the input is a clarification or confirmation, continue normally.</system-reminder>`
+          `<system-reminder>A user message arrived during what looks like an ` +
+          `active /do workflow. Before continuing execution, it's worth checking ` +
+          `whether the input might: (1) contradict an existing AC, INV, or PG ` +
+          `in the manifest, (2) extend the manifest with new requirements not ` +
+          `currently covered, or (3) amend the scope or approach in a way that ` +
+          `changes what "done" means. If any of those look likely: /escalate ` +
+          `with Self-Amendment type, then invoke /define --amend <manifest-path>. ` +
+          `After /define returns, resume /do with the updated manifest. If the ` +
+          `input reads more like clarification, confirmation, or unrelated ` +
+          `context (or if this hook is misreading the state and /do is already ` +
+          `closed), continue execution normally.</system-reminder>`
         )
 
         // Log reminder (posttool_log_hook equivalent — injected as persistent context)
         output.system.push(
-          `<system-reminder>LOG REMINDER: After every milestone (task updates, ` +
-          `workflow skill calls), update the execution log immediately with what ` +
-          `just happened, decisions made, and outcomes. ` +
-          `The log is disaster recovery — if context is lost, only the log survives.</system-reminder>`
+          `<system-reminder>After any milestone-shaped tool call during /do ` +
+          `(task updates, workflow skill calls) that introduced new state, ` +
+          `decisions, or outcomes not already in the execution log, writing ` +
+          `them preserves the record — the log is disaster recovery if context ` +
+          `is lost. If recent calls were routine and already reflected there, ` +
+          `skip this reminder.</system-reminder>`
         )
       }
 
@@ -298,20 +308,25 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
       if (doState.active && !doState.hasDone && !doState.hasEscalate) {
         if (doState.doArgs) {
           output.context.push(
-            `This session was compacted during an active /do workflow. Context may have been lost.\n\n` +
-            `CRITICAL: Before continuing, read the manifest and execution log in FULL.\n\n` +
+            `This session appears to have been compacted during an active /do ` +
+            `workflow — context from before compaction may be missing.\n\n` +
             `The /do was invoked with: ${doState.doArgs}\n\n` +
-            `1. Read the manifest file — contains deliverables, acceptance criteria, and approach\n` +
-            `2. Check /tmp/ for your execution log (do-log-*.md) and read it to recover progress\n\n` +
-            `Do not restart completed work. Resume from where you left off.`
+            `If deliverables or acceptance criteria aren't currently in context, ` +
+            `reading the manifest and any /tmp/do-log-*.md execution log restores ` +
+            `progress and prevents restarting completed work. If both are already ` +
+            `loaded from post-compact context, skip the re-read and resume from ` +
+            `where you left off. If this hook is misreading and the session was ` +
+            `never mid-/do, proceed normally.`
           )
         } else {
           output.context.push(
-            `This session was compacted during an active /do workflow. Context may have been lost.\n\n` +
-            `CRITICAL: Before continuing, recover your workflow context:\n\n` +
-            `1. Check /tmp/ for execution logs matching do-log-*.md\n` +
-            `2. The log references the manifest file path — read both in FULL\n\n` +
-            `Do not restart completed work. Resume from where you left off.`
+            `This session appears to have been compacted during an active /do ` +
+            `workflow — context from before compaction may be missing.\n\n` +
+            `If orientation is missing, checking /tmp/ for an execution log ` +
+            `matching do-log-*.md should surface both the manifest path ` +
+            `(referenced in the log) and progress so far. If orientation is ` +
+            `already intact, skip the re-read. If this hook is misreading and ` +
+            `the session was never mid-/do, proceed normally.`
           )
         }
       }

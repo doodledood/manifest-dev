@@ -38,7 +38,7 @@ class TestPromptSubmitHookOutput:
         output = json.loads(result.stdout)
         assert "hookSpecificOutput" in output
         assert output["hookSpecificOutput"]["hookEventName"] == "UserPromptSubmit"
-        assert "AMENDMENT CHECK" in output["hookSpecificOutput"]["additionalContext"]
+        assert "user message arrived during" in output["hookSpecificOutput"]["additionalContext"]
 
     def test_reminder_when_do_active_skill_call(
         self, temp_transcript, assistant_skill_do
@@ -51,7 +51,7 @@ class TestPromptSubmitHookOutput:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "AMENDMENT CHECK" in output["hookSpecificOutput"]["additionalContext"]
+        assert "user message arrived during" in output["hookSpecificOutput"]["additionalContext"]
 
     def test_reminder_contains_amendment_instructions(
         self, temp_transcript, user_do_command, assistant_text
@@ -64,8 +64,8 @@ class TestPromptSubmitHookOutput:
 
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
-        assert "Contradicts" in context
-        assert "Extends" in context
+        assert "contradict" in context
+        assert "extend" in context
         assert "/escalate" in context
         assert "/define --amend" in context
 
@@ -186,7 +186,7 @@ class TestPromptSubmitHookEdgeCases:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "AMENDMENT CHECK" in output["hookSpecificOutput"]["additionalContext"]
+        assert "user message arrived during" in output["hookSpecificOutput"]["additionalContext"]
 
     def test_no_stderr_output(self, temp_transcript, user_do_command, assistant_text):
         """Hook should never write to stderr on success."""
@@ -228,4 +228,4 @@ class TestPromptSubmitHookEdgeCases:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "AMENDMENT CHECK" in output["hookSpecificOutput"]["additionalContext"]
+        assert "user message arrived during" in output["hookSpecificOutput"]["additionalContext"]

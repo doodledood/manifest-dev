@@ -16,16 +16,16 @@ import sys
 
 from hook_utils import build_system_reminder, parse_do_flow
 
-AMENDMENT_CHECK_REMINDER = """AMENDMENT CHECK: You are in an active /do workflow and the user just submitted input.
+AMENDMENT_CHECK_REMINDER = """A user message arrived during what looks like an active /do workflow.
 
-Before continuing execution, check if this user input:
-1. **Contradicts** an existing AC, INV, or PG in the manifest
-2. **Extends** the manifest with new requirements not currently covered
-3. **Amends** the scope or approach in a way that changes what "done" means
+Before continuing execution, it's worth checking whether the input might:
+- **contradict** an existing AC, INV, or PG in the manifest
+- **extend** the manifest with new requirements not currently covered
+- **amend** the scope or approach in a way that changes what "done" means
 
-If YES to any: Call /escalate with Self-Amendment type, then immediately invoke /define --amend <manifest-path>. After /define returns, resume /do with the updated manifest.
+If any of those look likely: /escalate with Self-Amendment type, then invoke /define --amend <manifest-path>. After /define returns, resume /do with the updated manifest.
 
-If NO (clarification, confirmation, or unrelated): Continue execution normally."""
+If the input reads more like clarification, confirmation, or unrelated context (or if this hook is misreading the state and /do is already closed), continue execution normally."""
 
 
 def main() -> None:

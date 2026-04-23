@@ -13,16 +13,16 @@ import sys
 
 from hook_utils import build_system_reminder
 
-VERIFY_CONTEXT_REMINDER = """VERIFICATION CONTEXT CHECK: You are about to run /verify.
+VERIFY_CONTEXT_REMINDER = """/verify appears to be starting.
 
 Arguments: {verify_args}
 
-BEFORE spawning verifiers, read the manifest and execution log in FULL if not recently loaded. You need ALL acceptance criteria (AC-*) and global invariants (INV-G*) in context to spawn the correct verifiers."""
+Before spawning verifiers, the manifest and execution log may need to be in full context — if they haven't been read recently, loading them surfaces every acceptance criterion (AC-*) and global invariant (INV-G*) so the right verifiers get spawned. If they're already in context from recent work, skip re-reading and proceed to the spawn."""
 
 
-VERIFY_CONTEXT_REMINDER_MINIMAL = """VERIFICATION CONTEXT CHECK: You are about to run /verify.
+VERIFY_CONTEXT_REMINDER_MINIMAL = """/verify appears to be starting.
 
-BEFORE spawning verifiers, read the manifest and execution log in FULL if not recently loaded. You need ALL acceptance criteria (AC-*) and global invariants (INV-G*) in context to spawn the correct verifiers."""
+Before spawning verifiers, the manifest and execution log may need to be in full context — if they haven't been read recently, loading them surfaces every acceptance criterion (AC-*) and global invariant (INV-G*) so the right verifiers get spawned. If they're already in context from recent work, skip re-reading and proceed to the spawn."""
 
 
 def main() -> None:

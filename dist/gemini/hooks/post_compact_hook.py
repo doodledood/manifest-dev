@@ -17,26 +17,16 @@ from hook_utils import (
     parse_thinking_disciplines_flow,
 )
 
-DO_WORKFLOW_RECOVERY_REMINDER = """This session was compacted during an active /do workflow. Context may have been lost.
-
-CRITICAL: Before continuing, read the manifest and execution log in FULL.
+DO_WORKFLOW_RECOVERY_REMINDER = """This session appears to have been compacted during an active /do workflow — context from before compaction may be missing.
 
 The /do was invoked with: {do_args}
 
-1. Read the manifest file - contains deliverables, acceptance criteria, and approach
-2. Check /tmp/ for your execution log (do-log-*.md) and read it to recover progress
-
-Do not restart completed work. Resume from where you left off."""
+If deliverables or acceptance criteria aren't currently in context, reading the manifest and any `/tmp/do-log-*.md` execution log restores progress and prevents restarting completed work. If both are already loaded from post-compact context, skip the re-read and resume from where you left off. If this hook is misreading and the session was never mid-/do, proceed normally."""
 
 
-DO_WORKFLOW_RECOVERY_FALLBACK = """This session was compacted during an active /do workflow. Context may have been lost.
+DO_WORKFLOW_RECOVERY_FALLBACK = """This session appears to have been compacted during an active /do workflow — context from before compaction may be missing.
 
-CRITICAL: Before continuing, recover your workflow context:
-
-1. Check /tmp/ for execution logs matching do-log-*.md
-2. The log references the manifest file path - read both in FULL
-
-Do not restart completed work. Resume from where you left off."""
+If orientation is missing, checking `/tmp/` for an execution log matching `do-log-*.md` should surface both the manifest path (referenced in the log) and progress so far. If orientation is already intact, skip the re-read. If this hook is misreading and the session was never mid-/do, proceed normally."""
 
 
 THINKING_DISCIPLINES_RECOVERY_REMINDER = """Thinking disciplines are active. Re-read the thinking-disciplines skill to restore your cognitive stance."""

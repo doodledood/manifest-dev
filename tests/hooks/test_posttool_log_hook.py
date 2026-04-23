@@ -39,7 +39,7 @@ class TestPosttoolLogHookOutput:
         output = json.loads(result.stdout)
         assert "hookSpecificOutput" in output
         assert output["hookSpecificOutput"]["hookEventName"] == "PostToolUse"
-        assert "LOG REMINDER" in output["hookSpecificOutput"]["additionalContext"]
+        assert "milestone-shaped tool call" in output["hookSpecificOutput"]["additionalContext"]
         assert "TaskUpdate" in output["hookSpecificOutput"]["additionalContext"]
 
     def test_reminder_on_task_create(self, temp_transcript, user_do_command, assistant_text):
@@ -55,7 +55,7 @@ class TestPosttoolLogHookOutput:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "LOG REMINDER" in output["hookSpecificOutput"]["additionalContext"]
+        assert "milestone-shaped tool call" in output["hookSpecificOutput"]["additionalContext"]
 
     def test_reminder_on_todo_write(self, temp_transcript, user_do_command, assistant_text):
         """Should inject reminder when TodoWrite completes during /do."""
@@ -70,7 +70,7 @@ class TestPosttoolLogHookOutput:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "LOG REMINDER" in output["hookSpecificOutput"]["additionalContext"]
+        assert "milestone-shaped tool call" in output["hookSpecificOutput"]["additionalContext"]
 
     def test_reminder_on_skill_verify(self, temp_transcript, user_do_command, assistant_text):
         """Should inject reminder when /verify skill completes during /do."""
@@ -86,7 +86,7 @@ class TestPosttoolLogHookOutput:
         assert result.returncode == 0
         output = json.loads(result.stdout)
         ctx = output["hookSpecificOutput"]["additionalContext"]
-        assert "LOG REMINDER" in ctx
+        assert "milestone-shaped tool call" in ctx
         assert "manifest-dev:verify" in ctx
 
     def test_reminder_on_skill_escalate(self, temp_transcript, user_do_command, assistant_text):
@@ -102,7 +102,7 @@ class TestPosttoolLogHookOutput:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "LOG REMINDER" in output["hookSpecificOutput"]["additionalContext"]
+        assert "milestone-shaped tool call" in output["hookSpecificOutput"]["additionalContext"]
 
     def test_reminder_on_skill_define(self, temp_transcript, user_do_command, assistant_text):
         """Should inject reminder when /define skill completes during /do."""
@@ -117,7 +117,7 @@ class TestPosttoolLogHookOutput:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "LOG REMINDER" in output["hookSpecificOutput"]["additionalContext"]
+        assert "milestone-shaped tool call" in output["hookSpecificOutput"]["additionalContext"]
 
     def test_reminder_on_skill_done(self, temp_transcript, user_do_command, assistant_text):
         """Should inject reminder when /done skill completes during /do.
@@ -137,7 +137,7 @@ class TestPosttoolLogHookOutput:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "LOG REMINDER" in output["hookSpecificOutput"]["additionalContext"]
+        assert "milestone-shaped tool call" in output["hookSpecificOutput"]["additionalContext"]
 
 
 class TestPosttoolLogHookNoOutput:
@@ -291,4 +291,4 @@ class TestPosttoolLogHookEdgeCases:
 
         assert result.returncode == 0
         output = json.loads(result.stdout)
-        assert "LOG REMINDER" in output["hookSpecificOutput"]["additionalContext"]
+        assert "milestone-shaped tool call" in output["hookSpecificOutput"]["additionalContext"]

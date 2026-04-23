@@ -21,11 +21,11 @@ from hook_utils import build_system_reminder, parse_do_flow
 # Skills that represent workflow transitions worth logging
 WORKFLOW_SKILLS = {"verify", "escalate", "done", "define"}
 
-LOG_REMINDER = """LOG REMINDER: A milestone just completed during /do.
+LOG_REMINDER = """A milestone-shaped tool call appears to have just completed during /do.
 
 Tool: {tool_name}{skill_detail}
 
-Update the execution log NOW with what just happened, decisions made, and outcomes. The log is disaster recovery — if context is lost, only the log survives."""
+If this call introduced new state, decisions, or outcomes not already in the execution log, writing them preserves the record — the log is disaster recovery if context is lost. If the call was routine and already reflected there (or nothing meaningful changed), skip this reminder."""
 
 
 def _is_workflow_skill(tool_input: dict[str, Any]) -> bool:

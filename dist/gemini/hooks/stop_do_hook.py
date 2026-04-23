@@ -60,14 +60,22 @@ def main() -> None:
 
     # Self-Amendment escalation — block stop, must continue to /define --amend
     if state.has_self_amendment:
+        reason = (
+            "A Self-Amendment escalation appears active — the manifest "
+            "looks like it needs revision before /do can continue.\n"
+            "• /define --amend <manifest-path> applies the amendment; "
+            "then resume /do with the updated manifest.\n"
+            "• If the escalation was already resolved and this hook is "
+            "misreading the transcript, proceed — the flow will close "
+            "on the next /done or /escalate."
+        )
         output = {
             "decision": "block",
-            "reason": "Self-Amendment in progress",
+            "reason": reason,
             "systemMessage": (
-                "Self-Amendment in progress — the manifest needs updating "
-                "before execution can continue. "
-                "Run /define --amend <manifest-path> to apply the amendment, "
-                "then resume /do with the updated manifest."
+                "Stop intercepted: Self-Amendment escalation appears "
+                "pending — session continues so the manifest can be "
+                "amended and /do resumed."
             ),
         }
         print(json.dumps(output))
@@ -105,19 +113,26 @@ def main() -> None:
         print(json.dumps(output))
         sys.exit(0)
 
-    # Provide guidance — clear directive toward /verify or /escalate
-    system_message = (
-        "Active /do workflow — formal exit required. "
-        "If implementation is complete, run /verify to check criteria. "
-        "If blocked or waiting for async work (background agents, external input), "
-        "call /escalate to pause. "
-        "Continuing without tool use will trigger the idle escape valve."
+    # Provide guidance — hedged observation toward /verify or /escalate
+    reason = (
+        "/do appears unfinished — no /verify, /done, or /escalate "
+        "detected since the last /do invocation.\n"
+        "• If implementation looks complete, running /verify against "
+        "the manifest will check the acceptance criteria.\n"
+        "• If waiting on async work or otherwise blocked, /escalate "
+        "formally pauses the flow.\n"
+        "• If the flow is already closed and this hook is misreading "
+        "the transcript, proceed — the idle-loop escape valve will "
+        "release the stop after 3 idle outputs."
     )
 
     output = {
         "decision": "block",
-        "reason": "Execution not verified",
-        "systemMessage": system_message,
+        "reason": reason,
+        "systemMessage": (
+            "Stop intercepted: /do appears active and not yet verified "
+            "— session continues so the agent can run /verify or /escalate."
+        ),
     }
     print(json.dumps(output))
     sys.exit(0)
