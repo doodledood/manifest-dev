@@ -276,12 +276,12 @@ Scope: `claude-plugins/manifest-dev-experimental/skills/drive/SKILL.md`. Edits t
     prompt: "Read §Pre-flight in claude-plugins/manifest-dev-experimental/skills/drive/SKILL.md. Confirm: when both /loop AND /check-in are unavailable, the error message (a) names /loop, (b) names /check-in, (c) is actionable (tells user what to do). Pass only if all three are present."
   ```
 
-- [AC-2.3] §Scheduler Kickoff (renamed from §/loop Kickoff) documents the parameterised invocation — the invocation string is identical in structure regardless of scheduler, only the skill name swaps. | Verify: subagent.
+- [AC-2.3] §Scheduler Kickoff (renamed from §/loop Kickoff) documents two scheduler-specific invocation blocks: the `/loop` invocation is byte-equivalent to today (INV-G4); the `/check-in` invocation differs by one additional positional arg (`<log-path>`) up front, which is REQUIRED by INV-G9 (log-file-as-contract). The drive-tick arg string passed to both schedulers is identical. | Verify: subagent.
   ```yaml
   verify:
     method: subagent
     agent: general-purpose
-    prompt: "Read §Scheduler Kickoff (renamed from §/loop Kickoff) in claude-plugins/manifest-dev-experimental/skills/drive/SKILL.md. Confirm: (1) the section is renamed, (2) it describes a single parameterised invocation with the scheduler skill name swapped in, (3) the argument string format is unchanged. Pass = all three."
+    prompt: "Read §Scheduler Kickoff (renamed from §/loop Kickoff) in claude-plugins/manifest-dev-experimental/skills/drive/SKILL.md. Confirm: (1) the section is renamed to 'Scheduler Kickoff'; (2) a /loop invocation block exists and is byte-identical to what drive used today (<interval> then the /drive-tick args); (3) a /check-in invocation block exists with <log-path> as the second positional arg BEFORE the /drive-tick command, consistent with /check-in's need to read the log file per INV-G9; (4) the /drive-tick args string is identical between the two blocks. Pass = all four."
   ```
 
 - [AC-2.4] Run summary printed at end of §Scheduler Kickoff includes an explicit scheduler field naming which was chosen (a labelled line such as `scheduler: /loop` or `scheduler: /check-in`, not merely a mention). Existing summary fields (run-id, mode, platform, sink, interval, budget, branch, PR number, log path, `tail -f` hint) unchanged. | Verify: subagent.
