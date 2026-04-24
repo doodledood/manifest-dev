@@ -20,7 +20,7 @@
     1. Parse `<interval> <log-path> <command>`; validate interval range (`15m`–`24h`); error on malformed input with the same wording `/drive` uses.
     2. Convert interval to seconds.
     3. Loop:
-       - Sleep the interval. Compute chunk count upfront: `chunks = ceil(interval_seconds / 540)` (where 540s = 9 minutes, leaving headroom under the Bash tool's 600s cap). Issue exactly `chunks` sequential `sleep 540` calls (final chunk may be shorter: `interval_seconds % 540`). No in-loop arithmetic — counter is known at entry. Cumulative semantics (sum of chunks), not wall-clock-target.
+       - Sleep the interval. Compute chunk count upfront: `chunks = ceil(interval_seconds / 540)` (where 540s = 9 minutes, leaving headroom under the Bash tool's 600s cap). Issue `chunks - 1` sequential `sleep 540` calls plus one final `sleep <remainder>` where `remainder = interval_seconds - (chunks - 1) * 540` (always in `1..540` — ceil guarantees non-zero, avoiding 9-minute shortfalls on exact-multiple-of-540 intervals that naive `% 540` would produce). No in-loop arithmetic — counter is known at entry. Cumulative semantics (sum of chunks), not wall-clock-target.
        - Invoke the `<command>` verbatim via the Skill tool — `<command>` is passed unparsed; no shell expansion, no re-quoting.
        - If the Skill-tool invocation itself fails (tool error, timeout, crash): fail-loud, exit with an explanatory message. Do NOT retry.
        - Read the log file at `<log-path>`. Find the last `## Tick N — …` or `## BUDGET EXHAUSTED` header.

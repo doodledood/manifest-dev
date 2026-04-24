@@ -27,7 +27,7 @@ Substitute for `/loop` when it is not installed. Drives `/drive-tick` from a sin
 2. Record `last_seen_header` = the last `## Tick N — …` line already in `<log-path>` at entry (null if none).
 3. Set `empty_count = 0`.
 4. Loop:
-   - Sleep: issue `chunks - 1` sequential `sleep 540` Bash calls, then one `sleep <remainder>` for the final chunk. Cumulative — drift is acceptable.
+   - Sleep: issue `chunks - 1` sequential `sleep 540` Bash calls, then one final `sleep <remainder>` where `remainder = interval_seconds - (chunks - 1) * 540` (always in the range `1..540`, never zero — `ceil` guarantees this). Cumulative — drift is acceptable.
    - Invoke `<command>` via the Skill tool. If the Skill tool itself errors, times out, or crashes (NOT the normal case of drive-tick completing and writing a log entry), exit fail-loud. No retry.
    - Read `<log-path>`. Find the last line matching `^## Tick N — ` or `^## BUDGET EXHAUSTED`.
    - If no match, OR the match is not strictly newer than `last_seen_header`: `empty_count += 1`. If `empty_count >= 2`, exit fail-loud (drive-tick produced no new outcome for two consecutive iterations). Otherwise re-loop — ONE grace iteration for first-tick init races.
