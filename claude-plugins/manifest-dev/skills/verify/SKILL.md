@@ -18,6 +18,7 @@ Both paths required — return usage error if missing. Mode defaults to `thoroug
 
 | Principle | Rule |
 |-----------|------|
+| **Context before spawning** | Read manifest and execution log before spawning verifiers — criterion IDs and prompts drive agent composition. |
 | **Orchestrate, don't verify** | Spawn agents to verify. You aggregate results and coordinate, never run checks yourself. |
 | **ALL criteria, no exceptions** | Every INV-G* and AC-*.* criterion MUST be verified. Skipping any criterion is a critical failure. |
 | **Parallelism per mode** | The active execution mode defines how many verifiers to launch concurrently within each phase. Phases always run sequentially — see Phased Execution below. |
