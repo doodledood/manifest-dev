@@ -1,6 +1,6 @@
 ---
 name: drive-tick
-description: 'Single iteration of /drive. Reads full execution log (memento), loads platform + sink adapters, checks terminal states, handles inbox (code-change asks route via Amendment), delegates the full implement + verify + fix loop to /do within the tick (intra-tick convergence), runs CI triage + tend PR, ends the loop on terminal state or budget exhaust — otherwise returns for the next scheduled iteration. Triggers: drive tick, run one drive iteration, advance the drive loop.'
+description: 'Single iteration of /drive. Reads full execution log (memento), loads platform + sink adapters, checks terminal states, handles inbox (code-change asks route via Amendment), delegates the full implement + verify + fix loop to /do within the tick (intra-tick convergence), runs CI triage + tend PR, ends the loop on terminal state or budget exhaust — otherwise returns for the next scheduled iteration. Use when /loop (or the inline-fallback scheduler) fires the next iteration, or to manually advance or debug a single drive pass. Triggers: drive tick, run one drive iteration, advance the drive loop.'
 user-invocable: true
 ---
 
@@ -8,7 +8,7 @@ user-invocable: true
 
 ## Goal
 
-Execute one stateless pass of the drive loop: read full state (log, git, adapter-specific), decide one wide action, apply it, log the outcome, then end the loop (terminal state or budget exhaust) or schedule the next tick via `/loop`.
+Execute one stateless pass of the drive loop: read full state (log, git, adapter-specific), decide one wide action, apply it, log the outcome, then end the loop (terminal state or budget exhaust) or schedule the next tick per the recorded scheduler (`/loop` in loop mode, chunked-sleep + self-invoke in inline-fallback mode — see `../drive/references/fallback-inline.md`).
 
 Same shape whether invoked by `/loop`'s cron or by the user manually for debug.
 
@@ -34,6 +34,8 @@ Missing required args → error with usage message and halt.
 **Read the full execution log top-to-bottom before any state decision.** The log IS the cross-tick state. No JSON state blobs, no side channels — just the log. This is the first action after lock acquisition, always.
 
 Never decide an action based on only the last few entries. Tick behavior depends on: tick count (for budget), prior `execution-complete-head: <sha>` lines (for retrigger-only skip and subsequent-tick terminal detection — drive-tick writes these when /do's response contains `## Execution Complete`), `retrigger-empty-commit: <sha>` markers from CI Triage, last-reported terminal status, accumulated escalations.
+
+The seed header's `scheduler:` field is immutable per run and determines how the Continuing outcome schedules the next tick — see §Output Protocol.
 
 ## Concurrency Guard
 
@@ -227,7 +229,9 @@ Every tick ends with EXACTLY one of these outcomes, and appends a log entry for 
 
 - Appended log block: `## Tick N — Continuing` with timestamp, detected state summary, action taken (do / inbox-amendment / ci-retrigger / tend-pr / no-op), HEAD after action.
 - Lock removed.
-- Return. The next iteration is scheduled.
+- Schedule the next iteration per the `scheduler:` field from the seed header (§Memento Pattern):
+  - **`loop`**: Return. The next iteration is scheduled.
+  - **`inline-fallback`**: Follow `../drive/references/fallback-inline.md` §Self-Invocation Directive — it owns the full ordering (release lock → append log → sleep → re-invoke) and the chunked-sleep + self-invocation mechanics.
 
 ### Skipped (lock held)
 

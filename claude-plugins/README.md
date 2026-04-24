@@ -53,7 +53,7 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 **Experimental** alternative to `/do` + `/tend-pr`. Cron-driven tick loop with pluggable platform and sink adapters.
 
 **Skills:**
-- `/drive` - Wrapper that parses args, resolves base branch, pre-flights `/loop`, bootstraps branch/commit/PR (github mode), then hands control to `/loop` for repeated `/drive-tick` invocations.
+- `/drive` - Wrapper that parses args, resolves base branch, pre-flights the scheduler (`/loop` preferred; auto-falls back to an inline scheduler when `/loop` isn't installed), bootstraps branch/commit/PR (github mode), then hands control to the scheduler for repeated `/drive-tick` invocations.
 - `/drive-tick` - The per-iteration brain. Reads full log (memento), loads platform + sink adapters, checks terminal states, handles inbox, implements inline, verifies via `manifest-dev:verify`, fixes, amends if scope shifts, commits, and returns for the next scheduled iteration — or ends on terminal state / budget exhaust.
 
 **Adapters:**
