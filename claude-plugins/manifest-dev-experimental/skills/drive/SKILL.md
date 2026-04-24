@@ -1,6 +1,6 @@
 ---
 name: drive
-description: 'Experimental cron-driven manifest runner. Bootstraps branch/PR state and kicks off /loop to repeatedly invoke /drive-tick until a terminal state (all verify pass for none mode, merge-ready for github mode) or budget exhaust. Wide ticks with intra-tick convergence — /drive-tick delegates the full verify-fix loop to /do per tick. Use when you want /define → green without babysitting, or to autonomously tend a PR. Triggers: drive, run autonomously, take it to green, cron this to completion.'
+description: 'Experimental tick-based manifest runner. Bootstraps branch/PR state and kicks off /loop — or an inline-fallback scheduler when /loop isn''t available — to repeatedly invoke /drive-tick until a terminal state (all verify pass for none mode, merge-ready for github mode) or budget exhaust. Wide ticks with intra-tick convergence — /drive-tick delegates the full verify-fix loop to /do per tick. Use when you want /define → green without babysitting, or to autonomously tend a PR. Triggers: drive, run autonomously, take it to green, cron this to completion.'
 user-invocable: true
 ---
 
@@ -8,7 +8,7 @@ user-invocable: true
 
 ## Goal
 
-Take a manifest (or an existing PR in babysit mode) to a terminal state through repeated stateless ticks. This wrapper handles argument parsing, mode validation, pre-flight, and bootstrap, then invokes `/loop` to schedule `/drive-tick` on the configured interval. `/drive` exits immediately after kickoff — ongoing work happens in scheduled tick invocations, not in the wrapper.
+Take a manifest (or an existing PR in babysit mode) to a terminal state through repeated stateless ticks. This wrapper handles argument parsing, mode validation, pre-flight, and bootstrap, then hands control to the scheduler — `/loop` when available, the inline-fallback scheduler otherwise — to schedule `/drive-tick` on the configured interval. In loop mode, `/drive` exits immediately after kickoff and ongoing work happens in scheduled tick invocations. In inline-fallback mode, the scheduler runs inside the Claude session and `/drive` holds until a terminal state or budget exhaust — see `references/fallback-inline.md`.
 
 Coexists with `/do`, `/tend-pr`, `/auto` — does not replace them.
 
@@ -44,7 +44,8 @@ Coexists with `/do`, `/tend-pr`, `/auto` — does not replace them.
 
 All pre-flight checks run BEFORE any branch creation, commit, push, or PR operation. If any check fails, the wrapper errors actionably and exits without modifying repository state.
 
-- **`/loop` available.** Error: "/loop skill not found — ensure a loop provider is installed."
+- **Scheduler resolution.** Check Claude's system-prompt skills list for a skill with `name: loop`. If present, `scheduler = loop`. If absent, `scheduler = inline-fallback` and the run follows `references/fallback-inline.md` for the fallback protocol. Record the value once in the execution log seed header; never re-evaluate during the run.
+- **Announce before side effects.** In inline-fallback only: print the line from `references/fallback-inline.md` §Announce Protocol before any side-effecting operation in this skill (covers at least the operations named in the opening paragraph of this section, plus lock creation and log initialization). Read-only pre-flight checks may precede the announcement; side-effecting ones may not.
 - **`manifest-dev:do`, `manifest-dev:verify`, and `manifest-dev:define` available** (drive-tick invokes `manifest-dev:do` directly and `manifest-dev:define --amend` during Amendment; `manifest-dev:verify` is required transitively by `/do`). Error: "manifest-dev skills not found — /drive requires manifest-dev."
 - **Inside a git repo.** Error: "Not inside a git repository."
 - **Manifest mode: manifest file readable and parseable** as a `manifest-dev:define` manifest. Error: "Manifest not found, unreadable, or malformed: <path>"
@@ -97,11 +98,15 @@ Skip branch creation, commit, push, and PR creation — the user is already on a
 
 Create `/tmp/drive-log-{run-id}.md` if it does not already exist. If it does exist (resumption or collision), append to it — do not overwrite.
 
-Seed header includes: manifest path, mode (manifest|babysit), platform, sink, base branch, current branch, PR number (if github), interval, max-ticks, run-id, timestamp.
+Seed header includes: manifest path, mode (manifest|babysit), platform, sink, base branch, current branch, PR number (if github), interval, max-ticks, scheduler (`loop` | `inline-fallback`), run-id, timestamp. The scheduler field is written once at initialization from the value resolved during §Pre-flight; it is never rewritten on resume.
 
-## /loop Kickoff
+## Kickoff
 
-After all pre-flight, bootstrap, and log initialization succeed, invoke `/loop` with the configured interval and `/drive-tick` plus its flag-based arguments:
+After all pre-flight, bootstrap, and log initialization succeed, branch by the scheduler recorded in the seed header.
+
+### Scheduler: `loop`
+
+Invoke `/loop` with the configured interval and `/drive-tick` plus its flag-based arguments:
 
 ```
 Invoke the /loop skill with: "<interval> /drive-tick --run-id <run-id> --mode <mode> --platform <platform> --sink <sink> --log <log-path> --max-ticks <N> [--manifest <manifest-path>] [--pr <pr-number>]"
@@ -109,11 +114,18 @@ Invoke the /loop skill with: "<interval> /drive-tick --run-id <run-id> --mode <m
 
 Include `--manifest` only in manifest mode; include `--pr` only when platform is github. Then exit — `/drive` does not wait for tick completion.
 
-Print a run summary to the terminal: run-id, mode, platform, sink, interval, budget, branch, PR number (github mode only), log path, and a `tail -f` hint for observing progress. `/drive` exits after kickoff; ongoing work happens in scheduled `/drive-tick` invocations.
+### Scheduler: `inline-fallback`
+
+The mode announcement already fired during §Pre-flight (see §Scheduler resolution). Invoke `/drive-tick` directly per `references/fallback-inline.md` §Self-Invocation Directive, forwarding the current flags. Subsequent ticks are scheduled by `/drive-tick` itself per `references/fallback-inline.md` §Chunked-Sleep Protocol and §Self-Invocation Directive. `/drive` does not exit in this mode; the session is held until a terminal state, budget exhaust, or user interruption.
+
+### Run summary
+
+Print a run summary to the terminal: run-id, mode, platform, sink, scheduler, interval, budget, branch, PR number (github mode only), log path, and a `tail -f` hint for observing progress. In `loop`, `/drive` exits after kickoff and ongoing work happens in scheduled `/drive-tick` invocations. In `inline-fallback`, add a one-line reminder that the session is held until the run ends.
 
 ## Gotchas
 
 - **`/loop` reliability is outside /drive's control.** If cron stops firing (session ends, host sleeps), ticks stop. No automatic recovery — the log will go stale. Re-invoke `/drive` to resume. The tick is designed to pick up from log state.
+- **Inline-fallback scheduler holds the session.** When `/loop` is unavailable, `/drive` auto-selects the inline-fallback scheduler — see `references/fallback-inline.md` §Gotchas for observable effects (session-held, per-chunk blocking, context accumulation) and mitigation. Keep `--max-ticks` conservative, or install `/loop` to regain cron scheduling. Stale-lock recovery after mid-sleep interrupt: see §Pre-flight.
 - **Base branch auto-detection can fail** on repos with unusual configurations (detached HEAD on remote, no `origin/HEAD`, no `main` branch). The error is explicit — no silent fallback to `master`. Pass `--base <branch>` to override.
 - **Stale lock after crash** — see §Pre-flight.
 - **Run-id collision mitigations.** Github-mode run-ids are qualified by repo owner/name to avoid collision when `/tmp` is shared across multiple repositories with overlapping PR numbers. None-mode run-ids include a 4-char random suffix to avoid collision when two none-mode runs start within the same second.
