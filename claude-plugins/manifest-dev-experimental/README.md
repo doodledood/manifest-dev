@@ -6,8 +6,9 @@ Cron-driven, tick-based driver that takes a manifest (or PR in babysit mode) all
 
 ## What it ships
 
-- **`/drive`** — user-invocable wrapper. Parses args, validates mode, resolves base branch, pre-flights `/loop`, `manifest-dev`, and stale locks, bootstraps (branch + empty commit + PR for github; branch + empty commit for none), then kicks off `/loop`.
+- **`/drive`** — user-invocable wrapper. Parses args, validates mode, resolves base branch, pre-flights the scheduler (`/loop` preferred, `/check-in` as fallback), `manifest-dev`, and stale locks, bootstraps (branch + empty commit + PR for github; branch + empty commit for none), then kicks off the chosen scheduler.
 - **`/drive-tick`** — the per-iteration brain. Lean orchestration. Each tick: grab lock, read the full execution log (memento), read state via platform adapter, check terminal states, handle inbox (amendments — no inline code edits), invoke `/do` for the full manifest-convergence loop, run CI triage + tend PR via the adapter, and either return for the next scheduled iteration or end on terminal state or budget exhaust.
+- **`/check-in`** — blocking, same-session fallback scheduler. Automatically selected by `/drive` when `/loop` is not installed. Sleeps the interval in upfront-computed chunks (≤9m each to stay under the Bash tool cap), invokes `/drive-tick`, reads the log file to detect terminal state, and either exits or re-loops. Trades `/loop`'s background cron for blocking-session determinism; install `/loop` for fire-and-forget.
 - **Pluggable adapters** — `skills/drive/references/platforms/{none,github}.md` and `skills/drive/references/sinks/local.md` follow a consistent markdown-state-report contract. Adding a new platform or sink is a copy-and-adjust.
 
 ## Mode matrix
@@ -84,7 +85,7 @@ If `/drive` proves out, a later manifest can deprecate the overlapping skills. F
 
 `/drive` performs pre-flight checks before any branch/commit/push/PR side effects. It errors actionably if any of these are missing:
 
-- **`/loop` skill** — the cron scheduler that invokes `/drive-tick` on the configured interval.
+- **Scheduler: `/loop` OR `/check-in`** — `/drive` selects `/loop` when available (background cron, non-blocking); otherwise falls back to `/check-in` (blocking, same-session). Neither installed → `/drive` errors out in pre-flight. `/loop` is preferred because its cron survives session close; `/check-in` is a lighter-weight fallback for environments where `/loop` is not installed.
 - **`manifest-dev:do`, `manifest-dev:verify`, and `manifest-dev:define`** — `/do` runs the full verify-fix loop per tick; `/verify` backs it; `/define --amend --from-do` handles mid-tick manifest amendments.
 - **GitHub MCP tools** (when `--platform github`) — for PR create/read/comment operations.
 - **`/tmp/` persistence across sessions** — the tick reads its log from `/tmp/drive-log-{run-id}.md` on every wake (same assumption `tend-pr-tick` relies on).
@@ -126,6 +127,7 @@ Adjust to your workflow. These are **not enforced by the plugin** — they're Cl
 ## Gotchas
 
 - **`/loop` reliability is outside the plugin's control.** If the cron host sleeps or the Claude Code session ends, ticks stop. No recovery.
+- **`/check-in` fallback is blocking and session-bound.** When `/drive` falls back to `/check-in` (because `/loop` is not installed), the scheduler runs inside the Claude Code session as a blocking Skill invocation — not a background cron. Closing the session ends the loop immediately; there is no resumption mechanism. This is a strictly weaker guarantee than `/loop`'s cron-backed scheduling; install `/loop` for fire-and-forget behaviour.
 - **Stale locks require manual cleanup.** Locks have no TTL — a crashed or interrupted tick leaves its lock behind. The next `/drive` run halts with the lock path + timestamp + manual-removal instructions. Never auto-cleared; the user confirms no live tick exists before removing.
 - **Lock TOCTOU.** Two ticks may race on lock creation and both think they acquired. The tick re-verifies lock ownership immediately after creation (reads back PID/timestamp); mismatch → exit silently. Rare duplicate work is possible.
 - **Crash recovery keeps WIP.** If a prior tick crashed mid-implementation, uncommitted working-tree changes persist. The next tick commits them if the last log entry is consistent with the WIP shape; otherwise it logs a manual-review flag and exits. Never force-resets.

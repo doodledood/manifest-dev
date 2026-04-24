@@ -44,7 +44,7 @@ Coexists with `/do`, `/tend-pr`, `/auto` — does not replace them.
 
 All pre-flight checks run BEFORE any branch creation, commit, push, or PR operation. If any check fails, the wrapper errors actionably and exits without modifying repository state.
 
-- **`/loop` available.** Error: "/loop skill not found — ensure a loop provider is installed."
+- **Scheduler available.** Select in this order: `/loop` preferred when installed (background cron, non-blocking); else `/check-in` as a fallback (blocking, same-session — warn the user during the run summary); else error. The order is deterministic — `/loop` first, `/check-in` only when `/loop` is missing. Error when neither is available: "No scheduler installed — /drive requires either /loop (background cron) or /check-in (blocking fallback). Install one of them."
 - **`manifest-dev:do`, `manifest-dev:verify`, and `manifest-dev:define` available** (drive-tick invokes `manifest-dev:do` directly and `manifest-dev:define --amend` during Amendment; `manifest-dev:verify` is required transitively by `/do`). Error: "manifest-dev skills not found — /drive requires manifest-dev."
 - **Inside a git repo.** Error: "Not inside a git repository."
 - **Manifest mode: manifest file readable and parseable** as a `manifest-dev:define` manifest. Error: "Manifest not found, unreadable, or malformed: <path>"
@@ -99,21 +99,36 @@ Create `/tmp/drive-log-{run-id}.md` if it does not already exist. If it does exi
 
 Seed header includes: manifest path, mode (manifest|babysit), platform, sink, base branch, current branch, PR number (if github), interval, max-ticks, run-id, timestamp.
 
-## /loop Kickoff
+## Scheduler Kickoff
 
-After all pre-flight, bootstrap, and log initialization succeed, invoke `/loop` with the configured interval and `/drive-tick` plus its flag-based arguments:
+After all pre-flight, bootstrap, and log initialization succeed, invoke the chosen scheduler. The invocation string is parameterised on the scheduler resolved during pre-flight.
+
+**When `/loop` is the chosen scheduler** (preferred):
 
 ```
 Invoke the /loop skill with: "<interval> /drive-tick --run-id <run-id> --mode <mode> --platform <platform> --sink <sink> --log <log-path> --max-ticks <N> [--manifest <manifest-path>] [--pr <pr-number>]"
 ```
 
-Include `--manifest` only in manifest mode; include `--pr` only when platform is github. Then exit — `/drive` does not wait for tick completion.
+**When `/check-in` is the chosen scheduler** (fallback, blocking):
 
-Print a run summary to the terminal: run-id, mode, platform, sink, interval, budget, branch, PR number (github mode only), log path, and a `tail -f` hint for observing progress. `/drive` exits after kickoff; ongoing work happens in scheduled `/drive-tick` invocations.
+```
+Invoke the /check-in skill with: "<interval> <log-path> /drive-tick --run-id <run-id> --mode <mode> --platform <platform> --sink <sink> --log <log-path> --max-ticks <N> [--manifest <manifest-path>] [--pr <pr-number>]"
+```
+
+The drive-tick arg string is identical between the two; `/check-in` takes one extra positional arg (`<log-path>`) upfront because it reads terminal state from the log file rather than from drive-tick's response.
+
+Include `--manifest` only in manifest mode; include `--pr` only when platform is github.
+
+With `/loop`: then exit — `/drive` does not wait for tick completion (background cron).
+
+With `/check-in`: `/drive` remains blocked for the duration of the run — the session holds the scheduler. Closing the session ends the run immediately.
+
+Print a run summary to the terminal: `scheduler: /loop` or `scheduler: /check-in` (new), run-id, mode, platform, sink, interval, budget, branch, PR number (github mode only), log path, and a `tail -f` hint for observing progress. When `/check-in` was chosen, also print a one-line warning that the session will block for the duration of the run.
 
 ## Gotchas
 
 - **`/loop` reliability is outside /drive's control.** If cron stops firing (session ends, host sleeps), ticks stop. No automatic recovery — the log will go stale. Re-invoke `/drive` to resume. The tick is designed to pick up from log state.
+- **`/check-in` fallback is blocking and session-bound.** When `/drive` falls back to `/check-in` (because `/loop` is not installed), the scheduler runs inside the Claude Code session as a blocking Skill invocation. Closing the session kills the scheduler immediately — there is no background cron. This is a documented weaker guarantee than `/loop`; install `/loop` for fire-and-forget behaviour.
 - **Base branch auto-detection can fail** on repos with unusual configurations (detached HEAD on remote, no `origin/HEAD`, no `main` branch). The error is explicit — no silent fallback to `master`. Pass `--base <branch>` to override.
 - **Stale lock after crash** — see §Pre-flight.
 - **Run-id collision mitigations.** Github-mode run-ids are qualified by repo owner/name to avoid collision when `/tmp` is shared across multiple repositories with overlapping PR numbers. None-mode run-ids include a 4-char random suffix to avoid collision when two none-mode runs start within the same second.

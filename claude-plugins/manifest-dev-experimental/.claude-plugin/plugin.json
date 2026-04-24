@@ -1,11 +1,13 @@
 {
   "name": "manifest-dev-experimental",
-  "version": "0.4.0",
-  "description": "Experimental tick-based cron-driven manifest runner. Ships /drive + /drive-tick: a stateless, wide-tick driver that takes a manifest (or PR in babysit mode) to a terminal state through pluggable platform and sink adapters. Coexists with manifest-dev — nothing deprecated.",
+  "version": "0.5.0",
+  "description": "Experimental cron-driven manifest runner. Ships /drive + /drive-tick + /check-in fallback (auto-selected when /loop is unavailable). Stateless, wide-tick driver taking a manifest or PR to a terminal state through pluggable platforms and sinks.",
   "keywords": [
     "drive",
     "tick",
     "loop",
+    "check-in",
+    "fallback",
     "autonomous",
     "experimental",
     "manifest",

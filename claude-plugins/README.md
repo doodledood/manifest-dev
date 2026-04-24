@@ -16,7 +16,7 @@ Front-load the thinking so AI agents get it right the first time.
 |--------|--------------|
 | [`manifest-dev`](./manifest-dev) | Verification-first manifest workflows with phased verification (fast checks first, e2e/deploy-dependent later) and multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
 | [`manifest-dev-tools`](./manifest-dev-tools) | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. |
-| [`manifest-dev-experimental`](./manifest-dev-experimental) | **Experimental.** Cron-driven, tick-based manifest runner (`/drive` + `/drive-tick`) with pluggable platform (`none`, `github`) and sink (`local`) adapters. Wide stateless ticks, cross-tick convergence, no flow-control hooks. Coexists with `manifest-dev` — nothing deprecated. |
+| [`manifest-dev-experimental`](./manifest-dev-experimental) | **Experimental.** Tick-based manifest runner (`/drive` + `/drive-tick`) with `/check-in` as a blocking-session fallback scheduler when `/loop` is not installed. Pluggable platform (`none`, `github`) and sink (`local`) adapters. Wide stateless ticks, cross-tick convergence, no flow-control hooks. Coexists with `manifest-dev` — nothing deprecated. |
 
 ## Plugin Details
 
@@ -53,8 +53,9 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 **Experimental** alternative to `/do` + `/tend-pr`. Cron-driven tick loop with pluggable platform and sink adapters.
 
 **Skills:**
-- `/drive` - Wrapper that parses args, resolves base branch, pre-flights `/loop`, bootstraps branch/commit/PR (github mode), then hands control to `/loop` for repeated `/drive-tick` invocations.
+- `/drive` - Wrapper that parses args, resolves base branch, pre-flights the scheduler (`/loop` preferred, `/check-in` fallback) and `manifest-dev` skills, bootstraps branch/commit/PR (github mode), then hands control to the scheduler for repeated `/drive-tick` invocations.
 - `/drive-tick` - The per-iteration brain. Reads full log (memento), loads platform + sink adapters, checks terminal states, handles inbox, implements inline, verifies via `manifest-dev:verify`, fixes, amends if scope shifts, commits, and returns for the next scheduled iteration — or ends on terminal state / budget exhaust.
+- `/check-in` - Blocking, same-session fallback scheduler. Auto-selected by `/drive` when `/loop` is not installed. Sleeps the interval in chunks, invokes `/drive-tick`, reads the log file to detect terminal state, and either exits or re-loops. Trades `/loop`'s background cron for blocking-session determinism.
 
 **Adapters:**
 - Platforms: `none` (local branch only), `github` (PR bootstrap + tend — preserves `tend-pr-tick`'s classification, CI triage, PR sync, thread resolution, and merge-ready semantics adapted to the adapter contract).

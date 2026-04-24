@@ -4,6 +4,10 @@
 
 manifest-dev marketplace -- verification-first manifest workflows for Claude Code, with agents, skills, and hooks.
 
+## Output Style
+
+Write long outputs (manifests, docs, multi-section files) **incrementally in chunks** rather than one massive Write call. Use an initial Write to create the file with the first section, then Edit to append subsequent sections. Keeps context usage bounded and makes progress visible.
+
 ## Development Commands
 
 ```bash
