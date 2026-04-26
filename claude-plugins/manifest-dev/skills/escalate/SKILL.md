@@ -144,7 +144,11 @@ Approve amendment, reject and continue with current criterion, or adjust.
 
 ### Self-Amendment
 
-User input or a PR review comment contradicts or extends the manifest. No 3-attempt evidence needed — this is a scope change, not a blocker.
+**Standard reflex for user/reviewer feedback that contradicts or extends the manifest** — not a fallback for ambiguous cases.
+
+Canonical rule: `do/SKILL.md` Mid-Execution Amendment. Applies during /do, during /verify, and after /done (`done/SKILL.md` Post-Completion Feedback) — all three skills route here.
+
+No 3-attempt evidence needed — this is a scope change, not a blocker.
 
 ```markdown
 ## Escalation: Self-Amendment
@@ -162,7 +166,13 @@ User input or a PR review comment contradicts or extends the manifest. No 3-atte
 [Path to execution log]
 ```
 
-**When to use**: The USER or a REVIEWER triggered a scope change — they said something that contradicts or extends the manifest. This is a mechanical exit, not a decision point. /do handles the amendment flow after this escalation.
+**When to use**: The USER or a REVIEWER said something that contradicts or extends the manifest. This is a mechanical exit, not a decision point.
+
+**Re-entry depends on the trigger source:**
+- *Triggered from /do or /verify* — autonomous fast path: `/define --amend <path> --from-do`, then /do resumes with the updated manifest. No interview, no summary-for-approval.
+- *Triggered after /done* — interactive path: `/define --amend <path>` (without `--from-do`). /done is terminal; there's no /do to resume into. The Standalone amendment flow runs (interview scoped to the change, summary for approval), then `/do <manifest> <log> --scope <new-or-affected-deliverables>` is invoked separately to implement the change. See `done/SKILL.md` Post-Completion Feedback for the full re-entry contract.
+
+**Carve-out**: pure questions about the manifest or process are answered inline — no Self-Amendment. When ambiguous, amend (silent scope drift is the worse failure).
 
 **vs Proposed Amendment**: If YOU discovered the criterion should change (no user/reviewer trigger), use Proposed Amendment instead — that requires human approval.
 

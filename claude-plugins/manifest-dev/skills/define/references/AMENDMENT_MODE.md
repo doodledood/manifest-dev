@@ -2,9 +2,17 @@
 
 /define modifies an existing manifest instead of building from scratch.
 
+## Cumulative Manifest Rule
+
+**The manifest is the canonical source of truth for the PR/branch lifetime — not for a single task.** After every amendment, the manifest must describe the FULL PR state: intent, every deliverable, every Global Invariant, every Process Guidance entry, every Known Assumption. The latest increment is layered onto the prior content, never substituted for it.
+
+**No silent drops.** When applying an amendment, prior content is preserved by default. Removal is explicit — if a change supersedes an existing AC/INV/PG, the supersession is logged in the `## Amendments` section with rationale. The amendment receiver is responsible for reading the full prior manifest and confirming nothing valuable was lost.
+
+A manifest at any point in time should be readable as "everything currently in scope for this PR/branch," not "the most recent change request." This is what makes the manifest a useful artifact for PR descriptions, reviews, and future amendments.
+
 ## Core Behavior
 
-Read the manifest at the given path. Existing decisions (ACs, INVs, PGs, Approach, Trade-offs) are preserved unless directly contradicted by the change request. Make targeted changes — only items affected by the amendment are updated. Add new items, modify contradicted items, or remove items that no longer apply.
+Read the manifest at the given path. Existing decisions (ACs, INVs, PGs, Approach, Trade-offs) are preserved unless directly contradicted by the change request. Make targeted changes — only items affected by the amendment are updated. Add new items, modify contradicted items, or remove items that no longer apply (with explicit log entry per the Cumulative Manifest Rule above).
 
 **Coverage goals apply scoped to the change** — not the full manifest. Existing manifest content satisfies goals for unchanged areas.
 

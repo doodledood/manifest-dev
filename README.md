@@ -161,21 +161,21 @@ Set in manifest: add `mode: balanced` to the Intent & Context section.
 
 </details>
 
-### Best Practice: Two Sessions, One Source of Truth
+### Best Practice: One Manifest Per PR/Branch, Feedback Through It
 
-Run `/define` and `/do` in separate sessions. The define session holds your intent; the do session holds implementation state. Keep both open.
+The manifest is the canonical source of truth for the PR/branch — not for a single task. Feedback flows through it: when something's off mid-`/do`, mid-`/verify`, or after `/done` (a missed edge case, a reviewer comment, a bug you didn't anticipate), just send the feedback in your active session. The system routes it through Self-Amendment automatically: `/escalate` → `/define --amend --from-do` → `/do` resumes with the updated manifest. No manual session-switching for the common case. Pure questions about the manifest are answered inline; everything else amends.
 
-When `/do` finishes and something's off: a missed edge case, a reviewer comment, a bug you didn't anticipate. Don't patch it ad hoc. Go back to the define session. Encode the issue as an acceptance criterion in the manifest. Then re-run `/do` against the updated manifest in the do session.
+After `/done`, the same default applies — the post-completion re-entry runs `/define --amend <manifest>` interactively (so you can shape the change), then `/do --scope <new-or-affected-deliverables>`. /done is unreachable until the full verification suite passes again.
 
-This closes the loop properly. The fix gets the same verification treatment as everything else. The manifest stays the single source of truth for what "done" means. And if something regresses on a later pass, the criterion catches it.
+**Two-session pattern is still useful** when you want to draft the next manifest while one is executing — `/define` in one session, watch `/do` in another. But you no longer have to ferry feedback manually between them; the autonomous Self-Amendment flow handles that within a single session.
 
 **Example**: You ship a login feature. A reviewer flags that error messages leak whether an email exists in the system.
 
-1. **Define session**: add `[AC-2.4] Authentication errors return a generic message regardless of whether the account exists` with a verification method
-2. **Do session**: run `/do` against the updated manifest
-3. `/verify` confirms the fix. It will also catch it if it regresses in a future change.
+1. In the same session, send: "Auth errors should return a generic message regardless of whether the account exists."
+2. The system amends the manifest with a new AC, then re-enters `/do --scope <auth-deliverable>` to implement it.
+3. `/verify` confirms the fix in selective mode, then auto-triggers the full pass before `/done` is reachable again. Future regressions are caught by the new criterion.
 
-Every round trip through the manifest grows your verification surface. Bug fixes and late requirements become checked criteria. The manifest accumulates what "done" means for this task, and nothing falls through because you fixed it outside the loop.
+Every round trip through the manifest grows your verification surface. Bug fixes and late requirements become checked criteria, accumulated cumulatively per the manifest's full-PR-state guarantee.
 
 The do session doesn't need to remember the define conversation. The manifest is external state. Run `/do` in a fresh session after `/define`, or at minimum `/compact` before starting.
 
@@ -332,9 +332,9 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 
 | Plugin | Description |
 |--------|-------------|
-| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, `/tend-pr`, review agents, workflow hooks. Mid-execution manifest amendments via `--amend` flag and UserPromptSubmit hook. |
+| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, `/tend-pr`, review agents, workflow hooks. The manifest is the canonical source of truth for the PR/branch — feedback during `/do`, `/verify`, or after `/done` defaults to amending it. Verification is selective during fix-loop (in-scope deliverables + globals) with a mandatory full final gate before `/done`. |
 | `manifest-dev-tools` | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. |
-| `manifest-dev-experimental` | **Experimental.** Cron-driven, tick-based manifest runner (`/drive` + `/drive-tick`) with pluggable platform (`none`, `github`) and sink (`local`) adapters. Takes a manifest (or PR in babysit mode) to a terminal state via repeated stateless ticks — cross-tick convergence replaces `/do`'s internal fix-verify-loop hooks. Coexists with `manifest-dev`; nothing deprecated. |
+| `manifest-dev-experimental` | **Experimental.** Cron-driven, tick-based manifest runner (`/drive` + `/drive-tick`) with pluggable platform (`none`, `github`) and sink (`local`) adapters. Takes a manifest (or PR in babysit mode) to a terminal state via repeated stateless ticks; each tick delegates implement+verify+fix to `/do` (intra-tick convergence), with cross-tick boundaries handling CI triage, PR tending, and inbox routing. Coexists with `manifest-dev`; nothing deprecated. |
 
 ## Plugin Architecture
 
@@ -342,13 +342,13 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 
 | Skill | Type | Description |
 |-------|------|-------------|
-| `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, outputs manifest with verification methods. When invoked again in the same session with a related task, defaults to amending the prior manifest so one change set keeps one constitution. |
-| `/do` | User-invoked | Executes against manifest. Follows execution order, watches for risks, logs progress for disaster recovery |
+| `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, outputs manifest with verification methods. Defaults to amending a prior in-scope manifest (in-session, conversation-referenced, or branch-archived in `.manifest/`) so one change set keeps one constitution. On a fresh /define against a non-empty branch, seeds from the existing diff. |
+| `/do` | User-invoked | Executes against manifest. Follows execution order, watches for risks, logs progress for disaster recovery. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
 | `/auto` | User-invoked | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do`. Supports `--mode` and `--tend-pr` pass-through |
 | `/tend-pr` | User-invoked | Sets up PR for review and starts polling loop. Manifest-aware or babysit mode |
-| `/tend-pr-tick` | Internal | Single iteration of PR tending (classify, route, fix). Called by `/loop` via `/tend-pr` |
-| `/verify` | Internal | Spawns verifiers for all criteria, phased by iteration speed (fast checks first, e2e/deploy-dependent later). Routes to `criteria-checker` agents based on verification method |
-| `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure |
+| `/tend-pr-tick` | User-invoked | Single iteration of PR tending (classify, route, fix). Called by `/loop` via `/tend-pr`; also user-invocable for single-tick runs. PR-comment routing follows the same default-to-amend reflex as in-session feedback. |
+| `/verify` | Internal | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed (fast checks first, e2e/deploy-dependent later). |
+| `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |
 | `/figure-out` | User-invoked | Collaborative thinking partner for any topic. Investigates before claiming, surfaces gaps, resists premature synthesis |
 | `/learn-define-patterns` | User-invoked | Analyzes recent /define sessions, extracts user preference patterns, writes them to CLAUDE.md for future /define sessions |
