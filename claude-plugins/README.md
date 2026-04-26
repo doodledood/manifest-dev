@@ -31,7 +31,7 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 **Optional skills:**
 - `/figure-out` - Figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, resists premature synthesis. Use before `/define` when the problem space is foggy.
 
-**Other skills:** `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command (add `--tend-pr` for PR lifecycle) | `/tend-pr` - Tends a PR through review to merge-readiness, manifest-aware or babysit mode | `/learn-define-patterns` - Analyzes past /define sessions and writes preference patterns to CLAUDE.md
+**Other skills:** `/setup-manifest-dev` - One-time setup: auto-detects install scope, pre-grants four permissions needed to run `/define` and `/do` without prompts | `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command (add `--tend-pr` for PR lifecycle) | `/tend-pr` - Tends a PR through review to merge-readiness, manifest-aware or babysit mode | `/learn-define-patterns` - Analyzes past /define sessions and writes preference patterns to CLAUDE.md
 
 **Internal skills:** `/verify`, `/done`, `/escalate`, `/stop-thinking-disciplines`, `/tend-pr-tick`, `thinking-disciplines`
 

@@ -11,6 +11,33 @@ Tell Claude what "done" looks like. Let it work. Check the result.
 
 That's it. `/define` interviews you and builds a manifest. `/do` executes it. Two commands.
 
+## Setup
+
+manifest-dev needs four permissions to run without prompts: one read of the plugin cache (where skills live) and three `/tmp/` writes (manifest, discovery log, execution log). Run the setup skill once to pre-grant them:
+
+```
+/setup-manifest-dev
+```
+
+That's it. The skill auto-detects your install scope (user, project, or local dev), writes to the right settings file, and confirms which file it updated. Running it again is safe — it deduplicates.
+
+**Manual config** (if you prefer to edit settings directly):
+
+Add these four entries to `permissions.allow` in the appropriate settings file:
+
+```json
+"Read(~/.claude/plugins/cache/manifest-dev/manifest-dev/*/**)",
+"Edit(//tmp/manifest-*.md)",
+"Edit(//tmp/define-discovery-*.md)",
+"Edit(//tmp/do-log-*.md)"
+```
+
+| Install scope | Settings file |
+|---|---|
+| User (global install) | `~/.claude/settings.json` |
+| Project (project install) | `.claude/settings.json` |
+| Local dev (repo clone) | `.claude/settings.local.json` |
+
 ## The Mindset Shift
 
 Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
@@ -103,6 +130,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 
 | Skill | Description |
 |-------|-------------|
+| `/setup-manifest-dev` | One-time setup: auto-detects install scope (user/project/local), pre-grants the four permissions needed to run `/define` and `/do` without prompts. |
 | `/define` | Interviews you, builds an executable manifest with verification criteria. `--interview minimal\|autonomous\|thorough` controls interview style (default: thorough). |
 | `/do` | Works through the manifest autonomously, verifies everything passes |
 | `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` and `--tend-pr` pass-through. |
