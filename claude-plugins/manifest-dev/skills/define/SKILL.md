@@ -36,6 +36,46 @@ Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do
 
 If no arguments provided, ask: "What would you like to build or change?"
 
+## Session-Default Amendment
+
+After parsing arguments (above) and before any other workflow step (Domain Guidance, interview, etc.), check whether this session already produced a manifest. The goal is **one manifest per related change set** — follow-up bug fixes, feature extensions, and polish on the same surface should accumulate criteria into the existing manifest rather than start over and silently lose prior INVs/ACs/PGs.
+
+**Skip this section entirely when the user has already pointed at a specific manifest.** Explicit signals always win over session-default detection:
+- `--amend <path>` was passed (preserves `/do --from-do`, which always passes `--amend`, and any explicit user `/define --amend <path>` invocation).
+- Input arguments contain a `/tmp/manifest-*.md` path or otherwise plainly point at a specific manifest file — proceed past this section and let the workflow reach **Existing Manifest Feedback** below, which already treats the referenced manifest as source of truth.
+
+**Otherwise**, determine whether a prior `/define` already completed in this session. The signal is `/define`'s own completion output — a line of the form `Manifest complete: /tmp/manifest-{timestamp}.md` (defined in the `## Complete` section below; this is the only cross-invocation signal that survives reliably across `/define` runs). If multiple such lines appear in the conversation context, the **most recent in transcript order wins** (this handles the case where the user manually amended an older manifest mid-session — transcript order, not the path's timestamp, is authoritative). If the conversation has been compacted and the signal is no longer accessible, you'll naturally land in the No Prior Manifest Found branch — proceed fresh; the user can recover with explicit `/define --amend <path>` if needed.
+
+### No Prior Manifest Found
+
+Behavior is unchanged from a normal fresh `/define`. No announcement is emitted. Proceed with the remaining workflow as written.
+
+### Prior Manifest Found
+
+Read the prior manifest at the matched path. Compare its **Goal** and **Deliverables** (titles and acceptance criteria) against the new task description.
+
+**Amendment is the default — not a 50/50 judgment call.** Operational test for "truly unrelated": the new task's intent does **not** extend, fix, or polish anything in the prior manifest's Goal + Deliverables — it targets a clearly different problem space. Truly unrelated work in the same session is rare; anything else — continuation, refinement, follow-up, polish, bug fix on something the prior manifest covered — is related and should amend. **When the test is genuinely ambiguous, default to amendment.** The asymmetry is intentional: the announcement gives the user a one-line escape hatch, while a wrong "fresh" decision silently loses prior INVs/ACs/PGs.
+
+#### When Related (default)
+
+Announce the decision to the user, then proceed as if `--amend <prior-path>` had been passed. Follow `references/AMENDMENT_MODE.md` from that point — the new "Session-Default" trigger context documented there describes this path; behavior follows the Standalone amendment flow, respecting the active interview mode (a `/auto` invocation, for example, still runs autonomously — only the trigger differs from explicit `--amend`).
+
+Announcement format (substantively):
+
+> Detected prior manifest in session: `/tmp/manifest-{ts}.md` (`<title from manifest's H1>`). Defaulting to amendment mode — interrupt me if this is actually unrelated work and I'll start fresh.
+
+Emit the announcement regardless of interview mode (including `--interview autonomous` and `/auto` invocations) — this preserves the audit trail in the transcript. The announcement is one line and non-blocking; the interview proceeds without waiting for confirmation. The "interrupt me" phrasing matches that behavior — the user can redirect mid-interview if needed.
+
+#### When Truly Unrelated
+
+Proceed fresh with a one-line note explaining the decision so the user can correct if needed. Example:
+
+> Found prior manifest `<path>` (`<title>`), but new task targets `<different problem space>`. Starting fresh — interrupt me to amend instead if I read this wrong.
+
+#### When Prior Manifest File Cannot Be Read
+
+If the matched path no longer exists or fails to read, fall back to a fresh manifest with a one-line note: "Prior manifest `<path>` is no longer available; starting fresh."
+
 ## Domain Guidance
 
 Domain-specific guidance available in:

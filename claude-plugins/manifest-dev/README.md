@@ -103,7 +103,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 
 | Skill | Description |
 |-------|-------------|
-| `/define` | Interviews you, builds an executable manifest with verification criteria. `--interview minimal\|autonomous\|thorough` controls interview style (default: thorough). |
+| `/define` | Interviews you, builds an executable manifest with verification criteria. `--interview minimal\|autonomous\|thorough` controls interview style (default: thorough). When invoked again in the same session with a related task, defaults to amending the prior manifest so one change set keeps one constitution. |
 | `/do` | Works through the manifest autonomously, verifies everything passes |
 | `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` and `--tend-pr` pass-through. |
 | `/tend-pr` | Sets up PR for review and starts a polling loop. Manifest-aware mode with scoped `/do`, or babysit mode without a manifest. |
