@@ -342,7 +342,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 
 | Skill | Type | Description |
 |-------|------|-------------|
-| `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, outputs manifest with verification methods |
+| `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, outputs manifest with verification methods. When invoked again in the same session with a related task, defaults to amending the prior manifest so one change set keeps one constitution. |
 | `/do` | User-invoked | Executes against manifest. Follows execution order, watches for risks, logs progress for disaster recovery |
 | `/auto` | User-invoked | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do`. Supports `--mode` and `--tend-pr` pass-through |
 | `/tend-pr` | User-invoked | Sets up PR for review and starts polling loop. Manifest-aware or babysit mode |

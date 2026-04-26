@@ -16,7 +16,7 @@ The conversation context contains the reason — a user's message, a PR review c
 
 When `--interview` is explicitly provided, use it. Otherwise, inherit the interview style from the manifest's metadata (if recorded) or default to `thorough`. The amendment interview is scoped to the change — not a full re-interview of the entire manifest.
 
-## Two Contexts
+## Three Contexts
 
 ### 1. Standalone
 
@@ -31,6 +31,10 @@ User calls `/define --amend <manifest>` directly. Full interactive mode:
 Triggered by `--from-do` flag (e.g., `/define --amend <manifest> --from-do`). This flag is set by /do after Self-Amendment escalation — it signals deterministically that this is an autonomous amendment, not an interactive session.
 
 In /do context, amendment is autonomous and fast — no user approval gates (verification loop, summary approval). Make targeted changes based on the escalation context. Write updated manifest in-place so /do can resume immediately. Log the amendment in the manifest's `## Amendments` section.
+
+### 3. Session-Default
+
+Triggered implicitly by `/define`'s in-session detection of a prior related manifest (no explicit `--amend` flag). See SKILL.md's `## Session-Default Amendment` section for the detection and relatedness rules. Once the agent decides to amend, behavior **follows the Standalone path** — interview scoped to the change (per the active interview mode), verification loop, summary for approval. The interview mode (`thorough` / `minimal` / `autonomous`) is **not** overridden by the trigger context — `/auto` invocations still run autonomously, just amending the prior manifest instead of starting fresh. The user is told upfront via an announcement and can verbally redirect to a fresh manifest if the relatedness call was wrong.
 
 ## What to Preserve
 
