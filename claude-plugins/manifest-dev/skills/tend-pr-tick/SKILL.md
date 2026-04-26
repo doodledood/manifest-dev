@@ -67,14 +67,14 @@ Label source first (bot vs human — read `../tend-pr/references/known-bots.md`)
 
 *Runs when there are CI failures to handle or when new comments were classified.*
 
-**Manifest mode:**
+**Manifest mode:** This is the same default-to-amend reflex documented canonically in `do/SKILL.md` Mid-Execution Amendment — PR comments and CI failures are external feedback that contradicts or extends the manifest, so they route through Self-Amendment. The only difference is the trigger source (PR thread vs. user message in a session).
 1. Identify which deliverable(s) the comment or CI failure targets (include all potentially affected when ambiguous).
 2. Amend manifest via `/define --amend <manifest-path> --from-do`.
 3. Invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>`. If `/do` escalates, log the blocker, report the escalation to the user, and end the loop.
 4. Push changes.
 5. If the actionable item originated from a comment, reply on that thread.
 
-**Babysit mode:** Fix directly, push. If the item originated from a comment, reply on that thread.
+**Babysit mode:** Fix directly, push. If the item originated from a comment, reply on that thread. (No manifest in scope = no amendment route; this is the no-manifest case from `do/SKILL.md` — fail-open inline handling.)
 
 **False positives:** Reply with explanation.
 

@@ -36,6 +36,74 @@ Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do
 
 If no arguments provided, ask: "What would you like to build or change?"
 
+## Session-Default Amendment
+
+After parsing arguments (above) and before any other workflow step (Domain Guidance, interview, etc.), check whether this session already produced a manifest. The goal is **one manifest per related change set** — follow-up bug fixes, feature extensions, and polish on the same surface should accumulate criteria into the existing manifest rather than start over and silently lose prior INVs/ACs/PGs.
+
+**Skip this section entirely when the user has already pointed at a specific manifest.** Explicit signals always win over session-default detection:
+- `--amend <path>` was passed (preserves `/do --from-do`, which always passes `--amend`, and any explicit user `/define --amend <path>` invocation).
+- Input arguments contain a `/tmp/manifest-*.md` path or otherwise plainly point at a specific manifest file — proceed past this section and let the workflow reach **Existing Manifest Feedback** below, which already treats the referenced manifest as source of truth.
+
+**Otherwise**, determine whether a relevant prior manifest exists. Check signals in this order; the first hit wins:
+
+1. **In-session completion signal.** A line of the form `Manifest complete: /tmp/manifest-{timestamp}.md` (defined in the `## Complete` section below; the only cross-invocation signal that survives reliably across `/define` runs). If multiple such lines appear in the conversation context, the **most recent in transcript order wins** (this handles the case where the user manually amended an older manifest mid-session — transcript order, not the path's timestamp, is authoritative).
+
+2. **Conversation reference.** A `/tmp/manifest-*.md` or `.manifest/*.md` path mentioned in the current conversation (user message, prior tool result, summary). The path implies the user already has a manifest in mind for the current work.
+
+3. **Branch-archived manifest.** If `.manifest/` contains a file modified during the current branch's commit-history time range (i.e., file mtime falls between the branch's first commit time and now, computed via `git log --format=%cI <base>..HEAD` — `<base>` resolved per the Base inference order in Branch-Diff Seeding below), that file is a candidate. Among multiple candidates, the most recently modified wins. When two candidates were modified within ~1 hour of each other (genuinely ambiguous), ask the user once which one is authoritative. When `.manifest/` is empty or no file's mtime intersects the branch's time range, signal #3 produces no candidate (fall through to a fresh manifest).
+
+If no signal hits, you'll land in the No Prior Manifest Found branch — proceed fresh; the user can recover with explicit `/define --amend <path>` if needed.
+
+**Detection is judgment-based, not mechanical.** When a signal is ambiguous (e.g., transcript references an unrelated manifest from a different concern, or branch maps to multiple plausible archives), ask the user once: "I see manifest X in scope — amend it, pick a different one, or start fresh?" Don't silently choose. The Cumulative Manifest Rule (`references/AMENDMENT_MODE.md`) means a wrong choice here either pollutes an unrelated manifest or fragments the PR's source of truth — both are worse than asking once.
+
+### No Prior Manifest Found
+
+Behavior is unchanged from a normal fresh `/define`. No announcement is emitted. Proceed with the remaining workflow as written.
+
+### Prior Manifest Found
+
+Read the prior manifest at the matched path. Compare its **Goal** and **Deliverables** (titles and acceptance criteria) against the new task description.
+
+**Amendment is the default — not a 50/50 judgment call.** Operational test for "truly unrelated": the new task's intent does **not** extend, fix, or polish anything in the prior manifest's Goal + Deliverables — it targets a clearly different problem space. Truly unrelated work in the same session is rare; anything else — continuation, refinement, follow-up, polish, bug fix on something the prior manifest covered — is related and should amend. **When the test is genuinely ambiguous, default to amendment.** The asymmetry is intentional: the announcement gives the user a one-line escape hatch, while a wrong "fresh" decision silently loses prior INVs/ACs/PGs.
+
+#### When Related (default)
+
+Announce the decision to the user, then proceed as if `--amend <prior-path>` had been passed. Follow `references/AMENDMENT_MODE.md` from that point — the new "Session-Default" trigger context documented there describes this path; behavior follows the Standalone amendment flow, respecting the active interview mode (a `/auto` invocation, for example, still runs autonomously — only the trigger differs from explicit `--amend`).
+
+**Post-archival commits surface when signal #3 fires.** When the matched manifest came from signal #3 (branch-archived in `.manifest/`), additionally inspect commits made on the branch *after* the manifest's archival mtime: `git log --format=%H --since="<manifest-mtime>" <base>..HEAD` (`<base>` resolved per the Base inference order in Branch-Diff Seeding below). If any such commits exist, run `git diff <archive-commit-or-mtime>...HEAD` and incorporate the post-archival changeset as discovery context for the amendment — same as Branch-Diff Seeding does for fresh /define on a non-empty branch. This preserves the Cumulative Manifest Rule (`references/AMENDMENT_MODE.md`): post-archival work made outside the manifest workflow is surfaced into the amendment, not silently lost.
+
+Announcement format (substantively):
+
+> Detected prior manifest in session: `/tmp/manifest-{ts}.md` (`<title from manifest's H1>`). Defaulting to amendment mode — interrupt me if this is actually unrelated work and I'll start fresh.
+
+Emit the announcement regardless of interview mode (including `--interview autonomous` and `/auto` invocations) — this preserves the audit trail in the transcript. The announcement is one line and non-blocking; the interview proceeds without waiting for confirmation. The "interrupt me" phrasing matches that behavior — the user can redirect mid-interview if needed.
+
+#### When Truly Unrelated
+
+Proceed fresh with a one-line note explaining the decision so the user can correct if needed. Example:
+
+> Found prior manifest `<path>` (`<title>`), but new task targets `<different problem space>`. Starting fresh — interrupt me to amend instead if I read this wrong.
+
+#### When Prior Manifest File Cannot Be Read
+
+If the matched path no longer exists or fails to read, fall back to a fresh manifest with a one-line note: "Prior manifest `<path>` is no longer available; starting fresh."
+
+## Branch-Diff Seeding (Fresh /define on a Non-Empty Branch)
+
+**Trigger:** Fresh `/define` (no `--amend`, no Session-Default Amendment, no referenced manifest) AND the current branch has commits ahead of its base.
+
+**Why:** The manifest is the canonical source of truth for the PR/branch lifetime (per `references/AMENDMENT_MODE.md` Cumulative Manifest Rule). When work already exists on the branch — commits made before /define ran, or work-in-progress accumulated outside the manifest workflow — that work belongs in the manifest. Ignoring it produces a manifest that doesn't reflect the actual PR.
+
+**Base inference order:**
+1. Upstream tracking branch (`git rev-parse --abbrev-ref @{upstream}`).
+2. `origin/main` if it exists.
+3. `origin/master` if it exists.
+4. Ask the user once for the base ref. Halt seeding if they decline.
+
+**What to do:** Run `git diff <base>...HEAD` and `git log --oneline <base>..HEAD`. Read the diff and commit messages. Incorporate the existing changeset into the new manifest's Intent (mention what's already done) and starting Deliverables (the work-in-progress becomes prior context, with new ACs added on top for completion + the new task). The interview confirms or adjusts what was inferred from the diff.
+
+**Skip cleanly when:** No commits ahead of base (fresh branch), or `--amend` was passed (existing manifest already covers the prior state), or Session-Default Amendment fired (in-session manifest is being amended).
+
 ## Domain Guidance
 
 Domain-specific guidance available in:

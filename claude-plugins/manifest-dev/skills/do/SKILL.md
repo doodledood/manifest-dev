@@ -61,7 +61,17 @@ When `--scope` is NOT provided, ignore this section entirely — no reference fi
 
 **Log after every action** - Write to execution log immediately after each AC attempt. No exceptions. This is disaster recovery—if context is lost, the log is the only record of what happened.
 
-**Must call /verify** - Can't declare done without verification. Invoke manifest-dev:verify with manifest, log paths, and the resolved mode: `/verify <manifest> <log> --mode <level>`.
+**Must call /verify** - Can't declare done without verification. Invoke manifest-dev:verify with manifest, log paths, the resolved mode, and an optional scope per the rules below: `/verify <manifest> <log> --mode <level> [--scope D2,D3]`. Never pass `--final` from /do — that flag is internal to /verify (auto-triggered after a selective green pass) and exists to enforce the hard final gate. /done is unreachable without a full-mode green pass; /verify owns the selective→full chain.
+
+**Selective verification + fix-loop scope** - /verify supports two modes (see verify SKILL.md for full contract):
+- *First pass on fresh /do* — invoke without `--scope` and without `--final`. Selective mode degenerates to full (nothing to narrow). Equivalent to today's behavior.
+- *Scoped /do* (`--scope D2,D3` was passed to /do) — invoke /verify with the same `--scope D2,D3`. Selective pass runs those deliverables' ACs + all globals.
+- *Fix-loop after AC-X.Y failure* — invoke /verify with `--scope D{X}` (the failing criterion's deliverable). Other deliverables are not re-verified during this iteration; they get their pass at the mandatory full final gate when /verify auto-triggers it.
+- *Fix-loop after INV-G failure* — invoke /verify normally (globals always run; no narrowing makes sense). When the failure happened during a selective pass with a `--scope`, the next pass is selective on the same deliverable + globals. When the failure happened during a full pass (auto-triggered final, or first-pass degenerated-to-full — no `--scope` was set), the next pass is also full — invoke /verify with no `--scope`. INV-G failures are not deliverable-scoped, so falling through to full is the correct default.
+
+The mandatory full final gate (auto-triggered by /verify after selective green) is the safety net for cross-deliverable regressions. Don't try to skip or short-circuit it.
+
+**Execution log /verify contract** - /verify appends a structured block (`## /verify pass {N}` + fenced YAML with `mode`, `scope`, `result`, `failures`, `auto_triggered_final`) per invocation. Read the most recent block before deciding the next pass's scope. Format defined in `verify/SKILL.md` "Pass Logging Contract."
 
 **Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type), or (4) the active execution mode's fix-verify loop limit is reached. If ACs remain achievable as written and no user interrupt, continue autonomously.
 
@@ -85,8 +95,18 @@ Externalize progress to survive context loss.
 
 ## Mid-Execution Amendment
 
-**When to trigger** — User input or a PR review comment changes scope: new requirements, contradicted ACs, missing coverage. Clarifications and confirmations are NOT amendments — only act when the manifest's criteria themselves need to change.
+**Default to amend.** Any user message arriving during /do or /verify defaults to triggering Self-Amendment. The manifest is the canonical source of truth for the PR/branch (per `references/AMENDMENT_MODE.md`); feedback flows through it, not around it. The asymmetric framing is deliberate: silent scope drift (feedback acted on inline, manifest left out of date) is a worse failure than an occasional unnecessary amendment cycle.
+
+**Carve-out: pure questions.** Messages that ask about the manifest or process without requesting a state change are answered inline — no amendment.
+- *Amend:* "Also handle X." / "Change Y to Z." / "That's wrong, it should be …" / "Add a check for …"
+- *Inline:* "What does AC-1.1 require?" / "Why did you choose approach A over B?" / "Where's the execution log?" / "Which deliverable is D3?"
+
+**When ambiguous, amend.** A message that could be either ("hmm, what about the auth case?") goes to amendment. Re-running an amendment cycle is cheap; silently dropping a constraint that turns out to matter is expensive.
+
+**/verify-time feedback.** /verify is non-user-invocable orchestrator — semantically, user feedback received while /verify is running is feedback to /do (the caller), not to /verify. The same default-to-amend rule applies. /verify itself never handles user feedback inline; the message is interpreted in /do's context and routed through Self-Amendment.
 
 **Amendment flow** — Amend the manifest autonomously via Self-Amendment escalation and `/define --amend <manifest-path> --from-do`, then resume with the updated manifest and existing log. Log the trigger before amending. No human wait — the entire cycle is autonomous.
 
-**Amendment loop guard** (R-7) — If Self-Amendment escalations repeat without new external input (user messages or PR comments) between them, the amendments are likely oscillating — escalate as "Proposed Amendment" for human decision instead.
+**Amendment loop guard** (R-7) — If Self-Amendment escalations repeat without new external input (user messages or PR comments) between them, the amendments are likely oscillating — escalate as "Proposed Amendment" for human decision instead. The same guard applies to post-/done re-entry: when feedback after completion triggers re-entry to /do via amendment, the consecutive-amendments-without-external-input counter still applies. Purpose: prevent runaway loops and unnecessary token burn.
+
+**No-manifest case.** When /do is invoked without a manifest (rare — typically /do follows /define), default-to-amend doesn't apply: there is nothing to amend. Behavior falls back to inline handling. This is fail-open by design.
