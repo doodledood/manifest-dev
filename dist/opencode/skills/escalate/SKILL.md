@@ -170,7 +170,7 @@ No 3-attempt evidence needed — this is a scope change, not a blocker.
 
 **Re-entry depends on the trigger source:**
 - *Triggered from /do or /verify* — autonomous fast path: `/define --amend <path> --from-do`, then /do resumes with the updated manifest. No interview, no summary-for-approval.
-- *Triggered after /done* — interactive path: `/define --amend <path>` (without `--from-do`). /done is terminal; there's no /do to resume into. The Standalone amendment flow runs (interview scoped to the change, summary for approval), then `/do <manifest> <log> --scope <new-or-affected-deliverables>` is invoked separately to implement the change. See `done/SKILL.md` Post-Completion Feedback for the full re-entry contract.
+- *Triggered after /done* — two-step chain (both steps mandatory): (1) Invoke `manifest-dev:define` with `<feedback> --amend <path>` — runs in the manifest's recorded `Interview:` style (autonomous = no questions, thorough = questions, minimal = light probing); (2) Invoke `manifest-dev:do` with `<manifest> <log> --scope <new-or-affected-deliverables>` to implement and verify. /done is terminal; step 2 is the re-entry into /do — stopping after step 1 leaves the manifest amended but unimplemented and unverified. **Canonical source: `done/SKILL.md` Post-Completion Feedback** — the full chain contract (mandatory both-steps framing, --scope inference, full-final-gate guarantee, R-7 amendment loop guard) lives there.
 
 **Carve-out**: pure questions about the manifest or process are answered inline — no Self-Amendment. When ambiguous, amend (silent scope drift is the worse failure).
 
