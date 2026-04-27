@@ -117,6 +117,14 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 
 **Internal:** `thinking-disciplines` — core thinking disciplines invoked by `/figure-out` and `/define`. Not user-invocable.
 
+### Multi-Repo Manifests
+
+A single canonical manifest (in `/tmp`) can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` reads the path map and navigates absolute paths natively (no filter logic, no cwd matching). `/tend-pr` and `/drive` run per-repo against the same shared manifest — concurrent amendments are last-writer-wins (no locking). Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) use `method: deferred-auto` + `/verify --deferred`.
+
+Single-repo manifests are unaffected — the schema additions are conditional and the single-repo path is unchanged.
+
+Full convention: `skills/define/references/MULTI_REPO.md`.
+
 ### Execution Modes
 
 `/do` supports `--mode efficient|balanced|thorough` (default: thorough). Controls verification intensity — cheaper modes use less quota at the cost of verification depth. Only specify when you explicitly want to change it.

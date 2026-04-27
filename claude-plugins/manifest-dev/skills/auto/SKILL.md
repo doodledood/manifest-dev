@@ -33,7 +33,15 @@ The remaining text after flag extraction is the task description (`$TASK_DESCRIP
 
 4. **Tend PR** (only when `--tend-pr` is present) — After /do completes successfully (calls `/done`, not `/escalate`), invoke the manifest-dev:tend-pr skill with: "<manifest-path> --log <execution-log-path>" (the execution log path is available from the conversation context — /do logged its creation at the start of execution). Append `--platform <platform>`, `--interval <duration>`, and `--reviewers <usernames>` if specified in the original /auto arguments.
 
-   If /do escalates instead of completing: do NOT invoke /tend-pr. Report to user: "/do escalated — skipping /tend-pr. Reason: <escalation reason from /do>. Resolve the blocker and re-invoke /tend-pr manually with the manifest path."
+   If /do escalates with **"Deferred-Auto Pending"**: this is a coordination handoff, not a blocker — the implementation is green; the user just needs to run `/verify --deferred` later when prerequisites are ready. Still invoke /tend-pr for cwd's PR (per §Multi-Repo Behavior). Surface the deferred-auto reminder to the user alongside the PR link: "/auto: implementation green; /tend-pr started for cwd's PR. Deferred-auto criteria pending — run `/verify <manifest-path> <log-path> --deferred` when prerequisites are in place to reach /done."
+
+   If /do escalates with any other type: do NOT invoke /tend-pr. Report to user: "/do escalated — skipping /tend-pr. Reason: <escalation reason from /do>. Resolve the blocker and re-invoke /tend-pr manually with the manifest path."
+
+## Multi-Repo Behavior
+
+If `/define` produces a multi-repo manifest (Intent declares `Repos:`), `/auto`'s `/do` invocation **navigates all repos** declared in `Repos:` — `/do` reads the path map and uses absolute paths natively (no filter logic). A single `/auto` invocation can therefore complete the whole multi-repo implementation phase.
+
+The per-cwd limitation is `/tend-pr`: with `--tend-pr`, only cwd's PR is set up for tending, because `/tend-pr` is PR-bound by construction. To tend other repos' PRs, invoke `/tend-pr` from each other repo's cwd. See `manifest-dev:define/references/MULTI_REPO.md` §i.
 
 ## Failure Handling
 

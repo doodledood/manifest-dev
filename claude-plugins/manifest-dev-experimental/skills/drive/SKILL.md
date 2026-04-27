@@ -12,6 +12,8 @@ Take a manifest (or an existing PR in babysit mode) to a terminal state through 
 
 Coexists with `/do`, `/tend-pr`, `/auto` — does not replace them.
 
+**Multi-repo PR sets:** when the manifest declares `Repos:` in Intent (multi-repo changeset), each repo's PR is tended by its own `/drive` invocation pointing at the **same canonical `/tmp` manifest**. Run-id qualification (`gh-{owner}-{repo}-{pr-number}` in github mode) already isolates locks (`/tmp/drive-lock-{run-id}`) and execution logs (`/tmp/drive-log-{run-id}.md`) per-PR — no cross-repo collisions. Concurrent amendments to the shared manifest by different ticks are last-writer-wins (no locking; see `manifest-dev:tend-pr/SKILL.md` §Multi-Repo PR Sets and `manifest-dev:define/references/MULTI_REPO.md` §f). Single-repo manifests are unaffected.
+
 ## Input
 
 `$ARGUMENTS` = `[<manifest-path>] [--platform none|github] [--sink local] [--base <branch>] [--interval <duration>] [--max-ticks <N>]`

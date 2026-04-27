@@ -33,6 +33,8 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 
 **Other skills:** `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command (add `--tend-pr` for PR lifecycle) | `/tend-pr` - Tends a PR through review to merge-readiness, manifest-aware or babysit mode | `/learn-define-patterns` - Analyzes past /define sessions and writes preference patterns to CLAUDE.md
 
+**Multi-repo support:** A single canonical `/tmp` manifest can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` navigates absolute paths from the map (no filter logic — the LLM handles repo navigation natively). `/tend-pr` and `/drive` run per-repo against the same shared manifest. Cross-repo gates the user explicitly triggers use `method: deferred-auto` + `/verify --deferred`. See `skills/define/references/MULTI_REPO.md`.
+
 **Internal skills:** `/verify`, `/done`, `/escalate`, `/stop-thinking-disciplines`, `thinking-disciplines`
 
 **Other user-invocable skills:** `/tend-pr-tick` (also called by `/loop` via `/tend-pr`)
@@ -65,6 +67,8 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 **Design:** No plugin-specific hooks. No auto-escalation on no-progress. Each tick delegates implement+verify+fix to `/do` (intra-tick convergence); cross-tick boundaries handle CI triage, PR tending, and inbox routing. `--interval` defaults to 15m (bounded 15m–24h); while a tick holds its lock, subsequent cron fires exit silently — interval is a floor on poll frequency, not a hard cadence. Locks have no TTL; stale locks from crashed ticks require manual cleanup via `/drive` pre-flight. `--max-ticks` budget cap (default 100) prevents cost runaway. CI failures classified as infrastructure/flaky are auto-retriggered (native rerun or empty-commit push) up to 10 times per run before escalating.
 
 **Coexistence:** `/drive` does NOT replace `/do`, `/tend-pr`, `/tend-pr-tick`, or `/auto`. Pick whichever fits your workflow.
+
+**Multi-repo support:** Each repo's `/drive` runs against its own PR with its own run-id (`gh-{owner}-{repo}-{pr}`); all amend the same shared canonical `/tmp` manifest used by every repo's PR. See `manifest-dev/skills/define/references/MULTI_REPO.md`.
 
 ## Contributing
 

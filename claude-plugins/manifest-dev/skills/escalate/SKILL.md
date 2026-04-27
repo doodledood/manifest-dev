@@ -197,6 +197,31 @@ User explicitly asked to stop mid-workflow (e.g., "commit so I can deploy", "sto
 
 **When to use**: User interrupts workflow for legitimate reasons (deploy, review, break). Not a blocker—just a handoff.
 
+### Deferred-Auto Pending
+
+Normal-flow `/verify` completed green, but the manifest contains `method: deferred-auto` criteria that have not yet been verified green via a prior `/verify --deferred` run. This is a coordination handoff, not a blocker — `/done` is unreachable until the user signals readiness and runs `/verify --deferred`. **No 3-attempt evidence required.** Fired by `/verify`, not by `/do`.
+
+```markdown
+## Escalation: Deferred-Auto Pending
+
+**Reason:** Normal-flow verification green; deferred-auto criteria require user signal before they can run.
+
+### Pending Deferred-Auto Criteria
+- [INV-G{N} or AC-{D}.{N}]: [description from manifest]
+- ...
+
+### To Resolve
+When prerequisites are in place (e.g., "all PRs deployed"), invoke:
+
+`/verify <manifest-path> <execution-log-path> --deferred`
+
+After `--deferred` completes green, re-invoke a normal `/verify <manifest-path> <execution-log-path>` (no flags) to reach `/done`.
+```
+
+**When to use**: `/verify` finishes a normal-flow pass green and detects pending deferred-auto criteria — see `verify/SKILL.md` Deferred-Pending Escalation. **Not** a blocker — implementation is done; the user controls when cross-repo / staging / deploy-dependent verification happens.
+
+**Combined with Manual Criteria Review.** When BOTH manual criteria and pending deferred-auto criteria exist after a normal full-mode green pass, compose a single combined escalation: header `## Escalation: Manual Review + Deferred-Auto Pending`, then both sections inline (Manual Criteria block + Pending Deferred-Auto Criteria block + To Resolve combining manual review steps and the `/verify --deferred` instruction). `/done` remains unreachable until both are resolved.
+
 ## Medium Routing
 
 When medium is non-local, /do routes escalations through the medium directly — /escalate is not invoked. The escalation templates above still define the expected content structure; /do uses them when composing messages to the channel.

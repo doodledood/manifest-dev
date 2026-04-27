@@ -206,7 +206,7 @@ Triggered when the tick detects: (a) user input in conversation contradicting an
 Amendment flow:
 
 1. Append `## Amendment Trigger — <reason>` to log with source (user message / PR comment / Inbox event) and which manifest section needs updating.
-2. Invoke `manifest-dev:define --amend <manifest-path> --from-do`.
+2. Invoke `manifest-dev:define --amend <manifest-path> --from-do`. **Multi-repo:** the manifest at `<manifest-path>` is shared across all repo PRs — every `/drive-tick` (and `/tend-pr-tick`) amends the same file, last-writer-wins (no locking; see `manifest-dev:define/references/MULTI_REPO.md` §f). If you notice a missed amendment after a collision, re-trigger the lost tick.
 3. Continue with the Do Invocation stage against the amended manifest. /do picks up the new/modified ACs via its memento log.
 
 Bounding pathological amendment oscillation is delegated to `--max-ticks` (cross-tick budget) and /do's fix-verify loop-limit (within-tick). No separate amendment-count guard — if oscillation is observed, surface via the sink; reintroducing a guard is a design change, not a workaround.
