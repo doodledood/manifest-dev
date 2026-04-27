@@ -4,11 +4,15 @@
 
 ## Cumulative Manifest Rule
 
-**The manifest is the canonical source of truth for the PR/branch lifetime — not for a single task.** After every amendment, the manifest must describe the FULL PR state: intent, every deliverable, every Global Invariant, every Process Guidance entry, every Known Assumption. The latest increment is layered onto the prior content, never substituted for it.
+**The manifest is the canonical source of truth for the PR/branch lifetime — or, in multi-repo cases, the entire PR set / branch set lifetime — not for a single task.** After every amendment, the manifest must describe the FULL state of every PR it covers: intent, every deliverable (across every repo when multi-repo), every Global Invariant, every Process Guidance entry, every Known Assumption. The latest increment is layered onto the prior content, never substituted for it.
 
 **No silent drops.** When applying an amendment, prior content is preserved by default. Removal is explicit — if a change supersedes an existing AC/INV/PG, the supersession is logged in the `## Amendments` section with rationale. The amendment receiver is responsible for reading the full prior manifest and confirming nothing valuable was lost.
 
-A manifest at any point in time should be readable as "everything currently in scope for this PR/branch," not "the most recent change request." This is what makes the manifest a useful artifact for PR descriptions, reviews, and future amendments.
+A manifest at any point in time should be readable as "everything currently in scope for this PR/branch (or PR set)," not "the most recent change request." This is what makes the manifest a useful working artifact for the agent and the user across the PR lifecycle.
+
+**Multi-repo specifics** — when the manifest declares `Repos:` in Intent, the canonical manifest is shared across all repo PRs (`/tmp/manifest-{ts}.md`); any consumer skill that writes amendments operates on the same file, last-writer-wins (no locking). See `MULTI_REPO.md` §f for the convention.
+
+**Deferred-auto re-verification after amendment** — when an amendment substantively changes a `method: deferred-auto` criterion's verify block (`prompt:`, `command:`, etc.), prior `/verify --deferred` coverage is conceptually invalidated for that criterion. Normal `/verify` always re-runs in-scope criteria so amendments are picked up automatically; deferred-auto bypasses the pass and relies on prior coverage. The user is responsible for re-running `/verify --deferred` for the amended criterion before the gate clears. (Consistent with the user-as-coordinator stance — there is no automatic invalidation mechanism.)
 
 ## Core Behavior
 

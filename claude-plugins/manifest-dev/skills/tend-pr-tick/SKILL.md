@@ -68,9 +68,9 @@ Label source first (bot vs human — read `../tend-pr/references/known-bots.md`)
 *Runs when there are CI failures to handle or when new comments were classified.*
 
 **Manifest mode:** This is the same default-to-amend reflex documented canonically in `do/SKILL.md` Mid-Execution Amendment — PR comments and CI failures are external feedback that contradicts or extends the manifest, so they route through Self-Amendment. The only difference is the trigger source (PR thread vs. user message in a session).
-1. Identify which deliverable(s) the comment or CI failure targets (include all potentially affected when ambiguous).
-2. Amend manifest via `/define --amend <manifest-path> --from-do`.
-3. Invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>`. If `/do` escalates, log the blocker, report the escalation to the user, and end the loop.
+1. Identify which deliverable(s) the comment or CI failure targets (include all potentially affected when ambiguous). When the manifest declares `Repos:` (multi-repo) and deliverables carry `repo:` tags, look up this PR's repo via the platform adapter (e.g., GitHub MCP returns `owner/repo` for the PR number); for each absolute path in the manifest's `Repos:` map, run `git -C <path> remote get-url origin` and parse the URL to its `owner/repo` form; the entry whose remote matches the PR's `owner/repo` is the corresponding repo. Use that entry's `name:` as the deliverable filter — prefer deliverables tagged with the matching repo name.
+2. Amend manifest via `/define --amend <manifest-path> --from-do`. **Multi-repo:** the manifest is a shared canonical `/tmp` file used by every repo's `/tend-pr-tick` — concurrent amendments are last-writer-wins (no locking; see `tend-pr/SKILL.md` §Multi-Repo PR Sets and `define/references/MULTI_REPO.md` §f). If you notice a missed amendment, re-trigger the lost tick.
+3. Invoke `/do <manifest-path> <log-path> --scope <affected-deliverable-ids>`. If `/do` escalates with **"Deferred-Auto Pending"**: implementation is green — proceed to steps 4 and 5 normally (push the fix; reply to the originating thread). Append the deferred-auto reminder to this tick's Status Report so the user sees it: "Implementation green; run `/verify <manifest> <log> --deferred` when prerequisites are in place to reach /done." Do **NOT** terminate the tick — subsequent ticks continue normally toward merge-readiness. If `/do` escalates with any other type: log the blocker, report the escalation to the user, and end the loop.
 4. Push changes.
 5. If the actionable item originated from a comment, reply on that thread.
 
@@ -87,6 +87,8 @@ Label source first (bot vs human — read `../tend-pr/references/known-bots.md`)
 *Runs when this tick produced changes (routing fixes, conflict resolution). Skip when no changes were made.*
 
 After changes, rewrite "what changed" sections to reflect the current diff. Preserve manual context (issue references, motivation, deployment notes). Update title if scope changed significantly.
+
+The PR description stays summary-only — never embed the manifest. Manifests are internal working documents (also true in multi-repo, where the same canonical manifest is shared across all PRs without surfacing to reviewers).
 
 ## Status Report
 

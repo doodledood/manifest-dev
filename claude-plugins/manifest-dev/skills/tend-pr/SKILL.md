@@ -35,6 +35,16 @@ Two modes:
 - No argument, no manifest inferrable, and no open PR for current branch: "Error: No manifest or open PR found. Provide a manifest path or PR URL. Usage: /tend-pr <manifest-path-or-pr-url> [--platform github] [--interval 10m] [--reviewers user1,user2]"
 - `--platform` value not supported: "Error: Platform '<value>' not yet supported. Currently supported: github"
 
+## Multi-Repo PR Sets
+
+When the manifest declares `Repos:` in Intent (multi-repo changeset), each repo's PR is tended by its own `/tend-pr` invocation pointing at the **same canonical `/tmp` manifest**. PR descriptions stay summary-only — manifests are internal and never embedded in PRs.
+
+All `/tend-pr-tick` instances amend the same shared manifest. There is **no locking and no concurrency engineering**. Concurrent amendments are last-writer-wins; the later write may overwrite the earlier write's amendment block. Recovery: the user notices the missing amendment in the next iteration and re-triggers the lost tick (e.g., re-add the comment, re-run `/tend-pr-tick`). **Do not add file locking** — collisions are rare and the recovery cost is small.
+
+Single-repo manifests (no `Repos:` field) are unaffected — one `/tend-pr`, one PR, no shared-manifest considerations.
+
+Full convention: `references/MULTI_REPO.md` (in `define/references/`) §f.
+
 ## Setup
 
 **Manifest-aware mode:** Ensure a non-draft PR exists for the current branch — create one if none exists. Use the manifest's Intent section for PR title/description. If `--reviewers` was provided, request review from those users. Resolve the execution log path (from `--log`, most recent `/tmp/do-log-*.md`, or conversation context).

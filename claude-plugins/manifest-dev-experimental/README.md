@@ -9,6 +9,7 @@ Cron-driven, tick-based driver that takes a manifest (or PR in babysit mode) all
 - **`/drive`** — user-invocable wrapper. Parses args, validates mode, resolves base branch, pre-flights the scheduler (`/loop` preferred; auto-falls back to an inline scheduler when `/loop` isn't installed), `manifest-dev`, and stale locks, bootstraps (branch + empty commit + PR for github; branch + empty commit for none), then hands control to the scheduler.
 - **`/drive-tick`** — the per-iteration brain. Lean orchestration. Each tick: grab lock, read the full execution log (memento), read state via platform adapter, check terminal states, handle inbox (amendments — no inline code edits), invoke `/do` for the full manifest-convergence loop, run CI triage + tend PR via the adapter, and either return for the next scheduled iteration or end on terminal state or budget exhaust.
 - **Pluggable adapters** — `skills/drive/references/platforms/{none,github}.md` and `skills/drive/references/sinks/local.md` follow a consistent markdown-state-report contract. Adding a new platform or sink is a copy-and-adjust.
+- **Multi-repo PR sets** — when the manifest declares `Repos:` (multi-repo changeset), each repo's PR is tended by its own `/drive` invocation pointing at the same shared canonical `/tmp` manifest. Run-id qualification (`gh-{owner}-{repo}-{pr-number}`) already isolates locks and logs per-PR. See `manifest-dev/skills/define/references/MULTI_REPO.md`.
 
 ## Mode matrix
 
