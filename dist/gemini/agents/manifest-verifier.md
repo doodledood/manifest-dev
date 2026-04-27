@@ -1,6 +1,6 @@
 ---
 name: manifest-verifier
-description: 'Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe so interview can continue.'
+description: '''Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe so interview can continue.'''
 kind: local
 tools:
   - read_file

@@ -1,5 +1,5 @@
 ---
-description: "Analyze a single /define session transcript to extract user preference patterns. Spawned by learn-define-patterns skill for parallel per-session analysis."
+description: "'Analyze a single /define session transcript to extract user preference patterns. Spawned by learn-define-patterns skill for parallel per-session analysis.'"
 mode: subagent
 model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
@@ -36,7 +36,7 @@ Preferences about what /define should probe for or how it should probe. Examples
 Consistent trade-off resolutions the user makes. Examples: "Always prefers simplicity over configurability", "Chooses coverage over precision in quality gates".
 
 ### Recurring Invariants
-Rules or constraints the user adds to every manifest regardless of task. Examples: "Always requires CLAUDE.md adherence check", "Always includes lint/format/typecheck gate".
+Rules or constraints the user adds to every manifest regardless of task. Examples: "Always requires AGENTS.md adherence check", "Always includes lint/format/typecheck gate".
 
 ### Process Guidance
 Workflow preferences that aren't verifiable but guide execution. Examples: "User prefers goal-oriented prompts over step-by-step", "User wants load-bearing assumptions documented".

@@ -1,5 +1,5 @@
 name = "change-intent-reviewer"
-description = "Adversarially analyze whether code, prompt, or config changes achieve their stated intent"
+description = "Adversarially analyze whether code, prompt, or config changes achieve their stated intent. Reconstructs change intent from diff context, then systematically attacks the logic to find behavioral divergences"
 sandbox_mode = "read-only"
 developer_instructions = """
 

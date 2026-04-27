@@ -1,5 +1,5 @@
 name = "code-design-reviewer"
-description = "Audit code for design fitness issues -- right approach given what already exists"
+description = "Audit code for design fitness issues -- whether code is the right approach given what already exists in the framework, codebase, and configuration systems. Identifies reinvented wheels, misplaced responsibilities, under-engineering, short-sighted interfaces, concept misuse, and incoherent changes"
 sandbox_mode = "read-only"
 developer_instructions = """
 

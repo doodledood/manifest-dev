@@ -1,5 +1,5 @@
 name = "criteria-checker"
-description = "Read-only verification agent. Validates a single criterion using any automated method"
+description = "'Read-only verification agent. Validates a single criterion using any automated method: commands, codebase analysis, file inspection, reasoning, web research. Returns structured PASS/FAIL results.'"
 sandbox_mode = "read-only"
 developer_instructions = """
 

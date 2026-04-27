@@ -6,7 +6,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 
 | Type | Count | Notes |
 |------|-------|-------|
-| Skills | 13 | Full compatibility (Agent Skills Open Standard) |
+| Skills | 12 | Full compatibility (Agent Skills Open Standard) |
 | Agents | 14 | TOML config stubs with full prompt bodies |
 | Hooks | 0 | Not supported by Codex CLI (Issue #2109) |
 | Rules | 1 | Starlark execution policy |
@@ -97,7 +97,7 @@ The install script handles namespacing automatically (adds `-manifest-dev` suffi
 
 ```
 dist/codex/
-├── skills/                          # 11 skills (unchanged from source)
+├── skills/                          # 12 skills (unchanged from source)
 │   ├── auto/
 │   ├── define/
 │   │   ├── SKILL.md

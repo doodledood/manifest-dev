@@ -1,5 +1,5 @@
 name = "manifest-verifier"
-description = "Reviews /define manifests for gaps and outputs actionable continuation steps"
+description = "'Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe so interview can continue.'"
 sandbox_mode = "read-only"
 developer_instructions = """
 

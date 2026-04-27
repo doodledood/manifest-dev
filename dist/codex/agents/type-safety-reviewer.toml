@@ -1,5 +1,5 @@
 name = "type-safety-reviewer"
-description = "Audit code for type safety issues across typed languages"
+description = "Audit code for type safety issues across typed languages (TypeScript, Python, Java/Kotlin, Go, Rust, C#). Identifies type holes that let bugs through, opportunities to make invalid states unrepresentable, and ways to push runtime checks into compile-time guarantees"
 sandbox_mode = "read-only"
 developer_instructions = """
 

@@ -1,5 +1,5 @@
 name = "contracts-reviewer"
-description = "Verify API and interface contract correctness with evidence"
+description = "Verify API and interface contract correctness with evidence. Checks both outbound (code calls external/internal APIs correctly per documentation) and inbound (changes don't break consumers of your interfaces). Evidence-based -- cites actual API docs or codebase definitions"
 sandbox_mode = "read-only"
 developer_instructions = """
 

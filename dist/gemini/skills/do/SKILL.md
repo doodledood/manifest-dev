@@ -71,9 +71,11 @@ When `--scope` is NOT provided, ignore this section entirely — no reference fi
 
 The mandatory full final gate (auto-triggered by /verify after selective green) is the safety net for cross-deliverable regressions. Don't try to skip or short-circuit it.
 
-**Execution log /verify contract** - /verify appends a structured block (`## /verify pass {N}` + fenced YAML with `mode`, `scope`, `result`, `failures`, `auto_triggered_final`) per invocation. Read the most recent block before deciding the next pass's scope. Format defined in `verify/SKILL.md` "Pass Logging Contract."
+**Execution log /verify contract** - /verify appends a structured block (`## /verify pass {N}` + fenced YAML with `mode`, `scope`, `result`, `failures`, `auto_triggered_final`, `deferred`) per invocation. Read the most recent block before deciding the next pass's scope. Format defined in `verify/SKILL.md` "/verify Pass Logging Contract." When scanning for the most recent /verify pass to drive scope decisions, **skip blocks with `deferred: true`** — those reflect user-direct `--deferred` invocations (now possible since /verify is user-invocable), not /do-driven normal-flow passes.
 
 **Escalation boundary** - Escalate when: (1) ACs can't be met as written (contract broken), (2) user requests a pause mid-workflow, (3) you discover an AC or invariant should be amended (use "Proposed Amendment" escalation type), or (4) the active execution mode's fix-verify loop limit is reached. If ACs remain achievable as written and no user interrupt, continue autonomously.
+
+**`/verify`-routed escalation passthrough.** When `/verify` itself routes to `/escalate` (e.g., "Deferred-Auto Pending", "Manual Criteria Review") instead of `/done`, treat as a clean terminal handoff: surface the escalation output verbatim to the caller, do NOT enter the fix-loop, do NOT increment loop counters. The implementation is green; further action belongs to the user (e.g., running `/verify --deferred` for deferred-auto pending). This is distinct from `/verify` returning failures (which enters the standard fix-loop).
 
 **Mode-aware loop tracking** - Track fix-verify iteration count and escalation count in the execution log. When the active execution mode's limits are reached, follow its escalation rules.
 
@@ -93,9 +95,19 @@ Externalize progress to survive context loss.
 
 **Refresh between deliverables** - Before starting a new deliverable, re-read the manifest's deliverable section and relevant log entries. Context degrades across long sessions.
 
+## Multi-Repo Navigation
+
+When the manifest declares `Repos: [name: path, ...]` in Intent, deliverables may live in repos other than cwd. Read the path map and use **absolute paths** in tool calls (Read/Edit/Write/Bash) when working on a deliverable tagged with a different repo. There is **no filter logic, no cwd matching, no per-repo configuration** — the LLM navigates as deliverables require.
+
+A single `/do` invocation can cover the whole multi-repo task by navigating between repos; alternatively the user invokes `/do` per repo with `--scope` for parallel execution. Either works. The execution log remains a single file per `/do` invocation.
+
+When the manifest has no `Repos:` field (single-repo manifest), this section does not apply — behavior is unchanged.
+
+Full convention: `references/MULTI_REPO.md` (lives in `define/references/`).
+
 ## Mid-Execution Amendment
 
-**Default to amend.** Any user message arriving during /do or /verify defaults to triggering Self-Amendment. The manifest is the canonical source of truth for the PR/branch (per `references/AMENDMENT_MODE.md`); feedback flows through it, not around it. The asymmetric framing is deliberate: silent scope drift (feedback acted on inline, manifest left out of date) is a worse failure than an occasional unnecessary amendment cycle.
+**Default to amend.** Any user message arriving during /do or /verify defaults to triggering Self-Amendment. The manifest is the canonical source of truth for the PR/branch — or, in multi-repo cases, the **PR set / branch set** (see `references/AMENDMENT_MODE.md`). Feedback flows through it, not around it. The asymmetric framing is deliberate: silent scope drift (feedback acted on inline, manifest left out of date) is a worse failure than an occasional unnecessary amendment cycle.
 
 **Carve-out: pure questions.** Messages that ask about the manifest or process without requesting a state change are answered inline — no amendment.
 - *Amend:* "Also handle X." / "Change Y to Z." / "That's wrong, it should be …" / "Add a check for …"
@@ -103,7 +115,7 @@ Externalize progress to survive context loss.
 
 **When ambiguous, amend.** A message that could be either ("hmm, what about the auth case?") goes to amendment. Re-running an amendment cycle is cheap; silently dropping a constraint that turns out to matter is expensive.
 
-**/verify-time feedback.** /verify is non-user-invocable orchestrator — semantically, user feedback received while /verify is running is feedback to /do (the caller), not to /verify. The same default-to-amend rule applies. /verify itself never handles user feedback inline; the message is interpreted in /do's context and routed through Self-Amendment.
+**/verify-time feedback.** While /verify is running under /do, user feedback received mid-pass is semantically feedback to /do (the caller), not to /verify. The same default-to-amend rule applies. /verify itself never handles user feedback inline; the message is interpreted in /do's context and routed through Self-Amendment. (When /verify is invoked directly by the user — e.g., `/verify --deferred` — there is no /do caller; mid-pass user messages are handled per the user's own session reflex, not via /do's amendment route.)
 
 **Amendment flow** — Amend the manifest autonomously via Self-Amendment escalation and `/define --amend <manifest-path> --from-do`, then resume with the updated manifest and existing log. Log the trigger before amending. No human wait — the entire cycle is autonomous.
 

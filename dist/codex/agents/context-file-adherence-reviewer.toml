@@ -1,5 +1,5 @@
 name = "context-file-adherence-reviewer"
-description = "Verify that code changes comply with context file instructions and project standards"
+description = "Verify that code changes comply with context file instructions (CLAUDE.md, AGENTS.md, GEMINI.md) and project standards. Audits pull requests, new code, and refactors against rules defined in the project's context files"
 sandbox_mode = "read-only"
 developer_instructions = """
 

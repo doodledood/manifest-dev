@@ -6,9 +6,9 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 13 | Core workflow skills (define, do, verify, etc.) |
+| Skills | 12 | Core workflow skills (define, do, verify, etc.) |
 | Agents | 14 | Specialized reviewer and verification agents |
-| Commands | 8 | User-invocable slash commands |
+| Commands | 9 | User-invocable slash commands |
 | Plugin | 1 | TypeScript hook plugin for workflow enforcement |
 | Context | 1 | AGENTS.md workflow overview |
 
@@ -68,12 +68,15 @@ cp dist/opencode/AGENTS.md .opencode/AGENTS.md
 After installation, invoke workflows via slash commands:
 
 ```
-/define-manifest-dev     Plan and scope a task
-/do-manifest-dev         Execute a manifest
-/auto-manifest-dev       End-to-end autonomous execution
-/figure-out-manifest-dev              Deep collaborative understanding
+/define-manifest-dev                    Plan and scope a task
+/do-manifest-dev                        Execute a manifest
+/auto-manifest-dev                      End-to-end autonomous execution
+/verify-manifest-dev                    Run parallel verifiers (use --deferred for deferred-auto criteria)
+/figure-out-manifest-dev                Deep collaborative understanding
 /stop-thinking-disciplines-manifest-dev End thinking disciplines session
-/tend-pr-manifest-dev                 PR lifecycle automation
+/tend-pr-manifest-dev                   PR lifecycle automation
+/tend-pr-tick-manifest-dev              Single PR tending iteration
+/learn-define-patterns-manifest-dev     Extract patterns from past /define sessions
 ```
 
 ## Feature Parity with Claude Code
@@ -119,15 +122,17 @@ dist/opencode/
 │   ├── docs-reviewer.md
 │   ├── manifest-verifier.md
 │   └── type-safety-reviewer.md
-├── commands/                        # 8 user commands
+├── commands/                        # 9 user commands
 │   ├── auto.md
 │   ├── define.md
 │   ├── do.md
 │   ├── figure-out.md
 │   ├── learn-define-patterns.md
 │   ├── stop-thinking-disciplines.md
-│   └── tend-pr.md
-├── skills/                          # 13 skills (with subdirectories)
+│   ├── tend-pr.md
+│   ├── tend-pr-tick.md
+│   └── verify.md
+├── skills/                          # 12 skills (with subdirectories)
 │   ├── auto/
 │   ├── define/
 │   ├── do/

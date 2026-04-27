@@ -1,5 +1,5 @@
 name = "code-coverage-reviewer"
-description = "Verify that code changes have adequate test coverage by proactively enumerating edge cases"
+description = "Verify that code changes have adequate test coverage by proactively enumerating edge cases from the code's logic. Analyzes the diff, derives specific test scenarios with concrete inputs and expected outputs, and reports coverage gaps"
 sandbox_mode = "read-only"
 developer_instructions = """
 
