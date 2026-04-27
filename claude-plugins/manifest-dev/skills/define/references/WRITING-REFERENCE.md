@@ -10,7 +10,7 @@ Reference material for writing quality verification. Use as context when verifyi
 
 ## Vocabulary Kill-List
 
-Statistically flagged as AI-generated across peer-reviewed studies of millions of documents. Never use:
+Statistically flagged as AI-generated across peer-reviewed studies of millions of documents. Never use when *writing*. When *reviewing* existing prose, judge by density and clustering rather than single instances.
 
 **Nouns**: delve, tapestry, landscape, realm, testament, journey, insight, resilience, ecosystem, milestone, prowess, utilization
 
@@ -18,15 +18,19 @@ Statistically flagged as AI-generated across peer-reviewed studies of millions o
 
 **Adjectives**: seamless, robust, groundbreaking, transformative, pivotal, vibrant, compelling, crucial, invaluable, holistic, multifaceted, meticulous, commendable, intricate, comprehensive, profound, nuanced, innovative
 
-**Adverbs**: seamlessly, meticulously, notably, profoundly, predominantly, subsequently, thereby, ultimately, significantly, particularly, additionally
+**Adverbs**: seamlessly, meticulously, notably, profoundly, predominantly, subsequently, thereby, ultimately, significantly, particularly, additionally, moreover, furthermore
 
 **Phrases**: "ever-evolving landscape," "in today's fast-paced world," "as we navigate the complexities," "It isn't just X, it's Y," "it's important to note," "it's worth noting that," "without further ado," "in conclusion," "at the heart of"
+
+**Puffery / promotional drift**: "breathtaking," "stunning," "must-see," "must-visit," "iconic," "world-class," "rich cultural tapestry," "hidden gem." AI drifts toward advertisement-like writing even when prompted for a neutral or encyclopedic register — watch for this puffery vocabulary as the canary.
 
 **Hedging phrases**: "it could be argued," "this might suggest," "may potentially," "what could be considered"
 
 **Verb substitution**: AI systematically replaces simple verbs ("is," "are") with elaborate alternatives ("serves as a," "features," "offers"). Over 10% decrease in simple verb usage in AI text.
 
 **False intensifiers**: "genuinely," "truly," "actually" (when used to simulate conviction)
+
+**Era-tracked vocabulary**: AI vocabulary shifts over time. "Delve" peaked 2023–early 2024 then declined as model training data caught up to public awareness; "align with," "fostering," and "showcasing" rose with later models. Treat the kill-list as a living snapshot, not a fixed law — fresh anti-AI corpora keep moving.
 
 ## Anti-Patterns
 
@@ -51,6 +55,10 @@ Statistically flagged as AI-generated across peer-reviewed studies of millions o
 | Excessive hedging | "may potentially offer what could be considered significant benefits" | Strip to: "this works" |
 | Compulsive signposting | "It's worth noting," "It's important to remember" | Trust the reader |
 | Opinion-avoidant framing | "commonly described as," "many find," "generally considered" | State the view directly |
+| Overused conjunctions | "Moreover," "Furthermore," "Additionally," "In addition" stacking across paragraphs at AI-typical density | Cut transitions; let sentences carry the logic. One transition per page, not per paragraph |
+| "Myths busted" / contrast-and-correct | "While many think X, in fact Y" pattern used as default opener regardless of whether a myth exists | Open with the specific claim; skip the strawman setup |
+| Subject puffery | Arbitrary detail elevated to "a microcosm of [larger theme]" / "a window into [broader cultural moment]" | Stop at the specific. Don't extrapolate unless the piece earns it |
+| Statistical regression to the mean | Concrete details (names, numbers, dates) blurred into category-level language | Restore specifics. If you don't know them, say "I don't know" |
 
 ### Tonal
 
@@ -61,10 +69,14 @@ Statistically flagged as AI-generated across peer-reviewed studies of millions o
 | Equal professional distance | All subjects treated with same measured tone | Nerd out about what you care about; show impatience with boring parts |
 | Risk aversion | No confusing sentences, sharp observations, or controversial assertions | Take risks; write surprising, opinionated content |
 | Emotional overreach without depth | Exclamation marks, enthusiastic phrasing that feels oddly impersonal; polished yet hollow, like a greeting card for someone you've never met | Replace emotional proxies with actual emotional content grounded in specifics |
+| Encyclopedic-yet-promotional drift | Even when prompted for a neutral or encyclopedic register, AI drifts toward advertisement-like writing — travel-guide prose for places, marketing copy for products. Watch for puffery vocabulary ("breathtaking," "must-visit," "rich cultural tapestry") | Neutral does not mean polished-bland; it means specific, factual, and unlabored |
 
 ## Punctuation & Formatting Rules
 
 - **Em-dashes and en-dashes**: One of the most reliable AI tells. ChatGPT uses 8 per 573 words; Deepseek 9 per 555 words. Ban entirely; use commas, periods, parentheses, or colons instead.
+- **Curly quotation marks ("" '')**: ChatGPT and DeepSeek tend to produce curly quotes; Gemini and Claude tend to produce straight ("..." '...'). Curly quotes alone are not proof — word processors and typesetting tools auto-curl them — but combined with other tells they raise confidence. Prefer straight quotes for first-draft AI output; let the editor decide if curling is appropriate for the venue.
+- **Heading capitalization**: AI tends to title-case all main words in headings ("How to Write Better Prose") even when the document otherwise uses sentence case. Match the surrounding document's heading style; don't default to title case.
+- **Excessive boldface ("key takeaways" pattern)**: AI mechanically bolds phrases for emphasis, often the same word every time it appears, or in bullet lists where the bold phrase is then redeclared (`**Scalability:** The system is designed to scale...`). Use boldface sparingly and only where genuine emphasis serves the reader.
 - **Emojis**: AI overuses emojis as emotional proxies. Never add unless explicitly requested.
 - **Semicolons**: AI rarely uses them. Including some adds human texture.
 - **Contractions**: AI avoids them. Use freely in conversational prose.

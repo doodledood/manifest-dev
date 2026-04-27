@@ -1,6 +1,6 @@
 # WRITING Task Guidance
 
-Base guidance for all text-authoring tasks (articles, emails, marketing copy, social media, creative writing). Source: writing plugin v1.2.0.
+Base guidance for all text-authoring tasks (articles, emails, marketing copy, social media, creative writing). Source: writing plugin v1.3.0.
 
 ## The Core Problem
 
@@ -38,11 +38,11 @@ Writer substance is ~70% of output quality; editing ~20%; prompting ~10%. No amo
 
 *Detailed reference for all sections below: `references/WRITING-REFERENCE.md` (for verification, not interview context)*
 
-**Vocabulary Kill-List** — ~60 statistically flagged AI words/phrases: nouns (delve, tapestry, landscape...), verbs (leverage, harness, navigate...), adjectives (seamless, robust, transformative...), adverbs (seamlessly, meticulously...), stock phrases, hedging phrases, false intensifiers. AI also replaces simple verbs with elaborate alternatives (10%+ decrease).
+**Vocabulary Kill-List** — ~70 statistically flagged AI words/phrases: nouns (delve, tapestry, landscape...), verbs (leverage, harness, navigate...), adjectives (seamless, robust, transformative...), adverbs (seamlessly, meticulously, moreover, furthermore...), stock phrases, hedging phrases, false intensifiers, **puffery/promotional drift** ("breathtaking," "must-visit," "iconic," "world-class," "rich cultural tapestry," "hidden gem"). AI also replaces simple verbs with elaborate alternatives (10%+ decrease). **Era-tracked**: vocabulary shifts over time (e.g. "delve" peaked 2023–early 2024 then declined; "align with"/"fostering"/"showcasing" rose with later models). Reviewers judge by density/clustering, not single instances.
 
-**Anti-Patterns** — 17 patterns: structural (6: uniform paragraphs, list addiction, formulaic scaffolding, grammar perfection, colon titles, symmetric structure), rhetorical (6: tricolon obsession, perfect antithesis, rhetorical staging, excessive hedging, compulsive signposting, opinion-avoidant framing), tonal (5: uniform register, relentless positivity, equal distance, risk aversion, emotional overreach).
+**Anti-Patterns** — 21 patterns: structural (6: uniform paragraphs, list addiction, formulaic scaffolding, grammar perfection, colon titles, symmetric structure), rhetorical (10: tricolon obsession, perfect antithesis, rhetorical staging, excessive hedging, compulsive signposting, opinion-avoidant framing, **overused conjunctions** stacking — moreover/furthermore/additionally per paragraph, **"myths busted" / contrast-and-correct** strawman openers, **subject puffery** — "a microcosm of..."/"a window into...", **statistical regression to the mean** — concrete details blurred to category-level), tonal (5: uniform register, relentless positivity, equal distance, risk aversion, **encyclopedic-yet-promotional drift** — neutral prompts drift to advertisement-like writing).
 
-**Punctuation & Formatting** — Em-dashes are the top AI tell (ban entirely). AI overuses emojis, avoids semicolons/contractions, applies Oxford commas consistently. Casual markers ("So," "Anyway," "in my experience") have disproportionate human-feel impact.
+**Punctuation & Formatting** — Em-dashes are the top AI tell (ban entirely). AI overuses emojis, avoids semicolons/contractions, applies Oxford commas consistently. **Curly quotation marks** ("" '') flag ChatGPT/DeepSeek vs straight (Gemini/Claude) — combinatorial signal, not standalone. **Heading capitalization**: AI defaults to title case even in sentence-case documents — match surrounding style. **Excessive boldface** ("key takeaways" pattern): AI mechanically bolds same phrase repeatedly or redeclares bold phrase in bullet bodies — use sparingly. Casual markers ("So," "Anyway," "in my experience") have disproportionate human-feel impact.
 
 **Craft Fundamentals** — Seven human-AI gaps: showing vs telling, specificity from lived experience, strategic omission, rhythm variation, deliberate rule-breaking, humor (AI-complete problem), genuine insight.
 
@@ -60,6 +60,8 @@ Writer substance is ~70% of output quality; editing ~20%; prompting ~10%. No amo
 
 - **Hollow output** — content passes review but lacks writer's genuine substance; probe: was the 70% (writer input) actually provided?
 - **Disembodied voice** — lacks specific experiences, opinions, data; probe: check for AUTHOR_VOICE.md?
+- **Encyclopedic-promotional drift** — neutral/factual register slides into travel-guide or marketing puffery; probe: is the register specific and unlabored, or is it polished-bland with "must-visit"/"world-class" vocabulary?
+- **Regression to the mean** — concrete details (names, numbers, dates) get blurred into category-level language during drafting; probe: are specifics restored or did the writer say "I don't know"?
 
 ## Scenario Prompts
 
@@ -70,6 +72,9 @@ Writer substance is ~70% of output quality; editing ~20%; prompting ~10%. No amo
 - **Buried critical info** — important details hidden in middle; probe: what must reader not miss?
 - **Relentless positivity kills credibility** — everything framed as great; no honest assessment; probe: are weaknesses acknowledged?
 - **Perspective collapse** — writing aggregates so many views it has none; probe: does the author take a position?
+- **Strawman opener** — piece opens with "While many think X, in fact Y" without a real myth; probe: is there an actual misconception worth correcting, or skip the contrast-and-correct framing?
+- **Subject puffery** — arbitrary detail elevated to "a microcosm of..." or "a window into..."; probe: does the piece earn the broader extrapolation, or should it stop at the specific?
+- **Conjunction stacking** — moreover/furthermore/additionally appear at AI-typical density across paragraphs; probe: can transitions be cut so sentences carry the logic?
 
 ## Trade-offs
 
