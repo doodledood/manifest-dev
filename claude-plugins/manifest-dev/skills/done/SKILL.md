@@ -86,9 +86,18 @@ The trailing italic line is **mandatory** in /done's output — it surfaces the 
 
 After /done has been called, the manifest is still the canonical source of truth for the PR/branch — or the **PR set / branch set** in the multi-repo case — because the work isn't necessarily merged, and feedback can still arrive (user comments, PR reviews, second thoughts). The default reflex for any feedback that changes scope or contradicts something settled is the same as during /do (per `do/SKILL.md` Mid-Execution Amendment): **default to amend.**
 
-**Re-entry flow:** when feedback is determined to be amendment-worthy (not a pure question), invoke `/define --amend <manifest-path>` with the feedback as input, then `/do <manifest-path> <log-path> --scope <new-or-affected-deliverables>` to implement the change. /do's selective-mode + mandatory full final gate apply to the re-entry pass — /done won't be reachable again until the full suite is green on the amended manifest.
+**Re-entry flow.** When feedback is amendment-worthy (not a pure question), perform both of the following steps in order:
 
-**Pure questions** about the work that just completed are answered inline — same carve-out as in /do.
+1. **Amend the manifest.** Invoke the `manifest-dev:define` skill with: `<feedback> --amend <manifest-path>`. The amendment runs in the manifest's recorded `Interview:` style — autonomous manifests amend without questions, thorough manifests probe per `thorough.md`, minimal manifests do light probing. (See `define/references/AMENDMENT_MODE.md` for the full inheritance rule.) Wait for /define to return; note the manifest path.
+
+2. **Re-execute.** Invoke the `manifest-dev:do` skill with: `<manifest-path> <log-path> --scope <new-or-affected-deliverables>`. `<log-path>` is the existing execution log /do wrote during the original run (available from the conversation context — /do logged its creation at the start of execution); pass it so /do appends rather than starting fresh, per `do/SKILL.md`'s "iteration on previous work" contract. Infer `--scope` from the amendment log entries — the deliverables newly added or modified by step 1. When the amendment touches a Global Invariant or the scope is genuinely unclear, omit `--scope` so /do runs full. /do's mandatory full final gate (per `verify/SKILL.md` "Hard final gate") runs unconditionally before /done becomes reachable, so a too-narrow scope still cannot land a regression — /verify auto-triggers a full pass after selective green.
+
+**Both steps are mandatory.** Stopping after step 1 leaves the manifest amended but unimplemented and unverified — the same failure mode as silent scope drift, just shifted: the manifest now claims scope that no code satisfies. The amendment loop guard from `do/SKILL.md` Mid-Execution Amendment (R-7 — consecutive Self-Amendments without external user/PR input escalate as Proposed Amendment for human decision) applies to this re-entry path too; runaway oscillation is bounded.
+
+**Routing feedback to amend vs. inline.** Pure questions about the work that just completed are answered inline — same carve-out as in /do.
+- *Inline (answer in the current turn):* "What does AC-1.1 require?" / "Why did you choose approach A?" / "Where's the execution log?"
+- *Amend (run the two-step chain above):* "Also handle X." / "Change Y to Z." / "That's wrong, it should be …" / "Add a check for …"
+- *When ambiguous, amend.* Silent scope drift is the worse failure.
 
 **Manifest-in-scope detection** is judgment-based with no session boundary (per `define/SKILL.md` Session-Default Amendment): the manifest most recently associated with the work in this context is the candidate for amendment, regardless of when /done was called or whether the session was compacted in between. When ambiguous, ask the user once.
 
