@@ -17,6 +17,7 @@ Generate distribution packages for Gemini CLI, OpenCode, and Codex CLI from the 
 | Source (read-only) | `claude-plugins/manifest-dev/` |
 | Output | `dist/{gemini,opencode,codex}/` |
 | Conversion rules | `.claude/skills/sync-tools/references/{cli}-cli.md` |
+| Per-CLI sync state | `dist/{cli}/.sync-meta.json` (records last-synced source SHA — drives diff-first workflow) |
 | GitHub repo | `doodledood/manifest-dev` |
 
 ## Scope
@@ -26,6 +27,33 @@ Only sync `claude-plugins/manifest-dev/`. Never sync other plugins (e.g., `manif
 ## Per-CLI Processing
 
 For each target CLI, read its reference file first. The reference file is **the single source of truth** for conversion rules — tool name mappings, frontmatter format, hook protocol, directory structure, and limitations. Do not duplicate conversion logic here; follow the reference.
+
+### Diff-first sync (preferred)
+
+Each `dist/{cli}/.sync-meta.json` records the source commit that dist was last synced from:
+
+```json
+{
+  "source_commit": "<sha>",
+  "source_path": "claude-plugins/manifest-dev",
+  "synced_at": "<ISO 8601 UTC>"
+}
+```
+
+On invocation, prefer a delta sync over a full re-sync:
+
+1. Read `dist/{cli}/.sync-meta.json`. If missing, malformed, or the recorded SHA is unreachable from `HEAD` (e.g., rebased away, force-pushed branch), **fall back to full sync** for that CLI.
+2. **Force full sync** if any of the following changed between recorded SHA and `HEAD` (these define the substitution rules — any change can affect every dist file):
+   - `.claude/skills/sync-tools/SKILL.md`
+   - `.claude/skills/sync-tools/references/{cli}-cli.md`
+3. Otherwise compute `git diff --name-status <recorded-sha>..HEAD -- claude-plugins/manifest-dev/` and process each entry:
+   - **Added / Modified**: re-apply per-CLI substitutions, write to dist counterpart
+   - **Deleted**: remove dist counterpart (and parent dir if now empty)
+   - **Renamed**: handle as delete-old + add-new
+4. Recompute README component tables and the CLI's context file (`GEMINI.md` / `AGENTS.md`) only if the set of skills/agents changed (added/removed/renamed). Body-only edits don't require regenerating these.
+5. After all writes succeed, overwrite `dist/{cli}/.sync-meta.json` with the new HEAD sha and a fresh `synced_at` UTC timestamp. Keep the file even when the diff was empty — the timestamp records "we checked".
+
+The metadata is an **optimization, not a correctness anchor**. When in doubt — unreachable commit, ambiguous rename, mid-rebase repo state, suspicious dist drift — fall back to full sync rather than trusting the recorded SHA.
 
 ### Per-component goals
 
@@ -65,6 +93,7 @@ Remote install (no clone needed) must be the primary method. Use the repo from t
 | Unmapped agent tools pass through unchanged | Target CLI ignores unknown tools gracefully |
 | Empty component sets skip gracefully | Codex has no hooks — note in README, don't error |
 | Agent/skill prompt bodies stay faithful to Claude Code originals | Prompts are carefully crafted — don't simplify, rewrite, or truncate for other CLIs |
+| Always update `dist/{cli}/.sync-meta.json` at end of run | The recorded SHA is what next run's diff-first path keys on. Skipping the update silently degrades future syncs to full re-syncs. |
 
 ## Progress Log
 
