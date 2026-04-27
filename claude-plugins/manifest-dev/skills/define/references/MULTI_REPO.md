@@ -6,7 +6,9 @@ Single-repo manifests (no `Repos:` field) are unaffected by everything below.
 
 ## a. Principle
 
-The manifest is the source of truth for the **entire changeset** — not for a single PR. When a task spans repos, one manifest captures all of it: shared intent, all deliverables (each tagged with its repo), shared invariants, shared trade-offs. Splitting the manifest per PR forces the user to hold cross-PR coherence in their head, defeating the purpose.
+The shared canonical manifest is the **default and recommended** approach for multi-repo changesets: one manifest captures the whole thing — shared intent, all deliverables (each tagged with its repo), shared invariants, shared trade-offs. The reason it's the default: splitting per PR forces the user to hold cross-PR coherence in their head, which is the work the manifest exists to externalize.
+
+Splitting per repo (one manifest per repo's PR) is a **legitimate user choice** when the work is loosely coupled and the user prefers independent scopes — they accept carrying the cross-PR coherence themselves. Everything below describes the shared-manifest case (when `Repos:` is declared in Intent); the split case is just N independent single-repo manifests and needs no special rules.
 
 The manifest is **internal**. It is a working document for the user and the agent. PR descriptions remain summary-only — no manifest embed, no PR-side surfacing.
 
