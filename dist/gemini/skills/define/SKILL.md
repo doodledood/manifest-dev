@@ -527,6 +527,7 @@ The medium is encoded in the manifest's Intent section as `Medium: <value>` so d
 
 ```text
 Manifest complete: /tmp/manifest-{timestamp}.md
+Session: ~/.gemini/tmp/<project_hash>/chats/session-${GEMINI_SESSION_ID}.jsonl
 
 To execute: /do /tmp/manifest-{timestamp}.md [log-file-path if iterating]
 ```

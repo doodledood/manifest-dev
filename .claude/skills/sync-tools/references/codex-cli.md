@@ -427,6 +427,17 @@ During sync, replace remaining `CLAUDE.md` references that mean "this CLI's cont
 
 The `context-file-adherence-reviewer` agent already uses generic "context file" language — no special handling needed for its content.
 
+## Session File Adaptation
+
+Source skills that surface a session file path to the user (e.g. `Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl` in `define/SKILL.md`'s completion template, and the `Session JSONL files live at ...` line in `learn-define-patterns/SKILL.md`) reference Claude Code's per-session JSONL file.
+
+**Verdict for Codex**: OMIT the Session line. Codex *does* persist per-session JSONL on disk, but the agent has no way to compute its own current path at runtime.
+
+- **On-disk path**: `$CODEX_HOME/sessions/YYYY/MM/DD/rollout-<timestamp>-<session-id>.jsonl` (default `$CODEX_HOME` = `~/.codex/`). May be stored as `.jsonl.zst` compressed archives.
+- **No agent-visible session ID env var**: There is no standard `CODEX_SESSION_ID` exposed to the agent runtime. Surfacing the active session ID programmatically is an open feature request (issue #8923, "Feature request: expose current Codex session ID programmatically (env var or JSON)"). Without it, the running agent cannot construct a path that resolves to the current session — only the user can, by browsing `~/.codex/sessions/` or using `/status`.
+- **Sync rule for `define/SKILL.md` Session line**: drop the line entirely from the completion template until Codex exposes a session-id env var. Re-add when issue #8923 ships.
+- **Sync rule for `learn-define-patterns/SKILL.md`**: discovery path on line 31 also can't be safely retargeted because the date-sharded directory and per-rollout filename can't be derived from anything the agent sees. Document as a known limitation. The user-config substitution for lines 25/54 is still applied: `~/.claude/CLAUDE.md` → `~/.codex/AGENTS.md`.
+
 ## Known Limitations
 
 1. **Skills only for full compatibility** — Agents are TOML stubs, hooks impossible.
