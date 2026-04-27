@@ -22,13 +22,13 @@ Every `/define` session, users make the same corrections, add the same invariant
 | **Merge, never overwrite** | If a `## /define Preferences` section already exists, merge new patterns with existing ones. Never blindly overwrite. |
 | **Semantic deduplication** | When merging, identify patterns that say the same thing in different words and consolidate them. Don't just check for exact text matches. |
 | **Standard markdown only** | Output uses `##` headers, `###` subheaders, `- ` bullets, and `<!-- date -->` HTML comments. No custom syntax, no YAML, no special parsing. |
-| **Ask write target** | Ask the user which GEMINI.md to write to: project GEMINI.md, user `~/.claude/CLAUDE.md`, or both. Never assume. |
+| **Ask write target** | Ask the user which GEMINI.md to write to: project GEMINI.md, user `~/.gemini/GEMINI.md`, or both. Never assume. |
 | **Diff preview before write** | Show the user exactly what will be added or changed in GEMINI.md before writing. |
 | **Clean up temp files** | Delete per-session analysis files from `/tmp/` after aggregation is complete. |
 
 # Session Discovery
 
-Session JSONL files live at `~/.claude/projects/{project-path-encoded}/{session-id}.jsonl`. Find recent sessions containing `/define` activity. If `$ARGUMENTS` specifies a session count, use that; otherwise use enough recent sessions for meaningful pattern signal.
+Session JSONL files live at `~/.gemini/tmp/{project-hash}/chats/session-{session-id}.jsonl`. Find recent sessions containing `/define` activity. If `$ARGUMENTS` specifies a session count, use that; otherwise use enough recent sessions for meaningful pattern signal.
 
 **No sessions found**: Tell the user: "No /define sessions found in recent session history. Run a few /define sessions first, then try again."
 
@@ -51,7 +51,7 @@ The final output is a unified set of user preferences derived from all analyzed 
 **What the user sees before approving:**
 - Pattern statement, session frequency, project-specific vs generalizable flag, any contradictions
 - Batch selection (not per-pattern approval)
-- Choice of write target: project GEMINI.md, user `~/.claude/CLAUDE.md`, or both
+- Choice of write target: project GEMINI.md, user `~/.gemini/GEMINI.md`, or both
 - Diff/preview of exact changes before writing
 
 # GEMINI.md Output Format

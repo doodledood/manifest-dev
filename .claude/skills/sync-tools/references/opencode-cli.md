@@ -444,6 +444,17 @@ During sync, replace remaining `CLAUDE.md` references that mean "this CLI's cont
 
 The `context-file-adherence-reviewer` agent already uses generic "context file" language — no special handling needed for its content.
 
+## Session File Adaptation
+
+Source skills that surface a session file path to the user (e.g. `Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl` in `define/SKILL.md`'s completion template, and the `Session JSONL files live at ...` line in `learn-define-patterns/SKILL.md`) reference Claude Code's per-session JSONL file.
+
+**Verdict for OpenCode**: OMIT the Session line. OpenCode has no per-session JSONL transcript file the agent can hand to the user.
+
+- **On-disk storage**: Conversation state lives in SQLite at `~/.local/share/opencode/opencode.db` (WAL mode, Drizzle ORM), with large blobs in `~/.local/share/opencode/storage/{session,message,part,session_diff}/`. The legacy per-session JSON layout has been migrated to SQLite (issue #13654).
+- **No agent-visible session file**: There is no path the agent can `cat`/`tail` to read the running session. Plugin code can reach session data via the SDK client API (`client.session.list()`, `client.session.get(id)`, SSE stream) — but a skill running inside the model can't.
+- **Sync rule for `define/SKILL.md` Session line**: drop the line entirely from the completion template.
+- **Sync rule for `learn-define-patterns/SKILL.md`**: this skill fundamentally depends on JSONL transcripts and does not translate cleanly. Document as a known limitation. The user-config substitution for lines 25/54 is still applied: `~/.claude/CLAUDE.md` → `~/.config/opencode/AGENTS.md`.
+
 ## Known Limitations
 
 1. **Block pattern** — **Throw an Error** to block tool calls, NOT `args.abort`. Error message becomes tool result seen by LLM. Confirmed from source code and issue #5894.
