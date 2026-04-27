@@ -6,9 +6,9 @@ Verification-first manifest workflows for Gemini CLI. Plan work with structured 
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 13 | Workflow skills: define, do, verify, auto, figure-out, escalate, done, tend-pr, tend-pr-tick, learn-define-patterns, thinking-disciplines, stop-thinking-disciplines |
+| Skills | 12 | Workflow skills: define, do, verify, auto, figure-out, escalate, done, tend-pr, tend-pr-tick, learn-define-patterns, thinking-disciplines, stop-thinking-disciplines |
 | Agents | 14 | Specialized review agents for code quality verification |
-| Hooks | 8 | Event-driven hooks enforcing workflow discipline |
+| Hooks | 7 | Event-driven hooks enforcing workflow discipline |
 
 ## Installation
 
@@ -51,7 +51,7 @@ The `install.sh` script sets this automatically.
 
 | Feature | Claude Code | Gemini CLI | Notes |
 |---------|-------------|------------|-------|
-| Skills | All 13 | All 13 | Copied unchanged |
+| Skills | All 12 | All 12 | Copied unchanged |
 | Agents | All 14 | All 14 | Frontmatter converted |
 | Hooks | 8 hooks | 8 hooks | Adapted to Gemini event model |
 | Stop enforcement | PreToolUse/Stop | BeforeTool/AfterAgent | Retry counter for loop prevention |

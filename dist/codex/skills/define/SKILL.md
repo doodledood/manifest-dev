@@ -147,13 +147,21 @@ When `--amend <manifest-path>` is present: read `references/AMENDMENT_MODE.md` f
 
 ## Multi-Repo Scope
 
-When task spans multiple repositories, capture during intent (starting points):
+When the task spans multiple repositories, the manifest stays a single canonical document covering the entire changeset. Full convention is in `references/MULTI_REPO.md` — this section summarizes only what the manifest captures.
 
-- **Which repos** and their roles
-- **Cross-repo constraints** (dependencies, coordination requirements)
-- **Per-repo differences** (different rules, conventions, verification needs)
+**Conditional schema additions** (omit entirely for single-repo manifests):
 
-Scope deliverables and verification to repo context. Cross-repo invariants get explicit verification checking both sides.
+- Intent declares `Repos: [name: path, ...]` listing every repo in scope.
+- Intent optionally declares `Branch: <name>` (single string — same branch name across repos by convention).
+- Each repo-specific deliverable carries a `repo: <name>` tag matching one of the declared repos.
+
+`Repos:` and `repo:` exist for **documentation** — readers (human and agent) know which deliverable lives where. They are **not** an enforcement mechanism for `/do` or `/verify` — `/do` navigates absolute paths from `Repos:` natively (no filter logic).
+
+Cross-repo gates the user must explicitly trigger (e.g., post-deploy verification across services) get `method: deferred-auto`. Normal `/do→/verify` flow skips them during the pass, **but routes to `/escalate` ("Deferred-Auto Pending") instead of `/done` while they remain uncovered**; the user runs `/verify --deferred` when prerequisites are in place. See `references/MULTI_REPO.md` §e.
+
+**Detection** rides on the existing Domain Understanding coverage goal — when conversation, task description, or branch context indicates multiple repos, treat as multi-repo and populate `Repos:` accordingly. No separate probe step is added.
+
+Single-repo manifests omit `Repos:`, `Branch:`, and `repo:` tags entirely; the schema and downstream behavior are identical to today.
 
 ## Principles
 
@@ -377,6 +385,10 @@ Three categories, each covering **output** or **process**:
 - **Mode:** efficient | balanced | thorough *(optional, default: thorough — controls verification intensity during /do)*
 - **Interview:** minimal | autonomous | thorough *(optional, default: thorough — recorded so --amend can inherit the original interview style)*
 - **Medium:** local *(optional, default: local — currently only local is supported)*
+- **Repos:** *(optional, multi-repo only — see `references/MULTI_REPO.md`; omit for single-repo manifests)*
+    - name1: /absolute/path/to/repo1
+    - name2: /absolute/path/to/repo2
+- **Branch:** *(optional, multi-repo only — single string, same branch name across all repos by convention)*
 
 ## 2. Approach (Complex Tasks Only)
 *Initial direction, not rigid plan. Provides enough to start confidently; expect adjustment when reality diverges.*
@@ -401,13 +413,15 @@ Three categories, each covering **output** or **process**:
 - [INV-G1] Description: ... | Verify: [Method]
   ```yaml
   verify:
-    method: bash | codebase | subagent | research | manual
+    method: bash | codebase | subagent | research | manual | deferred-auto
     phase: "[numeric, optional, default 1 — higher phases run after lower phases pass]"
     command: "[if bash]"
     agent: "[if subagent]"
     model: "[if subagent, default inherit]"
     prompt: "[if subagent or research]"
   ```
+
+*`method: deferred-auto` on INV-G* = cross-repo gate the user explicitly triggers via `/verify --deferred`. Skipped during normal `/do→/verify`; routes to `/escalate` "Deferred-Auto Pending" if uncovered when normal flow would otherwise reach `/done`. INV-G* deferred-auto criteria are deliverable-scope-independent — covered only by a `--deferred` pass with empty `--scope`. See `references/MULTI_REPO.md` §e.*
 
 ## 4. Process Guidance (Non-Verifiable)
 *Constraints on HOW to work. Not gates—guidance for the implementer.*
@@ -423,16 +437,18 @@ Three categories, each covering **output** or **process**:
 *Ordered by execution order from Approach, or by dependency then importance.*
 
 ### Deliverable 1: [Name]
-*[If multi-repo: specify repo scope]*
+**Repo:** `name1` *(optional, multi-repo only — must match a name in Intent's `Repos:` map; omit for single-repo manifests)*
 
 **Acceptance Criteria:**
 - [AC-1.1] Description: ... | Verify: ...
   ```yaml
   verify:
-    method: bash | codebase | subagent | research | manual
+    method: bash | codebase | subagent | research | manual | deferred-auto
     phase: "[numeric, optional, default 1]"
     [details]
   ```
+
+*`method: deferred-auto` = automatically verifiable but skipped during normal `/do→/verify`; runs only via `/verify --deferred`. Use for cross-repo gates the user explicitly triggers. See `references/MULTI_REPO.md` §e.*
 
 ### Deliverable 2: [Name]
 ...

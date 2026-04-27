@@ -24,6 +24,14 @@ Read the execution log and manifest. Output a summary that shows:
 4. **Key changes** - Files modified, commits made
 5. **Tradeoffs applied** - How preferences were used
 
+When the manifest declares `Repos:` (multi-repo), `/done` still fires **once per manifest** — not once per repo. /verify's "every AC across every deliverable" rule is preserved unchanged; for multi-repo, that means every AC in every repo's deliverables must pass before `/done` is called. This is achievable because `/verify` injects the cross-repo path prefix (`Available repos: ...`) on every pass when `Repos:` is declared, so verifiers can reach all repos during normal flow.
+
+The multi-repo summary additionally lists which **repos' deliverables were verified in this run** — providing a clear inventory of what landed across the changeset.
+
+**`/done` is gated on no deferred-auto criteria pending.** When the manifest contains `method: deferred-auto` criteria that have not yet been verified green via `/verify --deferred`, `/verify` does NOT call `/done` — it routes to `/escalate` with type "Deferred-Auto Pending" instead, telling the user to run `/verify --deferred` when prerequisites are in place. Only after deferred-auto criteria pass via `--deferred` does a subsequent normal `/verify` pass reach `/done`. See `define/references/MULTI_REPO.md` §e/§g and `verify/SKILL.md` "Deferred-Pending Escalation".
+
+Single-repo manifests (no `Repos:` field) get the standard summary unchanged — no repo list, no deferred-auto note. The deferred-auto-pending escalation rule applies regardless of multi-repo (any manifest with deferred-auto criteria, single- or multi-repo, gates /done the same way).
+
 ## Output Format
 
 ```markdown
@@ -72,11 +80,11 @@ The trailing italic line is **mandatory** in /done's output — it surfaces the 
 1. **Mirror manifest structure** - Hierarchy should match: Intent → Global Invariants → Deliverables
 2. **Show evidence** - Link changes to deliverables, describe behavioral changes (not just file lists)
 3. **Adapt detail to complexity** - Simple task = condensed output. Complex task = full hierarchy.
-4. **Called by /verify only, after a full-suite green pass** - /done is the final step after /verify confirms a **full pass** is green — every AC across every deliverable plus every Global Invariant. Selective-mode green alone is not sufficient (per /verify's hard final gate); /verify auto-triggers a full pass after selective green and only then calls /done.
+4. **Called by /verify only, after a full-suite green pass** - /done is the final step after /verify confirms a **full pass** is green — every AC across every deliverable plus every Global Invariant — **AND no `deferred-auto` criteria are pending** (when pending deferred-auto criteria exist, /verify routes to /escalate "Deferred-Auto Pending" instead of calling /done; see narrative above and `verify/SKILL.md` Deferred-Pending Escalation). Selective-mode green alone is not sufficient (per /verify's hard final gate); /verify auto-triggers a full pass after selective green and only then calls /done.
 
 ## Post-Completion Feedback
 
-After /done has been called, the manifest is still the canonical source of truth for the PR/branch — the work isn't necessarily merged, and feedback can still arrive (user comments, PR reviews, second thoughts). The default reflex for any feedback that changes scope or contradicts something settled is the same as during /do (per `do/SKILL.md` Mid-Execution Amendment): **default to amend.**
+After /done has been called, the manifest is still the canonical source of truth for the PR/branch — or the **PR set / branch set** in the multi-repo case — because the work isn't necessarily merged, and feedback can still arrive (user comments, PR reviews, second thoughts). The default reflex for any feedback that changes scope or contradicts something settled is the same as during /do (per `do/SKILL.md` Mid-Execution Amendment): **default to amend.**
 
 **Re-entry flow:** when feedback is determined to be amendment-worthy (not a pure question), invoke `/define --amend <manifest-path>` with the feedback as input, then `/do <manifest-path> <log-path> --scope <new-or-affected-deliverables>` to implement the change. /do's selective-mode + mandatory full final gate apply to the re-entry pass — /done won't be reachable again until the full suite is green on the amended manifest.
 

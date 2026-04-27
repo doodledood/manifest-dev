@@ -1,5 +1,5 @@
 name = "docs-reviewer"
-description = "Audit documentation and code comments for accuracy against recent code changes"
+description = "Audit documentation and code comments for accuracy against recent code changes. Performs read-only analysis comparing docs to code, producing a report of required updates without modifying files"
 sandbox_mode = "read-only"
 developer_instructions = """
 

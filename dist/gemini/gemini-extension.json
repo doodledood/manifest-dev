@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.1.0",
+  "version": "0.92.0",
   "description": "Verification-first manifest workflows for Gemini CLI",
   "mcpServers": {},
   "excludeTools": [],

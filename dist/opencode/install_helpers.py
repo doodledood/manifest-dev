@@ -36,8 +36,8 @@ AGENT_NAMES = [
 
 # Command filenames (without .md)
 COMMAND_NAMES = [
-    "auto", "define", "do", "learn-define-patterns",
-    "tend-pr", "figure-out", "stop-thinking-disciplines",
+    "auto", "define", "do", "verify", "learn-define-patterns",
+    "tend-pr", "tend-pr-tick", "figure-out", "stop-thinking-disciplines",
 ]
 
 

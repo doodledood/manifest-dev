@@ -4,7 +4,7 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-CLAUDE.md may specify project-specific preferences.
+GEMINI.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
@@ -20,7 +20,7 @@ Defect-finding agents: every finding at Low severity or above fails the gate (`n
 | Testability | code-testability-reviewer | no MEDIUM+ |
 | Documentation | docs-reviewer | no MEDIUM+ |
 | Design fitness | code-design-reviewer | no MEDIUM+ |
-| CLAUDE.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
+| GEMINI.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
 
 ### Conditional Gates (when applicable)
 
@@ -31,7 +31,7 @@ Defect-finding agents: every finding at Low severity or above fails the gate (`n
 
 ## Project Gates
 
-CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+GEMINI.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 
@@ -74,7 +74,7 @@ CLAUDE.md specifies project gates (typecheck, lint, test, format). These become 
 *Domain best practices for this task type.*
 
 - **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
-- **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
+- **Read project gates from GEMINI.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
 
 ## Multi-Repo
 

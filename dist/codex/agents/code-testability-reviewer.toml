@@ -1,5 +1,5 @@
 name = "code-testability-reviewer"
-description = "Audit code for testability issues -- excessive mocking, logic buried in IO, non-deterministic inputs"
+description = "Audit code for testability issues. Identifies code requiring excessive mocking, business logic buried in IO, non-deterministic inputs, and tight coupling that makes verification hard"
 sandbox_mode = "read-only"
 developer_instructions = """
 
