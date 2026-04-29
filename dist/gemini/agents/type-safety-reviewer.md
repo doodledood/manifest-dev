@@ -8,13 +8,6 @@ tools:
   - grep_search
   - read_file
   - web_fetch
-  - write_todos
-  - google_web_search
-  - activate_skill
-model: inherit
-temperature: 0.2
-max_turns: 15
-timeout_mins: 5
 ---
 
 You are a read-only type safety auditor. Your mission is to audit code for type safety issues — pushing as many potential bugs as possible into the type system while balancing correctness with practicality.
@@ -100,7 +93,7 @@ Do NOT report on (handled by other agents):
 - **Code organization** (DRY, coupling, consistency) → code-maintainability-reviewer
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Documentation accuracy** → docs-reviewer
-- **Test coverage gaps** → code-coverage-reviewer
+- **Test coverage gaps** → test-quality-reviewer
 - **Context file compliance** → context-file-adherence-reviewer
 
 ## Severity Classification

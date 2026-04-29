@@ -125,7 +125,7 @@ Do NOT report on (handled by other agents):
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Design fitness** (wrong approach, reinvented wheels, under-engineering) → code-design-reviewer
 - **Documentation quality** → docs-reviewer
-- **Test coverage gaps** → code-coverage-reviewer
+- **Test coverage gaps** → test-quality-reviewer
 - **Testability design** (hard to test, mock friction) → code-testability-reviewer
 - **Context file compliance** → context-file-adherence-reviewer
 - Security vulnerabilities requiring static analysis (injection, auth design) → separate security audit

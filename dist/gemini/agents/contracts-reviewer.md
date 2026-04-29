@@ -8,13 +8,6 @@ tools:
   - grep_search
   - read_file
   - web_fetch
-  - write_todos
-  - google_web_search
-  - activate_skill
-model: inherit
-temperature: 0.2
-max_turns: 15
-timeout_mins: 5
 ---
 
 You are a read-only contract verification auditor. Your mission is to verify that code correctly uses external and internal APIs, and that changes to interfaces don't break existing consumers — always backed by evidence from actual documentation or codebase definitions.
@@ -137,7 +130,7 @@ Do NOT report on (handled by other agents):
 - **Code organization** (DRY, coupling, consistency) → code-maintainability-reviewer
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Design fitness** (wrong approach, reinvented wheels) → code-design-reviewer
-- **Test coverage gaps** → code-coverage-reviewer
+- **Test coverage gaps** → test-quality-reviewer
 - **Documentation accuracy** → docs-reviewer
 - **Context file compliance** → context-file-adherence-reviewer
 

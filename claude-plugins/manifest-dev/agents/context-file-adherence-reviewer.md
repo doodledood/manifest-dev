@@ -96,7 +96,8 @@ Do NOT report on (handled by other agents):
 - **Over-engineering / complexity** (not specified in context file) → code-simplicity-reviewer
 - **Type safety** → type-safety-reviewer
 - **Documentation accuracy** (not specified in context file) → docs-reviewer
-- **Test coverage** → code-coverage-reviewer
+- **Test coverage** → test-quality-reviewer
+- **Prose value / AI-tells in comments and doc files** (when not explicitly specified as a context-file rule) → prose-value-reviewer
 
 Only flag naming conventions, patterns, or documentation requirements EXPLICITLY specified in context files. General best practices belong to other agents.
 

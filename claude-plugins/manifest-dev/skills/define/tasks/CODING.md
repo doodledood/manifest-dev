@@ -16,10 +16,11 @@ Defect-finding agents: every finding at Low severity or above fails the gate (`n
 | Mechanical bug detection | code-bugs-reviewer | no LOW+ |
 | Maintainability | code-maintainability-reviewer | no MEDIUM+ |
 | Simplicity | code-simplicity-reviewer | no MEDIUM+ |
-| Test coverage | code-coverage-reviewer | no MEDIUM+ |
+| Test quality | test-quality-reviewer | no MEDIUM+ |
 | Testability | code-testability-reviewer | no MEDIUM+ |
 | Documentation | docs-reviewer | no MEDIUM+ |
 | Design fitness | code-design-reviewer | no MEDIUM+ |
+| Prose value | prose-value-reviewer | no MEDIUM+ |
 | CLAUDE.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
 
 ### Conditional Gates (when applicable)

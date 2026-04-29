@@ -32,7 +32,8 @@ Specialized review agents for code quality verification:
 |-------|---------|
 | change-intent-reviewer | Adversarial intent-behavior divergence analysis |
 | code-bugs-reviewer | Mechanical defect detection (race conditions, leaks, edge cases) |
-| code-coverage-reviewer | Test coverage gap analysis with concrete scenarios |
+| test-quality-reviewer | Coverage gap analysis plus tautological-test detection (mirror-impl, mock-SUT, trivial-asserts, snapshot-without-intent) |
+| prose-value-reviewer | Comments and repo doc files: narrating-the-obvious, generic puffery, AI rhetorical patterns, sycophantic fragments — comments must be load-bearing-WHY |
 | code-design-reviewer | Design fitness: right approach given what exists |
 | code-maintainability-reviewer | DRY, coupling, cohesion, consistency, dead code |
 | code-simplicity-reviewer | Unnecessary complexity and over-engineering |

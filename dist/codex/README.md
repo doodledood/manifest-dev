@@ -7,7 +7,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | Type | Count | Notes |
 |------|-------|-------|
 | Skills | 12 | Full compatibility (Agent Skills Open Standard) |
-| Agents | 14 | TOML config stubs with full prompt bodies |
+| Agents | 15 | TOML config stubs with full prompt bodies |
 | Hooks | 0 | Not supported by Codex CLI (Issue #2109) |
 | Rules | 1 | Starlark execution policy |
 
@@ -34,7 +34,8 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 |-------|---------|---------|
 | change-intent-reviewer | read-only | Intent-behavior divergence analysis |
 | code-bugs-reviewer | read-only | Mechanical defect detection |
-| code-coverage-reviewer | read-only | Test coverage gap analysis |
+| test-quality-reviewer | read-only | Coverage gaps plus tautological-test detection |
+| prose-value-reviewer | read-only | Comments and repo doc files: AI-tells, narrating-the-obvious, puffery |
 | code-design-reviewer | read-only | Design fitness audit |
 | code-maintainability-reviewer | read-only | Maintainability audit |
 | code-simplicity-reviewer | read-only | Complexity audit |
@@ -115,10 +116,11 @@ dist/codex/
 │   ├── stop-thinking-disciplines/
 │   ├── thinking-disciplines/
 │   └── verify/
-├── agents/                          # 14 TOML config stubs
+├── agents/                          # 15 TOML config stubs
 │   ├── change-intent-reviewer.toml
 │   ├── code-bugs-reviewer.toml
-│   ├── code-coverage-reviewer.toml
+│   ├── test-quality-reviewer.toml
+│   ├── prose-value-reviewer.toml
 │   ├── code-design-reviewer.toml
 │   ├── code-maintainability-reviewer.toml
 │   ├── code-simplicity-reviewer.toml

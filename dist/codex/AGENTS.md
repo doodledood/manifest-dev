@@ -17,7 +17,8 @@ Skills handle the workflow orchestration. Agents listed below are used for verif
 
 - **change-intent-reviewer**: Adversarially analyzes whether code changes achieve their stated intent. Reconstructs intent from diff context, then attacks the logic for behavioral divergences.
 - **code-bugs-reviewer**: Audits for mechanical defects -- race conditions, data loss, edge cases, resource leaks, dangerous defaults, error handling gaps.
-- **code-coverage-reviewer**: Derives test scenarios from code logic and reports coverage gaps with concrete inputs and expected outputs.
+- **test-quality-reviewer**: Derives test scenarios from code logic and reports both coverage gaps (test absence) and tautological tests (test invalidity: mirror-impl, mock-SUT, trivial-asserts, snapshot-without-intent).
+- **prose-value-reviewer**: Audits code comments and repo doc files (READMEs, /docs) for prose value -- narrating-the-obvious comments, generic puffery, AI rhetorical patterns, sycophantic fragments. Comments must be load-bearing-WHY.
 - **code-design-reviewer**: Design fitness -- reinvented wheels, misplaced responsibilities, under-engineering, short-sighted interfaces, concept misuse, incoherent changes.
 - **code-maintainability-reviewer**: DRY violations, structural complexity, dead code, consistency, coupling, cohesion, boundary leakage, migration debt.
 - **code-simplicity-reviewer**: Unnecessary complexity, over-engineering, premature optimization, cognitive burden, clarity over cleverness.

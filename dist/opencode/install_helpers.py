@@ -26,12 +26,12 @@ SKILL_NAMES = [
 
 # Agent filenames (without .md)
 AGENT_NAMES = [
-    "change-intent-reviewer", "code-bugs-reviewer", "code-coverage-reviewer",
-    "code-design-reviewer", "code-maintainability-reviewer",
-    "code-simplicity-reviewer", "code-testability-reviewer",
-    "context-file-adherence-reviewer", "contracts-reviewer",
-    "criteria-checker", "define-session-analyzer", "docs-reviewer",
-    "manifest-verifier", "type-safety-reviewer",
+    "change-intent-reviewer", "code-bugs-reviewer", "test-quality-reviewer",
+    "prose-value-reviewer", "code-design-reviewer",
+    "code-maintainability-reviewer", "code-simplicity-reviewer",
+    "code-testability-reviewer", "context-file-adherence-reviewer",
+    "contracts-reviewer", "criteria-checker", "define-session-analyzer",
+    "docs-reviewer", "manifest-verifier", "type-safety-reviewer",
 ]
 
 # Command filenames (without .md)

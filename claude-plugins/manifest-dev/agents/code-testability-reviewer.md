@@ -104,7 +104,7 @@ Do NOT report on (handled by other agents):
 - **Code duplication** (DRY violations) → code-maintainability-reviewer
 - **Over-engineering** (premature abstraction) → code-simplicity-reviewer
 - **Type safety** (any abuse, invalid states) → type-safety-reviewer
-- **Test coverage gaps** (missing tests) → code-coverage-reviewer
+- **Test coverage gaps** (missing tests) → test-quality-reviewer
 - **Mechanical code defects** (race conditions, resource leaks) → code-bugs-reviewer
 - **API contract correctness** (wrong params, consumer breakage) → contracts-reviewer
 - **Documentation** (stale comments) → docs-reviewer

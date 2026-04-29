@@ -140,7 +140,8 @@ Do NOT report on (handled by other agents):
 - **Code organization** (DRY, coupling, consistency) → code-maintainability-reviewer
 - **Over-engineering / complexity** (premature abstraction, cognitive complexity) → code-simplicity-reviewer
 - **Type safety** → type-safety-reviewer
-- **Test coverage gaps** → code-coverage-reviewer
+- **Test coverage gaps** → test-quality-reviewer
+- **Prose value / AI-tells in comments and doc files** (this agent owns accuracy and drift; value/tells live with the prose auditor) → prose-value-reviewer
 - **Context file compliance** (except doc-related rules) → context-file-adherence-reviewer
 
 ## Edge Cases
