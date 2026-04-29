@@ -108,7 +108,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 | `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` and `--tend-pr` pass-through. |
 | `/tend-pr` | Sets up PR for review and starts a polling loop. Manifest-aware mode with scoped `/do`, or babysit mode without a manifest. |
 | `/tend-pr-tick` | Single iteration of PR tending (classify comments, route fixes, tend CI). Called by `/loop` via `/tend-pr`; also user-invocable for single-tick runs. PR-comment routing follows the same default-to-amend reflex as in-session feedback. |
-| `/verify` | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed within each pass — fast checks first, e2e/deploy-dependent later. (You rarely call this directly; `/do` handles it.) |
+| `/verify` | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed within each pass — fast checks first, e2e/deploy-dependent later. Supports `--cache none\|manifest\|max` for prompt caching across verification agents. (You rarely call this directly; `/do` handles it.) |
 | `/done` | Prints what got done and what was verified. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
 | `/learn-define-patterns` | Analyzes recent /define sessions, extracts user preference patterns, writes them to CLAUDE.md |
@@ -172,6 +172,7 @@ It walks through these in order, starting with whatever gives the most signal:
 |-------|---------|
 | `criteria-checker` | Read-only verification agent. Validates a single criterion using commands, codebase analysis, file inspection, reasoning, or web research. Returns structured PASS/FAIL. |
 | `manifest-verifier` | Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe. |
+| `cache-warmup` | Cache viability gauge for /verify. Estimates shared context token footprint, compares against model-specific minimum thresholds, and recommends cache strategy. Spawned by `/verify` when `--cache` is `manifest` or `max`. |
 | `define-session-analyzer` | Analyzes a single /define session transcript for user preference patterns. Spawned by `/learn-define-patterns`. |
 
 ### Code Reviewers
