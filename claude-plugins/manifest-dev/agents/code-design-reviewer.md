@@ -114,7 +114,7 @@ Do NOT report on (handled by other agents):
 - **Concept & contract drift** (same concept represented incompatibly across modules, representation inconsistency) → code-maintainability-reviewer
 - **Over-engineering / complexity** (premature abstraction, cognitive burden) → code-simplicity-reviewer
 - **Testability design** (logic buried in IO, mock friction) → code-testability-reviewer
-- **Test coverage gaps** (missing tests) → code-coverage-reviewer
+- **Test coverage gaps** (missing tests) → test-quality-reviewer
 - **Documentation accuracy** (stale docs, wrong comments) → docs-reviewer
 - **Context file compliance** (project rule violations) → context-file-adherence-reviewer
 

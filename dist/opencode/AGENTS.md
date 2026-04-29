@@ -26,13 +26,14 @@ Internal skills:
 
 ## Agents
 
-14 specialized agents, all read-only reviewers except define-session-analyzer:
+15 specialized agents, all read-only reviewers except define-session-analyzer:
 
 | Agent | Purpose |
 |-------|---------|
 | change-intent-reviewer | Adversarial intent-behavior divergence analysis |
 | code-bugs-reviewer | Mechanical defect detection (race conditions, leaks, edge cases) |
-| code-coverage-reviewer | Test coverage gap analysis with concrete scenarios |
+| test-quality-reviewer | Coverage gap analysis plus tautological-test detection (mirror-impl, mock-SUT, trivial-asserts, snapshot-without-intent) |
+| prose-value-reviewer | Comments and repo doc files: narrating-the-obvious, generic puffery, AI rhetorical patterns, sycophantic fragments — comments must be load-bearing-WHY |
 | code-design-reviewer | Design fitness (reinvented wheels, wrong responsibility, under-engineering) |
 | code-maintainability-reviewer | Code organization (DRY, coupling, cohesion, consistency) |
 | code-simplicity-reviewer | Unnecessary complexity and over-engineering |

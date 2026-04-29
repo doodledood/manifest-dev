@@ -1,5 +1,5 @@
 name = "change-intent-reviewer"
-description = "Adversarially analyze whether code, prompt, or config changes achieve their stated intent. Reconstructs change intent from diff context, then systematically attacks the logic to find behavioral divergences"
+description = "Adversarially analyze whether code, prompt, or config changes achieve their stated intent"
 sandbox_mode = "read-only"
 developer_instructions = """
 
@@ -121,7 +121,7 @@ Do NOT report on (handled by other agents):
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Design fitness** (wrong approach, reinvented wheels, under-engineering) → code-design-reviewer
 - **Prompt structure quality** (clarity, anti-patterns, information density) → prompt-reviewer
-- **Test coverage gaps** (missing tests) → code-coverage-reviewer
+- **Test coverage gaps** (missing tests) → test-quality-reviewer
 - **Testability design** (hard to test, mock friction) → code-testability-reviewer
 - **Documentation accuracy** (stale docs) → docs-reviewer
 - **Context file compliance** (project rule violations) → context-file-adherence-reviewer

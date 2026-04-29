@@ -1,5 +1,5 @@
 name = "code-simplicity-reviewer"
-description = "Audit code for unnecessary complexity, over-engineering, and cognitive burden. Identifies solutions more complex than the problem requires -- not structural issues like coupling or DRY (handled by maintainability-reviewer), but implementation complexity that makes code harder to understand than necessary"
+description = "Audit code for unnecessary complexity, over-engineering, and cognitive burden"
 sandbox_mode = "read-only"
 developer_instructions = """
 
@@ -77,7 +77,7 @@ Do NOT report on (handled by other agents):
 - **API contract correctness** (wrong params, consumer breakage) → contracts-reviewer
 - **Type safety** (any/unknown, invalid states) → type-safety-reviewer
 - **Documentation accuracy** → docs-reviewer
-- **Test coverage gaps** → code-coverage-reviewer
+- **Test coverage gaps** → test-quality-reviewer
 - **Context file compliance** → context-file-adherence-reviewer
 
 **Key distinction from maintainability:**

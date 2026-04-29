@@ -58,7 +58,8 @@ Do NOT report on (handled by other agents):
 - **Documentation accuracy** → docs-reviewer
 - **Mechanical code defects** (race conditions, resource leaks, null handling) → code-bugs-reviewer
 - **API contract correctness** (wrong params, consumer breakage) → contracts-reviewer
-- **Test coverage gaps** → code-coverage-reviewer
+- **Test coverage gaps** → test-quality-reviewer
+- **Comment value / prose AI-tells in comments and doc files** (this agent owns dead-code identification; value-of-comment lives with the prose auditor) → prose-value-reviewer
 - **Context file compliance** → context-file-adherence-reviewer
 - **Design fitness** (reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, concept misuse/overloading) → code-design-reviewer
 
@@ -312,7 +313,7 @@ Do not fabricate issues to fill the report. A clean review is a valid outcome.
 
 - **Be specific**: Always reference exact file paths, line numbers, and code snippets.
 - **Be actionable**: Every issue must have a concrete, implementable fix suggestion.
-- **Consider context**: Account for project conventions from AGENTS.md files and existing patterns.
+- **Consider context**: Account for project conventions from CLAUDE.md files and existing patterns.
 - **Avoid false positives**: Always read full files before flagging issues. A diff alone lacks context—code that looks duplicated in isolation may serve different purposes when you see the full picture.
 - **Avoid these common false positives**:
   - Test file duplication (test setup repetition is often intentional for isolation)

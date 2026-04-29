@@ -124,7 +124,7 @@ Do NOT report on (handled by other agents):
 - **Code organization** (DRY, coupling, consistency) → code-maintainability-reviewer
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Design fitness** (wrong approach, reinvented wheels) → code-design-reviewer
-- **Test coverage gaps** → code-coverage-reviewer
+- **Test coverage gaps** → test-quality-reviewer
 - **Documentation accuracy** → docs-reviewer
 - **Context file compliance** → context-file-adherence-reviewer
 

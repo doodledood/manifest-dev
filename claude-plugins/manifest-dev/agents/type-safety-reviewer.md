@@ -87,7 +87,7 @@ Do NOT report on (handled by other agents):
 - **Code organization** (DRY, coupling, consistency) → code-maintainability-reviewer
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Documentation accuracy** → docs-reviewer
-- **Test coverage gaps** → code-coverage-reviewer
+- **Test coverage gaps** → test-quality-reviewer
 - **Context file compliance** → context-file-adherence-reviewer
 
 ## Severity Classification

@@ -372,7 +372,8 @@ Built-in agents for quality verification via `subagent` method:
 | `code-design-reviewer` | Design fitness: reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, PR coherence |
 | `code-simplicity-reviewer` | Over-engineering, premature optimization, cognitive complexity |
 | `code-testability-reviewer` | Excessive mocking requirements, logic buried in IO, hidden dependencies |
-| `code-coverage-reviewer` | Test coverage with proactive edge case enumeration — derives specific test scenarios from code logic |
+| `test-quality-reviewer` | Test quality: coverage gaps from edge-case enumeration plus tautological-test detection (mirror-impl, mock-SUT, trivial-asserts, snapshot-without-intent) |
+| `prose-value-reviewer` | Prose value in code comments and repo doc files — flags narrating-the-obvious comments, generic puffery, AI rhetorical patterns, sycophantic fragments. Comments must be load-bearing-WHY |
 | `type-safety-reviewer` | TypeScript type safety: `any` abuse, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
 | `context-file-adherence-reviewer` | Compliance with context file (CLAUDE.md/AGENTS.md/GEMINI.md) project rules |
@@ -400,7 +401,7 @@ Hooks enforce workflow integrity. The AI can't skip steps:
 
 | Task Type | Guidance | Quality Gates |
 |-----------|----------|---------------|
-| **Feature** | `tasks/FEATURE.md` + `CODING.md` | Bug detection, type safety, maintainability, simplicity, test coverage, testability, CLAUDE.md adherence |
+| **Feature** | `tasks/FEATURE.md` + `CODING.md` | Bug detection, type safety, maintainability, simplicity, test quality, testability, prose value, CLAUDE.md adherence |
 | **Bug** | `tasks/BUG.md` + `CODING.md` | Bug fix verification, regression prevention, root cause analysis |
 | **Refactor** | `tasks/REFACTOR.md` + `CODING.md` | Behavior preservation, maintainability, simplicity |
 | **Prompting** | `tasks/PROMPTING.md` | Prompt quality criteria |

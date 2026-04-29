@@ -122,7 +122,7 @@ Do NOT report on (handled by other agents):
 - **Over-engineering / complexity** → code-simplicity-reviewer
 - **Design fitness** (wrong approach, reinvented wheels, under-engineering) → code-design-reviewer
 - **Prompt structure quality** (clarity, anti-patterns, information density) → prompt-reviewer
-- **Test coverage gaps** (missing tests) → code-coverage-reviewer
+- **Test coverage gaps** (missing tests) → test-quality-reviewer
 - **Testability design** (hard to test, mock friction) → code-testability-reviewer
 - **Documentation accuracy** (stale docs) → docs-reviewer
 - **Context file compliance** (project rule violations) → context-file-adherence-reviewer

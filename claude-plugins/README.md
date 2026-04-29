@@ -39,7 +39,7 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 
 **Other user-invocable skills:** `/tend-pr-tick` (also called by `/loop` via `/tend-pr`)
 
-**Review agents:** `criteria-checker`, `manifest-verifier`, `define-session-analyzer`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `code-coverage-reviewer`, `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
+**Review agents:** `criteria-checker`, `manifest-verifier`, `define-session-analyzer`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `test-quality-reviewer` (coverage gaps + tautological-test detection), `prose-value-reviewer` (code comments + repo doc files: AI-tells, narrating-the-obvious, puffery), `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
 
 **Hooks** enforce workflow integrity: prevent premature stopping, restore context after compaction, nudge manifest reads before verification, track execution log updates, and detect manifest amendments during `/do`.
 
