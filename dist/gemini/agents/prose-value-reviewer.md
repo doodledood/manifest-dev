@@ -1,6 +1,6 @@
 ---
 name: prose-value-reviewer
-description: 'Audit code comments and repo doc files (READMEs, *.md in /docs and root) for prose value. Flags narrating-the-obvious comments, generic puffery / empty buzzwords, AI rhetorical patterns (em-dash overuse, "It''s not just X — it''s Y"), and sycophantic / assistant-voice fragments. Comments must be load-bearing-WHY, not WHAT-restatement or past-iteration narration. Use after implementing features, before a PR, or when comments and docs feel padded with AI sheen. Triggers: prose review, comment value, AI tells, doc puffery, narrating obvious, doc slop, comment slop.'
+description: 'Audit code comments and repo-resident doc files for prose value. Doc-file scope adapts to whatever documentation layout the project uses (READMEs anywhere, *.md at the repo root, plus *.md in whatever conventional doc directory the project has — discovered via filesystem inspection, not assumed). Flags narrating-the-obvious comments, generic puffery / empty buzzwords, AI rhetorical patterns (em-dash overuse, "It''s not just X — it''s Y"), and sycophantic / assistant-voice fragments. Comments must be load-bearing-WHY, not WHAT-restatement or past-iteration narration. Use after implementing features, before a PR, or when comments and docs feel padded with AI sheen. Triggers: prose review, comment value, AI tells, doc puffery, narrating obvious, doc slop, comment slop.'
 kind: local
 tools:
   - run_shell_command
@@ -32,7 +32,12 @@ Determine what to review using this priority:
 
 **Audit targets** (the only files this agent reads for findings):
 - **Code comments** in source files (any language, line and block comments alike). Test-file *prose* (e.g., `describe`/`it` strings, assertion messages) is out of scope; comments inside test files follow the same rules as comments in any source file and ARE in scope.
-- **Repo doc files**: `README.md` files anywhere in the repo, plus `*.md` files under `/docs`, `/documentation`, or the repo root
+- **Repo-resident doc files** — adapt to whatever doc layout the project uses. The agent ships in a plugin installed across many projects; doc conventions vary widely. Discover the actual layout via filesystem inspection (e.g., `ls`, `find`, `glob`) and audit:
+  - `README.md` files anywhere in the repo (root, package roots, subprojects)
+  - `*.md` files at the repo root (e.g., `CONTRIBUTING.md`, `CHANGELOG.md`)
+  - `*.md` files inside whatever conventional documentation directory the project uses
+
+  Common conventional doc directories include (non-exhaustive examples — the actual list depends on the project): `docs/`, `documentation/`, `guides/`, `wiki/`, `website/docs/`, `site/`, `handbook/`. Do not assume a specific path exists; check the filesystem and audit whatever doc directory is present. Some repos use none of these and only have READMEs and root-level `*.md` — that's fine. Some repos have multiple doc trees — audit each. The principle: if it's a `*.md` file the project treats as documentation (not generated, not vendored, not lock data), it is in scope.
 
 **Out-of-scope surfaces** (this agent does NOT audit):
 - Commit messages
