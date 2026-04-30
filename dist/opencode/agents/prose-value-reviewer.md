@@ -1,7 +1,6 @@
 ---
 description: "Audit code comments and repo-resident doc files for prose value. Doc-file scope adapts to whatever documentation layout the project uses (READMEs anywhere, *.md at the repo root, plus *.md in whatever conventional doc directory the project has — discovered via filesystem inspection, not assumed). Flags narrating-the-obvious comments, generic puffery / empty buzzwords, AI rhetorical patterns (em-dash overuse, \"It's not just X — it's Y\"), and sycophantic / assistant-voice fragments. Comments must be load-bearing-WHY, not WHAT-restatement or past-iteration narration. Use after implementing features, before a PR, or when comments and docs feel padded with AI sheen. Triggers: prose review, comment value, AI tells, doc puffery, narrating obvious, doc slop, comment slop."
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true

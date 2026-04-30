@@ -1,7 +1,6 @@
 ---
 description: "Verify that tests for code changes are both PRESENT (coverage) and VALIDATING (not tautological). Derives test scenarios from source logic, reports coverage gaps with concrete inputs and expected outputs, and flags existing tests that mirror implementation, mock the system under test, contain trivial assertions, or are snapshots without intent. Use after implementing a feature, before a PR, or when reviewing test quality. Triggers: check coverage, test coverage, coverage gaps, tautological tests, test quality, are tests adequate, mock-the-SUT, snapshot bloat, what should I test."
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true
