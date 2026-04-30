@@ -67,12 +67,11 @@ model: inherit
 ---
 ```
 
-OpenCode agent format:
+OpenCode agent format (no `model:` — agent inherits OpenCode's configured global model; see Phase 1 rule #7):
 ```yaml
 ---
 description: Agent purpose description
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 tools:
   bash: true
@@ -94,7 +93,7 @@ tools:
 |-------|------|---------|-------------|
 | `description` | string | REQUIRED | Brief description of agent purpose |
 | `mode` | "primary" / "subagent" / "all" | "all" | How agent can be invoked |
-| `model` | string | global config | Provider/model-id format (e.g., `anthropic/claude-sonnet-4-20250514`) |
+| `model` | string | global config | Provider/model-id format (e.g., `provider/model-id`). **Omit during sync** — let agents inherit the user's configured global model. See Phase 1 rule #7. |
 | `temperature` | number (0.0-1.0) | model default | Response randomness |
 | `top_p` | number (0.0-1.0) | model default | Nucleus sampling |
 | `steps` | positive integer | unlimited | Max agentic iterations |
@@ -112,6 +111,7 @@ tools:
 4. Add `mode: subagent` for agents spawned by other agents, `mode: primary` for top-level
 5. Keep prompt body (everything below frontmatter) unchanged
 6. Write to `.opencode/agents/` (project) or `~/.config/opencode/agents/` (global)
+7. **Omit the `model` field.** OpenCode falls back to the user's configured global model (per the field table above) — that is the desired behavior. Hardcoding any concrete `provider/model-id` makes the dist go stale at every model release; we do not want to keep chasing model names. This mirrors the source plugin convention (Claude Code agents omit `model:` and inherit), the Gemini reference (`model: inherit`), and the Codex reference (omit `model` and `model_reasoning_effort`). Do NOT add a `model:` line to converted agents under any circumstances; users override at the OpenCode global-config level if they want a specific model.
 
 **Phase 2 enrichment** (LLM):
 - Infer `temperature` from agent purpose: 0.1-0.2 for deterministic (QA, verification), 0.3 for balanced (code review), 0.5-0.7 for creative
