@@ -11,7 +11,7 @@ If thinking disciplines are not already active in this session, invoke the manif
 
 ## Goal
 
-Build a **comprehensive Manifest** that captures:
+Build **shared understanding** between you and the user about the work — what it is, why it matters, what could go wrong, what's in scope and what isn't — and encode that understanding formally as a **comprehensive Manifest** that captures:
 - **What we build** (Deliverables with Acceptance Criteria)
 - **How we'll get there** (Approach - initial direction, expect adjustment)
 - **Rules we must follow** (Global Invariants)
@@ -26,13 +26,15 @@ Output: `/tmp/manifest-{timestamp}.md`
 
 ## Input
 
-`$ARGUMENTS` = task description, optionally with context/research, `--interview <level>`, `--medium <type>`, `--amend <manifest-path>`
+`$ARGUMENTS` = task description, optionally with context/research, `--interview <level>`, `--medium <type>`, `--amend <manifest-path>`, `--canvas`
 
 Parse `--interview` from arguments (can appear anywhere). Valid values: `minimal`, `autonomous`, `thorough`. Default: `thorough`. Invalid value → error and halt: "Invalid interview style '<value>'. Valid styles: minimal | autonomous | thorough"
 
 Parse `--medium` from arguments (can appear anywhere). Currently only `local` is supported (default). Other mediums may be added in the future. If a non-local value is provided, error and halt: "Medium '<value>' not yet supported. Currently supported: local". See Medium Routing section below.
 
 Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do` flag (optional, used with `--amend`) — see `references/AMENDMENT_MODE.md` for behavior.
+
+Parse `--canvas` flag from arguments (can appear anywhere). When present, read `references/CANVAS_MODE.md` and follow it. When absent, ignore — no canvas-related behavior anywhere in /define.
 
 If no arguments provided, ask: "What would you like to build or change?"
 
