@@ -16,15 +16,13 @@ Build **shared understanding** between you and the user about the work — what 
 - **How we'll get there** (Approach - initial direction, expect adjustment)
 - **Rules we must follow** (Global Invariants)
 
-The manifest is the formal, machine-readable encoding consumed by `/do` and downstream agents. When `--canvas` is passed (desktop only), a human-facing **Shared Understanding Canvas** is also produced — see Canvas Mode below.
-
 **Why thoroughness matters**: Every criterion discovered NOW is one fewer rejection during implementation/review. The goal is a deliverable that passes review on first submission—no "oh, I also needed X" after the work is done.
 
 Comprehensive means surfacing **latent criteria**—requirements the user doesn't know they have until probed. Users know their surface-level needs; your job is to discover the constraints and edge cases they haven't thought about.
 
 Aim for high coverage. Amendments handle what emerges during implementation.
 
-Output: `/tmp/manifest-{timestamp}.md` (and `/tmp/canvas-{timestamp}.html` when `--canvas` is active).
+Output: `/tmp/manifest-{timestamp}.md`
 
 ## Input
 
@@ -36,7 +34,7 @@ Parse `--medium` from arguments (can appear anywhere). Currently only `local` is
 
 Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do` flag (optional, used with `--amend`) — see `references/AMENDMENT_MODE.md` for behavior.
 
-Parse `--canvas` flag from arguments (can appear anywhere). When present, see Canvas Mode section. Default: absent.
+Parse `--canvas` flag from arguments (can appear anywhere). When present, read `references/CANVAS_MODE.md` and follow it. When absent, ignore — no canvas-related behavior anywhere in /define.
 
 If no arguments provided, ask: "What would you like to build or change?"
 
@@ -107,17 +105,6 @@ If the matched path no longer exists or fails to read, fall back to a fresh mani
 **What to do:** Run `git diff <base>...HEAD` and `git log --oneline <base>..HEAD`. Read the diff and commit messages. Incorporate the existing changeset into the new manifest's Intent (mention what's already done) and starting Deliverables (the work-in-progress becomes prior context, with new ACs added on top for completion + the new task). The interview confirms or adjusts what was inferred from the diff.
 
 **Skip cleanly when:** No commits ahead of base (fresh branch), or `--amend` was passed (existing manifest already covers the prior state), or Session-Default Amendment fired (in-session manifest is being amended).
-
-## Canvas Mode
-
-Evaluate HERE (after Branch-Diff Seeding, before Domain Guidance) so the canvas opens before the interview starts. When `--canvas` is passed, skip canvas generation if any of these hold (first match wins; #1–3 silent, #4 prints one warning):
-
-1. Amendment mode active — `--amend`, Session-Default Amendment "When Related", or referenced manifest path
-2. `--interview autonomous` (covers `/auto`)
-3. `--medium` ≠ `local`
-4. No `xdg-open` / `open` / `start` on PATH
-
-If none match, load `references/CANVAS_MODE.md` in full and follow it — that file owns format, content, cadence, auto-open, failure handling, and lifecycle.
 
 ## Domain Guidance
 
@@ -513,8 +500,6 @@ Digest the manifest into a scannable summary the user can approve at a glance. T
 - **How I'll verify** — Brief description of verification approach. Example: "criteria-checker cross-references docs for contradictions, prompt-reviewer checks prompt quality."
 
 Include an ASCII architecture diagram when the task has multiple components with inter-component flow. Skip for single-deliverable tasks.
-
-When the canvas is genuinely active and a canvas file exists, append one line: `Canvas: file:///tmp/canvas-{timestamp}.html`. See `references/CANVAS_MODE.md` for the gating details.
 
 **The test**: If the summary reads like a compressed manifest, rewrite it. If it reads like something you'd say to a colleague, it's right.
 
