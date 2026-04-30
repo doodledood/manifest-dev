@@ -186,12 +186,13 @@ Runs when the platform adapter exposes a `CI Failure Triage` contract (currently
 
 ### P. Tend PR (platform adapter contracts)
 
-Runs when the platform adapter exposes `Write Outputs` and `Thread Hygiene` contracts (currently: github). After CI triage (when the adapter returned `continue` rather than `terminal`), invoke the two contracts in order:
+Runs when the platform adapter exposes `Write Outputs`, `Thread Hygiene`, and `PR Description Sync` contracts (currently: github). After CI triage (when the adapter returned `continue` rather than `terminal`), invoke the three contracts in order:
 
-1. **Write Outputs** — **gated on code changes this tick.** Handles commit, push, execution-log append, PR description sync, inbox follow-up replies, and updating requested reviewers if configured. Skipped entirely on ticks with no code changes. On retrigger-only ticks (only commits are retrigger-empty-commits), PR description sync within this contract is skipped — there is no new diff to describe.
+1. **Write Outputs** — **gated on code changes this tick.** Handles commit, push, execution-log append, inbox follow-up replies, and updating requested reviewers if configured. Skipped entirely on ticks with no code changes.
 2. **Thread Hygiene** — **runs every tick**, strictly after Write Outputs completes (never before, never in parallel). Resolves bot threads whose disposition is "addressed" per the adapter's rules. Never resolves human threads. Independent of whether code changed this tick — this is what resolves bot threads on FP-reply-only ticks where §I Inbox Handling posted a reply but produced no commit. On retrigger-only ticks, Thread Hygiene no-ops (no new disposition data).
+3. **PR Description Sync** — **runs every tick**, strictly after Thread Hygiene completes. Adapter owns the trigger logic; adapter may no-op when neither trigger fires. Independent of code changes — fires on amendment-only ticks where §Write Outputs was skipped, and on commit-producing ticks (combined-single-sync when both triggers apply same tick). Adapter contract details in `drive/references/platforms/github.md` §PR Description Sync.
 
-Both contracts are invoked at the tick level; the adapter owns how each one is realized on its platform.
+All three contracts are invoked at the tick level; the adapter owns how each one is realized on its platform.
 
 ### C. Continue
 
