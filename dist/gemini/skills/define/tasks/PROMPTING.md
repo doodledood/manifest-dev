@@ -21,7 +21,7 @@ When prompt-reviewer is not available, encode these as individual criteria verif
 | No conflicts | No contradictory rules, no priority collisions, edge cases covered |
 | Structure | Critical rules surfaced prominently, clear hierarchy, no unintentional redundancy |
 | Information density | Every word earns its place |
-| No anti-patterns | No prescriptive HOW, arbitrary limits, capability instructions, weak language |
+| No anti-patterns | No prescriptive HOW, arbitrary limits, capability instructions, weak hedging, unjustified absolutes |
 | Invocation fit | Prompt's trigger, caller identity, and output consumer match deployment context |
 | Domain context | Domain terms, conventions, and constraints captured—not guessed |
 | Complexity fit | Prompt complexity matches the task—not over-engineered, not under-specified |
@@ -63,7 +63,8 @@ Before defining a prompt, probe for these—missing context creates ambiguous pr
 | Arbitrary limits | "Max 3 iterations", "2-4 examples" | Principle: "until converged", "as needed" |
 | Capability instructions | "Use grep to search", "Read the file" | Remove—model knows how |
 | Rigid checklists in authored prompts | "Step 1: search. Step 2: read. Step 3: analyze." baked into the prompt | Convert to goal + constraints (discipline patterns like memento are exempt) |
-| Weak language | "Try to", "maybe", "if possible" | Direct: "Do X", "Never Y" |
+| Weak hedging | "Try to", "maybe", "if possible" | Direct imperative: "Do X" |
+| Absolutes for judgment calls | "ALWAYS", "NEVER", "MUST" applied to non-invariants (when to search, ask, iterate, retry) | Decision rules: "When X, do Y; otherwise Z". Reserve absolutes for true invariants — safety rules, required fields, hard constraints |
 | Buried critical info | Important rules in middle | Surface prominently |
 | Over-engineering | 10 phases for a simple task | Match complexity to need |
 
