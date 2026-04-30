@@ -518,7 +518,7 @@ Digest the manifest into a scannable summary the user can approve at a glance. T
 
 Include an ASCII architecture diagram when the task has multiple components with inter-component flow. Skip for single-deliverable tasks.
 
-When `--canvas` was active during this /define run (and not suppressed per Canvas Mode), append one line to the summary: `Canvas: file:///tmp/canvas-{timestamp}.html`. The chat summary remains the approval channel; the canvas is the deeper-look surface alongside it.
+When `--canvas` was active during this /define run, was not suppressed per Canvas Mode, AND the canvas file was successfully written at least once (i.e., not lost to a write failure per CANVAS_MODE.md §Failure handling), append one line to the summary: `Canvas: file:///tmp/canvas-{timestamp}.html`. Skip the link if any of those conditions fail — pointing the user at a file that doesn't exist is worse than omitting the link. The chat summary remains the approval channel; the canvas, when present, is the deeper-look surface alongside it.
 
 **The test**: If the summary reads like a compressed manifest, rewrite it. If it reads like something you'd say to a colleague, it's right.
 
