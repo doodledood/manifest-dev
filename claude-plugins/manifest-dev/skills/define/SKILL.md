@@ -16,7 +16,7 @@ Build **shared understanding** between you and the user about the work — what 
 - **How we'll get there** (Approach - initial direction, expect adjustment)
 - **Rules we must follow** (Global Invariants)
 
-The manifest is the formal, machine-readable encoding consumed by `/do` and downstream agents. When `--canvas` is passed on a desktop environment, a parallel **Shared Understanding Canvas** is also produced — a live, browser-rendered visual artifact at `/tmp/canvas-{timestamp}.html` that reflects the same understanding in a layered, human-friendly form. See Canvas Mode below.
+The manifest is the formal, machine-readable encoding consumed by `/do` and downstream agents. When `--canvas` is passed (desktop only), a human-facing **Shared Understanding Canvas** is also produced — see Canvas Mode below.
 
 **Why thoroughness matters**: Every criterion discovered NOW is one fewer rejection during implementation/review. The goal is a deliverable that passes review on first submission—no "oh, I also needed X" after the work is done.
 
@@ -36,7 +36,7 @@ Parse `--medium` from arguments (can appear anywhere). Currently only `local` is
 
 Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do` flag (optional, used with `--amend`) — see `references/AMENDMENT_MODE.md` for behavior.
 
-Parse `--canvas` flag from arguments (can appear anywhere). When present, see the Canvas Mode section that follows Branch-Diff Seeding — the dispatch is positioned there because that's where it must fire (after Session-Default Amendment and Branch-Diff Seeding resolve, before Domain Guidance / interview begins). Default: absent.
+Parse `--canvas` flag from arguments (can appear anywhere). When present, see Canvas Mode section. Default: absent.
 
 If no arguments provided, ask: "What would you like to build or change?"
 
@@ -110,18 +110,14 @@ If the matched path no longer exists or fails to read, fall back to a fresh mani
 
 ## Canvas Mode
 
-**Runtime position.** Evaluate this dispatch HERE — immediately after Branch-Diff Seeding resolves, before Domain Guidance and the interview begin. The section is placed here (not at the end of the file) so the dispatch fires at the correct point during sequential reading. Initial canvas generation and the browser auto-open happen at this evaluation point so the canvas tab is open and ready before the interview starts. After the interview begins, regenerate per `references/CANVAS_MODE.md`'s update cadence.
+Evaluate HERE (after Branch-Diff Seeding, before Domain Guidance) so the canvas opens before the interview starts. When `--canvas` is passed, skip canvas generation if any of these hold (first match wins; #1–3 silent, #4 prints one warning):
 
-**Suppression evaluation.** When `--canvas` is passed, evaluate the four suppression conditions in order. **First match wins** — once a condition triggers, stop evaluating and skip per its rule. Conditions 1–3 skip silently (no warning, no file written, no browser open). Condition 4 prints one warning, then skips. In all cases, the rest of /define continues normally:
+1. Amendment mode active — `--amend`, Session-Default Amendment "When Related", or referenced manifest path
+2. `--interview autonomous` (covers `/auto`)
+3. `--medium` ≠ `local`
+4. No `xdg-open` / `open` / `start` on PATH
 
-1. **Amendment mode is active** — `--amend` is literally passed, OR Session-Default Amendment **resolved to amendment** (the "When Related" branch — note: the "When Truly Unrelated" and "When Cannot Be Read" branches proceed FRESH and DO get a canvas), OR input arguments referenced a specific `/tmp/manifest-*.md` or `.manifest/*.md` path that the agent will amend → silent skip (canvas is fresh-/define-only; per ASM-6, amendments do not get a canvas regardless of trigger)
-2. `--interview autonomous` was resolved (this transitively covers `/auto` invocations — `/auto` always passes `--interview autonomous` to /define, so no separate `/auto` check is needed) → silent skip
-3. **Resolved `--medium` is anything other than `local`** — i.e., the user is not at the host's default browser (e.g., `--medium slack` once supported) → silent skip. Anticipatory: only `local` is currently supported and the Input section halts on non-local mediums at parse time, so this condition is dormant in practice but documented here for forward compatibility. The trigger generalizes to any future medium that doesn't give the user host-browser access.
-4. No graphical-browser launcher is available — none of `xdg-open`, `open`, or `start` is on PATH → print one warning ("--canvas requires a desktop environment with a graphical browser; skipping artifact generation") and skip
-
-If all four pass, the canvas is genuinely active. Read `references/CANVAS_MODE.md` in full — it owns the operational specification (file format, content menu, update cadence, auto-open mechanism, failure handling, file naming). The dispatch is a single-load contract; load the whole file, no section-targeted instructions.
-
-The canvas is generated and updated only during /define's interview phase. It freezes at user approval. `/do` never touches the canvas — no regeneration, extension, or annotation by `/do` or any downstream skill. The first render is intentionally a minimal shell — see CANVAS_MODE.md §Update cadence for content semantics.
+If none match, load `references/CANVAS_MODE.md` in full and follow it — that file owns format, content, cadence, auto-open, failure handling, and lifecycle.
 
 ## Domain Guidance
 
@@ -518,7 +514,7 @@ Digest the manifest into a scannable summary the user can approve at a glance. T
 
 Include an ASCII architecture diagram when the task has multiple components with inter-component flow. Skip for single-deliverable tasks.
 
-When `--canvas` was active during this /define run, was not suppressed per Canvas Mode, AND the canvas file was successfully written at least once (i.e., not lost to a write failure per CANVAS_MODE.md §Failure handling), append one line to the summary: `Canvas: file:///tmp/canvas-{timestamp}.html`. Skip the link if any of those conditions fail — pointing the user at a file that doesn't exist is worse than omitting the link. The chat summary remains the approval channel; the canvas, when present, is the deeper-look surface alongside it.
+When the canvas is genuinely active and a canvas file exists, append one line: `Canvas: file:///tmp/canvas-{timestamp}.html`. See `references/CANVAS_MODE.md` for the gating details.
 
 **The test**: If the summary reads like a compressed manifest, rewrite it. If it reads like something you'd say to a colleague, it's right.
 

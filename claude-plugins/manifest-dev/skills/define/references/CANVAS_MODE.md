@@ -1,6 +1,23 @@
 # Canvas Mode — Shared Understanding Canvas
 
-This file is loaded only when `--canvas` is active and the host environment supports it. It owns the operational specification of the Shared Understanding Canvas — what to generate, when to update it, how to open it, and how to handle failures. SKILL.md owns the suppression logic (when this file is loaded vs not); this file does not re-evaluate those conditions.
+This file is loaded only when `--canvas` is active and the host environment supports it. SKILL.md's Canvas Mode section is intentionally minimal — it lists the four suppression conditions and points here. This file owns the substance: principles, format, content, update cadence, auto-open, failure handling, lifecycle, and the rationale behind each suppression condition.
+
+## Suppression — rationale and edge cases
+
+SKILL.md enumerates the four conditions tersely. The detail behind each:
+
+1. **Amendment mode active.** Canvas is fresh-/define-only (ASM-6). Amendment is "active" via three paths: literal `--amend`, Session-Default Amendment resolving to "When Related" (NOT "When Truly Unrelated" or "When Cannot Be Read" — those proceed FRESH and DO get a canvas), or input arguments referencing a specific manifest path the agent will amend. Edge case worth noting: when the "When Related" branch fires, control diverts to AMENDMENT_MODE.md and SKILL.md's Canvas Mode dispatch may not be re-evaluated explicitly — the outcome (no canvas) is incidentally correct because amendment flow contains no canvas-generation step.
+2. **`--interview autonomous`.** The canvas's value is human review during the interview. Without a human reviewer, it's wasted tokens. This transitively covers `/auto`, which always passes `--interview autonomous` to /define — no separate `/auto` check is needed.
+3. **`--medium` ≠ `local`.** Anticipatory: only `local` is currently supported and the Input section halts on non-local mediums at parse time, so this condition is dormant in practice. The trigger generalizes to any future medium (e.g., `--medium slack` once supported) where the user lacks host-browser access.
+4. **No graphical-browser launcher.** Detected via `command -v xdg-open || command -v open || command -v start`. First match wins. The single warning lets the user know why the canvas didn't open (`--canvas requires a desktop environment with a graphical browser; skipping artifact generation`).
+
+## Lifecycle
+
+Canvas is generated and updated only during /define's interview phase. It freezes at user approval. `/do` never touches the canvas — no regeneration, extension, or annotation by `/do` or any downstream skill. The first render is intentionally a minimal shell (see Update cadence below).
+
+## Summary-for-Approval gating
+
+SKILL.md's Summary for Approval appends a one-line `Canvas: file:///tmp/canvas-{timestamp}.html` link only when ALL of: (a) `--canvas` was passed, (b) no suppression condition matched, AND (c) at least one canvas write succeeded (i.e., the file actually exists at the path). If any canvas write failed (per Failure handling below), omit the link — pointing the user at a non-existent file is worse than no link.
 
 ## Why a canvas exists
 
