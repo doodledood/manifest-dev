@@ -121,9 +121,7 @@ If the matched path no longer exists or fails to read, fall back to a fresh mani
 
 If all four pass, the canvas is genuinely active. Read `references/CANVAS_MODE.md` in full — it owns the operational specification (file format, content menu, update cadence, auto-open mechanism, failure handling, file naming). The dispatch is a single-load contract; load the whole file, no section-targeted instructions.
 
-**Initial canvas content.** At this evaluation point the interview has not started, so no deliverables, ACs, or invariants exist yet. The initial canvas is a deliberate **minimal shell** — intent banner from `$ARGUMENTS`, an "Interview in progress" affordance, and an empty scaffold for sections that fill in as understanding accumulates. The substance (diagrams, deliverable cards, before/after flows) materializes via the regeneration cadence as the interview produces it. The user opens the tab knowing it will fill in, not expecting completed content immediately.
-
-The canvas is generated and updated only during /define's interview phase. It freezes at user approval. `/do` never touches the canvas — no regeneration, extension, or annotation by `/do` or any downstream skill.
+The canvas is generated and updated only during /define's interview phase. It freezes at user approval. `/do` never touches the canvas — no regeneration, extension, or annotation by `/do` or any downstream skill. The first render is intentionally a minimal shell — see CANVAS_MODE.md §Update cadence for content semantics.
 
 ## Domain Guidance
 
