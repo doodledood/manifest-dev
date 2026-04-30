@@ -26,15 +26,23 @@ Use a lock file at `/tmp/tend-pr-lock-{pr-number}`. Skip this iteration if the l
 
 ## Read State
 
-Read the PR's current state: open/closed/merged/draft, CI status, review status, new comments since last check, merge conflict status, unresolved threads.
+Read the PR's current state: open/closed/merged/draft, CI status, review status, new comments since last check (see Comment Sources below), merge state per §Merge State Health, unresolved threads.
+
+**Comment Sources — three distinct surfaces, ALL required.** Top-level PR comments are routinely missed when only file-level review threads are fetched. Each source is a separate `mcp__github__pull_request_read` method, each is paginated, and each MUST be exhausted (page through `perPage`/`page` or cursor parameters until the response signals no more results). Missing any source means missing real reviewer feedback.
+
+- `mcp__github__pull_request_read` method `get_review_comments` — inline file-level review threads (comments anchored to specific code locations).
+- `mcp__github__pull_request_read` method `get_reviews` — formal review submissions; the review's own `body` (the text the reviewer wrote when submitting Approve / Request Changes / Comment) is a comment surface and counts as a top-level review-body comment.
+- `mcp__github__pull_request_read` method `get_comments` — top-level PR/issue-style comments (the conversation tab below the diff). These are the comments most often missed when only `get_review_comments` is consulted.
+
+**PR summary** — `mcp__github__pull_request_read` method `get` returns `mergeable_state` (the merge-state taxonomy: `clean | dirty | behind | blocked | unstable | unknown | has_hooks | draft`). The value drives §Merge State Health.
 
 **Terminal states** — Merged, Closed, or Draft. Handle per Output Protocol (end the loop).
 
 **First tick** (tend-pr-log has no prior iterations): Everything is unprocessed — run the full pipeline.
 
 **Check categories:**
-- **Every tick:** CI status, merge conflicts, merge readiness — these change independent of comments (base branch updates, CI re-runs, review approvals).
-- **Comment-gated:** Comment classification — only runs when new comments exist since last check.
+- **Every tick:** CI status, merge state health, merge readiness — these change independent of comments (base branch updates, CI re-runs, review approvals).
+- **Comment-gated:** Comment classification — only runs when new comments exist since last check across any of the three sources.
 - **Conditional:** Routing — runs when there are CI failures to handle or when new comments were classified.
 
 ## CI Failure Triage
@@ -47,21 +55,53 @@ Compare against base branch first:
 - **Infrastructure**: Flaky/timeout/runner → retrigger.
 - **Code-caused**: New failure from PR → actionable.
 
-## Merge Conflicts
+## Merge State Health
 
 *Runs every tick.*
 
-Update the PR branch from the base branch. Preserve review comment history — rebase destroys it (see Gotchas). Flag ambiguous conflicts to the user.
+The framing is broader than conflicts alone: GitHub's `mergeable_state` (read from §Read State) reports a taxonomy of values, each blocking merge-readiness in a different way. Reason about every value, not just conflicts.
+
+### Per-value dispositions
+
+- **`clean`** — green. No action.
+- **`dirty` (conflicts)** — actual merge conflicts against base. Update the PR branch by running `git merge origin/<base>`. Prefer `git merge` over `git rebase` — rebase destroys review-comment anchors by rewriting commit history (see Gotchas). Rebase ONLY when a reviewer explicitly requests it AND acknowledges the loss of comment anchoring. Flag ambiguous conflicts (overlapping edits requiring semantic understanding) to the user.
+- **`behind`** — branch protection requires the PR branch to be up-to-date with base, and base has new commits. This is GitHub's signal that the "Update branch" button is required before merge. Update via `git merge origin/<base>` (same path as `dirty`, minus the conflict markers). Preserve review-comment anchors (no rebase). When `mergeable_state` is `clean` even though base has advanced, branch protection does NOT require up-to-date — leave the branch alone.
+- **`blocked`** — non-conflict gate failing (missing required reviews, failing required checks, branch-protection rule beyond up-to-date). Do NOT auto-resolve — these gates require external action. Treat as not-green for §Merge Readiness; CI failures are owned by §CI Failure Triage and review feedback by §Comment Classification + §Routing.
+- **`unstable`** — mergeable, but a non-required check is failing. GitHub's merge button is enabled. Informational only; does NOT block merge-readiness.
+- **`unknown`** — GitHub is still computing the merge state. Wait for the next tick — do not act, do not advance to merge-ready, do not infer green.
+- **`has_hooks`** — mergeable, hooks installed on the repo. Treat as `clean` for merge-state purposes.
+- **`draft`** — handled by §Read State terminal-state rule, not here.
+
+### Fallback rule for unspecified values
+
+If `mergeable_state` returns a value not enumerated above (GitHub may add new states), treat as **`unknown` semantics** — wait for the next tick, do not act, do not advance to merge-ready. Log the encountered value so the user can extend this section if the value persists.
 
 ## Comment Classification
 
-*Runs when new comments exist since last check. Skip when no new comments.*
+*Runs when new comments exist since last check across any of the three sources from §Read State. Skip when no new comments.*
 
 Label source first (bot vs human — read `../tend-pr/references/known-bots.md`), then classify intent (read `../tend-pr/references/classification-examples.md`):
 
 - **Actionable**: Genuine issue to fix.
 - **False positive**: Intentional or not a problem.
 - **Uncertain**: Ambiguous — needs clarification.
+
+The same classification rules apply to all three comment surfaces — a top-level "Could you also handle X?" comment is just as actionable as an inline file-level "this branch is missing the null check" comment.
+
+### Disposition log
+
+Every classified comment emits one disposition log line to `/tmp/tend-pr-log-{pr-number}.md`, prefixed `### Inbox — ` for a stable anchor.
+
+Fields:
+- `thread-id`: GitHub review-thread id (for inline / review-body sources) or comment id (for top-level).
+- `source`: `bot` or `human`.
+- `bot-name`: bot login when `source=bot`; omitted otherwise.
+- `kind`: `inline | top-level | review-body` — which §Read State Comment Source the comment came from. Required so the skill can prove all three sources were consumed and so future ticks can dedup correctly.
+- `classification`: `Actionable` | `FP` | `Uncertain`.
+- `fingerprint`: content hash of the comment body (used for dedup; bots re-scan after every push and emit new comment IDs for the same finding).
+- `tick`: tick number of this classification.
+
+One line per classified comment, across all routing branches.
 
 ## Routing
 
@@ -84,9 +124,14 @@ Label source first (bot vs human — read `../tend-pr/references/known-bots.md`)
 
 ## PR Description Sync
 
-*Runs when this tick produced changes (routing fixes, conflict resolution). Skip when no changes were made.*
+The PR description and title must reflect the PR's current intent, not just its current diff. Two distinct triggers fire this contract:
 
-After changes, rewrite "what changed" sections to reflect the current diff. Preserve manual context (issue references, motivation, deployment notes). Update title if scope changed significantly.
+1. **Commit-producing tick** — routing fixes (/do commits in manifest-aware mode, direct fixes in babysit mode) or merge-state resolution (§Merge State Health). Skipped when nothing changed.
+2. **Intent/Deliverable amendment tick** — manifest-aware mode only. When this tick's amendment (via `/define --amend <manifest-path> --from-do` from §Routing) modified the manifest's **Intent** (Goal, Mental Model) OR added/removed/renamed a **Deliverable**, sync fires even if no /do commit landed this tick. Mid-AC tweaks (e.g., adjusting an AC's verify block, adding a Risk note) do NOT trigger sync — they don't change the PR's described scope. Babysit-mode has no manifest, so this trigger never fires there.
+
+**Combined single sync (same-tick collision)** — when both triggers would fire in the same tick (e.g., an Intent amendment AND a /do commit landed), perform exactly **one** sync at the end of the tick using the merged picture: amended scope + new diff. Avoids two consecutive PR edits per tick.
+
+After determining a trigger fires, rewrite "what changed" sections to reflect the current scope (manifest Intent + diff in commit-producing case; manifest Intent alone when amendment-only). Preserve manual context (issue references, motivation, deployment notes). Update title if scope changed significantly.
 
 The PR description stays summary-only — never embed the manifest. Manifests are internal working documents (also true in multi-repo, where the same canonical manifest is shared across all PRs without surfacing to reviewers).
 
@@ -98,7 +143,9 @@ Append to `/tmp/tend-pr-log-{pr-number}.md`: timestamp, actions taken, skipped i
 
 *Runs every tick.*
 
-When the PR's merge state indicates it is mergeable (all required checks pass, required approvals obtained, no unresolved threads, no pending `/do` runs) — this is a terminal state. Ask the user about merging and end the loop per the Output Protocol.
+When the PR's merge state is green per §Merge State Health (`mergeable_state` ∈ {`clean`, `unstable`, `has_hooks`}), AND all required checks pass, required approvals obtained, no unresolved threads, no pending `/do` runs — this is a terminal state. Ask the user about merging and end the loop per the Output Protocol.
+
+`behind`, `blocked`, `dirty`, and `unknown` are NOT green — they block merge-readiness until §Merge State Health resolves them (auto-update for `behind`/`dirty`; wait for external action on `blocked`; wait next tick for `unknown`).
 
 Unresolved uncertain threads block merge-readiness — they represent unanswered questions that could surface actionable issues.
 
@@ -123,7 +170,7 @@ When any STOP condition is reached: handle the user interaction described below,
 
 ### Continuing states (schedule next iteration)
 
-- **Nothing new** — No changes detected across any dimension (CI, merge conflicts, comments, merge readiness), iteration skipped. Schedule next iteration.
+- **Nothing new** — No changes detected across any dimension (CI, merge state, comments, merge readiness), iteration skipped. Schedule next iteration.
 - **Work done** — Actions taken, more tending needed. Schedule next iteration.
 
 ## Security

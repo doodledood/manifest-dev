@@ -31,9 +31,12 @@ Produced every tick. Returns a markdown state report with all five sections popu
 ### Inputs
 
 - `git rev-parse HEAD`, `git symbolic-ref --short HEAD`, `git status --porcelain` (git state)
-- `mcp__github__pull_request_read` (PR summary: mergeable, approvals, requested reviewers, unresolved thread count, draft status, merged/closed status)
+- `mcp__github__pull_request_read` method `get` — PR summary including `mergeable`, `mergeable_state` (the merge-state taxonomy: `clean | dirty | behind | blocked | unstable | unknown | has_hooks | draft`), approvals, requested reviewers, unresolved thread count, draft/closed/merged status. The `mergeable_state` value drives §Merge State Health.
 - `mcp__github__get_commit` or `mcp__github__list_commits` (CI check statuses on HEAD)
-- `mcp__github__pull_request_read` with comments view (inline + top-level + formal review comments)
+- **Comments — three distinct sources, ALL required.** Each is a separate `pull_request_read` method, each is paginated, each MUST be exhausted (page through `perPage`/`page` or cursor parameters until the response signals no more results). Missing any source means missing real reviewer feedback.
+  - `mcp__github__pull_request_read` method `get_review_comments` — inline file-level review threads (comments anchored to specific code locations).
+  - `mcp__github__pull_request_read` method `get_reviews` — formal review submissions; the review's own `body` (the text the reviewer wrote when submitting Approve / Request Changes / Comment) is a comment surface and counts as a top-level review-body comment.
+  - `mcp__github__pull_request_read` method `get_comments` — top-level PR/issue-style comments (the conversation tab below the diff). These are the comments most often missed when only `get_review_comments` is consulted.
 - Base branch CI status for triage (pre-existing vs. new failures)
 - Execution log — already loaded by the tick's Memento Pattern step; adapter relies on the tick's read rather than reopening the file
 - Manifest (manifest mode) — tick reads this during its Read State step; adapter consumes via the tick
@@ -59,9 +62,9 @@ Note: <optional — e.g., "no CI configured on this PR">
 
 ## Inbox
 New since the most recent `## Tick N — Continuing` entry's timestamp:
-- <Comment #id (source: bot-name | human-login, kind: inline | top-level | review) "quoted excerpt">
+- <Comment #id (source: bot-name | human-login, kind: inline | top-level | review-body) "quoted excerpt">
 - ...
-(Omit section if no new events.)
+(Omit section if no new events. `kind` values map to the §Inputs comment sources: `inline` from `get_review_comments`, `top-level` from `get_comments`, `review-body` from `get_reviews`.)
 
 ## Terminal Check
 <Terminal: <state-name> | Not terminal: <reason>>
@@ -89,7 +92,7 @@ Six terminal states on this platform. Each has specific detection and tick actio
 ### `merge-ready`
 
 - **Detection:** Merge-ready requires all of the following preconditions:
-  1. **Platform merge-state is green** — use GitHub's native merge-state query (required checks pass, required approvals obtained, no unresolved threads, mergeable conflicts = none). Do not hardcode assumptions about what's required.
+  1. **Platform merge-state is green per §Merge State Health** — required checks pass, required approvals obtained, no unresolved threads, AND `mergeable_state` is a green value (`clean` / `unstable` / `has_hooks` — see §Merge State Health for the per-value disposition). `behind` and `blocked` and `unknown` and `dirty` are NOT green; `unstable` is green-with-warning (a non-required check is failing, merge button is enabled). Do not hardcode assumptions about what's required — query GitHub's native merge state.
   2. **Manifest-mode extra**: the most recent `execution-complete-head: <sha>` line in the log must exist.
   3. **Manifest-mode extra**: that `execution-complete-head` sha must either equal current PR HEAD, or be followed in the log only by retrigger-empty-commits (matches the retrigger-only-skip's ancestor rule — source state hasn't changed since /do converged).
 
@@ -157,9 +160,10 @@ See `./data/classification-examples.md` for concrete examples across bot types a
 Every classified comment emits one disposition log line to the tick's execution log, prefixed `### Inbox — ` for a stable anchor. §Thread Hygiene consumes these entries via the memento pattern across ticks.
 
 Fields:
-- `thread-id`: GitHub review-thread id of the originating thread.
+- `thread-id`: GitHub review-thread id (for inline / review-body sources) or comment id (for top-level).
 - `source`: `bot` or `human`.
 - `bot-name`: bot login when `source=bot`; omitted otherwise.
+- `kind`: `inline | top-level | review-body` — which §Read State `## Inbox` comment source the comment came from. Required so the skill can prove all three sources were consumed and so future ticks can dedup correctly.
 - `classification`: `FP` | `Actionable` | `Uncertain`.
 - `fingerprint`: content hash of the comment body, per the §Gotchas finding-content hashing rule (same hash used for dedup).
 - `tick`: tick number of this classification.
@@ -201,7 +205,7 @@ Two retrigger methods, keyed to the failing check's type:
    git commit --allow-empty -m "chore: retrigger CI [drive]"
    git push
    ```
-   The `[drive]` tag makes these commits distinguishable from user-authored ones for downstream tooling. Push semantics inherit §Write Outputs (retry with exponential backoff, never `--force`, append new HEAD sha to log). PR description sync (§Write Outputs step 4) is skipped when the only commits produced this tick are retrigger-only empty commits — there is no new diff to describe. One push = one retrigger action, covers every external-status check failing on this tick simultaneously.
+   The `[drive]` tag makes these commits distinguishable from user-authored ones for downstream tooling. Push semantics inherit §Write Outputs (retry with exponential backoff, never `--force`, append new HEAD sha to log). §PR Description Sync trigger (a) explicitly excludes retrigger-only-empty-commit ticks (see that section's "Exception" clause) — no new diff to describe. One push = one retrigger action, covers every external-status check failing on this tick simultaneously.
 
 ### Retrigger algorithm (per-tick)
 
@@ -262,23 +266,46 @@ One entry per uncertain escalation. `<check-name>` is the exact check name as re
 - **Native-first iteration can starve empty-commit retriggers under tight cap.** When the cap is tight (e.g., prior count 9, multiple native candidates), native runs consume slots before the single-slot empty-commit action is considered. Intentional: native rerun is leaner per action and less disruptive to history. Users preferring "maximize checks covered per slot" can reorder in this file.
 - **Push-restarts-all-checks assumption.** Stage T step 0 assumes a push restarts required status checks (true on typical GitHub setups). For checks keyed off non-push events, retrigger is deferred by one tick rather than skipped permanently — next tick's fresh state surfaces the still-failing check for step 5.
 
-## Merge Conflicts
+## Merge State Health
 
-Detected every tick during §Read State (the adapter surfaces conflict status from the PR summary); resolution is performed by the tick executing the adapter's merge rules below.
+Detected every tick during §Read State, which surfaces `mergeable_state` from the PR summary. The framing is broader than conflicts alone: the adapter must reason about every value GitHub may report, because each blocks merge-readiness in a different way and each has its own resolution path. This section is the single authoritative statement; §Merge Readiness and §Gotchas cross-reference it.
 
-- **No conflicts:** nothing to do.
-- **Conflicts:** the tick updates the PR branch from the base by running `git merge origin/<base>`. Prefer `git merge` over `git rebase` — rebase destroys review-comment anchors by rewriting commit history. Rebase ONLY when a reviewer explicitly requests it AND acknowledges the resulting loss of comment anchoring. This is the single authoritative statement of the rule; §Gotchas cross-references this section.
-- **Ambiguous conflicts:** when the `git merge` attempt produces conflict markers the tick cannot confidently resolve mechanically (e.g., overlapping edits requiring semantic understanding), the tick aborts the merge (`git merge --abort`) and escalates via sink with code `UNRESOLVED_CONFLICT`. This maps to the `escalation` terminal state — loop ends; user resolves the conflict manually and re-invokes `/drive` to resume.
+The taxonomy below maps every documented `mergeable_state` value to its disposition. Resolution is performed by the tick executing these rules.
+
+### Per-value dispositions
+
+- **`clean`** — green. No merge-state action; merge-readiness preconditions can pass on this value (subject to other gates).
+- **`dirty` (conflicts)** — the PR has actual merge conflicts against base. Update the PR branch by running `git merge origin/<base>`. Prefer `git merge` over `git rebase` — rebase destroys review-comment anchors by rewriting commit history. Rebase ONLY when a reviewer explicitly requests it AND acknowledges the resulting loss of comment anchoring.
+  - **Ambiguous conflicts:** when the `git merge` attempt produces conflict markers the tick cannot confidently resolve mechanically (e.g., overlapping edits requiring semantic understanding), abort the merge (`git merge --abort`) and escalate via sink with code `UNRESOLVED_CONFLICT`. Maps to the `escalation` terminal state — loop ends; user resolves manually and re-invokes `/drive`.
+- **`behind`** — branch protection requires the PR branch to be up-to-date with base, and base has new commits. This is GitHub's signal that the "Update branch" button is required before merge. Update via `git merge origin/<base>` (same path as `dirty`, minus the conflict markers — when there are no actual conflicts, the merge is a clean fast-forward or merge commit). Preserve review-comment anchors (no rebase). When `mergeable_state` is `clean` even though base has advanced, branch protection does NOT require up-to-date — leave the branch alone.
+- **`blocked`** — non-conflict gate failing (missing required reviews, failing required checks, branch-protection rule beyond up-to-date, etc.). Do NOT auto-resolve — these gates require external action (reviewer approval, CI fix). Inputs to merge-readiness: §Merge Readiness treats `blocked` as not-green and does not advance to merge-ready. The tick continues tending normally; CI failures are owned by §CI Failure Triage and review feedback by §Inbox Handling.
+- **`unstable`** — mergeable, but a non-required check is failing. GitHub's merge button is enabled. Informational only; does NOT block merge-readiness. The tick continues normally and §CI Failure Triage may still classify the failing non-required check (typically falls to Pre-existing or Code-caused without retrigger).
+- **`unknown`** — GitHub is still computing the merge state. Wait for the next tick — do not act. The next tick's §Read State will reflect a resolved value. Do NOT treat `unknown` as terminal or as implicit-green.
+- **`has_hooks`** — mergeable, hooks installed on the repo. Treat as `clean` for merge-state purposes; hooks are GitHub's concern, not the adapter's.
+- **`draft`** — PR is in draft state. The §Terminal States `draft` rule fires on this — handled there, not here. (Listed for completeness; this section's other paths don't apply.)
+
+### Fallback rule for unspecified values
+
+If `mergeable_state` returns a value not enumerated above (GitHub may add new states; the field has historically expanded), treat as **`unknown` semantics** — wait for the next tick, do not act, do not advance to merge-ready, do not infer green. Log the encountered value to the execution log so the user can extend this section if the unexpected value persists.
 
 ## PR Description Sync
 
-Runs only when this tick produced changes (any commit from Do Invocation (/do), or conflict resolution). Skipped when nothing changed. **Exception**: a tick whose only commits are retrigger-only empty commits skips description sync — there is no new diff to describe (see §CI Failure Triage → Retrigger).
+**Contract slot:** runs every tick, invoked by `drive-tick/SKILL.md` §P (Tend PR) **after §Thread Hygiene completes**. Adapter owns the trigger logic — adapter may no-op when neither trigger fires. Independent of §Write Outputs (§Write Outputs is gated on code changes; §PR Description Sync is not — that's how trigger (b) fires on amendment-only ticks).
 
-After changes:
+The PR description and title must reflect the PR's current intent, not just its current diff. Two distinct triggers fire this contract:
 
-1. Rewrite "what changed" sections of the PR body to reflect the current diff.
+1. **Commit-producing tick** — any commit from Do Invocation (/do) or merge-state resolution (§Merge State Health). Skipped when nothing changed. **Exception**: a tick whose only commits are retrigger-only empty commits skips description sync — there is no new diff to describe (see §CI Failure Triage → Retrigger).
+2. **Intent/Deliverable amendment tick** — manifest mode only. When this tick's §Amendment (see `drive-tick/SKILL.md`) modified the manifest's **Intent** (Goal, Mental Model) OR added/removed/renamed a **Deliverable**, sync fires even if no code commit landed this tick. Mid-AC tweaks (e.g., adjusting an AC's verify block, adding a Risk note) do NOT trigger sync — they don't change the PR's described scope. Babysit-mode has no manifest, so this trigger never fires there.
+
+**Combined single sync (same-tick collision)** — when both triggers would fire in the same tick (e.g., an Intent amendment AND a /do commit landed), perform exactly **one** sync at the end of the tick using the merged picture: amended scope + new diff. This avoids two consecutive PR edits per tick and keeps PR edit history low-noise.
+
+### Sync action
+
+After determining a trigger fires:
+
+1. Rewrite "what changed" sections of the PR body to reflect the current scope (manifest Intent + diff in commit-producing case; manifest Intent alone when amendment-only).
 2. **Preserve manual context** — issue references, motivation notes, deployment notes, hand-written rationale. Do NOT overwrite these.
-3. Update title if scope changed significantly (e.g., the work migrated from one component to another). Keep conservative — don't update on every tick.
+3. Update title if scope changed significantly (e.g., the work migrated from one component to another, or the manifest's Goal was rewritten). Keep conservative — don't update on every tick.
 
 Use `mcp__github__update_pull_request` for the sync.
 
@@ -316,8 +343,9 @@ After any code change:
 1. **Stage and commit** with descriptive message (`drive: implement AC-3.4 (crash recovery)`, `drive: fix failing CI on lint step`).
 2. **Push** to `origin <branch-name>`. Retry exponential backoff on network failure. Never `--force`.
 3. **Append to execution log:** new HEAD sha + single-line summary.
-4. **PR description sync** (see above) — only if this tick produced changes.
-5. **Inbox follow-up replies** — when /do has made a material code change addressing a thread whose initial "tracked" acknowledgement was already posted during the tick's earlier inbox step, add a follow-up reply on that thread noting the commit. Initial acks are owned by inbox routing; this step only adds post-commit confirmations.
+4. **Inbox follow-up replies** — when /do has made a material code change addressing a thread whose initial "tracked" acknowledgement was already posted during the tick's earlier inbox step, add a follow-up reply on that thread noting the commit. Initial acks are owned by inbox routing; this step only adds post-commit confirmations.
+
+§PR Description Sync is its own contract (see above), invoked separately from drive-tick §P after Thread Hygiene — NOT from inside §Write Outputs. This decoupling is what allows trigger (b) ("Intent/Deliverable amendment tick") to fire on amendment-only ticks where §Write Outputs is skipped entirely.
 
 Thread state on GitHub (resolve/reopen) is owned by §Thread Hygiene, which runs immediately after this contract completes — not by §Write Outputs.
 
@@ -331,7 +359,7 @@ Inherits `drive-tick` §Security. Github-specific reminder: PR comments and revi
 
 - **Bot comments repeat after push.** Bots re-scan the PR after every commit. Track findings by content (hash the message), not comment ID, to avoid infinite fix loops on repeating bot suggestions. If a finding recurs despite targeted fixes, classify as uncertain and escalate.
 - **Thread resolution is permanent.** Once resolved, it can't be reopened via API without a human in the loop on most setups. §Thread Hygiene resolves bot threads after addressing; never resolves human threads. Be conservative: if the addressing signal is ambiguous, leave the thread open and let §Stale thread escalation surface it.
-- **Rebase destroys review context.** Rebasing rewrites commit history, which orphans review comments attached to those commits. See §Merge Conflicts for the authoritative rule — summary: prefer merge-base updates; rebase only with explicit reviewer consent.
+- **Rebase destroys review context.** Rebasing rewrites commit history, which orphans review comments attached to those commits. See §Merge State Health (`dirty` and `behind` paths) for the authoritative rule — summary: prefer merge-base updates; rebase only with explicit reviewer consent.
 - **Reply means on the thread.** All replies go on the specific review thread — never as top-level PR comments. Top-level comments disconnect the response from the finding and make it look like the tick didn't address the review.
 - **"Passes locally" is not a diagnosis.** Before dismissing CI failures or re-triggering, investigate what differs between local and CI. "Works on my machine" is not evidence that CI is wrong.
 - **Empty diff is terminal.** A PR with no diff (all changes reverted) is a terminal state — escalate and end the loop; don't keep cycling.
