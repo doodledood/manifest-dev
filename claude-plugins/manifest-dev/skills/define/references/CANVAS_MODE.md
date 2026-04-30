@@ -31,6 +31,8 @@ The canvas earns its keep by reducing the cognitive cost of grasping what's bein
 
 ## Update cadence
 
+**Initial canvas is a minimal shell.** When SKILL.md's Canvas Mode dispatch fires (before Domain Guidance and the interview begin), no deliverables, ACs, or invariants exist yet. The first canvas write is intentionally minimal: an intent banner derived from `$ARGUMENTS`, an "Interview in progress" affordance, and an empty scaffold for the sections that will fill in. The user opens the tab knowing the substance (diagrams, deliverable cards, before/after flows, decision trees) materializes as the interview produces it — not all at once on first render.
+
 The canvas regenerates after each **meaningful event** — defined as anything that changes the substance of the manifest or the user's understanding of the work. Specifically:
 
 - Each interview-cluster checkpoint (when the agent synthesizes its current understanding back to the user)

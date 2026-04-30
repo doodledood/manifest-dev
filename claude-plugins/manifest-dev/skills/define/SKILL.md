@@ -36,7 +36,7 @@ Parse `--medium` from arguments (can appear anywhere). Currently only `local` is
 
 Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do` flag (optional, used with `--amend`) — see `references/AMENDMENT_MODE.md` for behavior.
 
-Parse `--canvas` flag from arguments (can appear anywhere). When present, see Canvas Mode section below — the dispatch is evaluated after Session-Default Amendment and Branch-Diff Seeding resolve, before Domain Guidance / interview begins. Default: absent.
+Parse `--canvas` flag from arguments (can appear anywhere). When present, see the Canvas Mode section that follows Branch-Diff Seeding — the dispatch is positioned there because that's where it must fire (after Session-Default Amendment and Branch-Diff Seeding resolve, before Domain Guidance / interview begins). Default: absent.
 
 If no arguments provided, ask: "What would you like to build or change?"
 
@@ -107,6 +107,23 @@ If the matched path no longer exists or fails to read, fall back to a fresh mani
 **What to do:** Run `git diff <base>...HEAD` and `git log --oneline <base>..HEAD`. Read the diff and commit messages. Incorporate the existing changeset into the new manifest's Intent (mention what's already done) and starting Deliverables (the work-in-progress becomes prior context, with new ACs added on top for completion + the new task). The interview confirms or adjusts what was inferred from the diff.
 
 **Skip cleanly when:** No commits ahead of base (fresh branch), or `--amend` was passed (existing manifest already covers the prior state), or Session-Default Amendment fired (in-session manifest is being amended).
+
+## Canvas Mode
+
+**Runtime position.** Evaluate this dispatch HERE — immediately after Branch-Diff Seeding resolves, before Domain Guidance and the interview begin. The section is placed here (not at the end of the file) so the dispatch fires at the correct point during sequential reading. Initial canvas generation and the browser auto-open happen at this evaluation point so the canvas tab is open and ready before the interview starts. After the interview begins, regenerate per `references/CANVAS_MODE.md`'s update cadence.
+
+**Suppression evaluation.** When `--canvas` is passed, evaluate the four suppression conditions in order. **First match wins** — once a condition triggers, stop evaluating and skip per its rule. Conditions 1–3 skip silently (no warning, no file written, no browser open). Condition 4 prints one warning, then skips. In all cases, the rest of /define continues normally:
+
+1. **Amendment mode is active** — `--amend` is literally passed, OR Session-Default Amendment **resolved to amendment** (the "When Related" branch — note: the "When Truly Unrelated" and "When Cannot Be Read" branches proceed FRESH and DO get a canvas), OR input arguments referenced a specific `/tmp/manifest-*.md` or `.manifest/*.md` path that the agent will amend → silent skip (canvas is fresh-/define-only; per ASM-6, amendments do not get a canvas regardless of trigger)
+2. `--interview autonomous` was resolved (this transitively covers `/auto` invocations — `/auto` always passes `--interview autonomous` to /define, so no separate `/auto` check is needed) → silent skip
+3. **Resolved `--medium` is anything other than `local`** — i.e., the user is not at the host's default browser (e.g., `--medium slack` once supported) → silent skip. Anticipatory: only `local` is currently supported and the Input section halts on non-local mediums at parse time, so this condition is dormant in practice but documented here for forward compatibility. The trigger generalizes to any future medium that doesn't give the user host-browser access.
+4. No graphical-browser launcher is available — none of `xdg-open`, `open`, or `start` is on PATH → print one warning ("--canvas requires a desktop environment with a graphical browser; skipping artifact generation") and skip
+
+If all four pass, the canvas is genuinely active. Read `references/CANVAS_MODE.md` in full — it owns the operational specification (file format, content menu, update cadence, auto-open mechanism, failure handling, file naming). The dispatch is a single-load contract; load the whole file, no section-targeted instructions.
+
+**Initial canvas content.** At this evaluation point the interview has not started, so no deliverables, ACs, or invariants exist yet. The initial canvas is a deliberate **minimal shell** — intent banner from `$ARGUMENTS`, an "Interview in progress" affordance, and an empty scaffold for sections that fill in as understanding accumulates. The substance (diagrams, deliverable cards, before/after flows) materializes via the regeneration cadence as the interview produces it. The user opens the tab knowing it will fill in, not expecting completed content immediately.
+
+The canvas is generated and updated only during /define's interview phase. It freezes at user approval. `/do` never touches the canvas — no regeneration, extension, or annotation by `/do` or any downstream skill.
 
 ## Domain Guidance
 
@@ -526,21 +543,6 @@ Load the messaging file for the resolved medium:
 The messaging file defines HOW to interact (tool, format, polling). The interview mode file defines WHAT to interact about (questions, flow, convergence).
 
 The medium is encoded in the manifest's Intent section as `Medium: <value>` so downstream skills know the communication channel.
-
-## Canvas Mode
-
-**When to evaluate Canvas Mode.** Evaluate this dispatch immediately after argument parsing, Session-Default Amendment, and Branch-Diff Seeding have resolved — but **before** Domain Guidance and the interview begin. Initial canvas generation and the browser auto-open happen at this evaluation point so the canvas is open and ready before the interview starts. After the interview begins, regenerate per CANVAS_MODE.md's update cadence.
-
-**Suppression evaluation.** When `--canvas` is passed, evaluate the four suppression conditions in order. **First match wins** — once a condition triggers, stop evaluating and skip per its rule. Conditions 1–3 skip silently (no warning, no file written, no browser open). Condition 4 prints one warning, then skips. In all cases, the rest of /define continues normally:
-
-1. **Amendment mode is active** — `--amend` is literally passed, OR Session-Default Amendment matched a prior manifest, OR input arguments referenced a specific `/tmp/manifest-*.md` or `.manifest/*.md` path (i.e., any path into amendment mode per the Session-Default Amendment section) → silent skip (canvas is fresh-/define-only; per ASM-6, amendments do not get a canvas regardless of trigger)
-2. `--interview autonomous` was resolved (this transitively covers `/auto` invocations — `/auto` always passes `--interview autonomous` to /define, so no separate `/auto` check is needed) → silent skip
-3. `--medium slack` (or any other non-`local` medium where the user has no access to the host's browser) → silent skip. Anticipatory: only `local` is currently supported and the Input section halts on non-local mediums at parse time, so this condition is dormant in practice but documented here for forward compatibility when mediums like `slack` are added.
-4. No graphical-browser launcher is available — none of `xdg-open`, `open`, or `start` is on PATH → print one warning ("--canvas requires a desktop environment with a graphical browser; skipping artifact generation") and skip
-
-If all four pass, the canvas is genuinely active. Read `references/CANVAS_MODE.md` in full — it owns the operational specification (file format, content menu, update cadence, auto-open mechanism, failure handling, file naming). The dispatch is a single-load contract; load the whole file, no section-targeted instructions.
-
-The canvas is generated and updated only during /define's interview phase. It freezes at user approval. `/do` never touches the canvas — no regeneration, extension, or annotation by `/do` or any downstream skill.
 
 ## Complete
 
