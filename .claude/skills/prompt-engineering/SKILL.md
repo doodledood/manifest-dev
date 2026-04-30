@@ -82,7 +82,8 @@ Before writing or improving a prompt, surface all required context through user 
 | Arbitrary limits | "Max 3 iterations", "2-4 examples" | Principle: "until converged", "as needed" |
 | Capability instructions | "Use grep to search", "Read the file" | Remove - model knows how |
 | Rigid checklists | Step-by-step heuristics tables | Convert to principles |
-| Weak language | "Try to", "maybe", "if possible" | Direct: "Do X", "Never Y" |
+| Weak hedging | "Try to", "maybe", "if possible" | Direct imperative: "Do X" |
+| Absolutes for judgment calls | "ALWAYS", "NEVER", "MUST" applied to non-invariants (when to search, ask, iterate, retry) | Decision rules: "When X, do Y; otherwise Z". Reserve absolutes for true invariants — safety rules, required fields, hard constraints |
 | Buried critical info | Important rules in middle | Surface prominently |
 | Over-engineering | 10 phases for a simple task | Match complexity to need |
 
@@ -161,13 +162,18 @@ description: 'What it does. When to use. Trigger terms.'
 
 ```markdown
 ## Role
-{Identity and purpose - one paragraph}
+{Identity and stance — who the model is and how it behaves}
 
-## Approach
-{Principles for thinking, not procedures}
+## Goal
+{User-visible outcome — what the run produces}
+
+## Success criteria
+{Anything that would cause dissatisfaction with the run:
+ output correctness; validation passing (tests, lint, schema when available);
+ time / iteration bounds; handling of non-success cases — retry, fallback, abstain, ask}
 
 ## Constraints
-{MUST > SHOULD > PREFER priority}
+{MUST > SHOULD > PREFER priority — reserve MUST for true invariants per "Absolutes for judgment calls" anti-pattern}
 
 ## Output
 {Format requirements if needed}
