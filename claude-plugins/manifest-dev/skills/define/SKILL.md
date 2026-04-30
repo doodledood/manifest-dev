@@ -11,10 +11,12 @@ If thinking disciplines are not already active in this session, invoke the manif
 
 ## Goal
 
-Build a **comprehensive Manifest** that captures:
+Build **shared understanding** between you and the user about the work — what it is, why it matters, what could go wrong, what's in scope and what isn't — and encode that understanding formally as a **comprehensive Manifest** that captures:
 - **What we build** (Deliverables with Acceptance Criteria)
 - **How we'll get there** (Approach - initial direction, expect adjustment)
 - **Rules we must follow** (Global Invariants)
+
+The manifest is the formal, machine-readable encoding consumed by `/do` and downstream agents. When `--canvas` is passed on a desktop environment, a parallel **Shared Understanding Canvas** is also produced — a live, browser-rendered visual artifact at `/tmp/canvas-{timestamp}.html` that reflects the same understanding in a layered, human-friendly form. See Canvas Mode below.
 
 **Why thoroughness matters**: Every criterion discovered NOW is one fewer rejection during implementation/review. The goal is a deliverable that passes review on first submission—no "oh, I also needed X" after the work is done.
 
@@ -22,17 +24,19 @@ Comprehensive means surfacing **latent criteria**—requirements the user doesn'
 
 Aim for high coverage. Amendments handle what emerges during implementation.
 
-Output: `/tmp/manifest-{timestamp}.md`
+Output: `/tmp/manifest-{timestamp}.md` (and `/tmp/canvas-{timestamp}.html` when `--canvas` is active).
 
 ## Input
 
-`$ARGUMENTS` = task description, optionally with context/research, `--interview <level>`, `--medium <type>`, `--amend <manifest-path>`
+`$ARGUMENTS` = task description, optionally with context/research, `--interview <level>`, `--medium <type>`, `--amend <manifest-path>`, `--canvas`
 
 Parse `--interview` from arguments (can appear anywhere). Valid values: `minimal`, `autonomous`, `thorough`. Default: `thorough`. Invalid value → error and halt: "Invalid interview style '<value>'. Valid styles: minimal | autonomous | thorough"
 
 Parse `--medium` from arguments (can appear anywhere). Currently only `local` is supported (default). Other mediums may be added in the future. If a non-local value is provided, error and halt: "Medium '<value>' not yet supported. Currently supported: local". See Medium Routing section below.
 
 Parse `--amend <manifest-path>` from arguments (can appear anywhere). `--from-do` flag (optional, used with `--amend`) — see `references/AMENDMENT_MODE.md` for behavior.
+
+Parse `--canvas` flag from arguments (can appear anywhere). When present, see Canvas Mode section below — the dispatch is evaluated after Session-Default Amendment and Branch-Diff Seeding resolve, before Domain Guidance / interview begins. Default: absent.
 
 If no arguments provided, ask: "What would you like to build or change?"
 
@@ -499,6 +503,8 @@ Digest the manifest into a scannable summary the user can approve at a glance. T
 
 Include an ASCII architecture diagram when the task has multiple components with inter-component flow. Skip for single-deliverable tasks.
 
+When `--canvas` was active during this /define run (and not suppressed per Canvas Mode), append one line to the summary: `Canvas: file:///tmp/canvas-{timestamp}.html`. The chat summary remains the approval channel; the canvas is the deeper-look surface alongside it.
+
 **The test**: If the summary reads like a compressed manifest, rewrite it. If it reads like something you'd say to a colleague, it's right.
 
 **Anti-patterns**:
@@ -520,6 +526,21 @@ Load the messaging file for the resolved medium:
 The messaging file defines HOW to interact (tool, format, polling). The interview mode file defines WHAT to interact about (questions, flow, convergence).
 
 The medium is encoded in the manifest's Intent section as `Medium: <value>` so downstream skills know the communication channel.
+
+## Canvas Mode
+
+**When to evaluate Canvas Mode.** Evaluate this dispatch immediately after argument parsing, Session-Default Amendment, and Branch-Diff Seeding have resolved — but **before** Domain Guidance and the interview begin. Initial canvas generation and the browser auto-open happen at this evaluation point so the canvas is open and ready before the interview starts. After the interview begins, regenerate per CANVAS_MODE.md's update cadence.
+
+**Suppression evaluation.** When `--canvas` is passed, evaluate the four suppression conditions in order. **First match wins** — once a condition triggers, stop evaluating and skip per its rule. Conditions 1–3 skip silently (no warning, no file written, no browser open). Condition 4 prints one warning, then skips. In all cases, the rest of /define continues normally:
+
+1. **Amendment mode is active** — `--amend` is literally passed, OR Session-Default Amendment matched a prior manifest, OR input arguments referenced a specific `/tmp/manifest-*.md` or `.manifest/*.md` path (i.e., any path into amendment mode per the Session-Default Amendment section) → silent skip (canvas is fresh-/define-only; per ASM-6, amendments do not get a canvas regardless of trigger)
+2. `--interview autonomous` was resolved (this transitively covers `/auto` invocations — `/auto` always passes `--interview autonomous` to /define, so no separate `/auto` check is needed) → silent skip
+3. `--medium slack` (or any other non-`local` medium where the user has no access to the host's browser) → silent skip. Anticipatory: only `local` is currently supported and the Input section halts on non-local mediums at parse time, so this condition is dormant in practice but documented here for forward compatibility when mediums like `slack` are added.
+4. No graphical-browser launcher is available — none of `xdg-open`, `open`, or `start` is on PATH → print one warning ("--canvas requires a desktop environment with a graphical browser; skipping artifact generation") and skip
+
+If all four pass, the canvas is genuinely active. Read `references/CANVAS_MODE.md` in full — it owns the operational specification (file format, content menu, update cadence, auto-open mechanism, failure handling, file naming). The dispatch is a single-load contract; load the whole file, no section-targeted instructions.
+
+The canvas is generated and updated only during /define's interview phase. It freezes at user approval. `/do` never touches the canvas — no regeneration, extension, or annotation by `/do` or any downstream skill.
 
 ## Complete
 

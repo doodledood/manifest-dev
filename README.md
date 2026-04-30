@@ -45,6 +45,8 @@ Then use it:
 
 Control interview depth with `--interview minimal|autonomous|thorough` (default: thorough). Thorough asks everything. Minimal asks scope and high-impact items. Autonomous builds the manifest without asking, presents it for approval.
 
+Pass `--canvas` to `/define` (desktop only) to also generate a live, browser-rendered **Shared Understanding Canvas** alongside the manifest — a layered visual artifact (diagrams, deliverable cards, before/after flows) that updates as the interview unfolds and auto-opens in your default browser. The canvas is for human review during /define; the manifest stays as the formal encoding for /do. Silently no-ops on `--amend`, `--interview autonomous`, `/auto`, non-`local` mediums, or environments without a graphical browser.
+
 If you use zsh and want easy upgrade commands for the non-Claude distributions, add this to `~/.zshrc`:
 
 ```zsh

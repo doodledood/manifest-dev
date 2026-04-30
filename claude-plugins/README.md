@@ -25,7 +25,7 @@ Front-load the thinking so AI agents get it right the first time.
 Manifest-driven workflows separating **what to build** (Deliverables) from **rules to follow** (Global Invariants).
 
 **Core skills:**
-- `/define` - Verification-first requirements builder with proactive interview. Supports `--interview minimal|autonomous|thorough` (default: thorough) to control questioning depth. Defaults to amending an in-scope prior manifest (in-session, conversation-referenced, or branch-archived in `.manifest/`); on a fresh /define against a non-empty branch, seeds from the existing diff.
+- `/define` - Verification-first requirements builder with proactive interview. Supports `--interview minimal|autonomous|thorough` (default: thorough) to control questioning depth, and `--canvas` (desktop only) to generate a live, browser-rendered Shared Understanding Canvas alongside the manifest — a layered visual artifact (mermaid diagrams, deliverable cards, before/after flows) that updates as the interview unfolds and auto-opens in the user's default browser. Defaults to amending an in-scope prior manifest (in-session, conversation-referenced, or branch-archived in `.manifest/`); on a fresh /define against a non-empty branch, seeds from the existing diff.
 - `/do` - Autonomous execution with enforced verification gates. Iterates deliverables, satisfies ACs, calls /verify. Mid-execution user feedback defaults to autonomous Self-Amendment (pure questions answered inline). `/verify` runs selectively during the fix-loop with a mandatory full final gate before `/done`.
 
 **Optional skills:**
