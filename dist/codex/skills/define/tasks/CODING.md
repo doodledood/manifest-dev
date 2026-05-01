@@ -8,20 +8,20 @@ CLAUDE.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
-Every finding at Low severity or above fails the gate (`no LOW+`). Low findings get fixed or explicitly waived per criterion — they are not blanket-acceptable trade-offs.
+Two tiers by agent role. **Defect-finding agents** (every LOW finding is signal — a real divergence, defect, contract mismatch, or type hole): `no LOW+`. **Advisory agents** (LOW findings are usually taste-level — could-be-better, not is-broken): `no MEDIUM+`. The split is structural, not per-finding — it reflects what each agent is built to detect.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
 | Intent analysis | change-intent-reviewer | no LOW+ |
 | Mechanical bug detection | code-bugs-reviewer | no LOW+ |
-| Maintainability | code-maintainability-reviewer | no LOW+ |
-| Simplicity | code-simplicity-reviewer | no LOW+ |
-| Test quality | test-quality-reviewer | no LOW+ |
-| Testability | code-testability-reviewer | no LOW+ |
-| Documentation | docs-reviewer | no LOW+ |
-| Design fitness | code-design-reviewer | no LOW+ |
-| Prose value | prose-value-reviewer | no LOW+ |
-| CLAUDE.md adherence | context-file-adherence-reviewer | no LOW+ |
+| Maintainability | code-maintainability-reviewer | no MEDIUM+ |
+| Simplicity | code-simplicity-reviewer | no MEDIUM+ |
+| Test quality | test-quality-reviewer | no MEDIUM+ |
+| Testability | code-testability-reviewer | no MEDIUM+ |
+| Documentation | docs-reviewer | no MEDIUM+ |
+| Design fitness | code-design-reviewer | no MEDIUM+ |
+| Prose value | prose-value-reviewer | no MEDIUM+ |
+| CLAUDE.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
 
 ### Conditional Gates (when applicable)
 

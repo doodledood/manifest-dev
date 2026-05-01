@@ -6,9 +6,9 @@ New functionality: features, APIs, enhancements.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
-| Requirements traceability | general-purpose | no LOW+ — every specified requirement maps to implementation; nothing lost between spec and code |
-| Behavior completeness | general-purpose | no LOW+ — all specified use cases and interactions implemented, not just the happy path |
-| Error experience | general-purpose | no LOW+ — feature failures produce clear, actionable feedback to the user, not silent failures or raw stack traces |
+| Requirements traceability | general-purpose | no MEDIUM+ — every specified requirement maps to implementation; nothing lost between spec and code |
+| Behavior completeness | general-purpose | no MEDIUM+ — all specified use cases and interactions implemented, not just the happy path |
+| Error experience | general-purpose | no MEDIUM+ — feature failures produce clear, actionable feedback to the user, not silent failures or raw stack traces |
 
 ## Risks
 
