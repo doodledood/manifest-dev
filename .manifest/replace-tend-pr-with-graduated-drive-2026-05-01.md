@@ -281,13 +281,13 @@
     method: bash
     command: "python3 -c 'import json; d=json.load(open(\"claude-plugins/manifest-dev-experimental/.claude-plugin/plugin.json\")); v=tuple(int(x) for x in d[\"version\"].split(\".\")); assert v > (0,6,1), v; desc=d[\"description\"].lower(); assert (\"placeholder\" in desc or \"graduated\" in desc or \"reserved\" in desc) or \"drive\" not in desc, desc'"
   ```
-- [AC-5.3] `manifest-dev-experimental/README.md` describes the plugin as currently empty, drive having graduated, and is concise.
+- [AC-5.3] `manifest-dev-experimental/README.md` describes the plugin as currently empty and reserved for future experiments. Concise. (Amended post-/done per user feedback: drive-graduation note dropped from this README — migration is already documented in the root `README.md`, `claude-plugins/README.md`, and `manifest-dev/README.md`; no need to repeat it in the empty placeholder.)
   ```yaml
   verify:
     method: subagent
     agent: criteria-checker
     model: inherit
-    prompt: "Read claude-plugins/manifest-dev-experimental/README.md. Verify: (1) it explicitly states drive (and drive-tick) graduated to manifest-dev; (2) the plugin currently ships no skills; (3) it positions itself as a placeholder for future experiments. Word count ≤ 200. PASS only if all four hold."
+    prompt: "Read claude-plugins/manifest-dev-experimental/README.md. Verify: (1) the plugin currently ships no skills; (2) it positions itself as a placeholder for future experiments. Word count ≤ 200. PASS only if both hold."
   ```
 
 ### Deliverable 6: Update repo-level documentation
