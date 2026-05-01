@@ -34,8 +34,9 @@ Then use it:
 # Or go end-to-end autonomously:
 /auto <what you want to build>
 
-# Tend a PR through review:
-/tend-pr <manifest-path-or-pr-url>
+# Tend a PR through review (or drive a manifest to green locally):
+/drive <manifest-path>            # local loop, no PR
+/drive <manifest-path> --platform github   # bootstrap PR, tend through CI + review
 
 # Optional: figure something out before acting
 /figure-out <topic or problem>
@@ -167,7 +168,7 @@ Set in manifest: add `mode: balanced` to the Intent & Context section.
 
 The manifest is the canonical source of truth for the PR/branch — or, in multi-repo cases, the entire PR set / branch set. Not for a single task. Feedback flows through it: when something's off mid-`/do`, mid-`/verify`, or after `/done` (a missed edge case, a reviewer comment, a bug you didn't anticipate), just send the feedback in your active session. The system routes it through Self-Amendment automatically: `/escalate` → `/define --amend --from-do` → `/do` resumes with the updated manifest. No manual session-switching for the common case. Pure questions about the manifest are answered inline; everything else amends.
 
-**Multi-repo:** by default — and recommended — a single manifest covers the whole multi-repo changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively — no filter logic. `/tend-pr` and `/drive` run per-repo against the shared canonical `/tmp` manifest. Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) use `method: deferred-auto` + `/verify --deferred`. Splitting into independent per-repo manifests is also fine when the work is loosely coupled and you prefer to carry cross-PR coherence yourself. See `claude-plugins/manifest-dev/skills/define/references/MULTI_REPO.md` for the full convention.
+**Multi-repo:** by default — and recommended — a single manifest covers the whole multi-repo changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively — no filter logic. `/drive` runs per-repo against the shared canonical `/tmp` manifest. Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) use `method: deferred-auto` + `/verify --deferred`. Splitting into independent per-repo manifests is also fine when the work is loosely coupled and you prefer to carry cross-PR coherence yourself. See `claude-plugins/manifest-dev/skills/define/references/MULTI_REPO.md` for the full convention.
 
 After `/done`, the same default applies — the post-completion re-entry runs `/define --amend <manifest>` interactively (so you can shape the change), then `/do --scope <new-or-affected-deliverables>`. /done is unreachable until the full verification suite passes again.
 
@@ -336,9 +337,9 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 
 | Plugin | Description |
 |--------|-------------|
-| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, `/tend-pr`, review agents, workflow hooks. The manifest is the canonical source of truth for the PR/branch — feedback during `/do`, `/verify`, or after `/done` defaults to amending it. Verification is selective during fix-loop (in-scope deliverables + globals) with a mandatory full final gate before `/done`. |
+| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, `/drive`, review agents, workflow hooks. The manifest is the canonical source of truth for the PR/branch — feedback during `/do`, `/verify`, or after `/done` defaults to amending it. Verification is selective during fix-loop (in-scope deliverables + globals) with a mandatory full final gate before `/done`. |
 | `manifest-dev-tools` | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. |
-| `manifest-dev-experimental` | **Experimental.** Cron-driven, tick-based manifest runner (`/drive` + `/drive-tick`) with pluggable platform (`none`, `github`) and sink (`local`) adapters. Takes a manifest (or PR in babysit mode) to a terminal state via repeated stateless ticks; each tick delegates implement+verify+fix to `/do` (intra-tick convergence), with cross-tick boundaries handling CI triage, PR tending, and inbox routing. Coexists with `manifest-dev`; nothing deprecated. |
+| `manifest-dev-experimental` | **Placeholder.** Currently ships no skills — reserved for future experiments. `/drive` and `/drive-tick` graduated from this plugin into `manifest-dev`. |
 
 ## Plugin Architecture
 
@@ -348,9 +349,9 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 |-------|------|-------------|
 | `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, outputs manifest with verification methods. Defaults to amending a prior in-scope manifest (in-session, conversation-referenced, or branch-archived in `.manifest/`) so one change set keeps one constitution. On a fresh /define against a non-empty branch, seeds from the existing diff. |
 | `/do` | User-invoked | Executes against manifest. Follows execution order, watches for risks, logs progress for disaster recovery. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
-| `/auto` | User-invoked | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do`. Supports `--mode` and `--tend-pr` pass-through |
-| `/tend-pr` | User-invoked | Sets up PR for review and starts polling loop. Manifest-aware or babysit mode |
-| `/tend-pr-tick` | User-invoked | Single iteration of PR tending (classify, route, fix). Called by `/loop` via `/tend-pr`; also user-invocable for single-tick runs. PR-comment routing follows the same default-to-amend reflex as in-session feedback. |
+| `/auto` | User-invoked | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do`. Supports `--mode` and `--drive` pass-through |
+| `/drive` | User-invoked | Cron-driven loop that takes a manifest (or existing PR) to terminal state. Bootstraps branch/PR (github mode), then schedules `/drive-tick` via `/loop` (or an inline-fallback scheduler). Pluggable platform (`none`, `github`) and sink (`local`) adapters. |
+| `/drive-tick` | User-invoked | Single drive iteration. Reads full execution log (memento), checks terminal state, handles inbox, delegates implement+verify+fix to `/do` (intra-tick convergence), runs CI triage + PR tending. Called by `/loop` via `/drive`; also user-invocable for single-tick runs. |
 | `/verify` | Internal | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed (fast checks first, e2e/deploy-dependent later). |
 | `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |

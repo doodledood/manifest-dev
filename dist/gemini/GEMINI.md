@@ -16,7 +16,7 @@ manifest-dev provides structured workflows for planning, executing, and verifyin
 - **`/figure-out`** — Collaborative deep understanding before acting. Truth-convergence over helpfulness. End with `/stop-thinking-disciplines`
 - **`/escalate`** — Structured escalation during `/do`: blocking issues, scope changes, pauses
 - **`/done`** — Completion marker with hierarchical execution summary
-- **`/tend-pr`** — PR lifecycle automation: classify comments, route fixes, tend CI, sync description
+- **`/drive`** — Cron-driven manifest-to-green loop: bootstraps branch/PR, schedules `/drive-tick` until terminal state (all verify pass for none mode, merge-ready for github mode).
 
 ### Internal Skills
 

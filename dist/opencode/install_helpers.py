@@ -19,7 +19,7 @@ SUFFIX = "-manifest-dev"
 # Skills that exist in the distribution
 SKILL_NAMES = [
     "auto", "define", "do", "done", "escalate",
-    "tend-pr", "tend-pr-tick",
+    "drive", "drive-tick",
     "figure-out", "stop-thinking-disciplines",
     "thinking-disciplines", "verify",
 ]
@@ -37,7 +37,7 @@ AGENT_NAMES = [
 # Command filenames (without .md)
 COMMAND_NAMES = [
     "auto", "define", "do", "verify",
-    "tend-pr", "tend-pr-tick", "figure-out", "stop-thinking-disciplines",
+    "drive", "drive-tick", "figure-out", "stop-thinking-disciplines",
 ]
 
 

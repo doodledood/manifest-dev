@@ -74,8 +74,8 @@ After installation, invoke workflows via slash commands:
 /verify-manifest-dev                    Run parallel verifiers (use --deferred for deferred-auto criteria)
 /figure-out-manifest-dev                Deep collaborative understanding
 /stop-thinking-disciplines-manifest-dev End thinking disciplines session
-/tend-pr-manifest-dev                   PR lifecycle automation
-/tend-pr-tick-manifest-dev              Single PR tending iteration
+/drive-manifest-dev                     Cron-driven manifest-to-green loop / PR lifecycle automation
+/drive-tick-manifest-dev                Single drive iteration (called by /loop via /drive)
 ```
 
 ## Feature Parity with Claude Code
@@ -127,8 +127,8 @@ dist/opencode/
 │   ├── do.md
 │   ├── figure-out.md
 │   ├── stop-thinking-disciplines.md
-│   ├── tend-pr.md
-│   ├── tend-pr-tick.md
+│   ├── drive.md
+│   ├── drive-tick.md
 │   └── verify.md
 ├── skills/                          # 11 skills (with subdirectories)
 │   ├── auto/
@@ -138,8 +138,8 @@ dist/opencode/
 │   ├── escalate/
 │   ├── figure-out/
 │   ├── stop-thinking-disciplines/
-│   ├── tend-pr/
-│   ├── tend-pr-tick/
+│   ├── drive/
+│   ├── drive-tick/
 │   ├── thinking-disciplines/
 │   └── verify/
 ├── plugins/

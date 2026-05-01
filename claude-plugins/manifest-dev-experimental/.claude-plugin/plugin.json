@@ -1,19 +1,10 @@
 {
   "name": "manifest-dev-experimental",
-  "version": "0.6.1",
-  "description": "Experimental tick-based manifest runner. /drive + /drive-tick: stateless wide-tick driver that takes a manifest (or PR) to terminal state via pluggable adapters. Uses /loop for cron; auto-falls back to inline scheduler when /loop isn't installed. Supports multi-repo PR sets via a shared canonical manifest.",
+  "version": "0.7.0",
+  "description": "Placeholder plugin reserved for future experimental skills. Currently empty: the previous /drive and /drive-tick skills graduated to manifest-dev.",
   "keywords": [
-    "drive",
-    "tick",
-    "loop",
-    "autonomous",
     "experimental",
-    "manifest",
-    "cron",
-    "adapters",
-    "platforms",
-    "sinks",
-    "multi-repo"
+    "placeholder"
   ],
   "author": {
     "name": "doodledood",

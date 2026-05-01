@@ -21,7 +21,7 @@ SUFFIX = f"-{NAMESPACE}"
 # Skills that are referenced in cross-references
 SKILL_NAMES = [
     "auto", "define", "do", "done", "escalate",
-    "tend-pr", "tend-pr-tick",
+    "drive", "drive-tick",
     "figure-out", "stop-thinking-disciplines",
     "thinking-disciplines", "verify",
 ]

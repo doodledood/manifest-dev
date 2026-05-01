@@ -105,9 +105,9 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 |-------|-------------|
 | `/define` | Interviews you, builds an executable manifest with verification criteria. `--interview minimal\|autonomous\|thorough` controls interview style (default: thorough). Optional `--canvas` (desktop only) generates a live, browser-rendered Shared Understanding Canvas — a layered visual artifact (mermaid diagrams, deliverable cards, before/after flows) that updates as the interview unfolds and auto-opens in the user's default browser. Defaults to amending a prior in-scope manifest (in-session or conversation-referenced) so one change set keeps one constitution. On a fresh /define against a non-empty branch, seeds from the existing diff. |
 | `/do` | Works through the manifest autonomously, verifies everything passes. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
-| `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` and `--tend-pr` pass-through. |
-| `/tend-pr` | Sets up PR for review and starts a polling loop. Manifest-aware mode with scoped `/do`, or babysit mode without a manifest. |
-| `/tend-pr-tick` | Single iteration of PR tending (classify comments, route fixes, tend CI). Called by `/loop` via `/tend-pr`; also user-invocable for single-tick runs. PR-comment routing follows the same default-to-amend reflex as in-session feedback. |
+| `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` and `--drive` pass-through. |
+| `/drive` | Cron-driven manifest runner. Bootstraps branch/PR state and schedules `/drive-tick` (via `/loop` if available, inline-fallback otherwise) until terminal state — `all-verify-pass` for `--platform none` or `merge-ready` for `--platform github`. Pluggable platform + sink adapters; manifest-aware or babysit mode. |
+| `/drive-tick` | Single drive iteration. Reads full execution log (memento), loads platform + sink adapters, checks terminal states, handles inbox (amendments), delegates implement+verify+fix to `/do` (intra-tick convergence), runs CI triage + PR tending. Called by `/loop` via `/drive`; also user-invocable for single-tick runs. |
 | `/verify` | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed within each pass — fast checks first, e2e/deploy-dependent later. (You rarely call this directly; `/do` handles it.) |
 | `/done` | Prints what got done and what was verified. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
@@ -118,7 +118,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 
 ### Multi-Repo Manifests
 
-A single canonical manifest (in `/tmp`) can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` reads the path map and navigates absolute paths natively (no filter logic, no cwd matching). `/tend-pr` and `/drive` run per-repo against the same shared manifest — concurrent amendments are last-writer-wins (no locking). Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) use `method: deferred-auto` + `/verify --deferred`.
+A single canonical manifest (in `/tmp`) can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` reads the path map and navigates absolute paths natively (no filter logic, no cwd matching). `/drive` runs per-repo against the same shared manifest — concurrent amendments are last-writer-wins (no locking). Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) use `method: deferred-auto` + `/verify --deferred`.
 
 Single-repo manifests are unaffected — the schema additions are conditional and the single-repo path is unchanged.
 
@@ -205,4 +205,4 @@ Seven hooks keep the workflow honest. `stop_do_hook.py` won't let you stop befor
 
 ## See also
 
-- [`manifest-dev-experimental`](../manifest-dev-experimental) — experimental cron-driven alternative to `/do` + `/tend-pr`. Ships `/drive` + `/drive-tick`: a stateless wide-tick loop with pluggable platform and sink adapters. Coexists with this plugin; nothing deprecated.
+- [`manifest-dev-experimental`](../manifest-dev-experimental) — placeholder plugin reserved for future experiments. `/drive` and `/drive-tick` graduated from there into this plugin.
