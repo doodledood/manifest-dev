@@ -4,24 +4,24 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-AGENTS.md may specify project-specific preferences.
+CLAUDE.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
-Defect-finding agents: every finding at Low severity or above fails the gate (`no LOW+`). Quality/advisory agents: findings at Medium or above fail the gate (`no MEDIUM+`) — their Low findings are acceptable trade-offs.
+Every finding at Low severity or above fails the gate (`no LOW+`). Low findings get fixed or explicitly waived per criterion — they are not blanket-acceptable trade-offs.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
 | Intent analysis | change-intent-reviewer | no LOW+ |
 | Mechanical bug detection | code-bugs-reviewer | no LOW+ |
-| Maintainability | code-maintainability-reviewer | no MEDIUM+ |
-| Simplicity | code-simplicity-reviewer | no MEDIUM+ |
-| Test quality | test-quality-reviewer | no MEDIUM+ |
-| Testability | code-testability-reviewer | no MEDIUM+ |
-| Documentation | docs-reviewer | no MEDIUM+ |
-| Design fitness | code-design-reviewer | no MEDIUM+ |
-| Prose value | prose-value-reviewer | no MEDIUM+ |
-| AGENTS.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
+| Maintainability | code-maintainability-reviewer | no LOW+ |
+| Simplicity | code-simplicity-reviewer | no LOW+ |
+| Test quality | test-quality-reviewer | no LOW+ |
+| Testability | code-testability-reviewer | no LOW+ |
+| Documentation | docs-reviewer | no LOW+ |
+| Design fitness | code-design-reviewer | no LOW+ |
+| Prose value | prose-value-reviewer | no LOW+ |
+| CLAUDE.md adherence | context-file-adherence-reviewer | no LOW+ |
 
 ### Conditional Gates (when applicable)
 
@@ -32,7 +32,7 @@ Defect-finding agents: every finding at Low severity or above fails the gate (`n
 
 ## Project Gates
 
-AGENTS.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 
@@ -75,7 +75,7 @@ AGENTS.md specifies project gates (typecheck, lint, test, format). These become 
 *Domain best practices for this task type.*
 
 - **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
-- **Read project gates from AGENTS.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
+- **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
 
 ## Multi-Repo
 

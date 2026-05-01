@@ -11,7 +11,7 @@ Prompts are manifests: **WHAT and WHY, not HOW**. State goals and constraints. T
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
 | Intent analysis | change-intent-reviewer | no LOW+ |
-| Prompt quality | prompt-reviewer | no MEDIUM+ |
+| Prompt quality | prompt-reviewer | no LOW+ |
 
 When prompt-reviewer is not available, encode these as individual criteria verified via general-purpose subagent:
 

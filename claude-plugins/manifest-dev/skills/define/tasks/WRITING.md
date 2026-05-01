@@ -10,7 +10,7 @@ AI text is measurably more predictable, less varied, and narrower in vocabulary 
 
 | Aspect | Agent | Fallback | Threshold |
 |--------|-------|----------|-----------|
-| Vocabulary, Structure, Tone, Rhetoric, Craft, Negative space | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no MEDIUM+ |
+| Vocabulary, Structure, Tone, Rhetoric, Craft, Negative space | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no LOW+ |
 | Voice compliance | general-purpose | — | Matches AUTHOR_VOICE.md (conditional: only when doc exists) |
 | Readability | general-purpose | — | Accessible to target audience, scannable structure |
 | Anti-slop | general-purpose | — | No kill-list vocabulary, hedge words, filler phrases, generic phrasing |
