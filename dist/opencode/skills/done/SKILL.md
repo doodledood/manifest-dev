@@ -99,7 +99,7 @@ After /done has been called, the manifest is still the canonical source of truth
 - *Amend (run the two-step chain above):* "Also handle X." / "Change Y to Z." / "That's wrong, it should be …" / "Add a check for …"
 - *When ambiguous, amend.* Silent scope drift is the worse failure.
 
-**Manifest-in-scope detection** is judgment-based with no session boundary (per `define/SKILL.md` Session-Default Amendment): the manifest most recently associated with the work in this context is the candidate for amendment, regardless of when /done was called or whether the session was compacted in between. When ambiguous, ask the user once.
+**Manifest-in-scope detection** is judgment-based with no session boundary (per `define/references/AMENDMENT_MODE.md` Session-Default Detection): the manifest most recently associated with the work in this context is the candidate for amendment, regardless of when /done was called or whether the session was compacted in between. When ambiguous, ask the user once.
 
 **No-manifest case:** if /do somehow completed without a manifest in scope (rare — typically /do follows /define), there's nothing to amend; post-completion feedback falls back to inline handling. Fail-open by design.
 
