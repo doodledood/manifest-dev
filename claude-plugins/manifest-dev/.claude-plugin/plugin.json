@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev",
-  "version": "0.97.0",
-  "description": "Manifest-driven workflows for structured task execution with verification gates. Supports multi-repo changesets via a shared canonical manifest.",
+  "version": "0.98.0",
+  "description": "Manifest-driven workflows for structured task execution with verification gates. Includes /drive — a cron-driven PR-lifecycle runner (graduated from manifest-dev-experimental). Supports multi-repo changesets via a shared canonical manifest.",
   "keywords": [
     "manifest",
     "define",
@@ -15,7 +15,10 @@
     "do",
     "auto",
     "figure-out",
-    "tend-pr",
+    "drive",
+    "drive-tick",
+    "tick",
+    "loop",
     "multi-repo"
   ],
   "hooks": {

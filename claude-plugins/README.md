@@ -14,9 +14,9 @@ Front-load the thinking so AI agents get it right the first time.
 
 | Plugin | What It Does |
 |--------|--------------|
-| [`manifest-dev`](./manifest-dev) | Verification-first manifest workflows. The manifest is the canonical source of truth for the PR/branch — feedback during or after work defaults to amending it. Verification is selective during fix-loop and full before `/done` (mandatory final gate). Phased by iteration speed (fast checks first, e2e/deploy-dependent later). Multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
+| [`manifest-dev`](./manifest-dev) | Verification-first manifest workflows. The manifest is the canonical source of truth for the PR/branch — feedback during or after work defaults to amending it. Verification is selective during fix-loop and full before `/done` (mandatory final gate). Phased by iteration speed (fast checks first, e2e/deploy-dependent later). Includes `/drive` — a cron-driven PR-lifecycle runner. Multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
 | [`manifest-dev-tools`](./manifest-dev-tools) | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. |
-| [`manifest-dev-experimental`](./manifest-dev-experimental) | **Experimental.** Cron-driven, tick-based manifest runner (`/drive` + `/drive-tick`) with pluggable platform (`none`, `github`) and sink (`local`) adapters. Each tick delegates implement+verify+fix to `/do` (intra-tick convergence); cross-tick boundaries handle CI triage, PR tending, and inbox routing. No flow-control hooks. Coexists with `manifest-dev` — nothing deprecated. |
+| [`manifest-dev-experimental`](./manifest-dev-experimental) | **Placeholder.** Currently ships no skills — reserved for future experiments. `/drive` and `/drive-tick` graduated from this plugin into `manifest-dev`. |
 
 ## Plugin Details
 
@@ -31,13 +31,13 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 **Optional skills:**
 - `/figure-out` - Figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, resists premature synthesis. Use before `/define` when the problem space is foggy.
 
-**Other skills:** `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command (add `--tend-pr` for PR lifecycle) | `/tend-pr` - Tends a PR through review to merge-readiness, manifest-aware or babysit mode
+**Other skills:** `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command (add `--drive` for PR lifecycle or local loop) | `/drive` - Cron-driven loop that takes a manifest (or existing PR) to terminal state via repeated stateless ticks. Pluggable platform (`none`, `github`) and sink (`local`) adapters.
 
-**Multi-repo support:** A single canonical `/tmp` manifest can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` navigates absolute paths from the map (no filter logic — the LLM handles repo navigation natively). `/tend-pr` and `/drive` run per-repo against the same shared manifest. Cross-repo gates the user explicitly triggers use `method: deferred-auto` + `/verify --deferred`. See `skills/define/references/MULTI_REPO.md`.
+**Multi-repo support:** A single canonical `/tmp` manifest can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` navigates absolute paths from the map (no filter logic — the LLM handles repo navigation natively). `/drive` runs per-repo against the same shared manifest. Cross-repo gates the user explicitly triggers use `method: deferred-auto` + `/verify --deferred`. See `skills/define/references/MULTI_REPO.md`.
 
 **Internal skills:** `/verify`, `/done`, `/escalate`, `/stop-thinking-disciplines`, `thinking-disciplines`
 
-**Other user-invocable skills:** `/tend-pr-tick` (also called by `/loop` via `/tend-pr`)
+**Other user-invocable skills:** `/drive-tick` (also called by `/loop` via `/drive`)
 
 **Review agents:** `criteria-checker`, `manifest-verifier`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `test-quality-reviewer` (coverage gaps + tautological-test detection), `prose-value-reviewer` (code comments + repo doc files: AI-tells, narrating-the-obvious, puffery), `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
 
@@ -54,21 +54,9 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 
 ### manifest-dev-experimental
 
-**Experimental** alternative to `/do` + `/tend-pr`. Cron-driven tick loop with pluggable platform and sink adapters.
+**Placeholder** plugin. Currently ships no skills — reserved for future experiments that need a separate, opt-in surface from the core plugin.
 
-**Skills:**
-- `/drive` - Wrapper that parses args, resolves base branch, pre-flights the scheduler (`/loop` preferred; auto-falls back to an inline scheduler when `/loop` isn't installed), bootstraps branch/commit/PR (github mode), then hands control to the scheduler for repeated `/drive-tick` invocations.
-- `/drive-tick` - The per-iteration brain. Reads full log (memento), loads platform + sink adapters, checks terminal states, handles inbox, delegates implement+verify+fix to `/do` (intra-tick convergence), runs CI triage and PR tending, amends if scope shifts, commits, and returns for the next scheduled iteration — or ends on terminal state / budget exhaust.
-
-**Adapters:**
-- Platforms: `none` (local branch only), `github` (PR bootstrap + tend — preserves `tend-pr-tick`'s classification, CI triage, PR sync, thread resolution, and merge-ready semantics adapted to the adapter contract).
-- Sinks: `local` (log-file escalations).
-
-**Design:** No plugin-specific hooks. No auto-escalation on no-progress. Each tick delegates implement+verify+fix to `/do` (intra-tick convergence); cross-tick boundaries handle CI triage, PR tending, and inbox routing. `--interval` defaults to 15m (bounded 15m–24h); while a tick holds its lock, subsequent cron fires exit silently — interval is a floor on poll frequency, not a hard cadence. Locks have no TTL; stale locks from crashed ticks require manual cleanup via `/drive` pre-flight. `--max-ticks` budget cap (default 100) prevents cost runaway. CI failures classified as infrastructure/flaky are auto-retriggered (native rerun or empty-commit push) up to 10 times per run before escalating.
-
-**Coexistence:** `/drive` does NOT replace `/do`, `/tend-pr`, `/tend-pr-tick`, or `/auto`. Pick whichever fits your workflow.
-
-**Multi-repo support:** Each repo's `/drive` runs against its own PR with its own run-id (`gh-{owner}-{repo}-{pr}`); all amend the same shared canonical `/tmp` manifest used by every repo's PR. See `manifest-dev/skills/define/references/MULTI_REPO.md`.
+`/drive` and `/drive-tick` graduated from this plugin into [`manifest-dev`](#manifest-dev). For drive's full design — pluggable platform (`none`, `github`) and sink (`local`) adapters, intra-tick `/do` convergence, CI triage, multi-repo PR-set handling, lock semantics, and budget caps — see `manifest-dev/skills/drive/SKILL.md` and the references under `manifest-dev/skills/drive/references/`.
 
 ## Contributing
 

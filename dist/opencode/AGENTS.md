@@ -17,7 +17,7 @@ manifest-dev provides verification-first manifest workflows for AI coding agents
 Supporting workflows:
 - **/auto** — End-to-end autonomous: /define (autonomous interview) → /do in one command.
 - **/figure-out** — Collaborative deep understanding. Investigation-first, truth-convergent. End with /stop-thinking-disciplines.
-- **/tend-pr** — PR lifecycle automation. Classifies comments, routes fixes, tends CI.
+- **/drive** — Cron-driven manifest-to-green loop. Bootstraps branch/PR, schedules /drive-tick until terminal state (all verify pass for none mode, merge-ready for github mode).
 
 Internal skills:
 - **thinking-disciplines** — Core thinking disciplines invoked by /figure-out and /define. Not user-invocable.
