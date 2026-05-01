@@ -4,11 +4,11 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-AGENTS.md may specify project-specific preferences.
+CLAUDE.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
-Defect-finding agents: every finding at Low severity or above fails the gate (`no LOW+`). Quality/advisory agents: findings at Medium or above fail the gate (`no MEDIUM+`) — their Low findings are acceptable trade-offs.
+Two tiers by agent role. **Defect-finding agents** (every LOW finding is signal — a real divergence, defect, contract mismatch, or type hole): `no LOW+`. **Advisory agents** (LOW findings are usually taste-level — could-be-better, not is-broken): `no MEDIUM+`. The split is structural, not per-finding — it reflects what each agent is built to detect.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
@@ -21,7 +21,7 @@ Defect-finding agents: every finding at Low severity or above fails the gate (`n
 | Documentation | docs-reviewer | no MEDIUM+ |
 | Design fitness | code-design-reviewer | no MEDIUM+ |
 | Prose value | prose-value-reviewer | no MEDIUM+ |
-| AGENTS.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
+| CLAUDE.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
 
 ### Conditional Gates (when applicable)
 
@@ -32,7 +32,7 @@ Defect-finding agents: every finding at Low severity or above fails the gate (`n
 
 ## Project Gates
 
-AGENTS.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 
@@ -75,7 +75,7 @@ AGENTS.md specifies project gates (typecheck, lint, test, format). These become 
 *Domain best practices for this task type.*
 
 - **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
-- **Read project gates from AGENTS.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
+- **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
 
 ## Multi-Repo
 

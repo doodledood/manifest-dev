@@ -8,7 +8,7 @@ CLAUDE.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
-Defect-finding agents: every finding at Low severity or above fails the gate (`no LOW+`). Quality/advisory agents: findings at Medium or above fail the gate (`no MEDIUM+`) — their Low findings are acceptable trade-offs.
+Two tiers by agent role. **Defect-finding agents** (every LOW finding is signal — a real divergence, defect, contract mismatch, or type hole): `no LOW+`. **Advisory agents** (LOW findings are usually taste-level — could-be-better, not is-broken): `no MEDIUM+`. The split is structural, not per-finding — it reflects what each agent is built to detect.
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|

@@ -10,7 +10,7 @@
 
 A manifest at any point in time should be readable as "everything currently in scope for this PR/branch (or PR set)," not "the most recent change request." This is what makes the manifest a useful working artifact for the agent and the user across the PR lifecycle.
 
-**Multi-repo specifics** — when the manifest declares `Repos:` in Intent, the canonical manifest is shared across all repo PRs (`/tmp/manifest-{ts}.md`); any consumer skill that writes amendments operates on the same file, last-writer-wins (no locking). See `MULTI_REPO.md` §f for the convention.
+**Multi-repo specifics** — see `MULTI_REPO.md` §f for the shared-manifest amendment convention.
 
 **Deferred-auto re-verification after amendment** — when an amendment substantively changes a `method: deferred-auto` criterion's verify block (`prompt:`, `command:`, etc.), prior `/verify --deferred` coverage is conceptually invalidated for that criterion. Normal `/verify` always re-runs in-scope criteria so amendments are picked up automatically; deferred-auto bypasses the pass and relies on prior coverage. The user is responsible for re-running `/verify --deferred` for the amended criterion before the gate clears. (Consistent with the user-as-coordinator stance — there is no automatic invalidation mechanism.)
 
@@ -23,6 +23,43 @@ Read the manifest at the given path. Existing decisions (ACs, INVs, PGs, Approac
 ## What Triggers Amendment
 
 The conversation context contains the reason — a user's message, a PR review comment, or an explicit change request. Read this context and determine what to change.
+
+## Session-Default Detection
+
+`/define` invokes this detection from its Pre-flight when the transcript or conversation references a prior manifest (skipped when `--amend <path>` is explicit, or when the input plainly references a `/tmp/manifest-*.md` path — those signals always win, the named manifest is source of truth, and the agent confirms approach with the user only if its relationship to the new task is unclear).
+
+Detection signals (most-recent / most-specific wins):
+
+1. **In-session completion line** — `Manifest complete: /tmp/manifest-{timestamp}.md` from a prior /define's Complete output appearing earlier in the transcript. Most recent in transcript order wins.
+2. **Conversation reference** — a `/tmp/manifest-*.md` path mentioned in the conversation.
+
+When ambiguous (transcript references unrelated work, multiple plausible candidates, or a signal maps to a different concern), ask once: "I see manifest X in scope — amend it, pick a different one, or start fresh?" Don't silently choose.
+
+Once a candidate is identified, read it and compare its Goal + Deliverables against the new task. Apply the matching branch:
+
+### Related (default)
+
+**Amendment is the default.** Only "truly unrelated" work (clearly different problem space, not a continuation, refinement, follow-up, or polish) starts fresh. When ambiguous, default to amendment. The asymmetry is intentional: a wrong "fresh" decision silently loses prior INVs/ACs/PGs; a wrong "amend" decision is correctable via the announcement.
+
+Announce, then proceed as if `--amend <prior-path>` had been passed. Follow the rest of this file from that point. Emit the announcement regardless of interview mode (preserves audit trail in transcript); it is one line and non-blocking:
+
+> Detected prior manifest in session: `/tmp/manifest-{ts}.md` (`<title from H1>`). Defaulting to amendment mode — interrupt me if this is unrelated work and I'll start fresh.
+
+### Truly unrelated
+
+Proceed fresh with a one-line note so the user can correct if needed:
+
+> Found prior manifest `<path>` (`<title>`), but new task targets `<different problem space>`. Starting fresh — interrupt me to amend instead if I read this wrong.
+
+### Prior manifest unreadable
+
+Fall back to fresh with a one-line note:
+
+> Prior manifest `<path>` is no longer available; starting fresh.
+
+### No prior manifest
+
+Proceed fresh; no announcement.
 
 ## Interview Style
 
@@ -46,7 +83,7 @@ In /do context, amendment is autonomous and fast — no user approval gates (ver
 
 ### 3. Session-Default
 
-Triggered implicitly by `/define`'s in-session detection of a prior related manifest (no explicit `--amend` flag). See SKILL.md's `## Session-Default Amendment` section for the detection and relatedness rules. Once the agent decides to amend, behavior **follows the Standalone path** — interview scoped to the change (per the active interview mode), verification loop, summary for approval. The interview mode (`thorough` / `minimal` / `autonomous`) is **not** overridden by the trigger context — `/auto` invocations still run autonomously, just amending the prior manifest instead of starting fresh. The user is told upfront via an announcement and can verbally redirect to a fresh manifest if the relatedness call was wrong.
+Triggered implicitly by `/define`'s in-session detection of a prior related manifest (no explicit `--amend` flag). The detection rules and branches (Related / Truly unrelated / Prior manifest unreadable) live in the **Session-Default Detection** section above. Once detection lands on Related and the agent decides to amend, behavior **follows the Standalone path** — interview scoped to the change (per the active interview mode), verification loop, summary for approval. The interview mode (`thorough` / `minimal` / `autonomous`) is **not** overridden by the trigger context — `/auto` invocations still run autonomously, just amending the prior manifest instead of starting fresh. The user is told upfront via the announcement (per Session-Default Detection) and can verbally redirect to a fresh manifest if the relatedness call was wrong.
 
 ## What to Preserve
 

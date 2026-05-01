@@ -20,27 +20,36 @@ If the file is lost (reboot, `/tmp` cleared, session death), re-run `/define` ag
 
 This is an explicit trade-off: durability infrastructure is more cost than re-running `/define` is occasional pain.
 
-## c. Repo Registration
+## c. Manifest Schema Additions
 
-The manifest's `## 1. Intent & Context` section declares its multi-repo scope:
+Multi-repo manifests extend the standard single-repo schema with three optional fields. Single-repo manifests omit all of them.
 
-```markdown
-- **Repos:**                                  # optional, multi-repo only
-    - backend: /home/user/projects/api
-    - frontend: /home/user/projects/web
-- **Branch:** claude/sso-integration          # optional, single string (see §j)
-```
+**Intent & Context** declares two additional fields:
 
-Each deliverable that belongs to a specific repo carries a `repo:` tag matching one of the names above:
+- **Repos:** (multi-repo only) — a name → absolute-path map listing every repo in scope. Names are short identifiers used by deliverables; paths are absolute filesystem locations.
+
+  ```markdown
+  - **Repos:**
+      - backend: /home/user/projects/api
+      - frontend: /home/user/projects/web
+  ```
+
+- **Branch:** (multi-repo only) — a single string naming the branch used in every repo. By convention, all repos in a multi-repo changeset share the same branch name (see §j); divergent per-repo branch names are not supported in this version.
+
+  ```markdown
+  - **Branch:** claude/sso-integration
+  ```
+
+**Each deliverable** that belongs to a specific repo carries a `**Repo:**` tag matching one of the `Repos:` names:
 
 ```markdown
 ### Deliverable 3: SSO endpoint
 **Repo:** `backend`
 ```
 
-`Repos:` and `repo:` exist for **documentation** — readers (human and agent) know which deliverable lives where. They are **not** an enforcement mechanism for `/do` or `/verify` (see §d). Optional consumer skills may use the tags for their own scope inference (e.g., a PR-tending tool routing feedback on backend's PR to backend-tagged deliverables), but core skills do not depend on this.
+**Verify methods** include `deferred-auto`, valid in any manifest (single-repo or multi-repo) for criteria the user explicitly triggers — most commonly cross-repo gates that depend on prerequisites the user controls. See §e for behavior.
 
-Single-repo manifests omit both `Repos:` and `repo:` entirely.
+**Documentation, not enforcement.** `Repos:` and `repo:` are for readers (human and agent) — they do not gate `/do` or `/verify` (see §d). Optional consumer skills may use the tags for their own scope inference (e.g., a PR-tending tool routing feedback on backend's PR to backend-tagged deliverables), but core skills do not depend on this.
 
 ## d. /do Navigation
 
@@ -95,6 +104,7 @@ When the user signals readiness ("all PRs deployed"), they invoke:
 This runs **only** `deferred-auto` criteria. Flag interactions:
 
 - `--deferred` + `--scope` is supported. `--scope` narrows the deferred set to in-scope deliverables.
+- INV-G\* deferred-auto criteria are deliverable-scope-independent — `--scope` does not cover them. They are covered only by a `--deferred` pass with empty `--scope`. `/done` remains gated on `/escalate` "Deferred-Auto Pending" until that uncovered set runs green.
 - `--deferred` does not interact with `--final`. It never enters the final-gate machinery.
 - `--deferred` inherits `--mode`. Same parallelism and model routing as the parent invocation.
 
