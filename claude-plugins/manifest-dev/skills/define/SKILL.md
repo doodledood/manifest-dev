@@ -28,53 +28,21 @@ If thinking-disciplines is not active, invoke `manifest-dev:thinking-disciplines
 |------|--------|---------|----------|
 | `--interview` | `minimal` \| `autonomous` \| `thorough` | `thorough` | Sets interview mode (see Interview Style). Invalid value → halt: "Invalid interview style '<value>'. Valid styles: minimal \| autonomous \| thorough". |
 | `--medium` | `local` (only currently supported) | `local` | Sets communication channel. Other values → halt: "Medium '<value>' not yet supported. Currently supported: local". |
-| `--amend <path>` | manifest path | — | Amend an existing manifest. See `references/AMENDMENT_MODE.md`. |
-| `--from-do` | flag (used with `--amend`) | — | Marks amendment as triggered by `/do`. See `references/AMENDMENT_MODE.md`. |
-| `--canvas` | flag | — | Enable canvas mode. When present, read `references/CANVAS_MODE.md` and follow it; otherwise ignore. |
+| `--amend <path>` | manifest path | — | Amend an existing manifest. See `references/AMENDMENT_MODE.md` (Three Contexts §1 Standalone). |
+| `--from-do` | flag (used with `--amend`) | — | Marks amendment as triggered by `/do`. See `references/AMENDMENT_MODE.md` (Three Contexts §2 From /do). |
+| `--canvas` | flag | — | When present, follow `references/CANVAS_MODE.md`. |
 
 Flags can appear anywhere in `$ARGUMENTS`. If no arguments provided, ask: "What would you like to build or change?"
 
 ## Pre-flight: Resolve Manifest Context
 
-Before the interview, determine whether this run is fresh or continues prior work. **One manifest per related change set** — follow-up bug fixes, feature extensions, and polish should accumulate into the existing manifest rather than fragment.
-
-**Skip this section entirely when the user pointed at a specific manifest** (`--amend <path>`, or input plainly references a `/tmp/manifest-*.md` path). Explicit signals always win:
-- Treat the referenced manifest as source of truth — it contains validated decisions.
-- Default to building on it.
-- Confirm approach with the user only if unclear.
-
-**Otherwise, detect a relevant prior manifest from these signals (most-recent / most-specific wins):**
-
-1. **In-session completion line** — `Manifest complete: /tmp/manifest-{timestamp}.md` from the Complete section appearing earlier in the transcript. Most recent in transcript order wins.
-2. **Conversation reference** — a `/tmp/manifest-*.md` path mentioned in the conversation.
-
-When ambiguous (transcript references unrelated work, multiple plausible candidates, or a signal maps to a different concern), ask once: "I see manifest X in scope — amend it, pick a different one, or start fresh?" Don't silently choose.
-
-### Prior Manifest Found
-
-Read the matched manifest. Compare its Goal + Deliverables against the new task.
-
-**Amendment is the default.** Only "truly unrelated" work (clearly different problem space, not a continuation, refinement, follow-up, or polish) starts fresh. When ambiguous, default to amendment. The asymmetry is intentional: a wrong "fresh" decision silently loses prior INVs/ACs/PGs; a wrong "amend" decision is correctable via the announcement.
-
-**Related (default):** Announce, then proceed as if `--amend <prior-path>` had been passed. Follow `references/AMENDMENT_MODE.md` from that point. Emit the announcement regardless of interview mode (preserves audit trail in transcript); it is one line and non-blocking.
-
-> Detected prior manifest in session: `/tmp/manifest-{ts}.md` (`<title from H1>`). Defaulting to amendment mode — interrupt me if this is unrelated work and I'll start fresh.
-
-**Truly unrelated:** Proceed fresh with a one-line note so the user can correct if needed.
-
-> Found prior manifest `<path>` (`<title>`), but new task targets `<different problem space>`. Starting fresh — interrupt me to amend instead if I read this wrong.
-
-**Prior manifest unreadable:** Fall back to fresh with a one-line note: "Prior manifest `<path>` is no longer available; starting fresh."
-
-### No Prior Manifest
-
-Proceed fresh; no announcement.
+If `--amend <path>` is set or the input plainly references a `/tmp/manifest-*.md` path, that manifest is the source of truth. Otherwise, if the transcript contains a `Manifest complete: /tmp/manifest-*.md` line from a prior `/define` or a `/tmp/manifest-*.md` path is mentioned in the conversation, read `references/AMENDMENT_MODE.md` "Session-Default Detection" and apply the resulting branch. Else proceed fresh.
 
 ## Branch-Diff Seeding
 
 **Trigger:** Fresh `/define` (no `--amend`, no Pre-flight match, no manifest referenced in input) AND the current branch has commits ahead of its base.
 
-**Why:** Work already on the branch belongs in the manifest. The manifest is the canonical source of truth for the PR/branch lifetime (Cumulative Manifest Rule, `references/AMENDMENT_MODE.md`). Ignoring existing branch work produces a manifest that doesn't reflect the actual PR.
+**Why:** Work already on the branch belongs in the manifest (Cumulative Manifest Rule — see `references/AMENDMENT_MODE.md`).
 
 **Base inference** (first hit wins): upstream tracking branch → `origin/main` → `origin/master` → ask the user once. Halt seeding if the user declines.
 
@@ -121,18 +89,7 @@ When `--amend <path>` is present (explicitly or via Pre-flight default), read `r
 
 ## Multi-Repo Scope
 
-When the task spans multiple repositories, the manifest stays a single canonical document covering the entire changeset. Detection rides on existing Domain Understanding — when conversation, task description, or branch context indicates multiple repos, populate `Repos:` accordingly. No separate probe step is added.
-
-**Schema additions** (omit entirely for single-repo manifests):
-- Intent declares `Repos: [name: path, ...]` listing every repo in scope.
-- Intent optionally declares `Branch: <name>` (single string — same branch name across repos by convention).
-- Each repo-specific deliverable carries `repo: <name>` matching one of the declared repos.
-
-`Repos:` and `repo:` are documentation, not enforcement — `/do` navigates absolute paths from `Repos:` natively.
-
-**Deferred-auto verification.** Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) get `method: deferred-auto`. Normal `/do→/verify` skips them, **routing to `/escalate` ("Deferred-Auto Pending") instead of `/done` while uncovered**; the user runs `/verify --deferred` when prerequisites are in place. INV-G* deferred-auto criteria are deliverable-scope-independent — covered only by a `--deferred` pass with empty `--scope`.
-
-Full convention: `references/MULTI_REPO.md`.
+When the task spans multiple repositories, read `references/MULTI_REPO.md` for schema additions, detection, and cross-repo verification rules.
 
 ## Principles
 
@@ -252,7 +209,7 @@ Every actionable item gets logged with status:
 
 ## Question Disciplines
 
-**Decisions lock through structured options.** Questions that lock manifest content present 2-4 concrete options with one marked "(Recommended)". The messaging file defines the tool; the interview mode defines when and how.
+**Decisions lock through structured options.** Questions that lock manifest content present concrete options. The messaging file defines the tool and format; the interview mode defines when and how.
 
 **Confirm before encoding.** Exploration-discovered constraints require confirmation per interview mode before becoming invariants. Exception: task-file quality gates and Defaults are auto-included per Domain Guidance.
 
@@ -302,18 +259,6 @@ After defining deliverables, probe for **initial** implementation direction. Ski
 
 **Architecture vs Process Guidance.** Architecture = structural decisions (components, patterns, structure). Process Guidance = methodology constraints (tools, manual vs automated). "Add executive summary covering X, Y, Z" is Architecture. "No bullet points in summary sections" is Process Guidance.
 
-## Delegation Map
-
-| File | Owns |
-|------|------|
-| **Interview mode files** (`references/interview-modes/`) | Question format, flow, checkpoints, finding-sharing, convergence aggressiveness |
-| **Messaging files** (`references/messaging/`) | Interaction tooling (which tool, format constraints) |
-| **Task files** (`tasks/`) | Domain-specific quality gates, risks, scenarios, trade-offs, defaults |
-| **Amendment mode** (`references/AMENDMENT_MODE.md`) | Rules for modifying existing manifests |
-| **Canvas mode** (`references/CANVAS_MODE.md`) | `--canvas` behavior |
-| **Multi-repo** (`references/MULTI_REPO.md`) | Multi-repo manifest convention |
-| **Execution mode files** (`../do/references/execution-modes/`) | Verification loop behavior (cycles, verifier invocation) |
-
 ## What the Manifest Captures
 
 Three categories, each covering output or process:
@@ -336,10 +281,6 @@ Three categories, each covering output or process:
 - **Mode:** efficient | balanced | thorough *(optional, default: thorough — controls verification intensity during /do)*
 - **Interview:** minimal | autonomous | thorough *(optional, default: thorough — recorded so --amend can inherit the original interview style)*
 - **Medium:** local *(optional, default: local — currently only local is supported)*
-- **Repos:** *(optional, multi-repo only — see `references/MULTI_REPO.md`; omit for single-repo manifests)*
-    - name1: /absolute/path/to/repo1
-    - name2: /absolute/path/to/repo2
-- **Branch:** *(optional, multi-repo only — single string, same branch name across all repos by convention)*
 
 ## 2. Approach (Complex Tasks Only)
 *Initial direction, not rigid plan. Provides enough to start confidently; expect adjustment when reality diverges.*
@@ -372,7 +313,7 @@ Three categories, each covering output or process:
     prompt: "[if subagent or research]"
   ```
 
-*See Multi-Repo Scope above for `method: deferred-auto` semantics. INV-G* deferred-auto criteria are deliverable-scope-independent — covered only by a `--deferred` pass with empty `--scope`.*
+*`deferred-auto`: user-triggered; runs only via `/verify --deferred`. See `references/MULTI_REPO.md` §e for cross-repo semantics.*
 
 ## 4. Process Guidance (Non-Verifiable)
 *Constraints on HOW to work. Not gates—guidance for the implementer.*
@@ -388,7 +329,6 @@ Three categories, each covering output or process:
 *Ordered by execution order from Approach, or by dependency then importance.*
 
 ### Deliverable 1: [Name]
-**Repo:** `name1` *(optional, multi-repo only — must match a name in Intent's `Repos:` map; omit for single-repo manifests)*
 
 **Acceptance Criteria:**
 - [AC-1.1] Description: ... | Verify: ...
@@ -398,8 +338,6 @@ Three categories, each covering output or process:
     phase: "[numeric, optional, default 1]"
     [details]
   ```
-
-*See Multi-Repo Scope above for `method: deferred-auto` semantics.*
 
 ### Deliverable 2: [Name]
 ...
