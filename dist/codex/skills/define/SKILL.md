@@ -38,13 +38,12 @@ Flags can appear anywhere in `$ARGUMENTS`. If no arguments provided, ask: "What 
 
 Before the interview, determine whether this run is fresh or continues prior work. **One manifest per related change set** — follow-up bug fixes, feature extensions, and polish should accumulate into the existing manifest rather than fragment.
 
-**Skip this section entirely when the user pointed at a specific manifest** (`--amend <path>`, or input plainly references a `/tmp/manifest-*.md` or `.manifest/*.md` path). Explicit signals always win — treat the referenced manifest as source of truth (it contains validated decisions); default to building on it; confirm approach with user only if unclear.
+**Skip this section entirely when the user pointed at a specific manifest** (`--amend <path>`, or input plainly references a `/tmp/manifest-*.md` path). Explicit signals always win — treat the referenced manifest as source of truth (it contains validated decisions); default to building on it; confirm approach with user only if unclear.
 
 **Otherwise, detect a relevant prior manifest from these signals (most-recent / most-specific wins):**
 
 1. **In-session completion line** — `Manifest complete: /tmp/manifest-{timestamp}.md` from the Complete section appearing earlier in the transcript. Most recent in transcript order wins.
-2. **Conversation reference** — `/tmp/manifest-*.md` or `.manifest/*.md` mentioned in the conversation.
-3. **Branch-archived manifest** — a file in `.manifest/` whose mtime falls within the current branch's commit-history window (base inferred per Branch-Diff Seeding). Most recently modified candidate wins.
+2. **Conversation reference** — a `/tmp/manifest-*.md` path mentioned in the conversation.
 
 When ambiguous (transcript references unrelated work, multiple plausible candidates, or a signal maps to a different concern), ask once: "I see manifest X in scope — amend it, pick a different one, or start fresh?" Don't silently choose.
 
@@ -57,8 +56,6 @@ Read the matched manifest. Compare its Goal + Deliverables against the new task.
 **Related (default):** Announce, then proceed as if `--amend <prior-path>` had been passed. Follow `references/AMENDMENT_MODE.md` from that point. Emit the announcement regardless of interview mode (preserves audit trail in transcript); it is one line and non-blocking.
 
 > Detected prior manifest in session: `/tmp/manifest-{ts}.md` (`<title from H1>`). Defaulting to amendment mode — interrupt me if this is unrelated work and I'll start fresh.
-
-When the matched manifest came from signal #3 (branch-archived), also incorporate any commits made on the branch *after* the manifest's archival mtime as discovery context for the amendment — same as Branch-Diff Seeding does for fresh /define on a non-empty branch. This preserves the Cumulative Manifest Rule (`references/AMENDMENT_MODE.md`): post-archival work made outside the manifest workflow is not silently lost.
 
 **Truly unrelated:** Proceed fresh with a one-line note so the user can correct if needed.
 

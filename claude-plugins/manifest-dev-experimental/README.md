@@ -22,10 +22,10 @@ Cron-driven, tick-based driver that takes a manifest (or PR in babysit mode) all
 
 ```bash
 # Manifest + local-only loop
-/drive .manifest/my-feature.md
+/drive /tmp/manifest-{timestamp}.md
 
 # Manifest + GitHub PR lifecycle
-/drive .manifest/my-feature.md --platform github
+/drive /tmp/manifest-{timestamp}.md --platform github
 
 # Babysit an existing PR (manifest absent)
 /drive --platform github

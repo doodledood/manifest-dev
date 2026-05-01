@@ -14,7 +14,7 @@ The manifest is **internal**. It is a working document for the user and the agen
 
 ## b. Persistence
 
-The canonical manifest lives at `/tmp/manifest-{timestamp}.md`. No archival. No copying to `.manifest/` for multi-repo. No primary repo "owns" it.
+The canonical manifest lives at `/tmp/manifest-{timestamp}.md`. No primary repo "owns" it.
 
 If the file is lost (reboot, `/tmp` cleared, session death), re-run `/define` against the same task. The recreated manifest restarts the working state; in-flight PRs continue under the new manifest path.
 
