@@ -12,7 +12,7 @@ Build **shared understanding** between you and the user about the work, then enc
 - **How we'll get there** — Approach (initial direction, expect adjustment)
 - **Rules we must follow** — Global Invariants
 
-**Every criterion discovered NOW is one fewer rejection later.** Comprehensive means surfacing latent criteria — requirements the user doesn't know they have until probed. Aim for high coverage; amendments handle what emerges during implementation.
+**Every criterion discovered NOW is one fewer rejection later.** Comprehensive means surfacing latent criteria: requirements the user doesn't know they have until probed. Aim for high coverage; amendments handle what emerges during implementation.
 
 Output: `/tmp/manifest-{timestamp}.md`
 
@@ -38,7 +38,10 @@ Flags can appear anywhere in `$ARGUMENTS`. If no arguments provided, ask: "What 
 
 Before the interview, determine whether this run is fresh or continues prior work. **One manifest per related change set** — follow-up bug fixes, feature extensions, and polish should accumulate into the existing manifest rather than fragment.
 
-**Skip this section entirely when the user pointed at a specific manifest** (`--amend <path>`, or input plainly references a `/tmp/manifest-*.md` path). Explicit signals always win — treat the referenced manifest as source of truth (it contains validated decisions); default to building on it; confirm approach with user only if unclear.
+**Skip this section entirely when the user pointed at a specific manifest** (`--amend <path>`, or input plainly references a `/tmp/manifest-*.md` path). Explicit signals always win:
+- Treat the referenced manifest as source of truth — it contains validated decisions.
+- Default to building on it.
+- Confirm approach with the user only if unclear.
 
 **Otherwise, detect a relevant prior manifest from these signals (most-recent / most-specific wins):**
 
@@ -51,7 +54,7 @@ When ambiguous (transcript references unrelated work, multiple plausible candida
 
 Read the matched manifest. Compare its Goal + Deliverables against the new task.
 
-**Amendment is the default — not 50/50.** Only "truly unrelated" work (clearly different problem space, not a continuation, refinement, follow-up, or polish) starts fresh. When ambiguous, default to amendment. The asymmetry is intentional: a wrong "fresh" decision silently loses prior INVs/ACs/PGs; a wrong "amend" decision is correctable via the announcement.
+**Amendment is the default.** Only "truly unrelated" work (clearly different problem space, not a continuation, refinement, follow-up, or polish) starts fresh. When ambiguous, default to amendment. The asymmetry is intentional: a wrong "fresh" decision silently loses prior INVs/ACs/PGs; a wrong "amend" decision is correctable via the announcement.
 
 **Related (default):** Announce, then proceed as if `--amend <prior-path>` had been passed. Follow `references/AMENDMENT_MODE.md` from that point. Emit the announcement regardless of interview mode (preserves audit trail in transcript); it is one line and non-blocking.
 
@@ -99,7 +102,7 @@ Domain-specific guidance lives in `tasks/`:
 
 **Exception.** PROMPTING tasks do NOT compose with CODING.md unless the task also changes executable code. PROMPTING.md has its own quality gates. When a task changes both prompts AND code, apply both, scoping each to the relevant files.
 
-**Task file structures are presumed relevant.** They contain quality gates, reviewer agents, risks, scenarios, and trade-offs — angles you won't think to check on your own. Quality gates auto-include; Resolvable structures (risks, scenarios, trade-offs) must be **resolved** per interview mode, or explicitly skipped with logged reasoning (e.g., "CODING.md concurrency risk skipped: single-threaded CLI tool"). Silent drops are the failure mode, not over-asking.
+**Task file structures are presumed relevant.** They contain quality gates, reviewer agents, risks, scenarios, and trade-offs — domain-specific angles outside your default coverage. Quality gates auto-include; Resolvable structures (risks, scenarios, trade-offs) must be **resolved** per interview mode, or explicitly skipped with logged reasoning (e.g., "CODING.md concurrency risk skipped: single-threaded CLI tool"). Silent drops are the failure mode, not over-asking.
 
 **Task file content types:**
 - **Quality gates** (`## Quality Gates` section, any structured format with thresholds/criteria) — auto-include as INV-G*. Omit clearly inapplicable with logged reasoning. User reviews manifest.
@@ -110,7 +113,7 @@ Domain-specific guidance lives in `tasks/`:
 
 **Encode quality gates and Defaults immediately after reading task files — before the interview.** Log each as `- [x]` RESOLVED.
 
-Probing beyond task files is adaptive. Task files set the floor, not the ceiling.
+Task files set the floor, not the ceiling — probe beyond when domain understanding warrants.
 
 ## Amendment Mode
 
@@ -127,7 +130,7 @@ When the task spans multiple repositories, the manifest stays a single canonical
 
 `Repos:` and `repo:` are documentation, not enforcement — `/do` navigates absolute paths from `Repos:` natively.
 
-Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) get `method: deferred-auto`. Normal `/do→/verify` skips them, **routing to `/escalate` ("Deferred-Auto Pending") instead of `/done` while uncovered**; the user runs `/verify --deferred` when prerequisites are in place.
+**Deferred-auto verification.** Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) get `method: deferred-auto`. Normal `/do→/verify` skips them, **routing to `/escalate` ("Deferred-Auto Pending") instead of `/done` while uncovered**; the user runs `/verify --deferred` when prerequisites are in place. INV-G* deferred-auto criteria are deliverable-scope-independent — covered only by a `--deferred` pass with empty `--scope`.
 
 Full convention: `references/MULTI_REPO.md`.
 
@@ -138,7 +141,8 @@ Full convention: `references/MULTI_REPO.md`.
 3. **Domain-grounded** — understand the domain before probing. You can't surface what you don't know.
 4. **Complete** — surface hidden requirements through five coverage goals. Understanding from any source counts equally.
 5. **Directed** — for complex tasks, establish initial Approach. Architecture defines starting direction, not step-by-step script.
-6. **Efficient** — every question must change the manifest, lock an assumption, or choose between meaningful trade-offs. One missed criterion costs more than one extra question — err toward asking, never ask trivia.
+6. **Question quality** — every question must change the manifest, lock an assumption, or choose between meaningful trade-offs. Never ask trivia.
+7. **Err toward asking** — one missed criterion costs more than one extra question.
 
 ## Coverage Goals
 
@@ -150,25 +154,21 @@ Five goals that must be met before convergence. Each defines WHAT must be true a
 | Reference Class | Can you name the task type and its common failure modes? |
 | Failure Modes | All scenarios have dispositions (encoded, scoped out, or mitigated)? |
 | Positive Dependencies | Load-bearing assumptions surfaced and each has a disposition? |
-| Process Self-Audit | Scope-creep risks identified and resolved? (skip if straightforward) |
+| Process Self-Audit | Every identified scope-creep pattern has a disposition (PG, INV, accepted, already-covered). Skip when scope is bounded to a single deliverable with no incremental-addition risk. |
 
 ### Domain Understanding
 
 **What must be true:** you understand the affected area well enough to generate project-specific (not generic) failure scenarios. You know existing patterns, structure, constraints, and prior decisions relevant to the task.
 
-Understanding comes from any source. When insufficient, fill gaps through whatever fits — explore code, search docs, ask the user what exploration can't reveal. Scope to what's relevant, not the entire domain.
+When understanding is insufficient, fill gaps through whatever fits: explore code, search docs, ask the user what exploration can't reveal. Scope to what's relevant, not the entire domain.
 
 Starting points: existing patterns (how similar things are done), structure (components, dependencies, boundaries in the affected area), constraints (implicit conventions, assumed invariants, existing contracts), prior decisions (why things are the way they are, when discoverable).
 
-**Convergence test:** can you generate failure scenarios that reference specific components, patterns, or conventions in this context? If yes, sufficient. If only generic failures, gaps remain.
-
 ### Reference Class Awareness
 
-**What must be true:** you know what type of task this is, what typically fails in that class, and those base-rate failures inform failure mode coverage.
+**What must be true:** you know what type of task this is, what fails in that class, and those base-rate failures inform failure mode coverage.
 
-Ground the reference class in domain understanding — "refactor of a tightly-coupled module with no tests" is useful; "refactor" is too generic. Task file warnings are a source.
-
-**Convergence test:** can you name the reference class and its most common failure modes? Often satisfiable in a single assessment step.
+Ground the reference class in domain understanding: "refactor of a tightly-coupled module with no tests" is useful; "refactor" is too generic. Task file warnings are a source.
 
 ### Failure Mode Coverage
 
@@ -185,7 +185,7 @@ Ground the reference class in domain understanding — "refactor of a tightly-co
 | **Edge cases** | What inputs/conditions weren't considered? |
 | **Dependencies** | What external factors cause failure? |
 
-Task files add domain-specific scenarios. Domain-grounded scenarios are higher signal than generic templates.
+Task files add domain-specific scenarios. Prefer domain-grounded scenarios over generic templates.
 
 **Scenario disposition** — every scenario resolves to one of:
 1. **Encoded as criterion** — INV-G*, AC-*, or Risk Area with detection.
@@ -193,8 +193,6 @@ Task files add domain-specific scenarios. Domain-grounded scenarios are higher s
 3. **Mitigated by approach** — architecture choice eliminates the failure mode.
 
 The active interview mode defines how scenarios are presented and dispositions resolved.
-
-**Convergence test:** relevant failure dimensions considered, all scenarios have dispositions, user confirms no major failure modes were missed.
 
 ### Positive Dependency Coverage
 
@@ -204,17 +202,13 @@ Where Failure Modes asks "what broke?", Positive Dependencies asks "what held?" 
 
 Starting points: existing infrastructure/tooling you're relying on, user behavior you're assuming, things that need to stay stable but could change.
 
-**Convergence test:** load-bearing assumptions surfaced and each has a disposition.
-
 ### Process Self-Audit
 
-**What must be true:** process self-sabotage patterns — decisions reasonable individually but compounding into failure — are identified and resolved. **Skip for simple tasks.**
+**What must be true:** process self-sabotage patterns — decisions reasonable individually but compounding into failure — are identified and resolved. **Skip when scope is bounded to a single deliverable with no incremental-addition risk.**
 
 Common patterns (not exhaustive): small scope additions ("just one more thing"), edge cases deferred ("we'll handle that later"), "temporary" solutions that become permanent, process shortcuts that erode quality.
 
 For each pattern, resolve disposition: Process Guidance, verifiable Invariant, accept as low risk, or note already covered. The active interview mode defines how patterns are presented and resolved.
-
-**Convergence test:** tasks with scope-creep risk have process risks identified and resolved. Skip when the task is straightforward enough that process sabotage is unlikely.
 
 ## Interview Style
 
@@ -248,7 +242,7 @@ Every actionable item gets logged with status:
 - `- [x]` RESOLVED — encoded as INV/AC/PG/ASM, confirmed, or answered
 - `- [~]` SKIPPED — explicitly scoped out with reasoning
 
-**Read full log before synthesis.** Unresolved `- [ ]` items must be addressed first. Memento-pattern discipline: the model will skip this without explicit instruction.
+**Read full log before synthesis.** Unresolved `- [ ]` items are addressed first.
 
 **Search before asking.** Don't ask the user about facts you could discover through exploration. Only ask when multiple plausible candidates exist, searches yield nothing, or the ambiguity is about intent not fact.
 
@@ -262,13 +256,13 @@ Every actionable item gets logged with status:
 
 **Confirm before encoding.** Exploration-discovered constraints require confirmation per interview mode before becoming invariants. Exception: task-file quality gates and Defaults are auto-included per Domain Guidance.
 
-**Encode explicit constraints.** User-stated preferences, requirements, and constraints must map to an INV or AC. Don't let them get lost in the interview log.
+**Encode explicit constraints.** User-stated preferences, requirements, and constraints must map to an INV or AC.
 
 **Probe approach constraints.** Beyond WHAT to build, ask HOW: tools to use or avoid, methods required or forbidden, automation vs manual. These become process invariants.
 
 **Probe input artifacts.** When input references external documents (URLs, file paths, named documents), determine whether they should be verification sources. If yes, encode as Global Invariant.
 
-**Batch related questions.** Group related questions into a single turn covering a coherent topic.
+**Batch related questions.** Group questions into a single turn covering one coherent topic; don't drip-feed.
 
 ## Encoding Disciplines
 
@@ -292,9 +286,9 @@ Low-impact unknowns become Known Assumptions. User can signal "enough" to overri
 
 ## Approach Section (Complex Tasks)
 
-After defining deliverables, probe for **initial** implementation direction. Skip for simple tasks with obvious approach.
+After defining deliverables, probe for **initial** implementation direction. Skip when the task has a single component with no architectural choice to make.
 
-**Why "initial":** Approach provides starting direction, not a rigid plan. Plans break on reality — unexpected constraints, better patterns, dependencies that don't work as expected. The goal is enough direction to start confidently, with trade-offs documented so implementation can adjust autonomously when reality diverges.
+**Why "initial":** Approach provides starting direction, not a rigid plan. Plans break on reality — unexpected constraints, better patterns, surprising dependencies. The goal is enough direction to start confidently, with trade-offs documented so implementation can adjust autonomously when reality diverges.
 
 **Architecture** — generate concrete options based on existing patterns. "Given the intent, here are approaches: [A], [B], [C]. Which fits best?" Architecture is direction (structure, patterns, flow), not script. When a choice affects multiple deliverables, surface which deliverables depend on it and what would need to change if the choice proves wrong during implementation.
 
@@ -378,7 +372,7 @@ Three categories, each covering output or process:
     prompt: "[if subagent or research]"
   ```
 
-*`method: deferred-auto` on INV-G* = cross-repo gate the user explicitly triggers via `/verify --deferred`. Skipped during normal `/do→/verify`; routes to `/escalate` "Deferred-Auto Pending" if uncovered when normal flow would otherwise reach `/done`. INV-G* deferred-auto criteria are deliverable-scope-independent — covered only by a `--deferred` pass with empty `--scope`. See `references/MULTI_REPO.md` §e.*
+*See Multi-Repo Scope above for `method: deferred-auto` semantics. INV-G* deferred-auto criteria are deliverable-scope-independent — covered only by a `--deferred` pass with empty `--scope`.*
 
 ## 4. Process Guidance (Non-Verifiable)
 *Constraints on HOW to work. Not gates—guidance for the implementer.*
@@ -405,7 +399,7 @@ Three categories, each covering output or process:
     [details]
   ```
 
-*`method: deferred-auto` = automatically verifiable but skipped during normal `/do→/verify`; runs only via `/verify --deferred`. Use for cross-repo gates the user explicitly triggers. See `references/MULTI_REPO.md` §e.*
+*See Multi-Repo Scope above for `method: deferred-auto` semantics.*
 
 ### Deliverable 2: [Name]
 ...
@@ -426,7 +420,7 @@ Three categories, each covering output or process:
 
 After writing the manifest, check the manifest's `mode:` field and load the execution mode file from `../do/references/execution-modes/` for the resolved mode (default: `thorough`). Follow that mode's "Manifest Verification (/define)" section for whether to run the manifest-verifier and how many cycles.
 
-When invoking the verifier, pass only the file paths. No summary, framing, or commentary. The verifier sees what you may have missed; let it assess independently. When relaying verifier output, do not paraphrase, filter, or editorialize.
+When invoking the verifier, pass only the file paths (with `Manifest:` / `Log:` labels for disambiguation). No summary of contents, no framing, no commentary on the manifest itself. The verifier sees what you may have missed; let it assess independently. When relaying verifier output, do not paraphrase, filter, or editorialize.
 
 ```
 Invoke the manifest-dev:manifest-verifier agent with: "Manifest: /tmp/manifest-{timestamp}.md | Log: /tmp/define-discovery-{timestamp}.md"
