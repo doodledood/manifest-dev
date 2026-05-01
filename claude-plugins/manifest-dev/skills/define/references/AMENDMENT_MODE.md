@@ -26,7 +26,7 @@ The conversation context contains the reason — a user's message, a PR review c
 
 ## Session-Default Detection
 
-`/define` runs this detection on every fresh invocation (skipped when `--amend <path>` is explicit, or when the input plainly references a `/tmp/manifest-*.md` path — those signals always win and treat the named manifest as source of truth; confirm approach with the user only if the referenced manifest's relationship to the new task is unclear).
+`/define` invokes this detection from its Pre-flight when the transcript or conversation references a prior manifest (skipped when `--amend <path>` is explicit, or when the input plainly references a `/tmp/manifest-*.md` path — those signals always win, the named manifest is source of truth, and the agent confirms approach with the user only if its relationship to the new task is unclear).
 
 Detection signals (most-recent / most-specific wins):
 

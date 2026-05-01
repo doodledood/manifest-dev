@@ -38,7 +38,7 @@ Flags can appear anywhere in `$ARGUMENTS`. If no arguments provided, ask: "What 
 
 Pre-flight resolves to **amend** or **fresh**:
 
-- `--amend <path>` set, or input plainly references a `/tmp/manifest-*.md` path → **amend** that manifest.
+- `--amend <path>` set, or input plainly references a `/tmp/manifest-*.md` path → **amend** that manifest. Confirm approach with the user only if the referenced manifest's relationship to the new task is unclear.
 - Transcript contains a prior `Manifest complete: /tmp/manifest-*.md` line, or such a path is mentioned in the conversation → read `references/AMENDMENT_MODE.md` "Session-Default Detection"; that section's branch determines amend or fresh.
 - Else → **fresh**.
 
