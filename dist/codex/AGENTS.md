@@ -9,7 +9,7 @@ This project uses a **define -> do -> verify -> done** workflow, powered by skil
 3. **/verify** -- Parallel verification of all criteria. Spawns agents (listed below) for quality gate checks.
 4. **/done** -- Completion checkpoint. Confirms all criteria pass and produces a summary.
 
-Supporting skills: /auto (end-to-end autonomous), /figure-out (collaborative deep understanding — end with /stop-thinking-disciplines), /escalate (structured escalation), /tend-pr (PR lifecycle), /learn-define-patterns (preference extraction). Internal: thinking-disciplines (core disciplines invoked by /figure-out and /define).
+Supporting skills: /auto (end-to-end autonomous), /figure-out (collaborative deep understanding — end with /stop-thinking-disciplines), /escalate (structured escalation), /tend-pr (PR lifecycle). Internal: thinking-disciplines (core disciplines invoked by /figure-out and /define).
 
 Skills handle the workflow orchestration. Agents listed below are used for verification and analysis.
 
@@ -32,10 +32,6 @@ Skills handle the workflow orchestration. Agents listed below are used for verif
 
 - **criteria-checker**: Read-only verification agent. Validates a single criterion using commands, codebase analysis, file inspection, reasoning, or web research. Spawned in parallel by /verify.
 - **manifest-verifier**: Reviews /define manifests for gaps. Outputs actionable questions to continue the interview.
-
-## Analysis Agents
-
-- **define-session-analyzer**: Analyzes /define session transcripts to extract user preference patterns. Spawned by learn-define-patterns skill.
 
 ## How to Use
 

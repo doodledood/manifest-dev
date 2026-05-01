@@ -6,8 +6,8 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 
 | Type | Count | Notes |
 |------|-------|-------|
-| Skills | 12 | Full compatibility (Agent Skills Open Standard) |
-| Agents | 15 | TOML config stubs with full prompt bodies |
+| Skills | 11 | Full compatibility (Agent Skills Open Standard) |
+| Agents | 14 | TOML config stubs with full prompt bodies |
 | Hooks | 0 | Not supported by Codex CLI (Issue #2109) |
 | Rules | 1 | Starlark execution policy |
 
@@ -20,7 +20,6 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | do | Execute against a manifest |
 | done | Completion checkpoint |
 | escalate | Escalate blockers to the user |
-| learn-define-patterns | Extract user preference patterns from /define sessions |
 | tend-pr | PR tending workflow |
 | tend-pr-tick | PR tending tick (periodic check) |
 | figure-out | Collaborative deep understanding |
@@ -43,7 +42,6 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | context-file-adherence-reviewer | read-only | Context file compliance |
 | contracts-reviewer | read-only | API contract verification |
 | criteria-checker | read-only | Single criterion verification |
-| define-session-analyzer | workspace-write | Session transcript analysis |
 | docs-reviewer | read-only | Documentation accuracy audit |
 | manifest-verifier | read-only | Manifest gap detection |
 | type-safety-reviewer | read-only | Type safety audit |
@@ -98,7 +96,7 @@ The install script handles namespacing automatically (adds `-manifest-dev` suffi
 
 ```
 dist/codex/
-├── skills/                          # 12 skills (unchanged from source)
+├── skills/                          # 11 skills (unchanged from source)
 │   ├── auto/
 │   ├── define/
 │   │   ├── SKILL.md
@@ -109,14 +107,13 @@ dist/codex/
 │   │   └── references/
 │   ├── done/
 │   ├── escalate/
-│   ├── learn-define-patterns/
 │   ├── tend-pr/
 │   ├── tend-pr-tick/
 │   ├── figure-out/
 │   ├── stop-thinking-disciplines/
 │   ├── thinking-disciplines/
 │   └── verify/
-├── agents/                          # 15 TOML config stubs
+├── agents/                          # 14 TOML config stubs
 │   ├── change-intent-reviewer.toml
 │   ├── code-bugs-reviewer.toml
 │   ├── test-quality-reviewer.toml
@@ -128,7 +125,6 @@ dist/codex/
 │   ├── context-file-adherence-reviewer.toml
 │   ├── contracts-reviewer.toml
 │   ├── criteria-checker.toml
-│   ├── define-session-analyzer.toml
 │   ├── docs-reviewer.toml
 │   ├── manifest-verifier.toml
 │   └── type-safety-reviewer.toml

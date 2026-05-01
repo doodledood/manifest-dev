@@ -48,10 +48,6 @@ config_file = "agents/contracts-reviewer.toml"
 description = "Read-only verification agent. Validates a single criterion using any automated method"
 config_file = "agents/criteria-checker.toml"
 
-[agents.define-session-analyzer]
-description = "Analyze a single /define session transcript to extract user preference patterns"
-config_file = "agents/define-session-analyzer.toml"
-
 [agents.docs-reviewer]
 description = "Audit documentation and code comments for accuracy against recent code changes"
 config_file = "agents/docs-reviewer.toml"

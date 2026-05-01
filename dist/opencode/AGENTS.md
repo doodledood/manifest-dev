@@ -18,7 +18,6 @@ Supporting workflows:
 - **/auto** — End-to-end autonomous: /define (autonomous interview) → /do in one command.
 - **/figure-out** — Collaborative deep understanding. Investigation-first, truth-convergent. End with /stop-thinking-disciplines.
 - **/tend-pr** — PR lifecycle automation. Classifies comments, routes fixes, tends CI.
-- **/learn-define-patterns** — Extracts user preference patterns from past /define sessions.
 
 Internal skills:
 - **thinking-disciplines** — Core thinking disciplines invoked by /figure-out and /define. Not user-invocable.
@@ -26,7 +25,7 @@ Internal skills:
 
 ## Agents
 
-15 specialized agents, all read-only reviewers except define-session-analyzer:
+14 specialized agents, all read-only reviewers:
 
 | Agent | Purpose |
 |-------|---------|
@@ -41,7 +40,6 @@ Internal skills:
 | context-file-adherence-reviewer | Context file compliance (AGENTS.md/CLAUDE.md/GEMINI.md rules) |
 | contracts-reviewer | API and interface contract correctness with evidence |
 | criteria-checker | Single-criterion verification (bash, codebase, research) |
-| define-session-analyzer | Per-session pattern extraction for /learn-define-patterns |
 | docs-reviewer | Documentation accuracy against code changes |
 | manifest-verifier | Manifest gap detection and continuation questions |
 | type-safety-reviewer | Type system improvements across typed languages |

@@ -27,7 +27,6 @@ SUFFIX = "-manifest-dev"
 SKILLS = [
     "stop-thinking-disciplines",
     "thinking-disciplines",
-    "learn-define-patterns",
     "tend-pr-tick",
     "figure-out",
     "escalate",
@@ -51,7 +50,6 @@ AGENTS = [
     "code-bugs-reviewer",
     "type-safety-reviewer",
     "contracts-reviewer",
-    "define-session-analyzer",
     "manifest-verifier",
     "criteria-checker",
     "docs-reviewer",
