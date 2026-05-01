@@ -28,19 +28,23 @@ If thinking-disciplines is not active, invoke `manifest-dev:thinking-disciplines
 |------|--------|---------|----------|
 | `--interview` | `minimal` \| `autonomous` \| `thorough` | `thorough` | Sets interview mode (see Interview Style). Invalid value → halt: "Invalid interview style '<value>'. Valid styles: minimal \| autonomous \| thorough". |
 | `--medium` | `local` (only currently supported) | `local` | Sets communication channel. Other values → halt: "Medium '<value>' not yet supported. Currently supported: local". |
-| `--amend <path>` | manifest path | — | Amend an existing manifest. See `references/AMENDMENT_MODE.md` (Three Contexts §1 Standalone). |
-| `--from-do` | flag (used with `--amend`) | — | Marks amendment as triggered by `/do`. See `references/AMENDMENT_MODE.md` (Three Contexts §2 From /do). |
+| `--amend <path>` | manifest path | — | Amend an existing manifest. See `references/AMENDMENT_MODE.md`. |
+| `--from-do` | flag (used with `--amend`) | — | Marks amendment as triggered by `/do`. See `references/AMENDMENT_MODE.md` Three Contexts §2 (From /do). |
 | `--canvas` | flag | — | When present, follow `references/CANVAS_MODE.md`. |
 
 Flags can appear anywhere in `$ARGUMENTS`. If no arguments provided, ask: "What would you like to build or change?"
 
 ## Pre-flight: Resolve Manifest Context
 
-If `--amend <path>` is set or the input plainly references a `/tmp/manifest-*.md` path, that manifest is the source of truth. Otherwise, if the transcript contains a `Manifest complete: /tmp/manifest-*.md` line from a prior `/define` or a `/tmp/manifest-*.md` path is mentioned in the conversation, read `references/AMENDMENT_MODE.md` "Session-Default Detection" and apply the resulting branch. Else proceed fresh.
+Pre-flight resolves to **amend** or **fresh**:
+
+- `--amend <path>` set, or input plainly references a `/tmp/manifest-*.md` path → **amend** that manifest.
+- Transcript contains a prior `Manifest complete: /tmp/manifest-*.md` line, or such a path is mentioned in the conversation → read `references/AMENDMENT_MODE.md` "Session-Default Detection"; that section's branch determines amend or fresh.
+- Else → **fresh**.
 
 ## Branch-Diff Seeding
 
-**Trigger:** Fresh `/define` (no `--amend`, no Pre-flight match, no manifest referenced in input) AND the current branch has commits ahead of its base.
+**Trigger:** Pre-flight resolved to fresh AND the current branch has commits ahead of its base.
 
 **Why:** Work already on the branch belongs in the manifest (Cumulative Manifest Rule — see `references/AMENDMENT_MODE.md`).
 
@@ -48,7 +52,7 @@ If `--amend <path>` is set or the input plainly references a `/tmp/manifest-*.md
 
 Diff branch against base, read the diff and commit messages. Incorporate the existing changeset into the new manifest's Intent (what's already done) and starting Deliverables (work-in-progress as prior context, with new ACs added on top for completion + the new task). The interview confirms or adjusts what was inferred.
 
-**Skip cleanly when:** no commits ahead of base, `--amend` was passed, or Pre-flight already matched a prior manifest.
+**Skip cleanly when:** no commits ahead of base, or Pre-flight resolved to amend.
 
 ## Domain Guidance
 
@@ -89,7 +93,7 @@ When `--amend <path>` is present (explicitly or via Pre-flight default), read `r
 
 ## Multi-Repo Scope
 
-When the task spans multiple repositories, read `references/MULTI_REPO.md` for schema additions, detection, and cross-repo verification rules.
+Detection rides on Domain Understanding (no separate probe). When conversation, task description, or branch context indicates multiple repos, read `references/MULTI_REPO.md` for schema additions and cross-repo verification rules.
 
 ## Principles
 

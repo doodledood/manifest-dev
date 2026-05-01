@@ -22,8 +22,6 @@ This is an explicit trade-off: durability infrastructure is more cost than re-ru
 
 ## c. Manifest Schema Additions
 
-Detection rides on existing Domain Understanding — when conversation, task description, or branch context indicates multiple repos, populate `Repos:` accordingly. No separate probe step is added.
-
 Multi-repo manifests extend the standard single-repo schema with three optional fields. Single-repo manifests omit all of them.
 
 **Intent & Context** declares two additional fields:
