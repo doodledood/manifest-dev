@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.95.0",
+  "version": "0.96.0",
   "description": "Manifest-driven workflows for structured task execution with verification gates. Supports multi-repo changesets via a shared canonical manifest.",
   "keywords": [
     "manifest",
@@ -13,9 +13,6 @@
     "approach",
     "trade-offs",
     "do",
-    "learn",
-    "patterns",
-    "preferences",
     "auto",
     "figure-out",
     "tend-pr",

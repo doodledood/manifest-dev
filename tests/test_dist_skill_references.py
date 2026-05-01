@@ -104,7 +104,6 @@ def test_codex_reference_guide_uses_namespaced_dollar_invocations(
     assert "$verify-manifest-dev" in agents_text
     assert "$done-manifest-dev" in agents_text
     assert "$escalate-manifest-dev" in agents_text
-    assert "$learn-define-patterns-manifest-dev" in agents_text
     assert "code-bugs-reviewer-manifest-dev" in agents_text
 
 
@@ -116,7 +115,6 @@ def test_opencode_readme_distinguishes_commands_from_internal_skills(
 
     assert "/define-manifest-dev" in readme_text
     assert "/do-manifest-dev" in readme_text
-    assert "/learn-define-patterns-manifest-dev" in readme_text
     assert (
         "The `verify-manifest-dev`, `done-manifest-dev`, and "
         "`escalate-manifest-dev` skills remain internal workflow steps."

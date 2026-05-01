@@ -76,7 +76,6 @@ After installation, invoke workflows via slash commands:
 /stop-thinking-disciplines-manifest-dev End thinking disciplines session
 /tend-pr-manifest-dev                   PR lifecycle automation
 /tend-pr-tick-manifest-dev              Single PR tending iteration
-/learn-define-patterns-manifest-dev     Extract patterns from past /define sessions
 ```
 
 ## Feature Parity with Claude Code
@@ -107,7 +106,7 @@ After installation, invoke workflows via slash commands:
 
 ```
 dist/opencode/
-├── agents/                          # 15 converted agents
+├── agents/                          # 14 converted agents
 │   ├── change-intent-reviewer.md
 │   ├── code-bugs-reviewer.md
 │   ├── test-quality-reviewer.md
@@ -119,28 +118,25 @@ dist/opencode/
 │   ├── context-file-adherence-reviewer.md
 │   ├── contracts-reviewer.md
 │   ├── criteria-checker.md
-│   ├── define-session-analyzer.md
 │   ├── docs-reviewer.md
 │   ├── manifest-verifier.md
 │   └── type-safety-reviewer.md
-├── commands/                        # 9 user commands
+├── commands/                        # 8 user commands
 │   ├── auto.md
 │   ├── define.md
 │   ├── do.md
 │   ├── figure-out.md
-│   ├── learn-define-patterns.md
 │   ├── stop-thinking-disciplines.md
 │   ├── tend-pr.md
 │   ├── tend-pr-tick.md
 │   └── verify.md
-├── skills/                          # 12 skills (with subdirectories)
+├── skills/                          # 11 skills (with subdirectories)
 │   ├── auto/
 │   ├── define/
 │   ├── do/
 │   ├── done/
 │   ├── escalate/
 │   ├── figure-out/
-│   ├── learn-define-patterns/
 │   ├── stop-thinking-disciplines/
 │   ├── tend-pr/
 │   ├── tend-pr-tick/

@@ -368,7 +368,7 @@ The `context-file-adherence-reviewer` agent already uses generic "context file" 
 
 ## Session File Adaptation
 
-Source skills that surface a session file path to the user (e.g. `Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl` in `define/SKILL.md`'s completion template, and the `Session JSONL files live at ...` line in `learn-define-patterns/SKILL.md`) must be retargeted to Gemini's session storage.
+Source skills that surface a session file path to the user (e.g. `Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl` in `define/SKILL.md`'s completion template) must be retargeted to Gemini's session storage.
 
 **Verdict for Gemini**: KEEP the Session line. Gemini stores per-session transcripts on disk AND exposes the session ID to the agent runtime, so the path can be resolved at runtime.
 
@@ -378,8 +378,6 @@ Source skills that surface a session file path to the user (e.g. `Session: ~/.cl
   ```text
   Session: ~/.gemini/tmp/<project_hash>/chats/session-${GEMINI_SESSION_ID}.jsonl
   ```
-- **Sync substitution** for the `learn-define-patterns/SKILL.md` discovery path (line 31): `~/.gemini/tmp/{project-hash}/chats/session-{session-id}.jsonl`.
-- **User-config path substitution** (`learn-define-patterns/SKILL.md` lines 25/54): `~/.claude/CLAUDE.md` → `~/.gemini/GEMINI.md`.
 
 ## Known Limitations
 
