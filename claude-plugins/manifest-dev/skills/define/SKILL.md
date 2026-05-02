@@ -31,7 +31,7 @@ Invoke `manifest-dev:thinking-disciplines` at the start of /define, before any o
 | `--medium` | `local` | `local` | Sets communication channel. Other values → halt: "Medium '<value>' not yet supported. Currently supported: local". |
 | `--amend <path>` | manifest path | — | Amend an existing manifest (see Pre-flight). Missing argument → halt: "Cannot amend: --amend requires a manifest path." Path doesn't exist → halt: "Cannot amend: '<path>' not found." |
 | `--from-do` | boolean flag (used with `--amend`) | — | Marks amendment as triggered by `/do`. Accepts no value. See `references/AMENDMENT_MODE.md` Three Contexts §2 (From /do). |
-| `--canvas` | boolean flag | — | When present, follow `references/CANVAS_MODE.md`. Accepts no value. |
+| `--canvas` | boolean flag | — | When present, follow `references/CANVAS_MODE.md` (it owns its own activation gate, lifecycle, and run-order placement). Accepts no value. |
 
 Flags can appear anywhere in `$ARGUMENTS`. If `$ARGUMENTS` contains no task description (empty, or only flags with no free-form text), ask: "What would you like to build or change?" Exception: skip this prompt when **any** amend trigger applies — `--amend` is set, OR `$ARGUMENTS` contains a `/tmp/manifest-*.md` path (a bare path counts as routing, not as task text). Pre-flight handles amend context: the task description may live in conversation, the prior manifest, or be elaborated during the amendment interview.
 
@@ -42,16 +42,6 @@ Pre-flight resolves to **amend** or **fresh**. When amend is selected, follow `r
 - `--amend <path>` set, OR `$ARGUMENTS` contains any `/tmp/manifest-*.md` path → **amend** that manifest. Confirm approach with the user only if the referenced manifest's relationship to the new task is unclear.
 - Transcript contains a prior `Manifest complete: /tmp/manifest-*.md` line, or such a path is mentioned in the conversation → read `references/AMENDMENT_MODE.md` "Session-Default Detection"; that section's branch determines amend or fresh.
 - Else → **fresh**.
-
-## Canvas Overlay (Concurrent)
-
-**Trigger:** `--canvas` flag is set in `$ARGUMENTS`.
-
-**Why:** A canvas is a live shared-understanding artifact maintained alongside the interview so the user can see the manifest taking shape, not just read it at the end. It overlays the standard flow rather than replacing it — Pre-flight, Branch-Diff Seeding, Domain Guidance, Interview, manifest write, Verification Loop, Summary, and Complete still run normally.
-
-When the trigger fires, follow `references/CANVAS_MODE.md` throughout the run. The canvas updates concurrently with discoveries; the standard manifest is still the source of truth and final output.
-
-**Skip cleanly when:** `--canvas` is not set.
 
 ## Branch-Diff Seeding
 
@@ -69,7 +59,7 @@ When base is identified, diff branch against base, read the diff and commit mess
 
 ## Domain Guidance
 
-**Where this fits in the run order:** Pre-flight → Canvas Overlay (if `--canvas`, runs concurrently from here on) → Branch-Diff Seeding → Read task files (this section) → Multi-Repo detection → Encode quality gates + Defaults → Load interview mode file → Context Assessment → Interview → Approach Section → manifest write → Verification Loop → Summary → Complete.
+**Where this fits in the run order:** Pre-flight → Branch-Diff Seeding → Read task files (this section) → Multi-Repo detection → Encode quality gates + Defaults → Load interview mode file → Context Assessment → Interview → Approach Section → manifest write → Verification Loop → Summary → Complete.
 
 Domain-specific guidance lives in `tasks/`:
 
