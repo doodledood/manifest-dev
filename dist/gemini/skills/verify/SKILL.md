@@ -1,6 +1,6 @@
 ---
 name: verify
-description: 'Spawns parallel verifiers for Global Invariants and Acceptance Criteria from a Manifest. Primary user-facing entry point is /verify --deferred (run user-triggered deferred-auto criteria); other invocations normally come from /do.'
+description: 'Spawns parallel verifiers for Global Invariants and Acceptance Criteria from a Manifest. Normally invoked by /do; users invoke directly via /verify --deferred to run user-triggered deferred-auto criteria.'
 user-invocable: true
 ---
 
@@ -10,49 +10,82 @@ Orchestrate verification of all criteria from a Manifest by spawning parallel ve
 
 **Input**: $ARGUMENTS
 
-Format: `<manifest-file-path> <execution-log-path> [--mode efficient|balanced|thorough] [--scope D1,D2,...] [--final] [--deferred]`
+Format: `<manifest-file-path> <execution-log-path> [--mode efficient|balanced|thorough] [--scope D1,D2,...] [--deferred]`
 
-Both paths required — return usage error if missing. Mode defaults to `thorough` if not provided. `--scope` and `--final` are mutually exclusive (final is full by definition); when both appear, treat as final. `--deferred` runs only `method: deferred-auto` criteria — see "Deferred-Auto Criteria" below.
+If either path is missing, halt: `Usage: /verify <manifest-file-path> <execution-log-path> [--mode efficient|balanced|thorough] [--scope D1,D2,...] [--deferred]`. If the manifest path doesn't exist, halt: `Cannot verify: manifest '<path>' not found.` If the execution log path doesn't exist, **create it as an empty file** before proceeding — /verify must always be able to append a pass-log block.
+
+`--deferred` runs only `method: deferred-auto` criteria — see "Deferred-Auto Criteria" below.
+
+`--final` is internal-only — see "Hard Final Gate" below. /do never passes it; users never pass it.
+
+## Mode Resolution
+
+Resolve mode from (highest precedence first): `--mode` argument → manifest `Mode` field → `thorough`.
+
+Invalid `--mode` value → halt: `Invalid mode '<value>'. Valid modes: efficient | balanced | thorough`.
+
+The resolved mode controls verifier parallelism, model routing, and reviewer-skip rules per `../do/references/execution-modes/{mode}.md`. Load that file at entry; if it cannot be loaded, halt with the load error — do not attempt verification.
 
 ## Selective vs Full Verification
 
-/verify runs in one of two modes — selective or full — driven by the caller (/do):
+/verify runs in one of two modes — selective or full — driven by the caller (/do, or a user-direct invocation):
 
-- **Selective pass.** Runs only the ACs of the in-scope deliverables (passed via `--scope D2,D3`, or computed by /do as the deliverable owning a failed criterion in fix-loop) **plus all Global Invariants** (INV-G* always run). Used during the fix-loop and after scoped /do invocations to keep token cost bounded.
-- **Full pass.** Runs every AC across every deliverable plus all globals. Triggered by `--final` from /do, or auto-triggered by /verify itself after a selective pass goes green (see Outcome Handling).
+- **Selective pass.** Runs only the ACs of the in-scope deliverables (passed via `--scope D2,D3` — /do computes the failing-deliverable scope and passes it during fix-loop) **plus all Global Invariants** (INV-G* are in scope on every pass, subject to Phased Execution gating). Used during the fix-loop and after scoped /do invocations to keep token cost bounded.
+- **Full pass.** Runs every AC across every deliverable plus all globals (same phase gating). Auto-triggered by /verify itself (re-invoking with `--final`) after a true-selective pass goes green — see Hard Final Gate.
 
-**When `--scope` is absent and `--final` is absent**, selective mode degenerates to full — there's no narrowing to apply, so behavior matches today's "verify everything." This is also the first /verify pass on a fresh /do (no failure context yet, no scope flag).
+**Terminology.** *True-selective* = a selective pass where `--scope` was set (the filter actually narrowed). *Selective-degenerated-to-full* = a selective pass where `--scope` was absent (no narrowing to apply, so the pass covers everything). Outcome handling distinguishes the two — see Outcome Handling.
 
-**Why this exists.** Re-running every AC on every fix-loop iteration costs N × loops verifier invocations. Most fixes touch one deliverable; re-verifying the rest is waste. The mandatory full final gate (Outcome Handling) catches anything cross-deliverable that selective mode missed — that's the safety net.
+**When `--scope` is absent and `--final` is absent**, selective mode degenerates to full — behavior matches "verify everything." This applies to the first /verify pass on a fresh /do (no failure context yet, no scope flag) and to user-direct invocations like `/verify <manifest> <log>` with no flags.
+
+**Why this exists.** Re-running every AC on every fix-loop iteration costs N × loops verifier invocations. Most fixes touch one deliverable; re-verifying the rest is waste. The mandatory full final gate (Hard Final Gate) catches anything cross-deliverable that selective mode missed — that's the safety net.
 
 ## Principles
+
+Operating principles for every pass:
 
 | Principle | Rule |
 |-----------|------|
 | **Context before spawning** | Read manifest and execution log before spawning verifiers — criterion IDs and prompts drive agent composition. |
 | **Orchestrate, don't verify** | Spawn agents to verify. You aggregate results and coordinate, never run checks yourself. |
-| **All in-scope criteria, no exceptions** | Every criterion in the current pass's scope (selective: in-scope deliverables' ACs + all INV-G*; full: every AC + every INV-G*) MUST be verified. Skipping any in-scope criterion is a critical failure. |
+| **All in-scope criteria, mode-authorized skips only** | Every criterion in the current pass's scope (selective: in-scope deliverables' ACs + all INV-G*; full: every AC + every INV-G*) MUST be verified, except where the active execution mode file explicitly authorizes a skip (e.g., quality-gate reviewers in efficient mode). Skipping any criterion not authorized by the mode file is a critical failure. |
 | **Parallelism per mode** | The active execution mode defines how many verifiers to launch concurrently within each phase. Phases always run sequentially — see Phased Execution below. |
 | **Actionable feedback** | Pass through file:line, expected vs actual, fix hints. |
-| **Don't handle user feedback during a pass** | While /verify is running, any user message arriving mid-pass is semantically feedback to the caller (/do, or the user who invoked /verify --deferred directly) — /verify never amends, never re-prompts, never deviates from its current pass. It returns results; the caller interprets new user input per its own rules (e.g., /do's Mid-Execution Amendment). User-direct invocations of /verify --deferred run to completion the same way. |
+| **Don't handle user feedback during a pass** | **While /verify is running**, any user message arriving mid-pass is semantically feedback to the caller (/do, or the user who invoked /verify --deferred directly) — /verify never amends, never re-prompts, never deviates from its current pass. It returns results; the caller interprets new user input per its own rules (e.g., /do's Mid-Execution Amendment). User-direct invocations of /verify --deferred run to completion the same way. |
 
 ## Verification Routing
 
-Route `manual` criteria to /escalate. Route `subagent` criteria to the named agent specified in the criterion. Route `deferred-auto` criteria per the "Deferred-Auto Criteria" section below — they are **skipped during normal /verify flow** and only run when `--deferred` is passed; under `--deferred`, they are routed by the inner shape of their verify block (if `agent:` is set, route to that named subagent; if `command:` is set, route to criteria-checker as bash; otherwise default to criteria-checker). All other types (`bash`, `codebase`, `research`) spawn criteria-checker agents. If a criterion has no verification type, default to criteria-checker.
+Route by criterion `method:`:
+
+| Method | Verifier |
+|--------|----------|
+| `bash`, `codebase`, `research` | criteria-checker (mode-routed model) |
+| `subagent` | the named agent in the criterion's `agent:` field |
+| `manual` | /escalate (no automated check exists) |
+| `deferred-auto` | skipped on normal passes (see Deferred-Auto Criteria); under `--deferred`, routed by the inner nested `method:` field |
+| (none / unrecognized) | criteria-checker |
+
+**Deferred-auto requires an explicit inner method.** A `method: deferred-auto` verify block MUST declare a sibling `inner_method:` field (`subagent` | `bash` | `codebase` | `research`). Under `--deferred`, /verify routes the criterion identically to a non-deferred criterion of that `inner_method`. If `inner_method` is missing, halt: `Deferred-auto criterion <ID> missing inner_method.` Field shape (canonical example):
+
+```yaml
+verify:
+  method: deferred-auto
+  inner_method: subagent
+  agent: general-purpose
+  prompt: "..."
+```
 
 ## Agent Prompt Composition
 
-When spawning verifier agents, pass the criterion's manifest data. Do not add your own framing.
+Pass each verifier exactly three sections, **in this order, each on its own line**:
 
-**Include**: Criterion ID, description, verification method, and the verify block's `command:` or `prompt:` field verbatim. Add file scope when the criterion targets specific files.
+1. **Cross-repo prefix** (only when the manifest declares `Repos:`) — the verbatim string defined in `define/references/MULTI_REPO.md` §e (single source of truth). Single-repo manifests skip this line.
+2. **Optional context line** (only when at least one of manifest / discovery log / execution log path exists) — `Optional context — manifest: <path>, discovery log: <path>, execution log: <path>`. Include only paths that exist. This is informational, not directive — agents decide whether the context is relevant.
+3. **Criterion content** — the criterion's manifest data: ID, description, verification method, and the verify block's `command:` or `prompt:` field verbatim. If `prompt:` is absent (e.g., bash criteria), pass the criterion's description as the agent prompt instead. Add file scope when the criterion targets specific files.
 
-**Optional context file paths**: When a manifest file, discovery log, or execution log exists, append their file paths as optional reference material. Present them neutrally — agents can read them if useful for understanding scope or context, but are not required to.
+The cross-repo prefix is the one prescribed exception to "do not add framing" — it is manifest-driven (derived from `Repos:`), not orchestrator opinion.
 
-Format: `Optional context — manifest: <path>, discovery log: <path>, execution log: <path>`
+**Never add to the criterion content:**
 
-Only include paths that exist. This is informational, not directive — agents decide whether the context is relevant to their review.
-
-**Never add**:
 - Severity thresholds ("only report medium+ issues", "focus on critical findings")
 - Implementation context ("the code was refactored to...", "this was implemented by...")
 - Opinions or expectations ("this should pass", "this is likely fine")
@@ -61,9 +94,7 @@ Only include paths that exist. This is informational, not directive — agents d
 - Suggested outcomes ("confirm that X works correctly")
 - Interpretations of manifest intent ("the goal is to...", "this change is about...")
 
-The verify block's `prompt:` field is manifest-authored — pass it verbatim. These rules target language you add beyond what the manifest specifies. The optional context file paths are raw references, not framing — they provide access to source material without steering the agent's analysis.
-
-**Exception — manifest-driven `Repos:` prefix.** When the manifest declares `Repos:`, the cross-repo path prefix (`Available repos: name=/path, ...`) is prepended to every verifier's prompt per "Cross-repo path delivery to verifiers" below. This is the one prescribed exception to "Do not add your own framing" — the prefix is manifest-driven (derived from `Repos:`), not orchestrator opinion.
+The verify block's `prompt:` field is manifest-authored — pass it verbatim. These rules target language you add beyond what the manifest specifies. The optional context line is raw references, not framing — it provides access to source material without steering the agent's analysis.
 
 ## Criterion Types
 
@@ -73,7 +104,7 @@ The verify block's `prompt:` field is manifest-authored — pass it verbatim. Th
 | Acceptance Criteria | AC-{D}.{N} | Deliverable incomplete |
 | Process Guidance | PG-{N} | Not verified (guidance only) |
 
-Note: PG-* items guide HOW to work. Followed during /do, not checked by /verify.
+`{D}` = deliverable number; `{N}` = ordinal within scope (1-based). PG-* items guide HOW to work — followed during /do, not checked by /verify.
 
 ## Agent Failures
 
@@ -92,13 +123,9 @@ Criteria have an optional `phase:` field (numeric, default 1). Phases run in asc
 
 **Phase failure reporting:** When a phase fails, include the phase number in the failure report and note which later phases were not run (e.g., "Phase 1: 2 failures. Phase 2: not run (3 criteria pending).").
 
-**Phase and scope are orthogonal.** `phase:` gates execution order (ascending); selective vs full filters the universe of criteria. Within a selective pass, the filter applies first (which deliverables' ACs + all globals), then phases gate the filtered set. Conflating them is wrong — phase ordering is unchanged by selection.
+**Phase and scope are orthogonal.** `phase:` gates execution order (ascending); selective vs full filters the universe of criteria. Within a selective pass, the filter applies first (which deliverables' ACs + all globals), then phases gate the filtered set.
 
-**Backward compatibility:** Manifests without any `phase:` fields have all criteria in phase 1 — identical to current behavior (all criteria run together per mode parallelism).
-
-## Mode-Aware Verification
-
-Load the mode file at `../do/references/execution-modes/{mode}.md` (default: `thorough`). Follow its rules for verification parallelism, model routing, and quality gate inclusion. The mode file defines which verifiers to skip, what model to use for criteria-checker agents, and how many concurrent verifiers to launch per phase. If mode file cannot be loaded, return an error to the caller immediately — do not attempt any verification.
+**Backward compatibility:** Manifests without any `phase:` fields have all criteria in phase 1 — identical to the prior behavior (all criteria run together per mode parallelism).
 
 ## Gotchas
 
@@ -111,56 +138,60 @@ Group results by phase, then Global Invariants first, then by Deliverable.
 
 | Condition | Action |
 |-----------|--------|
-| Any Global Invariant failed | Return all failures, globals highlighted |
-| Any AC failed | Return failures grouped by deliverable |
-| All in-scope pass, **selective mode that actually narrowed** (`--scope` was set) | **Auto-trigger a full pass** (re-invoke /verify internally with `--final`). Do NOT call /done. Manual criteria in scope are NOT escalated yet — they're deferred to the auto-triggered full pass per the rule below. |
-| All pass, **full mode**, manual criteria exist (no pending deferred-auto) | List manual criteria with how-to-verify, suggest /escalate |
-| All pass, **full mode**, **deferred-auto criteria exist and not all verified green via prior `--deferred` pass** (no manual criteria) | /escalate with "Deferred-Auto Pending" — see "Deferred-Pending Escalation" below. Do NOT call /done. |
-| All pass, **full mode**, **manual criteria AND pending deferred-auto criteria** | Combined /escalate (Manual Review + Deferred-Auto Pending) per "When BOTH" in Deferred-Pending Escalation below. Do NOT call /done. |
-| All pass, **full mode**, no pending deferred-auto criteria, no manual criteria | Call /done |
+| **Any Global Invariant failed** | **Return all failures, globals highlighted** |
+| **Any AC failed** (no global failures) | **Return failures grouped by deliverable** |
+| **All in-scope pass; true-selective pass (`--scope` was set)** | **Auto-trigger a full pass** (re-invoke /verify internally with `--final`). Do NOT call /done. Manual escalation and Deferred-Auto Pending escalation are both deferred to the auto-triggered full pass. |
+| **All pass; full or selective-degenerated-to-full; manual criteria exist; no pending deferred-auto** | **/escalate "Manual Criteria Review"** with each manual criterion + its how-to-verify. Do NOT call /done. |
+| **All pass; full or selective-degenerated-to-full; pending deferred-auto exist; no manual criteria** | **/escalate "Deferred-Auto Pending"** — see Deferred-Auto Pending Escalation. Do NOT call /done. |
+| **All pass; full or selective-degenerated-to-full; manual AND pending deferred-auto** | **Combined /escalate** (Manual Criteria Review + Deferred-Auto Pending). Do NOT call /done. |
+| **All pass; full or selective-degenerated-to-full; no manual; no pending deferred-auto** | **Call /done** |
 
-**Selective that degenerated to full = full mode for outcome handling.** When `--scope` is absent and `--final` is absent, the pass covered every criterion already. Treat as a full pass: if manual criteria exist OR pending deferred-auto criteria exist → escalate (combine both per "Deferred-Pending Escalation §When BOTH"); otherwise → call /done. There is no "auto-trigger another full pass" for degenerated-to-full — that's redundant since the pass already covered everything.
+**Selective-degenerated-to-full** = a selective pass where `--scope` was absent. The pass already covered every criterion, so it's treated as full for outcome handling. There is no "auto-trigger another full pass" — that would be redundant.
 
-**Manual criteria in selective mode.** When a selective pass encounters manual criteria within its in-scope deliverables and all automated checks pass, manual escalation is **deferred** to the auto-triggered full pass. Rationale: the full pass surfaces every manual criterion across every deliverable, so escalating partial manual criteria from a selective pass would fragment the user-facing escalation. Manual escalation fires exactly once per /verify chain — at the end of the full pass — never from a selective pass.
-
-**Hard final gate.** /done is unreachable from selective-mode green alone. Per project directive ("Done means nothing more to do"), only a full-mode green pass — every AC across every deliverable + every Global Invariant — **with no pending deferred-auto criteria** calls /done. When deferred-auto criteria are pending (no prior `--deferred` pass covered them), /verify routes to /escalate ("Deferred-Auto Pending") instead — see Deferred-Pending Escalation. The auto-triggered full pass is unconditional: no mode override, no opt-out. If the auto-triggered full pass fails, /verify returns the failures to /do, which enters the standard fix-loop. Failure during a final pass behaves identically to failure during any other pass — fix, then a fresh selective pass scoped to the failing deliverable, then auto-trigger full again.
-
-**`--final` is internal-only.** /verify uses `--final` to re-invoke itself after a selective green; /do does NOT pass `--final`. /do invokes /verify either with no scope flags (degenerates to full on first pass) or with `--scope D2,D3` (selective). The internal-only constraint preserves the gate: /do can never bypass the selective→full chain by manually requesting a final-only pass.
-
-**Mode is preserved across the recursion.** When /verify auto-triggers itself with `--final`, it carries forward the active `--mode <X>` from the current invocation (efficient | balanced | thorough). The auto-triggered final pass runs at the same intensity (parallelism + model routing + skip rules) as the selective pass that triggered it — never forced to thorough. The "full suite" guarantee is unconditional; the *intensity per criterion* follows the active mode (preserves the orthogonality between selective/full and mode established earlier in this skill).
+**Manual criteria in true selective mode** (where `--scope` was set). Manual escalation is **deferred** to the auto-triggered full pass so that escalation fires exactly once per /verify chain — at the end of the full pass. Surfacing partial manual criteria from a true selective pass would fragment the user-facing escalation.
 
 **On phase failure**: Show the failed phase, then for each failed criterion: ID, description, verification method, failure details (location, expected vs actual, fix hint). Note later phases not run and their pending criteria count.
 
+### Hard Final Gate
+
+- **/done is unreachable from selective-mode green alone.** Per project directive ("Done means nothing more to do"), only a full-mode green pass — every AC across every deliverable + every Global Invariant — **with no pending manual criteria and no pending deferred-auto criteria** calls /done.
+- **Pending manual blocks /done.** When manual criteria exist (and the pass is the kind that can call /done), /verify routes to /escalate ("Manual Criteria Review") instead — the user verifies manually, then re-invokes /verify.
+- **Pending deferred-auto blocks /done.** When deferred-auto criteria are pending, /verify routes to /escalate ("Deferred-Auto Pending") instead — see Deferred-Auto Pending Escalation.
+- **Both pending → combined /escalate.** Surface both types in one block (see Deferred-Auto Pending Escalation § "When BOTH").
+- **Once a true-selective pass goes green, the auto-trigger fires unconditionally** — no mode override, no opt-out.
+- **Auto-final failure → standard fix-loop.** /verify returns failures to /do, which fixes; /verify then runs a fresh selective pass scoped to the failing deliverable, then auto-triggers full again.
+- **`--final` is internal-only.** /verify uses `--final` to re-invoke itself after a true-selective green; /do never passes it. /do invokes /verify either with no scope flags (degenerates to full on first pass) or with `--scope D2,D3` (selective). This preserves the gate: /do can never bypass the selective→full chain.
+- **Mode is preserved across the auto-final re-invocation.** /verify carries forward the active `--mode <X>` (efficient | balanced | thorough). The auto-final pass runs at the same intensity as the selective pass that triggered it — never forced to thorough. The "full suite" guarantee is unconditional; the *intensity per criterion* follows the active mode.
+
 ## Deferred-Auto Criteria
 
-`method: deferred-auto` marks a criterion as **automatically verifiable but user-triggered** — typically a cross-repo gate the user signals readiness for (e.g., "all PRs deployed"). The verifier itself runs automatically (bash command, subagent prompt, etc.); only the *triggering* is user-controlled.
+`method: deferred-auto` marks a criterion as **automatically verifiable but user-triggered** — typically a cross-repo gate the user signals readiness for (e.g., "all PRs deployed"). The verifier itself runs automatically (bash command, subagent prompt, etc.); only the *triggering* is user-controlled. Deferred-auto verify blocks MUST declare an explicit sibling `inner_method:` (subagent | bash | codebase | research) — see Verification Routing for the field shape.
 
-**Normal flow skips them.** Selective and full passes (with or without `--scope`/`--final`) ignore `deferred-auto` criteria entirely during the pass — they never appear in the failure list of a normal pass. **However, their absence-of-coverage gates `/done` routing per "Deferred-Pending Escalation" below**: a normal-flow green pass with pending deferred-auto criteria routes to `/escalate` ("Deferred-Auto Pending"), not `/done`.
+**Normal flow skips them.** Selective and full passes (with or without `--scope`/`--final`) ignore `deferred-auto` criteria entirely during the pass — they never appear in the failure list of a normal pass. **However, uncovered deferred-auto criteria block /done — a normal-flow green pass with pending deferred-auto routes to /escalate ("Deferred-Auto Pending"), not /done.** See Deferred-Auto Pending Escalation below.
 
 **`--deferred` runs them.** When `/verify ... --deferred` is invoked, /verify runs **only** `deferred-auto` criteria (everything else is skipped, including INV-Gs and ACs of other methods).
 
 **Flag interactions:**
+
 - `--deferred` + `--scope` is supported. `--scope` narrows the deferred-auto set to in-scope deliverables.
 - `--deferred` does not interact with `--final` — never enters the final-gate machinery, never auto-triggers a follow-up pass, never calls /done.
 - `--deferred` inherits `--mode` — same parallelism / model routing as the parent invocation.
 - `--deferred` invoked without `--scope` covers all `deferred-auto` criteria across the manifest.
 - A manifest with no `deferred-auto` criteria sees `--deferred` as a clean no-op ("no deferred-auto criteria in manifest").
 
-**Deferred-Pending Escalation.** When a normal-flow `/verify` pass (selective or full) completes green but the manifest contains `deferred-auto` criteria that have not been verified green via a prior `/verify --deferred` run, `/verify` must NOT call `/done`. Instead, it routes to `/escalate` with type "Deferred-Auto Pending" and a message telling the user which deferred-auto criteria remain and instructing them to invoke `/verify --deferred` once prerequisites are in place. Once those criteria pass via `--deferred`, a subsequent normal `/verify` pass can call `/done`.
+**Coverage determination.** A deferred-auto criterion is "covered" when there exists a preceding pass-log block where `deferred: true`, `result: pass`, and either (a) `scope:` is empty (full deferred coverage), or (b) `scope:` contains the deliverable that owns the criterion. /verify aggregates coverage across all prior `--deferred` blocks: a criterion is pending iff no prior deferred-pass block satisfies (a) or (b). INV-G* deferred-auto criteria are deliverable-scope-independent — covered only by a block where `deferred: true` and `scope: []`.
 
-**Coverage determination.** A deferred-auto criterion is considered "covered" when there exists a preceding pass-log block with `deferred: true`, `result: pass`, and either (a) `scope:` is empty (full deferred coverage), or (b) `scope:` contains the deliverable that owns the criterion. /verify aggregates coverage across all prior `--deferred` blocks in the log: a criterion is pending iff no prior deferred-pass block satisfies (a) or (b) for it. INV-G* deferred-auto criteria are deliverable-scope-independent — they are covered only by a `deferred: true scope: []` block.
+### Deferred-Auto Pending Escalation
 
-**When BOTH manual criteria and pending deferred-auto criteria exist** after a normal full-mode green pass, surface BOTH in a single combined escalation block: list the manual criteria + their how-to-verify, AND list the pending deferred-auto criteria + the `/verify --deferred` instruction. /done remains unreachable until both are resolved.
+When a normal-flow `/verify` pass (selective or full) completes green but the manifest contains `deferred-auto` criteria not yet covered, /verify routes to `/escalate` with type `"Deferred-Auto Pending"`. The escalation message lists the pending criteria and instructs the user to invoke `/verify --deferred` once prerequisites are in place. Once those criteria pass via `--deferred`, a subsequent normal `/verify` pass can call `/done`.
 
-**After `/verify --deferred` completes green** (all deferred-auto criteria pass), close the user-as-coordinator loop with an explicit next-step instruction: emit a message like *"Deferred-auto criteria green. Re-invoke `/verify <manifest> <log>` (no flags) to reach /done."* Do NOT call /done from the `--deferred` pass itself — `--deferred` only verifies the deferred-auto subset; the final `/done` decision belongs to a normal-flow pass that confirms the full criterion universe is still green AND the deferred coverage now satisfies the gate.
+**When BOTH manual criteria AND pending deferred-auto exist** after a normal full-mode green pass, surface BOTH in a single combined escalation block: list the manual criteria + their how-to-verify, AND list the pending deferred-auto criteria + the `/verify --deferred` instruction. /done remains unreachable until both are resolved.
 
-**Cross-repo path delivery to verifiers.** When the manifest declares `Repos: [name: path, ...]`, **every `/verify` pass** (selective, full, and `--deferred`) prepends a verbatim string to each verifier's prompt before the criterion's own prompt:
+**After `/verify --deferred` completes green** (all deferred-auto criteria pass), close the user-as-coordinator loop with an explicit next-step instruction: emit a message like *"Deferred-auto criteria green. Re-invoke `/verify <manifest> <log>` (no flags) to reach /done."* Do NOT call /done from the `--deferred` pass itself — `--deferred` only verifies the deferred-auto subset; the final /done decision belongs to a normal-flow pass that confirms the full criterion universe is still green AND the deferred coverage now satisfies the gate.
 
-```
-Available repos: name1=/path/1, name2=/path/2, ...
-```
+### Cross-Repo Path Delivery
 
-This is the one mechanism — verifiers do not parse the manifest themselves. The injection fires on every pass, not just `--deferred`, so cross-repo verifiers can run during normal `/do→/verify` flow — that's what makes `/done` reachable for multi-repo manifests without per-repo /done independence. Single-repo manifests (no `Repos:` field) get no prefix injection. Full convention: `references/MULTI_REPO.md` (lives in `define/references/`) §e.
+When the manifest declares `Repos:`, every /verify pass (selective, full, and `--deferred`) prepends a verbatim cross-repo prefix to each verifier's prompt. Format and full convention: `define/references/MULTI_REPO.md` §e (single source of truth). The prefix injection fires on every pass, not just `--deferred`, so cross-repo verifiers can run during normal `/do→/verify` flow — that's what makes /done reachable for multi-repo manifests without per-repo /done independence. Single-repo manifests (no `Repos:` field) get no prefix injection.
 
 ## /verify Pass Logging Contract
 
@@ -170,17 +201,22 @@ Every /verify invocation appends a structured block to the execution log so /do 
 ## /verify pass {N}
 
 ```yaml
-mode: selective|full             # for --deferred passes: selective if --scope was set, else full
+mode: selective|full             # under deferred:true, reflects --scope filter only — see Deferred-Auto Criteria
 scope: [<deliverable-id>, ...]   # empty list when mode is full
 result: pass|fail
 failures: [<criterion-id>, ...]  # empty when pass; criterion IDs only, no narrative
-auto_triggered_final: true|false # true when this pass was auto-triggered after selective green; always false for --deferred passes
+auto_triggered_final: true|false # true only when this pass was auto-triggered by /verify after a true-selective green; false for first-pass-degenerated-to-full and for --deferred passes
 deferred: true|false             # true when this pass ran via --deferred (only deferred-auto criteria checked); false for normal selective/full passes
 ```
 
 [narrative — failed criterion details, fix hints, etc., per Outcome Handling]
 ````
 
-When `deferred: true`, consumers should treat the pass as a partial verification (only `deferred-auto` criteria) — never as evidence that normal-flow ACs/INVs passed. The `result: pass` of a deferred pass means "the deferred-auto criteria are green," not "the whole manifest is green."
+**Field semantics:**
 
-Pure markdown so humans can read; fenced YAML so /do and a future /verify can parse deterministically. Pass numbers are sequential within the execution log. /do uses the most recent block to track progress and decide which pass to invoke next.
+- **`deferred` is the master interpretation flag.** Consumers MUST read `deferred` before `mode`. Under `deferred: true`, `result: pass` means "the deferred-auto criteria are green," not "the whole manifest is green." Under `deferred: true`, write `mode: selective` if `--scope` was set, else `mode: full`.
+- **Degenerated-to-full logging.** When `--scope` and `--final` are both absent (and `--deferred` is not set), log `mode: full`, `scope: []`, `auto_triggered_final: false`. The pass already covered everything — log it as full.
+- **`result: pass` does not imply /done was called.** A green pass may route to /escalate (Manual Criteria Review, Deferred-Auto Pending, or both) instead. Consumers asking "did /done fire?" must re-derive from the manifest's manual / deferred-auto coverage, not from `result` alone.
+- **Consumers driving next-pass scope decisions** (e.g., /do scanning for the latest pass) MUST skip blocks where `deferred: true` — those reflect partial verification, not normal-flow AC/INV state.
+
+Pure markdown so humans can read; fenced YAML so /do and a future /verify can parse deterministically. Pass numbers are sequential within the execution log. /do reads the most recent block, skipping `deferred: true` blocks per Field semantics above, to track progress and decide which pass to invoke next.

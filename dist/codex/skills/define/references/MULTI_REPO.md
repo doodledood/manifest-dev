@@ -83,12 +83,13 @@ Worked example — manifest declares:
 
 Cross-repo gates often cannot run during normal `/do→/verify` flow because they depend on prerequisites the user controls (e.g., "all PRs deployed to staging"). They are still **automatically verifiable** — just user-triggered.
 
-`method: deferred-auto` marks such criteria. Worked example:
+`method: deferred-auto` marks such criteria. Verify blocks MUST declare an explicit sibling `inner_method:` field naming the underlying verifier type (`subagent` | `bash` | `codebase` | `research`); under `/verify --deferred` the criterion is routed identically to a non-deferred criterion of that `inner_method`. Worked example:
 
 ```yaml
 - [INV-G7] Frontend SSO login round-trips through deployed backend
   verify:
     method: deferred-auto
+    inner_method: subagent
     agent: general-purpose
     prompt: "Hit https://staging.example.com/login with a test SAML assertion. Confirm successful redirect to /dashboard with a valid session cookie."
 ```
