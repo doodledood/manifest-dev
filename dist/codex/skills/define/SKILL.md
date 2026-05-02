@@ -342,13 +342,14 @@ Three categories, each covering output or process:
   verify:
     method: bash | codebase | subagent | research | manual | deferred-auto
     phase: 1                       # optional integer, default 1; higher phases run after lower pass
-    command: "[if bash]"
-    agent: "[if subagent]"
+    inner_method: subagent | bash | codebase | research   # REQUIRED when method: deferred-auto
+    command: "[if bash, or if deferred-auto with inner_method: bash]"
+    agent: "[if subagent, or if deferred-auto with inner_method: subagent]"
     model: "[if subagent, default inherit]"
-    prompt: "[if subagent or research]"
+    prompt: "[if subagent or research, or matching deferred-auto inner_method]"
   ```
 
-*`deferred-auto`: user-triggered; runs only via `/verify --deferred`. See `references/MULTI_REPO.md` §e for cross-repo semantics.*
+*`deferred-auto`: user-triggered; runs only via `/verify --deferred`. The required `inner_method` field names the underlying verifier type used when the deferred run executes. See `references/MULTI_REPO.md` §e for cross-repo semantics.*
 
 *Auto-decided items (Encoding Disciplines § Auto-decided items) carry an `(auto)` annotation immediately after the ID, e.g. `- [INV-G2] (auto) Description: ...`. The same convention applies to AC-* and PG-* entries that were auto-decided. Each auto-decided item also appears in Known Assumptions with its reasoning.*
 
@@ -373,10 +374,11 @@ Three categories, each covering output or process:
   verify:
     method: bash | codebase | subagent | research | manual | deferred-auto
     phase: 1                       # optional integer, default 1
-    command: "[if bash]"
-    agent: "[if subagent]"
+    inner_method: subagent | bash | codebase | research   # REQUIRED when method: deferred-auto
+    command: "[if bash, or deferred-auto + inner_method: bash]"
+    agent: "[if subagent, or deferred-auto + inner_method: subagent]"
     model: "[if subagent, default inherit]"
-    prompt: "[if subagent or research]"
+    prompt: "[if subagent or research, or matching deferred-auto inner_method]"
   ```
   *AC verify blocks accept the same fields as INV-G verify blocks above.*
 
