@@ -73,7 +73,6 @@ After installation, invoke workflows via slash commands:
 /auto-manifest-dev                      End-to-end autonomous execution
 /verify-manifest-dev                    Run parallel verifiers (use --deferred for deferred-auto criteria)
 /figure-out-manifest-dev                Deep collaborative understanding
-/stop-thinking-disciplines-manifest-dev End thinking disciplines session
 /drive-manifest-dev                     Cron-driven manifest-to-green loop / PR lifecycle automation
 /drive-tick-manifest-dev                Single drive iteration (called by /loop via /drive)
 ```
@@ -90,7 +89,6 @@ After installation, invoke workflows via slash commands:
 | Pre-verify refresh | Full | Full | tool.execute.before (main agent only) |
 | Log reminders | Full | Approximate | Persistent system context vs event-driven |
 | Amendment check | Full | Approximate | Persistent system context vs per-prompt |
-| Thinking disciplines reinforcement | Full | Approximate | Persistent system context vs per-prompt |
 | Subagent hooks | Full | Missing | tool.execute.before/after don't fire in subagents |
 
 ## Known Limitations
@@ -121,26 +119,23 @@ dist/opencode/
 │   ├── docs-reviewer.md
 │   ├── manifest-verifier.md
 │   └── type-safety-reviewer.md
-├── commands/                        # 8 user commands
+├── commands/                        # 7 user commands
 │   ├── auto.md
 │   ├── define.md
 │   ├── do.md
 │   ├── figure-out.md
-│   ├── stop-thinking-disciplines.md
 │   ├── drive.md
 │   ├── drive-tick.md
 │   └── verify.md
-├── skills/                          # 11 skills (with subdirectories)
+├── skills/                          # 9 skills (with subdirectories)
 │   ├── auto/
 │   ├── define/
 │   ├── do/
 │   ├── done/
 │   ├── escalate/
 │   ├── figure-out/
-│   ├── stop-thinking-disciplines/
 │   ├── drive/
 │   ├── drive-tick/
-│   ├── thinking-disciplines/
 │   └── verify/
 ├── plugins/
 │   ├── index.ts                     # Hook plugin

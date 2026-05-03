@@ -35,7 +35,7 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 
 **Multi-repo support:** A single canonical `/tmp` manifest can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` navigates absolute paths from the map (no filter logic — the LLM handles repo navigation natively). `/drive` runs per-repo against the same shared manifest. Cross-repo gates the user explicitly triggers use `method: deferred-auto` + `/verify --deferred`. See `skills/define/references/MULTI_REPO.md`.
 
-**Internal skills:** `/verify`, `/done`, `/escalate`, `/stop-thinking-disciplines`, `thinking-disciplines`
+**Internal skills:** `/verify`, `/done`, `/escalate`
 
 **Other user-invocable skills:** `/drive-tick` (also called by `/loop` via `/drive`)
 

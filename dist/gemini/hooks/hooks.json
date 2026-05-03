@@ -13,19 +13,6 @@
             "description": "Reminds model to read manifest before running /verify"
           }
         ]
-      },
-      {
-        "matcher": "ask_user",
-        "sequential": true,
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${extensionPath}/hooks/thinking_disciplines_pretool_hook.py",
-            "name": "thinking-disciplines-pretool",
-            "timeout": 10000,
-            "description": "Reinforces thinking disciplines before ask_user"
-          }
-        ]
       }
     ],
     "AfterTool": [
@@ -65,13 +52,6 @@
             "name": "prompt-submit-amendment",
             "timeout": 10000,
             "description": "Checks for manifest amendments on user input during /do"
-          },
-          {
-            "type": "command",
-            "command": "python3 ${extensionPath}/hooks/thinking_disciplines_prompt_hook.py",
-            "name": "thinking-disciplines-prompt",
-            "timeout": 10000,
-            "description": "Reinforces thinking disciplines during active sessions"
           }
         ]
       }
@@ -85,7 +65,7 @@
             "command": "python3 ${extensionPath}/hooks/post_compact_hook.py",
             "name": "post-compact",
             "timeout": 10000,
-            "description": "Restores workflow and thinking disciplines context after session resume/compact"
+            "description": "Restores /do context after session resume/compact"
           }
         ]
       }
@@ -98,7 +78,7 @@
             "command": "python3 ${extensionPath}/hooks/post_compact_hook.py",
             "name": "pre-compress-recovery",
             "timeout": 10000,
-            "description": "Restores workflow and thinking disciplines context after compaction"
+            "description": "Restores /do context after compaction"
           }
         ]
       }

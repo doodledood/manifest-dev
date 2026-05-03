@@ -11,8 +11,6 @@ This document specifies the behavioral contract for the manifest-dev plugin (`pl
 | PreToolUse (pretool_verify_hook.py) | Reminds to read manifest before /verify | `tool.execute.before` — throws Error as context reminder | **Full** (main agent only; subagent bypass) |
 | PostToolUse (posttool_log_hook.py) | Reminds to update execution log after milestones | `experimental.chat.system.transform` — persistent reminder | **Approximate** — always-on rather than per-event |
 | UserPromptSubmit (prompt_submit_hook.py) | Amendment check during /do on user input | `experimental.chat.system.transform` — persistent reminder | **Approximate** — always-on rather than per-prompt |
-| UserPromptSubmit (thinking_disciplines_prompt_hook.py) | Reinforces thinking disciplines | `experimental.chat.system.transform` — persistent reminder | **Approximate** — always-on rather than per-prompt |
-| PreToolUse (thinking_disciplines_pretool_hook.py) | Tracks thinking disciplines activation/deactivation via skill invocations | `tool.execute.before` — in-memory state tracking | **Full** |
 
 ## Known Limitations
 
@@ -67,10 +65,6 @@ The system transform follows the same decision matrix as the Claude Code stop ho
 3. Self-amendment `/escalate` → enforce: must `/define --amend` before stopping
 4. `/verify` + collab mode → advisory: escalation posted to medium, user will re-invoke
 5. No exit condition → enforce: must `/verify` or `/escalate`
-
-### Thinking Disciplines State
-- `active`: Set when thinking-disciplines skill is invoked
-- Deactivated when /stop-thinking-disciplines or /do is invoked
 
 ## Plugin Installation
 

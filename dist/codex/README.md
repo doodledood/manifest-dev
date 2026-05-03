@@ -23,8 +23,6 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | drive | Cron-driven manifest-to-green loop |
 | drive-tick | Single drive iteration (called by /loop via /drive) |
 | figure-out | Collaborative deep understanding |
-| thinking-disciplines | Core thinking disciplines (internal, not user-invocable) |
-| stop-thinking-disciplines | Deactivate thinking disciplines |
 | verify | Parallel verification of all criteria |
 
 ### Agents
@@ -110,8 +108,6 @@ dist/codex/
 │   ├── drive/
 │   ├── drive-tick/
 │   ├── figure-out/
-│   ├── stop-thinking-disciplines/
-│   ├── thinking-disciplines/
 │   └── verify/
 ├── agents/                          # 14 TOML config stubs
 │   ├── change-intent-reviewer.toml

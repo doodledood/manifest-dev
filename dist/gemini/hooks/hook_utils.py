@@ -26,13 +26,6 @@ class DoFlowState:
     has_collab_mode: bool  # /do uses non-local medium (--medium not local)
 
 
-@dataclass
-class ThinkingDisciplinesState:
-    """State of thinking disciplines from transcript parsing."""
-
-    is_active: bool  # thinking-disciplines skill was invoked and not yet deactivated
-
-
 def build_system_reminder(content: str) -> str:
     """Wrap content in a system-reminder tag."""
     return f"<system-reminder>{content}</system-reminder>"
@@ -413,49 +406,3 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
         do_args=do_args,
         has_collab_mode=has_collab_mode,
     )
-
-
-# Skills that deactivate thinking disciplines
-_THINKING_DEACTIVATORS = ("stop-thinking-disciplines", "do")
-
-
-def parse_thinking_disciplines_flow(
-    transcript_path: str,
-) -> ThinkingDisciplinesState:
-    """
-    Parse transcript to determine if thinking disciplines are active.
-
-    Activates when thinking-disciplines skill is invoked (by any skill).
-    Deactivates when /stop-thinking-disciplines or /do is invoked.
-    Reactivates if thinking-disciplines is invoked again after deactivation.
-    """
-    is_active = False
-
-    try:
-        with open(transcript_path, encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    data = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
-
-                # Check for thinking-disciplines activation
-                if was_skill_invoked(data, "thinking-disciplines"):
-                    # isMeta expansion follows the initial invocation —
-                    # don't toggle off/on, just ensure active
-                    is_active = True
-
-                # Check for deactivation
-                if is_active:
-                    for skill in _THINKING_DEACTIVATORS:
-                        if was_skill_invoked(data, skill):
-                            is_active = False
-                            break
-
-    except OSError:
-        return ThinkingDisciplinesState(is_active=False)
-
-    return ThinkingDisciplinesState(is_active=is_active)

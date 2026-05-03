@@ -16,12 +16,8 @@ manifest-dev provides verification-first manifest workflows for AI coding agents
 
 Supporting workflows:
 - **/auto** — End-to-end autonomous: /define (autonomous interview) → /do in one command.
-- **/figure-out** — Collaborative deep understanding. Investigation-first, truth-convergent. End with /stop-thinking-disciplines.
+- **/figure-out** — Collaborative deep understanding. Investigation-first, truth-convergent.
 - **/drive** — Cron-driven manifest-to-green loop. Bootstraps branch/PR, schedules /drive-tick until terminal state (all verify pass for none mode, merge-ready for github mode).
-
-Internal skills:
-- **thinking-disciplines** — Core thinking disciplines invoked by /figure-out and /define. Not user-invocable.
-- **/stop-thinking-disciplines** — Deactivate thinking disciplines.
 
 ## Agents
 
@@ -57,10 +53,9 @@ Internal skills:
 ## Plugin (Hooks)
 
 The manifest-dev plugin (`.opencode/plugins/manifest-dev.ts`) provides:
-- Workflow state tracking for /do and thinking disciplines
+- Workflow state tracking for /do
 - Post-compaction context recovery
 - Pre-verify context refresh
 - Amendment check guidance during /do
-- Thinking disciplines reinforcement
 
 **Known limitation**: OpenCode cannot block session stopping (session.idle is fire-and-forget). The /do workflow contract is enforced via persistent system guidance, not a hard block.
