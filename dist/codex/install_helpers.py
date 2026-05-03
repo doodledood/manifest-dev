@@ -25,8 +25,6 @@ SUFFIX = "-manifest-dev"
 
 # Ordered longest-first within each list to avoid prefix collisions.
 SKILLS = [
-    "stop-thinking-disciplines",
-    "thinking-disciplines",
     "drive-tick",
     "figure-out",
     "escalate",

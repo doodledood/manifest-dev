@@ -20,15 +20,6 @@
             "command": "python3 claude-plugins/manifest-dev/hooks/pretool_verify_hook.py"
           }
         ]
-      },
-      {
-        "matcher": "AskUserQuestion",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/thinking_disciplines_pretool_hook.py"
-          }
-        ]
       }
     ],
     "UserPromptSubmit": [
@@ -38,15 +29,6 @@
           {
             "type": "command",
             "command": "python3 claude-plugins/manifest-dev/hooks/prompt_submit_hook.py"
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/thinking_disciplines_prompt_hook.py"
           }
         ]
       }

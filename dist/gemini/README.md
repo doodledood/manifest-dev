@@ -6,9 +6,9 @@ Verification-first manifest workflows for Gemini CLI. Plan work with structured 
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 11 | Workflow skills: define, do, verify, auto, figure-out, escalate, done, drive, drive-tick, thinking-disciplines, stop-thinking-disciplines |
+| Skills | 9 | Workflow skills: define, do, verify, auto, figure-out, escalate, done, drive, drive-tick |
 | Agents | 14 | Specialized review agents for code quality verification |
-| Hooks | 7 | Event-driven hooks enforcing workflow discipline |
+| Hooks | 5 | Event-driven hooks enforcing workflow discipline |
 
 ## Installation
 
@@ -81,7 +81,7 @@ The `install.sh` script sets this automatically.
 3. `/verify` — Spawns parallel verifier agents for all criteria
 4. `/auto` — Chains define and do autonomously
 
-Supporting skills: `/figure-out` for deep investigation (end with `/stop-thinking-disciplines`), `/escalate` for blocking issues, `/drive` for cron-driven PR lifecycle automation and manifest-to-green loops.
+Supporting skills: `/figure-out` for deep investigation, `/escalate` for blocking issues, `/drive` for cron-driven PR lifecycle automation and manifest-to-green loops.
 
 ## Repository
 

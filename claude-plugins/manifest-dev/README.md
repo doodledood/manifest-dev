@@ -112,9 +112,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 | `/done` | Prints what got done and what was verified. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
 
-**Optional:** `/figure-out` — figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, and resists premature synthesis. Use when figuring it out IS the goal, or before `/define` when the problem space is foggy. End with `/stop-thinking-disciplines`.
-
-**Internal:** `thinking-disciplines` — core thinking disciplines invoked by `/figure-out` and `/define`. Not user-invocable.
+**Optional:** `/figure-out` — figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, and resists premature synthesis. Use when figuring it out IS the goal, or before `/define` when the problem space is foggy.
 
 ### Multi-Repo Manifests
 
@@ -201,7 +199,7 @@ Multi-CLI distributions under `dist/` for Gemini CLI, OpenCode, and Codex CLI ar
 
 ## Hooks
 
-Seven hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before verification runs. `post_compact_hook.py` restores `/do` and thinking disciplines context if the session gets compacted. `pretool_verify_hook.py` nudges agents to actually read the manifest before verifying anything. `posttool_log_hook.py` reminds the model to update the execution log after task progress during `/do`. `prompt_submit_hook.py` reminds the model to check for manifest amendments when the user provides input during `/do` — enabling the autonomous Self-Amendment flow (`/escalate` → `/define --amend` → `/do` resume). `thinking_disciplines_prompt_hook.py` reinforces thinking disciplines on each user message during `/figure-out` or `/define`. `thinking_disciplines_pretool_hook.py` reinforces disciplines before AskUserQuestion — the moment where sycophantic drift is most likely.
+Five hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before verification runs. `post_compact_hook.py` restores `/do` context if the session gets compacted. `pretool_verify_hook.py` nudges agents to actually read the manifest before verifying anything. `posttool_log_hook.py` reminds the model to update the execution log after task progress during `/do`. `prompt_submit_hook.py` reminds the model to check for manifest amendments when the user provides input during `/do` — enabling the autonomous Self-Amendment flow (`/escalate` → `/define --amend` → `/do` resume).
 
 ## See also
 

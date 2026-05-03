@@ -9,7 +9,6 @@ import type { Plugin } from "@opencode-ai/plugin"
  * - Pre-verify context refresh (tool.execute.before on task tool)
  * - Post-milestone log reminder (tool.execute.after on task/todowrite tools)
  * - Amendment check on user prompt during /do (experimental.chat.system.transform)
- * - Thinking disciplines reinforcement (experimental.chat.system.transform)
  *
  * KNOWN LIMITATIONS:
  * 1. Cannot block session stopping — session.idle is fire-and-forget (issue #12472).
@@ -37,13 +36,8 @@ interface DoFlowState {
   consecutiveIdleOutputs: number // loop detection counter
 }
 
-interface ThinkingDisciplinesState {
-  active: boolean  // thinking-disciplines skill invoked and not yet deactivated
-}
-
 // Per-session state maps
 const doStates = new Map<string, DoFlowState>()
-const thinkingStates = new Map<string, ThinkingDisciplinesState>()
 
 function getDoState(sessionID: string): DoFlowState {
   if (!doStates.has(sessionID)) {
@@ -59,13 +53,6 @@ function getDoState(sessionID: string): DoFlowState {
     })
   }
   return doStates.get(sessionID)!
-}
-
-function getThinkingState(sessionID: string): ThinkingDisciplinesState {
-  if (!thinkingStates.has(sessionID)) {
-    thinkingStates.set(sessionID, { active: false })
-  }
-  return thinkingStates.get(sessionID)!
 }
 
 // Skills that represent workflow transitions worth logging
@@ -137,18 +124,6 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
               state.hasSelfAmendment = true
             }
           }
-        }
-
-        // Track thinking-disciplines activation
-        if (skillName === "thinking-disciplines") {
-          const tState = getThinkingState(sessionID)
-          tState.active = true
-        }
-
-        // Deactivate thinking disciplines on /stop-thinking-disciplines or /do
-        if (skillName === "stop-thinking-disciplines" || skillName === "do") {
-          const tState = getThinkingState(sessionID)
-          tState.active = false
         }
 
         // --- Pre-verify context refresh (pretool_verify_hook) ---
@@ -283,19 +258,6 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
           `skip this reminder.</system-reminder>`
         )
       }
-
-      // --- Thinking disciplines reinforcement ---
-      const tState = getThinkingState(sessionID)
-      if (tState.active) {
-        output.system.push(
-          `<system-reminder>Thinking disciplines active. Truth over helpfulness. ` +
-          `Investigate before engaging. Verified and inferred are different — name which. ` +
-          `Contradictions are leads, not noise. Partial pictures produce confident-sounding ` +
-          `wrong answers — map the territory before forming a view. Don't advocate for an ` +
-          `approach you haven't verified. If you still disagree after genuine exchange, say so. ` +
-          `If the user flags something, investigate — don't reassure.</system-reminder>`
-        )
-      }
     },
 
     // -----------------------------------------------------------------------
@@ -329,14 +291,6 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
             `the session was never mid-/do, proceed normally.`
           )
         }
-      }
-
-      // Thinking disciplines recovery
-      const tState = getThinkingState(sessionID)
-      if (tState.active) {
-        output.context.push(
-          `Thinking disciplines are active. Re-read the thinking-disciplines skill to restore your cognitive stance.`
-        )
       }
     },
 

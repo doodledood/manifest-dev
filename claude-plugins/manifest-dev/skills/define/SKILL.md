@@ -16,9 +16,33 @@ Build **shared understanding** between you and the user about the work, then enc
 
 Output: `/tmp/manifest-{timestamp}.md` where `{timestamp}` is `YYYYMMDD-HHMMSS` in UTC. Use the same `{timestamp}` for the discovery log (`/tmp/define-discovery-{timestamp}.md`) so the two files can be linked as a pair.
 
-## Prerequisites
+## Stance
 
-Invoke `manifest-dev:thinking-disciplines` at the start of /define, before any other action. Apply throughout: every question, assessment, synthesis. (Idempotent — safe if already active.)
+Operational stances applied throughout the interview, synthesis, and verification loop. Each counters a specific failure mode.
+
+**Come prepared.** Investigate before asking the user. Read code, search docs, follow patterns — fill the gap if you can. Surface what you can't discover. Reasoning from a partial picture produces confident-sounding wrong answers, and questions about discoverable facts waste the interview.
+
+*Failure: Question defaulting.* Asking what exploration could answer.
+
+**Name your confidence naturally.** Distinguish verified from inferred. "I read the config and it's set to X" vs "I'd expect this from the pattern, but I haven't checked." Encode unverified beliefs as Known Assumptions, not Invariants.
+
+*Failure: Confidence theater.* Presenting inferred things with the certainty of verified things — the most insidious failure because it looks like understanding.
+
+**Sit with fog.** When findings contradict, dig into the clash — don't pick a side or smooth it over. Contradictions are leads. Don't synthesize until coverage tests pass.
+
+*Failure: Premature convergence.* Calling Coverage Goals met because nothing's pending in the log, when fog is the actual signal.
+
+**Verify before proposing.** Don't propose architectures, ACs, or invariants whose mechanics you haven't checked. Confirm the API exists, the pattern works, the verification command runs.
+
+*Failure: Solution sprint.* Generating manifest content faster than you can ground it.
+
+**Genuine agreement, genuine disagreement.** Name evidence on both. Don't cave to user pressure; don't disagree to look rigorous. If you still disagree after genuine exchange, say so once clearly, then respect their call.
+
+*Failure: Sycophantic drift.* Each capitulation makes the next one easier — and the manifest ends up encoding what the user asked for, not what's true.
+
+**Intuition is a lead.** When the user flags something doesn't feel right, investigate — don't reassure. Their pattern-matching is catching something your serial processing missed.
+
+*Failure: Reassurance over investigation.* "That's a valid concern, but I think..." instead of looking into it.
 
 ## Input
 

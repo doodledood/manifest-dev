@@ -13,15 +13,10 @@ manifest-dev provides structured workflows for planning, executing, and verifyin
 
 ### Supporting Skills
 
-- **`/figure-out`** — Collaborative deep understanding before acting. Truth-convergence over helpfulness. End with `/stop-thinking-disciplines`
+- **`/figure-out`** — Collaborative deep understanding before acting. Truth-convergence over helpfulness
 - **`/escalate`** — Structured escalation during `/do`: blocking issues, scope changes, pauses
 - **`/done`** — Completion marker with hierarchical execution summary
 - **`/drive`** — Cron-driven manifest-to-green loop: bootstraps branch/PR, schedules `/drive-tick` until terminal state (all verify pass for none mode, merge-ready for github mode).
-
-### Internal Skills
-
-- **`thinking-disciplines`** — Core thinking disciplines invoked by `/figure-out` and `/define`. Not user-invocable
-- **`/stop-thinking-disciplines`** — Deactivate thinking disciplines
 
 ### Agents
 
@@ -52,9 +47,7 @@ Event-driven hooks enforce workflow discipline:
 - **pretool-verify** — Reminds model to load manifest before `/verify`
 - **posttool-log** — Reminds model to update execution log after milestones
 - **prompt-submit-amendment** — Checks for manifest amendments on user input
-- **thinking-disciplines-prompt** — Reinforces thinking disciplines against sycophantic drift
-- **thinking-disciplines-pretool** — Reinforces disciplines before asking user questions
-- **post-compact** — Restores /do and thinking disciplines context after session compaction
+- **post-compact** — Restores /do context after session compaction
 
 ## Configuration
 

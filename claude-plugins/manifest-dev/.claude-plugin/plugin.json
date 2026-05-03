@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.100.0",
+  "version": "0.101.0",
   "description": "Manifest-driven workflows for structured task execution with verification gates. Includes /drive — a cron-driven PR-lifecycle runner (graduated from manifest-dev-experimental). Supports multi-repo changesets via a shared canonical manifest.",
   "keywords": [
     "manifest",
@@ -44,16 +44,6 @@
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/pretool_verify_hook.py"
           }
         ]
-      },
-      {
-        "matcher": "AskUserQuestion",
-        "description": "Reinforce thinking disciplines before asking user questions",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/thinking_disciplines_pretool_hook.py"
-          }
-        ]
       }
     ],
     "UserPromptSubmit": [
@@ -64,16 +54,6 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/prompt_submit_hook.py"
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "description": "Reinforce thinking disciplines to combat sycophantic drift",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/thinking_disciplines_prompt_hook.py"
           }
         ]
       }
@@ -113,7 +93,7 @@
     "SessionStart": [
       {
         "matcher": "compact",
-        "description": "Restore /do and thinking disciplines context after compaction",
+        "description": "Restore /do workflow context after compaction",
         "hooks": [
           {
             "type": "command",
