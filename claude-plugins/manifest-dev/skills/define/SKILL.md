@@ -115,7 +115,7 @@ Domain-specific guidance lives in `tasks/`:
   - Both become PG-*.
 - **Reference files** (`references/*.md`) — lookup data for `/verify` agents. Do not load during interview.
 
-**Encode quality gates and Defaults immediately after reading task files — before the interview.** Log each as `- [x]` RESOLVED.
+**Encode quality gates and Defaults immediately after reading task files — before the interview.** Note each in the discovery log narrative as it lands.
 
 Task files set the floor, not the ceiling — probe beyond when domain understanding warrants.
 
@@ -212,32 +212,23 @@ Follow the loaded mode's rules for question format, flow, checkpoints, finding-s
 
 **Style switches only on explicit user request.** The flag sets starting posture; the mode stays until the user explicitly asks to switch (e.g., "be more concise", "switch to autonomous", "ask everything"). Don't infer mode shifts from tone or terseness alone — terse answers within a mode are valid mode-internal signals, not switches. After a switch, follow the new mode from that point and log it to the discovery file.
 
-**Auto-switch variant.** When the user signals "enough" / "ship it" / "good enough" / "stop asking", a one-way switch to `autonomous` fires with auto-decide semantics on remaining `[ ]` items — see Convergence § Termination & escalation rules — Mode-switch escalation.
+**Auto-switch variant.** When the user signals "enough" / "ship it" / "good enough" / "stop asking", a one-way switch to `autonomous` fires with auto-decide semantics on remaining unresolved threads — see Convergence § Termination & escalation rules — Mode-switch escalation.
 
 ## Discovery & Question Disciplines
 
 ### Discovery log
 
-Write to `/tmp/define-discovery-{timestamp}.md` immediately after each discovery — same `{timestamp}` as the manifest. The log is source of truth: another agent reading only the log could resume the interview.
+Write to `/tmp/define-discovery-{timestamp}.md` as discoveries happen — same `{timestamp}` as the manifest. The log is **append-only**: never rewrite past entries. Later entries can supersede or close out earlier threads, but earlier text stays as it was written.
 
-Seed with a Context Assessment before probing — what's already understood and what's missing:
+**Goal: narrative compressed context.** A fresh agent or human reading only this log can reconstruct the timeline, the surprises, and the reasoning — and resume the interview from where you left off without redoing discovery. They can also retrospect and learn how decisions came to be.
 
-```
-## Context Assessment
-ALREADY UNDERSTOOD:
-- [x] RESOLVED (from context): [item] — [source]
-GAPS IDENTIFIED:
-- [ ] PENDING: [what's missing and why it matters]
-```
+**What belongs.** Anything that changed your mind, surprised you, required investigation, or locks a manifest decision. Domain knowledge you discovered. Assumptions you tested and what happened. Threads you opened, their dispositions, and why. **Hard floor:** every decision that affects the manifest goes in, regardless of perceived triviality.
 
-The interview begins at the gaps. Before marking a coverage goal as met from context, verify with concrete evidence — vague confidence doesn't count.
+**What doesn't.** Routine status pings, restating what the user just said, narrating tool use that found nothing of consequence. If removing the entry would not lose anything a future reader needs, don't write it.
 
-Every actionable item gets logged with status:
-- `- [ ]` PENDING — needs resolution
-- `- [x]` RESOLVED — encoded as INV/AC/PG/ASM, confirmed, or answered
-- `- [~]` SKIPPED — explicitly scoped out with reasoning
+**Open the log with what's already understood from context and where the gaps are**, then narrate as the interview unfolds. Format is yours — paragraphs, headings, whatever serves the resumability goal — as long as opened threads reach explicit dispositions in the narrative before synthesis. Before treating a coverage goal as met from context, verify with concrete evidence; vague confidence doesn't count.
 
-**Read full log before synthesis.** Unresolved `- [ ]` items are addressed first.
+**Read the full log before synthesis.** Any opened thread without a documented disposition is a gap — resolve it before writing the manifest.
 
 ### When to ask
 
@@ -249,7 +240,7 @@ Every actionable item gets logged with status:
 
 **Probe input artifacts.** When input references external documents (URLs, file paths, named documents), determine whether they should be verification sources. If yes, encode as Global Invariant.
 
-**Resolve all Resolvable task file structures.** After reading task files, extract every Resolvable table and checklist. Items already resolved in conversation context are logged as `- [x]` RESOLVED with source — not re-probed. Remaining items are `- [ ]` PENDING. Resolve each per interview mode, or skip with logged justification. Don't defer to synthesis.
+**Resolve all Resolvable task file structures.** After reading task files, extract every Resolvable table and checklist. Items already resolved in conversation context are noted in the log narrative with their source — not re-probed. Remaining items must reach a disposition through the interview (per interview mode) or be explicitly skipped with logged justification. Don't defer to synthesis.
 
 ### How to ask
 
@@ -275,7 +266,7 @@ Every actionable item gets logged with status:
 
 The interview mode defines probing aggressiveness. Convergence requires:
 - All applicable Coverage Goal convergence tests pass (Process Self-Audit may be skipped per its own rule)
-- No unresolved `- [ ]` items in the discovery log
+- Every thread opened in the discovery log has reached an explicit disposition (encoded as INV/AC/PG/ASM/R/T, scoped out with reasoning, or mitigated by approach)
 - Quality gates from task files encoded as INV-G* (or omitted with logged reasoning)
 - Defaults encoded as PG-*
 
@@ -291,14 +282,14 @@ These end /define:
 
 1. Verifier returns COMPLETE and the user approves the summary.
 2. User explicitly invokes `/do`. Behavior depends on where /define is in the run:
-   - **Before synthesis is complete** (interview still has unresolved items, or manifest not yet written): switch to `autonomous` interview mode, finish synthesis and the Verification Loop with auto-decisions (each remaining `[ ]` item gets the recommended default, encoded with `(auto)` annotation and logged in Known Assumptions), write the manifest, then hand off to /do without waiting for summary approval.
+   - **Before synthesis is complete** (interview still has unresolved threads, or manifest not yet written): switch to `autonomous` interview mode, finish synthesis and the Verification Loop with auto-decisions (each remaining unresolved thread gets the recommended default, encoded with `(auto)` annotation and logged in Known Assumptions), write the manifest, then hand off to /do without waiting for summary approval.
    - **At the summary stage** (manifest already written, awaiting approval): do not redo synthesis. Print `Manifest complete: ...` per Complete and hand off to /do immediately.
 
 #### Mode-switch escalation
 
 /define continues — only the interview mode changes:
 
-- User signals "enough" (or equivalent: "ship it", "good enough", "stop asking"). Effect: switch interview mode to `autonomous` from this point. Auto-decide remaining `[ ]` items per autonomous mode rules (recommended default chosen, encoded with `(auto)` annotation, logged in Known Assumptions). Continue through synthesis and the Verification Loop; expect to terminate via Stop condition 1.
+- User signals "enough" (or equivalent: "ship it", "good enough", "stop asking"). Effect: switch interview mode to `autonomous` from this point. Auto-decide remaining unresolved threads per autonomous mode rules (recommended default chosen, encoded with `(auto)` annotation, logged in Known Assumptions). Continue through synthesis and the Verification Loop; expect to terminate via Stop condition 1.
 
 ## Approach Section (Complex Tasks)
 
