@@ -60,7 +60,7 @@ When `--scope` is NOT provided, ignore this section entirely. No reference file 
 
 ## Constraints
 
-**Log after every action.** Write to execution log immediately after each AC attempt. No exceptions. This is disaster recovery: if context is lost, the log is the only record of what happened.
+**Log non-trivial events as they happen.** Write to the execution log whenever something a future reader would need to know lands: a surprise during implementation, a divergence from the Approach, the rationale behind a fix-after-failure, a discovery that should amend the manifest. Routine status pings ("started AC-1.1", "tests passed") are not events worth logging. The log is disaster recovery — if context is lost, it's the only record of what happened — and retrospect material — a future agent or human should be able to reconstruct *why* the run unfolded the way it did.
 
 **Must call /verify.** Can't declare done without verification. Invoke manifest-dev:verify with manifest, log paths, the resolved mode, and an optional scope per the rules below: `/verify <manifest> <log> --mode <level> [--scope D2,D3]`. Never pass `--final` from /do; that flag is internal to /verify (auto-triggered after a true-selective green pass where `--scope` was set). /done is unreachable without a full-pass green (every AC + every INV-G) with no pending manual or deferred-auto criteria.
 
@@ -89,7 +89,13 @@ The mandatory full final gate (auto-triggered by /verify after true-selective gr
 
 Externalize progress to survive context loss.
 
-**Execution log.** Create `/tmp/do-log-{timestamp}.md` at start. After EACH AC attempt, append what happened and the outcome. Goal: another agent reading only the log could resume work.
+**Execution log.** Create `/tmp/do-log-{timestamp}.md` at start. The log is **append-only**: never rewrite past entries. Later entries can correct or supersede earlier ones, but earlier text stays as written.
+
+**Goal: narrative compressed context.** A fresh agent or human reading only the log can reconstruct the timeline, the surprises, and the reasoning — and resume the run from where it stopped without redoing investigation. They can also retrospect and learn how the implementation came to be.
+
+**What belongs.** Surprises during implementation, divergences from the Approach (with rationale), why a particular fix was chosen after a verification failure, anything that should amend the manifest, domain knowledge discovered, dispositions on opened threads. **Hard floor:** every decision that affects the manifest goes in, regardless of perceived triviality. **What doesn't:** restating ACs verbatim, narrating tool use that found nothing of consequence, status pings for routine progress. If removing the entry would not lose anything a future reader needs, don't write it.
+
+**Coexists with /verify pass blocks.** /verify appends its own structured `## /verify pass {N}` blocks to the same file (per `verify/SKILL.md` "Pass Logging Contract"). Those are a separate, machine-readable artifact within the log — leave them as-is, and write your narrative entries around them.
 
 **Todos.** Create from manifest (deliverables → ACs). Start with execution order from Approach (adjust if dependencies require). Update todo status after logging (log first, todo second).
 
