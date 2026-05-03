@@ -6,7 +6,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 
 | Type | Count | Notes |
 |------|-------|-------|
-| Skills | 11 | Full compatibility (Agent Skills Open Standard) |
+| Skills | 9 | Full compatibility (Agent Skills Open Standard) |
 | Agents | 14 | TOML config stubs with full prompt bodies |
 | Hooks | 0 | Not supported by Codex CLI (Issue #2109) |
 | Rules | 1 | Starlark execution policy |

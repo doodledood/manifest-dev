@@ -51,9 +51,9 @@ The `install.sh` script sets this automatically.
 
 | Feature | Claude Code | Gemini CLI | Notes |
 |---------|-------------|------------|-------|
-| Skills | All 12 | All 12 | Copied unchanged |
-| Agents | All 15 | All 15 | Frontmatter converted |
-| Hooks | 8 hooks | 8 hooks | Adapted to Gemini event model |
+| Skills | All 9 | All 9 | Copied unchanged |
+| Agents | All 14 | All 14 | Frontmatter converted |
+| Hooks | 5 hooks | 5 hooks | Adapted to Gemini event model |
 | Stop enforcement | PreToolUse/Stop | BeforeTool/AfterAgent | Retry counter for loop prevention |
 | Context injection | additionalContext | additionalContext | Same mechanism |
 | Transcript parsing | JSONL (user/assistant) | JSONL (user/gemini) | Adapter normalizes |
