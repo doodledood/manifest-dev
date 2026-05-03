@@ -34,6 +34,12 @@ Read before building plugins:
 
 **Symlink note**: `.claude/` skills/agents are hardlinked to their `claude-plugins/manifest-dev/` counterparts for local development on environments where plugins aren't supported yet. When modifying plugin components, **always edit the `claude-plugins/` version** — changes propagate to `.claude/` via the hardlink.
 
+**Local Claude skills → `.agents/skills/`**: `.agents/skills/` mirrors `.claude/skills/` for the Agent Skills Open Standard (Codex CLI, etc.). **Whenever you add a new skill under `.claude/skills/`, also create the matching symlink in `.agents/skills/`**:
+
+```bash
+ln -sfn ../../.claude/skills/<skill-name> .agents/skills/<skill-name>
+```
+
 ### Plugin Components
 
 Each plugin can contain:
