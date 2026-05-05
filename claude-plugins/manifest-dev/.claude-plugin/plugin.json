@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.103.0",
+  "version": "0.104.4",
   "description": "Manifest-driven workflows for structured task execution with verification gates. Includes /drive — a cron-driven PR-lifecycle runner (graduated from manifest-dev-experimental). Supports multi-repo changesets via a shared canonical manifest.",
   "keywords": [
     "manifest",
