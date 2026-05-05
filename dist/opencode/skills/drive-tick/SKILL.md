@@ -8,9 +8,21 @@ user-invocable: true
 
 ## Goal
 
-Execute one stateless pass of the drive loop: read full state (log, git, adapter-specific), decide one wide action, apply it, log the outcome, then end the loop (terminal state or budget exhaust) or schedule the next tick per the recorded scheduler (`/loop` in loop mode, chunked-sleep + self-invoke in inline-fallback mode — see `../drive/references/fallback-inline.md`).
+Execute one stateless pass of the drive loop: read full state (log, git, adapter-specific), run the Action Decision Tree to completion (terminal state or non-terminal continuing), log the outcome, then end the loop (terminal state or budget exhaust) or schedule the next tick per the recorded scheduler (`/loop` in loop mode, chunked-sleep + self-invoke in inline-fallback mode — see `../drive/references/fallback-inline.md`).
 
 Same shape whether invoked by `/loop`'s cron or by the user manually for debug.
+
+## Tick Scope
+
+A tick is **wide**: it runs every stage in the Action Decision Tree in order (Terminal Check → Inbox Handling → Do Invocation → CI Triage → Tend PR → Continue) until either a terminal exit fires or the tree completes with a non-terminal continuing state. The tick boundary is set by terminal exits and adapter outputs — never by per-AC progress.
+
+In manifest mode, **Do Invocation delegates to one full /do convergence run** per tick: every reachable AC implemented, /verify pass, /done emitted (or a real blocker escalation per `do/SKILL.md` "Escalation boundary"). /do is not invoked piecemeal; completing a single AC is not a tick boundary, and /do does not yield mid-run to "fit" the tick.
+
+The cron / `/loop` / `--interval` machinery is scheduling, not throttling. The interval determines when the *next* tick fires when the current one ends non-terminal — it does not bound how much work the current tick does. /do runs to convergence within the tick; intervals matter only between ticks.
+
+In babysit mode /do is not invoked at all (no manifest). The wide action is the platform adapter's stages running through to completion (Inbox Handling + CI Triage + Tend PR per the adapter contract).
+
+**Anti-synthesis guardrail.** Inferring a "ticks should be small per the cron contract" framing — voluntarily yielding mid-/do, or emitting `User-Requested Pause` between ACs to terminate the tick cleanly — violates this contract. /do owns its escalation boundary (`do/SKILL.md` "Escalation boundary"; `escalate/SKILL.md` "User-Requested Pause"). /drive-tick imposes no per-AC pause semantics; "cron-driven /drive contract" requiring per-AC pauses is not a real rule and must not be invoked as one.
 
 ## Input
 
