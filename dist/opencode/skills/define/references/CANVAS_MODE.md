@@ -2,11 +2,33 @@
 
 You are reading this file because the user passed `--canvas` to /define. SKILL.md only does the flag check and routes here; **this file owns the entire canvas behavior** — when to fire, when to suppress, what to generate, how to keep it live, how to fail safely, when to stop.
 
+## Why this exists — shared-understanding alignment
+
+`/define` produces two artifacts that serve two readers.
+
+The **Manifest** (`/tmp/manifest-{ts}.md`) is the formal downstream encoding of the shared understanding the interview produced. It exists for `/do`, `/verify`, and downstream agents — dense, structured, machine-readable. Precise, and necessarily formal.
+
+The **Canvas** (`/tmp/canvas-{ts}.html`) is the human-facing reflection of that same understanding, expressed in the **ideas and decisions** the manifest formally encodes — in plain language, visual where possible, scanned at a glance.
+
+**The canvas's job is alignment.** The user is engaged in the chat interview — that's where their attention sits. The canvas is the visual side-channel they glance at to spot *"wait, that's not what I meant"* on the high-level shape: the intent, the flow, the scope. Misalignment caught early during the interview is cheap; the same misalignment surfacing later — during /do, in PR review, after a feature ships — is expensive. Helping the user catch it at a glance is what the canvas is for.
+
+This framing is load-bearing. The principles, the surface contract, the visual richness, and the anti-patterns below all subordinate to it. **Manifest formalism — IDs like AC-1.1 or INV-G3, schema section names like "Acceptance Criteria" or "Global Invariants", YAML verify blocks, the Mode/Interview/Medium metadata line — belongs in the manifest, not the canvas.** The canvas re-expresses the same ideas in plain language, surface and expanders alike. Formalism is forbidden anywhere on the canvas; it never enables alignment, only friction.
+
+## Principles
+
+The canvas earns its keep by reducing the cognitive cost of grasping what's being built. Three principles guide every generation and update — each in service of the alignment job above:
+
+1. **Comprehension over completeness.** Optimize for "the user grasps the shape in 30 seconds" before "every detail is on screen." A canvas where every acceptance detail is visible but nothing reads beats nothing — but a canvas where the user instantly sees the intent, the pieces, and how they relate beats both. Density is the enemy of misalignment-spotting.
+
+2. **Layered reveal.** The intent, the high-level flow, and the scope are immediate — visible without interaction. Detail (acceptance specifics, invariants, decision rationale, edge cases) is one expand/click/tab away. The user is never blocked from drilling in, but is never overwhelmed on first read either.
+
+3. **Visual where flow exists, prose where it doesn't.** Diagrams carry meaning faster than words for relationships, sequences, before/after states, and dependencies. Reach for diagrams in those cases. Use prose for declarative content (intent, rationale, scope notes) where flow doesn't apply. Don't substitute a bullet list where a picture would carry the meaning more cheaply — and conversely, don't force a diagram where there's no genuine relationship to draw.
+
 ## Activation gate
 
 Evaluate **immediately** — before Domain Guidance and the interview begin. The canvas tab must be open and ready before the user starts answering questions. If any of the following hold, skip canvas behavior entirely and continue /define normally (first match wins; conditions 1–3 are silent, condition 4 prints one warning):
 
-1. **Amendment mode is active.** Canvas is fresh-/define-only (ASM-6). Amendment is "active" via three paths: (a) literal `--amend` was passed, (b) Session-Default Detection resolved to amendment ("Related" branch — note: "Truly unrelated" and "Prior manifest unreadable" branches proceed FRESH and DO get a canvas), or (c) input arguments referenced a specific `/tmp/manifest-*.md` path that will be amended. Silent skip. Edge case: when "Related" fires, control diverts to AMENDMENT_MODE.md and this gate may not be re-evaluated explicitly — outcome is incidentally correct because amendment flow contains no canvas-generation step.
+1. **Amendment mode is active.** Canvas is fresh-/define-only. Amendment is "active" via three paths: (a) literal `--amend` was passed, (b) Session-Default Detection resolved to amendment ("Related" branch — note: "Truly unrelated" and "Prior manifest unreadable" branches proceed FRESH and DO get a canvas), or (c) input arguments referenced a specific `/tmp/manifest-*.md` path that will be amended. Silent skip. Edge case: when "Related" fires, control diverts to AMENDMENT_MODE.md and this gate may not be re-evaluated explicitly — outcome is incidentally correct because amendment flow contains no canvas-generation step.
 
 2. **`--interview autonomous`** (transitively covers `/auto` — `/auto` always passes `--interview autonomous` to /define; no separate `/auto` check needed). The canvas's value is live human review; without a human reviewer, it's wasted tokens. Silent skip.
 
@@ -20,25 +42,6 @@ If none match, the canvas is genuinely active: generate the initial canvas at `/
 
 Canvas is generated and updated only during /define's interview phase. It freezes at user approval. `/do` never touches the canvas — no regeneration, extension, or annotation by `/do` or any downstream skill. The first render is intentionally a minimal shell (see Update cadence below).
 
-## Why a canvas exists
-
-/define produces two artifacts that serve two readers:
-
-- The **Manifest** (`/tmp/manifest-{ts}.md`) is dense, structured, machine-readable. It exists for `/do`, `/verify`, and downstream agents. It is precise but cognitively expensive for a human to read end-to-end.
-- The **Canvas** (`/tmp/canvas-{ts}.html`) is the human-facing reflection of that same shared understanding. It absorbs the translation work the agent does natively on formal structure — so the user reviews by *looking* at a layered visual surface rather than by *parsing* hundreds of lines of YAML.
-
-Both artifacts encode the same understanding. The manifest is the source of truth; the canvas is the comprehension instrument.
-
-## Principles
-
-The canvas earns its keep by reducing the cognitive cost of grasping what's being built. Three principles guide every generation and update:
-
-1. **Comprehension over completeness.** Optimize for "the user grasps the shape in 30 seconds" before "every detail is on screen." A canvas where every AC is visible but nothing reads beats nothing — but a canvas where the user instantly sees the high-level intent, the pieces, and how they relate beats both. Density is the enemy.
-
-2. **Layered reveal.** The architecture, intent, and high-level flow are immediate — visible without interaction. Detail (individual ACs, invariants, decision rationale, edge cases) is one expand/click/tab away. The user is never blocked from drilling in, but is never overwhelmed on first read either.
-
-3. **Visual where flow exists, prose where it doesn't.** Diagrams carry meaning faster than words for relationships, sequences, before/after states, and dependencies. Reach for diagrams in those cases. Use prose for declarative content (intent, rationale, scope notes) where flow doesn't apply. Don't substitute a bullet list where a picture would carry the meaning more cheaply.
-
 ## Format requirements
 
 - **File:** A single self-contained `.html` file at `/tmp/canvas-{ts}.html`, where `{ts}` is the same timestamp as the manifest (`/tmp/manifest-{ts}.md`) and discovery log (`/tmp/define-discovery-{ts}.md`). Linkable as a triplet.
@@ -49,7 +52,7 @@ The canvas earns its keep by reducing the cognitive cost of grasping what's bein
 
 ## Update cadence
 
-**Initial canvas is a minimal shell.** When SKILL.md's Canvas Mode dispatch fires (before Domain Guidance and the interview begin), no deliverables, ACs, or invariants exist yet. The first canvas write is intentionally minimal: an intent banner derived from `$ARGUMENTS`, an "Interview in progress" affordance, and an empty scaffold for the sections that will fill in. The user opens the tab knowing the substance (diagrams, deliverable cards, before/after flows, decision trees) materializes as the interview produces it — not all at once on first render.
+**Initial canvas is a minimal shell.** When SKILL.md's Canvas Mode dispatch fires (before Domain Guidance and the interview begin), no deliverables, ACs, or invariants exist yet. The first canvas write is intentionally minimal: an intent banner derived from `$ARGUMENTS`, an "Interview in progress" affordance, and an empty scaffold for the sections that will fill in. The user opens the tab knowing the substance materializes as the interview produces it — not all at once on first render.
 
 The canvas regenerates after each **meaningful event** — defined as anything that changes the substance of the manifest or the user's understanding of the work. Specifically:
 
@@ -86,21 +89,19 @@ Any canvas-related operation failure is non-blocking. The canvas is supplementar
 
 The user's manifest workflow is never blocked by a canvas failure.
 
-## Illustrative content menu
+## What the canvas surface must enable
 
-Consider including any of the following in the canvas when they serve the task. **None are required.** The agent picks what fits — a small bug-fix manifest may need only Intent + Deliverable Cards; a multi-component refactor may use most of the menu. The principle is comprehension, not coverage.
+The user looks at the canvas to spot misalignment. That's the contract on what's visible by default — not a structural template, but an enablement test: **at a glance, can the user detect "that's not what I meant" on the things people most often disagree about?**
 
-- **High-level intent banner** — one or two sentences capturing what's being built and why. Always near the top.
-- **Process flows (before / after)** — when the change modifies existing behavior, a side-by-side flow showing what happens today vs what will happen. Mermaid `flowchart` or `sequenceDiagram` works well.
-- **Mental model diagram** — how the user should think about the system after the change. Components, their roles, how they relate. Often a simple boxes-and-arrows diagram.
-- **Component / dependency relationships** — for changes spanning multiple files or services, show what depends on what. Prevents the user from missing an affected consumer.
-- **Deliverable cards with AC checkpoints** — each deliverable as a visual card; ACs as collapsible items underneath. The user sees deliverables at a glance and expands for detail.
-- **Decision tree / trade-off comparison** — when the interview surfaced branching choices, show the options considered and which path was taken. Exposes assumptions for review.
-- **"What changes" callouts** — for amendments or modifications to existing code, highlight what's being added, removed, or replaced. Often a colored diff-style block.
-- **Risk panel** — surfaces R-* with detection criteria. A quick "what could go wrong, how would we know."
-- **Scope-out list** — explicit "this is NOT in scope" items. Prevents the user from assuming the manifest covers more than it does.
+People disagree about three things, predictably: **intent** (what we're actually building, and why), **flow** (how the system or process behaves — sequence, branches, before/after), and **scope** (what's in, what's deliberately out). Surface these so they're scannable without scrolling and without expanding anything. Everything else — acceptance specifics, decision rationale, risk drilldowns, edge cases, work-item drill-ins — lives behind progressive disclosure (`<details>` expanders, tabs, click-to-reveal). Detail is one click away, never zero.
 
-The menu is a starting point — if the task suggests a content type not listed (e.g., a state machine for a stateful workflow), include it. Conversely, if a listed type doesn't serve the task, omit it.
+The visible-by-default layer:
+
+- **Intent** — what's being built, in plain language. Always immediate.
+- **The visual that most exposes misalignment for this task, when one exists.** Common shapes: a flowchart for sequence changes, before/after panels for behavioral changes, an architecture sketch for component-level work, a dependency graph for cross-cutting changes, a state diagram for stateful workflows. The agent picks per task. When the task has no genuine flow — a one-line text fix, a renaming, a copy edit — don't force one. Prose is right where flow doesn't exist (per the third principle).
+- **Scope** — what's in, what's deliberately out. Often a callout or a short bordered list.
+
+Once those three surfaces enable misalignment-spotting at a glance, everything else collapses behind progressive disclosure.
 
 ## What "visual richness" looks like
 
@@ -125,19 +126,21 @@ flowchart LR
 </section>
 ```
 
-### Example: deliverable card with collapsible ACs
+### Example: collapsible work-item card with details inside
 
 ```html
 <details class="border rounded-lg p-4 my-3 bg-slate-50">
-  <summary class="font-semibold cursor-pointer">D1 — Create CANVAS_MODE.md</summary>
+  <summary class="font-semibold cursor-pointer">Refactor the canvas content rules</summary>
   <ul class="mt-3 space-y-2 text-sm text-slate-700">
-    <li>AC-1.1: Intro frames canvas as comprehension instrument</li>
-    <li>AC-1.2: Three principles (comprehension, layered reveal, visual-where-flow)</li>
-    <li>AC-1.3: Illustrative content menu, framed as suggestions</li>
-    <li>...</li>
+    <li>Reframe the canvas as an alignment surface, not a comprehension brochure</li>
+    <li>Replace the suggested-content menu with a principle: surface what people disagree about</li>
+    <li>Make detail collapsed by default — visible-by-default surface stays scannable</li>
+    <li>Strip manifest IDs and schema vocabulary throughout, surface and expanders alike</li>
   </ul>
 </details>
 ```
+
+The summary line names the work in user vocabulary. The details inside are plain-language commitments — not formal acceptance IDs.
 
 ### Example: side-by-side before/after
 
@@ -154,7 +157,7 @@ flowchart LR
 </div>
 ```
 
-These patterns share a property: they expose structure visually before any text is read. A user scanning quickly grasps "there are deliverables," "this is the flow," "this is the difference" before deciding where to drill in.
+These patterns share a property: they expose structure visually before any text is read. A user scanning quickly grasps the shape — what's being built, how it flows, what's different — before deciding where to drill in.
 
 ## Style notes
 
@@ -168,5 +171,9 @@ These patterns share a property: they expose structure visually before any text 
 
 - **Re-skinned manifest.** If the canvas reads as the same content as the manifest with different fonts, it has failed. The canvas should look and feel different — visual where the manifest is textual.
 - **Tidy-outline syndrome.** Headers, bullets, more headers, more bullets. The canvas should reach for diagrams, cards, panels, side-by-side comparisons, expand/collapse — not just prettier prose.
-- **Wall of ACs.** Listing every AC inline at the top level defeats layered reveal. Cards with collapsible details are nearly always better.
+- **Wall of acceptance details.** Listing every acceptance detail inline at the top level defeats layered reveal. Cards with collapsible details are nearly always better.
 - **Per-turn regeneration.** Updates fire after meaningful events, not after every tool call. Constant page flicker undermines the "live alongside understanding" feel.
+- **Manifest restatement at the surface.** The canvas isn't a digest of the manifest's IDs and schema. If a section reads like a re-formatted invariant or acceptance list, it's the wrong content — re-express the underlying ideas in plain language, or move the detail behind an expander.
+- **Schema vocabulary visible.** Canvas section labels should not read as "Acceptance Criteria", "Global Invariants", "Process Guidance", "Risk Areas", or "Trade-offs". Those are manifest-internal categories. The canvas talks about *what we're building*, *how it works*, *what's in and out of scope*, *what could go wrong* — in user vocabulary.
+- **Paragraph where a visual would land.** When the content involves relationships, sequence, before/after, dependencies, or branching, prose that *describes* the structure carries less than a diagram that *shows* it. If you find yourself writing more than a few sentences about how things relate, ask whether a diagram would carry it more cheaply.
+- **Formalism leaking into expanders.** The scrub applies everywhere on the canvas, not only the visible-by-default surface. Detail behind `<details>` is still on the canvas — still ideas and decisions in plain language, never IDs or schema labels.
