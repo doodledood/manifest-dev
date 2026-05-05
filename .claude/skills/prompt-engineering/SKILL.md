@@ -80,6 +80,8 @@ Stop rules
 
 Conflating Success and Stop causes agents to over-search or stop early. Conflating Constraints and Success buries the target inside hard rules. Conflating Constraints and Stop turns a permanent rule into a one-shot exit.
 
+Constraints bound the path, not the destination — a rule like *"don't fail to answer"* just restates the goal negatively, adding no new boundary on how the work gets done. Real constraints are blockers along the path: forbidden methods, resource limits, required evidence, side-effect rules. Test for a real constraint: would it still apply if the goal changed? *"Never invent citations"* would (any factual task); *"don't fail to answer"* wouldn't.
+
 **When to use canonical headers vs. theme/phase organization:**
 - Use the canonical headers when the prompt is a single-purpose system prompt for an assistant (one Role, one Goal, runtime in a deployment).
 - Theme or phase organization fits when the prompt's structure is itself non-trivial — multi-phase workflows, skills with subdomains, instructional documents (this skill is one) — so long as every applicable canonical section is answerable on read.
