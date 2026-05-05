@@ -55,7 +55,7 @@ Operational stances applied throughout the interview, synthesis, and verificatio
 | `--medium` | `local` | `local` | Sets communication channel. Other values → halt: "Medium '<value>' not yet supported. Currently supported: local". |
 | `--amend <path>` | manifest path | — | Amend an existing manifest (see Pre-flight). Missing argument → halt: "Cannot amend: --amend requires a manifest path." Path doesn't exist → halt: "Cannot amend: '<path>' not found." |
 | `--from-do` | boolean flag (used with `--amend`) | — | Marks amendment as triggered by `/do`. Accepts no value. See `references/AMENDMENT_MODE.md` Three Contexts §2 (From /do). |
-| `--canvas` | boolean flag | — | When present, follow `references/CANVAS_MODE.md` (it owns its own activation gate, lifecycle, and run-order placement). Accepts no value. |
+| `--canvas` | boolean flag | — | When present, generate a Shared Understanding Canvas alongside the manifest — a visual side-channel the user glances at during the chat interview to spot misalignment on intent, flow, and scope at a glance. Follow `references/CANVAS_MODE.md` (it owns its own activation gate, lifecycle, and run-order placement). Accepts no value. |
 
 Flags can appear anywhere in `$ARGUMENTS`. If `$ARGUMENTS` contains no task description (empty, or only flags with no free-form text), ask: "What would you like to build or change?" Exception: skip this prompt when **any** amend trigger applies — `--amend` is set, OR `$ARGUMENTS` contains a `/tmp/manifest-*.md` path (a bare path counts as routing, not as task text). Pre-flight handles amend context: the task description may live in conversation, the prior manifest, or be elaborated during the amendment interview.
 

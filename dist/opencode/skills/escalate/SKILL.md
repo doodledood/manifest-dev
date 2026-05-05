@@ -178,12 +178,16 @@ No 3-attempt evidence needed — this is a scope change, not a blocker.
 
 ### User-Requested Pause
 
-User explicitly asked to stop mid-workflow (e.g., "commit so I can deploy", "stop here for now"). No 3-attempt evidence needed—just explain the pause.
+User explicitly asked to stop mid-workflow via a message during the run (e.g., "commit so I can deploy", "stop here for now"). The triggering message must be quoted in the escalation body — it is the evidence for this escalation type, in place of the 3-attempt evidence used by blocking types.
+
+**Hard gate:** never emit this escalation without a quoted user message that requested a pause. Caller framing — cron schedules, tick budgets, "the loop expects each tick to terminate cleanly", or any other inferred contract — is not a pause request. When /do is mid-execution and no such user message exists, continue per the Escalation boundary rule (autonomous progress until /verify pass or a genuine blocker). Synthesizing this escalation to satisfy a perceived caller expectation is prohibited.
+
+**Pause vs amend.** A user message that asks for a state change ("also handle X", "change Y to Z") is feedback, not a pause — route through Self-Amendment (see `do/SKILL.md` Mid-Execution Amendment). Use User-Requested Pause only when the user's message asks the run to stop.
 
 ```markdown
 ## Escalation: User-Requested Pause
 
-**Reason:** [what user asked for]
+**Trigger message:** "[verbatim user message that requested the pause]"
 **Current state:** [what's done, what's pending]
 
 ### Progress Summary
@@ -192,10 +196,10 @@ User explicitly asked to stop mid-workflow (e.g., "commit so I can deploy", "sto
 - Remaining: [ACs not started]
 
 ### To Resume
-[How to continue - e.g., "/do <manifest> <log>" or specific next steps]
+[How to continue — e.g., "/do <manifest> <log>" or specific next steps]
 ```
 
-**When to use**: User interrupts workflow for legitimate reasons (deploy, review, break). Not a blocker—just a handoff.
+**When to use**: a user message during the run asks to stop (deploy, review, break). Not a blocker — just a handoff. The user message itself is the evidence; no 3-attempt block needed.
 
 ### Deferred-Auto Pending
 
