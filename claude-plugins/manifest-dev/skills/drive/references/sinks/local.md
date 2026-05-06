@@ -2,7 +2,7 @@
 
 Writes escalations and status notifications to the run's execution log file. No external integrations (no Slack, no Discord, no email). User observes by tailing the log.
 
-v0 default and only supported sink.
+**Degenerate sink.** The destination IS the log file. Escalate appends an `## ESCALATION` block; Report Status appends a `## TICK STATUS` block. The tick's own per-tick log entries (Terminal / Continuing / Skipped / Error) remain the authoritative cross-tick state per the contract invariant in `references/ADAPTER_CONTRACT.md` — sink writes are additive, not a replacement.
 
 ## Escalation Target
 
@@ -13,9 +13,9 @@ Escalations are appended to the run log at `/tmp/drive-log-{run-id}.md` as a `##
 
 ## Escalate
 
-Called by `/drive-tick` when something blocking emerges: amendment-loop guard tripped, budget exhausted, crash-recovery inconsistency detected (all platforms); stale uncertain thread, merge-ready prompt, empty-diff terminal, unresolved merge conflict (github platform only).
+Called by `/drive-tick` when something blocking emerges (see Escalation codes table for the full enumeration of triggers).
 
-### Format
+### Escalation block format
 
 Append this block to the run log (`/tmp/drive-log-{run-id}.md`):
 
@@ -46,8 +46,8 @@ Use a stable uppercase code so operators can grep the log. At minimum:
 | `UNRESOLVED_CONFLICT` | Yes | github platform: merge conflict the tick can't confidently resolve. Maps to the `escalation` terminal state. |
 | `EMPTY_DIFF` | Yes | github platform: PR has no diff. |
 | `MERGE_READY_PROMPT` | Yes | github platform: PR is merge-ready; awaiting user confirmation. Loop ends; user merges manually. |
-| `PROPOSED_AMENDMENT` | Yes | Scope change the tick does not want to auto-apply; user to decide. |
 | `STALE_THREAD` | No | github platform: uncertain thread with no reply after the staleness window defined by the github adapter, or fixed-thread unresolved past that window. Loop continues. |
+| `DO_MALFORMED_RESPONSE` | Yes | `/do` returned a response the tick can't parse; surfaced as a `/do` contract bug rather than patched in-tick. |
 | `TICK_ERROR` | Yes | Unrecoverable Skill / push / sink failure within a tick. |
 
 Additional codes can be added; follow the same `UPPERCASE_SNAKE_CASE` shape.
@@ -58,9 +58,9 @@ Additional codes can be added; follow the same `UPPERCASE_SNAKE_CASE` shape.
 
 ## Report Status
 
-Called by `/drive-tick` every tick, on every outcome (terminal, continuing, skipped-lock-held). The sink's `report-status` is **additive** to the log's tick-entry discipline — the log already gets a tick entry; `report-status` writes a friendlier human-visible line for operators tailing the log.
+Called by `/drive-tick` on Terminal outcomes that name a status code (see Status codes table). Continuing and Skipped-lock-held ticks do not invoke the sink — the log's tick entry is the cross-tick state record per the contract invariant (see `drive-tick/SKILL.md` §Output Protocol). Sink writes are additive notification blocks.
 
-### Format
+### Status block format
 
 Append this block to the run log:
 
@@ -69,9 +69,9 @@ Append this block to the run log:
 
 **Timestamp:** <ISO-8601>
 **Tick:** <tick-number>
-**Action:** <brief action summary — "implemented AC-3.4", "verified, all phases pass", "fixed failing lint on file X", "inbox: classified 2 comments, replied to 1, fixed 1", "lock held — skipped">
+**Action:** <brief action summary — "implemented AC-3.4", "verified, all phases pass", "fixed failing lint on file X", "inbox: classified 2 comments, replied to 1, fixed 1">
 **HEAD:** <current-sha>
-**Next:** <"scheduled next tick" | "terminal: <state>" | "skipped — lock held">
+**Next:** <"scheduled next tick" | "terminal: <state>">
 ```
 
 ### Status codes
@@ -82,10 +82,8 @@ Append this block to the run log:
 | `PR_MERGED` | Yes | github platform: PR was merged. |
 | `PR_CLOSED` | Yes | github platform: PR was closed without merge. |
 | `PR_DRAFTED` | Yes | github platform: PR converted to draft. |
-| `TICK_COMPLETED` | No | Continuing-state tick successfully performed an action. |
-| `TICK_SKIPPED` | No | Lock was held; this tick exited silently. |
 
 ## Gotchas
 
 - **Sink raises on failure.** If `escalate` or `report-status` fails (disk full, permission error on `/tmp`), the sink raises — it does NOT swallow the error. Failure handling is the tick's responsibility (see `drive-tick/SKILL.md` §Output Protocol → Error).
-- **No buffering.** `local` sink writes immediately (append + flush). No batching. Partial log is valuable; deferred log is useless.
+- **No buffering.** Write each block immediately. Partial log is valuable; deferred log is useless.
