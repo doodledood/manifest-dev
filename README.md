@@ -355,7 +355,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 | `/verify` | Internal | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed (fast checks first, e2e/deploy-dependent later). |
 | `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |
-| `/figure-out` | User-invoked | Collaborative thinking partner for any topic. Investigates before claiming, surfaces gaps, resists premature synthesis |
+| `/figure-out` | User-invoked | Collaborative thinking partner for any topic. Investigates before claiming, surfaces gaps, resists premature synthesis. Pass `--with-docs` to opt into glossary and ADR persistence |
 
 ### Review Agents
 
