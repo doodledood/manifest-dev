@@ -1,4 +1,4 @@
-# figure-out: --with-docs mode
+# figure-out: --with-docs
 
 Loaded when args contain `--with-docs`. Adds glossary and ADR persistence; without the flag, this file isn't read and default figure-out applies.
 
@@ -57,7 +57,7 @@ Rules:
 
 ## ADR format
 
-`docs/adr/{NNNN}-{slug}.md`. Highest existing number + 1.
+`docs/adr/{NNNN}-{slug}.md` with sequential numbering.
 
 ```md
 # {Short title of the decision}
