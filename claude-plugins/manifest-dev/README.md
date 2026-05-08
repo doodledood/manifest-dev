@@ -112,7 +112,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 | `/done` | Prints what got done and what was verified. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
 
-**Optional:** `/figure-out` — figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, and resists premature synthesis. Use when figuring it out IS the goal, or before `/define` when the problem space is foggy.
+**Optional:** `/figure-out` — figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, and resists premature synthesis. Use when figuring it out IS the goal, or before `/define` when the problem space is foggy. Pass `--with-docs` to opt into glossary and ADR persistence.
 
 ### Multi-Repo Manifests
 

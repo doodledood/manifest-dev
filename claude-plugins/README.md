@@ -29,7 +29,7 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 - `/do` - Autonomous execution with enforced verification gates. Iterates deliverables, satisfies ACs, calls /verify. Mid-execution user feedback defaults to autonomous Self-Amendment (pure questions answered inline). `/verify` runs selectively during the fix-loop with a mandatory full final gate before `/done`.
 
 **Optional skills:**
-- `/figure-out` - Figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, resists premature synthesis. Use before `/define` when the problem space is foggy.
+- `/figure-out` - Figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, resists premature synthesis. Use before `/define` when the problem space is foggy. Pass `--with-docs` to opt into glossary and ADR persistence.
 
 **Other skills:** `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command (add `--drive` for PR lifecycle or local loop) | `/drive` - Cron-driven loop that takes a manifest (or existing PR) to terminal state via repeated stateless ticks. Pluggable platform (`none`, `github`) and sink (`local`) adapters.
 
