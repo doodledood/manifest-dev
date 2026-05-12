@@ -272,13 +272,13 @@ Runtime mechanics — the core abstraction that replaces /drive's tick-driven ac
 
 **Acceptance Criteria:**
 
-- [AC-3.2] `claude-plugins/manifest-dev/agents/criteria-checker.md` documents its standard Output Format — PASS/FAIL with Status, Evidence, and (on FAIL) actionable detail in plain English. No separate "rich-hint convention" layer; a FAIL message is itself the hint. Hard rule preserved: outputs must not suggest pressing the merge button or invoking `gh pr merge` (INV-G8 enforces).
+- [AC-3.2] `claude-plugins/manifest-dev/agents/criteria-checker.md` documents its standard Output Format — PASS/FAIL with Status, Evidence, and (on FAIL) actionable detail in plain English. No separate "rich-hint convention" layer; a FAIL message is itself the hint. **Portability — the body MUST NOT reference caller-specific or platform-specific concepts** (GitHub, GitLab, PRs, merge buttons, `gh` CLI, `mergeable` composite state, etc.). criteria-checker is a generic SINGLE-criterion verifier; platform shape belongs to platform-specific agents (e.g., `github-pr-lifecycle`), and the merge-button prohibition itself is enforced at the workflow level by INV-G8 (grep across plugin source) — not by an inline rule in criteria-checker. Generic English `merge` (e.g., "merge two branches") is fine; what's forbidden is documenting platform-specific actions or prohibitions inside the generic agent.
   ```yaml
   verify:
     method: subagent
     agent: prompt-reviewer
     model: inherit
-    prompt: "Review claude-plugins/manifest-dev/agents/criteria-checker.md for prompt quality (no MEDIUM+). Verify the Output Format section documents the standard PASS/FAIL output (Status, Evidence, and on FAIL an actionable fix hint field) in natural English. Verify there is NO separate 'rich-hint convention' subsection or closed vocabulary block — the standard Output Format alone is sufficient; an extra layer documenting 'FAIL bodies may include hints' would be redundant (a FAIL message IS the hint). Flag MEDIUM if such a redundant section is present. Hard rule preserved: outputs must not suggest pressing the merge button or invoking `gh pr merge`. **Light-touch portability** still applies: opening role statement remains generic ('verify a SINGLE criterion. Read-only.') and does not hard-couple to manifest-dev's workflow."
+    prompt: "Review claude-plugins/manifest-dev/agents/criteria-checker.md for prompt quality (no MEDIUM+). Verify the Output Format section documents the standard PASS/FAIL output (Status, Evidence, and on FAIL an actionable fix hint field) in natural English. Verify there is NO separate 'rich-hint convention' subsection or closed vocabulary block — the standard Output Format alone is sufficient; an extra layer documenting 'FAIL bodies may include hints' would be redundant (a FAIL message IS the hint). Flag MEDIUM if such a redundant section is present. **Light-touch portability** still applies: opening role statement remains generic ('verify a SINGLE criterion. Read-only.') and does not hard-couple to manifest-dev's workflow. **Strict portability — no caller-specific or platform-specific leakage in the body.** Run a case-insensitive grep on the file body (excluding frontmatter) for these tokens: `gh ` (with trailing space, to avoid false-positive on words like `ghost`), `gh\\b` at end of line/string, `pull request`, `\\bPR\\b`, `merge button`, `merge-pr`, `mergeable`, `github`, `gitlab`, `bitbucket`. ANY match is a MEDIUM finding — these concepts belong to platform-specific agents (e.g., `github-pr-lifecycle`) or to workflow-level invariants (INV-G8 enforces the merge-button prohibition at the plugin-source level), not to the generic single-criterion verifier. Generic English `merge` (as a verb, e.g., 'merge two branches') is allowed; the ban is on platform-specific actions and prohibitions. Allowed: substring `merge` in generic prose. NOT allowed: any of the listed tokens as a standalone word or phrase."
   ```
 
 - [AC-3.3] /do SKILL.md documents three things about verifier hint handling: (a) FAIL bodies may include free-form natural-English hint text; /do parses with LLM judgment — no closed vocabulary, no required schema, no rigid dispatch table; (b) **action-aware fix-cap** — only code-change fix attempts increment the per-phase fix-verify counter; other retry shapes (waits for CI, retriggers of transient failures, replies on threads, pushes of sync updates, scope-amendment cycles) are not fix attempts and don't burn the budget; (c) explicit prohibition: `merge-pr` is not a supported action; /do does NOT invoke `gh pr merge` under any path. Mid-Execution Amendment section notes that scope-amend hints route through Self-Amendment, same as user-message-triggered amendments.
@@ -555,3 +555,26 @@ Regenerate multi-CLI distribution packages so dist/ reflects the current plugin 
 - /do SKILL.md and execution-modes unchanged in this amendment (Amendment 4 already simplified them).
 
 Recommend `--scope D1,D3`.
+
+### Amendment 6 (post-/done, from /do) — Strict portability for criteria-checker; no caller-specific leakage
+
+**Trigger**: User — "Do not expose irrelevant details to callers. Criteria agent doesn't need to know about GitHub." Concrete trigger: the Amendment 5 commit left an inline "Hard rule: hints must not suggest pressing the merge button or invoking `gh pr merge`..." sentence in `agents/criteria-checker.md`. That's GitHub-specific prose in a generic, callable-by-anyone verification agent. Wrong layer.
+
+**Rationale**: criteria-checker is a generic SINGLE-criterion verifier — agnostic to caller, workflow, and platform. The merge-button concern belongs to two layers that are already wired:
+- **INV-G8** — grep-enforces no `gh pr merge` / `merge-pr` across plugin source (workflow-level boundary).
+- **github-pr-lifecycle.md** — owns the GitHub-shape responsibility and carries its own Hard prohibitions section.
+
+Documenting the prohibition inline in criteria-checker conflates layers: it makes a generic agent know about a specific platform's button. Strip it; trust the layered enforcement.
+
+**Changes**:
+- **AC-3.2 description** — adds a portability requirement: criteria-checker's body MUST NOT reference caller-specific or platform-specific concepts (GitHub/GitLab/Bitbucket, PRs, merge buttons, gh CLI, mergeable composite state, etc.).
+- **AC-3.2 verifier prompt** — adds a strict portability grep clause: case-insensitive scan for tokens `gh ` / `pull request` / `\bPR\b` / `merge button` / `merge-pr` / `mergeable` / `github` / `gitlab` / `bitbucket` in the file body (frontmatter excluded). Any match is MEDIUM. Generic English `merge` (as a verb) is allowed.
+- **/do file change** (executed in /do, not /define): delete the "The 'Fix hint' field is free-form English ... Hard rule: hints must not suggest pressing the merge button or invoking `gh pr merge` — the merge button is out of scope for verifiers." sentence from `agents/criteria-checker.md`. Keep the standard Output Format block above it as-is.
+
+**Unchanged (load-bearing, kept):**
+- INV-G8 (no `gh pr merge` / `merge-pr` in plugin) — real safety boundary; still enforces the prohibition at workflow level.
+- `github-pr-lifecycle.md` Hard prohibitions — still carries the GitHub-specific merge-button rule (correct layer).
+- AC-3.2's "Light-touch portability" line that requires the opening role statement to stay generic — unchanged; this amendment makes the same principle stricter for the whole body.
+- All other ACs and PGs.
+
+**/do scope hint**: D3 (criteria-checker only). Recommend `--scope D3`.

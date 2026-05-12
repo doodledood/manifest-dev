@@ -78,8 +78,6 @@ Always return this structure:
 ```
 ```
 
-The "Fix hint" field is free-form English describing what's needed next; the caller reads with judgment. Hard rule: hints must not suggest pressing the merge button or invoking `gh pr merge` — the merge button is out of scope for verifiers.
-
 ## Type-Specific Guidance
 
 **Global Invariants (INV-G*)**: Task-level rules. Failure blocks entire task. Emphasize severity.
