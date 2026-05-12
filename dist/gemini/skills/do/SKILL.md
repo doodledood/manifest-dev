@@ -135,46 +135,16 @@ Full convention: `define/references/MULTI_REPO.md`.
 
 **Amendment flow.** Amend the manifest autonomously via Self-Amendment escalation and `/define --amend <manifest-path> --from-do`, then resume with the updated manifest and existing log. Log the trigger before amending. No human wait; the entire cycle is autonomous.
 
-**Verifier-emitted out-of-scope findings.** When a verifier's FAIL body contains an `out-of-scope` hint (see Hint Dispatch below) — typically an out-of-scope reviewer request or a manifest gap surfaced by the lifecycle agent — /do maps the finding to the same Self-Amendment path (`/define --amend <manifest-path> --from-do`). This mapping is /do's responsibility, not the verifier's. The verifier emits a *finding* (the situation: "this is beyond scope"); /do decides the workflow response (the action: amend the manifest). Same amendment flow as user-message-triggered amendments; different entry point.
+**Verifier-emitted out-of-scope findings.** When a verifier's FAIL body indicates the failure is beyond the current manifest's scope (see Verifier hints below) — typically an out-of-scope reviewer request or a manifest gap surfaced by the lifecycle agent — /do maps the finding to the same Self-Amendment path (`/define --amend <manifest-path> --from-do`). This mapping is /do's responsibility, not the verifier's. The verifier emits a *finding* (the situation: "this is beyond scope"); /do decides the workflow response (the action: amend the manifest). Same amendment flow as user-message-triggered amendments; different entry point.
 
 **Amendment loop guard.** If Self-Amendment escalations repeat without new external input (user messages or PR comments) between them, the amendments are likely oscillating; escalate as "Proposed Amendment" for human decision instead. The same guard applies to post-/done re-entry: when feedback after completion triggers re-entry to /do via amendment, the consecutive-amendments-without-external-input counter still applies. Purpose: prevent runaway loops and unnecessary token burn.
 
-## Hint Dispatch
+## Verifier hints
 
-Verifier FAIL bodies may carry a free-form, actionable hint describing what /do should do next. /do reads the body with LLM judgment and dispatches to one of six actions. Non-lifecycle verifiers may emit hints directly; lifecycle ACs route through agent-emitted hints (the `github-pr-lifecycle` agent — see `define/tasks/PR_LIFECYCLE.md`).
+Verifier FAIL bodies may carry a free-form, actionable hint describing what's needed next in natural English (wait for CI, change code, retrigger a transient failure, reply on a thread, push a sync update, surface an out-of-scope finding). /do reads the body with LLM judgment — no required vocabulary, no fixed schema, no dispatch table. Optional bracketed shorthand like `[sleep]` or `[out-of-scope]` may appear at the start of a hint when it helps clarity, but plain English works equally well.
 
-### Action vocabulary (closed set)
+**Action-aware fix-cap.** Only **code-change fix attempts** increment the per-phase fix-verify counter. Other retry shapes — re-verifying after a wait, retriggering a transient CI failure, posting a thread reply, pushing a sync update, or routing a scope-change through Self-Amendment — are not fix attempts and don't burn the budget. The principle is "what counts is what changes code in response to the failure" (see each execution-mode file's Fix-Verify Loops section). Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of retry shape.
 
-`sleep` | `fix-code` | `retrigger-ci` | `reply-thread` | `push-update` | `out-of-scope`
+**Out-of-scope findings route through Self-Amendment.** When a verifier surfaces that the failure is beyond the current manifest's scope, /do treats this as a scope shift and routes through Self-Amendment (`/define --amend <manifest-path> --from-do`) — same path as user-message-triggered amendments. The verifier reports the finding; /do owns the workflow response.
 
-The vocabulary names **findings** the verifier reports (what's true about the situation), not workflow actions. /do owns the mapping from finding to workflow step — for example, an `out-of-scope` finding maps internally to Self-Amendment via `/define --amend`. The verifier need not know about /define; /do is the layer that knows the workflow.
-
-`merge-pr` is **not a supported action**. /do does not invoke `gh pr merge` under any hint dispatch path. Terminal is "PR mergeable", not "PR merged" — pressing the button is left to a human or GitHub auto-merge.
-
-### Dispatch mapping
-
-| Action | What /do does | Tool invocation pattern |
-|---|---|---|
-| `sleep` | Wait, then re-run the failing verifier. Duration is hint-specified; if none, infer from context bounded by the criterion's `verify.timeout:` field. | `sleep <N>` (shell), then re-invoke /verify per the failure's scope rule (deliverable-scoped on AC failure; un-scoped on INV-G failure — see Selective verification + fix-loop scope above). |
-| `fix-code` | Treat as a normal code-fix failure. Read the hint for the failure shape, make the change, re-verify. | Edit / Write tools as needed |
-| `retrigger-ci` | Re-run the named CI check. Prefer native check-run rerun; fall back to an empty-commit push when the check is an external status. | `gh run rerun <run-id>`, or `git commit --allow-empty -m "chore: retrigger CI" && git push` |
-| `reply-thread` | Post a reply on the named review thread. False-positive replies briefly explain; Uncertain replies ask for clarification. | `gh pr comment` / `gh api repos/.../pulls/N/comments/<id>/replies` |
-| `push-update` | Sync the PR with a code or metadata update. Examples: merge base into branch (for mergeStateStatus=behind/dirty), update PR description, push a re-formatted commit. | `git merge origin/<base>`, `git push`, or `gh pr edit --body <text>` |
-| `out-of-scope` | The verifier reports a situation beyond the current manifest's scope (out-of-scope reviewer ask, manifest gap, scope shift). /do maps this finding to Self-Amendment — `/define --amend` updates the manifest, then /do resumes. | `/define --amend <manifest-path> --from-do` |
-
-### Parsing
-
-The hint is free-form English. /do parses with LLM judgment — no rigid schema. Two valid styles:
-
-- **Bracketed label** — `[push-update] mergeStateStatus=behind; merge origin/main into branch`
-- **Plain English** — `"PR branch is behind main; merge it forward before re-running CI"`
-
-When the action is ambiguous, /do defaults to `fix-code` interpretation — preserves the legacy fail-then-fix cycle (backwards compat with manifests that don't use the hint vocabulary).
-
-### Phase-aware dispatch
-
-Each hint dispatch counts (or does not count) toward the active execution mode's fix-cap. Only `fix-code` increments the per-phase fix-verify counter; `sleep`, `retrigger-ci`, `reply-thread`, `push-update`, and `out-of-scope` are non-counting actions (see each execution-mode file's Fix-Verify Loops section). Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of action mix.
-
-### Backwards compatibility
-
-Manifests authored without action-labeled hints (no `[action]` brackets, no vocabulary-specific phrasing) work unchanged: verifier FAIL bodies are read as legacy "fix hints," and /do defaults to `fix-code` dispatch. The per-phase fix-cap behaves identically to the pre-change contract for these manifests.
+**Hard prohibition.** Invoking `gh pr merge` is forbidden under any path. Terminal is "PR mergeable", not "PR merged" — pressing the merge button is left to a human or GitHub auto-merge. Hints that suggest the merge button are ignored as malformed (INV-G8 grep-enforces no surviving `merge-pr` references in plugin source).

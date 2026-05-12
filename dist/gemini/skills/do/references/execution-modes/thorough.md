@@ -13,17 +13,11 @@ Launch all verifiers in a single message within each phase. Maximize parallelism
 
 ## Fix-Verify Loops
 
-Unlimited fix-code attempts. Keep iterating until all criteria pass or you need to escalate a specific blocker.
+Unlimited code-change fix attempts. Keep iterating until all criteria pass or a criterion is genuinely blocking.
 
-**Action-aware fix-cap.** The fix-verify counter only increments on `fix-code` actions dispatched from a verifier hint (see /do SKILL.md "Hint Dispatch"). The other action labels are explicitly non-counting:
+**Action-aware fix-cap.** Only code-change fix attempts count toward the cap. Other retry shapes — re-verifying after a wait, retriggering a transient failure, posting a thread reply, pushing a sync update (merge base into branch, update PR description), routing a scope shift through Self-Amendment — are not fix attempts. They're shape-of-progress, not shape-of-fix. The principle: what counts is what changes code in response to the failure.
 
-- `sleep` — non-counting (a wait, not a fix attempt)
-- `retrigger-ci` — non-counting (re-runs CI without modifying code)
-- `reply-thread` — non-counting (posts a reply, no code change)
-- `push-update` — non-counting (sync-shaped action: merge base, update description, push a re-format)
-- `out-of-scope` — non-counting (the verifier reports a finding beyond the manifest's current scope; /do maps to Self-Amendment, and the amended manifest's ACs start their own fresh fix-loop)
-
-Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of action mix — see /do SKILL.md "Per-criterion timeout."
+Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of retry shape — see /do SKILL.md "Per-criterion timeout."
 
 ## Escalation
 

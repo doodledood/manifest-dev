@@ -76,33 +76,11 @@ Always return this structure:
 
 ### Rich-hint convention (FAIL bodies)
 
-A FAIL body may include a richer hint than a plain "fix hint" string — free-form English describing what the caller (/do) should do next. /do reads the body with LLM judgment and dispatches to one of the supported labels:
+A FAIL body may include a richer hint than a plain "fix hint" string — free-form English describing what the caller should do next (wait for CI, change code, retrigger a transient check, reply on a thread, push a sync update, surface an out-of-scope finding). The caller parses the body with LLM judgment; there is no required vocabulary or schema.
 
-`sleep` | `fix-code` | `retrigger-ci` | `reply-thread` | `push-update` | `out-of-scope`
+Optional bracketed shorthand labels like `[sleep]`, `[fix-code]`, `[retrigger-ci]`, `[reply-thread]`, `[push-update]`, `[out-of-scope]` may be used at the start of a hint when they help clarity — but plain English works equally well. Write what makes the finding actionable.
 
-**Findings, not workflow actions.** These labels name *findings* the verifier reports about the situation (the situation is: "CI is still running", "code needs to change", "this is out of scope for the current manifest", etc.). They are not workflow actions. /do (the consumer) is the layer that maps each finding to a workflow step — for example, an `out-of-scope` finding maps to Self-Amendment via `/define --amend`. Verifier authors emit findings; they do not need to know workflow concepts (like /define or Self-Amendment) to use this vocabulary.
-
-Authors of verifier `prompt:` fields may emit hints in two equivalent styles — both valid:
-
-- **Plain English** — `"CI in progress, retry in two minutes"`, `"thread #abc123 from @reviewer awaiting clarification"`.
-- **Bracketed label** — `"[sleep] CI in progress, retry in 2m"`, `"[reply-thread] thread #abc123 awaiting clarification"`.
-
-The bracketed form is unambiguous; the plain form trusts LLM-judgment dispatch. Use whichever fits the verifier's voice.
-
-**Canonical lifecycle producer.** The `github-pr-lifecycle` agent (and future `{platform}-pr-lifecycle` variants) is the canonical producer of lifecycle-check hints — it owns the gate logic and emits hints in this vocabulary. Non-lifecycle verifiers may emit hints directly using the same vocabulary; there is no requirement that hints originate from a specific agent.
-
-**Closed-set rule.** The closed set is exactly the six labels above. `merge-pr` and `amend-manifest` are both forbidden as labels: `merge-pr` is forbidden because the agent never emits it and /do never invokes `gh pr merge` — pressing the merge button is left to a human or GitHub auto-merge; `amend-manifest` is forbidden because it would name a workflow action (manifest amendment) rather than a finding — the agent reports the finding (`out-of-scope`), /do maps the finding to the workflow (Self-Amendment via `/define --amend`).
-
-**When to emit which hint:**
-
-- `sleep` — a wait-and-retry is the right next action (CI still running, mergeable=unknown, approval pending).
-- `fix-code` — actual code change required.
-- `retrigger-ci` — failure classified as Infrastructure (transient, not code-caused); within retrigger cap.
-- `reply-thread` — review thread needs an answer (False positive, Uncertain, or out-of-scope ask).
-- `push-update` — push a commit / merge base into branch / update PR description.
-- `out-of-scope` — out-of-scope ask, scope shift, or manifest gap surfaces. This is the agent's *finding*; /do owns the workflow response (Self-Amendment via /define --amend) — verifier authors emit the finding, not the workflow action.
-
-When no hint is emitted (or no action label is recognizable in the body), /do defaults to `fix-code` interpretation — preserves the legacy fail-then-fix cycle.
+Hard rule: hints must not suggest the caller press the merge button or invoke `gh pr merge` — the merge button is out of scope for verifiers (see INV-G8 in the project manifest). When no hint is emitted, the caller defaults to interpreting the failure as needing a code fix — preserves the legacy fail-then-fix cycle.
 
 ## Type-Specific Guidance
 
