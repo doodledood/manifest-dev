@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev",
-  "version": "0.107.0",
-  "description": "Manifest-driven workflows for structured task execution with verification gates. Includes /drive — a cron-driven PR-lifecycle runner (graduated from manifest-dev-experimental). Supports multi-repo changesets via a shared canonical manifest.",
+  "version": "0.108.0",
+  "description": "Manifest workflows for structured task execution with verification gates. PR-lifecycle work composes the github-pr-lifecycle agent through PR_LIFECYCLE.md task guidance; /define --babysit synthesizes a lifecycle manifest from an existing PR. Supports multi-repo changesets via a shared canonical manifest.",
   "keywords": [
     "manifest",
     "define",
@@ -14,11 +14,10 @@
     "trade-offs",
     "do",
     "auto",
+    "babysit",
+    "pr-lifecycle",
+    "lifecycle",
     "figure-out",
-    "drive",
-    "drive-tick",
-    "tick",
-    "loop",
     "multi-repo"
   ],
   "hooks": {

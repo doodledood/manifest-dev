@@ -55,14 +55,17 @@ Operational stances applied throughout the interview, synthesis, and verificatio
 | `--medium` | `local` | `local` | Sets communication channel. Other values → halt: "Medium '<value>' not yet supported. Currently supported: local". |
 | `--amend <path>` | manifest path | — | Amend an existing manifest (see Pre-flight). Missing argument → halt: "Cannot amend: --amend requires a manifest path." Path doesn't exist → halt: "Cannot amend: '<path>' not found." |
 | `--from-do` | boolean flag (used with `--amend`) | — | Marks amendment as triggered by `/do`. Accepts no value. See `references/AMENDMENT_MODE.md` Three Contexts §2 (From /do). |
+| `--babysit <pr-url>` | PR URL | — | Synthesize a lifecycle-only manifest from an existing PR. Routes to `references/BABYSIT_MODE.md`. Missing argument → halt: "--babysit requires a PR URL. Usage: /define --babysit <pr-url>." Inaccessible URL → halt naming the URL and the failure mode. |
+| `--platform` | `github` \| `none` | auto-detect | Sets PR-lifecycle platform. When omitted and `--babysit` is set, inferred from the PR URL host (github.com → github). When omitted and no babysit URL is given, inferred from the local `origin` remote (github.com → github; otherwise none). When `--platform github` resolves, PR_LIFECYCLE.md composes onto CODING.md per Domain Guidance. Invalid value → halt: "Invalid platform '<value>'. Valid values: github \| none." |
 | `--canvas` | boolean flag | — | When present, generate a Shared Understanding Canvas alongside the manifest — a visual side-channel the user glances at during the chat interview to spot misalignment on intent, flow, and scope at a glance. Follow `references/CANVAS_MODE.md` (it owns its own activation gate, lifecycle, and run-order placement). Accepts no value. |
 
 Flags can appear anywhere in `$ARGUMENTS`. If `$ARGUMENTS` contains no task description (empty, or only flags with no free-form text), ask: "What would you like to build or change?" Exception: skip this prompt when **any** amend trigger applies — `--amend` is set, OR `$ARGUMENTS` contains a `/tmp/manifest-*.md` path (a bare path counts as routing, not as task text). Pre-flight handles amend context: the task description may live in conversation, the prior manifest, or be elaborated during the amendment interview.
 
 ## Pre-flight: Resolve Manifest Context
 
-Pre-flight resolves to **amend** or **fresh**. When amend is selected, follow `references/AMENDMENT_MODE.md` for amendment rules.
+Pre-flight resolves to **babysit**, **amend**, or **fresh**. When babysit is selected, follow `references/BABYSIT_MODE.md`. When amend is selected, follow `references/AMENDMENT_MODE.md`.
 
+- `--babysit <pr-url>` set → **babysit** that PR. `--babysit` + `--amend` together → halt: "Cannot babysit and amend simultaneously. --babysit synthesizes a new manifest from a PR; --amend modifies an existing one. Pick one."
 - `--amend <path>` set, OR `$ARGUMENTS` contains any `/tmp/manifest-*.md` path → **amend** that manifest. Confirm approach with the user only if the referenced manifest's relationship to the new task is unclear.
 - Transcript contains a prior `Manifest complete: /tmp/manifest-*.md` line, or such a path is mentioned in the conversation → read `references/AMENDMENT_MODE.md` "Session-Default Detection"; that section's branch determines amend or fresh.
 - Else → **fresh**.
@@ -93,6 +96,7 @@ Domain-specific guidance lives in `tasks/`:
 | **Feature** | New functionality, APIs, enhancements | `tasks/FEATURE.md` |
 | **Bug** | Defects, errors, regressions, "not working", "broken" | `tasks/BUG.md` |
 | **Refactor** | Restructuring, "clean up", pattern changes | `tasks/REFACTOR.md` |
+| **PR lifecycle** | Shipping a change through CI, review, approvals to mergeable | `tasks/PR_LIFECYCLE.md` |
 | **Prompting** | LLM prompts, skills, agents, system instructions | `tasks/PROMPTING.md` |
 | **Writing** | Prose, articles, emails, copy, social, creative (base for Blog, Document) | `tasks/WRITING.md` |
 | **Document** | Specs, proposals, reports, formal docs (base: Writing) | `tasks/DOCUMENT.md` |
@@ -100,6 +104,8 @@ Domain-specific guidance lives in `tasks/`:
 | **Blog** | Blog posts, articles, tutorials (base: Writing) | `tasks/BLOG.md` |
 
 **Composition.** Code-change tasks combine CODING.md (base quality gates) with domain specifics. Text-authoring tasks combine WRITING.md with content-type guidance. Research composes RESEARCH.md with source-type files in `tasks/research/sources/` (RESEARCH.md's Data Sources table lists what's available and probes which sources apply). Domains aren't mutually exclusive: a "bug fix that requires refactoring" benefits from both BUG.md and REFACTOR.md.
+
+**PR lifecycle composition.** PR_LIFECYCLE.md composes onto CODING.md when `--platform github` resolves — auto-detected from the `origin` remote (github.com → github) unless `--platform none` is explicitly passed. The composition templates a single AC that invokes the `github-pr-lifecycle` agent; the agent owns lifecycle gate logic, and the AC's `verify.prompt:` field is the steering surface for per-PR nuances (custom labels, named approvers, known-flaky CI, retrigger overrides). Platform-variant naming convention: `{platform}-pr-lifecycle` — future GitLab/Bitbucket variants follow the same shape. Multi-repo manifests auto-template the AC per repo declared in `Repos:`.
 
 **Exception.** PROMPTING tasks do NOT compose with CODING.md unless the task also changes executable code. PROMPTING.md has its own quality gates. When a task changes both prompts AND code, apply both, scoping each to the relevant files.
 
@@ -357,6 +363,7 @@ Three categories, each covering output or process:
   verify:
     method: bash | codebase | subagent | research | manual | deferred-auto
     phase: 1                       # optional integer, default 1; higher phases run after lower pass
+    timeout: 30s | 5m | 6h | 1d    # optional shorthand duration; absent → no wall-clock cap (legacy behavior)
     inner_method: subagent | bash | codebase | research   # REQUIRED when method: deferred-auto
     command: "[if bash, or if deferred-auto with inner_method: bash]"
     agent: "[if subagent, or if deferred-auto with inner_method: subagent]"
@@ -365,6 +372,8 @@ Three categories, each covering output or process:
   ```
 
 *`deferred-auto`: user-triggered; runs only via `/verify --deferred`. The required `inner_method` field names the underlying verifier type used when the deferred run executes. See `references/MULTI_REPO.md` §e for cross-repo semantics.*
+
+*`timeout`: optional wall-clock cap for the criterion's verifier (parsed by /do; see /do SKILL.md). Accepted shorthand: integer + `s` / `m` / `h` / `d` suffix (seconds / minutes / hours / days). Absent → no cap (legacy behavior preserved). Use for criteria that may legitimately wait — CI polling, approval-wait, deploy cycles — where bounding total runtime matters.*
 
 *Auto-decided items (Encoding Disciplines § Auto-decided items) carry an `(auto)` annotation immediately after the ID, e.g. `- [INV-G2] (auto) Description: ...`. The same convention applies to AC-* and PG-* entries that were auto-decided. Each auto-decided item also appears in Known Assumptions with its reasoning.*
 
@@ -464,6 +473,8 @@ The medium is encoded in the manifest's Intent section as `Medium: <value>` so d
 
 /define ends here. Output the manifest path and stop. Substitute the placeholders before printing:
 - `{timestamp}` → the value used for the manifest filename.
+- `<dir>` → the current project directory in the slug form used by `~/.claude/projects/` (path separators replaced with `-`, e.g., `-home-user-manifest-dev` for `/home/user/manifest-dev`).
+- `${CLAUDE_SESSION_ID}` → the value of the `CLAUDE_SESSION_ID` environment variable.
 - `[log-file-path if iterating]` → if this run iterated on a previous manifest that had an execution log, substitute the actual log path; otherwise omit the bracketed clause entirely (including the trailing space).
 
 ```text
@@ -471,5 +482,3 @@ Manifest complete: /tmp/manifest-{timestamp}.md
 
 To execute: /do /tmp/manifest-{timestamp}.md [log-file-path if iterating]
 ```
-
-(OpenCode does not expose a per-session JSONL transcript file the agent can hand to the user — the Session line from the Claude Code source is intentionally omitted.)

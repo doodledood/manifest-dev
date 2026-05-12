@@ -32,7 +32,7 @@ Read before building plugins:
 - `claude-plugins/` - Individual plugins, each with `.claude-plugin/plugin.json`
 - `pyproject.toml` - Python tooling config (ruff, black, mypy)
 
-**Symlink note**: `.claude/` skills/agents are hardlinked to their `claude-plugins/manifest-dev/` counterparts for local development on environments where plugins aren't supported yet. When modifying plugin components, **always edit the `claude-plugins/` version** — changes propagate to `.claude/` via the hardlink.
+**Symlink note**: `.claude/` skills/agents are symlinked to their `claude-plugins/manifest-dev/` counterparts for local development on environments where plugins aren't supported yet. When modifying plugin components, **always edit the `claude-plugins/` version** — `.claude/` resolves through the symlink to the same file. (Previous revisions used hardlinks; Edit's atomic-replace routinely broke them, so the convention is symlinks now. New agents/skills should be added with `ln -s ../../claude-plugins/manifest-dev/agents/<name>.md .claude/agents/<name>.md`.)
 
 **Local Claude skills → `.agents/skills/`**: `.agents/skills/` mirrors `.claude/skills/` for the Agent Skills Open Standard (Codex CLI, etc.). **Whenever you add a new skill under `.claude/skills/`, also create the matching symlink in `.agents/skills/`**:
 

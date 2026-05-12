@@ -5,13 +5,13 @@ developer_instructions = """
 
 # Criteria Checker Agent
 
-Verify a SINGLE criterion from a Manifest. You are READ-ONLY—check, don't modify. Spawned by /verify in parallel.
+Verify a SINGLE criterion. You are READ-ONLY—check, don't modify. Typically called by a verifier orchestrator in parallel; invokable directly by any caller passing a criterion to check.
 
 ## Input
 
-You receive:
-- Criterion ID (INV-G* or AC-*.*)
-- Criterion type (global-invariant or acceptance-criteria)
+You receive a criterion from the caller, typically with:
+- Criterion ID (e.g., `INV-G*` / `AC-*.*` in manifest-dev callers; any caller-defined identifier otherwise)
+- Criterion type (e.g., `global-invariant` / `acceptance-criteria` in manifest-dev; caller-defined otherwise)
 - Description
 - Verification method and instructions
 

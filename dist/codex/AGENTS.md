@@ -9,7 +9,9 @@ This project uses a **define -> do -> verify -> done** workflow, powered by skil
 3. **/verify** -- Parallel verification of all criteria. Spawns agents (listed below) for quality gate checks.
 4. **/done** -- Completion checkpoint. Confirms all criteria pass and produces a summary.
 
-Supporting skills: /auto (end-to-end autonomous), /figure-out (collaborative deep understanding), /escalate (structured escalation), /drive (cron-driven PR lifecycle / manifest-to-green loop).
+Supporting skills: /auto (end-to-end autonomous; supports --babysit <pr-url> for tending an existing PR), /figure-out (collaborative deep understanding), /escalate (structured escalation).
+
+PR-lifecycle work composes the github-pr-lifecycle agent through tasks/PR_LIFECYCLE.md task guidance. /define --babysit <pr-url> synthesizes a lifecycle manifest from an existing PR. /do drives the PR to a mergeable state — the merge button is left to a human or GitHub auto-merge.
 
 Skills handle the workflow orchestration. Agents listed below are used for verification and analysis.
 
@@ -31,6 +33,7 @@ Skills handle the workflow orchestration. Agents listed below are used for verif
 ## Verification Agents
 
 - **criteria-checker**: Read-only verification agent. Validates a single criterion using commands, codebase analysis, file inspection, reasoning, or web research. Spawned in parallel by /verify.
+- **github-pr-lifecycle**: Steerable agent that inspects a GitHub PR's lifecycle state and returns a rich actionable hint for /do to dispatch. Read-only; never invokes the merge button.
 - **manifest-verifier**: Reviews /define manifests for gaps. Outputs actionable questions to continue the interview.
 
 ## How to Use

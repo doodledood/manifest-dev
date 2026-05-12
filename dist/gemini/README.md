@@ -6,8 +6,8 @@ Verification-first manifest workflows for Gemini CLI. Plan work with structured 
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 9 | Workflow skills: define, do, verify, auto, figure-out, escalate, done, drive, drive-tick |
-| Agents | 14 | Specialized review agents for code quality verification |
+| Skills | 7 | Workflow skills: define, do, verify, auto, figure-out, escalate, done |
+| Agents | 15 | Specialized agents for code review, manifest verification, and PR lifecycle |
 | Hooks | 5 | Event-driven hooks enforcing workflow discipline |
 
 ## Installation
@@ -51,8 +51,8 @@ The `install.sh` script sets this automatically.
 
 | Feature | Claude Code | Gemini CLI | Notes |
 |---------|-------------|------------|-------|
-| Skills | All 9 | All 9 | Copied unchanged |
-| Agents | All 14 | All 14 | Frontmatter converted |
+| Skills | All 7 | All 7 | Copied unchanged |
+| Agents | All 15 | All 15 | Frontmatter converted |
 | Hooks | 5 hooks | 5 hooks | Adapted to Gemini event model |
 | Stop enforcement | PreToolUse/Stop | BeforeTool/AfterAgent | Retry counter for loop prevention |
 | Context injection | additionalContext | additionalContext | Same mechanism |
@@ -81,7 +81,9 @@ The `install.sh` script sets this automatically.
 3. `/verify` — Spawns parallel verifier agents for all criteria
 4. `/auto` — Chains define and do autonomously
 
-Supporting skills: `/figure-out` for deep investigation, `/escalate` for blocking issues, `/drive` for cron-driven PR lifecycle automation and manifest-to-green loops.
+Supporting skills: `/figure-out` for deep investigation, `/escalate` for blocking issues.
+
+**PR lifecycle.** PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. `/auto --babysit <pr-url>` chains synthesis and execution in one command.
 
 ## Repository
 

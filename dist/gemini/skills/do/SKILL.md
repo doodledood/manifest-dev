@@ -83,6 +83,14 @@ The mandatory full final gate (auto-triggered by /verify after true-selective gr
 
 **Phase-aware verification.** /verify runs criteria in phases (ascending by `phase:` field, default 1). It may report "Phase N failed, Phase N+1 not run." After fixing failures, /verify restarts from Phase 1 to catch regressions. Loop limits apply per-phase; regressions increment the broken phase's counter, not the phase that caused them.
 
+**Per-criterion timeout.** Each criterion's verify block may declare an optional `timeout:` field (see `define/SKILL.md` Manifest Schema). Accepted shorthand: integer + `s` / `m` / `h` / `d` suffix (e.g. `30s`, `5m`, `6h`, `1d`). Parser semantics:
+
+- **Absent** → no wall-clock cap; legacy behavior preserved.
+- **Valid shorthand** → parsed to seconds; the verifier invocation is capped at that wall-clock duration.
+- **Malformed** (unknown suffix, non-integer, negative, empty string) → halt with an actionable error naming the offending AC ID and the invalid value: `Invalid verify.timeout '<value>' on <criterion-id>. Accepted: integer + s|m|h|d suffix (e.g., 30s, 5m, 6h, 1d).`
+
+Use `timeout:` for criteria that legitimately wait — CI polling, approval-wait, deploy cycles. It is the wall-clock cap that prevents lifecycle-AC runaway when the dispatched action is `sleep` repeatedly. Cross-reference: action-aware fix-cap (see each execution-mode file) bounds fix-code attempts; `verify.timeout:` bounds total wall-clock per criterion.
+
 **Stop requires /escalate.** During /do, you cannot stop without calling /verify (which routes to /done or /escalate) or calling /escalate directly. /do does not voluntarily emit `User-Requested Pause` — that escalation type fires only in response to a user message during the run that explicitly requests a pause (the message must be quoted in the escalation body; see `escalate/SKILL.md` "User-Requested Pause"). Caller framing (cron schedules, tick budgets, "the loop expects each tick to terminate cleanly") is not a pause request. Silent halts and bare statements like "Done." or "Waiting." are not valid exits.
 
 ## Memento Pattern
@@ -127,4 +135,16 @@ Full convention: `define/references/MULTI_REPO.md`.
 
 **Amendment flow.** Amend the manifest autonomously via Self-Amendment escalation and `/define --amend <manifest-path> --from-do`, then resume with the updated manifest and existing log. Log the trigger before amending. No human wait; the entire cycle is autonomous.
 
+**Verifier-emitted out-of-scope findings.** When a verifier's FAIL body indicates the failure is beyond the current manifest's scope (see Verifier hints below) — typically an out-of-scope reviewer request or a manifest gap surfaced by the lifecycle agent — /do maps the finding to the same Self-Amendment path (`/define --amend <manifest-path> --from-do`). This mapping is /do's responsibility, not the verifier's. The verifier emits a *finding* (the situation: "this is beyond scope"); /do decides the workflow response (the action: amend the manifest). Same amendment flow as user-message-triggered amendments; different entry point.
+
 **Amendment loop guard.** If Self-Amendment escalations repeat without new external input (user messages or PR comments) between them, the amendments are likely oscillating; escalate as "Proposed Amendment" for human decision instead. The same guard applies to post-/done re-entry: when feedback after completion triggers re-entry to /do via amendment, the consecutive-amendments-without-external-input counter still applies. Purpose: prevent runaway loops and unnecessary token burn.
+
+## Verifier hints
+
+Verifier FAIL bodies may carry a free-form, actionable hint describing what's needed next in natural English (wait for CI, change code, retrigger a transient failure, reply on a thread, push a sync update, surface an out-of-scope finding). /do reads the body with LLM judgment — no required vocabulary, no fixed schema, no dispatch table. Optional bracketed shorthand like `[sleep]` or `[out-of-scope]` may appear at the start of a hint when it helps clarity, but plain English works equally well. When the body is unlabeled or ambiguous, treat it as a code-fix hint — this preserves the legacy fail→fix→reverify cycle for manifests authored before this protocol existed.
+
+**Action-aware fix-cap.** Only **code-change fix attempts** increment the per-phase fix-verify counter. Other retry shapes — re-verifying after a wait, retriggering a transient CI failure, posting a thread reply, pushing a sync update, or routing a scope-change through Self-Amendment — are not fix attempts and don't burn the budget. The principle is "what counts is what changes code in response to the failure" (see each execution-mode file's Fix-Verify Loops section). Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of retry shape.
+
+**Out-of-scope findings route through Self-Amendment.** When a verifier surfaces that the failure is beyond the current manifest's scope, /do treats this as a scope shift and routes through Self-Amendment (`/define --amend <manifest-path> --from-do`) — same path as user-message-triggered amendments. The verifier reports the finding; /do owns the workflow response.
+
+**Hard prohibition.** Invoking `gh pr merge` is forbidden under any path. Terminal is "PR mergeable", not "PR merged" — pressing the merge button is left to a human or GitHub auto-merge. Hints that suggest the merge button are ignored as malformed (INV-G8 grep-enforces no surviving `merge-pr` references in plugin source).

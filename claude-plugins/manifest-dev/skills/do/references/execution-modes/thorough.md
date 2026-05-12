@@ -13,7 +13,11 @@ Launch all verifiers in a single message within each phase. Maximize parallelism
 
 ## Fix-Verify Loops
 
-Unlimited. Keep iterating until all criteria pass or you need to escalate a specific blocker.
+Unlimited code-change fix attempts. Keep iterating until all criteria pass or a criterion is genuinely blocking.
+
+**Action-aware fix-cap.** Only code-change fix attempts count toward the cap. Other retry shapes — re-verifying after a wait, retriggering a transient failure, posting a thread reply, pushing a sync update (merge base into branch, update PR description), routing a scope shift through Self-Amendment — are not fix attempts. They're shape-of-progress, not shape-of-fix. The principle: what counts is what changes code in response to the failure.
+
+Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of retry shape — see /do SKILL.md "Per-criterion timeout."
 
 ## Escalation
 

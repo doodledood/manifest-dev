@@ -6,7 +6,7 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 9 | Core workflow skills (auto, define, do, done, drive, drive-tick, escalate, figure-out, verify) |
+| Skills | 7 | Core workflow skills (auto, define, do, done, escalate, figure-out, verify) |
 | Agents | 14 | Specialized reviewer and verification agents |
 | Commands | 7 | User-invocable slash commands |
 | Plugin | 1 | TypeScript hook plugin for workflow enforcement |
@@ -68,13 +68,11 @@ cp dist/opencode/AGENTS.md .opencode/AGENTS.md
 After installation, invoke workflows via slash commands:
 
 ```
-/define-manifest-dev                    Plan and scope a task
+/define-manifest-dev                    Plan and scope a task (--babysit <pr-url> to synthesize from existing PR)
 /do-manifest-dev                        Execute a manifest
-/auto-manifest-dev                      End-to-end autonomous execution
+/auto-manifest-dev                      End-to-end autonomous execution (--babysit <pr-url> to tend existing PR)
 /verify-manifest-dev                    Run parallel verifiers (use --deferred for deferred-auto criteria)
 /figure-out-manifest-dev                Deep collaborative understanding
-/drive-manifest-dev                     Cron-driven manifest-to-green loop / PR lifecycle automation
-/drive-tick-manifest-dev                Single drive iteration (called by /loop via /drive)
 ```
 
 ## Feature Parity with Claude Code
@@ -104,7 +102,7 @@ After installation, invoke workflows via slash commands:
 
 ```
 dist/opencode/
-├── agents/                          # 14 converted agents
+├── agents/                          # 15 converted agents
 │   ├── change-intent-reviewer.md
 │   ├── code-bugs-reviewer.md
 │   ├── test-quality-reviewer.md
@@ -117,25 +115,22 @@ dist/opencode/
 │   ├── contracts-reviewer.md
 │   ├── criteria-checker.md
 │   ├── docs-reviewer.md
+│   ├── github-pr-lifecycle.md
 │   ├── manifest-verifier.md
 │   └── type-safety-reviewer.md
-├── commands/                        # 7 user commands
+├── commands/                        # 5 user commands
 │   ├── auto.md
 │   ├── define.md
 │   ├── do.md
 │   ├── figure-out.md
-│   ├── drive.md
-│   ├── drive-tick.md
 │   └── verify.md
-├── skills/                          # 9 skills (with subdirectories)
+├── skills/                          # 7 skills (with subdirectories)
 │   ├── auto/
 │   ├── define/
 │   ├── do/
 │   ├── done/
 │   ├── escalate/
 │   ├── figure-out/
-│   ├── drive/
-│   ├── drive-tick/
 │   └── verify/
 ├── plugins/
 │   ├── index.ts                     # Hook plugin

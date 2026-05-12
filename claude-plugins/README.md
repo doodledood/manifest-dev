@@ -14,9 +14,9 @@ Front-load the thinking so AI agents get it right the first time.
 
 | Plugin | What It Does |
 |--------|--------------|
-| [`manifest-dev`](./manifest-dev) | Verification-first manifest workflows. The manifest is the canonical source of truth for the PR/branch — feedback during or after work defaults to amending it. Verification is selective during fix-loop and full before `/done` (mandatory final gate). Phased by iteration speed (fast checks first, e2e/deploy-dependent later). Includes `/drive` — a cron-driven PR-lifecycle runner. Multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
+| [`manifest-dev`](./manifest-dev) | Verification-first manifest workflows. The manifest is the canonical source of truth for the PR/branch — feedback during or after work defaults to amending it. Verification is selective during fix-loop and full before `/done` (mandatory final gate). Phased by iteration speed (fast checks first, e2e/deploy-dependent later). PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md task guidance; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. Multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
 | [`manifest-dev-tools`](./manifest-dev-tools) | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. |
-| [`manifest-dev-experimental`](./manifest-dev-experimental) | **Placeholder.** Currently ships no skills — reserved for future experiments. `/drive` and `/drive-tick` graduated from this plugin into `manifest-dev`. |
+| [`manifest-dev-experimental`](./manifest-dev-experimental) | **Placeholder.** Currently ships no skills — reserved for future experiments. |
 
 ## Plugin Details
 
@@ -31,15 +31,13 @@ Manifest-driven workflows separating **what to build** (Deliverables) from **rul
 **Optional skills:**
 - `/figure-out` - Figure things out together on any topic. Truth-convergent thinking partner that investigates before claiming, surfaces gaps, resists premature synthesis. Use before `/define` when the problem space is foggy. Pass `--with-docs` to opt into glossary and ADR persistence.
 
-**Other skills:** `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command (add `--drive` for PR lifecycle or local loop) | `/drive` - Cron-driven loop that takes a manifest (or existing PR) to terminal state via repeated stateless ticks. Pluggable platform (`none`, `github`) and sink (`local`) adapters.
+**Other skills:** `/auto` - End-to-end autonomous `/define` → auto-approve → `/do` in a single command. Supports `--platform` and `--babysit <pr-url>` for tending an existing PR end-to-end without manifest-dev setup.
 
-**Multi-repo support:** A single canonical `/tmp` manifest can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` navigates absolute paths from the map (no filter logic — the LLM handles repo navigation natively). `/drive` runs per-repo against the same shared manifest. Cross-repo gates the user explicitly triggers use `method: deferred-auto` + `/verify --deferred`. See `skills/define/references/MULTI_REPO.md`.
+**Multi-repo support:** A single canonical `/tmp` manifest can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` navigates absolute paths from the map (no filter logic — the LLM handles repo navigation natively). PR-lifecycle work auto-templates one `github-pr-lifecycle` agent invocation per repo against the shared manifest. Cross-repo gates the user explicitly triggers use `method: deferred-auto` + `/verify --deferred`. See `skills/define/references/MULTI_REPO.md`.
 
 **Internal skills:** `/verify`, `/done`, `/escalate`
 
-**Other user-invocable skills:** `/drive-tick` (also called by `/loop` via `/drive`)
-
-**Review agents:** `criteria-checker`, `manifest-verifier`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `test-quality-reviewer` (coverage gaps + tautological-test detection), `prose-value-reviewer` (code comments + repo doc files: AI-tells, narrating-the-obvious, puffery), `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
+**Review agents:** `criteria-checker`, `manifest-verifier`, `github-pr-lifecycle`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `test-quality-reviewer` (coverage gaps + tautological-test detection), `prose-value-reviewer` (code comments + repo doc files: AI-tells, narrating-the-obvious, puffery), `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
 
 **Hooks** enforce workflow integrity: prevent premature stopping, restore context after compaction, nudge manifest reads before verification, track execution log updates, and detect manifest amendments during `/do`.
 
@@ -55,8 +53,6 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 ### manifest-dev-experimental
 
 **Placeholder** plugin. Currently ships no skills — reserved for future experiments that need a separate, opt-in surface from the core plugin.
-
-`/drive` and `/drive-tick` graduated from this plugin into [`manifest-dev`](#manifest-dev). For drive's full design — pluggable platform (`none`, `github`) and sink (`local`) adapters, intra-tick `/do` convergence, CI triage, multi-repo PR-set handling, lock semantics, and budget caps — see `manifest-dev/skills/drive/SKILL.md` and the references under `manifest-dev/skills/drive/references/`.
 
 ## Contributing
 

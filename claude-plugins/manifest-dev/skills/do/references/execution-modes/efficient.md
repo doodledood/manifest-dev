@@ -18,7 +18,11 @@ Sequential — launch verifiers one at a time within each phase. Minimizes concu
 
 ## Fix-Verify Loops
 
-Max 1 per phase.
+Max 1 code-change fix attempt per phase.
+
+**Action-aware fix-cap.** Only code-change fix attempts count toward the cap. Other retry shapes — re-verifying after a wait, retriggering a transient failure, posting a thread reply, pushing a sync update, routing a scope shift through Self-Amendment — are not fix attempts. They're shape-of-progress, not shape-of-fix.
+
+Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of retry shape — see /do SKILL.md "Per-criterion timeout."
 
 ## Escalation
 
