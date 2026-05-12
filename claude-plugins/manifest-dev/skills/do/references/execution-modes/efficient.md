@@ -26,7 +26,7 @@ Max 1 `fix-code` action per phase.
 - `retrigger-ci` — non-counting (re-runs CI without modifying code)
 - `reply-thread` — non-counting (posts a reply, no code change)
 - `push-update` — non-counting (sync-shaped action)
-- `amend-manifest` — non-counting (routes through Self-Amendment)
+- `out-of-scope` — non-counting (verifier finding; /do maps to Self-Amendment)
 
 Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of action mix — see /do SKILL.md "Per-criterion timeout."
 

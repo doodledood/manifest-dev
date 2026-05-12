@@ -21,7 +21,7 @@ Unlimited fix-code attempts. Keep iterating until all criteria pass or you need 
 - `retrigger-ci` — non-counting (re-runs CI without modifying code)
 - `reply-thread` — non-counting (posts a reply, no code change)
 - `push-update` — non-counting (sync-shaped action: merge base, update description, push a re-format)
-- `amend-manifest` — non-counting (routes through Self-Amendment; the amended manifest's ACs start their own fresh fix-loop)
+- `out-of-scope` — non-counting (the verifier reports a finding beyond the manifest's current scope; /do maps to Self-Amendment, and the amended manifest's ACs start their own fresh fix-loop)
 
 Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of action mix — see /do SKILL.md "Per-criterion timeout."
 

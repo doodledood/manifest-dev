@@ -78,7 +78,7 @@ Always return this structure:
 
 A FAIL body may include a richer hint than a plain "fix hint" string — free-form English describing what the caller (/do) should do next. /do reads the body with LLM judgment and dispatches to one of the supported actions:
 
-`sleep` | `fix-code` | `retrigger-ci` | `reply-thread` | `push-update` | `amend-manifest`
+`sleep` | `fix-code` | `retrigger-ci` | `reply-thread` | `push-update` | `out-of-scope`
 
 Authors of verifier `prompt:` fields may emit hints in two equivalent styles — both valid:
 
@@ -98,7 +98,7 @@ The bracketed form is unambiguous; the plain form trusts LLM-judgment dispatch. 
 - `retrigger-ci` — failure classified as Infrastructure (transient, not code-caused); within retrigger cap.
 - `reply-thread` — review thread needs an answer (False positive, Uncertain, or out-of-scope ask).
 - `push-update` — push a commit / merge base into branch / update PR description.
-- `amend-manifest` — out-of-scope ask, scope shift, or manifest gap surfaces; route via Self-Amendment.
+- `out-of-scope` — out-of-scope ask, scope shift, or manifest gap surfaces. This is the agent's *finding*; /do owns the workflow response (Self-Amendment via /define --amend) — verifier authors emit the finding, not the workflow action.
 
 When no hint is emitted (or no action label is recognizable in the body), /do defaults to `fix-code` interpretation — preserves the legacy fail-then-fix cycle.
 

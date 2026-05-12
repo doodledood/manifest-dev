@@ -33,7 +33,7 @@ Skills handle the workflow orchestration. Agents listed below are used for verif
 ## Verification Agents
 
 - **criteria-checker**: Read-only verification agent. Validates a single criterion using commands, codebase analysis, file inspection, reasoning, or web research. Spawned in parallel by /verify.
-- **github-pr-lifecycle**: Steerable agent that inspects a GitHub PR's lifecycle state and returns a rich actionable hint (sleep / fix-code / retrigger-ci / reply-thread / push-update / amend-manifest) for /do to dispatch. Read-only; never invokes the merge button.
+- **github-pr-lifecycle**: Steerable agent that inspects a GitHub PR's lifecycle state and returns a rich actionable hint (sleep / fix-code / retrigger-ci / reply-thread / push-update / out-of-scope) for /do to dispatch. Read-only; never invokes the merge button.
 - **manifest-verifier**: Reviews /define manifests for gaps. Outputs actionable questions to continue the interview.
 
 ## How to Use
