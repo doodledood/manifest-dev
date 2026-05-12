@@ -14,6 +14,6 @@ Loaded when `/do` receives `--scope <deliverable-ids>`. Limits execution to a su
 
 5. **Log scoped context.** At the start of a scoped run, log which deliverables are in-scope and which are skipped. This makes the execution log self-documenting for future readers.
 
-## When `/drive` Invokes Scoped `/do`
+## When the User Invokes Scoped `/do`
 
-`/drive` (and any other PR-tending consumer skill) uses `--scope` to limit blast radius after PR review feedback. It determines affected deliverables from PR comments and passes only those. The manifest may have been amended (new regression ACs added) before this scoped run — read the manifest fresh, not from memory.
+`--scope` limits blast radius after PR review feedback or targeted regression fixes. The user (or a calling workflow) determines affected deliverables and passes only those. The manifest may have been amended (new regression ACs added) before this scoped run — read the manifest fresh, not from memory.

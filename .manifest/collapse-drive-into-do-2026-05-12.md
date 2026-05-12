@@ -70,7 +70,7 @@
   ```yaml
   verify:
     method: bash
-    command: "! grep -rEn '/drive|/drive-tick|drive-log-|drive-lock-|drive-tick:' --include='*.md' --include='*.json' --include='*.py' /home/user/manifest-dev 2>/dev/null | grep -v -E '^(/home/user/manifest-dev/(\\.manifest|dist|node_modules))' | grep -v -E '/tmp/' | head -50"
+    command: "OUT=$(grep -rEn '/drive|/drive-tick|drive-log-|drive-lock-|drive-tick:' --include='*.md' --include='*.json' --include='*.py' /home/user/manifest-dev 2>/dev/null | grep -v -E '^(/home/user/manifest-dev/(\\.manifest|dist|node_modules))' | grep -v -E '/tmp/' | head -50); [ -z \"$OUT\" ] || { echo \"$OUT\"; false; }"
   ```
 
 - [INV-G4] Plugin keywords and description in `claude-plugins/manifest-dev/.claude-plugin/plugin.json` do not mention drive, drive-tick, tick, or loop. Version is bumped from `0.107.0`.
@@ -102,14 +102,14 @@
   verify:
     method: bash
     phase: 2
-    command: "! grep -rEn '/drive|/drive-tick|drive-log-|drive-lock-' /home/user/manifest-dev/dist 2>/dev/null | head -20"
+    command: "OUT=$(grep -rEn '/drive|/drive-tick|drive-log-|drive-lock-' /home/user/manifest-dev/dist 2>/dev/null | head -20); [ -z \"$OUT\" ] || { echo \"$OUT\"; false; }"
   ```
 
 - [INV-G8] /do never invokes `gh pr merge` (or any merge-button action) and the github-pr-lifecycle agent never emits a `merge-pr` action label. The terminal is "PR mergeable", not "PR merged" — pressing the button is out of scope for both. Enforced by grep across all surviving plugin markdown/json/python files, case-insensitively, with a documented allowlist for canonical prohibition prose. The canonical prohibition phrasing — to keep allowlist tight — is `never invokes` / `never emits` / `does not call` / `out of scope` / `NOT a supported action`; PG-7 mandates writers use these verbatim.
   ```yaml
   verify:
     method: bash
-    command: "! grep -riEn 'gh pr merge|merge-pr|pr_merge|merge_pr_action' /home/user/manifest-dev/claude-plugins/manifest-dev/ --include='*.md' --include='*.json' --include='*.py' 2>/dev/null | grep -viE '(test_|\\.test\\.|never (invokes|emits|calls) (gh pr merge|merge-pr)|(does|do) not (call|invoke|emit) (gh pr merge|merge-pr)|out of scope|not a supported action|never a member|excluded from|prohibited from|forbidden)' | head -20"
+    command: "OUT=$(grep -riEn 'gh pr merge|merge-pr|pr_merge|merge_pr_action' /home/user/manifest-dev/claude-plugins/manifest-dev/ --include='*.md' --include='*.json' --include='*.py' 2>/dev/null | grep -viE '(test_|\\.test\\.|never (invokes|emits|calls) (gh pr merge|merge-pr)|(does|do) not (call|invoke|emit) (gh pr merge|merge-pr)|out of scope|not a supported action|never a member|excluded from|prohibited from|forbidden)' | head -20); [ -z \"$OUT\" ] || { echo \"$OUT\"; false; }"
   ```
 
 ## 4. Process Guidance
@@ -381,7 +381,7 @@ Delete the skill directories with all reference subtrees. Verify nothing breaks.
   ```yaml
   verify:
     method: bash
-    command: "! grep -rEn '/drive|/drive-tick|drive-log-|drive-lock-|drive-tick:' /home/user/manifest-dev/claude-plugins/manifest-dev/ 2>/dev/null | head -20"
+    command: "OUT=$(grep -rEn '/drive|/drive-tick|drive-log-|drive-lock-|drive-tick:' /home/user/manifest-dev/claude-plugins/manifest-dev/ 2>/dev/null | head -20); [ -z \"$OUT\" ] || { echo \"$OUT\"; false; }"
   ```
 
 ### Deliverable 6: Plugin metadata + READMEs sweep
@@ -441,7 +441,7 @@ Regenerate multi-CLI distribution packages so dist/ reflects the current plugin 
   verify:
     method: bash
     phase: 2
-    command: "! grep -rEn '/drive|/drive-tick|drive-log-|drive-lock-' /home/user/manifest-dev/dist 2>/dev/null | head -20"
+    command: "OUT=$(grep -rEn '/drive|/drive-tick|drive-log-|drive-lock-' /home/user/manifest-dev/dist 2>/dev/null | head -20); [ -z \"$OUT\" ] || { echo \"$OUT\"; false; }"
   ```
 
 - [AC-7.3] sync-tools regeneration did not surface errors — every plugin component (skill, agent, hook) listed under claude-plugins/manifest-dev/ has corresponding dist artifacts for each target CLI (Gemini, OpenCode, Codex), per repo convention.

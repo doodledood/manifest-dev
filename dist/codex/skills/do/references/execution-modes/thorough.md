@@ -13,7 +13,17 @@ Launch all verifiers in a single message within each phase. Maximize parallelism
 
 ## Fix-Verify Loops
 
-Unlimited. Keep iterating until all criteria pass or you need to escalate a specific blocker.
+Unlimited fix-code attempts. Keep iterating until all criteria pass or you need to escalate a specific blocker.
+
+**Action-aware fix-cap.** The fix-verify counter only increments on `fix-code` actions dispatched from a verifier hint (see /do SKILL.md "Hint Dispatch"). The other action labels are explicitly non-counting:
+
+- `sleep` — non-counting (a wait, not a fix attempt)
+- `retrigger-ci` — non-counting (re-runs CI without modifying code)
+- `reply-thread` — non-counting (posts a reply, no code change)
+- `push-update` — non-counting (sync-shaped action: merge base, update description, push a re-format)
+- `amend-manifest` — non-counting (routes through Self-Amendment; the amended manifest's ACs start their own fresh fix-loop)
+
+Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of action mix — see /do SKILL.md "Per-criterion timeout."
 
 ## Escalation
 

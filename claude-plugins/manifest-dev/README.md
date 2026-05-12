@@ -105,9 +105,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 |-------|-------------|
 | `/define` | Interviews you, builds an executable manifest with verification criteria. `--interview minimal\|autonomous\|thorough` controls interview style (default: thorough). Optional `--canvas` (desktop only) generates a Shared Understanding Canvas alongside the manifest — a live, browser-rendered visual alignment surface for the chat interview. While the user is answering questions, the canvas surfaces intent, flow, and scope at a glance so misalignment surfaces early. Mermaid diagrams and before/after panels render in the user's default browser; the canvas updates as the interview unfolds. Defaults to amending a prior in-scope manifest (in-session or conversation-referenced) so one change set keeps one constitution. On a fresh /define against a non-empty branch, seeds from the existing diff. |
 | `/do` | Works through the manifest autonomously, verifies everything passes. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
-| `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode` and `--drive` pass-through. |
-| `/drive` | Cron-driven manifest runner. Bootstraps branch/PR state and schedules `/drive-tick` (via `/loop` if available, inline-fallback otherwise) until terminal state — `all-verify-pass` for `--platform none` or `merge-ready` for `--platform github`. Pluggable platform + sink adapters; manifest-aware or babysit mode. |
-| `/drive-tick` | Single drive iteration. Reads full execution log (memento), loads platform + sink adapters, checks terminal states, handles inbox (amendments), delegates implement+verify+fix to `/do` (intra-tick convergence), runs CI triage + PR tending. Called by `/loop` via `/drive`; also user-invocable for single-tick runs. |
+| `/auto` | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do` in one command. Supports `--mode`, `--platform`, and `--babysit <pr-url>` for tending an existing PR end-to-end. |
 | `/verify` | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed within each pass — fast checks first, e2e/deploy-dependent later. (You rarely call this directly; `/do` handles it.) |
 | `/done` | Prints what got done and what was verified. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | When something's blocked, surfaces the issue for you to decide |
@@ -116,7 +114,7 @@ Criteria verify blocks support an optional `phase:` field (numeric, default 1). 
 
 ### Multi-Repo Manifests
 
-A single canonical manifest (in `/tmp`) can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` reads the path map and navigates absolute paths natively (no filter logic, no cwd matching). `/drive` runs per-repo against the same shared manifest — concurrent amendments are last-writer-wins (no locking). Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) use `method: deferred-auto` + `/verify --deferred`.
+A single canonical manifest (in `/tmp`) can cover changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` reads the path map and navigates absolute paths natively (no filter logic, no cwd matching). PR-lifecycle work auto-templates one `github-pr-lifecycle` agent invocation per repo against the shared manifest — concurrent amendments are last-writer-wins (no locking). Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) use `method: deferred-auto` + `/verify --deferred`.
 
 Single-repo manifests are unaffected — the schema additions are conditional and the single-repo path is unchanged.
 
@@ -141,6 +139,7 @@ See `skills/do/references/execution-modes/` for per-mode behavioral details.
 | Task Type | File | When Loaded |
 |-----------|------|-------------|
 | Code | `skills/define/tasks/CODING.md` | APIs, features, fixes, refactors, tests |
+| PR lifecycle | `skills/define/tasks/PR_LIFECYCLE.md` | Composes onto Code when `--platform github` resolves; templates the single AC invoking the `github-pr-lifecycle` agent. Also the synthesis target for `/define --babysit <pr-url>`. |
 | Writing | `skills/define/tasks/WRITING.md` | Prose, articles, marketing copy (base for Blog, Document) |
 | Document | `skills/define/tasks/DOCUMENT.md` | Specs, proposals, formal docs (+ WRITING.md base) |
 | Blog | `skills/define/tasks/BLOG.md` | Blog posts, tutorials (+ WRITING.md base) |
@@ -169,6 +168,7 @@ It walks through these in order, starting with whatever gives the most signal:
 |-------|---------|
 | `criteria-checker` | Read-only verification agent. Validates a single criterion using commands, codebase analysis, file inspection, reasoning, or web research. Returns structured PASS/FAIL. |
 | `manifest-verifier` | Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe. |
+| `github-pr-lifecycle` | Steerable agent that inspects a GitHub PR's lifecycle state and returns a rich actionable hint (sleep / fix-code / retrigger-ci / reply-thread / push-update / amend-manifest) for /do to dispatch. Drives the PR toward a mergeable state; never invokes the merge button. Invoked by PR_LIFECYCLE.md's templated AC. |
 
 ### Code Reviewers
 
@@ -203,4 +203,4 @@ Five hooks keep the workflow honest. `stop_do_hook.py` won't let you stop before
 
 ## See also
 
-- [`manifest-dev-experimental`](../manifest-dev-experimental) — placeholder plugin reserved for future experiments. `/drive` and `/drive-tick` graduated from there into this plugin.
+- [`manifest-dev-experimental`](../manifest-dev-experimental) — placeholder plugin reserved for future experiments.

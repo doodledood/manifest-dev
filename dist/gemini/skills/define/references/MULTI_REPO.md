@@ -1,6 +1,6 @@
 # Multi-Repo Manifest Workflow
 
-Canonical reference for tasks whose changeset spans multiple repositories. Read this when a manifest declares `Repos:` in its Intent. Core skills (`/define`, `/do`, `/verify`, `/done`, `/auto`, `AMENDMENT_MODE`) summarize the rules below and link here for the full specification. Optional consumer skills (`/drive`, `/drive-tick`) describe how they ride the shared-manifest pattern in their own files — they are add-ons, not part of the core multi-repo workflow.
+Canonical reference for tasks whose changeset spans multiple repositories. Read this when a manifest declares `Repos:` in its Intent. Core skills (`/define`, `/do`, `/verify`, `/done`, `/auto`, `AMENDMENT_MODE`) summarize the rules below and link here for the full specification. PR-lifecycle work composes the `github-pr-lifecycle` agent per-repo via PR_LIFECYCLE.md's templated AC — see PR_LIFECYCLE.md "Multi-repo composition" for the agent-per-PR pattern.
 
 Single-repo manifests (no `Repos:` field) are unaffected by everything below.
 
@@ -131,7 +131,7 @@ There is **no concurrency engineering**. Two writers amending the same manifest 
 
 **Do not add file locking.** The collision rate is low (writes are brief), and the recovery cost is small compared to the complexity of locking, deadlock handling, and stale-lock cleanup.
 
-This pattern is the contract for any optional PR-tending consumer skill (e.g., `/drive`); those skills describe their per-PR usage in their own files.
+This pattern is the contract for any PR-tending consumer — including PR_LIFECYCLE.md's per-repo agent-AC templating, which writes its `github-pr-lifecycle` invocations against the same shared manifest, one AC per repo.
 
 ## g. /done — One Per Manifest, Gated on Deferred-Auto
 
@@ -155,11 +155,11 @@ The system supports this workflow but does not automate it. Coordination is a hu
 
 ## i. /auto Behavior
 
-`/auto` chains `/define` → `/do` → optionally `/drive`. The `/do` step **navigates all repos** declared in `Repos:` (per §d — no filter logic, LLM uses absolute paths from the map). A single `/auto` invocation can therefore complete the whole multi-repo implementation phase.
+`/auto` chains `/define` → `/do`. The `/do` step **navigates all repos** declared in `Repos:` (per §d — no filter logic, LLM uses absolute paths from the map). A single `/auto` invocation can therefore complete the whole multi-repo implementation phase.
 
-The per-cwd limitation is `/drive`: when `--drive` is set, `/auto` invokes `/drive` from cwd, which sets up tending for cwd's PR only — `/drive` is PR-bound by construction (see §f). To tend the other repos' PRs, invoke `/drive` from each other repo's cwd.
+Lifecycle tending is part of /do's execution when the manifest carries lifecycle ACs — PR_LIFECYCLE.md auto-templates one `github-pr-lifecycle` AC per repo (per §f shared-manifest pattern), and /do's verify-fix loop drives each PR to mergeable. There is no separate "drive" step; the lifecycle is in the manifest.
 
-This is the only multi-repo footgun in `/auto`: users may assume `--drive` covers all PRs, when it covers only cwd's. The implementation phase itself runs to completion across all repos in one go.
+`/auto --babysit <pr-url>` is single-PR by construction — it takes one PR URL. For multi-repo lifecycle tending, declare `Repos:` in the manifest and let /define template the per-repo ACs.
 
 ## j. Branch-Name Convention
 

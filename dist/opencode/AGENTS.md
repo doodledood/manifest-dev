@@ -15,13 +15,16 @@ manifest-dev provides verification-first manifest workflows for AI coding agents
 - **/escalate** — Structured escalation for blockers, scope changes, and pauses.
 
 Supporting workflows:
-- **/auto** — End-to-end autonomous: /define (autonomous interview) → /do in one command.
+- **/auto** — End-to-end autonomous: /define (autonomous interview) → /do in one command. Supports `--babysit <pr-url>` for tending an existing PR end-to-end.
 - **/figure-out** — Collaborative deep understanding. Investigation-first, truth-convergent.
-- **/drive** — Cron-driven manifest-to-green loop. Bootstraps branch/PR, schedules /drive-tick until terminal state (all verify pass for none mode, merge-ready for github mode).
+
+## PR Lifecycle
+
+PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
 
 ## Agents
 
-14 specialized agents, all read-only reviewers:
+15 specialized agents, all read-only:
 
 | Agent | Purpose |
 |-------|---------|
@@ -37,6 +40,7 @@ Supporting workflows:
 | contracts-reviewer | API and interface contract correctness with evidence |
 | criteria-checker | Single-criterion verification (bash, codebase, research) |
 | docs-reviewer | Documentation accuracy against code changes |
+| github-pr-lifecycle | Steerable GitHub PR lifecycle inspection — returns rich actionable hint for /do to dispatch. Read-only; never invokes the merge button. |
 | manifest-verifier | Manifest gap detection and continuation questions |
 | type-safety-reviewer | Type system improvements across typed languages |
 

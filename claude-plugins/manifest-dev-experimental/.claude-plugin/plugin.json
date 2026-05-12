@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-experimental",
   "version": "0.7.0",
-  "description": "Placeholder plugin reserved for future experimental skills. Currently empty: the previous /drive and /drive-tick skills graduated to manifest-dev.",
+  "description": "Placeholder plugin reserved for future experimental skills. Currently empty.",
   "keywords": [
     "experimental",
     "placeholder"

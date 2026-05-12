@@ -18,7 +18,17 @@ Sequential — launch verifiers one at a time within each phase. Minimizes concu
 
 ## Fix-Verify Loops
 
-Max 1 per phase.
+Max 1 `fix-code` action per phase.
+
+**Action-aware fix-cap.** The fix-verify counter only increments on `fix-code` actions dispatched from a verifier hint (see /do SKILL.md "Hint Dispatch"). The other action labels are explicitly non-counting:
+
+- `sleep` — non-counting (a wait, not a fix attempt)
+- `retrigger-ci` — non-counting (re-runs CI without modifying code)
+- `reply-thread` — non-counting (posts a reply, no code change)
+- `push-update` — non-counting (sync-shaped action)
+- `amend-manifest` — non-counting (routes through Self-Amendment)
+
+Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of action mix — see /do SKILL.md "Per-criterion timeout."
 
 ## Escalation
 

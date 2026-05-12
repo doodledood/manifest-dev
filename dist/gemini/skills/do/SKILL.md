@@ -83,6 +83,14 @@ The mandatory full final gate (auto-triggered by /verify after true-selective gr
 
 **Phase-aware verification.** /verify runs criteria in phases (ascending by `phase:` field, default 1). It may report "Phase N failed, Phase N+1 not run." After fixing failures, /verify restarts from Phase 1 to catch regressions. Loop limits apply per-phase; regressions increment the broken phase's counter, not the phase that caused them.
 
+**Per-criterion timeout.** Each criterion's verify block may declare an optional `timeout:` field (see `define/SKILL.md` Manifest Schema). Accepted shorthand: integer + `s` / `m` / `h` / `d` suffix (e.g. `30s`, `5m`, `6h`, `1d`). Parser semantics:
+
+- **Absent** → no wall-clock cap; legacy behavior preserved.
+- **Valid shorthand** → parsed to seconds; the verifier invocation is capped at that wall-clock duration.
+- **Malformed** (unknown suffix, non-integer, negative, empty string) → halt with an actionable error naming the offending AC ID and the invalid value: `Invalid verify.timeout '<value>' on <criterion-id>. Accepted: integer + s|m|h|d suffix (e.g., 30s, 5m, 6h, 1d).`
+
+Use `timeout:` for criteria that legitimately wait — CI polling, approval-wait, deploy cycles. It is the wall-clock cap that prevents lifecycle-AC runaway when the dispatched action is `sleep` repeatedly. Cross-reference: action-aware fix-cap (see each execution-mode file) bounds fix-code attempts; `verify.timeout:` bounds total wall-clock per criterion.
+
 **Stop requires /escalate.** During /do, you cannot stop without calling /verify (which routes to /done or /escalate) or calling /escalate directly. /do does not voluntarily emit `User-Requested Pause` — that escalation type fires only in response to a user message during the run that explicitly requests a pause (the message must be quoted in the escalation body; see `escalate/SKILL.md` "User-Requested Pause"). Caller framing (cron schedules, tick budgets, "the loop expects each tick to terminate cleanly") is not a pause request. Silent halts and bare statements like "Done." or "Waiting." are not valid exits.
 
 ## Memento Pattern
@@ -127,4 +135,44 @@ Full convention: `define/references/MULTI_REPO.md`.
 
 **Amendment flow.** Amend the manifest autonomously via Self-Amendment escalation and `/define --amend <manifest-path> --from-do`, then resume with the updated manifest and existing log. Log the trigger before amending. No human wait; the entire cycle is autonomous.
 
+**Verifier-emitted amend hints.** When a verifier's FAIL body contains an `amend-manifest` action label (see Hint Dispatch below) — typically an out-of-scope reviewer request or a manifest gap surfaced by the lifecycle agent — /do routes through this same Self-Amendment path (`/define --amend <manifest-path> --from-do`). The dispatch entry point differs (verifier-emitted vs user-message-triggered), the amendment flow is the same.
+
 **Amendment loop guard.** If Self-Amendment escalations repeat without new external input (user messages or PR comments) between them, the amendments are likely oscillating; escalate as "Proposed Amendment" for human decision instead. The same guard applies to post-/done re-entry: when feedback after completion triggers re-entry to /do via amendment, the consecutive-amendments-without-external-input counter still applies. Purpose: prevent runaway loops and unnecessary token burn.
+
+## Hint Dispatch
+
+Verifier FAIL bodies may carry a free-form, actionable hint describing what /do should do next. /do reads the body with LLM judgment and dispatches to one of six actions. Non-lifecycle verifiers may emit hints directly; lifecycle ACs route through agent-emitted hints (the `github-pr-lifecycle` agent — see `define/tasks/PR_LIFECYCLE.md`).
+
+### Action vocabulary (closed set)
+
+`sleep` | `fix-code` | `retrigger-ci` | `reply-thread` | `push-update` | `amend-manifest`
+
+`merge-pr` is **not a supported action**. /do does not invoke `gh pr merge` under any hint dispatch path. Terminal is "PR mergeable", not "PR merged" — pressing the button is left to a human or GitHub auto-merge.
+
+### Dispatch mapping
+
+| Action | What /do does | Tool invocation pattern |
+|---|---|---|
+| `sleep` | Wait, then re-run the failing verifier. Duration is hint-specified; if none, infer from context (CI poll → 30s–5m; approval wait → hours). Bounded by the criterion's `verify.timeout:` field. | `sleep <N>` (shell), then re-invoke /verify scoped to the failing deliverable |
+| `fix-code` | Treat as a normal code-fix failure. Read the hint for the failure shape, make the change, re-verify. | Edit / Write tools as needed |
+| `retrigger-ci` | Re-run the named CI check. Prefer native check-run rerun; fall back to an empty-commit push when the check is an external status. | `gh run rerun <run-id>`, or `git commit --allow-empty -m "chore: retrigger CI" && git push` |
+| `reply-thread` | Post a reply on the named review thread. False-positive replies briefly explain; Uncertain replies ask for clarification. | `gh pr comment` / `gh api repos/.../pulls/N/comments/<id>/replies` |
+| `push-update` | Sync the PR with a code or metadata update. Examples: merge base into branch (for mergeStateStatus=behind/dirty), update PR description, push a re-formatted commit. | `git merge origin/<base>`, `git push`, or `gh pr edit --body <text>` |
+| `amend-manifest` | Route through Mid-Execution Amendment's Self-Amendment path. The hint identifies the scope shift; /define handles the rest. | `/define --amend <manifest-path> --from-do` |
+
+### Parsing
+
+The hint is free-form English. /do parses with LLM judgment — no rigid schema. Two valid styles:
+
+- **Bracketed label** — `[push-update] mergeStateStatus=behind; merge origin/main into branch`
+- **Plain English** — `"PR branch is behind main; merge it forward before re-running CI"`
+
+When the action is ambiguous, /do defaults to `fix-code` interpretation — preserves the legacy fail-then-fix cycle (backwards compat with manifests that don't use the hint vocabulary).
+
+### Phase-aware dispatch
+
+Each hint dispatch counts (or does not count) toward the active execution mode's fix-cap. Only `fix-code` increments the per-phase fix-verify counter; `sleep`, `retrigger-ci`, `reply-thread`, `push-update`, and `amend-manifest` are non-counting actions (see each execution-mode file's Fix-Verify Loops section). Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of action mix.
+
+### Backwards compatibility
+
+Manifests authored without action-labeled hints (no `[action]` brackets, no vocabulary-specific phrasing) work unchanged: verifier FAIL bodies are read as legacy "fix hints," and /do defaults to `fix-code` dispatch. The per-phase fix-cap behaves identically to the pre-change contract for these manifests.

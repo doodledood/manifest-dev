@@ -96,6 +96,14 @@ The cross-repo prefix is the one prescribed exception to "do not add framing" �
 
 The verify block's `prompt:` field is manifest-authored — pass it verbatim. These rules target language you add beyond what the manifest specifies. The optional context line is raw references, not framing — it provides access to source material without steering the agent's analysis.
 
+## Rich Hint Passthrough
+
+A verifier's FAIL output may include free-form actionable hint text in the failure body — e.g., `[sleep] CI in progress, retry in 5m`, `[reply-thread] thread #abc123 unanswered: suggested reply ...`, `[push-update] mergeStateStatus=behind; merge base into branch`, or natural-language equivalents without bracketed labels. **/verify passes the body through verbatim to the caller; /do is the consumer that interprets and dispatches**.
+
+Convention rather than schema: /verify does not parse hints, does not classify hint shape, does not transform the body. The full hint travels as-is through Outcome Handling's failure reporting so /do can read it with LLM judgment and dispatch (see do SKILL.md "Hint Dispatch"). Verifier authors are free to write hints in plain English or with the bracketed-label convention — both forms are valid; /do disambiguates at dispatch time.
+
+The canonical lifecycle-hint producer is the `github-pr-lifecycle` agent (and future `{platform}-pr-lifecycle` variants). Non-lifecycle verifiers may emit hints directly using the same vocabulary — there is no requirement that hints originate from a specific agent type.
+
 ## Criterion Types
 
 | Type | Pattern | Failure Impact |

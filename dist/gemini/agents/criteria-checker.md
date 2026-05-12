@@ -78,6 +78,34 @@ Always return this structure:
 ```
 ```
 
+### Rich-hint convention (FAIL bodies)
+
+A FAIL body may include a richer hint than a plain "fix hint" string — free-form English describing what the caller (/do) should do next. /do reads the body with LLM judgment and dispatches to one of the supported actions:
+
+`sleep` | `fix-code` | `retrigger-ci` | `reply-thread` | `push-update` | `amend-manifest`
+
+Authors of verifier `prompt:` fields may emit hints in two equivalent styles — both valid:
+
+- **Plain English** — `"CI in progress, retry in two minutes"`, `"thread #abc123 from @reviewer awaiting clarification"`.
+- **Bracketed label** — `"[sleep] CI in progress, retry in 2m"`, `"[reply-thread] thread #abc123 awaiting clarification"`.
+
+The bracketed form is unambiguous; the plain form trusts LLM-judgment dispatch. Use whichever fits the verifier's voice.
+
+**Canonical lifecycle producer.** The `github-pr-lifecycle` agent (and future `{platform}-pr-lifecycle` variants) is the canonical producer of lifecycle-check hints — it owns the gate logic and emits hints in this vocabulary. Non-lifecycle verifiers may emit hints directly using the same vocabulary; there is no requirement that hints originate from a specific agent.
+
+**Closed-set rule.** `merge-pr` is forbidden as an action label. The agent never emits `merge-pr` and /do never invokes `gh pr merge` — both are out of scope. Pressing the merge button is left to a human or GitHub auto-merge.
+
+**When to emit which hint:**
+
+- `sleep` — a wait-and-retry is the right next action (CI still running, mergeable=unknown, approval pending).
+- `fix-code` — actual code change required.
+- `retrigger-ci` — failure classified as Infrastructure (transient, not code-caused); within retrigger cap.
+- `reply-thread` — review thread needs an answer (False positive, Uncertain, or out-of-scope ask).
+- `push-update` — push a commit / merge base into branch / update PR description.
+- `amend-manifest` — out-of-scope ask, scope shift, or manifest gap surfaces; route via Self-Amendment.
+
+When no hint is emitted (or no action label is recognizable in the body), /do defaults to `fix-code` interpretation — preserves the legacy fail-then-fix cycle.
+
 ## Type-Specific Guidance
 
 **Global Invariants (INV-G*)**: Task-level rules. Failure blocks entire task. Emphasize severity.
