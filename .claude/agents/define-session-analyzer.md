@@ -1,1 +1,0 @@
-../../claude-plugins/manifest-dev/agents/define-session-analyzer.md
