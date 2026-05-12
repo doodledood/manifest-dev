@@ -69,9 +69,11 @@ Always return this structure:
 
 ### Rich-hint convention (FAIL bodies)
 
-A FAIL body may include a richer hint than a plain "fix hint" string — free-form English describing what the caller (/do) should do next. /do reads the body with LLM judgment and dispatches to one of the supported actions:
+A FAIL body may include a richer hint than a plain "fix hint" string — free-form English describing what the caller (/do) should do next. /do reads the body with LLM judgment and dispatches to one of the supported labels:
 
 `sleep` | `fix-code` | `retrigger-ci` | `reply-thread` | `push-update` | `out-of-scope`
+
+**Findings, not workflow actions.** These labels name *findings* the verifier reports about the situation (the situation is: "CI is still running", "code needs to change", "this is out of scope for the current manifest", etc.). They are not workflow actions. /do (the consumer) is the layer that maps each finding to a workflow step — for example, an `out-of-scope` finding maps to Self-Amendment via `/define --amend`. Verifier authors emit findings; they do not need to know workflow concepts (like /define or Self-Amendment) to use this vocabulary.
 
 Authors of verifier `prompt:` fields may emit hints in two equivalent styles — both valid:
 
@@ -82,7 +84,7 @@ The bracketed form is unambiguous; the plain form trusts LLM-judgment dispatch. 
 
 **Canonical lifecycle producer.** The `github-pr-lifecycle` agent (and future `{platform}-pr-lifecycle` variants) is the canonical producer of lifecycle-check hints — it owns the gate logic and emits hints in this vocabulary. Non-lifecycle verifiers may emit hints directly using the same vocabulary; there is no requirement that hints originate from a specific agent.
 
-**Closed-set rule.** `merge-pr` is forbidden as an action label. The agent never emits `merge-pr` and /do never invokes `gh pr merge` — both are out of scope. Pressing the merge button is left to a human or GitHub auto-merge.
+**Closed-set rule.** The closed set is exactly the six labels above. `merge-pr` and `amend-manifest` are both forbidden as labels: `merge-pr` is forbidden because the agent never emits it and /do never invokes `gh pr merge` — pressing the merge button is left to a human or GitHub auto-merge; `amend-manifest` is forbidden because it would name a workflow action (manifest amendment) rather than a finding — the agent reports the finding (`out-of-scope`), /do maps the finding to the workflow (Self-Amendment via `/define --amend`).
 
 **When to emit which hint:**
 
