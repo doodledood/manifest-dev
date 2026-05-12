@@ -168,7 +168,7 @@ It walks through these in order, starting with whatever gives the most signal:
 |-------|---------|
 | `criteria-checker` | Read-only verification agent. Validates a single criterion using commands, codebase analysis, file inspection, reasoning, or web research. Returns structured PASS/FAIL. |
 | `manifest-verifier` | Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe. |
-| `github-pr-lifecycle` | Steerable agent that inspects a GitHub PR's lifecycle state and returns a rich actionable hint (sleep / fix-code / retrigger-ci / reply-thread / push-update / out-of-scope) for /do to dispatch. Drives the PR toward a mergeable state; never invokes the merge button. Invoked by PR_LIFECYCLE.md's templated AC. |
+| `github-pr-lifecycle` | Steerable agent that inspects a GitHub PR's lifecycle state and returns a rich actionable hint for /do to dispatch. Drives the PR toward a mergeable state; never invokes the merge button. Invoked by PR_LIFECYCLE.md's templated AC. |
 
 ### Code Reviewers
 

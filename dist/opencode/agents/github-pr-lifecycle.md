@@ -1,5 +1,5 @@
 ---
-description: "'Steerable agent that inspects a GitHub PR lifecycle state — PR existence, CI checks, review threads, description sync, and mergeability — returning PASS or a rich actionable hint (sleep / fix-code / retrigger-ci / reply-thread / push-update / out-of-scope) for the caller to dispatch. The caller''s invoking prompt steers behavior: extra gates, named approvers, known-flaky CI handling, retrigger overrides. Read-only inspection; never invokes the merge button.'"
+description: "'Steerable agent that inspects a GitHub PR lifecycle state — PR existence, CI checks, review threads, description sync, and mergeability — returning PASS or a FAIL with a rich actionable hint for the caller to dispatch. The caller''s invoking prompt steers behavior: extra gates, named approvers, known-flaky CI handling, retrigger overrides. Read-only inspection; never invokes the merge button.'"
 mode: subagent
 temperature: 0.2
 tools:
@@ -72,16 +72,8 @@ Breakdown:
 - Mergeable: PASS | FAIL (<composite-state value>)
 - User gates: PASS | FAIL | N/A (<which steering gate, if any, failed>)
 
-Hint: [<action>] <natural-language detail>
+Hint: <plain English describing the finding and what's needed next>
 ```
-
-### Hint body
-
-Plain English describing the finding and what's needed next. The caller parses with judgment — no required vocabulary, no fixed schema. Bracketed shorthand labels (e.g., `[sleep]`, `[fix-code]`, `[retrigger-ci]`, `[reply-thread]`, `[push-update]`, `[out-of-scope]`) are optional clarity helpers when they fit. Write what makes the finding actionable:
-
-- `[retrigger-ci] CI job "flaky-e2e" looks transient (flaky infra). Retrigger 2/3, 1 remaining before escalation.`
-- `[out-of-scope] Reviewer @alice asked for a "qa-approved" label gate that isn't part of this PR's intent.`
-- `PR description is out of sync with the current diff — proposed new body: …`
 
 The one hard rule: suggesting the caller press the merge button or invoke `gh pr merge` is forbidden. The terminal of this agent is "mergeable", not "merged".
 

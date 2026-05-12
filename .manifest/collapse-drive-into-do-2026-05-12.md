@@ -4,7 +4,7 @@
 
 - **Goal:** Remove `/drive` and `/drive-tick` as separate skills; absorb their responsibilities into `/do` via a free-form rich-hint protocol returned by verifiers. The manifest becomes the contract for "done" including PR-lifecycle gates (CI green, threads addressed, PR mergeable, etc.). Terminal is *mergeable*, not *merged* — /do drives the PR to a clean, ready-to-merge state and stops; the actual merge button is left to a human or GitHub auto-merge. A new `github-pr-lifecycle` agent owns the canonical lifecycle checks (mergeable composite, thread classification, retrigger-cap, hint emission); a paired `tasks/PR_LIFECYCLE.md` task file is the /define-time guide that templates an AC invoking the agent. A new `/define --babysit <pr-url>` mode synthesizes a lifecycle-only manifest from an existing PR. `/auto` keeps `--platform` pass-through and gains `--babysit` for one-command PR tending on repos that don't use manifest-dev. No /drive feature is silently lost — every responsibility maps to a new home (agent prompt, AC template, /do dispatch, or explicit drop with rationale).
 - **Mental Model:**
-  - *Verifier hints are natural English* — criteria-checker returns PASS or FAIL; FAIL bodies may include free-form actionable hint text describing what's needed next (wait for CI, fix code, retrigger, reply on a thread, push a sync update, surface out-of-scope finding). /do reads the body with LLM judgment and dispatches accordingly. No closed vocabulary, no required schema, no parsing rules — /do is an LLM that can read English. Optional bracketed labels like `[sleep]` / `[out-of-scope]` are shorthand a verifier may use when they help clarity. The agent never references /define or any workflow concept; /do owns workflow routing (e.g., recognizing an out-of-scope finding and routing it through Self-Amendment).
+  - *Verifier FAIL bodies are just FAIL messages* — criteria-checker returns PASS or FAIL with actionable detail; /do reads with LLM judgment and acts. No "hint protocol" layer — a FAIL message has always been free-form text and /do has always been an LLM. The agent never references /define or any workflow concept; /do owns workflow routing (e.g., recognizing an out-of-scope finding and routing it through Self-Amendment).
   - *Action-aware fix-cap* — execution-modes per-phase fix-cap only increments on **code-change fix attempts**. Other retry shapes (waits for CI, retriggers of transient failures, replies on threads, pushes of sync updates, scope-amendment cycles) don't burn the fix budget — they're not fix attempts. Per-AC `verify.timeout:` provides the wall-clock cap for criteria that legitimately wait (e.g., 30m CI-poll, 1d approval-wait).
   - *Lifecycle as a single agent-invoking AC* — `PR_LIFECYCLE.md` composes onto `CODING.md` when `--platform github` (auto-detected from git remote). It templates ONE AC: `method: subagent, agent: github-pr-lifecycle, prompt: <PR URL + branch + optional steering>`. The agent owns the canonical gate set (PR exists, CI green, threads addressed, PR description in sync, PR mergeable composite) as internal implementation detail — not five separate templated verifier prompts. Centralizing into the agent means one read of GitHub state, holistic cross-signal reasoning (e.g., "CI green but branch behind → push-update before claiming clean"), and a single reviewable prompt file. **The agent is steerable through the AC's verify.prompt** — users layer per-PR nuances (custom labels, named approvers, known-flaky CI jobs) without forking the agent. Multi-repo: PR_LIFECYCLE.md auto-templates the AC per-repo when manifest declares `Repos:`. Mergeable composite is read via `gh pr view --json mergeable,mergeStateStatus,reviewDecision` — GitHub's own composite, single source of truth. Platform-specific agent by design: GitLab/Bitbucket would each get their own (`gitlab-pr-lifecycle`, etc.); /define picks by `--platform`.
   - *Babysit mode* — `/define --babysit <pr-url>` reads PR title/body/state, templates lifecycle-only ACs from `PR_LIFECYCLE.md`, writes manifest. Default interview style: autonomous (templated ACs need minimal probing). Precedent: existing Branch-Diff Seeding does the same shape with branch diffs.
@@ -105,7 +105,7 @@
     command: "OUT=$(grep -rEn '/drive|/drive-tick|drive-log-|drive-lock-' /home/user/manifest-dev/dist 2>/dev/null | head -20); [ -z \"$OUT\" ] || { echo \"$OUT\"; false; }"
   ```
 
-- [INV-G8] /do never invokes `gh pr merge` (or any merge-button action) and the github-pr-lifecycle agent never emits a `merge-pr` action label. The terminal is "PR mergeable", not "PR merged" — pressing the button is out of scope for both. Enforced by grep across all surviving plugin markdown/json/python files, case-insensitively, with a documented allowlist for canonical prohibition prose. The canonical prohibition phrasing — to keep allowlist tight — is `never invokes` / `never emits` / `does not call` / `out of scope` / `NOT a supported action`; PG-7 mandates writers use these verbatim.
+- [INV-G8] /do never invokes `gh pr merge` (or any merge-button action) and the github-pr-lifecycle agent never emits a `merge-pr` action label. The terminal is "PR mergeable", not "PR merged" — pressing the button is out of scope for both. Enforced by grep across all surviving plugin markdown/json/python files, case-insensitively, with a documented allowlist for canonical prohibition prose. The canonical prohibition phrasing — to keep allowlist tight — is `never invokes` / `never emits` / `does not call` / `out of scope` / `NOT a supported action`; writers must use these verbatim when documenting the prohibition.
   ```yaml
   verify:
     method: bash
@@ -120,7 +120,6 @@
 - [PG-4] Establish behavior contract before removal — for every /drive feature listed in the feature parity mapping (see discovery log), confirm the new home is present and operational before deleting the corresponding /drive code.
 - [PG-5] Identify and migrate consumers — the only in-repo caller of /drive is /auto via `--drive`. After /auto's update lands, the /drive removal is safe.
 - [PG-6] Out of scope: refactoring /verify's pass-logging contract, /do's memento pattern, /define's interview-mode files. Only touch what the deliverables require.
-- [PG-7] Verifier hints are natural English — no closed vocabulary, no required schema. /do dispatches via LLM judgment. Verifiers (including agents) may use bracketed labels like `[sleep]`, `[fix-code]`, `[retrigger-ci]`, `[reply-thread]`, `[push-update]`, `[out-of-scope]` as optional shorthand when they help clarity; these are conventions, not contracts. Hard rule: hints must not indicate the caller should press the merge button or invoke `gh pr merge` — the merge button is out of scope (INV-G8 enforces).
 - [PG-8] Document session-held trade-off — PR_LIFECYCLE.md Gotchas section names the long-session implication clearly so users understand the workflow cost.
 
 ## 5. Known Assumptions
@@ -273,20 +272,13 @@ Runtime mechanics — the core abstraction that replaces /drive's tick-driven ac
 
 **Acceptance Criteria:**
 
-- [AC-3.1] /verify SKILL.md documents that criteria-checker FAIL output may include free-form actionable hint text in the failure body, and that callers (/do) may parse this body to choose dispatch. The Outcome Handling section references hint passthrough — /verify does not interpret hints, only relays.
-  ```yaml
-  verify:
-    method: codebase
-    prompt: "In claude-plugins/manifest-dev/skills/verify/SKILL.md: verify a section or paragraph documents the rich-hint convention — verifier FAIL output bodies may contain free-form, actionable hint text (e.g., 'CI in progress, retry in 2m', 'thread N unanswered: suggested reply ...', 'manifest gap: add AC for X'); /verify passes the body through verbatim to the caller; /do is the consumer that interprets and dispatches. Verify that /verify does not parse hints itself."
-  ```
-
-- [AC-3.2] `claude-plugins/manifest-dev/agents/criteria-checker.md` documents the rich-hint output convention — FAIL outputs may include free-form, actionable hint text in natural English describing what's needed next; /do parses with LLM judgment. No closed vocabulary required; verifier authors may use bracketed shorthand labels (`[sleep]`, `[fix-code]`, etc.) when they help clarity, but plain English works. Hard rule preserved: hints must not suggest pressing the merge button or invoking `gh pr merge` (INV-G8 enforces).
+- [AC-3.2] `claude-plugins/manifest-dev/agents/criteria-checker.md` documents its standard Output Format — PASS/FAIL with Status, Evidence, and (on FAIL) actionable detail in plain English. No separate "rich-hint convention" layer; a FAIL message is itself the hint. Hard rule preserved: outputs must not suggest pressing the merge button or invoking `gh pr merge` (INV-G8 enforces).
   ```yaml
   verify:
     method: subagent
     agent: prompt-reviewer
     model: inherit
-    prompt: "Review claude-plugins/manifest-dev/agents/criteria-checker.md for prompt quality (no MEDIUM+). Verify the Output Format section documents that FAIL bodies may include actionable hints in free-form English describing what's needed next, and that /do (or any caller) parses with LLM judgment — no required vocabulary, no required schema. Optional bracketed shorthand labels may be mentioned as convention but must not be presented as contract. Hard rule preserved: hints must not suggest the caller press the merge button or invoke `gh pr merge`. **Light-touch portability** still applies: opening role statement remains generic ('verify a SINGLE criterion. Read-only.') and does not hard-couple to manifest-dev's workflow."
+    prompt: "Review claude-plugins/manifest-dev/agents/criteria-checker.md for prompt quality (no MEDIUM+). Verify the Output Format section documents the standard PASS/FAIL output (Status, Evidence, and on FAIL an actionable fix hint field) in natural English. Verify there is NO separate 'rich-hint convention' subsection or closed vocabulary block — the standard Output Format alone is sufficient; an extra layer documenting 'FAIL bodies may include hints' would be redundant (a FAIL message IS the hint). Flag MEDIUM if such a redundant section is present. Hard rule preserved: outputs must not suggest pressing the merge button or invoking `gh pr merge`. **Light-touch portability** still applies: opening role statement remains generic ('verify a SINGLE criterion. Read-only.') and does not hard-couple to manifest-dev's workflow."
   ```
 
 - [AC-3.3] /do SKILL.md documents three things about verifier hint handling: (a) FAIL bodies may include free-form natural-English hint text; /do parses with LLM judgment — no closed vocabulary, no required schema, no rigid dispatch table; (b) **action-aware fix-cap** — only code-change fix attempts increment the per-phase fix-verify counter; other retry shapes (waits for CI, retriggers of transient failures, replies on threads, pushes of sync updates, scope-amendment cycles) are not fix attempts and don't burn the budget; (c) explicit prohibition: `merge-pr` is not a supported action; /do does NOT invoke `gh pr merge` under any path. Mid-Execution Amendment section notes that scope-amend hints route through Self-Amendment, same as user-message-triggered amendments.
@@ -536,3 +528,30 @@ Regenerate multi-CLI distribution packages so dist/ reflects the current plugin 
 - D2 (BABYSIT_MODE.md + /define schema), D4 (/auto), D5 (drive removal), D6 (plugin metadata + READMEs), D7 (sync-tools) — unchanged.
 
 **/do scope hint**: D1 (agent body — drop closed-vocabulary section + action-mapping table; keep hard prohibitions and steerability) and D3 (criteria-checker — drop closed-vocabulary; /do SKILL.md — drop dispatch table and parsing rules, keep action-aware fix-cap principle and merge-button prohibition; execution-modes — simplify to principle, not enumeration). Other deliverables unaffected. Recommend `--scope D1,D3`.
+
+### Amendment 5 (post-/done, from /do) — Drop the "rich hint" documentation layer; a FAIL message IS the hint
+
+**Trigger**: User — "Rich hint section is redundant. Trust the agent knows what to return and caller is smart…" After Amendment 4 already stripped the closed vocabulary, dispatch table, and parsing rules, what remains is documentation of "the verifier may return hint text in FAIL bodies" — which is just what FAIL messages have always been. The standard PASS/FAIL output format already has a fix-hint field; a separate "rich hint convention" section repeats this without adding mechanism. Trust the agent to write useful failure messages; trust the caller to read them.
+
+**Rationale**: per prompt-engineering principles — don't document what the model does anyway. /verify already says "Pass through file:line, expected vs actual, fix hints" in its Actionable feedback principle. criteria-checker's Output Format already names a Fix hint field. github-pr-lifecycle's FAIL output example already shows `Hint: <natural-language detail>`. Three separate "rich hint" sections are the same idea three times — documentation, not mechanism.
+
+**Changes**:
+
+- **§1 Mental Model** "Verifier hints" bullet — compressed to: "Verifier FAIL bodies are just FAIL messages. criteria-checker returns PASS or FAIL with actionable detail; /do reads with LLM judgment and acts. No 'hint protocol' layer — a FAIL message has always been free-form text and /do has always been an LLM."
+- **AC-3.1** (/verify rich-hint passthrough documentation) — dropped entirely. /verify's existing Actionable-feedback principle already covers passthrough; a separate section is redundant.
+- **AC-3.2** (criteria-checker rich-hint convention) — softened to: criteria-checker documents its standard Output Format (Status, Evidence, Fix hint on FAIL). Drop "rich-hint convention" framing. AC verifier prompt flags MEDIUM if a separate "rich-hint convention" subsection is still present alongside the standard Output Format.
+- **PG-7** (verifier hints are natural English) — dropped entirely. This was documenting what /do does anyway as an LLM. INV-G8 (merge-button prohibition) carries the only load-bearing invariant from PG-7.
+
+**Unchanged (load-bearing, kept):**
+- INV-G8 (no `gh pr merge` / `merge-pr` in plugin) — real safety boundary. INV-G8 body adjusted to drop PG-7 cross-reference (writers use the canonical phrasing directly).
+- `verify.timeout:` schema (AC-2.4) + parser semantics (AC-2.5) — genuinely new mechanism.
+- Action-aware fix-cap (AC-3.3, AC-3.4, AC-3.5) — addresses real failure mode (lifecycle waits exhausting fix budget). AC-3.3 / AC-3.4 unchanged; their action-aware-fix-cap language was the real content.
+- Agent hard prohibitions, steerability, workflow decoupling — all invariants, all preserved.
+- D2, D4, D5, D6, D7 — unchanged.
+
+**/do scope hint**: D1 + D3 only.
+- D1 (agent): drop the "### Hint body" subsection from `claude-plugins/manifest-dev/agents/github-pr-lifecycle.md` — the FAIL output format example with `Hint: <natural-language detail>` already conveys it.
+- D3 (verify SKILL + criteria-checker): delete "## Rich Hint Passthrough" section from `claude-plugins/manifest-dev/skills/verify/SKILL.md`; delete "### Rich-hint convention (FAIL bodies)" subsection from `claude-plugins/manifest-dev/agents/criteria-checker.md` (keep the standard PASS/FAIL Output Format).
+- /do SKILL.md and execution-modes unchanged in this amendment (Amendment 4 already simplified them).
+
+Recommend `--scope D1,D3`.

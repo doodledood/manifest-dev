@@ -66,13 +66,7 @@ Always return this structure:
 ```
 ```
 
-### Rich-hint convention (FAIL bodies)
-
-A FAIL body may include a richer hint than a plain "fix hint" string — free-form English describing what the caller should do next (wait for CI, change code, retrigger a transient check, reply on a thread, push a sync update, surface an out-of-scope finding). The caller parses the body with LLM judgment; there is no required vocabulary or schema.
-
-Optional bracketed shorthand labels like `[sleep]`, `[fix-code]`, `[retrigger-ci]`, `[reply-thread]`, `[push-update]`, `[out-of-scope]` may be used at the start of a hint when they help clarity — but plain English works equally well. Write what makes the finding actionable.
-
-Hard rule: hints must not suggest the caller press the merge button or invoke `gh pr merge` — the merge button is out of scope for verifiers (see INV-G8 in the project manifest). When no hint is emitted, the caller defaults to interpreting the failure as needing a code fix — preserves the legacy fail-then-fix cycle.
+The "Fix hint" field is free-form English describing what's needed next; the caller reads with judgment. Hard rule: hints must not suggest pressing the merge button or invoking `gh pr merge` — the merge button is out of scope for verifiers.
 
 ## Type-Specific Guidance
 
