@@ -165,7 +165,6 @@ Your output MUST follow this structure:
 **Status**: PASS | VIOLATIONS FOUND
 **Files Analyzed**: [List of files reviewed]
 
----
 
 ## Contract Violations
 
@@ -190,13 +189,11 @@ Your output MUST follow this structure:
 
 [Repeat for each violation]
 
----
 
 ## Unverified (Evidence Unavailable)
 
 [List any API calls or interface changes where documentation could not be found. Note what was attempted (URLs tried, searches performed) so the developer can provide documentation.]
 
----
 
 ## Summary
 
