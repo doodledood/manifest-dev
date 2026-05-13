@@ -33,35 +33,6 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "TaskUpdate",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/posttool_log_hook.py"
-          }
-        ]
-      },
-      {
-        "matcher": "TaskCreate",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/posttool_log_hook.py"
-          }
-        ]
-      },
-      {
-        "matcher": "Skill",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/posttool_log_hook.py"
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "matcher": "compact",

@@ -8,7 +8,7 @@ Verification-first manifest workflows for Gemini CLI. Plan work with structured 
 |------|-------|-------------|
 | Skills | 7 | Workflow skills: define, do, verify, auto, figure-out, escalate, done |
 | Agents | 15 | Specialized agents for code review, manifest verification, and PR lifecycle |
-| Hooks | 5 | Event-driven hooks enforcing workflow discipline |
+| Hooks | 4 | Event-driven hooks enforcing workflow discipline (stop-do, pretool-verify, prompt-submit-amendment, post-compact) |
 
 ## Installation
 
@@ -53,7 +53,7 @@ The `install.sh` script sets this automatically.
 |---------|-------------|------------|-------|
 | Skills | All 7 | All 7 | Copied unchanged |
 | Agents | All 15 | All 15 | Frontmatter converted |
-| Hooks | 5 hooks | 5 hooks | Adapted to Gemini event model |
+| Hooks | 4 hooks | 4 hooks | Adapted to Gemini event model |
 | Stop enforcement | PreToolUse/Stop | BeforeTool/AfterAgent | Retry counter for loop prevention |
 | Context injection | additionalContext | additionalContext | Same mechanism |
 | Transcript parsing | JSONL (user/assistant) | JSONL (user/gemini) | Adapter normalizes |
@@ -77,7 +77,7 @@ The `install.sh` script sets this automatically.
 ## Workflow Overview
 
 1. `/define` — Structured interview builds a manifest with deliverables, acceptance criteria, and global invariants
-2. `/do` — Executes the manifest, logging progress for disaster recovery
+2. `/do` — Executes the manifest, satisfying each Deliverable's acceptance criteria
 3. `/verify` — Spawns parallel verifier agents for all criteria
 4. `/auto` — Chains define and do autonomously
 

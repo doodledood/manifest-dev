@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.108.0",
+  "version": "0.109.0",
   "description": "Manifest workflows for structured task execution with verification gates. PR-lifecycle work composes the github-pr-lifecycle agent through PR_LIFECYCLE.md task guidance; /define --babysit synthesizes a lifecycle manifest from an existing PR. Supports multi-repo changesets via a shared canonical manifest.",
   "keywords": [
     "manifest",
@@ -36,7 +36,7 @@
     "PreToolUse": [
       {
         "matcher": "Skill",
-        "description": "Remind to read manifest/log in full before verification",
+        "description": "Remind to read the manifest in full before verification",
         "hooks": [
           {
             "type": "command",
@@ -53,38 +53,6 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/prompt_submit_hook.py"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "TaskUpdate",
-        "description": "Remind to update execution log after task progress during /do",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttool_log_hook.py"
-          }
-        ]
-      },
-      {
-        "matcher": "TaskCreate",
-        "description": "Remind to update execution log after task creation during /do",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttool_log_hook.py"
-          }
-        ]
-      },
-      {
-        "matcher": "Skill",
-        "description": "Remind to update execution log after workflow skill calls during /do",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttool_log_hook.py"
           }
         ]
       }

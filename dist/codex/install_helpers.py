@@ -25,12 +25,10 @@ SUFFIX = "-manifest-dev"
 
 # Ordered longest-first within each list to avoid prefix collisions.
 SKILLS = [
-    "drive-tick",
     "figure-out",
     "escalate",
     "define",
     "verify",
-    "drive",
     "auto",
     "done",
     "do",
@@ -42,6 +40,7 @@ AGENTS = [
     "code-testability-reviewer",
     "change-intent-reviewer",
     "code-simplicity-reviewer",
+    "github-pr-lifecycle",
     "test-quality-reviewer",
     "prose-value-reviewer",
     "code-design-reviewer",

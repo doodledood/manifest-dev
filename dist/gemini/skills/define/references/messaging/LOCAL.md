@@ -16,7 +16,7 @@ The interaction tool is `AskUserQuestion` — use it for decisions, confirmation
 
 Not applicable — the user is already in the session.
 
-## Discovery Log and Manifest
+## Manifest
 
 Write to `/tmp/` as normal. Present directly to the user in the terminal.
 

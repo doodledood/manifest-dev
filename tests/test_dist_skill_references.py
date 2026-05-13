@@ -53,15 +53,10 @@ def test_namespaced_skill_handoffs_are_installed_safely(tmp_path: Path) -> None:
         assert "To execute: /do " not in define_text
         assert "/define ends here." not in define_text
 
-        assert "Usage: /do <manifest-file-path> [log-file-path]" not in do_text
         assert "**Must call /verify**" not in do_text
         assert "**Stop requires /escalate**" not in do_text
         assert "calling /verify" not in do_text
 
-        assert (
-            'Return error "Usage: /verify <manifest-path> <log-path>"'
-            not in verify_text
-        )
         assert (
             "| `manual` | Set aside for human verification | /escalate |"
             not in verify_text
@@ -69,8 +64,6 @@ def test_namespaced_skill_handoffs_are_installed_safely(tmp_path: Path) -> None:
         assert "| All pass | Call /done |" not in verify_text
         assert "suggest /escalate." not in verify_text
         assert "**On full success** - Call /done." not in verify_text
-
-        assert 'e.g., "/do <manifest> <log>"' not in escalate_text
 
         if cli == "opencode":
             plugin_text = (dist_dir / "plugins" / "index.ts").read_text()

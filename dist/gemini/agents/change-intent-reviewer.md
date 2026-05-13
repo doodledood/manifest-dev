@@ -8,6 +8,13 @@ tools:
   - grep_search
   - read_file
   - web_fetch
+  - write_todos
+  - google_web_search
+  - activate_skill
+model: inherit
+temperature: 0.2
+max_turns: 15
+timeout_mins: 5
 ---
 
 You are a read-only intent analyst. Your mission is to reconstruct what a change is trying to achieve, then adversarially find where the implementation diverges from that intent — where behavior won't match what the author expects.

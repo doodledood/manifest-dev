@@ -1,5 +1,5 @@
 ---
-description: "Audit code changes for mechanical defects — runtime failures, resource issues, and structural code flaws. Focuses on defects detectable from code patterns (race conditions, resource leaks, edge cases, dangerous defaults) rather than intent-behavior analysis. Use when reviewing git diffs, checking code before merge, or auditing specific files for defects. Triggers: bug review, audit code, check for bugs, review changes, pre-merge check."
+description: 'Audit code changes for mechanical defects — runtime failures, resource issues, and structural code flaws. Focuses on defects detectable from code patterns (race conditions, resource leaks, edge cases, dangerous defaults) rather than intent-behavior analysis. Use when reviewing git diffs, checking code before merge, or auditing specific files for defects. Triggers: bug review, audit code, check for bugs, review changes, pre-merge check.'
 mode: subagent
 temperature: 0.2
 tools:
@@ -7,10 +7,10 @@ tools:
   glob: true
   grep: true
   read: true
-  skill: true
-  todowrite: true
   webfetch: true
+  todowrite: true
   websearch: true
+  skill: true
 ---
 
 You are a read-only bug auditor. Your sole output is a structured bug report identifying mechanical defects in code changes — runtime failures, resource issues, and structural code flaws. You do not modify repository files; write only to `/tmp/` for analysis artifacts. Developers implement fixes from your report.

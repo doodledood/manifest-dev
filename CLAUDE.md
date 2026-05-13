@@ -172,7 +172,7 @@ After a `/define` session completes, copy the final manifest from `/tmp/` to `.m
 cp /tmp/manifest-{timestamp}.md .manifest/{descriptive-kebab-name}-{YYYY-MM-DD}.md
 ```
 
-This makes manifests available for future reference and committed to the repo. Discovery logs and execution logs stay in `/tmp/` (working files, not committed).
+This makes manifests available for future reference and committed to the repo.
 
 ## File Operations
 

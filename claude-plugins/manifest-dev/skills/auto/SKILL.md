@@ -8,7 +8,7 @@ user-invocable: true
 
 ## Goal
 
-Chain `/define` and `/do` into a single autonomous flow. The full /define process runs — all coverage goals, all probing, all logging — the model answers its own questions instead of the user. After the manifest is built and verified, auto-approve and immediately launch /do.
+Chain `/define` and `/do` into a single autonomous flow. The full /define process runs — all coverage goals, all probing, all task-file engagement — the model answers its own questions instead of the user. After the manifest is built and verified, auto-approve and immediately launch /do.
 
 Two entry modes:
 
@@ -32,7 +32,7 @@ Parse flags from arguments if present:
 When `--babysit <pr-url>` is set:
 
 - Missing URL argument → halt: "--babysit requires a PR URL. Usage: /auto --babysit <pr-url>."
-- `--babysit` + free-form task description in `$ARGUMENTS` → the babysit URL wins; the task description is ignored with a one-line log note (babysit's intent comes from the PR, not from $ARGUMENTS).
+- `--babysit` + free-form task description in `$ARGUMENTS` → the babysit URL wins; the task description is ignored with a one-line note (babysit's intent comes from the PR, not from $ARGUMENTS).
 - **Platform inference from PR URL.** When `--platform` is not explicitly passed and `--babysit` is set, /auto derives platform from the PR URL host (`github.com` → `github`). This differs from /define's task-mode inference (which uses `origin` remote) because babysit's use case is repos that may not be locally cloned.
 - **Conflict detection.** When both `--platform` and `--babysit` are passed and the platform disagrees with the URL host (e.g., `--platform github` with a non-github URL), halt: "--platform <value> disagrees with PR URL host <host>. Pass a matching platform or omit --platform to infer from the URL."
 
@@ -70,6 +70,6 @@ See `manifest-dev:define/references/MULTI_REPO.md`.
 
 If /define does not produce a manifest path, stop and report the failure. Do not invoke /do without a valid manifest.
 
-If /do escalates with **"Deferred-Auto Pending"**: this is a coordination handoff, not a blocker — the implementation is green; the user just needs to run `/verify --deferred` later when prerequisites are ready. Surface the reminder: "/auto: implementation green. Deferred-auto criteria pending — run `/verify <manifest-path> <log-path> --deferred` when prerequisites are in place to reach /done."
+If /do escalates with **"Deferred-Auto Pending"**: this is a coordination handoff, not a blocker — the implementation is green; the user just needs to run `/verify --deferred` later when prerequisites are ready. Surface the reminder: "/auto: implementation green. Deferred-auto criteria pending — run `/verify <manifest-path> --deferred` when prerequisites are in place to reach /done."
 
 If /do escalates with any other type: report to user with the escalation reason. The user resolves and re-invokes /do (or /auto) as appropriate.

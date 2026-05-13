@@ -88,8 +88,7 @@ def main() -> None:
             "reason": "Non-local medium: escalation posted externally",
             "systemMessage": (
                 "Verification results posted to the external review channel. "
-                "The user will re-invoke /do with the execution log path "
-                "once the blocker is resolved."
+                "The user will re-invoke /do once the blocker is resolved."
             ),
         }
         print(json.dumps(output))

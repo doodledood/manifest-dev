@@ -2,19 +2,19 @@
 
 ## /verify invocation patterns
 
-Always invoke /verify to reach /done. /verify self-invokes for the auto-final pass by reading its own most recent pass log block — /do doesn't manage that recursion.
+Always invoke /verify to reach /done. /verify self-invokes for the auto-final pass by reading its own most recent return block visible in conversation — /do doesn't manage that recursion.
 
 | Situation | Invocation |
 |-----------|-----------|
-| First pass / no scope | `manifest-dev-experimental:verify <manifest> <log>` — selective degenerates to full |
-| Scoped /do (received `--scope D2,D3`) | `manifest-dev-experimental:verify <manifest> <log> --scope D2,D3` — selective |
-| Fix-loop after AC-X.Y failure | `manifest-dev-experimental:verify <manifest> <log> --scope D{X}` — narrow to the failing deliverable; later regressions caught by /verify's auto-triggered full final on green |
-| Fix-loop after INV-G failure (was selective) | `manifest-dev-experimental:verify <manifest> <log> --scope <same-scope>` — re-pass exactly that scope + globals |
-| Fix-loop after INV-G failure (was full) | `manifest-dev-experimental:verify <manifest> <log>` — no scope; globals always run |
+| First pass / no scope | `manifest-dev-experimental:verify <manifest>` — selective degenerates to full |
+| Scoped /do (received `--scope D2,D3`) | `manifest-dev-experimental:verify <manifest> --scope D2,D3` — selective |
+| Fix-loop after AC-X.Y failure | `manifest-dev-experimental:verify <manifest> --scope D{X}` — narrow to the failing deliverable; later regressions caught by /verify's auto-triggered full final on green |
+| Fix-loop after INV-G failure (was selective) | `manifest-dev-experimental:verify <manifest> --scope <same-scope>` — re-pass exactly that scope + globals |
+| Fix-loop after INV-G failure (was full) | `manifest-dev-experimental:verify <manifest>` — no scope; globals always run |
 
 **Phase-aware fix loops.** /verify runs criteria in phases. It may report `Phase N failed, Phase N+1 not run`. After fixing, /verify restarts from Phase 1 to catch regressions.
 
-**/verify pass log reading.** /verify appends `## /verify pass {N}` blocks. Read the most recent block before deciding next pass's scope. **Skip blocks where `deferred: true`** — those reflect passes that included deferred-auto criteria via chat-signal inference, not normal-flow AC/INV state.
+**/verify return block reading.** /verify returns `## /verify pass N` blocks in its tool result text. Read the most recent block visible in conversation before deciding next pass's scope. **Skip blocks where `deferred: true`** — those reflect passes that included deferred-auto criteria via chat-signal inference, not normal-flow AC/INV state.
 
 ## Escalation boundary
 

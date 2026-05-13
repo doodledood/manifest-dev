@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-PreToolUse hook that reminds Claude to read manifest/log for verification.
+PreToolUse hook that reminds Claude to read the manifest for verification.
 
 When /verify is about to be called, this hook adds a system reminder to ensure
-the manifest and execution log are in full context for accurate verification.
-This is especially important after long sessions where manifest details may have
-drifted from memory.
+the manifest is in full context for accurate verification. This is especially
+important after long sessions where manifest details may have drifted from
+memory.
 
 Registered as PreToolUse hook with "Skill" matcher.
 """
@@ -21,12 +21,12 @@ VERIFY_CONTEXT_REMINDER = """/verify appears to be starting.
 
 Arguments: {verify_args}
 
-Before spawning verifiers, the manifest and execution log may need to be in full context — if they haven't been read recently, loading them surfaces every acceptance criterion (AC-*) and global invariant (INV-G*) so the right verifiers get spawned. If they're already in context from recent work, skip re-reading and proceed to the spawn."""
+Before spawning verifiers, the manifest may need to be in full context — if it hasn't been read recently, loading it surfaces every acceptance criterion (AC-*) and global invariant (INV-G*) so the right verifiers get spawned. If it's already in context from recent work, skip re-reading and proceed to the spawn."""
 
 
 VERIFY_CONTEXT_REMINDER_MINIMAL = """/verify appears to be starting.
 
-Before spawning verifiers, the manifest and execution log may need to be in full context — if they haven't been read recently, loading them surfaces every acceptance criterion (AC-*) and global invariant (INV-G*) so the right verifiers get spawned. If they're already in context from recent work, skip re-reading and proceed to the spawn."""
+Before spawning verifiers, the manifest may need to be in full context — if it hasn't been read recently, loading it surfaces every acceptance criterion (AC-*) and global invariant (INV-G*) so the right verifiers get spawned. If it's already in context from recent work, skip re-reading and proceed to the spawn."""
 
 
 def main() -> None:

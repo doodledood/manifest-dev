@@ -338,7 +338,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 | Plugin | Description |
 |--------|-------------|
 | `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, `/auto`, review agents, workflow hooks. The manifest is the canonical source of truth for the PR/branch — feedback during `/do`, `/verify`, or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. Verification is selective during fix-loop (in-scope deliverables + globals) with a mandatory full final gate before `/done`. |
-| `manifest-dev-tools` | Post-processing utilities for manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. |
+| `manifest-dev-tools` | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. `/handoff` produces a cross-boundary context payload (tool switch, fresh session, multi-agent transfer). `/prompt-engineering` and `/walk-pr` are stand-alone collaboration tools. |
 | `manifest-dev-experimental` | **Placeholder.** Currently ships no skills — reserved for future experiments. |
 
 ## Plugin Architecture
@@ -348,7 +348,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 | Skill | Type | Description |
 |-------|------|-------------|
 | `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, outputs manifest with verification methods. Defaults to amending a prior in-scope manifest (in-session, conversation-referenced, or branch-archived in `.manifest/`) so one change set keeps one constitution. On a fresh /define against a non-empty branch, seeds from the existing diff. |
-| `/do` | User-invoked | Executes against manifest. Follows execution order, watches for risks, logs progress for disaster recovery. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
+| `/do` | User-invoked | Executes against manifest. Follows execution order, watches for risks. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
 | `/auto` | User-invoked | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do`. Supports `--mode`, `--platform`, and `--babysit <pr-url>` for tending an existing PR through to mergeable. |
 | `/verify` | Internal | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed (fast checks first, e2e/deploy-dependent later). |
 | `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure. Reachable only after a full-mode green /verify pass. |
@@ -385,9 +385,8 @@ Hooks enforce workflow integrity. The AI can't skip steps:
 | Hook | Event | Purpose |
 |------|-------|---------|
 | `stop_do_hook` | Stop command | Blocks premature stopping. Can't stop without verification passing or proper escalation. |
-| `post_compact_hook` | Session compaction | Restores /do workflow context after compaction. Reminds to re-read manifest and log. |
-| `pretool_verify_hook` | `/verify` invocation | Ensures manifest and log are in context before spawning verifiers. |
-| `posttool_log_hook` | Task progress | Reminds to update execution log after task updates, task creation, or workflow skill calls during `/do`. |
+| `post_compact_hook` | Session compaction | Restores /do workflow context after compaction. Reminds to re-read the manifest. |
+| `pretool_verify_hook` | `/verify` invocation | Ensures the manifest is in context before spawning verifiers. |
 | `prompt_submit_hook` | User input during `/do` | Detects manifest amendments when user provides input during `/do` — enables the autonomous Self-Amendment flow. |
 
 ### Task-Specific Guidance

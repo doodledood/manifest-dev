@@ -9,7 +9,6 @@ proper interaction between hooks at each lifecycle stage.
 Hook inventory:
 - stop_do_hook.py (Stop) — blocks premature stops
 - pretool_verify_hook.py (PreToolUse/Skill) — reminds to read manifest before /verify
-- posttool_log_hook.py (PostToolUse/TaskUpdate,TaskCreate,TodoWrite,Skill) — reminds to log
 - prompt_submit_hook.py (UserPromptSubmit) — checks for manifest amendments
 - post_compact_hook.py (SessionStart/compact) — restores /do context after compaction
 """
@@ -22,10 +21,8 @@ from typing import Any
 
 from hook_test_helpers import run_hook
 
-
 def run_stop_hook(transcript_path: str) -> dict[str, Any] | None:
     return run_hook("stop_do_hook.py", {"transcript_path": transcript_path})
-
 
 def run_pretool_verify(skill: str, args: str = "") -> dict[str, Any] | None:
     return run_hook(
@@ -33,32 +30,15 @@ def run_pretool_verify(skill: str, args: str = "") -> dict[str, Any] | None:
         {"tool_name": "Skill", "tool_input": {"skill": skill, "args": args}},
     )
 
-
-def run_posttool_log(
-    tool_name: str, transcript_path: str, tool_input: dict | None = None
-) -> dict[str, Any] | None:
-    return run_hook(
-        "posttool_log_hook.py",
-        {
-            "tool_name": tool_name,
-            "tool_input": tool_input or {},
-            "transcript_path": transcript_path,
-        },
-    )
-
-
 def run_prompt_submit(transcript_path: str) -> dict[str, Any] | None:
     return run_hook("prompt_submit_hook.py", {"transcript_path": transcript_path})
-
 
 def run_post_compact(transcript_path: str) -> dict[str, Any] | None:
     return run_hook("post_compact_hook.py", {"transcript_path": transcript_path})
 
-
 # --- Transcript building helpers ---
 
-
-def user_do(args: str = "/tmp/manifest.md /tmp/do-log.md") -> dict[str, Any]:
+def user_do(args: str = "/tmp/manifest.md") -> dict[str, Any]:
     return {
         "type": "user",
         "message": {
@@ -66,10 +46,8 @@ def user_do(args: str = "/tmp/manifest.md /tmp/do-log.md") -> dict[str, Any]:
         },
     }
 
-
 def user_message(text: str) -> dict[str, Any]:
     return {"type": "user", "message": {"content": text}}
-
 
 def assistant_text(text: str = "Working on the task...") -> dict[str, Any]:
     """Assistant text response (no tool use — classified as idle by loop detection).
@@ -80,7 +58,6 @@ def assistant_text(text: str = "Working on the task...") -> dict[str, Any]:
     that should reset the idle counter.
     """
     return {"type": "assistant", "message": {"content": text}}
-
 
 def substantial_work(
     text: str = "Implementing the feature...",
@@ -105,11 +82,9 @@ def substantial_work(
         },
     }
 
-
 def assistant_short(text: str = ".") -> dict[str, Any]:
     """Short assistant output for loop detection."""
     return {"type": "assistant", "message": {"content": text}}
-
 
 def skill_call(skill: str, args: str = "") -> dict[str, Any]:
     return {
@@ -125,7 +100,6 @@ def skill_call(skill: str, args: str = "") -> dict[str, Any]:
         },
     }
 
-
 def tool_call(tool: str, input_data: dict | None = None) -> dict[str, Any]:
     return {
         "type": "assistant",
@@ -140,7 +114,6 @@ def tool_call(tool: str, input_data: dict | None = None) -> dict[str, Any]:
         },
     }
 
-
 def make_transcript(tmp_path: Path, lines: list[dict[str, Any]]) -> str:
     transcript_file = tmp_path / "transcript.jsonl"
     with open(transcript_file, "w", encoding="utf-8") as f:
@@ -148,9 +121,7 @@ def make_transcript(tmp_path: Path, lines: list[dict[str, Any]]) -> str:
             f.write(json.dumps(line) + "\n")
     return str(transcript_file)
 
-
 # === E2E LIFECYCLE TESTS ===
-
 
 class TestHappyPathLifecycle:
     """Full /do session: invoke → work → verify → done → stop allowed."""
@@ -168,9 +139,6 @@ class TestHappyPathLifecycle:
         assert "user message arrived during" in amendment["hookSpecificOutput"]["additionalContext"]
 
         # TaskUpdate happens — log reminder fires
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is not None
-        assert "milestone-shaped tool call" in log_reminder["hookSpecificOutput"]["additionalContext"]
 
         # Stop attempted before verify — blocked
         stop_result = run_stop_hook(transcript)
@@ -186,13 +154,6 @@ class TestHappyPathLifecycle:
         )
 
         # Phase 3: /verify completes — posttool log reminder fires
-        log_after_verify = run_posttool_log(
-            "Skill",
-            transcript,
-            {"skill": "manifest-dev:verify", "args": "/tmp/manifest.md"},
-        )
-        assert log_after_verify is not None
-        assert "milestone-shaped tool call" in log_after_verify["hookSpecificOutput"]["additionalContext"]
 
         # Phase 4: /done called — update transcript
         transcript = make_transcript(
@@ -214,8 +175,6 @@ class TestHappyPathLifecycle:
         assert amendment is None
 
         # PostToolUse log reminder should NOT fire after /done
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is None
 
     def test_verify_fail_then_retry_then_pass(self, tmp_path: Path):
         """/verify fails → assistant fixes → /verify again → /done."""
@@ -236,8 +195,6 @@ class TestHappyPathLifecycle:
         assert stop_result["decision"] == "block"
 
         # TaskUpdate during fix — log reminder fires
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is not None
 
         # Second /verify → /done
         transcript = make_transcript(
@@ -255,7 +212,6 @@ class TestHappyPathLifecycle:
         # Now stop is allowed
         stop_result = run_stop_hook(transcript)
         assert stop_result is None
-
 
 class TestSelfAmendmentCycle:
     """/do → user changes scope → /escalate → /define --amend → /do resumes."""
@@ -284,12 +240,6 @@ class TestSelfAmendmentCycle:
         )
 
         # PostToolUse log reminder fires for /escalate
-        log_reminder = run_posttool_log(
-            "Skill",
-            transcript,
-            {"skill": "manifest-dev:escalate", "args": "Self-Amendment"},
-        )
-        assert log_reminder is not None
 
         # Stop BLOCKED after Self-Amendment — must continue to /define --amend
         stop_result = run_stop_hook(transcript)
@@ -302,12 +252,6 @@ class TestSelfAmendmentCycle:
         assert amendment is not None
 
         # Stage 3: /define --amend called (not a /do milestone)
-        log_for_define = run_posttool_log(
-            "Skill",
-            transcript,
-            {"skill": "manifest-dev:define", "args": "--amend /tmp/manifest.md --from-do"},
-        )
-        assert log_for_define is not None  # define IS a workflow skill
 
     def test_resumed_do_after_amendment_resets_state(self, tmp_path: Path):
         """After amendment, a new /do invocation resets hook state."""
@@ -315,13 +259,13 @@ class TestSelfAmendmentCycle:
             tmp_path,
             [
                 # First /do
-                user_do("/tmp/manifest.md /tmp/do-log.md"),
+                user_do("/tmp/manifest.md"),
                 substantial_work("Working on AC-1.1..."),
                 skill_call("escalate", "Self-Amendment"),
                 # /define --amend happens
                 skill_call("define", "--amend /tmp/manifest.md"),
                 # New /do with updated manifest
-                user_do("/tmp/manifest.md /tmp/do-log.md"),
+                user_do("/tmp/manifest.md"),
                 substantial_work("Resuming with amended manifest..."),
             ],
         )
@@ -332,13 +276,10 @@ class TestSelfAmendmentCycle:
         assert stop_result["decision"] == "block"
 
         # Posttool log reminder fires — new /do is active
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is not None
 
         # Prompt submit fires — active /do
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
-
 
 class TestCompactionRecovery:
     """/do active → session compacted → hooks recover correctly."""
@@ -349,7 +290,7 @@ class TestCompactionRecovery:
         transcript = make_transcript(
             tmp_path,
             [
-                user_do("/tmp/manifest.md /tmp/do-log.md"),
+                user_do("/tmp/manifest.md"),
                 assistant_text("Working on AC-1.1..."),
                 # Compaction happened — this is what's left
             ],
@@ -362,8 +303,6 @@ class TestCompactionRecovery:
         assert "/tmp/manifest.md" in ctx
 
         # All other hooks still work after recovery
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is not None
 
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
@@ -388,7 +327,6 @@ class TestCompactionRecovery:
         assert stop_result is not None
         assert stop_result["decision"] == "block"
 
-
 class TestMediumRoutingLifecycle:
     """/do with --medium slack → hooks detect non-local medium correctly."""
 
@@ -397,14 +335,12 @@ class TestMediumRoutingLifecycle:
         transcript = make_transcript(
             tmp_path,
             [
-                user_do("/tmp/manifest.md /tmp/do-log.md --medium slack"),
+                user_do("/tmp/manifest.md --medium slack"),
                 assistant_text("Working with Slack collaboration..."),
             ],
         )
 
         # All hooks fire normally during work
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is not None
 
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
@@ -429,7 +365,6 @@ class TestMediumRoutingLifecycle:
         assert stop_result is not None
         assert "decision" not in stop_result  # omit decision = allow
         assert "external" in stop_result.get("systemMessage", "").lower()
-
 
 class TestMultipleDoSessions:
     """Sequential /do invocations with different manifests."""
@@ -456,16 +391,13 @@ class TestMultipleDoSessions:
         assert stop_result["decision"] == "block"
 
         # PostToolUse fires for second /do
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is not None
 
         # Prompt submit fires for second /do
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
 
     def test_done_from_first_do_doesnt_affect_second(self, tmp_path: Path):
-        """prompt_submit and posttool_log should fire during second /do
-        even though first /do called /done."""
+        """prompt_submit should fire during second /do even though first /do called /done."""
         transcript = make_transcript(
             tmp_path,
             [
@@ -480,10 +412,6 @@ class TestMultipleDoSessions:
         # /done from first /do shouldn't silence hooks for second /do
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
-
-        log_reminder = run_posttool_log("TodoWrite", transcript)
-        assert log_reminder is not None
-
 
 class TestLoopDetectionInteraction:
     """Stop hook loop detection interacting with other hooks."""
@@ -528,103 +456,6 @@ class TestLoopDetectionInteraction:
         assert stop_result is not None
         assert stop_result["decision"] == "block"
 
-    def test_posttool_still_fires_during_loop_pattern(self, tmp_path: Path):
-        """PostToolUse hooks fire even when loop detection would allow stop."""
-        transcript = make_transcript(
-            tmp_path,
-            [
-                user_do(),
-                assistant_short("."),
-                assistant_short("."),
-                assistant_short("."),
-            ],
-        )
-
-        # Stop would be allowed (loop detected)
-        stop_result = run_stop_hook(transcript)
-        assert stop_result is not None
-        assert "decision" not in stop_result  # omit decision = allow
-
-        # But posttool_log_hook still fires if a milestone tool is used
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is not None
-
-
-class TestRapidFireToolCalls:
-    """Multiple milestone tool calls in quick succession."""
-
-    def test_multiple_task_updates_all_get_reminders(self, tmp_path: Path):
-        """Each TaskUpdate gets its own log reminder."""
-        transcript = make_transcript(
-            tmp_path, [user_do(), assistant_text("Working...")]
-        )
-
-        # Three TaskUpdates in sequence — each should get a reminder
-        r1 = run_posttool_log("TaskUpdate", transcript)
-        r2 = run_posttool_log("TaskCreate", transcript)
-        r3 = run_posttool_log("TodoWrite", transcript)
-
-        assert r1 is not None
-        assert r2 is not None
-        assert r3 is not None
-
-    def test_skill_verify_then_done_both_get_reminders(self, tmp_path: Path):
-        """Both /verify and /done get log reminders (before /done is recorded)."""
-        transcript = make_transcript(
-            tmp_path,
-            [
-                user_do(),
-                assistant_text("All ACs complete"),
-                skill_call("verify", "/tmp/manifest.md"),
-                # /done hasn't been recorded in transcript yet
-            ],
-        )
-
-        verify_log = run_posttool_log(
-            "Skill",
-            transcript,
-            {"skill": "manifest-dev:verify"},
-        )
-        assert verify_log is not None
-
-        done_log = run_posttool_log(
-            "Skill",
-            transcript,
-            {"skill": "manifest-dev:done"},
-        )
-        assert done_log is not None
-
-
-class TestNonWorkflowSkillsFiltered:
-    """Non-workflow skills should not trigger log reminders."""
-
-    def test_learn_skill_no_reminder(self, tmp_path: Path):
-        transcript = make_transcript(
-            tmp_path, [user_do(), assistant_text("Working...")]
-        )
-        result = run_posttool_log(
-            "Skill", transcript, {"skill": "manifest-dev:learn-from-session"}
-        )
-        assert result is None
-
-    def test_simplify_skill_no_reminder(self, tmp_path: Path):
-        transcript = make_transcript(
-            tmp_path, [user_do(), assistant_text("Working...")]
-        )
-        result = run_posttool_log(
-            "Skill", transcript, {"skill": "simplify"}
-        )
-        assert result is None
-
-    def test_sync_tools_skill_no_reminder(self, tmp_path: Path):
-        transcript = make_transcript(
-            tmp_path, [user_do(), assistant_text("Working...")]
-        )
-        result = run_posttool_log(
-            "Skill", transcript, {"skill": "manifest-dev:sync-tools"}
-        )
-        assert result is None
-
 
 class TestInterruptedDoHandling:
     """User interrupts /do mid-execution."""
@@ -644,9 +475,6 @@ class TestInterruptedDoHandling:
         stop_result = run_stop_hook(transcript)
         assert stop_result is None  # allow stop
 
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is None  # no reminder
-
         amendment = run_prompt_submit(transcript)
         assert amendment is None  # no amendment check
 
@@ -658,7 +486,7 @@ class TestInterruptedDoHandling:
                 user_do("/tmp/manifest-1.md"),
                 user_message("[Request interrupted by user]"),
                 # Re-invoke
-                user_do("/tmp/manifest-1.md /tmp/do-log.md"),
+                user_do("/tmp/manifest-1.md"),
                 assistant_text("Resuming..."),
             ],
         )
@@ -667,10 +495,6 @@ class TestInterruptedDoHandling:
         stop_result = run_stop_hook(transcript)
         assert stop_result is not None
         assert stop_result["decision"] == "block"
-
-        log_reminder = run_posttool_log("TaskUpdate", transcript)
-        assert log_reminder is not None
-
 
 class TestEscalateTypesNotDistinguished:
     """Hooks treat all /escalate types the same — verify this is safe."""
@@ -714,24 +538,6 @@ class TestEscalateTypesNotDistinguished:
         )
         stop_result = run_stop_hook(transcript)
         assert stop_result is None  # allowed
-
-    def test_posttool_fires_for_all_escalate_types(self, tmp_path: Path):
-        """Log reminder fires for any escalate type."""
-        transcript = make_transcript(
-            tmp_path, [user_do(), assistant_text("Working...")]
-        )
-
-        for escalate_args in [
-            "AC-5 blocking",
-            "Self-Amendment",
-            "User-Requested Pause",
-        ]:
-            result = run_posttool_log(
-                "Skill",
-                transcript,
-                {"skill": "manifest-dev:escalate", "args": escalate_args},
-            )
-            assert result is not None, f"No reminder for escalate '{escalate_args}'"
 
 
 class TestPretoolVerifyIsolation:

@@ -21,7 +21,6 @@ SUFFIX = f"-{NAMESPACE}"
 # Skills that are referenced in cross-references
 SKILL_NAMES = [
     "auto", "define", "do", "done", "escalate",
-    "drive", "drive-tick",
     "figure-out", "verify",
 ]
 
@@ -32,7 +31,8 @@ AGENT_NAMES = [
     "code-maintainability-reviewer", "code-simplicity-reviewer",
     "code-testability-reviewer", "context-file-adherence-reviewer",
     "contracts-reviewer", "criteria-checker",
-    "docs-reviewer", "manifest-verifier", "type-safety-reviewer",
+    "docs-reviewer", "github-pr-lifecycle", "manifest-verifier",
+    "type-safety-reviewer",
 ]
 
 

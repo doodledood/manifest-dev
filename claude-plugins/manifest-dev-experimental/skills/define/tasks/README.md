@@ -28,12 +28,12 @@ Each task type in `tasks/` carries domain-specific guidance: quality gates (auto
 
 ## Task file content types
 
-- **Quality gates** (`## Quality Gates` section) — auto-include as INV-G*. Omit clearly inapplicable with logged reasoning.
+- **Quality gates** (`## Quality Gates` section) — auto-include as INV-G*. Omit clearly inapplicable with stated reasoning.
 - **Defaults** (`## Defaults` section) — encoded pre-interview as PG-*. Included in manifest without probing; user reviews and removes if not applicable.
 - **Resolvable content** (risks, scenarios, trade-offs tables) — handed to figure-out as probing fuel. Resolutions encode as INV/AC/R/T.
 - **Compressed awareness** (bold-labeled one-line summaries) — informs probing; no resolution needed.
 - **Reference files** (`references/*.md` inside each task domain) — lookup data for verifier agents; not loaded during /define.
 
-**Encode quality gates and Defaults immediately after reading task files — before the interview.** Note each in the discovery log narrative as it lands.
+**Encode quality gates and Defaults immediately after reading task files — before the interview.** Surface each as it lands so the conversation carries the encoding decisions forward.
 
 Task files set the floor, not the ceiling — probe beyond when domain understanding warrants.

@@ -210,7 +210,7 @@ Six context layers [PRIMARY: ACE; SECONDARY: Manus]:
 
 **Proposed change**: Add to Orchestrating Web Research: "For research sessions approaching context limits, use file-based context persistence: write intermediate findings to files and load them as needed rather than relying on conversation history. This prevents information loss through context compaction."
 
-**Feasibility**: High. The execution log pattern already serves this purpose partially. Making it explicit as a context engineering practice would be valuable.
+**Feasibility**: High. Making it explicit as a context engineering practice would be valuable.
 
 ---
 

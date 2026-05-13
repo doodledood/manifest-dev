@@ -75,8 +75,6 @@ When generating ADR entries from session transcripts:
 
 **From manifests**: The Approach section (Architecture, Trade-offs, Risk Areas) contains structured decision summaries. These are the most reliable source for what was decided, though they lack the full deliberation context.
 
-**From execution logs**: Look for approach adjustments with rationale and trade-off applications. The key signal is "changed because" or "preferred X over Y because" — these indicate deliberation.
-
 **Quality over quantity**: A manifest with 10 decisions might produce 2-3 ADRs. The Context and Alternatives sections are what make ADRs valuable — a decision without context is just a fact. If you can't articulate why alternatives were rejected, the decision may not be ADR-worthy.
 
 **Context comes from the transcript, not the manifest**: The most valuable ADR content is the reasoning that happened during the session — user preferences, rejected approaches, constraint trade-offs. The manifest records WHAT was decided; the transcript records WHY.

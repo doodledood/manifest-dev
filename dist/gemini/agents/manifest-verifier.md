@@ -1,6 +1,6 @@
 ---
 name: manifest-verifier
-description: '''Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe so interview can continue.'''
+description: 'Reviews /define manifests for gaps and outputs actionable continuation steps. Returns specific questions to ask and areas to probe so interview can continue.'
 kind: local
 tools:
   - read_file
@@ -18,9 +18,9 @@ timeout_mins: 5
 
 Find gaps in the manifest that would cause implementation failure or rework. Output actionable questions to continue the interview.
 
-Input format: `Manifest: <path> | Log: <path>`
+Input format: `Manifest: <path>`
 
-If manifest or log file is missing or empty, output Status: CONTINUE with a gap noting the missing input.
+If the manifest path is missing or the manifest file is empty, output Status: CONTINUE with a gap noting the missing input.
 
 **Glossary**: INV = Global Invariant, AC = Acceptance Criteria, PG = Process Guidance, ASM = Known Assumption, T-* = Trade-off, R-* = Risk Area
 
@@ -34,21 +34,23 @@ If not, identify what's missing and output specific questions to fill the gap.
 
 ## Gap Detection Principles
 
+Each principle infers what /define's synthesis covered from the manifest content itself (what's encoded as INV/AC/PG/R/T/ASM, what's in Intent, what's in Approach). When the manifest's content suggests a gap relative to the principle, flag it.
+
 ### Depth over breadth
 
 Surface-level coverage with gaps is worse than deep coverage of fewer areas. Flag when:
-- First answers accepted without "what if X fails/changes?" follow-up
+- First answers appear accepted without "what if X fails/changes?" follow-up
 - Topics mentioned but not probed for edge cases
-- User constraints stated in log but not encoded in manifest (INV, AC, or PG)
+- User constraints implied by Intent but not encoded in manifest (INV, AC, or PG)
 
 ### Domain understanding before criteria
 
 Latent requirements emerge from domain understanding. Flag when:
-- Log shows no domain understanding of the affected area (no exploration of existing patterns, structure, or constraints — from any source)
-- Task involves external services but log shows no cross-service investigation
+- Manifest shows no signs of domain understanding of the affected area (Mental Model generic, no project-specific scenarios)
+- Task involves external services but no cross-service investigation reflected in INV/AC/R-*
 - Mental Model is generic (could apply to any project)
 - New data field but no exploration of where data originates or how it flows
-- Domain understanding findings logged but not confirmed with user before encoding as invariants
+- Domain understanding findings encoded as invariants without indication they were user-confirmed
 
 ### Edge cases for new capabilities
 
@@ -57,11 +59,11 @@ New fields, APIs, or features have characteristic failure modes. Flag when the m
 ### Explicit → Encoded
 
 User statements and discovered insights must appear in the manifest. Flag when:
-- User stated a preference/constraint with no corresponding INV, AC, or PG
-- Technical discovery encoded as invariant without user confirmation ("Discovered ≠ confirmed")
+- Intent or context implies a preference/constraint with no corresponding INV, AC, or PG
+- Technical discovery encoded as invariant without indication of user confirmation ("Discovered ≠ confirmed")
 - Process constraint (how to work) placed in INV instead of Process Guidance
-- Insights from domain understanding, reference class analysis, or failure mode coverage logged but not converted to criteria
-- Discovery log opens threads (questions raised, scenarios surfaced, options noted, gaps identified) that don't reach an explicit disposition — encoded, scoped out, or mitigated — before synthesis
+- Insights from domain understanding, reference class analysis, or failure mode coverage referenced in synthesis but not converted to criteria
+- Synthesis raised threads (questions, scenarios, options, gaps) that don't reach an explicit disposition — encoded, scoped out, or mitigated — in the manifest
 
 ### Approach for complexity
 
@@ -70,7 +72,7 @@ Complex tasks need initial direction (expect adjustment when reality diverges). 
 - Architectural decisions implicit rather than explicit
 - Architectural choice affects multiple deliverables but manifest doesn't identify which deliverables depend on it or what changes if the choice proves wrong
 - Deliverables have producer-consumer dependencies but no specification of the interface between them (data shape, contract, or integration point)
-- Competing concerns discussed but no trade-offs (T-*) captured
+- Competing concerns implied but no trade-offs (T-*) captured
 - High-risk task but no risk areas (R-*) defined
 
 ### Reference class grounding
@@ -78,23 +80,23 @@ Complex tasks need initial direction (expect adjustment when reality diverges). 
 Failure mode coverage should be grounded in evidence, not pure imagination. Flag when:
 - No reference class identified (what type of task is this?)
 - Reference class is generic when domain understanding revealed specific context (e.g., "refactor" instead of "refactor of a tightly-coupled module with no tests")
-- No base rate failures logged (what typically goes wrong in this class?)
+- No base rate failures named (what typically goes wrong in this class?)
 - Failure scenarios don't inherit from known failure patterns
 
 ### Failure mode coverage
 
 Failure scenarios raised must be resolved, not left dangling. Flag when:
-- Failure scenario discussed in log but no corresponding INV, AC, R-*, or explicit out-of-scope decision
+- Failure scenario implied by Intent/Approach but no corresponding INV, AC, R-*, or explicit out-of-scope decision
 - Only immediate/obvious failure modes explored (no downstream, timing, or stakeholder impacts)
-- Scenarios logged but lack disposition (encoded, scoped out, or mitigated)
+- Scenarios named but lack disposition (encoded, scoped out, or mitigated)
 - No mental model alignment check (user's vision of "done" vs deliverable definitions)
 
 ### Positive dependency coverage
 
 Positive dependencies (what must go right) should be surfaced. Flag when:
-- Non-trivial task but positive dependencies not examined (from any source — log, context, or manifest)
+- Non-trivial task but positive dependencies not examined (no ASMs about infrastructure, tooling, or user-behavior premises that the work relies on)
 - Implicit assumptions about infrastructure, tooling, or user behavior not examined
-- Load-bearing assumptions not resolved (verified, encoded as invariant, or logged as ASM)
+- Load-bearing assumptions not resolved (verified, encoded as invariant, or recorded as ASM)
 
 ### Process self-audit coverage
 
@@ -114,39 +116,38 @@ Known Assumptions (ASM-*) must be genuinely low-impact. Flag when:
 ### Question format discipline
 
 Questions must present structured options with concrete choices. Flag when:
-- Log shows open-ended questions without concrete options
-- Questions lack a recommended option (single-select should have one "(Recommended)")
-- User asked about discoverable facts that could have been searched first
+- Synthesis appears to have asked open-ended questions without concrete options (inferable from ASMs that read like deferred decisions rather than recommended-default selections)
+- Questions appear to lack a recommended option (single-select should have one "(Recommended)")
+- User appears to have been asked about discoverable facts that could have been searched first
 
 ### Input artifact coverage
 
 External documents referenced in input need explicit handling. Flag when:
-- Input references file paths or URLs but log doesn't show probing for verification source
+- Input references file paths or URLs but the manifest doesn't address them as verification sources
 - External document mentioned but not explicitly included or excluded as verification source
 
 ### Understanding confirmation
 
 Interpretation drift must be caught early. Flag when:
-- Multiple topic areas covered but no synthesis/confirmation checkpoint in log
-- Complex requirements discussed without "Here's what I've established" summary to user
+- Multiple topic areas covered but no synthesis/confirmation checkpoint reflected in the manifest's Intent or Approach
+- Complex requirements addressed without an "Here's what I've established" summary surface
 
 ### Task file structure coverage
 
-Task file structures (quality gates, reviewer agents, risks, scenarios, trade-offs) are presumed relevant and must be resolved — presented for user selection or explicitly skipped with justification. Flag when:
-- Task type identified (feature, bug, refactor, etc.) but corresponding task files not read or engaged with
-- CODING.md quality gates table (reviewer agents + thresholds) not presented to user for selection on code-change tasks
+Task file structures (quality gates, reviewer agents, risks, scenarios, trade-offs) are presumed relevant and must be resolved — encoded as INV-G*/AC-* (quality gates) or PG-*/R-*/T-* (resolvable structures) or explicitly skipped with justification. Flag when:
+- Task type identified (feature, bug, refactor, etc.) but corresponding task files not engaged with
+- CODING.md quality gates table (reviewer agents + thresholds) not reflected in INV-G* on code-change tasks
 - Domain-specific structures (FEATURE.md risks, BUG.md root cause gates, REFACTOR.md characterization tests, etc.) not resolved
-- Structures skipped without logged justification (silent drops)
+- Structures skipped without recorded justification (silent drops)
 - Selected quality gates not traceable to INV-G* or AC-* with matching verification (agent, threshold)
-- Log shows task file structures "noted" or "considered" but never presented to user — engagement requires selection or explicit skip, not acknowledgment
-- Log fails to surface task file structures as open threads (every Resolvable table/checklist item should be visible in the log narrative immediately after reading task files, with its eventual disposition)
-- Log contains threads opened but not closed at time of synthesis (applies to all opened threads, not just task files — see Explicit → Encoded)
+- Task file structures appear noted in Intent or Approach but never reached an encoded disposition
+- Threads raised in synthesis but not closed before manifest write (applies to all opened threads, not just task files — see Explicit → Encoded)
 
 ### Approach constraints coverage
 
 Beyond WHAT to build, HOW constraints need probing. Flag when:
-- No questions about tools to use/avoid, methods required/forbidden, automation vs manual
-- Process preferences stated but not encoded as PG
+- No coverage of tools to use/avoid, methods required/forbidden, automation vs manual
+- Process preferences implied by Intent but not encoded as PG
 
 ### Verification automation
 

@@ -7,7 +7,6 @@ import type { Plugin } from "@opencode-ai/plugin"
  * - Stop enforcement for /do workflow (session.idle — CANNOT block, documented limitation)
  * - Post-compaction workflow recovery (experimental.session.compacting)
  * - Pre-verify context refresh (tool.execute.before on task tool)
- * - Post-milestone log reminder (tool.execute.after on task/todowrite tools)
  * - Amendment check on user prompt during /do (experimental.chat.system.transform)
  *
  * KNOWN LIMITATIONS:
@@ -54,9 +53,6 @@ function getDoState(sessionID: string): DoFlowState {
   }
   return doStates.get(sessionID)!
 }
-
-// Skills that represent workflow transitions worth logging
-const LOG_WORKFLOW_SKILLS = new Set(["verify", "escalate", "done", "define"])
 
 function extractSkillName(args: Record<string, unknown>): string | null {
   const skill = args?.skill as string | undefined
@@ -132,11 +128,11 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
           throw new Error(
             `/verify appears to be starting.\n\n` +
             (verifyArgs ? `Arguments: ${verifyArgs}\n\n` : "") +
-            `Before spawning verifiers, the manifest and execution log may need ` +
-            `to be in full context — if they haven't been read recently, loading ` +
-            `them surfaces every acceptance criterion (AC-*) and global invariant ` +
-            `(INV-G*) so the right verifiers get spawned. If they're already in ` +
-            `context from recent work, proceed with /verify directly.\n\n` +
+            `Before spawning verifiers, the manifest may need to be in full ` +
+            `context — if it hasn't been read recently, loading it surfaces ` +
+            `every acceptance criterion (AC-*) and global invariant (INV-G*) ` +
+            `so the right verifiers get spawned. If it's already in context ` +
+            `from recent work, proceed with /verify directly.\n\n` +
             `This is a context reminder, not a blocker.`
           )
           // NOTE: In OpenCode, throwing an Error blocks the tool call and the
@@ -149,48 +145,13 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
     },
 
     // -----------------------------------------------------------------------
-    // tool.execute.after — Post-tool hooks
-    // -----------------------------------------------------------------------
-    "tool.execute.after": async ({ tool, sessionID, args }) => {
-      // --- Post-milestone log reminder (posttool_log_hook) ---
-      const doState = getDoState(sessionID)
-      if (!doState.active || doState.hasDone) return
-
-      let shouldRemind = false
-      let skillDetail = ""
-
-      // TodoWrite / task management milestones
-      if (tool === "todowrite" || tool === "todoread") {
-        shouldRemind = true
-      }
-
-      // Skill/task calls for workflow transitions
-      if (tool === "task" || tool === "skill") {
-        const skillName = extractSkillName(args as Record<string, unknown>)
-        if (skillName && LOG_WORKFLOW_SKILLS.has(skillName)) {
-          shouldRemind = true
-          skillDetail = ` (skill: ${skillName})`
-        }
-      }
-
-      if (!shouldRemind) return
-
-      // We cannot inject additionalContext in tool.execute.after in OpenCode.
-      // Instead we mutate the output to append the reminder.
-      // The `output` parameter in the hook signature allows mutation.
-      // However, since we're in a fire-and-forget position here,
-      // the reminder is best delivered via chat.system.transform.
-      // This is a known gap — the log reminder is handled there instead.
-    },
-
-    // -----------------------------------------------------------------------
     // experimental.chat.system.transform — System context injection
     // Fires before every LLM request. Closest to Claude Code's additionalContext.
     // -----------------------------------------------------------------------
     "experimental.chat.system.transform": async ({ sessionID }, output) => {
       const doState = getDoState(sessionID)
 
-      // --- /do workflow: stop enforcement + amendment check + log reminder ---
+      // --- /do workflow: stop enforcement + amendment check ---
       if (doState.active && !doState.hasDone) {
         // Stop enforcement guidance (cannot actually block — session.idle is fire-and-forget)
         // Decision matrix from stop_do_hook.py:
@@ -217,8 +178,7 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
           // Non-local medium: /verify posted escalation externally
           output.system.push(
             `<system-reminder>Verification results posted to the external review channel. ` +
-            `The user will re-invoke /do with the execution log path ` +
-            `once the blocker is resolved.</system-reminder>`
+            `The user will re-invoke /do once the blocker is resolved.</system-reminder>`
           )
         } else {
           // No exit condition met — enforce workflow
@@ -247,16 +207,6 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
           `context (or if this hook is misreading the state and /do is already ` +
           `closed), continue execution normally.</system-reminder>`
         )
-
-        // Log reminder (posttool_log_hook equivalent — injected as persistent context)
-        output.system.push(
-          `<system-reminder>After any milestone-shaped tool call during /do ` +
-          `(task updates, workflow skill calls) that introduced new state, ` +
-          `decisions, or outcomes not already in the execution log, writing ` +
-          `them preserves the record — the log is disaster recovery if context ` +
-          `is lost. If recent calls were routine and already reflected there, ` +
-          `skip this reminder.</system-reminder>`
-        )
       }
     },
 
@@ -274,19 +224,18 @@ export const ManifestDevPlugin: Plugin = async (_ctx) => {
             `workflow — context from before compaction may be missing.\n\n` +
             `The /do was invoked with: ${doState.doArgs}\n\n` +
             `If deliverables or acceptance criteria aren't currently in context, ` +
-            `reading the manifest and any /tmp/do-log-*.md execution log restores ` +
-            `progress and prevents restarting completed work. If both are already ` +
-            `loaded from post-compact context, skip the re-read and resume from ` +
-            `where you left off. If this hook is misreading and the session was ` +
-            `never mid-/do, proceed normally.`
+            `re-reading the manifest restores progress and prevents restarting ` +
+            `completed work. If it's already loaded from post-compact context, ` +
+            `skip the re-read and resume from where you left off. If this hook ` +
+            `is misreading and the session was never mid-/do, proceed normally.`
           )
         } else {
           output.context.push(
             `This session appears to have been compacted during an active /do ` +
             `workflow — context from before compaction may be missing.\n\n` +
-            `If orientation is missing, checking /tmp/ for an execution log ` +
-            `matching do-log-*.md should surface both the manifest path ` +
-            `(referenced in the log) and progress so far. If orientation is ` +
+            `If orientation is missing, the manifest path was passed to /do at ` +
+            `invocation and re-reading it surfaces the deliverables, acceptance ` +
+            `criteria, and global invariants needed to resume. If orientation is ` +
             `already intact, skip the re-read. If this hook is misreading and ` +
             `the session was never mid-/do, proceed normally.`
           )

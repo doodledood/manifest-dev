@@ -4,13 +4,12 @@ Output the manifest path and stop. Substitute placeholders before printing:
 - `{timestamp}` → the manifest filename's timestamp.
 - `<dir>` → the current project directory in slug form (path separators → `-`, e.g., `-home-user-manifest-dev` for `/home/user/manifest-dev`).
 - `${CLAUDE_SESSION_ID}` → the env value.
-- `[log-file-path if iterating]` → if this run iterated on a previous manifest's execution log, substitute the actual log path; otherwise omit the bracketed clause (including the trailing space).
 
 ```text
 Manifest complete: /tmp/manifest-{timestamp}.md
 Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl
 
-To execute: /do /tmp/manifest-{timestamp}.md [log-file-path if iterating]
+To execute: /do /tmp/manifest-{timestamp}.md
 ```
 
 ## Summary for Approval (precedes Complete)

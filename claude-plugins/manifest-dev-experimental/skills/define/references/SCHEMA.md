@@ -75,6 +75,6 @@
 
 ## Encoding disciplines
 
-- **Insights become criteria.** Every discovery encoded — INV-G*, AC-*, PG-*, R-*, T-*, or ASM-* — or explicitly scoped out with logged reasoning.
+- **Insights become criteria.** Every discovery encoded — INV-G*, AC-*, PG-*, R-*, T-*, or ASM-* — or explicitly scoped out with stated reasoning.
 - **Automate verification.** Manual is last resort.
 - **Verification phases.** Group by iteration speed — fast feedback first. Fast checks (bash, agent reviewers) in default phase 1. Slow checks (e2e, deploy-dependent) in later phases. Manual goes last. Omit `phase:` for phase 1; non-contiguous phases valid.

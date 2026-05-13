@@ -4,7 +4,7 @@
 
 - **True-selective.** A selective pass where `--scope` was set (the filter actually narrowed the criterion universe).
 - **Selective-degenerated-to-full.** A selective pass where `--scope` was absent — no narrowing applied, the pass covered everything. Treated as full for outcome handling.
-- **Auto-final.** A full pass /verify self-invoked after a preceding true-selective green. /verify identifies an auto-final invocation by reading its own most recent pass log block — if the previous block had `result: pass`, `scope:` non-empty, `auto_triggered_final: false`, this pass is the auto-final.
+- **Auto-final.** A full pass /verify self-invoked after a preceding true-selective green. /verify identifies an auto-final invocation by reading its own most recent return block visible in conversation — if the previous block had `result: pass`, `scope:` non-empty, `auto_triggered_final: false`, this pass is the auto-final.
 - **Deferred-auto inclusion.** /verify includes deferred-auto criteria in a pass when the conversation context contains an explicit user readiness signal (e.g., "all deployed", "staging is up", "go ahead"). Without the signal, deferred-auto criteria are skipped (uncovered ones still block /done via escalation).
 
 ## Routing table
