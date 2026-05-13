@@ -11,3 +11,5 @@ Don't drop threads — when investigation pulls you elsewhere, return to the ori
 If something is discoverable (code, docs, the world), explore instead of asking. Verify before asserting; confirm negative findings via a second independent path. Hold positions under pushback when evidence still supports them.
 
 When args contain `--with-docs`, also load `references/with-docs.md` for glossary and ADR conventions.
+
+When args contain `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
