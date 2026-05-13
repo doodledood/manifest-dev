@@ -18,7 +18,7 @@ The discipline: trust capability, minimize specification, observe what actually 
 
 - **One mode instead of three.** `--mode efficient|balanced|thorough` and `--interview minimal|autonomous|thorough` are dropped — defaults are quality-first. Trust the verifiers.
 - **`figure-out` owns the interview.** `/define`'s epistemic stance, interview style modes, and discovery-question disciplines are gone — they live in `/figure-out`, which `/define` auto-invokes on cold-start.
-- **Coverage Goals reframed.** No longer drive the interview; the `manifest-verifier` agent audits the manifest against them post-synthesis.
+- **Coverage Goals are implicit.** No longer drive the interview as in main; writer-side discipline (informed by figure-out's tree-walking and task-file probing fuel) applies them during manifest writing. If real gaps surface during /do execution as failed ACs or amendments, the slim discipline says: add specific lines back where they're needed.
 - **Spirit lives in the slim prompt itself.** No separate rubric files. The slim prompt either steers the load-bearing behavior or it doesn't; reviewers (`change-intent-reviewer`, `prompt-reviewer`) catch regressions.
 
 ## Hooks and agents

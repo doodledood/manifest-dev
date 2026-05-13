@@ -77,7 +77,7 @@ User calls `/define --amend <manifest>` directly. Full interactive mode:
 
 ### 2. From /do (Autonomous Fast Path)
 
-Triggered by `--from-do` flag (e.g., `/define --amend <manifest> --from-do`). This flag is set by /do after Self-Amendment escalation — it signals deterministically that this is an autonomous amendment, not an interactive session.
+Triggered by caller-context inference. When /define is invoked from /do's Self-Amendment path (the invocation chain shows /do is upstream), /define recognizes this as an autonomous amendment, not an interactive session. No explicit flag is needed; the caller context is the signal.
 
 In /do context, amendment is autonomous and fast — no user approval gates (verification loop, summary approval). Make targeted changes based on the escalation context. Write updated manifest in-place so /do can resume immediately. Log the amendment in the manifest's `## Amendments` section.
 

@@ -2,7 +2,7 @@
 
 ## /verify invocation patterns
 
-Always invoke /verify to reach /done. Never pass `--final` — internal to /verify.
+Always invoke /verify to reach /done. /verify self-invokes for the auto-final pass by reading its own most recent pass log block — /do doesn't manage that recursion.
 
 | Situation | Invocation |
 |-----------|-----------|
@@ -14,7 +14,7 @@ Always invoke /verify to reach /done. Never pass `--final` — internal to /veri
 
 **Phase-aware fix loops.** /verify runs criteria in phases. It may report `Phase N failed, Phase N+1 not run`. After fixing, /verify restarts from Phase 1 to catch regressions.
 
-**/verify pass log reading.** /verify appends `## /verify pass {N}` blocks. Read the most recent block before deciding next pass's scope. **Skip blocks where `deferred: true`** — those reflect user-direct `--deferred` invocations, not /do-driven normal-flow passes.
+**/verify pass log reading.** /verify appends `## /verify pass {N}` blocks. Read the most recent block before deciding next pass's scope. **Skip blocks where `deferred: true`** — those reflect passes that included deferred-auto criteria via chat-signal inference, not normal-flow AC/INV state.
 
 ## Escalation boundary
 
@@ -34,4 +34,4 @@ When /verify routes to /escalate (Deferred-Auto Pending / Manual Criteria Review
 
 ## Out-of-scope findings
 
-When a verifier surfaces that the failure is beyond the current manifest's scope, /do treats this as a scope shift and routes through Self-Amendment (`/define --amend <manifest-path> --from-do`) — same path as user-message-triggered amendments. The verifier reports the finding; /do owns the workflow response.
+When a verifier surfaces that the failure is beyond the current manifest's scope, /do treats this as a scope shift and routes through Self-Amendment — invoke `manifest-dev-experimental:define` with the out-of-scope finding; /define infers fast-path semantics from /do's caller context and the amend target from transcript. Same path as user-message-triggered amendments. The verifier reports the finding; /do owns the workflow response.

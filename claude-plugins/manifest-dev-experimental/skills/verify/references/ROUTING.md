@@ -5,7 +5,7 @@
 | `bash`, `codebase`, `research` | `criteria-checker` agent |
 | `subagent` | the agent named in the criterion's `agent:` field |
 | `manual` | `/escalate` (no automated check exists) |
-| `deferred-auto` | skipped on normal passes; under `--deferred`, routed by the criterion's `inner_method:` field (required; missing → halt: `Deferred-auto criterion <ID> missing inner_method.`) |
+| `deferred-auto` | skipped on normal passes; when /verify detects a chat-derived readiness signal, included in the pass and routed by the criterion's `inner_method:` field (required; missing → halt: `Deferred-auto criterion <ID> missing inner_method.`) |
 | (none / unrecognized) | `criteria-checker` |
 
 ## Deferred-auto verify block
@@ -19,4 +19,4 @@ verify:
   prompt: "..."                # if inner_method: subagent or research, or any inner_method that uses a prompt
 ```
 
-Under `--deferred`, /verify routes the criterion identically to a non-deferred criterion of that `inner_method`.
+When deferred-auto inclusion fires (chat signal detected), /verify routes the criterion identically to a non-deferred criterion of that `inner_method`.

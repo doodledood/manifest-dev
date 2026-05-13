@@ -36,7 +36,7 @@
     prompt: "[if subagent or research, or matching deferred-auto inner_method]"
   ```
 
-*`deferred-auto`: user-triggered; runs only via `/verify --deferred`. Required `inner_method:` names the underlying verifier type. See `MULTI_REPO.md` §e for cross-repo semantics.*
+*`deferred-auto`: user-triggered; /verify includes these criteria in a pass when a chat-derived readiness signal is detected. Required `inner_method:` names the underlying verifier type. See `MULTI_REPO.md` §e for cross-repo semantics.*
 
 *Auto-decided items carry `(auto)` after the ID, e.g. `[INV-G2] (auto) Description: ...`. Same convention applies to AC-* and PG-* that were auto-decided. Each auto-decided item also appears in Known Assumptions with reasoning.*
 

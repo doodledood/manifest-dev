@@ -88,8 +88,8 @@ Please review and confirm completion.
 ```
 
 Re-entry depends on trigger source:
-- *From /do or /verify* — autonomous fast path: `/define --amend <path> --from-do`, then /do resumes with updated manifest. No interview, no summary-for-approval.
-- *After /done* — two-step chain, both mandatory: (1) `manifest-dev-experimental:define` with `<feedback> --amend <manifest-path>`; (2) `manifest-dev-experimental:do` with `<manifest-path> <log-path> --scope <new-or-affected>`. Stopping after step 1 leaves the manifest amended but unverified. Amendment loop guard (consecutive Self-Amendments without external input → escalate as Proposed Amendment) applies to re-entry too.
+- *From /do or /verify* — autonomous fast path: invoke `manifest-dev-experimental:define` with the feedback; /define infers fast-path semantics from caller context (no summary wait) and infers the amend target from transcript via Session-Default Detection. /do resumes with the updated manifest.
+- *After /done* — two-step chain, both mandatory: (1) invoke `manifest-dev-experimental:define` with `<feedback>` — /define infers amend target from the just-completed manifest in transcript; (2) invoke `manifest-dev-experimental:do` with `<manifest-path> <log-path> --scope <new-or-affected>`. Stopping after step 1 leaves the manifest amended but unverified. Amendment loop guard (consecutive Self-Amendments without external input → escalate as Proposed Amendment) applies to re-entry too.
 
 ## Proposed Amendment
 
@@ -143,11 +143,7 @@ Use when YOU discovered the criterion should change (no user/reviewer trigger). 
 - ...
 
 ### To Resolve
-When prerequisites are in place (e.g., "all PRs deployed"), invoke:
-
-`/verify <manifest-path> <execution-log-path> --deferred`
-
-After `--deferred` completes green, re-invoke a normal `/verify <manifest-path> <execution-log-path>` (no flags) to reach `/done`.
+When prerequisites are in place, signal readiness in chat (e.g., "all deployed", "staging is up", "go ahead") and re-invoke `/verify <manifest-path> <execution-log-path>`. /verify reads recent conversation context for the readiness signal and includes deferred-auto criteria in the pass. After they pass green, /verify reaches `/done` on the next normal-flow pass.
 ```
 
-When BOTH manual criteria AND pending deferred-auto exist, combine into a single block titled `## Escalation: Manual Review + Deferred-Auto Pending` containing both sections inline + a To Resolve that combines manual review steps and the `/verify --deferred` instruction.
+When BOTH manual criteria AND pending deferred-auto exist, combine into a single block titled `## Escalation: Manual Review + Deferred-Auto Pending` containing both sections inline + a combined To Resolve covering the manual review steps and the readiness-signal-plus-re-invoke instruction.

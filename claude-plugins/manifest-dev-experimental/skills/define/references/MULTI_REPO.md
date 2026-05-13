@@ -79,11 +79,11 @@ Worked example — manifest declares:
 
 `/do` invoked from any cwd reads `Repos:`, navigates to `/home/user/projects/api` for D1's edits via absolute paths, runs the verify command. No filter required.
 
-## e. method: deferred-auto + /verify --deferred
+## e. method: deferred-auto + chat-signaled readiness
 
 Cross-repo gates often cannot run during normal `/do→/verify` flow because they depend on prerequisites the user controls (e.g., "all PRs deployed to staging"). They are still **automatically verifiable** — just user-triggered.
 
-`method: deferred-auto` marks such criteria. Verify blocks MUST declare an explicit sibling `inner_method:` field naming the underlying verifier type (`subagent` | `bash` | `codebase` | `research`); under `/verify --deferred` the criterion is routed identically to a non-deferred criterion of that `inner_method`. Worked example:
+`method: deferred-auto` marks such criteria. Verify blocks MUST declare an explicit sibling `inner_method:` field naming the underlying verifier type (`subagent` | `bash` | `codebase` | `research`); when /verify includes deferred-auto criteria in a pass, the criterion is routed identically to a non-deferred criterion of that `inner_method`. Worked example:
 
 ```yaml
 - [INV-G7] Frontend SSO login round-trips through deployed backend
@@ -94,20 +94,15 @@ Cross-repo gates often cannot run during normal `/do→/verify` flow because the
     prompt: "Hit https://staging.example.com/login with a test SAML assertion. Confirm successful redirect to /dashboard with a valid session cookie."
 ```
 
-Normal `/verify` invocations skip `deferred-auto` criteria during the pass itself. **However, `/verify` will not call `/done` while deferred-auto criteria remain unverified** — instead it routes to `/escalate` with type "Deferred-Auto Pending," signaling the user to run `/verify --deferred` when prerequisites are ready. Only after the deferred-auto criteria pass via `/verify --deferred` does a subsequent normal `/verify` pass reach `/done`. The pass log's `deferred: true|false` field tracks which prior runs covered the deferred-auto set.
+By default, `/verify` skips `deferred-auto` criteria during the pass. **However, `/verify` will not call `/done` while deferred-auto criteria remain unverified** — instead it routes to `/escalate` with type "Deferred-Auto Pending," telling the user to signal readiness in chat and re-invoke `/verify` when prerequisites are ready. The pass log's `deferred: true|false` field tracks which prior runs covered the deferred-auto set.
 
-When the user signals readiness ("all PRs deployed"), they invoke:
+When the user signals readiness in chat ("all PRs deployed", "staging is up", "go ahead"), the next `/verify` invocation reads the recent conversation context, detects the readiness signal, and includes deferred-auto criteria in that pass. No explicit flag needed.
 
-```
-/verify <manifest> <log> --deferred
-```
+Inclusion rules:
 
-This runs **only** `deferred-auto` criteria. Flag interactions:
-
-- `--deferred` + `--scope` is supported. `--scope` narrows the deferred set to in-scope deliverables.
-- INV-G\* deferred-auto criteria are deliverable-scope-independent — `--scope` does not cover them. They are covered only by a `--deferred` pass with empty `--scope`. `/done` remains gated on `/escalate` "Deferred-Auto Pending" until that uncovered set runs green.
-- `--deferred` does not interact with `--final`. It never enters the final-gate machinery.
-- `--deferred` inherits `--mode`. Same parallelism and model routing as the parent invocation.
+- `--scope` is supported alongside the context-signal. `--scope` narrows the deferred set to in-scope deliverables.
+- INV-G\* deferred-auto criteria are deliverable-scope-independent — `--scope` does not cover them. They are covered only by an inclusion-firing pass with empty `--scope`. `/done` remains gated on `/escalate` "Deferred-Auto Pending" until that uncovered set runs green.
+- Ambiguous chat signals default to skip — uncovered deferred-auto blocks /done via the escalation, user re-signals more explicitly if needed.
 
 ### Cross-repo path delivery to verifiers
 
