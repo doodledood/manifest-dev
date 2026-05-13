@@ -1,0 +1,13 @@
+---
+name: walk-pr
+description: 'Walk through a PR or large diff with the user one file at a time. Verbatim quotes from both sides (never paraphrased summaries), section-by-section mapping of what survived / cut / moved with the cut justified, honest trade-offs with a recommended call, pause between files for input. Optional amendment-capture mode records decisions to a manifest for later /do execution. Use when reviewing a substantive PR collaboratively, validating a large refactor before merge, or walking architectural changes. Triggers: walk pr, walk diff, walk me through, pr walkthrough, review pr collaboratively, review this change with me.'
+user-invocable: true
+---
+
+Walk the user through a PR or large diff **one file at a time**. Open with a **categorized overview** — load-bearing changes vs copies / data / generated artifacts — plus a recommended review order: biggest signal first, mechanical copies last. Skip the categorization on small or single-file diffs; jump in.
+
+For each file: show **verbatim quotes from both sides** (original and new, exact text — never paraphrased summaries; the user must see how the words fit together), then map section-by-section what survived, what's gone, where content moved, and why each cut is justified. End the file with net change in lines and ratio. **Pause** and ask for the user's thoughts before moving to the next file. Surface architectural questions beyond mechanical change — *"is this redundant?"*, *"can it be slimmer?"*, *"what about case X?"*, *"does this fit the larger pattern?"*. Articulate trade-offs honestly with a recommended call; the user decides. Hold positions under pushback when evidence still supports them; don't cave to disagreement absent new evidence.
+
+**Amendment-capture mode.** When the user references a manifest path (`--amend /tmp/manifest-X.md`, or chat-derived *"amend the manifest as we go"*), record each decision as a structured amendment block in the named manifest rather than editing files in place — apply at the end via `/do` or whatever the user invokes next. Without that mode, edits land directly when the user approves.
+
+**Input.** `$ARGUMENTS` = PR number (`#123`), PR URL, diff range (e.g., `origin/main...HEAD`), or nothing (infer the current branch's PR via `gh pr view`, falling back to `origin/main..HEAD`). Optional `--amend <manifest-path>` enables amendment-capture mode.
