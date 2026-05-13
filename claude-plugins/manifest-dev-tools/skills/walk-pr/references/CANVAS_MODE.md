@@ -1,12 +1,12 @@
 # Canvas Mode — Walk-PR Review Canvas
 
-Loaded when `/walk-pr --canvas` is passed. In this mode the canvas **is** the walkthrough — every walkthrough surface (verbatim quotes, section mapping, trade-offs, probes, recommendations, per-topic comment input) lives in the HTML artifact, and chat acts as paste-transport. The user reads the canvas, types a comment in the awaiting topic's textarea, clicks **Copy as prompt** to copy an anchored string, pastes it into chat. The agent processes the response, regenerates the HTML, the canvas advances. After the walkthrough closes, the artifact is redundant.
+Loaded when `/walk-pr --canvas` is passed. In this mode the canvas **is** the walkthrough — every walkthrough surface (verbatim quotes, section mapping, trade-offs, probes, recommendations, per-topic comment input) lives in the HTML artifact; chat acts as paste-transport. After the walkthrough closes, the artifact is redundant.
 
 ## Activation gate
 
 Evaluate **immediately** when `--canvas` is set, before opening the first sub-changeset. If any condition holds, skip canvas behavior and fall back to chat-only /walk-pr (first match wins; conditions 1–2 silent, condition 3 prints one warning):
 
-1. **Trivial diff** — single file, < 50 net lines changed. Canvas is overhead for a 30-second review.
+1. **Trivial diff** — canvas setup cost (file write + render + browser open + auto-reload plumbing) exceeds the review's information need. Rough threshold: single file with tens of net lines changed.
 2. **Non-local medium** — the user isn't at a host with browser access.
 3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`.
 
@@ -93,4 +93,4 @@ Any canvas-related failure is **non-blocking**. The canvas is the primary surfac
 - **Uniform layout template.** Forcing every sub-changeset into side-by-side panels regardless of what the change actually is — empty "after" columns for deletions, grids of identical lines for renames, etc. Match the layout to the change.
 - **Status-pill explosion.** Pills only on sub-changeset cards (the navigation surface).
 - **Diagram for nothing.** Mermaid only when component flow is at stake.
-- **Schema vocabulary on surface.** Talk about *what changed* and *why* in user vocabulary; no manifest schema labels.
+- **Internal vocabulary on surface.** Talk about *what changed* and *why* in user vocabulary; no leaked internal labels (schema names, anchor formats in headings, etc.).
