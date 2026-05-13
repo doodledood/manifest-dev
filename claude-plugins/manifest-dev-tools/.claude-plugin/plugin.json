@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-tools",
-  "version": "0.2.0",
-  "description": "Post-processing utilities for manifest workflows. ADR synthesis from session transcripts; collaborative PR walkthroughs.",
+  "version": "0.3.0",
+  "description": "Tools for working with prompts and PRs alongside the manifest workflow. ADR synthesis from session transcripts, collaborative PR walkthroughs, slim-discipline prompt engineering.",
   "keywords": [
     "adr",
     "architecture-decision-records",
@@ -9,6 +9,8 @@
     "manifest",
     "pr-review",
     "walk-pr",
-    "walkthrough"
+    "walkthrough",
+    "prompt-engineering",
+    "slim-prompts"
   ]
 }
