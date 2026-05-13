@@ -1,0 +1,64 @@
+# Babysit Mode
+
+Loaded when `/define --babysit <pr-url>` was passed. Synthesizes a lifecycle-only manifest from an existing PR so /do can tend it to mergeable. Entry path for "I have a PR open and want autonomous tending without authoring a manifest from scratch." User can re-invoke amendment later to add custom ACs beyond the lifecycle baseline.
+
+## PR URL parsing
+
+Canonical form: `https://github.com/<owner>/<repo>/pull/<N>`. Also accepted: `gh:owner/repo/N`, `owner/repo#N`. Reject non-`github.com` hosts (or platform-equivalent when `--platform` resolves elsewhere) with: `Cannot babysit: URL <url> is not a <platform> PR URL.` Extract owner, repo, pull number — they drive the AC's agent invocation.
+
+## Pre-flight (read-only — no side effects)
+
+Halt on failure with an actionable error:
+
+1. **GitHub backend reachable.** GitHub MCP tools loaded OR `gh` CLI authenticated. Reject naming what was tried.
+2. **PR accessible.** Query the PR. Not found / not visible / auth errors → halt naming the URL and failure mode.
+3. **PR not already terminal.** Closed/merged at synthesis → halt: `Cannot babysit: PR #<N> is already <state>. Babysit is for active PRs; closed/merged PRs need no further tending.`
+4. **Fork convention.** When `headRepository` differs from `baseRepository` (cross-repo PR from a fork), babysit targets the **upstream** repo where the PR lives — the `baseRepository`'s owner/repo, not the fork. The agent invocation uses that canonical URL. Log fork detection. *Consequence:* write-back hints targeting the PR's head branch live on the fork; /do may not have push access. Agent surfaces this as a halt-shaped FAIL when a write is needed, deferring to the contributor.
+5. **Repo identity confirmation.** When `cwd` is a git checkout AND `origin` differs from the PR's base repo → log a note (no halt): *"Babysit target (`<pr-owner/repo>`) differs from cwd `origin` (`<cwd-owner/repo>`). Continuing — babysit doesn't require a local checkout."*
+
+## Platform routing
+
+`--platform` resolves before this file. Babysit requires it match the PR URL's host:
+
+- `--platform github` + github.com URL → proceed.
+- `--platform github` + non-github URL → halt: `Cannot babysit: --platform github was set but URL host is <host>.`
+- `--platform none` + any URL → halt: `Cannot babysit: --platform none cannot tend a PR; pass --platform github (or omit for auto-detection).`
+
+When `--platform` not explicitly passed, /define infers from PR URL host (github.com → github). Differs from fresh-mode inference (which uses `origin` remote) because babysit's use case is repos that may not be locally cloned.
+
+## Intent seeding
+
+After pre-flight succeeds, read PR title and body:
+
+- **Goal:** derived from PR title and body's opening paragraph. One or two sentences naming what the PR is for.
+- **Mental Model:** when the body has a "context" / "background" / "why" section, fold it in. Otherwise minimal.
+- **Medium:** local.
+
+## AC templating
+
+One AC, invoking the `github-pr-lifecycle` agent, with PR URL + branch templated into the prompt field. Baseline template from `tasks/PR_LIFECYCLE.md` Quality Gates section. The agent owns canonical gate logic at runtime.
+
+**Steering surface.** /define populates `verify.prompt:` with baseline content (PR URL + branch). Custom steering (named approvers, known-flaky CI, custom labels) is NOT probed during babysit — autonomous synthesis stays fast. User adds steering later via amendment (routes through Amendment Mode for an interactive scoped interview).
+
+**Multi-repo babysit:** out of scope. Babysit takes one URL. Multi-repo changesets use fresh /define with `Repos:` declared.
+
+## Interview style
+
+Probing lives in /figure-out, and babysit doesn't invoke it (babysit's only AC is templated; no interview-resolvable scenarios). Probing nuances surface via amendment after the babysit manifest is in flight.
+
+## Output
+
+Write manifest to `/tmp/manifest-{ts}.md`. Print the standard `Manifest complete:` line per /define's Complete. User runs /do (or invoked `/auto --babysit`, which chains automatically).
+
+## Conflict halts
+
+- `--babysit` + `--amend` → halt: `Cannot babysit and amend simultaneously.`
+- `--babysit` without URL → halt: `--babysit requires a PR URL. Usage: /define --babysit <pr-url>.`
+- `--babysit` + free-form task text in `$ARGUMENTS` → URL wins; text ignored with one-line log note.
+
+## Gotchas
+
+- **One-shot synthesis.** Does not poll or re-synthesize. Manifest written → /do takes over.
+- **Externally-closed PR mid-/do.** Detected at runtime by the agent; FAIL with halt-shaped hint. /do treats as terminal; does not reopen.
+- **PR description rewrites scoped to /do.** Babysit reads description for intent seeding but does not modify. /do's later sync hint handles description updates if the gate fires.
+- **No retroactive seeding.** Intent seeded once at synthesis. If PR description changes substantively, user invokes amendment to re-sync intent — not by re-running babysit.

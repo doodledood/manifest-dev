@@ -1,0 +1,9 @@
+---
+name: verify
+description: 'Experimental. Runs verifiers for Global Invariants and Acceptance Criteria from a Manifest. Spawns verifier agents in parallel within each phase, aggregates, routes outcome to /done or /escalate. Normally invoked by /do; users invoke directly to verify an existing manifest.'
+user-invocable: true
+---
+
+Spawn verifiers for in-scope criteria, aggregate, route to /done or /escalate. Phases sequential (Phase N+1 only when N passes); criteria within a phase concurrent. Routing-by-method, verifier prompt format (3 sections, **no framing** — author's `prompt:` passed verbatim), outcome routing, deferred-auto semantics, and the pass log contract live in `references/`.
+
+**Two contracts the model wouldn't default to.** (1) After a true-selective green pass (where `--scope` was set), auto-trigger a full pass via internal self-invocation — unconditional safety net; /done is unreachable from selective green alone. /verify derives that a pass is the auto-final by reading its own most recent pass log block. (2) Pass log: every invocation appends a structured block per `references/PASS_LOG.md`; `deferred` is the **master interpretation flag** — consumers read it before `result` (under `deferred: true`, `result: pass` means deferred-auto green, not the whole manifest). When the manifest contains `method: deferred-auto` criteria, /verify reads the recent conversation context for explicit user readiness signals (e.g., "all deployed", "staging is up", "go ahead") — signal detected → include deferred-auto criteria in this pass; ambiguous or absent → skip them; uncovered ones still block /done via the Deferred-Auto Pending escalation. Don't handle user feedback mid-pass — route to caller. Verifier crash = criterion FAIL with note that verification itself failed. Input: `<manifest> <log> [--scope D1,D2,...]` — paths missing → halt with usage.

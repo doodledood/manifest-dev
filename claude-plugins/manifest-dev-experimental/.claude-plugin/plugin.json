@@ -1,10 +1,17 @@
 {
   "name": "manifest-dev-experimental",
-  "version": "0.7.0",
-  "description": "Placeholder plugin reserved for future experimental skills. Currently empty.",
+  "version": "0.8.0",
+  "description": "Experimental parallel rework of manifest-dev's skills. Radically slim prompts that trust model capability — every word steers, not scaffolds. Drops multi-mode budgeting and prescriptive HOW in favor of WHAT/WHY. Lives alongside manifest-dev until promotion. Same skills (figure-out, define, do, verify, done, escalate, auto), same hooks, same agents.",
   "keywords": [
     "experimental",
-    "placeholder"
+    "slim",
+    "figure-out",
+    "probe",
+    "manifest",
+    "define",
+    "do",
+    "verify",
+    "autonomous"
   ],
   "author": {
     "name": "doodledood",
@@ -12,5 +19,87 @@
   },
   "homepage": "https://github.com/doodledood/manifest-dev",
   "repository": "https://github.com/doodledood/manifest-dev",
-  "license": "MIT"
+  "license": "MIT",
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "description": "Prevent premature stops during /do workflow when verification incomplete",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stop_do_hook.py"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "description": "Remind to read manifest/log in full before verification",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/pretool_verify_hook.py"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "description": "Check for manifest amendments when user provides input during /do workflow",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/prompt_submit_hook.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "TaskUpdate",
+        "description": "Remind to update execution log after task progress during /do",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttool_log_hook.py"
+          }
+        ]
+      },
+      {
+        "matcher": "TaskCreate",
+        "description": "Remind to update execution log after task creation during /do",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttool_log_hook.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "description": "Remind to update execution log after workflow skill calls during /do",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttool_log_hook.py"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "description": "Restore /do workflow context after compaction",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/post_compact_hook.py"
+          }
+        ]
+      }
+    ]
+  }
 }
