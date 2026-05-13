@@ -1,6 +1,6 @@
 # Canvas Mode — Walk-PR Review Canvas
 
-Loaded when `/walk-pr --canvas` is passed. In this mode the canvas **is** the walkthrough — every walkthrough surface (verbatim quotes, section mapping, trade-offs, probes, recommendations, per-topic comment input) lives in the HTML artifact; chat acts as paste-transport. After the walkthrough closes, the artifact is redundant.
+Loaded when `/walk-pr --canvas` is passed. The canvas **is** the walkthrough — every surface (verbatim quotes, section mapping, trade-offs, probes, recommendations, per-topic comment input) lives in the HTML artifact, generated **once, upfront, with the full walk content**. The user navigates self-paced via local JS; chat reconnects only at the end, when the user pastes back a single bundled review result. After the walkthrough closes, the artifact is redundant.
 
 ## Activation gate
 
@@ -10,41 +10,36 @@ Evaluate **immediately** when `--canvas` is set, before opening the first sub-ch
 2. **Non-local medium** — the user isn't at a host with browser access.
 3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`.
 
-If none match: generate the initial canvas at `/tmp/walk-pr-canvas-{ts}.html` (`{ts}` = invocation timestamp), auto-open it, proceed.
+If none match: generate the canvas at `/tmp/walk-pr-canvas-{ts}.html` (`{ts}` = invocation timestamp), auto-open it, proceed.
 
 ## Cognitive-load contract
 
 The canvas rations what the user sees at any moment. Three rules govern visibility:
 
 1. **One sub-changeset in focus.** Exactly one expanded; others show title + size + status pill (`queued` slate, `in review` amber, `reviewed` emerald), collapsed.
-2. **One review topic awaiting input.** Inside the in-focus sub-changeset, exactly one topic (probe / trade-off / recommendation) is highlighted with its comment textarea visible and a *Copy as prompt* button. Prior topics show collapsed with a one-line summary of what the user said. Future topics show titles only, dimmed.
-3. **No content duplication.** Walkthrough content lives in the canvas — not echoed in chat. Chat carries only the user's pasted responses and the agent's short coordination acknowledgments.
+2. **One review topic in view.** Inside the in-focus sub-changeset, exactly one topic (probe / trade-off / recommendation) is highlighted with its comment textarea visible. Prior topics collapse to a one-line preview of what the user typed (read from the textarea). Future topics show titles only, dimmed.
+3. **No content duplication.** Walkthrough content lives in the canvas — not echoed in chat. Chat stays empty during the walk and receives only the final bundled paste.
 
-This is the visual fix for the "throw everything on screen, ask at the end" failure mode. Agent pacing alone doesn't solve it — what's expanded shapes load regardless of what chat says.
+Pacing is local — the canvas advances via JS (expand/collapse, "next topic", "mark reviewed") as the user works through it. There's no agent-side state to track until paste-back.
 
 ## Interaction model
 
-Each *awaiting* topic renders:
-- A short statement of the topic (probe / trade-off / recommendation text, plus the recommended call where applicable).
-- A `<textarea>` for the user's comment.
-- A **Copy as prompt** button that writes an anchored string to the clipboard, formatted as:
+**One-shot generation.** At creation, the agent embeds **every** sub-changeset, **every** review topic, and the full walk content (verbatim quotes, mappings, trade-offs, probes, recommendations) into the HTML. No per-topic Copy buttons, no anchor-format paste-back, no canvas regeneration mid-walk — those were artifacts of a per-turn design the user never actually used.
 
-  ```
-  [walk-pr / sub-changeset "<short title>" / <kind>: "<short topic title>"]
+Each topic renders:
+- A short statement (probe / trade-off / recommendation text, plus the recommended call where applicable).
+- A `<textarea>` for the user's comment. State persists across canvas reloads (e.g. `localStorage` keyed by topic id) so the user doesn't lose work.
 
-  <textarea content, or `(captured, no comment)` if empty>
-  ```
+At the bottom of the canvas, a single **Copy as prompt** button writes the consolidated review result to the clipboard as one structured block — per sub-changeset, per topic: the anchor (file + line range or PR-level) plus the user's textarea content (or `(captured, no comment)` if empty). The user pastes this block into chat; the agent reads it and proceeds with the end-of-walk handoff.
 
-The user pastes the string into chat. The agent recognizes the anchor prefix, identifies which topic the response addresses, treats non-empty content as a **comment candidate** and empty content as **captured, no comment**, regenerates the canvas with that topic captured and the next one promoted to awaiting. When the user replies in chat without the anchor, the agent maps the response to the currently-awaiting topic by context — anchor recognition is permissive, not strict.
-
-Clipboard write uses `navigator.clipboard.writeText` with a `document.execCommand('copy')` fallback for sandboxed `file://` cases. Any clipboard failure pre-selects the anchored string in a visible read-only `<pre>` so the user can copy manually.
+Clipboard write uses `navigator.clipboard.writeText` with a `document.execCommand('copy')` fallback for sandboxed `file://` cases. On any clipboard failure, pre-select the bundled string in a visible read-only `<pre>` so the user can copy manually.
 
 ## Format
 
 - **File:** single self-contained `.html` at `/tmp/walk-pr-canvas-{ts}.html`.
 - **Styling:** Tailwind via CDN (`<script src="https://cdn.tailwindcss.com"></script>`). Degrades to semantic HTML if unreachable.
 - **Diagrams** (when useful): mermaid via CDN. Use `<pre class="mermaid">...</pre>` only when the change involves component flow that's clearer drawn.
-- **Auto-reload:** embed JS that refreshes when the source file changes. Preserve scroll position and the expand/collapse state of non-focused sub-changeset cards across reloads.
+- **Auto-reload:** embed JS that refreshes if the source file changes. Preserve scroll position, expand/collapse state, and textarea contents across reloads (`localStorage`).
 - **Self-contained:** no external assets beyond the small set of CDN scripts (Tailwind, mermaid, diff renderer, syntax-highlighter — see below). Opens via `file://`. No local server.
 
 ## Rendering and layout adapt to the content
@@ -57,38 +52,39 @@ Use the representation that fits each piece of content. This is the second half 
 
 ## Lifecycle
 
-Live during the walkthrough, freezes when the walkthrough closes. Regenerate after each **meaningful event**, not every agent turn:
+Generate once, freeze. The canvas is a fully self-contained snapshot:
 
-- A sub-changeset opens (its card expands; status → "in review"; its first review topic becomes awaiting).
-- The user's pasted response lands (current topic captures the response and collapses with a one-line summary; next topic becomes awaiting; or, if topics exhausted, the sub-changeset → "reviewed" and the next one opens).
-- All sub-changesets are reviewed → render the **end-of-walk plan section** (see below).
+- Initial render contains every sub-changeset and every topic; state lives in-browser (expand/collapse, "current topic", persisted textareas).
+- Auto-reload fires only if the source file changes — e.g. the user asks the agent to regenerate from scratch. Scroll position, expand/collapse state, and textarea contents are preserved across reloads.
+- After auto-reload, call `mermaid.run()` to re-initialize diagrams.
 
-After auto-reload, call `mermaid.run()` to re-initialize diagrams.
+The agent disengages after generating the canvas and re-engages only when the user pastes the bundled review result.
 
-## End-of-walk: plan-of-comments
+## End-of-walk: paste, draft, post
 
-When all sub-changesets are reviewed, the canvas adds a final section: **Comments to post.** Each entry shows:
-- Which sub-changeset / topic it came from.
-- The anchor — file + line range where the topic ties to a specific code location, file-level or PR-level otherwise.
-- A drafted comment body (the agent synthesizes review-comment prose from the user's textarea content).
-- Captured-no-comment items list separately, dimmed, as `captured — no comment`.
+When the user clicks **Copy as prompt** and pastes the bundle into chat, the agent has the full set of topic responses. It then:
 
-The section ends with a single **Copy as prompt** button — the end-state mirror of the per-topic mechanism — that bundles the consolidated review result (anchors, drafted bodies, captured-no-comments) into one anchored string. This is the canvas's terminal handoff: pasted into chat, the agent has the full review and can continue without the canvas — post it as a PR review, build on it for next steps, or hand off to the next workflow stage. The agent then calls `ExitPlanMode` with the plan-of-comments as the proposed plan. On approval, the agent posts the comments as a single PR review using available GitHub tools (`gh pr review` / `mcp__github__pull_request_review_write` / API). On success, the canvas section flips to `posted` with links to the live PR comments — at which point the artifact is redundant. Whether and how the PR's author addresses the comments is the manifest workflow's job, not /walk-pr's.
+1. Synthesizes review-comment prose from each non-empty textarea — line-anchored where the topic ties to a specific code location, file-level or PR-level otherwise. Captured-no-comment items appear in the plan summary as `captured — no comment` but generate no PR comment.
+2. Calls `ExitPlanMode` with the plan-of-comments as the proposed plan.
+3. On approval, posts the comments as a single PR review using available GitHub tools (`gh pr review` / `mcp__github__pull_request_review_write` / API).
+
+After posting, the canvas is redundant. Whether and how the PR's author addresses the comments is the manifest workflow's job, not /walk-pr's.
 
 ## Failure handling
 
-Any canvas-related failure is **non-blocking**. The canvas is the primary surface in this mode, but failures fall back gracefully:
+Any canvas-related failure is **non-blocking**:
 
 - File write fails → warn once, fall back to chat-only walkthrough.
 - Browser launcher fails → print path (`Canvas: file:///tmp/walk-pr-canvas-{ts}.html`), continue.
-- Clipboard write fails → pre-select the anchored string in a visible block; show a one-line hint.
+- Clipboard write fails → pre-select the bundled string in a visible block; show a one-line hint.
 - Mermaid syntax error → emit as-is, continue.
-- PR-post failure at end of walk → keep the plan section, surface the API error inline, offer retry.
+- PR-post failure → keep the drafted plan, surface the API error inline, offer retry.
 
 ## Anti-patterns
 
-- **Chat duplicating canvas content.** Don't restate verbatim quotes, mappings, trade-offs, probes, or topic text in chat. The canvas is the surface; chat is paste-transport.
-- **Per-turn regeneration.** Updates fire on meaningful events, not every tool call.
+- **Chat duplicating canvas content.** Don't restate verbatim quotes, mappings, trade-offs, probes, or topic text in chat. The canvas is the surface; chat only sees the final bundled paste.
+- **Mid-walk regeneration.** The canvas is one-shot. Don't update it as the user works through topics — local JS handles pacing.
+- **Per-topic Copy buttons or anchor-format paste-back.** Single end-of-walk bundle only. Per-topic round-trips are the failure mode we removed.
 - **Wall of diff.** Don't dump entire patches as monolithic `<pre>` text. Render diffs as proper line-level hunks per file inside the in-focus card; everything else collapsed.
 - **Uniform layout template.** Forcing every sub-changeset into side-by-side panels regardless of what the change actually is — empty "after" columns for deletions, grids of identical lines for renames, etc. Match the layout to the change.
 - **Status-pill explosion.** Pills only on sub-changeset cards (the navigation surface).
