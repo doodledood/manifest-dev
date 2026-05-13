@@ -63,7 +63,7 @@ Proceed fresh; no announcement.
 
 ## Interview Style
 
-Experimental has one interview style — grilling lives in /figure-out, invoked when there's a gap that needs the user's input. The amendment interview is scoped to the change — not a full re-interview of the entire manifest. (Main-plugin's `--interview` flag and `Interview:` schema inheritance are not part of experimental's contract.)
+Experimental has one interview style — probing lives in /figure-out, invoked when there's a gap that needs the user's input. The amendment interview is scoped to the change — not a full re-interview of the entire manifest. (Main-plugin's `--interview` flag and `Interview:` schema inheritance are not part of experimental's contract.)
 
 ## Three Contexts
 
@@ -83,7 +83,7 @@ In /do context, amendment is autonomous and fast — no user approval gates (ver
 
 ### 3. Session-Default
 
-Triggered implicitly by `/define`'s in-session detection of a prior related manifest (no explicit `--amend` flag). The detection rules and branches (Related / Truly unrelated / Prior manifest unreadable) live in the **Session-Default Detection** section above. Once detection lands on Related and the agent decides to amend, behavior **follows the Standalone path** — interview scoped to the change (grilling via /figure-out when gaps surface), verification loop, summary for approval. `/auto`-driven amendments skip the summary approval per /auto's autonomous contract; standalone amendments wait for it. The user is told upfront via the announcement (per Session-Default Detection) and can verbally redirect to a fresh manifest if the relatedness call was wrong.
+Triggered implicitly by `/define`'s in-session detection of a prior related manifest (no explicit `--amend` flag). The detection rules and branches (Related / Truly unrelated / Prior manifest unreadable) live in the **Session-Default Detection** section above. Once detection lands on Related and the agent decides to amend, behavior **follows the Standalone path** — interview scoped to the change (probing via /figure-out when gaps surface), verification loop, summary for approval. `/auto`-driven amendments skip the summary approval per /auto's autonomous contract; standalone amendments wait for it. The user is told upfront via the announcement (per Session-Default Detection) and can verbally redirect to a fresh manifest if the relatedness call was wrong.
 
 ## What to Preserve
 

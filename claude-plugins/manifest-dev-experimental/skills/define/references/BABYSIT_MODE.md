@@ -54,7 +54,7 @@ Babysit synthesizes a lifecycle-only manifest. AC composition comes from `tasks/
 
 ## Interview style
 
-Experimental has one interview style — grilling lives in /figure-out, and babysit doesn't invoke it (babysit's only AC is templated from PR_LIFECYCLE.md; there are no interview-resolvable scenarios). Probing nuances surface via `/define --amend` after the babysit manifest is in flight.
+Experimental has one interview style — probing lives in /figure-out, and babysit doesn't invoke it (babysit's only AC is templated from PR_LIFECYCLE.md; there are no interview-resolvable scenarios). Probing nuances surface via `/define --amend` after the babysit manifest is in flight.
 
 ## Output
 

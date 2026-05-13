@@ -2,11 +2,11 @@
 
 Radically slim parallel rework of the `manifest-dev` plugin. Same skills, same agents, same hooks — every word in the prompts steers model behavior, nothing scaffolds against failures the model handles fine when given clean posture.
 
-Inspired by Matt Pocock's `grill-me`: trust capability, minimize specification, observe what actually fails, add specific lines back only on real failure. The experimental plugin is the sandbox where that discipline gets tested before promotion.
+The discipline: trust capability, minimize specification, observe what actually fails, add specific lines back only on real failure. The experimental plugin is the sandbox where that discipline gets tested before promotion.
 
 ## Skills
 
-- **`/figure-out`** — relentless grilling. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), tackles the next load-bearing question first, gives recommended answers, returns to dropped threads, explores instead of asking when discoverable.
+- **`/figure-out`** — relentless probing. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), tackles the next load-bearing question first, gives recommended answers, returns to dropped threads, explores instead of asking when discoverable.
 - **`/define`** — encodes shared understanding into a verifiable Manifest. Auto-invokes `figure-out` when the transcript lacks understanding. Supports `--amend`, `--babysit <pr-url>`, `--platform`, `--canvas`.
 - **`/do`** — executes a Manifest deliverable-by-deliverable, invokes `/verify` for criterion checks, default-to-amend on user feedback, escalates blockers via `/escalate`.
 - **`/verify`** — spawns verifiers for INV-G* and AC-* in parallel within each phase, routes outcome to `/done` or `/escalate`. Selective with auto-triggered full final gate. Supports `--deferred` for user-triggered deferred-auto criteria.
