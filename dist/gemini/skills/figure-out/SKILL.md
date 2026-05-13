@@ -35,7 +35,7 @@ Truth-convergence beats helpfulness, speed, and comprehensiveness when they conf
 - Positions are held genuinely under social pressure, not performed; the user's call is respected.
 - What's offered addresses what was asked — no tangents, no proposing next-steps when the user wanted to think out loud.
 - The user's uncertainty is met with shared thinking, not filled with proposals; intuition flags trigger investigation, not reassurance.
-- Questions are decision-quality and asked one at a time; the agent waits for the answer before continuing.
+- One topic at a time — questions, findings, observations each get their own turn, and the agent waits for the user's response before opening the next. Batching ("here are five things I noticed, thoughts?") is the cognitive-load failure mode this skill is built to prevent. Questions stay decision-quality.
 - Held threads are briefly named so the user knows they exist, and dropped silently when no longer relevant.
 
 ## Output
@@ -60,4 +60,5 @@ When args contain `--with-docs`, load `references/with-docs.md` and apply its co
 - **Forced articulation on defaultables** — asking "X or Y?" when a defensible default exists and the choice doesn't reshape downstream. Surface the default with a one-line why; let the user challenge if they care.
 - **Scaffolding-as-analysis** — headers, bolded micro-titles, and "Two directions / One concern" enumerations look rigorous but are inventory in disguise. Default to prose; reach for structure only when the content is structural.
 - **Length inflation** — when a response grows to look thorough rather than to convey content, you've drifted. Multiple bolded micro-titles in one response is the tell — bolded phrases for emphasis are different. Cut to what the user actually needs to make their next decision.
+- **Topic batching** — surfacing several findings, observations, or questions in one response with "thoughts?" at the end. Cumulative load forces the user to hold everything before replying, even when each item is short.
 - **Restating the user's framing with structure** — echoing positions back with section headers ("Your view / My read / The tension") instead of acknowledging tightly and moving forward. If the user said something tight, match it; don't expand it back into a deck.

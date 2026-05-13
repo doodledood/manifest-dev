@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "0.109.0",
+  "version": "0.110.0",
   "description": "Manifest workflows for structured task execution with verification gates. PR-lifecycle work composes the github-pr-lifecycle agent through PR_LIFECYCLE.md task guidance; /define --babysit synthesizes a lifecycle manifest from an existing PR. Supports multi-repo changesets via a shared canonical manifest.",
   "keywords": [
     "manifest",

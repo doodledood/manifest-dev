@@ -1,86 +1,96 @@
 # Canvas Mode — Walk-PR Review Canvas
 
-Loaded when `/walk-pr --canvas` is passed. This file owns the canvas behavior — when to fire, when to suppress, what to generate, how to keep it live, how to fail safely.
-
-## Purpose
-
-The user reads the chat as you walk each sub-changeset; the canvas is the visual side-channel that surfaces the **shape of the whole review at a glance** plus drill-in to any sub-changeset's before/after side-by-side. Categorized overview always visible; verbatim quotes, section mapping, and trade-offs live behind progressive disclosure (`<details>` expanders, tabs). The chat carries the conversation; the canvas carries the structure.
+Loaded when `/walk-pr --canvas` is passed. In this mode the canvas **is** the walkthrough — every walkthrough surface (verbatim quotes, section mapping, trade-offs, probes, recommendations, per-topic comment input) lives in the HTML artifact; chat acts as paste-transport. After the walkthrough closes, the artifact is redundant.
 
 ## Activation gate
 
-Evaluate **immediately** when `--canvas` is set, before opening the first sub-changeset. If any condition holds, skip canvas behavior; continue /walk-pr normally (first match wins; conditions 1–2 silent, condition 3 prints one warning):
+Evaluate **immediately** when `--canvas` is set, before opening the first sub-changeset. If any condition holds, skip canvas behavior and fall back to chat-only /walk-pr (first match wins; conditions 1–2 silent, condition 3 prints one warning):
 
-1. **Trivial diff** — single file, < 50 net lines changed. Canvas is overhead for a 30-second review. Silent skip.
-2. **Non-local medium** — the user isn't at a host with browser access. Silent skip.
-3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`. Skip.
+1. **Trivial diff** — canvas setup cost (file write + render + browser open + auto-reload plumbing) exceeds the review's information need. Rough threshold: single file with tens of net lines changed.
+2. **Non-local medium** — the user isn't at a host with browser access.
+3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`.
 
-If none match: generate the initial canvas at `/tmp/walk-pr-canvas-{ts}.html` (`{ts}` = invocation timestamp), auto-open it, proceed with the walkthrough and regenerate per cadence below.
+If none match: generate the initial canvas at `/tmp/walk-pr-canvas-{ts}.html` (`{ts}` = invocation timestamp), auto-open it, proceed.
 
-## Lifecycle
+## Cognitive-load contract
 
-Live during the walkthrough. Updates after each sub-changeset is walked (or after a decision is captured in amendment-capture mode). Freezes when the user signals the walkthrough is complete or invokes `/do` to apply amendments.
+The canvas rations what the user sees at any moment. Three rules govern visibility:
 
-First render is a minimal shell: PR title / diff scope banner, the categorized overview (sub-changesets with sizes and recommended order, each collapsed by default), an "Walkthrough in progress" affordance.
+1. **One sub-changeset in focus.** Exactly one expanded; others show title + size + status pill (`queued` slate, `in review` amber, `reviewed` emerald), collapsed.
+2. **One review topic awaiting input.** Inside the in-focus sub-changeset, exactly one topic (probe / trade-off / recommendation) is highlighted with its comment textarea visible and a *Copy as prompt* button. Prior topics show collapsed with a one-line summary of what the user said. Future topics show titles only, dimmed.
+3. **No content duplication.** Walkthrough content lives in the canvas — not echoed in chat. Chat carries only the user's pasted responses and the agent's short coordination acknowledgments.
+
+This is the visual fix for the "throw everything on screen, ask at the end" failure mode. Agent pacing alone doesn't solve it — what's expanded shapes load regardless of what chat says.
+
+## Interaction model
+
+Each *awaiting* topic renders:
+- A short statement of the topic (probe / trade-off / recommendation text, plus the recommended call where applicable).
+- A `<textarea>` for the user's comment.
+- A **Copy as prompt** button that writes an anchored string to the clipboard, formatted as:
+
+  ```
+  [walk-pr / sub-changeset "<short title>" / <kind>: "<short topic title>"]
+
+  <textarea content, or `(captured, no comment)` if empty>
+  ```
+
+The user pastes the string into chat. The agent recognizes the anchor prefix, identifies which topic the response addresses, treats non-empty content as a **comment candidate** and empty content as **captured, no comment**, regenerates the canvas with that topic captured and the next one promoted to awaiting. When the user replies in chat without the anchor, the agent maps the response to the currently-awaiting topic by context — anchor recognition is permissive, not strict.
+
+Clipboard write uses `navigator.clipboard.writeText` with a `document.execCommand('copy')` fallback for sandboxed `file://` cases. Any clipboard failure pre-selects the anchored string in a visible read-only `<pre>` so the user can copy manually.
 
 ## Format
 
 - **File:** single self-contained `.html` at `/tmp/walk-pr-canvas-{ts}.html`.
-- **Styling:** Tailwind via CDN (`<script src="https://cdn.tailwindcss.com"></script>`). Degrades to semantic HTML if CDN unreachable.
-- **Diagrams** (when useful): mermaid via CDN (`<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"; mermaid.initialize({ startOnLoad: true });</script>`). Use `<pre class="mermaid">...</pre>` blocks for architectural diagrams when the change involves component flow.
-- **Auto-reload:** embed JS that refreshes when the source file changes. Should preserve scroll position and expand/collapse state when feasible. Mechanism chosen once per session.
-- **Self-contained:** no external assets beyond the two CDN scripts. Opens via `file://`. No local server.
+- **Styling:** Tailwind via CDN (`<script src="https://cdn.tailwindcss.com"></script>`). Degrades to semantic HTML if unreachable.
+- **Diagrams** (when useful): mermaid via CDN. Use `<pre class="mermaid">...</pre>` only when the change involves component flow that's clearer drawn.
+- **Auto-reload:** embed JS that refreshes when the source file changes. Preserve scroll position and the expand/collapse state of non-focused sub-changeset cards across reloads.
+- **Self-contained:** no external assets beyond the small set of CDN scripts (Tailwind, mermaid, diff renderer, syntax-highlighter — see below). Opens via `file://`. No local server.
 
-## Update cadence
+## Rendering and layout adapt to the content
 
-Regenerate after each **meaningful event**:
+Use the representation that fits each piece of content. This is the second half of the cognitive-load contract — visual rationing controls *how much* the user sees; content-shaped rendering controls *how legibly* it lands.
 
-- A sub-changeset is opened (its expander auto-expands; status changes to "in review")
-- A sub-changeset is closed (user thoughts captured, status changes to "reviewed" or "amendment captured")
-- A decision is captured in amendment-capture mode
-- The user's response to a probe lands a recommendation acceptance / change / new probe
+- **Diffs render as diffs.** Line-level hunks with additions / deletions / context, colored (green / red / muted), not monolithic raw text. Use a CDN-loaded diff library (e.g. `diff2html`) or render server-side as styled `<span>` per line — either is fine; the contract is "looks like a diff, not a `<pre>` dump".
+- **Code renders with syntax highlighting.** Highlight.js or Prism via CDN, language inferred from file extension. Applies inside diff hunks where the library supports it, and to any standalone code excerpts in mappings or probes.
+- **Layout adapts to the change.** Not every sub-changeset gets the same shape. A move / refactor benefits from side-by-side panels. A pure deletion is a one-line summary, not an empty "after" panel. A config or small data change is a tight grid or table. An architectural shift may warrant a mermaid sketch instead of (or alongside) diffs. Pick the layout that lowers load for *this* change, not a uniform template.
 
-Do NOT regenerate per agent turn. After auto-reload, call `mermaid.run()` to re-initialize diagrams.
+## Lifecycle
 
-## Auto-open
+Live during the walkthrough, freezes when the walkthrough closes. Regenerate after each **meaningful event**, not every agent turn:
 
-On first canvas creation: detect via `command -v xdg-open || command -v open || command -v start`. Use first available. Launcher failure → print path (`Canvas: file:///tmp/walk-pr-canvas-{ts}.html`), continue normally.
+- A sub-changeset opens (its card expands; status → "in review"; its first review topic becomes awaiting).
+- The user's pasted response lands (current topic captures the response and collapses with a one-line summary; next topic becomes awaiting; or, if topics exhausted, the sub-changeset → "reviewed" and the next one opens).
+- All sub-changesets are reviewed → render the **end-of-walk plan section** (see below).
+
+After auto-reload, call `mermaid.run()` to re-initialize diagrams.
+
+## End-of-walk: plan-of-comments
+
+When all sub-changesets are reviewed, the canvas adds a final section: **Comments to post.** Each entry shows:
+- Which sub-changeset / topic it came from.
+- The anchor — file + line range where the topic ties to a specific code location, file-level or PR-level otherwise.
+- A drafted comment body (the agent synthesizes review-comment prose from the user's textarea content).
+- Captured-no-comment items list separately, dimmed, as `captured — no comment`.
+
+The agent then calls `ExitPlanMode` with the plan-of-comments as the proposed plan. On approval, the agent posts the comments as a single PR review using available GitHub tools (`gh pr review` / `mcp__github__pull_request_review_write` / API). On success, the canvas section flips to `posted` with links to the live PR comments — at which point the artifact is redundant. Whether and how the PR's author addresses the comments is the manifest workflow's job, not /walk-pr's.
 
 ## Failure handling
 
-Any canvas-related failure is **non-blocking**. Canvas is supplementary; the chat walkthrough is load-bearing. File write fails → warn once, continue. Browser launcher fails → print path, continue. Mermaid syntax error → emit as-is, continue. Any other failure → warn once, continue.
+Any canvas-related failure is **non-blocking**. The canvas is the primary surface in this mode, but failures fall back gracefully:
 
-## What the surface must enable
-
-Test: **at a glance, can the user grasp the shape of the whole review and the state of each sub-changeset without scrolling?**
-
-Visible by default:
-- **Review intent** — what PR/diff is being walked (PR number/URL or diff range, total stat).
-- **Categorized overview** — sub-changesets with size + status badges (queued / in review / reviewed / decision-captured / pending). Recommended walk order indicated.
-- **Current focus** — which sub-changeset is open right now, highlighted.
-
-Behind progressive disclosure (per sub-changeset card):
-- **Before / after side-by-side panels** — verbatim quotes from the original file and the new file (or per file in the sub-changeset), in two columns. Code blocks rendered with monospace + syntax-aware coloring where the file type permits.
-- **Section-by-section mapping** — a table or list mapping original sections → new sections, with the verdict (survived / cut / moved-to-X) and the cut justification.
-- **Net change** — lines, ratio, and a small bar visualizing the reduction.
-- **Architectural probes** — open questions surfaced during walkthrough as a collapsed list, each one expandable to show the user's response and the resulting decision.
-- **Captured amendments** (when amendment-capture mode is on) — each amendment as a numbered entry showing the change and the manifest path it was recorded to.
-
-## Visual richness — what lands as comprehension-friendly
-
-- **Sub-changeset cards** with status pills (`queued` slate, `in review` amber, `reviewed` emerald, `decision-captured` indigo). Click expands.
-- **Side-by-side panels** for before/after — `grid grid-cols-2 gap-4`. Header row labels each side. Code rendered with light syntax styling — keep it readable, not flashy.
-- **Mapping table** with three columns: Original → Verdict → New location. Color-code verdicts (survived green, cut gray, moved blue). Short cut-justification in a fourth column or as a tooltip on hover.
-- **Net change bar** — small inline visualization (`<div class="h-2 bg-emerald-200 rounded">` width-proportional). Big reductions are visually arresting; trivial changes barely register.
+- File write fails → warn once, fall back to chat-only walkthrough.
+- Browser launcher fails → print path (`Canvas: file:///tmp/walk-pr-canvas-{ts}.html`), continue.
+- Clipboard write fails → pre-select the anchored string in a visible block; show a one-line hint.
+- Mermaid syntax error → emit as-is, continue.
+- PR-post failure at end of walk → keep the plan section, surface the API error inline, offer retry.
 
 ## Anti-patterns
 
-- **Wall of diff.** Don't dump the entire patch as monolithic text. Side-by-side panels per file inside the sub-changeset card; everything else collapsed.
-- **Per-turn regeneration.** Updates fire after meaningful events, not every tool call.
-- **Schema vocabulary on surface.** No "Acceptance Criteria", "Global Invariants" labels — those belong in manifests, not here. Talk about *what changed* and *why* in user vocabulary.
-- **Re-skinned chat.** If the canvas reads as the same content the chat just said with different fonts, it has failed. Different role: chat = conversation, canvas = structure-at-a-glance + drill-in. The canvas surfaces the *map*; the chat carries the *decisions*.
-- **Status-pill explosion.** Pills only on sub-changeset cards (the navigation surface). Don't sprinkle them on every detail row inside.
-- **Diagram for nothing.** Mermaid only when the change involves component flow / architecture that's clearer drawn. A prose-heavy refactor doesn't need a diagram.
-
-## Amendment-capture mode interaction
-
-When `/walk-pr --amend <manifest-path>` is in effect, the canvas adds a footer section "Captured amendments" — a running list of decisions made during the walkthrough, each linkable to the corresponding manifest amendment block. The user can scan this footer at any time to see what /do will apply when the walkthrough closes. If the footer is empty, hide it; don't surface scaffolding.
+- **Chat duplicating canvas content.** Don't restate verbatim quotes, mappings, trade-offs, probes, or topic text in chat. The canvas is the surface; chat is paste-transport.
+- **Per-turn regeneration.** Updates fire on meaningful events, not every tool call.
+- **Wall of diff.** Don't dump entire patches as monolithic `<pre>` text. Render diffs as proper line-level hunks per file inside the in-focus card; everything else collapsed.
+- **Uniform layout template.** Forcing every sub-changeset into side-by-side panels regardless of what the change actually is — empty "after" columns for deletions, grids of identical lines for renames, etc. Match the layout to the change.
+- **Status-pill explosion.** Pills only on sub-changeset cards (the navigation surface).
+- **Diagram for nothing.** Mermaid only when component flow is at stake.
+- **Internal vocabulary on surface.** Talk about *what changed* and *why* in user vocabulary; no leaked internal labels (schema names, anchor formats in headings, etc.).
