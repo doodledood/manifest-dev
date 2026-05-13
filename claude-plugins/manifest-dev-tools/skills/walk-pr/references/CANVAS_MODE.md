@@ -45,7 +45,15 @@ Clipboard write uses `navigator.clipboard.writeText` with a `document.execComman
 - **Styling:** Tailwind via CDN (`<script src="https://cdn.tailwindcss.com"></script>`). Degrades to semantic HTML if unreachable.
 - **Diagrams** (when useful): mermaid via CDN. Use `<pre class="mermaid">...</pre>` only when the change involves component flow that's clearer drawn.
 - **Auto-reload:** embed JS that refreshes when the source file changes. Preserve scroll position and the expand/collapse state of non-focused sub-changeset cards across reloads.
-- **Self-contained:** no external assets beyond the two CDN scripts. Opens via `file://`. No local server.
+- **Self-contained:** no external assets beyond the small set of CDN scripts (Tailwind, mermaid, diff renderer, syntax-highlighter — see below). Opens via `file://`. No local server.
+
+## Rendering and layout adapt to the content
+
+Use the representation that fits each piece of content. This is the second half of the cognitive-load contract — visual rationing controls *how much* the user sees; content-shaped rendering controls *how legibly* it lands.
+
+- **Diffs render as diffs.** Line-level hunks with additions / deletions / context, colored (green / red / muted), not monolithic raw text. Use a CDN-loaded diff library (e.g. `diff2html`) or render server-side as styled `<span>` per line — either is fine; the contract is "looks like a diff, not a `<pre>` dump".
+- **Code renders with syntax highlighting.** Highlight.js or Prism via CDN, language inferred from file extension. Applies inside diff hunks where the library supports it, and to any standalone code excerpts in mappings or probes.
+- **Layout adapts to the change.** Not every sub-changeset gets the same shape. A move / refactor benefits from side-by-side panels. A pure deletion is a one-line summary, not an empty "after" panel. A config or small data change is a tight grid or table. An architectural shift may warrant a mermaid sketch instead of (or alongside) diffs. Pick the layout that lowers load for *this* change, not a uniform template.
 
 ## Lifecycle
 
@@ -81,7 +89,8 @@ Any canvas-related failure is **non-blocking**. The canvas is the primary surfac
 
 - **Chat duplicating canvas content.** Don't restate verbatim quotes, mappings, trade-offs, probes, or topic text in chat. The canvas is the surface; chat is paste-transport.
 - **Per-turn regeneration.** Updates fire on meaningful events, not every tool call.
-- **Wall of diff.** Don't dump the entire patch as monolithic text. Before/after side-by-side panels per file inside the in-focus card; everything else collapsed.
+- **Wall of diff.** Don't dump entire patches as monolithic `<pre>` text. Render diffs as proper line-level hunks per file inside the in-focus card; everything else collapsed.
+- **Uniform layout template.** Forcing every sub-changeset into side-by-side panels regardless of what the change actually is — empty "after" columns for deletions, grids of identical lines for renames, etc. Match the layout to the change.
 - **Status-pill explosion.** Pills only on sub-changeset cards (the navigation surface).
 - **Diagram for nothing.** Mermaid only when component flow is at stake.
 - **Schema vocabulary on surface.** Talk about *what changed* and *why* in user vocabulary; no manifest schema labels.
