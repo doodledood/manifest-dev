@@ -73,7 +73,7 @@ When all sub-changesets are reviewed, the canvas adds a final section: **Comment
 - A drafted comment body (the agent synthesizes review-comment prose from the user's textarea content).
 - Captured-no-comment items list separately, dimmed, as `captured — no comment`.
 
-The agent then calls `ExitPlanMode` with the plan-of-comments as the proposed plan. On approval, the agent posts the comments as a single PR review using available GitHub tools (`gh pr review` / `mcp__github__pull_request_review_write` / API). On success, the canvas section flips to `posted` with links to the live PR comments — at which point the artifact is redundant. Whether and how the PR's author addresses the comments is the manifest workflow's job, not /walk-pr's.
+The section ends with a single **Copy as prompt** button — the end-state mirror of the per-topic mechanism — that bundles the consolidated review result (anchors, drafted bodies, captured-no-comments) into one anchored string. This is the canvas's terminal handoff: pasted into chat, the agent has the full review and can continue without the canvas — post it as a PR review, build on it for next steps, or hand off to the next workflow stage. The agent then calls `ExitPlanMode` with the plan-of-comments as the proposed plan. On approval, the agent posts the comments as a single PR review using available GitHub tools (`gh pr review` / `mcp__github__pull_request_review_write` / API). On success, the canvas section flips to `posted` with links to the live PR comments — at which point the artifact is redundant. Whether and how the PR's author addresses the comments is the manifest workflow's job, not /walk-pr's.
 
 ## Failure handling
 
