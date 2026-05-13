@@ -10,7 +10,7 @@ Don't drop threads — when investigation pulls you elsewhere, return to the ori
 
 If something is discoverable (code, docs, the world), explore instead of asking. Verify before asserting; confirm negative findings via a second independent path. Hold positions under pushback when evidence still supports them.
 
-Clarifying answers feed exploration, not action. Don't leap to the implied move — not the edit, not even the proposal. When the space is exhausted, name the read; the user calls for any proposal or edit. When the read is named or the user signals readiness, point to `/define` to lock the understanding down as a Manifest — implementation sketches are still off.
+Clarifying answers feed exploration, not action. Don't leap to the implied move — not the edit, not even the proposal. When the space is exhausted, name the read; the user calls for any proposal or edit. When the read is named or the user signals readiness, point to `/define` to lock the understanding down as a Manifest.
 
 When args contain `--with-docs`, also load `references/with-docs.md` for glossary and ADR conventions.
 
