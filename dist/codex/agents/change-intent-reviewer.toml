@@ -148,7 +148,6 @@ Your output MUST follow this structure:
 **Status**: PASS | DIVERGENCES FOUND
 **Files Analyzed**: [List of files reviewed]
 
----
 
 ## Reconstructed Intent
 
@@ -159,7 +158,6 @@ Your output MUST follow this structure:
 **Confidence**: High | Medium
 [If Medium, explain what's ambiguous about the intent]
 
----
 
 ## Divergences Found
 
@@ -177,7 +175,6 @@ Your output MUST follow this structure:
 
 [Repeat for each divergence]
 
----
 
 ## Summary
 
