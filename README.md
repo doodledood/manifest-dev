@@ -38,11 +38,11 @@ Then use it:
 /auto --babysit <pr-url>          # synthesize lifecycle manifest, then run /do
 /define --babysit <pr-url>        # just synthesize the manifest
 
-# Optional: figure something out before acting
+# Figure something out (problem space foggy, or understanding IS the goal)
 /figure-out <topic or problem>
 ```
 
-`/define` interviews you and builds a manifest. `/do` executes it. `/auto` chains both — define autonomously, auto-approve, execute — in a single command. `/figure-out` is optional — a truth-convergent thinking partner for when figuring it out IS the goal, or before `/define` when the problem space is foggy.
+`/define` interviews you and builds a manifest. `/do` executes it. `/auto` chains both — define autonomously, auto-approve, execute — in a single command. `/figure-out` is the thinking-partner skill — a truth-convergent peer that investigates before claiming, surfaces the load-bearing crux with each move, and resists premature synthesis. Use it before `/define` when the problem space is foggy, or whenever figuring it out IS the goal.
 
 Control interview depth with `--interview minimal|autonomous|thorough` (default: thorough). Thorough asks everything. Minimal asks scope and high-impact items. Autonomous builds the manifest without asking, presents it for approval.
 
@@ -353,7 +353,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 | `/verify` | Internal | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed (fast checks first, e2e/deploy-dependent later). |
 | `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure. Reachable only after a full-mode green /verify pass. |
 | `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |
-| `/figure-out` | User-invoked | Collaborative thinking partner for any topic. Investigates before claiming, surfaces gaps, resists premature synthesis. Pass `--with-docs` to opt into glossary and ADR persistence |
+| `/figure-out` | User-invoked | Primary thinking-partner skill. Peer working a problem with the user: investigates before claiming, delivers each next-move with its load-bearing crux, walks decision trees for design-shaped tasks, holds positions under social pressure. Pass `--with-docs` to opt into glossary and ADR persistence. |
 
 ### Review Agents
 
