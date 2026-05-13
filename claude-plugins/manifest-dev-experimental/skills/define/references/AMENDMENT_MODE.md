@@ -4,90 +4,69 @@
 
 ## Cumulative Manifest Rule
 
-**The manifest is the canonical source of truth for the PR/branch lifetime — or, in multi-repo cases, the entire PR set / branch set lifetime — not for a single task.** After every amendment, the manifest must describe the FULL state of every PR it covers: intent, every deliverable (across every repo when multi-repo), every Global Invariant, every Process Guidance entry, every Known Assumption. The latest increment is layered onto the prior content, never substituted for it.
+**The manifest is the canonical source of truth for the PR/branch lifetime — or the entire PR set / branch set in multi-repo cases — not for a single task.** After every amendment, the manifest describes the FULL state: intent, every deliverable (across every repo when multi-repo), every Global Invariant, every Process Guidance entry, every Known Assumption. The latest increment layers onto prior content, never substitutes for it.
 
-**No silent drops.** When applying an amendment, prior content is preserved by default. Removal is explicit — if a change supersedes an existing AC/INV/PG, the supersession is logged in the `## Amendments` section with rationale. The amendment receiver is responsible for reading the full prior manifest and confirming nothing valuable was lost.
+**No silent drops.** Prior content preserved by default. Removal is explicit — supersessions logged in the `## Amendments` section with rationale. Read the full prior manifest before changing.
 
-A manifest at any point in time should be readable as "everything currently in scope for this PR/branch (or PR set)," not "the most recent change request." This is what makes the manifest a useful working artifact for the agent and the user across the PR lifecycle.
+Multi-repo specifics: `MULTI_REPO.md` §f.
 
-**Multi-repo specifics** — see `MULTI_REPO.md` §f for the shared-manifest amendment convention.
+**Deferred-auto re-verification after amendment** — when an amendment substantively changes a `method: deferred-auto` criterion's verify block, prior deferred coverage for that criterion is conceptually invalidated. The user is responsible for re-signaling readiness in chat to re-run the amended criterion before the gate clears. (Consistent with user-as-coordinator stance — no automatic invalidation.)
 
-**Deferred-auto re-verification after amendment** — when an amendment substantively changes a `method: deferred-auto` criterion's verify block (`prompt:`, `command:`, etc.), prior `/verify --deferred` coverage is conceptually invalidated for that criterion. Normal `/verify` always re-runs in-scope criteria so amendments are picked up automatically; deferred-auto bypasses the pass and relies on prior coverage. The user is responsible for re-running `/verify --deferred` for the amended criterion before the gate clears. (Consistent with the user-as-coordinator stance — there is no automatic invalidation mechanism.)
+## Trigger
 
-## Core Behavior
-
-Read the manifest at the given path. Existing decisions (ACs, INVs, PGs, Approach, Trade-offs) are preserved unless directly contradicted by the change request. Make targeted changes — only items affected by the amendment are updated. Add new items, modify contradicted items, or remove items that no longer apply (with explicit log entry per the Cumulative Manifest Rule above).
-
-**Coverage goals apply scoped to the change** — not the full manifest. Existing manifest content satisfies goals for unchanged areas.
-
-## What Triggers Amendment
-
-The conversation context contains the reason — a user's message, a PR review comment, or an explicit change request. Read this context and determine what to change.
+The conversation context carries the reason — user message, PR comment, explicit change request. Read it, determine what to change. Existing decisions (ACs, INVs, PGs, Approach, Trade-offs) preserved unless directly contradicted. Add new items, modify contradicted items, or remove items that no longer apply (with explicit log entry). Coverage applies scoped to the change — not the full manifest.
 
 ## Session-Default Detection
 
-`/define` invokes this detection from its Pre-flight when the transcript or conversation references a prior manifest (skipped when `--amend <path>` is explicit, or when the input plainly references a `/tmp/manifest-*.md` path — those signals always win, the named manifest is source of truth, and the agent confirms approach with the user only if its relationship to the new task is unclear).
+Invoked from /define's Pre-flight when chat-derived amendment intent ("also handle X", "change Y", "that's wrong") combines with transcript references to a prior manifest. Skipped when the input plainly references a specific `/tmp/manifest-*.md` path — that signal wins, the named manifest is source of truth (agent confirms with user only if relationship to the new task is unclear).
 
 Detection signals (most-recent / most-specific wins):
+1. **In-session completion line** — `Manifest complete: /tmp/manifest-{ts}.md` earlier in transcript. Most recent wins.
+2. **Conversation reference** — a `/tmp/manifest-*.md` path mentioned in chat.
 
-1. **In-session completion line** — `Manifest complete: /tmp/manifest-{timestamp}.md` from a prior /define's Complete output appearing earlier in the transcript. Most recent in transcript order wins.
-2. **Conversation reference** — a `/tmp/manifest-*.md` path mentioned in the conversation.
+When ambiguous (multiple candidates, or signal maps to different concern), ask once: *"I see manifest X in scope — amend it, pick a different one, or start fresh?"*
 
-When ambiguous (transcript references unrelated work, multiple plausible candidates, or a signal maps to a different concern), ask once: "I see manifest X in scope — amend it, pick a different one, or start fresh?" Don't silently choose.
-
-Once a candidate is identified, read it and compare its Goal + Deliverables against the new task. Apply the matching branch:
+Compare candidate's Goal + Deliverables against the new task. Apply the matching branch:
 
 ### Related (default)
 
-**Amendment is the default.** Only "truly unrelated" work (clearly different problem space, not a continuation, refinement, follow-up, or polish) starts fresh. When ambiguous, default to amendment. The asymmetry is intentional: a wrong "fresh" decision silently loses prior INVs/ACs/PGs; a wrong "amend" decision is correctable via the announcement.
+**Amendment is the default.** Only clearly-unrelated work (different problem space, not a continuation/refinement/polish) starts fresh. When ambiguous, amend — a wrong "fresh" silently loses prior content; a wrong "amend" is correctable via the announcement. Announce, then proceed as if amend had been triggered explicitly:
 
-Announce, then proceed as if `--amend <prior-path>` had been passed. Follow the rest of this file from that point. Emit the announcement regardless of interview mode (preserves audit trail in transcript); it is one line and non-blocking:
-
-> Detected prior manifest in session: `/tmp/manifest-{ts}.md` (`<title from H1>`). Defaulting to amendment mode — interrupt me if this is unrelated work and I'll start fresh.
+> Detected prior manifest in session: `/tmp/manifest-{ts}.md` (`<title>`). Defaulting to amendment mode — interrupt me if this is unrelated work and I'll start fresh.
 
 ### Truly unrelated
 
-Proceed fresh with a one-line note so the user can correct if needed:
+Proceed fresh with a one-line note:
 
 > Found prior manifest `<path>` (`<title>`), but new task targets `<different problem space>`. Starting fresh — interrupt me to amend instead if I read this wrong.
 
 ### Prior manifest unreadable
 
-Fall back to fresh with a one-line note:
-
-> Prior manifest `<path>` is no longer available; starting fresh.
+Fresh with a note: *"Prior manifest `<path>` is no longer available; starting fresh."*
 
 ### No prior manifest
 
 Proceed fresh; no announcement.
 
-## Interview Style
-
-Experimental has one interview style — probing lives in /figure-out, invoked when there's a gap that needs the user's input. The amendment interview is scoped to the change — not a full re-interview of the entire manifest. (Main-plugin's `--interview` flag and `Interview:` schema inheritance are not part of experimental's contract.)
-
 ## Three Contexts
 
 ### 1. Standalone
 
-User calls `/define --amend <manifest>` directly. Full interactive mode:
-- Interview the user about the change
-- Run verification loop per mode
-- Present summary for approval
-- Same as normal /define but starting from existing manifest
+User invokes /define for amendment directly (or via chat-derived amend intent). Full interactive mode: interview the user about the change (probing via /figure-out when gaps surface), present summary for approval.
 
 ### 2. From /do (Autonomous Fast Path)
 
-Triggered by caller-context inference. When /define is invoked from /do's Self-Amendment path (the invocation chain shows /do is upstream), /define recognizes this as an autonomous amendment, not an interactive session. No explicit flag is needed; the caller context is the signal.
+Caller-context inferred. When /define is invoked from /do's Self-Amendment path (invocation chain shows /do is upstream), it's an autonomous amendment, not interactive. No flag needed — caller context is the signal.
 
-In /do context, amendment is autonomous and fast — no user approval gates (verification loop, summary approval). Make targeted changes based on the escalation context. Write updated manifest in-place so /do can resume immediately. Log the amendment in the manifest's `## Amendments` section.
+Behavior: no user approval gates. Targeted changes from escalation context. Write updated manifest in-place so /do can resume. Log in `## Amendments`.
 
 ### 3. Session-Default
 
-Triggered implicitly by `/define`'s in-session detection of a prior related manifest (no explicit `--amend` flag). The detection rules and branches (Related / Truly unrelated / Prior manifest unreadable) live in the **Session-Default Detection** section above. Once detection lands on Related and the agent decides to amend, behavior **follows the Standalone path** — interview scoped to the change (probing via /figure-out when gaps surface), verification loop, summary for approval. `/auto`-driven amendments skip the summary approval per /auto's autonomous contract; standalone amendments wait for it. The user is told upfront via the announcement (per Session-Default Detection) and can verbally redirect to a fresh manifest if the relatedness call was wrong.
+Detected per Session-Default Detection above. When "Related" fires, follow the Standalone path: interview scoped to the change, summary for approval. /auto-driven amendments skip the summary per /auto's autonomous contract; standalone wait for it.
 
 ## What to Preserve
 
-Intent, Approach architecture (unless contradicted), existing ACs/INVs that aren't affected, Process Guidance, Known Assumptions. Execution order may need updating if new deliverables are added.
+Intent, Approach architecture (unless contradicted), unaffected ACs/INVs, Process Guidance, Known Assumptions. Execution order may update if new deliverables are added.
 
 ## What to Change
 
