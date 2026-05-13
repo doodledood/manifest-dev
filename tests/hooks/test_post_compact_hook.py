@@ -46,11 +46,11 @@ def user_do_command() -> dict[str, Any]:
 
 @pytest.fixture
 def user_do_command_with_log() -> dict[str, Any]:
-    """User message invoking /do with manifest and log path."""
+    """User message invoking /do with manifest path."""
     return {
         "type": "user",
         "message": {
-            "content": "<command-name>/manifest-dev:do</command-name> /tmp/manifest.md /tmp/do-log.md"
+            "content": "<command-name>/manifest-dev:do</command-name> /tmp/manifest.md"
         },
     }
 
@@ -67,7 +67,7 @@ def assistant_skill_do() -> dict[str, Any]:
                     "name": "Skill",
                     "input": {
                         "skill": "manifest-dev:do",
-                        "args": "/tmp/manifest.md /tmp/do-log.md",
+                        "args": "/tmp/manifest.md",
                     },
                 }
             ]
@@ -189,14 +189,13 @@ class TestPostCompactHookWithActiveDoWorkflow:
     def test_reminder_includes_both_args_when_provided(
         self, tmp_path: Path, user_do_command_with_log: dict[str, Any]
     ):
-        """Should include both manifest and log paths when both provided."""
+        """Should include the manifest path when /do args are provided."""
         lines = [user_do_command_with_log]
         result = run_post_compact_hook(transcript_lines=lines, tmp_path=tmp_path)
 
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
         assert "/tmp/manifest.md" in context
-        assert "/tmp/do-log.md" in context
 
     def test_reminder_from_skill_call(
         self, tmp_path: Path, assistant_skill_do: dict[str, Any]
@@ -208,7 +207,6 @@ class TestPostCompactHookWithActiveDoWorkflow:
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
         assert "/tmp/manifest.md" in context
-        assert "/tmp/do-log.md" in context
 
 
 class TestPostCompactHookArgsExtraction:
@@ -381,5 +379,5 @@ class TestPostCompactHookEdgeCases:
         assert result.returncode == 0
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
-        # Should still have a reminder about checking /tmp for logs
-        assert "do-log" in context or "/tmp" in context
+        # Should still have a reminder about re-reading the manifest
+        assert "manifest" in context.lower()

@@ -26,9 +26,6 @@ Usage: /adr <manifest-path> <output-dir> --session <transcript-path>
 Example: /adr /tmp/manifest-1234.md docs/adr/ --session ~/.claude/projects/.../session.jsonl
 ```
 
-Optional:
-- Execution log path(s) from `/do` runs — supplementary input for implementation decisions. Pass as additional positional arguments after output-dir.
-
 ## Pipeline
 
 ### Phase 1: Parallel Extraction
@@ -44,7 +41,6 @@ Spawn three extraction agents in parallel, each analyzing the session transcript
 Each extraction agent receives:
 - The full session transcript (primary source)
 - The manifest file (structured reference)
-- Any execution logs (supplementary)
 
 Each agent outputs a list of candidate decisions with:
 - **Title**: Short decision name
@@ -67,8 +63,8 @@ A synthesis agent receives all candidates from Phase 1 and:
 ## Graceful Degradation
 
 If the session transcript at `--session <path>` is unreadable or missing:
-- **Warn the user**: "Session transcript not found at <path>. Proceeding with manifest and logs only — ADRs will be less detailed (no deliberation context)."
-- **Proceed with manifest + logs**: Skip Phase 1 parallel extraction. Instead, extract decisions directly from the manifest's Approach section (Architecture, Trade-offs, Risk Areas) and any execution logs. Apply the same worthiness criteria.
+- **Warn the user**: "Session transcript not found at <path>. Proceeding with manifest only — ADRs will be less detailed (no deliberation context)."
+- **Proceed with manifest**: Skip Phase 1 parallel extraction. Instead, extract decisions directly from the manifest's Approach section (Architecture, Trade-offs, Risk Areas). Apply the same worthiness criteria.
 - **Note in each ADR**: Add to the Source section: "Note: Synthesized from manifest only. Session transcript was unavailable — deliberation context may be incomplete."
 
 If no ADR-worthy decisions are found after synthesis:
@@ -98,4 +94,3 @@ Total: N ADR(s) from M candidate decisions.
 
 - **Multi-define sessions**: If the session transcript contains multiple `/define` runs, `/adr` processes the full transcript. ADRs may reflect decisions from any run in the session. Review output for relevance to your specific task.
 - **Session transcript format**: Assumes the Claude Code session transcript JSONL format (`~/.claude/projects/<dir>/<id>.jsonl`) is stable. If the format changes, extraction agents may need updating.
-- **Discovery/execution logs are supplementary**: Logs are attention aids for the model, not structured data stores. The skill does not assume or require any particular log structure — it reads them as free-form text for additional context.

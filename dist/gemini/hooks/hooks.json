@@ -15,21 +15,6 @@
         ]
       }
     ],
-    "AfterTool": [
-      {
-        "matcher": "activate_skill|write_todos",
-        "sequential": true,
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${extensionPath}/hooks/posttool_log_hook.py",
-            "name": "posttool-log",
-            "timeout": 10000,
-            "description": "Reminds model to update execution log after milestones"
-          }
-        ]
-      }
-    ],
     "AfterAgent": [
       {
         "hooks": [

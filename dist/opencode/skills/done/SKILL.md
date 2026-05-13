@@ -16,7 +16,7 @@ Output a completion summary showing what was accomplished, organized by the Mani
 
 ## What to Do
 
-Read the execution log and manifest. Output a summary that shows:
+Read the manifest and the in-context conversation. Output a summary that shows:
 
 1. **Intent** - What was the goal
 2. **Global Invariants** - All respected
@@ -90,12 +90,12 @@ After /done has been called, the manifest is still the canonical source of truth
 
 1. **Amend the manifest.** Invoke the `manifest-dev:define` skill with: `<feedback> --amend <manifest-path>`. The amendment runs in the manifest's recorded `Interview:` style — autonomous manifests amend without questions, thorough manifests probe per `thorough.md`, minimal manifests do light probing. (See `define/references/AMENDMENT_MODE.md` for the full inheritance rule.) Wait for /define to return; note the manifest path.
 
-2. **Re-execute.** Invoke the `manifest-dev:do` skill with: `<manifest-path> <log-path> --scope <new-or-affected-deliverables>`. `<log-path>` is the existing execution log /do wrote during the original run (available from the conversation context — /do logged its creation at the start of execution); pass it so /do appends rather than starting fresh, per `do/SKILL.md`'s "iteration on previous work" contract. Infer `--scope` from the amendment log entries — the deliverables newly added or modified by step 1. When the amendment touches a Global Invariant or the scope is genuinely unclear, omit `--scope` so /do runs full. /do's mandatory full final gate (per `verify/SKILL.md` "Hard final gate") runs unconditionally before /done becomes reachable, so a too-narrow scope still cannot land a regression — /verify auto-triggers a full pass after selective green.
+2. **Re-execute.** Invoke the `manifest-dev:do` skill with: `<manifest-path> --scope <new-or-affected-deliverables>`. Infer `--scope` from the amendment's affected deliverables — those newly added or modified by step 1. When the amendment touches a Global Invariant or the scope is genuinely unclear, omit `--scope` so /do runs full. /do's mandatory full final gate (per `verify/SKILL.md` "Hard final gate") runs unconditionally before /done becomes reachable, so a too-narrow scope still cannot land a regression — /verify auto-triggers a full pass after selective green.
 
 **Both steps are mandatory.** Stopping after step 1 leaves the manifest amended but unimplemented and unverified — the same failure mode as silent scope drift, just shifted: the manifest now claims scope that no code satisfies. The amendment loop guard from `do/SKILL.md` Mid-Execution Amendment (R-7 — consecutive Self-Amendments without external user/PR input escalate as Proposed Amendment for human decision) applies to this re-entry path too; runaway oscillation is bounded.
 
 **Routing feedback to amend vs. inline.** Pure questions about the work that just completed are answered inline — same carve-out as in /do.
-- *Inline (answer in the current turn):* "What does AC-1.1 require?" / "Why did you choose approach A?" / "Where's the execution log?"
+- *Inline (answer in the current turn):* "What does AC-1.1 require?" / "Why did you choose approach A?" / "Which deliverable is D3?"
 - *Amend (run the two-step chain above):* "Also handle X." / "Change Y to Z." / "That's wrong, it should be …" / "Add a check for …"
 - *When ambiguous, amend.* Silent scope drift is the worse failure.
 

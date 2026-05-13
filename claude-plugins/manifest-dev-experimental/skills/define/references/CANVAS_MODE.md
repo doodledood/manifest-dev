@@ -23,7 +23,7 @@ Generated and updated only during /define's interview phase. Freezes at user app
 
 ## Format
 
-- **File:** single self-contained `.html` at `/tmp/canvas-{ts}.html`. Linkable as a triplet with manifest + discovery log.
+- **File:** single self-contained `.html` at `/tmp/canvas-{ts}.html`. Linkable as a pair with the manifest.
 - **Styling:** Tailwind via CDN (`<script src="https://cdn.tailwindcss.com"></script>`). Degrades to semantic HTML if CDN unreachable.
 - **Diagrams:** mermaid via CDN (`<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"; mermaid.initialize({ startOnLoad: true });</script>`). Use `<pre class="mermaid">...</pre>` blocks.
 - **Auto-reload:** embed JS that refreshes when the source file changes. Mechanism is agent's choice (JS polling, fetch + DOM diff, `<meta http-equiv="refresh">`). Should preserve scroll position and expand/collapse state when feasible. Mechanism chosen once per session.

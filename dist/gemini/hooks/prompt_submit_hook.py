@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """
-BeforeAgent hook that reminds the model to check for manifest amendments.
+BeforeAgent hook that reminds the agent to check for manifest amendments.
 
-Gemini CLI adaptation: Registered as BeforeAgent hook (no matcher).
-Uses Gemini's additionalContext for context injection.
+When user submits a message during an active /do workflow, this hook injects
+a system reminder to check if the input contradicts or extends the manifest.
+If so, /do should escalate and invoke /define --amend.
+
+Registered as BeforeAgent hook (Gemini CLI; fires on every prompt before agent reasoning).
 """
 
 from __future__ import annotations

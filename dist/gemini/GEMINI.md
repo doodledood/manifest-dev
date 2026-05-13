@@ -49,7 +49,6 @@ Event-driven hooks enforce workflow discipline:
 
 - **stop-do** — Blocks premature stop during `/do` (requires `/verify` or `/escalate`)
 - **pretool-verify** — Reminds model to load manifest before `/verify`
-- **posttool-log** — Reminds model to update execution log after milestones
 - **prompt-submit-amendment** — Checks for manifest amendments on user input
 - **post-compact** — Restores /do context after session compaction
 

@@ -14,7 +14,6 @@ Use during review or before shipping. Each item is a question the prompt should 
 - [ ] Critical rules surfaced near the top of their owning section, not buried mid-paragraph.
 - [ ] Complexity matches the task — no section longer than its job requires.
 - [ ] Emotional tone calibrated — no all-caps urgency, no excessive praise; failure normalized if iterative.
-- [ ] If multi-phase: memento pattern applied (write log entry after each step; read full log before synthesis).
 - [ ] If user-facing (conversational / customer-facing): Personality section present and calibrated.
 - [ ] If a skill: directory with SKILL.md + companions; description is a trigger spec (what + when + trigger terms).
 - [ ] If an agent: every required tool declared in `tools:` frontmatter.
@@ -28,7 +27,7 @@ Use during review or before shipping. Each item is a question the prompt should 
 | Capability instructions | "Use grep to search", "Read the file" | Remove — model knows how |
 | Restating model defaults | "Be helpful", "use good judgment", "think carefully" | Cut |
 | Arbitrary limits | "Max 3 iterations", "2-4 examples" | Principle: "until converged", "as needed" |
-| Rigid checklists baked in | Step-by-step procedure for runtime | Convert to goal + constraints. Order-bearing patterns (memento, metaprompting) and author-facing checklists (this file) exempt. |
+| Rigid checklists baked in | Step-by-step procedure for runtime | Convert to goal + constraints. Order-bearing patterns (metaprompting) and author-facing checklists (this file) exempt. |
 | Weak hedging | "Try to", "maybe", "if possible", "when appropriate" | Direct imperative: "Do X" |
 | Absolutes for judgment calls | "ALWAYS verify", "NEVER skip" applied to non-invariants | Decision rule: "When X, do Y; otherwise Z" |
 | Buried critical info | Safety / output-contract rules mid-paragraph | Surface near top of owning section |
@@ -60,6 +59,6 @@ Not all repetition is bloat. Some is **intentional emphasis** that reinforces a 
 
 - **Rewriting working language for style.** Claude rewrites clear, working prompt text for stylistic preference. If existing language is unambiguous and effective, don't touch it.
 - **Skipping context discovery when the task seems obvious.** Even "simple" prompt tasks have hidden constraints — force discovery before producing output.
-- **Over-engineering simple prompts.** A 3-line prompt doesn't need 10 sections, a memento pattern, and a validation checklist.
+- **Over-engineering simple prompts.** A 3-line prompt doesn't need 10 sections and a validation checklist.
 - **Converting principles into rigid rules.** "Stop when converged" becomes "Max 5 iterations." Principles give flexibility; rigid rules create edge cases.
 - **Adding examples for behaviors Claude already knows.** Examples earn their place only when they demonstrate non-obvious or counter-intuitive behavior.

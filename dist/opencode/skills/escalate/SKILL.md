@@ -138,7 +138,7 @@ During implementation, you discovered a criterion should change — not because 
 Approve amendment, reject and continue with current criterion, or adjust.
 ```
 
-**When to use**: You CAN meet the criterion as written, but discovered it should be different. Approach pivots don't need this — just log and adapt. Use this when the manifest's criteria themselves should change.
+**When to use**: You CAN meet the criterion as written, but discovered it should be different. Approach pivots don't need this — just note and adapt. Use this when the manifest's criteria themselves should change.
 
 **vs Self-Amendment**: If the USER or a reviewer triggered the change, use Self-Amendment instead — that proceeds autonomously without human approval.
 
@@ -161,16 +161,13 @@ No 3-attempt evidence needed — this is a scope change, not a blocker.
 
 ### Manifest path
 [Path to manifest file]
-
-### Execution log path
-[Path to execution log]
 ```
 
 **When to use**: The USER or a REVIEWER said something that contradicts or extends the manifest. This is a mechanical exit, not a decision point.
 
 **Re-entry depends on the trigger source:**
 - *Triggered from /do or /verify* — autonomous fast path: `/define --amend <path> --from-do`, then /do resumes with the updated manifest. No interview, no summary-for-approval.
-- *Triggered after /done* — two-step chain (both steps mandatory): (1) Invoke `manifest-dev:define` with `<feedback> --amend <path>` — runs in the manifest's recorded `Interview:` style (autonomous = no questions, thorough = questions, minimal = light probing); (2) Invoke `manifest-dev:do` with `<manifest> <log> --scope <new-or-affected-deliverables>` to implement and verify. /done is terminal; step 2 is the re-entry into /do — stopping after step 1 leaves the manifest amended but unimplemented and unverified. **Canonical source: `done/SKILL.md` Post-Completion Feedback** — the full chain contract (mandatory both-steps framing, --scope inference, full-final-gate guarantee, R-7 amendment loop guard) lives there.
+- *Triggered after /done* — two-step chain (both steps mandatory): (1) Invoke `manifest-dev:define` with `<feedback> --amend <path>` — runs in the manifest's recorded `Interview:` style (autonomous = no questions, thorough = questions, minimal = light probing); (2) Invoke `manifest-dev:do` with `<manifest> --scope <new-or-affected-deliverables>` to implement and verify. /done is terminal; step 2 is the re-entry into /do — stopping after step 1 leaves the manifest amended but unimplemented and unverified. **Canonical source: `done/SKILL.md` Post-Completion Feedback** — the full chain contract (mandatory both-steps framing, --scope inference, full-final-gate guarantee, R-7 amendment loop guard) lives there.
 
 **Carve-out**: pure questions about the manifest or process are answered inline — no Self-Amendment. When ambiguous, amend (silent scope drift is the worse failure).
 
@@ -196,7 +193,7 @@ User explicitly asked to stop mid-workflow via a message during the run (e.g., "
 - Remaining: [ACs not started]
 
 ### To Resume
-[How to continue — e.g., "/do <manifest> <log>" or specific next steps]
+[How to continue — e.g., "/do <manifest>" or specific next steps]
 ```
 
 **When to use**: a user message during the run asks to stop (deploy, review, break). Not a blocker — just a handoff. The user message itself is the evidence; no 3-attempt block needed.
@@ -217,9 +214,9 @@ Normal-flow `/verify` completed green, but the manifest contains `method: deferr
 ### To Resolve
 When prerequisites are in place (e.g., "all PRs deployed"), invoke:
 
-`/verify <manifest-path> <execution-log-path> --deferred`
+`/verify <manifest-path> --deferred`
 
-After `--deferred` completes green, re-invoke a normal `/verify <manifest-path> <execution-log-path>` (no flags) to reach `/done`.
+After `--deferred` completes green, re-invoke a normal `/verify <manifest-path>` (no flags) to reach `/done`.
 ```
 
 **When to use**: `/verify` finishes a normal-flow pass green and detects pending deferred-auto criteria — see `verify/SKILL.md` Deferred-Pending Escalation. **Not** a blocker — implementation is done; the user controls when cross-repo / staging / deploy-dependent verification happens.

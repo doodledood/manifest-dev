@@ -57,7 +57,7 @@ Multi-repo manifests extend the standard single-repo schema with three optional 
 
 The user can invoke `/do` once globally (the agent navigates between repos as deliverables require), or per-repo with `--scope` (each `/do` handles its repo's slice). Either works.
 
-`/do`'s execution log remains a single file per invocation: `/tmp/do-log-{timestamp}.md`. No per-repo log naming.
+A single `/do` invocation produces a single conversational session — no per-repo session split.
 
 Worked example — manifest declares:
 
@@ -94,12 +94,12 @@ Cross-repo gates often cannot run during normal `/do→/verify` flow because the
     prompt: "Hit https://staging.example.com/login with a test SAML assertion. Confirm successful redirect to /dashboard with a valid session cookie."
 ```
 
-Normal `/verify` invocations skip `deferred-auto` criteria during the pass itself. **However, `/verify` will not call `/done` while deferred-auto criteria remain unverified** — instead it routes to `/escalate` with type "Deferred-Auto Pending," signaling the user to run `/verify --deferred` when prerequisites are ready. Only after the deferred-auto criteria pass via `/verify --deferred` does a subsequent normal `/verify` pass reach `/done`. The pass log's `deferred: true|false` field tracks which prior runs covered the deferred-auto set.
+Normal `/verify` invocations skip `deferred-auto` criteria during the pass itself. **However, `/verify` will not call `/done` while deferred-auto criteria remain unverified** — instead it routes to `/escalate` with type "Deferred-Auto Pending," signaling the user to run `/verify --deferred` when prerequisites are ready. Only after the deferred-auto criteria pass via `/verify --deferred` does a subsequent normal `/verify` pass reach `/done`. /verify's return block's `deferred: true|false` field tracks which prior runs covered the deferred-auto set.
 
 When the user signals readiness ("all PRs deployed"), they invoke:
 
 ```
-/verify <manifest> <log> --deferred
+/verify <manifest> --deferred
 ```
 
 This runs **only** `deferred-auto` criteria. Flag interactions:

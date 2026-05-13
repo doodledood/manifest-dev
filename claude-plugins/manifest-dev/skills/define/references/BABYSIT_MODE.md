@@ -22,7 +22,7 @@ Pre-flight runs before any manifest is written or any side effect occurs. On fai
 2. **PR accessible.** Query the PR via the available backend. If the PR is not found, not visible to the authenticated user, or the API returns auth/permission errors → halt naming the URL and the specific failure mode.
 3. **PR not already terminal.** If the PR is already closed or merged at synthesis time → halt with: `Cannot babysit: PR #<N> is already <state>. Babysit is for active PRs; closed/merged PRs need no further tending.` This is distinct from /do's "mergeable" terminal — here we're rejecting a PR someone else has already closed or merged, not the agent's own lifecycle terminal.
 4. **Fork convention.** When the PR's `headRepository` differs from its `baseRepository` (cross-repo PR from a fork), babysit targets the **upstream repo where the PR lives** — i.e., the `baseRepository`'s owner/repo — not the fork. The agent invocation uses that canonical URL. Log the fork detection so the user can correct if they meant the fork copy. *Consequence*: any `push-update` or `fix-code` hint the agent emits would target the PR's head branch, which lives on the fork — /do may not have push access. In practice the agent surfaces this as a halt-shaped FAIL when a write is needed against a fork-origin head branch, deferring to the contributor to land the change themselves.
-5. **Repo identity confirmation.** When `cwd` is a git checkout AND `origin` is configured AND its owner/repo differ from the PR's base repo → log a note, don't halt: "Babysit target (`<pr-owner/repo>`) differs from cwd `origin` (`<cwd-owner/repo>`). Continuing — babysit doesn't require a local checkout."
+5. **Repo identity confirmation.** When `cwd` is a git checkout AND `origin` is configured AND its owner/repo differ from the PR's base repo → note (don't halt): "Babysit target (`<pr-owner/repo>`) differs from cwd `origin` (`<cwd-owner/repo>`). Continuing — babysit doesn't require a local checkout."
 
 ## Platform routing
 
@@ -66,7 +66,7 @@ Write the manifest to `/tmp/manifest-{timestamp}.md`. Print the standard `Manife
 
 - `--babysit` + `--amend` → halt: `Cannot babysit and amend simultaneously. --babysit synthesizes a new manifest from a PR; --amend modifies an existing one. Pick one.`
 - `--babysit` without a URL argument → halt: `--babysit requires a PR URL. Usage: /define --babysit <pr-url>.`
-- `--babysit` + free-form task description in `$ARGUMENTS` → the URL wins; the free-form text is ignored with a one-line log note. (Babysit's intent comes from the PR, not from $ARGUMENTS.)
+- `--babysit` + free-form task description in `$ARGUMENTS` → the URL wins; the free-form text is ignored with a one-line note. (Babysit's intent comes from the PR, not from $ARGUMENTS.)
 
 ## Post-babysit path
 

@@ -82,14 +82,11 @@ Please review and confirm completion.
 
 ### Manifest path
 [path]
-
-### Execution log path
-[path]
 ```
 
 Re-entry depends on trigger source:
 - *From /do or /verify* — autonomous fast path: invoke `manifest-dev-experimental:define` with the feedback; /define infers fast-path semantics from caller context (no summary wait) and infers the amend target from transcript via Session-Default Detection. /do resumes with the updated manifest.
-- *After /done* — two-step chain, both mandatory: (1) invoke `manifest-dev-experimental:define` with `<feedback>` — /define infers amend target from the just-completed manifest in transcript; (2) invoke `manifest-dev-experimental:do` with `<manifest-path> <log-path> --scope <new-or-affected>`. Stopping after step 1 leaves the manifest amended but unverified. Amendment loop guard (consecutive Self-Amendments without external input → escalate as Proposed Amendment) applies to re-entry too.
+- *After /done* — two-step chain, both mandatory: (1) invoke `manifest-dev-experimental:define` with `<feedback>` — /define infers amend target from the just-completed manifest in transcript; (2) invoke `manifest-dev-experimental:do` with `<manifest-path> --scope <new-or-affected>`. Stopping after step 1 leaves the manifest amended but unverified. Amendment loop guard (consecutive Self-Amendments without external input → escalate as Proposed Amendment) applies to re-entry too.
 
 ## Proposed Amendment
 
@@ -126,7 +123,7 @@ Use when YOU discovered the criterion should change (no user/reviewer trigger). 
 - Remaining: [ACs not started]
 
 ### To Resume
-[How to continue — e.g., "/do <manifest> <log>" or specific next steps]
+[How to continue — e.g., "/do <manifest>" or specific next steps]
 ```
 
 **Hard gate:** never emit without a verbatim quoted user pause message in the body. Caller framing (cron schedules, tick budgets, "the loop expects each tick to terminate cleanly") is not a pause request.
@@ -143,7 +140,7 @@ Use when YOU discovered the criterion should change (no user/reviewer trigger). 
 - ...
 
 ### To Resolve
-When prerequisites are in place, signal readiness in chat (e.g., "all deployed", "staging is up", "go ahead") and re-invoke `/verify <manifest-path> <execution-log-path>`. /verify reads recent conversation context for the readiness signal and includes deferred-auto criteria in the pass. After they pass green, /verify reaches `/done` on the next normal-flow pass.
+When prerequisites are in place, invoke `/verify <manifest-path> --deferred` to run only the deferred-auto criteria. After they pass green, /verify reaches `/done` on the next normal-flow pass.
 ```
 
 When BOTH manual criteria AND pending deferred-auto exist, combine into a single block titled `## Escalation: Manual Review + Deferred-Auto Pending` containing both sections inline + a combined To Resolve covering the manual review steps and the readiness-signal-plus-re-invoke instruction.

@@ -1,5 +1,5 @@
 ---
-description: "Verify that code changes comply with context file instructions (CLAUDE.md, AGENTS.md, GEMINI.md) and project standards. Audits pull requests, new code, and refactors against rules defined in the project's context files. Use after implementing features, before PRs, or when validating adherence to project-specific rules. Triggers: context file compliance, project standards, adherence check."
+description: 'Verify that code changes comply with context file instructions (CLAUDE.md, AGENTS.md, GEMINI.md) and project standards. Audits pull requests, new code, and refactors against rules defined in the project''s context files. Use after implementing features, before PRs, or when validating adherence to project-specific rules. Triggers: context file compliance, project standards, adherence check.'
 mode: subagent
 temperature: 0.2
 tools:
@@ -7,10 +7,10 @@ tools:
   glob: true
   grep: true
   read: true
-  skill: true
-  todowrite: true
   webfetch: true
+  todowrite: true
   websearch: true
+  skill: true
 ---
 
 You are a read-only context file compliance auditor. Your mission is to audit code changes for violations of project-specific instructions defined in context files (CLAUDE.md, AGENTS.md, or GEMINI.md depending on the CLI), reporting only verifiable violations with exact rule citations.

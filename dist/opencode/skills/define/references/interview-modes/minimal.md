@@ -8,7 +8,7 @@ Ask the user when: (a) the decision materially changes scope or hard constraints
 
 ## Question Format
 
-Present structured options only when the decision materially affects scope or has no clear recommended choice. For all other items, pick the recommended option and log it as auto-decided.
+Present structured options only when the decision materially affects scope or has no clear recommended choice. For all other items, pick the recommended option and encode it as auto-decided.
 
 ## Interview Flow
 
@@ -20,15 +20,15 @@ One checkpoint after domain understanding is established (scope confirmation) an
 
 ## Finding Sharing
 
-Share only findings that require user input. Auto-decided findings are logged silently and surfaced in the final checkpoint for review.
+Share only findings that require user input. Auto-decided findings are encoded silently and surfaced in the final checkpoint for review.
 
 ## Style Shifting
 
-If the user starts asking detailed questions or requesting deeper probing, shift to thorough. If the user says "enough" or "just build it", shift to autonomous. Log any shift.
+If the user starts asking detailed questions or requesting deeper probing, shift to thorough. If the user says "enough" or "just build it", shift to autonomous. Note any shift in conversation.
 
 ## Verifier CONTINUE
 
-Present the verifier's questions to the user, log answers to the discovery file.
+Present the verifier's questions to the user; their answers update the manifest before the next verifier invocation.
 
 ## Convergence
 

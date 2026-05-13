@@ -4,7 +4,7 @@ Post-compact hook that restores /do workflow context after compaction.
 
 When the session is compacted during an active /do workflow, context may be
 lost. This hook detects an active /do and reminds Claude to re-read the
-manifest and execution log.
+manifest.
 
 Registered as SessionStart hook with "compact" matcher.
 """
@@ -20,12 +20,12 @@ DO_WORKFLOW_RECOVERY_REMINDER = """This session appears to have been compacted d
 
 The /do was invoked with: {do_args}
 
-If deliverables or acceptance criteria aren't currently in context, reading the manifest and any `/tmp/do-log-*.md` execution log restores progress and prevents restarting completed work. If both are already loaded from post-compact context, skip the re-read and resume from where you left off. If this hook is misreading and the session was never mid-/do, proceed normally."""
+If deliverables or acceptance criteria aren't currently in context, reading the manifest restores the plan and prevents restarting completed work. If it's already loaded from post-compact context, skip the re-read and resume from where you left off. If this hook is misreading and the session was never mid-/do, proceed normally."""
 
 
 DO_WORKFLOW_RECOVERY_FALLBACK = """This session appears to have been compacted during an active /do workflow — context from before compaction may be missing.
 
-If orientation is missing, checking `/tmp/` for an execution log matching `do-log-*.md` should surface both the manifest path (referenced in the log) and progress so far. If orientation is already intact, skip the re-read. If this hook is misreading and the session was never mid-/do, proceed normally."""
+If orientation is missing, the manifest path was passed as the first positional argument to /do — re-reading the manifest surfaces deliverables and acceptance criteria. If orientation is already intact, skip the re-read. If this hook is misreading and the session was never mid-/do, proceed normally."""
 
 
 def main() -> None:

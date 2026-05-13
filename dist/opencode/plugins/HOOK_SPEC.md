@@ -9,7 +9,6 @@ This document specifies the behavioral contract for the manifest-dev plugin (`pl
 | Stop (stop_do_hook.py) | Blocks stopping during /do unless /done or /escalate called | `experimental.chat.system.transform` — persistent system guidance | **Degraded** — cannot actually block stopping |
 | SessionStart+compact (post_compact_hook.py) | Injects recovery context after compaction | `experimental.session.compacting` — inject into output.context | **Full** |
 | PreToolUse (pretool_verify_hook.py) | Reminds to read manifest before /verify | `tool.execute.before` — throws Error as context reminder | **Full** (main agent only; subagent bypass) |
-| PostToolUse (posttool_log_hook.py) | Reminds to update execution log after milestones | `experimental.chat.system.transform` — persistent reminder | **Approximate** — always-on rather than per-event |
 | UserPromptSubmit (prompt_submit_hook.py) | Amendment check during /do on user input | `experimental.chat.system.transform` — persistent reminder | **Approximate** — always-on rather than per-prompt |
 
 ## Known Limitations
@@ -24,7 +23,6 @@ Claude Code's Stop hook blocks the session from stopping during /do unless /done
 ### 2. Subagent Hook Bypass (Critical)
 `tool.execute.before` and `tool.execute.after` do NOT fire for tool calls within subagents (spawned via the `task` tool). This means:
 - The pre-verify context refresh won't trigger if /verify is invoked by a subagent
-- Post-milestone log reminders won't fire for subagent tool usage
 - Any future guardrail hooks won't apply within agent-spawned workflows
 
 **Impact**: Hooks only protect the main agent context.

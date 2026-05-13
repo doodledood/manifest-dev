@@ -9,7 +9,7 @@ For each load-bearing question on the tree:
 1. Pose the question internally — the same one you'd otherwise ask the user.
 2. Generate your recommended answer with brief rationale.
 3. Adopt the recommended answer as the resolution.
-4. Log the resolution (question, recommended answer, rationale) so the downstream encoder (`/define`) can consume it.
+4. Surface the resolution (question, recommended answer, rationale) in the conversation so the downstream encoder (`/define`) can consume it.
 5. When confidence in the answer is low *and* the answer is load-bearing, flag for `Known Assumption` so `/define` records it as `ASM-*` with "Default chosen, impact if wrong" semantics. This is the user's hook to amend later if the default proves wrong.
 6. Move to the next load-bearing question.
 
@@ -23,7 +23,7 @@ For each load-bearing question on the tree:
 
 ## Stop condition
 
-Stop when the high-leverage unknowns are resolved — remaining ones wouldn't shift the read. Surface the shared understanding in the transcript (or discovery log if one is open) so the next skill in the chain reads it as prior context.
+Stop when the high-leverage unknowns are resolved — remaining ones wouldn't shift the read. Surface the shared understanding in the conversation so the next skill in the chain reads it as prior context.
 
 ## Note on "hold positions under pushback"
 

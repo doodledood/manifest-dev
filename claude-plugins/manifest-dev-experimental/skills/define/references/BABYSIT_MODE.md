@@ -14,7 +14,7 @@ Halt on failure with an actionable error:
 2. **PR accessible.** Query the PR. Not found / not visible / auth errors → halt naming the URL and failure mode.
 3. **PR not already terminal.** Closed/merged at synthesis → halt: `Cannot babysit: PR #<N> is already <state>. Babysit is for active PRs; closed/merged PRs need no further tending.`
 4. **Fork convention.** When `headRepository` differs from `baseRepository` (cross-repo PR from a fork), babysit targets the **upstream** repo where the PR lives — the `baseRepository`'s owner/repo, not the fork. The agent invocation uses that canonical URL. Log fork detection. *Consequence:* write-back hints targeting the PR's head branch live on the fork; /do may not have push access. Agent surfaces this as a halt-shaped FAIL when a write is needed, deferring to the contributor.
-5. **Repo identity confirmation.** When `cwd` is a git checkout AND `origin` differs from the PR's base repo → log a note (no halt): *"Babysit target (`<pr-owner/repo>`) differs from cwd `origin` (`<cwd-owner/repo>`). Continuing — babysit doesn't require a local checkout."*
+5. **Repo identity confirmation.** When `cwd` is a git checkout AND `origin` differs from the PR's base repo → note it (no halt): *"Babysit target (`<pr-owner/repo>`) differs from cwd `origin` (`<cwd-owner/repo>`). Continuing — babysit doesn't require a local checkout."*
 
 ## Platform routing
 
@@ -54,7 +54,7 @@ Write manifest to `/tmp/manifest-{ts}.md`. Print the standard `Manifest complete
 
 - `--babysit` + `--amend` → halt: `Cannot babysit and amend simultaneously.`
 - `--babysit` without URL → halt: `--babysit requires a PR URL. Usage: /define --babysit <pr-url>.`
-- `--babysit` + free-form task text in `$ARGUMENTS` → URL wins; text ignored with one-line log note.
+- `--babysit` + free-form task text in `$ARGUMENTS` → URL wins; text ignored with one-line note.
 
 ## Gotchas
 

@@ -47,7 +47,7 @@ Multi-repo manifests extend the standard schema with three optional fields. Sing
 
 /do reads `Repos:` and uses absolute paths in tool calls when a deliverable lives outside cwd. No filter logic, no cwd-to-repo matching, no per-repo config. LLM handles navigation natively.
 
-User invokes /do once globally (agent navigates between repos) OR per-repo with `--scope` (parallel execution). Either works. Execution log remains a single file per /do invocation.
+User invokes /do once globally (agent navigates between repos) OR per-repo with `--scope` (parallel execution). Either works. A single /do invocation runs as a single conversational session — no per-repo session split.
 
 Worked example:
 
@@ -82,7 +82,7 @@ Cross-repo gates often depend on prerequisites the user controls ("all PRs deplo
     prompt: "Hit https://staging.example.com/login with a test SAML assertion. Confirm successful redirect to /dashboard with a valid session cookie."
 ```
 
-By default /verify skips deferred-auto criteria during the pass. **But /verify will not call /done while deferred-auto remain unverified** — routes to /escalate "Deferred-Auto Pending" instead, telling the user to signal readiness in chat and re-invoke /verify when prerequisites are ready. Pass log's `deferred: true|false` tracks which prior runs covered the set.
+By default /verify skips deferred-auto criteria during the pass. **But /verify will not call /done while deferred-auto remain unverified** — routes to /escalate "Deferred-Auto Pending" instead, telling the user to signal readiness in chat and re-invoke /verify when prerequisites are ready. /verify's return block's `deferred: true|false` field tracks which prior runs covered the set.
 
 When the user signals readiness in chat ("all PRs deployed", "staging is up", "go ahead"), the next /verify invocation reads the recent conversation context, detects the signal, and includes deferred-auto criteria in that pass. No flag needed.
 

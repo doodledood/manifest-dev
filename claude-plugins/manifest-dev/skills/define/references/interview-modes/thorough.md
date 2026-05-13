@@ -19,7 +19,7 @@ The concrete scenario helps users recognize whether it applies. The options redu
 
 **Mental model alignment**: Before finalizing deliverables, present your understanding and check for mismatch: "Here's what 'done' looks like: [concrete description]. Does this match your expectation?" → Options: "Yes, that's right (Recommended)", "Mostly, but also need [X]", "No, I expected [different thing]". Mismatches are latent criteria — expectations they didn't state.
 
-**Positive dependency presentation**: For each positive dependency, present to user with disposition options: "This assumes [X] remains stable. How should we handle?" → Options: "Safe assumption - log as Known Assumption (Recommended)", "Verify it holds before proceeding", "Encode as invariant", "Actually a risk - add to failure modes".
+**Positive dependency presentation**: For each positive dependency, present to user with disposition options: "This assumes [X] remains stable. How should we handle?" → Options: "Safe assumption - record as Known Assumption (Recommended)", "Verify it holds before proceeding", "Encode as invariant", "Actually a risk - add to failure modes".
 
 **Process self-audit presentation**: For each pattern identified, present to user: "This task is susceptible to [pattern]. Should we guard against it?" → Options: "Yes - add as Process Guidance (Recommended)", "Yes - add as verifiable Invariant", "Low risk for this task", "Already covered by [existing constraint]".
 
@@ -39,11 +39,11 @@ Exploration results are presented as conclusions with options. Share what you fo
 
 ## Style Shifting
 
-If the user says "enough" or "just build it", shift to autonomous mode. Log the shift.
+If the user says "enough" or "just build it", shift to autonomous mode. Note the shift in conversation.
 
 ## Verifier CONTINUE
 
-Present the verifier's questions to the user, log answers to the discovery file.
+Present the verifier's questions to the user; their answers update the manifest before the next verifier invocation.
 
 ## Convergence
 

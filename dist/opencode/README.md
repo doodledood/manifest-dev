@@ -7,8 +7,8 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 | Type | Count | Description |
 |------|-------|-------------|
 | Skills | 7 | Core workflow skills (auto, define, do, done, escalate, figure-out, verify) |
-| Agents | 14 | Specialized reviewer and verification agents |
-| Commands | 7 | User-invocable slash commands |
+| Agents | 15 | Specialized reviewer and verification agents |
+| Commands | 5 | User-invocable slash commands (auto, define, do, figure-out, verify) |
 | Plugin | 1 | TypeScript hook plugin for workflow enforcement |
 | Context | 1 | AGENTS.md workflow overview |
 
@@ -85,7 +85,6 @@ After installation, invoke workflows via slash commands:
 | Stop hook (block) | Full | Degraded | session.idle is fire-and-forget; enforced via system guidance |
 | Compaction recovery | Full | Full | experimental.session.compacting |
 | Pre-verify refresh | Full | Full | tool.execute.before (main agent only) |
-| Log reminders | Full | Approximate | Persistent system context vs event-driven |
 | Amendment check | Full | Approximate | Persistent system context vs per-prompt |
 | Subagent hooks | Full | Missing | tool.execute.before/after don't fire in subagents |
 
@@ -102,7 +101,7 @@ After installation, invoke workflows via slash commands:
 
 ```
 dist/opencode/
-├── agents/                          # 15 converted agents
+├── agents/                          # 15 converted agents (15 files)
 │   ├── change-intent-reviewer.md
 │   ├── code-bugs-reviewer.md
 │   ├── test-quality-reviewer.md

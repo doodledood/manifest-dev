@@ -1,5 +1,5 @@
 name = "code-maintainability-reviewer"
-description = "Use this agent when you need a comprehensive maintainability audit of recently written or modified code"
+description = "Use this agent when you need a comprehensive maintainability audit of recently written or modified code. Focuses on code organization: DRY violations, coupling, cohesion, consistency, dead code, and architectural boundaries. This agent should be invoked after implementing a feature, completing a refactor, or before finalizing a pull request."
 sandbox_mode = "read-only"
 developer_instructions = """
 

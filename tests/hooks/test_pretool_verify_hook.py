@@ -76,7 +76,7 @@ class TestPretoolVerifyHookOutputs:
             "tool_name": "Skill",
             "tool_input": {
                 "skill": "manifest-dev:verify",
-                "args": "/tmp/manifest.md /tmp/do-log.md",
+                "args": "/tmp/manifest.md",
             },
         }
         result = run_pretool_verify_hook(hook_input)
@@ -92,7 +92,7 @@ class TestPretoolVerifyHookOutputs:
             "tool_name": "Skill",
             "tool_input": {
                 "skill": "manifest-dev:verify",
-                "args": "/tmp/manifest.md /tmp/do-log.md",
+                "args": "/tmp/manifest.md",
             },
         }
         result = run_pretool_verify_hook(hook_input)
@@ -100,7 +100,6 @@ class TestPretoolVerifyHookOutputs:
         output = json.loads(result.stdout)
         context = output["hookSpecificOutput"]["additionalContext"]
         assert "/tmp/manifest.md" in context
-        assert "/tmp/do-log.md" in context
 
     def test_reminder_wrapped_in_system_reminder(self):
         """Reminder should be wrapped in system-reminder tags."""
@@ -108,7 +107,7 @@ class TestPretoolVerifyHookOutputs:
             "tool_name": "Skill",
             "tool_input": {
                 "skill": "manifest-dev:verify",
-                "args": "/tmp/manifest.md /tmp/do-log.md",
+                "args": "/tmp/manifest.md",
             },
         }
         result = run_pretool_verify_hook(hook_input)
@@ -124,7 +123,7 @@ class TestPretoolVerifyHookOutputs:
             "tool_name": "Skill",
             "tool_input": {
                 "skill": "manifest-dev:verify",
-                "args": "/tmp/manifest.md /tmp/do-log.md",
+                "args": "/tmp/manifest.md",
             },
         }
         result = run_pretool_verify_hook(hook_input)
@@ -139,7 +138,7 @@ class TestPretoolVerifyHookOutputs:
             "tool_name": "Skill",
             "tool_input": {
                 "skill": "manifest-dev:verify",
-                "args": "/tmp/manifest.md /tmp/do-log.md",
+                "args": "/tmp/manifest.md",
             },
         }
         result = run_pretool_verify_hook(hook_input)

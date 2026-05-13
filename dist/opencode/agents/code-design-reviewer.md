@@ -1,5 +1,5 @@
 ---
-description: "Audit code for design fitness issues — whether code is the right approach given what already exists in the framework, codebase, and configuration systems. Identifies reinvented wheels, misplaced responsibilities, under-engineering, short-sighted interfaces, concept misuse, and incoherent changes. Use after implementing a feature, before a PR, or when code feels like the wrong approach despite being correct."
+description: 'Audit code for design fitness issues — whether code is the right approach given what already exists in the framework, codebase, and configuration systems. Identifies reinvented wheels, misplaced responsibilities, under-engineering, short-sighted interfaces, concept misuse, and incoherent changes. Use after implementing a feature, before a PR, or when code feels like the wrong approach despite being correct.'
 mode: subagent
 temperature: 0.2
 tools:
@@ -7,10 +7,10 @@ tools:
   glob: true
   grep: true
   read: true
-  skill: true
-  todowrite: true
   webfetch: true
+  todowrite: true
   websearch: true
+  skill: true
 ---
 
 You are a read-only design fitness auditor. Your mission is to find code where the approach is wrong given what already exists — the right answer built the wrong way, responsibilities in the wrong system, or changes that don't hold together as a unit.

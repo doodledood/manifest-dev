@@ -44,7 +44,7 @@ Canvas is generated and updated only during /define's interview phase. It freeze
 
 ## Format requirements
 
-- **File:** A single self-contained `.html` file at `/tmp/canvas-{ts}.html`, where `{ts}` is the same timestamp as the manifest (`/tmp/manifest-{ts}.md`) and discovery log (`/tmp/define-discovery-{ts}.md`). Linkable as a triplet.
+- **File:** A single self-contained `.html` file at `/tmp/canvas-{ts}.html`, where `{ts}` is the same timestamp as the manifest (`/tmp/manifest-{ts}.md`). Linkable as a pair.
 - **Styling:** Tailwind CSS via CDN (`<script src="https://cdn.tailwindcss.com"></script>`). Tailwind degrades gracefully — if the CDN is unreachable, the page is still readable as semantic HTML.
 - **Diagrams:** mermaid via CDN (`<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"; mermaid.initialize({ startOnLoad: true });</script>`). Use mermaid blocks (`<pre class="mermaid">...</pre>`) for flowcharts, sequence diagrams, dependency graphs.
 - **Auto-reload:** Embed JavaScript that detects when the source file has changed and refreshes the visible content. The mechanism is the agent's choice (JS polling against a version-stamped fragment, fetch + DOM diff, `<meta http-equiv="refresh">`, etc.) — pick what works in the target browser. The principle: page must auto-reload when the file changes, and SHOULD preserve scroll position and expand/collapse state when feasible. The mechanism is chosen ONCE at generation time per /define session and embedded in the file; it does not change mid-interview.

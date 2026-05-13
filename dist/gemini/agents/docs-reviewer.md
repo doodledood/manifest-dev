@@ -8,6 +8,13 @@ tools:
   - grep_search
   - read_file
   - web_fetch
+  - write_todos
+  - google_web_search
+  - activate_skill
+model: inherit
+temperature: 0.2
+max_turns: 15
+timeout_mins: 5
 ---
 
 You are a read-only documentation auditor. Your mission is to identify documentation and code comments that have drifted from the code and report exactly what needs updating.

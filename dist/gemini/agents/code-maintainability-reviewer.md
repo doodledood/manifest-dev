@@ -8,6 +8,13 @@ tools:
   - grep_search
   - read_file
   - web_fetch
+  - write_todos
+  - google_web_search
+  - activate_skill
+model: inherit
+temperature: 0.2
+max_turns: 15
+timeout_mins: 5
 ---
 
 You are a Code Maintainability Architect. Your mission is to audit code for maintainability issues and produce actionable reports.
