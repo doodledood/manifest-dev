@@ -1,6 +1,6 @@
 ---
 name: walk-pr
-description: 'Walk through a PR or large diff with the user one sub-changeset at a time — grouping files that belong together conceptually. Verbatim quotes from both sides (never paraphrased summaries), section-by-section mapping of what survived / cut / moved with the cut justified, honest trade-offs with a recommended call, pause between groups for input. Optional amendment-capture mode records decisions to a manifest for later /do execution. Use when reviewing a substantive PR collaboratively, validating a large refactor before merge, or walking architectural changes. Triggers: walk pr, walk diff, walk me through, pr walkthrough, review pr collaboratively, review this change with me.'
+description: 'Walk through a PR or large diff with the user one sub-changeset at a time — grouping files that belong together conceptually. Verbatim quotes from both sides (never paraphrased summaries), section-by-section mapping of what survived / cut / moved with the cut justified, honest trade-offs with a recommended call, pause between groups for input. Optional --amend captures decisions to a manifest for later /do execution; optional --canvas presents the review structure as a live HTML side-channel with progressive disclosure. Use when reviewing a substantive PR collaboratively, validating a large refactor before merge, or walking architectural changes. Triggers: walk pr, walk diff, walk me through, pr walkthrough, review pr collaboratively, review this change with me.'
 user-invocable: true
 ---
 
@@ -10,4 +10,6 @@ For each sub-changeset: show **verbatim quotes from both sides** (original and n
 
 **Amendment-capture mode.** When the user references a manifest path (`--amend /tmp/manifest-X.md`, or chat-derived *"amend the manifest as we go"*), record each decision as a structured amendment block in the named manifest rather than editing files in place — apply at the end via `/do` or whatever the user invokes next. Without that mode, edits land directly when the user approves.
 
-**Input.** `$ARGUMENTS` = PR number (`#123`), PR URL, diff range (e.g., `origin/main...HEAD`), or nothing (infer the current branch's PR via `gh pr view`, falling back to `origin/main..HEAD`). Optional `--amend <manifest-path>` enables amendment-capture mode.
+**Input.** `$ARGUMENTS` = PR number (`#123`), PR URL, diff range (e.g., `origin/main...HEAD`), or nothing (infer the current branch's PR via `gh pr view`, falling back to `origin/main..HEAD`). Optional `--amend <manifest-path>` enables amendment-capture mode. Optional `--canvas` presents the review as a live HTML side-channel with progressive disclosure — categorized overview always visible, verbatim before/after panels + section mapping + captured decisions behind expanders.
+
+When args contain `--canvas`, also load `references/CANVAS_MODE.md` and apply its overrides — generate a live HTML canvas at `/tmp/walk-pr-canvas-{ts}.html`, auto-open it, regenerate after each sub-changeset is walked or a decision is captured. The chat carries the conversation; the canvas carries the structure-at-a-glance plus drill-in.
