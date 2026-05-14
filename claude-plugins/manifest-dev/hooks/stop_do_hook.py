@@ -58,16 +58,35 @@ def main() -> None:
     if state.has_escalate and not state.has_self_amendment:
         sys.exit(0)
 
-    # Self-Amendment escalation — block stop, must continue to /define --amend
+    # Self-Amendment escalation — block stop, must continue to /define --amend.
+    # Mirrors the /do-unfinished escape valve below: once /define --amend has
+    # completed and /do has resumed into a legitimate wait state, the sticky
+    # has_self_amendment flag would otherwise block forever. Idle-loop count
+    # detects the stuck state.
     if state.has_self_amendment:
+        consecutive_idle = count_consecutive_idle_outputs(transcript_path)
+
+        if consecutive_idle >= 3:
+            output = {
+                "reason": "Self-Amendment idle loop detected — allowing stop",
+                "systemMessage": (
+                    "Idle loop detected after Self-Amendment escalation — "
+                    "stop allowed. If /define --amend has completed and /do "
+                    "is waiting on an external blocker (CI, deploy, poller), "
+                    "the user will re-invoke /do when the blocker clears."
+                ),
+            }
+            print(json.dumps(output))
+            sys.exit(0)
+
         reason = (
             "A Self-Amendment escalation appears active — the manifest "
             "looks like it needs revision before /do can continue.\n"
             "• /define --amend <manifest-path> applies the amendment; "
             "then resume /do with the updated manifest.\n"
             "• If the escalation was already resolved and this hook is "
-            "misreading the transcript, proceed — the flow will close "
-            "on the next /done or /escalate."
+            "misreading the transcript, proceed — the idle-loop escape "
+            "valve will release the stop after 3 idle outputs."
         )
         output = {
             "decision": "block",
