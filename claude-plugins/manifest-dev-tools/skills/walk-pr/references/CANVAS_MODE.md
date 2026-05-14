@@ -2,6 +2,10 @@
 
 Loaded when `/walk-pr --canvas` is passed. The canvas **is** the walkthrough — every surface (verbatim quotes, section mapping, trade-offs, probes, recommendations, per-topic comment input) lives in the HTML artifact, generated **once, upfront, with the full walk content**. The user navigates self-paced via local JS; chat reconnects only at the end, when the user pastes back a single bundled review result. After the walkthrough closes, the artifact is redundant.
 
+## Reader model
+
+The reviewer **lives in the repo** (knows the modules, idioms, naming conventions) but has **zero context on this PR**. Calibrate explanations accordingly: codebase vocabulary is shared ground and doesn't need re-explaining; PR-specific framing has to be surfaced. Probes, mappings, and recommendations name files, functions, and modules by their real codebase identifiers, not by invented abstractions.
+
 ## Activation gate
 
 Evaluate **immediately** when `--canvas` is set, before opening the first sub-changeset. If any condition holds, skip canvas behavior and fall back to chat-only /walk-pr (first match wins; conditions 1–2 silent, condition 3 prints one warning):
@@ -17,7 +21,7 @@ If none match: generate the canvas at `/tmp/walk-pr-canvas-{ts}.html` (`{ts}` = 
 The canvas rations what the user sees at any moment. Three rules govern visibility:
 
 1. **One sub-changeset in focus.** Exactly one expanded; others show title + size + status pill (`queued` slate, `in review` amber, `reviewed` emerald), collapsed.
-2. **One review topic in view.** Inside the in-focus sub-changeset, exactly one topic (probe / trade-off / recommendation) is highlighted with its comment textarea visible. Prior topics collapse to a one-line preview of what the user typed (read from the textarea). Future topics show titles only, dimmed.
+2. **One review topic in view.** Inside the in-focus sub-changeset, exactly one topic (probe / trade-off / recommendation) is highlighted with its comment textarea visible. Prior topics collapse to a one-line preview of what the user typed (read from the textarea). Future topics show their headline only, dimmed. At generation, the first topic of the first sub-changeset is marked in-focus; local JS advances the marker as the user clicks "next topic" or marks a sub-changeset reviewed.
 3. **No content duplication.** Walkthrough content lives in the canvas — not echoed in chat. Chat stays empty during the walk and receives only the final bundled paste.
 
 Pacing is local — the canvas advances via JS (expand/collapse, "next topic", "mark reviewed") as the user works through it. There's no agent-side state to track until paste-back.
@@ -26,13 +30,28 @@ Pacing is local — the canvas advances via JS (expand/collapse, "next topic", "
 
 **One-shot generation.** At creation, the agent embeds **every** sub-changeset, **every** review topic, and the full walk content (verbatim quotes, mappings, trade-offs, probes, recommendations) into the HTML. No per-topic Copy buttons, no anchor-format paste-back, no canvas regeneration mid-walk — those were artifacts of a per-turn design the user never actually used.
 
-Each topic renders:
-- A short statement (probe / trade-off / recommendation text, plus the recommended call where applicable).
+Each topic renders as a two-part structure (see "Topic shape and progressive disclosure" below):
+
+- A visible **headline** — concrete framing of the concern plus the recommended call.
+- A collapsible **detail body** (`<details>`, closed by default) for rationale, topic-level code excerpts, and alternatives considered. The in-focus topic only — prior topics keep their one-line preview, future topics keep their dimmed headline.
 - A `<textarea>` for the user's comment. State persists across canvas reloads (e.g. `localStorage` keyed by topic id) so the user doesn't lose work.
 
 At the bottom of the canvas, a single **Copy as prompt** button writes the consolidated review result to the clipboard as one structured block — per sub-changeset, per topic: the anchor (file + line range or PR-level) plus the user's textarea content (or `(captured, no comment)` if empty). The user pastes this block into chat; the agent reads it and proceeds with the end-of-walk handoff.
 
 Clipboard write uses `navigator.clipboard.writeText` with a `document.execCommand('copy')` fallback for sandboxed `file://` cases. On any clipboard failure, pre-select the bundled string in a visible read-only `<pre>` so the user can copy manually.
+
+## Topic shape and progressive disclosure
+
+**Headline shape.** Each topic's visible headline is **two declarative sentences**:
+
+1. A concrete framing of the concern in **codebase vocabulary** — which file, function, or module is at issue and what the concern is. One declarative sentence.
+2. The **recommended call** — what to do about it. One declarative sentence.
+
+No nested clauses, no embedded justification, no narrated reasoning ("I'm wondering whether...", "It seems that..."). If a topic can't fit this shape, it's two topics, or it isn't load-bearing enough to be one.
+
+**Progressive disclosure for detail.** Everything past the headline — rationale, topic-level code excerpts, alternatives considered, trade-off depth — lives in a collapsible `<details>` body **closed by default**, attached to the *in-focus* topic only. Prior topics keep their existing one-line preview (textarea content) per the Cognitive-load contract; future topics keep their dimmed headline. Sub-changeset diff hunks continue to render inside the in-focus card per "Rendering and layout adapt to the content" — they are not moved behind `<details>`.
+
+Open/closed state of the topic-detail `<details>` is preserved across reloads via the existing **expand/collapse state** bucket that the Lifecycle section already covers — no new `localStorage` keys are introduced. Native `<details>` open/close *is* expand/collapse state by natural reading.
 
 ## Format
 
@@ -90,3 +109,7 @@ Any canvas-related failure is **non-blocking**:
 - **Status-pill explosion.** Pills only on sub-changeset cards (the navigation surface).
 - **Diagram for nothing.** Mermaid only when component flow is at stake.
 - **Internal vocabulary on surface.** Talk about *what changed* and *why* in user vocabulary; no leaked internal labels (schema names, anchor formats in headings, etc.).
+- **Narrated reasoning in the topic headline.** The headline carries the reasoning out loud — "I'm wondering whether the new `flushBuffer()` call inside `handleClose()` could end up racing the `onDisconnect` callback if the socket closes mid-write, since the buffer might still be referenced by the pending write promise and we don't currently guard against that case — should we add a check?" Headline shape instead: "`handleClose()` calls `flushBuffer()` without guarding the pending-write promise that still holds the buffer. Add a guard before `flushBuffer()` runs, or document why the race is safe." The trace, the alternatives weighed, the rationale — all belong in the collapsible detail body, not in the visible line.
+- **Headline restates the body.** The two-line headline summarises what the `<details>` body says, instead of standing alone as the concrete framing. The detail body adds rationale, evidence, alternatives — it doesn't unpack a generic headline.
+- **Detail dumped in the headline.** Inline code excerpts, multi-line enumerations, or alternative-comparison tables render alongside the two headline sentences instead of inside `<details>`. These break the two-sentence shape visually even when "short" — the most tempting things to inline because they feel atomic. Collapse them anyway.
+- **Invented abstraction in place of codebase vocabulary.** The headline names "the propagation manager" when the repo calls it `notifier`, or refers to "the auth pipeline" when no such concept exists in this codebase. Reader model: name things using identifiers the reviewer already knows.
