@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev-experimental",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Experimental parallel rework of manifest-dev's skills. Radically slim prompts that trust model capability — every word steers, not scaffolds. Drops multi-mode budgeting and prescriptive HOW in favor of WHAT/WHY. Lives alongside manifest-dev until promotion. Same skills (figure-out, define, do, verify, done, escalate, auto), same hooks, same agents.",
   "keywords": [
     "experimental",

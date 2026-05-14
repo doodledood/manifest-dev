@@ -542,6 +542,108 @@ class TestStopHookLoopDetection:
         assert result is not None
         assert "decision" not in result  # omit decision = allow
 
+    def test_self_amendment_idle_loop_allows_stop(
+        self,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Self-Amendment + 3 consecutive idle outputs should allow stop.
+
+        Models the bug scenario: Self-Amendment escalation fires, /define --amend
+        completes, /do resumes and enters a legitimate wait state (e.g., polling
+        an external CI build). Without the escape valve, the sticky
+        has_self_amendment flag blocks every turn forever.
+
+        Idle math: the Self-Amendment escalate Skill call itself counts as idle
+        (hook_utils.count_consecutive_idle_outputs treats Skill as not-meaningful),
+        so 2 text-only outputs after it yields a total of 3 consecutive idle
+        outputs at hook entry — the escape valve threshold.
+        """
+        self_amendment_escalate = {
+            "type": "assistant",
+            "message": {
+                "content": [
+                    {
+                        "type": "tool_use",
+                        "name": "Skill",
+                        "input": {
+                            "skill": "manifest-dev:escalate",
+                            "args": "Self-Amendment",
+                        },
+                    }
+                ]
+            },
+        }
+        idle_outputs = [
+            {
+                "type": "assistant",
+                "message": {"content": [{"type": "text", "text": "Idle."}]},
+            },
+            {
+                "type": "assistant",
+                "message": {
+                    "content": [{"type": "text", "text": "Waiting on background poller."}]
+                },
+            },
+        ]
+        transcript_path = temp_transcript(
+            [user_do_command, self_amendment_escalate] + idle_outputs
+        )
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook("stop_do_hook.py", hook_input)
+
+        assert result is not None
+        assert "decision" not in result  # omit decision = allow
+        assert (
+            "idle" in result["reason"].lower() or "loop" in result["reason"].lower()
+        )
+        # Self-Amendment-specific escape must NOT direct to /verify or /escalate
+        # — those are wrong moves for the resumed-/do-in-wait-state case.
+        assert "/verify" not in result["systemMessage"]
+        assert "/escalate" not in result["systemMessage"]
+
+    def test_self_amendment_below_threshold_still_blocks(
+        self,
+        temp_transcript,
+        user_do_command: dict[str, Any],
+    ):
+        """Self-Amendment + 2 consecutive idle outputs should still block.
+
+        Boundary test: with the Self-Amendment Skill call (idle) plus 1 text-only
+        output, total consecutive idle count is 2 — below the escape threshold
+        of 3. The Self-Amendment block path remains active.
+        """
+        self_amendment_escalate = {
+            "type": "assistant",
+            "message": {
+                "content": [
+                    {
+                        "type": "tool_use",
+                        "name": "Skill",
+                        "input": {
+                            "skill": "manifest-dev:escalate",
+                            "args": "Self-Amendment",
+                        },
+                    }
+                ]
+            },
+        }
+        one_idle_output = {
+            "type": "assistant",
+            "message": {"content": [{"type": "text", "text": "Idle."}]},
+        }
+        transcript_path = temp_transcript(
+            [user_do_command, self_amendment_escalate, one_idle_output]
+        )
+        hook_input = {"transcript_path": transcript_path}
+
+        result = run_hook("stop_do_hook.py", hook_input)
+
+        assert result is not None
+        assert result["decision"] == "block"
+        assert "self-amendment" in result["reason"].lower()
+
 
 class TestStopHookInvocationPatterns:
     """Tests for various skill invocation patterns."""
