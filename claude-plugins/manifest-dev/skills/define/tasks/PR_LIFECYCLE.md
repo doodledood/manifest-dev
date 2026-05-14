@@ -45,6 +45,17 @@ The `prompt` field is the steering surface — empty for baseline, populated whe
 
 The user steers `github-pr-lifecycle` through the AC's `prompt` field. Steering layers additively on baseline — empty steering yields baseline behavior; specified constraints override the baseline only for what they name.
 
+Concrete overlay-text examples (drop into the AC's `verify.prompt:` Steering line):
+
+| Steering | Agent behavior |
+|---|---|
+| `Required label: qa-approved` | Adds a label-presence user gate |
+| `Reviewer @alice required` | Adds a named-approver user gate |
+| `CI job "flaky-integration" is known-flaky; retrigger up to 5` | Raises retrigger cap for that check |
+| `Wait 5m between CI checks` | Paces wait-shaped hints between CI re-checks at 5m instead of the agent's default cadence |
+| `Cap approval-wait at 2d, then FAIL with halt hint` | Once cumulative approval-wait exceeds 2d, agent emits FAIL with a halt-shaped hint instead of another wait hint |
+| `Skip description sync — this PR uses a custom template` | Drops the description-in-sync gate |
+
 Probes for /define when surfacing steering nuances during the interview:
 
 | Probe | What it surfaces |
@@ -54,7 +65,7 @@ Probes for /define when surfacing steering nuances during the interview:
 | "Any CI jobs known to be flaky?" | Per-check retrigger-cap override |
 | "Any bots whose comments should auto-route a specific way?" | Custom bot routing (e.g., dependabot → `push-update with merge main`) |
 | "Should PR description sync be enforced?" | Drops/keeps the description-in-sync gate |
-| "Any cadence or wall-clock cap on lifecycle waits?" | Adjusts the agent's wait-hint cadence and/or a halt-at-cap (e.g., `Wait 5m between CI checks; cap approval-wait at 2d (FAIL with halt hint past cap)`) |
+| "Any cadence or wall-clock cap on lifecycle waits?" | Cadence and wall-clock cap steering (see overlay-text examples above) |
 
 These probes are *fallbacks*. /define should first discover what's true via repo signals:
 
