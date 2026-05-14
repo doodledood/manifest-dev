@@ -28,7 +28,7 @@
   verify:
     method: bash | codebase | subagent | research | manual | deferred-auto
     phase: 1                       # optional integer, default 1; higher phases run after lower pass
-    timeout: 30s | 5m | 6h | 1d    # optional wall-clock cap; integer + s|m|h|d suffix. Use for lifecycle ACs that legitimately wait (CI polling, approval, deploy). Absent → no cap.
+    timeout: 30s | 5m | 6h | 1d    # optional wall-clock cap; integer + s|m|h|d suffix. Use for criteria that may legitimately wait (CI polling, approval, deploy). Absent → no cap (legacy behavior).
     inner_method: subagent | bash | codebase | research   # REQUIRED when method: deferred-auto
     command: "[if bash, or deferred-auto with inner_method: bash]"
     agent: "[if subagent, or deferred-auto with inner_method: subagent]"
