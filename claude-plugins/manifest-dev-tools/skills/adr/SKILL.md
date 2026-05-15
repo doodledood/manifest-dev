@@ -1,7 +1,7 @@
 ---
 name: adr
 description: 'Synthesize Architecture Decision Records from session transcripts. Extracts decisions via multi-agent pipeline and writes MADR files to a specified directory. Use after completing a /define or /do session to capture architectural decisions as durable records.'
-argument-hint: '<manifest-path> <output-dir> --session <transcript-path>'
+argument-hint: '<manifest-path> <output-dir> <transcript-path>'
 user-invocable: true
 ---
 
@@ -13,18 +13,18 @@ Extract ADR-worthy decisions from a completed manifest workflow session and writ
 
 ## Input
 
-`$ARGUMENTS` = `<manifest-path> <output-dir> --session <transcript-path>`
+`$ARGUMENTS` = `<manifest-path> <output-dir> <transcript-path>`
 
-All three are required:
+All three are required positional arguments:
 - **manifest-path**: Path to the manifest file (primary structured input)
 - **output-dir**: Directory where ADR files will be written (created if needed)
-- **--session \<path\>**: Path to the session transcript JSONL file (primary raw input — `/define` outputs this path at completion)
+- **transcript-path**: Path to the session transcript JSONL file (primary raw input — `/define` outputs this path at completion)
 
 If any required argument is missing: error and halt with usage:
 ```
-Usage: /adr <manifest-path> <output-dir> --session <transcript-path>
+Usage: /adr <manifest-path> <output-dir> <transcript-path>
 
-Example: /adr /tmp/manifest-1234.md docs/adr/ --session ~/.claude/projects/.../session.jsonl
+Example: /adr /tmp/manifest-1234.md docs/adr/ ~/.claude/projects/.../session.jsonl
 ```
 
 ## Pipeline
@@ -63,7 +63,7 @@ A synthesis agent receives all candidates from Phase 1 and:
 
 ## Graceful Degradation
 
-If the session transcript at `--session <path>` is unreadable or missing:
+If the session transcript at `<transcript-path>` is unreadable or missing:
 - **Warn the user**: "Session transcript not found at <path>. Proceeding with manifest only — ADRs will be less detailed (no deliberation context)."
 - **Proceed with manifest**: Skip Phase 1 parallel extraction. Instead, extract decisions directly from the manifest's Approach section (Architecture, Trade-offs, Risk Areas). Apply the same worthiness criteria.
 - **Note in each ADR**: Add to the Source section: "Note: Synthesized from manifest only. Session transcript was unavailable — deliberation context may be incomplete."
