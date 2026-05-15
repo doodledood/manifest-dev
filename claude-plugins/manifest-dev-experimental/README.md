@@ -42,7 +42,7 @@ Hooks (`hooks/`) and reusable agents (`agents/`) are duplicated from the core pl
 
 **Cross-plugin isolation.** Both this plugin's hooks and `manifest-dev`'s hooks use strict namespace matching: only their own plugin's skill invocations register. When both plugins are installed alongside, neither plugin's hooks fire on the other's flow — `/manifest-dev-experimental:do` triggers only experimental hooks; `/manifest-dev:do` triggers only main hooks.
 
-The `criteria-checker` agent (the most-invoked verifier in this plugin) inherits the default tool set — no `tools:` allowlist — so users with MCP servers or extra CLI tools configured can verify against them. Read-only behavior is enforced by the agent's prompt, not by the tool list.
+Verifier subagents default to `general-purpose` when a manifest omits `verify.agent:`. The bundled `criteria-checker` agent (invoked explicitly via `agent: criteria-checker`) is the slim-discipline-aligned alternative: read-only behavior is enforced by its prompt (no `tools:` allowlist), so authors can spawn it against MCP servers or extra CLI tools the user has configured.
 
 ## Status
 
