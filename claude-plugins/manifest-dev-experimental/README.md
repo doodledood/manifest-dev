@@ -6,7 +6,7 @@ Maximally-slim parallel rework of the `manifest-dev` plugin. The discipline: tru
 
 - **`/figure-out`** — relentless probing. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), tackles the next load-bearing question first, gives recommended answers, returns to dropped threads, explores instead of asking when discoverable.
 - **`/define`** — encodes shared understanding into a verifiable Manifest. Auto-invokes `figure-out` when the transcript lacks understanding. Supports `--babysit <pr-url>`, `--canvas`, `--autonomous`.
-- **`/do`** — executes a Manifest by spawning one verifier subagent per Acceptance Criterion (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when every AC passes or `/escalate` when blocked. Mid-/do user messages default to invoking `/define` for amendment.
+- **`/do`** — executes a Manifest by spawning one verifier subagent per Acceptance Criterion and Global Invariant (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when every AC and Global Invariant passes or `/escalate` when blocked. Mid-/do user messages default to invoking `/define` for amendment.
 - **`/done`** — completion summary in plain prose. Called by `/do` after every Acceptance Criterion and Global Invariant verifies PASS.
 - **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from the user. Single type; routes via `/do`.
 - **`/auto`** — chains `figure-out → define → do` autonomously. Add `--babysit <pr-url>` for PR lifecycle work.

@@ -1,6 +1,6 @@
 ---
 name: do
-description: 'Experimental. Manifest executor. Works through Deliverables verifying every Acceptance Criterion via subagents, calls /done when all pass, /escalate when blocked. Use when executing a manifest, running a plan, implementing a defined task.'
+description: 'Experimental. Manifest executor. Works through Deliverables verifying every Acceptance Criterion and Global Invariant via subagents, calls /done when all pass, /escalate when blocked. Use when executing a manifest, running a plan, implementing a defined task.'
 argument-hint: '<manifest-path>'
 user-invocable: true
 ---
