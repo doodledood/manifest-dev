@@ -1,6 +1,7 @@
 ---
 name: define
 description: 'Manifest builder. Plan work, scope tasks, spec out requirements, break down complex tasks before implementation. Converts needs into Deliverables + Invariants with verification criteria. Use when planning features, debugging complex issues, scoping refactors, or whenever a task needs structured thinking before coding.'
+argument-hint: '[task] [--mode <level>] [--interview <style>] [--amend <path>] [--babysit <pr-url>] [--platform <name>] [--canvas]'
 ---
 
 # /define - Manifest Builder

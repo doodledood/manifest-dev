@@ -1,6 +1,7 @@
 ---
 name: verify
 description: 'Experimental. Runs verifiers for Global Invariants and Acceptance Criteria from a Manifest. Spawns verifier agents in parallel within each phase, aggregates, routes outcome to /done or /escalate. Normally invoked by /do; users invoke directly to verify an existing manifest.'
+argument-hint: '<manifest-path> [--scope <ids>]'
 user-invocable: true
 ---
 

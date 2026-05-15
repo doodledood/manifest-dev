@@ -1,6 +1,7 @@
 ---
 name: figure-out
 description: 'Figure things out together — any topic, problem, or idea. Collaborative thinking partner that investigates before claiming, builds shared truth through evidence not inference. Use when you need to truly understand something before acting, or when figuring it out IS the goal. Triggers: figure out, help me think through, dig deeper, what is really going on, investigate, understand, why does, work through.'
+argument-hint: '[topic] [--with-docs]'
 user-invocable: true
 ---
 

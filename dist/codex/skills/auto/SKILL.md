@@ -1,6 +1,7 @@
 ---
 name: auto
 description: 'End-to-end autonomous execution: /define → auto-approve → /do in a single command. Infers task from conversation context when no arguments provided. Add --babysit <pr-url> to tend an existing PR through review and CI without manifest-dev setup. Use when you want to define and execute a task without manual intervention during planning. Triggers: auto, autonomous define and do, end-to-end, just build it, tend pr, babysit pr.'
+argument-hint: '[task] [--mode <level>] [--platform <name>] [--babysit <pr-url>]'
 user-invocable: true
 ---
 

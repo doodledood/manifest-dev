@@ -1,6 +1,7 @@
 ---
 name: walk-pr
 description: 'Walk through a PR or large diff together — your own or someone else''s — one sub-changeset at a time and one review topic at a time within it. Verbatim quotes from both sides, section-by-section mapping of what survived / cut / moved, honest trade-offs with a recommended call. At the end, present a plan of the comments captured during the walk; on approval, post them as a PR review. Optional --canvas runs the walk in a live HTML artifact that replaces chat as the review surface. Use when reviewing a substantive PR collaboratively or walking a large refactor. Triggers: walk pr, walk diff, walk me through, pr walkthrough, review collaboratively, review this change with me.'
+argument-hint: '[pr-url-or-range] [--canvas]'
 user-invocable: true
 ---
 
