@@ -26,7 +26,7 @@ Multi-repo manifests extend the standard schema with two optional fields. Single
       - frontend: /home/user/projects/web
   ```
 
-- **Branch:** single string naming the branch used in every repo (see §i; divergent per-repo branch names not supported in this version).
+- **Branch:** single string naming the branch used in every repo (see §j; divergent per-repo branch names not supported in this version).
 
   ```markdown
   - **Branch:** claude/sso-integration
