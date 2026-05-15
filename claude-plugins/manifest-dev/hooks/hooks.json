@@ -1,0 +1,16 @@
+{
+  "description": "Substitute {{INLINE_MANIFEST:<path>}} markers in verifier subagent prompts with the real manifest snapshot before launch.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/inline_manifest_hook.py"
+          }
+        ]
+      }
+    ]
+  }
+}
