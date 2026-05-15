@@ -1,32 +1,49 @@
 # manifest-dev-experimental
 
-Radically slim parallel rework of the `manifest-dev` plugin. Same skills, same agents, same hooks — every word in the prompts steers model behavior, nothing scaffolds against failures the model handles fine when given clean posture.
-
-The discipline: trust capability, minimize specification, observe what actually fails, add specific lines back only on real failure. The experimental plugin is the sandbox where that discipline gets tested before promotion.
+Maximally-slim parallel rework of the `manifest-dev` plugin. The discipline: trust model capability, specify only what's non-default, drop scaffolding that defends against failures the model handles fine when given clean posture. Lives alongside `manifest-dev` until promotion.
 
 ## Skills
 
 - **`/figure-out`** — relentless probing. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), tackles the next load-bearing question first, gives recommended answers, returns to dropped threads, explores instead of asking when discoverable.
-- **`/define`** — encodes shared understanding into a verifiable Manifest. Auto-invokes `figure-out` when the transcript lacks understanding. Supports `--amend`, `--babysit <pr-url>`, `--platform`, `--canvas`.
-- **`/do`** — executes a Manifest deliverable-by-deliverable, invokes `/verify` for criterion checks, default-to-amend on user feedback, escalates blockers via `/escalate`.
-- **`/verify`** — spawns verifiers for INV-G* and AC-* in parallel within each phase, routes outcome to `/done` or `/escalate`. Selective with auto-triggered full final gate. Supports `--deferred` for user-triggered deferred-auto criteria.
-- **`/done`** — completion summary mirroring manifest hierarchy. Called by `/verify` after full-suite green pass.
-- **`/escalate`** — structured escalation: blocking, manual review, self-amendment, proposed amendment, user-requested pause, deferred-auto pending.
-- **`/auto`** — chains figure-out → define → do autonomously. Add `--babysit <pr-url>` for PR lifecycle work.
+- **`/define`** — encodes shared understanding into a verifiable Manifest. Auto-invokes `figure-out` when the transcript lacks understanding. Supports `--babysit <pr-url>`, `--canvas`, `--autonomous`.
+- **`/do`** — executes a Manifest by spawning one verifier subagent per Acceptance Criterion (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when every AC passes or `/escalate` when blocked. Mid-/do user messages default to invoking `/define` for amendment.
+- **`/done`** — completion summary in plain prose. Called by `/do` after every Acceptance Criterion and Global Invariant verifies PASS.
+- **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from the user. Single type; routes via `/do`.
+- **`/auto`** — chains `figure-out → define → do` autonomously. Add `--babysit <pr-url>` for PR lifecycle work.
+
+## Manifest schema — four fields
+
+Every verify block has the same shape:
+
+```yaml
+verify:
+  prompt: "..."     # required, verbatim verifier instruction
+  agent: "..."      # optional, default = general-purpose subagent
+  model: "..."      # optional, default = inherit from invoking context
+  phase: 1          # optional integer, default 1
+```
+
+Verifier subagents return one of three states: **PASS**, **FAIL**, or **BLOCKED**. PASS = criterion holds. FAIL = criterion violated; includes evidence and a fix hint. BLOCKED = criterion can't be evaluated yet because of an external action / state pending (deploy hasn't happened, human approval pending, etc.) — `/do` routes BLOCKED via `/escalate`.
 
 ## Differences from the core plugin
 
-- **One mode instead of three.** `--mode efficient|balanced|thorough` and `--interview minimal|autonomous|thorough` are dropped — defaults are quality-first. Trust the verifiers.
-- **`figure-out` owns the interview.** `/define`'s epistemic stance, interview style modes, and discovery-question disciplines are gone — they live in `/figure-out`, which `/define` auto-invokes on cold-start.
-- **Coverage Goals are implicit.** No longer drive the interview as in main; writer-side discipline (informed by figure-out's tree-walking and task-file probing fuel) applies them during manifest writing. If real gaps surface during /do execution as failed ACs or amendments, the slim discipline says: add specific lines back where they're needed.
-- **Spirit lives in the slim prompt itself.** No separate rubric files. The slim prompt either steers the load-bearing behavior or it doesn't; reviewers (`change-intent-reviewer`, `prompt-reviewer`) catch regressions.
+- **`/verify` is gone.** Its protocol moves inline into `/do`: spawn a subagent per AC, aggregate, route to `/done` (all PASS) or `/escalate` (any BLOCKED, or unrecoverable FAIL). No separate skill, no return-block YAML protocol, no auto-trigger-full-final state machine, no selective `--scope`, no `--deferred` flag.
+- **`/do` absorbs amendment routing.** Mid-/do user messages default to invoking `/define` for amendment; pure questions answered inline. No separate Self-Amendment escalation type.
+- **Schema collapsed to four fields**, all verification is always-subagent. The previous `method:` / `inner_method:` / `command:` / `timeout:` / `manual` value / `deferred-auto` method are gone — the verifier subagent runs whatever bash, file reads, or external tools it needs from its prompt.
+- **One mode instead of three.** `--mode` and `--interview` flags are gone; defaults are quality-first. `Mode:`, `Interview:`, and `Medium:` top-level manifest fields are gone too — experimental is single-mode, local-only.
+- **`/escalate` collapsed to one type** (blocking). The previous six-type taxonomy and `references/TEMPLATES.md` are gone.
+- **PR-lifecycle composition auto-detects** from the local `origin` remote (no `--platform` flag).
+- **`figure-out` owns the interview.** `/define`'s epistemic stance, interview style modes, and discovery-question disciplines live in `/figure-out`, which `/define` auto-invokes on cold-start.
+- **Reviewers catch what slim discipline loses.** No separate rubric files; `change-intent-reviewer` and `prompt-reviewer` catch regressions during /verify-style audits of changed prompts.
 
 ## Hooks and agents
 
-Hooks (`hooks/`) and reusable agents (`agents/`) are duplicated from the core plugin so this plugin runs standalone. Hook detection via `was_skill_invoked` is plugin-source-agnostic — experimental's skill invocations fire the same hook state machine as the core plugin's.
+Hooks (`hooks/`) and reusable agents (`agents/`) are duplicated from the core plugin so this plugin runs standalone. Two hooks fire: `stop_do_hook` (blocks premature stops; injects a terse "reload /do" reminder) and `post_compact_hook` (restores manifest context after session compaction).
 
-When both plugins are installed alongside, hooks fire from each independently. Manage your installation accordingly.
+**Cross-plugin isolation.** Both this plugin's hooks and `manifest-dev`'s hooks use strict namespace matching: only their own plugin's skill invocations register. When both plugins are installed alongside, neither plugin's hooks fire on the other's flow — `/manifest-dev-experimental:do` triggers only experimental hooks; `/manifest-dev:do` triggers only main hooks.
+
+The `criteria-checker` agent (the most-invoked verifier in this plugin) inherits the default tool set — no `tools:` allowlist — so users with MCP servers or extra CLI tools configured can verify against them. Read-only behavior is enforced by the agent's prompt, not by the tool list.
 
 ## Status
 
-Experimental. Skills produce the same outcomes as the core plugin but with radically slimmer prompts. The plan: use experimental, observe what fails, fix with specific lines (not blanket additions), promote to core when validated.
+Experimental. Skills produce the same outcomes as the core plugin but with radically slimmer prompts and a tighter machine contract. The plan: use experimental, observe what fails, fix with specific lines (not blanket additions), promote to core when validated.

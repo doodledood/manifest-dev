@@ -6,6 +6,7 @@ Tests the stop hook that enforces verification-first workflow for /do.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -118,9 +119,7 @@ class TestStopHookAllowing:
                 ]
             },
         }
-        transcript_path = temp_transcript(
-            [user_do_command, self_amendment_escalate]
-        )
+        transcript_path = temp_transcript([user_do_command, self_amendment_escalate])
         hook_input = {"transcript_path": transcript_path}
 
         result = run_hook("stop_do_hook.py", hook_input)
@@ -483,7 +482,7 @@ class TestStopHookLoopDetection:
                             {
                                 "type": "tool_use",
                                 "name": "Skill",
-                                "input": {"skill": "escalate"},
+                                "input": {"skill": "manifest-dev:escalate"},
                             },
                         ]
                     },
@@ -582,7 +581,9 @@ class TestStopHookLoopDetection:
             {
                 "type": "assistant",
                 "message": {
-                    "content": [{"type": "text", "text": "Waiting on background poller."}]
+                    "content": [
+                        {"type": "text", "text": "Waiting on background poller."}
+                    ]
                 },
             },
         ]
@@ -595,9 +596,7 @@ class TestStopHookLoopDetection:
 
         assert result is not None
         assert "decision" not in result  # omit decision = allow
-        assert (
-            "idle" in result["reason"].lower() or "loop" in result["reason"].lower()
-        )
+        assert "idle" in result["reason"].lower() or "loop" in result["reason"].lower()
         # Self-Amendment-specific escape must NOT direct to /verify or /escalate
         # — those are wrong moves for the resumed-/do-in-wait-state case.
         assert "/verify" not in result["systemMessage"]
@@ -648,33 +647,37 @@ class TestStopHookLoopDetection:
 class TestStopHookInvocationPatterns:
     """Tests for various skill invocation patterns."""
 
-    def test_detects_short_command_name(
+    def test_bare_command_name_does_not_register(
         self,
         temp_transcript,
     ):
-        """Should detect /do via short command-name (/<skill> without plugin prefix)."""
-        # This is the actual format produced when users type /do
-        user_do_short = {
+        """Bare /do (no plugin namespace) should NOT register — namespace-scoped detection.
+
+        With main plugin's hook_utils requiring the `manifest-dev:` namespace,
+        a bare `/do` command-name (which could belong to either plugin or
+        neither) is ignored. This is the namespace-isolation guarantee.
+        """
+        user_do_bare = {
             "type": "user",
             "message": {
                 "content": "<command-name>/do</command-name><command-args>/tmp/define.md</command-args>"
             },
         }
-        transcript_path = temp_transcript([user_do_short])
+        transcript_path = temp_transcript([user_do_bare])
         hook_input = {"transcript_path": transcript_path}
 
         result = run_hook("stop_do_hook.py", hook_input)
 
-        # Should block because /do detected but no /done
-        assert result is not None
-        assert result["decision"] == "block"
+        # Should NOT block — bare /do is not detected, so we're not in a /do flow
+        assert result is None
 
     def test_detects_ismeta_skill_expansion(
         self,
         temp_transcript,
     ):
-        """Should detect /do via isMeta skill expansion."""
-        # This is the actual format when skill content is injected
+        """Should detect /do via isMeta skill expansion with the plugin namespace in path."""
+        # The "Base directory for this skill:" line must include the
+        # `manifest-dev/skills/do` path for namespace-scoped detection.
         ismeta_do_expansion = {
             "type": "user",
             "isMeta": True,
@@ -682,7 +685,7 @@ class TestStopHookInvocationPatterns:
                 "content": [
                     {
                         "type": "text",
-                        "text": "Base directory for this skill: /path/to/plugins/skills/do\n\n# /do - Manifest Executor\n\n...",
+                        "text": "Base directory for this skill: /path/to/manifest-dev/skills/do\n\n# /do - Manifest Executor\n\n...",
                     }
                 ]
             },
@@ -780,13 +783,13 @@ class TestStopHookInvocationPatterns:
         first_do = {
             "type": "user",
             "message": {
-                "content": "<command-name>/do</command-name><command-args>/tmp/first.md</command-args>"
+                "content": "<command-name>/manifest-dev:do</command-name><command-args>/tmp/first.md</command-args>"
             },
         }
         second_do_command = {
             "type": "user",
             "message": {
-                "content": "<command-name>/do</command-name><command-args>/tmp/second.md</command-args>"
+                "content": "<command-name>/manifest-dev:do</command-name><command-args>/tmp/second.md</command-args>"
             },
         }
         second_do_ismeta = {
@@ -796,7 +799,7 @@ class TestStopHookInvocationPatterns:
                 "content": [
                     {
                         "type": "text",
-                        "text": "Base directory for this skill: /path/to/plugins/skills/do\n\n# /do - Manifest Executor",
+                        "text": "Base directory for this skill: /path/to/manifest-dev/skills/do\n\n# /do - Manifest Executor",
                     }
                 ]
             },
@@ -1028,9 +1031,7 @@ class TestStopHookMediumRouting:
                 )
             },
         }
-        transcript_path = temp_transcript(
-            [user_do_local_dev, assistant_skill_verify]
-        )
+        transcript_path = temp_transcript([user_do_local_dev, assistant_skill_verify])
         hook_input = {"transcript_path": transcript_path}
 
         result = run_hook("stop_do_hook.py", hook_input)

@@ -250,8 +250,12 @@ class TestPostCompactHookArgsExtraction:
         context = output["hookSpecificOutput"]["additionalContext"]
         assert "/path/manifest.md" in context
 
-    def test_extracts_from_skill_call_short_name(self, tmp_path: Path):
-        """Should extract args from Skill call with short skill name."""
+    def test_bare_skill_name_does_not_register(self, tmp_path: Path):
+        """Bare skill name (no plugin namespace) should NOT trigger the hook.
+
+        With namespace-scoped detection, a bare `do` Skill call (which could
+        belong to either plugin or neither) is ignored.
+        """
         lines = [
             {
                 "type": "assistant",
@@ -268,10 +272,8 @@ class TestPostCompactHookArgsExtraction:
         ]
         result = run_post_compact_hook(transcript_lines=lines, tmp_path=tmp_path)
 
-        output = json.loads(result.stdout)
-        context = output["hookSpecificOutput"]["additionalContext"]
-        assert "/manifest.md" in context
-        assert "/log.md" in context
+        # Hook should be silent (no /do detected because bare name is ignored)
+        assert result.stdout.strip() == ""
 
     def test_second_do_resets_args(self, tmp_path: Path):
         """Second /do should use its own args, not the first /do."""

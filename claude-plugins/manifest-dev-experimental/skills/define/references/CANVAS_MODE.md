@@ -12,8 +12,7 @@ Evaluate **immediately** — before Domain Guidance and the interview begin. If 
 
 1. **Amendment mode active.** Canvas is fresh-/define-only. Active via: literal amendment trigger from chat/transcript, Session-Default Detection resolved to "Related", or input args reference a `/tmp/manifest-*.md` path.
 2. **Invoked autonomously** (e.g., `--autonomous`, `/auto`). No human reviewer in the loop → canvas is wasted tokens.
-3. **Non-local medium.** Only `local` supported currently; non-local skip is anticipatory.
-4. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`. Skip.
+3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`. Skip.
 
 If none match: generate the initial canvas at `/tmp/canvas-{ts}.html` (same `{ts}` as the manifest), auto-open it, proceed with /define and regenerate per cadence. At the Summary for Approval step, append one line to the chat summary: `Canvas: file:///tmp/canvas-{ts}.html` — only if the file was successfully written.
 

@@ -4,7 +4,7 @@ Loaded when `/define --babysit <pr-url>` was passed. Synthesizes a lifecycle-onl
 
 ## PR URL parsing
 
-Canonical form: `https://github.com/<owner>/<repo>/pull/<N>`. Also accepted: `gh:owner/repo/N`, `owner/repo#N`. Reject non-`github.com` hosts (or platform-equivalent when `--platform` resolves elsewhere) with: `Cannot babysit: URL <url> is not a <platform> PR URL.` Extract owner, repo, pull number — they drive the AC's agent invocation.
+Canonical form: `https://github.com/<owner>/<repo>/pull/<N>`. Also accepted: `gh:owner/repo/N`, `owner/repo#N`. Reject non-`github.com` hosts with: `Cannot babysit: URL <url> is not a github PR URL. Babysit currently supports github.com only.` Extract owner, repo, pull number — they drive the AC's agent invocation.
 
 ## Pre-flight (read-only — no side effects)
 
@@ -16,23 +16,12 @@ Halt on failure with an actionable error:
 4. **Fork convention.** When `headRepository` differs from `baseRepository` (cross-repo PR from a fork), babysit targets the **upstream** repo where the PR lives — the `baseRepository`'s owner/repo, not the fork. The agent invocation uses that canonical URL. Log fork detection. *Consequence:* write-back hints targeting the PR's head branch live on the fork; /do may not have push access. Agent surfaces this as a halt-shaped FAIL when a write is needed, deferring to the contributor.
 5. **Repo identity confirmation.** When `cwd` is a git checkout AND `origin` differs from the PR's base repo → note it (no halt): *"Babysit target (`<pr-owner/repo>`) differs from cwd `origin` (`<cwd-owner/repo>`). Continuing — babysit doesn't require a local checkout."*
 
-## Platform routing
-
-`--platform` resolves before this file. Babysit requires it match the PR URL's host:
-
-- `--platform github` + github.com URL → proceed.
-- `--platform github` + non-github URL → halt: `Cannot babysit: --platform github was set but URL host is <host>.`
-- `--platform none` + any URL → halt: `Cannot babysit: --platform none cannot tend a PR; pass --platform github (or omit for auto-detection).`
-
-When `--platform` not explicitly passed, /define infers from PR URL host (github.com → github). Differs from fresh-mode inference (which uses `origin` remote) because babysit's use case is repos that may not be locally cloned.
-
 ## Intent seeding
 
 After pre-flight succeeds, read PR title and body:
 
 - **Goal:** derived from PR title and body's opening paragraph. One or two sentences naming what the PR is for.
 - **Mental Model:** when the body has a "context" / "background" / "why" section, fold it in. Otherwise minimal.
-- **Medium:** local.
 
 ## AC templating
 

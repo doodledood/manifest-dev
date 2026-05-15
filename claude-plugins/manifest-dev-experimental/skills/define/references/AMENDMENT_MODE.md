@@ -10,8 +10,6 @@
 
 Multi-repo specifics: `MULTI_REPO.md` §f.
 
-**Deferred-auto re-verification after amendment** — when an amendment substantively changes a `method: deferred-auto` criterion's verify block, prior deferred coverage for that criterion is conceptually invalidated. The user is responsible for re-signaling readiness in chat to re-run the amended criterion before the gate clears. (Consistent with user-as-coordinator stance — no automatic invalidation.)
-
 ## Trigger
 
 The conversation context carries the reason — user message, PR comment, explicit change request. Read it, determine what to change. Existing decisions (ACs, INVs, PGs, Approach, Trade-offs) preserved unless directly contradicted. Add new items, modify contradicted items, or remove items that no longer apply (with explicit log entry). Coverage applies scoped to the change — not the full manifest.
@@ -56,7 +54,7 @@ User invokes /define for amendment directly (or via chat-derived amend intent). 
 
 ### 2. From /do (Autonomous Fast Path)
 
-Caller-context inferred. When /define is invoked from /do's Self-Amendment path (invocation chain shows /do is upstream), it's an autonomous amendment, not interactive. No flag needed — caller context is the signal.
+Caller-context inferred. When /define is invoked from /do's amendment path (invocation chain shows /do is upstream), it's an autonomous amendment, not interactive. No flag needed — caller context is the signal.
 
 Behavior: no user approval gates. Targeted changes from escalation context. Write updated manifest in-place so /do can resume. Log in `## Amendments`.
 

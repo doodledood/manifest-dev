@@ -14,9 +14,9 @@ Canonical manifest lives at `/tmp/manifest-{ts}.md`. No primary repo "owns" it. 
 
 ## c. Schema Additions
 
-Multi-repo manifests extend the standard schema with three optional fields. Single-repo manifests omit all of them.
+Multi-repo manifests extend the standard schema with two optional fields. Single-repo manifests omit both.
 
-**Intent & Context** adds two fields:
+**Intent & Context** adds:
 
 - **Repos:** name → absolute-path map listing every repo in scope. Names are short identifiers used by deliverables; paths are absolute filesystem locations.
 
@@ -26,7 +26,7 @@ Multi-repo manifests extend the standard schema with three optional fields. Sing
       - frontend: /home/user/projects/web
   ```
 
-- **Branch:** single string naming the branch used in every repo (see §j; divergent per-repo branch names not supported in this version).
+- **Branch:** single string naming the branch used in every repo (see §i; divergent per-repo branch names not supported in this version).
 
   ```markdown
   - **Branch:** claude/sso-integration
@@ -39,15 +39,13 @@ Multi-repo manifests extend the standard schema with three optional fields. Sing
 **Repo:** `backend`
 ```
 
-**Verify methods** include `deferred-auto` (valid in any manifest) for criteria the user explicitly triggers — most commonly cross-repo gates with user-controlled prerequisites. See §e.
-
-**Documentation, not enforcement.** `Repos:` and `Repo:` are for readers (human and agent) — they don't gate /do or /verify (see §d).
+**Documentation, not enforcement.** `Repos:` and `Repo:` are for readers (human and agent) — they don't gate /do (see §d).
 
 ## d. /do Navigation
 
 /do reads `Repos:` and uses absolute paths in tool calls when a deliverable lives outside cwd. No filter logic, no cwd-to-repo matching, no per-repo config. LLM handles navigation natively.
 
-User invokes /do once globally (agent navigates between repos) OR per-repo with `--scope` (parallel execution). Either works. A single /do invocation runs as a single conversational session — no per-repo session split.
+User invokes /do once globally (agent navigates between repos). A single /do invocation runs as a single conversational session — no per-repo session split.
 
 Worked example:
 
@@ -62,47 +60,26 @@ Worked example:
 - [AC-1.1] POST /auth/sso accepts SAML assertion
   ```yaml
   verify:
-    method: bash
-    command: "curl -X POST http://localhost:8080/auth/sso -d @/tmp/saml-test.xml"
+    prompt: |
+      Hit POST /auth/sso at the backend repo with a test SAML assertion
+      (curl -X POST http://localhost:8080/auth/sso -d @/tmp/saml-test.xml).
+      PASS if response is 200 with a session cookie set.
   ```
 ```
 
-## e. method: deferred-auto + chat-signaled readiness
+## e. Cross-repo gates and BLOCKED state
 
-Cross-repo gates often depend on prerequisites the user controls ("all PRs deployed to staging"). They're automatically verifiable, just user-triggered.
+Cross-repo verification often depends on prerequisites the user controls ("all PRs deployed to staging"). The verifier subagent for such an AC returns **BLOCKED** with a note describing what's pending, and /do routes the BLOCKED via /escalate so the user can take the action. After the user signals readiness ("deployed", "go ahead"), re-invoke /do to re-evaluate the criterion.
 
-`method: deferred-auto` marks such criteria. Verify blocks MUST declare `inner_method:` (`subagent` | `bash` | `codebase` | `research`); when /verify includes deferred-auto criteria in a pass, the criterion is routed identically to a non-deferred criterion of that `inner_method`. Example:
-
-```yaml
-- [INV-G7] Frontend SSO login round-trips through deployed backend
-  verify:
-    method: deferred-auto
-    inner_method: subagent
-    agent: general-purpose
-    prompt: "Hit https://staging.example.com/login with a test SAML assertion. Confirm successful redirect to /dashboard with a valid session cookie."
-```
-
-By default /verify skips deferred-auto criteria during the pass. **But /verify will not call /done while deferred-auto remain unverified** — routes to /escalate "Deferred-Auto Pending" instead, telling the user to signal readiness in chat and re-invoke /verify when prerequisites are ready. /verify's return block's `deferred: true|false` field tracks which prior runs covered the set.
-
-When the user signals readiness in chat ("all PRs deployed", "staging is up", "go ahead"), the next /verify invocation reads the recent conversation context, detects the signal, and includes deferred-auto criteria in that pass. No flag needed.
-
-Rules:
-
-- `--scope` is supported alongside the chat signal — narrows the deferred set to in-scope deliverables.
-- INV-G\* deferred-auto criteria are deliverable-scope-independent — `--scope` does not cover them. Only covered by an inclusion-firing pass with empty `--scope`. /done remains gated on the escalation until that uncovered set runs green.
-- Ambiguous chat signals default to skip — uncovered deferred-auto blocks /done; user re-signals more explicitly if needed.
-
-### Cross-repo path delivery to verifiers
-
-When the manifest declares `Repos:`, every /verify invocation prepends a verbatim string to each verifier's prompt before the criterion's own:
+When the manifest declares `Repos:`, every verifier subagent invocation gets the cross-repo path map injected as part of the verbatim prompt so verifiers have access to all repos' paths:
 
 ```
 Available repos: backend=/home/user/projects/api, frontend=/home/user/projects/web
 
-[criterion's own prompt follows]
+[criterion's verify.prompt: follows verbatim]
 ```
 
-Applies on every pass — cross-repo verifiers can run during normal /do→/verify flow. That's what allows /done to fire once per multi-repo manifest (§g) without forcing per-repo /done independence. Single-repo manifests get no prefix injection.
+Single-repo manifests get no prefix injection.
 
 ## f. Shared Manifest Amendment Across PRs
 
@@ -112,19 +89,15 @@ The canonical /tmp manifest is shared across all PRs. Any tool that writes amend
 
 This pattern is the contract for any PR-tending consumer — including PR_LIFECYCLE.md's per-repo agent-AC templating, which writes one AC per repo against the same shared manifest.
 
-## g. /done — One Per Manifest, Gated on Deferred-Auto
+## g. /done — One Per Manifest
 
-/done fires **once per manifest**, including for multi-repo. No per-repo /done independence. /verify's "every AC across every deliverable" rule preserved unchanged — every AC in every repo's deliverables must pass before /done is called.
-
-Achievable because /verify's cross-repo prompt-prefix injection (§e) fires on every pass when `Repos:` is declared — verifiers have access to all repos' paths and can verify cross-repo behavior during normal /do→/verify flow.
-
-**/done is gated on no deferred-auto pending.** When uncovered deferred-auto criteria exist, /verify routes to /escalate "Deferred-Auto Pending" instead of /done — making the user-as-coordinator handoff explicit. After user signals readiness and deferred-auto criteria pass, a subsequent normal /verify pass reaches /done.
+/done fires **once per manifest**, including for multi-repo. No per-repo /done independence. The rule "every AC across every deliverable must PASS before /done" is preserved unchanged — every AC in every repo's deliverables must verify PASS (with no BLOCKED pending) before /done is called.
 
 Multi-repo /done summary lists which repos' deliverables were verified — clear inventory of what landed across the changeset.
 
 ## h. User as Coordinator
 
-No coordinator process, no primary repo, no orchestrator skill. User coordinates by: (1) invoking /do or /auto (once globally, or per-repo with `--scope`); (2) managing each repo's PR with whatever workflow they prefer; (3) signaling readiness in chat when cross-repo prerequisites land. System supports this workflow but does not automate it.
+No coordinator process, no primary repo, no orchestrator skill. User coordinates by: (1) invoking /do or /auto; (2) managing each repo's PR with whatever workflow they prefer; (3) signaling readiness in chat when cross-repo prerequisites land (BLOCKED criteria are re-evaluated on the next /do invocation). System supports this workflow but does not automate it.
 
 ## i. /auto Behavior
 
