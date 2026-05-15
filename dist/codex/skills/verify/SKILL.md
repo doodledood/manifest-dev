@@ -1,6 +1,7 @@
 ---
 name: verify
 description: 'Spawns parallel verifiers for Global Invariants and Acceptance Criteria from a Manifest. Normally invoked by /do; users invoke directly via /verify --deferred to run user-triggered deferred-auto criteria.'
+argument-hint: '<manifest-path> [--mode <level>] [--scope <ids>] [--deferred]'
 user-invocable: true
 ---
 
