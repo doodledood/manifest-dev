@@ -1,6 +1,7 @@
 ---
 name: handoff
 description: 'Produce a self-contained context payload for cross-boundary handoff — switching tools (Claude Code ↔ Codex), starting a clean session, or handing off to another agent. Captures epistemic state (decisions, alternatives, verified facts, open threads) rather than session chronology, so the receiving agent inherits the same grounding without re-deriving understanding. Use when in-tool session continuation isn''t available. Triggers: handoff, cross-tool handoff, context payload, hand off context, fresh session bootstrap, transfer to a new agent.'
+argument-hint: '[prior-handoff-path]'
 user-invocable: true
 ---
 

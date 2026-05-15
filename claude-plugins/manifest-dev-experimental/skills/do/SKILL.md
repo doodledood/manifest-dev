@@ -1,6 +1,7 @@
 ---
 name: do
 description: 'Experimental. Manifest executor. Iterates through Deliverables satisfying Acceptance Criteria, then verifies via /verify. Use when executing a manifest, running a plan, implementing a defined task.'
+argument-hint: '<manifest-path> [--scope <ids>]'
 user-invocable: true
 ---
 

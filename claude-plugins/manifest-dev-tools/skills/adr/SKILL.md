@@ -1,6 +1,7 @@
 ---
 name: adr
 description: 'Synthesize Architecture Decision Records from session transcripts. Extracts decisions via multi-agent pipeline and writes MADR files to a specified directory. Use after completing a /define or /do session to capture architectural decisions as durable records.'
+argument-hint: '<manifest-path> <output-dir> --session <transcript-path>'
 user-invocable: true
 ---
 

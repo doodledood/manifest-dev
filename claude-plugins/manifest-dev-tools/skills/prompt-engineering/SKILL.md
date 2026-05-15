@@ -1,6 +1,7 @@
 ---
 name: prompt-engineering
 description: 'Create, update, slim, or review LLM prompts in the slim discipline — every word steers (behavior the model wouldn''t reach on its own) or scaffolds (preempts a failure the clean posture handles); cut scaffold. 1-3 paragraphs of essence in SKILL.md, contracts in references. Use when writing, slimming, reviewing, or diagnosing a prompt. Triggers: write a prompt, slim a prompt, edit a prompt, review a prompt, improve a prompt, diagnose prompt failure, fix failing prompt, system prompt, skill, agent.'
+argument-hint: '<request>'
 user-invocable: true
 ---
 

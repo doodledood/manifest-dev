@@ -1,6 +1,7 @@
 ---
 name: example
 description: 'Analyzes the current project structure and tech stack. Use when asked to explore, understand, or summarize a project. Trigger terms: project overview, analyze codebase, what is this project.'
+argument-hint: '<input>'
 ---
 
 # Example Skill
