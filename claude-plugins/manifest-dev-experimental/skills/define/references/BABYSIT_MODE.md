@@ -29,13 +29,13 @@ One AC, invoking the `github-pr-lifecycle` agent, with PR URL + branch templated
 
 ## Output
 
-Write manifest to `/tmp/manifest-{ts}.md`. Print the standard `Manifest complete:` line per /define's Complete. User runs /do (or invoked `/auto --babysit`, which chains automatically).
+Write manifest to a writable scratch path appropriate to the harness (e.g., `$TMPDIR/manifest-{ts}.md`). Print the standard `Manifest complete:` line per /define's Complete — the line carries the actual path you wrote to. User runs /do (or invoked `/auto --babysit`, which chains automatically).
 
 ## Conflict halts
 
 - `--babysit` without URL → halt: `--babysit requires a PR URL. Usage: /define --babysit <pr-url>.`
 - `--babysit` + free-form task text in `$ARGUMENTS` → URL wins; text ignored with one-line note.
-- `--babysit` + a `/tmp/manifest-*.md` path in `$ARGUMENTS` → halt: `Cannot babysit and amend simultaneously. --babysit synthesizes a new manifest from a PR; a manifest path triggers amendment. Pick one.`
+- `--babysit` + a manifest file path in `$ARGUMENTS` → halt: `Cannot babysit and amend simultaneously. --babysit synthesizes a new manifest from a PR; a manifest path triggers amendment. Pick one.`
 
 ## Gotchas
 

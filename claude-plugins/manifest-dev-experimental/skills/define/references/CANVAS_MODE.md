@@ -10,11 +10,11 @@ The user reads the chat; the canvas is the visual side-channel they glance at to
 
 Evaluate **immediately** — before Domain Guidance and the interview begin. If any condition holds, skip canvas behavior; continue /define normally (first match wins; 1–2 silent, 3 prints one warning):
 
-1. **Amendment mode active.** Canvas is fresh-/define-only. Active via input args referencing a `/tmp/manifest-*.md` path.
+1. **Amendment mode active.** Canvas is fresh-/define-only. Active via input args referencing a manifest file path.
 2. **Invoked autonomously** (e.g., `--autonomous`, `/auto`). No human reviewer in the loop → canvas is wasted tokens.
 3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`. Skip.
 
-If none match: generate the initial canvas at `/tmp/canvas-{ts}.html` (same `{ts}` as the manifest), auto-open it, proceed with /define and regenerate per cadence. At the Summary for Approval step, append one line to the chat summary: `Canvas: file:///tmp/canvas-{ts}.html` — only if the file was successfully written.
+If none match: generate the initial canvas at `<scratch>/canvas-{ts}.html` (same `{ts}` as the manifest, in the same scratch directory you wrote the manifest to), auto-open it, proceed with /define and regenerate per cadence. At the Summary for Approval step, append one line to the chat summary: `Canvas: file://<canvas-path>` — only if the file was successfully written.
 
 ## Lifecycle
 
@@ -22,7 +22,7 @@ Generated and updated only during /define's interview phase. Freezes at user app
 
 ## Format
 
-- **File:** single self-contained `.html` at `/tmp/canvas-{ts}.html`. Linkable as a pair with the manifest.
+- **File:** single self-contained `.html` at `<scratch>/canvas-{ts}.html` (same scratch dir as the manifest). Linkable as a pair with the manifest.
 - **Styling:** Tailwind via CDN (`<script src="https://cdn.tailwindcss.com"></script>`). Degrades to semantic HTML if CDN unreachable.
 - **Diagrams:** mermaid via CDN (`<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"; mermaid.initialize({ startOnLoad: true });</script>`). Use `<pre class="mermaid">...</pre>` blocks.
 - **Auto-reload:** embed JS that refreshes when the source file changes. Mechanism is agent's choice (JS polling, fetch + DOM diff, `<meta http-equiv="refresh">`). Should preserve scroll position and expand/collapse state when feasible. Mechanism chosen once per session.
@@ -39,12 +39,12 @@ Cluster of small changes → regenerate once at the end. Do NOT regenerate per a
 On first canvas creation: detect via `command -v xdg-open || command -v open || command -v start`. Use first available:
 
 ```
-xdg-open /tmp/canvas-{ts}.html    # Linux
-open /tmp/canvas-{ts}.html        # macOS
-start /tmp/canvas-{ts}.html       # Windows / WSL
+xdg-open <canvas-path>    # Linux
+open <canvas-path>        # macOS
+start <canvas-path>       # Windows / WSL
 ```
 
-Subsequent updates do NOT re-open — auto-reload handles refresh. Launcher failure → print path (`Canvas: file:///tmp/canvas-{ts}.html`), continue normally.
+Subsequent updates do NOT re-open — auto-reload handles refresh. Launcher failure → print path (`Canvas: file://<canvas-path>`), continue normally.
 
 ## Failure handling
 
