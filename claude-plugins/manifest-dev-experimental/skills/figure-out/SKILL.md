@@ -1,6 +1,6 @@
 ---
 name: figure-out
-description: 'Experimental. Figure things out together — any topic, problem, or idea. Probes a topic relentlessly until shared understanding is reached: walks every branch of the decision tree (design choices, diagnostic hypotheses, commitment questions), tackles the next load-bearing question first, returns to dropped threads, gives recommended answers. Use when you need to understand something before acting, or when figuring it out IS the goal. Triggers: figure out, help me think through, dig deeper, probe this, what is really going on, investigate, work through, why does.'
+description: 'Experimental. Figure things out together — any topic, problem, or idea. Probes relentlessly until shared understanding is reached. Use when you need to understand something before acting, or when figuring it out IS the goal. Triggers: figure out, help me think through, dig deeper, probe this, what is really going on, investigate, work through, why does.'
 argument-hint: '[topic] [--with-docs]'
 user-invocable: true
 ---

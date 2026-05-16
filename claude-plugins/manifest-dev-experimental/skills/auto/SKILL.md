@@ -1,6 +1,6 @@
 ---
 name: auto
-description: 'Experimental. End-to-end autonomous execution: figure-out (when needed) → define → do, chained without manual approval gates. Add --babysit <pr-url> to tend an existing PR through review and CI. Use when you want to define and execute without intervention during planning. Triggers: auto, autonomous, end-to-end, just build it, tend pr, babysit pr.'
+description: 'Experimental. End-to-end autonomous execution: figure-out → define → do, chained without manual approval gates. Use when you want to define and execute without intervention during planning. Triggers: auto, autonomous, end-to-end, just build it, tend pr, babysit pr.'
 argument-hint: '[task] [--babysit <pr-url>] [--canvas]'
 user-invocable: true
 ---

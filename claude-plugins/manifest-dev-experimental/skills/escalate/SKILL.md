@@ -1,6 +1,6 @@
 ---
 name: escalate
-description: 'Structured escalation when /do hits an unrecoverable blocker. Surfaces what was tried, why it failed, and what the user can decide. Called by /do, not directly.'
+description: 'Structured escalation when /do hits an unrecoverable blocker. Surfaces what was tried, why it failed, and what the user can decide. Called by /do, not directly. Triggers: blocked, can''t proceed, unrecoverable failure, need user decision, blocker, hit a wall, escalate, stuck.'
 user-invocable: false
 ---
 
