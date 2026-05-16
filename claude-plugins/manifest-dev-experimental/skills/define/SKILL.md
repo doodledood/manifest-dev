@@ -7,6 +7,8 @@ user-invocable: true
 
 Encode the conversation's shared understanding as a Manifest at `<scratch>/manifest-{ts}.md` (writable scratch path appropriate to the harness — `$TMPDIR`, `%TEMP%`, etc.). If the transcript lacks shared understanding, invoke `manifest-dev-experimental:figure-out` first; propagate `--autonomous` when invoked from `/auto` or `/do`'s amendment path. **Pre-flight:** babysit (`--babysit <pr-url>` → `references/BABYSIT_MODE.md`); amend (args contain a manifest file path → see Amendment below); else fresh.
 
+**Encoding discipline.** figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to lock as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
+
 ## Manifest Schema
 
 ````markdown
