@@ -57,10 +57,10 @@ Encode the conversation's shared understanding as a Manifest at `<scratch>/manif
 - [AC-1.1] Description: ...
   ```yaml
   verify:
-    prompt: "..."
-    agent: "..."
-    model: "..."
-    phase: 1
+    prompt: "..."             # required, verbatim verifier instruction
+    agent: "..."              # optional, default = general-purpose subagent
+    model: "..."              # optional, default = inherit from invoking context
+    phase: 1                  # optional integer, default 1; higher phases run after lower pass
   ```
 ````
 
