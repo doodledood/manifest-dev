@@ -23,7 +23,7 @@ Each task type in `tasks/` carries domain-specific encoder data: quality gates (
 - Text-authoring tasks combine `WRITING.md` with the content-type guidance (BLOG / DOCUMENT).
 - Research composes `research/RESEARCH.md` with source-type files in `research/sources/`.
 - Domains aren't mutually exclusive: a "bug fix that requires refactoring" uses both `BUG.md` and `REFACTOR.md`.
-- **PR lifecycle composition** — `PR_LIFECYCLE.md` composes onto `CODING.md` when `--platform github` resolves. Templates a single AC invoking the `github-pr-lifecycle` agent; the agent owns lifecycle gate logic; the AC's `verify.prompt:` is the steering surface for per-PR nuances (labels, named approvers, known-flaky CI, retrigger overrides). Multi-repo manifests auto-template the AC per repo declared in `Repos:`.
+- **PR lifecycle composition** — `PR_LIFECYCLE.md` composes onto `CODING.md` when the local `origin` remote points at `github.com` (auto-detected). Templates a single AC invoking the `github-pr-lifecycle` agent; the agent owns lifecycle gate logic; the AC's `verify.prompt:` is the steering surface for per-PR nuances (labels, named approvers, known-flaky CI, retrigger overrides). Multi-repo manifests auto-template the AC per repo declared in `Repos:`.
 - **Exception:** PROMPTING tasks do NOT compose with CODING unless the task also changes executable code. PROMPTING has its own quality gates.
 
 ## Task file content types

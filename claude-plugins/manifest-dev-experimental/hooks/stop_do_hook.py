@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 """
-Stop hook that enforces definition completion workflow for /do.
+Stop hook for the experimental plugin.
 
 Blocks stop attempts unless /done or /escalate was called after /do.
-This prevents the LLM from declaring "done" without verification.
+Injects a terse "reload /do" reminder so the model can resume.
 
 Decision matrix:
 - API error: ALLOW (system failure, not voluntary stop)
 - No /do: ALLOW (not in flow)
-- /do + /done: ALLOW (verified complete)
+- /do + /done: ALLOW (manifest verified complete)
 - /do + /escalate: ALLOW (properly escalated)
-- /do + /verify + non-local medium: ALLOW (escalation posted to medium)
-- /do only: BLOCK (must verify first)
-- /do + /verify only: BLOCK (verify returned failures, keep working)
+- /do + idle loop (>= 3 consecutive idle outputs): ALLOW (stuck, let user re-invoke)
+- /do only: BLOCK with reload reminder
 """
 
 from __future__ import annotations
@@ -33,7 +32,7 @@ def main() -> None:
         stdin_data = sys.stdin.read()
         hook_input = json.loads(stdin_data)
     except (json.JSONDecodeError, OSError):
-        # On any error, allow stop (fail open)
+        # Fail open on parse error
         sys.exit(0)
 
     transcript_path = hook_input.get("transcript_path", "")
@@ -50,106 +49,31 @@ def main() -> None:
     if not state.has_do:
         sys.exit(0)
 
-    # /done was called - verified complete, allow stop
-    if state.has_done:
+    # /done or /escalate fired - allow stop
+    if state.has_done or state.has_escalate:
         sys.exit(0)
 
-    # /escalate was called — but Self-Amendment must continue to /define --amend
-    if state.has_escalate and not state.has_self_amendment:
-        sys.exit(0)
-
-    # Self-Amendment escalation — block stop, must continue to /define --amend.
-    # Mirrors the /do-unfinished escape valve below: once /define --amend has
-    # completed and /do has resumed into a legitimate wait state, the sticky
-    # has_self_amendment flag would otherwise block forever. Idle-loop count
-    # detects the stuck state.
-    if state.has_self_amendment:
-        consecutive_idle = count_consecutive_idle_outputs(transcript_path)
-
-        if consecutive_idle >= 3:
-            output = {
-                "reason": "Self-Amendment idle loop detected — allowing stop",
-                "systemMessage": (
-                    "Idle loop detected after Self-Amendment escalation — "
-                    "stop allowed. If /define --amend has completed and /do "
-                    "is waiting on an external blocker (CI, deploy, poller), "
-                    "the user will re-invoke /do when the blocker clears."
-                ),
-            }
-            print(json.dumps(output))
-            sys.exit(0)
-
-        reason = (
-            "A Self-Amendment escalation appears active — the manifest "
-            "looks like it needs revision before /do can continue.\n"
-            "• /define --amend <manifest-path> applies the amendment; "
-            "then resume /do with the updated manifest.\n"
-            "• If the escalation was already resolved and this hook is "
-            "misreading the transcript, proceed — the idle-loop escape "
-            "valve will release the stop after 3 idle outputs."
-        )
-        output = {
-            "decision": "block",
-            "reason": reason,
-            "systemMessage": (
-                "Stop intercepted: Self-Amendment escalation appears "
-                "pending — session continues so the manifest can be "
-                "amended and /do resumed."
-            ),
-        }
-        print(json.dumps(output))
-        sys.exit(0)
-
-    # Non-local medium: /verify was called and escalation posted to the medium.
-    # The user will re-invoke /do when the external blocker clears.
-    if state.has_collab_mode and state.has_verify:
-        output = {
-            "reason": "Non-local medium: escalation posted externally",
-            "systemMessage": (
-                "Verification results posted to the external review channel. "
-                "The user will re-invoke /do once the blocker is resolved."
-            ),
-        }
-        print(json.dumps(output))
-        sys.exit(0)
-
-    # /do was called but neither /done nor /escalate
-    # Check for idle loop pattern before blocking
+    # Idle loop escape valve: if we've had 3+ consecutive idle outputs,
+    # the model is stuck and blocking further would just spin.
     consecutive_idle = count_consecutive_idle_outputs(transcript_path)
-
-    # If we've had 3+ consecutive idle outputs (no tool use), we're stuck - allow
     if consecutive_idle >= 3:
         output = {
             "reason": "Idle loop detected — allowing stop",
             "systemMessage": (
-                "Idle loop detected — stop allowed. "
-                "If waiting for background agents, collect their results "
-                "and resume with /verify. "
-                "If genuinely blocked, call /escalate to formally pause."
+                "Idle loop detected — stop allowed. Re-invoke "
+                "`/manifest-dev-experimental:do` when ready to continue."
             ),
         }
         print(json.dumps(output))
         sys.exit(0)
 
-    # Provide guidance — hedged observation toward /verify or /escalate
-    reason = (
-        "/do appears unfinished — no /verify, /done, or /escalate "
-        "detected since the last /do invocation.\n"
-        "• If implementation looks complete, running /verify against "
-        "the manifest will check the acceptance criteria.\n"
-        "• If waiting on async work or otherwise blocked, /escalate "
-        "formally pauses the flow.\n"
-        "• If the flow is already closed and this hook is misreading "
-        "the transcript, proceed — the idle-loop escape valve will "
-        "release the stop after 3 idle outputs."
-    )
-
+    # /do is active but unfinished - inject terse reload reminder and block.
     output = {
         "decision": "block",
-        "reason": reason,
+        "reason": "Not done. Reload `/manifest-dev-experimental:do` to continue.",
         "systemMessage": (
-            "Stop intercepted: /do appears active and not yet verified "
-            "— session continues so the agent can run /verify or /escalate."
+            "Stop intercepted: /do appears active and unfinished — "
+            "reload /manifest-dev-experimental:do to continue."
         ),
     }
     print(json.dumps(output))

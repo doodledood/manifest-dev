@@ -21,8 +21,10 @@ from typing import Any
 
 from hook_test_helpers import run_hook
 
+
 def run_stop_hook(transcript_path: str) -> dict[str, Any] | None:
     return run_hook("stop_do_hook.py", {"transcript_path": transcript_path})
+
 
 def run_pretool_verify(skill: str, args: str = "") -> dict[str, Any] | None:
     return run_hook(
@@ -30,24 +32,28 @@ def run_pretool_verify(skill: str, args: str = "") -> dict[str, Any] | None:
         {"tool_name": "Skill", "tool_input": {"skill": skill, "args": args}},
     )
 
+
 def run_prompt_submit(transcript_path: str) -> dict[str, Any] | None:
     return run_hook("prompt_submit_hook.py", {"transcript_path": transcript_path})
+
 
 def run_post_compact(transcript_path: str) -> dict[str, Any] | None:
     return run_hook("post_compact_hook.py", {"transcript_path": transcript_path})
 
+
 # --- Transcript building helpers ---
+
 
 def user_do(args: str = "/tmp/manifest.md") -> dict[str, Any]:
     return {
         "type": "user",
-        "message": {
-            "content": f"<command-name>/manifest-dev:do</command-name> {args}"
-        },
+        "message": {"content": f"<command-name>/manifest-dev:do</command-name> {args}"},
     }
+
 
 def user_message(text: str) -> dict[str, Any]:
     return {"type": "user", "message": {"content": text}}
+
 
 def assistant_text(text: str = "Working on the task...") -> dict[str, Any]:
     """Assistant text response (no tool use — classified as idle by loop detection).
@@ -58,6 +64,7 @@ def assistant_text(text: str = "Working on the task...") -> dict[str, Any]:
     that should reset the idle counter.
     """
     return {"type": "assistant", "message": {"content": text}}
+
 
 def substantial_work(
     text: str = "Implementing the feature...",
@@ -76,15 +83,21 @@ def substantial_work(
                 {
                     "type": "tool_use",
                     "name": "Edit",
-                    "input": {"file_path": "/tmp/code.py", "old_string": "x", "new_string": "y"},
+                    "input": {
+                        "file_path": "/tmp/code.py",
+                        "old_string": "x",
+                        "new_string": "y",
+                    },
                 },
             ]
         },
     }
 
+
 def assistant_short(text: str = ".") -> dict[str, Any]:
     """Short assistant output for loop detection."""
     return {"type": "assistant", "message": {"content": text}}
+
 
 def skill_call(skill: str, args: str = "") -> dict[str, Any]:
     return {
@@ -100,6 +113,7 @@ def skill_call(skill: str, args: str = "") -> dict[str, Any]:
         },
     }
 
+
 def tool_call(tool: str, input_data: dict | None = None) -> dict[str, Any]:
     return {
         "type": "assistant",
@@ -114,6 +128,7 @@ def tool_call(tool: str, input_data: dict | None = None) -> dict[str, Any]:
         },
     }
 
+
 def make_transcript(tmp_path: Path, lines: list[dict[str, Any]]) -> str:
     transcript_file = tmp_path / "transcript.jsonl"
     with open(transcript_file, "w", encoding="utf-8") as f:
@@ -121,7 +136,9 @@ def make_transcript(tmp_path: Path, lines: list[dict[str, Any]]) -> str:
             f.write(json.dumps(line) + "\n")
     return str(transcript_file)
 
+
 # === E2E LIFECYCLE TESTS ===
+
 
 class TestHappyPathLifecycle:
     """Full /do session: invoke → work → verify → done → stop allowed."""
@@ -136,7 +153,10 @@ class TestHappyPathLifecycle:
         # User submits input during work — amendment check fires
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
-        assert "user message arrived during" in amendment["hookSpecificOutput"]["additionalContext"]
+        assert (
+            "user message arrived during"
+            in amendment["hookSpecificOutput"]["additionalContext"]
+        )
 
         # TaskUpdate happens — log reminder fires
 
@@ -213,6 +233,7 @@ class TestHappyPathLifecycle:
         stop_result = run_stop_hook(transcript)
         assert stop_result is None
 
+
 class TestSelfAmendmentCycle:
     """/do → user changes scope → /escalate → /define --amend → /do resumes."""
 
@@ -281,6 +302,7 @@ class TestSelfAmendmentCycle:
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
 
+
 class TestCompactionRecovery:
     """/do active → session compacted → hooks recover correctly."""
 
@@ -327,6 +349,7 @@ class TestCompactionRecovery:
         assert stop_result is not None
         assert stop_result["decision"] == "block"
 
+
 class TestMediumRoutingLifecycle:
     """/do with --medium slack → hooks detect non-local medium correctly."""
 
@@ -365,6 +388,7 @@ class TestMediumRoutingLifecycle:
         assert stop_result is not None
         assert "decision" not in stop_result  # omit decision = allow
         assert "external" in stop_result.get("systemMessage", "").lower()
+
 
 class TestMultipleDoSessions:
     """Sequential /do invocations with different manifests."""
@@ -413,6 +437,7 @@ class TestMultipleDoSessions:
         amendment = run_prompt_submit(transcript)
         assert amendment is not None
 
+
 class TestLoopDetectionInteraction:
     """Stop hook loop detection interacting with other hooks."""
 
@@ -433,7 +458,10 @@ class TestLoopDetectionInteraction:
         stop_result = run_stop_hook(transcript)
         assert stop_result is not None
         assert "decision" not in stop_result  # omit decision = allow
-        assert "idle" in stop_result.get("reason", "").lower() or "loop" in stop_result.get("reason", "").lower()
+        assert (
+            "idle" in stop_result.get("reason", "").lower()
+            or "loop" in stop_result.get("reason", "").lower()
+        )
 
     def test_substantial_output_breaks_loop_pattern(self, tmp_path: Path):
         """A non-Skill tool use between idle outputs resets the idle counter.
@@ -495,6 +523,7 @@ class TestInterruptedDoHandling:
         stop_result = run_stop_hook(transcript)
         assert stop_result is not None
         assert stop_result["decision"] == "block"
+
 
 class TestEscalateTypesNotDistinguished:
     """Hooks treat all /escalate types the same — verify this is safe."""
@@ -558,9 +587,11 @@ class TestPretoolVerifyIsolation:
     def test_reminder_for_verify_with_prefix(self):
         result = run_pretool_verify("manifest-dev:verify", "/tmp/manifest.md")
         assert result is not None
-        assert "/verify appears to be starting" in result["hookSpecificOutput"]["additionalContext"]
+        assert (
+            "/verify appears to be starting"
+            in result["hookSpecificOutput"]["additionalContext"]
+        )
 
     def test_reminder_for_verify_without_prefix(self):
         result = run_pretool_verify("verify", "/tmp/manifest.md")
         assert result is not None
-

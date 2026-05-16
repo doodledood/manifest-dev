@@ -3,6 +3,11 @@
 Shared utilities for manifest-dev hooks.
 
 Contains transcript parsing for skill invocation detection.
+
+Namespace-scoped: only `manifest-dev:<skill>` invocations register.
+Bare `<skill>` and `manifest-dev-experimental:<skill>` invocations are
+ignored, so the main plugin's hooks do not fire on the experimental
+plugin's skill calls when both plugins are installed alongside.
 """
 
 from __future__ import annotations
@@ -11,6 +16,8 @@ import json
 import re
 from dataclasses import dataclass
 from typing import Any
+
+PLUGIN_NAMESPACE = "manifest-dev"
 
 
 @dataclass
@@ -51,7 +58,7 @@ def get_skill_call_args(line_data: dict[str, Any], skill_name: str) -> str | Non
     Get arguments from a Skill tool call for the given skill.
 
     Returns the args string if found, None otherwise.
-    Matches both "skill-name" and "plugin:skill-name" formats.
+    Matches ONLY the namespaced form `manifest-dev:<skill>`.
     """
     if line_data.get("type") != "assistant":
         return None
@@ -61,6 +68,8 @@ def get_skill_call_args(line_data: dict[str, Any], skill_name: str) -> str | Non
 
     if isinstance(content, str):
         return None
+
+    target = f"{PLUGIN_NAMESPACE}:{skill_name}"
 
     for block in content:
         if not isinstance(block, dict):
@@ -73,7 +82,7 @@ def get_skill_call_args(line_data: dict[str, Any], skill_name: str) -> str | Non
         tool_input = block.get("input", {})
         skill = tool_input.get("skill", "")
 
-        if skill == skill_name or skill.endswith(f":{skill_name}"):
+        if skill == target:
             args = tool_input.get("args", "")
             return args.strip() if args else None
 
@@ -117,6 +126,8 @@ def _is_skill_tool_call(line_data: dict[str, Any], skill_name: str) -> bool:
     if isinstance(content, str):
         return False
 
+    target = f"{PLUGIN_NAMESPACE}:{skill_name}"
+
     for block in content:
         if not isinstance(block, dict):
             continue
@@ -128,8 +139,8 @@ def _is_skill_tool_call(line_data: dict[str, Any], skill_name: str) -> bool:
         tool_input = block.get("input", {})
         skill = tool_input.get("skill", "")
 
-        # Match "skill-name" or "plugin:skill-name"
-        if skill == skill_name or skill.endswith(f":{skill_name}"):
+        # Match only the namespaced form `manifest-dev:<skill>`
+        if skill == target:
             return True
 
     return False
@@ -139,25 +150,20 @@ def _is_user_skill_invocation(line_data: dict[str, Any], skill_name: str) -> boo
     """Check if user message represents a skill invocation."""
     text = get_message_text(line_data)
 
-    # Pattern 2: isMeta skill expansion (most reliable for user-invoked)
+    # Pattern 2: isMeta skill expansion — require the plugin namespace
+    # in the "Base directory" path (manifest-dev/skills/<name>/), so we
+    # don't false-positive on manifest-dev-experimental's skills.
     if line_data.get("isMeta"):
         if "Base directory for this skill:" in text:
-            # Only search the "Base directory" line — the body may reference
-            # other skills' files (e.g., skills/do/references/...) which would
-            # false-positive if we searched the entire text.
             for line in text.split("\n"):
                 if "Base directory for this skill:" in line:
-                    pattern = rf"skills/{re.escape(skill_name)}(?:/|\s|$)"
+                    pattern = rf"{re.escape(PLUGIN_NAMESPACE)}/skills/{re.escape(skill_name)}(?:/|\s|$)"
                     if re.search(pattern, line):
                         return True
                     break
 
-    # Pattern 3: command-name tags (various formats)
-    # Match /<skill> or /manifest-dev:skill (only our plugin)
-    return (
-        f"<command-name>/{skill_name}</command-name>" in text
-        or f"<command-name>/manifest-dev:{skill_name}</command-name>" in text
-    )
+    # Pattern 3: command-name tag — only the namespaced form for this plugin.
+    return f"<command-name>/{PLUGIN_NAMESPACE}:{skill_name}</command-name>" in text
 
 
 def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str | None:
@@ -172,10 +178,9 @@ def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str
 
     text = get_message_text(line_data)
 
-    # Check if this is a command with matching skill name (only our plugin)
+    # Check if this is a command with matching skill name (only our plugin's namespace)
     has_command = (
-        f"<command-name>/{skill_name}</command-name>" in text
-        or f"<command-name>/manifest-dev:{skill_name}</command-name>" in text
+        f"<command-name>/{PLUGIN_NAMESPACE}:{skill_name}</command-name>" in text
     )
 
     if not has_command:

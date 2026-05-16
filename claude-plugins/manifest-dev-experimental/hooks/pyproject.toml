@@ -1,13 +1,12 @@
 [project]
-name = "manifest-dev-hooks"
+name = "manifest-dev-experimental-hooks"
 version = "0.1.0"
-description = "Hooks for manifest-dev plugin"
+description = "Hooks for manifest-dev-experimental plugin"
 requires-python = ">=3.10"
 
 [project.scripts]
 stop-do-hook = "stop_do_hook:main"
 post-compact-hook = "post_compact_hook:main"
-pretool-verify-hook = "pretool_verify_hook:main"
 
 [build-system]
 requires = ["hatchling"]

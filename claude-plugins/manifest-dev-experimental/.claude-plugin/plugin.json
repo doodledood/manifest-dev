@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-experimental",
-  "version": "0.10.1",
-  "description": "Experimental parallel rework of manifest-dev's skills. Radically slim prompts that trust model capability — every word steers, not scaffolds. Drops multi-mode budgeting and prescriptive HOW in favor of WHAT/WHY. Lives alongside manifest-dev until promotion. Same skills (figure-out, define, do, verify, done, escalate, auto), same hooks, same agents.",
+  "version": "0.12.0",
+  "description": "Maximally-slim experimental rework of manifest-dev. The /verify skill is gone — /do absorbs verification inline by spawning subagents per Acceptance Criterion and Global Invariant. The manifest schema collapses to four fields (prompt, agent, model, phase) with always-subagent verification. The amendment contract and completion template fold inline into /define; the manifest is overwritten in place (current state, not edit-history) — git carries the history. Each surviving skill keeps only the words that steer non-default model behavior. Lives alongside manifest-dev until promotion.",
   "keywords": [
     "experimental",
     "slim",
@@ -10,7 +10,6 @@
     "manifest",
     "define",
     "do",
-    "verify",
     "autonomous"
   ],
   "author": {
@@ -24,35 +23,11 @@
     "Stop": [
       {
         "matcher": "*",
-        "description": "Prevent premature stops during /do workflow when verification incomplete",
+        "description": "Block premature stops during /do; inject reload reminder",
         "hooks": [
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stop_do_hook.py"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Skill",
-        "description": "Remind to read the manifest in full before verification",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/pretool_verify_hook.py"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "description": "Check for manifest amendments when user provides input during /do workflow",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/prompt_submit_hook.py"
           }
         ]
       }
