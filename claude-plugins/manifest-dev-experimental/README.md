@@ -27,11 +27,14 @@ Verifier subagents return one of three states: **PASS**, **FAIL**, or **BLOCKED*
 
 ## Differences from the core plugin
 
-- **`/verify` is gone.** Its protocol moves inline into `/do`: spawn a subagent per AC, aggregate, route to `/done` (all PASS) or `/escalate` (any BLOCKED, or unrecoverable FAIL). No separate skill, no return-block YAML protocol, no auto-trigger-full-final state machine, no selective `--scope`, no `--deferred` flag.
+- **`/verify` is gone.** Its protocol moves inline into `/do`: spawn a subagent per AC and Global Invariant, aggregate, route to `/done` (all PASS) or `/escalate` (any BLOCKED, or unrecoverable FAIL). No separate skill, no return-block YAML protocol, no auto-trigger-full-final state machine, no selective `--scope`, no `--deferred` flag.
 - **`/do` absorbs amendment routing.** Mid-/do user messages default to invoking `/define` for amendment; pure questions answered inline. No separate Self-Amendment escalation type.
+- **Amendment lives inline in `/define`.** No `AMENDMENT_MODE.md` ref — the contract is four sentences in `/define`'s body. Amendment trigger is path-only: if `$ARGUMENTS` contains a `/tmp/manifest-*.md` path, /define amends that manifest. The `--amend` flag is gone. No Session-Default Detection auto-magic.
+- **Completion template lives inline in `/define`.** No `COMPLETE.md` ref — the `Manifest complete:` template and Summary for Approval section are in `/define`'s body since they're always-loaded, not a conditional side-path.
+- **Manifest = current state.** Amendments overwrite in place with stable IDs (modify `INV-G1` → it stays `INV-G1`; remove one → it's gone, no renumbering of the rest). No `## Amendments` log section, no `INV-G1.1 amends INV-G1` chain. Git diff carries the history.
 - **Schema collapsed to four fields**, all verification is always-subagent. The previous `method:` / `inner_method:` / `command:` / `timeout:` / `manual` value / `deferred-auto` method are gone — the verifier subagent runs whatever bash, file reads, or external tools it needs from its prompt.
 - **One mode instead of three.** `--mode` and `--interview` flags are gone; defaults are quality-first. `Mode:`, `Interview:`, and `Medium:` top-level manifest fields are gone too — experimental is single-mode, local-only.
-- **`/escalate` collapsed to one type** (blocking). The previous six-type taxonomy and `references/TEMPLATES.md` are gone.
+- **`/escalate` collapsed to one type** (blocking) with a parallel amendment-routing reinforcement line. The previous six-type taxonomy and `references/TEMPLATES.md` are gone. Amendment routing now lives in `/do`, `/done`, and `/escalate` — hook-independent.
 - **PR-lifecycle composition auto-detects** from the local `origin` remote (no `--platform` flag).
 - **`figure-out` owns the interview.** `/define`'s epistemic stance, interview style modes, and discovery-question disciplines live in `/figure-out`, which `/define` auto-invokes on cold-start.
 - **Reviewers catch what slim discipline loses.** No separate rubric files; `change-intent-reviewer` and `prompt-reviewer` catch regressions during /verify-style audits of changed prompts.

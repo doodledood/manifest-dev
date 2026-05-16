@@ -1,6 +1,6 @@
 # Babysit Mode
 
-Loaded when `/define --babysit <pr-url>` was passed. Synthesizes a lifecycle-only manifest from an existing PR so /do can tend it to mergeable. Entry path for "I have a PR open and want autonomous tending without authoring a manifest from scratch." User can re-invoke amendment later to add custom ACs beyond the lifecycle baseline.
+Loaded when `/define --babysit <pr-url>` was passed. Synthesizes a lifecycle-only manifest from an existing PR so /do can tend it to mergeable. Entry path for "I have a PR open and want autonomous tending without authoring a manifest from scratch." User can amend later to add custom ACs beyond the lifecycle baseline. Babysit takes one URL; multi-repo changesets use fresh /define with `Repos:` declared.
 
 ## PR URL parsing
 
@@ -25,15 +25,7 @@ After pre-flight succeeds, read PR title and body:
 
 ## AC templating
 
-One AC, invoking the `github-pr-lifecycle` agent, with PR URL + branch templated into the prompt field. Baseline template from `tasks/PR_LIFECYCLE.md` Quality Gates section. The agent owns canonical gate logic at runtime.
-
-**Steering surface.** /define populates `verify.prompt:` with baseline content (PR URL + branch). Custom steering (named approvers, known-flaky CI, custom labels) is NOT probed during babysit — autonomous synthesis stays fast. User adds steering later via amendment (routes through Amendment Mode for an interactive scoped interview).
-
-**Multi-repo babysit:** out of scope. Babysit takes one URL. Multi-repo changesets use fresh /define with `Repos:` declared.
-
-## Interview style
-
-Probing lives in /figure-out, and babysit doesn't invoke it (babysit's only AC is templated; no interview-resolvable scenarios). Probing nuances surface via amendment after the babysit manifest is in flight.
+One AC, invoking the `github-pr-lifecycle` agent, with PR URL + branch templated into the prompt field. Baseline template from `tasks/PR_LIFECYCLE.md` Quality Gates section. The agent owns canonical gate logic at runtime. /define populates `verify.prompt:` with baseline content (PR URL + branch); custom steering (named approvers, known-flaky CI, custom labels) is NOT probed during babysit — autonomous synthesis stays fast. User adds steering later via amendment.
 
 ## Output
 
@@ -41,9 +33,9 @@ Write manifest to `/tmp/manifest-{ts}.md`. Print the standard `Manifest complete
 
 ## Conflict halts
 
-- `--babysit` + `--amend` → halt: `Cannot babysit and amend simultaneously.`
 - `--babysit` without URL → halt: `--babysit requires a PR URL. Usage: /define --babysit <pr-url>.`
 - `--babysit` + free-form task text in `$ARGUMENTS` → URL wins; text ignored with one-line note.
+- `--babysit` + a `/tmp/manifest-*.md` path in `$ARGUMENTS` → halt: `Cannot babysit and amend simultaneously. --babysit synthesizes a new manifest from a PR; a manifest path triggers amendment. Pick one.`
 
 ## Gotchas
 

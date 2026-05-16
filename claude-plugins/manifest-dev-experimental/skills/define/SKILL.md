@@ -1,17 +1,19 @@
 ---
 name: define
 description: 'Experimental. Manifest builder. Turns shared understanding into a verifiable Manifest with Deliverables, Acceptance Criteria, Global Invariants, and Approach. Auto-invokes /figure-out when the transcript lacks understanding. Use when planning features, scoping refactors, debugging complex issues, or whenever a task needs structured thinking before coding. Triggers: define, manifest, scope, plan, spec out, break down.'
-argument-hint: '[task] [--babysit <pr-url>] [--canvas]'
+argument-hint: '[task] [/tmp/manifest-*.md path to amend] [--babysit <pr-url>] [--canvas]'
 user-invocable: true
 ---
 
-Take the conversation's shared understanding and encode it as a Manifest at `/tmp/manifest-{ts}.md`. If the transcript lacks shared understanding, invoke `manifest-dev-experimental:figure-out` first ("no prior understanding detected — probing first"); when invoked from `/auto` or with `--autonomous`, propagate the flag so figure-out self-answers without user wait. Chat-derived amendment intent (e.g., "also handle X", "change Y") + Session-Default Detection of a prior `Manifest complete:` line skip this front-door and route to amendment instead.
+Take the conversation's shared understanding and encode it as a Manifest at `/tmp/manifest-{ts}.md`. If the transcript lacks shared understanding, invoke `manifest-dev-experimental:figure-out` first ("no prior understanding detected — probing first"); when invoked from `/auto` or with `--autonomous`, propagate the flag so figure-out self-answers without user wait.
 
 The manifest captures **what to build** (Deliverables + ACs), **how to get there** (Approach — initial direction, expect adjustment), **rules to follow** (Global Invariants + Process Guidance + Known Assumptions + Risks + Trade-offs). Every insight becomes an encoded criterion or is explicitly scoped out with stated reasoning. Automate verification — every AC and INV-G has a `verify:` block; criteria that genuinely require human action belong in Process Guidance or Known Assumptions, not as ACs.
 
-**Output contract.** After writing, emit a plain-language Summary for Approval (no codes, no YAML, no schema vocabulary; reads like talking to a colleague). On approval, output `Manifest complete:` per `references/COMPLETE.md` — this line is the load-bearing handoff signal for `/auto`, `/do`, and Session-Default Detection. When the caller context is `/do`'s autonomous amendment path or the user signals "enough" / "ship it" / "good enough" mid-flow, finish autonomously without summary approval. Explicit `/do` invocation mid-flow → hand off without waiting.
+**Pre-flight:** babysit (`--babysit <pr-url>` → `references/BABYSIT_MODE.md`); amend (args contain a `/tmp/manifest-*.md` path → apply the Amendment paragraph below); else fresh. **Domain Guidance** loads task-type files from `tasks/` per `tasks/README.md` composition rules. **Multi-repo** in `references/MULTI_REPO.md`. **Canvas** in `references/CANVAS_MODE.md`.
 
-**Pre-flight** resolves babysit (`--babysit <pr-url>` → `references/BABYSIT_MODE.md`) / amend (chat-derived amendment intent + Session-Default Detection of a prior `Manifest complete:` line → `references/AMENDMENT_MODE.md`; ambiguous-multiple-candidates → ask once) / fresh. **Domain Guidance** loads task-type files from `tasks/` per `tasks/README.md` composition rules. **Multi-repo** in `references/MULTI_REPO.md`. **Canvas** in `references/CANVAS_MODE.md`.
+## Amendment
+
+When `$ARGUMENTS` contains a `/tmp/manifest-*.md` path, you're amending that manifest. Read it fully first, then apply targeted changes — modify, add, or remove only the specific items the request names. Preserve everything else verbatim. IDs are stable: modifying INV-G1 keeps it as INV-G1 with new content; removing one drops it without renumbering the rest. The manifest reads as current state; git carries the history — no `## Amendments` log, no `INV-G1.1 amends INV-G1` chain. Autonomous (no summary wait, finish in place) when caller chain includes `/auto` or `/do`; interactive (full Summary for Approval flow) otherwise.
 
 ## Manifest Schema
 
@@ -92,3 +94,38 @@ The manifest captures **what to build** (Deliverables + ACs), **how to get there
 - `--autonomous` — used internally by `/auto` chaining and `/do`'s amendment path; suppresses Summary for Approval wait and lets figure-out self-answer with recommended defaults.
 
 PR-lifecycle composition is auto-detected from the local `origin` remote — `github.com` host adds the `github-pr-lifecycle` AC via `tasks/PR_LIFECYCLE.md`. Non-github remotes get no PR-lifecycle AC; user can add one manually if needed.
+
+## Summary for Approval
+
+Before emitting `Manifest complete:`, digest the manifest into a scannable summary the user can approve at a glance. Plain language. **No manifest codes** (D1, AC-1.1, INV-G3), **no YAML blocks**, **no structured-document vocabulary** ("acceptance criteria", "global invariants"). Default shape:
+
+- **The plan** — one-line headline of what's being done and why.
+- **What I'll build** — work items grouped naturally; don't enumerate every sub-task.
+- **Guardrails** — invariants as plain rules.
+- **How I'll verify** — brief description of verification approach.
+
+Include an ASCII architecture diagram when the task has multiple components with inter-component flow.
+
+**Test:** if it reads like a compressed manifest (codes, YAML, structured labels dressed up as prose; enumerated criteria; abstractions hiding content), rewrite. If it reads like something you'd say to a colleague, it's right.
+
+After presenting, wait for the user's response:
+- *Approval* ("looks good", "approved") → proceed to Complete.
+- *Feedback* ("also add X", "change Y") → revise manifest, re-present summary. Do not implement.
+- *Explicit /do invocation* → /define is done; /do takes over.
+- *Decline* ("scrap this", "cancel") → exit silently without writing the manifest.
+
+## Complete
+
+Output the manifest path and stop. Substitute placeholders before printing:
+- `{timestamp}` → the manifest filename's timestamp.
+- `<dir>` → the current project directory in slug form (path separators → `-`, e.g., `-home-user-manifest-dev` for `/home/user/manifest-dev`).
+- `${CLAUDE_SESSION_ID}` → the env value.
+
+```text
+Manifest complete: /tmp/manifest-{timestamp}.md
+Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl
+
+To execute: /do /tmp/manifest-{timestamp}.md
+```
+
+The `Manifest complete:` line is the load-bearing handoff signal for `/auto` and `/do`. When the caller context is `/do`'s autonomous amendment path or the user signals "enough" / "ship it" / "good enough" mid-flow, finish autonomously — skip the Summary for Approval wait and emit Complete directly. Explicit `/do` invocation mid-flow → hand off without waiting.
