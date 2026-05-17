@@ -31,7 +31,6 @@ The `prompt` field is the steering surface — baseline content is enough to sta
 *Domain best practices for PR-lifecycle work.*
 
 - **Mergeable as terminal, not merged** — /do drives to mergeable and stops. The merge action itself is out of scope.
-- **Hint disposition vocabulary** — the `github-pr-lifecycle` agent emits findings with one of eight suggested dispositions: `poll`, `retrigger-if-transient`, `fix-code`, `reply-and-resolve`, `reply-only`, `wait-for-author`, `scope-shift`, `escalate`. /do routes each accordingly; `escalate` requires human escalation rather than autonomous amendment, `scope-shift` is the legitimate amendment trigger.
 - **Retrigger cap** — agent default is 10 retriggers per failing CI check per AC lifetime. Override per-check via steering when a known-flaky job needs more headroom.
 - **No force-push, no merge to base** — agent's hard prohibitions; PR_LIFECYCLE inherits them.
 - **No secret exposure** — env vars, tokens, credentials never appear in PR replies, descriptions, comments, or commit messages.
