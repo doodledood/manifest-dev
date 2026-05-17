@@ -61,26 +61,6 @@ def assistant_skill_do() -> dict[str, Any]:
 
 
 @pytest.fixture
-def assistant_skill_verify() -> dict[str, Any]:
-    """Assistant Skill tool call for verify."""
-    return {
-        "type": "assistant",
-        "message": {
-            "content": [
-                {
-                    "type": "tool_use",
-                    "name": "Skill",
-                    "input": {
-                        "skill": "manifest-dev:verify",
-                        "args": "/tmp/define.md",
-                    },
-                }
-            ]
-        },
-    }
-
-
-@pytest.fixture
 def assistant_skill_done() -> dict[str, Any]:
     """Assistant Skill tool call for done."""
     return {

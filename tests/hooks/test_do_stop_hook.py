@@ -31,21 +31,6 @@ class TestStopHookBlocking:
         assert result["decision"] == "block"
         assert "reload" in result["systemMessage"].lower()
 
-    def test_blocks_with_verify_only(
-        self,
-        temp_transcript,
-        user_do_command: dict[str, Any],
-        assistant_skill_verify: dict[str, Any],
-    ):
-        """Stop should be blocked when /verify was called but returned failures (no /done)."""
-        transcript_path = temp_transcript([user_do_command, assistant_skill_verify])
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        assert result is not None
-        assert result["decision"] == "block"
-
 
 class TestStopHookAllowing:
     """Tests for stop hook allowing behavior."""
@@ -54,14 +39,12 @@ class TestStopHookAllowing:
         self,
         temp_transcript,
         user_do_command: dict[str, Any],
-        assistant_skill_verify: dict[str, Any],
         assistant_skill_done: dict[str, Any],
     ):
         """Stop should be allowed when /done exists after /do."""
         transcript_path = temp_transcript(
             [
                 user_do_command,
-                assistant_skill_verify,
                 assistant_skill_done,
             ]
         )
@@ -76,14 +59,12 @@ class TestStopHookAllowing:
         self,
         temp_transcript,
         user_do_command: dict[str, Any],
-        assistant_skill_verify: dict[str, Any],
         assistant_skill_escalate: dict[str, Any],
     ):
         """Stop should be allowed when /escalate exists after /do."""
         transcript_path = temp_transcript(
             [
                 user_do_command,
-                assistant_skill_verify,
                 assistant_skill_escalate,
             ]
         )
@@ -566,8 +547,8 @@ class TestStopHookInvocationPatterns:
         temp_transcript,
     ):
         """isMeta /define expansion referencing skills/do/ in body should NOT detect /do."""
-        # Real bug: /define SKILL.md references "../do/references/execution-modes/"
-        # in its body text. The isMeta regex was matching this as a /do invocation.
+        # Regression: when /define SKILL.md body text mentions a /do file path,
+        # the isMeta detector must not interpret that mention as a /do invocation.
         ismeta_define_expansion = {
             "type": "user",
             "isMeta": True,
@@ -580,9 +561,8 @@ class TestStopHookInvocationPatterns:
                             "# /define - Manifest Builder\n\n"
                             "Build a comprehensive Manifest...\n\n"
                             "## Verification Loop\n\n"
-                            "After writing the manifest, check the manifest's `mode:` field "
-                            "and the `/define manifest-verifier` row in "
-                            "`../do/references/execution-modes/`.\n\n"
+                            "After writing the manifest, the executor reads it. "
+                            "See `../do/SKILL.md` for the executor contract.\n\n"
                             "To execute: /do /tmp/manifest-{timestamp}.md"
                         ),
                     }
@@ -832,7 +812,7 @@ class TestStopHookInterruptHandling:
                             "/path/to/plugins/skills/define\n\n"
                             "# /define - Manifest Builder\n\n"
                             "Build a comprehensive Manifest...\n\n"
-                            "Check `../do/references/execution-modes/`.\n\n"
+                            "See `../do/SKILL.md` for the executor contract.\n\n"
                             "To execute: /do /tmp/manifest-{timestamp}.md"
                         ),
                     }

@@ -4,10 +4,9 @@ Shared utilities for manifest-dev hooks.
 
 Contains transcript parsing for skill invocation detection.
 
-Namespace-scoped: only `manifest-dev:<skill>` invocations register.
-Bare `<skill>` and `manifest-dev:<skill>` invocations are ignored, so the
-experimental plugin's hooks do not fire on the main plugin's skill calls when
-both plugins are installed alongside.
+Namespace-scoped: only `manifest-dev:<skill>` invocations register. Bare
+`<skill>` invocations are ignored so unrelated plugins that happen to share
+a skill name (e.g., `/do`) don't accidentally trigger these hooks.
 """
 
 from __future__ import annotations

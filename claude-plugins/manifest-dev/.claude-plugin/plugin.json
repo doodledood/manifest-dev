@@ -9,6 +9,8 @@
     "auto",
     "babysit",
     "figure-out",
+    "figure-out-team",
+    "slack-poller",
     "verification",
     "invariants",
     "deliverables",

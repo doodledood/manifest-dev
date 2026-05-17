@@ -5,7 +5,7 @@
     "email": "doodledood@github.com"
   },
   "metadata": {
-    "description": "Manifest-driven workflows for Claude Code"
+    "description": "Tell Claude what done looks like, let it work, check the result."
   },
   "plugins": [
     { "name": "manifest-dev", "source": "./claude-plugins/manifest-dev" },

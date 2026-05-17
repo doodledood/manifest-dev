@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Stop hook for the experimental plugin.
+Stop hook for the manifest-dev plugin.
 
 Blocks stop attempts unless /done or /escalate was called after /do.
 Injects a terse "reload /do" reminder so the model can resume.
