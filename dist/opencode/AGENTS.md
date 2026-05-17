@@ -40,7 +40,7 @@ PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIF
 | contracts-reviewer | API and interface contract correctness with evidence |
 | criteria-checker | Single-criterion verification (bash, codebase, research) |
 | docs-reviewer | Documentation accuracy against code changes |
-| github-pr-lifecycle | Steerable GitHub PR lifecycle inspection — returns rich actionable hint for /do to dispatch. Read-only; never invokes the merge button. |
+| github-pr-lifecycle | Steerable GitHub PR lifecycle inspection — returns natural-language hint for /do to dispatch. Read-only; never invokes the merge button. |
 | manifest-verifier | Manifest gap detection and continuation questions |
 | type-safety-reviewer | Type system improvements across typed languages |
 

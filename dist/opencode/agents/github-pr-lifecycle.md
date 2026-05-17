@@ -1,5 +1,5 @@
 ---
-description: 'Steerable agent that inspects a GitHub PR lifecycle state — PR existence, CI checks, review threads, description sync, and mergeability — returning PASS or a FAIL with a rich actionable hint for the caller to dispatch. The caller''s invoking prompt steers behavior: extra gates, named approvers, known-flaky CI handling, retrigger overrides. Read-only inspection; never invokes the merge button.'
+description: 'Steerable agent that inspects a GitHub PR lifecycle state — PR existence, CI checks, review threads, description sync, and mergeability — returning PASS or a FAIL with a natural-language hint for the caller to dispatch. The caller''s invoking prompt steers behavior: extra gates, named approvers, known-flaky CI handling, retrigger overrides. Read-only inspection; never invokes the merge button.'
 mode: subagent
 temperature: 0.2
 tools:
