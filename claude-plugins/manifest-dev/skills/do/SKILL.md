@@ -145,9 +145,14 @@ The `escalate` row is load-bearing: when a verifier emits `escalate`, the caller
 
 ### Action-aware fix-cap
 
-Only **code-change** `fix-code` dispatches increment the per-phase fix-verify counter. Other retry shapes don't burn the fix-cap budget: the seven non-`fix-code` dispositions (`poll`, `retrigger-if-transient`, `reply-and-resolve`, `reply-only`, `wait-for-author`, `scope-shift`, `escalate`) plus the mechanical-sync sub-case of `fix-code` itself (branch-sync push like merging base in, or pushing a PR-description update). The principle: what counts is what changes code in response to the failure — mechanical pushes that don't iterate on a bug aren't fix attempts (see each execution-mode file's Fix-Verify Loops section, which enumerates the non-fix-attempt retry shapes).
+Only **code-change** `fix-code` dispatches increment the per-phase fix-verify counter. Two categories don't count toward the budget:
 
-For free-form (non-disposition) hint bodies from non-lifecycle verifiers, /do classifies the hint shape into the equivalent disposition and applies the same rules.
+1. The seven non-`fix-code` dispositions — `poll`, `retrigger-if-transient`, `reply-and-resolve`, `reply-only`, `wait-for-author`, `scope-shift`, `escalate`.
+2. The mechanical-sync sub-case of `fix-code` itself — a branch-sync push (merging base in) or a PR-description update push, neither of which iterates on a bug.
+
+The principle: what counts is what changes code in response to the failure — mechanical pushes that don't iterate on a bug aren't fix attempts (see each execution-mode file's Fix-Verify Loops section, which enumerates the non-fix-attempt retry shapes).
+
+For free-form (non-disposition) hint bodies from non-lifecycle verifiers, /do classifies the prose into the equivalent disposition shape and applies the same routing — same fix-cap accounting and same escalate-forbid-amend rule.
 
 Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of retry shape.
 

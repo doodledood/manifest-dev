@@ -35,7 +35,12 @@ The PR is ready when each gate holds:
 2. **CI green** — required checks pass on the current head commit.
 3. **Threads addressed** — each review thread is resolved, replied to (False positive), or carries a follow-up commit on the current head that addresses it (Actionable). Human-authored threads only the human resolves.
 4. **Description in sync** — PR description reflects the current diff's intent.
-5. **Mergeable** — GitHub's composite mergeability signal says the PR can merge. Green pass clears the gate. "Still computing" → suggest `poll`. "Needs branch-sync" → suggest `fix-code` (caller pushes a merge of base). Composite states that defer to the other gates (e.g., BLOCKED because CI failed) — the upstream gate's finding speaks; emit no separate Mergeable finding (the Breakdown line still reports `FAIL (BLOCKED)`, but the action lives on the upstream finding). Draft state is a wait — un-drafting is a human action, parallel to approval — suggest `poll` and re-check on the next invocation.
+5. **Mergeable** — GitHub's composite mergeability signal says the PR can merge. Disposition by composite state:
+   - Green pass → gate clears.
+   - "Still computing" → suggest `poll`.
+   - "Needs branch-sync" → suggest `fix-code` (caller pushes a merge of base).
+   - BLOCKED because of another gate (e.g., CI failed) → emit no separate Mergeable finding; the upstream gate's finding speaks. The Breakdown line still reports `FAIL (BLOCKED)`, but the action lives on the upstream finding.
+   - Draft state → suggest `poll` and re-check on the next invocation; un-drafting is a human action, parallel to approval.
 
 User-defined gates from the steering overlay evaluate additively — the PR is ready only when both baseline and user gates hold.
 
