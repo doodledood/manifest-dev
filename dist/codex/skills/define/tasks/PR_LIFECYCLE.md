@@ -52,8 +52,8 @@ Concrete overlay-text examples (drop into the AC's `verify.prompt:` Steering lin
 | `Required label: qa-approved` | Adds a label-presence user gate |
 | `Reviewer @alice required` | Adds a named-approver user gate |
 | `CI job "flaky-integration" is known-flaky; retrigger up to 5` | Raises retrigger cap for that check |
-| `Wait 5m between CI checks` | Paces wait-shaped hints between CI re-checks at 5m instead of the agent's default cadence |
-| `Cap approval-wait at 2d, then FAIL with halt hint` | Once cumulative approval-wait exceeds 2d, agent emits FAIL with a halt-shaped hint instead of another wait hint |
+| `Wait 5m between CI checks` | Paces `poll` dispositions between CI re-checks at 5m instead of the agent's default cadence |
+| `Cap approval-wait at 2d, then escalate` | Once cumulative approval-wait exceeds 2d, agent emits an `escalate` disposition instead of another `poll` |
 | `Skip description sync — this PR uses a custom template` | Drops the description-in-sync gate |
 
 Probes for /define when surfacing steering nuances during the interview:
@@ -78,11 +78,11 @@ Only probe when discovery is silent or contradictory. Cite what was checked in t
 
 ## Risks
 
-- **Long approval-wait holds the session.** /do's terminal must stay open for the agent's `[sleep]` dispatches to keep firing; closing the terminal stops progress. Probe: is this PR's approval cycle measured in minutes, hours, or days? Long cycles → user-in-loop pattern more appropriate than a single /do invocation held overnight.
+- **Long approval-wait holds the session.** /do's terminal must stay open for the agent's `poll` dispositions to keep firing through re-invocations; closing the terminal stops progress. Probe: is this PR's approval cycle measured in minutes, hours, or days? Long cycles → user-in-loop pattern more appropriate than a single /do invocation held overnight.
 - **Flaky CI burns retrigger budget.** Probe: which CI jobs flake? Default cap of 10 may still starve a chronically flaky job; raise via steering when known.
 - **Thread oscillation.** A bot that re-scans after every push can post the same finding repeatedly. Agent dedups by content fingerprint (not comment ID), but if oscillation is observed the user investigates.
-- **Out-of-scope reviewer asks.** A reviewer requests a change beyond the manifest's declared scope. Agent emits `[out-of-scope]`; /do maps that finding to Self-Amendment so the user (or /define --amend) decides whether to expand.
-- **Externally-closed PR.** Someone else merges or closes the PR while /do is running. Probe: who else has merge rights on this PR? On detection the agent surfaces FAIL with a halt-shaped hint.
+- **Reviewer asks beyond PR intent.** A reviewer requests a change beyond what this PR set out to do. Agent suggests `scope-shift`; /do maps that finding to Self-Amendment so the user (or `/define --amend`) decides whether to expand. Distinct from `escalate` — see next bullet.
+- **Externally-closed PR.** Someone else merges or closes the PR while /do is running. Probe: who else has merge rights on this PR? On detection the agent suggests `escalate`; /do surfaces to a human via `/escalate` (autonomous amendment to suppress is forbidden).
 
 ## Scenario Prompts
 
@@ -105,6 +105,6 @@ Pre-mortem fuel for /define's interview:
 
 - **Session-held trade-off.** /do holding open for approval-wait is bounded by terminal session lifetime — closing the terminal stops progress. For genuinely multi-day cycles, phase-2 deferred-auto is the safer pattern; document this in /define when the approval cycle's character emerges.
 - **Externally-closed PR mid-session.** If someone else merges or closes the PR while /do is running, the next agent invocation surfaces FAIL noting the terminal state. /do treats this as a halt — it does not attempt to reopen.
-- **Branch protection drift.** Required checks and required reviews can change while the manifest runs. The agent reads GitHub's current configuration each invocation, so drift is observed naturally — but a manifest assertion ("named approver @alice required") may diverge from configured branch protection. Surface via `[out-of-scope]` when the divergence matters.
+- **Branch protection drift.** Required checks and required reviews can change while the manifest runs. The agent reads GitHub's current configuration each invocation, so drift is observed naturally — but a manifest assertion ("named approver @alice required") may diverge from configured branch protection. Surface via `scope-shift` (steering disagrees with branch protection — caller decides whether to amend) or `escalate` (the divergence is unrecoverable) depending on the case.
 - **gh CLI / GitHub MCP availability.** The agent assumes one is reachable. When neither is available, the agent's inspection fails — that's an environment problem (out of scope for the manifest) and the user installs / authenticates.
 - **Probing fuel, not execution instructions.** This file is for /define's interview. The agent file (`agents/github-pr-lifecycle.md`) is what /do invokes at runtime. Keep that separation when adding content here — task files describe angles to probe, not steps the agent follows.

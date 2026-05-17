@@ -120,16 +120,37 @@ Full convention: `define/references/MULTI_REPO.md`.
 
 **Amendment flow.** Amend the manifest autonomously via Self-Amendment escalation and `/define --amend <manifest-path> --from-do`, then resume with the updated manifest. No human wait; the entire cycle is autonomous.
 
-**Verifier-emitted out-of-scope findings.** When a verifier's FAIL body indicates the failure is beyond the current manifest's scope (see Verifier hints below) — typically an out-of-scope reviewer request or a manifest gap surfaced by the lifecycle agent — /do maps the finding to the same Self-Amendment path (`/define --amend <manifest-path> --from-do`). This mapping is /do's responsibility, not the verifier's. The verifier emits a *finding* (the situation: "this is beyond scope"); /do decides the workflow response (the action: amend the manifest). Same amendment flow as user-message-triggered amendments; different entry point.
+**Verifier-emitted scope-shift findings.** When a verifier surfaces a `scope-shift` disposition (or, for free-form non-disposition verifiers, a hint whose prose says the failure is beyond what the work set out to do — typically a reviewer ask beyond the PR's intent surfaced by the lifecycle agent), /do maps the finding to the Self-Amendment path (`/define --amend <manifest-path> --from-do`) — same path as user-message-triggered amendments. This mapping is /do's responsibility, not the verifier's. The verifier emits a *finding* (the situation: "this is beyond what the work set out to do"); /do decides the workflow response (the action: amend the manifest). **Note:** `escalate` is a different disposition — it forbids autonomous amendment and routes to human via `/escalate`; see Verifier hints below.
 
 **Amendment loop guard.** If Self-Amendment escalations repeat without new external input (user messages or PR comments) between them, the amendments are likely oscillating; escalate as "Proposed Amendment" for human decision instead. The same guard applies to post-/done re-entry: when feedback after completion triggers re-entry to /do via amendment, the consecutive-amendments-without-external-input counter still applies. Purpose: prevent runaway loops and unnecessary token burn.
 
 ## Verifier hints
 
-Verifier FAIL bodies may carry a free-form, actionable hint describing what's needed next in natural English (wait for CI, change code, retrigger a transient failure, reply on a thread, push a sync update, surface an out-of-scope finding). /do reads the body with LLM judgment — no required vocabulary, no fixed schema, no dispatch table. Optional bracketed shorthand like `[sleep]` or `[out-of-scope]` may appear at the start of a hint when it helps clarity, but plain English works equally well. When the body is unlabeled or ambiguous, treat it as a code-fix hint — this preserves the legacy fail→fix→reverify cycle for manifests authored before this protocol existed.
+Verifier FAIL bodies may carry an actionable hint describing what's needed next. The `github-pr-lifecycle` agent emits per-finding **dispositions** drawn from a closed eight-token vocabulary (see `agents/github-pr-lifecycle.md` § Hint dispositions). Other verifiers emit free-form natural-English hints. /do reads both shapes with LLM judgment — when a finding carries a recognized disposition token, route per the table below; otherwise classify the prose into the same disposition shape and apply the same rules. When the body is unlabeled or ambiguous, treat it as a code-fix hint — this preserves the legacy fail→fix→reverify cycle for verifiers that pre-date this protocol.
 
-**Action-aware fix-cap.** Only **code-change fix attempts** increment the per-phase fix-verify counter. Other retry shapes — re-verifying after a wait, retriggering a transient CI failure, posting a thread reply, pushing a sync update, or routing a scope-change through Self-Amendment — are not fix attempts and don't burn the budget. The principle is "what counts is what changes code in response to the failure" (see each execution-mode file's Fix-Verify Loops section). Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of retry shape.
+### Disposition routing
 
-**Out-of-scope findings route through Self-Amendment.** When a verifier surfaces that the failure is beyond the current manifest's scope, /do treats this as a scope shift and routes through Self-Amendment (`/define --amend <manifest-path> --from-do`) — same path as user-message-triggered amendments. The verifier reports the finding; /do owns the workflow response.
+| Disposition | /do's action | Counts toward fix-cap? |
+|---|---|---|
+| `poll` | Sleep (per the verifier's prose or a reasonable default), then re-invoke. | No |
+| `retrigger-if-transient` | Dispatch a retrigger of the named CI check, then re-invoke. | No |
+| `fix-code` | Change code (or push the named branch update — e.g., merge base in for sync) and re-invoke. | **Yes** — increments the per-phase fix-verify counter |
+| `reply-and-resolve` | Post the reply to the bot-authored thread and resolve it (bot-authored, caller-resolvable), then re-invoke. | No |
+| `reply-only` | Post the reply to the human-authored thread; do NOT resolve (only the original author resolves human threads); then re-invoke. | No |
+| `wait-for-author` | Sleep + re-invoke; or post a clarification reply at your discretion. | No |
+| `scope-shift` | Reviewer asks beyond what the manifest set out to do. Legitimate Self-Amendment route — route to `/define --amend <manifest-path> --from-do`, same path as user-message-triggered amendments. | No |
+| `escalate` | Verifier surfaced a terminal-no-progress finding (PR closed externally, retrigger budget exhausted with real failures, fork-origin push impossible, gh/GitHub-API unreachable, deep CI failure). **Autonomous Self-Amendment in response is forbidden** — /do MUST NOT rewrite the verifier's `verify.prompt:` steering to suppress the block. Surface to a human via the `/escalate` skill. | No (fix-cap counter does not apply; the disposition is terminal) |
 
-**Hard prohibition.** Invoking `gh pr merge` is forbidden under any path. Terminal is "PR mergeable", not "PR merged" — pressing the merge button is left to a human or GitHub auto-merge. Hints that suggest the merge button are ignored as malformed (INV-G8 grep-enforces no surviving `merge-pr` references in plugin source).
+The `escalate` row is load-bearing: when a verifier emits `escalate`, the caller's correct response is to surface to a human — never to autonomously amend the manifest's verifier prompt to make the block disappear. That would be silent contract erosion. `scope-shift` is the disposition that *does* permit autonomous Self-Amendment; the two are distinct.
+
+### Action-aware fix-cap
+
+Only `fix-code` dispositions (code-change fix attempts) increment the per-phase fix-verify counter. The other seven dispositions — `poll`, `retrigger-if-transient`, `reply-and-resolve`, `reply-only`, `wait-for-author`, `scope-shift`, `escalate` — are different retry / escalation shapes (wait, retry, reply, amend, escalate); they do not burn the fix-cap budget. The principle: what counts is what changes code in response to the failure (see each execution-mode file's Fix-Verify Loops section).
+
+For free-form (non-disposition) hint bodies from non-lifecycle verifiers, /do classifies the hint shape into the equivalent disposition and applies the same rules.
+
+Per-AC `verify.timeout:` is the wall-clock cap that bounds total time on a criterion regardless of retry shape.
+
+### Hard prohibition
+
+Invoking `gh pr merge` is forbidden under any path. Terminal is "PR mergeable", not "PR merged" — pressing the merge button is left to a human or GitHub auto-merge. Hints that suggest the merge button are ignored as malformed (INV-G8 grep-enforces no surviving `merge-pr` references in plugin source).
