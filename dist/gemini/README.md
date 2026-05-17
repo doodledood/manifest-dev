@@ -77,11 +77,10 @@ The `install.sh` script sets this automatically.
 ## Workflow Overview
 
 1. `/define` — Structured interview builds a manifest with deliverables, acceptance criteria, and global invariants
-2. `/do` — Executes the manifest, satisfying each Deliverable's acceptance criteria
-3. `/verify` — Spawns parallel verifier agents for all criteria
-4. `/auto` — Chains define and do autonomously
+2. `/do` — Executes the manifest, satisfying each Deliverable's acceptance criteria, then verifies inline by spawning one subagent per Acceptance Criterion and Global Invariant
+3. `/auto` — Chains define and do autonomously
 
-Supporting skills: `/figure-out` for deep investigation, `/escalate` for blocking issues.
+Supporting skills: `/figure-out` for truth-convergent investigation, `/figure-out-team` for async Slack deliberation, `/escalate` for blocking issues.
 
 **PR lifecycle.** PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. `/auto --babysit <pr-url>` chains synthesis and execution in one command.
 

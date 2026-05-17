@@ -310,7 +310,6 @@ dist/gemini/
 │   ├── gemini_adapter.py
 │   ├── hook_utils.py
 │   ├── stop_do_hook.py
-│   ├── pretool_verify_hook.py
 │   └── post_compact_hook.py
 ├── skills/
 │   ├── define/

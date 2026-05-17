@@ -8,37 +8,23 @@ This document specifies the behavioral contract for the manifest-dev plugin (`pl
 |-----------------|--------------|-------------------|----------|
 | Stop (stop_do_hook.py) | Blocks stopping during /do unless /done or /escalate called | `experimental.chat.system.transform` — persistent system guidance | **Degraded** — cannot actually block stopping |
 | SessionStart+compact (post_compact_hook.py) | Injects recovery context after compaction | `experimental.session.compacting` — inject into output.context | **Full** |
-| PreToolUse (pretool_verify_hook.py) | Reminds to read manifest before /verify | `tool.execute.before` — throws Error as context reminder | **Full** (main agent only; subagent bypass) |
-| UserPromptSubmit (prompt_submit_hook.py) | Amendment check during /do on user input | `experimental.chat.system.transform` — persistent reminder | **Approximate** — always-on rather than per-prompt |
 
 ## Known Limitations
 
 ### 1. No Stop Blocking (Critical)
 Claude Code's Stop hook blocks the session from stopping during /do unless /done or /escalate is called. OpenCode's `session.idle` event is fire-and-forget — **you cannot prevent stopping**. The plugin approximates this by injecting persistent system-level enforcement guidance via `experimental.chat.system.transform`, but a determined or confused model can still stop.
 
-**Impact**: The /do workflow contract (must call /verify -> /done or /escalate before stopping) is advisory rather than enforced.
+**Impact**: The /do workflow contract (must call /done or /escalate before stopping) is advisory rather than enforced.
 
 **Tracking**: OpenCode issue #12472 (feature request for blocking stop hooks).
 
-### 2. Subagent Hook Bypass (Critical)
-`tool.execute.before` and `tool.execute.after` do NOT fire for tool calls within subagents (spawned via the `task` tool). This means:
-- The pre-verify context refresh won't trigger if /verify is invoked by a subagent
-- Any future guardrail hooks won't apply within agent-spawned workflows
-
-**Impact**: Hooks only protect the main agent context.
-
-**Tracking**: OpenCode issue #5894.
-
-### 3. No JSONL Transcript
+### 2. No JSONL Transcript
 Claude Code hooks parse the JSONL transcript file to detect workflow state. OpenCode stores sessions in SQLite — no file-based transcript. The plugin tracks workflow state in-memory per session. This means:
 - State is lost if the plugin is reloaded mid-session
 - State cannot be recovered from persistent storage after a restart
 
-### 4. Persistent vs Event-Driven Reminders
-Claude Code hooks fire on specific events (UserPromptSubmit, PostToolUse). OpenCode's `experimental.chat.system.transform` fires before every LLM request. The reminders are always-on during active workflows rather than event-triggered. This means slightly more context overhead but equivalent behavioral guidance.
-
-### 5. Pre-Verify Hook Uses Error Throwing
-The pre-verify context refresh throws an Error to inject the reminder. In OpenCode, throwing in `tool.execute.before` blocks the tool call and the error message becomes the tool result. The agent must re-invoke /verify after seeing the reminder. This is more disruptive than Claude Code's additionalContext approach but achieves the same goal.
+### 3. Persistent vs Event-Driven Reminders
+Claude Code hooks fire on specific events. OpenCode's `experimental.chat.system.transform` fires before every LLM request. The reminders are always-on during active workflows rather than event-triggered. This means slightly more context overhead but equivalent behavioral guidance.
 
 ## Workflow State Tracking
 
@@ -46,12 +32,9 @@ The plugin maintains in-memory state per session:
 
 ### /do Flow State
 - `active`: Set when /do skill is invoked
-- `hasVerify`: Set when /verify is invoked during active /do
 - `hasDone`: Set when /done is invoked — marks successful completion
 - `hasEscalate`: Set when /escalate is invoked — marks escalation exit
-- `hasSelfAmendment`: Set when /escalate with "self-amendment" args — must continue to /define --amend
 - `doArgs`: Raw arguments from /do invocation
-- `hasCollabMode`: Set when /do uses `--medium` with a value other than `local` — indicates non-local collaboration where escalations are posted to an external medium
 - `consecutiveShortOutputs`: Counter for loop detection — tracks consecutive short model outputs (not currently incrementable via OpenCode events, reserved for future use)
 
 Each new /do invocation resets the state.
@@ -59,10 +42,8 @@ Each new /do invocation resets the state.
 ### Stop Enforcement Decision Matrix
 The system transform follows the same decision matrix as the Claude Code stop hook:
 1. `/done` called → no enforcement (verified complete)
-2. `/escalate` (non-self-amendment) → no enforcement (properly escalated)
-3. Self-amendment `/escalate` → enforce: must `/define --amend` before stopping
-4. `/verify` + collab mode → advisory: escalation posted to medium, user will re-invoke
-5. No exit condition → enforce: must `/verify` or `/escalate`
+2. `/escalate` called → no enforcement (properly escalated)
+3. No exit condition → enforce: must call `/done` or `/escalate` before stopping
 
 ## Plugin Installation
 

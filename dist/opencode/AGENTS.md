@@ -2,21 +2,35 @@
 
 ## Overview
 
-manifest-dev provides verification-first manifest workflows for AI coding agents. The core flow is:
+manifest-dev provides manifest-driven workflows for AI coding agents. The core flow is:
 
 ```
-/define → manifest → /do → /verify → /done
+/define → manifest → /do (executes + verifies inline) → /done
 ```
 
 - **/define** — Interactive manifest builder. Probes for requirements, quality gates, edge cases. Outputs a manifest with deliverables, acceptance criteria, and global invariants.
-- **/do** — Manifest executor. Implements deliverables, follows process guidance, adapts approach when reality diverges.
-- **/verify** — Spawns parallel verification agents against all criteria. Runs in phases (fast checks first).
-- **/done** — Completion marker. Outputs hierarchical execution summary.
-- **/escalate** — Structured escalation for blockers, scope changes, and pauses.
+- **/do** — Manifest executor. Implements deliverables, follows process guidance, adapts approach when reality diverges. Verifies inline by spawning one subagent per Acceptance Criterion and Global Invariant using the verify prompt verbatim. Aggregates PASS / FAIL / BLOCKED, fixes failures, re-verifies.
+- **/done** — Plain-prose completion summary called by /do after every criterion verifies PASS.
+- **/escalate** — Structured blocker handoff for unrecoverable failures or pending external action.
 
 Supporting workflows:
-- **/auto** — End-to-end autonomous: /define (autonomous interview) → /do in one command. Supports `--babysit <pr-url>` for tending an existing PR end-to-end.
-- **/figure-out** — Collaborative deep understanding. Investigation-first, truth-convergent.
+- **/auto** — End-to-end autonomous: /define → /do in one command. Supports `--babysit <pr-url>` for tending an existing PR end-to-end.
+- **/figure-out** — Truth-convergent thinking partner. /define auto-invokes it when the problem space is foggy.
+- **/figure-out-team** — /figure-out's discipline applied to a multi-party async Slack conversation.
+
+## Manifest Schema — Four Fields
+
+Every verify block has the same shape:
+
+```yaml
+verify:
+  prompt: "..."     # required, verbatim verifier instruction
+  agent: "..."      # optional, default = general-purpose subagent
+  model: "..."      # optional, default = inherit from invoking context
+  phase: 1          # optional integer, default 1 (lower phases run first)
+```
+
+The subagent returns **PASS**, **FAIL**, or **BLOCKED**. BLOCKED routes via /escalate (external action pending — deploy, human approval).
 
 ## PR Lifecycle
 
@@ -24,7 +38,7 @@ PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIF
 
 ## Agents
 
-15 specialized agents, all read-only:
+15 specialized subagents, all read-only:
 
 | Agent | Purpose |
 |-------|---------|
@@ -38,28 +52,16 @@ PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIF
 | code-testability-reviewer | Test friction analysis (mock count, logic in IO) |
 | context-file-adherence-reviewer | Context file compliance (AGENTS.md/CLAUDE.md/GEMINI.md rules) |
 | contracts-reviewer | API and interface contract correctness with evidence |
-| criteria-checker | Single-criterion verification (bash, codebase, research) |
+| criteria-checker | Single-criterion verifier — the default subagent when verify.agent is omitted |
 | docs-reviewer | Documentation accuracy against code changes |
 | github-pr-lifecycle | Steerable GitHub PR lifecycle inspection — returns natural-language hint for /do to dispatch. Read-only; never invokes the merge button. |
-| manifest-verifier | Manifest gap detection and continuation questions |
+| slack-poller | Narrate new Slack messages in a channel or thread since a cursor. Used by /figure-out-team. |
 | type-safety-reviewer | Type system improvements across typed languages |
-
-## Execution Modes
-
-/do supports three modes controlling verification intensity:
-
-| Mode | Model Routing | Parallelism | Fix Loops |
-|------|--------------|-------------|-----------|
-| thorough (default) | inherit | All at once | Unlimited |
-| balanced | inherit | Batches of 4 | Max 2/phase |
-| efficient | inherit | Sequential | Max 1/phase |
 
 ## Plugin (Hooks)
 
 The manifest-dev plugin (`.opencode/plugins/manifest-dev.ts`) provides:
 - Workflow state tracking for /do
 - Post-compaction context recovery
-- Pre-verify context refresh
-- Amendment check guidance during /do
 
 **Known limitation**: OpenCode cannot block session stopping (session.idle is fire-and-forget). The /do workflow contract is enforced via persistent system guidance, not a hard block.

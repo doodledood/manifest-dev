@@ -69,10 +69,10 @@ After installation, invoke workflows via slash commands:
 
 ```
 /define-manifest-dev                    Plan and scope a task (--babysit <pr-url> to synthesize from existing PR)
-/do-manifest-dev                        Execute a manifest
+/do-manifest-dev                        Execute a manifest and verify each criterion inline
 /auto-manifest-dev                      End-to-end autonomous execution (--babysit <pr-url> to tend existing PR)
-/verify-manifest-dev                    Run parallel verifiers (use --deferred for deferred-auto criteria)
-/figure-out-manifest-dev                Deep collaborative understanding
+/figure-out-manifest-dev                Truth-convergent thinking partner
+/figure-out-team-manifest-dev           Multi-party async deliberation in a Slack thread
 ```
 
 ## Feature Parity with Claude Code
@@ -115,7 +115,7 @@ dist/opencode/
 │   ├── criteria-checker.md
 │   ├── docs-reviewer.md
 │   ├── github-pr-lifecycle.md
-│   ├── manifest-verifier.md
+│   ├── slack-poller.md
 │   └── type-safety-reviewer.md
 ├── commands/                        # 5 user commands
 │   ├── auto.md

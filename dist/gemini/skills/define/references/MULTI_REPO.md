@@ -1,32 +1,16 @@
 # Multi-Repo Manifest Workflow
 
-Canonical reference for tasks whose changeset spans multiple repositories. Read this when a manifest declares `Repos:` in its Intent. Core skills (`/define`, `/do`, `/verify`, `/done`, `/auto`, `AMENDMENT_MODE`) summarize the rules below and link here for the full specification. PR-lifecycle work composes the `github-pr-lifecycle` agent per-repo via PR_LIFECYCLE.md's templated AC — see PR_LIFECYCLE.md "Multi-repo composition" for the agent-per-PR pattern.
+Canonical reference for tasks whose changeset spans multiple repositories. Read when a manifest declares `Repos:` in its Intent. Single-repo manifests are unaffected.
 
-Single-repo manifests (no `Repos:` field) are unaffected by everything below.
+A shared canonical manifest is the default: one manifest captures shared intent, every deliverable tagged with its repo, shared invariants, shared trade-offs. Splitting per repo is a legitimate user choice when work is loosely coupled — that case is just N independent single-repo manifests with no special rules. The manifest is **internal** (a working document for user and agent); PR descriptions stay summary-only. It lives at a writable scratch path (whatever `/define` chose at synthesis — emitted in the `Manifest complete:` line) with no primary repo owning it; if scratch is cleared, re-run /define against the same task and in-flight PRs continue under the new path. Multi-repo amendments use the single shared manifest — last-writer-wins on concurrent edits; collision rate is low, recovery is the writer noticing missing content and re-triggering. No file locking. /do reads `Repos:` and uses absolute paths when working in a non-cwd repo; user invokes /do once globally (agent navigates between repos) within one conversational session.
 
-## a. Principle
+## Schema Additions
 
-The shared canonical manifest is the **default and recommended** approach for multi-repo changesets: one manifest captures the whole thing — shared intent, all deliverables (each tagged with its repo), shared invariants, shared trade-offs. The reason it's the default: splitting per PR forces the user to hold cross-PR coherence in their head, which is the work the manifest exists to externalize.
+Multi-repo manifests extend the standard schema with two optional fields. Single-repo manifests omit both.
 
-Splitting per repo (one manifest per repo's PR) is a **legitimate user choice** when the work is loosely coupled and the user prefers independent scopes — they accept carrying the cross-PR coherence themselves. Everything below describes the shared-manifest case (when `Repos:` is declared in Intent); the split case is just N independent single-repo manifests and needs no special rules.
+**Intent & Context** adds:
 
-The manifest is **internal**. It is a working document for the user and the agent. PR descriptions remain summary-only — no manifest embed, no PR-side surfacing.
-
-## b. Persistence
-
-The canonical manifest lives at `/tmp/manifest-{timestamp}.md`. No primary repo "owns" it.
-
-If the file is lost (reboot, `/tmp` cleared, session death), re-run `/define` against the same task. The recreated manifest restarts the working state; in-flight PRs continue under the new manifest path.
-
-This is an explicit trade-off: durability infrastructure is more cost than re-running `/define` is occasional pain.
-
-## c. Manifest Schema Additions
-
-Multi-repo manifests extend the standard single-repo schema with three optional fields. Single-repo manifests omit all of them.
-
-**Intent & Context** declares two additional fields:
-
-- **Repos:** (multi-repo only) — a name → absolute-path map listing every repo in scope. Names are short identifiers used by deliverables; paths are absolute filesystem locations.
+- **Repos:** name → absolute-path map listing every repo in scope. Names are short identifiers used by deliverables; paths are absolute filesystem locations.
 
   ```markdown
   - **Repos:**
@@ -34,7 +18,7 @@ Multi-repo manifests extend the standard single-repo schema with three optional 
       - frontend: /home/user/projects/web
   ```
 
-- **Branch:** (multi-repo only) — a single string naming the branch used in every repo. By convention, all repos in a multi-repo changeset share the same branch name (see §j); divergent per-repo branch names are not supported in this version.
+- **Branch:** single string naming the branch used in every repo. By default, all repos use the same branch name (matches the existing harness pattern). Divergent per-repo branch names not supported in this version; future extension could replace `Branch: <string>` with `Branches: [name → branch]`.
 
   ```markdown
   - **Branch:** claude/sso-integration
@@ -47,19 +31,9 @@ Multi-repo manifests extend the standard single-repo schema with three optional 
 **Repo:** `backend`
 ```
 
-**Verify methods** include `deferred-auto`, valid in any manifest (single-repo or multi-repo) for criteria the user explicitly triggers — most commonly cross-repo gates that depend on prerequisites the user controls. See §e for behavior.
+`Repos:` and `Repo:` are documentation for human and agent readers — they don't gate /do.
 
-**Documentation, not enforcement.** `Repos:` and `repo:` are for readers (human and agent) — they do not gate `/do` or `/verify` (see §d). Optional consumer skills may use the tags for their own scope inference (e.g., a PR-tending tool routing feedback on backend's PR to backend-tagged deliverables), but core skills do not depend on this.
-
-## d. /do Navigation
-
-`/do` reads `Repos:` from the manifest and uses absolute paths in tool calls (Read/Edit/Write/Bash) when a deliverable lives outside cwd. The LLM handles navigation natively — there is no filter logic, no cwd-to-repo matching, no per-repo configuration in `/do`.
-
-The user can invoke `/do` once globally (the agent navigates between repos as deliverables require), or per-repo with `--scope` (each `/do` handles its repo's slice). Either works.
-
-A single `/do` invocation produces a single conversational session — no per-repo session split.
-
-Worked example — manifest declares:
+Worked example:
 
 ```markdown
 - **Repos:**
@@ -72,103 +46,31 @@ Worked example — manifest declares:
 - [AC-1.1] POST /auth/sso accepts SAML assertion
   ```yaml
   verify:
-    method: bash
-    command: "curl -X POST http://localhost:8080/auth/sso -d @/tmp/saml-test.xml"
+    prompt: |
+      Hit POST /auth/sso at the backend repo with a test SAML assertion
+      (curl -X POST http://localhost:8080/auth/sso -d @/tmp/saml-test.xml).
+      PASS if response is 200 with a session cookie set.
   ```
 ```
 
-`/do` invoked from any cwd reads `Repos:`, navigates to `/home/user/projects/api` for D1's edits via absolute paths, runs the verify command. No filter required.
+## Cross-repo gates and BLOCKED state
 
-## e. method: deferred-auto + /verify --deferred
+Cross-repo verification often depends on prerequisites the user controls ("all PRs deployed to staging"). The verifier subagent for such an AC returns **BLOCKED** with a note describing what's pending, and /do routes the BLOCKED via /escalate so the user can take the action. After the user signals readiness ("deployed", "go ahead"), re-invoke /do to re-evaluate the criterion.
 
-Cross-repo gates often cannot run during normal `/do→/verify` flow because they depend on prerequisites the user controls (e.g., "all PRs deployed to staging"). They are still **automatically verifiable** — just user-triggered.
-
-`method: deferred-auto` marks such criteria. Verify blocks MUST declare an explicit sibling `inner_method:` field naming the underlying verifier type (`subagent` | `bash` | `codebase` | `research`); under `/verify --deferred` the criterion is routed identically to a non-deferred criterion of that `inner_method`. Worked example:
-
-```yaml
-- [INV-G7] Frontend SSO login round-trips through deployed backend
-  verify:
-    method: deferred-auto
-    inner_method: subagent
-    agent: general-purpose
-    prompt: "Hit https://staging.example.com/login with a test SAML assertion. Confirm successful redirect to /dashboard with a valid session cookie."
-```
-
-Normal `/verify` invocations skip `deferred-auto` criteria during the pass itself. **However, `/verify` will not call `/done` while deferred-auto criteria remain unverified** — instead it routes to `/escalate` with type "Deferred-Auto Pending," signaling the user to run `/verify --deferred` when prerequisites are ready. Only after the deferred-auto criteria pass via `/verify --deferred` does a subsequent normal `/verify` pass reach `/done`. /verify's return block's `deferred: true|false` field tracks which prior runs covered the deferred-auto set.
-
-When the user signals readiness ("all PRs deployed"), they invoke:
-
-```
-/verify <manifest> --deferred
-```
-
-This runs **only** `deferred-auto` criteria. Flag interactions:
-
-- `--deferred` + `--scope` is supported. `--scope` narrows the deferred set to in-scope deliverables.
-- INV-G\* deferred-auto criteria are deliverable-scope-independent — `--scope` does not cover them. They are covered only by a `--deferred` pass with empty `--scope`. `/done` remains gated on `/escalate` "Deferred-Auto Pending" until that uncovered set runs green.
-- `--deferred` does not interact with `--final`. It never enters the final-gate machinery.
-- `--deferred` inherits `--mode`. Same parallelism and model routing as the parent invocation.
-
-### Cross-repo path delivery to verifiers
-
-When the manifest declares `Repos: [name: path, ...]`, every `/verify` invocation (selective, full, and `--deferred`) prepends a verbatim string to each verifier's prompt before the criterion's own prompt:
+When the manifest declares `Repos:`, every verifier subagent invocation gets the cross-repo path map injected as part of the verbatim prompt so verifiers have access to all repos' paths:
 
 ```
 Available repos: backend=/home/user/projects/api, frontend=/home/user/projects/web
 
-[criterion's own prompt follows]
+[criterion's verify.prompt: follows verbatim]
 ```
 
-This applies on every pass — not just `--deferred` — so cross-repo verifiers can run during normal `/do→/verify` flow. That's what allows `/done` to fire once per multi-repo manifest (§g) without forcing per-repo /done independence.
+Single-repo manifests get no prefix injection.
 
-Single-repo manifests (no `Repos:` field) get no prefix injection. Manifests with no `deferred-auto` criteria see `/verify --deferred` as a no-op with a clean message.
+## /done and /auto for multi-repo
 
-## f. Shared Manifest Amendment Across PRs
+/done fires **once per manifest**, including for multi-repo. No per-repo /done independence. Every AC + every Global Invariant across every repo's deliverables must verify PASS (with no BLOCKED pending) before /done is called. The cross-repo prompt-prefix injection above is what makes a single /done reachable: verifiers have all repo paths, so cross-repo behavior is checkable during normal /do flow. Multi-repo /done summary lists which repos' deliverables were verified.
 
-The canonical `/tmp` manifest is shared across all PRs in a multi-repo changeset. Any tool that writes amendments — whether the user editing the file directly, or any optional consumer skill — operates on this single shared file.
+/auto's chain (figure-out → define → do) covers the whole multi-repo implementation phase in one invocation, navigating between repos as deliverables require. Lifecycle tending is part of /do's execution when the manifest carries `github-pr-lifecycle` ACs (PR_LIFECYCLE.md auto-templates one per repo). `/auto --babysit <pr-url>` is single-PR by construction; for multi-repo lifecycle tending, declare `Repos:` in the manifest and let /define template the per-repo ACs.
 
-There is **no concurrency engineering**. Two writers amending the same manifest at the same instant — last-writer-wins. The later write may overwrite the earlier write's amendment block. Recovery: the writer who lost their amendment notices the missing change in the next iteration and re-triggers it (e.g., re-add the comment that prompted it, or re-invoke whatever workflow generated it).
-
-**Do not add file locking.** The collision rate is low (writes are brief), and the recovery cost is small compared to the complexity of locking, deadlock handling, and stale-lock cleanup.
-
-This pattern is the contract for any PR-tending consumer — including PR_LIFECYCLE.md's per-repo agent-AC templating, which writes its `github-pr-lifecycle` invocations against the same shared manifest, one AC per repo.
-
-## g. /done — One Per Manifest, Gated on Deferred-Auto
-
-`/done` fires **once per manifest**, including for multi-repo manifests. There is no per-repo `/done` independence. /verify's "every AC across every deliverable" rule is preserved unchanged; for multi-repo, that means every AC in every repo's deliverables must pass before `/done` is called.
-
-This is achievable because `/verify`'s cross-repo prompt-prefix injection (§e) fires on every pass when `Repos:` is declared — verifiers in normal `/do→/verify` flow have access to all repos' paths and can verify cross-repo behavior without `--deferred`.
-
-**`/done` is gated on no deferred-auto criteria pending.** When the manifest contains `method: deferred-auto` criteria that have not been verified green via a prior `/verify --deferred`, `/verify` routes to `/escalate` ("Deferred-Auto Pending") instead of `/done` — making the user-as-coordinator handoff explicit rather than silently completing. After the user runs `/verify --deferred` and the deferred-auto criteria pass, a subsequent normal `/verify` pass reaches `/done`.
-
-For multi-repo manifests, the `/done` summary lists which repos' deliverables were verified — providing a clear inventory of what landed across the changeset.
-
-## h. User as Coordinator
-
-There is no coordinator process, no primary repo, no orchestrator skill. The user coordinates by:
-
-1. Invoking `/do` or `/auto` (once globally to navigate all repos, or per-repo with `--scope` for parallel execution).
-2. Opening / managing each repo's PR with whatever PR-management workflow they prefer (manual, or via an optional consumer skill).
-3. Triggering `/verify --deferred` once cross-repo prerequisites are in place (e.g., "all PRs merged and deployed").
-
-The system supports this workflow but does not automate it. Coordination is a human concern that the manifest captures the *state* of, not a state machine the system drives.
-
-## i. /auto Behavior
-
-`/auto` chains `/define` → `/do`. The `/do` step **navigates all repos** declared in `Repos:` (per §d — no filter logic, LLM uses absolute paths from the map). A single `/auto` invocation can therefore complete the whole multi-repo implementation phase.
-
-Lifecycle tending is part of /do's execution when the manifest carries lifecycle ACs — PR_LIFECYCLE.md auto-templates one `github-pr-lifecycle` AC per repo (per §f shared-manifest pattern), and /do's verify-fix loop drives each PR to mergeable. There is no separate "drive" step; the lifecycle is in the manifest.
-
-`/auto --babysit <pr-url>` is single-PR by construction — it takes one PR URL. For multi-repo lifecycle tending, declare `Repos:` in the manifest and let /define template the per-repo ACs.
-
-## j. Branch-Name Convention
-
-By default, all repos in a multi-repo changeset use the **same branch name**. This matches the existing harness pattern (per-repo branch declarations in the system prompt that share a branch identifier).
-
-The manifest's Intent records the branch name as a single string:
-
-```markdown
-- **Branch:** claude/sso-integration
-```
-
-Divergent branch names per repo are not supported by this version. A future extension could replace `Branch: <string>` with `Branches: [name -> branch]` if real cases demand it.
+The user is the coordinator: invoke /do (or /auto), manage each repo's PR with whatever workflow they prefer, signal readiness in chat when cross-repo prerequisites land (BLOCKED criteria re-evaluate on the next /do invocation). The system supports this workflow but does not automate it.

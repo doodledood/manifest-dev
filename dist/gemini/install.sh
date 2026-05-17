@@ -75,20 +75,13 @@ find "$TARGET/agents" -maxdepth 1 -name "*-${NAMESPACE}*" -exec rm -rf {} + 2>/d
 rm -f "$TARGET/hooks/gemini_adapter.py" 2>/dev/null || true
 rm -f "$TARGET/hooks/hook_utils.py" 2>/dev/null || true
 rm -f "$TARGET/hooks/post_compact_hook.py" 2>/dev/null || true
-rm -f "$TARGET/hooks/posttool_log_hook.py" 2>/dev/null || true
-rm -f "$TARGET/hooks/pretool_verify_hook.py" 2>/dev/null || true
-rm -f "$TARGET/hooks/prompt_submit_hook.py" 2>/dev/null || true
 rm -f "$TARGET/hooks/stop_do_hook.py" 2>/dev/null || true
-rm -f "$TARGET/hooks/understand_prompt_hook.py" 2>/dev/null || true
-rm -f "$TARGET/hooks/figure_out_prompt_hook.py" 2>/dev/null || true
 
 # --- Copy hooks (no namespacing needed — extension-private) ---
 echo "Installing hooks..."
 cp "$SCRIPT_DIR/hooks/gemini_adapter.py" "$TARGET/hooks/"
 cp "$SCRIPT_DIR/hooks/hook_utils.py" "$TARGET/hooks/"
 cp "$SCRIPT_DIR/hooks/post_compact_hook.py" "$TARGET/hooks/"
-cp "$SCRIPT_DIR/hooks/pretool_verify_hook.py" "$TARGET/hooks/"
-cp "$SCRIPT_DIR/hooks/prompt_submit_hook.py" "$TARGET/hooks/"
 cp "$SCRIPT_DIR/hooks/stop_do_hook.py" "$TARGET/hooks/"
 
 # --- Namespace and install skills + agents ---
@@ -126,7 +119,7 @@ echo ""
 echo "Components installed:"
 echo "  Skills:  $(find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}" -type d 2>/dev/null | wc -l) skills"
 echo "  Agents:  $(find "$TARGET/agents" -maxdepth 1 -name "*-${NAMESPACE}.md" -type f 2>/dev/null | wc -l) agents"
-echo "  Hooks:   6 hook scripts (adapter + utils + 4 hooks)"
+echo "  Hooks:   4 hook scripts (adapter + utils + 2 hooks)"
 echo ""
 echo "Required: enableAgents must be true in settings.json"
 echo "  (already set by this installer)"

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-Post-compact hook that restores /do workflow context after compaction.
+Post-compact hook: restore /do workflow context after compaction.
 
 When the session is compacted during an active /do workflow, context may be
-lost. This hook detects an active /do and reminds Claude to re-read the
-manifest.
+lost. This hook injects a terse reminder to re-read the manifest.
 
 Registered as SessionStart hook with "compact" matcher.
 """
@@ -16,16 +15,16 @@ import sys
 
 from hook_utils import build_system_reminder, parse_do_flow
 
-DO_WORKFLOW_RECOVERY_REMINDER = """This session appears to have been compacted during an active /do workflow — context from before compaction may be missing.
+DO_WORKFLOW_RECOVERY_REMINDER = (
+    "Session compacted mid-/do — re-read the manifest at {do_args} to "
+    "restore Deliverables and Acceptance Criteria before continuing."
+)
 
-The /do was invoked with: {do_args}
-
-If deliverables or acceptance criteria aren't currently in context, reading the manifest restores the plan and prevents restarting completed work. If it's already loaded from post-compact context, skip the re-read and resume from where you left off. If this hook is misreading and the session was never mid-/do, proceed normally."""
-
-
-DO_WORKFLOW_RECOVERY_FALLBACK = """This session appears to have been compacted during an active /do workflow — context from before compaction may be missing.
-
-If orientation is missing, the manifest path was passed as the first positional argument to /do — re-reading the manifest surfaces deliverables and acceptance criteria. If orientation is already intact, skip the re-read. If this hook is misreading and the session was never mid-/do, proceed normally."""
+DO_WORKFLOW_RECOVERY_FALLBACK = (
+    "Session compacted mid-/do — re-read the manifest (path was passed "
+    "as the first positional argument to /do) to restore Deliverables "
+    "and Acceptance Criteria before continuing."
+)
 
 
 def main() -> None:
@@ -35,14 +34,12 @@ def main() -> None:
         hook_input = json.loads(stdin_data)
 
         transcript_path = hook_input.get("transcript_path", "")
-
-        # If no transcript, we can't detect workflows
         if not transcript_path:
             sys.exit(0)
 
         do_state = parse_do_flow(transcript_path)
 
-        # Active /do workflow - build recovery reminder
+        # Only fire when /do is active and not yet completed
         if not (
             do_state.has_do and not do_state.has_done and not do_state.has_escalate
         ):

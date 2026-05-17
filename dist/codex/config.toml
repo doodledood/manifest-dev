@@ -56,9 +56,9 @@ config_file = "agents/docs-reviewer.toml"
 description = "Inspect a GitHub PR lifecycle state — PR existence, CI checks, review threads, description sync, mergeability — returning PASS or a FAIL with natural-language hint. Read-only; never invokes the merge button"
 config_file = "agents/github-pr-lifecycle.toml"
 
-[agents.manifest-verifier]
-description = "Reviews /define manifests for gaps and outputs actionable continuation steps"
-config_file = "agents/manifest-verifier.toml"
+[agents.slack-poller]
+description = "Narrate new Slack messages in a channel or thread since a cursor"
+config_file = "agents/slack-poller.toml"
 
 [agents.type-safety-reviewer]
 description = "Audit code for type safety issues across typed languages"

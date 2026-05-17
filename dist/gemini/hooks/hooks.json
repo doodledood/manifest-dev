@@ -1,20 +1,5 @@
 {
   "hooks": {
-    "BeforeTool": [
-      {
-        "matcher": "activate_skill",
-        "sequential": true,
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${extensionPath}/hooks/pretool_verify_hook.py",
-            "name": "pretool-verify",
-            "timeout": 10000,
-            "description": "Reminds model to read manifest before running /verify"
-          }
-        ]
-      }
-    ],
     "AfterAgent": [
       {
         "hooks": [
@@ -24,19 +9,6 @@
             "name": "stop-do",
             "timeout": 10000,
             "description": "Enforces /do workflow completion before stopping"
-          }
-        ]
-      }
-    ],
-    "BeforeAgent": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${extensionPath}/hooks/prompt_submit_hook.py",
-            "name": "prompt-submit-amendment",
-            "timeout": 10000,
-            "description": "Checks for manifest amendments on user input during /do"
           }
         ]
       }

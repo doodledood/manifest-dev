@@ -19,7 +19,7 @@ SUFFIX = "-manifest-dev"
 # Skills that exist in the distribution
 SKILL_NAMES = [
     "auto", "define", "do", "done", "escalate",
-    "figure-out", "verify",
+    "figure-out", "figure-out-team",
 ]
 
 # Agent filenames (without .md)
@@ -29,13 +29,13 @@ AGENT_NAMES = [
     "code-maintainability-reviewer", "code-simplicity-reviewer",
     "code-testability-reviewer", "context-file-adherence-reviewer",
     "contracts-reviewer", "criteria-checker",
-    "docs-reviewer", "github-pr-lifecycle", "manifest-verifier",
+    "docs-reviewer", "github-pr-lifecycle", "slack-poller",
     "type-safety-reviewer",
 ]
 
 # Command filenames (without .md)
 COMMAND_NAMES = [
-    "auto", "define", "do", "verify", "figure-out",
+    "auto", "define", "do", "figure-out", "figure-out-team",
 ]
 
 

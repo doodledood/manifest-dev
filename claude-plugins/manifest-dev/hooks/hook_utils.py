@@ -4,10 +4,9 @@ Shared utilities for manifest-dev hooks.
 
 Contains transcript parsing for skill invocation detection.
 
-Namespace-scoped: only `manifest-dev:<skill>` invocations register.
-Bare `<skill>` and `manifest-dev-experimental:<skill>` invocations are
-ignored, so the main plugin's hooks do not fire on the experimental
-plugin's skill calls when both plugins are installed alongside.
+Namespace-scoped: only `manifest-dev:<skill>` invocations register. Bare
+`<skill>` invocations are ignored so unrelated plugins that happen to share
+a skill name (e.g., `/do`) don't accidentally trigger these hooks.
 """
 
 from __future__ import annotations
@@ -25,12 +24,9 @@ class DoFlowState:
     """State of the /do workflow from transcript parsing."""
 
     has_do: bool  # /do was invoked
-    has_verify: bool  # /verify was called after last /do
     has_done: bool  # /done was called after last /do
     has_escalate: bool  # /escalate was called after last /do
-    has_self_amendment: bool  # last /escalate was Self-Amendment (not blocking/pause)
     do_args: str | None  # raw arguments from /do invocation
-    has_collab_mode: bool  # /do uses non-local medium (--medium not local)
 
 
 def build_system_reminder(content: str) -> str:
@@ -91,27 +87,19 @@ def get_skill_call_args(line_data: dict[str, Any], skill_name: str) -> str | Non
 
 def was_skill_invoked(line_data: dict[str, Any], skill_name: str) -> bool:
     """
-    Check if this transcript line represents a skill invocation.
+    Check if this transcript line represents a skill invocation
+    for this plugin.
 
-    Detects ALL invocation patterns:
+    Detects invocation patterns scoped to `manifest-dev:<skill>`:
     1. Model Skill tool call (assistant message with Skill tool_use)
-    2. User isMeta skill expansion (isMeta=true with skills/{name} in path)
-    3. User command-name tag (/<skill> or /plugin:skill format)
-
-    Args:
-        line_data: Parsed transcript line
-        skill_name: Skill name to check (e.g., "do", "verify")
-
-    Returns:
-        True if this line invokes the specified skill
+    2. User isMeta skill expansion (isMeta=true with the plugin's skill path)
+    3. User command-name tag (/manifest-dev:<skill>)
     """
     msg_type = line_data.get("type")
 
-    # Pattern 1: Model Skill tool call
     if msg_type == "assistant":
         return _is_skill_tool_call(line_data, skill_name)
 
-    # Patterns 2 & 3: User invocations
     if msg_type == "user":
         return _is_user_skill_invocation(line_data, skill_name)
 
@@ -139,7 +127,6 @@ def _is_skill_tool_call(line_data: dict[str, Any], skill_name: str) -> bool:
         tool_input = block.get("input", {})
         skill = tool_input.get("skill", "")
 
-        # Match only the namespaced form `manifest-dev:<skill>`
         if skill == target:
             return True
 
@@ -147,14 +134,15 @@ def _is_skill_tool_call(line_data: dict[str, Any], skill_name: str) -> bool:
 
 
 def _is_user_skill_invocation(line_data: dict[str, Any], skill_name: str) -> bool:
-    """Check if user message represents a skill invocation."""
+    """Check if user message represents a skill invocation for this plugin."""
     text = get_message_text(line_data)
 
     # Pattern 2: isMeta skill expansion — require the plugin namespace
-    # in the "Base directory" path (manifest-dev/skills/<name>/), so we
-    # don't false-positive on manifest-dev-experimental's skills.
+    # in the "Base directory" path (manifest-dev/skills/<name>/).
     if line_data.get("isMeta"):
         if "Base directory for this skill:" in text:
+            # Only search the "Base directory" line — body may reference
+            # other skills' files which would false-positive otherwise.
             for line in text.split("\n"):
                 if "Base directory for this skill:" in line:
                     pattern = rf"{re.escape(PLUGIN_NAMESPACE)}/skills/{re.escape(skill_name)}(?:/|\s|$)"
@@ -162,27 +150,25 @@ def _is_user_skill_invocation(line_data: dict[str, Any], skill_name: str) -> boo
                         return True
                     break
 
-    # Pattern 3: command-name tag — only the namespaced form for this plugin.
+    # Pattern 3: command-name tag — only the namespaced form.
     return f"<command-name>/{PLUGIN_NAMESPACE}:{skill_name}</command-name>" in text
 
 
 def extract_user_command_args(line_data: dict[str, Any], skill_name: str) -> str | None:
     """
-    Extract arguments from a user skill command.
+    Extract arguments from a user skill command for this plugin.
 
     Returns the raw arguments string, or None if not the specified skill command.
-    Handles both command-args tags and isMeta expansion formats.
+    Matches ONLY the namespaced form `/manifest-dev:<skill>`.
     """
     if line_data.get("type") != "user":
         return None
 
     text = get_message_text(line_data)
 
-    # Check if this is a command with matching skill name (only our plugin's namespace)
     has_command = (
         f"<command-name>/{PLUGIN_NAMESPACE}:{skill_name}</command-name>" in text
     )
-
     if not has_command:
         return None
 
@@ -219,7 +205,6 @@ def has_recent_api_error(transcript_path: str) -> bool:
                 except json.JSONDecodeError:
                     continue
 
-                # Track if the last assistant message was an API error
                 if data.get("type") == "assistant":
                     last_assistant_is_error = data.get("isApiErrorMessage", False)
 
@@ -233,20 +218,15 @@ def count_consecutive_idle_outputs(transcript_path: str) -> int:
     """
     Count consecutive idle assistant outputs at the end of the transcript.
 
-    This detects loop patterns where the agent is stuck — either outputting
-    minimal content or writing long explanations without doing productive work.
-    Productive work means using tools (Read, Edit, Bash, Agent, etc.).
-
     An "idle" output is an assistant message with no meaningful tool use
-    (only text, or text with Skill-only tool calls). Text length is irrelevant —
-    a 200-char explanation of why the model is waiting is just as idle as ".".
+    (only text, or text with Skill-only tool calls). Productive work means
+    using tools (Read, Edit, Bash, Agent, etc.).
 
     Skill invocations are excluded from "meaningful" tool use because /escalate
     attempts are Skill calls and shouldn't mask the stuck pattern.
 
     Returns the count of consecutive idle outputs from the end.
     """
-    # Collect all assistant output classifications
     output_types: list[str] = []  # 'idle' or 'productive'
 
     try:
@@ -266,7 +246,6 @@ def count_consecutive_idle_outputs(transcript_path: str) -> int:
                 message = data.get("message", {})
                 content = message.get("content", [])
 
-                # Check for meaningful tool uses
                 has_meaningful_tool = False
 
                 if isinstance(content, list):
@@ -277,7 +256,6 @@ def count_consecutive_idle_outputs(transcript_path: str) -> int:
                                 if tool_name != "Skill":
                                     has_meaningful_tool = True
 
-                # Classify: only tool use makes an output productive
                 if has_meaningful_tool:
                     output_types.append("productive")
                 else:
@@ -286,7 +264,6 @@ def count_consecutive_idle_outputs(transcript_path: str) -> int:
     except (FileNotFoundError, OSError):
         return 0
 
-    # Count consecutive idle outputs from the end
     consecutive_idle = 0
     for output_type in reversed(output_types):
         if output_type == "idle":
@@ -308,15 +285,9 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
     before the assistant responds, the /do is considered cancelled.
     """
     has_do = False
-    has_verify = False
     has_done = False
     has_escalate = False
-    has_self_amendment = False
     do_args: str | None = None
-    has_collab_mode = False
-    # Tracks whether assistant has responded since the last /do invocation.
-    # Used to detect interrupted /do: if the user interrupts before the
-    # assistant responds, /do never started processing.
     do_turn_has_response = False
 
     try:
@@ -330,33 +301,23 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
                 except json.JSONDecodeError:
                     continue
 
-                # Check for /do (any invocation pattern)
+                # Check for /do (namespace-scoped to this plugin only)
                 if was_skill_invoked(data, "do"):
-                    # Extract args first before deciding if this is a new /do
                     args = extract_user_command_args(data, "do")
                     if not args:
                         args = get_skill_call_args(data, "do")
 
                     # isMeta skill expansions follow command-name lines for the same /do
-                    # Only reset state if this line has args OR we don't have /do yet
-                    # This prevents the isMeta line from clearing args set by command-name line
                     is_new_do = not has_do or args is not None
 
                     if is_new_do:
                         has_do = True
-                        has_verify = False
                         has_done = False
                         has_escalate = False
-                        has_self_amendment = False
                         do_turn_has_response = False
                         if args:
                             do_args = args
-                            has_collab_mode = bool(
-                                re.search(r"--medium\s+(?!local(?:\s|$))\S+", args)
-                            )
 
-                    # For assistant Skill tool calls (Pattern 1), the /do
-                    # invocation IS an assistant message — mark as responded.
                     if data.get("type") == "assistant":
                         do_turn_has_response = True
 
@@ -365,49 +326,31 @@ def parse_do_flow(transcript_path: str) -> DoFlowState:
                     if data.get("type") == "assistant":
                         do_turn_has_response = True
 
-                # Detect user interrupt: if /do was invoked but the assistant
-                # never responded, the /do was cancelled by the interrupt.
+                # Detect user interrupt: /do invoked but assistant never responded
                 if has_do and not do_turn_has_response:
                     if data.get("type") == "user":
                         text = get_message_text(data)
                         if "[Request interrupted by user]" in text:
                             has_do = False
                             do_args = None
-                            has_collab_mode = False
-
-                # Check for /verify, /done, /escalate after /do (any invocation pattern)
-                if has_do and was_skill_invoked(data, "verify"):
-                    has_verify = True
 
                 if has_do and was_skill_invoked(data, "done"):
                     has_done = True
 
                 if has_do and was_skill_invoked(data, "escalate"):
                     has_escalate = True
-                    # Detect Self-Amendment by checking escalate args
-                    esc_args = get_skill_call_args(data, "escalate")
-                    if not esc_args:
-                        esc_args = extract_user_command_args(data, "escalate")
-                    if esc_args and "self-amendment" in esc_args.lower():
-                        has_self_amendment = True
 
     except OSError:
         return DoFlowState(
             has_do=False,
-            has_verify=False,
             has_done=False,
             has_escalate=False,
-            has_self_amendment=False,
             do_args=None,
-            has_collab_mode=False,
         )
 
     return DoFlowState(
         has_do=has_do,
-        has_verify=has_verify,
         has_done=has_done,
         has_escalate=has_escalate,
-        has_self_amendment=has_self_amendment,
         do_args=do_args,
-        has_collab_mode=has_collab_mode,
     )
