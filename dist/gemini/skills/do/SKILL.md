@@ -145,7 +145,7 @@ The `escalate` row is load-bearing: when a verifier emits `escalate`, the caller
 
 ### Action-aware fix-cap
 
-Only `fix-code` dispositions (code-change fix attempts) increment the per-phase fix-verify counter. The other seven dispositions — `poll`, `retrigger-if-transient`, `reply-and-resolve`, `reply-only`, `wait-for-author`, `scope-shift`, `escalate` — are different retry / escalation shapes (wait, retry, reply, amend, escalate); they do not burn the fix-cap budget. The principle: what counts is what changes code in response to the failure (see each execution-mode file's Fix-Verify Loops section).
+Only `fix-code` dispositions increment the per-phase fix-verify counter. The other seven dispositions — `poll`, `retrigger-if-transient`, `reply-and-resolve`, `reply-only`, `wait-for-author`, `scope-shift`, `escalate` — are different retry / escalation shapes (wait, retry, reply, amend, escalate); they do not burn the fix-cap budget. The principle: `fix-code` covers every push that changes the head commit in response to the failure (code edits and mechanical branch-sync alike, since both require re-running CI to validate); the non-pushing retry shapes don't move the head commit, so they don't burn the budget (see each execution-mode file's Fix-Verify Loops section).
 
 For free-form (non-disposition) hint bodies from non-lifecycle verifiers, /do classifies the hint shape into the equivalent disposition and applies the same rules.
 

@@ -75,6 +75,8 @@ Findings:
 - <next finding, same shape>
 ```
 
+The `Suggested disposition` value MUST be exactly one of the eight tokens enumerated in the next subsection — no synonyms, abbreviations, or near-misses. If the situation doesn't fit any disposition cleanly, pick the closest one and explain the mismatch in the rationale rather than inventing a new token.
+
 Findings are advisory. The caller has full context (history across re-invocations, runtime decisions about retries, code-side knowledge) and may override any disposition.
 
 ### Hint dispositions
@@ -83,14 +85,14 @@ The disposition vocabulary is closed — these eight names are the contract. The
 
 | Disposition | When to suggest | What the caller does |
 |---|---|---|
-| `poll` | CI still running; approval pending; draft awaiting un-draft; mergeability "still computing"; thread waiting on human reply | Sleep + re-invoke |
+| `poll` | CI still running; approval pending; draft awaiting un-draft; mergeability "still computing" | Sleep + re-invoke |
 | `retrigger-if-transient` | CI failure looks flaky (steering-marked known-flaky, or matches transient signal) and retrigger budget remains | Retrigger the named check; re-invoke |
 | `fix-code` | CI failure introduced by this PR's commits; thread asks for an in-scope concrete change; mergeability needs branch-sync (merge base in) | Change code or push the named update; re-invoke |
 | `reply-and-resolve` | Bot-authored thread is a false positive | Reply explaining; resolve the thread (bot-authored, caller-resolvable) |
 | `reply-only` | Human-authored thread is a false positive | Reply explaining; leave the thread open (only the original author resolves human threads) |
 | `wait-for-author` | Unresolved thread waiting on the original human author to respond — uncertain intent needs clarification, or staleness threshold reached | Sleep + re-invoke, or post a clarification reply if the caller chooses |
 | `scope-shift` | Reviewer asks for something beyond what this PR set out to do | Caller decides: expand what the PR sets out to do (legitimate caller-side widening), or hold the line and reply |
-| `escalate` | Genuinely terminal-no-progress: PR closed externally; retrigger budget exhausted with real failures remaining; fork-origin push impossible (caller lacks write access to the head branch); gh / GitHub-API unreachable; CI failure pattern that looks deeper than this PR | Caller surfaces to a human. **Suppressing the block by rewriting the caller's steering input to this agent is forbidden** — the disposition is terminal until human action. |
+| `escalate` | Genuinely terminal-no-progress; examples include: PR closed externally; retrigger budget exhausted with real failures remaining; fork-origin push impossible (caller lacks write access to the head branch); gh / GitHub-API unreachable; CI failure pattern that looks deeper than this PR; user-defined cap reached (e.g., approval-wait exceeded a steering-imposed deadline) | Caller surfaces to a human. **Suppressing the block by rewriting the caller's steering input to this agent is forbidden** — the disposition is terminal until human action. |
 
 The agent's job stops at suggesting. Mutations (replying, resolving, retriggering, pushing, escalating) happen in the caller's dispatch.
 
