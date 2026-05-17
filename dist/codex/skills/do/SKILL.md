@@ -134,7 +134,7 @@ Verifier FAIL bodies may carry an actionable hint describing what's needed next.
 |---|---|---|
 | `poll` | Sleep (per the verifier's prose or a reasonable default), then re-invoke. | No |
 | `retrigger-if-transient` | Dispatch a retrigger of the named CI check, then re-invoke. | No |
-| `fix-code` | Change code (or push the named branch update — e.g., merge base in for sync) and re-invoke. | **Yes** — increments the per-phase fix-verify counter |
+| `fix-code` | Change code (or push the named branch update — e.g., merge base in for sync) and re-invoke. | **Yes for code-change dispatches** (a code edit in response to the failure increments the per-phase fix-verify counter). **No for mechanical-sync dispatches** (a branch-sync push such as merging base in or updating the PR description is not a code-change fix attempt — see Action-aware fix-cap below). |
 | `reply-and-resolve` | Post the reply to the bot-authored thread and resolve it (bot-authored, caller-resolvable), then re-invoke. | No |
 | `reply-only` | Post the reply to the human-authored thread; do NOT resolve (only the original author resolves human threads); then re-invoke. | No |
 | `wait-for-author` | Sleep + re-invoke; or post a clarification reply at your discretion. | No |
@@ -145,7 +145,7 @@ The `escalate` row is load-bearing: when a verifier emits `escalate`, the caller
 
 ### Action-aware fix-cap
 
-Only `fix-code` dispositions increment the per-phase fix-verify counter. The other seven dispositions — `poll`, `retrigger-if-transient`, `reply-and-resolve`, `reply-only`, `wait-for-author`, `scope-shift`, `escalate` — are different retry / escalation shapes (wait, retry, reply, amend, escalate); they do not burn the fix-cap budget. The principle: `fix-code` covers every push that changes the head commit in response to the failure (code edits and mechanical branch-sync alike, since both require re-running CI to validate); the non-pushing retry shapes don't move the head commit, so they don't burn the budget (see each execution-mode file's Fix-Verify Loops section).
+Only **code-change** `fix-code` dispatches increment the per-phase fix-verify counter. Other retry shapes don't burn the fix-cap budget: the seven non-`fix-code` dispositions (`poll`, `retrigger-if-transient`, `reply-and-resolve`, `reply-only`, `wait-for-author`, `scope-shift`, `escalate`) plus the mechanical-sync sub-case of `fix-code` itself (branch-sync push like merging base in, or pushing a PR-description update). The principle: what counts is what changes code in response to the failure — mechanical pushes that don't iterate on a bug aren't fix attempts (see each execution-mode file's Fix-Verify Loops section, which enumerates the non-fix-attempt retry shapes).
 
 For free-form (non-disposition) hint bodies from non-lifecycle verifiers, /do classifies the hint shape into the equivalent disposition and applies the same rules.
 

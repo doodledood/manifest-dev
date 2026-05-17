@@ -53,7 +53,7 @@ Concrete overlay-text examples (drop into the AC's `verify.prompt:` Steering lin
 | `Reviewer @alice required` | Adds a named-approver user gate |
 | `CI job "flaky-integration" is known-flaky; retrigger up to 5` | Raises retrigger cap for that check |
 | `Wait 5m between CI checks` | Paces `poll` dispositions between CI re-checks at 5m instead of the agent's default cadence |
-| `Cap approval-wait at 2d, then escalate` | Once cumulative approval-wait exceeds 2d, agent emits an `escalate` disposition instead of another `poll` |
+| `Cap approval-wait at 2d, then escalate` | Once cumulative approval-wait exceeds 2d, agent emits an `escalate` disposition instead of another `poll`. The escalation routes to human (per `escalate`'s contract — autonomous amendment to extend the cap is forbidden); to extend, the user adjusts the steering and re-invokes /do, same as for any other terminal disposition. |
 | `Skip description sync — this PR uses a custom template` | Drops the description-in-sync gate |
 
 Probes for /define when surfacing steering nuances during the interview:
@@ -104,7 +104,7 @@ Pre-mortem fuel for /define's interview:
 ## Gotchas
 
 - **Session-held trade-off.** /do holding open for approval-wait is bounded by terminal session lifetime — closing the terminal stops progress. For genuinely multi-day cycles, phase-2 deferred-auto is the safer pattern; document this in /define when the approval cycle's character emerges.
-- **Externally-closed PR mid-session.** If someone else merges or closes the PR while /do is running, the next agent invocation surfaces FAIL noting the terminal state. /do treats this as a halt — it does not attempt to reopen.
+- **Externally-closed PR mid-session.** If someone else merges or closes the PR while /do is running, the next agent invocation surfaces FAIL with an `escalate` disposition naming the terminal state. /do routes to a human via `/escalate` — autonomous amendment to suppress the block is forbidden, and /do does not attempt to reopen the PR.
 - **Branch protection drift.** Required checks and required reviews can change while the manifest runs. The agent reads GitHub's current configuration each invocation, so drift is observed naturally — but a manifest assertion ("named approver @alice required") may diverge from configured branch protection. Surface via `scope-shift` so the caller decides whether to amend the steering or hold the line.
 - **gh CLI / GitHub MCP availability.** The agent assumes one is reachable. When neither is available, the agent's inspection fails — that's an environment problem (out of scope for the manifest) and the user installs / authenticates.
 - **Probing fuel, not execution instructions.** This file is for /define's interview. The agent file (`agents/github-pr-lifecycle.md`) is what /do invokes at runtime. Keep that separation when adding content here — task files describe angles to probe, not steps the agent follows.
