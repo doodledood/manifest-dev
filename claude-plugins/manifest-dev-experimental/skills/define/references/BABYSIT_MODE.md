@@ -13,7 +13,7 @@ Halt on failure with an actionable error:
 1. **GitHub backend reachable.** GitHub MCP tools loaded OR `gh` CLI authenticated. Reject naming what was tried.
 2. **PR accessible.** Query the PR. Not found / not visible / auth errors → halt naming the URL and failure mode.
 3. **PR not already terminal.** Closed/merged at synthesis → halt: `Cannot babysit: PR #<N> is already <state>. Babysit is for active PRs; closed/merged PRs need no further tending.`
-4. **Fork convention.** When `headRepository` differs from `baseRepository` (cross-repo PR from a fork), babysit targets the **upstream** repo where the PR lives — the `baseRepository`'s owner/repo, not the fork. The agent invocation uses that canonical URL. Log fork detection. *Consequence:* write-back hints targeting the PR's head branch live on the fork; /do may not have push access. Agent surfaces this as a halt-shaped FAIL when a write is needed, deferring to the contributor.
+4. **Fork convention.** When `headRepository` differs from `baseRepository` (cross-repo PR from a fork), babysit targets the **upstream** repo where the PR lives — the `baseRepository`'s owner/repo, not the fork. The agent invocation uses that canonical URL. Log fork detection. *Consequence:* a `fix-code` disposition the agent suggests targets the PR's head branch, which lives on the fork — /do may not have push access. Agent suggests `escalate` when a write is needed against a fork-origin head branch, deferring to the contributor.
 5. **Repo identity confirmation.** When `cwd` is a git checkout AND `origin` differs from the PR's base repo → note it (no halt): *"Babysit target (`<pr-owner/repo>`) differs from cwd `origin` (`<cwd-owner/repo>`). Continuing — babysit doesn't require a local checkout."*
 
 ## Intent seeding
@@ -40,6 +40,6 @@ Write manifest to a writable scratch path appropriate to the harness (e.g., `$TM
 ## Gotchas
 
 - **One-shot synthesis.** Does not poll or re-synthesize. Manifest written → /do takes over.
-- **Externally-closed PR mid-/do.** Detected at runtime by the agent; FAIL with halt-shaped hint. /do treats as terminal; does not reopen.
+- **Externally-closed PR mid-/do.** Detected at runtime by the agent; FAIL with an `escalate` disposition. /do treats as terminal; does not reopen; autonomous amendment to suppress is forbidden.
 - **PR description rewrites scoped to /do.** Babysit reads description for intent seeding but does not modify. /do's later sync hint handles description updates if the gate fires.
 - **No retroactive seeding.** Intent seeded once at synthesis. If PR description changes substantively, user invokes amendment to re-sync intent — not by re-running babysit.
