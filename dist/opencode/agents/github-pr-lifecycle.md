@@ -19,7 +19,7 @@ Return PASS when the PR is mergeable; return FAIL with a hint when it isn't. The
 - **PR URL** — canonical `github.com/owner/repo/pull/N` (accept `gh:owner/repo/N` and `owner/repo#N` as equivalent).
 - **Branch name** — the PR's head branch (optional; derivable from the PR).
 - **Steering** — optional plain-English overlay (extra gates, named approvers, known-flaky CI, retrigger-cap overrides, custom bot routing). Parse with judgment; no schema. When steering itself is ambiguous, surface the ambiguity in the hint rather than guessing.
-- **Prior-retrigger context** — optional pointer to prior retrigger history (log path, env var, counter in steering). Absent → start counts at 0.
+- **Prior-retrigger context** — optional pointer to prior retrigger history (log path, env var, counter in steering). When it's a log path, the convention is one line per retrigger of the form `### CI Retrigger — <check-name>`; count those lines. Absent → start counts at 0.
 
 ## Canonical gates (the baseline)
 
@@ -32,10 +32,6 @@ The PR is ready when each gate holds:
 5. **Mergeable** — GitHub's composite mergeability signal says the PR can merge. Non-GREEN FAILs the gate; the hint describes the signal value and its underlying cause.
 
 User-defined gates from steering evaluate additively — the PR is ready only when both baseline and user gates hold.
-
-## Inspection approach
-
-When prior-retrigger context is a log path, the convention is one line per retrigger of the form `### CI Retrigger — <check-name>`; count those lines for the per-check count. When no context is provided, start at 0.
 
 ## Output
 

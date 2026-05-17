@@ -76,7 +76,7 @@ The mandatory full final gate (auto-triggered by /verify after true-selective gr
 
 **`/verify`-routed escalation passthrough.** When `/verify` itself routes to `/escalate` (e.g., "Deferred-Auto Pending", "Manual Criteria Review", or the combined "Manual Review + Deferred-Auto Pending") instead of `/done`, treat as a clean terminal handoff: surface the escalation output verbatim to the caller, do NOT enter the fix-loop, do NOT increment loop counters. The implementation is green; further action belongs to the user (e.g., running `/verify --deferred` for deferred-auto pending). This is distinct from `/verify` returning failures (which enters the standard fix-loop).
 
-**Mode-aware loop tracking.** Track fix-verify iteration count and escalation count in-context across the conversation. When the active execution mode's limits are reached, follow its escalation rules.
+**Mode-aware loop tracking.** Track fix-verify iteration count and escalation count in-context across the conversation. Only code-change fix attempts increment the per-phase counter; other retry shapes (wait, retrigger, reply, sync, amend, escalate) don't burn the budget. When the active execution mode's limits are reached, follow its escalation rules. See each execution-mode file's Fix-Verify Loops section.
 
 **Phase-aware verification.** /verify runs criteria in phases (ascending by `phase:` field, default 1). It may report "Phase N failed, Phase N+1 not run." After fixing failures, /verify restarts from Phase 1 to catch regressions. Loop limits apply per-phase; regressions increment the broken phase's counter, not the phase that caused them.
 
@@ -88,7 +88,7 @@ The mandatory full final gate (auto-triggered by /verify after true-selective gr
 
 Use `timeout:` for criteria that legitimately wait — CI polling, approval-wait, deploy cycles. It is the wall-clock cap that prevents lifecycle-AC runaway when the dispatched action is repeatedly waiting. Cross-reference: action-aware fix-cap (see each execution-mode file) bounds code-change fix attempts; `verify.timeout:` bounds total wall-clock per criterion.
 
-**Stop requires /escalate.** During /do, you cannot stop without calling /verify (which routes to /done or /escalate) or calling /escalate directly. /do does not voluntarily emit `User-Requested Pause` — that escalation type fires only in response to a user message during the run that explicitly requests a pause (the message must be quoted in the escalation body; see `escalate/SKILL.md` "User-Requested Pause"). Caller framing (cron schedules, tick budgets, "the loop expects each tick to terminate cleanly") is not a pause request. Silent halts and bare statements like "Done." or "Waiting." are not valid exits.
+**Stop requires /escalate.** During /do, you cannot stop without calling /verify (which routes to /done or /escalate) or calling /escalate directly. /do does not voluntarily emit `User-Requested Pause` — that escalation type fires only in response to a user message during the run that explicitly requests a pause (the message must be quoted in the escalation body; see `escalate/SKILL.md` "User-Requested Pause"). Silent halts and bare statements like "Done." or "Waiting." are not valid exits.
 
 ## Progress Tracking
 
@@ -130,6 +130,6 @@ Verifier FAIL bodies carry a natural-language hint describing the situation, the
 
 **Escalate-forbid-amend (load-bearing safety property).** When a verifier's hint signals the situation is terminal or requires human decision — phrases like *"consider escalating to a human"* or *"unrecoverable from automated inspection"* — /do routes the finding to `/escalate`. **/do MUST NOT autonomously rewrite the verifier's `verify.prompt:` steering input to suppress the block.** This is distinct from **scope-shift** findings (a reviewer asks beyond what the work set out to do), which route through Self-Amendment (see Mid-Execution Amendment above). /do reads the prose and distinguishes the two; the natural-language hint is the contract surface.
 
-**Action-aware fix-cap.** Only code-change fix attempts increment the per-phase fix-verify counter; other retry shapes (wait, retrigger, reply, sync, amend, escalate) don't burn the budget. See each execution-mode file's Fix-Verify Loops section. Per-AC `verify.timeout:` is the orthogonal wall-clock cap.
+**Action-aware fix-cap.** See Mode-aware loop tracking above (only code-change fix attempts burn the budget). Per-AC `verify.timeout:` is the orthogonal wall-clock cap.
 
 **Hard prohibition.** Invoking `gh pr merge` is forbidden under any path. Terminal is "PR mergeable", not "PR merged" — pressing the merge button is left to a human or GitHub auto-merge. Hints that suggest the merge button are ignored as malformed.
