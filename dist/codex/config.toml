@@ -53,7 +53,7 @@ description = "Audit documentation and code comments for accuracy against recent
 config_file = "agents/docs-reviewer.toml"
 
 [agents.github-pr-lifecycle]
-description = "Inspect a GitHub PR lifecycle state — PR existence, CI checks, review threads, description sync, mergeability — returning PASS or a FAIL with rich actionable hint. Read-only; never invokes the merge button"
+description = "Inspect a GitHub PR lifecycle state — PR existence, CI checks, review threads, description sync, mergeability — returning PASS or a FAIL with natural-language hint. Read-only; never invokes the merge button"
 config_file = "agents/github-pr-lifecycle.toml"
 
 [agents.manifest-verifier]

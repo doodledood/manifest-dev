@@ -16,7 +16,7 @@ Front-load the thinking so AI agents get it right the first time.
 |--------|--------------|
 | [`manifest-dev`](./manifest-dev) | Verification-first manifest workflows. The manifest is the canonical source of truth for the PR/branch — feedback during or after work defaults to amending it. Verification is selective during fix-loop and full before `/done` (mandatory final gate). Phased by iteration speed (fast checks first, e2e/deploy-dependent later). PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md task guidance; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. Multi-CLI distribution (Gemini CLI, OpenCode, Codex CLI). Every criterion has explicit verification; execution can't stop without verification passing or escalation. |
 | [`manifest-dev-tools`](./manifest-dev-tools) | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. `/handoff` produces a cross-boundary context payload (tool switch, fresh session, multi-agent transfer). `/prompt-engineering` and `/walk-pr` are stand-alone collaboration tools. |
-| [`manifest-dev-experimental`](./manifest-dev-experimental) | **Placeholder.** Currently ships no skills — reserved for future experiments. |
+| [`manifest-dev-experimental`](./manifest-dev-experimental) | Slim parallel rework of `manifest-dev`. Trust-the-model discipline; ships `/figure-out`, `/figure-out-team`, `/define`, `/do`, `/done`, `/escalate`, `/auto`. No separate `/verify` skill (verification absorbed inline by `/do`); four-field manifest schema; agents mirror core. Lives alongside `manifest-dev` until promotion. |
 
 ## Plugin Details
 
@@ -50,7 +50,13 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 
 ### manifest-dev-experimental
 
-**Placeholder** plugin. Currently ships no skills — reserved for future experiments that need a separate, opt-in surface from the core plugin.
+Slim parallel rework of `manifest-dev` under a trust-the-model discipline — drops scaffolding the model handles fine when given clean posture.
+
+**Skills:** `/figure-out`, `/figure-out-team`, `/define`, `/do`, `/done`, `/escalate`, `/auto`.
+
+**Key differences from core `manifest-dev`:** verification is absorbed inline by `/do` (no separate `/verify` skill); the manifest schema collapses to four fields (`prompt`, `agent`, `model`, `phase`); amendment is overwrite-in-place (git carries history); agents mirror core for compatibility (`github-pr-lifecycle` byte-identical with main). See the plugin's own README for the full schema and discipline.
+
+Lives alongside `manifest-dev` until promotion.
 
 ## Contributing
 

@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev-experimental",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Maximally-slim experimental rework of manifest-dev. The /verify skill is gone — /do absorbs verification inline by spawning subagents per Acceptance Criterion and Global Invariant. The manifest schema collapses to four fields (prompt, agent, model, phase) with always-subagent verification. The amendment contract and completion template fold inline into /define; the manifest is overwritten in place (current state, not edit-history) — git carries the history. Each surviving skill keeps only the words that steer non-default model behavior. Lives alongside manifest-dev until promotion.",
   "keywords": [
     "experimental",
