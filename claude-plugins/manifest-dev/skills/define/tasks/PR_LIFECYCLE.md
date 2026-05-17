@@ -35,7 +35,7 @@ The `prompt` field is the steering surface — empty for baseline, populated whe
 *Domain best practices for PR-lifecycle work.*
 
 - **Mergeable as terminal, not merged** — /do drives to mergeable and stops. The merge action itself is out of scope.
-- **No default wall-clock cap on the lifecycle AC** — the templated AC ships without a `timeout:` field. The agent owns wait decisions via hint emission (`[sleep N]`, etc.); /do dispatches each wait between invocations. To impose a wall-clock cap or a specific cadence, the user puts that nuance in the AC's `verify.prompt:` steering field (see §Steering Examples). Consequence: closing /do's terminal stops progress — the session-held trade-off has no manifest-level safety net by default.
+- **No default wall-clock cap on the lifecycle AC** — the templated AC ships without a `timeout:` field. The agent owns wait decisions via disposition emission (`poll`, etc.); /do dispatches each wait between invocations. To impose a wall-clock cap or a specific cadence, the user puts that nuance in the AC's `verify.prompt:` steering field (see §Steering Examples). Consequence: closing /do's terminal stops progress — the session-held trade-off has no manifest-level safety net by default.
 - **Retrigger cap** — agent default is 10 retriggers per failing CI check per AC lifetime. Override per-check via steering when a known-flaky job needs more headroom.
 - **No force-push, no merge to base** — agent's hard prohibitions; PR_LIFECYCLE inherits them.
 - **No secret exposure** — env vars, tokens, credentials never appear in PR replies, descriptions, comments, or commit messages.

@@ -35,7 +35,7 @@ The `prompt` field is the steering surface — empty for baseline, populated whe
 *Domain best practices for PR-lifecycle work.*
 
 - **Mergeable as terminal, not merged** — /do drives to mergeable and stops. The merge action itself is out of scope.
-- **No default wall-clock cap on the lifecycle AC** — the templated AC ships without a `timeout:` field. The agent owns wait decisions via hint emission (`[sleep N]`, etc.); /do dispatches each wait between invocations. To impose a wall-clock cap or a specific cadence, the user puts that nuance in the AC's `verify.prompt:` steering field (see §Steering Examples). Consequence: closing /do's terminal stops progress — the session-held trade-off has no manifest-level safety net by default.
+- **No default wall-clock cap on the lifecycle AC** — the templated AC ships without a `timeout:` field. The agent owns wait decisions via disposition emission (`poll`, etc.); /do dispatches each wait between invocations. To impose a wall-clock cap or a specific cadence, the user puts that nuance in the AC's `verify.prompt:` steering field (see §Steering Examples). Consequence: closing /do's terminal stops progress — the session-held trade-off has no manifest-level safety net by default.
 - **Retrigger cap** — agent default is 10 retriggers per failing CI check per AC lifetime. Override per-check via steering when a known-flaky job needs more headroom.
 - **No force-push, no merge to base** — agent's hard prohibitions; PR_LIFECYCLE inherits them.
 - **No secret exposure** — env vars, tokens, credentials never appear in PR replies, descriptions, comments, or commit messages.
@@ -63,7 +63,7 @@ Probes for /define when surfacing steering nuances during the interview:
 | "Any custom labels the PR must carry before merge?" | Adds a label-presence user gate (e.g., `qa-approved`, `security-reviewed`) |
 | "Any named approvers required beyond GitHub's required-reviewers?" | Adds a named-approver user gate |
 | "Any CI jobs known to be flaky?" | Per-check retrigger-cap override |
-| "Any bots whose comments should auto-route a specific way?" | Custom bot routing (e.g., dependabot → `push-update with merge main`) |
+| "Any bots whose comments should auto-route a specific way?" | Custom bot routing (e.g., dependabot threads default to `fix-code` regardless of intent classification — caller handles the named branch update) |
 | "Should PR description sync be enforced?" | Drops/keeps the description-in-sync gate |
 | "Any cadence or wall-clock cap on lifecycle waits?" | Cadence and wall-clock cap steering (see overlay-text examples above) |
 
@@ -105,6 +105,6 @@ Pre-mortem fuel for /define's interview:
 
 - **Session-held trade-off.** /do holding open for approval-wait is bounded by terminal session lifetime — closing the terminal stops progress. For genuinely multi-day cycles, phase-2 deferred-auto is the safer pattern; document this in /define when the approval cycle's character emerges.
 - **Externally-closed PR mid-session.** If someone else merges or closes the PR while /do is running, the next agent invocation surfaces FAIL noting the terminal state. /do treats this as a halt — it does not attempt to reopen.
-- **Branch protection drift.** Required checks and required reviews can change while the manifest runs. The agent reads GitHub's current configuration each invocation, so drift is observed naturally — but a manifest assertion ("named approver @alice required") may diverge from configured branch protection. Surface via `scope-shift` (steering disagrees with branch protection — caller decides whether to amend) or `escalate` (the divergence is unrecoverable) depending on the case.
+- **Branch protection drift.** Required checks and required reviews can change while the manifest runs. The agent reads GitHub's current configuration each invocation, so drift is observed naturally — but a manifest assertion ("named approver @alice required") may diverge from configured branch protection. Surface via `scope-shift` so the caller decides whether to amend the steering or hold the line.
 - **gh CLI / GitHub MCP availability.** The agent assumes one is reachable. When neither is available, the agent's inspection fails — that's an environment problem (out of scope for the manifest) and the user installs / authenticates.
 - **Probing fuel, not execution instructions.** This file is for /define's interview. The agent file (`agents/github-pr-lifecycle.md`) is what /do invokes at runtime. Keep that separation when adding content here — task files describe angles to probe, not steps the agent follows.
