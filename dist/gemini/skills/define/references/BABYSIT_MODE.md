@@ -76,5 +76,5 @@ After /do reaches a terminal state (mergeable, or escalation), the manifest at `
 
 - **Babysit is one-shot synthesis.** It does not poll the PR or re-synthesize over time. Once the manifest is written, /do takes over.
 - **Externally-closed PR mid-/do.** Detected by the agent at runtime, surfaced via FAIL with a hint naming the terminal state. /do treats this as terminal — it does not attempt to reopen, and autonomous amendment to suppress the block is forbidden.
-- **PR description rewrites are scoped to /do.** Babysit reads the PR description for intent seeding but does not modify it. /do's `fix-code` dispatch (push of the description-sync update) is what later syncs the description if the gate fires.
+- **PR description rewrites are scoped to /do.** Babysit reads the PR description for intent seeding but does not modify it. /do's later push of the description-sync update is what syncs the description if the gate fires.
 - **No retroactive seeding.** Intent is seeded once at synthesis. If the PR description changes substantively after babysit, the user re-invokes `/define --amend` to re-sync intent — not via re-running babysit.
