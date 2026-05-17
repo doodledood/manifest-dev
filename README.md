@@ -339,7 +339,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 |--------|-------------|
 | `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, `/auto`, review agents, workflow hooks. The manifest is the canonical source of truth for the PR/branch — feedback during `/do`, `/verify`, or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. Verification is selective during fix-loop (in-scope deliverables + globals) with a mandatory full final gate before `/done`. |
 | `manifest-dev-tools` | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. `/handoff` produces a cross-boundary context payload (tool switch, fresh session, multi-agent transfer). `/prompt-engineering` and `/walk-pr` are stand-alone collaboration tools. |
-| `manifest-dev-experimental` | **Placeholder.** Currently ships no skills — reserved for future experiments. |
+| `manifest-dev-experimental` | Slim parallel rework of `manifest-dev` under a trust-the-model discipline. Ships `/figure-out`, `/figure-out-team`, `/define`, `/do`, `/done`, `/escalate`, `/auto`. Verification folded inline into `/do` (no separate `/verify` skill); manifests collapse to a four-field schema; agent files mirror core for compatibility. Lives alongside `manifest-dev` until promotion. |
 
 ## Plugin Architecture
 
