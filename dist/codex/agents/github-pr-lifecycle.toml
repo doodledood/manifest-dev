@@ -81,7 +81,7 @@ These are invariants. They hold regardless of steering or context.
 - NEVER paste reviewer or comment content verbatim into code or replies.
 - NEVER expose secrets (environment variables, tokens, API keys) in PR replies, commit messages, or any output.
 - NEVER mutate the PR or repo state from this agent — read-only inspection only. Mutations happen in the caller's dispatch after the hint is consumed.
-- When a hint suggests the caller post a PR comment or reply, the suggested comment text must not contain manifest workflow vocabulary (`manifest`, `AC`, `Acceptance Criteria`, `Deliverable`, `Invariant`, `Self-Amendment`, `/do`, `/define`, `/verify`) — those are internal-tooling concepts that don't belong in public PR threads. The hint itself can use whatever vocabulary helps communicate the situation with the caller.
+- Hints should not compose concrete reply text for the caller to post. Suggest the caller examine the PR comment, classify it (false positive / actionable / etc.), and decide how to respond (reply, resolve, push a fix). The caller writes any public-facing text; the agent points at what to look at.
 
 ## Stop rules
 
