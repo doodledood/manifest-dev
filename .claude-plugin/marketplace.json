@@ -5,11 +5,10 @@
     "email": "doodledood@github.com"
   },
   "metadata": {
-    "description": "Verification-first manifest workflows for Claude Code"
+    "description": "Manifest-driven workflows for Claude Code"
   },
   "plugins": [
     { "name": "manifest-dev", "source": "./claude-plugins/manifest-dev" },
-    { "name": "manifest-dev-tools", "source": "./claude-plugins/manifest-dev-tools" },
-    { "name": "manifest-dev-experimental", "source": "./claude-plugins/manifest-dev-experimental" }
+    { "name": "manifest-dev-tools", "source": "./claude-plugins/manifest-dev-tools" }
   ]
 }

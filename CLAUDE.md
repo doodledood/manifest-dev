@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-manifest-dev marketplace -- verification-first manifest workflows for Claude Code, with agents, skills, and hooks.
+manifest-dev marketplace — manifest-driven workflows for Claude Code. `/define` interviews and writes a Manifest; `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. Ships agents, skills, and hooks.
 
 ## Development Commands
 
@@ -52,7 +52,7 @@ Each plugin can contain:
 
 ### Hooks
 
-Hooks are Python scripts in `hooks/` that respond to Claude Code events. Shared utilities live in `hook_utils.py`. Hooks use `parse_do_flow()` to detect active workflows and follow a fail-open pattern (silent exit on errors).
+Hooks are Python scripts in `hooks/` that respond to Claude Code events. The plugin ships two: `stop_do_hook.py` (Stop event — blocks premature stops during `/do`) and `post_compact_hook.py` (SessionStart event — restores `/do` workflow context after compaction). Shared utilities live in `hook_utils.py`. Hooks use `parse_do_flow()` to detect active workflows and follow a fail-open pattern (silent exit on errors).
 
 **When modifying hooks**:
 1. Run tests: `pytest tests/hooks/ -v`
@@ -95,7 +95,7 @@ Invoke the <plugin>:<skill> skill with: "<arguments>"
 
 Examples:
 - `Invoke the manifest-dev:define skill with: "$ARGUMENTS"`
-- `Invoke the manifest-dev:verify skill`
+- `Invoke the manifest-dev:figure-out skill`
 
 **Why**: Vague language like "consider using the X skill" is ambiguous -- Claude may just read the skill file instead of invoking it. Clear directives like "Invoke the X skill" ensure the skill is actually called.
 
@@ -148,7 +148,7 @@ Task files provide domain-specific hints for `/define`. They live in `skills/def
 - *Resolvable* (tables/checklists: risks, scenarios, trade-offs) — resolved by `/define` via the interview.
 - *Compressed awareness* (bold-labeled one-line domain summaries) — informs probing without requiring resolution.
 - *Process guidance hints* (counter-instinctive practices) — Two modes: **candidates** (labeled as PG candidates, presented as batch, user selects) and **defaults** (`## Defaults` section, included in manifest without probing, user reviews manifest). Both become PG-* in the manifest.
-- *Reference files* (`references/*.md`) — detailed lookup data for `/verify` agents. Not loaded during `/define`.
+- *Reference files* (`references/*.md`) — detailed lookup data for the verifier subagents `/do` spawns. Not loaded during `/define`.
 
 **Probing fuel, not execution instructions**: The consumer is `/define`'s interview process. Content should be angles to check, not instructions for how to do the work. Task files provide domain knowledge; SKILL.md defines how `/define` uses it. Don't prescribe manifest encoding (PG vs INV vs AC) in task files — that's `/define`'s job.
 

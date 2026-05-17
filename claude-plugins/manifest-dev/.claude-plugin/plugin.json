@@ -1,10 +1,14 @@
 {
   "name": "manifest-dev",
-  "version": "0.112.0",
-  "description": "Manifest workflows for structured task execution with verification gates. PR-lifecycle work composes the github-pr-lifecycle agent through PR_LIFECYCLE.md task guidance; /define --babysit synthesizes a lifecycle manifest from an existing PR. Supports multi-repo changesets via a shared canonical manifest.",
+  "version": "1.0.0",
+  "description": "Tell Claude what done looks like, let it work, check the result. /define interviews you and writes a Manifest — Deliverables with Acceptance Criteria, Global Invariants, Approach. /do executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. /figure-out is the truth-convergent thinking partner /define auto-invokes when the problem space is foggy. /figure-out-team extends that discipline to multi-party async Slack conversations. Verify blocks are four fields — prompt, agent, model, phase. /auto chains the whole flow autonomously; --babysit <pr-url> tends an existing PR to mergeable without local manifest-dev setup.",
   "keywords": [
     "manifest",
     "define",
+    "do",
+    "auto",
+    "babysit",
+    "figure-out",
     "verification",
     "invariants",
     "deliverables",
@@ -12,47 +16,25 @@
     "autonomous",
     "approach",
     "trade-offs",
-    "do",
-    "auto",
-    "babysit",
     "pr-lifecycle",
-    "lifecycle",
-    "figure-out",
     "multi-repo"
   ],
+  "author": {
+    "name": "doodledood",
+    "email": "doodledood@github.com"
+  },
+  "homepage": "https://github.com/doodledood/manifest-dev",
+  "repository": "https://github.com/doodledood/manifest-dev",
+  "license": "MIT",
   "hooks": {
     "Stop": [
       {
         "matcher": "*",
-        "description": "Prevent premature stops during /do workflow when verification incomplete",
+        "description": "Block premature stops during /do; inject reload reminder",
         "hooks": [
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stop_do_hook.py"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Skill",
-        "description": "Remind to read the manifest in full before verification",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/pretool_verify_hook.py"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "description": "Check for manifest amendments when user provides input during /do workflow",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/prompt_submit_hook.py"
           }
         ]
       }

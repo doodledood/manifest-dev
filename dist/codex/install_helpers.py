@@ -25,10 +25,10 @@ SUFFIX = "-manifest-dev"
 
 # Ordered longest-first within each list to avoid prefix collisions.
 SKILLS = [
+    "figure-out-team",
     "figure-out",
     "escalate",
     "define",
-    "verify",
     "auto",
     "done",
     "do",
@@ -47,8 +47,8 @@ AGENTS = [
     "code-bugs-reviewer",
     "type-safety-reviewer",
     "contracts-reviewer",
-    "manifest-verifier",
     "criteria-checker",
+    "slack-poller",
     "docs-reviewer",
 ]
 
@@ -78,14 +78,14 @@ def _build_regex() -> tuple[dict[str, str], re.Pattern[str]]:
     for name in SKILLS:
         # Context-prefixed patterns (the prefix prevents false positives
         # on common English words like "do", "done", "define").
-        rmap[f"/{name}"] = f"/{name}{SUFFIX}"  # /verify
-        rmap[f"${name}"] = f"${name}{SUFFIX}"  # $verify (Codex)
-        rmap[f"skills/{name}"] = f"skills/{name}{SUFFIX}"  # skills/verify
-        rmap[f'":{name}"'] = f'":{name}{SUFFIX}"'  # ":verify"
-        rmap[f"':{name}'"] = f"':{name}{SUFFIX}'"  # ':verify'
-        rmap[f'"{name}"'] = f'"{name}{SUFFIX}"'  # "verify"
-        rmap[f"'{name}'"] = f"'{name}{SUFFIX}'"  # 'verify'
-        rmap[f"`{name}`"] = f"`{name}{SUFFIX}`"  # `verify`
+        rmap[f"/{name}"] = f"/{name}{SUFFIX}"  # /define
+        rmap[f"${name}"] = f"${name}{SUFFIX}"  # $define (Codex)
+        rmap[f"skills/{name}"] = f"skills/{name}{SUFFIX}"  # skills/define
+        rmap[f'":{name}"'] = f'":{name}{SUFFIX}"'  # ":define"
+        rmap[f"':{name}'"] = f"':{name}{SUFFIX}'"  # ':define'
+        rmap[f'"{name}"'] = f'"{name}{SUFFIX}"'  # "define"
+        rmap[f"'{name}'"] = f"'{name}{SUFFIX}'"  # 'define'
+        rmap[f"`{name}`"] = f"`{name}{SUFFIX}`"  # `define`
         rmap[f"manifest-dev:{name}"] = f"manifest-dev:{name}{SUFFIX}"
 
     for name in AGENTS:

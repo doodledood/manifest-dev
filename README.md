@@ -42,11 +42,9 @@ Then use it:
 /figure-out <topic or problem>
 ```
 
-`/define` interviews you and builds a manifest. `/do` executes it. `/auto` chains both — define autonomously, auto-approve, execute — in a single command. `/figure-out` is the thinking-partner skill — a truth-convergent peer that investigates before claiming, surfaces the load-bearing crux with each move, and resists premature synthesis. Use it before `/define` when the problem space is foggy, or whenever figuring it out IS the goal.
+`/define` interviews you and builds a manifest. `/do` executes it and verifies each criterion inline by spawning a subagent. `/auto` chains both — define autonomously, auto-approve, execute — in a single command. `/figure-out` is the thinking-partner skill — a truth-convergent peer that investigates before claiming, surfaces the load-bearing crux with each move, and resists premature synthesis. `/define` auto-invokes it when the problem space is foggy; you can also call it directly when figuring it out IS the goal.
 
-Control interview depth with `--interview minimal|autonomous|thorough` (default: thorough). Thorough asks everything. Minimal asks scope and high-impact items. Autonomous builds the manifest without asking, presents it for approval.
-
-Pass `--canvas` to `/define` (desktop only) to also generate a **Shared Understanding Canvas** — a live, browser-rendered visual side-channel for the chat interview. While you're answering questions, the canvas surfaces the intent, flow, and scope at a glance, so misalignment shows up early instead of after a feature ships. Diagrams (mermaid) and before/after panels render directly in your default browser; the canvas updates as the interview unfolds. The manifest stays as the formal encoding for /do. Silently no-ops on `--amend`, `--interview autonomous`, `/auto`, non-`local` mediums, or environments without a graphical browser.
+Pass `--canvas` to `/define` (desktop only) to also generate a **Shared Understanding Canvas** — a live, browser-rendered visual side-channel for the chat interview. While you're answering questions, the canvas surfaces the intent, flow, and scope at a glance, so misalignment shows up early instead of after a feature ships. Diagrams (mermaid) and before/after panels render directly in your default browser; the canvas updates as the interview unfolds. The manifest stays as the formal encoding for /do.
 
 If you use zsh and want easy upgrade commands for the non-Claude distributions, add this to `~/.zshrc`:
 
@@ -82,7 +80,7 @@ flowchart TD
     C --> D["/do manifest.md"]
     D --> E{"For each Deliverable"}
     E --> F["Satisfy ACs"]
-    F --> G["/verify"]
+    F --> G["Spawn subagent per AC + Global Invariant"]
     G -->|failures| H["Fix specific criterion"]
     H --> G
     G -->|all pass| I["/done"]
@@ -93,7 +91,7 @@ flowchart TD
 
 `/define` interviews you to surface what you actually want. The stuff you'd reject in a PR but wouldn't think to specify upfront. Then `/do` implements toward those acceptance criteria, flexible on *how* but not on *what*.
 
-After each deliverable, `/verify` runs automated checks against every criterion. Failing checks say exactly what's wrong. The AI fixes what failed, only what failed, and the loop continues until everything passes or a blocker needs your attention.
+`/do` verifies inline. For each Acceptance Criterion and Global Invariant, it spawns a subagent with the verify prompt, aggregates PASS / FAIL / BLOCKED across them, fixes what failed, and re-verifies. The loop continues until everything passes (then `/done`) or a blocker needs your attention (then `/escalate`).
 
 ## What Changes
 
@@ -148,37 +146,21 @@ This is spec-driven development adapted for LLM execution. The manifest is a spe
 
 </details>
 
-<details>
-<summary><strong>Execution Modes</strong></summary>
-
-`/do` supports `--mode efficient|balanced|thorough` to control verification intensity. Default is `thorough` (current behavior). Only pass `--mode` when you explicitly want to trade verification depth for quota savings.
-
-| Mode | What changes | When to use |
-|------|-------------|-------------|
-| **thorough** (default) | Full verification: all quality gates, all models inherit from session, unlimited parallelism and fix loops | Most tasks. Don't change unless you have a reason. |
-| **balanced** | Same models, but limits parallelism (max 4 concurrent verifiers) and fix loops (max 2) | Long-running tasks where you want to limit concurrent quota burn |
-| **efficient** | Uses haiku for criteria-checker, skips quality gate reviewers, sequential verification, max 1 fix loop | Quick iterations where speed matters more than verification depth |
-
-Set per-execution: `/do manifest.md --mode balanced`
-Set in manifest: add `mode: balanced` to the Intent & Context section.
-
-</details>
-
 ### Best Practice: One Manifest Per PR/Branch (or PR Set), Feedback Through It
 
-The manifest is the canonical source of truth for the PR/branch — or, in multi-repo cases, the entire PR set / branch set. Not for a single task. Feedback flows through it: when something's off mid-`/do`, mid-`/verify`, or after `/done` (a missed edge case, a reviewer comment, a bug you didn't anticipate), just send the feedback in your active session. The system routes it through Self-Amendment automatically: `/escalate` → `/define --amend --from-do` → `/do` resumes with the updated manifest. No manual session-switching for the common case. Pure questions about the manifest are answered inline; everything else amends.
+The manifest is the canonical source of truth for the PR/branch — or, in multi-repo cases, the entire PR set / branch set. Not for a single task. Feedback flows through it: when something's off mid-`/do` or after `/done` (a missed edge case, a reviewer comment, a bug you didn't anticipate), just send the feedback in your active session. The system routes it through Self-Amendment automatically: `/escalate` → `/define --amend --from-do` → `/do` resumes with the updated manifest. No manual session-switching for the common case. Pure questions about the manifest are answered inline; everything else amends.
 
-**Multi-repo:** by default — and recommended — a single manifest covers the whole multi-repo changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively — no filter logic. PR-lifecycle work auto-templates one `github-pr-lifecycle` agent invocation per repo against the shared manifest. Cross-repo gates the user explicitly triggers (e.g., post-deploy verification across services) use `method: deferred-auto` + `/verify --deferred`. Splitting into independent per-repo manifests is also fine when the work is loosely coupled and you prefer to carry cross-PR coherence yourself. See `claude-plugins/manifest-dev/skills/define/references/MULTI_REPO.md` for the full convention.
+**Multi-repo:** by default — and recommended — a single manifest covers the whole multi-repo changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively — no filter logic. PR-lifecycle work auto-templates one `github-pr-lifecycle` agent invocation per repo against the shared manifest. Splitting into independent per-repo manifests is also fine when the work is loosely coupled and you prefer to carry cross-PR coherence yourself. See `claude-plugins/manifest-dev/skills/define/references/MULTI_REPO.md` for the full convention.
 
-After `/done`, the same default applies — the post-completion re-entry runs `/define --amend <manifest>` interactively (so you can shape the change), then `/do --scope <new-or-affected-deliverables>`. /done is unreachable until the full verification suite passes again.
+After `/done`, the same default applies — the post-completion re-entry runs `/define --amend <manifest>` interactively (so you can shape the change), then `/do` re-executes. `/done` is unreachable until every Acceptance Criterion and Global Invariant verifies PASS again.
 
 **Two-session pattern is still useful** when you want to draft the next manifest while one is executing — `/define` in one session, watch `/do` in another. But you no longer have to ferry feedback manually between them; the autonomous Self-Amendment flow handles that within a single session.
 
 **Example**: You ship a login feature. A reviewer flags that error messages leak whether an email exists in the system.
 
 1. In the same session, send: "Auth errors should return a generic message regardless of whether the account exists."
-2. The system amends the manifest with a new AC, then re-enters `/do --scope <auth-deliverable>` to implement it.
-3. `/verify` confirms the fix in selective mode, then auto-triggers the full pass before `/done` is reachable again. Future regressions are caught by the new criterion.
+2. The system amends the manifest with a new AC, then re-enters `/do` to implement and verify it.
+3. The new AC's subagent confirms the fix, then `/do` re-verifies everything before `/done` is reachable again. Future regressions are caught by the new criterion.
 
 Every round trip through the manifest grows your verification surface. Bug fixes and late requirements become checked criteria, accumulated cumulatively per the manifest's full-PR-state guarantee.
 
@@ -186,7 +168,7 @@ The do session doesn't need to remember the define conversation. The manifest is
 
 ## What /define Produces
 
-The interview classifies your task (Feature, Bug, Refactor, Prompting, Writing, Document, Blog, Research) and loads task-specific guidance. It probes for your latent criteria, the standards you hold but wouldn't think to spell out. A `manifest-verifier` agent validates the manifest for gaps before output.
+The interview classifies your task (Feature, Bug, Refactor, Prompting, Writing, Document, Blog, Research) and loads task-specific guidance. It probes for your latent criteria — the standards you hold but wouldn't think to spell out — before writing the manifest.
 
 <details>
 <summary><strong>Example manifest</strong></summary>
@@ -213,22 +195,17 @@ The interview classifies your task (Feature, Bug, Refactor, Prompting, Writing, 
 - [INV-G1] Passwords never stored in plaintext
   ```yaml
   verify:
-    method: bash
-    command: "! grep -r 'password.*=' src/ | grep -v hash | grep -v test"
+    prompt: "Run: grep -r 'password.*=' src/ | grep -v hash | grep -v test. PASS only if there are no matches."
   ```
 - [INV-G2] All auth endpoints rate-limited (max 5 attempts/minute)
   ```yaml
   verify:
-    method: subagent
-    agent: general-purpose
-    model: inherit
-    prompt: "Verify rate limiting exists on /login and /register endpoints"
+    prompt: "Inspect src/auth/ and confirm rate limiting (max 5 attempts/minute) is wired to /login and /register endpoints. Report PASS or FAIL with evidence."
   ```
 - [INV-G3] JWT secrets from environment, never hardcoded
   ```yaml
   verify:
-    method: bash
-    command: "grep -r 'process.env.JWT' src/auth/"
+    prompt: "Confirm src/auth/ reads JWT secrets from process.env and contains no hardcoded JWT strings."
   ```
 
 ## 4. Process Guidance (Non-Verifiable)
@@ -246,8 +223,7 @@ The interview classifies your task (Feature, Bug, Refactor, Prompting, Writing, 
 - [AC-1.1] User model has id, email, hashedPassword, createdAt
   ```yaml
   verify:
-    method: codebase
-    pattern: "User.*id.*email.*hashedPassword.*createdAt"
+    prompt: "Confirm the User model definition includes id, email, hashedPassword, and createdAt fields."
   ```
 - [AC-1.2] Email has unique constraint
 - [AC-1.3] Migration creates users table with indexes
@@ -259,10 +235,8 @@ The interview classifies your task (Feature, Bug, Refactor, Prompting, Writing, 
 - [AC-2.3] Invalid credentials return 401, not 500
   ```yaml
   verify:
-    method: subagent
     agent: code-bugs-reviewer
-    model: inherit
-    prompt: "Check auth routes return 401 for auth failures, not 500"
+    prompt: "Check auth routes return 401 for auth failures, not 500."
   ```
 ````
 
@@ -281,44 +255,39 @@ The interview classifies your task (Feature, Bug, Refactor, Prompting, Writing, 
 
 Approach section is added for complex tasks with dependencies, risks, or architectural decisions.
 
-## Verification Methods
+## Verify Blocks
 
-Every criterion can have an automated verification method:
+Every criterion has a `verify` block — four fields, all optional except `prompt`:
 
-| Method | When to Use | Example |
-|--------|-------------|---------|
-| `bash` | Commands with deterministic output | `npm run typecheck && npm run lint` |
-| `codebase` | Code pattern checks | Check file exists, pattern matches |
-| `subagent` | LLM-as-judge for subjective criteria | Code quality, security review |
-| `research` | External information lookup | API compatibility, version checks |
-| `manual` | Human verification required | UI review, deployment checks |
+| Field | Required | Purpose |
+|-------|----------|---------|
+| `prompt` | yes | Verbatim instruction to the verifier subagent. Whatever it needs to do — run a bash command, inspect files, query an API, fetch docs — goes here. |
+| `agent` | no | Subagent type to spawn (e.g., `code-bugs-reviewer`, `criteria-checker`). Defaults to a general-purpose subagent. |
+| `model` | no | Model override (e.g., `claude-haiku-4-5-20251001` for speed). Defaults to inherit from the invoking session. |
+| `phase` | no | Integer (default `1`). Lower phases run first; later phases (e2e, deploy-dependent) only after earlier pass. Avoids wasting slow cycles when cheaper checks fail. |
 
 ```yaml
-# Bash verification
+# Cheap bash check via general-purpose subagent
 verify:
-  method: bash
-  command: "npm run test -- --coverage"
+  prompt: "Run: npm run test -- --coverage. PASS only if exit 0 and coverage report shows ≥80%."
 
-# Subagent verification with specialized reviewer
+# Specialized reviewer
 verify:
-  method: subagent
   agent: code-maintainability-reviewer
-  model: inherit
-  prompt: "Review for DRY violations and coupling issues"
+  prompt: "Review for DRY violations and coupling issues."
 
-# Slow/expensive verification runs in a later phase
+# Slow staging probe in a later phase
 verify:
-  method: bash
+  prompt: "curl -s https://staging.example.com/health and confirm it returns 200 with status: ok."
   phase: 2
-  command: "curl -s https://staging.example.com/health"
 
-# Manual verification
+# Manual check
 verify:
-  method: manual
-  instructions: "Verify the login flow works in staging"
+  prompt: "MANUAL: ask the operator to confirm the login flow works in staging. Report PASS only after explicit human confirmation in the channel."
+  phase: 3
 ```
 
-Criteria support a `phase:` field (numeric, default 1). `/verify` runs phases in ascending order — faster checks first, slower/expensive ones only after earlier phases pass. This avoids wasting e2e deploy cycles when cheaper checks are still failing.
+The subagent returns one of three states: **PASS** (criterion holds), **FAIL** (criterion violated; includes evidence and a fix hint), or **BLOCKED** (criterion can't be evaluated yet — pending deploy, human approval, etc.; `/do` routes BLOCKED via `/escalate`).
 
 ## Multi-CLI Support
 
@@ -337,9 +306,8 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 
 | Plugin | Description |
 |--------|-------------|
-| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/verify`, `/auto`, review agents, workflow hooks. The manifest is the canonical source of truth for the PR/branch — feedback during `/do`, `/verify`, or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. Verification is selective during fix-loop (in-scope deliverables + globals) with a mandatory full final gate before `/done`. |
+| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out`, `/figure-out-team`, review agents, workflow hooks. `/do` verifies inline — spawns a subagent per Acceptance Criterion and Global Invariant. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
 | `manifest-dev-tools` | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. `/handoff` produces a cross-boundary context payload (tool switch, fresh session, multi-agent transfer). `/prompt-engineering` and `/walk-pr` are stand-alone collaboration tools. |
-| `manifest-dev-experimental` | Slim parallel rework of `manifest-dev` under a trust-the-model discipline. Ships `/figure-out`, `/figure-out-team`, `/define`, `/do`, `/done`, `/escalate`, `/auto`. Verification folded inline into `/do` (no separate `/verify` skill); manifests collapse to a four-field schema; agent files mirror core for compatibility. Lives alongside `manifest-dev` until promotion. |
 
 ## Plugin Architecture
 
@@ -347,22 +315,21 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 
 | Skill | Type | Description |
 |-------|------|-------------|
-| `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, outputs manifest with verification methods. Defaults to amending a prior in-scope manifest (in-session, conversation-referenced, or branch-archived in `.manifest/`) so one change set keeps one constitution. On a fresh /define against a non-empty branch, seeds from the existing diff. |
-| `/do` | User-invoked | Executes against manifest. Follows execution order, watches for risks. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
-| `/auto` | User-invoked | End-to-end autonomous: `/define --interview autonomous` → auto-approve → `/do`. Supports `--mode`, `--platform`, and `--babysit <pr-url>` for tending an existing PR through to mergeable. |
-| `/verify` | Internal | Spawns verifiers for criteria in scope. Selective passes (in-scope deliverables' ACs + all globals) during fix-loop and after scoped /do; full pass auto-triggered before `/done` so completion always reflects an everything-green run. Phased by iteration speed (fast checks first, e2e/deploy-dependent later). |
-| `/done` | Internal | Prints hierarchical completion summary mirroring manifest structure. Reachable only after a full-mode green /verify pass. |
-| `/escalate` | Internal | Structured escalation when blockers need human intervention. Requires evidence: 3+ attempts, failure reasons, hypothesis, resolution options |
+| `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, writes the manifest. Auto-invokes `/figure-out` when the problem space is foggy. Defaults to amending a prior in-scope manifest (in-session, conversation-referenced, or branch-archived in `.manifest/`) so one change set keeps one constitution. On a fresh /define against a non-empty branch, seeds from the existing diff. |
+| `/do` | User-invoked | Executes against manifest and verifies inline — spawns a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregates PASS / FAIL / BLOCKED, fixes failures, re-verifies. Calls `/done` when everything passes or `/escalate` when blocked. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
+| `/auto` | User-invoked | End-to-end autonomous: `/define` → auto-approve → `/do`. Supports `--platform` and `--babysit <pr-url>` for tending an existing PR through to mergeable. |
+| `/done` | Internal | Plain-prose completion summary called by `/do` after every criterion verifies PASS. |
+| `/escalate` | Internal | Structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from the user. Routes via `/do`. |
 | `/figure-out` | User-invoked | Primary thinking-partner skill. Peer working a problem with the user: investigates before claiming, delivers each next-move with its load-bearing crux, walks decision trees for design-shaped tasks, holds positions under social pressure. Pass `--with-docs` to opt into glossary and ADR persistence. |
+| `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. Involved orchestrator (brings evidence, viewpoints, synthesis); polls the thread via `/loop`, reads via the `slack-poller` subagent; owner-by-Slack-handle overrules disagreement. |
 
 ### Review Agents
 
-Built-in agents for quality verification via `subagent` method:
+Built-in agents `/do` spawns to verify criteria. Name an agent in the verify block's `agent:` field, or omit it to get a general-purpose subagent.
 
 | Agent | Focus |
 |-------|-------|
-| `criteria-checker` | Core verifier: validates single criterion using bash/codebase/subagent/research methods |
-| `manifest-verifier` | Validates manifest completeness during `/define` |
+| `criteria-checker` | General-purpose criterion verifier — runs whatever bash, file reads, or external tools the prompt specifies |
 | `change-intent-reviewer` | Adversarial intent analysis: reconstructs change intent, finds behavioral divergences across code, prompts, and config |
 | `contracts-reviewer` | Bidirectional API/interface contract verification with evidence from docs and codebase |
 | `code-bugs-reviewer` | Mechanical code defects: race conditions, data loss, edge cases, resource leaks, dangerous defaults |
@@ -375,6 +342,8 @@ Built-in agents for quality verification via `subagent` method:
 | `type-safety-reviewer` | TypeScript type safety: `any` abuse, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
 | `context-file-adherence-reviewer` | Compliance with context file (CLAUDE.md/AGENTS.md/GEMINI.md) project rules |
+| `github-pr-lifecycle` | PR-lifecycle inspector — checks CI, review threads, description sync, mergeability; returns PASS/FAIL with a hint. Composed automatically when `--platform github` resolves during `/define`. |
+| `slack-poller` | Tails a Slack thread for the `/figure-out-team` loop, returning the verbatim deltas the agent reasons over. |
 
 Each reviewer returns structured output with severity levels (Critical, High, Medium, Low) and specific fix guidance.
 
@@ -386,8 +355,6 @@ Hooks enforce workflow integrity. The AI can't skip steps:
 |------|-------|---------|
 | `stop_do_hook` | Stop command | Blocks premature stopping. Can't stop without verification passing or proper escalation. |
 | `post_compact_hook` | Session compaction | Restores /do workflow context after compaction. Reminds to re-read the manifest. |
-| `pretool_verify_hook` | `/verify` invocation | Ensures the manifest is in context before spawning verifiers. |
-| `prompt_submit_hook` | User input during `/do` | Detects manifest amendments when user provides input during `/do` — enables the autonomous Self-Amendment flow. |
 
 ### Task-Specific Guidance
 

@@ -11,28 +11,6 @@
         ]
       }
     ],
-    "PreToolUse": [
-      {
-        "matcher": "Skill",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/pretool_verify_hook.py"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 claude-plugins/manifest-dev/hooks/prompt_submit_hook.py"
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "matcher": "compact",

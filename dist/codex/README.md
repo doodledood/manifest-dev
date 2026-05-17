@@ -40,7 +40,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | criteria-checker | read-only | Single criterion verification |
 | docs-reviewer | read-only | Documentation accuracy audit |
 | github-pr-lifecycle | read-only | Steerable GitHub PR lifecycle inspection; emits hints for /do dispatch |
-| manifest-verifier | read-only | Manifest gap detection |
+| slack-poller | read-only | Slack thread delta narrator for /figure-out-team |
 | type-safety-reviewer | read-only | Type safety audit |
 
 ## Installation
@@ -120,7 +120,7 @@ dist/codex/
 │   ├── criteria-checker.toml
 │   ├── docs-reviewer.toml
 │   ├── github-pr-lifecycle.toml
-│   ├── manifest-verifier.toml
+│   ├── slack-poller.toml
 │   └── type-safety-reviewer.toml
 ├── rules/                           # Execution policy
 │   └── default.rules

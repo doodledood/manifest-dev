@@ -1,0 +1,1 @@
+../../claude-plugins/manifest-dev/agents/slack-poller.md

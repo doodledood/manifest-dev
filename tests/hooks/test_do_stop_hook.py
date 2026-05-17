@@ -29,7 +29,7 @@ class TestStopHookBlocking:
 
         assert result is not None
         assert result["decision"] == "block"
-        assert "verify" in result["systemMessage"].lower()
+        assert "reload" in result["systemMessage"].lower()
 
     def test_blocks_with_verify_only(
         self,
@@ -92,41 +92,6 @@ class TestStopHookAllowing:
         result = run_hook("stop_do_hook.py", hook_input)
 
         assert result is None
-
-    def test_blocks_with_self_amendment_escalate(
-        self,
-        temp_transcript,
-        user_do_command: dict[str, Any],
-    ):
-        """Stop should be BLOCKED after Self-Amendment escalation.
-
-        Self-Amendment is a mechanical exit that requires /define --amend
-        before stopping. Unlike blocking/pause escalations, the workflow
-        must continue autonomously.
-        """
-        self_amendment_escalate = {
-            "type": "assistant",
-            "message": {
-                "content": [
-                    {
-                        "type": "tool_use",
-                        "name": "Skill",
-                        "input": {
-                            "skill": "manifest-dev:escalate",
-                            "args": "Self-Amendment",
-                        },
-                    }
-                ]
-            },
-        }
-        transcript_path = temp_transcript([user_do_command, self_amendment_escalate])
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        assert result is not None
-        assert result["decision"] == "block"
-        assert "self-amendment" in result["reason"].lower()
 
     def test_allows_no_do(
         self,
@@ -320,8 +285,7 @@ class TestStopHookLoopDetection:
 
         assert result is not None
         assert result["decision"] == "block"
-        assert "/verify" in result["systemMessage"]
-        assert "/escalate" in result["systemMessage"]
+        assert "/manifest-dev:do" in result["systemMessage"]
 
     def test_long_text_without_tools_is_idle(
         self,
@@ -540,108 +504,6 @@ class TestStopHookLoopDetection:
         # Should allow because 3 consecutive idle outputs (Skill doesn't reset counter)
         assert result is not None
         assert "decision" not in result  # omit decision = allow
-
-    def test_self_amendment_idle_loop_allows_stop(
-        self,
-        temp_transcript,
-        user_do_command: dict[str, Any],
-    ):
-        """Self-Amendment + 3 consecutive idle outputs should allow stop.
-
-        Models the bug scenario: Self-Amendment escalation fires, /define --amend
-        completes, /do resumes and enters a legitimate wait state (e.g., polling
-        an external CI build). Without the escape valve, the sticky
-        has_self_amendment flag blocks every turn forever.
-
-        Idle math: the Self-Amendment escalate Skill call itself counts as idle
-        (hook_utils.count_consecutive_idle_outputs treats Skill as not-meaningful),
-        so 2 text-only outputs after it yields a total of 3 consecutive idle
-        outputs at hook entry — the escape valve threshold.
-        """
-        self_amendment_escalate = {
-            "type": "assistant",
-            "message": {
-                "content": [
-                    {
-                        "type": "tool_use",
-                        "name": "Skill",
-                        "input": {
-                            "skill": "manifest-dev:escalate",
-                            "args": "Self-Amendment",
-                        },
-                    }
-                ]
-            },
-        }
-        idle_outputs = [
-            {
-                "type": "assistant",
-                "message": {"content": [{"type": "text", "text": "Idle."}]},
-            },
-            {
-                "type": "assistant",
-                "message": {
-                    "content": [
-                        {"type": "text", "text": "Waiting on background poller."}
-                    ]
-                },
-            },
-        ]
-        transcript_path = temp_transcript(
-            [user_do_command, self_amendment_escalate] + idle_outputs
-        )
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        assert result is not None
-        assert "decision" not in result  # omit decision = allow
-        assert "idle" in result["reason"].lower() or "loop" in result["reason"].lower()
-        # Self-Amendment-specific escape must NOT direct to /verify or /escalate
-        # — those are wrong moves for the resumed-/do-in-wait-state case.
-        assert "/verify" not in result["systemMessage"]
-        assert "/escalate" not in result["systemMessage"]
-
-    def test_self_amendment_below_threshold_still_blocks(
-        self,
-        temp_transcript,
-        user_do_command: dict[str, Any],
-    ):
-        """Self-Amendment + 2 consecutive idle outputs should still block.
-
-        Boundary test: with the Self-Amendment Skill call (idle) plus 1 text-only
-        output, total consecutive idle count is 2 — below the escape threshold
-        of 3. The Self-Amendment block path remains active.
-        """
-        self_amendment_escalate = {
-            "type": "assistant",
-            "message": {
-                "content": [
-                    {
-                        "type": "tool_use",
-                        "name": "Skill",
-                        "input": {
-                            "skill": "manifest-dev:escalate",
-                            "args": "Self-Amendment",
-                        },
-                    }
-                ]
-            },
-        }
-        one_idle_output = {
-            "type": "assistant",
-            "message": {"content": [{"type": "text", "text": "Idle."}]},
-        }
-        transcript_path = temp_transcript(
-            [user_do_command, self_amendment_escalate, one_idle_output]
-        )
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        assert result is not None
-        assert result["decision"] == "block"
-        assert "self-amendment" in result["reason"].lower()
 
 
 class TestStopHookInvocationPatterns:
@@ -892,153 +754,6 @@ class TestStopHookEdgeCases:
 
         # Should allow (fail open) on parsing errors
         assert result is None
-
-
-class TestStopHookMediumRouting:
-    """Tests for non-local medium routing behavior."""
-
-    def test_allows_verify_with_medium_slack(
-        self,
-        temp_transcript,
-        assistant_skill_verify: dict[str, Any],
-    ):
-        """With --medium slack, /do + /verify should ALLOW stop (escalation posted to medium)."""
-        user_do_medium = {
-            "type": "user",
-            "message": {
-                "content": (
-                    "<command-name>/manifest-dev:do</command-name>"
-                    "<command-args>/tmp/manifest.md --medium slack"
-                    "</command-args>"
-                )
-            },
-        }
-        transcript_path = temp_transcript([user_do_medium, assistant_skill_verify])
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        assert result is not None
-        assert "decision" not in result  # omit decision = allow
-        assert "medium" in result["reason"].lower()
-
-    def test_blocks_without_verify_even_with_medium(
-        self,
-        temp_transcript,
-    ):
-        """With --medium slack, /do without /verify should still BLOCK."""
-        user_do_medium = {
-            "type": "user",
-            "message": {
-                "content": (
-                    "<command-name>/manifest-dev:do</command-name>"
-                    "<command-args>/tmp/manifest.md --medium slack"
-                    "</command-args>"
-                )
-            },
-        }
-        transcript_path = temp_transcript([user_do_medium])
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        assert result is not None
-        assert result["decision"] == "block"
-
-    def test_still_blocks_verify_without_medium(
-        self,
-        temp_transcript,
-        user_do_command: dict[str, Any],
-        assistant_skill_verify: dict[str, Any],
-    ):
-        """Without --medium, /do + /verify should still BLOCK (local mode behavior unchanged)."""
-        transcript_path = temp_transcript([user_do_command, assistant_skill_verify])
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        assert result is not None
-        assert result["decision"] == "block"
-
-    def test_medium_via_skill_tool_call(
-        self,
-        temp_transcript,
-        assistant_skill_verify: dict[str, Any],
-    ):
-        """Should detect --medium in Skill tool call args."""
-        assistant_do_with_medium = {
-            "type": "assistant",
-            "message": {
-                "content": [
-                    {
-                        "type": "tool_use",
-                        "name": "Skill",
-                        "input": {
-                            "skill": "manifest-dev:do",
-                            "args": "/tmp/manifest.md --medium discord",
-                        },
-                    }
-                ]
-            },
-        }
-        transcript_path = temp_transcript(
-            [assistant_do_with_medium, assistant_skill_verify]
-        )
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        assert result is not None
-        assert "decision" not in result  # omit decision = allow
-
-    def test_medium_local_does_not_trigger_collab(
-        self,
-        temp_transcript,
-        assistant_skill_verify: dict[str, Any],
-    ):
-        """--medium local should NOT trigger collab mode (same as no --medium)."""
-        user_do_local = {
-            "type": "user",
-            "message": {
-                "content": (
-                    "<command-name>/manifest-dev:do</command-name>"
-                    "<command-args>/tmp/manifest.md --medium local"
-                    "</command-args>"
-                )
-            },
-        }
-        transcript_path = temp_transcript([user_do_local, assistant_skill_verify])
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        assert result is not None
-        assert result["decision"] == "block"
-
-    def test_medium_local_prefix_is_collab(
-        self,
-        temp_transcript,
-        assistant_skill_verify: dict[str, Any],
-    ):
-        """--medium local-dev should trigger collab mode (not a false negative)."""
-        user_do_local_dev = {
-            "type": "user",
-            "message": {
-                "content": (
-                    "<command-name>/manifest-dev:do</command-name>"
-                    "<command-args>/tmp/manifest.md --medium local-dev"
-                    "</command-args>"
-                )
-            },
-        }
-        transcript_path = temp_transcript([user_do_local_dev, assistant_skill_verify])
-        hook_input = {"transcript_path": transcript_path}
-
-        result = run_hook("stop_do_hook.py", hook_input)
-
-        # local-dev is NOT "local" — it should be treated as collab mode
-        assert result is not None
-        assert "decision" not in result  # omit decision = allow
 
 
 class TestStopHookInterruptHandling:

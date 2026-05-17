@@ -2,14 +2,13 @@
 
 ## Workflow
 
-This project uses a **define -> do -> verify -> done** workflow, powered by skills:
+This project uses a **define -> do -> done** workflow, powered by skills:
 
-1. **/define** -- Interview-driven manifest creation. Produces a structured specification with deliverables, acceptance criteria, global invariants, and verification methods.
-2. **/do** -- Execute against the manifest. Implements deliverables, runs fix-verify loops, escalates blockers.
-3. **/verify** -- Parallel verification of all criteria. Spawns agents (listed below) for quality gate checks.
-4. **/done** -- Completion checkpoint. Confirms all criteria pass and produces a summary.
+1. **/define** -- Interview-driven manifest creation. Produces a structured specification with deliverables, acceptance criteria, global invariants, and verify prompts.
+2. **/do** -- Execute against the manifest and verify inline by spawning one subagent per Acceptance Criterion and Global Invariant using the verify prompt verbatim. Aggregates PASS / FAIL / BLOCKED, fixes failures, re-verifies. Calls /done on green or routes BLOCKED via /escalate.
+3. **/done** -- Completion summary in plain prose. Called by /do after every criterion verifies PASS.
 
-Supporting skills: /auto (end-to-end autonomous; supports --babysit <pr-url> for tending an existing PR), /figure-out (collaborative deep understanding), /escalate (structured escalation).
+Supporting skills: /auto (end-to-end autonomous; supports --babysit <pr-url> for tending an existing PR), /figure-out (truth-convergent thinking partner), /figure-out-team (multi-party async Slack deliberation), /escalate (structured blocker handoff).
 
 PR-lifecycle work composes the github-pr-lifecycle agent through tasks/PR_LIFECYCLE.md task guidance. /define --babysit <pr-url> synthesizes a lifecycle manifest from an existing PR. /do drives the PR to a mergeable state — the merge button is left to a human or GitHub auto-merge.
 
@@ -32,9 +31,9 @@ Skills handle the workflow orchestration. Agents listed below are used for verif
 
 ## Verification Agents
 
-- **criteria-checker**: Read-only verification agent. Validates a single criterion using commands, codebase analysis, file inspection, reasoning, or web research. Spawned in parallel by /verify.
+- **criteria-checker**: Read-only verification agent. Validates a single criterion by running whatever bash, file reads, or external tools its prompt specifies. The default subagent type when a manifest doesn't name one in verify.agent.
 - **github-pr-lifecycle**: Inspect a GitHub PR's lifecycle state (CI, threads, mergeability) and return PASS or FAIL with a natural-language hint for the caller to dispatch. Read-only; never invokes the merge button.
-- **manifest-verifier**: Reviews /define manifests for gaps. Outputs actionable questions to continue the interview.
+- **slack-poller**: Narrate new Slack messages in a channel or thread since a cursor. Used by /figure-out-team to read deltas without re-ingesting the whole thread.
 
 ## How to Use
 
@@ -50,5 +49,5 @@ multi_agent = true
 ## Known Limitations
 
 - Agents are TOML config stubs -- they approximate Claude Code's scoped agent behavior but use Codex's multi-agent paradigm.
-- Without hooks, the define -> do -> verify -> done chain is advisory (nothing enforces completion order).
+- Without hooks, the define -> do -> done chain is advisory (nothing enforces completion order).
 - Skills may not chain as reliably as on Claude Code.
