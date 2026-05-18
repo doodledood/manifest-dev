@@ -5,7 +5,7 @@ argument-hint: '[pr-url-or-range] [--canvas]'
 user-invocable: true
 ---
 
-Walk the user through a PR or large diff **one sub-changeset at a time** — a group of files that makes sense together — and **one review topic at a time within it**.
+Walk the user through a PR or large diff **one sub-changeset (SC) at a time** — a group of files that makes sense together — and **one review topic at a time within it**.
 
 **Reader model.** The reviewer lives in the repo but has zero context on *this PR*. Codebase vocabulary is shared ground; **vocabulary the PR introduces is not** — new types, modes, modules, domain terms need explicit introduction before downstream content uses them.
 
