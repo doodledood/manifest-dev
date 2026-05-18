@@ -320,8 +320,8 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 | `/auto` | User-invoked | End-to-end autonomous: `/define` → auto-approve → `/do`. Supports `--platform` and `--babysit <pr-url>` for tending an existing PR through to mergeable. |
 | `/done` | Internal | Plain-prose completion summary called by `/do` after every criterion verifies PASS. |
 | `/escalate` | Internal | Structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from the user. Routes via `/do`. |
-| `/figure-out` | User-invoked | Primary thinking-partner skill. Peer working a problem with the user: investigates before claiming, delivers each next-move with its load-bearing crux, walks decision trees for design-shaped tasks, holds positions under social pressure. Pass `--with-docs` to opt into glossary and ADR persistence. |
-| `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. Involved orchestrator (brings evidence, viewpoints, synthesis); polls the thread via `/loop`, reads via the `slack-poller` subagent; owner-by-Slack-handle overrules disagreement. |
+| `/figure-out` | User-invoked | Primary thinking-partner skill. Peer working a problem with the user: investigates before claiming, delivers each next-move with its load-bearing crux, walks decision trees for design-shaped tasks, holds positions under social pressure. Pass `--with-docs` to opt into bootstrap, inline glossary captures, and ADR offers. |
+| `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. Involved orchestrator (brings evidence, viewpoints, synthesis); polls the thread via `/loop`, reads via the `slack-poller` subagent; owner-by-Slack-handle overrules disagreement. Pass `--with-docs` (read-only) to load CONTEXT.md as background context for the deliberation. |
 
 ### Review Agents
 
