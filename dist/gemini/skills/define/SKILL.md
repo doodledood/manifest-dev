@@ -9,7 +9,7 @@ Encode the conversation's shared understanding as a Manifest at `<scratch>/manif
 
 **Encoding discipline.** figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to lock as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
 
-**Task files.** Identify task type; load applicable files from `tasks/` per `tasks/README.md` — their gates and Defaults auto-encode before the interview. For code tasks, also compose `tasks/PR_LIFECYCLE.md` when `git remote get-url origin 2>/dev/null` matches `github.com`; when origin is missing or a github-enterprise host, probe. Per-repo for multi-repo manifests.
+**Task files.** Identify task type; load applicable files from `tasks/` per `tasks/README.md` — their gates and Defaults auto-encode before the interview. For code tasks, also compose `tasks/PR_LIFECYCLE.md` when origin is on github.com; probe if origin is missing or a github-enterprise host. Per-repo for multi-repo manifests.
 
 ## Manifest Schema
 
