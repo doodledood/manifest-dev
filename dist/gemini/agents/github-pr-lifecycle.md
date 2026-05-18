@@ -33,7 +33,7 @@ The PR is ready when each gate holds:
 2. **CI green** — required checks pass on the current head commit.
 3. **Threads addressed** — each review thread is resolved, replied to, or addressed by a follow-up commit on the current head. Human-authored threads can only be resolved by the original author.
 4. **Description in sync** — PR description reflects the current diff's intent.
-5. **Mergeable** — GitHub's composite mergeability signal says the PR can merge. Non-GREEN FAILs the gate; the `Reason:` line describes the signal value and its underlying cause, and the per-gate directive names the action (`bash sleep`, `re-request-review`, `escalate`, …).
+5. **Mergeable** — GitHub's composite mergeability signal says the PR can merge. Non-GREEN FAILs the gate.
 
 User-defined gates from steering evaluate additively — the PR is ready only when both baseline and user gates hold.
 
@@ -76,7 +76,7 @@ Breakdown:
 - User gates: PASS | FAIL | N/A — <directive>
 ```
 
-The `Reason:` line carries the human-readable diagnostic (who's waited on, which check failed, which thread is open, remaining retrigger budget). The per-gate `FAIL — <directive>` lines are the actionable shape; the caller reads each directive and executes it. Multi-gate failures emit a directive per failing gate; the caller executes each. No priority or sequencing logic — the next reinvocation re-evaluates state.
+`Reason:` carries diagnostic context (who's waited on, which check failed, remaining retrigger budget). Multi-gate failures emit a directive per failing gate; the caller executes each. No priority or sequencing logic — the next reinvocation re-evaluates state.
 
 Example wait-in-progress FAIL:
 

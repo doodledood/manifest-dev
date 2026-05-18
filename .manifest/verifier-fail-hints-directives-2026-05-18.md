@@ -2,18 +2,17 @@
 
 ## 1. Intent & Context
 
-- **Goal:** Implement ADR `docs/adr/20260518-verifier-fail-hints-are-directives.md` — convert `github-pr-lifecycle` FAIL output from prose suggestions to per-gate directive lines, add a literal-execution discipline rule to `/do`, move wait-cadence policy into the agent (variable per-gate with cycle cap), and extend steering to parse wait-cadence overrides. Land on existing branch `feature/verifier-fail-hints-directives` alongside the ADR; ship to mergeable.
+- **Goal:** Implement ADR `docs/adr/20260518-verifier-fail-hints-are-directives.md` — convert `github-pr-lifecycle` FAIL output from prose suggestions to per-gate directive lines, add a literal-execution discipline rule to `/do`, move wait-cadence policy into the agent (variable per-gate with cycle cap), and extend steering to parse wait-cadence overrides. Land on existing branch `feature/verifier-fail-hints-directives` alongside the ADR as a local commit; the user pushes and opens the PR manually when ready. PR-lifecycle dog-fooding deferred to that push.
 - **Mental Model:** The current contract has the inspector emit prose hints and `/do` consume them with judgment. Three observed wrong inventions (Stop / `/loop` misuse / busy-wait) demonstrate that judgment fails reliably on suggestion-shaped hints. The fix removes the judgment: hints become directives the caller executes literally. The agent gains responsibility for wait-cadence policy because it has the GitHub-state visibility to pick gate-appropriate intervals; `/do` gains a discipline rule that names the three failure modes and forbids them. Cycle counting reuses the existing `prior-retrigger-context` mechanism — semantically extended, not replaced. Steering customization stays in the existing judgment-parsed surface.
 
 ## 2. Approach
 
 - **Architecture:** Two files in scope: `claude-plugins/manifest-dev/agents/github-pr-lifecycle.md` (new FAIL format, wait-cadence policy section, cycle counter semantics, steering example) and `claude-plugins/manifest-dev/skills/do/SKILL.md` (one-paragraph discipline rule about literal directive execution). Plus plugin metadata: version bump 1.1.0 → 1.2.0; README updates if a behavior summary references the FAIL format; `dist/` regeneration via `/sync-tools` so Gemini/OpenCode/Codex distributions stay in sync.
 - **Execution Order:**
-  - D1 (agent + skill edits) → D2 (plugin housekeeping: version, README, dist sync) → D3 (PR through mergeable)
-  - Rationale: substantive edits must land before housekeeping so version-bump + README reflect the actual change; sync-tools reads source files so it runs after edits; PR lifecycle is terminal and shouldn't gate the implementation work.
+  - D1 (agent + skill edits) → D2 (plugin housekeeping: version, README, dist sync) → D4 (drop phantom "budget" framing from /do SKILL.md — follow-up cleanup that surfaced during INV-G2 review).
+  - Rationale: substantive edits must land before housekeeping so version-bump + README reflect the actual change; sync-tools reads source files so it runs after edits; D4 came last because it was prompted by review feedback on D1's discipline rule paragraph (same paragraph in /do SKILL.md). Push + PR are out of band; the user lands commits manually.
 - **Risk Areas:**
   - [R-1] Backward compatibility of the agent's FAIL format with `/do`'s existing parsing path. | Detect: read the existing `/do` SKILL.md description of how FAIL bodies are consumed; verify the new format is a superset of the old (per-gate `Breakdown:` survives; directives replace prose hints inside that structure). If `/do` parses by section header, the new format works for both old and new behavior.
-  - [R-2] Self-verification dog-fooding: D3 spawns the edited `github-pr-lifecycle` agent to verify its own AC. | Detect: if the AC misbehaves at D3 time, escalation surfaces. The new directive format is structurally a refinement of the old, not a break — if anything fails, the edits themselves are the bug.
   - [R-3] Cycle-counter semantic extension to `prior-retrigger-context`. | Detect: read the existing input description and verify the extension fits without breaking the CI-retrigger counting semantics (per-gate counting was already implicit; the change names it explicitly).
 - **Trade-offs:**
   - [T-1] Inspector encapsulation vs caller-mechanic coupling — naming `bash sleep` in the agent couples the inspector to one specific caller's mechanism. Prefer the coupling because the alternative (prose hints + caller judgment) has been observed to fail in three different ways; coupling cost is real but bounded to one caller today.
@@ -162,24 +161,44 @@ Bump plugin version, update READMEs only if they explicitly reference FAIL-forma
       Return PASS if all are in sync. Return FAIL with a directive (`- dist sync: FAIL — run /sync-tools`) if any file lags.
   ```
 
-### Deliverable 3: Ship through PR to mergeable
+### Deliverable 4: Drop phantom "budget" framing from /do SKILL.md
 
-Commit the implementation + ADR on `feature/verifier-fail-hints-directives`, push, open a PR, and run the lifecycle to mergeable. The merge button itself is out of scope per PR_LIFECYCLE doctrine.
+The /do SKILL.md previously used a "Budget + routing" header with prose referring to "the budget" and "burn the budget" — but no budget value or counter is defined anywhere in /do. The phrasing was pre-existing prose (predates this ADR) that surfaced for cleanup during INV-G2 review feedback on D1. Replace "Budget + routing" with "Iteration + routing" and reword the paragraph so the actual rule reads cleanly: code-change fix attempts iterate to pass-or-unrecoverable; other retry shapes (waiting, retriggering, replying with or without resolving, mechanical syncs) aren't fix attempts. The semantic distinction the old text was drawing is preserved verbatim in meaning — only the phantom "budget" word and "burn the budget" phrasing are gone. Resync `dist/{gemini,opencode,codex}/skills/do/SKILL.md` after the edit.
 
 **Acceptance Criteria:**
 
-- [AC-3.1] (PR_LIFECYCLE quality gate) PR for branch `feature/verifier-fail-hints-directives` is mergeable.
+- [AC-4.1] The word "budget" no longer appears in `claude-plugins/manifest-dev/skills/do/SKILL.md`.
   ```yaml
   verify:
-    agent: github-pr-lifecycle
+    agent: general-purpose
     prompt: |
-      PR: <PR URL for branch feature/verifier-fail-hints-directives — open one if absent, using the ADR + manifest Intent for title/description>
-      Branch: feature/verifier-fail-hints-directives
+      Search claude-plugins/manifest-dev/skills/do/SKILL.md for the substring "budget" (case-insensitive).
+      Return PASS if zero matches. Return FAIL with a directive (`- /do cleanup: FAIL — remove the remaining occurrence(s) of "budget" from /do SKILL.md`) if any match exists, naming the line numbers.
+  ```
 
-      Steering: |
-        Baseline — no custom approvers, no flaky CI overrides, no custom labels.
-        Wait cadence: keep agent defaults.
-        Mergeable is terminal; do not press the merge button.
+- [AC-4.2] The iteration semantics survive verbatim in meaning — code-change fix attempts iterate to pass-or-unrecoverable, and other retry shapes (waiting, retriggering, replying with or without resolving, mechanical syncs) are explicitly named as not-fix-attempts.
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Read claude-plugins/manifest-dev/skills/do/SKILL.md.
+      Verify the rewritten paragraph (which replaced the old "Budget + routing" section) preserves both clauses:
+      (a) Code-change fix attempts iterate until they pass or hit genuinely unrecoverable → `/escalate`.
+      (b) Other retry shapes (waiting, retriggering, replying with or without resolving, mechanical syncs) are explicitly distinguished — they aren't fix attempts and don't trigger the iterate-until-stuck handling.
+      Return PASS if both clauses are present in the new paragraph. Return FAIL with a directive (`- /do semantics: FAIL — restore missing clause: <which one>`) if either is missing.
+  ```
+
+- [AC-4.3] `dist/{gemini,opencode,codex}/skills/do/SKILL.md` byte-match source after the edit (sync-tools coverage for this single-file change).
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      For each of:
+      - dist/gemini/skills/do/SKILL.md
+      - dist/opencode/skills/do/SKILL.md
+      - dist/codex/skills/do/SKILL.md
+      Compare against claude-plugins/manifest-dev/skills/do/SKILL.md.
+      Return PASS if all three are byte-identical to source. Return FAIL with a directive (`- dist sync: FAIL — re-sync /do SKILL.md to <which CLI dist>`) naming the lagging file(s).
   ```
 
 ## Source
