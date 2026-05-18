@@ -9,8 +9,8 @@
 
 - **Architecture:** Two files in scope: `claude-plugins/manifest-dev/agents/github-pr-lifecycle.md` (new FAIL format, wait-cadence policy section, cycle counter semantics, steering example) and `claude-plugins/manifest-dev/skills/do/SKILL.md` (one-paragraph discipline rule about literal directive execution). Plus plugin metadata: version bump 1.1.0 → 1.2.0; README updates if a behavior summary references the FAIL format; `dist/` regeneration via `/sync-tools` so Gemini/OpenCode/Codex distributions stay in sync.
 - **Execution Order:**
-  - D1 (agent + skill edits) → D2 (plugin housekeeping: version, README, dist sync) → D4 (drop phantom "budget" framing from /do SKILL.md — follow-up cleanup that surfaced during INV-G2 review).
-  - Rationale: substantive edits must land before housekeeping so version-bump + README reflect the actual change; sync-tools reads source files so it runs after edits; D4 came last because it was prompted by review feedback on D1's discipline rule paragraph (same paragraph in /do SKILL.md). Push + PR are out of band; the user lands commits manually.
+  - D1 (agent + skill edits) → D2 (plugin housekeeping) → D4 (drop phantom "budget") → D5 (enrich FAIL line shape; catch-all on `escalate`) → D6 (make agent workflow-neutral; supersede the original ADR).
+  - Rationale: substantive edits land before housekeeping so version + README reflect the actual change; sync-tools reads source files so it runs after edits; D4–D6 are post-hoc design corrections prompted by the user noticing — D4 from "what's the budget?", D5 from "is the vocabulary exhaustive? and `reply X` alone is anemic", and D6 from "the agent shouldn't carry manifest workflow vocabulary like `escalate`; and what about truly solvable unknowns?" D6 supersedes parts of the original ADR (the rigid-vocabulary-includes-`escalate` decision), so a new ADR is written and the original is marked Superseded. Push + PR are out of band; the user lands commits manually.
 - **Risk Areas:**
   - [R-1] Backward compatibility of the agent's FAIL format with `/do`'s existing parsing path. | Detect: read the existing `/do` SKILL.md description of how FAIL bodies are consumed; verify the new format is a superset of the old (per-gate `Breakdown:` survives; directives replace prose hints inside that structure). If `/do` parses by section header, the new format works for both old and new behavior.
   - [R-3] Cycle-counter semantic extension to `prior-retrigger-context`. | Detect: read the existing input description and verify the extension fits without breaking the CI-retrigger counting semantics (per-gate counting was already implicit; the change names it explicitly).
@@ -201,8 +201,154 @@ The /do SKILL.md previously used a "Budget + routing" header with prose referrin
       Return PASS if all three are byte-identical to source. Return FAIL with a directive (`- dist sync: FAIL — re-sync /do SKILL.md to <which CLI dist>`) naming the lagging file(s).
   ```
 
+### Deliverable 5: Enrich per-gate FAIL shape + explicit unknown-unknowns catch-all
+
+Two related refinements to the `github-pr-lifecycle` FAIL format that surfaced after D1 shipped:
+
+1. **Per-gate FAIL lines are anemic with just a directive token.** `reply 12345` alone doesn't tell the caller what the thread is about — they have to re-fetch. The format should support a multi-line shape with `Reason:`, `Directive:`, and `Context:` fields so the caller has actionable context inline. Inline form (`- <gate>: FAIL — <directive>`) stays for simple cases (e.g., `escalate`, no meaningful context to surface). The agent picks the shape based on whether there's meaningful context to surface.
+
+2. **`escalate` is the implicit catch-all for unknown unknowns, but the description doesn't say so.** The current `escalate` text lists specific terminal conditions (closed externally, fork-origin push impossible, gh/API unreachable, CI deeper than this PR). It doesn't say "anything else the vocabulary doesn't cover." An agent encountering a novel situation could either invent an out-of-vocabulary directive (breaking literal-execution discipline downstream) or emit `escalate` by best inference. The catch-all should be explicit.
+
+Field naming choice: `Directive:` (not `Suggestion:`) in the multi-line form, to preserve the literal-execution contract — "Suggestion" softens the rule.
+
+Resync `dist/{gemini,opencode,codex}/skills/do/SKILL.md`, `dist/{gemini,opencode,codex}/agents/github-pr-lifecycle.{md,toml}`, and the root `.gemini/`/`.opencode/` distributions after the edits.
+
+**Acceptance Criteria:**
+
+- [AC-5.1] `github-pr-lifecycle.md` Output section specifies both inline and multi-line FAIL line shapes with example bodies.
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Read claude-plugins/manifest-dev/agents/github-pr-lifecycle.md.
+      Verify the Output section documents two FAIL line shapes:
+      (a) inline: `- <gate>: FAIL — <directive>` for terse / no-extra-context cases.
+      (b) multi-line: per-gate FAIL block with `Reason:`, `Directive:`, and `Context:` fields (or similar named fields conveying the same three concepts) for cases where the caller needs context inline.
+      An example body showing the multi-line shape must be present in the file (e.g., a `reply <thread>` example with thread excerpt in Context).
+      Return PASS if both shapes are documented and the multi-line example is present. Return FAIL with a directive naming the missing piece.
+  ```
+
+- ~~[AC-5.2]~~ Removed — superseded by AC-6.1 (D6 removes `escalate` from the vocabulary entirely; the prior catch-all-clause requirement is obsolete).
+- ~~[AC-5.3]~~ Removed — superseded by AC-6.2 (D6 rewrites the stay-in-vocabulary stop rule in workflow-neutral terms; the prior `escalate`-naming requirement is obsolete).
+- ~~[AC-5.4]~~ Removed — superseded by AC-6.4 (D6 renames the multi-line `Directive:` field to `Suggested:` and broadens its semantics; the prior `Directive:`-naming requirement is obsolete).
+
+- [AC-5.5] `dist/{gemini,opencode,codex}/agents/github-pr-lifecycle.{md,toml}` and `dist/{gemini,opencode,codex}/skills/do/SKILL.md` and root `.gemini/`/`.opencode/` distributions are in sync with the updated source files.
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Verify all distribution targets contain the D5 changes (multi-line FAIL shape + catch-all escalate + stop rule + /do field recognition):
+      - dist/gemini/agents/github-pr-lifecycle.md and dist/opencode/agents/github-pr-lifecycle.md (markdown bodies byte-match source body)
+      - dist/codex/agents/github-pr-lifecycle.toml (developer_instructions body matches source body content)
+      - dist/{gemini,opencode,codex}/skills/do/SKILL.md (byte-match source)
+      - .gemini/agents/github-pr-lifecycle-manifest-dev.md and .opencode/agents/github-pr-lifecycle-manifest-dev.md (bodies match dist)
+      - .gemini/skills/do-manifest-dev/SKILL.md and .opencode/skills/do-manifest-dev/SKILL.md (bodies match dist)
+      Return PASS if all in sync. Return FAIL with a directive naming the lagging file(s).
+  ```
+
+### Deliverable 6: Workflow-neutral agent (supersede original ADR)
+
+The agent should be like other reviewer agents (`change-intent-reviewer`, `code-bugs-reviewer`, etc.): it identifies what's blocking the PR — it doesn't prescribe `/do`'s workflow. The `escalate` directive token is the offender: `/escalate` is a `/do` workflow concept that leaked into the agent's vocabulary. Pure GitHub-state directives (`bash sleep`, `retrigger`, `reply`, etc.) are workflow-neutral and stay; `escalate` is workflow-aware and goes.
+
+Separately: the rigid fixed vocabulary doesn't cover solvable-but-novel scenarios well. Forcing every unknown into `escalate` (which means "give up, ask a human") is wrong when the situation is actually solvable but doesn't fit a pre-defined token. The escape valve is **prose findings**: the agent emits a free-form description of what was observed (and optionally a suggested approach) on that gate's FAIL line. The 6 workflow-neutral directives stay as the established vocabulary for clear actions; prose findings handle the rest.
+
+Field rename in the multi-line shape: `Directive:` → `Suggested:`. The new name reflects the broader semantics (known vocabulary token OR free-form prose). The literal-execution rule still applies when `Suggested:` carries a recognized vocabulary token — `/do` recognizes it and executes verbatim. When `Suggested:` carries prose, `/do` reads with LLM judgment and decides what to do (potentially route to `/escalate` itself).
+
+`/do`'s SKILL.md takes on the workflow dispatch: known-vocabulary token in `Suggested:` → execute literally (substitution-prevention rules still apply: no Stop / `/loop` / `ScheduleWakeup` / busy-wait); prose in `Suggested:` → read with LLM judgment, possibly route to `/escalate` when the situation is human-decision-needed. The `/escalate` routing is `/do`'s call now, not the agent's.
+
+Terminal/unrecoverable conditions (PR closed externally, gh/API unreachable, fork-origin push impossible) now surface as **prose findings** on the relevant gate describing what was observed; `/do` reads and decides whether to `/escalate`. No more `escalate` token in agent output.
+
+This change supersedes the original ADR's "rigid fixed vocabulary including `escalate`" decision. The new ADR captures: workflow vocabulary lives in `/do`, agent emits GitHub-action directives OR prose findings; flexibility for solvable unknowns through the prose escape valve. The original ADR is marked `Superseded`.
+
+**Acceptance Criteria:**
+
+- [AC-6.1] `escalate` is no longer present in the agent's directive vocabulary list.
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Read claude-plugins/manifest-dev/agents/github-pr-lifecycle.md.
+      Search the Output section's directive vocabulary list for the token `escalate`.
+      Return PASS if `escalate` is absent from the vocabulary list. References to `escalate` in prose elsewhere (e.g., explaining that /do may route prose findings to /escalate) are acceptable — only the directive vocabulary list itself must be free of the `escalate` token.
+      Return FAIL with a directive if `escalate` is still listed as a directive.
+  ```
+
+- [AC-6.2] Agent's Stop rules forbid emitting synthetic workflow tokens; when an observation needs human judgment, the agent surfaces a prose finding describing what was observed (not a workflow command).
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Read claude-plugins/manifest-dev/agents/github-pr-lifecycle.md.
+      Find a Stop rule (or equivalent invariant in the Hard prohibitions / Stop rules sections) instructing the agent:
+      (a) never to emit workflow-aware tokens such as `escalate` or any synthetic workflow command (only the workflow-neutral vocabulary tokens are allowed);
+      (b) when an observation needs human judgment or doesn't fit the workflow-neutral vocabulary, surface a prose finding describing what was observed.
+      Return PASS if the rule covers both clauses. Return FAIL with a directive naming what's missing.
+  ```
+
+- [AC-6.3] The multi-line FAIL shape uses `Suggested:` as the field name (or equivalent broader-semantics name) and supports both vocabulary tokens and prose; an example demonstrates prose-finding usage on a gate.
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Read claude-plugins/manifest-dev/agents/github-pr-lifecycle.md.
+      Verify:
+      (a) The multi-line per-gate FAIL block uses `Suggested:` (or equivalent broader-semantics field name) instead of the prior `Directive:`. The renamed field accepts either a recognized vocabulary token OR free-form prose describing a suggested approach.
+      (b) An example FAIL body demonstrates the prose-finding form on a gate (e.g., a "Mergeable" or "User gates" failure where the suggested action is free-form, not a vocabulary token).
+      Return PASS if both are present. Return FAIL with a directive naming what's missing.
+  ```
+
+- [AC-6.4] `/do` SKILL.md handles workflow dispatch — recognizes known vocabulary tokens (execute literally) vs prose suggestions (LLM judgment) — and owns the `/escalate` routing call.
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Read claude-plugins/manifest-dev/skills/do/SKILL.md.
+      Verify the FAIL body contract / dispatch section now articulates:
+      (a) Recognized vocabulary tokens (e.g., `bash sleep`, `retrigger`, `reply`, etc.) in the `Suggested:` field are executed literally with the substitution-prevention rules.
+      (b) Prose in the `Suggested:` field is read with LLM judgment.
+      (c) `/escalate` routing is /do's decision based on hint/prose semantics (no longer triggered by an `escalate` token in the agent output, since the agent no longer emits that token).
+      Return PASS if all three are stated. Return FAIL with a directive naming what's missing.
+  ```
+
+- [AC-6.5] Terminal/unrecoverable conditions surface as prose findings in agent output, not as an `escalate` token.
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Read claude-plugins/manifest-dev/agents/github-pr-lifecycle.md.
+      Find the example terminal FAIL body (or equivalent example covering a terminal/unrecoverable case like PR closed externally).
+      Verify the example surfaces the terminal condition as a prose finding on the affected gate (describing what was observed — e.g., "PR was closed externally by @bob at <timestamp>; unrecoverable from automated inspection") rather than emitting an `escalate` token. The example may state that /do will route to /escalate, but the agent itself does not emit a workflow token.
+      Return PASS if the example uses a prose finding for terminal conditions. Return FAIL with a directive identifying any remaining `escalate` token in terminal examples.
+  ```
+
+- [AC-6.6] The original ADR `docs/adr/20260518-verifier-fail-hints-are-directives.md` is REWRITTEN IN PLACE to capture the final workflow-neutral design. No separate new-ADR file is created — per the in-PR override convention: when an ADR introduced in a PR supersedes another ADR also introduced in the same PR, the earlier one is rewritten in place rather than left as a separate Superseded record (this reduces docs/adr/ clutter when an ADR's design is still iterating during the PR that introduces it). The immutability rule from `references/ADR_FORMAT.md` still applies to ADRs once their PR merges; in-PR overrides are the carve-out.
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Verify the original ADR file is rewritten in place to reflect the final workflow-neutral design:
+      (a) docs/adr/20260518-verifier-fail-hints-are-directives.md exists, Status is `Accepted` (not `Superseded`).
+      (b) The body now captures the final design: workflow vocabulary lives in /do (agent stops emitting `escalate`); agent emits per-gate findings — either workflow-neutral GitHub-action directives from the fixed vocabulary OR prose findings — via the `Suggested:` field of the multi-line FAIL form; /do recognizes vocabulary tokens for literal execution and reads prose with judgment, owning the /escalate routing decision.
+      (c) Alternatives Considered captures the rejected alternatives (the rigid-vocabulary-including-`escalate` approach the ADR originally documented, and the hypothetical full-revert-to-prose-hints).
+      (d) Consequences lists the trade (more flexibility for solvable unknowns at the cost of some caller-side judgment for prose findings; substitution-prevention discipline stays in /do).
+      (e) NO separate new-ADR file exists at docs/adr/20260518-pr-lifecycle-workflow-neutral.md (or similar) — the in-PR override convention requires rewriting in place, not writing a parallel file.
+      Return PASS if all of (a)-(e) hold. Return FAIL with a directive naming what's missing or misaligned.
+  ```
+
+- [AC-6.7] `dist/{gemini,opencode,codex}/` agent and skill files re-synced to reflect D6 changes; root `.gemini/`/`.opencode/` distributions also in sync.
+  ```yaml
+  verify:
+    agent: general-purpose
+    prompt: |
+      Verify all distribution targets reflect D6 changes (no `escalate` in agent vocabulary; `Suggested:` field; prose-finding examples; /do workflow dispatch):
+      - dist/{gemini,opencode}/agents/github-pr-lifecycle.md and dist/codex/agents/github-pr-lifecycle.toml (bodies match source body content)
+      - dist/{gemini,opencode,codex}/skills/do/SKILL.md (byte-match source)
+      - .gemini/ and .opencode/ root-level distributions for both agent and skill
+      Return PASS if all in sync with the D6-updated source. Return FAIL with a directive naming the lagging file(s).
+  ```
+
 ## Source
 
-- ADR: `docs/adr/20260518-verifier-fail-hints-are-directives.md`
+- ADR: `docs/adr/20260518-verifier-fail-hints-are-directives.md` — rewritten in place during D6 to capture the workflow-neutral design (the original "rigid directive vocabulary including `escalate`" framing was iterative thinking; the final design is workflow-neutral findings with directives OR prose). In-PR override convention applies — see AC-6.6.
 - Session: `~/.claude/projects/-Users-aviram-kofman-Documents-Projects-manifest-dev/8c3870c7-ab4c-4ca2-8125-59b813b55130.jsonl`
 - Branch: `feature/verifier-fail-hints-directives`
