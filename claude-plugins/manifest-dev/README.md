@@ -41,7 +41,7 @@ verify:
   phase: 1          # optional integer, default 1 (lower phases run first)
 ```
 
-Verifier subagents return one of three states: **PASS**, **FAIL**, or **BLOCKED**. PASS = criterion holds. FAIL = criterion violated; includes evidence and a fix hint. BLOCKED = criterion can't be evaluated yet because of an external action / state pending (deploy hasn't happened, human approval pending, etc.) — `/do` routes BLOCKED via `/escalate`.
+Verifier subagents return one of three states: **PASS**, **FAIL**, or **BLOCKED**. PASS = criterion holds. FAIL = criterion violated; includes evidence — either a per-gate directive `/do` executes literally (specialized verifiers like `github-pr-lifecycle`) or a prose fix hint read with judgment (generic verifiers). BLOCKED = criterion can't be evaluated yet because of an external action / state pending (deploy hasn't happened, human approval pending, etc.) — `/do` routes BLOCKED via `/escalate`.
 
 Authors put whatever the verifier needs to do directly into the prompt — run a bash command and check exit code, inspect files, query an API, fetch docs. There's no separate `method:`, `command:`, or `inner_method:` field; the subagent runs whatever its prompt asks for from its tool set.
 

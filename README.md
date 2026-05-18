@@ -287,7 +287,7 @@ verify:
   phase: 3
 ```
 
-The subagent returns one of three states: **PASS** (criterion holds), **FAIL** (criterion violated; includes evidence and a fix hint), or **BLOCKED** (criterion can't be evaluated yet — pending deploy, human approval, etc.; `/do` routes BLOCKED via `/escalate`).
+The subagent returns one of three states: **PASS** (criterion holds), **FAIL** (criterion violated; includes evidence — a per-gate directive `/do` executes literally for specialized verifiers like `github-pr-lifecycle`, or a prose fix hint read with judgment for generic verifiers), or **BLOCKED** (criterion can't be evaluated yet — pending deploy, human approval, etc.; `/do` routes BLOCKED via `/escalate`).
 
 ## Multi-CLI Support
 
@@ -342,7 +342,7 @@ Built-in agents `/do` spawns to verify criteria. Name an agent in the verify blo
 | `type-safety-reviewer` | TypeScript type safety: `any` abuse, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
 | `context-file-adherence-reviewer` | Compliance with context file (CLAUDE.md/AGENTS.md/GEMINI.md) project rules |
-| `github-pr-lifecycle` | PR-lifecycle inspector — checks CI, review threads, description sync, mergeability; returns PASS/FAIL with a hint. Composed automatically when `--platform github` resolves during `/define`. |
+| `github-pr-lifecycle` | PR-lifecycle inspector — checks CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives (`bash sleep …; reinvoke`, `retrigger …`, `reply …`, `escalate`, …) the caller executes literally. Owns its wait-cadence policy (per-gate durations and cycle caps; steering customizable). Composed automatically when `--platform github` resolves during `/define`. |
 | `slack-poller` | Tails a Slack thread for the `/figure-out-team` loop, returning the verbatim deltas the agent reasons over. |
 
 Each reviewer returns structured output with severity levels (Critical, High, Medium, Low) and specific fix guidance.
