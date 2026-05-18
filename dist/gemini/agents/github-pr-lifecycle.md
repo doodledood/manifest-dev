@@ -1,6 +1,6 @@
 ---
 name: github-pr-lifecycle
-description: 'Inspect a GitHub PR''s lifecycle state — CI, review threads, description sync, mergeability — and return PASS or FAIL with per-gate findings. Each finding suggests either a workflow-neutral GitHub-action directive from the fixed vocabulary (the caller executes literally) or a free-form prose description for solvable-but-novel situations (the caller reads with judgment). Read-only; never invokes the merge button. Use when verifying a PR is ready to merge, polling lifecycle progress between calls, or babysitting a PR through CI and approvals. Triggers: PR lifecycle, check PR ready, verify PR mergeable, PR babysit, lifecycle check, github PR mergeable.'
+description: 'Read-only inspection agent for a single GitHub PR — checks CI, review threads, description sync, and mergeability; reports PASS or FAIL with per-gate findings. Never invokes the merge button. Use when verifying a PR is ready to merge, polling lifecycle progress between calls, or babysitting a PR through CI and approvals. Triggers: PR lifecycle, check PR ready, verify PR mergeable, PR babysit, lifecycle check, github PR mergeable.'
 kind: local
 model: inherit
 temperature: 0.2
