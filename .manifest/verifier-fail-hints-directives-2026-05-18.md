@@ -297,18 +297,7 @@ This change supersedes the original ADR's "rigid fixed vocabulary including `esc
       Return PASS if both are present. Return FAIL with a directive naming what's missing.
   ```
 
-- [AC-6.4] `/do` SKILL.md handles workflow dispatch — recognizes known vocabulary tokens (execute literally) vs prose suggestions (LLM judgment) — and owns the `/escalate` routing call.
-  ```yaml
-  verify:
-    agent: general-purpose
-    prompt: |
-      Read claude-plugins/manifest-dev/skills/do/SKILL.md.
-      Verify the FAIL body contract / dispatch section now articulates:
-      (a) Recognized vocabulary tokens (e.g., `bash sleep`, `retrigger`, `reply`, etc.) in the `Suggested:` field are executed literally with the substitution-prevention rules.
-      (b) Prose in the `Suggested:` field is read with LLM judgment.
-      (c) `/escalate` routing is /do's decision based on hint/prose semantics (no longer triggered by an `escalate` token in the agent output, since the agent no longer emits that token).
-      Return PASS if all three are stated. Return FAIL with a directive naming what's missing.
-  ```
+- ~~[AC-6.4]~~ Removed — final-pass design pivot ("trust model capability"). `/do` does not gain workflow-dispatch logic for `github-pr-lifecycle`'s vocabulary; the literal-command shape of the agent's output is the discipline (the model reads `bash sleep 600; reinvoke` and executes that text — no special dispatch rule needed in the caller). `/do` is unchanged-in-this-PR aside from D4's pre-existing-budget-prose cleanup.
 
 - [AC-6.5] Terminal/unrecoverable conditions surface as prose findings in agent output, not as an `escalate` token.
   ```yaml
