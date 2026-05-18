@@ -53,7 +53,7 @@ Rules:
 - One sentence per definition. What it IS, not what it does.
 - Bold term names; list aliases under `_Avoid_:` when multiple words competed.
 - Show cardinality in Relationships when load-bearing.
-- Project-specific concepts only.
+- Project-specific vocabulary and conceptual relationships only — no architecture, file paths, code structure, or design decisions. Implementation belongs in ADRs.
 
 ## ADR format
 
