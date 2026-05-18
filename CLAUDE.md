@@ -23,7 +23,9 @@ pytest tests/hooks/ -v
 Read before building plugins:
 
 - **@docs/CUSTOMER.md** - Who we build for, messaging guidelines
+- **@CONTEXT.md** - Project language (Manifest, Deliverable, etc.) and relationships
 - **docs/LLM_CODING_CAPABILITIES.md** - LLM strengths/limitations, informs workflow design
+- **docs/adr/** - Architecture Decision Records
 
 ## Repository Structure
 
