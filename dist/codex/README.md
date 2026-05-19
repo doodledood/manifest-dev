@@ -7,7 +7,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | Type | Count | Notes |
 |------|-------|-------|
 | Skills | 7 | Full compatibility (Agent Skills Open Standard) |
-| Agents | 15 | TOML config stubs with full prompt bodies |
+| Agents | 16 | TOML config stubs with full prompt bodies |
 | Hooks | 0 | Not supported by Codex CLI (Issue #2109) |
 | Rules | 1 | Starlark execution policy |
 
@@ -29,14 +29,15 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 |-------|---------|---------|
 | change-intent-reviewer | read-only | Intent-behavior divergence analysis |
 | code-bugs-reviewer | read-only | Mechanical defect detection |
-| test-quality-reviewer | read-only | Coverage gaps plus tautological-test detection |
+| operational-readiness-reviewer | read-only | Runtime and deployment readiness |
+| test-quality-reviewer | read-only | Coverage gaps plus independent behavioral-oracle checks |
 | prose-value-reviewer | read-only | Comments and repo doc files: AI-tells, narrating-the-obvious, puffery |
-| code-design-reviewer | read-only | Design fitness audit |
+| code-design-reviewer | read-only | Design fitness and responsibility ownership audit |
 | code-maintainability-reviewer | read-only | Maintainability audit |
 | code-simplicity-reviewer | read-only | Complexity audit |
 | code-testability-reviewer | read-only | Testability audit |
 | context-file-adherence-reviewer | read-only | Context file compliance |
-| contracts-reviewer | read-only | API contract verification |
+| contracts-reviewer | read-only | API contract verification with source-of-truth evidence |
 | criteria-checker | read-only | Single criterion verification |
 | docs-reviewer | read-only | Documentation accuracy audit |
 | github-pr-lifecycle | read-only | Steerable GitHub PR lifecycle inspection; emits hints for /do dispatch |
@@ -106,9 +107,10 @@ dist/codex/
 │   ├── escalate/
 │   ├── figure-out/
 │   └── verify/
-├── agents/                          # 15 TOML config stubs
+├── agents/                          # 16 TOML config stubs
 │   ├── change-intent-reviewer.toml
 │   ├── code-bugs-reviewer.toml
+│   ├── operational-readiness-reviewer.toml
 │   ├── test-quality-reviewer.toml
 │   ├── prose-value-reviewer.toml
 │   ├── code-design-reviewer.toml

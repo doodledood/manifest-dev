@@ -59,6 +59,19 @@ A tautological test passes regardless of whether the implementation is correct. 
 
 **Counter-implementation test**: A test should fail if you replaced the implementation with one that produces a contradictory result for the same input. If the test would still pass against a contradictory implementation, it's tautological.
 
+### Independent Behavioral Oracle
+
+A validating test states the expected behavior independently of the implementation. Flag tests that appear to cover a scenario but leave the behavioral oracle weak or hidden:
+
+- **Implementation-derived expected values**: The test recomputes expected output with the same algorithm, helpers, or transformations as production. A matching bug in both places still passes.
+- **Mock wiring instead of behavior**: Assertions prove only that a mock was called or returned, not that the user-visible/domain result is correct.
+- **Hidden scenario setup**: Meaningful state lives in shared setup, fixtures, or `beforeEach`-style blocks in a way that makes the test case hard to audit. Common setup is fine; scenario-defining facts should be visible in the test or named builder.
+- **Partial collection assertions**: Test checks one element when the behavior applies to all items, ordering, uniqueness, or membership of the collection.
+- **Merged failure modes**: Semantically different outcomes share one test, obscuring which behavior is protected (for example, "dependency returned failure" vs "dependency threw").
+- **Over-abstracted assertions**: Custom assertion helpers hide the protected behavior even though the assertion itself is simple.
+
+Prefer explicit expected values, whole-result assertions, or named builders when shape and semantics matter. Do not flag ordinary fixture reuse or assertion helpers when the behavioral property remains clear at the call site.
+
 ## Edge Case Enumeration
 
 Derive the scenarios that SHOULD exist from the code's logic, then judge whether existing tests for those scenarios actually validate behavior. The reviewer's responsibility has two parts: enumerate the scenarios; check both that each is tested AND that the test isn't tautological.
@@ -152,7 +165,7 @@ For each tautology, name what isn't being verified:
 
 ```
 [TAUTOLOGY] <test filepath>: <test name>
-   Pattern: [mirror-impl | mock-SUT | trivial-assert | snapshot-without-intent | other]
+   Pattern: [mirror-impl | mock-SUT | trivial-assert | snapshot-without-intent | hidden-scenario | partial-collection | merged-failure-modes | over-abstracted-assertion | other]
    Risk: [High | Medium | Low] — [behavioral property left unverified]
 
    Why tautological: [Specific reason — e.g., "mock returns 42, code returns mock value, asserts 42; test passes on any implementation that wires the mock through"]

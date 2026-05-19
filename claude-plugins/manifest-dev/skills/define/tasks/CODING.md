@@ -14,6 +14,7 @@ Two tiers by agent role. **Defect-finding agents** (every LOW finding is signal 
 |--------|-------|-----------|
 | Intent analysis | change-intent-reviewer | no LOW+ |
 | Mechanical bug detection | code-bugs-reviewer | no LOW+ |
+| Operational readiness | operational-readiness-reviewer | no MEDIUM+ |
 | Maintainability | code-maintainability-reviewer | no MEDIUM+ |
 | Simplicity | code-simplicity-reviewer | no MEDIUM+ |
 | Test quality | test-quality-reviewer | no MEDIUM+ |

@@ -42,6 +42,12 @@ Determine what to review using this priority:
 
 These categories are guidance, not exhaustive. If you identify a contract issue that fits within this agent's domain but doesn't match a listed category, report it — just respect the Out of Scope boundaries to maintain reviewer orthogonality.
 
+### Source-of-Truth Discipline
+
+Before accepting hand-built calls, payloads, literals, status names, schemas, config values, or protocol assumptions, look for the authoritative source: generated client, SDK, OpenAPI/Swagger, protobuf/IDL, GraphQL schema, schema file, shared constants/enums, framework config, migration, documented API, or neighboring established module pattern.
+
+Flag when the change duplicates or bypasses an existing authoritative source and creates concrete contract risk: drift, wrong request/response shape, invalid literals, duplicated protocol rules, or breaking consumers. Do not report merely because a generated or shared source exists; report only when bypassing it changes correctness, durability, or consumer compatibility.
+
 ### Outbound: API Usage Verification
 
 Verify that code calling external or internal APIs does so correctly per the API's actual contract.
@@ -98,16 +104,17 @@ Verify that changes to interfaces, public APIs, or contracts don't break existin
 
 **Acceptable evidence sources:**
 - **API documentation** — fetched via WebFetch from official docs, API reference pages, or OpenAPI/Swagger specs
-- **Internal API definitions** — read from the codebase (route handlers, controller definitions, type exports, protobuf/GraphQL schemas)
+- **Internal API definitions** — read from the codebase (route handlers, controller definitions, generated clients, SDKs, type exports, shared constants/enums, protobuf/GraphQL schemas)
 - **Consumer code** — actual callers found via codebase search that depend on the contract
 - **Test expectations** — existing tests that assert specific contract behavior
 
 **Evidence workflow:**
 1. Identify API calls or interface changes in the diff
-2. For outbound: locate the API documentation (WebFetch for external, codebase read for internal)
-3. For inbound: search the codebase for consumers of the changed interface
-4. Compare the code against the evidence
-5. Report only verified mismatches
+2. Look for the authoritative source of truth before judging handwritten code: generated client, SDK, schema, shared constants, docs, or established neighboring pattern
+3. For outbound: locate the API documentation (WebFetch for external, codebase read for internal)
+4. For inbound: search the codebase for consumers of the changed interface
+5. Compare the code against the evidence
+6. Report only verified mismatches
 
 **When evidence is unavailable:** If you cannot find documentation for an external API (WebFetch fails, no docs URL discoverable), or cannot locate consumers of an internal interface, note the gap in the report but do NOT fabricate API behavior or assume consumer existence. Use the "Unverified" section of the report.
 

@@ -29,14 +29,15 @@ Specialized subagents spawned by `/do` for criterion verification. Name one in `
 |-------|---------|
 | change-intent-reviewer | Adversarial intent-behavior divergence analysis |
 | code-bugs-reviewer | Mechanical defect detection (race conditions, leaks, edge cases) |
-| test-quality-reviewer | Coverage gap analysis plus tautological-test detection (mirror-impl, mock-SUT, trivial-asserts, snapshot-without-intent) |
+| operational-readiness-reviewer | Runtime and deployment readiness: environment wiring, migrations, retries, rollback, scale, CI, and observability |
+| test-quality-reviewer | Coverage gap analysis plus independent behavioral-oracle checks |
 | prose-value-reviewer | Comments and repo doc files: narrating-the-obvious, generic puffery, AI rhetorical patterns, sycophantic fragments — comments must be load-bearing-WHY |
-| code-design-reviewer | Design fitness: right approach given what exists |
+| code-design-reviewer | Design fitness: right approach and right responsibility owner given what exists |
 | code-maintainability-reviewer | DRY, coupling, cohesion, consistency, dead code |
 | code-simplicity-reviewer | Unnecessary complexity and over-engineering |
 | code-testability-reviewer | Test friction: mock count, IO-buried logic |
 | context-file-adherence-reviewer | Compliance with GEMINI.md project rules |
-| contracts-reviewer | API contract correctness with evidence |
+| contracts-reviewer | API contract correctness with source-of-truth evidence |
 | criteria-checker | Single criterion PASS/FAIL verification — default subagent when verify.agent is omitted |
 | docs-reviewer | Documentation accuracy against code changes |
 | github-pr-lifecycle | Steerable GitHub PR lifecycle inspection — returns natural-language hint for /do to dispatch. Read-only; never invokes the merge button. |
