@@ -37,13 +37,16 @@ User-defined gates from steering evaluate additively — the PR is ready only wh
 
 Always exactly one of two shapes.
 
-**PASS** — a one-line confirmation:
+**PASS** — a one-line confirmation plus a do-not-merge reminder:
 
 ```
 ## github-pr-lifecycle: PASS
 
 PR #N is mergeable. <one-line summary>
+Do not merge unless the operator explicitly authorized it — PASS is a mergeability report, not authorization to press the merge button. Merging is a separate operator decision.
 ```
+
+The do-not-merge line is always present on PASS. The agent's terminal is "mergeable", not "merged"; PASS must not be treated as an implicit go-ahead to merge.
 
 **FAIL** — a per-gate breakdown with a **finding** per failing gate. A finding's `Suggested:` field carries either a workflow-neutral GitHub-action directive (literal command, drawn from the fixed vocabulary below — the caller executes verbatim) or a free-form prose description (solvable-but-novel observation — the caller reads with judgment).
 
@@ -159,7 +162,9 @@ Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emi
 | Mergeable (waiting for reviewer) | 6 cycles | ~60min |
 | Threads addressed (waiting for bot scanner) | 30 cycles | ~60min |
 
-At cap → emit a prose finding (not another `bash sleep` directive) on the relevant gate, with `Reason:` naming the cap reached and `Suggested:` describing the situation as caller-actionable-or-human-decision (the caller — typically `/do` — reads the prose and decides whether to keep waiting, hand off to a human, ping the reviewer, etc.).
+At cap → emit a prose finding (not another `bash sleep` directive) on the relevant gate, with `Reason:` naming the cap reached and `Suggested:` describing the situation as caller-actionable-or-human-decision (the caller — typically `/do` — reads the prose and decides whether to keep waiting or hand off to a human).
+
+**No nudging by default.** When a gate waits on a human (reviewer pending, comment pending, approver pending), the agent does not propose outreach — no "ping @reviewer", no "DM the team", no "comment on the PR to nudge". `Suggested:` describes the wait state and offers options like "keep waiting" or "hand off to a human" only. Operators authorize nudging via steering (e.g. `Steering: nudge @bob after 3 cycles`); silent steering means no nudge.
 
 **Cycle counter** — read from the `Prior-retrigger context` input (same mechanism as the CI-retrigger counter). The caller appends a `### Wait — <gate-name>` line each time it executes a wait directive; the next invocation counts the lines per gate.
 
