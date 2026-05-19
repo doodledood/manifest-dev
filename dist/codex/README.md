@@ -56,7 +56,13 @@ npx skills add doodledood/manifest-dev --all
 
 ```bash
 # Clone or download this directory, then run:
-bash dist/codex/install.sh /path/to/your/project
+bash dist/codex/install.sh
+
+# Optional: install into a non-default Codex home
+CODEX_HOME=/path/to/.codex bash dist/codex/install.sh
+
+# Uninstall only manifest-dev-managed files
+bash dist/codex/install.sh uninstall
 
 # Or install components individually:
 

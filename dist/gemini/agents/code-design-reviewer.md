@@ -106,6 +106,7 @@ Something used for a purpose it was never designed for — overloading an existi
 
 - **Overloaded beyond original purpose**: An enum, type, or parameter that was designed for one thing now controls unrelated behavior. A formatting enum that now drives business logic, a parameter threaded through a function just to pass it to a downstream caller, a field repurposed to carry data it wasn't meant to represent. Trigger: "X is supposed to be about Y but it's being used as Z."
 - **Variant bloat — reuse over addition**: A new variant added to an enum or type when an existing variant already covers the use case. Bias toward reusing what exists rather than adding. Trigger: "isn't this already covered by the existing variant?"
+- **False semantic generalization**: A type, API, option, event, or extension point groups cases that share shape but differ in lifecycle, ownership, valid operations, or failure semantics. Flag only when the abstraction will mislead callers, force special cases, or hide required explicit handling.
 
 Note: This is about **semantic misuse** — using X for purpose Y was never designed for. Maintainability's "Concept & Contract Drift" is about **representation inconsistency** — the same concept represented in multiple incompatible ways across modules. If the problem is "this enum now means two different things," that's concept misuse (design fitness). If the problem is "module A calls it OrderStatus and module B calls it OrderState with different shapes," that's concept drift (maintainability).
 

@@ -31,6 +31,8 @@ git clone https://github.com/doodledood/manifest-dev.git
 cd manifest-dev/dist/gemini
 ./install.sh              # Project-level (.gemini/)
 ./install.sh --global     # User-level (~/.gemini/)
+./install.sh uninstall    # Remove project-level manifest-dev files
+./install.sh uninstall --global
 ```
 
 ## Required Configuration

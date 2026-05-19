@@ -16,12 +16,39 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET="${OPENCODE_TARGET:-.opencode}"
+ACTION="${1:-install}"
+
+case "$ACTION" in
+  install|uninstall)
+    ;;
+  *)
+    echo "Usage: bash install.sh [install|uninstall]" >&2
+    exit 1
+    ;;
+esac
 
 echo "manifest-dev OpenCode installer"
 echo "================================"
 echo "Source:  $SCRIPT_DIR"
 echo "Target:  $TARGET"
 echo ""
+
+if [[ "$ACTION" == "uninstall" ]]; then
+    echo "Removing manifest-dev-managed OpenCode files..."
+    find "$TARGET/skills" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
+    find "$TARGET/agents" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
+    find "$TARGET/commands" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
+    rm -f "$TARGET/plugins/manifest-dev.ts" 2>/dev/null || true
+    rm -f "$TARGET/plugins/manifest-dev.HOOK_SPEC.md" 2>/dev/null || true
+
+    if [[ -f "$TARGET/AGENTS.md" ]] && cmp -s "$SCRIPT_DIR/AGENTS.md" "$TARGET/AGENTS.md"; then
+        rm -f "$TARGET/AGENTS.md"
+    fi
+
+    rmdir "$TARGET/skills" "$TARGET/agents" "$TARGET/commands" "$TARGET/plugins" "$TARGET" 2>/dev/null || true
+    echo "Removed manifest-dev-managed OpenCode files only."
+    exit 0
+fi
 
 # Ensure target directories exist
 mkdir -p "$TARGET"/{skills,agents,commands,plugins}
