@@ -417,6 +417,8 @@ OpenCode's `task` tool also supports subagent delegation, compatible with Claude
 
 Install scripts handle all component renaming at install time via `install_helpers.py`. The `dist/opencode/` directory keeps original names — sync-tools writes originals, install scripts namespace.
 
+`install_helpers.py` must discover skill directories, agent markdown files, and command markdown files from `dist/opencode/` at runtime. Do not encode static skill/agent/command lists or fixed counts in installer code; component add/remove/rename is represented by the files present in `dist/`.
+
 **Pattern**: All components get `-manifest-dev` suffix:
 - Skill dirs: `skills/define/` → `skills/define-manifest-dev/`
 - Agent files: `code-bugs-reviewer.md` → `code-bugs-reviewer-manifest-dev.md`

@@ -80,6 +80,7 @@ Remote install (no clone needed) must be the primary method. Use the repo from t
 - Only replace installer-managed namespaced files or extension-private files owned by this distribution
 - Full setup must complete from `install.sh` alone; no required manual follow-up steps
 - Install scripts namespace all components with `-manifest-dev` suffix at install time via `install_helpers.py`
+- Installer helpers must discover skills, agents, and commands from `dist/{cli}/` at runtime. Do not maintain hardcoded component-name lists or hardcoded installed counts; add/remove/rename in `dist/` must be enough for the installer to pick up the change.
 - Selective cleanup: delete only `*-manifest-dev*` files/dirs, never `rm -rf` shared directories
 - `dist/` keeps original names; namespacing is an install-time concern
 

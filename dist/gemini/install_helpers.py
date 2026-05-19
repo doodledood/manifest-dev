@@ -18,25 +18,47 @@ from pathlib import Path
 NAMESPACE = "manifest-dev"
 SUFFIX = f"-{NAMESPACE}"
 
-# Skills that are referenced in cross-references
-SKILL_NAMES = [
-    "auto", "define", "do", "done", "escalate",
-    "figure-out", "figure-out-team",
-]
 
-# Agent filenames (without .md)
-AGENT_NAMES = [
-    "change-intent-reviewer", "code-bugs-reviewer", "test-quality-reviewer",
-    "prose-value-reviewer", "code-design-reviewer",
-    "code-maintainability-reviewer", "code-simplicity-reviewer",
-    "code-testability-reviewer", "context-file-adherence-reviewer",
-    "contracts-reviewer", "criteria-checker",
-    "docs-reviewer", "github-pr-lifecycle", "slack-poller",
-    "type-safety-reviewer",
-]
+def _strip_suffix(name: str) -> str:
+    """Return a source component name, even if a temp dist is re-used."""
+    return name.removesuffix(SUFFIX)
 
 
-def namespace_skill_dir(src_dir: Path, dst_dir: Path) -> None:
+def discover_components(src: Path) -> tuple[list[str], list[str]]:
+    """Discover distributed skill and agent names from the filesystem."""
+    skills_dir = src / "skills"
+    agents_dir = src / "agents"
+    skills = (
+        sorted(
+            set(
+                _strip_suffix(path.name)
+                for path in skills_dir.iterdir()
+                if path.is_dir()
+            )
+        )
+        if skills_dir.is_dir()
+        else []
+    )
+    agents = (
+        sorted(
+            set(
+                _strip_suffix(path.stem)
+                for path in agents_dir.glob("*.md")
+                if path.is_file()
+            )
+        )
+        if agents_dir.is_dir()
+        else []
+    )
+    return skills, agents
+
+
+def namespace_skill_dir(
+    src_dir: Path,
+    dst_dir: Path,
+    skill_names: list[str],
+    agent_names: list[str],
+) -> None:
     """Copy a skill directory with namespaced name and patch contents."""
     skill_name = src_dir.name
     namespaced_name = f"{skill_name}{SUFFIX}"
@@ -60,7 +82,7 @@ def namespace_skill_dir(src_dir: Path, dst_dir: Path) -> None:
             flags=re.MULTILINE,
         )
         # Patch cross-references to other skills
-        content = patch_cross_references(content)
+        content = patch_cross_references(content, skill_names, agent_names)
         skill_md.write_text(content)
 
     # Patch any other .md files in subdirectories
@@ -68,12 +90,17 @@ def namespace_skill_dir(src_dir: Path, dst_dir: Path) -> None:
         if md_file.name == "SKILL.md":
             continue
         content = md_file.read_text()
-        patched = patch_cross_references(content)
+        patched = patch_cross_references(content, skill_names, agent_names)
         if patched != content:
             md_file.write_text(patched)
 
 
-def namespace_agent_file(src_file: Path, dst_dir: Path) -> None:
+def namespace_agent_file(
+    src_file: Path,
+    dst_dir: Path,
+    skill_names: list[str],
+    agent_names: list[str],
+) -> None:
     """Copy an agent file with namespaced name and patch contents."""
     agent_name = src_file.stem
     namespaced_name = f"{agent_name}{SUFFIX}"
@@ -91,15 +118,19 @@ def namespace_agent_file(src_file: Path, dst_dir: Path) -> None:
     )
 
     # Patch cross-references
-    content = patch_cross_references(content)
+    content = patch_cross_references(content, skill_names, agent_names)
 
     target.write_text(content)
 
 
-def patch_cross_references(content: str) -> str:
+def patch_cross_references(
+    content: str,
+    skill_names: list[str],
+    agent_names: list[str],
+) -> str:
     """Patch skill and agent cross-references to use namespaced names."""
     # Patch slash command references: /skill-name → /skill-name-manifest-dev
-    for skill in SKILL_NAMES:
+    for skill in sorted(set(skill_names), key=len, reverse=True):
         # /skill-name (at word boundary)
         content = re.sub(
             rf"(?<!\w)/{re.escape(skill)}(?=[\s,.\)\]\"'`]|$)",
@@ -113,7 +144,7 @@ def patch_cross_references(content: str) -> str:
         )
 
     # Patch agent name references in quoted strings
-    for agent in AGENT_NAMES:
+    for agent in sorted(set(agent_names), key=len, reverse=True):
         # Agent names in contexts like "code-bugs-reviewer" or agent: code-bugs-reviewer
         content = re.sub(
             rf"(?<=agent:\s){re.escape(agent)}(?=\s|$|\")",
@@ -170,7 +201,9 @@ def merge_settings(settings_path: Path, hook_config: dict) -> None:
         manifest_dev_names = set()
         for hook_group in new_hooks:
             for hook in hook_group.get("hooks", []):
-                if hook.get("name", "").endswith(f"-{NAMESPACE}") or NAMESPACE in hook.get("command", ""):
+                if hook.get("name", "").endswith(
+                    f"-{NAMESPACE}"
+                ) or NAMESPACE in hook.get("command", ""):
                     manifest_dev_names.add(hook.get("name"))
 
         # Filter out old manifest-dev entries
@@ -179,7 +212,11 @@ def merge_settings(settings_path: Path, hook_config: dict) -> None:
         for hook_group in existing_hooks:
             remaining_hooks = []
             for hook in hook_group.get("hooks", []):
-                if hook.get("name") not in manifest_dev_names and NAMESPACE not in hook.get("command", ""):
+                if hook.get(
+                    "name"
+                ) not in manifest_dev_names and NAMESPACE not in hook.get(
+                    "command", ""
+                ):
                     remaining_hooks.append(hook)
             if remaining_hooks:
                 hook_group["hooks"] = remaining_hooks
@@ -203,6 +240,7 @@ def main() -> int:
 
     src = Path(sys.argv[1])
     dst = Path(sys.argv[2])
+    skill_names, agent_names = discover_components(src)
 
     # Namespace skills
     src_skills = src / "skills"
@@ -211,7 +249,7 @@ def main() -> int:
 
     for skill_dir in sorted(src_skills.iterdir()):
         if skill_dir.is_dir():
-            namespace_skill_dir(skill_dir, dst_skills)
+            namespace_skill_dir(skill_dir, dst_skills, skill_names, agent_names)
             print(f"  skill: {skill_dir.name} -> {skill_dir.name}{SUFFIX}")
 
     # Namespace agents
@@ -220,7 +258,7 @@ def main() -> int:
     dst_agents.mkdir(parents=True, exist_ok=True)
 
     for agent_file in sorted(src_agents.glob("*.md")):
-        namespace_agent_file(agent_file, dst_agents)
+        namespace_agent_file(agent_file, dst_agents, skill_names, agent_names)
         print(f"  agent: {agent_file.stem} -> {agent_file.stem}{SUFFIX}")
 
     return 0
