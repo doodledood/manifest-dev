@@ -23,35 +23,6 @@ from pathlib import Path
 
 SUFFIX = "-manifest-dev"
 
-# Ordered longest-first within each list to avoid prefix collisions.
-SKILLS = [
-    "figure-out-team",
-    "figure-out",
-    "escalate",
-    "define",
-    "auto",
-    "done",
-    "do",
-]
-
-AGENTS = [
-    "context-file-adherence-reviewer",
-    "code-maintainability-reviewer",
-    "code-testability-reviewer",
-    "change-intent-reviewer",
-    "code-simplicity-reviewer",
-    "github-pr-lifecycle",
-    "test-quality-reviewer",
-    "prose-value-reviewer",
-    "code-design-reviewer",
-    "code-bugs-reviewer",
-    "type-safety-reviewer",
-    "contracts-reviewer",
-    "criteria-checker",
-    "slack-poller",
-    "docs-reviewer",
-]
-
 # File extensions to patch (text files only).
 TEXT_EXTENSIONS = {".md", ".py", ".ts", ".json", ".toml", ".rules", ".txt"}
 
@@ -67,7 +38,54 @@ CONFIG_HEADER = (
 STATE_VERSION = 1
 
 
-def _build_regex() -> tuple[dict[str, str], re.Pattern[str]]:
+def _strip_suffix(name: str) -> str:
+    """Return the source component name when a temp dist is already namespaced."""
+    return name.removesuffix(SUFFIX)
+
+
+def _sort_longest(names: list[str]) -> list[str]:
+    return sorted(set(names), key=len, reverse=True)
+
+
+def _discover_skill_names(base: Path) -> list[str]:
+    skills_dir = base / "skills"
+    if not skills_dir.is_dir():
+        return []
+    return _sort_longest(
+        [_strip_suffix(path.name) for path in skills_dir.iterdir() if path.is_dir()]
+    )
+
+
+def _discover_agent_names(base: Path, ext: str) -> list[str]:
+    agents_dir = base / "agents"
+    if not agents_dir.is_dir():
+        return []
+    return _sort_longest(
+        [
+            _strip_suffix(path.stem)
+            for path in agents_dir.glob(f"*{ext}")
+            if path.is_file()
+        ]
+    )
+
+
+def _discover_command_names(base: Path) -> list[str]:
+    commands_dir = base / "commands"
+    if not commands_dir.is_dir():
+        return []
+    return _sort_longest(
+        [
+            _strip_suffix(path.stem)
+            for path in commands_dir.glob("*.md")
+            if path.is_file()
+        ]
+    )
+
+
+def _build_regex(
+    skills: list[str],
+    agents: list[str],
+) -> tuple[dict[str, str], re.Pattern[str]]:
     """Build replacement map and compiled single-pass regex.
 
     Negative lookahead (?![a-zA-Z0-9_-]) prevents matching inside
@@ -75,7 +93,7 @@ def _build_regex() -> tuple[dict[str, str], re.Pattern[str]]:
     """
     rmap: dict[str, str] = {}
 
-    for name in SKILLS:
+    for name in _sort_longest(skills):
         # Context-prefixed patterns (the prefix prevents false positives
         # on common English words like "do", "done", "define").
         rmap[f"/{name}"] = f"/{name}{SUFFIX}"  # /define
@@ -88,7 +106,7 @@ def _build_regex() -> tuple[dict[str, str], re.Pattern[str]]:
         rmap[f"`{name}`"] = f"`{name}{SUFFIX}`"  # `define`
         rmap[f"manifest-dev:{name}"] = f"manifest-dev:{name}{SUFFIX}"
 
-    for name in AGENTS:
+    for name in _sort_longest(agents):
         # Bare agent names are safe — all are unique multi-hyphenated
         # identifiers that don't collide with English words.
         rmap[name] = f"{name}{SUFFIX}"
@@ -98,51 +116,51 @@ def _build_regex() -> tuple[dict[str, str], re.Pattern[str]]:
     sorted_keys = sorted(rmap, key=len, reverse=True)
 
     parts = [f"(?:{re.escape(k)})(?![a-zA-Z0-9_-])" for k in sorted_keys]
+    if not parts:
+        return rmap, re.compile(r"(?!)")
     pattern = re.compile("|".join(parts))
     return rmap, pattern
 
 
-_RMAP, _RE = _build_regex()
-
-
-def patch_content(text: str) -> str:
+def patch_content(text: str, skills: list[str], agents: list[str]) -> str:
     """Apply all namespace replacements to text (single-pass, idempotent)."""
-    return _RE.sub(lambda m: _RMAP[m.group(0)], text)
+    rmap, pattern = _build_regex(skills, agents)
+    return pattern.sub(lambda m: rmap[m.group(0)], text)
 
 
 # ── Filesystem operations ─────────────────────────────────────────────
 
 
-def rename_skills(base: Path) -> None:
+def rename_skills(base: Path, skills: list[str]) -> None:
     """Rename skill directories: skills/X -> skills/X-manifest-dev."""
     skills_dir = base / "skills"
     if not skills_dir.is_dir():
         return
-    for name in SKILLS:
+    for name in skills:
         src = skills_dir / name
         dst = skills_dir / f"{name}{SUFFIX}"
         if src.is_dir() and not dst.exists():
             src.rename(dst)
 
 
-def rename_agents(base: Path, ext: str = ".md") -> None:
+def rename_agents(base: Path, agents: list[str], ext: str = ".md") -> None:
     """Rename agent files: agents/X.ext -> agents/X-manifest-dev.ext."""
     agents_dir = base / "agents"
     if not agents_dir.is_dir():
         return
-    for name in AGENTS:
+    for name in agents:
         src = agents_dir / f"{name}{ext}"
         dst = agents_dir / f"{name}{SUFFIX}{ext}"
         if src.is_file() and not dst.exists():
             src.rename(dst)
 
 
-def rename_commands(base: Path) -> None:
+def rename_commands(base: Path, command_names: list[str]) -> None:
     """Rename command files (OpenCode): commands/X.md -> commands/X-manifest-dev.md."""
     cmds_dir = base / "commands"
     if not cmds_dir.is_dir():
         return
-    for name in SKILLS:
+    for name in command_names:
         src = cmds_dir / f"{name}.md"
         dst = cmds_dir / f"{name}{SUFFIX}.md"
         if src.is_file() and not dst.exists():
@@ -185,7 +203,7 @@ def patch_skill_frontmatter(base: Path) -> None:
             skill_md.write_text(new_fm + rest, encoding="utf-8")
 
 
-def patch_files(base: Path) -> None:
+def patch_files(base: Path, skills: list[str], agents: list[str]) -> None:
     """Walk all text files under base and apply content replacements."""
     for root, _dirs, files in os.walk(base):
         for fname in files:
@@ -198,7 +216,7 @@ def patch_files(base: Path) -> None:
                 content = fpath.read_text(encoding="utf-8")
             except (UnicodeDecodeError, OSError):
                 continue
-            patched = patch_content(content)
+            patched = patch_content(content, skills, agents)
             if patched != content:
                 fpath.write_text(patched, encoding="utf-8")
 
@@ -235,7 +253,9 @@ def _get_table_key_value(text: str, table_name: str, key: str) -> str | None:
     return match.group(1).strip()
 
 
-def _table_list_contains_value(text: str, table_name: str, key: str, value: str) -> bool:
+def _table_list_contains_value(
+    text: str, table_name: str, key: str, value: str
+) -> bool:
     current_value = _get_table_key_value(text, table_name, key)
     if current_value is None:
         return False
@@ -251,9 +271,8 @@ def _strip_managed_config_block(text: str) -> str:
 
 
 def _strip_manifest_agent_tables(text: str) -> str:
-    names = "|".join(re.escape(f"{name}{SUFFIX}") for name in AGENTS)
     pattern = re.compile(
-        rf"(?ms)^\[agents\.(?:{names})\]\n.*?(?=^\[|\Z)",
+        rf"(?ms)^\[agents\.[^\]]*{re.escape(SUFFIX)}\]\n.*?(?=^\[|\Z)",
     )
     return pattern.sub("", text)
 
@@ -374,7 +393,9 @@ def _remove_key_from_table(
     return text[: match.start()] + header + body + text[match.end() :]
 
 
-def _remove_list_value_from_table(text: str, table_name: str, key: str, value: str) -> str:
+def _remove_list_value_from_table(
+    text: str, table_name: str, key: str, value: str
+) -> str:
     match = _table_match(text, table_name)
     if not match:
         return text
@@ -438,7 +459,9 @@ def _build_config_state(existing_text: str, config_existed: bool) -> dict[str, o
         "version": STATE_VERSION,
         "config_existed": config_existed,
         "added_keys": {
-            "features.multi_agent": _get_table_key_value(existing_text, "features", "multi_agent")
+            "features.multi_agent": _get_table_key_value(
+                existing_text, "features", "multi_agent"
+            )
             is None,
         },
         "added_list_values": {},
@@ -453,16 +476,16 @@ def merge_config(
     source_text = Path(source_config_path).read_text(encoding="utf-8")
     managed_tables = _extract_managed_agent_tables(source_text).rstrip()
     managed_block = (
-        f"{MANAGED_CONFIG_START}\n"
-        f"{managed_tables}\n"
-        f"{MANAGED_CONFIG_END}\n"
+        f"{MANAGED_CONFIG_START}\n" f"{managed_tables}\n" f"{MANAGED_CONFIG_END}\n"
     )
 
     dest_path = Path(dest_config_path)
     config_existed = dest_path.exists()
     existing_text = dest_path.read_text(encoding="utf-8") if config_existed else ""
     merged_text = existing_text if config_existed else CONFIG_HEADER
-    state = _load_state(state_path) or _build_config_state(existing_text, config_existed)
+    state = _load_state(state_path) or _build_config_state(
+        existing_text, config_existed
+    )
 
     merged_text = _strip_managed_config_block(merged_text)
     merged_text = _strip_manifest_agent_tables(merged_text)
@@ -523,18 +546,22 @@ def unmerge_config(dest_config_path: str, state_path: str | None = None) -> None
 def namespace(base_dir: str, cli_type: str = "gemini") -> None:
     """Rename and patch all components in base_dir."""
     base = Path(base_dir)
+    agent_ext = ".toml" if cli_type == "codex" else ".md"
+    skills = _discover_skill_names(base)
+    agents = _discover_agent_names(base, agent_ext)
+    command_names = _discover_command_names(base) if cli_type == "opencode" else []
 
     # 1. Rename files and directories
-    rename_skills(base)
-    rename_agents(base, ".toml" if cli_type == "codex" else ".md")
+    rename_skills(base, skills)
+    rename_agents(base, agents, agent_ext)
     if cli_type == "opencode":
-        rename_commands(base)
+        rename_commands(base, command_names)
 
     # 2. Patch SKILL.md name: frontmatter
     patch_skill_frontmatter(base)
 
     # 3. Patch content cross-references in all text files
-    patch_files(base)
+    patch_files(base, skills, agents)
 
 
 if __name__ == "__main__":
