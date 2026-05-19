@@ -65,6 +65,16 @@ Words that signal effort without delivering substance:
 - **Marketing-tone in technical docs**: Tone calibrated to impress rather than inform. "Beautifully crafted", "world-class", "best-in-class".
 - **Filler intros and conclusions**: "In conclusion, we have shown...", "It's worth noting that..." in short documents that don't need wind-up or wind-down.
 
+### Canonical Decision Value
+
+Repo docs, rules, and comments should reduce future decision cost without creating drift:
+
+- **Duplicated canonical guidance** *(flag)*: A doc/rule repeats guidance that has a clear canonical source elsewhere in the repo or upstream docs, creating two places to maintain the same rule. Prefer a reference to the canonical source plus only the local delta.
+- **Placeholder examples** *(flag)*: Examples use fake/stub values where a realistic example would teach the actual decision, constraint, or usage pattern better.
+- **Absolute wording for conditional guidance** *(flag)*: Prose states "always" or "must" when the codebase or source docs show the rule applies only under specific conditions.
+
+Only report when you can name the canonical source or the concrete decision a future reader would get wrong.
+
 ### AI Rhetorical Patterns
 
 Stylistic tells that propagate from LLM training data into human-facing prose:
