@@ -77,12 +77,12 @@ Breakdown:
 
 `Reason:` carries diagnostic context (who's waited on, which check failed, remaining retrigger budget). Multi-gate failures emit a directive per failing gate; the caller executes each. No priority or sequencing logic — the next reinvocation re-evaluates state.
 
-Example wait-in-progress FAIL:
+Example wait-in-progress FAIL (reviewer-pending — execute the sleep and reinvoke; waiting is the resolution, not a stuck signal):
 
 ```
 ## github-pr-lifecycle: FAIL
 
-Reason: Reviewer @bob (per CODEOWNERS) has not approved; CI green, threads clean.
+Reason: Reviewer @bob (per CODEOWNERS) has not approved; CI green, threads clean. Waiting is the resolution — execute the sleep and reinvoke.
 Cycle: 3/6
 
 Breakdown:
@@ -143,7 +143,7 @@ Breakdown:
 
 ## Wait cadence policy
 
-Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emit `bash sleep <N>; reinvoke` directives. The agent picks `<N>` based on what's being waited on and tracks how many cycles each gate has been waiting via the `Prior-retrigger context` input.
+Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emit `bash sleep <N>; reinvoke` directives. **Waiting is the action, not a no-op** — the caller executes the sleep and reinvokes; reviewer-pending and CI-in-flight FAILs typically resolve on a subsequent cycle without further intervention. Treat sleep-then-reverify as the standard resolution path for time-bound blockers; the agent picks `<N>` based on what's being waited on and tracks how many cycles each gate has been waiting via the `Prior-retrigger context` input.
 
 **Per-cycle duration defaults**:
 
