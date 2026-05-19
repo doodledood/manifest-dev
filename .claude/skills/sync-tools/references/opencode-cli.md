@@ -419,21 +419,25 @@ Install scripts handle all component renaming at install time via `install_helpe
 
 `install_helpers.py` must discover skill directories, agent markdown files, and command markdown files from `dist/opencode/` at runtime. Do not encode static skill/agent/command lists or fixed counts in installer code; component add/remove/rename is represented by the files present in `dist/`.
 
-**Pattern**: All components get `-manifest-dev` suffix:
+**Pattern**: Components get the suffix declared in `component-namespaces.json`:
 - Skill dirs: `skills/define/` → `skills/define-manifest-dev/`
+- Tool skill dirs: `skills/adr/` → `skills/adr-manifest-dev-tools/`
 - Agent files: `code-bugs-reviewer.md` → `code-bugs-reviewer-manifest-dev.md`
 - Command files: `define.md` → `define-manifest-dev.md`
+- Tool command files: `adr.md` → `adr-manifest-dev-tools.md`
 - SKILL.md `name:` field patched to match directory name
 - Content cross-references patched (slash commands, quoted strings, paths, agent names)
 
 **Selective cleanup** (replaces `rm -rf` of shared dirs):
 ```bash
 find "$TARGET/skills" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
+find "$TARGET/skills" -maxdepth 1 -name "*-manifest-dev-tools" -type d -exec rm -rf {} + 2>/dev/null || true
 find "$TARGET/agents" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
 find "$TARGET/commands" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
+find "$TARGET/commands" -maxdepth 1 -name "*-manifest-dev-tools*" -exec rm -rf {} + 2>/dev/null || true
 ```
 
-Component names on disk will have `-manifest-dev` suffix after install.
+Component names on disk will have their plugin-owned suffix after install.
 
 ## Context File Adaptation
 

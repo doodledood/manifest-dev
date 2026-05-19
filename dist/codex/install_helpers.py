@@ -21,13 +21,15 @@ import re
 import sys
 from pathlib import Path
 
-SUFFIX = "-manifest-dev"
+DEFAULT_SUFFIX = "-manifest-dev"
+KNOWN_MANAGED_SUFFIXES = [DEFAULT_SUFFIX, "-manifest-dev-tools"]
+COMPONENT_NAMESPACE_FILE = "component-namespaces.json"
 
 # File extensions to patch (text files only).
 TEXT_EXTENSIONS = {".md", ".py", ".ts", ".json", ".toml", ".rules", ".txt"}
 
 # Files to never patch (they ARE the namespace tooling).
-SKIP_FILES = {"install_helpers.py", "install.sh"}
+SKIP_FILES = {"install_helpers.py", "install.sh", COMPONENT_NAMESPACE_FILE}
 
 MANAGED_CONFIG_START = "# >>> manifest-dev managed config >>>"
 MANAGED_CONFIG_END = "# <<< manifest-dev managed config <<<"
@@ -38,44 +40,84 @@ CONFIG_HEADER = (
 STATE_VERSION = 1
 
 
-def _strip_suffix(name: str) -> str:
+def _load_component_namespaces(base: Path) -> dict[str, object]:
+    metadata_path = base / COMPONENT_NAMESPACE_FILE
+    if not metadata_path.is_file():
+        return {}
+    try:
+        data = json.loads(metadata_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _metadata_suffixes(metadata: dict[str, object]) -> list[str]:
+    suffixes = metadata.get("suffixes")
+    if isinstance(suffixes, list):
+        values = [suffix for suffix in suffixes if isinstance(suffix, str)]
+        if values:
+            return sorted(set(values), key=len, reverse=True)
+    return KNOWN_MANAGED_SUFFIXES
+
+
+def _suffix_for(
+    metadata: dict[str, object],
+    component_type: str,
+    name: str,
+) -> str:
+    components = metadata.get(component_type)
+    if isinstance(components, dict):
+        suffix = components.get(name)
+        if isinstance(suffix, str) and suffix:
+            return suffix
+    return DEFAULT_SUFFIX
+
+
+def _strip_suffix(name: str, suffixes: list[str]) -> str:
     """Return the source component name when a temp dist is already namespaced."""
-    return name.removesuffix(SUFFIX)
+    for suffix in suffixes:
+        if name.endswith(suffix):
+            return name[: -len(suffix)]
+    return name
 
 
 def _sort_longest(names: list[str]) -> list[str]:
     return sorted(set(names), key=len, reverse=True)
 
 
-def _discover_skill_names(base: Path) -> list[str]:
+def _discover_skill_names(base: Path, suffixes: list[str]) -> list[str]:
     skills_dir = base / "skills"
     if not skills_dir.is_dir():
         return []
     return _sort_longest(
-        [_strip_suffix(path.name) for path in skills_dir.iterdir() if path.is_dir()]
+        [
+            _strip_suffix(path.name, suffixes)
+            for path in skills_dir.iterdir()
+            if path.is_dir()
+        ]
     )
 
 
-def _discover_agent_names(base: Path, ext: str) -> list[str]:
+def _discover_agent_names(base: Path, ext: str, suffixes: list[str]) -> list[str]:
     agents_dir = base / "agents"
     if not agents_dir.is_dir():
         return []
     return _sort_longest(
         [
-            _strip_suffix(path.stem)
+            _strip_suffix(path.stem, suffixes)
             for path in agents_dir.glob(f"*{ext}")
             if path.is_file()
         ]
     )
 
 
-def _discover_command_names(base: Path) -> list[str]:
+def _discover_command_names(base: Path, suffixes: list[str]) -> list[str]:
     commands_dir = base / "commands"
     if not commands_dir.is_dir():
         return []
     return _sort_longest(
         [
-            _strip_suffix(path.stem)
+            _strip_suffix(path.stem, suffixes)
             for path in commands_dir.glob("*.md")
             if path.is_file()
         ]
@@ -83,8 +125,8 @@ def _discover_command_names(base: Path) -> list[str]:
 
 
 def _build_regex(
-    skills: list[str],
-    agents: list[str],
+    skills: dict[str, str],
+    agents: dict[str, str],
 ) -> tuple[dict[str, str], re.Pattern[str]]:
     """Build replacement map and compiled single-pass regex.
 
@@ -93,23 +135,26 @@ def _build_regex(
     """
     rmap: dict[str, str] = {}
 
-    for name in _sort_longest(skills):
+    for name in _sort_longest(list(skills)):
+        suffix = skills[name]
         # Context-prefixed patterns (the prefix prevents false positives
         # on common English words like "do", "done", "define").
-        rmap[f"/{name}"] = f"/{name}{SUFFIX}"  # /define
-        rmap[f"${name}"] = f"${name}{SUFFIX}"  # $define (Codex)
-        rmap[f"skills/{name}"] = f"skills/{name}{SUFFIX}"  # skills/define
-        rmap[f'":{name}"'] = f'":{name}{SUFFIX}"'  # ":define"
-        rmap[f"':{name}'"] = f"':{name}{SUFFIX}'"  # ':define'
-        rmap[f'"{name}"'] = f'"{name}{SUFFIX}"'  # "define"
-        rmap[f"'{name}'"] = f"'{name}{SUFFIX}'"  # 'define'
-        rmap[f"`{name}`"] = f"`{name}{SUFFIX}`"  # `define`
-        rmap[f"manifest-dev:{name}"] = f"manifest-dev:{name}{SUFFIX}"
+        rmap[f"/{name}"] = f"/{name}{suffix}"  # /define
+        rmap[f"${name}"] = f"${name}{suffix}"  # $define (Codex)
+        rmap[f"skills/{name}"] = f"skills/{name}{suffix}"  # skills/define
+        rmap[f'":{name}"'] = f'":{name}{suffix}"'  # ":define"
+        rmap[f"':{name}'"] = f"':{name}{suffix}'"  # ':define'
+        rmap[f'"{name}"'] = f'"{name}{suffix}"'  # "define"
+        rmap[f"'{name}'"] = f"'{name}{suffix}'"  # 'define'
+        rmap[f"`{name}`"] = f"`{name}{suffix}`"  # `define`
+        rmap[f"manifest-dev:{name}"] = f"manifest-dev:{name}{suffix}"
+        rmap[f"manifest-dev-tools:{name}"] = f"manifest-dev-tools:{name}{suffix}"
 
-    for name in _sort_longest(agents):
+    for name in _sort_longest(list(agents)):
+        suffix = agents[name]
         # Bare agent names are safe — all are unique multi-hyphenated
         # identifiers that don't collide with English words.
-        rmap[name] = f"{name}{SUFFIX}"
+        rmap[name] = f"{name}{suffix}"
 
     # Sort keys longest-first so the regex engine tries longer matches
     # before shorter ones at each position (e.g., /done before /do).
@@ -122,7 +167,7 @@ def _build_regex(
     return rmap, pattern
 
 
-def patch_content(text: str, skills: list[str], agents: list[str]) -> str:
+def patch_content(text: str, skills: dict[str, str], agents: dict[str, str]) -> str:
     """Apply all namespace replacements to text (single-pass, idempotent)."""
     rmap, pattern = _build_regex(skills, agents)
     return pattern.sub(lambda m: rmap[m.group(0)], text)
@@ -131,38 +176,38 @@ def patch_content(text: str, skills: list[str], agents: list[str]) -> str:
 # ── Filesystem operations ─────────────────────────────────────────────
 
 
-def rename_skills(base: Path, skills: list[str]) -> None:
+def rename_skills(base: Path, skills: dict[str, str]) -> None:
     """Rename skill directories: skills/X -> skills/X-manifest-dev."""
     skills_dir = base / "skills"
     if not skills_dir.is_dir():
         return
-    for name in skills:
+    for name, suffix in skills.items():
         src = skills_dir / name
-        dst = skills_dir / f"{name}{SUFFIX}"
+        dst = skills_dir / f"{name}{suffix}"
         if src.is_dir() and not dst.exists():
             src.rename(dst)
 
 
-def rename_agents(base: Path, agents: list[str], ext: str = ".md") -> None:
+def rename_agents(base: Path, agents: dict[str, str], ext: str = ".md") -> None:
     """Rename agent files: agents/X.ext -> agents/X-manifest-dev.ext."""
     agents_dir = base / "agents"
     if not agents_dir.is_dir():
         return
-    for name in agents:
+    for name, suffix in agents.items():
         src = agents_dir / f"{name}{ext}"
-        dst = agents_dir / f"{name}{SUFFIX}{ext}"
+        dst = agents_dir / f"{name}{suffix}{ext}"
         if src.is_file() and not dst.exists():
             src.rename(dst)
 
 
-def rename_commands(base: Path, command_names: list[str]) -> None:
+def rename_commands(base: Path, command_names: dict[str, str]) -> None:
     """Rename command files (OpenCode): commands/X.md -> commands/X-manifest-dev.md."""
     cmds_dir = base / "commands"
     if not cmds_dir.is_dir():
         return
-    for name in command_names:
+    for name, suffix in command_names.items():
         src = cmds_dir / f"{name}.md"
-        dst = cmds_dir / f"{name}{SUFFIX}.md"
+        dst = cmds_dir / f"{name}{suffix}.md"
         if src.is_file() and not dst.exists():
             src.rename(dst)
 
@@ -186,15 +231,9 @@ def patch_skill_frontmatter(base: Path) -> None:
         frontmatter = content[:end_idx]
         rest = content[end_idx:]
 
-        def _fix_name(m: re.Match[str]) -> str:
-            prefix, old_name = m.group(1), m.group(2)
-            if old_name.endswith(SUFFIX):
-                return m.group(0)
-            return f"{prefix}{old_name}{SUFFIX}"
-
         new_fm = re.sub(
             r"^(name:\s*)(\S+)",
-            _fix_name,
+            rf"\g<1>{skill_dir.name}",
             frontmatter,
             count=1,
             flags=re.MULTILINE,
@@ -203,7 +242,7 @@ def patch_skill_frontmatter(base: Path) -> None:
             skill_md.write_text(new_fm + rest, encoding="utf-8")
 
 
-def patch_files(base: Path, skills: list[str], agents: list[str]) -> None:
+def patch_files(base: Path, skills: dict[str, str], agents: dict[str, str]) -> None:
     """Walk all text files under base and apply content replacements."""
     for root, _dirs, files in os.walk(base):
         for fname in files:
@@ -270,9 +309,14 @@ def _strip_managed_config_block(text: str) -> str:
     return pattern.sub("\n", text)
 
 
-def _strip_manifest_agent_tables(text: str) -> str:
+def _strip_manifest_agent_tables(
+    text: str,
+    suffixes: list[str] | None = None,
+) -> str:
+    managed_suffixes = suffixes or KNOWN_MANAGED_SUFFIXES
+    suffix_pattern = "|".join(re.escape(suffix) for suffix in managed_suffixes)
     pattern = re.compile(
-        rf"(?ms)^\[agents\.[^\]]*{re.escape(SUFFIX)}\]\n.*?(?=^\[|\Z)",
+        rf"(?ms)^\[agents\.[^\]]*(?:{suffix_pattern})\]\n.*?(?=^\[|\Z)",
     )
     return pattern.sub("", text)
 
@@ -610,10 +654,20 @@ def unmerge_config(dest_config_path: str, state_path: str | None = None) -> None
 def namespace(base_dir: str, cli_type: str = "gemini") -> None:
     """Rename and patch all components in base_dir."""
     base = Path(base_dir)
+    metadata = _load_component_namespaces(base)
+    suffixes = _metadata_suffixes(metadata)
     agent_ext = ".toml" if cli_type == "codex" else ".md"
-    skills = _discover_skill_names(base)
-    agents = _discover_agent_names(base, agent_ext)
-    command_names = _discover_command_names(base) if cli_type == "opencode" else []
+    skill_names = _discover_skill_names(base, suffixes)
+    agent_names = _discover_agent_names(base, agent_ext, suffixes)
+    discovered_command_names = (
+        _discover_command_names(base, suffixes) if cli_type == "opencode" else []
+    )
+    skills = {name: _suffix_for(metadata, "skills", name) for name in skill_names}
+    agents = {name: _suffix_for(metadata, "agents", name) for name in agent_names}
+    command_names = {
+        name: _suffix_for(metadata, "commands", name)
+        for name in discovered_command_names
+    }
 
     # 1. Rename files and directories
     rename_skills(base, skills)

@@ -1,9 +1,8 @@
 """
-Verify each CLI distribution carries the full surviving skill set with correct namespacing.
+Verify each CLI distribution carries the full skill set with correct namespacing.
 
-The post-promotion plugin ships seven skills: auto, define, do, done, escalate,
-figure-out, figure-out-team. After install_helpers.py namespaces them with the
-`-manifest-dev` suffix, every skill directory should resolve in every dist.
+The dist payload ships core manifest-dev skills with the `-manifest-dev` suffix
+and manifest-dev-tools skills with the `-manifest-dev-tools` suffix.
 
 Also confirms the removed plugin components stay removed:
   - no `verify` skill in any dist
@@ -13,6 +12,7 @@ Also confirms the removed plugin components stay removed:
 
 from __future__ import annotations
 
+import json
 import shutil
 import subprocess
 import sys
@@ -21,7 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
 
-SURVIVING_SKILLS = (
+CORE_SKILLS = (
     "auto",
     "define",
     "do",
@@ -30,6 +30,7 @@ SURVIVING_SKILLS = (
     "figure-out",
     "figure-out-team",
 )
+TOOLS_SKILLS = ("adr", "handoff", "prompt-engineering", "walk-pr")
 
 REMOVED_SKILLS = ("verify",)
 REMOVED_AGENTS = ("manifest-verifier",)
@@ -69,21 +70,33 @@ def namespace_dist(tmp_path: Path, cli: str) -> Path:
     return dest
 
 
+def component_namespaces(cli: str) -> dict[str, dict[str, str]]:
+    metadata = json.loads(
+        (DIST / cli / "component-namespaces.json").read_text(encoding="utf-8")
+    )
+    return {
+        "skills": metadata["skills"],
+        "agents": metadata["agents"],
+        "commands": metadata["commands"],
+    }
+
+
 def test_every_dist_namespaces_the_surviving_skill_set(tmp_path: Path) -> None:
     for cli in ("codex", "opencode", "gemini"):
         dist_dir = namespace_dist(tmp_path / cli, cli)
-        for skill in SURVIVING_SKILLS:
-            skill_dir = dist_dir / "skills" / f"{skill}-manifest-dev"
+        for skill, suffix in component_namespaces(cli)["skills"].items():
+            skill_dir = dist_dir / "skills" / f"{skill}{suffix}"
             assert skill_dir.is_dir(), f"{cli}: {skill}-manifest-dev missing"
             assert (
                 skill_dir / "SKILL.md"
-            ).is_file(), f"{cli}: {skill}-manifest-dev/SKILL.md missing"
+            ).is_file(), f"{cli}: {skill}{suffix}/SKILL.md missing"
 
 
 def test_every_dist_namespaces_every_distributed_component(tmp_path: Path) -> None:
     """Installer helpers must discover components from dist/, not static name lists."""
     for cli in ("codex", "opencode", "gemini"):
         agent_ext = ".toml" if cli == "codex" else ".md"
+        metadata = component_namespaces(cli)
         source_skills = sorted(
             path.name for path in (DIST / cli / "skills").iterdir() if path.is_dir()
         )
@@ -96,13 +109,13 @@ def test_every_dist_namespaces_every_distributed_component(tmp_path: Path) -> No
         assert sorted(
             path.name for path in (dist_dir / "skills").iterdir() if path.is_dir()
         ) == [
-            f"{skill}-manifest-dev" for skill in source_skills
+            f"{skill}{metadata['skills'][skill]}" for skill in source_skills
         ], f"{cli}: installed skill set diverged from dist/{cli}/skills"
 
         assert sorted(
             path.name for path in (dist_dir / "agents").glob(f"*{agent_ext}")
         ) == [
-            f"{agent}-manifest-dev{agent_ext}" for agent in source_agents
+            f"{agent}{metadata['agents'][agent]}{agent_ext}" for agent in source_agents
         ], f"{cli}: installed agent set diverged from dist/{cli}/agents"
 
         if cli == "opencode":
@@ -112,8 +125,34 @@ def test_every_dist_namespaces_every_distributed_component(tmp_path: Path) -> No
             assert sorted(
                 path.name for path in (dist_dir / "commands").glob("*.md")
             ) == [
-                f"{command}-manifest-dev.md" for command in source_commands
+                f"{command}{metadata['commands'][command]}.md"
+                for command in source_commands
             ], "opencode: installed command set diverged from dist/opencode/commands"
+
+
+def test_component_namespace_metadata_matches_dist() -> None:
+    for cli in ("codex", "opencode", "gemini"):
+        metadata = component_namespaces(cli)
+        agent_ext = ".toml" if cli == "codex" else ".md"
+
+        assert set(metadata["skills"]) == {
+            path.name for path in (DIST / cli / "skills").iterdir() if path.is_dir()
+        }, f"{cli}: skills metadata drifted from dist"
+        assert set(metadata["agents"]) == {
+            path.stem for path in (DIST / cli / "agents").glob(f"*{agent_ext}")
+        }, f"{cli}: agents metadata drifted from dist"
+
+        if cli == "opencode":
+            assert set(metadata["commands"]) == {
+                path.stem for path in (DIST / cli / "commands").glob("*.md")
+            }, "opencode: commands metadata drifted from dist"
+        else:
+            assert metadata["commands"] == {}
+
+        for skill in CORE_SKILLS:
+            assert metadata["skills"][skill] == "-manifest-dev"
+        for skill in TOOLS_SKILLS:
+            assert metadata["skills"][skill] == "-manifest-dev-tools"
 
 
 def test_removed_components_are_not_distributed() -> None:

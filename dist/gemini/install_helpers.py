@@ -2,50 +2,87 @@
 """
 Install helpers for manifest-dev Gemini CLI extension.
 
-Handles namespacing: adds -manifest-dev suffix to all components at install time.
+Handles namespacing: adds plugin-owned suffixes to components at install time.
 The dist/gemini/ directory keeps original names; this script renames during install.
 """
 
 from __future__ import annotations
 
 import json
-import os
 import re
 import shutil
 import sys
 from pathlib import Path
 
 NAMESPACE = "manifest-dev"
-SUFFIX = f"-{NAMESPACE}"
+DEFAULT_SUFFIX = f"-{NAMESPACE}"
+KNOWN_MANAGED_SUFFIXES = [DEFAULT_SUFFIX, "-manifest-dev-tools"]
+COMPONENT_NAMESPACE_FILE = "component-namespaces.json"
 
 
-def _strip_suffix(name: str) -> str:
+def _load_component_namespaces(src: Path) -> dict[str, object]:
+    metadata_path = src / COMPONENT_NAMESPACE_FILE
+    if not metadata_path.is_file():
+        return {}
+    try:
+        data = json.loads(metadata_path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _metadata_suffixes(metadata: dict[str, object]) -> list[str]:
+    suffixes = metadata.get("suffixes")
+    if isinstance(suffixes, list):
+        values = [suffix for suffix in suffixes if isinstance(suffix, str)]
+        if values:
+            return sorted(set(values), key=len, reverse=True)
+    return KNOWN_MANAGED_SUFFIXES
+
+
+def _suffix_for(
+    metadata: dict[str, object],
+    component_type: str,
+    name: str,
+) -> str:
+    components = metadata.get(component_type)
+    if isinstance(components, dict):
+        suffix = components.get(name)
+        if isinstance(suffix, str) and suffix:
+            return suffix
+    return DEFAULT_SUFFIX
+
+
+def _strip_suffix(name: str, suffixes: list[str]) -> str:
     """Return a source component name, even if a temp dist is re-used."""
-    return name.removesuffix(SUFFIX)
+    for suffix in suffixes:
+        if name.endswith(suffix):
+            return name[: -len(suffix)]
+    return name
 
 
-def discover_components(src: Path) -> tuple[list[str], list[str]]:
+def discover_components(src: Path, suffixes: list[str]) -> tuple[list[str], list[str]]:
     """Discover distributed skill and agent names from the filesystem."""
     skills_dir = src / "skills"
     agents_dir = src / "agents"
     skills = (
         sorted(
-            set(
-                _strip_suffix(path.name)
+            {
+                _strip_suffix(path.name, suffixes)
                 for path in skills_dir.iterdir()
                 if path.is_dir()
-            )
+            }
         )
         if skills_dir.is_dir()
         else []
     )
     agents = (
         sorted(
-            set(
-                _strip_suffix(path.stem)
+            {
+                _strip_suffix(path.stem, suffixes)
                 for path in agents_dir.glob("*.md")
                 if path.is_file()
-            )
+            }
         )
         if agents_dir.is_dir()
         else []
@@ -56,12 +93,12 @@ def discover_components(src: Path) -> tuple[list[str], list[str]]:
 def namespace_skill_dir(
     src_dir: Path,
     dst_dir: Path,
-    skill_names: list[str],
-    agent_names: list[str],
+    skill_name: str,
+    skill_names: dict[str, str],
+    agent_names: dict[str, str],
 ) -> None:
     """Copy a skill directory with namespaced name and patch contents."""
-    skill_name = src_dir.name
-    namespaced_name = f"{skill_name}{SUFFIX}"
+    namespaced_name = f"{skill_name}{skill_names[skill_name]}"
     target = dst_dir / namespaced_name
 
     if target.exists():
@@ -98,12 +135,12 @@ def namespace_skill_dir(
 def namespace_agent_file(
     src_file: Path,
     dst_dir: Path,
-    skill_names: list[str],
-    agent_names: list[str],
+    agent_name: str,
+    skill_names: dict[str, str],
+    agent_names: dict[str, str],
 ) -> None:
     """Copy an agent file with namespaced name and patch contents."""
-    agent_name = src_file.stem
-    namespaced_name = f"{agent_name}{SUFFIX}"
+    namespaced_name = f"{agent_name}{agent_names[agent_name]}"
     target = dst_dir / f"{namespaced_name}.md"
 
     content = src_file.read_text()
@@ -125,30 +162,36 @@ def namespace_agent_file(
 
 def patch_cross_references(
     content: str,
-    skill_names: list[str],
-    agent_names: list[str],
+    skill_names: dict[str, str],
+    agent_names: dict[str, str],
 ) -> str:
     """Patch skill and agent cross-references to use namespaced names."""
     # Patch slash command references: /skill-name → /skill-name-manifest-dev
     for skill in sorted(set(skill_names), key=len, reverse=True):
+        suffix = skill_names[skill]
         # /skill-name (at word boundary)
         content = re.sub(
             rf"(?<!\w)/{re.escape(skill)}(?=[\s,.\)\]\"'`]|$)",
-            f"/{skill}{SUFFIX}",
+            f"/{skill}{suffix}",
             content,
         )
         # manifest-dev:skill-name → manifest-dev:skill-name-manifest-dev
         content = content.replace(
             f"manifest-dev:{skill}",
-            f"manifest-dev:{skill}{SUFFIX}",
+            f"manifest-dev:{skill}{suffix}",
+        )
+        content = content.replace(
+            f"manifest-dev-tools:{skill}",
+            f"manifest-dev-tools:{skill}{suffix}",
         )
 
     # Patch agent name references in quoted strings
     for agent in sorted(set(agent_names), key=len, reverse=True):
+        suffix = agent_names[agent]
         # Agent names in contexts like "code-bugs-reviewer" or agent: code-bugs-reviewer
         content = re.sub(
             rf"(?<=agent:\s){re.escape(agent)}(?=\s|$|\")",
-            f"{agent}{SUFFIX}",
+            f"{agent}{suffix}",
             content,
         )
 
@@ -165,7 +208,7 @@ def patch_hooks_json(hooks_file: Path, extension_path: str) -> dict:
         return cmd.replace("${extensionPath}", extension_path)
 
     hooks = config.get("hooks", {})
-    for event_type, event_hooks in hooks.items():
+    for _event_type, event_hooks in hooks.items():
         for hook_group in event_hooks:
             for hook in hook_group.get("hooks", []):
                 if "command" in hook:
@@ -357,7 +400,15 @@ def main() -> int:
 
     src = Path(sys.argv[1])
     dst = Path(sys.argv[2])
-    skill_names, agent_names = discover_components(src)
+    metadata = _load_component_namespaces(src)
+    suffixes = _metadata_suffixes(metadata)
+    discovered_skill_names, discovered_agent_names = discover_components(src, suffixes)
+    skill_names = {
+        name: _suffix_for(metadata, "skills", name) for name in discovered_skill_names
+    }
+    agent_names = {
+        name: _suffix_for(metadata, "agents", name) for name in discovered_agent_names
+    }
 
     # Namespace skills
     src_skills = src / "skills"
@@ -366,8 +417,11 @@ def main() -> int:
 
     for skill_dir in sorted(src_skills.iterdir()):
         if skill_dir.is_dir():
-            namespace_skill_dir(skill_dir, dst_skills, skill_names, agent_names)
-            print(f"  skill: {skill_dir.name} -> {skill_dir.name}{SUFFIX}")
+            skill_name = _strip_suffix(skill_dir.name, suffixes)
+            namespace_skill_dir(
+                skill_dir, dst_skills, skill_name, skill_names, agent_names
+            )
+            print(f"  skill: {skill_name} -> {skill_name}{skill_names[skill_name]}")
 
     # Namespace agents
     src_agents = src / "agents"
@@ -375,8 +429,11 @@ def main() -> int:
     dst_agents.mkdir(parents=True, exist_ok=True)
 
     for agent_file in sorted(src_agents.glob("*.md")):
-        namespace_agent_file(agent_file, dst_agents, skill_names, agent_names)
-        print(f"  agent: {agent_file.stem} -> {agent_file.stem}{SUFFIX}")
+        agent_name = _strip_suffix(agent_file.stem, suffixes)
+        namespace_agent_file(
+            agent_file, dst_agents, agent_name, skill_names, agent_names
+        )
+        print(f"  agent: {agent_name} -> {agent_name}{agent_names[agent_name]}")
 
     return 0
 

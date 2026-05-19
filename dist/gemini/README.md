@@ -6,9 +6,9 @@ Verification-first manifest workflows for Gemini CLI. Plan work with structured 
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 7 | Workflow skills: define, do, verify, auto, figure-out, escalate, done |
+| Skills | 11 | Workflow skills plus manifest-dev-tools utilities (`adr`, `handoff`, `prompt-engineering`, `walk-pr`) |
 | Agents | 16 | Specialized agents for code review, manifest verification, and PR lifecycle |
-| Hooks | 4 | Event-driven hooks enforcing workflow discipline (stop-do, pretool-verify, prompt-submit-amendment, post-compact) |
+| Hooks | 3 registrations | Stop enforcement plus post-compact/pre-compress recovery, backed by 4 scripts |
 
 ## Installation
 
@@ -53,9 +53,9 @@ The `install.sh` script sets this automatically.
 
 | Feature | Claude Code | Gemini CLI | Notes |
 |---------|-------------|------------|-------|
-| Skills | All 7 | All 7 | Copied unchanged |
+| Skills | All 11 | All 11 | Copied unchanged |
 | Agents | All 16 | All 16 | Frontmatter converted |
-| Hooks | 4 hooks | 4 hooks | Adapted to Gemini event model |
+| Hooks | 2 workflow hooks | 3 Gemini registrations | Stop enforcement plus compaction recovery |
 | Stop enforcement | PreToolUse/Stop | BeforeTool/AfterAgent | Retry counter for loop prevention |
 | Context injection | additionalContext | additionalContext | Same mechanism |
 | Transcript parsing | JSONL (user/assistant) | JSONL (user/gemini) | Adapter normalizes |
@@ -82,7 +82,7 @@ The `install.sh` script sets this automatically.
 2. `/do` — Executes the manifest, satisfying each Deliverable's acceptance criteria, then verifies inline by spawning one subagent per Acceptance Criterion and Global Invariant
 3. `/auto` — Chains define and do autonomously
 
-Supporting skills: `/figure-out` for truth-convergent investigation, `/figure-out-team` for async Slack deliberation, `/escalate` for blocking issues.
+Supporting skills: `/figure-out` for truth-convergent investigation, `/figure-out-team` for async Slack deliberation, `/escalate` for blocking issues, plus tools utilities `/adr`, `/handoff`, `/prompt-engineering`, and `/walk-pr`.
 
 **PR lifecycle.** PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. `/auto --babysit <pr-url>` chains synthesis and execution in one command.
 

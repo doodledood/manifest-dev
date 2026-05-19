@@ -10,6 +10,7 @@ import pytest
 
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
+TOOLS_SKILLS = ("adr", "handoff", "prompt-engineering", "walk-pr")
 
 
 def run_installer(
@@ -24,6 +25,93 @@ def run_installer(
         text=True,
         check=True,
     )
+
+
+def _install_target(cli: str, env: dict[str, str]) -> Path:
+    if cli == "codex":
+        return Path(env["HOME"]) / ".codex"
+    if cli == "gemini":
+        return Path(env["HOME"]) / ".gemini"
+    if cli == "opencode":
+        return Path(env["OPENCODE_TARGET"])
+    raise AssertionError(f"unexpected cli: {cli}")
+
+
+def _install_args(cli: str) -> tuple[str, ...]:
+    return ("--global",) if cli == "gemini" else ()
+
+
+def _env_for_cli(tmp_path: Path, cli: str) -> dict[str, str]:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / cli / "home")
+    if cli == "opencode":
+        env["OPENCODE_TARGET"] = str(Path(env["HOME"]) / ".config" / "opencode")
+    return env
+
+
+def test_installers_install_manifest_dev_tools_skills(tmp_path: Path) -> None:
+    for cli in ("codex", "gemini", "opencode"):
+        env = _env_for_cli(tmp_path, cli)
+        run_installer(cli, env, *_install_args(cli))
+
+        target = _install_target(cli, env)
+        for skill in TOOLS_SKILLS:
+            skill_dir = target / "skills" / f"{skill}-manifest-dev-tools"
+            assert skill_dir.is_dir(), f"{cli}: missing {skill_dir}"
+            assert (skill_dir / "SKILL.md").is_file()
+
+        assert (target / "skills" / "define-manifest-dev").is_dir()
+
+        if cli == "opencode":
+            for skill in TOOLS_SKILLS:
+                command = target / "commands" / f"{skill}-manifest-dev-tools.md"
+                assert command.is_file(), f"opencode: missing {command}"
+
+
+def test_reinstall_syncs_manifest_dev_tools_state_without_touching_user_files(
+    tmp_path: Path,
+) -> None:
+    for cli in ("codex", "gemini", "opencode"):
+        env = _env_for_cli(tmp_path, cli)
+        args = _install_args(cli)
+        run_installer(cli, env, *args)
+
+        target = _install_target(cli, env)
+        managed_skill = target / "skills" / "adr-manifest-dev-tools" / "SKILL.md"
+        managed_skill.write_text("stale managed content\n", encoding="utf-8")
+
+        stale_skill = target / "skills" / "retired-manifest-dev-tools"
+        stale_skill.mkdir(parents=True)
+        (stale_skill / "SKILL.md").write_text("retired\n", encoding="utf-8")
+
+        custom_skill = target / "skills" / "custom-skill"
+        custom_skill.mkdir(parents=True)
+        (custom_skill / "SKILL.md").write_text("custom\n", encoding="utf-8")
+
+        if cli == "opencode":
+            managed_command = target / "commands" / "adr-manifest-dev-tools.md"
+            managed_command.write_text("stale command\n", encoding="utf-8")
+
+            stale_command = target / "commands" / "retired-manifest-dev-tools.md"
+            stale_command.write_text("retired command\n", encoding="utf-8")
+
+            custom_command = target / "commands" / "custom-command.md"
+            custom_command.write_text("custom command\n", encoding="utf-8")
+
+        run_installer(cli, env, *args)
+
+        refreshed_skill = managed_skill.read_text(encoding="utf-8")
+        assert "name: adr-manifest-dev-tools" in refreshed_skill
+        assert "stale managed content" not in refreshed_skill
+        assert not stale_skill.exists()
+        assert (custom_skill / "SKILL.md").read_text(encoding="utf-8") == "custom\n"
+
+        if cli == "opencode":
+            refreshed_command = managed_command.read_text(encoding="utf-8")
+            assert "manifest-dev-tools:adr-manifest-dev-tools" in refreshed_command
+            assert "stale command" not in refreshed_command
+            assert not stale_command.exists()
+            assert custom_command.read_text(encoding="utf-8") == "custom command\n"
 
 
 def test_codex_uninstall_removes_only_manifest_dev_and_reverts_added_config(
@@ -85,6 +173,7 @@ def test_codex_uninstall_removes_only_manifest_dev_and_reverts_added_config(
     assert custom_agent.is_file()
     assert custom_rule.is_file()
     assert not (codex_dir / "skills" / "define-manifest-dev").exists()
+    assert not (codex_dir / "skills" / "adr-manifest-dev-tools").exists()
     assert not (codex_dir / "agents" / "criteria-checker-manifest-dev.toml").exists()
     assert not (codex_dir / "rules" / "manifest-dev.rules").exists()
     assert not (codex_dir / "manifest-dev-install-state.json").exists()
@@ -170,10 +259,7 @@ def test_codex_uninstall_preserves_user_kept_fallback_list_changes(
     run_installer("codex", env, "uninstall")
 
     final_config = config_path.read_text(encoding="utf-8")
-    assert (
-        'project_doc_fallback_filenames = ["CLAUDE.md", "AGENTS.md"]'
-        in final_config
-    )
+    assert 'project_doc_fallback_filenames = ["CLAUDE.md", "AGENTS.md"]' in final_config
 
 
 def test_codex_install_migrates_legacy_agents_table_to_runtime_valid_config(
@@ -307,8 +393,10 @@ def test_opencode_uninstall_removes_only_manifest_dev_files(tmp_path: Path) -> N
     assert not (plugins_dir / "manifest-dev.ts").exists()
     assert not (plugins_dir / "manifest-dev.HOOK_SPEC.md").exists()
     assert not (opencode_dir / "skills" / "define-manifest-dev").exists()
+    assert not (opencode_dir / "skills" / "adr-manifest-dev-tools").exists()
     assert not (opencode_dir / "agents" / "criteria-checker-manifest-dev.md").exists()
     assert not (opencode_dir / "commands" / "define-manifest-dev.md").exists()
+    assert not (opencode_dir / "commands" / "adr-manifest-dev-tools.md").exists()
 
 
 def test_opencode_install_leaves_user_root_plugin_and_config_untouched(
@@ -435,6 +523,7 @@ def test_gemini_uninstall_removes_manifest_files_and_hooks_only(
         ]
     }
     assert not (gemini_dir / "skills" / "define-manifest-dev").exists()
+    assert not (gemini_dir / "skills" / "adr-manifest-dev-tools").exists()
     assert not (gemini_dir / "agents" / "criteria-checker-manifest-dev.md").exists()
     assert not (gemini_dir / "hooks" / "stop_do_hook.py").exists()
     assert not (gemini_dir / "manifest-dev-install-state.json").exists()

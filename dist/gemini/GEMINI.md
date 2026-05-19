@@ -16,6 +16,7 @@ manifest-dev provides structured workflows for planning, executing, and verifyin
 - **`/figure-out-team`** — `/figure-out`'s discipline applied to a multi-party async Slack conversation
 - **`/escalate`** — Structured blocker handoff: criterion, attempts, possible resolutions, what's needed from the user
 - **`/done`** — Plain-prose completion summary called by `/do` after every criterion verifies PASS
+- **Tools skills** — `/adr`, `/handoff`, `/prompt-engineering`, and `/walk-pr` install with the `-manifest-dev-tools` suffix
 
 ### PR Lifecycle
 
