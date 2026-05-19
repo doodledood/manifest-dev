@@ -71,4 +71,4 @@ Two hooks ship with the plugin:
 
 Verifier subagents default to `general-purpose` when a manifest omits `verify.agent:`. The bundled `criteria-checker` agent (invoked explicitly via `agent: criteria-checker`) is a focused alternative: read-only behavior is enforced by its prompt, so authors can spawn it against MCP servers or extra CLI tools the user has configured.
 
-Review agents in `agents/` cover code, prose, contracts, types, design, testability, intent, and docs — name one in `verify.agent:` to scope the subagent to that lens. `github-pr-lifecycle` handles PR mergeability checks; `slack-poller` tails Slack threads for `/figure-out-team`.
+Review agents in `agents/` cover code, operational readiness, prose, contracts, types, design, testability, intent, and docs — name one in `verify.agent:` to scope the subagent to that lens. `github-pr-lifecycle` handles PR mergeability checks; `slack-poller` tails Slack threads for `/figure-out-team`.

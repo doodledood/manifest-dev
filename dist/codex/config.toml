@@ -12,8 +12,12 @@ config_file = "agents/change-intent-reviewer.toml"
 description = "Audit code changes for mechanical defects — runtime failures, resource issues, and structural code flaws"
 config_file = "agents/code-bugs-reviewer.toml"
 
+[agents.operational-readiness-reviewer]
+description = "Audit code and configuration changes for runtime, deployment, rollback, retry, scale, CI, and observability risks"
+config_file = "agents/operational-readiness-reviewer.toml"
+
 [agents.test-quality-reviewer]
-description = "Verify tests are both PRESENT (coverage gaps) and VALIDATING (tautological-test detection: mirror-impl, mock-SUT, trivial-asserts, snapshot-without-intent)"
+description = "Verify tests are both PRESENT and VALIDATING with independent behavioral oracles"
 config_file = "agents/test-quality-reviewer.toml"
 
 [agents.prose-value-reviewer]
@@ -21,7 +25,7 @@ description = "Audit code comments and repo doc files for prose value — narrat
 config_file = "agents/prose-value-reviewer.toml"
 
 [agents.code-design-reviewer]
-description = "Audit code for design fitness issues — right approach given what already exists"
+description = "Audit code for design fitness issues — right approach and right responsibility owner given what already exists"
 config_file = "agents/code-design-reviewer.toml"
 
 [agents.code-maintainability-reviewer]
@@ -41,7 +45,7 @@ description = "Verify that code changes comply with context file instructions an
 config_file = "agents/context-file-adherence-reviewer.toml"
 
 [agents.contracts-reviewer]
-description = "Verify API and interface contract correctness with evidence"
+description = "Verify API and interface contract correctness with source-of-truth evidence"
 config_file = "agents/contracts-reviewer.toml"
 
 [agents.criteria-checker]

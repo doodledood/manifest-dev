@@ -6,7 +6,7 @@ Each task type in `tasks/` carries domain-specific encoder data: quality gates (
 
 | Domain | Indicators | File |
 |--------|------------|------|
-| Coding | Any code change (base for Feature, Bug, Refactor) | `CODING.md` |
+| Coding | Any code change; includes default reviewer gates for intent, bugs, operational readiness, design, tests, docs, and context adherence | `CODING.md` |
 | Feature | New functionality, APIs, enhancements | `FEATURE.md` |
 | Bug | Defects, errors, regressions, "not working", "broken" | `BUG.md` |
 | Refactor | Restructuring, "clean up", pattern changes | `REFACTOR.md` |

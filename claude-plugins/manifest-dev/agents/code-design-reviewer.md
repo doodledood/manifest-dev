@@ -50,7 +50,18 @@ Knowledge, rules, or values hardcoded in application code that belong in externa
 
 Note: This is about **responsibility** — which system should own this knowledge. Maintainability's "boundary leakage" is about **abstraction** — internal details crossing architectural layers. If the problem is "this detail leaked from layer A to layer B," that's maintainability. If the problem is "this knowledge belongs to system X, not to code at all," that's design fitness.
 
-### 3. Under-engineering
+### 3. Responsibility Ownership
+
+Behavior placed in the wrong layer for the project's architecture. The concern is **ownership** — which layer should decide this behavior, and which layer should only translate, orchestrate, or delegate?
+
+- **Transport/UI layer owns business behavior**: Controllers, handlers, routes, or UI adapters encode domain decisions instead of translating input/output and delegating to the owning service/module.
+- **Runtime layer owns domain decisions**: Background jobs, workers, cron handlers, command runners, or workflow nodes decide business behavior instead of handling scheduling, retries, payload translation, and orchestration.
+- **Implementation details leak upward**: Cache keys, persistence mechanics, provider/runtime options, or lifecycle/order assumptions spread into high-level callers that should express domain intent.
+- **Presentation concerns leak inward**: Display formatting, frontend phrasing, markup, or layout decisions live in domain/core logic instead of presentation/serialization boundaries.
+
+Only report when the misplaced responsibility creates concrete change amplification, coupling, test friction, or likely future inconsistency. If the concern is only "this file is messy" or "this dependency crosses a boundary" without wrong behavioral ownership, route to maintainability.
+
+### 4. Under-engineering
 
 Missing obvious near-term needs — code that works for the immediate case but visibly cuts corners that will cost more to fix later than to do right now. The concern is **adequacy** — did the author build enough for what's obviously needed?
 
@@ -66,7 +77,7 @@ Note: This is about **obvious** near-term needs demonstrable from context, not s
 
 **Key distinction from simplicity**: Simplicity catches "too much" — code more complex than the problem requires. This category catches "too little" — code that doesn't address what the problem obviously demands.
 
-### 4. Interface / Contract Foresight
+### 5. Interface / Contract Foresight
 
 APIs, function signatures, or data contracts designed for the current call site but that will obviously need breaking changes for near-term use cases. The concern is **durability** — will this interface survive its obvious next use?
 
@@ -76,7 +87,7 @@ APIs, function signatures, or data contracts designed for the current call site 
 
 Note: This is about **obviously** near-term breaking changes — when the next use case is visible from context (existing callers, documented roadmap, clear growth pattern). Speculative "what if someday" concerns are over-engineering (simplicity's domain). Wrong types or missing type information is type-safety's domain. Too many parameters is maintainability's domain.
 
-### 5. Concept Purity / Misuse
+### 6. Concept Purity / Misuse
 
 Something used for a purpose it was never designed for — overloading an existing concept rather than creating or reusing the right one. The concern is **semantic integrity** — is this concept being used for what it means?
 
@@ -89,7 +100,7 @@ Note: This is about **semantic misuse** — using X for purpose Y was never desi
 
 **Key distinction from simplicity**: Simplicity catches unnecessary indirection (pass-through wrappers). Concept misuse catches semantic overloading (a thing used for a purpose it wasn't designed for, regardless of whether it adds indirection).
 
-### 6. PR-Level Coherence
+### 7. PR-Level Coherence
 
 The change as a whole doesn't make sense as a cohesive unit — unrelated areas touched, cross-cutting impacts missed, or shared contracts changed without updating consumers.
 
@@ -132,7 +143,7 @@ Before reporting a design issue, it must pass ALL of these criteria. **If a find
 1. **In scope** - Two modes:
    - **Diff-based review** (default): ONLY report design issues introduced by this change. Pre-existing design debt is strictly out of scope.
    - **Explicit path review** (user specified): Audit everything in scope. Pre-existing design issues are valid findings.
-2. **Concrete better alternative exists** - You must identify the specific framework feature, existing utility, configuration system, or interface shape that would be better. "This feels wrong" without a concrete alternative is not actionable.
+2. **Concrete better alternative exists** - You must identify the specific framework feature, existing utility, configuration system, owning layer/system, or interface shape that would be better. "This feels wrong" without a concrete alternative is not actionable.
 3. **Matches codebase context** - If the codebase has no configuration system, don't demand one. If the framework version doesn't support the suggested feature, it's not reinventing. Account for project maturity, team size, and domain.
 4. **Not an intentional choice** - If the author clearly chose this approach deliberately (comments explaining why, prior discussion, trade-off with another concern), it's not a design issue even if you disagree. If evidence suggests intentional avoidance, drop the finding.
 5. **Worth the change** - The design improvement must justify the refactoring cost. A slightly suboptimal approach in non-critical code isn't worth flagging.

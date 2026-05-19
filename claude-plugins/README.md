@@ -46,7 +46,7 @@ The subagent returns PASS, FAIL, or BLOCKED. BLOCKED routes via `/escalate` (ext
 
 **Internal skills:** `/done`, `/escalate`
 
-**Review agents:** `criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `test-quality-reviewer`, `prose-value-reviewer`, `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
+**Review agents:** `criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `operational-readiness-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `test-quality-reviewer`, `prose-value-reviewer`, `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
 
 **Hooks** enforce workflow integrity: `stop_do_hook` prevents premature stopping during `/do`; `post_compact_hook` restores context after compaction.
 

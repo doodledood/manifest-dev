@@ -18,14 +18,15 @@ Skills handle the workflow orchestration. Agents listed below are used for verif
 
 - **change-intent-reviewer**: Adversarially analyzes whether code changes achieve their stated intent. Reconstructs intent from diff context, then attacks the logic for behavioral divergences.
 - **code-bugs-reviewer**: Audits for mechanical defects -- race conditions, data loss, edge cases, resource leaks, dangerous defaults, error handling gaps.
-- **test-quality-reviewer**: Derives test scenarios from code logic and reports both coverage gaps (test absence) and tautological tests (test invalidity: mirror-impl, mock-SUT, trivial-asserts, snapshot-without-intent).
+- **operational-readiness-reviewer**: Audits runtime and deployment readiness -- environment wiring, migrations, retries, rollback, scale, CI reliability, and observability.
+- **test-quality-reviewer**: Derives test scenarios from code logic and reports both coverage gaps and tests with weak or implementation-derived behavioral oracles.
 - **prose-value-reviewer**: Audits code comments and repo doc files (READMEs, /docs) for prose value -- narrating-the-obvious comments, generic puffery, AI rhetorical patterns, sycophantic fragments. Comments must be load-bearing-WHY.
-- **code-design-reviewer**: Design fitness -- reinvented wheels, misplaced responsibilities, under-engineering, short-sighted interfaces, concept misuse, incoherent changes.
+- **code-design-reviewer**: Design fitness -- reinvented wheels, wrong responsibility ownership, under-engineering, short-sighted interfaces, concept misuse, incoherent changes.
 - **code-maintainability-reviewer**: DRY violations, structural complexity, dead code, consistency, coupling, cohesion, boundary leakage, migration debt.
 - **code-simplicity-reviewer**: Unnecessary complexity, over-engineering, premature optimization, cognitive burden, clarity over cleverness.
 - **code-testability-reviewer**: Identifies code requiring excessive mocking, business logic buried in IO, non-deterministic inputs.
 - **context-file-adherence-reviewer**: Verifies code changes comply with context file instructions (AGENTS.md) and project standards.
-- **contracts-reviewer**: Evidence-based API and interface contract verification -- both outbound (correct API usage) and inbound (consumer impact).
+- **contracts-reviewer**: Source-of-truth API and interface contract verification -- both outbound (correct API usage) and inbound (consumer impact).
 - **docs-reviewer**: Audits documentation and code comments for accuracy against recent code changes.
 - **type-safety-reviewer**: Type holes, invalid states representable, narrowing gaps, nullability problems across typed languages.
 

@@ -331,15 +331,16 @@ Built-in agents `/do` spawns to verify criteria. Name an agent in the verify blo
 |-------|-------|
 | `criteria-checker` | General-purpose criterion verifier — runs whatever bash, file reads, or external tools the prompt specifies |
 | `change-intent-reviewer` | Adversarial intent analysis: reconstructs change intent, finds behavioral divergences across code, prompts, and config |
-| `contracts-reviewer` | Bidirectional API/interface contract verification with evidence from docs and codebase |
+| `contracts-reviewer` | Bidirectional API/interface contract verification with source-of-truth evidence from docs, schemas, generated clients, and codebase definitions |
 | `code-bugs-reviewer` | Mechanical code defects: race conditions, data loss, edge cases, resource leaks, dangerous defaults |
+| `operational-readiness-reviewer` | Runtime and deployment readiness: environment wiring, migrations, retries, rollback, scale, CI, and observability risks |
 | `code-maintainability-reviewer` | DRY violations, coupling, cohesion, dead code, consistency |
-| `code-design-reviewer` | Design fitness: reinvented wheels, code vs configuration boundary, under-engineering, interface foresight, PR coherence |
+| `code-design-reviewer` | Design fitness: reinvented wheels, wrong responsibility ownership, code vs configuration boundary, under-engineering, interface foresight, PR coherence |
 | `code-simplicity-reviewer` | Over-engineering, premature optimization, cognitive complexity |
 | `code-testability-reviewer` | Excessive mocking requirements, logic buried in IO, hidden dependencies |
-| `test-quality-reviewer` | Test quality: coverage gaps from edge-case enumeration plus tautological-test detection (mirror-impl, mock-SUT, trivial-asserts, snapshot-without-intent) |
+| `test-quality-reviewer` | Test quality: coverage gaps plus independent-oracle checks for tautology, mirror-impl, mock-SUT, trivial asserts, and hidden scenarios |
 | `prose-value-reviewer` | Prose value in code comments and repo doc files — flags narrating-the-obvious comments, generic puffery, AI rhetorical patterns, sycophantic fragments. Comments must be load-bearing-WHY |
-| `type-safety-reviewer` | TypeScript type safety: `any` abuse, invalid states representable, narrowing issues |
+| `type-safety-reviewer` | Typed-language safety: type holes, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
 | `context-file-adherence-reviewer` | Compliance with context file (CLAUDE.md/AGENTS.md/GEMINI.md) project rules |
 | `github-pr-lifecycle` | PR-lifecycle inspector — checks CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives (`bash sleep …; reinvoke`, `retrigger …`, `reply …`, `escalate`, …) the caller executes literally. Owns its wait-cadence policy (per-gate durations and cycle caps; steering customizable). Composed automatically when `--platform github` resolves during `/define`. |
@@ -362,7 +363,7 @@ Hooks enforce workflow integrity. The AI can't skip steps:
 
 | Task Type | Guidance | Quality Gates |
 |-----------|----------|---------------|
-| **Feature** | `tasks/FEATURE.md` + `CODING.md` | Bug detection, type safety, maintainability, simplicity, test quality, testability, prose value, CLAUDE.md adherence |
+| **Feature** | `tasks/FEATURE.md` + `CODING.md` | Bug detection, operational readiness, type safety, maintainability, simplicity, test quality, testability, prose value, CLAUDE.md adherence |
 | **Bug** | `tasks/BUG.md` + `CODING.md` | Bug fix verification, regression prevention, root cause analysis |
 | **Refactor** | `tasks/REFACTOR.md` + `CODING.md` | Behavior preservation, maintainability, simplicity |
 | **Prompting** | `tasks/PROMPTING.md` | Prompt quality criteria |

@@ -38,20 +38,21 @@ PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIF
 
 ## Agents
 
-15 specialized subagents, all read-only:
+16 specialized subagents, all read-only:
 
 | Agent | Purpose |
 |-------|---------|
 | change-intent-reviewer | Adversarial intent-behavior divergence analysis |
 | code-bugs-reviewer | Mechanical defect detection (race conditions, leaks, edge cases) |
-| test-quality-reviewer | Coverage gap analysis plus tautological-test detection (mirror-impl, mock-SUT, trivial-asserts, snapshot-without-intent) |
+| operational-readiness-reviewer | Runtime and deployment readiness: environment wiring, migrations, retries, rollback, scale, CI, and observability |
+| test-quality-reviewer | Coverage gap analysis plus independent behavioral-oracle checks |
 | prose-value-reviewer | Comments and repo doc files: narrating-the-obvious, generic puffery, AI rhetorical patterns, sycophantic fragments — comments must be load-bearing-WHY |
-| code-design-reviewer | Design fitness (reinvented wheels, wrong responsibility, under-engineering) |
+| code-design-reviewer | Design fitness (reinvented wheels, wrong responsibility owner, under-engineering) |
 | code-maintainability-reviewer | Code organization (DRY, coupling, cohesion, consistency) |
 | code-simplicity-reviewer | Unnecessary complexity and over-engineering |
 | code-testability-reviewer | Test friction analysis (mock count, logic in IO) |
 | context-file-adherence-reviewer | Context file compliance (AGENTS.md/CLAUDE.md/GEMINI.md rules) |
-| contracts-reviewer | API and interface contract correctness with evidence |
+| contracts-reviewer | API and interface contract correctness with source-of-truth evidence |
 | criteria-checker | Single-criterion verifier — the default subagent when verify.agent is omitted |
 | docs-reviewer | Documentation accuracy against code changes |
 | github-pr-lifecycle | Steerable GitHub PR lifecycle inspection — returns natural-language hint for /do to dispatch. Read-only; never invokes the merge button. |
