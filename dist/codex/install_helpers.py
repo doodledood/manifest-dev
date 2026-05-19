@@ -277,6 +277,69 @@ def _strip_manifest_agent_tables(text: str) -> str:
     return pattern.sub("", text)
 
 
+def _root_text(text: str) -> str:
+    match = re.search(r"(?m)^\[", text)
+    return text[: match.start()] if match else text
+
+
+def _root_has_key(text: str, key: str) -> bool:
+    return re.search(rf"(?m)^{re.escape(key)}\s*=", _root_text(text)) is not None
+
+
+def _insert_root_lines(text: str, lines: list[str]) -> str:
+    if not lines:
+        return text
+
+    block = "\n".join(lines) + "\n"
+    match = re.search(r"(?m)^\[", text)
+    if not match:
+        if text and not text.endswith("\n"):
+            text += "\n"
+        return text + block
+
+    prefix = text[: match.start()].rstrip()
+    suffix = text[match.start() :].lstrip("\n")
+    if prefix:
+        return f"{prefix}\n{block}\n{suffix}"
+    return f"{block}\n{suffix}"
+
+
+def _migrate_legacy_agents_table(text: str) -> str:
+    """Move old scalar [agents] settings to modern root-level config.
+
+    Codex now treats every key under [agents] as an agent role table. Older
+    dist configs placed max_threads/max_depth/project_doc_fallback_filenames
+    there, which makes current Codex reject config.toml before startup.
+    """
+    match = _table_match(text, "agents")
+    if not match:
+        return text
+
+    legacy_root_keys = {
+        "max_threads",
+        "max_depth",
+        "project_doc_fallback_filenames",
+    }
+    root_lines: list[str] = []
+    preserved_comments: list[str] = []
+
+    for line in match.group(2).splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        key_match = re.match(r"^([A-Za-z0-9_-]+)\s*=", stripped)
+        if key_match and key_match.group(1) in legacy_root_keys:
+            key = key_match.group(1)
+            if not _root_has_key(text, key):
+                root_lines.append(stripped)
+        else:
+            preserved_comments.append(f"# Legacy [agents] entry removed: {stripped}")
+
+    text = text[: match.start()] + text[match.end() :]
+    text = _insert_root_lines(text, root_lines + preserved_comments)
+    return _normalize_config_text(text)
+
+
 def _strip_manifest_header(text: str) -> str:
     if text.startswith(CONFIG_HEADER):
         text = text[len(CONFIG_HEADER) :]
@@ -487,6 +550,7 @@ def merge_config(
         existing_text, config_existed
     )
 
+    merged_text = _migrate_legacy_agents_table(merged_text)
     merged_text = _strip_managed_config_block(merged_text)
     merged_text = _strip_manifest_agent_tables(merged_text)
     merged_text = _ensure_missing_table_keys(

@@ -170,6 +170,8 @@ def patch_hooks_json(hooks_file: Path, extension_path: str) -> dict:
             for hook in hook_group.get("hooks", []):
                 if "command" in hook:
                     hook["command"] = patch_command(hook["command"])
+                if "name" in hook and not hook["name"].endswith(f"-{NAMESPACE}"):
+                    hook["name"] = f"{hook['name']}-{NAMESPACE}"
 
     return config
 
@@ -230,6 +232,121 @@ def merge_settings(settings_path: Path, hook_config: dict) -> None:
     with open(settings_path, "w") as f:
         json.dump(existing, f, indent=2)
         f.write("\n")
+
+
+def build_install_state(settings_path: Path) -> dict:
+    """Capture user-owned settings before install so uninstall is conservative."""
+    existing: dict = {}
+    settings_existed = settings_path.exists()
+    if settings_existed:
+        try:
+            with open(settings_path) as f:
+                existing = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            existing = {}
+
+    experimental = existing.get("experimental")
+    return {
+        "version": 1,
+        "settings_existed": settings_existed,
+        "enable_agents_existed": isinstance(experimental, dict)
+        and "enableAgents" in experimental,
+    }
+
+
+def write_install_state(state_path: Path, state: dict) -> None:
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(state_path, "w") as f:
+        json.dump(state, f, indent=2)
+        f.write("\n")
+
+
+def _load_install_state(state_path: Path) -> dict:
+    if not state_path.exists():
+        return {}
+    try:
+        with open(state_path) as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def _remove_manifest_hooks(existing: dict) -> None:
+    hooks = existing.get("hooks")
+    if not isinstance(hooks, dict):
+        return
+
+    for event_type in list(hooks):
+        event_hooks = hooks.get(event_type)
+        if not isinstance(event_hooks, list):
+            continue
+
+        filtered_groups = []
+        for hook_group in event_hooks:
+            if not isinstance(hook_group, dict):
+                filtered_groups.append(hook_group)
+                continue
+
+            remaining_hooks = []
+            for hook in hook_group.get("hooks", []):
+                if not isinstance(hook, dict):
+                    remaining_hooks.append(hook)
+                    continue
+                name = hook.get("name", "")
+                command = hook.get("command", "")
+                if name.endswith(f"-{NAMESPACE}") or NAMESPACE in command:
+                    continue
+                remaining_hooks.append(hook)
+
+            if remaining_hooks:
+                hook_group["hooks"] = remaining_hooks
+                filtered_groups.append(hook_group)
+
+        if filtered_groups:
+            hooks[event_type] = filtered_groups
+        else:
+            del hooks[event_type]
+
+    if not hooks:
+        existing.pop("hooks", None)
+
+
+def unmerge_settings(settings_path: Path, state_path: Path) -> None:
+    """Remove manifest-dev settings while preserving user-owned values."""
+    if not settings_path.exists():
+        if state_path.exists():
+            state_path.unlink()
+        return
+
+    try:
+        with open(settings_path) as f:
+            existing = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        existing = {}
+
+    state = _load_install_state(state_path)
+    _remove_manifest_hooks(existing)
+
+    experimental = existing.get("experimental")
+    if (
+        isinstance(experimental, dict)
+        and not state.get("enable_agents_existed", True)
+        and experimental.get("enableAgents") is True
+    ):
+        experimental.pop("enableAgents", None)
+        if not experimental:
+            existing.pop("experimental", None)
+
+    if existing or state.get("settings_existed", True):
+        settings_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(settings_path, "w") as f:
+            json.dump(existing, f, indent=2)
+            f.write("\n")
+    else:
+        settings_path.unlink()
+
+    if state_path.exists():
+        state_path.unlink()
 
 
 def main() -> int:

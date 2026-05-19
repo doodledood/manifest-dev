@@ -44,6 +44,18 @@ The install script:
 - Copies AGENTS.md context file
 - Is idempotent — safe to re-run
 
+To install somewhere other than project-local `.opencode`, set `OPENCODE_TARGET`:
+
+```bash
+OPENCODE_TARGET="$HOME/.config/opencode" bash dist/opencode/install.sh
+```
+
+To uninstall only manifest-dev-managed files:
+
+```bash
+bash dist/opencode/install.sh uninstall
+```
+
 ### Manual Install
 
 ```bash

@@ -28,9 +28,14 @@ NAMESPACE="manifest-dev"
 # Parse arguments
 INSTALL_DIR=""
 GLOBAL=false
+ACTION="install"
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        install|uninstall)
+            ACTION="$1"
+            shift
+            ;;
         --global)
             GLOBAL=true
             shift
@@ -41,7 +46,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo "Unknown option: $1"
-            echo "Usage: ./install.sh [--global | --dir <path>]"
+            echo "Usage: ./install.sh [install|uninstall] [--global | --dir <path>]"
             exit 1
             ;;
     esac
@@ -61,6 +66,37 @@ echo "======================================"
 echo "Source:  $SCRIPT_DIR"
 echo "Target:  $TARGET"
 echo ""
+
+SETTINGS_FILE="$TARGET/settings.json"
+STATE_FILE="$TARGET/manifest-dev-install-state.json"
+
+if [[ "$ACTION" == "uninstall" ]]; then
+    echo "Removing manifest-dev-managed Gemini files..."
+    find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}" -type d -exec rm -rf {} + 2>/dev/null || true
+    find "$TARGET/agents" -maxdepth 1 -name "*-${NAMESPACE}*" -exec rm -rf {} + 2>/dev/null || true
+    rm -f "$TARGET/hooks/gemini_adapter.py" 2>/dev/null || true
+    rm -f "$TARGET/hooks/hook_utils.py" 2>/dev/null || true
+    rm -f "$TARGET/hooks/post_compact_hook.py" 2>/dev/null || true
+    rm -f "$TARGET/hooks/stop_do_hook.py" 2>/dev/null || true
+
+    if [[ -f "$TARGET/GEMINI.md" ]] && cmp -s "$SCRIPT_DIR/GEMINI.md" "$TARGET/GEMINI.md"; then
+        rm -f "$TARGET/GEMINI.md"
+    fi
+
+    python3 -c "
+import sys
+sys.path.insert(0, '${SCRIPT_DIR}')
+from pathlib import Path
+from install_helpers import unmerge_settings
+
+unmerge_settings(Path('${SETTINGS_FILE}'), Path('${STATE_FILE}'))
+print('  Settings unmerged successfully')
+"
+
+    rmdir "$TARGET/skills" "$TARGET/agents" "$TARGET/hooks" "$TARGET" 2>/dev/null || true
+    echo "Removed manifest-dev-managed Gemini files only."
+    exit 0
+fi
 
 # Create directories
 mkdir -p "$TARGET/skills"
@@ -98,7 +134,6 @@ fi
 
 # --- Merge settings ---
 echo "Merging settings..."
-SETTINGS_FILE="$TARGET/settings.json"
 HOOKS_JSON="$SCRIPT_DIR/hooks/hooks.json"
 
 # Use Python helper to merge settings additively
@@ -106,10 +141,18 @@ python3 -c "
 import sys
 sys.path.insert(0, '${SCRIPT_DIR}')
 from pathlib import Path
-from install_helpers import patch_hooks_json, merge_settings
+from install_helpers import (
+    build_install_state,
+    patch_hooks_json,
+    merge_settings,
+    write_install_state,
+)
 
-hooks_config = patch_hooks_json(Path('${HOOKS_JSON}'), '${TARGET}/hooks')
-merge_settings(Path('${SETTINGS_FILE}'), hooks_config)
+hooks_config = patch_hooks_json(Path('${HOOKS_JSON}'), '${TARGET}')
+settings_path = Path('${SETTINGS_FILE}')
+state = build_install_state(settings_path)
+merge_settings(settings_path, hooks_config)
+write_install_state(Path('${STATE_FILE}'), state)
 print('  Settings merged successfully')
 "
 
@@ -125,6 +168,10 @@ echo "Required: enableAgents must be true in settings.json"
 echo "  (already set by this installer)"
 echo ""
 echo "To uninstall:"
-echo "  find \"$TARGET/skills\" -maxdepth 1 -name \"*-${NAMESPACE}\" -type d -exec rm -rf {} +"
-echo "  find \"$TARGET/agents\" -maxdepth 1 -name \"*-${NAMESPACE}*\" -exec rm -rf {} +"
-echo "  # Then remove hook entries from settings.json manually"
+if [[ "$GLOBAL" == "true" ]]; then
+    echo "  $0 uninstall --global"
+elif [[ -n "$INSTALL_DIR" ]]; then
+    echo "  $0 uninstall --dir \"$INSTALL_DIR\""
+else
+    echo "  $0 uninstall"
+fi

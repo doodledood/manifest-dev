@@ -13,11 +13,9 @@ DIST = ROOT / "dist"
 
 
 def run_installer(
-    cli: str, env: dict[str, str], action: str = "install"
+    cli: str, env: dict[str, str], *args: str
 ) -> subprocess.CompletedProcess[str]:
-    cmd = ["bash", str(DIST / cli / "install.sh")]
-    if action != "install":
-        cmd.append(action)
+    cmd = ["bash", str(DIST / cli / "install.sh"), *args]
     return subprocess.run(
         cmd,
         cwd=ROOT,
@@ -63,13 +61,10 @@ def test_codex_uninstall_removes_only_manifest_dev_and_reverts_added_config(
 
     installed_config = config_path.read_text(encoding="utf-8")
     assert "preview_feature = true" in installed_config
-    assert (
-        'project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]'
-        in installed_config
-    )
+    assert 'project_doc_fallback_filenames = ["AGENTS.md"]' in installed_config
     assert "multi_agent = true" in installed_config
-    assert "max_threads = 6" in installed_config
-    assert "max_depth = 1" in installed_config
+    assert "max_threads" not in installed_config
+    assert "max_depth" not in installed_config
     assert "# >>> manifest-dev managed config >>>" in installed_config
     assert (codex_dir / "manifest-dev-install-state.json").is_file()
     assert (codex_dir / "rules" / "manifest-dev.rules").is_file()
@@ -82,8 +77,6 @@ def test_codex_uninstall_removes_only_manifest_dev_and_reverts_added_config(
     assert "preview_feature = true" in final_config
     assert 'project_doc_fallback_filenames = ["AGENTS.md"]' in final_config
     assert "multi_agent = true" not in final_config
-    assert "max_threads = 6" not in final_config
-    assert "max_depth = 1" not in final_config
     assert "# >>> manifest-dev managed config >>>" not in final_config
     assert "[agents.criteria-checker-manifest-dev]" not in final_config
     assert "[mcp_servers.custom]" in final_config
@@ -108,15 +101,15 @@ def test_codex_uninstall_keeps_user_modified_shared_settings(tmp_path: Path) -> 
 
     config_path = codex_dir / "config.toml"
     installed_config = config_path.read_text(encoding="utf-8")
-    installed_config = installed_config.replace("max_threads = 6", "max_threads = 8")
+    installed_config = installed_config.replace(
+        "multi_agent = true", "multi_agent = false"
+    )
     config_path.write_text(installed_config, encoding="utf-8")
 
     run_installer("codex", env, "uninstall")
 
     final_config = config_path.read_text(encoding="utf-8")
-    assert "max_threads = 8" in final_config
-    assert "max_depth = 1" not in final_config
-    assert "multi_agent = true" not in final_config
+    assert "multi_agent = false" in final_config
     assert "# >>> manifest-dev managed config >>>" not in final_config
 
 
@@ -137,7 +130,7 @@ def test_codex_uninstall_removes_generated_config_when_install_created_it(
     assert not (codex_dir / "manifest-dev-install-state.json").exists()
 
 
-def test_codex_uninstall_uses_embedded_state_when_state_file_is_missing(
+def test_codex_uninstall_without_state_removes_managed_block_but_keeps_shared_config(
     tmp_path: Path,
 ) -> None:
     env = os.environ.copy()
@@ -152,7 +145,10 @@ def test_codex_uninstall_uses_embedded_state_when_state_file_is_missing(
 
     run_installer("codex", env, "uninstall")
 
-    assert not (codex_dir / "config.toml").exists()
+    final_config = (codex_dir / "config.toml").read_text(encoding="utf-8")
+    assert "multi_agent = true" in final_config
+    assert "# >>> manifest-dev managed config >>>" not in final_config
+    assert "[agents.criteria-checker-manifest-dev]" not in final_config
 
 
 def test_codex_uninstall_preserves_user_kept_fallback_list_changes(
@@ -165,17 +161,19 @@ def test_codex_uninstall_preserves_user_kept_fallback_list_changes(
     run_installer("codex", env)
 
     config_path = codex_dir / "config.toml"
-    config_text = config_path.read_text(encoding="utf-8")
-    config_text = config_text.replace(
-        'project_doc_fallback_filenames = ["CLAUDE.md"]',
-        'project_doc_fallback_filenames = ["CLAUDE.md", "AGENTS.md"]',
+    config_text = (
+        'project_doc_fallback_filenames = ["CLAUDE.md", "AGENTS.md"]\n\n'
+        + config_path.read_text(encoding="utf-8")
     )
     config_path.write_text(config_text, encoding="utf-8")
 
     run_installer("codex", env, "uninstall")
 
     final_config = config_path.read_text(encoding="utf-8")
-    assert 'project_doc_fallback_filenames = ["CLAUDE.md", "AGENTS.md"]' in final_config
+    assert (
+        'project_doc_fallback_filenames = ["CLAUDE.md", "AGENTS.md"]'
+        in final_config
+    )
 
 
 def test_codex_install_migrates_legacy_agents_table_to_runtime_valid_config(
@@ -269,6 +267,7 @@ def test_opencode_uninstall_removes_only_manifest_dev_files(tmp_path: Path) -> N
     env["HOME"] = str(tmp_path / "home")
 
     opencode_dir = Path(env["HOME"]) / ".config" / "opencode"
+    env["OPENCODE_TARGET"] = str(opencode_dir)
     custom_skill = opencode_dir / "skills" / "custom-skill"
     custom_skill.mkdir(parents=True, exist_ok=True)
     (custom_skill / "SKILL.md").write_text("custom\n", encoding="utf-8")
@@ -293,6 +292,9 @@ def test_opencode_uninstall_removes_only_manifest_dev_files(tmp_path: Path) -> N
     )
 
     run_installer("opencode", env)
+    assert (plugins_dir / "manifest-dev.ts").is_file()
+    assert (opencode_dir / "skills" / "define-manifest-dev").is_dir()
+
     run_installer("opencode", env, "uninstall")
 
     assert custom_skill.is_dir()
@@ -316,6 +318,7 @@ def test_opencode_install_leaves_user_root_plugin_and_config_untouched(
     env["HOME"] = str(tmp_path / "home")
 
     opencode_dir = Path(env["HOME"]) / ".config" / "opencode"
+    env["OPENCODE_TARGET"] = str(opencode_dir)
     plugins_dir = opencode_dir / "plugins"
     plugins_dir.mkdir(parents=True, exist_ok=True)
     root_plugin = plugins_dir / "index.ts"
@@ -356,6 +359,7 @@ def test_opencode_cli_loads_installed_manifest_agent(tmp_path: Path) -> None:
 
     env = os.environ.copy()
     env["HOME"] = str(tmp_path / "home")
+    env["OPENCODE_TARGET"] = str(Path(env["HOME"]) / ".config" / "opencode")
 
     run_installer("opencode", env)
 
@@ -370,7 +374,7 @@ def test_opencode_cli_loads_installed_manifest_agent(tmp_path: Path) -> None:
     assert '"name": "criteria-checker-manifest-dev"' in result.stdout
 
 
-def test_gemini_uninstall_removes_extension_and_manifest_hooks_only(
+def test_gemini_uninstall_removes_manifest_files_and_hooks_only(
     tmp_path: Path,
 ) -> None:
     env = os.environ.copy()
@@ -405,12 +409,13 @@ def test_gemini_uninstall_removes_extension_and_manifest_hooks_only(
         encoding="utf-8",
     )
 
-    install_dir = gemini_dir / "extensions" / "manifest-dev"
-    run_installer("gemini", env)
-    assert install_dir.is_dir()
-    assert (install_dir / "install-state.json").is_file()
+    run_installer("gemini", env, "--global")
+    assert (gemini_dir / "skills" / "define-manifest-dev").is_dir()
+    assert (gemini_dir / "agents" / "criteria-checker-manifest-dev.md").is_file()
+    assert (gemini_dir / "hooks" / "stop_do_hook.py").is_file()
+    assert (gemini_dir / "manifest-dev-install-state.json").is_file()
 
-    run_installer("gemini", env, "uninstall")
+    run_installer("gemini", env, "uninstall", "--global")
 
     merged = json.loads(settings_path.read_text(encoding="utf-8"))
     assert merged["selectedAuthType"] == "gemini-api-key"
@@ -429,8 +434,10 @@ def test_gemini_uninstall_removes_extension_and_manifest_hooks_only(
             }
         ]
     }
-    assert not install_dir.exists()
-    assert (gemini_dir / "settings.json.pre-manifest-dev-uninstall.bak").is_file()
+    assert not (gemini_dir / "skills" / "define-manifest-dev").exists()
+    assert not (gemini_dir / "agents" / "criteria-checker-manifest-dev.md").exists()
+    assert not (gemini_dir / "hooks" / "stop_do_hook.py").exists()
+    assert not (gemini_dir / "manifest-dev-install-state.json").exists()
 
 
 def test_gemini_uninstall_preserves_preexisting_enable_agents(tmp_path: Path) -> None:
@@ -454,8 +461,8 @@ def test_gemini_uninstall_preserves_preexisting_enable_agents(tmp_path: Path) ->
         encoding="utf-8",
     )
 
-    run_installer("gemini", env)
-    run_installer("gemini", env, "uninstall")
+    run_installer("gemini", env, "--global")
+    run_installer("gemini", env, "uninstall", "--global")
 
     merged = json.loads(settings_path.read_text(encoding="utf-8"))
     assert merged["experimental"]["enableAgents"] is True
@@ -471,16 +478,16 @@ def test_gemini_uninstall_removes_settings_file_created_by_install(
     gemini_dir = Path(env["HOME"]) / ".gemini"
     settings_path = gemini_dir / "settings.json"
 
-    run_installer("gemini", env)
+    run_installer("gemini", env, "--global")
     assert settings_path.is_file()
 
-    run_installer("gemini", env, "uninstall")
+    run_installer("gemini", env, "uninstall", "--global")
 
     assert not settings_path.exists()
-    assert not (gemini_dir / "extensions" / "manifest-dev").exists()
+    assert not (gemini_dir / "manifest-dev-install-state.json").exists()
 
 
-def test_gemini_uninstall_uses_global_state_when_extension_state_is_missing(
+def test_gemini_uninstall_without_state_removes_hooks_but_preserves_enable_agents(
     tmp_path: Path,
 ) -> None:
     env = os.environ.copy()
@@ -489,18 +496,18 @@ def test_gemini_uninstall_uses_global_state_when_extension_state_is_missing(
     gemini_dir = Path(env["HOME"]) / ".gemini"
     settings_path = gemini_dir / "settings.json"
 
-    run_installer("gemini", env)
+    run_installer("gemini", env, "--global")
 
-    local_state = gemini_dir / "extensions" / "manifest-dev" / "install-state.json"
-    global_state = gemini_dir / "manifest-dev-install-state.json"
-    assert local_state.is_file()
-    assert global_state.is_file()
-    local_state.unlink()
+    state_path = gemini_dir / "manifest-dev-install-state.json"
+    assert state_path.is_file()
+    state_path.unlink()
 
-    run_installer("gemini", env, "uninstall")
+    run_installer("gemini", env, "uninstall", "--global")
 
-    assert not settings_path.exists()
-    assert not global_state.exists()
+    merged = json.loads(settings_path.read_text(encoding="utf-8"))
+    assert merged["experimental"]["enableAgents"] is True
+    assert "hooks" not in merged
+    assert not state_path.exists()
 
 
 def test_gemini_uninstall_preserves_enable_agents_after_user_expands_experimental_settings(
@@ -510,15 +517,15 @@ def test_gemini_uninstall_preserves_enable_agents_after_user_expands_experimenta
     env["HOME"] = str(tmp_path / "home")
 
     gemini_dir = Path(env["HOME"]) / ".gemini"
-    run_installer("gemini", env)
+    run_installer("gemini", env, "--global")
 
     settings_path = gemini_dir / "settings.json"
     data = json.loads(settings_path.read_text(encoding="utf-8"))
     data.setdefault("experimental", {})["otherFeature"] = True
     settings_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
-    run_installer("gemini", env, "uninstall")
+    run_installer("gemini", env, "uninstall", "--global")
 
     merged = json.loads(settings_path.read_text(encoding="utf-8"))
-    assert merged["experimental"]["enableAgents"] is True
+    assert "enableAgents" not in merged["experimental"]
     assert merged["experimental"]["otherFeature"] is True
