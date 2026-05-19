@@ -6,7 +6,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 
 | Type | Count | Notes |
 |------|-------|-------|
-| Skills | 7 | Full compatibility (Agent Skills Open Standard) |
+| Skills | 11 | Core workflow skills plus manifest-dev-tools utilities |
 | Agents | 16 | TOML config stubs with full prompt bodies |
 | Hooks | 0 | Not supported by Codex CLI (Issue #2109) |
 | Rules | 1 | Starlark execution policy |
@@ -21,7 +21,11 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | done | Completion checkpoint |
 | escalate | Escalate blockers to the user |
 | figure-out | Collaborative deep understanding |
-| verify | Parallel verification of all criteria |
+| figure-out-team | Multi-party async deliberation |
+| adr | Post-hoc Architecture Decision Record synthesis |
+| handoff | Cross-boundary context handoff |
+| prompt-engineering | Slim-discipline prompt creation and review |
+| walk-pr | Collaborative PR/diff walkthrough |
 
 ### Agents
 
@@ -82,7 +86,7 @@ cat dist/codex/config.toml >> .codex/config.toml
 cp dist/codex/AGENTS.md ./AGENTS.md
 ```
 
-The install script handles namespacing automatically (adds `-manifest-dev` suffix to all components).
+The install script handles namespacing automatically: core workflow components use `-manifest-dev`, and manifest-dev-tools skills use `-manifest-dev-tools`.
 
 ## Feature Parity with Claude Code
 
@@ -100,7 +104,7 @@ The install script handles namespacing automatically (adds `-manifest-dev` suffi
 
 ```
 dist/codex/
-├── skills/                          # 7 skills (unchanged from source)
+├── skills/                          # 11 skills (core + tools)
 │   ├── auto/
 │   ├── define/
 │   │   ├── SKILL.md
@@ -112,7 +116,11 @@ dist/codex/
 │   ├── done/
 │   ├── escalate/
 │   ├── figure-out/
-│   └── verify/
+│   ├── figure-out-team/
+│   ├── adr/
+│   ├── handoff/
+│   ├── prompt-engineering/
+│   └── walk-pr/
 ├── agents/                          # 16 TOML config stubs
 │   ├── change-intent-reviewer.toml
 │   ├── code-bugs-reviewer.toml

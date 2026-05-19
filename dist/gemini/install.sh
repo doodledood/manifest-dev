@@ -2,7 +2,7 @@
 # manifest-dev installer for Gemini CLI
 #
 # Idempotent — safe to re-run. Copies skills, agents, hooks to target directory.
-# Uses install_helpers.py for namespacing (adds -manifest-dev suffix).
+# Uses install_helpers.py for namespacing (adds plugin-owned suffixes).
 # Merges settings additively — never overwrites user config.
 #
 # Usage:
@@ -73,6 +73,7 @@ STATE_FILE="$TARGET/manifest-dev-install-state.json"
 if [[ "$ACTION" == "uninstall" ]]; then
     echo "Removing manifest-dev-managed Gemini files..."
     find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}" -type d -exec rm -rf {} + 2>/dev/null || true
+    find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}-tools" -type d -exec rm -rf {} + 2>/dev/null || true
     find "$TARGET/agents" -maxdepth 1 -name "*-${NAMESPACE}*" -exec rm -rf {} + 2>/dev/null || true
     rm -f "$TARGET/hooks/gemini_adapter.py" 2>/dev/null || true
     rm -f "$TARGET/hooks/hook_utils.py" 2>/dev/null || true
@@ -106,6 +107,7 @@ mkdir -p "$TARGET/hooks"
 # --- Selective cleanup of previous manifest-dev installation ---
 echo "Cleaning previous manifest-dev installation..."
 find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}" -type d -exec rm -rf {} + 2>/dev/null || true
+find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}-tools" -type d -exec rm -rf {} + 2>/dev/null || true
 find "$TARGET/agents" -maxdepth 1 -name "*-${NAMESPACE}*" -exec rm -rf {} + 2>/dev/null || true
 # Hooks directory: clean manifest-dev hook files
 rm -f "$TARGET/hooks/gemini_adapter.py" 2>/dev/null || true
@@ -160,7 +162,7 @@ echo ""
 echo "Installation complete!"
 echo ""
 echo "Components installed:"
-echo "  Skills:  $(find "$TARGET/skills" -maxdepth 1 -name "*-${NAMESPACE}" -type d 2>/dev/null | wc -l) skills"
+echo "  Skills:  $(find "$TARGET/skills" -maxdepth 1 \( -name "*-${NAMESPACE}" -o -name "*-${NAMESPACE}-tools" \) -type d 2>/dev/null | wc -l) skills"
 echo "  Agents:  $(find "$TARGET/agents" -maxdepth 1 -name "*-${NAMESPACE}.md" -type f 2>/dev/null | wc -l) agents"
 echo "  Hooks:   4 hook scripts (adapter + utils + 2 hooks)"
 echo ""

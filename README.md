@@ -291,7 +291,7 @@ The subagent returns one of three states: **PASS** (criterion holds), **FAIL** (
 
 ## Multi-CLI Support
 
-The Claude Code plugin is the source of truth. Per-CLI distributions under `dist/` provide native packages for other AI coding CLIs. Each has a one-command remote installer — run again to update, or pass `uninstall` to remove only manifest-dev-managed files.
+The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` provide native packages for other AI coding CLIs. Each has a one-command remote installer — run again to update, or pass `uninstall` to remove only manifest-dev-managed files. Installers include core `manifest-dev` components with `-manifest-dev` names and `manifest-dev-tools` skills with `-manifest-dev-tools` names.
 
 | CLI | Install | Skills | Agents | Hooks | Details |
 |-----|---------|--------|--------|-------|---------|
@@ -300,7 +300,7 @@ The Claude Code plugin is the source of truth. Per-CLI distributions under `dist
 | OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | Partial (adapted plugin) | [README](dist/opencode/README.md) |
 | Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | Not available | [README](dist/codex/README.md) |
 
-**Keeping distributions in sync**: After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. The sync skill reads reference files with per-CLI conversion rules and produces the full distribution for each target.
+**Keeping distributions in sync**: After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. The sync skill reads reference files with per-CLI conversion rules, regenerates component namespace metadata, and produces the full distribution for each target.
 
 ## Available Plugins
 

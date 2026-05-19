@@ -6,9 +6,9 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 7 | Core workflow skills (auto, define, do, done, escalate, figure-out, verify) |
+| Skills | 11 | Core workflow skills plus manifest-dev-tools utilities |
 | Agents | 16 | Specialized reviewer and verification agents |
-| Commands | 5 | User-invocable slash commands (auto, define, do, figure-out, verify) |
+| Commands | 9 | User-invocable slash commands for core workflows and tools utilities |
 | Plugin | 1 | TypeScript hook plugin for workflow enforcement |
 | Context | 1 | AGENTS.md workflow overview |
 
@@ -37,9 +37,10 @@ bash dist/opencode/install.sh
 ```
 
 The install script:
-- Copies skills to `.opencode/skills/` with `-manifest-dev` suffix
+- Copies core skills to `.opencode/skills/` with `-manifest-dev` suffix
+- Copies manifest-dev-tools skills to `.opencode/skills/` with `-manifest-dev-tools` suffix
 - Copies agents to `.opencode/agents/` with `-manifest-dev` suffix
-- Copies commands to `.opencode/commands/` with `-manifest-dev` suffix
+- Copies commands to `.opencode/commands/` with the same plugin-owned suffixes
 - Installs plugin as `.opencode/plugins/manifest-dev.ts`
 - Copies AGENTS.md context file
 - Is idempotent — safe to re-run
@@ -85,6 +86,10 @@ After installation, invoke workflows via slash commands:
 /auto-manifest-dev                      End-to-end autonomous execution (--babysit <pr-url> to tend existing PR)
 /figure-out-manifest-dev                Truth-convergent thinking partner
 /figure-out-team-manifest-dev           Multi-party async deliberation in a Slack thread
+/adr-manifest-dev-tools                 Post-hoc ADR synthesis
+/handoff-manifest-dev-tools             Cross-boundary context handoff
+/prompt-engineering-manifest-dev-tools  Slim-discipline prompt work
+/walk-pr-manifest-dev-tools             Collaborative PR/diff walkthrough
 ```
 
 ## Feature Parity with Claude Code
@@ -96,8 +101,6 @@ After installation, invoke workflows via slash commands:
 | Commands | N/A | Full | Generated from user-invocable skills |
 | Stop hook (block) | Full | Degraded | session.idle is fire-and-forget; enforced via system guidance |
 | Compaction recovery | Full | Full | experimental.session.compacting |
-| Pre-verify refresh | Full | Full | tool.execute.before (main agent only) |
-| Amendment check | Full | Approximate | Persistent system context vs per-prompt |
 | Subagent hooks | Full | Missing | tool.execute.before/after don't fire in subagents |
 
 ## Known Limitations
@@ -130,20 +133,28 @@ dist/opencode/
 │   ├── github-pr-lifecycle.md
 │   ├── slack-poller.md
 │   └── type-safety-reviewer.md
-├── commands/                        # 5 user commands
+├── commands/                        # 9 user commands
 │   ├── auto.md
+│   ├── adr.md
 │   ├── define.md
 │   ├── do.md
+│   ├── handoff.md
 │   ├── figure-out.md
-│   └── verify.md
-├── skills/                          # 7 skills (with subdirectories)
+│   ├── figure-out-team.md
+│   ├── prompt-engineering.md
+│   └── walk-pr.md
+├── skills/                          # 11 skills (core + tools)
+│   ├── adr/
 │   ├── auto/
 │   ├── define/
 │   ├── do/
 │   ├── done/
 │   ├── escalate/
 │   ├── figure-out/
-│   └── verify/
+│   ├── figure-out-team/
+│   ├── handoff/
+│   ├── prompt-engineering/
+│   └── walk-pr/
 ├── plugins/
 │   ├── index.ts                     # Hook plugin
 │   └── HOOK_SPEC.md                 # Behavioral specification

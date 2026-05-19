@@ -400,10 +400,11 @@ Skills can reference other skills via `$skillname` syntax and implicit activatio
 
 Install scripts handle all component renaming at install time via `install_helpers.py`. The `dist/codex/` directory keeps original names — sync-tools writes originals, install scripts namespace.
 
-`install_helpers.py` must discover skill directories and agent TOML files from `dist/codex/` at runtime. Do not encode static skill/agent lists or fixed counts in installer code; component add/remove/rename is represented by the files present in `dist/`. Config cleanup should remove suffix-matched `[agents.*-manifest-dev]` tables so retired reviewer agents are cleaned without updating a list.
+`install_helpers.py` must discover skill directories and agent TOML files from `dist/codex/` at runtime. Do not encode static skill/agent lists or fixed counts in installer code; component add/remove/rename is represented by the files present in `dist/`. Config cleanup should remove suffix-matched managed `[agents.*]` tables so retired reviewer agents are cleaned without updating a list.
 
-**Pattern**: All components get `-manifest-dev` suffix:
+**Pattern**: Components get the suffix declared in `component-namespaces.json`:
 - Skill dirs: `skills/define/` → `skills/define-manifest-dev/`
+- Tool skill dirs: `skills/adr/` → `skills/adr-manifest-dev-tools/`
 - Agent TOML files: `code-bugs-reviewer.toml` → `code-bugs-reviewer-manifest-dev.toml`
 - SKILL.md `name:` field patched to match directory name
 - Content cross-references patched (slash commands, quoted strings, paths, agent names)
@@ -412,10 +413,11 @@ Install scripts handle all component renaming at install time via `install_helpe
 **Selective cleanup** (replaces `rm -rf` of shared dirs):
 ```bash
 find ".agents/skills" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
+find ".agents/skills" -maxdepth 1 -name "*-manifest-dev-tools" -type d -exec rm -rf {} + 2>/dev/null || true
 find ".codex/agents" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
 ```
 
-Component names on disk will have `-manifest-dev` suffix after install.
+Component names on disk will have their plugin-owned suffix after install.
 
 ## Context File Adaptation
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # manifest-dev for Codex CLI -- idempotent installer
-# All components are namespaced with -manifest-dev suffix to avoid collisions.
+# Components are namespaced with plugin-owned suffixes to avoid collisions.
 #
 # Remote:  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
 # Local:   bash dist/codex/install.sh
@@ -56,6 +56,7 @@ if [ "$ACTION" = "uninstall" ]; then
   echo "Removing manifest-dev-managed Codex files from $INSTALL_ROOT..."
 
   find "$INSTALL_ROOT/skills" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
+  find "$INSTALL_ROOT/skills" -maxdepth 1 -name "*-manifest-dev-tools" -type d -exec rm -rf {} + 2>/dev/null || true
   find "$INSTALL_ROOT/agents" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
   rm -f "$INSTALL_ROOT/rules/manifest-dev.rules"
 
@@ -90,6 +91,7 @@ echo ""
 echo "Installing skills..."
 mkdir -p "$INSTALL_ROOT/skills"
 find "$INSTALL_ROOT/skills" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
+find "$INSTALL_ROOT/skills" -maxdepth 1 -name "*-manifest-dev-tools" -type d -exec rm -rf {} + 2>/dev/null || true
 for skill_dir in "$SRC/skills/"*/; do
   skill_name=$(basename "$skill_dir")
   cp -r "$skill_dir" "$INSTALL_ROOT/skills/$skill_name"
@@ -132,10 +134,10 @@ echo ""
 echo "======================================"
 echo "Done!"
 echo ""
-skill_count=$(find "$INSTALL_ROOT/skills" -maxdepth 1 -name "*-manifest-dev" -type d 2>/dev/null | wc -l | tr -d ' ')
+skill_count=$(find "$INSTALL_ROOT/skills" -maxdepth 1 \( -name "*-manifest-dev" -o -name "*-manifest-dev-tools" \) -type d 2>/dev/null | wc -l | tr -d ' ')
 agent_count=$(find "$INSTALL_ROOT/agents" -maxdepth 1 -name "*-manifest-dev.toml" -type f 2>/dev/null | wc -l | tr -d ' ')
-echo "What's installed (all suffixed with -manifest-dev):"
-echo "  - $skill_count skills in $INSTALL_ROOT/skills/ (define-manifest-dev, do-manifest-dev, etc.)"
+echo "What's installed (all suffixed with manifest-dev namespaces):"
+echo "  - $skill_count skills in $INSTALL_ROOT/skills/ (define-manifest-dev, adr-manifest-dev-tools, etc.)"
 echo "  - $agent_count TOML agent stubs in $INSTALL_ROOT/agents/ (multi-agent config)"
 echo "  - Execution rules in $INSTALL_ROOT/rules/manifest-dev.rules"
 echo "  - Config in $INSTALL_ROOT/config.toml (multi-agent enabled, $agent_count agents registered)"
