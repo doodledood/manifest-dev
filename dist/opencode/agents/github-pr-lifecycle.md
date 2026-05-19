@@ -37,13 +37,16 @@ User-defined gates from steering evaluate additively — the PR is ready only wh
 
 Always exactly one of two shapes.
 
-**PASS** — a one-line confirmation:
+**PASS** — a one-line confirmation plus a do-not-merge reminder:
 
 ```
 ## github-pr-lifecycle: PASS
 
 PR #N is mergeable. <one-line summary>
+Do not merge unless the operator explicitly authorized it — PASS is a mergeability report, not authorization to press the merge button. Merging is a separate operator decision.
 ```
+
+The do-not-merge line is always present on PASS. The agent's terminal is "mergeable", not "merged"; PASS must not be treated as an implicit go-ahead to merge.
 
 **FAIL** — a per-gate breakdown with a **finding** per failing gate. A finding's `Suggested:` field carries either a workflow-neutral GitHub-action directive (literal command, drawn from the fixed vocabulary below — the caller executes verbatim) or a free-form prose description (solvable-but-novel observation — the caller reads with judgment).
 
@@ -75,12 +78,12 @@ Breakdown:
 
 `Reason:` carries diagnostic context (who's waited on, which check failed, remaining retrigger budget). Multi-gate failures emit a directive per failing gate; the caller executes each. No priority or sequencing logic — the next reinvocation re-evaluates state.
 
-Example wait-in-progress FAIL:
+Example wait-in-progress FAIL (reviewer-pending — execute the sleep and reinvoke; waiting is the resolution, not a stuck signal):
 
 ```
 ## github-pr-lifecycle: FAIL
 
-Reason: Reviewer @bob (per CODEOWNERS) has not approved; CI green, threads clean.
+Reason: Reviewer @bob (per CODEOWNERS) has not approved; CI green, threads clean. Waiting is the resolution — execute the sleep and reinvoke.
 Cycle: 3/6
 
 Breakdown:
@@ -141,7 +144,7 @@ Breakdown:
 
 ## Wait cadence policy
 
-Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emit `bash sleep <N>; reinvoke` directives. The agent picks `<N>` based on what's being waited on and tracks how many cycles each gate has been waiting via the `Prior-retrigger context` input.
+Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emit `bash sleep <N>; reinvoke` directives. **Waiting is the action, not a no-op** — the caller executes the sleep and reinvokes; reviewer-pending and CI-in-flight FAILs typically resolve on a subsequent cycle without further intervention. Treat sleep-then-reverify as the standard resolution path for time-bound blockers; the agent picks `<N>` based on what's being waited on and tracks how many cycles each gate has been waiting via the `Prior-retrigger context` input.
 
 **Per-cycle duration defaults**:
 
@@ -159,7 +162,9 @@ Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emi
 | Mergeable (waiting for reviewer) | 6 cycles | ~60min |
 | Threads addressed (waiting for bot scanner) | 30 cycles | ~60min |
 
-At cap → emit a prose finding (not another `bash sleep` directive) on the relevant gate, with `Reason:` naming the cap reached and `Suggested:` describing the situation as caller-actionable-or-human-decision (the caller — typically `/do` — reads the prose and decides whether to keep waiting, hand off to a human, ping the reviewer, etc.).
+At cap → emit a prose finding (not another `bash sleep` directive) on the relevant gate, with `Reason:` naming the cap reached and `Suggested:` describing the situation as caller-actionable-or-human-decision (the caller — typically `/do` — reads the prose and decides whether to keep waiting or hand off to a human).
+
+**No nudging by default.** When a gate waits on a human (reviewer pending, comment pending, approver pending), the agent does not propose outreach — no "ping @reviewer", no "DM the team", no "comment on the PR to nudge". `Suggested:` describes the wait state and offers options like "keep waiting" or "hand off to a human" only. Operators authorize nudging via steering (e.g. `Steering: nudge @bob after 3 cycles`); silent steering means no nudge.
 
 **Cycle counter** — read from the `Prior-retrigger context` input (same mechanism as the CI-retrigger counter). The caller appends a `### Wait — <gate-name>` line each time it executes a wait directive; the next invocation counts the lines per gate.
 
