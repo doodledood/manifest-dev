@@ -3,6 +3,12 @@ set -euo pipefail
 
 # manifest-dev OpenCode distribution installer
 # Idempotent — safe to re-run. Only touches *-manifest-dev files.
+#
+# Usage:
+#   ./install.sh                    # Install globally to ~/.config/opencode/
+#   ./install.sh --local            # Install to project-local .opencode/
+#   ./install.sh --dir <path>       # Install to custom directory
+#   ./install.sh uninstall [scope]  # Remove only manifest-dev-managed files
 
 # When piped via curl | bash, BASH_SOURCE is unset and companion files aren't
 # available. Detect this, clone the repo to a temp dir, and re-execute from there.
@@ -15,17 +21,52 @@ if [[ -z "${BASH_SOURCE[0]:-}" || "${BASH_SOURCE[0]}" == "bash" || "${BASH_SOURC
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGET="${OPENCODE_TARGET:-.opencode}"
-ACTION="${1:-install}"
+ACTION="install"
+INSTALL_DIR=""
+SCOPE="global"
+SCOPE_EXPLICIT=false
 
-case "$ACTION" in
-  install|uninstall)
-    ;;
-  *)
-    echo "Usage: bash install.sh [install|uninstall]" >&2
-    exit 1
-    ;;
-esac
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        install|uninstall)
+            ACTION="$1"
+            shift
+            ;;
+        --global)
+            SCOPE="global"
+            SCOPE_EXPLICIT=true
+            shift
+            ;;
+        --local)
+            SCOPE="local"
+            SCOPE_EXPLICIT=true
+            shift
+            ;;
+        --dir)
+            if [[ $# -lt 2 ]]; then
+                echo "Missing path after --dir" >&2
+                exit 1
+            fi
+            INSTALL_DIR="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            echo "Usage: bash install.sh [install|uninstall] [--global | --local | --dir <path>]" >&2
+            exit 1
+            ;;
+    esac
+done
+
+if [[ -n "$INSTALL_DIR" ]]; then
+    TARGET="$INSTALL_DIR"
+elif [[ "$SCOPE" == "local" ]]; then
+    TARGET=".opencode"
+elif [[ -n "${OPENCODE_TARGET:-}" && "$SCOPE_EXPLICIT" == "false" ]]; then
+    TARGET="$OPENCODE_TARGET"
+else
+    TARGET="$HOME/.config/opencode"
+fi
 
 echo "manifest-dev OpenCode installer"
 echo "================================"
@@ -105,3 +146,19 @@ echo "  Plugin:   manifest-dev.ts"
 echo "  Context:  AGENTS.md"
 echo ""
 echo "Usage: /define-manifest-dev, /do-manifest-dev, /adr-manifest-dev-tools, etc."
+
+if [[ "$TARGET" != ".opencode" && -d ".opencode" ]]; then
+    local_count=$(
+        (find ".opencode/skills" ".opencode/agents" ".opencode/commands" \
+            -maxdepth 1 \( -name "*-manifest-dev" -o -name "*-manifest-dev-tools" -o -name "*-manifest-dev.md" -o -name "*-manifest-dev-tools.md" \) \
+            2>/dev/null || true) | wc -l | tr -d ' '
+    )
+    if [[ "${local_count:-0}" != "0" ]]; then
+        echo ""
+        echo "Note: found $local_count manifest-dev component(s) in project-local .opencode/."
+        echo "OpenCode may prefer project-local components in this repo. Update them with:"
+        echo "  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- --local"
+        echo "Or remove only local manifest-dev files with:"
+        echo "  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- uninstall --local"
+    fi
+fi

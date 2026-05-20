@@ -1,6 +1,6 @@
 # OpenCode CLI Conversion Guide
 
-Reference for converting Claude Code plugin components to OpenCode format (anomalyco/opencode v1.2.15, March 2026).
+Reference for converting Claude Code plugin components to OpenCode format (opencode 1.15.x, May 2026).
 
 ## Conversion Summary
 
@@ -393,18 +393,24 @@ npx skills add <github-url> --all -a opencode
 
 For the full distribution:
 ```bash
+# Default installer target is global so `curl | bash` updates every project.
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
+
+# Project-local install is explicit:
+bash dist/opencode/install.sh --local
+
 # Skills (already work from .claude/ natively, but for standalone):
-cp -r dist/opencode/skills/* .opencode/skills/
+cp -r dist/opencode/skills/* ~/.config/opencode/skills/
 
 # Agents
-cp -r dist/opencode/agents/* .opencode/agents/
+cp -r dist/opencode/agents/* ~/.config/opencode/agents/
 
 # Commands
-cp -r dist/opencode/commands/* .opencode/commands/
+cp -r dist/opencode/commands/* ~/.config/opencode/commands/
 
 # Plugin payload (auto-loaded)
-cp dist/opencode/plugins/index.ts .opencode/plugins/manifest-dev.ts
-cp dist/opencode/plugins/HOOK_SPEC.md .opencode/plugins/manifest-dev.HOOK_SPEC.md
+cp dist/opencode/plugins/index.ts ~/.config/opencode/plugins/manifest-dev.ts
+cp dist/opencode/plugins/HOOK_SPEC.md ~/.config/opencode/plugins/manifest-dev.HOOK_SPEC.md
 ```
 
 ## Skill Chaining

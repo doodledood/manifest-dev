@@ -175,15 +175,16 @@ def patch_cross_references(
             f"/{skill}{suffix}",
             content,
         )
-        # manifest-dev:skill-name → manifest-dev:skill-name-manifest-dev
-        content = content.replace(
-            f"manifest-dev:{skill}",
-            f"manifest-dev:{skill}{suffix}",
-        )
-        content = content.replace(
-            f"manifest-dev-tools:{skill}",
-            f"manifest-dev-tools:{skill}{suffix}",
-        )
+        # manifest-dev:skill-name → manifest-dev:skill-name-manifest-dev.
+        # Keep the match boundary-aware so shorter overlapping names do not
+        # rewrite longer names after they have already been patched.
+        for namespace in ("manifest-dev", "manifest-dev-tools"):
+            content = re.sub(
+                rf"(?<![a-zA-Z0-9-]){re.escape(namespace)}:{re.escape(skill)}"
+                r"(?![a-zA-Z0-9-])",
+                f"{namespace}:{skill}{suffix}",
+                content,
+            )
 
     # Patch agent name references in quoted strings
     for agent in sorted(set(agent_names), key=len, reverse=True):

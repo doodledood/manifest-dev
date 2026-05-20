@@ -327,6 +327,15 @@ gemini extensions install https://github.com/<org>/<repo>/dist/gemini
 gemini extensions link ./dist/gemini
 ```
 
+Full distribution installer:
+```bash
+# Default target is user-level ~/.gemini/ so `curl | bash` updates every project.
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
+
+# Project-local install is explicit:
+bash dist/gemini/install.sh --local
+```
+
 Skills only: `npx skills add <url> --all -a gemini-cli`
 
 `install.sh` must merge `"experimental": { "enableAgents": true }` and the generated `hooks.json` entries into `~/.gemini/settings.json` additively. If users install via Gemini's native extension command instead of `install.sh`, document the equivalent manual settings changes separately.

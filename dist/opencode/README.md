@@ -28,6 +28,8 @@ This installs skills into `.opencode/skills/`. For agents, commands, and the plu
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 ```
 
+This installs globally to `~/.config/opencode/`, which OpenCode loads from every project. Restart OpenCode after installing or updating so the running TUI reloads agents, commands, skills, and plugins.
+
 Or clone and run locally:
 
 ```bash
@@ -37,18 +39,25 @@ bash dist/opencode/install.sh
 ```
 
 The install script:
-- Copies core skills to `.opencode/skills/` with `-manifest-dev` suffix
-- Copies manifest-dev-tools skills to `.opencode/skills/` with `-manifest-dev-tools` suffix
-- Copies agents to `.opencode/agents/` with `-manifest-dev` suffix
-- Copies commands to `.opencode/commands/` with the same plugin-owned suffixes
-- Installs plugin as `.opencode/plugins/manifest-dev.ts`
+- Copies core skills to `~/.config/opencode/skills/` with `-manifest-dev` suffix
+- Copies manifest-dev-tools skills to `~/.config/opencode/skills/` with `-manifest-dev-tools` suffix
+- Copies agents to `~/.config/opencode/agents/` with `-manifest-dev` suffix
+- Copies commands to `~/.config/opencode/commands/` with the same plugin-owned suffixes
+- Installs plugin as `~/.config/opencode/plugins/manifest-dev.ts`
 - Copies AGENTS.md context file
 - Is idempotent — safe to re-run
 
-To install somewhere other than project-local `.opencode`, set `OPENCODE_TARGET`:
+To install only for the current project, pass `--local`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- --local
+```
+
+To install somewhere custom, set `OPENCODE_TARGET` or pass `--dir`:
 
 ```bash
 OPENCODE_TARGET="$HOME/.config/opencode" bash dist/opencode/install.sh
+bash dist/opencode/install.sh --dir /path/to/opencode-config
 ```
 
 To uninstall only manifest-dev-managed files:
@@ -56,6 +65,8 @@ To uninstall only manifest-dev-managed files:
 ```bash
 bash dist/opencode/install.sh uninstall
 ```
+
+Use `bash dist/opencode/install.sh uninstall --local` to remove a project-local install.
 
 ### Manual Install
 
