@@ -29,9 +29,11 @@ gemini extensions install https://github.com/doodledood/manifest-dev/dist/gemini
 ```bash
 git clone https://github.com/doodledood/manifest-dev.git
 cd manifest-dev/dist/gemini
-./install.sh              # Project-level (.gemini/)
+./install.sh              # User-level (~/.gemini/)
+./install.sh --local      # Project-level (.gemini/)
 ./install.sh --global     # User-level (~/.gemini/)
-./install.sh uninstall    # Remove project-level manifest-dev files
+./install.sh uninstall    # Remove user-level manifest-dev files
+./install.sh uninstall --local
 ./install.sh uninstall --global
 ```
 

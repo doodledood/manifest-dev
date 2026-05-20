@@ -25,6 +25,8 @@ curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/o
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
 ```
 
+The Gemini and OpenCode installers write to their global config directories by default (`~/.gemini/` and `~/.config/opencode/`) so the components load in every project. Use `--local` if you intentionally want only the current repo's `.gemini/` or `.opencode/`, and restart the CLI after updates because config-time files are loaded at startup.
+
 Then use it:
 ```bash
 # Define what to build, then execute

@@ -12,6 +12,7 @@ Also confirms the removed plugin components stay removed:
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import shutil
 import subprocess
@@ -81,6 +82,16 @@ def component_namespaces(cli: str) -> dict[str, dict[str, str]]:
     }
 
 
+def load_helper(cli: str):
+    helper_path = DIST / cli / "install_helpers.py"
+    spec = importlib.util.spec_from_file_location(f"{cli}_install_helpers", helper_path)
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def test_every_dist_namespaces_the_surviving_skill_set(tmp_path: Path) -> None:
     for cli in ("codex", "opencode", "gemini"):
         dist_dir = namespace_dist(tmp_path / cli, cli)
@@ -128,6 +139,59 @@ def test_every_dist_namespaces_every_distributed_component(tmp_path: Path) -> No
                 f"{command}{metadata['commands'][command]}.md"
                 for command in source_commands
             ], "opencode: installed command set diverged from dist/opencode/commands"
+
+
+def test_opencode_namespaced_commands_invoke_existing_namespaced_skills(
+    tmp_path: Path,
+) -> None:
+    dist_dir = namespace_dist(tmp_path / "opencode-command-targets", "opencode")
+    metadata = component_namespaces("opencode")
+
+    for command, command_suffix in metadata["commands"].items():
+        skill_suffix = metadata["skills"][command]
+        command_file = dist_dir / "commands" / f"{command}{command_suffix}.md"
+        content = command_file.read_text(encoding="utf-8")
+        plugin_name = (
+            "manifest-dev-tools"
+            if command_suffix == "-manifest-dev-tools"
+            else "manifest-dev"
+        )
+
+        assert (
+            f"Invoke the {plugin_name}:{command}{skill_suffix} skill" in content
+        ), f"opencode: {command_file.name} does not target its installed skill"
+
+    figure_out_team = (
+        dist_dir / "commands" / "figure-out-team-manifest-dev.md"
+    ).read_text(encoding="utf-8")
+    assert "figure-out-manifest-dev-team" not in figure_out_team
+
+
+def test_namespacing_helpers_preserve_overlapping_skill_names() -> None:
+    skills = {
+        "figure-out": "-manifest-dev",
+        "figure-out-team": "-manifest-dev",
+        "adr": "-manifest-dev-tools",
+    }
+    agents: dict[str, str] = {}
+    source = (
+        "Invoke manifest-dev:figure-out-team, then manifest-dev:figure-out. "
+        "Invoke manifest-dev-tools:adr."
+    )
+
+    gemini = load_helper("gemini")
+    assert gemini.patch_cross_references(source, skills, agents) == (
+        "Invoke manifest-dev:figure-out-team-manifest-dev, then "
+        "manifest-dev:figure-out-manifest-dev. "
+        "Invoke manifest-dev-tools:adr-manifest-dev-tools."
+    )
+
+    opencode = load_helper("opencode")
+    assert opencode._patch_cross_references(source, skills, agents) == (
+        "Invoke manifest-dev:figure-out-team-manifest-dev, then "
+        "manifest-dev:figure-out-manifest-dev. "
+        "Invoke manifest-dev-tools:adr-manifest-dev-tools."
+    )
 
 
 def test_component_namespace_metadata_matches_dist() -> None:

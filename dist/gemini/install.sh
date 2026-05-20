@@ -6,7 +6,8 @@
 # Merges settings additively — never overwrites user config.
 #
 # Usage:
-#   ./install.sh              # Install to project .gemini/
+#   ./install.sh              # Install globally to ~/.gemini/
+#   ./install.sh --local      # Install to project .gemini/
 #   ./install.sh --global     # Install to ~/.gemini/
 #   ./install.sh --dir <path> # Install to custom directory
 
@@ -27,7 +28,7 @@ NAMESPACE="manifest-dev"
 
 # Parse arguments
 INSTALL_DIR=""
-GLOBAL=false
+SCOPE="global"
 ACTION="install"
 
 while [[ $# -gt 0 ]]; do
@@ -37,7 +38,11 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --global)
-            GLOBAL=true
+            SCOPE="global"
+            shift
+            ;;
+        --local)
+            SCOPE="local"
             shift
             ;;
         --dir)
@@ -46,7 +51,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo "Unknown option: $1"
-            echo "Usage: ./install.sh [install|uninstall] [--global | --dir <path>]"
+            echo "Usage: ./install.sh [install|uninstall] [--global | --local | --dir <path>]"
             exit 1
             ;;
     esac
@@ -55,10 +60,10 @@ done
 # Determine install directory
 if [[ -n "$INSTALL_DIR" ]]; then
     TARGET="$INSTALL_DIR"
-elif [[ "$GLOBAL" == "true" ]]; then
-    TARGET="$HOME/.gemini"
-else
+elif [[ "$SCOPE" == "local" ]]; then
     TARGET=".gemini"
+else
+    TARGET="$HOME/.gemini"
 fi
 
 echo "manifest-dev installer for Gemini CLI"
@@ -170,10 +175,26 @@ echo "Required: enableAgents must be true in settings.json"
 echo "  (already set by this installer)"
 echo ""
 echo "To uninstall:"
-if [[ "$GLOBAL" == "true" ]]; then
+if [[ "$SCOPE" == "global" && -z "$INSTALL_DIR" ]]; then
     echo "  $0 uninstall --global"
 elif [[ -n "$INSTALL_DIR" ]]; then
     echo "  $0 uninstall --dir \"$INSTALL_DIR\""
 else
-    echo "  $0 uninstall"
+    echo "  $0 uninstall --local"
+fi
+
+if [[ "$TARGET" != ".gemini" && -d ".gemini" ]]; then
+    local_count=$(
+        (find ".gemini/skills" ".gemini/agents" \
+            -maxdepth 1 \( -name "*-manifest-dev" -o -name "*-manifest-dev-tools" -o -name "*-manifest-dev.md" -o -name "*-manifest-dev-tools.md" \) \
+            2>/dev/null || true) | wc -l | tr -d ' '
+    )
+    if [[ "${local_count:-0}" != "0" ]]; then
+        echo ""
+        echo "Note: found $local_count manifest-dev component(s) in project-local .gemini/."
+        echo "Gemini CLI may prefer project-local components in this repo. Update them with:"
+        echo "  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash -s -- --local"
+        echo "Or remove only local manifest-dev files with:"
+        echo "  curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash -s -- uninstall --local"
+    fi
 fi

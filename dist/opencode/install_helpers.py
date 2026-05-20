@@ -203,12 +203,17 @@ def _patch_cross_references(
         suffix = agent_names[name] if name in agent_name_set else skill_names[name]
         ns = name + suffix
 
-        # manifest-dev:<skill> -> manifest-dev:<skill>-manifest-dev
-        content = content.replace(f"manifest-dev:{name}", f"manifest-dev:{ns}")
-        content = content.replace(
-            f"manifest-dev-tools:{name}",
-            f"manifest-dev-tools:{ns}",
-        )
+        # manifest-dev:<skill> -> manifest-dev:<skill>-manifest-dev.
+        # Keep the match boundary-aware so figure-out does not rewrite the
+        # figure-out prefix inside figure-out-team after the longer name has
+        # already been patched.
+        for namespace in ("manifest-dev", "manifest-dev-tools"):
+            content = re.sub(
+                rf"(?<![a-zA-Z0-9-]){re.escape(namespace)}:{re.escape(name)}"
+                r"(?![a-zA-Z0-9-])",
+                f"{namespace}:{ns}",
+                content,
+            )
 
         # /skill-name -> /skill-name-manifest-dev (in command references)
         # Only match when followed by word boundary
@@ -226,7 +231,7 @@ def _patch_cross_references(
         if name in agent_name_set:
             # In YAML-like agent: field
             content = re.sub(
-                r'(agent:\s*["\']?)' + re.escape(name) + r'(["\']?)',
+                r'(agent:\s*["\']?)' + re.escape(name) + r'(["\']?)(?![a-zA-Z0-9-])',
                 rf"\g<1>{ns}\g<2>",
                 content,
             )

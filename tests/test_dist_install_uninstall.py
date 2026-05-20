@@ -68,6 +68,76 @@ def test_installers_install_manifest_dev_tools_skills(tmp_path: Path) -> None:
                 assert command.is_file(), f"opencode: missing {command}"
 
 
+def test_opencode_installer_defaults_to_global_config_dir(tmp_path: Path) -> None:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+    env.pop("OPENCODE_TARGET", None)
+
+    result = run_installer("opencode", env)
+
+    target = Path(env["HOME"]) / ".config" / "opencode"
+    assert f"Target:  {target}" in result.stdout
+    assert (target / "skills" / "define-manifest-dev").is_dir()
+    assert (target / "agents" / "criteria-checker-manifest-dev.md").is_file()
+    assert (target / "commands" / "define-manifest-dev.md").is_file()
+    assert (target / "plugins" / "manifest-dev.ts").is_file()
+
+
+def test_gemini_installer_defaults_to_global_config_dir(tmp_path: Path) -> None:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+
+    result = run_installer("gemini", env)
+
+    target = Path(env["HOME"]) / ".gemini"
+    assert f"Target:  {target}" in result.stdout
+    assert (target / "skills" / "define-manifest-dev").is_dir()
+    assert (target / "agents" / "criteria-checker-manifest-dev.md").is_file()
+    assert (target / "hooks" / "stop_do_hook.py").is_file()
+    assert (target / "settings.json").is_file()
+
+
+def test_opencode_installer_local_scope_is_explicit(tmp_path: Path) -> None:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+    env.pop("OPENCODE_TARGET", None)
+    project = tmp_path / "project"
+    project.mkdir()
+
+    subprocess.run(
+        ["bash", str(DIST / "opencode" / "install.sh"), "--local"],
+        cwd=project,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    target = project / ".opencode"
+    assert (target / "skills" / "define-manifest-dev").is_dir()
+    assert not (Path(env["HOME"]) / ".config" / "opencode").exists()
+
+
+def test_gemini_installer_local_scope_is_explicit(tmp_path: Path) -> None:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+    project = tmp_path / "project"
+    project.mkdir()
+
+    subprocess.run(
+        ["bash", str(DIST / "gemini" / "install.sh"), "--local"],
+        cwd=project,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    target = project / ".gemini"
+    assert (target / "skills" / "define-manifest-dev").is_dir()
+    assert not (Path(env["HOME"]) / ".gemini").exists()
+
+
 def test_reinstall_syncs_manifest_dev_tools_state_without_touching_user_files(
     tmp_path: Path,
 ) -> None:
@@ -460,6 +530,40 @@ def test_opencode_cli_loads_installed_manifest_agent(tmp_path: Path) -> None:
         check=True,
     )
     assert '"name": "criteria-checker-manifest-dev"' in result.stdout
+
+
+def test_opencode_cli_loads_installed_manifest_command(tmp_path: Path) -> None:
+    if shutil.which("opencode") is None:
+        pytest.skip("OpenCode CLI not installed")
+
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+    env["OPENCODE_TARGET"] = str(Path(env["HOME"]) / ".config" / "opencode")
+    project = tmp_path / "project"
+    project.mkdir()
+
+    run_installer("opencode", env)
+
+    config_output = tmp_path / "opencode-debug-config.json"
+    config_errors = tmp_path / "opencode-debug-config.err"
+    with (
+        config_output.open("w", encoding="utf-8") as stdout,
+        config_errors.open("w", encoding="utf-8") as stderr,
+    ):
+        subprocess.run(
+            ["opencode", "debug", "config"],
+            cwd=project,
+            env=env,
+            stdout=stdout,
+            stderr=stderr,
+            text=True,
+            check=True,
+        )
+
+    config = config_output.read_text(encoding="utf-8")
+    assert '"figure-out-team-manifest-dev"' in config
+    assert "manifest-dev:figure-out-team-manifest-dev" in config
+    assert "figure-out-manifest-dev-team" not in config
 
 
 def test_gemini_uninstall_removes_manifest_files_and_hooks_only(
