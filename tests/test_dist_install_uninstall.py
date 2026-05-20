@@ -30,15 +30,13 @@ def run_installer(
 def _install_target(cli: str, env: dict[str, str]) -> Path:
     if cli == "codex":
         return Path(env["HOME"]) / ".codex"
-    if cli == "gemini":
-        return Path(env["HOME"]) / ".gemini"
     if cli == "opencode":
         return Path(env["OPENCODE_TARGET"])
     raise AssertionError(f"unexpected cli: {cli}")
 
 
 def _install_args(cli: str) -> tuple[str, ...]:
-    return ("--global",) if cli == "gemini" else ()
+    return ()
 
 
 def _env_for_cli(tmp_path: Path, cli: str) -> dict[str, str]:
@@ -50,7 +48,7 @@ def _env_for_cli(tmp_path: Path, cli: str) -> dict[str, str]:
 
 
 def test_installers_install_manifest_dev_tools_skills(tmp_path: Path) -> None:
-    for cli in ("codex", "gemini", "opencode"):
+    for cli in ("codex", "opencode"):
         env = _env_for_cli(tmp_path, cli)
         run_installer(cli, env, *_install_args(cli))
 
@@ -83,20 +81,6 @@ def test_opencode_installer_defaults_to_global_config_dir(tmp_path: Path) -> Non
     assert (target / "plugins" / "manifest-dev.ts").is_file()
 
 
-def test_gemini_installer_defaults_to_global_config_dir(tmp_path: Path) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-
-    result = run_installer("gemini", env)
-
-    target = Path(env["HOME"]) / ".gemini"
-    assert f"Target:  {target}" in result.stdout
-    assert (target / "skills" / "define-manifest-dev").is_dir()
-    assert (target / "agents" / "criteria-checker-manifest-dev.md").is_file()
-    assert (target / "hooks" / "stop_do_hook.py").is_file()
-    assert (target / "settings.json").is_file()
-
-
 def test_opencode_installer_local_scope_is_explicit(tmp_path: Path) -> None:
     env = os.environ.copy()
     env["HOME"] = str(tmp_path / "home")
@@ -118,30 +102,10 @@ def test_opencode_installer_local_scope_is_explicit(tmp_path: Path) -> None:
     assert not (Path(env["HOME"]) / ".config" / "opencode").exists()
 
 
-def test_gemini_installer_local_scope_is_explicit(tmp_path: Path) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-    project = tmp_path / "project"
-    project.mkdir()
-
-    subprocess.run(
-        ["bash", str(DIST / "gemini" / "install.sh"), "--local"],
-        cwd=project,
-        env=env,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-
-    target = project / ".gemini"
-    assert (target / "skills" / "define-manifest-dev").is_dir()
-    assert not (Path(env["HOME"]) / ".gemini").exists()
-
-
 def test_reinstall_syncs_manifest_dev_tools_state_without_touching_user_files(
     tmp_path: Path,
 ) -> None:
-    for cli in ("codex", "gemini", "opencode"):
+    for cli in ("codex", "opencode"):
         env = _env_for_cli(tmp_path, cli)
         args = _install_args(cli)
         run_installer(cli, env, *args)
@@ -564,161 +528,3 @@ def test_opencode_cli_loads_installed_manifest_command(tmp_path: Path) -> None:
     assert '"figure-out-team-manifest-dev"' in config
     assert "manifest-dev:figure-out-team-manifest-dev" in config
     assert "figure-out-manifest-dev-team" not in config
-
-
-def test_gemini_uninstall_removes_manifest_files_and_hooks_only(
-    tmp_path: Path,
-) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-
-    gemini_dir = Path(env["HOME"]) / ".gemini"
-    gemini_dir.mkdir(parents=True, exist_ok=True)
-    settings_path = gemini_dir / "settings.json"
-    settings_path.write_text(
-        json.dumps(
-            {
-                "selectedAuthType": "gemini-api-key",
-                "experimental": {"otherFlag": True},
-                "hooks": {
-                    "BeforeTool": [
-                        {
-                            "matcher": "write_file",
-                            "hooks": [
-                                {
-                                    "type": "command",
-                                    "command": "python3 /custom/hook.py",
-                                    "name": "custom-before-tool",
-                                }
-                            ],
-                        }
-                    ]
-                },
-            },
-            indent=2,
-        )
-        + "\n",
-        encoding="utf-8",
-    )
-
-    run_installer("gemini", env, "--global")
-    assert (gemini_dir / "skills" / "define-manifest-dev").is_dir()
-    assert (gemini_dir / "agents" / "criteria-checker-manifest-dev.md").is_file()
-    assert (gemini_dir / "hooks" / "stop_do_hook.py").is_file()
-    assert (gemini_dir / "manifest-dev-install-state.json").is_file()
-
-    run_installer("gemini", env, "uninstall", "--global")
-
-    merged = json.loads(settings_path.read_text(encoding="utf-8"))
-    assert merged["selectedAuthType"] == "gemini-api-key"
-    assert merged["experimental"] == {"otherFlag": True}
-    assert merged["hooks"] == {
-        "BeforeTool": [
-            {
-                "matcher": "write_file",
-                "hooks": [
-                    {
-                        "type": "command",
-                        "command": "python3 /custom/hook.py",
-                        "name": "custom-before-tool",
-                    }
-                ],
-            }
-        ]
-    }
-    assert not (gemini_dir / "skills" / "define-manifest-dev").exists()
-    assert not (gemini_dir / "skills" / "adr-manifest-dev-tools").exists()
-    assert not (gemini_dir / "agents" / "criteria-checker-manifest-dev.md").exists()
-    assert not (gemini_dir / "hooks" / "stop_do_hook.py").exists()
-    assert not (gemini_dir / "manifest-dev-install-state.json").exists()
-
-
-def test_gemini_uninstall_preserves_preexisting_enable_agents(tmp_path: Path) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-
-    gemini_dir = Path(env["HOME"]) / ".gemini"
-    gemini_dir.mkdir(parents=True, exist_ok=True)
-    settings_path = gemini_dir / "settings.json"
-    settings_path.write_text(
-        json.dumps(
-            {
-                "experimental": {
-                    "enableAgents": True,
-                    "otherFlag": True,
-                }
-            },
-            indent=2,
-        )
-        + "\n",
-        encoding="utf-8",
-    )
-
-    run_installer("gemini", env, "--global")
-    run_installer("gemini", env, "uninstall", "--global")
-
-    merged = json.loads(settings_path.read_text(encoding="utf-8"))
-    assert merged["experimental"]["enableAgents"] is True
-    assert merged["experimental"]["otherFlag"] is True
-
-
-def test_gemini_uninstall_removes_settings_file_created_by_install(
-    tmp_path: Path,
-) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-
-    gemini_dir = Path(env["HOME"]) / ".gemini"
-    settings_path = gemini_dir / "settings.json"
-
-    run_installer("gemini", env, "--global")
-    assert settings_path.is_file()
-
-    run_installer("gemini", env, "uninstall", "--global")
-
-    assert not settings_path.exists()
-    assert not (gemini_dir / "manifest-dev-install-state.json").exists()
-
-
-def test_gemini_uninstall_without_state_removes_hooks_but_preserves_enable_agents(
-    tmp_path: Path,
-) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-
-    gemini_dir = Path(env["HOME"]) / ".gemini"
-    settings_path = gemini_dir / "settings.json"
-
-    run_installer("gemini", env, "--global")
-
-    state_path = gemini_dir / "manifest-dev-install-state.json"
-    assert state_path.is_file()
-    state_path.unlink()
-
-    run_installer("gemini", env, "uninstall", "--global")
-
-    merged = json.loads(settings_path.read_text(encoding="utf-8"))
-    assert merged["experimental"]["enableAgents"] is True
-    assert "hooks" not in merged
-    assert not state_path.exists()
-
-
-def test_gemini_uninstall_preserves_enable_agents_after_user_expands_experimental_settings(
-    tmp_path: Path,
-) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-
-    gemini_dir = Path(env["HOME"]) / ".gemini"
-    run_installer("gemini", env, "--global")
-
-    settings_path = gemini_dir / "settings.json"
-    data = json.loads(settings_path.read_text(encoding="utf-8"))
-    data.setdefault("experimental", {})["otherFeature"] = True
-    settings_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-
-    run_installer("gemini", env, "uninstall", "--global")
-
-    merged = json.loads(settings_path.read_text(encoding="utf-8"))
-    assert "enableAgents" not in merged["experimental"]
-    assert merged["experimental"]["otherFeature"] is True

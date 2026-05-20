@@ -1,21 +1,21 @@
 ---
 name: sync-tools
-description: 'Generate multi-CLI distribution packages from the Claude Code plugin. Converts skills, agents, and hooks for Gemini CLI, OpenCode, and Codex CLI under dist/. Run after changing plugin components to keep distributions in sync.'
+description: 'Generate multi-CLI distribution packages from the Claude Code plugin. Converts skills, agents, and hooks for OpenCode and Codex CLI under dist/. Run after changing plugin components to keep distributions in sync.'
 user-invocable: true
 ---
 
 # /sync-tools — Multi-CLI Distribution Generator
 
-Generate distribution packages for Gemini CLI, OpenCode, and Codex CLI from the Claude Code plugin.
+Generate distribution packages for OpenCode and Codex CLI from the Claude Code plugin.
 
-**Input**: `$ARGUMENTS` — optional CLI name (gemini, opencode, codex) to sync one target. Empty = all three.
+**Input**: `$ARGUMENTS` — optional CLI name (opencode, codex) to sync one target. Empty = both.
 
 ## Paths
 
 | Role | Path |
 |------|------|
 | Sources (read-only) | `claude-plugins/manifest-dev/` and `claude-plugins/manifest-dev-tools/` |
-| Output | `dist/{gemini,opencode,codex}/` |
+| Output | `dist/{opencode,codex}/` |
 | Conversion rules | `.claude/skills/sync-tools/references/{cli}-cli.md` |
 | Per-CLI sync state | `dist/{cli}/.sync-meta.json` (records last-synced source SHA — drives diff-first workflow) |
 | Per-CLI namespace metadata | `dist/{cli}/component-namespaces.json` (component name → install suffix) |
@@ -65,7 +65,7 @@ On invocation, prefer a delta sync over a full re-sync:
    - **Added / Modified**: re-apply per-CLI substitutions, write to dist counterpart
    - **Deleted**: remove dist counterpart (and parent dir if now empty)
    - **Renamed**: handle as delete-old + add-new
-4. Recompute README component tables and the CLI's context file (`GEMINI.md` / `AGENTS.md`) only if the set of skills/agents changed (added/removed/renamed). Body-only edits don't require regenerating these.
+4. Recompute README component tables and the CLI's context file (`AGENTS.md`) only if the set of skills/agents changed (added/removed/renamed). Body-only edits don't require regenerating these.
 5. Regenerate `dist/{cli}/component-namespaces.json` from the current dist component set and source ownership map.
 6. After all writes succeed, overwrite `dist/{cli}/.sync-meta.json` with the new HEAD sha and a fresh `synced_at` UTC timestamp. Keep the file even when the diff was empty — the timestamp records "we checked".
 
@@ -123,6 +123,5 @@ Summary table after all CLIs processed:
 
 | CLI | Skills | Agents | Hooks | Commands | Status |
 |-----|--------|--------|-------|----------|--------|
-| Gemini | N | N converted | N adapted | — | Complete |
 | OpenCode | N | N converted | N adapted | N | Complete |
 | Codex | N | AGENTS.md + N TOML | none | — | Complete |

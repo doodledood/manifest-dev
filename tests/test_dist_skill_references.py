@@ -7,7 +7,6 @@ and manifest-dev-tools skills with the `-manifest-dev-tools` suffix.
 Also confirms the removed plugin components stay removed:
   - no `verify` skill in any dist
   - no `manifest-verifier` agent in any dist
-  - no `pretool_verify_hook.py` or `prompt_submit_hook.py` in the gemini hooks dir
 """
 
 from __future__ import annotations
@@ -35,14 +34,13 @@ TOOLS_SKILLS = ("adr", "handoff", "prompt-engineering", "walk-pr")
 
 REMOVED_SKILLS = ("verify",)
 REMOVED_AGENTS = ("manifest-verifier",)
-REMOVED_GEMINI_HOOKS = ("pretool_verify_hook.py", "prompt_submit_hook.py")
 
 
 def namespace_dist(tmp_path: Path, cli: str) -> Path:
     """Mirror dist/{cli} into tmp_path and run that CLI's install_helpers.
 
     Per-CLI argv conventions differ — codex uses ``namespace <dir> <cli>``
-    in place while gemini and opencode copy from ``<src>`` into ``<dst>``.
+    in place while opencode copies from ``<src>`` into ``<dst>``.
     """
     tmp_path.mkdir(parents=True, exist_ok=True)
     src = DIST / cli
@@ -93,7 +91,7 @@ def load_helper(cli: str):
 
 
 def test_every_dist_namespaces_the_surviving_skill_set(tmp_path: Path) -> None:
-    for cli in ("codex", "opencode", "gemini"):
+    for cli in ("codex", "opencode"):
         dist_dir = namespace_dist(tmp_path / cli, cli)
         for skill, suffix in component_namespaces(cli)["skills"].items():
             skill_dir = dist_dir / "skills" / f"{skill}{suffix}"
@@ -105,7 +103,7 @@ def test_every_dist_namespaces_the_surviving_skill_set(tmp_path: Path) -> None:
 
 def test_every_dist_namespaces_every_distributed_component(tmp_path: Path) -> None:
     """Installer helpers must discover components from dist/, not static name lists."""
-    for cli in ("codex", "opencode", "gemini"):
+    for cli in ("codex", "opencode"):
         agent_ext = ".toml" if cli == "codex" else ".md"
         metadata = component_namespaces(cli)
         source_skills = sorted(
@@ -179,13 +177,6 @@ def test_namespacing_helpers_preserve_overlapping_skill_names() -> None:
         "Invoke manifest-dev-tools:adr."
     )
 
-    gemini = load_helper("gemini")
-    assert gemini.patch_cross_references(source, skills, agents) == (
-        "Invoke manifest-dev:figure-out-team-manifest-dev, then "
-        "manifest-dev:figure-out-manifest-dev. "
-        "Invoke manifest-dev-tools:adr-manifest-dev-tools."
-    )
-
     opencode = load_helper("opencode")
     assert opencode._patch_cross_references(source, skills, agents) == (
         "Invoke manifest-dev:figure-out-team-manifest-dev, then "
@@ -195,7 +186,7 @@ def test_namespacing_helpers_preserve_overlapping_skill_names() -> None:
 
 
 def test_component_namespace_metadata_matches_dist() -> None:
-    for cli in ("codex", "opencode", "gemini"):
+    for cli in ("codex", "opencode"):
         metadata = component_namespaces(cli)
         agent_ext = ".toml" if cli == "codex" else ".md"
 
@@ -220,7 +211,7 @@ def test_component_namespace_metadata_matches_dist() -> None:
 
 
 def test_removed_components_are_not_distributed() -> None:
-    for cli in ("codex", "opencode", "gemini"):
+    for cli in ("codex", "opencode"):
         for skill in REMOVED_SKILLS:
             assert not (
                 DIST / cli / "skills" / skill
@@ -231,11 +222,6 @@ def test_removed_components_are_not_distributed() -> None:
                     DIST / cli / "agents" / f"{agent}{ext}"
                 ).exists(), f"{cli}: removed agent {agent}{ext} still in dist"
 
-    for hook in REMOVED_GEMINI_HOOKS:
-        assert not (
-            DIST / "gemini" / "hooks" / hook
-        ).exists(), f"removed gemini hook {hook} still in dist"
-
 
 def test_figure_out_team_command_exists_for_opencode() -> None:
     """OpenCode exposes user-invocable skills as slash commands; figure-out-team must be one."""
@@ -245,6 +231,5 @@ def test_figure_out_team_command_exists_for_opencode() -> None:
 
 def test_slack_poller_agent_exists_in_every_dist() -> None:
     """The slack-poller subagent is new in this release; every dist must carry it."""
-    assert (DIST / "gemini" / "agents" / "slack-poller.md").is_file()
     assert (DIST / "opencode" / "agents" / "slack-poller.md").is_file()
     assert (DIST / "codex" / "agents" / "slack-poller.toml").is_file()

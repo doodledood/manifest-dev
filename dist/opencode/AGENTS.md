@@ -52,7 +52,7 @@ PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIF
 | code-maintainability-reviewer | Code organization (DRY, coupling, cohesion, consistency) |
 | code-simplicity-reviewer | Unnecessary complexity and over-engineering |
 | code-testability-reviewer | Test friction analysis (mock count, logic in IO) |
-| context-file-adherence-reviewer | Context file compliance (AGENTS.md/CLAUDE.md/GEMINI.md rules) |
+| context-file-adherence-reviewer | Context file compliance (AGENTS.md/CLAUDE.md rules) |
 | contracts-reviewer | API and interface contract correctness with source-of-truth evidence |
 | criteria-checker | Single-criterion verifier — the default subagent when verify.agent is omitted |
 | docs-reviewer | Documentation accuracy against code changes |

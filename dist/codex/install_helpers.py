@@ -9,7 +9,7 @@ Single-pass regex ensures correct handling of overlapping names (e.g., /do
 vs /done) and idempotency (won't double-suffix on re-run).
 
 Usage:
-    python3 install_helpers.py namespace <dir> [codex|gemini|opencode]
+    python3 install_helpers.py namespace <dir> [codex|opencode]
     python3 install_helpers.py merge-config <source-config> <dest-config>
 """
 
@@ -651,7 +651,7 @@ def unmerge_config(dest_config_path: str, state_path: str | None = None) -> None
 # ── Main entry point ──────────────────────────────────────────────────
 
 
-def namespace(base_dir: str, cli_type: str = "gemini") -> None:
+def namespace(base_dir: str, cli_type: str = "codex") -> None:
     """Rename and patch all components in base_dir."""
     base = Path(base_dir)
     metadata = _load_component_namespaces(base)
@@ -684,7 +684,7 @@ def namespace(base_dir: str, cli_type: str = "gemini") -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) >= 3 and sys.argv[1] == "namespace":
-        namespace(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "gemini")
+        namespace(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "codex")
     elif len(sys.argv) == 4 and sys.argv[1] == "merge-config":
         merge_config(sys.argv[2], sys.argv[3])
     elif len(sys.argv) == 5 and sys.argv[1] == "merge-config":
@@ -696,7 +696,7 @@ if __name__ == "__main__":
     else:
         print(
             (
-                f"Usage: {sys.argv[0]} namespace <dir> [codex|gemini|opencode]\n"
+                f"Usage: {sys.argv[0]} namespace <dir> [codex|opencode]\n"
                 f"   or: {sys.argv[0]} merge-config <source-config> <dest-config> [state-file]\n"
                 f"   or: {sys.argv[0]} unmerge-config <dest-config> [state-file]"
             ),
