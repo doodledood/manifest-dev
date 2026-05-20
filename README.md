@@ -15,9 +15,6 @@ Stop iterating with the model after implementation. Define what you'd accept, ru
 /plugin marketplace add doodledood/manifest-dev
 /plugin install manifest-dev@manifest-dev-marketplace
 
-# Gemini CLI — everything (skills, agents, hooks)
-curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash
-
 # OpenCode — everything (skills, agents, commands, plugin)
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 
@@ -25,7 +22,7 @@ curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/o
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
 ```
 
-The Gemini and OpenCode installers write to their global config directories by default (`~/.gemini/` and `~/.config/opencode/`) so the components load in every project. Use `--local` if you intentionally want only the current repo's `.gemini/` or `.opencode/`, and restart the CLI after updates because config-time files are loaded at startup.
+The OpenCode installer writes to its global config directory by default (`~/.config/opencode/`) so the components load in every project. Use `--local` if you intentionally want only the current repo's `.opencode/`, and restart the CLI after updates because config-time files are loaded at startup.
 
 Then use it:
 ```bash
@@ -52,17 +49,15 @@ If you use zsh and want easy upgrade commands for the non-Claude distributions, 
 
 ```zsh
 alias upgrade-manifest-dev-codex='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash'
-alias upgrade-manifest-dev-gemini='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash'
 alias upgrade-manifest-dev-opencode='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash'
-alias upgrade-manifest-dev-all='upgrade-manifest-dev-codex && upgrade-manifest-dev-gemini && upgrade-manifest-dev-opencode'
+alias upgrade-manifest-dev-all='upgrade-manifest-dev-codex && upgrade-manifest-dev-opencode'
 ```
 
-Then run `source ~/.zshrc` once. Future updates are just `upgrade-manifest-dev-codex`, `upgrade-manifest-dev-gemini`, `upgrade-manifest-dev-opencode`, or `upgrade-manifest-dev-all` for all three.
+Then run `source ~/.zshrc` once. Future updates are just `upgrade-manifest-dev-codex`, `upgrade-manifest-dev-opencode`, or `upgrade-manifest-dev-all` for both.
 
 Uninstall uses the same entrypoints:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/gemini/install.sh | bash -s -- uninstall
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- uninstall
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash -s -- uninstall
 ```
@@ -298,7 +293,6 @@ The Claude Code plugins are the source of truth. Per-CLI distributions under `di
 | CLI | Install | Skills | Agents | Hooks | Details |
 |-----|---------|--------|--------|-------|---------|
 | Claude Code | `/plugin install` | Full | Full | Full | Primary target |
-| Gemini CLI | `curl .../gemini/install.sh \| bash` | Full | Full (converted) | Full (adapted) | [README](dist/gemini/README.md) |
 | OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | Partial (adapted plugin) | [README](dist/opencode/README.md) |
 | Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | Not available | [README](dist/codex/README.md) |
 
@@ -344,7 +338,7 @@ Built-in agents `/do` spawns to verify criteria. Name an agent in the verify blo
 | `prose-value-reviewer` | Prose value in code comments and repo doc files — flags narrating-the-obvious comments, generic puffery, AI rhetorical patterns, sycophantic fragments. Comments must be load-bearing-WHY |
 | `type-safety-reviewer` | Typed-language safety: type holes, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
-| `context-file-adherence-reviewer` | Compliance with context file (CLAUDE.md/AGENTS.md/GEMINI.md) project rules |
+| `context-file-adherence-reviewer` | Compliance with context file (CLAUDE.md/AGENTS.md) project rules |
 | `github-pr-lifecycle` | PR-lifecycle inspector — checks CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives (`bash sleep …; reinvoke`, `retrigger …`, `reply …`, `escalate`, …) the caller executes literally. Owns its wait-cadence policy (per-gate durations and cycle caps; steering customizable). Composed automatically when `--platform github` resolves during `/define`. |
 | `slack-poller` | Tails a Slack thread for the `/figure-out-team` loop, returning the verbatim deltas the agent reasons over. |
 
