@@ -1,6 +1,6 @@
 ---
 name: review
-description: 'Autonomous PR review that posts high-signal, human-voiced comments under your account. Spawns a tiered reviewer fleet (always-on core + content-gated specialists), filters to medium+ findings, runs a single holistic coherence pass grounding findings against PR history, bundle context, and the author''s manifest, then submits a single GitHub PR review (decision `comment`). --loop bypasses approval, watches the PR with backoff, per-comment verifier judges addressed-by-fix / addressed-by-valid-reply / needs-pushback (one round of pushback per thread), reruns on success, terminates at 3 cycles or 24h. Use when reviewing someone else''s PR — or your own manifest-driven PR — and you want a precision-tuned review without babysitting. Triggers: review pr, autonomous review, post pr review, autoreview, loop review, watch pr review.'
+description: 'Autonomous PR review that posts high-signal, human-voiced comments under your account; --loop closes the feedback loop without babysitting. Use when reviewing someone else''s PR (or your own manifest-driven PR) and you want a precision-tuned review you can walk away from. Triggers: review pr, autonomous review, post pr review, autoreview, loop review, watch pr review.'
 argument-hint: '[pr-url] [--manifest <path>] [--bundle <urls>] [--loop]'
 user-invocable: true
 ---
