@@ -11,7 +11,7 @@ High-signal autonomous PR review posted under your account. The goal is a review
 
 **Reviewer fleet.** Spawn in parallel. Always-on: `change-intent-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `context-file-adherence-reviewer`. Add when the diff fits: `type-safety-reviewer` on typed code; `test-quality-reviewer` and `code-testability-reviewer` on source; `contracts-reviewer` on API surfaces; `operational-readiness-reviewer` on CI/infra/env/migrations/workers/queues/secrets; `docs-reviewer` and `prose-value-reviewer` on prose; `prompt-reviewer` (with `prompt-token-efficiency-verifier`, `prompt-compression-verifier`) on prompts/skills/agents. Forward the manifest to every spawned reviewer when present. Filter findings to Medium+; drop Low.
 
-**Narrow-lens reviewers.** Reviewer agents never receive PR conversation, linked-PR diffs, or linked-PR conversation. That context flows only to the holistic pass and the loop's per-comment verifier — narrow lens is what keeps each reviewer precise.
+**Narrow-lens reviewers.** Reviewer agents never receive PR conversation, linked-PR diffs, or linked-PR conversation. That context flows only to the holistic pass — narrow lens is what keeps each reviewer precise.
 
 **Holistic coherence pass.** Spawn one subagent with the Medium+ findings plus PR history (most recent ~50 review/conversation comments, all unresolved threads regardless of recency, the author's last 5 commit messages on the branch, the PR description), bundle context (≤5 linked PRs: diff, description, top-level conversation — no inline review comments from linked PRs), and the manifest if present. Carry forward any truncation the caller did. The subagent:
 
@@ -38,7 +38,7 @@ Target voice: *"Empty input skips the null check — `if (input?.value)` at `par
 - The only path to decision `approve` is the user-confirmed lgtm prompt above. Never submit `approve` automatically anywhere else.
 - Never submit decision `request_changes` — this skill does not algorithmically block merges.
 - Never add an AI disclosure footer to a comment, summary, or reply. There is no flag for one.
-- Never forward PR conversation or bundle context to a reviewer agent. Only the holistic pass and the verifier may see that context.
+- Never forward PR conversation or bundle context to a reviewer agent. Only the holistic pass may see that context.
 - Never re-raise a finding the holistic pass already pruned in this cycle, and never re-raise (in a later cycle) something already in our own prior posted comments — dedupe via PR history.
 
 **`--loop`.** Load `references/LOOP.md`.
