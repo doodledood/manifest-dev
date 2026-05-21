@@ -1,12 +1,16 @@
 ---
 name: handoff
-description: 'Produce a self-contained context payload for cross-boundary handoff — switching tools (Claude Code ↔ Codex), starting a clean session, or handing off to another agent. Captures epistemic state (decisions, alternatives, verified facts, open threads) rather than session chronology, so the receiving agent inherits the same grounding without re-deriving understanding. Use when in-tool session continuation isn''t available. Triggers: handoff, cross-tool handoff, context payload, hand off context, fresh session bootstrap, transfer to a new agent.'
-argument-hint: '[prior-handoff-path]'
+description: 'Produce a self-contained context payload that lets a fresh agent continue the current work without re-deriving or re-learning what this session already established. Two triggers: cross-boundary transfer (switching tools — Claude Code ↔ Codex — starting a clean session, or handing off to another agent) and DIY sub-agent (spin off a focused side-session and hand back, keeping the parent thread clean). Triggers: handoff, cross-tool handoff, context payload, hand off context, fresh session bootstrap, transfer to a new agent, lateral spawn-and-return, DIY sub-agent.'
+argument-hint: '<what the next session is for>'
 user-invocable: true
 ---
 
-Produce a self-contained context payload that lets a fresh agent continue the current work without re-deriving understanding. Use when in-tool session continuation isn't available — switching tools, starting a clean session, or handing off to another agent.
+Produce a self-contained context payload that lets a fresh agent continue this work without re-deriving or re-learning what this session already established. The argument is what the next session is for — use it to shape what's captured and what's left out.
 
-Capture **epistemic state, not chronology**. Settled decisions carry their alternatives-considered and why-this-won, since the point is that the new agent doesn't redo that thinking. Verified facts carry *how verified* (file:line, command output, doc URL), so the new agent inherits the same grounding instead of taking your read on faith. Open threads carry what would close them. Skip the session timeline; the reader doesn't need to know order or who said what.
+Capture what's hard-won — anything the new session would have to re-do otherwise. For each item that travels, carry the grounding with it, so the receiver inherits the working state rather than just the conclusion. *Examples (illustrative, not required):* a settled decision travels with the alternatives considered and why this won; a verified fact travels with how it was verified (file:line, command output, doc URL); an open thread travels with what would close it. If a particular handoff isn't structured around decisions, facts, or threads, capture whatever the goal requires — with its grounding.
 
-Output to `/tmp/handoff-{timestamp}.md` where `{timestamp}` is `YYYYMMDD-HHMMSS` in UTC. If a prior-handoff path is passed as an optional positional argument, read it and write a fresh doc at a new timestamp reflecting the latest state — pure rewrite, not append. Doc shape and an annotated example live in `references/example.md`.
+Reference other artifacts (PRDs, manifests in `.manifest/`, ADRs, issues, PRs, commits, diffs) by path or URL — don't restate their content.
+
+Shape is the agent's call. Section names, headings, prose-vs-lists, ordering — driven by the intent, not a template.
+
+Output to `/tmp/handoff-{timestamp}.md` where `{timestamp}` is `YYYYMMDD-HHMMSS` in UTC. If the argument is a path to a prior handoff, read it first and write a fresh doc reflecting the current state — pure rewrite, not append.
