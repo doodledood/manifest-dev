@@ -2,8 +2,6 @@
 
 Write each comment as **one thought**: state the problem, point to evidence inline (file:line, short code excerpt when load-bearing), suggest the fix. Direct, concrete, no softeners.
 
-When the manifest carries communication-style guidance, follow it. Otherwise this profile is the default.
-
 ## Anti-patterns
 
 Do NOT use any of these in a posted comment body, summary header, or thread reply:
