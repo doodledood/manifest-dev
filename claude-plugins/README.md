@@ -15,7 +15,7 @@ Front-load the thinking so AI agents get it right the first time.
 | Plugin | What It Does |
 |--------|--------------|
 | [`manifest-dev`](./manifest-dev) | Manifest-driven workflows. `/define` interviews and writes a Manifest; `/do` executes it and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md task guidance; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. Multi-CLI distribution (OpenCode, Codex CLI). Execution can't stop without every criterion verifying PASS or proper escalation. |
-| [`manifest-dev-tools`](./manifest-dev-tools) | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. `/handoff` produces a context payload for cross-boundary transfer or DIY sub-agent flows (spin off a focused side-session and hand back). `/prompt-engineering` and `/walk-pr` are stand-alone collaboration tools. |
+| [`manifest-dev-tools`](./manifest-dev-tools) | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. `/handoff` produces a context payload for cross-boundary transfer or DIY sub-agent flows (spin off a focused side-session and hand back). `/prompt-engineering`, `/walk-pr`, and `/review` are stand-alone collaboration tools — `/walk-pr` for collaborative review, `/review` for autonomous PR review with `--loop` follow-through. |
 
 ## Plugin Details
 
@@ -60,6 +60,7 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 - `/adr` — Synthesize Architecture Decision Records from session transcripts via multi-agent extraction pipeline (architecture, trade-offs, scope/constraints lenses + synthesis gatekeeper). Writes individual MADR files.
 - `/handoff` — Produces a context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, multi-agent) and DIY sub-agent (spin off a focused side-session and hand back to the parent).
 - `/prompt-engineering` — Stand-alone prompt authoring and slimming discipline.
+- `/review` — Autonomous PR review. Spawns a tiered reviewer fleet in parallel, filters to medium+ findings, runs a holistic coherence pass grounded against PR history, bundle context, and the author's manifest, then submits a single GitHub review with human-voiced comments. `--loop` bypasses approval and watches the PR with backoff: per-comment verifier decides addressed-by-fix / addressed-by-valid-reply / needs-pushback (one round of pushback per thread, then drop); reruns the pipeline on success; terminates at 3 cycles, 24h, or clean lgtm.
 - `/walk-pr` — Collaboratively walks through a PR or large diff, sub-changeset by sub-changeset.
 
 ## Contributing

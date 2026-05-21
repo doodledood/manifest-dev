@@ -6,9 +6,9 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 11 | Core workflow skills plus manifest-dev-tools utilities |
+| Skills | 12 | Core workflow skills plus manifest-dev-tools utilities |
 | Agents | 16 | Specialized reviewer and verification agents |
-| Commands | 9 | User-invocable slash commands for core workflows and tools utilities |
+| Commands | 10 | User-invocable slash commands for core workflows and tools utilities |
 | Plugin | 1 | TypeScript hook plugin for workflow enforcement |
 | Context | 1 | AGENTS.md workflow overview |
 
@@ -100,6 +100,7 @@ After installation, invoke workflows via slash commands:
 /adr-manifest-dev-tools                 Post-hoc ADR synthesis
 /handoff-manifest-dev-tools             Cross-boundary handoff or DIY sub-agent context payload
 /prompt-engineering-manifest-dev-tools  Slim-discipline prompt work
+/review-manifest-dev-tools              Autonomous PR review with --loop follow-through
 /walk-pr-manifest-dev-tools             Collaborative PR/diff walkthrough
 ```
 
@@ -144,7 +145,7 @@ dist/opencode/
 │   ├── github-pr-lifecycle.md
 │   ├── slack-poller.md
 │   └── type-safety-reviewer.md
-├── commands/                        # 9 user commands
+├── commands/                        # 10 user commands
 │   ├── auto.md
 │   ├── adr.md
 │   ├── define.md
@@ -153,8 +154,9 @@ dist/opencode/
 │   ├── figure-out.md
 │   ├── figure-out-team.md
 │   ├── prompt-engineering.md
+│   ├── review.md
 │   └── walk-pr.md
-├── skills/                          # 11 skills (core + tools)
+├── skills/                          # 12 skills (core + tools)
 │   ├── adr/
 │   ├── auto/
 │   ├── define/
@@ -165,6 +167,7 @@ dist/opencode/
 │   ├── figure-out-team/
 │   ├── handoff/
 │   ├── prompt-engineering/
+│   ├── review/
 │   └── walk-pr/
 ├── plugins/
 │   ├── index.ts                     # Hook plugin

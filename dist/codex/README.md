@@ -25,6 +25,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | adr | Post-hoc Architecture Decision Record synthesis |
 | handoff | Cross-boundary handoff or DIY sub-agent context payload |
 | prompt-engineering | Slim-discipline prompt creation and review |
+| review | Autonomous PR review with tiered reviewer fleet, holistic coherence pass, and `--loop` follow-through |
 | walk-pr | Collaborative PR/diff walkthrough |
 
 ### Agents
@@ -120,6 +121,7 @@ dist/codex/
 │   ├── adr/
 │   ├── handoff/
 │   ├── prompt-engineering/
+│   ├── review/
 │   └── walk-pr/
 ├── agents/                          # 16 TOML config stubs
 │   ├── change-intent-reviewer.toml
