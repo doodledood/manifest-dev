@@ -23,7 +23,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | figure-out | Collaborative deep understanding |
 | figure-out-team | Multi-party async deliberation |
 | adr | Post-hoc Architecture Decision Record synthesis |
-| handoff | Cross-boundary context handoff |
+| handoff | Cross-boundary handoff or DIY sub-agent context payload |
 | prompt-engineering | Slim-discipline prompt creation and review |
 | walk-pr | Collaborative PR/diff walkthrough |
 

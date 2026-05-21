@@ -15,7 +15,7 @@ Front-load the thinking so AI agents get it right the first time.
 | Plugin | What It Does |
 |--------|--------------|
 | [`manifest-dev`](./manifest-dev) | Manifest-driven workflows. `/define` interviews and writes a Manifest; `/do` executes it and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md task guidance; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. Multi-CLI distribution (OpenCode, Codex CLI). Execution can't stop without every criterion verifying PASS or proper escalation. |
-| [`manifest-dev-tools`](./manifest-dev-tools) | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. `/handoff` produces a cross-boundary context payload (tool switch, fresh session, multi-agent transfer). `/prompt-engineering` and `/walk-pr` are stand-alone collaboration tools. |
+| [`manifest-dev-tools`](./manifest-dev-tools) | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. `/handoff` produces a context payload for cross-boundary transfer or DIY sub-agent flows (spin off a focused side-session and hand back). `/prompt-engineering` and `/walk-pr` are stand-alone collaboration tools. |
 
 ## Plugin Details
 
@@ -58,7 +58,7 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 
 **Skills:**
 - `/adr` — Synthesize Architecture Decision Records from session transcripts via multi-agent extraction pipeline (architecture, trade-offs, scope/constraints lenses + synthesis gatekeeper). Writes individual MADR files.
-- `/handoff` — Produces a cross-boundary context payload for tool switching, fresh sessions, or multi-agent transfers.
+- `/handoff` — Produces a context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, multi-agent) and DIY sub-agent (spin off a focused side-session and hand back to the parent).
 - `/prompt-engineering` — Stand-alone prompt authoring and slimming discipline.
 - `/walk-pr` — Collaboratively walks through a PR or large diff, sub-changeset by sub-changeset.
 
