@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev-tools",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Tools for working with prompts and PRs alongside the manifest workflow. ADR synthesis from session transcripts, collaborative PR walkthroughs, slim-discipline prompt engineering, and cross-boundary context handoff.",
   "keywords": [
     "adr",
