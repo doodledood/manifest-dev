@@ -100,7 +100,7 @@ After installation, invoke workflows via slash commands:
 /adr-manifest-dev-tools                 Post-hoc ADR synthesis
 /handoff-manifest-dev-tools             Cross-boundary handoff or DIY sub-agent context payload
 /prompt-engineering-manifest-dev-tools  Gap-calibrated prompt creation, update, and review
-/review-manifest-dev-tools              Autonomous PR review with --loop follow-through
+/review-pr-manifest-dev-tools           Autonomous PR review with --loop follow-through
 /walk-pr-manifest-dev-tools             Collaborative PR/diff walkthrough
 ```
 
@@ -168,7 +168,7 @@ dist/opencode/
 │   ├── figure-out-team/
 │   ├── handoff/
 │   ├── prompt-engineering/
-│   ├── review/
+│   ├── review-pr/
 │   └── walk-pr/
 ├── plugins/
 │   ├── index.ts                     # Hook plugin
