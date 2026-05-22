@@ -24,7 +24,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | figure-out-team | Multi-party async deliberation |
 | adr | Post-hoc Architecture Decision Record synthesis |
 | handoff | Cross-boundary handoff or DIY sub-agent context payload |
-| prompt-engineering | Slim-discipline prompt creation and review |
+| prompt-engineering | Create, update, or review an LLM prompt — gap-calibrated discipline |
 | review | Autonomous PR review with tiered reviewer fleet, holistic coherence pass, and `--loop` follow-through |
 | walk-pr | Collaborative PR/diff walkthrough |
 

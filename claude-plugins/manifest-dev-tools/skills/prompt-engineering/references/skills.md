@@ -1,49 +1,81 @@
-# Skill Architecture Patterns
+# Writing a skill
 
-Loaded when creating or updating a Claude Code skill. Supplements universal prompt principles with architecture patterns from Anthropic's internal experience with hundreds of skills.
+A skill activates a behavior the model wouldn't naturally produce, or activates it with a calibration the default lacks (more relentless, more structured, more skeptical, etc.). The skill's content is whatever closes that gap — no more.
 
-## Skills Are Folders
+## Minimum-viable shape
 
-A skill is a directory, not a markdown file. The file system is context engineering — what lives alongside SKILL.md shapes how Claude executes the skill. Useful companions: reference docs (API signatures, domain knowledge), assets (templates for output artifacts), scripts (composable libraries Claude can invoke or generate against).
+Mat Pocock's `grill-me` is the existence proof of how minimal the body can be when goal + expected behavior + one override are all the gap requires:
 
-## Progressive Disclosure
+```
+Interview me relentlessly about every aspect of this plan until we reach
+a shared understanding. Walk down each branch of the design tree,
+resolving dependencies between decisions one-by-one. For each question,
+provide your recommended answer.
 
-Don't front-load everything into SKILL.md. Point to companion files Claude should read at appropriate times. SKILL.md declares what's available; Claude loads it when relevant.
+Ask the questions one at a time.
 
-**Why**: Monolithic prompts suffer context rot. Splitting content lets Claude load only what the current phase needs, keeping working context focused.
+If a question can be answered by exploring the codebase, explore the
+codebase instead.
+```
 
-## Gotchas Section
+Three sentences. Goal ("shared understanding"), expected behavior ("relentlessly," "one at a time," "with recommendation"), one override of natural behavior ("explore the codebase instead of asking"). The model already knows how to interview, prioritize, walk a decision tree — those are not stated.
 
-The highest-signal content in any skill. Gotchas encode failure modes Claude actually hits — not theoretical risks, but observed patterns where the skill produces wrong output.
+Start here. Add only when the gap requires it.
 
-Build gotchas from real failures. Update as new edge cases emerge. A skill with good gotchas outperforms a skill with perfect instructions but no failure-mode awareness.
+## Skills are folders
 
-A good gotcha is specific (names the failure), actionable (says what to do instead), and grounded (observed, not hypothetical).
+A skill is a directory, not a file. SKILL.md is the entry; companion files live alongside (`references/`, `assets/`, `scripts/`, config). The file system is part of the context engineering — what lives next to SKILL.md shapes what Claude can reach when the skill fires.
 
-## Setup & User Context
+## Description is the trigger
 
-Skills needing user-specific configuration (channel names, project IDs, preferred formats) should store setup in a config file within the skill directory. If config is absent, ask the user and persist their answers.
+The frontmatter `description` field is what Claude's skill discovery scans at session start. Write it as a trigger spec, not a human summary.
 
-**Why**: Asking every session wastes turns. Persisted config makes the skill stateful across invocations.
+Pattern: **what the skill does + when to use it + trigger terms the user actually says**, under 1024 chars (enforced).
 
-## Description as Trigger
+Weak: *"Helps with code review."*
+Strong: *"Adversarial code review that spawns a fresh-eyes subagent. Use for PR review, code audit, pre-merge quality check. Triggers: review my PR, audit this code, pre-merge check."*
 
-Claude Code builds a skill listing from descriptions at session start and scans it to match user requests to skills. The description field is a **trigger specification** — write it for the model's matching algorithm, not as a human-readable summary.
+The description is also where downstream agents inherit the skill's framing — if your description says "slim discipline" or "minimize tokens," agents reading the skill list will think that's the discipline before they invoke. Lead with the *principle* the skill embodies.
 
-Pattern: what the skill does + when to invoke it + terms users actually say. Weak: "Helps with code review." Strong: "Adversarial code review that spawns a fresh-eyes subagent. Use for PR review, code audit, or pre-merge quality check."
+## Progressive disclosure
 
-## Skill Type Awareness
+When SKILL.md grows, the question to ask is *"does this content need to be in working context every time the skill fires?"* If no, move it to a `references/*.md` file and point to it conditionally from SKILL.md (`see references/X.md when …`).
 
-Skills cluster into recurring categories. Knowing which type you're building surfaces the right patterns:
+Real progressive disclosure means the reference does NOT load until a specific trigger fires (a branch, a flag, a failure mode). If SKILL.md mentions the reference's mechanics, or the reference always loads anyway, the split isn't earning anything — inline it.
 
-| Type | Core Pattern |
-|------|-------------|
-| **Library/API Reference** | Edge cases, footguns, reference snippets for correct usage |
-| **Product Verification** | Test/verify output — often paired with scripts for programmatic assertions |
-| **Data Fetching & Analysis** | Connects to data stacks — credentials, dashboard IDs, common query workflows |
-| **Business Process** | Automates repetitive workflows — benefits from logging previous runs for consistency |
-| **Code Scaffolding** | Generates boilerplate — useful when scaffolding has natural-language requirements |
-| **Code Quality & Review** | Enforces standards — can include deterministic scripts for robustness |
-| **CI/CD & Deployment** | Fetch, push, deploy workflows — may compose with other skills |
-| **Runbooks** | Symptom → investigation → structured report |
-| **Infrastructure Ops** | Routine maintenance with guardrails for destructive actions |
+Subagent prompts that always run also belong inline at the spawn point, not in a separate file. Splitting them just adds an indirection without saving context.
+
+## Gotchas (when you have them)
+
+The highest-signal content in a mature skill. A gotcha names an observed failure mode, the specific behavior to do instead, and is grounded in a real case — not a theoretical risk. Build the gotchas list as the skill is used in anger; don't pre-populate it speculatively.
+
+Three checks: *specific* (names the failure, not a category), *actionable* (says what to do instead), *grounded* (observed, not imagined).
+
+## Setup and stateful skills
+
+Skills that need user-specific configuration (channel names, project IDs, output paths) persist that config in a file inside the skill directory. Read it on invocation; ask only if absent. Re-asking every session is a gap the skill exists to close.
+
+## Frontmatter
+
+```yaml
+---
+name: kebab-case-name       # required, lowercase, hyphens, max 64 chars
+description: '…'             # required, trigger spec, max 1024 chars
+argument-hint: '<request>'  # optional, shown in slash-command UI
+user-invocable: true        # optional, default true; false hides from the command menu
+tools: …                    # optional; omit to inherit invoker's tools (recommended)
+---
+```
+
+Omit `tools` to inherit. Declare `tools` only when the skill must run with a restricted set (rare).
+
+## Common skill shapes (not archetypes — observations)
+
+These aren't a taxonomy you route to. They're recurring shapes that show what kind of gap drove each one:
+
+- **Behavior-activator** — short body, goal + expected behavior + 1–2 overrides. Gap is *how* the model approaches the task. (`grill-me`, `figure-out`, `do`.)
+- **Workflow** — multi-step procedure with explicit branches. Gap is the procedural logic and where it diverges from natural-model defaults. (`define`, `walk-pr`.)
+- **Knowledge** — see `knowledge-skills.md`. Gap is data the model doesn't have.
+- **Procedural with lookups** — heavier body with tables, paths, contracts. Gap is the specific data flow the model must respect. (`sync-tools`.)
+
+Length scales with what the gap requires. A 600-line skill earned every line if the procedural logic is genuinely 600 lines wide. A 12-line skill is correct when 12 lines close the gap.

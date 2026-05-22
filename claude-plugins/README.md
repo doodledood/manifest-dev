@@ -59,7 +59,7 @@ Post-processing utilities that operate on the outputs of the manifest workflow.
 **Skills:**
 - `/adr` — Synthesize Architecture Decision Records from session transcripts via multi-agent extraction pipeline (architecture, trade-offs, scope/constraints lenses + synthesis gatekeeper). Writes individual MADR files.
 - `/handoff` — Produces a context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, multi-agent) and DIY sub-agent (spin off a focused side-session and hand back to the parent).
-- `/prompt-engineering` — Stand-alone prompt authoring and slimming discipline.
+- `/prompt-engineering` — Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. Branches on intent (create / update / review / diagnose); references load on demand for archetype-specific guidance (system prompts, skills, knowledge skills, agents, patterns, review, metaprompting).
 - `/review` — Autonomous PR review. Spawns a tiered reviewer fleet in parallel, filters to medium+ findings, runs a holistic coherence pass grounded against PR history, bundle context, and the author's manifest, then submits a single GitHub review with human-voiced comments. `--loop` bypasses approval and watches the PR with backoff: per-comment verifier decides addressed-by-fix / addressed-by-valid-reply / needs-pushback (one round of pushback per thread, then drop); reruns the pipeline on success; terminates at 3 cycles, 24h, or clean lgtm.
 - `/walk-pr` — Collaboratively walks through a PR or large diff, sub-changeset by sub-changeset.
 

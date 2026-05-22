@@ -99,7 +99,7 @@ After installation, invoke workflows via slash commands:
 /figure-out-team-manifest-dev           Multi-party async deliberation in a Slack thread
 /adr-manifest-dev-tools                 Post-hoc ADR synthesis
 /handoff-manifest-dev-tools             Cross-boundary handoff or DIY sub-agent context payload
-/prompt-engineering-manifest-dev-tools  Slim-discipline prompt work
+/prompt-engineering-manifest-dev-tools  Gap-calibrated prompt creation, update, and review
 /review-manifest-dev-tools              Autonomous PR review with --loop follow-through
 /walk-pr-manifest-dev-tools             Collaborative PR/diff walkthrough
 ```

@@ -8,7 +8,7 @@ Utilities that complement manifest workflows — prompt engineering, PR walkthro
 |-------|-------------|
 | `/adr` | Synthesize Architecture Decision Records from session transcripts. Extracts decisions via multi-agent pipeline and writes MADR files. |
 | `/handoff` | Produce a self-contained context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, another agent) and DIY sub-agent (spin off a focused side-session and hand back). Manually invoked. |
-| `/prompt-engineering` | Create, update, slim, or review LLM prompts in the slim discipline. |
+| `/prompt-engineering` | Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. |
 | `/review` | Autonomous PR review that posts high-signal, human-voiced comments under your account. Tiered reviewer fleet + holistic coherence pass grounded against PR history, bundle context, and the author's manifest. `--loop` watches the PR, verifies addressing per comment, reruns on success, terminates at 3 cycles or 24h. |
 | `/walk-pr` | Walk through a PR or large diff together, one sub-changeset at a time. |
 
