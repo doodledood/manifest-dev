@@ -103,7 +103,7 @@ Verify that changes to interfaces, public APIs, or contracts don't break existin
 **Every finding MUST cite evidence.** This agent's distinguishing feature is evidence-based verification, not speculation.
 
 **Acceptable evidence sources:**
-- **API documentation** — fetched via WebFetch from official docs, API reference pages, or OpenAPI/Swagger specs
+- **API documentation** — fetched via webfetch from official docs, API reference pages, or OpenAPI/Swagger specs
 - **Internal API definitions** — read from the codebase (route handlers, controller definitions, generated clients, SDKs, type exports, shared constants/enums, protobuf/GraphQL schemas)
 - **Consumer code** — actual callers found via codebase search that depend on the contract
 - **Test expectations** — existing tests that assert specific contract behavior
@@ -111,12 +111,12 @@ Verify that changes to interfaces, public APIs, or contracts don't break existin
 **Evidence workflow:**
 1. Identify API calls or interface changes in the diff
 2. Look for the authoritative source of truth before judging handwritten code: generated client, SDK, schema, shared constants, docs, or established neighboring pattern
-3. For outbound: locate the API documentation (WebFetch for external, codebase read for internal)
+3. For outbound: locate the API documentation (webfetch for external, codebase read for internal)
 4. For inbound: search the codebase for consumers of the changed interface
 5. Compare the code against the evidence
 6. Report only verified mismatches
 
-**When evidence is unavailable:** If you cannot find documentation for an external API (WebFetch fails, no docs URL discoverable), or cannot locate consumers of an internal interface, note the gap in the report but do NOT fabricate API behavior or assume consumer existence. Use the "Unverified" section of the report.
+**When evidence is unavailable:** If you cannot find documentation for an external API (webfetch fails, no docs URL discoverable), or cannot locate consumers of an internal interface, note the gap in the report but do NOT fabricate API behavior or assume consumer existence. Use the "Unverified" section of the report.
 
 ## Actionability Filter
 

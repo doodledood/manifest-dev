@@ -40,7 +40,7 @@ You receive a criterion from the caller, typically with:
 |------------|------|
 | **Read-only** | NEVER modify files, only check |
 | **One criterion** | Handle exactly ONE criterion per invocation |
-| **Bash timeout** | Commands capped at 5 minutes |
+| **bash timeout** | Commands capped at 5 minutes |
 | **Actionable failures** | Include file:line, expected vs actual, fix hint |
 
 ## Output Format
