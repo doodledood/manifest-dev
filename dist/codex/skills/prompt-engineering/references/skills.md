@@ -4,7 +4,7 @@ A skill activates a behavior the model wouldn't naturally produce, or activates 
 
 ## Minimum-viable shape
 
-Mat Pocock's `grill-me` is the existence proof of how minimal the body can be when goal + expected behavior + one override are all the gap requires:
+A skill body can be as short as three sentences when goal + expected behavior + one override are all the gap requires. The example below — a "grill me on this plan" skill — illustrates the shape:
 
 ```
 Interview me relentlessly about every aspect of this plan until we reach
@@ -73,7 +73,7 @@ Omit `tools` to inherit. Declare `tools` only when the skill must run with a res
 
 These aren't a taxonomy you route to. They're recurring shapes that show what kind of gap drove each one:
 
-- **Behavior-activator** — short body, goal + expected behavior + 1–2 overrides. Gap is *how* the model approaches the task. (`grill-me`, `figure-out`, `do`.)
+- **Behavior-activator** — short body, goal + expected behavior + 1–2 overrides. Gap is *how* the model approaches the task. (`figure-out`, `do`.)
 - **Workflow** — multi-step procedure with explicit branches. Gap is the procedural logic and where it diverges from natural-model defaults. (`define`, `walk-pr`.)
 - **Knowledge** — see `knowledge-skills.md`. Gap is data the model doesn't have.
 - **Procedural with lookups** — heavier body with tables, paths, contracts. Gap is the specific data flow the model must respect. (`sync-tools`.)
