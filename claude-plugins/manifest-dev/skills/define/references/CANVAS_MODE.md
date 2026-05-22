@@ -1,6 +1,6 @@
 # Canvas Mode — Shared Understanding Canvas
 
-Loaded when `/define` is invoked with `--canvas`. Owns canvas behavior: when to fire, when to suppress, what to generate, how to keep it live, how to fail safely.
+Owns canvas behavior: when to fire, when to suppress, what to generate, how to keep it live, how to fail safely.
 
 ## Purpose
 
