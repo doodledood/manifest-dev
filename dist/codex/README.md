@@ -7,7 +7,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | Type | Count | Notes |
 |------|-------|-------|
 | Skills | 11 | Core workflow skills plus manifest-dev-tools utilities |
-| Agents | 16 | TOML config stubs with full prompt bodies |
+| Agents | 17 | TOML config stubs with full prompt bodies |
 | Hooks | 0 | Not supported by Codex CLI (Issue #2109) |
 | Rules | 1 | Starlark execution policy |
 
@@ -24,7 +24,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | figure-out-team | Multi-party async deliberation |
 | adr | Post-hoc Architecture Decision Record synthesis |
 | handoff | Cross-boundary handoff or DIY sub-agent context payload |
-| prompt-engineering | Slim-discipline prompt creation and review |
+| prompt-engineering | Create, update, or review an LLM prompt — gap-calibrated discipline |
 | review | Autonomous PR review with tiered reviewer fleet, holistic coherence pass, and `--loop` follow-through |
 | walk-pr | Collaborative PR/diff walkthrough |
 
@@ -48,6 +48,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | github-pr-lifecycle | read-only | Steerable GitHub PR lifecycle inspection; emits hints for /do dispatch |
 | slack-poller | read-only | Slack thread delta narrator for /figure-out-team |
 | type-safety-reviewer | read-only | Type safety audit |
+| prompt-reviewer | read-only | Reviews LLM prompts against the prompt-engineering skill's gap-calibration principles |
 
 ## Installation
 
@@ -123,7 +124,7 @@ dist/codex/
 │   ├── prompt-engineering/
 │   ├── review/
 │   └── walk-pr/
-├── agents/                          # 16 TOML config stubs
+├── agents/                          # 17 TOML config stubs
 │   ├── change-intent-reviewer.toml
 │   ├── code-bugs-reviewer.toml
 │   ├── operational-readiness-reviewer.toml
@@ -139,7 +140,8 @@ dist/codex/
 │   ├── docs-reviewer.toml
 │   ├── github-pr-lifecycle.toml
 │   ├── slack-poller.toml
-│   └── type-safety-reviewer.toml
+│   ├── type-safety-reviewer.toml
+│   └── prompt-reviewer.toml
 ├── rules/                           # Execution policy
 │   └── default.rules
 ├── config.toml                      # Multi-agent + MCP config

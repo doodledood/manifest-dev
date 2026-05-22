@@ -34,7 +34,8 @@
     "prose-value-reviewer": "-manifest-dev",
     "slack-poller": "-manifest-dev",
     "test-quality-reviewer": "-manifest-dev",
-    "type-safety-reviewer": "-manifest-dev"
+    "type-safety-reviewer": "-manifest-dev",
+    "prompt-reviewer": "-manifest-dev-tools"
   },
   "commands": {}
 }

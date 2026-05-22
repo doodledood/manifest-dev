@@ -1,6 +1,6 @@
 # Babysit Mode
 
-Loaded when `/define --babysit <pr-url>` was passed. Synthesizes a lifecycle-only manifest from an existing PR so /do can tend it to mergeable. Entry path for "I have a PR open and want autonomous tending without authoring a manifest from scratch." User can amend later to add custom ACs beyond the lifecycle baseline. Babysit takes one URL; multi-repo changesets use fresh /define with `Repos:` declared.
+Synthesizes a lifecycle-only manifest from an existing PR so /do can tend it to mergeable. Entry path for "I have a PR open and want autonomous tending without authoring a manifest from scratch." User can amend later to add custom ACs beyond the lifecycle baseline. Babysit takes one URL; multi-repo changesets use fresh /define with `Repos:` declared.
 
 ## PR URL parsing
 

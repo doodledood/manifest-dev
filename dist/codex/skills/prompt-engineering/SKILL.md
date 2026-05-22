@@ -1,12 +1,20 @@
 ---
 name: prompt-engineering
-description: 'Create, update, slim, or review LLM prompts in the slim discipline — every word steers (behavior the model wouldn''t reach on its own) or scaffolds (preempts a failure the clean posture handles); cut scaffold. 1-3 paragraphs of essence in SKILL.md, contracts in references. Use when writing, slimming, reviewing, or diagnosing a prompt. Triggers: write a prompt, slim a prompt, edit a prompt, review a prompt, improve a prompt, diagnose prompt failure, fix failing prompt, system prompt, skill, agent.'
+description: 'Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. Use when writing, updating, reviewing, or diagnosing a prompt. Triggers: write a prompt, update a prompt, review a prompt, diagnose prompt failure, system prompt, skill, agent.'
 argument-hint: '<request>'
 user-invocable: true
 ---
 
-**User request**: $ARGUMENTS
+A prompt earns its place where natural model behavior misses what's needed. State the goal and the expected outcome; trust the model for everything else. Lines belong only when they close a real gap — observed gotchas, non-obvious behavior, knowledge the model doesn't have, or edge cases it gets wrong by default. Length follows the gap, not a number. On update, calibrate both directions: add what closes the new gap, and prune what no longer earns its place. A prompt stays in balance over time; it doesn't accrete.
 
-Prompts are manifests: state the goal and the load-bearing constraints; trust the model to do everything else. Every word **steers** (behavior the model wouldn't reach on its own) or **scaffolds** (preempts a failure the clean posture handles); cut scaffold. The default is too few words — add specific lines back only when an observed failure justifies it. Aspirational shape: **1-3 short paragraphs** in SKILL.md; `references/*.md` for progressive disclosure — material loaded conditionally per branch, flag, or failure mode. If a reference would always be loaded, fold it back into SKILL.md. The model knows how to search, analyze, generate, format — don't restate. Decision rules over absolutes for judgment calls; no arbitrary numbers; low-arousal tone.
+Branch on intent. *Creating*: discover the goal, audience, and the specific gap; draft the minimum that closes it. *Updating*: find each existing line's gap before changing anything around it — patches that replace often beat patches that add. *Reviewing*: of each line ask *"would the model do this without it?"* — flag the no's. *Diagnosing a failing prompt*: see `references/metaprompting.md` — find the line driving the symptom before patching.
 
-**Branch.** *Creating:* probe essence (one-sentence job, anti-defaults that need steering, exact contracts), then draft 1-3 paragraphs, contract data to references. *Updating / slimming:* find scaffolding per `references/review-checklist.md`, cut it; preserve every steer with the cut justified. *Reviewing:* for each line ask *"does this change behavior the model wouldn't produce without it?"* — flag the no's. *Diagnosing failure:* `references/metaprompting.md`. Discover context before drafting through targeted recommended-answer questions. Agents run isolated — declare every required tool in `tools:` frontmatter. For skills conventions, the canonical-template fallback, and the technique library, see `references/`.
+References load on demand. Load only the ones whose trigger fires:
+
+- `references/system-prompts.md` — when writing a system prompt that ships in a deployment loop and warrants section structure (real degradation paths, real constraints, real stop conditions).
+- `references/skills.md` — when writing a skill (anything in a `SKILL.md` + `references/` folder layout that activates a behavior).
+- `references/knowledge-skills.md` — when writing a skill whose gap is data the model lacks rather than behavior it gets wrong (API references, schema lookups, internal conventions).
+- `references/agents.md` — when writing an agent (anything that runs in isolation with its own declared tool set).
+- `references/patterns.md` — when filling a non-trivial section in any prompt type and a known technique fits the gap (verification, narrate-execute-confirm, tool-call escalation, output contracts, ambiguity handling, high-risk self-check, decision rules over absolutes, emotional tone).
+- `references/review.md` — when reviewing or updating an existing prompt.
+- `references/metaprompting.md` — when diagnosing a failing prompt against logged traces.

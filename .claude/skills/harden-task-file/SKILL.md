@@ -56,9 +56,9 @@ If the first analysis finds no gaps, invoke the reviewer once and exit if clean 
 
 Each iteration achieves:
 - **Gaps identified** via orthogonality analysis
-- **Additions designed** — invoke the `prompt-engineering:prompt-engineering` skill before proposing changes
+- **Additions designed** — invoke the prompt-engineering skill before proposing changes
 - **User-approved additions** applied (all additions via AskUserQuestion)
-- **Quality validated** — invoke the `prompt-engineering:review-prompt` skill on the task file after applying changes
+- **Quality validated** — invoke the review-prompt skill on the task file after applying changes
 - **Reviewer findings evaluated critically** — not all are valid. Present assessment with rationale; user decides
 - **Log updated** after each round
 
