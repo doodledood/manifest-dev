@@ -122,7 +122,7 @@ dist/codex/
 │   ├── adr/
 │   ├── handoff/
 │   ├── prompt-engineering/
-│   ├── review/
+│   ├── review-pr/
 │   └── walk-pr/
 ├── agents/                          # 17 TOML config stubs
 │   ├── change-intent-reviewer.toml

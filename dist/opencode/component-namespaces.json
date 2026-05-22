@@ -15,7 +15,7 @@
     "adr": "-manifest-dev-tools",
     "handoff": "-manifest-dev-tools",
     "prompt-engineering": "-manifest-dev-tools",
-    "review": "-manifest-dev-tools",
+    "review-pr": "-manifest-dev-tools",
     "walk-pr": "-manifest-dev-tools"
   },
   "agents": {
@@ -46,7 +46,7 @@
     "adr": "-manifest-dev-tools",
     "handoff": "-manifest-dev-tools",
     "prompt-engineering": "-manifest-dev-tools",
-    "review": "-manifest-dev-tools",
+    "review-pr": "-manifest-dev-tools",
     "walk-pr": "-manifest-dev-tools"
   }
 }

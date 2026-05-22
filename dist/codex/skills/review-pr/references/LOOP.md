@@ -1,6 +1,6 @@
 # --loop mode
 
-Bypass the approval gate entirely — initial post and every rerun run autonomously. The user kicks off /review --loop and walks away.
+Bypass the approval gate entirely — initial post and every rerun run autonomously. The user kicks off /review-pr --loop and walks away.
 
 ## Initial post + watch
 
