@@ -7,7 +7,7 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 | Type | Count | Description |
 |------|-------|-------------|
 | Skills | 12 | Core workflow skills plus manifest-dev-tools utilities |
-| Agents | 16 | Specialized reviewer and verification agents |
+| Agents | 17 | Specialized reviewer and verification agents |
 | Commands | 10 | User-invocable slash commands for core workflows and tools utilities |
 | Plugin | 1 | TypeScript hook plugin for workflow enforcement |
 | Context | 1 | AGENTS.md workflow overview |
@@ -41,7 +41,7 @@ bash dist/opencode/install.sh
 The install script:
 - Copies core skills to `~/.config/opencode/skills/` with `-manifest-dev` suffix
 - Copies manifest-dev-tools skills to `~/.config/opencode/skills/` with `-manifest-dev-tools` suffix
-- Copies agents to `~/.config/opencode/agents/` with `-manifest-dev` suffix
+- Copies agents to `~/.config/opencode/agents/` with the plugin-owned suffix (`-manifest-dev` for core, `-manifest-dev-tools` for tools)
 - Copies commands to `~/.config/opencode/commands/` with the same plugin-owned suffixes
 - Installs plugin as `~/.config/opencode/plugins/manifest-dev.ts`
 - Copies AGENTS.md context file
@@ -144,7 +144,8 @@ dist/opencode/
 │   ├── docs-reviewer.md
 │   ├── github-pr-lifecycle.md
 │   ├── slack-poller.md
-│   └── type-safety-reviewer.md
+│   ├── type-safety-reviewer.md
+│   └── prompt-reviewer.md
 ├── commands/                        # 10 user commands
 │   ├── auto.md
 │   ├── adr.md

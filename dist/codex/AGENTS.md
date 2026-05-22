@@ -36,6 +36,10 @@ Skills handle the workflow orchestration. Agents listed below are used for verif
 - **github-pr-lifecycle**: Inspect a GitHub PR's lifecycle state (CI, threads, mergeability) and return PASS or FAIL with a natural-language hint for the caller to dispatch. Read-only; never invokes the merge button.
 - **slack-poller**: Narrate new Slack messages in a channel or thread since a cursor. Used by /figure-out-team to read deltas without re-ingesting the whole thread.
 
+## Prompt Tooling Agents
+
+- **prompt-reviewer**: Reviews an LLM prompt against the /prompt-engineering skill's gap-calibration principles. Reports issues without modifying files; tags each as `NEEDS_USER_INPUT` (only the author can resolve) or `AUTO_FIXABLE` (clear fix exists), for downstream consumption by /auto-optimize-prompt. Installs with `-manifest-dev-tools` suffix.
+
 ## How to Use
 
 These agents are configured as TOML files in `agents/`. On Codex CLI, the multi-agent system uses these configs to approximate scoped subagent behavior. Skills invoke agents by name during verification workflows.

@@ -25,7 +25,7 @@ Generate distribution packages for OpenCode and Codex CLI from the Claude Code p
 
 Sync only these source payloads:
 - `claude-plugins/manifest-dev/` — core workflow skills, agents, hooks, context.
-- `claude-plugins/manifest-dev-tools/` — tools skills only (`skills/`); no agents/hooks/context.
+- `claude-plugins/manifest-dev-tools/` — tools skills (`skills/`) and tools agents (`agents/`); no hooks/context.
 
 Never sync other plugins (e.g., `manifest-dev-collab` — uses Agent Teams/Slack, inherently incompatible). Never modify source files. Skip `sync-tools` skill from output (meta-tool).
 

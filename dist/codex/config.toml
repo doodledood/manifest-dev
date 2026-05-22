@@ -68,6 +68,10 @@ config_file = "agents/slack-poller.toml"
 description = "Audit code for type safety issues across typed languages"
 config_file = "agents/type-safety-reviewer.toml"
 
+[agents.prompt-reviewer]
+description = "Review LLM prompts against the prompt-engineering skill's gap-calibration principles"
+config_file = "agents/prompt-reviewer.toml"
+
 # MCP Servers (none required — add your own as needed)
 # [mcp_servers.example]
 # command = "npx"

@@ -39,7 +39,7 @@ PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIF
 
 ## Agents
 
-16 specialized subagents, all read-only:
+17 specialized subagents, all read-only:
 
 | Agent | Purpose |
 |-------|---------|
@@ -59,6 +59,7 @@ PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIF
 | github-pr-lifecycle | Steerable GitHub PR lifecycle inspection — returns natural-language hint for /do to dispatch. Read-only; never invokes the merge button. |
 | slack-poller | Narrate new Slack messages in a channel or thread since a cursor. Used by /figure-out-team. |
 | type-safety-reviewer | Type system improvements across typed languages |
+| prompt-reviewer | Reviews LLM prompts against the /prompt-engineering skill's gap-calibration principles (tools-plugin agent — installs with `-manifest-dev-tools` suffix) |
 
 ## Plugin (Hooks)
 
