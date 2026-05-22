@@ -1,6 +1,6 @@
 # Metaprompting
 
-Loaded when an existing prompt is failing in production and you want a model to help diagnose and fix it. Different from authoring: instead of writing from scratch, you feed a model the current prompt plus failure traces, get a diagnosis, then ask for a surgical revision.
+Diagnose-then-revise for a failing prompt. Instead of writing from scratch, feed a model the current prompt plus logged failure traces, get a root-cause diagnosis, then ask for a surgical revision against that diagnosis.
 
 The shape is two separate calls — diagnose first, revise second. Skipping the diagnosis (asking directly for a fix) tends to produce vague rewrites that miss the real cause.
 

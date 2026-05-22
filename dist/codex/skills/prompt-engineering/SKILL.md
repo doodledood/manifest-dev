@@ -9,4 +9,12 @@ A prompt earns its place where natural model behavior misses what's needed. Stat
 
 Branch on intent. *Creating*: discover the goal, audience, and the specific gap; draft the minimum that closes it. *Updating*: find each existing line's gap before changing anything around it — patches that replace often beat patches that add. *Reviewing*: of each line ask *"would the model do this without it?"* — flag the no's. *Diagnosing a failing prompt*: see `references/metaprompting.md` — find the line driving the symptom before patching.
 
-References load on demand, not by default. `references/system-prompts.md` for prompts in deployment loops. `references/skills.md` for skill conventions and the minimum-viable shape. `references/knowledge-skills.md` when the gap is data the model lacks, not behavior. `references/agents.md` for isolation and tool declarations. `references/patterns.md` for techniques (verification, ambiguity handling, output contracts, decision rules). `references/review.md` for the anti-pattern catalog. `references/metaprompting.md` for diagnose-then-revise on failing prompts.
+References load on demand. Load only the ones whose trigger fires:
+
+- `references/system-prompts.md` — when writing a system prompt that ships in a deployment loop and warrants section structure (real degradation paths, real constraints, real stop conditions).
+- `references/skills.md` — when writing a skill (anything in a `SKILL.md` + `references/` folder layout that activates a behavior).
+- `references/knowledge-skills.md` — when writing a skill whose gap is data the model lacks rather than behavior it gets wrong (API references, schema lookups, internal conventions).
+- `references/agents.md` — when writing an agent (anything that runs in isolation with its own declared tool set).
+- `references/patterns.md` — when filling a non-trivial section in any prompt type and a known technique fits the gap (verification, narrate-execute-confirm, tool-call escalation, output contracts, ambiguity handling, high-risk self-check, decision rules over absolutes, emotional tone).
+- `references/review.md` — when reviewing or updating an existing prompt.
+- `references/metaprompting.md` — when diagnosing a failing prompt against logged traces.
