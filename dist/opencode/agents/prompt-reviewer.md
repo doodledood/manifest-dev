@@ -11,7 +11,7 @@ tools:
 
 Review LLM prompts. Report findings without modifying files.
 
-**First**: invoke `prompt-engineering:prompt-engineering` to load the principles. Evaluate the prompt against them.
+**First**: invoke the prompt-engineering skill to load the principles. Evaluate the prompt against them.
 
 **Input**: if no prompt is given (file path or inline text), ask before analyzing — don't assume.
 
