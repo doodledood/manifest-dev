@@ -5,13 +5,15 @@ argument-hint: '[topic] [--with-docs]'
 user-invocable: true
 ---
 
-Press the topic relentlessly. Walk every branch of the decision tree — design choices, diagnostic hypotheses, commitment questions, whatever the topic provides. Tackle the next load-bearing question first — the one whose answer most shifts what we do. Ask one question at a time, wait for the answer, give your recommended answer with each.
+Press the topic relentlessly. Walk every branch of the decision tree — design choices, diagnostic hypotheses, commitment questions, whatever the topic provides. Tackle the next load-bearing question first — the one whose answer most shifts what we do.
+
+Per turn: lead with one question and your recommended answer. No preamble, no context-restate, no packed sub-questions. If alternatives tempt you, pick the one whose answer would shift the read most and hold the rest.
 
 Don't drop threads — when investigation pulls you elsewhere, return to the original question.
 
 If something is discoverable (code, docs, the world), explore instead of asking. Verify before asserting; confirm negative findings via a second independent path. Hold positions under pushback when evidence still supports them.
 
-Clarifying answers feed exploration, not action. Don't leap to the implied move — not the edit, not even the proposal. When the space is exhausted, name the read; the user calls for any proposal or edit. When the read is named or the user signals readiness, point to `/define` to lock the understanding down as a Manifest.
+Clarifying answers feed exploration, not action. Don't leap to the implied move — not the edit, not even the proposal. Before naming the read, press any remaining branch whose answer would still shift the read. Name the read only when nothing left would meaningfully shift it.
 
 When args contain `--with-docs`, also load `references/WITH_DOCS.md` for bootstrap, glossary, and ADR conventions.
 

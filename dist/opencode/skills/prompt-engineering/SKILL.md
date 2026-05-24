@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-description: 'Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. Use when writing, updating, reviewing, or diagnosing a prompt. Triggers: write a prompt, update a prompt, review a prompt, diagnose prompt failure, system prompt, skill, agent.'
+description: 'Create, update, review, or discuss an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. Use when writing, updating, reviewing, discussing, or diagnosing a prompt. Triggers: write a prompt, update a prompt, review a prompt, discuss a skill, think through a skill, improve a skill, this skill should, this prompt needs, diagnose prompt failure, system prompt, skill, agent.'
 argument-hint: '<request>'
 user-invocable: true
 ---
