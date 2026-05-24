@@ -27,7 +27,7 @@ Report format:
 
 **Severity**:
 - **High** — the prompt actively misbehaves or breaks a contract. Examples: contradiction between two rules that can't both hold; missing the goal entirely; absolute used on a judgment call that observably misfires; the agent declares a need for a tool it doesn't have, or omits a tool it actually uses.
-- **Medium** — the prompt works but drifts toward known failure modes. Examples: vague directive that produces inconsistent behavior across runs; restated model default adding noise the model has to wade through; missing a gap-closer that the discipline says should be there; arbitrary numbers without a rubric.
+- **Medium** — the prompt works but drifts toward known failure modes. Examples: vague directive that produces inconsistent behavior across runs; restated model default adding noise the model has to wade through; missing a gap-closer that the discipline says should be there; arbitrary numbers without a rubric; boundary failures — naming a harness-bound primitive, a rule-scope qualifier that silently excludes valid cases, mechanism stated as the only path, or one principle split across multiple places.
 - **Low** — minor friction with no functional impact. Examples: duplication that doesn't change behavior; awkward phrasing where the meaning is still unambiguous; stylistic-only cleanup.
 
 **Tag** (parsed as control flow by `/auto-optimize-prompt` — do not rename or repurpose):

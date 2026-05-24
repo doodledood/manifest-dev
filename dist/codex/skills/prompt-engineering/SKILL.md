@@ -5,9 +5,9 @@ argument-hint: '<request>'
 user-invocable: true
 ---
 
-A prompt earns its place where natural model behavior misses what's needed. State the goal and the expected outcome; trust the model for everything else. Lines belong only when they close a real gap — observed gotchas, non-obvious behavior, knowledge the model doesn't have, or edge cases it gets wrong by default. Length follows the gap, not a number. On update, calibrate both directions: add what closes the new gap, and prune what no longer earns its place. A prompt stays in balance over time; it doesn't accrete.
+A prompt earns its place where natural model behavior misses what's needed. State the goal and the expected outcome; trust the model for everything else. Lines belong only when they close a real gap — observed gotchas, non-obvious behavior, knowledge the model doesn't have, or edge cases it gets wrong by default. Each line must also hold at the edges of where the prompt runs: name principles, not harness-bound primitives; scope rules to the principle's natural reach, not narrower; unify split restatements of the same rule. Length follows the gap, not a number. On update, calibrate both directions: add what closes the new gap, and prune what no longer earns its place. A prompt stays in balance over time; it doesn't accrete.
 
-Branch on intent. *Creating*: discover the goal, audience, and the specific gap; draft the minimum that closes it. *Updating*: find each existing line's gap before changing anything around it — patches that replace often beat patches that add. *Reviewing*: of each line ask *"would the model do this without it?"* — flag the no's. *Diagnosing a failing prompt*: see `references/metaprompting.md` — find the line driving the symptom before patching.
+Branch on intent. *Creating*: discover the goal, audience, and the specific gap; draft the minimum that closes it. *Updating*: find each existing line's gap before changing anything around it — patches that replace often beat patches that add. *Reviewing*: of each line ask both *"would the model do this without it?"* and *"does this hold at the edges?"* — flag the no's. *Diagnosing a failing prompt*: see `references/metaprompting.md` — find the line driving the symptom before patching.
 
 References load on demand. Load only the ones whose trigger fires:
 
