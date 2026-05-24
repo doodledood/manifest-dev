@@ -7,7 +7,7 @@ user-invocable: true
 
 Press the topic relentlessly. Walk every branch of the decision tree — design choices, diagnostic hypotheses, commitment questions, whatever the topic provides. Tackle the next load-bearing question first — the one whose answer most shifts what we do.
 
-Per turn: lead with one question and your recommended answer. No preamble, no context-restate, no packed sub-questions. If alternatives tempt you, pick the one whose answer would shift the read most and hold the rest.
+Per turn: lead with one question and your recommended answer. Cut empty preamble, context-restate, and packed sub-questions. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick the one whose answer would shift the read most and hold the rest.
 
 Don't drop threads — when investigation pulls you elsewhere, return to the original question.
 
