@@ -10,6 +10,21 @@ Update is the same audit applied to a specific change. Find the new gap; close i
 
 Apply it to every line. The line earns its place if and only if the answer is *no, the model wouldn't reach this on its own*.
 
+## The boundary check
+
+> *Does this line still hold at the edges of where this prompt will run?*
+
+A line can earn its place locally and still be brittle. The earn-your-place question is point-wise; the boundary check tests each line against the conditions it'll actually meet. Run both — they catch different failures.
+
+| Edge | Symptom | Fix |
+|------|---------|-----|
+| **Harness** | Names a primitive bound to one harness (`AskUserQuestion`, `subscribe_pr_activity`, `ExitPlanMode`, an MCP tool by name) | State the principle; let the model pick whatever tool the harness exposes |
+| **Scope qualifier** | Rule has a qualifier (`by another reviewer`, `under --loop only`, `in mode X`) that excludes cases the principle should also cover | Drop the qualifier or broaden it to match the principle's reach |
+| **Mechanism-as-prescription** | Specific numbers or a fixed sequence stated as the only path (`15→30→60→120 min`, `Max 3 iterations`, a hardcoded tool chain) | State the principle; numbers and sequences become defaults, not the rule |
+| **Split of same rule** | Same principle restated in multiple places with slight variations (one general, one mode-specific) | Unify into one rule, delete the splits |
+
+A line that passes earn-your-place but fails boundary is fragile — works today, breaks the first time the prompt runs in a different harness, mode, or scope. Boundary fixes usually *reword* the line rather than delete it.
+
 ## Anti-patterns
 
 | Anti-pattern | Example | Fix |
