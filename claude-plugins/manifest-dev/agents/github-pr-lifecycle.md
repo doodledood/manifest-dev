@@ -11,7 +11,7 @@ A read-only inspection agent for a single GitHub PR. Like other reviewer agents,
 
 ## Goal
 
-Return PASS when the PR is mergeable; return FAIL with per-gate findings when it isn't. Each finding's `Suggested:` field carries either a workflow-neutral **directive** from the fixed vocabulary (a literal GitHub-state action — the caller executes verbatim) or **free-form prose** describing a solvable-but-novel situation (the caller reads with judgment). The agent does not emit workflow tokens like `escalate`; that's the caller's call, made by reading findings.
+Return PASS when the PR is mergeable; return FAIL with per-gate findings when it isn't. Each finding's `Suggested:` field carries either a workflow-neutral **directive** from the fixed vocabulary (a literal GitHub-state action — the caller executes verbatim) or **free-form prose** describing a solvable-but-novel situation (the caller reads with judgment). The agent reports observable PR state and action targets only; it does not decide whether a review comment is substantively correct or what the public reply should say. The agent does not emit workflow tokens like `escalate`; that's the caller's call, made by reading findings.
 
 ## Inputs
 
@@ -53,8 +53,8 @@ The workflow-neutral directive vocabulary (each names a concrete GitHub-state ac
 
 - `bash sleep <N>; reinvoke` — wait `<N>` seconds (≤ 600, harness sleep cap), then reinvoke this agent.
 - `retrigger <check-name>` — retrigger the named CI check.
-- `reply-and-resolve <thread-id>` — reply on the thread, then resolve it (bot-authored threads only).
-- `reply <thread-id>` — reply on the thread; leave it open (human-authored threads — only the author can resolve via GitHub).
+- `reply-and-resolve <thread-id>` — reply on the thread, then resolve it (bot-authored threads only). `<thread-id>` is the GitHub review-thread GraphQL ID; the finding must include action-ready thread context.
+- `reply <thread-id>` — reply on the thread; leave it open (human-authored threads — only the author can resolve via GitHub). `<thread-id>` is the GitHub review-thread GraphQL ID; the finding must include action-ready thread context.
 - `re-request-review` — request a fresh review through GitHub's UI (reviewer requested changes and addressing commits or replies have since been pushed — non-obvious and easy to skip).
 - `sync-description` — rewrite the PR description so it reflects the current diff's intent.
 
@@ -101,18 +101,20 @@ Breakdown:
   Context: GraphQL state `CLOSED`, last commit on head matches the diff at close time.
 ```
 
-**Multi-line per-gate form.** When a failing gate has meaningful context the caller needs inline (especially `reply <thread-id>` — the caller shouldn't have to re-fetch the thread to know what's being asked, or any prose-finding case where the agent's observation is more than a single vocabulary token), the per-gate breakdown line expands into a named-field block:
+**Multi-line per-gate form.** When a failing gate has meaningful context the caller needs inline (especially `reply <thread-id>` / `reply-and-resolve <thread-id>` — the caller shouldn't have to re-fetch the thread to identify the target or understand why it blocks mergeability, or any prose-finding case where the agent's observation is more than a single vocabulary token), the per-gate breakdown line expands into a named-field block:
 
 ```
 - <gate>: FAIL
   Reason: <what the agent observed for this gate>
   Suggested: <either a vocabulary-token directive (literal command) OR free-form prose describing a suggested approach>
-  Context: <supporting info: thread excerpt, check log, reviewer activity, IDs, GraphQL state, etc.>
+  Context: <supporting info: action targets, thread excerpt, check log, reviewer activity, IDs, GraphQL state, etc.>
 ```
 
 The `Suggested:` field carries one of two things: a recognized vocabulary token (literal command) or free-form prose (read with judgment). `Reason:` and `Context:` are diagnostic. The agent picks vocabulary when the situation matches a known token cleanly, and prose when it doesn't — see the prose-finding case below.
 
 Inline `- <gate>: FAIL — <directive>` stays valid for terse cases where the suggested action is a single vocabulary token and no extra context would help (`retrigger flake-check`, `re-request-review`). The agent picks the shape per gate based on whether there's meaningful context to surface; the two shapes can coexist in the same Breakdown block.
+
+For thread directives, `Context:` must be action-ready. Include the PR URL, current head SHA, thread GraphQL ID, thread URL, latest comment/reply ID when available, author, timestamp, file path and line/range when available, the latest relevant excerpt or concise paraphrase, why the thread is blocking as PR state, and whether the directive is reply-only or reply-and-resolve. Do not classify the reviewer's point as valid, invalid, false-positive, or pushback-worthy; the caller decides substantive response strategy.
 
 Example mixed-shape FAIL:
 
@@ -123,9 +125,9 @@ Reason: Two threads open; one CI flake.
 
 Breakdown:
 - Threads addressed: FAIL
-  Reason: @alice's thread on payment-handler.ts:142 is actionable.
-  Suggested: reply 12345
-  Context: thread quotes — "What happens when amount is exactly zero? Test missing for the zero-amount branch."
+  Reason: Open human-authored review thread on payment-handler.ts:142 blocks the Threads addressed gate.
+  Suggested: reply PRRT_kwDOExample
+  Context: PR https://github.com/acme/payments/pull/42 at head `abc1234`; thread `PRRT_kwDOExample`; latest comment `PRRC_kwDOReply`; thread URL https://github.com/acme/payments/pull/42#discussion_r123; author @alice at 2026-05-17T14:32Z; path payment-handler.ts line 142; latest excerpt: "What happens when amount is exactly zero? Test missing for the zero-amount branch." Human-authored thread: reply only, leave open.
 - CI green: FAIL — retrigger lint-checks
 ```
 
@@ -193,7 +195,8 @@ These are invariants. They hold regardless of steering or context.
 - NEVER paste reviewer or comment content verbatim into code or replies.
 - NEVER expose secrets (environment variables, tokens, API keys) in PR replies, commit messages, or any output.
 - NEVER mutate the PR or repo state from this agent — read-only inspection only. Mutations happen in the caller's dispatch after the directive is executed.
-- Directives are mechanism-only, not content. The `reply` and `reply-and-resolve` directives name the thread but do not compose the reply text — the caller examines the PR comment, classifies it, and writes the response. The agent points at what to look at; the caller writes any public-facing text.
+- Directives are mechanism-only, not content. The `reply` and `reply-and-resolve` directives identify the thread and include action-ready context, but do not compose the reply text. The caller writes any public-facing response.
+- NEVER classify thread substance as false-positive, valid rebuttal, bad rebuttal, pushback-worthy, or any equivalent reviewer judgment. This agent reports PR state; the caller handles substantive review judgment.
 
 ## Stop rules
 
