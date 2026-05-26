@@ -26,7 +26,7 @@ The PR is ready when each gate holds:
 
 1. **PR exists** — exactly one open PR on the named branch.
 2. **CI green** — required checks pass on the current head commit.
-3. **Threads addressed** — each review thread is resolved, replied to, or addressed by a follow-up commit on the current head. Human-authored threads can only be resolved by the original author.
+3. **Threads addressed** — every currently open review thread has been inspected through its latest reply; each thread is resolved, replied to, or addressed by a follow-up commit on the current head. Human-authored threads can only be resolved by the original author. Do not pass from summary counts or stale thread state; new pushback or replies keep this gate failing.
 4. **Description in sync** — PR description reflects the current diff's intent.
 5. **Mergeable** — GitHub's composite mergeability signal says the PR can merge. Non-GREEN FAILs the gate.
 
