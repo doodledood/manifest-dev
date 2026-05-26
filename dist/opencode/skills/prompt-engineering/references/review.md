@@ -18,10 +18,11 @@ A line can earn its place locally and still be brittle. The earn-your-place ques
 
 | Edge | Symptom | Fix |
 |------|---------|-----|
-| **Harness** | Names a primitive bound to one harness (`AskUserQuestion`, `subscribe_pr_activity`, `ExitPlanMode`, an MCP tool by name) | State the principle; let the model pick whatever tool the harness exposes |
+| **Harness** | Names a primitive bound to one harness: a specific scheduler, prompt, approval, subscription, MCP, or CLI tool by name | State the principle or capability in natural language; let the model pick whatever tool the harness exposes |
 | **Scope qualifier** | Rule has a qualifier (`by another reviewer`, `under --loop only`, `in mode X`) that excludes cases the principle should also cover | Drop the qualifier or broaden it to match the principle's reach |
 | **Mechanism-as-prescription** | Specific numbers or a fixed sequence stated as the only path (`15→30→60→120 min`, `Max 3 iterations`, a hardcoded tool chain) | State the principle; numbers and sequences become defaults, not the rule |
 | **Split of same rule** | Same principle restated in multiple places with slight variations (one general, one mode-specific) | Unify into one rule, delete the splits |
+| **Description keyword dump** | Skill or agent description ends with a labeled list of search terms | Fold those phrases into natural-language activation prose |
 
 A line that passes earn-your-place but fails boundary is fragile — works today, breaks the first time the prompt runs in a different harness, mode, or scope. Boundary fixes usually *reword* the line rather than delete it.
 
@@ -30,7 +31,7 @@ A line that passes earn-your-place but fails boundary is fragile — works today
 | Anti-pattern | Example | Fix |
 |--------------|---------|-----|
 | **Prescribing HOW** | *"First search, then read, then analyze…"* | State the goal: *"Understand the pattern"* |
-| **Capability instructions** | *"Use grep to search"*, *"Read the file"* | Cut — the model knows how |
+| **Capability instructions** | *"Use grep to search"*, *"Read the file"* | Cut unless naming a required input source; the model knows how |
 | **Restating model defaults** | *"Be helpful"*, *"use good judgment"*, *"think carefully"* | Cut |
 | **Arbitrary limits** | *"Max 3 iterations"*, *"2-4 examples"* | Principle: *"until converged"*, *"as needed"* |
 | **Rigid checklists for runtime** | Step-by-step procedure baked in for the model to follow | Convert to goal + constraints. Order-bearing patterns (metaprompting) and author-facing checklists (like this one) are exempt — they're not steps the model follows at runtime. |
@@ -81,7 +82,7 @@ Not all repetition is bloat. **Intentional emphasis** reinforces a critical rule
 - Complexity matches the gap — no section longer than its job requires.
 - Emotional tone calibrated — no all-caps urgency, no excessive praise; failure normalized for iterative prompts.
 - If user-facing (conversational / customer-facing): Personality section present and calibrated.
-- If a skill: directory with SKILL.md + companions; description is a trigger spec (what + when + trigger terms); see `skills.md`.
+- If a skill: directory with SKILL.md + companions; description is natural-language activation prose (what + when + user phrases); see `skills.md`.
 - If an agent: every required tool declared in `tools:` frontmatter; see `agents.md`.
 - If restructuring: high-signal content preserved, relocated, or folded — not silently dropped.
 

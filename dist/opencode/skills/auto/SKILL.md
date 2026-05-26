@@ -1,6 +1,6 @@
 ---
 name: auto
-description: 'End-to-end autonomous execution: figure-out → define → do, chained without manual approval gates. Use when you want to define and execute without intervention during planning. Triggers: auto, autonomous, end-to-end, just build it, tend pr, babysit pr.'
+description: 'End-to-end autonomous execution: figure-out → define → do, chained without manual approval gates. Use when you want to define and execute without intervention during planning, when the user asks for autonomous or end-to-end work, says just build it, or asks to tend or babysit a PR.'
 argument-hint: '[task] [--babysit <pr-url>]'
 user-invocable: true
 ---

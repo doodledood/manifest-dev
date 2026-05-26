@@ -1,5 +1,5 @@
 ---
-description: 'Audit code for testability issues. Identifies code requiring excessive mocking, business logic buried in IO, non-deterministic inputs, and tight coupling that makes verification hard. Use after implementing features, during refactoring, or before PRs. Triggers: testability, hard to test, too many mocks, testable design.'
+description: 'Audit code for testability issues. Identifies code requiring excessive mocking, business logic buried in IO, non-deterministic inputs, and tight coupling that makes verification hard. Use after implementing features, during refactoring, before PRs, or when checking whether code is hard to test, needs too many mocks, or should be made more testable.'
 mode: subagent
 temperature: 0.2
 tools:

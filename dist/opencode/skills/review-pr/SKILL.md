@@ -1,6 +1,6 @@
 ---
 name: review-pr
-description: 'Autonomous PR review that posts high-signal, human-voiced comments under your account. Use when reviewing someone else''s PR (or your own manifest-driven PR) and you want a precision-tuned review you can walk away from. Triggers: review pr, autonomous review, post pr review, autoreview, loop review, watch pr review.'
+description: 'Autonomous PR review that posts high-signal, human-voiced comments under your account. Use when reviewing someone else''s PR or your own manifest-driven PR, when you want a precision-tuned review you can walk away from, or when the user asks to review a PR, post a PR review, autoreview, loop review, or watch a PR.'
 argument-hint: '[pr-url] [--manifest <path>] [--bundle <urls>] [--loop]'
 user-invocable: true
 ---

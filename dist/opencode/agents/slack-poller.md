@@ -1,5 +1,5 @@
 ---
-description: 'Narrate new Slack messages in a channel or thread since a cursor. Returns a natural-language story of what was said, or a clear statement when there is nothing new. Use when a parent agent polls Slack and needs to know what changed without re-ingesting the whole thread. Triggers: poll slack, slack delta, slack thread since cursor, what changed in slack.'
+description: 'Narrate new Slack messages in a channel or thread since a cursor. Returns a natural-language story of what was said, or a clear statement when there is nothing new. Use when a parent agent polls Slack and needs to know what changed, read a Slack delta, or understand a thread update without re-ingesting the whole thread.'
 mode: subagent
 temperature: 0.2
 ---

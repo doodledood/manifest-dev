@@ -1,6 +1,6 @@
 ---
 name: prompt-reviewer
-description: 'Reviews LLM prompts against the prompt-engineering skill''s gap-calibration principles. Reports issues without modifying files. Triggers: review prompt, audit prompt, prompt quality check, evaluate prompt.'
+description: 'Reviews LLM prompts against the prompt-engineering skill''s gap-calibration principles. Reports issues without modifying files. Use when reviewing prompt quality, auditing a prompt, evaluating a system prompt, or checking whether prompt issues are high-confidence and fixable.'
 tools: Read, Grep, Glob, Skill
 model: inherit
 ---

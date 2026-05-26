@@ -4,22 +4,22 @@ Agents run in isolation. They don't inherit the parent's conversation context, t
 
 This isolation creates two specific gaps that natural model behavior won't close on its own.
 
-## Tool declarations
+## Capability declarations
 
-An agent only has the tools listed in its `tools:` frontmatter. If the agent's job needs Bash, Read, Grep, Edit, WebFetch — every one of those must appear. Missing tools don't produce a graceful fallback; the agent simply can't perform that action.
+An agent only has the capabilities granted by its frontmatter or harness config. If the job needs command execution, file reading, code search, editing, web/doc lookup, subagent launch, skill invocation, or progress-log writing, the current harness's corresponding capability must be declared. Missing capabilities don't produce a graceful fallback; the agent simply can't perform that action.
 
-Audit: read what the agent does step by step. For every capability mentioned in the prompt (explicit or implicit), check it has the matching tool. Common implicit needs:
+Audit: read what the agent does step by step. For every capability mentioned in the prompt (explicit or implicit), check it has the matching declaration. Common implicit needs:
 
-- *"Search the codebase"* → Grep, Glob, or Bash
-- *"Read this file"* → Read
-- *"Make a change"* → Edit or Write
-- *"Run the tests"* → Bash
-- *"Look up the docs"* → WebFetch or WebSearch
-- *"Spawn a subagent"* → TaskCreate
-- *"Invoke a skill"* → Skill or SlashCommand
-- *"Write a progress log"* → Write
+- *"Search the codebase"* requires code search capability
+- *"Read this file"* requires file-read capability
+- *"Make a change"* requires file-edit capability
+- *"Run the tests"* requires command execution
+- *"Look up the docs"* requires web or documentation lookup
+- *"Spawn a subagent"* requires subagent launch capability
+- *"Invoke a skill"* requires skill invocation capability
+- *"Write a progress log"* requires file-write capability
 
-Omit `tools:` entirely to inherit the parent's tool set — useful for general-purpose agents where the parent's permissions are appropriate.
+Use the current harness's inheritance mechanism when a general-purpose agent should share the parent's permissions.
 
 ## Context passing
 
@@ -39,13 +39,13 @@ Agents return a single message back to the parent. If the parent needs structure
 ---
 name: agent-name             # required
 description: '…'              # required, used in the agent listing
-tools: Bash, Read, Grep, …   # explicit list, or omit to inherit
-model: inherit               # optional; inherit, opus, sonnet, haiku
+tools: …                     # optional harness-specific capability list
+model: inherit               # optional, harness-specific
 ---
 ```
 
 ## Gotchas
 
-- **Forgetting tools the prompt implicitly needs.** An agent told to "report findings to a log file" without `Write` in `tools:` will fail silently or hallucinate the write.
+- **Forgetting capabilities the prompt implicitly needs.** An agent told to "report findings to a log file" without file-write capability will fail silently or hallucinate the write.
 - **Briefing the agent as if it has parent context.** *"As we discussed, …"* is meaningless to an agent that doesn't see the parent's conversation.
 - **Spawning agents for trivial work.** If the parent could do the task in two tool calls, the spawn overhead is wasted. Reserve agents for genuinely parallel or genuinely independent work, or for protecting the parent's context from large result sets.

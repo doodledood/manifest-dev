@@ -123,8 +123,8 @@ The agent disengages after generating the canvas and re-engages only when the us
 When the user clicks **Copy as prompt** and pastes the bundle into chat, the agent has the full set of topic responses. It then:
 
 1. Synthesizes review-comment prose from each non-empty textarea — line-anchored where the topic ties to a specific code location, file-level or PR-level otherwise. Captured-no-comment items appear in the plan summary as `captured — no comment` but generate no PR comment.
-2. Calls `ExitPlanMode` with the plan-of-comments as the proposed plan.
-3. On approval, posts the comments as a single PR review using available GitHub tools (`gh pr review` / `mcp__github__pull_request_review_write` / API).
+2. Presents the plan-of-comments through the harness's approval/planning mechanism.
+3. On approval, posts the comments as a single PR review using the available GitHub review mechanism.
 
 After posting, the canvas is redundant. Whether and how the PR's author addresses the comments is the manifest workflow's job, not /walk-pr's.
 

@@ -1,5 +1,5 @@
 ---
-description: 'Reviews LLM prompts against the prompt-engineering skill''s gap-calibration principles. Reports issues without modifying files. Triggers: review prompt, audit prompt, prompt quality check, evaluate prompt.'
+description: 'Reviews LLM prompts against the prompt-engineering skill''s gap-calibration principles. Reports issues without modifying files. Use when reviewing prompt quality, auditing a prompt, evaluating a system prompt, or checking whether prompt issues are high-confidence and fixable.'
 mode: subagent
 temperature: 0.2
 tools:

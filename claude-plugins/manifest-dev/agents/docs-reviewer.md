@@ -1,6 +1,6 @@
 ---
 name: docs-reviewer
-description: Audit documentation and code comments for accuracy against recent code changes. Performs read-only analysis comparing docs to code, producing a report of required updates without modifying files. Use after implementing features, before PRs, or when validating doc accuracy. Triggers: docs review, documentation audit, stale docs check.
+description: Audit documentation and code comments for accuracy against recent code changes. Performs read-only analysis comparing docs to code, producing a report of required updates without modifying files. Use after implementing features, before PRs, or when reviewing docs, auditing documentation, checking for stale docs, or validating doc accuracy.
 tools: Bash, BashOutput, Glob, Grep, Read, WebFetch, TaskCreate, WebSearch, Skill
 ---
 

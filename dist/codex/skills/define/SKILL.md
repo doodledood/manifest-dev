@@ -1,6 +1,6 @@
 ---
 name: define
-description: 'Manifest builder. Turns shared understanding into a verifiable Manifest with Deliverables, Acceptance Criteria, Global Invariants, and Approach. Use when planning features, scoping refactors, debugging complex issues, or whenever a task needs structured thinking before coding. Triggers: define, manifest, scope, plan, spec out, break down.'
+description: 'Manifest builder. Turns shared understanding into a verifiable Manifest with Deliverables, Acceptance Criteria, Global Invariants, and Approach. Use when planning features, scoping refactors, debugging complex issues, or when the user asks to define, scope, plan, spec out, make a manifest, or break down a task.'
 argument-hint: '[task] [<manifest-path> to amend] [--babysit <pr-url>] [--canvas]'
 user-invocable: true
 ---
@@ -10,6 +10,8 @@ Encode the conversation's shared understanding as a Manifest at `<scratch>/manif
 **Encoding discipline.** figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to lock as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
 
 **Task files.** Identify task type; load applicable files from `tasks/` per `tasks/README.md` — their gates and Defaults auto-encode before the interview. For code tasks, also compose `tasks/PR_LIFECYCLE.md` when origin is on github.com; probe if origin is missing or a github-enterprise host. Per-repo for multi-repo manifests.
+
+**Verifier prompt discipline.** Before writing `verify.prompt` fields, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. Verifier prompts are prompts: state the verifier's goal, evidence to inspect, PASS/FAIL/BLOCKED contract, and non-obvious context. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
 
 ## Manifest Schema
 

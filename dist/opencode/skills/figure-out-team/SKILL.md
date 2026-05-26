@@ -1,6 +1,6 @@
 ---
 name: figure-out-team
-description: 'Drive a multi-party deliberation in a Slack channel or thread. The agent is an involved orchestrator — presses rigorously, brings evidence, names trade-offs, surfaces disagreements, advances when answers cohere; owner-by-Slack-handle overrules. Use when the people involved can''t all sit in a Claude Code chat and the deliberation has to happen where they already talk. Triggers: figure out with team, slack figure-out, team press, async deliberation, group thinking, get the team aligned.'
+description: 'Drive a multi-party deliberation in a Slack channel or thread. The agent is an involved orchestrator — presses rigorously, brings evidence, names trade-offs, surfaces disagreements, advances when answers cohere; owner-by-Slack-handle overrules. Use when the people involved cannot all sit in one chat, when deliberation has to happen in Slack, or when the user asks to figure out with the team, press a group asynchronously, or get the team aligned.'
 argument-hint: '[topic] [--with-docs]'
 user-invocable: true
 ---

@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: 'Produce a self-contained context payload that lets a fresh agent continue the current work without re-deriving or re-learning what this session already established. Two triggers: cross-boundary transfer (switching tools — Claude Code ↔ Codex — starting a clean session, or handing off to another agent) and DIY sub-agent (spin off a focused side-session and hand back, keeping the parent thread clean). Triggers: handoff, cross-tool handoff, context payload, hand off context, fresh session bootstrap, transfer to a new agent, lateral spawn-and-return, DIY sub-agent.'
+description: 'Produce a self-contained context payload that lets a fresh agent continue without re-deriving what this session established. Use for cross-boundary transfer such as switching tools, starting a clean session, or handing off to another agent, and for DIY sub-agent flows where a focused side-session returns context to the parent.'
 argument-hint: '<what the next session is for>'
 user-invocable: true
 ---

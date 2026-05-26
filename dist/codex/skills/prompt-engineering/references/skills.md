@@ -26,14 +26,16 @@ Start here. Add only when the gap requires it.
 
 A skill is a directory, not a file. SKILL.md is the entry; companion files live alongside (`references/`, `assets/`, `scripts/`, config). The file system is part of the context engineering — what lives next to SKILL.md shapes what Claude can reach when the skill fires.
 
-## Description is the trigger
+## Description is activation prose
 
-The frontmatter `description` field is what Claude's skill discovery scans at session start. Write it as a trigger spec, not a human summary.
+The frontmatter `description` field is what skill discovery scans at session start. Write it as natural-language activation prose, not a keyword dump or human-facing summary.
 
-Pattern: **what the skill does + when to use it + trigger terms the user actually says**, under 1024 chars (enforced).
+Pattern: **what the skill does + when to use it + phrases the user actually says**, integrated into prose under 1024 chars (enforced).
 
 Weak: *"Helps with code review."*
-Strong: *"Adversarial code review that spawns a fresh-eyes subagent. Use for PR review, code audit, pre-merge quality check. Triggers: review my PR, audit this code, pre-merge check."*
+Strong: *"Adversarial code review that brings fresh eyes to code changes. Use for PR review, code audit, pre-merge quality checks, or when the user asks to review a PR, audit code, or check changes before merge."*
+
+Do not append labeled keyword lists. Phrases users actually say belong in the sentence where they explain when the skill should activate.
 
 The description is also where downstream agents inherit the skill's framing — if your description says "slim discipline" or "minimize tokens," agents reading the skill list will think that's the discipline before they invoke. Lead with the *principle* the skill embodies.
 
@@ -60,14 +62,14 @@ Skills that need user-specific configuration (channel names, project IDs, output
 ```yaml
 ---
 name: kebab-case-name       # required, lowercase, hyphens, max 64 chars
-description: '…'             # required, trigger spec, max 1024 chars
+description: '…'             # required, natural-language activation prose, max 1024 chars
 argument-hint: '<request>'  # optional, shown in slash-command UI
 user-invocable: true        # optional, default true; false hides from the command menu
 tools: …                    # optional; omit to inherit invoker's tools (recommended)
 ---
 ```
 
-Omit `tools` to inherit. Declare `tools` only when the skill must run with a restricted set (rare).
+Default to omitting `tools` or equivalent capability declarations for skills. In most harnesses, skills should inherit the invoking context's capabilities; declare tools only when the skill intentionally needs a restricted set, which is rare.
 
 ## Common skill shapes (not archetypes — observations)
 

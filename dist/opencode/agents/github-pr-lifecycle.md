@@ -1,5 +1,5 @@
 ---
-description: 'Read-only inspection agent for a single GitHub PR — checks CI, review threads, description sync, and mergeability; reports PASS or FAIL with per-gate findings. Never invokes the merge button. Use when verifying a PR is ready to merge, polling lifecycle progress between calls, or babysitting a PR through CI and approvals. Triggers: PR lifecycle, check PR ready, verify PR mergeable, PR babysit, lifecycle check, github PR mergeable.'
+description: 'Read-only inspection agent for a single GitHub PR — checks CI, review threads, description sync, and mergeability; reports PASS or FAIL with per-gate findings. Never invokes the merge button. Use when verifying a PR is ready to merge, polling lifecycle progress, checking mergeability, or babysitting a GitHub PR through CI and approvals.'
 mode: subagent
 temperature: 0.2
 ---

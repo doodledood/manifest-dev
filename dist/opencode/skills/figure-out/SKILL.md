@@ -1,6 +1,6 @@
 ---
 name: figure-out
-description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when you need to understand something before acting, or when figuring it out IS the goal. Triggers: figure out, help me think through, dig deeper, press this, what is really going on, investigate, work through, why does.'
+description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when you need to understand before acting, when figuring it out is the goal, or when the user asks to think through a decision, dig deeper, press an assumption, investigate why something is happening, or work through a problem.'
 argument-hint: '[topic] [--with-docs]'
 user-invocable: true
 ---

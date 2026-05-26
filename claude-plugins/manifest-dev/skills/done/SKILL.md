@@ -1,6 +1,6 @@
 ---
 name: done
-description: 'Completion marker for the /do workflow. Outputs a plain-prose summary of what was built. Called by /do after every Acceptance Criterion and Global Invariant verifies PASS, not directly. Triggers: completion summary, manifest complete, all criteria pass, finish manifest, summarize completion, wrap up, mark done.'
+description: 'Completion marker for the /do workflow. Outputs a plain-prose summary of what was built. Called by /do after every Acceptance Criterion and Global Invariant verifies PASS, when the manifest is complete, all criteria pass, or the workflow needs to wrap up with a completion summary.'
 user-invocable: false
 ---
 

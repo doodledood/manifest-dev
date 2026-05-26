@@ -1,6 +1,6 @@
 ---
 name: context-file-adherence-reviewer
-description: Verify that code changes comply with context file instructions (CLAUDE.md, AGENTS.md) and project standards. Audits pull requests, new code, and refactors against rules defined in the project's context files. Use after implementing features, before PRs, or when validating adherence to project-specific rules. Triggers: context file compliance, project standards, adherence check.
+description: Verify that code changes comply with context file instructions (CLAUDE.md, AGENTS.md) and project standards. Audits pull requests, new code, and refactors against rules defined in the project's context files. Use after implementing features, before PRs, or when checking context-file compliance, project standards, or adherence to repo instructions.
 tools: Bash, Glob, Grep, Read, WebFetch, TaskCreate, WebSearch, BashOutput, Skill
 ---
 

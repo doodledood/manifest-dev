@@ -22,7 +22,7 @@ When prompt-reviewer is not available, encode these as individual criteria verif
 | Domain context | Domain terms, conventions, and constraints captured—not guessed |
 | Complexity fit | Prompt complexity matches the task—not over-engineered, not under-specified |
 | Memento (if multi-phase) | Multi-step prompts externalize state correctly |
-| Description (if skill/agent) | Description follows What + When + Triggers pattern |
+| Description (if skill/agent) | Description is natural-language activation prose: what it does, when to use it, and phrases users actually say |
 | Edge case coverage | Handles boundary inputs and unusual conditions, not just the happy path |
 | Model-prompt fit | Stays within model capabilities—doesn't assume unreliable behaviors |
 | Guardrail calibration | Safety boundaries neither too loose nor too tight |
@@ -36,7 +36,7 @@ When the task involves creating or updating a skill, also apply:
 | Folder architecture | Skill is a directory with SKILL.md + appropriate companions (references, assets, scripts) — not a standalone file |
 | Progressive disclosure | Domain knowledge and reference data in companion files, not front-loaded into SKILL.md |
 | Gotchas section | Contains observed failure modes — specific, actionable, grounded in real behavior (not theoretical) |
-| Description as trigger | Description field is a trigger specification (what + when + trigger terms), not a human-readable summary |
+| Description as activation prose | Description field naturally explains what the skill does and when it should activate; no appended keyword lists |
 
 ## Defaults
 

@@ -1,6 +1,6 @@
 ---
 name: change-intent-reviewer
-description: Adversarially analyze whether code, prompt, or config changes achieve their stated intent. Reconstructs change intent from diff context, then systematically attacks the logic to find behavioral divergences. Use after implementing a feature, before a PR, or when validating that changes do what they're supposed to do. Triggers: intent review, does this work, logic check, behavioral analysis, change validation.
+description: Adversarially analyze whether code, prompt, or config changes achieve their stated intent. Reconstructs change intent from diff context, then systematically attacks the logic to find behavioral divergences. Use after implementing a feature, before a PR, or when validating whether changes do what they are supposed to do, checking logic, or asking if this works.
 tools: Bash, Glob, Grep, Read, WebFetch, TaskCreate, WebSearch, BashOutput, Skill
 ---
 
