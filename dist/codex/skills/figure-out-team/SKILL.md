@@ -1,7 +1,7 @@
 ---
 name: figure-out-team
 description: 'Drive a multi-party deliberation in a Slack channel or thread. The agent is an involved orchestrator — presses rigorously, brings evidence, names trade-offs, surfaces disagreements, advances when answers cohere; owner-by-Slack-handle overrules. Use when the people involved cannot all sit in one chat, when deliberation has to happen in Slack, or when the user asks to figure out with the team, press a group asynchronously, or get the team aligned.'
-argument-hint: '[topic] [--with-docs]'
+argument-hint: '[topic] [--with-docs] [--log [path]]'
 user-invocable: true
 ---
 
@@ -20,5 +20,7 @@ Drive a deliberation across the team's Slack conversation. Press rigorously — 
 **Entry.** Required: channel-or-thread and the named participants. Infer from context (CLAUDE.md, conversation, repo config); ask the operator once in Claude Code chat (never in Slack) if you can't. Same inference-first-then-ask for topic, owner handle, and roles. Prerequisite: Slack MCP available in the operator's session — fail fast with clear remediation if not.
 
 **With docs (read-only).** When `--with-docs` is passed, load `CONTEXT.md` at repo root before pressing, and follow `CONTEXT-MAP.md` to the relevant context's `CONTEXT.md` if the map exists. Use the loaded vocabulary and relationships to recognize project terms in Slack messages, reference prior decisions when relevant, and avoid re-asking what is already canonicalized. **Read-only boundary** — the agent does NOT write `CONTEXT.md` captures, does NOT propose initialization if docs are missing, and does NOT offer or write ADRs from the Slack thread. The team's docs capture happens through other channels: manual edits, or `figure-out --with-docs` in Claude Code chat where a single trusted operator owns the writes. Slack is too multi-voice and noisy for inline doc capture; this flag only enriches the agent's context, never the docs themselves.
+
+**Local log.** When `--log` is passed as this skill's option, load `references/LOG.md` and keep a local append-only investigation log. If `--log` appears quoted, code-formatted, or as part of the topic being investigated, ask whether to enable logging before loading it. The log is a local file artifact only; do not post it to Slack or send it as a Slack message.
 
 When the conversation lands, post a wrap-up synthesis to Slack so the team sees what was decided; control returns to Claude Code with the operator.

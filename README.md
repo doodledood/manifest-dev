@@ -38,7 +38,7 @@ Then use it:
 /define --babysit <pr-url>        # just synthesize the manifest
 
 # Figure something out (problem space foggy, or understanding IS the goal)
-/figure-out <topic or problem>
+/figure-out <topic or problem> [--log [path]]
 ```
 
 `/define` interviews you and builds a manifest. `/do` executes it and verifies each criterion inline by spawning a subagent. `/auto` chains both — define autonomously, auto-approve, execute — in a single command. `/figure-out` is the thinking-partner skill — a truth-convergent peer that investigates before claiming, surfaces the load-bearing crux with each move, and resists premature synthesis. `/define` auto-invokes it when the problem space is foggy; you can also call it directly when figuring it out IS the goal.
@@ -316,8 +316,8 @@ The Claude Code plugins are the source of truth. Per-CLI distributions under `di
 | `/auto` | User-invoked | End-to-end autonomous: `/define` → auto-approve → `/do`. Supports `--platform` and `--babysit <pr-url>` for tending an existing PR through to mergeable. |
 | `/done` | Internal | Plain-prose completion summary called by `/do` after every criterion verifies PASS. |
 | `/escalate` | Internal | Structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from the user. Routes via `/do`. |
-| `/figure-out` | User-invoked | Primary thinking-partner skill. Peer working a problem with the user: investigates before claiming, delivers each next-move with its load-bearing crux, walks decision trees for design-shaped tasks, holds positions under social pressure. Pass `--with-docs` to opt into bootstrap, inline glossary captures, and ADR offers. |
-| `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. Involved orchestrator (brings evidence, viewpoints, synthesis); polls the thread via `/loop`, reads via the `slack-poller` subagent; owner-by-Slack-handle overrules disagreement. Pass `--with-docs` (read-only) to load CONTEXT.md as background context for the deliberation. |
+| `/figure-out` | User-invoked | Primary thinking-partner skill. Peer working a problem with the user: investigates before claiming, delivers each next-move with its load-bearing crux, walks decision trees for design-shaped tasks, holds positions under social pressure. Pass `--with-docs` to opt into bootstrap, inline glossary captures, and ADR offers; pass `--log [path]` to keep an append-only narrative investigation log for long sessions. |
+| `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. Involved orchestrator (brings evidence, viewpoints, synthesis); polls the thread via `/loop`, reads via the `slack-poller` subagent; owner-by-Slack-handle overrules disagreement. Pass `--with-docs` (read-only) to load CONTEXT.md as background context for the deliberation; pass `--log [path]` to keep a local append-only narrative investigation log without posting it to Slack. |
 
 ### Review Agents
 

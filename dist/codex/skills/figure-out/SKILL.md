@@ -1,7 +1,7 @@
 ---
 name: figure-out
 description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when you need to understand before acting, when figuring it out is the goal, or when the user asks to think through a decision, dig deeper, press an assumption, investigate why something is happening, or work through a problem.'
-argument-hint: '[topic] [--with-docs]'
+argument-hint: '[topic] [--with-docs] [--log [path]]'
 user-invocable: true
 ---
 
@@ -17,4 +17,8 @@ Clarifying answers feed exploration, not action. Don't leap to the implied move 
 
 When args contain `--with-docs`, also load `references/WITH_DOCS.md` for bootstrap, glossary, and ADR conventions.
 
+When args contain `--log` as this skill's option, also load `references/LOG.md` and keep an append-only investigation log. If `--log` appears quoted, code-formatted, or as part of the topic being investigated, ask whether to enable logging before loading it.
+
 When args contain `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
+
+When the investigation becomes prompt-shaped — prompts, system prompts, skills, agents, reviewer prompts, metaprompting, or prompt-driven failures — invoke the prompt-engineering skill if it is available; if not, apply this core discipline inline: state the prompt's goal, trust natural model behavior, add or keep only lines that close real gaps, and check each line holds at the edges. Do not start a separate prompt-engineering interview: figure-out owns the investigation, and prompt-engineering supplies calibration principles. Ordinary non-prompt investigations should not load it.
