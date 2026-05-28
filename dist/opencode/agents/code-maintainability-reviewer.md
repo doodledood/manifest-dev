@@ -27,6 +27,8 @@ These categories are guidance, not exhaustive. If you identify a maintainability
 
 - **DRY violations**: Duplicate functions, copy-pasted logic blocks, redundant type definitions, repeated validation patterns, and similar code that should be abstracted
 - **Structural complexity**: Mixed concerns in single units (e.g., HTTP handling + business logic + persistence in one file)
+- **Conditional accretion / spaghetti growth**: New ad-hoc branches, one-off flags, nullable modes, or scattered feature checks inserted into unrelated flows. Report only when the branching has a concrete cleaner owner (state model, policy object, dispatcher, helper, or module) and makes future changes easier to miss.
+- **Large-file decomposition triggers**: When a diff pushes a non-generated source file from below roughly 1000 lines to above roughly 1000 lines, inspect whether the added code forms separable concerns. Crossing the threshold is not itself a finding; report only when decomposition would materially reduce coupling, scan cost, or change amplification.
 - **Dead code**: Unused functions, unreferenced imports, orphaned exports, commented-out code blocks, unreachable branches, and vestigial parameters
 - **Consistency issues**: Inconsistent error handling patterns, mixed API styles, naming convention violations, and divergent approaches to similar problems
 - **Concept & Contract Drift**: The same domain concept represented in multiple incompatible ways across modules/layers (different names, shapes, formats, or conventions), leading to glue code, brittle invariants, and hard-to-change systems. Look for: duplicated serialization/formatting/normalization logic across components, multiple names/structures for the same artifact across layers without a clear mapping boundary, "parity drift" between producer/consumer subsystems that should share contracts, and similar-looking identifiers with unclear semantics (e.g., `XText` vs `XDocs` vs `XPayload`)
@@ -89,6 +91,8 @@ Before reporting an issue, it must pass ALL of these criteria. **If a finding fa
 5. **Concrete impact** - "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible."
 6. **Author would prioritize** - Given limited time, would a reasonable author fix this before shipping, or defer it? If defer, it's Low severity at best.
 
+For conditional accretion, the finding must name the cleaner owner for the logic and why leaving the branch in place creates forgettability risk. For large-file growth, line count alone is never enough; the finding must identify separable concerns introduced by the diff and why extracting them would reduce review or future-change risk.
+
 ## Context Adaptation
 
 Before applying rules rigidly, consider:
@@ -124,6 +128,8 @@ Classify every issue with one of these severity levels:
 - Low module cohesion: single file handling concerns from multiple core architectural layers (HTTP/transport, business/domain logic, data access/persistence, external service integration). Supporting concerns (logging, configuration, error handling) don't count as separate layers when mixed with one core layer.
 - Low function cohesion: function name doesn't match behavior (misleading), or function does multiple distinct operations that could be separate functions
 - Low type cohesion: type spanning unrelated domains, or property that clearly belongs to a different concept (e.g., `billingAddress` on `AuthToken`)
+- Special-case branching scattered through a shared or already-busy flow when the logic has a clear owning abstraction, creating forgettability risk for the next similar case
+- A diff pushes a non-generated source file past roughly 1000 lines and the added code contains separable concerns whose extraction would materially improve cohesion or reviewability
 - Long parameter lists without parameter object
 - Unexplained `@ts-ignore`/`eslint-disable` in new code—likely hiding a real bug
 - Extensibility risk where 2+ sibling components already exist and each manually implements the same cross-cutting behavior—evidence the concern belongs at a higher level
@@ -137,6 +143,7 @@ Classify every issue with one of these severity levels:
 - Broad `eslint-disable` without specific rule (should target specific rule)
 - Minor boundary violations (one layer leaking into another)
 - Extensibility risk in new code: cross-cutting concern placed in a specific implementation where the pattern is likely to be extended
+- New local branch/mode accretion that makes a function harder to extend safely, but the cleaner owner is limited to one module
 - Function with compound name (`validateAndSave`, `fetchAndTransform`) that could be split
 - Hidden contract in internal/helper code: function relies on external state or execution order not visible in signature
 - Type growing beyond its original purpose (new property doesn't quite fit but isn't egregious)

@@ -36,6 +36,7 @@ Solutions more complex than the problem demands:
 - **Premature abstraction**: Generalizing before concrete use cases justify it (factory for one implementation, plugin system for one plugin)
 - **Unnecessary configurability**: Options that never vary in practice
 - **Speculative generality**: Code for hypothetical future requirements ("what if we need to...")
+- **Missed structural simplification**: A concrete behavior-preserving reframing would delete whole branches, helper layers, modes, or concepts rather than merely polish them. Report only when the simpler shape is visible from the code, preserves behavior, and materially reduces what the reader must hold in their head.
 
 ### 2. Premature Optimization
 
@@ -99,10 +100,13 @@ Before reporting an issue, it must pass ALL of these criteria. **If it fails ANY
 4. **Worth the simplification** - Trivial complexity (an extra variable, one level of nesting) isn't worth flagging. Focus on complexity that meaningfully increases cognitive load.
 5. **Matches codebase context** - A startup MVP can be simpler than enterprise software. A one-off script can be simpler than a shared library. Consider scale, maturity, team size, domain, and performance requirements before flagging.
 
+When looking for simplifications, prefer changes that delete concepts over changes that just rearrange complexity. Do not report speculative "there might be a better design" feedback; the simpler flow must be concrete enough that the author could implement it from the review.
+
 ## Severity Classification
 
 **High**: Complexity that significantly impedes understanding and maintenance
 - Abstraction layers with single implementation and no planned alternatives
+- A visible behavior-preserving simplification would remove multiple branches, modes, or helper layers from core logic
 - Deep nesting in core logic paths that loses context
 - Complex optimization without profiling evidence in hot paths
 - Multiple indirection layers that obscure simple operations
@@ -110,6 +114,7 @@ Before reporting an issue, it must pass ALL of these criteria. **If it fails ANY
 
 **Medium**: Complexity that adds friction but doesn't severely impede understanding
 - Moderate over-abstraction (could be simpler but isn't egregious)
+- A concrete local reframing would collapse repeated branches or helper indirection in one module
 - Nested ternaries or moderately complex boolean expressions
 - Unnecessary caching or memoization in non-critical paths
 - Somewhat cryptic naming that requires context to understand
@@ -169,7 +174,7 @@ For each issue:
 
 ```
 #### [SEVERITY] Issue Title
-**Category**: Over-Engineering | Premature Optimization | Cognitive Complexity | Clarity | Unnecessary Indirection
+**Category**: Over-Engineering | Missed Structural Simplification | Premature Optimization | Cognitive Complexity | Clarity | Unnecessary Indirection
 **Location**: file(s) and line numbers
 **Description**: Clear explanation of the unnecessary complexity
 **Evidence**: Code snippet showing the issue
