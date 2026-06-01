@@ -8,7 +8,7 @@ This project uses a **define -> do -> done** workflow, powered by skills:
 2. **/do** -- Execute against the manifest and verify inline by spawning one subagent per Acceptance Criterion and Global Invariant using the verify prompt verbatim. Aggregates PASS / FAIL / BLOCKED, fixes failures, re-verifies. Calls /done on green or routes BLOCKED via /escalate.
 3. **/done** -- Completion summary in plain prose. Called by /do after every criterion verifies PASS.
 
-Supporting skills: /auto (end-to-end autonomous; supports --babysit <pr-url> for tending an existing PR), /figure-out (truth-convergent thinking partner), /figure-out-team (multi-party async Slack deliberation), /escalate (structured blocker handoff). Tools skills install separately with the `-manifest-dev-tools` suffix: /adr, /handoff, /prompt-engineering, and /walk-pr.
+Supporting skills: /auto (end-to-end autonomous; supports --babysit <pr-url> for tending an existing PR), /figure-out (truth-convergent thinking partner), /figure-out-team (multi-party async Slack deliberation), /escalate (structured blocker handoff). Tools skills install separately with the `-manifest-dev-tools` suffix: /adr, /babysit-pr, /handoff, /prompt-engineering, /review-pr, and /walk-pr.
 
 PR-lifecycle work composes the github-pr-lifecycle agent through tasks/PR_LIFECYCLE.md task guidance. /define --babysit <pr-url> synthesizes a lifecycle manifest from an existing PR. /do drives the PR to a mergeable state — the merge button is left to a human or GitHub auto-merge.
 
@@ -54,5 +54,5 @@ multi_agent = true
 ## Known Limitations
 
 - Agents are TOML config stubs -- they approximate Claude Code's scoped agent behavior but use Codex's multi-agent paradigm.
-- Without hooks, the define -> do -> done chain is advisory (nothing enforces completion order).
+- Use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
 - Skills may not chain as reliably as on Claude Code.

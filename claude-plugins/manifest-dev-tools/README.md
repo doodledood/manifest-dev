@@ -1,15 +1,16 @@
 # manifest-dev-tools
 
-Utilities that complement manifest workflows — prompt engineering, PR walkthroughs and reviews, ADR synthesis, and cross-boundary context handoff.
+Utilities that complement manifest workflows — prompt engineering, PR babysitting, PR walkthroughs and reviews, ADR synthesis, and cross-boundary context handoff.
 
 ## Skills
 
 | Skill | Description |
 |-------|-------------|
 | `/adr` | Synthesize Architecture Decision Records from session transcripts. Extracts decisions via multi-agent pipeline and writes MADR files. |
+| `/babysit-pr` | Thin wrapper for PR lifecycle babysitting. Synthesizes a `define --babysit` manifest when needed, then hands off to `/goal /do <manifest-path>`. |
 | `/handoff` | Produce a self-contained context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, another agent) and DIY sub-agent (spin off a focused side-session and hand back). Manually invoked. |
 | `/prompt-engineering` | Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. |
-| `/review-pr` | Autonomous PR review that posts high-signal, human-voiced comments under your account. Tiered reviewer fleet + holistic coherence pass grounded against PR history, bundle context, and the author's manifest. `--loop` watches the PR, follows comment threads to closure, reruns on accumulated changes since the last reviewed head, and stops on clean latest head or safety caps. |
+| `/review-pr` | Autonomous PR review that posts high-signal, human-voiced comments under your account. Advances existing review threads, verifies fixes/replies/stale comments, runs the reviewer fleet on the relevant diff range, and posts one GitHub review. `--loop` schedules repeated one-shot passes with backoff. |
 | `/walk-pr` | Walk through a PR or large diff together, one sub-changeset at a time. |
 
 ## Agents
@@ -20,7 +21,7 @@ Utilities that complement manifest workflows — prompt engineering, PR walkthro
 
 ## How It Works
 
-These tools sit alongside the manifest workflow (`/define` → `/do` → `/done`). `/adr` operates on the *outputs* (session transcript + manifest). `/handoff` produces a context payload for two use cases: cross-boundary transfer (tool switch, fresh session, multi-agent transfer) and DIY sub-agent flows (spin off a focused side-session and hand back to the parent without polluting its context). `/prompt-engineering`, `/walk-pr`, and `/review-pr` are stand-alone collaboration tools — `/walk-pr` is the collaborative version, `/review-pr` is the autonomous version.
+These tools sit alongside the manifest workflow (`/define` → `/do` → `/done`). `/adr` operates on the *outputs* (session transcript + manifest). `/handoff` produces a context payload for two use cases: cross-boundary transfer (tool switch, fresh session, multi-agent transfer) and DIY sub-agent flows (spin off a focused side-session and hand back to the parent without polluting its context). `/prompt-engineering`, `/walk-pr`, `/review-pr`, and `/babysit-pr` are stand-alone collaboration tools — `/walk-pr` is the collaborative review surface, `/review-pr` is the autonomous reviewer, and `/babysit-pr` is the author-side PR lifecycle entrypoint.
 
 ## Installation
 

@@ -94,7 +94,7 @@ if [[ "$ACTION" == "uninstall" ]]; then
 fi
 
 # Ensure target directories exist
-mkdir -p "$TARGET"/{skills,agents,commands,plugins}
+mkdir -p "$TARGET"/{skills,agents,commands}
 
 # ---------------------------------------------------------------------------
 # Step 1: Selective cleanup of previous install (only *-manifest-dev files)
@@ -107,6 +107,7 @@ find "$TARGET/commands" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>
 find "$TARGET/commands" -maxdepth 1 -name "*-manifest-dev-tools*" -exec rm -rf {} + 2>/dev/null || true
 rm -f "$TARGET/plugins/manifest-dev.ts" 2>/dev/null || true
 rm -f "$TARGET/plugins/manifest-dev.HOOK_SPEC.md" 2>/dev/null || true
+rmdir "$TARGET/plugins" 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
 # Step 2: Run namespacing helper to copy and namespace all components
@@ -115,14 +116,7 @@ echo "Installing components with -manifest-dev namespace..."
 python3 "$SCRIPT_DIR/install_helpers.py" "$SCRIPT_DIR" "$TARGET"
 
 # ---------------------------------------------------------------------------
-# Step 3: Install plugin (no namespacing — single file, auto-loaded)
-# ---------------------------------------------------------------------------
-echo "Installing plugin..."
-cp "$SCRIPT_DIR/plugins/index.ts" "$TARGET/plugins/manifest-dev.ts"
-cp "$SCRIPT_DIR/plugins/HOOK_SPEC.md" "$TARGET/plugins/manifest-dev.HOOK_SPEC.md"
-
-# ---------------------------------------------------------------------------
-# Step 4: Install context file
+# Step 3: Install context file
 # ---------------------------------------------------------------------------
 echo "Installing AGENTS.md..."
 cp "$SCRIPT_DIR/AGENTS.md" "$TARGET/AGENTS.md"
@@ -142,7 +136,6 @@ command_count=$(find "$TARGET/commands" -maxdepth 1 \( -name "*-manifest-dev.md"
 echo "  Skills:   $skill_count"
 echo "  Agents:   $agent_count"
 echo "  Commands: $command_count"
-echo "  Plugin:   manifest-dev.ts"
 echo "  Context:  AGENTS.md"
 echo ""
 echo "Usage: /define-manifest-dev, /do-manifest-dev, /adr-manifest-dev-tools, etc."

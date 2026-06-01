@@ -27,7 +27,7 @@ _Avoid_: Guideline, best practice.
 A domain hint file loaded by `/define` to inform interview probing and pre-encode Quality Gates and Defaults.
 
 **Plugin**:
-A Claude Code extension unit composed of skills, agents, and hooks.
+A Claude Code extension unit that may contain skills, agents, and optional hooks.
 
 **Skill**:
 A markdown-defined extension (`SKILL.md` + companion files) that adds a capability to Claude Code.
@@ -39,14 +39,19 @@ _Avoid_: Subprocess, worker.
 **Hook**:
 A handler that responds to a Claude Code lifecycle event (e.g., Stop, SessionStart).
 
+**Babysit PR**:
+An author-side workflow that tends an existing pull request through CI, review threads, description sync, and mergeability without pressing merge.
+_Avoid_: Tend PR.
+
 ## Relationships
 
 - A **Manifest** contains one or more **Deliverables**.
 - A **Deliverable** has one or more **Acceptance Criteria**.
 - A **Manifest** has zero or more **Global Invariants**, applied across all Deliverables.
 - A **Task File** informs `/define`'s probing and encoding; it does not directly appear in the produced Manifest as a structural unit.
-- A **Plugin** contains zero or more **Skills**, **Agents**, and **Hooks**.
+- A **Plugin** contains zero or more **Skills**, **Agents**, and optional **Hooks**.
 - A **Skill** may invoke other **Skills** and spawn **Agents**.
+- **Babysit PR** uses a **Manifest** synthesized from an existing pull request, then `/do` executes the lifecycle **Acceptance Criterion** through the `github-pr-lifecycle` **Agent**.
 
 ## Flagged ambiguities
 
