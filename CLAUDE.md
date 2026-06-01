@@ -2,16 +2,13 @@
 
 ## Project Overview
 
-manifest-dev marketplace — manifest-driven workflows for Claude Code. `/define` interviews and writes a Manifest; `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. Ships agents, skills, and hooks.
+manifest-dev marketplace — manifest-driven workflows for Claude Code. `/define` interviews and writes a Manifest; `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. Ships agents and skills.
 
 ## Development Commands
 
 ```bash
 # Lint, format, typecheck
 ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
-
-# Test hooks (run after ANY hook changes)
-pytest tests/hooks/ -v
 
 # Test plugin locally
 /plugin marketplace add /path/to/manifest-dev
@@ -47,21 +44,8 @@ ln -sfn ../../.claude/skills/<skill-name> .agents/skills/<skill-name>
 Each plugin can contain:
 - `agents/` - Specialized agent definitions (markdown)
 - `skills/` - Skills with `SKILL.md` files (replaces deprecated commands)
-- `hooks/` - Event handlers for Claude Code events
-- `tests/hooks/` - Test suite for hooks (at repo root)
 
 **Naming convention**: Use kebab-case (`-`) for all file and skill names (e.g., `bug-fixer.md`, `clean-slop`).
-
-### Hooks
-
-Hooks are Python scripts in `hooks/` that respond to Claude Code events. The plugin ships two: `stop_do_hook.py` (Stop event — blocks premature stops during `/do`) and `post_compact_hook.py` (SessionStart event — restores `/do` workflow context after compaction). Shared utilities live in `hook_utils.py`. Hooks use `parse_do_flow()` to detect active workflows and follow a fail-open pattern (silent exit on errors).
-
-**When modifying hooks**:
-1. Run tests: `pytest tests/hooks/ -v`
-2. Run linting: `ruff check --fix claude-plugins/manifest-dev/hooks/ && black claude-plugins/manifest-dev/hooks/`
-3. Run type check: `mypy claude-plugins/manifest-dev/hooks/`
-
-**Test coverage**: Tests in `tests/hooks/` cover edge cases (invalid JSON, missing files, malformed transcripts), workflow detection, and hook output format. Add tests for any new hook logic.
 
 ### Skills
 
@@ -124,7 +108,7 @@ README-only changes don't require version bumps.
 
 ## Adding New Components
 
-When adding agents, skills, or hooks:
+When adding agents or skills:
 1. Create the component file in the appropriate directory
 2. Bump plugin version (minor for new features)
 3. Update affected plugin's `README.md` and repo root `README.md`
@@ -185,9 +169,6 @@ Prefer `cp` and `mv` bash commands over the Write tool when duplicating or movin
 ```bash
 # Lint, format, typecheck
 ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
-
-# Run hook tests if hooks were modified
-pytest tests/hooks/ -v
 ```
 
 Bump plugin version if plugin files changed.

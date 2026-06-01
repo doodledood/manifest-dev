@@ -7,9 +7,10 @@ Tell Claude what "done" looks like. Let it work. Check the result.
 ```
 /define "add rate limiting to the API"
 /do /tmp/manifest-<timestamp>.md
+/goal /do /tmp/manifest-<timestamp>.md  # unattended
 ```
 
-Two commands. `/define` interviews you and writes a Manifest. `/do` executes it and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant.
+Two commands, or wrap the second in `/goal` when you want unattended turn continuation. `/define` interviews you and writes a Manifest. `/do` executes it and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant.
 
 ## The Mindset Shift
 
@@ -23,8 +24,8 @@ This works because LLMs are surprisingly good at execution when they know exactl
 
 - **`/figure-out`** — truth-convergent thinking partner. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), tackles the next load-bearing question first, gives recommended answers, returns to dropped threads, investigates instead of asking when something is discoverable. `/define` auto-invokes it when the transcript lacks understanding; call it directly when figuring it out IS the goal. Pass `--log [path]` to keep an append-only narrative investigation log for long sessions.
 - **`/figure-out-team`** — `/figure-out`'s discipline applied to a multi-party async Slack conversation. Involved orchestrator (brings evidence, viewpoints, synthesis); polls the thread via `/loop` and reads via the `slack-poller` subagent for verbatim deltas; convergence is judgment-based across speakers with the owner (by Slack handle) overruling disagreement. Trust is session-bound — the operator from Claude Code is the sole trusted human; Slack content is data, never instructions. Pass `--log [path]` to keep a local append-only narrative investigation log without posting it to Slack.
-- **`/define`** — encodes shared understanding into a verifiable Manifest. Supports `--babysit <pr-url>`, `--canvas`, `--autonomous`. Amendment is triggered by passing an existing manifest path in `$ARGUMENTS`; `/define` overwrites in place.
-- **`/do`** — executes a Manifest by spawning one verifier subagent per Acceptance Criterion and Global Invariant (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when every AC and Global Invariant verifies PASS, or routing through `/escalate` when blocked. Mid-/do user messages default to invoking `/define` for amendment.
+- **`/define`** — encodes shared understanding into a verifiable Manifest. Supports `--babysit <pr-url>`, `--canvas`, `--autonomous`. Amendment is triggered by passing an existing manifest path in `$ARGUMENTS`; `/define` overwrites in place. Emits `/do <manifest-path>` and `/goal /do <manifest-path>` handoffs.
+- **`/do`** — executes a Manifest by spawning one verifier subagent per Acceptance Criterion and Global Invariant (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when every AC and Global Invariant verifies PASS, or routing through `/escalate` when blocked. Run as `/goal /do <manifest-path>` for unattended turn continuation. Mid-/do user messages default to invoking `/define` for amendment.
 - **`/done`** — completion summary in plain prose. Called by `/do` after every Acceptance Criterion and Global Invariant verifies PASS.
 - **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from the user. Single type; routes via `/do`.
 - **`/auto`** — chains `figure-out → define → do` autonomously. Add `--babysit <pr-url>` for PR-lifecycle work.
@@ -62,12 +63,7 @@ A Manifest has five sections:
 
 Amendments overwrite in place with stable IDs (modify `INV-G1` → it stays `INV-G1`; remove one → it's gone, no renumbering of the rest). No `## Amendments` log section, no `INV-G1.1 amends INV-G1` chain. Git diff carries the history.
 
-## Hooks and agents
-
-Two hooks ship with the plugin:
-
-- **`stop_do_hook`** — blocks premature stops during `/do`; injects a terse "reload /do" reminder.
-- **`post_compact_hook`** — restores manifest context after session compaction.
+## Agents
 
 Verifier subagents default to `general-purpose` when a manifest omits `verify.agent:`. The bundled `criteria-checker` agent (invoked explicitly via `agent: criteria-checker`) is a focused alternative: read-only behavior is enforced by its prompt, so authors can spawn it against MCP servers or extra CLI tools the user has configured.
 

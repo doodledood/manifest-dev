@@ -17,6 +17,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from types import ModuleType
 
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
@@ -30,7 +31,14 @@ CORE_SKILLS = (
     "figure-out",
     "figure-out-team",
 )
-TOOLS_SKILLS = ("adr", "handoff", "prompt-engineering", "walk-pr")
+TOOLS_SKILLS = (
+    "adr",
+    "babysit-pr",
+    "handoff",
+    "prompt-engineering",
+    "review-pr",
+    "walk-pr",
+)
 
 REMOVED_SKILLS = ("verify",)
 REMOVED_AGENTS = ("manifest-verifier",)
@@ -80,7 +88,7 @@ def component_namespaces(cli: str) -> dict[str, dict[str, str]]:
     }
 
 
-def load_helper(cli: str):
+def load_helper(cli: str) -> ModuleType:
     helper_path = DIST / cli / "install_helpers.py"
     spec = importlib.util.spec_from_file_location(f"{cli}_install_helpers", helper_path)
     assert spec is not None

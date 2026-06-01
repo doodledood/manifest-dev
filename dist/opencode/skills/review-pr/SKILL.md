@@ -7,7 +7,38 @@ user-invocable: true
 
 High-signal autonomous PR review posted under your account. A review you'd put your name on — precision over coverage.
 
-**Inputs.** `pr-url` from the arg or the current branch's upstream PR. `--manifest <path>` opts into grounding against the author's intent; the skill does not auto-discover from any folder convention. `--bundle <urls>` plus PR-description linked-PR parsing (`Depends on #N`, `Stack:`, `Co-changes:`, GitHub PR URLs) provides cross-PR context for coupled changes.
+**Inputs.** `pr-url` from the arg or the current branch's upstream PR. `--manifest <path>` opts into grounding against the author's intent; the skill does not auto-discover from any folder convention. `--bundle <urls>` plus PR-description linked-PR parsing (`Depends on #N`, `Stack:`, `Co-changes:`, GitHub PR URLs) provides cross-PR context for coupled changes. Resolve the PR, current head SHA, our prior GitHub reviews/comments/replies, open review threads, author commits, PR description, and linked-PR context before deciding what to do.
+
+## One-Shot Pass
+
+Every invocation, including non-`--loop`, performs one complete PR-state advance:
+
+1. **Advance our existing threads.** For every unresolved thread we authored or replied to, run the per-comment verifier below. Post needed thread replies, resolve terminal threads, and leave genuinely pending threads open.
+2. **Review new code.** Determine the review range from durable GitHub state: if we have a prior review on this PR, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. If the head is unchanged from our latest review, skip the reviewer fleet only after thread advancement has run.
+3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments.
+
+The one-shot pass is CI-shaped: it must make useful progress from only GitHub state and the current checkout. Do not rely on session memory such as `last-reviewed-sha`; derive it from our prior review/comment metadata and the PR history each run.
+
+## Per-Comment Verifier
+
+For every unresolved thread we authored or replied to, spawn one verifier subagent. The subagent receives:
+
+- The original finding: anchor, body, review commit/head SHA, and concrete concern.
+- Every author reply on this thread since our last message, plus every prior reply we posted on this thread.
+- Current code at the anchor, with nearby context, and any commits since the original review that touched the relevant range.
+- Full PR history: all comments, review threads, commit messages, current PR description, and our prior review/comment bodies.
+- Bundle context for each linked PR (≤5): diff, description, top-level conversation.
+- The voice profile below for drafting replies.
+
+The subagent returns exactly one disposition:
+
+- **`addressed-by-fix`** — A commit after our review modified the relevant code AND removes the concrete failure mode. Resolve the thread. Straightforward code fixes do not need a reply unless there was active discussion to answer.
+- **`addressed-by-valid-reply`** — The author replied on this or another thread with an argument a fair-minded human reviewer would concede: correct factual context, deliberate owner trade-off, valid out-of-scope boundary, or code elsewhere already covering the concern. Post a short concession/acknowledgment reply, then resolve.
+- **`false-positive-or-stale`** — Our comment was wrong, stale, or disproven by current PR history. Post a brief correction that owns the miss, then resolve.
+- **`needs-our-pushback`** — The author replied or changed code, but the concrete concern remains. Post a short reply on the existing thread and keep it pending.
+- **`still-pending`** — No relevant new author reply and no relevant code change since our last look. Keep the thread pending without posting.
+
+Push back only on new signal, and stay on the specific point under contention. Do not repost the same argument without a new author reply or code change.
 
 **Reviewer fleet.** Always-on: `change-intent-reviewer`, `code-bugs-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `context-file-adherence-reviewer`. Add when the diff fits: `type-safety-reviewer` on typed code; `test-quality-reviewer` and `code-testability-reviewer` on source; `contracts-reviewer` on API surfaces; `operational-readiness-reviewer` on CI/infra/env/migrations/workers/queues/secrets; `docs-reviewer` and `prose-value-reviewer` on prose; `prompt-reviewer` (with `prompt-token-efficiency-verifier`, `prompt-compression-verifier`) on prompts/skills/agents. Forward the manifest to every spawned reviewer when present.
 
@@ -18,12 +49,14 @@ High-signal autonomous PR review posted under your account. A review you'd put y
 - PR history: all comments and threads on the PR (including our own from any prior review pass), the author's recent commit messages on the branch, the PR description.
 - Bundle context for each linked PR: diff, description, top-level conversation. No inline review comments from linked PRs.
 - The manifest if present.
+- The reviewed range for this invocation.
 - Any truncation the caller did, carried forward.
 
 The subagent:
 
 - **Prunes** any finding already covered on the PR: any prior comment (ours from a previous run, or another reviewer's), any concession or rebuttal on an existing thread, anything contradicted by the manifest, a commit message, or the PR description, or piling on an active thread.
 - **Dedupes** across reviewers: merge near-duplicates into one comment when they raise the same underlying concern.
+- **Bounds** surfaced findings to issues introduced or exposed by the reviewed range, unless this is the first review and the range is the full PR.
 - **Anchors** each surviving finding to exactly one of inline file:line (default), file-level (whole-file concern), or PR-level (cross-cutting, no specific anchor).
 - **Rewrites** every comment body and any drafted reply in the voice profile below.
 - **Omits a summary header by default** — adds one only when there's a real overall take the per-comment list misses (one short sentence, voice-compliant, no boilerplate).
@@ -38,9 +71,9 @@ Structural defaults: prose, not bullets, for a single suggestion; no markdown he
 
 Target voice: *"Empty input skips the null check — `if (input?.value)` at `parser.ts:42` short-circuits before the parse at `parser.ts:47`, so `{}` reaches `parse()` without the guard. Tighten to `if (input?.value != null)`, or move the `parse()` call inside the existing branch."*
 
-**Posting.** When the holistic pass returns comments to post, present the plan for user approval (comments + anchors, what was loaded as context, any truncation, dropped-findings tally). On approval, submit a single GitHub PR review with decision `comment` — all comments batched atomically.
+**Posting.** When the holistic pass returns comments to post, submit a single GitHub PR review with decision `comment` — all comments batched atomically. In interactive sessions, briefly report what was posted (comment count, anchors, reviewed range, truncation if any, dropped-findings tally). In CI or non-interactive contexts, do not wait for approval.
 
-**Zero comments to post.** When the holistic pass returns nothing, skip plan presentation and ask the user: `"Looks good to me. Post as approval on the PR?"`. Approve → submit decision `approve` with body `Looks good to me.`; decline → take no PR action. No PR action otherwise.
+**Zero comments to post.** When the holistic pass returns nothing and all our existing threads reached terminal disposition, report clean. In interactive sessions only, ask: `"Looks good to me. Post as approval on the PR?"`. Approve → submit decision `approve` with body `Looks good to me.`; decline → take no PR action. In CI or non-interactive contexts, take no approval action.
 
 **Gotchas.**
 
@@ -49,5 +82,6 @@ Target voice: *"Empty input skips the null check — `if (input?.value)` at `par
 - Never add an AI disclosure footer to a comment, summary, or reply. There is no flag for one.
 - Never forward PR conversation or bundle context to a reviewer agent. Only the holistic pass may see that context.
 - Never re-raise a finding the holistic pass pruned in this run.
+- Never skip thread advancement because the code review range is empty; thread state can change without a new commit.
 
 **`--loop`.** Load `references/LOOP.md`.

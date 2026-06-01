@@ -6,10 +6,9 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 12 | Core workflow skills plus manifest-dev-tools utilities |
+| Skills | 13 | Core workflow skills plus manifest-dev-tools utilities |
 | Agents | 17 | Specialized reviewer and verification agents |
-| Commands | 10 | User-invocable slash commands for core workflows and tools utilities |
-| Plugin | 1 | TypeScript hook plugin for workflow enforcement |
+| Commands | 11 | User-invocable slash commands for core workflows and tools utilities |
 | Context | 1 | AGENTS.md workflow overview |
 
 ## Installation
@@ -20,7 +19,7 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 npx skills add doodledood/manifest-dev --all -a opencode
 ```
 
-This installs skills into `.opencode/skills/`. For agents, commands, and the plugin, use the full distribution install below.
+This installs skills into `.opencode/skills/`. For agents and commands, use the full distribution install below.
 
 ### Option 2: Full Distribution Install
 
@@ -28,7 +27,7 @@ This installs skills into `.opencode/skills/`. For agents, commands, and the plu
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 ```
 
-This installs globally to `~/.config/opencode/`, which OpenCode loads from every project. Restart OpenCode after installing or updating so the running TUI reloads agents, commands, skills, and plugins.
+This installs globally to `~/.config/opencode/`, which OpenCode loads from every project. Restart OpenCode after installing or updating so the running TUI reloads agents, commands, and skills.
 
 Or clone and run locally:
 
@@ -43,7 +42,6 @@ The install script:
 - Copies manifest-dev-tools skills to `~/.config/opencode/skills/` with `-manifest-dev-tools` suffix
 - Copies agents to `~/.config/opencode/agents/` with the plugin-owned suffix (`-manifest-dev` for core, `-manifest-dev-tools` for tools)
 - Copies commands to `~/.config/opencode/commands/` with the same plugin-owned suffixes
-- Installs plugin as `~/.config/opencode/plugins/manifest-dev.ts`
 - Copies AGENTS.md context file
 - Is idempotent — safe to re-run
 
@@ -80,9 +78,6 @@ cp -r dist/opencode/agents/* .opencode/agents/
 # Commands
 cp -r dist/opencode/commands/* .opencode/commands/
 
-# Plugin (auto-loaded from .opencode/plugins/)
-cp dist/opencode/plugins/index.ts .opencode/plugins/manifest-dev.ts
-
 # Context file
 cp dist/opencode/AGENTS.md .opencode/AGENTS.md
 ```
@@ -98,9 +93,10 @@ After installation, invoke workflows via slash commands:
 /figure-out-manifest-dev                Truth-convergent thinking partner
 /figure-out-team-manifest-dev           Multi-party async deliberation in a Slack thread
 /adr-manifest-dev-tools                 Post-hoc ADR synthesis
+/babysit-pr-manifest-dev-tools          Babysit an existing PR via /goal /do
 /handoff-manifest-dev-tools             Cross-boundary handoff or DIY sub-agent context payload
 /prompt-engineering-manifest-dev-tools  Gap-calibrated prompt creation, update, and review
-/review-pr-manifest-dev-tools           Autonomous PR review with --loop follow-through
+/review-pr-manifest-dev-tools           Autonomous PR review one-shot or --loop scheduler
 /walk-pr-manifest-dev-tools             Collaborative PR/diff walkthrough
 ```
 
@@ -111,24 +107,18 @@ After installation, invoke workflows via slash commands:
 | Skills | Full | Full | Copied unchanged |
 | Agents | Full | Full | Frontmatter converted to OpenCode format |
 | Commands | N/A | Full | Generated from user-invocable skills |
-| Stop hook (block) | Full | Degraded | session.idle is fire-and-forget; enforced via system guidance |
-| Compaction recovery | Full | Full | experimental.session.compacting |
-| Subagent hooks | Full | Missing | tool.execute.before/after don't fire in subagents |
+| Hooks | None shipped | None shipped | Use `/goal /do <manifest-path>` for unattended turn continuation |
 
 ## Known Limitations
 
-1. **No stop blocking** — OpenCode's `session.idle` is fire-and-forget. The /do workflow contract is advisory, not enforced. (OpenCode issue #12472)
-2. **Subagent hook bypass** — `tool.execute.before`/`after` don't fire for subagent tool calls. (OpenCode issue #5894)
-3. **No JSONL transcript** — Workflow state tracked in-memory; lost on plugin reload.
-4. **Compaction hook is experimental** — `experimental.session.compacting` may change.
-5. **System transform is experimental** — `experimental.chat.system.transform` may change.
-6. **$ARGUMENTS handling** — Skills using `$ARGUMENTS` work in Claude Code; behavior in OpenCode may vary.
+1. **No hook backstop** — use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
+2. **$ARGUMENTS handling** — Skills using `$ARGUMENTS` work in Claude Code; behavior in OpenCode may vary.
 
 ## Directory Structure
 
 ```
 dist/opencode/
-├── agents/                          # 16 converted agents (16 files)
+├── agents/                          # 17 converted agents (17 files)
 │   ├── change-intent-reviewer.md
 │   ├── code-bugs-reviewer.md
 │   ├── operational-readiness-reviewer.md
@@ -146,20 +136,22 @@ dist/opencode/
 │   ├── slack-poller.md
 │   ├── type-safety-reviewer.md
 │   └── prompt-reviewer.md
-├── commands/                        # 10 user commands
+├── commands/                        # 11 user commands
 │   ├── auto.md
 │   ├── adr.md
+│   ├── babysit-pr.md
 │   ├── define.md
 │   ├── do.md
 │   ├── handoff.md
 │   ├── figure-out.md
 │   ├── figure-out-team.md
 │   ├── prompt-engineering.md
-│   ├── review.md
+│   ├── review-pr.md
 │   └── walk-pr.md
-├── skills/                          # 12 skills (core + tools)
+├── skills/                          # 13 skills (core + tools)
 │   ├── adr/
 │   ├── auto/
+│   ├── babysit-pr/
 │   ├── define/
 │   ├── do/
 │   ├── done/
@@ -170,9 +162,6 @@ dist/opencode/
 │   ├── prompt-engineering/
 │   ├── review-pr/
 │   └── walk-pr/
-├── plugins/
-│   ├── index.ts                     # Hook plugin
-│   └── HOOK_SPEC.md                 # Behavioral specification
 ├── AGENTS.md                        # Context file
 ├── README.md                        # This file
 ├── install.sh                       # Installation script

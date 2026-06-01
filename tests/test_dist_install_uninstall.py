@@ -10,7 +10,14 @@ import pytest
 
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
-TOOLS_SKILLS = ("adr", "handoff", "prompt-engineering", "walk-pr")
+TOOLS_SKILLS = (
+    "adr",
+    "babysit-pr",
+    "handoff",
+    "prompt-engineering",
+    "review-pr",
+    "walk-pr",
+)
 
 
 def run_installer(
@@ -78,7 +85,6 @@ def test_opencode_installer_defaults_to_global_config_dir(tmp_path: Path) -> Non
     assert (target / "skills" / "define-manifest-dev").is_dir()
     assert (target / "agents" / "criteria-checker-manifest-dev.md").is_file()
     assert (target / "commands" / "define-manifest-dev.md").is_file()
-    assert (target / "plugins" / "manifest-dev.ts").is_file()
 
 
 def test_opencode_installer_local_scope_is_explicit(tmp_path: Path) -> None:
@@ -412,7 +418,7 @@ def test_opencode_uninstall_removes_only_manifest_dev_files(tmp_path: Path) -> N
     )
 
     run_installer("opencode", env)
-    assert (plugins_dir / "manifest-dev.ts").is_file()
+    assert not (plugins_dir / "manifest-dev.ts").exists()
     assert (opencode_dir / "skills" / "define-manifest-dev").is_dir()
 
     run_installer("opencode", env, "uninstall")
@@ -471,8 +477,8 @@ def test_opencode_install_leaves_user_root_plugin_and_config_untouched(
         "default_agent": "build",
     }
     assert not (plugins_dir / "index.ts.manifest-dev-legacy.bak").exists()
-    assert (plugins_dir / "manifest-dev.ts").is_file()
-    assert (plugins_dir / "manifest-dev.HOOK_SPEC.md").is_file()
+    assert not (plugins_dir / "manifest-dev.ts").exists()
+    assert not (plugins_dir / "manifest-dev.HOOK_SPEC.md").exists()
 
 
 def test_opencode_cli_loads_installed_manifest_agent(tmp_path: Path) -> None:

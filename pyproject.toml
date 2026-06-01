@@ -18,7 +18,8 @@ warn_unused_ignores = true
 warn_no_return = true
 warn_unreachable = true
 files = [
-    "claude-plugins/manifest-dev/hooks"
+    "tests/test_dist_install_uninstall.py",
+    "tests/test_dist_skill_references.py"
 ]
 explicit_package_bases = true
 ignore_missing_imports = true

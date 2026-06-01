@@ -30,10 +30,14 @@ Then use it:
 /define <what you want to build>
 /do <manifest-path>
 
+# Or keep /do running unattended across turns:
+/goal /do <manifest-path>
+
 # Or go end-to-end autonomously:
 /auto <what you want to build>
 
-# Tend an existing PR through review without manifest-dev setup:
+# Babysit an existing PR through review without manifest-dev setup:
+/babysit-pr <pr-url>              # synthesize lifecycle manifest, then recommend /goal /do
 /auto --babysit <pr-url>          # synthesize lifecycle manifest, then run /do
 /define --babysit <pr-url>        # just synthesize the manifest
 
@@ -41,7 +45,7 @@ Then use it:
 /figure-out <topic or problem> [--log [path]]
 ```
 
-`/define` interviews you and builds a manifest. `/do` executes it and verifies each criterion inline by spawning a subagent. `/auto` chains both — define autonomously, auto-approve, execute — in a single command. `/figure-out` is the thinking-partner skill — a truth-convergent peer that investigates before claiming, surfaces the load-bearing crux with each move, and resists premature synthesis. `/define` auto-invokes it when the problem space is foggy; you can also call it directly when figuring it out IS the goal.
+`/define` interviews you and builds a manifest. `/do` executes it and verifies each criterion inline by spawning a subagent. Use `/goal /do <manifest-path>` when you want the host CLI to keep the `/do` run alive across turns. `/auto` chains both — define autonomously, auto-approve, execute — in a single command. `/figure-out` is the thinking-partner skill — a truth-convergent peer that investigates before claiming, surfaces the load-bearing crux with each move, and resists premature synthesis. `/define` auto-invokes it when the problem space is foggy; you can also call it directly when figuring it out IS the goal.
 
 Pass `--canvas` to `/define` (desktop only) to also generate a **Shared Understanding Canvas** — a live, browser-rendered visual side-channel for the chat interview. While you're answering questions, the canvas surfaces the intent, flow, and scope at a glance, so misalignment shows up early instead of after a feature ships. Diagrams (mermaid) and before/after panels render directly in your default browser; the canvas updates as the interview unfolds. The manifest stays as the formal encoding for /do.
 
@@ -292,9 +296,9 @@ The Claude Code plugins are the source of truth. Per-CLI distributions under `di
 
 | CLI | Install | Skills | Agents | Hooks | Details |
 |-----|---------|--------|--------|-------|---------|
-| Claude Code | `/plugin install` | Full | Full | Full | Primary target |
-| OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | Partial (adapted plugin) | [README](dist/opencode/README.md) |
-| Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | Not available | [README](dist/codex/README.md) |
+| Claude Code | `/plugin install` | Full | Full | None | Primary target |
+| OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | None | [README](dist/opencode/README.md) |
+| Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | None | [README](dist/codex/README.md) |
 
 **Keeping distributions in sync**: After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. The sync skill reads reference files with per-CLI conversion rules, regenerates component namespace metadata, and produces the full distribution for each target.
 
@@ -302,8 +306,8 @@ The Claude Code plugins are the source of truth. Per-CLI distributions under `di
 
 | Plugin | Description |
 |--------|-------------|
-| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out`, `/figure-out-team`, review agents, workflow hooks. `/do` verifies inline — spawns a subagent per Acceptance Criterion and Global Invariant. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
-| `manifest-dev-tools` | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. `/handoff` produces a context payload for cross-boundary transfer (tool switch, fresh session, multi-agent) or DIY sub-agent flows (spin off a focused side-session and hand back to the parent). `/prompt-engineering`, `/walk-pr`, and `/review-pr` are stand-alone collaboration tools — `/walk-pr` is the collaborative review surface, `/review-pr` is the autonomous version that posts comments under your account and (with `--loop`) follows up until review threads reach closure and accumulated new commits are reviewed. |
+| `manifest-dev` | Core manifest workflows: `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out`, `/figure-out-team`, and review agents. `/do` verifies inline — spawns a subagent per Acceptance Criterion and Global Invariant. Use `/goal /do <manifest-path>` for unattended turn continuation. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
+| `manifest-dev-tools` | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts via multi-agent extraction pipeline. `/handoff` produces a context payload for cross-boundary transfer (tool switch, fresh session, multi-agent) or DIY sub-agent flows (spin off a focused side-session and hand back to the parent). `/prompt-engineering`, `/walk-pr`, `/review-pr`, and `/babysit-pr` are stand-alone collaboration tools — `/walk-pr` is the collaborative review surface, `/review-pr` is the autonomous version that advances existing review threads and reviews new PR ranges, and `/babysit-pr` wraps `define --babysit` plus `/goal /do`. |
 
 ## Plugin Architecture
 
@@ -311,8 +315,8 @@ The Claude Code plugins are the source of truth. Per-CLI distributions under `di
 
 | Skill | Type | Description |
 |-------|------|-------------|
-| `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, writes the manifest. Auto-invokes `/figure-out` when the problem space is foggy. Defaults to amending a prior in-scope manifest (in-session, conversation-referenced, or branch-archived in `.manifest/`) so one change set keeps one constitution. On a fresh /define against a non-empty branch, seeds from the existing diff. |
-| `/do` | User-invoked | Executes against manifest and verifies inline — spawns a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregates PASS / FAIL / BLOCKED, fixes failures, re-verifies. Calls `/done` when everything passes or `/escalate` when blocked. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
+| `/define` | User-invoked | Interviews you, classifies task type, probes for latent criteria, writes the manifest. Auto-invokes `/figure-out` when the problem space is foggy. Defaults to amending a prior in-scope manifest (in-session, conversation-referenced, or branch-archived in `.manifest/`) so one change set keeps one constitution. On a fresh /define against a non-empty branch, seeds from the existing diff. Emits both `/do <manifest-path>` and `/goal /do <manifest-path>` handoffs. |
+| `/do` | User-invoked | Executes against manifest and verifies inline — spawns a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregates PASS / FAIL / BLOCKED, fixes failures, re-verifies. Calls `/done` when everything passes or `/escalate` when blocked. Run through `/goal /do <manifest-path>` when you want unattended turn continuation. Any user feedback during execution defaults to a Self-Amendment cycle (pure questions answered inline). |
 | `/auto` | User-invoked | End-to-end autonomous: `/define` → auto-approve → `/do`. Supports `--platform` and `--babysit <pr-url>` for tending an existing PR through to mergeable. |
 | `/done` | Internal | Plain-prose completion summary called by `/do` after every criterion verifies PASS. |
 | `/escalate` | Internal | Structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from the user. Routes via `/do`. |
@@ -339,19 +343,10 @@ Built-in agents `/do` spawns to verify criteria. Name an agent in the verify blo
 | `type-safety-reviewer` | Typed-language safety: type holes, invalid states representable, narrowing issues |
 | `docs-reviewer` | Documentation accuracy against code changes |
 | `context-file-adherence-reviewer` | Compliance with context file (CLAUDE.md/AGENTS.md) project rules |
-| `github-pr-lifecycle` | PR-lifecycle inspector — checks CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives (`bash sleep …; reinvoke`, `retrigger …`, `reply …`, `escalate`, …) the caller executes literally. Owns its wait-cadence policy (per-gate durations and cycle caps; steering customizable). Composed automatically when `--platform github` resolves during `/define`. |
+| `github-pr-lifecycle` | PR-lifecycle inspector — checks CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives (`bash sleep …; reinvoke`, `retrigger …`, `reply …`) or prose findings the caller acts on. Owns its wait-cadence policy (per-gate durations and cycle caps; steering customizable). Composed automatically when `--platform github` resolves during `/define`. |
 | `slack-poller` | Tails a Slack thread for the `/figure-out-team` loop, returning the verbatim deltas the agent reasons over. |
 
 Each reviewer returns structured output with severity levels (Critical, High, Medium, Low) and specific fix guidance.
-
-### Workflow Enforcement Hooks
-
-Hooks enforce workflow integrity. The AI can't skip steps:
-
-| Hook | Event | Purpose |
-|------|-------|---------|
-| `stop_do_hook` | Stop command | Blocks premature stopping. Can't stop without verification passing or proper escalation. |
-| `post_compact_hook` | Session compaction | Restores /do workflow context after compaction. Reminds to re-read the manifest. |
 
 ### Task-Specific Guidance
 
@@ -377,9 +372,6 @@ source .venv/bin/activate
 
 # Lint, format, typecheck
 ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
-
-# Test hooks (run after ANY hook changes)
-pytest tests/hooks/ -v
 
 # Test plugin locally
 /plugin marketplace add /path/to/manifest-dev

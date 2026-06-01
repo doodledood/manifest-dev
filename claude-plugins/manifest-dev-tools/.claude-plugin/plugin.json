@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-tools",
-  "version": "0.15.2",
-  "description": "Tools for working with prompts and PRs alongside the manifest workflow. ADR synthesis from session transcripts, collaborative PR walkthroughs, autonomous PR review with per-comment verification, gap-calibrated prompt engineering, and cross-boundary context handoff.",
+  "version": "0.16.0",
+  "description": "Tools for working with prompts and PRs alongside the manifest workflow. ADR synthesis from session transcripts, collaborative PR walkthroughs, autonomous PR review with per-comment verification, PR babysitting via manifest-dev, gap-calibrated prompt engineering, and cross-boundary context handoff.",
   "keywords": [
     "adr",
     "architecture-decision-records",
@@ -12,6 +12,8 @@
     "walkthrough",
     "autonomous-review",
     "review-loop",
+    "babysit-pr",
+    "pr-lifecycle",
     "prompt-engineering",
     "prompts",
     "handoff",

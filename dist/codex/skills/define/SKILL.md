@@ -85,4 +85,5 @@ Manifest complete: <manifest-path>
 Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl
 
 To execute: /do <manifest-path>
+For unattended execution: /goal /do <manifest-path>
 ```

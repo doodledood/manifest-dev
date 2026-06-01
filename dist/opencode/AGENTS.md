@@ -17,7 +17,7 @@ Supporting workflows:
 - **/auto** — End-to-end autonomous: /define → /do in one command. Supports `--babysit <pr-url>` for tending an existing PR end-to-end.
 - **/figure-out** — Truth-convergent thinking partner. /define auto-invokes it when the problem space is foggy.
 - **/figure-out-team** — /figure-out's discipline applied to a multi-party async Slack conversation.
-- **Tools skills** — /adr, /handoff, /prompt-engineering, and /walk-pr install with the `-manifest-dev-tools` suffix.
+- **Tools skills** — /adr, /babysit-pr, /handoff, /prompt-engineering, /review-pr, and /walk-pr install with the `-manifest-dev-tools` suffix.
 
 ## Manifest Schema — Four Fields
 
@@ -61,10 +61,6 @@ PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIF
 | type-safety-reviewer | Type system improvements across typed languages |
 | prompt-reviewer | Reviews LLM prompts against the /prompt-engineering skill's gap-calibration principles (tools-plugin agent — installs with `-manifest-dev-tools` suffix) |
 
-## Plugin (Hooks)
+## Unattended Execution
 
-The manifest-dev plugin (`.opencode/plugins/manifest-dev.ts`) provides:
-- Workflow state tracking for /do
-- Post-compaction context recovery
-
-**Known limitation**: OpenCode cannot block session stopping (session.idle is fire-and-forget). The /do workflow contract is enforced via persistent system guidance, not a hard block.
+Run `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
