@@ -15,7 +15,7 @@ Every invocation, including non-`--loop`, performs one complete PR-state advance
 
 1. **Advance our existing threads.** For every unresolved thread we authored or replied to, run the per-comment verifier below. Post needed thread replies, resolve terminal threads, and leave genuinely pending threads open.
 2. **Review new code.** Determine the review range from durable GitHub state: if we have a prior review on this PR, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. If the head is unchanged from our latest review, skip the reviewer fleet only after thread advancement has run.
-3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments.
+3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments. End with the cycle summary below.
 
 The one-shot pass is CI-shaped: it must make useful progress from only GitHub state and the current checkout. Do not rely on session memory such as `last-reviewed-sha`; derive it from our prior review/comment metadata and the PR history each run.
 
@@ -71,9 +71,18 @@ Structural defaults: prose, not bullets, for a single suggestion; no markdown he
 
 Target voice: *"Empty input skips the null check — `if (input?.value)` at `parser.ts:42` short-circuits before the parse at `parser.ts:47`, so `{}` reaches `parse()` without the guard. Tighten to `if (input?.value != null)`, or move the `parse()` call inside the existing branch."*
 
-**Posting.** When the holistic pass returns comments to post, submit a single GitHub PR review with decision `comment` — all comments batched atomically. In interactive sessions, briefly report what was posted (comment count, anchors, reviewed range, truncation if any, dropped-findings tally). In CI or non-interactive contexts, do not wait for approval.
+**Posting.** When the holistic pass returns comments to post, submit a single GitHub PR review with decision `comment` — all comments batched atomically. In CI or non-interactive contexts, do not wait for approval.
 
 **Zero comments to post.** When the holistic pass returns nothing and all our existing threads reached terminal disposition, report clean. In interactive sessions only, ask: `"Looks good to me. Post as approval on the PR?"`. Approve → submit decision `approve` with body `Looks good to me.`; decline → take no PR action. In CI or non-interactive contexts, take no approval action.
+
+**Cycle summary.** Every one-shot pass ends with an operator-facing summary, whether it posted comments, resolved threads, asked for approval, or found nothing to do. Keep it compact but complete:
+
+- Reviewed range/head and concrete PR actions taken: new review comment count and anchors, thread replies, resolved threads, approval prompt/action, or no PR action.
+- Per-comment verifier subagents: one line per thread naming the anchor, disposition, and the verifier's short reason.
+- Reviewer fleet subagents: one line per spawned reviewer naming its actionable findings count and the substance of what it found, or `none`.
+- Holistic coherence pass: surviving comments, dedupes/merges, pruned findings with dominant reasons, range-bounding decisions, summary header if any, and truncation notes.
+
+The cycle summary is for the operator transcript or run log only. Do not paste it into PR review bodies, thread replies, or approval text; the only posted summary-like text is the voice-compliant summary header returned by the holistic pass.
 
 **Gotchas.**
 
