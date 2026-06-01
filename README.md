@@ -35,17 +35,18 @@ Then work through the three beats:
 # 2. Encode what you'd accept into a manifest
 /define <what you want to build>
 
-# 3. Execute and verify every criterion inline
-/do <manifest-path>
-
-# Keep /do alive across turns, unattended:
+# 3. Execute and verify every criterion inline.
+#    Wrap in /goal so the run continues across turns on its own — the recommended way to run /do.
 /goal /do <manifest-path>
+/do <manifest-path>          # foreground variant, runs in the current turn only
 
-# Or run all three autonomously, no approval gates:
-/auto <what you want to build>
+# Or run the whole thing autonomously, no approval gates:
+/goal /auto <what you want to build>
 ```
 
 `/figure-out` is the heart of it — a peer that investigates before it claims, walks the decision tree for design-shaped problems, and holds its position under pushback. `/define` doesn't interview you; it takes the understanding you reached and *encodes* it into a manifest (auto-invoking `/figure-out` first if you skipped ahead and the understanding isn't there yet). `/do` implements toward the manifest and spawns a subagent per criterion to verify inline. `/auto` chains all three with no waiting.
+
+Run `/do` and `/auto` through `/goal` — it's the recommended way to run both. `/goal` is the host CLI's turn-continuation wrapper: it keeps the run alive across turns, so verification and fixes carry all the way through without you babysitting. Bare `/do` is fine for a quick single-turn run you're watching.
 
 Babysit an existing PR through review without any manifest-dev setup:
 
@@ -167,7 +168,7 @@ The manifest is the canonical source of truth for the PR or branch (in multi-rep
 
 **Multi-repo:** by default a single manifest covers the whole changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively. PR-lifecycle work templates one `github-pr-lifecycle` agent run per repo against the shared manifest. Splitting into per-repo manifests is fine when the work is loosely coupled. See [`MULTI_REPO.md`](claude-plugins/manifest-dev/skills/define/references/MULTI_REPO.md).
 
-The do session doesn't need to remember the define conversation — the manifest is external state. Run `/do` in a fresh session, or `/compact` before starting.
+The do session doesn't need to remember the define conversation — the manifest is external state. Run `/goal /do` in a fresh session, or `/compact` before starting.
 
 ## What /define Produces
 
@@ -273,7 +274,7 @@ After changing plugin components, run `/sync-tools` in Claude Code to regenerate
 
 | Plugin | Description |
 |--------|-------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow: `/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team`, and the verifier agents. `/do` verifies inline — a subagent per Acceptance Criterion and Global Invariant. Use `/goal /do <manifest-path>` for unattended turn continuation. The manifest is the canonical source of truth for the PR/branch; feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
+| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow: `/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team`, and the verifier agents. `/do` verifies inline — a subagent per Acceptance Criterion and Global Invariant. The recommended way to run it is `/goal /do <manifest-path>`, which keeps the run alive across turns. The manifest is the canonical source of truth for the PR/branch; feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow. `/prompt-engineering` for building and reviewing prompts. `/walk-pr` (collaborative review) and `/review-pr` (autonomous review that posts human-voiced comments). `/babysit-pr` wraps `define --babysit` plus `/goal /do`. `/adr` synthesizes Architecture Decision Records from a session. `/handoff` packages context for a fresh agent or a side-session. |
 
 ## Plugin Architecture
@@ -284,8 +285,8 @@ After changing plugin components, run `/sync-tools` in Claude Code to regenerate
 |-------|------|-------------|
 | `/figure-out` | User-invoked | The thinking partner, and the conceptual core. A truth-convergent peer: investigates before claiming, delivers each next move with its load-bearing crux, walks the decision tree for design-shaped tasks, keeps a belief register for evidence-heavy investigations, holds positions under pushback. `/define` auto-invokes it when understanding is missing; call it directly when figuring it out IS the goal. `--with-docs` opts into bootstrap, glossary captures, and ADR offers; `--log [path]` keeps a narrative investigation log; `--autonomous` lets it self-answer (used by `/auto`). |
 | `/define` | User-invoked | Encodes the conversation's shared understanding into a manifest. Not an interview — it makes the manifest-specific calls (invariant vs guidance, AC scope, phase ordering, trade-offs to lock) and auto-invokes `/figure-out` first if the understanding isn't there. Pass an existing manifest path to amend it in place. Emits both `/do` and `/goal /do` handoffs. Supports `--babysit <pr-url>` and `--canvas`. |
-| `/do` | User-invoked | Executes against the manifest and verifies inline — a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Calls `/done` when everything passes, routes to `/escalate` when blocked. Run through `/goal /do <manifest-path>` for unattended turn continuation. Mid-execution feedback defaults to a Self-Amendment cycle. |
-| `/auto` | User-invoked | End-to-end autonomous: `/figure-out` → `/define` → `/do`, chained with no approval gates. `--babysit <pr-url>` tends an existing PR toward mergeable (platform auto-detected from the PR URL host). |
+| `/do` | User-invoked | Executes against the manifest and verifies inline — a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Calls `/done` when everything passes, routes to `/escalate` when blocked. Recommended invocation is `/goal /do <manifest-path>` — `/goal` keeps the run alive across turns; bare `/do` runs a single foreground turn. Mid-execution feedback defaults to a Self-Amendment cycle. |
+| `/auto` | User-invoked | End-to-end autonomous: `/figure-out` → `/define` → `/do`, chained with no approval gates. Run it as `/goal /auto` so it carries across turns (recommended). `--babysit <pr-url>` tends an existing PR toward mergeable (platform auto-detected from the PR URL host). |
 | `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator that brings evidence, names trade-offs, and surfaces disagreement; polls the thread via `/loop`, reads via the `slack-poller` subagent. Owner-by-Slack-handle overrules. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting it to Slack. |
 | `/done` | Internal | Plain-prose completion summary, called by `/do` after every criterion verifies PASS. |
 | `/escalate` | Internal | Structured blocker: the criterion, what was tried and why each attempt failed, possible resolutions, what's needed from you. Routed by `/do`. |

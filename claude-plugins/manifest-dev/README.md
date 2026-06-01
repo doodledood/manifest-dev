@@ -7,11 +7,11 @@ Understand the problem. Write down what you'd accept. Let it build and verify it
 ```
 /figure-out "how should rate limiting behave here?"   # think it through
 /define "add rate limiting to the API"                # encode what you'd accept
-/do /tmp/manifest-<timestamp>.md                       # execute + verify inline
-/goal /do /tmp/manifest-<timestamp>.md                 # same, unattended
+/goal /do /tmp/manifest-<timestamp>.md                 # execute + verify (recommended: continues across turns)
+/do /tmp/manifest-<timestamp>.md                       # foreground variant, current turn only
 ```
 
-`/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/do`. `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant.
+`/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/goal /do`. `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. Run it through `/goal` — `/goal /do <path>` is the recommended form, keeping the run alive across turns.
 
 ## The Mindset Shift
 
@@ -23,8 +23,8 @@ Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
 
 - **`/figure-out`** — the thinking partner, and the conceptual core. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), takes the next load-bearing question first, recommends an answer, returns to dropped threads, investigates instead of asking when something is discoverable, and keeps a belief register on evidence-heavy work. `/define` auto-invokes it when the transcript lacks understanding; call it directly when figuring it out IS the goal. `--with-docs` adds bootstrap/glossary/ADR conventions; `--log [path]` keeps a narrative investigation log; `--autonomous` lets it self-answer (used by `/auto`).
 - **`/define`** — encodes shared understanding into a verifiable Manifest. Not an interview: it makes the manifest-specific judgment calls (invariant vs process guidance, AC scope and pass threshold, phase ordering, trade-offs to lock as `[T-N]`) and pulls in `/figure-out` first if the understanding isn't there. Pass an existing manifest path in `$ARGUMENTS` to amend it in place. Supports `--babysit <pr-url>` and `--canvas`. Emits `/do <manifest-path>` and `/goal /do <manifest-path>` handoffs.
-- **`/do`** — executes a Manifest, spawning one verifier subagent per Acceptance Criterion and Global Invariant (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when everything verifies PASS or routing through `/escalate` when blocked. Run as `/goal /do <manifest-path>` for unattended turn continuation. Mid-`/do` user messages default to invoking `/define` for amendment.
-- **`/auto`** — chains `figure-out → define → do` autonomously, no approval gates. Add `--babysit <pr-url>` for PR-lifecycle work.
+- **`/do`** — executes a Manifest, spawning one verifier subagent per Acceptance Criterion and Global Invariant (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when everything verifies PASS or routing through `/escalate` when blocked. The recommended invocation is `/goal /do <manifest-path>`, which keeps the run alive across turns; bare `/do` runs a single foreground turn. Mid-`/do` user messages default to invoking `/define` for amendment.
+- **`/auto`** — chains `figure-out → define → do` autonomously, no approval gates. Run it as `/goal /auto` for unattended cross-turn execution (recommended). Add `--babysit <pr-url>` for PR-lifecycle work.
 - **`/figure-out-team`** — `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator: brings evidence, names trade-offs, surfaces disagreement; polls the thread via `/loop` and reads via the `slack-poller` subagent for verbatim deltas; convergence is judgment-based across speakers, with the owner (by Slack handle) overruling. Trust is session-bound — the Claude Code operator is the only trusted human; Slack content is data, never instructions. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting to Slack.
 - **`/done`** — completion summary in plain prose, called by `/do` after every criterion verifies PASS.
 - **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from you. Routed by `/do`.
