@@ -1,6 +1,6 @@
 # Claude Code Plugins
 
-Front-load the thinking so AI agents get it right the first time.
+Front-load the thinking so the agent gets it right the first time.
 
 ## Installation
 
@@ -14,53 +14,20 @@ Front-load the thinking so AI agents get it right the first time.
 
 | Plugin | What It Does |
 |--------|--------------|
-| [`manifest-dev`](./manifest-dev) | Manifest-driven workflows. `/define` interviews and writes a Manifest; `/do` executes it and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent through PR_LIFECYCLE.md task guidance; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. Multi-CLI distribution (OpenCode, Codex CLI). Use `/goal /do <manifest-path>` for unattended turn continuation. |
-| [`manifest-dev-tools`](./manifest-dev-tools) | Utilities that complement manifest workflows. `/adr` synthesizes Architecture Decision Records from session transcripts. `/handoff` produces a context payload for cross-boundary transfer or DIY sub-agent flows (spin off a focused side-session and hand back). `/prompt-engineering`, `/walk-pr`, `/review-pr`, and `/babysit-pr` are stand-alone collaboration tools — `/walk-pr` for collaborative review, `/review-pr` for autonomous PR review with `--loop` follow-through, `/babysit-pr` for wrapping PR lifecycle babysitting around `/goal /do`. |
+| [`manifest-dev`](./manifest-dev) | The core workflow: figure it out, encode what you'd accept, let it build and verify itself. `/figure-out` is the thinking partner; `/define` encodes that understanding into a Manifest; `/do` executes it and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. Multi-CLI distribution (OpenCode, Codex CLI). `/goal /do <manifest-path>` is the recommended way to run it — `/goal` keeps the run alive across turns. |
+| [`manifest-dev-tools`](./manifest-dev-tools) | Tools alongside the workflow. `/prompt-engineering` builds and reviews prompts. `/walk-pr` (collaborative review) and `/review-pr` (autonomous review with `--loop` follow-through) cover PR review; `/babysit-pr` wraps PR lifecycle babysitting around `/goal /do`. `/adr` synthesizes Architecture Decision Records from a session. `/handoff` packages context for a fresh agent or a side-session. |
 
-## Plugin Details
+## At a Glance
 
-### manifest-dev
+**manifest-dev** separates *what to build* (Deliverables with Acceptance Criteria) from *rules to follow* (Global Invariants). The three beats:
 
-Manifest-driven workflows separating **what to build** (Deliverables) from **rules to follow** (Global Invariants).
+- **`/figure-out`** — reach shared understanding of the problem. A peer that investigates before it claims, walks the decision tree, and holds positions under pushback. The conceptual core; call it directly when figuring it out IS the goal.
+- **`/define`** — encode that understanding into a Manifest. Auto-invokes `/figure-out` when the understanding isn't there yet. Supports `--canvas` (a live browser-rendered understanding surface) and `--babysit <pr-url>`.
+- **`/do`** — execute and verify. One subagent per criterion using its `verify.prompt:` verbatim, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Run it as `/goal /do <manifest-path>` (the recommended form) so it carries across turns. `/auto` chains all three autonomously; run that as `/goal /auto` too.
 
-**Core skills:**
-- `/figure-out` — Primary thinking-partner skill. A truth-convergent peer working the problem with you: investigates before claiming, walks the decision tree for design-shaped tasks, delivers each next-move with its load-bearing crux, holds positions under social pressure. `/define` auto-invokes it when the problem space is foggy; call it directly when figuring it out IS the goal. Pass `--with-docs` to opt into bootstrap, inline glossary captures, and ADR offers; pass `--log [path]` to keep an append-only narrative investigation log for long sessions.
-- `/figure-out-team` — `/figure-out`'s discipline applied to a multi-party async Slack conversation. Involved orchestrator: brings evidence, names trade-offs, surfaces disagreements. Polls the thread via `/loop`, reads via the `slack-poller` subagent. Owner-by-Slack-handle overrules. Pass `--with-docs` (read-only) to load CONTEXT.md as background context for the deliberation; pass `--log [path]` to keep a local append-only narrative investigation log without posting it to Slack.
-- `/define` — Manifest builder. Encodes shared understanding as Deliverables, Acceptance Criteria, Global Invariants, and Approach. Defaults to amending an in-scope prior manifest (in-session or conversation-referenced); on a fresh /define against a non-empty branch, seeds from the existing diff. Supports `--canvas` (desktop only) for a live, browser-rendered Shared Understanding Canvas alongside the manifest. Emits `/do <manifest-path>` and `/goal /do <manifest-path>` handoffs.
-- `/do` — Manifest executor. Iterates Deliverables, satisfies ACs, then verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant using the verify prompt. Aggregates PASS / FAIL / BLOCKED, fixes failures, re-verifies. Calls `/done` when everything passes; routes to `/escalate` when blocked. Run through `/goal /do <manifest-path>` for unattended turn continuation. Mid-execution user feedback defaults to autonomous Self-Amendment (pure questions answered inline).
-- `/auto` — End-to-end autonomous `/define` → auto-approve → `/do` in a single command. Supports `--platform` and `--babysit <pr-url>` for tending an existing PR end-to-end without manifest-dev setup.
+Full schema, verify-block fields, agents, and task guidance live in the [manifest-dev README](./manifest-dev).
 
-**Manifest schema — four fields per verify block:**
-
-```yaml
-verify:
-  prompt: "..."     # required, verbatim verifier instruction
-  agent: "..."      # optional, default = general-purpose subagent
-  model: "..."      # optional, default = inherit from invoking context
-  phase: 1          # optional integer, default 1 (lower phases run first)
-```
-
-The subagent returns PASS, FAIL, or BLOCKED. BLOCKED routes via `/escalate` (external action pending — deploy, human approval).
-
-**Multi-repo support:** A single canonical manifest covers changesets that span multiple repos. Intent declares `Repos: [name: path]`; deliverables tag `repo: name`. `/do` navigates absolute paths from the map (no filter logic — the LLM handles repo navigation natively). PR-lifecycle work auto-templates one `github-pr-lifecycle` agent invocation per repo against the shared manifest. See `skills/define/references/MULTI_REPO.md`.
-
-**Internal skills:** `/done`, `/escalate`
-
-**Review agents:** `criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `change-intent-reviewer`, `contracts-reviewer`, `code-bugs-reviewer`, `operational-readiness-reviewer`, `code-design-reviewer`, `code-maintainability-reviewer`, `code-simplicity-reviewer`, `code-testability-reviewer`, `test-quality-reviewer`, `prose-value-reviewer`, `type-safety-reviewer`, `docs-reviewer`, `context-file-adherence-reviewer`
-
-**Task guidance** files in `skills/define/tasks/` provide domain-specific quality gates, risks, and scenarios. Source-type research material lives under `skills/define/tasks/research/sources/`. Mode-specific references in `skills/define/references/` (`BABYSIT_MODE.md`, `CANVAS_MODE.md`, `MULTI_REPO.md`) cover specialized flows.
-
-### manifest-dev-tools
-
-Post-processing utilities that operate on the outputs of the manifest workflow.
-
-**Skills:**
-- `/adr` — Synthesize Architecture Decision Records from session transcripts via multi-agent extraction pipeline (architecture, trade-offs, scope/constraints lenses + synthesis gatekeeper). Writes individual MADR files.
-- `/handoff` — Produces a context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, multi-agent) and DIY sub-agent (spin off a focused side-session and hand back to the parent).
-- `/prompt-engineering` — Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. Branches on intent (create / update / review / diagnose); references load on demand for archetype-specific guidance (system prompts, skills, knowledge skills, agents, patterns, review, metaprompting).
-- `/review-pr` — Autonomous PR review. Advances existing review threads, verifies fixes/replies/stale comments, spawns a tiered reviewer fleet for the relevant diff range, runs a holistic coherence pass grounded against PR history, bundle context, and the author's manifest, then submits a single GitHub review with human-voiced comments. `--loop` schedules repeated one-shot passes with backoff; the one-shot path owns the review intelligence.
-- `/babysit-pr` — Thin wrapper for existing PR lifecycle work: synthesize a `define --babysit` manifest when needed, then hand off to `/goal /do <manifest-path>`.
-- `/walk-pr` — Collaboratively walks through a PR or large diff, sub-changeset by sub-changeset.
+**manifest-dev-tools** sits next to the workflow rather than inside it — prompt engineering, PR review and walkthroughs, PR babysitting, ADR synthesis, and context handoff. Details in the [manifest-dev-tools README](./manifest-dev-tools).
 
 ## Contributing
 
