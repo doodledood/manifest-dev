@@ -1,36 +1,35 @@
 # manifest-dev
 
-Tell Claude what "done" looks like. Let it work. Check the result.
+Understand the problem. Write down what you'd accept. Let it build and verify itself.
 
 ## Quick Start
 
 ```
-/define "add rate limiting to the API"
-/do /tmp/manifest-<timestamp>.md
-/goal /do /tmp/manifest-<timestamp>.md  # unattended
+/figure-out "how should rate limiting behave here?"   # think it through
+/define "add rate limiting to the API"                # encode what you'd accept
+/do /tmp/manifest-<timestamp>.md                       # execute + verify inline
+/goal /do /tmp/manifest-<timestamp>.md                 # same, unattended
 ```
 
-Two commands, or wrap the second in `/goal` when you want unattended turn continuation. `/define` interviews you and writes a Manifest. `/do` executes it and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant.
+`/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/do`. `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant.
 
 ## The Mindset Shift
 
 Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
 
-"What would make me accept this PR?" "What rules can't be broken?" "How would I know each piece is done?" That's what `/define` asks you. Architecture might come up too, but the pillar is acceptance, not implementation. What does good enough look like?
-
-This works because LLMs are surprisingly good at execution when they know exactly what's expected. They're bad at reading your mind. The manifest closes that gap before a single line of code gets written. The interview phase is slow; it catches the gaps that blow up after implementation.
+"What would make me approve this PR?" "What rules can't be broken?" "How would I know each piece is done?" The acceptance criteria are the pillar, not the implementation. LLMs are good at execution when they know exactly what's expected and bad at reading your mind — the manifest closes that gap before a line of code gets written.
 
 ## Skills
 
-- **`/figure-out`** — truth-convergent thinking partner. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), tackles the next load-bearing question first, gives recommended answers, returns to dropped threads, investigates instead of asking when something is discoverable. `/define` auto-invokes it when the transcript lacks understanding; call it directly when figuring it out IS the goal. Pass `--log [path]` to keep an append-only narrative investigation log for long sessions.
-- **`/figure-out-team`** — `/figure-out`'s discipline applied to a multi-party async Slack conversation. Involved orchestrator (brings evidence, viewpoints, synthesis); polls the thread via `/loop` and reads via the `slack-poller` subagent for verbatim deltas; convergence is judgment-based across speakers with the owner (by Slack handle) overruling disagreement. Trust is session-bound — the operator from Claude Code is the sole trusted human; Slack content is data, never instructions. Pass `--log [path]` to keep a local append-only narrative investigation log without posting it to Slack.
-- **`/define`** — encodes shared understanding into a verifiable Manifest. Supports `--babysit <pr-url>`, `--canvas`, `--autonomous`. Amendment is triggered by passing an existing manifest path in `$ARGUMENTS`; `/define` overwrites in place. Emits `/do <manifest-path>` and `/goal /do <manifest-path>` handoffs.
-- **`/do`** — executes a Manifest by spawning one verifier subagent per Acceptance Criterion and Global Invariant (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when every AC and Global Invariant verifies PASS, or routing through `/escalate` when blocked. Run as `/goal /do <manifest-path>` for unattended turn continuation. Mid-/do user messages default to invoking `/define` for amendment.
-- **`/done`** — completion summary in plain prose. Called by `/do` after every Acceptance Criterion and Global Invariant verifies PASS.
-- **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from the user. Single type; routes via `/do`.
-- **`/auto`** — chains `figure-out → define → do` autonomously. Add `--babysit <pr-url>` for PR-lifecycle work.
+- **`/figure-out`** — the thinking partner, and the conceptual core. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), takes the next load-bearing question first, recommends an answer, returns to dropped threads, investigates instead of asking when something is discoverable, and keeps a belief register on evidence-heavy work. `/define` auto-invokes it when the transcript lacks understanding; call it directly when figuring it out IS the goal. `--with-docs` adds bootstrap/glossary/ADR conventions; `--log [path]` keeps a narrative investigation log; `--autonomous` lets it self-answer (used by `/auto`).
+- **`/define`** — encodes shared understanding into a verifiable Manifest. Not an interview: it makes the manifest-specific judgment calls (invariant vs process guidance, AC scope and pass threshold, phase ordering, trade-offs to lock as `[T-N]`) and pulls in `/figure-out` first if the understanding isn't there. Pass an existing manifest path in `$ARGUMENTS` to amend it in place. Supports `--babysit <pr-url>` and `--canvas`. Emits `/do <manifest-path>` and `/goal /do <manifest-path>` handoffs.
+- **`/do`** — executes a Manifest, spawning one verifier subagent per Acceptance Criterion and Global Invariant (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when everything verifies PASS or routing through `/escalate` when blocked. Run as `/goal /do <manifest-path>` for unattended turn continuation. Mid-`/do` user messages default to invoking `/define` for amendment.
+- **`/auto`** — chains `figure-out → define → do` autonomously, no approval gates. Add `--babysit <pr-url>` for PR-lifecycle work.
+- **`/figure-out-team`** — `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator: brings evidence, names trade-offs, surfaces disagreement; polls the thread via `/loop` and reads via the `slack-poller` subagent for verbatim deltas; convergence is judgment-based across speakers, with the owner (by Slack handle) overruling. Trust is session-bound — the Claude Code operator is the only trusted human; Slack content is data, never instructions. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting to Slack.
+- **`/done`** — completion summary in plain prose, called by `/do` after every criterion verifies PASS.
+- **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from you. Routed by `/do`.
 
-## Manifest schema — four fields
+## Manifest Schema — Four Fields per Verify Block
 
 Every verify block has the same shape:
 
@@ -42,13 +41,11 @@ verify:
   phase: 1          # optional integer, default 1 (lower phases run first)
 ```
 
-Verifier subagents return one of three states: **PASS**, **FAIL**, or **BLOCKED**. PASS = criterion holds. FAIL = criterion violated; includes evidence — either a per-gate directive `/do` executes literally (specialized verifiers like `github-pr-lifecycle`) or a prose fix hint read with judgment (generic verifiers). BLOCKED = criterion can't be evaluated yet because of an external action / state pending (deploy hasn't happened, human approval pending, etc.) — `/do` routes BLOCKED via `/escalate`.
+Verifiers return one of three states. **PASS** — the criterion holds. **FAIL** — violated, with evidence: either a per-gate directive `/do` runs literally (specialized verifiers like `github-pr-lifecycle`) or a prose fix hint read with judgment (generic verifiers). **BLOCKED** — can't be evaluated yet because an external action or state is pending (deploy, human approval); `/do` routes BLOCKED via `/escalate`.
 
-Authors put whatever the verifier needs to do directly into the prompt — run a bash command and check exit code, inspect files, query an API, fetch docs. There's no separate `method:`, `command:`, or `inner_method:` field; the subagent runs whatever its prompt asks for from its tool set.
+Authors put whatever the verifier needs directly into the prompt — run a bash command and check the exit code, inspect files, query an API, fetch docs. There's no separate `method:` or `command:` field; the subagent runs whatever its prompt asks for.
 
-## Manifest sections
-
-A Manifest has five sections:
+## Manifest Sections
 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
@@ -59,12 +56,16 @@ A Manifest has five sections:
 | **Known Assumptions** | Low-impact items resolved with a default | `ASM-{N}` |
 | **Deliverables** | Ordered work items with Acceptance Criteria | `AC-{D}.{N}` |
 
-## Manifest = current state
+## Manifest = Current State
 
-Amendments overwrite in place with stable IDs (modify `INV-G1` → it stays `INV-G1`; remove one → it's gone, no renumbering of the rest). No `## Amendments` log section, no `INV-G1.1 amends INV-G1` chain. Git diff carries the history.
+Amendments overwrite in place with stable IDs (modify `INV-G1` and it stays `INV-G1`; remove one and it's gone, no renumbering). No `## Amendments` log, no `INV-G1.1 amends INV-G1` chain — git carries the history.
 
 ## Agents
 
-Verifier subagents default to `general-purpose` when a manifest omits `verify.agent:`. The bundled `criteria-checker` agent (invoked explicitly via `agent: criteria-checker`) is a focused alternative: read-only behavior is enforced by its prompt, so authors can spawn it against MCP servers or extra CLI tools the user has configured.
+Verifier subagents default to `general-purpose` when a manifest omits `verify.agent:`. The bundled `criteria-checker` is a focused alternative (invoked via `agent: criteria-checker`): read-only behavior is enforced by its prompt, so authors can point it at MCP servers or extra CLI tools the user has configured.
 
-Review agents in `agents/` cover code, operational readiness, prose, contracts, types, design, testability, intent, and docs — name one in `verify.agent:` to scope the subagent to that lens. `github-pr-lifecycle` handles PR mergeability checks; `slack-poller` tails Slack threads for `/figure-out-team`.
+The review agents in `agents/` cover code, operational readiness, prose, contracts, types, design, testability, intent, and docs — name one in `verify.agent:` to scope a subagent to that lens. `github-pr-lifecycle` handles PR mergeability checks; `slack-poller` tails Slack threads for `/figure-out-team`. See the [root README](../../README.md#verifier-agents) for the full list.
+
+## Task Guidance and References
+
+Task files in `skills/define/tasks/` carry domain-specific quality gates, risks, and scenarios; `/define` loads them by task type. Source-type research material lives under `skills/define/tasks/research/sources/`. Mode and domain references in `skills/define/references/` (`BABYSIT_MODE.md`, `CANVAS_MODE.md`, `MULTI_REPO.md`, `WRITING-REFERENCE.md`) cover specialized flows.

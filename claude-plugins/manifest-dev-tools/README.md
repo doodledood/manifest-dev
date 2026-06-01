@@ -17,7 +17,7 @@ Utilities that complement manifest workflows — prompt engineering, PR babysitt
 
 | Agent | Description |
 |-------|-------------|
-| `prompt-reviewer` | Reviews an LLM prompt against the `/prompt-engineering` skill's gap-calibration principles. Reports issues without modifying files; tags each as `NEEDS_USER_INPUT` or `AUTO_FIXABLE` for downstream consumption by `/auto-optimize-prompt`. |
+| `prompt-reviewer` | Reviews LLM prompts against the `/prompt-engineering` skill's gap-calibration principles. Reports issues without modifying files, tagging each `NEEDS_USER_INPUT` or `AUTO_FIXABLE` so an optimization loop can act on them. Use when reviewing prompt quality, auditing a prompt, or evaluating a system prompt. |
 
 ## How It Works
 
