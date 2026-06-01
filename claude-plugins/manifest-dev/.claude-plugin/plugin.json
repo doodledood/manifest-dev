@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Tell Claude what done looks like, let it work, check the result. /define interviews you and writes a Manifest — Deliverables with Acceptance Criteria, Global Invariants, Approach. /do executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. /goal /do <manifest> is the recommended unattended execution wrapper. /figure-out is the truth-convergent thinking partner /define auto-invokes when the problem space is foggy. /figure-out-team extends that discipline to multi-party async Slack conversations. Verify blocks are four fields — prompt, agent, model, phase. /auto chains the whole flow autonomously; --babysit <pr-url> tends an existing PR to mergeable without local manifest-dev setup.",
   "keywords": [
     "manifest",

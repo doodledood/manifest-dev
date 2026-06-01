@@ -35,9 +35,11 @@ Recommended shape:
 ```md
 ## {UTC timestamp} — {short title}
 
+**Current belief:** {leading read + confidence, when there is one}
 **Evidence:** {refs or quotes}
+**Evidence against / limits:** {disconfirming evidence, weak spots, or why confidence is bounded}
 **Finding / surprise:** {what changed or was learned}
-**Reasoning shift:** {why this matters; omit if unchanged}
+**Belief update:** {how the read shifted; omit if unchanged}
 **Open threads:** {what remains unresolved; omit if none}
 **Next crux:** {the next load-bearing question; omit if not yet clear}
 ```

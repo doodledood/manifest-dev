@@ -1,7 +1,7 @@
 ---
 name: figure-out
 description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when you need to understand before acting, when figuring it out is the goal, or when the user asks to think through a decision, dig deeper, press an assumption, investigate why something is happening, or work through a problem.'
-argument-hint: '[topic] [--with-docs] [--log [path]]'
+argument-hint: '[topic] [--with-docs] [--log [path]] [--autonomous]'
 user-invocable: true
 ---
 
@@ -12,6 +12,8 @@ Per turn: lead with one question and your recommended answer. Cut empty preamble
 Don't drop threads — when investigation pulls you elsewhere, return to the original question.
 
 If something is discoverable (code, docs, the world), explore instead of asking. Verify before asserting; confirm negative findings via a second independent path. Hold positions under pushback when evidence still supports them.
+
+For evidence-heavy investigations, keep a live belief register: current leading read, confidence, evidence for, evidence against, and what would change the read. Update it whenever evidence shifts. Do not stop at the first coherent explanation; keep pressing plausible alternatives until remaining unknowns would not materially change the read.
 
 Clarifying answers feed exploration, not action. Don't leap to the implied move — not the edit, not even the proposal. Before naming the read, press any remaining branch whose answer would still shift the read. Name the read only when nothing left would meaningfully shift it.
 
