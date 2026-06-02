@@ -93,7 +93,7 @@ After installation, invoke workflows via slash commands:
 /figure-out-manifest-dev                Truth-convergent thinking partner
 /figure-out-team-manifest-dev           Multi-party async deliberation in a Slack thread
 /adr-manifest-dev-tools                 Post-hoc ADR synthesis
-/babysit-pr-manifest-dev-tools          Babysit an existing PR via /goal /do
+/babysit-pr-manifest-dev-tools          Babysit an existing PR; --ci performs one state advance
 /handoff-manifest-dev-tools             Cross-boundary handoff or DIY sub-agent context payload
 /prompt-engineering-manifest-dev-tools  Gap-calibrated prompt creation, update, and review
 /review-pr-manifest-dev-tools           Autonomous PR review one-shot or --loop scheduler

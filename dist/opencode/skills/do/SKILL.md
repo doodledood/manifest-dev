@@ -9,6 +9,8 @@ Work toward the manifest's Deliverables. Before calling `/done`, verify every Ac
 
 Code-change fix attempts iterate until they pass or `/do` judges them genuinely unrecoverable → `/escalate`. Other retry shapes (waiting, retriggering, replying with or without resolving, mechanical syncs) aren't fix attempts — they follow the verifier's findings directly. When a hint or finding indicates a reviewer ask beyond the work's intent, route to amendment by invoking `manifest-dev:define` again with the manifest path and the amendment context — `/define` reads "manifest path in args = amend" and applies targeted changes. **When a hint or finding indicates terminal / unrecoverable / human-decision-needed, route to `/escalate` — autonomously amending the manifest to suppress the block is forbidden.**
 
+Caller overlays may narrow retry cadence without changing the manifest. In CI one-shot / no-wait contexts, execute immediately actionable findings (fix, test, commit/push when authorized, retrigger, reply, resolve, sync), then stop instead of executing long wait directives such as `bash sleep <N>; reinvoke`. If only wait-shaped findings remain, report the waiting state as pending; do not call `/done`, do not call `/escalate`, and do not keep the runner alive.
+
 Mid-/do user messages default to invoking `manifest-dev:define` for amendment — the manifest is the source of truth, silent scope drift is worse than an extra amendment cycle. Pure questions about the manifest or process are answered inline.
 
 **Input.** `<manifest-path>` — required; no args → halt with usage. Read the manifest fully before any execution. Multi-repo manifests (declare `Repos: [name: path, ...]` in Intent) — use absolute paths in tool calls when working in a non-cwd repo.
