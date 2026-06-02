@@ -51,10 +51,13 @@ Run `/do` and `/auto` through `/goal` — it's the recommended way to run both. 
 Babysit an existing PR through review without any manifest-dev setup:
 
 ```bash
-/babysit-pr <pr-url>      # synthesize a lifecycle manifest, then recommend /goal /do
-/auto --babysit <pr-url>  # synthesize, then run /do straight through
-/define --babysit <pr-url># just synthesize the manifest
+/babysit-pr [pr-url]          # infer or synthesize grounding, then run the lifecycle
+/babysit-pr --ci [pr-url]     # CI one-shot: advance state, push trusted fixes, exit on waiting
+/auto --babysit <pr-url>      # core define→do chain for a supplied PR URL
+/define --babysit <pr-url>    # just synthesize the manifest
 ```
+
+`/babysit-pr` is the author-side companion to `/review-pr`: review applies quality pressure through comments and thread advancement; babysit uses the strongest available grounding (manifest, PR description, commits/diff, then comments) to get the PR green and mergeable without pressing merge. In trusted same-repo CI it may auto-fix, commit, and push; on untrusted or unwritable heads it reports/escalates instead.
 
 Pass `--canvas` to `/define` (desktop only) for a **Shared Understanding Canvas**: a live, browser-rendered side-channel that runs alongside the chat. Intent, flow, and scope render as you go (mermaid diagrams, before/after panels), so misalignment shows up while you can still cheaply fix it. The manifest stays the formal encoding for `/do`.
 
@@ -275,7 +278,7 @@ After changing plugin components, run `/sync-tools` in Claude Code to regenerate
 | Plugin | Description |
 |--------|-------------|
 | [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow: `/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team`, and the verifier agents. `/do` verifies inline — a subagent per Acceptance Criterion and Global Invariant. The recommended way to run it is `/goal /do <manifest-path>`, which keeps the run alive across turns. The manifest is the canonical source of truth for the PR/branch; feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
-| [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow. `/prompt-engineering` for building and reviewing prompts. `/walk-pr` (collaborative review) and `/review-pr` (autonomous review that posts human-voiced comments). `/babysit-pr` wraps `define --babysit` plus `/goal /do`. `/adr` synthesizes Architecture Decision Records from a session. `/handoff` packages context for a fresh agent or a side-session. |
+| [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow. `/prompt-engineering` for building and reviewing prompts. `/walk-pr` (collaborative review), `/review-pr` (autonomous review that posts human-voiced comments), and `/babysit-pr` (author-side PR lifecycle babysitting that runs manifest machinery) cover PR collaboration. `/adr` synthesizes Architecture Decision Records from a session. `/handoff` packages context for a fresh agent or a side-session. |
 
 ## Plugin Architecture
 
@@ -285,7 +288,7 @@ After changing plugin components, run `/sync-tools` in Claude Code to regenerate
 |-------|------|-------------|
 | `/figure-out` | User-invoked | The thinking partner, and the conceptual core. A truth-convergent peer: investigates before claiming, delivers each next move with its load-bearing crux, walks the decision tree for design-shaped tasks, keeps a belief register for evidence-heavy investigations, holds positions under pushback. `/define` auto-invokes it when understanding is missing; call it directly when figuring it out IS the goal. `--with-docs` opts into bootstrap, glossary captures, and ADR offers; `--log [path]` keeps a narrative investigation log; `--autonomous` lets it self-answer (used by `/auto`). |
 | `/define` | User-invoked | Encodes the conversation's shared understanding into a manifest. Not an interview — it makes the manifest-specific calls (invariant vs guidance, AC scope, phase ordering, trade-offs to lock) and auto-invokes `/figure-out` first if the understanding isn't there. Pass an existing manifest path to amend it in place. Emits both `/do` and `/goal /do` handoffs. Supports `--babysit <pr-url>` and `--canvas`. |
-| `/do` | User-invoked | Executes against the manifest and verifies inline — a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Calls `/done` when everything passes, routes to `/escalate` when blocked. Recommended invocation is `/goal /do <manifest-path>` — `/goal` keeps the run alive across turns; bare `/do` runs a single foreground turn. Mid-execution feedback defaults to a Self-Amendment cycle. |
+| `/do` | User-invoked | Executes against the manifest and verifies inline — a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Calls `/done` when everything passes, routes to `/escalate` when blocked. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping. Recommended invocation is `/goal /do <manifest-path>` — `/goal` keeps the run alive across turns; bare `/do` runs a single foreground turn. Mid-execution feedback defaults to a Self-Amendment cycle. |
 | `/auto` | User-invoked | End-to-end autonomous: `/figure-out` → `/define` → `/do`, chained with no approval gates. Run it as `/goal /auto` so it carries across turns (recommended). `--babysit <pr-url>` tends an existing PR toward mergeable (platform auto-detected from the PR URL host). |
 | `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator that brings evidence, names trade-offs, and surfaces disagreement; polls the thread via `/loop`, reads via the `slack-poller` subagent. Owner-by-Slack-handle overrules. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting it to Slack. |
 | `/done` | Internal | Plain-prose completion summary, called by `/do` after every criterion verifies PASS. |

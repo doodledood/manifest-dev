@@ -17,13 +17,13 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 |-------|-------------|
 | auto | Autonomous workflow orchestration (`--babysit <pr-url>` to tend existing PR) |
 | define | Interview-driven manifest creation (`--babysit <pr-url>` to synthesize from existing PR) |
-| do | Execute against a manifest |
+| do | Execute against a manifest; caller overlays can narrow retry cadence |
 | done | Completion checkpoint |
 | escalate | Escalate blockers to the user |
 | figure-out | Collaborative deep understanding |
 | figure-out-team | Multi-party async deliberation |
 | adr | Post-hoc Architecture Decision Record synthesis |
-| babysit-pr | Babysit an existing PR via `/goal /do <manifest-path>` |
+| babysit-pr | Babysit an existing PR through manifest/PR grounding; `--ci` performs one state advance |
 | handoff | Cross-boundary handoff or DIY sub-agent context payload |
 | prompt-engineering | Create, update, or review an LLM prompt — gap-calibrated discipline |
 | review-pr | Autonomous PR review one-shot or `--loop` scheduler |

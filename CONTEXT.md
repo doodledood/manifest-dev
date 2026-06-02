@@ -40,8 +40,17 @@ _Avoid_: Subprocess, worker.
 A handler that responds to a Claude Code lifecycle event (e.g., Stop, SessionStart).
 
 **Babysit PR**:
-An author-side workflow that tends an existing pull request through CI, review threads, description sync, and mergeability without pressing merge.
+An author-side workflow that tends an existing pull request through CI, review threads, description sync, and mergeability without pressing merge; companion to **Review PR**.
 _Avoid_: Tend PR.
+
+**Review PR**:
+A reviewer-side workflow that inspects a pull request, posts comments, and advances review threads without becoming the author-side lifecycle owner.
+
+**PR Grounding**:
+The ordered evidence **Babysit PR** uses to decide whether a pull-request blocker is in scope to fix: explicit **Manifest**, PR description, commits and diff, then comments.
+
+**CI One-Shot**:
+A non-interactive **Babysit PR** run that performs every immediately actionable lifecycle step, then exits pending when only waiting remains.
 
 ## Relationships
 
@@ -51,7 +60,11 @@ _Avoid_: Tend PR.
 - A **Task File** informs `/define`'s probing and encoding; it does not directly appear in the produced Manifest as a structural unit.
 - A **Plugin** contains zero or more **Skills**, **Agents**, and optional **Hooks**.
 - A **Skill** may invoke other **Skills** and spawn **Agents**.
+- **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure through comments and thread advancement, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
+- **Babysit PR** belongs to the `manifest-dev-tools` **Plugin** as PR tooling, while orchestrating core `manifest-dev` **Skills** for manifest synthesis and execution.
 - **Babysit PR** uses a **Manifest** synthesized from an existing pull request, then `/do` executes the lifecycle **Acceptance Criterion** through the `github-pr-lifecycle` **Agent**.
+- **PR Grounding** constrains **Babysit PR** autonomy: comments are interpreted against stronger intent sources instead of becoming the specification by recency.
+- **CI One-Shot** narrows `/do` retry cadence for **Babysit PR**: wait-shaped blockers are reported as pending instead of sleeping a runner.
 
 ## Flagged ambiguities
 

@@ -1,5 +1,5 @@
 ---
-description: "Thin PR babysitting wrapper. Synthesizes a lifecycle manifest when needed, then hands off to /goal /do <manifest-path>."
+description: "Author-side PR lifecycle babysitter. Uses manifest/PR grounding, then runs the lifecycle toward green and mergeable."
 ---
 
 Invoke the manifest-dev-tools:babysit-pr skill with: "$ARGUMENTS"
