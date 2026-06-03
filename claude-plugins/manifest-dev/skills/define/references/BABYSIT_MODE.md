@@ -44,7 +44,7 @@ One AC, invoking the `github-pr-lifecycle` agent, with PR URL + branch templated
 
 ## Output
 
-Write manifest to a writable scratch path appropriate to the harness (e.g., `$TMPDIR/manifest-{ts}.md`). Print the standard `Manifest complete:` line per /define's Complete — the line carries the actual path you wrote to. Callers such as `/auto --babysit` and `/babysit-pr` invoke `/do` directly after synthesis.
+Write manifest to `~/.manifest-dev/manifests/manifest-{ts}.md` — the same durable location /define uses, so the lifecycle manifest survives OS temp cleanup while a PR is tended over days. Fall back to a writable temp path only when the home directory isn't writable. Print the standard `Manifest complete:` line per /define's Complete — the line carries the actual path you wrote to. Callers such as `/auto --babysit` and `/babysit-pr` invoke `/do` directly after synthesis.
 
 ## Conflict halts
 

@@ -7,8 +7,8 @@ Understand the problem. Write down what you'd accept. Let it build and verify it
 ```
 /figure-out "how should rate limiting behave here?"   # think it through
 /define "add rate limiting to the API"                # encode what you'd accept
-/goal /do /tmp/manifest-<timestamp>.md                 # execute + verify (recommended: continues across turns)
-/do /tmp/manifest-<timestamp>.md                       # foreground variant, current turn only
+/goal /do ~/.manifest-dev/manifests/manifest-<timestamp>.md   # execute + verify (recommended: continues across turns)
+/do ~/.manifest-dev/manifests/manifest-<timestamp>.md         # foreground variant, current turn only
 ```
 
 `/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/goal /do`. `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. Run it through `/goal` — `/goal /do <path>` is the recommended form, keeping the run alive across turns.

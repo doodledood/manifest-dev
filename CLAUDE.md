@@ -152,10 +152,10 @@ Task files provide domain-specific hints for `/define`. They live in `skills/def
 
 ## Manifest Archival
 
-After a `/define` session completes, copy the final manifest from `/tmp/` to `.manifest/` with a descriptive name:
+After a `/define` session completes, copy the final manifest from `~/.manifest-dev/manifests/` to `.manifest/` with a descriptive name:
 
 ```bash
-cp /tmp/manifest-{timestamp}.md .manifest/{descriptive-kebab-name}-{YYYY-MM-DD}.md
+cp ~/.manifest-dev/manifests/manifest-{timestamp}.md .manifest/{descriptive-kebab-name}-{YYYY-MM-DD}.md
 ```
 
 This makes manifests available for future reference and committed to the repo.
