@@ -1,6 +1,6 @@
 ---
 name: harden-task-file
-description: 'Harden /define task guidance files for one-shot quality. Iterates: orthogonality gap analysis, user-approved additions, prompt review, fix, converge. Use when a task file needs comprehensive coverage or "harden task file".'
+description: 'Harden a manifest-dev task guidance file for one-shot quality — either /define''s quality-gate/Default set or figure-out''s probe set. Iterates: orthogonality gap analysis, user-approved additions, prompt review, fix, converge. Use when a task file needs comprehensive coverage or "harden task file".'
 user-invocable: true
 ---
 
@@ -12,18 +12,20 @@ If no arguments, ask which task file to harden.
 
 ## Context
 
-Task files live in `claude-plugins/manifest-dev/skills/define/tasks/` and supplement the /define interview with domain-specific guidance:
+Task files come in two parallel, decoupled sets, each keyed by task type and hardened for one-shot quality. Harden whichever set the target file belongs to:
 
-- **Quality Gates** — Verifiable output properties. Can split into baselines (always enforced) and selectable (meaningful rigor choices)
-- **Risks** — Process failure modes with probe questions
-- **Scenario Prompts** — Pre-mortem fuel: "imagine this deliverable was rejected — what went wrong?"
-- **Trade-offs** — Competing tensions the user resolves during the interview
+- **`/define`'s task files** (`claude-plugins/manifest-dev/skills/define/tasks/`) carry encoder data:
+  - **Quality Gates** — Verifiable output properties. Can split into baselines (always enforced) and selectable (meaningful rigor choices)
+  - **Defaults** — Non-verifiable process practices always worth doing, encoded as PG-* without probing
+- **figure-out's task files** (`claude-plugins/manifest-dev/skills/figure-out/tasks/`) carry probing fuel:
+  - **Blind-spot probes** — Non-natural angles the model skips by default (failure modes, pre-mortem fuel), phrased as the question that opens a branch
+  - **Forced trade-offs** — Competing tensions the model must drive to a decision
 
-New items must match the depth and structural conventions of the parent skill (`skills/define/SKILL.md`) and existing sibling task files.
+New items must match the depth and structural conventions of the owning skill (`define/SKILL.md` or `figure-out/SKILL.md`) and its existing sibling task files.
 
 ## Goal
 
-The task file should be comprehensive enough that a /define interview using it surfaces all criteria needed for one-shot quality. "One-shot" = the deliverable passes review without iteration.
+The task file should be comprehensive enough that a manifest built with it surfaces all criteria needed for one-shot quality — figure-out's probes surface the non-natural angles during understanding; /define's gates and Defaults encode the verifiable bar. "One-shot" = the deliverable passes review without iteration.
 
 ## Log
 
@@ -66,15 +68,15 @@ Converged when criteria in Convergence section met.
 
 ## Section Placement
 
-Each item belongs in exactly one section:
+Each item belongs in exactly one section. A file holds only its own set's sections — a `/define` file never carries probes/trade-offs, a figure-out file never carries gates/Defaults:
 
-| Section | What it checks | Test |
-|---------|---------------|------|
-| Quality Gate (baseline) | Output property that should always be true | Would omitting this ever be acceptable? No → baseline |
-| Quality Gate (selectable) | Output property representing a meaningful rigor choice | Reasonable to skip for some tasks? Yes → selectable |
-| Risk | Process failure mode during execution | About how the work was done, not the output? → risk |
-| Scenario Prompt | Specific way the deliverable fails or gets rejected | "Imagine the reader rejected this because..." → scenario |
-| Trade-off | Competing tension with no universal right answer | Both sides have legitimate merit? → trade-off |
+| Section | Set | What it checks | Test |
+|---------|-----|----------------|------|
+| Quality Gate (baseline) | /define | Output property that should always be true | Would omitting this ever be acceptable? No → baseline |
+| Quality Gate (selectable) | /define | Output property representing a meaningful rigor choice | Reasonable to skip for some tasks? Yes → selectable |
+| Default | /define | Non-verifiable process practice always worth doing | Can't verify from output but always sound? → Default (PG-*) |
+| Blind-spot probe | figure-out | A non-natural failure mode / pre-mortem angle the model skips by default | "Imagine this was rejected because..." AND a capable model wouldn't raise it unprompted? → probe |
+| Forced trade-off | figure-out | Competing tension with no universal right answer | Both sides have legitimate merit? → trade-off |
 
 A concern appears once, in its most natural section. When the same concern appears in multiple sections, keep the stronger version.
 
