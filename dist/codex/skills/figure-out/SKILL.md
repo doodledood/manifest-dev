@@ -7,6 +7,8 @@ user-invocable: true
 
 Press the topic relentlessly. Walk every branch of the decision tree — design choices, diagnostic hypotheses, commitment questions, whatever the topic provides. Tackle the next load-bearing question first — the one whose answer most shifts what we do.
 
+When the topic maps to a known domain, load its probe file from `tasks/` (the index in `tasks/README.md` maps indicators to files) to surface angles that are easy to under-weight — verification among them. Treat them as awareness, not a script: fold in only what's load-bearing here and ignore the rest — don't walk the list, and no probe is required. No domain match → probe generally, as you would anyway.
+
 Per turn: lead with one question and your recommended answer. Cut empty preamble, context-restate, and packed sub-questions. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick the one whose answer would shift the read most and hold the rest.
 
 Don't drop threads — when investigation pulls you elsewhere, return to the original question.
