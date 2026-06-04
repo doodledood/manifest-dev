@@ -9,7 +9,7 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 
 **Encoding discipline.** figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to lock as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
 
-**Task files.** Identify task type and load the matching file(s) from `tasks/` — their Quality Gates auto-encode as INV-G*/AC-* and Defaults as PG-* before the interview (surface each as it lands so the dialogue carries the encoding forward). These define task files carry **encoder data only**; probing fuel lives in figure-out's own parallel probe files (`skills/figure-out/tasks/`) — the two sets are decoupled, each skill owns its own index. Per-repo for multi-repo manifests.
+**Task files.** Identify task type and load the matching file(s) from `tasks/` — their Quality Gates auto-encode as INV-G*/AC-* and Defaults as PG-* before the interview (surface each as it lands so the dialogue carries the encoding forward). These define task files carry **encoder data only**; probing fuel lives in figure-out's own parallel probe files (`skills/figure-out/tasks/`) — the two sets are decoupled. Per-repo for multi-repo manifests.
 
 | Domain | Indicators | File |
 |--------|------------|------|
