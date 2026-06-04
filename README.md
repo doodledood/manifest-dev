@@ -286,7 +286,7 @@ After changing plugin components, run `/sync-tools` in Claude Code to regenerate
 
 | Skill | Type | Description |
 |-------|------|-------------|
-| `/figure-out` | User-invoked | The thinking partner, and the conceptual core. A truth-convergent peer: investigates before claiming, delivers each next move with its load-bearing crux, walks the decision tree for design-shaped tasks, keeps a belief register for evidence-heavy investigations, holds positions under pushback. `/define` auto-invokes it when understanding is missing; call it directly when figuring it out IS the goal. `--with-docs` opts into bootstrap, glossary captures, and ADR offers; `--log [path]` keeps a narrative investigation log; `--autonomous` lets it self-answer (used by `/auto`). |
+| `/figure-out` | User-invoked | The thinking partner, and the conceptual core. A truth-convergent peer: investigates before claiming, delivers each next move with its load-bearing crux, walks the decision tree for design-shaped tasks, keeps a belief register for evidence-heavy investigations, holds positions under pushback. On domain-shaped topics it loads its own probe task files to surface easy-to-miss angles (verification among them), pressed by judgment, never as a checklist. `/define` auto-invokes it when understanding is missing; call it directly when figuring it out IS the goal. `--with-docs` opts into bootstrap, glossary captures, and ADR offers; `--log [path]` keeps a narrative investigation log; `--autonomous` lets it self-answer (used by `/auto`). |
 | `/define` | User-invoked | Encodes the conversation's shared understanding into a manifest. Not an interview — it makes the manifest-specific calls (invariant vs guidance, AC scope, phase ordering, trade-offs to lock) and auto-invokes `/figure-out` first if the understanding isn't there. Pass an existing manifest path to amend it in place. Emits both `/do` and `/goal /do` handoffs. Supports `--babysit <pr-url>` and `--canvas`. |
 | `/do` | User-invoked | Executes against the manifest and verifies inline — a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Calls `/done` when everything passes, routes to `/escalate` when blocked. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping. Recommended invocation is `/goal /do <manifest-path>` — `/goal` keeps the run alive across turns; bare `/do` runs a single foreground turn. Mid-execution feedback defaults to a Self-Amendment cycle. |
 | `/auto` | User-invoked | End-to-end autonomous: `/figure-out` → `/define` → `/do`, chained with no approval gates. Run it as `/goal /auto` so it carries across turns (recommended). `--babysit <pr-url>` tends an existing PR toward mergeable (platform auto-detected from the PR URL host). |
@@ -319,7 +319,7 @@ After changing plugin components, run `/sync-tools` in Claude Code to regenerate
 
 ### Task-specific guidance
 
-`/define` loads guidance by task type:
+Guidance comes in two parallel, decoupled sets, each loaded by task type by its own skill. `/figure-out` loads its own probe task files (`skills/figure-out/tasks/` — `CODING.md`, `FEATURE.md`, `BUG.md`, `REFACTOR.md`), which carry blind-spot probes and forced trade-offs (verification among them) surfaced as awareness, not a checklist. `/define` loads the encoder set below, which carries quality gates and Defaults:
 
 | Task Type | Guidance | Quality Gates |
 |-----------|----------|---------------|
