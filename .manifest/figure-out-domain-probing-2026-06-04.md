@@ -76,11 +76,17 @@
     prompt: "Read the figure-out probe files. Goal: confirm non-natural-only selection and first-class verification. FAIL if any clearly-natural probe a competent model raises unprompted is present (e.g. generic 'what's out of scope', 'performance vs readability', 'minimal change vs cleanup'). FAIL if CODING.md or FEATURE.md lacks a design-shaping verification probe that asks how the change will be verified and whether the design needs a seam/observability to allow it. Spot-check that retained probes match the non-natural set (verification, observability/failure-visibility, consumer blast radius, cleanup, rollback; BUG mechanism-not-shape; REFACTOR behavior-contract+characterization). PASS only if non-natural-only AND verification-first-class hold; FAIL listing offending items with file:line."
     phase: 1
   ```
-- [AC-1.3] figure-out has its own self-contained task-type detection index that maps indicators → probe file, and does not reference define's index or define/tasks paths.
+- [AC-1.3] figure-out's task-type detection index is inlined directly in `figure-out/SKILL.md` (the domain→probe-file mapping), self-contained, with no reference to define's index or define/tasks paths.
   ```yaml
   verify:
-    prompt: "Find figure-out's task-type detection index (expected at claude-plugins/manifest-dev/skills/figure-out/tasks/README.md, or in SKILL.md). PASS if it maps task-type indicators to figure-out's own probe files AND contains no reference to define's index, define/tasks/, or any path outside the figure-out skill. FAIL if the index is missing or references define; cite the offending line."
+    prompt: "Read claude-plugins/manifest-dev/skills/figure-out/SKILL.md. PASS if it inlines the domain→probe-file mapping (indicators → CODING/FEATURE/BUG/REFACTOR.md, with CODING as the composable base) directly in the SKILL.md body AND contains no reference to define's index, define/tasks/, or any path outside the figure-out skill. FAIL if the mapping is missing from SKILL.md or references define; cite the offending line."
     phase: 1
+  ```
+- [AC-1.4] No separate `tasks/README.md` index file remains under either skill — the index lives inline in each SKILL.md.
+  ```yaml
+  verify:
+    prompt: "Confirm neither claude-plugins/manifest-dev/skills/figure-out/tasks/README.md nor claude-plugins/manifest-dev/skills/define/tasks/README.md exists (both deleted), and confirm no dist copy remains (dist/{opencode,codex}/skills/{figure-out,define}/tasks/README.md absent). PASS if all four paths are absent; FAIL listing any that still exist."
+    phase: 2
   ```
 
 ### Deliverable 2: figure-out consumption instruction
@@ -96,16 +102,16 @@
 ### Deliverable 3: documentation reconciliation
 
 **Acceptance Criteria:**
-- [AC-3.1] `CLAUDE.md` no longer describes task files as carrying Risks/Scenario-Prompt/Trade-off probes consumed by /define's interview; it describes the two-parallel-sets model (figure-out task files carry probes; define task files carry Quality Gates + Defaults).
+- [AC-3.1] `CLAUDE.md` and `CONTEXT.md` describe the two-parallel-sets model (figure-out task files carry probes; define task files carry Quality Gates + Defaults) with no stale claim that define's task files carry probes for /define's interview; and the "each skill owns its own index" wording reflects that the index now lives inline in each SKILL.md, not in a separate `tasks/README.md`.
   ```yaml
   verify:
-    prompt: "Read the task-file content-type section of CLAUDE.md (around the 'Required sections', 'Resolvable', and 'Probing fuel … consumer is /define's interview process' passages). PASS if it now describes figure-out's task files as the probe carriers and define's as Quality-Gates+Defaults carriers, with no surviving claim that define's task files carry probes for define's interview. FAIL quoting any stale passage."
+    prompt: "Read the task-file section of CLAUDE.md and the Task File entry/relationship in CONTEXT.md. PASS if both: (a) describe figure-out's task files as probe carriers and define's as Quality-Gates+Defaults carriers, with no surviving claim that define's task files carry probes for define's interview; and (b) any reference to where each skill's task-type index lives points to the SKILL.md inline location, not a separate tasks/README.md index file. FAIL quoting any stale passage (including a dangling 'tasks/README.md' index reference)."
     phase: 1
   ```
-- [AC-3.2] `claude-plugins/manifest-dev/skills/define/tasks/README.md` is reconciled: it no longer implies probing fuel has no home / is purely figure-out's responsibility without a mechanism; it reflects that figure-out owns its own probe task files and define's task files carry gates + Defaults.
+- [AC-3.2] `define/tasks/README.md` is deleted; its content (Domains detection table, Composition rules, Task-file content-types, encode-timing guidance) plus the two-parallel-sets reconciliation now live inline in `define/SKILL.md`, and define detects task type / loads its task files from SKILL.md guidance rather than a separate README.
   ```yaml
   verify:
-    prompt: "Read define/tasks/README.md. PASS if it accurately reflects the two-parallel-sets model (define task files = Quality Gates + Defaults; figure-out has its own probe task files) and no longer contains a dangling 'probing is figure-out's job — task files don't carry probing fuel' statement that implies no home exists. FAIL quoting stale text."
+    prompt: "Read claude-plugins/manifest-dev/skills/define/SKILL.md and confirm claude-plugins/manifest-dev/skills/define/tasks/README.md no longer exists. PASS if: (a) define/tasks/README.md is absent; (b) define/SKILL.md now carries the inlined task-file guidance — domain detection table (or equivalent mapping), composition rules, and content-types; (c) it states the two-parallel-sets model (define task files = Quality Gates + Defaults; figure-out owns its own probe files) with no dangling 'task files don't carry probing fuel / no home' claim; (d) define no longer instructs loading a now-deleted tasks/README.md. FAIL quoting the offending text or naming the missing piece."
     phase: 1
   ```
 
