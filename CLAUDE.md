@@ -121,34 +121,31 @@ When adding agents or skills:
 
 **README Guidelines**: Keep READMEs high-level (overview, what it does, how to use). Avoid implementation details that require frequent updates -- readers can explore code for specifics.
 
-### Task Files for /define
+### Task Files
 
-Task files provide domain-specific hints for `/define`. They live in `skills/define/tasks/` and follow a composition model:
+Task files provide domain-specific hints, kept as **two parallel sets** with different consumers:
 
-**Base files** provide universal quality gates for a domain (e.g., `CODING.md` for code, `WRITING.md` for prose). **Overlay files** add content-type specificity on top (e.g., `BLOG.md` composes with `WRITING.md`, `FEATURE.md` composes with `CODING.md`). **Research** composes `tasks/research/RESEARCH.md` with source-type files in `tasks/research/sources/`.
+- **`/define`'s task files** (`skills/define/tasks/`) carry **Quality Gates** (auto-encoded as INV-G*/AC-*) and **Defaults** (auto-encoded as PG-*) — encoder data for the manifest.
+- **figure-out's task files** (`skills/figure-out/tasks/`) carry **probing fuel** — non-natural angles (`## Blind-spot probes`, `## Forced trade-offs`) that figure-out surfaces during understanding.
 
-**Required sections**: Quality Gates (table with Agent + Threshold), Risks (bullet list with probes), Scenario Prompts (bullet list with probes), Trade-offs (bullet list). Optional additions: Context to Discover, Anti-Patterns, Defaults.
+Each skill carries its own task-type detection index inline in its `SKILL.md` (not a separate `tasks/README.md`) and loads its own set. The two are deliberately decoupled so figure-out runs standalone — figure-out never reads define's task files, and vice versa.
 
-**Content types**: Task files contain five categories:
+**Composition** (within each set): base files provide domain-common content (e.g., `CODING.md` for code); overlay files add content-type specificity (`FEATURE` / `BUG` / `REFACTOR` compose onto `CODING`; in /define's set, `BLOG` / `DOCUMENT` compose onto `WRITING`, and Research composes `research/RESEARCH.md` with `research/sources/`).
+
+**/define content types**:
 - *Quality gates* (tables with Agent + Threshold) — auto-included as INV-G*/AC-* by `/define`. Omitted with logged reasoning if clearly inapplicable. User reviews manifest.
-- *Resolvable* (tables/checklists: risks, scenarios, trade-offs) — resolved by `/define` via the interview.
-- *Compressed awareness* (bold-labeled one-line domain summaries) — informs probing without requiring resolution.
-- *Process guidance hints* (counter-instinctive practices) — Two modes: **candidates** (labeled as PG candidates, presented as batch, user selects) and **defaults** (`## Defaults` section, included in manifest without probing, user reviews manifest). Both become PG-* in the manifest.
-- *Reference files* (`references/*.md`) — detailed lookup data for the verifier subagents `/do` spawns. Not loaded during `/define`.
+- *Defaults* (`## Defaults` section) — included in the manifest as PG-* without probing; user reviews.
+- *Reference files* (`references/*.md`) — lookup data for the verifier subagents `/do` spawns. Not loaded during `/define`.
 
-**Probing fuel, not execution instructions**: The consumer is `/define`'s interview process. Content should be angles to check, not instructions for how to do the work. Task files provide domain knowledge; SKILL.md defines how `/define` uses it. Don't prescribe manifest encoding (PG vs INV vs AC) in task files — that's `/define`'s job.
+A define task-file item belongs in exactly one type: if you can verify it from the output, it's a Quality Gate; if it's a non-verifiable process practice, it's a Default. Don't prescribe manifest encoding (PG vs INV vs AC) in task files — that's `/define`'s job.
 
-**Item placement test** — each item belongs in exactly one content type:
-- *"Would this ever NOT apply to a task of this type?"* → If always applies, it's not a scenario/risk — move to Defaults (process) or Quality Gates (verifiable).
-- *"Can you verify this from the output alone?"* → If yes, it's a Quality Gate, not a Default. Defaults are for non-verifiable process practices.
-- *"Does the probe have only one valid answer?"* → If yes, it shouldn't be probed. Move to Defaults or Quality Gates.
-- *No item should appear in multiple content types.* If a quality gate and a Default say the same thing, one must go — the encoding conflicts (INV/AC vs PG).
+**figure-out probe content**: angles to check, not instructions for how to do the work — each phrased as the question that opens a branch. **Non-natural only**: include a probe only if the model skips it by default (don't restate what a capable model raises unprompted). Keep files terse so they read as awareness, not an agenda to complete.
 
 **When creating/modifying task files**:
-1. Read existing task files for structural patterns (BUG.md and WRITING.md show the Defaults pattern)
-2. Update the domain guidance table in `skills/define/SKILL.md` (add row, update Composition paragraph)
-3. If creating a base file, update overlay files to remove content that moved to the base
-4. Bump plugin version, update READMEs per sync checklist
+1. Read existing files for structural patterns — define's set (gates + Defaults) and figure-out's set (Blind-spot probes + Forced trade-offs) differ.
+2. Update the relevant skill's own inline index in its `SKILL.md` (`define/SKILL.md` and/or `figure-out/SKILL.md`).
+3. If creating a base file, update overlay files to remove content that moved to the base.
+4. Bump plugin version, update READMEs per sync checklist.
 
 ## Manifest Archival
 
