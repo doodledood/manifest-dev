@@ -9,7 +9,24 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 
 **Encoding discipline.** figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to lock as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
 
-**Task files.** Identify task type; load applicable files from `tasks/` per `tasks/README.md` — their gates and Defaults auto-encode before the interview. For code tasks, also compose `tasks/PR_LIFECYCLE.md` when origin is on github.com; probe if origin is missing or a github-enterprise host. Per-repo for multi-repo manifests.
+**Task files.** Identify task type and load the matching file(s) from `tasks/` — their Quality Gates auto-encode as INV-G*/AC-* and Defaults as PG-* before the interview (surface each as it lands so the dialogue carries the encoding forward). These define task files carry **encoder data only**; probing fuel lives in figure-out's own parallel probe files (`skills/figure-out/tasks/`) — the two sets are decoupled, each skill owns its own index. Per-repo for multi-repo manifests.
+
+| Domain | Indicators | File |
+|--------|------------|------|
+| Coding | Any code change; base reviewer gates for intent, bugs, operational readiness, design, tests, docs, context adherence | `CODING.md` |
+| Feature | New functionality, APIs, enhancements | `FEATURE.md` |
+| Bug | Defects, errors, regressions, "not working", "broken" | `BUG.md` |
+| Refactor | Restructuring, "clean up", pattern changes | `REFACTOR.md` |
+| PR lifecycle | Shipping a change through CI, review, approvals | `PR_LIFECYCLE.md` |
+| Prompting | LLM prompts, skills, agents, system instructions | `PROMPTING.md` |
+| Writing | Prose, articles, copy, social, creative (base) | `WRITING.md` |
+| Document | Specs, proposals, reports, formal docs (base: Writing) | `DOCUMENT.md` |
+| Research | Investigations, analyses, comparisons | `research/RESEARCH.md` |
+| Blog | Blog posts, articles, tutorials (base: Writing) | `BLOG.md` |
+
+*Composition:* code-change tasks combine `CODING.md` (base gates) with the specific FEATURE/BUG/REFACTOR; text-authoring combines `WRITING.md` with BLOG/DOCUMENT; Research composes `research/RESEARCH.md` with `research/sources/`. Domains aren't mutually exclusive (a bug fix that refactors uses both). `PR_LIFECYCLE.md` composes onto `CODING.md` when the local `origin` points at github.com (auto-detected; probe if origin is missing or a github-enterprise host) — it templates one AC per repo invoking the `github-pr-lifecycle` agent, whose `verify.prompt:` is the steering surface for per-PR nuances (labels, approvers, flaky-CI/retrigger overrides). **Exception:** PROMPTING does not compose with CODING unless the task also changes executable code.
+
+*Content types:* **Quality Gates** (`## Quality Gates`) → INV-G*/AC-* (omit clearly inapplicable with stated reasoning); **Defaults** (`## Defaults`) → PG-* pre-interview, user reviews and removes if N/A; **Reference files** (`tasks/**/references/*.md`) → verifier-agent lookup data, not loaded during /define.
 
 **Verifier prompt discipline.** Before writing `verify.prompt` fields, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. Verifier prompts are prompts: state the verifier's goal, evidence to inspect, PASS/FAIL/BLOCKED contract, and non-obvious context. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
 

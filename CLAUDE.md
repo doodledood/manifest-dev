@@ -128,7 +128,7 @@ Task files provide domain-specific hints, kept as **two parallel sets** with dif
 - **`/define`'s task files** (`skills/define/tasks/`) carry **Quality Gates** (auto-encoded as INV-G*/AC-*) and **Defaults** (auto-encoded as PG-*) — encoder data for the manifest.
 - **figure-out's task files** (`skills/figure-out/tasks/`) carry **probing fuel** — non-natural angles (`## Blind-spot probes`, `## Forced trade-offs`) that figure-out surfaces during understanding.
 
-Each skill owns its own task-type index (`tasks/README.md`) and loads its own set. The two are deliberately decoupled so figure-out runs standalone — figure-out never reads define's task files, and vice versa.
+Each skill carries its own task-type detection index inline in its `SKILL.md` (not a separate `tasks/README.md`) and loads its own set. The two are deliberately decoupled so figure-out runs standalone — figure-out never reads define's task files, and vice versa.
 
 **Composition** (within each set): base files provide domain-common content (e.g., `CODING.md` for code); overlay files add content-type specificity (`FEATURE` / `BUG` / `REFACTOR` compose onto `CODING`; in /define's set, `BLOG` / `DOCUMENT` compose onto `WRITING`, and Research composes `research/RESEARCH.md` with `research/sources/`).
 
@@ -143,7 +143,7 @@ A define task-file item belongs in exactly one type: if you can verify it from t
 
 **When creating/modifying task files**:
 1. Read existing files for structural patterns — define's set (gates + Defaults) and figure-out's set (Blind-spot probes + Forced trade-offs) differ.
-2. Update the relevant skill's own index: `define/tasks/README.md` and/or `figure-out/tasks/README.md`.
+2. Update the relevant skill's own inline index in its `SKILL.md` (`define/SKILL.md` and/or `figure-out/SKILL.md`).
 3. If creating a base file, update overlay files to remove content that moved to the base.
 4. Bump plugin version, update READMEs per sync checklist.
 
