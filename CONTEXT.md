@@ -24,7 +24,7 @@ A constraint on HOW to work during execution that isn't itself a verifiable gate
 _Avoid_: Guideline, best practice.
 
 **Task File**:
-A domain hint file loaded by `/define` to inform interview probing and pre-encode Quality Gates and Defaults.
+A per-domain hint file keyed to a task type, kept as two parallel sets: `figure-out`'s carry probing fuel (the non-natural angles to press during understanding); `/define`'s carry Quality Gates and Defaults (encoder data). Each skill owns its own task-type index and loads its own set.
 
 **Plugin**:
 A Claude Code extension unit that may contain skills, agents, and optional hooks.
@@ -57,7 +57,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - A **Manifest** contains one or more **Deliverables**.
 - A **Deliverable** has one or more **Acceptance Criteria**.
 - A **Manifest** has zero or more **Global Invariants**, applied across all Deliverables.
-- A **Task File** informs `/define`'s probing and encoding; it does not directly appear in the produced Manifest as a structural unit.
+- A **Task File** informs the workflow that owns it — `figure-out`'s probe set fuels interview probing, `/define`'s gate/Default set fuels encoding — and does not directly appear in the produced Manifest as a structural unit.
 - A **Plugin** contains zero or more **Skills**, **Agents**, and optional **Hooks**.
 - A **Skill** may invoke other **Skills** and spawn **Agents**.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure through comments and thread advancement, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
