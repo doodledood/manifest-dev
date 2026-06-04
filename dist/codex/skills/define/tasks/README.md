@@ -1,6 +1,6 @@
 # Task Files — Composition Rules
 
-Each task type in `tasks/` carries domain-specific encoder data: quality gates (auto-include as INV-G*), Defaults (auto-include as PG-*), and reference data for verifier agents. Probing of the conversation is figure-out's job — task files don't carry probing fuel.
+Each task type in `tasks/` carries domain-specific encoder data: quality gates (auto-include as INV-G*), Defaults (auto-include as PG-*), and reference data for verifier agents. These define task files do not carry probing fuel — probing is figure-out's job, fueled by figure-out's own parallel probe task files (`skills/figure-out/tasks/`). The two sets are decoupled and each skill owns its own index.
 
 ## Domains
 
