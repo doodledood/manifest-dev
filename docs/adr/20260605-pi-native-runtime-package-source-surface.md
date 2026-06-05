@@ -23,6 +23,8 @@ The package should be installable from the repository root, so users can install
 
 The `sync-tools` Pi reference should be a capability model, not only a file mapping table: it must document how Claude Code plugin concepts map to Pi package resources and which Pi-only affordances matter for manifest-dev, including extension commands, resource discovery, package install/update, prompt resources, sessions/forks, and SDK or subprocess orchestration.
 
+Initial implementation lands the runtime entrypoint slice before the full verifier fanout: `/manifest-do` starts Harness-level Do for an existing manifest, `/manifest-auto` and `/manifest-babysit-pr` replace the omitted portable wrapper skills, and `manifest_dev_report_outcome` records final `done` or `escalate` outcomes. Independent verifier sessions, PASS / FAIL / BLOCKED aggregation, and repair-session resumption remain future runtime work until implemented and tested.
+
 ## Alternatives Considered
 
 - **Generated Pi distribution only**: rejected because it would port the prompt surface without using Pi's strongest affordance, deterministic extension code. The `/do` completeness contract would remain mostly prompt discipline.
@@ -46,6 +48,7 @@ The `sync-tools` Pi reference should be a capability model, not only a file mapp
 - README and distribution docs must stay synchronized so Pi has the same easy upgrade story as the other plugin targets.
 - Runtime semantics can drift from Claude/Codex `/do` if shared invariants are not represented as tests or conformance fixtures.
 - The Pi target reference will carry more implementation knowledge than simpler generated targets, so it must be kept evidence-backed and updated when Pi package/runtime APIs change.
+- Until verifier-session fanout lands, Pi users get command/outcome gating but not the same independent verifier isolation as Claude/Codex `/do`.
 
 ## Source
 

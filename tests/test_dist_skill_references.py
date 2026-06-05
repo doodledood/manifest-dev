@@ -51,7 +51,10 @@ PI_SKILLS = (
     "walk-pr",
 )
 PI_EXCLUDED_RUNTIME_SKILLS = ("do", "done", "escalate")
-PI_WRAPPER_PENDING_SKILLS = ("auto", "babysit-pr")
+PI_EXTENSION_WRAPPER_SKILLS = ("auto", "babysit-pr")
+PI_EXTENSION_COMMANDS = ("manifest-do", "manifest-auto", "manifest-babysit-pr")
+PI_EXTENSION_TOOL = "manifest_dev_report_outcome"
+PI_EXTENSION = ROOT / "pi" / "extensions" / "manifest-dev.ts"
 
 REMOVED_SKILLS = ("verify",)
 REMOVED_AGENTS = ("manifest-verifier",)
@@ -262,7 +265,10 @@ def test_sync_tools_declares_pi_as_first_class_target() -> None:
     assert "`opencode`, `codex`, `pi`" in skill
     assert "dist/{opencode,codex,pi}/" in skill
     assert ".claude/skills/sync-tools/references/{cli}-cli.md" in skill
-    assert "| Pi | N compatible | N runtime prompt assets |" in skill
+    assert (
+        "| Pi | N compatible | N runtime prompt assets | source-owned runtime extension | extension commands | Complete |"
+        in skill
+    )
     assert (SYNC_TOOLS / "references" / "pi-cli.md").is_file()
 
 
@@ -273,7 +279,17 @@ def test_pi_sync_reference_keeps_harness_do_out_of_generated_skills() -> None:
     assert "- `do`: exclude from `dist/pi/skills/`" in reference
     assert "- `done`: exclude from `dist/pi/skills/`" in reference
     assert "- `escalate`: exclude from `dist/pi/skills/`" in reference
+    assert (
+        "- `auto`: exclude from `dist/pi/skills/`; expose as `/manifest-auto`"
+        in reference
+    )
+    assert (
+        "- `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/manifest-babysit-pr`"
+        in reference
+    )
     assert "/manifest-do <manifest-path>" in reference
+    assert "/manifest-auto <task>" in reference
+    assert "/manifest-babysit-pr <github-pr-url>" in reference
     assert "Do not generate `install.sh` for Pi." in reference
     assert (
         "Do not silently generate or overwrite a repo-root package manifest"
@@ -295,17 +311,23 @@ def test_pi_sync_reference_models_pi_capabilities() -> None:
         "Session files and `--fork`",
         "SDK / JSON-mode subprocesses",
         "Prompt resources",
+        "manifest_dev_report_outcome",
         "## Known Uncertainties",
     ):
         assert required in reference
 
 
-def test_pi_package_metadata_points_to_generated_skills_only() -> None:
+def test_pi_package_metadata_points_to_generated_skills_and_extension() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert "pi-package" in package["keywords"]
-    assert package["pi"] == {"skills": ["./dist/pi/skills"]}
-    assert "extensions" not in package["pi"]
+    assert package["pi"] == {
+        "extensions": ["./pi/extensions/manifest-dev.ts"],
+        "skills": ["./dist/pi/skills"],
+    }
+    assert package["peerDependencies"]["@earendil-works/pi-coding-agent"] == "*"
+    assert package["peerDependencies"]["typebox"] == "*"
+    assert PI_EXTENSION.is_file()
 
 
 def test_pi_dist_contains_only_compatible_skill_set() -> None:
@@ -319,9 +341,27 @@ def test_pi_dist_contains_only_compatible_skill_set() -> None:
     assert skill_dirs == set(PI_SKILLS)
     assert set(metadata["skills"]) == set(PI_SKILLS)
     assert set(metadata["runtime_owned_skills"]) == set(PI_EXCLUDED_RUNTIME_SKILLS)
-    assert set(metadata["wrapper_pending_skills"]) == set(PI_WRAPPER_PENDING_SKILLS)
+    assert set(metadata["extension_wrappers"]) == set(PI_EXTENSION_WRAPPER_SKILLS)
+    assert set(metadata["commands"]) == set(PI_EXTENSION_COMMANDS)
+    assert metadata["tools"] == {
+        PI_EXTENSION_TOOL: "Structured Pi runtime outcome for done and escalation."
+    }
     assert metadata["agents"] == {}
-    assert metadata["commands"] == {}
+
+
+def test_pi_extension_registers_harness_commands_and_outcome_tool() -> None:
+    content = PI_EXTENSION.read_text(encoding="utf-8")
+
+    for command in PI_EXTENSION_COMMANDS:
+        assert f'pi.registerCommand("{command}"' in content
+
+    assert f'name: "{PI_EXTENSION_TOOL}"' in content
+    assert 'Type.Literal("done")' in content
+    assert 'Type.Literal("escalate")' in content
+    assert "pi.appendEntry(RUN_ENTRY" in content
+    assert "pi.appendEntry(OUTCOME_ENTRY" in content
+    assert "pi.sendUserMessage" in content
+    assert "Do not use /done or /escalate" in content
 
 
 def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
@@ -334,5 +374,12 @@ def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
         assert "pi remove git:github.com/doodledood/manifest-dev" in content
         assert "Harness-level Do" in content
 
-    assert "/do`, `/done`, and `/escalate` are intentionally absent" in pi_readme
-    assert "`/auto` and `/babysit-pr` are intentionally absent" in pi_readme
+    assert "/manifest-do <manifest-path>" in pi_readme
+    assert "/manifest-auto <task>" in pi_readme
+    assert "/manifest-babysit-pr <github-pr-url>" in pi_readme
+    assert PI_EXTENSION_TOOL in pi_readme
+    assert "`/do`, `/done`, and `/escalate` remain intentionally absent" in pi_readme
+    assert (
+        "Full independent verifier-session fanout remains future Pi runtime work"
+        in root_readme
+    )

@@ -10,14 +10,21 @@
     "walk-pr": "manifest-dev-tools"
   },
   "runtime_owned_skills": {
-    "do": "Harness-level Do is owned by the future Pi runtime extension, not distributed as a normal skill.",
+    "do": "Harness-level Do is owned by the Pi runtime extension command, not distributed as a normal skill.",
     "done": "Done is a Pi runtime completion outcome, not a normal skill.",
     "escalate": "Escalation is a Pi runtime blocker outcome, not a normal skill."
   },
-  "wrapper_pending_skills": {
-    "auto": "Requires a Pi-aware wrapper that calls Harness-level Do.",
-    "babysit-pr": "Requires a Pi-aware wrapper that calls Harness-level Do."
+  "extension_wrappers": {
+    "auto": "Provided by /manifest-auto, which runs the manifest-dev lifecycle through the Pi Harness-level Do outcome gate.",
+    "babysit-pr": "Provided by /manifest-babysit-pr, which synthesizes PR lifecycle grounding and runs it through the Pi Harness-level Do outcome gate."
   },
   "agents": {},
-  "commands": {}
+  "commands": {
+    "manifest-do": "Pi Harness-level Do entrypoint for an existing manifest.",
+    "manifest-auto": "Pi wrapper for autonomous figure-out -> define -> Harness-level Do.",
+    "manifest-babysit-pr": "Pi wrapper for PR lifecycle manifest synthesis and Harness-level Do."
+  },
+  "tools": {
+    "manifest_dev_report_outcome": "Structured Pi runtime outcome for done and escalation."
+  }
 }

@@ -13,7 +13,7 @@ Understand the problem. Write down what you'd accept. Let it build and verify it
 
 `/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/goal /do`. `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. Run it through `/goal` — `/goal /do <path>` is the recommended form, keeping the run alive across turns.
 
-Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi currently installs shared skills from the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) while Harness-level Do is pending. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
+Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs shared skills plus `/manifest-do`, `/manifest-auto`, and `/manifest-babysit-pr` from the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`). Full independent verifier-session fanout remains future Pi runtime work. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
 
 ## The Mindset Shift
 

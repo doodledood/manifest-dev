@@ -81,7 +81,7 @@ The metadata is an **optimization, not a correctness anchor**. When in doubt —
 | **Commands** | Generate command files from user-invocable skills (`user-invocable: true`, the default) in both source payloads. Per reference file. |
 | **Context file** | Workflow overview + agent descriptions in the CLI's native context format per reference file. |
 | **README** | Component table, install instructions, feature parity table, required config, link to GitHub repo. |
-| **Package manifest** | Generate only for targets whose reference file declares a package-native install surface. For Pi, package metadata must make the boundary explicit: generated shared assets are installable package resources, while Harness-level Do runtime code remains a maintained source surface until implemented. |
+| **Package manifest** | Generate only for targets whose reference file declares a package-native install surface. For Pi, repo-root package metadata and `pi/extensions/` runtime code are source-owned; generated shared assets under `dist/pi/` are package resources consumed by that source surface. |
 | **Install script** | `install.sh` and `install_helpers.py` are **infrastructure files** — update incrementally, never regenerate. They contain logic not derivable from source (piped execution detection, temp dir cloning, cleanup traps, argument parsing, settings merging). Only modify sections that reflect changed components (step counts, file lists, component names). |
 | **CLI extras** | Extension manifests, plugin configs, execution rules — per reference file. |
 | **Namespace metadata** | Regenerate `component-namespaces.json` from source ownership every run. Every distributed component must appear exactly once under its component type with the suffix for its owning plugin. |
@@ -128,4 +128,4 @@ Summary table after all CLIs processed:
 |-----|--------|--------|-------|----------|--------|
 | OpenCode | N | N converted | N adapted | N | Complete |
 | Codex | N | AGENTS.md + N TOML | none | — | Complete |
-| Pi | N compatible | N runtime prompt assets | runtime extension pending/updated | extension commands | Complete |
+| Pi | N compatible | N runtime prompt assets | source-owned runtime extension | extension commands | Complete |

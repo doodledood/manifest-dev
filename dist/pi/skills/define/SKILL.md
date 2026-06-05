@@ -87,7 +87,7 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
   ```
 ````
 
-Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — the future Pi Harness-level Do runtime will route blockers through its escalation outcome). Automate verification — criteria that genuinely require human action belong in Process Guidance, not as ACs. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
+Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — the Pi Harness-level Do runtime routes blockers through its escalation outcome). Automate verification — criteria that genuinely require human action belong in Process Guidance, not as ACs. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
 
 **Amendment.** A manifest path in `$ARGUMENTS` means amend. Read it fully, apply targeted changes only — preserve unaffected items verbatim. IDs are stable (modify in place; remove without renumbering). No `## Amendments` log — git is history. Autonomous when the caller supplies `--autonomous`; interactive otherwise.
 
@@ -100,6 +100,5 @@ Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action 
 ```text
 Manifest complete: <manifest-path>
 
-Pi package note: Harness-level Do is not installed by this skills-only package yet.
-To execute now: run manifest-dev /do from a host distribution that ships it, or install a future Pi runtime package and run its Harness-level Do command.
+To execute in Pi: /manifest-do <manifest-path>
 ```
