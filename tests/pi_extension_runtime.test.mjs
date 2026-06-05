@@ -1,16 +1,31 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import {
 	aggregateVerificationStatus,
 	buildGateVerifierPrompt,
+	chunkManifestGates,
+	evaluateDoneReadiness,
 	extractManifestGates,
+	extractReposMap,
 	makeBlockedVerificationRecord,
+	parseRunState,
 	parseVerifierReport,
+	planVerifierBatches,
+	readRunStateFile,
+	resolvePositiveIntConfig,
+	resolveStringConfig,
+	resolveVerifierModel,
+	runStateFileName,
 	sha256,
+	shouldStopAfterBatch,
+	shouldTerminateOutcome,
 	toGateVerificationResult,
 	unquote,
 	verificationToolResponse,
 	waitForVerifierRecords,
+	writeRunStateFile,
 } from "../pi/extensions/manifest-dev-runtime.ts";
 
 const gate = {
@@ -56,6 +71,19 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
       second line
     agent: contracts-reviewer
   \`\`\`
+- [AC-3.1] Model and phase.
+  \`\`\`yaml
+  verify:
+    prompt: "run check"
+    model: gpt-5
+    phase: 2
+  \`\`\`
+- [AC-4.1] Invalid phase falls back.
+  \`\`\`yaml
+  verify:
+    prompt: "x"
+    phase: not-a-number
+  \`\`\`
 - [PG-1] Process guidance is not a verifier gate.
 `;
 
@@ -66,6 +94,8 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			title: "Runtime claims stay honest.",
 			verifyPrompt: 'Run: echo "ok"',
 			suggestedAgent: "docs-reviewer",
+			model: undefined,
+			phase: 1,
 		},
 		{
 			id: "AC-1.1",
@@ -73,6 +103,8 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			title: "Single quoted prompt.",
 			verifyPrompt: "Check it's fine",
 			suggestedAgent: undefined,
+			model: undefined,
+			phase: 1,
 		},
 		{
 			id: "AC-2.1",
@@ -80,6 +112,26 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			title: "Block scalar prompt.",
 			verifyPrompt: "first line\nsecond line",
 			suggestedAgent: "contracts-reviewer",
+			model: undefined,
+			phase: 1,
+		},
+		{
+			id: "AC-3.1",
+			kind: "acceptance_criterion",
+			title: "Model and phase.",
+			verifyPrompt: "run check",
+			suggestedAgent: undefined,
+			model: "gpt-5",
+			phase: 2,
+		},
+		{
+			id: "AC-4.1",
+			kind: "acceptance_criterion",
+			title: "Invalid phase falls back.",
+			verifyPrompt: "x",
+			suggestedAgent: undefined,
+			model: undefined,
+			phase: 1,
 		},
 	]);
 });
@@ -252,6 +304,138 @@ test("unquote removes balanced shell-style quotes only", () => {
 	assert.equal(unquote('"manifest.md"'), "manifest.md");
 	assert.equal(unquote("'manifest.md'"), "manifest.md");
 	assert.equal(unquote('"unterminated'), '"unterminated');
+});
+
+test("planVerifierBatches groups by ascending phase, parallel within", () => {
+	const g = (id, phase) => ({ id, kind: "acceptance_criterion", title: id, verifyPrompt: "x", phase });
+	const batches = planVerifierBatches([g("AC-1.1", 2), g("AC-1.2", 1), g("AC-1.3", 2), g("AC-1.4", 1)]);
+	assert.deepEqual(
+		batches.map((batch) => batch.map((gate) => gate.id)),
+		[["AC-1.2", "AC-1.4"], ["AC-1.1", "AC-1.3"]],
+	);
+});
+
+test("phase execution short-circuits later batches on FAIL or BLOCKED", () => {
+	const g = (id, phase) => ({ id, kind: "acceptance_criterion", title: id, verifyPrompt: "x", phase });
+	const batches = planVerifierBatches([g("AC-1.1", 1), g("AC-1.2", 2)]);
+	const spawnedOnFail = [];
+	for (const batch of batches) {
+		spawnedOnFail.push(...batch.map((gate) => gate.id));
+		if (shouldStopAfterBatch([gateResult(batch[0].phase === 1 ? "FAIL" : "PASS")])) break;
+	}
+	assert.deepEqual(spawnedOnFail, ["AC-1.1"]);
+
+	const spawnedOnBlocked = [];
+	for (const batch of batches) {
+		spawnedOnBlocked.push(...batch.map((gate) => gate.id));
+		if (shouldStopAfterBatch([gateResult(batch[0].phase === 1 ? "BLOCKED" : "PASS")])) break;
+	}
+	assert.deepEqual(spawnedOnBlocked, ["AC-1.1"]);
+
+	assert.equal(shouldStopAfterBatch([gateResult("PASS")]), false);
+});
+
+test("chunkManifestGates bounds verifier fanout while preserving order", () => {
+	const gates = Array.from({ length: 25 }, (_, index) => ({
+		id: `AC-1.${index + 1}`,
+		kind: "acceptance_criterion",
+		title: `gate ${index + 1}`,
+		verifyPrompt: "x",
+		phase: 1,
+	}));
+
+	const chunks = chunkManifestGates(gates, 10);
+	assert.deepEqual(chunks.map((chunk) => chunk.length), [10, 10, 5]);
+	assert.deepEqual(chunks.flat().map((chunkGate) => chunkGate.id), gates.map((chunkGate) => chunkGate.id));
+	assert.deepEqual(chunkManifestGates(gates.slice(0, 3), 0).map((chunk) => chunk.length), [1, 1, 1]);
+});
+
+test("extractReposMap parses a Repos declaration and ignores single-repo", () => {
+	assert.deepEqual(
+		extractReposMap("- **Repos:** [loco: /a/loco, billing: /b/billing]"),
+		{ loco: "/a/loco", billing: "/b/billing" },
+	);
+	assert.deepEqual(extractReposMap("no repos declared here"), {});
+});
+
+test("buildGateVerifierPrompt prepends repo map only for multi-repo", () => {
+	const gate = { id: "AC-1.1", kind: "acceptance_criterion", title: "t", verifyPrompt: "do it", phase: 1 };
+	const base = buildGateVerifierPrompt({ gate, manifestPath: "/m", manifest: "# M", runId: "r" });
+	const withRepos = buildGateVerifierPrompt({ gate, manifestPath: "/m", manifest: "# M", runId: "r", reposMap: { loco: "/a" } });
+	assert.ok(!base.includes("Repository path map"));
+	assert.match(withRepos, /Repository path map/);
+	assert.match(withRepos, /- loco: \/a/);
+	// Empty map (single-repo) is byte-identical to omitting reposMap.
+	assert.equal(buildGateVerifierPrompt({ gate, manifestPath: "/m", manifest: "# M", runId: "r", reposMap: {} }), base);
+});
+
+test("run-state helpers round-trip to disk and handle missing or corrupt files", () => {
+	const record = makeBlockedVerificationRecord({
+		runId: "manifest-dev-run",
+		manifestPath: "/m",
+		manifest: "# M",
+		cwd: "/repo",
+		requestedAt: "t",
+		blocker: "b",
+	});
+	const expected = JSON.parse(JSON.stringify(record));
+	const dir = mkdtempSync(`${tmpdir()}/manifest-dev-runstate-`);
+	try {
+		assert.equal(runStateFileName("manifest-dev-d0/be c"), "manifest-dev-d0_be_c.json");
+		assert.deepEqual(parseRunState(JSON.stringify(record)), expected);
+		assert.equal(writeRunStateFile(record, dir), true);
+		assert.deepEqual(readRunStateFile(record.runId, dir), expected);
+		assert.equal(readRunStateFile("missing", dir), undefined);
+		writeFileSync(`${dir}/${runStateFileName("corrupt")}`, "{not json", "utf-8");
+		assert.equal(readRunStateFile("corrupt", dir), undefined);
+		assert.equal(parseRunState("{not json"), undefined);
+		assert.equal(parseRunState('{"runId":"x"}'), undefined);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+});
+
+test("resolveVerifierModel prefers the gate model then inherits the session model", () => {
+	assert.equal(resolveVerifierModel("openai/gpt-5", { provider: "anthropic", id: "claude" }), "openai/gpt-5");
+	assert.equal(resolveVerifierModel(undefined, { provider: "anthropic", id: "claude-sonnet-4" }), "anthropic/claude-sonnet-4");
+	assert.equal(resolveVerifierModel(undefined, { id: "bare-id" }), "bare-id");
+	assert.equal(resolveVerifierModel(undefined, undefined), undefined);
+});
+
+test("evaluateDoneReadiness clears only an all-PASS verification that still matches", () => {
+	const base = {
+		runId: "r", manifestPath: "/m", manifestSha256: "msha", requestedAt: "a", completedAt: "b",
+		cwd: "/repo", status: "passed", results: [], workspaceDiffSha256: "dsha",
+	};
+	assert.equal(evaluateDoneReadiness({ verification: undefined }).ready, false);
+	assert.equal(evaluateDoneReadiness({ verification: { ...base, status: "failed" } }).ready, false);
+	assert.equal(
+		evaluateDoneReadiness({ verification: base, currentManifestSha256: "msha", currentWorkspaceDiffSha256: "dsha" }).ready,
+		true,
+	);
+	assert.equal(
+		evaluateDoneReadiness({ verification: base, currentManifestSha256: "changed", currentWorkspaceDiffSha256: "dsha" }).ready,
+		false,
+	);
+	assert.equal(
+		evaluateDoneReadiness({ verification: base, currentManifestSha256: "msha", currentWorkspaceDiffSha256: "changed" }).ready,
+		false,
+	);
+});
+
+test("shouldTerminateOutcome terminates done only", () => {
+	assert.equal(shouldTerminateOutcome("done"), true);
+	assert.equal(shouldTerminateOutcome("escalate"), false);
+});
+
+test("config resolution follows flag > env > default with validation", () => {
+	assert.equal(resolvePositiveIntConfig({ flag: "50", env: "9", fallback: 1000 }), 50);
+	assert.equal(resolvePositiveIntConfig({ flag: "bad", env: "9", fallback: 1000 }), 9);
+	assert.equal(resolvePositiveIntConfig({ flag: undefined, env: "0", fallback: 1000 }), 1000);
+	assert.equal(resolvePositiveIntConfig({ flag: undefined, env: undefined, fallback: 1000 }), 1000);
+	assert.equal(resolveStringConfig({ flag: "general-purpose", env: "x", fallback: "d" }), "general-purpose");
+	assert.equal(resolveStringConfig({ flag: "  ", env: "fromenv", fallback: "d" }), "fromenv");
+	assert.equal(resolveStringConfig({ flag: undefined, env: undefined, fallback: "d" }), "d");
 });
 
 function gateResult(verdict) {
