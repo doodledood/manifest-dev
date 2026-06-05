@@ -1,15 +1,25 @@
 import { execFileSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineTool, type ExtensionAPI, type ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
+import {
+	aggregateVerificationStatus,
+	buildGateVerifierPrompt,
+	extractManifestGates,
+	makeBlockedVerificationRecord,
+	sha256,
+	toGateVerificationResult,
+	unquote,
+	verificationToolResponse,
+	waitForVerifierRecords,
+	type ManifestGate,
+	type SubagentsRecordService,
+	type VerificationRecord,
+} from "./manifest-dev-runtime.ts";
 
 type ManifestOutcome = "done" | "escalate";
 type ManifestCommand = "manifest-do" | "manifest-auto" | "manifest-babysit-pr";
-type VerificationStatus = "passed" | "failed" | "blocked";
-type GateVerdict = "PASS" | "FAIL" | "BLOCKED";
-type GateKind = "acceptance_criterion" | "global_invariant";
 
 interface RunRecord {
 	runId: string;
@@ -23,49 +33,7 @@ interface RunRecord {
 	args?: string;
 }
 
-interface ManifestGate {
-	id: string;
-	kind: GateKind;
-	title: string;
-	verifyPrompt: string;
-	suggestedAgent?: string;
-}
-
-interface GateVerificationResult {
-	gateId: string;
-	kind: GateKind;
-	title: string;
-	agentId?: string;
-	agentStatus?: string;
-	verdict: GateVerdict;
-	evidence: string;
-	details: string;
-	rawResult?: string;
-	error?: string;
-}
-
-interface VerificationRecord {
-	runId: string;
-	manifestPath: string;
-	manifestSha256: string;
-	requestedAt: string;
-	completedAt: string;
-	cwd: string;
-	status: VerificationStatus;
-	implementationSummary?: string;
-	results: GateVerificationResult[];
-}
-
-interface SubagentRecord {
-	id: string;
-	type: string;
-	description: string;
-	status: string;
-	result?: string;
-	error?: string;
-}
-
-interface SubagentsService {
+interface SubagentsService extends SubagentsRecordService {
 	spawn(type: string, prompt: string, options?: {
 		description?: string;
 		model?: string;
@@ -75,7 +43,6 @@ interface SubagentsService {
 		foreground?: boolean;
 		bypassQueue?: boolean;
 	}): string;
-	getRecord(id: string): SubagentRecord | undefined;
 }
 
 const RUN_ENTRY = "manifest-dev:run";
@@ -524,55 +491,6 @@ Follow the manifest-dev PR lifecycle flow:
 7. Do not use /done or /escalate. Finish exactly once by calling manifest_dev_report_outcome with runId="${run.runId}", outcome="done" only after verifier fanout returns all PASS, or outcome="escalate" with blockers[] when blocked.`;
 }
 
-function extractManifestGates(manifest: string): ManifestGate[] {
-	const gateMatches = [...manifest.matchAll(/^\s*-\s+\[(AC-\d+(?:\.\d+)+|INV-G\d+)\]\s*(.+?)\s*$/gm)];
-	return gateMatches.flatMap((match, index) => {
-		const id = match[1];
-		const title = match[2].trim();
-		const start = match.index ?? 0;
-		const end = gateMatches[index + 1]?.index ?? manifest.length;
-		const block = manifest.slice(start, end);
-		const verifyPrompt = extractYamlValue(block, "prompt");
-		if (!verifyPrompt) return [];
-		return [{
-			id,
-			title,
-			kind: id.startsWith("INV-") ? "global_invariant" : "acceptance_criterion",
-			verifyPrompt,
-			suggestedAgent: extractYamlValue(block, "agent"),
-		} satisfies ManifestGate];
-	});
-}
-
-function extractYamlValue(block: string, key: string): string | undefined {
-	const quoted = block.match(new RegExp(`^\\s*${key}:\\s*"((?:\\\\.|[^"\\\\])*)"\\s*$`, "m"));
-	if (quoted) return unescapeQuotedYaml(quoted[1]);
-
-	const singleQuoted = block.match(new RegExp(`^\\s*${key}:\\s*'((?:''|[^'])*)'\\s*$`, "m"));
-	if (singleQuoted) return singleQuoted[1].replaceAll("''", "'");
-
-	const inline = block.match(new RegExp(`^\\s*${key}:\\s*([^\\n]+?)\\s*$`, "m"));
-	if (inline && !inline[1].startsWith("|") && !inline[1].startsWith(">")) {
-		return inline[1].trim();
-	}
-
-	const blockScalar = block.match(new RegExp(`^\\s*${key}:\\s*[|>]\\s*\\n((?:\\s{4,}.+\\n?)+)`, "m"));
-	if (!blockScalar) return undefined;
-	return blockScalar[1]
-		.split("\n")
-		.map((line) => line.replace(/^\s{4}/, ""))
-		.join("\n")
-		.trim();
-}
-
-function unescapeQuotedYaml(value: string): string {
-	try {
-		return JSON.parse(`"${value}"`) as string;
-	} catch {
-		return value.replace(/\\"/g, '"');
-	}
-}
-
 async function getSubagentsService(): Promise<SubagentsService | undefined> {
 	try {
 		const module = await import(SUBAGENTS_PACKAGE) as {
@@ -582,208 +500,6 @@ async function getSubagentsService(): Promise<SubagentsService | undefined> {
 	} catch {
 		return undefined;
 	}
-}
-
-function buildGateVerifierPrompt(args: {
-	gate: ManifestGate;
-	manifestPath: string;
-	manifest: string;
-	runId: string;
-	implementationSummary?: string;
-}): string {
-	const suggestedAgent = args.gate.suggestedAgent
-		? `\nSuggested manifest verifier persona: ${args.gate.suggestedAgent}`
-		: "";
-	const implementationSummary = args.implementationSummary
-		? `\nImplementation summary from executor:\n${args.implementationSummary}\n`
-		: "";
-
-	return `You are a manifest-dev verifier running in a clean Pi subagent session.
-
-Verify exactly one manifest gate. Do not implement fixes. Inspect the workspace, run focused commands when useful, and judge only the assigned gate.
-
-Run id: ${args.runId}
-Manifest path: ${args.manifestPath}
-Gate: ${args.gate.id} ${args.gate.title}
-Gate kind: ${args.gate.kind}${suggestedAgent}
-${implementationSummary}
-Verification prompt:
-${args.gate.verifyPrompt}
-
-Return exactly this report shape:
-VERDICT: PASS|FAIL|BLOCKED
-EVIDENCE: concise concrete evidence, including commands/files inspected
-DETAILS: what passed, what failed, or what external blocker prevents judgment
-
-Verdict rules:
-- PASS only when the gate is satisfied with concrete evidence.
-- FAIL when the implementation can be repaired in the workspace.
-- BLOCKED only for missing access, human decision, unavailable external service, or verifier runtime/tooling inability.
-
-Manifest content:
-\`\`\`markdown
-${args.manifest}
-\`\`\``;
-}
-
-async function waitForVerifierRecords(
-	subagents: SubagentsService,
-	agentIds: string[],
-): Promise<Map<string, SubagentRecord | undefined>> {
-	const deadline = Date.now() + 30 * 60 * 1000;
-	while (Date.now() < deadline) {
-		const records = new Map(agentIds.map((agentId) => [agentId, subagents.getRecord(agentId)]));
-		const stillRunning = [...records.values()].some((record) => (
-			!record || record.status === "queued" || record.status === "running"
-		));
-		if (!stillRunning) return records;
-		await delay(1000);
-	}
-
-	return new Map(agentIds.map((agentId) => [agentId, subagents.getRecord(agentId)]));
-}
-
-function toGateVerificationResult(
-	gate: ManifestGate,
-	agentId: string,
-	record: SubagentRecord | undefined,
-): GateVerificationResult {
-	if (!record) {
-		return {
-			gateId: gate.id,
-			kind: gate.kind,
-			title: gate.title,
-			agentId,
-			verdict: "BLOCKED",
-			evidence: "Verifier subagent record disappeared before aggregation.",
-			details: "Runtime could not retrieve the verifier result.",
-			error: "missing_subagent_record",
-		};
-	}
-
-	if (record.status !== "completed") {
-		return {
-			gateId: gate.id,
-			kind: gate.kind,
-			title: gate.title,
-			agentId,
-			agentStatus: record.status,
-			verdict: "BLOCKED",
-			evidence: `Verifier subagent ended with status=${record.status}.`,
-			details: record.error ?? "Verifier did not complete cleanly.",
-			rawResult: record.result,
-			error: record.error,
-		};
-	}
-
-	const parsed = parseVerifierReport(record.result ?? "");
-	if (!parsed) {
-		return {
-			gateId: gate.id,
-			kind: gate.kind,
-			title: gate.title,
-			agentId,
-			agentStatus: record.status,
-			verdict: "BLOCKED",
-			evidence: "Verifier completed but did not emit a parseable VERDICT line.",
-			details: "Expected report lines: VERDICT, EVIDENCE, DETAILS.",
-			rawResult: record.result,
-		};
-	}
-
-	return {
-		gateId: gate.id,
-		kind: gate.kind,
-		title: gate.title,
-		agentId,
-		agentStatus: record.status,
-		...parsed,
-		rawResult: record.result,
-	};
-}
-
-function parseVerifierReport(result: string): Pick<GateVerificationResult, "verdict" | "evidence" | "details"> | undefined {
-	const verdict = result.match(/^\s*VERDICT:\s*(PASS|FAIL|BLOCKED)\b/im)?.[1] as GateVerdict | undefined;
-	if (!verdict) return undefined;
-	const evidence = result.match(/^\s*EVIDENCE:\s*(.+?)\s*$/im)?.[1]?.trim() ?? "";
-	const details = result.match(/^\s*DETAILS:\s*([\s\S]*)$/im)?.[1]?.trim() ?? "";
-	return {
-		verdict,
-		evidence,
-		details,
-	};
-}
-
-function aggregateVerificationStatus(results: GateVerificationResult[]): VerificationStatus {
-	if (results.some((result) => result.verdict === "BLOCKED")) return "blocked";
-	if (results.some((result) => result.verdict === "FAIL")) return "failed";
-	return "passed";
-}
-
-function makeBlockedVerificationRecord(args: {
-	runId: string;
-	manifestPath: string;
-	manifest: string;
-	cwd: string;
-	requestedAt: string;
-	implementationSummary?: string;
-	blocker: string;
-}): VerificationRecord {
-	return {
-		runId: args.runId,
-		manifestPath: args.manifestPath,
-		manifestSha256: sha256(args.manifest),
-		requestedAt: args.requestedAt,
-		completedAt: new Date().toISOString(),
-		cwd: args.cwd,
-		status: "blocked",
-		implementationSummary: args.implementationSummary,
-		results: [{
-			gateId: "manifest",
-			kind: "global_invariant",
-			title: "Verifier runtime precondition",
-			verdict: "BLOCKED",
-			evidence: args.blocker,
-			details: args.blocker,
-		}],
-	};
-}
-
-function verificationToolResponse(record: VerificationRecord) {
-	const summary = record.results
-		.map((result) => `${result.gateId}: ${result.verdict} - ${firstLine(result.evidence || result.details)}`)
-		.join("\n");
-	const instruction = record.status === "passed"
-		? "All manifest gates PASS. You may now call manifest_dev_report_outcome with outcome=\"done\" for this run id."
-		: record.status === "failed"
-			? "Some manifest gates FAIL. Repair the failed gates, then call manifest_dev_request_verification again with the same run id."
-			: "Verification is BLOCKED. If the blocker requires human input, access, external state, or an unrecoverable decision, call manifest_dev_report_outcome with outcome=\"escalate\" and include blockers[].";
-
-	return {
-		content: [{
-			type: "text",
-			text: `Manifest-dev verification ${record.status.toUpperCase()} for ${record.runId}.\n\n${summary}\n\n${instruction}`,
-		}],
-		details: record,
-	};
-}
-
-function firstLine(value: string): string {
-	return value.split("\n")[0]?.trim() || "No evidence reported.";
-}
-
-function delay(ms: number): Promise<void> {
-	return new Promise((resolveDelay) => setTimeout(resolveDelay, ms));
-}
-
-function unquote(value: string): string {
-	if (
-		(value.startsWith('"') && value.endsWith('"'))
-		|| (value.startsWith("'") && value.endsWith("'"))
-	) {
-		return value.slice(1, -1);
-	}
-	return value;
 }
 
 function isGithubPr(value: string): boolean {
@@ -802,10 +518,6 @@ function gitOutput(cwd: string, args: string[]): string | undefined {
 	} catch {
 		return undefined;
 	}
-}
-
-function sha256(value: string): string {
-	return createHash("sha256").update(value).digest("hex");
 }
 
 function shortId(runId: string): string {

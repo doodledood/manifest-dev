@@ -58,6 +58,7 @@ PI_EXTENSION_TOOLS = (
     "manifest_dev_report_outcome",
 )
 PI_EXTENSION = ROOT / "pi" / "extensions" / "manifest-dev.ts"
+PI_EXTENSION_RUNTIME = ROOT / "pi" / "extensions" / "manifest-dev-runtime.ts"
 
 REMOVED_SKILLS = ("verify",)
 REMOVED_AGENTS = ("manifest-verifier",)
@@ -335,6 +336,7 @@ def test_pi_package_metadata_points_to_generated_skills_and_extension() -> None:
     assert package["peerDependencies"]["@gotgenes/pi-subagents"] == "*"
     assert package["peerDependencies"]["typebox"] == "*"
     assert PI_EXTENSION.is_file()
+    assert PI_EXTENSION_RUNTIME.is_file()
 
 
 def test_pi_dist_contains_only_compatible_skill_set() -> None:
@@ -368,6 +370,7 @@ def test_pi_dist_contains_only_compatible_skill_set() -> None:
 
 def test_pi_extension_registers_harness_commands_and_runtime_tools() -> None:
     content = PI_EXTENSION.read_text(encoding="utf-8")
+    runtime = PI_EXTENSION_RUNTIME.read_text(encoding="utf-8")
 
     for command in PI_EXTENSION_COMMANDS:
         assert f'pi.registerCommand("{command}"' in content
@@ -379,7 +382,9 @@ def test_pi_extension_registers_harness_commands_and_runtime_tools() -> None:
     assert "@gotgenes/pi-subagents" in content
     assert "subagents.spawn" in content
     assert "inheritContext: false" in content
-    assert "VERDICT: PASS|FAIL|BLOCKED" in content
+    assert "VERDICT: PASS|FAIL|BLOCKED" in runtime
+    assert "extractManifestGates" in runtime
+    assert "aggregateVerificationStatus" in runtime
     assert 'Type.Literal("done")' in content
     assert 'Type.Literal("escalate")' in content
     assert "pi.appendEntry(RUN_ENTRY" in content
