@@ -1,10 +1,10 @@
 {
-  "source_commit": "ac07f1847d93dd60b0e372d5c916c5fdead36bdb",
+  "source_commit": "5de4a0d7b205d8a76351608c2e87d6fa7005c4b2",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-06-05T16:32:30Z",
+  "synced_at": "2026-06-05T17:01:12Z",
   "notes": "Pi package target with shared skills plus source-owned Harness-level Do extension. Runtime now honors verify.agent/model/phase, multi-repo prompt prepend, a durable + freshness-bound done gate, resumable escalation, and Pi-native verifier configuration."
 }
