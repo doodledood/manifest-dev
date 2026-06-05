@@ -390,10 +390,17 @@ def test_pi_extension_registers_harness_commands_and_runtime_tools() -> None:
     assert "pi.appendEntry(RUN_ENTRY" in content
     assert "pi.appendEntry(VERIFICATION_ENTRY" in content
     assert "pi.appendEntry(OUTCOME_ENTRY" in content
-    assert 'latestVerification?.status !== "passed"' in content
     assert "Done is blocked" in content
     assert "pi.sendUserMessage" in content
     assert "Do not use /done or /escalate" in content
+    # Durable + freshness-bound done gate, phase-aware fanout, session inheritance, resumable escalate.
+    assert "evaluateDoneReadiness(" in content
+    assert "writeRunStateFile(" in content
+    assert "readRunStateFile(" in content
+    assert "planVerifierBatches(" in content
+    assert "resolveVerifierModel(gate.model, ctx.model)" in content
+    assert "pi.registerFlag(FLAG_MAX_TURNS" in content
+    assert "shouldTerminateOutcome(outcome)" in content
 
 
 def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:

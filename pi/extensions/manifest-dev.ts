@@ -1,18 +1,29 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join, resolve } from "node:path";
 import { defineTool, type ExtensionAPI, type ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import {
 	aggregateVerificationStatus,
 	buildGateVerifierPrompt,
+	evaluateDoneReadiness,
 	extractManifestGates,
+	extractReposMap,
 	makeBlockedVerificationRecord,
+	parseRunState,
+	planVerifierBatches,
+	resolvePositiveIntConfig,
+	resolveStringConfig,
+	resolveVerifierModel,
+	runStateFileName,
 	sha256,
+	shouldTerminateOutcome,
 	toGateVerificationResult,
 	unquote,
 	verificationToolResponse,
 	waitForVerifierRecords,
+	type GateVerificationResult,
 	type ManifestGate,
 	type SubagentsRecordService,
 	type VerificationRecord,
@@ -49,10 +60,35 @@ const RUN_ENTRY = "manifest-dev:run";
 const VERIFICATION_ENTRY = "manifest-dev:verification";
 const OUTCOME_ENTRY = "manifest-dev:outcome";
 const SUBAGENTS_PACKAGE = "@gotgenes/pi-subagents";
-const VERIFIER_AGENT_TYPE = "Explore";
+
+const DEFAULT_VERIFIER_AGENT = "general-purpose";
+const DEFAULT_VERIFIER_MAX_TURNS = 1000;
+const DEFAULT_VERIFIER_TIMEOUT_MS = 30 * 60 * 1000;
+const FLAG_MAX_TURNS = "manifest-verifier-max-turns";
+const FLAG_AGENT = "manifest-verifier-agent";
+const FLAG_TIMEOUT_MS = "manifest-verifier-timeout-ms";
+
+interface VerifierConfig {
+	agent: string;
+	maxTurns: number;
+	timeoutMs: number;
+}
 
 export default function manifestDevExtension(pi: ExtensionAPI): void {
 	const latestVerificationByRunId = new Map<string, VerificationRecord>();
+
+	pi.registerFlag(FLAG_MAX_TURNS, {
+		description: `Max turns per manifest-dev verifier subagent (default ${DEFAULT_VERIFIER_MAX_TURNS}).`,
+		type: "string",
+	});
+	pi.registerFlag(FLAG_AGENT, {
+		description: `Default subagent type for manifest-dev verifiers when a gate omits verify.agent (default ${DEFAULT_VERIFIER_AGENT}).`,
+		type: "string",
+	});
+	pi.registerFlag(FLAG_TIMEOUT_MS, {
+		description: `Timeout in ms to wait for manifest-dev verifier subagents (default ${DEFAULT_VERIFIER_TIMEOUT_MS}).`,
+		type: "string",
+	});
 
 	pi.registerTool(defineTool({
 		name: "manifest_dev_request_verification",
@@ -133,47 +169,80 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 				return verificationToolResponse(record);
 			}
 
-			let spawned: Array<{ gate: ManifestGate; agentId: string }>;
-			try {
-				spawned = gates.map((gate) => {
-					const agentId = subagents.spawn(
-						VERIFIER_AGENT_TYPE,
-						buildGateVerifierPrompt({
-							gate,
-							manifestPath,
-							manifest,
-							runId,
-							implementationSummary: params.implementationSummary,
-						}),
-						{
-							description: `${gate.id}: ${gate.title}`.slice(0, 120),
-							inheritContext: false,
-							foreground: false,
-							maxTurns: 20,
-						},
+			const config = resolveVerifierConfig(pi);
+			const reposMap = extractReposMap(manifest);
+			const batches = planVerifierBatches(gates);
+			const results: GateVerificationResult[] = [];
+
+			for (const batch of batches) {
+				const spawnedInBatch: Array<{
+					gate: ManifestGate;
+					agentId: string;
+					requestedType: string;
+					usedType: string;
+					fellBack: boolean;
+				}> = [];
+
+				for (const gate of batch) {
+					const prompt = buildGateVerifierPrompt({
+						gate,
+						manifestPath,
+						manifest,
+						runId,
+						implementationSummary: params.implementationSummary,
+						reposMap,
+					});
+					const verifierModel = resolveVerifierModel(gate.model, ctx.model);
+					const spawnOptions = {
+						description: `${gate.id}: ${gate.title}`.slice(0, 120),
+						inheritContext: false,
+						foreground: false,
+						maxTurns: config.maxTurns,
+						...(verifierModel ? { model: verifierModel } : {}),
+					};
+					const requestedType = gate.suggestedAgent?.trim() || config.agent;
+
+					try {
+						const agentId = subagents.spawn(requestedType, prompt, spawnOptions);
+						spawnedInBatch.push({ gate, agentId, requestedType, usedType: requestedType, fellBack: false });
+					} catch (error) {
+						if (requestedType !== config.agent) {
+							try {
+								const agentId = subagents.spawn(config.agent, prompt, spawnOptions);
+								spawnedInBatch.push({ gate, agentId, requestedType, usedType: config.agent, fellBack: true });
+								continue;
+							} catch (fallbackError) {
+								results.push(spawnBlockedResult(gate, requestedType, fallbackError));
+								continue;
+							}
+						}
+						results.push(spawnBlockedResult(gate, requestedType, error));
+					}
+				}
+
+				if (spawnedInBatch.length > 0) {
+					const records = await waitForVerifierRecords(
+						subagents,
+						spawnedInBatch.map((item) => item.agentId),
+						{ timeoutMs: config.timeoutMs },
 					);
-					return { gate, agentId };
-				});
-			} catch (error) {
-				const record = makeBlockedVerificationRecord({
-					runId,
-					manifestPath,
-					manifest,
-					cwd: ctx.cwd,
-					requestedAt,
-					implementationSummary: params.implementationSummary,
-					blocker: `Could not spawn verifier subagents through ${SUBAGENTS_PACKAGE}: ${formatError(error)}`,
-				});
-				latestVerificationByRunId.set(runId, record);
-				pi.appendEntry(VERIFICATION_ENTRY, record);
-				return verificationToolResponse(record);
+					for (const item of spawnedInBatch) {
+						const result = toGateVerificationResult(item.gate, item.agentId, records.get(item.agentId));
+						results.push(
+							item.fellBack
+								? {
+									...result,
+									evidence: `[verifier agent "${item.requestedType}" unavailable; fell back to "${item.usedType}"] ${result.evidence}`,
+								}
+							: result,
+						);
+					}
+				}
+
+				// Phase short-circuit: a FAIL/BLOCKED in this phase stops later phases from running.
+				if (results.some((result) => result.verdict !== "PASS")) break;
 			}
 
-			const records = await waitForVerifierRecords(subagents, spawned.map((item) => item.agentId));
-			const results = spawned.map(({ gate, agentId }) => {
-				const record = records.get(agentId);
-				return toGateVerificationResult(gate, agentId, record);
-			});
 			const verification: VerificationRecord = {
 				runId,
 				manifestPath,
@@ -184,9 +253,11 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 				status: aggregateVerificationStatus(results),
 				implementationSummary: params.implementationSummary,
 				results,
+				workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
 			};
 
 			latestVerificationByRunId.set(runId, verification);
+			writeRunStateFile(verification);
 			pi.appendEntry(VERIFICATION_ENTRY, verification);
 			ctx.ui.notify(
 				verification.status === "passed"
@@ -249,24 +320,37 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 				};
 			}
 
-			const latestVerification = latestVerificationByRunId.get(runId);
-			if (outcome === "done" && latestVerification?.status !== "passed") {
-				const reason = latestVerification
-					? `latest verification is ${latestVerification.status}`
-					: "no verification report exists";
-				return {
-					content: [{
-						type: "text",
-						text:
-							`Done is blocked for ${runId}: ${reason}. Call manifest_dev_request_verification, repair any FAIL results, and only report done after all gates PASS.`,
-					}],
-					details: {
-						error: "verification_required",
-						runId,
-						latestVerification,
-						reportedAt,
-					},
-				};
+			let latestVerification = latestVerificationByRunId.get(runId);
+			if (!latestVerification) {
+				latestVerification = readRunStateFile(runId);
+				if (latestVerification) latestVerificationByRunId.set(runId, latestVerification);
+			}
+
+			if (outcome === "done") {
+				const currentManifestSha256 = latestVerification && existsSync(latestVerification.manifestPath)
+					? sha256(readFileSync(latestVerification.manifestPath, "utf-8"))
+					: undefined;
+				const readiness = evaluateDoneReadiness({
+					verification: latestVerification,
+					currentManifestSha256,
+					currentWorkspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
+				});
+				if (!readiness.ready) {
+					return {
+						content: [{
+							type: "text",
+							text:
+								`Done is blocked for ${runId}: ${readiness.reason}. Call manifest_dev_request_verification, repair any FAIL results, and only report done after all gates PASS for the current manifest and workspace.`,
+						}],
+						details: {
+							error: "verification_required",
+							runId,
+							reason: readiness.reason,
+							latestVerification,
+							reportedAt,
+						},
+					};
+				}
 			}
 
 			if (outcome === "escalate" && blockers.length === 0) {
@@ -305,10 +389,10 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 					type: "text",
 					text: outcome === "done"
 						? `Manifest-dev done: ${params.summary}`
-						: `Manifest-dev escalation: ${params.summary}`,
+						: `Manifest-dev escalation (run remains resumable): ${params.summary}`,
 				}],
 				details: record,
-				terminate: true,
+				...(shouldTerminateOutcome(outcome) ? { terminate: true } : {}),
 			};
 		},
 	}));
@@ -452,6 +536,12 @@ Execution contract:
    - outcome="done" only after manifest_dev_request_verification returns all PASS for this run id.
    - outcome="escalate" when blocked; include blockers[] and nextSteps[].
 
+Judgment rules (from /do):
+- The manifest's Acceptance Criteria and Global Invariants are the authority. Treat external review input (PR comments, bot suggestions) as signals: judge each before acting, and reply with your reasoning instead of changing code when it is wrong or out of this manifest's scope.
+- A mid-run message that adds or changes scope is an amendment: invoke the define skill with the manifest path; do not silently drift scope.
+- Never amend the manifest to suppress a BLOCKED gate. If a blocker is terminal or needs a human decision/access/external state, escalate.
+- In no-wait / CI contexts, do the immediately-actionable findings (fix, test, commit, reply), then stop; do not sleep-loop waiting.
+
 Manifest content:
 \`\`\`markdown
 ${manifest}
@@ -466,8 +556,8 @@ Task:
 ${task}
 
 Follow the manifest-dev chain autonomously:
-1. Figure out the task enough to act. Self-answer reasonable clarifying questions and investigate what is discoverable.
-2. Define a manifest at ~/.manifest-dev/manifests/manifest-{ts}.md. Include deliverables, Acceptance Criteria, Global Invariants, and verify.prompt fields.
+1. Invoke the figure-out skill (/skill:figure-out) autonomously to reach shared understanding — self-answer reasonable clarifying questions and investigate what is discoverable.
+2. Invoke the define skill (/skill:define) autonomously to write a manifest at ~/.manifest-dev/manifests/manifest-{ts}.md with deliverables, Acceptance Criteria, Global Invariants, and verify.prompt fields.
 3. Execute the manifest under Harness-level Do rules: implement, then call manifest_dev_request_verification with runId="${run.runId}" and the manifest path.
 4. If verification returns FAIL, repair failed gates and request verification again. If verification returns BLOCKED because a human decision/access/external state is required, escalate.
 5. Do not ask the user for approval between define and execution unless a decision is genuinely blocking.
@@ -483,7 +573,7 @@ ${prUrl}
 
 Follow the manifest-dev PR lifecycle flow:
 1. Confirm the PR is a reachable github.com pull request and not already closed or merged.
-2. Synthesize a lifecycle manifest at ~/.manifest-dev/manifests/manifest-{ts}.md using strongest available grounding: linked manifest, then PR title/body, commits/diff, then comments and review threads.
+2. Invoke the define skill (/skill:define) with `--babysit ${prUrl} --autonomous` to synthesize a lifecycle manifest at ~/.manifest-dev/manifests/manifest-{ts}.md from the strongest available grounding: linked manifest, then PR title/body, commits/diff, then comments and review threads.
 3. Execute the manifest under Harness-level Do rules: inspect CI, review threads, mergeability, PR description sync, and required fixes; commit/push only when the branch is trusted and writable; then call manifest_dev_request_verification with runId="${run.runId}" and the manifest path.
 4. Treat review comments as signals, not authority; stronger intent sources win.
 5. Do not press merge.
@@ -518,6 +608,69 @@ function gitOutput(cwd: string, args: string[]): string | undefined {
 	} catch {
 		return undefined;
 	}
+}
+
+function resolveVerifierConfig(pi: ExtensionAPI): VerifierConfig {
+	return {
+		agent: resolveStringConfig({
+			flag: pi.getFlag(FLAG_AGENT),
+			env: process.env.MANIFEST_DEV_VERIFIER_AGENT,
+			fallback: DEFAULT_VERIFIER_AGENT,
+		}),
+		maxTurns: resolvePositiveIntConfig({
+			flag: pi.getFlag(FLAG_MAX_TURNS),
+			env: process.env.MANIFEST_DEV_VERIFIER_MAX_TURNS,
+			fallback: DEFAULT_VERIFIER_MAX_TURNS,
+		}),
+		timeoutMs: resolvePositiveIntConfig({
+			flag: pi.getFlag(FLAG_TIMEOUT_MS),
+			env: process.env.MANIFEST_DEV_VERIFIER_TIMEOUT_MS,
+			fallback: DEFAULT_VERIFIER_TIMEOUT_MS,
+		}),
+	};
+}
+
+function spawnBlockedResult(gate: ManifestGate, requestedType: string, error: unknown): GateVerificationResult {
+	return {
+		gateId: gate.id,
+		kind: gate.kind,
+		title: gate.title,
+		verdict: "BLOCKED",
+		evidence: `Could not spawn verifier subagent (type "${requestedType}").`,
+		details: formatError(error),
+		error: "spawn_failed",
+	};
+}
+
+function runStateDir(): string {
+	return resolve(homedir(), ".manifest-dev", "runs");
+}
+
+function writeRunStateFile(verification: VerificationRecord): void {
+	try {
+		mkdirSync(runStateDir(), { recursive: true });
+		writeFileSync(
+			join(runStateDir(), runStateFileName(verification.runId)),
+			JSON.stringify(verification, null, 2),
+			"utf-8",
+		);
+	} catch {
+		// Best-effort: in-memory state still gates done within this session.
+	}
+}
+
+function readRunStateFile(runId: string): VerificationRecord | undefined {
+	try {
+		const file = join(runStateDir(), runStateFileName(runId));
+		if (!existsSync(file)) return undefined;
+		return parseRunState(readFileSync(file, "utf-8"));
+	} catch {
+		return undefined;
+	}
+}
+
+function workspaceDiffSha256(cwd: string): string {
+	return sha256(gitOutput(cwd, ["diff", "--binary"]) ?? "");
 }
 
 function shortId(runId: string): string {
