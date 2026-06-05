@@ -1,7 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
+import manifestDevExtension, {
+	buildManifestAutoPrompt,
+	buildManifestBabysitPrompt,
+	buildManifestDoPrompt,
+	createVerificationOrchestratorSession,
+	formatRepairFollowUpMessage,
+	makeOrchestratorSessionId,
+	rehydrateRuntimeState,
+	resolveManifestPath,
+	routeVerificationResult,
+	shouldTriggerHarnessVerification,
+	startManifestDo,
+} from "../pi/extensions/manifest-dev.ts";
 import {
 	aggregateVerificationStatus,
 	buildGateVerifierPrompt,
@@ -143,10 +156,12 @@ test("buildGateVerifierPrompt creates a single-gate clean-session contract", () 
 		manifest: "# Manifest",
 		runId: "manifest-dev-abc123",
 		implementationSummary: "Changed extension runtime.",
+		orchestratorSessionId: "manifest-verify-123",
 	});
 
 	assert.match(prompt, /clean Pi subagent session/);
 	assert.match(prompt, /Do not implement fixes/);
+	assert.match(prompt, /Verification orchestrator session: manifest-verify-123/);
 	assert.match(prompt, /Gate: AC-1\.1 Thing works/);
 	assert.match(prompt, /Suggested manifest verifier persona: test-quality-reviewer/);
 	assert.match(prompt, /Run npm test and inspect output\./);
@@ -266,20 +281,28 @@ test("makeBlockedVerificationRecord and verificationToolResponse encode runtime 
 		requestedAt: "2026-06-05T00:00:00.000Z",
 		implementationSummary: "ready",
 		blocker: "subagents service missing",
+		orchestratorSessionId: "manifest-verify-1",
+		attempt: 2,
+		workspaceDiffSha256: "diff-sha",
 	});
 
 	assert.equal(record.status, "blocked");
 	assert.equal(record.manifestSha256, sha256("# Manifest"));
+	assert.equal(record.orchestratorSessionId, "manifest-verify-1");
+	assert.equal(record.attempt, 2);
+	assert.equal(record.workspaceDiffSha256, "diff-sha");
 	assert.equal(record.results[0].verdict, "BLOCKED");
 	assert.equal(record.results[0].details, "subagents service missing");
 
 	const response = verificationToolResponse(record);
 	assert.match(response.content[0].text, /Verification is BLOCKED/);
-	assert.match(response.content[0].text, /outcome="escalate"/);
+	assert.match(response.content[0].text, /resumable blocker/);
+	assert.doesNotMatch(response.content[0].text, /manifest_dev_request_verification/);
+	assert.doesNotMatch(response.content[0].text, /manifest_dev_report_outcome/);
 	assert.equal(response.details, record);
 });
 
-test("verificationToolResponse tells executor to finish or repair", () => {
+test("verificationToolResponse summarizes legacy internal verification records", () => {
 	const passed = {
 		runId: "manifest-dev-run",
 		manifestPath: "/tmp/manifest.md",
@@ -296,8 +319,12 @@ test("verificationToolResponse tells executor to finish or repair", () => {
 		results: [gateResult("FAIL")],
 	};
 
-	assert.match(verificationToolResponse(passed).content[0].text, /outcome="done"/);
-	assert.match(verificationToolResponse(failed).content[0].text, /Repair the failed gates/);
+	const passedText = verificationToolResponse(passed).content[0].text;
+	const failedText = verificationToolResponse(failed).content[0].text;
+	assert.match(passedText, /runtime may record done/);
+	assert.match(failedText, /Inject the failed gates back/);
+	assert.doesNotMatch(passedText + failedText, /manifest_dev_request_verification/);
+	assert.doesNotMatch(passedText + failedText, /manifest_dev_report_outcome/);
 });
 
 test("unquote removes balanced shell-style quotes only", () => {
@@ -409,6 +436,7 @@ test("evaluateDoneReadiness clears only an all-PASS verification that still matc
 	};
 	assert.equal(evaluateDoneReadiness({ verification: undefined }).ready, false);
 	assert.equal(evaluateDoneReadiness({ verification: { ...base, status: "failed" } }).ready, false);
+	assert.equal(evaluateDoneReadiness({ verification: base, currentWorkspaceDiffSha256: "dsha" }).ready, false);
 	assert.equal(
 		evaluateDoneReadiness({ verification: base, currentManifestSha256: "msha", currentWorkspaceDiffSha256: "dsha" }).ready,
 		true,
@@ -436,6 +464,433 @@ test("config resolution follows flag > env > default with validation", () => {
 	assert.equal(resolveStringConfig({ flag: "general-purpose", env: "x", fallback: "d" }), "general-purpose");
 	assert.equal(resolveStringConfig({ flag: "  ", env: "fromenv", fallback: "d" }), "fromenv");
 	assert.equal(resolveStringConfig({ flag: undefined, env: undefined, fallback: "d" }), "d");
+});
+
+test("resolveManifestPath expands leading tilde while preserving relative paths", () => {
+	const cwd = "/repo";
+	assert.equal(resolveManifestPath("", cwd), undefined);
+	assert.equal(resolveManifestPath("manifest.md", cwd), "/repo/manifest.md");
+	assert.equal(resolveManifestPath("'manifest.md'", cwd), "/repo/manifest.md");
+	assert.equal(resolveManifestPath('"~/manifest.md"', cwd), `${process.env.HOME}/manifest.md`);
+	assert.equal(resolveManifestPath("~/.manifest-dev/manifests/m.md", cwd), `${process.env.HOME}/.manifest-dev/manifests/m.md`);
+	assert.equal(resolveManifestPath("~", cwd), process.env.HOME);
+});
+
+test("simplified Pi executor prompts omit harness verification tools", () => {
+	const run = {
+		runId: "manifest-dev-run",
+		manifestPath: "/tmp/manifest.md",
+		manifestSha256: "hash",
+	};
+	const doPrompt = buildManifestDoPrompt(run, "# Manifest");
+	assert.match(doPrompt, /implement the Manifest Deliverables/i);
+	assert.match(doPrompt, /run useful local checks/i);
+	assert.match(doPrompt, /runtime owns authoritative verification/i);
+	assert.doesNotMatch(doPrompt, /manifest_dev_request_verification/);
+	assert.doesNotMatch(doPrompt, /manifest_dev_report_outcome/);
+	assert.doesNotMatch(doPrompt, /Finish exactly once/);
+
+	const autoPrompt = buildManifestAutoPrompt(run, "build it");
+	assert.match(autoPrompt, /write the manifest exactly at: \/tmp\/manifest\.md/);
+	assert.doesNotMatch(autoPrompt, /manifest_dev_request_verification/);
+	assert.doesNotMatch(autoPrompt, /manifest_dev_report_outcome/);
+
+	const babysitPrompt = buildManifestBabysitPrompt(run, "https://github.com/o/r/pull/1");
+	assert.match(babysitPrompt, /write the lifecycle manifest exactly at: \/tmp\/manifest\.md/);
+	assert.doesNotMatch(babysitPrompt, /manifest_dev_request_verification/);
+	assert.doesNotMatch(babysitPrompt, /manifest_dev_report_outcome/);
+});
+
+test("shouldTriggerHarnessVerification only allows active executor checkpoints", () => {
+	const run = {
+		runId: "manifest-dev-run",
+		command: "manifest-do",
+		startedAt: "t",
+		cwd: "/repo",
+		executorSessionId: "executor-session",
+		status: "executing",
+	};
+	assert.equal(shouldTriggerHarnessVerification(run, "executor-session"), true);
+	assert.equal(shouldTriggerHarnessVerification({ ...run, status: "repairing" }, "executor-session"), true);
+	assert.equal(shouldTriggerHarnessVerification({ ...run, status: "verifying" }, "executor-session"), false);
+	assert.equal(shouldTriggerHarnessVerification({ ...run, status: "done" }, "executor-session"), false);
+	assert.equal(shouldTriggerHarnessVerification({ ...run, status: "blocked" }, "executor-session"), false);
+	assert.equal(shouldTriggerHarnessVerification(run, "other-session"), false);
+	assert.equal(shouldTriggerHarnessVerification(run, "executor-session", new Set(["executor-session"])), false);
+	assert.equal(shouldTriggerHarnessVerification(undefined, "executor-session"), false);
+});
+
+test("extension registers agent_end lifecycle hook for Harness-level verification", () => {
+	const events = new Map();
+	const commands = new Map();
+	const flags = [];
+	const pi = {
+		events: { on() {} },
+		registerFlag(name, options) { flags.push({ name, options }); },
+		on(name, handler) { events.set(name, handler); },
+		registerCommand(name, command) { commands.set(name, command); },
+	};
+
+	manifestDevExtension(pi);
+
+	assert.equal(typeof events.get("agent_end"), "function");
+	assert.equal(typeof events.get("before_agent_start"), "function");
+	assert.equal(commands.has("manifest-do"), true);
+	assert.equal(commands.has("manifest-auto"), true);
+	assert.equal(commands.has("manifest-babysit-pr"), true);
+	assert.equal(flags.some((flag) => flag.name === "manifest-verifier-max-concurrent"), true);
+});
+
+test("rehydrateRuntimeState removes terminal runs after replay", () => {
+	const executing = {
+		runId: "manifest-dev-run",
+		command: "manifest-do",
+		startedAt: "t",
+		cwd: "/repo",
+		executorSessionId: "executor-session",
+		status: "executing",
+	};
+	const verification = {
+		runId: executing.runId,
+		manifestPath: "/m",
+		manifestSha256: "h",
+		requestedAt: "start",
+		completedAt: "end",
+		cwd: "/repo",
+		status: "passed",
+		results: [gateResult("PASS")],
+	};
+	const state = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map(),
+		childSessionIds: new Set(),
+	};
+	const ctx = {
+		sessionManager: {
+			getBranch() {
+				return [
+					{ type: "custom", customType: "manifest-dev:run", data: executing },
+					{ type: "custom", customType: "manifest-dev:verification", data: verification },
+					{ type: "custom", customType: "manifest-dev:run", data: { ...executing, status: "done" } },
+				];
+			},
+		},
+	};
+
+	rehydrateRuntimeState(ctx, state);
+
+	assert.equal(state.activeRunByExecutorSessionId.has("executor-session"), false);
+	assert.equal(state.latestVerificationByRunId.get(executing.runId), verification);
+});
+
+test("registered agent_end handler runs runtime verification path", async () => {
+	const events = new Map();
+	const commands = new Map();
+	const calls = { entries: [], prompts: [], messages: [], activeTools: [] };
+	const pi = {
+		events: { on() {} },
+		registerFlag() {},
+		on(name, handler) { events.set(name, handler); },
+		registerCommand(name, command) { commands.set(name, command); },
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		setSessionName() {},
+		getActiveTools() { return calls.activeTools; },
+		setActiveTools(names) { calls.activeTools = names; },
+		sendUserMessage(prompt) { calls.prompts.push(prompt); },
+		sendMessage(message, options) { calls.messages.push({ message, options }); },
+	};
+	manifestDevExtension(pi);
+
+	const dir = mkdtempSync(`${tmpdir()}/manifest-dev-agent-end-`);
+	const manifestPath = `${dir}/manifest.md`;
+	writeFileSync(manifestPath, `# Manifest\n\n## 6. Deliverables\n### Deliverable 1: X\n**Acceptance Criteria:**\n- [AC-1.1] X works\n  \`\`\`yaml\n  verify:\n    prompt: "Check X"\n  \`\`\`\n`, "utf-8");
+	const ctx = {
+		cwd: dir,
+		sessionManager: { getSessionId() { return "executor-session"; } },
+		isIdle() { return true; },
+		hasPendingMessages() { return false; },
+		ui: { notify() {} },
+	};
+	try {
+		await commands.get("manifest-do").handler(manifestPath, ctx);
+		await events.get("agent_end")({}, ctx);
+
+		const verificationEntry = calls.entries.find((entry) => entry.customType === "manifest-dev:verification");
+		assert.ok(verificationEntry);
+		assert.equal(verificationEntry.data.status, "blocked");
+		assert.equal(verificationEntry.data.orchestratorSessionId.startsWith("manifest-verify-"), true);
+		assert.ok(verificationEntry.data.orchestratorSessionFile);
+		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:outcome" && entry.data.outcome === "escalate"), true);
+		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:run" && entry.data.status === "blocked"), true);
+		assert.equal(calls.messages.length, 1);
+		assert.match(calls.messages[0].message.content, /verification is blocked/);
+		assert.equal(calls.prompts.length, 1);
+		assert.doesNotMatch(calls.prompts[0], /manifest_dev_request_verification/);
+
+		rmSync(`${process.env.HOME}/.manifest-dev/runs/${verificationEntry.data.runId}.json`, { force: true });
+		rmSync(verificationEntry.data.orchestratorSessionFile, { force: true });
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+});
+
+test("registered agent_end handler waits for pending messages before verification", async () => {
+	const events = new Map();
+	const commands = new Map();
+	const calls = { entries: [], prompts: [], activeTools: [] };
+	const pi = {
+		events: { on() {} },
+		registerFlag() {},
+		on(name, handler) { events.set(name, handler); },
+		registerCommand(name, command) { commands.set(name, command); },
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		setSessionName() {},
+		getActiveTools() { return calls.activeTools; },
+		setActiveTools(names) { calls.activeTools = names; },
+		sendUserMessage(prompt) { calls.prompts.push(prompt); },
+	};
+	manifestDevExtension(pi);
+
+	const dir = mkdtempSync(`${tmpdir()}/manifest-dev-pending-`);
+	const manifestPath = `${dir}/manifest.md`;
+	writeFileSync(manifestPath, "# Manifest\n\n## 6. Deliverables\n", "utf-8");
+	const ctx = {
+		cwd: dir,
+		sessionManager: { getSessionId() { return "executor-session"; } },
+		isIdle() { return true; },
+		hasPendingMessages() { return true; },
+		ui: { notify() {} },
+	};
+	try {
+		await commands.get("manifest-do").handler(manifestPath, ctx);
+		await events.get("agent_end")({}, ctx);
+		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:verification"), false);
+		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:outcome"), false);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+});
+
+test("startManifestDo records executor session and simplified prompt", async () => {
+	const dir = mkdtempSync(`${tmpdir()}/manifest-dev-start-`);
+	const manifestPath = `${dir}/manifest.md`;
+	writeFileSync(manifestPath, "# Manifest\n\n## 6. Deliverables\n", "utf-8");
+	const calls = { entries: [], prompts: [], sessionNames: [], notifications: [], activeTools: ["read", "manifest_dev_request_verification"] };
+	const pi = {
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		setSessionName(name) { calls.sessionNames.push(name); },
+		getActiveTools() { return calls.activeTools; },
+		setActiveTools(names) { calls.activeTools = names; },
+		sendUserMessage(prompt) { calls.prompts.push(prompt); },
+	};
+	const ctx = {
+		cwd: dir,
+		sessionManager: { getSessionId() { return "executor-session"; } },
+		isIdle() { return true; },
+		ui: { notify(message, level) { calls.notifications.push({ message, level }); } },
+	};
+	const state = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map(),
+		childSessionIds: new Set(),
+	};
+	await startManifestDo(pi, manifestPath, ctx, state);
+	try {
+		const runEntry = calls.entries.find((entry) => entry.customType === "manifest-dev:run");
+		assert.ok(runEntry);
+		assert.equal(runEntry.data.executorSessionId, "executor-session");
+		assert.equal(runEntry.data.status, "executing");
+		assert.equal(state.activeRunByExecutorSessionId.get("executor-session").runId, runEntry.data.runId);
+		assert.equal(shouldTriggerHarnessVerification(runEntry.data, "executor-session", state.childSessionIds), true);
+		assert.equal(calls.activeTools.includes("manifest_dev_request_verification"), false);
+		assert.equal(calls.prompts.length, 1);
+		assert.match(calls.prompts[0], /Run manifest-dev Harness-level Do implementation/);
+		assert.match(calls.prompts[0], /run useful local checks/i);
+		assert.doesNotMatch(calls.prompts[0], /manifest_dev_request_verification/);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+});
+
+test("second executor stop after repair starts another clean Verification Orchestrator Session", () => {
+	const requestedAt = "2026-06-05T20:00:00.000Z";
+	const repairingRun = {
+		runId: "manifest-dev-repair-loop-test",
+		command: "manifest-do",
+		startedAt: "2026-06-05T18:00:00.000Z",
+		cwd: process.cwd(),
+		executorSessionId: "executor-session",
+		status: "repairing",
+		verificationAttempts: 2,
+	};
+	const ctx = { cwd: process.cwd() };
+
+	assert.equal(shouldTriggerHarnessVerification(repairingRun, "executor-session"), true);
+	const firstAttemptId = makeOrchestratorSessionId({ ...repairingRun, verificationAttempts: 1 }, requestedAt);
+	const secondAttempt = createVerificationOrchestratorSession(ctx, repairingRun, requestedAt);
+	try {
+		assert.notEqual(secondAttempt.id, firstAttemptId);
+		assert.equal(secondAttempt.id, makeOrchestratorSessionId(repairingRun, requestedAt));
+		const lines = readFileSync(secondAttempt.file, "utf-8").trim().split("\n").map((line) => JSON.parse(line));
+		assert.equal(lines[0].parentSession, undefined);
+		assert.equal(lines[1].parentId, null);
+		assert.equal(lines[1].details.executorSessionId, "executor-session");
+	} finally {
+		if (secondAttempt.file) rmSync(secondAttempt.file, { force: true });
+	}
+});
+
+test("verification orchestrator sessions are clean persisted attempts", () => {
+	const requestedAt = "2026-06-05T19:00:00.000Z";
+	const run = {
+		runId: "manifest-dev-orchestrator-test",
+		command: "manifest-do",
+		startedAt: "2026-06-05T18:00:00.000Z",
+		cwd: process.cwd(),
+		executorSessionId: "executor-session",
+		status: "verifying",
+		verificationAttempts: 1,
+	};
+	const ctx = { cwd: process.cwd() };
+	const firstId = makeOrchestratorSessionId(run, requestedAt);
+	const secondId = makeOrchestratorSessionId({ ...run, verificationAttempts: 2 }, requestedAt);
+	assert.notEqual(firstId, secondId);
+
+	const session = createVerificationOrchestratorSession(ctx, run, requestedAt);
+	try {
+		assert.equal(session.id, firstId);
+		assert.ok(session.file?.includes(".manifest-dev/verification-sessions"));
+		const lines = readFileSync(session.file, "utf-8").trim().split("\n").map((line) => JSON.parse(line));
+		assert.equal(lines[0].type, "session");
+		assert.equal(lines[0].id, firstId);
+		assert.equal(lines[0].parentSession, undefined);
+		assert.equal(lines[1].type, "custom_message");
+		assert.equal(lines[1].parentId, null);
+		assert.equal(lines[1].details.executorSessionId, "executor-session");
+		assert.match(lines[1].content, /intentionally not inherited/);
+	} finally {
+		if (session.file) rmSync(session.file, { force: true });
+	}
+});
+
+test("formatRepairFollowUpMessage injects failed gate evidence without exposing protocol", () => {
+	const message = formatRepairFollowUpMessage({
+		runId: "manifest-dev-run",
+		manifestPath: "/m",
+		manifestSha256: "h",
+		requestedAt: "start",
+		completedAt: "end",
+		cwd: "/repo",
+		status: "failed",
+		orchestratorSessionId: "manifest-verify-1",
+		orchestratorSessionFile: "/tmp/manifest-verify-1.jsonl",
+		results: [
+			gateResult("PASS"),
+			{ ...gateResult("FAIL"), gateId: "INV-G1", title: "Runtime boundary", evidence: "tool is visible", details: "remove it" },
+		],
+	});
+	assert.match(message, /Harness verification found failed/);
+	assert.match(message, /Verification orchestrator session: manifest-verify-1 \(\/tmp\/manifest-verify-1\.jsonl\)/);
+	assert.match(message, /INV-G1 Runtime boundary: tool is visible/);
+	assert.match(message, /Details: remove it/);
+	assert.doesNotMatch(message, /manifest_dev_request_verification/);
+	assert.doesNotMatch(message, /manifest_dev_report_outcome/);
+	assert.doesNotMatch(message, /AC-1\.1 Thing works/);
+});
+
+test("routeVerificationResult injects repair, blocked, and done runtime outcomes", async () => {
+	const routeRunStateFile = `${process.env.HOME}/.manifest-dev/runs/manifest-dev-route-test.json`;
+	rmSync(routeRunStateFile, { force: true });
+	const makePi = () => {
+		const calls = { entries: [], userMessages: [], messages: [], notifications: [] };
+		return {
+			calls,
+			pi: {
+				appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+				sendUserMessage(message, options) { calls.userMessages.push({ message, options }); },
+				sendMessage(message, options) { calls.messages.push({ message, options }); },
+			},
+		};
+	};
+	const routeTmpDir = mkdtempSync(`${tmpdir()}/manifest-dev-route-`);
+	const routeManifest = `${routeTmpDir}/manifest.md`;
+	writeFileSync(routeManifest, "# Manifest", "utf-8");
+	const ctx = {
+		cwd: process.cwd(),
+		ui: { notify(message, level) { void message; void level; } },
+	};
+	const baseRun = {
+		runId: "manifest-dev-route-test",
+		command: "manifest-do",
+		startedAt: "2026-06-05T00:00:00.000Z",
+		cwd: process.cwd(),
+		executorSessionId: "executor-session",
+		status: "verifying",
+		verificationAttempts: 1,
+	};
+	const makeState = () => ({
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map([[baseRun.executorSessionId, baseRun]]),
+		childSessionIds: new Set(),
+	});
+	const verification = (status, results) => ({
+		runId: baseRun.runId,
+		manifestPath: routeManifest,
+		manifestSha256: sha256("# Manifest"),
+		requestedAt: "start",
+		completedAt: "end",
+		cwd: process.cwd(),
+		status,
+		orchestratorSessionId: "manifest-verify-1",
+		results,
+	});
+
+	const failedPi = makePi();
+	await routeVerificationResult(failedPi.pi, ctx, makeState(), baseRun, verification("failed", [
+		{ ...gateResult("FAIL"), gateId: "AC-2.1", title: "Runtime internals", evidence: "still exposed", details: "hide it" },
+	]));
+	assert.equal(failedPi.calls.userMessages.length, 1);
+	assert.match(failedPi.calls.userMessages[0].message, /AC-2\.1 Runtime internals: still exposed/);
+	assert.deepEqual(failedPi.calls.userMessages[0].options, { deliverAs: "followUp" });
+	assert.equal(failedPi.calls.entries.some((entry) => entry.customType === "manifest-dev:verification"), true);
+	assert.equal(failedPi.calls.entries.some((entry) => entry.customType === "manifest-dev:run" && entry.data.status === "repairing"), true);
+
+	const blockedPi = makePi();
+	await routeVerificationResult(blockedPi.pi, ctx, makeState(), baseRun, verification("blocked", [
+		gateResult("PASS"),
+		{ ...gateResult("BLOCKED"), gateId: "INV-G2", evidence: "subagents unavailable" },
+	]));
+	assert.equal(blockedPi.calls.messages.length, 1);
+	assert.match(blockedPi.calls.messages[0].message.content, /verification is blocked/);
+	assert.match(blockedPi.calls.messages[0].message.content, /INV-G2: subagents unavailable/);
+	assert.doesNotMatch(blockedPi.calls.messages[0].message.content, /AC-1\.1: PASS evidence/);
+	const blockedOutcome = blockedPi.calls.entries.find((entry) => entry.customType === "manifest-dev:outcome" && entry.data.outcome === "escalate");
+	assert.ok(blockedOutcome);
+	assert.deepEqual(blockedOutcome.data.blockers, ["INV-G2: subagents unavailable"]);
+	assert.equal(blockedPi.calls.entries.some((entry) => entry.customType === "manifest-dev:run" && entry.data.status === "blocked"), true);
+
+	const passedPi = makePi();
+	await routeVerificationResult(passedPi.pi, ctx, makeState(), baseRun, verification("passed", [gateResult("PASS")]));
+	assert.equal(passedPi.calls.messages.length, 1);
+	assert.match(passedPi.calls.messages[0].message.content, /Manifest-dev done/);
+	assert.equal(passedPi.calls.entries.some((entry) => entry.customType === "manifest-dev:outcome" && entry.data.outcome === "done"), true);
+	assert.equal(passedPi.calls.entries.some((entry) => entry.customType === "manifest-dev:run" && entry.data.status === "done"), true);
+
+	writeFileSync(routeManifest, "# Changed Manifest", "utf-8");
+	const stalePi = makePi();
+	await routeVerificationResult(stalePi.pi, ctx, makeState(), baseRun, verification("passed", [gateResult("PASS")]));
+	assert.equal(stalePi.calls.messages.length, 0);
+	assert.equal(stalePi.calls.userMessages.length, 1);
+	assert.match(stalePi.calls.userMessages[0].message, /became stale before done/);
+	assert.equal(stalePi.calls.entries.some((entry) => entry.customType === "manifest-dev:outcome" && entry.data.outcome === "done"), false);
+	assert.deepEqual(
+		stalePi.calls.entries
+			.filter((entry) => entry.customType === "manifest-dev:run")
+			.map((entry) => entry.data.status),
+		["repairing"],
+	);
+	rmSync(routeRunStateFile, { force: true });
+	rmSync(routeTmpDir, { recursive: true, force: true });
 });
 
 function gateResult(verdict) {

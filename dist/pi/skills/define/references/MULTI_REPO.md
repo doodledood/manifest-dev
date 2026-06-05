@@ -55,7 +55,7 @@ Worked example:
 
 ## Cross-repo gates and BLOCKED state
 
-Cross-repo verification often depends on prerequisites the user controls ("all PRs deployed to staging"). The verifier subagent for such an AC returns **BLOCKED** with a note describing what's pending, and Pi Harness-level Do routes the BLOCKED state through `manifest_dev_report_outcome` with `outcome="escalate"` so the user can take the action. After the user signals readiness ("deployed", "go ahead"), re-invoke `/manifest-do` to re-evaluate the criterion.
+Cross-repo verification often depends on prerequisites the user controls ("all PRs deployed to staging"). The verifier subagent for such an AC returns **BLOCKED** with a note describing what's pending, and Pi Harness-level Do records a runtime-owned blocker outcome so the user can take the action. After the user signals readiness ("deployed", "go ahead"), re-invoke `/manifest-do` to re-evaluate the criterion.
 
 When the manifest declares `Repos:`, every verifier subagent invocation gets the cross-repo path map injected as part of the verbatim prompt so verifiers have access to all repos' paths:
 
@@ -69,7 +69,7 @@ Single-repo manifests get no prefix injection.
 
 ## Completion and /manifest-auto for multi-repo
 
-`manifest_dev_report_outcome` with `outcome="done"` fires **once per manifest**, including for multi-repo. No per-repo completion independence. Every AC + every Global Invariant across every repo's deliverables must verify PASS (with no BLOCKED pending) before the done outcome is reported. The cross-repo prompt-prefix injection above is what makes a single done outcome reachable: verifiers have all repo paths, so cross-repo behavior is checkable during normal Harness-level Do flow. The summary lists which repos' deliverables were verified.
+The runtime-owned done outcome fires **once per manifest**, including for multi-repo. No per-repo completion independence. Every AC + every Global Invariant across every repo's deliverables must verify PASS (with no BLOCKED pending) before the done outcome is reported. The cross-repo prompt-prefix injection above is what makes a single done outcome reachable: verifiers have all repo paths, so cross-repo behavior is checkable during normal Harness-level Do flow. The summary lists which repos' deliverables were verified.
 
 `/manifest-auto`'s chain (figure-out -> define -> Harness-level Do) covers the whole multi-repo implementation phase in one invocation, navigating between repos as deliverables require. Lifecycle tending is part of Harness-level Do execution when the manifest carries `github-pr-lifecycle` ACs (PR_LIFECYCLE.md auto-templates one per repo). `/manifest-babysit-pr <pr-url>` is single-PR by construction; for multi-repo lifecycle tending, declare `Repos:` in the manifest and let /define template the per-repo ACs.
 

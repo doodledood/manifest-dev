@@ -57,6 +57,5 @@ Repair-session resumption remains executor-mediated for now: failed verification
 
 ## Source
 
-- Session: `manifest-dev:figure-out --logs --with-docs`, 2026-06-05.
-- Log: `~/.manifest-dev/logs/figure-out-log-20260605-071040.md`
+- Session: `manifest-dev:figure-out --with-docs`, 2026-06-05.
 - Related: `20260531-codex-plugin-native-distribution`

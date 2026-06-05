@@ -30,7 +30,7 @@ pi install npm:@gotgenes/pi-subagents
 pi install git:github.com/doodledood/manifest-dev@main
 ```
 
-Pi exposes shared skills as `/skill:<name>` commands and registers `/manifest-do`, `/manifest-auto`, and `/manifest-babysit-pr` through its runtime extension. Harness-level Do uses `@gotgenes/pi-subagents` for clean verifier subagent sessions: the executor calls `manifest_dev_request_verification`, the runtime fans out one verifier per Acceptance Criterion and Global Invariant, and `manifest_dev_report_outcome(outcome="done")` is rejected until the verifier report is all PASS. The Pi verifier fanout bypasses the subagents package's default background queue and uses its own cap (`--manifest-verifier-max-concurrent`, default 24), so 20+ same-phase verifier sessions can run in parallel.
+Pi exposes shared skills as `/skill:<name>` commands and registers `/manifest-do`, `/manifest-auto`, and `/manifest-babysit-pr` through its runtime extension. Harness-level Do keeps the executor simple: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop. The runtime starts clean verification attempts, records a clean verification orchestration session, fans out clean verifier subagent sessions — one per Acceptance Criterion and Global Invariant, injects failed-gate evidence back into the executor as follow-up work, and records done only after every gate passes. The Pi verifier fanout bypasses the subagents package's default background queue and uses its own cap (`--manifest-verifier-max-concurrent`, default 24), so 20+ same-phase verifier sessions can run in parallel.
 
 Then work through the three beats:
 

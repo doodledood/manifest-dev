@@ -1,9 +1,8 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
-import { defineTool, type ExtensionAPI, type ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
-import { Type } from "typebox";
+import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import {
 	aggregateVerificationStatus,
 	buildGateVerifierPrompt,
@@ -13,7 +12,6 @@ import {
 	extractReposMap,
 	makeBlockedVerificationRecord,
 	planVerifierBatches,
-	readRunStateFile,
 	resolvePositiveIntConfig,
 	resolveStringConfig,
 	resolveVerifierModel,
@@ -22,7 +20,6 @@ import {
 	shouldTerminateOutcome,
 	toGateVerificationResult,
 	unquote,
-	verificationToolResponse,
 	waitForVerifierRecords,
 	writeRunStateFile,
 	type GateVerificationResult,
@@ -33,17 +30,22 @@ import {
 
 type ManifestOutcome = "done" | "escalate";
 type ManifestCommand = "manifest-do" | "manifest-auto" | "manifest-babysit-pr";
+type RunStatus = "executing" | "repairing" | "verifying" | "blocked" | "done";
 
-interface RunRecord {
+export interface RunRecord {
 	runId: string;
 	command: ManifestCommand;
 	startedAt: string;
 	cwd: string;
+	executorSessionId: string;
+	status: RunStatus;
 	manifestPath?: string;
 	manifestSha256?: string;
 	gitHead?: string;
 	gitDiffSha256?: string;
 	args?: string;
+	verificationAttempts?: number;
+	lastVerificationStatus?: VerificationRecord["status"];
 }
 
 interface SubagentsService extends SubagentsRecordService {
@@ -61,6 +63,7 @@ interface SubagentsService extends SubagentsRecordService {
 const RUN_ENTRY = "manifest-dev:run";
 const VERIFICATION_ENTRY = "manifest-dev:verification";
 const OUTCOME_ENTRY = "manifest-dev:outcome";
+const STATUS_ENTRY = "manifest-dev:status";
 const SUBAGENTS_PACKAGE = "@gotgenes/pi-subagents";
 
 const DEFAULT_VERIFIER_AGENT = "general-purpose";
@@ -71,6 +74,10 @@ const FLAG_MAX_TURNS = "manifest-verifier-max-turns";
 const FLAG_AGENT = "manifest-verifier-agent";
 const FLAG_TIMEOUT_MS = "manifest-verifier-timeout-ms";
 const FLAG_MAX_CONCURRENT = "manifest-verifier-max-concurrent";
+const HARNESS_TOOL_NAMES = new Set([
+	"manifest_dev_request_verification",
+	"manifest_dev_report_outcome",
+]);
 
 interface VerifierConfig {
 	agent: string;
@@ -79,8 +86,18 @@ interface VerifierConfig {
 	maxConcurrent: number;
 }
 
+export interface RuntimeState {
+	latestVerificationByRunId: Map<string, VerificationRecord>;
+	activeRunByExecutorSessionId: Map<string, RunRecord>;
+	childSessionIds: Set<string>;
+}
+
 export default function manifestDevExtension(pi: ExtensionAPI): void {
-	const latestVerificationByRunId = new Map<string, VerificationRecord>();
+	const state: RuntimeState = {
+		latestVerificationByRunId: new Map<string, VerificationRecord>(),
+		activeRunByExecutorSessionId: new Map<string, RunRecord>(),
+		childSessionIds: new Set<string>(),
+	};
 
 	pi.registerFlag(FLAG_MAX_TURNS, {
 		description: `Max turns per manifest-dev verifier subagent (default ${DEFAULT_VERIFIER_MAX_TURNS}).`,
@@ -99,347 +116,59 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 		type: "string",
 	});
 
-	pi.registerTool(defineTool({
-		name: "manifest_dev_request_verification",
-		label: "Manifest-dev Verification",
-		description:
-			"Run the manifest-dev Harness-level verification fanout. Call this when implementation is believed ready; it parses the manifest, spawns clean verifier subagent sessions per Acceptance Criterion and Global Invariant, aggregates PASS / FAIL / BLOCKED verdicts, and reports whether the executor should finish, repair, or escalate.",
-		promptSnippet:
-			"Request manifest-dev verification before reporting done. Verification launches clean subagent sessions for every manifest gate.",
-		promptGuidelines: [
-			"Call manifest_dev_request_verification when a Harness-level Do implementation attempt is ready for independent verification.",
-			"Do not call manifest_dev_report_outcome with outcome=done until this tool returns an all-PASS report for the same run id.",
-			"If this tool returns FAIL, repair the failed gates and call this tool again.",
-			"If this tool returns BLOCKED, call manifest_dev_report_outcome with outcome=escalate only when the blockers require human input, access, external state, or another unrecoverable decision.",
-		],
-		parameters: Type.Object({
-			runId: Type.String({
-				description: "Run id emitted by /manifest-do, /manifest-auto, or /manifest-babysit-pr.",
-			}),
-			manifestPath: Type.String({
-				description: "Path to the manifest that contains Acceptance Criteria and Global Invariant verify.prompt blocks.",
-			}),
-			implementationSummary: Type.Optional(Type.String({
-				description: "Concise summary of what changed before verification.",
-			})),
-		}),
-		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
-			const requestedAt = new Date().toISOString();
-			const runId = params.runId.trim();
-			if (!runId) {
-				return {
-					content: [{ type: "text", text: "Verification requires a non-empty runId." }],
-					details: { error: "missing_run_id", requestedAt },
-				};
-			}
+	pi.events.on("subagents:child:session-created", (event: unknown) => {
+		const sessionId = typeof event === "object" && event !== null && "sessionId" in event
+			? String((event as { sessionId: unknown }).sessionId)
+			: "";
+		if (sessionId) state.childSessionIds.add(sessionId);
+	});
+	pi.events.on("subagents:child:disposed", (event: unknown) => {
+		const sessionId = typeof event === "object" && event !== null && "sessionId" in event
+			? String((event as { sessionId: unknown }).sessionId)
+			: "";
+		if (sessionId) state.childSessionIds.delete(sessionId);
+	});
 
-			const manifestPath = resolve(ctx.cwd, unquote(params.manifestPath));
-			if (!existsSync(manifestPath)) {
-				return {
-					content: [{
-						type: "text",
-						text: `Verification blocked: manifest not found at ${manifestPath}.`,
-					}],
-					details: { error: "manifest_not_found", manifestPath, requestedAt },
-				};
-			}
+	pi.on("session_start", (_event, ctx) => {
+		rehydrateRuntimeState(ctx, state);
+	});
 
-			const manifest = readFileSync(manifestPath, "utf-8");
-			const gates = extractManifestGates(manifest);
-			if (gates.length === 0) {
-				const record = makeBlockedVerificationRecord({
-					runId,
-					manifestPath,
-					manifest,
-					cwd: ctx.cwd,
-					requestedAt,
-					implementationSummary: params.implementationSummary,
-					blocker: "No Acceptance Criteria or Global Invariants with verify.prompt blocks were found in the manifest.",
-				});
-				latestVerificationByRunId.set(runId, record);
-				writeRunStateFile(record, runStateDir());
-				pi.appendEntry(VERIFICATION_ENTRY, record);
-				return verificationToolResponse(record);
-			}
+	pi.on("before_agent_start", (_event, ctx) => {
+		if (!state.activeRunByExecutorSessionId.has(ctx.sessionManager.getSessionId())) return;
+		hideHarnessToolsFromExecutor(pi);
+	});
 
-			const subagents = await getSubagentsService();
-			if (!subagents) {
-				const record = makeBlockedVerificationRecord({
-					runId,
-					manifestPath,
-					manifest,
-					cwd: ctx.cwd,
-					requestedAt,
-					implementationSummary: params.implementationSummary,
-					blocker:
-						`Pi subagents service is unavailable. Install and enable it with: pi install npm:${SUBAGENTS_PACKAGE}`,
-				});
-				latestVerificationByRunId.set(runId, record);
-				writeRunStateFile(record, runStateDir());
-				pi.appendEntry(VERIFICATION_ENTRY, record);
-				return verificationToolResponse(record);
-			}
-
-			const config = resolveVerifierConfig(pi);
-			const reposMap = extractReposMap(manifest);
-			const batches = planVerifierBatches(gates);
-			const results: GateVerificationResult[] = [];
-
-			for (const batch of batches) {
-				const phaseResultStart = results.length;
-
-				for (const chunk of chunkManifestGates(batch, config.maxConcurrent)) {
-					const spawnedInChunk: Array<{
-						gate: ManifestGate;
-						agentId: string;
-						requestedType: string;
-						usedType: string;
-						fellBack: boolean;
-					}> = [];
-
-					for (const gate of chunk) {
-						const prompt = buildGateVerifierPrompt({
-							gate,
-							manifestPath,
-							manifest,
-							runId,
-							implementationSummary: params.implementationSummary,
-							reposMap,
-						});
-						const verifierModel = resolveVerifierModel(gate.model, ctx.model);
-						const spawnOptions = {
-							description: `${gate.id}: ${gate.title}`.slice(0, 120),
-							inheritContext: false,
-							foreground: false,
-							bypassQueue: true,
-							maxTurns: config.maxTurns,
-							...(verifierModel ? { model: verifierModel } : {}),
-						};
-						const requestedType = gate.suggestedAgent?.trim() || config.agent;
-
-						try {
-							const agentId = subagents.spawn(requestedType, prompt, spawnOptions);
-							spawnedInChunk.push({ gate, agentId, requestedType, usedType: requestedType, fellBack: false });
-						} catch (error) {
-							if (requestedType !== config.agent) {
-								try {
-									const agentId = subagents.spawn(config.agent, prompt, spawnOptions);
-									spawnedInChunk.push({ gate, agentId, requestedType, usedType: config.agent, fellBack: true });
-									continue;
-								} catch (fallbackError) {
-									results.push(spawnBlockedResult(gate, requestedType, fallbackError));
-									continue;
-								}
-							}
-							results.push(spawnBlockedResult(gate, requestedType, error));
-						}
-					}
-
-					if (spawnedInChunk.length > 0) {
-						const records = await waitForVerifierRecords(
-							subagents,
-							spawnedInChunk.map((item) => item.agentId),
-							{ timeoutMs: config.timeoutMs },
-						);
-						for (const item of spawnedInChunk) {
-							const result = toGateVerificationResult(item.gate, item.agentId, records.get(item.agentId));
-							results.push(
-								item.fellBack
-									? {
-										...result,
-										evidence: `[verifier agent "${item.requestedType}" unavailable; fell back to "${item.usedType}"] ${result.evidence}`,
-									}
-									: result,
-							);
-						}
-					}
-				}
-
-				// Phase short-circuit: a FAIL/BLOCKED in this phase stops later phases from running.
-				if (shouldStopAfterBatch(results.slice(phaseResultStart))) break;
-			}
-
-			const verification: VerificationRecord = {
-				runId,
-				manifestPath,
-				manifestSha256: sha256(manifest),
-				requestedAt,
-				completedAt: new Date().toISOString(),
-				cwd: ctx.cwd,
-				status: aggregateVerificationStatus(results),
-				implementationSummary: params.implementationSummary,
-				results,
-				workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
-			};
-
-			latestVerificationByRunId.set(runId, verification);
-			writeRunStateFile(verification, runStateDir());
-			pi.appendEntry(VERIFICATION_ENTRY, verification);
-			ctx.ui.notify(
-				verification.status === "passed"
-					? `Manifest-dev verification passed for ${runId}.`
-					: `Manifest-dev verification ${verification.status} for ${runId}.`,
-				verification.status === "passed" ? "info" : "warning",
-			);
-
-			return verificationToolResponse(verification);
-		},
-	}));
-
-	pi.registerTool(defineTool({
-		name: "manifest_dev_report_outcome",
-		label: "Manifest-dev Outcome",
-		description:
-			"Report the final manifest-dev Harness-level Do outcome. Use outcome=done only after manifest_dev_request_verification returns all PASS for this run id. Use outcome=escalate when the run is blocked by an external precondition or unrecoverable blocker.",
-		promptSnippet:
-			"Report final manifest-dev Do state with outcome=done or outcome=escalate; completion and escalation are runtime outcomes, not prose.",
-		promptGuidelines: [
-			"Call manifest_dev_report_outcome exactly once when a manifest-dev Harness-level Do run reaches a final state.",
-			"Use outcome=done only after manifest_dev_request_verification returns an all-PASS report for the same run id.",
-			"Use outcome=escalate when the remaining blocker needs human input, access, external state, or a decision the agent cannot safely make.",
-			"outcome=escalate is a resumable pause, not a terminal stop: after it, a follow-up that resolves the blocker should lead to another manifest_dev_request_verification call for the same run id, and a follow-up that changes scope should invoke the define skill to amend. Only outcome=done ends the run.",
-			"Do not call this tool for progress updates, plans, or partial implementation.",
-		],
-		parameters: Type.Object({
-			runId: Type.String({
-				description: "Run id emitted by /manifest-do, /manifest-auto, or /manifest-babysit-pr.",
-			}),
-			outcome: Type.Union([
-				Type.Literal("done"),
-				Type.Literal("escalate"),
-			], {
-				description: "Final Harness-level Do outcome.",
-			}),
-			summary: Type.String({
-				description: "Concise summary of what was completed or why the run escalated.",
-			}),
-			verified: Type.Optional(Type.Array(Type.String({
-				description: "Acceptance criteria, invariants, tests, or checks that passed.",
-			}))),
-			blockers: Type.Optional(Type.Array(Type.String({
-				description: "Blocking facts. Required for outcome=escalate.",
-			}))),
-			nextSteps: Type.Optional(Type.Array(Type.String({
-				description: "Human or future-agent actions needed after escalation.",
-			}))),
-		}),
-		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
-			const reportedAt = new Date().toISOString();
-			const blockers = params.blockers ?? [];
-			const nextSteps = params.nextSteps ?? [];
-			const outcome = params.outcome as ManifestOutcome;
-			const runId = params.runId.trim();
-
-			if (!runId) {
-				return {
-					content: [{ type: "text", text: "Outcome reporting requires a non-empty runId." }],
-					details: { error: "missing_run_id", reportedAt },
-				};
-			}
-
-			let latestVerification = latestVerificationByRunId.get(runId);
-			if (!latestVerification) {
-				latestVerification = readRunStateFile(runId, runStateDir());
-				if (latestVerification) latestVerificationByRunId.set(runId, latestVerification);
-			}
-
-			if (outcome === "done") {
-				const currentManifestSha256 = latestVerification && existsSync(latestVerification.manifestPath)
-					? sha256(readFileSync(latestVerification.manifestPath, "utf-8"))
-					: undefined;
-				const readiness = evaluateDoneReadiness({
-					verification: latestVerification,
-					currentManifestSha256,
-					currentWorkspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
-				});
-				if (!readiness.ready) {
-					return {
-						content: [{
-							type: "text",
-							text:
-								`Done is blocked for ${runId}: ${readiness.reason}. Call manifest_dev_request_verification, repair any FAIL results, and only report done after all gates PASS for the current manifest and workspace.`,
-						}],
-						details: {
-							error: "verification_required",
-							runId,
-							reason: readiness.reason,
-							latestVerification,
-							reportedAt,
-						},
-					};
-				}
-			}
-
-			if (outcome === "escalate" && blockers.length === 0) {
-				return {
-					content: [{
-						type: "text",
-						text: "Escalation requires at least one blocker in blockers[].",
-					}],
-					details: { error: "missing_blockers", reportedAt },
-				};
-			}
-
-			const verified = params.verified?.length
-				? params.verified
-				: latestVerification?.results.map((result) => result.gateId) ?? [];
-			const record = {
-				...params,
-				runId,
-				blockers,
-				nextSteps,
-				verified,
-				verification: latestVerification,
-				reportedAt,
-				cwd: ctx.cwd,
-			};
-			pi.appendEntry(OUTCOME_ENTRY, record);
-			ctx.ui.notify(
-				outcome === "done"
-					? "Manifest-dev run reported done."
-					: "Manifest-dev run reported escalation.",
-				outcome === "done" ? "info" : "warning",
-			);
-
-			return {
-				content: [{
-					type: "text",
-					text: outcome === "done"
-						? `Manifest-dev done: ${params.summary}`
-						: `Manifest-dev escalation (run remains resumable): ${params.summary}`,
-				}],
-				details: record,
-				...(shouldTerminateOutcome(outcome) ? { terminate: true } : {}),
-			};
-		},
-	}));
+	pi.on("agent_end", async (_event, ctx) => {
+		await maybeRunHarnessVerification(pi, ctx, state);
+	});
 
 	pi.registerCommand("manifest-do", {
 		description: "Run manifest-dev Harness-level Do for a manifest path.",
 		handler: async (rawArgs, ctx) => {
-			await startManifestDo(pi, rawArgs, ctx);
+			await startManifestDo(pi, rawArgs, ctx, state);
 		},
 	});
 
 	pi.registerCommand("manifest-auto", {
 		description: "Run manifest-dev figure-out -> define -> Harness-level Do autonomously for a task.",
 		handler: async (rawArgs, ctx) => {
-			await startWrapper(pi, "manifest-auto", rawArgs, ctx);
+			await startWrapper(pi, "manifest-auto", rawArgs, ctx, state);
 		},
 	});
 
 	pi.registerCommand("manifest-babysit-pr", {
 		description: "Synthesize a PR lifecycle manifest and run Harness-level Do for a GitHub PR.",
 		handler: async (rawArgs, ctx) => {
-			await startWrapper(pi, "manifest-babysit-pr", rawArgs, ctx);
+			await startWrapper(pi, "manifest-babysit-pr", rawArgs, ctx, state);
 		},
 	});
 }
 
-async function startManifestDo(
+export async function startManifestDo(
 	pi: ExtensionAPI,
 	rawArgs: string,
 	ctx: ExtensionCommandContext,
+	state: RuntimeState,
 ): Promise<void> {
 	const manifestPath = resolveManifestPath(rawArgs, ctx.cwd);
 	if (!manifestPath) {
@@ -456,8 +185,9 @@ async function startManifestDo(
 		manifestPath,
 		manifestSha256: sha256(manifest),
 	});
-	pi.appendEntry(RUN_ENTRY, run);
+	registerRun(pi, state, run);
 	pi.setSessionName(`manifest-dev ${shortId(run.runId)}`);
+	hideHarnessToolsFromExecutor(pi);
 
 	await sendPrompt(pi, ctx, buildManifestDoPrompt(run, manifest));
 	ctx.ui.notify(`Started manifest-dev Harness-level Do: ${manifestPath}`, "info");
@@ -468,6 +198,7 @@ async function startWrapper(
 	command: Extract<ManifestCommand, "manifest-auto" | "manifest-babysit-pr">,
 	rawArgs: string,
 	ctx: ExtensionCommandContext,
+	state: RuntimeState,
 ): Promise<void> {
 	const args = rawArgs.trim();
 	if (!args) {
@@ -485,9 +216,11 @@ async function startWrapper(
 		return;
 	}
 
-	const run = makeRunRecord(command, ctx, { args });
-	pi.appendEntry(RUN_ENTRY, run);
+	const plannedManifestPath = makePlannedManifestPath(command);
+	const run = makeRunRecord(command, ctx, { args, manifestPath: plannedManifestPath });
+	registerRun(pi, state, run);
 	pi.setSessionName(`${command} ${shortId(run.runId)}`);
+	hideHarnessToolsFromExecutor(pi);
 
 	const prompt = command === "manifest-auto"
 		? buildManifestAutoPrompt(run, args)
@@ -511,6 +244,18 @@ async function sendPrompt(
 	}
 }
 
+function registerRun(pi: ExtensionAPI, state: RuntimeState, run: RunRecord): void {
+	state.activeRunByExecutorSessionId.set(run.executorSessionId, run);
+	pi.appendEntry(RUN_ENTRY, run);
+}
+
+function updateRun(pi: ExtensionAPI, state: RuntimeState, run: RunRecord, updates: Partial<RunRecord>): RunRecord {
+	const next = { ...run, ...updates };
+	state.activeRunByExecutorSessionId.set(next.executorSessionId, next);
+	pi.appendEntry(RUN_ENTRY, next);
+	return next;
+}
+
 function makeRunRecord(
 	command: ManifestCommand,
 	ctx: ExtensionCommandContext,
@@ -523,20 +268,30 @@ function makeRunRecord(
 		command,
 		startedAt,
 		cwd: ctx.cwd,
+		executorSessionId: ctx.sessionManager.getSessionId(),
+		status: "executing",
+		verificationAttempts: 0,
 		gitHead: gitOutput(ctx.cwd, ["rev-parse", "HEAD"]),
 		gitDiffSha256: sha256(gitOutput(ctx.cwd, ["diff", "--binary"]) ?? ""),
 		...extra,
 	};
 }
 
-function resolveManifestPath(rawArgs: string, cwd: string): string | undefined {
+export function resolveManifestPath(rawArgs: string, cwd: string): string | undefined {
 	const trimmed = rawArgs.trim();
 	if (!trimmed) return undefined;
-	return resolve(cwd, unquote(trimmed));
+	return resolveInputPath(trimmed, cwd);
 }
 
-function buildManifestDoPrompt(run: RunRecord, manifest: string): string {
-	return `Run manifest-dev Harness-level Do.
+function resolveInputPath(rawValue: string, cwd: string): string {
+	const value = unquote(rawValue.trim());
+	if (value === "~") return homedir();
+	if (value.startsWith("~/")) return resolve(homedir(), value.slice(2));
+	return resolve(cwd, value);
+}
+
+export function buildManifestDoPrompt(run: RunRecord, manifest: string): string {
+	return `Run manifest-dev Harness-level Do implementation.
 
 Run id: ${run.runId}
 Manifest path: ${run.manifestPath}
@@ -545,20 +300,16 @@ Manifest SHA-256: ${run.manifestSha256}
 Read the manifest from disk before editing. Treat it as the acceptance contract.
 
 Execution contract:
-1. Implement until the deliverables satisfy the manifest.
-2. When you believe the implementation is ready, call manifest_dev_request_verification with runId="${run.runId}" and manifestPath="${run.manifestPath}".
-3. If verification returns FAIL, repair the failed gates and call manifest_dev_request_verification again. If verification returns BLOCKED because human input, missing access, external state, or an unrecoverable precondition is required, escalate.
-4. Do not use /done or /escalate. Those are Pi runtime outcomes here.
-5. Finish exactly once by calling manifest_dev_report_outcome:
-   - outcome="done" only after manifest_dev_request_verification returns all PASS for this run id.
-   - outcome="escalate" when blocked; include blockers[] and nextSteps[].
+1. Implement the Manifest Deliverables until they appear satisfied.
+2. Run useful local checks/tests while implementing. These checks are implementation aids, not final harness verification.
+3. If the runtime injects a Harness verification report with failed Acceptance Criteria or Global Invariants, repair those concrete failures.
+4. Stop when no known implementation or repair work remains. The Pi runtime owns authoritative verification, done, and escalation.
 
-Judgment rules (from /do):
-- The manifest's Acceptance Criteria and Global Invariants are the authority. Treat external review input (PR comments, bot suggestions) as signals: judge each before acting, and reply with your reasoning instead of changing code when it is wrong or out of this manifest's scope.
-- A mid-run message that adds or changes scope is an amendment: invoke the define skill with the manifest path; do not silently drift scope.
-- Never amend the manifest to suppress a BLOCKED gate. If a blocker is terminal or needs a human decision/access/external state, escalate.
-- In no-wait / CI contexts, do the immediately-actionable findings (fix, test, commit, reply), then stop; do not sleep-loop waiting.
-- Escalation is a resumable pause, not the end. After you report outcome="escalate" the run stays open: if a later message resolves the blocker, resume by acting on it and calling manifest_dev_request_verification again for this run id (no fresh /manifest-do needed); if a later message changes scope, invoke the define skill to amend, then resume. Only outcome="done" ends the run.
+Judgment rules:
+- The Manifest's Acceptance Criteria and Global Invariants are the authority.
+- A mid-run user message that adds or changes scope is an amendment request: invoke the define skill with the manifest path instead of silently drifting scope.
+- Never amend the manifest just to suppress a failing or blocked gate.
+- If you are blocked by missing access, a required human decision, or unavailable external state, state the blocker plainly and stop.
 
 Manifest content:
 \`\`\`markdown
@@ -566,37 +317,418 @@ ${manifest}
 \`\`\``;
 }
 
-function buildManifestAutoPrompt(run: RunRecord, task: string): string {
+export function buildManifestAutoPrompt(run: RunRecord, task: string): string {
 	return `Run manifest-dev auto in Pi.
 
 Run id: ${run.runId}
+Manifest path to create: ${run.manifestPath}
 Task:
 ${task}
 
 Follow the manifest-dev chain autonomously:
 1. Invoke the figure-out skill (/skill:figure-out) autonomously to reach shared understanding — self-answer reasonable clarifying questions and investigate what is discoverable.
-2. Invoke the define skill (/skill:define) autonomously to write a manifest at ~/.manifest-dev/manifests/manifest-{ts}.md with deliverables, Acceptance Criteria, Global Invariants, and verify.prompt fields.
-3. Execute the manifest under Harness-level Do rules: implement, then call manifest_dev_request_verification with runId="${run.runId}" and the manifest path.
-4. If verification returns FAIL, repair failed gates and request verification again. If verification returns BLOCKED because a human decision/access/external state is required, escalate.
-5. Do not ask the user for approval between define and execution unless a decision is genuinely blocking.
-6. Do not use /done or /escalate. Finish exactly once by calling manifest_dev_report_outcome with runId="${run.runId}", outcome="done" only after verifier fanout returns all PASS, or outcome="escalate" with blockers[] when blocked.`;
+2. Invoke the define skill (/skill:define) autonomously to write the manifest exactly at: ${run.manifestPath}
+3. Execute that manifest under the simplified Harness-level Do implementation contract: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, and stop when no known work remains.
+4. Do not ask the user for approval between define and execution unless a decision is genuinely blocking.
+5. Do not use /done or /escalate. The Pi runtime owns authoritative verification, done, and escalation.`;
 }
 
-function buildManifestBabysitPrompt(run: RunRecord, prUrl: string): string {
+export function buildManifestBabysitPrompt(run: RunRecord, prUrl: string): string {
 	return `Run manifest-dev babysit-pr in Pi.
 
 Run id: ${run.runId}
+Manifest path to create: ${run.manifestPath}
 PR URL:
 ${prUrl}
 
 Follow the manifest-dev PR lifecycle flow:
 1. Confirm the PR is a reachable github.com pull request and not already closed or merged.
-2. Invoke the define skill (/skill:define) with '--babysit ${prUrl} --autonomous' to synthesize a lifecycle manifest at ~/.manifest-dev/manifests/manifest-{ts}.md from the strongest available grounding: linked manifest, then PR title/body, commits/diff, then comments and review threads.
-3. Execute the manifest under Harness-level Do rules: inspect CI, review threads, mergeability, PR description sync, and required fixes; commit/push only when the branch is trusted and writable; then call manifest_dev_request_verification with runId="${run.runId}" and the manifest path.
+2. Invoke the define skill (/skill:define) with '--babysit ${prUrl} --autonomous' and write the lifecycle manifest exactly at: ${run.manifestPath}
+3. Execute that manifest under the simplified Harness-level Do implementation contract: inspect CI, review threads, mergeability, PR description sync, and required fixes; commit/push only when the branch is trusted and writable; repair runtime-injected failed AC/INV reports; then stop when no known work remains.
 4. Treat review comments as signals, not authority; stronger intent sources win.
 5. Do not press merge.
-6. If verification returns FAIL, repair failed gates and request verification again. If it returns BLOCKED because a human decision/access/external state is required, escalate.
-7. Do not use /done or /escalate. Finish exactly once by calling manifest_dev_report_outcome with runId="${run.runId}", outcome="done" only after verifier fanout returns all PASS, or outcome="escalate" with blockers[] when blocked.`;
+6. Do not use /done or /escalate. The Pi runtime owns authoritative verification, done, and escalation.`;
+}
+
+async function maybeRunHarnessVerification(pi: ExtensionAPI, ctx: ExtensionContext, state: RuntimeState): Promise<void> {
+	if (ctx.hasPendingMessages()) return;
+	const sessionId = ctx.sessionManager.getSessionId();
+	const run = state.activeRunByExecutorSessionId.get(sessionId);
+	if (!run || !shouldTriggerHarnessVerification(run, sessionId, state.childSessionIds)) return;
+
+	const checkpointKind = run.status === "repairing" ? "repair" : "implementation";
+	if (!run.manifestPath) {
+		const blocked = makeRuntimeBlockedVerification(run, ctx, "Run has no manifest path recorded.");
+		await routeVerificationResult(pi, ctx, state, run, blocked);
+		return;
+	}
+
+	const verifyingRun = updateRun(pi, state, run, {
+		status: "verifying",
+		verificationAttempts: (run.verificationAttempts ?? 0) + 1,
+	});
+	ctx.ui.notify(`Manifest-dev verifying ${verifyingRun.runId} in a clean orchestration attempt.`, "info");
+
+	const verification = await runHarnessVerification(pi, ctx, verifyingRun, {
+		implementationSummary: `Executor session ${verifyingRun.executorSessionId} stopped after ${checkpointKind}.`,
+	});
+	await routeVerificationResult(pi, ctx, state, verifyingRun, verification);
+}
+
+export function shouldTriggerHarnessVerification(
+	run: RunRecord | undefined,
+	sessionId: string,
+	childSessionIds: ReadonlySet<string> = new Set(),
+): boolean {
+	if (!run) return false;
+	if (childSessionIds.has(sessionId)) return false;
+	if (run.executorSessionId !== sessionId) return false;
+	return run.status === "executing" || run.status === "repairing";
+}
+
+async function runHarnessVerification(
+	pi: ExtensionAPI,
+	ctx: ExtensionContext,
+	run: RunRecord,
+	params: { implementationSummary?: string } = {},
+): Promise<VerificationRecord> {
+	const requestedAt = new Date().toISOString();
+	const manifestPath = resolveRunManifestPath(run, ctx.cwd);
+	const orchestrator = createVerificationOrchestratorSession(ctx, run, requestedAt);
+
+	if (!manifestPath || !existsSync(manifestPath)) {
+		return makeBlockedVerificationRecord({
+			runId: run.runId,
+			manifestPath: manifestPath ?? "",
+			manifest: "",
+			cwd: ctx.cwd,
+			requestedAt,
+			implementationSummary: params.implementationSummary,
+			blocker: `Manifest not found at ${manifestPath ?? "<missing>"}.`,
+			orchestratorSessionId: orchestrator.id,
+			orchestratorSessionFile: orchestrator.file,
+			workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
+		});
+	}
+
+	const manifest = readFileSync(manifestPath, "utf-8");
+	const gates = extractManifestGates(manifest);
+	if (gates.length === 0) {
+		return makeBlockedVerificationRecord({
+			runId: run.runId,
+			manifestPath,
+			manifest,
+			cwd: ctx.cwd,
+			requestedAt,
+			implementationSummary: params.implementationSummary,
+			blocker: "No Acceptance Criteria or Global Invariants with verify.prompt blocks were found in the manifest.",
+			orchestratorSessionId: orchestrator.id,
+			orchestratorSessionFile: orchestrator.file,
+			workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
+		});
+	}
+
+	const subagents = await getSubagentsService();
+	if (!subagents) {
+		return makeBlockedVerificationRecord({
+			runId: run.runId,
+			manifestPath,
+			manifest,
+			cwd: ctx.cwd,
+			requestedAt,
+			implementationSummary: params.implementationSummary,
+			blocker: `Pi subagents service is unavailable. Install and enable it with: pi install npm:${SUBAGENTS_PACKAGE}`,
+			orchestratorSessionId: orchestrator.id,
+			orchestratorSessionFile: orchestrator.file,
+			workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
+		});
+	}
+
+	const config = resolveVerifierConfig(pi);
+	const reposMap = extractReposMap(manifest);
+	const batches = planVerifierBatches(gates);
+	const results: GateVerificationResult[] = [];
+
+	for (const batch of batches) {
+		const phaseResultStart = results.length;
+
+		for (const chunk of chunkManifestGates(batch, config.maxConcurrent)) {
+			const spawnedInChunk: Array<{
+				gate: ManifestGate;
+				agentId: string;
+				requestedType: string;
+				usedType: string;
+				fellBack: boolean;
+			}> = [];
+
+			for (const gate of chunk) {
+				const prompt = buildGateVerifierPrompt({
+					gate,
+					manifestPath,
+					manifest,
+					runId: run.runId,
+					implementationSummary: params.implementationSummary,
+					reposMap,
+					orchestratorSessionId: orchestrator.id,
+					orchestratorSessionFile: orchestrator.file,
+				});
+				const verifierModel = resolveVerifierModel(gate.model, ctx.model);
+				const spawnOptions = {
+					description: `${gate.id}: ${gate.title}`.slice(0, 120),
+					inheritContext: false,
+					foreground: false,
+					bypassQueue: true,
+					maxTurns: config.maxTurns,
+					...(verifierModel ? { model: verifierModel } : {}),
+				};
+				const requestedType = gate.suggestedAgent?.trim() || config.agent;
+
+				try {
+					const agentId = subagents.spawn(requestedType, prompt, spawnOptions);
+					spawnedInChunk.push({ gate, agentId, requestedType, usedType: requestedType, fellBack: false });
+				} catch (error) {
+					if (requestedType !== config.agent) {
+						try {
+							const agentId = subagents.spawn(config.agent, prompt, spawnOptions);
+							spawnedInChunk.push({ gate, agentId, requestedType, usedType: config.agent, fellBack: true });
+							continue;
+						} catch (fallbackError) {
+							results.push(spawnBlockedResult(gate, requestedType, fallbackError));
+							continue;
+						}
+					}
+					results.push(spawnBlockedResult(gate, requestedType, error));
+				}
+			}
+
+			if (spawnedInChunk.length > 0) {
+				const records = await waitForVerifierRecords(
+					subagents,
+					spawnedInChunk.map((item) => item.agentId),
+					{ timeoutMs: config.timeoutMs },
+				);
+				for (const item of spawnedInChunk) {
+					const result = toGateVerificationResult(item.gate, item.agentId, records.get(item.agentId));
+					results.push(
+						item.fellBack
+							? {
+								...result,
+								evidence: `[verifier agent "${item.requestedType}" unavailable; fell back to "${item.usedType}"] ${result.evidence}`,
+							}
+							: result,
+					);
+				}
+			}
+		}
+
+		if (shouldStopAfterBatch(results.slice(phaseResultStart))) break;
+	}
+
+	return {
+		runId: run.runId,
+		manifestPath,
+		manifestSha256: sha256(manifest),
+		requestedAt,
+		completedAt: new Date().toISOString(),
+		cwd: ctx.cwd,
+		status: aggregateVerificationStatus(results),
+		implementationSummary: params.implementationSummary,
+		orchestratorSessionId: orchestrator.id,
+		orchestratorSessionFile: orchestrator.file,
+		attempt: run.verificationAttempts ?? 1,
+		results,
+		workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
+	};
+}
+
+export async function routeVerificationResult(
+	pi: ExtensionAPI,
+	ctx: ExtensionContext,
+	state: RuntimeState,
+	run: RunRecord,
+	verification: VerificationRecord,
+): Promise<void> {
+	state.latestVerificationByRunId.set(run.runId, verification);
+	writeRunStateFile(verification, runStateDir());
+	pi.appendEntry(VERIFICATION_ENTRY, verification);
+	ctx.ui.notify(
+		verification.status === "passed"
+			? `Manifest-dev verification passed for ${run.runId}.`
+			: `Manifest-dev verification ${verification.status} for ${run.runId}.`,
+		verification.status === "passed" ? "info" : "warning",
+	);
+
+	if (verification.status === "failed") {
+		const nextRun = updateRun(pi, state, run, {
+			status: "repairing",
+			lastVerificationStatus: verification.status,
+		});
+		void nextRun;
+		pi.sendUserMessage(formatRepairFollowUpMessage(verification), { deliverAs: "followUp" });
+		return;
+	}
+
+	if (verification.status === "blocked") {
+		const blockedRun = updateRun(pi, state, run, {
+			status: "blocked",
+			lastVerificationStatus: verification.status,
+		});
+		const blockers = verification.results
+			.filter((result) => result.verdict === "BLOCKED")
+			.map((result) => `${result.gateId}: ${result.evidence || result.details}`);
+		const outcome = buildOutcomeRecord(blockedRun, "escalate", {
+			summary: "Harness verification is blocked.",
+			blockers,
+			nextSteps: blockers,
+			verification,
+			cwd: ctx.cwd,
+		});
+		pi.appendEntry(OUTCOME_ENTRY, outcome);
+		pi.sendMessage({
+			customType: STATUS_ENTRY,
+			content: `Manifest-dev verification is blocked for ${run.runId}.\n\n${blockers.join("\n")}`,
+			display: true,
+			details: outcome,
+		}, { triggerTurn: false });
+		return;
+	}
+
+	const currentManifestSha256 = verification.manifestPath && existsSync(verification.manifestPath)
+		? sha256(readFileSync(verification.manifestPath, "utf-8"))
+		: undefined;
+	const readiness = evaluateDoneReadiness({
+		verification,
+		currentManifestSha256,
+		currentWorkspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
+	});
+	if (!readiness.ready) {
+		const staleRun = updateRun(pi, state, run, {
+			status: "repairing",
+			lastVerificationStatus: "failed",
+		});
+		void staleRun;
+		pi.sendUserMessage(
+			`Harness verification became stale before done could be recorded: ${readiness.reason}. Re-read the manifest/workspace, repair any resulting drift, and stop when ready for runtime verification again.`,
+			{ deliverAs: "followUp" },
+		);
+		return;
+	}
+
+	const doneRun = updateRun(pi, state, run, {
+		status: "done",
+		lastVerificationStatus: verification.status,
+	});
+	const outcome = buildOutcomeRecord(doneRun, "done", {
+		summary: "All manifest gates passed harness verification.",
+		verified: verification.results.map((result) => result.gateId),
+		verification,
+		cwd: ctx.cwd,
+	});
+	pi.appendEntry(OUTCOME_ENTRY, outcome);
+	pi.sendMessage({
+		customType: STATUS_ENTRY,
+		content: `Manifest-dev done for ${run.runId}: all manifest gates passed harness verification.`,
+		display: true,
+		details: outcome,
+	}, { triggerTurn: false });
+}
+
+function makeRuntimeBlockedVerification(run: RunRecord | undefined, ctx: ExtensionContext, blocker: string): VerificationRecord {
+	const manifest = run?.manifestPath && existsSync(run.manifestPath) ? readFileSync(run.manifestPath, "utf-8") : "";
+	return makeBlockedVerificationRecord({
+		runId: run?.runId ?? "manifest-dev-unknown",
+		manifestPath: run?.manifestPath ?? "",
+		manifest,
+		cwd: ctx.cwd,
+		requestedAt: new Date().toISOString(),
+		blocker,
+		orchestratorSessionId: run ? makeOrchestratorSessionId(run, new Date().toISOString()) : "manifest-verify-missing-run",
+		workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
+	});
+}
+
+function buildOutcomeRecord(
+	run: RunRecord,
+	outcome: ManifestOutcome,
+	args: {
+		summary: string;
+		verification?: VerificationRecord;
+		verified?: string[];
+		blockers?: string[];
+		nextSteps?: string[];
+		cwd: string;
+	},
+) {
+	const blockers = args.blockers ?? [];
+	const nextSteps = args.nextSteps ?? [];
+	return {
+		runId: run.runId,
+		outcome,
+		summary: args.summary,
+		verified: args.verified ?? args.verification?.results.map((result) => result.gateId) ?? [],
+		blockers,
+		nextSteps,
+		verification: args.verification,
+		reportedAt: new Date().toISOString(),
+		cwd: args.cwd,
+		terminate: shouldTerminateOutcome(outcome),
+	};
+}
+
+export function formatRepairFollowUpMessage(verification: VerificationRecord): string {
+	const failed = verification.results.filter((result) => result.verdict === "FAIL");
+	const lines = [
+		"Harness verification found failed Acceptance Criteria / Global Invariants.",
+		"",
+		"Repair the failed gates below. Do not run or invoke the harness verification protocol yourself; stop when the repair work is complete and the runtime will verify again from a clean session.",
+		"",
+		`Run id: ${verification.runId}`,
+		`Verification orchestrator session: ${verification.orchestratorSessionId ?? "unknown"}${verification.orchestratorSessionFile ? ` (${verification.orchestratorSessionFile})` : ""}`,
+		"",
+	];
+	for (const result of failed) {
+		lines.push(`- ${result.gateId} ${result.title}: ${result.evidence || "No evidence reported."}`);
+		if (result.details) lines.push(`  Details: ${singleLine(result.details)}`);
+	}
+	return lines.join("\n");
+}
+
+export function rehydrateRuntimeState(ctx: ExtensionContext, state: RuntimeState): void {
+	for (const entry of ctx.sessionManager.getBranch()) {
+		if (entry.type !== "custom") continue;
+		if (entry.customType === RUN_ENTRY && isRunRecord(entry.data)) {
+			if (entry.data.status === "done" || entry.data.status === "blocked") {
+				state.activeRunByExecutorSessionId.delete(entry.data.executorSessionId);
+			} else {
+				state.activeRunByExecutorSessionId.set(entry.data.executorSessionId, entry.data);
+			}
+		}
+		if (entry.customType === VERIFICATION_ENTRY && isVerificationRecord(entry.data)) {
+			state.latestVerificationByRunId.set(entry.data.runId, entry.data);
+		}
+	}
+}
+
+function isRunRecord(value: unknown): value is RunRecord {
+	return typeof value === "object"
+		&& value !== null
+		&& typeof (value as { runId?: unknown }).runId === "string"
+		&& typeof (value as { executorSessionId?: unknown }).executorSessionId === "string"
+		&& typeof (value as { status?: unknown }).status === "string";
+}
+
+function isVerificationRecord(value: unknown): value is VerificationRecord {
+	return typeof value === "object"
+		&& value !== null
+		&& typeof (value as { runId?: unknown }).runId === "string"
+		&& typeof (value as { status?: unknown }).status === "string"
+		&& Array.isArray((value as { results?: unknown }).results);
+}
+
+function hideHarnessToolsFromExecutor(pi: ExtensionAPI): void {
+	const active = pi.getActiveTools();
+	const filtered = active.filter((toolName) => !HARNESS_TOOL_NAMES.has(toolName));
+	if (filtered.length !== active.length) pi.setActiveTools(filtered);
 }
 
 async function getSubagentsService(): Promise<SubagentsService | undefined> {
@@ -669,12 +801,63 @@ function runStateDir(): string {
 	return resolve(homedir(), ".manifest-dev", "runs");
 }
 
+function verificationSessionDir(): string {
+	return resolve(homedir(), ".manifest-dev", "verification-sessions");
+}
+
 function workspaceDiffSha256(cwd: string): string {
 	return sha256(gitOutput(cwd, ["diff", "--binary"]) ?? "");
 }
 
 function shortId(runId: string): string {
 	return runId.replace(/^manifest-dev-/, "").slice(0, 8);
+}
+
+function makePlannedManifestPath(command: ManifestCommand): string {
+	const suffix = command === "manifest-auto" ? "auto" : "babysit-pr";
+	return resolve(homedir(), ".manifest-dev", "manifests", `manifest-${new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z")}-${suffix}.md`);
+}
+
+function resolveRunManifestPath(run: RunRecord, cwd: string): string | undefined {
+	return run.manifestPath ? resolveInputPath(run.manifestPath, cwd) : undefined;
+}
+
+export function createVerificationOrchestratorSession(ctx: ExtensionContext, run: RunRecord, requestedAt: string): { id: string; file?: string } {
+	const id = makeOrchestratorSessionId(run, requestedAt);
+	const sessionDir = verificationSessionDir();
+	const timestamp = requestedAt.replace(/[:.]/g, "-");
+	const file = resolve(sessionDir, `${timestamp}_${id}.jsonl`);
+	const customMessageId = `msg-${sha256(`${id}:custom-message`).slice(0, 12)}`;
+	const details = { runId: run.runId, executorSessionId: run.executorSessionId, requestedAt };
+	const entries = [
+		{ type: "session", version: 1, id, timestamp: requestedAt, cwd: ctx.cwd },
+		{
+			type: "custom_message",
+			id: customMessageId,
+			parentId: null,
+			timestamp: requestedAt,
+			customType: "manifest-dev:verification-orchestrator",
+			content: `Clean Harness-level verification attempt for ${run.runId}. Executor session ${run.executorSessionId} is intentionally not inherited.`,
+			display: true,
+			details,
+		},
+	];
+	try {
+		mkdirSync(sessionDir, { recursive: true });
+		writeFileSync(file, entries.map((entry) => JSON.stringify(entry)).join("\n") + "\n", "utf-8");
+		return { id, file };
+	} catch {
+		return { id };
+	}
+}
+
+export function makeOrchestratorSessionId(run: RunRecord, requestedAt: string): string {
+	const attempt = run.verificationAttempts ?? 1;
+	return `manifest-verify-${sha256(`${run.runId}:${attempt}:${requestedAt}`).slice(0, 12)}`;
+}
+
+function singleLine(value: string): string {
+	return value.replace(/\s+/g, " ").trim();
 }
 
 function formatError(error: unknown): string {

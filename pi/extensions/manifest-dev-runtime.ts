@@ -38,6 +38,9 @@ export interface VerificationRecord {
 	cwd: string;
 	status: VerificationStatus;
 	implementationSummary?: string;
+	orchestratorSessionId?: string;
+	orchestratorSessionFile?: string;
+	attempt?: number;
 	results: GateVerificationResult[];
 	workspaceDiffSha256?: string;
 }
@@ -84,12 +87,17 @@ export function buildGateVerifierPrompt(args: {
 	runId: string;
 	implementationSummary?: string;
 	reposMap?: Record<string, string>;
+	orchestratorSessionId?: string;
+	orchestratorSessionFile?: string;
 }): string {
 	const suggestedAgent = args.gate.suggestedAgent
 		? `\nSuggested manifest verifier persona: ${args.gate.suggestedAgent}`
 		: "";
 	const implementationSummary = args.implementationSummary
 		? `\nImplementation summary from executor:\n${args.implementationSummary}\n`
+		: "";
+	const orchestratorSession = args.orchestratorSessionId
+		? `\nVerification orchestrator session: ${args.orchestratorSessionId}${args.orchestratorSessionFile ? ` (${args.orchestratorSessionFile})` : ""}`
 		: "";
 	const reposEntries = Object.entries(args.reposMap ?? {});
 	const reposBlock = reposEntries.length > 0
@@ -100,7 +108,7 @@ export function buildGateVerifierPrompt(args: {
 
 Verify exactly one manifest gate. Do not implement fixes. Inspect the workspace, run focused commands when useful, and judge only the assigned gate.
 ${reposBlock}
-Run id: ${args.runId}
+Run id: ${args.runId}${orchestratorSession}
 Manifest path: ${args.manifestPath}
 Gate: ${args.gate.id} ${args.gate.title}
 Gate kind: ${args.gate.kind}${suggestedAgent}
@@ -229,6 +237,10 @@ export function makeBlockedVerificationRecord(args: {
 	requestedAt: string;
 	implementationSummary?: string;
 	blocker: string;
+	orchestratorSessionId?: string;
+	orchestratorSessionFile?: string;
+	attempt?: number;
+	workspaceDiffSha256?: string;
 }): VerificationRecord {
 	return {
 		runId: args.runId,
@@ -239,6 +251,10 @@ export function makeBlockedVerificationRecord(args: {
 		cwd: args.cwd,
 		status: "blocked",
 		implementationSummary: args.implementationSummary,
+		orchestratorSessionId: args.orchestratorSessionId,
+		orchestratorSessionFile: args.orchestratorSessionFile,
+		attempt: args.attempt,
+		workspaceDiffSha256: args.workspaceDiffSha256,
 		results: [{
 			gateId: "manifest",
 			kind: "global_invariant",
@@ -255,10 +271,10 @@ export function verificationToolResponse(record: VerificationRecord) {
 		.map((result) => `${result.gateId}: ${result.verdict} - ${firstLine(result.evidence || result.details)}`)
 		.join("\n");
 	const instruction = record.status === "passed"
-		? "All manifest gates PASS. You may now call manifest_dev_report_outcome with outcome=\"done\" for this run id."
+		? "All manifest gates PASS. The runtime may record done for this run id."
 		: record.status === "failed"
-			? "Some manifest gates FAIL. Repair the failed gates, then call manifest_dev_request_verification again with the same run id."
-			: "Verification is BLOCKED. If the blocker requires human input, access, external state, or an unrecoverable decision, call manifest_dev_report_outcome with outcome=\"escalate\" and include blockers[].";
+			? "Some manifest gates FAIL. Inject the failed gates back to the executor as repair work, then rerun clean verification after the executor stops again."
+			: "Verification is BLOCKED. Record or surface a resumable blocker when human input, access, external state, or an unrecoverable decision is required.";
 
 	return {
 		content: [{
@@ -454,9 +470,11 @@ export function evaluateDoneReadiness(args: {
 	const verification = args.verification;
 	if (!verification) return { ready: false, reason: "no verification report exists for this run id" };
 	if (verification.status !== "passed") return { ready: false, reason: `latest verification is ${verification.status}` };
+	if (args.currentManifestSha256 === undefined) {
+		return { ready: false, reason: "the manifest is unavailable — re-verify before reporting done" };
+	}
 	if (
-		args.currentManifestSha256 !== undefined
-		&& verification.manifestSha256 !== undefined
+		verification.manifestSha256 !== undefined
 		&& args.currentManifestSha256 !== verification.manifestSha256
 	) {
 		return { ready: false, reason: "the manifest changed since verification \u2014 re-verify before reporting done" };
