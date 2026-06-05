@@ -25,6 +25,10 @@
     "manifest-babysit-pr": "Pi wrapper for PR lifecycle manifest synthesis and Harness-level Do."
   },
   "tools": {
-    "manifest_dev_report_outcome": "Structured Pi runtime outcome for done and escalation."
+    "manifest_dev_request_verification": "Structured Pi runtime verifier fanout over manifest Acceptance Criteria and Global Invariants.",
+    "manifest_dev_report_outcome": "Structured Pi runtime outcome for done and escalation after verifier fanout passes."
+  },
+  "runtime_dependencies": {
+    "@gotgenes/pi-subagents": "Required for clean verifier subagent sessions."
   }
 }

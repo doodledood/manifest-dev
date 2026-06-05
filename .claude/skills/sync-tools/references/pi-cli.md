@@ -16,6 +16,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | `resources_discover` | Extensions can contribute generated skill, prompt, and theme paths at runtime if static `package.json` paths are insufficient. |
 | `sendUserMessage` | Runtime extensions can resume or steer an executor session with verifier reports. |
 | `appendEntry` / session manager | Runtime can persist run state outside LLM context. |
+| `@gotgenes/pi-subagents` service | The current verifier fanout spawns clean Pi subagent sessions with inherited context disabled. |
 | Session files and `--fork` | Verification/judge experiments can fork or isolate context instead of mutating the executor turn directly. |
 | SDK / JSON-mode subprocesses | Verifier fanout can be implemented by controlled Pi sessions or subprocesses instead of prompt-only delegation. |
 | Prompt resources | Verifier, executor, and reviewer prompts may be package-private runtime assets, not user-facing slash prompts. |
@@ -29,7 +30,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | `/done` skill | Excluded. Runtime completion outcome. |
 | `/escalate` skill | Excluded. Runtime blocker outcome. |
 | `/auto`, `/babysit-pr` | Excluded as ordinary skills. Provided by Pi-aware extension commands that run the lifecycle through Harness-level Do outcome gating. |
-| Reviewer/verifier agents | Runtime prompt assets for the future extension; do not invent unsupported `pi.agents` manifest fields. |
+| Reviewer/verifier agents | Use manifest `verify.prompt` blocks to steer clean Pi subagent verifier sessions; do not invent unsupported `pi.agents` manifest fields. |
 | Claude hooks | Re-evaluate as Pi lifecycle/command/tool events; do not port hook names mechanically. |
 | Slash commands | Prefer `/skill:<name>` for skills and extension commands for runtime actions. |
 | CLAUDE.md context | Do not assume a package-level CLAUDE.md equivalent; package docs and skills carry their own context. |
@@ -84,12 +85,13 @@ Current package manifest shape:
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",
+    "@gotgenes/pi-subagents": "*",
     "typebox": "*"
   }
 }
 ```
 
-Keep `"extensions": [...]` source-owned. Extension code that imports Pi packages should declare Pi core packages as `peerDependencies` with `"*"` ranges and real runtime dependencies under `dependencies`.
+Keep `"extensions": [...]` source-owned. Extension code that imports Pi packages should declare Pi core packages as `peerDependencies` with `"*"` ranges and real runtime dependencies under `dependencies`. `@gotgenes/pi-subagents` is also a Pi package that must be installed/enabled (`pi install npm:@gotgenes/pi-subagents`) so its global service is published before manifest-dev requests verification.
 
 ## Skill Handling
 
@@ -119,26 +121,29 @@ When adapting `define`, replace user-facing execution handoffs that say `/do <ma
 
 ## Runtime Extension Boundary
 
-The Pi extension owns Do/Verify Loop runtime behavior. The landed first slice provides:
+The Pi extension owns Do/Verify Loop runtime behavior. The current runtime slice provides:
 
 - `/manifest-do <manifest-path>` command registration
 - `/manifest-auto <task>` wrapper command registration
 - `/manifest-babysit-pr <github-pr-url>` wrapper command registration
+- `manifest_dev_request_verification` as the structured verifier fanout tool
 - `manifest_dev_report_outcome` as the structured done/escalate outcome tool
-- run and outcome persistence through `pi.appendEntry`
+- parse the Manifest and enumerate Acceptance Criteria and Global Invariants
+- run clean Pi subagent verifier sessions over every gate with `inheritContext: false`
+- aggregate PASS / FAIL / BLOCKED verdicts
+- mark done only when every gate returns PASS
+- emit structured escalation only for external preconditions or unrecoverable blockers
+- run, verification, and outcome persistence through `pi.appendEntry`
 - active-session steering through `pi.sendUserMessage`
 
-The full deterministic runtime remains the target architecture:
+Remaining target architecture work:
 
-- parse the Manifest and enumerate Acceptance Criteria and Global Invariants
-- start or resume the Executor Session until it yields an implementation attempt
-- checkpoint the run boundary with manifest hash, git head, dirty diff hash, executor session id, and yield entry id when available
-- run verifier sessions over every gate and aggregate PASS / FAIL / BLOCKED verdicts
-- mark done only when every gate returns PASS
-- resume the executor with verifier failures for repair or challenge
-- emit structured escalation only for external preconditions or unrecoverable blockers
+- checkpoint the run boundary with executor session id and yield entry id when available
+- persist a fuller state machine across extension reloads
+- resume or fork executor sessions under runtime control rather than relying on the active session prompt
+- add optional judge/fork handling for contested verifier reports or dubious blockers
 
-Do not claim full independent verifier-session fanout until the extension actually implements it. If runtime extension source is absent, produce a skills-only Pi target with `/do` explicitly unavailable and warnings in the progress log and README.
+Do not claim package-level verifier agent resources until Pi supports them. If runtime extension source is absent, produce a skills-only Pi target with `/do` explicitly unavailable and warnings in the progress log and README.
 
 ## Commands
 
@@ -161,6 +166,7 @@ Relevant primitives to account for in implementation docs:
 - `pi.on("resources_discover", ...)` can expose generated skill or prompt paths when static package metadata is not enough.
 - `pi.sendUserMessage(..., { deliverAs })` can resume or steer a session after verifier aggregation.
 - `pi.appendEntry(customType, data)` can persist run state without putting it in the model context.
+- `@gotgenes/pi-subagents` publishes `getSubagentsService()`, whose `spawn(...)` API can launch clean verifier subagent sessions when called with `inheritContext: false`.
 - Session APIs and `pi --fork` can preserve executor context while isolating verifier or judge work.
 - SDK sessions and `pi --mode json` subprocesses can run verifier fanout deterministically under a supervising runtime.
 
@@ -231,6 +237,7 @@ Generated and source READMEs must document:
 - remove via `pi remove`
 - current Harness-level Do command/outcome-tool support and any remaining runtime limitations
 - included `/skill:<name>` commands
+- required `pi install npm:@gotgenes/pi-subagents` runtime prerequisite for verifier fanout
 
 ## Context File Adaptation
 
@@ -244,5 +251,5 @@ Pi sessions save under `~/.pi/agent/sessions/` and support `pi --session` and `p
 
 - Do not assume git subdirectory package roots. Use repo-root package metadata for git install unless Pi docs/source prove subdirectory package install is supported.
 - Do not assume package-level agent resources. Keep agent prompts extension-private until proven otherwise.
-- Do not describe independent verifier-session fanout as working until the extension implements it.
+- Do not assume package peer dependency installation alone enables another Pi package's extension; document explicit `pi install npm:@gotgenes/pi-subagents`.
 - Re-check Pi package and extension APIs before implementing Harness-level Do; this reference should stay evidence-backed rather than aspirational.

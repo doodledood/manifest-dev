@@ -26,10 +26,11 @@ curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/o
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
 
 # Pi — repo-root package, shared skills plus Harness-level commands
+pi install npm:@gotgenes/pi-subagents
 pi install git:github.com/doodledood/manifest-dev@main
 ```
 
-Pi exposes shared skills as `/skill:<name>` commands and registers `/manifest-do`, `/manifest-auto`, and `/manifest-babysit-pr` through its runtime extension. This is the first Harness-level Do slice: command entrypoints plus a structured `manifest_dev_report_outcome` done/escalate tool. Full independent verifier-session fanout remains future Pi runtime work.
+Pi exposes shared skills as `/skill:<name>` commands and registers `/manifest-do`, `/manifest-auto`, and `/manifest-babysit-pr` through its runtime extension. Harness-level Do uses `@gotgenes/pi-subagents` for clean verifier subagent sessions: the executor calls `manifest_dev_request_verification`, the runtime fans out one verifier per Acceptance Criterion and Global Invariant, and `manifest_dev_report_outcome(outcome="done")` is rejected until the verifier report is all PASS.
 
 Then work through the three beats:
 
@@ -64,7 +65,7 @@ Babysit an existing PR through review without any manifest-dev setup:
 
 `/babysit-pr` is the author-side companion to `/review-pr`: review applies quality pressure through comments and thread advancement; babysit uses the strongest available grounding (manifest, PR description, commits/diff, then comments) to get the PR green and mergeable without pressing merge. In trusted same-repo CI it may auto-fix, commit, and push; on untrusted or unwritable heads it reports/escalates instead.
 
-In Pi, use `/manifest-do <manifest-path>` for execution, `/manifest-auto <task>` for the autonomous chain, and `/manifest-babysit-pr <pr-url>` for PR lifecycle tending.
+In Pi, install `npm:@gotgenes/pi-subagents` once, then use `/manifest-do <manifest-path>` for execution, `/manifest-auto <task>` for the autonomous chain, and `/manifest-babysit-pr <pr-url>` for PR lifecycle tending.
 
 Pass `--canvas` to `/define` (desktop only) for a **Shared Understanding Canvas**: a live, browser-rendered side-channel that runs alongside the chat. Intent, flow, and scope render as you go (mermaid diagrams, before/after panels), so misalignment shows up while you can still cheaply fix it. The manifest stays the formal encoding for `/do`.
 
@@ -84,7 +85,7 @@ Run `source ~/.zshrc` once. After that, updates are just `upgrade-manifest-dev-c
 
 The OpenCode installer writes to its global config (`~/.config/opencode/`) so components load in every project. Use `--local` for the current repo only, and restart the CLI after updates (config-time files load at startup).
 
-Pi owns its package lifecycle. Use `pi install -l git:github.com/doodledood/manifest-dev@main` for project-local installs, `pi update` or `pi update --extensions` to update installed packages, and `pi remove git:github.com/doodledood/manifest-dev` to remove the repo package.
+Pi owns its package lifecycle. Use `pi install npm:@gotgenes/pi-subagents` once to enable clean verifier sessions, `pi install -l git:github.com/doodledood/manifest-dev@main` for project-local manifest-dev installs, `pi update` or `pi update --extensions` to update installed packages, and `pi remove git:github.com/doodledood/manifest-dev` to remove the repo package.
 
 Uninstall uses the same entrypoints:
 
@@ -274,16 +275,18 @@ A verifier returns one of three states. **PASS** — the criterion holds. **FAIL
 
 ## Multi-CLI Support
 
-The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs. OpenCode and Codex have one-command installers — run them again to update, or pass `uninstall` to remove only manifest-dev-managed files. Pi uses its native package manager from the repository root. Installer-based targets include core `manifest-dev` components (suffixed `-manifest-dev`) and `manifest-dev-tools` skills (suffixed `-manifest-dev-tools`); Pi keeps package-scoped skill names.
+The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs. OpenCode and Codex have one-command installers — run them again to update, or pass `uninstall` to remove only manifest-dev-managed files. Pi uses its native package manager from the repository root plus `npm:@gotgenes/pi-subagents` for clean verifier sessions. Installer-based targets include core `manifest-dev` components (suffixed `-manifest-dev`) and `manifest-dev-tools` skills (suffixed `-manifest-dev-tools`); Pi keeps package-scoped skill names.
 
 | CLI | Install | Skills | Agents | Details |
 |-----|---------|--------|--------|---------|
 | Claude Code | `/plugin install` | Full | Full | Primary target |
 | OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | [README](dist/opencode/README.md) |
 | Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | [README](dist/codex/README.md) |
-| Pi | `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | Extension outcome tool | [README](dist/pi/README.md) |
+| Pi | `pi install npm:@gotgenes/pi-subagents` then `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | Verifier fanout + outcome gate | [README](dist/pi/README.md) |
 
-After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, the current Harness-level Do command/outcome-tool slice, and future verifier-session orchestration.
+After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and the current Harness-level Do verifier fanout plus outcome gate.
+
+Architecture decisions, including the accepted Codex plugin-native migration plan, are indexed in [`docs/adr/`](docs/adr/README.md).
 
 ## Available Plugins
 
