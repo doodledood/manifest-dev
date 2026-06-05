@@ -1,0 +1,10 @@
+{
+  "source_commit": "16228cb80418aeea9df08c8f9bdf34673f800da8",
+  "source_paths": [
+    "claude-plugins/manifest-dev",
+    "claude-plugins/manifest-dev-tools"
+  ],
+  "target": "pi",
+  "synced_at": "2026-06-05T08:31:29Z",
+  "notes": "Initial skills-only Pi package target. Harness-level Do runtime extension is intentionally not generated yet."
+}
