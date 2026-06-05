@@ -281,6 +281,7 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 			"Call manifest_dev_report_outcome exactly once when a manifest-dev Harness-level Do run reaches a final state.",
 			"Use outcome=done only after manifest_dev_request_verification returns an all-PASS report for the same run id.",
 			"Use outcome=escalate when the remaining blocker needs human input, access, external state, or a decision the agent cannot safely make.",
+			"outcome=escalate is a resumable pause, not a terminal stop: after it, a follow-up that resolves the blocker should lead to another manifest_dev_request_verification call for the same run id, and a follow-up that changes scope should invoke the define skill to amend. Only outcome=done ends the run.",
 			"Do not call this tool for progress updates, plans, or partial implementation.",
 		],
 		parameters: Type.Object({
@@ -541,6 +542,7 @@ Judgment rules (from /do):
 - A mid-run message that adds or changes scope is an amendment: invoke the define skill with the manifest path; do not silently drift scope.
 - Never amend the manifest to suppress a BLOCKED gate. If a blocker is terminal or needs a human decision/access/external state, escalate.
 - In no-wait / CI contexts, do the immediately-actionable findings (fix, test, commit, reply), then stop; do not sleep-loop waiting.
+- Escalation is a resumable pause, not the end. After you report outcome="escalate" the run stays open: if a later message resolves the blocker, resume by acting on it and calling manifest_dev_request_verification again for this run id (no fresh /manifest-do needed); if a later message changes scope, invoke the define skill to amend, then resume. Only outcome="done" ends the run.
 
 Manifest content:
 \`\`\`markdown
