@@ -2,7 +2,7 @@
   "name": "@doodledood/manifest-dev-pi",
   "version": "0.1.0",
   "private": true,
-  "description": "Pi package surface for manifest-dev shared skills and future Harness-level Do runtime.",
+  "description": "Pi package surface for manifest-dev shared skills and Harness-level Do runtime entrypoints.",
   "type": "module",
   "keywords": [
     "pi-package",
@@ -10,8 +10,15 @@
     "agent-skills"
   ],
   "pi": {
+    "extensions": [
+      "./pi/extensions/manifest-dev.ts"
+    ],
     "skills": [
       "./dist/pi/skills"
     ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
   }
 }

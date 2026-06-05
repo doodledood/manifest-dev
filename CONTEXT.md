@@ -33,10 +33,10 @@ A Claude Code extension unit that may contain skills, agents, and optional hooks
 A maintained implementation surface treated as authoritative for some part of manifest-dev, rather than a generated distribution copy.
 
 **Pi-native Runtime Package**:
-A Pi package that owns deterministic manifest-dev orchestration code while reusing or generating shared manifest-dev prompt and skill assets.
+A Pi package that owns manifest-dev runtime entrypoints and deterministic orchestration code while reusing or generating shared manifest-dev prompt and skill assets.
 
 **Pi Dist Target**:
-The generated `dist/pi` asset set produced by `sync-tools`, containing Pi-compatible shared skills, runtime prompt assets, package metadata, and docs for the **Pi-native Runtime Package** to consume.
+The generated `dist/pi` asset set produced by `sync-tools`, containing Pi-compatible shared skills, runtime prompt assets, namespace metadata, and docs for the **Pi-native Runtime Package** to consume.
 
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a **Manifest**, runs verifiers for every **Acceptance Criterion** and **Global Invariant**, routes failures or blockers, and finishes only after all gates pass.
@@ -45,7 +45,7 @@ The execution cycle where `/do` implements toward a **Manifest**, runs verifiers
 The `/do` session that performs implementation work and then yields control to the runtime for verification and adjudication.
 
 **Harness-level Do**:
-A Pi-native runtime entrypoint that replaces the portable `/do` skill with deterministic orchestration of executor, verifier, repair, escalation, and completion states.
+A Pi-native runtime entrypoint that replaces the portable `/do` skill. The current Pi extension provides command entrypoints and a structured done/escalate outcome gate; the full target architecture adds deterministic orchestration of executor, verifier, repair, escalation, and completion states.
 
 **Verification Judge**:
 An optional fallback adjudicator with `/do`'s execution context that can review contested verifier reports or dubious blockers when the normal executor-verifier loop does not converge.
@@ -84,6 +84,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - A **Pi-native Runtime Package** is a second **Source Surface** for runtime orchestration, not a replacement for the Claude Code **Plugin** source surface for shared prompt and skill assets.
 - A **Pi Dist Target** is generated output, not a **Source Surface**; it packages the shared assets that the **Pi-native Runtime Package** installs or loads.
 - A **Pi-native Runtime Package** owns deterministic behavior primarily for the **Do/Verify Loop**; `/figure-out` and `/define` remain shared prompt and skill behavior unless a future Pi-specific gap emerges.
+- The current **Pi-native Runtime Package** exposes `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr`, and `manifest_dev_report_outcome`; independent verifier-session fanout remains future runtime work.
 - An **Executor Session** does not own final verification; it yields after implementation, and the runtime coordinates verifier work before resuming repair or completion.
 - **Harness-level Do** is the Pi-specific implementation of the **Do/Verify Loop**; `/done` and `/escalate` become runtime outcomes rather than independent portable skills in that package.
 - A **Verification Judge** is not part of the default **Do/Verify Loop**; it is reserved for later fallback if executor repair/escalation judgments prove unreliable.

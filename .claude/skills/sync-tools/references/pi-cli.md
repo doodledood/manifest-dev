@@ -9,7 +9,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | Pi Capability | Why manifest-dev cares |
 |---------------|------------------------|
 | Repo-root package install | A repo-root package install lets users run `pi install git:github.com/doodledood/manifest-dev@ref` and update with Pi's package flow. |
-| `package.json` `pi` manifest | Source-owned install contract for skills now and extensions later. |
+| `package.json` `pi` manifest | Source-owned install contract for shared skills plus source-owned runtime extensions. |
 | Agent Skills loading | `figure-out`, `define`, and compatible tools skills can ship as ordinary package skills. |
 | `/skill:<name>` commands | Skills do not need generated slash-command shims just to be invocable. |
 | `registerCommand` | Harness-level Do should be an extension command, not a copied skill. |
@@ -28,7 +28,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | `/do` skill | Excluded. Reimplemented as Harness-level Do extension/runtime behavior. |
 | `/done` skill | Excluded. Runtime completion outcome. |
 | `/escalate` skill | Excluded. Runtime blocker outcome. |
-| `/auto`, `/babysit-pr` | Excluded until Pi-aware wrappers call Harness-level Do. |
+| `/auto`, `/babysit-pr` | Excluded as ordinary skills. Provided by Pi-aware extension commands that run the lifecycle through Harness-level Do outcome gating. |
 | Reviewer/verifier agents | Runtime prompt assets for the future extension; do not invent unsupported `pi.agents` manifest fields. |
 | Claude hooks | Re-evaluate as Pi lifecycle/command/tool events; do not port hook names mechanically. |
 | Slash commands | Prefer `/skill:<name>` for skills and extension commands for runtime actions. |
@@ -41,7 +41,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 |-----------|----------------------|-------|
 | Compatible skills | Copy to `dist/pi/skills/` | Agent Skills are portable. Apply only target-specific handoff substitutions. |
 | Harness-level Do | Do not copy as a normal skill | `/do`, `/done`, and `/escalate` are runtime outcomes in Pi. |
-| Chain skills | Copy only when Pi-aware | `/auto` and `/babysit-pr` invoke `/do`; either generate Pi-specific wrappers or omit them until wrappers exist. |
+| Chain skills | Expose as extension commands when Pi-aware | `/auto` and `/babysit-pr` invoke `/do` in Claude-style hosts; in Pi they map to `/manifest-auto` and `/manifest-babysit-pr`. |
 | Agents | Copy as extension-private runtime prompts | Pi packages do not declare an `agents` resource in `package.json`; runtime code may load Markdown prompts from package-local files. |
 | Extensions | Include hand-written Pi runtime code | The extension owns commands, executor/verifier orchestration, verdict aggregation, repair routing, escalation, and completion gating. |
 | Prompt templates | Generate only intentionally user-invocable templates | Do not expose verifier/reviewer agent prompts as slash prompt templates by accident. |
@@ -55,6 +55,8 @@ The repo root owns Pi package metadata so users can install and update manifest-
 
 ```
 package.json                         # source-owned Pi package metadata
+pi/
+└── extensions/manifest-dev.ts       # source-owned Pi runtime entrypoints
 dist/pi/
 ├── README.md
 ├── skills/                      # compatible shared skills
@@ -67,7 +69,7 @@ dist/pi/
 
 Do not silently generate or overwrite a repo-root package manifest from `/sync-tools`; that file is a source surface decision, not a dist artifact. `sync-tools` may update `dist/pi/**`, `dist/pi/.sync-meta.json`, and dist README/metadata.
 
-Current skills-only package manifest shape:
+Current package manifest shape:
 
 ```json
 {
@@ -77,12 +79,17 @@ Current skills-only package manifest shape:
   "type": "module",
   "keywords": ["pi-package"],
   "pi": {
+    "extensions": ["./pi/extensions/manifest-dev.ts"],
     "skills": ["./dist/pi/skills"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
   }
 }
 ```
 
-Add `"extensions": [...]` only when source-owned installable extension code exists. Extension code that imports Pi packages should declare Pi core packages as `peerDependencies` with `"*"` ranges and real runtime dependencies under `dependencies`.
+Keep `"extensions": [...]` source-owned. Extension code that imports Pi packages should declare Pi core packages as `peerDependencies` with `"*"` ranges and real runtime dependencies under `dependencies`.
 
 ## Skill Handling
 
@@ -105,14 +112,23 @@ Handle these specially:
 - `do`: exclude from `dist/pi/skills/`; expose Harness-level Do through the Pi extension.
 - `done`: exclude from `dist/pi/skills/`; done is a runtime completion outcome.
 - `escalate`: exclude from `dist/pi/skills/`; escalation is a runtime outcome with structured blocker payload.
-- `auto`: omit until a Pi-aware wrapper exists, or generate a wrapper that calls the Pi Harness-level Do command rather than portable `/do`.
-- `babysit-pr`: omit until a Pi-aware wrapper exists, or generate a wrapper that calls the Pi Harness-level Do command rather than portable `/do`.
+- `auto`: exclude from `dist/pi/skills/`; expose as `/manifest-auto`, a Pi-aware wrapper that drives figure-out -> define -> Harness-level Do outcome gating.
+- `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/manifest-babysit-pr`, a Pi-aware wrapper that synthesizes PR lifecycle grounding and drives Harness-level Do outcome gating.
 
-When adapting `define`, replace user-facing execution handoffs that say `/do <manifest-path>` or `/goal /do <manifest-path>`. For a skills-only target, state that Harness-level Do is not installed yet. Once the Pi extension exists, hand off to its command, expected to be `/manifest-do <manifest-path>` unless the runtime reference changes.
+When adapting `define`, replace user-facing execution handoffs that say `/do <manifest-path>` or `/goal /do <manifest-path>` with `/manifest-do <manifest-path>`.
 
 ## Runtime Extension Boundary
 
-The Pi extension owns deterministic Do/Verify Loop behavior:
+The Pi extension owns Do/Verify Loop runtime behavior. The landed first slice provides:
+
+- `/manifest-do <manifest-path>` command registration
+- `/manifest-auto <task>` wrapper command registration
+- `/manifest-babysit-pr <github-pr-url>` wrapper command registration
+- `manifest_dev_report_outcome` as the structured done/escalate outcome tool
+- run and outcome persistence through `pi.appendEntry`
+- active-session steering through `pi.sendUserMessage`
+
+The full deterministic runtime remains the target architecture:
 
 - parse the Manifest and enumerate Acceptance Criteria and Global Invariants
 - start or resume the Executor Session until it yields an implementation attempt
@@ -122,13 +138,15 @@ The Pi extension owns deterministic Do/Verify Loop behavior:
 - resume the executor with verifier failures for repair or challenge
 - emit structured escalation only for external preconditions or unrecoverable blockers
 
-Do not generate a fake extension stub that claims this behavior before it exists. If no runtime extension source is present, produce a skills-only Pi target with `/do` explicitly unavailable and warnings in the progress log and README.
+Do not claim full independent verifier-session fanout until the extension actually implements it. If runtime extension source is absent, produce a skills-only Pi target with `/do` explicitly unavailable and warnings in the progress log and README.
 
 ## Commands
 
 Pi skills already register as `/skill:<name>` commands when skill commands are enabled. Extension commands should be used for native manifest-dev entrypoints:
 
 - `/manifest-do <manifest-path>` for Harness-level Do
+- `/manifest-auto <task>` for autonomous figure-out -> define -> Harness-level Do
+- `/manifest-babysit-pr <github-pr-url>` for PR lifecycle synthesis -> Harness-level Do
 - optional aliases such as `/define` and `/figure-out` only if collision behavior is acceptable
 
 Pi allows multiple extensions to register the same command and disambiguates with numeric suffixes. Generated docs must mention that collisions are possible if aliases are installed.
@@ -211,7 +229,7 @@ Generated and source READMEs must document:
 - one-run trial with `pi -e`
 - update via `pi update` / `pi update --extensions`
 - remove via `pi remove`
-- current absence of Harness-level Do runtime when extensions are not shipped
+- current Harness-level Do command/outcome-tool support and any remaining runtime limitations
 - included `/skill:<name>` commands
 
 ## Context File Adaptation
@@ -226,5 +244,5 @@ Pi sessions save under `~/.pi/agent/sessions/` and support `pi --session` and `p
 
 - Do not assume git subdirectory package roots. Use repo-root package metadata for git install unless Pi docs/source prove subdirectory package install is supported.
 - Do not assume package-level agent resources. Keep agent prompts extension-private until proven otherwise.
-- Do not expose `/manifest-do` in docs as working until the extension command exists.
+- Do not describe independent verifier-session fanout as working until the extension implements it.
 - Re-check Pi package and extension APIs before implementing Harness-level Do; this reference should stay evidence-backed rather than aspirational.

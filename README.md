@@ -25,11 +25,11 @@ curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/o
 # Codex CLI — skills, TOML stubs, rules, config
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
 
-# Pi — repo-root package, shared skills today; Harness-level Do runtime pending
+# Pi — repo-root package, shared skills plus Harness-level commands
 pi install git:github.com/doodledood/manifest-dev@main
 ```
 
-Pi currently exposes shared skills as `/skill:<name>` commands and does not yet ship the deterministic Harness-level Do runtime. Use Claude Code, OpenCode, or Codex for `/do` execution until the Pi runtime extension lands.
+Pi exposes shared skills as `/skill:<name>` commands and registers `/manifest-do`, `/manifest-auto`, and `/manifest-babysit-pr` through its runtime extension. This is the first Harness-level Do slice: command entrypoints plus a structured `manifest_dev_report_outcome` done/escalate tool. Full independent verifier-session fanout remains future Pi runtime work.
 
 Then work through the three beats:
 
@@ -63,6 +63,8 @@ Babysit an existing PR through review without any manifest-dev setup:
 ```
 
 `/babysit-pr` is the author-side companion to `/review-pr`: review applies quality pressure through comments and thread advancement; babysit uses the strongest available grounding (manifest, PR description, commits/diff, then comments) to get the PR green and mergeable without pressing merge. In trusted same-repo CI it may auto-fix, commit, and push; on untrusted or unwritable heads it reports/escalates instead.
+
+In Pi, use `/manifest-do <manifest-path>` for execution, `/manifest-auto <task>` for the autonomous chain, and `/manifest-babysit-pr <pr-url>` for PR lifecycle tending.
 
 Pass `--canvas` to `/define` (desktop only) for a **Shared Understanding Canvas**: a live, browser-rendered side-channel that runs alongside the chat. Intent, flow, and scope render as you go (mermaid diagrams, before/after panels), so misalignment shows up while you can still cheaply fix it. The manifest stays the formal encoding for `/do`.
 
@@ -279,9 +281,9 @@ The Claude Code plugins are the source of truth. Per-CLI distributions under `di
 | Claude Code | `/plugin install` | Full | Full | Primary target |
 | OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | [README](dist/opencode/README.md) |
 | Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | [README](dist/codex/README.md) |
-| Pi | `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset | Runtime pending | [README](dist/pi/README.md) |
+| Pi | `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | Extension outcome tool | [README](dist/pi/README.md) |
 
-After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and future Harness-level Do orchestration.
+After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, the current Harness-level Do command/outcome-tool slice, and future verifier-session orchestration.
 
 ## Available Plugins
 

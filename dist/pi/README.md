@@ -1,6 +1,6 @@
 # manifest-dev for Pi
 
-This is the Pi package target for manifest-dev. It currently ships the shared, Pi-compatible skills and the package metadata needed for repo-root install. The deterministic Pi Harness-level Do runtime is not included yet.
+This is the Pi package target for manifest-dev. It ships the shared, Pi-compatible skills plus a source-owned Pi extension for Harness-level Do entrypoints and structured done/escalate outcomes.
 
 ## Install
 
@@ -64,18 +64,28 @@ Pi exposes installed skills as `/skill:<name>` commands when skill commands are 
 - `/skill:review-pr`
 - `/skill:walk-pr`
 
+## Harness-level Commands
+
+The Pi extension registers native commands for the runtime-owned parts of manifest-dev:
+
+- `/manifest-do <manifest-path>` starts a Harness-level Do run for an existing manifest.
+- `/manifest-auto <task>` runs the figure-out -> define -> Harness-level Do lifecycle without approval gates.
+- `/manifest-babysit-pr <github-pr-url>` synthesizes PR lifecycle grounding and runs it through Harness-level Do.
+
+The extension also registers `manifest_dev_report_outcome`, the structured runtime tool that reports final `done` or `escalate` outcomes. Completion and escalation are runtime outcomes in Pi; they are not exposed as normal skills.
+
 ## Runtime Boundary
 
-The Pi package does not currently install Harness-level Do. That means:
+`/do`, `/done`, and `/escalate` remain intentionally absent from `dist/pi/skills/`:
 
-- `/do`, `/done`, and `/escalate` are intentionally absent as normal skills.
-- `/auto` and `/babysit-pr` are intentionally absent until Pi-aware wrappers exist.
-- `/skill:define` can write a manifest, but executing it with deterministic Pi verification waits for the future Harness-level Do extension.
+- `/do` is represented by `/manifest-do`.
+- `/done` is represented by `manifest_dev_report_outcome` with `outcome="done"`.
+- `/escalate` is represented by `manifest_dev_report_outcome` with `outcome="escalate"` and `blockers[]`.
 
-The future runtime extension owns executor sessions, verifier sessions, PASS / FAIL / BLOCKED aggregation, repair routing, blocker escalation, and completion gating.
+This landed runtime slice starts and gates the run in Pi, records run/outcome entries with the extension API, and keeps `/auto` plus `/babysit-pr` usable through Pi-aware wrappers. Full deterministic verifier-session fanout, PASS / FAIL / BLOCKED aggregation across independent verifier sessions, and repair-session resumption remain future runtime work.
 
 ## Development
 
-`sync-tools` owns this generated target. After changing source plugin skills or the Pi conversion reference, regenerate `dist/pi` through `/sync-tools pi` once the generator path exists.
+`sync-tools` owns the generated skill/docs payload under `dist/pi`. After changing source plugin skills or the Pi conversion reference, regenerate `dist/pi` through `/sync-tools pi` once the generator path exists.
 
-The repo-root `package.json` is source-owned package metadata. Do not generate or overwrite it from `sync-tools`.
+The repo-root `package.json` and `pi/extensions/` are source-owned Pi package surfaces. Do not generate or overwrite them from `sync-tools`.

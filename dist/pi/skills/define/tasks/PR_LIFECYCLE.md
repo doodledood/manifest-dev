@@ -2,7 +2,7 @@
 
 PR-lifecycle work: shipping a change through code review, CI, and approvals to a mergeable state. Composes onto `CODING.md` when the local `origin` remote points at `github.com` (auto-detected; no flag). Multi-repo: PR_LIFECYCLE applies per repo declared in the manifest's `Repos:` block.
 
-The goal of /do under PR_LIFECYCLE is to drive the PR to a **mergeable** state — clean, ready for a human (or GitHub auto-merge) to press the merge button. /do never presses the button itself.
+The goal of Harness-level Do under PR_LIFECYCLE is to drive the PR to a **mergeable** state — clean, ready for a human (or GitHub auto-merge) to press the merge button. Harness-level Do never presses the button itself.
 
 ## Quality Gates
 
@@ -30,7 +30,7 @@ The `prompt` field is the steering surface — baseline content is enough to sta
 
 *Domain best practices for PR-lifecycle work.*
 
-- **Mergeable as terminal, not merged** — /do drives to mergeable and stops. The merge action itself is out of scope.
+- **Mergeable as terminal, not merged** — Harness-level Do drives to mergeable and stops. The merge action itself is out of scope.
 - **Retrigger cap** — agent default is 10 retriggers per failing CI check within the current fail-loop iteration (the caller scopes the counter via the agent's prior-retrigger context input). Override per-check via steering when a known-flaky job needs more headroom.
 - **No force-push, no merge to base** — agent's hard prohibitions; PR_LIFECYCLE inherits them.
 - **No secret exposure** — env vars, tokens, credentials never appear in PR replies, descriptions, comments, or commit messages.

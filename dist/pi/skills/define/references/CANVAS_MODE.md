@@ -4,21 +4,21 @@ Owns canvas behavior: when to fire, when to suppress, what to generate, how to k
 
 ## Purpose
 
-The user reads the chat; the canvas is the visual side-channel they glance at to spot *"that's not what I meant"* on intent, flow, scope. Misalignment caught during the interview is cheap; the same misalignment surfacing during /do or after a feature ships is expensive. The canvas re-expresses the manifest's ideas in plain language — **never** schema vocabulary, never AC/INV-G/PG IDs.
+The user reads the chat; the canvas is the visual side-channel they glance at to spot *"that's not what I meant"* on intent, flow, scope. Misalignment caught during the interview is cheap; the same misalignment surfacing during Harness-level Do or after a feature ships is expensive. The canvas re-expresses the manifest's ideas in plain language — **never** schema vocabulary, never AC/INV-G/PG IDs.
 
 ## Activation gate
 
 Evaluate **immediately** — before Domain Guidance and the interview begin. If any condition holds, skip canvas behavior; continue /define normally (first match wins; 1–2 silent, 3 prints one warning):
 
 1. **Amendment mode active.** Canvas is fresh-/define-only. Active via input args referencing a manifest file path.
-2. **Invoked autonomously** (e.g., `--autonomous`, `/auto`). No human reviewer in the loop → canvas is wasted tokens.
+2. **Invoked autonomously** (e.g., `--autonomous`, `/manifest-auto`). No human reviewer in the loop → canvas is wasted tokens.
 3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`. Skip.
 
 If none match: generate the initial canvas at `<scratch>/canvas-{ts}.html` (same `{ts}` as the manifest, in the same scratch directory you wrote the manifest to), auto-open it, proceed with /define and regenerate per cadence. At the Summary for Approval step, append one line to the chat summary: `Canvas: file://<canvas-path>` — only if the file was successfully written.
 
 ## Lifecycle
 
-Generated and updated only during /define's interview phase. Freezes at user approval. `/do` never touches the canvas. First render is a minimal shell (intent banner + "Interview in progress" affordance + empty scaffold).
+Generated and updated only during /define's interview phase. Freezes at user approval. Harness-level Do never touches the canvas. First render is a minimal shell (intent banner + "Interview in progress" affordance + empty scaffold).
 
 ## Format
 
