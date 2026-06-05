@@ -1,0 +1,23 @@
+{
+  "skills": {
+    "adr": "manifest-dev-tools",
+    "define": "manifest-dev",
+    "figure-out": "manifest-dev",
+    "figure-out-team": "manifest-dev",
+    "handoff": "manifest-dev-tools",
+    "prompt-engineering": "manifest-dev-tools",
+    "review-pr": "manifest-dev-tools",
+    "walk-pr": "manifest-dev-tools"
+  },
+  "runtime_owned_skills": {
+    "do": "Harness-level Do is owned by the future Pi runtime extension, not distributed as a normal skill.",
+    "done": "Done is a Pi runtime completion outcome, not a normal skill.",
+    "escalate": "Escalation is a Pi runtime blocker outcome, not a normal skill."
+  },
+  "wrapper_pending_skills": {
+    "auto": "Requires a Pi-aware wrapper that calls Harness-level Do.",
+    "babysit-pr": "Requires a Pi-aware wrapper that calls Harness-level Do."
+  },
+  "agents": {},
+  "commands": {}
+}

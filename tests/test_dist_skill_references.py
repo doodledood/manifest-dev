@@ -21,6 +21,7 @@ from types import ModuleType
 
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
+SYNC_TOOLS = ROOT / ".claude" / "skills" / "sync-tools"
 
 CORE_SKILLS = (
     "auto",
@@ -39,6 +40,18 @@ TOOLS_SKILLS = (
     "review-pr",
     "walk-pr",
 )
+PI_SKILLS = (
+    "adr",
+    "define",
+    "figure-out",
+    "figure-out-team",
+    "handoff",
+    "prompt-engineering",
+    "review-pr",
+    "walk-pr",
+)
+PI_EXCLUDED_RUNTIME_SKILLS = ("do", "done", "escalate")
+PI_WRAPPER_PENDING_SKILLS = ("auto", "babysit-pr")
 
 REMOVED_SKILLS = ("verify",)
 REMOVED_AGENTS = ("manifest-verifier",)
@@ -241,3 +254,85 @@ def test_slack_poller_agent_exists_in_every_dist() -> None:
     """The slack-poller subagent is new in this release; every dist must carry it."""
     assert (DIST / "opencode" / "agents" / "slack-poller.md").is_file()
     assert (DIST / "codex" / "agents" / "slack-poller.toml").is_file()
+
+
+def test_sync_tools_declares_pi_as_first_class_target() -> None:
+    skill = (SYNC_TOOLS / "SKILL.md").read_text(encoding="utf-8")
+
+    assert "`opencode`, `codex`, `pi`" in skill
+    assert "dist/{opencode,codex,pi}/" in skill
+    assert ".claude/skills/sync-tools/references/{cli}-cli.md" in skill
+    assert "| Pi | N compatible | N runtime prompt assets |" in skill
+    assert (SYNC_TOOLS / "references" / "pi-cli.md").is_file()
+
+
+def test_pi_sync_reference_keeps_harness_do_out_of_generated_skills() -> None:
+    reference = (SYNC_TOOLS / "references" / "pi-cli.md").read_text(encoding="utf-8")
+
+    assert "| Harness-level Do | Do not copy as a normal skill |" in reference
+    assert "- `do`: exclude from `dist/pi/skills/`" in reference
+    assert "- `done`: exclude from `dist/pi/skills/`" in reference
+    assert "- `escalate`: exclude from `dist/pi/skills/`" in reference
+    assert "/manifest-do <manifest-path>" in reference
+    assert "Do not generate `install.sh` for Pi." in reference
+    assert (
+        "Do not silently generate or overwrite a repo-root package manifest"
+        in reference
+    )
+
+
+def test_pi_sync_reference_models_pi_capabilities() -> None:
+    reference = (SYNC_TOOLS / "references" / "pi-cli.md").read_text(encoding="utf-8")
+
+    for required in (
+        "## Capability Model",
+        "## Claude Code Component Mapping",
+        "repo-root package install",
+        "registerCommand",
+        "resources_discover",
+        "sendUserMessage",
+        "appendEntry",
+        "Session files and `--fork`",
+        "SDK / JSON-mode subprocesses",
+        "Prompt resources",
+        "## Known Uncertainties",
+    ):
+        assert required in reference
+
+
+def test_pi_package_metadata_points_to_generated_skills_only() -> None:
+    package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
+
+    assert "pi-package" in package["keywords"]
+    assert package["pi"] == {"skills": ["./dist/pi/skills"]}
+    assert "extensions" not in package["pi"]
+
+
+def test_pi_dist_contains_only_compatible_skill_set() -> None:
+    skill_dirs = {
+        path.name for path in (DIST / "pi" / "skills").iterdir() if path.is_dir()
+    }
+    metadata = json.loads(
+        (DIST / "pi" / "component-namespaces.json").read_text(encoding="utf-8")
+    )
+
+    assert skill_dirs == set(PI_SKILLS)
+    assert set(metadata["skills"]) == set(PI_SKILLS)
+    assert set(metadata["runtime_owned_skills"]) == set(PI_EXCLUDED_RUNTIME_SKILLS)
+    assert set(metadata["wrapper_pending_skills"]) == set(PI_WRAPPER_PENDING_SKILLS)
+    assert metadata["agents"] == {}
+    assert metadata["commands"] == {}
+
+
+def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
+    root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    pi_readme = (DIST / "pi" / "README.md").read_text(encoding="utf-8")
+
+    for content in (root_readme, pi_readme):
+        assert "pi install git:github.com/doodledood/manifest-dev@main" in content
+        assert "pi update" in content
+        assert "pi remove git:github.com/doodledood/manifest-dev" in content
+        assert "Harness-level Do" in content
+
+    assert "/do`, `/done`, and `/escalate` are intentionally absent" in pi_readme
+    assert "`/auto` and `/babysit-pr` are intentionally absent" in pi_readme

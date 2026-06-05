@@ -1,0 +1,17 @@
+{
+  "name": "@doodledood/manifest-dev-pi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pi package surface for manifest-dev shared skills and future Harness-level Do runtime.",
+  "type": "module",
+  "keywords": [
+    "pi-package",
+    "manifest-dev",
+    "agent-skills"
+  ],
+  "pi": {
+    "skills": [
+      "./dist/pi/skills"
+    ]
+  }
+}

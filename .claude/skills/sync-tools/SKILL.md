@@ -1,21 +1,21 @@
 ---
 name: sync-tools
-description: 'Generate multi-CLI distribution packages from the Claude Code plugin. Converts skills, agents, and hooks for OpenCode and Codex CLI under dist/. Run after changing plugin components to keep distributions in sync.'
+description: 'Generate multi-CLI distribution packages from the Claude Code plugin. Converts shared skills, agents, hooks, package assets, and runtime payloads for OpenCode, Codex CLI, and Pi under dist/. Run after changing plugin components to keep distributions in sync.'
 user-invocable: true
 ---
 
 # /sync-tools — Multi-CLI Distribution Generator
 
-Generate distribution packages for OpenCode and Codex CLI from the Claude Code plugin.
+Generate distribution packages for OpenCode, Codex CLI, and Pi from the Claude Code plugin.
 
-**Input**: `$ARGUMENTS` — optional CLI name (opencode, codex) to sync one target. Empty = both.
+**Input**: `$ARGUMENTS` — optional CLI name (`opencode`, `codex`, `pi`) to sync one target. Empty = all targets.
 
 ## Paths
 
 | Role | Path |
 |------|------|
 | Sources (read-only) | `claude-plugins/manifest-dev/` and `claude-plugins/manifest-dev-tools/` |
-| Output | `dist/{opencode,codex}/` |
+| Output | `dist/{opencode,codex,pi}/` |
 | Conversion rules | `.claude/skills/sync-tools/references/{cli}-cli.md` |
 | Per-CLI sync state | `dist/{cli}/.sync-meta.json` (records last-synced source SHA — drives diff-first workflow) |
 | Per-CLI namespace metadata | `dist/{cli}/component-namespaces.json` (component name → install suffix) |
@@ -37,7 +37,7 @@ Regenerate `component-namespaces.json` on every sync from the discovered source 
 
 ## Per-CLI Processing
 
-For each target CLI, read its reference file first. The reference file is **the single source of truth** for conversion rules — tool name mappings, frontmatter format, hook protocol, directory structure, and limitations. Do not duplicate conversion logic here; follow the reference.
+For each target CLI, read its reference file first. The reference file is **the single source of truth** for conversion rules — tool name mappings, frontmatter format, hook protocol, package shape, directory structure, and limitations. Do not duplicate conversion logic here; follow the reference.
 
 ### Diff-first sync (preferred)
 
@@ -81,15 +81,18 @@ The metadata is an **optimization, not a correctness anchor**. When in doubt —
 | **Commands** | Generate command files from user-invocable skills (`user-invocable: true`, the default) in both source payloads. Per reference file. |
 | **Context file** | Workflow overview + agent descriptions in the CLI's native context format per reference file. |
 | **README** | Component table, install instructions, feature parity table, required config, link to GitHub repo. |
+| **Package manifest** | Generate only for targets whose reference file declares a package-native install surface. For Pi, package metadata must make the boundary explicit: generated shared assets are installable package resources, while Harness-level Do runtime code remains a maintained source surface until implemented. |
 | **Install script** | `install.sh` and `install_helpers.py` are **infrastructure files** — update incrementally, never regenerate. They contain logic not derivable from source (piped execution detection, temp dir cloning, cleanup traps, argument parsing, settings merging). Only modify sections that reflect changed components (step counts, file lists, component names). |
 | **CLI extras** | Extension manifests, plugin configs, execution rules — per reference file. |
 | **Namespace metadata** | Regenerate `component-namespaces.json` from source ownership every run. Every distributed component must appear exactly once under its component type with the suffix for its owning plugin. |
 
 ### README install section
 
-Remote install (no clone needed) must be the primary method. Use the repo from the Paths table with the standard skills installer (`npx skills add`). Include CLI-native install methods from the reference file as alternatives. Full distribution install via `install.sh` as secondary.
+Remote install (no clone needed) must be the primary method. For skills-installer targets, use the repo from the Paths table with the standard skills installer (`npx skills add`). For package-native targets such as Pi, use the CLI-native package manager from the reference file. Include other CLI-native install methods from the reference file as alternatives. Full distribution install via `install.sh` is secondary only for targets that actually ship an install script.
 
 ### Install script constraints
+
+This section applies only to targets whose reference file declares an `install.sh` payload. Pi does not generate `install.sh`; its package manager is the installer.
 
 - **Incremental updates only**: `install.sh` and `install_helpers.py` are maintained infrastructure — read existing content, modify only what changed. Never rewrite from scratch. Regression risk: infrastructure logic (piped `curl | bash` support, trap handlers, argument parsing) is invisible to component-level sync and will be lost on regeneration.
 - Idempotent (safe to re-run for updates)
@@ -125,3 +128,4 @@ Summary table after all CLIs processed:
 |-----|--------|--------|-------|----------|--------|
 | OpenCode | N | N converted | N adapted | N | Complete |
 | Codex | N | AGENTS.md + N TOML | none | — | Complete |
+| Pi | N compatible | N runtime prompt assets | runtime extension pending/updated | extension commands | Complete |

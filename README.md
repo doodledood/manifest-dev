@@ -24,7 +24,12 @@ curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/o
 
 # Codex CLI — skills, TOML stubs, rules, config
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
+
+# Pi — repo-root package, shared skills today; Harness-level Do runtime pending
+pi install git:github.com/doodledood/manifest-dev@main
 ```
+
+Pi currently exposes shared skills as `/skill:<name>` commands and does not yet ship the deterministic Harness-level Do runtime. Use Claude Code, OpenCode, or Codex for `/do` execution until the Pi runtime extension lands.
 
 Then work through the three beats:
 
@@ -69,18 +74,22 @@ For zsh, add upgrade shortcuts for the non-Claude distributions:
 ```zsh
 alias upgrade-manifest-dev-codex='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash'
 alias upgrade-manifest-dev-opencode='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash'
-alias upgrade-manifest-dev-all='upgrade-manifest-dev-codex && upgrade-manifest-dev-opencode'
+alias upgrade-manifest-dev-pi='pi update --extensions'
+alias upgrade-manifest-dev-all='upgrade-manifest-dev-codex && upgrade-manifest-dev-opencode && upgrade-manifest-dev-pi'
 ```
 
-Run `source ~/.zshrc` once. After that, updates are just `upgrade-manifest-dev-codex`, `upgrade-manifest-dev-opencode`, or `upgrade-manifest-dev-all`.
+Run `source ~/.zshrc` once. After that, updates are just `upgrade-manifest-dev-codex`, `upgrade-manifest-dev-opencode`, `upgrade-manifest-dev-pi`, or `upgrade-manifest-dev-all`.
 
 The OpenCode installer writes to its global config (`~/.config/opencode/`) so components load in every project. Use `--local` for the current repo only, and restart the CLI after updates (config-time files load at startup).
+
+Pi owns its package lifecycle. Use `pi install -l git:github.com/doodledood/manifest-dev@main` for project-local installs, `pi update` or `pi update --extensions` to update installed packages, and `pi remove git:github.com/doodledood/manifest-dev` to remove the repo package.
 
 Uninstall uses the same entrypoints:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- uninstall
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash -s -- uninstall
+pi remove git:github.com/doodledood/manifest-dev
 ```
 
 </details>
@@ -263,15 +272,16 @@ A verifier returns one of three states. **PASS** — the criterion holds. **FAIL
 
 ## Multi-CLI Support
 
-The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs. Each has a one-command installer — run it again to update, or pass `uninstall` to remove only manifest-dev-managed files. Installers include core `manifest-dev` components (suffixed `-manifest-dev`) and `manifest-dev-tools` skills (suffixed `-manifest-dev-tools`).
+The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs. OpenCode and Codex have one-command installers — run them again to update, or pass `uninstall` to remove only manifest-dev-managed files. Pi uses its native package manager from the repository root. Installer-based targets include core `manifest-dev` components (suffixed `-manifest-dev`) and `manifest-dev-tools` skills (suffixed `-manifest-dev-tools`); Pi keeps package-scoped skill names.
 
 | CLI | Install | Skills | Agents | Details |
 |-----|---------|--------|--------|---------|
 | Claude Code | `/plugin install` | Full | Full | Primary target |
 | OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | [README](dist/opencode/README.md) |
 | Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | [README](dist/codex/README.md) |
+| Pi | `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset | Runtime pending | [README](dist/pi/README.md) |
 
-After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-CLI conversion rules, regenerates namespace metadata, and rebuilds each target's distribution.
+After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and future Harness-level Do orchestration.
 
 ## Available Plugins
 

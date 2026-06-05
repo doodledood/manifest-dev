@@ -14,7 +14,7 @@ Front-load the thinking so the agent gets it right the first time.
 
 | Plugin | What It Does |
 |--------|--------------|
-| [`manifest-dev`](./manifest-dev) | The core workflow: figure it out, encode what you'd accept, let it build and verify itself. `/figure-out` is the thinking partner; `/define` encodes that understanding into a Manifest; `/do` executes it and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. Multi-CLI distribution (OpenCode, Codex CLI). `/goal /do <manifest-path>` is the recommended way to run it — `/goal` keeps the run alive across turns. |
+| [`manifest-dev`](./manifest-dev) | The core workflow: figure it out, encode what you'd accept, let it build and verify itself. `/figure-out` is the thinking partner; `/define` encodes that understanding into a Manifest; `/do` executes it and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. Multi-CLI distribution (OpenCode, Codex CLI, and a Pi package target). `/goal /do <manifest-path>` is the recommended way to run it — `/goal` keeps the run alive across turns. |
 | [`manifest-dev-tools`](./manifest-dev-tools) | Tools alongside the workflow. `/prompt-engineering` builds and reviews prompts. `/walk-pr` (collaborative review), `/review-pr` (autonomous review with `--loop` follow-through), and `/babysit-pr` (author-side PR lifecycle babysitting that runs manifest machinery) cover PR collaboration. `/adr` synthesizes Architecture Decision Records from a session. `/handoff` packages context for a fresh agent or a side-session. |
 
 ## At a Glance
@@ -26,6 +26,8 @@ Front-load the thinking so the agent gets it right the first time.
 - **`/do`** — execute and verify. One subagent per criterion using its `verify.prompt:` verbatim, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Caller overlays can narrow retry cadence for CI one-shot workflows. Run it as `/goal /do <manifest-path>` (the recommended form) so it carries across turns. `/auto` chains all three autonomously; run that as `/goal /auto` too.
 
 Full schema, verify-block fields, agents, and task guidance live in the [manifest-dev README](./manifest-dev).
+
+For non-Claude installs and updates, see the root README's [Multi-CLI Support](../README.md#multi-cli-support). Pi installs from the repo root with `pi install git:github.com/doodledood/manifest-dev@main`; it currently ships shared skills while Harness-level Do runtime support is pending.
 
 **manifest-dev-tools** sits next to the workflow rather than inside it — prompt engineering, PR review and walkthroughs, PR babysitting, ADR synthesis, and context handoff. Details in the [manifest-dev-tools README](./manifest-dev-tools).
 

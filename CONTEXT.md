@@ -29,6 +29,27 @@ A per-domain hint file keyed to a task type, kept as two parallel sets: `figure-
 **Plugin**:
 A Claude Code extension unit that may contain skills, agents, and optional hooks.
 
+**Source Surface**:
+A maintained implementation surface treated as authoritative for some part of manifest-dev, rather than a generated distribution copy.
+
+**Pi-native Runtime Package**:
+A Pi package that owns deterministic manifest-dev orchestration code while reusing or generating shared manifest-dev prompt and skill assets.
+
+**Pi Dist Target**:
+The generated `dist/pi` asset set produced by `sync-tools`, containing Pi-compatible shared skills, runtime prompt assets, package metadata, and docs for the **Pi-native Runtime Package** to consume.
+
+**Do/Verify Loop**:
+The execution cycle where `/do` implements toward a **Manifest**, runs verifiers for every **Acceptance Criterion** and **Global Invariant**, routes failures or blockers, and finishes only after all gates pass.
+
+**Executor Session**:
+The `/do` session that performs implementation work and then yields control to the runtime for verification and adjudication.
+
+**Harness-level Do**:
+A Pi-native runtime entrypoint that replaces the portable `/do` skill with deterministic orchestration of executor, verifier, repair, escalation, and completion states.
+
+**Verification Judge**:
+An optional fallback adjudicator with `/do`'s execution context that can review contested verifier reports or dubious blockers when the normal executor-verifier loop does not converge.
+
 **Skill**:
 A markdown-defined extension (`SKILL.md` + companion files) that adds a capability to Claude Code.
 
@@ -60,6 +81,12 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - A **Task File** informs the workflow that owns it — `figure-out`'s probe set fuels interview probing, `/define`'s gate/Default set fuels encoding — and does not directly appear in the produced Manifest as a structural unit.
 - A **Plugin** contains zero or more **Skills**, **Agents**, and optional **Hooks**.
 - A **Skill** may invoke other **Skills** and spawn **Agents**.
+- A **Pi-native Runtime Package** is a second **Source Surface** for runtime orchestration, not a replacement for the Claude Code **Plugin** source surface for shared prompt and skill assets.
+- A **Pi Dist Target** is generated output, not a **Source Surface**; it packages the shared assets that the **Pi-native Runtime Package** installs or loads.
+- A **Pi-native Runtime Package** owns deterministic behavior primarily for the **Do/Verify Loop**; `/figure-out` and `/define` remain shared prompt and skill behavior unless a future Pi-specific gap emerges.
+- An **Executor Session** does not own final verification; it yields after implementation, and the runtime coordinates verifier work before resuming repair or completion.
+- **Harness-level Do** is the Pi-specific implementation of the **Do/Verify Loop**; `/done` and `/escalate` become runtime outcomes rather than independent portable skills in that package.
+- A **Verification Judge** is not part of the default **Do/Verify Loop**; it is reserved for later fallback if executor repair/escalation judgments prove unreliable.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure through comments and thread advancement, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
 - **Babysit PR** belongs to the `manifest-dev-tools` **Plugin** as PR tooling, while orchestrating core `manifest-dev` **Skills** for manifest synthesis and execution.
 - **Babysit PR** uses a **Manifest** synthesized from an existing pull request, then `/do` executes the lifecycle **Acceptance Criterion** through the `github-pr-lifecycle` **Agent**.
