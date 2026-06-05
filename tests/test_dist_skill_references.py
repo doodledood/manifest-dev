@@ -425,6 +425,9 @@ def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
     assert "pi install npm:@gotgenes/pi-subagents" in root_readme
     assert "pi install npm:@gotgenes/pi-subagents" in pi_readme
     assert "clean verifier subagent sessions" in root_readme
+    assert "--manifest-verifier-max-concurrent" in root_readme
+    assert "--manifest-verifier-max-concurrent" in pi_readme
+    assert "bypassQueue: true" in pi_readme
     assert "inheritContext: false" in pi_readme
     assert (
         "Full independent verifier-session fanout remains future Pi runtime work"
