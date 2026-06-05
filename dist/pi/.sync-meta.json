@@ -1,5 +1,5 @@
 {
-  "source_commit": "6623508aa2dc6da12fc483798dfb8dcf386ccc1e",
+  "source_commit": "5c4f930e63fddc35d01dc87ed45266c01712f27d",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
