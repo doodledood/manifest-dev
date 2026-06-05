@@ -286,6 +286,8 @@ The Claude Code plugins are the source of truth. Per-CLI distributions under `di
 
 After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and the current Harness-level Do verifier fanout plus outcome gate.
 
+Architecture decisions, including the accepted Codex plugin-native migration plan, are indexed in [`docs/adr/`](docs/adr/README.md).
+
 ## Available Plugins
 
 | Plugin | Description |

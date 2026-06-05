@@ -38,6 +38,12 @@ A Pi package that owns manifest-dev runtime entrypoints and deterministic orches
 **Pi Dist Target**:
 The generated `dist/pi` asset set produced by `sync-tools`, containing Pi-compatible shared skills, runtime prompt assets, namespace metadata, and docs for the **Pi-native Runtime Package** to consume.
 
+**Codex Plugin-native Distribution**:
+The accepted target architecture for Codex distribution: a Codex plugin marketplace that ships manifest-dev skills and reviewer agents as native plugin components, replacing install-time TOML stub generation and config merging.
+
+**Codex Legacy Installer Target**:
+The current generated `dist/codex` installer-based distribution, which predates Codex plugin marketplaces and approximates reviewer agents through TOML stubs plus config/rules files.
+
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a **Manifest**, runs verifiers for every **Acceptance Criterion** and **Global Invariant**, routes failures or blockers, and finishes only after all gates pass.
 
@@ -88,6 +94,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - A **Pi Dist Target** is generated output, not a **Source Surface**; it packages the shared assets that the **Pi-native Runtime Package** installs or loads.
 - A **Pi-native Runtime Package** owns deterministic behavior primarily for the **Do/Verify Loop**; `/figure-out` and `/define` remain shared prompt and skill behavior unless a future Pi-specific gap emerges.
 - The current **Pi-native Runtime Package** exposes `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr`, `manifest_dev_request_verification`, and `manifest_dev_report_outcome`; verifier fanout uses clean Pi subagent sessions through `@gotgenes/pi-subagents`.
+- **Codex Plugin-native Distribution** is the accepted migration direction for Codex, but the current `dist/codex` tree remains the **Codex Legacy Installer Target** until that rollout lands.
 - An **Executor Session** does not own final verification; it yields after implementation, receives verifier failures for repair, and cannot report done until runtime verification passes.
 - **Harness-level Do** is the Pi-specific implementation of the **Do/Verify Loop**; `/done` and `/escalate` become runtime outcomes rather than independent portable skills in that package.
 - A **Verification Judge** is not part of the default **Do/Verify Loop**; it is reserved for later fallback if executor repair/escalation judgments prove unreliable.
