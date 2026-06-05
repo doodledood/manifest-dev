@@ -75,12 +75,12 @@ The Pi extension registers native commands for the runtime-owned parts of manife
 - `/manifest-auto <task>` runs the figure-out -> define -> Harness-level Do lifecycle without approval gates.
 - `/manifest-babysit-pr <github-pr-url>` synthesizes PR lifecycle grounding and runs it through Harness-level Do.
 
-The extension also registers two structured runtime tools:
+The extension owns Harness-level verification and outcome routing internally:
 
-- `manifest_dev_request_verification` parses the manifest and spawns one clean `@gotgenes/pi-subagents` verifier subagent session per Acceptance Criterion and Global Invariant, honoring each gate's `verify.agent` (subagent type), `verify.model`, and `phase`. Gates run in ascending-phase batches (serial across phases, parallel within), short-circuiting later phases on FAIL/BLOCKED. Manifest-dev bypasses the community subagents extension's global background-agent queue and enforces its own verifier fanout cap (default 24 per phase), so manifests with 20+ same-phase gates can actually run 20+ clean verifier sessions at once instead of being limited by the subagents package default of 4. When a gate omits `verify.agent` the verifier uses `general-purpose`; when it omits `verify.model` it inherits the main session's current model. Multi-repo manifests (`Repos:`) prepend a repo path map to each verifier prompt. A BLOCKED verdict is returned to the executor for judgment (it never auto-escalates).
-- `manifest_dev_report_outcome` reports final `done` or `escalate` outcomes. `outcome="done"` is rejected until an all-PASS verification still matches the current manifest and workspace (verifications persist to `~/.manifest-dev/runs/<runId>.json` and are rehydrated across reloads). `escalate` surfaces the structured blocker and leaves the run resumable; only `done` ends the run.
+- When the Executor Session stops after implementation or repair work, the runtime records a clean verification orchestration session under `~/.manifest-dev/verification-sessions/` and spawns one clean `@gotgenes/pi-subagents` verifier subagent session per Acceptance Criterion and Global Invariant, honoring each gate's `verify.agent` (subagent type), `verify.model`, and `phase`. Gates run in ascending-phase batches (serial across phases, parallel within), short-circuiting later phases on FAIL/BLOCKED. Manifest-dev bypasses the community subagents extension's global background-agent queue and enforces its own verifier fanout cap (default 24 per phase), so manifests with 20+ same-phase gates can actually run 20+ clean verifier sessions at once instead of being limited by the subagents package default of 4. When a gate omits `verify.agent` the verifier uses `general-purpose`; when it omits `verify.model` it inherits the Executor Session's current model. Multi-repo manifests (`Repos:`) prepend a repo path map to each verifier prompt.
+- FAIL verdicts are injected back into the Executor Session as runtime-authored follow-up repair work. PASS records a runtime done outcome after freshness checks. BLOCKED records and surfaces a resumable blocker. The executor is not asked to call verification or outcome tools.
 
-Completion and escalation are runtime outcomes in Pi; they are not exposed as normal skills.
+Completion, escalation, and authoritative verification are runtime outcomes in Pi; they are not exposed as normal skills or executor-callable tools.
 
 ### Verifier configuration
 
@@ -100,10 +100,10 @@ A per-gate `verify.agent` / `verify.model` always overrides these defaults. `man
 `/do`, `/done`, and `/escalate` remain intentionally absent from `dist/pi/skills/`:
 
 - `/do` is represented by `/manifest-do`.
-- `/done` is represented by `manifest_dev_report_outcome` with `outcome="done"`.
-- `/escalate` is represented by `manifest_dev_report_outcome` with `outcome="escalate"` and `blockers[]`.
+- `/done` is represented by a runtime-owned done outcome after all verifier gates pass.
+- `/escalate` is represented by a runtime-owned blocked/escalation outcome with blocker details.
 
-This runtime slice starts and gates the run in Pi, records run/verification/outcome entries with the extension API, keeps `/auto` plus `/babysit-pr` usable through Pi-aware wrappers (which invoke the installed `/skill:figure-out` and `/skill:define`), and performs verifier fanout through clean Pi subagent sessions (`inheritContext: false`) that honor each gate's agent/model/phase. The done gate is durable (verification state persists to `~/.manifest-dev/runs/<runId>.json` and is rehydrated on reload) and freshness-bound (a stale pass is rejected once the manifest or workspace changes). The remaining future runtime work is executor session checkpointing/resume and optional judge/fork handling for contested verifier reports.
+This runtime slice starts and gates the run in Pi, records run/verification/outcome entries with the extension API, keeps `/auto` plus `/babysit-pr` usable through Pi-aware wrappers (which invoke the installed `/skill:figure-out` and `/skill:define`), records a clean verification orchestration session per attempt, and performs verifier fanout through clean Pi subagent sessions (`inheritContext: false`) that honor each gate's agent/model/phase. The Executor Session prompt stays implementation-focused; runtime lifecycle hooks trigger verification after executor checkpoints and inject failed-gate results back as follow-up work. The done gate is durable (verification state persists to `~/.manifest-dev/runs/<runId>.json` and is rehydrated on reload) and freshness-bound (a stale pass is rejected once the manifest or workspace changes). The remaining future runtime work is optional judge/fork handling for contested verifier reports.
 
 ## Development
 

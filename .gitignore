@@ -54,6 +54,7 @@ node_modules/
 
 # .claude stuff
 settings.local.json
+.claude/worktrees/
 
 # Local installs of multi-CLI distributions (created by running dist/<cli>/install.sh inside this repo)
 .gemini/

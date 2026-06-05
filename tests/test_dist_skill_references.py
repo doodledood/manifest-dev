@@ -53,10 +53,7 @@ PI_SKILLS = (
 PI_EXCLUDED_RUNTIME_SKILLS = ("do", "done", "escalate")
 PI_EXTENSION_WRAPPER_SKILLS = ("auto", "babysit-pr")
 PI_EXTENSION_COMMANDS = ("manifest-do", "manifest-auto", "manifest-babysit-pr")
-PI_EXTENSION_TOOLS = (
-    "manifest_dev_request_verification",
-    "manifest_dev_report_outcome",
-)
+PI_EXTENSION_TOOLS: tuple[str, ...] = ()
 PI_EXTENSION = ROOT / "pi" / "extensions" / "manifest-dev.ts"
 PI_EXTENSION_RUNTIME = ROOT / "pi" / "extensions" / "manifest-dev-runtime.ts"
 
@@ -294,7 +291,7 @@ def test_pi_sync_reference_keeps_harness_do_out_of_generated_skills() -> None:
     assert "/manifest-do <manifest-path>" in reference
     assert "/manifest-auto <task>" in reference
     assert "/manifest-babysit-pr <github-pr-url>" in reference
-    assert "manifest_dev_request_verification" in reference
+    assert "runtime-owned verification/outcome orchestration" in reference
     assert "Do not generate `install.sh` for Pi." in reference
     assert (
         "Do not silently generate or overwrite a repo-root package manifest"
@@ -317,8 +314,8 @@ def test_pi_sync_reference_models_pi_capabilities() -> None:
         "Session files and `--fork`",
         "SDK / JSON-mode subprocesses",
         "Prompt resources",
-        "manifest_dev_request_verification",
-        "manifest_dev_report_outcome",
+        "runtime-owned verification/outcome orchestration",
+        "Executor Session prompt",
         "## Known Uncertainties",
     ):
         assert required in reference
@@ -332,9 +329,10 @@ def test_pi_package_metadata_points_to_generated_skills_and_extension() -> None:
         "extensions": ["./pi/extensions/manifest-dev.ts"],
         "skills": ["./dist/pi/skills"],
     }
-    assert package["peerDependencies"]["@earendil-works/pi-coding-agent"] == "*"
-    assert package["peerDependencies"]["@gotgenes/pi-subagents"] == "*"
-    assert package["peerDependencies"]["typebox"] == "*"
+    assert package["peerDependencies"] == {
+        "@earendil-works/pi-coding-agent": "*",
+        "@gotgenes/pi-subagents": "*",
+    }
     assert PI_EXTENSION.is_file()
     assert PI_EXTENSION_RUNTIME.is_file()
 
@@ -352,14 +350,15 @@ def test_pi_dist_contains_only_compatible_skill_set() -> None:
     assert set(metadata["runtime_owned_skills"]) == set(PI_EXCLUDED_RUNTIME_SKILLS)
     assert set(metadata["extension_wrappers"]) == set(PI_EXTENSION_WRAPPER_SKILLS)
     assert set(metadata["commands"]) == set(PI_EXTENSION_COMMANDS)
-    assert metadata["tools"] == {
-        "manifest_dev_request_verification": (
-            "Structured Pi runtime verifier fanout over manifest Acceptance Criteria "
-            "and Global Invariants."
+    assert metadata["tools"] == {}
+    assert metadata["runtime_internal"] == {
+        "verification": (
+            "Runtime-owned verifier fanout over manifest Acceptance Criteria and "
+            "Global Invariants; not exposed as an executor-callable tool."
         ),
-        "manifest_dev_report_outcome": (
-            "Structured Pi runtime outcome for done and escalation after verifier "
-            "fanout passes."
+        "outcome": (
+            "Runtime-owned done and blocker outcomes after verifier fanout; not "
+            "exposed as an executor-callable tool."
         ),
     }
     assert metadata["runtime_dependencies"] == {
@@ -368,35 +367,39 @@ def test_pi_dist_contains_only_compatible_skill_set() -> None:
     assert metadata["agents"] == {}
 
 
-def test_pi_extension_registers_harness_commands_and_runtime_tools() -> None:
+def test_pi_extension_registers_harness_commands_and_runtime_internals() -> None:
     content = PI_EXTENSION.read_text(encoding="utf-8")
     runtime = PI_EXTENSION_RUNTIME.read_text(encoding="utf-8")
 
     for command in PI_EXTENSION_COMMANDS:
         assert f'pi.registerCommand("{command}"' in content
 
-    for tool in PI_EXTENSION_TOOLS:
-        assert f'name: "{tool}"' in content
+    for tool in ("manifest_dev_request_verification", "manifest_dev_report_outcome"):
+        assert f'name: "{tool}"' not in content
 
-    assert "manifest_dev_request_verification" in content
+    assert "runHarnessVerification" in content
+    assert "maybeRunHarnessVerification" in content
+    assert "shouldTriggerHarnessVerification" in content
+    assert "formatRepairFollowUpMessage" in content
+    assert "createVerificationOrchestratorSession" in content
+    assert "verificationSessionDir" in content
+    assert "resolveManifestPath" in content
     assert "@gotgenes/pi-subagents" in content
     assert "subagents.spawn" in content
     assert "inheritContext: false" in content
     assert "VERDICT: PASS|FAIL|BLOCKED" in runtime
     assert "extractManifestGates" in runtime
     assert "aggregateVerificationStatus" in runtime
-    assert 'Type.Literal("done")' in content
-    assert 'Type.Literal("escalate")' in content
     assert "pi.appendEntry(RUN_ENTRY" in content
     assert "pi.appendEntry(VERIFICATION_ENTRY" in content
     assert "pi.appendEntry(OUTCOME_ENTRY" in content
-    assert "Done is blocked" in content
-    assert "pi.sendUserMessage" in content
+    assert "pi.sendUserMessage(formatRepairFollowUpMessage" in content
+    assert "runtime owns authoritative verification" in content
     assert "Do not use /done or /escalate" in content
-    # Durable + freshness-bound done gate, phase-aware fanout, session inheritance, resumable escalate.
+    # Durable + freshness-bound done gate, phase-aware fanout, session inheritance, resumable blocker.
     assert "evaluateDoneReadiness(" in content
     assert "writeRunStateFile(" in content
-    assert "readRunStateFile(" in content
+    assert "rehydrateRuntimeState" in content
     assert "planVerifierBatches(" in content
     assert "chunkManifestGates(" in content
     assert "bypassQueue: true" in content
@@ -419,8 +422,14 @@ def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
     assert "/manifest-do <manifest-path>" in pi_readme
     assert "/manifest-auto <task>" in pi_readme
     assert "/manifest-babysit-pr <github-pr-url>" in pi_readme
-    for tool in PI_EXTENSION_TOOLS:
-        assert tool in pi_readme
+    assert "not exposed as normal skills or executor-callable tools" in pi_readme
+    assert "The executor is not asked to call verification or outcome tools" in pi_readme
+    pi_markdown = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (DIST / "pi").rglob("*.md")
+    )
+    assert "manifest_dev_request_verification" not in pi_markdown
+    assert "manifest_dev_report_outcome" not in pi_markdown
     assert "`/do`, `/done`, and `/escalate` remain intentionally absent" in pi_readme
     assert "pi install npm:@gotgenes/pi-subagents" in root_readme
     assert "pi install npm:@gotgenes/pi-subagents" in pi_readme

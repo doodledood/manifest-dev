@@ -24,9 +24,10 @@
     "manifest-auto": "Pi wrapper for autonomous figure-out -> define -> Harness-level Do.",
     "manifest-babysit-pr": "Pi wrapper for PR lifecycle manifest synthesis and Harness-level Do."
   },
-  "tools": {
-    "manifest_dev_request_verification": "Structured Pi runtime verifier fanout over manifest Acceptance Criteria and Global Invariants.",
-    "manifest_dev_report_outcome": "Structured Pi runtime outcome for done and escalation after verifier fanout passes."
+  "tools": {},
+  "runtime_internal": {
+    "verification": "Runtime-owned verifier fanout over manifest Acceptance Criteria and Global Invariants; not exposed as an executor-callable tool.",
+    "outcome": "Runtime-owned done and blocker outcomes after verifier fanout; not exposed as an executor-callable tool."
   },
   "runtime_dependencies": {
     "@gotgenes/pi-subagents": "Required for clean verifier subagent sessions."

@@ -14,9 +14,9 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | `/skill:<name>` commands | Skills do not need generated slash-command shims just to be invocable. |
 | `registerCommand` | Harness-level Do should be an extension command, not a copied skill. |
 | `resources_discover` | Extensions can contribute generated skill, prompt, and theme paths at runtime if static `package.json` paths are insufficient. |
-| `sendUserMessage` | Runtime extensions can resume or steer an executor session with verifier reports. |
+| `sendUserMessage` | Runtime extensions can inject failed verifier reports back into the Executor Session as follow-up repair work. |
 | `appendEntry` / session manager | Runtime can persist run state outside LLM context. |
-| `@gotgenes/pi-subagents` service | The current verifier fanout spawns clean Pi subagent sessions with inherited context disabled. |
+| `@gotgenes/pi-subagents` service | Verifier fanout spawns clean Pi subagent sessions with inherited context disabled from a runtime-owned verification attempt. |
 | Session files and `--fork` | Verification/judge experiments can fork or isolate context instead of mutating the executor turn directly. |
 | SDK / JSON-mode subprocesses | Verifier fanout can be implemented by controlled Pi sessions or subprocesses instead of prompt-only delegation. |
 | Prompt resources | Verifier, executor, and reviewer prompts may be package-private runtime assets, not user-facing slash prompts. |
@@ -75,7 +75,7 @@ Current package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
@@ -85,8 +85,7 @@ Current package manifest shape:
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",
-    "@gotgenes/pi-subagents": "*",
-    "typebox": "*"
+    "@gotgenes/pi-subagents": "*"
   }
 }
 ```
@@ -126,14 +125,15 @@ When adapting `define`, replace user-facing execution handoffs that say `/do <ma
 The Pi extension owns Do/Verify Loop runtime behavior. The current runtime slice provides:
 
 - `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr` command registration; the chain wrappers invoke the installed `/skill:figure-out` and `/skill:define` rather than paraphrasing the chain.
-- `manifest_dev_request_verification` (structured verifier fanout) and `manifest_dev_report_outcome` (structured done/escalate outcome).
+- a simplified Executor Session prompt: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop.
+- runtime-owned verification/outcome orchestration rather than LLM-visible verifier/outcome tools in the executor action space, including a clean verification orchestration session record per attempt.
 - parse the Manifest and enumerate Acceptance Criteria and Global Invariants, honoring each gate's `verify.agent` (subagent type), `verify.model`, and `phase`.
-- run clean Pi subagent verifier sessions (`inheritContext: false`) in ascending-phase batches — serial across phases, parallel within, short-circuiting later phases on FAIL/BLOCKED. Verifier spawns use `bypassQueue: true` and manifest-dev's own per-phase fanout cap so the community subagents package's default background queue does not silently cap large same-phase verifier sets. Absent `verify.agent` -> general-purpose; absent `verify.model` -> the main session's current model (`ctx.model`). An unavailable agent type falls back to general-purpose and is surfaced in the gate evidence.
+- record a clean verification orchestration session under `~/.manifest-dev/verification-sessions/`, then run clean Pi subagent verifier sessions (`inheritContext: false`) in ascending-phase batches — serial across phases, parallel within, short-circuiting later phases on FAIL/BLOCKED. Verifier spawns use `bypassQueue: true` and manifest-dev's own per-phase fanout cap so the community subagents package's default background queue does not silently cap large same-phase verifier sets. Absent `verify.agent` -> general-purpose; absent `verify.model` -> the Executor Session's current model (`ctx.model`). An unavailable agent type falls back to general-purpose and is surfaced in the gate evidence.
 - multi-repo grounding: when the Manifest declares `Repos:`, each verifier prompt is prepended with the repo path map.
-- aggregate PASS / FAIL / BLOCKED; a BLOCKED verdict routes back to the executor for judgment (never auto-escalates).
-- a durable, freshness-bound done gate: each verification is persisted to `~/.manifest-dev/runs/<runId>.json`, rehydrated on `report_outcome`, and `done` is refused unless an all-PASS verification still matches the current manifest SHA and workspace diff.
-- resumable escalation: `report_outcome` terminates only for `done`; `escalate` surfaces the structured blocker and leaves the run resumable.
-- run/verification/outcome persistence through `pi.appendEntry`; active-session steering through `pi.sendUserMessage`.
+- aggregate PASS / FAIL / BLOCKED; FAIL verdicts are injected into the Executor Session as runtime-authored follow-up repair work; BLOCKED verdicts record and surface resumable blockers; PASS records done after freshness checks.
+- a durable, freshness-bound done gate: each verification is persisted to `~/.manifest-dev/runs/<runId>.json`, rehydrated from runtime state, and `done` is refused unless an all-PASS verification still matches the current manifest SHA and workspace diff.
+- resumable escalation: blocker outcomes surface structured blockers and leave the run resumable; only done terminates the run.
+- run/verification/outcome persistence through `pi.appendEntry`; active-session repair injection through `pi.sendUserMessage`.
 
 Configuration follows the Pi-native convention (`pi.registerFlag` / `pi.getFlag` with a `MANIFEST_DEV_*` environment-variable fallback; resolution order flag > env > default):
 
@@ -142,10 +142,15 @@ Configuration follows the Pi-native convention (`pi.registerFlag` / `pi.getFlag`
 - `--manifest-verifier-timeout-ms` / `MANIFEST_DEV_VERIFIER_TIMEOUT_MS` (default 1800000)
 - `--manifest-verifier-max-concurrent` / `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` (default 24)
 
+Current runtime boundaries:
+
+- Harness verification and outcome controls must not be registered as normal LLM-visible tools for `/manifest-do`.
+- The runtime should hide or remove any compatibility scaffolding that would put harness verification/outcome calls in the Executor Session's active tool set.
+- Verification attempts must be scoped to the Executor Session id and ignore child/subagent session completion events.
+
 Remaining target architecture work:
 
-- checkpoint the executor session id / yield entry id for cross-session resume
-- resume or fork executor sessions under runtime control rather than relying on the active session prompt
+- upgrade the lightweight persisted Verification Orchestrator Session record to a fully isolated SDK AgentSession if future verifier orchestration needs LLM reasoning
 - optional judge/fork handling for contested verifier reports or dubious blockers
 
 Do not claim package-level verifier agent resources until Pi supports them. If runtime extension source is absent, produce a skills-only Pi target with `/do` explicitly unavailable and warnings in the progress log and README.
@@ -169,7 +174,7 @@ Relevant primitives to account for in implementation docs:
 
 - `pi.registerCommand(name, options)` registers `/manifest-do` and any future aliases.
 - `pi.on("resources_discover", ...)` can expose generated skill or prompt paths when static package metadata is not enough.
-- `pi.sendUserMessage(..., { deliverAs })` can resume or steer a session after verifier aggregation.
+- `pi.sendUserMessage(..., { deliverAs })` can inject verifier FAIL results into the Executor Session after runtime aggregation.
 - `pi.appendEntry(customType, data)` can persist run state without putting it in the model context.
 - `@gotgenes/pi-subagents` publishes `getSubagentsService()`, whose `spawn(...)` API can launch clean verifier subagent sessions when called with `inheritContext: false`.
 - Session APIs and `pi --fork` can preserve executor context while isolating verifier or judge work.

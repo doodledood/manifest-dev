@@ -1,6 +1,6 @@
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "description": "Pi package surface for manifest-dev shared skills and Harness-level Do runtime entrypoints.",
   "type": "module",
@@ -19,7 +19,6 @@
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",
-    "@gotgenes/pi-subagents": "*",
-    "typebox": "*"
+    "@gotgenes/pi-subagents": "*"
   }
 }
