@@ -45,7 +45,10 @@ The execution cycle where `/do` implements toward a **Manifest**, runs verifiers
 The `/do` session that performs implementation work and then yields control to the runtime for verification and adjudication.
 
 **Harness-level Do**:
-A Pi-native runtime entrypoint that replaces the portable `/do` skill. The current Pi extension provides command entrypoints and a structured done/escalate outcome gate; the full target architecture adds deterministic orchestration of executor, verifier, repair, escalation, and completion states.
+A Pi-native runtime entrypoint that replaces the portable `/do` skill. The current Pi extension provides command entrypoints, a clean verifier subagent fanout, and a structured done/escalate outcome gate. The remaining target architecture adds fuller persisted orchestration of executor checkpoints, repair-session resumption, escalation state, and optional contested-verifier handling.
+
+**Verifier Session**:
+A clean Pi subagent session spawned by Harness-level Do to evaluate exactly one **Acceptance Criterion** or **Global Invariant** from the **Manifest**. It does not inherit the **Executor Session** conversation and returns PASS, FAIL, or BLOCKED evidence to the runtime.
 
 **Verification Judge**:
 An optional fallback adjudicator with `/do`'s execution context that can review contested verifier reports or dubious blockers when the normal executor-verifier loop does not converge.
@@ -84,8 +87,8 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - A **Pi-native Runtime Package** is a second **Source Surface** for runtime orchestration, not a replacement for the Claude Code **Plugin** source surface for shared prompt and skill assets.
 - A **Pi Dist Target** is generated output, not a **Source Surface**; it packages the shared assets that the **Pi-native Runtime Package** installs or loads.
 - A **Pi-native Runtime Package** owns deterministic behavior primarily for the **Do/Verify Loop**; `/figure-out` and `/define` remain shared prompt and skill behavior unless a future Pi-specific gap emerges.
-- The current **Pi-native Runtime Package** exposes `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr`, and `manifest_dev_report_outcome`; independent verifier-session fanout remains future runtime work.
-- An **Executor Session** does not own final verification; it yields after implementation, and the runtime coordinates verifier work before resuming repair or completion.
+- The current **Pi-native Runtime Package** exposes `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr`, `manifest_dev_request_verification`, and `manifest_dev_report_outcome`; verifier fanout uses clean Pi subagent sessions through `@gotgenes/pi-subagents`.
+- An **Executor Session** does not own final verification; it yields after implementation, receives verifier failures for repair, and cannot report done until runtime verification passes.
 - **Harness-level Do** is the Pi-specific implementation of the **Do/Verify Loop**; `/done` and `/escalate` become runtime outcomes rather than independent portable skills in that package.
 - A **Verification Judge** is not part of the default **Do/Verify Loop**; it is reserved for later fallback if executor repair/escalation judgments prove unreliable.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure through comments and thread advancement, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.

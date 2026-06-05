@@ -5,6 +5,6 @@
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-06-05T08:57:48Z",
-  "notes": "Pi package target with shared skills plus source-owned Harness-level Do extension entrypoints. Full verifier-session fanout is intentionally future runtime work."
+  "synced_at": "2026-06-05T10:21:07Z",
+  "notes": "Pi package target with shared skills plus source-owned Harness-level Do extension entrypoints, clean verifier subagent fanout, and structured outcome gating."
 }

@@ -53,7 +53,10 @@ PI_SKILLS = (
 PI_EXCLUDED_RUNTIME_SKILLS = ("do", "done", "escalate")
 PI_EXTENSION_WRAPPER_SKILLS = ("auto", "babysit-pr")
 PI_EXTENSION_COMMANDS = ("manifest-do", "manifest-auto", "manifest-babysit-pr")
-PI_EXTENSION_TOOL = "manifest_dev_report_outcome"
+PI_EXTENSION_TOOLS = (
+    "manifest_dev_request_verification",
+    "manifest_dev_report_outcome",
+)
 PI_EXTENSION = ROOT / "pi" / "extensions" / "manifest-dev.ts"
 
 REMOVED_SKILLS = ("verify",)
@@ -290,6 +293,7 @@ def test_pi_sync_reference_keeps_harness_do_out_of_generated_skills() -> None:
     assert "/manifest-do <manifest-path>" in reference
     assert "/manifest-auto <task>" in reference
     assert "/manifest-babysit-pr <github-pr-url>" in reference
+    assert "manifest_dev_request_verification" in reference
     assert "Do not generate `install.sh` for Pi." in reference
     assert (
         "Do not silently generate or overwrite a repo-root package manifest"
@@ -308,9 +312,11 @@ def test_pi_sync_reference_models_pi_capabilities() -> None:
         "resources_discover",
         "sendUserMessage",
         "appendEntry",
+        "@gotgenes/pi-subagents",
         "Session files and `--fork`",
         "SDK / JSON-mode subprocesses",
         "Prompt resources",
+        "manifest_dev_request_verification",
         "manifest_dev_report_outcome",
         "## Known Uncertainties",
     ):
@@ -326,6 +332,7 @@ def test_pi_package_metadata_points_to_generated_skills_and_extension() -> None:
         "skills": ["./dist/pi/skills"],
     }
     assert package["peerDependencies"]["@earendil-works/pi-coding-agent"] == "*"
+    assert package["peerDependencies"]["@gotgenes/pi-subagents"] == "*"
     assert package["peerDependencies"]["typebox"] == "*"
     assert PI_EXTENSION.is_file()
 
@@ -344,22 +351,42 @@ def test_pi_dist_contains_only_compatible_skill_set() -> None:
     assert set(metadata["extension_wrappers"]) == set(PI_EXTENSION_WRAPPER_SKILLS)
     assert set(metadata["commands"]) == set(PI_EXTENSION_COMMANDS)
     assert metadata["tools"] == {
-        PI_EXTENSION_TOOL: "Structured Pi runtime outcome for done and escalation."
+        "manifest_dev_request_verification": (
+            "Structured Pi runtime verifier fanout over manifest Acceptance Criteria "
+            "and Global Invariants."
+        ),
+        "manifest_dev_report_outcome": (
+            "Structured Pi runtime outcome for done and escalation after verifier "
+            "fanout passes."
+        ),
+    }
+    assert metadata["runtime_dependencies"] == {
+        "@gotgenes/pi-subagents": "Required for clean verifier subagent sessions."
     }
     assert metadata["agents"] == {}
 
 
-def test_pi_extension_registers_harness_commands_and_outcome_tool() -> None:
+def test_pi_extension_registers_harness_commands_and_runtime_tools() -> None:
     content = PI_EXTENSION.read_text(encoding="utf-8")
 
     for command in PI_EXTENSION_COMMANDS:
         assert f'pi.registerCommand("{command}"' in content
 
-    assert f'name: "{PI_EXTENSION_TOOL}"' in content
+    for tool in PI_EXTENSION_TOOLS:
+        assert f'name: "{tool}"' in content
+
+    assert "manifest_dev_request_verification" in content
+    assert "@gotgenes/pi-subagents" in content
+    assert "subagents.spawn" in content
+    assert "inheritContext: false" in content
+    assert "VERDICT: PASS|FAIL|BLOCKED" in content
     assert 'Type.Literal("done")' in content
     assert 'Type.Literal("escalate")' in content
     assert "pi.appendEntry(RUN_ENTRY" in content
+    assert "pi.appendEntry(VERIFICATION_ENTRY" in content
     assert "pi.appendEntry(OUTCOME_ENTRY" in content
+    assert 'latestVerification?.status !== "passed"' in content
+    assert "Done is blocked" in content
     assert "pi.sendUserMessage" in content
     assert "Do not use /done or /escalate" in content
 
@@ -377,9 +404,14 @@ def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
     assert "/manifest-do <manifest-path>" in pi_readme
     assert "/manifest-auto <task>" in pi_readme
     assert "/manifest-babysit-pr <github-pr-url>" in pi_readme
-    assert PI_EXTENSION_TOOL in pi_readme
+    for tool in PI_EXTENSION_TOOLS:
+        assert tool in pi_readme
     assert "`/do`, `/done`, and `/escalate` remain intentionally absent" in pi_readme
+    assert "pi install npm:@gotgenes/pi-subagents" in root_readme
+    assert "pi install npm:@gotgenes/pi-subagents" in pi_readme
+    assert "clean verifier subagent sessions" in root_readme
+    assert "inheritContext: false" in pi_readme
     assert (
         "Full independent verifier-session fanout remains future Pi runtime work"
-        in root_readme
+        not in root_readme
     )

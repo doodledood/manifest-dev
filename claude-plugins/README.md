@@ -27,7 +27,7 @@ Front-load the thinking so the agent gets it right the first time.
 
 Full schema, verify-block fields, agents, and task guidance live in the [manifest-dev README](./manifest-dev).
 
-For non-Claude installs and updates, see the root README's [Multi-CLI Support](../README.md#multi-cli-support). Pi installs from the repo root with `pi install git:github.com/doodledood/manifest-dev@main`; it ships shared skills plus `/manifest-do`, `/manifest-auto`, and `/manifest-babysit-pr` extension commands. Full independent verifier-session fanout remains future Pi runtime work.
+For non-Claude installs and updates, see the root README's [Multi-CLI Support](../README.md#multi-cli-support). Pi installs `npm:@gotgenes/pi-subagents` plus the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`); it ships shared skills plus `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr`, clean verifier fanout, and a structured done/escalate gate.
 
 **manifest-dev-tools** sits next to the workflow rather than inside it — prompt engineering, PR review and walkthroughs, PR babysitting, ADR synthesis, and context handoff. Details in the [manifest-dev-tools README](./manifest-dev-tools).
 

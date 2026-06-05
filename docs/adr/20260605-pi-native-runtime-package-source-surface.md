@@ -23,7 +23,11 @@ The package should be installable from the repository root, so users can install
 
 The `sync-tools` Pi reference should be a capability model, not only a file mapping table: it must document how Claude Code plugin concepts map to Pi package resources and which Pi-only affordances matter for manifest-dev, including extension commands, resource discovery, package install/update, prompt resources, sessions/forks, and SDK or subprocess orchestration.
 
-Initial implementation lands the runtime entrypoint slice before the full verifier fanout: `/manifest-do` starts Harness-level Do for an existing manifest, `/manifest-auto` and `/manifest-babysit-pr` replace the omitted portable wrapper skills, and `manifest_dev_report_outcome` records final `done` or `escalate` outcomes. Independent verifier sessions, PASS / FAIL / BLOCKED aggregation, and repair-session resumption remain future runtime work until implemented and tested.
+Initial implementation landed the runtime entrypoint slice first: `/manifest-do` starts Harness-level Do for an existing manifest, `/manifest-auto` and `/manifest-babysit-pr` replace the omitted portable wrapper skills, and `manifest_dev_report_outcome` records final `done` or `escalate` outcomes.
+
+The next slice adds `manifest_dev_request_verification`: when the executor believes implementation is ready, it calls this tool with the manifest path and run id. The extension parses Acceptance Criteria and Global Invariants, spawns one clean Pi subagent verifier session per gate through `@gotgenes/pi-subagents` with inherited context disabled, aggregates PASS / FAIL / BLOCKED reports, persists the verification entry, and rejects `outcome="done"` unless the latest verification for that run is all PASS.
+
+Repair-session resumption remains executor-mediated for now: failed verification returns a report to the active executor, which repairs and calls verification again. A fuller persisted state machine, executor checkpointing, and optional judge/fork handling for contested verifier reports remain future runtime work.
 
 ## Alternatives Considered
 
@@ -48,7 +52,8 @@ Initial implementation lands the runtime entrypoint slice before the full verifi
 - README and distribution docs must stay synchronized so Pi has the same easy upgrade story as the other plugin targets.
 - Runtime semantics can drift from Claude/Codex `/do` if shared invariants are not represented as tests or conformance fixtures.
 - The Pi target reference will carry more implementation knowledge than simpler generated targets, so it must be kept evidence-backed and updated when Pi package/runtime APIs change.
-- Until verifier-session fanout lands, Pi users get command/outcome gating but not the same independent verifier isolation as Claude/Codex `/do`.
+- The current verifier fanout depends on `@gotgenes/pi-subagents` being installed and enabled in Pi; package peer dependency alone does not publish the service.
+- Repair routing is still prompt-mediated through the active executor session rather than a fully persisted runtime state machine.
 
 ## Source
 
