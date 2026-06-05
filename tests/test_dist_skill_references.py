@@ -398,8 +398,11 @@ def test_pi_extension_registers_harness_commands_and_runtime_tools() -> None:
     assert "writeRunStateFile(" in content
     assert "readRunStateFile(" in content
     assert "planVerifierBatches(" in content
+    assert "chunkManifestGates(" in content
+    assert "bypassQueue: true" in content
     assert "resolveVerifierModel(gate.model, ctx.model)" in content
     assert "pi.registerFlag(FLAG_MAX_TURNS" in content
+    assert "pi.registerFlag(FLAG_MAX_CONCURRENT" in content
     assert "shouldTerminateOutcome(outcome)" in content
 
 

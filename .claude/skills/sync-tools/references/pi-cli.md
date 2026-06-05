@@ -75,7 +75,7 @@ Current package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
@@ -128,7 +128,7 @@ The Pi extension owns Do/Verify Loop runtime behavior. The current runtime slice
 - `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr` command registration; the chain wrappers invoke the installed `/skill:figure-out` and `/skill:define` rather than paraphrasing the chain.
 - `manifest_dev_request_verification` (structured verifier fanout) and `manifest_dev_report_outcome` (structured done/escalate outcome).
 - parse the Manifest and enumerate Acceptance Criteria and Global Invariants, honoring each gate's `verify.agent` (subagent type), `verify.model`, and `phase`.
-- run clean Pi subagent verifier sessions (`inheritContext: false`) in ascending-phase batches — serial across phases, parallel within, short-circuiting later phases on FAIL/BLOCKED. Absent `verify.agent` -> general-purpose; absent `verify.model` -> the main session's current model (`ctx.model`). An unavailable agent type falls back to general-purpose and is surfaced in the gate evidence.
+- run clean Pi subagent verifier sessions (`inheritContext: false`) in ascending-phase batches — serial across phases, parallel within, short-circuiting later phases on FAIL/BLOCKED. Verifier spawns use `bypassQueue: true` and manifest-dev's own per-phase fanout cap so the community subagents package's default background queue does not silently cap large same-phase verifier sets. Absent `verify.agent` -> general-purpose; absent `verify.model` -> the main session's current model (`ctx.model`). An unavailable agent type falls back to general-purpose and is surfaced in the gate evidence.
 - multi-repo grounding: when the Manifest declares `Repos:`, each verifier prompt is prepended with the repo path map.
 - aggregate PASS / FAIL / BLOCKED; a BLOCKED verdict routes back to the executor for judgment (never auto-escalates).
 - a durable, freshness-bound done gate: each verification is persisted to `~/.manifest-dev/runs/<runId>.json`, rehydrated on `report_outcome`, and `done` is refused unless an all-PASS verification still matches the current manifest SHA and workspace diff.
@@ -140,6 +140,7 @@ Configuration follows the Pi-native convention (`pi.registerFlag` / `pi.getFlag`
 - `--manifest-verifier-max-turns` / `MANIFEST_DEV_VERIFIER_MAX_TURNS` (default 1000)
 - `--manifest-verifier-agent` / `MANIFEST_DEV_VERIFIER_AGENT` (default general-purpose)
 - `--manifest-verifier-timeout-ms` / `MANIFEST_DEV_VERIFIER_TIMEOUT_MS` (default 1800000)
+- `--manifest-verifier-max-concurrent` / `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` (default 24)
 
 Remaining target architecture work:
 

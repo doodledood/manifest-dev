@@ -77,7 +77,7 @@ The Pi extension registers native commands for the runtime-owned parts of manife
 
 The extension also registers two structured runtime tools:
 
-- `manifest_dev_request_verification` parses the manifest and spawns one clean `@gotgenes/pi-subagents` verifier subagent session per Acceptance Criterion and Global Invariant, honoring each gate's `verify.agent` (subagent type), `verify.model`, and `phase`. Gates run in ascending-phase batches (serial across phases, parallel within), short-circuiting later phases on FAIL/BLOCKED. When a gate omits `verify.agent` the verifier uses `general-purpose`; when it omits `verify.model` it inherits the main session's current model. Multi-repo manifests (`Repos:`) prepend a repo path map to each verifier prompt. A BLOCKED verdict is returned to the executor for judgment (it never auto-escalates).
+- `manifest_dev_request_verification` parses the manifest and spawns one clean `@gotgenes/pi-subagents` verifier subagent session per Acceptance Criterion and Global Invariant, honoring each gate's `verify.agent` (subagent type), `verify.model`, and `phase`. Gates run in ascending-phase batches (serial across phases, parallel within), short-circuiting later phases on FAIL/BLOCKED. Manifest-dev bypasses the community subagents extension's global background-agent queue and enforces its own verifier fanout cap (default 24 per phase), so manifests with 20+ same-phase gates can actually run 20+ clean verifier sessions at once instead of being limited by the subagents package default of 4. When a gate omits `verify.agent` the verifier uses `general-purpose`; when it omits `verify.model` it inherits the main session's current model. Multi-repo manifests (`Repos:`) prepend a repo path map to each verifier prompt. A BLOCKED verdict is returned to the executor for judgment (it never auto-escalates).
 - `manifest_dev_report_outcome` reports final `done` or `escalate` outcomes. `outcome="done"` is rejected until an all-PASS verification still matches the current manifest and workspace (verifications persist to `~/.manifest-dev/runs/<runId>.json` and are rehydrated across reloads). `escalate` surfaces the structured blocker and leaves the run resumable; only `done` ends the run.
 
 Completion and escalation are runtime outcomes in Pi; they are not exposed as normal skills.
@@ -91,8 +91,9 @@ Configure the verifier the Pi-native way — CLI flags (`pi.registerFlag` / `pi.
 | `--manifest-verifier-max-turns` | `MANIFEST_DEV_VERIFIER_MAX_TURNS` | `1000` |
 | `--manifest-verifier-agent` | `MANIFEST_DEV_VERIFIER_AGENT` | `general-purpose` |
 | `--manifest-verifier-timeout-ms` | `MANIFEST_DEV_VERIFIER_TIMEOUT_MS` | `1800000` |
+| `--manifest-verifier-max-concurrent` | `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` | `24` |
 
-A per-gate `verify.agent` / `verify.model` always overrides these defaults.
+A per-gate `verify.agent` / `verify.model` always overrides these defaults. `manifest-verifier-max-concurrent` is manifest-dev's own cap; verifier spawns use `@gotgenes/pi-subagents` with `bypassQueue: true` so this value is not silently reduced by the subagents package's global `maxConcurrent` setting.
 
 ## Runtime Boundary
 
