@@ -1,8 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import {
 	aggregateVerificationStatus,
 	buildGateVerifierPrompt,
+	chunkManifestGates,
 	evaluateDoneReadiness,
 	extractManifestGates,
 	extractReposMap,
@@ -10,16 +13,19 @@ import {
 	parseRunState,
 	parseVerifierReport,
 	planVerifierBatches,
+	readRunStateFile,
 	resolvePositiveIntConfig,
 	resolveStringConfig,
 	resolveVerifierModel,
 	runStateFileName,
 	sha256,
+	shouldStopAfterBatch,
 	shouldTerminateOutcome,
 	toGateVerificationResult,
 	unquote,
 	verificationToolResponse,
 	waitForVerifierRecords,
+	writeRunStateFile,
 } from "../pi/extensions/manifest-dev-runtime.ts";
 
 const gate = {
@@ -309,6 +315,41 @@ test("planVerifierBatches groups by ascending phase, parallel within", () => {
 	);
 });
 
+test("phase execution short-circuits later batches on FAIL or BLOCKED", () => {
+	const g = (id, phase) => ({ id, kind: "acceptance_criterion", title: id, verifyPrompt: "x", phase });
+	const batches = planVerifierBatches([g("AC-1.1", 1), g("AC-1.2", 2)]);
+	const spawnedOnFail = [];
+	for (const batch of batches) {
+		spawnedOnFail.push(...batch.map((gate) => gate.id));
+		if (shouldStopAfterBatch([gateResult(batch[0].phase === 1 ? "FAIL" : "PASS")])) break;
+	}
+	assert.deepEqual(spawnedOnFail, ["AC-1.1"]);
+
+	const spawnedOnBlocked = [];
+	for (const batch of batches) {
+		spawnedOnBlocked.push(...batch.map((gate) => gate.id));
+		if (shouldStopAfterBatch([gateResult(batch[0].phase === 1 ? "BLOCKED" : "PASS")])) break;
+	}
+	assert.deepEqual(spawnedOnBlocked, ["AC-1.1"]);
+
+	assert.equal(shouldStopAfterBatch([gateResult("PASS")]), false);
+});
+
+test("chunkManifestGates bounds verifier fanout while preserving order", () => {
+	const gates = Array.from({ length: 25 }, (_, index) => ({
+		id: `AC-1.${index + 1}`,
+		kind: "acceptance_criterion",
+		title: `gate ${index + 1}`,
+		verifyPrompt: "x",
+		phase: 1,
+	}));
+
+	const chunks = chunkManifestGates(gates, 10);
+	assert.deepEqual(chunks.map((chunk) => chunk.length), [10, 10, 5]);
+	assert.deepEqual(chunks.flat().map((chunkGate) => chunkGate.id), gates.map((chunkGate) => chunkGate.id));
+	assert.deepEqual(chunkManifestGates(gates.slice(0, 3), 0).map((chunk) => chunk.length), [1, 1, 1]);
+});
+
 test("extractReposMap parses a Repos declaration and ignores single-repo", () => {
 	assert.deepEqual(
 		extractReposMap("- **Repos:** [loco: /a/loco, billing: /b/billing]"),
@@ -328,7 +369,7 @@ test("buildGateVerifierPrompt prepends repo map only for multi-repo", () => {
 	assert.equal(buildGateVerifierPrompt({ gate, manifestPath: "/m", manifest: "# M", runId: "r", reposMap: {} }), base);
 });
 
-test("run-state round-trips and rejects corrupt or foreign content", () => {
+test("run-state helpers round-trip to disk and handle missing or corrupt files", () => {
 	const record = makeBlockedVerificationRecord({
 		runId: "manifest-dev-run",
 		manifestPath: "/m",
@@ -337,10 +378,21 @@ test("run-state round-trips and rejects corrupt or foreign content", () => {
 		requestedAt: "t",
 		blocker: "b",
 	});
-	assert.equal(runStateFileName("manifest-dev-d0/be c"), "manifest-dev-d0_be_c.json");
-	assert.deepEqual(parseRunState(JSON.stringify(record)), JSON.parse(JSON.stringify(record)));
-	assert.equal(parseRunState("{not json"), undefined);
-	assert.equal(parseRunState('{"runId":"x"}'), undefined);
+	const expected = JSON.parse(JSON.stringify(record));
+	const dir = mkdtempSync(`${tmpdir()}/manifest-dev-runstate-`);
+	try {
+		assert.equal(runStateFileName("manifest-dev-d0/be c"), "manifest-dev-d0_be_c.json");
+		assert.deepEqual(parseRunState(JSON.stringify(record)), expected);
+		assert.equal(writeRunStateFile(record, dir), true);
+		assert.deepEqual(readRunStateFile(record.runId, dir), expected);
+		assert.equal(readRunStateFile("missing", dir), undefined);
+		writeFileSync(`${dir}/${runStateFileName("corrupt")}`, "{not json", "utf-8");
+		assert.equal(readRunStateFile("corrupt", dir), undefined);
+		assert.equal(parseRunState("{not json"), undefined);
+		assert.equal(parseRunState('{"runId":"x"}'), undefined);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
 });
 
 test("resolveVerifierModel prefers the gate model then inherits the session model", () => {

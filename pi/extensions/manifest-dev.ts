@@ -1,28 +1,30 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join, resolve } from "node:path";
+import { resolve } from "node:path";
 import { defineTool, type ExtensionAPI, type ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import {
 	aggregateVerificationStatus,
 	buildGateVerifierPrompt,
+	chunkManifestGates,
 	evaluateDoneReadiness,
 	extractManifestGates,
 	extractReposMap,
 	makeBlockedVerificationRecord,
-	parseRunState,
 	planVerifierBatches,
+	readRunStateFile,
 	resolvePositiveIntConfig,
 	resolveStringConfig,
 	resolveVerifierModel,
-	runStateFileName,
 	sha256,
+	shouldStopAfterBatch,
 	shouldTerminateOutcome,
 	toGateVerificationResult,
 	unquote,
 	verificationToolResponse,
 	waitForVerifierRecords,
+	writeRunStateFile,
 	type GateVerificationResult,
 	type ManifestGate,
 	type SubagentsRecordService,
@@ -64,14 +66,17 @@ const SUBAGENTS_PACKAGE = "@gotgenes/pi-subagents";
 const DEFAULT_VERIFIER_AGENT = "general-purpose";
 const DEFAULT_VERIFIER_MAX_TURNS = 1000;
 const DEFAULT_VERIFIER_TIMEOUT_MS = 30 * 60 * 1000;
+const DEFAULT_VERIFIER_MAX_CONCURRENT = 24;
 const FLAG_MAX_TURNS = "manifest-verifier-max-turns";
 const FLAG_AGENT = "manifest-verifier-agent";
 const FLAG_TIMEOUT_MS = "manifest-verifier-timeout-ms";
+const FLAG_MAX_CONCURRENT = "manifest-verifier-max-concurrent";
 
 interface VerifierConfig {
 	agent: string;
 	maxTurns: number;
 	timeoutMs: number;
+	maxConcurrent: number;
 }
 
 export default function manifestDevExtension(pi: ExtensionAPI): void {
@@ -87,6 +92,10 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 	});
 	pi.registerFlag(FLAG_TIMEOUT_MS, {
 		description: `Timeout in ms to wait for manifest-dev verifier subagents (default ${DEFAULT_VERIFIER_TIMEOUT_MS}).`,
+		type: "string",
+	});
+	pi.registerFlag(FLAG_MAX_CONCURRENT, {
+		description: `Max manifest-dev verifier subagents to run in parallel per phase (default ${DEFAULT_VERIFIER_MAX_CONCURRENT}).`,
 		type: "string",
 	});
 
@@ -148,6 +157,7 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 					blocker: "No Acceptance Criteria or Global Invariants with verify.prompt blocks were found in the manifest.",
 				});
 				latestVerificationByRunId.set(runId, record);
+				writeRunStateFile(record, runStateDir());
 				pi.appendEntry(VERIFICATION_ENTRY, record);
 				return verificationToolResponse(record);
 			}
@@ -165,6 +175,7 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 						`Pi subagents service is unavailable. Install and enable it with: pi install npm:${SUBAGENTS_PACKAGE}`,
 				});
 				latestVerificationByRunId.set(runId, record);
+				writeRunStateFile(record, runStateDir());
 				pi.appendEntry(VERIFICATION_ENTRY, record);
 				return verificationToolResponse(record);
 			}
@@ -175,72 +186,77 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 			const results: GateVerificationResult[] = [];
 
 			for (const batch of batches) {
-				const spawnedInBatch: Array<{
-					gate: ManifestGate;
-					agentId: string;
-					requestedType: string;
-					usedType: string;
-					fellBack: boolean;
-				}> = [];
+				const phaseResultStart = results.length;
 
-				for (const gate of batch) {
-					const prompt = buildGateVerifierPrompt({
-						gate,
-						manifestPath,
-						manifest,
-						runId,
-						implementationSummary: params.implementationSummary,
-						reposMap,
-					});
-					const verifierModel = resolveVerifierModel(gate.model, ctx.model);
-					const spawnOptions = {
-						description: `${gate.id}: ${gate.title}`.slice(0, 120),
-						inheritContext: false,
-						foreground: false,
-						maxTurns: config.maxTurns,
-						...(verifierModel ? { model: verifierModel } : {}),
-					};
-					const requestedType = gate.suggestedAgent?.trim() || config.agent;
+				for (const chunk of chunkManifestGates(batch, config.maxConcurrent)) {
+					const spawnedInChunk: Array<{
+						gate: ManifestGate;
+						agentId: string;
+						requestedType: string;
+						usedType: string;
+						fellBack: boolean;
+					}> = [];
 
-					try {
-						const agentId = subagents.spawn(requestedType, prompt, spawnOptions);
-						spawnedInBatch.push({ gate, agentId, requestedType, usedType: requestedType, fellBack: false });
-					} catch (error) {
-						if (requestedType !== config.agent) {
-							try {
-								const agentId = subagents.spawn(config.agent, prompt, spawnOptions);
-								spawnedInBatch.push({ gate, agentId, requestedType, usedType: config.agent, fellBack: true });
-								continue;
-							} catch (fallbackError) {
-								results.push(spawnBlockedResult(gate, requestedType, fallbackError));
-								continue;
-							}
-						}
-						results.push(spawnBlockedResult(gate, requestedType, error));
-					}
-				}
+					for (const gate of chunk) {
+						const prompt = buildGateVerifierPrompt({
+							gate,
+							manifestPath,
+							manifest,
+							runId,
+							implementationSummary: params.implementationSummary,
+							reposMap,
+						});
+						const verifierModel = resolveVerifierModel(gate.model, ctx.model);
+						const spawnOptions = {
+							description: `${gate.id}: ${gate.title}`.slice(0, 120),
+							inheritContext: false,
+							foreground: false,
+							bypassQueue: true,
+							maxTurns: config.maxTurns,
+							...(verifierModel ? { model: verifierModel } : {}),
+						};
+						const requestedType = gate.suggestedAgent?.trim() || config.agent;
 
-				if (spawnedInBatch.length > 0) {
-					const records = await waitForVerifierRecords(
-						subagents,
-						spawnedInBatch.map((item) => item.agentId),
-						{ timeoutMs: config.timeoutMs },
-					);
-					for (const item of spawnedInBatch) {
-						const result = toGateVerificationResult(item.gate, item.agentId, records.get(item.agentId));
-						results.push(
-							item.fellBack
-								? {
-									...result,
-									evidence: `[verifier agent "${item.requestedType}" unavailable; fell back to "${item.usedType}"] ${result.evidence}`,
+						try {
+							const agentId = subagents.spawn(requestedType, prompt, spawnOptions);
+							spawnedInChunk.push({ gate, agentId, requestedType, usedType: requestedType, fellBack: false });
+						} catch (error) {
+							if (requestedType !== config.agent) {
+								try {
+									const agentId = subagents.spawn(config.agent, prompt, spawnOptions);
+									spawnedInChunk.push({ gate, agentId, requestedType, usedType: config.agent, fellBack: true });
+									continue;
+								} catch (fallbackError) {
+									results.push(spawnBlockedResult(gate, requestedType, fallbackError));
+									continue;
 								}
-							: result,
+							}
+							results.push(spawnBlockedResult(gate, requestedType, error));
+						}
+					}
+
+					if (spawnedInChunk.length > 0) {
+						const records = await waitForVerifierRecords(
+							subagents,
+							spawnedInChunk.map((item) => item.agentId),
+							{ timeoutMs: config.timeoutMs },
 						);
+						for (const item of spawnedInChunk) {
+							const result = toGateVerificationResult(item.gate, item.agentId, records.get(item.agentId));
+							results.push(
+								item.fellBack
+									? {
+										...result,
+										evidence: `[verifier agent "${item.requestedType}" unavailable; fell back to "${item.usedType}"] ${result.evidence}`,
+									}
+									: result,
+							);
+						}
 					}
 				}
 
 				// Phase short-circuit: a FAIL/BLOCKED in this phase stops later phases from running.
-				if (results.some((result) => result.verdict !== "PASS")) break;
+				if (shouldStopAfterBatch(results.slice(phaseResultStart))) break;
 			}
 
 			const verification: VerificationRecord = {
@@ -257,7 +273,7 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 			};
 
 			latestVerificationByRunId.set(runId, verification);
-			writeRunStateFile(verification);
+			writeRunStateFile(verification, runStateDir());
 			pi.appendEntry(VERIFICATION_ENTRY, verification);
 			ctx.ui.notify(
 				verification.status === "passed"
@@ -323,7 +339,7 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 
 			let latestVerification = latestVerificationByRunId.get(runId);
 			if (!latestVerification) {
-				latestVerification = readRunStateFile(runId);
+				latestVerification = readRunStateFile(runId, runStateDir());
 				if (latestVerification) latestVerificationByRunId.set(runId, latestVerification);
 			}
 
@@ -575,7 +591,7 @@ ${prUrl}
 
 Follow the manifest-dev PR lifecycle flow:
 1. Confirm the PR is a reachable github.com pull request and not already closed or merged.
-2. Invoke the define skill (/skill:define) with `--babysit ${prUrl} --autonomous` to synthesize a lifecycle manifest at ~/.manifest-dev/manifests/manifest-{ts}.md from the strongest available grounding: linked manifest, then PR title/body, commits/diff, then comments and review threads.
+2. Invoke the define skill (/skill:define) with '--babysit ${prUrl} --autonomous' to synthesize a lifecycle manifest at ~/.manifest-dev/manifests/manifest-{ts}.md from the strongest available grounding: linked manifest, then PR title/body, commits/diff, then comments and review threads.
 3. Execute the manifest under Harness-level Do rules: inspect CI, review threads, mergeability, PR description sync, and required fixes; commit/push only when the branch is trusted and writable; then call manifest_dev_request_verification with runId="${run.runId}" and the manifest path.
 4. Treat review comments as signals, not authority; stronger intent sources win.
 5. Do not press merge.
@@ -629,6 +645,11 @@ function resolveVerifierConfig(pi: ExtensionAPI): VerifierConfig {
 			env: process.env.MANIFEST_DEV_VERIFIER_TIMEOUT_MS,
 			fallback: DEFAULT_VERIFIER_TIMEOUT_MS,
 		}),
+		maxConcurrent: resolvePositiveIntConfig({
+			flag: pi.getFlag(FLAG_MAX_CONCURRENT),
+			env: process.env.MANIFEST_DEV_VERIFIER_MAX_CONCURRENT,
+			fallback: DEFAULT_VERIFIER_MAX_CONCURRENT,
+		}),
 	};
 }
 
@@ -646,29 +667,6 @@ function spawnBlockedResult(gate: ManifestGate, requestedType: string, error: un
 
 function runStateDir(): string {
 	return resolve(homedir(), ".manifest-dev", "runs");
-}
-
-function writeRunStateFile(verification: VerificationRecord): void {
-	try {
-		mkdirSync(runStateDir(), { recursive: true });
-		writeFileSync(
-			join(runStateDir(), runStateFileName(verification.runId)),
-			JSON.stringify(verification, null, 2),
-			"utf-8",
-		);
-	} catch {
-		// Best-effort: in-memory state still gates done within this session.
-	}
-}
-
-function readRunStateFile(runId: string): VerificationRecord | undefined {
-	try {
-		const file = join(runStateDir(), runStateFileName(runId));
-		if (!existsSync(file)) return undefined;
-		return parseRunState(readFileSync(file, "utf-8"));
-	} catch {
-		return undefined;
-	}
 }
 
 function workspaceDiffSha256(cwd: string): string {

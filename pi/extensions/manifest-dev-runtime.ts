@@ -1,4 +1,6 @@
 import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 export type VerificationStatus = "passed" | "failed" | "blocked";
 export type GateVerdict = "PASS" | "FAIL" | "BLOCKED";
@@ -365,6 +367,16 @@ export function planVerifierBatches(gates: ManifestGate[]): ManifestGate[][] {
 	return [...byPhase.keys()].sort((a, b) => a - b).map((phase) => byPhase.get(phase) ?? []);
 }
 
+/** Split a phase batch into bounded parallel chunks, preserving manifest order. */
+export function chunkManifestGates(gates: ManifestGate[], maxConcurrent: number): ManifestGate[][] {
+	const limit = Number.isInteger(maxConcurrent) && maxConcurrent > 0 ? maxConcurrent : 1;
+	const chunks: ManifestGate[][] = [];
+	for (let index = 0; index < gates.length; index += limit) {
+		chunks.push(gates.slice(index, index + limit));
+	}
+	return chunks;
+}
+
 /** Parse a manifest `Repos: [name: path, ...]` declaration into a name->path map. Empty when single-repo. */
 export function extractReposMap(manifest: string): Record<string, string> {
 	const line = manifest
@@ -400,9 +412,37 @@ export function parseRunState(text: string): VerificationRecord | undefined {
 	}
 }
 
+export function writeRunStateFile(verification: VerificationRecord, directory: string): boolean {
+	try {
+		mkdirSync(directory, { recursive: true });
+		writeFileSync(
+			join(directory, runStateFileName(verification.runId)),
+			JSON.stringify(verification, null, 2),
+			"utf-8",
+		);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+export function readRunStateFile(runId: string, directory: string): VerificationRecord | undefined {
+	try {
+		const file = join(directory, runStateFileName(runId));
+		if (!existsSync(file)) return undefined;
+		return parseRunState(readFileSync(file, "utf-8"));
+	} catch {
+		return undefined;
+	}
+}
+
 export interface DoneReadiness {
 	ready: boolean;
 	reason?: string;
+}
+
+export function shouldStopAfterBatch(results: GateVerificationResult[]): boolean {
+	return results.some((result) => result.verdict !== "PASS");
 }
 
 /** Decide whether `done` may be reported: only on an all-PASS verification that still matches the current manifest + workspace. */
