@@ -24,7 +24,7 @@ If any required argument is missing: error and halt with usage:
 ```
 Usage: /adr <manifest-path> <output-dir> <transcript-path>
 
-Example: /adr /tmp/manifest-1234.md docs/adr/ ~/.claude/projects/.../session.jsonl
+Example: /adr ~/.manifest-dev/manifests/manifest-1234.md docs/adr/ ~/.claude/projects/.../session.jsonl
 ```
 
 ## Pipeline

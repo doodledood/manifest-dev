@@ -1,6 +1,6 @@
 # figure-out: --autonomous
 
-Loaded when args contain `--autonomous` (typically passed by `/manifest-auto` chaining figure-out -> define -> Harness-level Do without user wait). Without the flag, default interactive behavior applies.
+Loaded when args contain `--autonomous` (typically passed by `/auto` chaining figure-out → define → do without user wait). Without the flag, default interactive behavior applies.
 
 ## What changes
 

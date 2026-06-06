@@ -13,4 +13,4 @@ Reference other artifacts (PRDs, manifests in `.manifest/`, ADRs, issues, PRs, c
 
 Shape is the agent's call. Section names, headings, prose-vs-lists, ordering — driven by the intent, not a template.
 
-Output to `/tmp/handoff-{timestamp}.md` where `{timestamp}` is `YYYYMMDD-HHMMSS` in UTC. If the argument is a path to a prior handoff, read it first and write a fresh doc reflecting the current state — pure rewrite, not append.
+Output to a writable scratch path: `/tmp/handoff-{timestamp}.md` when `/tmp` is writable; otherwise the host temp directory (`$TMPDIR` / `%TEMP%`). `{timestamp}` is `YYYYMMDD-HHMMSS` in UTC. If the argument is a path to a prior handoff, read it first and write a fresh doc reflecting the current state — pure rewrite, not append.

@@ -135,7 +135,7 @@ echo "======================================"
 echo "Done!"
 echo ""
 skill_count=$(find "$INSTALL_ROOT/skills" -maxdepth 1 \( -name "*-manifest-dev" -o -name "*-manifest-dev-tools" \) -type d 2>/dev/null | wc -l | tr -d ' ')
-agent_count=$(find "$INSTALL_ROOT/agents" -maxdepth 1 -name "*-manifest-dev.toml" -type f 2>/dev/null | wc -l | tr -d ' ')
+agent_count=$(find "$INSTALL_ROOT/agents" -maxdepth 1 \( -name "*-manifest-dev.toml" -o -name "*-manifest-dev-tools.toml" \) -type f 2>/dev/null | wc -l | tr -d ' ')
 echo "What's installed (all suffixed with manifest-dev namespaces):"
 echo "  - $skill_count skills in $INSTALL_ROOT/skills/ (define-manifest-dev, adr-manifest-dev-tools, etc.)"
 echo "  - $agent_count TOML agent stubs in $INSTALL_ROOT/agents/ (multi-agent config)"
