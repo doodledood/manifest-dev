@@ -130,7 +130,7 @@ echo ""
 echo "Components installed to $TARGET/:"
 
 skill_count=$(find "$TARGET/skills" -maxdepth 1 \( -name "*-manifest-dev" -o -name "*-manifest-dev-tools" \) -type d 2>/dev/null | wc -l)
-agent_count=$(find "$TARGET/agents" -maxdepth 1 -name "*-manifest-dev.md" -type f 2>/dev/null | wc -l)
+agent_count=$(find "$TARGET/agents" -maxdepth 1 \( -name "*-manifest-dev.md" -o -name "*-manifest-dev-tools.md" \) -type f 2>/dev/null | wc -l)
 command_count=$(find "$TARGET/commands" -maxdepth 1 \( -name "*-manifest-dev.md" -o -name "*-manifest-dev-tools.md" \) -type f 2>/dev/null | wc -l)
 
 echo "  Skills:   $skill_count"
