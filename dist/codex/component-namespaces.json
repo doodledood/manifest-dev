@@ -5,15 +5,15 @@
     "-manifest-dev-tools"
   ],
   "skills": {
+    "adr": "-manifest-dev-tools",
     "auto": "-manifest-dev",
+    "babysit-pr": "-manifest-dev-tools",
     "define": "-manifest-dev",
     "do": "-manifest-dev",
     "done": "-manifest-dev",
     "escalate": "-manifest-dev",
-    "figure-out": "-manifest-dev",
     "figure-out-team": "-manifest-dev",
-    "adr": "-manifest-dev-tools",
-    "babysit-pr": "-manifest-dev-tools",
+    "figure-out": "-manifest-dev",
     "handoff": "-manifest-dev-tools",
     "prompt-engineering": "-manifest-dev-tools",
     "review-pr": "-manifest-dev-tools",
@@ -32,11 +32,11 @@
     "docs-reviewer": "-manifest-dev",
     "github-pr-lifecycle": "-manifest-dev",
     "operational-readiness-reviewer": "-manifest-dev",
+    "prompt-reviewer": "-manifest-dev-tools",
     "prose-value-reviewer": "-manifest-dev",
     "slack-poller": "-manifest-dev",
     "test-quality-reviewer": "-manifest-dev",
-    "type-safety-reviewer": "-manifest-dev",
-    "prompt-reviewer": "-manifest-dev-tools"
+    "type-safety-reviewer": "-manifest-dev"
   },
   "commands": {}
 }

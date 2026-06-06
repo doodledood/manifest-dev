@@ -2,6 +2,8 @@
 
 This is the Pi package target for manifest-dev. It ships the shared, Pi-compatible skills plus a source-owned Pi extension for Harness-level Do entrypoints, clean verifier subagent fanout, and structured done/escalate outcomes.
 
+Repository: [doodledood/manifest-dev](https://github.com/doodledood/manifest-dev). Pi's package manager is the installer — there is no `install.sh` for this target.
+
 ## Install
 
 From this repository checkout:
