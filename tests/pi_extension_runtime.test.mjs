@@ -584,6 +584,56 @@ test("rehydrateRuntimeState removes terminal runs after replay", () => {
 	assert.equal(state.latestVerificationByRunId.get(executing.runId), verification);
 });
 
+test("rehydrateRuntimeState scopes runs to the owning package's command set", () => {
+	const doRun = {
+		runId: "run-do",
+		command: "do",
+		startedAt: "t",
+		cwd: "/repo",
+		executorSessionId: "core-session",
+		status: "executing",
+	};
+	const babysitRun = {
+		runId: "run-babysit",
+		command: "babysit-pr",
+		startedAt: "t",
+		cwd: "/repo",
+		executorSessionId: "tools-session",
+		status: "executing",
+	};
+	const ctx = {
+		sessionManager: {
+			getBranch() {
+				return [
+					{ type: "custom", customType: "manifest-dev:run", data: doRun },
+					{ type: "custom", customType: "manifest-dev:run", data: babysitRun },
+				];
+			},
+		},
+	};
+
+	// Tools runtime (owns babysit-pr) must ignore the core /do run, so it never
+	// double-verifies it.
+	const toolsState = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map(),
+		childSessionIds: new Set(),
+	};
+	rehydrateRuntimeState(ctx, toolsState, new Set(["babysit-pr"]));
+	assert.equal(toolsState.activeRunByExecutorSessionId.has("tools-session"), true);
+	assert.equal(toolsState.activeRunByExecutorSessionId.has("core-session"), false);
+
+	// Core runtime (owns do/auto) must ignore the tools babysit-pr run.
+	const coreState = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map(),
+		childSessionIds: new Set(),
+	};
+	rehydrateRuntimeState(ctx, coreState, new Set(["do", "auto"]));
+	assert.equal(coreState.activeRunByExecutorSessionId.has("core-session"), true);
+	assert.equal(coreState.activeRunByExecutorSessionId.has("tools-session"), false);
+});
+
 test("registered agent_end handler runs runtime verification path", async () => {
 	const events = new Map();
 	const commands = new Map();
