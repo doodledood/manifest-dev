@@ -13,7 +13,7 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 
 | Domain | Indicators | File |
 |--------|------------|------|
-| Coding | Any code change; base reviewer gates for intent, bugs, operational readiness, design, tests, docs, context adherence | `CODING.md` |
+| Coding | Any code change; base code-review dimension gates for intent, bugs, operational readiness, design, tests, docs, context adherence | `CODING.md` |
 | Feature | New functionality, APIs, enhancements | `FEATURE.md` |
 | Bug | Defects, errors, regressions, "not working", "broken" | `BUG.md` |
 | Refactor | Restructuring, "clean up", pattern changes | `REFACTOR.md` |
@@ -29,6 +29,17 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 *Content types:* **Quality Gates** (`## Quality Gates`) → INV-G*/AC-* (omit clearly inapplicable with stated reasoning); **Defaults** (`## Defaults`) → PG-* pre-interview, user reviews and removes if N/A; **Reference files** (`tasks/**/references/*.md`) → verifier-agent lookup data, not loaded during /define.
 
 **Verifier prompt discipline.** Before writing `verify.prompt` fields, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. Verifier prompts are prompts: state the verifier's goal, evidence to inspect, PASS/FAIL/BLOCKED contract, and non-obvious context. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
+
+**Encoding dimension gates.** Code-quality gates name a **dimension** of the `code-review` skill, not a standalone reviewer agent. Encode each as `verify.agent: general-purpose` (the default — omit `verify.agent`) with a `verify.prompt` that invokes the `manifest-dev:code-review` skill for that dimension at the gate's threshold. Pattern:
+
+```yaml
+verify:
+  prompt: |
+    Spawn a general-purpose review using the manifest-dev code-review skill with dimension=<dimension> against the change.
+    PASS only if no <LOW|MEDIUM>-or-higher findings. Report findings with severity.
+```
+
+Standalone agents that are **not** code-review dimensions still encode as named agents via `verify.agent:` — `prompt-reviewer` (prompt quality), `github-pr-lifecycle` (PR lifecycle), `criteria-checker` (generic single-criterion checks). The 13 code-review dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+).
 
 ## Manifest Schema
 
@@ -99,6 +110,7 @@ Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action 
 
 ```text
 Manifest complete: <manifest-path>
+Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl
 
 To execute: /do <manifest-path>
 For unattended execution: /goal /do <manifest-path>

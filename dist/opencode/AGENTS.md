@@ -37,28 +37,19 @@ The subagent returns **PASS**, **FAIL**, or **BLOCKED**. BLOCKED routes via /esc
 
 PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /babysit-pr uses manifest/PR grounding and runs the lifecycle; /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
 
+## Code review
+
+Quality review is the **`code-review` skill** (one dimension per invocation, each loading its own reference): `change-intent`, `code-bugs`, `contracts`, `type-safety` (defect-finders, no LOW+); `operational-readiness`, `code-design`, `code-maintainability`, `code-simplicity`, `code-testability`, `test-quality`, `docs`, `prose-value`, `context-file-adherence` (advisory, no MEDIUM+). A verifier spawns a general-purpose subagent and activates `code-review` with the dimension.
+
 ## Agents
 
-17 specialized subagents, all read-only:
+Functional subagents, all read-only:
 
 | Agent | Purpose |
 |-------|---------|
-| change-intent-reviewer | Adversarial intent-behavior divergence analysis |
-| code-bugs-reviewer | Mechanical defect detection (race conditions, leaks, edge cases) |
-| operational-readiness-reviewer | Runtime and deployment readiness: environment wiring, migrations, retries, rollback, scale, CI, and observability |
-| test-quality-reviewer | Coverage gap analysis plus independent behavioral-oracle checks |
-| prose-value-reviewer | Comments and repo doc files: narrating-the-obvious, generic puffery, AI rhetorical patterns, sycophantic fragments — comments must be load-bearing-WHY |
-| code-design-reviewer | Design fitness (reinvented wheels, wrong responsibility owner, under-engineering) |
-| code-maintainability-reviewer | Code organization (DRY, coupling, cohesion, consistency) |
-| code-simplicity-reviewer | Unnecessary complexity and over-engineering |
-| code-testability-reviewer | Test friction analysis (mock count, logic in IO) |
-| context-file-adherence-reviewer | Context file compliance (AGENTS.md/CLAUDE.md rules) |
-| contracts-reviewer | API and interface contract correctness with source-of-truth evidence |
 | criteria-checker | Single-criterion verifier — the default subagent when verify.agent is omitted |
-| docs-reviewer | Documentation accuracy against code changes |
 | github-pr-lifecycle | Steerable GitHub PR lifecycle inspection — returns natural-language hint for /do to dispatch. Read-only; never invokes the merge button. |
 | slack-poller | Narrate new Slack messages in a channel or thread since a cursor. Used by /figure-out-team. |
-| type-safety-reviewer | Type system improvements across typed languages |
 | prompt-reviewer | Reviews LLM prompts against the /prompt-engineering skill's gap-calibration principles (tools-plugin agent — installs with `-manifest-dev-tools` suffix) |
 
 ## Unattended Execution

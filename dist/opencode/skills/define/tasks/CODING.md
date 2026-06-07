@@ -4,36 +4,38 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-AGENTS.md may specify project-specific preferences.
+CLAUDE.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
-Two tiers by agent role. **Defect-finding agents** (every LOW finding is signal — a real divergence, defect, contract mismatch, or type hole): `no LOW+`. **Advisory agents** (LOW findings are usually taste-level — could-be-better, not is-broken): `no MEDIUM+`. The split is structural, not per-finding — it reflects what each agent is built to detect.
+Each gate is a **dimension** of the `code-review` skill (one ref per dimension, loaded on demand). Two tiers by dimension role. **Defect-finding dimensions** (every LOW finding is signal — a real divergence, defect, contract mismatch, or type hole): `no LOW+`. **Advisory dimensions** (LOW findings are usually taste-level — could-be-better, not is-broken): `no MEDIUM+`. The split is structural, not per-finding — it reflects what each dimension is built to detect.
 
-| Aspect | Agent | Threshold |
-|--------|-------|-----------|
-| Intent analysis | change-intent-reviewer | no LOW+ |
-| Mechanical bug detection | code-bugs-reviewer | no LOW+ |
-| Operational readiness | operational-readiness-reviewer | no MEDIUM+ |
-| Maintainability | code-maintainability-reviewer | no MEDIUM+ |
-| Simplicity | code-simplicity-reviewer | no MEDIUM+ |
-| Test quality | test-quality-reviewer | no MEDIUM+ |
-| Testability | code-testability-reviewer | no MEDIUM+ |
-| Documentation | docs-reviewer | no MEDIUM+ |
-| Design fitness | code-design-reviewer | no MEDIUM+ |
-| Prose value | prose-value-reviewer | no MEDIUM+ |
-| AGENTS.md adherence | context-file-adherence-reviewer | no MEDIUM+ |
+| Aspect | Dimension | Threshold |
+|--------|-----------|-----------|
+| Intent analysis | change-intent | no LOW+ |
+| Mechanical bug detection | code-bugs | no LOW+ |
+| Operational readiness | operational-readiness | no MEDIUM+ |
+| Maintainability | code-maintainability | no MEDIUM+ |
+| Simplicity | code-simplicity | no MEDIUM+ |
+| Test quality | test-quality | no MEDIUM+ |
+| Testability | code-testability | no MEDIUM+ |
+| Documentation | docs | no MEDIUM+ |
+| Design fitness | code-design | no MEDIUM+ |
+| Prose value | prose-value | no MEDIUM+ |
+| CLAUDE.md adherence | context-file-adherence | no MEDIUM+ |
 
 ### Conditional Gates (when applicable)
 
-| Aspect | Agent | Threshold | Condition |
-|--------|-------|-----------|-----------|
-| Contract correctness | contracts-reviewer | no LOW+ | When code calls external/internal APIs, changes public interfaces, or crosses service boundaries |
-| Type safety | type-safety-reviewer | no LOW+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
+| Aspect | Dimension | Threshold | Condition |
+|--------|-----------|-----------|-----------|
+| Contract correctness | contracts | no LOW+ | When code calls external/internal APIs, changes public interfaces, or crosses service boundaries |
+| Type safety | type-safety | no LOW+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
+
+**Encoding:** each dimension gate encodes with `verify.agent: general-purpose` (the default) and a `verify.prompt` that invokes the `manifest-dev:code-review` skill for that dimension at the row's threshold — e.g. *"Spawn a general-purpose review using the manifest-dev code-review skill with dimension=code-bugs against the change. PASS only if no LOW-or-higher findings."* See `define/SKILL.md` → "Encoding dimension gates".
 
 ## Project Gates
 
-AGENTS.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 
@@ -46,7 +48,7 @@ AGENTS.md specifies project gates (typecheck, lint, test, format). These become 
 *Domain best practices for this task type.*
 
 - **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
-- **Read project gates from AGENTS.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
+- **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
 
 ## Multi-Repo
 

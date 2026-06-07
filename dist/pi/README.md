@@ -72,11 +72,11 @@ Pi exposes installed skills as `/skill:<name>` commands when skill commands are 
 
 ## Harness-level Commands
 
-The Pi extension registers native commands for the runtime-owned parts of manifest-dev:
+The Pi runtime ships as **two packages**: `@doodledood/manifest-dev-pi` (core: `/do` and `/auto`, plus the shared Harness-level Do runtime) and `@doodledood/manifest-dev-pi-tools` (`/babysit-pr`, depending on core). Together they register native commands for the runtime-owned parts of manifest-dev:
 
-- `/manifest-do <manifest-path>` starts a Harness-level Do run for an existing manifest.
-- `/manifest-auto <task>` runs the figure-out -> define -> Harness-level Do lifecycle without approval gates.
-- `/manifest-babysit-pr <github-pr-url>` synthesizes PR lifecycle grounding and runs it through Harness-level Do.
+- `/do <manifest-path>` starts a Harness-level Do run for an existing manifest. *(core)*
+- `/auto <task>` runs the figure-out -> define -> Harness-level Do lifecycle without approval gates. *(core)*
+- `/babysit-pr <github-pr-url>` synthesizes PR lifecycle grounding and runs it through Harness-level Do. *(tools)*
 
 `/skill:teach-me` runs as a prompt-driven incremental teaching loop — for the current session's work, a PR, an ADR, or any topic — that verifies understanding through the learner's own demonstration before wrapping up.
 
@@ -104,7 +104,7 @@ A per-gate `verify.agent` / `verify.model` always overrides these defaults. `man
 
 `/do`, `/done`, and `/escalate` remain intentionally absent from `dist/pi/skills/`:
 
-- `/do` is represented by `/manifest-do`.
+- `/do` is represented by the runtime-owned `/do` extension command (registered by the core package, not shipped as a skill).
 - `/done` is represented by a runtime-owned done outcome after all verifier gates pass.
 - `/escalate` is represented by a runtime-owned blocked/escalation outcome with blocker details.
 
