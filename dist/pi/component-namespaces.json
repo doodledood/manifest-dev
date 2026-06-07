@@ -7,7 +7,8 @@
     "handoff": "manifest-dev-tools",
     "prompt-engineering": "manifest-dev-tools",
     "review-pr": "manifest-dev-tools",
-    "walk-pr": "manifest-dev-tools"
+    "walk-pr": "manifest-dev-tools",
+    "teach-me": "manifest-dev-tools"
   },
   "runtime_owned_skills": {
     "do": "Harness-level Do is owned by the Pi runtime extension command, not distributed as a normal skill.",

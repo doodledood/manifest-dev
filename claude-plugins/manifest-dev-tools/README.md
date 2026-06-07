@@ -1,6 +1,6 @@
 # manifest-dev-tools
 
-Utilities that complement manifest workflows — prompt engineering, PR babysitting, PR walkthroughs and reviews, ADR synthesis, and cross-boundary context handoff.
+Utilities that complement manifest workflows — prompt engineering, PR babysitting, PR walkthroughs and reviews, ADR synthesis, cross-boundary context handoff, and incremental teaching for session work.
 
 ## Skills
 
@@ -11,6 +11,7 @@ Utilities that complement manifest workflows — prompt engineering, PR babysitt
 | `/handoff` | Produce a self-contained context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, another agent) and DIY sub-agent (spin off a focused side-session and hand back). Manually invoked. |
 | `/prompt-engineering` | Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. |
 | `/review-pr` | Autonomous PR review that posts high-signal, human-voiced comments under your account. Advances existing review threads, verifies fixes/replies/stale comments, runs the reviewer fleet on the relevant diff range, and posts one GitHub review. `--loop` schedules repeated one-shot passes with backoff. |
+| `/teach-me` | Teach the learner to deeply understand the current session's work. Builds a three-pillar checklist, teaches incrementally, quizzes for demonstrated mastery, and uses a scoped Stop hook to avoid wrapping before understanding is verified. |
 | `/walk-pr` | Walk through a PR or large diff together, one sub-changeset at a time. |
 
 ## Agents
@@ -21,7 +22,7 @@ Utilities that complement manifest workflows — prompt engineering, PR babysitt
 
 ## How It Works
 
-These tools sit alongside the manifest workflow (`/define` → `/do` → `/done`). `/adr` operates on the *outputs* (session transcript + manifest). `/handoff` produces a context payload for two use cases: cross-boundary transfer (tool switch, fresh session, multi-agent transfer) and DIY sub-agent flows (spin off a focused side-session and hand back to the parent without polluting its context). `/prompt-engineering`, `/walk-pr`, `/review-pr`, and `/babysit-pr` are stand-alone collaboration tools — `/walk-pr` is the collaborative review surface, `/review-pr` is the autonomous reviewer, and `/babysit-pr` is the author-side PR lifecycle actor that orchestrates core manifest-dev skills.
+These tools sit alongside the manifest workflow (`/define` → `/do` → `/done`). `/adr` operates on the *outputs* (session transcript + manifest). `/handoff` produces a context payload for two use cases: cross-boundary transfer (tool switch, fresh session, multi-agent transfer) and DIY sub-agent flows (spin off a focused side-session and hand back to the parent without polluting its context). `/teach-me` turns a completed session into an incremental learning loop that verifies understanding before ending. `/prompt-engineering`, `/walk-pr`, `/review-pr`, and `/babysit-pr` are stand-alone collaboration tools — `/walk-pr` is the collaborative review surface, `/review-pr` is the autonomous reviewer, and `/babysit-pr` is the author-side PR lifecycle actor that orchestrates core manifest-dev skills.
 
 ## Installation
 

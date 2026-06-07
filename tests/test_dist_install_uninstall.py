@@ -16,6 +16,7 @@ TOOLS_SKILLS = (
     "handoff",
     "prompt-engineering",
     "review-pr",
+    "teach-me",
     "walk-pr",
 )
 

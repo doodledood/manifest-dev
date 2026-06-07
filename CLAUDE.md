@@ -97,12 +97,14 @@ Examples:
 
 See each plugin's README for architecture details.
 
-## Plugin Versioning
+## Versioning
 
-When updating plugin files, bump version in `.claude-plugin/plugin.json`:
+When updating plugin files, bump that plugin's `.claude-plugin/plugin.json`:
 - **Patch** (0.0.x): Bug fixes, typos
 - **Minor** (0.x.0): New features, new skills/agents
 - **Major** (x.0.0): Breaking changes
+
+Pi has its own source-owned package version in the repo-root `package.json` (`@doodledood/manifest-dev-pi`). Bump it when changing Pi runtime code, Pi package metadata, or Pi-distributed shared assets under `dist/pi/` (including adding/removing compatible skills). Keep the package manifest example in `.claude/skills/sync-tools/references/pi-cli.md` in sync with the real `package.json` version.
 
 README-only changes don't require version bumps.
 

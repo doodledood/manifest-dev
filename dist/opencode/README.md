@@ -6,9 +6,9 @@ Verification-first manifest workflows for OpenCode CLI. Ported from the Claude C
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 13 | Core workflow skills plus manifest-dev-tools utilities |
+| Skills | 14 | Core workflow skills plus manifest-dev-tools utilities |
 | Agents | 17 | Specialized reviewer and verification agents |
-| Commands | 11 | User-invocable slash commands for core workflows and tools utilities |
+| Commands | 12 | User-invocable slash commands for core workflows and tools utilities |
 | Context | 1 | AGENTS.md workflow overview |
 
 ## Installation
@@ -97,6 +97,7 @@ After installation, invoke workflows via slash commands:
 /handoff-manifest-dev-tools             Cross-boundary handoff or DIY sub-agent context payload
 /prompt-engineering-manifest-dev-tools  Gap-calibrated prompt creation, update, and review
 /review-pr-manifest-dev-tools           Autonomous PR review one-shot or --loop scheduler
+/teach-me-manifest-dev-tools            Incremental teaching loop for the current session's work
 /walk-pr-manifest-dev-tools             Collaborative PR/diff walkthrough
 ```
 
@@ -111,8 +112,9 @@ After installation, invoke workflows via slash commands:
 
 ## Known Limitations
 
-1. **No hook backstop** — use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
-2. **$ARGUMENTS handling** — Skills using `$ARGUMENTS` work in Claude Code; behavior in OpenCode may vary.
+1. **No hook backstop for `/do`** — use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
+2. **Claude-specific skill hooks may be ignored** — `/teach-me` carries its scoped Stop hook in frontmatter, but hosts without skill-hook support rely on the prompt's teaching discipline rather than hook enforcement.
+3. **$ARGUMENTS handling** — Skills using `$ARGUMENTS` work in Claude Code; behavior in OpenCode may vary.
 
 ## Directory Structure
 
@@ -136,7 +138,7 @@ dist/opencode/
 │   ├── slack-poller.md
 │   ├── type-safety-reviewer.md
 │   └── prompt-reviewer.md
-├── commands/                        # 11 user commands
+├── commands/                        # 12 user commands
 │   ├── auto.md
 │   ├── adr.md
 │   ├── babysit-pr.md
@@ -147,8 +149,9 @@ dist/opencode/
 │   ├── figure-out-team.md
 │   ├── prompt-engineering.md
 │   ├── review-pr.md
+│   ├── teach-me.md
 │   └── walk-pr.md
-├── skills/                          # 13 skills (core + tools)
+├── skills/                          # 14 skills (core + tools)
 │   ├── adr/
 │   ├── auto/
 │   ├── babysit-pr/
@@ -161,6 +164,7 @@ dist/opencode/
 │   ├── handoff/
 │   ├── prompt-engineering/
 │   ├── review-pr/
+│   ├── teach-me/
 │   └── walk-pr/
 ├── AGENTS.md                        # Context file
 ├── README.md                        # This file
