@@ -159,9 +159,8 @@ dist/codex/
 
 1. **Skills are the only fully compatible component.** Agent TOML stubs approximate behavior but use a different paradigm.
 2. **No hook backstop for `/do`.** Use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
-3. **Claude-specific skill hooks may be ignored.** `/teach-me` carries its scoped Stop hook in frontmatter, but hosts without skill-hook support rely on the prompt's teaching discipline rather than hook enforcement.
-4. **Default tool set differs.** Codex provides 6 default tools (`shell_command`, `apply_patch`, `update_plan`, `request_user_input`, `web_search`, `view_image`) plus experimental tools (`read_file`, `list_dir`, `grep_files`). Tool restrictions are per-sandbox-mode, not per-agent.
-5. **Skills may not chain reliably.** `$skillname` invocation is less documented than Claude Code's skill system.
-6. **AGENTS.md is informational only.** Describes agents and workflow but does not execute them as scoped subagents.
-7. **$ARGUMENTS not supported.** Claude Code extension only.
-8. **Model tier routing is not available.** Execution modes use `inherit` (the configured model) rather than Claude-specific model names.
+3. **Default tool set differs.** Codex provides 6 default tools (`shell_command`, `apply_patch`, `update_plan`, `request_user_input`, `web_search`, `view_image`) plus experimental tools (`read_file`, `list_dir`, `grep_files`). Tool restrictions are per-sandbox-mode, not per-agent.
+4. **Skills may not chain reliably.** `$skillname` invocation is less documented than Claude Code's skill system.
+5. **AGENTS.md is informational only.** Describes agents and workflow but does not execute them as scoped subagents.
+6. **$ARGUMENTS not supported.** Claude Code extension only.
+7. **Model tier routing is not available.** Execution modes use `inherit` (the configured model) rather than Claude-specific model names.

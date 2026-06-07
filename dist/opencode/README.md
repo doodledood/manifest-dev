@@ -113,8 +113,7 @@ After installation, invoke workflows via slash commands:
 ## Known Limitations
 
 1. **No hook backstop for `/do`** — use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
-2. **Claude-specific skill hooks may be ignored** — `/teach-me` carries its scoped Stop hook in frontmatter, but hosts without skill-hook support rely on the prompt's teaching discipline rather than hook enforcement.
-3. **$ARGUMENTS handling** — Skills using `$ARGUMENTS` work in Claude Code; behavior in OpenCode may vary.
+2. **$ARGUMENTS handling** — Skills using `$ARGUMENTS` work in Claude Code; behavior in OpenCode may vary.
 
 ## Directory Structure
 
