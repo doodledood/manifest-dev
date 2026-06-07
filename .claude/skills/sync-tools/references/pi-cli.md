@@ -108,6 +108,7 @@ Copy manifest-dev-tools skills that do not directly invoke `/do` as ordinary ski
 - `handoff`
 - `prompt-engineering`
 - `review-pr`
+- `teach-me`
 - `walk-pr`
 
 Handle these specially:
@@ -118,7 +119,7 @@ Handle these specially:
 - `auto`: exclude from `dist/pi/skills/`; expose as `/manifest-auto`, a Pi-aware wrapper that drives figure-out -> define -> Harness-level Do outcome gating.
 - `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/manifest-babysit-pr`, a Pi-aware wrapper that synthesizes PR lifecycle grounding and drives Harness-level Do outcome gating.
 
-When adapting `define`, replace user-facing execution handoffs that say `/do <manifest-path>` or `/goal /do <manifest-path>` with `/manifest-do <manifest-path>`.
+When adapting `define`, replace user-facing execution handoffs that say `/do <manifest-path>` or `/goal /do <manifest-path>` with `/manifest-do <manifest-path>`. `/teach-me` carries a Claude-scoped Stop hook in skill frontmatter; copy the skill unchanged and let Pi's current skill-hook support determine whether the hook is enforced, while the prompt remains usable without hook enforcement.
 
 ## Runtime Extension Boundary
 

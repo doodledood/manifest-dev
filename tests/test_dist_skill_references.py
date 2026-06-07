@@ -38,6 +38,7 @@ TOOLS_SKILLS = (
     "handoff",
     "prompt-engineering",
     "review-pr",
+    "teach-me",
     "walk-pr",
 )
 PI_SKILLS = (
@@ -48,6 +49,7 @@ PI_SKILLS = (
     "handoff",
     "prompt-engineering",
     "review-pr",
+    "teach-me",
     "walk-pr",
 )
 PI_EXCLUDED_RUNTIME_SKILLS = ("do", "done", "escalate")
@@ -423,10 +425,11 @@ def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
     assert "/manifest-auto <task>" in pi_readme
     assert "/manifest-babysit-pr <github-pr-url>" in pi_readme
     assert "not exposed as normal skills or executor-callable tools" in pi_readme
-    assert "The executor is not asked to call verification or outcome tools" in pi_readme
+    assert (
+        "The executor is not asked to call verification or outcome tools" in pi_readme
+    )
     pi_markdown = "\n".join(
-        path.read_text(encoding="utf-8")
-        for path in (DIST / "pi").rglob("*.md")
+        path.read_text(encoding="utf-8") for path in (DIST / "pi").rglob("*.md")
     )
     assert "manifest_dev_request_verification" not in pi_markdown
     assert "manifest_dev_report_outcome" not in pi_markdown

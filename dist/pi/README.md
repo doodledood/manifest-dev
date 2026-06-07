@@ -67,6 +67,7 @@ Pi exposes installed skills as `/skill:<name>` commands when skill commands are 
 - `/skill:handoff`
 - `/skill:prompt-engineering`
 - `/skill:review-pr`
+- `/skill:teach-me`
 - `/skill:walk-pr`
 
 ## Harness-level Commands
@@ -76,6 +77,8 @@ The Pi extension registers native commands for the runtime-owned parts of manife
 - `/manifest-do <manifest-path>` starts a Harness-level Do run for an existing manifest.
 - `/manifest-auto <task>` runs the figure-out -> define -> Harness-level Do lifecycle without approval gates.
 - `/manifest-babysit-pr <github-pr-url>` synthesizes PR lifecycle grounding and runs it through Harness-level Do.
+
+`/skill:teach-me` carries its Claude-scoped Stop hook in frontmatter; if the current Pi skill host does not enforce that hook, the skill still runs as a prompt-driven incremental teaching loop.
 
 The extension owns Harness-level verification and outcome routing internally:
 

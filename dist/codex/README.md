@@ -6,7 +6,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 
 | Type | Count | Notes |
 |------|-------|-------|
-| Skills | 13 | Core workflow skills plus manifest-dev-tools utilities |
+| Skills | 14 | Core workflow skills plus manifest-dev-tools utilities |
 | Agents | 17 | TOML config stubs with full prompt bodies |
 | Hooks | 0 | manifest-dev no longer ships hook-based workflow enforcement |
 | Rules | 1 | Starlark execution policy |
@@ -27,6 +27,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | handoff | Cross-boundary handoff or DIY sub-agent context payload |
 | prompt-engineering | Create, update, or review an LLM prompt — gap-calibrated discipline |
 | review-pr | Autonomous PR review one-shot or `--loop` scheduler |
+| teach-me | Incremental teaching loop for the current session's work with mastery checks |
 | walk-pr | Collaborative PR/diff walkthrough |
 
 ### Agents
@@ -107,7 +108,7 @@ The install script handles namespacing automatically: core workflow components u
 
 ```
 dist/codex/
-├── skills/                          # 13 skills (core + tools)
+├── skills/                          # 14 skills (core + tools)
 │   ├── auto/
 │   ├── babysit-pr/
 │   ├── define/
@@ -125,6 +126,7 @@ dist/codex/
 │   ├── handoff/
 │   ├── prompt-engineering/
 │   ├── review-pr/
+│   ├── teach-me/
 │   └── walk-pr/
 ├── agents/                          # 17 TOML config stubs
 │   ├── change-intent-reviewer.toml
@@ -156,9 +158,10 @@ dist/codex/
 ## Known Limitations
 
 1. **Skills are the only fully compatible component.** Agent TOML stubs approximate behavior but use a different paradigm.
-2. **No hook backstop.** Use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
-3. **Default tool set differs.** Codex provides 6 default tools (`shell_command`, `apply_patch`, `update_plan`, `request_user_input`, `web_search`, `view_image`) plus experimental tools (`read_file`, `list_dir`, `grep_files`). Tool restrictions are per-sandbox-mode, not per-agent.
-4. **Skills may not chain reliably.** `$skillname` invocation is less documented than Claude Code's skill system.
-5. **AGENTS.md is informational only.** Describes agents and workflow but does not execute them as scoped subagents.
-6. **$ARGUMENTS not supported.** Claude Code extension only.
-7. **Model tier routing is not available.** Execution modes use `inherit` (the configured model) rather than Claude-specific model names.
+2. **No hook backstop for `/do`.** Use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
+3. **Claude-specific skill hooks may be ignored.** `/teach-me` carries its scoped Stop hook in frontmatter, but hosts without skill-hook support rely on the prompt's teaching discipline rather than hook enforcement.
+4. **Default tool set differs.** Codex provides 6 default tools (`shell_command`, `apply_patch`, `update_plan`, `request_user_input`, `web_search`, `view_image`) plus experimental tools (`read_file`, `list_dir`, `grep_files`). Tool restrictions are per-sandbox-mode, not per-agent.
+5. **Skills may not chain reliably.** `$skillname` invocation is less documented than Claude Code's skill system.
+6. **AGENTS.md is informational only.** Describes agents and workflow but does not execute them as scoped subagents.
+7. **$ARGUMENTS not supported.** Claude Code extension only.
+8. **Model tier routing is not available.** Execution modes use `inherit` (the configured model) rather than Claude-specific model names.

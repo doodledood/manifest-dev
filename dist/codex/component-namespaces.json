@@ -17,7 +17,8 @@
     "handoff": "-manifest-dev-tools",
     "prompt-engineering": "-manifest-dev-tools",
     "review-pr": "-manifest-dev-tools",
-    "walk-pr": "-manifest-dev-tools"
+    "walk-pr": "-manifest-dev-tools",
+    "teach-me": "-manifest-dev-tools"
   },
   "agents": {
     "change-intent-reviewer": "-manifest-dev",
