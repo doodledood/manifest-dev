@@ -29,7 +29,7 @@ import {
 } from "./manifest-dev-runtime.ts";
 
 type ManifestOutcome = "done" | "escalate";
-type ManifestCommand = "do" | "auto" | "babysit-pr";
+export type ManifestCommand = "do" | "auto" | "babysit-pr";
 type RunStatus = "executing" | "repairing" | "verifying" | "blocked" | "done";
 
 export interface RunRecord {
@@ -92,13 +92,18 @@ export interface RuntimeState {
 	childSessionIds: Set<string>;
 }
 
-export default function manifestDevExtension(pi: ExtensionAPI): void {
-	const state: RuntimeState = {
+/** Commands owned by the core (`@doodledood/manifest-dev-pi`) package. */
+export const CORE_COMMANDS: ReadonlySet<ManifestCommand> = new Set<ManifestCommand>(["do", "auto"]);
+
+export function createRuntimeState(): RuntimeState {
+	return {
 		latestVerificationByRunId: new Map<string, VerificationRecord>(),
 		activeRunByExecutorSessionId: new Map<string, RunRecord>(),
 		childSessionIds: new Set<string>(),
 	};
+}
 
+export function registerVerifierFlags(pi: ExtensionAPI): void {
 	pi.registerFlag(FLAG_MAX_TURNS, {
 		description: `Max turns per manifest-dev verifier subagent (default ${DEFAULT_VERIFIER_MAX_TURNS}).`,
 		type: "string",
@@ -115,7 +120,19 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 		description: `Max manifest-dev verifier subagents to run in parallel per phase (default ${DEFAULT_VERIFIER_MAX_CONCURRENT}).`,
 		type: "string",
 	});
+}
 
+/**
+ * Wire the shared Harness-level Do runtime (subagent tracking, verification on
+ * executor checkpoints, repair routing) onto `state`. `ownedCommands` scopes
+ * which persisted runs this instance rehydrates, so the core and tools packages
+ * can each run their own runtime without double-verifying each other's runs.
+ */
+export function wireRuntimeHooks(
+	pi: ExtensionAPI,
+	state: RuntimeState,
+	ownedCommands: ReadonlySet<ManifestCommand>,
+): void {
 	pi.events.on("subagents:child:session-created", (event: unknown) => {
 		const sessionId = typeof event === "object" && event !== null && "sessionId" in event
 			? String((event as { sessionId: unknown }).sessionId)
@@ -130,7 +147,7 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 	});
 
 	pi.on("session_start", (_event, ctx) => {
-		rehydrateRuntimeState(ctx, state);
+		rehydrateRuntimeState(ctx, state, ownedCommands);
 	});
 
 	pi.on("before_agent_start", (_event, ctx) => {
@@ -141,6 +158,12 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 	pi.on("agent_end", async (_event, ctx) => {
 		await maybeRunHarnessVerification(pi, ctx, state);
 	});
+}
+
+export default function manifestDevExtension(pi: ExtensionAPI): void {
+	const state = createRuntimeState();
+	registerVerifierFlags(pi);
+	wireRuntimeHooks(pi, state, CORE_COMMANDS);
 
 	pi.registerCommand("do", {
 		description: "Run manifest-dev Harness-level Do for a manifest path.",
@@ -153,13 +176,6 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 		description: "Run manifest-dev figure-out -> define -> Harness-level Do autonomously for a task.",
 		handler: async (rawArgs, ctx) => {
 			await startWrapper(pi, "auto", rawArgs, ctx, state);
-		},
-	});
-
-	pi.registerCommand("babysit-pr", {
-		description: "Synthesize a PR lifecycle manifest and run Harness-level Do for a GitHub PR.",
-		handler: async (rawArgs, ctx) => {
-			await startWrapper(pi, "babysit-pr", rawArgs, ctx, state);
 		},
 	});
 }
@@ -193,7 +209,7 @@ export async function startManifestDo(
 	ctx.ui.notify(`Started manifest-dev Harness-level Do: ${manifestPath}`, "info");
 }
 
-async function startWrapper(
+export async function startWrapper(
 	pi: ExtensionAPI,
 	command: Extract<ManifestCommand, "auto" | "babysit-pr">,
 	rawArgs: string,
@@ -693,10 +709,15 @@ export function formatRepairFollowUpMessage(verification: VerificationRecord): s
 	return lines.join("\n");
 }
 
-export function rehydrateRuntimeState(ctx: ExtensionContext, state: RuntimeState): void {
+export function rehydrateRuntimeState(
+	ctx: ExtensionContext,
+	state: RuntimeState,
+	ownedCommands?: ReadonlySet<ManifestCommand>,
+): void {
 	for (const entry of ctx.sessionManager.getBranch()) {
 		if (entry.type !== "custom") continue;
 		if (entry.customType === RUN_ENTRY && isRunRecord(entry.data)) {
+			if (ownedCommands && !ownedCommands.has(entry.data.command)) continue;
 			if (entry.data.status === "done" || entry.data.status === "blocked") {
 				state.activeRunByExecutorSessionId.delete(entry.data.executorSessionId);
 			} else {

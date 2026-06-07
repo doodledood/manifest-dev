@@ -1,14 +1,21 @@
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "private": true,
-  "description": "Pi package surface for manifest-dev shared skills and Harness-level Do runtime entrypoints.",
+  "description": "Pi package surface for manifest-dev shared skills and Harness-level Do runtime entrypoints (core: /do, /auto).",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "keywords": [
     "pi-package",
     "manifest-dev",
     "agent-skills"
   ],
+  "exports": {
+    "./extension": "./pi/extensions/manifest-dev.ts",
+    "./runtime": "./pi/extensions/manifest-dev-runtime.ts"
+  },
   "pi": {
     "extensions": [
       "./pi/extensions/manifest-dev.ts"

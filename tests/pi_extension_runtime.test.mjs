@@ -537,7 +537,8 @@ test("extension registers agent_end lifecycle hook for Harness-level verificatio
 	assert.equal(typeof events.get("before_agent_start"), "function");
 	assert.equal(commands.has("do"), true);
 	assert.equal(commands.has("auto"), true);
-	assert.equal(commands.has("babysit-pr"), true);
+	// babysit-pr moved to the @doodledood/manifest-dev-pi-tools package.
+	assert.equal(commands.has("babysit-pr"), false);
 	assert.equal(flags.some((flag) => flag.name === "manifest-verifier-max-concurrent"), true);
 });
 
