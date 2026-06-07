@@ -54,7 +54,7 @@ PI_SKILLS = (
 )
 PI_EXCLUDED_RUNTIME_SKILLS = ("do", "done", "escalate")
 PI_EXTENSION_WRAPPER_SKILLS = ("auto", "babysit-pr")
-PI_EXTENSION_COMMANDS = ("manifest-do", "manifest-auto", "manifest-babysit-pr")
+PI_EXTENSION_COMMANDS = ("do", "auto", "babysit-pr")
 PI_EXTENSION_TOOLS: tuple[str, ...] = ()
 PI_EXTENSION = ROOT / "pi" / "extensions" / "manifest-dev.ts"
 PI_EXTENSION_RUNTIME = ROOT / "pi" / "extensions" / "manifest-dev-runtime.ts"
@@ -283,16 +283,16 @@ def test_pi_sync_reference_keeps_harness_do_out_of_generated_skills() -> None:
     assert "- `done`: exclude from `dist/pi/skills/`" in reference
     assert "- `escalate`: exclude from `dist/pi/skills/`" in reference
     assert (
-        "- `auto`: exclude from `dist/pi/skills/`; expose as `/manifest-auto`"
+        "- `auto`: exclude from `dist/pi/skills/`; expose as `/auto`"
         in reference
     )
     assert (
-        "- `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/manifest-babysit-pr`"
+        "- `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/babysit-pr`"
         in reference
     )
-    assert "/manifest-do <manifest-path>" in reference
-    assert "/manifest-auto <task>" in reference
-    assert "/manifest-babysit-pr <github-pr-url>" in reference
+    assert "/do <manifest-path>" in reference
+    assert "/auto <task>" in reference
+    assert "/babysit-pr <github-pr-url>" in reference
     assert "runtime-owned verification/outcome orchestration" in reference
     assert "Do not generate `install.sh` for Pi." in reference
     assert (
@@ -421,9 +421,9 @@ def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
         assert "pi remove git:github.com/doodledood/manifest-dev" in content
         assert "Harness-level Do" in content
 
-    assert "/manifest-do <manifest-path>" in pi_readme
-    assert "/manifest-auto <task>" in pi_readme
-    assert "/manifest-babysit-pr <github-pr-url>" in pi_readme
+    assert "/do <manifest-path>" in pi_readme
+    assert "/auto <task>" in pi_readme
+    assert "/babysit-pr <github-pr-url>" in pi_readme
     assert "not exposed as normal skills or executor-callable tools" in pi_readme
     assert (
         "The executor is not asked to call verification or outcome tools" in pi_readme

@@ -98,7 +98,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - A **Pi-native Runtime Package** is a second **Source Surface** for runtime orchestration, not a replacement for the Claude Code **Plugin** source surface for shared prompt and skill assets.
 - A **Pi Dist Target** is generated output, not a **Source Surface**; it packages the shared assets that the **Pi-native Runtime Package** installs or loads.
 - A **Pi-native Runtime Package** owns deterministic behavior primarily for the **Do/Verify Loop**; `/figure-out` and `/define` remain shared prompt and skill behavior unless a future Pi-specific gap emerges.
-- The target **Pi-native Runtime Package** exposes `/manifest-do`, `/manifest-auto`, and `/manifest-babysit-pr`; the harness verification and outcome paths are runtime-owned, not normal **Executor Session** capabilities.
+- The target **Pi-native Runtime Package** exposes `/do`, `/auto`, and `/babysit-pr`; the harness verification and outcome paths are runtime-owned, not normal **Executor Session** capabilities.
 - **Codex Plugin-native Distribution** is the accepted migration direction for Codex, but the current `dist/codex` tree remains the **Codex Legacy Installer Target** until that rollout lands.
 - An **Executor Session** does not own verification trigger, verifier fanout, adjudication, or final outcome; it implements **Deliverables** and repairs failed **Acceptance Criteria** or **Global Invariants** injected by the runtime.
 - A **Verification Orchestrator Session** starts clean after each **Executor Session** checkpoint, launches one or more **Verifier Sessions**, and returns aggregate results for injection back into the **Executor Session** as runtime-authored follow-up work.

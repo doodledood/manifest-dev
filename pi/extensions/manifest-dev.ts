@@ -29,7 +29,7 @@ import {
 } from "./manifest-dev-runtime.ts";
 
 type ManifestOutcome = "done" | "escalate";
-type ManifestCommand = "manifest-do" | "manifest-auto" | "manifest-babysit-pr";
+type ManifestCommand = "do" | "auto" | "babysit-pr";
 type RunStatus = "executing" | "repairing" | "verifying" | "blocked" | "done";
 
 export interface RunRecord {
@@ -142,24 +142,24 @@ export default function manifestDevExtension(pi: ExtensionAPI): void {
 		await maybeRunHarnessVerification(pi, ctx, state);
 	});
 
-	pi.registerCommand("manifest-do", {
+	pi.registerCommand("do", {
 		description: "Run manifest-dev Harness-level Do for a manifest path.",
 		handler: async (rawArgs, ctx) => {
 			await startManifestDo(pi, rawArgs, ctx, state);
 		},
 	});
 
-	pi.registerCommand("manifest-auto", {
+	pi.registerCommand("auto", {
 		description: "Run manifest-dev figure-out -> define -> Harness-level Do autonomously for a task.",
 		handler: async (rawArgs, ctx) => {
-			await startWrapper(pi, "manifest-auto", rawArgs, ctx, state);
+			await startWrapper(pi, "auto", rawArgs, ctx, state);
 		},
 	});
 
-	pi.registerCommand("manifest-babysit-pr", {
+	pi.registerCommand("babysit-pr", {
 		description: "Synthesize a PR lifecycle manifest and run Harness-level Do for a GitHub PR.",
 		handler: async (rawArgs, ctx) => {
-			await startWrapper(pi, "manifest-babysit-pr", rawArgs, ctx, state);
+			await startWrapper(pi, "babysit-pr", rawArgs, ctx, state);
 		},
 	});
 }
@@ -172,7 +172,7 @@ export async function startManifestDo(
 ): Promise<void> {
 	const manifestPath = resolveManifestPath(rawArgs, ctx.cwd);
 	if (!manifestPath) {
-		ctx.ui.notify("Usage: /manifest-do <manifest-path>", "warning");
+		ctx.ui.notify("Usage: /do <manifest-path>", "warning");
 		return;
 	}
 	if (!existsSync(manifestPath)) {
@@ -181,7 +181,7 @@ export async function startManifestDo(
 	}
 
 	const manifest = readFileSync(manifestPath, "utf-8");
-	const run = makeRunRecord("manifest-do", ctx, {
+	const run = makeRunRecord("do", ctx, {
 		manifestPath,
 		manifestSha256: sha256(manifest),
 	});
@@ -195,20 +195,20 @@ export async function startManifestDo(
 
 async function startWrapper(
 	pi: ExtensionAPI,
-	command: Extract<ManifestCommand, "manifest-auto" | "manifest-babysit-pr">,
+	command: Extract<ManifestCommand, "auto" | "babysit-pr">,
 	rawArgs: string,
 	ctx: ExtensionCommandContext,
 	state: RuntimeState,
 ): Promise<void> {
 	const args = rawArgs.trim();
 	if (!args) {
-		const usage = command === "manifest-auto"
-			? "Usage: /manifest-auto <task>"
-			: "Usage: /manifest-babysit-pr <github-pr-url>";
+		const usage = command === "auto"
+			? "Usage: /auto <task>"
+			: "Usage: /babysit-pr <github-pr-url>";
 		ctx.ui.notify(usage, "warning");
 		return;
 	}
-	if (command === "manifest-babysit-pr" && !isGithubPr(args)) {
+	if (command === "babysit-pr" && !isGithubPr(args)) {
 		ctx.ui.notify(
 			"Cannot babysit: provide a GitHub PR URL such as https://github.com/owner/repo/pull/123.",
 			"warning",
@@ -222,7 +222,7 @@ async function startWrapper(
 	pi.setSessionName(`${command} ${shortId(run.runId)}`);
 	hideHarnessToolsFromExecutor(pi);
 
-	const prompt = command === "manifest-auto"
+	const prompt = command === "auto"
 		? buildManifestAutoPrompt(run, args)
 		: buildManifestBabysitPrompt(run, args);
 	await sendPrompt(pi, ctx, prompt);
@@ -814,7 +814,7 @@ function shortId(runId: string): string {
 }
 
 function makePlannedManifestPath(command: ManifestCommand): string {
-	const suffix = command === "manifest-auto" ? "auto" : "babysit-pr";
+	const suffix = command === "auto" ? "auto" : "babysit-pr";
 	return resolve(homedir(), ".manifest-dev", "manifests", `manifest-${new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z")}-${suffix}.md`);
 }
 

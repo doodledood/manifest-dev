@@ -13,7 +13,7 @@ Understand the problem. Write down what you'd accept. Let it build and verify it
 
 `/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/goal /do`. `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. Run it through `/goal` — `/goal /do <path>` is the recommended form, keeping the run alive across turns.
 
-Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs `npm:@gotgenes/pi-subagents` plus the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for shared skills, `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr`, clean verifier fanout, and a structured done/escalate gate. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
+Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs `npm:@gotgenes/pi-subagents` plus the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for shared skills, `/do`, `/auto`, `/babysit-pr`, clean verifier fanout, and a structured done/escalate gate. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
 
 ## The Mindset Shift
 

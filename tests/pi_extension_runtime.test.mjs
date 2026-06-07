@@ -504,7 +504,7 @@ test("simplified Pi executor prompts omit harness verification tools", () => {
 test("shouldTriggerHarnessVerification only allows active executor checkpoints", () => {
 	const run = {
 		runId: "manifest-dev-run",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "t",
 		cwd: "/repo",
 		executorSessionId: "executor-session",
@@ -535,16 +535,16 @@ test("extension registers agent_end lifecycle hook for Harness-level verificatio
 
 	assert.equal(typeof events.get("agent_end"), "function");
 	assert.equal(typeof events.get("before_agent_start"), "function");
-	assert.equal(commands.has("manifest-do"), true);
-	assert.equal(commands.has("manifest-auto"), true);
-	assert.equal(commands.has("manifest-babysit-pr"), true);
+	assert.equal(commands.has("do"), true);
+	assert.equal(commands.has("auto"), true);
+	assert.equal(commands.has("babysit-pr"), true);
 	assert.equal(flags.some((flag) => flag.name === "manifest-verifier-max-concurrent"), true);
 });
 
 test("rehydrateRuntimeState removes terminal runs after replay", () => {
 	const executing = {
 		runId: "manifest-dev-run",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "t",
 		cwd: "/repo",
 		executorSessionId: "executor-session",
@@ -612,7 +612,7 @@ test("registered agent_end handler runs runtime verification path", async () => 
 		ui: { notify() {} },
 	};
 	try {
-		await commands.get("manifest-do").handler(manifestPath, ctx);
+		await commands.get("do").handler(manifestPath, ctx);
 		await events.get("agent_end")({}, ctx);
 
 		const verificationEntry = calls.entries.find((entry) => entry.customType === "manifest-dev:verification");
@@ -662,7 +662,7 @@ test("registered agent_end handler waits for pending messages before verificatio
 		ui: { notify() {} },
 	};
 	try {
-		await commands.get("manifest-do").handler(manifestPath, ctx);
+		await commands.get("do").handler(manifestPath, ctx);
 		await events.get("agent_end")({}, ctx);
 		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:verification"), false);
 		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:outcome"), false);
@@ -716,7 +716,7 @@ test("second executor stop after repair starts another clean Verification Orches
 	const requestedAt = "2026-06-05T20:00:00.000Z";
 	const repairingRun = {
 		runId: "manifest-dev-repair-loop-test",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "2026-06-05T18:00:00.000Z",
 		cwd: process.cwd(),
 		executorSessionId: "executor-session",
@@ -744,7 +744,7 @@ test("verification orchestrator sessions are clean persisted attempts", () => {
 	const requestedAt = "2026-06-05T19:00:00.000Z";
 	const run = {
 		runId: "manifest-dev-orchestrator-test",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "2026-06-05T18:00:00.000Z",
 		cwd: process.cwd(),
 		executorSessionId: "executor-session",
@@ -821,7 +821,7 @@ test("routeVerificationResult injects repair, blocked, and done runtime outcomes
 	};
 	const baseRun = {
 		runId: "manifest-dev-route-test",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "2026-06-05T00:00:00.000Z",
 		cwd: process.cwd(),
 		executorSessionId: "executor-session",

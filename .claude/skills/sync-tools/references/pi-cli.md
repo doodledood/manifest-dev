@@ -42,7 +42,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 |-----------|----------------------|-------|
 | Compatible skills | Copy to `dist/pi/skills/` | Agent Skills are portable. Apply only target-specific handoff substitutions. |
 | Harness-level Do | Do not copy as a normal skill | `/do`, `/done`, and `/escalate` are runtime outcomes in Pi. |
-| Chain skills | Expose as extension commands when Pi-aware | `/auto` and `/babysit-pr` invoke `/do` in Claude-style hosts; in Pi they map to `/manifest-auto` and `/manifest-babysit-pr`. |
+| Chain skills | Expose as extension commands when Pi-aware | `/auto` and `/babysit-pr` invoke `/do` in Claude-style hosts; in Pi they are registered as native extension commands of the same name (`/auto`, `/babysit-pr`). |
 | Agents | Copy as extension-private runtime prompts | Pi packages do not declare an `agents` resource in `package.json`; runtime code may load Markdown prompts from package-local files. |
 | Extensions | Include hand-written Pi runtime code | The extension owns commands, executor/verifier orchestration, verdict aggregation, repair routing, escalation, and completion gating. |
 | Prompt templates | Generate only intentionally user-invocable templates | Do not expose verifier/reviewer agent prompts as slash prompt templates by accident. |
@@ -116,16 +116,16 @@ Handle these specially:
 - `do`: exclude from `dist/pi/skills/`; expose Harness-level Do through the Pi extension.
 - `done`: exclude from `dist/pi/skills/`; done is a runtime completion outcome.
 - `escalate`: exclude from `dist/pi/skills/`; escalation is a runtime outcome with structured blocker payload.
-- `auto`: exclude from `dist/pi/skills/`; expose as `/manifest-auto`, a Pi-aware wrapper that drives figure-out -> define -> Harness-level Do outcome gating.
-- `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/manifest-babysit-pr`, a Pi-aware wrapper that synthesizes PR lifecycle grounding and drives Harness-level Do outcome gating.
+- `auto`: exclude from `dist/pi/skills/`; expose as `/auto`, a Pi-aware wrapper that drives figure-out -> define -> Harness-level Do outcome gating.
+- `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/babysit-pr`, a Pi-aware wrapper that synthesizes PR lifecycle grounding and drives Harness-level Do outcome gating.
 
-When adapting `define`, replace user-facing execution handoffs that say `/do <manifest-path>` or `/goal /do <manifest-path>` with `/manifest-do <manifest-path>`.
+Pi registers `/do` as a native extension command, so `define`'s `/do <manifest-path>` handoff resolves directly — no name substitution needed. Drop the `/goal /do <manifest-path>` unattended-execution line, which has no Pi equivalent.
 
 ## Runtime Extension Boundary
 
 The Pi extension owns Do/Verify Loop runtime behavior. The current runtime slice provides:
 
-- `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr` command registration; the chain wrappers invoke the installed `/skill:figure-out` and `/skill:define` rather than paraphrasing the chain.
+- `/do`, `/auto`, `/babysit-pr` command registration; the chain wrappers invoke the installed `/skill:figure-out` and `/skill:define` rather than paraphrasing the chain.
 - a simplified Executor Session prompt: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop.
 - runtime-owned verification/outcome orchestration rather than LLM-visible verifier/outcome tools in the executor action space, including a clean verification orchestration session record per attempt.
 - parse the Manifest and enumerate Acceptance Criteria and Global Invariants, honoring each gate's `verify.agent` (subagent type), `verify.model`, and `phase`.
@@ -145,7 +145,7 @@ Configuration follows the Pi-native convention (`pi.registerFlag` / `pi.getFlag`
 
 Current runtime boundaries:
 
-- Harness verification and outcome controls must not be registered as normal LLM-visible tools for `/manifest-do`.
+- Harness verification and outcome controls must not be registered as normal LLM-visible tools for `/do`.
 - The runtime should hide or remove any compatibility scaffolding that would put harness verification/outcome calls in the Executor Session's active tool set.
 - Verification attempts must be scoped to the Executor Session id and ignore child/subagent session completion events.
 
@@ -160,9 +160,9 @@ Do not claim package-level verifier agent resources until Pi supports them. If r
 
 Pi skills already register as `/skill:<name>` commands when skill commands are enabled. Extension commands should be used for native manifest-dev entrypoints:
 
-- `/manifest-do <manifest-path>` for Harness-level Do
-- `/manifest-auto <task>` for autonomous figure-out -> define -> Harness-level Do
-- `/manifest-babysit-pr <github-pr-url>` for PR lifecycle synthesis -> Harness-level Do
+- `/do <manifest-path>` for Harness-level Do
+- `/auto <task>` for autonomous figure-out -> define -> Harness-level Do
+- `/babysit-pr <github-pr-url>` for PR lifecycle synthesis -> Harness-level Do
 - optional aliases such as `/define` and `/figure-out` only if collision behavior is acceptable
 
 Pi allows multiple extensions to register the same command and disambiguates with numeric suffixes. Generated docs must mention that collisions are possible if aliases are installed.
@@ -173,7 +173,7 @@ Harness-level Do should use Pi extension/runtime primitives instead of asking th
 
 Relevant primitives to account for in implementation docs:
 
-- `pi.registerCommand(name, options)` registers `/manifest-do` and any future aliases.
+- `pi.registerCommand(name, options)` registers `/do` and any future aliases.
 - `pi.on("resources_discover", ...)` can expose generated skill or prompt paths when static package metadata is not enough.
 - `pi.sendUserMessage(..., { deliverAs })` can inject verifier FAIL results into the Executor Session after runtime aggregation.
 - `pi.appendEntry(customType, data)` can persist run state without putting it in the model context.
