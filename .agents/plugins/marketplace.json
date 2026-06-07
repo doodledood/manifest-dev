@@ -1,0 +1,32 @@
+{
+  "name": "manifest-dev",
+  "interface": {
+    "displayName": "manifest-dev"
+  },
+  "plugins": [
+    {
+      "name": "manifest-dev",
+      "source": {
+        "source": "local",
+        "path": "./dist/codex/plugins/manifest-dev"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "manifest-dev-tools",
+      "source": {
+        "source": "local",
+        "path": "./dist/codex/plugins/manifest-dev-tools"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
