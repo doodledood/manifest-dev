@@ -75,7 +75,7 @@ Current package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
@@ -119,7 +119,7 @@ Handle these specially:
 - `auto`: exclude from `dist/pi/skills/`; expose as `/manifest-auto`, a Pi-aware wrapper that drives figure-out -> define -> Harness-level Do outcome gating.
 - `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/manifest-babysit-pr`, a Pi-aware wrapper that synthesizes PR lifecycle grounding and drives Harness-level Do outcome gating.
 
-When adapting `define`, replace user-facing execution handoffs that say `/do <manifest-path>` or `/goal /do <manifest-path>` with `/manifest-do <manifest-path>`. `/teach-me` carries a Claude-scoped Stop hook in skill frontmatter; copy the skill unchanged and let Pi's current skill-hook support determine whether the hook is enforced, while the prompt remains usable without hook enforcement.
+When adapting `define`, replace user-facing execution handoffs that say `/do <manifest-path>` or `/goal /do <manifest-path>` with `/manifest-do <manifest-path>`.
 
 ## Runtime Extension Boundary
 

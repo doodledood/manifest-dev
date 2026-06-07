@@ -1,11 +1,11 @@
 {
-  "source_commit": "50b2beaac024a6e47628bc779416c0e4fc9735e1",
+  "source_commit": "f4ed8dfafc76737ed076640bc1026daa97da88d2",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-06-06T10:47:53Z",
+  "synced_at": "2026-06-07T14:17:44Z",
   "notes": "Full re-sync (prior recorded SHA 6d34069 unreachable from HEAD; sync-tools SKILL.md and references/pi-cli.md changed since). Pi package target ships shared skills under dist/pi/skills/ plus a source-owned Harness-level Do extension. Runtime owns verifier fanout/outcomes internally, keeps /manifest-do executor prompts implementation-focused, records clean verification orchestration attempts, injects failed gates as follow-up repair work, honors verify.agent/model/phase, multi-repo prompt prepend, durable freshness-bound done gating, resumable blockers, and Pi-native verifier configuration. No dist/pi/agents resource: reviewer/verifier agent prompts are extension-private and source-owned; package.json and pi/extensions/ are source-owned and untouched."
 }

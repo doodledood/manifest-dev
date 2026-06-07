@@ -78,7 +78,7 @@ The Pi extension registers native commands for the runtime-owned parts of manife
 - `/manifest-auto <task>` runs the figure-out -> define -> Harness-level Do lifecycle without approval gates.
 - `/manifest-babysit-pr <github-pr-url>` synthesizes PR lifecycle grounding and runs it through Harness-level Do.
 
-`/skill:teach-me` carries its Claude-scoped Stop hook in frontmatter; if the current Pi skill host does not enforce that hook, the skill still runs as a prompt-driven incremental teaching loop.
+`/skill:teach-me` runs as a prompt-driven incremental teaching loop — for the current session's work, a PR, an ADR, or any topic — that verifies understanding through the learner's own demonstration before wrapping up.
 
 The extension owns Harness-level verification and outcome routing internally:
 
