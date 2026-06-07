@@ -70,15 +70,25 @@ The verifier prompt is assembled inline at runtime (no `dist/pi/runtime/` asset 
 
 Do not silently generate or overwrite a repo-root package manifest from `/sync-tools`; that file is a source surface decision, not a dist artifact. `sync-tools` may update `dist/pi/**`, `dist/pi/.sync-meta.json`, and dist README/metadata.
 
-Current package manifest shape:
+The Pi runtime ships as **two packages** mirroring the Claude/Codex plugin split:
+
+- **`@doodledood/manifest-dev-pi`** (repo root) — core: registers `/do` and `/auto`, owns the shared Harness-level Do runtime, and exports its wiring (`createRuntimeState`, `registerVerifierFlags`, `wireRuntimeHooks`, `startWrapper`) for the tools package to reuse.
+- **`@doodledood/manifest-dev-pi-tools`** (`packages/manifest-dev-pi-tools/`) — registers `/babysit-pr`, depends on the core package, and reuses the core runtime wiring (scoped to babysit-pr runs so it never double-verifies core's runs).
+
+Current core package manifest shape:
 
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
+  "workspaces": ["packages/*"],
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
+  "exports": {
+    "./extension": "./pi/extensions/manifest-dev.ts",
+    "./runtime": "./pi/extensions/manifest-dev-runtime.ts"
+  },
   "pi": {
     "extensions": ["./pi/extensions/manifest-dev.ts"],
     "skills": ["./dist/pi/skills"]
@@ -90,7 +100,7 @@ Current package manifest shape:
 }
 ```
 
-Keep the `version` here in sync with the real `package.json`; bump it when the runtime extension changes.
+The tools package declares `"dependencies": { "@doodledood/manifest-dev-pi": "<core version>" }` and its own `pi.extensions`. Keep both `version` fields here in sync with the real `package.json` files (lockstep); bump them when the runtime changes.
 
 Keep `"extensions": [...]` source-owned. Extension code that imports Pi packages should declare Pi core packages as `peerDependencies` with `"*"` ranges and real runtime dependencies under `dependencies`. `@gotgenes/pi-subagents` is also a Pi package that must be installed/enabled (`pi install npm:@gotgenes/pi-subagents`) so its global service is published before manifest-dev requests verification.
 

@@ -33,16 +33,16 @@ A Claude Code extension unit that may contain skills, agents, and optional hooks
 A maintained implementation surface treated as authoritative for some part of manifest-dev, rather than a generated distribution copy.
 
 **Pi-native Runtime Package**:
-A Pi package that owns manifest-dev runtime entrypoints and deterministic orchestration code while reusing or generating shared manifest-dev prompt and skill assets.
+The Pi package(s) that own manifest-dev runtime entrypoints and deterministic orchestration code while reusing or generating shared manifest-dev prompt and skill assets. Shipped as two packages mirroring the Claude/Codex plugin split: `@doodledood/manifest-dev-pi` (core: `/do`, `/auto`, and the shared Harness-level Do runtime) and `@doodledood/manifest-dev-pi-tools` (`/babysit-pr`, depending on core and reusing its runtime wiring).
 
 **Pi Dist Target**:
 The generated `dist/pi` asset set produced by `sync-tools`, containing Pi-compatible shared skills, runtime prompt assets, namespace metadata, and docs for the **Pi-native Runtime Package** to consume.
 
 **Codex Plugin-native Distribution**:
-The accepted target architecture for Codex distribution: a Codex plugin marketplace that ships manifest-dev skills and reviewer agents as native plugin components, replacing install-time TOML stub generation and config merging.
+The Codex distribution architecture (now shipped): a Codex plugin marketplace (`.agents/plugins/marketplace.json`) registering two native plugins (`manifest-dev`, `manifest-dev-tools`) under `dist/codex/plugins/`, each bundling skills. Codex plugins bundle skills/MCP/apps/hooks but **not** agents, so the quality reviewers ship as a progressive-disclosure `code-review` **skill** (one dimension per invocation), not as plugin-native agents; the surviving functional agents degrade to general-purpose. Replaces the install-time TOML stub generation and config merging of the retired installer.
 
-**Codex Legacy Installer Target**:
-The current generated `dist/codex` installer-based distribution, which predates Codex plugin marketplaces and approximates reviewer agents through TOML stubs plus config/rules files.
+**Codex Legacy Installer Target** (retired):
+The former generated `dist/codex` installer-based distribution (`install.sh`, `install_helpers.py`, `config.toml` merge, `rules/`, `agents/*.toml`), which predated Codex plugin marketplaces and approximated reviewer agents through TOML stubs. Removed in favor of the **Codex Plugin-native Distribution**.
 
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a **Manifest**, runs verifiers for every **Acceptance Criterion** and **Global Invariant**, routes failures or blockers, and finishes only after all gates pass.
@@ -99,7 +99,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - A **Pi Dist Target** is generated output, not a **Source Surface**; it packages the shared assets that the **Pi-native Runtime Package** installs or loads.
 - A **Pi-native Runtime Package** owns deterministic behavior primarily for the **Do/Verify Loop**; `/figure-out` and `/define` remain shared prompt and skill behavior unless a future Pi-specific gap emerges.
 - The target **Pi-native Runtime Package** exposes `/do`, `/auto`, and `/babysit-pr`; the harness verification and outcome paths are runtime-owned, not normal **Executor Session** capabilities.
-- **Codex Plugin-native Distribution** is the accepted migration direction for Codex, but the current `dist/codex` tree remains the **Codex Legacy Installer Target** until that rollout lands.
+- **Codex Plugin-native Distribution** is the live Codex distribution; the **Codex Legacy Installer Target** has been retired and removed from `dist/codex`.
 - An **Executor Session** does not own verification trigger, verifier fanout, adjudication, or final outcome; it implements **Deliverables** and repairs failed **Acceptance Criteria** or **Global Invariants** injected by the runtime.
 - A **Verification Orchestrator Session** starts clean after each **Executor Session** checkpoint, launches one or more **Verifier Sessions**, and returns aggregate results for injection back into the **Executor Session** as runtime-authored follow-up work.
 - **Harness-level Do** is the Pi-specific implementation of the **Do/Verify Loop**; `/done` and `/escalate` become runtime outcomes rather than independent portable skills in that package.

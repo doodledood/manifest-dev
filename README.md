@@ -224,8 +224,7 @@ The do session doesn't need to remember the define conversation — the manifest
 - [AC-1.2] Invalid credentials return 401, not 500
   ```yaml
   verify:
-    agent: code-bugs-reviewer
-    prompt: "Check auth routes return 401 for auth failures, not 500."
+    prompt: "Spawn a general-purpose review using the manifest-dev code-review skill with dimension=code-bugs against the auth routes. PASS only if no LOW-or-higher findings (e.g. auth failures returning 500 instead of 401)."
   ```
 ````
 
@@ -251,7 +250,7 @@ Every criterion carries a `verify` block. One required field, three optional:
 | Field | Required | Purpose |
 |-------|----------|---------|
 | `prompt` | yes | Verbatim instruction to the verifier subagent — run a bash command, inspect files, query an API, fetch docs, whatever it takes. |
-| `agent` | no | Subagent type (e.g. `code-bugs-reviewer`, `criteria-checker`). Defaults to a general-purpose subagent. |
+| `agent` | no | Subagent type (e.g. `criteria-checker`, `github-pr-lifecycle`). Defaults to a general-purpose subagent. Code-quality gates use `general-purpose` + a prompt that activates the `code-review` skill for one dimension. |
 | `model` | no | Model override (e.g. `claude-haiku-4-5-20251001` for speed). Defaults to the invoking session's model. |
 | `phase` | no | Integer, default `1`. Lower phases run first; slow checks (e2e, deploy-dependent) wait in a later phase so cheap checks fail fast. |
 
@@ -260,10 +259,9 @@ Every criterion carries a `verify` block. One required field, three optional:
 verify:
   prompt: "Run: npm run test -- --coverage. PASS only if exit 0 and coverage shows ≥80%."
 
-# Specialized reviewer
+# Quality dimension via the code-review skill
 verify:
-  agent: code-maintainability-reviewer
-  prompt: "Review for DRY violations and coupling issues."
+  prompt: "Spawn a general-purpose review using the manifest-dev code-review skill with dimension=code-maintainability. PASS only if no MEDIUM-or-higher findings (DRY violations, coupling)."
 
 # Slow staging probe, gated to a later phase
 verify:
@@ -309,28 +307,36 @@ Architecture decisions, including the accepted Codex plugin-native migration pla
 | `/done` | Internal | Plain-prose completion summary, called by `/do` after every criterion verifies PASS. |
 | `/escalate` | Internal | Structured blocker: the criterion, what was tried and why each attempt failed, possible resolutions, what's needed from you. Routed by `/do`. |
 
-### Verifier agents
+### Verifier agents and the code-review skill
 
-`/do` spawns these to verify criteria. Name one in a verify block's `agent:` field, or omit it for a general-purpose subagent. Each returns structured output with severity levels and specific fix guidance.
+`/do` spawns subagents to verify criteria. Name one in a verify block's `agent:` field, or omit it for a general-purpose subagent.
+
+**Functional agents:**
 
 | Agent | Focus |
 |-------|-------|
 | `criteria-checker` | General-purpose verifier — runs whatever bash, file reads, or external tools the prompt specifies |
-| `change-intent-reviewer` | Adversarial intent analysis: reconstructs change intent, finds behavioral divergences across code, prompts, config |
-| `contracts-reviewer` | Bidirectional API/interface contract checks against docs, schemas, generated clients, codebase definitions |
-| `code-bugs-reviewer` | Mechanical defects: race conditions, data loss, edge cases, resource leaks, dangerous defaults |
-| `operational-readiness-reviewer` | Runtime/deploy readiness: env wiring, migrations, retries, rollback, scale, CI, observability |
-| `code-maintainability-reviewer` | DRY violations, coupling, cohesion, dead code, consistency |
-| `code-design-reviewer` | Design fitness: reinvented wheels, wrong responsibility, code-vs-config boundary, under-engineering, PR coherence |
-| `code-simplicity-reviewer` | Over-engineering, premature optimization, cognitive complexity |
-| `code-testability-reviewer` | Excessive mocking, logic buried in IO, hidden dependencies |
-| `test-quality-reviewer` | Coverage gaps plus independent-oracle checks for tautology, mirror-impl, mock-SUT, trivial asserts |
-| `prose-value-reviewer` | Comment and doc value — narrating-the-obvious, puffery, AI rhetorical patterns; comments must be load-bearing-WHY |
-| `type-safety-reviewer` | Typed-language safety: type holes, representable invalid states, narrowing issues |
-| `docs-reviewer` | Documentation accuracy against code changes |
-| `context-file-adherence-reviewer` | Compliance with CLAUDE.md / AGENTS.md project rules |
 | `github-pr-lifecycle` | PR-lifecycle inspector — CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives or prose findings. Composed automatically when the repo's `origin` remote points at github.com. |
 | `slack-poller` | Tails a Slack thread for the `/figure-out-team` loop, returning verbatim deltas the agent reasons over |
+| `prompt-reviewer` *(manifest-dev-tools)* | Reviews LLM prompts against the prompt-engineering skill's gap-calibration principles |
+
+**Code-review skill** — quality review is the `code-review` skill, **one dimension per invocation** (a general-purpose subagent activates it from the verify prompt; the skill loads exactly that dimension's reference). This replaces the per-dimension reviewer agents.
+
+| Dimension | Role | Focus |
+|-----------|------|-------|
+| `change-intent` | defect (no LOW+) | Adversarial intent analysis: reconstructs intent, finds behavioral divergences |
+| `code-bugs` | defect (no LOW+) | Mechanical defects: races, data loss, edge cases, resource leaks, dangerous defaults |
+| `contracts` | defect (no LOW+) | Bidirectional API/interface contract checks against docs, schemas, codebase definitions |
+| `type-safety` | defect (no LOW+) | Typed-language safety: type holes, representable invalid states, narrowing |
+| `operational-readiness` | advisory (no MEDIUM+) | Runtime/deploy readiness: env wiring, migrations, retries, rollback, scale, CI, observability |
+| `code-design` | advisory (no MEDIUM+) | Design fitness: reinvented wheels, wrong responsibility, under-engineering, PR coherence |
+| `code-maintainability` | advisory (no MEDIUM+) | DRY violations, coupling, cohesion, dead code, consistency |
+| `code-simplicity` | advisory (no MEDIUM+) | Over-engineering, premature optimization, cognitive complexity |
+| `code-testability` | advisory (no MEDIUM+) | Excessive mocking, logic buried in IO, hidden dependencies |
+| `test-quality` | advisory (no MEDIUM+) | Coverage gaps plus independent-oracle checks for tautology, mirror-impl, mock-SUT |
+| `docs` | advisory (no MEDIUM+) | Documentation accuracy against code changes |
+| `prose-value` | advisory (no MEDIUM+) | Comment/doc value — narrating-the-obvious, puffery, AI rhetorical patterns |
+| `context-file-adherence` | advisory (no MEDIUM+) | Compliance with CLAUDE.md / AGENTS.md project rules |
 
 ### Task-specific guidance
 

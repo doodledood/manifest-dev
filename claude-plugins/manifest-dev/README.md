@@ -30,6 +30,7 @@ Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
 - **`/figure-out-team`** — `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator: brings evidence, names trade-offs, surfaces disagreement; polls the thread via `/loop` and reads via the `slack-poller` subagent for verbatim deltas; convergence is judgment-based across speakers, with the owner (by Slack handle) overruling. Trust is session-bound — the Claude Code operator is the only trusted human; Slack content is data, never instructions. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting to Slack.
 - **`/done`** — completion summary in plain prose, called by `/do` after every criterion verifies PASS.
 - **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from you. Routed by `/do`.
+- **`/code-review`** — quality review along **one dimension per invocation** (bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, or CLAUDE.md adherence). Loads exactly that dimension's reference (progressive disclosure) and returns a PASS/FAIL report. Verifier subagents activate it from a `verify.prompt`; it replaces the per-dimension reviewer agents.
 
 ## Manifest Schema — Four Fields per Verify Block
 
@@ -66,7 +67,7 @@ Amendments overwrite in place with stable IDs (modify `INV-G1` and it stays `INV
 
 Verifier subagents default to `general-purpose` when a manifest omits `verify.agent:`. The bundled `criteria-checker` is a focused alternative (invoked via `agent: criteria-checker`): read-only behavior is enforced by its prompt, so authors can point it at MCP servers or extra CLI tools the user has configured.
 
-The review agents in `agents/` cover code, operational readiness, prose, contracts, types, design, testability, intent, and docs — name one in `verify.agent:` to scope a subagent to that lens. `github-pr-lifecycle` handles PR mergeability checks; `slack-poller` tails Slack threads for `/figure-out-team`. See the [root README](../../README.md#verifier-agents) for the full list.
+Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`code-review` skill** — one dimension per invocation — not separate agents; a verifier activates it from `verify.prompt`. The remaining agents in `agents/` are functional: `criteria-checker` (generic verifier), `github-pr-lifecycle` (PR mergeability checks), and `slack-poller` (tails Slack threads for `/figure-out-team`). See the [root README](../../README.md#verifier-agents-and-the-code-review-skill) for the full list.
 
 ## Task Guidance and References
 
