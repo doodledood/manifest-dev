@@ -366,7 +366,7 @@ LLM should review agent prompt bodies for:
 ```
 dist/opencode/
 ├── agents/                     # Agents (converted frontmatter)
-│   ├── code-bugs-reviewer.md
+│   ├── github-pr-lifecycle.md
 │   └── criteria-checker.md
 ├── commands/                   # Commands (from user-invoked skills)
 │   └── define.md
@@ -428,7 +428,7 @@ Install scripts handle all component renaming at install time via `install_helpe
 **Pattern**: Components get the suffix declared in `component-namespaces.json`:
 - Skill dirs: `skills/define/` → `skills/define-manifest-dev/`
 - Tool skill dirs: `skills/adr/` → `skills/adr-manifest-dev-tools/`
-- Agent files: `code-bugs-reviewer.md` → `code-bugs-reviewer-manifest-dev.md`
+- Agent files: `github-pr-lifecycle.md` → `github-pr-lifecycle-manifest-dev.md`
 - Command files: `define.md` → `define-manifest-dev.md`
 - Tool command files: `adr.md` → `adr-manifest-dev-tools.md`
 - SKILL.md `name:` field patched to match directory name
@@ -454,7 +454,7 @@ During sync, replace remaining `CLAUDE.md` references that mean "this CLI's cont
 - Skills (operational only): instructions like "write to CLAUDE.md" → "write to AGENTS.md". Leave research/reference content unchanged.
 - Do NOT replace "CLAUDE.md" when it refers to Claude Code's own file (e.g., in comparative text or research).
 
-The `context-file-adherence-reviewer` agent already uses generic "context file" language — no special handling needed for its content.
+The `code-review` skill's `context-file-adherence` dimension reference already uses generic "context file" language — no special handling needed for its content.
 
 ## Session File Adaptation
 
