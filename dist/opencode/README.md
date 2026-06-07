@@ -97,7 +97,7 @@ After installation, invoke workflows via slash commands:
 /handoff-manifest-dev-tools             Cross-boundary handoff or DIY sub-agent context payload
 /prompt-engineering-manifest-dev-tools  Gap-calibrated prompt creation, update, and review
 /review-pr-manifest-dev-tools           Autonomous PR review one-shot or --loop scheduler
-/teach-me-manifest-dev-tools            Incremental teaching loop for the current session's work
+/teach-me-manifest-dev-tools            Incremental teaching loop for the session's work, a PR, an ADR, or any topic
 /walk-pr-manifest-dev-tools             Collaborative PR/diff walkthrough
 ```
 

@@ -27,7 +27,7 @@ Verification-first manifest workflows for Codex CLI. Define specifications, exec
 | handoff | Cross-boundary handoff or DIY sub-agent context payload |
 | prompt-engineering | Create, update, or review an LLM prompt — gap-calibrated discipline |
 | review-pr | Autonomous PR review one-shot or `--loop` scheduler |
-| teach-me | Incremental teaching loop for the current session's work with mastery checks |
+| teach-me | Incremental teaching loop for a body of work — the current session, a PR, an ADR, or any topic — with mastery checks |
 | walk-pr | Collaborative PR/diff walkthrough |
 
 ### Agents
