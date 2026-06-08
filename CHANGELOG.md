@@ -17,7 +17,7 @@ packaged. It contains **breaking changes** — read the migration notes.
     **general-purpose** subagent whose `verify.prompt` activates a skill when specialized
     behavior is needed — e.g. *"Activate the manifest-dev:review-code skill with
     dimension=code-bugs and review the change. PASS only if no LOW-or-higher findings."*
-    or *"Activate the manifest-dev check-pr skill. PR: …"*. The prompt tells the current
+    or *"Activate the manifest-dev:check-pr skill. PR: …"*. The prompt tells the current
     general-purpose verifier to activate the skill directly — it must not spawn a nested
     agent. `/define` encodes this automatically; manifests/task files authored
     against old agent names or `verify.agent` must be updated. The Pi runtime no longer
@@ -74,6 +74,6 @@ packaged. It contains **breaking changes** — read the migration notes.
 
 ### Versions
 
-- `manifest-dev` plugin: 2.4.0 → 2.8.0
-- `manifest-dev-tools` plugin: 0.19.0 → 0.23.0
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.5
+- `manifest-dev` plugin: 2.4.0 → 2.8.1
+- `manifest-dev-tools` plugin: 0.19.0 → 0.23.1
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.6

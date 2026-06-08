@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -402,6 +403,37 @@ def test_pi_dist_contains_only_compatible_skill_set() -> None:
     assert skill_dirs == set(PI_SKILLS)
     assert set(metadata["skills"]) == set(PI_SKILLS)
     assert metadata.get("agents", {}) == {}
+
+
+def test_skill_activation_names_are_per_target() -> None:
+    """Verifier-activation / chain prose must name skills in each target's own form:
+    source + OpenCode use the canonical plugin-qualified colon form (Claude native;
+    OpenCode's installer suffixes it), while Pi strips the qualifier to the bare
+    /skill:<name> form. Anchored in Pi loader/skills source and install_helpers.py."""
+    qualified = re.compile(r"manifest-dev(?:-tools)?:[a-z]")
+
+    # Source canonical form: colon-qualified, never the unrewritable space form.
+    for rel in (
+        "claude-plugins/manifest-dev/skills/define/SKILL.md",
+        "claude-plugins/manifest-dev/skills/define/tasks/PR_LIFECYCLE.md",
+    ):
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        assert "manifest-dev check-pr skill" not in text
+        assert "manifest-dev:check-pr" in text
+    review_pr = (
+        ROOT / "claude-plugins/manifest-dev-tools/skills/review-pr/SKILL.md"
+    ).read_text(encoding="utf-8")
+    assert "manifest-dev-tools:review-prompt" in review_pr
+
+    # Pi dist: no plugin-qualified skill ids survive (Pi invokes bare /skill:<name>).
+    for path in (DIST / "pi" / "skills").rglob("*.md"):
+        assert not qualified.search(path.read_text(encoding="utf-8")), path
+
+    # OpenCode dist keeps the colon form for its install-time suffix rewrite.
+    opencode_pr = (
+        DIST / "opencode" / "skills" / "define" / "tasks" / "PR_LIFECYCLE.md"
+    ).read_text(encoding="utf-8")
+    assert "manifest-dev:check-pr" in opencode_pr
 
 
 def test_pi_core_extension_registers_do_and_auto_only() -> None:

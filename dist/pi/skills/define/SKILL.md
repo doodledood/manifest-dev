@@ -5,7 +5,7 @@ argument-hint: '[task] [<manifest-path> to amend] [--babysit <pr-url>] [--canvas
 user-invocable: true
 ---
 
-Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev/manifests/manifest-{ts}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so manifests survive OS temp cleanup across multi-day work. Fall back to a writable temp path (`/tmp/`, else `$TMPDIR` / `%TEMP%`) only when the home directory isn't writable. If the transcript lacks shared understanding, invoke `manifest-dev:figure-out` first; propagate `--autonomous` when invoked from `/auto` or `/do`'s amendment path. **Pre-flight:** if `--babysit <pr-url>`, load `references/BABYSIT_MODE.md` and follow its synthesis flow; if `$ARGUMENTS` contains a manifest file path, amend (see below); else fresh.
+Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev/manifests/manifest-{ts}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so manifests survive OS temp cleanup across multi-day work. Fall back to a writable temp path (`/tmp/`, else `$TMPDIR` / `%TEMP%`) only when the home directory isn't writable. If the transcript lacks shared understanding, invoke `figure-out` first; propagate `--autonomous` when invoked from `/auto` or `/do`'s amendment path. **Pre-flight:** if `--babysit <pr-url>`, load `references/BABYSIT_MODE.md` and follow its synthesis flow; if `$ARGUMENTS` contains a manifest file path, amend (see below); else fresh.
 
 **Encoding discipline.** figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to lock as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
 
@@ -35,11 +35,11 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 ```yaml
 verify:
   prompt: |
-    Activate the manifest-dev:review-code skill with dimension=<dimension> and review the change.
+    Activate the review-code skill with dimension=<dimension> and review the change.
     PASS only if no <LOW|MEDIUM>-or-higher findings. Report findings with severity.
 ```
 
-The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+). The `verify.prompt` is already run by a general-purpose verifier subagent, so the prompt must tell *that* verifier to **activate** the skill — never to spawn another agent (a nested spawn bypasses the runtime's PASS/FAIL/BLOCKED contract). For a non-review-code specialized check, name its skill the same way, e.g. *"Activate the manifest-dev check-pr skill. PR: …"*.
+The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+). The `verify.prompt` is already run by a general-purpose verifier subagent, so the prompt must tell *that* verifier to **activate** the skill — never to spawn another agent (a nested spawn bypasses the runtime's PASS/FAIL/BLOCKED contract). For a non-review-code specialized check, name its skill the same way, e.g. *"Activate the check-pr skill. PR: …"*.
 
 ## Manifest Schema
 

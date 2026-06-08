@@ -80,7 +80,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -137,6 +137,8 @@ Handle these specially:
 - `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/babysit-pr`, a Pi-aware wrapper that synthesizes PR lifecycle grounding and drives Harness-level Do outcome gating.
 
 Pi registers `/do` as a native extension command, so `define`'s `/do <manifest-path>` handoff resolves directly — no name substitution needed. Drop the `/goal /do <manifest-path>` unattended-execution line, which has no Pi equivalent.
+
+**Strip plugin qualifiers from skill references → bare names.** Pi invokes skills as `/skill:<name>` (`dist/core/skills.d.ts`, `agent-session.d.ts`: "Expand skill commands (/skill:name args)") with no plugin namespace. So any `manifest-dev:<skill>` / `manifest-dev-tools:<skill>` reference in copied skill bodies — verifier-activation prose (`Activate the manifest-dev:review-code skill` → `Activate the review-code skill`), chain handoffs (`manifest-dev:figure-out` → `figure-out`), etc. — must have the qualifier stripped to the bare skill name during Pi sync. A qualified id does not resolve in Pi. (Codex keeps the qualifier; OpenCode keeps it for its install-time suffix rewrite — this strip is Pi-only.)
 
 ## Runtime Extension Boundary
 

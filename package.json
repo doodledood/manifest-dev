@@ -1,6 +1,6 @@
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "private": true,
   "description": "Pi package surface for manifest-dev shared skills and Harness-level Do runtime entrypoints (/do, /auto, /babysit-pr).",
   "type": "module",

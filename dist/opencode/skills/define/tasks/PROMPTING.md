@@ -9,7 +9,7 @@ Creating or updating LLM prompts, skills, agents, system instructions.
 | Intent analysis | `review-code` skill, dimension=`change-intent` | no LOW+ |
 | Prompt quality | `review-prompt` skill | no MEDIUM+ |
 
-Both gates encode as a general-purpose verifier (no `verify.agent`) whose `verify.prompt` activates a skill: the intent gate activates the review-code skill (dimension=change-intent); the prompt-quality gate activates the `review-prompt` skill.
+Both gates encode as a general-purpose verifier (no `verify.agent`) whose `verify.prompt` activates a skill: the intent gate activates the review-code skill (dimension=change-intent); the prompt-quality gate activates the `manifest-dev-tools:review-prompt` skill.
 
 When the review-prompt skill is not available, encode these as individual criteria verified via general-purpose subagent:
 
