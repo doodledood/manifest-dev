@@ -614,10 +614,16 @@ export async function routeVerificationResult(
 		verification.status === "passed" ? "info" : "warning",
 	);
 
-	// CI one-shot: a failure that is only waiting on external actors/time is not a
-	// repairable defect. Exit pending (resumable) instead of injecting repair, so the
-	// runner is not looped on a wait. Mixed (wait + real) failures fall through to repair.
-	if (verification.status === "failed" && run.ciOneShot && isWaitPendingFailure(verification)) {
+	// CI one-shot: a verification that is only waiting on external actors/time is not a
+	// repairable defect, and not a generic escalation either. Exit pending (resumable)
+	// instead of injecting repair or escalating, so the runner is not looped on a wait.
+	// A wait reads as FAIL or BLOCKED depending on how the verifier classifies it, so we
+	// catch both aggregate statuses; mixed (wait + real/unmarked) results fall through.
+	if (
+		run.ciOneShot &&
+		(verification.status === "failed" || verification.status === "blocked") &&
+		isWaitPendingVerification(verification)
+	) {
 		const pendingRun = updateRun(pi, state, run, {
 			status: "blocked",
 			lastVerificationStatus: verification.status,
@@ -625,7 +631,7 @@ export async function routeVerificationResult(
 		const summary = buildCiPendingSummary(verification);
 		const outcome = buildOutcomeRecord(pendingRun, "escalate", {
 			summary: "CI one-shot pending on external wait.",
-			blockers: verification.results.filter((r) => r.verdict === "FAIL").map((r) => `${r.gateId}: ${r.evidence || r.details}`),
+			blockers: verification.results.filter((r) => r.verdict !== "PASS").map((r) => `${r.gateId}: ${r.evidence || r.details}`),
 			nextSteps: ["Re-run /babysit-pr --ci once the external wait clears."],
 			verification,
 			cwd: ctx.cwd,
@@ -960,16 +966,18 @@ export function buildOrchestrationSpawnBlocker(run: RunRecord, currentSessionId:
 }
 
 /**
- * True if a failed verification is wait-only: every FAIL gate carries the verifier's
- * WAIT-PENDING marker (the --ci lifecycle verifier derives it from check-pr's neutral
- * wait directives — waiting on a reviewer/CI/time, not a fixable defect). Used only in
- * --ci one-shot mode to exit pending instead of looping repair. A mix of wait and real
- * failures is not wait-only — repair still runs.
+ * True if a verification is wait-only: every non-PASS gate (FAIL or BLOCKED) carries the
+ * verifier's WAIT-PENDING marker (the --ci lifecycle verifier derives it from check-pr's
+ * neutral wait directives — waiting on a reviewer/CI/time, not a fixable defect). A
+ * reviewer/CI wait legitimately reads as BLOCKED under the base verdict rules, so we accept
+ * the marker on either verdict; the aggregate status is then "failed" or "blocked". Used
+ * only in --ci one-shot mode to exit pending instead of looping repair / escalating. A mix
+ * of wait and real (unmarked) failures is not wait-only — the normal path still runs.
  */
-export function isWaitPendingFailure(verification: VerificationRecord): boolean {
-	const failures = verification.results.filter((result) => result.verdict === "FAIL");
-	if (failures.length === 0) return false;
-	return failures.every((result) =>
+export function isWaitPendingVerification(verification: VerificationRecord): boolean {
+	const unresolved = verification.results.filter((result) => result.verdict !== "PASS");
+	if (unresolved.length === 0) return false;
+	return unresolved.every((result) =>
 		`${result.evidence ?? ""}\n${result.details ?? ""}`.includes(WAIT_PENDING_MARKER),
 	);
 }
@@ -977,7 +985,7 @@ export function isWaitPendingFailure(verification: VerificationRecord): boolean 
 /** Pending-exit summary for a --ci one-shot run blocked only on external waits. */
 export function buildCiPendingSummary(verification: VerificationRecord): string {
 	const waits = verification.results
-		.filter((result) => result.verdict === "FAIL")
+		.filter((result) => result.verdict !== "PASS")
 		.map((result) => `${result.gateId}: ${result.evidence || result.details}`);
 	return [
 		"CI one-shot (--ci): every immediately actionable lifecycle step is done; the PR is now waiting on external actors/time (reviewer, CI, merge window).",

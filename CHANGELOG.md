@@ -85,10 +85,12 @@ packaged. It contains **breaking changes** — read the migration notes.
   still routes to repair. The derivation rule is injected by the runtime into the **gate
   verifier prompt** (`buildGateVerifierPrompt({ ciOneShot })`) — not the executor prompt or the
   manifest `verify.prompt` — so it actually reaches the verifier subagent for synthesized and
-  `--manifest` runs alike.
+  `--manifest` runs alike. A reviewer/CI wait reads as BLOCKED under the base verdict
+  rules, so the runtime routes `ciOneShot` `WAIT-PENDING` on either FAIL or BLOCKED status to
+  pending — not just FAIL.
 
 ### Versions
 
 - `manifest-dev` plugin: 2.4.0 → 2.8.3
 - `manifest-dev-tools` plugin: 0.19.0 → 0.23.1
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.9
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.10

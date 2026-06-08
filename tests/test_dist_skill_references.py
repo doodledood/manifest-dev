@@ -527,7 +527,7 @@ def test_wait_pending_contract_lives_in_runtime_and_pi_reference() -> None:
     assert "buildGateVerifierPrompt" in runtime_mod
     assert "ciOneShot" in runtime_mod
     ext = PI_EXTENSION.read_text(encoding="utf-8")
-    assert "isWaitPendingFailure" in ext
+    assert "isWaitPendingVerification" in ext
     assert (
         "ciOneShot: run.ciOneShot" in ext
     )  # threaded into the verifier prompt at spawn

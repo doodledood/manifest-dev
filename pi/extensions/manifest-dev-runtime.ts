@@ -14,7 +14,7 @@ export type GateKind = "acceptance_criterion" | "global_invariant";
 // subagent for synthesized AND --manifest runs alike.
 export const WAIT_PENDING_MARKER = "WAIT-PENDING";
 export const CI_WAIT_PENDING_VERIFIER_RULE = `
-CI one-shot wait-pending rule: if this gate is blocked ONLY on an external wait — the check-pr finding's only directive is a wait ("bash sleep <N>; reinvoke") and nothing is actionable (no reply / reply-and-resolve / retrigger / sync-description / re-request-review / prose fix) — append the token ${WAIT_PENDING_MARKER} on its own line in DETAILS so the runtime exits pending instead of looping repair. Omit ${WAIT_PENDING_MARKER} entirely if any failing gate is actionable (report a normal FAIL).`;
+CI one-shot wait-pending rule: if this gate's only remaining blocker is an external wait — the check-pr finding's sole directive is a wait ("bash sleep <N>; reinvoke") and nothing is actionable (no reply / reply-and-resolve / retrigger / sync-description / re-request-review / prose fix) — append the token ${WAIT_PENDING_MARKER} on its own line in DETAILS. Pick the VERDICT by the normal rules above (a reviewer / CI / merge-window wait is typically BLOCKED — a human/external condition, not a workspace-repairable defect); the runtime treats either FAIL or BLOCKED carrying ${WAIT_PENDING_MARKER} as a pending exit instead of looping repair or escalating. Omit ${WAIT_PENDING_MARKER} entirely if anything here is actionable.`;
 
 
 export interface ManifestGate {

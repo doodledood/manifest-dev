@@ -11,7 +11,7 @@ import manifestDevExtension, {
 	buildCiPendingSummary,
 	formatRepairFollowUpMessage,
 	isStaleSessionContextError,
-	isWaitPendingFailure,
+	isWaitPendingVerification,
 	makeOrchestratorSessionId,
 	rehydrateRuntimeState,
 	resolveManifestPath,
@@ -1000,16 +1000,19 @@ test("buildGateVerifierPrompt injects the WAIT-PENDING rule only when ciOneShot"
 	assert.doesNotMatch(buildGateVerifierPrompt({ ...base, ciOneShot: false }), /WAIT-PENDING/);
 });
 
-test("isWaitPendingFailure requires every FAIL gate to carry the WAIT-PENDING marker", () => {
+test("isWaitPendingVerification accepts the marker on FAIL or BLOCKED non-PASS gates", () => {
 	const verification = (results) => ({ runId: "r", status: "failed", results });
 	const waitFail = { ...gateResult("FAIL"), gateId: "AC-1.1", evidence: "Reviewer pending. WAIT-PENDING" };
+	const waitBlocked = { ...gateResult("BLOCKED"), gateId: "AC-1.1", evidence: "Reviewer pending (human). WAIT-PENDING" };
 	const realFail = { ...gateResult("FAIL"), gateId: "AC-1.2", evidence: "broken test" };
-	assert.equal(isWaitPendingFailure(verification([waitFail])), true);
-	assert.equal(isWaitPendingFailure(verification([gateResult("PASS"), waitFail])), true);
-	// Mixed wait + real failure is not wait-only — repair must still run.
-	assert.equal(isWaitPendingFailure(verification([waitFail, realFail])), false);
-	// No FAIL gates at all is not a wait-pending failure.
-	assert.equal(isWaitPendingFailure(verification([gateResult("PASS")])), false);
+	assert.equal(isWaitPendingVerification(verification([waitFail])), true);
+	// A reviewer/CI wait classified as BLOCKED must still count as wait-only.
+	assert.equal(isWaitPendingVerification(verification([waitBlocked])), true);
+	assert.equal(isWaitPendingVerification(verification([gateResult("PASS"), waitBlocked])), true);
+	// Mixed wait + real (unmarked) failure is not wait-only — the normal path still runs.
+	assert.equal(isWaitPendingVerification(verification([waitFail, realFail])), false);
+	// No non-PASS gates at all is not wait-pending.
+	assert.equal(isWaitPendingVerification(verification([gateResult("PASS")])), false);
 });
 
 test("buildCiPendingSummary frames the exit as pending, not blocked, and lists the waits", () => {
@@ -1062,6 +1065,49 @@ test("routeVerificationResult exits pending (no repair) for a --ci wait-only fai
 		// Outcome recorded as a (resumable) escalate flavored pending; run left blocked.
 		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "CI one-shot pending on external wait."), true);
 		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:run" && e.data.status === "blocked"), true);
+	} finally {
+		rmSync(routeRunStateFile, { force: true });
+		rmSync(tmp, { recursive: true, force: true });
+	}
+});
+
+test("routeVerificationResult exits pending for a --ci wait-only BLOCKED verification (not generic escalation)", async () => {
+	const routeRunStateFile = `${process.env.HOME}/.manifest-dev/runs/manifest-dev-ci-blocked.json`;
+	rmSync(routeRunStateFile, { force: true });
+	const calls = { entries: [], userMessages: [], messages: [] };
+	const pi = {
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		sendUserMessage(message, options) { calls.userMessages.push({ message, options }); },
+		sendMessage(message, options) { calls.messages.push({ message, options }); },
+	};
+	const tmp = mkdtempSync(`${tmpdir()}/manifest-dev-ci-`);
+	const manifestPath = `${tmp}/manifest.md`;
+	writeFileSync(manifestPath, "# Manifest", "utf-8");
+	const ctx = { cwd: process.cwd(), ui: { notify() {} } };
+	const run = {
+		runId: "manifest-dev-ci-blocked", command: "babysit-pr", startedAt: "t",
+		cwd: process.cwd(), executorSessionId: "executor-session", status: "verifying",
+		verificationAttempts: 1, ciOneShot: true,
+	};
+	const state = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map([[run.executorSessionId, run]]),
+		childSessionIds: new Set(),
+	};
+	// Verifier classified the reviewer/CI wait as BLOCKED (human/external) — aggregate
+	// status is "blocked", but the WAIT-PENDING marker must still route to pending.
+	const verification = {
+		runId: run.runId, manifestPath, manifestSha256: sha256("# Manifest"),
+		requestedAt: "s", completedAt: "e", cwd: process.cwd(), status: "blocked",
+		orchestratorSessionId: "manifest-verify-1",
+		results: [{ ...gateResult("BLOCKED"), gateId: "AC-1.1", title: "PR lifecycle", evidence: "Reviewer @bob pending (human decision); CI green. WAIT-PENDING" }],
+	};
+	try {
+		await routeVerificationResult(pi, ctx, state, run, verification);
+		assert.equal(calls.userMessages.length, 0); // no repair
+		assert.equal(calls.messages.length, 1);
+		assert.match(calls.messages[0].message.content, /Exiting pending instead of looping repair/);
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "CI one-shot pending on external wait."), true);
 	} finally {
 		rmSync(routeRunStateFile, { force: true });
 		rmSync(tmp, { recursive: true, force: true });
