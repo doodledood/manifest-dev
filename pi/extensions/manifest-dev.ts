@@ -960,10 +960,11 @@ export function buildOrchestrationSpawnBlocker(run: RunRecord, currentSessionId:
 }
 
 /**
- * True if a failed verification is wait-only: every FAIL gate carries the check-pr
- * WAIT-PENDING marker (waiting on a reviewer/CI/time, not a fixable defect). Used only
- * in --ci one-shot mode to exit pending instead of looping repair. A mix of wait and
- * real failures is not wait-only — repair still runs.
+ * True if a failed verification is wait-only: every FAIL gate carries the verifier's
+ * WAIT-PENDING marker (the --ci lifecycle verifier derives it from check-pr's neutral
+ * wait directives — waiting on a reviewer/CI/time, not a fixable defect). Used only in
+ * --ci one-shot mode to exit pending instead of looping repair. A mix of wait and real
+ * failures is not wait-only — repair still runs.
  */
 export function isWaitPendingFailure(verification: VerificationRecord): boolean {
 	const failures = verification.results.filter((result) => result.verdict === "FAIL");
