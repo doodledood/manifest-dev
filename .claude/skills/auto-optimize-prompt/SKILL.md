@@ -1,6 +1,6 @@
 ---
 name: auto-optimize-prompt
-description: 'Iteratively auto-optimize a prompt until no issues remain. Uses prompt-reviewer in a loop, asks user for ambiguities, applies fixes via prompt-engineering skill. Runs until converged.'
+description: 'Iteratively auto-optimize a prompt until no issues remain. Uses review-prompt in a loop, asks user for ambiguities, applies fixes via prompt-engineering skill. Runs until converged.'
 ---
 
 # Auto-Optimize Prompt
@@ -11,7 +11,7 @@ Iteratively optimize a prompt until no issues remain.
 
 ## Goal
 
-Loop until a general-purpose agent that activates the `prompt-reviewer` skill finds no issues: review → resolve NEEDS_USER_INPUT with user → fix via prompt-engineering → repeat.
+Loop until a general-purpose agent that activates the `review-prompt` skill finds no issues: review → resolve NEEDS_USER_INPUT with user → fix via prompt-engineering → repeat.
 
 - **No path provided**: Ask which file to optimize
 - **Working copy**: Use `/tmp/auto-optimize-*.md` during iterations; apply to original only when converged
@@ -22,7 +22,7 @@ Loop until a general-purpose agent that activates the `prompt-reviewer` skill fi
 |------------|-----|
 | **Converge, don't cap** | No iteration limits—run until no issues |
 | **Atomic output** | Original unchanged until fully converged |
-| **DRY** | Delegate review to a general-purpose agent activating the `prompt-reviewer` skill, fixes to prompt-engineering |
+| **DRY** | Delegate review to a general-purpose agent activating the `review-prompt` skill, fixes to prompt-engineering |
 | **User-in-the-loop** | NEEDS_USER_INPUT issues require user resolution (with context, options); skip if user declines |
 
 ## Output

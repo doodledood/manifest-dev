@@ -280,7 +280,7 @@ manifest-dev ships no agents of its own — verification is always a general-pur
 |-----|---------|--------|--------------|---------|
 | Claude Code | `/plugin install` | Full | General-purpose subagent per criterion | Primary target |
 | OpenCode | `curl .../opencode/install.sh \| bash` | Full | General-purpose subagent per criterion | [README](dist/opencode/README.md) |
-| Codex CLI | `curl .../codex/install.sh \| bash` | Full | General-purpose subagent per criterion | [README](dist/codex/README.md) |
+| Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` | Full | General-purpose subagent per criterion | [README](dist/codex/README.md) |
 | Pi | `pi install npm:@gotgenes/pi-subagents` then `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | Clean verifier fanout + outcome gate | [README](dist/pi/README.md) |
 
 After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and the current Harness-level Do verifier fanout plus outcome gate.

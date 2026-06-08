@@ -19,14 +19,13 @@ Supporting workflows:
 - **/figure-out-team** — /figure-out's discipline applied to a multi-party async Slack conversation.
 - **Tools skills** — /adr, /babysit-pr, /handoff, /prompt-engineering, /review-pr, /teach-me, and /walk-pr install with the `-manifest-dev-tools` suffix. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
 
-## Manifest Schema — Four Fields
+## Manifest Schema — Three Fields
 
-Every verify block has the same shape:
+Every verify block has the same shape. Verification always runs as a general-purpose subagent that activates a skill when the prompt needs it — there is no `agent` field.
 
 ```yaml
 verify:
   prompt: "..."     # required, verbatim verifier instruction
-  agent: "..."      # optional, default = general-purpose subagent
   model: "..."      # optional, default = inherit from invoking context
   phase: 1          # optional integer, default 1 (lower phases run first)
 ```
