@@ -22,8 +22,8 @@ Three skills, one idea: figure it out, write down what "done" means, let it buil
 # OpenCode — skills, commands, plugin
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 
-# Codex CLI — plugin-native skills
-curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
+# Codex CLI — native plugins from the repo marketplace
+codex plugin marketplace add doodledood/manifest-dev
 
 # Pi — repo-root package, shared skills plus Harness-level commands
 pi install npm:@gotgenes/pi-subagents
@@ -75,7 +75,7 @@ Pass `--canvas` to `/define` (desktop only) for a **Shared Understanding Canvas*
 For zsh, add upgrade shortcuts for the non-Claude distributions:
 
 ```zsh
-alias upgrade-manifest-dev-codex='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash'
+alias upgrade-manifest-dev-codex='codex plugin marketplace upgrade'
 alias upgrade-manifest-dev-opencode='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash'
 alias upgrade-manifest-dev-pi='pi update --extensions'
 alias upgrade-manifest-dev-all='upgrade-manifest-dev-codex && upgrade-manifest-dev-opencode && upgrade-manifest-dev-pi'
@@ -91,7 +91,7 @@ Uninstall uses the same entrypoints:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- uninstall
-curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash -s -- uninstall
+codex plugin marketplace remove manifest-dev
 pi remove git:github.com/doodledood/manifest-dev
 ```
 

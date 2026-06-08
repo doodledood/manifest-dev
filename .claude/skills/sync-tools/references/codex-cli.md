@@ -22,12 +22,12 @@ Nothing lands in the shared open-standard `~/.agents/skills/` directory, so mani
 | MCP servers (`.mcp.json`) | YES | None currently |
 | Apps (`.app.json`) | YES | None currently |
 | Hooks (`hooks/hooks.json`) | YES (manifest field exists) | manifest-dev ships none to Codex; Codex hook execution is still limited (Issue #2109) — do not fabricate |
-| **Agents / subagent roles** | **NO** | Reviewers are the `code-review` **skill**; other agents degrade to general-purpose (see below) |
+| **Agents / subagent roles** | **NO** | manifest-dev ships no agents — all former agents are skills (see below) |
 
-**Agents are not a plugin component.** Codex plugins bundle skills/MCP/apps/hooks only. Consequences for manifest-dev:
+**Agents are not a plugin component, and manifest-dev ships none.** Codex plugins bundle skills/MCP/apps/hooks only — but this is not a Codex-specific limitation: manifest-dev itself ships **zero agents** on every target. Consequences:
 
-- The 13 quality-dimension reviewers are **not agents** anymore — they are dimensions of the bundled `code-review` skill. They ship automatically as part of that skill's directory.
-- The surviving agents (`criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `prompt-reviewer`) cannot be bundled. On Codex they **degrade to the general-purpose subagent**: a manifest gate with `verify.agent: <name>` falls back to general-purpose driven by its `verify.prompt`. The skills and task files already carry general-purpose fallbacks (e.g. PROMPTING.md's prompt-reviewer fallback; `verify.agent` default is general-purpose). Document this as a known limitation; do not generate TOML agent stubs.
+- The 13 quality-dimension reviewers are **not agents** — they are dimensions of the bundled `code-review` skill. They ship automatically as part of that skill's directory.
+- The former functional agents are now **skills**: `criteria-checker`, `github-pr-lifecycle`, `slack-poller`, and `prompt-reviewer` ship as ordinary bundled skills. Verification is always a general-purpose subagent whose `verify.prompt` activates the relevant skill — there is no `verify.agent` field. Do not generate TOML agent stubs.
 
 ## Distribution layout
 
@@ -148,11 +148,11 @@ Installed plugins are cached under `~/.codex/plugins/cache/manifest-dev/<plugin>
 
 ## AGENTS.md / context
 
-manifest-dev's own `CLAUDE.md`-style context is not required for plugin consumers. If a generated context file is produced for the dist README, describe the workflow (define → do → verify → done) and note that reviewers are the `code-review` skill's dimensions, not standalone agents.
+manifest-dev's own `CLAUDE.md`-style context is not required for plugin consumers. If a generated context file is produced for the dist README, describe the workflow (define → do → verify → done) and note that manifest-dev ships no agents — verification is a general-purpose subagent that activates skills (reviewers are the `code-review` skill's dimensions).
 
 ## Known limitations
 
-1. **No agent bundling** — reviewers are the `code-review` skill; `criteria-checker` / `github-pr-lifecycle` / `slack-poller` / `prompt-reviewer` degrade to general-purpose via `verify.prompt` fallbacks.
+1. **No agents at all** — manifest-dev ships zero agents. Reviewers are the `code-review` skill; `criteria-checker` / `github-pr-lifecycle` / `slack-poller` / `prompt-reviewer` are skills a general-purpose verifier activates via `verify.prompt`.
 2. **Hooks** — manifest-dev ships none to Codex; Codex hook execution remains limited (Issue #2109).
 3. **No `/auto` or `/babysit-pr` runtime command** — they ship as skills that chain `/do`; only Pi has native runtime wrappers.
 4. **Experimental tools** — `read_file`/`grep_files`/`list_dir` availability is model-gated server-side.

@@ -30,7 +30,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | `/done` skill | Excluded. Runtime completion outcome. |
 | `/escalate` skill | Excluded. Runtime blocker outcome. |
 | `/auto`, `/babysit-pr` | Excluded as ordinary skills. Provided by Pi-aware extension commands that run the lifecycle through Harness-level Do outcome gating. |
-| Reviewer/verifier agents | Use manifest `verify.prompt` blocks to steer clean Pi subagent verifier sessions; do not invent unsupported `pi.agents` manifest fields. |
+| Reviewer/verifier skills | manifest-dev ships no agents; `criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `prompt-reviewer`, and `code-review` ship as ordinary skills under `dist/pi/skills/`. Steer clean Pi subagent verifier sessions via `verify.prompt` (which may activate one of these skills); there is no `verify.agent` field and no `pi.agents` manifest field. |
 | Claude hooks | Re-evaluate as Pi lifecycle/command/tool events; do not port hook names mechanically. |
 | Slash commands | Prefer `/skill:<name>` for skills and extension commands for runtime actions. |
 | CLAUDE.md context | Do not assume a package-level CLAUDE.md equivalent; package docs and skills carry their own context. |
@@ -43,9 +43,9 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | Compatible skills | Copy to `dist/pi/skills/` | Agent Skills are portable. Apply only target-specific handoff substitutions. |
 | Harness-level Do | Do not copy as a normal skill | `/do`, `/done`, and `/escalate` are runtime outcomes in Pi. |
 | Chain skills | Expose as extension commands when Pi-aware | `/auto` and `/babysit-pr` invoke `/do` in Claude-style hosts; in Pi they are registered as native extension commands of the same name (`/auto`, `/babysit-pr`). |
-| Agents | Copy as extension-private runtime prompts | Pi packages do not declare an `agents` resource in `package.json`; runtime code may load Markdown prompts from package-local files. |
+| Agents | None — manifest-dev ships no agents | The former agents are skills under `dist/pi/skills/`; verification is always a general-purpose subagent activating a skill via `verify.prompt`. |
 | Extensions | Include hand-written Pi runtime code | The extension owns commands, executor/verifier orchestration, verdict aggregation, repair routing, escalation, and completion gating. |
-| Prompt templates | Generate only intentionally user-invocable templates | Do not expose verifier/reviewer agent prompts as slash prompt templates by accident. |
+| Prompt templates | Generate only intentionally user-invocable templates | Do not expose the runtime verifier prompt as a slash prompt template by accident. |
 | README | Generate install and feature-boundary docs | Explain what is generated, what is source-owned, and which commands are available. |
 
 ## Package Model
@@ -80,7 +80,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -111,12 +111,17 @@ Copy these core skills unchanged except for target-specific handoff wording:
 - `figure-out`
 - `define`
 - `figure-out-team`
+- `criteria-checker`
+- `github-pr-lifecycle`
+- `slack-poller`
+- `code-review`
 
 Copy manifest-dev-tools skills that do not directly invoke `/do` as ordinary skills:
 
 - `adr`
 - `handoff`
 - `prompt-engineering`
+- `prompt-reviewer`
 - `review-pr`
 - `teach-me`
 - `walk-pr`
@@ -138,8 +143,8 @@ The Pi extension owns Do/Verify Loop runtime behavior. The current runtime slice
 - `/do`, `/auto`, `/babysit-pr` command registration; the chain wrappers invoke the installed `/skill:figure-out` and `/skill:define` rather than paraphrasing the chain.
 - a simplified Executor Session prompt: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop.
 - runtime-owned verification/outcome orchestration rather than LLM-visible verifier/outcome tools in the executor action space, including a clean verification orchestration session record per attempt.
-- parse the Manifest and enumerate Acceptance Criteria and Global Invariants, honoring each gate's `verify.agent` (subagent type), `verify.model`, and `phase`.
-- record a clean verification orchestration session under `~/.manifest-dev/verification-sessions/`, then run clean Pi subagent verifier sessions (`inheritContext: false`) in ascending-phase batches — serial across phases, parallel within, short-circuiting later phases on FAIL/BLOCKED. Verifier spawns use `bypassQueue: true` and manifest-dev's own per-phase fanout cap so the community subagents package's default background queue does not silently cap large same-phase verifier sets. Absent `verify.agent` -> general-purpose; absent `verify.model` -> the Executor Session's current model (`ctx.model`). An unavailable agent type falls back to general-purpose and is surfaced in the gate evidence.
+- parse the Manifest and enumerate Acceptance Criteria and Global Invariants, honoring each gate's `verify.model` and `phase`. There is no `verify.agent` field — every gate is verified by a general-purpose subagent whose `verify.prompt` may activate a skill.
+- record a clean verification orchestration session under `~/.manifest-dev/verification-sessions/`, then run clean Pi subagent verifier sessions (`inheritContext: false`) in ascending-phase batches — serial across phases, parallel within, short-circuiting later phases on FAIL/BLOCKED. Verifier spawns use `bypassQueue: true` and manifest-dev's own per-phase fanout cap so the community subagents package's default background queue does not silently cap large same-phase verifier sets. Verifiers are always general-purpose; absent `verify.model` -> the Executor Session's current model (`ctx.model`).
 - multi-repo grounding: when the Manifest declares `Repos:`, each verifier prompt is prepended with the repo path map.
 - aggregate PASS / FAIL / BLOCKED; FAIL verdicts are injected into the Executor Session as runtime-authored follow-up repair work; BLOCKED verdicts record and surface resumable blockers; PASS records done after freshness checks.
 - a durable, freshness-bound done gate: each verification is persisted to `~/.manifest-dev/runs/<runId>.json`, rehydrated from runtime state, and `done` is refused unless an all-PASS verification still matches the current manifest SHA and workspace diff.
@@ -149,7 +154,6 @@ The Pi extension owns Do/Verify Loop runtime behavior. The current runtime slice
 Configuration follows the Pi-native convention (`pi.registerFlag` / `pi.getFlag` with a `MANIFEST_DEV_*` environment-variable fallback; resolution order flag > env > default):
 
 - `--manifest-verifier-max-turns` / `MANIFEST_DEV_VERIFIER_MAX_TURNS` (default 1000)
-- `--manifest-verifier-agent` / `MANIFEST_DEV_VERIFIER_AGENT` (default general-purpose)
 - `--manifest-verifier-timeout-ms` / `MANIFEST_DEV_VERIFIER_TIMEOUT_MS` (default 1800000)
 - `--manifest-verifier-max-concurrent` / `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` (default 24)
 
@@ -164,7 +168,7 @@ Remaining target architecture work:
 - upgrade the lightweight persisted Verification Orchestrator Session record to a fully isolated SDK AgentSession if future verifier orchestration needs LLM reasoning
 - optional judge/fork handling for contested verifier reports or dubious blockers
 
-Do not claim package-level verifier agent resources until Pi supports them. If runtime extension source is absent, produce a skills-only Pi target with `/do` explicitly unavailable and warnings in the progress log and README.
+manifest-dev ships no agents, and verifiers are always general-purpose — do not claim package-level verifier agent resources. If runtime extension source is absent, produce a skills-only Pi target with `/do` explicitly unavailable and warnings in the progress log and README.
 
 ## Commands
 
@@ -193,11 +197,11 @@ Relevant primitives to account for in implementation docs:
 
 Do not port Claude Code hook names literally. For Pi, restate the event goal and choose the closest Pi extension/event primitive.
 
-## Prompt and Agent Assets
+## Prompt and Skill Assets
 
-Pi package manifests expose `prompts`, but manifest-dev's verifier prompt is assembled inline at runtime by `buildGateVerifierPrompt` in `manifest-dev-runtime.ts` (wrapping each gate's verbatim `verify.prompt`). There is no `dist/pi/runtime/agents|prompts` asset directory — do not assume one. Reviewer/verifier prompts are not exposed as user-facing prompt templates.
+Pi package manifests expose `prompts`, but manifest-dev's verifier prompt is assembled inline at runtime by `buildGateVerifierPrompt` in `manifest-dev-runtime.ts` (wrapping each gate's verbatim `verify.prompt`). There is no `dist/pi/runtime/agents|prompts` asset directory — do not assume one. The verifier prompt is not exposed as a user-facing prompt template. The former reviewer/verifier agents are skills under `dist/pi/skills/`.
 
-Do not add an unsupported `agents` key to `package.json`. If future Pi versions add package-level agents, update this reference with evidence and tests.
+Do not add an unsupported `agents` key to `package.json`; manifest-dev ships no agents. If future Pi versions add package-level agents, update this reference with evidence and tests.
 
 ## Namespacing
 
@@ -259,7 +263,7 @@ Generated and source READMEs must document:
 - current Harness-level Do command/outcome-tool support and any remaining runtime limitations
 - included `/skill:<name>` commands
 - required `pi install npm:@gotgenes/pi-subagents` runtime prerequisite for verifier fanout
-- verifier configuration flags / env vars and their defaults (max-turns, default agent, timeout-ms)
+- verifier configuration flags / env vars and their defaults (max-turns, timeout-ms, max-concurrent)
 
 ## Context File Adaptation
 
@@ -272,6 +276,6 @@ Pi sessions save under `~/.pi/agent/sessions/` and support `pi --session` and `p
 ## Known Uncertainties
 
 - Do not assume git subdirectory package roots. Use repo-root package metadata for git install unless Pi docs/source prove subdirectory package install is supported.
-- Do not assume package-level agent resources. Keep agent prompts extension-private until proven otherwise.
+- Do not assume package-level agent resources. manifest-dev ships no agents; the former agents are skills under `dist/pi/skills/`.
 - Do not assume package peer dependency installation alone enables another Pi package's extension; document explicit `pi install npm:@gotgenes/pi-subagents`.
 - Re-check Pi package and extension APIs before implementing Harness-level Do; this reference should stay evidence-backed rather than aspirational.

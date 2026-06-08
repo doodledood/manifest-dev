@@ -32,19 +32,18 @@ Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
 - **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from you. Routed by `/do`.
 - **`/code-review`** — quality review along **one dimension per invocation** (bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, or CLAUDE.md adherence). Loads exactly that dimension's reference (progressive disclosure) and returns a PASS/FAIL report. Verifier subagents activate it from a `verify.prompt`; it replaces the per-dimension reviewer agents.
 
-## Manifest Schema — Four Fields per Verify Block
+## Manifest Schema — Three Fields per Verify Block
 
 Every verify block has the same shape:
 
 ```yaml
 verify:
-  prompt: "..."     # required, verbatim verifier instruction
-  agent: "..."      # optional, default = general-purpose subagent
+  prompt: "..."     # required, verbatim instruction to a general-purpose verifier (may activate a skill)
   model: "..."      # optional, default = inherit from invoking context
   phase: 1          # optional integer, default 1 (lower phases run first)
 ```
 
-Verifiers return one of three states. **PASS** — the criterion holds. **FAIL** — violated, with evidence: either a per-gate directive `/do` runs literally (specialized verifiers like `github-pr-lifecycle`) or a prose fix hint read with judgment (generic verifiers). **BLOCKED** — can't be evaluated yet because an external action or state is pending (deploy, human approval); `/do` routes BLOCKED via `/escalate`.
+Verifiers return one of three states. **PASS** — the criterion holds. **FAIL** — violated, with evidence: either a per-gate directive `/do` runs literally (when the prompt activates a specialized skill like `github-pr-lifecycle`) or a prose fix hint read with judgment (plain prompts). **BLOCKED** — can't be evaluated yet because an external action or state is pending (deploy, human approval); `/do` routes BLOCKED via `/escalate`.
 
 Authors put whatever the verifier needs directly into the prompt — run a bash command and check the exit code, inspect files, query an API, fetch docs. There's no separate `method:` or `command:` field; the subagent runs whatever its prompt asks for.
 
@@ -63,11 +62,11 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 
 Amendments overwrite in place with stable IDs (modify `INV-G1` and it stays `INV-G1`; remove one and it's gone, no renumbering). No `## Amendments` log, no `INV-G1.1 amends INV-G1` chain — git carries the history.
 
-## Agents
+## Verification Skills
 
-Verifier subagents default to `general-purpose` when a manifest omits `verify.agent:`. The bundled `criteria-checker` is a focused alternative (invoked via `agent: criteria-checker`): read-only behavior is enforced by its prompt, so authors can point it at MCP servers or extra CLI tools the user has configured.
+manifest-dev ships **no agents of its own**. Every criterion is verified by a general-purpose subagent driven by `verify.prompt`, which can run bash, inspect files, query external tools, or activate a skill. The bundled `criteria-checker` skill is a focused generic verifier: read-only behavior is enforced by its prompt, so authors can point it at MCP servers or extra CLI tools the user has configured.
 
-Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`code-review` skill** — one dimension per invocation — not separate agents; a verifier activates it from `verify.prompt`. The remaining agents in `agents/` are functional: `criteria-checker` (generic verifier), `github-pr-lifecycle` (PR mergeability checks), and `slack-poller` (tails Slack threads for `/figure-out-team`). See the [root README](../../README.md#verifier-agents-and-the-code-review-skill) for the full list.
+Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`code-review` skill** — one dimension per invocation; a verifier activates it from `verify.prompt`. The other functional skills are `criteria-checker` (generic verifier), `github-pr-lifecycle` (PR mergeability checks), and `slack-poller` (tails Slack threads for `/figure-out-team`). See the [root README](../../README.md#verification-skills) for the full list.
 
 ## Task Guidance and References
 

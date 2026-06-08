@@ -2,12 +2,14 @@
 
 Reference for converting Claude Code plugin components to OpenCode format (opencode 1.15.x, May 2026).
 
+**manifest-dev ships no agents of its own.** The former functional agents (`criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `prompt-reviewer`) and the 13 review dimensions are all **skills**; verification is always a general-purpose subagent whose prompt activates a skill. The OpenCode distribution therefore ships **skills only — no `agents/` directory**. The agent-conversion mechanics below are retained as reference for the OpenCode agent format generally, not because manifest-dev emits any agents.
+
 ## Conversion Summary
 
 | Component | Phase 1 (Deterministic) | Phase 2 (LLM) |
 |-----------|------------------------|----------------|
 | Skills | Copy unchanged | — |
-| Agents | Frontmatter conversion (tool map + format) | Temperature/mode inference, description enrichment |
+| Agents | None shipped — manifest-dev has no agents | — |
 | Hooks | Generate complete plugin module placed in the local plugin directory | Adapt behavioral logic to OpenCode's event model |
 | Commands | Map skill → command markdown | Adapt prompt body |
 | MCP config | Generate opencode.json snippet | — |
@@ -57,6 +59,8 @@ Meta-permission keys (permission-only, not tool toggles):
 - `doom_loop` — repeated identical tool calls (3+)
 
 ### Agent Frontmatter Conversion
+
+> Not used by manifest-dev's distribution — manifest-dev ships no agents. Retained only as reference for the OpenCode agent format.
 
 Claude Code agent format:
 ```yaml
@@ -365,17 +369,16 @@ LLM should review agent prompt bodies for:
 
 ```
 dist/opencode/
-├── agents/                     # Agents (converted frontmatter)
-│   ├── github-pr-lifecycle.md
-│   └── criteria-checker.md
 ├── commands/                   # Commands (from user-invoked skills)
 │   └── define.md
-├── skills/                     # Skills (SKILL.md copied unchanged)
+├── skills/                     # Skills (SKILL.md copied unchanged) — incl. former agents
 │   ├── define/
 │   │   └── SKILL.md
 │   ├── do/
 │   │   └── SKILL.md
-│   └── verify/
+│   ├── criteria-checker/
+│   │   └── SKILL.md
+│   └── github-pr-lifecycle/
 │       └── SKILL.md
 ├── plugins/
 │   ├── index.ts                # Hook plugin (complete installable implementation)
@@ -402,9 +405,6 @@ bash dist/opencode/install.sh --local
 # Skills (already work from .claude/ natively, but for standalone):
 cp -r dist/opencode/skills/* ~/.config/opencode/skills/
 
-# Agents
-cp -r dist/opencode/agents/* ~/.config/opencode/agents/
-
 # Commands
 cp -r dist/opencode/commands/* ~/.config/opencode/commands/
 
@@ -423,12 +423,11 @@ OpenCode's `task` tool also supports subagent delegation, compatible with Claude
 
 Install scripts handle all component renaming at install time via `install_helpers.py`. The `dist/opencode/` directory keeps original names — sync-tools writes originals, install scripts namespace.
 
-`install_helpers.py` must discover skill directories, agent markdown files, and command markdown files from `dist/opencode/` at runtime. Do not encode static skill/agent/command lists or fixed counts in installer code; component add/remove/rename is represented by the files present in `dist/`.
+`install_helpers.py` must discover skill directories and command markdown files from `dist/opencode/` at runtime (manifest-dev ships no agents). Do not encode static skill/command lists or fixed counts in installer code; component add/remove/rename is represented by the files present in `dist/`.
 
 **Pattern**: Components get the suffix declared in `component-namespaces.json`:
 - Skill dirs: `skills/define/` → `skills/define-manifest-dev/`
 - Tool skill dirs: `skills/adr/` → `skills/adr-manifest-dev-tools/`
-- Agent files: `github-pr-lifecycle.md` → `github-pr-lifecycle-manifest-dev.md`
 - Command files: `define.md` → `define-manifest-dev.md`
 - Tool command files: `adr.md` → `adr-manifest-dev-tools.md`
 - SKILL.md `name:` field patched to match directory name
@@ -438,7 +437,6 @@ Install scripts handle all component renaming at install time via `install_helpe
 ```bash
 find "$TARGET/skills" -maxdepth 1 -name "*-manifest-dev" -type d -exec rm -rf {} + 2>/dev/null || true
 find "$TARGET/skills" -maxdepth 1 -name "*-manifest-dev-tools" -type d -exec rm -rf {} + 2>/dev/null || true
-find "$TARGET/agents" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
 find "$TARGET/commands" -maxdepth 1 -name "*-manifest-dev*" -exec rm -rf {} + 2>/dev/null || true
 find "$TARGET/commands" -maxdepth 1 -name "*-manifest-dev-tools*" -exec rm -rf {} + 2>/dev/null || true
 ```

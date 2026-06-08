@@ -28,18 +28,22 @@ SYNC_TOOLS = ROOT / ".claude" / "skills" / "sync-tools"
 CORE_SKILLS = (
     "auto",
     "code-review",
+    "criteria-checker",
     "define",
     "do",
     "done",
     "escalate",
     "figure-out",
     "figure-out-team",
+    "github-pr-lifecycle",
+    "slack-poller",
 )
 TOOLS_SKILLS = (
     "adr",
     "babysit-pr",
     "handoff",
     "prompt-engineering",
+    "prompt-reviewer",
     "review-pr",
     "teach-me",
     "walk-pr",
@@ -47,12 +51,16 @@ TOOLS_SKILLS = (
 PI_SKILLS = (
     "adr",
     "code-review",
+    "criteria-checker",
     "define",
     "figure-out",
     "figure-out-team",
+    "github-pr-lifecycle",
     "handoff",
     "prompt-engineering",
+    "prompt-reviewer",
     "review-pr",
+    "slack-poller",
     "teach-me",
     "walk-pr",
 )
@@ -285,25 +293,32 @@ def test_opencode_namespace_metadata_matches_dist() -> None:
         assert metadata["skills"][skill] == "-manifest-dev-tools"
 
 
-def test_opencode_dropped_dimension_reviewer_agents() -> None:
-    agents = {path.stem for path in (DIST / "opencode" / "agents").glob("*.md")}
-    assert not (RETIRED_REVIEWER_AGENTS & agents)
-    # Functional agents survive.
+def test_opencode_ships_no_agents() -> None:
+    # manifest-dev ships zero agents on every target; OpenCode drops its agents/ dir.
+    assert not (DIST / "opencode" / "agents").exists()
+
+
+def test_former_functional_agents_are_skills_in_every_dist() -> None:
+    """The four converted agents now ship as skills, not agents."""
     assert {
         "criteria-checker",
         "github-pr-lifecycle",
         "slack-poller",
+    } <= codex_plugin_skills("manifest-dev")
+    assert "prompt-reviewer" in codex_plugin_skills("manifest-dev-tools")
+    for name in (
+        "criteria-checker",
+        "github-pr-lifecycle",
+        "slack-poller",
         "prompt-reviewer",
-    } <= agents
+    ):
+        assert (DIST / "opencode" / "skills" / name / "SKILL.md").is_file()
+        assert (DIST / "pi" / "skills" / name / "SKILL.md").is_file()
 
 
 def test_figure_out_team_command_exists_for_opencode() -> None:
     command_file = DIST / "opencode" / "commands" / "figure-out-team.md"
     assert command_file.is_file()
-
-
-def test_slack_poller_agent_exists_for_opencode() -> None:
-    assert (DIST / "opencode" / "agents" / "slack-poller.md").is_file()
 
 
 # --------------------------------------------------------------------------
