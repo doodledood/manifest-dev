@@ -53,10 +53,10 @@ When no source file exists for a relevant source type, the general quality gates
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
-| Emergent depth | criteria-checker | Dedicated sections, follow-up searches, or scope evolution documented for unexpected findings |
-| Question completeness | criteria-checker | All dimensions of the research question identified and addressed |
-| Quantification | criteria-checker | Claims that could be quantified use numbers, not vague qualitative language — "faster" becomes "~2x faster" when evidence supports it |
-| Recency | criteria-checker | Sources published within the topic's relevance window — fast-moving topics demand recent, stable topics tolerate older |
+| Emergent depth | general-purpose | Dedicated sections, follow-up searches, or scope evolution documented for unexpected findings |
+| Question completeness | general-purpose | All dimensions of the research question identified and addressed |
+| Quantification | general-purpose | Claims that could be quantified use numbers, not vague qualitative language — "faster" becomes "~2x faster" when evidence supports it |
+| Recency | general-purpose | Sources published within the topic's relevance window — fast-moving topics demand recent, stable topics tolerate older |
 
 #### Output Quality
 
@@ -78,14 +78,14 @@ When no source file exists for a relevant source type, the general quality gates
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
 | GRADE-adapted confidence | general-purpose | Evidence quality assessed beyond source type — a PRIMARY source can be low-confidence if inconsistent with other evidence, indirect to the question, or imprecise. Dimensions: risk of bias, inconsistency, indirectness, imprecision, publication bias |
-| Claim decomposition | criteria-checker | Complex claims broken into independently verifiable atoms. Compound claims hide errors — "X reached $500B in 2023 driven by Y" contains three separate verifiable claims |
+| Claim decomposition | general-purpose | Complex claims broken into independently verifiable atoms. Compound claims hide errors — "X reached $500B in 2023 driven by Y" contains three separate verifiable claims |
 | Disagreement classification | general-purpose | Source conflicts classified before resolution: factual conflicts → investigate deeper, favor higher authority; open questions → preserve both positions; methodological differences → present both with framing. Never force false consensus on genuine open questions |
 
 #### Process Discipline
 
 | Aspect | Agent | Threshold |
 |--------|-------|-----------|
-| Protocol deviation tracking | criteria-checker | Departures from original research plan documented with rationale — pre-registration's value comes from making deviations visible, not preventing them |
+| Protocol deviation tracking | general-purpose | Departures from original research plan documented with rationale — pre-registration's value comes from making deviations visible, not preventing them |
 | Linchpin analysis | general-purpose | Claims whose failure would collapse most conclusions identified and targeted for strongest verification effort |
 | Outside view | general-purpose | Reference class identified — "how often do claims of this sort hold?" applied after initial conclusions to counter anchoring and base rate neglect |
 | Adversarial convergence | general-purpose | Adversarial findings descended in severity across waves — not merely absent. Final wave attacked from new angles. Conclusions became more accurate, not more hedged (bipolar check) |

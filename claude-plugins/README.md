@@ -25,9 +25,9 @@ Front-load the thinking so the agent gets it right the first time.
 - **`/define`** — encode that understanding into a Manifest. Auto-invokes `/figure-out` when the understanding isn't there yet. Supports `--canvas` (a live browser-rendered understanding surface) and `--babysit <pr-url>`.
 - **`/do`** — execute and verify. One subagent per criterion using its `verify.prompt:` verbatim, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Caller overlays can narrow retry cadence for CI one-shot workflows. Run it as `/goal /do <manifest-path>` (the recommended form) so it carries across turns. `/auto` chains all three autonomously; run that as `/goal /auto` too.
 
-Full schema, verify-block fields, agents, and task guidance live in the [manifest-dev README](./manifest-dev).
+Full schema, verify-block fields, verification skills, and task guidance live in the [manifest-dev README](./manifest-dev).
 
-For non-Claude installs and updates, see the root README's [Multi-CLI Support](../README.md#multi-cli-support). Pi installs `npm:@gotgenes/pi-subagents` plus the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`); it ships shared skills plus `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr`, clean verifier fanout, and a structured done/escalate gate.
+For non-Claude installs and updates, see the root README's [Multi-CLI Support](../README.md#multi-cli-support). Pi installs `npm:@gotgenes/pi-subagents` plus the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`); it ships shared skills plus `/do`, `/auto`, `/babysit-pr`, clean verifier fanout, and a structured done/escalate gate.
 
 **manifest-dev-tools** sits next to the workflow rather than inside it — prompt engineering, PR review and walkthroughs, PR babysitting, ADR synthesis, context handoff, and incremental teaching. Details in the [manifest-dev-tools README](./manifest-dev-tools).
 
