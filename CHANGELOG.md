@@ -82,10 +82,13 @@ packaged. It contains **breaking changes** — read the migration notes.
   instead of being looped back into repair. `check-pr` stays workflow-neutral; the `--ci`
   lifecycle verifier derives wait-only from check-pr's structured `sleep; reinvoke` directives
   and emits a `WAIT-PENDING` token the runtime routes to pending. A genuinely fixable failure
-  still routes to repair.
+  still routes to repair. The derivation rule is injected by the runtime into the **gate
+  verifier prompt** (`buildGateVerifierPrompt({ ciOneShot })`) — not the executor prompt or the
+  manifest `verify.prompt` — so it actually reaches the verifier subagent for synthesized and
+  `--manifest` runs alike.
 
 ### Versions
 
 - `manifest-dev` plugin: 2.4.0 → 2.8.3
 - `manifest-dev-tools` plugin: 0.19.0 → 0.23.1
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.8
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.9

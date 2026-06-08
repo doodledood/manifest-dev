@@ -80,7 +80,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -192,7 +192,7 @@ Pi skills already register as `/skill:<name>` commands when skill commands are e
 
 Pi allows multiple extensions to register the same command and disambiguates with numeric suffixes. Generated docs must mention that collisions are possible if aliases are installed.
 
-**`/babysit-pr --ci` wait-pending contract (verifier→runtime, not check-pr).** `check-pr` is workflow-neutral — it never emits a "pending vs repair" token (that is a caller decision, per its own invariant). The wait-only decision lives in the `--ci` lifecycle verifier prompt and the runtime: the verifier derives wait-only from `check-pr`'s structured FAIL directives (every failing gate is a `bash sleep <N>; reinvoke` wait, nothing actionable) and emits the `WAIT-PENDING` token in its EVIDENCE/DETAILS. The runtime (`isWaitPendingFailure` + `routeVerificationResult`) routes a `ciOneShot` failure whose every FAIL gate carries that token to a pending (resumable) exit instead of repair. A mixed or actionable failure still repairs. Keep the token out of `check-pr`'s vocabulary when regenerating its skill.
+**`/babysit-pr --ci` wait-pending contract (verifier→runtime, not check-pr).** `check-pr` is workflow-neutral — it never emits a "pending vs repair" token (that is a caller decision, per its own invariant). The wait-only decision is a runtime-owned verifier→runtime contract: when a run is `ciOneShot`, the runtime injects `CI_WAIT_PENDING_VERIFIER_RULE` into **every gate's verifier prompt** via `buildGateVerifierPrompt({ ciOneShot })` — not into the executor/babysit prompt or the manifest `verify.prompt`, so it reaches the spawned verifier subagent for synthesized **and** `--manifest` runs alike. The verifier derives wait-only from `check-pr`'s structured FAIL directives (every failing gate is a `bash sleep <N>; reinvoke` wait, nothing actionable) and appends the `WAIT-PENDING` token to its DETAILS. The runtime (`isWaitPendingFailure` + `routeVerificationResult`) routes a `ciOneShot` failure whose every FAIL gate carries that token to a pending (resumable) exit instead of repair. A mixed or actionable failure still repairs. Keep the token out of `check-pr`'s vocabulary when regenerating its skill.
 
 ## Extension and Runtime Affordances
 

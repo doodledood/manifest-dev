@@ -513,12 +513,24 @@ def test_check_pr_stays_workflow_neutral_on_every_surface() -> None:
 
 
 def test_wait_pending_contract_lives_in_runtime_and_pi_reference() -> None:
-    """The wait-pending contract must live where check-pr is not: the runtime constant,
-    the --ci verifier prompt, and the Pi runtime reference. Guards against the contract
-    being dropped (which would silently route wait-only PRs back into repair)."""
-    runtime = PI_EXTENSION.read_text(encoding="utf-8")
-    assert 'WAIT_PENDING_MARKER = "WAIT-PENDING"' in runtime
-    assert "isWaitPendingFailure" in runtime
+    """The wait-pending contract must live where check-pr is not: the runtime module
+    (marker + the verifier-prompt rule the runtime injects when ciOneShot), the routing
+    in the extension, and the Pi runtime reference. Guards against the contract being
+    dropped (which would silently route wait-only PRs back into repair). The rule MUST be
+    in the verifier-prompt builder, not only the executor prompt, or the verifier that has
+    to emit the marker never receives it."""
+    runtime_mod = PI_EXTENSION_RUNTIME.read_text(encoding="utf-8")
+    assert 'WAIT_PENDING_MARKER = "WAIT-PENDING"' in runtime_mod
+    # The derivation rule is injected into the gate verifier prompt (reaches the verifier
+    # subagent for synthesized AND --manifest runs), gated on ciOneShot.
+    assert "CI_WAIT_PENDING_VERIFIER_RULE" in runtime_mod
+    assert "buildGateVerifierPrompt" in runtime_mod
+    assert "ciOneShot" in runtime_mod
+    ext = PI_EXTENSION.read_text(encoding="utf-8")
+    assert "isWaitPendingFailure" in ext
+    assert (
+        "ciOneShot: run.ciOneShot" in ext
+    )  # threaded into the verifier prompt at spawn
     pi_ref = (SYNC_TOOLS / "references" / "pi-cli.md").read_text(encoding="utf-8")
     assert "WAIT-PENDING" in pi_ref
     assert "workflow-neutral" in pi_ref

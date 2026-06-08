@@ -21,6 +21,7 @@ import {
 	unquote,
 	waitForVerifierRecords,
 	writeRunStateFile,
+	WAIT_PENDING_MARKER,
 	type GateVerificationResult,
 	type ManifestGate,
 	type SubagentsRecordService,
@@ -65,11 +66,9 @@ const RUN_ENTRY = "manifest-dev:run";
 const VERIFICATION_ENTRY = "manifest-dev:verification";
 const OUTCOME_ENTRY = "manifest-dev:outcome";
 const STATUS_ENTRY = "manifest-dev:status";
-// Verifier→runtime contract token (NOT a check-pr token — check-pr stays workflow-neutral).
-// The --ci lifecycle verifier derives "wait-only" from check-pr's structured FAIL directives
-// (every failing gate is a "sleep; reinvoke" wait, nothing actionable) and emits this marker
-// in its EVIDENCE/DETAILS so the runtime routes the failure to a pending exit, not repair.
-const WAIT_PENDING_MARKER = "WAIT-PENDING";
+// WAIT_PENDING_MARKER and the verifier-facing derivation rule live in the runtime module
+// (manifest-dev-runtime.ts) so the rule reaches the spawned verifier prompt, not just the
+// executor prompt. Imported above.
 const SUBAGENTS_PACKAGE = "@gotgenes/pi-subagents";
 
 // Verifiers always run as a general-purpose subagent that loads whatever skill
@@ -388,7 +387,7 @@ export function buildManifestBabysitPrompt(run: RunRecord, prUrl: string, rawArg
 		? `2. Use the existing manifest at '${existingManifest}' as the PR's grounding (do not synthesize a new one).`
 		: `2. Invoke the define skill (/skill:define) with '--babysit ${prUrl} --autonomous' and write the lifecycle manifest exactly at: ${run.manifestPath}`;
 	const cadenceStep = ci
-		? `3. CI one-shot mode (--ci): perform every immediately actionable lifecycle step (inspect CI, review threads, mergeability, description sync; apply and push trusted fixes; retrigger; reply/resolve), then STOP and report the pending/waiting state instead of sleeping the runner. Do not block on long waits. The lifecycle gate's verifier owns the wait-only decision — check-pr stays workflow-neutral and emits no such token; the verifier DERIVES it from check-pr's FAIL output: if every failing gate's directive is a wait ("bash sleep <N>; reinvoke") and none is actionable (no reply / reply-and-resolve / retrigger / sync-description / re-request-review / prose fix), the PR is blocked only on external waits. In that case the verifier must return VERDICT: FAIL with the token ${WAIT_PENDING_MARKER} in its EVIDENCE/DETAILS so the runtime exits pending instead of looping repair. If any failing gate is actionable, omit ${WAIT_PENDING_MARKER} and report a normal FAIL.`
+		? `3. CI one-shot mode (--ci): perform every immediately actionable lifecycle step (inspect CI, review threads, mergeability, description sync; apply and push trusted fixes; retrigger; reply/resolve), then STOP instead of sleeping the runner on long waits. When the only thing left is an external wait (reviewer / CI / merge window), the runtime exits pending (resumable) rather than looping repair — the lifecycle gate's verifier signals the wait-only state to the runtime, so you do not emit any token yourself. Just don't burn the runner sleeping on waits.`
 		: `3. Execute that manifest under the simplified Harness-level Do implementation contract: inspect CI, review threads, mergeability, PR description sync, and required fixes; commit/push only when the branch is trusted and writable; repair runtime-injected failed AC/INV reports; then stop when no known work remains.`;
 
 	return `Run manifest-dev babysit-pr in Pi.
@@ -526,6 +525,7 @@ async function runHarnessVerification(
 					reposMap,
 					orchestratorSessionId: orchestrator.id,
 					orchestratorSessionFile: orchestrator.file,
+					ciOneShot: run.ciOneShot,
 				});
 				const verifierModel = resolveVerifierModel(gate.model, ctx.model);
 				const spawnOptions = {

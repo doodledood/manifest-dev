@@ -977,14 +977,27 @@ test("buildOrchestrationSpawnBlocker names a harness spawn failure and the stale
 	assert.doesNotMatch(other, /stored session context was invalidated/);
 });
 
-test("buildManifestBabysitPrompt --ci instructs the verifier to emit WAIT-PENDING", () => {
+test("buildManifestBabysitPrompt --ci sets pending cadence but does NOT carry the verifier token", () => {
 	const run = { runId: "manifest-dev-run", manifestPath: "/tmp/m.md", manifestSha256: "h" };
 	const url = "https://github.com/o/r/pull/1";
 	const ciPrompt = buildManifestBabysitPrompt(run, url, `${url} --ci`);
 	assert.match(ciPrompt, /CI one-shot mode/);
-	assert.match(ciPrompt, /WAIT-PENDING/);
-	// Default (no --ci) does not mention the marker.
+	assert.match(ciPrompt, /pending/);
+	// The WAIT-PENDING token is a verifier->runtime contract injected into the VERIFIER
+	// prompt by the runtime, not the executor prompt — the verifier never reads this prompt.
+	assert.doesNotMatch(ciPrompt, /WAIT-PENDING/);
 	assert.doesNotMatch(buildManifestBabysitPrompt(run, url, url), /WAIT-PENDING/);
+});
+
+test("buildGateVerifierPrompt injects the WAIT-PENDING rule only when ciOneShot", () => {
+	const gate = { id: "AC-1.1", kind: "acceptance_criterion", title: "PR lifecycle", verifyPrompt: "Activate the check-pr skill." };
+	const base = { gate, manifestPath: "/m", manifest: "# M", runId: "r" };
+	const ciPrompt = buildGateVerifierPrompt({ ...base, ciOneShot: true });
+	assert.match(ciPrompt, /WAIT-PENDING/);
+	assert.match(ciPrompt, /bash sleep <N>; reinvoke/);
+	// Off by default — non-ci runs and other gates get the plain verifier contract.
+	assert.doesNotMatch(buildGateVerifierPrompt(base), /WAIT-PENDING/);
+	assert.doesNotMatch(buildGateVerifierPrompt({ ...base, ciOneShot: false }), /WAIT-PENDING/);
 });
 
 test("isWaitPendingFailure requires every FAIL gate to carry the WAIT-PENDING marker", () => {
