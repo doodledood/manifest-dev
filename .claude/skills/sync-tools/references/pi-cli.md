@@ -80,7 +80,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -147,6 +147,7 @@ The Pi extension owns Do/Verify Loop runtime behavior. The current runtime slice
 - runtime-owned verification/outcome orchestration rather than LLM-visible verifier/outcome tools in the executor action space, including a clean verification orchestration session record per attempt.
 - parse the Manifest and enumerate Acceptance Criteria and Global Invariants, honoring each gate's `verify.model` and `phase`. There is no `verify.agent` field — every gate is verified by a general-purpose subagent whose `verify.prompt` may activate a skill.
 - record a clean verification orchestration session under `~/.manifest-dev/verification-sessions/`, then run clean Pi subagent verifier sessions (`inheritContext: false`) in ascending-phase batches — serial across phases, parallel within, short-circuiting later phases on FAIL/BLOCKED. Verifier spawns use `bypassQueue: true` and manifest-dev's own per-phase fanout cap so the community subagents package's default background queue does not silently cap large same-phase verifier sets. Verifiers are always general-purpose; absent `verify.model` -> the Executor Session's current model (`ctx.model`).
+- resilient verifier spawning: each `subagents.spawn` is retried once after yielding a tick (a spawn can transiently hit Pi's stale-session-context guard at the executor checkpoint while the session settles). If no verifier spawns at all, the attempt returns a single harness/runtime orchestration BLOCKED with the underlying spawn error and session-id diagnostics — not an identical BLOCKED per gate that never ran.
 - multi-repo grounding: when the Manifest declares `Repos:`, each verifier prompt is prepended with the repo path map.
 - aggregate PASS / FAIL / BLOCKED; FAIL verdicts are injected into the Executor Session as runtime-authored follow-up repair work; BLOCKED verdicts record and surface resumable blockers; PASS records done after freshness checks.
 - a durable, freshness-bound done gate: each verification is persisted to `~/.manifest-dev/runs/<runId>.json`, rehydrated from runtime state, and `done` is refused unless an all-PASS verification still matches the current manifest SHA and workspace diff.

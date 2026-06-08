@@ -510,6 +510,7 @@ async function runHarnessVerification(
 	const reposMap = extractReposMap(manifest);
 	const batches = planVerifierBatches(gates);
 	const results: GateVerificationResult[] = [];
+	let totalSpawned = 0;
 
 	for (const batch of batches) {
 		const phaseResultStart = results.length;
@@ -541,11 +542,31 @@ async function runHarnessVerification(
 					...(verifierModel ? { model: verifierModel } : {}),
 				};
 
-				try {
-					const agentId = subagents.spawn(VERIFIER_AGENT_TYPE, prompt, spawnOptions);
-					spawnedInChunk.push({ gate, agentId });
-				} catch (error) {
-					results.push(spawnBlockedResult(gate, VERIFIER_AGENT_TYPE, error));
+				const spawn = await spawnVerifier(subagents, VERIFIER_AGENT_TYPE, prompt, spawnOptions);
+				if (spawn.ok) {
+					totalSpawned += 1;
+					spawnedInChunk.push({ gate, agentId: spawn.agentId });
+				} else if (totalSpawned === 0) {
+					// No verifier has spawned at all — treat this as a systemic harness
+					// orchestration failure (e.g. a stale Pi session context at the
+					// checkpoint) and report ONE clear blocker, instead of an identical
+					// BLOCKED on every gate that never actually ran.
+					return makeBlockedVerificationRecord({
+						runId: run.runId,
+						manifestPath,
+						manifest,
+						cwd: ctx.cwd,
+						requestedAt,
+						implementationSummary: params.implementationSummary,
+						blocker: buildOrchestrationSpawnBlocker(run, ctx.sessionManager.getSessionId(), spawn.error),
+						orchestratorSessionId: orchestrator.id,
+						orchestratorSessionFile: orchestrator.file,
+						workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
+					});
+				} else {
+					// Some verifiers already spawned, so spawning works in general; keep a
+					// per-gate blocker for this one rather than failing the whole attempt.
+					results.push(spawnBlockedResult(gate, VERIFIER_AGENT_TYPE, spawn.error));
 				}
 			}
 
@@ -862,6 +883,49 @@ function spawnBlockedResult(gate: ManifestGate, requestedType: string, error: un
 		details: formatError(error),
 		error: "spawn_failed",
 	};
+}
+
+/**
+ * Spawn one verifier subagent, retrying once after yielding a macrotask. A spawn can
+ * transiently fail at the executor checkpoint if the subagents service's stored
+ * session context is mid session-transition (Pi's stale-context guard surfaces this
+ * through `spawn`). Yielding a tick lets the session settle, so a single retry
+ * distinguishes a transient window from a real orchestration failure. The first
+ * error is preserved for reporting when both attempts fail. spawn() returns the
+ * agentId synchronously, so a thrown attempt creates no child to leak.
+ */
+export async function spawnVerifier(
+	subagents: Pick<SubagentsService, "spawn">,
+	type: string,
+	prompt: string,
+	options: Parameters<SubagentsService["spawn"]>[2],
+): Promise<{ ok: true; agentId: string } | { ok: false; error: unknown }> {
+	try {
+		return { ok: true, agentId: subagents.spawn(type, prompt, options) };
+	} catch (firstError) {
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		try {
+			return { ok: true, agentId: subagents.spawn(type, prompt, options) };
+		} catch {
+			return { ok: false, error: firstError };
+		}
+	}
+}
+
+/**
+ * Blocker text for a systemic verifier-spawn failure: no verifier ran, so this is a
+ * harness/runtime orchestration failure rather than a gate or implementation failure.
+ * Names the underlying error and the session ids so a stale-context spawn failure is
+ * diagnosable instead of being reported as an identical BLOCKED on every gate.
+ */
+export function buildOrchestrationSpawnBlocker(run: RunRecord, currentSessionId: string, error: unknown): string {
+	return [
+		"Verifier subagents could not be spawned, so no Acceptance Criterion or Global Invariant was verified.",
+		"This is a harness/runtime orchestration failure (verifier spawn), not an implementation or gate failure.",
+		`Underlying spawn error: ${formatError(error)}`,
+		`Diagnostics: current session ${currentSessionId}, executor session ${run.executorSessionId}.`,
+		"If this is a stale Pi session-context error, re-run verification once the session has settled.",
+	].join("\n");
 }
 
 function runStateDir(): string {

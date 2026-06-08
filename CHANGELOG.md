@@ -49,8 +49,18 @@ packaged. It contains **breaking changes** — read the migration notes.
 - **The Pi runtime is now two packages.** `@doodledood/manifest-dev-pi` (core: `/do`,
   `/auto`) and `@doodledood/manifest-dev-pi-tools` (`/babysit-pr`, depends on core).
 
+### Fixes
+
+- **Resilient verifier spawning.** Each `subagents.spawn` is retried once after yielding a
+  tick, since a spawn can transiently hit Pi's stale-session-context guard at the executor
+  checkpoint while the session settles. If no verifier spawns at all, Harness verification
+  now reports a single harness/runtime orchestration BLOCKED (with the underlying spawn error
+  and session-id diagnostics) instead of an identical BLOCKED on every gate that never ran.
+  The related custom-verifier-agent failure mode is gone independently: verifiers are always
+  general-purpose (no `verify.agent`), so a missing reviewer agent type can no longer block.
+
 ### Versions
 
 - `manifest-dev` plugin: 2.4.0 → 2.8.0
 - `manifest-dev-tools` plugin: 0.19.0 → 0.23.0
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.3
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.4

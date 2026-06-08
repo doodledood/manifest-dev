@@ -6,6 +6,7 @@ import manifestDevExtension, {
 	buildManifestAutoPrompt,
 	buildManifestBabysitPrompt,
 	buildManifestDoPrompt,
+	buildOrchestrationSpawnBlocker,
 	createVerificationOrchestratorSession,
 	formatRepairFollowUpMessage,
 	makeOrchestratorSessionId,
@@ -13,6 +14,7 @@ import manifestDevExtension, {
 	resolveManifestPath,
 	routeVerificationResult,
 	shouldTriggerHarnessVerification,
+	spawnVerifier,
 	startManifestDo,
 } from "../pi/extensions/manifest-dev.ts";
 import {
@@ -935,6 +937,50 @@ test("routeVerificationResult injects repair, blocked, and done runtime outcomes
 	);
 	rmSync(routeRunStateFile, { force: true });
 	rmSync(routeTmpDir, { recursive: true, force: true });
+});
+
+test("spawnVerifier retries once after a transient throw, then succeeds", async () => {
+	let calls = 0;
+	const subagents = {
+		spawn() {
+			calls += 1;
+			if (calls === 1) throw new Error("ctx is stale after session replacement or reload");
+			return "agent-2";
+		},
+	};
+	const result = await spawnVerifier(subagents, "general-purpose", "verify", { maxTurns: 5 });
+	assert.deepEqual(result, { ok: true, agentId: "agent-2" });
+	assert.equal(calls, 2);
+});
+
+test("spawnVerifier returns the first error after two failures", async () => {
+	let calls = 0;
+	const subagents = {
+		spawn() {
+			calls += 1;
+			throw new Error(`stale ctx ${calls}`);
+		},
+	};
+	const result = await spawnVerifier(subagents, "general-purpose", "verify", undefined);
+	assert.equal(result.ok, false);
+	assert.equal(calls, 2);
+	assert.match(String(result.error), /stale ctx 1/);
+});
+
+test("buildOrchestrationSpawnBlocker names a harness spawn failure with session diagnostics", () => {
+	const run = {
+		runId: "manifest-dev-run",
+		command: "do",
+		startedAt: "t",
+		cwd: "/repo",
+		executorSessionId: "executor-session",
+		status: "verifying",
+	};
+	const blocker = buildOrchestrationSpawnBlocker(run, "current-session", new Error("ctx is stale after session replacement"));
+	assert.match(blocker, /harness\/runtime orchestration failure/);
+	assert.match(blocker, /no Acceptance Criterion or Global Invariant was verified/);
+	assert.match(blocker, /Underlying spawn error: .*ctx is stale/);
+	assert.match(blocker, /current session current-session, executor session executor-session/);
 });
 
 function gateResult(verdict) {
