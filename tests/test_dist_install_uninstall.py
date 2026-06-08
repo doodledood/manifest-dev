@@ -164,9 +164,11 @@ def test_opencode_installer_defaults_to_global_config_dir(tmp_path: Path) -> Non
     target = Path(env["HOME"]) / ".config" / "opencode"
     assert f"Target:  {target}" in result.stdout
     assert (target / "skills" / "define-manifest-dev").is_dir()
-    # criteria-checker is a skill now, not an agent.
+    # criteria-checker is a skill now, not an agent; no manifest-dev agents install.
     assert (target / "skills" / "criteria-checker-manifest-dev").is_dir()
-    assert not (target / "agents").exists()
+    agents_dir = target / "agents"
+    if agents_dir.exists():
+        assert not list(agents_dir.glob("*-manifest-dev*"))
     assert (target / "commands" / "define-manifest-dev.md").is_file()
 
 

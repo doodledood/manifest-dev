@@ -341,7 +341,8 @@ def test_codex_reference_is_plugin_native() -> None:
     assert "~/.codex/plugins/cache/" in reference
     # The legacy installer approach is retired.
     assert "TOML config stubs" not in reference
-    assert "the `code-review` **skill**" in reference
+    # manifest-dev ships no agents — all former agents are skills.
+    assert "all former agents are skills" in reference
 
 
 # --------------------------------------------------------------------------

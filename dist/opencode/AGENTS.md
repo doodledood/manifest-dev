@@ -35,7 +35,7 @@ The subagent returns **PASS**, **FAIL**, or **BLOCKED**. BLOCKED routes via /esc
 
 ## PR Lifecycle
 
-PR-lifecycle work composes the `github-pr-lifecycle` agent through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /babysit-pr uses manifest/PR grounding and runs the lifecycle; /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
+PR-lifecycle work activates the `github-pr-lifecycle` skill (via a general-purpose verifier) through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /babysit-pr uses manifest/PR grounding and runs the lifecycle; /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
 
 ## Code review
 
@@ -43,14 +43,7 @@ Quality review is the **`code-review` skill** (one dimension per invocation, eac
 
 ## Agents
 
-Functional subagents, all read-only:
-
-| Agent | Purpose |
-|-------|---------|
-| criteria-checker | Single-criterion verifier — the default subagent when verify.agent is omitted |
-| github-pr-lifecycle | Steerable GitHub PR lifecycle inspection — returns natural-language hint for /do to dispatch. Read-only; never invokes the merge button. |
-| slack-poller | Narrate new Slack messages in a channel or thread since a cursor. Used by /figure-out-team. |
-| prompt-reviewer | Reviews LLM prompts against the /prompt-engineering skill's gap-calibration principles (tools-plugin agent — installs with `-manifest-dev-tools` suffix) |
+manifest-dev ships no agents. Verification is a general-purpose subagent that activates the relevant skill — formerly-agent capabilities now ship as skills (`criteria-checker`, `github-pr-lifecycle`, `slack-poller`, and the tools-side `prompt-reviewer`).
 
 ## Unattended Execution
 

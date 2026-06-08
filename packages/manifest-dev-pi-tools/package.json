@@ -16,7 +16,7 @@
     ]
   },
   "dependencies": {
-    "@doodledood/manifest-dev-pi": "0.5.0"
+    "@doodledood/manifest-dev-pi": "0.6.0"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",

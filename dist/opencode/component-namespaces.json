@@ -19,14 +19,13 @@
     "review-pr": "-manifest-dev-tools",
     "walk-pr": "-manifest-dev-tools",
     "teach-me": "-manifest-dev-tools",
-    "code-review": "-manifest-dev"
-  },
-  "agents": {
+    "code-review": "-manifest-dev",
     "criteria-checker": "-manifest-dev",
     "github-pr-lifecycle": "-manifest-dev",
     "slack-poller": "-manifest-dev",
     "prompt-reviewer": "-manifest-dev-tools"
   },
+  "agents": {},
   "commands": {
     "auto": "-manifest-dev",
     "define": "-manifest-dev",
@@ -39,6 +38,10 @@
     "prompt-engineering": "-manifest-dev-tools",
     "review-pr": "-manifest-dev-tools",
     "walk-pr": "-manifest-dev-tools",
-    "teach-me": "-manifest-dev-tools"
+    "teach-me": "-manifest-dev-tools",
+    "criteria-checker": "-manifest-dev",
+    "github-pr-lifecycle": "-manifest-dev",
+    "slack-poller": "-manifest-dev",
+    "prompt-reviewer": "-manifest-dev-tools"
   }
 }
