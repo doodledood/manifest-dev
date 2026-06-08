@@ -118,7 +118,7 @@ Do NOT report on (owned by other dimensions):
 
 Note: Security issues causing **runtime failures** (crashes, data corruption) ARE in scope. Security issues requiring **static analysis** are out of scope.
 
-**Tool usage**: WebFetch and WebSearch are available for researching unfamiliar APIs or ambiguous language semantics. If web research fails and you cannot be certain about the bug, drop the finding entirely.
+**Tool usage**: shell_command (for fetching docs) and web_search are available for researching unfamiliar APIs or ambiguous language semantics. If web research fails and you cannot be certain about the bug, drop the finding entirely.
 
 ## Severity calibration (this dimension)
 

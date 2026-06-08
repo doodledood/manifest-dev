@@ -9,7 +9,7 @@ manifest-dev ships **zero agents** — every capability is a skill. Quality revi
 | Type | Count | Description |
 |------|-------|-------------|
 | Skills | 18 | Core workflow skills plus manifest-dev-tools utilities (incl. `review-code`, `check-pr`, `poll-slack`, `review-prompt`) |
-| Commands | 15 | User-invocable slash commands generated from user-invocable skills |
+| Commands | 16 | User-invocable slash commands generated from user-invocable skills |
 | Context | 1 | AGENTS.md workflow overview |
 | Agents | 0 | None — all capabilities are skills |
 
@@ -107,7 +107,7 @@ dist/opencode/
 │   ├── check-pr/  poll-slack/       #   former functional agents, now skills
 │   ├── define/  do/  auto/  ...      #   workflow skills
 │   └── review-prompt/  prompt-engineering/  review-pr/  ...
-├── commands/                        # 15 user commands (from user-invocable skills)
+├── commands/                        # 16 user commands (from user-invocable skills)
 ├── component-namespaces.json        # install-time namespacing metadata
 ├── AGENTS.md                        # Context file
 ├── README.md                        # This file

@@ -104,7 +104,7 @@ Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action 
 
 **Summary for Approval.** Before Complete, write a plain-language digest (plan / what / guardrails / how-verified) — no codes, no YAML, no schema vocab. **Test:** reads like talking to a colleague, not a compressed manifest. Approval → Complete; feedback → revise; `/do` → handoff; decline → exit silently. Skip the wait when caller is `/auto` or `/do` amendment, or the user signals "enough".
 
-**Complete.** Emit the load-bearing handoff (`<manifest-path>` is the absolute path you wrote; `<dir>` is the project directory in slug form, e.g. `-home-user-manifest-dev`):
+**Complete.** Emit the load-bearing handoff (`<manifest-path>` is the absolute path you wrote):
 
 ```text
 Manifest complete: <manifest-path>

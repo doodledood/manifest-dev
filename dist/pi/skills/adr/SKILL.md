@@ -24,7 +24,7 @@ If any required argument is missing: error and halt with usage:
 ```
 Usage: /adr <manifest-path> <output-dir> <transcript-path>
 
-Example: /adr ~/.manifest-dev/manifests/manifest-1234.md docs/adr/ ~/.pi/agent/sessions/<session>.jsonl
+Example: /adr ~/.manifest-dev/manifests/manifest-1234.md docs/adr/ ~/.claude/projects/.../session.jsonl
 ```
 
 ## Pipeline
@@ -94,4 +94,4 @@ Total: N ADR(s) from M candidate decisions.
 ## Known Limitations
 
 - **Multi-define sessions**: If the session transcript contains multiple `/define` runs, `/adr` processes the full transcript. ADRs may reflect decisions from any run in the session. Review output for relevance to your specific task.
-- **Session transcript format**: Assumes the host session transcript JSONL format (Pi sessions live under `~/.pi/agent/sessions/`) is stable. If the format changes, extraction agents may need updating.
+- **Session transcript format**: Assumes the Claude Code session transcript JSONL format (`~/.claude/projects/<dir>/<id>.jsonl`) is stable. If the format changes, extraction agents may need updating.

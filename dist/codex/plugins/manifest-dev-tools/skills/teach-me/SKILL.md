@@ -18,6 +18,6 @@ Drive at *why*, and keep drilling into deeper whys — but cover *what* and *how
 
 Start by gauging where they are: proactively have them restate their current understanding before you explain anything. Fill the gaps from there. Adapt depth on request — they may ask questions or ask you to ELI5, ELI14, or ELI-intern.
 
-Quiz to verify mastery, using AskUserQuestion with open-ended or multiple-choice questions. Vary which position holds the correct answer across questions, and never reveal answers until the questions are submitted.
+Quiz to verify mastery, using request_user_input with open-ended or multiple-choice questions. Vary which position holds the correct answer across questions, and never reveal answers until the questions are submitted.
 
 Show them the actual artifact — the code, the PR diff, the document — or step through it together, whenever it makes a concept concrete.

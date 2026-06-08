@@ -13,8 +13,8 @@ This registers two plugins:
 
 | Plugin | Skills |
 |--------|--------|
-| `manifest-dev` | `define`, `do`, `auto`, `done`, `escalate`, `figure-out`, `figure-out-team`, `review-code` |
-| `manifest-dev-tools` | `babysit-pr`, `review-pr`, `walk-pr`, `teach-me`, `adr`, `handoff`, `prompt-engineering` |
+| `manifest-dev` | `define`, `do`, `auto`, `done`, `escalate`, `figure-out`, `figure-out-team`, `check-pr`, `poll-slack`, `review-code` |
+| `manifest-dev-tools` | `adr`, `babysit-pr`, `handoff`, `prompt-engineering`, `review-pr`, `review-prompt`, `teach-me`, `walk-pr` |
 
 Local development against a checkout:
 
