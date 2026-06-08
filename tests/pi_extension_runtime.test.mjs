@@ -9,6 +9,7 @@ import manifestDevExtension, {
 	buildOrchestrationSpawnBlocker,
 	createVerificationOrchestratorSession,
 	formatRepairFollowUpMessage,
+	isStaleSessionContextError,
 	makeOrchestratorSessionId,
 	rehydrateRuntimeState,
 	resolveManifestPath,
@@ -939,35 +940,22 @@ test("routeVerificationResult injects repair, blocked, and done runtime outcomes
 	rmSync(routeTmpDir, { recursive: true, force: true });
 });
 
-test("spawnVerifier retries once after a transient throw, then succeeds", async () => {
+test("spawnVerifier returns the agentId on success and the error on failure (no retry)", () => {
 	let calls = 0;
-	const subagents = {
-		spawn() {
-			calls += 1;
-			if (calls === 1) throw new Error("ctx is stale after session replacement or reload");
-			return "agent-2";
-		},
-	};
-	const result = await spawnVerifier(subagents, "general-purpose", "verify", { maxTurns: 5 });
-	assert.deepEqual(result, { ok: true, agentId: "agent-2" });
-	assert.equal(calls, 2);
+	const ok = spawnVerifier({ spawn() { calls += 1; return "agent-1"; } }, "general-purpose", "verify", { maxTurns: 5 });
+	assert.deepEqual(ok, { ok: true, agentId: "agent-1" });
+	assert.equal(calls, 1);
+
+	// A stale-context throw is surfaced immediately — no retry, because the subagents
+	// service only refreshes its stored ctx on a session lifecycle event, not in a tick.
+	let failCalls = 0;
+	const fail = spawnVerifier({ spawn() { failCalls += 1; throw new Error("ctx is stale after session replacement or reload"); } }, "general-purpose", "verify", undefined);
+	assert.equal(fail.ok, false);
+	assert.equal(failCalls, 1);
+	assert.equal(isStaleSessionContextError(fail.error), true);
 });
 
-test("spawnVerifier returns the first error after two failures", async () => {
-	let calls = 0;
-	const subagents = {
-		spawn() {
-			calls += 1;
-			throw new Error(`stale ctx ${calls}`);
-		},
-	};
-	const result = await spawnVerifier(subagents, "general-purpose", "verify", undefined);
-	assert.equal(result.ok, false);
-	assert.equal(calls, 2);
-	assert.match(String(result.error), /stale ctx 1/);
-});
-
-test("buildOrchestrationSpawnBlocker names a harness spawn failure with session diagnostics", () => {
+test("buildOrchestrationSpawnBlocker names a harness spawn failure and the stale-context cause", () => {
 	const run = {
 		runId: "manifest-dev-run",
 		command: "do",
@@ -976,11 +964,15 @@ test("buildOrchestrationSpawnBlocker names a harness spawn failure with session 
 		executorSessionId: "executor-session",
 		status: "verifying",
 	};
-	const blocker = buildOrchestrationSpawnBlocker(run, "current-session", new Error("ctx is stale after session replacement"));
-	assert.match(blocker, /harness\/runtime orchestration failure/);
-	assert.match(blocker, /no Acceptance Criterion or Global Invariant was verified/);
-	assert.match(blocker, /Underlying spawn error: .*ctx is stale/);
-	assert.match(blocker, /current session current-session, executor session executor-session/);
+	const stale = buildOrchestrationSpawnBlocker(run, "current-session", new Error("This extension ctx is stale after session replacement or reload."));
+	assert.match(stale, /harness\/runtime orchestration failure/);
+	assert.match(stale, /no Acceptance Criterion or Global Invariant was verified/);
+	assert.match(stale, /current session current-session, executor session executor-session/);
+	assert.match(stale, /stored session context was invalidated/);
+
+	// Non-stale spawn errors omit the session-replacement cause line.
+	const other = buildOrchestrationSpawnBlocker(run, "s", new Error("No model registry available."));
+	assert.doesNotMatch(other, /stored session context was invalidated/);
 });
 
 function gateResult(verdict) {

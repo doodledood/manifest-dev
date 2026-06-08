@@ -104,28 +104,14 @@ export function createRuntimeState(): RuntimeState {
 }
 
 /**
- * Symbol marking that the verifier launch flags have already been registered in this
- * process. Kept on globalThis (not module scope) because Pi evaluates each extension
- * as a fresh module instance — module-level state is NOT shared between the core and
- * tools extensions, but they run in the same process, so a globalThis marker is.
- */
-const VERIFIER_FLAGS_REGISTERED = Symbol.for("@doodledood/manifest-dev:verifier-flags-registered");
-
-/**
- * Register the verifier launch flags exactly once per process. Both the core and tools
- * extensions call this, but only the first to load claims ownership (via the globalThis
- * marker) and actually registers — so:
- *   - repo-root install (both extensions load): core is listed first and owns the flags;
- *     tools skips, so `pi --help` lists each flag once.
- *   - standalone tools install (`pi -e packages/manifest-dev-pi-tools`): tools is the
- *     only loader and owns the flags, so Pi accepts `--manifest-verifier-*` overrides.
- * The non-owning extension still reads the parsed value via resolveVerifierConfig's
- * process.argv fallback (Pi's getFlag is per-extension).
+ * Register the verifier launch flags. Only the CORE extension calls this. The tools
+ * extension is loaded only from the repo-root `pi.extensions` (it has no standalone
+ * `pi.extensions` of its own), so core is always present to own the flags and there is
+ * no second load path that needs its own registration — hence no de-dup marker. The
+ * tools runtime reads the parsed values via resolveVerifierConfig's process.argv
+ * fallback, since Pi's getFlag is per-extension.
  */
 export function registerVerifierFlags(pi: ExtensionAPI): void {
-	const slot = globalThis as Record<symbol, boolean | undefined>;
-	if (slot[VERIFIER_FLAGS_REGISTERED]) return;
-	slot[VERIFIER_FLAGS_REGISTERED] = true;
 	pi.registerFlag(FLAG_MAX_TURNS, {
 		description: `Max turns per manifest-dev verifier subagent (default ${DEFAULT_VERIFIER_MAX_TURNS}).`,
 		type: "string",
@@ -542,7 +528,7 @@ async function runHarnessVerification(
 					...(verifierModel ? { model: verifierModel } : {}),
 				};
 
-				const spawn = await spawnVerifier(subagents, VERIFIER_AGENT_TYPE, prompt, spawnOptions);
+				const spawn = spawnVerifier(subagents, VERIFIER_AGENT_TYPE, prompt, spawnOptions);
 				if (spawn.ok) {
 					totalSpawned += 1;
 					spawnedInChunk.push({ gate, agentId: spawn.agentId });
@@ -886,30 +872,35 @@ function spawnBlockedResult(gate: ManifestGate, requestedType: string, error: un
 }
 
 /**
- * Spawn one verifier subagent, retrying once after yielding a macrotask. A spawn can
- * transiently fail at the executor checkpoint if the subagents service's stored
- * session context is mid session-transition (Pi's stale-context guard surfaces this
- * through `spawn`). Yielding a tick lets the session settle, so a single retry
- * distinguishes a transient window from a real orchestration failure. The first
- * error is preserved for reporting when both attempts fail. spawn() returns the
- * agentId synchronously, so a thrown attempt creates no child to leak.
+ * Spawn one verifier subagent. Returns the agentId or the thrown error. spawn() is
+ * synchronous and returns the agentId immediately (@gotgenes/pi-subagents
+ * service-adapter.ts), so a thrown attempt creates no child to leak. We do NOT retry:
+ * the subagents service reads its stored `currentCtx` (captured at session_start) when
+ * building the parent snapshot, and that reference is only refreshed by another
+ * session lifecycle event — never within a microtask — so an immediate re-spawn would
+ * read the same stale ctx and throw identically. A spawn failure is surfaced instead.
  */
-export async function spawnVerifier(
+export function spawnVerifier(
 	subagents: Pick<SubagentsService, "spawn">,
 	type: string,
 	prompt: string,
 	options: Parameters<SubagentsService["spawn"]>[2],
-): Promise<{ ok: true; agentId: string } | { ok: false; error: unknown }> {
+): { ok: true; agentId: string } | { ok: false; error: unknown } {
 	try {
 		return { ok: true, agentId: subagents.spawn(type, prompt, options) };
-	} catch (firstError) {
-		await new Promise((resolve) => setTimeout(resolve, 0));
-		try {
-			return { ok: true, agentId: subagents.spawn(type, prompt, options) };
-		} catch {
-			return { ok: false, error: firstError };
-		}
+	} catch (error) {
+		return { ok: false, error };
 	}
+}
+
+/**
+ * True if `error` is Pi's stale-extension-context guard (loader.js/runner.js
+ * `invalidate`), which the subagents service surfaces through `spawn` when its stored
+ * session context was invalidated by a session replacement/reload before the
+ * verifier checkpoint.
+ */
+export function isStaleSessionContextError(error: unknown): boolean {
+	return /stale after session replacement or reload/i.test(formatError(error));
 }
 
 /**
@@ -919,13 +910,18 @@ export async function spawnVerifier(
  * diagnosable instead of being reported as an identical BLOCKED on every gate.
  */
 export function buildOrchestrationSpawnBlocker(run: RunRecord, currentSessionId: string, error: unknown): string {
-	return [
+	const lines = [
 		"Verifier subagents could not be spawned, so no Acceptance Criterion or Global Invariant was verified.",
 		"This is a harness/runtime orchestration failure (verifier spawn), not an implementation or gate failure.",
 		`Underlying spawn error: ${formatError(error)}`,
 		`Diagnostics: current session ${currentSessionId}, executor session ${run.executorSessionId}.`,
-		"If this is a stale Pi session-context error, re-run verification once the session has settled.",
-	].join("\n");
+	];
+	if (isStaleSessionContextError(error)) {
+		lines.push(
+			"Cause: the Pi subagents service's stored session context was invalidated (session replacement/reload) before this checkpoint. Re-run verification from a fresh session so the service re-captures a live context.",
+		);
+	}
+	return lines.join("\n");
 }
 
 function runStateDir(): string {

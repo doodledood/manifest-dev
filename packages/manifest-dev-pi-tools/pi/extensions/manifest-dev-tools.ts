@@ -1,11 +1,9 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-// Reuses the shared Harness-level Do runtime from the core package
-// (@doodledood/manifest-dev-pi, declared in package.json dependencies). Pi
-// installs manifest-dev as the whole repo, so the in-repo relative path is the
-// resolved location of the dependency.
+// Reuses the shared Harness-level Do runtime from the core package. This extension is
+// loaded only from the repo-root `pi.extensions` (it has no standalone `pi.extensions`),
+// so the core source is always present at this in-repo relative path.
 import {
 	createRuntimeState,
-	registerVerifierFlags,
 	startWrapper,
 	wireRuntimeHooks,
 	type ManifestCommand,
@@ -16,14 +14,11 @@ const TOOLS_COMMANDS: ReadonlySet<ManifestCommand> = new Set<ManifestCommand>(["
 
 export default function manifestDevToolsExtension(pi: ExtensionAPI): void {
 	const state = createRuntimeState();
-	// registerVerifierFlags claims a single owner per process via a globalThis marker
-	// (Pi loads each extension as a fresh module instance, so module-level state isn't
-	// shared, but globalThis is). In the repo-root install core loads first and owns the
-	// flags, so this call is a no-op (one `pi --help` entry) and /babysit-pr reads the
-	// values via the process.argv fallback. In a standalone tools install this call owns
-	// and registers the flags, so Pi accepts the --manifest-verifier-* overrides. Wire
-	// hooks scoped to babysit-pr runs so it never double-verifies core's /do or /auto runs.
-	registerVerifierFlags(pi);
+	// The tools extension does NOT register the --manifest-verifier-* flags: the core
+	// extension owns them (it always loads alongside in the repo-root install), so this
+	// would just double the `pi --help` entries. /babysit-pr still honors the overrides
+	// because resolveVerifierConfig reads the launch values from process.argv. Wire hooks
+	// scoped to babysit-pr runs so it never double-verifies core's /do or /auto runs.
 	wireRuntimeHooks(pi, state, TOOLS_COMMANDS);
 
 	pi.registerCommand("babysit-pr", {

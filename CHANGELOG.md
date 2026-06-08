@@ -51,16 +51,29 @@ packaged. It contains **breaking changes** — read the migration notes.
 
 ### Fixes
 
-- **Resilient verifier spawning.** Each `subagents.spawn` is retried once after yielding a
-  tick, since a spawn can transiently hit Pi's stale-session-context guard at the executor
-  checkpoint while the session settles. If no verifier spawns at all, Harness verification
-  now reports a single harness/runtime orchestration BLOCKED (with the underlying spawn error
-  and session-id diagnostics) instead of an identical BLOCKED on every gate that never ran.
-  The related custom-verifier-agent failure mode is gone independently: verifiers are always
+- **Clear verifier-spawn failure reporting.** Anchored in `@gotgenes/pi-subagents`
+  `service-adapter.ts`: `spawn` reads the service's stored `currentCtx` (captured at
+  `session_start`) to build the parent snapshot, and Pi's stale-context guard throws if that
+  ctx was invalidated by a session replacement/reload. When no verifier spawns at all, Harness
+  verification now reports a single harness/runtime orchestration BLOCKED — naming the
+  underlying error, the current/executor session ids, and (for the stale-context signature)
+  the session-replacement cause — instead of an identical BLOCKED on every gate that never
+  ran. We do not retry the spawn: the stored ctx only refreshes on another session lifecycle
+  event, so an immediate re-spawn would read the same stale ctx. The related
+  custom-verifier-agent failure mode is gone independently: verifiers are always
   general-purpose (no `verify.agent`), so a missing reviewer agent type can no longer block.
+
+- **Verifier-flag ownership simplified (repo-root-only tools package).** Anchored in Pi's
+  `loader.js`: `getFlag` returns a value only if the calling extension registered the flag,
+  values live in a per-load-cycle `runtime.flagValues` map. Only the core extension registers
+  the `--manifest-verifier-*` flags (unconditionally, no process-global marker that a later
+  load cycle would see); `/babysit-pr` reads them via a `process.argv` fallback. The tools
+  package no longer declares its own `pi.extensions` — it loads only from the repo-root
+  manifest, so it is never installed standalone (which couldn't resolve its relatively-imported
+  core runtime) and core is always present to own the flags.
 
 ### Versions
 
 - `manifest-dev` plugin: 2.4.0 → 2.8.0
 - `manifest-dev-tools` plugin: 0.19.0 → 0.23.0
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.4
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.5

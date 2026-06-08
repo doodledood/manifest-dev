@@ -380,8 +380,14 @@ def test_pi_split_into_core_and_tools_packages() -> None:
     # private repo-root package instead of hitting the public registry (E404).
     assert tools["dependencies"]["@doodledood/manifest-dev-pi"] == "file:../.."
     assert tools["version"] == core["version"]
-    # Tools ships its own extension.
-    assert tools["pi"]["extensions"] == ["./pi/extensions/manifest-dev-tools.ts"]
+    # Tools is repo-root-only: it has NO standalone `pi.extensions`, so it is never
+    # installed as its own Pi package (which couldn't resolve the relatively-imported
+    # core runtime from its own tarball). It loads solely from the repo-root
+    # pi.extensions, which lists the tools extension file directly.
+    assert "pi" not in tools
+    assert core["pi"]["extensions"][1] == (
+        "./packages/manifest-dev-pi-tools/pi/extensions/manifest-dev-tools.ts"
+    )
     assert PI_TOOLS_EXTENSION.is_file()
 
 

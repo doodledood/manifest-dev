@@ -49,11 +49,13 @@ Pre-flight: abort if `<source_repo>/claude-plugins/prompt-engineering/` is missi
 
 For each component (agents/skills):
 
-- **Copy** every source item over its target path. Skip if target is a symlink.
+- **Copy** every source item over its target path. Skip if target is a symlink. **Skip retired items** (see denylist below) even when an older upstream checkout still ships them.
 - **Delete** items in `tracked − source` from target. Skip if target is a symlink, doesn't exist, or is the `sync-claude-code-plugins` skill itself.
-- **Refresh** `.claude/.claude-code-plugins-sync.json` with the current source listing.
+- **Refresh** `.claude/.claude-code-plugins-sync.json` with the current source listing **minus the denylist**.
 
 Source listing excludes `README.md` and `.claude-plugin/` (plugin metadata, not content).
+
+**Retirement denylist** (never copy or track, regardless of upstream): `agents/prompt-reviewer.md`. manifest-dev-tools ships its own `review-prompt` skill (plugin-owned symlink at `.claude/skills/review-prompt`) and manifest-dev ships **zero agents**, so the upstream prompt-engineering `prompt-reviewer` agent must not be reintroduced — it is already removed from `.claude/agents/` and dropped from the tracked set.
 
 ## .agents mirror
 
