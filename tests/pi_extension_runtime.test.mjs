@@ -8,8 +8,10 @@ import manifestDevExtension, {
 	buildManifestDoPrompt,
 	buildOrchestrationSpawnBlocker,
 	createVerificationOrchestratorSession,
+	buildCiPendingSummary,
 	formatRepairFollowUpMessage,
 	isStaleSessionContextError,
+	isWaitPendingFailure,
 	makeOrchestratorSessionId,
 	rehydrateRuntimeState,
 	resolveManifestPath,
@@ -973,6 +975,114 @@ test("buildOrchestrationSpawnBlocker names a harness spawn failure and the stale
 	// Non-stale spawn errors omit the session-replacement cause line.
 	const other = buildOrchestrationSpawnBlocker(run, "s", new Error("No model registry available."));
 	assert.doesNotMatch(other, /stored session context was invalidated/);
+});
+
+test("buildManifestBabysitPrompt --ci instructs the verifier to emit WAIT-PENDING", () => {
+	const run = { runId: "manifest-dev-run", manifestPath: "/tmp/m.md", manifestSha256: "h" };
+	const url = "https://github.com/o/r/pull/1";
+	const ciPrompt = buildManifestBabysitPrompt(run, url, `${url} --ci`);
+	assert.match(ciPrompt, /CI one-shot mode/);
+	assert.match(ciPrompt, /WAIT-PENDING/);
+	// Default (no --ci) does not mention the marker.
+	assert.doesNotMatch(buildManifestBabysitPrompt(run, url, url), /WAIT-PENDING/);
+});
+
+test("isWaitPendingFailure requires every FAIL gate to carry the WAIT-PENDING marker", () => {
+	const verification = (results) => ({ runId: "r", status: "failed", results });
+	const waitFail = { ...gateResult("FAIL"), gateId: "AC-1.1", evidence: "Reviewer pending. WAIT-PENDING" };
+	const realFail = { ...gateResult("FAIL"), gateId: "AC-1.2", evidence: "broken test" };
+	assert.equal(isWaitPendingFailure(verification([waitFail])), true);
+	assert.equal(isWaitPendingFailure(verification([gateResult("PASS"), waitFail])), true);
+	// Mixed wait + real failure is not wait-only — repair must still run.
+	assert.equal(isWaitPendingFailure(verification([waitFail, realFail])), false);
+	// No FAIL gates at all is not a wait-pending failure.
+	assert.equal(isWaitPendingFailure(verification([gateResult("PASS")])), false);
+});
+
+test("buildCiPendingSummary frames the exit as pending, not blocked, and lists the waits", () => {
+	const summary = buildCiPendingSummary({
+		runId: "r", status: "failed",
+		results: [{ ...gateResult("FAIL"), gateId: "AC-1.1", evidence: "Reviewer @bob pending. WAIT-PENDING" }],
+	});
+	assert.match(summary, /CI one-shot/);
+	assert.match(summary, /Exiting pending instead of looping repair/);
+	assert.match(summary, /Re-run \/babysit-pr --ci/);
+	assert.match(summary, /AC-1\.1: Reviewer @bob pending/);
+});
+
+test("routeVerificationResult exits pending (no repair) for a --ci wait-only failure", async () => {
+	const routeRunStateFile = `${process.env.HOME}/.manifest-dev/runs/manifest-dev-ci-pending.json`;
+	rmSync(routeRunStateFile, { force: true });
+	const calls = { entries: [], userMessages: [], messages: [] };
+	const pi = {
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		sendUserMessage(message, options) { calls.userMessages.push({ message, options }); },
+		sendMessage(message, options) { calls.messages.push({ message, options }); },
+	};
+	const tmp = mkdtempSync(`${tmpdir()}/manifest-dev-ci-`);
+	const manifestPath = `${tmp}/manifest.md`;
+	writeFileSync(manifestPath, "# Manifest", "utf-8");
+	const ctx = { cwd: process.cwd(), ui: { notify() {} } };
+	const run = {
+		runId: "manifest-dev-ci-pending", command: "babysit-pr", startedAt: "t",
+		cwd: process.cwd(), executorSessionId: "executor-session", status: "verifying",
+		verificationAttempts: 1, ciOneShot: true,
+	};
+	const state = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map([[run.executorSessionId, run]]),
+		childSessionIds: new Set(),
+	};
+	const verification = {
+		runId: run.runId, manifestPath, manifestSha256: sha256("# Manifest"),
+		requestedAt: "s", completedAt: "e", cwd: process.cwd(), status: "failed",
+		orchestratorSessionId: "manifest-verify-1",
+		results: [{ ...gateResult("FAIL"), gateId: "AC-1.1", title: "PR lifecycle", evidence: "Reviewer @bob pending; CI green. WAIT-PENDING" }],
+	};
+	try {
+		await routeVerificationResult(pi, ctx, state, run, verification);
+		// No repair injection.
+		assert.equal(calls.userMessages.length, 0);
+		// A pending status message instead.
+		assert.equal(calls.messages.length, 1);
+		assert.match(calls.messages[0].message.content, /Exiting pending instead of looping repair/);
+		// Outcome recorded as a (resumable) escalate flavored pending; run left blocked.
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "CI one-shot pending on external wait."), true);
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:run" && e.data.status === "blocked"), true);
+	} finally {
+		rmSync(routeRunStateFile, { force: true });
+		rmSync(tmp, { recursive: true, force: true });
+	}
+});
+
+test("routeVerificationResult still repairs a --ci failure that is not wait-only", async () => {
+	const calls = { userMessages: [], messages: [], entries: [] };
+	const pi = {
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		sendUserMessage(message, options) { calls.userMessages.push({ message, options }); },
+		sendMessage(message, options) { calls.messages.push({ message, options }); },
+	};
+	const ctx = { cwd: process.cwd(), ui: { notify() {} } };
+	const run = {
+		runId: "manifest-dev-ci-repair", command: "babysit-pr", startedAt: "t",
+		cwd: process.cwd(), executorSessionId: "executor-session", status: "verifying",
+		verificationAttempts: 1, ciOneShot: true,
+	};
+	const state = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map([[run.executorSessionId, run]]),
+		childSessionIds: new Set(),
+	};
+	const verification = {
+		runId: run.runId, manifestPath: "/m", manifestSha256: "h", requestedAt: "s", completedAt: "e",
+		cwd: process.cwd(), status: "failed", orchestratorSessionId: "manifest-verify-1",
+		results: [{ ...gateResult("FAIL"), gateId: "AC-1.1", title: "PR lifecycle", evidence: "merge conflict — fix it" }],
+	};
+	await routeVerificationResult(pi, ctx, state, run, verification);
+	// Not wait-only → normal repair injection, no pending status message.
+	assert.equal(calls.userMessages.length, 1);
+	assert.match(calls.userMessages[0].message, /AC-1\.1 PR lifecycle: merge conflict/);
+	assert.equal(calls.messages.length, 0);
 });
 
 function gateResult(verdict) {

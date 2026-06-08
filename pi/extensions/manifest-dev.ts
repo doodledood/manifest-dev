@@ -45,6 +45,8 @@ export interface RunRecord {
 	args?: string;
 	verificationAttempts?: number;
 	lastVerificationStatus?: VerificationRecord["status"];
+	/** /babysit-pr --ci: do every actionable lifecycle step, then exit pending on waits rather than looping repair. */
+	ciOneShot?: boolean;
 }
 
 interface SubagentsService extends SubagentsRecordService {
@@ -63,6 +65,10 @@ const RUN_ENTRY = "manifest-dev:run";
 const VERIFICATION_ENTRY = "manifest-dev:verification";
 const OUTCOME_ENTRY = "manifest-dev:outcome";
 const STATUS_ENTRY = "manifest-dev:status";
+// Marker a check-pr verifier emits when a gate FAILs only because it is waiting on an
+// external actor/time (reviewer pending, CI in progress) rather than a fixable defect.
+// In --ci one-shot mode the runtime routes such failures to a pending exit, not repair.
+const WAIT_PENDING_MARKER = "WAIT-PENDING";
 const SUBAGENTS_PACKAGE = "@gotgenes/pi-subagents";
 
 // Verifiers always run as a general-purpose subagent that loads whatever skill
@@ -230,6 +236,7 @@ export async function startWrapper(
 	}
 	let babysitPrUrl: string | undefined;
 	let babysitManifest: string | undefined;
+	let ciOneShot = false;
 	if (command === "babysit-pr") {
 		// Accept the URL anywhere in the args so documented flags (--ci, --manifest <path>)
 		// don't fail validation; the URL is the only required positional.
@@ -244,6 +251,7 @@ export async function startWrapper(
 		}
 		const manifestFlagIndex = tokens.indexOf("--manifest");
 		babysitManifest = manifestFlagIndex >= 0 ? tokens[manifestFlagIndex + 1] : undefined;
+		ciOneShot = tokens.includes("--ci");
 	}
 
 	const plannedManifestPath = makePlannedManifestPath(command);
@@ -253,7 +261,7 @@ export async function startWrapper(
 	const manifestPath = babysitManifest
 		? resolveInputPath(babysitManifest, ctx.cwd)
 		: plannedManifestPath;
-	const run = makeRunRecord(command, ctx, { args, manifestPath });
+	const run = makeRunRecord(command, ctx, { args, manifestPath, ...(ciOneShot ? { ciOneShot: true } : {}) });
 	registerRun(pi, state, run);
 	pi.setSessionName(`${command} ${shortId(run.runId)}`);
 	hideHarnessToolsFromExecutor(pi);
@@ -379,7 +387,7 @@ export function buildManifestBabysitPrompt(run: RunRecord, prUrl: string, rawArg
 		? `2. Use the existing manifest at '${existingManifest}' as the PR's grounding (do not synthesize a new one).`
 		: `2. Invoke the define skill (/skill:define) with '--babysit ${prUrl} --autonomous' and write the lifecycle manifest exactly at: ${run.manifestPath}`;
 	const cadenceStep = ci
-		? `3. CI one-shot mode (--ci): perform every immediately actionable lifecycle step (inspect CI, review threads, mergeability, description sync; apply and push trusted fixes; retrigger; reply/resolve), then STOP and report the pending/waiting state instead of sleeping the runner. Do not block on long waits.`
+		? `3. CI one-shot mode (--ci): perform every immediately actionable lifecycle step (inspect CI, review threads, mergeability, description sync; apply and push trusted fixes; retrigger; reply/resolve), then STOP and report the pending/waiting state instead of sleeping the runner. Do not block on long waits. When the lifecycle gate's verifier finds the only remaining blockers are external waits (reviewer pending, CI in progress, merge window), it must report VERDICT: FAIL with the token ${WAIT_PENDING_MARKER} in its EVIDENCE/DETAILS so the runtime exits pending instead of looping repair. If any blocker is actually fixable, do NOT emit ${WAIT_PENDING_MARKER} — report it as a normal FAIL.`
 		: `3. Execute that manifest under the simplified Harness-level Do implementation contract: inspect CI, review threads, mergeability, PR description sync, and required fixes; commit/push only when the branch is trusted and writable; repair runtime-injected failed AC/INV reports; then stop when no known work remains.`;
 
 	return `Run manifest-dev babysit-pr in Pi.
@@ -604,6 +612,32 @@ export async function routeVerificationResult(
 			: `Manifest-dev verification ${verification.status} for ${run.runId}.`,
 		verification.status === "passed" ? "info" : "warning",
 	);
+
+	// CI one-shot: a failure that is only waiting on external actors/time is not a
+	// repairable defect. Exit pending (resumable) instead of injecting repair, so the
+	// runner is not looped on a wait. Mixed (wait + real) failures fall through to repair.
+	if (verification.status === "failed" && run.ciOneShot && isWaitPendingFailure(verification)) {
+		const pendingRun = updateRun(pi, state, run, {
+			status: "blocked",
+			lastVerificationStatus: verification.status,
+		});
+		const summary = buildCiPendingSummary(verification);
+		const outcome = buildOutcomeRecord(pendingRun, "escalate", {
+			summary: "CI one-shot pending on external wait.",
+			blockers: verification.results.filter((r) => r.verdict === "FAIL").map((r) => `${r.gateId}: ${r.evidence || r.details}`),
+			nextSteps: ["Re-run /babysit-pr --ci once the external wait clears."],
+			verification,
+			cwd: ctx.cwd,
+		});
+		pi.appendEntry(OUTCOME_ENTRY, outcome);
+		pi.sendMessage({
+			customType: STATUS_ENTRY,
+			content: summary,
+			display: true,
+			details: outcome,
+		}, { triggerTurn: false });
+		return;
+	}
 
 	if (verification.status === "failed") {
 		const nextRun = updateRun(pi, state, run, {
@@ -922,6 +956,33 @@ export function buildOrchestrationSpawnBlocker(run: RunRecord, currentSessionId:
 		);
 	}
 	return lines.join("\n");
+}
+
+/**
+ * True if a failed verification is wait-only: every FAIL gate carries the check-pr
+ * WAIT-PENDING marker (waiting on a reviewer/CI/time, not a fixable defect). Used only
+ * in --ci one-shot mode to exit pending instead of looping repair. A mix of wait and
+ * real failures is not wait-only — repair still runs.
+ */
+export function isWaitPendingFailure(verification: VerificationRecord): boolean {
+	const failures = verification.results.filter((result) => result.verdict === "FAIL");
+	if (failures.length === 0) return false;
+	return failures.every((result) =>
+		`${result.evidence ?? ""}\n${result.details ?? ""}`.includes(WAIT_PENDING_MARKER),
+	);
+}
+
+/** Pending-exit summary for a --ci one-shot run blocked only on external waits. */
+export function buildCiPendingSummary(verification: VerificationRecord): string {
+	const waits = verification.results
+		.filter((result) => result.verdict === "FAIL")
+		.map((result) => `${result.gateId}: ${result.evidence || result.details}`);
+	return [
+		"CI one-shot (--ci): every immediately actionable lifecycle step is done; the PR is now waiting on external actors/time (reviewer, CI, merge window).",
+		"Exiting pending instead of looping repair. Re-run /babysit-pr --ci to resume once the wait clears.",
+		"",
+		...waits,
+	].join("\n");
 }
 
 function runStateDir(): string {

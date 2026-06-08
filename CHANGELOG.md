@@ -72,8 +72,18 @@ packaged. It contains **breaking changes** — read the migration notes.
   manifest, so it is never installed standalone (which couldn't resolve its relatively-imported
   core runtime) and core is always present to own the flags.
 
+- **Per-target skill-activation naming.** Verifier-activation/chain prose is canonicalized to
+  the plugin-qualified `manifest-dev:<skill>` colon form in source (Claude-native; OpenCode's
+  installer rewrites it to suffixed names). The Pi dist strips the qualifier to the bare
+  `/skill:<name>` form Pi actually invokes; Codex keeps the qualifier.
+
+- **`/babysit-pr --ci` honors its one-shot contract.** `--ci` is now persisted on the run, and
+  a lifecycle verification that FAILs only on external waits (the `check-pr` skill emits a
+  `WAIT-PENDING` marker) exits **pending** (resumable) instead of being looped back into repair.
+  A genuinely fixable failure still routes to repair.
+
 ### Versions
 
-- `manifest-dev` plugin: 2.4.0 → 2.8.1
+- `manifest-dev` plugin: 2.4.0 → 2.8.2
 - `manifest-dev-tools` plugin: 0.19.0 → 0.23.1
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.6
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.7
