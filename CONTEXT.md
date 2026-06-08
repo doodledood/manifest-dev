@@ -68,7 +68,7 @@ An optional fallback adjudicator with `/do`'s execution context that can review 
 A markdown-defined extension (`SKILL.md` + companion files) that adds a capability to Claude Code.
 
 **Agent**:
-An isolated subagent process with its own tools and context.
+An isolated subagent process with its own tools and context. Retained only as the generic Claude Code concept: manifest-dev ships **no agents of its own**. Verification is always a general-purpose subagent whose `verify.prompt` activates a skill (e.g. `criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `prompt-reviewer`, `code-review`); the manifest schema has no `verify.agent` field.
 _Avoid_: Subprocess, worker.
 
 **Hook**:
@@ -106,7 +106,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - A **Verification Judge** is not part of the default **Do/Verify Loop**; it is reserved for later fallback if executor repair/escalation judgments prove unreliable.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure through comments and thread advancement, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
 - **Babysit PR** belongs to the `manifest-dev-tools` **Plugin** as PR tooling, while orchestrating core `manifest-dev` **Skills** for manifest synthesis and execution.
-- **Babysit PR** uses a **Manifest** synthesized from an existing pull request, then `/do` executes the lifecycle **Acceptance Criterion** through the `github-pr-lifecycle` **Agent**.
+- **Babysit PR** uses a **Manifest** synthesized from an existing pull request, then `/do` executes the lifecycle **Acceptance Criterion** through a general-purpose verifier whose prompt activates the `github-pr-lifecycle` **Skill**.
 - **PR Grounding** constrains **Babysit PR** autonomy: comments are interpreted against stronger intent sources instead of becoming the specification by recency.
 - **CI One-Shot** narrows `/do` retry cadence for **Babysit PR**: wait-shaped blockers are reported as pending instead of sleeping a runner.
 

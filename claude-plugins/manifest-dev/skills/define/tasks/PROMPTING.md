@@ -7,11 +7,11 @@ Creating or updating LLM prompts, skills, agents, system instructions.
 | Aspect | Verifier | Threshold |
 |--------|----------|-----------|
 | Intent analysis | `code-review` skill, dimension=`change-intent` | no LOW+ |
-| Prompt quality | `prompt-reviewer` agent | no MEDIUM+ |
+| Prompt quality | `prompt-reviewer` skill | no MEDIUM+ |
 
-The intent-analysis gate encodes as `verify.agent: general-purpose` + a `verify.prompt` activating the code-review skill (dimension=change-intent). The prompt-quality gate encodes as `verify.agent: prompt-reviewer` (a standalone agent, not a code-review dimension).
+Both gates encode as a general-purpose verifier (no `verify.agent`) whose `verify.prompt` activates a skill: the intent gate activates the code-review skill (dimension=change-intent); the prompt-quality gate activates the `prompt-reviewer` skill.
 
-When prompt-reviewer is not available, encode these as individual criteria verified via general-purpose subagent:
+When the prompt-reviewer skill is not available, encode these as individual criteria verified via general-purpose subagent:
 
 | Gate | Threshold |
 |------|-----------|

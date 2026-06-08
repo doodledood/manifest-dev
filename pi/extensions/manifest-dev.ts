@@ -13,7 +13,6 @@ import {
 	makeBlockedVerificationRecord,
 	planVerifierBatches,
 	resolvePositiveIntConfig,
-	resolveStringConfig,
 	resolveVerifierModel,
 	sha256,
 	shouldStopAfterBatch,
@@ -66,12 +65,14 @@ const OUTCOME_ENTRY = "manifest-dev:outcome";
 const STATUS_ENTRY = "manifest-dev:status";
 const SUBAGENTS_PACKAGE = "@gotgenes/pi-subagents";
 
-const DEFAULT_VERIFIER_AGENT = "general-purpose";
+// Verifiers always run as a general-purpose subagent that loads whatever skill
+// the gate's verify.prompt names — there is no per-gate or configurable verifier
+// agent selection.
+const VERIFIER_AGENT_TYPE = "general-purpose";
 const DEFAULT_VERIFIER_MAX_TURNS = 1000;
 const DEFAULT_VERIFIER_TIMEOUT_MS = 30 * 60 * 1000;
 const DEFAULT_VERIFIER_MAX_CONCURRENT = 24;
 const FLAG_MAX_TURNS = "manifest-verifier-max-turns";
-const FLAG_AGENT = "manifest-verifier-agent";
 const FLAG_TIMEOUT_MS = "manifest-verifier-timeout-ms";
 const FLAG_MAX_CONCURRENT = "manifest-verifier-max-concurrent";
 const HARNESS_TOOL_NAMES = new Set([
@@ -80,7 +81,6 @@ const HARNESS_TOOL_NAMES = new Set([
 ]);
 
 interface VerifierConfig {
-	agent: string;
 	maxTurns: number;
 	timeoutMs: number;
 	maxConcurrent: number;
@@ -106,10 +106,6 @@ export function createRuntimeState(): RuntimeState {
 export function registerVerifierFlags(pi: ExtensionAPI): void {
 	pi.registerFlag(FLAG_MAX_TURNS, {
 		description: `Max turns per manifest-dev verifier subagent (default ${DEFAULT_VERIFIER_MAX_TURNS}).`,
-		type: "string",
-	});
-	pi.registerFlag(FLAG_AGENT, {
-		description: `Default subagent type for manifest-dev verifiers when a gate omits verify.agent (default ${DEFAULT_VERIFIER_AGENT}).`,
 		type: "string",
 	});
 	pi.registerFlag(FLAG_TIMEOUT_MS, {
@@ -472,9 +468,6 @@ async function runHarnessVerification(
 			const spawnedInChunk: Array<{
 				gate: ManifestGate;
 				agentId: string;
-				requestedType: string;
-				usedType: string;
-				fellBack: boolean;
 			}> = [];
 
 			for (const gate of chunk) {
@@ -497,23 +490,12 @@ async function runHarnessVerification(
 					maxTurns: config.maxTurns,
 					...(verifierModel ? { model: verifierModel } : {}),
 				};
-				const requestedType = gate.suggestedAgent?.trim() || config.agent;
 
 				try {
-					const agentId = subagents.spawn(requestedType, prompt, spawnOptions);
-					spawnedInChunk.push({ gate, agentId, requestedType, usedType: requestedType, fellBack: false });
+					const agentId = subagents.spawn(VERIFIER_AGENT_TYPE, prompt, spawnOptions);
+					spawnedInChunk.push({ gate, agentId });
 				} catch (error) {
-					if (requestedType !== config.agent) {
-						try {
-							const agentId = subagents.spawn(config.agent, prompt, spawnOptions);
-							spawnedInChunk.push({ gate, agentId, requestedType, usedType: config.agent, fellBack: true });
-							continue;
-						} catch (fallbackError) {
-							results.push(spawnBlockedResult(gate, requestedType, fallbackError));
-							continue;
-						}
-					}
-					results.push(spawnBlockedResult(gate, requestedType, error));
+					results.push(spawnBlockedResult(gate, VERIFIER_AGENT_TYPE, error));
 				}
 			}
 
@@ -524,15 +506,7 @@ async function runHarnessVerification(
 					{ timeoutMs: config.timeoutMs },
 				);
 				for (const item of spawnedInChunk) {
-					const result = toGateVerificationResult(item.gate, item.agentId, records.get(item.agentId));
-					results.push(
-						item.fellBack
-							? {
-								...result,
-								evidence: `[verifier agent "${item.requestedType}" unavailable; fell back to "${item.usedType}"] ${result.evidence}`,
-							}
-							: result,
-					);
+					results.push(toGateVerificationResult(item.gate, item.agentId, records.get(item.agentId)));
 				}
 			}
 		}
@@ -783,11 +757,6 @@ function gitOutput(cwd: string, args: string[]): string | undefined {
 
 function resolveVerifierConfig(pi: ExtensionAPI): VerifierConfig {
 	return {
-		agent: resolveStringConfig({
-			flag: pi.getFlag(FLAG_AGENT),
-			env: process.env.MANIFEST_DEV_VERIFIER_AGENT,
-			fallback: DEFAULT_VERIFIER_AGENT,
-		}),
 		maxTurns: resolvePositiveIntConfig({
 			flag: pi.getFlag(FLAG_MAX_TURNS),
 			env: process.env.MANIFEST_DEV_VERIFIER_MAX_TURNS,

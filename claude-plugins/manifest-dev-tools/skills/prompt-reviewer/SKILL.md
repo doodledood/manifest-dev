@@ -1,11 +1,10 @@
 ---
 name: prompt-reviewer
-description: 'Reviews LLM prompts against the prompt-engineering skill''s gap-calibration principles. Reports issues without modifying files. Use when reviewing prompt quality, auditing a prompt, evaluating a system prompt, or checking whether prompt issues are high-confidence and fixable.'
-tools: Read, Grep, Glob, Skill
-model: inherit
+description: 'Review LLM prompts against the prompt-engineering skill''s gap-calibration principles, reporting issues without modifying files. Use when reviewing prompt quality, auditing a prompt, evaluating a system prompt, or checking whether prompt issues are high-confidence and fixable.'
+user-invocable: true
 ---
 
-Review LLM prompts. Report findings without modifying files.
+Review LLM prompts. Report findings without modifying files — this skill diagnoses; it never edits the prompt.
 
 **First**: invoke the prompt-engineering skill to load the principles. Evaluate the prompt against them.
 

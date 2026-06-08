@@ -1,6 +1,6 @@
 {
   "name": "@doodledood/manifest-dev-pi-tools",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Pi tools package for manifest-dev: the /babysit-pr PR-lifecycle wrapper over Harness-level Do. Depends on @doodledood/manifest-dev-pi for the shared runtime.",
   "type": "module",

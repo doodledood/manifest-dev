@@ -1,1 +1,0 @@
-../../claude-plugins/manifest-dev-tools/agents/prompt-reviewer.md

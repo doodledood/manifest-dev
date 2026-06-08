@@ -46,7 +46,6 @@ const gate = {
 	kind: "acceptance_criterion",
 	title: "Thing works",
 	verifyPrompt: "Run npm test and inspect output.",
-	suggestedAgent: "test-quality-reviewer",
 };
 
 function completedRecord(result) {
@@ -106,7 +105,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "global_invariant",
 			title: "Runtime claims stay honest.",
 			verifyPrompt: 'Run: echo "ok"',
-			suggestedAgent: "docs-reviewer",
 			model: undefined,
 			phase: 1,
 		},
@@ -115,7 +113,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Single quoted prompt.",
 			verifyPrompt: "Check it's fine",
-			suggestedAgent: undefined,
 			model: undefined,
 			phase: 1,
 		},
@@ -124,7 +121,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Block scalar prompt.",
 			verifyPrompt: "first line\nsecond line",
-			suggestedAgent: "contracts-reviewer",
 			model: undefined,
 			phase: 1,
 		},
@@ -133,7 +129,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Model and phase.",
 			verifyPrompt: "run check",
-			suggestedAgent: undefined,
 			model: "gpt-5",
 			phase: 2,
 		},
@@ -142,7 +137,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Invalid phase falls back.",
 			verifyPrompt: "x",
-			suggestedAgent: undefined,
 			model: undefined,
 			phase: 1,
 		},
@@ -163,7 +157,6 @@ test("buildGateVerifierPrompt creates a single-gate clean-session contract", () 
 	assert.match(prompt, /Do not implement fixes/);
 	assert.match(prompt, /Verification orchestrator session: manifest-verify-123/);
 	assert.match(prompt, /Gate: AC-1\.1 Thing works/);
-	assert.match(prompt, /Suggested manifest verifier persona: test-quality-reviewer/);
 	assert.match(prompt, /Run npm test and inspect output\./);
 	assert.match(prompt, /VERDICT: PASS\|FAIL\|BLOCKED/);
 	assert.match(prompt, /Changed extension runtime\./);
