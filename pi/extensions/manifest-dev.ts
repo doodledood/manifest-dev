@@ -75,14 +75,6 @@ const DEFAULT_VERIFIER_MAX_CONCURRENT = 24;
 const FLAG_MAX_TURNS = "manifest-verifier-max-turns";
 const FLAG_TIMEOUT_MS = "manifest-verifier-timeout-ms";
 const FLAG_MAX_CONCURRENT = "manifest-verifier-max-concurrent";
-
-// The verifier flags are process-global Pi launch flags. In the repo-root install
-// both the core and tools extensions load (and share this module), so registering
-// the same flag names from both would make `pi --help` list each flag twice. The
-// first extension to register becomes the single public owner; the other reads the
-// parsed launch value through it, since Pi's getFlag only returns values for flags
-// the calling extension itself registered.
-let verifierFlagOwner: ExtensionAPI | undefined;
 const HARNESS_TOOL_NAMES = new Set([
 	"manifest_dev_request_verification",
 	"manifest_dev_report_outcome",
@@ -111,13 +103,16 @@ export function createRuntimeState(): RuntimeState {
 	};
 }
 
+/**
+ * Register the verifier launch flags. Only the CORE extension calls this, so the
+ * flags are published exactly once even though the repo-root install loads both
+ * extensions (Pi loads each extension as a fresh module instance, so module-level
+ * de-dup state is not shared between them — the single owner must be static). The
+ * tools extension does not register; it reads the launch value from process.argv
+ * via resolveVerifierConfig, so `/babysit-pr` still honors the overrides without
+ * adding a second `pi --help` entry.
+ */
 export function registerVerifierFlags(pi: ExtensionAPI): void {
-	// Single public owner: skip if another extension (e.g. core, loaded first in
-	// the repo-root install) already published these flags, so they appear once in
-	// `pi --help`. resolveVerifierConfig reads the owner's parsed value for callers
-	// that did not register. A standalone tools install registers here as the owner.
-	if (verifierFlagOwner) return;
-	verifierFlagOwner = pi;
 	pi.registerFlag(FLAG_MAX_TURNS, {
 		description: `Max turns per manifest-dev verifier subagent (default ${DEFAULT_VERIFIER_MAX_TURNS}).`,
 		type: "string",
@@ -798,15 +793,31 @@ function gitOutput(cwd: string, args: string[]): string | undefined {
 }
 
 /**
+ * Read a Pi launch flag straight from process.argv. The verifier flags are
+ * process-global launch flags, so this is shared across module instances (unlike
+ * per-extension getFlag). Supports `--name value` and `--name=value`.
+ */
+export function launchFlagFromArgv(name: string, argv: readonly string[] = process.argv): string | undefined {
+	const long = `--${name}`;
+	for (let i = 0; i < argv.length; i++) {
+		const arg = argv[i];
+		if (arg === long) return argv[i + 1];
+		if (arg.startsWith(`${long}=`)) return arg.slice(long.length + 1);
+	}
+	return undefined;
+}
+
+/**
  * Read a verifier flag value, preferring the calling extension's own getFlag and
- * falling back to the single public flag owner. Pi's getFlag only returns values
- * for flags the calling extension registered, so the extension that didn't register
- * (the second one loaded in the repo-root install) reads the parsed value here.
+ * falling back to process.argv. Pi's getFlag only returns values for flags the
+ * calling extension registered; the tools extension intentionally does not register
+ * the verifier flags (to avoid duplicate `pi --help` entries), so it recovers the
+ * parsed launch value from argv instead.
  */
 function readVerifierFlag(pi: ExtensionAPI, name: string): string | undefined {
 	const own = pi.getFlag?.(name);
 	if (own !== undefined && own !== null) return own as string;
-	return verifierFlagOwner?.getFlag?.(name) as string | undefined;
+	return launchFlagFromArgv(name);
 }
 
 function resolveVerifierConfig(pi: ExtensionAPI): VerifierConfig {

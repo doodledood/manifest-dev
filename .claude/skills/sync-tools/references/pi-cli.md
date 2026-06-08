@@ -80,7 +80,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -159,7 +159,7 @@ Configuration follows the Pi-native convention (`pi.registerFlag` / `pi.getFlag`
 - `--manifest-verifier-timeout-ms` / `MANIFEST_DEV_VERIFIER_TIMEOUT_MS` (default 1800000)
 - `--manifest-verifier-max-concurrent` / `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` (default 24)
 
-These flags have a **single public owner**. The repo-root install loads both extensions from the shared core module, so `registerVerifierFlags` registers only on the first extension to call it (core, listed first) — otherwise `pi --help` would list each flag twice. Pi's `getFlag` is per-extension, so `resolveVerifierConfig` reads the calling extension's own flag and falls back to the owner; that lets `/babysit-pr` (tools extension) honor `--manifest-verifier-*` overrides parsed by the core owner. A standalone tools install registers the flags itself as the owner.
+These flags have a **single static owner: the core extension**. Pi loads each extension as a fresh module instance, so an in-module "first registrant wins" guard would NOT be shared between the core and tools extensions — both would see it unset and register, listing each flag twice in `pi --help`. So only the core extension calls `registerVerifierFlags`; the tools extension never does. Because Pi's `getFlag` is per-extension, `/babysit-pr` (tools) recovers the launch values from `process.argv` (process-global, shared across module instances) via `resolveVerifierConfig` — honoring `--manifest-verifier-*` overrides without adding a second `--help` entry.
 
 Current runtime boundaries:
 
