@@ -23,8 +23,11 @@ test("tools extension registers babysit-pr and wires Harness verification hooks"
 	assert.equal(typeof events.get("agent_end"), "function");
 	assert.equal(typeof events.get("before_agent_start"), "function");
 	assert.equal(typeof events.get("session_start"), "function");
-	// It registers the verifier flags itself — Pi's getFlag only returns values
-	// for flags registered by this extension, so /babysit-pr honors the overrides.
+	// Loaded standalone (no core extension first), the tools extension is the single
+	// public flag owner, so it registers the verifier flags itself and /babysit-pr
+	// honors --manifest-verifier-* overrides. (In the repo-root install core owns
+	// them and this registration is a de-duplicating no-op — see
+	// pi_extension_flag_ownership.test.mjs.)
 	assert.equal(flags.includes("manifest-verifier-max-concurrent"), true);
 	assert.equal(flags.includes("manifest-verifier-max-turns"), true);
 });

@@ -75,6 +75,14 @@ const DEFAULT_VERIFIER_MAX_CONCURRENT = 24;
 const FLAG_MAX_TURNS = "manifest-verifier-max-turns";
 const FLAG_TIMEOUT_MS = "manifest-verifier-timeout-ms";
 const FLAG_MAX_CONCURRENT = "manifest-verifier-max-concurrent";
+
+// The verifier flags are process-global Pi launch flags. In the repo-root install
+// both the core and tools extensions load (and share this module), so registering
+// the same flag names from both would make `pi --help` list each flag twice. The
+// first extension to register becomes the single public owner; the other reads the
+// parsed launch value through it, since Pi's getFlag only returns values for flags
+// the calling extension itself registered.
+let verifierFlagOwner: ExtensionAPI | undefined;
 const HARNESS_TOOL_NAMES = new Set([
 	"manifest_dev_request_verification",
 	"manifest_dev_report_outcome",
@@ -104,6 +112,12 @@ export function createRuntimeState(): RuntimeState {
 }
 
 export function registerVerifierFlags(pi: ExtensionAPI): void {
+	// Single public owner: skip if another extension (e.g. core, loaded first in
+	// the repo-root install) already published these flags, so they appear once in
+	// `pi --help`. resolveVerifierConfig reads the owner's parsed value for callers
+	// that did not register. A standalone tools install registers here as the owner.
+	if (verifierFlagOwner) return;
+	verifierFlagOwner = pi;
 	pi.registerFlag(FLAG_MAX_TURNS, {
 		description: `Max turns per manifest-dev verifier subagent (default ${DEFAULT_VERIFIER_MAX_TURNS}).`,
 		type: "string",
@@ -783,20 +797,32 @@ function gitOutput(cwd: string, args: string[]): string | undefined {
 	}
 }
 
+/**
+ * Read a verifier flag value, preferring the calling extension's own getFlag and
+ * falling back to the single public flag owner. Pi's getFlag only returns values
+ * for flags the calling extension registered, so the extension that didn't register
+ * (the second one loaded in the repo-root install) reads the parsed value here.
+ */
+function readVerifierFlag(pi: ExtensionAPI, name: string): string | undefined {
+	const own = pi.getFlag?.(name);
+	if (own !== undefined && own !== null) return own as string;
+	return verifierFlagOwner?.getFlag?.(name) as string | undefined;
+}
+
 function resolveVerifierConfig(pi: ExtensionAPI): VerifierConfig {
 	return {
 		maxTurns: resolvePositiveIntConfig({
-			flag: pi.getFlag(FLAG_MAX_TURNS),
+			flag: readVerifierFlag(pi, FLAG_MAX_TURNS),
 			env: process.env.MANIFEST_DEV_VERIFIER_MAX_TURNS,
 			fallback: DEFAULT_VERIFIER_MAX_TURNS,
 		}),
 		timeoutMs: resolvePositiveIntConfig({
-			flag: pi.getFlag(FLAG_TIMEOUT_MS),
+			flag: readVerifierFlag(pi, FLAG_TIMEOUT_MS),
 			env: process.env.MANIFEST_DEV_VERIFIER_TIMEOUT_MS,
 			fallback: DEFAULT_VERIFIER_TIMEOUT_MS,
 		}),
 		maxConcurrent: resolvePositiveIntConfig({
-			flag: pi.getFlag(FLAG_MAX_CONCURRENT),
+			flag: readVerifierFlag(pi, FLAG_MAX_CONCURRENT),
 			env: process.env.MANIFEST_DEV_VERIFIER_MAX_CONCURRENT,
 			fallback: DEFAULT_VERIFIER_MAX_CONCURRENT,
 		}),

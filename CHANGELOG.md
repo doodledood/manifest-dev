@@ -15,10 +15,11 @@ packaged. It contains **breaking changes** — read the migration notes.
   `poll-slack` under `manifest-dev`, `review-prompt` under `manifest-dev-tools`).
   - *Migrate*: there is no `verify.agent` field anymore. Every gate is verified by a
     **general-purpose** subagent whose `verify.prompt` activates a skill when specialized
-    behavior is needed — e.g. *"Spawn a general-purpose review using the manifest-dev
-    review-code skill with dimension=code-bugs. PASS only if no LOW-or-higher findings."*
-    or *"Spawn a general-purpose agent and activate the manifest-dev check-pr
-    skill. PR: …"*. `/define` encodes this automatically; manifests/task files authored
+    behavior is needed — e.g. *"Activate the manifest-dev:review-code skill with
+    dimension=code-bugs and review the change. PASS only if no LOW-or-higher findings."*
+    or *"Activate the manifest-dev check-pr skill. PR: …"*. The prompt tells the current
+    general-purpose verifier to activate the skill directly — it must not spawn a nested
+    agent. `/define` encodes this automatically; manifests/task files authored
     against old agent names or `verify.agent` must be updated. The Pi runtime no longer
     reads a per-gate or configurable verifier agent (the `--manifest-verifier-agent` flag
     is removed); verifiers always spawn general-purpose.
@@ -52,4 +53,4 @@ packaged. It contains **breaking changes** — read the migration notes.
 
 - `manifest-dev` plugin: 2.4.0 → 2.8.0
 - `manifest-dev-tools` plugin: 0.19.0 → 0.23.0
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.0
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.1

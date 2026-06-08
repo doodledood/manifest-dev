@@ -16,11 +16,12 @@ const TOOLS_COMMANDS: ReadonlySet<ManifestCommand> = new Set<ManifestCommand>(["
 
 export default function manifestDevToolsExtension(pi: ExtensionAPI): void {
 	const state = createRuntimeState();
-	// Pi's getFlag only returns values for flags registered by THIS extension, so
-	// the tools extension must register the verifier flags itself for /babysit-pr
-	// to honor --manifest-verifier-* overrides (it would otherwise fall back to
-	// defaults). Then wire its own hooks, scoped to babysit-pr runs so it never
-	// double-verifies the core package's /do or /auto runs.
+	// registerVerifierFlags has a single public owner: in the repo-root install the
+	// core extension loads first and publishes the --manifest-verifier-* flags, so
+	// this call is a no-op (no duplicate flags in `pi --help`) and /babysit-pr reads
+	// the parsed values through the core owner. In a standalone tools install this
+	// call publishes the flags itself. Then wire hooks scoped to babysit-pr runs so
+	// it never double-verifies the core package's /do or /auto runs.
 	registerVerifierFlags(pi);
 	wireRuntimeHooks(pi, state, TOOLS_COMMANDS);
 

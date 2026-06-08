@@ -80,7 +80,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -158,6 +158,8 @@ Configuration follows the Pi-native convention (`pi.registerFlag` / `pi.getFlag`
 - `--manifest-verifier-max-turns` / `MANIFEST_DEV_VERIFIER_MAX_TURNS` (default 1000)
 - `--manifest-verifier-timeout-ms` / `MANIFEST_DEV_VERIFIER_TIMEOUT_MS` (default 1800000)
 - `--manifest-verifier-max-concurrent` / `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` (default 24)
+
+These flags have a **single public owner**. The repo-root install loads both extensions from the shared core module, so `registerVerifierFlags` registers only on the first extension to call it (core, listed first) — otherwise `pi --help` would list each flag twice. Pi's `getFlag` is per-extension, so `resolveVerifierConfig` reads the calling extension's own flag and falls back to the owner; that lets `/babysit-pr` (tools extension) honor `--manifest-verifier-*` overrides parsed by the core owner. A standalone tools install registers the flags itself as the owner.
 
 Current runtime boundaries:
 
