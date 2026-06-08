@@ -444,6 +444,86 @@ def test_skill_activation_names_are_per_target() -> None:
     assert "manifest-dev:check-pr" in opencode_pr
 
 
+# --- Durable source<->dist drift guards -----------------------------------------
+# These sweep EVERY skill markdown on each surface so a future /sync-tools that
+# regenerates dist (it force-full-regenerates when the reference files change)
+# cannot silently reintroduce the drift classes this PR fixed. They assert the
+# per-target invariant holds everywhere, not just on the files edited by hand.
+
+SOURCE_SKILL_ROOTS = (
+    ROOT / "claude-plugins" / "manifest-dev" / "skills",
+    ROOT / "claude-plugins" / "manifest-dev-tools" / "skills",
+)
+DIST_QUALIFIER_KEEPING_ROOTS = (
+    DIST / "codex" / "plugins" / "manifest-dev" / "skills",
+    DIST / "codex" / "plugins" / "manifest-dev-tools" / "skills",
+    DIST / "opencode" / "skills",
+)
+# Forms the OpenCode installer rewrite (colon-only) cannot catch — they must never
+# appear in source or in a qualifier-keeping dist, or the installed prompt names a
+# skill that does not exist.
+_UNREWRITABLE_FORMS = (
+    "manifest-dev check-pr skill",  # space form instead of colon
+    "activates the `review-prompt` skill",  # bare cross-plugin activation
+)
+
+
+def _skill_markdowns(*roots: Path) -> list[Path]:
+    return [p for root in roots for p in root.rglob("*.md")]
+
+
+def test_no_unrewritable_activation_forms_in_source_or_qualifier_dists() -> None:
+    """Source and the colon-keeping dists (Codex, OpenCode) must use the canonical
+    plugin-qualified activation form everywhere — never the space form or a bare
+    cross-plugin id the OpenCode installer can't rewrite."""
+    for path in _skill_markdowns(*SOURCE_SKILL_ROOTS, *DIST_QUALIFIER_KEEPING_ROOTS):
+        text = path.read_text(encoding="utf-8")
+        for bad in _UNREWRITABLE_FORMS:
+            assert bad not in text, f"{path}: stale activation form {bad!r}"
+
+
+def test_pi_dist_has_no_qualified_skill_ids_anywhere() -> None:
+    """Pi invokes /skill:<name> with no plugin namespace, so no manifest-dev(-tools):
+    qualified id may survive in ANY Pi skill markdown (sweep, not just sampled files).
+    """
+    qualified = re.compile(r"manifest-dev(?:-tools)?:[a-z]")
+    for path in _skill_markdowns(DIST / "pi" / "skills"):
+        assert not qualified.search(path.read_text(encoding="utf-8")), path
+
+
+def test_check_pr_stays_workflow_neutral_on_every_surface() -> None:
+    """check-pr is a workflow-neutral reporter: the caller-side WAIT-PENDING token
+    must never leak into it (source or any dist copy). The wait-pending decision is a
+    verifier->runtime concern; check-pr only emits its fixed-vocabulary directives."""
+    check_pr_copies = [
+        ROOT / "claude-plugins/manifest-dev/skills/check-pr/SKILL.md",
+        DIST / "pi" / "skills" / "check-pr" / "SKILL.md",
+        DIST / "opencode" / "skills" / "check-pr" / "SKILL.md",
+        DIST
+        / "codex"
+        / "plugins"
+        / "manifest-dev"
+        / "skills"
+        / "check-pr"
+        / "SKILL.md",
+    ]
+    for path in check_pr_copies:
+        assert path.exists(), path
+        assert "WAIT-PENDING" not in path.read_text(encoding="utf-8"), path
+
+
+def test_wait_pending_contract_lives_in_runtime_and_pi_reference() -> None:
+    """The wait-pending contract must live where check-pr is not: the runtime constant,
+    the --ci verifier prompt, and the Pi runtime reference. Guards against the contract
+    being dropped (which would silently route wait-only PRs back into repair)."""
+    runtime = PI_EXTENSION.read_text(encoding="utf-8")
+    assert 'WAIT_PENDING_MARKER = "WAIT-PENDING"' in runtime
+    assert "isWaitPendingFailure" in runtime
+    pi_ref = (SYNC_TOOLS / "references" / "pi-cli.md").read_text(encoding="utf-8")
+    assert "WAIT-PENDING" in pi_ref
+    assert "workflow-neutral" in pi_ref
+
+
 def test_pi_core_extension_registers_do_and_auto_only() -> None:
     content = PI_EXTENSION.read_text(encoding="utf-8")
     for command in PI_CORE_COMMANDS:
