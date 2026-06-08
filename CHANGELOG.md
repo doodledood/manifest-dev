@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — Codex plugin-native distribution, code-review skill, command rename
+## Unreleased — Codex plugin-native distribution, review-code skill, command rename
 
 This release reworks how reviewers, the Codex distribution, and the Pi runtime are
 packaged. It contains **breaking changes** — read the migration notes.
@@ -9,15 +9,15 @@ packaged. It contains **breaking changes** — read the migration notes.
 
 - **manifest-dev ships ZERO agents — all agents are now skills, and `verify.agent` is
   removed from the manifest schema.** The 13 quality-dimension reviewer agents became the
-  `code-review` skill (one reference per dimension, progressive disclosure), and the four
-  remaining functional agents — `criteria-checker`, `github-pr-lifecycle`, `slack-poller`,
-  `prompt-reviewer` — are now skills too (`criteria-checker`/`github-pr-lifecycle`/
-  `slack-poller` under `manifest-dev`, `prompt-reviewer` under `manifest-dev-tools`).
+  `review-code` skill (one reference per dimension, progressive disclosure), and the
+  remaining functional agents — `check-pr`, `poll-slack`,
+  `review-prompt` — are now skills too (`check-pr`/
+  `poll-slack` under `manifest-dev`, `review-prompt` under `manifest-dev-tools`).
   - *Migrate*: there is no `verify.agent` field anymore. Every gate is verified by a
     **general-purpose** subagent whose `verify.prompt` activates a skill when specialized
     behavior is needed — e.g. *"Spawn a general-purpose review using the manifest-dev
-    code-review skill with dimension=code-bugs. PASS only if no LOW-or-higher findings."*
-    or *"Spawn a general-purpose agent and activate the manifest-dev github-pr-lifecycle
+    review-code skill with dimension=code-bugs. PASS only if no LOW-or-higher findings."*
+    or *"Spawn a general-purpose agent and activate the manifest-dev check-pr
     skill. PR: …"*. `/define` encodes this automatically; manifests/task files authored
     against old agent names or `verify.agent` must be updated. The Pi runtime no longer
     reads a per-gate or configurable verifier agent (the `--manifest-verifier-agent` flag
@@ -30,8 +30,17 @@ packaged. It contains **breaking changes** — read the migration notes.
   - *Migrate*: `codex plugin marketplace add doodledood/manifest-dev`, then install the
     plugins. Plugin skills install into `~/.codex/plugins/cache/...` instead of the
     shared `~/.agents/skills/`, which is what stops manifest-dev skills from leaking into
-    other Agent-Skills hosts (e.g. Pi). On Codex, the surviving functional agents degrade
-    to the general-purpose subagent (plugins cannot bundle agents).
+    other Agent-Skills hosts (e.g. Pi). manifest-dev ships no agents on any target — the
+    former functional agents are bundled skills.
+
+- **Skills are verb-named; `criteria-checker` is dropped.** The former functional agents
+  became verb-named skills: `github-pr-lifecycle` → `check-pr`, `slack-poller` →
+  `poll-slack`, `prompt-reviewer` → `review-prompt`, and the reviewers' `code-review`
+  skill → `review-code`. Instruction skills get verb names; knowledge skills (e.g.
+  `prompt-engineering`) stay nouns. `criteria-checker` was removed entirely — with no
+  `verify.agent` field, the default general-purpose verifier following `verify.prompt`
+  already does single-criterion checks. The `prompt-engineering` skill now documents
+  defaulting to a skill over an agent (cross-compatibility) and this naming convention.
 
 - **Pi harness commands dropped the `manifest-` prefix.** `/manifest-do`, `/manifest-auto`,
   and `/manifest-babysit-pr` are now `/do`, `/auto`, and `/babysit-pr`.
@@ -41,6 +50,6 @@ packaged. It contains **breaking changes** — read the migration notes.
 
 ### Versions
 
-- `manifest-dev` plugin: 2.4.0 → 2.6.0
-- `manifest-dev-tools` plugin: 0.19.0 → 0.21.0
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.6.0
+- `manifest-dev` plugin: 2.4.0 → 2.7.0
+- `manifest-dev-tools` plugin: 0.19.0 → 0.22.0
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.7.0

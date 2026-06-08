@@ -8,7 +8,7 @@ CLAUDE.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
-Each gate is a **dimension** of the `code-review` skill (one ref per dimension, loaded on demand). Two tiers by dimension role. **Defect-finding dimensions** (every LOW finding is signal — a real divergence, defect, contract mismatch, or type hole): `no LOW+`. **Advisory dimensions** (LOW findings are usually taste-level — could-be-better, not is-broken): `no MEDIUM+`. The split is structural, not per-finding — it reflects what each dimension is built to detect.
+Each gate is a **dimension** of the `review-code` skill (one ref per dimension, loaded on demand). Two tiers by dimension role. **Defect-finding dimensions** (every LOW finding is signal — a real divergence, defect, contract mismatch, or type hole): `no LOW+`. **Advisory dimensions** (LOW findings are usually taste-level — could-be-better, not is-broken): `no MEDIUM+`. The split is structural, not per-finding — it reflects what each dimension is built to detect.
 
 | Aspect | Dimension | Threshold |
 |--------|-----------|-----------|
@@ -31,7 +31,7 @@ Each gate is a **dimension** of the `code-review` skill (one ref per dimension, 
 | Contract correctness | contracts | no LOW+ | When code calls external/internal APIs, changes public interfaces, or crosses service boundaries |
 | Type safety | type-safety | no LOW+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
 
-**Encoding:** each dimension gate encodes with `verify.agent: general-purpose` (the default) and a `verify.prompt` that invokes the `manifest-dev:code-review` skill for that dimension at the row's threshold — e.g. *"Spawn a general-purpose review using the manifest-dev code-review skill with dimension=code-bugs against the change. PASS only if no LOW-or-higher findings."* See `define/SKILL.md` → "Encoding dimension gates".
+**Encoding:** each dimension gate is verified by a general-purpose subagent (there is no `verify.agent` field) whose `verify.prompt` invokes the `manifest-dev:review-code` skill for that dimension at the row's threshold — e.g. *"Spawn a general-purpose review using the manifest-dev review-code skill with dimension=code-bugs against the change. PASS only if no LOW-or-higher findings."* See `define/SKILL.md` → "Encoding gates".
 
 ## Project Gates
 

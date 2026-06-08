@@ -40,7 +40,7 @@ If the PR description is stale or too thin to resolve substantive code decisions
 
 ## AC templating
 
-One AC, verified by a general-purpose agent that activates the `github-pr-lifecycle` skill, with PR URL + branch templated into the prompt field. There is no `verify.agent` field — `verify.prompt` instructs the verifier to activate the `github-pr-lifecycle` skill. Baseline template from `tasks/PR_LIFECYCLE.md` Quality Gates section. The `github-pr-lifecycle` skill owns canonical gate logic at runtime. /define populates `verify.prompt:` with baseline content (PR URL + branch); custom steering (named approvers, known-flaky CI, custom labels) is NOT probed during babysit — autonomous synthesis stays fast. User adds steering later via amendment.
+One AC, verified by a general-purpose agent that activates the `check-pr` skill, with PR URL + branch templated into the prompt field. There is no `verify.agent` field — `verify.prompt` instructs the verifier to activate the `check-pr` skill. Baseline template from `tasks/PR_LIFECYCLE.md` Quality Gates section. The `check-pr` skill owns canonical gate logic at runtime. /define populates `verify.prompt:` with baseline content (PR URL + branch); custom steering (named approvers, known-flaky CI, custom labels) is NOT probed during babysit — autonomous synthesis stays fast. User adds steering later via amendment.
 
 ## Output
 
@@ -55,6 +55,6 @@ Write manifest to `~/.manifest-dev/manifests/manifest-{ts}.md` — the same dura
 ## Gotchas
 
 - **One-shot synthesis.** Does not poll or re-synthesize. Manifest written → /do takes over.
-- **Externally-closed PR mid-/do.** Detected at runtime by the verifier (the general-purpose agent activating the `github-pr-lifecycle` skill); FAIL with a hint naming the terminal state. /do treats as terminal; does not reopen; autonomous amendment to suppress is forbidden.
+- **Externally-closed PR mid-/do.** Detected at runtime by the verifier (the general-purpose agent activating the `check-pr` skill); FAIL with a hint naming the terminal state. /do treats as terminal; does not reopen; autonomous amendment to suppress is forbidden.
 - **PR description rewrites scoped to /do.** Babysit reads description for intent seeding but does not modify. /do's later sync hint handles description updates if the gate fires.
 - **No retroactive seeding.** Intent seeded once at synthesis. If PR description changes substantively, user invokes amendment to re-sync intent — not by re-running babysit.

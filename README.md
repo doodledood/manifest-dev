@@ -181,7 +181,7 @@ This is spec-driven development adapted for LLM execution. The manifest is a spe
 
 The manifest is the canonical source of truth for the PR or branch (in multi-repo work, the whole PR set), not for a single task. Feedback flows through it. When something's off mid-`/do` or after `/done` — a missed edge case, a reviewer comment, a bug you didn't see coming — say it in your active session. The system routes it through Self-Amendment automatically: `/escalate` → `/define` re-invoked on the manifest path to amend → `/do` resumes with the updated manifest. Pure questions about the manifest get answered inline; everything else amends. `/done` stays unreachable until every criterion verifies PASS again, so each round trip grows your verification surface — bug fixes and late requirements become permanent checked criteria.
 
-**Multi-repo:** by default a single manifest covers the whole changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively. PR-lifecycle work templates one `github-pr-lifecycle` skill run per repo against the shared manifest. Splitting into per-repo manifests is fine when the work is loosely coupled. See [`MULTI_REPO.md`](claude-plugins/manifest-dev/skills/define/references/MULTI_REPO.md).
+**Multi-repo:** by default a single manifest covers the whole changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively. PR-lifecycle work templates one `check-pr` skill run per repo against the shared manifest. Splitting into per-repo manifests is fine when the work is loosely coupled. See [`MULTI_REPO.md`](claude-plugins/manifest-dev/skills/define/references/MULTI_REPO.md).
 
 The do session doesn't need to remember the define conversation — the manifest is external state. Run `/goal /do` in a fresh session, or `/compact` before starting.
 
@@ -224,7 +224,7 @@ The do session doesn't need to remember the define conversation — the manifest
 - [AC-1.2] Invalid credentials return 401, not 500
   ```yaml
   verify:
-    prompt: "Spawn a general-purpose review using the manifest-dev code-review skill with dimension=code-bugs against the auth routes. PASS only if no LOW-or-higher findings (e.g. auth failures returning 500 instead of 401)."
+    prompt: "Spawn a general-purpose review using the manifest-dev review-code skill with dimension=code-bugs against the auth routes. PASS only if no LOW-or-higher findings (e.g. auth failures returning 500 instead of 401)."
   ```
 ````
 
@@ -249,7 +249,7 @@ Every criterion carries a `verify` block. One required field, three optional:
 
 | Field | Required | Purpose |
 |-------|----------|---------|
-| `prompt` | yes | Verbatim instruction to the general-purpose verifier subagent — run a bash command, inspect files, query an API, fetch docs, or activate a skill (e.g. the `code-review` skill for one dimension), whatever it takes. |
+| `prompt` | yes | Verbatim instruction to the general-purpose verifier subagent — run a bash command, inspect files, query an API, fetch docs, or activate a skill (e.g. the `review-code` skill for one dimension), whatever it takes. |
 | `model` | no | Model override (e.g. `claude-haiku-4-5-20251001` for speed). Defaults to the invoking session's model. |
 | `phase` | no | Integer, default `1`. Lower phases run first; slow checks (e2e, deploy-dependent) wait in a later phase so cheap checks fail fast. |
 
@@ -258,9 +258,9 @@ Every criterion carries a `verify` block. One required field, three optional:
 verify:
   prompt: "Run: npm run test -- --coverage. PASS only if exit 0 and coverage shows ≥80%."
 
-# Quality dimension via the code-review skill
+# Quality dimension via the review-code skill
 verify:
-  prompt: "Spawn a general-purpose review using the manifest-dev code-review skill with dimension=code-maintainability. PASS only if no MEDIUM-or-higher findings (DRY violations, coupling)."
+  prompt: "Spawn a general-purpose review using the manifest-dev review-code skill with dimension=code-maintainability. PASS only if no MEDIUM-or-higher findings (DRY violations, coupling)."
 
 # Slow staging probe, gated to a later phase
 verify:
@@ -268,7 +268,7 @@ verify:
   phase: 2
 ```
 
-A verifier returns one of three states. **PASS** — the criterion holds. **FAIL** — it's violated, with evidence: a per-gate directive `/do` runs literally (when the prompt activates a specialized skill like `github-pr-lifecycle`), or a prose fix hint read with judgment (for plain prompts). **BLOCKED** — it can't be evaluated yet (pending deploy, human approval), and `/do` routes it through `/escalate`.
+A verifier returns one of three states. **PASS** — the criterion holds. **FAIL** — it's violated, with evidence: a per-gate directive `/do` runs literally (when the prompt activates a specialized skill like `check-pr`), or a prose fix hint read with judgment (for plain prompts). **BLOCKED** — it can't be evaluated yet (pending deploy, human approval), and `/do` routes it through `/escalate`.
 
 ## Multi-CLI Support
 
@@ -291,7 +291,7 @@ Architecture decisions, including the accepted Codex plugin-native migration pla
 
 | Plugin | Description |
 |--------|-------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow: `/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team`, and the verification skills. `/do` verifies inline — a general-purpose subagent per Acceptance Criterion and Global Invariant. The recommended way to run it is `/goal /do <manifest-path>`, which keeps the run alive across turns. The manifest is the canonical source of truth for the PR/branch; feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work activates the `github-pr-lifecycle` skill; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
+| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow: `/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team`, and the verification skills. `/do` verifies inline — a general-purpose subagent per Acceptance Criterion and Global Invariant. The recommended way to run it is `/goal /do <manifest-path>`, which keeps the run alive across turns. The manifest is the canonical source of truth for the PR/branch; feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work activates the `check-pr` skill; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow. `/prompt-engineering` for building and reviewing prompts. `/walk-pr` (collaborative review), `/review-pr` (autonomous review that posts human-voiced comments), and `/babysit-pr` (author-side PR lifecycle babysitting that runs manifest machinery) cover PR collaboration. `/adr` synthesizes Architecture Decision Records from a session. `/handoff` packages context for a fresh agent or a side-session. `/teach-me` turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks. |
 
 ## Plugin Architecture
@@ -304,7 +304,7 @@ Architecture decisions, including the accepted Codex plugin-native migration pla
 | `/define` | User-invoked | Encodes the conversation's shared understanding into a manifest. Not an interview — it makes the manifest-specific calls (invariant vs guidance, AC scope, phase ordering, trade-offs to lock) and auto-invokes `/figure-out` first if the understanding isn't there. Pass an existing manifest path to amend it in place. Emits both `/do` and `/goal /do` handoffs. Supports `--babysit <pr-url>` and `--canvas`. |
 | `/do` | User-invoked | Executes against the manifest and verifies inline — a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Calls `/done` when everything passes, routes to `/escalate` when blocked. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping. Recommended invocation is `/goal /do <manifest-path>` — `/goal` keeps the run alive across turns; bare `/do` runs a single foreground turn. Mid-execution feedback defaults to a Self-Amendment cycle. |
 | `/auto` | User-invoked | End-to-end autonomous: `/figure-out` → `/define` → `/do`, chained with no approval gates. Run it as `/goal /auto` so it carries across turns (recommended). `--babysit <pr-url>` tends an existing PR toward mergeable (platform auto-detected from the PR URL host). |
-| `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator that brings evidence, names trade-offs, and surfaces disagreement; polls the thread via `/loop`, reads via the `slack-poller` subagent. Owner-by-Slack-handle overrules. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting it to Slack. |
+| `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator that brings evidence, names trade-offs, and surfaces disagreement; polls the thread via `/loop`, reads via the `poll-slack` subagent. Owner-by-Slack-handle overrules. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting it to Slack. |
 | `/done` | Internal | Plain-prose completion summary, called by `/do` after every criterion verifies PASS. |
 | `/escalate` | Internal | Structured blocker: the criterion, what was tried and why each attempt failed, possible resolutions, what's needed from you. Routed by `/do`. |
 
@@ -316,12 +316,11 @@ manifest-dev ships **no agents of its own**. `/do` always verifies criteria with
 
 | Skill | Focus |
 |-------|-------|
-| `criteria-checker` | General-purpose verifier — runs whatever bash, file reads, or external tools the prompt specifies |
-| `github-pr-lifecycle` | PR-lifecycle inspector — CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives or prose findings. Activated automatically when the repo's `origin` remote points at github.com. |
-| `slack-poller` | Tails a Slack thread for the `/figure-out-team` loop, returning verbatim deltas the agent reasons over |
-| `prompt-reviewer` *(manifest-dev-tools)* | Reviews LLM prompts against the prompt-engineering skill's gap-calibration principles |
+| `check-pr` | PR-lifecycle inspector — CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives or prose findings. Activated automatically when the repo's `origin` remote points at github.com. |
+| `poll-slack` | Tails a Slack thread for the `/figure-out-team` loop, returning verbatim deltas the agent reasons over |
+| `review-prompt` *(manifest-dev-tools)* | Reviews LLM prompts against the prompt-engineering skill's gap-calibration principles |
 
-**Code-review skill** — quality review is the `code-review` skill, **one dimension per invocation** (a general-purpose subagent activates it from the verify prompt; the skill loads exactly that dimension's reference).
+**Code-review skill** — quality review is the `review-code` skill, **one dimension per invocation** (a general-purpose subagent activates it from the verify prompt; the skill loads exactly that dimension's reference).
 
 | Dimension | Role | Focus |
 |-----------|------|-------|

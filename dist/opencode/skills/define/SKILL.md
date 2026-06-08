@@ -13,7 +13,7 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 
 | Domain | Indicators | File |
 |--------|------------|------|
-| Coding | Any code change; base code-review dimension gates for intent, bugs, operational readiness, design, tests, docs, context adherence | `CODING.md` |
+| Coding | Any code change; base review-code dimension gates for intent, bugs, operational readiness, design, tests, docs, context adherence | `CODING.md` |
 | Feature | New functionality, APIs, enhancements | `FEATURE.md` |
 | Bug | Defects, errors, regressions, "not working", "broken" | `BUG.md` |
 | Refactor | Restructuring, "clean up", pattern changes | `REFACTOR.md` |
@@ -24,22 +24,22 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 | Research | Investigations, analyses, comparisons | `research/RESEARCH.md` |
 | Blog | Blog posts, articles, tutorials (base: Writing) | `BLOG.md` |
 
-*Composition:* code-change tasks combine `CODING.md` (base gates) with the specific FEATURE/BUG/REFACTOR; text-authoring combines `WRITING.md` with BLOG/DOCUMENT; Research composes `research/RESEARCH.md` with `research/sources/`. Domains aren't mutually exclusive (a bug fix that refactors uses both). `PR_LIFECYCLE.md` composes onto `CODING.md` when the local `origin` points at github.com (auto-detected; probe if origin is missing or a github-enterprise host) — it templates one AC per repo whose `verify.prompt:` spawns a general-purpose agent that activates the `github-pr-lifecycle` skill — the prompt is the steering surface for per-PR nuances (labels, approvers, flaky-CI/retrigger overrides). **Exception:** PROMPTING does not compose with CODING unless the task also changes executable code.
+*Composition:* code-change tasks combine `CODING.md` (base gates) with the specific FEATURE/BUG/REFACTOR; text-authoring combines `WRITING.md` with BLOG/DOCUMENT; Research composes `research/RESEARCH.md` with `research/sources/`. Domains aren't mutually exclusive (a bug fix that refactors uses both). `PR_LIFECYCLE.md` composes onto `CODING.md` when the local `origin` points at github.com (auto-detected; probe if origin is missing or a github-enterprise host) — it templates one AC per repo whose `verify.prompt:` spawns a general-purpose agent that activates the `check-pr` skill — the prompt is the steering surface for per-PR nuances (labels, approvers, flaky-CI/retrigger overrides). **Exception:** PROMPTING does not compose with CODING unless the task also changes executable code.
 
 *Content types:* **Quality Gates** (`## Quality Gates`) → INV-G*/AC-* (omit clearly inapplicable with stated reasoning); **Defaults** (`## Defaults`) → PG-* pre-interview, user reviews and removes if N/A; **Reference files** (`tasks/**/references/*.md`) → verifier-agent lookup data, not loaded during /define.
 
 **Verifier prompt discipline.** Before writing `verify.prompt` fields, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. Verifier prompts are prompts: state the verifier's goal, evidence to inspect, PASS/FAIL/BLOCKED contract, and non-obvious context. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
 
-**Encoding gates — always general-purpose + a skill.** There is no `verify.agent` field. Every gate is verified by a **general-purpose** subagent driven by `verify.prompt`; when a gate needs specialized behavior, the prompt tells that agent to **activate a skill**. Code-quality gates activate the `code-review` skill with a dimension; other specialized checks activate their skill (`github-pr-lifecycle`, `prompt-reviewer`, `criteria-checker`). Pattern:
+**Encoding gates — always general-purpose + a skill.** There is no `verify.agent` field. Every gate is verified by a **general-purpose** subagent driven by `verify.prompt`; when a gate needs specialized behavior, the prompt tells that agent to **activate a skill**. Code-quality gates activate the `review-code` skill with a dimension; other specialized checks activate their skill (`check-pr`, `review-prompt`). Pattern:
 
 ```yaml
 verify:
   prompt: |
-    Spawn a general-purpose review using the manifest-dev code-review skill with dimension=<dimension> against the change.
+    Spawn a general-purpose review using the manifest-dev review-code skill with dimension=<dimension> against the change.
     PASS only if no <LOW|MEDIUM>-or-higher findings. Report findings with severity.
 ```
 
-The 13 code-review dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+). For a non-code-review specialized check, name its skill in the prompt instead, e.g. *"Spawn a general-purpose agent and activate the manifest-dev github-pr-lifecycle skill. PR: …"*.
+The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+). For a non-review-code specialized check, name its skill in the prompt instead, e.g. *"Spawn a general-purpose agent and activate the manifest-dev check-pr skill. PR: …"*.
 
 ## Manifest Schema
 

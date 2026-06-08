@@ -112,7 +112,7 @@ def test_codex_core_plugin_bundles_code_review_with_all_dimensions() -> None:
         / "plugins"
         / "manifest-dev"
         / "skills"
-        / "code-review"
+        / "review-code"
         / "references"
     )
     dimensions = {p.stem for p in refs.glob("*.md")}
@@ -151,7 +151,7 @@ def test_opencode_installer_installs_tools_skills(tmp_path: Path) -> None:
         assert command.is_file(), f"missing {command}"
 
     assert (target / "skills" / "define-manifest-dev").is_dir()
-    assert (target / "skills" / "code-review-manifest-dev").is_dir()
+    assert (target / "skills" / "review-code-manifest-dev").is_dir()
 
 
 def test_opencode_installer_defaults_to_global_config_dir(tmp_path: Path) -> None:
@@ -164,8 +164,8 @@ def test_opencode_installer_defaults_to_global_config_dir(tmp_path: Path) -> Non
     target = Path(env["HOME"]) / ".config" / "opencode"
     assert f"Target:  {target}" in result.stdout
     assert (target / "skills" / "define-manifest-dev").is_dir()
-    # criteria-checker is a skill now, not an agent; no manifest-dev agents install.
-    assert (target / "skills" / "criteria-checker-manifest-dev").is_dir()
+    # The former functional agents are skills now; no manifest-dev agents install.
+    assert (target / "skills" / "check-pr-manifest-dev").is_dir()
     agents_dir = target / "agents"
     if agents_dir.exists():
         assert not list(agents_dir.glob("*-manifest-dev*"))
@@ -276,7 +276,6 @@ def test_opencode_uninstall_removes_only_manifest_dev_files(tmp_path: Path) -> N
     }
     assert not (opencode_dir / "skills" / "define-manifest-dev").exists()
     assert not (opencode_dir / "skills" / "adr-manifest-dev-tools").exists()
-    assert not (opencode_dir / "agents" / "criteria-checker-manifest-dev.md").exists()
     assert not (opencode_dir / "commands" / "define-manifest-dev.md").exists()
 
 

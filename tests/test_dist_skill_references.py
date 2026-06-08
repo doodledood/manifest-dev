@@ -5,10 +5,10 @@ Verify each CLI distribution carries the surviving skill set in the right shape.
   the repo-root .agents/plugins/marketplace.json). No installer, no agents, no
   namespacing suffixes.
 - OpenCode still ships an installer that namespaces components at install time.
-- Pi ships compatible shared skills (incl. code-review) plus a two-package runtime
+- Pi ships compatible shared skills (incl. review-code) plus a two-package runtime
   (core @doodledood/manifest-dev-pi, tools @doodledood/manifest-dev-pi-tools).
 
-Reviewers are dimensions of the code-review skill, not standalone agents.
+Reviewers are dimensions of the review-code skill, not standalone agents.
 """
 
 from __future__ import annotations
@@ -27,40 +27,38 @@ SYNC_TOOLS = ROOT / ".claude" / "skills" / "sync-tools"
 
 CORE_SKILLS = (
     "auto",
-    "code-review",
-    "criteria-checker",
+    "review-code",
     "define",
     "do",
     "done",
     "escalate",
     "figure-out",
     "figure-out-team",
-    "github-pr-lifecycle",
-    "slack-poller",
+    "check-pr",
+    "poll-slack",
 )
 TOOLS_SKILLS = (
     "adr",
     "babysit-pr",
     "handoff",
     "prompt-engineering",
-    "prompt-reviewer",
+    "review-prompt",
     "review-pr",
     "teach-me",
     "walk-pr",
 )
 PI_SKILLS = (
     "adr",
-    "code-review",
-    "criteria-checker",
+    "review-code",
     "define",
     "figure-out",
     "figure-out-team",
-    "github-pr-lifecycle",
+    "check-pr",
     "handoff",
     "prompt-engineering",
-    "prompt-reviewer",
+    "review-prompt",
     "review-pr",
-    "slack-poller",
+    "poll-slack",
     "teach-me",
     "walk-pr",
 )
@@ -125,7 +123,7 @@ def test_codex_code_review_skill_carries_every_dimension() -> None:
         / "plugins"
         / "manifest-dev"
         / "skills"
-        / "code-review"
+        / "review-code"
         / "references"
     )
     assert {p.stem for p in refs.glob("*.md")} == CODE_REVIEW_DIMENSIONS
@@ -301,16 +299,14 @@ def test_opencode_ships_no_agents() -> None:
 def test_former_functional_agents_are_skills_in_every_dist() -> None:
     """The four converted agents now ship as skills, not agents."""
     assert {
-        "criteria-checker",
-        "github-pr-lifecycle",
-        "slack-poller",
+        "check-pr",
+        "poll-slack",
     } <= codex_plugin_skills("manifest-dev")
-    assert "prompt-reviewer" in codex_plugin_skills("manifest-dev-tools")
+    assert "review-prompt" in codex_plugin_skills("manifest-dev-tools")
     for name in (
-        "criteria-checker",
-        "github-pr-lifecycle",
-        "slack-poller",
-        "prompt-reviewer",
+        "check-pr",
+        "poll-slack",
+        "review-prompt",
     ):
         assert (DIST / "opencode" / "skills" / name / "SKILL.md").is_file()
         assert (DIST / "pi" / "skills" / name / "SKILL.md").is_file()

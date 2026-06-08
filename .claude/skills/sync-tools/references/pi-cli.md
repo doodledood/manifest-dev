@@ -30,7 +30,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | `/done` skill | Excluded. Runtime completion outcome. |
 | `/escalate` skill | Excluded. Runtime blocker outcome. |
 | `/auto`, `/babysit-pr` | Excluded as ordinary skills. Provided by Pi-aware extension commands that run the lifecycle through Harness-level Do outcome gating. |
-| Reviewer/verifier skills | manifest-dev ships no agents; `criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `prompt-reviewer`, and `code-review` ship as ordinary skills under `dist/pi/skills/`. Steer clean Pi subagent verifier sessions via `verify.prompt` (which may activate one of these skills); there is no `verify.agent` field and no `pi.agents` manifest field. |
+| Reviewer/verifier skills | manifest-dev ships no agents; `check-pr`, `poll-slack`, `review-prompt`, and `review-code` ship as ordinary skills under `dist/pi/skills/`. Steer clean Pi subagent verifier sessions via `verify.prompt` (which may activate one of these skills); there is no `verify.agent` field and no `pi.agents` manifest field. |
 | Claude hooks | Re-evaluate as Pi lifecycle/command/tool events; do not port hook names mechanically. |
 | Slash commands | Prefer `/skill:<name>` for skills and extension commands for runtime actions. |
 | CLAUDE.md context | Do not assume a package-level CLAUDE.md equivalent; package docs and skills carry their own context. |
@@ -111,17 +111,16 @@ Copy these core skills unchanged except for target-specific handoff wording:
 - `figure-out`
 - `define`
 - `figure-out-team`
-- `criteria-checker`
-- `github-pr-lifecycle`
-- `slack-poller`
-- `code-review`
+- `check-pr`
+- `poll-slack`
+- `review-code`
 
 Copy manifest-dev-tools skills that do not directly invoke `/do` as ordinary skills:
 
 - `adr`
 - `handoff`
 - `prompt-engineering`
-- `prompt-reviewer`
+- `review-prompt`
 - `review-pr`
 - `teach-me`
 - `walk-pr`

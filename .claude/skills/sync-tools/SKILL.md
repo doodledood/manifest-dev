@@ -125,5 +125,5 @@ Summary table after all CLIs processed:
 | CLI | Skills | Agents | Hooks | Commands | Status |
 |-----|--------|--------|-------|----------|--------|
 | OpenCode | N | N converted | N adapted | N | Complete |
-| Codex | N (2 plugins) | none (reviewers = code-review skill) | none | — | Complete |
+| Codex | N (2 plugins) | none (reviewers = review-code skill) | none | — | Complete |
 | Pi | N compatible | N runtime prompt assets | source-owned runtime extension | extension commands | Complete |

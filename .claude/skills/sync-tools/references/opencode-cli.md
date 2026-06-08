@@ -2,7 +2,7 @@
 
 Reference for converting Claude Code plugin components to OpenCode format (opencode 1.15.x, May 2026).
 
-**manifest-dev ships no agents of its own.** The former functional agents (`criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `prompt-reviewer`) and the 13 review dimensions are all **skills**; verification is always a general-purpose subagent whose prompt activates a skill. The OpenCode distribution therefore ships **skills only — no `agents/` directory**. The agent-conversion mechanics below are retained as reference for the OpenCode agent format generally, not because manifest-dev emits any agents.
+**manifest-dev ships no agents of its own.** The former functional agents (`check-pr`, `poll-slack`, `review-prompt`) and the 13 review dimensions are all **skills**; verification is always a general-purpose subagent whose prompt activates a skill. The OpenCode distribution therefore ships **skills only — no `agents/` directory**. The agent-conversion mechanics below are retained as reference for the OpenCode agent format generally, not because manifest-dev emits any agents.
 
 ## Conversion Summary
 
@@ -376,9 +376,7 @@ dist/opencode/
 │   │   └── SKILL.md
 │   ├── do/
 │   │   └── SKILL.md
-│   ├── criteria-checker/
-│   │   └── SKILL.md
-│   └── github-pr-lifecycle/
+│   └── check-pr/
 │       └── SKILL.md
 ├── plugins/
 │   ├── index.ts                # Hook plugin (complete installable implementation)
@@ -452,7 +450,7 @@ During sync, replace remaining `CLAUDE.md` references that mean "this CLI's cont
 - Skills (operational only): instructions like "write to CLAUDE.md" → "write to AGENTS.md". Leave research/reference content unchanged.
 - Do NOT replace "CLAUDE.md" when it refers to Claude Code's own file (e.g., in comparative text or research).
 
-The `code-review` skill's `context-file-adherence` dimension reference already uses generic "context file" language — no special handling needed for its content.
+The `review-code` skill's `context-file-adherence` dimension reference already uses generic "context file" language — no special handling needed for its content.
 
 ## Session File Adaptation
 

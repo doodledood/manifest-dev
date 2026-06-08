@@ -1,12 +1,12 @@
 {
   "name": "manifest-dev",
-  "version": "2.6.0",
-  "description": "Manifest-driven workflows for Codex: /define interviews and writes a Manifest; /do executes it and verifies inline. Includes the code-review skill (one quality dimension per invocation).",
+  "version": "2.7.0",
+  "description": "Manifest-driven workflows for Codex: /define interviews and writes a Manifest; /do executes it and verifies inline. Includes the review-code skill (one quality dimension per invocation).",
   "skills": "./skills/",
   "keywords": [
     "manifest-dev",
     "agent-skills",
     "workflow",
-    "code-review"
+    "review-code"
   ]
 }

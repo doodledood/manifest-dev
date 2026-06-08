@@ -35,15 +35,15 @@ The subagent returns **PASS**, **FAIL**, or **BLOCKED**. BLOCKED routes via /esc
 
 ## PR Lifecycle
 
-PR-lifecycle work activates the `github-pr-lifecycle` skill (via a general-purpose verifier) through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /babysit-pr uses manifest/PR grounding and runs the lifecycle; /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
+PR-lifecycle work activates the `check-pr` skill (via a general-purpose verifier) through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /babysit-pr uses manifest/PR grounding and runs the lifecycle; /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
 
 ## Code review
 
-Quality review is the **`code-review` skill** (one dimension per invocation, each loading its own reference): `change-intent`, `code-bugs`, `contracts`, `type-safety` (defect-finders, no LOW+); `operational-readiness`, `code-design`, `code-maintainability`, `code-simplicity`, `code-testability`, `test-quality`, `docs`, `prose-value`, `context-file-adherence` (advisory, no MEDIUM+). A verifier spawns a general-purpose subagent and activates `code-review` with the dimension.
+Quality review is the **`review-code` skill** (one dimension per invocation, each loading its own reference): `change-intent`, `code-bugs`, `contracts`, `type-safety` (defect-finders, no LOW+); `operational-readiness`, `code-design`, `code-maintainability`, `code-simplicity`, `code-testability`, `test-quality`, `docs`, `prose-value`, `context-file-adherence` (advisory, no MEDIUM+). A verifier spawns a general-purpose subagent and activates `review-code` with the dimension.
 
 ## Agents
 
-manifest-dev ships no agents. Verification is a general-purpose subagent that activates the relevant skill — formerly-agent capabilities now ship as skills (`criteria-checker`, `github-pr-lifecycle`, `slack-poller`, and the tools-side `prompt-reviewer`).
+manifest-dev ships no agents. Verification is a general-purpose subagent that activates the relevant skill — formerly-agent capabilities now ship as skills (`check-pr`, `poll-slack`, and the tools-side `review-prompt`).
 
 ## Unattended Execution
 

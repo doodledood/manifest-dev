@@ -18,7 +18,7 @@ Nothing lands in the shared open-standard `~/.agents/skills/` directory, so mani
 
 | Component | Bundleable in a plugin? | manifest-dev handling |
 |-----------|-------------------------|------------------------|
-| Skills (`SKILL.md` + companions) | YES — `"skills": "./skills/"` | All shared skills, including the `code-review` skill with its per-dimension references |
+| Skills (`SKILL.md` + companions) | YES — `"skills": "./skills/"` | All shared skills, including the `review-code` skill with its per-dimension references |
 | MCP servers (`.mcp.json`) | YES | None currently |
 | Apps (`.app.json`) | YES | None currently |
 | Hooks (`hooks/hooks.json`) | YES (manifest field exists) | manifest-dev ships none to Codex; Codex hook execution is still limited (Issue #2109) — do not fabricate |
@@ -26,8 +26,8 @@ Nothing lands in the shared open-standard `~/.agents/skills/` directory, so mani
 
 **Agents are not a plugin component, and manifest-dev ships none.** Codex plugins bundle skills/MCP/apps/hooks only — but this is not a Codex-specific limitation: manifest-dev itself ships **zero agents** on every target. Consequences:
 
-- The 13 quality-dimension reviewers are **not agents** — they are dimensions of the bundled `code-review` skill. They ship automatically as part of that skill's directory.
-- The former functional agents are now **skills**: `criteria-checker`, `github-pr-lifecycle`, `slack-poller`, and `prompt-reviewer` ship as ordinary bundled skills. Verification is always a general-purpose subagent whose `verify.prompt` activates the relevant skill — there is no `verify.agent` field. Do not generate TOML agent stubs.
+- The 13 quality-dimension reviewers are **not agents** — they are dimensions of the bundled `review-code` skill. They ship automatically as part of that skill's directory.
+- The former functional agents are now **skills**: `check-pr`, `poll-slack`, and `review-prompt` ship as ordinary bundled skills. Verification is always a general-purpose subagent whose `verify.prompt` activates the relevant skill — there is no `verify.agent` field. Do not generate TOML agent stubs.
 
 ## Distribution layout
 
@@ -37,7 +37,7 @@ dist/codex/
 ├── plugins/
 │   ├── manifest-dev/                      # core plugin
 │   │   ├── .codex-plugin/plugin.json
-│   │   └── skills/                        # core skills incl. code-review/ (with references/*)
+│   │   └── skills/                        # core skills incl. review-code/ (with references/*)
 │   └── manifest-dev-tools/                # tools plugin
 │       ├── .codex-plugin/plugin.json
 │       └── skills/                        # tools skills
@@ -94,13 +94,13 @@ Keep `version` in step with the source plugin's `.claude-plugin/plugin.json`.
 
 Skills copy under the Agent Skills Open Standard — same as before, into each plugin's `skills/` directory:
 
-- **Core plugin** (`manifest-dev`): the user-invocable and supporting skills from `claude-plugins/manifest-dev/skills/`, including `code-review/` with its full `references/` set. Exclude the `sync-tools` meta-tool.
+- **Core plugin** (`manifest-dev`): the user-invocable and supporting skills from `claude-plugins/manifest-dev/skills/`, including `review-code/` with its full `references/` set. Exclude the `sync-tools` meta-tool.
 - **Tools plugin** (`manifest-dev-tools`): skills from `claude-plugins/manifest-dev-tools/skills/`.
 
 Per-skill body adaptations (unchanged from the open-standard rules):
 
 - **Tool-name references in operational prose** → Codex names: Bash→`shell_command`, Read→`read_file`, Edit→`apply_patch`, Grep→`grep_files`, Glob/Write/WebFetch→`shell_command`, WebSearch→`web_search`, AskUserQuestion→`request_user_input`, TaskCreate/Todo→`update_plan`. Leave teaching/reference content (`references/*.md` explaining Claude Code conventions) unchanged.
-- **Context file**: operational "write to CLAUDE.md" → "AGENTS.md". Do not rewrite "CLAUDE.md" in comparative/research text. The `code-review` skill's `context-file-adherence` dimension reference already uses generic "context file" language — no special handling.
+- **Context file**: operational "write to CLAUDE.md" → "AGENTS.md". Do not rewrite "CLAUDE.md" in comparative/research text. The `review-code` skill's `context-file-adherence` dimension reference already uses generic "context file" language — no special handling.
 - **Model tiers**: in `references/execution-modes/`, replace Claude model names (haiku/sonnet/opus) with `inherit`.
 - **Session line**: omit the `Session: ~/.claude/.../<id>.jsonl` line from `define`'s completion template — Codex has no agent-visible session-id env var (issue #8923).
 - **No `manifest-` command prefix**: Codex skills present `/do`, `/auto`, `/babysit-pr` (the Pi-only `manifest-` prefix never applied to Codex). Codex has no native `/auto` or `/babysit-pr` runtime command, so those skills ship as ordinary skills that internally chain `/do`.
@@ -148,11 +148,11 @@ Installed plugins are cached under `~/.codex/plugins/cache/manifest-dev/<plugin>
 
 ## AGENTS.md / context
 
-manifest-dev's own `CLAUDE.md`-style context is not required for plugin consumers. If a generated context file is produced for the dist README, describe the workflow (define → do → verify → done) and note that manifest-dev ships no agents — verification is a general-purpose subagent that activates skills (reviewers are the `code-review` skill's dimensions).
+manifest-dev's own `CLAUDE.md`-style context is not required for plugin consumers. If a generated context file is produced for the dist README, describe the workflow (define → do → verify → done) and note that manifest-dev ships no agents — verification is a general-purpose subagent that activates skills (reviewers are the `review-code` skill's dimensions).
 
 ## Known limitations
 
-1. **No agents at all** — manifest-dev ships zero agents. Reviewers are the `code-review` skill; `criteria-checker` / `github-pr-lifecycle` / `slack-poller` / `prompt-reviewer` are skills a general-purpose verifier activates via `verify.prompt`.
+1. **No agents at all** — manifest-dev ships zero agents. Reviewers are the `review-code` skill; `check-pr` / `poll-slack` / `review-prompt` are skills a general-purpose verifier activates via `verify.prompt`.
 2. **Hooks** — manifest-dev ships none to Codex; Codex hook execution remains limited (Issue #2109).
 3. **No `/auto` or `/babysit-pr` runtime command** — they ship as skills that chain `/do`; only Pi has native runtime wrappers.
 4. **Experimental tools** — `read_file`/`grep_files`/`list_dir` availability is model-gated server-side.

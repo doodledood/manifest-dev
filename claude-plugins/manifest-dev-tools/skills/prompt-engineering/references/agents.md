@@ -1,5 +1,13 @@
 # Writing an agent
 
+## Prefer a skill first
+
+Before writing an agent, ask whether a skill closes the same gap. Default to a skill that a general-purpose agent activates ("activate skill X to do Y") rather than a bespoke agent — in nearly all cases that reproduces the agent's behavior. Skills are the Agent Skills Open Standard: plugin-bundleable and identical across harnesses (Claude Code, Codex, Pi, OpenCode). Agents need a different representation per harness and can't be bundled in some plugin systems.
+
+What a skill can't give you is harness-specific frontmatter: a restricted tool allow-list, or an isolated model/subagent type. Reach for an agent only when you genuinely need that isolation or restriction — otherwise the capability belongs in a skill.
+
+## Isolation
+
 Agents run in isolation. They don't inherit the parent's conversation context, the parent's loaded files, or the parent's tool permissions. The spawn prompt is the agent's entire world.
 
 This isolation creates two specific gaps that natural model behavior won't close on its own.

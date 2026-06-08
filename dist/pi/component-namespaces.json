@@ -1,7 +1,7 @@
 {
   "skills": {
     "adr": "manifest-dev-tools",
-    "code-review": "manifest-dev",
+    "review-code": "manifest-dev",
     "define": "manifest-dev",
     "figure-out": "manifest-dev",
     "figure-out-team": "manifest-dev",
@@ -10,10 +10,9 @@
     "review-pr": "manifest-dev-tools",
     "walk-pr": "manifest-dev-tools",
     "teach-me": "manifest-dev-tools",
-    "criteria-checker": "manifest-dev",
-    "github-pr-lifecycle": "manifest-dev",
-    "slack-poller": "manifest-dev",
-    "prompt-reviewer": "manifest-dev-tools"
+    "check-pr": "manifest-dev",
+    "poll-slack": "manifest-dev",
+    "review-prompt": "manifest-dev-tools"
   },
   "runtime_owned_skills": {
     "do": "Harness-level Do is owned by the Pi runtime extension command, not distributed as a normal skill.",
@@ -25,16 +24,8 @@
     "babysit-pr": "Provided by /babysit-pr (tools package), which synthesizes PR lifecycle grounding and runs it through the Pi Harness-level Do outcome gate."
   },
   "agents": {},
-  "agents_excluded": {
-    "_note": "Quality reviewers ship as the `code-review` skill (one dimension per invocation), not as agents. The remaining functional agents below are not shipped as dist/pi assets; verifier sessions are steered at runtime by the source-owned extension via each manifest gate's verify.prompt, and any agent prompt assets remain extension-private and source-owned.",
-    "manifest-dev": [
-      "criteria-checker",
-      "github-pr-lifecycle",
-      "slack-poller"
-    ],
-    "manifest-dev-tools": [
-      "prompt-reviewer"
-    ]
+  "agents_note": {
+    "_note": "manifest-dev ships zero agents. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`), shipped under dist/pi/skills/. Verification is always a general-purpose subagent whose verify.prompt activates a skill — there is no verify.agent field."
   },
   "commands": {
     "do": "Pi Harness-level Do entrypoint for an existing manifest (core package).",

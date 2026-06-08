@@ -2,29 +2,29 @@
 
 ## 1. Intent & Context
 
-- **Goal:** Eliminate the Pi skill-leak at its root by migrating the Codex distribution to plugin-native (skills land in the Pi-invisible plugin cache instead of the shared `~/.agents/skills/`), rename the Pi harness commands to drop the `manifest-` prefix, and consolidate the 13 quality-dimension reviewer agents into a single progressive-disclosure `code-review` skill so reviewers are plugin-bundleable and cross-harness. One cohesive change.
-- **Goal (amendment):** Complete the agent→skill migration so the project ships **zero agents** on any surface — convert the four remaining functional agents (`criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `prompt-reviewer`) into skills, and **remove the `verify.agent` field from the manifest schema entirely**. Verification always runs as a **general-purpose** subagent that loads whatever skill the `verify.prompt` names; there is no agent selection. Every call site becomes "launch a general-purpose agent that activates the `<skill>`".
+- **Goal:** Eliminate the Pi skill-leak at its root by migrating the Codex distribution to plugin-native (skills land in the Pi-invisible plugin cache instead of the shared `~/.agents/skills/`), rename the Pi harness commands to drop the `manifest-` prefix, and consolidate the 13 quality-dimension reviewer agents into a single progressive-disclosure `review-code` skill so reviewers are plugin-bundleable and cross-harness. One cohesive change.
+- **Goal (amendment):** Complete the agent→skill migration so the project ships **zero agents** on any surface — convert the remaining functional agents (`check-pr`, `poll-slack`, `review-prompt`) into skills, **drop `criteria-checker` entirely** (redundant — the default general-purpose verifier already does single-criterion checks), give every instruction skill a verb name (`review-code`, `review-pr`, `review-prompt`, `poll-slack`, `check-pr`), and **remove the `verify.agent` field from the manifest schema entirely**. Verification always runs as a **general-purpose** subagent that loads whatever skill the `verify.prompt` names; there is no agent selection. Every call site becomes "launch a general-purpose agent that activates the `<skill>`".
 - **Mental Model:**
   - **The leak:** the legacy Codex installer copies portable skills into the shared open-standard dir `~/.agents/skills/` (USER scope), which Pi scans globally → manifest-dev commands surface in every Pi session. Codex *plugins* place skills under `~/.codex/plugins/cache/…`, which Pi never scans. Only **skills** leak; Codex reviewer *agents* (TOML in `~/.codex/agents/`) were never Pi-visible.
   - **Codex plugins bundle skills/MCP/apps/hooks — NOT agents.** So retiring the installer removes the TOML reviewer agents; reviewers must become a **skill** to survive on Codex. This gates the installer retirement.
   - **`sync-tools` is prompt-driven** (SKILL.md + references, no Python codegen). The `dist/` trees are produced by *running* the skill. "Generator rework" = editing sync-tools' SKILL.md + references, then regenerating.
   - **The only executable runtime code is the Pi TypeScript extension** `pi/extensions/manifest-dev.ts`; the canonical source of truth for shared assets is the Claude plugin under `claude-plugins/`.
-  - **Verification dogfoods the new skill:** the old reviewer agents are removed by this change, so this manifest's own code-quality gates run through the `code-review` skill it builds (verifiers run after deliverables exist).
+  - **Verification dogfoods the new skill:** the old reviewer agents are removed by this change, so this manifest's own code-quality gates run through the `review-code` skill it builds (verifiers run after deliverables exist).
 
 ## 2. Approach
 
 - **Architecture:**
-  - Build `code-review` as a directory skill in `claude-plugins/manifest-dev/skills/code-review/` with `SKILL.md` + `references/<dimension>.md` (one ref per dimension), loading exactly one ref per invocation (progressive disclosure). Symlink-mirror into `.claude/skills/` and `.agents/skills/` per CLAUDE.md conventions.
-  - Rewire verification: `define`'s task-file gate tables' `Agent` column → a `dimension` selector; the encoded `verify.agent:` becomes `general-purpose` with a `verify.prompt` that activates `code-review` for that dimension. Delete the 13 dimension agent `.md` files. **(Amendment D9):** then convert the four remaining functional agents (`criteria-checker`, `github-pr-lifecycle`, `slack-poller`, `prompt-reviewer`) to skills too and remove the `verify.agent` field from the schema/runtime — verification always runs general-purpose and loads skills via `verify.prompt`, leaving zero agents.
+  - Build `review-code` as a directory skill in `claude-plugins/manifest-dev/skills/review-code/` with `SKILL.md` + `references/<dimension>.md` (one ref per dimension), loading exactly one ref per invocation (progressive disclosure). Symlink-mirror into `.claude/skills/` and `.agents/skills/` per CLAUDE.md conventions.
+  - Rewire verification: `define`'s task-file gate tables' `Agent` column → a `dimension` selector; the encoded `verify.agent:` becomes `general-purpose` with a `verify.prompt` that activates `review-code` for that dimension. Delete the 13 dimension agent `.md` files. **(Amendment D9/D10):** then convert the remaining functional agents (`check-pr`, `poll-slack`, `review-prompt`) to skills, drop `criteria-checker` as redundant, give instruction skills verb names, and remove the `verify.agent` field from the schema/runtime — verification always runs general-purpose and loads skills via `verify.prompt`, leaving zero agents.
   - Rename Pi commands in the extension + all live references; leave historical archives (`.manifest/`, `docs/adr/`) untouched.
-  - Rework `sync-tools` to emit a Codex plugin-native tree (two `.codex-plugin/plugin.json` plugins + `.agents/plugins/marketplace.json` + bundled skills incl. `code-review`) and stop emitting the Codex installer; OpenCode + Pi-dist emission paths otherwise preserved. Regenerate all of `dist/`.
+  - Rework `sync-tools` to emit a Codex plugin-native tree (two `.codex-plugin/plugin.json` plugins + `.agents/plugins/marketplace.json` + bundled skills incl. `review-code`) and stop emitting the Codex installer; OpenCode + Pi-dist emission paths otherwise preserved. Regenerate all of `dist/`.
   - Split Pi into two npm packages: `@doodledood/manifest-dev-pi` (core runtime) + a tools package (babysit-pr), tools depending on core.
   - Rewrite the dist test suite for the new Codex shape; keep OpenCode installer coverage.
 - **Execution Order:**
-  - D1 (code-review skill) → D2 (verification rewiring) → D3 (command rename) → D4 (sync-tools rework + Codex cutover) → D5 (Pi split) → D6 (regenerate dist + test rewrite) → D7 (docs + versioning)
+  - D1 (review-code skill) → D2 (verification rewiring) → D3 (command rename) → D4 (sync-tools rework + Codex cutover) → D5 (Pi split) → D6 (regenerate dist + test rewrite) → D7 (docs + versioning)
   - Rationale: the skill is the foundation the gate rewiring and the Codex cutover both depend on; tests and docs settle last against the finished trees.
 - **Risk Areas:**
-  - [R-1] The `code-review` skill is also the verifier for this manifest's own quality gates — a bug in it can mask or false-flag findings. Detect: D1 has its own AC verified by `prompt-reviewer` + a functional smoke invocation of each dimension before later phases rely on it.
+  - [R-1] The `review-code` skill is also the verifier for this manifest's own quality gates — a bug in it can mask or false-flag findings. Detect: D1 has its own AC verified by `review-prompt` + a functional smoke invocation of each dimension before later phases rely on it.
   - [R-2] Content loss when collapsing 13 agent bodies into refs — a dimension's review guidance silently drops. Detect: per-dimension content-parity check vs the original agent `.md` bodies (git history).
   - [R-3] Stray `manifest-do/auto/babysit-pr` references left in live surfaces break the rename. Detect: repo-wide grep invariant excluding historical archives.
   - [R-4] Regenerated Codex tree still writes skills into a Pi-scanned path, leaving the leak. Detect: explicit leak invariant inspecting the generated tree.
@@ -76,7 +76,7 @@
   verify:
     prompt: |
       Run `pytest tests/ -q` from repo root. PASS only if all tests pass.
-      The suite must reflect the new architecture: Codex covered as a plugin-native tree (no codex install.sh), OpenCode still covered as installer-based, and skill-reference/namespacing checks updated for the code-review skill. A suite that still shells out to a deleted dist/codex/install.sh is a FAIL.
+      The suite must reflect the new architecture: Codex covered as a plugin-native tree (no codex install.sh), OpenCode still covered as installer-based, and skill-reference/namespacing checks updated for the review-code skill. A suite that still shells out to a deleted dist/codex/install.sh is a FAIL.
       Report results.
     phase: 2
   ```
@@ -94,7 +94,7 @@
   verify:
     prompt: |
       Goal: confirm dist/ is a faithful regeneration of current source via sync-tools, not stale.
-      Check that every shared skill present in claude-plugins/ (including the new code-review skill with its per-dimension references) appears in each CLI distribution with the project's namespacing convention, and that no retired component (codex installer files, deleted dimension reviewer agents) lingers in dist/.
+      Check that every shared skill present in claude-plugins/ (including the new review-code skill with its per-dimension references) appears in each CLI distribution with the project's namespacing convention, and that no retired component (codex installer files, deleted dimension reviewer agents) lingers in dist/.
       PASS/FAIL with specifics.
     phase: 3
   ```
@@ -102,7 +102,7 @@
   ```yaml
   verify:
     prompt: |
-      Spawn a general-purpose review of the full diff using the manifest-dev code-review skill with dimension="change-intent".
+      Spawn a general-purpose review of the full diff using the manifest-dev review-code skill with dimension="change-intent".
       Reconstruct intent from this manifest's Goal and attack for behavioral divergences between stated intent and the diff.
       PASS only if no LOW-or-higher findings remain. Report findings with severity.
     phase: 3
@@ -111,7 +111,7 @@
   ```yaml
   verify:
     prompt: |
-      Invoke the manifest-dev code-review skill with dimension="code-bugs" against the executable/code changes (Pi TypeScript extension, test files, JSON manifests, marketplace.json, sync-tools-generated structures).
+      Invoke the manifest-dev review-code skill with dimension="code-bugs" against the executable/code changes (Pi TypeScript extension, test files, JSON manifests, marketplace.json, sync-tools-generated structures).
       PASS only if no LOW-or-higher mechanical defects. Report findings with severity.
     phase: 3
   ```
@@ -119,7 +119,7 @@
   ```yaml
   verify:
     prompt: |
-      Invoke the manifest-dev code-review skill with dimension="type-safety" against pi/extensions/manifest-dev.ts and any TS touched by the rename/Pi split.
+      Invoke the manifest-dev review-code skill with dimension="type-safety" against pi/extensions/manifest-dev.ts and any TS touched by the rename/Pi split.
       PASS only if no LOW-or-higher type holes. Report findings.
     phase: 3
   ```
@@ -127,7 +127,7 @@
   ```yaml
   verify:
     prompt: |
-      Invoke the manifest-dev code-review skill with dimension="contracts" focused on: the two-package Pi boundary (tools→core dependency, exported entrypoints, versions), the .codex-plugin/plugin.json schema, and .agents/plugins/marketplace.json schema.
+      Invoke the manifest-dev review-code skill with dimension="contracts" focused on: the two-package Pi boundary (tools→core dependency, exported entrypoints, versions), the .codex-plugin/plugin.json schema, and .agents/plugins/marketplace.json schema.
       Verify the manifests are well-formed and the cross-package contract is internally consistent (declared deps resolve, command names match what consumers invoke).
       PASS only if no LOW-or-higher contract issues. Report findings.
     phase: 3
@@ -136,7 +136,7 @@
   ```yaml
   verify:
     prompt: |
-      Run the manifest-dev code-review skill for EACH advisory dimension against the diff: design, simplicity, maintainability, testability, test-quality, operational-readiness, docs, prose-value, context-file-adherence.
+      Run the manifest-dev review-code skill for EACH advisory dimension against the diff: design, simplicity, maintainability, testability, test-quality, operational-readiness, docs, prose-value, context-file-adherence.
       Each dimension reads exactly its own reference file. PASS only if none surface MEDIUM-or-higher findings. Report per-dimension severity.
     phase: 3
   ```
@@ -144,7 +144,7 @@
   ```yaml
   verify:
     prompt: |
-      Spawn a general-purpose agent and activate the manifest-dev prompt-reviewer skill on all changed/created prompt surfaces: the code-review SKILL.md + references, the four new skills (criteria-checker, github-pr-lifecycle, slack-poller, prompt-reviewer), the renamed-command surfaces, the reworked sync-tools SKILL.md + references, and edited define task files.
+      Spawn a general-purpose agent and activate the manifest-dev review-prompt skill on all changed/created prompt surfaces: the review-code SKILL.md + references, the new skills (check-pr, poll-slack, review-prompt), the renamed-command surfaces, the reworked sync-tools SKILL.md + references, and edited define task files.
       PASS only if no MEDIUM-or-higher prompt-quality findings. Report findings.
     phase: 3
   ```
@@ -156,7 +156,7 @@
         1. No `agents/` directory with `.md` agent definitions under claude-plugins/manifest-dev/ or claude-plugins/manifest-dev-tools/ (empty or removed), and `.claude/agents/` has no remaining manifest-dev agent symlinks.
         2. No agent definitions or agent dirs anywhere under dist/ (opencode, codex, pi); each dist's namespace metadata reports agents == {} (or omits agents).
         3. The manifest schema no longer documents a `verify.agent` field — check define/SKILL.md's schema block + encoding guidance and README.md's verify-block docs; only prompt/model/phase remain.
-        4. No live surface spawns a manifest-dev agent by name: grep for `verify.agent:`, `agent: <name>` in verify blocks, and `subagent_type:` naming criteria-checker/github-pr-lifecycle/slack-poller/prompt-reviewer or any `*-reviewer`. Historical archives (`.manifest/`, `docs/adr/`) are excluded.
+        4. No live surface spawns a manifest-dev agent by name: grep for `verify.agent:`, `agent: <name>` in verify blocks, and `subagent_type:` naming check-pr/poll-slack/review-prompt or any `*-reviewer`. Historical archives (`.manifest/`, `docs/adr/`) are excluded.
         5. The Pi runtime no longer selects a verifier agent type from gates: manifest-dev-runtime.ts's gate type/parser and manifest-dev.ts no longer read a per-gate agent; verifiers always spawn general-purpose.
       Report PASS/FAIL with the exact paths/lines inspected.
     phase: 1
@@ -173,28 +173,28 @@
 
 ## 5. Known Assumptions
 
-- [ASM-1] (auto) Self-verification dogfoods the new `code-review` skill rather than the soon-deleted reviewer agents. Default: encode dimension gates as `general-purpose` + a `code-review` skill-activation prompt. Impact if wrong: if the skill is unreliable at verification time, quality gates give bad signal — mitigated by R-1's D1 smoke check.
+- [ASM-1] (auto) Self-verification dogfoods the new `review-code` skill rather than the soon-deleted reviewer agents. Default: encode dimension gates as `general-purpose` + a `review-code` skill-activation prompt. Impact if wrong: if the skill is unreliable at verification time, quality gates give bad signal — mitigated by R-1's D1 smoke check.
 - [ASM-2] (auto) Reviewer refactor preserves review *content/guidance*, not output-identical findings. Default: content-parity verification. Impact if wrong: a behavior shift in reviews passes unnoticed.
 - [ASM-3] (auto) OpenCode remains installer-based; only Codex migrates to plugin-native. Default: keep `dist/opencode/install.sh` + its test coverage. Impact if wrong: scope under-covers OpenCode.
 - [ASM-4] Pi splits into `@doodledood/manifest-dev-pi` (core) + a tools package (babysit-pr) that depends on core, versioned in lockstep. Impact if wrong: package boundary drawn at the wrong seam, needing rework.
 - [ASM-5] (auto) Historical surfaces (`.manifest/`, `docs/adr/`) keep old command names verbatim; rename touches only live surfaces. Impact if wrong: either churns immutable records or misses a live reference.
-- [ASM-6] (auto) The 13 code-review dimensions are exactly: change-intent, code-bugs, code-design, code-maintainability, code-simplicity, code-testability, context-file-adherence, contracts, docs, operational-readiness, prose-value, test-quality, type-safety. Per the amendment, the four functional agents are ALSO converted to skills (D9), leaving zero agents. Impact if wrong: an agent is mis-bucketed or left behind.
-- [ASM-7] (auto) Codex marketplace ships two plugins mirroring source: `manifest-dev` (core skills incl. code-review) + `manifest-dev-tools` (babysit-pr etc.). Impact if wrong: plugin boundary mismatched to source.
-- [ASM-8] (auto) The four functional agents convert to skills under their owning plugin: `criteria-checker`, `github-pr-lifecycle`, `slack-poller` → `manifest-dev/skills/`; `prompt-reviewer` → `manifest-dev-tools/skills/`. All four ship in every dist (incl. dist/pi, so Pi verifiers/flows can activate them). Impact if wrong: a flow can't reach its converted skill on some harness.
-- [ASM-9] (auto) `criteria-checker` is the degenerate case: with `verify.agent` removed, the default general-purpose verifier following `verify.prompt` already performs single-criterion verification. It is converted to a thin skill for directive-completeness (zero agents), but the default verification path does not need to activate it. Impact if wrong: minor redundancy, no behavioral loss.
+- [ASM-6] (auto) The 13 review-code dimensions are exactly: change-intent, code-bugs, code-design, code-maintainability, code-simplicity, code-testability, context-file-adherence, contracts, docs, operational-readiness, prose-value, test-quality, type-safety. Per the amendment, the four functional agents are ALSO converted to skills (D9), leaving zero agents. Impact if wrong: an agent is mis-bucketed or left behind.
+- [ASM-7] (auto) Codex marketplace ships two plugins mirroring source: `manifest-dev` (core skills incl. review-code) + `manifest-dev-tools` (babysit-pr etc.). Impact if wrong: plugin boundary mismatched to source.
+- [ASM-8] (auto) The four functional agents convert to skills under their owning plugin: `check-pr`, `poll-slack` → `manifest-dev/skills/`; `review-prompt` → `manifest-dev-tools/skills/`. All three ship in every dist (incl. dist/pi, so Pi verifiers/flows can activate them). Impact if wrong: a flow can't reach its converted skill on some harness.
+- [ASM-9] (auto) `criteria-checker` is **dropped entirely** (not converted): with `verify.agent` removed, the default general-purpose verifier following `verify.prompt` already performs single-criterion verification, so a criteria-checker skill would be redundant. Impact if wrong: a flow that explicitly wanted a named single-criterion checker must instead phrase it in the verify.prompt (no behavioral loss).
 
 ## 6. Deliverables
 
-### Deliverable 1: `code-review` skill with per-dimension references
+### Deliverable 1: `review-code` skill with per-dimension references
 
 **Acceptance Criteria:**
 - [AC-1.1] Skill exists as a directory with progressive disclosure.
   ```yaml
   verify:
     prompt: |
-      Confirm claude-plugins/manifest-dev/skills/code-review/ exists with SKILL.md and references/<dimension>.md for ALL 13 dimensions (change-intent, code-bugs, code-design, code-maintainability, code-simplicity, code-testability, context-file-adherence, contracts, docs, operational-readiness, prose-value, test-quality, type-safety).
+      Confirm claude-plugins/manifest-dev/skills/review-code/ exists with SKILL.md and references/<dimension>.md for ALL 13 dimensions (change-intent, code-bugs, code-design, code-maintainability, code-simplicity, code-testability, context-file-adherence, contracts, docs, operational-readiness, prose-value, test-quality, type-safety).
       SKILL.md must instruct the agent to load EXACTLY ONE reference file matching the requested dimension (progressive disclosure), accept a dimension argument, and carry the correct severity threshold per dimension (defect-finders change-intent/code-bugs/contracts/type-safety = no LOW+; advisory dimensions = no MEDIUM+).
-      Confirm symlink mirrors exist: .claude/skills/code-review and .agents/skills/code-review resolve to the canonical dir.
+      Confirm symlink mirrors exist: .claude/skills/review-code and .agents/skills/review-code resolve to the canonical dir.
       PASS/FAIL with the file list.
     phase: 1
   ```
@@ -210,7 +210,7 @@
   ```yaml
   verify:
     prompt: |
-      Actually invoke the code-review skill once per dimension against a small sample of this change's diff (spawn a general-purpose agent, activate manifest-dev:code-review with the dimension).
+      Actually invoke the review-code skill once per dimension against a small sample of this change's diff (spawn a general-purpose agent, activate manifest-dev:review-code with the dimension).
       PASS only if every dimension loads its single ref, runs, and returns a structured PASS/FAIL/severity verdict without erroring or loading the wrong/multiple refs.
       Report per-dimension result.
     phase: 1
@@ -224,7 +224,7 @@
   verify:
     prompt: |
       Inspect claude-plugins/manifest-dev/skills/define/tasks/*.md (CODING.md, PROMPTING.md, WRITING.md, PR_LIFECYCLE.md, etc.).
-      PASS only if the Quality-Gate tables no longer have an `Agent` column naming the 13 dimension reviewers; instead they reference the code-review skill dimension (a `Dimension` selector or equivalent). github-pr-lifecycle and prompt-reviewer references remain as agents (NOT migrated). Thresholds preserved.
+      PASS only if the Quality-Gate tables no longer have an `Agent` column naming the 13 dimension reviewers; instead they reference the review-code skill dimension (a `Dimension` selector or equivalent). check-pr and review-prompt references remain as agents (NOT migrated). Thresholds preserved.
       Report FAIL with any table still naming a deleted dimension agent.
     phase: 1
   ```
@@ -232,7 +232,7 @@
   ```yaml
   verify:
     prompt: |
-      Confirm define/SKILL.md (and any encoding reference it loads) encodes ALL verification as a general-purpose subagent driven by `verify.prompt` — code-quality gates activate the code-review skill with a dimension; specialized checks activate their skill (github-pr-lifecycle, prompt-reviewer, criteria-checker). There must be NO guidance to set `verify.agent` to a named agent (the field is removed from the schema — see D9/INV-G13).
+      Confirm define/SKILL.md (and any encoding reference it loads) encodes ALL verification as a general-purpose subagent driven by `verify.prompt` — code-quality gates activate the review-code skill with a dimension; specialized checks activate their skill (check-pr, review-prompt). There must be NO guidance to set `verify.agent` to a named agent (the field is removed from the schema — see D9/INV-G13).
       PASS/FAIL with quoted evidence.
     phase: 1
   ```
@@ -250,7 +250,7 @@
   ```yaml
   verify:
     prompt: |
-      Read claude-plugins/manifest-dev/skills/do/SKILL.md. Confirm its verifier-fanout description is consistent with the new convention: it spawns the named `verify.agent` (default general-purpose) and the code-review dimensions arrive via verify.prompt skill-activation. No dangling reference to per-dimension reviewer agent types.
+      Read claude-plugins/manifest-dev/skills/do/SKILL.md. Confirm its verifier-fanout description is consistent with the new convention: it spawns the named `verify.agent` (default general-purpose) and the review-code dimensions arrive via verify.prompt skill-activation. No dangling reference to per-dimension reviewer agent types.
       PASS/FAIL with quoted evidence.
     phase: 1
   ```
@@ -282,8 +282,8 @@
   ```yaml
   verify:
     prompt: |
-      Read .claude/skills/sync-tools/SKILL.md + references (esp. codex-cli.md). PASS only if the Codex generation instructions now produce: two plugins each with `.codex-plugin/plugin.json` (manifest-dev core + manifest-dev-tools), bundled `skills/` (incl. code-review with per-dimension refs), applicable hooks/.mcp.json, AND a `.agents/plugins/marketplace.json` registry — and NO LONGER emit install.sh / install_helpers.py / config.toml merge / rules / TOML reviewer-agent stubs for Codex.
-      The "Agents → TOML stubs" guidance must be replaced with the code-review-skill approach.
+      Read .claude/skills/sync-tools/SKILL.md + references (esp. codex-cli.md). PASS only if the Codex generation instructions now produce: two plugins each with `.codex-plugin/plugin.json` (manifest-dev core + manifest-dev-tools), bundled `skills/` (incl. review-code with per-dimension refs), applicable hooks/.mcp.json, AND a `.agents/plugins/marketplace.json` registry — and NO LONGER emit install.sh / install_helpers.py / config.toml merge / rules / TOML reviewer-agent stubs for Codex.
+      The "Agents → TOML stubs" guidance must be replaced with the review-code-skill approach.
       PASS/FAIL with quoted evidence.
     phase: 1
   ```
@@ -291,7 +291,7 @@
   ```yaml
   verify:
     prompt: |
-      Inspect the regenerated dist/codex tree. PASS only if: each plugin has a well-formed `.codex-plugin/plugin.json`; skills are bundled under the plugin dirs (incl. code-review/references/*); a valid marketplace.json registers both plugins; and the retired files (install.sh, install_helpers.py, config.toml, rules/, agents/*.toml) are GONE from dist/codex.
+      Inspect the regenerated dist/codex tree. PASS only if: each plugin has a well-formed `.codex-plugin/plugin.json`; skills are bundled under the plugin dirs (incl. review-code/references/*); a valid marketplace.json registers both plugins; and the retired files (install.sh, install_helpers.py, config.toml, rules/, agents/*.toml) are GONE from dist/codex.
       Validate each JSON parses and required fields (name, version, skills) are present.
       PASS/FAIL with specifics.
     phase: 3
@@ -327,8 +327,8 @@
   ```yaml
   verify:
     prompt: |
-      Confirm dist/ was regenerated by running the reworked sync-tools (not hand-edited): dist/codex (plugin tree), dist/opencode (installer-based, unchanged shape), dist/pi (reflecting the two-package split + code-review skill).
-      PASS only if each shared skill incl. code-review appears in each dist with correct namespacing and no retired components linger.
+      Confirm dist/ was regenerated by running the reworked sync-tools (not hand-edited): dist/codex (plugin tree), dist/opencode (installer-based, unchanged shape), dist/pi (reflecting the two-package split + review-code skill).
+      PASS only if each shared skill incl. review-code appears in each dist with correct namespacing and no retired components linger.
       PASS/FAIL.
     phase: 3
   ```
@@ -345,7 +345,7 @@
   ```yaml
   verify:
     prompt: |
-      Confirm tests/test_dist_skill_references.py asserts the new skill set (incl. code-review) and namespacing across dists, and that pyproject.toml's [tool.mypy] `files` list references only existing test modules.
+      Confirm tests/test_dist_skill_references.py asserts the new skill set (incl. review-code) and namespacing across dists, and that pyproject.toml's [tool.mypy] `files` list references only existing test modules.
       Run `pytest tests/test_dist_skill_references.py -q` and `mypy` — both pass.
       PASS/FAIL with output.
     phase: 3
@@ -358,7 +358,7 @@
   ```yaml
   verify:
     prompt: |
-      Confirm CONTEXT.md's "Codex Plugin-native Distribution" definition no longer says reviewer agents ship "as native plugin components" (infeasible) and instead describes reviewers as a progressive-disclosure code-review skill. Confirm related relationship lines and any command-name mentions are consistent with the new names.
+      Confirm CONTEXT.md's "Codex Plugin-native Distribution" definition no longer says reviewer agents ship "as native plugin components" (infeasible) and instead describes reviewers as a progressive-disclosure review-code skill. Confirm related relationship lines and any command-name mentions are consistent with the new names.
       PASS/FAIL with quoted before/after.
     phase: 2
   ```
@@ -366,7 +366,7 @@
   ```yaml
   verify:
     prompt: |
-      Per CLAUDE.md's README sync checklist, confirm README.md (root), claude-plugins/README.md, and the affected claude-plugins/<plugin>/README.md reflect: the code-review skill (added), the removed dimension reviewer agents, the renamed commands, and the Codex plugin-native distribution. Stay high-level per README guidelines.
+      Per CLAUDE.md's README sync checklist, confirm README.md (root), claude-plugins/README.md, and the affected claude-plugins/<plugin>/README.md reflect: the review-code skill (added), the removed dimension reviewer agents, the renamed commands, and the Codex plugin-native distribution. Stay high-level per README guidelines.
       PASS/FAIL with evidence.
     phase: 2
   ```
@@ -374,7 +374,7 @@
   ```yaml
   verify:
     prompt: |
-      Confirm .claude/skills/sync-tools/references/codex-cli.md no longer documents "Agents → TOML stubs" as the approach (replaced by plugin-native + code-review skill) and documents the plugin/marketplace emission. Confirm pi-cli.md's package-manifest example matches the real package.json version(s) after the bump and reflects the two-package split.
+      Confirm .claude/skills/sync-tools/references/codex-cli.md no longer documents "Agents → TOML stubs" as the approach (replaced by plugin-native + review-code skill) and documents the plugin/marketplace emission. Confirm pi-cli.md's package-manifest example matches the real package.json version(s) after the bump and reflects the two-package split.
       PASS/FAIL with evidence.
     phase: 2
   ```
@@ -382,7 +382,7 @@
   ```yaml
   verify:
     prompt: |
-      Confirm version bumps: affected claude-plugins/*/.claude-plugin/plugin.json (minor — new code-review skill / removed agents / structural change) and the Pi package(s) package.json (core + tools, lockstep). Bumps must be strictly greater than the pre-change versions.
+      Confirm version bumps: affected claude-plugins/*/.claude-plugin/plugin.json (minor — new review-code skill / removed agents / structural change) and the Pi package(s) package.json (core + tools, lockstep). Bumps must be strictly greater than the pre-change versions.
       PASS/FAIL listing old→new per file.
     phase: 2
   ```
@@ -390,7 +390,7 @@
   ```yaml
   verify:
     prompt: |
-      Confirm a migration note exists (CHANGELOG or README/migration section) stating that reviewers are no longer addressable by agent name (e.g. code-bugs-reviewer) and are now invoked via the code-review skill dimension, that Codex installs via plugin marketplace (installer retired), and that Pi commands dropped the manifest- prefix.
+      Confirm a migration note exists (CHANGELOG or README/migration section) stating that reviewers are no longer addressable by agent name (e.g. code-bugs-reviewer) and are now invoked via the review-code skill dimension, that Codex installs via plugin marketplace (installer retired), and that Pi commands dropped the manifest- prefix.
       PASS/FAIL with quoted note.
     phase: 2
   ```
@@ -402,7 +402,7 @@
   ```yaml
   verify:
     prompt: |
-      Spawn a general-purpose agent and activate the manifest-dev github-pr-lifecycle skill.
+      Spawn a general-purpose agent and activate the manifest-dev check-pr skill.
       PR: https://github.com/doodledood/manifest-dev/pull/183
       Branch: claude/pi-auto-skill-harness-sync-DBuIX
 
@@ -420,10 +420,9 @@
   verify:
     prompt: |
       Confirm each converts to a directory skill preserving the original agent's full behavior (recover originals from git history under claude-plugins/*/agents/):
-        - claude-plugins/manifest-dev/skills/criteria-checker/SKILL.md
-        - claude-plugins/manifest-dev/skills/github-pr-lifecycle/SKILL.md (+ any references)
-        - claude-plugins/manifest-dev/skills/slack-poller/SKILL.md
-        - claude-plugins/manifest-dev-tools/skills/prompt-reviewer/SKILL.md (+ any references)
+        - claude-plugins/manifest-dev/skills/check-pr/SKILL.md (+ any references)
+        - claude-plugins/manifest-dev/skills/poll-slack/SKILL.md
+        - claude-plugins/manifest-dev-tools/skills/review-prompt/SKILL.md (+ any references)
       Each SKILL.md must have valid frontmatter (name, description as activation prose) and carry the substantive instructions/heuristics/output-contract of the original agent — no behavior dropped.
       Confirm the agent .md files are deleted and claude-plugins/manifest-dev/agents/ and claude-plugins/manifest-dev-tools/agents/ are empty or removed.
       PASS/FAIL with the file list.
@@ -454,16 +453,16 @@
   verify:
     prompt: |
       Confirm no live surface names a manifest-dev agent as a verifier/subagent type; each instead spawns a general-purpose agent that activates the corresponding skill:
-        - do/SKILL.md verifier fanout; define/SKILL.md encoding; define/tasks/PR_LIFECYCLE.md (github-pr-lifecycle) and PROMPTING.md (prompt-reviewer); review-pr/SKILL.md (prompt-reviewer + holistic pass); babysit-pr; figure-out-team (slack-poller); auto-optimize-prompt (prompt-reviewer).
-      Grep across claude-plugins/, .claude/, pi/, packages/ for `verify.agent:`, `agent: <name>` in verify blocks, and `subagent_type` naming criteria-checker/github-pr-lifecycle/slack-poller/prompt-reviewer — zero hits outside historical archives.
+        - do/SKILL.md verifier fanout; define/SKILL.md encoding; define/tasks/PR_LIFECYCLE.md (check-pr) and PROMPTING.md (review-prompt); review-pr/SKILL.md (review-prompt + holistic pass); babysit-pr; figure-out-team (poll-slack); auto-optimize-prompt (review-prompt).
+      Grep across claude-plugins/, .claude/, pi/, packages/ for `verify.agent:`, `agent: <name>` in verify blocks, and `subagent_type` naming check-pr/poll-slack/review-prompt — zero hits outside historical archives.
       PASS/FAIL with file:line evidence.
     phase: 2
   ```
-- [AC-9.5] Distributions are agent-free and bundle the four new skills.
+- [AC-9.5] Distributions are agent-free and bundle the new skills.
   ```yaml
   verify:
     prompt: |
-      Confirm: dist/opencode has no agents/ dir (removed) and its component-namespaces.json agents == {} with AGENTS.md updated to describe skills only; dist/codex (already agent-free) and dist/pi carry no agents; and the four new skills appear in each dist where their owning plugin ships (criteria-checker/github-pr-lifecycle/slack-poller under manifest-dev; prompt-reviewer under manifest-dev-tools; all four in dist/pi/skills). Confirm sync-tools/SKILL.md and all three references (opencode-cli.md, codex-cli.md, pi-cli.md) describe skills only and no longer document agent conversion.
+      Confirm: dist/opencode has no agents/ dir (removed) and its component-namespaces.json agents == {} with AGENTS.md updated to describe skills only; dist/codex (already agent-free) and dist/pi carry no agents; and the new skills appear in each dist where their owning plugin ships (check-pr/poll-slack under manifest-dev; review-prompt under manifest-dev-tools; all four in dist/pi/skills). Confirm sync-tools/SKILL.md and all three references (opencode-cli.md, codex-cli.md, pi-cli.md) describe skills only and no longer document agent conversion.
       PASS/FAIL with specifics.
     phase: 3
   ```
@@ -471,7 +470,7 @@
   ```yaml
   verify:
     prompt: |
-      Confirm the OpenCode agent-install/namespace tests and criteria-checker agent assertions are removed/replaced; tests now assert no agents ship on any dist and that the four converted skills are bundled per CLI. Run `pytest tests/ -q` and confirm ruff/black/mypy clean (pyproject mypy files list valid).
+      Confirm the OpenCode agent-install/namespace tests and criteria-checker agent assertions are removed/replaced; tests now assert no agents ship on any dist and that the converted skills are bundled per CLI. Run `pytest tests/ -q` and confirm ruff/black/mypy clean (pyproject mypy files list valid).
       PASS/FAIL with output.
     phase: 3
   ```
@@ -479,7 +478,7 @@
   ```yaml
   verify:
     prompt: |
-      Confirm `.claude/agents/` has no remaining manifest-dev agent symlinks (empty, or only non-manifest-dev entries), with no dangling/broken symlinks. Confirm the four new skills are symlink-mirrored per CLAUDE.md: `.claude/skills/<name>` → `../../claude-plugins/<plugin>/skills/<name>` and `.agents/skills/<name>` → `../../.claude/skills/<name>`, for criteria-checker, github-pr-lifecycle, slack-poller, prompt-reviewer. All symlinks resolve.
+      Confirm `.claude/agents/` has no remaining manifest-dev agent symlinks (empty, or only non-manifest-dev entries), with no dangling/broken symlinks. Confirm the new skills are symlink-mirrored per CLAUDE.md: `.claude/skills/<name>` → `../../claude-plugins/<plugin>/skills/<name>` and `.agents/skills/<name>` → `../../.claude/skills/<name>`, for check-pr, poll-slack, review-prompt. All symlinks resolve.
       PASS/FAIL with `ls -la` evidence.
     phase: 3
   ```
@@ -489,5 +488,43 @@
     prompt: |
       Confirm: CONTEXT.md updated (the **Agent** term and reviewer/agent relationship lines reflect that manifest-dev ships no agents; verification is general-purpose + skills); README.md verifier section reframed from agents to skills; CHANGELOG.md notes the breaking change (agents removed as a concept, `verify.agent` removed from the schema, invoke the skill from a general-purpose agent); plugin versions and Pi package versions bumped again for this amendment (strictly greater), with pi-cli.md's example version in sync.
       PASS/FAIL with quoted evidence.
+    phase: 2
+  ```
+
+### Deliverable 10: Verb-name the skills, drop criteria-checker, prompt-engineering guidance, review-prompt plugin ownership
+
+*Amendment. Final naming/ownership pass on the zero-agents skills (same PR #183).*
+
+**Acceptance Criteria:**
+- [AC-10.1] Instruction skills carry verb names; criteria-checker is gone.
+  ```yaml
+  verify:
+    prompt: |
+      Confirm the converted skills use verb-phrase names everywhere (source, dist, symlinks, component-namespaces, call sites, tests, docs): `review-code` (was code-review), `check-pr` (was github-pr-lifecycle), `poll-slack` (was slack-poller), `review-prompt` (was prompt-reviewer). Confirm `criteria-checker` no longer exists as a skill or agent anywhere. Grep the repo (excluding `.manifest/` and `docs/adr/`) for the OLD names `code-review`, `github-pr-lifecycle`, `slack-poller`, `prompt-reviewer`, `criteria-checker` — zero live hits.
+      PASS/FAIL with any stray references (file:line).
+    phase: 1
+  ```
+- [AC-10.2] review-prompt is a plugin-owned skill, not an upstream copy.
+  ```yaml
+  verify:
+    prompt: |
+      Confirm `.claude/skills/review-prompt` and `.agents/skills/review-prompt` are SYMLINKS resolving to `claude-plugins/manifest-dev-tools/skills/review-prompt` (the plugin's own skill), NOT a real external copy. Confirm sync-claude-code-plugins no longer tracks `review-prompt` and documents that the plugin owns it (protected by the skip-if-symlink rule). The other upstream prompt-engineering skills (compress-prompt, optimize-prompt-token-efficiency, auto-optimize-prompt) and the prompt-*-verifier agents remain external — out of scope.
+      PASS/FAIL with `ls -la` + grep evidence.
+    phase: 1
+  ```
+- [AC-10.3] prompt-engineering skill documents skill-over-agent default + the naming convention.
+  ```yaml
+  verify:
+    prompt: |
+      Confirm claude-plugins/manifest-dev-tools/skills/prompt-engineering/ (SKILL.md + references) now: (a) defaults to a skill over a bespoke agent for cross-compatibility — a general-purpose agent activating a skill reproduces agent behavior except for harness-specific frontmatter (restricted tool allow-list, isolated model/subagent type), so reach for an agent only when that isolation is genuinely needed; and (b) documents the naming convention — instruction-based skills get verb names, knowledge-based skills may be nouns, kebab-case.
+      PASS/FAIL with quoted evidence.
+    phase: 1
+  ```
+- [AC-10.4] All gates green after the rename.
+  ```yaml
+  verify:
+    prompt: |
+      Run `pytest tests/ -q`, `node --test tests/pi_extension_runtime.test.mjs tests/pi_extension_tools_runtime.test.mjs`, and `ruff check claude-plugins/ tests/ && black --check claude-plugins/ tests/ && mypy`. All pass. Dist skill dirs and opencode command files reflect the new names; no broken symlinks under `.claude`/`.agents`.
+      PASS/FAIL with output.
     phase: 2
   ```

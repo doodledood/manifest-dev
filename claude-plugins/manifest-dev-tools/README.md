@@ -13,7 +13,7 @@ Utilities that complement manifest workflows — prompt engineering, PR babysitt
 | `/review-pr` | Autonomous PR review that posts high-signal, human-voiced comments under your account. Advances existing review threads, verifies fixes/replies/stale comments, runs the reviewer fleet on the relevant diff range, and posts one GitHub review. `--loop` schedules repeated one-shot passes with backoff. |
 | `/teach-me` | Teach the learner to deeply understand a body of work — the current session, a PR, an ADR, or any topic. Builds a three-pillar checklist, teaches incrementally, and quizzes for demonstrated mastery before wrapping up. |
 | `/walk-pr` | Walk through a PR or large diff together, one sub-changeset at a time. |
-| `prompt-reviewer` | Reviews LLM prompts against the `/prompt-engineering` skill's gap-calibration principles. Reports issues without modifying files, tagging each `NEEDS_USER_INPUT` or `AUTO_FIXABLE` so an optimization loop can act on them. Use when reviewing prompt quality, auditing a prompt, or evaluating a system prompt. A general-purpose verifier activates it from a `verify.prompt`. |
+| `review-prompt` | Reviews LLM prompts against the `/prompt-engineering` skill's gap-calibration principles. Reports issues without modifying files, tagging each `NEEDS_USER_INPUT` or `AUTO_FIXABLE` so an optimization loop can act on them. Use when reviewing prompt quality, auditing a prompt, or evaluating a system prompt. A general-purpose verifier activates it from a `verify.prompt`. |
 
 ## How It Works
 
