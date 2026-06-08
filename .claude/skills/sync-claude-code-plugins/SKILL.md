@@ -66,8 +66,7 @@ After each sync, ensure `.agents/skills/<name>` is a symlink to `../../.claude/s
 ## Gotchas
 
 - **Source must exist**: missing source path means abort, not "delete all tracked items."
-- **Nested skills directory**: source skills live at `skills/prompt-engineering/`, `skills/compress-prompt/`, etc. Copy each skill directory into `.claude/skills/<skill-name>/` — don't copy the outer `skills/` folder or you get `.claude/skills/skills/`.
-- **`review-prompt` is plugin-owned, not upstream**: manifest-dev-tools ships its own `review-prompt` skill, symlinked at `.claude/skills/review-prompt`. The upstream prompt-engineering plugin also ships a `review-prompt`, but the "skip if target is a symlink" rule above means this sync leaves the plugin's symlink alone (it neither overwrites nor deletes it). Do not re-add `review-prompt` to the tracking file.
+- **Nested skills directory**: source skills live at `skills/prompt-engineering/`, `skills/review-prompt/`, etc. Copy each skill directory into `.claude/skills/<skill-name>/` — don't copy the outer `skills/` folder or you get `.claude/skills/skills/`.
 - **Symlinks look like directories to `cp`/`rm`/`find`**: a symlinked target overwritten by `cp -R` corrupts the linked plugin's source files; a symlinked directory deleted by `rm -rf` removes the link, not the plugin, but a recursive find that follows the link will. Use `[ -L path ]` before every overwrite and every delete.
 
 ## Output

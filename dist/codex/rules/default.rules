@@ -1,0 +1,176 @@
+# manifest-dev execution policy rules
+# Safe defaults for development workflows
+
+# Allow git operations
+prefix_rule(
+    pattern = ["git"],
+    decision = "allow",
+    justification = "Git operations are safe for development workflows",
+)
+
+# Allow Python tooling
+prefix_rule(
+    pattern = ["python"],
+    decision = "allow",
+    justification = "Python execution for scripts and tools",
+)
+
+prefix_rule(
+    pattern = ["python3"],
+    decision = "allow",
+    justification = "Python3 execution for scripts and tools",
+)
+
+prefix_rule(
+    pattern = ["pytest"],
+    decision = "allow",
+    justification = "Test runner",
+)
+
+prefix_rule(
+    pattern = ["ruff"],
+    decision = "allow",
+    justification = "Python linter",
+)
+
+prefix_rule(
+    pattern = ["black"],
+    decision = "allow",
+    justification = "Python formatter",
+)
+
+prefix_rule(
+    pattern = ["mypy"],
+    decision = "allow",
+    justification = "Python type checker",
+)
+
+# Allow common dev tools
+prefix_rule(
+    pattern = ["npm"],
+    decision = "allow",
+    justification = "Node.js package manager",
+)
+
+prefix_rule(
+    pattern = ["npx"],
+    decision = "allow",
+    justification = "Node.js package runner",
+)
+
+prefix_rule(
+    pattern = ["node"],
+    decision = "allow",
+    justification = "Node.js runtime",
+)
+
+prefix_rule(
+    pattern = ["cat"],
+    decision = "allow",
+    justification = "File reading",
+)
+
+prefix_rule(
+    pattern = ["ls"],
+    decision = "allow",
+    justification = "Directory listing",
+)
+
+prefix_rule(
+    pattern = ["find"],
+    decision = "allow",
+    justification = "File search",
+)
+
+prefix_rule(
+    pattern = ["grep"],
+    decision = "allow",
+    justification = "Pattern search",
+)
+
+prefix_rule(
+    pattern = ["wc"],
+    decision = "allow",
+    justification = "Word/line counting",
+)
+
+prefix_rule(
+    pattern = ["head"],
+    decision = "allow",
+    justification = "File preview",
+)
+
+prefix_rule(
+    pattern = ["tail"],
+    decision = "allow",
+    justification = "File tail",
+)
+
+prefix_rule(
+    pattern = ["cp"],
+    decision = "allow",
+    justification = "File copy",
+)
+
+prefix_rule(
+    pattern = ["mv"],
+    decision = "allow",
+    justification = "File move/rename",
+)
+
+prefix_rule(
+    pattern = ["mkdir"],
+    decision = "allow",
+    justification = "Directory creation",
+)
+
+# Prompt for destructive operations
+prefix_rule(
+    pattern = ["rm", ["-rf", "-fr", "-r"]],
+    decision = "prompt",
+    justification = "Recursive deletion requires confirmation",
+)
+
+prefix_rule(
+    pattern = ["rm"],
+    decision = "allow",
+    justification = "Single file deletion is safe",
+)
+
+# Block dangerous network commands
+prefix_rule(
+    pattern = ["iptables"],
+    decision = "forbidden",
+    justification = "Network firewall modification not allowed",
+)
+
+prefix_rule(
+    pattern = ["ufw"],
+    decision = "forbidden",
+    justification = "Firewall modification not allowed",
+)
+
+prefix_rule(
+    pattern = ["nmap"],
+    decision = "forbidden",
+    justification = "Network scanning not allowed",
+)
+
+# Block system modification commands
+prefix_rule(
+    pattern = ["sudo"],
+    decision = "prompt",
+    justification = "Elevated privileges require confirmation",
+)
+
+prefix_rule(
+    pattern = ["chmod"],
+    decision = "prompt",
+    justification = "Permission changes require confirmation",
+)
+
+prefix_rule(
+    pattern = ["chown"],
+    decision = "prompt",
+    justification = "Ownership changes require confirmation",
+)

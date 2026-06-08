@@ -29,9 +29,11 @@ Sync only these source payloads:
 
 Never sync other plugins (e.g., `manifest-dev-collab` — uses Agent Teams/Slack, inherently incompatible). Never modify source files. Skip `sync-tools` skill from output (meta-tool).
 
-**Namespacing model is per-CLI** (see each reference file):
-- **Installer targets (OpenCode)**: each component carries plugin ownership in `component-namespaces.json`, and install-time namespacing comes from that metadata (`-manifest-dev` / `-manifest-dev-tools` suffixes), not a single global suffix. Regenerate `component-namespaces.json` on every sync from the discovered source components; never hand-maintain it. If a component exists under `dist/{cli}/skills`, `agents`, or `commands` and is missing from metadata, the sync is incomplete.
-- **Plugin-native targets (Codex)**: the plugin is the namespace. Two plugins (`manifest-dev`, `manifest-dev-tools`) each bundle their skills under original names. No install-time suffixing, no `component-namespaces.json`, no installer.
+Each generated component must carry plugin ownership in `component-namespaces.json`. Install-time namespacing comes from that metadata, not from a single global suffix:
+- `manifest-dev` components install with `-manifest-dev`
+- `manifest-dev-tools` components install with `-manifest-dev-tools`
+
+Regenerate `component-namespaces.json` on every sync from the discovered source components; never hand-maintain it. The file is part of the generated dist contract and must include every distributed skill, agent, and command. If a component exists under `dist/{cli}/skills`, `agents`, or `commands` and is missing from metadata, the sync is incomplete.
 
 ## Per-CLI Processing
 
@@ -125,5 +127,5 @@ Summary table after all CLIs processed:
 | CLI | Skills | Agents | Hooks | Commands | Status |
 |-----|--------|--------|-------|----------|--------|
 | OpenCode | N | N converted | N adapted | N | Complete |
-| Codex | N (2 plugins) | none (reviewers = review-code skill) | none | — | Complete |
+| Codex | N | AGENTS.md + N TOML | none | — | Complete |
 | Pi | N compatible | N runtime prompt assets | source-owned runtime extension | extension commands | Complete |

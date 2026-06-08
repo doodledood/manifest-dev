@@ -19,20 +19,18 @@ Three skills, one idea: figure it out, write down what "done" means, let it buil
 /plugin marketplace add doodledood/manifest-dev
 /plugin install manifest-dev@manifest-dev-marketplace
 
-# OpenCode — skills, commands, plugin
+# OpenCode — skills, agents, commands, plugin
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 
-# Codex CLI — native plugins from the repo marketplace (add the marketplace, then install both plugins)
-codex plugin marketplace add doodledood/manifest-dev
-codex plugin add manifest-dev@manifest-dev
-codex plugin add manifest-dev-tools@manifest-dev
+# Codex CLI — skills, TOML stubs, rules, config
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash
 
 # Pi — repo-root package, shared skills plus Harness-level commands
 pi install npm:@gotgenes/pi-subagents
 pi install git:github.com/doodledood/manifest-dev@main
 ```
 
-Pi exposes shared skills as `/skill:<name>` commands and registers `/do`, `/auto`, and `/babysit-pr` through its runtime extension. Harness-level Do keeps the executor simple: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop. The runtime starts clean verification attempts, records a clean verification orchestration session, fans out clean verifier subagent sessions — one per Acceptance Criterion and Global Invariant, injects failed-gate evidence back into the executor as follow-up work, and records done only after every gate passes. The Pi verifier fanout bypasses the subagents package's default background queue and uses its own cap (`--manifest-verifier-max-concurrent`, default 24), so 20+ same-phase verifier sessions can run in parallel.
+Pi exposes shared skills as `/skill:<name>` commands and registers `/manifest-do`, `/manifest-auto`, and `/manifest-babysit-pr` through its runtime extension. Harness-level Do keeps the executor simple: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop. The runtime starts clean verification attempts, records a clean verification orchestration session, fans out clean verifier subagent sessions — one per Acceptance Criterion and Global Invariant, injects failed-gate evidence back into the executor as follow-up work, and records done only after every gate passes. The Pi verifier fanout bypasses the subagents package's default background queue and uses its own cap (`--manifest-verifier-max-concurrent`, default 24), so 20+ same-phase verifier sessions can run in parallel.
 
 Then work through the three beats:
 
@@ -67,7 +65,7 @@ Babysit an existing PR through review without any manifest-dev setup:
 
 `/babysit-pr` is the author-side companion to `/review-pr`: review applies quality pressure through comments and thread advancement; babysit uses the strongest available grounding (manifest, PR description, commits/diff, then comments) to get the PR green and mergeable without pressing merge. In trusted same-repo CI it may auto-fix, commit, and push; on untrusted or unwritable heads it reports/escalates instead.
 
-In Pi, install `npm:@gotgenes/pi-subagents` once, then use `/do <manifest-path>` for execution, `/auto <task>` for the autonomous chain, and `/babysit-pr <pr-url>` for PR lifecycle tending.
+In Pi, install `npm:@gotgenes/pi-subagents` once, then use `/manifest-do <manifest-path>` for execution, `/manifest-auto <task>` for the autonomous chain, and `/manifest-babysit-pr <pr-url>` for PR lifecycle tending.
 
 Pass `--canvas` to `/define` (desktop only) for a **Shared Understanding Canvas**: a live, browser-rendered side-channel that runs alongside the chat. Intent, flow, and scope render as you go (mermaid diagrams, before/after panels), so misalignment shows up while you can still cheaply fix it. The manifest stays the formal encoding for `/do`.
 
@@ -77,7 +75,7 @@ Pass `--canvas` to `/define` (desktop only) for a **Shared Understanding Canvas*
 For zsh, add upgrade shortcuts for the non-Claude distributions:
 
 ```zsh
-alias upgrade-manifest-dev-codex='codex plugin marketplace upgrade'
+alias upgrade-manifest-dev-codex='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash'
 alias upgrade-manifest-dev-opencode='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash'
 alias upgrade-manifest-dev-pi='pi update --extensions'
 alias upgrade-manifest-dev-all='upgrade-manifest-dev-codex && upgrade-manifest-dev-opencode && upgrade-manifest-dev-pi'
@@ -93,7 +91,7 @@ Uninstall uses the same entrypoints:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- uninstall
-codex plugin remove manifest-dev@manifest-dev && codex plugin remove manifest-dev-tools@manifest-dev && codex plugin marketplace remove manifest-dev
+curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/codex/install.sh | bash -s -- uninstall
 pi remove git:github.com/doodledood/manifest-dev
 ```
 
@@ -183,7 +181,7 @@ This is spec-driven development adapted for LLM execution. The manifest is a spe
 
 The manifest is the canonical source of truth for the PR or branch (in multi-repo work, the whole PR set), not for a single task. Feedback flows through it. When something's off mid-`/do` or after `/done` — a missed edge case, a reviewer comment, a bug you didn't see coming — say it in your active session. The system routes it through Self-Amendment automatically: `/escalate` → `/define` re-invoked on the manifest path to amend → `/do` resumes with the updated manifest. Pure questions about the manifest get answered inline; everything else amends. `/done` stays unreachable until every criterion verifies PASS again, so each round trip grows your verification surface — bug fixes and late requirements become permanent checked criteria.
 
-**Multi-repo:** by default a single manifest covers the whole changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively. PR-lifecycle work templates one `check-pr` skill run per repo against the shared manifest. Splitting into per-repo manifests is fine when the work is loosely coupled. See [`MULTI_REPO.md`](claude-plugins/manifest-dev/skills/define/references/MULTI_REPO.md).
+**Multi-repo:** by default a single manifest covers the whole changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively. PR-lifecycle work templates one `github-pr-lifecycle` agent run per repo against the shared manifest. Splitting into per-repo manifests is fine when the work is loosely coupled. See [`MULTI_REPO.md`](claude-plugins/manifest-dev/skills/define/references/MULTI_REPO.md).
 
 The do session doesn't need to remember the define conversation — the manifest is external state. Run `/goal /do` in a fresh session, or `/compact` before starting.
 
@@ -226,7 +224,8 @@ The do session doesn't need to remember the define conversation — the manifest
 - [AC-1.2] Invalid credentials return 401, not 500
   ```yaml
   verify:
-    prompt: "Activate the manifest-dev:review-code skill with dimension=code-bugs and review the auth routes. PASS only if no LOW-or-higher findings (e.g. auth failures returning 500 instead of 401)."
+    agent: code-bugs-reviewer
+    prompt: "Check auth routes return 401 for auth failures, not 500."
   ```
 ````
 
@@ -251,7 +250,8 @@ Every criterion carries a `verify` block. One required field, three optional:
 
 | Field | Required | Purpose |
 |-------|----------|---------|
-| `prompt` | yes | Verbatim instruction to the general-purpose verifier subagent — run a bash command, inspect files, query an API, fetch docs, or activate a skill (e.g. the `review-code` skill for one dimension), whatever it takes. |
+| `prompt` | yes | Verbatim instruction to the verifier subagent — run a bash command, inspect files, query an API, fetch docs, whatever it takes. |
+| `agent` | no | Subagent type (e.g. `code-bugs-reviewer`, `criteria-checker`). Defaults to a general-purpose subagent. |
 | `model` | no | Model override (e.g. `claude-haiku-4-5-20251001` for speed). Defaults to the invoking session's model. |
 | `phase` | no | Integer, default `1`. Lower phases run first; slow checks (e2e, deploy-dependent) wait in a later phase so cheap checks fail fast. |
 
@@ -260,9 +260,10 @@ Every criterion carries a `verify` block. One required field, three optional:
 verify:
   prompt: "Run: npm run test -- --coverage. PASS only if exit 0 and coverage shows ≥80%."
 
-# Quality dimension via the review-code skill
+# Specialized reviewer
 verify:
-  prompt: "Activate the manifest-dev:review-code skill with dimension=code-maintainability and review the change. PASS only if no MEDIUM-or-higher findings (DRY violations, coupling)."
+  agent: code-maintainability-reviewer
+  prompt: "Review for DRY violations and coupling issues."
 
 # Slow staging probe, gated to a later phase
 verify:
@@ -270,20 +271,18 @@ verify:
   phase: 2
 ```
 
-A verifier returns one of three states. **PASS** — the criterion holds. **FAIL** — it's violated, with evidence: a per-gate directive `/do` runs literally (when the prompt activates a specialized skill like `check-pr`), or a prose fix hint read with judgment (for plain prompts). **BLOCKED** — it can't be evaluated yet (pending deploy, human approval), and `/do` routes it through `/escalate`.
+A verifier returns one of three states. **PASS** — the criterion holds. **FAIL** — it's violated, with evidence: a per-gate directive `/do` runs literally (for specialized verifiers like `github-pr-lifecycle`), or a prose fix hint read with judgment (for generic verifiers). **BLOCKED** — it can't be evaluated yet (pending deploy, human approval), and `/do` routes it through `/escalate`.
 
 ## Multi-CLI Support
 
 The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs. OpenCode and Codex have one-command installers — run them again to update, or pass `uninstall` to remove only manifest-dev-managed files. Pi uses its native package manager from the repository root plus `npm:@gotgenes/pi-subagents` for clean verifier sessions. Installer-based targets include core `manifest-dev` components (suffixed `-manifest-dev`) and `manifest-dev-tools` skills (suffixed `-manifest-dev-tools`); Pi keeps package-scoped skill names.
 
-manifest-dev ships no agents of its own — verification is always a general-purpose subagent whose prompt can activate a skill — so distributions carry skills only.
-
-| CLI | Install | Skills | Verification | Details |
-|-----|---------|--------|--------------|---------|
-| Claude Code | `/plugin install` | Full | General-purpose subagent per criterion | Primary target |
-| OpenCode | `curl .../opencode/install.sh \| bash` | Full | General-purpose subagent per criterion | [README](dist/opencode/README.md) |
-| Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` | Full | General-purpose subagent per criterion | [README](dist/codex/README.md) |
-| Pi | `pi install npm:@gotgenes/pi-subagents` then `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | Clean verifier fanout + outcome gate | [README](dist/pi/README.md) |
+| CLI | Install | Skills | Agents | Details |
+|-----|---------|--------|--------|---------|
+| Claude Code | `/plugin install` | Full | Full | Primary target |
+| OpenCode | `curl .../opencode/install.sh \| bash` | Full | Full (converted) | [README](dist/opencode/README.md) |
+| Codex CLI | `curl .../codex/install.sh \| bash` | Full | TOML stubs | [README](dist/codex/README.md) |
+| Pi | `pi install npm:@gotgenes/pi-subagents` then `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | Verifier fanout + outcome gate | [README](dist/pi/README.md) |
 
 After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and the current Harness-level Do verifier fanout plus outcome gate.
 
@@ -293,7 +292,7 @@ Architecture decisions, including the accepted Codex plugin-native migration pla
 
 | Plugin | Description |
 |--------|-------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow: `/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team`, and the verification skills. `/do` verifies inline — a general-purpose subagent per Acceptance Criterion and Global Invariant. The recommended way to run it is `/goal /do <manifest-path>`, which keeps the run alive across turns. The manifest is the canonical source of truth for the PR/branch; feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work activates the `check-pr` skill; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
+| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow: `/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team`, and the verifier agents. `/do` verifies inline — a subagent per Acceptance Criterion and Global Invariant. The recommended way to run it is `/goal /do <manifest-path>`, which keeps the run alive across turns. The manifest is the canonical source of truth for the PR/branch; feedback during `/do` or after `/done` defaults to amending it. PR-lifecycle work composes the `github-pr-lifecycle` agent; `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow. `/prompt-engineering` for building and reviewing prompts. `/walk-pr` (collaborative review), `/review-pr` (autonomous review that posts human-voiced comments), and `/babysit-pr` (author-side PR lifecycle babysitting that runs manifest machinery) cover PR collaboration. `/adr` synthesizes Architecture Decision Records from a session. `/handoff` packages context for a fresh agent or a side-session. `/teach-me` turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks. |
 
 ## Plugin Architecture
@@ -306,39 +305,32 @@ Architecture decisions, including the accepted Codex plugin-native migration pla
 | `/define` | User-invoked | Encodes the conversation's shared understanding into a manifest. Not an interview — it makes the manifest-specific calls (invariant vs guidance, AC scope, phase ordering, trade-offs to lock) and auto-invokes `/figure-out` first if the understanding isn't there. Pass an existing manifest path to amend it in place. Emits both `/do` and `/goal /do` handoffs. Supports `--babysit <pr-url>` and `--canvas`. |
 | `/do` | User-invoked | Executes against the manifest and verifies inline — a subagent per Acceptance Criterion and Global Invariant using the verify prompt, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Calls `/done` when everything passes, routes to `/escalate` when blocked. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping. Recommended invocation is `/goal /do <manifest-path>` — `/goal` keeps the run alive across turns; bare `/do` runs a single foreground turn. Mid-execution feedback defaults to a Self-Amendment cycle. |
 | `/auto` | User-invoked | End-to-end autonomous: `/figure-out` → `/define` → `/do`, chained with no approval gates. Run it as `/goal /auto` so it carries across turns (recommended). `--babysit <pr-url>` tends an existing PR toward mergeable (platform auto-detected from the PR URL host). |
-| `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator that brings evidence, names trade-offs, and surfaces disagreement; polls the thread via `/loop`, reads via the `poll-slack` subagent. Owner-by-Slack-handle overrules. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting it to Slack. |
+| `/figure-out-team` | User-invoked | `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator that brings evidence, names trade-offs, and surfaces disagreement; polls the thread via `/loop`, reads via the `slack-poller` subagent. Owner-by-Slack-handle overrules. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting it to Slack. |
 | `/done` | Internal | Plain-prose completion summary, called by `/do` after every criterion verifies PASS. |
 | `/escalate` | Internal | Structured blocker: the criterion, what was tried and why each attempt failed, possible resolutions, what's needed from you. Routed by `/do`. |
 
-### Verification skills
+### Verifier agents
 
-manifest-dev ships **no agents of its own**. `/do` always verifies criteria with a general-purpose subagent driven by the verify block's `prompt`, which can run bash, inspect files, query an API, or activate one of the verification skills below.
+`/do` spawns these to verify criteria. Name one in a verify block's `agent:` field, or omit it for a general-purpose subagent. Each returns structured output with severity levels and specific fix guidance.
 
-**Functional skills:**
-
-| Skill | Focus |
+| Agent | Focus |
 |-------|-------|
-| `check-pr` | PR-lifecycle inspector — CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives or prose findings. Activated automatically when the repo's `origin` remote points at github.com. |
-| `poll-slack` | Tails a Slack thread for the `/figure-out-team` loop, returning verbatim deltas the agent reasons over |
-| `review-prompt` *(manifest-dev-tools)* | Reviews LLM prompts against the prompt-engineering skill's gap-calibration principles |
-
-**Code-review skill** — quality review is the `review-code` skill, **one dimension per invocation** (a general-purpose subagent activates it from the verify prompt; the skill loads exactly that dimension's reference).
-
-| Dimension | Role | Focus |
-|-----------|------|-------|
-| `change-intent` | defect (no LOW+) | Adversarial intent analysis: reconstructs intent, finds behavioral divergences |
-| `code-bugs` | defect (no LOW+) | Mechanical defects: races, data loss, edge cases, resource leaks, dangerous defaults |
-| `contracts` | defect (no LOW+) | Bidirectional API/interface contract checks against docs, schemas, codebase definitions |
-| `type-safety` | defect (no LOW+) | Typed-language safety: type holes, representable invalid states, narrowing |
-| `operational-readiness` | advisory (no MEDIUM+) | Runtime/deploy readiness: env wiring, migrations, retries, rollback, scale, CI, observability |
-| `code-design` | advisory (no MEDIUM+) | Design fitness: reinvented wheels, wrong responsibility, under-engineering, PR coherence |
-| `code-maintainability` | advisory (no MEDIUM+) | DRY violations, coupling, cohesion, dead code, consistency |
-| `code-simplicity` | advisory (no MEDIUM+) | Over-engineering, premature optimization, cognitive complexity |
-| `code-testability` | advisory (no MEDIUM+) | Excessive mocking, logic buried in IO, hidden dependencies |
-| `test-quality` | advisory (no MEDIUM+) | Coverage gaps plus independent-oracle checks for tautology, mirror-impl, mock-SUT |
-| `docs` | advisory (no MEDIUM+) | Documentation accuracy against code changes |
-| `prose-value` | advisory (no MEDIUM+) | Comment/doc value — narrating-the-obvious, puffery, AI rhetorical patterns |
-| `context-file-adherence` | advisory (no MEDIUM+) | Compliance with CLAUDE.md / AGENTS.md project rules |
+| `criteria-checker` | General-purpose verifier — runs whatever bash, file reads, or external tools the prompt specifies |
+| `change-intent-reviewer` | Adversarial intent analysis: reconstructs change intent, finds behavioral divergences across code, prompts, config |
+| `contracts-reviewer` | Bidirectional API/interface contract checks against docs, schemas, generated clients, codebase definitions |
+| `code-bugs-reviewer` | Mechanical defects: race conditions, data loss, edge cases, resource leaks, dangerous defaults |
+| `operational-readiness-reviewer` | Runtime/deploy readiness: env wiring, migrations, retries, rollback, scale, CI, observability |
+| `code-maintainability-reviewer` | DRY violations, coupling, cohesion, dead code, consistency |
+| `code-design-reviewer` | Design fitness: reinvented wheels, wrong responsibility, code-vs-config boundary, under-engineering, PR coherence |
+| `code-simplicity-reviewer` | Over-engineering, premature optimization, cognitive complexity |
+| `code-testability-reviewer` | Excessive mocking, logic buried in IO, hidden dependencies |
+| `test-quality-reviewer` | Coverage gaps plus independent-oracle checks for tautology, mirror-impl, mock-SUT, trivial asserts |
+| `prose-value-reviewer` | Comment and doc value — narrating-the-obvious, puffery, AI rhetorical patterns; comments must be load-bearing-WHY |
+| `type-safety-reviewer` | Typed-language safety: type holes, representable invalid states, narrowing issues |
+| `docs-reviewer` | Documentation accuracy against code changes |
+| `context-file-adherence-reviewer` | Compliance with CLAUDE.md / AGENTS.md project rules |
+| `github-pr-lifecycle` | PR-lifecycle inspector — CI, review threads, description sync, mergeability; returns PASS/FAIL with per-gate directives or prose findings. Composed automatically when the repo's `origin` remote points at github.com. |
+| `slack-poller` | Tails a Slack thread for the `/figure-out-team` loop, returning verbatim deltas the agent reasons over |
 
 ### Task-specific guidance
 

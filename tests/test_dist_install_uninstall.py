@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
@@ -17,141 +20,58 @@ TOOLS_SKILLS = (
     "walk-pr",
 )
 
-# Codex is distributed as native plugins (no installer). Only OpenCode still
-# ships an install.sh; its install/uninstall behavior is exercised below.
 
-
-def run_opencode_installer(
-    env: dict[str, str], *args: str
+def run_installer(
+    cli: str, env: dict[str, str], *args: str
 ) -> subprocess.CompletedProcess[str]:
-    cmd = ["bash", str(DIST / "opencode" / "install.sh"), *args]
+    cmd = ["bash", str(DIST / cli / "install.sh"), *args]
     return subprocess.run(
-        cmd, cwd=ROOT, env=env, capture_output=True, text=True, check=True
+        cmd,
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
     )
 
 
-def _opencode_env(tmp_path: Path) -> dict[str, str]:
+def _install_target(cli: str, env: dict[str, str]) -> Path:
+    if cli == "codex":
+        return Path(env["HOME"]) / ".codex"
+    if cli == "opencode":
+        return Path(env["OPENCODE_TARGET"])
+    raise AssertionError(f"unexpected cli: {cli}")
+
+
+def _install_args(cli: str) -> tuple[str, ...]:
+    return ()
+
+
+def _env_for_cli(tmp_path: Path, cli: str) -> dict[str, str]:
     env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-    env["OPENCODE_TARGET"] = str(Path(env["HOME"]) / ".config" / "opencode")
+    env["HOME"] = str(tmp_path / cli / "home")
+    if cli == "opencode":
+        env["OPENCODE_TARGET"] = str(Path(env["HOME"]) / ".config" / "opencode")
     return env
 
 
-# --------------------------------------------------------------------------
-# Codex: plugin-native distribution (no installer)
-# --------------------------------------------------------------------------
+def test_installers_install_manifest_dev_tools_skills(tmp_path: Path) -> None:
+    for cli in ("codex", "opencode"):
+        env = _env_for_cli(tmp_path, cli)
+        run_installer(cli, env, *_install_args(cli))
 
-CODEX_PLUGINS = ("manifest-dev", "manifest-dev-tools")
+        target = _install_target(cli, env)
+        for skill in TOOLS_SKILLS:
+            skill_dir = target / "skills" / f"{skill}-manifest-dev-tools"
+            assert skill_dir.is_dir(), f"{cli}: missing {skill_dir}"
+            assert (skill_dir / "SKILL.md").is_file()
 
+        assert (target / "skills" / "define-manifest-dev").is_dir()
 
-def test_codex_ships_no_installer_artifacts() -> None:
-    """The legacy Codex installer is retired; none of its files may remain."""
-    codex = DIST / "codex"
-    for retired in (
-        "install.sh",
-        "install_helpers.py",
-        "config.toml",
-        "rules",
-        "agents",
-        "AGENTS.md",
-        "component-namespaces.json",
-        "skills",
-    ):
-        assert not (
-            codex / retired
-        ).exists(), f"retired Codex artifact present: {retired}"
-
-
-def test_codex_marketplace_registers_both_plugins() -> None:
-    marketplace = json.loads(
-        (ROOT / ".agents" / "plugins" / "marketplace.json").read_text(encoding="utf-8")
-    )
-    names = {entry["name"] for entry in marketplace["plugins"]}
-    assert names == set(CODEX_PLUGINS)
-    for entry in marketplace["plugins"]:
-        # Required marketplace fields.
-        assert entry["policy"]["installation"]
-        assert entry["policy"]["authentication"]
-        assert entry["category"]
-        # source.path points at a real plugin directory, relative to repo root.
-        rel = entry["source"]["path"]
-        assert rel.startswith("./")
-        plugin_dir = ROOT / rel
-        assert (plugin_dir / ".codex-plugin" / "plugin.json").is_file(), rel
-
-
-def test_codex_marketplace_only_file_under_agents_plugins() -> None:
-    """`.agents/plugins/` holds only the registry — no SKILL.md may leak there."""
-    agents_plugins = ROOT / ".agents" / "plugins"
-    files = {p.name for p in agents_plugins.iterdir()}
-    assert files == {"marketplace.json"}
-    assert list(agents_plugins.rglob("SKILL.md")) == []
-
-
-def test_codex_plugins_bundle_skills() -> None:
-    for plugin in CODEX_PLUGINS:
-        plugin_dir = DIST / "codex" / "plugins" / plugin
-        manifest = json.loads(
-            (plugin_dir / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
-        )
-        assert manifest["name"] == plugin
-        assert manifest["version"]
-        assert manifest["skills"] == "./skills/"
-        skills_dir = plugin_dir / "skills"
-        assert skills_dir.is_dir()
-        skills = [p.name for p in skills_dir.iterdir() if p.is_dir()]
-        assert skills, f"{plugin}: no bundled skills"
-        for skill in skills:
-            assert (skills_dir / skill / "SKILL.md").is_file()
-
-
-def test_codex_core_plugin_bundles_code_review_with_all_dimensions() -> None:
-    refs = (
-        DIST
-        / "codex"
-        / "plugins"
-        / "manifest-dev"
-        / "skills"
-        / "review-code"
-        / "references"
-    )
-    dimensions = {p.stem for p in refs.glob("*.md")}
-    assert dimensions == {
-        "change-intent",
-        "code-bugs",
-        "code-design",
-        "code-maintainability",
-        "code-simplicity",
-        "code-testability",
-        "context-file-adherence",
-        "contracts",
-        "docs",
-        "operational-readiness",
-        "prose-value",
-        "test-quality",
-        "type-safety",
-    }
-
-
-# --------------------------------------------------------------------------
-# OpenCode: installer-based distribution (retained)
-# --------------------------------------------------------------------------
-
-
-def test_opencode_installer_installs_tools_skills(tmp_path: Path) -> None:
-    env = _opencode_env(tmp_path)
-    run_opencode_installer(env)
-
-    target = Path(env["OPENCODE_TARGET"])
-    for skill in TOOLS_SKILLS:
-        skill_dir = target / "skills" / f"{skill}-manifest-dev-tools"
-        assert skill_dir.is_dir(), f"missing {skill_dir}"
-        assert (skill_dir / "SKILL.md").is_file()
-        command = target / "commands" / f"{skill}-manifest-dev-tools.md"
-        assert command.is_file(), f"missing {command}"
-
-    assert (target / "skills" / "define-manifest-dev").is_dir()
-    assert (target / "skills" / "review-code-manifest-dev").is_dir()
+        if cli == "opencode":
+            for skill in TOOLS_SKILLS:
+                command = target / "commands" / f"{skill}-manifest-dev-tools.md"
+                assert command.is_file(), f"opencode: missing {command}"
 
 
 def test_opencode_installer_defaults_to_global_config_dir(tmp_path: Path) -> None:
@@ -159,16 +79,12 @@ def test_opencode_installer_defaults_to_global_config_dir(tmp_path: Path) -> Non
     env["HOME"] = str(tmp_path / "home")
     env.pop("OPENCODE_TARGET", None)
 
-    result = run_opencode_installer(env)
+    result = run_installer("opencode", env)
 
     target = Path(env["HOME"]) / ".config" / "opencode"
     assert f"Target:  {target}" in result.stdout
     assert (target / "skills" / "define-manifest-dev").is_dir()
-    # The former functional agents are skills now; no manifest-dev agents install.
-    assert (target / "skills" / "check-pr-manifest-dev").is_dir()
-    agents_dir = target / "agents"
-    if agents_dir.exists():
-        assert not list(agents_dir.glob("*-manifest-dev*"))
+    assert (target / "agents" / "criteria-checker-manifest-dev.md").is_file()
     assert (target / "commands" / "define-manifest-dev.md").is_file()
 
 
@@ -193,44 +109,284 @@ def test_opencode_installer_local_scope_is_explicit(tmp_path: Path) -> None:
     assert not (Path(env["HOME"]) / ".config" / "opencode").exists()
 
 
-def test_opencode_reinstall_syncs_state_without_touching_user_files(
+def test_reinstall_syncs_manifest_dev_tools_state_without_touching_user_files(
     tmp_path: Path,
 ) -> None:
-    env = _opencode_env(tmp_path)
-    run_opencode_installer(env)
+    for cli in ("codex", "opencode"):
+        env = _env_for_cli(tmp_path, cli)
+        args = _install_args(cli)
+        run_installer(cli, env, *args)
 
-    target = Path(env["OPENCODE_TARGET"])
-    managed_skill = target / "skills" / "adr-manifest-dev-tools" / "SKILL.md"
-    managed_skill.write_text("stale managed content\n", encoding="utf-8")
+        target = _install_target(cli, env)
+        managed_skill = target / "skills" / "adr-manifest-dev-tools" / "SKILL.md"
+        managed_skill.write_text("stale managed content\n", encoding="utf-8")
 
-    stale_skill = target / "skills" / "retired-manifest-dev-tools"
-    stale_skill.mkdir(parents=True)
-    (stale_skill / "SKILL.md").write_text("retired\n", encoding="utf-8")
+        stale_skill = target / "skills" / "retired-manifest-dev-tools"
+        stale_skill.mkdir(parents=True)
+        (stale_skill / "SKILL.md").write_text("retired\n", encoding="utf-8")
 
-    custom_skill = target / "skills" / "custom-skill"
-    custom_skill.mkdir(parents=True)
+        custom_skill = target / "skills" / "custom-skill"
+        custom_skill.mkdir(parents=True)
+        (custom_skill / "SKILL.md").write_text("custom\n", encoding="utf-8")
+
+        if cli == "opencode":
+            managed_command = target / "commands" / "adr-manifest-dev-tools.md"
+            managed_command.write_text("stale command\n", encoding="utf-8")
+
+            stale_command = target / "commands" / "retired-manifest-dev-tools.md"
+            stale_command.write_text("retired command\n", encoding="utf-8")
+
+            custom_command = target / "commands" / "custom-command.md"
+            custom_command.write_text("custom command\n", encoding="utf-8")
+
+        run_installer(cli, env, *args)
+
+        refreshed_skill = managed_skill.read_text(encoding="utf-8")
+        assert "name: adr-manifest-dev-tools" in refreshed_skill
+        assert "stale managed content" not in refreshed_skill
+        assert not stale_skill.exists()
+        assert (custom_skill / "SKILL.md").read_text(encoding="utf-8") == "custom\n"
+
+        if cli == "opencode":
+            refreshed_command = managed_command.read_text(encoding="utf-8")
+            assert "manifest-dev-tools:adr-manifest-dev-tools" in refreshed_command
+            assert "stale command" not in refreshed_command
+            assert not stale_command.exists()
+            assert custom_command.read_text(encoding="utf-8") == "custom command\n"
+
+
+def test_codex_uninstall_removes_only_manifest_dev_and_reverts_added_config(
+    tmp_path: Path,
+) -> None:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+
+    codex_dir = Path(env["HOME"]) / ".codex"
+    config_path = codex_dir / "config.toml"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    config_path.write_text(
+        (
+            'preferred_auth_method = "chatgpt"\n\n'
+            'project_doc_fallback_filenames = ["AGENTS.md"]\n\n'
+            "[features]\n"
+            "preview_feature = true\n\n"
+            "[mcp_servers.custom]\n"
+            'command = ["echo", "hi"]\n'
+        ),
+        encoding="utf-8",
+    )
+
+    custom_skill = codex_dir / "skills" / "custom-skill"
+    custom_skill.mkdir(parents=True, exist_ok=True)
     (custom_skill / "SKILL.md").write_text("custom\n", encoding="utf-8")
+    custom_agent = codex_dir / "agents" / "custom-agent.toml"
+    custom_agent.parent.mkdir(parents=True, exist_ok=True)
+    custom_agent.write_text("model = 'inherit'\n", encoding="utf-8")
+    custom_rule = codex_dir / "rules" / "custom.rules"
+    custom_rule.parent.mkdir(parents=True, exist_ok=True)
+    custom_rule.write_text("# custom\n", encoding="utf-8")
 
-    managed_command = target / "commands" / "adr-manifest-dev-tools.md"
-    managed_command.write_text("stale command\n", encoding="utf-8")
-    stale_command = target / "commands" / "retired-manifest-dev-tools.md"
-    stale_command.write_text("retired command\n", encoding="utf-8")
-    custom_command = target / "commands" / "custom-command.md"
-    custom_command.write_text("custom command\n", encoding="utf-8")
+    install_result = run_installer("codex", env)
 
-    run_opencode_installer(env)
+    installed_config = config_path.read_text(encoding="utf-8")
+    assert "preview_feature = true" in installed_config
+    assert 'project_doc_fallback_filenames = ["AGENTS.md"]' in installed_config
+    assert "multi_agent = true" in installed_config
+    assert "max_threads" not in installed_config
+    assert "max_depth" not in installed_config
+    assert "# >>> manifest-dev managed config >>>" in installed_config
+    assert (codex_dir / "manifest-dev-install-state.json").is_file()
+    assert (codex_dir / "rules" / "manifest-dev.rules").is_file()
+    assert "config.toml merged" in install_result.stdout
 
-    refreshed_skill = managed_skill.read_text(encoding="utf-8")
-    assert "name: adr-manifest-dev-tools" in refreshed_skill
-    assert "stale managed content" not in refreshed_skill
-    assert not stale_skill.exists()
-    assert (custom_skill / "SKILL.md").read_text(encoding="utf-8") == "custom\n"
+    uninstall_result = run_installer("codex", env, "uninstall")
 
-    refreshed_command = managed_command.read_text(encoding="utf-8")
-    assert "manifest-dev-tools:adr-manifest-dev-tools" in refreshed_command
-    assert "stale command" not in refreshed_command
-    assert not stale_command.exists()
-    assert custom_command.read_text(encoding="utf-8") == "custom command\n"
+    final_config = config_path.read_text(encoding="utf-8")
+    assert 'preferred_auth_method = "chatgpt"' in final_config
+    assert "preview_feature = true" in final_config
+    assert 'project_doc_fallback_filenames = ["AGENTS.md"]' in final_config
+    assert "multi_agent = true" not in final_config
+    assert "# >>> manifest-dev managed config >>>" not in final_config
+    assert "[agents.criteria-checker-manifest-dev]" not in final_config
+    assert "[mcp_servers.custom]" in final_config
+
+    assert custom_skill.is_dir()
+    assert custom_agent.is_file()
+    assert custom_rule.is_file()
+    assert not (codex_dir / "skills" / "define-manifest-dev").exists()
+    assert not (codex_dir / "skills" / "adr-manifest-dev-tools").exists()
+    assert not (codex_dir / "agents" / "criteria-checker-manifest-dev.toml").exists()
+    assert not (codex_dir / "rules" / "manifest-dev.rules").exists()
+    assert not (codex_dir / "manifest-dev-install-state.json").exists()
+    assert (codex_dir / "config.toml.pre-manifest-dev-uninstall.bak").is_file()
+    assert "Removed manifest-dev-managed Codex files only." in uninstall_result.stdout
+
+
+def test_codex_uninstall_keeps_user_modified_shared_settings(tmp_path: Path) -> None:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+
+    codex_dir = Path(env["HOME"]) / ".codex"
+    run_installer("codex", env)
+
+    config_path = codex_dir / "config.toml"
+    installed_config = config_path.read_text(encoding="utf-8")
+    installed_config = installed_config.replace(
+        "multi_agent = true", "multi_agent = false"
+    )
+    config_path.write_text(installed_config, encoding="utf-8")
+
+    run_installer("codex", env, "uninstall")
+
+    final_config = config_path.read_text(encoding="utf-8")
+    assert "multi_agent = false" in final_config
+    assert "# >>> manifest-dev managed config >>>" not in final_config
+
+
+def test_codex_uninstall_removes_generated_config_when_install_created_it(
+    tmp_path: Path,
+) -> None:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+
+    codex_dir = Path(env["HOME"]) / ".codex"
+    run_installer("codex", env)
+
+    assert (codex_dir / "config.toml").is_file()
+
+    run_installer("codex", env, "uninstall")
+
+    assert not (codex_dir / "config.toml").exists()
+    assert not (codex_dir / "manifest-dev-install-state.json").exists()
+
+
+def test_codex_uninstall_without_state_removes_managed_block_but_keeps_shared_config(
+    tmp_path: Path,
+) -> None:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+
+    codex_dir = Path(env["HOME"]) / ".codex"
+    run_installer("codex", env)
+
+    state_path = codex_dir / "manifest-dev-install-state.json"
+    assert state_path.is_file()
+    state_path.unlink()
+
+    run_installer("codex", env, "uninstall")
+
+    final_config = (codex_dir / "config.toml").read_text(encoding="utf-8")
+    assert "multi_agent = true" in final_config
+    assert "# >>> manifest-dev managed config >>>" not in final_config
+    assert "[agents.criteria-checker-manifest-dev]" not in final_config
+
+
+def test_codex_uninstall_preserves_user_kept_fallback_list_changes(
+    tmp_path: Path,
+) -> None:
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+
+    codex_dir = Path(env["HOME"]) / ".codex"
+    run_installer("codex", env)
+
+    config_path = codex_dir / "config.toml"
+    config_text = (
+        'project_doc_fallback_filenames = ["CLAUDE.md", "AGENTS.md"]\n\n'
+        + config_path.read_text(encoding="utf-8")
+    )
+    config_path.write_text(config_text, encoding="utf-8")
+
+    run_installer("codex", env, "uninstall")
+
+    final_config = config_path.read_text(encoding="utf-8")
+    assert 'project_doc_fallback_filenames = ["CLAUDE.md", "AGENTS.md"]' in final_config
+
+
+def test_codex_install_migrates_legacy_agents_table_to_runtime_valid_config(
+    tmp_path: Path,
+) -> None:
+    if shutil.which("codex") is None:
+        pytest.skip("codex CLI not installed")
+
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+
+    codex_dir = Path(env["HOME"]) / ".codex"
+    config_path = codex_dir / "config.toml"
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    config_path.write_text(
+        (
+            "[features]\n"
+            "multi_agent = true\n\n"
+            "[agents]\n"
+            "max_threads = 6\n"
+            "max_depth = 1\n"
+            'project_doc_fallback_filenames = ["CLAUDE.md"]\n\n'
+            "[agents.criteria-checker-manifest-dev]\n"
+            'description = "x"\n'
+            'config_file = "agents/criteria-checker-manifest-dev.toml"\n'
+        ),
+        encoding="utf-8",
+    )
+    state_path = codex_dir / "manifest-dev-install-state.json"
+    state_path.write_text(
+        json.dumps(
+            {
+                "version": 2,
+                "config_existed": True,
+                "original_keys": {
+                    "features.multi_agent": "true",
+                    "agents.max_threads": "6",
+                    "agents.max_depth": "1",
+                },
+                "original_lists": {
+                    "agents.project_doc_fallback_filenames": ["CLAUDE.md"],
+                },
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    run_installer("codex", env)
+
+    migrated = config_path.read_text(encoding="utf-8")
+    assert "\n[agents]\n" not in f"\n{migrated}"
+    assert "max_threads = 6" in migrated
+    assert "max_depth = 1" in migrated
+    assert 'project_doc_fallback_filenames = ["CLAUDE.md"]' in migrated
+
+    result = subprocess.run(
+        ["codex", "features", "list"],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert "fast_mode" in result.stdout
+
+
+def test_codex_cli_boots_after_clean_install(tmp_path: Path) -> None:
+    if shutil.which("codex") is None:
+        pytest.skip("codex CLI not installed")
+
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+
+    run_installer("codex", env)
+
+    result = subprocess.run(
+        ["codex", "features", "list"],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert "multi_agent" in result.stdout
 
 
 def test_opencode_uninstall_removes_only_manifest_dev_files(tmp_path: Path) -> None:
@@ -262,10 +418,11 @@ def test_opencode_uninstall_removes_only_manifest_dev_files(tmp_path: Path) -> N
         encoding="utf-8",
     )
 
-    run_opencode_installer(env)
+    run_installer("opencode", env)
+    assert not (plugins_dir / "manifest-dev.ts").exists()
     assert (opencode_dir / "skills" / "define-manifest-dev").is_dir()
 
-    run_opencode_installer(env, "uninstall")
+    run_installer("opencode", env, "uninstall")
 
     assert custom_skill.is_dir()
     assert root_plugin.read_text(encoding="utf-8") == "// user-managed root plugin\n"
@@ -274,9 +431,13 @@ def test_opencode_uninstall_removes_only_manifest_dev_files(tmp_path: Path) -> N
         "plugin": ["./plugins/index.ts"],
         "mcp": {"custom": {"type": "local", "command": ["echo", "hi"]}},
     }
+    assert not (plugins_dir / "manifest-dev.ts").exists()
+    assert not (plugins_dir / "manifest-dev.HOOK_SPEC.md").exists()
     assert not (opencode_dir / "skills" / "define-manifest-dev").exists()
     assert not (opencode_dir / "skills" / "adr-manifest-dev-tools").exists()
+    assert not (opencode_dir / "agents" / "criteria-checker-manifest-dev.md").exists()
     assert not (opencode_dir / "commands" / "define-manifest-dev.md").exists()
+    assert not (opencode_dir / "commands" / "adr-manifest-dev-tools.md").exists()
 
 
 def test_opencode_install_leaves_user_root_plugin_and_config_untouched(
@@ -290,7 +451,10 @@ def test_opencode_install_leaves_user_root_plugin_and_config_untouched(
     plugins_dir = opencode_dir / "plugins"
     plugins_dir.mkdir(parents=True, exist_ok=True)
     root_plugin = plugins_dir / "index.ts"
-    root_plugin.write_text("// user-managed root plugin\n", encoding="utf-8")
+    root_plugin.write_text(
+        "// user-managed root plugin\n",
+        encoding="utf-8",
+    )
     opencode_config = opencode_dir / "opencode.json"
     opencode_config.write_text(
         json.dumps(
@@ -305,7 +469,7 @@ def test_opencode_install_leaves_user_root_plugin_and_config_untouched(
         encoding="utf-8",
     )
 
-    run_opencode_installer(env)
+    run_installer("opencode", env)
 
     assert root_plugin.read_text(encoding="utf-8") == "// user-managed root plugin\n"
     assert json.loads(opencode_config.read_text(encoding="utf-8")) == {
@@ -313,3 +477,61 @@ def test_opencode_install_leaves_user_root_plugin_and_config_untouched(
         "plugin": ["./plugins/index.ts"],
         "default_agent": "build",
     }
+    assert not (plugins_dir / "index.ts.manifest-dev-legacy.bak").exists()
+    assert not (plugins_dir / "manifest-dev.ts").exists()
+    assert not (plugins_dir / "manifest-dev.HOOK_SPEC.md").exists()
+
+
+def test_opencode_cli_loads_installed_manifest_agent(tmp_path: Path) -> None:
+    if shutil.which("opencode") is None:
+        pytest.skip("OpenCode CLI not installed")
+
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+    env["OPENCODE_TARGET"] = str(Path(env["HOME"]) / ".config" / "opencode")
+
+    run_installer("opencode", env)
+
+    result = subprocess.run(
+        ["opencode", "debug", "agent", "criteria-checker-manifest-dev"],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert '"name": "criteria-checker-manifest-dev"' in result.stdout
+
+
+def test_opencode_cli_loads_installed_manifest_command(tmp_path: Path) -> None:
+    if shutil.which("opencode") is None:
+        pytest.skip("OpenCode CLI not installed")
+
+    env = os.environ.copy()
+    env["HOME"] = str(tmp_path / "home")
+    env["OPENCODE_TARGET"] = str(Path(env["HOME"]) / ".config" / "opencode")
+    project = tmp_path / "project"
+    project.mkdir()
+
+    run_installer("opencode", env)
+
+    config_output = tmp_path / "opencode-debug-config.json"
+    config_errors = tmp_path / "opencode-debug-config.err"
+    with (
+        config_output.open("w", encoding="utf-8") as stdout,
+        config_errors.open("w", encoding="utf-8") as stderr,
+    ):
+        subprocess.run(
+            ["opencode", "debug", "config"],
+            cwd=project,
+            env=env,
+            stdout=stdout,
+            stderr=stderr,
+            text=True,
+            check=True,
+        )
+
+    config = config_output.read_text(encoding="utf-8")
+    assert '"figure-out-team-manifest-dev"' in config
+    assert "manifest-dev:figure-out-team-manifest-dev" in config
+    assert "figure-out-manifest-dev-team" not in config

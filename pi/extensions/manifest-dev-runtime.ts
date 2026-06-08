@@ -11,6 +11,7 @@ export interface ManifestGate {
 	kind: GateKind;
 	title: string;
 	verifyPrompt: string;
+	suggestedAgent?: string;
 	model?: string;
 	phase: number;
 }
@@ -72,6 +73,7 @@ export function extractManifestGates(manifest: string): ManifestGate[] {
 			title,
 			kind: id.startsWith("INV-") ? "global_invariant" : "acceptance_criterion",
 			verifyPrompt,
+			suggestedAgent: extractYamlValue(block, "agent"),
 			model: extractYamlValue(block, "model"),
 			phase: parsePhase(extractYamlValue(block, "phase")),
 		} satisfies ManifestGate];
@@ -88,6 +90,9 @@ export function buildGateVerifierPrompt(args: {
 	orchestratorSessionId?: string;
 	orchestratorSessionFile?: string;
 }): string {
+	const suggestedAgent = args.gate.suggestedAgent
+		? `\nSuggested manifest verifier persona: ${args.gate.suggestedAgent}`
+		: "";
 	const implementationSummary = args.implementationSummary
 		? `\nImplementation summary from executor:\n${args.implementationSummary}\n`
 		: "";
@@ -106,7 +111,7 @@ ${reposBlock}
 Run id: ${args.runId}${orchestratorSession}
 Manifest path: ${args.manifestPath}
 Gate: ${args.gate.id} ${args.gate.title}
-Gate kind: ${args.gate.kind}
+Gate kind: ${args.gate.kind}${suggestedAgent}
 ${implementationSummary}
 Verification prompt:
 ${args.gate.verifyPrompt}

@@ -1,7 +1,6 @@
 {
   "skills": {
     "adr": "manifest-dev-tools",
-    "review-code": "manifest-dev",
     "define": "manifest-dev",
     "figure-out": "manifest-dev",
     "figure-out-team": "manifest-dev",
@@ -9,10 +8,7 @@
     "prompt-engineering": "manifest-dev-tools",
     "review-pr": "manifest-dev-tools",
     "walk-pr": "manifest-dev-tools",
-    "teach-me": "manifest-dev-tools",
-    "check-pr": "manifest-dev",
-    "poll-slack": "manifest-dev",
-    "review-prompt": "manifest-dev-tools"
+    "teach-me": "manifest-dev-tools"
   },
   "runtime_owned_skills": {
     "do": "Harness-level Do is owned by the Pi runtime extension command, not distributed as a normal skill.",
@@ -20,17 +16,38 @@
     "escalate": "Escalation is a Pi runtime blocker outcome, not a normal skill."
   },
   "extension_wrappers": {
-    "auto": "Provided by /auto (core package), which runs the manifest-dev lifecycle through the Pi Harness-level Do outcome gate.",
-    "babysit-pr": "Provided by /babysit-pr (tools package), which synthesizes PR lifecycle grounding and runs it through the Pi Harness-level Do outcome gate."
+    "auto": "Provided by /manifest-auto, which runs the manifest-dev lifecycle through the Pi Harness-level Do outcome gate.",
+    "babysit-pr": "Provided by /manifest-babysit-pr, which synthesizes PR lifecycle grounding and runs it through the Pi Harness-level Do outcome gate."
   },
   "agents": {},
-  "agents_note": {
-    "_note": "manifest-dev ships zero agents. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`), shipped under dist/pi/skills/. Verification is always a general-purpose subagent whose verify.prompt activates a skill — there is no verify.agent field."
+  "agents_excluded": {
+    "_note": "Pi packages do not declare a package-level `agents` resource, so no reviewer/verifier agents ship as dist/pi assets. Verifier sessions are steered at runtime by the source-owned extension via each manifest gate's verify.prompt block; agent prompt assets remain extension-private and source-owned.",
+    "manifest-dev": [
+      "change-intent-reviewer",
+      "code-bugs-reviewer",
+      "code-design-reviewer",
+      "code-maintainability-reviewer",
+      "code-simplicity-reviewer",
+      "code-testability-reviewer",
+      "context-file-adherence-reviewer",
+      "contracts-reviewer",
+      "criteria-checker",
+      "docs-reviewer",
+      "github-pr-lifecycle",
+      "operational-readiness-reviewer",
+      "prose-value-reviewer",
+      "slack-poller",
+      "test-quality-reviewer",
+      "type-safety-reviewer"
+    ],
+    "manifest-dev-tools": [
+      "prompt-reviewer"
+    ]
   },
   "commands": {
-    "do": "Pi Harness-level Do entrypoint for an existing manifest (core package).",
-    "auto": "Pi wrapper for autonomous figure-out -> define -> Harness-level Do (core package).",
-    "babysit-pr": "Pi wrapper for PR lifecycle manifest synthesis and Harness-level Do (tools package)."
+    "manifest-do": "Pi Harness-level Do entrypoint for an existing manifest.",
+    "manifest-auto": "Pi wrapper for autonomous figure-out -> define -> Harness-level Do.",
+    "manifest-babysit-pr": "Pi wrapper for PR lifecycle manifest synthesis and Harness-level Do."
   },
   "tools": {},
   "runtime_internal": {

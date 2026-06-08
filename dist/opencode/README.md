@@ -2,16 +2,14 @@
 
 Verification-first manifest workflows for OpenCode CLI. Ported from the Claude Code manifest-dev plugin.
 
-manifest-dev ships **zero agents** — every capability is a skill. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`). Verification is always a general-purpose subagent whose prompt activates the relevant skill.
-
 ## Components
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 18 | Core workflow skills plus manifest-dev-tools utilities (incl. `review-code`, `check-pr`, `poll-slack`, `review-prompt`) |
-| Commands | 16 | User-invocable slash commands generated from user-invocable skills |
+| Skills | 14 | Core workflow skills plus manifest-dev-tools utilities |
+| Agents | 17 | Specialized reviewer and verification agents |
+| Commands | 12 | User-invocable slash commands for core workflows and tools utilities |
 | Context | 1 | AGENTS.md workflow overview |
-| Agents | 0 | None — all capabilities are skills |
 
 ## Installation
 
@@ -21,7 +19,7 @@ manifest-dev ships **zero agents** — every capability is a skill. Quality revi
 npx skills add doodledood/manifest-dev --all -a opencode
 ```
 
-This installs skills into `.opencode/skills/`. For commands too, use the full distribution install below.
+This installs skills into `.opencode/skills/`. For agents and commands, use the full distribution install below.
 
 ### Option 2: Full Distribution Install
 
@@ -29,7 +27,7 @@ This installs skills into `.opencode/skills/`. For commands too, use the full di
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 ```
 
-This installs globally to `~/.config/opencode/`, which OpenCode loads from every project. Restart OpenCode after installing or updating so the running TUI reloads commands and skills.
+This installs globally to `~/.config/opencode/`, which OpenCode loads from every project. Restart OpenCode after installing or updating so the running TUI reloads agents, commands, and skills.
 
 Or clone and run locally:
 
@@ -40,10 +38,11 @@ bash dist/opencode/install.sh
 ```
 
 The install script:
-- Copies core skills to `~/.config/opencode/skills/` with the `-manifest-dev` suffix
-- Copies manifest-dev-tools skills to `~/.config/opencode/skills/` with the `-manifest-dev-tools` suffix
+- Copies core skills to `~/.config/opencode/skills/` with `-manifest-dev` suffix
+- Copies manifest-dev-tools skills to `~/.config/opencode/skills/` with `-manifest-dev-tools` suffix
+- Copies agents to `~/.config/opencode/agents/` with the plugin-owned suffix (`-manifest-dev` for core, `-manifest-dev-tools` for tools)
 - Copies commands to `~/.config/opencode/commands/` with the same plugin-owned suffixes
-- Copies the AGENTS.md context file
+- Copies AGENTS.md context file
 - Is idempotent — safe to re-run
 
 To install only for the current project, pass `--local`:
@@ -73,6 +72,9 @@ Use `bash dist/opencode/install.sh uninstall --local` to remove a project-local 
 # Skills
 cp -r dist/opencode/skills/* .opencode/skills/
 
+# Agents
+cp -r dist/opencode/agents/* .opencode/agents/
+
 # Commands
 cp -r dist/opencode/commands/* .opencode/commands/
 
@@ -82,15 +84,30 @@ cp dist/opencode/AGENTS.md .opencode/AGENTS.md
 
 ## Usage
 
-After installation, invoke workflows via slash commands (namespaced with the owning plugin's suffix), e.g. `/define-manifest-dev`, `/do-manifest-dev`, `/auto-manifest-dev`, `/babysit-pr-manifest-dev-tools`, `/review-pr-manifest-dev-tools`.
+After installation, invoke workflows via slash commands:
+
+```
+/define-manifest-dev                    Plan and scope a task (--babysit <pr-url> to synthesize from existing PR)
+/do-manifest-dev                        Execute a manifest and verify each criterion inline
+/auto-manifest-dev                      End-to-end autonomous execution (--babysit <pr-url> to tend existing PR)
+/figure-out-manifest-dev                Truth-convergent thinking partner
+/figure-out-team-manifest-dev           Multi-party async deliberation in a Slack thread
+/adr-manifest-dev-tools                 Post-hoc ADR synthesis
+/babysit-pr-manifest-dev-tools          Babysit an existing PR; --ci performs one state advance
+/handoff-manifest-dev-tools             Cross-boundary handoff or DIY sub-agent context payload
+/prompt-engineering-manifest-dev-tools  Gap-calibrated prompt creation, update, and review
+/review-pr-manifest-dev-tools           Autonomous PR review one-shot or --loop scheduler
+/teach-me-manifest-dev-tools            Incremental teaching loop for the session's work, a PR, an ADR, or any topic
+/walk-pr-manifest-dev-tools             Collaborative PR/diff walkthrough
+```
 
 ## Feature Parity with Claude Code
 
 | Feature | Claude Code | OpenCode | Notes |
 |---------|------------|----------|-------|
-| Skills | Full | Full | Copied unchanged (incl. the review-code/check-pr/poll-slack/review-prompt skills) |
+| Skills | Full | Full | Copied unchanged |
+| Agents | Full | Full | Frontmatter converted to OpenCode format |
 | Commands | N/A | Full | Generated from user-invocable skills |
-| Agents | None (all skills) | None (all skills) | Verification activates a skill from a general-purpose subagent |
 | Hooks | None shipped | None shipped | Use `/goal /do <manifest-path>` for unattended turn continuation |
 
 ## Known Limitations
@@ -102,13 +119,52 @@ After installation, invoke workflows via slash commands (namespaced with the own
 
 ```
 dist/opencode/
-├── skills/                          # 18 skills (core + tools), original names
-│   ├── review-code/                 #   quality review, one dimension per invocation
-│   ├── check-pr/  poll-slack/       #   former functional agents, now skills
-│   ├── define/  do/  auto/  ...      #   workflow skills
-│   └── review-prompt/  prompt-engineering/  review-pr/  ...
-├── commands/                        # 16 user commands (from user-invocable skills)
-├── component-namespaces.json        # install-time namespacing metadata
+├── agents/                          # 17 converted agents (17 files)
+│   ├── change-intent-reviewer.md
+│   ├── code-bugs-reviewer.md
+│   ├── operational-readiness-reviewer.md
+│   ├── test-quality-reviewer.md
+│   ├── prose-value-reviewer.md
+│   ├── code-design-reviewer.md
+│   ├── code-maintainability-reviewer.md
+│   ├── code-simplicity-reviewer.md
+│   ├── code-testability-reviewer.md
+│   ├── context-file-adherence-reviewer.md
+│   ├── contracts-reviewer.md
+│   ├── criteria-checker.md
+│   ├── docs-reviewer.md
+│   ├── github-pr-lifecycle.md
+│   ├── slack-poller.md
+│   ├── type-safety-reviewer.md
+│   └── prompt-reviewer.md
+├── commands/                        # 12 user commands
+│   ├── auto.md
+│   ├── adr.md
+│   ├── babysit-pr.md
+│   ├── define.md
+│   ├── do.md
+│   ├── handoff.md
+│   ├── figure-out.md
+│   ├── figure-out-team.md
+│   ├── prompt-engineering.md
+│   ├── review-pr.md
+│   ├── teach-me.md
+│   └── walk-pr.md
+├── skills/                          # 14 skills (core + tools)
+│   ├── adr/
+│   ├── auto/
+│   ├── babysit-pr/
+│   ├── define/
+│   ├── do/
+│   ├── done/
+│   ├── escalate/
+│   ├── figure-out/
+│   ├── figure-out-team/
+│   ├── handoff/
+│   ├── prompt-engineering/
+│   ├── review-pr/
+│   ├── teach-me/
+│   └── walk-pr/
 ├── AGENTS.md                        # Context file
 ├── README.md                        # This file
 ├── install.sh                       # Installation script

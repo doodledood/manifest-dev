@@ -1,15 +1,6 @@
 {
   "version": 1,
   "last_synced_at": "2026-05-05T15:37:21Z",
-  "agents": [
-    "prompt-compression-verifier.md",
-    "prompt-reviewer.md",
-    "prompt-token-efficiency-verifier.md"
-  ],
-  "skills": [
-    "auto-optimize-prompt",
-    "compress-prompt",
-    "optimize-prompt-token-efficiency",
-    "prompt-engineering"
-  ]
+  "agents": ["prompt-compression-verifier.md", "prompt-reviewer.md", "prompt-token-efficiency-verifier.md"],
+  "skills": ["auto-optimize-prompt", "compress-prompt", "optimize-prompt-token-efficiency", "prompt-engineering", "review-prompt"]
 }

@@ -2,8 +2,6 @@
 
 A skill activates a behavior the model wouldn't naturally produce, or activates it with a calibration the default lacks (more relentless, more structured, more skeptical, etc.). The skill's content is whatever closes that gap — no more.
 
-Default to packaging a new capability as a skill rather than an agent: skills are the Agent Skills Open Standard — plugin-bundleable and identical across harnesses — and a general-purpose agent told to activate the skill reproduces agent behavior in nearly all cases. Choose an agent only when you need harness-specific frontmatter (a restricted tool allow-list, an isolated model/subagent type); see `agents.md`.
-
 ## Minimum-viable shape
 
 A skill body can be as short as three sentences when goal + expected behavior + one override are all the gap requires. The example below — a "grill me on this plan" skill — illustrates the shape:
@@ -58,10 +56,6 @@ Three checks: *specific* (names the failure, not a category), *actionable* (says
 ## Setup and stateful skills
 
 Skills that need user-specific configuration (channel names, project IDs, output paths) persist that config in a file inside the skill directory. Read it on invocation; ask only if absent. Re-asking every session is a gap the skill exists to close.
-
-## Naming
-
-Kebab-case throughout. The name reflects what kind of gap the skill closes: an **instruction-based skill performs an action, so it gets a verb phrase** (`review-code`, `review-pr`, `review-prompt`, `poll-slack`, `check-pr`, `compress-prompt`); a **knowledge-based skill is reference/lookup/teaching with no action, so it may be a noun** (`prompt-engineering`, `claude-api`).
 
 ## Frontmatter
 

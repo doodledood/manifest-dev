@@ -6,7 +6,6 @@ import manifestDevExtension, {
 	buildManifestAutoPrompt,
 	buildManifestBabysitPrompt,
 	buildManifestDoPrompt,
-	buildOrchestrationSpawnBlocker,
 	createVerificationOrchestratorSession,
 	formatRepairFollowUpMessage,
 	makeOrchestratorSessionId,
@@ -14,7 +13,6 @@ import manifestDevExtension, {
 	resolveManifestPath,
 	routeVerificationResult,
 	shouldTriggerHarnessVerification,
-	spawnVerifier,
 	startManifestDo,
 } from "../pi/extensions/manifest-dev.ts";
 import {
@@ -48,6 +46,7 @@ const gate = {
 	kind: "acceptance_criterion",
 	title: "Thing works",
 	verifyPrompt: "Run npm test and inspect output.",
+	suggestedAgent: "test-quality-reviewer",
 };
 
 function completedRecord(result) {
@@ -107,6 +106,7 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "global_invariant",
 			title: "Runtime claims stay honest.",
 			verifyPrompt: 'Run: echo "ok"',
+			suggestedAgent: "docs-reviewer",
 			model: undefined,
 			phase: 1,
 		},
@@ -115,6 +115,7 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Single quoted prompt.",
 			verifyPrompt: "Check it's fine",
+			suggestedAgent: undefined,
 			model: undefined,
 			phase: 1,
 		},
@@ -123,6 +124,7 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Block scalar prompt.",
 			verifyPrompt: "first line\nsecond line",
+			suggestedAgent: "contracts-reviewer",
 			model: undefined,
 			phase: 1,
 		},
@@ -131,6 +133,7 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Model and phase.",
 			verifyPrompt: "run check",
+			suggestedAgent: undefined,
 			model: "gpt-5",
 			phase: 2,
 		},
@@ -139,6 +142,7 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Invalid phase falls back.",
 			verifyPrompt: "x",
+			suggestedAgent: undefined,
 			model: undefined,
 			phase: 1,
 		},
@@ -159,6 +163,7 @@ test("buildGateVerifierPrompt creates a single-gate clean-session contract", () 
 	assert.match(prompt, /Do not implement fixes/);
 	assert.match(prompt, /Verification orchestrator session: manifest-verify-123/);
 	assert.match(prompt, /Gate: AC-1\.1 Thing works/);
+	assert.match(prompt, /Suggested manifest verifier persona: test-quality-reviewer/);
 	assert.match(prompt, /Run npm test and inspect output\./);
 	assert.match(prompt, /VERDICT: PASS\|FAIL\|BLOCKED/);
 	assert.match(prompt, /Changed extension runtime\./);
@@ -499,7 +504,7 @@ test("simplified Pi executor prompts omit harness verification tools", () => {
 test("shouldTriggerHarnessVerification only allows active executor checkpoints", () => {
 	const run = {
 		runId: "manifest-dev-run",
-		command: "do",
+		command: "manifest-do",
 		startedAt: "t",
 		cwd: "/repo",
 		executorSessionId: "executor-session",
@@ -530,17 +535,16 @@ test("extension registers agent_end lifecycle hook for Harness-level verificatio
 
 	assert.equal(typeof events.get("agent_end"), "function");
 	assert.equal(typeof events.get("before_agent_start"), "function");
-	assert.equal(commands.has("do"), true);
-	assert.equal(commands.has("auto"), true);
-	// babysit-pr moved to the @doodledood/manifest-dev-pi-tools package.
-	assert.equal(commands.has("babysit-pr"), false);
+	assert.equal(commands.has("manifest-do"), true);
+	assert.equal(commands.has("manifest-auto"), true);
+	assert.equal(commands.has("manifest-babysit-pr"), true);
 	assert.equal(flags.some((flag) => flag.name === "manifest-verifier-max-concurrent"), true);
 });
 
 test("rehydrateRuntimeState removes terminal runs after replay", () => {
 	const executing = {
 		runId: "manifest-dev-run",
-		command: "do",
+		command: "manifest-do",
 		startedAt: "t",
 		cwd: "/repo",
 		executorSessionId: "executor-session",
@@ -579,56 +583,6 @@ test("rehydrateRuntimeState removes terminal runs after replay", () => {
 	assert.equal(state.latestVerificationByRunId.get(executing.runId), verification);
 });
 
-test("rehydrateRuntimeState scopes runs to the owning package's command set", () => {
-	const doRun = {
-		runId: "run-do",
-		command: "do",
-		startedAt: "t",
-		cwd: "/repo",
-		executorSessionId: "core-session",
-		status: "executing",
-	};
-	const babysitRun = {
-		runId: "run-babysit",
-		command: "babysit-pr",
-		startedAt: "t",
-		cwd: "/repo",
-		executorSessionId: "tools-session",
-		status: "executing",
-	};
-	const ctx = {
-		sessionManager: {
-			getBranch() {
-				return [
-					{ type: "custom", customType: "manifest-dev:run", data: doRun },
-					{ type: "custom", customType: "manifest-dev:run", data: babysitRun },
-				];
-			},
-		},
-	};
-
-	// Tools runtime (owns babysit-pr) must ignore the core /do run, so it never
-	// double-verifies it.
-	const toolsState = {
-		latestVerificationByRunId: new Map(),
-		activeRunByExecutorSessionId: new Map(),
-		childSessionIds: new Set(),
-	};
-	rehydrateRuntimeState(ctx, toolsState, new Set(["babysit-pr"]));
-	assert.equal(toolsState.activeRunByExecutorSessionId.has("tools-session"), true);
-	assert.equal(toolsState.activeRunByExecutorSessionId.has("core-session"), false);
-
-	// Core runtime (owns do/auto) must ignore the tools babysit-pr run.
-	const coreState = {
-		latestVerificationByRunId: new Map(),
-		activeRunByExecutorSessionId: new Map(),
-		childSessionIds: new Set(),
-	};
-	rehydrateRuntimeState(ctx, coreState, new Set(["do", "auto"]));
-	assert.equal(coreState.activeRunByExecutorSessionId.has("core-session"), true);
-	assert.equal(coreState.activeRunByExecutorSessionId.has("tools-session"), false);
-});
-
 test("registered agent_end handler runs runtime verification path", async () => {
 	const events = new Map();
 	const commands = new Map();
@@ -658,7 +612,7 @@ test("registered agent_end handler runs runtime verification path", async () => 
 		ui: { notify() {} },
 	};
 	try {
-		await commands.get("do").handler(manifestPath, ctx);
+		await commands.get("manifest-do").handler(manifestPath, ctx);
 		await events.get("agent_end")({}, ctx);
 
 		const verificationEntry = calls.entries.find((entry) => entry.customType === "manifest-dev:verification");
@@ -708,7 +662,7 @@ test("registered agent_end handler waits for pending messages before verificatio
 		ui: { notify() {} },
 	};
 	try {
-		await commands.get("do").handler(manifestPath, ctx);
+		await commands.get("manifest-do").handler(manifestPath, ctx);
 		await events.get("agent_end")({}, ctx);
 		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:verification"), false);
 		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:outcome"), false);
@@ -762,7 +716,7 @@ test("second executor stop after repair starts another clean Verification Orches
 	const requestedAt = "2026-06-05T20:00:00.000Z";
 	const repairingRun = {
 		runId: "manifest-dev-repair-loop-test",
-		command: "do",
+		command: "manifest-do",
 		startedAt: "2026-06-05T18:00:00.000Z",
 		cwd: process.cwd(),
 		executorSessionId: "executor-session",
@@ -790,7 +744,7 @@ test("verification orchestrator sessions are clean persisted attempts", () => {
 	const requestedAt = "2026-06-05T19:00:00.000Z";
 	const run = {
 		runId: "manifest-dev-orchestrator-test",
-		command: "do",
+		command: "manifest-do",
 		startedAt: "2026-06-05T18:00:00.000Z",
 		cwd: process.cwd(),
 		executorSessionId: "executor-session",
@@ -867,7 +821,7 @@ test("routeVerificationResult injects repair, blocked, and done runtime outcomes
 	};
 	const baseRun = {
 		runId: "manifest-dev-route-test",
-		command: "do",
+		command: "manifest-do",
 		startedAt: "2026-06-05T00:00:00.000Z",
 		cwd: process.cwd(),
 		executorSessionId: "executor-session",
@@ -937,50 +891,6 @@ test("routeVerificationResult injects repair, blocked, and done runtime outcomes
 	);
 	rmSync(routeRunStateFile, { force: true });
 	rmSync(routeTmpDir, { recursive: true, force: true });
-});
-
-test("spawnVerifier retries once after a transient throw, then succeeds", async () => {
-	let calls = 0;
-	const subagents = {
-		spawn() {
-			calls += 1;
-			if (calls === 1) throw new Error("ctx is stale after session replacement or reload");
-			return "agent-2";
-		},
-	};
-	const result = await spawnVerifier(subagents, "general-purpose", "verify", { maxTurns: 5 });
-	assert.deepEqual(result, { ok: true, agentId: "agent-2" });
-	assert.equal(calls, 2);
-});
-
-test("spawnVerifier returns the first error after two failures", async () => {
-	let calls = 0;
-	const subagents = {
-		spawn() {
-			calls += 1;
-			throw new Error(`stale ctx ${calls}`);
-		},
-	};
-	const result = await spawnVerifier(subagents, "general-purpose", "verify", undefined);
-	assert.equal(result.ok, false);
-	assert.equal(calls, 2);
-	assert.match(String(result.error), /stale ctx 1/);
-});
-
-test("buildOrchestrationSpawnBlocker names a harness spawn failure with session diagnostics", () => {
-	const run = {
-		runId: "manifest-dev-run",
-		command: "do",
-		startedAt: "t",
-		cwd: "/repo",
-		executorSessionId: "executor-session",
-		status: "verifying",
-	};
-	const blocker = buildOrchestrationSpawnBlocker(run, "current-session", new Error("ctx is stale after session replacement"));
-	assert.match(blocker, /harness\/runtime orchestration failure/);
-	assert.match(blocker, /no Acceptance Criterion or Global Invariant was verified/);
-	assert.match(blocker, /Underlying spawn error: .*ctx is stale/);
-	assert.match(blocker, /current session current-session, executor session executor-session/);
 });
 
 function gateResult(verdict) {

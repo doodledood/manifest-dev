@@ -1,0 +1,78 @@
+# manifest-dev Codex CLI configuration
+# Merge this into your project's .codex/config.toml
+
+[features]
+multi_agent = true
+
+[agents.change-intent-reviewer]
+description = "Adversarially analyze whether code, prompt, or config changes achieve their stated intent"
+config_file = "agents/change-intent-reviewer.toml"
+
+[agents.code-bugs-reviewer]
+description = "Audit code changes for mechanical defects — runtime failures, resource issues, and structural code flaws"
+config_file = "agents/code-bugs-reviewer.toml"
+
+[agents.operational-readiness-reviewer]
+description = "Audit code and configuration changes for runtime, deployment, rollback, retry, scale, CI, and observability risks"
+config_file = "agents/operational-readiness-reviewer.toml"
+
+[agents.test-quality-reviewer]
+description = "Verify tests are both PRESENT and VALIDATING with independent behavioral oracles"
+config_file = "agents/test-quality-reviewer.toml"
+
+[agents.prose-value-reviewer]
+description = "Audit code comments and repo doc files for prose value — narrating-the-obvious, generic puffery, AI rhetorical patterns, sycophantic fragments. Comments must be load-bearing-WHY"
+config_file = "agents/prose-value-reviewer.toml"
+
+[agents.code-design-reviewer]
+description = "Audit code for design fitness issues — right approach and right responsibility owner given what already exists"
+config_file = "agents/code-design-reviewer.toml"
+
+[agents.code-maintainability-reviewer]
+description = "Comprehensive maintainability audit: DRY, coupling, cohesion, consistency, dead code, boundaries"
+config_file = "agents/code-maintainability-reviewer.toml"
+
+[agents.code-simplicity-reviewer]
+description = "Audit code for unnecessary complexity, over-engineering, and cognitive burden"
+config_file = "agents/code-simplicity-reviewer.toml"
+
+[agents.code-testability-reviewer]
+description = "Audit code for testability issues — excessive mocking, logic buried in IO, non-deterministic inputs"
+config_file = "agents/code-testability-reviewer.toml"
+
+[agents.context-file-adherence-reviewer]
+description = "Verify that code changes comply with context file instructions and project standards"
+config_file = "agents/context-file-adherence-reviewer.toml"
+
+[agents.contracts-reviewer]
+description = "Verify API and interface contract correctness with source-of-truth evidence"
+config_file = "agents/contracts-reviewer.toml"
+
+[agents.criteria-checker]
+description = "Read-only verification agent. Validates a single criterion using any automated method"
+config_file = "agents/criteria-checker.toml"
+
+[agents.docs-reviewer]
+description = "Audit documentation and code comments for accuracy against recent code changes"
+config_file = "agents/docs-reviewer.toml"
+
+[agents.github-pr-lifecycle]
+description = "Inspect a GitHub PR lifecycle state — PR existence, CI checks, review threads, description sync, mergeability — returning PASS or a FAIL with natural-language hint. Read-only; never invokes the merge button"
+config_file = "agents/github-pr-lifecycle.toml"
+
+[agents.slack-poller]
+description = "Narrate new Slack messages in a channel or thread since a cursor"
+config_file = "agents/slack-poller.toml"
+
+[agents.type-safety-reviewer]
+description = "Audit code for type safety issues across typed languages"
+config_file = "agents/type-safety-reviewer.toml"
+
+[agents.prompt-reviewer]
+description = "Review LLM prompts against the prompt-engineering skill's gap-calibration principles"
+config_file = "agents/prompt-reviewer.toml"
+
+# MCP Servers (none required — add your own as needed)
+# [mcp_servers.example]
+# command = "npx"
+# args = ["-y", "package-name"]

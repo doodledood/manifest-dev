@@ -13,7 +13,7 @@ Understand the problem. Write down what you'd accept. Let it build and verify it
 
 `/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/goal /do`. `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. Run it through `/goal` — `/goal /do <path>` is the recommended form, keeping the run alive across turns.
 
-Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs `npm:@gotgenes/pi-subagents` plus the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for shared skills, `/do`, `/auto`, `/babysit-pr`, clean verifier fanout, and a structured done/escalate gate. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
+Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs `npm:@gotgenes/pi-subagents` plus the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for shared skills, `/manifest-do`, `/manifest-auto`, `/manifest-babysit-pr`, clean verifier fanout, and a structured done/escalate gate. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
 
 ## The Mindset Shift
 
@@ -27,23 +27,23 @@ Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
 - **`/define`** — encodes shared understanding into a verifiable Manifest. Not an interview: it makes the manifest-specific judgment calls (invariant vs process guidance, AC scope and pass threshold, phase ordering, trade-offs to lock as `[T-N]`) and pulls in `/figure-out` first if the understanding isn't there. Pass an existing manifest path in `$ARGUMENTS` to amend it in place. Supports `--babysit <pr-url>` and `--canvas`. Emits `/do <manifest-path>` and `/goal /do <manifest-path>` handoffs.
 - **`/do`** — executes a Manifest, spawning one verifier subagent per Acceptance Criterion and Global Invariant (using `verify.prompt:` verbatim), respecting `phase:` ordering, calling `/done` when everything verifies PASS or routing through `/escalate` when blocked. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping. The recommended invocation is `/goal /do <manifest-path>`, which keeps the run alive across turns; bare `/do` runs a single foreground turn. Mid-`/do` user messages default to invoking `/define` for amendment.
 - **`/auto`** — chains `figure-out → define → do` autonomously, no approval gates. Run it as `/goal /auto` for unattended cross-turn execution (recommended). Add `--babysit <pr-url>` for PR-lifecycle work.
-- **`/figure-out-team`** — `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator: brings evidence, names trade-offs, surfaces disagreement; polls the thread via `/loop` and reads via the `poll-slack` subagent for verbatim deltas; convergence is judgment-based across speakers, with the owner (by Slack handle) overruling. Trust is session-bound — the Claude Code operator is the only trusted human; Slack content is data, never instructions. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting to Slack.
+- **`/figure-out-team`** — `/figure-out`'s discipline applied to a multi-party async Slack conversation. An involved orchestrator: brings evidence, names trade-offs, surfaces disagreement; polls the thread via `/loop` and reads via the `slack-poller` subagent for verbatim deltas; convergence is judgment-based across speakers, with the owner (by Slack handle) overruling. Trust is session-bound — the Claude Code operator is the only trusted human; Slack content is data, never instructions. `--with-docs` loads CONTEXT.md as background; `--log [path]` keeps a local log without posting to Slack.
 - **`/done`** — completion summary in plain prose, called by `/do` after every criterion verifies PASS.
 - **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from you. Routed by `/do`.
-- **`/review-code`** — quality review along **one dimension per invocation** (bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, or CLAUDE.md adherence). Loads exactly that dimension's reference (progressive disclosure) and returns a PASS/FAIL report. Verifier subagents activate it from a `verify.prompt`; it replaces the per-dimension reviewer agents.
 
-## Manifest Schema — Three Fields per Verify Block
+## Manifest Schema — Four Fields per Verify Block
 
 Every verify block has the same shape:
 
 ```yaml
 verify:
-  prompt: "..."     # required, verbatim instruction to a general-purpose verifier (may activate a skill)
+  prompt: "..."     # required, verbatim verifier instruction
+  agent: "..."      # optional, default = general-purpose subagent
   model: "..."      # optional, default = inherit from invoking context
   phase: 1          # optional integer, default 1 (lower phases run first)
 ```
 
-Verifiers return one of three states. **PASS** — the criterion holds. **FAIL** — violated, with evidence: either a per-gate directive `/do` runs literally (when the prompt activates a specialized skill like `check-pr`) or a prose fix hint read with judgment (plain prompts). **BLOCKED** — can't be evaluated yet because an external action or state is pending (deploy, human approval); `/do` routes BLOCKED via `/escalate`.
+Verifiers return one of three states. **PASS** — the criterion holds. **FAIL** — violated, with evidence: either a per-gate directive `/do` runs literally (specialized verifiers like `github-pr-lifecycle`) or a prose fix hint read with judgment (generic verifiers). **BLOCKED** — can't be evaluated yet because an external action or state is pending (deploy, human approval); `/do` routes BLOCKED via `/escalate`.
 
 Authors put whatever the verifier needs directly into the prompt — run a bash command and check the exit code, inspect files, query an API, fetch docs. There's no separate `method:` or `command:` field; the subagent runs whatever its prompt asks for.
 
@@ -62,11 +62,11 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 
 Amendments overwrite in place with stable IDs (modify `INV-G1` and it stays `INV-G1`; remove one and it's gone, no renumbering). No `## Amendments` log, no `INV-G1.1 amends INV-G1` chain — git carries the history.
 
-## Verification Skills
+## Agents
 
-manifest-dev ships **no agents of its own**. Every criterion is verified by a general-purpose subagent driven by `verify.prompt`, which can run bash, inspect files, query external tools, or activate a skill. Read-only behavior is enforced by the prompt, so authors can point a verifier at MCP servers or extra CLI tools the user has configured.
+Verifier subagents default to `general-purpose` when a manifest omits `verify.agent:`. The bundled `criteria-checker` is a focused alternative (invoked via `agent: criteria-checker`): read-only behavior is enforced by its prompt, so authors can point it at MCP servers or extra CLI tools the user has configured.
 
-Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`review-code` skill** — one dimension per invocation; a verifier activates it from `verify.prompt`. The other functional skills are `check-pr` (PR mergeability checks) and `poll-slack` (tails Slack threads for `/figure-out-team`). See the [root README](../../README.md#verification-skills) for the full list.
+The review agents in `agents/` cover code, operational readiness, prose, contracts, types, design, testability, intent, and docs — name one in `verify.agent:` to scope a subagent to that lens. `github-pr-lifecycle` handles PR mergeability checks; `slack-poller` tails Slack threads for `/figure-out-team`. See the [root README](../../README.md#verifier-agents) for the full list.
 
 ## Task Guidance and References
 

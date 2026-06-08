@@ -1,0 +1,1 @@
+../../claude-plugins/manifest-dev/agents/context-file-adherence-reviewer.md

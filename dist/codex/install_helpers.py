@@ -1,0 +1,705 @@
+#!/usr/bin/env python3
+"""
+Namespace manifest-dev components with -manifest-dev suffix at install time.
+
+Renames files/directories and patches cross-references so components don't
+collide with other plugins in shared directories (skills/, agents/, etc.).
+
+Single-pass regex ensures correct handling of overlapping names (e.g., /do
+vs /done) and idempotency (won't double-suffix on re-run).
+
+Usage:
+    python3 install_helpers.py namespace <dir> [codex|opencode]
+    python3 install_helpers.py merge-config <source-config> <dest-config>
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+DEFAULT_SUFFIX = "-manifest-dev"
+KNOWN_MANAGED_SUFFIXES = [DEFAULT_SUFFIX, "-manifest-dev-tools"]
+COMPONENT_NAMESPACE_FILE = "component-namespaces.json"
+
+# File extensions to patch (text files only).
+TEXT_EXTENSIONS = {".md", ".py", ".ts", ".json", ".toml", ".rules", ".txt"}
+
+# Files to never patch (they ARE the namespace tooling).
+SKIP_FILES = {"install_helpers.py", "install.sh", COMPONENT_NAMESPACE_FILE}
+
+MANAGED_CONFIG_START = "# >>> manifest-dev managed config >>>"
+MANAGED_CONFIG_END = "# <<< manifest-dev managed config <<<"
+CONFIG_HEADER = (
+    "# manifest-dev configuration for Codex CLI\n"
+    "# Merge relevant sections into your .codex/config.toml\n"
+)
+STATE_VERSION = 1
+
+
+def _load_component_namespaces(base: Path) -> dict[str, object]:
+    metadata_path = base / COMPONENT_NAMESPACE_FILE
+    if not metadata_path.is_file():
+        return {}
+    try:
+        data = json.loads(metadata_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _metadata_suffixes(metadata: dict[str, object]) -> list[str]:
+    suffixes = metadata.get("suffixes")
+    if isinstance(suffixes, list):
+        values = [suffix for suffix in suffixes if isinstance(suffix, str)]
+        if values:
+            return sorted(set(values), key=len, reverse=True)
+    return KNOWN_MANAGED_SUFFIXES
+
+
+def _suffix_for(
+    metadata: dict[str, object],
+    component_type: str,
+    name: str,
+) -> str:
+    components = metadata.get(component_type)
+    if isinstance(components, dict):
+        suffix = components.get(name)
+        if isinstance(suffix, str) and suffix:
+            return suffix
+    return DEFAULT_SUFFIX
+
+
+def _strip_suffix(name: str, suffixes: list[str]) -> str:
+    """Return the source component name when a temp dist is already namespaced."""
+    for suffix in suffixes:
+        if name.endswith(suffix):
+            return name[: -len(suffix)]
+    return name
+
+
+def _sort_longest(names: list[str]) -> list[str]:
+    return sorted(set(names), key=len, reverse=True)
+
+
+def _discover_skill_names(base: Path, suffixes: list[str]) -> list[str]:
+    skills_dir = base / "skills"
+    if not skills_dir.is_dir():
+        return []
+    return _sort_longest(
+        [
+            _strip_suffix(path.name, suffixes)
+            for path in skills_dir.iterdir()
+            if path.is_dir()
+        ]
+    )
+
+
+def _discover_agent_names(base: Path, ext: str, suffixes: list[str]) -> list[str]:
+    agents_dir = base / "agents"
+    if not agents_dir.is_dir():
+        return []
+    return _sort_longest(
+        [
+            _strip_suffix(path.stem, suffixes)
+            for path in agents_dir.glob(f"*{ext}")
+            if path.is_file()
+        ]
+    )
+
+
+def _discover_command_names(base: Path, suffixes: list[str]) -> list[str]:
+    commands_dir = base / "commands"
+    if not commands_dir.is_dir():
+        return []
+    return _sort_longest(
+        [
+            _strip_suffix(path.stem, suffixes)
+            for path in commands_dir.glob("*.md")
+            if path.is_file()
+        ]
+    )
+
+
+def _build_regex(
+    skills: dict[str, str],
+    agents: dict[str, str],
+) -> tuple[dict[str, str], re.Pattern[str]]:
+    """Build replacement map and compiled single-pass regex.
+
+    Negative lookahead (?![a-zA-Z0-9_-]) prevents matching inside
+    already-suffixed names or longer identifiers, ensuring idempotency.
+    """
+    rmap: dict[str, str] = {}
+
+    for name in _sort_longest(list(skills)):
+        suffix = skills[name]
+        # Context-prefixed patterns (the prefix prevents false positives
+        # on common English words like "do", "done", "define").
+        rmap[f"/{name}"] = f"/{name}{suffix}"  # /define
+        rmap[f"${name}"] = f"${name}{suffix}"  # $define (Codex)
+        rmap[f"skills/{name}"] = f"skills/{name}{suffix}"  # skills/define
+        rmap[f'":{name}"'] = f'":{name}{suffix}"'  # ":define"
+        rmap[f"':{name}'"] = f"':{name}{suffix}'"  # ':define'
+        rmap[f'"{name}"'] = f'"{name}{suffix}"'  # "define"
+        rmap[f"'{name}'"] = f"'{name}{suffix}'"  # 'define'
+        rmap[f"`{name}`"] = f"`{name}{suffix}`"  # `define`
+        rmap[f"manifest-dev:{name}"] = f"manifest-dev:{name}{suffix}"
+        rmap[f"manifest-dev-tools:{name}"] = f"manifest-dev-tools:{name}{suffix}"
+
+    for name in _sort_longest(list(agents)):
+        suffix = agents[name]
+        # Bare agent names are safe — all are unique multi-hyphenated
+        # identifiers that don't collide with English words.
+        rmap[name] = f"{name}{suffix}"
+
+    # Sort keys longest-first so the regex engine tries longer matches
+    # before shorter ones at each position (e.g., /done before /do).
+    sorted_keys = sorted(rmap, key=len, reverse=True)
+
+    parts = [f"(?:{re.escape(k)})(?![a-zA-Z0-9_-])" for k in sorted_keys]
+    if not parts:
+        return rmap, re.compile(r"(?!)")
+    pattern = re.compile("|".join(parts))
+    return rmap, pattern
+
+
+def patch_content(text: str, skills: dict[str, str], agents: dict[str, str]) -> str:
+    """Apply all namespace replacements to text (single-pass, idempotent)."""
+    rmap, pattern = _build_regex(skills, agents)
+    return pattern.sub(lambda m: rmap[m.group(0)], text)
+
+
+# ── Filesystem operations ─────────────────────────────────────────────
+
+
+def rename_skills(base: Path, skills: dict[str, str]) -> None:
+    """Rename skill directories: skills/X -> skills/X-manifest-dev."""
+    skills_dir = base / "skills"
+    if not skills_dir.is_dir():
+        return
+    for name, suffix in skills.items():
+        src = skills_dir / name
+        dst = skills_dir / f"{name}{suffix}"
+        if src.is_dir() and not dst.exists():
+            src.rename(dst)
+
+
+def rename_agents(base: Path, agents: dict[str, str], ext: str = ".md") -> None:
+    """Rename agent files: agents/X.ext -> agents/X-manifest-dev.ext."""
+    agents_dir = base / "agents"
+    if not agents_dir.is_dir():
+        return
+    for name, suffix in agents.items():
+        src = agents_dir / f"{name}{ext}"
+        dst = agents_dir / f"{name}{suffix}{ext}"
+        if src.is_file() and not dst.exists():
+            src.rename(dst)
+
+
+def rename_commands(base: Path, command_names: dict[str, str]) -> None:
+    """Rename command files (OpenCode): commands/X.md -> commands/X-manifest-dev.md."""
+    cmds_dir = base / "commands"
+    if not cmds_dir.is_dir():
+        return
+    for name, suffix in command_names.items():
+        src = cmds_dir / f"{name}.md"
+        dst = cmds_dir / f"{name}{suffix}.md"
+        if src.is_file() and not dst.exists():
+            src.rename(dst)
+
+
+def patch_skill_frontmatter(base: Path) -> None:
+    """Ensure SKILL.md name: field matches the suffixed directory name."""
+    skills_dir = base / "skills"
+    if not skills_dir.is_dir():
+        return
+    for skill_dir in skills_dir.iterdir():
+        if not skill_dir.is_dir():
+            continue
+        skill_md = skill_dir / "SKILL.md"
+        if not skill_md.is_file():
+            continue
+        content = skill_md.read_text(encoding="utf-8")
+        if not content.startswith("---"):
+            continue
+        # Find frontmatter boundary (second ---)
+        end_idx = content.index("---", 3)
+        frontmatter = content[:end_idx]
+        rest = content[end_idx:]
+
+        new_fm = re.sub(
+            r"^(name:\s*)(\S+)",
+            rf"\g<1>{skill_dir.name}",
+            frontmatter,
+            count=1,
+            flags=re.MULTILINE,
+        )
+        if new_fm != frontmatter:
+            skill_md.write_text(new_fm + rest, encoding="utf-8")
+
+
+def patch_files(base: Path, skills: dict[str, str], agents: dict[str, str]) -> None:
+    """Walk all text files under base and apply content replacements."""
+    for root, _dirs, files in os.walk(base):
+        for fname in files:
+            if fname in SKIP_FILES:
+                continue
+            fpath = Path(root) / fname
+            if fpath.suffix not in TEXT_EXTENSIONS:
+                continue
+            try:
+                content = fpath.read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError):
+                continue
+            patched = patch_content(content, skills, agents)
+            if patched != content:
+                fpath.write_text(patched, encoding="utf-8")
+
+
+def _extract_managed_agent_tables(source_text: str) -> str:
+    matches = list(re.finditer(r"(?m)^\[agents\.[^\]]+\]\s*$", source_text))
+    if not matches:
+        raise ValueError("No [agents.<name>] tables found in source config.")
+    return source_text[matches[0].start() :].strip() + "\n"
+
+
+def _table_pattern(table_name: str) -> re.Pattern[str]:
+    return re.compile(rf"(?ms)^(\[{re.escape(table_name)}\]\n)(.*?)(?=^\[|\Z)")
+
+
+def _table_match(text: str, table_name: str) -> re.Match[str] | None:
+    return _table_pattern(table_name).search(text)
+
+
+def _get_table_body(text: str, table_name: str) -> str | None:
+    match = _table_match(text, table_name)
+    if not match:
+        return None
+    return match.group(2)
+
+
+def _get_table_key_value(text: str, table_name: str, key: str) -> str | None:
+    body = _get_table_body(text, table_name)
+    if body is None:
+        return None
+    match = re.search(rf"(?m)^{re.escape(key)}\s*=\s*(.*)$", body)
+    if not match:
+        return None
+    return match.group(1).strip()
+
+
+def _table_list_contains_value(
+    text: str, table_name: str, key: str, value: str
+) -> bool:
+    current_value = _get_table_key_value(text, table_name, key)
+    if current_value is None:
+        return False
+    return f'"{value}"' in current_value
+
+
+def _strip_managed_config_block(text: str) -> str:
+    pattern = re.compile(
+        rf"\n?{re.escape(MANAGED_CONFIG_START)}\n.*?\n{re.escape(MANAGED_CONFIG_END)}\n?",
+        flags=re.DOTALL,
+    )
+    return pattern.sub("\n", text)
+
+
+def _strip_manifest_agent_tables(
+    text: str,
+    suffixes: list[str] | None = None,
+) -> str:
+    managed_suffixes = suffixes or KNOWN_MANAGED_SUFFIXES
+    suffix_pattern = "|".join(re.escape(suffix) for suffix in managed_suffixes)
+    pattern = re.compile(
+        rf"(?ms)^\[agents\.[^\]]*(?:{suffix_pattern})\]\n.*?(?=^\[|\Z)",
+    )
+    return pattern.sub("", text)
+
+
+def _root_text(text: str) -> str:
+    match = re.search(r"(?m)^\[", text)
+    return text[: match.start()] if match else text
+
+
+def _root_has_key(text: str, key: str) -> bool:
+    return re.search(rf"(?m)^{re.escape(key)}\s*=", _root_text(text)) is not None
+
+
+def _insert_root_lines(text: str, lines: list[str]) -> str:
+    if not lines:
+        return text
+
+    block = "\n".join(lines) + "\n"
+    match = re.search(r"(?m)^\[", text)
+    if not match:
+        if text and not text.endswith("\n"):
+            text += "\n"
+        return text + block
+
+    prefix = text[: match.start()].rstrip()
+    suffix = text[match.start() :].lstrip("\n")
+    if prefix:
+        return f"{prefix}\n{block}\n{suffix}"
+    return f"{block}\n{suffix}"
+
+
+def _migrate_legacy_agents_table(text: str) -> str:
+    """Move old scalar [agents] settings to modern root-level config.
+
+    Codex now treats every key under [agents] as an agent role table. Older
+    dist configs placed max_threads/max_depth/project_doc_fallback_filenames
+    there, which makes current Codex reject config.toml before startup.
+    """
+    match = _table_match(text, "agents")
+    if not match:
+        return text
+
+    legacy_root_keys = {
+        "max_threads",
+        "max_depth",
+        "project_doc_fallback_filenames",
+    }
+    root_lines: list[str] = []
+    preserved_comments: list[str] = []
+
+    for line in match.group(2).splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        key_match = re.match(r"^([A-Za-z0-9_-]+)\s*=", stripped)
+        if key_match and key_match.group(1) in legacy_root_keys:
+            key = key_match.group(1)
+            if not _root_has_key(text, key):
+                root_lines.append(stripped)
+        else:
+            preserved_comments.append(f"# Legacy [agents] entry removed: {stripped}")
+
+    text = text[: match.start()] + text[match.end() :]
+    text = _insert_root_lines(text, root_lines + preserved_comments)
+    return _normalize_config_text(text)
+
+
+def _strip_manifest_header(text: str) -> str:
+    if text.startswith(CONFIG_HEADER):
+        text = text[len(CONFIG_HEADER) :]
+    return text
+
+
+def _upsert_key_in_table_body(body: str, key: str, value: str) -> str:
+    line = f"{key} = {value}"
+    pattern = re.compile(rf"(?m)^{re.escape(key)}\s*=.*$")
+    if pattern.search(body):
+        return pattern.sub(line, body, count=1)
+
+    if body and not body.endswith("\n"):
+        body += "\n"
+    return body + line + "\n"
+
+
+def _has_key_in_table_body(body: str, key: str) -> bool:
+    pattern = re.compile(rf"(?m)^{re.escape(key)}\s*=.*$")
+    return pattern.search(body) is not None
+
+
+def _ensure_missing_table_keys(
+    text: str,
+    table_name: str,
+    keys: list[tuple[str, str]],
+) -> str:
+    match = _table_match(text, table_name)
+    if match:
+        body = match.group(2)
+        for key, value in keys:
+            if not _has_key_in_table_body(body, key):
+                body = _upsert_key_in_table_body(body, key, value)
+        return text[: match.start()] + match.group(1) + body + text[match.end() :]
+
+    if text and not text.endswith("\n"):
+        text += "\n"
+    if text.strip():
+        text += "\n"
+    lines = [f"[{table_name}]"] + [f"{key} = {value}" for key, value in keys]
+    return text + "\n".join(lines) + "\n"
+
+
+def _ensure_list_value_in_table(
+    text: str,
+    table_name: str,
+    key: str,
+    value: str,
+) -> str:
+    match = _table_match(text, table_name)
+    list_value = f'["{value}"]'
+    if not match:
+        return _ensure_missing_table_keys(text, table_name, [(key, list_value)])
+
+    header, body = match.group(1), match.group(2)
+    key_pattern = re.compile(rf"(?m)^({re.escape(key)}\s*=\s*)(\[.*\])$")
+    key_match = key_pattern.search(body)
+    if not key_match:
+        body = _upsert_key_in_table_body(body, key, list_value)
+        return text[: match.start()] + header + body + text[match.end() :]
+
+    existing_list = key_match.group(2)
+    if f'"{value}"' in existing_list:
+        return text
+
+    inner = existing_list[1:-1].strip()
+    merged_list = f'[{inner}, "{value}"]' if inner else list_value
+    body = key_pattern.sub(rf"\1{merged_list}", body, count=1)
+    return text[: match.start()] + header + body + text[match.end() :]
+
+
+def _ensure_table_keys(
+    text: str,
+    table_name: str,
+    keys: list[tuple[str, str]],
+) -> str:
+    match = _table_match(text, table_name)
+    if match:
+        body = match.group(2)
+        for key, value in keys:
+            body = _upsert_key_in_table_body(body, key, value)
+        return text[: match.start()] + match.group(1) + body + text[match.end() :]
+
+    if text and not text.endswith("\n"):
+        text += "\n"
+    if text.strip():
+        text += "\n"
+    lines = [f"[{table_name}]"] + [f"{key} = {value}" for key, value in keys]
+    return text + "\n".join(lines) + "\n"
+
+
+def _remove_key_from_table(
+    text: str,
+    table_name: str,
+    key: str,
+    expected_value: str | None = None,
+) -> str:
+    match = _table_match(text, table_name)
+    if not match:
+        return text
+
+    header, body = match.group(1), match.group(2)
+    key_pattern = re.compile(rf"(?m)^({re.escape(key)}\s*=\s*)(.*)$")
+    key_match = key_pattern.search(body)
+    if not key_match:
+        return text
+
+    current_value = key_match.group(2).strip()
+    if expected_value is not None and current_value != expected_value:
+        return text
+
+    body = key_pattern.sub("", body, count=1)
+    body = re.sub(r"\n{3,}", "\n\n", body).lstrip("\n")
+    return text[: match.start()] + header + body + text[match.end() :]
+
+
+def _remove_list_value_from_table(
+    text: str, table_name: str, key: str, value: str
+) -> str:
+    match = _table_match(text, table_name)
+    if not match:
+        return text
+
+    header, body = match.group(1), match.group(2)
+    key_pattern = re.compile(rf"(?m)^({re.escape(key)}\s*=\s*)(\[.*\])$")
+    key_match = key_pattern.search(body)
+    if not key_match:
+        return text
+
+    items = re.findall(r'"([^"]*)"', key_match.group(2))
+    if value not in items:
+        return text
+
+    items = [item for item in items if item != value]
+    if items:
+        rendered = "[" + ", ".join(f'"{item}"' for item in items) + "]"
+        body = key_pattern.sub(rf"\1{rendered}", body, count=1)
+    else:
+        body = key_pattern.sub("", body, count=1)
+
+    body = re.sub(r"\n{3,}", "\n\n", body).lstrip("\n")
+    return text[: match.start()] + header + body + text[match.end() :]
+
+
+def _remove_empty_table(text: str, table_name: str) -> str:
+    match = _table_match(text, table_name)
+    if not match:
+        return text
+    if match.group(2).strip():
+        return text
+    return text[: match.start()] + text[match.end() :]
+
+
+def _normalize_config_text(text: str) -> str:
+    text = text.replace("\r\n", "\n")
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    text = text.lstrip("\n").rstrip()
+    if not text:
+        return ""
+    return text + "\n"
+
+
+def _load_state(state_path: str | None) -> dict[str, object]:
+    if not state_path:
+        return {}
+    path = Path(state_path)
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _write_state(state_path: str | None, state: dict[str, object]) -> None:
+    if not state_path:
+        return
+    Path(state_path).write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+
+
+def _build_config_state(existing_text: str, config_existed: bool) -> dict[str, object]:
+    return {
+        "version": STATE_VERSION,
+        "config_existed": config_existed,
+        "added_keys": {
+            "features.multi_agent": _get_table_key_value(
+                existing_text, "features", "multi_agent"
+            )
+            is None,
+        },
+        "added_list_values": {},
+    }
+
+
+def merge_config(
+    source_config_path: str,
+    dest_config_path: str,
+    state_path: str | None = None,
+) -> None:
+    source_text = Path(source_config_path).read_text(encoding="utf-8")
+    managed_tables = _extract_managed_agent_tables(source_text).rstrip()
+    managed_block = (
+        f"{MANAGED_CONFIG_START}\n" f"{managed_tables}\n" f"{MANAGED_CONFIG_END}\n"
+    )
+
+    dest_path = Path(dest_config_path)
+    config_existed = dest_path.exists()
+    existing_text = dest_path.read_text(encoding="utf-8") if config_existed else ""
+    merged_text = existing_text if config_existed else CONFIG_HEADER
+    state = _load_state(state_path) or _build_config_state(
+        existing_text, config_existed
+    )
+
+    merged_text = _migrate_legacy_agents_table(merged_text)
+    merged_text = _strip_managed_config_block(merged_text)
+    merged_text = _strip_manifest_agent_tables(merged_text)
+    merged_text = _ensure_missing_table_keys(
+        merged_text,
+        "features",
+        [("multi_agent", "true")],
+    )
+    # Note: max_threads, max_depth, project_doc_fallback_filenames are root-level
+    # keys in modern Codex, NOT under [agents]. Do not add them under [agents] —
+    # Codex treats all [agents.*] entries as agent role definitions.
+
+    merged_text = merged_text.rstrip() + "\n\n" + managed_block
+    dest_path.write_text(merged_text, encoding="utf-8")
+    _write_state(state_path, state)
+
+
+def unmerge_config(dest_config_path: str, state_path: str | None = None) -> None:
+    dest_path = Path(dest_config_path)
+    if not dest_path.exists():
+        return
+
+    state = _load_state(state_path)
+    merged_text = dest_path.read_text(encoding="utf-8")
+    merged_text = _strip_managed_config_block(merged_text)
+    merged_text = _strip_manifest_agent_tables(merged_text)
+
+    added_keys = state.get("added_keys", {})
+    if isinstance(added_keys, dict):
+        if added_keys.get("features.multi_agent"):
+            merged_text = _remove_key_from_table(
+                merged_text,
+                "features",
+                "multi_agent",
+                "true",
+            )
+        # Note: max_threads, max_depth, project_doc_fallback_filenames are root-level
+        # keys — not managed under [agents] anymore. Skip removal.
+
+    merged_text = _remove_empty_table(merged_text, "features")
+    merged_text = _strip_manifest_header(merged_text)
+    merged_text = _normalize_config_text(merged_text)
+
+    if merged_text:
+        dest_path.write_text(merged_text, encoding="utf-8")
+    else:
+        dest_path.unlink()
+
+    if state_path:
+        state_file = Path(state_path)
+        if state_file.exists():
+            state_file.unlink()
+
+
+# ── Main entry point ──────────────────────────────────────────────────
+
+
+def namespace(base_dir: str, cli_type: str = "codex") -> None:
+    """Rename and patch all components in base_dir."""
+    base = Path(base_dir)
+    metadata = _load_component_namespaces(base)
+    suffixes = _metadata_suffixes(metadata)
+    agent_ext = ".toml" if cli_type == "codex" else ".md"
+    skill_names = _discover_skill_names(base, suffixes)
+    agent_names = _discover_agent_names(base, agent_ext, suffixes)
+    discovered_command_names = (
+        _discover_command_names(base, suffixes) if cli_type == "opencode" else []
+    )
+    skills = {name: _suffix_for(metadata, "skills", name) for name in skill_names}
+    agents = {name: _suffix_for(metadata, "agents", name) for name in agent_names}
+    command_names = {
+        name: _suffix_for(metadata, "commands", name)
+        for name in discovered_command_names
+    }
+
+    # 1. Rename files and directories
+    rename_skills(base, skills)
+    rename_agents(base, agents, agent_ext)
+    if cli_type == "opencode":
+        rename_commands(base, command_names)
+
+    # 2. Patch SKILL.md name: frontmatter
+    patch_skill_frontmatter(base)
+
+    # 3. Patch content cross-references in all text files
+    patch_files(base, skills, agents)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) >= 3 and sys.argv[1] == "namespace":
+        namespace(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "codex")
+    elif len(sys.argv) == 4 and sys.argv[1] == "merge-config":
+        merge_config(sys.argv[2], sys.argv[3])
+    elif len(sys.argv) == 5 and sys.argv[1] == "merge-config":
+        merge_config(sys.argv[2], sys.argv[3], sys.argv[4])
+    elif len(sys.argv) == 3 and sys.argv[1] == "unmerge-config":
+        unmerge_config(sys.argv[2])
+    elif len(sys.argv) == 4 and sys.argv[1] == "unmerge-config":
+        unmerge_config(sys.argv[2], sys.argv[3])
+    else:
+        print(
+            (
+                f"Usage: {sys.argv[0]} namespace <dir> [codex|opencode]\n"
+                f"   or: {sys.argv[0]} merge-config <source-config> <dest-config> [state-file]\n"
+                f"   or: {sys.argv[0]} unmerge-config <dest-config> [state-file]"
+            ),
+            file=sys.stderr,
+        )
+        sys.exit(1)

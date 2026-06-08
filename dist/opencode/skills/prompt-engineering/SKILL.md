@@ -14,7 +14,7 @@ References load on demand. Load only the ones whose trigger fires:
 - `references/system-prompts.md` — when writing a system prompt that ships in a deployment loop and warrants section structure (real degradation paths, real constraints, real stop conditions).
 - `references/skills.md` — when writing a skill (anything in a `SKILL.md` + `references/` folder layout that activates a behavior).
 - `references/knowledge-skills.md` — when writing a skill whose gap is data the model lacks rather than behavior it gets wrong (API references, schema lookups, internal conventions).
-- `references/agents.md` — when writing an agent (anything that runs in isolation with its own declared tool set). Default to a skill over an agent unless you need harness-specific frontmatter (restricted tool allow-list, isolated model/subagent type).
+- `references/agents.md` — when writing an agent (anything that runs in isolation with its own declared tool set).
 - `references/patterns.md` — when filling a non-trivial section in any prompt type and a known technique fits the gap (verification, narrate-execute-confirm, tool-call escalation, output contracts, ambiguity handling, high-risk self-check, decision rules over absolutes, emotional tone).
 - `references/review.md` — when reviewing or updating an existing prompt.
 - `references/metaprompting.md` — when diagnosing a failing prompt against logged traces.
