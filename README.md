@@ -93,7 +93,7 @@ Uninstall uses the same entrypoints:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- uninstall
-codex plugin remove manifest-dev && codex plugin remove manifest-dev-tools && codex plugin marketplace remove manifest-dev
+codex plugin remove manifest-dev@manifest-dev && codex plugin remove manifest-dev-tools@manifest-dev && codex plugin marketplace remove manifest-dev
 pi remove git:github.com/doodledood/manifest-dev
 ```
 

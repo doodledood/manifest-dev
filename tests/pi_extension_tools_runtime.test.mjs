@@ -5,9 +5,10 @@ import manifestDevToolsExtension from "../packages/manifest-dev-pi-tools/pi/exte
 test("tools extension registers babysit-pr and wires Harness verification hooks", () => {
 	const events = new Map();
 	const commands = new Map();
+	const flags = [];
 	const pi = {
 		events: { on() {} },
-		registerFlag() {},
+		registerFlag(name) { flags.push(name); },
 		on(name, handler) { events.set(name, handler); },
 		registerCommand(name, command) { commands.set(name, command); },
 	};
@@ -22,4 +23,8 @@ test("tools extension registers babysit-pr and wires Harness verification hooks"
 	assert.equal(typeof events.get("agent_end"), "function");
 	assert.equal(typeof events.get("before_agent_start"), "function");
 	assert.equal(typeof events.get("session_start"), "function");
+	// It registers the verifier flags itself — Pi's getFlag only returns values
+	// for flags registered by this extension, so /babysit-pr honors the overrides.
+	assert.equal(flags.includes("manifest-verifier-max-concurrent"), true);
+	assert.equal(flags.includes("manifest-verifier-max-turns"), true);
 });

@@ -27,7 +27,7 @@ codex plugin add manifest-dev@manifest-dev
 codex plugin add manifest-dev-tools@manifest-dev
 ```
 
-Uninstall: `codex plugin remove manifest-dev && codex plugin remove manifest-dev-tools && codex plugin marketplace remove manifest-dev`.
+Uninstall: `codex plugin remove manifest-dev@manifest-dev && codex plugin remove manifest-dev-tools@manifest-dev && codex plugin marketplace remove manifest-dev`.
 
 ## What's generated vs. retired
 

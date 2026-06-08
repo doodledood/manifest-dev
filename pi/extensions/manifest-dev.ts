@@ -221,10 +221,12 @@ export async function startWrapper(
 		return;
 	}
 	let babysitPrUrl: string | undefined;
+	let babysitManifest: string | undefined;
 	if (command === "babysit-pr") {
 		// Accept the URL anywhere in the args so documented flags (--ci, --manifest <path>)
 		// don't fail validation; the URL is the only required positional.
-		babysitPrUrl = args.split(/\s+/).find(isGithubPr);
+		const tokens = args.split(/\s+/);
+		babysitPrUrl = tokens.find(isGithubPr);
 		if (!babysitPrUrl) {
 			ctx.ui.notify(
 				"Cannot babysit: include a GitHub PR URL such as https://github.com/owner/repo/pull/123 (flags like --ci or --manifest <path> may accompany it).",
@@ -232,10 +234,18 @@ export async function startWrapper(
 			);
 			return;
 		}
+		const manifestFlagIndex = tokens.indexOf("--manifest");
+		babysitManifest = manifestFlagIndex >= 0 ? tokens[manifestFlagIndex + 1] : undefined;
 	}
 
 	const plannedManifestPath = makePlannedManifestPath(command);
-	const run = makeRunRecord(command, ctx, { args, manifestPath: plannedManifestPath });
+	// When --manifest <path> is supplied for babysit, the run is grounded in that
+	// existing manifest — point run.manifestPath at it so runtime verification
+	// reads the real file instead of the never-written planned path.
+	const manifestPath = babysitManifest
+		? resolveInputPath(babysitManifest, ctx.cwd)
+		: plannedManifestPath;
+	const run = makeRunRecord(command, ctx, { args, manifestPath });
 	registerRun(pi, state, run);
 	pi.setSessionName(`${command} ${shortId(run.runId)}`);
 	hideHarnessToolsFromExecutor(pi);
@@ -367,7 +377,7 @@ export function buildManifestBabysitPrompt(run: RunRecord, prUrl: string, rawArg
 	return `Run manifest-dev babysit-pr in Pi.
 
 Run id: ${run.runId}
-Manifest path to create: ${run.manifestPath}
+${existingManifest ? `Manifest path (existing): ${run.manifestPath}` : `Manifest path to create: ${run.manifestPath}`}
 PR URL:
 ${prUrl}
 ${ci ? "Mode: CI one-shot (--ci)\n" : ""}${existingManifest ? `Existing manifest: ${existingManifest}\n` : ""}

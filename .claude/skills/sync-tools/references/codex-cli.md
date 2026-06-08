@@ -59,13 +59,13 @@ The registry lives at the conventional repo-root path so `codex plugin marketpla
     {
       "name": "manifest-dev",
       "source": { "source": "local", "path": "./dist/codex/plugins/manifest-dev" },
-      "policy": { "installation": "AVAILABLE", "authentication": "NONE" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
       "category": "Productivity"
     },
     {
       "name": "manifest-dev-tools",
       "source": { "source": "local", "path": "./dist/codex/plugins/manifest-dev-tools" },
-      "policy": { "installation": "AVAILABLE", "authentication": "NONE" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
       "category": "Productivity"
     }
   ]
@@ -152,8 +152,8 @@ codex plugin add manifest-dev-tools@manifest-dev
 Uninstall removes the installed plugins, then (optionally) the marketplace source:
 
 ```bash
-codex plugin remove manifest-dev
-codex plugin remove manifest-dev-tools
+codex plugin remove manifest-dev@manifest-dev
+codex plugin remove manifest-dev-tools@manifest-dev
 codex plugin marketplace remove manifest-dev
 ```
 

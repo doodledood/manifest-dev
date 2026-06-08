@@ -5,6 +5,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 // resolved location of the dependency.
 import {
 	createRuntimeState,
+	registerVerifierFlags,
 	startWrapper,
 	wireRuntimeHooks,
 	type ManifestCommand,
@@ -15,10 +16,12 @@ const TOOLS_COMMANDS: ReadonlySet<ManifestCommand> = new Set<ManifestCommand>(["
 
 export default function manifestDevToolsExtension(pi: ExtensionAPI): void {
 	const state = createRuntimeState();
-	// The core package owns verifier flag registration; the tools runtime reads
-	// those flags via pi.getFlag (falling back to env/defaults) and only wires
-	// its own hooks, scoped to babysit-pr runs so it never double-verifies the
-	// core package's /do or /auto runs.
+	// Pi's getFlag only returns values for flags registered by THIS extension, so
+	// the tools extension must register the verifier flags itself for /babysit-pr
+	// to honor --manifest-verifier-* overrides (it would otherwise fall back to
+	// defaults). Then wire its own hooks, scoped to babysit-pr runs so it never
+	// double-verifies the core package's /do or /auto runs.
+	registerVerifierFlags(pi);
 	wireRuntimeHooks(pi, state, TOOLS_COMMANDS);
 
 	pi.registerCommand("babysit-pr", {
