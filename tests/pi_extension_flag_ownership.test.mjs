@@ -9,6 +9,10 @@ const VERIFIER_FLAGS = [
 	"manifest-verifier-max-concurrent",
 ];
 
+// Process-wide ownership marker (kept on globalThis so it is shared across Pi's
+// fresh per-extension module instances). Reset before each load-path simulation.
+const OWNED = Symbol.for("@doodledood/manifest-dev:verifier-flags-registered");
+
 function makePi() {
 	const flags = [];
 	return {
@@ -21,12 +25,10 @@ function makePi() {
 	};
 }
 
-// The de-dup is STATIC: only the core extension registers the verifier flags, and
-// the tools extension never does. This holds regardless of how Pi loads the modules
-// (Pi gives each extension a fresh module instance, so an in-module owner guard
-// would NOT be shared between them — the single owner must be a compile-time decision,
-// not runtime state). So `pi --help` lists each --manifest-verifier-* flag exactly once.
-test("only the core extension registers the verifier flags (single static owner)", () => {
+// Repo-root install: both extensions load (core first). Core owns the flags; tools
+// skips, so `pi --help` lists each --manifest-verifier-* flag exactly once (3, not 6).
+test("repo-root load registers each verifier flag once (core owns, tools skips)", () => {
+	delete globalThis[OWNED];
 	const core = makePi();
 	const tools = makePi();
 
@@ -35,17 +37,26 @@ test("only the core extension registers the verifier flags (single static owner)
 
 	for (const flag of VERIFIER_FLAGS) {
 		assert.equal(core.flags.filter((name) => name === flag).length, 1, `core registers ${flag} once`);
-		assert.equal(tools.flags.includes(flag), false, `tools does not register ${flag}`);
+		assert.equal(tools.flags.includes(flag), false, `tools skips ${flag}`);
 	}
-	// Combined, the repo-root install publishes each flag exactly once (3, not 6).
-	const combined = [...core.flags, ...tools.flags].filter((name) => VERIFIER_FLAGS.includes(name));
-	assert.equal(combined.length, VERIFIER_FLAGS.length);
 });
 
-// The tools extension recovers the launch value from process.argv (process-global,
-// shared across module instances) instead of registering its own flag — so
-// /babysit-pr --manifest-verifier-max-concurrent N is honored without a second
-// --help entry.
+// Standalone tools install (`pi -e packages/manifest-dev-pi-tools`): tools is the only
+// loader, so it owns and registers the flags — otherwise Pi rejects --manifest-verifier-*
+// as an unknown option before /babysit-pr can run.
+test("standalone tools load registers the verifier flags itself", () => {
+	delete globalThis[OWNED];
+	const tools = makePi();
+
+	manifestDevToolsExtension(tools);
+
+	for (const flag of VERIFIER_FLAGS) {
+		assert.equal(tools.flags.includes(flag), true, `tools registers ${flag} when standalone`);
+	}
+});
+
+// The non-owning extension recovers the launch value from process.argv (process-global,
+// shared across module instances) so /babysit-pr honors overrides without re-registering.
 test("launchFlagFromArgv reads --name value and --name=value forms", () => {
 	assert.equal(
 		launchFlagFromArgv("manifest-verifier-max-concurrent", [

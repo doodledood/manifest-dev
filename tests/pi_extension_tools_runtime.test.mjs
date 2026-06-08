@@ -13,6 +13,11 @@ test("tools extension registers babysit-pr and wires Harness verification hooks"
 		registerCommand(name, command) { commands.set(name, command); },
 	};
 
+	// Loaded standalone here (no core extension first), so the tools extension owns and
+	// registers the verifier flags itself — otherwise Pi rejects --manifest-verifier-*
+	// as unknown before /babysit-pr runs. In the repo-root install core owns them and
+	// this is a globalThis-guarded no-op. See pi_extension_flag_ownership.test.mjs.
+	delete globalThis[Symbol.for("@doodledood/manifest-dev:verifier-flags-registered")];
 	manifestDevToolsExtension(pi);
 
 	// Tools owns only babysit-pr; do/auto stay in the core package.
@@ -23,12 +28,7 @@ test("tools extension registers babysit-pr and wires Harness verification hooks"
 	assert.equal(typeof events.get("agent_end"), "function");
 	assert.equal(typeof events.get("before_agent_start"), "function");
 	assert.equal(typeof events.get("session_start"), "function");
-	// The tools extension does NOT register the verifier flags — the core extension is
-	// their single static owner, so registering here would double them in `pi --help`
-	// (Pi loads each extension as a fresh module instance, so no in-module owner guard
-	// is shared). /babysit-pr instead reads the launch values from process.argv. See
-	// pi_extension_flag_ownership.test.mjs.
-	assert.equal(flags.includes("manifest-verifier-max-concurrent"), false);
-	assert.equal(flags.includes("manifest-verifier-max-turns"), false);
-	assert.equal(flags.includes("manifest-verifier-timeout-ms"), false);
+	assert.equal(flags.includes("manifest-verifier-max-concurrent"), true);
+	assert.equal(flags.includes("manifest-verifier-max-turns"), true);
+	assert.equal(flags.includes("manifest-verifier-timeout-ms"), true);
 });

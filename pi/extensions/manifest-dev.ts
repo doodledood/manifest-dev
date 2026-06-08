@@ -104,15 +104,28 @@ export function createRuntimeState(): RuntimeState {
 }
 
 /**
- * Register the verifier launch flags. Only the CORE extension calls this, so the
- * flags are published exactly once even though the repo-root install loads both
- * extensions (Pi loads each extension as a fresh module instance, so module-level
- * de-dup state is not shared between them — the single owner must be static). The
- * tools extension does not register; it reads the launch value from process.argv
- * via resolveVerifierConfig, so `/babysit-pr` still honors the overrides without
- * adding a second `pi --help` entry.
+ * Symbol marking that the verifier launch flags have already been registered in this
+ * process. Kept on globalThis (not module scope) because Pi evaluates each extension
+ * as a fresh module instance — module-level state is NOT shared between the core and
+ * tools extensions, but they run in the same process, so a globalThis marker is.
+ */
+const VERIFIER_FLAGS_REGISTERED = Symbol.for("@doodledood/manifest-dev:verifier-flags-registered");
+
+/**
+ * Register the verifier launch flags exactly once per process. Both the core and tools
+ * extensions call this, but only the first to load claims ownership (via the globalThis
+ * marker) and actually registers — so:
+ *   - repo-root install (both extensions load): core is listed first and owns the flags;
+ *     tools skips, so `pi --help` lists each flag once.
+ *   - standalone tools install (`pi -e packages/manifest-dev-pi-tools`): tools is the
+ *     only loader and owns the flags, so Pi accepts `--manifest-verifier-*` overrides.
+ * The non-owning extension still reads the parsed value via resolveVerifierConfig's
+ * process.argv fallback (Pi's getFlag is per-extension).
  */
 export function registerVerifierFlags(pi: ExtensionAPI): void {
+	const slot = globalThis as Record<symbol, boolean | undefined>;
+	if (slot[VERIFIER_FLAGS_REGISTERED]) return;
+	slot[VERIFIER_FLAGS_REGISTERED] = true;
 	pi.registerFlag(FLAG_MAX_TURNS, {
 		description: `Max turns per manifest-dev verifier subagent (default ${DEFAULT_VERIFIER_MAX_TURNS}).`,
 		type: "string",
@@ -810,9 +823,8 @@ export function launchFlagFromArgv(name: string, argv: readonly string[] = proce
 /**
  * Read a verifier flag value, preferring the calling extension's own getFlag and
  * falling back to process.argv. Pi's getFlag only returns values for flags the
- * calling extension registered; the tools extension intentionally does not register
- * the verifier flags (to avoid duplicate `pi --help` entries), so it recovers the
- * parsed launch value from argv instead.
+ * calling extension registered; in the repo-root install the tools extension does
+ * not own the flags (core does), so it recovers the parsed launch value from argv.
  */
 function readVerifierFlag(pi: ExtensionAPI, name: string): string | undefined {
 	const own = pi.getFlag?.(name);

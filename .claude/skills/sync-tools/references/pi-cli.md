@@ -80,7 +80,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -159,7 +159,10 @@ Configuration follows the Pi-native convention (`pi.registerFlag` / `pi.getFlag`
 - `--manifest-verifier-timeout-ms` / `MANIFEST_DEV_VERIFIER_TIMEOUT_MS` (default 1800000)
 - `--manifest-verifier-max-concurrent` / `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` (default 24)
 
-These flags have a **single static owner: the core extension**. Pi loads each extension as a fresh module instance, so an in-module "first registrant wins" guard would NOT be shared between the core and tools extensions — both would see it unset and register, listing each flag twice in `pi --help`. So only the core extension calls `registerVerifierFlags`; the tools extension never does. Because Pi's `getFlag` is per-extension, `/babysit-pr` (tools) recovers the launch values from `process.argv` (process-global, shared across module instances) via `resolveVerifierConfig` — honoring `--manifest-verifier-*` overrides without adding a second `--help` entry.
+These flags are registered by a **single owner per process**, claimed via a `globalThis` marker. Pi loads each extension as a fresh module instance, so a module-level guard would NOT be shared between the core and tools extensions (both would register, doubling the flags in `pi --help`); `globalThis` is shared across instances in the same process, so the first extension to load owns the flags and the other skips:
+
+- **Repo-root install** (both extensions load, core first): core owns the flags; tools skips → `pi --help` lists each once. Because Pi's `getFlag` is per-extension, `/babysit-pr` (tools) recovers the launch values from `process.argv` via `resolveVerifierConfig`.
+- **Standalone tools install** (`pi -e packages/manifest-dev-pi-tools`): tools is the only loader and owns the flags, so Pi accepts `--manifest-verifier-*` instead of rejecting them as unknown options.
 
 Current runtime boundaries:
 

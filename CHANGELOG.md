@@ -53,4 +53,4 @@ packaged. It contains **breaking changes** — read the migration notes.
 
 - `manifest-dev` plugin: 2.4.0 → 2.8.0
 - `manifest-dev-tools` plugin: 0.19.0 → 0.23.0
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.2
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.3
