@@ -1115,6 +1115,8 @@ test("routeVerificationResult exits pending for a --ci wait-only BLOCKED verific
 });
 
 test("routeVerificationResult still repairs a --ci failure that is not wait-only", async () => {
+	const routeRunStateFile = `${process.env.HOME}/.manifest-dev/runs/manifest-dev-ci-repair.json`;
+	rmSync(routeRunStateFile, { force: true });
 	const calls = { userMessages: [], messages: [], entries: [] };
 	const pi = {
 		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
@@ -1137,17 +1139,23 @@ test("routeVerificationResult still repairs a --ci failure that is not wait-only
 		cwd: process.cwd(), status: "failed", orchestratorSessionId: "manifest-verify-1",
 		results: [{ ...gateResult("FAIL"), gateId: "AC-1.1", title: "PR lifecycle", evidence: "merge conflict — fix it" }],
 	};
-	await routeVerificationResult(pi, ctx, state, run, verification);
-	// Not wait-only → normal repair injection, no pending status message.
-	assert.equal(calls.userMessages.length, 1);
-	assert.match(calls.userMessages[0].message, /AC-1\.1 PR lifecycle: merge conflict/);
-	assert.equal(calls.messages.length, 0);
+	try {
+		await routeVerificationResult(pi, ctx, state, run, verification);
+		// Not wait-only → normal repair injection, no pending status message.
+		assert.equal(calls.userMessages.length, 1);
+		assert.match(calls.userMessages[0].message, /AC-1\.1 PR lifecycle: merge conflict/);
+		assert.equal(calls.messages.length, 0);
+	} finally {
+		rmSync(routeRunStateFile, { force: true });
+	}
 });
 
 test("routeVerificationResult escalates (not pending) for a --ci BLOCKED verification WITHOUT the marker", async () => {
 	// Pairs the BLOCKED+WAIT-PENDING positive test: a ciOneShot blocked verification with no
 	// marker must take the generic blocked/escalation path, proving the marker — not merely
 	// the blocked status — is what routes to pending.
+	const routeRunStateFile = `${process.env.HOME}/.manifest-dev/runs/manifest-dev-ci-escalate.json`;
+	rmSync(routeRunStateFile, { force: true });
 	const calls = { userMessages: [], messages: [], entries: [] };
 	const pi = {
 		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
@@ -1170,15 +1178,19 @@ test("routeVerificationResult escalates (not pending) for a --ci BLOCKED verific
 		cwd: process.cwd(), status: "blocked", orchestratorSessionId: "manifest-verify-1",
 		results: [{ ...gateResult("BLOCKED"), gateId: "AC-1.1", title: "PR lifecycle", evidence: "Needs maintainer secret to retrigger; no WAIT marker here" }],
 	};
-	await routeVerificationResult(pi, ctx, state, run, verification);
-	assert.equal(calls.userMessages.length, 0); // no repair
-	// Generic blocked status message, NOT the pending summary.
-	assert.equal(calls.messages.length, 1);
-	assert.match(calls.messages[0].message.content, /is blocked for/);
-	assert.doesNotMatch(calls.messages[0].message.content, /Exiting pending instead of looping repair/);
-	// Generic blocked outcome, not the CI pending outcome.
-	assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "Harness verification is blocked."), true);
-	assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "CI one-shot pending on external wait."), false);
+	try {
+		await routeVerificationResult(pi, ctx, state, run, verification);
+		assert.equal(calls.userMessages.length, 0); // no repair
+		// Generic blocked status message, NOT the pending summary.
+		assert.equal(calls.messages.length, 1);
+		assert.match(calls.messages[0].message.content, /is blocked for/);
+		assert.doesNotMatch(calls.messages[0].message.content, /Exiting pending instead of looping repair/);
+		// Generic blocked outcome, not the CI pending outcome.
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "Harness verification is blocked."), true);
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "CI one-shot pending on external wait."), false);
+	} finally {
+		rmSync(routeRunStateFile, { force: true });
+	}
 });
 
 function gateResult(verdict) {
