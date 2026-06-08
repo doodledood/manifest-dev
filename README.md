@@ -22,8 +22,10 @@ Three skills, one idea: figure it out, write down what "done" means, let it buil
 # OpenCode — skills, commands, plugin
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
 
-# Codex CLI — native plugins from the repo marketplace
+# Codex CLI — native plugins from the repo marketplace (add the marketplace, then install both plugins)
 codex plugin marketplace add doodledood/manifest-dev
+codex plugin add manifest-dev@manifest-dev
+codex plugin add manifest-dev-tools@manifest-dev
 
 # Pi — repo-root package, shared skills plus Harness-level commands
 pi install npm:@gotgenes/pi-subagents
@@ -91,7 +93,7 @@ Uninstall uses the same entrypoints:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- uninstall
-codex plugin marketplace remove manifest-dev
+codex plugin remove manifest-dev && codex plugin remove manifest-dev-tools && codex plugin marketplace remove manifest-dev
 pi remove git:github.com/doodledood/manifest-dev
 ```
 
@@ -224,7 +226,7 @@ The do session doesn't need to remember the define conversation — the manifest
 - [AC-1.2] Invalid credentials return 401, not 500
   ```yaml
   verify:
-    prompt: "Spawn a general-purpose review using the manifest-dev review-code skill with dimension=code-bugs against the auth routes. PASS only if no LOW-or-higher findings (e.g. auth failures returning 500 instead of 401)."
+    prompt: "Activate the manifest-dev:review-code skill with dimension=code-bugs and review the auth routes. PASS only if no LOW-or-higher findings (e.g. auth failures returning 500 instead of 401)."
   ```
 ````
 
@@ -260,7 +262,7 @@ verify:
 
 # Quality dimension via the review-code skill
 verify:
-  prompt: "Spawn a general-purpose review using the manifest-dev review-code skill with dimension=code-maintainability. PASS only if no MEDIUM-or-higher findings (DRY violations, coupling)."
+  prompt: "Activate the manifest-dev:review-code skill with dimension=code-maintainability and review the change. PASS only if no MEDIUM-or-higher findings (DRY violations, coupling)."
 
 # Slow staging probe, gated to a later phase
 verify:

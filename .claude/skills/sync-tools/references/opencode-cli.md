@@ -448,6 +448,7 @@ During sync, replace remaining `CLAUDE.md` references that mean "this CLI's cont
 - Context file (AGENTS.md): references to context file names
 - README: references to context file names
 - Skills (operational only): instructions like "write to CLAUDE.md" → "write to AGENTS.md". Leave research/reference content unchanged.
+- **`define/tasks/CODING.md` is operational, not comparative** — its project-preference, project-gate, and "AGENTS.md adherence" gate-row references tell the verifier where to read project rules, so ALL of its `CLAUDE.md` references remap to `AGENTS.md` (a reader on OpenCode must look at the file OpenCode actually installs).
 - Do NOT replace "CLAUDE.md" when it refers to Claude Code's own file (e.g., in comparative text or research).
 
 The `review-code` skill's `context-file-adherence` dimension reference already uses generic "context file" language — no special handling needed for its content.

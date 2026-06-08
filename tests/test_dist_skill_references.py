@@ -350,16 +350,20 @@ def test_pi_package_metadata_points_to_generated_skills_and_extension() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert "pi-package" in package["keywords"]
-    assert package["pi"] == {
-        "extensions": ["./pi/extensions/manifest-dev.ts"],
-        "skills": ["./dist/pi/skills"],
-    }
+    # The repo-root Pi package loads BOTH extensions so a single
+    # `pi install git:...@main` registers /do, /auto (core) and /babysit-pr (tools).
+    assert package["pi"]["extensions"] == [
+        "./pi/extensions/manifest-dev.ts",
+        "./packages/manifest-dev-pi-tools/pi/extensions/manifest-dev-tools.ts",
+    ]
+    assert package["pi"]["skills"] == ["./dist/pi/skills"]
     assert package["peerDependencies"] == {
         "@earendil-works/pi-coding-agent": "*",
         "@gotgenes/pi-subagents": "*",
     }
     assert PI_EXTENSION.is_file()
     assert PI_EXTENSION_RUNTIME.is_file()
+    assert PI_TOOLS_EXTENSION.is_file()
 
 
 def test_pi_split_into_core_and_tools_packages() -> None:
@@ -372,8 +376,9 @@ def test_pi_split_into_core_and_tools_packages() -> None:
 
     assert core["name"] == "@doodledood/manifest-dev-pi"
     assert tools["name"] == "@doodledood/manifest-dev-pi-tools"
-    # Tools depends on core at the in-repo (lockstep) version.
-    assert tools["dependencies"]["@doodledood/manifest-dev-pi"] == core["version"]
+    # Tools depends on core via a local file path so git installs resolve the
+    # private repo-root package instead of hitting the public registry (E404).
+    assert tools["dependencies"]["@doodledood/manifest-dev-pi"] == "file:../.."
     assert tools["version"] == core["version"]
     # Tools ships its own extension.
     assert tools["pi"]["extensions"] == ["./pi/extensions/manifest-dev-tools.ts"]

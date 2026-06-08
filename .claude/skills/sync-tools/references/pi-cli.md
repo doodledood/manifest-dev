@@ -72,15 +72,15 @@ Do not silently generate or overwrite a repo-root package manifest from `/sync-t
 
 The Pi runtime ships as **two packages** mirroring the Claude/Codex plugin split:
 
-- **`@doodledood/manifest-dev-pi`** (repo root) — core: registers `/do` and `/auto`, owns the shared Harness-level Do runtime, and exports its wiring (`createRuntimeState`, `registerVerifierFlags`, `wireRuntimeHooks`, `startWrapper`) for the tools package to reuse.
-- **`@doodledood/manifest-dev-pi-tools`** (`packages/manifest-dev-pi-tools/`) — registers `/babysit-pr`, depends on the core package, and reuses the core runtime wiring (scoped to babysit-pr runs so it never double-verifies core's runs).
+- **`@doodledood/manifest-dev-pi`** (repo root) — core: registers `/do` and `/auto`, owns the shared Harness-level Do runtime, and exports its wiring (`createRuntimeState`, `registerVerifierFlags`, `wireRuntimeHooks`, `startWrapper`) for the tools package to reuse. The repo-root `pi.extensions` lists **both** extensions so a single `pi install git:...@main` registers `/do`, `/auto`, and `/babysit-pr` (Pi loads resources only from the installed package root's `pi` manifest — workspaces/dependencies are not additional resource roots).
+- **`@doodledood/manifest-dev-pi-tools`** (`packages/manifest-dev-pi-tools/`) — registers `/babysit-pr`, reuses the core runtime wiring (scoped to babysit-pr runs so it never double-verifies core's runs). It depends on core via a **local file path** (`"@doodledood/manifest-dev-pi": "file:../.."`) so git installs resolve the private repo-root package locally instead of hitting the public registry (which 404s).
 
 Current core package manifest shape:
 
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -90,7 +90,10 @@ Current core package manifest shape:
     "./runtime": "./pi/extensions/manifest-dev-runtime.ts"
   },
   "pi": {
-    "extensions": ["./pi/extensions/manifest-dev.ts"],
+    "extensions": [
+      "./pi/extensions/manifest-dev.ts",
+      "./packages/manifest-dev-pi-tools/pi/extensions/manifest-dev-tools.ts"
+    ],
     "skills": ["./dist/pi/skills"]
   },
   "peerDependencies": {
@@ -100,7 +103,7 @@ Current core package manifest shape:
 }
 ```
 
-The tools package declares `"dependencies": { "@doodledood/manifest-dev-pi": "<core version>" }` and its own `pi.extensions`. Keep both `version` fields here in sync with the real `package.json` files (lockstep); bump them when the runtime changes.
+The tools package declares `"dependencies": { "@doodledood/manifest-dev-pi": "file:../.." }` (local path, resolves on git installs) and its own `pi.extensions`. Keep both packages' `version` fields in lockstep with the real `package.json` files; bump them when the runtime changes.
 
 Keep `"extensions": [...]` source-owned. Extension code that imports Pi packages should declare Pi core packages as `peerDependencies` with `"*"` ranges and real runtime dependencies under `dependencies`. `@gotgenes/pi-subagents` is also a Pi package that must be installed/enabled (`pi install npm:@gotgenes/pi-subagents`) so its global service is published before manifest-dev requests verification.
 

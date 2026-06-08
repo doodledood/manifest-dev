@@ -4,7 +4,7 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-CLAUDE.md may specify project-specific preferences.
+AGENTS.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
@@ -22,7 +22,7 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 | Documentation | docs | no MEDIUM+ |
 | Design fitness | code-design | no MEDIUM+ |
 | Prose value | prose-value | no MEDIUM+ |
-| CLAUDE.md adherence | context-file-adherence | no MEDIUM+ |
+| AGENTS.md adherence | context-file-adherence | no MEDIUM+ |
 
 ### Conditional Gates (when applicable)
 
@@ -31,11 +31,11 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 | Contract correctness | contracts | no LOW+ | When code calls external/internal APIs, changes public interfaces, or crosses service boundaries |
 | Type safety | type-safety | no LOW+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
 
-**Encoding:** each dimension gate is verified by a general-purpose subagent (there is no `verify.agent` field) whose `verify.prompt` invokes the `manifest-dev:review-code` skill for that dimension at the row's threshold — e.g. *"Spawn a general-purpose review using the manifest-dev review-code skill with dimension=code-bugs against the change. PASS only if no LOW-or-higher findings."* See `define/SKILL.md` → "Encoding gates".
+**Encoding:** each dimension gate is verified by a general-purpose subagent (there is no `verify.agent` field) whose `verify.prompt` tells that verifier to **activate** the `manifest-dev:review-code` skill for the dimension at the row's threshold — e.g. *"Activate the manifest-dev:review-code skill with dimension=code-bugs and review the change. PASS only if no LOW-or-higher findings."* (Do not say "spawn a general-purpose agent" — the verifier already is one; a nested spawn drops the PASS/FAIL/BLOCKED contract.) See `define/SKILL.md` → "Encoding gates".
 
 ## Project Gates
 
-CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+AGENTS.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 
@@ -48,7 +48,7 @@ CLAUDE.md specifies project gates (typecheck, lint, test, format). These become 
 *Domain best practices for this task type.*
 
 - **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
-- **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
+- **Read project gates from AGENTS.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
 
 ## Multi-Repo
 

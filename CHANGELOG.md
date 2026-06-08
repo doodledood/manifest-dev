@@ -50,6 +50,6 @@ packaged. It contains **breaking changes** — read the migration notes.
 
 ### Versions
 
-- `manifest-dev` plugin: 2.4.0 → 2.7.0
-- `manifest-dev-tools` plugin: 0.19.0 → 0.22.0
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.7.0
+- `manifest-dev` plugin: 2.4.0 → 2.8.0
+- `manifest-dev-tools` plugin: 0.19.0 → 0.23.0
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.0

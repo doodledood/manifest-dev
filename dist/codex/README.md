@@ -4,12 +4,15 @@ Codex distribution of [manifest-dev](https://github.com/doodledood/manifest-dev)
 
 ## Install
 
+Codex separates marketplace registration from plugin installation — add the marketplace, then install both plugins:
+
 ```bash
-# Add the marketplace, then install the plugins from the Codex /plugins UI:
 codex plugin marketplace add doodledood/manifest-dev
+codex plugin add manifest-dev@manifest-dev
+codex plugin add manifest-dev-tools@manifest-dev
 ```
 
-This registers two plugins:
+The two plugins:
 
 | Plugin | Skills |
 |--------|--------|
@@ -20,7 +23,11 @@ Local development against a checkout:
 
 ```bash
 codex plugin marketplace add ./   # reads .agents/plugins/marketplace.json at the repo root
+codex plugin add manifest-dev@manifest-dev
+codex plugin add manifest-dev-tools@manifest-dev
 ```
+
+Uninstall: `codex plugin remove manifest-dev && codex plugin remove manifest-dev-tools && codex plugin marketplace remove manifest-dev`.
 
 ## What's generated vs. retired
 

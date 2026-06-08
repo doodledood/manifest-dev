@@ -130,18 +130,31 @@ Plugin-native distribution does **not** namespace component names with install-t
 
 ## Installation
 
+Codex separates marketplace **registration** from plugin **installation** — add the marketplace, then install each plugin:
+
 ```bash
-# Add the marketplace (GitHub shorthand resolves .agents/plugins/marketplace.json)
+# 1. Add the marketplace (GitHub shorthand resolves .agents/plugins/marketplace.json)
 codex plugin marketplace add doodledood/manifest-dev
 
-# Then install the plugins from the Codex /plugins UI, or:
-codex plugin marketplace list
+# 2. Install both plugins (or pick them from the Codex /plugins UI)
+codex plugin add manifest-dev@manifest-dev
+codex plugin add manifest-dev-tools@manifest-dev
 ```
 
 Local development against a checkout:
 
 ```bash
 codex plugin marketplace add ./   # repo root; reads .agents/plugins/marketplace.json
+codex plugin add manifest-dev@manifest-dev
+codex plugin add manifest-dev-tools@manifest-dev
+```
+
+Uninstall removes the installed plugins, then (optionally) the marketplace source:
+
+```bash
+codex plugin remove manifest-dev
+codex plugin remove manifest-dev-tools
+codex plugin marketplace remove manifest-dev
 ```
 
 Installed plugins are cached under `~/.codex/plugins/cache/manifest-dev/<plugin>/<version>/` and loaded from there — never from the shared `~/.agents/skills/` tree.

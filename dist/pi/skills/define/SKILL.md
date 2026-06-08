@@ -35,11 +35,11 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 ```yaml
 verify:
   prompt: |
-    Spawn a general-purpose review using the manifest-dev review-code skill with dimension=<dimension> against the change.
+    Activate the manifest-dev:review-code skill with dimension=<dimension> and review the change.
     PASS only if no <LOW|MEDIUM>-or-higher findings. Report findings with severity.
 ```
 
-The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+). For a non-review-code specialized check, name its skill in the prompt instead, e.g. *"Spawn a general-purpose agent and activate the manifest-dev check-pr skill. PR: …"*.
+The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+). The `verify.prompt` is already run by a general-purpose verifier subagent, so the prompt must tell *that* verifier to **activate** the skill — never to spawn another agent (a nested spawn bypasses the runtime's PASS/FAIL/BLOCKED contract). For a non-review-code specialized check, name its skill the same way, e.g. *"Activate the manifest-dev check-pr skill. PR: …"*.
 
 ## Manifest Schema
 
@@ -104,7 +104,7 @@ Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action 
 
 **Summary for Approval.** Before Complete, write a plain-language digest (plan / what / guardrails / how-verified) — no codes, no YAML, no schema vocab. **Test:** reads like talking to a colleague, not a compressed manifest. Approval → Complete; feedback → revise; `/do` → handoff; decline → exit silently. Skip the wait when caller is `/auto` or `/do` amendment, or the user signals "enough".
 
-**Complete.** Emit the load-bearing handoff (`<manifest-path>` is the absolute path you wrote):
+**Complete.** Emit the load-bearing handoff (`<manifest-path>` is the absolute path you wrote; `<dir>` is the project directory in slug form, e.g. `-home-user-manifest-dev`):
 
 ```text
 Manifest complete: <manifest-path>
