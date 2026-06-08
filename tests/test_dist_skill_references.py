@@ -425,6 +425,14 @@ def test_skill_activation_names_are_per_target() -> None:
     ).read_text(encoding="utf-8")
     assert "manifest-dev-tools:review-prompt" in review_pr
 
+    # Cross-plugin verifier activations in task files must also be qualified at the
+    # source, or a sync would copy the stale bare id back into the dists.
+    prompting = (
+        ROOT / "claude-plugins/manifest-dev/skills/define/tasks/PROMPTING.md"
+    ).read_text(encoding="utf-8")
+    assert "manifest-dev-tools:review-prompt" in prompting
+    assert "activates the `review-prompt` skill" not in prompting
+
     # Pi dist: no plugin-qualified skill ids survive (Pi invokes bare /skill:<name>).
     for path in (DIST / "pi" / "skills").rglob("*.md"):
         assert not qualified.search(path.read_text(encoding="utf-8")), path

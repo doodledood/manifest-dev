@@ -88,8 +88,6 @@ Breakdown:
 - Mergeable: FAIL — bash sleep 600; reinvoke
 ```
 
-**Wait-only marker (`WAIT-PENDING`).** When the *only* remaining blockers are external waits (reviewer pending, CI in progress, merge window) — i.e. nothing here is fixable, waiting is the resolution — include the token `WAIT-PENDING` in the FAIL output. A non-interactive caller (e.g. `/babysit-pr --ci`) uses it to exit pending instead of sleeping or looping repair. Omit it the moment any blocker is actually actionable (then it's a normal FAIL).
-
 Example terminal-condition FAIL (surfaced as a prose finding — no workflow token):
 
 ```

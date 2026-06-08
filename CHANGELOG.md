@@ -78,12 +78,14 @@ packaged. It contains **breaking changes** — read the migration notes.
   `/skill:<name>` form Pi actually invokes; Codex keeps the qualifier.
 
 - **`/babysit-pr --ci` honors its one-shot contract.** `--ci` is now persisted on the run, and
-  a lifecycle verification that FAILs only on external waits (the `check-pr` skill emits a
-  `WAIT-PENDING` marker) exits **pending** (resumable) instead of being looped back into repair.
-  A genuinely fixable failure still routes to repair.
+  a lifecycle verification that FAILs only on external waits exits **pending** (resumable)
+  instead of being looped back into repair. `check-pr` stays workflow-neutral; the `--ci`
+  lifecycle verifier derives wait-only from check-pr's structured `sleep; reinvoke` directives
+  and emits a `WAIT-PENDING` token the runtime routes to pending. A genuinely fixable failure
+  still routes to repair.
 
 ### Versions
 
-- `manifest-dev` plugin: 2.4.0 → 2.8.2
+- `manifest-dev` plugin: 2.4.0 → 2.8.3
 - `manifest-dev-tools` plugin: 0.19.0 → 0.23.1
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.7
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.8
