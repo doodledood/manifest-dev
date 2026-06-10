@@ -100,6 +100,6 @@ marked `BREAKING`.
 
 ### Versions
 
-- `manifest-dev` plugin: 2.4.0 → 2.8.4
+- `manifest-dev` plugin: 2.4.0 → 2.9.1
 - `manifest-dev-tools` plugin: 0.19.0 → 0.23.1
-- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.8.11
+- `@doodledood/manifest-dev-pi` (and new `@doodledood/manifest-dev-pi-tools`): 0.9.1
