@@ -80,7 +80,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.8.10",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
