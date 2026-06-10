@@ -5,7 +5,7 @@ argument-hint: '[task] [<manifest-path> to amend] [--babysit <pr-url>] [--canvas
 user-invocable: true
 ---
 
-Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev/manifests/manifest-{ts}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so manifests survive OS temp cleanup across multi-day work. Fall back to a writable temp path (`/tmp/`, else `$TMPDIR` / `%TEMP%`) only when the home directory isn't writable. If the transcript lacks shared understanding, invoke `manifest-dev:figure-out` first; propagate `--autonomous` when invoked from `/auto` or `/do`'s amendment path. **Pre-flight:** if `--babysit <pr-url>`, load `references/BABYSIT_MODE.md` and follow its synthesis flow; if `$ARGUMENTS` contains a manifest file path, amend (see below); else fresh.
+Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev/manifests/manifest-{ts}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so manifests survive OS temp cleanup across multi-day work. Fall back to a writable temp path (`/tmp/`, else `$TMPDIR` / `%TEMP%`) only when the home directory isn't writable. If the transcript lacks shared understanding, invoke `figure-out` first; propagate `--autonomous` when invoked from `/auto` or `/do`'s amendment path. **Pre-flight:** if `--babysit <pr-url>`, load `references/BABYSIT_MODE.md` and follow its synthesis flow; if `$ARGUMENTS` contains a manifest file path, amend (see below); else fresh.
 
 **Encoding discipline.** figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to lock as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
 
@@ -13,7 +13,7 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 
 | Domain | Indicators | File |
 |--------|------------|------|
-| Coding | Any code change; base reviewer gates for intent, bugs, operational readiness, design, tests, docs, context adherence | `CODING.md` |
+| Coding | Any code change; base review-code dimension gates for intent, bugs, operational readiness, design, tests, docs, context adherence | `CODING.md` |
 | Feature | New functionality, APIs, enhancements | `FEATURE.md` |
 | Bug | Defects, errors, regressions, "not working", "broken" | `BUG.md` |
 | Refactor | Restructuring, "clean up", pattern changes | `REFACTOR.md` |
@@ -24,11 +24,22 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 | Research | Investigations, analyses, comparisons | `research/RESEARCH.md` |
 | Blog | Blog posts, articles, tutorials (base: Writing) | `BLOG.md` |
 
-*Composition:* code-change tasks combine `CODING.md` (base gates) with the specific FEATURE/BUG/REFACTOR; text-authoring combines `WRITING.md` with BLOG/DOCUMENT; Research composes `research/RESEARCH.md` with `research/sources/`. Domains aren't mutually exclusive (a bug fix that refactors uses both). `PR_LIFECYCLE.md` composes onto `CODING.md` when the local `origin` points at github.com (auto-detected; probe if origin is missing or a github-enterprise host) — it templates one AC per repo invoking the `github-pr-lifecycle` agent, whose `verify.prompt:` is the steering surface for per-PR nuances (labels, approvers, flaky-CI/retrigger overrides). **Exception:** PROMPTING does not compose with CODING unless the task also changes executable code.
+*Composition:* code-change tasks combine `CODING.md` (base gates) with the specific FEATURE/BUG/REFACTOR; text-authoring combines `WRITING.md` with BLOG/DOCUMENT; Research composes `research/RESEARCH.md` with `research/sources/`. Domains aren't mutually exclusive (a bug fix that refactors uses both). `PR_LIFECYCLE.md` composes onto `CODING.md` when the local `origin` points at github.com (auto-detected; probe if origin is missing or a github-enterprise host) — it templates one AC per repo whose `verify.prompt:` spawns a general-purpose agent that activates the `check-pr` skill — the prompt is the steering surface for per-PR nuances (labels, approvers, flaky-CI/retrigger overrides). **Exception:** PROMPTING does not compose with CODING unless the task also changes executable code.
 
 *Content types:* **Quality Gates** (`## Quality Gates`) → INV-G*/AC-* (omit clearly inapplicable with stated reasoning); **Defaults** (`## Defaults`) → PG-* pre-interview, user reviews and removes if N/A; **Reference files** (`tasks/**/references/*.md`) → verifier-agent lookup data, not loaded during /define.
 
 **Verifier prompt discipline.** Before writing `verify.prompt` fields, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. Verifier prompts are prompts: state the verifier's goal, evidence to inspect, PASS/FAIL/BLOCKED contract, and non-obvious context. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
+
+**Encoding gates — always general-purpose + a skill.** There is no `verify.agent` field. Every gate is verified by a **general-purpose** subagent driven by `verify.prompt`; when a gate needs specialized behavior, the prompt tells that agent to **activate a skill**. Code-quality gates activate the `review-code` skill with a dimension; other specialized checks activate their skill (`check-pr`, `review-prompt`). Pattern:
+
+```yaml
+verify:
+  prompt: |
+    Activate the review-code skill with dimension=<dimension> and review the change.
+    PASS only if no <LOW|MEDIUM>-or-higher findings. Report findings with severity.
+```
+
+The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+). The `verify.prompt` is already run by a general-purpose verifier subagent, so the prompt must tell *that* verifier to **activate** the skill — never to spawn another agent (a nested spawn bypasses the runtime's PASS/FAIL/BLOCKED contract). For a non-review-code specialized check, name its skill the same way, e.g. *"Activate the check-pr skill. PR: …"*.
 
 ## Manifest Schema
 
@@ -58,7 +69,6 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
   ```yaml
   verify:
     prompt: "..."             # required, verbatim verifier instruction
-    agent: "..."              # optional, default = general-purpose subagent
     model: "..."              # optional, default = inherit from invoking context
     phase: 1                  # optional integer, default 1; higher phases run after lower pass
   ```
@@ -81,7 +91,6 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
   ```yaml
   verify:
     prompt: "..."             # required, verbatim verifier instruction
-    agent: "..."              # optional, default = general-purpose subagent
     model: "..."              # optional, default = inherit from invoking context
     phase: 1                  # optional integer, default 1; higher phases run after lower pass
   ```
@@ -95,10 +104,10 @@ Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action 
 
 **Summary for Approval.** Before Complete, write a plain-language digest (plan / what / guardrails / how-verified) — no codes, no YAML, no schema vocab. **Test:** reads like talking to a colleague, not a compressed manifest. Approval → Complete; feedback → revise; `/do` → handoff; decline → exit silently. Skip the wait when caller is `/auto` or `/do` amendment, or the user signals "enough".
 
-**Complete.** Emit the load-bearing handoff (`<manifest-path>` is the absolute path you wrote):
+**Complete.** Emit the load-bearing handoff (`<manifest-path>` is the absolute path you wrote; `<dir>` is the project directory in slug form, e.g. `-home-user-manifest-dev`):
 
 ```text
 Manifest complete: <manifest-path>
 
-To execute in Pi: /manifest-do <manifest-path>
+To execute: /do <manifest-path>
 ```

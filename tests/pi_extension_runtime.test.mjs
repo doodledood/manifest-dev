@@ -6,13 +6,18 @@ import manifestDevExtension, {
 	buildManifestAutoPrompt,
 	buildManifestBabysitPrompt,
 	buildManifestDoPrompt,
+	buildOrchestrationSpawnBlocker,
 	createVerificationOrchestratorSession,
+	buildCiPendingSummary,
 	formatRepairFollowUpMessage,
+	isStaleSessionContextError,
+	isWaitPendingVerification,
 	makeOrchestratorSessionId,
 	rehydrateRuntimeState,
 	resolveManifestPath,
 	routeVerificationResult,
 	shouldTriggerHarnessVerification,
+	spawnVerifier,
 	startManifestDo,
 } from "../pi/extensions/manifest-dev.ts";
 import {
@@ -46,7 +51,6 @@ const gate = {
 	kind: "acceptance_criterion",
 	title: "Thing works",
 	verifyPrompt: "Run npm test and inspect output.",
-	suggestedAgent: "test-quality-reviewer",
 };
 
 function completedRecord(result) {
@@ -106,7 +110,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "global_invariant",
 			title: "Runtime claims stay honest.",
 			verifyPrompt: 'Run: echo "ok"',
-			suggestedAgent: "docs-reviewer",
 			model: undefined,
 			phase: 1,
 		},
@@ -115,7 +118,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Single quoted prompt.",
 			verifyPrompt: "Check it's fine",
-			suggestedAgent: undefined,
 			model: undefined,
 			phase: 1,
 		},
@@ -124,7 +126,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Block scalar prompt.",
 			verifyPrompt: "first line\nsecond line",
-			suggestedAgent: "contracts-reviewer",
 			model: undefined,
 			phase: 1,
 		},
@@ -133,7 +134,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Model and phase.",
 			verifyPrompt: "run check",
-			suggestedAgent: undefined,
 			model: "gpt-5",
 			phase: 2,
 		},
@@ -142,7 +142,6 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 			kind: "acceptance_criterion",
 			title: "Invalid phase falls back.",
 			verifyPrompt: "x",
-			suggestedAgent: undefined,
 			model: undefined,
 			phase: 1,
 		},
@@ -163,7 +162,6 @@ test("buildGateVerifierPrompt creates a single-gate clean-session contract", () 
 	assert.match(prompt, /Do not implement fixes/);
 	assert.match(prompt, /Verification orchestrator session: manifest-verify-123/);
 	assert.match(prompt, /Gate: AC-1\.1 Thing works/);
-	assert.match(prompt, /Suggested manifest verifier persona: test-quality-reviewer/);
 	assert.match(prompt, /Run npm test and inspect output\./);
 	assert.match(prompt, /VERDICT: PASS\|FAIL\|BLOCKED/);
 	assert.match(prompt, /Changed extension runtime\./);
@@ -504,7 +502,7 @@ test("simplified Pi executor prompts omit harness verification tools", () => {
 test("shouldTriggerHarnessVerification only allows active executor checkpoints", () => {
 	const run = {
 		runId: "manifest-dev-run",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "t",
 		cwd: "/repo",
 		executorSessionId: "executor-session",
@@ -535,16 +533,17 @@ test("extension registers agent_end lifecycle hook for Harness-level verificatio
 
 	assert.equal(typeof events.get("agent_end"), "function");
 	assert.equal(typeof events.get("before_agent_start"), "function");
-	assert.equal(commands.has("manifest-do"), true);
-	assert.equal(commands.has("manifest-auto"), true);
-	assert.equal(commands.has("manifest-babysit-pr"), true);
+	assert.equal(commands.has("do"), true);
+	assert.equal(commands.has("auto"), true);
+	// babysit-pr moved to the @doodledood/manifest-dev-pi-tools package.
+	assert.equal(commands.has("babysit-pr"), false);
 	assert.equal(flags.some((flag) => flag.name === "manifest-verifier-max-concurrent"), true);
 });
 
 test("rehydrateRuntimeState removes terminal runs after replay", () => {
 	const executing = {
 		runId: "manifest-dev-run",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "t",
 		cwd: "/repo",
 		executorSessionId: "executor-session",
@@ -583,6 +582,56 @@ test("rehydrateRuntimeState removes terminal runs after replay", () => {
 	assert.equal(state.latestVerificationByRunId.get(executing.runId), verification);
 });
 
+test("rehydrateRuntimeState scopes runs to the owning package's command set", () => {
+	const doRun = {
+		runId: "run-do",
+		command: "do",
+		startedAt: "t",
+		cwd: "/repo",
+		executorSessionId: "core-session",
+		status: "executing",
+	};
+	const babysitRun = {
+		runId: "run-babysit",
+		command: "babysit-pr",
+		startedAt: "t",
+		cwd: "/repo",
+		executorSessionId: "tools-session",
+		status: "executing",
+	};
+	const ctx = {
+		sessionManager: {
+			getBranch() {
+				return [
+					{ type: "custom", customType: "manifest-dev:run", data: doRun },
+					{ type: "custom", customType: "manifest-dev:run", data: babysitRun },
+				];
+			},
+		},
+	};
+
+	// Tools runtime (owns babysit-pr) must ignore the core /do run, so it never
+	// double-verifies it.
+	const toolsState = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map(),
+		childSessionIds: new Set(),
+	};
+	rehydrateRuntimeState(ctx, toolsState, new Set(["babysit-pr"]));
+	assert.equal(toolsState.activeRunByExecutorSessionId.has("tools-session"), true);
+	assert.equal(toolsState.activeRunByExecutorSessionId.has("core-session"), false);
+
+	// Core runtime (owns do/auto) must ignore the tools babysit-pr run.
+	const coreState = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map(),
+		childSessionIds: new Set(),
+	};
+	rehydrateRuntimeState(ctx, coreState, new Set(["do", "auto"]));
+	assert.equal(coreState.activeRunByExecutorSessionId.has("core-session"), true);
+	assert.equal(coreState.activeRunByExecutorSessionId.has("tools-session"), false);
+});
+
 test("registered agent_end handler runs runtime verification path", async () => {
 	const events = new Map();
 	const commands = new Map();
@@ -612,7 +661,7 @@ test("registered agent_end handler runs runtime verification path", async () => 
 		ui: { notify() {} },
 	};
 	try {
-		await commands.get("manifest-do").handler(manifestPath, ctx);
+		await commands.get("do").handler(manifestPath, ctx);
 		await events.get("agent_end")({}, ctx);
 
 		const verificationEntry = calls.entries.find((entry) => entry.customType === "manifest-dev:verification");
@@ -662,7 +711,7 @@ test("registered agent_end handler waits for pending messages before verificatio
 		ui: { notify() {} },
 	};
 	try {
-		await commands.get("manifest-do").handler(manifestPath, ctx);
+		await commands.get("do").handler(manifestPath, ctx);
 		await events.get("agent_end")({}, ctx);
 		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:verification"), false);
 		assert.equal(calls.entries.some((entry) => entry.customType === "manifest-dev:outcome"), false);
@@ -716,7 +765,7 @@ test("second executor stop after repair starts another clean Verification Orches
 	const requestedAt = "2026-06-05T20:00:00.000Z";
 	const repairingRun = {
 		runId: "manifest-dev-repair-loop-test",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "2026-06-05T18:00:00.000Z",
 		cwd: process.cwd(),
 		executorSessionId: "executor-session",
@@ -744,7 +793,7 @@ test("verification orchestrator sessions are clean persisted attempts", () => {
 	const requestedAt = "2026-06-05T19:00:00.000Z";
 	const run = {
 		runId: "manifest-dev-orchestrator-test",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "2026-06-05T18:00:00.000Z",
 		cwd: process.cwd(),
 		executorSessionId: "executor-session",
@@ -821,7 +870,7 @@ test("routeVerificationResult injects repair, blocked, and done runtime outcomes
 	};
 	const baseRun = {
 		runId: "manifest-dev-route-test",
-		command: "manifest-do",
+		command: "do",
 		startedAt: "2026-06-05T00:00:00.000Z",
 		cwd: process.cwd(),
 		executorSessionId: "executor-session",
@@ -891,6 +940,257 @@ test("routeVerificationResult injects repair, blocked, and done runtime outcomes
 	);
 	rmSync(routeRunStateFile, { force: true });
 	rmSync(routeTmpDir, { recursive: true, force: true });
+});
+
+test("spawnVerifier returns the agentId on success and the error on failure (no retry)", () => {
+	let calls = 0;
+	const ok = spawnVerifier({ spawn() { calls += 1; return "agent-1"; } }, "general-purpose", "verify", { maxTurns: 5 });
+	assert.deepEqual(ok, { ok: true, agentId: "agent-1" });
+	assert.equal(calls, 1);
+
+	// A stale-context throw is surfaced immediately — no retry, because the subagents
+	// service only refreshes its stored ctx on a session lifecycle event, not in a tick.
+	let failCalls = 0;
+	const fail = spawnVerifier({ spawn() { failCalls += 1; throw new Error("ctx is stale after session replacement or reload"); } }, "general-purpose", "verify", undefined);
+	assert.equal(fail.ok, false);
+	assert.equal(failCalls, 1);
+	assert.equal(isStaleSessionContextError(fail.error), true);
+});
+
+test("buildOrchestrationSpawnBlocker names a harness spawn failure and the stale-context cause", () => {
+	const run = {
+		runId: "manifest-dev-run",
+		command: "do",
+		startedAt: "t",
+		cwd: "/repo",
+		executorSessionId: "executor-session",
+		status: "verifying",
+	};
+	const stale = buildOrchestrationSpawnBlocker(run, "current-session", new Error("This extension ctx is stale after session replacement or reload."));
+	assert.match(stale, /harness\/runtime orchestration failure/);
+	assert.match(stale, /no Acceptance Criterion or Global Invariant was verified/);
+	assert.match(stale, /current session current-session, executor session executor-session/);
+	assert.match(stale, /stored session context was invalidated/);
+
+	// Non-stale spawn errors omit the session-replacement cause line.
+	const other = buildOrchestrationSpawnBlocker(run, "s", new Error("No model registry available."));
+	assert.doesNotMatch(other, /stored session context was invalidated/);
+});
+
+test("buildManifestBabysitPrompt --ci sets pending cadence but does NOT carry the verifier token", () => {
+	const run = { runId: "manifest-dev-run", manifestPath: "/tmp/m.md", manifestSha256: "h" };
+	const url = "https://github.com/o/r/pull/1";
+	const ciPrompt = buildManifestBabysitPrompt(run, url, `${url} --ci`);
+	assert.match(ciPrompt, /CI one-shot mode/);
+	assert.match(ciPrompt, /pending/);
+	// The WAIT-PENDING token is a verifier->runtime contract injected into the VERIFIER
+	// prompt by the runtime, not the executor prompt — the verifier never reads this prompt.
+	assert.doesNotMatch(ciPrompt, /WAIT-PENDING/);
+	assert.doesNotMatch(buildManifestBabysitPrompt(run, url, url), /WAIT-PENDING/);
+});
+
+test("buildGateVerifierPrompt injects the WAIT-PENDING rule only when ciOneShot", () => {
+	const gate = { id: "AC-1.1", kind: "acceptance_criterion", title: "PR lifecycle", verifyPrompt: "Activate the check-pr skill." };
+	const base = { gate, manifestPath: "/m", manifest: "# M", runId: "r" };
+	const ciPrompt = buildGateVerifierPrompt({ ...base, ciOneShot: true });
+	assert.match(ciPrompt, /WAIT-PENDING/);
+	assert.match(ciPrompt, /bash sleep <N>; reinvoke/);
+	// Off by default — non-ci runs and other gates get the plain verifier contract.
+	assert.doesNotMatch(buildGateVerifierPrompt(base), /WAIT-PENDING/);
+	assert.doesNotMatch(buildGateVerifierPrompt({ ...base, ciOneShot: false }), /WAIT-PENDING/);
+});
+
+test("isWaitPendingVerification accepts the marker on FAIL or BLOCKED non-PASS gates", () => {
+	const verification = (results) => ({ runId: "r", status: "failed", results });
+	const waitFail = { ...gateResult("FAIL"), gateId: "AC-1.1", evidence: "Reviewer pending. WAIT-PENDING" };
+	const waitBlocked = { ...gateResult("BLOCKED"), gateId: "AC-1.1", evidence: "Reviewer pending (human). WAIT-PENDING" };
+	const realFail = { ...gateResult("FAIL"), gateId: "AC-1.2", evidence: "broken test" };
+	assert.equal(isWaitPendingVerification(verification([waitFail])), true);
+	// A reviewer/CI wait classified as BLOCKED must still count as wait-only.
+	assert.equal(isWaitPendingVerification(verification([waitBlocked])), true);
+	assert.equal(isWaitPendingVerification(verification([gateResult("PASS"), waitBlocked])), true);
+	// Mixed wait + real (unmarked) failure is not wait-only — the normal path still runs.
+	assert.equal(isWaitPendingVerification(verification([waitFail, realFail])), false);
+	// No non-PASS gates at all is not wait-pending.
+	assert.equal(isWaitPendingVerification(verification([gateResult("PASS")])), false);
+});
+
+test("buildCiPendingSummary frames the exit as pending, not blocked, and lists the waits", () => {
+	const summary = buildCiPendingSummary({
+		runId: "r", status: "failed",
+		results: [{ ...gateResult("FAIL"), gateId: "AC-1.1", evidence: "Reviewer @bob pending. WAIT-PENDING" }],
+	});
+	assert.match(summary, /CI one-shot/);
+	assert.match(summary, /Exiting pending instead of looping repair/);
+	assert.match(summary, /Re-run \/babysit-pr --ci/);
+	assert.match(summary, /AC-1\.1: Reviewer @bob pending/);
+});
+
+test("routeVerificationResult exits pending (no repair) for a --ci wait-only failure", async () => {
+	const routeRunStateFile = `${process.env.HOME}/.manifest-dev/runs/manifest-dev-ci-pending.json`;
+	rmSync(routeRunStateFile, { force: true });
+	const calls = { entries: [], userMessages: [], messages: [] };
+	const pi = {
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		sendUserMessage(message, options) { calls.userMessages.push({ message, options }); },
+		sendMessage(message, options) { calls.messages.push({ message, options }); },
+	};
+	const tmp = mkdtempSync(`${tmpdir()}/manifest-dev-ci-`);
+	const manifestPath = `${tmp}/manifest.md`;
+	writeFileSync(manifestPath, "# Manifest", "utf-8");
+	const ctx = { cwd: process.cwd(), ui: { notify() {} } };
+	const run = {
+		runId: "manifest-dev-ci-pending", command: "babysit-pr", startedAt: "t",
+		cwd: process.cwd(), executorSessionId: "executor-session", status: "verifying",
+		verificationAttempts: 1, ciOneShot: true,
+	};
+	const state = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map([[run.executorSessionId, run]]),
+		childSessionIds: new Set(),
+	};
+	const verification = {
+		runId: run.runId, manifestPath, manifestSha256: sha256("# Manifest"),
+		requestedAt: "s", completedAt: "e", cwd: process.cwd(), status: "failed",
+		orchestratorSessionId: "manifest-verify-1",
+		results: [{ ...gateResult("FAIL"), gateId: "AC-1.1", title: "PR lifecycle", evidence: "Reviewer @bob pending; CI green. WAIT-PENDING" }],
+	};
+	try {
+		await routeVerificationResult(pi, ctx, state, run, verification);
+		// No repair injection.
+		assert.equal(calls.userMessages.length, 0);
+		// A pending status message instead.
+		assert.equal(calls.messages.length, 1);
+		assert.match(calls.messages[0].message.content, /Exiting pending instead of looping repair/);
+		// Outcome recorded as a (resumable) escalate flavored pending; run left blocked.
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "CI one-shot pending on external wait."), true);
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:run" && e.data.status === "blocked"), true);
+	} finally {
+		rmSync(routeRunStateFile, { force: true });
+		rmSync(tmp, { recursive: true, force: true });
+	}
+});
+
+test("routeVerificationResult exits pending for a --ci wait-only BLOCKED verification (not generic escalation)", async () => {
+	const routeRunStateFile = `${process.env.HOME}/.manifest-dev/runs/manifest-dev-ci-blocked.json`;
+	rmSync(routeRunStateFile, { force: true });
+	const calls = { entries: [], userMessages: [], messages: [] };
+	const pi = {
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		sendUserMessage(message, options) { calls.userMessages.push({ message, options }); },
+		sendMessage(message, options) { calls.messages.push({ message, options }); },
+	};
+	const tmp = mkdtempSync(`${tmpdir()}/manifest-dev-ci-`);
+	const manifestPath = `${tmp}/manifest.md`;
+	writeFileSync(manifestPath, "# Manifest", "utf-8");
+	const ctx = { cwd: process.cwd(), ui: { notify() {} } };
+	const run = {
+		runId: "manifest-dev-ci-blocked", command: "babysit-pr", startedAt: "t",
+		cwd: process.cwd(), executorSessionId: "executor-session", status: "verifying",
+		verificationAttempts: 1, ciOneShot: true,
+	};
+	const state = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map([[run.executorSessionId, run]]),
+		childSessionIds: new Set(),
+	};
+	// Verifier classified the reviewer/CI wait as BLOCKED (human/external) — aggregate
+	// status is "blocked", but the WAIT-PENDING marker must still route to pending.
+	const verification = {
+		runId: run.runId, manifestPath, manifestSha256: sha256("# Manifest"),
+		requestedAt: "s", completedAt: "e", cwd: process.cwd(), status: "blocked",
+		orchestratorSessionId: "manifest-verify-1",
+		results: [{ ...gateResult("BLOCKED"), gateId: "AC-1.1", title: "PR lifecycle", evidence: "Reviewer @bob pending (human decision); CI green. WAIT-PENDING" }],
+	};
+	try {
+		await routeVerificationResult(pi, ctx, state, run, verification);
+		assert.equal(calls.userMessages.length, 0); // no repair
+		assert.equal(calls.messages.length, 1);
+		assert.match(calls.messages[0].message.content, /Exiting pending instead of looping repair/);
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "CI one-shot pending on external wait."), true);
+	} finally {
+		rmSync(routeRunStateFile, { force: true });
+		rmSync(tmp, { recursive: true, force: true });
+	}
+});
+
+test("routeVerificationResult still repairs a --ci failure that is not wait-only", async () => {
+	const routeRunStateFile = `${process.env.HOME}/.manifest-dev/runs/manifest-dev-ci-repair.json`;
+	rmSync(routeRunStateFile, { force: true });
+	const calls = { userMessages: [], messages: [], entries: [] };
+	const pi = {
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		sendUserMessage(message, options) { calls.userMessages.push({ message, options }); },
+		sendMessage(message, options) { calls.messages.push({ message, options }); },
+	};
+	const ctx = { cwd: process.cwd(), ui: { notify() {} } };
+	const run = {
+		runId: "manifest-dev-ci-repair", command: "babysit-pr", startedAt: "t",
+		cwd: process.cwd(), executorSessionId: "executor-session", status: "verifying",
+		verificationAttempts: 1, ciOneShot: true,
+	};
+	const state = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map([[run.executorSessionId, run]]),
+		childSessionIds: new Set(),
+	};
+	const verification = {
+		runId: run.runId, manifestPath: "/m", manifestSha256: "h", requestedAt: "s", completedAt: "e",
+		cwd: process.cwd(), status: "failed", orchestratorSessionId: "manifest-verify-1",
+		results: [{ ...gateResult("FAIL"), gateId: "AC-1.1", title: "PR lifecycle", evidence: "merge conflict — fix it" }],
+	};
+	try {
+		await routeVerificationResult(pi, ctx, state, run, verification);
+		// Not wait-only → normal repair injection, no pending status message.
+		assert.equal(calls.userMessages.length, 1);
+		assert.match(calls.userMessages[0].message, /AC-1\.1 PR lifecycle: merge conflict/);
+		assert.equal(calls.messages.length, 0);
+	} finally {
+		rmSync(routeRunStateFile, { force: true });
+	}
+});
+
+test("routeVerificationResult escalates (not pending) for a --ci BLOCKED verification WITHOUT the marker", async () => {
+	// Pairs the BLOCKED+WAIT-PENDING positive test: a ciOneShot blocked verification with no
+	// marker must take the generic blocked/escalation path, proving the marker — not merely
+	// the blocked status — is what routes to pending.
+	const routeRunStateFile = `${process.env.HOME}/.manifest-dev/runs/manifest-dev-ci-escalate.json`;
+	rmSync(routeRunStateFile, { force: true });
+	const calls = { userMessages: [], messages: [], entries: [] };
+	const pi = {
+		appendEntry(customType, data) { calls.entries.push({ customType, data }); },
+		sendUserMessage(message, options) { calls.userMessages.push({ message, options }); },
+		sendMessage(message, options) { calls.messages.push({ message, options }); },
+	};
+	const ctx = { cwd: process.cwd(), ui: { notify() {} } };
+	const run = {
+		runId: "manifest-dev-ci-escalate", command: "babysit-pr", startedAt: "t",
+		cwd: process.cwd(), executorSessionId: "executor-session", status: "verifying",
+		verificationAttempts: 1, ciOneShot: true,
+	};
+	const state = {
+		latestVerificationByRunId: new Map(),
+		activeRunByExecutorSessionId: new Map([[run.executorSessionId, run]]),
+		childSessionIds: new Set(),
+	};
+	const verification = {
+		runId: run.runId, manifestPath: "/m", manifestSha256: "h", requestedAt: "s", completedAt: "e",
+		cwd: process.cwd(), status: "blocked", orchestratorSessionId: "manifest-verify-1",
+		results: [{ ...gateResult("BLOCKED"), gateId: "AC-1.1", title: "PR lifecycle", evidence: "Needs maintainer secret to retrigger; no WAIT marker here" }],
+	};
+	try {
+		await routeVerificationResult(pi, ctx, state, run, verification);
+		assert.equal(calls.userMessages.length, 0); // no repair
+		// Generic blocked status message, NOT the pending summary.
+		assert.equal(calls.messages.length, 1);
+		assert.match(calls.messages[0].message.content, /is blocked for/);
+		assert.doesNotMatch(calls.messages[0].message.content, /Exiting pending instead of looping repair/);
+		// Generic blocked outcome, not the CI pending outcome.
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "Harness verification is blocked."), true);
+		assert.equal(calls.entries.some((e) => e.customType === "manifest-dev:outcome" && e.data.summary === "CI one-shot pending on external wait."), false);
+	} finally {
+		rmSync(routeRunStateFile, { force: true });
+	}
 });
 
 function gateResult(verdict) {

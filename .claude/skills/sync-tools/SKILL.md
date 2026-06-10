@@ -29,11 +29,9 @@ Sync only these source payloads:
 
 Never sync other plugins (e.g., `manifest-dev-collab` — uses Agent Teams/Slack, inherently incompatible). Never modify source files. Skip `sync-tools` skill from output (meta-tool).
 
-Each generated component must carry plugin ownership in `component-namespaces.json`. Install-time namespacing comes from that metadata, not from a single global suffix:
-- `manifest-dev` components install with `-manifest-dev`
-- `manifest-dev-tools` components install with `-manifest-dev-tools`
-
-Regenerate `component-namespaces.json` on every sync from the discovered source components; never hand-maintain it. The file is part of the generated dist contract and must include every distributed skill, agent, and command. If a component exists under `dist/{cli}/skills`, `agents`, or `commands` and is missing from metadata, the sync is incomplete.
+**Namespacing model is per-CLI** (see each reference file):
+- **Installer targets (OpenCode)**: each component carries plugin ownership in `component-namespaces.json`, and install-time namespacing comes from that metadata (`-manifest-dev` / `-manifest-dev-tools` suffixes), not a single global suffix. Regenerate `component-namespaces.json` on every sync from the discovered source components; never hand-maintain it. If a component exists under `dist/{cli}/skills`, `agents`, or `commands` and is missing from metadata, the sync is incomplete.
+- **Plugin-native targets (Codex)**: the plugin is the namespace. Two plugins (`manifest-dev`, `manifest-dev-tools`) each bundle their skills under original names. No install-time suffixing, no `component-namespaces.json`, no installer.
 
 ## Per-CLI Processing
 
@@ -66,7 +64,7 @@ On invocation, prefer a delta sync over a full re-sync:
    - **Deleted**: remove dist counterpart (and parent dir if now empty)
    - **Renamed**: handle as delete-old + add-new
 4. Recompute README component tables and the CLI's context file (`AGENTS.md`) only if the set of skills/agents changed (added/removed/renamed). Body-only edits don't require regenerating these.
-5. Regenerate `dist/{cli}/component-namespaces.json` from the current dist component set and source ownership map.
+5. **Installer/package targets only (OpenCode, Pi):** regenerate `dist/{cli}/component-namespaces.json` from the current dist component set and source ownership map. **Skip entirely for plugin-native Codex** — the plugin is the namespace, there is no `component-namespaces.json`, and generating one would resurrect retired installer metadata.
 6. After all writes succeed, overwrite `dist/{cli}/.sync-meta.json` with the new HEAD sha and a fresh `synced_at` UTC timestamp. Keep the file even when the diff was empty — the timestamp records "we checked".
 
 The metadata is an **optimization, not a correctness anchor**. When in doubt — unreachable commit, ambiguous rename, mid-rebase repo state, suspicious dist drift — fall back to full sync rather than trusting the recorded SHA.
@@ -84,7 +82,7 @@ The metadata is an **optimization, not a correctness anchor**. When in doubt —
 | **Package manifest** | Generate only for targets whose reference file declares a package-native install surface. For Pi, repo-root package metadata and `pi/extensions/` runtime code are source-owned; generated shared assets under `dist/pi/` are package resources consumed by that source surface. |
 | **Install script** | `install.sh` and `install_helpers.py` are **infrastructure files** — update incrementally, never regenerate. They contain logic not derivable from source (piped execution detection, temp dir cloning, cleanup traps, argument parsing, settings merging). Only modify sections that reflect changed components (step counts, file lists, component names). |
 | **CLI extras** | Extension manifests, plugin configs, execution rules — per reference file. |
-| **Namespace metadata** | Regenerate `component-namespaces.json` from source ownership every run. Every distributed component must appear exactly once under its component type with the suffix for its owning plugin. |
+| **Namespace metadata** | **Installer/package targets only (OpenCode, Pi).** Regenerate `component-namespaces.json` from source ownership every run; every distributed component appears exactly once under its component type with the suffix for its owning plugin. **Plugin-native Codex has none** — skip it (the plugin boundary is the namespace). |
 
 ### README install section
 
@@ -127,5 +125,5 @@ Summary table after all CLIs processed:
 | CLI | Skills | Agents | Hooks | Commands | Status |
 |-----|--------|--------|-------|----------|--------|
 | OpenCode | N | N converted | N adapted | N | Complete |
-| Codex | N | AGENTS.md + N TOML | none | — | Complete |
+| Codex | N (2 plugins) | none (reviewers = review-code skill) | none | — | Complete |
 | Pi | N compatible | N runtime prompt assets | source-owned runtime extension | extension commands | Complete |

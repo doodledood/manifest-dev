@@ -1,0 +1,21 @@
+{
+  "name": "@doodledood/manifest-dev-pi-tools",
+  "version": "0.8.10",
+  "private": true,
+  "description": "Pi tools package for manifest-dev: the /babysit-pr PR-lifecycle wrapper over Harness-level Do. Depends on @doodledood/manifest-dev-pi for the shared runtime.",
+  "type": "module",
+  "keywords": [
+    "pi-package",
+    "manifest-dev",
+    "manifest-dev-tools",
+    "agent-skills"
+  ],
+  "comment_pi": "No own `pi.extensions`: this package is loaded only from the repo-root pi.extensions (which lists ./packages/manifest-dev-pi-tools/pi/extensions/manifest-dev-tools.ts directly), never installed as a standalone Pi package. That keeps the core extension always present for the relative import and the verifier flags single-owned by core.",
+  "dependencies": {
+    "@doodledood/manifest-dev-pi": "file:../.."
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@gotgenes/pi-subagents": "*"
+  }
+}

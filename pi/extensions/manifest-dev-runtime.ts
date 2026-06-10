@@ -6,12 +6,22 @@ export type VerificationStatus = "passed" | "failed" | "blocked";
 export type GateVerdict = "PASS" | "FAIL" | "BLOCKED";
 export type GateKind = "acceptance_criterion" | "global_invariant";
 
+// Verifier→runtime contract token (NOT a check-pr token — check-pr stays workflow-neutral).
+// In a `/babysit-pr --ci` (ciOneShot) run the runtime injects CI_WAIT_PENDING_VERIFIER_RULE
+// into every gate's verifier prompt; a verifier that finds the gate is blocked only on an
+// external wait appends this marker, and the runtime routes the failure to a pending exit
+// instead of repair. Defined here (not in the executor prompt) so it reaches the verifier
+// subagent for synthesized AND --manifest runs alike.
+export const WAIT_PENDING_MARKER = "WAIT-PENDING";
+export const CI_WAIT_PENDING_VERIFIER_RULE = `
+CI one-shot wait-pending rule: if this gate's only remaining blocker is an external wait — the check-pr finding's sole directive is a wait ("bash sleep <N>; reinvoke") and nothing is actionable (no reply / reply-and-resolve / retrigger / sync-description / re-request-review / prose fix) — append the token ${WAIT_PENDING_MARKER} on its own line in DETAILS. Pick the VERDICT by the normal rules above (a reviewer / CI / merge-window wait is typically BLOCKED — a human/external condition, not a workspace-repairable defect); the runtime treats either FAIL or BLOCKED carrying ${WAIT_PENDING_MARKER} as a pending exit instead of looping repair or escalating. Omit ${WAIT_PENDING_MARKER} entirely if anything here is actionable.`;
+
+
 export interface ManifestGate {
 	id: string;
 	kind: GateKind;
 	title: string;
 	verifyPrompt: string;
-	suggestedAgent?: string;
 	model?: string;
 	phase: number;
 }
@@ -73,7 +83,6 @@ export function extractManifestGates(manifest: string): ManifestGate[] {
 			title,
 			kind: id.startsWith("INV-") ? "global_invariant" : "acceptance_criterion",
 			verifyPrompt,
-			suggestedAgent: extractYamlValue(block, "agent"),
 			model: extractYamlValue(block, "model"),
 			phase: parsePhase(extractYamlValue(block, "phase")),
 		} satisfies ManifestGate];
@@ -89,10 +98,9 @@ export function buildGateVerifierPrompt(args: {
 	reposMap?: Record<string, string>;
 	orchestratorSessionId?: string;
 	orchestratorSessionFile?: string;
+	ciOneShot?: boolean;
 }): string {
-	const suggestedAgent = args.gate.suggestedAgent
-		? `\nSuggested manifest verifier persona: ${args.gate.suggestedAgent}`
-		: "";
+	const waitPendingRule = args.ciOneShot ? `\n${CI_WAIT_PENDING_VERIFIER_RULE}\n` : "";
 	const implementationSummary = args.implementationSummary
 		? `\nImplementation summary from executor:\n${args.implementationSummary}\n`
 		: "";
@@ -111,11 +119,11 @@ ${reposBlock}
 Run id: ${args.runId}${orchestratorSession}
 Manifest path: ${args.manifestPath}
 Gate: ${args.gate.id} ${args.gate.title}
-Gate kind: ${args.gate.kind}${suggestedAgent}
+Gate kind: ${args.gate.kind}
 ${implementationSummary}
 Verification prompt:
 ${args.gate.verifyPrompt}
-
+${waitPendingRule}
 Return exactly this report shape:
 VERDICT: PASS|FAIL|BLOCKED
 EVIDENCE: concise concrete evidence, including commands/files inspected

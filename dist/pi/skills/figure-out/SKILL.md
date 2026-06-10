@@ -32,6 +32,6 @@ When args contain `--with-docs`, also load `references/WITH_DOCS.md` for bootstr
 
 When args contain `--log` as this skill's option, also load `references/LOG.md` and keep an append-only investigation log. If `--log` appears quoted, code-formatted, or as part of the topic being investigated, ask whether to enable logging before loading it.
 
-When args contain `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/manifest-auto` chaining without user wait.
+When args contain `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
 
 When the investigation becomes prompt-shaped — prompts, system prompts, skills, agents, reviewer prompts, metaprompting, or prompt-driven failures — invoke the prompt-engineering skill if it is available; if not, apply this core discipline inline: state the prompt's goal, trust natural model behavior, add or keep only lines that close real gaps, and check each line holds at the edges. Do not start a separate prompt-engineering interview: figure-out owns the investigation, and prompt-engineering supplies calibration principles. Ordinary non-prompt investigations should not load it.
