@@ -27,6 +27,4 @@ test("tools extension registers babysit-pr and wires Harness verification hooks"
 	// always loaded alongside (repo-root-only). /babysit-pr reads values via the
 	// process.argv fallback. See pi_extension_flag_ownership.test.mjs.
 	assert.equal(flags.includes("manifest-verifier-max-concurrent"), false);
-	assert.equal(flags.includes("manifest-verifier-max-turns"), false);
-	assert.equal(flags.includes("manifest-verifier-timeout-ms"), false);
 });

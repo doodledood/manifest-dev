@@ -360,7 +360,6 @@ def test_pi_package_metadata_points_to_generated_skills_and_extension() -> None:
     assert package["pi"]["skills"] == ["./dist/pi/skills"]
     assert package["peerDependencies"] == {
         "@earendil-works/pi-coding-agent": "*",
-        "@gotgenes/pi-subagents": "*",
     }
     assert PI_EXTENSION.is_file()
     assert PI_EXTENSION_RUNTIME.is_file()
@@ -381,6 +380,9 @@ def test_pi_split_into_core_and_tools_packages() -> None:
     # private repo-root package instead of hitting the public registry (E404).
     assert tools["dependencies"]["@doodledood/manifest-dev-pi"] == "file:../.."
     assert tools["version"] == core["version"]
+    assert tools["peerDependencies"] == {
+        "@earendil-works/pi-coding-agent": "*",
+    }
     # Tools is repo-root-only: it has NO standalone `pi.extensions`, so it is never
     # installed as its own Pi package (which couldn't resolve the relatively-imported
     # core runtime from its own tarball). It loads solely from the repo-root
@@ -403,6 +405,7 @@ def test_pi_dist_contains_only_compatible_skill_set() -> None:
     assert skill_dirs == set(PI_SKILLS)
     assert set(metadata["skills"]) == set(PI_SKILLS)
     assert metadata.get("agents", {}) == {}
+    assert metadata.get("runtime_dependencies", {}) == {}
 
 
 def test_skill_activation_names_are_per_target() -> None:
@@ -522,7 +525,7 @@ def test_wait_pending_contract_lives_in_runtime_and_pi_reference() -> None:
     runtime_mod = PI_EXTENSION_RUNTIME.read_text(encoding="utf-8")
     assert 'WAIT_PENDING_MARKER = "WAIT-PENDING"' in runtime_mod
     # The derivation rule is injected into the gate verifier prompt (reaches the verifier
-    # subagent for synthesized AND --manifest runs), gated on ciOneShot.
+    # verifier for synthesized AND --manifest runs), gated on ciOneShot.
     assert "CI_WAIT_PENDING_VERIFIER_RULE" in runtime_mod
     assert "buildGateVerifierPrompt" in runtime_mod
     assert "ciOneShot" in runtime_mod
@@ -571,10 +574,13 @@ def test_pi_tools_extension_registers_babysit_pr_over_core_runtime() -> None:
 def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
     root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
     pi_readme = (DIST / "pi" / "README.md").read_text(encoding="utf-8")
+    pi_sync_meta = (DIST / "pi" / ".sync-meta.json").read_text(encoding="utf-8")
 
-    for content in (root_readme, pi_readme):
+    for content in (root_readme, pi_readme, pi_sync_meta):
         assert "pi install git:github.com/doodledood/manifest-dev@main" in content
-        assert "Harness-level Do" in content
+        assert "Harness-level Do" in content or "Harness-level Do runtime" in content
+        assert "JSON subprocess" in content
+        assert "pi install npm:@gotgenes/pi-subagents" not in content
 
     assert "/do <manifest-path>" in pi_readme
     assert "/auto <task>" in pi_readme
@@ -584,5 +590,3 @@ def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
     )
     assert "manifest_dev_request_verification" not in pi_markdown
     assert "manifest_dev_report_outcome" not in pi_markdown
-    assert "pi install npm:@gotgenes/pi-subagents" in root_readme
-    assert "pi install npm:@gotgenes/pi-subagents" in pi_readme

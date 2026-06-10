@@ -16,9 +16,8 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | `resources_discover` | Extensions can contribute generated skill, prompt, and theme paths at runtime if static `package.json` paths are insufficient. |
 | `sendUserMessage` | Runtime extensions can inject failed verifier reports back into the Executor Session as follow-up repair work. |
 | `appendEntry` / session manager | Runtime can persist run state outside LLM context. |
-| `@gotgenes/pi-subagents` service | Verifier fanout spawns clean Pi subagent sessions with inherited context disabled from a runtime-owned verification attempt. |
 | Session files and `--fork` | Verification/judge experiments can fork or isolate context instead of mutating the executor turn directly. |
-| SDK / JSON-mode subprocesses | Verifier fanout can be implemented by controlled Pi sessions or subprocesses instead of prompt-only delegation. |
+| SDK / JSON-mode subprocesses | Harness-level verifier fanout runs controlled Pi subprocesses instead of prompt-only delegation or an external verifier service. |
 | Prompt resources | Verifier, executor, and reviewer prompts may be package-private runtime assets, not user-facing slash prompts. |
 
 ## Claude Code Component Mapping
@@ -30,7 +29,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | `/done` skill | Excluded. Runtime completion outcome. |
 | `/escalate` skill | Excluded. Runtime blocker outcome. |
 | `/auto`, `/babysit-pr` | Excluded as ordinary skills. Provided by Pi-aware extension commands that run the lifecycle through Harness-level Do outcome gating. |
-| Reviewer/verifier skills | manifest-dev ships no agents; `check-pr`, `poll-slack`, `review-prompt`, and `review-code` ship as ordinary skills under `dist/pi/skills/`. Steer clean Pi subagent verifier sessions via `verify.prompt` (which may activate one of these skills); there is no `verify.agent` field and no `pi.agents` manifest field. |
+| Reviewer/verifier skills | manifest-dev ships no agents; `check-pr`, `poll-slack`, `review-prompt`, and `review-code` ship as ordinary skills under `dist/pi/skills/`. Run clean Pi JSON verifier subprocesses with the gate's `verify.prompt` (which may activate one of these skills); there is no `verify.agent` field and no `pi.agents` manifest field. |
 | Claude hooks | Re-evaluate as Pi lifecycle/command/tool events; do not port hook names mechanically. |
 | Slash commands | Prefer `/skill:<name>` for skills and extension commands for runtime actions. |
 | CLAUDE.md context | Do not assume a package-level CLAUDE.md equivalent; package docs and skills carry their own context. |
@@ -43,7 +42,7 @@ Pi is not only an Agent Skills host. It is a package/runtime host with a TypeScr
 | Compatible skills | Copy to `dist/pi/skills/` | Agent Skills are portable. Apply only target-specific handoff substitutions. |
 | Harness-level Do | Do not copy as a normal skill | `/do`, `/done`, and `/escalate` are runtime outcomes in Pi. |
 | Chain skills | Expose as extension commands when Pi-aware | `/auto` and `/babysit-pr` invoke `/do` in Claude-style hosts; in Pi they are registered as native extension commands of the same name (`/auto`, `/babysit-pr`). |
-| Agents | None — manifest-dev ships no agents | The former agents are skills under `dist/pi/skills/`; verification is always a general-purpose subagent activating a skill via `verify.prompt`. |
+| Agents | None — manifest-dev ships no agents | The former agents are skills under `dist/pi/skills/`; Pi verification is runtime-owned JSON subprocess fanout whose `verify.prompt` may activate a skill. |
 | Extensions | Include hand-written Pi runtime code | The extension owns commands, executor/verifier orchestration, verdict aggregation, repair routing, escalation, and completion gating. |
 | Prompt templates | Generate only intentionally user-invocable templates | Do not expose the runtime verifier prompt as a slash prompt template by accident. |
 | README | Generate install and feature-boundary docs | Explain what is generated, what is source-owned, and which commands are available. |
@@ -80,7 +79,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -97,15 +96,14 @@ Current core package manifest shape:
     "skills": ["./dist/pi/skills"]
   },
   "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "*",
-    "@gotgenes/pi-subagents": "*"
+    "@earendil-works/pi-coding-agent": "*"
   }
 }
 ```
 
 The tools package declares `"dependencies": { "@doodledood/manifest-dev-pi": "file:../.." }` (local path, resolves on git installs) and **no `pi` block** (repo-root-only; see above). Keep both packages' `version` fields in lockstep with the real `package.json` files; bump them when the runtime changes.
 
-Keep `"extensions": [...]` source-owned. Extension code that imports Pi packages should declare Pi core packages as `peerDependencies` with `"*"` ranges and real runtime dependencies under `dependencies`. `@gotgenes/pi-subagents` is also a Pi package that must be installed/enabled (`pi install npm:@gotgenes/pi-subagents`) so its global service is published before manifest-dev requests verification.
+Keep `"extensions": [...]` source-owned. Extension code that imports Pi packages should declare Pi core packages as `peerDependencies` with `"*"` ranges and real runtime dependencies under `dependencies`. Harness-level verification is implemented inside manifest-dev with `pi --mode json` subprocesses, so Pi users do not install a separate verifier fanout package.
 
 ## Skill Handling
 
@@ -147,9 +145,9 @@ The Pi extension owns Do/Verify Loop runtime behavior. The current runtime slice
 - `/do`, `/auto`, `/babysit-pr` command registration; the chain wrappers invoke the installed `/skill:figure-out` and `/skill:define` rather than paraphrasing the chain.
 - a simplified Executor Session prompt: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop.
 - runtime-owned verification/outcome orchestration rather than LLM-visible verifier/outcome tools in the executor action space, including a clean verification orchestration session record per attempt.
-- parse the Manifest and enumerate Acceptance Criteria and Global Invariants, honoring each gate's `verify.model` and `phase`. There is no `verify.agent` field — every gate is verified by a general-purpose subagent whose `verify.prompt` may activate a skill.
-- record a clean verification orchestration session under `~/.manifest-dev/verification-sessions/`, then run clean Pi subagent verifier sessions (`inheritContext: false`) in ascending-phase batches — serial across phases, parallel within, short-circuiting later phases on FAIL/BLOCKED. Verifier spawns use `bypassQueue: true` and manifest-dev's own per-phase fanout cap so the community subagents package's default background queue does not silently cap large same-phase verifier sets. Verifiers are always general-purpose; absent `verify.model` -> the Executor Session's current model (`ctx.model`).
-- verifier-spawn failure handling (anchored in `@gotgenes/pi-subagents` `service-adapter.ts`): `spawn` is synchronous and reads the service's stored `currentCtx` (captured at `session_start`) to build the parent snapshot. If that ctx was invalidated by a session replacement/reload, Pi's stale-context guard (`loader.js`/`runner.js` `invalidate`, message "...stale after session replacement or reload...") throws. We do NOT retry — the stored ctx only refreshes on another session lifecycle event, never within a tick, so an immediate re-spawn reads the same stale ctx. Instead, if no verifier spawns at all, the attempt returns a single harness/runtime orchestration BLOCKED naming the underlying error, the current/executor session ids, and (for the stale-context signature) the session-replacement cause — not an identical BLOCKED per gate that never ran.
+- parse the Manifest and enumerate Acceptance Criteria and Global Invariants, honoring each gate's `verify.model` and `phase`. There is no `verify.agent` field — every gate is verified by a manifest-dev-owned Pi JSON subprocess whose `verify.prompt` may activate a skill.
+- record a clean verification orchestration session under `~/.manifest-dev/verification-sessions/`, then run clean `pi --mode json` verifier subprocesses in ascending-phase batches — serial across phases, parallel within, short-circuiting later phases on FAIL/BLOCKED. Child Pi processes load resources normally; do not pass `--no-extensions`, `--no-skills`, or equivalent suppression by default. Absent `verify.model` -> the Executor Session's current model (`ctx.model`), and the parent thinking level is passed with `--thinking`.
+- verifier subprocess failure handling: child process spawn errors, non-zero exits, or missing final assistant text become BLOCKED-compatible per-gate records with stdout/stderr diagnostics. Existing report parsing (`VERDICT`, `EVIDENCE`, `DETAILS`) remains authoritative for completed verifier output.
 - multi-repo grounding: when the Manifest declares `Repos:`, each verifier prompt is prepended with the repo path map.
 - aggregate PASS / FAIL / BLOCKED; FAIL verdicts are injected into the Executor Session as runtime-authored follow-up repair work; BLOCKED verdicts record and surface resumable blockers; PASS records done after freshness checks.
 - a durable, freshness-bound done gate: each verification is persisted to `~/.manifest-dev/runs/<runId>.json`, rehydrated from runtime state, and `done` is refused unless an all-PASS verification still matches the current manifest SHA and workspace diff.
@@ -158,9 +156,7 @@ The Pi extension owns Do/Verify Loop runtime behavior. The current runtime slice
 
 Configuration follows the Pi-native convention (`pi.registerFlag` / `pi.getFlag` with a `MANIFEST_DEV_*` environment-variable fallback; resolution order flag > env > default):
 
-- `--manifest-verifier-max-turns` / `MANIFEST_DEV_VERIFIER_MAX_TURNS` (default 1000)
-- `--manifest-verifier-timeout-ms` / `MANIFEST_DEV_VERIFIER_TIMEOUT_MS` (default 1800000)
-- `--manifest-verifier-max-concurrent` / `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` (default 24)
+- `--manifest-verifier-max-concurrent` / `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` (default 10)
 
 **Flag ownership (anchored in Pi `dist/core/extensions/loader.js`).** `registerFlag` records the flag on the calling extension (`extension.flags.set(name, …)`) and seeds the shared, per-load-cycle `runtime.flagValues` map; `getFlag` returns a value **only if the calling extension itself registered the flag** (`if (!extension.flags.has(name)) return undefined`) and otherwise reads from `runtime.flagValues`. The `runtime` (and its `flagValues`) is rebuilt on every `loadExtensions()` call. Given that:
 
@@ -172,7 +168,7 @@ Current runtime boundaries:
 
 - Harness verification and outcome controls must not be registered as normal LLM-visible tools for `/do`.
 - The runtime should hide or remove any compatibility scaffolding that would put harness verification/outcome calls in the Executor Session's active tool set.
-- Verification attempts must be scoped to the Executor Session id and ignore child/subagent session completion events.
+- Verification attempts must be scoped to the Executor Session id and ignore non-executor session completion events.
 
 Remaining target architecture work:
 
@@ -192,7 +188,7 @@ Pi skills already register as `/skill:<name>` commands when skill commands are e
 
 Pi allows multiple extensions to register the same command and disambiguates with numeric suffixes. Generated docs must mention that collisions are possible if aliases are installed.
 
-**`/babysit-pr --ci` wait-pending contract (verifier→runtime, not check-pr).** `check-pr` is workflow-neutral — it never emits a "pending vs repair" token (that is a caller decision, per its own invariant). The wait-only decision is a runtime-owned verifier→runtime contract: when a run is `ciOneShot`, the runtime injects `CI_WAIT_PENDING_VERIFIER_RULE` into **every gate's verifier prompt** via `buildGateVerifierPrompt({ ciOneShot })` — not into the executor/babysit prompt or the manifest `verify.prompt`, so it reaches the spawned verifier subagent for synthesized **and** `--manifest` runs alike. The verifier derives wait-only from `check-pr`'s structured wait directives (the sole directive is a `bash sleep <N>; reinvoke` wait, nothing actionable), picks its VERDICT by the normal rules (a reviewer/CI/merge-window wait is typically **BLOCKED** — a human/external condition), and appends the `WAIT-PENDING` token to its DETAILS. The runtime (`isWaitPendingVerification` + `routeVerificationResult`) routes a `ciOneShot` verification whose every non-PASS gate carries that token to a pending (resumable) exit — for **both** `failed` and `blocked` aggregate status, so it does not matter whether the verifier called the wait FAIL or BLOCKED. A mixed or actionable result still repairs/escalates normally. Keep the token out of `check-pr`'s vocabulary when regenerating its skill.
+**`/babysit-pr --ci` wait-pending contract (verifier→runtime, not check-pr).** `check-pr` is workflow-neutral — it never emits a "pending vs repair" token (that is a caller decision, per its own invariant). The wait-only decision is a runtime-owned verifier→runtime contract: when a run is `ciOneShot`, the runtime injects `CI_WAIT_PENDING_VERIFIER_RULE` into **every gate's verifier prompt** via `buildGateVerifierPrompt({ ciOneShot })` — not into the executor/babysit prompt or the manifest `verify.prompt`, so it reaches the child verifier subprocess for synthesized **and** `--manifest` runs alike. The verifier derives wait-only from `check-pr`'s structured wait directives (the sole directive is a `bash sleep <N>; reinvoke` wait, nothing actionable), picks its VERDICT by the normal rules (a reviewer/CI/merge-window wait is typically **BLOCKED** — a human/external condition), and appends the `WAIT-PENDING` token to its DETAILS. The runtime (`isWaitPendingVerification` + `routeVerificationResult`) routes a `ciOneShot` verification whose every non-PASS gate carries that token to a pending (resumable) exit — for **both** `failed` and `blocked` aggregate status, so it does not matter whether the verifier called the wait FAIL or BLOCKED. A mixed or actionable result still repairs/escalates normally. Keep the token out of `check-pr`'s vocabulary when regenerating its skill.
 
 ## Extension and Runtime Affordances
 
@@ -204,9 +200,8 @@ Relevant primitives to account for in implementation docs:
 - `pi.on("resources_discover", ...)` can expose generated skill or prompt paths when static package metadata is not enough.
 - `pi.sendUserMessage(..., { deliverAs })` can inject verifier FAIL results into the Executor Session after runtime aggregation.
 - `pi.appendEntry(customType, data)` can persist run state without putting it in the model context.
-- `@gotgenes/pi-subagents` publishes `getSubagentsService()`, whose `spawn(...)` API can launch clean verifier subagent sessions when called with `inheritContext: false`.
-- Session APIs and `pi --fork` can preserve executor context while isolating verifier or judge work.
-- SDK sessions and `pi --mode json` subprocesses can run verifier fanout deterministically under a supervising runtime.
+- Session APIs and `pi --fork` can preserve executor context while isolating future judge work.
+- `pi --mode json` subprocesses run verifier fanout deterministically under the supervising runtime while preserving normal Pi resource loading.
 
 Do not port Claude Code hook names literally. For Pi, restate the event goal and choose the closest Pi extension/event primitive.
 
@@ -275,8 +270,7 @@ Generated and source READMEs must document:
 - remove via `pi remove`
 - current Harness-level Do command/outcome-tool support and any remaining runtime limitations
 - included `/skill:<name>` commands
-- required `pi install npm:@gotgenes/pi-subagents` runtime prerequisite for verifier fanout
-- verifier configuration flags / env vars and their defaults (max-turns, timeout-ms, max-concurrent)
+- verifier configuration flag / env var and its default (max-concurrent)
 
 ## Context File Adaptation
 
@@ -290,5 +284,5 @@ Pi sessions save under `~/.pi/agent/sessions/` and support `pi --session` and `p
 
 - Do not assume git subdirectory package roots. Use repo-root package metadata for git install unless Pi docs/source prove subdirectory package install is supported.
 - Do not assume package-level agent resources. manifest-dev ships no agents; the former agents are skills under `dist/pi/skills/`.
-- Do not assume package peer dependency installation alone enables another Pi package's extension; document explicit `pi install npm:@gotgenes/pi-subagents`.
+- Do not assume an external verifier fanout package is present or required for manifest-dev verification.
 - Re-check Pi package and extension APIs before implementing Harness-level Do; this reference should stay evidence-backed rather than aspirational.

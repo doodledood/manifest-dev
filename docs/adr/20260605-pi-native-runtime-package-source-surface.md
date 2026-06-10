@@ -3,6 +3,8 @@
 ## Status
 Accepted
 
+Verifier-fanout mechanism partially superseded by `20260610-own-pi-verifier-runner`: Pi Harness-level Do now uses manifest-dev-owned JSON subprocess verifier fanout instead of `@gotgenes/pi-subagents`.
+
 ## Context
 
 manifest-dev has treated Claude Code plugin components as the source of truth, with other CLI distributions generated under `dist/`. That model works for prompt and skill assets because Agent Skills are portable and the core methodology can be expressed in shared Markdown.
@@ -25,7 +27,7 @@ The `sync-tools` Pi reference should be a capability model, not only a file mapp
 
 Initial implementation landed the runtime entrypoint slice first: `/manifest-do` starts Harness-level Do for an existing manifest, `/manifest-auto` and `/manifest-babysit-pr` replace the omitted portable wrapper skills, and `manifest_dev_report_outcome` records final `done` or `escalate` outcomes.
 
-The next slice adds `manifest_dev_request_verification`: when the executor believes implementation is ready, it calls this tool with the manifest path and run id. The extension parses Acceptance Criteria and Global Invariants, spawns one clean Pi subagent verifier session per gate through `@gotgenes/pi-subagents` with inherited context disabled, aggregates PASS / FAIL / BLOCKED reports, persists the verification entry, and rejects `outcome="done"` unless the latest verification for that run is all PASS.
+The next slice added `manifest_dev_request_verification`: when the executor believed implementation was ready, it called this tool with the manifest path and run id. At the time, the extension parsed Acceptance Criteria and Global Invariants, spawned one clean Pi subagent verifier session per gate through `@gotgenes/pi-subagents` with inherited context disabled, aggregated PASS / FAIL / BLOCKED reports, persisted the verification entry, and rejected `outcome="done"` unless the latest verification for that run was all PASS. That verifier fanout mechanism is historical and has been superseded by the JSON subprocess runner ADR.
 
 Repair-session resumption remains executor-mediated for now: failed verification returns a report to the active executor, which repairs and calls verification again. A fuller persisted state machine, executor checkpointing, and optional judge/fork handling for contested verifier reports remain future runtime work.
 
@@ -52,7 +54,7 @@ Repair-session resumption remains executor-mediated for now: failed verification
 - README and distribution docs must stay synchronized so Pi has the same easy upgrade story as the other plugin targets.
 - Runtime semantics can drift from Claude/Codex `/do` if shared invariants are not represented as tests or conformance fixtures.
 - The Pi target reference will carry more implementation knowledge than simpler generated targets, so it must be kept evidence-backed and updated when Pi package/runtime APIs change.
-- The current verifier fanout depends on `@gotgenes/pi-subagents` being installed and enabled in Pi; package peer dependency alone does not publish the service.
+- At the time of this ADR, verifier fanout depended on `@gotgenes/pi-subagents` being installed and enabled in Pi; package peer dependency alone did not publish the service. This dependency is no longer current after the JSON subprocess runner change.
 - Repair routing is still prompt-mediated through the active executor session rather than a fully persisted runtime state machine.
 
 ## Source

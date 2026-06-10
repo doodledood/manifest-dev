@@ -52,14 +52,14 @@ The top-level Harness-level Do worker session that implements Deliverables and r
 _Avoid_: Main session.
 
 **Harness-level Do**:
-A Pi-native runtime entrypoint that replaces the portable `/do` skill. The current Pi extension provides command entrypoints, a clean verifier subagent fanout, and a structured done/escalate outcome gate. The remaining target architecture adds fuller persisted orchestration of executor checkpoints, repair-session resumption, escalation state, and optional contested-verifier handling.
+A Pi-native runtime entrypoint that replaces the portable `/do` skill. The current Pi extension provides command entrypoints, manifest-dev-owned JSON subprocess verifier fanout, and a structured done/escalate outcome gate. The remaining target architecture adds fuller persisted orchestration of executor checkpoints, repair-session resumption, escalation state, and optional contested-verifier handling.
 
 **Verification Orchestrator Session**:
 A clean Pi session started by Harness-level Do after an **Executor Session** checkpoint to coordinate authoritative verification from zero inherited executor conversation, launch **Verifier Sessions**, aggregate their reports, and return the result to the runtime.
 _Avoid_: Main verification loop.
 
 **Verifier Session**:
-A clean Pi subagent session spawned by a **Verification Orchestrator Session** to evaluate exactly one **Acceptance Criterion** or **Global Invariant** from the **Manifest**. It does not inherit the **Executor Session** conversation and returns PASS, FAIL, or BLOCKED evidence to the runtime.
+A clean verifier execution context launched by a **Verification Orchestrator Session** to evaluate exactly one **Acceptance Criterion** or **Global Invariant** from the **Manifest**. In Pi this is a `pi --mode json` subprocess; in subagent-capable hosts it may be a general-purpose subagent. It does not inherit the **Executor Session** conversation and returns PASS, FAIL, or BLOCKED evidence to the runtime.
 
 **Verification Judge**:
 An optional fallback adjudicator with `/do`'s execution context that can review contested verifier reports or dubious blockers when the normal executor-verifier loop does not converge.

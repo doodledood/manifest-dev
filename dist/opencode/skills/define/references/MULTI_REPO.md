@@ -55,9 +55,9 @@ Worked example:
 
 ## Cross-repo gates and BLOCKED state
 
-Cross-repo verification often depends on prerequisites the user controls ("all PRs deployed to staging"). The verifier subagent for such an AC returns **BLOCKED** with a note describing what's pending, and /do routes the BLOCKED via /escalate so the user can take the action. After the user signals readiness ("deployed", "go ahead"), re-invoke /do to re-evaluate the criterion.
+Cross-repo verification often depends on prerequisites the user controls ("all PRs deployed to staging"). The verifier execution context for such an AC returns **BLOCKED** with a note describing what's pending, and /do routes the BLOCKED via /escalate so the user can take the action. After the user signals readiness ("deployed", "go ahead"), re-invoke /do to re-evaluate the criterion.
 
-When the manifest declares `Repos:`, every verifier subagent invocation gets the cross-repo path map injected as part of the verbatim prompt so verifiers have access to all repos' paths:
+When the manifest declares `Repos:`, every verifier execution context gets the cross-repo path map injected as part of the verbatim prompt so verifiers have access to all repos' paths:
 
 ```
 Available repos: backend=/home/user/projects/api, frontend=/home/user/projects/web

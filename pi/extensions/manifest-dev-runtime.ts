@@ -11,7 +11,7 @@ export type GateKind = "acceptance_criterion" | "global_invariant";
 // into every gate's verifier prompt; a verifier that finds the gate is blocked only on an
 // external wait appends this marker, and the runtime routes the failure to a pending exit
 // instead of repair. Defined here (not in the executor prompt) so it reaches the verifier
-// subagent for synthesized AND --manifest runs alike.
+// execution context for synthesized AND --manifest runs alike.
 export const WAIT_PENDING_MARKER = "WAIT-PENDING";
 export const CI_WAIT_PENDING_VERIFIER_RULE = `
 CI one-shot wait-pending rule: if this gate's only remaining blocker is an external wait — the check-pr finding's sole directive is a wait ("bash sleep <N>; reinvoke") and nothing is actionable (no reply / reply-and-resolve / retrigger / sync-description / re-request-review / prose fix) — append the token ${WAIT_PENDING_MARKER} on its own line in DETAILS. Pick the VERDICT by the normal rules above (a reviewer / CI / merge-window wait is typically BLOCKED — a human/external condition, not a workspace-repairable defect); the runtime treats either FAIL or BLOCKED carrying ${WAIT_PENDING_MARKER} as a pending exit instead of looping repair or escalating. Omit ${WAIT_PENDING_MARKER} entirely if anything here is actionable.`;
@@ -64,10 +64,6 @@ export interface SubagentRecord {
 	error?: string;
 }
 
-export interface SubagentsRecordService {
-	getRecord(id: string): SubagentRecord | undefined;
-}
-
 export function extractManifestGates(manifest: string): ManifestGate[] {
 	const gateMatches = [...manifest.matchAll(/^\s*-\s+\[(AC-\d+(?:\.\d+)+|INV-G\d+)\]\s*(.+?)\s*$/gm)];
 	return gateMatches.flatMap((match, index) => {
@@ -112,7 +108,7 @@ export function buildGateVerifierPrompt(args: {
 		? `\nRepository path map (use the absolute path for each repo when inspecting a non-cwd repo):\n${reposEntries.map(([name, path]) => `- ${name}: ${path}`).join("\n")}\n`
 		: "";
 
-	return `You are a manifest-dev verifier running in a clean Pi subagent session.
+	return `You are a manifest-dev verifier running in a clean Pi JSON subprocess.
 
 Verify exactly one manifest gate. Do not implement fixes. Inspect the workspace, run focused commands when useful, and judge only the assigned gate.
 ${reposBlock}
@@ -140,26 +136,6 @@ ${args.manifest}
 \`\`\``;
 }
 
-export async function waitForVerifierRecords(
-	subagents: SubagentsRecordService,
-	agentIds: string[],
-	options: { timeoutMs?: number; intervalMs?: number } = {},
-): Promise<Map<string, SubagentRecord | undefined>> {
-	const timeoutMs = options.timeoutMs ?? 30 * 60 * 1000;
-	const intervalMs = options.intervalMs ?? 1000;
-	const deadline = Date.now() + timeoutMs;
-	while (Date.now() < deadline) {
-		const records = new Map(agentIds.map((agentId) => [agentId, subagents.getRecord(agentId)]));
-		const stillRunning = [...records.values()].some((record) => (
-			!record || record.status === "queued" || record.status === "running"
-		));
-		if (!stillRunning) return records;
-		await delay(intervalMs);
-	}
-
-	return new Map(agentIds.map((agentId) => [agentId, subagents.getRecord(agentId)]));
-}
-
 export function toGateVerificationResult(
 	gate: ManifestGate,
 	agentId: string,
@@ -172,9 +148,9 @@ export function toGateVerificationResult(
 			title: gate.title,
 			agentId,
 			verdict: "BLOCKED",
-			evidence: "Verifier subagent record disappeared before aggregation.",
+			evidence: "Verifier record disappeared before aggregation.",
 			details: "Runtime could not retrieve the verifier result.",
-			error: "missing_subagent_record",
+			error: "missing_verifier_record",
 		};
 	}
 
@@ -186,7 +162,7 @@ export function toGateVerificationResult(
 			agentId,
 			agentStatus: record.status,
 			verdict: "BLOCKED",
-			evidence: `Verifier subagent ended with status=${record.status}.`,
+			evidence: `Verifier runner ended with status=${record.status}.`,
 			details: record.error ?? "Verifier did not complete cleanly.",
 			rawResult: record.result,
 			error: record.error,
@@ -368,10 +344,6 @@ function unescapeQuotedYaml(value: string): string {
 
 function firstLine(value: string): string {
 	return value.split("\n")[0]?.trim() || "No evidence reported.";
-}
-
-function delay(ms: number): Promise<void> {
-	return new Promise((resolveDelay) => setTimeout(resolveDelay, ms));
 }
 
 function parsePhase(value: string | undefined): number {

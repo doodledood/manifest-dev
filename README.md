@@ -28,11 +28,10 @@ codex plugin add manifest-dev@manifest-dev
 codex plugin add manifest-dev-tools@manifest-dev
 
 # Pi — repo-root package, shared skills plus Harness-level commands
-pi install npm:@gotgenes/pi-subagents
 pi install git:github.com/doodledood/manifest-dev@main
 ```
 
-Pi exposes shared skills as `/skill:<name>` commands and registers `/do`, `/auto`, and `/babysit-pr` through its runtime extension. Harness-level Do keeps the executor simple: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop. The runtime starts clean verification attempts, records a clean verification orchestration session, fans out clean verifier subagent sessions — one per Acceptance Criterion and Global Invariant, injects failed-gate evidence back into the executor as follow-up work, and records done only after every gate passes. The Pi verifier fanout bypasses the subagents package's default background queue and uses its own cap (`--manifest-verifier-max-concurrent`, default 24), so 20+ same-phase verifier sessions can run in parallel.
+Pi exposes shared skills as `/skill:<name>` commands and registers `/do`, `/auto`, and `/babysit-pr` through its runtime extension. Harness-level Do keeps the executor simple: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop. The runtime starts clean verification attempts, records a clean verification orchestration session, fans out manifest-dev-owned Pi JSON subprocess verifiers — one per Acceptance Criterion and Global Invariant — injects failed-gate evidence back into the executor as follow-up work, and records done only after every gate passes. The Pi verifier fanout uses its own cap (`--manifest-verifier-max-concurrent`, default 10) and does not require a separate verifier fanout package.
 
 Then work through the three beats:
 
@@ -67,7 +66,7 @@ Babysit an existing PR through review without any manifest-dev setup:
 
 `/babysit-pr` is the author-side companion to `/review-pr`: review applies quality pressure through comments and thread advancement; babysit uses the strongest available grounding (manifest, PR description, commits/diff, then comments) to get the PR green and mergeable without pressing merge. In trusted same-repo CI it may auto-fix, commit, and push; on untrusted or unwritable heads it reports/escalates instead.
 
-In Pi, install `npm:@gotgenes/pi-subagents` once, then use `/do <manifest-path>` for execution, `/auto <task>` for the autonomous chain, and `/babysit-pr <pr-url>` for PR lifecycle tending.
+In Pi, install the repo-root package, then use `/do <manifest-path>` for execution, `/auto <task>` for the autonomous chain, and `/babysit-pr <pr-url>` for PR lifecycle tending.
 
 Pass `--canvas` to `/define` (desktop only) for a **Shared Understanding Canvas**: a live, browser-rendered side-channel that runs alongside the chat. Intent, flow, and scope render as you go (mermaid diagrams, before/after panels), so misalignment shows up while you can still cheaply fix it. The manifest stays the formal encoding for `/do`.
 
@@ -87,7 +86,7 @@ Run `source ~/.zshrc` once. After that, updates are just `upgrade-manifest-dev-c
 
 The OpenCode installer writes to its global config (`~/.config/opencode/`) so components load in every project. Use `--local` for the current repo only, and restart the CLI after updates (config-time files load at startup).
 
-Pi owns its package lifecycle. Use `pi install npm:@gotgenes/pi-subagents` once to enable clean verifier sessions, `pi install -l git:github.com/doodledood/manifest-dev@main` for project-local manifest-dev installs, `pi update` or `pi update --extensions` to update installed packages, and `pi remove git:github.com/doodledood/manifest-dev` to remove the repo package.
+Pi owns its package lifecycle. Use `pi install -l git:github.com/doodledood/manifest-dev@main` for project-local manifest-dev installs, `pi update` or `pi update --extensions` to update installed packages, and `pi remove git:github.com/doodledood/manifest-dev` to remove the repo package.
 
 Uninstall uses the same entrypoints:
 
@@ -105,7 +104,7 @@ Most spec-driven tools take your description and generate a spec, a plan, and th
 
 This flips the order. Understanding comes first and it's adversarial — `/figure-out` presses the load-bearing question, investigates the code instead of asking you, and refuses to leap to the implied edit. Only once the problem is actually understood does `/define` encode it, and what it encodes is an *acceptance contract*: the things you'd reject in review but wouldn't think to write down. Not "use Zod, disable the button while submitting." Instead: "invalid credentials show an error without clearing the password field," "the form can't be submitted twice." You set the bar. The agent picks how to clear it.
 
-Then `/do` proves it cleared the bar. Every Acceptance Criterion and Global Invariant gets its own verifier subagent before completion. Failures get fixed and re-checked without you in the loop. The manifest is ephemeral — it drives one PR, then the code is the source of truth. No spec to maintain, nothing to drift.
+Then `/do` proves it cleared the bar. Every Acceptance Criterion and Global Invariant gets its own verifier execution context before completion (a verifier subagent on subagent-capable hosts, a Pi JSON subprocess in Pi). Failures get fixed and re-checked without you in the loop. The manifest is ephemeral — it drives one PR, then the code is the source of truth. No spec to maintain, nothing to drift.
 
 ## How It Works
 
@@ -251,12 +250,12 @@ Every criterion carries a `verify` block. One required field, three optional:
 
 | Field | Required | Purpose |
 |-------|----------|---------|
-| `prompt` | yes | Verbatim instruction to the general-purpose verifier subagent — run a bash command, inspect files, query an API, fetch docs, or activate a skill (e.g. the `review-code` skill for one dimension), whatever it takes. |
+| `prompt` | yes | Verbatim instruction to the general-purpose verifier execution context — run a bash command, inspect files, query an API, fetch docs, or activate a skill (e.g. the `review-code` skill for one dimension), whatever it takes. |
 | `model` | no | Model override (e.g. `claude-haiku-4-5-20251001` for speed). Defaults to the invoking session's model. |
 | `phase` | no | Integer, default `1`. Lower phases run first; slow checks (e2e, deploy-dependent) wait in a later phase so cheap checks fail fast. |
 
 ```yaml
-# Cheap bash check via general-purpose subagent
+# Cheap bash check via the general-purpose verifier execution context
 verify:
   prompt: "Run: npm run test -- --coverage. PASS only if exit 0 and coverage shows ≥80%."
 
@@ -274,18 +273,18 @@ A verifier returns one of three states. **PASS** — the criterion holds. **FAIL
 
 ## Multi-CLI Support
 
-The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs. OpenCode and Codex have one-command installers — run them again to update, or pass `uninstall` to remove only manifest-dev-managed files. Pi uses its native package manager from the repository root plus `npm:@gotgenes/pi-subagents` for clean verifier sessions. Installer-based targets include core `manifest-dev` components (suffixed `-manifest-dev`) and `manifest-dev-tools` skills (suffixed `-manifest-dev-tools`); Pi keeps package-scoped skill names.
+The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs. OpenCode and Codex have one-command installers — run them again to update, or pass `uninstall` to remove only manifest-dev-managed files. Pi uses its native package manager from the repository root and owns Harness-level verification with Pi JSON subprocess fanout. Installer-based targets include core `manifest-dev` components (suffixed `-manifest-dev`) and `manifest-dev-tools` skills (suffixed `-manifest-dev-tools`); Pi keeps package-scoped skill names.
 
-manifest-dev ships no agents of its own — verification is always a general-purpose subagent whose prompt can activate a skill — so distributions carry skills only.
+manifest-dev ships no agents of its own, so distributions carry skills only. Claude-style and OpenCode/Codex verification use a general-purpose subagent whose prompt can activate a skill; Pi runs the same per-gate verifier prompt in a manifest-dev-owned JSON subprocess.
 
 | CLI | Install | Skills | Verification | Details |
 |-----|---------|--------|--------------|---------|
 | Claude Code | `/plugin install` | Full | General-purpose subagent per criterion | Primary target |
 | OpenCode | `curl .../opencode/install.sh \| bash` | Full | General-purpose subagent per criterion | [README](dist/opencode/README.md) |
 | Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` | Full | General-purpose subagent per criterion | [README](dist/codex/README.md) |
-| Pi | `pi install npm:@gotgenes/pi-subagents` then `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | Clean verifier fanout + outcome gate | [README](dist/pi/README.md) |
+| Pi | `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | JSON subprocess verifier fanout + outcome gate | [README](dist/pi/README.md) |
 
-After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and the current Harness-level Do verifier fanout plus outcome gate.
+After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and the current Harness-level Do JSON verifier fanout plus outcome gate.
 
 Architecture decisions, including the accepted Codex plugin-native migration plan, are indexed in [`docs/adr/`](docs/adr/README.md).
 
