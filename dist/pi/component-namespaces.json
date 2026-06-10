@@ -25,7 +25,7 @@
   },
   "agents": {},
   "agents_note": {
-    "_note": "manifest-dev ships zero agents. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`), shipped under dist/pi/skills/. Verification is always a general-purpose subagent whose verify.prompt activates a skill — there is no verify.agent field."
+    "_note": "manifest-dev ships zero agents. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`), shipped under dist/pi/skills/. Pi verification is runtime-owned JSON subprocess fanout whose verify.prompt can activate a skill — there is no verify.agent field."
   },
   "commands": {
     "do": "Pi Harness-level Do entrypoint for an existing manifest (core package).",
@@ -34,10 +34,8 @@
   },
   "tools": {},
   "runtime_internal": {
-    "verification": "Runtime-owned verifier fanout over manifest Acceptance Criteria and Global Invariants; not exposed as an executor-callable tool.",
+    "verification": "Runtime-owned JSON subprocess verifier fanout over manifest Acceptance Criteria and Global Invariants; not exposed as an executor-callable tool.",
     "outcome": "Runtime-owned done and blocker outcomes after verifier fanout; not exposed as an executor-callable tool."
   },
-  "runtime_dependencies": {
-    "@gotgenes/pi-subagents": "Required for clean verifier subagent sessions."
-  }
+  "runtime_dependencies": {}
 }

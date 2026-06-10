@@ -4,8 +4,6 @@ import manifestDevExtension, { launchFlagFromArgv } from "../pi/extensions/manif
 import manifestDevToolsExtension from "../packages/manifest-dev-pi-tools/pi/extensions/manifest-dev-tools.ts";
 
 const VERIFIER_FLAGS = [
-	"manifest-verifier-max-turns",
-	"manifest-verifier-timeout-ms",
 	"manifest-verifier-max-concurrent",
 ];
 
@@ -63,10 +61,10 @@ test("launchFlagFromArgv reads --name value and --name=value forms", () => {
 		"3",
 	);
 	assert.equal(
-		launchFlagFromArgv("manifest-verifier-max-turns", [
-			"node", "pi", "--manifest-verifier-max-turns=42",
+		launchFlagFromArgv("manifest-verifier-max-concurrent", [
+			"node", "pi", "--manifest-verifier-max-concurrent=42",
 		]),
 		"42",
 	);
-	assert.equal(launchFlagFromArgv("manifest-verifier-timeout-ms", ["node", "pi", "-e", "/repo"]), undefined);
+	assert.equal(launchFlagFromArgv("manifest-verifier-max-concurrent", ["node", "pi", "-e", "/repo"]), undefined);
 });

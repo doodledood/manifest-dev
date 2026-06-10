@@ -1,4 +1,5 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn as spawnChildProcess } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
@@ -19,12 +20,11 @@ import {
 	shouldTerminateOutcome,
 	toGateVerificationResult,
 	unquote,
-	waitForVerifierRecords,
 	writeRunStateFile,
 	WAIT_PENDING_MARKER,
 	type GateVerificationResult,
 	type ManifestGate,
-	type SubagentsRecordService,
+	type SubagentRecord,
 	type VerificationRecord,
 } from "./manifest-dev-runtime.ts";
 
@@ -50,18 +50,6 @@ export interface RunRecord {
 	ciOneShot?: boolean;
 }
 
-interface SubagentsService extends SubagentsRecordService {
-	spawn(type: string, prompt: string, options?: {
-		description?: string;
-		model?: string;
-		maxTurns?: number;
-		thinkingLevel?: string;
-		inheritContext?: boolean;
-		foreground?: boolean;
-		bypassQueue?: boolean;
-	}): string;
-}
-
 const RUN_ENTRY = "manifest-dev:run";
 const VERIFICATION_ENTRY = "manifest-dev:verification";
 const OUTCOME_ENTRY = "manifest-dev:outcome";
@@ -69,27 +57,35 @@ const STATUS_ENTRY = "manifest-dev:status";
 // WAIT_PENDING_MARKER and the verifier-facing derivation rule live in the runtime module
 // (manifest-dev-runtime.ts) so the rule reaches the spawned verifier prompt, not just the
 // executor prompt. Imported above.
-const SUBAGENTS_PACKAGE = "@gotgenes/pi-subagents";
 
-// Verifiers always run as a general-purpose subagent that loads whatever skill
-// the gate's verify.prompt names — there is no per-gate or configurable verifier
-// agent selection.
-const VERIFIER_AGENT_TYPE = "general-purpose";
-const DEFAULT_VERIFIER_MAX_TURNS = 1000;
-const DEFAULT_VERIFIER_TIMEOUT_MS = 30 * 60 * 1000;
-const DEFAULT_VERIFIER_MAX_CONCURRENT = 24;
-const FLAG_MAX_TURNS = "manifest-verifier-max-turns";
-const FLAG_TIMEOUT_MS = "manifest-verifier-timeout-ms";
+const VERIFIER_RUNNER_TYPE = "pi-json-subprocess";
+const DEFAULT_VERIFIER_MAX_CONCURRENT = 10;
 const FLAG_MAX_CONCURRENT = "manifest-verifier-max-concurrent";
+const PI_BIN_ENV = "MANIFEST_DEV_PI_BIN";
 const HARNESS_TOOL_NAMES = new Set([
 	"manifest_dev_request_verification",
 	"manifest_dev_report_outcome",
 ]);
 
 interface VerifierConfig {
-	maxTurns: number;
-	timeoutMs: number;
 	maxConcurrent: number;
+}
+
+interface VerifierJsonCommand {
+	command: string;
+	args: string[];
+	stdin: string;
+	cwd: string;
+}
+
+interface VerifierSubprocessRequest {
+	gate: ManifestGate;
+	prompt: string;
+	cwd: string;
+	description: string;
+	model?: string;
+	thinkingLevel?: string;
+	piBin?: string;
 }
 
 export interface RuntimeState {
@@ -118,22 +114,14 @@ export function createRuntimeState(): RuntimeState {
  * fallback, since Pi's getFlag is per-extension.
  */
 export function registerVerifierFlags(pi: ExtensionAPI): void {
-	pi.registerFlag(FLAG_MAX_TURNS, {
-		description: `Max turns per manifest-dev verifier subagent (default ${DEFAULT_VERIFIER_MAX_TURNS}).`,
-		type: "string",
-	});
-	pi.registerFlag(FLAG_TIMEOUT_MS, {
-		description: `Timeout in ms to wait for manifest-dev verifier subagents (default ${DEFAULT_VERIFIER_TIMEOUT_MS}).`,
-		type: "string",
-	});
 	pi.registerFlag(FLAG_MAX_CONCURRENT, {
-		description: `Max manifest-dev verifier subagents to run in parallel per phase (default ${DEFAULT_VERIFIER_MAX_CONCURRENT}).`,
+		description: `Max manifest-dev JSON verifier subprocesses to run in parallel per phase (default ${DEFAULT_VERIFIER_MAX_CONCURRENT}).`,
 		type: "string",
 	});
 }
 
 /**
- * Wire the shared Harness-level Do runtime (subagent tracking, verification on
+ * Wire the shared Harness-level Do runtime (child-session tracking, verification on
  * executor checkpoints, repair routing) onto `state`. `ownedCommands` scopes
  * which persisted runs this instance rehydrates, so the core and tools packages
  * can each run their own runtime without double-verifying each other's runs.
@@ -484,38 +472,17 @@ async function runHarnessVerification(
 		});
 	}
 
-	const subagents = await getSubagentsService();
-	if (!subagents) {
-		return makeBlockedVerificationRecord({
-			runId: run.runId,
-			manifestPath,
-			manifest,
-			cwd: ctx.cwd,
-			requestedAt,
-			implementationSummary: params.implementationSummary,
-			blocker: `Pi subagents service is unavailable. Install and enable it with: pi install npm:${SUBAGENTS_PACKAGE}`,
-			orchestratorSessionId: orchestrator.id,
-			orchestratorSessionFile: orchestrator.file,
-			workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
-		});
-	}
-
 	const config = resolveVerifierConfig(pi);
 	const reposMap = extractReposMap(manifest);
 	const batches = planVerifierBatches(gates);
 	const results: GateVerificationResult[] = [];
-	let totalSpawned = 0;
+	const thinkingLevel = resolveThinkingLevel(pi);
 
 	for (const batch of batches) {
 		const phaseResultStart = results.length;
 
 		for (const chunk of chunkManifestGates(batch, config.maxConcurrent)) {
-			const spawnedInChunk: Array<{
-				gate: ManifestGate;
-				agentId: string;
-			}> = [];
-
-			for (const gate of chunk) {
+			const records = await Promise.all(chunk.map(async (gate) => {
 				const prompt = buildGateVerifierPrompt({
 					gate,
 					manifestPath,
@@ -528,52 +495,19 @@ async function runHarnessVerification(
 					ciOneShot: run.ciOneShot,
 				});
 				const verifierModel = resolveVerifierModel(gate.model, ctx.model);
-				const spawnOptions = {
-					description: `${gate.id}: ${gate.title}`.slice(0, 120),
-					inheritContext: false,
-					foreground: false,
-					bypassQueue: true,
-					maxTurns: config.maxTurns,
-					...(verifierModel ? { model: verifierModel } : {}),
-				};
-
-				const spawn = spawnVerifier(subagents, VERIFIER_AGENT_TYPE, prompt, spawnOptions);
-				if (spawn.ok) {
-					totalSpawned += 1;
-					spawnedInChunk.push({ gate, agentId: spawn.agentId });
-				} else if (totalSpawned === 0) {
-					// No verifier has spawned at all — treat this as a systemic harness
-					// orchestration failure (e.g. a stale Pi session context at the
-					// checkpoint) and report ONE clear blocker, instead of an identical
-					// BLOCKED on every gate that never actually ran.
-					return makeBlockedVerificationRecord({
-						runId: run.runId,
-						manifestPath,
-						manifest,
-						cwd: ctx.cwd,
-						requestedAt,
-						implementationSummary: params.implementationSummary,
-						blocker: buildOrchestrationSpawnBlocker(run, ctx.sessionManager.getSessionId(), spawn.error),
-						orchestratorSessionId: orchestrator.id,
-						orchestratorSessionFile: orchestrator.file,
-						workspaceDiffSha256: workspaceDiffSha256(ctx.cwd),
-					});
-				} else {
-					// Some verifiers already spawned, so spawning works in general; keep a
-					// per-gate blocker for this one rather than failing the whole attempt.
-					results.push(spawnBlockedResult(gate, VERIFIER_AGENT_TYPE, spawn.error));
-				}
-			}
-
-			if (spawnedInChunk.length > 0) {
-				const records = await waitForVerifierRecords(
-					subagents,
-					spawnedInChunk.map((item) => item.agentId),
-					{ timeoutMs: config.timeoutMs },
-				);
-				for (const item of spawnedInChunk) {
-					results.push(toGateVerificationResult(item.gate, item.agentId, records.get(item.agentId)));
-				}
+				const description = `${gate.id}: ${gate.title}`.slice(0, 120);
+				const record = await runVerifierSubprocess({
+					gate,
+					prompt,
+					cwd: ctx.cwd,
+					description,
+					model: verifierModel,
+					thinkingLevel,
+				});
+				return { gate, record };
+			}));
+			for (const { gate, record } of records) {
+				results.push(toGateVerificationResult(gate, record.id, record));
 			}
 		}
 
@@ -824,17 +758,6 @@ function hideHarnessToolsFromExecutor(pi: ExtensionAPI): void {
 	if (filtered.length !== active.length) pi.setActiveTools(filtered);
 }
 
-async function getSubagentsService(): Promise<SubagentsService | undefined> {
-	try {
-		const module = await import(SUBAGENTS_PACKAGE) as {
-			getSubagentsService?: () => SubagentsService | undefined;
-		};
-		return module.getSubagentsService?.();
-	} catch {
-		return undefined;
-	}
-}
-
 function isGithubPr(value: string): boolean {
 	return /^https:\/\/github\.com\/[^/]+\/[^/]+\/pull\/\d+(?:[/?#].*)?$/.test(value)
 		|| /^gh:[^/]+\/[^/]+\/\d+$/.test(value)
@@ -882,16 +805,6 @@ function readVerifierFlag(pi: ExtensionAPI, name: string): string | undefined {
 
 function resolveVerifierConfig(pi: ExtensionAPI): VerifierConfig {
 	return {
-		maxTurns: resolvePositiveIntConfig({
-			flag: readVerifierFlag(pi, FLAG_MAX_TURNS),
-			env: process.env.MANIFEST_DEV_VERIFIER_MAX_TURNS,
-			fallback: DEFAULT_VERIFIER_MAX_TURNS,
-		}),
-		timeoutMs: resolvePositiveIntConfig({
-			flag: readVerifierFlag(pi, FLAG_TIMEOUT_MS),
-			env: process.env.MANIFEST_DEV_VERIFIER_TIMEOUT_MS,
-			fallback: DEFAULT_VERIFIER_TIMEOUT_MS,
-		}),
 		maxConcurrent: resolvePositiveIntConfig({
 			flag: readVerifierFlag(pi, FLAG_MAX_CONCURRENT),
 			env: process.env.MANIFEST_DEV_VERIFIER_MAX_CONCURRENT,
@@ -900,69 +813,199 @@ function resolveVerifierConfig(pi: ExtensionAPI): VerifierConfig {
 	};
 }
 
-function spawnBlockedResult(gate: ManifestGate, requestedType: string, error: unknown): GateVerificationResult {
+function resolveThinkingLevel(pi: ExtensionAPI): string | undefined {
+	try {
+		const level = pi.getThinkingLevel?.();
+		return typeof level === "string" && level.trim() ? level.trim() : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+export function buildVerifierJsonCommand(request: VerifierSubprocessRequest): VerifierJsonCommand {
+	const command = request.piBin?.trim() || process.env[PI_BIN_ENV]?.trim() || "pi";
+	const args = [
+		"--mode",
+		"json",
+		"--print",
+		"--no-session",
+		"--name",
+		request.description,
+	];
+	const model = request.model?.trim();
+	if (model) args.push("--model", model);
+	const thinkingLevel = request.thinkingLevel?.trim();
+	if (thinkingLevel) args.push("--thinking", thinkingLevel);
 	return {
-		gateId: gate.id,
-		kind: gate.kind,
-		title: gate.title,
-		verdict: "BLOCKED",
-		evidence: `Could not spawn verifier subagent (type "${requestedType}").`,
-		details: formatError(error),
-		error: "spawn_failed",
+		command,
+		args,
+		stdin: request.prompt,
+		cwd: request.cwd,
 	};
 }
 
-/**
- * Spawn one verifier subagent. Returns the agentId or the thrown error. spawn() is
- * synchronous and returns the agentId immediately (@gotgenes/pi-subagents
- * service-adapter.ts), so a thrown attempt creates no child to leak. We do NOT retry:
- * the subagents service reads its stored `currentCtx` (captured at session_start) when
- * building the parent snapshot, and that reference is only refreshed by another
- * session lifecycle event — never within a microtask — so an immediate re-spawn would
- * read the same stale ctx and throw identically. A spawn failure is surfaced instead.
- */
-export function spawnVerifier(
-	subagents: Pick<SubagentsService, "spawn">,
-	type: string,
-	prompt: string,
-	options: Parameters<SubagentsService["spawn"]>[2],
-): { ok: true; agentId: string } | { ok: false; error: unknown } {
-	try {
-		return { ok: true, agentId: subagents.spawn(type, prompt, options) };
-	} catch (error) {
-		return { ok: false, error };
+export async function runVerifierSubprocess(request: VerifierSubprocessRequest): Promise<SubagentRecord> {
+	const id = `pi-json-${request.gate.id.replace(/[^A-Za-z0-9._-]/g, "_")}-${randomUUID()}`;
+	const command = buildVerifierJsonCommand(request);
+	const processResult = await collectVerifierProcess(command);
+	if (processResult.error) {
+		return makeVerifierErrorRecord({
+			id,
+			description: request.description,
+			summary: `Could not start Pi JSON verifier subprocess: ${formatError(processResult.error)}`,
+			stdout: processResult.stdout,
+			stderr: processResult.stderr,
+		});
 	}
+	if (processResult.code !== 0) {
+		return makeVerifierErrorRecord({
+			id,
+			description: request.description,
+			summary: `Pi JSON verifier subprocess exited with code ${processResult.code ?? "unknown"}${processResult.signal ? ` (signal ${processResult.signal})` : ""}.`,
+			stdout: processResult.stdout,
+			stderr: processResult.stderr,
+		});
+	}
+
+	const result = extractFinalAssistantTextFromJsonEvents(processResult.stdout);
+	if (!result) {
+		return makeVerifierErrorRecord({
+			id,
+			description: request.description,
+			summary: "Pi JSON verifier subprocess exited 0 but did not emit a final assistant message.",
+			stdout: processResult.stdout,
+			stderr: processResult.stderr,
+		});
+	}
+
+	return {
+		id,
+		type: VERIFIER_RUNNER_TYPE,
+		description: request.description,
+		status: "completed",
+		result,
+	};
 }
 
-/**
- * True if `error` is Pi's stale-extension-context guard (loader.js/runner.js
- * `invalidate`), which the subagents service surfaces through `spawn` when its stored
- * session context was invalidated by a session replacement/reload before the
- * verifier checkpoint.
- */
-export function isStaleSessionContextError(error: unknown): boolean {
-	return /stale after session replacement or reload/i.test(formatError(error));
+function makeVerifierErrorRecord(args: {
+	id: string;
+	description: string;
+	summary: string;
+	stdout: string;
+	stderr: string;
+}): SubagentRecord {
+	return {
+		id: args.id,
+		type: VERIFIER_RUNNER_TYPE,
+		description: args.description,
+		status: "error",
+		error: formatVerifierProcessDetails(args.summary, args.stdout, args.stderr),
+	};
 }
 
-/**
- * Blocker text for a systemic verifier-spawn failure: no verifier ran, so this is a
- * harness/runtime orchestration failure rather than a gate or implementation failure.
- * Names the underlying error and the session ids so a stale-context spawn failure is
- * diagnosable instead of being reported as an identical BLOCKED on every gate.
- */
-export function buildOrchestrationSpawnBlocker(run: RunRecord, currentSessionId: string, error: unknown): string {
-	const lines = [
-		"Verifier subagents could not be spawned, so no Acceptance Criterion or Global Invariant was verified.",
-		"This is a harness/runtime orchestration failure (verifier spawn), not an implementation or gate failure.",
-		`Underlying spawn error: ${formatError(error)}`,
-		`Diagnostics: current session ${currentSessionId}, executor session ${run.executorSessionId}.`,
-	];
-	if (isStaleSessionContextError(error)) {
-		lines.push(
-			"Cause: the Pi subagents service's stored session context was invalidated (session replacement/reload) before this checkpoint. Re-run verification from a fresh session so the service re-captures a live context.",
-		);
+function collectVerifierProcess(command: VerifierJsonCommand): Promise<{
+	code: number | null;
+	signal: NodeJS.Signals | null;
+	stdout: string;
+	stderr: string;
+	error?: unknown;
+}> {
+	return new Promise((resolveProcess) => {
+		let stdout = "";
+		let stderr = "";
+		let settled = false;
+		let spawnError: unknown;
+		let child: ReturnType<typeof spawnChildProcess>;
+		try {
+			child = spawnChildProcess(command.command, command.args, {
+				cwd: command.cwd,
+				env: process.env,
+				stdio: ["pipe", "pipe", "pipe"],
+			});
+		} catch (error) {
+			resolveProcess({ code: null, signal: null, stdout, stderr, error });
+			return;
+		}
+		child.stdout?.setEncoding("utf-8");
+		child.stderr?.setEncoding("utf-8");
+		child.stdout?.on("data", (chunk) => {
+			stdout += String(chunk);
+		});
+		child.stderr?.on("data", (chunk) => {
+			stderr += String(chunk);
+		});
+		child.once("error", (error) => {
+			spawnError = error;
+		});
+		child.once("close", (code, signal) => {
+			if (settled) return;
+			settled = true;
+			resolveProcess({ code, signal, stdout, stderr, error: spawnError });
+		});
+		child.stdin?.on("error", (error) => {
+			stderr += `\nstdin error: ${formatError(error)}`;
+		});
+		child.stdin?.end(command.stdin);
+	});
+}
+
+export function extractFinalAssistantTextFromJsonEvents(stdout: string): string | undefined {
+	let finalText: string | undefined;
+	for (const line of stdout.split(/\r?\n/)) {
+		if (!line.trim()) continue;
+		let event: unknown;
+		try {
+			event = JSON.parse(line);
+		} catch {
+			continue;
+		}
+		for (const message of assistantMessagesFromEvent(event)) {
+			const text = assistantMessageText(message);
+			if (text?.trim()) finalText = text.trim();
+		}
 	}
-	return lines.join("\n");
+	return finalText;
+}
+
+function assistantMessagesFromEvent(event: unknown): unknown[] {
+	if (!isRecord(event)) return [];
+	const messages: unknown[] = [];
+	if (event.type === "message_end" || event.type === "turn_end" || event.type === "message") {
+		messages.push(event.message);
+	}
+	if (event.type === "agent_end" && Array.isArray(event.messages)) {
+		messages.push(...event.messages);
+	}
+	return messages.filter((message) => isRecord(message) && message.role === "assistant");
+}
+
+function assistantMessageText(message: unknown): string | undefined {
+	if (!isRecord(message)) return undefined;
+	const content = message.content;
+	if (typeof content === "string") return content;
+	if (!Array.isArray(content)) return undefined;
+	const textParts = content.flatMap((part) => {
+		if (typeof part === "string") return [part];
+		if (isRecord(part) && part.type === "text" && typeof part.text === "string") return [part.text];
+		return [];
+	});
+	return textParts.length > 0 ? textParts.join("\n") : undefined;
+}
+
+function formatVerifierProcessDetails(summary: string, stdout: string, stderr: string): string {
+	const parts = [summary];
+	if (stderr.trim()) parts.push(`stderr:\n${tailText(stderr)}`);
+	if (stdout.trim()) parts.push(`stdout:\n${tailText(stdout)}`);
+	return parts.join("\n\n");
+}
+
+function tailText(value: string, maxLength = 4000): string {
+	if (value.length <= maxLength) return value.trim();
+	return value.slice(value.length - maxLength).trim();
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
 }
 
 /**

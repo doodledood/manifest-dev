@@ -1,23 +1,23 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import manifestDevExtension, {
 	buildManifestAutoPrompt,
 	buildManifestBabysitPrompt,
 	buildManifestDoPrompt,
-	buildOrchestrationSpawnBlocker,
+	buildVerifierJsonCommand,
 	createVerificationOrchestratorSession,
 	buildCiPendingSummary,
+	extractFinalAssistantTextFromJsonEvents,
 	formatRepairFollowUpMessage,
-	isStaleSessionContextError,
 	isWaitPendingVerification,
 	makeOrchestratorSessionId,
 	rehydrateRuntimeState,
 	resolveManifestPath,
 	routeVerificationResult,
+	runVerifierSubprocess,
 	shouldTriggerHarnessVerification,
-	spawnVerifier,
 	startManifestDo,
 } from "../pi/extensions/manifest-dev.ts";
 import {
@@ -42,7 +42,6 @@ import {
 	toGateVerificationResult,
 	unquote,
 	verificationToolResponse,
-	waitForVerifierRecords,
 	writeRunStateFile,
 } from "../pi/extensions/manifest-dev-runtime.ts";
 
@@ -56,7 +55,7 @@ const gate = {
 function completedRecord(result) {
 	return {
 		id: "agent-1",
-		type: "Explore",
+		type: "pi-json-subprocess",
 		description: "AC-1.1",
 		status: "completed",
 		result,
@@ -148,7 +147,7 @@ test("extractManifestGates parses AC and invariant verify prompts", () => {
 	]);
 });
 
-test("buildGateVerifierPrompt creates a single-gate clean-session contract", () => {
+test("buildGateVerifierPrompt creates a single-gate JSON subprocess contract", () => {
 	const prompt = buildGateVerifierPrompt({
 		gate,
 		manifestPath: "/tmp/manifest.md",
@@ -158,7 +157,7 @@ test("buildGateVerifierPrompt creates a single-gate clean-session contract", () 
 		orchestratorSessionId: "manifest-verify-123",
 	});
 
-	assert.match(prompt, /clean Pi subagent session/);
+	assert.match(prompt, /clean Pi JSON subprocess/);
 	assert.match(prompt, /Do not implement fixes/);
 	assert.match(prompt, /Verification orchestrator session: manifest-verify-123/);
 	assert.match(prompt, /Gate: AC-1\.1 Thing works/);
@@ -186,22 +185,22 @@ second line
 	assert.equal(parseVerifierReport("EVIDENCE: no verdict"), undefined);
 });
 
-test("toGateVerificationResult converts verifier agent terminal states", () => {
+test("toGateVerificationResult converts verifier runner terminal states", () => {
 	assert.deepEqual(toGateVerificationResult(gate, "agent-missing", undefined), {
 		gateId: "AC-1.1",
 		kind: "acceptance_criterion",
 		title: "Thing works",
 		agentId: "agent-missing",
 		verdict: "BLOCKED",
-		evidence: "Verifier subagent record disappeared before aggregation.",
+		evidence: "Verifier record disappeared before aggregation.",
 		details: "Runtime could not retrieve the verifier result.",
-		error: "missing_subagent_record",
+		error: "missing_verifier_record",
 	});
 
 	assert.equal(
 		toGateVerificationResult(gate, "agent-error", {
 			id: "agent-error",
-			type: "Explore",
+			type: "pi-json-subprocess",
 			description: "AC-1.1",
 			status: "error",
 			error: "model failed",
@@ -250,24 +249,119 @@ test("aggregateVerificationStatus gives blocked precedence over failed over pass
 	);
 });
 
-test("waitForVerifierRecords waits until queued or running agents finish", async () => {
-	let reads = 0;
-	const service = {
-		getRecord() {
-			reads += 1;
-			return reads === 1
-				? { id: "agent-1", type: "Explore", description: "AC-1.1", status: "running" }
-				: completedRecord("VERDICT: PASS\nEVIDENCE: ok\nDETAILS: ok");
-		},
-	};
-
-	const records = await waitForVerifierRecords(service, ["agent-1"], {
-		timeoutMs: 50,
-		intervalMs: 1,
+test("buildVerifierJsonCommand sends the prompt to pi json mode without suppressing resources", () => {
+	const command = buildVerifierJsonCommand({
+		gate,
+		prompt: "VERIFIER PROMPT",
+		cwd: "/repo",
+		description: "AC-1.1: Thing works",
+		model: "openai/gpt-5",
+		thinkingLevel: "high",
+		piBin: "/usr/local/bin/pi",
 	});
 
-	assert.equal(records.get("agent-1").status, "completed");
-	assert.equal(reads, 2);
+	assert.equal(command.command, "/usr/local/bin/pi");
+	assert.equal(command.cwd, "/repo");
+	assert.equal(command.stdin, "VERIFIER PROMPT");
+	assert.deepEqual(command.args, [
+		"--mode",
+		"json",
+		"--print",
+		"--no-session",
+		"--name",
+		"AC-1.1: Thing works",
+		"--model",
+		"openai/gpt-5",
+		"--thinking",
+		"high",
+	]);
+	assert.equal(command.args.includes("--no-extensions"), false);
+	assert.equal(command.args.includes("--no-skills"), false);
+});
+
+test("extractFinalAssistantTextFromJsonEvents reads the final assistant message from Pi JSONL", () => {
+	const stdout = [
+		JSON.stringify({ type: "session", id: "s" }),
+		JSON.stringify({
+			type: "message_end",
+			message: { role: "assistant", content: [{ type: "text", text: "draft" }] },
+		}),
+		JSON.stringify({
+			type: "turn_end",
+			message: { role: "assistant", content: [{ type: "text", text: "VERDICT: PASS\nEVIDENCE: ok\nDETAILS: ok" }] },
+		}),
+		"not-json",
+		"",
+	].join("\n");
+
+	assert.equal(
+		extractFinalAssistantTextFromJsonEvents(stdout),
+		"VERDICT: PASS\nEVIDENCE: ok\nDETAILS: ok",
+	);
+});
+
+test("runVerifierSubprocess captures successful final assistant text", async () => {
+	const dir = mkdtempSync(`${tmpdir()}/manifest-dev-pi-json-`);
+	const piBin = `${dir}/fake-pi-success.mjs`;
+	writeFileSync(
+		piBin,
+		`#!/usr/bin/env node
+process.stdin.resume();
+let input = "";
+process.stdin.on("data", (chunk) => { input += chunk; });
+process.stdin.on("end", () => {
+  console.log(JSON.stringify({ type: "message_end", message: { role: "assistant", content: [{ type: "text", text: "VERDICT: PASS\\nEVIDENCE: saw " + input.length + " bytes\\nDETAILS: ok" }] } }));
+});
+`,
+		"utf-8",
+	);
+	chmodSync(piBin, 0o755);
+	try {
+		const record = await runVerifierSubprocess({
+			gate,
+			prompt: "exact verifier prompt",
+			cwd: dir,
+			description: "AC-1.1: Thing works",
+			piBin,
+		});
+		assert.equal(record.type, "pi-json-subprocess");
+		assert.equal(record.status, "completed");
+		assert.match(record.result, /VERDICT: PASS/);
+		assert.match(record.result, /saw 21 bytes/);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+});
+
+test("runVerifierSubprocess reports process failures with stdout and stderr evidence", async () => {
+	const dir = mkdtempSync(`${tmpdir()}/manifest-dev-pi-json-fail-`);
+	const piBin = `${dir}/fake-pi-fail.mjs`;
+	writeFileSync(
+		piBin,
+		`#!/usr/bin/env node
+console.log(JSON.stringify({ type: "message_end", message: { role: "assistant", content: [{ type: "text", text: "partial" }] } }));
+console.error("model unavailable");
+process.exit(7);
+`,
+		"utf-8",
+	);
+	chmodSync(piBin, 0o755);
+	try {
+		const record = await runVerifierSubprocess({
+			gate,
+			prompt: "prompt",
+			cwd: dir,
+			description: "AC-1.1: Thing works",
+			piBin,
+		});
+		assert.equal(record.status, "error");
+		assert.match(record.error, /exited with code 7/);
+		assert.match(record.error, /stderr:\nmodel unavailable/);
+		assert.match(record.error, /stdout:/);
+		assert.equal(toGateVerificationResult(gate, record.id, record).verdict, "BLOCKED");
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
 });
 
 test("makeBlockedVerificationRecord and verificationToolResponse encode runtime blockers", () => {
@@ -278,7 +372,7 @@ test("makeBlockedVerificationRecord and verificationToolResponse encode runtime 
 		cwd: "/repo",
 		requestedAt: "2026-06-05T00:00:00.000Z",
 		implementationSummary: "ready",
-		blocker: "subagents service missing",
+		blocker: "verifier subprocess unavailable",
 		orchestratorSessionId: "manifest-verify-1",
 		attempt: 2,
 		workspaceDiffSha256: "diff-sha",
@@ -290,7 +384,7 @@ test("makeBlockedVerificationRecord and verificationToolResponse encode runtime 
 	assert.equal(record.attempt, 2);
 	assert.equal(record.workspaceDiffSha256, "diff-sha");
 	assert.equal(record.results[0].verdict, "BLOCKED");
-	assert.equal(record.results[0].details, "subagents service missing");
+	assert.equal(record.results[0].details, "verifier subprocess unavailable");
 
 	const response = verificationToolResponse(record);
 	assert.match(response.content[0].text, /Verification is BLOCKED/);
@@ -652,7 +746,17 @@ test("registered agent_end handler runs runtime verification path", async () => 
 
 	const dir = mkdtempSync(`${tmpdir()}/manifest-dev-agent-end-`);
 	const manifestPath = `${dir}/manifest.md`;
+	const fakePiBin = `${dir}/fake-pi-fail.mjs`;
 	writeFileSync(manifestPath, `# Manifest\n\n## 6. Deliverables\n### Deliverable 1: X\n**Acceptance Criteria:**\n- [AC-1.1] X works\n  \`\`\`yaml\n  verify:\n    prompt: "Check X"\n  \`\`\`\n`, "utf-8");
+	writeFileSync(
+		fakePiBin,
+		`#!/usr/bin/env node
+console.error("fake verifier failure");
+process.exit(2);
+`,
+		"utf-8",
+	);
+	chmodSync(fakePiBin, 0o755);
 	const ctx = {
 		cwd: dir,
 		sessionManager: { getSessionId() { return "executor-session"; } },
@@ -660,6 +764,8 @@ test("registered agent_end handler runs runtime verification path", async () => 
 		hasPendingMessages() { return false; },
 		ui: { notify() {} },
 	};
+	const previousPiBin = process.env.MANIFEST_DEV_PI_BIN;
+	process.env.MANIFEST_DEV_PI_BIN = fakePiBin;
 	try {
 		await commands.get("do").handler(manifestPath, ctx);
 		await events.get("agent_end")({}, ctx);
@@ -679,6 +785,11 @@ test("registered agent_end handler runs runtime verification path", async () => 
 		rmSync(`${process.env.HOME}/.manifest-dev/runs/${verificationEntry.data.runId}.json`, { force: true });
 		rmSync(verificationEntry.data.orchestratorSessionFile, { force: true });
 	} finally {
+		if (previousPiBin === undefined) {
+			delete process.env.MANIFEST_DEV_PI_BIN;
+		} else {
+			process.env.MANIFEST_DEV_PI_BIN = previousPiBin;
+		}
 		rmSync(dir, { recursive: true, force: true });
 	}
 });
@@ -907,15 +1018,15 @@ test("routeVerificationResult injects repair, blocked, and done runtime outcomes
 	const blockedPi = makePi();
 	await routeVerificationResult(blockedPi.pi, ctx, makeState(), baseRun, verification("blocked", [
 		gateResult("PASS"),
-		{ ...gateResult("BLOCKED"), gateId: "INV-G2", evidence: "subagents unavailable" },
+		{ ...gateResult("BLOCKED"), gateId: "INV-G2", evidence: "verifier subprocess unavailable" },
 	]));
 	assert.equal(blockedPi.calls.messages.length, 1);
 	assert.match(blockedPi.calls.messages[0].message.content, /verification is blocked/);
-	assert.match(blockedPi.calls.messages[0].message.content, /INV-G2: subagents unavailable/);
+	assert.match(blockedPi.calls.messages[0].message.content, /INV-G2: verifier subprocess unavailable/);
 	assert.doesNotMatch(blockedPi.calls.messages[0].message.content, /AC-1\.1: PASS evidence/);
 	const blockedOutcome = blockedPi.calls.entries.find((entry) => entry.customType === "manifest-dev:outcome" && entry.data.outcome === "escalate");
 	assert.ok(blockedOutcome);
-	assert.deepEqual(blockedOutcome.data.blockers, ["INV-G2: subagents unavailable"]);
+	assert.deepEqual(blockedOutcome.data.blockers, ["INV-G2: verifier subprocess unavailable"]);
 	assert.equal(blockedPi.calls.entries.some((entry) => entry.customType === "manifest-dev:run" && entry.data.status === "blocked"), true);
 
 	const passedPi = makePi();
@@ -940,41 +1051,6 @@ test("routeVerificationResult injects repair, blocked, and done runtime outcomes
 	);
 	rmSync(routeRunStateFile, { force: true });
 	rmSync(routeTmpDir, { recursive: true, force: true });
-});
-
-test("spawnVerifier returns the agentId on success and the error on failure (no retry)", () => {
-	let calls = 0;
-	const ok = spawnVerifier({ spawn() { calls += 1; return "agent-1"; } }, "general-purpose", "verify", { maxTurns: 5 });
-	assert.deepEqual(ok, { ok: true, agentId: "agent-1" });
-	assert.equal(calls, 1);
-
-	// A stale-context throw is surfaced immediately — no retry, because the subagents
-	// service only refreshes its stored ctx on a session lifecycle event, not in a tick.
-	let failCalls = 0;
-	const fail = spawnVerifier({ spawn() { failCalls += 1; throw new Error("ctx is stale after session replacement or reload"); } }, "general-purpose", "verify", undefined);
-	assert.equal(fail.ok, false);
-	assert.equal(failCalls, 1);
-	assert.equal(isStaleSessionContextError(fail.error), true);
-});
-
-test("buildOrchestrationSpawnBlocker names a harness spawn failure and the stale-context cause", () => {
-	const run = {
-		runId: "manifest-dev-run",
-		command: "do",
-		startedAt: "t",
-		cwd: "/repo",
-		executorSessionId: "executor-session",
-		status: "verifying",
-	};
-	const stale = buildOrchestrationSpawnBlocker(run, "current-session", new Error("This extension ctx is stale after session replacement or reload."));
-	assert.match(stale, /harness\/runtime orchestration failure/);
-	assert.match(stale, /no Acceptance Criterion or Global Invariant was verified/);
-	assert.match(stale, /current session current-session, executor session executor-session/);
-	assert.match(stale, /stored session context was invalidated/);
-
-	// Non-stale spawn errors omit the session-replacement cause line.
-	const other = buildOrchestrationSpawnBlocker(run, "s", new Error("No model registry available."));
-	assert.doesNotMatch(other, /stored session context was invalidated/);
 });
 
 test("buildManifestBabysitPrompt --ci sets pending cadence but does NOT carry the verifier token", () => {
