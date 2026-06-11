@@ -1,6 +1,6 @@
 ---
 name: sync-tools
-description: 'Generate multi-CLI distribution packages from the Claude Code plugin. Converts shared skills, agents, hooks, package assets, and runtime payloads for OpenCode, Codex CLI, and Pi under dist/. Run after changing plugin components to keep distributions in sync.'
+description: 'Generate multi-CLI distribution packages from the Claude Code plugin. Converts shared skills, package assets, and runtime payloads for OpenCode, Codex CLI, and Pi under dist/. Run after changing plugin components to keep distributions in sync.'
 user-invocable: true
 ---
 
@@ -24,13 +24,15 @@ Generate distribution packages for OpenCode, Codex CLI, and Pi from the Claude C
 ## Scope
 
 Sync only these source payloads:
-- `claude-plugins/manifest-dev/` — core workflow skills, agents, hooks, context.
-- `claude-plugins/manifest-dev-tools/` — tools skills (`skills/`) and tools agents (`agents/`); no hooks/context.
+- `claude-plugins/manifest-dev/` — core workflow skills.
+- `claude-plugins/manifest-dev-tools/` — tools skills.
+
+Both plugins are skills-only — manifest-dev ships no agents or hooks on any target (the former functional agents are skills).
 
 Never sync other plugins (e.g., `manifest-dev-collab` — uses Agent Teams/Slack, inherently incompatible). Never modify source files. Skip `sync-tools` skill from output (meta-tool).
 
 **Namespacing model is per-CLI** (see each reference file):
-- **Plugin-native targets (Codex, OpenCode)**: the plugin is the distribution unit. Codex: two plugins (`manifest-dev`, `manifest-dev-tools`) each bundle their skills under original names. OpenCode: one plugin entry (`dist/opencode/plugin/`) registers the whole skills payload via `skills.paths`; skills keep bare names (native discovery is first-found-wins). No install-time suffixing, no `component-namespaces.json`, no installer. Plugin-qualified skill references (`manifest-dev:<skill>`) are stripped to bare names during OpenCode and Pi sync — no namespace exists to resolve them there (Claude Code and Codex keep the qualifier).
+- **Plugin-native targets (Codex, OpenCode)**: the plugin is the distribution unit. Codex: two plugins (`manifest-dev`, `manifest-dev-tools`) each bundle their skills under original names. OpenCode: one plugin entry (`dist/opencode/plugin/`) registers the whole skills payload via `skills.paths`; skills keep bare names (native discovery is first-found-wins). No install-time suffixing, no `component-namespaces.json`, no installer. Plugin-qualified skill references (`manifest-dev:<skill>`) are stripped to bare names during OpenCode and Pi sync per each reference file; Claude Code and Codex keep the qualifier.
 - **Package target (Pi)**: each component carries plugin ownership in `component-namespaces.json` (ownership metadata — Pi keeps package-scoped skill names, no suffixing). Regenerate it on every sync from the discovered source components; never hand-maintain it.
 
 ## Per-CLI Processing
@@ -73,13 +75,13 @@ The metadata is an **optimization, not a correctness anchor**. When in doubt —
 
 | Component | Goal |
 |-----------|------|
-| **Skills** | Copy unchanged (Agent Skills Open Standard = universal) from both source payloads. Include all subdirectories. Replace operational CLAUDE.md references (e.g., "write to CLAUDE.md") with CLI context file name per reference file. Replace operational tool-name references in skill body prose with the target CLI's names (e.g., "use the Read tool" → OpenCode `read`, → Codex `read_file`; "run Bash" → OpenCode `bash`, → Codex `shell_command`) — see each reference file's tool-name lookup table. Leave research/reference content unchanged (teaching documents in `references/*.md` that explain Claude Code conventions stay Claude-Code-centric; only operational instructions remap). **Exception 1**: files in `references/execution-modes/` — replace Claude-specific model names (haiku, sonnet, opus) with `inherit`. Model tier routing is Claude Code-only; other CLIs use session model for all tiers. **Exception 2**: lines that surface a session-file path to the user (e.g. `Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl`, "Session JSONL files live at ...") — retarget per the reference file's "Session File Adaptation" section. If the target CLI has no per-session file the agent can locate at runtime, omit the line. |
-| **Agents** | Convert frontmatter per reference file — including remapping the `tools:` list to the target CLI's tool keys (see each reference file's tool-name lookup table). Keep prompt body as identical as possible to Claude Code original — categories, actionability filters, severity guidelines, output formats, out-of-scope sections are the core value. Allowed body changes: tool-name references in prose remapped to the target CLI's names (e.g., *"use the Read tool"* → OpenCode `read`, → Codex `read_file`; *"run Bash"* → OpenCode `bash`, → Codex `shell_command`). See each reference file's "Prompt Body Adaptation" / "Phase 2 (LLM)" section for the per-CLI vocabulary. Other allowed changes: context file name (CLAUDE.md → CLI name per reference file), genuinely unsupported features (document as limitation, don't remove). |
-| **Hooks** | Adapt to the target hook protocol per reference file. Generate complete, installable hook/plugin payloads. Document unavoidable runtime gaps, but do not ship stubs or require manual post-install wiring. |
+| **Skills** | Copy unchanged (Agent Skills Open Standard = universal) from both source payloads. Include all subdirectories. Replace operational CLAUDE.md references (e.g., "write to CLAUDE.md") with CLI context file name per reference file. Replace operational tool-name references in skill body prose with the target CLI's names (e.g., "use the Read tool" → OpenCode `read`, → Codex `read_file`; "run Bash" → OpenCode `bash`, → Codex `shell_command`) — see each reference file's tool-name lookup table. Leave research/reference content unchanged (teaching documents in `references/*.md` that explain Claude Code conventions stay Claude-Code-centric; only operational instructions remap). **Exception 1**: files in `references/execution-modes/` — replace Claude-specific model names (haiku, sonnet, opus) with `inherit`. Model tier routing is Claude Code-only; other CLIs use session model for all tiers. **Exception 2**: lines that surface a session-file path to the user (e.g. `Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl`, "Session JSONL files live at ...") — retarget per the reference file's session-line rule. If the target CLI has no per-session file the agent can locate at runtime, omit the line. |
+| **Agents** | None shipped — manifest-dev has no agents on any target; the former functional agents are skills. Do not generate agent files. |
+| **Hooks** | None shipped. If a future hook ships, adapt per the target's reference file — and re-derive that target's hook capability map first (the retired research is stale). |
 | **Commands** | None shipped. Codex bundles skills without command shims; OpenCode lists every discovered skill as a slash command natively (≥ v1.1.48); Pi invokes `/skill:<name>` and registers runtime commands from source-owned extensions. Do not generate command files. |
 | **Context file** | Workflow overview + agent descriptions in the CLI's native context format per reference file. |
 | **README** | Component table, install instructions, feature parity table, required config, link to GitHub repo. |
-| **Package manifest** | Generate only for targets whose reference file declares a package-native install surface. For Pi, repo-root package metadata and `pi/extensions/` runtime code are source-owned; generated shared assets under `dist/pi/` are package resources consumed by that source surface. For OpenCode, the plugin entry (`dist/opencode/plugin/package.json` + `index.js`) is generated per the reference file; its `version` mirrors the core `manifest-dev` plugin version. |
+| **Package manifest** | Generate only for targets whose reference file declares a package-native install surface. For Pi, repo-root package metadata and `pi/extensions/` runtime code are source-owned; generated shared assets under `dist/pi/` are package resources consumed by that source surface. For OpenCode, the plugin entry (`dist/opencode/plugin/package.json` + `index.js`) is generated and versioned per the reference file. |
 | **Install script** | None. No target ships an install script — Codex and OpenCode are plugin-native; Pi installs via its package manager. |
 | **CLI extras** | Extension manifests, plugin configs, execution rules — per reference file. |
 | **Namespace metadata** | **Package target (Pi) only.** Regenerate `component-namespaces.json` from source ownership every run; every distributed component appears exactly once under its component type with its owning plugin. **Plugin-native Codex and OpenCode have none** — skip them (the plugin boundary is the namespace). |
