@@ -1,6 +1,6 @@
 # manifest-dev — OpenCode CLI Distribution
 
-Verification-first manifest workflows for OpenCode CLI. Ported from the Claude Code manifest-dev plugin.
+Verification-first manifest workflows for OpenCode CLI, distributed as an **OpenCode plugin**: a clone of this repo plus one line of config. No installer, no files copied into your config directories, nothing placed in shared Agent Skills directories (so nothing bleeds into Pi, Claude Code, or Codex installs).
 
 manifest-dev ships **zero agents** — every capability is a skill. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`). Verification is always a general-purpose subagent whose prompt activates the relevant skill.
 
@@ -9,108 +9,111 @@ manifest-dev ships **zero agents** — every capability is a skill. Quality revi
 | Type | Count | Description |
 |------|-------|-------------|
 | Skills | 18 | Core workflow skills plus manifest-dev-tools utilities (incl. `review-code`, `check-pr`, `poll-slack`, `review-prompt`) |
-| Commands | 16 | User-invocable slash commands generated from user-invocable skills |
-| Context | 1 | AGENTS.md workflow overview |
+| Plugin | 1 | Dependency-free OpenCode plugin that registers the skills payload and AGENTS.md context |
+| Context | 1 | AGENTS.md workflow overview, registered via `instructions` |
+| Commands | 0 | Not shipped — OpenCode exposes every skill as a slash command natively |
 | Agents | 0 | None — all capabilities are skills |
+
+## Requirements
+
+**OpenCode v1.2.16 or newer.** Basis: this distribution was live-verified on v1.2.16, v1.3.13, v1.14.31, and v1.17.3 (plugin `config` hook + `skills.paths` registration + skill discovery, see Mechanism Verification below). Older versions can't be verified the same way (`opencode debug skill` doesn't exist before ~v1.2), and skills-as-slash-commands requires ≥ v1.1.48 regardless.
 
 ## Installation
 
-### Option 1: Remote Install via npx skills (Skills Only)
+1. Clone the repo (anywhere; `~/.manifest-dev/repo` is the documented default):
 
 ```bash
-npx skills add doodledood/manifest-dev --all -a opencode
+git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo
 ```
 
-This installs skills into `.opencode/skills/`. For commands too, use the full distribution install below.
+2. Add the plugin to your **global** OpenCode config (`~/.config/opencode/opencode.json`):
 
-### Option 2: Full Distribution Install
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["~/.manifest-dev/repo/dist/opencode/plugin"]
+}
+```
+
+3. Restart OpenCode. Config (including plugins and skills) loads once at startup and is not hot-reloaded.
+
+The `~/` form in plugin paths is live-verified on v1.17.3 but not explicitly documented by OpenCode (its docs show `./relative` — resolved from the declaring config file — and `file:///absolute`; bare absolute paths are also accepted by the spec parser and were live-verified across all four tested versions). If you prefer not to rely on `~` expansion, use an absolute path:
+
+```json
+{ "plugin": ["/home/you/.manifest-dev/repo/dist/opencode/plugin"] }
+```
+
+For a single project instead of global, put the same `plugin` entry in the project's `opencode.json`.
+
+### Updating
+
+Add this alias once (e.g. `~/.zshrc` / `~/.bashrc`):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
+alias manifest-dev-update='if [ -d ~/.manifest-dev/repo/.git ]; then git -C ~/.manifest-dev/repo pull --ff-only; else git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo; fi'
 ```
 
-This installs globally to `~/.config/opencode/`, which OpenCode loads from every project. Restart OpenCode after installing or updating so the running TUI reloads commands and skills.
+Then updating is one command — `manifest-dev-update` — followed by an OpenCode restart. The plugin has zero npm dependencies, so `git pull` is the entire update.
 
-Or clone and run locally:
+### Uninstalling
+
+Remove the `plugin` entry from your opencode.json and delete the clone. Nothing else was installed.
+
+### Migrating from the retired installer
+
+Versions of this distribution before June 2026 shipped a `curl | bash` installer that copied suffixed skills and commands into `~/.config/opencode/`. Those copies keep loading (and now produce duplicate slash-menu entries alongside this plugin) until you remove them:
 
 ```bash
-git clone https://github.com/doodledood/manifest-dev.git
-cd manifest-dev
-bash dist/opencode/install.sh
+find ~/.config/opencode/skills -maxdepth 1 -name '*-manifest-dev*' -exec rm -rf {} + 2>/dev/null
+find ~/.config/opencode/commands -maxdepth 1 -name '*-manifest-dev*' -exec rm -f {} + 2>/dev/null
 ```
 
-The install script:
-- Copies core skills to `~/.config/opencode/skills/` with the `-manifest-dev` suffix
-- Copies manifest-dev-tools skills to `~/.config/opencode/skills/` with the `-manifest-dev-tools` suffix
-- Copies commands to `~/.config/opencode/commands/` with the same plugin-owned suffixes
-- Copies the AGENTS.md context file
-- Is idempotent — safe to re-run
-
-To install only for the current project, pass `--local`:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- --local
-```
-
-To install somewhere custom, set `OPENCODE_TARGET` or pass `--dir`:
-
-```bash
-OPENCODE_TARGET="$HOME/.config/opencode" bash dist/opencode/install.sh
-bash dist/opencode/install.sh --dir /path/to/opencode-config
-```
-
-To uninstall only manifest-dev-managed files:
-
-```bash
-bash dist/opencode/install.sh uninstall
-```
-
-Use `bash dist/opencode/install.sh uninstall --local` to remove a project-local install.
-
-### Manual Install
-
-```bash
-# Skills
-cp -r dist/opencode/skills/* .opencode/skills/
-
-# Commands
-cp -r dist/opencode/commands/* .opencode/commands/
-
-# Context file
-cp dist/opencode/AGENTS.md .opencode/AGENTS.md
-```
+The old installer also copied an `AGENTS.md` to `~/.config/opencode/AGENTS.md` — delete it only if you haven't made it your own (the plugin registers this repo's copy automatically).
 
 ## Usage
 
-After installation, invoke workflows via slash commands (namespaced with the owning plugin's suffix), e.g. `/define-manifest-dev`, `/do-manifest-dev`, `/auto-manifest-dev`, `/babysit-pr-manifest-dev-tools`, `/review-pr-manifest-dev-tools`.
+Skills appear under their original names. Invoke via slash commands (OpenCode lists every discovered skill as a command, marked `:skill` in the TUI menu) — `/define`, `/do`, `/auto`, `/babysit-pr`, `/review-pr` — or just describe the task and let skill auto-discovery match it.
+
+## How It Works (Mechanism Verification)
+
+The plugin (`plugin/index.js`) is a dependency-free ES module. Its `config` hook mutates the live merged config once at startup: it appends `dist/opencode/skills` to `skills.paths` and `dist/opencode/AGENTS.md` to `instructions`, both resolved from the plugin file's own location (`import.meta.url`), so the clone can live anywhere. Missing assets degrade to a console warning — a throwing config hook would break OpenCode startup.
+
+Evidence (live runs against real binaries, 2026-06-11, sandboxed `XDG_*` homes):
+
+- **Hook-before-discovery ordering**: a test plugin's `config` hook appended `skills.paths`; `opencode debug skill` then listed the registered skill — verified on v1.2.16, v1.3.13, v1.14.31, v1.17.3. With this repo's actual plugin on v1.17.3, all 18 skills were discovered from `dist/opencode/skills`, and `opencode debug config` showed the resolved config containing both the `skills.paths` and `instructions` entries.
+- **Plugin contract**: function export (default or named) returning a hooks object; `config(cfg)` is called "once on init with the merged config". Confirmed live and by OpenCode's own built-in `customize-opencode` skill (registered in code at `packages/core/src/plugin/skill.ts`, shipped inside `opencode-ai@1.17.3`), which also documents `skills.paths` ("scanned recursively for `**/SKILL.md`"), the `instructions` key, and the plugin spec forms.
+- **`~` in plugin paths**: a `"plugin": ["~/…"]` entry loaded and its skills were discovered (v1.17.3).
+- **Failure-soft**: invoking the hook with the sibling assets absent produced warnings and no throw; existing user `skills.paths`/`instructions` values are preserved (append, not overwrite).
+- **Not exercised live**: actual injection of the AGENTS.md *content* into a session's system context (needs an LLM session, not available in the verification sandbox). Basis for shipping it: `instructions` is a documented config key and the resolved config accepted the entry.
 
 ## Feature Parity with Claude Code
 
 | Feature | Claude Code | OpenCode | Notes |
 |---------|------------|----------|-------|
-| Skills | Full | Full | Copied unchanged (incl. the review-code/check-pr/poll-slack/review-prompt skills) |
-| Commands | N/A | Full | Generated from user-invocable skills |
+| Skills | Full | Full | Identical payload, registered via plugin `skills.paths` |
+| Slash commands | Plugin-namespaced (`/manifest-dev:define`) | Native skills-as-commands, bare names (`/define`) | OpenCode ≥ v1.1.48 lists every skill as a command |
 | Agents | None (all skills) | None (all skills) | Verification activates a skill from a general-purpose subagent |
 | Hooks | None shipped | None shipped | Use `/goal /do <manifest-path>` for unattended turn continuation |
 
 ## Known Limitations
 
-1. **No hook backstop for `/do`** — use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
-2. **$ARGUMENTS handling** — Skills using `$ARGUMENTS` work in Claude Code; behavior in OpenCode may vary.
+1. **`user-invocable` / `disable-model-invocation` frontmatter is ignored** — OpenCode honors only `name`/`description` (verified against v1.17.3 behavior and anomalyco/opencode#11972). All 18 skills appear in the slash menu and model context, including helper skills like `done` and `escalate` that Claude Code hides.
+2. **Bare names, first-found-wins** — skills keep their original names (`define`, `do`, `auto`); OpenCode dedups same-name skills by discovery order with a logged warning. A project-local skill named `do` shadows manifest-dev's.
+3. **No hook backstop for `/do`** — use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
+4. **$ARGUMENTS handling** — skills using `$ARGUMENTS` work in Claude Code; behavior in OpenCode may vary.
 
 ## Directory Structure
 
 ```
 dist/opencode/
+├── plugin/                          # OpenCode plugin (the install surface)
+│   ├── package.json                 #   dependency-free ESM package
+│   └── index.js                     #   config hook: registers skills/ + AGENTS.md
 ├── skills/                          # 18 skills (core + tools), original names
 │   ├── review-code/                 #   quality review, one dimension per invocation
 │   ├── check-pr/  poll-slack/       #   former functional agents, now skills
 │   ├── define/  do/  auto/  ...      #   workflow skills
 │   └── review-prompt/  prompt-engineering/  review-pr/  ...
-├── commands/                        # 16 user commands (from user-invocable skills)
-├── component-namespaces.json        # install-time namespacing metadata
-├── AGENTS.md                        # Context file
-├── README.md                        # This file
-├── install.sh                       # Installation script
-└── install_helpers.py               # Namespacing helper
+├── AGENTS.md                        # Context file, registered via instructions
+└── README.md                        # This file
 ```

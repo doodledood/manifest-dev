@@ -1,0 +1,13 @@
+{
+  "name": "@doodledood/manifest-dev-opencode",
+  "version": "2.9.1",
+  "description": "OpenCode plugin that registers the manifest-dev skills payload and AGENTS.md context from this repo clone. Install by adding this directory's path to the `plugin` array in opencode.json.",
+  "type": "module",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doodledood/manifest-dev.git",
+    "directory": "dist/opencode/plugin"
+  },
+  "license": "MIT"
+}

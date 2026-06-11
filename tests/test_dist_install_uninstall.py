@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 from pathlib import Path
 
@@ -17,24 +16,8 @@ TOOLS_SKILLS = (
     "walk-pr",
 )
 
-# Codex is distributed as native plugins (no installer). Only OpenCode still
-# ships an install.sh; its install/uninstall behavior is exercised below.
-
-
-def run_opencode_installer(
-    env: dict[str, str], *args: str
-) -> subprocess.CompletedProcess[str]:
-    cmd = ["bash", str(DIST / "opencode" / "install.sh"), *args]
-    return subprocess.run(
-        cmd, cwd=ROOT, env=env, capture_output=True, text=True, check=True
-    )
-
-
-def _opencode_env(tmp_path: Path) -> dict[str, str]:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-    env["OPENCODE_TARGET"] = str(Path(env["HOME"]) / ".config" / "opencode")
-    return env
+# Codex and OpenCode are distributed as native plugins (no installer anywhere).
+# OpenCode's plugin entry is exercised below by invoking its config hook in node.
 
 
 # --------------------------------------------------------------------------
@@ -134,182 +117,103 @@ def test_codex_core_plugin_bundles_code_review_with_all_dimensions() -> None:
 
 
 # --------------------------------------------------------------------------
-# OpenCode: installer-based distribution (retained)
+# OpenCode: plugin-native distribution (no installer)
 # --------------------------------------------------------------------------
 
-
-def test_opencode_installer_installs_tools_skills(tmp_path: Path) -> None:
-    env = _opencode_env(tmp_path)
-    run_opencode_installer(env)
-
-    target = Path(env["OPENCODE_TARGET"])
-    for skill in TOOLS_SKILLS:
-        skill_dir = target / "skills" / f"{skill}-manifest-dev-tools"
-        assert skill_dir.is_dir(), f"missing {skill_dir}"
-        assert (skill_dir / "SKILL.md").is_file()
-        command = target / "commands" / f"{skill}-manifest-dev-tools.md"
-        assert command.is_file(), f"missing {command}"
-
-    assert (target / "skills" / "define-manifest-dev").is_dir()
-    assert (target / "skills" / "review-code-manifest-dev").is_dir()
+OPENCODE = DIST / "opencode"
 
 
-def test_opencode_installer_defaults_to_global_config_dir(tmp_path: Path) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-    env.pop("OPENCODE_TARGET", None)
-
-    result = run_opencode_installer(env)
-
-    target = Path(env["HOME"]) / ".config" / "opencode"
-    assert f"Target:  {target}" in result.stdout
-    assert (target / "skills" / "define-manifest-dev").is_dir()
-    # The former functional agents are skills now; no manifest-dev agents install.
-    assert (target / "skills" / "check-pr-manifest-dev").is_dir()
-    agents_dir = target / "agents"
-    if agents_dir.exists():
-        assert not list(agents_dir.glob("*-manifest-dev*"))
-    assert (target / "commands" / "define-manifest-dev.md").is_file()
+def test_opencode_ships_no_installer_artifacts() -> None:
+    """The OpenCode installer is retired; none of its files may remain."""
+    for retired in (
+        "install.sh",
+        "install_helpers.py",
+        "component-namespaces.json",
+        "commands",
+    ):
+        assert not (
+            OPENCODE / retired
+        ).exists(), f"retired OpenCode artifact present: {retired}"
 
 
-def test_opencode_installer_local_scope_is_explicit(tmp_path: Path) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-    env.pop("OPENCODE_TARGET", None)
-    project = tmp_path / "project"
-    project.mkdir()
-
-    subprocess.run(
-        ["bash", str(DIST / "opencode" / "install.sh"), "--local"],
-        cwd=project,
-        env=env,
-        capture_output=True,
-        text=True,
-        check=True,
+def test_opencode_plugin_entry_shape() -> None:
+    """Dependency-free ESM plugin whose version mirrors the core plugin."""
+    manifest = json.loads(
+        (OPENCODE / "plugin" / "package.json").read_text(encoding="utf-8")
     )
+    assert manifest["name"] == "@doodledood/manifest-dev-opencode"
+    assert manifest["type"] == "module"
+    assert manifest["main"] == "index.js"
+    assert not manifest.get("dependencies")
+    assert not manifest.get("devDependencies")
 
-    target = project / ".opencode"
-    assert (target / "skills" / "define-manifest-dev").is_dir()
-    assert not (Path(env["HOME"]) / ".config" / "opencode").exists()
+    core = json.loads(
+        (
+            ROOT / "claude-plugins" / "manifest-dev" / ".claude-plugin" / "plugin.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert manifest["version"] == core["version"]
 
-
-def test_opencode_reinstall_syncs_state_without_touching_user_files(
-    tmp_path: Path,
-) -> None:
-    env = _opencode_env(tmp_path)
-    run_opencode_installer(env)
-
-    target = Path(env["OPENCODE_TARGET"])
-    managed_skill = target / "skills" / "adr-manifest-dev-tools" / "SKILL.md"
-    managed_skill.write_text("stale managed content\n", encoding="utf-8")
-
-    stale_skill = target / "skills" / "retired-manifest-dev-tools"
-    stale_skill.mkdir(parents=True)
-    (stale_skill / "SKILL.md").write_text("retired\n", encoding="utf-8")
-
-    custom_skill = target / "skills" / "custom-skill"
-    custom_skill.mkdir(parents=True)
-    (custom_skill / "SKILL.md").write_text("custom\n", encoding="utf-8")
-
-    managed_command = target / "commands" / "adr-manifest-dev-tools.md"
-    managed_command.write_text("stale command\n", encoding="utf-8")
-    stale_command = target / "commands" / "retired-manifest-dev-tools.md"
-    stale_command.write_text("retired command\n", encoding="utf-8")
-    custom_command = target / "commands" / "custom-command.md"
-    custom_command.write_text("custom command\n", encoding="utf-8")
-
-    run_opencode_installer(env)
-
-    refreshed_skill = managed_skill.read_text(encoding="utf-8")
-    assert "name: adr-manifest-dev-tools" in refreshed_skill
-    assert "stale managed content" not in refreshed_skill
-    assert not stale_skill.exists()
-    assert (custom_skill / "SKILL.md").read_text(encoding="utf-8") == "custom\n"
-
-    refreshed_command = managed_command.read_text(encoding="utf-8")
-    assert "manifest-dev-tools:adr-manifest-dev-tools" in refreshed_command
-    assert "stale command" not in refreshed_command
-    assert not stale_command.exists()
-    assert custom_command.read_text(encoding="utf-8") == "custom command\n"
+    assert (OPENCODE / "plugin" / "index.js").is_file()
 
 
-def test_opencode_uninstall_removes_only_manifest_dev_files(tmp_path: Path) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-
-    opencode_dir = Path(env["HOME"]) / ".config" / "opencode"
-    env["OPENCODE_TARGET"] = str(opencode_dir)
-    custom_skill = opencode_dir / "skills" / "custom-skill"
-    custom_skill.mkdir(parents=True, exist_ok=True)
-    (custom_skill / "SKILL.md").write_text("custom\n", encoding="utf-8")
-
-    plugins_dir = opencode_dir / "plugins"
-    plugins_dir.mkdir(parents=True, exist_ok=True)
-    root_plugin = plugins_dir / "index.ts"
-    root_plugin.write_text("// user-managed root plugin\n", encoding="utf-8")
-
-    opencode_config = opencode_dir / "opencode.json"
-    opencode_config.write_text(
-        json.dumps(
-            {
-                "$schema": "https://opencode.ai/config.json",
-                "plugin": ["./plugins/index.ts"],
-                "mcp": {"custom": {"type": "local", "command": ["echo", "hi"]}},
-            },
-            indent=2,
-        )
-        + "\n",
+def test_opencode_plugin_config_hook_registers_payload(tmp_path: Path) -> None:
+    """The config hook appends package-local skills.paths + instructions."""
+    script = tmp_path / "smoke.mjs"
+    script.write_text(
+        f"""
+import {{ ManifestDevPlugin }} from {json.dumps((OPENCODE / "plugin" / "index.js").as_posix())}
+const hooks = await ManifestDevPlugin({{}})
+const cfg = {{ skills: {{ paths: ["/user/existing"] }}, instructions: ["USER.md"] }}
+await hooks.config(cfg)
+console.log(JSON.stringify(cfg))
+""",
         encoding="utf-8",
     )
-
-    run_opencode_installer(env)
-    assert (opencode_dir / "skills" / "define-manifest-dev").is_dir()
-
-    run_opencode_installer(env, "uninstall")
-
-    assert custom_skill.is_dir()
-    assert root_plugin.read_text(encoding="utf-8") == "// user-managed root plugin\n"
-    assert json.loads(opencode_config.read_text(encoding="utf-8")) == {
-        "$schema": "https://opencode.ai/config.json",
-        "plugin": ["./plugins/index.ts"],
-        "mcp": {"custom": {"type": "local", "command": ["echo", "hi"]}},
-    }
-    assert not (opencode_dir / "skills" / "define-manifest-dev").exists()
-    assert not (opencode_dir / "skills" / "adr-manifest-dev-tools").exists()
-    assert not (opencode_dir / "commands" / "define-manifest-dev.md").exists()
+    result = subprocess.run(
+        ["node", str(script)], capture_output=True, text=True, check=True
+    )
+    cfg = json.loads(result.stdout)
+    assert cfg["skills"]["paths"] == [
+        "/user/existing",
+        (OPENCODE / "skills").as_posix(),
+    ]
+    assert cfg["instructions"] == ["USER.md", (OPENCODE / "AGENTS.md").as_posix()]
 
 
-def test_opencode_install_leaves_user_root_plugin_and_config_untouched(
+def test_opencode_plugin_config_hook_never_throws_without_assets(
     tmp_path: Path,
 ) -> None:
-    env = os.environ.copy()
-    env["HOME"] = str(tmp_path / "home")
-
-    opencode_dir = Path(env["HOME"]) / ".config" / "opencode"
-    env["OPENCODE_TARGET"] = str(opencode_dir)
-    plugins_dir = opencode_dir / "plugins"
-    plugins_dir.mkdir(parents=True, exist_ok=True)
-    root_plugin = plugins_dir / "index.ts"
-    root_plugin.write_text("// user-managed root plugin\n", encoding="utf-8")
-    opencode_config = opencode_dir / "opencode.json"
-    opencode_config.write_text(
-        json.dumps(
-            {
-                "$schema": "https://opencode.ai/config.json",
-                "plugin": ["./plugins/index.ts"],
-                "default_agent": "build",
-            },
-            indent=2,
-        )
-        + "\n",
+    """Missing sibling assets degrade to warnings — startup must survive."""
+    bare = tmp_path / "bare" / "plugin"
+    bare.mkdir(parents=True)
+    for name in ("package.json", "index.js"):
+        (bare / name).write_bytes((OPENCODE / "plugin" / name).read_bytes())
+    script = tmp_path / "smoke.mjs"
+    script.write_text(
+        f"""
+import {{ ManifestDevPlugin }} from {json.dumps((bare / "index.js").as_posix())}
+const hooks = await ManifestDevPlugin({{}})
+const cfg = {{}}
+await hooks.config(cfg)
+console.log(JSON.stringify(cfg))
+""",
         encoding="utf-8",
     )
+    result = subprocess.run(
+        ["node", str(script)], capture_output=True, text=True, check=True
+    )
+    assert json.loads(result.stdout) == {}
 
-    run_opencode_installer(env)
 
-    assert root_plugin.read_text(encoding="utf-8") == "// user-managed root plugin\n"
-    assert json.loads(opencode_config.read_text(encoding="utf-8")) == {
-        "$schema": "https://opencode.ai/config.json",
-        "plugin": ["./plugins/index.ts"],
-        "default_agent": "build",
-    }
+def test_opencode_bundles_all_skills_under_original_names() -> None:
+    skills_dir = OPENCODE / "skills"
+    skills = {p.name for p in skills_dir.iterdir() if p.is_dir()}
+    assert {"define", "do", "auto", "review-code", "check-pr"} <= skills
+    assert set(TOOLS_SKILLS) <= skills
+    for skill in skills:
+        skill_md = skills_dir / skill / "SKILL.md"
+        assert skill_md.is_file()
+        # Native discovery requires frontmatter name == directory name.
+        frontmatter = skill_md.read_text(encoding="utf-8").split("---", 2)[1]
+        assert f"name: {skill}" in frontmatter, f"{skill}: frontmatter name mismatch"

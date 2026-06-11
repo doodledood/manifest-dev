@@ -17,7 +17,7 @@ Supporting workflows:
 - **/auto** — End-to-end autonomous: /define → /do in one command. Supports `--babysit <pr-url>` for tending an existing PR end-to-end.
 - **/figure-out** — Truth-convergent thinking partner. /define auto-invokes it when the problem space is foggy.
 - **/figure-out-team** — /figure-out's discipline applied to a multi-party async Slack conversation.
-- **Tools skills** — /adr, /babysit-pr, /handoff, /prompt-engineering, /review-pr, /teach-me, and /walk-pr install with the `-manifest-dev-tools` suffix. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
+- **Tools skills** — /adr, /babysit-pr, /handoff, /prompt-engineering, /review-pr, /teach-me, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
 
 ## Manifest Schema — Three Fields
 

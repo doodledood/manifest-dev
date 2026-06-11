@@ -17,3 +17,4 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-06-06 | [figure-out provides process trust, kept distinct from define→do's artifact trust](20260606-figure-out-process-trust-vs-define-do-artifact-trust.md) | Accepted | figure-out |
 | 2026-06-06 | [Harden figure-out truth-seeking via inline general-case rigor; defer the independent verification pass](20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass.md) | Accepted | figure-out |
 | 2026-06-10 | [Own Pi verifier execution with JSON subprocesses](20260610-own-pi-verifier-runner.md) | Accepted | Pi runtime |
+| 2026-06-11 | [OpenCode plugin-native distribution (retire install.sh)](20260611-opencode-plugin-native-distribution.md) | Accepted | OpenCode distribution |
