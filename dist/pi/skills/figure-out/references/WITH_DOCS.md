@@ -4,7 +4,7 @@ Loaded when `--with-docs` appears in args. Adds three behaviors to figure-out: *
 
 ## Override: these writes ARE the action
 
-The master frame in `SKILL.md` says: *"Clarifying answers feed exploration, not action. Don't leap to the implied move — not the edit, not even the proposal."*
+The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal.
 
 In `--with-docs` mode that frame has two explicit exceptions. **Glossary captures and ADR offers are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them.
 
