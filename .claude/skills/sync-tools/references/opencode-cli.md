@@ -22,7 +22,7 @@ Install = clone the repo + add the plugin directory's path to the `plugin` array
 
 ## Plugin Entry Contract
 
-`package.json`: name `@doodledood/manifest-dev-opencode`, `"type": "module"`, `"main": "index.js"`, zero `dependencies`/`devDependencies`. **`version` mirrors the core `manifest-dev` plugin version** (`claude-plugins/manifest-dev/.claude-plugin/plugin.json`) — bump on sync when the core version moved.
+`package.json`: name `@doodledood/manifest-dev-opencode`, `"type": "module"`, `"main": "index.js"`, zero `dependencies`/`devDependencies`. **`version` mirrors the core `manifest-dev` plugin version** (`claude-plugins/manifest-dev/.claude-plugin/plugin.json`) — bump on sync when the core version moved. Core-only mirroring is deliberate: install is clone-by-path and updates ride `git pull`, so the version is provenance, not a resolution input; `manifest-dev-tools`-only releases ship through the same sync without a bump.
 
 `index.js`: a named export `ManifestDevPlugin = async () => ({ config: async (cfg) => … })`. The `config` hook:
 
@@ -48,7 +48,7 @@ Only `name` and `description` are honored (`name` ≤ 64 chars, `^[a-z0-9]+(-[a-
 
 ### Tool Name Mapping (Lookup Table)
 
-For prose remaps in skills. Unmapped names pass through unchanged.
+For prose remaps in skills. Unmapped names and "(no equivalent)" rows both pass through unchanged — never delete or rewrite a tool mention that has no mapping.
 
 | Claude Code Tool | OpenCode Tool Key | Notes |
 |-----------------|-------------------|-------|
@@ -82,7 +82,7 @@ Generate `dist/opencode/AGENTS.md` (workflow overview) without any suffix-namesp
 
 ## README Generation
 
-Per the SKILL.md README row, plus OpenCode-specific required elements: clone + config-line install (documented default clone path `~/.manifest-dev/repo`); one-command clone-or-pull update alias + restart note; minimum-version pin with its basis; migration note for retired-installer users (removing `*-manifest-dev*` suffixed copies from `~/.config/opencode/{skills,commands}`); known limitations — items 1–4 of the Known Limitations list below, in that list's phrasing; mechanism-verification section preserving the evidence summary and its version pins.
+Per the SKILL.md README row, plus OpenCode-specific required elements: clone + config-line install (documented default clone path `~/.manifest-dev/repo`); one-command clone-or-pull update alias + restart note; minimum-version pin with its basis; migration note for retired-installer users (removing `*-manifest-dev*` suffixed copies from `~/.config/opencode/{skills,commands}`); known limitations — the frontmatter-controls, bare-names, `$ARGUMENTS`, and Stop-hook items from the Known Limitations list below, in that list's phrasing; mechanism-verification section preserving the evidence summary and its version pins.
 
 ## Hooks
 
