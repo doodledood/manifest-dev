@@ -45,8 +45,8 @@ The Codex distribution architecture (now shipped): a Codex plugin marketplace (`
 The former generated `dist/codex` installer-based distribution (`install.sh`, `install_helpers.py`, `config.toml` merge, `rules/`, `agents/*.toml`), which predated Codex plugin marketplaces and approximated reviewer agents through TOML stubs. Removed in favor of the **Codex Plugin-native Distribution**.
 
 **OpenCode Plugin-native Distribution**:
-The OpenCode distribution architecture: a generated OpenCode plugin under `dist/opencode/` that registers its bundled, OpenCode-flavored skills from package-local paths, installed from a repo clone by file path — replacing the OpenCode global installer (`install.sh`, install-time suffix namespacing, generated commands) and keeping manifest-dev out of shared Agent Skills directories.
-_Avoid_: OpenCode installer, global install.
+The OpenCode distribution architecture: a generated OpenCode plugin under `dist/opencode/` that registers its bundled, OpenCode-flavored skills from package-local paths, registers slash-command wrappers for user-invocable skills via `cfg.command`, and is installed from a repo clone by file path — replacing the OpenCode global installer (`install.sh`, install-time suffix namespacing, generated command files) while keeping manifest-dev out of shared Agent Skills directories.
+_Avoid_: OpenCode installer, global install, copied command files.
 
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a **Manifest**, runs verifiers for every **Acceptance Criterion** and **Global Invariant**, routes failures or blockers, and finishes only after all gates pass.

@@ -158,13 +158,17 @@ def test_opencode_plugin_entry_shape() -> None:
 
 
 def test_opencode_plugin_config_hook_registers_payload(tmp_path: Path) -> None:
-    """The config hook appends package-local skills.paths + instructions."""
+    """The config hook appends package-local skills.paths, command wrappers, and instructions."""
     script = tmp_path / "smoke.mjs"
     script.write_text(
         f"""
 import {{ ManifestDevPlugin }} from {json.dumps((OPENCODE / "plugin" / "index.js").as_posix())}
 const hooks = await ManifestDevPlugin({{}})
-const cfg = {{ skills: {{ paths: ["/user/existing"] }}, instructions: ["USER.md"] }}
+const cfg = {{
+  skills: {{ paths: ["/user/existing"] }},
+  instructions: ["USER.md"],
+  command: {{ define: {{ description: "User override", template: "Keep me" }} }},
+}}
 await hooks.config(cfg)
 console.log(JSON.stringify(cfg))
 """,
@@ -179,6 +183,19 @@ console.log(JSON.stringify(cfg))
         (OPENCODE / "skills").as_posix(),
     ]
     assert cfg["instructions"] == ["USER.md", (OPENCODE / "AGENTS.md").as_posix()]
+
+    commands = cfg["command"]
+    assert commands["define"] == {"description": "User override", "template": "Keep me"}
+    assert commands["figure-out"]["template"] == "Use the figure-out skill with: $ARGUMENTS"
+    assert commands["prompt-engineering"]["template"] == (
+        "Use the prompt-engineering skill with: $ARGUMENTS"
+    )
+    assert commands["babysit-pr"]["template"] == "Use the babysit-pr skill with: $ARGUMENTS"
+    assert "done" not in commands
+    assert "escalate" not in commands
+    # 18 OpenCode skills minus the two internal user-invocable:false helpers,
+    # plus the user-provided define override that the plugin preserves.
+    assert len(commands) == 16
 
 
 def test_opencode_plugin_config_hook_never_throws_without_assets(

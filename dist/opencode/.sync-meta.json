@@ -5,6 +5,6 @@
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-06-11T08:25:56Z",
-  "notes": "Plugin-native rework: retired install.sh/install_helpers.py/component-namespaces.json and generated commands/ (OpenCode >=1.1.48 lists skills as slash commands natively); added dist/opencode/plugin/ (dependency-free config-hook plugin registering skills/ via skills.paths and AGENTS.md via instructions; version mirrors the core manifest-dev plugin). Skills payload re-flavored once: plugin-qualified skill ids (manifest-dev:/manifest-dev-tools:) stripped to bare names, matching Pi, since the install-time suffix rewrite that used to resolve them is retired. claude-plugins sources unchanged since the recorded source_commit."
+  "synced_at": "2026-06-11T09:58:16Z",
+  "notes": "Plugin-native OpenCode distribution with package-local skills registered via skills.paths, package-local AGENTS.md registered via instructions, and plugin-owned cfg.command wrappers for source user-invocable skills. No installer, no component-namespaces.json, and no generated/copied command files. Current upstream OpenCode exposes skills through the skill tool; slash autocomplete is command-backed, so the plugin registers wrappers dynamically from bundled SKILL.md frontmatter while preserving existing user/project commands."
 }

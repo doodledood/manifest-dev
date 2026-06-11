@@ -5,8 +5,9 @@ Verify each CLI distribution carries the surviving skill set in the right shape.
   the repo-root .agents/plugins/marketplace.json). No installer, no agents, no
   namespacing suffixes.
 - OpenCode ships a plugin (dist/opencode/plugin/) that registers the skills payload
-  via skills.paths. No installer, no commands, no namespacing suffixes; qualified
-  skill ids are stripped to bare names like Pi.
+  via skills.paths and slash-command wrappers via cfg.command. No installer,
+  no command files, no namespacing suffixes; qualified skill ids are stripped to
+  bare names like Pi.
 - Pi ships compatible shared skills (incl. review-code) plus a two-package runtime
   (core @doodledood/manifest-dev-pi, tools @doodledood/manifest-dev-pi-tools).
 

@@ -1,7 +1,7 @@
 # ADR: OpenCode plugin-native distribution (retire install.sh)
 
 ## Status
-Accepted
+Accepted; slash-UX mechanism superseded by 20260611-opencode-slash-commands-use-plugin-wrappers
 
 ## Context
 
