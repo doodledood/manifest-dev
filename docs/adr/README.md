@@ -15,7 +15,10 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-06-05 | [Pi-native runtime package as a source surface](20260605-pi-native-runtime-package-source-surface.md) | Accepted | Pi distribution |
 | 2026-06-05 | [Runtime owns Harness-level Do verification trigger](20260605-runtime-owns-harness-do-verification-trigger.md) | Accepted | Pi runtime |
 | 2026-06-06 | [figure-out provides process trust, kept distinct from define→do's artifact trust](20260606-figure-out-process-trust-vs-define-do-artifact-trust.md) | Accepted | figure-out |
-| 2026-06-06 | [Harden figure-out truth-seeking via inline general-case rigor; defer the independent verification pass](20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass.md) | Accepted | figure-out |
+| 2026-06-06 | [Harden figure-out truth-seeking via inline general-case rigor; defer the independent verification pass](20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass.md) | Accepted; deferral lifted by [evidence ledger ADR](20260611-figure-out-evidence-ledger-and-independent-rederivation.md) | figure-out |
 | 2026-06-10 | [Own Pi verifier execution with JSON subprocesses](20260610-own-pi-verifier-runner.md) | Accepted | Pi runtime |
 | 2026-06-11 | [OpenCode plugin-native distribution (retire install.sh)](20260611-opencode-plugin-native-distribution.md) | Accepted; slash UX superseded by [OpenCode slash commands use plugin wrappers](20260611-opencode-slash-commands-use-plugin-wrappers.md) | OpenCode distribution |
 | 2026-06-11 | [OpenCode slash commands use plugin wrappers](20260611-opencode-slash-commands-use-plugin-wrappers.md) | Accepted | OpenCode distribution |
+| 2026-06-11 | [figure-out's spine owns all epistemics; mode references thin to pure mechanics](20260611-figure-out-spine-owns-epistemics-mode-refs-thin.md) | Accepted | figure-out |
+| 2026-06-11 | [figure-out reads ship an Evidence Ledger and earn their terminals; independent re-derivation un-deferred](20260611-figure-out-evidence-ledger-and-independent-rederivation.md) | Accepted | figure-out |
+| 2026-06-11 | [figure-out gains DIAGNOSIS and RESEARCH probe files behind a topic-shaped trigger](20260611-figure-out-task-taxonomy-diagnosis-research-topic-trigger.md) | Accepted | Task guidance |

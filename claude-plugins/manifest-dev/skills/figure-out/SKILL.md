@@ -7,26 +7,32 @@ user-invocable: true
 
 Press the topic relentlessly. Walk every branch of the decision tree — design choices, diagnostic hypotheses, commitment questions, whatever the topic provides. Tackle the next load-bearing question first — the one whose answer most shifts what we do.
 
-When the topic involves a code change, load the matching probe file from `tasks/` to surface angles that are easy to under-weight — verification among them. Compose `CODING.md` (the base) with the specific file when one applies:
+Load the matching probe file(s) from `tasks/` to surface angles that are easy to under-weight — match on the topic's shape:
 
-| Domain | Indicators | File |
-|--------|------------|------|
-| Coding (base) | Any code change | `CODING.md` |
+| Shape | Indicators | File |
+|-------|------------|------|
+| Code change (base) | Any change to code | `CODING.md` |
 | Feature | New functionality, APIs | `FEATURE.md` |
-| Bug | Defects, regressions, "broken" | `BUG.md` |
+| Bug fix | Fixing a known defect | `BUG.md` |
 | Refactor | Restructuring, cleanup | `REFACTOR.md` |
+| Diagnosis | A symptom to explain — incident, anomaly, regression, "why is this happening" — code or not, fix not yet in sight | `DIAGNOSIS.md` |
+| Research | An external-evidence question — technology evaluation, library choice, "what's the state of X" | `RESEARCH.md` |
 
-Treat them as awareness, not a script: fold in only what's load-bearing here and ignore the rest — don't walk the list, and no probe is required. No code change, or no file fits → probe generally, as you would anyway.
+FEATURE/BUG/REFACTOR compose onto `CODING.md`; a code defect composes `DIAGNOSIS.md` (explain it) with `CODING.md` + `BUG.md` (fix it); DIAGNOSIS and RESEARCH stand alone when no code change is in play. Treat them as awareness, not a script: fold in only what's load-bearing here and ignore the rest — don't walk the list, and no probe is required. Nothing fits → probe generally, as you would anyway.
 
 Per turn: lead with one question and your recommended answer. Cut empty preamble, context-restate, and packed sub-questions. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick the one whose answer would shift the read most and hold the rest.
 
 Don't drop threads — when investigation pulls you elsewhere, return to the original question.
 
-If something is discoverable (code, docs, the world), explore instead of asking. Verify before asserting; confirm negative findings via a second independent path. When the investigation leans on external sources, treat them as fallible: check that cited claims actually exist and support what's attributed to them, and that corroborating sources are genuinely independent rather than echoes of one origin. Hold positions under pushback when evidence still supports them.
+If something is discoverable (code, docs, the world), explore instead of asking. Verify before asserting; confirm negative findings via a second independent path. Voice every claim as what it is — verified (you looked), inferred (you deduced), or assumed (carried unchecked) — never an inference in a verified register. Load-bearing claims — the ones the read will rest on — also carry concrete provenance: file and line, command output, URL, quoted statement. Together they form the Evidence Ledger the read ships with. Verified status decays: when a claim's basis may no longer hold — files changed since, the session ran long, compaction swallowed the original evidence — it drops back to inferred or assumed until re-anchored. When the investigation leans on external sources, treat them as fallible: check that cited claims actually exist and support what's attributed to them, and that corroborating sources are genuinely independent rather than echoes of one origin. Hold positions under pushback when evidence still supports them.
 
-For evidence-heavy investigations, keep a live belief register: current leading read, confidence, evidence for, evidence against, and what would change the read. Update it whenever evidence shifts. Keep the rival set itself live — competing explanations or options both — not fixed at the outset: when a finding opens or forecloses a possibility, regenerate the candidates rather than only re-weighting the ones you had, and commit only once new evidence stops moving the set. Before locking the read, take the outside view: for problems of this class, what's the usual answer? — base rates surface candidates the inside view skipped.
+For evidence-heavy investigations, keep a live belief register: current leading read, confidence, evidence for, evidence against, and what would change the read. Update it whenever evidence shifts. Keep the rival set itself live — competing explanations or options both — not fixed at the outset: when a finding opens or forecloses a possibility, regenerate the candidates rather than only re-weighting the ones you had. While rivals remain live, prefer the probe that splits them — the observation that would kill one — over gathering more support for the leader: the read earns commitment by surviving its best disconfirming test, and commits only once new evidence stops moving the set. Before locking the read, take the outside view: for problems of this class, what's the usual answer? — base rates surface candidates the inside view skipped.
 
-Answers and agreement feed exploration, not action — don't leap to the implied move — not the edit, not even the proposal. Before naming the read, press any remaining branch whose answer would still shift the read; name the read only when nothing left would meaningfully shift it. The read is the deliverable — naming it ends the skill, in every mode. Solution agreement, "sounds good," or your own sense of being done never authorize executing what was converged on; only the user explicitly asking for the work does — then comply. When the read implies work, offer `/define` to lock it into a Manifest. Under `--autonomous`, surface the read and stop — chaining onward belongs to the caller. (Investigation artifacts — logs, doc captures — are part of figuring out, not execution.)
+Before naming the read, press any remaining branch whose answer would still shift it. When the read is load-bearing and no one will audit it before it's relied on — or when asked — run an independent re-derivation first: hand the question and the ledger's evidence, with your conclusion stripped, to a fresh context that hasn't seen the read, and let it derive its own. Agreement earns confidence honestly; divergence is a live rival the register must absorb before naming anything. The re-deriver works from the gathered evidence only — no new collection — though it may flag where the evidence underdetermines. Where no isolated fresh context is available, skip the pass and disclose that the read is self-graded.
+
+The read is the deliverable, and it ships with its anatomy: the conclusion, your confidence, the Evidence Ledger it rests on, and what would overturn it — for judgment-driven reads, the trade-off boundary that would flip the choice. An investigation with no evidence claims collapses to conclusion, reasoning, and confidence; the anatomy is a principle, not a form to pad. Never manufacture a winner — but "underdetermined" is earned, not declared: it requires that every discriminating probe you can actually run has been run and sits in the ledger, and the rival set still won't move. An unrun probe means keep pressing, not "unclear". A genuinely underdetermined read names the surviving rivals and the evidence that would settle them.
+
+Answers and agreement feed exploration, not action — don't leap to the implied move — not the edit, not even the proposal. Naming the read ends the skill, in every mode. Solution agreement, "sounds good," or your own sense of being done never authorize executing what was converged on; only the user explicitly asking for the work does — then comply. When the read implies work, offer `/define` to lock it into a Manifest. Under `--autonomous`, surface the read and stop — chaining onward belongs to the caller. (Investigation artifacts — logs, doc captures — are part of figuring out, not execution.)
 
 When args contain `--with-docs`, also load `references/WITH_DOCS.md` for bootstrap, glossary, and ADR conventions.
 
