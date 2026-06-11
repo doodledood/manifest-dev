@@ -44,6 +44,10 @@ The Codex distribution architecture (now shipped): a Codex plugin marketplace (`
 **Codex Legacy Installer Target** (retired):
 The former generated `dist/codex` installer-based distribution (`install.sh`, `install_helpers.py`, `config.toml` merge, `rules/`, `agents/*.toml`), which predated Codex plugin marketplaces and approximated reviewer agents through TOML stubs. Removed in favor of the **Codex Plugin-native Distribution**.
 
+**OpenCode Plugin-native Distribution**:
+The OpenCode distribution architecture: a generated OpenCode plugin under `dist/opencode/` that registers its bundled, OpenCode-flavored skills from package-local paths, installed from a repo clone by file path — replacing the OpenCode global installer (`install.sh`, install-time suffix namespacing, generated commands) and keeping manifest-dev out of shared Agent Skills directories.
+_Avoid_: OpenCode installer, global install.
+
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a **Manifest**, runs verifiers for every **Acceptance Criterion** and **Global Invariant**, routes failures or blockers, and finishes only after all gates pass.
 
@@ -100,6 +104,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - A **Pi-native Runtime Package** owns deterministic behavior primarily for the **Do/Verify Loop**; `/figure-out` and `/define` remain shared prompt and skill behavior unless a future Pi-specific gap emerges.
 - The target **Pi-native Runtime Package** exposes `/do`, `/auto`, and `/babysit-pr`; the harness verification and outcome paths are runtime-owned, not normal **Executor Session** capabilities.
 - **Codex Plugin-native Distribution** is the live Codex distribution; the **Codex Legacy Installer Target** has been retired and removed from `dist/codex`.
+- **OpenCode Plugin-native Distribution** replaces the retired OpenCode global installer; OpenCode loads manifest-dev **Skills** from the plugin's package-local paths rather than shared Agent Skills directories, so per-host skill-set differences (e.g., Pi excluding `do`/`done`/`escalate` as runtime-owned) never collide across CLIs.
 - An **Executor Session** does not own verification trigger, verifier fanout, adjudication, or final outcome; it implements **Deliverables** and repairs failed **Acceptance Criteria** or **Global Invariants** injected by the runtime.
 - A **Verification Orchestrator Session** starts clean after each **Executor Session** checkpoint, launches one or more **Verifier Sessions**, and returns aggregate results for injection back into the **Executor Session** as runtime-authored follow-up work.
 - **Harness-level Do** is the Pi-specific implementation of the **Do/Verify Loop**; `/done` and `/escalate` become runtime outcomes rather than independent portable skills in that package.
