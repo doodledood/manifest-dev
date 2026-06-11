@@ -26,6 +26,9 @@ _Avoid_: Guideline, best practice.
 **Task File**:
 A per-domain hint file keyed to a task type, kept as two parallel sets: `figure-out`'s carry probing fuel (the non-natural angles to press during understanding); `/define`'s carry Quality Gates and Defaults (encoder data). Each skill owns its own task-type index and loads its own set.
 
+**Evidence Ledger**:
+The compact set of load-bearing claims — each carrying provenance and epistemic status (verified, inferred, or assumed) — that a figure-out read rests on and ships with.
+
 **Plugin**:
 A Claude Code extension unit that may contain skills, agents, and optional hooks.
 
