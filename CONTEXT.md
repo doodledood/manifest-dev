@@ -102,6 +102,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 
 - A **Manifest** contains one or more **Deliverables**.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
+- `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** — formal **Deliverables** with verifiable gates — rather than re-deriving or re-investigating it.
 - A **Deliverable** has one or more **Acceptance Criteria**.
 - A **Manifest** has zero or more **Global Invariants**, applied across all Deliverables.
 - A **Task File** informs the workflow that owns it — `figure-out`'s probe set fuels interview probing, `/define`'s gate/Default set fuels encoding — and does not directly appear in the produced Manifest as a structural unit.
