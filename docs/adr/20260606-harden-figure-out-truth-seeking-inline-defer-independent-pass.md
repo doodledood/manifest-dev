@@ -40,4 +40,4 @@ Strengthen figure-out's investigation process **inline, in the spine, mode-gener
 
 ## Source
 - Session: figure-out --with-docs --log session on research-methodology applicability to figure-out (2026-06-06); log at `~/.manifest-dev/logs/figure-out-log-20260606-073510.md`
-- Related: See also 20260606-figure-out-process-trust-vs-define-do-artifact-trust
+- Related: See also 20260606-figure-out-process-trust-vs-define-do-artifact-trust; the deferred independent pass was later un-deferred by 20260611-figure-out-evidence-ledger-and-independent-rederivation

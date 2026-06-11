@@ -29,6 +29,10 @@ A per-domain hint file keyed to a task type, kept as two parallel sets: `figure-
 **Evidence Ledger**:
 The compact set of load-bearing claims — each carrying provenance and epistemic status (verified, inferred, or assumed) — that a figure-out read rests on and ships with.
 
+**Read**:
+The deliverable of a figure-out session: a named conclusion carrying confidence, the Evidence Ledger it rests on, and what would overturn it; naming the Read ends the skill.
+_Avoid_: Conclusion, verdict, answer.
+
 **Plugin**:
 A Claude Code extension unit that may contain skills, agents, and optional hooks.
 
@@ -97,6 +101,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 ## Relationships
 
 - A **Manifest** contains one or more **Deliverables**.
+- A figure-out **Read** ships with the **Evidence Ledger** it rests on.
 - A **Deliverable** has one or more **Acceptance Criteria**.
 - A **Manifest** has zero or more **Global Invariants**, applied across all Deliverables.
 - A **Task File** informs the workflow that owns it — `figure-out`'s probe set fuels interview probing, `/define`'s gate/Default set fuels encoding — and does not directly appear in the produced Manifest as a structural unit.
