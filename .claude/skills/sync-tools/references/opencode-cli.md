@@ -82,7 +82,7 @@ Generate `dist/opencode/AGENTS.md` (workflow overview) without any suffix-namesp
 
 ## README Generation
 
-Per the SKILL.md README row, plus OpenCode-specific required elements: clone + config-line install (documented default clone path `~/.manifest-dev/repo`); one-command clone-or-pull update alias + restart note; minimum-version pin with its basis; migration note for retired-installer users (removing `*-manifest-dev*` suffixed copies from `~/.config/opencode/{skills,commands}`); known limitations (frontmatter fields ignored → helper skills visible; bare names with first-found-wins dedup; no `/do` hook backstop — point at `/goal /do`; `$ARGUMENTS` behavior undefined); mechanism-verification section preserving the evidence summary and its version pins.
+Per the SKILL.md README row, plus OpenCode-specific required elements: clone + config-line install (documented default clone path `~/.manifest-dev/repo`); one-command clone-or-pull update alias + restart note; minimum-version pin with its basis; migration note for retired-installer users (removing `*-manifest-dev*` suffixed copies from `~/.config/opencode/{skills,commands}`); known limitations — items 1–4 of the Known Limitations list below, in that list's phrasing; mechanism-verification section preserving the evidence summary and its version pins.
 
 ## Hooks
 

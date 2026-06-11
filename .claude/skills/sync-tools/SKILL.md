@@ -32,7 +32,7 @@ Both plugins are skills-only — manifest-dev ships no agents or hooks on any ta
 Never sync other plugins (e.g., `manifest-dev-collab` — uses Agent Teams/Slack, inherently incompatible). Never modify source files. Skip `sync-tools` skill from output (meta-tool).
 
 **Namespacing model is per-CLI** (see each reference file):
-- **Plugin-native targets (Codex, OpenCode)**: the plugin is the distribution unit. Codex: two plugins (`manifest-dev`, `manifest-dev-tools`) each bundle their skills under original names. OpenCode: one plugin entry (`dist/opencode/plugin/`) registers the whole skills payload via `skills.paths`; skills keep bare names (native discovery is first-found-wins). No install-time suffixing, no `component-namespaces.json`, no installer. Plugin-qualified skill references (`manifest-dev:<skill>`) are stripped to bare names during OpenCode and Pi sync per each reference file; Claude Code and Codex keep the qualifier.
+- **Plugin-native targets (Codex, OpenCode)**: the plugin is the distribution unit. Codex: two plugins (`manifest-dev`, `manifest-dev-tools`) each bundle their skills under original names. OpenCode: one plugin entry (`dist/opencode/plugin/`) registers the whole skills payload via `skills.paths`; skills keep bare names (native discovery is first-found-wins). No install-time suffixing, no `component-namespaces.json`, no installer. Plugin-qualified skill-reference handling (`manifest-dev:<skill>` — strip vs keep) is per-CLI: see each reference file.
 - **Package target (Pi)**: each component carries plugin ownership in `component-namespaces.json` (ownership metadata — Pi keeps package-scoped skill names, no suffixing). Regenerate it on every sync from the discovered source components; never hand-maintain it.
 
 ## Per-CLI Processing
@@ -65,7 +65,8 @@ On invocation, prefer a delta sync over a full re-sync:
    - **Added / Modified**: re-apply per-CLI substitutions, write to dist counterpart
    - **Deleted**: remove dist counterpart (and parent dir if now empty)
    - **Renamed**: handle as delete-old + add-new
-4. Recompute README component tables and the CLI's context file (`AGENTS.md`) only if the set of skills/agents changed (added/removed/renamed). Body-only edits don't require regenerating these.
+4. Recompute README component tables and the CLI's context file (`AGENTS.md`) only if the set of skills changed (added/removed/renamed). Body-only edits don't require regenerating these.
+   - **OpenCode:** if `claude-plugins/manifest-dev/.claude-plugin/plugin.json`'s version changed between recorded SHA and `HEAD`, mirror it into `dist/opencode/plugin/package.json` per the reference file.
 5. **Package target (Pi) only:** regenerate `dist/pi/component-namespaces.json` from the current dist component set and source ownership map. **Skip entirely for plugin-native Codex and OpenCode** — the plugin is the namespace there; generating namespace metadata would resurrect retired installer concepts.
 6. After all writes succeed, overwrite `dist/{cli}/.sync-meta.json` with the new HEAD sha and a fresh `synced_at` UTC timestamp. Keep the file even when the diff was empty — the timestamp records "we checked".
 
@@ -96,9 +97,9 @@ The CLI-native install method from the reference file is the primary method: Cod
 |-----------|-----|
 | Frontmatter conversion must work in both bash and zsh | macOS default shell is zsh; bash-only constructs break |
 | Reference files are authoritative for conversion rules | Avoids two sources of truth — update one place |
-| Unmapped agent tools pass through unchanged | Target CLI ignores unknown tools gracefully |
+| Unmapped tool names in skill prose pass through unchanged | Only operational references remap; names without a lookup-table row are left as-is |
 | Empty component sets skip gracefully | Codex has no hooks — note in README, don't error |
-| Agent/skill prompt bodies stay faithful to Claude Code originals | Prompts are carefully crafted — don't simplify, rewrite, or truncate for other CLIs |
+| Skill prompt bodies stay faithful to Claude Code originals | Prompts are carefully crafted — don't simplify, rewrite, or truncate for other CLIs |
 | Always update `dist/{cli}/.sync-meta.json` at end of run | The recorded SHA is what next run's diff-first path keys on. Skipping the update silently degrades future syncs to full re-syncs. |
 
 ## Progress Log
