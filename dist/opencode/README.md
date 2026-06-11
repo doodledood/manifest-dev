@@ -37,7 +37,7 @@ git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo
 
 3. Restart OpenCode. Config (including plugins and skills) loads once at startup and is not hot-reloaded.
 
-The `~/` form in plugin paths is live-verified on v1.17.3 but not explicitly documented by OpenCode (documented forms are `./relative` — resolved from the declaring config file — and `file:///absolute`). If you prefer the documented-only surface, use the absolute path:
+The `~/` form in plugin paths is live-verified on v1.17.3 but not explicitly documented by OpenCode (its docs show `./relative` — resolved from the declaring config file — and `file:///absolute`; bare absolute paths are also accepted by the spec parser and were live-verified across all four tested versions). If you prefer not to rely on `~` expansion, use an absolute path:
 
 ```json
 { "plugin": ["/home/you/.manifest-dev/repo/dist/opencode/plugin"] }
@@ -50,7 +50,7 @@ For a single project instead of global, put the same `plugin` entry in the proje
 Add this alias once (e.g. `~/.zshrc` / `~/.bashrc`):
 
 ```bash
-alias manifest-dev-update='git -C ~/.manifest-dev/repo pull --ff-only 2>/dev/null || git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo'
+alias manifest-dev-update='if [ -d ~/.manifest-dev/repo/.git ]; then git -C ~/.manifest-dev/repo pull --ff-only; else git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo; fi'
 ```
 
 Then updating is one command — `manifest-dev-update` — followed by an OpenCode restart. The plugin has zero npm dependencies, so `git pull` is the entire update.

@@ -78,7 +78,7 @@ For zsh, add upgrade shortcuts for the non-Claude distributions:
 
 ```zsh
 alias upgrade-manifest-dev-codex='codex plugin marketplace upgrade'
-alias upgrade-manifest-dev-opencode='git -C ~/.manifest-dev/repo pull --ff-only 2>/dev/null || git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo'
+alias upgrade-manifest-dev-opencode='if [ -d ~/.manifest-dev/repo/.git ]; then git -C ~/.manifest-dev/repo pull --ff-only; else git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo; fi'
 alias upgrade-manifest-dev-pi='pi update --extensions'
 alias upgrade-manifest-dev-all='upgrade-manifest-dev-codex && upgrade-manifest-dev-opencode && upgrade-manifest-dev-pi'
 ```
