@@ -21,9 +21,3 @@ Loaded when args contain `--team` (typically passed by the `figure-out-team` wra
 **`--with-docs` is read-only.** Load `CONTEXT.md` at repo root before pressing, and follow `CONTEXT-MAP.md` to the relevant context's `CONTEXT.md` if the map exists. Use the loaded vocabulary and relationships to recognize project terms in Slack messages, reference prior decisions when relevant, and avoid re-asking what is already canonicalized. Do NOT write `CONTEXT.md` captures, do NOT propose initialization if docs are missing, and do NOT offer or write ADRs from the Slack thread — Slack is too multi-voice and noisy for inline doc capture; the team's docs capture happens through other channels (manual edits, or `figure-out --with-docs` in chat where a single trusted operator owns the writes). This flag only enriches the agent's context, never the docs themselves.
 
 **`--log` is local-only.** The investigation log is a local file artifact; do not post it to Slack or send it as a Slack message.
-
-## What stays the same
-
-- The investigation core: decision-tree walking, load-bearing-question-first, recommended answers, belief register, live rival set, outside view, probe task files for code-shaped topics.
-- Explore instead of asking when discoverable; verify before asserting; confirm negative findings via a second independent path.
-- The terminal rule: the read is the deliverable; the skill never executes what was converged on — in team mode, not even on a unanimous team decision.

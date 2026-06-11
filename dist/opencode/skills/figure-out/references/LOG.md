@@ -1,14 +1,8 @@
 # figure-out: --log
 
-Keeps an append-only narrative investigation journal for long figure-out sessions. The log is evidence-based continuity: what was learned, why the read shifted, which surprises matter, what remains open, and what crux should be pressed next.
+Keeps an append-only investigation journal for long figure-out sessions — continuity that survives context loss: what was learned, why the read shifted, which surprises matter, what remains open, and what crux should be pressed next.
 
-This log is not a transcript, handoff, ADR, or Manifest:
-
-- **Transcript** is raw conversation history.
-- **Handoff** is a curated rewrite for a future agent or session.
-- **ADR** records durable decisions and their alternatives.
-- **Manifest** is an execution contract.
-- **Log** is the chronological investigation line, append-only and portable by path.
+This log is not a transcript (raw conversation history), a handoff (curated rewrite for a future agent), an ADR (durable decision record), or a Manifest (execution contract) — it is the chronological investigation line, append-only and portable by path.
 
 ## Path
 
@@ -28,7 +22,7 @@ When resuming an existing log, read enough of it to recover open threads and the
 
 ## Entry Shape
 
-Use Markdown. Keep entries concise and factual; do not copy the transcript. Every factual claim needs provenance: file path and line, command result, URL, document name, quoted user statement, or named prior log entry.
+Use Markdown. Keep entries concise and factual; do not copy the transcript. Entries serialize what the investigation already carries — belief-register state and ledger claims with the provenance and epistemic status the skill's discipline assigns them — so the line of reasoning survives context loss. The log records that discipline's output; it does not redefine it.
 
 Recommended shape:
 
