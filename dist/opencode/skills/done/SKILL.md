@@ -8,4 +8,4 @@ Emit a completion summary in plain prose: what was built, the key changes (files
 
 Reachable only after every Acceptance Criterion and Global Invariant verifies PASS with no BLOCKED criteria pending. End with the mandatory trailing line — directive, not observational, because the manifest stays the source of truth post-completion:
 
-*If the next message describes a change or new requirement (not a pure question), invoke `/manifest-dev:define <this-manifest-path>` to amend. Pure questions are answered inline.*
+*If the next message describes a change or new requirement (not a pure question), invoke `/define <this-manifest-path>` to amend. Pure questions are answered inline.*

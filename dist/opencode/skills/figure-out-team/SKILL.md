@@ -7,6 +7,6 @@ user-invocable: true
 
 Discovery wrapper for figure-out's team mode. The deliberation itself — trust boundary, Slack polling, mrkdwn, convergence and wrap-up rules — lives in the figure-out skill's `references/team.md` overrides, so team sessions inherit figure-out's full investigation discipline.
 
-Invoke the manifest-dev:figure-out skill with: "$ARGUMENTS --team"
+Invoke the figure-out skill with: "$ARGUMENTS --team"
 
 Forward the topic and any flags (`--with-docs`, `--log [path]`) exactly as given.

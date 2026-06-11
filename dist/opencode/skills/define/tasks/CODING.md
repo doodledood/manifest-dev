@@ -31,7 +31,7 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 | Contract correctness | contracts | no LOW+ | When code calls external/internal APIs, changes public interfaces, or crosses service boundaries |
 | Type safety | type-safety | no LOW+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
 
-**Encoding:** each dimension gate is verified by a general-purpose subagent (there is no `verify.agent` field) whose `verify.prompt` tells that verifier to **activate** the `manifest-dev:review-code` skill for the dimension at the row's threshold — e.g. *"Activate the manifest-dev:review-code skill with dimension=code-bugs and review the change. PASS only if no LOW-or-higher findings."* (Do not say "spawn a general-purpose agent" — the verifier already is one; a nested spawn drops the PASS/FAIL/BLOCKED contract.) See `define/SKILL.md` → "Encoding gates".
+**Encoding:** each dimension gate is verified by a general-purpose subagent (there is no `verify.agent` field) whose `verify.prompt` tells that verifier to **activate** the `review-code` skill for the dimension at the row's threshold — e.g. *"Activate the review-code skill with dimension=code-bugs and review the change. PASS only if no LOW-or-higher findings."* (Do not say "spawn a general-purpose agent" — the verifier already is one; a nested spawn drops the PASS/FAIL/BLOCKED contract.) See `define/SKILL.md` → "Encoding gates".
 
 ## Project Gates
 

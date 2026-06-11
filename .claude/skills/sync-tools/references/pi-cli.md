@@ -136,7 +136,7 @@ Handle these specially:
 
 Pi registers `/do` as a native extension command, so `define`'s `/do <manifest-path>` handoff resolves directly — no name substitution needed. Drop the `/goal /do <manifest-path>` unattended-execution line, which has no Pi equivalent.
 
-**Strip plugin qualifiers from skill references → bare names.** Pi invokes skills as `/skill:<name>` (`dist/core/skills.d.ts`, `agent-session.d.ts`: "Expand skill commands (/skill:name args)") with no plugin namespace. So any `manifest-dev:<skill>` / `manifest-dev-tools:<skill>` reference in copied skill bodies — verifier-activation prose (`Activate the manifest-dev:review-code skill` → `Activate the review-code skill`), chain handoffs (`manifest-dev:figure-out` → `figure-out`), etc. — must have the qualifier stripped to the bare skill name during Pi sync. A qualified id does not resolve in Pi. (Codex keeps the qualifier; OpenCode keeps it for its install-time suffix rewrite — this strip is Pi-only.)
+**Strip plugin qualifiers from skill references → bare names.** Pi invokes skills as `/skill:<name>` (`dist/core/skills.d.ts`, `agent-session.d.ts`: "Expand skill commands (/skill:name args)") with no plugin namespace. So any `manifest-dev:<skill>` / `manifest-dev-tools:<skill>` reference in copied skill bodies — verifier-activation prose (`Activate the manifest-dev:review-code skill` → `Activate the review-code skill`), chain handoffs (`manifest-dev:figure-out` → `figure-out`), etc. — must have the qualifier stripped to the bare skill name during Pi sync. A qualified id does not resolve in Pi. (Codex keeps the qualifier — its plugins are real namespaces; OpenCode strips it too, per `opencode-cli.md`.)
 
 ## Runtime Extension Boundary
 

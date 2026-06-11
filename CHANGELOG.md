@@ -43,6 +43,21 @@ marked `BREAKING`.
     other Agent-Skills hosts (e.g. Pi). manifest-dev ships no agents on any target — the
     former functional agents are bundled skills.
 
+- **BREAKING: OpenCode installs via a plugin; the installer is retired.** The
+  `dist/opencode` `install.sh` / `install_helpers.py` / `component-namespaces.json`
+  suffix-namespacing approach and the generated `commands/` are gone (OpenCode ≥ v1.1.48
+  lists every skill as a slash command natively, so the generated commands had become
+  duplicate menu entries). OpenCode now ships a dependency-free plugin
+  (`dist/opencode/plugin/`) whose `config` hook registers the bundled skills via
+  `skills.paths` and the AGENTS.md context via `instructions`. Skills keep bare names
+  (`/define`, `/do`) — plugin-qualified references in the payload are stripped like Pi's.
+  Requires OpenCode ≥ v1.2.16 (oldest live-verified version).
+  - *Migrate*: clone the repo (e.g. `git clone https://github.com/doodledood/manifest-dev.git
+    ~/.manifest-dev/repo`) and add `"plugin": ["~/.manifest-dev/repo/dist/opencode/plugin"]`
+    to `~/.config/opencode/opencode.json`; update with `git pull` + restart. Remove old
+    suffixed copies: `find ~/.config/opencode/skills ~/.config/opencode/commands -maxdepth 1
+    -name '*-manifest-dev*' -exec rm -rf {} +`. See dist/opencode/README.md.
+
 - **BREAKING: Skills are verb-named; `criteria-checker` is dropped.** The former functional agents
   became verb-named skills: `github-pr-lifecycle` → `check-pr`, `slack-poller` →
   `poll-slack`, `prompt-reviewer` → `review-prompt`, and the reviewers' `code-review`

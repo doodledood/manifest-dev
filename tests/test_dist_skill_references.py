@@ -4,7 +4,9 @@ Verify each CLI distribution carries the surviving skill set in the right shape.
 - Codex ships native plugins (two plugins under dist/codex/plugins/, registered by
   the repo-root .agents/plugins/marketplace.json). No installer, no agents, no
   namespacing suffixes.
-- OpenCode still ships an installer that namespaces components at install time.
+- OpenCode ships a plugin (dist/opencode/plugin/) that registers the skills payload
+  via skills.paths. No installer, no commands, no namespacing suffixes; qualified
+  skill ids are stripped to bare names like Pi.
 - Pi ships compatible shared skills (incl. review-code) plus a two-package runtime
   (core @doodledood/manifest-dev-pi, tools @doodledood/manifest-dev-pi-tools).
 
@@ -13,14 +15,9 @@ Reviewers are dimensions of the review-code skill, not standalone agents.
 
 from __future__ import annotations
 
-import importlib.util
 import json
 import re
-import shutil
-import subprocess
-import sys
 from pathlib import Path
-from types import ModuleType
 
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
@@ -154,142 +151,17 @@ def test_codex_marketplace_points_at_existing_plugins() -> None:
 
 
 # --------------------------------------------------------------------------
-# OpenCode: installer-based distribution
+# OpenCode: plugin-native distribution
 # --------------------------------------------------------------------------
 
 
-def namespace_dist(tmp_path: Path) -> Path:
-    """Mirror dist/opencode into tmp_path and run its install_helpers."""
-    tmp_path.mkdir(parents=True, exist_ok=True)
-    source_copy = tmp_path / "source"
-    shutil.copytree(DIST / "opencode", source_copy)
-    dest = tmp_path / "installed"
-    argv = [
-        sys.executable,
-        str(source_copy / "install_helpers.py"),
-        str(source_copy),
-        str(dest),
-    ]
-    subprocess.run(argv, check=True, cwd=source_copy)
-    return dest
-
-
-def component_namespaces(cli: str) -> dict[str, dict[str, str]]:
-    metadata = json.loads(
-        (DIST / cli / "component-namespaces.json").read_text(encoding="utf-8")
-    )
-    return {
-        "skills": metadata["skills"],
-        "agents": metadata["agents"],
-        "commands": metadata["commands"],
-    }
-
-
-def load_helper(cli: str) -> ModuleType:
-    helper_path = DIST / cli / "install_helpers.py"
-    spec = importlib.util.spec_from_file_location(f"{cli}_install_helpers", helper_path)
-    assert spec is not None
-    assert spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-def test_opencode_namespaces_the_surviving_skill_set(tmp_path: Path) -> None:
-    dist_dir = namespace_dist(tmp_path)
-    for skill, suffix in component_namespaces("opencode")["skills"].items():
-        skill_dir = dist_dir / "skills" / f"{skill}{suffix}"
-        assert skill_dir.is_dir(), f"opencode: {skill}{suffix} missing"
-        assert (skill_dir / "SKILL.md").is_file()
-
-
-def test_opencode_namespaces_every_distributed_component(tmp_path: Path) -> None:
-    metadata = component_namespaces("opencode")
-    source_skills = sorted(
-        path.name for path in (DIST / "opencode" / "skills").iterdir() if path.is_dir()
-    )
-    source_agents = sorted(
-        path.stem for path in (DIST / "opencode" / "agents").glob("*.md")
-    )
-
-    dist_dir = namespace_dist(tmp_path)
-
-    assert sorted(
-        path.name for path in (dist_dir / "skills").iterdir() if path.is_dir()
-    ) == [f"{skill}{metadata['skills'][skill]}" for skill in source_skills]
-
-    assert sorted(path.name for path in (dist_dir / "agents").glob("*.md")) == [
-        f"{agent}{metadata['agents'][agent]}.md" for agent in source_agents
-    ]
-
-    source_commands = sorted(
-        path.stem for path in (DIST / "opencode" / "commands").glob("*.md")
-    )
-    assert sorted(path.name for path in (dist_dir / "commands").glob("*.md")) == [
-        f"{command}{metadata['commands'][command]}.md" for command in source_commands
-    ]
-
-
-def test_opencode_namespaced_commands_invoke_existing_namespaced_skills(
-    tmp_path: Path,
-) -> None:
-    dist_dir = namespace_dist(tmp_path)
-    metadata = component_namespaces("opencode")
-
-    for command, command_suffix in metadata["commands"].items():
-        skill_suffix = metadata["skills"][command]
-        command_file = dist_dir / "commands" / f"{command}{command_suffix}.md"
-        content = command_file.read_text(encoding="utf-8")
-        plugin_name = (
-            "manifest-dev-tools"
-            if command_suffix == "-manifest-dev-tools"
-            else "manifest-dev"
-        )
-        assert f"Invoke the {plugin_name}:{command}{skill_suffix} skill" in content
-
-    figure_out_team = (
-        dist_dir / "commands" / "figure-out-team-manifest-dev.md"
-    ).read_text(encoding="utf-8")
-    assert "figure-out-manifest-dev-team" not in figure_out_team
-
-
-def test_namespacing_helpers_preserve_overlapping_skill_names() -> None:
+def test_opencode_carries_full_skill_split() -> None:
     skills = {
-        "figure-out": "-manifest-dev",
-        "figure-out-team": "-manifest-dev",
-        "adr": "-manifest-dev-tools",
-    }
-    agents: dict[str, str] = {}
-    source = (
-        "Invoke manifest-dev:figure-out-team, then manifest-dev:figure-out. "
-        "Invoke manifest-dev-tools:adr."
-    )
-
-    opencode = load_helper("opencode")
-    assert opencode._patch_cross_references(source, skills, agents) == (
-        "Invoke manifest-dev:figure-out-team-manifest-dev, then "
-        "manifest-dev:figure-out-manifest-dev. "
-        "Invoke manifest-dev-tools:adr-manifest-dev-tools."
-    )
-
-
-def test_opencode_namespace_metadata_matches_dist() -> None:
-    metadata = component_namespaces("opencode")
-
-    assert set(metadata["skills"]) == {
         path.name for path in (DIST / "opencode" / "skills").iterdir() if path.is_dir()
     }
-    assert set(metadata["agents"]) == {
-        path.stem for path in (DIST / "opencode" / "agents").glob("*.md")
-    }
-    assert set(metadata["commands"]) == {
-        path.stem for path in (DIST / "opencode" / "commands").glob("*.md")
-    }
-
-    for skill in CORE_SKILLS:
-        assert metadata["skills"][skill] == "-manifest-dev"
-    for skill in TOOLS_SKILLS:
-        assert metadata["skills"][skill] == "-manifest-dev-tools"
+    assert skills == set(CORE_SKILLS) | set(TOOLS_SKILLS)
+    for skill in skills:
+        assert (DIST / "opencode" / "skills" / skill / "SKILL.md").is_file()
 
 
 def test_opencode_ships_no_agents() -> None:
@@ -311,11 +183,6 @@ def test_former_functional_agents_are_skills_in_every_dist() -> None:
     ):
         assert (DIST / "opencode" / "skills" / name / "SKILL.md").is_file()
         assert (DIST / "pi" / "skills" / name / "SKILL.md").is_file()
-
-
-def test_figure_out_team_command_exists_for_opencode() -> None:
-    command_file = DIST / "opencode" / "commands" / "figure-out-team.md"
-    assert command_file.is_file()
 
 
 # --------------------------------------------------------------------------
@@ -410,9 +277,9 @@ def test_pi_dist_contains_only_compatible_skill_set() -> None:
 
 def test_skill_activation_names_are_per_target() -> None:
     """Verifier-activation / chain prose must name skills in each target's own form:
-    source + OpenCode use the canonical plugin-qualified colon form (Claude native;
-    OpenCode's installer suffixes it), while Pi strips the qualifier to the bare
-    /skill:<name> form. Anchored in Pi loader/skills source and install_helpers.py."""
+    source + Codex use the canonical plugin-qualified colon form (Claude native;
+    Codex plugins keep it), while Pi and OpenCode strip the qualifier to bare skill
+    names (no plugin namespace exists to resolve qualified ids there)."""
     qualified = re.compile(r"manifest-dev(?:-tools)?:[a-z]")
 
     # Source canonical form: colon-qualified, never the unrewritable space form.
@@ -436,15 +303,24 @@ def test_skill_activation_names_are_per_target() -> None:
     assert "manifest-dev-tools:review-prompt" in prompting
     assert "activates the `review-prompt` skill" not in prompting
 
-    # Pi dist: no plugin-qualified skill ids survive (Pi invokes bare /skill:<name>).
-    for path in (DIST / "pi" / "skills").rglob("*.md"):
-        assert not qualified.search(path.read_text(encoding="utf-8")), path
+    # Pi and OpenCode dists: no plugin-qualified skill ids survive (both invoke
+    # skills by bare name).
+    for dist_skills in (DIST / "pi" / "skills", DIST / "opencode" / "skills"):
+        for path in dist_skills.rglob("*.md"):
+            assert not qualified.search(path.read_text(encoding="utf-8")), path
 
-    # OpenCode dist keeps the colon form for its install-time suffix rewrite.
-    opencode_pr = (
-        DIST / "opencode" / "skills" / "define" / "tasks" / "PR_LIFECYCLE.md"
+    # Codex dist keeps the colon form (plugins are real namespaces there).
+    codex_pr = (
+        DIST
+        / "codex"
+        / "plugins"
+        / "manifest-dev"
+        / "skills"
+        / "define"
+        / "tasks"
+        / "PR_LIFECYCLE.md"
     ).read_text(encoding="utf-8")
-    assert "manifest-dev:check-pr" in opencode_pr
+    assert "manifest-dev:check-pr" in codex_pr
 
 
 # --- Durable source<->dist drift guards -----------------------------------------
@@ -460,11 +336,10 @@ SOURCE_SKILL_ROOTS = (
 DIST_QUALIFIER_KEEPING_ROOTS = (
     DIST / "codex" / "plugins" / "manifest-dev" / "skills",
     DIST / "codex" / "plugins" / "manifest-dev-tools" / "skills",
-    DIST / "opencode" / "skills",
 )
-# Forms the OpenCode installer rewrite (colon-only) cannot catch — they must never
-# appear in source or in a qualifier-keeping dist, or the installed prompt names a
-# skill that does not exist.
+# Non-canonical activation forms — they must never appear in source or in the
+# qualifier-keeping Codex dist (the strip substitution for Pi/OpenCode only handles
+# the canonical colon form, so anything else would survive a sync in a stale shape).
 _UNREWRITABLE_FORMS = (
     "manifest-dev check-pr skill",  # space form instead of colon
     "activates the `review-prompt` skill",  # bare cross-plugin activation
@@ -476,21 +351,21 @@ def _skill_markdowns(*roots: Path) -> list[Path]:
 
 
 def test_no_unrewritable_activation_forms_in_source_or_qualifier_dists() -> None:
-    """Source and the colon-keeping dists (Codex, OpenCode) must use the canonical
-    plugin-qualified activation form everywhere — never the space form or a bare
-    cross-plugin id the OpenCode installer can't rewrite."""
+    """Source and the colon-keeping Codex dist must use the canonical plugin-qualified
+    activation form everywhere — never the space form or a bare cross-plugin id the
+    qualifier-strip substitution can't recognize."""
     for path in _skill_markdowns(*SOURCE_SKILL_ROOTS, *DIST_QUALIFIER_KEEPING_ROOTS):
         text = path.read_text(encoding="utf-8")
         for bad in _UNREWRITABLE_FORMS:
             assert bad not in text, f"{path}: stale activation form {bad!r}"
 
 
-def test_pi_dist_has_no_qualified_skill_ids_anywhere() -> None:
-    """Pi invokes /skill:<name> with no plugin namespace, so no manifest-dev(-tools):
-    qualified id may survive in ANY Pi skill markdown (sweep, not just sampled files).
-    """
+def test_bare_name_dists_have_no_qualified_skill_ids_anywhere() -> None:
+    """Pi invokes /skill:<name> and OpenCode discovers bare skill names, so no
+    manifest-dev(-tools): qualified id may survive in ANY of their skill markdowns
+    (sweep, not just sampled files)."""
     qualified = re.compile(r"manifest-dev(?:-tools)?:[a-z]")
-    for path in _skill_markdowns(DIST / "pi" / "skills"):
+    for path in _skill_markdowns(DIST / "pi" / "skills", DIST / "opencode" / "skills"):
         assert not qualified.search(path.read_text(encoding="utf-8")), path
 
 

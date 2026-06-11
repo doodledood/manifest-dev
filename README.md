@@ -19,8 +19,9 @@ Three skills, one idea: figure it out, write down what "done" means, let it buil
 /plugin marketplace add doodledood/manifest-dev
 /plugin install manifest-dev@manifest-dev-marketplace
 
-# OpenCode — skills, commands, plugin
-curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash
+# OpenCode — clone the repo, then add the plugin to ~/.config/opencode/opencode.json
+git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo
+#   "plugin": ["~/.manifest-dev/repo/dist/opencode/plugin"]
 
 # Codex CLI — native plugins from the repo marketplace (add the marketplace, then install both plugins)
 codex plugin marketplace add doodledood/manifest-dev
@@ -77,21 +78,22 @@ For zsh, add upgrade shortcuts for the non-Claude distributions:
 
 ```zsh
 alias upgrade-manifest-dev-codex='codex plugin marketplace upgrade'
-alias upgrade-manifest-dev-opencode='curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash'
+alias upgrade-manifest-dev-opencode='git -C ~/.manifest-dev/repo pull --ff-only 2>/dev/null || git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo'
 alias upgrade-manifest-dev-pi='pi update --extensions'
 alias upgrade-manifest-dev-all='upgrade-manifest-dev-codex && upgrade-manifest-dev-opencode && upgrade-manifest-dev-pi'
 ```
 
 Run `source ~/.zshrc` once. After that, updates are just `upgrade-manifest-dev-codex`, `upgrade-manifest-dev-opencode`, `upgrade-manifest-dev-pi`, or `upgrade-manifest-dev-all`.
 
-The OpenCode installer writes to its global config (`~/.config/opencode/`) so components load in every project. Use `--local` for the current repo only, and restart the CLI after updates (config-time files load at startup).
+OpenCode loads manifest-dev through a plugin pointed at the repo clone — updating is just pulling the clone, then restarting the CLI (config-time files load at startup). Requires OpenCode ≥ v1.2.16; see [dist/opencode/README.md](dist/opencode/README.md) for details and for migrating off the retired installer.
 
 Pi owns its package lifecycle. Use `pi install -l git:github.com/doodledood/manifest-dev@main` for project-local manifest-dev installs, `pi update` or `pi update --extensions` to update installed packages, and `pi remove git:github.com/doodledood/manifest-dev` to remove the repo package.
 
 Uninstall uses the same entrypoints:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/doodledood/manifest-dev/main/dist/opencode/install.sh | bash -s -- uninstall
+# OpenCode: remove the plugin line from ~/.config/opencode/opencode.json, then
+rm -rf ~/.manifest-dev/repo
 codex plugin remove manifest-dev@manifest-dev && codex plugin remove manifest-dev-tools@manifest-dev && codex plugin marketplace remove manifest-dev
 pi remove git:github.com/doodledood/manifest-dev
 ```
@@ -273,18 +275,18 @@ A verifier returns one of three states. **PASS** — the criterion holds. **FAIL
 
 ## Multi-CLI Support
 
-The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs. OpenCode and Codex have one-command installers — run them again to update, or pass `uninstall` to remove only manifest-dev-managed files. Pi uses its native package manager from the repository root and owns Harness-level verification with Pi JSON subprocess fanout. Installer-based targets include core `manifest-dev` components (suffixed `-manifest-dev`) and `manifest-dev-tools` skills (suffixed `-manifest-dev-tools`); Pi keeps package-scoped skill names.
+The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs, each through its native extension unit: a Codex plugin marketplace, an OpenCode plugin (a repo clone plus one config line), and a Pi package installed from the repository root (Pi owns Harness-level verification with Pi JSON subprocess fanout). No distribution installs into shared Agent Skills directories, and every target keeps original component names — no install-time suffixing anywhere.
 
 manifest-dev ships no agents of its own, so distributions carry skills only. Claude-style and OpenCode/Codex verification use a general-purpose subagent whose prompt can activate a skill; Pi runs the same per-gate verifier prompt in a manifest-dev-owned JSON subprocess.
 
 | CLI | Install | Skills | Verification | Details |
 |-----|---------|--------|--------------|---------|
 | Claude Code | `/plugin install` | Full | General-purpose subagent per criterion | Primary target |
-| OpenCode | `curl .../opencode/install.sh \| bash` | Full | General-purpose subagent per criterion | [README](dist/opencode/README.md) |
+| OpenCode | clone + `"plugin": ["…/dist/opencode/plugin"]` | Full | General-purpose subagent per criterion | [README](dist/opencode/README.md) |
 | Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` | Full | General-purpose subagent per criterion | [README](dist/codex/README.md) |
 | Pi | `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | JSON subprocess verifier fanout + outcome gate | [README](dist/pi/README.md) |
 
-After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules, regenerates namespace metadata, and rebuilds each target's distribution. The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and the current Harness-level Do JSON verifier fanout plus outcome gate.
+After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules and rebuilds each target's distribution (regenerating Pi's ownership metadata along the way). The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and the current Harness-level Do JSON verifier fanout plus outcome gate.
 
 Architecture decisions, including the accepted Codex plugin-native migration plan, are indexed in [`docs/adr/`](docs/adr/README.md).
 
