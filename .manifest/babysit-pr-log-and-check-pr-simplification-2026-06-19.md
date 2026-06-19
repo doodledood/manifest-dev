@@ -94,14 +94,14 @@
       `~/.manifest-dev/logs/` keyed to the PR; (3) explicit-path override; (4) resume-or-create behavior; and
       (5) `--log` present in the `argument-hint`. FAIL naming any missing element.
   ```
-- [AC-1.2] The log path is threaded downstream: babysit-pr passes `--log` into the `/do` invocation, and babysit's no-manifest path (`define --babysit`) carries it so the templated verifier steering can reference prior journal context when present.
+- [AC-1.2] The log path is threaded into the `/do` invocation babysit-pr makes. `/do` is the sole journal consumer; the stateless `check-pr` verifier (per Deliverable 3) neither reads nor needs it, so the journal is deliberately NOT threaded through `define`/verifier steering.
   ```yaml
   verify:
     prompt: |
-      Read claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md (and, if it changed, the define
-      `--babysit` synthesis flow it calls). PASS only if the `--log` path is explicitly threaded into the
-      downstream `/do` execution (and the define `--babysit` path when no manifest is supplied) rather than
-      being a parsed-but-unused flag. FAIL if `--log` is accepted but never propagated.
+      Read claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md. PASS only if the `--log` path is
+      explicitly threaded into the downstream `/do` execution rather than being a parsed-but-unused flag.
+      The journal is `/do`'s alone — it is correct that it is NOT threaded into define/verifier steering,
+      since check-pr is stateless. FAIL only if `--log` is accepted but never propagated to `/do`.
   ```
 
 ### Deliverable 2: `/do` journal consumption + runaway protection relocation
