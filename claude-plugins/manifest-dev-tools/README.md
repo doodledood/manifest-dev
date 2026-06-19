@@ -7,7 +7,7 @@ Utilities that complement manifest workflows — prompt engineering, PR babysitt
 | Skill | Description |
 |-------|-------------|
 | `/adr` | Synthesize Architecture Decision Records from session transcripts. Extracts decisions via multi-agent pipeline and writes MADR files. |
-| `/babysit-pr` | Author-side PR lifecycle babysitter and companion to `/review-pr`. Uses manifest grounding when available, synthesizes PR grounding when not, then runs the manifest lifecycle toward green and mergeable without pressing merge. Supports CI one-shot advancement via `--ci`. |
+| `/babysit-pr` | Author-side PR lifecycle babysitter and companion to `/review-pr`. Uses manifest grounding when available, synthesizes PR grounding when not, then runs the manifest lifecycle toward green and mergeable without pressing merge. Supports CI one-shot advancement via `--ci` and an optional `--log [path]` journal that keeps continuity across a long tend. |
 | `/handoff` | Produce a self-contained context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, another agent) and DIY sub-agent (spin off a focused side-session and hand back). Manually invoked. |
 | `/prompt-engineering` | Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. |
 | `/review-pr` | Autonomous PR review that posts high-signal, human-voiced comments under your account. Advances existing review threads, verifies fixes/replies/stale comments, runs the reviewer fleet on the relevant diff range, and posts one GitHub review. `--loop` schedules repeated one-shot passes with backoff. |

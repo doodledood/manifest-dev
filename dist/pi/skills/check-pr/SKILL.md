@@ -16,8 +16,7 @@ Return PASS when the PR is mergeable; return FAIL with per-gate findings when it
 
 - **PR URL** — canonical `github.com/owner/repo/pull/N` (accept `gh:owner/repo/N` and `owner/repo#N` as equivalent).
 - **Branch name** — the PR's head branch (optional; derivable from the PR).
-- **Steering** — optional plain-English overlay (extra gates, named approvers, known-flaky CI, retrigger-cap overrides, wait-cadence overrides, custom bot routing). Parse with judgment; no schema. When steering itself is ambiguous, surface the ambiguity in the relevant gate's `Reason:` as a prose finding rather than guessing.
-- **Prior-retrigger context** — optional pointer to prior retrigger / wait history (log path, env var, counter in steering). The same input feeds two counters: CI retriggers per check, and wait cycles per gate. When it's a log path, the convention is one line per event of the form `### CI Retrigger — <check-name>` (retrigger) or `### Wait — <gate-name>` (wait cycle); count those lines per kind and name. Absent → start counts at 0. The caller appends a `### Wait — <gate-name>` line each time it executes a `bash sleep` directive emitted by this skill, so the next invocation reads the incremented count.
+- **Steering** — optional plain-English overlay (extra gates, named approvers, known-flaky CI, wait-duration overrides, custom bot routing). Parse with judgment; no schema. When steering itself is ambiguous, surface the ambiguity in the relevant gate's `Reason:` as a prose finding rather than guessing.
 
 ## Canonical gates (the baseline)
 
@@ -63,7 +62,6 @@ For situations that don't fit any of these (an unexpected CI fingerprint that lo
 ## check-pr: FAIL
 
 Reason: <one-line summary of what's holding the PR back>
-Cycle: <current>/<cap>   # present only when a gate is in a wait state
 
 Breakdown:
 - PR exists: PASS | FAIL — <directive>
@@ -74,7 +72,7 @@ Breakdown:
 - User gates: PASS | FAIL | N/A — <directive>
 ```
 
-`Reason:` carries diagnostic context (who's waited on, which check failed, remaining retrigger budget). Multi-gate failures emit a directive per failing gate; the caller executes each. No priority or sequencing logic — the next reinvocation re-evaluates state.
+`Reason:` carries diagnostic context (who's waited on, which check failed). Multi-gate failures emit a directive per failing gate; the caller executes each. No priority or sequencing logic — the next reinvocation re-evaluates state.
 
 Example wait-in-progress FAIL (reviewer-pending — execute the sleep and reinvoke; waiting is the resolution, not a stuck signal):
 
@@ -82,7 +80,6 @@ Example wait-in-progress FAIL (reviewer-pending — execute the sleep and reinvo
 ## check-pr: FAIL
 
 Reason: Reviewer @bob (per CODEOWNERS) has not approved; CI green, threads clean. Waiting is the resolution — execute the sleep and reinvoke.
-Cycle: 3/6
 
 Breakdown:
 - Mergeable: FAIL — bash sleep 600; reinvoke
@@ -138,13 +135,13 @@ Example prose-finding FAIL (situation doesn't fit the vocabulary cleanly):
 Breakdown:
 - CI green: FAIL
   Reason: Required check `integration-suite` failed with an error fingerprint that doesn't match prior flake patterns for this check, and the PR diff doesn't touch the failing module.
-  Suggested: Worth a one-shot retrigger to rule out a transient infra issue (no prior retriggers logged for this run); if it fails again with the same fingerprint, the situation is novel and the caller should route to a human — the failure looks deeper than this PR.
-  Context: failure log excerpt — "ECONNREFUSED on integration-test-runner-3 after 14 successful tests"; prior retriggers on `integration-suite` this iteration: 0 (budget 10).
+  Suggested: Worth a one-shot retrigger to rule out a transient infra issue; if it fails again with the same fingerprint, the situation is novel and the caller should route to a human — the failure looks deeper than this PR.
+  Context: failure log excerpt — "ECONNREFUSED on integration-test-runner-3 after 14 successful tests"; the diff does not touch the failing module.
 ```
 
 ## Wait cadence policy
 
-Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emit `bash sleep <N>; reinvoke` directives. **Waiting is the action, not a no-op** — the caller executes the sleep and reinvokes; reviewer-pending and CI-in-flight FAILs typically resolve on a subsequent cycle without further intervention. Treat sleep-then-reverify as the standard resolution path for time-bound blockers; pick `<N>` based on what's being waited on and track how many cycles each gate has been waiting via the `Prior-retrigger context` input.
+Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emit `bash sleep <N>; reinvoke` directives. **Waiting is the action, not a no-op** — the caller executes the sleep and reinvokes; reviewer-pending and CI-in-flight FAILs typically resolve on a subsequent cycle without further intervention. Treat sleep-then-reverify as the standard resolution path for time-bound blockers; pick `<N>` based on what's being waited on.
 
 **Per-cycle duration defaults**:
 
@@ -154,35 +151,20 @@ Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emi
 | Reviewer pending | ~600s (harness sleep cap) |
 | Bot scanner pending | ~120s |
 
-**Per-gate cycle cap defaults**:
-
-| Gate | Cycle cap | Wall-clock at cap |
-|------|-----------|-------------------|
-| CI green (waiting for run) | 12 cycles | ~60min |
-| Mergeable (waiting for reviewer) | 6 cycles | ~60min |
-| Threads addressed (waiting for bot scanner) | 30 cycles | ~60min |
-
-At cap → emit a prose finding (not another `bash sleep` directive) on the relevant gate, with `Reason:` naming the cap reached and `Suggested:` describing the situation as caller-actionable-or-human-decision (the caller — typically `/do` — reads the prose and decides whether to keep waiting or hand off to a human).
+This skill reports current PR state per invocation; it does not count cycles or enforce a stop. **When to stop waiting or retriggering — runaway protection — is the caller's decision** (`/do` owns it, using its own run memory and journal). check-pr names the wait and a duration; the caller decides whether the blocker is still worth waiting on or should hand off to a human.
 
 **No nudging by default.** When a gate waits on a human (reviewer pending, comment pending, approver pending), do not propose outreach — no "ping @reviewer", no "DM the team", no "comment on the PR to nudge". `Suggested:` describes the wait state and offers options like "keep waiting" or "hand off to a human" only. Operators authorize nudging via steering (e.g. `Steering: nudge @bob after 3 cycles`); silent steering means no nudge.
 
-**Cycle counter** — read from the `Prior-retrigger context` input (same mechanism as the CI-retrigger counter). The caller appends a `### Wait — <gate-name>` line each time it executes a wait directive; the next invocation counts the lines per gate.
-
-**Steering customization** — users override per-gate durations or caps via the `Steering:` overlay, parsed with judgment (no schema). Example:
+**Steering customization** — users override per-gate wait durations via the `Steering:` overlay, parsed with judgment (no schema). Example:
 
 ```
 Steering: |
   Wait cadence:
-  - Reviewer pending: 1800s per cycle, up to 12 cycles
+  - Reviewer pending: 1800s per cycle
   - CI green: keep defaults
-  - Threads (bot scanner): cap at 60 cycles
 ```
 
 Apply overrides on top of defaults; silent steering means defaults hold.
-
-## Retrigger budget
-
-Default 10 retriggers per failing CI check within the current fail-loop iteration (counter scoped via the `Prior-retrigger context` input), overridable via steering. Name remaining budget in `Reason:` so the caller sees how much room is left. At-budget → emit a prose finding on the CI gate naming the exhausted budget and describing the failure pattern (so the caller can decide whether the failure looks real-and-deeper-than-this-PR or worth another approach).
 
 ## Hard prohibitions
 
