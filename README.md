@@ -61,6 +61,7 @@ Babysit an existing PR through review without any manifest-dev setup:
 ```bash
 /babysit-pr [pr-url]          # infer or synthesize grounding, then run the lifecycle
 /babysit-pr --ci [pr-url]     # CI one-shot: advance state, push trusted fixes, exit on waiting
+/babysit-pr --log [pr-url]    # keep a persisted journal so a long warm tend stays coherent
 /auto --babysit <pr-url>      # core define→do chain for a supplied PR URL
 /define --babysit <pr-url>    # just synthesize the manifest
 ```
