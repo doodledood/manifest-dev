@@ -151,8 +151,6 @@ Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emi
 | Reviewer pending | ~600s (harness sleep cap) |
 | Bot scanner pending | ~120s |
 
-This skill reports current PR state per invocation; it does not count cycles or enforce a stop. **When to stop waiting or retriggering — runaway protection — is the caller's decision** (`/do` owns it, using its own run memory and journal). check-pr names the wait and a duration; the caller decides whether the blocker is still worth waiting on or should hand off to a human.
-
 **No nudging by default.** When a gate waits on a human (reviewer pending, comment pending, approver pending), do not propose outreach — no "ping @reviewer", no "DM the team", no "comment on the PR to nudge". `Suggested:` describes the wait state and offers options like "keep waiting" or "hand off to a human" only. Operators authorize nudging via steering (e.g. `Steering: nudge @bob after 3 cycles`); silent steering means no nudge.
 
 **Steering customization** — users override per-gate wait durations via the `Steering:` overlay, parsed with judgment (no schema). Example:

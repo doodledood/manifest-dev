@@ -1,10 +1,10 @@
 {
-  "source_commit": "43a0f459b0917459d82e5b64530350f18aa483e9",
+  "source_commit": "a3f3fab7fd0cad56911459701c74d5e3654e9175",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-06-19T11:10:30Z",
+  "synced_at": "2026-06-19T11:40:31Z",
   "notes": "Plugin-native OpenCode distribution with package-local skills registered via skills.paths, package-local AGENTS.md registered via instructions, and plugin-owned cfg.command wrappers for source user-invocable skills. No installer, no component-namespaces.json, and no generated/copied command files. Current upstream OpenCode exposes skills through the skill tool; slash autocomplete is command-backed, so the plugin registers wrappers dynamically from bundled SKILL.md frontmatter while preserving existing user/project commands."
 }
