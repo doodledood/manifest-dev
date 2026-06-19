@@ -90,7 +90,7 @@ An author-side workflow that tends an existing pull request through CI, review t
 _Avoid_: Tend PR.
 
 **Review PR**:
-A reviewer-side workflow that inspects a pull request, posts comments, and advances review threads without becoming the author-side lifecycle owner.
+A reviewer-side workflow that inspects a pull request, posts comments, and advances review threads without becoming the author-side lifecycle owner. Polymorphic on manifest presence: given `--manifest`, it skips the generic reviewer fleet and independently verifies *only* the **Manifest** — running each **Acceptance Criterion** and **Global Invariant** `verify.prompt` against the PR head and posting PASS/FAIL — which gives optionally cross-model verification of the contract; without one, it runs the generic `review-code` reviewer fleet for an ordinary PR carrying no contract.
 
 **PR Grounding**:
 The ordered evidence **Babysit PR** uses to decide whether a pull-request blocker is in scope to fix: explicit **Manifest**, PR description, commits and diff, then comments.
@@ -119,6 +119,7 @@ A non-interactive **Babysit PR** run that performs every immediately actionable 
 - **Harness-level Do** is the Pi-specific implementation of the **Do/Verify Loop**; `/done` and `/escalate` become runtime outcomes rather than independent portable skills in that package.
 - A **Verification Judge** is not part of the default **Do/Verify Loop**; it is reserved for later fallback if executor repair/escalation judgments prove unreliable.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure through comments and thread advancement, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
+- **Review PR** in manifest mode is the independent, optionally cross-model reviewer-side re-verification of a **Manifest**: it executes the same **Acceptance Criterion** and **Global Invariant** `verify.prompt`s that `/do` runs in-session, against the PR head, providing a cross-check that same-model in-session verification cannot. Generic code-quality review is preserved without an additive fleet because `/define` default-injects a `review-code` **Global Invariant** that runs as part of manifest verification.
 - **Babysit PR** belongs to the `manifest-dev-tools` **Plugin** as PR tooling, while orchestrating core `manifest-dev` **Skills** for manifest synthesis and execution.
 - **Babysit PR** uses a **Manifest** synthesized from an existing pull request, then `/do` executes the lifecycle **Acceptance Criterion** through a general-purpose verifier whose prompt activates the `check-pr` **Skill**.
 - **PR Grounding** constrains **Babysit PR** autonomy: comments are interpreted against stronger intent sources instead of becoming the specification by recency.
