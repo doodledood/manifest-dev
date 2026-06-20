@@ -12,3 +12,6 @@ Chain `figure-out --autonomous` (when the transcript lacks shared understanding)
 **Babysit mode** (`--babysit <pr-url>`) skips fresh synthesis. Invoke `define` with `--babysit <pr-url> --autonomous`, then /do. PR-lifecycle platform auto-detects from PR URL host (`github.com` → github composition); non-github host → halt. Multi-repo manifest produced by /define → single /do invocation navigates all repos.
 
 **Failure handling.** /define returns no manifest path → stop, report. /do escalates (BLOCKED criterion or other blocker) → surface the escalation verbatim to the user with the action it requests.
+
+**Unattended launch.** For a cross-turn run, the recommended form is to launch `/auto` under a goal whose argument is the full-chain completion condition — so the host's fresh-model evaluator re-opens the turn until the whole chain finishes, not just the first phase:
+`/goal Run /auto <task> until the figure-out Read is named, the manifest is written, and /do reports /done with every Acceptance Criterion and Global Invariant PASS; don't stop while any phase is incomplete. Stop after N turns if it stalls.`

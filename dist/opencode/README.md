@@ -93,13 +93,13 @@ Evidence (live runs against real binaries, 2026-06-11, sandboxed `XDG_*` homes):
 | Skills | Full | Full | Identical payload, registered via plugin `skills.paths` |
 | Slash commands | Plugin-namespaced (`/manifest-dev:define`) | Plugin-registered wrappers, bare names (`/define`) | Wrappers call the corresponding skill and are generated only for user-invocable skills |
 | Agents | None (all skills) | None (all skills) | Verification activates a skill from a general-purpose subagent |
-| Hooks | None shipped | None shipped | Use `/goal /do <manifest-path>` for unattended turn continuation |
+| Hooks | None shipped | None shipped | Wrap `/do` in a `/goal` (all-criteria-PASS completion condition) for unattended turn continuation |
 
 ## Known Limitations
 
 1. **Frontmatter controls mostly ignored by OpenCode** — OpenCode's skill loader honors only `name`/`description`; `disable-model-invocation` has no effect, so all 18 skills remain model-visible through the `skill` tool. manifest-dev's plugin consumes `user-invocable` only for slash-wrapper registration: `done` and `escalate` are not slash-listed.
 2. **Bare names, first-found-wins** — skills keep their original names (`define`, `do`, `auto`); OpenCode dedups same-name skills by discovery order with a logged warning. A project-local skill named `do` shadows manifest-dev's skill. Same-name user/project commands also shadow manifest-dev's slash wrappers because the plugin does not overwrite existing commands.
-3. **No hook backstop for `/do`** — use `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
+3. **No hook backstop for `/do`** — wrap `/do` in a `/goal` whose argument is the all-criteria-PASS completion condition when you want the host CLI to keep `/do` running across turns.
 4. **$ARGUMENTS pass-through** — slash wrappers use OpenCode command-template `$ARGUMENTS` to prompt `Use the <skill> skill with: $ARGUMENTS`.
 
 ## Directory Structure

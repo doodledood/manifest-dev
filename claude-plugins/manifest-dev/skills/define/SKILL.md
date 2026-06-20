@@ -110,6 +110,7 @@ Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action 
 Manifest complete: <manifest-path>
 Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl
 
-To execute: /do <manifest-path>
-For unattended execution: /goal /do <manifest-path>
+To execute (foreground, current turn): /do <manifest-path>
+For an unattended run, launch under a self-contained `/goal` (its evaluator judges the transcript, not files) — replace <deliverables> with a one-line summary of what you defined:
+/goal Deliver <deliverables>; implement against the manifest at <manifest-path> and don't stop until /do reports every Acceptance Criterion and Global Invariant PASS and emits /done — keep going while any gate is unverified, FAIL, or escalation-pending. Stop after N turns if it stalls.
 ```
