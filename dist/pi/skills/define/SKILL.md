@@ -109,5 +109,5 @@ Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action 
 ```text
 Manifest complete: <manifest-path>
 
-To execute: /do <manifest-path>
+To execute (foreground, current turn): /do <manifest-path>
 ```

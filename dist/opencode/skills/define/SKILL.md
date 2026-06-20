@@ -109,6 +109,7 @@ Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action 
 ```text
 Manifest complete: <manifest-path>
 
-To execute: /do <manifest-path>
-For unattended execution: /goal /do <manifest-path>
+To execute (foreground, current turn): /do <manifest-path>
+For an unattended run, launch under a goal whose condition is this manifest's completion bar, so the host's fresh-model evaluator re-opens the turn until every gate passes:
+/goal Run /do <manifest-path> until every Acceptance Criterion and Global Invariant verifies PASS and /done is reported; don't stop while any gate is unverified, FAIL, or escalation-pending. Stop after N turns if it stalls.
 ```
