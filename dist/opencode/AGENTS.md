@@ -46,4 +46,4 @@ manifest-dev ships no agents. Verification is a general-purpose subagent that ac
 
 ## Unattended Execution
 
-Run `/goal /do <manifest-path>` when you want the host CLI to keep `/do` running across turns.
+Run `/do` under a `/goal` whose argument is the all-criteria-PASS completion condition when you want the host CLI to keep `/do` running across turns (its fresh-model evaluator re-opens the turn until the condition holds).
