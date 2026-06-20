@@ -17,6 +17,6 @@ When a caller supplies a journal/log path (e.g. `/babysit-pr --log`), read it be
 
 Mid-/do user messages default to invoking `manifest-dev:define` for amendment — the manifest is the source of truth, silent scope drift is worse than an extra amendment cycle. Pure questions about the manifest or process are answered inline.
 
-**Unattended launch.** For a cross-turn run, launch `/do` under a `/goal` whose argument is the manifest-completion condition — every Acceptance Criterion and Global Invariant PASS and `/done` reported (the form `/define` prints) — so the host's fresh-model evaluator re-opens the turn until all gates pass, rather than stopping at the first turn's end.
+**Unattended launch.** For a cross-turn run, launch `/do` under a `/goal` whose argument is the manifest-completion condition — every Acceptance Criterion and Global Invariant PASS and `/done` reported (the self-contained form `/define` prints, which the transcript-judging evaluator can check without reading files) — so the host's fresh-model evaluator re-opens the turn until all gates pass, rather than stopping at the first turn's end.
 
 **Input.** `<manifest-path>` — required; no args → halt with usage. Read the manifest fully before any execution. Multi-repo manifests (declare `Repos: [name: path, ...]` in Intent) — use absolute paths in tool calls when working in a non-cwd repo.
