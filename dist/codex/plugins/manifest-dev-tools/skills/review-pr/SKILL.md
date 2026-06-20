@@ -7,14 +7,14 @@ user-invocable: true
 
 High-signal autonomous PR review posted under your account. A review you'd put your name on — precision over coverage.
 
-**Inputs.** `pr-url` from the arg or the current branch's upstream PR. `--manifest <path>` opts into grounding against the author's intent; the skill does not auto-discover from any folder convention. `--bundle <urls>` plus PR-description linked-PR parsing (`Depends on #N`, `Stack:`, `Co-changes:`, GitHub PR URLs) provides cross-PR context for coupled changes. Resolve the PR, current head SHA, our prior GitHub reviews/comments/replies, open review threads, author commits, PR description, and linked-PR context before deciding what to do.
+**Inputs.** `pr-url` from the arg or the current branch's upstream PR. `--manifest <path>` switches the skill into **manifest mode**: it skips the generic reviewer fleet and independently verifies *only* the manifest's contract — it does not merely ground the fleet against author intent. Only in that mode, load `references/MANIFEST_MODE.md` for the verification mechanics; without `--manifest`, that reference is never read and review runs the generic `review-code` fleet. The skill does not auto-discover a manifest from any folder convention. `--bundle <urls>` plus PR-description linked-PR parsing (`Depends on #N`, `Stack:`, `Co-changes:`, GitHub PR URLs) provides cross-PR context for coupled changes. Resolve the PR, current head SHA, our prior GitHub reviews/comments/replies, open review threads, author commits, PR description, and linked-PR context before deciding what to do.
 
 ## One-Shot Pass
 
 Every invocation, including non-`--loop`, performs one complete PR-state advance:
 
 1. **Advance our existing threads.** For every unresolved thread we authored or replied to, run the per-comment verifier below. Post needed thread replies, resolve terminal threads, and leave genuinely pending threads open.
-2. **Review new code.** Determine the review range from durable GitHub state: if we have a prior review on this PR, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. If the head is unchanged from our latest review, skip the reviewer fleet only after thread advancement has run.
+2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range — determine that range from durable GitHub state: if we have a prior review on this PR, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. In either mode, if the head is unchanged from our latest review, skip re-verifying the code only after thread advancement has run.
 3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments. End with the cycle summary below.
 
 The one-shot pass is CI-shaped: it must make useful progress from only GitHub state and the current checkout. Do not rely on session memory such as `last-reviewed-sha`; derive it from our prior review/comment metadata and the PR history each run.
@@ -40,7 +40,7 @@ The subagent returns exactly one disposition:
 
 Push back only on new signal, and stay on the specific point under contention. Do not repost the same argument without a new author reply or code change.
 
-**Reviewer fleet.** Each lens is a **dimension** of the `manifest-dev:review-code` skill — spawn one general-purpose subagent per dimension and have it activate the review-code skill with that dimension against the review range. Always-on dimensions: `change-intent`, `code-bugs`, `code-design`, `code-maintainability`, `code-simplicity`, `context-file-adherence`. Add when the diff fits: `type-safety` on typed code; `test-quality` and `code-testability` on source; `contracts` on API surfaces; `operational-readiness` on CI/infra/env/migrations/workers/queues/secrets; `docs` and `prose-value` on prose. For prompts/skills/agents, spawn a general-purpose subagent that activates the `manifest-dev-tools:review-prompt` skill (plus, if available, the external prompt-engineering-plugin agents `prompt-token-efficiency-verifier` and `prompt-compression-verifier`). Forward the manifest to every spawned reviewer when present.
+**Reviewer fleet.** No-manifest mode only — skipped entirely in manifest mode (`references/MANIFEST_MODE.md`). Each lens is a **dimension** of the `manifest-dev:review-code` skill — spawn one general-purpose subagent per dimension and have it activate the review-code skill with that dimension against the review range. Always-on dimensions: `change-intent`, `code-bugs`, `code-design`, `code-maintainability`, `code-simplicity`, `context-file-adherence`. Add when the diff fits: `type-safety` on typed code; `test-quality` and `code-testability` on source; `contracts` on API surfaces; `operational-readiness` on CI/infra/env/migrations/workers/queues/secrets; `docs` and `prose-value` on prose. For prompts/skills/agents, spawn a general-purpose subagent that activates the `manifest-dev-tools:review-prompt` skill (plus, if available, the external prompt-engineering-plugin agents `prompt-token-efficiency-verifier` and `prompt-compression-verifier`). Forward the manifest to every spawned reviewer when present.
 
 **Narrow-lens reviewers.** Reviewer agents never receive PR conversation, linked-PR diffs, or linked-PR conversation. That context flows only to the holistic pass — narrow lens is what keeps each reviewer precise.
 
@@ -79,8 +79,8 @@ Target voice: *"Empty input skips the null check — `if (input?.value)` at `par
 
 - Reviewed range/head and concrete PR actions taken: new review comment count and anchors, thread replies, resolved threads, approval prompt/action, or no PR action.
 - Per-comment verifier subagents: one line per thread naming the anchor, disposition, and the verifier's short reason.
-- Reviewer fleet subagents: one line per spawned reviewer naming its actionable findings count and the substance of what it found, or `none`.
-- Holistic coherence pass: surviving comments, dedupes/merges, pruned findings with dominant reasons, range-bounding decisions, summary header if any, and truncation notes.
+- Reviewer fleet subagents (no-manifest mode): one line per spawned reviewer naming its actionable findings count and the substance of what it found, or `none`. In manifest mode, report per-criterion verifier results instead, per `references/MANIFEST_MODE.md`.
+- Holistic coherence pass (no-manifest mode): surviving comments, dedupes/merges, pruned findings with dominant reasons, range-bounding decisions, summary header if any, and truncation notes.
 
 The cycle summary is for the operator transcript or run log only. Do not paste it into PR review bodies, thread replies, or approval text; the only posted summary-like text is the voice-compliant summary header returned by the holistic pass.
 
@@ -92,5 +92,6 @@ The cycle summary is for the operator transcript or run log only. Do not paste i
 - Never forward PR conversation or bundle context to a reviewer agent. Only the holistic pass may see that context.
 - Never re-raise a finding the holistic pass pruned in this run.
 - Never skip thread advancement because the code review range is empty; thread state can change without a new commit.
+- In manifest mode (`--manifest`), follow `references/MANIFEST_MODE.md` for the verification, posting, and fingerprinting rules and its mode-specific gotchas.
 
 **`--loop`.** Load `references/LOOP.md`.
