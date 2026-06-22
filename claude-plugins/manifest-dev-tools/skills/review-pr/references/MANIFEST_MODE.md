@@ -18,7 +18,7 @@ Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing c
 
 ## Fingerprint, don't re-post
 
-PASS/FAIL comments recur every push, so track each by a content fingerprint (criterion id + finding substance), not comment id: re-post a criterion's FAIL only when its finding changes, and prune a FAIL whose criterion now PASSes. This keeps the thread clean and keeps `/do`/`babysit-pr` ingestion — which treats these comments as external review input it judges before acting — from looping on stale repeats.
+PASS/FAIL comments recur every push, so track each by a content fingerprint (criterion id + finding substance), not comment id: re-post a criterion's FAIL only when its finding changes, and prune a FAIL whose criterion now PASSes. This keeps the thread clean and keeps `/do`/`babysit-pr` ingestion — which treats these comments as external review input it judges before acting — from looping on stale repeats. Carry the criterion id inside the SKILL.md self-marker (e.g. `<!-- manifest-dev:review-pr ac=AC-1.2 -->`) so the criterion half of the fingerprint matches exactly; the finding-substance half still reads the rendered body to decide whether the finding changed.
 
 ## Cycle summary
 
