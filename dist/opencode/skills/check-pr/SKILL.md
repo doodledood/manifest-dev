@@ -186,5 +186,5 @@ These are invariants. They hold regardless of steering or context.
 
 ## Gotchas
 
-- **Bot comments repeat after push.** Bots re-scan after every commit and emit new comment IDs for the same finding. Track by content fingerprint, not comment ID, to avoid loops on recurring bot suggestions.
+- **Bot comments repeat after push.** Bots re-scan after every commit and emit new comment IDs for the same finding. Track by content fingerprint, not comment ID, to avoid loops on recurring bot suggestions. `review-pr`'s own comments carry a hidden `<!-- manifest-dev:review-pr -->` marker (in manifest mode, with the criterion id) — an exact signal for this category, even when posted under a human's account.
 - **Thread resolution is permanent.** GitHub doesn't reopen resolved threads via API. Be conservative — leave open when the addressing signal is ambiguous.
