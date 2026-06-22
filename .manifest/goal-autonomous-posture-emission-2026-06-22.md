@@ -80,7 +80,7 @@
 ### Deliverable 1: Prompt content, emission, and mode-prose edits
 
 **Acceptance Criteria:**
-- [AC-1.1] Each of the three printed `/goal` strings (figure-out `references/autonomous.md`, `define/SKILL.md` Complete handoff, `auto/SKILL.md`) carries the autonomous-posture clause as a clause **distinct** from the measurable completion condition, and the turn bound remains a user-filled placeholder.
+- [AC-1.1] Each of the three printed `/goal` strings (figure-out `references/autonomous.md`, `define/SKILL.md` Complete handoff, `auto/SKILL.md`) carries an autonomous-posture clause **distinct** from the measurable completion condition, **domain-appropriate to that surface** (figure-out = investigation/fog-clearing; `/do` and `/auto` = execution + honest verification — not the fog framing), and the turn bound remains a user-filled placeholder.
   ```yaml
   verify:
     prompt: |
@@ -91,14 +91,20 @@
       PASS only if ALL hold for each of the three:
       (a) the /goal still contains its measurable completion condition (Read named with full anatomy / every AC and
       GI PASS and /done reported / full-chain complete — as appropriate to that surface);
-      (b) it ALSO contains an autonomous-operating-posture clause meaning: resolve every question you can yourself
-      with best judgment, record low-confidence calls as assumptions to revisit, and only halt for a blocker that
-      genuinely needs the user;
+      (b) it ALSO contains an autonomous-operating-posture clause that is DOMAIN-APPROPRIATE to its surface and
+      distinct from the completion condition:
+        - figure-out (autonomous.md): the investigation/fog-clearing posture — clear all fog you can yourself,
+          record low-confidence calls as assumptions, halt only for a blocker that genuinely needs the user;
+        - define's /do goal AND auto's goal: an EXECUTION + honest-verification posture — verify every gate
+          honestly (fix and re-verify rather than waving any through), trustworthiness/truth over speed, make the
+          calls yourself, escalating only a blocker that genuinely needs the user. This must NOT be the figure-out
+          "clear all fog / investigate / record an assumption" framing (that essence belongs to figure-out only);
       (c) the posture clause is grammatically/visually distinct from the completion condition (a separate clause or
       sentence), not fused into the measurable end state;
       (d) any turn bound remains a user-filled placeholder (e.g. "Stop after N turns…"), with no hardcoded number.
-      FAIL if any of the three lacks the posture, fuses it into the completion condition, or hardcodes a turn bound.
-      Report the exact /goal text from each file.
+      FAIL if any /goal lacks a posture, fuses it into the completion condition, hardcodes a turn bound, OR if the
+      /do or /auto goal carries the figure-out fog-clearing/assumption framing instead of an execution-verification
+      posture. Report the exact /goal text from each file.
     phase: 1
   ```
 - [AC-1.2] figure-out `autonomous.md` makes emitting the `/goal` a salient first action, and the nested-suppression rule fails toward printing.

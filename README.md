@@ -46,11 +46,11 @@ Then work through the three beats:
 # 3. Execute and verify every criterion inline.
 #    Wrap in /goal — its fresh-model evaluator re-runs turns until a completion condition holds (recommended).
 #    /define prints a ready-to-copy /goal; the shape is a measurable end state, not a bare command:
-/goal Run /do <manifest-path> until every Acceptance Criterion and Global Invariant verifies PASS and /done is reported; don't stop while any gate is unverified, FAIL, or escalation-pending. Clear all fog you can without me — investigate to the truth rather than guessing, since trustworthiness outranks speed — recording an assumption only for what genuinely needs me, and halting only for a blocker that truly requires my input. Stop after N turns if it stalls.
+/goal Run /do <manifest-path> until every Acceptance Criterion and Global Invariant verifies PASS and /done is reported; don't stop while any gate is unverified, FAIL, or escalation-pending. Verify every gate honestly — fix what fails and re-verify rather than waving it through, since trustworthiness and truth outrank speed — making the calls yourself and escalating only a blocker that genuinely needs me. Stop after N turns if it stalls.
 /do <manifest-path>          # foreground variant, runs in the current turn only
 
 # Or run the whole thing autonomously, no approval gates:
-/goal Run /auto <what you want to build> until the Read is named, the manifest is written, and /do reports /done with all criteria PASS; don't stop while any phase is incomplete. Clear all fog you can without me — investigate to the truth rather than guessing, since trustworthiness outranks speed — recording an assumption only for what genuinely needs me, and halting only for a blocker that truly requires my input. Stop after N turns if it stalls.
+/goal Run /auto <what you want to build> until the Read is named, the manifest is written, and /do reports /done with all criteria PASS; don't stop while any phase is incomplete. Drive every phase to its real bar yourself and verify each gate honestly rather than waving any through — trustworthiness and truth over speed — escalating only a blocker that genuinely needs me. Stop after N turns if it stalls.
 ```
 
 `/figure-out` is the heart of it — a peer that investigates before it claims, walks the decision tree for design-shaped problems, and holds its position under pushback. `/define` doesn't interview you; it takes the understanding you reached and *encodes* it into a manifest (auto-invoking `/figure-out` first if you skipped ahead and the understanding isn't there yet). `/do` implements toward the manifest and spawns a subagent per criterion to verify inline. `/auto` chains all three with no waiting.
