@@ -23,7 +23,7 @@ Front-load the thinking so the agent gets it right the first time.
 
 - **`/figure-out`** — reach shared understanding of the problem. A peer that investigates before it claims, walks the decision tree, and holds positions under pushback. The conceptual core; call it directly when figuring it out IS the goal.
 - **`/define`** — encode that understanding into a Manifest. Auto-invokes `/figure-out` when the understanding isn't there yet. Supports `--canvas` (a live browser-rendered understanding surface) and `--babysit <pr-url>`.
-- **`/do`** — execute and verify. One subagent per criterion using its `verify.prompt:` verbatim, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Caller overlays can narrow retry cadence for CI one-shot workflows. Run it under a `/goal` whose argument is the all-criteria-PASS completion condition (the recommended form) so it carries across turns. `/auto` chains all three autonomously; run that under a chain-complete `/goal` too.
+- **`/do`** — execute and verify. One subagent per criterion using its `verify.prompt:` verbatim, aggregating PASS / FAIL / BLOCKED, fixing failures, re-verifying. Caller overlays can narrow retry cadence for CI one-shot workflows. Run it under a `/goal` whose argument is the all-criteria-PASS completion condition (the recommended form) so it carries across turns, resolving what it can autonomously and halting only for a blocker that genuinely needs you. `/auto` chains all three autonomously; run that under a chain-complete `/goal` too.
 
 Full schema, verify-block fields, verification skills, and task guidance live in the [manifest-dev README](./manifest-dev).
 
