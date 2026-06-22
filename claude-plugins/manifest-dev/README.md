@@ -8,7 +8,7 @@ Understand the problem. Write down what you'd accept. Let it build and verify it
 /figure-out "how should rate limiting behave here?"   # think it through
 /define "add rate limiting to the API"                # encode what you'd accept
 # recommended — /goal's fresh-model evaluator re-runs turns until the condition holds (continues across turns):
-/goal Run /do ~/.manifest-dev/manifests/manifest-<timestamp>.md until every Acceptance Criterion and Global Invariant verifies PASS and /done is reported; don't stop while any gate is unverified, FAIL, or escalation-pending. Resolve every question you can yourself and record low-confidence calls as assumptions, halting only for a blocker that genuinely needs me. Stop after N turns if it stalls.
+/goal Run /do ~/.manifest-dev/manifests/manifest-<timestamp>.md until every Acceptance Criterion and Global Invariant verifies PASS and /done is reported; don't stop while any gate is unverified, FAIL, or escalation-pending. Clear all fog you can without me — investigate to the truth rather than guessing, since trustworthiness outranks speed — recording an assumption only for what genuinely needs me, and halting only for a blocker that truly requires my input. Stop after N turns if it stalls.
 /do ~/.manifest-dev/manifests/manifest-<timestamp>.md         # foreground variant, current turn only
 ```
 
