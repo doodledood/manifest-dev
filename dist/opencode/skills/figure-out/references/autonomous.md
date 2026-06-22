@@ -1,14 +1,14 @@
 # figure-out: --autonomous
 
-Loaded when args contain `--autonomous` (typically passed by `/auto` chaining figure-out → define → do without user wait). There is no user to wait on — and no user to **press back**. In interactive mode the user is a second presser, catching branches you skipped and demanding depth, with the one-question-per-turn cadence pacing that across turns; autonomous mode removes both the presser and the cadence, so the completeness bar **rises** — you play both roles.
+Loaded when args contain `--autonomous` (typically passed by `/auto` chaining figure-out → define → do without user wait). There is no user to wait on — and no user to **press back**. In interactive mode the user is a second presser, catching branches you skipped and demanding depth, with the one-question-per-turn cadence pacing that across turns; autonomous mode removes both the presser and the cadence, so the completeness bar **rises** — you play both roles. And the master frame's *explore-don't-ask* default goes absolute here: proactively clear every patch of fog that investigation or a defensible judgment call can settle without a human, leaving only what genuinely needs one — a true preference, an unknowable-without-asking call — to fall to a low-confidence assumption.
 
-On activation, before the first question, print a copy-pasteable backstop for the run — a `/goal` whose argument is the Read's completion condition, so the host's fresh-model evaluator re-opens the turn if you stop early:
+Your first action on activation — before the first question, before any investigation — is to print a copy-pasteable backstop for the run: a `/goal` whose argument is the Read's completion condition, so the host's fresh-model evaluator re-opens the turn if you stop early:
 
 ```
-/goal Investigate <topic> until the Read is named with full anatomy — every load-bearing branch pressed, the independent re-derivation run, the rival set no longer moving; do not stop at a first-pass read. Stop after N turns if it stalls.
+/goal Investigate <topic> until the Read is named with full anatomy — every load-bearing branch pressed, the independent re-derivation run, the rival set no longer moving; do not stop at a first-pass read. Resolve every question you can yourself and record low-confidence calls as assumptions, halting only for a blocker that genuinely needs me. Stop after N turns if it stalls.
 ```
 
-This is the standalone-run backstop; when `--autonomous` is chained under `/auto`, that wrapping entrypoint owns the goal — don't print a nested one.
+This is the standalone-run backstop. Suppress it only when you can clearly see `--autonomous` is chained under `/auto` (that wrapping entrypoint owns the goal); when in doubt, print — a missing backstop costs more than a redundant one.
 
 - At each load-bearing question, pose it, generate your recommended answer with brief rationale, and adopt that answer as the resolution — the same one you'd have recommended to the user.
 - Surface each resolution (question, answer, rationale) in the conversation so downstream consumers (e.g. `/define`) can read it as prior context.
