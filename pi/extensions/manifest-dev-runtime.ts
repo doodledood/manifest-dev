@@ -214,9 +214,10 @@ function extractVerifierVerdict(result: string): GateVerdict | undefined {
 	const match = findVerifierLabel(result, "VERDICT");
 	if (!match) return undefined;
 
-	const value = result
-		.slice(match.index + match[0].length)
-		.match(/^(?:\*\*|__|\*|_)?[^\S\r\n]*(PASS|FAIL|BLOCKED)\b/i)?.[1];
+	const verdictLine = result.slice(match.index + match[0].length).match(/^[^\r\n]*/)?.[0] ?? "";
+	const value = verdictLine.match(
+		/^(?:\*\*|__|\*|_)?[^\S\r\n]*(PASS|FAIL|BLOCKED)[^\S\r\n]*(?:\*\*|__|\*|_)?[^\S\r\n]*$/i,
+	)?.[1];
 	return value?.toUpperCase() as GateVerdict | undefined;
 }
 
