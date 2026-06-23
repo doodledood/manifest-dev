@@ -1,6 +1,6 @@
 # manifest-dev for Pi
 
-This is the Pi package target for manifest-dev. It ships the shared, Pi-compatible skills plus a source-owned Pi extension for Harness-level Do entrypoints, manifest-dev-owned JSON subprocess verifier fanout, and structured done/escalate outcomes.
+This is the Pi package target for manifest-dev. It ships the portable manifest-dev skills plus prompt-template aliases for the main entrypoints. There is no manifest-dev TypeScript extension in this target: `/do` follows the same main-agent verifier protocol used on the other skill-based hosts, and host goal/continuation support is an optional outer backstop.
 
 Repository: [doodledood/manifest-dev](https://github.com/doodledood/manifest-dev). Pi's package manager is the installer — there is no `install.sh` for this target.
 
@@ -59,53 +59,57 @@ Pi exposes installed skills as `/skill:<name>` commands when skill commands are 
 
 - `/skill:figure-out`
 - `/skill:define`
+- `/skill:do`
+- `/skill:done`
+- `/skill:escalate`
+- `/skill:auto`
 - `/skill:figure-out-team`
+- `/skill:check-pr`
+- `/skill:poll-slack`
+- `/skill:review-code`
+- `/skill:babysit-pr`
 - `/skill:adr`
 - `/skill:handoff`
 - `/skill:prompt-engineering`
+- `/skill:review-prompt`
 - `/skill:review-pr`
 - `/skill:teach-me`
 - `/skill:walk-pr`
 
-## Harness-level Commands
+## Slash Aliases
 
-The Pi runtime ships as **two packages**: `@doodledood/manifest-dev-pi` (core: `/do` and `/auto`, plus the shared Harness-level Do runtime) and `@doodledood/manifest-dev-pi-tools` (`/babysit-pr`, depending on core). Together they register native commands for the runtime-owned parts of manifest-dev:
+The package also ships prompt-template aliases for the common entrypoints:
 
-- `/do <manifest-path>` starts a Harness-level Do run for an existing manifest. *(core)*
-- `/auto <task>` runs the figure-out -> define -> Harness-level Do lifecycle without approval gates. *(core)*
-- `/babysit-pr <github-pr-url>` synthesizes PR lifecycle grounding and runs it through Harness-level Do. *(tools)*
+- `/do <manifest-path>` expands to the `do` skill.
+- `/auto <task>` expands to the `auto` skill.
+- `/babysit-pr <github-pr-url> [--ci] [--manifest <path>] [--log [path]]` expands to the `babysit-pr` skill.
 
-`/skill:teach-me` runs as a prompt-driven incremental teaching loop — for the current session's work, a PR, an ADR, or any topic — that verifies understanding through the learner's own demonstration before wrapping up.
+The aliases are convenience templates. The skills own behavior.
 
-The extension owns Harness-level verification and outcome routing internally:
+## Execution and Verification
 
-- When the Executor Session stops after implementation or repair work, the runtime records a clean verification orchestration session under `~/.manifest-dev/verification-sessions/` and spawns one clean Pi subprocess per Acceptance Criterion and Global Invariant using `pi --mode json`. Each child receives the exact prompt built from the gate's `verify.prompt`, loads Pi resources normally, and returns the existing `VERDICT` / `EVIDENCE` / `DETAILS` report. Gates run in ascending-phase batches (serial across phases, parallel within), short-circuiting later phases on FAIL/BLOCKED. Manifest-dev enforces its own verifier fanout cap (default 10 per phase chunk). A gate-level `verify.model` wins; otherwise the child inherits the Executor Session's current model, and the parent thinking level is passed through with `--thinking`. Multi-repo manifests (`Repos:`) prepend a repo path map to each verifier prompt.
-- FAIL verdicts are injected back into the Executor Session as runtime-authored follow-up repair work. PASS records a runtime done outcome after freshness checks. BLOCKED records and surfaces a resumable blocker. The executor is not asked to call verification or outcome tools.
+`/do` is prompt-level in Pi, matching the portable manifest-dev workflow:
 
-Completion, escalation, and authoritative verification are runtime outcomes in Pi; they are not exposed as normal skills or executor-callable tools.
+1. The main agent reads the Manifest and treats it as the acceptance contract.
+2. It implements Deliverables.
+3. It enumerates every Acceptance Criterion and Global Invariant with a `verify.prompt`.
+4. It launches an independent verifier execution for each gate using that prompt verbatim.
+5. It repairs FAILs and reruns the affected verifier.
+6. It reports genuine BLOCKED gates with the missing external input or state.
+7. It calls `done` only after every gate has PASS evidence.
 
-### Verifier configuration
+Pi does **not** include a package-owned verifier scheduler, verdict aggregator, done gate, or verifier concurrency flag. The trust mechanism is still independent verifier execution per Manifest gate; the orchestration is the normal `/do` skill protocol.
 
-Configure the verifier the Pi-native way — CLI flags (`pi.registerFlag` / `pi.getFlag`) with a `MANIFEST_DEV_*` environment-variable fallback. Resolution order is flag > env > default:
+## Optional Host Continuation
 
-| Flag | Env var | Default |
-|------|---------|---------|
-| `--manifest-verifier-max-concurrent` | `MANIFEST_DEV_VERIFIER_MAX_CONCURRENT` | `10` |
+For unattended work, use a host goal-setting or continuation capability when available. The goal should say that the run is complete only after every Manifest AC/GI has independent verifier PASS evidence, FAILs have been repaired and reverified, blockers are genuine, and no required verification is missing.
 
-A per-gate `verify.model` always overrides the parent session model. `manifest-verifier-max-concurrent` is manifest-dev's own cap for same-phase JSON verifier subprocesses.
+One Pi-compatible continuation provider is the [`goal-controller` package in doodledood/pi-plugins](https://github.com/doodledood/pi-plugins/tree/main/packages/extensions/goal-controller). Install it using that package's instructions and Pi's normal package install flow.
 
-## Runtime Boundary
-
-`/do`, `/done`, and `/escalate` remain intentionally absent from `dist/pi/skills/`:
-
-- `/do` is represented by the runtime-owned `/do` extension command (registered by the core package, not shipped as a skill).
-- `/done` is represented by a runtime-owned done outcome after all verifier gates pass.
-- `/escalate` is represented by a runtime-owned blocked/escalation outcome with blocker details.
-
-This runtime slice starts and gates the run in Pi, records run/verification/outcome entries with the extension API, keeps `/auto` plus `/babysit-pr` usable through Pi-aware wrappers (which invoke the installed `/skill:figure-out` and `/skill:define`), records a clean verification orchestration session per attempt, and performs verifier fanout through clean Pi JSON subprocesses that honor each gate's model/phase. The Executor Session prompt stays implementation-focused; runtime lifecycle hooks trigger verification after executor checkpoints and inject failed-gate results back as follow-up work. The done gate is durable (verification state persists to `~/.manifest-dev/runs/<runId>.json` and is rehydrated on reload) and freshness-bound (a stale pass is rejected once the manifest or workspace changes). The remaining future runtime work is optional judge/fork handling for contested verifier reports.
+The continuation provider is optional. Without one, `/do`, `/auto`, and `/babysit-pr` still run, but Pi will not automatically reopen turns if the model stops before the contract is complete.
 
 ## Development
 
-`sync-tools` owns the generated skill/docs payload under `dist/pi`. After changing source plugin skills or the Pi conversion reference, regenerate `dist/pi` through `/sync-tools pi` once the generator path exists.
+`sync-tools` owns the generated skill/docs payload under `dist/pi`. After changing source plugin skills or the Pi conversion reference, regenerate or hand-align `dist/pi` according to `.claude/skills/sync-tools/references/pi-cli.md`.
 
-The repo-root `package.json` and `pi/extensions/` are source-owned Pi package surfaces. Do not generate or overwrite them from `sync-tools`.
+The repo-root `package.json` is source-owned Pi package metadata. `dist/pi/skills`, `dist/pi/prompts`, `dist/pi/component-namespaces.json`, and this README are generated/distribution assets.

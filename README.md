@@ -28,11 +28,11 @@ codex plugin marketplace add doodledood/manifest-dev
 codex plugin add manifest-dev@manifest-dev
 codex plugin add manifest-dev-tools@manifest-dev
 
-# Pi — repo-root package, shared skills plus Harness-level commands
+# Pi — repo-root package, shared skills plus prompt aliases
 pi install git:github.com/doodledood/manifest-dev@main
 ```
 
-Pi exposes shared skills as `/skill:<name>` commands and registers `/do`, `/auto`, and `/babysit-pr` through its runtime extension. Harness-level Do keeps the executor simple: implement Deliverables, run useful local checks, repair runtime-injected failed AC/INV reports, then stop. The runtime starts clean verification attempts, records a clean verification orchestration session, fans out manifest-dev-owned Pi JSON subprocess verifiers — one per Acceptance Criterion and Global Invariant — injects failed-gate evidence back into the executor as follow-up work, and records done only after every gate passes. The Pi verifier fanout uses its own cap (`--manifest-verifier-max-concurrent`, default 10) and does not require a separate verifier fanout package.
+Pi exposes the manifest-dev skills as `/skill:<name>` commands and ships prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. There is no Pi-specific verifier runtime: `/do` uses the same portable protocol as the other skill-based hosts — the main agent reads the Manifest, launches an independent verifier execution per Acceptance Criterion and Global Invariant using `verify.prompt`, fixes FAILs, reports genuine BLOCKED gates, and finishes only when all gates have PASS evidence. For unattended Pi runs, install and use a host continuation provider such as the [`goal-controller` package in doodledood/pi-plugins](https://github.com/doodledood/pi-plugins/tree/main/packages/extensions/goal-controller), or any equivalent goal/continuation capability. Without one, the skills still work, but Pi will not automatically reopen turns if the model stops early.
 
 Then work through the three beats:
 
@@ -68,7 +68,7 @@ Babysit an existing PR through review without any manifest-dev setup:
 
 `/babysit-pr` is the author-side companion to `/review-pr`: review applies quality pressure through comments and thread advancement; babysit uses the strongest available grounding (manifest, PR description, commits/diff, then comments) to get the PR green and mergeable without pressing merge. In trusted same-repo CI it may auto-fix, commit, and push; on untrusted or unwritable heads it reports/escalates instead.
 
-In Pi, install the repo-root package, then use `/do <manifest-path>` for execution, `/auto <task>` for the autonomous chain, and `/babysit-pr <pr-url>` for PR lifecycle tending.
+In Pi, install the repo-root package, then use `/do <manifest-path>` for execution, `/auto <task>` for the autonomous chain, and `/babysit-pr <pr-url>` for PR lifecycle tending. These are prompt-template aliases over the packaged skills; `/skill:do`, `/skill:auto`, and `/skill:babysit-pr` work too.
 
 Pass `--canvas` to `/define` (desktop only) for a **Shared Understanding Canvas**: a live, browser-rendered side-channel that runs alongside the chat. Intent, flow, and scope render as you go (mermaid diagrams, before/after panels), so misalignment shows up while you can still cheaply fix it. The manifest stays the formal encoding for `/do`.
 
@@ -107,7 +107,7 @@ Most spec-driven tools take your description and generate a spec, a plan, and th
 
 This flips the order. Understanding comes first and it's adversarial — `/figure-out` presses the load-bearing question, investigates the code instead of asking you, and refuses to leap to the implied edit. Only once the problem is actually understood does `/define` encode it, and what it encodes is an *acceptance contract*: the things you'd reject in review but wouldn't think to write down. Not "use Zod, disable the button while submitting." Instead: "invalid credentials show an error without clearing the password field," "the form can't be submitted twice." You set the bar. The agent picks how to clear it.
 
-Then `/do` proves it cleared the bar. Every Acceptance Criterion and Global Invariant gets its own verifier execution context before completion (a verifier subagent on subagent-capable hosts, a Pi JSON subprocess in Pi). Failures get fixed and re-checked without you in the loop. The manifest is ephemeral — it drives one PR, then the code is the source of truth. No spec to maintain, nothing to drift.
+Then `/do` proves it cleared the bar. Every Acceptance Criterion and Global Invariant gets its own verifier execution context before completion (typically a general-purpose verifier subagent or equivalent independent execution in the active host). Failures get fixed and re-checked without you in the loop. The manifest is ephemeral — it drives one PR, then the code is the source of truth. No spec to maintain, nothing to drift.
 
 ## How It Works
 
@@ -276,18 +276,18 @@ A verifier returns one of three states. **PASS** — the criterion holds. **FAIL
 
 ## Multi-CLI Support
 
-The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs, each through its native extension unit: a Codex plugin marketplace, an OpenCode plugin (a repo clone plus one config line), and a Pi package installed from the repository root (Pi owns Harness-level verification with Pi JSON subprocess fanout). No distribution installs into shared Agent Skills directories, and every target keeps original component names — no install-time suffixing anywhere.
+The Claude Code plugins are the source of truth. Per-CLI distributions under `dist/` package the same components for other AI coding CLIs, each through its native extension unit: a Codex plugin marketplace, an OpenCode plugin (a repo clone plus one config line), and a Pi package installed from the repository root (skills plus prompt-template aliases). No distribution installs into shared Agent Skills directories, and every target keeps original component names — no install-time suffixing anywhere.
 
-manifest-dev ships no agents of its own, so distributions carry skills only. Claude-style and OpenCode/Codex verification use a general-purpose subagent whose prompt can activate a skill; Pi runs the same per-gate verifier prompt in a manifest-dev-owned JSON subprocess.
+manifest-dev ships no agents of its own, so distributions carry skills only. Verification uses a general-purpose verifier execution whose prompt can activate a skill; host goal/continuation support, when present, is an outer backstop rather than a replacement for the per-gate verifier protocol.
 
 | CLI | Install | Skills | Verification | Details |
 |-----|---------|--------|--------------|---------|
 | Claude Code | `/plugin install` | Full | General-purpose subagent per criterion | Primary target |
 | OpenCode | clone + `"plugin": ["…/dist/opencode/plugin"]` | Full | General-purpose subagent per criterion | [README](dist/opencode/README.md) |
 | Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` | Full | General-purpose subagent per criterion | [README](dist/codex/README.md) |
-| Pi | `pi install git:github.com/doodledood/manifest-dev@main` | Shared subset + runtime commands | JSON subprocess verifier fanout + outcome gate | [README](dist/pi/README.md) |
+| Pi | `pi install git:github.com/doodledood/manifest-dev@main` | Full skills + prompt aliases | General-purpose verifier execution per criterion; optional host continuation | [README](dist/pi/README.md) |
 
-After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules and rebuilds each target's distribution (regenerating Pi's ownership metadata along the way). The Pi target additionally carries a capability model for package install/update, skill loading, extension commands, resource discovery, prompt assets, sessions/forks, and the current Harness-level Do JSON verifier fanout plus outcome gate.
+After changing plugin components, run `/sync-tools` in Claude Code to regenerate `dist/`. It reads per-target conversion rules and rebuilds each target's distribution (regenerating Pi's ownership metadata along the way). The Pi target additionally carries a capability model for package install/update, skill loading, prompt-template aliases, and optional host goal/continuation support.
 
 Architecture decisions, including the accepted Codex plugin-native migration plan, are indexed in [`docs/adr/`](docs/adr/README.md).
 

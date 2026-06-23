@@ -1,25 +1,25 @@
 # ADR: Pi-native runtime package as a source surface
 
 ## Status
-Accepted
+Superseded by 20260623-use-host-continuation-as-optional-do-backstop
 
-Verifier-fanout mechanism partially superseded by `20260610-own-pi-verifier-runner`: Pi Harness-level Do now uses manifest-dev-owned JSON subprocess verifier fanout instead of `@gotgenes/pi-subagents`.
+Historical context for the former Pi-native runtime source surface. The current Pi target is a skill-only package with prompt-template aliases; verifier fanout is owned by the portable `/do` skill protocol plus optional host continuation.
 
 ## Context
 
 manifest-dev has treated Claude Code plugin components as the source of truth, with other CLI distributions generated under `dist/`. That model works for prompt and skill assets because Agent Skills are portable and the core methodology can be expressed in shared Markdown.
 
-Pi changes the trade-off for runtime orchestration. Pi packages can bundle skills, prompts, and TypeScript extensions; extensions can register commands and tools, intercept lifecycle and tool events, persist custom session entries, control active tools, and coordinate other Pi sessions through JSON/RPC or the SDK. Those primitives are especially relevant to manifest-dev's `/do` semantics, where correctness depends on stateful enforcement of verifier verdicts rather than on the executor agent's self-assessment.
+At the time, Pi changed the trade-off for runtime orchestration. Pi packages could bundle skills, prompts, and TypeScript extensions; extensions could register commands and tools, intercept lifecycle and tool events, persist custom session entries, control active tools, and coordinate other Pi sessions through JSON/RPC or the SDK. Those primitives appeared especially relevant to manifest-dev's `/do` semantics, where the team was exploring stateful enforcement of verifier verdicts rather than executor self-assessment.
 
-The user chose a Pi package as a second source surface and clarified the intended boundary: `/figure-out` and `/define` are similar enough to the existing Claude Code behavior that they do not need special Pi-native behavior now. The area that needs attention is the `/do` and verification loop.
+The user then chose a Pi package as a second source surface and clarified the intended boundary: `/figure-out` and `/define` were similar enough to existing Claude Code behavior that they did not need special Pi-native behavior. The area that seemed to need attention was the `/do` and verification loop. That runtime-source-surface direction is now superseded.
 
 ## Decision
 
-Create and maintain a **Pi-native runtime package** as a second source surface for deterministic `/do` and verification orchestration.
+The superseded decision was to create and maintain a **Pi-native runtime package** as a second source surface for deterministic `/do` and verification orchestration.
 
-Shared manifest-dev prompt and skill assets remain sourced from the existing plugin surfaces and may be reused or generated into the Pi package. The Pi-native source surface is for runtime code: run state, manifest parsing, phase ordering, verifier session fanout, verdict aggregation, repair routing, blocker handling, and the done gate.
+Shared manifest-dev prompt and skill assets would remain sourced from the existing plugin surfaces and could be reused or generated into the Pi package. The Pi-native source surface was for runtime code: run state, manifest parsing, phase ordering, verifier session fanout, verdict aggregation, repair routing, blocker handling, and the done gate.
 
-The Pi runtime package should not fork `/figure-out` or `/define` behavior unless a concrete Pi-specific gap appears. Those remain shared prompt and skill behavior.
+The Pi runtime package would not fork `/figure-out` or `/define` behavior unless a concrete Pi-specific gap appeared. Those remained shared prompt and skill behavior.
 
 The package should be installable from the repository root, so users can install and update it like a normal Pi package. A repo-root package manifest is source-owned package metadata, while generated `dist/pi` assets are produced by `sync-tools` and consumed by that package. README surfaces must document install, update, local-development, and removal flows wherever the repo documents multi-CLI distribution.
 
@@ -29,7 +29,7 @@ Initial implementation landed the runtime entrypoint slice first: `/manifest-do`
 
 The next slice added `manifest_dev_request_verification`: when the executor believed implementation was ready, it called this tool with the manifest path and run id. At the time, the extension parsed Acceptance Criteria and Global Invariants, spawned one clean Pi subagent verifier session per gate through `@gotgenes/pi-subagents` with inherited context disabled, aggregated PASS / FAIL / BLOCKED reports, persisted the verification entry, and rejected `outcome="done"` unless the latest verification for that run was all PASS. That verifier fanout mechanism is historical and has been superseded by the JSON subprocess runner ADR.
 
-Repair-session resumption remains executor-mediated for now: failed verification returns a report to the active executor, which repairs and calls verification again. A fuller persisted state machine, executor checkpointing, and optional judge/fork handling for contested verifier reports remain future runtime work.
+In that superseded runtime direction, repair-session resumption remained executor-mediated: failed verification returned a report to the active executor, which repaired and called verification again. A fuller persisted state machine, executor checkpointing, and optional judge/fork handling for contested verifier reports were deferred future runtime work.
 
 ## Alternatives Considered
 

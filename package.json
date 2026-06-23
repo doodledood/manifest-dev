@@ -1,31 +1,20 @@
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.11.6",
+  "version": "0.12.2",
   "private": true,
-  "description": "Pi package surface for manifest-dev shared skills and Harness-level Do runtime entrypoints (/do, /auto, /babysit-pr).",
+  "description": "Pi package surface for manifest-dev shared skills and prompt-template aliases (/do, /auto, /babysit-pr).",
   "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
   "keywords": [
     "pi-package",
     "manifest-dev",
     "agent-skills"
   ],
-  "exports": {
-    "./extension": "./pi/extensions/manifest-dev.ts",
-    "./runtime": "./pi/extensions/manifest-dev-runtime.ts"
-  },
   "pi": {
-    "extensions": [
-      "./pi/extensions/manifest-dev.ts",
-      "./packages/manifest-dev-pi-tools/pi/extensions/manifest-dev-tools.ts"
-    ],
     "skills": [
       "./dist/pi/skills"
+    ],
+    "prompts": [
+      "./dist/pi/prompts"
     ]
-  },
-  "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "*"
   }
 }
