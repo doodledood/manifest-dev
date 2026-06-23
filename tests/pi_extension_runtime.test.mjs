@@ -182,7 +182,103 @@ second line
 		},
 	);
 
+	for (const verdict of ["PASS", "FAIL", "BLOCKED"]) {
+		assert.equal(
+			parseVerifierReport(`VERDICT: ${verdict}\nEVIDENCE: ok\nDETAILS: ok`)?.verdict,
+			verdict,
+		);
+	}
+});
+
+test("parseVerifierReport accepts markdown emphasis around report labels", () => {
+	assert.deepEqual(
+		parseVerifierReport(`
+Typecheck passes, confirming the full chain compiles.
+
+**VERDICT: PASS**
+
+**EVIDENCE:**
+- Loaded the contracts dimension reference.
+- Ran \`npx nx run cxllm:tsc\` → **exit 0**, no type errors.
+
+**DETAILS — what passed:**
+- Data type fields flow end-to-end.
+- MCP and Slack surfaces preserve matching shapes.
+`),
+		{
+			verdict: "PASS",
+			evidence: "- Loaded the contracts dimension reference.\n- Ran `npx nx run cxllm:tsc` → **exit 0**, no type errors.",
+			details: "- Data type fields flow end-to-end.\n- MCP and Slack surfaces preserve matching shapes.",
+		},
+	);
+
+	assert.deepEqual(
+		parseVerifierReport(`
+Both review dimensions complete. Final assessment:
+
+---
+
+**VERDICT: PASS**
+
+**EVIDENCE:**
+- Inspected full change diff via \`git diff origin/master...HEAD\`.
+- Loaded and applied review-code references.
+
+**DETAILS:**
+
+test-quality — PASS.
+code-testability — PASS.
+`),
+		{
+			verdict: "PASS",
+			evidence: "- Inspected full change diff via `git diff origin/master...HEAD`.\n- Loaded and applied review-code references.",
+			details: "test-quality — PASS.\ncode-testability — PASS.",
+		},
+	);
+
+	assert.equal(
+		parseVerifierReport("**VERDICT:** PASS\n**EVIDENCE:** ok\n**DETAILS:** ok")?.verdict,
+		"PASS",
+	);
+
+	for (const verdict of ["PASS", "FAIL", "BLOCKED"]) {
+		assert.equal(
+			parseVerifierReport(`**VERDICT:** **${verdict}**\n**EVIDENCE:** ok\n**DETAILS:** ok`)?.verdict,
+			verdict,
+		);
+	}
+});
+
+test("parseVerifierReport preserves markdown content in evidence and details", () => {
+	assert.deepEqual(
+		parseVerifierReport("VERDICT: PASS\nEVIDENCE: Ran **npm test**\nDETAILS: All **good**"),
+		{
+			verdict: "PASS",
+			evidence: "Ran **npm test**",
+			details: "All **good**",
+		},
+	);
+
+	assert.deepEqual(
+		parseVerifierReport("VERDICT: PASS\n**EVIDENCE:** **bold evidence**\n**DETAILS:** **bold details**"),
+		{
+			verdict: "PASS",
+			evidence: "**bold evidence**",
+			details: "**bold details**",
+		},
+	);
+});
+
+test("parseVerifierReport rejects missing or non-contract verdicts", () => {
 	assert.equal(parseVerifierReport("EVIDENCE: no verdict"), undefined);
+	assert.equal(parseVerifierReport("Looks good; passed everything."), undefined);
+	assert.equal(parseVerifierReport("**VERDICT: PASSED**\nEVIDENCE: ok\nDETAILS: ok"), undefined);
+	assert.equal(parseVerifierReport("VERDICT: pass\nEVIDENCE: ok\nDETAILS: ok"), undefined);
+	assert.equal(parseVerifierReport("VERDICT: Pass\nEVIDENCE: ok\nDETAILS: ok"), undefined);
+	assert.equal(parseVerifierReport("VERDICT: blocked\nEVIDENCE: ok\nDETAILS: ok"), undefined);
+	assert.equal(parseVerifierReport("VERDICT: PASS because ok\nEVIDENCE: ok\nDETAILS: ok"), undefined);
+	assert.equal(parseVerifierReport("VERDICT: PASS-ish\nEVIDENCE: ok\nDETAILS: ok"), undefined);
+	assert.equal(parseVerifierReport("VERDICT: PASS/FAIL\nEVIDENCE: ok\nDETAILS: ok"), undefined);
 });
 
 test("toGateVerificationResult converts verifier runner terminal states", () => {
@@ -208,9 +304,19 @@ test("toGateVerificationResult converts verifier runner terminal states", () => 
 		"BLOCKED",
 	);
 
-	assert.equal(
-		toGateVerificationResult(gate, "agent-bad-report", completedRecord("not a report")).verdict,
-		"BLOCKED",
+	assert.deepEqual(
+		toGateVerificationResult(gate, "agent-bad-report", completedRecord("not a report")),
+		{
+			gateId: "AC-1.1",
+			kind: "acceptance_criterion",
+			title: "Thing works",
+			agentId: "agent-bad-report",
+			agentStatus: "completed",
+			verdict: "BLOCKED",
+			evidence: "Verifier completed but did not emit a parseable VERDICT line.",
+			details: "Expected report lines: VERDICT, EVIDENCE, DETAILS.",
+			rawResult: "not a report",
+		},
 	);
 
 	assert.deepEqual(
@@ -234,6 +340,15 @@ DETAILS: all good
 			details: "all good",
 			rawResult: "\nVERDICT: PASS\nEVIDENCE: command exited 0\nDETAILS: all good\n",
 		},
+	);
+
+	assert.equal(
+		toGateVerificationResult(
+			gate,
+			"agent-bold-pass",
+			completedRecord("**VERDICT: PASS**\n\n**EVIDENCE:**\n- command exited 0\n\n**DETAILS:**\nall good"),
+		).verdict,
+		"PASS",
 	);
 });
 

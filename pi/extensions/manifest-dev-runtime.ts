@@ -196,15 +196,55 @@ export function toGateVerificationResult(
 }
 
 export function parseVerifierReport(result: string): Pick<GateVerificationResult, "verdict" | "evidence" | "details"> | undefined {
-	const verdict = result.match(/^\s*VERDICT:\s*(PASS|FAIL|BLOCKED)\b/im)?.[1] as GateVerdict | undefined;
+	const verdict = extractVerifierVerdict(result);
 	if (!verdict) return undefined;
-	const evidence = result.match(/^\s*EVIDENCE:\s*(.+?)\s*$/im)?.[1]?.trim() ?? "";
-	const details = result.match(/^\s*DETAILS:\s*([\s\S]*)$/im)?.[1]?.trim() ?? "";
+	const evidence = extractVerifierSection(result, "EVIDENCE") ?? "";
+	const details = extractVerifierSection(result, "DETAILS", { allowSuffix: true }) ?? "";
 	return {
 		verdict,
 		evidence,
 		details,
 	};
+}
+
+const MARKDOWN_EMPHASIS_MARKER_PATTERN = String.raw`(\*\*|__|\*|_)`;
+const MARKDOWN_EMPHASIS_PATTERN = String.raw`(?:\*\*|__|\*|_)?`;
+const HORIZONTAL_SPACE_PATTERN = String.raw`[^\S\r\n]*`;
+
+function extractVerifierVerdict(result: string): GateVerdict | undefined {
+	const match = findVerifierLabel(result, "VERDICT");
+	if (!match) return undefined;
+
+	const verdictLine = result.slice(match.index + match[0].length).match(/^[^\r\n]*/)?.[0] ?? "";
+	const value = verdictLine.match(
+		/^(?:\*\*|__|\*|_)?[^\S\r\n]*(PASS|FAIL|BLOCKED)[^\S\r\n]*(?:\*\*|__|\*|_)?[^\S\r\n]*$/,
+	)?.[1];
+	return value?.toUpperCase() as GateVerdict | undefined;
+}
+
+function extractVerifierSection(result: string, label: "EVIDENCE" | "DETAILS", options?: { allowSuffix?: boolean }): string | undefined {
+	const match = findVerifierLabel(result, label, options);
+	if (!match) return undefined;
+
+	const start = match.index + match[0].length;
+	const nextLabel = label === "EVIDENCE" ? findVerifierLabel(result, "DETAILS", { allowSuffix: true, start }) : undefined;
+	return result.slice(start, nextLabel?.index).trim();
+}
+
+function findVerifierLabel(
+	result: string,
+	label: "VERDICT" | "EVIDENCE" | "DETAILS",
+	options?: { allowSuffix?: boolean; start?: number },
+): RegExpExecArray | undefined {
+	const suffixPattern = options?.allowSuffix ? String.raw`(?:[^\S\r\n]+[—-][^:\r\n]*)?` : "";
+	const wrappedLabelPattern = String.raw`${MARKDOWN_EMPHASIS_MARKER_PATTERN}${HORIZONTAL_SPACE_PATTERN}${label}\b${suffixPattern}${HORIZONTAL_SPACE_PATTERN}(?:\1${HORIZONTAL_SPACE_PATTERN}:|:${HORIZONTAL_SPACE_PATTERN}\1?)${HORIZONTAL_SPACE_PATTERN}`;
+	const plainLabelPattern = String.raw`${label}\b${suffixPattern}${HORIZONTAL_SPACE_PATTERN}:${HORIZONTAL_SPACE_PATTERN}`;
+	const pattern = new RegExp(
+		String.raw`^${HORIZONTAL_SPACE_PATTERN}(?:${wrappedLabelPattern}|${plainLabelPattern})`,
+		"gim",
+	);
+	pattern.lastIndex = options?.start ?? 0;
+	return pattern.exec(result) ?? undefined;
 }
 
 export function aggregateVerificationStatus(results: GateVerificationResult[]): VerificationStatus {
