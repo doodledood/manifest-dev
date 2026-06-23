@@ -39,6 +39,9 @@ A Claude Code extension unit that may contain skills, agents, and optional hooks
 **Source Surface**:
 A maintained implementation surface treated as authoritative for some part of manifest-dev, rather than a generated distribution copy.
 
+**Universal Language**:
+Prompt wording that names portable behavior or capability rather than a harness-specific primitive, so the same skill intent can run across Claude, Codex, OpenCode, Pi, or another host.
+
 **Pi-native Runtime Package**:
 The Pi package(s) that own manifest-dev runtime entrypoints and deterministic orchestration code while reusing or generating shared manifest-dev prompt and skill assets. Shipped as two packages mirroring the Claude/Codex plugin split: `@doodledood/manifest-dev-pi` (core: `/do`, `/auto`, and the shared Harness-level Do runtime) and `@doodledood/manifest-dev-pi-tools` (`/babysit-pr`, depending on core and reusing its runtime wiring).
 

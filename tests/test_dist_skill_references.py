@@ -210,6 +210,79 @@ def test_codex_reference_is_plugin_native() -> None:
     assert "all former agents are skills" in reference
 
 
+def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
+    """Unattended-run backstops are a portable capability, not a literal /goal rule.
+
+    Source skills should tell the model to set a harness-native durable goal when the
+    host exposes one, and to print a copy-pasteable completion contract only as the
+    fallback. Pi must preserve that backstop instead of dropping it for lack of a
+    `/goal` command; OpenCode/Codex must not regress to target-only `/goal` prose.
+    """
+    source_skill_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/figure-out/references/autonomous.md",
+        ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
+        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
+        ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
+    ]
+    for path in source_skill_files:
+        text = path.read_text(encoding="utf-8")
+        assert "goal-setting" in text, path
+        assert "completion contract" in text, path
+        assert "/goal" not in text, path
+
+    source_docs = [
+        ROOT / "README.md",
+        ROOT / "claude-plugins/README.md",
+        ROOT / "claude-plugins/manifest-dev/README.md",
+        ROOT / "claude-plugins/manifest-dev/.claude-plugin/plugin.json",
+    ]
+    for path in source_docs:
+        assert "goal-setting" in path.read_text(encoding="utf-8"), path
+
+    pi_ref = (SYNC_TOOLS / "references" / "pi-cli.md").read_text(encoding="utf-8")
+    assert "universal goal-setting backstop guidance" in pi_ref
+    assert "Pi has no `/goal` command, so drop" not in pi_ref
+    assert "drop the `/goal` unattended-execution backstop" not in pi_ref
+
+    opencode_ref = (SYNC_TOOLS / "references" / "opencode-cli.md").read_text(
+        encoding="utf-8"
+    )
+    assert "universal goal-setting backstop guidance" in opencode_ref
+    assert "keep the `/goal` blocks" not in opencode_ref
+
+    pi_skill_files = [
+        DIST / "pi/skills/figure-out/references/autonomous.md",
+        DIST / "pi/skills/define/SKILL.md",
+    ]
+    for path in pi_skill_files:
+        text = path.read_text(encoding="utf-8")
+        assert "goal-setting" in text, path
+        assert "completion contract" in text, path
+        assert "/goal" not in text, path
+
+    dist_skill_files = [
+        DIST / "codex/plugins/manifest-dev/skills/figure-out/references/autonomous.md",
+        DIST / "codex/plugins/manifest-dev/skills/define/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "opencode/skills/figure-out/references/autonomous.md",
+        DIST / "opencode/skills/define/SKILL.md",
+        DIST / "opencode/skills/auto/SKILL.md",
+        DIST / "opencode/skills/do/SKILL.md",
+    ]
+    stale_phrases = (
+        "print the copy-pasteable full-chain backstop below so the user can relaunch under it",
+        "launch `/do` under a `/goal`",
+        "launch under a self-contained `/goal`",
+        "print a copy-pasteable backstop for the run: a `/goal`",
+    )
+    for path in dist_skill_files:
+        text = path.read_text(encoding="utf-8")
+        assert "goal-setting" in text, path
+        for stale in stale_phrases:
+            assert stale not in text, f"{path}: stale goal wording {stale!r}"
+
+
 # --------------------------------------------------------------------------
 # Pi: two-package runtime + compatible skills
 # --------------------------------------------------------------------------
@@ -276,6 +349,16 @@ def test_pi_dist_contains_only_compatible_skill_set() -> None:
     assert metadata.get("runtime_dependencies", {}) == {}
 
 
+def _without_cross_host_review_pr_markers(text: str) -> str:
+    """Remove review-pr's literal hidden GitHub marker before skill-id scans.
+
+    The marker is cross-host comment metadata (`<!-- manifest-dev:review-pr ... -->`),
+    not a skill activation id; the review-pr skill explicitly says not to namespace-
+    rewrite it or comments posted by one host stop matching another's.
+    """
+    return re.sub(r"<!-- manifest-dev:review-pr[^>]*-->", "", text)
+
+
 def test_skill_activation_names_are_per_target() -> None:
     """Verifier-activation / chain prose must name skills in each target's own form:
     source + Codex use the canonical plugin-qualified colon form (Claude native;
@@ -308,7 +391,10 @@ def test_skill_activation_names_are_per_target() -> None:
     # skills by bare name).
     for dist_skills in (DIST / "pi" / "skills", DIST / "opencode" / "skills"):
         for path in dist_skills.rglob("*.md"):
-            assert not qualified.search(path.read_text(encoding="utf-8")), path
+            text = _without_cross_host_review_pr_markers(
+                path.read_text(encoding="utf-8")
+            )
+            assert not qualified.search(text), path
 
     # Codex dist keeps the colon form (plugins are real namespaces there).
     codex_pr = (
@@ -367,7 +453,8 @@ def test_bare_name_dists_have_no_qualified_skill_ids_anywhere() -> None:
     (sweep, not just sampled files)."""
     qualified = re.compile(r"manifest-dev(?:-tools)?:[a-z]")
     for path in _skill_markdowns(DIST / "pi" / "skills", DIST / "opencode" / "skills"):
-        assert not qualified.search(path.read_text(encoding="utf-8")), path
+        text = _without_cross_host_review_pr_markers(path.read_text(encoding="utf-8"))
+        assert not qualified.search(text), path
 
 
 def test_check_pr_stays_workflow_neutral_on_every_surface() -> None:

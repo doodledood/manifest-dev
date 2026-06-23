@@ -79,7 +79,7 @@ Current core package manifest shape:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "0.11.5",
+  "version": "0.11.6",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],
@@ -134,7 +134,7 @@ Handle these specially:
 - `auto`: exclude from `dist/pi/skills/`; expose as `/auto`, a Pi-aware wrapper that drives figure-out -> define -> Harness-level Do outcome gating.
 - `babysit-pr`: exclude from `dist/pi/skills/`; expose as `/babysit-pr`, a Pi-aware wrapper that synthesizes PR lifecycle grounding and drives Harness-level Do outcome gating.
 
-Pi registers `/do` as a native extension command, so `define`'s `/do <manifest-path>` handoff resolves directly — no name substitution needed. Pi has no `/goal` command, so drop the `/goal` unattended-execution backstop wherever it appears — `define`'s handoff goal line, `figure-out/references/autonomous.md`'s goal block, and the **Unattended launch** notes in `auto` and `do` SKILL.md. Drop only the `/goal` block; keep the surrounding content (e.g. `define`'s `/do <manifest-path>` foreground line and the skills' other prose).
+Pi registers `/do` as a native extension command, so `define`'s `/do <manifest-path>` handoff resolves directly — no name substitution needed. Preserve manifest-dev's universal goal-setting backstop guidance in copied skills: if the active harness exposes goal-setting or continuation, the model should set the durable completion goal directly; otherwise it prints the copy-pasteable completion contract for the user. Do **not** drop this backstop just because Pi does not call the mechanism `/goal`; adapt or preserve the mechanism-neutral wording so Pi gets the same unattended-run protection as other targets. Keep target-specific session-file handling separate: omit Claude JSONL session lines when the extension cannot provide an exact Pi session reference.
 
 **Strip plugin qualifiers from skill references → bare names.** Pi invokes skills as `/skill:<name>` (`dist/core/skills.d.ts`, `agent-session.d.ts`: "Expand skill commands (/skill:name args)") with no plugin namespace. So any `manifest-dev:<skill>` / `manifest-dev-tools:<skill>` reference in copied skill bodies — verifier-activation prose (`Activate the manifest-dev:review-code skill` → `Activate the review-code skill`), chain handoffs (`manifest-dev:figure-out` → `figure-out`), etc. — must have the qualifier stripped to the bare skill name during Pi sync. A qualified id does not resolve in Pi. (Codex keeps the qualifier — its plugins are real namespaces; OpenCode strips it too, per `opencode-cli.md`.)
 
