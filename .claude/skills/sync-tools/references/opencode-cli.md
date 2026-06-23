@@ -16,7 +16,7 @@ dist/opencode/
 └── README.md              # install/update/migration docs
 ```
 
-Install = clone the repo + add the plugin directory's path to the `plugin` array in `~/.config/opencode/opencode.json`. Update = `git pull` + restart (config loads once at startup, no hot reload). Uninstall = remove the config line + delete the clone. Nothing is copied into `~/.config/opencode/` or any shared Agent Skills directory (`.agents/skills`, `.claude/skills`) — per-host skill sets differ (Pi excludes `do`/`done`/`escalate` as runtime-owned), so shared dirs would bleed wrong payloads across CLIs.
+Install = clone the repo + add the plugin directory's path to the `plugin` array in `~/.config/opencode/opencode.json`. Update = `git pull` + restart (config loads once at startup, no hot reload). Uninstall = remove the config line + delete the clone. Nothing is copied into `~/.config/opencode/` or any shared Agent Skills directory (`.agents/skills`, `.claude/skills`) — per-host skill and slash-alias packaging can differ, so shared dirs would bleed wrong payloads across CLIs.
 
 **Do not generate:** command files, `component-namespaces.json` (no install-time namespacing exists), install scripts of any kind. Slash UX is owned by the plugin's `config` hook, which adds `cfg.command` wrappers at startup without copying files into user config.
 

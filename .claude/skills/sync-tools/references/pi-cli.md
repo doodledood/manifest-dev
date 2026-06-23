@@ -24,7 +24,7 @@ Pi is an Agent Skills host and package host. For manifest-dev, the Pi target is 
 | `/auto`, `/babysit-pr` | Ordinary package skills. Prompt-template aliases expose `/auto` and `/babysit-pr` as convenience commands. |
 | Reviewer/verifier skills | `check-pr`, `poll-slack`, `review-prompt`, and `review-code` ship as ordinary skills; verifier prompts activate them by bare skill name. |
 | Agents | None — manifest-dev ships no agents. |
-| Extensions | None for this target. Do not generate Pi TypeScript extensions for manifest-dev unless a future ADR restores a runtime-owned capability. |
+| Extensions | None for this target. Do not generate Pi TypeScript extensions for manifest-dev unless a future ADR restores a host-specific runtime tier. |
 | Prompt templates | Generate only user-facing slash aliases, not verifier prompts. |
 | Installer scripts | Not generated. Pi package manager owns install, update, remove, and project-local scope. |
 
