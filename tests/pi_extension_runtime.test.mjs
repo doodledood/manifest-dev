@@ -253,6 +253,9 @@ test("parseVerifierReport rejects missing or non-contract verdicts", () => {
 	assert.equal(parseVerifierReport("EVIDENCE: no verdict"), undefined);
 	assert.equal(parseVerifierReport("Looks good; passed everything."), undefined);
 	assert.equal(parseVerifierReport("**VERDICT: PASSED**\nEVIDENCE: ok\nDETAILS: ok"), undefined);
+	assert.equal(parseVerifierReport("VERDICT: pass\nEVIDENCE: ok\nDETAILS: ok"), undefined);
+	assert.equal(parseVerifierReport("VERDICT: Pass\nEVIDENCE: ok\nDETAILS: ok"), undefined);
+	assert.equal(parseVerifierReport("VERDICT: blocked\nEVIDENCE: ok\nDETAILS: ok"), undefined);
 	assert.equal(parseVerifierReport("VERDICT: PASS because ok\nEVIDENCE: ok\nDETAILS: ok"), undefined);
 	assert.equal(parseVerifierReport("VERDICT: PASS-ish\nEVIDENCE: ok\nDETAILS: ok"), undefined);
 	assert.equal(parseVerifierReport("VERDICT: PASS/FAIL\nEVIDENCE: ok\nDETAILS: ok"), undefined);

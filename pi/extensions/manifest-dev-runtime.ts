@@ -216,7 +216,7 @@ function extractVerifierVerdict(result: string): GateVerdict | undefined {
 
 	const verdictLine = result.slice(match.index + match[0].length).match(/^[^\r\n]*/)?.[0] ?? "";
 	const value = verdictLine.match(
-		/^(?:\*\*|__|\*|_)?[^\S\r\n]*(PASS|FAIL|BLOCKED)[^\S\r\n]*(?:\*\*|__|\*|_)?[^\S\r\n]*$/i,
+		/^(?:\*\*|__|\*|_)?[^\S\r\n]*(PASS|FAIL|BLOCKED)[^\S\r\n]*(?:\*\*|__|\*|_)?[^\S\r\n]*$/,
 	)?.[1];
 	return value?.toUpperCase() as GateVerdict | undefined;
 }
