@@ -46,4 +46,4 @@ manifest-dev ships no agents. Verification is a general-purpose subagent that ac
 
 ## Unattended Execution
 
-Run `/do` under a `/goal` whose argument is the all-criteria-PASS completion condition when you want the host CLI to keep `/do` running across turns (its fresh-model evaluator re-opens the turn until the condition holds).
+Run `/do` with a durable goal-setting/continuation backstop whose contract is the all-criteria-PASS condition when you want the host CLI to keep `/do` running across turns. Use a host-native goal-setting capability when available; otherwise copy the completion contract the skill prints into your continuation mechanism.
