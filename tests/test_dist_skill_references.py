@@ -256,6 +256,23 @@ def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
             assert stale not in text, f"{path}: stale goal wording {stale!r}"
 
 
+def test_autonomous_diagnosis_goal_requires_mechanism_or_earned_underdetermination() -> None:
+    expected = (
+        "For diagnosis-shaped work, a layer-localized read is not complete: "
+        "either name the concrete mechanism, or explicitly earn an underdetermined "
+        "read by showing that feasible mechanism-splitting probes were run or blocked."
+    )
+    files = [
+        ROOT / "claude-plugins/manifest-dev/skills/figure-out/references/autonomous.md",
+        DIST / "codex/plugins/manifest-dev/skills/figure-out/references/autonomous.md",
+        DIST / "opencode/skills/figure-out/references/autonomous.md",
+        DIST / "pi/skills/figure-out/references/autonomous.md",
+    ]
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        assert expected in text, path
+
+
 def test_continuation_backstop_is_owned_by_top_level_entrypoint() -> None:
     """Nested workflow skills should not set competing narrower goals."""
     define_files = [
@@ -316,7 +333,7 @@ def test_pi_package_metadata_points_to_generated_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "0.12.1"
+    assert package["version"] == "0.12.2"
     assert "pi-package" in package["keywords"]
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],
