@@ -256,7 +256,98 @@ def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
             assert stale not in text, f"{path}: stale goal wording {stale!r}"
 
 
-def test_autonomous_diagnosis_goal_requires_mechanism_or_earned_underdetermination() -> None:
+def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
+    """The continuation backstop must make incomplete verification non-terminal."""
+    do_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "opencode/skills/do/SKILL.md",
+        DIST / "pi/skills/do/SKILL.md",
+    ]
+    required_do_phrases = (
+        "gate ledger covering every Acceptance Criterion and Global Invariant",
+        "latest independent verifier verdict",
+        "freshness relative to the last relevant implementation change",
+        "Completion requires every listed gate to have fresh PASS evidence",
+        "Do not accept self-attestation",
+    )
+    for path in do_files:
+        text = path.read_text(encoding="utf-8")
+        for phrase in required_do_phrases:
+            assert phrase in text, f"{path}: missing {phrase!r}"
+
+    parent_goal_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
+        ROOT / "claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "codex/plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "opencode/skills/auto/SKILL.md",
+        DIST / "opencode/skills/babysit-pr/SKILL.md",
+        DIST / "pi/skills/auto/SKILL.md",
+        DIST / "pi/skills/babysit-pr/SKILL.md",
+    ]
+    for path in parent_goal_files:
+        text = path.read_text(encoding="utf-8")
+        assert "manifest gate ledger" in text, path
+        assert "fresh independent verifier" in text, path
+        assert "self-attestation" in text, path
+
+
+def test_auto_parent_goal_carries_autonomous_read_contract() -> None:
+    """The /auto parent backstop must carry the nested figure-out Read bar."""
+    auto_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "opencode/skills/auto/SKILL.md",
+        DIST / "pi/skills/auto/SKILL.md",
+    ]
+    required_phrases = (
+        "contract must carry both child completion bars",
+        "full autonomous Read anatomy",
+        "every load-bearing branch pressed",
+        "assumptions surfaced",
+        "independent re-derivation run or explicitly unavailable",
+        "rival set no longer moving",
+        "manifest gate ledger",
+    )
+    for path in auto_files:
+        text = path.read_text(encoding="utf-8")
+        for phrase in required_phrases:
+            assert phrase in text, f"{path}: missing {phrase!r}"
+
+
+def test_autonomous_figure_out_supplements_weak_parent_backstops() -> None:
+    """A weak parent is supplemented without replacing it with a Read-only goal."""
+    files = [
+        ROOT / "claude-plugins/manifest-dev/skills/figure-out/references/autonomous.md",
+        DIST / "codex/plugins/manifest-dev/skills/figure-out/references/autonomous.md",
+        DIST / "opencode/skills/figure-out/references/autonomous.md",
+        DIST / "pi/skills/figure-out/references/autonomous.md",
+    ]
+    required_phrases = (
+        "Suppress it only when",
+        "carries this Read-completion contract",
+        "If the visible parent is weak",
+        'only says "Read named"',
+        "do not replace or narrow that parent into a Read-only goal",
+        "Augment the parent only when the harness can do so without narrowing it",
+        "print or carry this Read-level contract as a local checkpoint",
+        "preserve the broader parent",
+    )
+    forbidden_phrases = (
+        "supplement it by setting or printing this Read-level contract",
+    )
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        for phrase in required_phrases:
+            assert phrase in text, f"{path}: missing {phrase!r}"
+        for phrase in forbidden_phrases:
+            assert phrase not in text, f"{path}: forbidden {phrase!r}"
+
+
+def test_autonomous_diagnosis_goal_requires_mechanism_or_earned_underdetermination() -> (
+    None
+):
     expected = (
         "For diagnosis-shaped work, a layer-localized read is not complete: "
         "either name the concrete mechanism, or explicitly earn an underdetermined "
@@ -285,7 +376,9 @@ def test_continuation_backstop_is_owned_by_top_level_entrypoint() -> None:
         text = path.read_text(encoding="utf-8")
         assert "Deliver <deliverables>" not in text, path
         assert "/define does not set a separate /do goal" in text, path
-        assert "/do reads the manifest and owns the manifest-completion contract" in text, path
+        assert (
+            "/do reads the manifest and owns the manifest-completion contract" in text
+        ), path
 
     do_files = [
         ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
@@ -319,7 +412,9 @@ def test_continuation_backstop_is_owned_by_top_level_entrypoint() -> None:
     ]
     for path in babysit_files:
         text = path.read_text(encoding="utf-8")
-        assert "including the `--manifest` path where `/define` is skipped" in text, path
+        assert (
+            "including the `--manifest` path where `/define` is skipped" in text
+        ), path
         assert "outer backstop for the tend" in text, path
         assert "should not set or print competing narrower goals" in text, path
 
@@ -333,7 +428,7 @@ def test_pi_package_metadata_points_to_generated_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "0.12.2"
+    assert package["version"] == "0.12.4"
     assert "pi-package" in package["keywords"]
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],

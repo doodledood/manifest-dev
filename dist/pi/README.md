@@ -96,13 +96,13 @@ The aliases are convenience templates. The skills own behavior.
 4. It launches an independent verifier execution for each gate using that prompt verbatim.
 5. It repairs FAILs and reruns the affected verifier.
 6. It reports genuine BLOCKED gates with the missing external input or state.
-7. It calls `done` only after every gate has PASS evidence.
+7. It calls `done` only after every gate has fresh PASS evidence in a manifest gate ledger.
 
 Pi does **not** include a package-owned verifier scheduler, verdict aggregator, done gate, or verifier concurrency flag. The trust mechanism is still independent verifier execution per Manifest gate; the orchestration is the normal `/do` skill protocol.
 
 ## Optional Host Continuation
 
-For unattended work, use a host goal-setting or continuation capability when available. The goal should say that the run is complete only after every Manifest AC/GI has independent verifier PASS evidence, FAILs have been repaired and reverified, blockers are genuine, and no required verification is missing.
+For unattended work, use a host goal-setting or continuation capability when available. For `/do`, the goal should say that the run is complete only after every Manifest AC/GI is listed in a gate ledger with fresh independent verifier PASS evidence, FAILs have been repaired and reverified, blockers are genuine, and no required verification is missing or stale. For `/auto`, use one full-chain parent goal: full autonomous Read anatomy first, then manifest written, then `/do` gate-ledger PASS. It should also say that unverified, FAIL, stale after a relevant change, BLOCKED/actionable, or escalation-pending gates are non-terminal. Do not accept self-attestation, "looks done", or a summary claim in place of verifier output.
 
 One Pi-compatible continuation provider is the [`goal-controller` package in doodledood/pi-plugins](https://github.com/doodledood/pi-plugins/tree/main/packages/extensions/goal-controller). Install it using that package's instructions and Pi's normal package install flow.
 
