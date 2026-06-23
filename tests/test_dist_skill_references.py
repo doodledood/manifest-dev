@@ -256,6 +256,57 @@ def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
             assert stale not in text, f"{path}: stale goal wording {stale!r}"
 
 
+def test_continuation_backstop_is_owned_by_top_level_entrypoint() -> None:
+    """Nested workflow skills should not set competing narrower goals."""
+    define_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/define/SKILL.md",
+        DIST / "opencode/skills/define/SKILL.md",
+        DIST / "pi/skills/define/SKILL.md",
+    ]
+    for path in define_files:
+        text = path.read_text(encoding="utf-8")
+        assert "Deliver <deliverables>" not in text, path
+        assert "/define does not set a separate /do goal" in text, path
+        assert "/do reads the manifest and owns the manifest-completion contract" in text, path
+
+    do_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "opencode/skills/do/SKILL.md",
+        DIST / "pi/skills/do/SKILL.md",
+    ]
+    for path in do_files:
+        text = path.read_text(encoding="utf-8")
+        assert "When /do is the top-level execution entrypoint" in text, path
+        assert "broader parent workflow backstop" in text, path
+        assert "do not set or print a second narrower goal" in text, path
+
+    auto_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "opencode/skills/auto/SKILL.md",
+        DIST / "pi/skills/auto/SKILL.md",
+    ]
+    for path in auto_files:
+        text = path.read_text(encoding="utf-8")
+        assert "/auto` owns this backstop as the chain entrypoint" in text, path
+        assert "`figure-out --autonomous` suppresses" in text, path
+        assert "/do` operates under the existing full-chain contract" in text, path
+
+    babysit_files = [
+        ROOT / "claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "codex/plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "opencode/skills/babysit-pr/SKILL.md",
+        DIST / "pi/skills/babysit-pr/SKILL.md",
+    ]
+    for path in babysit_files:
+        text = path.read_text(encoding="utf-8")
+        assert "including the `--manifest` path where `/define` is skipped" in text, path
+        assert "outer backstop for the tend" in text, path
+        assert "should not set or print competing narrower goals" in text, path
+
+
 # --------------------------------------------------------------------------
 # Pi: skill-only package + prompt aliases
 # --------------------------------------------------------------------------
@@ -265,7 +316,7 @@ def test_pi_package_metadata_points_to_generated_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "0.12.0"
+    assert package["version"] == "0.12.1"
     assert "pi-package" in package["keywords"]
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],
