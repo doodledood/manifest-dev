@@ -1,41 +1,42 @@
 {
   "skills": {
     "adr": "manifest-dev-tools",
-    "review-code": "manifest-dev",
+    "auto": "manifest-dev",
+    "babysit-pr": "manifest-dev-tools",
+    "check-pr": "manifest-dev",
     "define": "manifest-dev",
+    "do": "manifest-dev",
+    "done": "manifest-dev",
+    "escalate": "manifest-dev",
     "figure-out": "manifest-dev",
     "figure-out-team": "manifest-dev",
     "handoff": "manifest-dev-tools",
-    "prompt-engineering": "manifest-dev-tools",
-    "review-pr": "manifest-dev-tools",
-    "walk-pr": "manifest-dev-tools",
-    "teach-me": "manifest-dev-tools",
-    "check-pr": "manifest-dev",
     "poll-slack": "manifest-dev",
-    "review-prompt": "manifest-dev-tools"
+    "prompt-engineering": "manifest-dev-tools",
+    "review-code": "manifest-dev",
+    "review-pr": "manifest-dev-tools",
+    "review-prompt": "manifest-dev-tools",
+    "teach-me": "manifest-dev-tools",
+    "walk-pr": "manifest-dev-tools"
   },
-  "runtime_owned_skills": {
-    "do": "Harness-level Do is owned by the Pi runtime extension command, not distributed as a normal skill.",
-    "done": "Done is a Pi runtime completion outcome, not a normal skill.",
-    "escalate": "Escalation is a Pi runtime blocker outcome, not a normal skill."
+  "prompts": {
+    "do": "manifest-dev",
+    "auto": "manifest-dev",
+    "babysit-pr": "manifest-dev-tools"
   },
-  "extension_wrappers": {
-    "auto": "Provided by /auto (core package), which runs the manifest-dev lifecycle through the Pi Harness-level Do outcome gate.",
-    "babysit-pr": "Provided by /babysit-pr (tools package), which synthesizes PR lifecycle grounding and runs it through the Pi Harness-level Do outcome gate."
+  "prompt_aliases": {
+    "do": "Use the do skill with: $ARGUMENTS",
+    "auto": "Use the auto skill with: $ARGUMENTS",
+    "babysit-pr": "Use the babysit-pr skill with: $ARGUMENTS"
   },
   "agents": {},
   "agents_note": {
-    "_note": "manifest-dev ships zero agents. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`), shipped under dist/pi/skills/. Pi verification is runtime-owned JSON subprocess fanout whose verify.prompt can activate a skill — there is no verify.agent field."
+    "_note": "manifest-dev ships zero agents. Quality review is the `review-code` skill (one dimension per invocation); functional verifier behaviors are skills too (`check-pr`, `poll-slack`, `review-prompt`). `/do` launches independent verifier executions using verify.prompt; there is no verify.agent field."
   },
-  "commands": {
-    "do": "Pi Harness-level Do entrypoint for an existing manifest (core package).",
-    "auto": "Pi wrapper for autonomous figure-out -> define -> Harness-level Do (core package).",
-    "babysit-pr": "Pi wrapper for PR lifecycle manifest synthesis and Harness-level Do (tools package)."
-  },
+  "commands": {},
   "tools": {},
-  "runtime_internal": {
-    "verification": "Runtime-owned JSON subprocess verifier fanout over manifest Acceptance Criteria and Global Invariants; not exposed as an executor-callable tool.",
-    "outcome": "Runtime-owned done and blocker outcomes after verifier fanout; not exposed as an executor-callable tool."
-  },
-  "runtime_dependencies": {}
+  "runtime_dependencies": {},
+  "host_continuation": {
+    "_note": "Host goal/continuation support is optional. When available, skills set a durable completion contract; when absent or disabled, Pi runs prompt-level skills without continuous host enforcement."
+  }
 }

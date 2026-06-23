@@ -8,8 +8,8 @@ Verify each CLI distribution carries the surviving skill set in the right shape.
   via skills.paths and slash-command wrappers via cfg.command. No installer,
   no command files, no namespacing suffixes; qualified skill ids are stripped to
   bare names like Pi.
-- Pi ships compatible shared skills (incl. review-code) plus a two-package runtime
-  (core @doodledood/manifest-dev-pi, tools @doodledood/manifest-dev-pi-tools).
+- Pi ships the full compatible skill set plus prompt-template aliases for the main
+  entrypoints; no TypeScript runtime extension.
 
 Reviewers are dimensions of the review-code skill, not standalone agents.
 """
@@ -46,35 +46,8 @@ TOOLS_SKILLS = (
     "teach-me",
     "walk-pr",
 )
-PI_SKILLS = (
-    "adr",
-    "review-code",
-    "define",
-    "figure-out",
-    "figure-out-team",
-    "check-pr",
-    "handoff",
-    "prompt-engineering",
-    "review-prompt",
-    "review-pr",
-    "poll-slack",
-    "teach-me",
-    "walk-pr",
-)
-PI_EXCLUDED_RUNTIME_SKILLS = ("do", "done", "escalate")
-PI_EXTENSION_WRAPPER_SKILLS = ("auto", "babysit-pr")
-PI_CORE_COMMANDS = ("do", "auto")
-PI_TOOLS_COMMANDS = ("babysit-pr",)
-PI_EXTENSION = ROOT / "pi" / "extensions" / "manifest-dev.ts"
-PI_EXTENSION_RUNTIME = ROOT / "pi" / "extensions" / "manifest-dev-runtime.ts"
-PI_TOOLS_EXTENSION = (
-    ROOT
-    / "packages"
-    / "manifest-dev-pi-tools"
-    / "pi"
-    / "extensions"
-    / "manifest-dev-tools.ts"
-)
+PI_SKILLS = CORE_SKILLS + TOOLS_SKILLS
+PI_PROMPTS = ("do", "auto", "babysit-pr")
 
 CODE_REVIEW_DIMENSIONS = {
     "change-intent",
@@ -284,69 +257,80 @@ def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
 
 
 # --------------------------------------------------------------------------
-# Pi: two-package runtime + compatible skills
+# Pi: skill-only package + prompt aliases
 # --------------------------------------------------------------------------
 
 
-def test_pi_package_metadata_points_to_generated_skills_and_extension() -> None:
+def test_pi_package_metadata_points_to_generated_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
+    assert package["name"] == "@doodledood/manifest-dev-pi"
+    assert package["version"] == "0.12.0"
     assert "pi-package" in package["keywords"]
-    # The repo-root Pi package loads BOTH extensions so a single
-    # `pi install git:...@main` registers /do, /auto (core) and /babysit-pr (tools).
-    assert package["pi"]["extensions"] == [
-        "./pi/extensions/manifest-dev.ts",
-        "./packages/manifest-dev-pi-tools/pi/extensions/manifest-dev-tools.ts",
-    ]
-    assert package["pi"]["skills"] == ["./dist/pi/skills"]
-    assert package["peerDependencies"] == {
-        "@earendil-works/pi-coding-agent": "*",
+    assert package["pi"] == {
+        "skills": ["./dist/pi/skills"],
+        "prompts": ["./dist/pi/prompts"],
     }
-    assert PI_EXTENSION.is_file()
-    assert PI_EXTENSION_RUNTIME.is_file()
-    assert PI_TOOLS_EXTENSION.is_file()
+    assert "extensions" not in package["pi"]
+    assert "workspaces" not in package
+    assert "exports" not in package
+    assert not (ROOT / "pi" / "extensions").exists()
+    assert not (ROOT / "packages" / "manifest-dev-pi-tools").exists()
 
 
-def test_pi_split_into_core_and_tools_packages() -> None:
-    core = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
-    tools = json.loads(
-        (ROOT / "packages" / "manifest-dev-pi-tools" / "package.json").read_text(
-            encoding="utf-8"
-        )
-    )
-
-    assert core["name"] == "@doodledood/manifest-dev-pi"
-    assert tools["name"] == "@doodledood/manifest-dev-pi-tools"
-    # Tools depends on core via a local file path so git installs resolve the
-    # private repo-root package instead of hitting the public registry (E404).
-    assert tools["dependencies"]["@doodledood/manifest-dev-pi"] == "file:../.."
-    assert tools["version"] == core["version"]
-    assert tools["peerDependencies"] == {
-        "@earendil-works/pi-coding-agent": "*",
-    }
-    # Tools is repo-root-only: it has NO standalone `pi.extensions`, so it is never
-    # installed as its own Pi package (which couldn't resolve the relatively-imported
-    # core runtime from its own tarball). It loads solely from the repo-root
-    # pi.extensions, which lists the tools extension file directly.
-    assert "pi" not in tools
-    assert core["pi"]["extensions"][1] == (
-        "./packages/manifest-dev-pi-tools/pi/extensions/manifest-dev-tools.ts"
-    )
-    assert PI_TOOLS_EXTENSION.is_file()
-
-
-def test_pi_dist_contains_only_compatible_skill_set() -> None:
+def test_pi_dist_contains_full_skill_set_and_prompt_aliases() -> None:
     skill_dirs = {
         path.name for path in (DIST / "pi" / "skills").iterdir() if path.is_dir()
     }
+    prompt_files = {path.stem for path in (DIST / "pi" / "prompts").glob("*.md")}
     metadata = json.loads(
         (DIST / "pi" / "component-namespaces.json").read_text(encoding="utf-8")
     )
 
     assert skill_dirs == set(PI_SKILLS)
+    assert prompt_files == set(PI_PROMPTS)
     assert set(metadata["skills"]) == set(PI_SKILLS)
+    assert set(metadata["prompts"]) == set(PI_PROMPTS)
     assert metadata.get("agents", {}) == {}
+    assert metadata.get("commands", {}) == {}
+    assert metadata.get("tools", {}) == {}
     assert metadata.get("runtime_dependencies", {}) == {}
+
+
+def test_pi_prompt_aliases_expand_to_matching_skills() -> None:
+    expected = {
+        "do.md": "Use the do skill with: $ARGUMENTS",
+        "auto.md": "Use the auto skill with: $ARGUMENTS",
+        "babysit-pr.md": "Use the babysit-pr skill with: $ARGUMENTS",
+    }
+    for filename, body in expected.items():
+        text = (DIST / "pi" / "prompts" / filename).read_text(encoding="utf-8")
+        assert body in text
+        assert "description:" in text
+
+
+def test_pi_live_docs_do_not_claim_runtime_verifier_fanout() -> None:
+    live_paths = [
+        ROOT / "README.md",
+        DIST / "pi" / "README.md",
+        DIST / "pi" / ".sync-meta.json",
+        DIST / "pi" / "component-namespaces.json",
+        SYNC_TOOLS / "references" / "pi-cli.md",
+    ]
+    stale = (
+        "manifest-verifier-max-concurrent",
+        "MANIFEST_DEV_VERIFIER_MAX_CONCURRENT",
+        "manifest_dev_request_verification",
+        "manifest_dev_report_outcome",
+        "WAIT-PENDING",
+        "JSON subprocess verifier fanout",
+        "runtime-owned verification",
+        "done outcome",
+    )
+    for path in live_paths:
+        text = path.read_text(encoding="utf-8")
+        for phrase in stale:
+            assert phrase not in text, f"{path}: stale Pi runtime claim {phrase!r}"
 
 
 def _without_cross_host_review_pr_markers(text: str) -> str:
@@ -458,9 +442,8 @@ def test_bare_name_dists_have_no_qualified_skill_ids_anywhere() -> None:
 
 
 def test_check_pr_stays_workflow_neutral_on_every_surface() -> None:
-    """check-pr is a workflow-neutral reporter: the caller-side WAIT-PENDING token
-    must never leak into it (source or any dist copy). The wait-pending decision is a
-    verifier->runtime concern; check-pr only emits its fixed-vocabulary directives."""
+    """check-pr is a workflow-neutral reporter and should not grow caller-specific
+    pending tokens or workflow routing state in source or dist copies."""
     check_pr_copies = [
         ROOT / "claude-plugins/manifest-dev/skills/check-pr/SKILL.md",
         DIST / "pi" / "skills" / "check-pr" / "SKILL.md",
@@ -475,81 +458,5 @@ def test_check_pr_stays_workflow_neutral_on_every_surface() -> None:
     ]
     for path in check_pr_copies:
         assert path.exists(), path
-        assert "WAIT-PENDING" not in path.read_text(encoding="utf-8"), path
-
-
-def test_wait_pending_contract_lives_in_runtime_and_pi_reference() -> None:
-    """The wait-pending contract must live where check-pr is not: the runtime module
-    (marker + the verifier-prompt rule the runtime injects when ciOneShot), the routing
-    in the extension, and the Pi runtime reference. Guards against the contract being
-    dropped (which would silently route wait-only PRs back into repair). The rule MUST be
-    in the verifier-prompt builder, not only the executor prompt, or the verifier that has
-    to emit the marker never receives it."""
-    runtime_mod = PI_EXTENSION_RUNTIME.read_text(encoding="utf-8")
-    assert 'WAIT_PENDING_MARKER = "WAIT-PENDING"' in runtime_mod
-    # The derivation rule is injected into the gate verifier prompt (reaches the verifier
-    # verifier for synthesized AND --manifest runs), gated on ciOneShot.
-    assert "CI_WAIT_PENDING_VERIFIER_RULE" in runtime_mod
-    assert "buildGateVerifierPrompt" in runtime_mod
-    assert "ciOneShot" in runtime_mod
-    ext = PI_EXTENSION.read_text(encoding="utf-8")
-    assert "isWaitPendingVerification" in ext
-    assert (
-        "ciOneShot: run.ciOneShot" in ext
-    )  # threaded into the verifier prompt at spawn
-    pi_ref = (SYNC_TOOLS / "references" / "pi-cli.md").read_text(encoding="utf-8")
-    assert "WAIT-PENDING" in pi_ref
-    assert "workflow-neutral" in pi_ref
-
-
-def test_pi_core_extension_registers_do_and_auto_only() -> None:
-    content = PI_EXTENSION.read_text(encoding="utf-8")
-    for command in PI_CORE_COMMANDS:
-        assert f'pi.registerCommand("{command}"' in content
-    # babysit-pr lives in the tools package now.
-    assert 'pi.registerCommand("babysit-pr"' not in content
-
-    # Runtime orchestration stays in core and is reusable by tools.
-    for symbol in (
-        "runHarnessVerification",
-        "maybeRunHarnessVerification",
-        "shouldTriggerHarnessVerification",
-        "createRuntimeState",
-        "wireRuntimeHooks",
-        "registerVerifierFlags",
-        "export async function startWrapper",
-    ):
-        assert symbol in content
-    for tool in ("manifest_dev_request_verification", "manifest_dev_report_outcome"):
-        assert f'name: "{tool}"' not in content
-
-
-def test_pi_tools_extension_registers_babysit_pr_over_core_runtime() -> None:
-    content = PI_TOOLS_EXTENSION.read_text(encoding="utf-8")
-    assert 'pi.registerCommand("babysit-pr"' in content
-    assert 'pi.registerCommand("do"' not in content
-    assert 'pi.registerCommand("auto"' not in content
-    # Reuses the core runtime wiring rather than forking it.
-    assert "wireRuntimeHooks" in content
-    assert "startWrapper" in content
-
-
-def test_pi_readmes_document_install_update_and_runtime_boundary() -> None:
-    root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    pi_readme = (DIST / "pi" / "README.md").read_text(encoding="utf-8")
-    pi_sync_meta = (DIST / "pi" / ".sync-meta.json").read_text(encoding="utf-8")
-
-    for content in (root_readme, pi_readme, pi_sync_meta):
-        assert "pi install git:github.com/doodledood/manifest-dev@main" in content
-        assert "Harness-level Do" in content or "Harness-level Do runtime" in content
-        assert "JSON subprocess" in content
-        assert "pi install npm:@gotgenes/pi-subagents" not in content
-
-    assert "/do <manifest-path>" in pi_readme
-    assert "/auto <task>" in pi_readme
-    assert "/babysit-pr <github-pr-url>" in pi_readme
-    pi_markdown = "\n".join(
-        path.read_text(encoding="utf-8") for path in (DIST / "pi").rglob("*.md")
-    )
-    assert "manifest_dev_request_verification" not in pi_markdown
-    assert "manifest_dev_report_outcome" not in pi_markdown
+        forbidden = "WAIT" + "-PENDING"
+        assert forbidden not in path.read_text(encoding="utf-8"), path

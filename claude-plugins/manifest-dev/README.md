@@ -14,7 +14,7 @@ Goal: Run /do ~/.manifest-dev/manifests/manifest-<timestamp>.md until every Acce
 
 `/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/do` with a durable goal-setting or continuation backstop. `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. The backstop's argument should be the all-criteria-PASS completion contract, keeping the run alive across turns until the condition holds.
 
-Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for shared skills, `/do`, `/auto`, `/babysit-pr`, manifest-dev-owned JSON subprocess verifier fanout, and a structured done/escalate gate. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
+Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
 
 ## The Mindset Shift
 

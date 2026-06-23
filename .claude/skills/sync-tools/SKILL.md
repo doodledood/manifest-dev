@@ -1,6 +1,6 @@
 ---
 name: sync-tools
-description: 'Generate multi-CLI distribution packages from the Claude Code plugin. Converts shared skills, package assets, and runtime payloads for OpenCode, Codex CLI, and Pi under dist/. Run after changing plugin components to keep distributions in sync.'
+description: 'Generate multi-CLI distribution packages from the Claude Code plugin. Converts shared skills and package assets for OpenCode, Codex CLI, and Pi under dist/. Run after changing plugin components to keep distributions in sync.'
 user-invocable: true
 ---
 
@@ -79,10 +79,10 @@ The metadata is an **optimization, not a correctness anchor**. When in doubt —
 | **Skills** | Copy unchanged (Agent Skills Open Standard = universal) from both source payloads. Include all subdirectories. Replace operational CLAUDE.md references (e.g., "write to CLAUDE.md") with CLI context file name per reference file. Replace operational tool-name references in skill body prose with the target CLI's names (e.g., "use the Read tool" → the target's read tool) — the mappings live in each reference file's tool-name lookup table. Leave research/reference content unchanged (teaching documents in `references/*.md` that explain Claude Code conventions stay Claude-Code-centric; only operational instructions remap). **Exception 1**: files in `references/execution-modes/` — replace Claude-specific model names (haiku, sonnet, opus) with `inherit`. Model tier routing is Claude Code-only; other CLIs use session model for all tiers. **Exception 2**: lines that surface a session-file path to the user (e.g. `Session: ~/.claude/projects/<dir>/${CLAUDE_SESSION_ID}.jsonl`, "Session JSONL files live at ...") — retarget per the reference file's session-line rule. If the target CLI has no per-session file the agent can locate at runtime, omit the line. |
 | **Agents** | None shipped — manifest-dev has no agents on any target; the former functional agents are skills. Do not generate agent files. |
 | **Hooks** | None shipped. If a future hook ships, adapt per the target's reference file — and re-derive that target's hook capability map first (the retired research is stale). |
-| **Commands** | Codex bundles skills without command shims. OpenCode generates no command files, but its plugin config hook registers slash-command wrappers in `cfg.command` for source skills whose `user-invocable` is missing/true, preserving existing user/project commands; `user-invocable: false` helpers stay skill-tool-only. Pi invokes `/skill:<name>` and registers runtime commands from source-owned extensions. |
+| **Commands** | Codex bundles skills without command shims. OpenCode generates no command files, but its plugin config hook registers slash-command wrappers in `cfg.command` for source skills whose `user-invocable` is missing/true, preserving existing user/project commands; `user-invocable: false` helpers stay skill-tool-only. Pi invokes `/skill:<name>` and ships prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. |
 | **Context file** | Workflow overview + skill descriptions in the CLI's native context format per reference file. |
 | **README** | Component table, install instructions, feature parity table, required config, link to GitHub repo. |
-| **Package manifest** | Generate only for targets whose reference file declares a package-native install surface. For Pi, repo-root package metadata and `pi/extensions/` runtime code are source-owned; generated shared assets under `dist/pi/` are package resources consumed by that source surface. For OpenCode, the plugin entry (`dist/opencode/plugin/package.json` + `index.js`) is generated and versioned per the reference file. |
+| **Package manifest** | Generate only for targets whose reference file declares a package-native install surface. For Pi, repo-root package metadata is source-owned; generated skills/prompts under `dist/pi/` are package resources consumed by that package. For OpenCode, the plugin entry (`dist/opencode/plugin/package.json` + `index.js`) is generated and versioned per the reference file. |
 | **Install script** | None. No target ships an install script — Codex and OpenCode are plugin-native; Pi installs via its package manager. |
 | **CLI extras** | Extension manifests, plugin configs, execution rules — per reference file. |
 | **Namespace metadata** | **Package target (Pi) only.** Regenerate `component-namespaces.json` from source ownership every run; every distributed component appears exactly once under its component type with its owning plugin. **Plugin-native Codex and OpenCode have none** — skip them (the plugin boundary is the namespace). |
@@ -114,4 +114,4 @@ Summary table after all CLIs processed:
 |-----|--------|--------|-------|----------|--------|
 | OpenCode | N (1 plugin) | none (all skills) | none | N plugin-registered wrappers (no command files) | Complete |
 | Codex | N (2 plugins) | none (reviewers = review-code skill) | none | — | Complete |
-| Pi | N compatible | N runtime prompt assets | source-owned runtime extension | extension commands | Complete |
+| Pi | N compatible | `/do`, `/auto`, `/babysit-pr` aliases | none | prompt-template aliases | Complete |

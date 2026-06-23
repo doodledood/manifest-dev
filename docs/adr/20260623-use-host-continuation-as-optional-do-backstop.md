@@ -3,13 +3,13 @@
 ## Status
 Accepted
 
-Supersedes the target architecture portions of `20260605-runtime-owns-harness-do-verification-trigger` and `20260610-own-pi-verifier-runner` that make Pi own deterministic Manifest parsing, verifier fanout, verdict aggregation, and done/escalation gating as a special runtime implementation. Those ADRs remain historical context for why the Pi runtime fanout existed.
+Supersedes `20260605-pi-native-runtime-package-source-surface` and the target architecture portions of `20260605-runtime-owns-harness-do-verification-trigger` and `20260610-own-pi-verifier-runner` that make Pi own deterministic Manifest parsing, verifier fanout, verdict aggregation, and done/escalation gating as a special runtime implementation. Those ADRs remain historical context for why the Pi runtime fanout existed.
 
 ## Context
 
 manifest-dev's core `/do` contract is portable: the main agent reads the Manifest, implements Deliverables, and verifies every Acceptance Criterion and Global Invariant by launching an independent verifier execution for each gate using the gate's `verify.prompt` verbatim. Hosts differ in how much continuation they provide around that portable protocol. Codex CLI, for example, now exposes `/goal` as a durable thread-scoped objective that keeps working across turns until evidence satisfies the goal; other hosts may expose equivalent goal-setting or continuation capabilities, and some hosts may expose none or have them disabled.
 
-Pi currently has a heavier special implementation: a runtime extension command parses the Manifest, runs manifest-dev-owned JSON subprocess verifiers per gate, aggregates PASS / FAIL / BLOCKED results, injects repairs, and records done only after an all-PASS freshness check. That buys deterministic runtime enforcement, but it also creates a separate source surface and a Pi-specific `/do` behavior that must be maintained alongside the portable skill contract.
+Before this simplification, Pi had a heavier special implementation: a runtime extension command parsed the Manifest, ran manifest-dev-owned JSON subprocess verifiers per gate, aggregated PASS / FAIL / BLOCKED results, injected repairs, and recorded done only after an all-PASS freshness check. That bought deterministic runtime enforcement, but it also created a separate source surface and a Pi-specific `/do` behavior that had to be maintained alongside the portable skill contract.
 
 The better host-level boundary is capability-based, not CLI-name-based: when the active environment exposes a durable goal-setting, continuation, or completion-check capability, manifest-dev should use it to keep the run alive until the normal `/do` verifier protocol is genuinely complete. When that capability is absent or disabled, the main agent still runs the verifier protocol, but there is no separate continuous enforcement loop beyond model discipline and any foreground run semantics.
 

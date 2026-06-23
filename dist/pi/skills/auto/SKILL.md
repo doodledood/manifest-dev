@@ -1,0 +1,17 @@
+---
+name: auto
+description: 'End-to-end autonomous execution: figure-out → define → do, chained without manual approval gates. Use when you want to define and execute without intervention during planning, when the user asks for autonomous or end-to-end work, says just build it, or asks to tend or babysit a PR.'
+argument-hint: '[task] [--babysit <pr-url>]'
+user-invocable: true
+---
+
+Chain `figure-out --autonomous` (when the transcript lacks shared understanding) → `define --autonomous` → `do` on a single task. The `--autonomous` flag on figure-out makes the model self-answer with recommended answers instead of waiting on the user (see `figure-out/references/autonomous.md`). Surface define's Summary for Approval for visibility but don't wait — treat as approved and proceed to /do.
+
+**Task text** comes from `$ARGUMENTS`; if empty, infer from conversation context (summarize the discussed task into a concrete description). Fresh session with no context and no args → halt: `No task description provided and no conversation context to infer from. Usage: /auto <task description> | /auto --babysit <pr-url>`.
+
+**Babysit mode** (`--babysit <pr-url>`) skips fresh synthesis. Invoke `define` with `--babysit <pr-url> --autonomous`, then /do. PR-lifecycle platform auto-detects from PR URL host (`github.com` → github composition); non-github host → halt. Multi-repo manifest produced by /define → single /do invocation navigates all repos.
+
+**Failure handling.** /define returns no manifest path → stop, report. /do escalates (BLOCKED criterion or other blocker) → surface the escalation verbatim to the user with the action it requests.
+
+**Unattended launch.** At the start of a standalone run, before chaining, establish a durable full-chain goal-setting backstop. If the active harness exposes a goal-setting or continuation capability, set the goal directly; otherwise print the copy-pasteable completion contract below. Its completion condition spans the full chain, so continuation does not stop after the first phase. `/auto` owns this backstop as the chain entrypoint, so figure-out suppresses its own nested backstop when it can see it's under `/auto`:
+`Run the autonomous chain for <task> until the figure-out Read is named, the manifest is written, and /do reports /done with every Acceptance Criterion and Global Invariant PASS; don't stop while any phase is incomplete. Drive every phase to its real bar yourself and verify each gate honestly rather than waving any through — trustworthiness and truth over speed — escalating only a blocker that genuinely needs me. Record compact progress checkpoints after the Read, manifest path, verification/repair cycles, and blockers. Stop after N turns if it stalls.`

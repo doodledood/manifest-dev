@@ -27,7 +27,7 @@ Front-load the thinking so the agent gets it right the first time.
 
 Full schema, verify-block fields, verification skills, and task guidance live in the [manifest-dev README](./manifest-dev).
 
-For non-Claude installs and updates, see the root README's [Multi-CLI Support](../README.md#multi-cli-support). Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`); it ships shared skills plus `/do`, `/auto`, `/babysit-pr`, manifest-dev-owned JSON subprocess verifier fanout, and a structured done/escalate gate.
+For non-Claude installs and updates, see the root README's [Multi-CLI Support](../README.md#multi-cli-support). Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`); it ships the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs.
 
 **manifest-dev-tools** sits next to the workflow rather than inside it — prompt engineering, PR review and walkthroughs, PR babysitting, ADR synthesis, context handoff, and incremental teaching. Details in the [manifest-dev-tools README](./manifest-dev-tools).
 
