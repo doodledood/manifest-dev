@@ -196,15 +196,55 @@ export function toGateVerificationResult(
 }
 
 export function parseVerifierReport(result: string): Pick<GateVerificationResult, "verdict" | "evidence" | "details"> | undefined {
-	const verdict = result.match(/^\s*VERDICT:\s*(PASS|FAIL|BLOCKED)\b/im)?.[1] as GateVerdict | undefined;
+	const verdict = extractVerifierVerdict(result);
 	if (!verdict) return undefined;
-	const evidence = result.match(/^\s*EVIDENCE:\s*(.+?)\s*$/im)?.[1]?.trim() ?? "";
-	const details = result.match(/^\s*DETAILS:\s*([\s\S]*)$/im)?.[1]?.trim() ?? "";
+	const evidence = extractVerifierSection(result, "EVIDENCE") ?? "";
+	const details = extractVerifierSection(result, "DETAILS", { allowSuffix: true }) ?? "";
 	return {
 		verdict,
 		evidence,
 		details,
 	};
+}
+
+const MARKDOWN_EMPHASIS_PATTERN = String.raw`(?:\*\*|__|\*|_)?`;
+const HORIZONTAL_SPACE_PATTERN = String.raw`[^\S\r\n]*`;
+
+function extractVerifierVerdict(result: string): GateVerdict | undefined {
+	const match = findVerifierLabel(result, "VERDICT");
+	if (!match) return undefined;
+
+	const value = result
+		.slice(match.index + match[0].length)
+		.match(/^(?:\*\*|__|\*|_)?[^\S\r\n]*(PASS|FAIL|BLOCKED)\b/i)?.[1];
+	return value?.toUpperCase() as GateVerdict | undefined;
+}
+
+function extractVerifierSection(result: string, label: "EVIDENCE" | "DETAILS", options?: { allowSuffix?: boolean }): string | undefined {
+	const match = findVerifierLabel(result, label, options);
+	if (!match) return undefined;
+
+	const start = match.index + match[0].length;
+	const nextLabel = label === "EVIDENCE" ? findVerifierLabel(result, "DETAILS", { allowSuffix: true, start }) : undefined;
+	return trimVerifierFieldValue(result.slice(start, nextLabel?.index).trim());
+}
+
+function findVerifierLabel(
+	result: string,
+	label: "VERDICT" | "EVIDENCE" | "DETAILS",
+	options?: { allowSuffix?: boolean; start?: number },
+): RegExpExecArray | undefined {
+	const suffixPattern = options?.allowSuffix ? String.raw`(?:[^\S\r\n]+[—-][^:\r\n]*)?` : "";
+	const pattern = new RegExp(
+		String.raw`^${HORIZONTAL_SPACE_PATTERN}${MARKDOWN_EMPHASIS_PATTERN}${HORIZONTAL_SPACE_PATTERN}${label}\b${suffixPattern}${HORIZONTAL_SPACE_PATTERN}${MARKDOWN_EMPHASIS_PATTERN}${HORIZONTAL_SPACE_PATTERN}:${HORIZONTAL_SPACE_PATTERN}${MARKDOWN_EMPHASIS_PATTERN}${HORIZONTAL_SPACE_PATTERN}`,
+		"gim",
+	);
+	pattern.lastIndex = options?.start ?? 0;
+	return pattern.exec(result) ?? undefined;
+}
+
+function trimVerifierFieldValue(value: string): string {
+	return value.replace(/(?:\*\*|__|\*|_)\s*$/, "").trim();
 }
 
 export function aggregateVerificationStatus(results: GateVerificationResult[]): VerificationStatus {
