@@ -256,7 +256,46 @@ def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
             assert stale not in text, f"{path}: stale goal wording {stale!r}"
 
 
-def test_autonomous_diagnosis_goal_requires_mechanism_or_earned_underdetermination() -> None:
+def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
+    """The continuation backstop must make incomplete verification non-terminal."""
+    do_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "opencode/skills/do/SKILL.md",
+        DIST / "pi/skills/do/SKILL.md",
+    ]
+    required_do_phrases = (
+        "gate ledger covering every Acceptance Criterion and Global Invariant",
+        "latest independent verifier verdict",
+        "freshness relative to the last relevant implementation change",
+        "Completion requires every listed gate to have fresh PASS evidence",
+        "Do not accept self-attestation",
+    )
+    for path in do_files:
+        text = path.read_text(encoding="utf-8")
+        for phrase in required_do_phrases:
+            assert phrase in text, f"{path}: missing {phrase!r}"
+
+    parent_goal_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
+        ROOT / "claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "codex/plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "opencode/skills/auto/SKILL.md",
+        DIST / "opencode/skills/babysit-pr/SKILL.md",
+        DIST / "pi/skills/auto/SKILL.md",
+        DIST / "pi/skills/babysit-pr/SKILL.md",
+    ]
+    for path in parent_goal_files:
+        text = path.read_text(encoding="utf-8")
+        assert "manifest gate ledger" in text, path
+        assert "fresh independent verifier" in text, path
+        assert "self-attestation" in text, path
+
+
+def test_autonomous_diagnosis_goal_requires_mechanism_or_earned_underdetermination() -> (
+    None
+):
     expected = (
         "For diagnosis-shaped work, a layer-localized read is not complete: "
         "either name the concrete mechanism, or explicitly earn an underdetermined "
@@ -285,7 +324,9 @@ def test_continuation_backstop_is_owned_by_top_level_entrypoint() -> None:
         text = path.read_text(encoding="utf-8")
         assert "Deliver <deliverables>" not in text, path
         assert "/define does not set a separate /do goal" in text, path
-        assert "/do reads the manifest and owns the manifest-completion contract" in text, path
+        assert (
+            "/do reads the manifest and owns the manifest-completion contract" in text
+        ), path
 
     do_files = [
         ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
@@ -319,7 +360,9 @@ def test_continuation_backstop_is_owned_by_top_level_entrypoint() -> None:
     ]
     for path in babysit_files:
         text = path.read_text(encoding="utf-8")
-        assert "including the `--manifest` path where `/define` is skipped" in text, path
+        assert (
+            "including the `--manifest` path where `/define` is skipped" in text
+        ), path
         assert "outer backstop for the tend" in text, path
         assert "should not set or print competing narrower goals" in text, path
 
@@ -333,7 +376,7 @@ def test_pi_package_metadata_points_to_generated_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "0.12.2"
+    assert package["version"] == "0.12.3"
     assert "pi-package" in package["keywords"]
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],
