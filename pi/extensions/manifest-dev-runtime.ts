@@ -207,6 +207,7 @@ export function parseVerifierReport(result: string): Pick<GateVerificationResult
 	};
 }
 
+const MARKDOWN_EMPHASIS_MARKER_PATTERN = String.raw`(\*\*|__|\*|_)`;
 const MARKDOWN_EMPHASIS_PATTERN = String.raw`(?:\*\*|__|\*|_)?`;
 const HORIZONTAL_SPACE_PATTERN = String.raw`[^\S\r\n]*`;
 
@@ -227,7 +228,7 @@ function extractVerifierSection(result: string, label: "EVIDENCE" | "DETAILS", o
 
 	const start = match.index + match[0].length;
 	const nextLabel = label === "EVIDENCE" ? findVerifierLabel(result, "DETAILS", { allowSuffix: true, start }) : undefined;
-	return trimVerifierFieldValue(result.slice(start, nextLabel?.index).trim());
+	return result.slice(start, nextLabel?.index).trim();
 }
 
 function findVerifierLabel(
@@ -236,16 +237,14 @@ function findVerifierLabel(
 	options?: { allowSuffix?: boolean; start?: number },
 ): RegExpExecArray | undefined {
 	const suffixPattern = options?.allowSuffix ? String.raw`(?:[^\S\r\n]+[—-][^:\r\n]*)?` : "";
+	const wrappedLabelPattern = String.raw`${MARKDOWN_EMPHASIS_MARKER_PATTERN}${HORIZONTAL_SPACE_PATTERN}${label}\b${suffixPattern}${HORIZONTAL_SPACE_PATTERN}(?:\1${HORIZONTAL_SPACE_PATTERN}:|:${HORIZONTAL_SPACE_PATTERN}\1?)${HORIZONTAL_SPACE_PATTERN}`;
+	const plainLabelPattern = String.raw`${label}\b${suffixPattern}${HORIZONTAL_SPACE_PATTERN}:${HORIZONTAL_SPACE_PATTERN}`;
 	const pattern = new RegExp(
-		String.raw`^${HORIZONTAL_SPACE_PATTERN}${MARKDOWN_EMPHASIS_PATTERN}${HORIZONTAL_SPACE_PATTERN}${label}\b${suffixPattern}${HORIZONTAL_SPACE_PATTERN}${MARKDOWN_EMPHASIS_PATTERN}${HORIZONTAL_SPACE_PATTERN}:${HORIZONTAL_SPACE_PATTERN}${MARKDOWN_EMPHASIS_PATTERN}${HORIZONTAL_SPACE_PATTERN}`,
+		String.raw`^${HORIZONTAL_SPACE_PATTERN}(?:${wrappedLabelPattern}|${plainLabelPattern})`,
 		"gim",
 	);
 	pattern.lastIndex = options?.start ?? 0;
 	return pattern.exec(result) ?? undefined;
-}
-
-function trimVerifierFieldValue(value: string): string {
-	return value.replace(/(?:\*\*|__|\*|_)\s*$/, "").trim();
 }
 
 export function aggregateVerificationStatus(results: GateVerificationResult[]): VerificationStatus {

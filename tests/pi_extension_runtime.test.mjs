@@ -249,6 +249,26 @@ code-testability — PASS.
 	}
 });
 
+test("parseVerifierReport preserves markdown content in evidence and details", () => {
+	assert.deepEqual(
+		parseVerifierReport("VERDICT: PASS\nEVIDENCE: Ran **npm test**\nDETAILS: All **good**"),
+		{
+			verdict: "PASS",
+			evidence: "Ran **npm test**",
+			details: "All **good**",
+		},
+	);
+
+	assert.deepEqual(
+		parseVerifierReport("VERDICT: PASS\n**EVIDENCE:** **bold evidence**\n**DETAILS:** **bold details**"),
+		{
+			verdict: "PASS",
+			evidence: "**bold evidence**",
+			details: "**bold details**",
+		},
+	);
+});
+
 test("parseVerifierReport rejects missing or non-contract verdicts", () => {
 	assert.equal(parseVerifierReport("EVIDENCE: no verdict"), undefined);
 	assert.equal(parseVerifierReport("Looks good; passed everything."), undefined);
