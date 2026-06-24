@@ -186,11 +186,17 @@ console.log(JSON.stringify(cfg))
 
     commands = cfg["command"]
     assert commands["define"] == {"description": "User override", "template": "Keep me"}
-    assert commands["figure-out"]["template"] == "Use the figure-out skill with: $ARGUMENTS"
+    assert (
+        commands["figure-out"]["template"]
+        == "Use the figure-out skill with: $ARGUMENTS"
+    )
     assert commands["prompt-engineering"]["template"] == (
         "Use the prompt-engineering skill with: $ARGUMENTS"
     )
-    assert commands["babysit-pr"]["template"] == "Use the babysit-pr skill with: $ARGUMENTS"
+    assert (
+        commands["babysit-pr"]["template"]
+        == "Use the babysit-pr skill with: $ARGUMENTS"
+    )
     assert "done" not in commands
     assert "escalate" not in commands
     # 18 OpenCode skills minus the two internal user-invocable:false helpers,
