@@ -293,8 +293,8 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         assert "self-attestation" in text, path
 
 
-def test_auto_parent_goal_carries_autonomous_read_contract() -> None:
-    """The /auto parent backstop must carry the nested figure-out Read bar."""
+def test_auto_parent_goal_carries_autonomous_read_checkpoint() -> None:
+    """The /auto parent backstop carries Read rigor as a phase checkpoint."""
     auto_files = [
         ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
         DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
@@ -302,23 +302,31 @@ def test_auto_parent_goal_carries_autonomous_read_contract() -> None:
         DIST / "pi/skills/auto/SKILL.md",
     ]
     required_phrases = (
-        "contract must carry both child completion bars",
-        "full autonomous Read anatomy",
+        "The terminal success condition is outcome-gated",
+        "phase checkpoint before `/define`",
+        "full-anatomy Read checkpoint before /define",
         "every load-bearing branch pressed",
         "Evidence Ledger explicit",
         "assumptions separated from verified and inferred claims",
         "independent re-derivation run or explicitly unavailable",
         "rival set no longer moving",
-        "the Read is not complete if it only localizes where the symptom concentrates",
+        "the Read checkpoint is not complete if it only localizes where the symptom concentrates",
         "name the concrete mechanism",
         "naming the surviving explanations",
         "feasible probes that could distinguish them were run",
+        "Treat a missing or weak Read checkpoint as a phase defect",
         "manifest gate ledger",
+    )
+    forbidden_phrases = (
+        "contract must carry both child completion bars",
+        "until figure-out names a Read",
     )
     for path in auto_files:
         text = path.read_text(encoding="utf-8")
         for phrase in required_phrases:
             assert phrase in text, f"{path}: missing {phrase!r}"
+        for phrase in forbidden_phrases:
+            assert phrase not in text, f"{path}: forbidden {phrase!r}"
 
 
 def test_autonomous_figure_out_supplements_weak_parent_backstops() -> None:
@@ -437,7 +445,7 @@ def test_pi_package_metadata_points_to_generated_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "0.12.6"
+    assert package["version"] == "0.12.7"
     assert "pi-package" in package["keywords"]
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],

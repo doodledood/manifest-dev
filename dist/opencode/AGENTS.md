@@ -14,7 +14,7 @@ manifest-dev provides manifest-driven workflows for AI coding agents. The core f
 - **/escalate** — Structured blocker handoff for unrecoverable failures or pending external action.
 
 Supporting workflows:
-- **/auto** — End-to-end autonomous: /figure-out → /define → /do in one command. Its unattended parent goal should carry full autonomous Read anatomy before manifest creation, then the /do gate-ledger PASS condition. Supports `--babysit <pr-url>` for tending an existing PR end-to-end.
+- **/auto** — End-to-end autonomous: /figure-out → /define → /do in one command. Its unattended parent goal should treat full autonomous Read anatomy as a checkpoint before manifest creation when figure-out runs, then use manifest written plus /do gate-ledger PASS as the terminal condition. Supports `--babysit <pr-url>` for tending an existing PR end-to-end.
 - **/figure-out** — Truth-convergent thinking partner. /define auto-invokes it when the problem space is foggy.
 - **/figure-out-team** — /figure-out's discipline applied to a multi-party async Slack conversation.
 - **Tools skills** — /adr, /babysit-pr, /handoff, /prompt-engineering, /review-pr, /teach-me, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
@@ -46,4 +46,4 @@ manifest-dev ships no agents. Verification is a general-purpose subagent that ac
 
 ## Unattended Execution
 
-Run `/do` with a durable goal-setting/continuation backstop whose contract is the auditable all-criteria-PASS condition when you want the host CLI to keep `/do` running across turns: every manifest gate listed with fresh independent PASS evidence, not a summary claim. For `/auto`, use one full-chain parent goal: full autonomous Read anatomy first, then manifest written, then `/do` gate-ledger PASS. Use a host-native goal-setting capability when available; otherwise copy the completion contract the skill prints into your continuation mechanism.
+Run `/do` with a durable goal-setting/continuation backstop whose contract is the auditable all-criteria-PASS condition when you want the host CLI to keep `/do` running across turns: every manifest gate listed with fresh independent PASS evidence, not a summary claim. For `/auto`, use one full-chain parent goal whose terminal condition is manifest written plus `/do` gate-ledger PASS; when figure-out runs first, its full autonomous Read anatomy is a checkpoint before `/define`. Use a host-native goal-setting capability when available; otherwise copy the completion contract the skill prints into your continuation mechanism.

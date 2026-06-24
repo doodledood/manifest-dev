@@ -51,6 +51,9 @@ The execution cycle where `/do` implements toward a Manifest, verifies every Acc
 **Host Continuation Backstop**:
 A host-provided goal-setting, continuation, or completion-check capability that keeps or reopens a run until a durable completion contract is satisfied.
 
+**Phase Checkpoint**:
+A required intermediate workflow condition that must be satisfied before moving to the next phase, but is not the terminal success condition unless that phase's artifact is the deliverable.
+
 **Verifier Execution**:
 An independent host execution context launched by `/do` to evaluate one Acceptance Criterion or Global Invariant.
 
@@ -88,6 +91,7 @@ A non-interactive Babysit PR run that performs immediately actionable lifecycle 
 - A **Verifier Execution** returns PASS, FAIL, or BLOCKED evidence to the **Do/Verify Loop**.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.
+- A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
 - **Review PR** in manifest mode independently re-verifies a **Manifest** against the pull request head.
 - **Babysit PR** uses **PR Grounding** so newer comments do not override stronger sources of intent by recency alone.
