@@ -305,9 +305,14 @@ def test_auto_parent_goal_carries_autonomous_read_contract() -> None:
         "contract must carry both child completion bars",
         "full autonomous Read anatomy",
         "every load-bearing branch pressed",
-        "assumptions surfaced",
+        "Evidence Ledger explicit",
+        "assumptions separated from verified and inferred claims",
         "independent re-derivation run or explicitly unavailable",
         "rival set no longer moving",
+        "the Read is not complete if it only localizes where the symptom concentrates",
+        "name the concrete mechanism",
+        "naming the surviving explanations",
+        "feasible probes that could distinguish them were run",
         "manifest gate ledger",
     )
     for path in auto_files:
@@ -349,9 +354,13 @@ def test_autonomous_diagnosis_goal_requires_mechanism_or_earned_underdeterminati
     None
 ):
     expected = (
-        "For diagnosis-shaped work, a layer-localized read is not complete: "
-        "either name the concrete mechanism, or explicitly earn an underdetermined "
-        "read by showing that feasible mechanism-splitting probes were run or blocked."
+        "For diagnosis-shaped work, finding where the symptom concentrates is only "
+        "localization, not a complete Read: name the concrete mechanism — the "
+        "variable, difference, or sequence that produces the symptom, including "
+        "why this case differs when the question is comparative — or earn an "
+        "underdetermined Read by naming the surviving explanations and showing "
+        "which feasible probes that could distinguish them were run, what they "
+        "showed, or why they were blocked."
     )
     files = [
         ROOT / "claude-plugins/manifest-dev/skills/figure-out/references/autonomous.md",
@@ -428,7 +437,7 @@ def test_pi_package_metadata_points_to_generated_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "0.12.4"
+    assert package["version"] == "0.12.5"
     assert "pi-package" in package["keywords"]
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],
