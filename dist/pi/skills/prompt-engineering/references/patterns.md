@@ -164,6 +164,18 @@ Reserve absolutes for true invariants — safety rules, output contracts, hard c
 - For iterative or agentic prompts, normalize failure: *"if this approach doesn't work, try another"* prevents accumulated desperation from driving corner-cutting.
 - The emotional tone of the opening propagates through subsequent processing — calibrate early tokens, not just the closing.
 
+## Leading word
+
+**Gap** — a directive that survives the no-op cut still leans on several words to pin down a behavior the model won't reach from a plain restatement (*"be thorough"* is too weak; *"fast, deterministic, low-overhead"* is a mouthful). Cutting the no-op is only half the craft — the surviving line can still under-leverage.
+
+**What it does** — collapses the directive onto a single compact word the model already holds from pretraining. Recruited as a token, it anchors a whole region of behavior in the fewest words — and reused in a skill's description, the same word sharpens activation. The corollary is the lever: the fix for a weak directive is a *stronger word, not more words*. Prefer an existing pretrained word — a coined one recruits no priors, so you pay in definition tokens what a real word gives free.
+
+```
+"be thorough"                        ->  relentless
+"fast, deterministic, low-overhead"  ->  a tight loop
+"a check you actually believe in"    ->  the loop goes red
+```
+
 ---
 
 These patterns compose — pick by gap, not by category. Add them where the gap is real for this prompt, not speculatively.
