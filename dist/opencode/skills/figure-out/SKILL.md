@@ -1,7 +1,7 @@
 ---
 name: figure-out
 description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when you need to understand before acting, when figuring it out is the goal, or when the user asks to think through a decision, dig deeper, press an assumption, investigate why something is happening, or work through a problem.'
-argument-hint: '[topic] [--no-docs] [--no-log] [--log <path>] [--autonomous] [--team]'
+argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team]'
 user-invocable: true
 ---
 
@@ -36,11 +36,11 @@ The read is the deliverable, and it ships with its anatomy: the conclusion, your
 
 Answers and agreement feed exploration, not action — don't leap to the implied move — not the edit, not even the proposal. Naming the read ends the skill, in every mode. Solution agreement, "sounds good," or your own sense of being done never authorize executing what was converged on; only the user explicitly asking for the work does — then comply. When the read implies work, offer `/define` to lock it into a Manifest. (Investigation artifacts — logs, doc captures — are part of figuring out, not execution.)
 
-Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of `--no-docs`, `--no-log`, or `--log <path>` are topic text unless clearly supplied as this skill's option.
+Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of `--no-docs` or `--no-log` are topic text unless clearly supplied as this skill's option.
 
 Unless parsed options include `--no-docs`, load `references/WITH_DOCS.md` for bootstrap, glossary, and ADR conventions.
 
-Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only investigation log. `--log <path>` overrides the default log path.
+Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only investigation log.
 
 When parsed options include `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
 

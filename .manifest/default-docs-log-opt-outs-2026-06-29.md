@@ -16,7 +16,7 @@
   - [R-4] Generated distributions could drift | Detect: sync output plus source-vs-dist grep/static checks.
 - **Trade-offs:**
   - [T-1] Backward compatibility vs clean flag surface → Prefer clean surface because the user explicitly said no backward compatibility.
-  - [T-2] Remove all `--log` forms vs keep path override → Keep `--log <path>` because explicit log path selection is still live functionality, not compatibility.
+  - [T-2] Remove explicit log-path override vs keep a shorter flag surface → Prefer removal because default logging writes to the user's home `.manifest-dev/logs/` directory and `--no-log` is the only needed control.
   - [T-3] Strict invalid-flag rejection vs simply dropping old flags from support → Prefer dropping from supported syntax without extra rejection prose; these are skill prompts, and rejection logic adds prompt surface for a path the user does not want to support.
 
 ## 3. Global Invariants
@@ -29,7 +29,7 @@
 - [INV-G2] Old positive flag compatibility is removed from current source-facing surfaces.
   ```yaml
   verify:
-    prompt: "Inspect current source docs/prompts under claude-plugins/manifest-dev and claude-plugins/manifest-dev-tools, excluding archived manifests and ADR history. PASS only if --with-docs and the old optional form --log [path] are no longer advertised or described as supported current flags. --log <path> may remain as an explicit path override. FAIL with file:line evidence for any current supported old positive flag wording."
+    prompt: "Inspect current source docs/prompts under claude-plugins/manifest-dev and claude-plugins/manifest-dev-tools, excluding archived manifests and ADR history. PASS only if --with-docs, the old optional form --log [path], and --log <path> are no longer advertised or described as supported current flags. FAIL with file:line evidence for any current supported old positive flag wording."
     phase: 1
   ```
 - [INV-G3] Prompt edits pass change-intent and prompt-quality review.
@@ -47,7 +47,7 @@
 
 ## 5. Known Assumptions
 - [ASM-1] (auto) Version bumps should reflect breaking flag/default changes. Default: bump `manifest-dev` major, bump `manifest-dev-tools` major if its plugin semantics are considered breaking, and bump the Pi package for changed distributed assets. Impact if wrong: version can be adjusted before commit.
-- [ASM-2] (auto) `--log <path>` syntax is sufficient for explicit path override; bare `--log` does not need current support text. Impact if wrong: users who pass bare `--log` get no extra behavior, matching default logging.
+- [ASM-2] (auto) No explicit log-path override is needed. Default: all default logs use the user's home `.manifest-dev/logs/` directory, with `~` expanding as `$HOME` / `%USERPROFILE%`. Impact if wrong: a future flag can reintroduce path override deliberately.
 - [ASM-3] (auto) Static verification is adequate because this is prompt/skill metadata, not executable code. Impact if wrong: add targeted script/grep checks.
 
 ## 6. Deliverables
@@ -58,13 +58,13 @@
 - [AC-1.1] `figure-out/SKILL.md` advertises and implements default-on docs/log via opt-outs.
   ```yaml
   verify:
-    prompt: "Read claude-plugins/manifest-dev/skills/figure-out/SKILL.md. PASS only if argument-hint advertises --no-docs, --no-log, and --log <path>; does not advertise --with-docs or --log [path]; the body says to interpret only top-level skill options as flags so quoted/code/topic mentions of --no-docs, --no-log, or --log <path> remain topic text; and the body loads references/WITH_DOCS.md unless parsed options include --no-docs and references/LOG.md unless parsed options include --no-log. PASS only if --log <path> is described only as explicit path override. FAIL with actual lines quoted."
+    prompt: "Read claude-plugins/manifest-dev/skills/figure-out/SKILL.md. PASS only if argument-hint advertises --no-docs and --no-log but not --log <path>, --with-docs, or --log [path]; the body says to interpret only top-level skill options as flags so quoted/code/topic mentions of --no-docs or --no-log remain topic text; and the body loads references/WITH_DOCS.md unless parsed options include --no-docs and references/LOG.md unless parsed options include --no-log. FAIL with actual lines quoted."
     phase: 1
   ```
 - [AC-1.2] Figure-out references contain mechanics, not load-trigger policy.
   ```yaml
   verify:
-    prompt: "Read claude-plugins/manifest-dev/skills/figure-out/references/WITH_DOCS.md, LOG.md, ADR_FORMAT.md, autonomous.md, and team.md. PASS only if the references do not contain trigger boilerplate such as 'Loaded when', 'Loaded by default', or instructions about whether args contain their loading flags; WITH_DOCS.md still describes bootstrap/glossary/ADR mechanics, LOG.md still describes default path and --log <path> path override mechanics, ADR_FORMAT.md refers to docs mode rather than figure-out --with-docs and contains no --no-docs policy, autonomous.md still describes autonomous behavior, and team.md still describes team behavior. FAIL with missing mechanics or trigger boilerplate quoted."
+    prompt: "Read claude-plugins/manifest-dev/skills/figure-out/references/WITH_DOCS.md, LOG.md, ADR_FORMAT.md, autonomous.md, and team.md. PASS only if the references do not contain trigger boilerplate such as 'Loaded when', 'Loaded by default', or instructions about whether args contain their loading flags; WITH_DOCS.md still describes bootstrap/glossary/ADR mechanics, LOG.md still describes the cross-platform default home `.manifest-dev/logs` path mechanics and no path override, ADR_FORMAT.md refers to docs mode rather than figure-out --with-docs and contains no --no-docs policy, autonomous.md still describes autonomous behavior, and team.md still describes team behavior. FAIL with missing mechanics or trigger boilerplate quoted."
     phase: 1
   ```
 
@@ -74,23 +74,23 @@
 - [AC-2.1] `figure-out-team` forwards the new opt-out/path flags and no old positive docs flag.
   ```yaml
   verify:
-    prompt: "Read claude-plugins/manifest-dev/skills/figure-out-team/SKILL.md. PASS only if argument-hint advertises --no-docs, --no-log, and --log <path>, does not advertise --with-docs or --log [path], and the body forwards topic and flags including --no-docs, --no-log, and --log <path> to figure-out --team. FAIL with actual lines quoted."
+    prompt: "Read claude-plugins/manifest-dev/skills/figure-out-team/SKILL.md. PASS only if argument-hint advertises --no-docs and --no-log, does not advertise --log <path>, --with-docs, or --log [path], and the body forwards topic and flags including --no-docs and --no-log to figure-out --team. FAIL with actual lines quoted."
     phase: 1
   ```
 - [AC-2.2] Team mode preserves read-only docs and local-only logging without owning load triggers.
   ```yaml
   verify:
-    prompt: "Read claude-plugins/manifest-dev/skills/figure-out/references/team.md and figure-out/SKILL.md. PASS only if figure-out/SKILL.md owns the --team/--no-docs/--no-log load conditions, while team.md contains no load-trigger boilerplate and still says docs mode is read-only in team mode, with no CONTEXT captures/init and no ADR offers/writes from Slack; and logging is local-only, with explicit log path only choosing the local path and never posted to Slack. FAIL with missing or conflicting text quoted."
+    prompt: "Read claude-plugins/manifest-dev/skills/figure-out/references/team.md and figure-out/SKILL.md. PASS only if figure-out/SKILL.md owns the --team/--no-docs/--no-log load conditions, while team.md contains no load-trigger boilerplate and still says docs mode is read-only in team mode, with no CONTEXT captures/init and no ADR offers/writes from Slack; and logging is local-only and never posted to Slack. Home log-path mechanics belong to LOG.md, not team.md. FAIL with missing or conflicting text quoted."
     phase: 1
   ```
 
 ### Deliverable 3: Babysit-pr journal defaults on
 
 **Acceptance Criteria:**
-- [AC-3.1] `babysit-pr` journaling is default-on with opt-out and path override.
+- [AC-3.1] `babysit-pr` journaling is default-on with opt-out only.
   ```yaml
   verify:
-    prompt: "Read claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md. PASS only if argument-hint advertises --no-log and --log <path> but not --log [path], Inputs no longer calls logging optional, Logging says the PR journal is created/used by default unless --no-log, and --log <path> overrides the default PR-keyed path. PASS only if Execution passes the resolved journal path to /do by default unless --no-log, while /do remains the sole consumer. FAIL with actual conflicting lines quoted."
+    prompt: "Read claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md. PASS only if argument-hint advertises --no-log but not --log <path> or --log [path], Inputs no longer calls logging optional, and Logging says the PR journal is created/used by default under the user's home `.manifest-dev/logs/` directory unless --no-log. PASS only if Execution passes the resolved journal path to /do by default unless --no-log, while /do remains the sole consumer. FAIL with actual conflicting lines quoted."
     phase: 1
   ```
 - [AC-3.2] `/do` remains consumer-only.
@@ -106,7 +106,7 @@
 - [AC-4.1] User-facing READMEs describe the new opt-out defaults.
   ```yaml
   verify:
-    prompt: "Inspect README.md, claude-plugins/README.md, claude-plugins/manifest-dev/README.md, and claude-plugins/manifest-dev-tools/README.md. PASS only if current figure-out/team/babysit-pr descriptions match default docs/log or default journal behavior with --no-docs/--no-log opt-outs and --log <path> path override where relevant, and do not advertise --with-docs or --log [path]. FAIL with stale lines quoted."
+    prompt: "Inspect README.md, claude-plugins/README.md, claude-plugins/manifest-dev/README.md, and claude-plugins/manifest-dev-tools/README.md. PASS only if current figure-out/team/babysit-pr descriptions match default docs/log or default journal behavior with --no-docs/--no-log opt-outs and no explicit log-path override, and do not advertise --with-docs, --log [path], or --log <path>. FAIL with stale lines quoted."
     phase: 1
   ```
 - [AC-4.2] Plugin/package versions are bumped consistently with changed source and Pi-distributed assets.
@@ -118,7 +118,7 @@
 - [AC-4.3] Generated distribution copies match the source semantics.
   ```yaml
   verify:
-    prompt: "Inspect dist/opencode, dist/codex, and dist/pi copies for figure-out, figure-out-team, babysit-pr, their touched references, and README/package metadata. PASS only if generated copies mirror the new --no-docs/--no-log/default-on semantics from source and no generated current docs advertise --with-docs or --log [path]. FAIL with file:line evidence for drift."
+    prompt: "Inspect dist/opencode, dist/codex, and dist/pi copies for figure-out, figure-out-team, babysit-pr, their touched references, and README/package metadata. PASS only if generated copies mirror the new --no-docs/--no-log/default-on semantics with no explicit log-path override from source and no generated current docs advertise --with-docs, --log [path], or --log <path>. FAIL with file:line evidence for drift."
     phase: 2
   ```
 - [AC-4.4] Repository verification commands pass.

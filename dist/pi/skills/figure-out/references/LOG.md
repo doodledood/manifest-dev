@@ -8,9 +8,7 @@ This log is not a transcript (raw conversation history), a handoff (curated rewr
 
 Resolve the active log path before the first question and surface it immediately.
 
-- When no explicit path is supplied, create the log at `~/.manifest-dev/logs/figure-out-log-{timestamp}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from long investigations survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS`.
-- `--log <path>` appends to that explicit path instead of the default path. Relative paths resolve from the current workspace directory. Existing files are resumed; new files are created.
-- Create parent directories only for an explicit path, and only when the target location is clear and writable. If creating the parent would be ambiguous or unsafe, ask for a different path instead of silently choosing one.
+Create the log at `~/.manifest-dev/logs/figure-out-log-{timestamp}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from long investigations survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS`.
 
 ## Append Discipline
 

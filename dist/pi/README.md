@@ -82,7 +82,7 @@ The package also ships prompt-template aliases for the common entrypoints:
 
 - `/do <manifest-path>` expands to the `do` skill.
 - `/auto <task>` expands to the `auto` skill.
-- `/babysit-pr <github-pr-url> [--ci] [--manifest <path>] [--no-log] [--log <path>]` expands to the `babysit-pr` skill.
+- `/babysit-pr <github-pr-url> [--ci] [--manifest <path>] [--no-log]` expands to the `babysit-pr` skill.
 
 The aliases are convenience templates. The skills own behavior.
 
