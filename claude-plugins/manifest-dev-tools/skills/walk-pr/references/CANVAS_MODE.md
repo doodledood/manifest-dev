@@ -1,6 +1,6 @@
 # Canvas Mode — Walk-PR Review Canvas
 
-Loaded when `/walk-pr --canvas` is passed. The canvas **is** the walkthrough — every surface (PR primer, per-SC behavior summary + verification probe, expanded depth with boundary view, topics, per-file diff affordances, per-topic comment input) lives in the HTML artifact, generated **once, upfront, with the full walk content**. The user navigates self-paced via local JS; chat reconnects only at the end, when the user pastes back a single bundled review result. After the walkthrough closes, the artifact is redundant.
+The canvas **is** the walkthrough — every surface (PR primer, per-SC behavior summary + verification probe, expanded depth with boundary view, topics, per-file diff affordances, per-topic comment input) lives in the HTML artifact, generated **once, upfront, with the full walk content**. The user navigates self-paced via local JS; chat reconnects only at the end, when the user pastes back a single bundled review result. After the walkthrough closes, the artifact is redundant.
 
 ## Reader model
 

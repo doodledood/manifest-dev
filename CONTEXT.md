@@ -45,6 +45,9 @@ A maintained project surface treated as authoritative instead of generated outpu
 **Universal Language**:
 Prompt wording that names portable behavior or capability rather than a harness-specific primitive.
 
+**Progressive Disclosure**:
+A prompt-architecture pattern where always-needed behavior stays in the entry prompt and mode-specific mechanics live in companion references loaded only when their trigger applies.
+
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a Manifest, verifies every Acceptance Criterion and Global Invariant, routes failures or blockers, and finishes only after all gates pass.
 
@@ -99,4 +102,4 @@ A non-interactive Babysit PR run that performs immediately actionable lifecycle 
 
 ## Flagged ambiguities
 
-_None yet. Grow this section as figure-out --with-docs sessions surface clashes or canonicalizations._
+_None yet. Grow this section as figure-out docs-mode sessions surface clashes or canonicalizations._

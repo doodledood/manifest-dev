@@ -1,4 +1,4 @@
-# figure-out: --log
+# figure-out: logging
 
 Keeps an append-only investigation journal for long figure-out sessions — continuity that survives context loss: what was learned, why the read shifted, which surprises matter, what remains open, and what crux should be pressed next.
 
@@ -8,9 +8,7 @@ This log is not a transcript (raw conversation history), a handoff (curated rewr
 
 Resolve the active log path before the first question and surface it immediately.
 
-- `--log` with no path creates the log at `~/.manifest-dev/logs/figure-out-log-{timestamp}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from long investigations survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS`.
-- `--log <path>` appends to that explicit path. Relative paths resolve from the current workspace directory. Existing files are resumed; new files are created.
-- Create parent directories only for an explicit path, and only when the target location is clear and writable. If creating the parent would be ambiguous or unsafe, ask for a different path instead of silently choosing one.
+Create the log at `~/.manifest-dev/logs/figure-out-log-{timestamp}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from long investigations survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS`.
 
 ## Append Discipline
 
@@ -42,4 +40,4 @@ The shape is a default, not a form to pad. Omit empty fields; add a field only w
 
 ## Composition
 
-`--log` composes with other figure-out modes. It records the active mode's findings and reasoning shifts; it does not change `--with-docs` glossary/ADR behavior or `--autonomous` self-answering behavior.
+Logging composes with other figure-out modes. It records the active mode's findings and reasoning shifts; it does not change docs-mode glossary/ADR behavior or `--autonomous` self-answering behavior.

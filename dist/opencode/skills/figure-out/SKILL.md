@@ -1,7 +1,7 @@
 ---
 name: figure-out
 description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when you need to understand before acting, when figuring it out is the goal, or when the user asks to think through a decision, dig deeper, press an assumption, investigate why something is happening, or work through a problem.'
-argument-hint: '[topic] [--with-docs] [--log [path]] [--autonomous] [--team]'
+argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team]'
 user-invocable: true
 ---
 
@@ -36,12 +36,14 @@ The read is the deliverable, and it ships with its anatomy: the conclusion, your
 
 Answers and agreement feed exploration, not action — don't leap to the implied move — not the edit, not even the proposal. Naming the read ends the skill, in every mode. Solution agreement, "sounds good," or your own sense of being done never authorize executing what was converged on; only the user explicitly asking for the work does — then comply. When the read implies work, offer `/define` to lock it into a Manifest. (Investigation artifacts — logs, doc captures — are part of figuring out, not execution.)
 
-When args contain `--with-docs`, also load `references/WITH_DOCS.md` for bootstrap, glossary, and ADR conventions.
+Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of `--no-docs` or `--no-log` are topic text unless clearly supplied as this skill's option.
 
-When args contain `--log` as this skill's option, also load `references/LOG.md` and keep an append-only investigation log. If `--log` appears quoted, code-formatted, or as part of the topic being investigated, ask whether to enable logging before loading it.
+Unless parsed options include `--no-docs`, load `references/WITH_DOCS.md` for bootstrap, glossary, and ADR conventions.
 
-When args contain `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
+Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only investigation log.
 
-When args contain `--team`, also load `references/team.md` and apply its overrides — the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session. `--team` supersedes `--autonomous`. Typically passed by the `figure-out-team` wrapper skill.
+When parsed options include `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
+
+When parsed options include `--team`, also load `references/team.md` and apply its overrides — the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session. `--team` supersedes `--autonomous`. Typically passed by the `figure-out-team` wrapper skill.
 
 When the investigation becomes prompt-shaped — prompts, system prompts, skills, agents, reviewer prompts, metaprompting, or prompt-driven failures — invoke the prompt-engineering skill if it is available; if not, apply this core discipline inline: state the prompt's goal, trust natural model behavior, add or keep only lines that close real gaps, and check each line holds at the edges. Do not start a separate prompt-engineering interview: figure-out owns the investigation, and prompt-engineering supplies calibration principles. Ordinary non-prompt investigations should not load it.

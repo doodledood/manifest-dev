@@ -1,12 +1,12 @@
-# figure-out: --with-docs
+# figure-out: docs mode
 
-Loaded when `--with-docs` appears in args. Adds three behaviors to figure-out: **bootstrap** (initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping). Without the flag, this file isn't read.
+Adds three behaviors to figure-out: **bootstrap** (initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
 
 ## Override: these writes ARE the action
 
 The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal.
 
-In `--with-docs` mode that frame has two explicit exceptions. **Glossary captures and ADR offers are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them.
+In docs mode that frame has two explicit exceptions. **Glossary captures and ADR offers are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them.
 
 (The default figure-out posture still applies to everything else — design proposals, code edits, plan synthesis. Only glossary writes and ADR offers carve out.)
 
@@ -17,7 +17,7 @@ Before pressing the topic, resolve the active context file and load it if it exi
 1. **`CONTEXT-MAP.md` at root** → the repo has multiple contexts. Follow the map to the relevant context's `CONTEXT.md`. Ask which context if unclear.
 2. **No `CONTEXT-MAP.md`** → the active context is the repo-root `CONTEXT.md`.
 3. **Active `CONTEXT.md` exists** → load it as evidence. Project vocabulary is a source the user is already working from.
-4. **Active `CONTEXT.md` is missing** → offer minimal initialization for that context: *"No CONTEXT.md exists for this repo/context. Want a minimal scaffold I can grow as terms resolve?"* On accept, write a starter file at the active context path (context name, one-sentence purpose, empty Language section). On decline, skip the proactive scaffold and don't re-offer it for that context — but subsequent per-turn glossary captures may still create the active `CONTEXT.md` lazily on first earned resolution. (The user opted into docs by passing `--with-docs`; declining the scaffold only declines the *proactive* write, not the inline captures that the flag exists for.)
+4. **Active `CONTEXT.md` is missing** → offer minimal initialization for that context: *"No CONTEXT.md exists for this repo/context. Want a minimal scaffold I can grow as terms resolve?"* On accept, write a starter file at the active context path (context name, one-sentence purpose, empty Language section). On decline, skip the proactive scaffold and don't re-offer it for that context — but subsequent per-turn glossary captures may still create the active `CONTEXT.md` lazily on first earned resolution. (Declining the scaffold only declines the *proactive* write, not the inline captures that docs mode exists for.)
 5. **Multiple distinct domains emerge mid-session** → propose splitting via `CONTEXT-MAP.md` + per-context `CONTEXT.md`. Don't do this preemptively; only when the conversation actually crosses domain boundaries. If the user accepts a split and a relevant per-context `CONTEXT.md` is missing, offer the same minimal initialization for that new context.
 
 ## Glossary captures (per-turn, inline, no offer)
