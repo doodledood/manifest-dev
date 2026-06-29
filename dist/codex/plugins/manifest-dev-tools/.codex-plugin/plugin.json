@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev-tools",
-  "version": "0.27.3",
+  "version": "1.0.0",
   "description": "manifest-dev companion tooling for Codex: /babysit-pr, /review-pr, /walk-pr, /teach-me, /adr, /handoff, and the prompt-engineering skill.",
   "skills": "./skills/",
   "keywords": [

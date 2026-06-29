@@ -137,12 +137,12 @@ When uncertain, apply: *"Would a new team member joining in 6 months benefit fro
 
 Two paths capture ADRs in this repo:
 
-- **Inline** via `figure-out --with-docs` — agent offers ADRs during the conversation as decisions get made (primary path).
+- **Inline** via figure-out docs mode — agent offers ADRs during the conversation as decisions get made (primary path).
 - **Post-hoc** via the legacy `/adr` skill — sweeps a finished session transcript (backup path).
 
 **Both paths use the same gate**: category match (above) + Decision Test + NOT-ADR-worthy anti-patterns. There is no separate AND-of-conditions trigger anywhere. Same coverage, same criteria.
 
-Inline capture is preferred because context is fresh, alternatives have just been discussed, and the user is present to confirm rejected options. Post-hoc remains useful when `--with-docs` wasn't active or when re-sweeping a finished workflow.
+Inline capture is preferred because context is fresh, alternatives have just been discussed, and the user is present to confirm rejected options. Post-hoc remains useful when inline docs capture was not active or when re-sweeping a finished workflow.
 
 ## Synthesis Guidance (post-hoc)
 
