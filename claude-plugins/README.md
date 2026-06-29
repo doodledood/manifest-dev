@@ -1,6 +1,6 @@
 # Claude Code Plugins
 
-Front-load the thinking so the agent gets it right the first time.
+Loop engineering's missing half: define what "done" means, then verify it. The loop is the easy part — these plugins are the understanding and the verification that wrap around it.
 
 ## Installation
 
@@ -19,7 +19,7 @@ Front-load the thinking so the agent gets it right the first time.
 
 ## At a Glance
 
-**manifest-dev** separates *what to build* (Deliverables with Acceptance Criteria) from *rules to follow* (Global Invariants). The three beats:
+**manifest-dev** separates *what to build* (Deliverables with Acceptance Criteria) from *rules to follow* (Global Invariants). The three beats answer the three ways an autonomous loop goes wrong — skipping understanding, never defining "done," and faking it:
 
 - **`/figure-out`** — reach shared understanding of the problem. A peer that investigates before it claims, walks the decision tree, and holds positions under pushback. The conceptual core; call it directly when figuring it out IS the goal.
 - **`/define`** — encode that understanding into a Manifest. Auto-invokes `/figure-out` when the understanding isn't there yet. Supports `--canvas` (a live browser-rendered understanding surface) and `--babysit <pr-url>`.

@@ -1,6 +1,6 @@
 # manifest-dev-tools
 
-Utilities that complement manifest workflows — prompt engineering, PR babysitting, PR walkthroughs and reviews, ADR synthesis, cross-boundary context handoff, and incremental teaching for session work.
+Utilities that sit alongside the define → do → verify workflow — prompt engineering, PR babysitting, PR walkthroughs and reviews, ADR synthesis, cross-boundary context handoff, and incremental teaching for session work.
 
 ## Skills
 

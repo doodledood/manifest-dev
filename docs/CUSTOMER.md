@@ -14,7 +14,7 @@
 - **Experience**: Senior/experienced developers (5+ years)
 - **Role**: Full-stack developers, indie hackers, startup engineers
 - **Context**: Solo projects, side products, or small startup teams
-- **Tool Comfort**: Already uses Claude Code, comfortable customizing dev environment
+- **Tool Comfort**: Already drives an AI coding agent / harness (Claude Code, OpenCode, Codex, Pi, or similar), comfortable customizing dev environment
 
 ### Psychographics
 - **Mindset**: Quality over speed; willing to invest tokens and time upfront for better autonomous results
@@ -55,7 +55,7 @@ When using this marketplace's plugins, the customer experiences:
 ## Problem We Solve
 
 ### Primary Problem
-Extending Claude Code's capabilities beyond defaults with **quality-focused, first-principles workflows** - not hype-driven prompts.
+Extending your coding agent's capabilities beyond defaults with **quality-focused, first-principles workflows** - not hype-driven prompts. Harness-agnostic: the workflows run on Claude Code, OpenCode, Codex, Pi, or any compatible agent CLI.
 
 ### Secondary Problem
 Sharing proven workflows and best practices with teams, creating consistency in how AI-assisted development is done.
@@ -77,7 +77,7 @@ Sharing proven workflows and best practices with teams, creating consistency in 
 | **Speed-first developers** | We prioritize quality over raw speed; not for "just ship it" mentality |
 | **Tinkerers & customizers** | We provide opinionated workflows that "just work"; not for those who want to tweak everything |
 | **Hype chasers** | We're grounded and realistic; not for those wanting revolutionary promises |
-| **Non-Claude Code users** | Plugins are specifically for Claude Code ecosystem |
+| **Non-harness users** | Built for people driving an agentic coding CLI; not for those not using a coding agent at all |
 
 ---
 
@@ -85,7 +85,7 @@ Sharing proven workflows and best practices with teams, creating consistency in 
 
 **Primary channels** (organic, community-driven):
 1. GitHub discovery (search, trending, stars)
-2. Claude Code community (Discord, forums, official docs)
+2. Coding-agent communities (Claude Code, OpenCode, Codex, Pi; Discord, forums, official docs)
 3. Developer Twitter/X, blogs, newsletters
 4. Word of mouth from other quality-focused developers
 5. Reddit (r/ClaudeAI, programming subreddits)
@@ -97,7 +97,7 @@ Sharing proven workflows and best practices with teams, creating consistency in 
 ## Messaging Guidelines
 
 ### Do Say
-- "First-principles workflows for Claude Code"
+- "First-principles workflows for your coding agent"
 - "Quality output you can trust"
 - "Built by developers who understand LLM limitations"
 - "Grounded, realistic, and reliable"
@@ -113,7 +113,7 @@ Sharing proven workflows and best practices with teams, creating consistency in 
 - Any hype-driven superlatives
 
 ### Positioning Statement
-> For experienced developers frustrated by hype-driven AI coding tools, Claude Code Plugins Marketplace provides first-principles workflows that maximize code quality through grounded, realistic approaches - unlike the endless stream of overpromising tools that require constant debugging and iteration.
+> For experienced developers frustrated by hype-driven AI coding tools, manifest-dev provides first-principles workflows that maximize code quality through grounded, realistic approaches - unlike the endless stream of overpromising tools that require constant debugging and iteration. The workflows are harness-agnostic: they run on Claude Code, OpenCode, Codex, Pi, or any compatible agent CLI.
 
 ---
 
@@ -127,5 +127,5 @@ This document should be referenced when:
 
 ---
 
-*Last updated: 2026-01-09*
-*Version: 1.0*
+*Last updated: 2026-06-29*
+*Version: 1.1 (audience broadened from Claude-Code-only to all agent-harness users, matching shipped multi-CLI distribution)*

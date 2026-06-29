@@ -1,6 +1,8 @@
 # manifest-dev
 
-Understand the problem. Write down what you'd accept. Let it build and verify itself.
+The loop is the easy part. This is the understanding and verification around it: figure out the problem, write down what you'd accept, and let the loop build and prove it against every line before you open the diff.
+
+Three skills, one for each way an autonomous loop fails — skipping understanding (`/figure-out`), never defining "done" (`/define`), and faking it (`/do`).
 
 ## Quick Start
 
@@ -18,7 +20,7 @@ Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/
 
 ## The Mindset Shift
 
-Stop thinking about *how* to build it. Start thinking about *what you'd accept*.
+Stop thinking about *how* to build it. Start thinking about *what you'd accept* — that's the loop's real stop condition.
 
 "What would make me approve this PR?" "What rules can't be broken?" "How would I know each piece is done?" The acceptance criteria are the pillar, not the implementation. LLMs are good at execution when they know exactly what's expected and bad at reading your mind — the manifest closes that gap before a line of code gets written.
 
