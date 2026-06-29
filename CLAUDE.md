@@ -26,7 +26,6 @@ Read before building plugins:
 
 ## Repository Structure
 
-- `.manifest/` - Committed manifests for this project (see Manifest Archival below)
 - `.claude-plugin/marketplace.json` - Registry of all plugins
 - `claude-plugins/` - Individual plugins, each with `.claude-plugin/plugin.json`
 - `pyproject.toml` - Python tooling config (ruff, black, mypy)
@@ -148,16 +147,6 @@ A define task-file item belongs in exactly one type: if you can verify it from t
 2. Update the relevant skill's own inline index in its `SKILL.md` (`define/SKILL.md` and/or `figure-out/SKILL.md`).
 3. If creating a base file, update overlay files to remove content that moved to the base.
 4. Bump plugin version, update READMEs per sync checklist.
-
-## Manifest Archival
-
-After a `/define` session completes, copy the final manifest from `~/.manifest-dev/manifests/` to `.manifest/` with a descriptive name:
-
-```bash
-cp ~/.manifest-dev/manifests/manifest-{timestamp}.md .manifest/{descriptive-kebab-name}-{YYYY-MM-DD}.md
-```
-
-This makes manifests available for future reference and committed to the repo.
 
 ## File Operations
 
