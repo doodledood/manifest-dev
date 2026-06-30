@@ -5,7 +5,7 @@ argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team]'
 user-invocable: true
 ---
 
-Press the topic relentlessly. Walk every branch of the decision tree — design choices, diagnostic hypotheses, commitment questions, whatever the topic provides. Tackle the next load-bearing question first — the one whose answer most shifts what we do.
+Press the topic relentlessly. Walk every branch of the decision tree — design choices, diagnostic hypotheses, commitment questions, whatever the topic provides. Tackle the next load-bearing question first, preferring the highest-level unresolved crux: settle the parent question before its children, and go deeper only when the parent is resolved or a subquestion is needed to resolve it.
 
 Load the matching probe file(s) from `tasks/` to surface angles that are easy to under-weight — match on the topic's shape:
 
@@ -20,7 +20,7 @@ Load the matching probe file(s) from `tasks/` to surface angles that are easy to
 
 FEATURE/BUG/REFACTOR compose onto `CODING.md`; a code defect composes `DIAGNOSIS.md` (explain it) with `CODING.md` + `BUG.md` (fix it); DIAGNOSIS and RESEARCH stand alone when no code change is in play. Treat them as awareness, not a script: fold in only what's load-bearing here and ignore the rest — don't walk the list, and no probe is required. Nothing fits → probe generally, as you would anyway.
 
-Per turn: lead with one question and your recommended answer. Cut empty preamble, context-restate, and packed sub-questions. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick the one whose answer would shift the read most and hold the rest.
+Per turn: lead with one question and your recommended answer. Cut empty preamble, context-restate, and packed sub-questions. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick the highest-level unresolved load-bearing question; within that level, choose the one whose answer would shift the read most and hold the rest.
 
 Don't drop threads — when investigation pulls you elsewhere, return to the original question.
 
