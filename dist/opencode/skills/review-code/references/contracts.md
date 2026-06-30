@@ -6,7 +6,7 @@ For every API call ask: **"Is this correct per the actual contract?"** For every
 
 ## What to examine
 
-Focus on code that crosses boundaries: API calls, interface definitions, public function signatures, data contracts, serialization formats.
+Focus on code and data that cross boundaries: API calls, interface definitions, public function signatures, data contracts, serialization formats, database tables/columns read outside their owning runtime, and exported/reporting data surfaces.
 
 These categories are guidance, not exhaustive. If you find a contract issue that fits this dimension but no listed category, report it — just respect the orthogonality boundaries below.
 
@@ -47,7 +47,7 @@ Verify that code calling external or internal APIs does so correctly per the API
 
 ### Inbound: Consumer Impact Verification
 
-Verify that changes to interfaces, public APIs, or contracts don't break existing consumers.
+Verify that changes to interfaces, public APIs, or contracts don't break existing consumers. Consumers include application/service callers and evidenced non-service readers such as analytics, BI dashboards, warehouse models, ETL jobs, reporting exports, and related product integrations.
 
 **Signature & Shape Changes**
 - Function parameter changes (added required params, removed params, reordered params) that break existing callers
@@ -62,9 +62,9 @@ Verify that changes to interfaces, public APIs, or contracts don't break existin
 
 **Serialization & Protocol Changes**
 - Changed JSON/XML/protobuf field names or types in wire formats
-- Modified API response shapes that downstream services parse
+- Modified API response shapes that downstream services, SDKs, dashboards, reports, data pipelines, or warehouse models parse
 - Changed event payload structures that subscribers consume
-- Database schema changes that affect other services reading the same data
+- Database schema changes that affect other services, analytics jobs, BI dashboards, warehouse/dbt models, reporting exports, or related products reading the same data
 
 ## Evidence requirement
 
@@ -74,17 +74,18 @@ Verify that changes to interfaces, public APIs, or contracts don't break existin
 - **API documentation** — fetched via WebFetch from official docs, API reference pages, or OpenAPI/Swagger specs
 - **Internal API definitions** — read from the codebase (route handlers, controller definitions, generated clients, SDKs, type exports, shared constants/enums, protobuf/GraphQL schemas)
 - **Consumer code** — actual callers found via codebase search that depend on the contract
+- **Data/analytics definitions** — dashboard SQL, warehouse/dbt models, BI semantic layers, data catalog docs, export specs, scheduled query/ETL definitions, or downstream repo code
 - **Test expectations** — existing tests that assert specific contract behavior
 
 **Evidence workflow:**
 1. Identify API calls or interface changes in the diff.
 2. Look for the authoritative source of truth before judging handwritten code: generated client, SDK, schema, shared constants, docs, or established neighboring pattern.
 3. For outbound: locate the API documentation (WebFetch for external, codebase read for internal).
-4. For inbound: search the codebase for consumers of the changed interface.
+4. For inbound: search the codebase for consumers of the changed interface, including available data consumers such as warehouse models, dashboard/report definitions, ETL jobs, export specs, and linked downstream repositories.
 5. Compare the code against the evidence.
 6. Report only verified mismatches.
 
-**When evidence is unavailable:** If you cannot find documentation for an external API (WebFetch fails, no docs URL discoverable), or cannot locate consumers of an internal interface, note the gap in the report's **Unverified** section but do NOT fabricate API behavior or assume consumer existence.
+**When evidence is unavailable:** If you cannot find documentation for an external API (WebFetch fails, no docs URL discoverable), cannot locate consumers of an internal interface, or can only suspect external analytics/reporting/product consumers without available docs or code, note the gap in the report's **Unverified** section but do NOT fabricate API behavior or assume consumer existence.
 
 ## Tool usage
 
