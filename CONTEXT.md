@@ -39,6 +39,10 @@ The compact set of load-bearing claims — each carrying provenance and epistemi
 The deliverable of a figure-out session: a named conclusion carrying confidence, Evidence Ledger, and overturn conditions.
 _Avoid_: Conclusion, verdict, answer.
 
+**Parent-before-child Crux Priority**:
+A figure-out question-selection rule that resolves the highest-level unresolved crux before drilling into child details.
+_Avoid_: BDFS.
+
 **Source Surface**:
 A maintained project surface treated as authoritative instead of generated output.
 
@@ -89,6 +93,7 @@ A non-interactive Babysit PR run that performs immediately actionable lifecycle 
 - A **Quality Gate** becomes an acceptance-style gate in a **Manifest**.
 - A **Default** becomes **Process Guidance** in a **Manifest**.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
+- **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.
 - `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, launches **Verifier Executions** for failed-or-unverified **Acceptance Criteria** and **Global Invariants**, repairs FAILs, and routes BLOCKED gates.
 - A **Verifier Execution** returns PASS, FAIL, or BLOCKED evidence to the **Do/Verify Loop**.
