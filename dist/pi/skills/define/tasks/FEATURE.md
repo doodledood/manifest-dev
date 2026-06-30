@@ -18,5 +18,5 @@ The first three gates *inspect* the artifact; **Behavioral exercise** *runs* it 
 *Domain best practices for this task type.*
 
 - **Document load-bearing assumptions** — Identify what must remain true for the feature to work; surface invisible dependencies
-- **Identify affected consumers** — All downstream consumers of changed interfaces identified before implementation
+- **Identify affected consumers** — All downstream consumers of changed interfaces or data contracts identified before implementation, including services, related products, analytics/BI/reporting, data pipelines, and exports where relevant
 - **Define rollback strategy** — How to reverse the feature if it fails in production; feature flags, migration rollback, or manual revert
