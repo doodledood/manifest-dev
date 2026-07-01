@@ -18,11 +18,15 @@ Goal: Run /do ~/.manifest-dev/manifests/manifest-<timestamp>.md until every Acce
 
 Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
 
+The `/do` session doesn't need to remember the `/define` conversation — the manifest is external state. Run `/do` in a fresh session with a durable goal-setting/continuation backstop, or `/compact` before starting.
+
 ## The Mindset Shift
 
 Stop thinking about *how* to build it. Start thinking about *what you'd accept* — that's the loop's real stop condition.
 
 "What would make me approve this PR?" "What rules can't be broken?" "How would I know each piece is done?" The acceptance criteria are the pillar, not the implementation. LLMs are good at execution when they know exactly what's expected and bad at reading your mind — the manifest closes that gap before a line of code gets written.
+
+You plan a feature with the agent. It implements. The code looks reasonable. Then you review it and half the things aren't how you'd want them: wrong error handling, conventions ignored, edge cases skipped. You send it back. It fixes some, breaks others. Three rounds later you're satisfied, but you've spent more time reviewing than you saved. Manifest-dev front-loads that review energy — you spell out the criteria before implementation starts, so the do phase becomes mechanical and the output lands closer to what you'd accept as a reviewer.
 
 ## Skills
 
@@ -61,16 +65,74 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 | **Known Assumptions** | Low-impact items resolved with a default | `ASM-{N}` |
 | **Deliverables** | Ordered work items with Acceptance Criteria | `AC-{D}.{N}` |
 
+## Example Manifest
+
+````markdown
+# Definition: User Authentication
+
+## 1. Intent & Context
+- **Goal:** Add password-based auth to an Express app with JWT sessions.
+- **Mental Model:** Auth is cross-cutting. Security invariants apply
+  globally; endpoint behavior is per-deliverable.
+
+## 2. Approach
+- **Architecture:** Middleware-based auth, JWT in httpOnly cookies
+- **Execution Order:** D1 (Model) → D2 (Endpoints) → D3 (Protected Routes)
+- **Trade-offs:**
+  - [T-1] Simplicity vs Security → Prefer security (bcrypt, not md5)
+
+## 3. Global Invariants (The Constitution)
+- [INV-G1] Passwords never stored in plaintext
+  ```yaml
+  verify:
+    prompt: "Run: grep -r 'password.*=' src/ | grep -v hash | grep -v test. PASS only if there are no matches."
+  ```
+
+## 4. Process Guidance (Non-Verifiable)
+- [PG-1] Follow existing error handling patterns in the codebase
+
+## 6. Deliverables (The Work)
+
+### Deliverable 1: Auth Endpoints
+**Acceptance Criteria:**
+- [AC-1.1] POST /login validates credentials, returns JWT
+- [AC-1.2] Invalid credentials return 401, not 500
+  ```yaml
+  verify:
+    prompt: "Activate the manifest-dev:review-code skill with dimension=code-bugs and review the auth routes. PASS only if no LOW-or-higher findings (e.g. auth failures returning 500 instead of 401)."
+  ```
+````
+
 ## Manifest = Current State
 
 Amendments overwrite in place with stable IDs (modify `INV-G1` and it stays `INV-G1`; remove one and it's gone, no renumbering). No `## Amendments` log, no `INV-G1.1 amends INV-G1` chain — git carries the history.
+
+The manifest is the canonical source of truth for the PR or branch, not for a single task — feedback flows through it. When something's off mid-`/do` or after `/done` (a missed edge case, a reviewer comment, a late requirement), Self-Amendment routes it automatically: `/escalate` → `/define` re-invoked on the manifest path to amend → `/do` resumes with the updated manifest. Pure questions about the manifest get answered inline; everything else amends. `/done` stays unreachable until every criterion verifies PASS again, so each round trip grows the verification surface — bug fixes and late requirements become permanent checked criteria.
 
 ## Verification Skills
 
 manifest-dev ships **no agents of its own**. Every criterion is verified by a general-purpose subagent driven by `verify.prompt`, which can run bash, inspect files, query external tools, or activate a skill. Read-only behavior is enforced by the prompt, so authors can point a verifier at MCP servers or extra CLI tools the user has configured.
 
-Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`review-code` skill** — one dimension per invocation; a verifier activates it from `verify.prompt`. The other functional skills are `check-pr` (PR mergeability checks) and `poll-slack` (tails Slack threads for `/figure-out-team`). See the [root README](../../README.md#verification-skills) for the full list.
+Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`review-code` skill** — one dimension per invocation; a verifier activates it from `verify.prompt`. The other functional skills are `check-pr` (PR mergeability checks) and `poll-slack` (tails Slack threads for `/figure-out-team`).
+
+| Dimension | Role | Focus |
+|-----------|------|-------|
+| `change-intent` | defect (no LOW+) | Adversarial intent analysis: reconstructs intent, finds behavioral divergences |
+| `code-bugs` | defect (no LOW+) | Mechanical defects: races, data loss, edge cases, resource leaks, dangerous defaults |
+| `contracts` | defect (no LOW+) | Bidirectional API/interface contract checks against docs, schemas, codebase definitions |
+| `type-safety` | defect (no LOW+) | Typed-language safety: type holes, representable invalid states, narrowing |
+| `operational-readiness` | advisory (no MEDIUM+) | Runtime/deploy readiness: env wiring, migrations, retries, rollback, scale, CI, observability |
+| `code-design` | advisory (no MEDIUM+) | Design fitness: reinvented wheels, wrong responsibility, under-engineering, PR coherence |
+| `code-maintainability` | advisory (no MEDIUM+) | DRY violations, coupling, cohesion, dead code, consistency |
+| `code-simplicity` | advisory (no MEDIUM+) | Over-engineering, premature optimization, cognitive complexity |
+| `code-testability` | advisory (no MEDIUM+) | Excessive mocking, logic buried in IO, hidden dependencies |
+| `test-quality` | advisory (no MEDIUM+) | Coverage gaps plus independent-oracle checks for tautology, mirror-impl, mock-SUT |
+| `docs` | advisory (no MEDIUM+) | Documentation accuracy against code changes |
+| `prose-value` | advisory (no MEDIUM+) | Comment/doc value: narrating-the-obvious, puffery, AI rhetorical patterns |
+| `context-file-adherence` | advisory (no MEDIUM+) | Compliance with CLAUDE.md / AGENTS.md project rules |
 
 ## Task Guidance and References
 
 Task files come in two parallel, decoupled sets, each loaded by task type by its own skill: `skills/define/tasks/` carry domain-specific quality gates and Defaults that `/define` encodes into the manifest; `skills/figure-out/tasks/` carry probing fuel — blind-spot probes and forced trade-offs (verification among them) that `/figure-out` surfaces during understanding as awareness, not a checklist. Source-type research material lives under `skills/define/tasks/research/sources/`. Mode and domain references in `skills/define/references/` (`BABYSIT_MODE.md`, `CANVAS_MODE.md`, `MULTI_REPO.md`, `WRITING-REFERENCE.md`) cover specialized flows.
+
+**Multi-repo** (`MULTI_REPO.md`): by default a single manifest covers the whole changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively. PR-lifecycle work templates one `check-pr` skill run per repo against the shared manifest. Splitting into per-repo manifests is fine when the work is loosely coupled.
