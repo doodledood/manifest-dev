@@ -45,7 +45,7 @@ The Pi package manifest shape is:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "1.0.3",
+  "version": "1.1.1",
   "private": true,
   "type": "module",
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
