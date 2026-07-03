@@ -1,6 +1,5 @@
 {
   "skills": {
-    "adr": "manifest-dev-tools",
     "auto": "manifest-dev",
     "babysit-pr": "manifest-dev-tools",
     "check-pr": "manifest-dev",
