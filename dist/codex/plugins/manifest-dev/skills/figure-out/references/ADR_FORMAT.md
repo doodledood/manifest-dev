@@ -107,42 +107,12 @@ Recording a decision that was already made informally (in chat, in code, in a PR
 
 The history matters; the retroactivity tag is honest about how the record entered the system.
 
-## Decision-Worthiness Criteria
-
-Not every choice deserves an ADR. The threshold is **downstream architectural impact** — decisions that shape the system's structure, constrain future options, or would be costly to reverse.
-
-### ADR-Worthy (record these)
-
-| Source | What to capture |
-|--------|----------------|
-| **Architecture choices** | Technology, patterns, component structure, integration approach |
-| **Trade-off resolutions** | When competing concerns were weighed and one was preferred |
-| **Scope decisions with rationale** | Deliberate inclusion/exclusion that shapes the system boundary |
-| **Key constraint decisions** | Invariants established from multiple valid options |
-| **Approach pivots** | When implementation adjusts architecture based on reality |
-
-### NOT ADR-Worthy (skip these)
-
-| Category | Why not |
-|----------|---------|
-| **Quality gate selections** | Verification configuration, not architecture |
-| **Process guidance defaults** | How-to-work, not system structure |
-| **Mechanical choices** | Obvious implementations with no meaningful alternatives |
-| **Known assumptions** | Defaults chosen without deliberation — no alternatives weighed |
-| **Bug fixes** | Corrections, not decisions (unless the fix involves an architectural choice) |
-
-### Decision Test
-
-When uncertain, apply: *"Would a new team member joining in 6 months benefit from knowing WHY this was decided this way?"* If yes → ADR. If they'd just accept it as obvious → skip.
-
 ## Gate (unified across capture paths)
 
-Two paths capture ADRs in this repo:
+Two paths capture ADRs in this repo, and both apply the same gate criteria — category match + Decision Test + NOT-ADR-worthy anti-patterns. Same coverage, same criteria; there is no separate AND-of-conditions trigger anywhere.
 
-- **Inline** via figure-out docs mode — agent offers ADRs during the conversation as decisions get made (primary path).
-- **Post-hoc** via the legacy `/adr` skill — sweeps a finished session transcript (backup path).
-
-**Both paths use the same gate**: category match (above) + Decision Test + NOT-ADR-worthy anti-patterns. There is no separate AND-of-conditions trigger anywhere. Same coverage, same criteria.
+- **Inline** via figure-out docs mode (primary path) — offers ADRs during the conversation as decisions get made. The gate criteria live in `WITH_DOCS.md`, the always-loaded docs-mode layer, so the per-turn offer check runs without loading this file; this file loads only at write time, after an offer is accepted.
+- **Post-hoc** via the legacy `/adr` skill (backup path) — sweeps a finished session transcript. Its own `ADR_FORMAT.md` copy keeps the criteria inline, since that skill's invocation is itself the trigger.
 
 Inline capture is preferred because context is fresh, alternatives have just been discussed, and the user is present to confirm rejected options. Post-hoc remains useful when inline docs capture was not active or when re-sweeping a finished workflow.
 

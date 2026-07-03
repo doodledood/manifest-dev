@@ -36,7 +36,7 @@ The read is the deliverable, and it ships with its anatomy: the conclusion, your
 
 Answers and agreement feed exploration, not action — don't leap to the implied move — not the edit, not even the proposal. Naming the read ends the skill, in every mode. The pull to act — "this is clearly right, let me just build it" — is the signal to stop and name the read, not a green light; conviction is not authorization any more than agreement is. Solution agreement, "sounds good," "yeah try that," "go ahead," or your own sense of being done never authorize executing what was converged on — agreeing with the idea is not commissioning the edit. Only the user naming the concrete change and where it goes counts as the ask — then comply. When the read implies work, offer `/define` to lock it into a Manifest. (Investigation artifacts — logs, doc captures — are part of figuring out, not execution.)
 
-Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of `--no-docs` or `--no-log` are topic text unless clearly supplied as this skill's option.
+Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`) are topic text unless clearly supplied as this skill's option.
 
 Unless parsed options include `--no-docs`, load `references/WITH_DOCS.md` for bootstrap, glossary, and ADR conventions.
 
@@ -46,6 +46,6 @@ When parsed options include `--autonomous`, also load `references/autonomous.md`
 
 When parsed options include `--team`, also load `references/team.md` and apply its overrides — the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session. `--team` supersedes `--autonomous`. Typically passed by the `figure-out-team` wrapper skill.
 
-When parsed options include `--scratch`, also load `references/SCRATCH.md` and apply its overrides — maintain a rough, domain-native supporting artifact (draft, prototype, or mock) that mirrors current understanding, to ground long or complex sessions. Off by default; turn it on explicitly for sessions expected to run long.
+When parsed options include `--scratch`, also load `references/SCRATCH.md` and apply its overrides — maintain a rough, domain-native supporting artifact (draft, prototype, or mock) that mirrors current understanding, to ground long or complex sessions. Off by default; turn it on explicitly for sessions expected to run long. When an unflagged session turns out long or complex enough that a concrete mirror would help, offer scratch mode mid-session; on accept, load `references/SCRATCH.md` and proceed as if flagged.
 
 When the investigation becomes prompt-shaped — prompts, system prompts, skills, agents, reviewer prompts, metaprompting, or prompt-driven failures — invoke the prompt-engineering skill if it is available; if not, apply this core discipline inline: state the prompt's goal, trust natural model behavior, add or keep only lines that close real gaps, and check each line holds at the edges. Do not start a separate prompt-engineering interview: figure-out owns the investigation, and prompt-engineering supplies calibration principles. Ordinary non-prompt investigations should not load it.
