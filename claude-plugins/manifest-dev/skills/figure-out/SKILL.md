@@ -5,7 +5,7 @@ argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team] [--scratc
 user-invocable: true
 ---
 
-Press the topic relentlessly. Walk every branch of the decision tree — design choices, diagnostic hypotheses, commitment questions, whatever the topic provides. Tackle the next load-bearing question first, preferring the highest-level unresolved crux: settle the parent question before its children, and go deeper only when the parent is resolved or a subquestion is needed to resolve it.
+Press the topic relentlessly. Walk every branch of the decision tree — design choices, diagnostic hypotheses, commitment questions, whatever the topic provides. Tackle the next load-bearing question first, preferring the highest-level unresolved crux: settle the parent question before its children, and go deeper only when the parent is resolved or a subquestion is needed to resolve it. Some branches are fog — areas you sense matter but can't yet state as a question. Don't force a question shape onto them or slice them into subtrees; sharpen them first: resolve the parent, or gather the evidence that makes them statable.
 
 Load the matching probe file(s) from `tasks/` to surface angles that are easy to under-weight — match on the topic's shape:
 
