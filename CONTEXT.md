@@ -43,6 +43,10 @@ _Avoid_: Conclusion, verdict, answer.
 A figure-out question-selection rule that resolves the highest-level unresolved crux before drilling into child details.
 _Avoid_: BDFS.
 
+**Fog**:
+A branch sensed to matter but not yet statable as a question — sharpened by resolving its parent or gathering evidence, never forced into a question shape or pre-sliced into subtrees.
+_Avoid_: Open thread (that's sharp — statable precisely now, even if unanswerable yet), unknown, uncertainty.
+
 **Source Surface**:
 A maintained project surface treated as authoritative instead of generated output.
 
