@@ -32,7 +32,8 @@ Recommended shape:
 **Evidence against / limits:** {disconfirming evidence, weak spots, or why confidence is bounded}
 **Finding / surprise:** {what changed or was learned}
 **Belief update:** {how the read shifted; omit if unchanged}
-**Open threads:** {what remains unresolved; omit if none}
+**Open threads:** {sharp unresolved questions — a question is sharp when you can state it precisely now, regardless of whether you can answer it; omit if none}
+**Fog:** {areas sensed but not yet statable as questions — don't pre-slice into sub-questions; a patch may resolve into several questions or none; omit if none}
 **Next crux:** {the next load-bearing question; omit if not yet clear}
 ```
 
