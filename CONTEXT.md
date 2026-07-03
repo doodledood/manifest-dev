@@ -54,7 +54,7 @@ A maintained project surface treated as authoritative instead of generated outpu
 Prompt wording that names portable behavior or capability rather than a harness-specific primitive.
 
 **Progressive Disclosure**:
-A prompt-architecture pattern where always-needed behavior stays in the entry prompt and mode-specific mechanics live in companion references loaded only when their trigger applies.
+A prompt-architecture pattern where always-needed behavior stays in the entry prompt and mode-specific mechanics live in companion references loaded only when their trigger applies — the trigger living in the loading layer, never inside the deferred reference, which can only be evaluated after the load it was meant to gate.
 
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a Manifest, verifies every Acceptance Criterion and Global Invariant, routes failures or blockers, and finishes only after all gates pass.

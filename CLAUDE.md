@@ -96,6 +96,10 @@ Examples:
 
 See each plugin's README for architecture details.
 
+## ADR Format Ownership
+
+`claude-plugins/manifest-dev/skills/figure-out/references/ADR_FORMAT.md` is the sole ADR write-time reference (the offer gate lives in figure-out's `WITH_DOCS.md`); ADRs are created through figure-out docs-mode sessions. Distributed skill files stay repo-agnostic — maintainer/governance notes like this one belong here, not in skill references that ship to user repos.
+
 ## Versioning
 
 When updating plugin files, bump that plugin's `.claude-plugin/plugin.json`:

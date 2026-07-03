@@ -107,66 +107,6 @@ Recording a decision that was already made informally (in chat, in code, in a PR
 
 The history matters; the retroactivity tag is honest about how the record entered the system.
 
-## Decision-Worthiness Criteria
+## Gate
 
-Not every choice deserves an ADR. The threshold is **downstream architectural impact** — decisions that shape the system's structure, constrain future options, or would be costly to reverse.
-
-### ADR-Worthy (record these)
-
-| Source | What to capture |
-|--------|----------------|
-| **Architecture choices** | Technology, patterns, component structure, integration approach |
-| **Trade-off resolutions** | When competing concerns were weighed and one was preferred |
-| **Scope decisions with rationale** | Deliberate inclusion/exclusion that shapes the system boundary |
-| **Key constraint decisions** | Invariants established from multiple valid options |
-| **Approach pivots** | When implementation adjusts architecture based on reality |
-
-### NOT ADR-Worthy (skip these)
-
-| Category | Why not |
-|----------|---------|
-| **Quality gate selections** | Verification configuration, not architecture |
-| **Process guidance defaults** | How-to-work, not system structure |
-| **Mechanical choices** | Obvious implementations with no meaningful alternatives |
-| **Known assumptions** | Defaults chosen without deliberation — no alternatives weighed |
-| **Bug fixes** | Corrections, not decisions (unless the fix involves an architectural choice) |
-
-### Decision Test
-
-When uncertain, apply: *"Would a new team member joining in 6 months benefit from knowing WHY this was decided this way?"* If yes → ADR. If they'd just accept it as obvious → skip.
-
-## Gate (unified across capture paths)
-
-Two paths capture ADRs in this repo:
-
-- **Inline** via figure-out docs mode — agent offers ADRs during the conversation as decisions get made (primary path).
-- **Post-hoc** via the legacy `/adr` skill — sweeps a finished session transcript (backup path).
-
-**Both paths use the same gate**: category match (above) + Decision Test + NOT-ADR-worthy anti-patterns. There is no separate AND-of-conditions trigger anywhere. Same coverage, same criteria.
-
-Inline capture is preferred because context is fresh, alternatives have just been discussed, and the user is present to confirm rejected options. Post-hoc remains useful when inline docs capture was not active or when re-sweeping a finished workflow.
-
-## Synthesis Guidance (post-hoc)
-
-When generating ADR entries from session transcripts:
-
-**From session transcripts**: Look for architecture decisions, trade-off resolutions, and scope decisions where alternatives were explicitly discussed. Key signals: user rejecting an option in favor of another, explicit "because" reasoning, deliberation between approaches.
-
-**From manifests**: The Approach section (Architecture, Trade-offs, Risk Areas) contains structured decision summaries. These are the most reliable source for what was decided, though they lack the full deliberation context.
-
-**Quality over quantity**: A manifest with 10 decisions might produce 2-3 ADRs. The Context and Alternatives sections are what make ADRs valuable — a decision without context is just a fact. If you can't articulate why alternatives were rejected, the decision may not be ADR-worthy.
-
-**Context comes from the transcript, not the manifest**: The most valuable ADR content is the reasoning that happened during the session — user preferences, rejected approaches, constraint trade-offs. The manifest records WHAT was decided; the transcript records WHY.
-
-## Duplication Note (canonical owner)
-
-**This file is the canonical ADR format documentation for the manifest-dev project.**
-
-A legacy copy exists at `claude-plugins/manifest-dev-tools/skills/adr/references/ADR_FORMAT.md` — used by the post-hoc `/adr` skill, retained for as long as that skill exists. The two files are duplicated by design (not by cross-plugin reference) so that:
-
-- `figure-out` (inline capture, primary path) is self-contained and won't break when `/adr` is removed.
-- `/adr` (post-hoc backup) keeps working in its current form without depending on a cross-plugin path.
-
-The two files **may drift over time**. When that happens, this file (the figure-out canonical) wins. The legacy `/adr` copy is frozen unless explicitly modified for `/adr` skill changes.
-
-When `/adr` is eventually removed, the legacy copy goes with it; only this file survives.
+The offer gate — whether a decision deserves an ADR at all — lives in `WITH_DOCS.md`, the docs-mode layer that runs the per-turn check. This file assumes the gate has already fired: it carries only the write-time mechanics, and loads after an offer is accepted.

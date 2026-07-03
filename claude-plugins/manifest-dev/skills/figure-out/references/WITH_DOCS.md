@@ -49,11 +49,37 @@ When the user uses a fuzzy or overloaded term, propose a canonical one: *"'Accou
 
 ## ADR offers (two-pass capture)
 
-The ADR gate, format, lifecycle, immutability discipline, and cross-reference rules live in the adjacent **`ADR_FORMAT.md`** — read it. This section only covers *when and how to offer* during a figure-out conversation.
+This section carries the gate — everything needed to decide *whether* to offer, per turn, without loading another file. The write-time mechanics (template, MADR sections, naming, lifecycle, immutability, cross-references) live in the adjacent **`ADR_FORMAT.md`** — read it only when an offer is accepted and an ADR is about to be written.
+
+### The gate
+
+The threshold is **downstream architectural impact** — decisions that shape the system's structure, constrain future options, or would be costly to reverse. The gate is category match + Decision Test + anti-patterns; there is no separate AND-of-conditions trigger.
+
+**ADR-worthy (record these):**
+
+| Source | What to capture |
+|--------|----------------|
+| **Architecture choices** | Technology, patterns, component structure, integration approach |
+| **Trade-off resolutions** | When competing concerns were weighed and one was preferred |
+| **Scope decisions with rationale** | Deliberate inclusion/exclusion that shapes the system boundary |
+| **Key constraint decisions** | Invariants established from multiple valid options |
+| **Approach pivots** | When implementation adjusts architecture based on reality |
+
+**NOT ADR-worthy (skip these):**
+
+| Category | Why not |
+|----------|---------|
+| **Quality gate selections** | Verification configuration, not architecture |
+| **Process guidance defaults** | How-to-work, not system structure |
+| **Mechanical choices** | Obvious implementations with no meaningful alternatives |
+| **Known assumptions** | Defaults chosen without deliberation — no alternatives weighed |
+| **Bug fixes** | Corrections, not decisions (unless the fix involves an architectural choice) |
+
+**Decision Test** (when uncertain): *"Would a new team member joining in 6 months benefit from knowing WHY this was decided this way?"* If yes → ADR. If they'd just accept it as obvious → skip.
 
 ### Pass 1 — per-turn (high-confidence)
 
-**After every user response**, check the ADR gate (see `ADR_FORMAT.md`: category match + Decision Test + anti-patterns). When the gate fires *clearly* on a decision just articulated — user chose B over A with explicit reasoning, a scope boundary just got drawn, a key constraint just got named — **offer immediately**:
+**After every user response**, check the gate above. When it fires *clearly* on a decision just articulated — user chose B over A with explicit reasoning, a scope boundary just got drawn, a key constraint just got named — **offer immediately**:
 
 > *"This looks ADR-worthy — [name the category and the Decision Test result]. Want me to record it?"*
 
