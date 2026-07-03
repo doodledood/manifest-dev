@@ -16,7 +16,7 @@ Append only. Never rewrite, reorder, compress, or delete prior entries. If an ol
 
 Append after each meaningful user turn or evidence-gathering pass, before asking the next question. Meaningful means the investigation gained evidence, found a surprise, changed its read, opened or closed a thread, or identified a new crux. Skip pure acknowledgements and empty procedural chatter.
 
-When resuming an existing log, read enough of it to recover open threads and the current line of investigation before pressing forward.
+When resuming an existing log, read enough of it to recover open threads, fog, and the current line of investigation before pressing forward.
 
 ## Entry Shape
 
