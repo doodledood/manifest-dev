@@ -5,7 +5,7 @@ manifest-driven workflows for Claude Code. `/define` interviews you and writes a
 ## Language
 
 **Manifest**:
-A structured spec produced by `/define` that captures Deliverables, Acceptance Criteria, Global Invariants, Process Guidance, and an Approach.
+A structured spec produced by `/define` that captures Deliverables, Acceptance Criteria, Global Invariants, Process Guidance, and an Initial Approach.
 
 **Deliverable**:
 A discrete output a `/define` session commits to producing.

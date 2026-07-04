@@ -59,7 +59,7 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
 | **Intent & Context** | Goal and mental model | -- |
-| **Approach** (complex tasks) | Architecture, execution order, risks, trade-offs | `R-{N}`, `T-{N}` |
+| **Initial Approach** (complex tasks) | Architecture, execution order, risks, trade-offs | `R-{N}`, `T-{N}` |
 | **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
 | **Process Guidance** | Non-verifiable recommendations for how to work | `PG-{N}` |
 | **Known Assumptions** | Low-impact items resolved with a default | `ASM-{N}` |
@@ -75,7 +75,7 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 - **Mental Model:** Auth is cross-cutting. Security invariants apply
   globally; endpoint behavior is per-deliverable.
 
-## 2. Approach
+## 2. Initial Approach
 - **Architecture:** Middleware-based auth, JWT in httpOnly cookies
 - **Execution Order:** D1 (Model) → D2 (Endpoints) → D3 (Protected Routes)
 - **Trade-offs:**
