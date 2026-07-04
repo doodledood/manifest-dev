@@ -1,6 +1,6 @@
 ---
 name: define
-description: 'Manifest builder. Turns shared understanding into a verifiable Manifest with Deliverables, Acceptance Criteria, Global Invariants, and Approach. Use when planning features, scoping refactors, debugging complex issues, or when the user asks to define, scope, plan, spec out, make a manifest, or break down a task.'
+description: 'Manifest builder. Turns shared understanding into a verifiable Manifest with Deliverables, Acceptance Criteria, Global Invariants, and an Initial Approach. Use when planning features, scoping refactors, debugging complex issues, or when the user asks to define, scope, plan, spec out, make a manifest, or break down a task.'
 argument-hint: '[task] [<manifest-path> to amend] [--babysit <pr-url>] [--canvas]'
 user-invocable: true
 ---
@@ -8,6 +8,8 @@ user-invocable: true
 Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev/manifests/manifest-{ts}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so manifests survive OS temp cleanup across multi-day work. Fall back to a writable temp path (`/tmp/`, else `$TMPDIR` / `%TEMP%`) only when the home directory isn't writable. If the transcript lacks shared understanding, invoke `manifest-dev:figure-out` first; propagate `--autonomous` when invoked from `/auto` or `/do`'s amendment path. **Pre-flight:** if `--babysit <pr-url>`, load `references/BABYSIT_MODE.md` and follow its synthesis flow; if `$ARGUMENTS` contains a manifest file path, amend (see below); else fresh.
 
 **Encoding discipline.** figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to lock as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
+
+Criteria the user pinned by *reacting* to something concrete during figure-out — a mock, a reference, a chosen direction — are success criteria, not flavor: encode them in the preserved layer — an Acceptance Criterion or Global Invariant when a verifier can judge them (qualitatively is fine, e.g. a subagent checking the result against the named reference), Process Guidance when they must hold but resist verification. Never fold them into the soft Initial Approach, where /do may pivot away from them. This routes onto existing structure; it adds no new manifest section.
 
 **Task files.** Identify task type and load the matching file(s) from `tasks/` — their Quality Gates auto-encode as INV-G*/AC-* and Defaults as PG-* before the interview (surface each as it lands so the dialogue carries the encoding forward). These define task files carry **encoder data only**; probing fuel lives in figure-out's own parallel probe files (`skills/figure-out/tasks/`) — the two sets are decoupled. Per-repo for multi-repo manifests.
 
@@ -50,7 +52,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - **Goal:** [High-level purpose]
 - **Mental Model:** [Key concepts to understand]
 
-## 2. Approach (Complex Tasks Only)
+## 2. Initial Approach (Complex Tasks Only)
 *Initial direction, not rigid plan. Expect adjustment when reality diverges.*
 
 - **Architecture:** [High-level HOW — starting direction]
@@ -82,7 +84,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - [ASM-1] [What was assumed] | Default: [chosen value] | Impact if wrong: [consequence]
 
 ## 6. Deliverables
-*Ordered by execution order from Approach, or by dependency then importance.*
+*Ordered by execution order from Initial Approach, or by dependency then importance.*
 
 ### Deliverable 1: [Name]
 
