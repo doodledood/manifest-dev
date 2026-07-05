@@ -31,7 +31,7 @@ Sync only these source payloads:
 
 Both plugins are skills-only — manifest-dev ships no agents or hooks on any target (the former functional agents are skills).
 
-Never sync other plugins (e.g., `manifest-dev-collab` — uses Agent Teams/Slack, inherently incompatible). Never modify source files. Skip `sync-tools` skill from output (meta-tool).
+Never sync other plugins (e.g., `manifest-dev-collab` — uses Agent Teams/Slack, inherently incompatible; `manifest-dev-meta` — maintainer-only tooling for developing manifest-dev itself, not distributed to end users). Never modify source files. Skip `sync-tools` skill from output (meta-tool).
 
 **Namespacing model is per-CLI** (see each reference file):
 - **Plugin-native targets (Codex, OpenCode)**: the plugin is the distribution unit. Codex: two plugins (`manifest-dev`, `manifest-dev-tools`) each bundle their skills under original names. OpenCode: one plugin entry (`dist/opencode/plugin/`) registers the whole skills payload via `skills.paths`; skills keep bare names (native discovery is first-found-wins). No install-time suffixing, no `component-namespaces.json`, no installer. Plugin-qualified skill-reference handling (`manifest-dev:<skill>` — strip vs keep) is per-CLI: see each reference file.
