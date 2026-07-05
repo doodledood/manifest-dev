@@ -22,7 +22,7 @@ Before pressing the topic, resolve the active context file and load it if it exi
 
 ## Glossary captures (per-turn, inline, no offer)
 
-**After every user response**, check for glossary candidates — but write only candidates that pass the earned-entry gate.
+**After every counterparty response — or, in self-answered runs, every resolved question —** check for glossary candidates — but write only candidates that pass the earned-entry gate.
 
 A candidate earns entry when it would help a future agent model this project correctly because at least one is true:
 
@@ -79,7 +79,7 @@ The threshold is **downstream architectural impact** — decisions that shape th
 
 ### Pass 1 — per-turn (high-confidence)
 
-**After every user response**, check the gate above. When it fires *clearly* on a decision just articulated — user chose B over A with explicit reasoning, a scope boundary just got drawn, a key constraint just got named — **offer immediately**:
+**After every counterparty response — or, in self-answered runs, every resolved question —** check the gate above. When it fires *clearly* on a decision just articulated — user chose B over A with explicit reasoning, a scope boundary just got drawn, a key constraint just got named — **offer immediately**:
 
 > *"This looks ADR-worthy — [name the category and the Decision Test result]. Want me to record it?"*
 

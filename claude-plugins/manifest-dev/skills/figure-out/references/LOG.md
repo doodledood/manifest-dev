@@ -1,6 +1,6 @@
 # figure-out: logging
 
-Keeps an append-only investigation journal for long figure-out sessions — continuity that survives context loss: what was learned, why the read shifted, which surprises matter, what remains open, and what crux should be pressed next.
+Keeps an append-only investigation journal — on by default for every figure-out session (`--no-log` opts out) — continuity that survives context loss: what was learned, why the read shifted, which surprises matter, what remains open, and what crux should be pressed next.
 
 This log is not a transcript (raw conversation history), a handoff (curated rewrite for a future agent), an ADR (durable decision record), or a Manifest (execution contract) — it is the chronological investigation line, append-only and portable by path.
 
