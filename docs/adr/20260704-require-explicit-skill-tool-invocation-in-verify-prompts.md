@@ -1,4 +1,4 @@
-# ADR: Require explicit Skill-tool invocation in verify.prompt templates, not "activate"
+# ADR: Require explicit, non-free-handed skill invocation in verify.prompt templates, not bare "activate"
 
 ## Status
 Accepted
@@ -30,12 +30,13 @@ Four literal `verify.prompt:`-embedded template strings used the ambiguous "Acti
 
 ## Decision
 
-Reword the four `verify.prompt`-embedded template strings from "Activate the manifest-dev:X skill…" to an explicit directive naming the Skill tool and forbidding a free-handed substitute — e.g. *"Use the Skill tool to invoke manifest-dev:review-code with dimension=<dimension>; do not free-hand this review without it."* The nested-spawn-avoidance warning ("tell that agent to activate a skill — never to spawn another agent") and the PASS/FAIL/BLOCKED verifier contract are preserved unchanged in meaning. Descriptive prose elsewhere in these files that uses "activate a skill" to describe the mechanism itself (not a copy-pasteable template) is left as-is — only the literal template strings change.
+Reword the four `verify.prompt`-embedded template strings from "Activate the manifest-dev:X skill…" to an explicit directive that forbids a free-handed substitute — e.g. *"Invoke the manifest-dev:review-code skill for real, with dimension=<dimension>; do not free-hand this review by reconstructing the rubric from memory instead of actually invoking the skill."* The forcing function is the "do not free-hand … instead of actually invoking" clause, not a specific tool name: these four strings are distributed, repo-agnostic template text (`sync-tools` copies them into the OpenCode, Codex, and Pi packages), and naming a Claude-Code-specific primitive like "the Skill tool" would bake a harness-bound primitive into portable prompt text — the same failure mode the universal-goal-setting-language ADR closed for `/goal`. Checked against `sync-tools`'s own conversion tables: Codex's operational-tool-name remap list (`codex-cli.md`) has no entry for "Skill" (unlike Bash/Read/Edit/etc., which do), and Pi's conversion doc (`pi-cli.md`) never substitutes a "Skill tool" phrase at all — so a literal "Skill tool" instruction would ship unconverted to those hosts. The nested-spawn-avoidance warning ("tell that agent to activate a skill — never to spawn another agent") and the PASS/FAIL/BLOCKED verifier contract are preserved unchanged in meaning. Descriptive prose elsewhere in these files that uses "activate a skill" to describe the mechanism itself (not a copy-pasteable template) is left as-is — only the literal template strings change.
 
 ## Alternatives Considered
 - **Leave the wording as "activate"**: Rejected — the captured evidence shows this phrasing is followed inconsistently (0/5–2/5 compliance in the arms matching today's shipped inlined-manifest behavior) and the one skip that diverged in outcome produced the experiment's only FAIL, i.e. skipping the skill is not merely stylistic, it can flip a verdict.
 - **Add a `verify.agent` field naming a specialized subagent instead of a skill**: Rejected — the codebase already documents (and this ADR's own evidence context confirms) that every verifier is a general-purpose subagent; introducing an agent field would require a broader schema change and duplicate what the skill mechanism already provides.
 - **Rely on the verifier's own judgment to decide when a rubric is thorough enough without the skill**: Rejected — Excerpt A-3 shows the free-handed path *can* independently find real issues, but the instruction ambiguity is unpredictable across repeats (2/5 to 5/5), which is not a property a manifest author can rely on.
+- **Name "the Skill tool" literally in the reworded instruction** (the first draft of this fix): Rejected — CLAUDE.md requires distributed skill files to stay repo-agnostic, and `sync-tools`'s Codex/Pi conversion tables have no rule to translate that phrase, so it would ship unconverted to hosts with no tool literally called "the Skill tool." The forcing function ("do not free-hand … instead of actually invoking the skill") achieves the same compliance goal without naming a harness-specific primitive.
 
 ## Consequences
 
