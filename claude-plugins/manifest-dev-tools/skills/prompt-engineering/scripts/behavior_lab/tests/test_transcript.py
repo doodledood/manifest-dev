@@ -3,9 +3,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from behavior_lab.assertions import assert_tool_invoked
 from behavior_lab.harness import ClaudeCodeHarness
 from behavior_lab.transcript import (
+    decode_calls_for_run,
     decode_calls_for_session,
+    load_run_entries,
     load_session_entries,
     reconstruct_session,
 )
@@ -117,3 +120,72 @@ def test_decode_calls_for_session_returns_decoded_shape(tmp_path: Path) -> None:
     assert len(decoded) == 1
     assert decoded[0]["response_blocks"][0]["text"] == "hello"
     assert decoded[0]["usage"]["output_tokens"] == 3
+
+
+def _write_call_with_tool_use(
+    diagnostics_dir: Path, name: str, *, session_id: str, tool_name: str
+) -> None:
+    diagnostics_dir.mkdir(parents=True, exist_ok=True)
+    lines = "\n".join(
+        [
+            "event: content_block_start",
+            'data: {"type": "content_block_start", "index": 0, "content_block": '
+            f'{{"type": "tool_use", "id": "t1", "name": "{tool_name}", "input": {{}}}}}}',
+            "event: content_block_delta",
+            'data: {"type": "content_block_delta", "index": 0, "delta": '
+            '{"type": "input_json_delta", "partial_json": "{}"}}',
+            "",
+        ]
+    )
+    entry = {
+        "session_id": session_id,
+        "agent_id": None,
+        "is_subagent": False,
+        "method": "POST",
+        "response_status": 200,
+        "request_body": {"messages": [{"role": "user", "content": "run the tool"}]},
+        "response_body": {"base64": lines.encode("utf-8").hex()},
+    }
+    (diagnostics_dir / f"{name}.json").write_text(json.dumps(entry), encoding="utf-8")
+
+
+def test_decode_calls_for_run_is_the_correct_pairing_for_assert_tool_invoked(
+    tmp_path: Path,
+) -> None:
+    """Regression test for the doc's own worked example: `decode_calls_for_run`
+    (unlike `experiment.load_run_calls`) must produce entries `assert_tool_invoked`
+    can actually see the tool_use block in, across every session in a run
+    directory (not just one)."""
+    diagnostics_dir = tmp_path / "diagnostics"
+    _write_call_with_tool_use(
+        diagnostics_dir, "call-0000", session_id="sess-1", tool_name="Skill"
+    )
+    _write_call_with_tool_use(
+        diagnostics_dir, "call-0001", session_id="sess-2", tool_name="Bash"
+    )
+
+    decoded = decode_calls_for_run(ClaudeCodeHarness(), diagnostics_dir)
+
+    assert len(decoded) == 2
+    assert assert_tool_invoked(decoded, "Skill") is True
+    assert assert_tool_invoked(decoded, "Bash") is True
+    assert assert_tool_invoked(decoded, "Edit") is False
+
+
+def test_load_run_entries_negative_excludes_non_post(tmp_path: Path) -> None:
+    diagnostics_dir = tmp_path / "diagnostics"
+    _write_call(
+        diagnostics_dir, "call-0000", session_id="sess-1", user_text="a", reply_text="b"
+    )
+    _write_call(
+        diagnostics_dir,
+        "call-0001",
+        session_id="sess-2",
+        user_text="c",
+        reply_text="d",
+        method="GET",
+    )
+
+    entries = load_run_entries(diagnostics_dir)
+    assert len(entries) == 1
+    assert entries[0]["session_id"] == "sess-1"

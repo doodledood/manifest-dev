@@ -177,7 +177,12 @@ def load_run_calls(diagnostics_dir: Path | str) -> list[dict[str, Any]]:
     in capture order, as a flat record: session/agent identity and token
     usage. Non-``/v1/messages`` traffic (e.g. a stray health-check GET) is
     dropped rather than raising, since those aren't calls an experiment is
-    measuring."""
+    measuring.
+
+    This is a usage-only summary — records have no `request_body`/
+    `response_body`, so they are NOT valid input to a `Harness.decode_call`.
+    For decoded calls (`response_blocks` for `assertions.assert_tool_invoked`),
+    use `transcript.decode_calls_for_run` instead."""
     calls = []
     for path in sorted(Path(diagnostics_dir).glob("*.json")):
         entry = json.loads(path.read_text(encoding="utf-8"))

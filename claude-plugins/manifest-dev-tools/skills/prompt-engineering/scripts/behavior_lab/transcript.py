@@ -66,3 +66,37 @@ def decode_calls_for_session(
         harness.decode_call(entry)
         for entry in load_session_entries(diagnostics_dir, session_id)
     ]
+
+
+def load_run_entries(diagnostics_dir: Path | str) -> list[dict[str, Any]]:
+    """Every raw diagnostics entry captured under ``diagnostics_dir``, in capture
+    order — the full entry shape a harness adapter's `decode_call` expects.
+
+    Unlike `load_session_entries`, this isn't filtered to one session: a run
+    directory produced by `experiment.run_experiment` has exactly one session
+    by construction, but this stays useful when it doesn't (e.g. a scenario
+    whose own invocation launches subagent sessions sharing the run's proxy
+    capture)."""
+    entries = []
+    for path in sorted(Path(diagnostics_dir).glob("*.json")):
+        entry = json.loads(path.read_text(encoding="utf-8"))
+        if entry.get("method") == "POST":
+            entries.append(entry)
+    return entries
+
+
+def decode_calls_for_run(
+    harness: Harness, diagnostics_dir: Path | str
+) -> list[dict[str, Any]]:
+    """Every decoded call (usage + response_blocks) for a whole run directory,
+    in capture order — the run-scoped counterpart to `decode_calls_for_session`,
+    and the correct pairing for `experiment.run_experiment`'s output with
+    `assertions.assert_tool_invoked`/`diff_arms`.
+
+    `experiment.load_run_calls` is NOT a substitute for this: it strips each
+    entry down to a usage-only summary (no `request_body`/`response_body`),
+    so feeding its output into `decode_call` silently yields empty
+    `response_blocks` for every call rather than raising — this function
+    exists specifically to avoid that trap by decoding the raw entries
+    directly."""
+    return [harness.decode_call(entry) for entry in load_run_entries(diagnostics_dir)]

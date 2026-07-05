@@ -28,9 +28,11 @@ from reading the diff.
    real request/response through a logging reverse proxy
    (`proxy.py`/`harness.configure_for_capture`) into a deterministic,
    inspectable run directory.
-5. **Assert.** Decode a run's captured calls via the harness adapter's
-   `decode_call` (`transcript.py`, `experiment.load_run_calls`), then check
-   the target behavior with `assertions.assert_tool_invoked` (or a custom
+5. **Assert.** Decode a run's captured calls via `transcript.decode_calls_for_run`
+   (which calls the harness adapter's `decode_call` per raw entry — do not use
+   `experiment.load_run_calls` here, that returns a usage-only summary with no
+   `request_body`/`response_body`, so it can't be decoded), then check the
+   target behavior with `assertions.assert_tool_invoked` (or a custom
    predicate) and compare arms in one call with `assertions.diff_arms`.
 6. **Read the diff.** `diff_arms` returns per-arm compliance — read it
    directly to see whether the amended wording actually moved the behavior,
@@ -38,7 +40,8 @@ from reading the diff.
 
 ```python
 from behavior_lab.harness import ClaudeCodeHarness
-from behavior_lab.experiment import Arm, Scenario, run_experiment, load_run_calls
+from behavior_lab.experiment import Arm, Scenario, run_experiment
+from behavior_lab.transcript import decode_calls_for_run
 from behavior_lab.assertions import assert_tool_invoked, diff_arms
 
 scenario = Scenario(name="verify-inv-g2", prompt=open("verify_prompt.txt").read(), cwd="/path/to/baseline-checkout")
@@ -49,7 +52,7 @@ arms = [
 results = run_experiment([scenario], arms, run_dir_base="~/behavior-lab-runs")
 
 calls_by_arm = {
-    r.arm: [ClaudeCodeHarness().decode_call(e) for e in load_run_calls(r.run_directory / "diagnostics")]
+    r.arm: decode_calls_for_run(ClaudeCodeHarness(), r.run_directory / "diagnostics")
     for r in results
 }
 print(diff_arms(calls_by_arm, lambda calls: assert_tool_invoked(calls, "Skill")))
