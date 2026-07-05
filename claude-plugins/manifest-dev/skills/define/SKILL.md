@@ -40,11 +40,12 @@ Criteria the user pinned by *reacting* to something concrete during figure-out �
 ```yaml
 verify:
   prompt: |
-    Activate the manifest-dev:review-code skill with dimension=<dimension> and review the change.
-    PASS only if no <LOW|MEDIUM>-or-higher findings. Report findings with severity.
+    Use the Skill tool to invoke manifest-dev:review-code with dimension=<dimension>; do not
+    free-hand this review without it. PASS only if no <LOW|MEDIUM>-or-higher findings. Report
+    findings with severity.
 ```
 
-The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+). The `verify.prompt` is already run by a general-purpose verifier execution context, so the prompt must tell *that* verifier to **activate** the skill — never to spawn another agent (a nested spawn bypasses the runtime's PASS/FAIL/BLOCKED contract). For a non-review-code specialized check, name its skill the same way, e.g. *"Activate the manifest-dev:check-pr skill. PR: …"*.
+The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-safety (defect-finders, no LOW+); operational-readiness, code-design, code-maintainability, code-simplicity, code-testability, test-quality, docs, prose-value, context-file-adherence (advisory, no MEDIUM+). The `verify.prompt` is already run by a general-purpose verifier execution context, so the prompt must tell *that* verifier to **activate** the skill — never to spawn another agent (a nested spawn bypasses the runtime's PASS/FAIL/BLOCKED contract). For a non-review-code specialized check, name its skill the same way, e.g. *"Use the Skill tool to invoke manifest-dev:check-pr; do not free-hand this check without it. PR: …"*.
 
 ## Manifest Schema
 
