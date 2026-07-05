@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-tools",
   "version": "2.1.1",
-  "description": "Tools for working with prompts and PRs alongside the manifest workflow. Collaborative PR walkthroughs, autonomous PR review with per-comment verification, author-side PR babysitting via manifest-dev, gap-calibrated prompt engineering, cross-boundary context handoff, and incremental teaching for session work.",
+  "description": "Tools for working with prompts and PRs alongside the manifest workflow. Collaborative PR walkthroughs, autonomous PR review with per-comment verification, author-side PR babysitting via manifest-dev, gap-calibrated prompt engineering with an opt-in empirical behavior-verification harness, cross-boundary context handoff, and incremental teaching for session work.",
   "keywords": [
     "post-processing",
     "manifest",
@@ -14,6 +14,8 @@
     "pr-lifecycle",
     "prompt-engineering",
     "prompts",
+    "empirical-verification",
+    "behavior-verification",
     "handoff",
     "context-handoff",
     "teaching",
