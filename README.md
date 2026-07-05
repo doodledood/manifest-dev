@@ -16,7 +16,7 @@
 
 Not broken code — wrong code. It compiles, the tests pass, and it solves a problem you don't have, because the agent started typing before it understood what you meant.
 
-**`/figure-out` is the pushback.** An adversarial thinking partner that investigates your codebase instead of interrogating you, presses on the question that actually decides the work, and refuses to touch code until you both know what "right" is. It holds its position when the evidence supports it, and changes its mind when the evidence does — not when you insist.
+**`/figure-out` is the pushback.** An adversarial thinking partner that investigates your codebase instead of interrogating you, presses on the question that actually decides the work, and refuses to touch code until you both know what "right" is. It holds its position when the evidence supports it, and changes its mind when the evidence does, not when you insist.
 
 ```bash
 npx skills add doodledood/manifest-dev --skill figure-out
@@ -32,9 +32,9 @@ A minute in, it has read your code and come back with the question you hadn't th
 
 ## The loop was never the hard part
 
-Everyone's writing loops now — the shift from prompting an agent by hand to designing the system that prompts it. But a loop pointed at a shallow understanding just ships the wrong thing faster, and a loop that grades its own homework was never going to tell you. It runs, declares victory on a confident summary, and you find out in review.
+Everyone's writing loops now: the shift from prompting an agent by hand to designing the system that prompts it. But a loop pointed at a shallow understanding just ships the wrong thing faster. And the loop vouches for itself — it runs, declares victory on a confident summary, and you find out in review.
 
-The leverage isn't the `while`. It's understanding the problem before anything is built, defining what "done" means, and verifying it independently. That's the rest of manifest-dev: loop engineering, with a stop condition you can trust.
+The leverage lives upstream of the `while`: understand the problem before anything is built, define what "done" means, then verify it independently. That's the rest of manifest-dev: loop engineering, with a stop condition you can trust.
 
 <table>
   <tr>
@@ -42,7 +42,7 @@ The leverage isn't the `while`. It's understanding the problem before anything i
     <th align="left">The skill that answers it</th>
   </tr>
   <tr>
-    <td><strong>It skips understanding.</strong> The loop becomes a way to avoid thinking about the problem, not a way to move faster on one you already grasp.</td>
+    <td><strong>It skips understanding.</strong> The loop becomes a substitute for thinking about the problem, when it should be a faster path through one you already grasp.</td>
     <td><strong><code>/figure-out</code></strong> — the door you just walked through. Adversarial understanding, before anything gets built.</td>
   </tr>
   <tr>
@@ -57,7 +57,7 @@ The leverage isn't the `while`. It's understanding the problem before anything i
 
 Most spec-driven tools take your description and generate a spec, then code — a transcript of what you already said, thin if your understanding was thin. This flips the order: understanding comes first and is adversarial, before `/define` ever writes anything down.
 
-It's not a loop runtime. It doesn't schedule jobs or manage worktrees, and it doesn't need to. It rides on top of whatever runs your loop, including your host's own `/loop` and `/goal`. It supplies the part those primitives leave to you: what to verify, and how to know you're actually done.
+manifest-dev rides on top of whatever runs your loop, including your host's own `/loop` and `/goal`, and leaves scheduling jobs and managing worktrees to that runtime. It supplies the part those primitives leave to you: what to verify, and how to know you're actually done.
 
 ## Quick Start
 

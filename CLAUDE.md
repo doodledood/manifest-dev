@@ -4,6 +4,10 @@
 
 manifest-dev marketplace — manifest-driven workflows for Claude Code. `/define` interviews and writes a Manifest; `/do` executes the Manifest and verifies inline by spawning a subagent per Acceptance Criterion and Global Invariant. Ships agents and skills.
 
+## Public Repository Discipline
+
+This repo is public. Everything committed or posted to it — docs, ADRs, READMEs, PR titles and descriptions, commit messages, issue text — must stand on its own merits and stay free of private working context. Never reference: chat sessions or session logs, private planning/strategy/handoff documents, investigation transcripts, or the repo's own adoption/popularity status (star counts, usage levels, traction commentary). ADRs state decisions with their technical grounds, not the deliberation history behind them. Temporary ops documents are allowed when clearly marked, but must read as neutral, forward-looking operations content.
+
 ## Development Commands
 
 ```bash
