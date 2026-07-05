@@ -7,11 +7,11 @@ Accepted
 
 Walk-PR's `--canvas` mode produces a sub-changeset-by-sub-changeset, topic-by-topic review surface. Its initial design centered on **verbatim quotes from both sides, never paraphrased** — diff hunks were the canonical depth, "survived/cut/moved" prose summarized the line-level mapping, and topics often framed concerns at the level of specific lines or hunks.
 
-Field experience on a moderately complex but not large PR (37 files, +869 / −154, 5 sub-changesets, 9 topics) surfaced a consistent failure mode: even with the previous round of tightening (per-topic progressive disclosure and the topic-shape contract), a reviewer with codebase fluency but zero PR-specific context experienced the canvas as "BOOM — very very low-level details jumping at you."
+Field experience on a moderately complex but not large PR (37 files, +869 / −154, 5 sub-changesets, 9 topics) surfaced a consistent failure mode: even with the previous round of tightening (per-topic progressive disclosure and the topic-shape contract), a reviewer with codebase fluency but zero PR-specific context experienced the canvas as an immediate wall of low-level detail with nothing to orient them first.
 
 Two layered causes:
 
-1. **No orientation above the SCs.** The canvas dropped the reviewer straight from a categorized overview (a table of SC names + sizes + classes) into SC1's prose grounding + diff hunks + topics. New PR-specific vocabulary (`LiveFallbackHandle`, `readFrozenOrFallback`, the strict/lenient eval distinction, `frozen_world_snapshot` capture on errored inquiries) was used without being introduced. Codebase fluency ≠ PR fluency, and the existing reader-model didn't separate them.
+1. **No orientation above the SCs.** The canvas dropped the reviewer straight from a categorized overview (a table of SC names + sizes + classes) into SC1's prose grounding + diff hunks + topics. New PR-specific vocabulary — freshly introduced type and function names, plus a subtle behavioral distinction the PR added — was used without being introduced. Codebase fluency ≠ PR fluency, and the existing reader-model didn't separate them.
 
 2. **Depth forced at line level.** Once inside an SC, the diff was the canonical depth and the "survived/cut/moved" prose listed every type, file, and call site by name. A reviewer who wanted to verify "this PR makes sense and doesn't break things" had no path short of parsing every hunk and engaging every topic. The skill mistook *one mode of review* (deep, topic-by-topic) for the *only mode*.
 
@@ -23,7 +23,7 @@ Walk-PR canvas adopts a **three-layer model** with explicit orientation, depth-o
 
 **Layer 2 — per-SC card surface (always visible).** A one-sentence behavior summary in user terms and a one-sentence verification probe (concrete, observable). Everything else — prose grounding, boundary view, diff hunks, topics — collapses behind a single per-SC expand. A reviewer skims top-to-bottom in minutes and clicks into only the SCs that warrant depth.
 
-**Layer 3 — inside the expand: boundary view, diff as evidence.** The expanded body opens with a **boundary view** describing the change at module-boundary altitude — new/changed types and what they represent, signatures at module edges, dependency-edge shifts, contract changes — in ≤3 short paragraphs, freeform, load-bearing pieces only. Diff hunks become per-file "show diff" affordances — one more click, on-demand. Topics retain their existing two-declarative-sentence shape; most #4425 topics were already boundary-level, so the contract holds.
+**Layer 3 — inside the expand: boundary view, diff as evidence.** The expanded body opens with a **boundary view** describing the change at module-boundary altitude — new/changed types and what they represent, signatures at module edges, dependency-edge shifts, contract changes — in ≤3 short paragraphs, freeform, load-bearing pieces only. Diff hunks become per-file "show diff" affordances — one more click, on-demand. Topics retain their existing two-declarative-sentence shape; most topics on the field-experience PR were already boundary-level, so the contract holds.
 
 **Reader-model addendum.** Codebase-fluent still holds. New clause: vocabulary introduced by *this PR* is not shared ground. The primer is the only place that vocabulary gets introduced; downstream SC summaries, boundary views, and topics use it without re-explanation.
 
@@ -31,9 +31,9 @@ Walk-PR canvas adopts a **three-layer model** with explicit orientation, depth-o
 
 ## Alternatives Considered
 
-- **Status quo: diff-centric depth with topic-shape tightening only.** Lean on prompt discipline to keep topics off line-level edge cases; leave diff and "survived/cut/moved" as the canonical depth. Rejected because the BOOM survives even with disciplined topics — the prose grounding and the diff itself remain the things the reviewer hits first. The 2026-05-14 iteration tried a softer version of this (per-topic progressive disclosure) and the failure mode persisted on #4425.
+- **Status quo: diff-centric depth with topic-shape tightening only.** Lean on prompt discipline to keep topics off line-level edge cases; leave diff and "survived/cut/moved" as the canonical depth. Rejected because the wall-of-detail failure survives even with disciplined topics — the prose grounding and the diff itself remain the things the reviewer hits first. A prior iteration tried a softer version of this (per-topic progressive disclosure) and the failure mode persisted in the field.
 
-- **Boundary translation above diff (additive).** Add a boundary-mapping block at the top of each SC expand, but keep diff hunks and "survived/cut/moved" prose below as canonical depth. Rejected because the expand still holds everything — the BOOM moves but doesn't shrink. The reviewer still scrolls past walls of low-level content after engaging the boundary view; the architecture stays diff-centric in practice.
+- **Boundary translation above diff (additive).** Add a boundary-mapping block at the top of each SC expand, but keep diff hunks and "survived/cut/moved" prose below as canonical depth. Rejected because the expand still holds everything — the wall of detail moves but doesn't shrink. The reviewer still scrolls past walls of low-level content after engaging the boundary view; the architecture stays diff-centric in practice.
 
 - **Rigid facet-structured boundary view.** Four named subsections inside the expand — Types, Signatures, Dependencies, Contracts — each rendered conditionally. Rejected: rigid structure is scaffolding the LLM doesn't need if the goal is clear, and small PRs end up with empty named headers. Goal-statement-over-structure is honest to how the rest of CANVAS_MODE.md works.
 
