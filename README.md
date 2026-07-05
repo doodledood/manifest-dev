@@ -6,7 +6,7 @@
 
 # manifest-dev
 
-#### Loop engineering, with a stop condition you can trust.
+#### Your agent builds the wrong thing, confidently.
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-15803D" alt="MIT license">
@@ -14,17 +14,27 @@
   <img src="https://img.shields.io/badge/runs_in-Claude_Code_·_OpenCode_·_Codex_·_Pi-475569" alt="Runs in four CLIs">
 </p>
 
-I built this because I didn't trust a fully autonomous loop to actually finish the job — not once I'd stepped away mid-run, after I'd already done the work of understanding the problem. Everyone's writing loops now: the shift from prompting your agent by hand to designing the system that prompts it. But the loop was never the hard part. A loop that can't prove it finished is just a faster way to burn tokens: it runs, it declares victory on a confident summary, and you find out in review.
+Not broken code — wrong code. It compiles, the tests pass, and it solves a problem you don't have, because the agent started typing before it understood what you meant.
 
-The leverage isn't the `while`. It's defining what "done" means and verifying it independently, so the loop can't mark its own homework.
+**`/figure-out` is the pushback.** An adversarial thinking partner that investigates your codebase instead of interrogating you, presses on the question that actually decides the work, and refuses to touch code until you both know what "right" is. It holds its position when the evidence supports it, and changes its mind when the evidence does — not when you insist.
 
-That's what manifest-dev is. You say what you'd accept. The agent builds toward that bar and checks its own work against every line of it (an independent verifier per criterion) before you ever open the diff. The understanding comes first, with a thinking partner that pushes back instead of nodding along. Then you write down what you'd accept. Then it builds and verifies itself.
+```bash
+npx skills add doodledood/manifest-dev --skill figure-out
+```
 
-It's not a loop runtime. It doesn't schedule jobs or manage worktrees, and it doesn't need to. It rides on top of whatever runs your loop, including your host's own `/loop` and `/goal`. It supplies the part those primitives leave to you: what to verify, and how to know you're actually done.
+```
+/figure-out why do half my background jobs silently stall?
+```
 
-## Loops fail in three ways. There's a skill for each.
+A minute in, it has read your code and come back with the question you hadn't thought to ask. That first question is the fastest way to find out whether this tool is for you.
 
-A loop is only as good as the thing that tells it to stop, and the popular patterns skip the three parts that make stopping real.
+**Every skill here works standalone — take what you want.** No framework to adopt, nothing else to install. If you never run another command from this repo, `/figure-out` still earns its keep.
+
+## The loop was never the hard part
+
+Everyone's writing loops now — the shift from prompting an agent by hand to designing the system that prompts it. But a loop pointed at a shallow understanding just ships the wrong thing faster, and a loop that grades its own homework was never going to tell you. It runs, declares victory on a confident summary, and you find out in review.
+
+The leverage isn't the `while`. It's understanding the problem before anything is built, defining what "done" means, and verifying it independently. That's the rest of manifest-dev: loop engineering, with a stop condition you can trust.
 
 <table>
   <tr>
@@ -33,7 +43,7 @@ A loop is only as good as the thing that tells it to stop, and the popular patte
   </tr>
   <tr>
     <td><strong>It skips understanding.</strong> The loop becomes a way to avoid thinking about the problem, not a way to move faster on one you already grasp.</td>
-    <td><strong><code>/figure-out</code></strong> is an adversarial thinking partner. It investigates the code instead of asking you, presses the load-bearing question, and refuses to leap to the edit.</td>
+    <td><strong><code>/figure-out</code></strong> — the door you just walked through. Adversarial understanding, before anything gets built.</td>
   </tr>
   <tr>
     <td><strong>It has no real stop condition.</strong> "Run until done" is worthless when "done" was never written down.</td>
@@ -47,11 +57,11 @@ A loop is only as good as the thing that tells it to stop, and the popular patte
 
 Most spec-driven tools take your description and generate a spec, then code — a transcript of what you already said, thin if your understanding was thin. This flips the order: understanding comes first and is adversarial, before `/define` ever writes anything down.
 
-## Who This Is For
-
-You've burned out on the weekly "game-changing AI coding tool" cycle and want something grounded that works. You're an experienced developer who cares more about output quality than raw speed, and you've learned the hard way that AI code needs guardrails more than cheerleading. If you count every cent per token, or want the fastest possible output regardless of what it costs you in review, this isn't your thing.
+It's not a loop runtime. It doesn't schedule jobs or manage worktrees, and it doesn't need to. It rides on top of whatever runs your loop, including your host's own `/loop` and `/goal`. It supplies the part those primitives leave to you: what to verify, and how to know you're actually done.
 
 ## Quick Start
+
+The one-skill door is above. The full system installs as a plugin:
 
 ```bash
 # Claude Code (primary)
@@ -71,7 +81,7 @@ Then work through the three beats:
 /auto <what you want to build>     # Or run all three, chained, no approval gates
 ```
 
-`/figure-out` is the heart of it: a peer that investigates before it claims and holds its position under pushback. `/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest. `/auto` chains all three with no waiting.
+`/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest and can't call it done until every criterion passes independent verification. `/auto` chains all three with no waiting.
 
 For unattended runs of `/do` or `/auto` (the recommended way to run both), set your host's goal-setting or continuation capability to the completion contract those skills print — see the [manifest-dev plugin README](claude-plugins/manifest-dev/README.md#quick-start) for the full contract text and why it's shaped that way.
 
@@ -113,6 +123,10 @@ Your first pass lands closer to done, and the fix loop cleans up what's left on 
 > [!TIP]
 > Resist the urge to jump in mid-`/do`. It won't nail everything first try; that's expected. You invested in understanding the problem, so let the loop run.
 
+## Who This Is For
+
+You've burned out on the weekly "game-changing AI coding tool" cycle and want something grounded that works. You're an experienced developer who cares more about output quality than raw speed, and you've learned the hard way that AI code needs guardrails more than cheerleading. If you count every cent per token, or want the fastest possible output regardless of what it costs you in review, this isn't your thing.
+
 ## Multi-CLI Support
 
 The Claude Code plugins are the source of truth. The same components run in OpenCode, Codex CLI, and Pi through native per-CLI distributions under `dist/`, all verifying the same way — a general-purpose subagent or verifier execution per gate.
@@ -123,6 +137,8 @@ The Claude Code plugins are the source of truth. The same components run in Open
 | OpenCode | clone + one config line | [README](dist/opencode/README.md) |
 | Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` | [README](dist/codex/README.md) |
 | Pi | `pi install git:github.com/doodledood/manifest-dev@main` | [README](dist/pi/README.md) |
+
+Individual skills also install into 18+ agents (Cursor, Copilot, Cline, and more) via `npx skills add doodledood/manifest-dev --skill <name>`.
 
 Each linked README covers that CLI's install, upgrade, and uninstall path. Architecture decisions behind the multi-CLI design are indexed in [`docs/adr/`](docs/adr/README.md).
 

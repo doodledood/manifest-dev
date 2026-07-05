@@ -2,6 +2,8 @@
 name: sync-tools
 description: 'Generate multi-CLI distribution packages from the Claude Code plugin. Converts shared skills and package assets for OpenCode, Codex CLI, and Pi under dist/. Run after changing plugin components to keep distributions in sync.'
 user-invocable: true
+metadata:
+  internal: true
 ---
 
 # /sync-tools — Multi-CLI Distribution Generator

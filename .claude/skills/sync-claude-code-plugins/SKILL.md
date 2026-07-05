@@ -2,6 +2,8 @@
 name: sync-claude-code-plugins
 description: 'Sync the prompt-engineering plugin from a local clone of claude-code-plugins into .claude/ so the repo is self-contained for isolated/web environments. Copies agents/skills, removes only previously-synced items that disappeared upstream. Other content in .claude/ is left alone. Use when asked to sync claude-code-plugins, pull prompt-engineering, refresh prompt-engineering plugin.'
 user-invocable: true
+metadata:
+  internal: true
 ---
 
 **User request**: $ARGUMENTS
