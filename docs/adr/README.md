@@ -25,3 +25,4 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-06-23 | [Use host continuation as optional `/do` backstop, not a Pi-specific verifier runtime](20260623-use-host-continuation-as-optional-do-backstop.md) | Accepted | Pi distribution |
 | 2026-06-24 | [Use outcome-gated terminal success for `/auto` continuation](20260624-use-outcome-gated-auto-continuation.md) | Accepted | Goal setting |
 | 2026-07-03 | [figure-out gains fog discipline; multi-session orchestration stays out of scope](20260703-figure-out-fog-discipline.md) | Accepted | figure-out |
+| 2026-07-05 | [Keep the plugin-first repo layout; no restructure for skill-picker distribution](20260705-keep-plugin-first-layout-npx-skills-compatible.md) | Accepted | Repo layout |
