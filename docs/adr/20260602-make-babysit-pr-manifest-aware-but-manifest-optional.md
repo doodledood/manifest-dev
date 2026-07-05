@@ -51,5 +51,4 @@ Comments are signals, not authority. `babysit-pr` reconciles comments against st
 
 ## Source
 
-- Session: `/figure-out --with-docs` session on 2026-06-02.
 - Related: `20260602-coordinate-review-pr-and-babysit-pr-through-pr-state`

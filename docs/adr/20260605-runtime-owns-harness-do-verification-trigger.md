@@ -50,9 +50,6 @@ The loop repeats after repair: when the Executor Session stops again after actin
 
 ## Source
 
-- Session: `figure-out --with-docs`, 2026-06-05.
-- User clarification: "do should just implmeent deliverables and fix failing ac/invs thats it".
-- User clarification: "i odnt care if main session does verifications but the hanress level verification wil lrun them again; do shluld be simplistic".
-- User accepted that `manifest_dev_request_verification` / `manifest_dev_report_outcome` should not remain visible to the `/do` executor.
-- User clarification: verification should happen in a new session from zero; that session launches verifier executions; aggregate results are injected back into the Do session as a user-like message; when Do stops again, another clean verification session runs.
+- Decision note: `manifest_dev_request_verification` / `manifest_dev_report_outcome` do not remain visible to the `/do` executor; `/do` stays simple — implement Deliverables and fix failing gates.
+- Decision note: verification happens in a fresh session from zero context; that session launches verifier executions, aggregate results re-enter the Do session as follow-up work, and each subsequent stop triggers another clean verification session.
 - Related: `20260605-pi-native-runtime-package-source-surface`

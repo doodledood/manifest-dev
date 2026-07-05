@@ -31,5 +31,5 @@ All investigation epistemics — claim discipline, evidence handling, convergenc
 - The spine grows; it must absorb the methodology without becoming a checklist (calibrated under the prompt-engineering review discipline).
 
 ## Source
-- Session: `figure-out --with-docs` session on figure-out trustworthiness (2026-06-11); PR #189.
+- Related: PR #189.
 - Related: 20260611-figure-out-evidence-ledger-and-independent-rederivation; 20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass

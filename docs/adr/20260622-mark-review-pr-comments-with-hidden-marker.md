@@ -42,6 +42,5 @@ The marker does **not** replace the content fingerprint: "re-post only when the 
 - The whole mechanism is moot if `review-pr` is never run on accounts shared with human reviewers — but the premise is that it is.
 
 ## Source
-- Session: `/figure-out --with-docs --log` on marking `review-pr`'s own comments to identify automated vs human comments on a shared account (2026-06-22).
 - Governs behavior of the `review-pr` and `check-pr` skills.
 - Related: 20260619-manifest-aware-review-pr

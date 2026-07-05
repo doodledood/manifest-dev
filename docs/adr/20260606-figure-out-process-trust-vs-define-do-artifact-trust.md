@@ -39,5 +39,4 @@ figure-out produces understanding, not a Deliverable. There is no artifact for i
 - figure-out's `--autonomous` mode retains a self-grading limitation — with the human removed, nothing independent checks its convergence. Accepted here and partially mitigated by inline process rigor (see related ADR); full independence is deliberately deferred.
 
 ## Source
-- Session: figure-out --with-docs --log session on research-methodology applicability to figure-out (2026-06-06); log at `~/.manifest-dev/logs/figure-out-log-20260606-073510.md`
 - Related: See also 20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass; 20260604-figure-out-owns-domain-probing-via-mirrored-task-files

@@ -1,6 +1,8 @@
 ---
 name: auto-optimize-prompt
 description: 'Iteratively auto-optimize a prompt until no issues remain. Uses review-prompt in a loop, asks user for ambiguities, applies fixes via prompt-engineering skill. Runs until converged.'
+metadata:
+  internal: true
 ---
 
 # Auto-Optimize Prompt

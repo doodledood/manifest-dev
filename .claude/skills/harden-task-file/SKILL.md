@@ -2,6 +2,8 @@
 name: harden-task-file
 description: 'Harden a manifest-dev task guidance file for one-shot quality — either /define''s quality-gate/Default set or figure-out''s probe set. Iterates: orthogonality gap analysis, user-approved additions, prompt review, fix, converge. Use when a task file needs comprehensive coverage or "harden task file".'
 user-invocable: true
+metadata:
+  internal: true
 ---
 
 **User request**: $ARGUMENTS

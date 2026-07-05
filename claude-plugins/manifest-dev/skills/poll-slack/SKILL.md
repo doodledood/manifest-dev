@@ -2,6 +2,8 @@
 name: poll-slack
 description: 'Narrate new Slack messages in a channel or thread since a cursor. Returns a natural-language story of what was said, or a clear statement when there is nothing new. Use when a parent agent polls Slack and needs to know what changed, read a Slack delta, or understand a thread update without re-ingesting the whole thread.'
 user-invocable: true
+metadata:
+  internal: true
 ---
 
 # Slack Poller

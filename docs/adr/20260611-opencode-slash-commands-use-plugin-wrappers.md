@@ -50,7 +50,6 @@ No command files are generated or copied. The command layer is runtime config mu
 
 ## Source
 
-- Session: Pi/OpenCode install debugging, 2026-06-11
 - Evidence: local `opencode debug skill` discovered all 18 bundled skills; asking the model to use `figure-out` worked; `/` autocomplete did not show the skills until command wrappers were added.
 - Upstream docs: `https://opencode.ai/docs/skills`, `https://opencode.ai/docs/commands`, `https://opencode.ai/docs/config` — skills are exposed through the `skill` tool; slash commands are command-backed.
 - Related: Supersedes the slash-UX mechanism assumed in `20260611-opencode-plugin-native-distribution`; keeps its plugin-native install decision.

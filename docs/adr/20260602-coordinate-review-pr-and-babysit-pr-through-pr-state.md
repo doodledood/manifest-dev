@@ -42,5 +42,4 @@ The shared substrate is the PR itself: commits, checks, comments, review threads
 
 ## Source
 
-- Session: `/figure-out --with-docs` session on 2026-06-02.
 - Related: `20260518-verifier-fail-hints-are-directives`

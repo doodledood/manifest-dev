@@ -1,6 +1,8 @@
 ---
 name: compress-prompt
 description: 'Compresses prompts/skills into minimal goal-focused instructions. Trusts the model, drops what it already knows, maximizes action space. Use when asked to compress, condense, or minimize a prompt.'
+metadata:
+  internal: true
 ---
 
 # Compress Prompt

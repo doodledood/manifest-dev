@@ -57,6 +57,4 @@ The slice removed `@gotgenes/pi-subagents` from manifest-dev Pi package peer dep
 
 ## Source
 
-- Session: `figure-out --log --with-docs`, 2026-06-10.
-- Investigation log: `/Users/aviram.kofman/.manifest-dev/logs/figure-out-log-20260610-135425.md`.
 - Related: `20260605-pi-native-runtime-package-source-surface`.

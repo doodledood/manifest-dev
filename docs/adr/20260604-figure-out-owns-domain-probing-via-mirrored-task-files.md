@@ -50,5 +50,4 @@ define continues to *formalize* the understanding figure-out reaches; it does no
 
 ## Source
 
-- Session: `/figure-out --with-docs --log` session on 2026-06-04.
 - Related: over-slim root cause in promotion `17043f9`; partial steering restore in `d8ffab7` (#145).

@@ -55,5 +55,4 @@ Staged across two PRs to keep the change additive until proven in the wild:
 The marketplace mechanism was validated locally on Codex v0.135 (2026-05-31): a two-plugin marketplace rooted at `.agents/plugins/marketplace.json` installed cleanly via `codex plugin marketplace add <root>` + `codex plugin add <plugin>@<mp>`. Skills and `agents/*.md` both rode into an isolated, versioned plugin cache (`~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/`) intact — no manual namespacing needed, and the `config.toml` footprint is a single `[plugins."<plugin>@<mp>"] enabled = true`. The one open check is the git source: whether `codex plugin marketplace add owner/repo --sparse dist/codex` resolves the subdir root the same way the local path did.
 
 ## Source
-- Session: figure-out --with-docs, 2026-05-31
 - Related: See also 20260518-verifier-fail-hints-are-directives (the `/do` verification model these hooks backstopped)

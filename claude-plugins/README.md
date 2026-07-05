@@ -7,7 +7,7 @@ Loop engineering's missing half: define what "done" means, then verify it. The l
 ```bash
 /plugin marketplace add https://github.com/doodledood/manifest-dev
 /plugin list
-/plugin install manifest-dev@manifest-dev-marketplace
+/plugin install manifest-dev@manifest-dev
 ```
 
 ## Available Plugins

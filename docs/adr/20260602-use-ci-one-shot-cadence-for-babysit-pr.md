@@ -46,6 +46,5 @@ Interactive babysitting can still use the normal `/do` loop and execute wait/rei
 
 ## Source
 
-- Session: `/figure-out --with-docs` session on 2026-06-02.
 - Related: `20260602-coordinate-review-pr-and-babysit-pr-through-pr-state`
 - Related: `20260602-make-babysit-pr-manifest-aware-but-manifest-optional`

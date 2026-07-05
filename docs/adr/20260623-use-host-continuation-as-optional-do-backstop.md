@@ -52,8 +52,6 @@ Pi-specific runtime code may still provide native command wrappers, package load
 
 ## Source
 
-- Session: `figure-out --with-docs --log`, 2026-06-23.
-- Investigation log: `/Users/aviram.kofman/.manifest-dev/logs/figure-out-log-20260623-124040.md`.
-- User clarification: describe generic host continuation capability rather than a machine-specific setup; when none exists or it is disabled, keep regular main-agent verification without continuous enforcement.
+- Design note: host continuation is described as a generic capability rather than a machine-specific setup; when none exists or it is disabled, regular main-agent verification applies without continuous enforcement.
 - External evidence: OpenAI Developers Codex docs, `Using Goals in Codex` and `Slash commands in Codex CLI`, describe `/goal` as a durable goal-setting capability that keeps a Codex thread working across turns and checks completion against evidence.
 - Related: `20260605-runtime-owns-harness-do-verification-trigger`, `20260610-own-pi-verifier-runner`, `20260623-use-universal-goal-setting-language`.

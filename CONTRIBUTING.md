@@ -129,7 +129,7 @@ Add your plugin to `.claude-plugin/marketplace.json`:
 /plugin marketplace add /path/to/manifest-dev
 
 # Install your plugin
-/plugin install your-plugin-name@manifest-dev-marketplace
+/plugin install your-plugin-name@manifest-dev
 
 # Test skills
 /your-skill-name

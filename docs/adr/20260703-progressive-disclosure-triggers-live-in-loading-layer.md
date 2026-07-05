@@ -41,5 +41,5 @@ The Progressive Disclosure entry in `CONTEXT.md` was sharpened to carry this rul
 - The "unified gate" phrasing weakens to unified-in-substance across the inline and post-hoc capture paths (drift already accepted by the existing duplication note).
 
 ## Source
-- Session: `figure-out` session auditing the figure-out skill (2026-07-03); log at `~/.manifest-dev/logs/figure-out-log-20260703-142854.md`; PR #214.
+- Related: PR #214.
 - Related: 20260611-figure-out-spine-owns-epistemics-mode-refs-thin; 20260703-figure-out-fog-discipline
