@@ -1,0 +1,13 @@
+{
+  "name": "manifest-dev-meta",
+  "version": "1.0.0",
+  "description": "Maintainer-facing tooling for developing manifest-dev's own plugins — empirical, live-traffic proof that a skill/prompt wording change actually changed model behavior, not just a diff that reads like it should.",
+  "keywords": [
+    "meta",
+    "maintainer-tooling",
+    "empirical-verification",
+    "behavior-verification",
+    "prompt-engineering",
+    "self-improvement"
+  ]
+}

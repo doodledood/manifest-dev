@@ -96,12 +96,13 @@ More effort up front, less checking after. manifest-dev is free and open source 
 
 ## What's in it
 
-Two plugins ship from this repository:
+Three plugins ship from this repository:
 
 | Plugin | What it covers |
 |--------|----------------|
 | [`manifest-dev`](claude-plugins/manifest-dev) | The workflow itself, project setup, ticket authoring and execution, first-principles design with composable guides and optional measurement tools (`/design`), artifact review, and the review skills the criteria call on |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Pull-request collaboration, prompt work, standalone goals from Manifests (`/manifest-to-goal`), teaching, explaining, and handoff between sessions |
+| [`manifest-dev-meta`](claude-plugins/manifest-dev-meta) | Maintainer-facing tooling for developing manifest-dev's own plugins. |
 
 Each plugin's README lists what it ships.
 
