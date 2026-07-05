@@ -88,6 +88,13 @@ The ordered evidence Babysit PR uses to decide whether a pull-request blocker is
 **CI One-Shot**:
 A non-interactive Babysit PR run that performs immediately actionable lifecycle steps, then exits pending when only waiting remains.
 
+**Door**:
+A standalone skill fronted on one discovery surface as the zero-enrollment entry into manifest-dev.
+_Avoid_: Wedge, funnel.
+
+**House**:
+The full understanding-first loop (figure-out → define → do) that every Door opens into; the retention engine behind the Doors.
+
 ## Relationships
 
 - A **Manifest** contains one or more **Deliverables**.
@@ -108,6 +115,7 @@ A non-interactive Babysit PR run that performs immediately actionable lifecycle 
 - **Review PR** in manifest mode independently re-verifies a **Manifest** against the pull request head.
 - **Babysit PR** uses **PR Grounding** so newer comments do not override stronger sources of intent by recency alone.
 - **CI One-Shot** is a constrained mode of **Babysit PR**.
+- One **Door** per discovery surface; every **Door** opens into the same **House**.
 
 ## Flagged ambiguities
 
