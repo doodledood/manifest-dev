@@ -29,7 +29,7 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-06-24 | [Use outcome-gated terminal success for `/auto` continuation](20260624-use-outcome-gated-auto-continuation.md) | Accepted | Goal setting |
 | 2026-07-03 | [figure-out gains fog discipline; multi-session orchestration stays out of scope](20260703-figure-out-fog-discipline.md) | Accepted | figure-out |
 | 2026-07-03 | [Progressive-disclosure triggers live in the loading layer, never in the deferred reference](20260703-progressive-disclosure-triggers-live-in-loading-layer.md) | Accepted | Prompt architecture |
-| 2026-07-04 | [Require explicit Skill-tool invocation in verify.prompt templates, not "activate"](20260704-require-explicit-skill-tool-invocation-in-verify-prompts.md) | Accepted | Verifier reliability |
+| 2026-07-04 | [Require explicit, non-free-handed skill invocation in verify.prompt templates, not bare "activate"](20260704-require-explicit-skill-tool-invocation-in-verify-prompts.md) | Accepted | Verifier reliability |
 | 2026-07-04 | [Isolate branch-specific verifiers via disposable worktrees, falling back to phase separation](20260704-isolate-branch-specific-verifiers-via-disposable-worktrees.md) | Accepted | Verifier reliability |
 | 2026-07-05 | [Keep the plugin-first repo layout; no restructure for skill-picker distribution](20260705-keep-plugin-first-layout-npx-skills-compatible.md) | Accepted | Repo layout |
 | 2026-07-05 | [Front `/figure-out` as the Door; the define/do loop remains the House](20260705-front-figure-out-as-door-define-do-loop-as-house.md) | Accepted | Positioning |

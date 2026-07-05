@@ -5,26 +5,11 @@ Accepted
 
 ## Context
 
-The same cache-staggering experiment (`tests/cache-experiment/run_arms.py`, postgres-provider-split manifest fixture, arm0/repeat-0) that surfaced the skill-activation gap also surfaced a race hazard: `/do`'s default phase is 1 for every criterion unless the manifest author sets `phase:` explicitly, and criteria within a phase launch in parallel sharing the orchestrator's `cwd`. When one criterion's `verify.prompt` needs a specific branch's actual checked-out working-tree state — not just `git diff`/`git show` content inspection — running `git checkout <branch>` mid-session mutates that shared directory while sibling criteria concurrently read it.
+The same investigation that surfaced the skill-activation gap also surfaced a race hazard in `/do`'s execution model: `/do`'s default phase is 1 for every criterion unless the manifest author sets `phase:` explicitly, and criteria within a phase launch in parallel, sharing the orchestrator's working directory (`cwd`). Diagnostic timing showed a full set of same-phase verifier sessions launching within a few seconds of each other and running concurrently for minutes against that one shared directory.
 
-**Excerpt B-1 — concurrent launch timing** (`arm0/35697d565ed/repeat-0/312cf7d63c768be9/diagnostics/*.json`, response `Date` headers), showing all 12 criteria of one repeat launching within a 3-second window and running concurrently against one shared git worktree:
-```
-INV-G2   start=18:59:51 end=19:01:26 calls=16
-AC-2.3   start=18:59:51 end=18:59:54 calls=2
-AC-1.1   start=18:59:51 end=19:00:05 calls=5
-INV-G1   start=18:59:51 end=19:00:53 calls=14
-AC-3.1   start=18:59:52 end=19:03:34 calls=40
-```
+When one criterion's `verify.prompt` needs a specific branch's actual checked-out working-tree state — not just `git diff`/`git show` content inspection — running `git checkout <branch>` mid-session mutates that shared directory. A captured session doing exactly this (checking out a sequence of branches in place to run project tooling "on each branch") ran concurrently with sibling criteria that were still reading the same directory via `git diff`/`git show`, so the checkout and the reads raced against each other.
 
-**Excerpt B-2 — mid-session branch checkouts inside the shared worktree** (`arm0/35697d565ed/repeat-0/312cf7d63c768be9/`, session `8c7e3f23-18f1-48a7-89f3-020d6c6b09b0`, criterion AC-3.1 — "On each branch run `prek run --from-ref upstream/main --stage pre-commit`"), while INV-G1/INV-G2 above are still concurrently running `git diff`/`git show` against the same `cwd`:
-```
-git checkout 2606/postgres-provider-psycopg3-default -q && git log --oneline -1
-git checkout 3ec0d9d0ab -q && git log --oneline -1
-...
-git status --short && git checkout 46936f93139 -q && git log --oneline -1
-```
-
-This generalizes beyond the experiment's own harness: any real manifest with a criterion whose `verify.prompt` needs an actually-checked-out branch, running in the same default phase as siblings that inspect the working tree, is exposed to the same race.
+This generalizes beyond any one harness: any real manifest with a criterion whose `verify.prompt` needs an actually-checked-out branch, running in the same default phase as siblings that inspect the working tree, is exposed to the same race.
 
 ## Decision
 
@@ -50,5 +35,4 @@ This guidance is added to `define/tasks/CODING.md`'s Defaults section (authoring
 - Worktree isolation adds setup/teardown overhead (creating and removing a temp worktree) versus an in-place checkout, though this is bounded and disposable.
 
 ## Source
-- Manifest: `manifest-20260704-163919.md`
 - Related: 20260704-require-explicit-skill-tool-invocation-in-verify-prompts
