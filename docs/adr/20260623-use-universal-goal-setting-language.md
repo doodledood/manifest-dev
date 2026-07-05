@@ -44,5 +44,4 @@ The completion condition remains concrete and checkable: figure-out autonomous r
 
 ## Source
 
-- Investigation log: `~/.manifest-dev/logs/figure-out-log-20260623-102511.md`.
 - Related: `20260605-pi-native-runtime-package-source-surface`
