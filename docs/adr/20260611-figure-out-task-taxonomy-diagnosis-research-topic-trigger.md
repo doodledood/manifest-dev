@@ -33,5 +33,5 @@ Operator constraints: figure-out is standalone-first — its methodology may not
 - figure-out's taxonomy diverges further from define's mirrored set; the parallel-set drift surface grows (accepted per 20260604's split-index trade-off).
 
 ## Source
-- Session: `figure-out --with-docs` session on figure-out trustworthiness (2026-06-11); PR #189.
+- Related: PR #189.
 - Related: 20260604-figure-out-owns-domain-probing-via-mirrored-task-files (extends its taxonomy and amends its load trigger); 20260611-figure-out-evidence-ledger-and-independent-rederivation

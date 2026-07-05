@@ -7,7 +7,7 @@ Accepted
 
 Walk-PR's `--canvas` mode produces a sub-changeset-by-sub-changeset, topic-by-topic review surface. Its initial design centered on **verbatim quotes from both sides, never paraphrased** — diff hunks were the canonical depth, "survived/cut/moved" prose summarized the line-level mapping, and topics often framed concerns at the level of specific lines or hunks.
 
-Field experience on a moderately complex but not large PR (cxllm #4425 — ADR-0004 lenient eval + multi-message replay fix, 37 files, +869 / −154, 5 sub-changesets, 9 topics) surfaced a consistent failure mode: even with the previous round of tightening (per-topic progressive disclosure and the topic-shape contract from the 2026-05-14 manifest at `.manifest/walk-pr-canvas-topic-density-2026-05-14.md`), a reviewer with codebase fluency but zero PR-specific context experienced the canvas as "BOOM — very very low-level details jumping at you."
+Field experience on a moderately complex but not large PR (37 files, +869 / −154, 5 sub-changesets, 9 topics) surfaced a consistent failure mode: even with the previous round of tightening (per-topic progressive disclosure and the topic-shape contract), a reviewer with codebase fluency but zero PR-specific context experienced the canvas as "BOOM — very very low-level details jumping at you."
 
 Two layered causes:
 
@@ -35,7 +35,7 @@ Walk-PR canvas adopts a **three-layer model** with explicit orientation, depth-o
 
 - **Boundary translation above diff (additive).** Add a boundary-mapping block at the top of each SC expand, but keep diff hunks and "survived/cut/moved" prose below as canonical depth. Rejected because the expand still holds everything — the BOOM moves but doesn't shrink. The reviewer still scrolls past walls of low-level content after engaging the boundary view; the architecture stays diff-centric in practice.
 
-- **Rigid facet-structured boundary view.** Four named subsections inside the expand — Types, Signatures, Dependencies, Contracts — each rendered conditionally. Rejected after pushback in the figure-out session (2026-05-18): rigid structure is scaffolding the LLM doesn't need if the goal is clear, and small PRs end up with empty named headers. Goal-statement-over-structure is honest to how the rest of CANVAS_MODE.md works.
+- **Rigid facet-structured boundary view.** Four named subsections inside the expand — Types, Signatures, Dependencies, Contracts — each rendered conditionally. Rejected: rigid structure is scaffolding the LLM doesn't need if the goal is clear, and small PRs end up with empty named headers. Goal-statement-over-structure is honest to how the rest of CANVAS_MODE.md works.
 
 - **Mode toggle (`--brief` / `--deep`).** Add a flag that switches between behavior-only and full-depth canvases. Rejected because the right answer is a single layered canvas where the reviewer chooses depth per-SC, not per-canvas. A mode toggle forces a commitment up front; per-SC expand makes the commitment local.
 
@@ -57,6 +57,5 @@ Walk-PR canvas adopts a **three-layer model** with explicit orientation, depth-o
 
 ## Source
 
-- Session: figure-out --with-docs, 2026-05-18 (canvas under review: `/tmp/walk-pr-canvas-4425-20260518T132933.html`; PR under review: github.com/lemonade-hq/cxllm/pull/4425).
-- Prior iteration: `.manifest/walk-pr-canvas-topic-density-2026-05-14.md` (per-topic progressive disclosure and topic-shape contract; this ADR builds on that work).
+- Prior iteration: per-topic progressive disclosure and the topic-shape contract; this ADR builds on that work.
 - Related: first ADR for the manifest-dev repo.

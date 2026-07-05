@@ -46,5 +46,4 @@ Result across all four hosts — Claude Code plugin, Codex plugin marketplace, P
 - Existing installer users need a migration note (remove suffixed copies, or the old uninstall path) to avoid lingering duplicates.
 
 ## Source
-- Session: figure-out --with-docs --log, 2026-06-11 (log: `~/.manifest-dev/logs/figure-out-log-20260611-070829.md`)
 - Related: See also 20260531-codex-plugin-native-distribution (sibling decision; same retire-the-installer arc on Codex)

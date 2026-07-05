@@ -41,5 +41,5 @@ Clarify **`references/ADR_FORMAT.md`** Immutability: append-only discipline begi
 - One more field in the log entry shape; sessions must judge sharp-vs-fog rather than dumping both in one list (the test sentence carries that judgment).
 
 ## Source
-- Session: figure-out session (2026-07-03), operator-confirmed observed failure; landed with the edits in this PR.
+- Grounding: operator-confirmed observed failure; landed with the accompanying skill edits.
 - Related: 20260611-figure-out-spine-owns-epistemics-mode-refs-thin

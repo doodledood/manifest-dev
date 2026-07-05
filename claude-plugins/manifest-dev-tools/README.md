@@ -21,7 +21,7 @@ These tools sit alongside the manifest workflow (`/define` → `/do` → `/done`
 ## Installation
 
 ```bash
-/plugin install manifest-dev-tools@manifest-dev-marketplace
+/plugin install manifest-dev-tools@manifest-dev
 ```
 
 For OpenCode, Codex, and Pi package installs, use the repo-level distribution instructions. Pi installs from the repository root and includes compatible shared tools skills plus `/auto` and `/babysit-pr` wrappers that route through the Pi Harness-level Do outcome gate.

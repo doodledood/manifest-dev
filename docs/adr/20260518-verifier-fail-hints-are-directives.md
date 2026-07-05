@@ -56,7 +56,5 @@ The multi-line FAIL form uses `Reason:` / `Suggested:` / `Context:` fields per f
 
 ## Source
 
-- Session: `/figure-out --with-docs` session on 2026-05-18 (this branch). Iterated through implementation amendments D1, D4, D5, and D6 of the manifest at `.manifest/verifier-fail-hints-directives-2026-05-18.md`.
-- Manifest: `.manifest/verifier-fail-hints-directives-2026-05-18.md`
 - In-PR override note: this ADR was originally written in commit `58375f6` on this branch as "Verifier FAIL hints are directives, not suggestions" with a rigid-vocabulary direction. It was rewritten in place during D6 (this commit) to reflect the final workflow-neutral design. Per the in-PR override convention: an ADR introduced in the same PR that supersedes another ADR from that PR is rewritten in place rather than written as a separate Superseded record, to reduce `docs/adr/` clutter when a single PR's design is still iterating. Once a PR merges, the standard ADR immutability rule applies — future supersedences will use separate `Superseded by` records.
 - Related: (none)

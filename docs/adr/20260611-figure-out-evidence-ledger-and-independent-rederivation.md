@@ -42,5 +42,5 @@ Adopt an evidence-ledger trust core in the spine, mode-general:
 - The cheap re-derivation checks evidence→conclusion fit only; evidence-gathering blind spots remain partially open.
 
 ## Source
-- Session: `figure-out --with-docs` session on figure-out trustworthiness (2026-06-11); PR #189.
+- Related: PR #189.
 - Related: 20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass (un-defers its deferred independent pass; its inline-rigor decision stands); 20260606-figure-out-process-trust-vs-define-do-artifact-trust (process-trust boundary unchanged); 20260611-figure-out-spine-owns-epistemics-mode-refs-thin

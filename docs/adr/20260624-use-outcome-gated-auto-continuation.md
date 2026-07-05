@@ -49,7 +49,5 @@ General rule for future goals and manifests:
 
 ## Source
 
-- Session: `figure-out --with-docs --log`, 2026-06-24.
-- Investigation log: `/Users/aviram.kofman/.manifest-dev/logs/figure-out-log-20260624-135303.md`.
 - User observation: `/auto` produced an acceptable final result even though the Read was not properly named; goal success criteria should focus on final outcome where possible.
 - Related: `20260606-figure-out-process-trust-vs-define-do-artifact-trust`; `20260611-figure-out-evidence-ledger-and-independent-rederivation`; `20260623-use-host-continuation-as-optional-do-backstop`; `20260623-use-universal-goal-setting-language`.

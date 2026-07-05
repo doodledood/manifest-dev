@@ -14,9 +14,9 @@
   <img src="https://img.shields.io/badge/runs_in-Claude_Code_·_OpenCode_·_Codex_·_Pi-475569" alt="Runs in four CLIs">
 </p>
 
-Not broken code — wrong code. It compiles, the tests pass, and it solves a problem you don't have, because the agent started typing before it understood what you meant.
+Not broken code — wrong code. It compiles. The tests pass. And it solves a problem you don't have, because the agent started typing before it understood what you meant.
 
-**`/figure-out` is the pushback.** An adversarial thinking partner that investigates your codebase instead of interrogating you, presses on the question that actually decides the work, and refuses to touch code until you both know what "right" is. It holds its position when the evidence supports it, and changes its mind when the evidence does, not when you insist.
+**`/figure-out` is the pushback.** An adversarial thinking partner. It digs through your codebase on its own and presses on the question that decides the work. It refuses to touch code until you both know what "right" is, holds its position under pushback, and changes its mind when the evidence changes.
 
 ```bash
 npx skills add doodledood/manifest-dev --skill figure-out
@@ -28,11 +28,11 @@ npx skills add doodledood/manifest-dev --skill figure-out
 
 A minute in, it has read your code and come back with the question you hadn't thought to ask. That first question is the fastest way to find out whether this tool is for you.
 
-**Every skill here works standalone — take what you want.** No framework to adopt, nothing else to install. If you never run another command from this repo, `/figure-out` still earns its keep.
+**Every skill here works standalone. Take what you want.** No framework to adopt, nothing else to install. If you never run another command from this repo, `/figure-out` still earns its keep.
 
 ## The loop was never the hard part
 
-Everyone's writing loops now: the shift from prompting an agent by hand to designing the system that prompts it. But a loop pointed at a shallow understanding just ships the wrong thing faster. And the loop vouches for itself — it runs, declares victory on a confident summary, and you find out in review.
+Everyone's writing loops now: the shift from prompting an agent by hand to designing the system that prompts it. But a loop pointed at a shallow understanding just ships the wrong thing faster. And the loop vouches for itself. It runs, declares victory on a confident summary. You find out in review.
 
 The leverage lives upstream of the `while`: understand the problem before anything is built, define what "done" means, then verify it independently. That's the rest of manifest-dev: loop engineering, with a stop condition you can trust.
 
@@ -42,8 +42,8 @@ The leverage lives upstream of the `while`: understand the problem before anythi
     <th align="left">The skill that answers it</th>
   </tr>
   <tr>
-    <td><strong>It skips understanding.</strong> The loop becomes a substitute for thinking about the problem, when it should be a faster path through one you already grasp.</td>
-    <td><strong><code>/figure-out</code></strong> — the door you just walked through. Adversarial understanding, before anything gets built.</td>
+    <td><strong>It skips understanding.</strong> A loop should be a faster path through a problem you already grasp; skipping that step turns it into a substitute for thinking.</td>
+    <td><strong><code>/figure-out</code></strong> is the door you just walked through: adversarial understanding, before anything gets built.</td>
   </tr>
   <tr>
     <td><strong>It has no real stop condition.</strong> "Run until done" is worthless when "done" was never written down.</td>
@@ -55,7 +55,7 @@ The leverage lives upstream of the `while`: understand the problem before anythi
   </tr>
 </table>
 
-Most spec-driven tools take your description and generate a spec, then code — a transcript of what you already said, thin if your understanding was thin. This flips the order: understanding comes first and is adversarial, before `/define` ever writes anything down.
+manifest-dev puts understanding first, adversarially, before `/define` writes anything down. Most spec-driven tools generate the spec straight from your description, so the spec runs only as deep as what you already said.
 
 manifest-dev rides on top of whatever runs your loop, including your host's own `/loop` and `/goal`, and leaves scheduling jobs and managing worktrees to that runtime. It supplies the part those primitives leave to you: what to verify, and how to know you're actually done.
 
@@ -66,7 +66,7 @@ The one-skill door is above. The full system installs as a plugin:
 ```bash
 # Claude Code (primary)
 /plugin marketplace add doodledood/manifest-dev
-/plugin install manifest-dev@manifest-dev-marketplace
+/plugin install manifest-dev@manifest-dev
 ```
 
 For OpenCode, Codex CLI, and Pi, see [Multi-CLI Support](#multi-cli-support) below.
@@ -83,7 +83,7 @@ Then work through the three beats:
 
 `/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest and can't call it done until every criterion passes independent verification. `/auto` chains all three with no waiting.
 
-For unattended runs of `/do` or `/auto` (the recommended way to run both), set your host's goal-setting or continuation capability to the completion contract those skills print — see the [manifest-dev plugin README](claude-plugins/manifest-dev/README.md#quick-start) for the full contract text and why it's shaped that way.
+For unattended runs of `/do` or `/auto` (the recommended way to run both), set your host's goal-setting or continuation capability to the completion contract those skills print; see the [manifest-dev plugin README](claude-plugins/manifest-dev/README.md#quick-start) for the full contract text and why it's shaped that way.
 
 Babysit an existing PR through review without any manifest-dev setup: `/babysit-pr [pr-url]`. Details in the [manifest-dev-tools README](claude-plugins/manifest-dev-tools).
 
@@ -118,7 +118,7 @@ FAIL routes back to a fix; a real blocker (amber) routes to `/escalate`.
 
 ## What Changes
 
-Your first pass lands closer to done, and the fix loop cleans up what's left on its own. Writing acceptance criteria also keeps you engaged with your own code — that matters more the more you lean on the agent, right when the codebase starts to feel like someone else wrote it.
+Your first pass lands closer to done, and the fix loop cleans up what's left on its own. Writing acceptance criteria also keeps you engaged with your own code. That matters more the more you lean on the agent, right when the codebase starts to feel like someone else wrote it.
 
 > [!TIP]
 > Resist the urge to jump in mid-`/do`. It won't nail everything first try; that's expected. You invested in understanding the problem, so let the loop run.
@@ -129,11 +129,11 @@ You've burned out on the weekly "game-changing AI coding tool" cycle and want so
 
 ## Multi-CLI Support
 
-The Claude Code plugins are the source of truth. The same components run in OpenCode, Codex CLI, and Pi through native per-CLI distributions under `dist/`, all verifying the same way — a general-purpose subagent or verifier execution per gate.
+The Claude Code plugins are the source of truth. The same components run in OpenCode, Codex CLI, and Pi through native per-CLI distributions under `dist/`, all verifying the same way: a general-purpose subagent or verifier execution per gate.
 
 | CLI | Install | Details |
 |-----|---------|---------|
-| Claude Code | `/plugin install manifest-dev@manifest-dev-marketplace` | Primary target |
+| Claude Code | `/plugin install manifest-dev@manifest-dev` | Primary target |
 | OpenCode | clone + one config line | [README](dist/opencode/README.md) |
 | Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` | [README](dist/codex/README.md) |
 | Pi | `pi install git:github.com/doodledood/manifest-dev@main` | [README](dist/pi/README.md) |
@@ -146,7 +146,7 @@ Each linked README covers that CLI's install, upgrade, and uninstall path. Archi
 
 | Plugin | Description |
 |--------|--------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow — `/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team` — and the verification skills, including `review-code`'s per-dimension quality gates. |
+| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team`) and the verification skills, including `review-code`'s per-dimension quality gates. |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow: `/review-pr`, `/babysit-pr`, `/walk-pr` for PR collaboration, plus `/prompt-engineering`, `/handoff`, and `/teach-me`. |
 
 Full plugin and skill catalogs live in [`claude-plugins/README.md`](claude-plugins/README.md) and each plugin's own README.

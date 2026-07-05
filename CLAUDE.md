@@ -16,7 +16,7 @@ ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
 
 # Test plugin locally
 /plugin marketplace add /path/to/manifest-dev
-/plugin install manifest-dev@manifest-dev-marketplace
+/plugin install manifest-dev@manifest-dev
 ```
 
 ## Foundational Documents

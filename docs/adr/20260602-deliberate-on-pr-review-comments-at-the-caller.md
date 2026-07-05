@@ -60,6 +60,5 @@ The rule lands in `/do`'s generic finding-handling, so both regular `/do` and `b
 
 ## Source
 
-- Session: `/figure-out --with-docs` session on 2026-06-02.
 - Related: `20260602-make-babysit-pr-manifest-aware-but-manifest-optional`
 - Related: `20260602-coordinate-review-pr-and-babysit-pr-through-pr-state`

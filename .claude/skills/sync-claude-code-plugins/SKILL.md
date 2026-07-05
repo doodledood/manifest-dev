@@ -52,6 +52,7 @@ Pre-flight: abort if `<source_repo>/claude-plugins/prompt-engineering/` is missi
 For each component (agents/skills):
 
 - **Copy** every source item over its target path. Skip if target is a symlink. **Skip retired items** (see denylist below) even when an older upstream checkout still ships them.
+- **Re-apply local metadata** after copying: every non-symlink synced skill's `SKILL.md` must carry `metadata:` / `internal: true` in its frontmatter — add it back when the upstream copy lacks it. Synced skills are repo-maintenance tooling in this repo; the flag keeps skill pickers and directory scrapers from listing them as product skills.
 - **Delete** items in `tracked − source` from target. Skip if target is a symlink, doesn't exist, or is the `sync-claude-code-plugins` skill itself.
 - **Refresh** `.claude/.claude-code-plugins-sync.json` with the current source listing **minus the denylist**.
 
@@ -68,6 +69,8 @@ After each sync, ensure `.agents/skills/<name>` is a symlink to `../../.claude/s
 - Create `.agents/skills/` if missing, but never `.agents/` itself (the user opts in by creating it).
 
 ## Gotchas
+
+- **Upstream copies drop the internal flag.** Upstream `claude-code-plugins` skills ship without `metadata: internal: true`; a plain copy silently reverts the flag on the non-symlink synced skills (observed 2026-07-05). The re-apply step above exists for this — do not skip it.
 
 - **Source must exist**: missing source path means abort, not "delete all tracked items."
 - **Nested skills directory**: source skills live at `skills/prompt-engineering/`, `skills/compress-prompt/`, etc. Copy each skill directory into `.claude/skills/<skill-name>/` — don't copy the outer `skills/` folder or you get `.claude/skills/skills/`.

@@ -41,5 +41,4 @@ Operationally, the desired "execution + independent verification collaborate ove
 - Cross-model AC re-execution may have low marginal value if in-session fresh-context AC subagents already catch most same-model misreads; the durable win then concentrates in the encoded `review-code` invariant rather than AC re-running.
 
 ## Source
-- Session: `/figure-out` on the experimental "GitHub as the execute/verify collaboration medium" idea (2026-06-19).
 - Governs behavior of the `review-pr`, `define`, `do`, and `babysit-pr` skills.

@@ -59,5 +59,4 @@ In that superseded runtime direction, repair-session resumption remained executo
 
 ## Source
 
-- Session: `manifest-dev:figure-out --with-docs`, 2026-06-05.
 - Related: `20260531-codex-plugin-native-distribution`

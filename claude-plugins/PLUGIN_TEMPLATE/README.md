@@ -41,7 +41,7 @@ your-plugin-name/
 5. Test locally:
    ```bash
    /plugin marketplace add /path/to/manifest-dev
-   /plugin install your-plugin-name@manifest-dev-marketplace
+   /plugin install your-plugin-name@manifest-dev
    ```
 
 ## Skills
