@@ -20,6 +20,8 @@ Before writing to scratch, or when unsure whether an update belongs there, check
 
 If an update would fail any of these, it belongs to execution, not scratch — stop and name the read instead.
 
+(Hypothesis probes the master frame routes into the scratch location are experiments, not the mirror — the directionality check governs the mirror artifact, not them. Fidelity and the unchanged terminal state still apply.)
+
 ## Format
 
 Domain-native, not one fixed template. A tech-design session keeps a rough draft doc with open questions; a coding-shaped session may keep a small prototype; a UI-shaped session may keep an HTML mock. Not limited to a single file — use as many as the domain naturally produces.
