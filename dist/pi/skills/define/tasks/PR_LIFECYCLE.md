@@ -1,6 +1,6 @@
 # PR_LIFECYCLE Task Guidance
 
-PR-lifecycle work: shipping a change through code review, CI, and approvals to a mergeable state. Composes onto `CODING.md` when the local `origin` remote points at `github.com` (auto-detected; no flag). Multi-repo: PR_LIFECYCLE applies per repo declared in the manifest's `Repos:` block.
+PR-lifecycle work: shipping a change through code review, CI, and approvals to a mergeable state. Composes when the output ships through a GitHub PR and the local `origin` remote points at `github.com` (auto-detected; no flag), including code changes and documentation changes. Multi-repo: PR_LIFECYCLE applies per repo declared in the manifest's `Repos:` block.
 
 The goal of /do under PR_LIFECYCLE is to drive the PR to a **mergeable** state — clean, ready for a human (or GitHub auto-merge) to press the merge button. /do never presses the button itself.
 

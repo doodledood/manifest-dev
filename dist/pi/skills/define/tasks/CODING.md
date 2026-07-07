@@ -4,7 +4,7 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-CLAUDE.md may specify project-specific preferences.
+AGENTS.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
@@ -22,7 +22,7 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 | Documentation | docs | no MEDIUM+ |
 | Design fitness | code-design | no MEDIUM+ |
 | Prose value | prose-value | no MEDIUM+ |
-| CLAUDE.md adherence | context-file-adherence | no MEDIUM+ |
+| AGENTS.md adherence | context-file-adherence | no MEDIUM+ |
 
 ### Conditional Gates (when applicable)
 
@@ -35,7 +35,7 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 
 ## Project Gates
 
-CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+AGENTS.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 
@@ -54,7 +54,7 @@ Principle: **manifest criteria are for what you want independently fix-targeted;
 *Domain best practices for this task type.*
 
 - **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
-- **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
+- **Read project gates from AGENTS.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
 
 ## Multi-Repo
 

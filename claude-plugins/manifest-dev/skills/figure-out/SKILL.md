@@ -16,9 +16,10 @@ Load the matching probe file(s) from `tasks/` to surface angles that are easy to
 | Bug fix | Fixing a known defect | `BUG.md` |
 | Refactor | Restructuring, cleanup | `REFACTOR.md` |
 | Diagnosis | A symptom to explain — incident, anomaly, regression, "why is this happening" — code or not, fix not yet in sight | `DIAGNOSIS.md` |
+| Tech design doc | Authoring a design document from finished understanding; audience-fit doc, design narrative, technical design writeup | `TECH_DESIGN.md` |
 | Research | An external-evidence question — technology evaluation, library choice, "what's the state of X" | `RESEARCH.md` |
 
-FEATURE/BUG/REFACTOR compose onto `CODING.md`; a code defect composes `DIAGNOSIS.md` (explain it) with `CODING.md` + `BUG.md` (fix it); DIAGNOSIS and RESEARCH stand alone when no code change is in play. Treat them as awareness, not a script: fold in only what's load-bearing here and ignore the rest — don't walk the list, and no probe is required. Nothing fits → probe generally, as you would anyway.
+FEATURE/BUG/REFACTOR compose onto `CODING.md`; a code defect composes `DIAGNOSIS.md` (explain it) with `CODING.md` + `BUG.md` (fix it); TECH_DESIGN stands alone for the document-authoring shape, while unresolved underlying system design still loads CODING/FEATURE as relevant; DIAGNOSIS and RESEARCH stand alone when no code change is in play. Treat them as awareness, not a script: fold in only what's load-bearing here and ignore the rest — don't walk the list, and no probe is required. Nothing fits → probe generally, as you would anyway.
 
 Per turn: lead with one question and your recommended answer. Cut empty preamble, context-restate, and packed sub-questions. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick the highest-level unresolved load-bearing question; within that level, choose the one whose answer would shift the read most and hold the rest.
 
