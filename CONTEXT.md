@@ -82,6 +82,10 @@ _Avoid_: Tend PR.
 **Review PR**:
 A reviewer-side workflow that inspects a pull request and advances review threads without becoming the author-side lifecycle owner.
 
+**Judgment Layer**:
+A non-binding, review-time premise check that surfaces whether a change earns its keep against the pain it solves — necessity, the pain itself, and surface proportionality — as author-facing questions rather than gates.
+_Avoid_: Premise gate, necessity gate.
+
 **PR Grounding**:
 The ordered evidence Babysit PR uses to decide whether a pull-request blocker is in scope to fix.
 
@@ -113,6 +117,7 @@ The full understanding-first loop (figure-out → define → do) that every Door
 - A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
 - **Review PR** in manifest mode independently re-verifies a **Manifest** against the pull request head.
+- The **Judgment Layer** runs inside **Review PR** (both modes) as non-binding questions, kept distinct from a **Manifest**'s binding **Acceptance Criteria** and from the defect fleet.
 - **Babysit PR** uses **PR Grounding** so newer comments do not override stronger sources of intent by recency alone.
 - **CI One-Shot** is a constrained mode of **Babysit PR**.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.
