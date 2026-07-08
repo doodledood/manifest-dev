@@ -14,7 +14,17 @@ The generic `review-code` fleet is **not** also run. `/define` default-injects a
 
 ## Posting & approval
 
-Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing criterion (its manifest id) and the verifier's concrete finding, anchored to the file:line the finding points at, else file- or PR-level; submit them through the SKILL.md **Posting** path (a single batched review, decision `comment`). When every criterion PASSes there are zero comments to post: take the SKILL.md **Zero comments to post** path — manifest-mode "all green" is the approval signal (user-confirmed in interactive sessions, no PR action under `--loop`/CI).
+Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing criterion (its manifest id) and the verifier's concrete finding, anchored to the file:line the finding points at, else file- or PR-level; submit them through the SKILL.md **Posting** path (a single batched review, decision `comment`). When every criterion PASSes there are zero contract comments to post: take the SKILL.md **Zero comments to post** path — manifest-mode "all green" is the approval signal (user-confirmed in interactive sessions, no PR action under `--loop`/CI).
+
+## Judgment pass (additive premise check)
+
+Alongside contract verification, run the judgment pass per `references/JUDGMENT_PASS.md` — the whole-PR question of whether the change earns its keep against the pain it solves. Manifest mode is where it matters most: a manifest can lock in a flawed premise, and the generic fleet is skipped here, so this is the only premise/surface reviewer running. Feed it the manifest's **Intent** as the stated pain, plus the PR head and description.
+
+It is **strictly additive** and never touches the contract:
+
+- The contract verdict — every Acceptance Criterion and Global Invariant — is computed exactly as it would be without the pass. A judgment finding never changes a criterion's PASS/FAIL, never blocks, and never gates approval.
+- Judgment findings are the distinct non-severity class the reference defines — author-answerable questions, synthesized to one per root, posted through the same batched `comment` review and voice. They are **not** criteria, so they carry the base self-marker (no `ac=` id) and are fingerprinted by finding substance like any other comment.
+- The all-green approval signal stays keyed to the contract: when every criterion PASSes, manifest mode is green **even if** the judgment pass posted questions — those are non-blocking and do not withhold the signal. They are still posted; the human decides.
 
 ## Fingerprint, don't re-post
 
