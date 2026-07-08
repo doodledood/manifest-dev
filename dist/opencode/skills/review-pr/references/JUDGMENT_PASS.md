@@ -10,6 +10,8 @@ It runs where the stated pain is visible — the holistic layer in no-manifest m
 
 The judgment pass operates on the **PR as a whole, or a major component of it** — the big question, never line-level ones. It must never fire on a small-item nitpick — an unused parameter, a single narrow helper, one incidental line; those belong to the defect dimensions or are dropped. The surface, omission, and precedent triggers fire only on a **material footprint**: a subsystem, a new public API area, a cluster of knobs, an established pattern — never a single incidental item.
 
+Whole-PR altitude is unconditional. The pass reads the **entire PR head every run** — not just the incrementally-reviewed range on a loop or re-review pass — so a premise concern that only becomes nameable after later commits is still caught. Judgment findings are therefore exempt from any reviewed-range bounding that scopes defect findings to the latest delta; repeat-posting across passes is prevented by the host's already-covered / prune-against-prior-comments check, not by narrowing what the pass looks at.
+
 ## The evidence bar
 
 The pass exists to *remove* noise (unjustified changes, orphaned surface). It becomes noise the instant it fires on taste. So every trigger fires **only on concrete, nameable evidence** — something you can point at. "I'd have done it differently" is not evidence and stays dropped, exactly as the defect dimensions drop intentional choices. When in doubt, stay silent: a missed premise question costs less than an arrogant one.
