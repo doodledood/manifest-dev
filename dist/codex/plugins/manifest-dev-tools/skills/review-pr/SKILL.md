@@ -51,7 +51,8 @@ Push back only on new signal, and stay on the specific point under contention. D
 - PR history: all comments and threads on the PR (including our own from any prior review pass), the author's recent commit messages on the branch, the PR description.
 - Bundle context for each linked PR: diff, description, top-level conversation. No inline review comments from linked PRs.
 - The manifest if present.
-- The reviewed range for this invocation.
+- The reviewed range for this invocation — the code the fleet's defect findings are bounded to.
+- The full PR-head diff (`base..head`, the whole PR), supplied for the judgment pass so its whole-PR altitude holds even on an incremental/loop pass where the reviewed range above is only the latest delta. The fleet's defect findings still bound to the reviewed range; only the judgment pass reads this whole-PR view.
 - Any truncation the caller did, carried forward.
 
 The subagent:
