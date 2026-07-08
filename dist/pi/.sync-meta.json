@@ -1,11 +1,11 @@
 {
-  "source_commit": "3f0fcd51bec956aea8fe013300ac94ab87266f18",
+  "source_commit": "8b51df61c6d71b6a6bb13883528463ba8252c5a9",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-07T08:53:13Z",
+  "synced_at": "2026-07-08T09:24:26Z",
   "notes": "Targeted Pi sync for skill-only package architecture. dist/pi ships the full compatible workflow skill set plus prompt-template aliases for /do, /auto, and /babysit-pr. Body adaptation applied: Claude session JSONL line omitted where applicable, plugin-qualified skill ids stripped to bare names, and universal goal-setting backstop guidance preserved in mechanism-neutral wording. Pi no longer ships manifest-dev TypeScript extensions, package-owned verifier scheduling, package-owned done/escalation gates, verifier-only flags, or a tools subpackage. Repo-root package.json is source-owned and loads dist/pi skills/prompts."
 }

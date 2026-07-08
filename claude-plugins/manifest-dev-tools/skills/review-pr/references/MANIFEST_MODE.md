@@ -14,7 +14,19 @@ The generic `review-code` fleet is **not** also run. `/define` default-injects a
 
 ## Posting & approval
 
-Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing criterion (its manifest id) and the verifier's concrete finding, anchored to the file:line the finding points at, else file- or PR-level; submit them through the SKILL.md **Posting** path (a single batched review, decision `comment`). When every criterion PASSes there are zero comments to post: take the SKILL.md **Zero comments to post** path — manifest-mode "all green" is the approval signal (user-confirmed in interactive sessions, no PR action under `--loop`/CI).
+Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing criterion (its manifest id) and the verifier's concrete finding, anchored to the file:line the finding points at, else file- or PR-level; submit them through the SKILL.md **Posting** path (a single batched review, decision `comment`). When every criterion PASSes there are zero contract comments to post: take the SKILL.md **Zero comments to post** path — manifest-mode "all green" is the approval signal (user-confirmed in interactive sessions, no PR action under `--loop`/CI).
+
+## Judgment pass (additive premise check)
+
+Run the judgment pass per `references/JUDGMENT_PASS.md` as its **own parallel subagent**, spawned alongside the criterion verifiers in the same manifest-mode pass: the whole-PR question of whether the change earns its keep against the pain it solves. Manifest mode is where it matters most: a manifest can lock in a flawed premise, and the generic fleet is skipped here, so this is the only premise/surface reviewer running. Feed it the manifest's **Intent** as the stated pain, plus the PR head and description.
+
+Like no-manifest mode, fresh judgment generation is **gated to once per PR** — run it only when no prior **judgment-marked** finding (`<!-- manifest-dev:review-pr judgment -->`) exists on the PR (durable GitHub state, not session memory), so once a question has posted, later passes skip regeneration and never re-nag; advancing an existing judgment thread stays with the per-comment verifier and is not gated. As in no-manifest mode, a silent pass posts no judgment marker, so on an all-green PR the pass may re-run on later rounds — bounded and harmless (it stays silent). **Premise-subsumption does not apply here** — there are no fleet findings to subordinate, since the fleet is skipped in manifest mode.
+
+It is **strictly additive** and never touches the contract:
+
+- The contract verdict — every Acceptance Criterion and Global Invariant — is computed exactly as it would be without the pass. A judgment finding never changes a criterion's PASS/FAIL, never blocks, and never gates approval.
+- Judgment findings are the distinct non-severity class the reference defines — author-answerable questions, synthesized to one per root **by the judgment subagent itself** (manifest mode skips the holistic pass, so the pass does its own collapsing), posted through the same batched `comment` review and voice. They are **not** criteria, so instead of the `ac=` extension they carry the `judgment` discriminator token (`<!-- manifest-dev:review-pr judgment -->`) and are fingerprinted by finding substance like any other comment.
+- The all-green approval signal stays keyed to the contract: when every criterion PASSes, manifest mode is green **even if** the judgment pass posted questions — those are non-blocking and do not withhold the signal. They are still posted; the human decides.
 
 ## Fingerprint, don't re-post
 
@@ -22,7 +34,7 @@ PASS/FAIL comments recur every push, so track each by a content fingerprint (cri
 
 ## Cycle summary
 
-The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, the model used, and the verifier's short finding.
+The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, the model used, and the verifier's short finding. Then add one line for the judgment pass: premise questions posted — count and their roots — or `none`, so an all-green contract summary still records that questions were raised.
 
 ## Gotchas
 
