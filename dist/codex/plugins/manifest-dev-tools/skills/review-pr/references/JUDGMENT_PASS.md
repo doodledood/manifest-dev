@@ -4,13 +4,13 @@ The reviewer-fleet dimensions find defects inside a change whose intent is taken
 
 **The single question:** *Does this change — its existence, its approach, and its footprint — earn its keep against the pain it solves, and is anything the pain requires missing?*
 
-It runs where the stated pain is visible — the holistic layer in no-manifest mode, an additive step in manifest mode — both of which see the PR description, conversation, and (in manifest mode) the manifest's Intent that the narrow-lens fleet never receives. It is **non-blocking**: every finding is a question the author answers, never a gate.
+It runs as a **wide-context pass** — fed the PR description, conversation, and (in manifest mode) the manifest's Intent that the narrow-lens fleet never receives. It is **non-blocking**: every finding is a question the author answers, never a gate. (The host wires *how* it runs — a parallel subagent whose findings the coherence pass consolidates, gated to once per PR; see the review-pr SKILL and `MANIFEST_MODE.md`.)
 
 ## Altitude — whole-PR only
 
 The judgment pass operates on the **PR as a whole, or a major component of it** — the big question, never line-level ones. It must never fire on a small-item nitpick — an unused parameter, a single narrow helper, one incidental line; those belong to the defect dimensions or are dropped. The surface, omission, and precedent triggers fire only on a **material footprint**: a subsystem, a new public API area, a cluster of knobs, an established pattern — never a single incidental item.
 
-Whole-PR altitude is unconditional. The pass reads the **entire PR head every run** — not just the incrementally-reviewed range on a loop or re-review pass — so a premise concern that only becomes nameable after later commits is still caught. Judgment findings are therefore exempt from any reviewed-range bounding that scopes defect findings to the latest delta; repeat-posting across passes is prevented by the host's already-covered / prune-against-prior-comments check, not by narrowing what the pass looks at.
+Whole-PR altitude is unconditional: whenever the pass runs, it reads the **entire PR head**, not just the incrementally-reviewed range on a loop or re-review pass, so its question always concerns the whole change. Judgment findings are therefore exempt from any reviewed-range bounding that scopes defect findings to the latest delta. (Because generation is gated to once per PR, the pass runs on the first pass over the PR rather than every round — the host owns that gate.)
 
 ## The evidence bar
 

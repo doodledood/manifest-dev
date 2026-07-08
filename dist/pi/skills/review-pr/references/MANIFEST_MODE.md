@@ -18,7 +18,9 @@ Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing c
 
 ## Judgment pass (additive premise check)
 
-Alongside contract verification — in the same manifest-mode pass that spawns the criterion verifiers — run the judgment pass per `references/JUDGMENT_PASS.md`: the whole-PR question of whether the change earns its keep against the pain it solves. Manifest mode is where it matters most: a manifest can lock in a flawed premise, and the generic fleet is skipped here, so this is the only premise/surface reviewer running. Feed it the manifest's **Intent** as the stated pain, plus the PR head and description.
+Run the judgment pass per `references/JUDGMENT_PASS.md` as its **own parallel subagent**, spawned alongside the criterion verifiers in the same manifest-mode pass: the whole-PR question of whether the change earns its keep against the pain it solves. Manifest mode is where it matters most: a manifest can lock in a flawed premise, and the generic fleet is skipped here, so this is the only premise/surface reviewer running. Feed it the manifest's **Intent** as the stated pain, plus the PR head and description.
+
+Like no-manifest mode, fresh judgment generation is **gated to once per PR** — run it only when no prior judgment finding exists on the PR (self-marker, durable GitHub state, not session memory), so it fires on the first pass and is skipped on later loop rounds and re-runs; advancing an existing judgment thread stays with the per-comment verifier and is not gated. **Premise-subsumption does not apply here** — there are no fleet findings to subordinate, since the fleet is skipped in manifest mode.
 
 It is **strictly additive** and never touches the contract:
 
