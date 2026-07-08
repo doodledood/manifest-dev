@@ -4,7 +4,7 @@ The reviewer-fleet dimensions find defects inside a change whose intent is taken
 
 **The single question:** *Does this change — its existence, its approach, and its footprint — earn its keep against the pain it solves, and is anything the pain requires missing?*
 
-It runs where the stated pain is visible — the holistic layer in no-manifest mode, an additive step in manifest mode — which see the PR description, conversation, and (in manifest mode) the manifest's Intent that the narrow-lens fleet never receives. It is **non-blocking**: every finding is a question the author answers, never a gate.
+It runs where the stated pain is visible — the holistic layer in no-manifest mode, an additive step in manifest mode — both of which see the PR description, conversation, and (in manifest mode) the manifest's Intent that the narrow-lens fleet never receives. It is **non-blocking**: every finding is a question the author answers, never a gate.
 
 ## Altitude — whole-PR only
 

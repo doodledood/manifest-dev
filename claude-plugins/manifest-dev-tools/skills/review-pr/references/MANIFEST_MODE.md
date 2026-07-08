@@ -32,7 +32,7 @@ PASS/FAIL comments recur every push, so track each by a content fingerprint (cri
 
 ## Cycle summary
 
-The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, the model used, and the verifier's short finding.
+The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, the model used, and the verifier's short finding. Then add one line for the judgment pass: premise questions posted — count and their roots — or `none`, so an all-green contract summary still records that questions were raised.
 
 ## Gotchas
 
