@@ -18,7 +18,7 @@ Surface each FAIL or BLOCKED as one voice-compliant comment naming the failing c
 
 ## Judgment pass (additive premise check)
 
-Alongside contract verification, run the judgment pass per `references/JUDGMENT_PASS.md` — the whole-PR question of whether the change earns its keep against the pain it solves. Manifest mode is where it matters most: a manifest can lock in a flawed premise, and the generic fleet is skipped here, so this is the only premise/surface reviewer running. Feed it the manifest's **Intent** as the stated pain, plus the PR head and description.
+Alongside contract verification — in the same manifest-mode pass that spawns the criterion verifiers — run the judgment pass per `references/JUDGMENT_PASS.md`: the whole-PR question of whether the change earns its keep against the pain it solves. Manifest mode is where it matters most: a manifest can lock in a flawed premise, and the generic fleet is skipped here, so this is the only premise/surface reviewer running. Feed it the manifest's **Intent** as the stated pain, plus the PR head and description.
 
 It is **strictly additive** and never touches the contract:
 

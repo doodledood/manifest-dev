@@ -85,7 +85,7 @@ Target voice: *"Empty input skips the null check — `if (input?.value)` at `par
 - Per-comment verifier subagents: one line per thread naming the anchor, disposition, and the verifier's short reason.
 - Reviewer fleet subagents (no-manifest mode): one line per spawned reviewer naming its actionable findings count and the substance of what it found, or `none`. In manifest mode, report per-criterion verifier results instead, per `references/MANIFEST_MODE.md`.
 - Holistic coherence pass (no-manifest mode): surviving comments, dedupes/merges, pruned findings with dominant reasons, range-bounding decisions, summary header if any, and truncation notes.
-- Judgment pass (both modes): premise questions posted — count and their roots — or `none`.
+- Judgment pass (no-manifest mode): premise questions posted — count and their roots — or `none`. In manifest mode, report it per `references/MANIFEST_MODE.md`.
 
 The cycle summary is for the operator transcript or run log only. Do not paste it into PR review bodies, thread replies, or approval text; the only posted summary-like text is the voice-compliant summary header returned by the holistic pass.
 
