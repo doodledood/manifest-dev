@@ -63,7 +63,7 @@ and **no severity**. This is load-bearing, not cosmetic:
 
 ## Synthesis — one question per root
 
-When several triggers fire on the **same** root — necessity + solution-shape + surface all pointing at one over-built change — collapse them into **one** "does this earn its keep, here's why I ask" question. Never post one comment per trigger. This reuses the holistic pass's existing dedupe/merge; it adds no new capping machinery. Enumeration is exactly how this pass would become the noise it exists to remove.
+When several triggers fire on the **same** root — necessity + solution-shape + surface all pointing at one over-built change — collapse them into **one** "does this earn its keep, here's why I ask" question. Never post one comment per trigger. The pass does this collapsing **itself, before returning**, so one-question-per-root holds in every mode (it does not depend on the no-manifest holistic pass — which merely dedupes the already-synthesized questions against the fleet's findings on top). Enumeration is exactly how this pass would become the noise it exists to remove.
 
 ## Non-blocking — always a question, never a gate
 
