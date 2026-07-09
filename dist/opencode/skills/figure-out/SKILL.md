@@ -61,7 +61,7 @@ FEATURE/BUG/REFACTOR compose onto `CODING.md`; a code defect composes `DIAGNOSIS
 
 Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`) are topic text unless clearly supplied as this skill's option.
 
-Unless parsed options include `--no-docs`, load `references/WITH_DOCS.md` for bootstrap, glossary, and ADR conventions.
+Unless parsed options include `--no-docs` or `--team`, load `references/WITH_DOCS.md` only once the investigation is relevant to the active project or one of its mapped contexts; the working directory alone does not establish relevance. When relevance is absent or unclear, do not load project docs; if it emerges later, load the reference then. Default out-of-repo investigation logging is independent. Team mode owns its separate read-only project-context behavior in `references/team.md`.
 
 Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only investigation log.
 
