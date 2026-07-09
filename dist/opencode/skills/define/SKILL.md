@@ -99,7 +99,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
   ```
 ````
 
-Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — `/do` routes via `/escalate`). Automate verification — criteria that genuinely require human action *to check* belong in Process Guidance, not as ACs; criteria that merely wait on a user-controlled prerequisite (deploys, sign-offs the user must perform) stay ACs and verify as BLOCKED until cleared — time-bound external waits like reviewer approval or in-flight CI resolve through the verifier's own wait findings instead. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
+Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — `/do` routes via `/escalate`). Automate verification — criteria that genuinely require human action *to check* belong in Process Guidance, not as ACs; criteria that merely wait on human or external action to be satisfied (deploys, approvals, in-flight CI) stay ACs — the verifier surfaces the wait per its own contract, as BLOCKED or as a FAIL carrying a wait finding, until it clears. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
 
 **Amendment.** A manifest path in `$ARGUMENTS` means amend. Read it fully, apply targeted changes only — preserve unaffected items verbatim. IDs are stable (modify in place; remove without renumbering). No `## Amendments` log — git is history. Autonomous when caller is `/auto` or `/do` — a mid-/do user message is fire-and-forget steering, so don't ask back or wait; interactive otherwise. In autonomous amendment, every judgment call the steering text doesn't settle is auto-decided per the `(auto)`/ASM discipline — the user's audit trail.
 
