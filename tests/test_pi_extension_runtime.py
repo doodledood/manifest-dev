@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -10,7 +11,11 @@ def test_pi_package_is_skill_and_prompt_only() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "1.0.3"
+    assert re.fullmatch(r"\d+\.\d+\.\d+", package["version"])
+    pi_reference = (
+        ROOT / ".claude" / "skills" / "sync-tools" / "references" / "pi-cli.md"
+    ).read_text(encoding="utf-8")
+    assert f'"version": "{package["version"]}"' in pi_reference
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],
         "prompts": ["./dist/pi/prompts"],

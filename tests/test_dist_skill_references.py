@@ -24,28 +24,20 @@ ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
 SYNC_TOOLS = ROOT / ".claude" / "skills" / "sync-tools"
 
-CORE_SKILLS = (
-    "auto",
-    "review-code",
-    "define",
-    "do",
-    "done",
-    "escalate",
-    "figure-out",
-    "figure-out-team",
-    "check-pr",
-    "poll-slack",
-)
-TOOLS_SKILLS = (
-    "adr",
-    "babysit-pr",
-    "handoff",
-    "prompt-engineering",
-    "review-prompt",
-    "review-pr",
-    "teach-me",
-    "walk-pr",
-)
+
+def source_skills(plugin: str) -> tuple[str, ...]:
+    skills_dir = ROOT / "claude-plugins" / plugin / "skills"
+    return tuple(
+        sorted(
+            path.name
+            for path in skills_dir.iterdir()
+            if path.is_dir() and (path / "SKILL.md").is_file()
+        )
+    )
+
+
+CORE_SKILLS = source_skills("manifest-dev")
+TOOLS_SKILLS = source_skills("manifest-dev-tools")
 PI_SKILLS = CORE_SKILLS + TOOLS_SKILLS
 PI_PROMPTS = ("do", "auto", "babysit-pr")
 
@@ -445,7 +437,9 @@ def test_pi_package_metadata_points_to_generated_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "1.0.3"
+    assert re.fullmatch(r"\d+\.\d+\.\d+", package["version"])
+    pi_reference = (SYNC_TOOLS / "references" / "pi-cli.md").read_text(encoding="utf-8")
+    assert f'"version": "{package["version"]}"' in pi_reference
     assert "pi-package" in package["keywords"]
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],

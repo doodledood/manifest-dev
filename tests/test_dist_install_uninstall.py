@@ -6,14 +6,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
-TOOLS_SKILLS = (
-    "adr",
-    "babysit-pr",
-    "handoff",
-    "prompt-engineering",
-    "review-pr",
-    "teach-me",
-    "walk-pr",
+TOOLS_SKILLS = tuple(
+    sorted(
+        path.name
+        for path in (ROOT / "claude-plugins/manifest-dev-tools/skills").iterdir()
+        if path.is_dir() and (path / "SKILL.md").is_file()
+    )
 )
 
 # Codex and OpenCode are distributed as native plugins (no installer anywhere).
@@ -199,9 +197,15 @@ console.log(JSON.stringify(cfg))
     )
     assert "done" not in commands
     assert "escalate" not in commands
-    # 18 OpenCode skills minus the two internal user-invocable:false helpers,
-    # plus the user-provided define override that the plugin preserves.
-    assert len(commands) == 16
+    expected_commands = {
+        path.name
+        for path in (OPENCODE / "skills").iterdir()
+        if path.is_dir()
+        and "user-invocable: false"
+        not in (path / "SKILL.md").read_text(encoding="utf-8").split("---", 2)[1]
+    }
+    # The user-provided define command replaces, rather than adds to, that set.
+    assert set(commands) == expected_commands
 
 
 def test_opencode_plugin_config_hook_never_throws_without_assets(

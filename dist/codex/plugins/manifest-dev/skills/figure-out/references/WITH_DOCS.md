@@ -1,18 +1,18 @@
 # figure-out: docs mode
 
-Adds three behaviors to figure-out: **bootstrap** (initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
+The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds three behaviors from that point: **bootstrap** (initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
 
 ## Override: these writes ARE the action
 
 The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal.
 
-In docs mode that frame has two explicit exceptions. **Glossary captures and ADR offers are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them.
+When project docs are active, that frame has two explicit exceptions. **Glossary captures and ADR offers are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them.
 
 (The default figure-out posture still applies to everything else — design proposals, code edits, plan synthesis. Only glossary writes and ADR offers carve out.)
 
-## Bootstrap (at session start)
+## Bootstrap (when project relevance exists)
 
-Before pressing the topic, resolve the active context file and load it if it exists:
+Once project relevance exists, resolve the active context file and load it if it exists:
 
 1. **`CONTEXT-MAP.md` at root** → the repo has multiple contexts. Follow the map to the relevant context's `CONTEXT.md`. Ask which context if unclear.
 2. **No `CONTEXT-MAP.md`** → the active context is the repo-root `CONTEXT.md`.
