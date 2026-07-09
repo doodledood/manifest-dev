@@ -146,4 +146,4 @@ The full understanding-first loop (figure-out → define → do) that every Door
 
 ## Flagged ambiguities
 
-- "Process Guidance" read two ways — define's "must hold" vs the manifest schema header's "not gates — guidance" (advisory) — resolved: **binding but unverified**; the schema wording and /do are the artifacts to align.
+_None yet. Grow this section as figure-out docs-mode sessions surface clashes or canonicalizations._
