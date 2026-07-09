@@ -75,7 +75,7 @@ Apply these substitutions:
 
 Generate package-local prompt templates under `dist/pi/prompts/`:
 
-- `do.md` → `/do <manifest-path>` expands to `Use the do skill with: $ARGUMENTS`
+- `do.md` → `/do <manifest-path> [--no-log]` expands to `Use the do skill with: $ARGUMENTS`
 - `auto.md` → `/auto <task>` expands to `Use the auto skill with: $ARGUMENTS`
 - `babysit-pr.md` → `/babysit-pr ...` expands to `Use the babysit-pr skill with: $ARGUMENTS`
 
