@@ -56,6 +56,18 @@ Prompt wording that names portable behavior or capability rather than a harness-
 **Progressive Disclosure**:
 A prompt-architecture pattern where always-needed behavior stays in the entry prompt and mode-specific mechanics live in companion references loaded only when their trigger applies — the trigger living in the loading layer, never inside the deferred reference, which can only be evaluated after the load it was meant to gate.
 
+**Spine**:
+The always-on core discipline of a skill's prompt — hosted inline in SKILL.md — as opposed to mode mechanics and edge guards.
+_Avoid_: Core, essence.
+
+**Re-host**:
+Restructuring a prompt by relocating content verbatim — reordering, sectioning — without rewriting or trimming it.
+_Avoid_: Rewrite, refactor, cleanup.
+
+**Altitude**:
+The weight class of a prompt line — Spine, mode-specific mechanic, or edge-case guard — determining how foregrounded it should be.
+_Avoid_: Priority, importance.
+
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a Manifest, verifies every Acceptance Criterion and Global Invariant, routes failures or blockers, and finishes only after all gates pass.
 
@@ -121,6 +133,7 @@ The full understanding-first loop (figure-out → define → do) that every Door
 - **Babysit PR** uses **PR Grounding** so newer comments do not override stronger sources of intent by recency alone.
 - **CI One-Shot** is a constrained mode of **Babysit PR**.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.
+- A **Re-host** preserves **Spine** content verbatim while making its **Altitude** typographically legible.
 
 ## Flagged ambiguities
 
