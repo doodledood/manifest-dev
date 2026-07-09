@@ -81,7 +81,7 @@ Then work through the three beats:
 /auto <what you want to build>     # Or run all three, chained, no approval gates
 ```
 
-`/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest and can't call it done until every criterion passes independent verification. `/auto` chains all three with no waiting.
+`/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest and can't call it done until every criterion passes independent verification, keeping a default-on execution log of deviations and dead ends as it goes (`--no-log` skips it). `/auto` chains all three with no waiting.
 
 For unattended runs of `/do` or `/auto` (the recommended way to run both), set your host's goal-setting or continuation capability to the completion contract those skills print; see the [manifest-dev plugin README](claude-plugins/manifest-dev/README.md#quick-start) for the full contract text and why it's shaped that way.
 

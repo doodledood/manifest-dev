@@ -77,7 +77,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
   ```
 
 ## 4. Process Guidance
-*Constraints on HOW to work. Not gates — guidance for the implementer.*
+*Binding constraints on HOW to work — must hold throughout execution even though no gate verifies them. Only the Initial Approach is soft.*
 
 - [PG-1] Description: ...
 
@@ -99,9 +99,9 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
   ```
 ````
 
-Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — `/do` routes via `/escalate`). Automate verification — criteria that genuinely require human action belong in Process Guidance, not as ACs. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
+Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — `/do` routes via `/escalate`). Automate verification — criteria that genuinely require human action *to check* belong in Process Guidance, not as ACs; criteria that merely wait on human or external action to be satisfied (approvals, deploys) stay ACs and verify as BLOCKED until cleared. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
 
-**Amendment.** A manifest path in `$ARGUMENTS` means amend. Read it fully, apply targeted changes only — preserve unaffected items verbatim. IDs are stable (modify in place; remove without renumbering). No `## Amendments` log — git is history. Autonomous when caller is `/auto` or `/do`; interactive otherwise.
+**Amendment.** A manifest path in `$ARGUMENTS` means amend. Read it fully, apply targeted changes only — preserve unaffected items verbatim. IDs are stable (modify in place; remove without renumbering). No `## Amendments` log — git is history. Autonomous when caller is `/auto` or `/do` — a mid-/do user message is fire-and-forget steering, so don't ask back or wait; interactive otherwise. In autonomous amendment, every judgment call the steering text doesn't settle lands `(auto)`-marked with a matching ASM entry — the user's audit trail.
 
 **Flags.** `--babysit <pr-url>` — load `references/BABYSIT_MODE.md`; synthesizes a lifecycle-only manifest from a PR. `--canvas` — load `references/CANVAS_MODE.md`; generates a Shared Understanding Canvas alongside the manifest. `--autonomous` skips summary approval and lets figure-out self-answer. When the task spans multiple repos (manifest declares `Repos:` in Intent), load `references/MULTI_REPO.md`.
 
