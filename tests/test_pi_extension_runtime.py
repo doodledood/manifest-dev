@@ -10,7 +10,7 @@ def test_pi_package_is_skill_and_prompt_only() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "1.0.3"
+    assert package["version"] == "1.6.1"
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],
         "prompts": ["./dist/pi/prompts"],

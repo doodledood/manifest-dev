@@ -37,7 +37,6 @@ CORE_SKILLS = (
     "poll-slack",
 )
 TOOLS_SKILLS = (
-    "adr",
     "babysit-pr",
     "handoff",
     "prompt-engineering",
@@ -445,7 +444,7 @@ def test_pi_package_metadata_points_to_generated_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
-    assert package["version"] == "1.0.3"
+    assert package["version"] == "1.6.1"
     assert "pi-package" in package["keywords"]
     assert package["pi"] == {
         "skills": ["./dist/pi/skills"],

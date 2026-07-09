@@ -7,10 +7,10 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 DIST = ROOT / "dist"
 TOOLS_SKILLS = (
-    "adr",
     "babysit-pr",
     "handoff",
     "prompt-engineering",
+    "review-prompt",
     "review-pr",
     "teach-me",
     "walk-pr",
@@ -199,9 +199,9 @@ console.log(JSON.stringify(cfg))
     )
     assert "done" not in commands
     assert "escalate" not in commands
-    # 18 OpenCode skills minus the two internal user-invocable:false helpers,
-    # plus the user-provided define override that the plugin preserves.
-    assert len(commands) == 16
+    # 17 OpenCode skills minus the two internal user-invocable:false helpers;
+    # the user-provided define override replaces, rather than adds to, that set.
+    assert len(commands) == 15
 
 
 def test_opencode_plugin_config_hook_never_throws_without_assets(
