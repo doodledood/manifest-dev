@@ -79,7 +79,7 @@ Pi exposes installed skills as `/skill:<name>` commands when skill commands are 
 
 The package also ships prompt-template aliases for the common entrypoints:
 
-- `/do <manifest-path>` expands to the `do` skill.
+- `/do <manifest-path> [--no-log]` expands to the `do` skill.
 - `/auto <task>` expands to the `auto` skill.
 - `/babysit-pr <github-pr-url> [--ci] [--manifest <path>] [--no-log]` expands to the `babysit-pr` skill.
 

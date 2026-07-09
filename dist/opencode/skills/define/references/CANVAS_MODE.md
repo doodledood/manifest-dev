@@ -30,7 +30,7 @@ Generated and updated only during /define's interview phase. Freezes at user app
 
 ## Update cadence
 
-Regenerate after each **meaningful event** — anything that changes the substance of the manifest or the user's understanding: interview-cluster checkpoints, coverage-goal resolutions, AC / INV / PG / ASM / R / T additions or modifications, Initial-Approach-section updates (Architecture / Execution Order / Risk Areas / Trade-offs), scope-guard or trade-off lock-ins.
+Regenerate after each **meaningful event** — anything that changes the substance of the manifest or the user's understanding: interview-cluster checkpoints, coverage-goal resolutions, AC / INV / PG / ASM / R / T additions or modifications, Initial-Approach-section updates (Architecture / Execution Order / Risk Areas / Trade-offs), scope-guard or trade-off resolutions.
 
 Cluster of small changes → regenerate once at the end. Do NOT regenerate per agent turn or per tool call. After auto-reload, call `mermaid.run()` or equivalent to re-initialize diagrams.
 
