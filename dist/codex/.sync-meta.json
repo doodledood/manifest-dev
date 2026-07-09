@@ -1,9 +1,9 @@
 {
-  "source_commit": "017bd6fc37aeebde24eb2387931ef2cf5269c3f0",
+  "source_commit": "525a362a53ed4bc9ad92d76177d4b555704d812b",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-09T20:49:40Z"
+  "synced_at": "2026-07-09T20:57:35Z"
 }
