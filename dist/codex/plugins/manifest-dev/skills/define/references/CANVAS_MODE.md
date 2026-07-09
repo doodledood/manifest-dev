@@ -14,7 +14,7 @@ Evaluate **immediately** — before Domain Guidance and the interview begin. If 
 2. **Invoked autonomously** (e.g., `--autonomous`, `/auto`). No human reviewer in the loop → canvas is wasted tokens.
 3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`. Skip.
 
-If none match: generate the initial canvas at `<scratch>/canvas-{ts}.html` (same `{ts}` as the manifest, in the same scratch directory you wrote the manifest to), auto-open it, proceed with /define and regenerate per cadence. At the Summary for Approval step, append one line to the chat summary: `Canvas: file://<canvas-path>` — only if the file was successfully written.
+If none match: generate the initial canvas at `<tmp>/canvas-{ts}.html` (same `{ts}` as the manifest for correlation; `<tmp>` is a writable temp path — `/tmp`, else the host temp directory — because the canvas is a disposable interview aid, deliberately not persisted in the durable manifests home), auto-open it, proceed with /define and regenerate per cadence. At the Summary for Approval step, append one line to the chat summary: `Canvas: file://<canvas-path>` — only if the file was successfully written.
 
 ## Lifecycle
 
@@ -22,7 +22,7 @@ Generated and updated only during /define's interview phase. Freezes at user app
 
 ## Format
 
-- **File:** single self-contained `.html` at `<scratch>/canvas-{ts}.html` (same scratch dir as the manifest). Linkable as a pair with the manifest.
+- **File:** single self-contained `.html` at `<tmp>/canvas-{ts}.html` — a temp path, not the durable manifests home; the canvas is disposable and shares only `{ts}` with the manifest for correlation.
 - **Styling:** Tailwind via CDN (`<script src="https://cdn.tailwindcss.com"></script>`). Degrades to semantic HTML if CDN unreachable.
 - **Diagrams:** mermaid via CDN (`<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs"; mermaid.initialize({ startOnLoad: true });</script>`). Use `<pre class="mermaid">...</pre>` blocks.
 - **Auto-reload:** embed JS that refreshes when the source file changes. Mechanism is agent's choice (JS polling, fetch + DOM diff, `<meta http-equiv="refresh">`). Should preserve scroll position and expand/collapse state when feasible. Mechanism chosen once per session.
@@ -30,7 +30,7 @@ Generated and updated only during /define's interview phase. Freezes at user app
 
 ## Update cadence
 
-Regenerate after each **meaningful event** — anything that changes the substance of the manifest or the user's understanding: interview-cluster checkpoints, coverage-goal resolutions, AC / INV / PG / ASM / R / T additions or modifications, Initial-Approach-section updates (Architecture / Execution Order / Risk Areas / Trade-offs), scope-guard or trade-off lock-ins.
+Regenerate after each **meaningful event** — anything that changes the substance of the manifest or the user's understanding: interview-cluster checkpoints, coverage-goal resolutions, AC / INV / PG / ASM / R / T additions or modifications, Initial-Approach-section updates (Architecture / Execution Order / Risk Areas / Trade-offs), scope-guard or trade-off resolutions.
 
 Cluster of small changes → regenerate once at the end. Do NOT regenerate per agent turn or per tool call. After auto-reload, call `mermaid.run()` or equivalent to re-initialize diagrams.
 

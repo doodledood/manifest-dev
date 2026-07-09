@@ -20,8 +20,8 @@ A property that must hold across all Deliverables in a Manifest.
 _Avoid_: Constraint, rule.
 
 **Process Guidance**:
-A constraint on HOW to work during execution that isn't itself a verifiable gate.
-_Avoid_: Guideline, best practice.
+A binding constraint on HOW to work during execution that must hold throughout even though no verifier checks it.
+_Avoid_: Guideline, best practice, suggestion.
 
 **Quality Gate**:
 A verifiable task-file item that `/define` encodes as an acceptance-style gate.
@@ -104,6 +104,14 @@ The ordered evidence Babysit PR uses to decide whether a pull-request blocker is
 **CI One-Shot**:
 A non-interactive Babysit PR run that performs immediately actionable lifecycle steps, then exits pending when only waiting remains.
 
+**Steering Message**:
+A mid-/do user message treated as fire-and-forget direction — encoded into the manifest by autonomous amendment without waiting for the user to stay engaged.
+_Avoid_: Interrupt, mid-run question.
+
+**Execution Log**:
+An append-only, out-of-repo journal /do keeps by default (`--no-log` opts out) recording deviations from the Initial Approach, dead-end memory, and operational events — execution history never lives in the Manifest.
+_Avoid_: Execution notes, amendments log, changelog.
+
 **Door**:
 A standalone skill fronted on one discovery surface as the zero-enrollment entry into manifest-dev.
 _Avoid_: Wedge, funnel.
@@ -130,6 +138,7 @@ The full understanding-first loop (figure-out → define → do) that every Door
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
 - **Review PR** in manifest mode independently re-verifies a **Manifest** against the pull request head.
 - The **Judgment Layer** runs inside **Review PR** (both modes) as non-binding questions, kept distinct from a **Manifest**'s binding **Acceptance Criteria** and from the defect fleet.
+- A **Steering Message** is encoded by autonomous amendment, with judgment calls audited as Known Assumptions and pivots recorded in the **Execution Log**.
 - **Babysit PR** uses **PR Grounding** so newer comments do not override stronger sources of intent by recency alone.
 - **CI One-Shot** is a constrained mode of **Babysit PR**.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.

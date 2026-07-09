@@ -1,6 +1,6 @@
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "private": true,
   "description": "Pi package surface for manifest-dev shared skills and prompt-template aliases (/do, /auto, /babysit-pr).",
   "type": "module",
