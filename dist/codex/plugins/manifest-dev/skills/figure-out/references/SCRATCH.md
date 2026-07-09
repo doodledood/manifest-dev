@@ -30,7 +30,7 @@ Do not force content through `define/references/CANVAS_MODE.md`'s HTML/Tailwind/
 
 ## Location
 
-Default to `~/.manifest-dev/scratch/{session-ts}/` (create the dir; `~` = `$HOME` / `%USERPROFILE%`; `{session-ts}` matches the session's log/manifest timestamp where one exists) — out-of-repo, matching the precedent set by the investigation log (`~/.manifest-dev/logs/`) and by `/define`'s manifest and canvas artifacts (`~/.manifest-dev/manifests/`). This keeps scratch from ever being mistaken for a real deliverable, never lands in git by accident, and never pollutes the repo before `/define` locks anything in. Fall back to a writable temp path only when the home directory isn't writable.
+Default to `~/.manifest-dev/scratch/{session-ts}/` (create the dir; `~` = `$HOME` / `%USERPROFILE%`; `{session-ts}` matches the session's log/manifest timestamp where one exists) — out-of-repo, matching the precedent set by the investigation log (`~/.manifest-dev/logs/`) and by `/define`'s manifest artifacts (`~/.manifest-dev/manifests/`). This keeps scratch from ever being mistaken for a real deliverable, never lands in git by accident, and never pollutes the repo before `/define` locks anything in. Fall back to a writable temp path only when the home directory isn't writable.
 
 **Exception:** when the artifact genuinely needs the project's own build/run tooling to function — a prototype that must import real project modules or dependencies to validate an approach — place it in-repo instead, under an obviously-scratch, gitignored path (not intermixed with real source), so it stays physically unmistakable for deliverable code even while living in the tree. Prefer the out-of-repo default whenever the artifact doesn't require this.
 
