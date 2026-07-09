@@ -10,7 +10,7 @@ Resolve the active log path before execution starts and surface it immediately.
 
 Create the log at `~/.manifest-dev/logs/do-log-{timestamp}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from multi-day runs survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS`.
 
-**Caller-supplied journal.** When a caller supplies a journal/log path (for example, the default `/babysit-pr` journal), that path *is* the log — no second file. Under `--no-log`, run without one — the log is an aid, not a precondition.
+**Caller-supplied journal.** When a caller supplies a journal/log path (for example, the default `/babysit-pr` journal), that path *is* the log — no second file.
 
 ## Append Discipline
 

@@ -23,9 +23,9 @@ Caller overlays may narrow retry cadence without changing the manifest. In CI on
 
 ## Execution log
 
-Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only execution log — deviations from the Initial Approach, dead-end memory, and operational notes live there, never in the manifest; a caller-supplied journal path is that log.
+Execution history never lives in the manifest — logged or not, the manifest stays the acceptance contract. Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only execution log — deviations from the Initial Approach, dead-end memory, and operational notes; a caller-supplied journal path is that log. Under `--no-log`, run without one — the log is an aid, not a precondition.
 
-The log is also where runaway protection lives: lifecycle verifiers like `check-pr` are stateless and report current state without counting cycles, so you own the stop condition — when the log plus your run memory show a fix or wait has been retried well past the point of progress, route to `/escalate` (or, in no-wait mode, a pending summary) rather than looping.
+Runaway protection holds regardless of logging; the log is where its memory lives. Lifecycle verifiers like `check-pr` are stateless and report current state without counting cycles, so you own the stop condition — when the log (when kept) plus your run memory show a fix or wait has been retried well past the point of progress, route to `/escalate` (or, in no-wait mode, a pending summary) rather than looping.
 
 ## Steering & amendment
 
