@@ -102,7 +102,6 @@ Per-skill body adaptations (unchanged from the open-standard rules):
 - **Tool-name references in operational prose** → Codex names: Bash→`shell_command`, Read→`read_file`, Edit→`apply_patch`, Grep→`grep_files`, Glob/Write/WebFetch→`shell_command`, WebSearch→`web_search`, AskUserQuestion→`request_user_input`, TaskCreate/Todo→`update_plan`. Leave teaching/reference content (`references/*.md` explaining Claude Code conventions) unchanged.
 - **Context file**: operational "write to CLAUDE.md" → "AGENTS.md". Do not rewrite "CLAUDE.md" in comparative/research text. The `review-code` skill's `context-file-adherence` dimension reference already uses generic "context file" language — no special handling.
 - **Model tiers**: in `references/execution-modes/`, replace Claude model names (haiku/sonnet/opus) with `inherit`.
-- **Session line**: omit the `Session: ~/.claude/.../<id>.jsonl` line from `define`'s completion template — Codex has no agent-visible session-id env var (issue #8923).
 - **No `manifest-` command prefix**: Codex skills present `/do`, `/auto`, `/babysit-pr` (the Pi-only `manifest-` prefix never applied to Codex). Codex has no native `/auto` or `/babysit-pr` runtime command, so those skills ship as ordinary skills that internally chain `/do`.
 
 ### Tool name mapping (Claude Code → Codex)
