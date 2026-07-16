@@ -1,7 +1,7 @@
 ---
 name: figure-out
 description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when understanding is the deliverable rather than a preamble to acting, when figuring it out is the goal, or when the user asks to think through a decision, dig deeper, press an assumption, investigate why something is happening, or work through a problem.'
-argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team] [--scratch]'
+argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team] [--scratch] [--watched]'
 user-invocable: true
 ---
 
@@ -61,11 +61,13 @@ Load the matching probe file(s) from `tasks/` to surface angles that are easy to
 
 FEATURE/BUG/REFACTOR compose onto `CODING.md`; a code defect composes `DIAGNOSIS.md` (explain it) with `CODING.md` + `BUG.md` (fix it); TECH_DESIGN stands alone for the document-authoring shape, while unresolved underlying system design still loads CODING/FEATURE as relevant; DIAGNOSIS and RESEARCH stand alone when no code change is in play. Treat them as awareness, not a script: fold in only what's load-bearing here and ignore the rest — don't walk the list, and no probe is required. Nothing fits → probe generally.
 
-Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`) are topic text unless clearly supplied as this skill's option.
+Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`, `--watched`) are topic text unless clearly supplied as this skill's option.
 
 Unless parsed options include `--no-docs` or `--team`, load `references/WITH_DOCS.md` only once the investigation is relevant to the active project or one of its mapped contexts; the working directory alone does not establish relevance. When relevance is absent or unclear, do not load project docs; if it emerges later, load the reference then. Default out-of-repo investigation logging is independent. Team mode owns its separate read-only project-context behavior in `references/team.md`.
 
 Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only investigation log.
+
+When parsed options include `--watched`, also load `references/watched.md` and apply its overrides — an external watcher model audits the investigation log in the background and interjects into the chat. `--watched` implies logging: when `--no-log` is also passed, `--watched` wins and the LOG.md discipline stays on. Composes with any other mode.
 
 When parsed options include `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
 
