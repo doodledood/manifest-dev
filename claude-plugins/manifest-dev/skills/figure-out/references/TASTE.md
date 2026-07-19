@@ -12,7 +12,9 @@ Watch for directional preferences the user steers by, not one-off situational ca
 - **Durable** — recurring across the session, or explicitly stated as a standing way of working; a single situational correction is not taste.
 - **Behavior-changing** — a future session that knew it would act differently; if the model already behaves this way unprompted, there is nothing to write.
 
-**Per-turn:** when the signal is unmistakable — the same pushback has recurred, or the user states a standing preference in so many words — offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (for figure-out, before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. Anything below the gate: keep working, don't offer.
+Passing the gate makes a candidate eligible, not offered — an offer must also repay its interruption. When a preference is real but too minor for future sessions to meaningfully profit from, don't stop the session for it: let it ride the session-end sweep, where batching amortizes the cost, or leave it unoffered.
+
+**Per-turn:** when the signal is unmistakable — the same pushback has recurred, or the user states a standing preference in so many words — and the entry is consequential enough to repay the interruption, offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (for figure-out, before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. Anything below the gate: keep working, don't offer.
 
 ## Drafting (boundary form)
 
