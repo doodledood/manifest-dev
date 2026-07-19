@@ -1,6 +1,6 @@
 # figure-out: taste capture
 
-The loading layer activates this reference for attended sessions only — under `--autonomous`, `--team`, or any unattended run, taste capture is fully inert: no offers, no writes. Ratified entries already present in loaded memory files still inform the work; inertness is about capture, not use.
+Under `--autonomous`, `--team`, or any unattended run, taste capture is fully inert: no offers, no writes. Ratified entries already present in loaded memory files still inform the work — inertness is about capture, not use.
 
 Taste is a durable personal steering preference persisted only by offer-and-ratify: the agent drafts, the user's explicit yes writes. Never infer a preference and store or apply it silently — an unratified behavioral prior can only be obeyed, not weighed, and it self-seals: once the agent preempts the preference, the pushback that would test or correct it stops occurring. Ratification is what converts an observed pattern into standing context.
 
@@ -9,10 +9,10 @@ Taste is a durable personal steering preference persisted only by offer-and-rati
 Watch for directional preferences the user steers by, not one-off situational calls. A candidate earns an offer when it is all three:
 
 - **Directional** — it would steer future judgment calls the same way ("prefer the smallest clean change", "prose over tables"), not a fact about this task.
-- **Durable** — recurring across the session, or stated emphatically as a standing way of working; a single situational correction is not taste.
+- **Durable** — recurring across the session, or explicitly stated as a standing way of working; a single situational correction is not taste.
 - **Behavior-changing** — a future session that knew it would act differently; if the model already behaves this way unprompted, there is nothing to write.
 
-**Per-turn:** when the signal is unmistakable — the same pushback has recurred, or the user states a standing preference in so many words — offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (for figure-out, before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any survivors into one offer. Anything below the gate: keep working, don't offer.
+**Per-turn:** when the signal is unmistakable — the same pushback has recurred, or the user states a standing preference in so many words — offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (for figure-out, before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. Anything below the gate: keep working, don't offer.
 
 ## Drafting (boundary form)
 
