@@ -9,7 +9,7 @@ Taste is a durable personal steering preference persisted only by offer-and-rati
 Watch for directional preferences the user steers by, not one-off situational calls. A candidate earns an offer when it is all three:
 
 - **Directional** — it would steer future judgment calls the same way ("prefer the smallest clean change", "prose over tables"), not a fact about this task.
-- **Durable** — recurring across the session, or explicitly stated as a standing way of working; a single situational correction is not taste.
+- **Durable** — recurring within the session, or explicitly stated as a standing way of working; a single situational correction is not taste.
 - **Behavior-changing** — a future session that knew it would act differently; if the model already behaves this way unprompted, there is nothing to write.
 
 Passing the gate makes a candidate eligible, not offered — an offer must also repay its interruption. When a preference is real but too minor for future sessions to meaningfully profit from, don't stop the session for it: let it ride the session-end sweep, where batching amortizes the cost, or leave it unoffered.
@@ -24,7 +24,7 @@ A taste entry is a prompt line that will ride in every future session, so draft 
 - **Rationale** — why, so future sessions can weigh it rather than obey it.
 - **Flip condition** — when it should yield, so it doesn't over-fire on adjacent cases.
 
-Example: `Prefer the smallest change that stays clean; go bigger only when the small version leaves debt costlier than the restructure.` A bare preference ("keep changes small") over-fires on the cases where bigger is right; a hedge-wrapped one ("consider smaller changes where appropriate") under-fires into noise. The rationale and flip condition are the calibration.
+Example: `Prefer the smallest change that stays clean — small diffs are cheaper to review, revert, and reason about; go bigger only when the small version leaves debt costlier than the restructure.` A bare preference ("keep changes small") over-fires on the cases where bigger is right; a hedge-wrapped one ("consider smaller changes where appropriate") under-fires into noise. The rationale and flip condition are the calibration.
 
 ## Scope and write target
 
