@@ -69,6 +69,7 @@ On invocation, prefer a delta sync over a full re-sync:
    - **Renamed**: handle as delete-old + add-new
 4. Recompute README component tables and the CLI's context file (`AGENTS.md`) only if the set of skills changed (added/removed/renamed). Body-only edits don't require regenerating these.
    - **OpenCode:** if `claude-plugins/manifest-dev/.claude-plugin/plugin.json`'s version changed between recorded SHA and `HEAD`, mirror it into `dist/opencode/plugin/package.json` per the reference file.
+   - **Codex:** if either source plugin's `.claude-plugin/plugin.json` version changed between recorded SHA and `HEAD`, mirror it into that plugin's `dist/codex/plugins/<plugin>/.codex-plugin/plugin.json` per the reference file's version rule.
 5. **Package target (Pi) only:** regenerate `dist/pi/component-namespaces.json` from the current dist component set and source ownership map. **Skip entirely for plugin-native Codex and OpenCode** — the plugin is the namespace there; generating namespace metadata would resurrect retired installer concepts.
 6. After all writes succeed, overwrite `dist/{cli}/.sync-meta.json` with the new HEAD sha and a fresh `synced_at` UTC timestamp. Keep the file even when the diff was empty — the timestamp records "we checked".
 

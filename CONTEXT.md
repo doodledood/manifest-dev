@@ -119,6 +119,10 @@ _Avoid_: Wedge, funnel.
 **House**:
 The full understanding-first loop (figure-out → define → do) that every Door opens into; the retention engine behind the Doors.
 
+**Taste**:
+A durable personal steering preference persisted only by offer-and-ratify — captured as preference, rationale, and flip condition in a harness memory file.
+_Avoid_: Preference, style, judgment.
+
 ## Relationships
 
 - A **Manifest** contains one or more **Deliverables**.
@@ -143,6 +147,7 @@ The full understanding-first loop (figure-out → define → do) that every Door
 - **CI One-Shot** is a constrained mode of **Babysit PR**.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.
 - A **Re-host** preserves **Spine** content verbatim while making its **Altitude** typographically legible.
+- A **Taste** entry is ratified by the user and routed by scope to a user-level or project-level memory file; it is never inferred and applied silently, and it stays distinct from the review-time **Judgment Layer**.
 
 ## Flagged ambiguities
 
