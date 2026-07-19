@@ -67,7 +67,7 @@ Unless parsed options include `--no-docs` or `--team`, load `references/WITH_DOC
 
 Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only investigation log.
 
-Unless parsed options include `--autonomous` or `--team`, load `references/TASTE.md` — offer-and-ratify capture of durable personal steering preferences (Taste) into harness memory files. It loads for any attended session regardless of project-docs relevance; in the excluded modes (and any unattended run) capture is fully inert — no offers, no writes — though already-ratified entries in loaded memory files still inform the work.
+Unless parsed options include `--autonomous` or `--team`, load `references/TASTE.md` — offer-and-ratify capture of durable personal steering preferences (Taste) into harness memory files. It loads regardless of project-docs relevance.
 
 When parsed options include `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
 

@@ -1,6 +1,6 @@
 # figure-out: taste capture
 
-Under `--autonomous`, `--team`, or any unattended run, taste capture is fully inert: no offers, no writes. Ratified entries already present in loaded memory files still inform the work — inertness is about capture, not use.
+In an autonomous or otherwise unattended run — no counterparty in the loop to ratify — taste capture is fully inert: no offers, no writes. Ratified entries already present in loaded memory files still inform the work — inertness is about capture, not use.
 
 Taste is a durable personal steering preference persisted only by offer-and-ratify: the agent drafts, the user's explicit yes writes. Never infer a preference and store or apply it silently — an unratified behavioral prior can only be obeyed, not weighed, and it self-seals: once the agent preempts the preference, the pushback that would test or correct it stops occurring. Ratification is what converts an observed pattern into standing context.
 
