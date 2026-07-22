@@ -27,3 +27,4 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-03 | [figure-out gains fog discipline; multi-session orchestration stays out of scope](20260703-figure-out-fog-discipline.md) | Accepted | figure-out |
 | 2026-07-05 | [Keep the plugin-first repo layout; no restructure for skill-picker distribution](20260705-keep-plugin-first-layout-npx-skills-compatible.md) | Accepted | Repo layout |
 | 2026-07-05 | [Front `/figure-out` as the Door; the define/do loop remains the House](20260705-front-figure-out-as-door-define-do-loop-as-house.md) | Accepted | Positioning |
+| 2026-07-22 | [figure-out firms the low-cognitive-load directive to match rigor's modality](20260722-figure-out-firms-low-cognitive-load-directive.md) | Accepted | figure-out |
