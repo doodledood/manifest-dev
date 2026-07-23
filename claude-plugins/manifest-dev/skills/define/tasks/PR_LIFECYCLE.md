@@ -17,7 +17,8 @@ Lifecycle verification composes through a single AC that activates the `check-pr
 ```yaml
 verify:
   prompt: |
-    Activate the manifest-dev:check-pr skill.
+    Invoke the manifest-dev:check-pr skill for real; do not free-hand this check instead of actually
+    invoking the skill.
     PR: https://github.com/<owner>/<repo>/pull/<N>
     Branch: <branch-name>
 

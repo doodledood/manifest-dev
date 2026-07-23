@@ -31,7 +31,7 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 | Contract correctness | contracts | no LOW+ | When code calls external/internal APIs, changes public interfaces, crosses service boundaries, or changes durable data contracts (API/event payloads, database schema/table-field semantics, exports, analytics feeds) |
 | Type safety | type-safety | no LOW+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
 
-**Encoding:** each dimension gate is verified by a general-purpose subagent (there is no `verify.agent` field) whose `verify.prompt` tells that verifier to **activate** the `manifest-dev:review-code` skill for the dimension at the row's threshold — e.g. *"Activate the manifest-dev:review-code skill with dimension=code-bugs and review the change. PASS only if no LOW-or-higher findings."* (Do not say "spawn a general-purpose agent" — the verifier already is one; a nested spawn drops the PASS/FAIL/BLOCKED contract.) See `define/SKILL.md` → "Encoding gates".
+**Encoding:** each dimension gate is verified by a general-purpose subagent (there is no `verify.agent` field) whose `verify.prompt` tells that verifier to **activate** the `manifest-dev:review-code` skill for the dimension at the row's threshold — e.g. *"Invoke the manifest-dev:review-code skill for real, with dimension=code-bugs; do not free-hand this review by reconstructing the rubric from memory instead of actually invoking the skill. PASS only if no LOW-or-higher findings."* (Do not say "spawn a general-purpose agent" — the verifier already is one; a nested spawn drops the PASS/FAIL/BLOCKED contract.) See `define/SKILL.md` → "Encoding gates".
 
 ## Project Gates
 
@@ -55,6 +55,7 @@ Principle: **manifest criteria are for what you want independently fix-targeted;
 
 - **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
 - **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
+- **Isolate branch-specific verifiers** — When a `verify.prompt` needs to operate against a specific branch's actual checked-out working-tree state (not just `git diff`/`git show` inspection of its content) — e.g. running project tooling "on branch X" — have the verifier isolate via a disposable `git worktree add <tmp-dir> <branch>`, removed afterward with `git worktree remove --force <tmp-dir>` (plain `remove` refuses if running the tooling left untracked/modified files behind), rather than `git checkout <branch>` in the shared working directory. Sibling criteria in the same phase can launch concurrently and share that directory, so an in-place checkout races their reads against your writes to git HEAD/tree state. When a dedicated worktree isn't practical — e.g. tooling that must run from the repo's exact original path, or a sibling criterion in the same phase already holds that same branch checked out in its own worktree (`git worktree add` fails outright, rather than merely racing, if the branch is checked out elsewhere) — fall back to giving the criterion its own `phase:` so it never runs concurrently with a sibling that also touches the shared tree
 
 ## Multi-Repo
 

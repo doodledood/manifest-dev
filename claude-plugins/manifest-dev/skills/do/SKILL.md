@@ -38,3 +38,7 @@ When /do is the top-level execution entrypoint, establish a durable goal-setting
 ## Input
 
 `<manifest-path>` — required; no args → halt with usage. Interpret only top-level skill options as flags; quoted or topic mentions of `--no-log` are text. Read the manifest fully before any execution. Multi-repo manifests (declare `Repos: [name: path, ...]` in Intent) — use absolute paths in tool calls when working in a non-cwd repo.
+
+## Shared-worktree hazard
+
+Criteria in the same phase launch in parallel, sharing the orchestrator's working directory. A `verify.prompt` that requires an actual checked-out branch (not just `git diff`/`git show` inspection) should isolate via a disposable `git worktree add` rather than mutating the shared tree in place with `git checkout` — a sibling criterion's concurrent reads can race against it. `git worktree add` fails outright (not a race) if a sibling already holds that same branch checked out in its own worktree — when that happens, or when a dedicated worktree isn't otherwise practical, give the criterion its own `phase:` instead. See `define/tasks/CODING.md` → "Defaults".
