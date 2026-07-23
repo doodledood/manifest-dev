@@ -148,6 +148,7 @@ Each linked README covers that CLI's install, upgrade, and uninstall path. Archi
 |--------|--------------|
 | [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/done`, `/escalate`, `/auto`, `/figure-out-team`) and the verification skills, including `review-code`'s per-dimension quality gates. |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow: `/review-pr`, `/babysit-pr`, `/walk-pr` for PR collaboration, plus `/prompt-engineering`, `/handoff`, and `/teach-me`. |
+| [`manifest-dev-meta`](claude-plugins/manifest-dev-meta) | Maintainer-facing tooling for developing manifest-dev's own plugins: `/behavior-verification` for live-traffic proof that a skill/prompt wording change actually changed model behavior. |
 
 Full plugin and skill catalogs live in [`claude-plugins/README.md`](claude-plugins/README.md) and each plugin's own README.
 

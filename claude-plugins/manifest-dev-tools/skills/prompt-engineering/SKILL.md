@@ -18,3 +18,5 @@ References load on demand. Load only the ones whose trigger fires:
 - `references/patterns.md` — when filling a non-trivial section in any prompt type and a known technique fits the gap (verification, narrate-execute-confirm, tool-call escalation, output contracts, ambiguity handling, high-risk self-check, decision rules over absolutes, emotional tone).
 - `references/review.md` — when reviewing or updating an existing prompt.
 - `references/metaprompting.md` — when diagnosing a failing prompt against logged traces.
+
+When you want live-traffic proof that a wording change actually changed the model's behavior, not just a diff that reads like it should: invoke the manifest-dev-meta:behavior-verification skill.

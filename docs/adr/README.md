@@ -31,6 +31,7 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-03 | [Progressive-disclosure triggers live in the loading layer, never in the deferred reference](20260703-progressive-disclosure-triggers-live-in-loading-layer.md) | Accepted | Prompt architecture |
 | 2026-07-05 | [Keep the plugin-first repo layout; no restructure for skill-picker distribution](20260705-keep-plugin-first-layout-npx-skills-compatible.md) | Accepted | Repo layout |
 | 2026-07-05 | [Front `/figure-out` as the Door; the define/do loop remains the House](20260705-front-figure-out-as-door-define-do-loop-as-house.md) | Accepted | Positioning |
+| 2026-07-05 | [Empirical skill-behavior verification stays opt-in, not a mandatory gate](20260705-empirical-verification-stays-opt-in.md) | Accepted | Prompt engineering |
 | 2026-07-07 | [Split the tech-design task profile by workflow role](20260707-split-tech-design-task-profile-by-workflow-role.md) | Accepted | Task guidance |
 | 2026-07-08 | [The judgment layer is a review-time premise check, distinct from define's gates](20260708-judgment-layer-is-a-review-time-premise-check.md) | Accepted | PR review |
 | 2026-07-08 | [The judgment layer runs in review-pr's manifest mode, not only no-manifest mode](20260708-judgment-layer-runs-in-manifest-mode-as-a-premise-safety-net.md) | Accepted | PR review |
