@@ -9,7 +9,7 @@ user-invocable: true
 
 ### What binds the run
 
-Work toward the manifest's Deliverables, in the order the manifest gives them — a `Sequence:` line in the Deliverables section is authoritative where it diverges from list order. Process Guidance items bind the whole run — hold them even though no verifier checks them; only the Initial Approach is soft and open to pivoting when reality diverges.
+Work toward the manifest's Deliverables, in the order the manifest gives them — a `Sequence:` line in the Deliverables section is authoritative where it diverges from list order, and on a manifest predating that convention an `Execution Order:` line in its Initial Approach is the sequence. Process Guidance items bind the whole run — hold them even though no verifier checks them; only the Initial Approach is soft and open to pivoting when reality diverges.
 
 ### Running the verifiers
 
@@ -69,7 +69,7 @@ Then surface a one-line digest of what the amendment assumed (the new or changed
 
 When /do is the top-level execution entrypoint, establish a durable goal-setting backstop whose completion contract is auditable from the transcript after /do reads the manifest.
 
-**What the contract must require.** A gate ledger covering every Acceptance Criterion and Global Invariant: gate id, phase, `verify.prompt` source, latest independent verifier verdict, evidence, and freshness relative to the last relevant implementation change. Completion requires every listed gate to have fresh PASS evidence and `/done` reported. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are non-terminal; if implementation changes after a PASS, mark affected gates stale and re-verify before `/done`. Do not accept self-attestation, "looks done", or summary claims in place of verifier output.
+**What the contract must require.** A gate ledger covering every Acceptance Criterion and Global Invariant: gate id, phase, `verify.prompt` source, latest independent verifier verdict, evidence, and freshness relative to the last relevant implementation change. Completion requires every listed gate to have fresh PASS evidence and `/done` reported. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are non-terminal; when a substantive implementation change touches a gate's subject after a PASS — re-reading, re-examining, and cosmetic or no-op edits do not — mark that gate stale and re-verify before `/done`. Do not accept self-attestation, "looks done", or summary claims in place of verifier output.
 
 **Where the contract lives.** If a broader parent workflow backstop is already visible (for example `/auto`'s full-chain contract or `/babysit-pr`'s PR-tend contract) and it carries this manifest gate-ledger condition, do not set or print a second narrower goal; operate under the parent contract. If the visible parent lacks that condition, supplement it by setting or printing the manifest-completion contract before continuing. Otherwise, if the active harness exposes a goal-setting or continuation capability, set the manifest-completion contract directly; if not, print the copy-pasteable contract for the user to apply manually.
 
