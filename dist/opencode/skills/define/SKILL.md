@@ -88,7 +88,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
   ```
 
 ## 4. Process Guidance
-*Advisory recommendations on HOW to work — /do weighs them and may depart, naming the departure in the completion summary (and in the execution log when one is kept). Only Acceptance Criteria and Global Invariants bind; anything that must hold belongs in a gate.*
+*Advisory recommendations on HOW to work — /do weighs them and may depart, naming the departure on whichever terminal path the run reaches (and in the execution log when one is kept). Only Acceptance Criteria and Global Invariants bind; anything that must hold belongs in a gate.*
 
 - [PG-1] Description: ...
 

@@ -20,7 +20,7 @@ A property that must hold across all Deliverables in a Manifest.
 _Avoid_: Constraint, rule.
 
 **Process Guidance**:
-An advisory recommendation on HOW to work during execution, weighed by `/do` rather than enforced; departing from one is legitimate and is named in the completion summary, and in the Execution Log too when one is kept. Only Acceptance Criteria and Global Invariants bind.
+An advisory recommendation on HOW to work during execution, weighed by `/do` rather than enforced; departing from one is legitimate and is named on whichever terminal path the run reaches — completion, escalation, or pending — and in the Execution Log too when one is kept. Only Acceptance Criteria and Global Invariants bind.
 _Avoid_: Constraint, requirement, gate.
 
 **Quality Gate**:
@@ -109,7 +109,7 @@ A mid-/do user message treated as fire-and-forget direction — encoded into the
 _Avoid_: Interrupt, mid-run question.
 
 **Execution Log**:
-An append-only, out-of-repo journal /do keeps by default (`--no-log` opts out) recording deviations from the Initial Approach, dead-end memory, and operational events — execution history never lives in the Manifest.
+An append-only, out-of-repo journal /do keeps by default (`--no-log` opts out) recording deviations from the Initial Approach or Deliverable order, Process Guidance departures, dead-end memory, and operational events — execution history never lives in the Manifest.
 _Avoid_: Execution notes, amendments log, changelog.
 
 **Door**:
