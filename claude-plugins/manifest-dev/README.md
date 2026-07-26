@@ -87,7 +87,7 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
     prompt: "Run: grep -r 'password.*=' src/ | grep -v hash | grep -v test. PASS only if there are no matches."
   ```
 
-## 4. Process Guidance (Non-Verifiable)
+## 4. Process Guidance
 - [PG-1] Follow existing error handling patterns in the codebase
 
 ## 6. Deliverables (The Work)
