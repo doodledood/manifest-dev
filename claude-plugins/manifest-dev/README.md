@@ -77,7 +77,6 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 
 ## 2. Initial Approach
 - **Architecture:** Middleware-based auth, JWT in httpOnly cookies
-- **Execution Order:** D1 (Login round-trip) → D2 (Protected route access) → D3 (Logout)
 - **Trade-offs:**
   - [T-1] Simplicity vs Security → Prefer security (bcrypt, not md5)
 

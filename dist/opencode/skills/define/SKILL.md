@@ -71,9 +71,6 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 *Initial direction, not rigid plan. Expect adjustment when reality diverges.*
 
 - **Architecture:** [High-level HOW — starting direction]
-- **Execution Order:**
-  - D1 → D2 → D3
-  - Rationale: [why this order]
 - **Risk Areas:**
   - [R-1] [What could go wrong] | Detect: [how you'd know]
 - **Trade-offs:**
@@ -99,7 +96,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - [ASM-1] [What was assumed] | Default: [chosen value] | Impact if wrong: [consequence]
 
 ## 6. Deliverables
-*Ordered least-proven-first. When amendments have appended out of order, add `Sequence: D3 → D1 → D2` here; it is authoritative.*
+*Ordered least-proven-first, with one line saying why. When amendments have appended out of order, add `Sequence: D3 → D1 → D2` here; it is authoritative.*
 
 ### Deliverable 1: [Name]
 
