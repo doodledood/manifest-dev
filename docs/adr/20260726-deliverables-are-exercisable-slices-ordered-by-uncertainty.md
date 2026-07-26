@@ -19,7 +19,7 @@ Separately, the ordering annotation encoded the wrong default. Ordering by depen
 
 `/define` states how Deliverables are cut and ordered, inline in `SKILL.md` alongside the other encoding-discipline guidance.
 
-A Deliverable is a slice that can be finished on its own and **exercised end-to-end** — run against its real use, not merely inspected as present. The stated reason is the acceptance consequence: this is what allows its Acceptance Criteria to judge behavior rather than existence.
+A Deliverable is a slice that can be finished on its own and **exercised end-to-end** — put in front of its real use: run, read, or otherwise judged in the situation it is for, not merely inspected as present. The stated reason is the acceptance consequence: this is what allows its Acceptance Criteria to judge behavior rather than existence.
 
 The guidance names three signs a cut is wrong: you cannot say how done it is; the name is generic rather than specific to the work; it is too large to finish soon.
 

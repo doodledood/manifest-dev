@@ -59,11 +59,11 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
 | **Intent & Context** | Goal and mental model | -- |
-| **Initial Approach** (complex tasks) | Architecture, execution order, risks, trade-offs | `R-{N}`, `T-{N}` |
+| **Initial Approach** (complex tasks) | Architecture, risks, trade-offs | `R-{N}`, `T-{N}` |
 | **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
 | **Process Guidance** | Binding constraints on how to work that no verifier checks | `PG-{N}` |
 | **Known Assumptions** | Low-impact items resolved with a default | `ASM-{N}` |
-| **Deliverables** | Ordered work items with Acceptance Criteria | `AC-{D}.{N}` |
+| **Deliverables** | Work items with Acceptance Criteria, least-proven first | `AC-{D}.{N}` |
 
 ## Example Manifest
 
