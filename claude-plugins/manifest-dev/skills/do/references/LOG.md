@@ -22,8 +22,8 @@ Read the log before deciding retries and comment judgments in a resumed or long-
 
 Record what completed state won't reconstruct on its own:
 
-- **Deviations from the Initial Approach or the Deliverable order** — what changed and why, including a resequencing and the dependency that forced it. Both are soft; the record of leaving them is not.
-- **Process Guidance departures** — which item was set aside and why. Process Guidance is advisory, so nothing blocks on it; this record and whichever terminal summary the run reaches — completion, escalation, or pending — are where a departure surfaces.
+- **Deviations from the Initial Approach or the Deliverable order** — what changed and why, including a resequencing and what forced it. Both are soft; the record of leaving them is not.
+- **Process Guidance departures** — which item was set aside and why.
 - **Dead-end memory** — fixes tried and reverted, approaches considered and rejected that left no commit.
 - **Operational notes** — retriggers, waits, environment actions, so those decisions survive context compaction.
 - **Gate-ledger updates** — verdicts, staleness marks, re-verification outcomes.

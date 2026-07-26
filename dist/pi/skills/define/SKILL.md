@@ -96,7 +96,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - [ASM-1] [What was assumed] | Default: [chosen value] | Impact if wrong: [consequence]
 
 ## 6. Deliverables
-*Ordered least-proven-first within dependency constraints. Plan, not contract — /do may resequence on a real dependency the order missed, recording the deviation.*
+*Ordered least-proven-first within dependency constraints. Plan, not contract — /do may resequence when execution changes what the order was built on, recording the deviation.*
 
 - **Order rationale:** [why this order; omit when there is only one Deliverable]
 
