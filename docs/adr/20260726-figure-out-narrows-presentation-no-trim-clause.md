@@ -50,7 +50,7 @@ Deleting only the qualifier "the turn owes" was rejected as a smaller edit: it w
 ### Positive
 - The prompt states the per-turn contract once, in one place, instead of stating it in one place and contradicting it in another.
 - The guardrail keeps its full force: reducing what was investigated remains forbidden outright, in plainer words than before.
-- The paragraph gets 20 words shorter, in a passage whose subject is not making the reader work through dense blocks.
+- The paragraph gets 16 words shorter (411 to 395), in a passage whose subject is not making the reader work through dense blocks.
 
 ### Negative
 - The guardrail is now stated once rather than twice. If a model needed the enumeration's specificity to connect "what was investigated" to crumbs and rivals concretely, the shorter form gives it less to hold onto. The surrounding sections state each of those obligations as hard imperatives in their own right, which is why this is judged an acceptable trade.
