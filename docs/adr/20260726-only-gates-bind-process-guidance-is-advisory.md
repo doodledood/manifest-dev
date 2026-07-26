@@ -15,7 +15,7 @@ Making Process Guidance binding also asks it to do something it structurally can
 
 **Acceptance Criteria and Global Invariants are the only binding layer.** Gates are what the run owes and the only thing that can hold it open.
 
-**Process Guidance is advisory** — recommendations on how to work, which `/do` weighs and may depart from when the work is better for it, recording the departure in the Execution Log. This makes the layer's authority match its enforcement, and it removes the collision with the termination condition: a state where all gates pass and a Process Guidance item was set aside is a legitimate completion with a logged departure, not a contradiction.
+**Process Guidance is advisory** — recommendations on how to work, which `/do` weighs and may depart from when the work is better for it, naming the departure on whichever path the run exits by — completion summary, escalation payload, or pending summary — and in the Execution Log too when one is kept. The terminal-path obligation is what keeps the layer safe: the Execution Log is optional under `--no-log`, so a rule resting on it alone would let a departure surface nowhere. This makes the layer's authority match its enforcement, and it removes the collision with the termination condition: a state where all gates pass and a Process Guidance item was set aside is a legitimate completion with a visible departure, not a contradiction.
 
 The routing gap the superseded ADR identified is closed at the encoder instead of by inflating the layer. `/define` now routes criteria the user pinned by reacting to something concrete to an **Acceptance Criterion or Global Invariant**, never to Process Guidance. Difficulty of verification is treated as a prompt-authoring problem rather than grounds for demotion: a verifier subagent can judge qualitatively — checking a result against a named reference is a legitimate gate — so a pinned criterion becomes a judgment-based gate rather than an unenforced note. Anything that must hold belongs in a gate; if it cannot be written as one, that is information about the criterion, not a reason to record it in a layer nothing checks.
 
@@ -37,7 +37,7 @@ The routing gap the superseded ADR identified is closed at the encoder instead o
 - Task-file Defaults, which flow into Process Guidance with light review, can no longer dictate execution — the concern the superseded ADR set aside as handled only by user review at approval time.
 
 ### Negative
-- Advice genuinely worth holding but genuinely unverifiable now has no binding home. This is deliberate: the alternative was an obligation nothing could enforce, and the Execution Log records departures so the user can see them.
+- Advice genuinely worth holding but genuinely unverifiable now has no binding home. This is deliberate: the alternative was an obligation nothing could enforce, and every run-exit surface names its departures so the user can see them.
 - `/define` carries more encoding load — a pinned criterion that resists verification must be written as a judgment-based gate rather than dropped into Process Guidance, which is more demanding than the previous routing.
 - Manifests written under the superseded reading treat their Process Guidance as binding. They still execute; their PG items are now weighed rather than enforced, which may be a behavior change for a manifest that relied on the stronger reading.
 
