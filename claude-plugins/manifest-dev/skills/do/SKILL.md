@@ -9,7 +9,7 @@ user-invocable: true
 
 ### What binds the run
 
-Work toward the manifest's Deliverables in the order listed. Acceptance Criteria and Global Invariants are the binding layer — they are what the run owes, and gates are the only thing that can hold it open. Process Guidance is advisory: recommendations on how to work, weighed rather than enforced, and set aside when the work is better for it — record the departure in the execution log so the user can see it. The Initial Approach and the Deliverable order are likewise plan, not contract: pivot either when reality diverges — resequence when execution surfaces a real dependency the order missed — and record the deviation.
+Work toward the manifest's Deliverables in the order listed. Acceptance Criteria and Global Invariants are the binding layer — they are what the run owes, and gates are the only thing that can hold it open. Process Guidance is advisory: recommendations on how to work, weighed rather than enforced, and set aside when the work is better for it — record every departure where the user will see it, in the execution log when one is kept and in the completion summary otherwise, since advisory only stays safe while departing stays visible. The Initial Approach and the Deliverable order are likewise plan, not contract: pivot either when reality diverges — resequence when execution surfaces a real dependency the order missed — and record the deviation.
 
 ### Running the verifiers
 
