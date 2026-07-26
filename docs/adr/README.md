@@ -47,3 +47,4 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-19 | [Taste persists by offer-and-ratify, never by silent inference](20260719-taste-persists-by-offer-and-ratify.md) | Accepted | figure-out |
 | 2026-07-22 | [`/do` states verification sufficiency, not only necessity](20260722-state-verification-sufficiency-not-only-necessity.md) | Accepted | do |
 | 2026-07-22 | [figure-out firms the low-cognitive-load directive to match rigor's modality](20260722-figure-out-firms-low-cognitive-load-directive.md) | Accepted | figure-out |
+| 2026-07-26 | [Deliverables are exercisable slices, ordered by uncertainty](20260726-deliverables-are-exercisable-slices-ordered-by-uncertainty.md) | Accepted | define |

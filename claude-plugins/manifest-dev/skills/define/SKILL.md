@@ -9,6 +9,8 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 
 **Encoding discipline.** figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to record as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
 
+**Cutting Deliverables.** A Deliverable is a slice that can be finished on its own and exercised end-to-end — run against its real use, not merely inspected as present. That is what lets its Acceptance Criteria judge behavior; a Deliverable cut along a layer ("the data model", "the endpoints") can only be gated on existence, the weakest thing a gate can check. Signs a cut is wrong: you can't say how done it is, the name is generic rather than specific to this work, or it's too large to finish soon. Order by uncertainty — the Deliverable whose approach is least proven leads, so an unworkable direction surfaces while there is still room to change course. Real dependencies still bind; uncertainty orders what they leave free.
+
 Consume `Known Assumption candidate` items from the latest figure-out Read: encode each still-unresolved candidate as an `ASM-*` entry with its default and impact if wrong; omit candidates that later evidence or the user resolved. Do not copy the full Evidence Ledger into the Manifest.
 
 Criteria the user pinned by *reacting* to something concrete during figure-out — a mock, a reference, a chosen direction — are success criteria, not flavor: encode them in the preserved layer — an Acceptance Criterion or Global Invariant when a verifier can judge them (qualitatively is fine, e.g. a subagent checking the result against the named reference), Process Guidance when they must hold but resist verification. Never fold them into the soft Initial Approach, where /do may pivot away from them. This routes onto existing structure; it adds no new manifest section.
@@ -87,7 +89,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - [ASM-1] [What was assumed] | Default: [chosen value] | Impact if wrong: [consequence]
 
 ## 6. Deliverables
-*Ordered by execution order from Initial Approach, or by dependency then importance.*
+*Ordered by execution order from Initial Approach; otherwise least-proven approach first, with real dependencies binding.*
 
 ### Deliverable 1: [Name]
 
