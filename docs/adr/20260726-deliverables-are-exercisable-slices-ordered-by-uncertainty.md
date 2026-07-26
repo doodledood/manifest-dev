@@ -57,4 +57,4 @@ The guidance lives inline rather than in a companion reference because deliverab
 
 ## Source
 - Related: [20260703-progressive-disclosure-triggers-live-in-loading-layer](20260703-progressive-disclosure-triggers-live-in-loading-layer.md)
-- Related: [20260709-process-guidance-is-binding-but-unverified](20260709-process-guidance-is-binding-but-unverified.md)
+- Related: [20260726-only-gates-bind-process-guidance-is-advisory](20260726-only-gates-bind-process-guidance-is-advisory.md)
