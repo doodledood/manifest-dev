@@ -9,7 +9,7 @@ user-invocable: true
 
 ### What binds the run
 
-Work toward the manifest's Deliverables in the order listed. Process Guidance items bind the whole run — hold them even though no verifier checks them. The Initial Approach and the Deliverable order are the soft layer: pivot either when reality diverges — resequence when execution surfaces a real dependency the order missed — and record the deviation in the execution log.
+Work toward the manifest's Deliverables in the order listed. Acceptance Criteria and Global Invariants are the binding layer — they are what the run owes, and gates are the only thing that can hold it open. Process Guidance is advisory: recommendations on how to work, weighed rather than enforced, and set aside when the work is better for it — record the departure in the execution log so the user can see it. The Initial Approach and the Deliverable order are likewise plan, not contract: pivot either when reality diverges — resequence when execution surfaces a real dependency the order missed — and record the deviation.
 
 ### Running the verifiers
 
@@ -19,11 +19,11 @@ Every verifier is a **general-purpose** subagent driven by `verify.prompt` — w
 
 ### The gate ledger
 
-Each verifier returns PASS, FAIL, or BLOCKED; track each gate's latest verdict and its freshness in a gate ledger — a substantive implementation change to a gate's subject after a PASS marks that gate stale — re-reading, re-examining, or cosmetic/no-op edits do not — and Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Stale and unverified gates re-verify before `/done`; a settled PASS does not re-run.
+Each verifier returns PASS, FAIL, or BLOCKED; track each gate's latest verdict and its freshness in a gate ledger. A substantive implementation change to a gate's subject after a PASS marks that gate stale; re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Stale and unverified gates re-verify before `/done`; a settled PASS does not re-run.
 
 ### When the run is done
 
-A fresh independent PASS on every Acceptance Criterion and Global Invariant is both **necessary and sufficient** for done: necessary — never declare done on self-attestation or a "looks done" judgment in place of verifier output; sufficient — once every gate holds a fresh PASS the run is complete, so call `/done` and stop. Do not re-verify a gate whose implementation has not changed since its PASS, and do not keep refining past the gates: a passing gate is settled, not provisional, and the verifier's PASS is the evidence that ends the loop.
+A fresh independent PASS on every Acceptance Criterion and Global Invariant is both **necessary and sufficient** for done: necessary — never declare done on self-attestation or a "looks done" judgment in place of verifier output; sufficient — once every gate holds a fresh PASS the run is complete, so call `/done` and stop. Do not keep refining past the gates: a passing gate is settled, not provisional, and the verifier's PASS is the evidence that ends the loop.
 
 ### Acting on verdicts
 

@@ -129,7 +129,7 @@ Unless parsed options include `--no-docs` or `--team`, load `references/WITH_DOC
 
 Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only investigation log.
 
-Unless parsed options include `--autonomous` or `--team`, load `references/TASTE.md` — offer-and-ratify capture of durable personal steering preferences (Taste) into harness memory files. It loads regardless of project-docs relevance.
+Unless parsed options include `--autonomous` or `--team`, load `references/TASTE.md` — offer-and-ratify capture of durable personal steering preferences (Taste) into harness memory files. It loads regardless of project-docs relevance. Both exclusions are about who can ratify: autonomous runs have nobody in the loop, and taste is *personal*, so a multi-party channel has no single "this user" whose preference an entry would record — team mode has counterparties but no ratifier for this.
 
 ### What loads on a flag
 

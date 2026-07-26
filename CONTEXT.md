@@ -20,8 +20,8 @@ A property that must hold across all Deliverables in a Manifest.
 _Avoid_: Constraint, rule.
 
 **Process Guidance**:
-A binding constraint on HOW to work during execution that must hold throughout even though no verifier checks it.
-_Avoid_: Guideline, best practice, suggestion.
+An advisory recommendation on HOW to work during execution, weighed by `/do` rather than enforced; departing from one is legitimate and is recorded in the Execution Log. Only Acceptance Criteria and Global Invariants bind.
+_Avoid_: Constraint, requirement, gate.
 
 **Quality Gate**:
 A verifiable task-file item that `/define` encodes as an acceptance-style gate.

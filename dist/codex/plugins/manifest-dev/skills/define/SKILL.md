@@ -19,7 +19,7 @@ figure-out reaches shared understanding of the *problem*; /define handles manife
 
 **Known Assumptions.** Consume `Known Assumption candidate` items from the latest figure-out Read: encode each still-unresolved candidate as an `ASM-*` entry with its default and impact if wrong; omit candidates that later evidence or the user resolved. Do not copy the full Evidence Ledger into the Manifest.
 
-**Criteria pinned by reaction.** Criteria the user pinned by *reacting* to something concrete during figure-out — a mock, a reference, a chosen direction — are success criteria, not flavor: encode them in the preserved layer — an Acceptance Criterion or Global Invariant when a verifier can judge them (qualitatively is fine, e.g. a subagent checking the result against the named reference), Process Guidance when they must hold but resist verification. Never fold them into the soft Initial Approach, where /do may pivot away from them. This routes onto existing structure; it adds no new manifest section.
+**Criteria pinned by reaction.** Criteria the user pinned by *reacting* to something concrete during figure-out — a mock, a reference, a chosen direction — are success criteria, not flavor: encode them as an Acceptance Criterion or Global Invariant, because gates are the only layer that binds. A verifier can judge them qualitatively — a subagent checking the result against the named reference is a legitimate gate — so "hard to verify" is a reason to write a judgment-based prompt, not a reason to demote the criterion. Never route a pinned criterion to Process Guidance or the Initial Approach, where /do may weigh it away. This routes onto existing structure; it adds no new manifest section.
 
 ## Task files
 
@@ -88,7 +88,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
   ```
 
 ## 4. Process Guidance
-*Binding constraints on HOW to work — must hold throughout execution even though no gate verifies them. Only the Initial Approach and the Deliverable order are soft.*
+*Advisory recommendations on HOW to work — /do weighs them and may depart, logging the departure. Only Acceptance Criteria and Global Invariants bind; anything that must hold belongs in a gate.*
 
 - [PG-1] Description: ...
 

@@ -61,7 +61,7 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 | **Intent & Context** | Goal and mental model | -- |
 | **Initial Approach** (complex tasks) | Architecture, risks, trade-offs | `R-{N}`, `T-{N}` |
 | **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
-| **Process Guidance** | Binding constraints on how to work that no verifier checks | `PG-{N}` |
+| **Process Guidance** | Advisory recommendations on how to work; weighed, not enforced | `PG-{N}` |
 | **Known Assumptions** | Low-impact items resolved with a default | `ASM-{N}` |
 | **Deliverables** | Work items with Acceptance Criteria, least-proven first | `AC-{D}.{N}` |
 
