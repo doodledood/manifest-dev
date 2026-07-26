@@ -9,7 +9,7 @@ user-invocable: true
 
 ### What binds the run
 
-Work toward the manifest's Deliverables, in the order the manifest gives them — a `Sequence:` line in the Deliverables section is authoritative where it diverges from list order. Process Guidance items bind the whole run — hold them even though no verifier checks them; only the Initial Approach is soft and open to pivoting when reality diverges.
+Work toward the manifest's Deliverables. Process Guidance items bind the whole run — hold them even though no verifier checks them; only the Initial Approach is soft and open to pivoting when reality diverges.
 
 ### Running the verifiers
 

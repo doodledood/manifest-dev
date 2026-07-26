@@ -15,7 +15,7 @@ figure-out reaches shared understanding of the *problem*; /define handles manife
 
 **Cutting Deliverables.** A Deliverable is a slice that can be finished on its own and exercised end-to-end — put in front of its real use: run, read, or otherwise judged in the situation it is for, not merely inspected as present. That is what lets its Acceptance Criteria judge whether it works rather than whether it exists; a Deliverable cut along a layer ("the data model", "the endpoints", "the outline", "the sources") can only be gated on existence, the weakest thing a gate can check. Signs a cut is wrong: you can't say how done it is, the name is generic rather than specific to this work, or it's too large to finish soon.
 
-**Ordering Deliverables.** Order by uncertainty — the Deliverable whose approach is least proven leads, so an unworkable direction surfaces while there is still room to change course; record why in the Order rationale line. Real dependencies still bind; uncertainty orders what they leave free. Amendments append and IDs stay stable, so a later-arriving least-proven Deliverable is sequenced by a `Sequence:` line in the Deliverables section rather than renumbered into place — execution sequencing binds, so it never lives in the soft Initial Approach. That line names exactly the Deliverables that exist: a removal drops its entry, and once the line no longer differs from list order, delete it.
+**Ordering Deliverables.** Order by uncertainty — the Deliverable whose approach is least proven leads, so an unworkable direction surfaces while there is still room to change course; record why in the Order rationale line. Real dependencies still bind; uncertainty orders what they leave free. This ordering is set when the manifest is written: amendments append with stable IDs rather than renumbering.
 
 **Known Assumptions.** Consume `Known Assumption candidate` items from the latest figure-out Read: encode each still-unresolved candidate as an `ASM-*` entry with its default and impact if wrong; omit candidates that later evidence or the user resolved. Do not copy the full Evidence Ledger into the Manifest.
 
@@ -96,10 +96,9 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - [ASM-1] [What was assumed] | Default: [chosen value] | Impact if wrong: [consequence]
 
 ## 6. Deliverables
-*Ordered least-proven-first. `Sequence:`, when present, is authoritative.*
+*Ordered least-proven-first within dependency constraints.*
 
-- **Order rationale:** [why this order]
-- **Sequence:** [omit unless amendments appended Deliverables out of execution order; then list their IDs in the order to run them]
+- **Order rationale:** [why this order; omit when there is only one Deliverable]
 
 ### Deliverable 1: [Name]
 
