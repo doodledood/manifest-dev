@@ -9,7 +9,7 @@ user-invocable: true
 
 ### What binds the run
 
-Work toward the manifest's Deliverables. Process Guidance items bind the whole run — hold them even though no verifier checks them; only the Initial Approach is soft and open to pivoting when reality diverges.
+Work toward the manifest's Deliverables in the order listed — that order is the plan, not a gate: resequence when execution surfaces a real dependency it missed, and record the deviation in the execution log. Process Guidance items bind the whole run — hold them even though no verifier checks them; only the Initial Approach is soft and open to pivoting when reality diverges.
 
 ### Running the verifiers
 

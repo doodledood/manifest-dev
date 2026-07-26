@@ -23,7 +23,7 @@ A Deliverable is a slice that can be finished on its own and **exercised end-to-
 
 The guidance names three signs a cut is wrong: you cannot say how done it is; the name is generic rather than specific to the work; it is too large to finish soon.
 
-Ordering changes from "dependency then importance" to **least-proven approach first**, with real dependencies still binding and uncertainty ordering what they leave free. The schema annotation is rewritten rather than supplemented. Ordering is guidance at synthesis time, where the leverage is: list order is the execution order, amendments append with stable IDs rather than renumbering, and `/do` receives no separate ordering directive.
+Ordering changes from "dependency then importance" to **least-proven approach first**, with real dependencies still binding and uncertainty ordering what they leave free. The schema annotation is rewritten rather than supplemented. Ordering is guidance at synthesis time, where the leverage is: list order is the execution order and amendments append with stable IDs rather than renumbering. `/do` works the Deliverables in list order and may resequence when execution surfaces a real dependency the ordering missed, recording the deviation; there is no separate sequencing field.
 
 The guidance lives inline rather than in a companion reference because deliverable-cutting applies to every `/define` invocation. Per `20260703-progressive-disclosure-triggers-live-in-loading-layer`, always-needed behavior belongs in the entry prompt; companion references carry mode-specific mechanics reached through a trigger.
 
