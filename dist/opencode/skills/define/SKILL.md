@@ -41,7 +41,7 @@ Identify task type and load the matching file(s) from `tasks/` — their Quality
 
 *Composition:* code-change tasks combine `CODING.md` (base gates) with the specific FEATURE/BUG/REFACTOR; text-authoring combines `WRITING.md` with BLOG/DOCUMENT, and TECH_DESIGN composes onto DOCUMENT/WRITING; Research composes `research/RESEARCH.md` with `research/sources/`. Domains aren't mutually exclusive (a bug fix that refactors uses both). `PR_LIFECYCLE.md` composes when the output ships through a GitHub PR (auto-detected from a github.com `origin`; probe if origin is missing or a github-enterprise host), including tech-design docs shipped as PRs — it templates one AC per repo whose `verify.prompt:` spawns a general-purpose agent that activates the `check-pr` skill — the prompt is the steering surface for per-PR nuances (labels, approvers, flaky-CI/retrigger overrides). **Exception:** PROMPTING does not compose with CODING unless the task also changes executable code.
 
-*Content types:* **Quality Gates** (`## Quality Gates`) → INV-G*/AC-* (omit clearly inapplicable with stated reasoning); **Defaults** (`## Defaults`) → PG-* pre-interview, user reviews and removes if N/A; **Reference files** (`tasks/**/references/*.md`) → verifier-agent lookup data, not loaded during /define.
+*Content types:* **Quality Gates** (`## Quality Gates`) → INV-G*/AC-* (omit clearly inapplicable with stated reasoning); **Defaults** (`## Defaults`) → PG-* pre-interview, user reviews and removes if N/A — except a Default stated as a prohibition (secrets and credentials, untrusted input, destructive or irreversible actions), which routes to INV-G* instead, since Process Guidance is advisory and a safety rule /do may set aside is not a safety rule; **Reference files** (`tasks/**/references/*.md`) → verifier-agent lookup data, not loaded during /define.
 
 ## Writing the gates
 
@@ -96,7 +96,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - [ASM-1] [What was assumed] | Default: [chosen value] | Impact if wrong: [consequence]
 
 ## 6. Deliverables
-*Ordered least-proven-first within dependency constraints. Plan, not contract — /do may resequence when execution changes what the order was built on, recording the deviation.*
+*Ordered least-proven-first within dependency constraints; list order is the execution order, and Deliverable numbers are stable IDs rather than positions. Plan, not contract — /do may resequence when execution changes what the order was built on, recording the deviation.*
 
 - **Order rationale:** [why this order; omit when there is only one Deliverable]
 

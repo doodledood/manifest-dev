@@ -34,7 +34,7 @@ The routing gap the superseded ADR identified is closed at the encoder instead o
 - `/do`'s termination condition is unambiguous: gates decide, and a fresh PASS on all of them ends the run.
 - The manifest's authority structure matches its enforcement structure — the layer that binds is the layer that is checked.
 - Criteria the user pinned by reacting to something concrete land in gates, so they are actually verified rather than recorded in a layer nothing evaluates. This is stronger protection than the superseded ADR provided.
-- Task-file Defaults, which flow into Process Guidance with light review, can no longer dictate execution — the concern the superseded ADR set aside as handled only by user review at approval time.
+- Task-file Defaults, which flow into Process Guidance with light review, can no longer dictate execution — the concern the superseded ADR set aside as handled only by user review at approval time. This holds for quality defaults; a Default stated as a prohibition (secrets, untrusted input, destructive actions) is carved out at the encoder and routed to a Global Invariant instead, because an advisory safety rule is not a safety rule.
 
 ### Negative
 - Advice genuinely worth holding but genuinely unverifiable now has no binding home. This is deliberate: the alternative was an obligation nothing could enforce, and every run-exit surface names its departures so the user can see them.
