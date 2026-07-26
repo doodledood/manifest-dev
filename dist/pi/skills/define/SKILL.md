@@ -112,7 +112,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
   ```
 ````
 
-**Verdicts.** Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — `/do` routes via `/escalate`). Automate verification — reach first for a judgment-based prompt, since a subagent can judge qualitatively against a named reference, and only a criterion that genuinely requires a *human* to check belongs in Process Guidance, where it is advisory and surfaces for the user rather than binding the run — except criteria pinned by reaction, which stay gates (see Encoding discipline). Criteria that merely wait on human or external action to be satisfied (deploys, approvals, in-flight CI) stay ACs — the verifier surfaces the wait per its own contract, as BLOCKED or as a FAIL carrying a wait finding, until it clears. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
+**Verdicts.** Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — `/do` routes via `/escalate`). Automate verification. A criterion that resists it becomes a judgment-based gate whose prompt names the human-inspectable evidence to check against — not a Process Guidance entry; if it genuinely cannot be written as a gate, sharpen or drop it, because a criterion nothing checks is not a criterion. Criteria that wait on human or external action (deploys, approvals, in-flight CI) stay ACs — the verifier surfaces the wait per its own contract, as BLOCKED or as a FAIL carrying a wait finding, until it clears. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
 
 ## Amendment
 

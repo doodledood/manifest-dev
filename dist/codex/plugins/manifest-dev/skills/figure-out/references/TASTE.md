@@ -4,7 +4,7 @@ With no counterparty in the loop to ratify — an unattended run — taste captu
 
 Taste is a durable personal steering preference persisted only by offer-and-ratify: the agent drafts, the user's explicit yes writes. Never infer a preference and store or apply it silently — an unratified behavioral prior can only be obeyed, not weighed, and it self-seals: once the agent preempts the preference, the pushback that would test or correct it stops occurring. Ratification is what converts an observed pattern into standing context.
 
-## Override: ratified writes ARE the action
+## Override: a ratified write is the action
 
 The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal. **A ratified taste write is an exception: it is the action of this capture, not deferred work.** The user's yes is the authorization; execute the write inline when it lands. Nothing here licenses acting on the *content* of the preference — only writing the entry.
 
