@@ -9,7 +9,7 @@ user-invocable: true
 
 ### What binds the run
 
-Work toward the manifest's Deliverables in the order listed. Acceptance Criteria and Global Invariants are the binding layer — they are what the run owes, and gates are the only thing that can hold it open. Process Guidance is advisory: recommendations on how to work, weighed rather than enforced, and set aside when the work is better for it — record every departure where the user will see it, in the execution log when one is kept and in the completion summary otherwise, since advisory only stays safe while departing stays visible. The Initial Approach and the Deliverable order are likewise plan, not contract: pivot either when reality diverges — resequence when execution surfaces a real dependency the order missed — and record the deviation.
+Work toward the manifest's Deliverables in the order listed. Acceptance Criteria and Global Invariants are the binding layer — they are what the run owes, and gates are the only thing that can hold it open. Process Guidance is advisory: recommendations on how to work, weighed rather than enforced, and set aside when the work is better for it — name every departure in the completion summary, and in the execution log too when one is kept, since advisory only stays safe while departing stays visible. The Initial Approach and the Deliverable order are likewise plan, not contract: pivot either when reality diverges — resequence when execution surfaces a real dependency the order missed — and record the deviation.
 
 ### Running the verifiers
 
@@ -53,7 +53,7 @@ If only wait-shaped findings remain, report the waiting state as pending; do not
 
 ## Execution log
 
-Execution history never lives in the manifest — logged or not, the manifest stays the acceptance contract. Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only execution log — deviations from the Initial Approach, dead-end memory, and operational notes; a caller-supplied journal path is that log. Under `--no-log`, run without one — the log is an aid, not a precondition.
+Execution history never lives in the manifest — logged or not, the manifest stays the acceptance contract. Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only execution log — deviations from the Initial Approach or Deliverable order, Process Guidance departures, dead-end memory, and operational notes; a caller-supplied journal path is that log. Under `--no-log`, run without one — the log is an aid, not a precondition.
 
 **Runaway protection.** Holds regardless of logging; the log is where its memory lives. Lifecycle verifiers like `check-pr` are stateless and report current state without counting cycles, so you own the stop condition — when the log (when kept) plus your run memory show a fix or wait has been retried well past the point of progress, route to `/escalate` (or, in no-wait mode, a pending summary) rather than looping.
 
@@ -69,7 +69,7 @@ Then surface a one-line digest of what the amendment assumed (the new or changed
 
 When /do is the top-level execution entrypoint, establish a durable goal-setting backstop whose completion contract is auditable from the transcript after /do reads the manifest.
 
-**What the contract must require.** A gate ledger covering every Acceptance Criterion and Global Invariant: gate id, phase, `verify.prompt` source, latest independent verifier verdict, evidence, and freshness relative to the last relevant change to its subject. Completion requires every listed gate to have fresh PASS evidence and `/done` reported. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are non-terminal; when a substantive change touches a gate's subject after a PASS — re-reading, re-examining, and cosmetic or no-op edits do not — mark that gate stale and re-verify before `/done`. Do not accept self-attestation, "looks done", or summary claims in place of verifier output.
+**What the contract must require.** A gate ledger covering every Acceptance Criterion and Global Invariant: gate id, phase, `verify.prompt` source, latest independent verifier verdict, evidence, and freshness relative to the last relevant change to its subject. Completion requires every listed gate to have fresh PASS evidence and `/done` reported. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are non-terminal; when a substantive change touches a gate's subject after a PASS, mark that gate stale and re-verify before `/done`; re-reading, re-examining, and cosmetic or no-op edits do not. Do not accept self-attestation, "looks done", or summary claims in place of verifier output.
 
 **Where the contract lives.** If a broader parent workflow backstop is already visible (for example `/auto`'s full-chain contract or `/babysit-pr`'s PR-tend contract) and it carries this manifest gate-ledger condition, do not set or print a second narrower goal; operate under the parent contract. If the visible parent lacks that condition, supplement it by setting or printing the manifest-completion contract before continuing. Otherwise, if the active harness exposes a goal-setting or continuation capability, set the manifest-completion contract directly; if not, print the copy-pasteable contract for the user to apply manually.
 
