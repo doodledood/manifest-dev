@@ -19,7 +19,7 @@ Every verifier is a **general-purpose** subagent driven by `verify.prompt` — w
 
 ### The gate ledger
 
-Each verifier returns PASS, FAIL, or BLOCKED; track each gate's latest verdict and its freshness in a gate ledger. A substantive implementation change to a gate's subject after a PASS marks that gate stale; re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Stale and unverified gates re-verify before `/done`; a settled PASS does not re-run.
+Each verifier returns PASS, FAIL, or BLOCKED; track each gate's latest verdict and its freshness in a gate ledger. A substantive change to a gate's subject after a PASS marks that gate stale; re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Stale and unverified gates re-verify before `/done`; a settled PASS does not re-run.
 
 ### When the run is done
 
@@ -61,7 +61,7 @@ Execution history never lives in the manifest — logged or not, the manifest st
 
 Mid-/do user messages default to invoking `manifest-dev:define` for amendment — the manifest is the source of truth, silent scope drift is worse than an extra amendment cycle. After the amendment returns, re-read the full Manifest and reconcile the active gate ledger before resuming.
 
-**Reconciling the ledger.** A gate's verification identity is its complete effective verifier input: ID, criterion/invariant text, `verify.prompt`, `verify.model` (default: inherit), `verify.phase` (default: 1), and any caller-injected wrapper context such as a multi-repo path map. New gates and gates whose identity changed become unverified, with prior verdicts retained only as history; removed gates retire from the active ledger; unchanged gates retain their verdict and freshness subject to relevant implementation changes. Run outstanding verification in normal phase order.
+**Reconciling the ledger.** A gate's verification identity is its complete effective verifier input: ID, criterion/invariant text, `verify.prompt`, `verify.model` (default: inherit), `verify.phase` (default: 1), and any caller-injected wrapper context such as a multi-repo path map. New gates and gates whose identity changed become unverified, with prior verdicts retained only as history; removed gates retire from the active ledger; unchanged gates retain their verdict and freshness subject to relevant changes in their subject. Run outstanding verification in normal phase order.
 
 Then surface a one-line digest of what the amendment assumed (the new or changed `(auto)`/ASM entries) so a user who steered and left can audit on return. Pure questions about the manifest or process are answered inline.
 
@@ -69,7 +69,7 @@ Then surface a one-line digest of what the amendment assumed (the new or changed
 
 When /do is the top-level execution entrypoint, establish a durable goal-setting backstop whose completion contract is auditable from the transcript after /do reads the manifest.
 
-**What the contract must require.** A gate ledger covering every Acceptance Criterion and Global Invariant: gate id, phase, `verify.prompt` source, latest independent verifier verdict, evidence, and freshness relative to the last relevant implementation change. Completion requires every listed gate to have fresh PASS evidence and `/done` reported. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are non-terminal; when a substantive implementation change touches a gate's subject after a PASS — re-reading, re-examining, and cosmetic or no-op edits do not — mark that gate stale and re-verify before `/done`. Do not accept self-attestation, "looks done", or summary claims in place of verifier output.
+**What the contract must require.** A gate ledger covering every Acceptance Criterion and Global Invariant: gate id, phase, `verify.prompt` source, latest independent verifier verdict, evidence, and freshness relative to the last relevant change to its subject. Completion requires every listed gate to have fresh PASS evidence and `/done` reported. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are non-terminal; when a substantive change touches a gate's subject after a PASS — re-reading, re-examining, and cosmetic or no-op edits do not — mark that gate stale and re-verify before `/done`. Do not accept self-attestation, "looks done", or summary claims in place of verifier output.
 
 **Where the contract lives.** If a broader parent workflow backstop is already visible (for example `/auto`'s full-chain contract or `/babysit-pr`'s PR-tend contract) and it carries this manifest gate-ledger condition, do not set or print a second narrower goal; operate under the parent contract. If the visible parent lacks that condition, supplement it by setting or printing the manifest-completion contract before continuing. Otherwise, if the active harness exposes a goal-setting or continuation capability, set the manifest-completion contract directly; if not, print the copy-pasteable contract for the user to apply manually.
 
