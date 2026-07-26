@@ -25,7 +25,7 @@ figure-out reaches shared understanding of the *problem*; /define handles manife
 
 ## Task files
 
-Identify task type and load the matching file(s) from `tasks/` — their Quality Gates auto-encode as INV-G*/AC-* and Defaults as PG-* before the interview — except safety-critical Defaults, which route to a gate per **Safety-critical candidates** above (surface each as it lands so the dialogue carries the encoding forward). These define task files carry **encoder data only**; probing fuel lives in figure-out's own parallel probe files (`skills/figure-out/tasks/`) — the two sets are decoupled. Per-repo for multi-repo manifests.
+Identify task type and load the matching file(s) from `tasks/` — their Quality Gates and Defaults auto-encode before the interview, per *Content types* below (surface each as it lands so the dialogue carries the encoding forward). These define task files carry **encoder data only**; probing fuel lives in figure-out's own parallel probe files (`skills/figure-out/tasks/`) — the two sets are decoupled. Per-repo for multi-repo manifests.
 
 | Domain | Indicators | File |
 |--------|------------|------|
@@ -114,7 +114,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
   ```
 ````
 
-**Verdicts.** Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — `/do` routes via `/escalate`). Automate verification. A criterion that resists it becomes a judgment-based gate whose prompt names the concrete evidence the verifier checks against — not a Process Guidance entry; if it genuinely cannot be written as a gate, sharpen or drop it — a criterion nothing checks is not a criterion. A drop leaves a trace: record it as an `ASM-*` entry naming what was dropped, why it resisted gating, and the impact if that judgment is wrong, so nothing the user cared about disappears unrecorded. Safety-critical candidates are never dropped for resisting verification — sharpen them instead (see above). Criteria that wait on human or external action (deploys, approvals, in-flight CI) stay ACs — the verifier surfaces the wait per its own contract, as BLOCKED or as a FAIL carrying a wait finding, until it clears. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
+**Verdicts.** Verifiers return **PASS**, **FAIL**, or **BLOCKED** (waiting on external action — `/do` routes via `/escalate`). Automate verification. A criterion that resists it becomes a judgment-based gate whose prompt names the concrete evidence the verifier checks against — not a Process Guidance entry; if it genuinely cannot be written as a gate, sharpen or drop it — a criterion nothing checks is not a criterion. A drop leaves a trace: record it as an `ASM-*` entry naming what was dropped, why it resisted gating, and the impact if that judgment is wrong, so nothing the user cared about disappears unrecorded. Safety-critical candidates are exempt from the drop (see above). Criteria that wait on human or external action (deploys, approvals, in-flight CI) stay ACs — the verifier surfaces the wait per its own contract, as BLOCKED or as a FAIL carrying a wait finding, until it clears. Auto-decided items carry `(auto)` after the ID with a matching ASM entry.
 
 ## Amendment
 
