@@ -8,7 +8,7 @@ manifest-driven workflows for Claude Code. `/define` interviews you and writes a
 A structured spec produced by `/define` that captures Deliverables, Acceptance Criteria, Global Invariants, Process Guidance, and an Initial Approach.
 
 **Deliverable**:
-A discrete output a `/define` session commits to producing.
+A slice a `/define` session commits to producing that can be finished on its own and exercised end-to-end, so its Acceptance Criteria judge whether it works rather than whether it exists.
 _Avoid_: Story, ticket, feature.
 
 **Acceptance Criterion**:
@@ -27,7 +27,7 @@ _Avoid_: Constraint, requirement, gate.
 A verifiable task-file item that `/define` encodes as an acceptance-style gate.
 
 **Default**:
-A non-probed task-file item that `/define` carries into Process Guidance.
+A non-probed task-file item that `/define` carries into Process Guidance — unless it is stated as a prohibition, which routes to a Global Invariant instead.
 
 **Task File**:
 A per-domain hint file owned by a workflow: `figure-out` task files supply probing fuel, while `/define` task files supply Quality Gates and Defaults.
@@ -130,7 +130,7 @@ _Avoid_: Preference, style, judgment.
 - A **Manifest** has zero or more **Global Invariants**, applied across all Deliverables.
 - A **Task File** can contribute **Quality Gates** and **Defaults** to `/define`.
 - A **Quality Gate** becomes an acceptance-style gate in a **Manifest**.
-- A **Default** becomes **Process Guidance** in a **Manifest**.
+- A **Default** becomes **Process Guidance** in a **Manifest**, except a prohibition-shaped Default, which becomes a **Global Invariant** so it binds.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
 - **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.

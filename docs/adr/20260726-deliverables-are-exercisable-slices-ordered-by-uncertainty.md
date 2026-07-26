@@ -53,6 +53,7 @@ The guidance lives inline rather than in a companion reference because deliverab
 ### Negative
 - `SKILL.md` grows, and it loads on every `/define` invocation. The cost is accepted because decomposition applies universally; the ordering line was rewritten rather than added to keep the net growth proportionate.
 - Uncertainty-first ordering can conflict with a reader's expectation that execution order follows dependencies. The guidance states that real dependencies still bind, but the two rules must now be reconciled per manifest rather than read off the dependency graph.
+- A manifest written before this change that carries an `Execution Order:` line in its Initial Approach loses it: `/do` reads list order and nothing reads that field any more. Accepted rather than mitigated — honoring it would require `/do` to carry a precedence rule for a field the schema no longer emits, which is the mechanism cost the `Sequence:` alternative was rejected for. Such a manifest still executes; the deliverables are simply worked in list order, the resequencing licence corrects on contact with a real dependency, and every gate still verifies before `/done`, so the cost is rework rather than a wrong result.
 - Requiring exercisability may push against work that is genuinely infrastructural, where the honest slice has no user-visible path. Such cases must be cut so that something can still be run against them, which is more demanding than cutting by layer.
 
 ## Source
