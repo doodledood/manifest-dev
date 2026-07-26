@@ -18,8 +18,8 @@ Lifecycle verification composes through a single AC that activates the `check-pr
 The last three are the `check-pr` skill's hard prohibitions, verified per repo.
 
 /define synthesizes these three per repo alongside the lifecycle AC, templating the same `PR:` and
-`Branch:` context into each so the subject is defined in multi-repo manifests. They encode as
-`INV-G*` — each must hold across the whole run, not within one Deliverable.
+`Branch:` context into each so the subject is defined in multi-repo manifests. Each must hold for
+the whole run rather than within a single Deliverable.
 
 **No force-push, no merge to base** — the prohibition is on what the run *did*, not on the PR's
 resulting state: a human or GitHub auto-merge pressing merge is the success outcome, and syncing
