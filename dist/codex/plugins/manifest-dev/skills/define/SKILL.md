@@ -89,7 +89,7 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - [ASM-1] [What was assumed] | Default: [chosen value] | Impact if wrong: [consequence]
 
 ## 6. Deliverables
-*Ordered by execution order from Initial Approach; otherwise least-proven approach first, with real dependencies binding.*
+*Ordered least-proven-first, with real dependencies binding — the Initial Approach's Execution Order, where one exists, follows the same rule.*
 
 ### Deliverable 1: [Name]
 
