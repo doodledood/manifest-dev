@@ -77,7 +77,7 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 
 ## 2. Initial Approach
 - **Architecture:** Middleware-based auth, JWT in httpOnly cookies
-- **Execution Order:** D1 (Model) → D2 (Endpoints) → D3 (Protected Routes)
+- **Execution Order:** D1 (Login round-trip) → D2 (Protected route access) → D3 (Logout)
 - **Trade-offs:**
   - [T-1] Simplicity vs Security → Prefer security (bcrypt, not md5)
 
@@ -93,7 +93,7 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 
 ## 6. Deliverables (The Work)
 
-### Deliverable 1: Auth Endpoints
+### Deliverable 1: Login round-trip
 **Acceptance Criteria:**
 - [AC-1.1] POST /login validates credentials, returns JWT
 - [AC-1.2] Invalid credentials return 401, not 500
