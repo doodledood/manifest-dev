@@ -1,7 +1,7 @@
 # ADR: Only gates bind; Process Guidance is advisory
 
 ## Status
-Accepted. Supersedes [20260709-process-guidance-is-binding-but-unverified](20260709-process-guidance-is-binding-but-unverified.md).
+Accepted
 
 ## Context
 

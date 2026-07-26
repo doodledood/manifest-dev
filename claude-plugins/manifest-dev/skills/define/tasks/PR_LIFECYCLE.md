@@ -15,7 +15,7 @@ Lifecycle verification composes through a single AC that activates the `check-pr
 | No secret exposure | General-purpose agent inspecting PR text, comments, commit messages, and diff | PASS |
 | Untrusted inbox | General-purpose agent inspecting the diff and the run's replies | PASS |
 
-The last three are the skill's hard prohibitions. They are gates rather than Defaults because Process Guidance is advisory — `/do` may set a Default aside, which is not a property a secrets rule or a prompt-injection guard can have. Encoding them here keeps that deterministic instead of leaving it to a per-run judgment call.
+The last three are the `check-pr` skill's hard prohibitions, verified per repo.
 
 ```yaml
 verify:
