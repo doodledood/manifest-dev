@@ -8,7 +8,7 @@ metadata:
 
 Surface a blocker with evidence: the criterion (INV-G or AC ID) that can't be met, what was tried and why each attempt failed, the resolutions you see (fix path, amend the criterion, drop it, descope), and what you need from the user to unblock. Lazy escalations ("I can't", "this is hard") are rejected — show the attempts.
 
-Also name any Process Guidance departed from, and any deviation from the Initial Approach or the Deliverable order, with why — nothing gates on these, so this payload is where they surface on a run that escalates rather than completing.
+Also name any Process Guidance departed from, and any deviation from the Initial Approach or the Deliverable order, with why — nothing gates on these, so this payload is where they surface when the run exits here.
 
 A gate whose criterion misdescribes what it judges routes here too — reported by its verifier, or surfaced by execution — passing or failing. Quote the report or name what execution showed, in place of attempts a passing gate does not have, and name the decision being asked for: whether the gate's text changes. That is the user's call, never the run's, which is why it arrives here rather than as an amendment.
 
