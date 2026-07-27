@@ -10,7 +10,7 @@ Surface a blocker with evidence: the criterion (INV-G or AC ID) that can't be me
 
 Also name any Process Guidance departed from, and any deviation from the Initial Approach or the Deliverable order, with why — nothing gates on these, so this payload is where they surface on a run that escalates rather than completing.
 
-A gate whose verifier reports that its criterion misdescribes what it judges routes here too, passing or failing. Quote the verifier's report in place of attempts — a gate that passed has none — and name the decision being asked for: whether the gate's text changes. That is the user's call, never the run's, which is why it arrives here rather than as an amendment.
+A gate whose criterion misdescribes what it judges routes here too — reported by its verifier, or surfaced by execution — passing or failing. Quote the report or name what execution showed, in place of attempts a passing gate does not have, and name the decision being asked for: whether the gate's text changes. That is the user's call, never the run's, which is why it arrives here rather than as an amendment.
 
 A BLOCKED verifier verdict (e.g., "deploy hasn't happened yet", "awaiting human approval") routes here too, with the BLOCKED note quoted from the verifier and the suggested user action carried through. Pure questions about the manifest or process are answered inline by /do, not escalated.
 
