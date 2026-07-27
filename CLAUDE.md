@@ -168,3 +168,9 @@ ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
 ```
 
 Bump plugin version if plugin files changed.
+
+## Taste
+
+Ratified steering preferences for this repo. Each states the preference, why it holds, and when it should yield — weigh them rather than obey them.
+
+- **Default manifests here to no PR-lifecycle gates.** Pull requests in this repo run no CI and have a single maintainer as the only reviewer, so lifecycle criteria spend verification effort on nothing. Include them once a pull request carries required status checks, or a reviewer whose approval gates the merge.

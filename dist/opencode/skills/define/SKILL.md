@@ -23,7 +23,7 @@ figure-out reaches shared understanding of the *problem*; /define handles manife
 
 **Known Assumptions.** Consume `Known Assumption candidate` items from the latest figure-out Read: encode each still-unresolved candidate that survives the triage below as an `ASM-*` entry with its default and impact if wrong; omit candidates that later evidence or the user resolved. Do not copy the full Evidence Ledger into the Manifest.
 
-Triage by what being wrong would cost. Work redone is an assumption and belongs here; an approach invalidated is not — settle that gap before the manifest ships, either by invoking `figure-out` to resolve it or by choosing a good-enough answer outright and recording it as a decided element of the Initial Approach along with what it trades away. Carried as a default instead, it surfaces mid-run, where a stalled unattended execution costs far more than settling it here would have. With no user to settle it — an autonomous run or a mid-/do amendment — invoke `figure-out --autonomous` and record what it settles as that decided element, with an `(auto)` ASM pointing at the decision rather than standing in for it.
+Triage by what being wrong would cost. Work redone is an assumption and belongs here; an approach invalidated is not — settle that gap before the manifest ships, either by invoking `figure-out` to resolve it or by choosing a good-enough answer outright and recording it as a decided element of the Initial Approach along with what it trades away — which makes that section present even on an otherwise simple task. Carried as a default instead, it surfaces mid-run, where a stalled unattended execution costs far more than settling it here would have. With no user to settle it — an autonomous run or a mid-/do amendment — invoke `figure-out --autonomous` and record what it settles as that decided element, with an `(auto)` ASM pointing at the decision rather than standing in for it.
 
 **Criteria pinned by reaction.** Criteria the user pinned by *reacting* to something concrete during figure-out — a mock, a reference, a chosen direction — are success criteria, not flavor: encode them as an Acceptance Criterion or Global Invariant, judged against the criterion the reaction named rather than the artifact that provoked it. Never route one to Process Guidance or the Initial Approach, where /do may weigh it away. This routes onto existing structure; it adds no new manifest section.
 
@@ -51,7 +51,9 @@ Identify task type and load the matching file(s) from `tasks/` — their Quality
 
 ## Writing the gates
 
-**Gate altitude.** A gate binds the outcome the user cares about, at the altitude of the Problem and Appetite; the mechanism that achieves it belongs in the Initial Approach, where /do may depart and name the departure. Test each candidate: if /do satisfied the intent a better way, would this gate go false anyway? Then it is pinning the how — raise it until it isn't. The asymmetry is what makes this worth the care: /do cannot amend gate text on its own reading, so an over-concrete gate becomes an escalation the moment a legitimate pivot happens. Three classes sit outside the test. A safety-critical invariant is exempt — there the mechanism *is* the outcome, so it stays at whatever concreteness makes it judgable from what the work leaves behind. So is a criterion the user pinned by reaction: the criterion the reaction named is itself the outcome, and raising it away is the erosion that routing exists to prevent. And a Quality Gate a task file authored ships as written: task files own their `verify.prompt`, and the licensed transform on them stays omission with stated reasoning. Under-specification is guarded from the other side — a Deliverable exercised end-to-end lets its gates judge behavior rather than presence.
+**Gate altitude.** A gate binds the outcome the user cares about, at the altitude of the Problem and Appetite; a mechanism chosen merely as the means to that outcome belongs in the Initial Approach, where /do may depart and name the departure. Test each candidate: if /do satisfied the intent a better way, would this gate go false anyway? Then it is pinning a means — raise it until it isn't. The asymmetry is what makes this worth the care: /do cannot amend gate text on its own reading, so an over-concrete gate becomes an escalation the moment a legitimate pivot happens.
+
+The test reaches means, never ends. Where a mechanism was deliberately chosen as the thing that must hold — a safety-critical invariant, a criterion the user pinned by reacting to something concrete, a bound the Appetite or Out of bounds deliberately set, the claim a task file's Quality Gate pitches — that mechanism *is* the outcome, and raising it away is the erosion this discipline exists to prevent; the gate stays at whatever concreteness makes it judgable from what the work leaves behind. For a task-file gate that means keeping the altitude the task file pitched, not its literal text: instantiating its template and adding run-specific steering is expected, while the licensed removal stays omission with stated reasoning. Under-specification is guarded from the other side — a Deliverable exercised end-to-end lets its gates judge behavior rather than presence.
 
 **Verifier prompt discipline.** Before writing `verify.prompt` fields, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. Verifier prompts are prompts: state the verifier's goal, evidence to inspect, PASS/FAIL/BLOCKED contract, and non-obvious context. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
 
@@ -78,10 +80,12 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - **Out of bounds:** [What this deliberately does not do]
 - **Mental Model:** [Key concepts to understand]
 
-## 2. Initial Approach (Complex Tasks Only)
+## 2. Initial Approach (complex tasks, and any task carrying a decided element)
 *Initial direction, not rigid plan. Expect adjustment when reality diverges.*
 
 - **Architecture:** [High-level HOW — starting direction]
+- **Decided elements:**
+  - [D-1] [What was settled, and the answer chosen] | Trades away: [what the choice gives up]
 - **Risk Areas:**
   - [R-1] [What could go wrong] | Detect: [how you'd know]
 - **Trade-offs:**
