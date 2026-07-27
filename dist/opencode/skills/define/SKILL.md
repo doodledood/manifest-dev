@@ -13,6 +13,8 @@ Encode the conversation's shared understanding as a Manifest at `~/.manifest-dev
 
 figure-out reaches shared understanding of the *problem*; /define handles manifest-specific *encoding* judgment calls — invariant vs process guidance, AC scope and pass threshold, phase ordering (fast vs slow), trade-offs to record as `[T-N]`. Surface the load-bearing encoding decisions briefly with a recommended answer before encoding; auto-decide the rest and mark `(auto)` + matching ASM. The manifest is the acceptance contract — what the user accepts as *"I'd ship the outcome of executing this."*
 
+**Problem first.** Intent opens with the Problem — one specific story of what breaks or grates today, not an abstract need — because everything downstream steers by it: /do weighs its trade-off calls and sub-threshold findings against it, and review judges the change against that baseline rather than against an ideal. Appetite follows: the size of change the problem is worth, bounding complexity and surface rather than time or tokens, and the criterion for how much to gate and how many Deliverables to cut. Out of bounds records what the work deliberately leaves alone; entries that must hold route to Global Invariants like any other binding rule. Elicit whatever the conversation left unset — these are encoding decisions, not re-investigation. A session that cannot name a pain has found a stop signal rather than an empty field: return to `figure-out`, or conclude there is nothing worth building.
+
 **Cutting Deliverables.** A Deliverable is a slice that can be finished on its own and exercised end-to-end — put in front of its real use: run, read, or otherwise judged in the situation it is for, not merely inspected as present. That is what lets its Acceptance Criteria judge whether it works rather than whether it exists; a Deliverable cut along a layer ("the data model", "the endpoints", "the outline", "the sources") can only be gated on existence, the weakest thing a gate can check. Signs a cut is wrong: you can't say how done it is, the name is generic rather than specific to this work, or it's too large to finish soon.
 
 **Ordering Deliverables.** Order by uncertainty — the Deliverable whose approach is least proven leads, so an unworkable direction surfaces while there is still room to change course; record why in the Order rationale line. Real dependencies still bind; uncertainty orders what they leave free. An amendment places a new Deliverable where uncertainty puts it rather than at the end by default.
@@ -20,6 +22,8 @@ figure-out reaches shared understanding of the *problem*; /define handles manife
 **Safety-critical candidates.** Any candidate whose violation would be unsafe or irreversible — secrets and credentials, untrusted input, destructive or irreversible actions on shared state, such as merging, publishing, or overwriting a branch others build on — becomes a Global Invariant, holding across every Deliverable rather than only the one that happens to touch it, whatever its origin: a task-file Default, the interview, or a steering amendment. A verifier sees only its own prompt, never the run that spawned it, so sharpen the invariant until it can be judged from what the work leaves behind — the artifacts produced and the project state around them; for code, the diff, the repository, and the pull request with its comments. Never drop it for resisting verification: dropping is the outcome this routing exists to prevent. Where only part of it is reachable — a clause about what the run *did*, leaving no artifact — gate the reachable part and record the rest as an `ASM-*` entry naming what is not gated and what enforces it instead, so the unreachable half is visible rather than quietly narrowed away.
 
 **Known Assumptions.** Consume `Known Assumption candidate` items from the latest figure-out Read: encode each still-unresolved candidate as an `ASM-*` entry with its default and impact if wrong; omit candidates that later evidence or the user resolved. Do not copy the full Evidence Ledger into the Manifest.
+
+Triage by what being wrong would cost. Work redone is an assumption and belongs here; an approach invalidated is not — settle that gap before the manifest ships, either by invoking `figure-out` to resolve it or by choosing a good-enough answer outright and recording it as a decided element of the Initial Approach along with what it trades away. Carried as a default instead, it surfaces mid-run, where a stalled unattended execution costs far more than settling it here would have.
 
 **Criteria pinned by reaction.** Criteria the user pinned by *reacting* to something concrete during figure-out — a mock, a reference, a chosen direction — are success criteria, not flavor: encode them as an Acceptance Criterion or Global Invariant, judged against the criterion the reaction named rather than the artifact that provoked it. Never route one to Process Guidance or the Initial Approach, where /do may weigh it away. This routes onto existing structure; it adds no new manifest section.
 
@@ -47,6 +51,8 @@ Identify task type and load the matching file(s) from `tasks/` — their Quality
 
 ## Writing the gates
 
+**Gate altitude.** A gate binds the outcome the user cares about, at the altitude of the Problem and Appetite; the mechanism that achieves it belongs in the Initial Approach, where /do may depart and name the departure. Test each candidate: if /do satisfied the intent a better way, would this gate go false anyway? Then it is pinning the how — raise it until it isn't. The asymmetry is what makes this worth the care: /do cannot amend gate text on its own reading, so an over-concrete gate becomes an escalation the moment a legitimate pivot happens. Under-specification is guarded from the other side — a Deliverable exercised end-to-end lets its gates judge behavior rather than presence.
+
 **Verifier prompt discipline.** Before writing `verify.prompt` fields, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. Verifier prompts are prompts: state the verifier's goal, evidence to inspect, PASS/FAIL/BLOCKED contract, and non-obvious context. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
 
 **Encoding gates — always general-purpose + a skill.** There is no `verify.agent` field. Every gate is verified by a **general-purpose** subagent driven by `verify.prompt`; when a gate needs specialized behavior, the prompt tells that agent to **activate a skill**. Code-quality gates activate the `review-code` skill with a dimension; other specialized checks activate their skill (`check-pr`, `review-prompt`). Pattern:
@@ -66,7 +72,10 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 # Definition: [Title]
 
 ## 1. Intent & Context
-- **Goal:** [High-level purpose]
+- **Problem:** [The specific story of what breaks or grates today — the baseline this work improves on]
+- **Appetite:** [The size of change this problem is worth — a bound on complexity and surface]
+- **Goal:** [What this work achieves, in service of the Problem]
+- **Out of bounds:** [What this deliberately does not do]
 - **Mental Model:** [Key concepts to understand]
 
 ## 2. Initial Approach (Complex Tasks Only)
@@ -134,7 +143,7 @@ Before Complete, write a plain-language digest (plan / what / guardrails / how-v
 
 ## Complete
 
-Emit the load-bearing handoff (`<manifest-path>` is the absolute path you wrote; `<dir>` is the project directory in slug form, e.g. `-home-user-manifest-dev`):
+Emit the load-bearing handoff (`<manifest-path>` is the absolute path you wrote):
 
 ```text
 Manifest complete: <manifest-path>

@@ -71,7 +71,12 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 # Definition: User Authentication
 
 ## 1. Intent & Context
+- **Problem:** Anyone with the app URL reads every user's data — there is
+  no login at all.
+- **Appetite:** Session auth over the existing endpoints, not an identity
+  subsystem.
 - **Goal:** Add password-based auth to an Express app with JWT sessions.
+- **Out of bounds:** OAuth providers, account recovery, role permissions.
 - **Mental Model:** Auth is cross-cutting. Security invariants apply
   globally; endpoint behavior is per-deliverable.
 

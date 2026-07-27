@@ -7,6 +7,7 @@ Angles that are easy to under-weight on new functionality. Considerations, not a
 - **Partial failure** — What state is left behind if it fails halfway through?
 - **Orphaned resources** — Does this create data or state that grows unbounded with no cleanup path?
 - **Rollback** — If this ships and goes wrong, how is it reversed — flag, migration rollback, manual revert?
+- **Slow-motion walk** — Played the use case through one step at a time, rather than at the altitude of "and then it works"? The holes sit between the steps nobody narrated.
 
 ## Forced trade-offs
 - Graceful degradation vs fail-fast — when this breaks, should the surrounding functionality keep working or stop loudly?

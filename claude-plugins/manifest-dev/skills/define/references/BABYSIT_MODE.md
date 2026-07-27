@@ -33,6 +33,8 @@ Do not fuzzy-pick a repository manifest when confidence is low; synthesize from 
 
 After pre-flight succeeds, read PR title and body:
 
+- **Problem:** the pain the PR describes — what was broken or missing before it. Fall back to the linked issue, then to the PR's own framing, recording thinness as a Known Assumption. SKILL.md's stop-on-no-pain does not apply here: the PR already exists, so synthesis records the motivation the evidence supports rather than halting.
+- **Appetite / Out of bounds:** bounded by the PR as it stands — lifecycle work drives this diff to mergeable and adds no scope beyond it.
 - **Goal:** derived from PR title and body's opening paragraph. One or two sentences naming what the PR is for.
 - **Mental Model:** when the body has a "context" / "background" / "why" section, fold it in. Otherwise minimal.
 
