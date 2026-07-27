@@ -1,9 +1,0 @@
-# /do execution log — Shape Up adoption manifest
-
-**Manifest:** /root/.manifest-dev/manifests/manifest-20260727-143753.md
-**Branch:** claude/shape-up-methodology-review-05jwen
-
-## 2026-07-27T14:43:00Z — run start
-**Event:** /do invoked as top-level entrypoint. Manifest read; gate ledger initialized — INV-G1..G4, AC-1.1, AC-1.2, AC-2.1, AC-2.2, AC-3.1 unverified (phase 1); AC-3.2 unverified (phase 2).
-**Next:** Deliverable 1 — define/SKILL.md schema + encoding discipline.
-

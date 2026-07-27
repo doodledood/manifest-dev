@@ -58,7 +58,7 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
-| **Intent & Context** | Goal and mental model | -- |
+| **Intent & Context** | Problem, appetite, goal, out of bounds, mental model | -- |
 | **Initial Approach** (complex tasks) | Architecture, risks, trade-offs | `R-{N}`, `T-{N}` |
 | **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
 | **Process Guidance** | Advisory recommendations on how to work; weighed, not enforced | `PG-{N}` |
