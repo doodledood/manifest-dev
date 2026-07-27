@@ -50,3 +50,4 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-26 | [figure-out narrows the presentation no-trim clause to its guardrail](20260726-figure-out-narrows-presentation-no-trim-clause.md) | Accepted | figure-out |
 | 2026-07-26 | [Deliverables are exercisable slices, ordered by uncertainty](20260726-deliverables-are-exercisable-slices-ordered-by-uncertainty.md) | Accepted | define |
 | 2026-07-26 | [Only gates bind; Process Guidance is advisory](20260726-only-gates-bind-process-guidance-is-advisory.md) | Accepted | do |
+| 2026-07-27 | [Gate text changes on the user's say-so, not the run's](20260727-gate-text-changes-on-the-users-say-so.md) | Accepted | do |

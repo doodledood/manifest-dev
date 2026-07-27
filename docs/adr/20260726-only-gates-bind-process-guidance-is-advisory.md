@@ -31,7 +31,7 @@ The routing gap the superseded ADR identified is closed at the encoder instead o
 ## Consequences
 
 ### Positive
-- `/do`'s termination condition is unambiguous: gates decide, and a fresh PASS on all of them ends the run.
+- `/do`'s termination condition is unambiguous: gates decide, and a fresh PASS on all of them ends the run. (Refined subsequently: a PASS whose criterion is itself under challenge is not a settled PASS, and routes to `/escalate` rather than completing — see the gate-text ADR below. Gates still decide; what changed is when a PASS counts as one.)
 - The manifest's authority structure matches its enforcement structure — the layer that binds is the layer that is checked.
 - Criteria the user pinned by reacting to something concrete land in gates, so they are actually verified rather than recorded in a layer nothing evaluates. This is stronger protection than the superseded ADR provided.
 - Task-file Defaults, which flow into Process Guidance with light review, can no longer dictate execution — the concern the superseded ADR set aside as handled only by user review at approval time. This holds for quality defaults; a Default whose violation would be unsafe or irreversible (secrets, untrusted input, destructive actions) is carved out at the encoder and routed to a Global Invariant instead, because an advisory safety rule is not a safety rule.
@@ -42,6 +42,7 @@ The routing gap the superseded ADR identified is closed at the encoder instead o
 - Manifests written under the superseded reading treat their Process Guidance as binding. They still execute; their PG items are now weighed rather than enforced, which may be a behavior change for a manifest that relied on the stronger reading.
 
 ## Source
+- Refined by: [20260727-gate-text-changes-on-the-users-say-so](20260727-gate-text-changes-on-the-users-say-so.md)
 - Supersedes: [20260709-process-guidance-is-binding-but-unverified](20260709-process-guidance-is-binding-but-unverified.md)
 - Related: [20260722-state-verification-sufficiency-not-only-necessity](20260722-state-verification-sufficiency-not-only-necessity.md)
 - Related: [20260726-deliverables-are-exercisable-slices-ordered-by-uncertainty](20260726-deliverables-are-exercisable-slices-ordered-by-uncertainty.md)

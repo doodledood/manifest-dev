@@ -100,8 +100,8 @@ flowchart TD
     E --> F{"For each Deliverable"}
     F --> G["Implement toward ACs"]
     G --> H["Spawn subagent per AC + Global Invariant"]
-    H -->|FAIL| I["Fix that criterion"]
-    I --> H
+    H -->|any FAIL| I["Fix everything the round found"]
+    I -->|re-verify per head| H
     H -->|all PASS| J["/done"]
     F -->|risk surfaces| K["Consult trade-offs, adjust approach"]
     K -->|reachable| F

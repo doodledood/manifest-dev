@@ -74,7 +74,7 @@ Each item belongs in exactly one section, and a safety rule whose violation woul
 
 | Section | Set | What it checks | Test |
 |---------|-----|----------------|------|
-| Quality Gate (baseline) | /define | Output property that should always be true | Would omitting this ever be acceptable? No → baseline |
+| Quality Gate (baseline) | /define | Output property that should always be true | Would omitting this ever be acceptable? No → baseline, unless violating it would be unsafe or irreversible → Default |
 | Quality Gate (selectable) | /define | Output property representing a meaningful rigor choice | Reasonable to skip for some tasks? Yes → selectable |
 | Default | /define | Process practice always worth doing | Can't verify from output, or a safety rule whose violation would be unsafe or irreversible? → Default |
 | Blind-spot probe | figure-out | A non-natural failure mode / pre-mortem angle the model skips by default | "Imagine this was rejected because..." AND a capable model wouldn't raise it unprompted? → probe |
