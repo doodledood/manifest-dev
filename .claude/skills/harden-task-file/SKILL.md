@@ -18,7 +18,7 @@ Task files come in two parallel, decoupled sets, each keyed by task type and har
 
 - **`/define`'s task files** (`claude-plugins/manifest-dev/skills/define/tasks/`) carry encoder data:
   - **Quality Gates** — Verifiable output properties. Can split into baselines (always enforced) and selectable (meaningful rigor choices)
-  - **Defaults** — Non-verifiable process practices always worth doing, encoded as PG-* without probing
+  - **Defaults** — process practices always worth doing, carried into the manifest without probing; `/define` decides the encoding, and routes one whose violation would be unsafe or irreversible to a binding invariant rather than advice
 - **figure-out's task files** (`claude-plugins/manifest-dev/skills/figure-out/tasks/`) carry probing fuel:
   - **Blind-spot probes** — Non-natural angles the model skips by default (failure modes, pre-mortem fuel), phrased as the question that opens a branch
   - **Forced trade-offs** — Competing tensions the model must drive to a decision
@@ -76,7 +76,7 @@ Each item belongs in exactly one section. A file holds only its own set's sectio
 |---------|-----|----------------|------|
 | Quality Gate (baseline) | /define | Output property that should always be true | Would omitting this ever be acceptable? No → baseline |
 | Quality Gate (selectable) | /define | Output property representing a meaningful rigor choice | Reasonable to skip for some tasks? Yes → selectable |
-| Default | /define | Non-verifiable process practice always worth doing | Can't verify from output but always sound? → Default (PG-*) |
+| Default | /define | Process practice always worth doing | Can't verify from output, or a safety rule whose violation would be unsafe or irreversible? → Default |
 | Blind-spot probe | figure-out | A non-natural failure mode / pre-mortem angle the model skips by default | "Imagine this was rejected because..." AND a capable model wouldn't raise it unprompted? → probe |
 | Forced trade-off | figure-out | Competing tension with no universal right answer | Both sides have legitimate merit? → trade-off |
 
