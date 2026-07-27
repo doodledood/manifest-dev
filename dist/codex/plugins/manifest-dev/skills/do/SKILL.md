@@ -33,6 +33,8 @@ Any BLOCKED routes via `/escalate`. FAIL bodies carry findings or a natural-lang
 
 Code-change fix attempts iterate until they pass or `/do` judges them genuinely unrecoverable → `/escalate`. Other retry shapes (waiting, retriggering, replying with or without resolving, mechanical syncs) aren't fix attempts — they follow the verifier's findings directly.
 
+**Bound repairs by subject area, not by count.** When a gate FAILs again with MEDIUM-or-higher findings in an area already repaired, stop and route to `/escalate` instead of patching again: findings that keep landing in one place mean the design is wrong rather than the wording, and the next patch tends to spawn the finding after it. Distinct findings in distinct areas are the loop working normally and don't trip this. Keep it separate from runaway protection below — that bounds the *same* fix retried; this bounds *different* fixes converging on one subject.
+
 **When a hint or finding indicates terminal / unrecoverable / human-decision-needed, route to `/escalate` — autonomously amending the manifest to suppress the block is forbidden.**
 
 ## External review input
@@ -59,7 +61,9 @@ Execution history never lives in the manifest — logged or not, the manifest st
 
 ## Steering & amendment
 
-Mid-/do user messages default to invoking `manifest-dev:define` for amendment — the manifest is the source of truth, silent scope drift is worse than an extra amendment cycle. After the amendment returns, re-read the full Manifest and reconcile the active gate ledger before resuming.
+Mid-/do user messages default to invoking `manifest-dev:define` for amendment — the manifest is the source of truth, silent scope drift is worse than an extra amendment cycle. A message that *reverses or redefines a rule* rather than adding work amends too: it widens no scope, so the drift rationale never reaches it, yet it is the class most likely to leave the manifest describing a system that no longer exists. After the amendment returns, re-read the full Manifest and reconcile the active gate ledger before resuming.
+
+**When the manifest itself is what's wrong.** Verifiers and execution both surface evidence that a manifest statement has gone false — an Architecture that no longer describes the work, a scope boundary the work has outgrown, a `verify.prompt` whose own steering misdescribes what it is judging. That is not execution history and does not belong in the log: the log records the run deviating from the plan, and this is the plan deviating from reality. Amend. A gate that passes while reporting that its own premise is wrong is still telling you the contract needs repair, and noting it in a completion summary is not repairing it.
 
 **Reconciling the ledger.** A gate's verification identity is its complete effective verifier input: ID, criterion/invariant text, `verify.prompt`, `verify.model` (default: inherit), `verify.phase` (default: 1), and any caller-injected wrapper context such as a multi-repo path map. New gates and gates whose identity changed become unverified, with prior verdicts retained only as history; removed gates retire from the active ledger; unchanged gates retain their verdict and freshness subject to relevant changes in their subject. Run outstanding verification in normal phase order.
 
