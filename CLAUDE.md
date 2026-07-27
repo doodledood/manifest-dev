@@ -6,7 +6,7 @@ manifest-dev marketplace — manifest-driven workflows for Claude Code. `/define
 
 ## Public Repository Discipline
 
-This repo is public. Everything committed or posted to it — docs, ADRs, READMEs, PR titles and descriptions, commit messages, issue text — must stand on its own merits and stay free of private working context. Never reference: chat sessions or session logs, private planning/strategy/handoff documents, investigation transcripts, or the repo's own adoption/popularity status (star counts, usage levels, traction commentary). ADRs state decisions with their technical grounds, not the deliberation history behind them. Temporary ops documents are allowed when clearly marked, but must read as neutral, forward-looking operations content.
+This repo is public. Everything committed or posted to it — docs, ADRs, READMEs, PR titles and descriptions, commit messages, issue text — must stand on its own merits and stay free of private working context. The test is whether a reader is pointed at something they cannot see, or shown internal detail that serves no reader: don't link to or quote chat sessions, session logs, or investigation transcripts; don't reference private planning, strategy, or handoff documents; don't discuss the repo's own adoption or popularity (star counts, usage levels, traction commentary). Naming this project's own documented workflow modes — a figure-out docs-mode session, a `/define` session, a `/do` run — is ordinary vocabulary for how work was produced, not a private reference. ADRs state decisions with their technical grounds, not the deliberation history behind them. Temporary ops documents are allowed when clearly marked, but must read as neutral, forward-looking operations content.
 
 ## Development Commands
 
