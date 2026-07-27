@@ -1,10 +1,10 @@
 {
-  "source_commit": "46e25c6b12d6ae2a896ab7a828247b1629d8e7d1",
+  "source_commit": "ded2bb6bb890edaa77712b22c6efea7c245a1d2a",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-27T16:53:09Z",
+  "synced_at": "2026-07-27T18:22:09Z",
   "notes": "Plugin-native OpenCode distribution with package-local skills registered via skills.paths, package-local AGENTS.md registered via instructions, and plugin-owned cfg.command wrappers for source user-invocable skills. Universal goal-setting backstop guidance is preserved as capability language; no target-only /goal rule is introduced."
 }
