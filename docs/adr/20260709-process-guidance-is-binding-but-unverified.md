@@ -1,7 +1,7 @@
 # ADR: Process Guidance is binding but unverified
 
 ## Status
-Accepted
+Superseded by [20260726-only-gates-bind-process-guidance-is-advisory](20260726-only-gates-bind-process-guidance-is-advisory.md)
 
 ## Context
 The manifest schema carries two layers with different softness: the Initial Approach ("initial direction, not rigid plan" — /do may pivot away from it) and Process Guidance. The suite described Process Guidance inconsistently: /define's encoding discipline routes must-hold-but-unverifiable success criteria into it ("Process Guidance when they must hold but resist verification. Never fold them into the soft Initial Approach"), while the schema header read "Not gates — guidance for the implementer" and /do's skill never assigned the section any status. The layer /define treats as preserved was presented to the executor as advisory — a silent path for user-pinned criteria to be dropped while every verifiable gate still passes.

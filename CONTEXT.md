@@ -8,7 +8,7 @@ manifest-driven workflows for Claude Code. `/define` interviews you and writes a
 A structured spec produced by `/define` that captures Deliverables, Acceptance Criteria, Global Invariants, Process Guidance, and an Initial Approach.
 
 **Deliverable**:
-A discrete output a `/define` session commits to producing.
+A slice a `/define` session commits to producing that can be finished on its own and exercised end-to-end, so its Acceptance Criteria judge whether it works rather than whether it exists.
 _Avoid_: Story, ticket, feature.
 
 **Acceptance Criterion**:
@@ -20,14 +20,14 @@ A property that must hold across all Deliverables in a Manifest.
 _Avoid_: Constraint, rule.
 
 **Process Guidance**:
-A binding constraint on HOW to work during execution that must hold throughout even though no verifier checks it.
-_Avoid_: Guideline, best practice, suggestion.
+An advisory recommendation on HOW to work during execution, weighed by `/do` rather than enforced; departing from one is legitimate and is named on whichever terminal path the run reaches — completion, escalation, or pending — and in the Execution Log too when one is kept. Only Acceptance Criteria and Global Invariants bind.
+_Avoid_: Constraint, requirement, gate.
 
 **Quality Gate**:
 A verifiable task-file item that `/define` encodes as an acceptance-style gate.
 
 **Default**:
-A non-probed task-file item that `/define` carries into Process Guidance.
+A non-probed task-file item that `/define` carries into Process Guidance — unless violating it would be unsafe or irreversible, which routes it to a Global Invariant instead.
 
 **Task File**:
 A per-domain hint file owned by a workflow: `figure-out` task files supply probing fuel, while `/define` task files supply Quality Gates and Defaults.
@@ -109,7 +109,7 @@ A mid-/do user message treated as fire-and-forget direction — encoded into the
 _Avoid_: Interrupt, mid-run question.
 
 **Execution Log**:
-An append-only, out-of-repo journal /do keeps by default (`--no-log` opts out) recording deviations from the Initial Approach, dead-end memory, and operational events — execution history never lives in the Manifest.
+An append-only, out-of-repo journal /do keeps by default (`--no-log` opts out) recording deviations from the Initial Approach or Deliverable order, Process Guidance departures, dead-end memory, and operational events — execution history never lives in the Manifest.
 _Avoid_: Execution notes, amendments log, changelog.
 
 **Door**:
@@ -130,7 +130,7 @@ _Avoid_: Preference, style, judgment.
 - A **Manifest** has zero or more **Global Invariants**, applied across all Deliverables.
 - A **Task File** can contribute **Quality Gates** and **Defaults** to `/define`.
 - A **Quality Gate** becomes an acceptance-style gate in a **Manifest**.
-- A **Default** becomes **Process Guidance** in a **Manifest**.
+- A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
 - **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.

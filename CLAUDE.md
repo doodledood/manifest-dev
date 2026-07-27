@@ -34,7 +34,7 @@ Read before building plugins:
 - `claude-plugins/` - Individual plugins, each with `.claude-plugin/plugin.json`
 - `pyproject.toml` - Python tooling config (ruff, black, mypy)
 
-**Symlink note**: `.claude/` skills/agents are symlinked to their `claude-plugins/manifest-dev/` counterparts for local development on environments where plugins aren't supported yet. When modifying plugin components, **always edit the `claude-plugins/` version** — `.claude/` resolves through the symlink to the same file. (Previous revisions used hardlinks; Edit's atomic-replace routinely broke them, so the convention is symlinks now. New agents/skills should be added with `ln -s ../../claude-plugins/manifest-dev/agents/<name>.md .claude/agents/<name>.md`.)
+**Symlink note**: `.claude/` skills/agents are symlinked to their `claude-plugins/manifest-dev/` counterparts for local development on environments where plugins aren't supported yet. When modifying plugin components, **always edit the `claude-plugins/` version** — `.claude/` resolves through the symlink to the same file. `dist/` is different — those are real per-CLI copies, not links, and each carries a transform, so a plugin change is not propagated until they are regenerated or edited in place. (Previous revisions used hardlinks; Edit's atomic-replace routinely broke them, so the convention is symlinks now. New agents/skills should be added with `ln -s ../../claude-plugins/manifest-dev/agents/<name>.md .claude/agents/<name>.md`.)
 
 **Local Claude skills → `.agents/skills/`**: `.agents/skills/` mirrors `.claude/skills/` for the Agent Skills Open Standard (Codex CLI, etc.). **Whenever you add a new skill under `.claude/skills/`, also create the matching symlink in `.agents/skills/`**:
 
@@ -134,7 +134,7 @@ When adding agents or skills:
 
 Task files provide domain-specific hints, kept as **two parallel sets** with different consumers:
 
-- **`/define`'s task files** (`skills/define/tasks/`) carry **Quality Gates** (auto-encoded as INV-G*/AC-*) and **Defaults** (auto-encoded as PG-*) — encoder data for the manifest.
+- **`/define`'s task files** (`skills/define/tasks/`) carry **Quality Gates** (auto-encoded as INV-G*/AC-*) and **Defaults** (auto-encoded as PG-*, except one whose violation would be unsafe or irreversible, which routes to a Global Invariant) — encoder data for the manifest.
 - **figure-out's task files** (`skills/figure-out/tasks/`) carry **probing fuel** — non-natural angles (`## Blind-spot probes`, `## Forced trade-offs`) that figure-out surfaces during understanding.
 
 Each skill carries its own task-type detection index inline in its `SKILL.md` (not a separate `tasks/README.md`) and loads its own set. The two are deliberately decoupled so figure-out runs standalone — figure-out never reads define's task files, and vice versa.
@@ -143,10 +143,10 @@ Each skill carries its own task-type detection index inline in its `SKILL.md` (n
 
 **/define content types**:
 - *Quality gates* (tables with Agent + Threshold) — auto-included as INV-G*/AC-* by `/define`. Omitted with logged reasoning if clearly inapplicable. User reviews manifest.
-- *Defaults* (`## Defaults` section) — included in the manifest as PG-* without probing; user reviews.
+- *Defaults* (`## Defaults` section) — included in the manifest as PG-* without probing; user reviews. A Default whose violation would be unsafe or irreversible routes to a Global Invariant instead, so it binds.
 - *Reference files* (`references/*.md`) — lookup data for the verifier subagents `/do` spawns. Not loaded during `/define`.
 
-A define task-file item belongs in exactly one type: if you can verify it from the output, it's a Quality Gate; if it's a non-verifiable process practice, it's a Default. Don't prescribe manifest encoding (PG vs INV vs AC) in task files — that's `/define`'s job.
+A define task-file item belongs in exactly one type: if you can verify it from the output, it's a Quality Gate; if it's a non-verifiable process practice, it's a Default. A safety rule whose violation would be unsafe or irreversible is a Default even when it is verifiable — a Quality Gate ships the `verify.prompt` the task file authors, written with no sight of the repo, the branch, or the run, while a Default routed by `/define` gets its invariant written with that context. Don't prescribe manifest encoding (PG vs INV vs AC) in task files — that's `/define`'s job.
 
 **figure-out probe content**: angles to check, not instructions for how to do the work — each phrased as the question that opens a branch. **Non-natural only**: include a probe only if the model skips it by default (don't restate what a capable model raises unprompted). Keep files terse so they read as awareness, not an agenda to complete.
 

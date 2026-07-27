@@ -8,6 +8,10 @@ metadata:
 
 Surface a blocker with evidence: the criterion (INV-G or AC ID) that can't be met, what was tried and why each attempt failed, the resolutions you see (fix path, amend the criterion, drop it, descope), and what you need from the user to unblock. Lazy escalations ("I can't", "this is hard") are rejected — show the attempts.
 
-A BLOCKED verifier verdict (e.g., "deploy hasn't happened yet", "awaiting human approval") routes here too, with the BLOCKED note quoted from the verifier and the suggested user action carried through. Pure questions about the manifest or process are answered inline by /do, not escalated.
+Also name any Process Guidance departed from, any deviation from the Initial Approach or the Deliverable order, and any findings a gate reported below its threshold, with why — nothing gates on these, so this payload is where they surface when the run exits here.
+
+A gate whose criterion misdescribes what it judges routes here too — reported by its verifier, or surfaced by execution — passing or failing. Quote the report or name what execution showed, in place of attempts a passing gate does not have, and name the decision being asked for: whether the gate's text changes. That is the user's call, never the run's, which is why it arrives here rather than as an amendment.
+
+A BLOCKED verifier verdict routes here too when a person can act on it — "awaiting human approval" names someone who can act, while "the scheduled build has not run yet" names only elapsed time — with the BLOCKED note quoted from the verifier and the suggested user action carried through. Under a caller's no-wait overlay a BLOCKED that leaves only waiting reports as pending rather than arriving here; without that overlay it waits and re-verifies instead. Pure questions about the manifest or process are answered inline by /do, not escalated.
 
 **If the user responds with a scope change rather than addressing the blocker** ("change AC-X", "drop that criterion", "add a check for Y", "actually we also need Z"), invoke `/define <manifest-path>` to amend the manifest, then resume /do. Otherwise (user clears the blocker or supplies missing context), resume /do directly.

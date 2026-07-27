@@ -9,7 +9,7 @@ manifest-dev provides manifest-driven workflows for AI coding agents. The core f
 ```
 
 - **/define** — Interactive manifest builder. Probes for requirements, quality gates, edge cases. Outputs a manifest with deliverables, acceptance criteria, and global invariants.
-- **/do** — Manifest executor. Implements deliverables, follows process guidance, adapts approach when reality diverges. Verifies inline by spawning one subagent per Acceptance Criterion and Global Invariant using the verify prompt verbatim. Aggregates PASS / FAIL / BLOCKED, fixes failures, re-verifies. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping.
+- **/do** — Manifest executor. Implements deliverables, weighs process guidance, adapts approach when reality diverges. Verifies inline by spawning one subagent per Acceptance Criterion and Global Invariant using the verify prompt verbatim. Aggregates PASS / FAIL / BLOCKED, fixes failures, re-verifies. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping.
 - **/done** — Plain-prose completion summary called by /do after every criterion has fresh verifier PASS evidence.
 - **/escalate** — Structured blocker handoff for unrecoverable failures or pending external action.
 

@@ -40,7 +40,7 @@ If the PR description is stale or too thin to resolve substantive code decisions
 
 ## AC templating
 
-One AC, verified by a general-purpose agent that activates the `check-pr` skill, with PR URL + branch templated into the prompt field. There is no `verify.agent` field — `verify.prompt` instructs the verifier to activate the `check-pr` skill. Baseline template from `tasks/PR_LIFECYCLE.md` Quality Gates section. The `check-pr` skill owns canonical gate logic at runtime. /define populates `verify.prompt:` with baseline content (PR URL + branch); custom steering (named approvers, known-flaky CI, custom labels) is NOT probed during babysit — autonomous synthesis stays fast. User adds steering later via amendment.
+One AC, verified by a general-purpose agent that activates the `check-pr` skill, with PR URL + branch templated into the prompt field. There is no `verify.agent` field — `verify.prompt` instructs the verifier to activate the `check-pr` skill. Baseline template from `tasks/PR_LIFECYCLE.md` Quality Gates section. Drawing the AC from that section does not scope the safety routing to it — an item in the same file's `## Defaults` whose violation would be unsafe or irreversible still becomes a Global Invariant per SKILL.md's *Safety-critical candidates*, since autonomous synthesis skips probing, not the binding layer. The `check-pr` skill owns canonical gate logic at runtime. /define populates `verify.prompt:` with baseline content (PR URL + branch); custom steering (named approvers, known-flaky CI, custom labels) is NOT probed during babysit — autonomous synthesis stays fast. User adds steering later via amendment.
 
 ## Output
 

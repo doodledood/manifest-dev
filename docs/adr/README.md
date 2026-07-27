@@ -38,7 +38,7 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-09 | [Re-weight figure-out's SKILL.md by re-hosting — sectioned arc, no extraction, evidence-gated trims](20260709-figure-out-reweight-by-rehosting-not-extraction.md) | Accepted | figure-out |
 | 2026-07-09 | [Gate figure-out project docs by topic relevance](20260709-gate-figure-out-project-docs-by-topic-relevance.md) | Accepted | figure-out |
 | 2026-07-09 | [Mid-/do steering stays autonomous, audited through Known Assumptions](20260709-mid-do-steering-stays-autonomous.md) | Accepted | do |
-| 2026-07-09 | [Process Guidance is binding but unverified](20260709-process-guidance-is-binding-but-unverified.md) | Accepted | do |
+| 2026-07-09 | [Process Guidance is binding but unverified](20260709-process-guidance-is-binding-but-unverified.md) | Superseded by [only gates bind ADR](20260726-only-gates-bind-process-guidance-is-advisory.md) | do |
 | 2026-07-14 | [figure-out roots the crux tree above solution-shaped topics](20260714-figure-out-roots-crux-tree-above-solution-shaped-topics.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out challenges solution existence before descendant design](20260714-figure-out-challenge-solution-existence-before-design.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out classifies stated constraints before they prune options](20260714-figure-out-classifies-constraints-before-they-prune.md) | Accepted | figure-out |
@@ -48,3 +48,6 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-22 | [`/do` states verification sufficiency, not only necessity](20260722-state-verification-sufficiency-not-only-necessity.md) | Accepted | do |
 | 2026-07-22 | [figure-out firms the low-cognitive-load directive to match rigor's modality](20260722-figure-out-firms-low-cognitive-load-directive.md) | Accepted | figure-out |
 | 2026-07-26 | [figure-out narrows the presentation no-trim clause to its guardrail](20260726-figure-out-narrows-presentation-no-trim-clause.md) | Accepted | figure-out |
+| 2026-07-26 | [Deliverables are exercisable slices, ordered by uncertainty](20260726-deliverables-are-exercisable-slices-ordered-by-uncertainty.md) | Accepted | define |
+| 2026-07-26 | [Only gates bind; Process Guidance is advisory](20260726-only-gates-bind-process-guidance-is-advisory.md) | Accepted | do |
+| 2026-07-27 | [Gate text changes on the user's say-so, not the run's](20260727-gate-text-changes-on-the-users-say-so.md) | Accepted | do |

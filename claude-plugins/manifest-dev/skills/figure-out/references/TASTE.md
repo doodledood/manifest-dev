@@ -1,12 +1,16 @@
 # figure-out: taste capture
 
-In an autonomous or otherwise unattended run — no counterparty in the loop to ratify — taste capture is fully inert: no offers, no writes. Ratified entries already present in loaded memory files still inform the work — inertness is about capture, not use.
+With no counterparty in the loop to ratify — an unattended run — taste capture is fully inert: no offers, no writes. Ratified entries already present in loaded memory files still inform the work — inertness is about capture, not use.
 
 Taste is a durable personal steering preference persisted only by offer-and-ratify: the agent drafts, the user's explicit yes writes. Never infer a preference and store or apply it silently — an unratified behavioral prior can only be obeyed, not weighed, and it self-seals: once the agent preempts the preference, the pushback that would test or correct it stops occurring. Ratification is what converts an observed pattern into standing context.
 
+## Override: a ratified write is the action
+
+The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal. **A ratified taste write is an exception: it is the action of this capture, not deferred work.** The user's yes is the authorization; execute the write inline when it lands. Nothing here licenses acting on the *content* of the preference — only writing the entry.
+
 ## Detection gate
 
-Watch for directional preferences the user steers by, not one-off situational calls. A candidate earns an offer when it is all three:
+Watch for directional preferences the user steers by, not one-off situational calls. A candidate is eligible when it is all three:
 
 - **Directional** — it would steer future judgment calls the same way ("prefer the smallest clean change", "prose over tables"), not a fact about this task.
 - **Durable** — recurring within the session, or explicitly stated as a standing way of working; a single situational correction is not taste.
@@ -31,9 +35,9 @@ Example: `Prefer the smallest change that stays clean — small diffs are cheape
 Classify before offering:
 
 - **User-level** — how this user likes things everywhere → the harness's user-level memory file (for Claude Code, `~/.claude/CLAUDE.md`; on other harnesses, the AGENTS.md-style user-level equivalent).
-- **Project-level** — how this project does things, binding on anyone working in it → the project's memory file.
+- **Project-level** — how this project does things, binding on anyone working in it → the project's memory file. Available only once the investigation is relevant to the active project or one of its mapped contexts, on the same relevance test that gates project docs — and never under `--no-docs`, where opting out of project documentation opts out of project-binding writes too. Absent that, the entry is user-level or it is not offered — an investigation that merely happened to run in a repo must not write a rule binding everyone who works in it.
 
-When scope is ambiguous, the offer asks: *"save this for you everywhere, or as a rule of this project?"*
+When scope is ambiguous and project-level is available, the offer asks: *"save this for you everywhere, or as a rule of this project?"* Where project-level isn't available, offer user-level alone rather than a choice one branch of which cannot be honored.
 
 Write into a marked `## Taste` section of the target file, creating the section if absent. The rest of the file is untouchable: never modify content outside the section. Within the section, ratified revisions and merges are allowed (see curation).
 
