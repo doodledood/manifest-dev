@@ -59,7 +59,7 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
 | **Intent & Context** | Problem, appetite, goal, out of bounds, mental model | -- |
-| **Initial Approach** (complex tasks, or any task with a decided element) | Architecture, decided elements, risks, trade-offs | `D-{N}`, `R-{N}`, `T-{N}` |
+| **Initial Approach** (complex tasks) | Architecture, risks, trade-offs | `R-{N}`, `T-{N}` |
 | **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
 | **Process Guidance** | Advisory recommendations on how to work; weighed, not enforced | `PG-{N}` |
 | **Known Assumptions** | Low-impact items resolved with a default | `ASM-{N}` |

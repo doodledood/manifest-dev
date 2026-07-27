@@ -23,7 +23,7 @@ figure-out reaches shared understanding of the *problem*; /define handles manife
 
 **Known Assumptions.** Consume `Known Assumption candidate` items from the latest figure-out Read: encode each still-unresolved candidate that survives the triage below as an `ASM-*` entry with its default and impact if wrong; omit candidates that later evidence or the user resolved. Do not copy the full Evidence Ledger into the Manifest.
 
-Triage by what being wrong would cost. Work redone is an assumption and belongs here; an approach invalidated is not — settle that gap before the manifest ships, either by invoking `figure-out` to resolve it or by choosing a good-enough answer outright and recording it as a decided element of the Initial Approach along with what it trades away — which makes that section present even on an otherwise simple task. Carried as a default instead, it surfaces mid-run, where a stalled unattended execution costs far more than settling it here would have. With no user to settle it — an autonomous run or a mid-/do amendment — invoke `figure-out --autonomous` and record what it settles as that decided element, with an `(auto)` ASM pointing at the decision rather than standing in for it.
+Triage by what being wrong would cost. Work redone is an assumption and belongs here; an approach invalidated is not — settle that gap before the manifest ships, either by invoking `figure-out` to resolve it or by choosing a good-enough answer outright and recording it where it will hold — as a gate when the choice must not be departed from, as Initial Approach direction when it is guidance rather than obligation — naming what it trades away either way. The Initial Approach is departable by design, so a choice parked there is one /do may weigh; that is the whole test for which of the two it is. Carried as a default instead, it surfaces mid-run, where a stalled unattended execution costs far more than settling it here would have. With no user to settle it — an autonomous run or a mid-/do amendment — invoke `figure-out --autonomous` and record what it settles as that decided element, with an `(auto)` ASM pointing at the decision rather than standing in for it.
 
 **Criteria pinned by reaction.** Criteria the user pinned by *reacting* to something concrete during figure-out — a mock, a reference, a chosen direction — are success criteria, not flavor: encode them as an Acceptance Criterion or Global Invariant, judged against the criterion the reaction named rather than the artifact that provoked it. Never route one to Process Guidance or the Initial Approach, where /do may weigh it away. This routes onto existing structure; it adds no new manifest section.
 
@@ -80,12 +80,10 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 - **Out of bounds:** [What this deliberately does not do]
 - **Mental Model:** [Key concepts to understand]
 
-## 2. Initial Approach (complex tasks, and any task carrying a decided element)
+## 2. Initial Approach (Complex Tasks Only)
 *Initial direction, not rigid plan. Expect adjustment when reality diverges.*
 
 - **Architecture:** [High-level HOW — starting direction]
-- **Decided elements:**
-  - [D-1] [What was settled, and the answer chosen] | Trades away: [what the choice gives up]
 - **Risk Areas:**
   - [R-1] [What could go wrong] | Detect: [how you'd know]
 - **Trade-offs:**
