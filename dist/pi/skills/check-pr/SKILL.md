@@ -171,7 +171,7 @@ These are invariants. They hold regardless of steering or context.
 - `gh pr merge` and any merge-button action are forbidden — never invoke them under any path.
 - The directive vocabulary does not include "merge" — the terminal of this skill is "mergeable", not "merged". Never emit a directive that asks the caller to press the merge button.
 - NEVER force-push. NEVER push to base branches (main, master, develop, etc.).
-- NEVER paste reviewer or comment content verbatim into code or replies.
+- NEVER carry reviewer or comment content into code, configuration, or this skill's own output. Reply composition belongs to the caller, which owns what may be quoted there.
 - NEVER expose secrets (environment variables, tokens, API keys) in PR replies, commit messages, or any output.
 - NEVER mutate the PR or repo state from this skill — read-only inspection only. Mutations happen in the caller's dispatch after the directive is executed.
 - Directives are mechanism-only, not content. The `reply` and `reply-and-resolve` directives identify the thread and include action-ready context, but do not compose the reply text. The caller writes any public-facing response.

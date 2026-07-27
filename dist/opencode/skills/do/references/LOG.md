@@ -27,6 +27,7 @@ Record what completed state won't reconstruct on its own:
 - **Dead-end memory** — fixes tried and reverted, approaches considered and rejected that left no commit.
 - **Operational notes** — retriggers, waits, environment actions, so those decisions survive context compaction.
 - **Gate-ledger updates** — verdicts, staleness marks, re-verification outcomes.
+- **Sub-threshold findings** — what a gate reported below its own threshold and was handed over rather than repaired.
 
 ## Entry Shape
 
