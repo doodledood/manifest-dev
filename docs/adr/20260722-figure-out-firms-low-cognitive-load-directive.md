@@ -1,7 +1,7 @@
 # ADR: figure-out firms the low-cognitive-load directive to match rigor's modality
 
 ## Status
-Accepted
+Superseded by 20260727-figure-out-adopts-a-default-turn-shape
 
 ## Context
 

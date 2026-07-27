@@ -46,7 +46,7 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-14 | [figure-out scales read depth with stakes and reversibility, not fog alone](20260714-figure-out-scales-read-depth-with-stakes-and-reversibility.md) | Accepted | figure-out |
 | 2026-07-19 | [Taste persists by offer-and-ratify, never by silent inference](20260719-taste-persists-by-offer-and-ratify.md) | Accepted | figure-out |
 | 2026-07-22 | [`/do` states verification sufficiency, not only necessity](20260722-state-verification-sufficiency-not-only-necessity.md) | Accepted | do |
-| 2026-07-22 | [figure-out firms the low-cognitive-load directive to match rigor's modality](20260722-figure-out-firms-low-cognitive-load-directive.md) | Accepted | figure-out |
+| 2026-07-22 | [figure-out firms the low-cognitive-load directive to match rigor's modality](20260722-figure-out-firms-low-cognitive-load-directive.md) | Superseded by [default turn shape ADR](20260727-figure-out-adopts-a-default-turn-shape.md) | figure-out |
 | 2026-07-26 | [figure-out narrows the presentation no-trim clause to its guardrail](20260726-figure-out-narrows-presentation-no-trim-clause.md) | Accepted | figure-out |
 | 2026-07-26 | [Deliverables are exercisable slices, ordered by uncertainty](20260726-deliverables-are-exercisable-slices-ordered-by-uncertainty.md) | Accepted | define |
 | 2026-07-26 | [Only gates bind; Process Guidance is advisory](20260726-only-gates-bind-process-guidance-is-advisory.md) | Accepted | do |
@@ -54,3 +54,4 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-27 | [Manifest Intent leads with a required Problem, plus Appetite and Out of bounds](20260727-manifest-intent-leads-with-problem-appetite-and-bounds.md) | Accepted | define |
 | 2026-07-27 | [/define encodes for full /do autonomy](20260727-define-encodes-for-full-do-autonomy.md) | Accepted | define |
 | 2026-07-27 | [Shape Up adoption boundary — what is deliberately not imported](20260727-shape-up-adoption-boundary.md) | Accepted | Positioning |
+| 2026-07-27 | [figure-out adopts a concrete default turn shape](20260727-figure-out-adopts-a-default-turn-shape.md) | Accepted | figure-out |
