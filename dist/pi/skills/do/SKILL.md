@@ -63,7 +63,7 @@ When the user does want a beyond-intent ask incorporated, that is an amendment: 
 
 Caller overlays may narrow retry cadence without changing the manifest. In CI one-shot / no-wait contexts, execute immediately actionable findings (fix, test, commit/push when authorized, retrigger, reply, resolve, sync), then stop instead of executing long wait directives such as `bash sleep <N>; reinvoke`.
 
-If only wait-shaped findings remain, report the waiting state as pending; do not call `/done`, do not call `/escalate`, and do not keep the runner alive. That summary carries what the other two exits carry — Process Guidance departed from, deviation from the Initial Approach or the Deliverable order, and findings a gate reported below its threshold — since it is the only thing the user sees on this exit.
+If only wait-shaped findings remain, report the waiting state as pending; do not call `/done`, do not call `/escalate`, and do not keep the runner alive. That summary carries what the other two exits carry — Process Guidance departed from, deviation from the Initial Approach or the Deliverable order, findings a gate reported below its threshold, and any gate whose bar the run read as suspect without a user to ask — since it is the only thing the user sees on this exit.
 
 ## Execution log
 
