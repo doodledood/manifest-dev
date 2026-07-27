@@ -70,7 +70,7 @@ Converged when criteria in Convergence section met.
 
 ## Section Placement
 
-Each item belongs in exactly one section, and a safety rule whose violation would be unsafe or irreversible is a Default even when verifiable — that clause wins over the verifiability test below. A file holds only its own set's sections — a `/define` file never carries probes/trade-offs, a figure-out file never carries gates/Defaults:
+Each item belongs in exactly one section, and a safety rule whose violation would be unsafe or irreversible is a Default even when verifiable — that clause wins over the Quality Gate (baseline) row below, which every safety rule also matches. A file holds only its own set's sections — a `/define` file never carries probes/trade-offs, a figure-out file never carries gates/Defaults:
 
 | Section | Set | What it checks | Test |
 |---------|-----|----------------|------|
