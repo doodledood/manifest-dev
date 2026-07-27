@@ -31,11 +31,17 @@ Sufficiency runs over gates whose premises stand. A PASS whose criterion misdesc
 
 Any actionable BLOCKED routes via `/escalate` — one whose note names something a person can do now. A BLOCKED that leaves only waiting reports as pending under a no-wait overlay instead; see *Caller overlays*. FAIL bodies carry findings or a natural-language hint — read them and act on what they say.
 
+**Verify per head, not per fix.** A round's findings were all true of the same commit, so decide everything you will change from that round, change it, then re-verify once. Fixing and re-running gate by gate re-stales every gate whose subject moved and learns nothing the round had not already told you — and it strands verifiers still running against a head that no longer exists.
+
+**A gate's threshold is the bar, not a starting point.** Findings below it are real and worth recording for the user, but they are not owed, and repairing them in-loop costs a full re-verification of everything the change touches. Hand them over and move on; a branch that keeps growing to chase advisory findings is paying that cost repeatedly for work no gate asked for.
+
 ## Failure routing
 
 Code-change fix attempts iterate until they pass or `/do` judges them genuinely unrecoverable → `/escalate`. Other retry shapes (waiting, retriggering, replying with or without resolving, mechanical syncs) aren't fix attempts — they follow the verifier's findings directly.
 
-**Bound repairs by subject, not by count.** Substantive findings that keep landing in one subject — the same code path, document section, or design decision an earlier finding named — mean the design is wrong rather than the wording, and the next patch tends to spawn the finding after it. When that is what you are looking at, stop and route to `/escalate` instead of patching again. Read it from the findings rather than from a tally or a severity label: some verifiers grade and many emit no severities at all, and a second finding genuinely unrelated to the first is the loop working normally, not the pattern. Keep this separate from runaway protection below — that bounds the *same* fix retried; this bounds *different* fixes converging on one subject.
+**Bound repairs by subject, not by count.** Substantive findings that keep landing in one subject — the same code path, document section, or design decision an earlier finding named — mean the design is wrong rather than the wording. The test is convergence, not recurrence: findings in one subject getting smaller and fewer is the loop working, while each fix spawning a comparable one is the design telling you the wording was never the problem. When that is what you are looking at, stop and route to `/escalate` instead of patching again. Read it from the findings rather than from a tally or a severity label: some verifiers grade and many emit no severities at all, and a second finding genuinely unrelated to the first is the loop working normally, not the pattern. Keep this separate from runaway protection below — that bounds the *same* fix retried; this bounds *different* fixes converging on one subject.
+
+**A rule stated in two places changes in two places.** When a fix alters something restated elsewhere — another file carrying the same rule, a caller's copy of a contract, a generated distribution — it is not done until the other statements agree. Search for the rule's distinctive wording rather than repairing only where the finding pointed: the reported site is where it was noticed, not where it lives.
 
 **When a hint or finding indicates terminal / unrecoverable / human-decision-needed, route to `/escalate` — autonomously amending the manifest to suppress the block is forbidden.**
 
