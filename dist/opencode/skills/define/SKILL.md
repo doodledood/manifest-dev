@@ -57,8 +57,6 @@ The test reaches means, never ends. Where a mechanism was deliberately chosen as
 
 **Verifier prompt discipline.** Before writing `verify.prompt` fields, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. Verifier prompts are prompts: state the verifier's goal, evidence to inspect, PASS/FAIL/BLOCKED contract, and non-obvious context. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
 
-A gate encoding adherence to a project rule carries what the rule *reaches* and what it does not, never the prohibition alone: a bare ban leaves the boundary to the verifier, and careful readers then reach opposite verdicts on the same evidence. When the user rules on how a rule applies, encode that ruling as the rule's scope — never instruct a verifier to withhold a finding, which yields a gate that launders findings instead of judging them. And a gate comparing against a base branch names the remote-tracking ref, `origin/main` rather than `main`, since a local ref can sit stale in a fresh or shallow clone and fail the gate on the wrong evidence.
-
 **Encoding gates — always general-purpose + a skill.** There is no `verify.agent` field. Every gate is verified by a **general-purpose** subagent driven by `verify.prompt`; when a gate needs specialized behavior, the prompt tells that agent to **activate a skill**. Code-quality gates activate the `review-code` skill with a dimension; other specialized checks activate their skill (`check-pr`, `review-prompt`). Pattern:
 
 ```yaml
