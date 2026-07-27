@@ -25,7 +25,7 @@ Each verifier returns PASS, FAIL, or BLOCKED; track each gate's latest verdict a
 
 A fresh independent PASS on every Acceptance Criterion and Global Invariant is both **necessary and sufficient** for done: necessary — never declare done on self-attestation or a "looks done" judgment in place of verifier output; sufficient — once every gate holds a fresh PASS the run is complete, so call `/done` and stop. Do not keep refining past the gates: a passing gate is settled, not provisional, and the verifier's PASS is the evidence that ends the loop.
 
-Sufficiency runs over gates whose premises stand. A PASS whose own verifier reports that the criterion misdescribes what it judges is not a settled PASS — route it to `/escalate` rather than completing on it, and quote what the verifier said. The user's ruling settles the premise question, not the ledger: affirming the text as written leaves the existing PASS standing, while amending it changes the gate's identity, so it returns to the ledger unverified and re-verifies like any other changed gate. That is the only thing a passing gate can still owe.
+Sufficiency runs over gates whose premises stand. A PASS whose criterion misdescribes what it judges is not a settled PASS, whether its verifier reported that or execution surfaced it: route it to `/escalate` rather than completing on it, quoting the report or naming what execution showed. The user's ruling settles the premise question, not the ledger: affirming the text as written leaves the existing PASS standing, while amending it changes the gate's identity, so it returns to the ledger unverified and re-verifies like any other changed gate. That is the only thing a passing gate can still owe.
 
 ### Acting on verdicts
 

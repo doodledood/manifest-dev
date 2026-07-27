@@ -35,7 +35,7 @@ Example: `Prefer the smallest change that stays clean — small diffs are cheape
 Classify before offering:
 
 - **User-level** — how this user likes things everywhere → the harness's user-level memory file (this CLI's user-level `AGENTS.md`; on Claude Code, `~/.claude/CLAUDE.md`).
-- **Project-level** — how this project does things, binding on anyone working in it → the project's memory file. Available only once the investigation is relevant to the active project or one of its mapped contexts, on the same test that gates project docs. Absent that, the entry is user-level or it is not offered — an investigation that merely happened to run in a repo must not write a rule binding everyone who works in it.
+- **Project-level** — how this project does things, binding on anyone working in it → the project's memory file. Available only once the investigation is relevant to the active project or one of its mapped contexts, on the same relevance test that gates project docs — and never under `--no-docs`, where opting out of project documentation opts out of project-binding writes too. Absent that, the entry is user-level or it is not offered — an investigation that merely happened to run in a repo must not write a rule binding everyone who works in it.
 
 When scope is ambiguous and project-level is available, the offer asks: *"save this for you everywhere, or as a rule of this project?"* Where project-level isn't available, offer user-level alone rather than a choice one branch of which cannot be honored.
 
