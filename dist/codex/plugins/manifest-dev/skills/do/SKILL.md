@@ -29,7 +29,7 @@ Sufficiency runs over gates whose premises stand. A PASS whose criterion misdesc
 
 ### Acting on verdicts
 
-Any BLOCKED routes via `/escalate`. FAIL bodies carry findings or a natural-language hint — read them and act on what they say.
+Any actionable BLOCKED routes via `/escalate` — one whose note names something a person can do now. A BLOCKED that leaves only waiting reports as pending under a no-wait overlay instead; see *Caller overlays*. FAIL bodies carry findings or a natural-language hint — read them and act on what they say.
 
 ## Failure routing
 

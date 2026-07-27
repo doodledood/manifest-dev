@@ -12,6 +12,6 @@ Also name any Process Guidance departed from, and any deviation from the Initial
 
 A gate whose criterion misdescribes what it judges routes here too — reported by its verifier, or surfaced by execution — passing or failing. Quote the report or name what execution showed, in place of attempts a passing gate does not have, and name the decision being asked for: whether the gate's text changes. That is the user's call, never the run's, which is why it arrives here rather than as an amendment.
 
-A BLOCKED verifier verdict (e.g., "deploy hasn't happened yet", "awaiting human approval") routes here too, with the BLOCKED note quoted from the verifier and the suggested user action carried through. Pure questions about the manifest or process are answered inline by /do, not escalated.
+A BLOCKED verifier verdict (e.g., "deploy hasn't happened yet", "awaiting human approval") routes here too when a person can act on it, with the BLOCKED note quoted from the verifier and the suggested user action carried through. Under a caller's no-wait overlay a BLOCKED that leaves only waiting reports as pending rather than arriving here. Pure questions about the manifest or process are answered inline by /do, not escalated.
 
 **If the user responds with a scope change rather than addressing the blocker** ("change AC-X", "drop that criterion", "add a check for Y", "actually we also need Z"), invoke `/manifest-dev:define <manifest-path>` to amend the manifest, then resume /do. Otherwise (user clears the blocker or supplies missing context), resume /do directly.

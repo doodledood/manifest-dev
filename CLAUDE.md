@@ -143,7 +143,7 @@ Each skill carries its own task-type detection index inline in its `SKILL.md` (n
 
 **/define content types**:
 - *Quality gates* (tables with Agent + Threshold) — auto-included as INV-G*/AC-* by `/define`. Omitted with logged reasoning if clearly inapplicable. User reviews manifest.
-- *Defaults* (`## Defaults` section) — included in the manifest as PG-* without probing; user reviews.
+- *Defaults* (`## Defaults` section) — included in the manifest as PG-* without probing; user reviews. A Default whose violation would be unsafe or irreversible routes to a Global Invariant instead, so it binds.
 - *Reference files* (`references/*.md`) — lookup data for the verifier subagents `/do` spawns. Not loaded during `/define`.
 
 A define task-file item belongs in exactly one type: if you can verify it from the output, it's a Quality Gate; if it's a non-verifiable process practice, it's a Default. Don't prescribe manifest encoding (PG vs INV vs AC) in task files — that's `/define`'s job.
