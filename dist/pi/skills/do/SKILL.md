@@ -33,7 +33,7 @@ Any actionable BLOCKED routes via `/escalate` — one whose note names something
 
 **Verify per head, not per fix.** A round's findings were all true of the same commit, so decide everything you will change from that round, change it, then re-verify once. Fixing and re-running gate by gate re-stales every gate whose subject moved and learns nothing the round had not already told you — and it strands verifiers still running against a head that no longer exists.
 
-**A gate's threshold is the bar, not a starting point.** Findings below it are real and worth recording for the user, but they are not owed, and repairing them in-loop costs a full re-verification of everything the change touches. Hand them over and move on; a branch that keeps growing to chase advisory findings is paying that cost repeatedly for work no gate asked for.
+**A gate's threshold is the bar, not a starting point.** Findings below it are real and worth recording for the user, but they are not owed, and repairing them in-loop costs a full re-verification of everything the change touches. Hand them over on whichever terminal path the run takes — completion summary, escalation payload, or pending summary — the same way a Process Guidance departure is named, and move on; a branch that keeps growing to chase advisory findings is paying that cost repeatedly for work no gate asked for.
 
 ## Failure routing
 
