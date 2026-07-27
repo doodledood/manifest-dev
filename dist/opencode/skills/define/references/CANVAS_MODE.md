@@ -54,7 +54,7 @@ Any canvas-related failure is **non-blocking**. The canvas is supplementary; the
 
 The user looks at the canvas to spot misalignment. Test: **at a glance, can the user detect "that's not what I meant" on the things people most often disagree about?** People disagree predictably about three things:
 
-- **Intent** — what's being built, in plain language. Always immediate.
+- **Intent** — the pain being solved and what's being built to relieve it, in plain language. Always immediate.
 - **Flow** — sequence, branches, before/after, dependencies. Pick the visual that most exposes misalignment for *this* task: flowchart, before/after panels, architecture sketch, dependency graph, state diagram. When task has no genuine flow (one-line text fix, rename, copy edit), don't force one — prose is right.
 - **Scope** — what's in, what's deliberately out. Callout or short bordered list.
 

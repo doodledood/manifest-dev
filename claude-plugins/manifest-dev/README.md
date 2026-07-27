@@ -58,7 +58,7 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
-| **Intent & Context** | Goal and mental model | -- |
+| **Intent & Context** | Problem, appetite, goal, out of bounds, mental model | -- |
 | **Initial Approach** (complex tasks) | Architecture, risks, trade-offs | `R-{N}`, `T-{N}` |
 | **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
 | **Process Guidance** | Advisory recommendations on how to work; weighed, not enforced | `PG-{N}` |
@@ -71,7 +71,12 @@ Authors put whatever the verifier needs directly into the prompt — run a bash 
 # Definition: User Authentication
 
 ## 1. Intent & Context
+- **Problem:** Anyone with the app URL reads every user's data — there is
+  no login at all.
+- **Appetite:** Session auth over the existing endpoints, not an identity
+  subsystem.
 - **Goal:** Add password-based auth to an Express app with JWT sessions.
+- **Out of bounds:** OAuth providers, account recovery, role permissions.
 - **Mental Model:** Auth is cross-cutting. Security invariants apply
   globally; endpoint behavior is per-deliverable.
 

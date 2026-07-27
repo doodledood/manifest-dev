@@ -29,6 +29,10 @@ A verifiable task-file item that `/define` encodes as an acceptance-style gate.
 **Default**:
 A non-probed task-file item that `/define` carries into Process Guidance — unless violating it would be unsafe or irreversible, which routes it to a Global Invariant instead.
 
+**Appetite**:
+The size of change a problem is worth — a scope bound on complexity and surface set before solutioning, so high-impact work stays prioritized over expanding one solution; independent of time and token cost.
+_Avoid_: Estimate, budget, deadline.
+
 **Task File**:
 A per-domain hint file owned by a workflow: `figure-out` task files supply probing fuel, while `/define` task files supply Quality Gates and Defaults.
 

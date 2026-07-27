@@ -28,6 +28,7 @@ Record what completed state won't reconstruct on its own:
 - **Operational notes** — retriggers, waits, environment actions, so those decisions survive context compaction.
 - **Gate-ledger updates** — verdicts, staleness marks, re-verification outcomes.
 - **Sub-threshold findings** — what a gate reported below its own threshold and was handed over rather than repaired.
+- **Threshold questions** — a gate whose bar the run read as suspect, and how it settled: amended, affirmed by the user, or recorded with no user to ask. An affirmation settles it for the run, so the record is what keeps it from being raised again after context compaction.
 
 ## Entry Shape
 

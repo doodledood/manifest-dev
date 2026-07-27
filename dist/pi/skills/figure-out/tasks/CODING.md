@@ -7,6 +7,8 @@ Angles that are easy to under-weight on code tasks. Considerations, not an agend
 - **Failure visibility** — When this breaks in production, how would anyone know? Is there a metric, log, or alert, or does it fail silently?
 - **Consumer notification** — once you've traced who depends on what's changing, how do they *find out* it changed — compile error, runtime break, or silent drift?
 - **Silent regression** — What behavior could change while the existing tests still pass?
+- **Unbuilt solution** — Does this rest on a design or technical solution nobody has actually produced yet? Assuming one exists is where scope quietly doubles.
+- **Decisions that invalidate built work** — Which unmade call would, settled the wrong way mid-build, throw away work already built rather than just redirect the next step?
 
 ## Forced trade-offs
 - Fix in place vs refactor first — which, and why?
