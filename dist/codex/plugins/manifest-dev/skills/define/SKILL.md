@@ -120,6 +120,10 @@ The 13 review-code dimensions are: change-intent, code-bugs, contracts, type-saf
 
 A manifest path in `$ARGUMENTS` means amend. Read it fully, apply targeted changes only — preserve unaffected items verbatim. IDs are stable and independent of list position (modify in place; insert or remove without renumbering). No `## Amendments` log — git is history. Autonomous when caller is `/auto` or `/do` — a mid-/do user message is fire-and-forget steering, so don't ask back or wait; interactive otherwise. In autonomous amendment, every judgment call the steering text doesn't settle is auto-decided per the `(auto)`/ASM discipline — the user's audit trail.
 
+**Reconcile the frame, not just the leaves.** An amendment that widens scope, or changes a rule the manifest already states, leaves Intent, Architecture, and any scope-bounding Process Guidance describing the older and smaller task — and those sections read as unaffected precisely because nothing is editing them, so the staleness is invisible rather than merely unaddressed. Re-read them against what the manifest now covers, and re-read the existing gates over the widened area for under-coverage: a criterion written when a rule lived in three places does not reach the fourth.
+
+**An amendment that changes a decision produces a gate.** Adding work and reversing a rule the system already states are different amendments; the second needs its own Acceptance Criterion. Edited prose and a decision record record the decision but check nothing, so the change ends up verified only by whatever broad gate happens to overlap the same files — and "does the diff match its stated intent" goes green over a redesign without ever asking whether the new design holds.
+
 ## Flags
 
 `--babysit <pr-url>` — load `references/BABYSIT_MODE.md`; synthesizes a lifecycle-only manifest from a PR. `--canvas` — load `references/CANVAS_MODE.md`; generates a disposable Shared Understanding Canvas (temp-homed) during the interview. `--autonomous` skips summary approval and lets figure-out self-answer. When the task spans multiple repos (manifest declares `Repos:` in Intent), load `references/MULTI_REPO.md`.
