@@ -133,7 +133,7 @@ Severity reflects operational impact, not technical complexity. Refining the sha
 
 ## Report expectations (this dimension)
 
-Beyond the shared report format: use the **Type** field to name the category from the detection list above. Every Critical/High bug MUST have specific `file:line` references. Where a code snippet showing the bug clarifies the finding, include it. Each finding benefits from a **Reproduction** note (steps or conditions to trigger). An empty report (Status: PASS) is a valid outcome — do not fabricate bugs to fill the report.
+Beyond the shared report format: use the **Type** field to name the category from the detection list above. Every Critical/High bug MUST have specific `file:line` references. Where a code snippet showing the bug clarifies the finding, include it. The shared format's required **Trigger** field carries the conditions that produce the failure. An empty report (Status: PASS) is a valid outcome — do not fabricate bugs to fill the report.
 
 ## Handling ambiguity
 
