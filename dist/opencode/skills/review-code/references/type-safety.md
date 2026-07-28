@@ -9,10 +9,10 @@ These categories are guidance, not exhaustive. If you spot a type safety issue t
 - **`any`/`unknown` abuse**: Unjustified `any` that could be typed, implicit `any` from untyped dependencies, `unknown` without proper narrowing, type assertion escape hatches (`as`), non-null assertions (`!`) without evidence. Acceptable: genuinely dynamic structures, temporary migration with TODO, test mocks where full typing is impractical.
 - **Invalid states representable**: Optional field soup where certain combinations are invalid (use discriminated unions), primitive obsession for domain concepts (use branded/newtype patterns), stringly-typed APIs where enums/unions would prevent typos, arrays when tuples have fixed structure, type ownership violations where variant-specific or channel-specific data lives on a shared/generic type as optional fields that are meaningless for most consumers (fix: discriminated unions so each variant only carries its own fields).
 - **Type narrowing gaps**: Missing type guards after runtime checks, unsafe narrowing, missing exhaustiveness checks on discriminated unions (switch without `never` case).
-- **Generic type issues**: Functions losing type information that generics would preserve, incorrect type predicates that don't verify what they claim, loose generic constraints, unnecessary explicit generics.
+- **Generic type issues**: Functions losing type information that generics would preserve, incorrect type predicates that don't verify what they claim, loose generic constraints.
 - **Nullability problems**: Missing null checks, overuse of optional chaining hiding bugs instead of failing fast, inconsistent null vs undefined handling, non-null assertion abuse. Focus: could this null check be expressed as a type? Is `T | null` properly narrowed?
-- **Type definition quality**: Overly wide types (`Object`, `Function`, `{}`), missing return types on exports, interface vs type inconsistency without rationale.
-- **Discriminated union anti-patterns**: Inconsistent discriminant naming across codebase, non-literal discriminants, partial discrimination, default case swallowing new variants.
+- **Type definition quality**: Overly wide types (`Object`, `Function`, `{}`), and a missing return type on an export whose inferred shape a named consumer depends on. Interface-versus-type-alias consistency is style rather than a type hole — it names no trigger and is out of scope here, per the Low band below.
+- **Discriminated union anti-patterns**: Non-literal discriminants, partial discrimination, default case swallowing new variants. Discriminant naming that is merely inconsistent across the codebase names no trigger and belongs to code-maintainability, per the boundaries below.
 - **Naming collisions**: A field or property name that means one thing in one context and something different in another — semantic collision, not style preference. These create confusion about which concept is being referenced and can lead to bugs when the wrong one is used. Only flag when the collision is genuinely ambiguous, not minor naming preferences. This is about type-level naming that creates ambiguity enabling bugs — a field name on a type that means two different things depending on context.
 
 The core lens: push runtime checks into compile-time guarantees, and make invalid states unrepresentable.
@@ -34,7 +34,7 @@ Skip generated files, vendored dependencies, and type stubs/declarations from ex
 
 ## Actionability filter
 
-Before reporting a type safety issue, it must pass ALL of these. If a finding fails ANY criterion, drop it entirely. Only report issues you are CERTAIN about — "this type could be better" is not sufficient; "this type hole WILL enable passing X where Y is expected, causing Z failure" is required.
+Before reporting a type safety issue, it must pass ALL of these. If a finding fails ANY criterion, drop it entirely.
 
 1. **In scope** — Two modes:
    - *Diff-based review* (default): ONLY report type issues introduced by this change. Pre-existing `any` or type holes are strictly out of scope.
@@ -81,7 +81,7 @@ The key question: **how many potential bugs does this type hole enable?**
 - **Critical**: Type holes that WILL cause runtime bugs — it's only a matter of time. Examples: `any` in critical paths (payments, auth, data persistence), missing null checks on external data, type assertions on user input without validation, exhaustiveness gaps in state machines.
 - **High**: Type holes that enable entire categories of bugs. Examples: unjustified `any` in business logic, stringly-typed APIs for finite sets, primitive obsession for IDs, incorrect type predicates, non-null assertions without evidence.
 - **Medium**: Type weaknesses that make bugs more likely. Examples: `any` that could be `unknown` with narrowing, missing branded types for confused values, optional chaining hiding bugs, loose generic constraints.
-- **Low**: Type hygiene that improves maintainability. Examples: missing explicit return types on exports, over-annotation of obvious types, inconsistent interface vs type alias usage.
+- **Low**: Type holes with a narrow trigger — the failure needs a particular caller or an unusual input to surface. Examples: a missing explicit return type on an export whose inferred shape a named consumer depends on, a loose signature only one call path can misuse. Taste-level type hygiene — over-annotation of obvious types, interface-versus-type-alias consistency — names no trigger and is not reportable here. It is a divergent approach to a similar problem rather than a type hole, so `code-maintainability` owns it under Consistency, the same way it owns merely-inconsistent discriminant naming above.
 
 **Calibration check**: Critical type issues are rare outside of security-sensitive code. If you're marking more than one issue as Critical, recalibrate — Critical means "this type hole WILL cause a production bug," not "might."
 
@@ -111,6 +111,7 @@ function updateStatus(orderId: string, status: string) {
     // ...
   }
 }
+**Trigger**: any caller of `updateStatus` passing a misspelled literal — `updateStatus(id, 'pendng')` in `src/orders/api.ts:88` compiles and silently matches no branch.
 **Impact**: Status typos cause silent failures; adding new statuses doesn't trigger compile errors.
 **Effort**: Quick win
 **Suggested Fix**:

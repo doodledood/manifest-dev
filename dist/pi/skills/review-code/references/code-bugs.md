@@ -83,7 +83,7 @@ Note: This is about code paths that should fail explicitly but don't. If the stu
 
 ## Actionability filter
 
-Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.** Only report bugs you are CERTAIN about — "this might be a bug" is not sufficient; "this WILL cause X failure when Y happens" is required.
+Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.**
 
 1. **In scope** — Two modes:
    - **Diff-based review** (default): ONLY report bugs in lines added or modified by this change. Pre-existing bugs in unchanged lines are strictly out of scope.
@@ -118,7 +118,7 @@ Do NOT report on (owned by other dimensions):
 
 Note: Security issues causing **runtime failures** (crashes, data corruption) ARE in scope. Security issues requiring **static analysis** are out of scope.
 
-**Tool usage**: WebFetch and WebSearch are available for researching unfamiliar APIs or ambiguous language semantics. If web research fails and you cannot be certain about the bug, drop the finding entirely.
+**Tool usage**: WebFetch and WebSearch are available for researching unfamiliar APIs or ambiguous language semantics. If web research fails and you still cannot name the input, state, or sequence that produces the failure, drop the finding entirely.
 
 ## Severity calibration (this dimension)
 
@@ -133,11 +133,11 @@ Severity reflects operational impact, not technical complexity. Refining the sha
 
 ## Report expectations (this dimension)
 
-Beyond the shared report format: use the **Type** field to name the category from the detection list above. Every Critical/High bug MUST have specific `file:line` references. Where a code snippet showing the bug clarifies the finding, include it. Each finding benefits from a **Reproduction** note (steps or conditions to trigger). An empty report (Status: PASS) is a valid outcome — do not fabricate bugs to fill the report.
+Beyond the shared report format: use the **Type** field to name the category from the detection list above. Every Critical/High bug MUST have specific `file:line` references. Where a code snippet showing the bug clarifies the finding, include it. The shared format's required **Trigger** field carries the conditions that produce the failure. An empty report (Status: PASS) is a valid outcome — do not fabricate bugs to fill the report.
 
 ## Handling ambiguity
 
 - If code behavior is unclear, **do not report it**.
 - If you need more context about intended behavior and cannot determine it, drop the finding.
 - When multiple interpretations exist and you cannot determine which is correct, drop the finding.
-- **The bar for reporting is certainty, not suspicion.** An empty report is better than one with false positives.
+- **An empty report is better than one with false positives.** Where the ambiguity above cannot be resolved, drop the finding.

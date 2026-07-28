@@ -39,7 +39,7 @@ Do NOT report on these — they belong elsewhere:
 - **Unnecessary indirection** → the code-simplicity dimension.
 - **Premature optimization** → the code-simplicity dimension.
 - **Testability design patterns** → the code-testability dimension.
-- **Type safety issues** → the type-safety dimension.
+- **Type safety holes** — a type weakness that names a trigger → the type-safety dimension. Type *style* consistency stays here under Consistency: interface-versus-type-alias divergence, over-annotation of obvious types, and discriminant naming that is merely inconsistent across the codebase.
 - **Documentation accuracy** → the docs dimension.
 - **Mechanical code defects** (race conditions, resource leaks, null handling) → the code-bugs dimension.
 - **API contract correctness** (wrong params, consumer breakage) → the contracts dimension.
@@ -58,7 +58,7 @@ High-churn files deserve extra scrutiny since issues there have outsized impact.
 
 ## Actionability filter
 
-Before reporting an issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this might be a problem" is not sufficient; "this WILL cause X problem because Y" is required.
+Before reporting an issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this might be a problem" is not sufficient; "this WILL cause X problem because Y" is required. Style-consistency findings are the exception this dimension owns: a divergent form imposes reader cost rather than a failure, so name the divergence and the surfaces it splits across, per criterion 5.
 
 1. **In scope** — Two modes:
    - **Diff-based review** (default, no paths specified): ONLY report issues introduced or meaningfully worsened by this change. "Meaningfully worsened" means the change added significant new duplication to a pre-existing issue, added a new instance of an already-problematic pattern (e.g., third copy of duplicate code), or changed a single-file fix into a multi-file change. Pre-existing tech debt is strictly out of scope.
@@ -66,7 +66,7 @@ Before reporting an issue, it must pass ALL of these. **If a finding fails ANY c
 2. **Worth the churn** — Fix value must clearly exceed refactor cost. A refactor is worth it when the lines of problematic code eliminated substantially outweigh the lines added for the new abstraction plus modified call sites.
 3. **Matches codebase patterns** — Don't demand abstractions absent elsewhere. If the codebase doesn't use dependency injection, don't flag its absence.
 4. **Not an intentional tradeoff** — Some duplication is intentional (test isolation, avoiding coupling). If identical patterns exist in multiple other places in the codebase, assume it's an intentional convention.
-5. **Concrete impact** — "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible."
+5. **Concrete impact** — "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible." Style-consistency findings under Consistency state their impact as reader cost — the scan or learning tax a divergent form imposes on someone working across both — and land at Low. That is the whole severity they are entitled to; they never rise above it.
 6. **Author would prioritize** — Given limited time, would a reasonable author fix this before shipping, or defer it? If defer, it's Low severity at best.
 
 For conditional accretion, the finding must name the cleaner owner for the logic and why leaving the branch in place creates forgettability risk. For large-file growth, line count alone is never enough; the finding must identify separable concerns introduced by the diff and why extracting them would reduce review or future-change risk.

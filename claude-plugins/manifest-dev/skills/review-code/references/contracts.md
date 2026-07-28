@@ -97,7 +97,7 @@ Before reporting, a finding must pass ALL of these. If it fails ANY, drop it ent
 
 1. **In scope** — Diff-based review (default): only report contract issues introduced or affected by this change; pre-existing contract violations are out of scope. Explicit-path review (caller specified paths): pre-existing contract issues are valid findings.
 2. **Evidence-backed** — Cite the specific documentation, API definition, or consumer code that establishes the contract. No speculation.
-3. **Concrete mismatch** — Identify the specific parameter, field, status code, or behavior that doesn't match the contract. "This API call might be wrong" is not a finding.
+3. **Concrete mismatch, with the path that reaches it** — Identify the specific parameter, field, status code, or behavior that doesn't match the contract, and name the call or consumer path that hits it. Where the mismatch is static — wrong on every call — that path is this dimension's trigger for the shared report format's required field. Where it surfaces only under a documented condition — a paginated response, a rate-limit reply, an absent optional field — name that condition instead. "This API call might be wrong" is not a finding.
 4. **Not intentional** — If code, comments, or commit messages show the author deliberately deviated (e.g., "ignoring pagination for now — single-page results guaranteed"), it's not a finding.
 5. **Matches codebase patterns** — If the codebase consistently uses an API a particular way and the documentation is ambiguous, follow the established pattern rather than flagging it.
 6. **Worth flagging** — Trivial mismatches (optional header that makes no difference, extra parameter that's ignored) aren't worth reporting unless they cause observable issues.

@@ -40,7 +40,7 @@ For each hypothesis, verify it against the actual code. Only report hypotheses y
 - What the code will actually do vs. what was intended
 - Why this is inconsistent with the reconstructed intent
 
-Drop any hypothesis you cannot verify. Unverified suspicions are not findings.
+Drop any hypothesis you could not trace to the code. A reading you did not follow through the change is not a finding.
 
 ## Domain-adaptive attack strategies
 
@@ -130,7 +130,7 @@ Severity reflects how far the actual behavior diverges from the intended behavio
 - If intent cannot be reconstructed with reasonable confidence, **state the ambiguity** and reduce your confidence level to Medium. Only report divergences you can verify despite the ambiguity.
 - If multiple valid interpretations of intent exist, **note them** and analyze against the most likely interpretation. If divergence only appears under one interpretation, note which.
 - When the change's purpose is genuinely unclear and you cannot determine intent from any source, report "Intent unclear — cannot perform divergence analysis" and suggest the author add context (commit message, comments, or PR description).
-- **The bar for reporting is verification, not suspicion.** An empty report is better than one with speculative divergences.
+- **An empty report is better than one with speculative divergences.** Where the ambiguity above cannot be resolved, drop the finding.
 
 ## Report expectations (additions to the shared format)
 
