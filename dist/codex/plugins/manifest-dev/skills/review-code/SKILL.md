@@ -32,7 +32,7 @@ Load `references/<dimension>.md` for the requested dimension and follow it. The 
 | `prose-value` | `references/prose-value.md` | advisory | no MEDIUM-or-higher findings |
 | `context-file-adherence` | `references/context-file-adherence.md` | advisory | no MEDIUM-or-higher findings |
 
-The split is structural: **defect-finders** report only certain divergences/defects/contract-mismatches/type-holes — every LOW there is real signal. **Advisory** dimensions surface taste-level improvements where LOW is usually could-be-better, not is-broken.
+The split is structural: **defect-finders** report only divergences/defects/contract-mismatches/type-holes that name their trigger — every LOW there is real signal. **Advisory** dimensions surface taste-level improvements where LOW is usually could-be-better, not is-broken.
 
 ## Determining scope (shared across dimensions)
 
