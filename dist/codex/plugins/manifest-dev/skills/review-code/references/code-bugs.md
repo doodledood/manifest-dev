@@ -83,7 +83,7 @@ Note: This is about code paths that should fail explicitly but don't. If the stu
 
 ## Actionability filter
 
-Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.** Reportability turns on whether the finding names its trigger, not on how certain you feel — "this might be a bug" is not sufficient; "this WILL cause X failure when Y happens", with X and Y written down, is required.
+Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.**
 
 1. **In scope** — Two modes:
    - **Diff-based review** (default): ONLY report bugs in lines added or modified by this change. Pre-existing bugs in unchanged lines are strictly out of scope.
@@ -140,4 +140,4 @@ Beyond the shared report format: use the **Type** field to name the category fro
 - If code behavior is unclear, **do not report it**.
 - If you need more context about intended behavior and cannot determine it, drop the finding.
 - When multiple interpretations exist and you cannot determine which is correct, drop the finding.
-- **A stated trigger is necessary, not sufficient.** A finding that cannot name the input, state, or sequence is not reportable however strongly you suspect it — and naming one does not exempt it from the actionability filter or the ambiguity rules above. An empty report is better than one with false positives.
+- **An empty report is better than one with false positives.** Where the ambiguity above cannot be resolved, drop the finding.
