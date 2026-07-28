@@ -34,7 +34,7 @@ Skip generated files, vendored dependencies, and type stubs/declarations from ex
 
 ## Actionability filter
 
-Before reporting a type safety issue, it must pass ALL of these. If a finding fails ANY criterion, drop it entirely. Only report issues you are CERTAIN about — "this type could be better" is not sufficient; "this type hole WILL enable passing X where Y is expected, causing Z failure" is required.
+Before reporting a type safety issue, it must pass ALL of these. If a finding fails ANY criterion, drop it entirely. Reportability turns on whether the finding names its trigger, not on how certain you feel — "this type could be better" is not sufficient; "this type hole WILL enable passing X where Y is expected, causing Z failure", with X, Y, and Z written down, is required.
 
 1. **In scope** — Two modes:
    - *Diff-based review* (default): ONLY report type issues introduced by this change. Pre-existing `any` or type holes are strictly out of scope.

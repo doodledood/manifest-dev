@@ -25,8 +25,8 @@ State both bounds of the acceptance contract, and make each bound independent of
 
 - **Conformance, never necessity.** It asks whether the change exceeded what was agreed, taking the manifest's premise as given exactly as every other criterion does. It never asks whether the work was worth doing.
 - **`phase: 1`.** It runs every repair round beside the other gates. Within a round the gates re-verify anyway, so excess caught there is removed alongside that round's other fixes; excess caught once everything is green forces a fresh round against a diff where the extra work has entangled with passing gates.
-- **A cheap, fast `verify.model`.** Comparing a diff against a written scope is mechanical, and this gate runs more often than any other.
-- **Intent carried inline in its `verify.prompt`.** A verifier sees only its own prompt, so a ceiling referring to "the manifest" refers to something it cannot read.
+- **A cheap, fast `verify.model`.** Tracing each change back to the item that asked for it is mostly a lookup, and this gate runs more often than any other; where judgment is needed, the gate's calibration carries it rather than model strength.
+- **Intent carried inline in its `verify.prompt`.** A verifier sees only its own prompt, so a ceiling referring to "the manifest" refers to something it cannot read. This makes it the first gate holding a copy of Intent, so amendment must refresh that copy — a stale one judges the work against the scope the amendment replaced and fails what it required. `/define`'s frame-reconciliation rule names it for that reason.
 
 `/do`'s threshold passage is reconciled to defer to that invariant where a manifest carries one, rather than restating the same restraint as prose.
 

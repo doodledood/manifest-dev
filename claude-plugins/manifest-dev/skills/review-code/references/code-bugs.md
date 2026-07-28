@@ -140,4 +140,4 @@ Beyond the shared report format: use the **Type** field to name the category fro
 - If code behavior is unclear, **do not report it**.
 - If you need more context about intended behavior and cannot determine it, drop the finding.
 - When multiple interpretations exist and you cannot determine which is correct, drop the finding.
-- **The bar for reporting is certainty, not suspicion.** An empty report is better than one with false positives.
+- **The bar for reporting is a stated trigger, not certainty.** A finding that cannot name the input, state, or sequence is not reportable however strongly you suspect it. An empty report is better than one with false positives.
