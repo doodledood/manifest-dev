@@ -55,3 +55,4 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-27 | [/define encodes for full /do autonomy](20260727-define-encodes-for-full-do-autonomy.md) | Accepted | define |
 | 2026-07-27 | [Shape Up adoption boundary — what is deliberately not imported](20260727-shape-up-adoption-boundary.md) | Accepted | Positioning |
 | 2026-07-27 | [figure-out adopts a concrete default turn shape](20260727-figure-out-adopts-a-default-turn-shape.md) | Accepted | figure-out |
+| 2026-07-28 | [Bound the acceptance contract from above, not only from below](20260728-bound-the-acceptance-contract-from-above.md) | Accepted | define / do |
