@@ -83,7 +83,7 @@ Note: This is about code paths that should fail explicitly but don't. If the stu
 
 ## Actionability filter
 
-Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.** Only report bugs you are CERTAIN about — "this might be a bug" is not sufficient; "this WILL cause X failure when Y happens" is required.
+Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.** Reportability turns on whether the finding names its trigger, not on how certain you feel — "this might be a bug" is not sufficient; "this WILL cause X failure when Y happens", with X and Y written down, is required.
 
 1. **In scope** — Two modes:
    - **Diff-based review** (default): ONLY report bugs in lines added or modified by this change. Pre-existing bugs in unchanged lines are strictly out of scope.

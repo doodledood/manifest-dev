@@ -33,6 +33,7 @@
 4. Every week there's a new "game-changing" prompt/tool that doesn't actually help
 5. Building custom workflows from scratch is time-consuming
 6. Copy-pasting prompts from blogs/Twitter is hit-or-miss
+7. Runs that spiral — the agent keeps re-checking, re-fixing, and widening scope, and it stops being clear whether it will converge
 
 ---
 
@@ -65,6 +66,7 @@ Sharing proven workflows and best practices with teams, creating consistency in 
 - **Honest scope**: We don't promise the world; we deliver reliable results within realistic constraints
 - **Play to strengths**: Maximize LLM capabilities while mitigating known limitations
 - **Quality over speed**: Optimize for output quality, not token efficiency or execution time
+- **Bounded, not cheap**: Spending more to get a better result is the trade we make. Spending without a bound is not that trade — a run that keeps verifying and repairing past the point where its gates are satisfied has stopped buying quality. That is a defect in the workflow, and we fix it in the workflow rather than asking the developer to watch the meter
 - **Complexity hidden, simplicity exposed**: Workflows can be sophisticated under the hood, but the user experience is minimal steps, low cognitive load, "just go with it"
 
 ---
@@ -127,5 +129,5 @@ This document should be referenced when:
 
 ---
 
-*Last updated: 2026-06-29*
-*Version: 1.1 (audience broadened from Claude-Code-only to all agent-harness users, matching shipped multi-CLI distribution)*
+*Last updated: 2026-07-28*
+*Version: 1.2 (adds the bounded-not-cheap stance: unbounded verification cost is a workflow defect we own, distinct from optimizing for spend — the "Cost optimizers" anti-persona is unchanged)*
