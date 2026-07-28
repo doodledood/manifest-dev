@@ -111,6 +111,7 @@ function updateStatus(orderId: string, status: string) {
     // ...
   }
 }
+**Trigger**: any caller of `updateStatus` passing a misspelled literal — `updateStatus(id, 'pendng')` in `src/orders/api.ts:88` compiles and silently matches no branch.
 **Impact**: Status typos cause silent failures; adding new statuses doesn't trigger compile errors.
 **Effort**: Quick win
 **Suggested Fix**:

@@ -37,6 +37,7 @@ After pre-flight succeeds, read PR title and body:
 - **Appetite:** bounded by the PR as it stands — lifecycle work drives this diff to mergeable.
 - **Goal:** derived from PR title and body's opening paragraph. One or two sentences naming what the PR is for.
 - **Out of bounds:** no scope beyond the existing diff.
+- **Ceiling baseline:** capture the PR head SHA at synthesis and template it into the ceiling invariant's `verify.prompt` as the commit the run starts from. The PR's existing diff is the artifact this run inherits, not work it added, so without that baseline the ceiling reads the author's own commits as excess and fails a run that has done nothing yet.
 - **Mental Model:** when the body has a "context" / "background" / "why" section, fold it in. Otherwise minimal.
 
 If the PR description is stale or too thin to resolve substantive code decisions, encode that as a Known Assumption / Risk and let /do lower autonomy for ambiguous code changes while still tending mechanical lifecycle gates.
