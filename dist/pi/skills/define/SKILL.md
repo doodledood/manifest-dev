@@ -65,11 +65,36 @@ Where the host exposes per-verifier model selection, set a cheap, fast `verify.m
 
 Carry the manifest's Problem, Appetite, and Out of bounds inline in its `verify.prompt`, along with what the work owes and whatever the Initial Approach and Process Guidance directed. *Gate altitude* deliberately keeps chosen mechanisms out of gates, so the work will show mechanisms the manifest called for and no criterion names — a flag, a rollback path, a module layout — and a ceiling reading only the gates fails them. A verifier sees only its own prompt, so a ceiling that refers to "the manifest" refers to something it cannot read. Write the enumeration of what the work owes last, once the Deliverables and their criteria exist: filled in schema order it lists a set the manifest has not finished stating, and the gate then reads everything written after it as excess.
 
-Carry two carve-outs with it, since each names work that is required while no criterion names it. **Inherited rather than added** — the artifact a manifest was synthesized over, as `--babysit` does with a pull request's existing diff, and anything arriving from outside the run, such as a base branch merged into the head. Wherever a ceiling's enumeration stops covering work the run already completed — one added to a manifest already under execution, or one whose criteria an amendment has since replaced — that work is inherited too, and it is the one inherited category leaving no signal of its own: name it outright, listing the Deliverables already finished or the surfaces already touched, since the verifier reading one undifferentiated diff cannot otherwise tell it from what comes next. **Discharging what a criterion required** — including sweeping a changed rule into every copy and surface that holds it: other files stating it, distributed or generated copies, callers, and the READMEs that describe it. That work lands in files no criterion named, and a ceiling blind to it fails the sweep `/do` is separately obliged to perform.
+Carry two carve-outs with it, since each names work that is required while no criterion names it. **Inherited rather than added** — the artifact a manifest was synthesized over, as `--babysit` does with a pull request's existing diff, and anything arriving from outside the run, such as a base branch merged into the head. Wherever a ceiling's enumeration stops covering work the run already completed — one added to a manifest already under execution, or one whose criteria an amendment has since replaced — that work is inherited too, and it is the one inherited category leaving no signal of its own: name it outright, listing the Deliverables it finished under the criteria in force at the time, since the verifier reading one undifferentiated diff cannot otherwise tell it from what comes next. List what those criteria required, never every surface the run has touched — the looser form would let excess already produced be relabelled inherited and stop being judged at all. **Discharging what a criterion required** — including sweeping a changed rule into every copy and surface that holds it: other files stating it, distributed or generated copies, callers, and the READMEs that describe it. That work lands in files no criterion named, and a ceiling blind to it fails the sweep `/do` is separately obliged to perform.
 
 State those as categories, not as a baseline commit the verifier compares against. A pinned ref fixes at authoring time a boundary that keeps moving — the run resumes, someone pushes, the base gets merged in — and it means nothing for a manifest whose deliverable is prose or one spanning several repositories. The categories hold in all of those, and where a case is genuinely ambiguous the calibration below already resolves it toward required work.
 
 Pitch it to pass on a well-scoped run. Read as "minimal diff" it fails work a Deliverable plainly required, and each failure re-stales every gate whose subject moved — costing more than the excess it exists to catch. Tell the verifier to treat an unclear case as required work, and to leave small, incidental, or imperfect changes inside an artifact already in scope alone: this gate catches work nobody asked for, not work done imperfectly.
+
+A skeleton, since this prompt carries more than any other gate's and the guard has to reach the verifier rather than only the author:
+
+```yaml
+verify:
+  prompt: |
+    Check this change against the scope it was authorized to have. This is a conformance
+    check: take the intent below as given, and do not judge whether the work was necessary,
+    motivated, or worthwhile.
+    Problem: ...
+    Appetite: ...
+    Out of bounds: ...
+    What the work owes: <the Acceptance Criteria, Global Invariants, and Deliverables, plus
+    whatever the Initial Approach and Process Guidance directed>
+    Required although no criterion names it: <work inherited rather than added>, and work
+    discharging what a criterion required, including sweeping a changed rule into every copy
+    and surface that holds it.
+    Evidence: ...
+    FAIL only on work none of the above required, or work nominally serving one of them that
+    far exceeds the Appetite's surface. Treat an unclear case as required work, and leave
+    small, incidental, or imperfect changes inside an artifact already in scope alone.
+    Return PASS, FAIL, or BLOCKED.
+  model: "..."                # cheap and fast where the host offers per-verifier selection; omit to inherit
+  phase: 1
+```
 
 **Verifier prompt discipline.** Before writing `verify.prompt` fields, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. Verifier prompts are prompts: state the verifier's goal, evidence to inspect, PASS/FAIL/BLOCKED contract, and non-obvious context. Do not run a separate prompt-engineering interview — /define owns the manifest interview. Name the evidence precisely enough that two verifiers read the same thing: which ref a comparison uses — `origin/main` rather than `main`, since a local ref can sit stale in a fresh or shallow clone and fail the gate on the wrong evidence — and whether the subject is the branch tip or every commit on it, because a gate reading only the net diff cannot see what appeared and was removed inside the branch.
 
