@@ -39,7 +39,7 @@ Do NOT report on these — they belong elsewhere:
 - **Unnecessary indirection** → the code-simplicity dimension.
 - **Premature optimization** → the code-simplicity dimension.
 - **Testability design patterns** → the code-testability dimension.
-- **Type safety issues** → the type-safety dimension.
+- **Type safety holes** — a type weakness that names a trigger → the type-safety dimension. Type *style* consistency stays here under Consistency: interface-versus-type-alias divergence, over-annotation of obvious types, and discriminant naming that is merely inconsistent across the codebase.
 - **Documentation accuracy** → the docs dimension.
 - **Mechanical code defects** (race conditions, resource leaks, null handling) → the code-bugs dimension.
 - **API contract correctness** (wrong params, consumer breakage) → the contracts dimension.
