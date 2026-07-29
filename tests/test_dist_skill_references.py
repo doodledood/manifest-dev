@@ -380,6 +380,7 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         DIST / "pi/skills/do/SKILL.md",
     ]
     for path in do_files:
+        assert path.stat().st_mode & 0o111 == 0, path
         text = path.read_text(encoding="utf-8")
         assert "--verification per-gate|consolidated|self" in text, path
         assert "--verifier-model <model>" in text, path
@@ -452,6 +453,7 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "without claiming independence" in self_text
 
         for reference in (per_gate, consolidated, self_verification):
+            assert reference.stat().st_mode & 0o111 == 0, reference
             assert "Load this reference only" not in reference.read_text(
                 encoding="utf-8"
             ), reference
