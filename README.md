@@ -51,7 +51,7 @@ The leverage lives upstream of the `while`: understand the problem before anythi
   </tr>
   <tr>
     <td><strong>It fakes "done."</strong> An agent reports success on broken code with total confidence.</td>
-    <td><strong><code>/do</code></strong> makes it prove otherwise: one independent verifier per criterion, and it can't reach <code>/done</code> on a self-report.</td>
+    <td><strong><code>/do</code></strong> makes it prove otherwise: every criterion needs evidence under an explicit verification mode, and the default independently verifies each gate.</td>
   </tr>
 </table>
 
@@ -77,11 +77,13 @@ Then work through the three beats:
 /figure-out <topic or problem>     # 1. Figure it out — understand before acting
 /define <what you want to build>   # 2. Encode what you'd accept into a manifest
 /do <manifest-path>                # 3. Execute and verify every criterion inline
+/do <manifest-path> --verification consolidated  # opt in to one verifier per round
+/do <manifest-path> --verification self          # opt in to executor verification
 
 /auto <what you want to build>     # Or run all three, chained, no approval gates
 ```
 
-`/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest and can't call it done until every criterion passes independent verification, keeping a default-on execution log of deviations and dead ends as it goes (`--no-log` skips it). `/auto` chains all three with no waiting.
+`/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest and can't call it done until every criterion has fresh evidence under the selected mode, keeping a default-on execution log of deviations and dead ends as it goes (`--no-log` skips it). The default `per-gate` mode preserves one independent verifier per gate; opt-in `consolidated` and `self` modes trade assurance for lower execution cost. `--verifier-model <model>` optionally selects the independent verifier model and is invalid with `self`. `/auto` chains all three with no waiting and forwards the same execution flags without putting them in the manifest.
 
 For unattended runs of `/do` or `/auto` (the recommended way to run both), set your host's goal-setting or continuation capability to the completion contract those skills print; see the [manifest-dev plugin README](claude-plugins/manifest-dev/README.md#quick-start) for the full contract text and why it's shaped that way.
 
@@ -99,7 +101,7 @@ flowchart TD
     D --> E["/do manifest.md"]
     E --> F{"For each Deliverable"}
     F --> G["Implement toward ACs"]
-    G --> H["Spawn subagent per AC + Global Invariant"]
+    G --> H["Evaluate gates under selected mode"]
     H -->|any FAIL| I["Fix everything the round found"]
     I -->|re-verify per head| H
     H -->|all PASS| J["/done"]

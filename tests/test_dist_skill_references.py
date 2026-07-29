@@ -249,7 +249,7 @@ def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
 
 
 def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
-    """The continuation backstop must make incomplete verification non-terminal."""
+    """The backstop must preserve mode, provenance, and incomplete-gate state."""
     do_files = [
         ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
         DIST / "codex/plugins/manifest-dev/skills/do/SKILL.md",
@@ -258,10 +258,13 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
     ]
     required_do_phrases = (
         "gate ledger covering every Acceptance Criterion and Global Invariant",
-        "latest independent verifier verdict",
-        "freshness relative to the last relevant implementation change",
+        "`verify.instructions` source",
+        "selected verification mode",
+        "evaluator provenance",
         "Completion requires every listed gate to have fresh PASS evidence",
-        "Do not accept self-attestation",
+        "`per-gate` evidence as independently verified per gate",
+        "`consolidated` evidence as independently verified by a consolidated verifier",
+        "`self` evidence as executor self-verification",
     )
     for path in do_files:
         text = path.read_text(encoding="utf-8")
@@ -281,8 +284,90 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
     for path in parent_goal_files:
         text = path.read_text(encoding="utf-8")
         assert "manifest gate ledger" in text, path
-        assert "fresh independent verifier" in text, path
+        assert "fresh PASS evidence under the selected verification mode" in text, path
+        assert "evaluator provenance" in text, path
         assert "self-attestation" in text, path
+
+
+def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> None:
+    """Schema, mode mechanics, and model choice must not collapse back together."""
+    do_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "opencode/skills/do/SKILL.md",
+        DIST / "pi/skills/do/SKILL.md",
+    ]
+    for path in do_files:
+        text = path.read_text(encoding="utf-8")
+        assert "--verification per-gate|consolidated|self" in text, path
+        assert "--verifier-model <model>" in text, path
+        assert "defaults to `per-gate`" in text, path
+        assert "Reject `prompt`, `model`, a missing `instructions`" in text, path
+        assert "Neither option is written into the Manifest" in text, path
+        assert "Reject it with `self`" in text, path
+        assert "never changes in response to cost" in text, path
+
+        refs = path.parent / "references"
+        consolidated = refs / "CONSOLIDATED_VERIFICATION.md"
+        self_verification = refs / "SELF_VERIFICATION.md"
+        assert consolidated.is_file(), consolidated
+        assert self_verification.is_file(), self_verification
+        assert "one fresh independent general-purpose verifier execution" in (
+            consolidated.read_text(encoding="utf-8")
+        )
+        assert "Do not launch verifier executions" in self_verification.read_text(
+            encoding="utf-8"
+        )
+
+    define_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/define/SKILL.md",
+        DIST / "opencode/skills/define/SKILL.md",
+        DIST / "pi/skills/define/SKILL.md",
+    ]
+    for path in define_files:
+        text = path.read_text(encoding="utf-8")
+        assert "instructions:" in text, path
+        assert "`verify.instructions`" in text, path
+        assert "`verify.prompt`" not in text, path
+        assert "`verify.model`" not in text, path
+
+
+def test_parent_workflows_forward_policy_without_putting_it_in_manifests() -> None:
+    auto_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "opencode/skills/auto/SKILL.md",
+        DIST / "pi/skills/auto/SKILL.md",
+    ]
+    babysit_files = [
+        ROOT / "claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "codex/plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "opencode/skills/babysit-pr/SKILL.md",
+        DIST / "pi/skills/babysit-pr/SKILL.md",
+    ]
+    for path in auto_files + babysit_files:
+        text = path.read_text(encoding="utf-8")
+        assert "--verification per-gate|consolidated|self" in text, path
+        assert "--verifier-model <model>" in text, path
+        assert "Never write either option into the Manifest" in text, path
+
+
+def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
+    references = [
+        ROOT
+        / "claude-plugins/manifest-dev-tools/skills/review-pr/references/MANIFEST_MODE.md",
+        DIST
+        / "codex/plugins/manifest-dev-tools/skills/review-pr/references/MANIFEST_MODE.md",
+        DIST / "opencode/skills/review-pr/references/MANIFEST_MODE.md",
+        DIST / "pi/skills/review-pr/references/MANIFEST_MODE.md",
+    ]
+    for path in references:
+        text = path.read_text(encoding="utf-8")
+        assert "one fresh **general-purpose** subagent per Acceptance Criterion" in text
+        assert "`verify.instructions:` **verbatim**" in text
+        assert "regardless of which `/do --verification` mode" in text
+        assert "model choice is not manifest data" in text
 
 
 def test_auto_parent_goal_carries_autonomous_read_checkpoint() -> None:
