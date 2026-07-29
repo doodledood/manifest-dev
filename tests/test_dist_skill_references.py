@@ -305,6 +305,8 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         "`verify.instructions` source",
         "selected verification mode",
         "evaluator provenance",
+        "Whenever `/do` invokes `/escalate`, pass the manifest path",
+        "That summary reports the selected verification mode",
         "Completion requires every listed gate to have fresh PASS evidence",
         "`per-gate` evidence as independently verified per gate",
         "`consolidated` evidence as independently verified by a consolidated verifier",
@@ -332,6 +334,23 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
     for path in done_files:
         text = path.read_text(encoding="utf-8")
         for phrase in required_done_phrases:
+            assert phrase in text, f"{path}: missing {phrase!r}"
+
+    escalate_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/escalate/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/escalate/SKILL.md",
+        DIST / "opencode/skills/escalate/SKILL.md",
+        DIST / "pi/skills/escalate/SKILL.md",
+    ]
+    required_escalate_phrases = (
+        "selected verification mode",
+        "explicit or inherited verifier-model provenance",
+        "affected gate ledger entries including evaluator provenance",
+        "Surface that policy/provenance with the blocker evidence",
+    )
+    for path in escalate_files:
+        text = path.read_text(encoding="utf-8")
+        for phrase in required_escalate_phrases:
             assert phrase in text, f"{path}: missing {phrase!r}"
 
     parent_goal_files = [
