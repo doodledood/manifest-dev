@@ -333,6 +333,33 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "`verify.model`" not in text, path
 
 
+def test_define_task_gates_do_not_select_evaluator_topology() -> None:
+    task_roots = [
+        ROOT / "claude-plugins/manifest-dev/skills/define/tasks",
+        DIST / "codex/plugins/manifest-dev/skills/define/tasks",
+        DIST / "opencode/skills/define/tasks",
+        DIST / "pi/skills/define/tasks",
+    ]
+    gate_files = (
+        "WRITING.md",
+        "TECH_DESIGN.md",
+        "BLOG.md",
+        "DOCUMENT.md",
+        "FEATURE.md",
+        "research/RESEARCH.md",
+    )
+    for task_root in task_roots:
+        for relative in gate_files:
+            path = task_root / relative
+            text = path.read_text(encoding="utf-8")
+            assert "| Agent |" not in text, path
+            assert "| general-purpose |" not in text, path
+            assert "writing-reviewer" not in text, path
+
+    project_context = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "tables with Agent + Threshold" not in project_context
+
+
 def test_parent_workflows_forward_policy_without_putting_it_in_manifests() -> None:
     auto_files = [
         ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
