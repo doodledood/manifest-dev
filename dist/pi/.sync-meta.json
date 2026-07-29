@@ -1,11 +1,11 @@
 {
-  "source_commit": "560e545c0f29c2b413b83b1b68b4b404a56d6976",
+  "source_commit": "0609add87ad1d09437266b53d027ec821d022b7a",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-28T22:45:14Z",
-  "notes": "Full regeneration followed by delta syncs through portable state wording, caller-journal run boundaries, topology-neutral lookup language, quote-safe /auto policy parsing, and strict incompatible-amendment rejection; plugin-qualified skill ids remain stripped to bare names."
+  "synced_at": "2026-07-28T23:06:05Z",
+  "notes": "Full regeneration followed by delta syncs through centralized phase eligibility, portable state wording, caller-journal run boundaries, topology-neutral lookup language, quote-safe /auto policy parsing, and strict incompatible-amendment rejection; plugin-qualified skill ids remain stripped to bare names."
 }
