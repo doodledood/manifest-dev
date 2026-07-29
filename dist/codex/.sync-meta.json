@@ -1,10 +1,10 @@
 {
-  "source_commit": "02acbb109af1a7309942238471b174bf5a62f10a",
+  "source_commit": "d93906a59fa6c6dda3595643f133b031a655204f",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-29T05:25:57Z",
+  "synced_at": "2026-07-29T05:48:48Z",
   "notes": "Full regeneration followed by delta syncs through centralized phase eligibility, portable state wording, caller-journal run boundaries, topology-neutral lookup language, quote-safe /auto policy parsing, and strict incompatible-amendment rejection."
 }
