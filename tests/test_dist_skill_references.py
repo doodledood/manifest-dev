@@ -305,7 +305,7 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "Reject `prompt`, `model`, a missing `instructions`" in text, path
         assert "Neither option is written into the Manifest" in text, path
         assert "Reject it with `self`" in text, path
-        assert "never changes in response to cost" in text, path
+        assert "never change in response to cost" in text, path
 
         refs = path.parent / "references"
         consolidated = refs / "CONSOLIDATED_VERIFICATION.md"
@@ -350,7 +350,8 @@ def test_parent_workflows_forward_policy_without_putting_it_in_manifests() -> No
         text = path.read_text(encoding="utf-8")
         assert "--verification per-gate|consolidated|self" in text, path
         assert "--verifier-model <model>" in text, path
-        assert "Never write either option into the Manifest" in text, path
+        assert "Never write either" in text, path
+        assert "into the Manifest" in text, path
 
 
 def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:

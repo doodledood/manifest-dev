@@ -36,7 +36,7 @@ Uninstall: `codex plugin remove manifest-dev@manifest-dev && codex plugin remove
 
 ## Reviewers and verification skills
 
-manifest-dev ships **zero agents** — everything is a skill. The quality reviewers (bugs, design, simplicity, types, contracts, …) are **dimensions of the `review-code` skill**: a verifier activates `review-code` with a dimension (e.g. `dimension=code-bugs`) and it loads exactly that dimension's reference. The former functional agents are now their own bundled skills too — `check-pr` (PR lifecycle), `poll-slack` (Slack deltas), and the tools-side `review-prompt` (prompt quality). Verification is always a general-purpose subagent whose `verify.prompt` activates the relevant skill — there is no `verify.agent` field.
+manifest-dev ships **zero agents** — everything is a skill. The quality reviewers (bugs, design, simplicity, types, contracts, …) are **dimensions of the `review-code` skill**: gate instructions activate `review-code` with a dimension (e.g. `dimension=code-bugs`) and it loads exactly that dimension's reference. The former functional agents are now their own bundled skills too — `check-pr` (PR lifecycle), `poll-slack` (Slack deltas), and the tools-side `review-prompt` (prompt quality). Manifests carry `verify.instructions` plus optional `phase`; `/do` applies `per-gate` (default), `consolidated`, or `self` at launch, with optional `--verifier-model` for the independent modes. There is no `verify.agent` field.
 
 ## Limitations
 

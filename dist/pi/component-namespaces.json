@@ -30,7 +30,7 @@
   },
   "agents": {},
   "agents_note": {
-    "_note": "manifest-dev ships zero agents. Quality review is the `review-code` skill (one dimension per invocation); functional verifier behaviors are skills too (`check-pr`, `poll-slack`, `review-prompt`). `/do` launches independent verifier executions using verify.prompt; there is no verify.agent field."
+    "_note": "manifest-dev ships zero agents. Quality review is the `review-code` skill (one dimension per invocation); functional verifier behaviors are skills too (`check-pr`, `poll-slack`, `review-prompt`). `/do` applies a run-level verification mode to topology-neutral verify.instructions; there is no verify.agent field."
   },
   "commands": {},
   "tools": {},

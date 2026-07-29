@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev",
-  "version": "4.16.0",
-  "description": "Manifest-driven workflows for Codex: /define interviews and writes a Manifest; /do executes it and verifies inline. Includes the review-code skill (one quality dimension per invocation).",
+  "version": "5.0.0",
+  "description": "Manifest-driven workflows for Codex: /define writes topology-neutral gate instructions; /do executes them under per-gate, consolidated, or self verification. Includes the review-code skill.",
   "skills": "./skills/",
   "keywords": [
     "manifest-dev",

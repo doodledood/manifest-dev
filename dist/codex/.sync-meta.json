@@ -1,9 +1,10 @@
 {
-  "source_commit": "378313bab7b75ab1865da8f2729d121d5d89b32d",
+  "source_commit": "a8cc0c2ebf43bb691a901c3bfad0eca7a2c599f8",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-28T19:46:57Z"
+  "synced_at": "2026-07-28T21:26:32Z",
+  "notes": "Full regeneration after the Codex conversion guide changed. Includes the clean verify.instructions schema, /do verification modes, optional independent verifier model, caller forwarding, and mode-aware completion provenance."
 }
