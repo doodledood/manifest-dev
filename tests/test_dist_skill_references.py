@@ -385,13 +385,11 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "--verifier-model <model>" in text, path
         assert "defaults to `per-gate`" in text, path
         assert "Reject `prompt`, `model`, a missing `instructions`" in text, path
+        assert "or any other verify field" in text, path
+        assert "optional integer `phase`" in text, path
         assert "Neither option is written into the Manifest" in text, path
         assert "Reject it with `self`" in text, path
         assert "never change in response to cost" in text, path
-        assert (
-            "only the lowest phase containing unverified or stale gates is eligible"
-            in text
-        ), path
         assert "any non-PASS leaves later phases unverified" in text, path
 
         refs = path.parent / "references"
@@ -404,6 +402,14 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         )
         consolidated_text = consolidated.read_text(encoding="utf-8")
         assert "every gate the spine marks eligible" in consolidated_text
+        assert (
+            "one PASS, FAIL, or BLOCKED record with concrete evidence per gate"
+            in consolidated_text
+        )
+        assert (
+            "Reject an overall verdict that lacks a distinct record for every evaluated gate"
+            in consolidated_text
+        )
         assert "later phases remain unverified" not in consolidated_text
         assert "Do not launch verifier executions" in self_verification.read_text(
             encoding="utf-8"
@@ -426,10 +432,32 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "`verify.instructions`" in text, path
         assert "`verify.prompt`" not in text, path
         assert "`verify.model`" not in text, path
+        assert "optional integer `phase`, and no other fields" in text, path
         assert "fresh `/define` regeneration" in text, path
         assert (
             "never amend, translate, or preserve an incompatible schema" in text
         ), path
+
+
+def test_do_phase_eligibility_retries_every_non_passing_state() -> None:
+    """FAIL and retryable BLOCKED gates must not deadlock the phase spine."""
+    do_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/do/SKILL.md",
+        DIST / "opencode/skills/do/SKILL.md",
+        DIST / "pi/skills/do/SKILL.md",
+    ]
+    required_transitions = (
+        "only the lowest phase containing any gate without a fresh PASS is eligible",
+        "evaluate every gate that is unverified, stale, FAIL, or retryable BLOCKED",
+        "A FAIL remains eligible after repair",
+        "a retryable BLOCKED remains eligible at its next check",
+        "a settled fresh PASS does not re-run",
+    )
+    for path in do_files:
+        text = path.read_text(encoding="utf-8")
+        for transition in required_transitions:
+            assert transition in text, f"{path}: missing {transition!r}"
 
 
 def test_every_operative_manifest_example_uses_the_strict_verify_schema() -> None:
@@ -673,12 +701,28 @@ def test_parent_workflows_forward_policy_without_putting_it_in_manifests() -> No
         DIST / "opencode/skills/babysit-pr/SKILL.md",
         DIST / "pi/skills/babysit-pr/SKILL.md",
     ]
-    for path in auto_files + babysit_files:
+    for path in auto_files:
         text = path.read_text(encoding="utf-8")
         assert "--verification per-gate|consolidated|self" in text, path
         assert "--verifier-model <model>" in text, path
         assert "Never write either" in text, path
         assert "into the Manifest" in text, path
+        assert (
+            "Remove parsed flags from the task before `/define`, and forward them only to `/do`."
+            in text
+        ), path
+
+    for path in babysit_files:
+        text = path.read_text(encoding="utf-8")
+        assert "--verification per-gate|consolidated|self" in text, path
+        assert "--verifier-model <model>" in text, path
+        assert "Never write either" in text, path
+        assert "into the Manifest" in text, path
+        assert re.search(
+            r"After resolving the manifest path, invoke `(?:manifest-dev:)?do` "
+            r"on it with the parsed verification options",
+            text,
+        ), path
 
 
 def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
