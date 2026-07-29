@@ -399,6 +399,56 @@ def test_every_operative_manifest_example_uses_the_strict_verify_schema() -> Non
     assert required_examples <= {path.name for path in verified_files}
 
 
+def test_operative_manifest_authoring_has_no_legacy_schema_identifiers() -> None:
+    authoring_files = [
+        ROOT / "README.md",
+        ROOT / "CLAUDE.md",
+        ROOT / "CONTEXT.md",
+        ROOT / "claude-plugins/manifest-dev/README.md",
+        *(ROOT / "claude-plugins/manifest-dev/skills/define").rglob("*.md"),
+    ]
+    for path in authoring_files:
+        text = path.read_text(encoding="utf-8")
+        assert "verify.prompt" not in text, path
+        assert "verify.model" not in text, path
+
+
+def test_self_verification_never_claims_independence() -> None:
+    roots = [
+        ROOT / "claude-plugins/manifest-dev",
+        ROOT / "claude-plugins/manifest-dev-tools",
+        DIST / "codex/plugins",
+        DIST / "opencode/skills",
+        DIST / "pi/skills",
+    ]
+    affirmative_independence = (
+        re.compile(
+            r"\bself-verification\s+is\s+(?:an?\s+)?independent\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"\bself-verification\s+(?:provides|produces|constitutes)\s+"
+            r"(?:an?\s+)?independent\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"\bself-verification\s+counts\s+as\s+(?:an?\s+)?independent\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            r"\bself-verification\s+makes(?:\s+\w+){0,3}\s+independent\b",
+            re.IGNORECASE,
+        ),
+    )
+    for root in roots:
+        for path in root.rglob("*.md"):
+            text = path.read_text(encoding="utf-8")
+            if "self-verification" not in text.lower():
+                continue
+            for claim in affirmative_independence:
+                assert not claim.search(text), path
+
+
 def test_define_task_gates_do_not_select_evaluator_topology() -> None:
     task_roots = [
         ROOT / "claude-plugins/manifest-dev/skills/define/tasks",
