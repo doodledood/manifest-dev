@@ -59,6 +59,35 @@ CODE_REVIEW_DIMENSIONS = {
 RETIRED_REVIEWER_AGENTS = {f"{d}-reviewer" for d in CODE_REVIEW_DIMENSIONS}
 REMOVED_SKILLS = ("verify",)
 
+SELF_INDEPENDENCE_CLAIMS = (
+    re.compile(
+        r"\bindependent(?:ly)?(?:\s+verified)?\s+"
+        r"self(?:[- ]verification|\s+mode)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\bself(?:[- ]verification|\s+mode)\b"
+        r"[^.;\n]{0,100}\b"
+        r"(?:is|uses|employs|launches|invokes|has|gets|receives|requires|"
+        r"relies\s+on|(?:is\s+)?(?:performed|evaluated|verified)\s+by)\b"
+        r"[^.;\n]{0,80}\b(?:an?\s+)?independent(?:ly)?\b",
+        re.IGNORECASE,
+    ),
+)
+
+
+def claims_self_verification_is_independent(text: str) -> bool:
+    normalized = text.replace("`", "")
+    for claim in SELF_INDEPENDENCE_CLAIMS:
+        for match in claim.finditer(normalized):
+            if not re.search(
+                r"\b(?:no|not|never|without)\b|non-independent",
+                match.group(0),
+                re.IGNORECASE,
+            ):
+                return True
+    return False
+
 
 # --------------------------------------------------------------------------
 # Codex: plugin-native distribution
@@ -421,32 +450,98 @@ def test_self_verification_never_claims_independence() -> None:
         DIST / "opencode/skills",
         DIST / "pi/skills",
     ]
-    affirmative_independence = (
-        re.compile(
-            r"\bself-verification\s+is\s+(?:an?\s+)?independent\b",
-            re.IGNORECASE,
-        ),
-        re.compile(
-            r"\bself-verification\s+(?:provides|produces|constitutes)\s+"
-            r"(?:an?\s+)?independent\b",
-            re.IGNORECASE,
-        ),
-        re.compile(
-            r"\bself-verification\s+counts\s+as\s+(?:an?\s+)?independent\b",
-            re.IGNORECASE,
-        ),
-        re.compile(
-            r"\bself-verification\s+makes(?:\s+\w+){0,3}\s+independent\b",
-            re.IGNORECASE,
-        ),
-    )
     for root in roots:
         for path in root.rglob("*.md"):
             text = path.read_text(encoding="utf-8")
             if "self-verification" not in text.lower():
                 continue
-            for claim in affirmative_independence:
-                assert not claim.search(text), path
+            assert not claims_self_verification_is_independent(text), path
+
+
+def test_self_independence_detector_catches_semantic_variants() -> None:
+    contradictory_claims = (
+        "Self-verification uses an independent evaluator.",
+        "Self-verification is independently verified.",
+        "Independent self-verification is sufficient.",
+        "The self mode relies on an independent verifier.",
+        "Self verification is performed by an independent reviewer.",
+    )
+    for claim in contradictory_claims:
+        assert claims_self_verification_is_independent(claim), claim
+
+    valid_claims = (
+        "Self-verification is not independent verification.",
+        "Self-verification uses no independent evaluator.",
+        "The host does not make this evidence independent. "
+        "Record provenance as executor self-verification.",
+    )
+    for claim in valid_claims:
+        assert not claims_self_verification_is_independent(claim), claim
+
+
+def test_verification_policy_prompts_preserve_portable_boundaries() -> None:
+    log_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/do/references/LOG.md",
+        DIST / "codex/plugins/manifest-dev/skills/do/references/LOG.md",
+        DIST / "opencode/skills/do/references/LOG.md",
+        DIST / "pi/skills/do/references/LOG.md",
+    ]
+    for path in log_files:
+        text = path.read_text(encoding="utf-8")
+        assert "default timestamped logs" in text, path
+        assert "caller-supplied journal" in text, path
+        assert "append a `Run initialized` boundary" in text, path
+        assert "prior gate verdicts remain historical" in text, path
+        assert "not carried into the new run" in text, path
+
+    babysit_files = [
+        ROOT / "claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "codex/plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
+        DIST / "opencode/skills/babysit-pr/SKILL.md",
+        DIST / "pi/skills/babysit-pr/SKILL.md",
+    ]
+    for path in babysit_files:
+        text = path.read_text(encoding="utf-8")
+        assert "appends a new run boundary and starts a fresh gate ledger" in text, path
+        assert "prior verdicts remain historical" in text, path
+        assert "not carried into the active run" in text, path
+
+    consolidated_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/do/references/"
+        "CONSOLIDATED_VERIFICATION.md",
+        DIST / "codex/plugins/manifest-dev/skills/do/references/"
+        "CONSOLIDATED_VERIFICATION.md",
+        DIST / "opencode/skills/do/references/CONSOLIDATED_VERIFICATION.md",
+        DIST / "pi/skills/do/references/CONSOLIDATED_VERIFICATION.md",
+    ]
+    for path in consolidated_files:
+        text = path.read_text(encoding="utf-8")
+        assert "same current artifact or project state" in text, path
+        assert "relevant head SHA or SHAs" in text, path
+        assert "without inventing a head" in text, path
+        assert "from the current head" not in text, path
+
+    define_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/define/SKILL.md",
+        DIST / "opencode/skills/define/SKILL.md",
+        DIST / "pi/skills/define/SKILL.md",
+    ]
+    for path in define_files:
+        text = path.read_text(encoding="utf-8")
+        assert "gate-evaluation lookup data" in text, path
+        assert "verifier-agent lookup data" not in text, path
+
+    auto_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "opencode/skills/auto/SKILL.md",
+        DIST / "pi/skills/auto/SKILL.md",
+    ]
+    for path in auto_files:
+        text = path.read_text(encoding="utf-8")
+        assert "Parse only top-level option uses" in text, path
+        assert "quoted or topic mentions remain task text" in text, path
 
 
 def test_define_task_gates_do_not_select_evaluator_topology() -> None:
