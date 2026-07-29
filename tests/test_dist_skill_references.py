@@ -376,8 +376,8 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "any non-PASS leaves later phases unverified" in text, path
 
         refs = path.parent / "references"
-        consolidated = refs / "CONSOLIDATED_VERIFICATION.md"
-        self_verification = refs / "SELF_VERIFICATION.md"
+        consolidated = refs / "consolidated-verification.md"
+        self_verification = refs / "self-verification.md"
         assert consolidated.is_file(), consolidated
         assert self_verification.is_file(), self_verification
         assert "one fresh independent general-purpose verifier execution" in (
@@ -537,11 +537,11 @@ def test_verification_policy_prompts_preserve_portable_boundaries() -> None:
 
     consolidated_files = [
         ROOT / "claude-plugins/manifest-dev/skills/do/references/"
-        "CONSOLIDATED_VERIFICATION.md",
+        "consolidated-verification.md",
         DIST / "codex/plugins/manifest-dev/skills/do/references/"
-        "CONSOLIDATED_VERIFICATION.md",
-        DIST / "opencode/skills/do/references/CONSOLIDATED_VERIFICATION.md",
-        DIST / "pi/skills/do/references/CONSOLIDATED_VERIFICATION.md",
+        "consolidated-verification.md",
+        DIST / "opencode/skills/do/references/consolidated-verification.md",
+        DIST / "pi/skills/do/references/consolidated-verification.md",
     ]
     for path in consolidated_files:
         text = path.read_text(encoding="utf-8")
