@@ -80,6 +80,30 @@ def test_codex_plugins_carry_their_skill_split() -> None:
             ).is_file()
 
 
+def test_codex_plugin_versions_match_sources() -> None:
+    for plugin in ("manifest-dev", "manifest-dev-tools"):
+        source = json.loads(
+            (
+                ROOT
+                / "claude-plugins"
+                / plugin
+                / ".claude-plugin"
+                / "plugin.json"
+            ).read_text(encoding="utf-8")
+        )
+        codex = json.loads(
+            (
+                DIST
+                / "codex"
+                / "plugins"
+                / plugin
+                / ".codex-plugin"
+                / "plugin.json"
+            ).read_text(encoding="utf-8")
+        )
+        assert codex["version"] == source["version"], plugin
+
+
 def test_codex_code_review_skill_carries_every_dimension() -> None:
     refs = (
         DIST
@@ -318,6 +342,9 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "Do not launch verifier executions" in self_verification.read_text(
             encoding="utf-8"
         )
+        self_text = self_verification.read_text(encoding="utf-8")
+        assert "does not make this evidence independent" in self_text
+        assert "Record provenance as `executor self-verification`" in self_text
 
     define_files = [
         ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
@@ -331,6 +358,52 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "`verify.instructions`" in text, path
         assert "`verify.prompt`" not in text, path
         assert "`verify.model`" not in text, path
+        assert "fresh `/define` regeneration" in text, path
+        assert "never amend, translate, or preserve an incompatible schema" in text, path
+
+
+def test_every_operative_manifest_example_uses_the_strict_verify_schema() -> None:
+    authoring_roots = [
+        ROOT / "claude-plugins/manifest-dev/skills/define",
+        DIST / "codex/plugins/manifest-dev/skills/define",
+        DIST / "opencode/skills/define",
+        DIST / "pi/skills/define",
+    ]
+    candidates = [ROOT / "claude-plugins/manifest-dev/README.md"]
+    for authoring_root in authoring_roots:
+        candidates.extend(authoring_root.rglob("*.md"))
+
+    verified_files: set[Path] = set()
+    for path in candidates:
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for index, line in enumerate(lines):
+            if line.strip() != "verify:":
+                continue
+            verified_files.add(path)
+            verify_indent = len(line) - len(line.lstrip())
+            direct_keys: list[str] = []
+            for child in lines[index + 1 :]:
+                if not child.strip():
+                    continue
+                child_indent = len(child) - len(child.lstrip())
+                if child_indent <= verify_indent:
+                    break
+                if child_indent != verify_indent + 2:
+                    continue
+                key = re.match(r"([A-Za-z][A-Za-z0-9_-]*):", child.strip())
+                if key:
+                    direct_keys.append(key.group(1))
+            assert direct_keys, f"{path}:{index + 1}: empty verify block"
+            assert direct_keys[0] == "instructions", path
+            assert set(direct_keys) <= {"instructions", "phase"}, path
+
+    required_examples = {
+        "README.md",
+        "SKILL.md",
+        "MULTI_REPO.md",
+        "PR_LIFECYCLE.md",
+    }
+    assert required_examples <= {path.name for path in verified_files}
 
 
 def test_define_task_gates_do_not_select_evaluator_topology() -> None:
