@@ -1,10 +1,10 @@
 {
-  "source_commit": "aee505379a4331710703cd4d2d0297167c965f4f",
+  "source_commit": "560e545c0f29c2b413b83b1b68b4b404a56d6976",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-28T22:10:51Z",
-  "notes": "Full regeneration followed by delta syncs through strict incompatible-amendment rejection. Includes the clean verify.instructions schema, /do verification modes, optional independent verifier model, caller forwarding, mode-aware completion provenance, and matching contract guards."
+  "synced_at": "2026-07-28T22:45:14Z",
+  "notes": "Full regeneration followed by delta syncs through portable state wording, caller-journal run boundaries, topology-neutral lookup language, quote-safe /auto policy parsing, and strict incompatible-amendment rejection."
 }
