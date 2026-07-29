@@ -457,15 +457,17 @@ def test_every_operative_manifest_example_uses_the_strict_verify_schema() -> Non
     assert required_examples <= {path.name for path in verified_files}
 
 
-def test_operative_manifest_authoring_has_no_legacy_schema_identifiers() -> None:
-    authoring_files = [
+def test_operative_source_skills_have_no_legacy_schema_identifiers() -> None:
+    operative_files = [
         ROOT / "README.md",
         ROOT / "CLAUDE.md",
         ROOT / "CONTEXT.md",
         ROOT / "claude-plugins/manifest-dev/README.md",
-        *(ROOT / "claude-plugins/manifest-dev/skills/define").rglob("*.md"),
+        ROOT / "claude-plugins/manifest-dev-tools/README.md",
+        *(ROOT / "claude-plugins/manifest-dev/skills").rglob("*.md"),
+        *(ROOT / "claude-plugins/manifest-dev-tools/skills").rglob("*.md"),
     ]
-    for path in authoring_files:
+    for path in operative_files:
         text = path.read_text(encoding="utf-8")
         assert "verify.prompt" not in text, path
         assert "verify.model" not in text, path
@@ -482,8 +484,6 @@ def test_self_verification_never_claims_independence() -> None:
     for root in roots:
         for path in root.rglob("*.md"):
             text = path.read_text(encoding="utf-8")
-            if "self-verification" not in text.lower():
-                continue
             assert not claims_self_verification_is_independent(text), path
 
 
