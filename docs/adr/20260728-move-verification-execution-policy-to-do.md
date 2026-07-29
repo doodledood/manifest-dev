@@ -130,10 +130,15 @@ is no per-gate model field or model map.
 
 ### Prompt architecture and callers
 
-The common Do/Verify Loop remains in `/do`'s always-loaded spine. The default
-per-gate behavior stays inline. Consolidated and self-verification mechanics
-live in separate references loaded only when their corresponding flag value is
-selected; the references do not restate shared ledger or completion rules.
+The common Do/Verify Loop remains in `/do`'s always-loaded spine. After
+`--verification` is resolved — including the omitted flag becoming the default
+`per-gate` value — `/do` loads exactly one of three sibling references:
+per-gate, consolidated, or self. Each reference owns that mode's evaluator
+topology, verifier-model compatibility, evidence provenance, and
+mode-specific completion wording. The spine retains only selection plus shared
+phase, ledger, staleness, verdict-routing, and completion mechanics; callers
+and terminal helpers forward the selected reference's contract instead of
+restating mode semantics.
 
 `/auto` and Babysit PR accept and forward the verification mode and optional
 verifier model, and their host-completion contracts describe the selected

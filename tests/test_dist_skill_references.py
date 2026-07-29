@@ -308,9 +308,7 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         "Whenever `/do` invokes `/escalate`, pass the manifest path",
         "That summary reports the selected verification mode",
         "Completion requires every listed gate to have fresh PASS evidence",
-        "`per-gate` evidence as independently verified per gate",
-        "`consolidated` evidence as independently verified by a consolidated verifier",
-        "`self` evidence as executor self-verification",
+        "Use the selected reference's evidence/provenance wording",
     )
     for path in do_files:
         text = path.read_text(encoding="utf-8")
@@ -325,16 +323,18 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
     ]
     required_done_phrases = (
         "selected verification mode",
-        "`per-gate` is independently verified per gate",
-        "`consolidated` is independently verified by a consolidated verifier",
-        "`self` is executor self-verification",
-        "explicit verifier model or inherited model choice",
+        "selected verification reference's evidence/provenance wording",
+        "exactly from the supplied ledger and selected-reference wording",
+        "do not translate the mode into a second inline policy here",
         "fresh PASS evidence under the selected mode",
     )
     for path in done_files:
         text = path.read_text(encoding="utf-8")
         for phrase in required_done_phrases:
             assert phrase in text, f"{path}: missing {phrase!r}"
+        assert "independently verified per gate" not in text, path
+        assert "independently verified by a consolidated verifier" not in text, path
+        assert "`self` is executor self-verification" not in text, path
 
     escalate_files = [
         ROOT / "claude-plugins/manifest-dev/skills/escalate/SKILL.md",
@@ -388,24 +388,42 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "or any other verify field" in text, path
         assert "optional integer `phase`" in text, path
         assert "Neither option is written into the Manifest" in text, path
-        assert "Reject it with `self`" in text, path
         assert "never change in response to cost" in text, path
         assert "any non-PASS leaves later phases unverified" in text, path
-        assert (
-            "launch one fresh independent general-purpose verifier execution "
-            "for each eligible gate"
-        ) in text, path
-        assert (
-            "With `consolidated`, load `references/consolidated-verification.md`."
-            in text
+        assert "load exactly one matching reference" in text, path
+        assert "`references/per-gate-verification.md`" in text, path
+        assert "`references/consolidated-verification.md`" in text, path
+        assert "`references/self-verification.md`" in text, path
+        assert "selected reference owns evaluator topology" in text, path
+        assert "Evaluate gates through the selected reference's execution envelope" in (
+            text
         ), path
-        assert "With `self`, load `references/self-verification.md`." in text, path
+        assert (
+            "launch one fresh independent general-purpose verifier execution"
+            not in (text)
+        ), (path)
+        assert "Do not launch verifier executions" not in text, path
+        assert "Record provenance as `executor self-verification`" not in text, path
+        assert "independently verified by a consolidated verifier" not in text, path
 
         refs = path.parent / "references"
+        per_gate = refs / "per-gate-verification.md"
         consolidated = refs / "consolidated-verification.md"
         self_verification = refs / "self-verification.md"
+        assert per_gate.is_file(), per_gate
         assert consolidated.is_file(), consolidated
         assert self_verification.is_file(), self_verification
+
+        per_gate_text = per_gate.read_text(encoding="utf-8")
+        assert (
+            "one fresh independent general-purpose verifier execution" in per_gate_text
+        )
+        assert "every gate the spine marks eligible" in per_gate_text
+        assert "Run those executions in parallel" in per_gate_text
+        assert "`--verifier-model <model>` is optional" in per_gate_text
+        assert "Record provenance as `independent per-gate verifier`" in per_gate_text
+        assert "independently verified per gate" in per_gate_text
+
         assert "one fresh independent general-purpose verifier execution" in (
             consolidated.read_text(encoding="utf-8")
         )
@@ -420,6 +438,8 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
             in consolidated_text
         )
         assert "later phases remain unverified" not in consolidated_text
+        assert "`--verifier-model <model>` is optional" in consolidated_text
+        assert "independently verified by a consolidated verifier" in consolidated_text
         assert "Do not launch verifier executions" in self_verification.read_text(
             encoding="utf-8"
         )
@@ -427,7 +447,14 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "every gate the spine marks eligible" in self_text
         assert "stop before a later phase" not in self_text
         assert "does not make this evidence independent" in self_text
+        assert "Reject `--verifier-model`" in self_text
         assert "Record provenance as `executor self-verification`" in self_text
+        assert "without claiming independence" in self_text
+
+        for reference in (per_gate, consolidated, self_verification):
+            assert "Load this reference only" not in reference.read_text(
+                encoding="utf-8"
+            ), reference
 
     define_files = [
         ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
@@ -716,10 +743,15 @@ def test_parent_workflows_forward_policy_without_putting_it_in_manifests() -> No
         assert "--verifier-model <model>" in text, path
         assert "Never write either" in text, path
         assert "into the Manifest" in text, path
+        assert "load the matching sibling `/do` reference" in text, path
+        assert "the reference, not `/auto`, owns mode-specific" in text, path
         assert (
             "Remove parsed flags from the task before `/define`, and forward them only to `/do`."
             in text
         ), path
+        assert "independently verified per gate" not in text, path
+        assert "independently verified by a consolidated verifier" not in text, path
+        assert "means executor self-verification" not in text, path
 
     for path in babysit_files:
         text = path.read_text(encoding="utf-8")
@@ -727,6 +759,17 @@ def test_parent_workflows_forward_policy_without_putting_it_in_manifests() -> No
         assert "--verifier-model <model>" in text, path
         assert "Never write either" in text, path
         assert "into the Manifest" in text, path
+        assert (
+            "load the matching `manifest-dev:do` verification reference" in text
+        ), path
+        assert "the reference, not Babysit PR, owns mode-specific" in text, path
+        assert (
+            "selected verification reference's required evidence/provenance wording"
+            in (text)
+        ), path
+        assert "independently verified per gate" not in text, path
+        assert "independently verified by a consolidated verifier" not in text, path
+        assert "as executor self-verification" not in text, path
         assert re.search(
             r"After resolving the manifest path, invoke `(?:manifest-dev:)?do` "
             r"on it with the parsed verification options",
