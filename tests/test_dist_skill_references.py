@@ -315,6 +315,25 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         for phrase in required_do_phrases:
             assert phrase in text, f"{path}: missing {phrase!r}"
 
+    done_files = [
+        ROOT / "claude-plugins/manifest-dev/skills/done/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/done/SKILL.md",
+        DIST / "opencode/skills/done/SKILL.md",
+        DIST / "pi/skills/done/SKILL.md",
+    ]
+    required_done_phrases = (
+        "selected verification mode",
+        "`per-gate` is independently verified per gate",
+        "`consolidated` is independently verified by a consolidated verifier",
+        "`self` is executor self-verification",
+        "explicit verifier model or inherited model choice",
+        "fresh PASS evidence under the selected mode",
+    )
+    for path in done_files:
+        text = path.read_text(encoding="utf-8")
+        for phrase in required_done_phrases:
+            assert phrase in text, f"{path}: missing {phrase!r}"
+
     parent_goal_files = [
         ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
         ROOT / "claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
@@ -350,6 +369,11 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "Neither option is written into the Manifest" in text, path
         assert "Reject it with `self`" in text, path
         assert "never change in response to cost" in text, path
+        assert (
+            "only the lowest phase containing unverified or stale gates is eligible"
+            in text
+        ), path
+        assert "any non-PASS leaves later phases unverified" in text, path
 
         refs = path.parent / "references"
         consolidated = refs / "CONSOLIDATED_VERIFICATION.md"
@@ -359,10 +383,15 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "one fresh independent general-purpose verifier execution" in (
             consolidated.read_text(encoding="utf-8")
         )
+        consolidated_text = consolidated.read_text(encoding="utf-8")
+        assert "every gate the spine marks eligible" in consolidated_text
+        assert "later phases remain unverified" not in consolidated_text
         assert "Do not launch verifier executions" in self_verification.read_text(
             encoding="utf-8"
         )
         self_text = self_verification.read_text(encoding="utf-8")
+        assert "every gate the spine marks eligible" in self_text
+        assert "stop before a later phase" not in self_text
         assert "does not make this evidence independent" in self_text
         assert "Record provenance as `executor self-verification`" in self_text
 
