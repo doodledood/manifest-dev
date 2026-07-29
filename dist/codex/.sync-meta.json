@@ -1,10 +1,10 @@
 {
-  "source_commit": "dd1f4907eafd5c7e0fcc34bef1c5d2815abed13d",
+  "source_commit": "3d7c1b9e903ffe317bbe85a692ab0986288328be",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-29T07:32:08Z",
-  "notes": "Delta sync through three-way verification-mode progressive disclosure, including a dedicated default per-gate reference and mode-neutral shared callers and terminal helpers."
+  "synced_at": "2026-07-29T08:59:31Z",
+  "notes": "Delta sync of figure-out's anchored turn-shape default; plugin/package versions mirrored."
 }
