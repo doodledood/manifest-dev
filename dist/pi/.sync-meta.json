@@ -1,11 +1,11 @@
 {
-  "source_commit": "a8cc0c2ebf43bb691a901c3bfad0eca7a2c599f8",
+  "source_commit": "0e52b3f0176729df97f81011ce05643e60705b56",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-28T21:26:32Z",
-  "notes": "Full regeneration after the Pi conversion guide changed. The skill-only package and /do, /auto, and /babysit-pr aliases now carry the clean verify.instructions schema, run-level verification modes, optional independent verifier model, and mode-aware provenance; plugin-qualified skill ids remain stripped to bare names."
+  "synced_at": "2026-07-28T21:36:39Z",
+  "notes": "Full regeneration followed by a delta sync of topology-neutral define task tables. The skill-only package and /do, /auto, and /babysit-pr aliases carry the clean verify.instructions schema, run-level verification modes, optional independent verifier model, and mode-aware provenance; plugin-qualified skill ids remain stripped to bare names."
 }
