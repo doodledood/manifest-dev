@@ -4,18 +4,18 @@ Base guidance for all text-authoring tasks (articles, emails, marketing copy, so
 
 ## Quality Gates
 
-| Aspect | Agent | Fallback | Threshold |
-|--------|-------|----------|-----------|
-| Vocabulary, Structure, Tone, Rhetoric, Craft, Negative space | writing-reviewer | general-purpose + `references/WRITING-REFERENCE.md` | no MEDIUM+ |
-| Voice compliance | general-purpose | — | Matches AUTHOR_VOICE.md (conditional: only when doc exists) |
-| Readability | general-purpose | — | Accessible to target audience, scannable structure |
-| Anti-slop | general-purpose | — | No kill-list vocabulary, hedge words, filler phrases, generic phrasing |
-| Accuracy | general-purpose | — | Claims supported, no contradictions |
-| Audience fit | general-purpose | — | Language and depth match target reader |
-| Clarity | general-purpose | — | No ambiguous terms or undefined jargon |
-| Statistical variation | general-purpose | — | Sentence-length variation and vocabulary diversity present; uniform rhythm is an AI tell |
+| Aspect | Threshold |
+|--------|-----------|
+| Vocabulary, Structure, Tone, Rhetoric, Craft, Negative space | no MEDIUM+ under `references/WRITING-REFERENCE.md` |
+| Voice compliance | Matches AUTHOR_VOICE.md (conditional: only when doc exists) |
+| Readability | Accessible to target audience, scannable structure |
+| Anti-slop | No kill-list vocabulary, hedge words, filler phrases, generic phrasing |
+| Accuracy | Claims supported, no contradictions |
+| Audience fit | Language and depth match target reader |
+| Clarity | No ambiguous terms or undefined jargon |
+| Statistical variation | Sentence-length variation and vocabulary diversity present; uniform rhythm is an AI tell |
 
-Writing-reviewer severity: CRITICAL = immediately identifiable as AI. HIGH = experienced readers would notice. MEDIUM/LOW = informational only.
+Writing-review severity: CRITICAL = immediately identifiable as AI. HIGH = experienced readers would notice. MEDIUM/LOW = informational only.
 
 ## Defaults
 

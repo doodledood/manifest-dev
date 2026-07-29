@@ -18,6 +18,8 @@ Append only. Never rewrite, reorder, compress, or delete prior entries. If an ol
 
 Read the log before deciding retries and comment judgments in a resumed or long-lived run; append after acting. Append after meaningful events — a deliverable implemented, a deviation from the Initial Approach or the Deliverable order, a Process Guidance departure, a fix attempt abandoned, a gate verdict or staleness change, an operational step (retrigger, wait), an escalation. Skip play-by-play narration.
 
+The first entry fixes the logical run's verification policy: selected mode and explicit verifier model or inherited model choice. A later invocation changing either always starts a fresh logical run and gate ledger. For `/do`'s default timestamped logs, resolve a new physical log file. In a caller-supplied journal, keep the same file, append a `Run initialized` boundary with the new policy, and start an empty active ledger; prior gate verdicts remain historical and are not carried into the new run. This preserves caller-owned continuity without mixing evidence provenance.
+
 ## Content
 
 Record what completed state won't reconstruct on its own:
@@ -26,7 +28,7 @@ Record what completed state won't reconstruct on its own:
 - **Process Guidance departures** — which item was set aside and why.
 - **Dead-end memory** — fixes tried and reverted, approaches considered and rejected that left no commit.
 - **Operational notes** — retriggers, waits, environment actions, so those decisions survive context compaction.
-- **Gate-ledger updates** — verdicts, staleness marks, re-verification outcomes.
+- **Gate-ledger updates** — verdicts, evidence provenance, staleness marks, re-verification outcomes.
 - **Sub-threshold findings** — what a gate reported below its own threshold and was handed over rather than repaired.
 - **Threshold questions** — a gate whose bar the run read as suspect, and how it settled: amended, affirmed by the user, or recorded with no user to ask. An affirmation settles it for the run, so the record is what keeps it from being raised again after context compaction.
 

@@ -81,8 +81,17 @@ A host-provided goal-setting, continuation, or completion-check capability that 
 **Phase Checkpoint**:
 A required intermediate workflow condition that must be satisfied before moving to the next phase, but is not the terminal success condition unless that phase's artifact is the deliverable.
 
+**Gate Evaluation Instructions**:
+The topology-neutral procedure inside `verify.instructions` that says what evidence to gather and what PASS means, without choosing who evaluates it or which model runs it.
+
+**Verification Mode**:
+The run-level `/do` policy that selects `per-gate`, `consolidated`, or `self` evaluation without changing the Manifest.
+
+**Verification Provenance**:
+The gate-ledger record of who evaluated a gate under which mode and explicit or inherited model choice.
+
 **Verifier Execution**:
-An independent host execution context launched by `/do` to evaluate one Acceptance Criterion or Global Invariant.
+An independent host execution context launched by `/do` to evaluate one gate or a consolidated set of gates.
 
 **Skill**:
 A reusable capability that extends an agent's behavior.
@@ -138,8 +147,10 @@ _Avoid_: Preference, style, judgment.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
 - **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.
-- `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, launches **Verifier Executions** for failed-or-unverified **Acceptance Criteria** and **Global Invariants**, repairs FAILs, and routes BLOCKED gates.
-- A **Verifier Execution** returns PASS, FAIL, or BLOCKED evidence to the **Do/Verify Loop**.
+- Every **Acceptance Criterion** and **Global Invariant** carries **Gate Evaluation Instructions** in the **Manifest**.
+- `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, evaluates failed-or-unverified **Acceptance Criteria** and **Global Invariants** under the selected **Verification Mode**, repairs FAILs, and routes BLOCKED gates.
+- `per-gate` launches one **Verifier Execution** per eligible gate, `consolidated` launches one for the outstanding gate set, and `self` launches none.
+- Every gate evaluation returns PASS, FAIL, or BLOCKED evidence plus **Verification Provenance** to the **Do/Verify Loop**.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.
 - A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.

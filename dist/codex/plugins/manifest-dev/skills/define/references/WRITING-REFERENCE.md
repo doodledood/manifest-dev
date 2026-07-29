@@ -2,7 +2,7 @@
 
 Reference material for writing quality verification. Use as context when verifying writing task deliverables.
 
-**Purpose**: Verification fallback for users without the writing plugin (writing-reviewer agent). Pass this file as context to a general-purpose verifier when writing-reviewer is unavailable.
+**Purpose**: Topology-neutral writing-quality guidance. When no writing-review capability is available, incorporate the applicable rules from this file into the gate's evaluation instructions.
 
 **Not for /define interviews** — this file contains lookup tables and detailed rules. The task file (`tasks/WRITING.md`) has compressed summaries for interview probing. Do not load this file during `/define`.
 

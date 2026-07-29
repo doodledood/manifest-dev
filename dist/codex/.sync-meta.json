@@ -1,9 +1,10 @@
 {
-  "source_commit": "378313bab7b75ab1865da8f2729d121d5d89b32d",
+  "source_commit": "dd1f4907eafd5c7e0fcc34bef1c5d2815abed13d",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-28T19:46:57Z"
+  "synced_at": "2026-07-29T07:32:08Z",
+  "notes": "Delta sync through three-way verification-mode progressive disclosure, including a dedicated default per-gate reference and mode-neutral shared callers and terminal helpers."
 }

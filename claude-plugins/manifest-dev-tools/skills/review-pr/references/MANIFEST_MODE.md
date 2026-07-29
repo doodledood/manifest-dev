@@ -1,16 +1,16 @@
 # Manifest mode (`--manifest <path>`)
 
-In manifest mode the skill independently re-verifies the manifest's contract instead of running the generic `review-code` reviewer fleet — the reviewer-side, optionally cross-model re-execution of the same Acceptance Criteria and Global Invariants that `/do` runs in-session. Everything else in the SKILL.md one-shot pass — thread advancement, voice profile, the single batched `comment` review, the user-confirmed-only approval path, `--loop` — is unchanged; only the code-verification half of step 2 branches here.
+In manifest mode the skill independently re-verifies the manifest's contract instead of running the generic `review-code` reviewer fleet — the reviewer-side, per-gate re-execution of the same Acceptance Criteria and Global Invariants that `/do` can run under any of its execution modes. Everything else in the SKILL.md one-shot pass — thread advancement, voice profile, the single batched `comment` review, the user-confirmed-only approval path, `--loop` — is unchanged; only the code-verification half of step 2 branches here.
 
 ## Verify the manifest
 
-Read the manifest fully, then spawn one **general-purpose** subagent per Acceptance Criterion and per Global Invariant, each driven by that criterion's `verify.prompt:` **verbatim** — no rewording — evaluated against the PR head. This is the same fanout `/do` runs in-session (`manifest-dev:do`): the optional `verify.model:` selects the subagent's model — running on a different tool/model is where the cross-model independence comes from — and `phase:` ordering is respected, serial across phases and parallel within. Each subagent returns PASS, FAIL, or BLOCKED.
+Read and validate the manifest fully, then spawn one fresh **general-purpose** subagent per Acceptance Criterion and per Global Invariant, each driven by that gate's `verify.instructions:` **verbatim** — no rewording — evaluated against the PR head. A verify block contains required `instructions` and optional integer `phase` (default `1`); reject `prompt`, `model`, a missing `instructions`, or any other field with a clear request to create a fresh Manifest through `/define` without amending the incompatible file. Manifest review stays independently per-gate regardless of which `/do --verification` mode produced the branch. The reviewer context chooses the active model; model choice is not manifest data. Respect `phase:` ordering, serial across phases and parallel within. Each subagent returns PASS, FAIL, or BLOCKED.
 
 The generic `review-code` fleet is **not** also run. `/define` default-injects a `review-code` Global Invariant, so generic code-quality review already travels inside the manifest and runs *as* one of these verifications; the manifest is the single source of truth for what "done" requires. Running both would reintroduce a second source of truth and noisy duplicate comments on a contract-driven PR.
 
 ## PR-head checkout
 
-`verify.prompt`s execute the code at PR head (tests, builds, greps). Like `/do` and `babysit-pr`, manifest mode runs against the current working checkout: ensure it is at the PR head SHA before spawning verifiers — check the head out if the runner isn't already on it — and derive head from GitHub each run, never from session memory.
+`verify.instructions` execute against the code at PR head (tests, builds, greps). Like `/do` and `babysit-pr`, manifest mode runs against the current working checkout: ensure it is at the PR head SHA before spawning verifiers — check the head out if the runner isn't already on it — and derive head from GitHub each run, never from session memory.
 
 ## Posting & approval
 
@@ -34,9 +34,9 @@ PASS/FAIL comments recur every push, so track each by a content fingerprint (cri
 
 ## Cycle summary
 
-The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, the model used, and the verifier's short finding. Then add one line for the judgment pass: premise questions posted — count and their roots — or `none`, so an all-green contract summary still records that questions were raised.
+The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply in manifest mode. Instead report, one line per Acceptance Criterion and Global Invariant: its manifest id, PASS/FAIL/BLOCKED, independent per-gate provenance, the reviewer context's model, and the verifier's short finding. Then add one line for the judgment pass: premise questions posted — count and their roots — or `none`, so an all-green contract summary still records that questions were raised.
 
 ## Gotchas
 
-- Run each `verify.prompt` verbatim and never also run the generic reviewer fleet — the manifest (which `/define` default-injects a `review-code` invariant into) is the single source of truth, and running both reintroduces a second source of truth with duplicate comments.
+- Run each `verify.instructions` block verbatim and never also run the generic reviewer fleet — the manifest (which `/define` default-injects a `review-code` invariant into) is the single source of truth, and running both reintroduces a second source of truth with duplicate comments.
 - Track PASS/FAIL comments by content fingerprint, not comment id — they recur after every push, and re-posting an unchanged FAIL loops `/do`/`babysit-pr` ingestion.

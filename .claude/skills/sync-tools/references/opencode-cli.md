@@ -2,7 +2,7 @@
 
 Reference for generating the OpenCode distribution from the Claude Code plugins. Plugin-native model, live-verified against opencode **v1.17.3** (June 2026); minimum supported version **v1.2.16** (oldest version the plugin mechanism was live-verified on; current OpenCode docs expose skills through the native `skill` tool, while slash autocomplete is command-backed).
 
-**manifest-dev ships no agents and no command files on OpenCode.** Every capability is a skill; verification is a general-purpose subagent whose prompt activates a skill. The OpenCode plugin registers the bundled skills via `skills.paths` and dynamically adds slash-command wrappers in `cfg.command` for source skills whose `user-invocable` frontmatter is not `false`. The former `install.sh`/`install_helpers.py`/`component-namespaces.json` installer surface is retired with it — the plugin below is the entire install story.
+**manifest-dev ships no agents and no command files on OpenCode.** Every capability is a skill; gate evaluation instructions activate skills under `/do`'s selected verification mode. The OpenCode plugin registers the bundled skills via `skills.paths` and dynamically adds slash-command wrappers in `cfg.command` for source skills whose `user-invocable` frontmatter is not `false`. The former `install.sh`/`install_helpers.py`/`component-namespaces.json` installer surface is retired with it — the plugin below is the entire install story.
 
 ## Distribution Model
 

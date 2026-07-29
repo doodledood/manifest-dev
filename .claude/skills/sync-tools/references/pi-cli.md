@@ -20,7 +20,7 @@ Pi is an Agent Skills host and package host. For manifest-dev, the Pi target is 
 | Claude Code Source | Pi Target |
 |--------------------|-----------|
 | Skills | Package skills under `dist/pi/skills/`, with Pi target substitutions. |
-| `/do`, `/done`, `/escalate` | Ordinary package skills. `/do` runs the portable main-agent verifier protocol; `/done` and `/escalate` are invoked by `/do` as skills. |
+| `/do`, `/done`, `/escalate` | Ordinary package skills. `/do` applies the portable verification-mode protocol; `/done` and `/escalate` are invoked by `/do` as skills. |
 | `/auto`, `/babysit-pr` | Ordinary package skills. Prompt-template aliases expose `/auto` and `/babysit-pr` as convenience commands. |
 | Reviewer/verifier skills | `check-pr`, `poll-slack`, `review-prompt`, and `review-code` ship as ordinary skills; verifier prompts activate them by bare skill name. |
 | Agents | None — manifest-dev ships no agents. |
@@ -45,7 +45,7 @@ The Pi package manifest shape is:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "2.16.0",
+  "version": "3.0.1",
   "private": true,
   "type": "module",
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
@@ -75,15 +75,15 @@ Apply these substitutions:
 
 Generate package-local prompt templates under `dist/pi/prompts/`:
 
-- `do.md` → `/do <manifest-path> [--no-log]` expands to `Use the do skill with: $ARGUMENTS`
-- `auto.md` → `/auto <task>` expands to `Use the auto skill with: $ARGUMENTS`
-- `babysit-pr.md` → `/babysit-pr ...` expands to `Use the babysit-pr skill with: $ARGUMENTS`
+- `do.md` → `/do <manifest-path> [--verification per-gate|consolidated|self] [--verifier-model <model>] [--no-log]` expands to `Use the do skill with: $ARGUMENTS`
+- `auto.md` → `/auto <task> [--verification per-gate|consolidated|self] [--verifier-model <model>]` expands to `Use the auto skill with: $ARGUMENTS`
+- `babysit-pr.md` → `/babysit-pr ... [--verification per-gate|consolidated|self] [--verifier-model <model>]` expands to `Use the babysit-pr skill with: $ARGUMENTS`
 
 These templates are aliases only. The skill bodies own behavior.
 
 ## Runtime Boundary
 
-Pi no longer owns manifest-dev verifier fanout, manifest parsing, verdict aggregation, done/escalation gating, verifier concurrency flags, or wait-pending runtime tokens. `/do` follows the same portable verifier protocol as other hosts: the main agent reads the Manifest, enumerates AC/GI gates, launches independent verifier executions using each `verify.prompt` verbatim, repairs FAILs, reports genuine BLOCKED blockers, and calls `done` only after all gates PASS.
+Pi no longer owns manifest-dev verifier fanout, manifest parsing, verdict aggregation, done/escalation gating, verifier concurrency flags, or wait-pending runtime tokens. `/do` follows the same portable verification-mode protocol as other hosts: it reads the Manifest, validates topology-neutral `verify.instructions`, fixes the launch policy as `per-gate`, `consolidated`, or `self`, evaluates every AC/GI under that policy, repairs FAILs, reports genuine BLOCKED blockers, and calls `done` only after all gates have fresh PASS evidence. `--verifier-model` is valid only for the independent modes and is never Manifest data.
 
 A host-provided goal/continuation feature is an optional outer backstop. If none exists or it is disabled, manifest-dev still runs normally, but no continuous host-level enforcement is guaranteed.
 

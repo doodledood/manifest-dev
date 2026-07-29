@@ -6,13 +6,13 @@ Utilities that sit alongside the define → do → verify workflow — prompt en
 
 | Skill | Description |
 |-------|-------------|
-| `/babysit-pr` | Author-side PR lifecycle babysitter and companion to `/review-pr`. Uses manifest grounding when available, synthesizes PR grounding when not, then runs the manifest lifecycle toward green and mergeable without pressing merge. Supports CI one-shot advancement via `--ci`; keeps a continuity journal by default under the user's home `.manifest-dev/logs/` directory, with `--no-log` to disable it. |
+| `/babysit-pr` | Author-side PR lifecycle babysitter and companion to `/review-pr`. Uses manifest grounding when available, synthesizes PR grounding when not, then runs the manifest lifecycle toward green and mergeable without pressing merge. Forwards `/do`'s opt-in `--verification` and `--verifier-model` execution policy; supports CI one-shot advancement via `--ci`; keeps a continuity journal by default under the user's home `.manifest-dev/logs/` directory, with `--no-log` to disable it. |
 | `/handoff` | Produce a self-contained context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, another agent) and DIY sub-agent (spin off a focused side-session and hand back). Manually invoked. |
 | `/prompt-engineering` | Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. |
-| `/review-pr` | Autonomous PR review that posts high-signal, human-voiced comments under your account. Advances existing review threads, verifies fixes/replies/stale comments, and posts one GitHub review. Polymorphic on `--manifest`: without it, runs the generic reviewer fleet on the relevant diff range; with it, skips the fleet and independently verifies *only* the manifest — running each Acceptance Criterion and Global Invariant `verify.prompt` against the PR head (optionally cross-model) and posting PASS/FAIL. `--loop` schedules repeated one-shot passes with backoff. |
+| `/review-pr` | Autonomous PR review that posts high-signal, human-voiced comments under your account. Advances existing review threads, verifies fixes/replies/stale comments, and posts one GitHub review. Polymorphic on `--manifest`: without it, runs the generic reviewer fleet on the relevant diff range; with it, skips the fleet and independently verifies *only* the manifest — running each Acceptance Criterion and Global Invariant `verify.instructions` against the PR head with one fresh verifier per gate and posting PASS/FAIL. `--loop` schedules repeated one-shot passes with backoff. |
 | `/teach-me` | Teach the learner to deeply understand a body of work — the current session, a PR, an ADR, or any topic. Builds a three-pillar checklist, teaches incrementally, and quizzes for demonstrated mastery before wrapping up. |
 | `/walk-pr` | Walk through a PR or large diff together, one sub-changeset at a time. |
-| `review-prompt` | Reviews LLM prompts against the `/prompt-engineering` skill's gap-calibration principles. Reports issues without modifying files, tagging each `NEEDS_USER_INPUT` or `AUTO_FIXABLE` so an optimization loop can act on them. Use when reviewing prompt quality, auditing a prompt, or evaluating a system prompt. A general-purpose verifier activates it from a `verify.prompt`. |
+| `review-prompt` | Reviews LLM prompts against the `/prompt-engineering` skill's gap-calibration principles. Reports issues without modifying files, tagging each `NEEDS_USER_INPUT` or `AUTO_FIXABLE` so an optimization loop can act on them. Use when reviewing prompt quality, auditing a prompt, or evaluating a system prompt. Gate evaluation instructions activate it when needed. |
 
 ## How It Works
 
@@ -24,4 +24,4 @@ These tools sit alongside the manifest workflow (`/define` → `/do` → `/done`
 /plugin install manifest-dev-tools@manifest-dev
 ```
 
-For OpenCode, Codex, and Pi package installs, use the repo-level distribution instructions. Pi installs from the repository root and includes compatible shared tools skills plus `/auto` and `/babysit-pr` wrappers that route through the Pi Harness-level Do outcome gate.
+For OpenCode, Codex, and Pi package installs, use the repo-level distribution instructions. Pi installs from the repository root and includes compatible shared tools skills plus `/auto` and `/babysit-pr` prompt aliases that invoke the same portable skills.

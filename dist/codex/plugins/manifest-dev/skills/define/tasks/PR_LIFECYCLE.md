@@ -6,17 +6,17 @@ The goal of /do under PR_LIFECYCLE is to drive the PR to a **mergeable** state �
 
 ## Quality Gates
 
-Lifecycle verification composes through a single AC that activates the `check-pr` **skill**. That skill owns the canonical gate set as internal implementation detail; PR_LIFECYCLE templates the AC whose general-purpose verifier activates it.
+Lifecycle verification composes through a single AC whose evaluation instructions activate the `check-pr` **skill**. That skill owns the canonical gate set as internal implementation detail.
 
 | Aspect | Verifier | Threshold |
 |--------|----------|-----------|
-| PR lifecycle | `review-code`-style general-purpose agent activating the `check-pr` skill | PASS |
+| PR lifecycle | Selected evaluator activating the `check-pr` skill | PASS |
 
 **Templated AC** — /define synthesizes one AC per repo with the following shape:
 
 ```yaml
 verify:
-  prompt: |
+  instructions: |
     Activate the manifest-dev:check-pr skill.
     PR: https://github.com/<owner>/<repo>/pull/<N>
     Branch: <branch-name>
@@ -24,7 +24,7 @@ verify:
     Steering: <baseline | user customization>
 ```
 
-The `prompt` field is the steering surface — baseline content is enough to start; the user adds nuances (custom labels, named approvers, cadence/cap overrides) via amendment when needed.
+The `instructions` field is the steering surface — baseline content is enough to start; the user adds nuances (custom labels, named approvers, cadence/cap overrides) via amendment when needed.
 
 ## Defaults
 
