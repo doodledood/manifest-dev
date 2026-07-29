@@ -131,7 +131,7 @@ You've burned out on the weekly "game-changing AI coding tool" cycle and want so
 
 ## Multi-CLI Support
 
-The Claude Code plugins are the source of truth. The same components run in OpenCode, Codex CLI, and Pi through native per-CLI distributions under `dist/`, all verifying the same way: a general-purpose subagent or verifier execution per gate.
+The Claude Code plugins are the source of truth. The same components run in OpenCode, Codex CLI, and Pi through native per-CLI distributions under `dist/`, all carrying the same topology-neutral gate schema and run-level verification modes.
 
 | CLI | Install | Details |
 |-----|---------|---------|

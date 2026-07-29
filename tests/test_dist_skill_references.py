@@ -360,6 +360,47 @@ def test_define_task_gates_do_not_select_evaluator_topology() -> None:
     assert "tables with Agent + Threshold" not in project_context
 
 
+def test_operational_guidance_has_no_stale_per_gate_topology() -> None:
+    files = [
+        ROOT / "README.md",
+        ROOT / "claude-plugins/manifest-dev-tools/README.md",
+        ROOT
+        / "claude-plugins/manifest-dev/skills/define/references/WRITING-REFERENCE.md",
+        ROOT / "claude-plugins/manifest-dev/skills/define/references/BABYSIT_MODE.md",
+        ROOT / "claude-plugins/manifest-dev/skills/review-code/SKILL.md",
+        DIST
+        / "codex/plugins/manifest-dev/skills/define/references/WRITING-REFERENCE.md",
+        DIST / "codex/plugins/manifest-dev/skills/define/references/BABYSIT_MODE.md",
+        DIST / "codex/plugins/manifest-dev/skills/review-code/SKILL.md",
+        DIST / "opencode/skills/define/references/WRITING-REFERENCE.md",
+        DIST / "opencode/skills/define/references/BABYSIT_MODE.md",
+        DIST / "opencode/skills/review-code/SKILL.md",
+        DIST / "pi/skills/define/references/WRITING-REFERENCE.md",
+        DIST / "pi/skills/define/references/BABYSIT_MODE.md",
+        DIST / "pi/skills/review-code/SKILL.md",
+    ]
+    stale_phrases = (
+        "general-purpose subagent or verifier execution per gate",
+        "Pass this file as context to a general-purpose verifier",
+        "the verifier (the general-purpose agent activating",
+        "Pi Harness-level Do outcome gate",
+        "typically spawn a general-purpose agent",
+    )
+    for path in files:
+        text = path.read_text(encoding="utf-8")
+        for phrase in stale_phrases:
+            assert phrase not in text, f"{path}: stale topology wording {phrase!r}"
+
+    readme = (ROOT / "claude-plugins/manifest-dev/README.md").read_text(
+        encoding="utf-8"
+    )
+    example = readme.split("### Deliverable 1: Login round-trip", 1)[1].split(
+        "````", 1
+    )[0]
+    assert example.count("verify:") == 2
+    assert example.count("instructions:") == 2
+
+
 def test_parent_workflows_forward_policy_without_putting_it_in_manifests() -> None:
     auto_files = [
         ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",

@@ -99,6 +99,10 @@ Authors put whatever an evaluator needs directly into `instructions` — run a b
 ### Deliverable 1: Login round-trip
 **Acceptance Criteria:**
 - [AC-1.1] POST /login validates credentials, returns JWT
+  ```yaml
+  verify:
+    instructions: "Exercise POST /login with valid credentials. PASS only if it returns a valid JWT."
+  ```
 - [AC-1.2] Invalid credentials return 401, not 500
   ```yaml
   verify:
