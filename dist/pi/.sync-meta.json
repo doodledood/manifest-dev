@@ -1,11 +1,11 @@
 {
-  "source_commit": "3d7c1b9e903ffe317bbe85a692ab0986288328be",
+  "source_commit": "d095bf3ea7a02c5140476295a6419c6f5724b0d1",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-29T08:59:31Z",
-  "notes": "Delta sync of figure-out's anchored turn-shape default; plugin/package versions mirrored."
+  "synced_at": "2026-07-29T09:06:30Z",
+  "notes": "Full sync verified by regenerate-and-compare against the per-CLI references (pi forced full by a pi-cli.md change); figure-out's anchored turn-shape default current in all targets; skill set unchanged at 17 so READMEs and context files were not regenerated."
 }
