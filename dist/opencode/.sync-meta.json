@@ -1,10 +1,10 @@
 {
-  "source_commit": "0e52b3f0176729df97f81011ce05643e60705b56",
+  "source_commit": "0653170def99149d69bdee4b10725fa39c63c774",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-28T21:36:39Z",
-  "notes": "Full regeneration followed by a delta sync of topology-neutral define task tables. Plugin-native package-local skills, command wrappers, and AGENTS.md carry the clean verify.instructions schema, /do verification modes, optional independent verifier model, and mode-aware provenance."
+  "synced_at": "2026-07-28T21:45:43Z",
+  "notes": "Full regeneration followed by delta syncs of topology-neutral define task tables and remaining evaluator-neutral references. Plugin-native package-local skills, command wrappers, and AGENTS.md carry the clean verify.instructions schema, /do verification modes, optional independent verifier model, and mode-aware provenance."
 }
