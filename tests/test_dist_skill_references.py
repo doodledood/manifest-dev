@@ -759,8 +759,9 @@ def test_parent_workflows_forward_policy_without_putting_it_in_manifests() -> No
         assert "--verifier-model <model>" in text, path
         assert "Never write either" in text, path
         assert "into the Manifest" in text, path
-        assert (
-            "load the matching `manifest-dev:do` verification reference" in text
+        assert re.search(
+            r"load the matching `(?:manifest-dev:)?do` verification reference",
+            text,
         ), path
         assert "the reference, not Babysit PR, owns mode-specific" in text, path
         assert (
