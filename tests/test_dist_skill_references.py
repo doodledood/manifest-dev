@@ -391,6 +391,11 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "Reject it with `self`" in text, path
         assert "never change in response to cost" in text, path
         assert "any non-PASS leaves later phases unverified" in text, path
+        assert (
+            "With `consolidated`, load `references/consolidated-verification.md`."
+            in text
+        ), path
+        assert "With `self`, load `references/self-verification.md`." in text, path
 
         refs = path.parent / "references"
         consolidated = refs / "consolidated-verification.md"
