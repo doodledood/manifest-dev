@@ -1,10 +1,10 @@
 {
-  "source_commit": "0653170def99149d69bdee4b10725fa39c63c774",
+  "source_commit": "aee505379a4331710703cd4d2d0297167c965f4f",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-28T21:45:43Z",
-  "notes": "Full regeneration followed by delta syncs of topology-neutral define task tables and remaining evaluator-neutral references. Includes the clean verify.instructions schema, /do verification modes, optional independent verifier model, caller forwarding, and mode-aware completion provenance."
+  "synced_at": "2026-07-28T22:10:51Z",
+  "notes": "Full regeneration followed by delta syncs through strict incompatible-amendment rejection. Includes the clean verify.instructions schema, /do verification modes, optional independent verifier model, caller forwarding, mode-aware completion provenance, and matching contract guards."
 }

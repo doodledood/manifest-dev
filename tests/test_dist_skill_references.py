@@ -84,21 +84,12 @@ def test_codex_plugin_versions_match_sources() -> None:
     for plugin in ("manifest-dev", "manifest-dev-tools"):
         source = json.loads(
             (
-                ROOT
-                / "claude-plugins"
-                / plugin
-                / ".claude-plugin"
-                / "plugin.json"
+                ROOT / "claude-plugins" / plugin / ".claude-plugin" / "plugin.json"
             ).read_text(encoding="utf-8")
         )
         codex = json.loads(
             (
-                DIST
-                / "codex"
-                / "plugins"
-                / plugin
-                / ".codex-plugin"
-                / "plugin.json"
+                DIST / "codex" / "plugins" / plugin / ".codex-plugin" / "plugin.json"
             ).read_text(encoding="utf-8")
         )
         assert codex["version"] == source["version"], plugin
@@ -359,7 +350,9 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "`verify.prompt`" not in text, path
         assert "`verify.model`" not in text, path
         assert "fresh `/define` regeneration" in text, path
-        assert "never amend, translate, or preserve an incompatible schema" in text, path
+        assert (
+            "never amend, translate, or preserve an incompatible schema" in text
+        ), path
 
 
 def test_every_operative_manifest_example_uses_the_strict_verify_schema() -> None:

@@ -1,11 +1,11 @@
 {
-  "source_commit": "0653170def99149d69bdee4b10725fa39c63c774",
+  "source_commit": "aee505379a4331710703cd4d2d0297167c965f4f",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-28T21:45:43Z",
-  "notes": "Full regeneration followed by delta syncs of topology-neutral define task tables and remaining evaluator-neutral references. The skill-only package and /do, /auto, and /babysit-pr aliases carry the clean verify.instructions schema, run-level verification modes, optional independent verifier model, and mode-aware provenance; plugin-qualified skill ids remain stripped to bare names."
+  "synced_at": "2026-07-28T22:10:51Z",
+  "notes": "Full regeneration followed by delta syncs through strict incompatible-amendment rejection. The skill-only package and /do, /auto, and /babysit-pr aliases carry the clean verify.instructions schema, run-level verification modes, optional independent verifier model, mode-aware provenance, and matching contract guards; plugin-qualified skill ids remain stripped to bare names."
 }
