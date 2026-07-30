@@ -1,10 +1,10 @@
 {
-  "source_commit": "d095bf3ea7a02c5140476295a6419c6f5724b0d1",
+  "source_commit": "4c7f283062ec5b99a8eba6f1d12ea4b6d2bbdde3",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-29T09:06:30Z",
-  "notes": "Full sync verified by regenerate-and-compare against the per-CLI references (pi forced full by a pi-cli.md change); figure-out's anchored turn-shape default current in all targets; skill set unchanged at 17 so READMEs and context files were not regenerated."
+  "synced_at": "2026-07-30T09:03:14Z",
+  "notes": "Full-sync equivalence verified from the prior fully synced source: the only payload changes were figure-out SKILL.md and LOG.md, copied with target substitutions reviewed as no-ops; plugin/package versions were mirrored; the pi-cli.md change was its package-version example only; skill set unchanged at 17 so README/context regeneration was unnecessary."
 }
