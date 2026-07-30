@@ -5,6 +5,6 @@
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-30T13:31:22Z",
-  "notes": "Delta sync: walk-pr SKILL.md + references/CANVAS_MODE.md copied verbatim (no operational tool-name references to remap) and new assets/canvas-reference.html added; manifest-dev-tools plugin version mirrored where the target carries one; skill set unchanged so README/context regeneration unnecessary."
+  "synced_at": "2026-07-30T13:38:36Z",
+  "notes": "Delta sync: planning task files (figure-out/define tasks/PLANNING.md), SKILL.md detection rows + mid-session offer, 5.3.0/3.4.0 version mirrors; verified per-CLI transform-equivalence; empty re-check delta at source_commit."
 }
