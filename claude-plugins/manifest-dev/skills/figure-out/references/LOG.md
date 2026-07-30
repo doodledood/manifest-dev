@@ -28,7 +28,7 @@ Recommended shape:
 ## {UTC timestamp} — {short title}
 
 **Current belief:** {leading read + confidence, when there is one}
-**Evidence:** {refs or quotes}
+**Evidence:** {the artifacts themselves — pasted quotes, file:line refs, command output, URLs; a description of having looked doesn't count, and a claim with no artifact here is recorded as inferred/assumed, not verified}
 **Evidence against / limits:** {disconfirming evidence, weak spots, or why confidence is bounded}
 **Finding / surprise:** {what changed or was learned}
 **Belief update:** {how the read shifted; omit if unchanged}
