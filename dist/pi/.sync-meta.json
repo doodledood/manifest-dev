@@ -1,11 +1,11 @@
 {
-  "source_commit": "a0f79a171f29879b71d8413d1e5e3a9a22786611",
+  "source_commit": "fd129eef43486e8c51b23c0e1c80aaaff327ff77",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-30T13:42:25Z",
+  "synced_at": "2026-07-30T13:45:27Z",
   "notes": "Delta sync: planning task files (figure-out/define tasks/PLANNING.md), SKILL.md detection rows + mid-session offer, 5.3.0/3.4.0 version mirrors; verified per-CLI transform-equivalence; empty re-check delta at source_commit."
 }
