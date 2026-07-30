@@ -20,6 +20,16 @@ Once project relevance exists, resolve the active context file and load it if it
 4. **Active `CONTEXT.md` is missing** → offer minimal initialization for that context: *"No CONTEXT.md exists for this repo/context. Want a minimal scaffold I can grow as terms resolve?"* On accept, write a starter file at the active context path (context name, one-sentence purpose, empty Language section). On decline, skip the proactive scaffold and don't re-offer it for that context — but subsequent per-turn glossary captures may still create the active `CONTEXT.md` lazily on first earned resolution. (Declining the scaffold only declines the *proactive* write, not the inline captures that docs mode exists for.)
 5. **Multiple distinct domains emerge mid-session** → propose splitting via `CONTEXT-MAP.md` + per-context `CONTEXT.md`. Don't do this preemptively; only when the conversation actually crosses domain boundaries. If the user accepts a split and a relevant per-context `CONTEXT.md` is missing, offer the same minimal initialization for that new context.
 
+## Map awareness
+
+Some projects carry an active **decision map** — a front page holding an effort's destination, standing decisions, frontier, fog, and rulings (per the define task references' map convention; commonly under `plans/` or linked from `CONTEXT.md`, though any venue can host it). When the session's topic is relevant to a mapped effort, load the map's front page as evidence at the point that relevance emerges — the same gate as the rest of docs mode, so a session unrelated to the effort never pays for it.
+
+Three behaviors follow:
+
+- **Standing decisions constrain.** Treat them like ADRs: they bound the option set. Re-litigate one only deliberately — name that the session is challenging a standing decision, and route the outcome through the map rather than around it.
+- **Route matching topics.** When the topic is, or substantially overlaps, an open map item, say so and work it as that item — the map's claim and closer rules then apply to whoever finishes it.
+- **Outcomes go to the closer step, not the map.** figure-out's read-only rule holds: the session doesn't edit the map. When the read resolves a map item, makes fog statable, or challenges a standing decision, name that with the read so the closer step — the user's go, or the executing run — lands it per the map's seeded protocol.
+
 ## Glossary captures (per-turn, inline, no offer)
 
 **After every counterparty response — or, in self-answered runs, every resolved question —** check for glossary candidates — but write only candidates that pass the earned-entry gate.

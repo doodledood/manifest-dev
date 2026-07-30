@@ -1,11 +1,11 @@
 {
-  "source_commit": "7ad858045f4590b244d2d7bfa29c081b1a09d10d",
+  "source_commit": "84b010119f97146a2086b3b23582d7b997eab222",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-30T13:48:21Z",
-  "notes": "Delta sync check at 7ad85804: no trigger changes (sync-tools SKILL.md / references unchanged), empty source delta since fd129eef; sync-meta refreshed only."
+  "synced_at": "2026-07-30T14:57:38Z",
+  "notes": "Full sync at 84b01011 (forced: references/pi-cli.md changed — version example only, 3.4.0 -> 3.5.0). Verified full dist tree against sources; net change = the 5-file source delta with qualifier stripping in define/SKILL.md. component-namespaces.json regenerated (identical, 17 skills / 3 prompts). Root package.json 3.5.0 matches reference example."
 }

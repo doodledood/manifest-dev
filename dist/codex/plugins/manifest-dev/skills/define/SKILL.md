@@ -44,7 +44,7 @@ Identify task type and load the matching file(s) from `tasks/` — their Quality
 | Tech design | Design docs consolidating finished understanding into audience-fit standalone technical documentation (base: Document) | `TECH_DESIGN.md` |
 | Research | Investigations, analyses, comparisons | `research/RESEARCH.md` |
 | Blog | Blog posts, articles, tutorials (base: Writing) | `BLOG.md` |
-| Planning | Encoding a decomposition read into a durable decision map — map plus per-decision files, local markdown default, venue pluggable | `PLANNING.md` |
+| Planning | Encoding a decomposition read into a durable decision map — items worked over time, venue named per manifest | `PLANNING.md` |
 
 *Composition:* code-change tasks combine `CODING.md` (base gates) with the specific FEATURE/BUG/REFACTOR; text-authoring combines `WRITING.md` with BLOG/DOCUMENT, and TECH_DESIGN composes onto DOCUMENT/WRITING; Research composes `research/RESEARCH.md` with `research/sources/`. Domains aren't mutually exclusive (a bug fix that refactors uses both). `PR_LIFECYCLE.md` composes when the output ships through a GitHub PR (auto-detected from a github.com `origin`; probe if origin is missing or a github-enterprise host), including tech-design docs shipped as PRs — it templates one AC per repo whose `verify.instructions:` activates the `check-pr` skill under whichever `/do` verification mode is selected. The instructions are the steering surface for per-PR nuances (labels, approvers, flaky-CI/retrigger overrides). **Exception:** PROMPTING does not compose with CODING unless the task also changes executable code. PLANNING stands alone — the map is the deliverable; work a resolved decision spawns gets its own manifest.
 
