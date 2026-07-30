@@ -1,9 +1,7 @@
 # ADR: Move verification execution policy to `/do`
 
 ## Status
-Accepted
-
-> Update (2026-07-30): the omitted-flag default later changed from `per-gate` to `consolidated`; the policy mechanism below is unchanged.
+Accepted — omitted-flag default superseded by 20260730-consolidated-default-verification-mode
 
 ## Context
 
@@ -97,7 +95,7 @@ or assign legacy semantics to them.
 
 Neither option is written back into the Manifest.
 
-`--verification` defaulted to `per-gate` when omitted at the time of this decision (since 2026-07-30 the default is `consolidated` — see the status note above):
+`--verification` defaults to `per-gate` when omitted:
 
 - **`per-gate`** launches one fresh independent verifier execution for each
   eligible gate. This preserves the existing assurance model.
