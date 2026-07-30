@@ -34,6 +34,7 @@ Recommended shape:
 **Belief update:** {how the read shifted; omit if unchanged}
 **Open threads:** {sharp unresolved questions — a question is sharp when you can state it precisely now, regardless of whether you can answer it; omit if none}
 **Fog:** {areas sensed but not yet statable as questions — don't pre-slice into sub-questions; a patch may resolve into several questions or none; omit if none}
+**Out of scope:** {ground consciously ruled beyond the current frame, with why — rulings, not unanswered questions; returns only if the frame moves; omit if none}
 **Next crux:** {the next load-bearing question; omit if not yet clear}
 ```
 
