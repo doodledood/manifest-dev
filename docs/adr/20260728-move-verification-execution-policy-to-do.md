@@ -97,7 +97,7 @@ or assign legacy semantics to them.
 
 Neither option is written back into the Manifest.
 
-`--verification` defaults to `per-gate` when omitted:
+`--verification` defaulted to `per-gate` when omitted at the time of this decision (since 2026-07-30 the default is `consolidated` — see the status note above):
 
 - **`per-gate`** launches one fresh independent verifier execution for each
   eligible gate. This preserves the existing assurance model.
