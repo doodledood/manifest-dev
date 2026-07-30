@@ -38,7 +38,7 @@ Default to `~/.manifest-dev/scratch/{session-ts}/` (create the dir; `~` = `$HOME
 
 **Lazy creation.** Don't scaffold an empty shell at session start. Create the artifact the first time there's actually something worth sketching — a first design element agreed, a first UI direction picked, a first algorithm shape decided.
 
-**Update cadence.** Regenerate or edit after a meaningful shift in understanding — a belief-register update, a new element decided, an open question resolved — not per turn and not per tool call. Batch small changes into one update rather than writing on every micro-step.
+**Update cadence.** Regenerate or edit after a meaningful shift in understanding — a belief-register update, a new element decided, an open question resolved, ground ruled out of frame — not per turn and not per tool call. Batch small changes into one update rather than writing on every micro-step.
 
 ## Composition
 
