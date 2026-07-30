@@ -3,6 +3,8 @@
 ## Status
 Accepted
 
+> Update (2026-07-30): the omitted-flag default later changed from `per-gate` to `consolidated`; the policy mechanism below is unchanged.
+
 ## Context
 
 A Manifest is the acceptance contract consumed by `/do`. It must carry enough

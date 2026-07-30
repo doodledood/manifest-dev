@@ -51,7 +51,7 @@ The leverage lives upstream of the `while`: understand the problem before anythi
   </tr>
   <tr>
     <td><strong>It fakes "done."</strong> An agent reports success on broken code with total confidence.</td>
-    <td><strong><code>/do</code></strong> makes it prove otherwise: every criterion needs evidence under an explicit verification mode, and the default independently verifies each gate.</td>
+    <td><strong><code>/do</code></strong> makes it prove otherwise: every criterion needs evidence under an explicit verification mode, and the default has an independent verifier evaluate every gate.</td>
   </tr>
 </table>
 
@@ -77,13 +77,13 @@ Then work through the three beats:
 /figure-out <topic or problem>     # 1. Figure it out — understand before acting
 /define <what you want to build>   # 2. Encode what you'd accept into a manifest
 /do <manifest-path>                # 3. Execute and verify every criterion inline
-/do <manifest-path> --verification consolidated  # opt in to one verifier per round
+/do <manifest-path> --verification per-gate      # opt in to one verifier per gate
 /do <manifest-path> --verification self          # opt in to executor verification
 
 /auto <what you want to build>     # Or run all three, chained, no approval gates
 ```
 
-`/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest and can't call it done until every criterion has fresh evidence under the selected mode, keeping a default-on execution log of deviations and dead ends as it goes (`--no-log` skips it). The default `per-gate` mode preserves one independent verifier per gate; opt-in `consolidated` and `self` modes trade assurance for lower execution cost. `--verifier-model <model>` optionally selects the independent verifier model and is invalid with `self`. `/auto` chains all three with no waiting and forwards the same execution flags without putting them in the manifest.
+`/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest and can't call it done until every criterion has fresh evidence under the selected mode, keeping a default-on execution log of deviations and dead ends as it goes (`--no-log` skips it). The default `consolidated` mode has one independent verifier evaluate the outstanding gate set each round — one coherent view, one artifact read; opt-in `per-gate` runs one fresh independent verifier per gate for maximum rigor, and opt-in `self` trades independence for the lowest execution cost. `--verifier-model <model>` optionally selects the independent verifier model and is invalid with `self`. `/auto` chains all three with no waiting and forwards the same execution flags without putting them in the manifest.
 
 For unattended runs of `/do` or `/auto` (the recommended way to run both), set your host's goal-setting or continuation capability to the completion contract those skills print; see the [manifest-dev plugin README](claude-plugins/manifest-dev/README.md#quick-start) for the full contract text and why it's shaped that way.
 
