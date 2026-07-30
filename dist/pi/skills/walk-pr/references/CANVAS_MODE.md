@@ -14,7 +14,7 @@ Evaluate **immediately** when `--canvas` is set, before opening the first sub-ch
 2. **Non-local medium** — the user isn't at a host with browser access.
 3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`.
 
-If none match: generate the canvas at `/tmp/walk-pr-canvas-{ts}.html` (`{ts}` = invocation timestamp), open it, and disengage until the paste-back.
+If none match: generate the canvas as one self-contained HTML file in the host's temp directory (`walk-pr-canvas-{ts}.html`, `{ts}` = invocation timestamp), open it, and disengage until the paste-back.
 
 ## The reference shell
 
