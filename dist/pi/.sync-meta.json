@@ -1,11 +1,11 @@
 {
-  "source_commit": "d76ce90bd43a7f41e223238db9bb2047ff2c7fbe",
+  "source_commit": "2fedf15b1dded7ff9c01b76e937c15cc28efa8a4",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-30T17:27:47Z",
-  "notes": "Delta sync: WITH_DOCS intro count + PLANNING path-form fix; verbatim copies (no qualifiers/context-file refs in changed text)."
+  "synced_at": "2026-07-30T19:07:14Z",
+  "notes": "Delta sync: default verification mode flipped to consolidated in do/auto/babysit-pr + README/AGENTS default wording; version mirrors bumped."
 }
