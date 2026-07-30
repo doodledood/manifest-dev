@@ -1,10 +1,10 @@
 {
-  "source_commit": "84b010119f97146a2086b3b23582d7b997eab222",
+  "source_commit": "8d1f2189c397d0d7ca5a54987145863ed743aab3",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-30T14:57:38Z",
-  "notes": "Delta sync at 84b01011: 5 core-skill files updated (define/SKILL.md, define/tasks/PLANNING.md, new define/tasks/references/MAP_CONVENTION.md, figure-out/tasks/PLANNING.md, figure-out/references/WITH_DOCS.md); core plugin version mirrored 5.3.0 -> 5.4.0. Skill set unchanged; README/context files untouched."
+  "synced_at": "2026-07-30T17:20:50Z",
+  "notes": "Delta sync at 8d1f2189: 2 core reference files updated verbatim (define/tasks/references/MAP_CONVENTION.md, figure-out/references/WITH_DOCS.md). No qualifier/CLAUDE.md/tool-name substitutions needed. Skill set and versions unchanged; README/context files untouched."
 }

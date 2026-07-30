@@ -1,6 +1,6 @@
 # Map Convention
 
-A map is the one system that answers "what needs doing" for an effort too large for one deliberation. It holds the effort's direction — questions being worked, work in flight, what's settled, what's ruled out — so strategy lives in an artifact instead of in someone's head. The convention is venue-neutral: every rule is stated over items, statuses, links, and views. Local files are the default rendering; any tracker can host the same convention (see Venues).
+A map is the one system that answers "what needs doing" for an effort too large for one deliberation — whatever the effort's size, from a gnarly multi-week task to a multi-year venture. It holds the effort's direction — questions being worked, work in flight, what's settled, what's ruled out — so direction lives in an artifact instead of in someone's head. The convention is venue-neutral: every rule is stated over items, statuses, links, and views. Local files are the default rendering; any tracker can host the same convention (see Venues).
 
 ## Item kinds
 
@@ -13,7 +13,7 @@ An item too big for one session splits; one that can't be split yet is fog, not 
 
 ## The front page
 
-The front page is a **view, not a ledger** — it answers "what governs us now, and what's next," never "what happened." It stays around one screen at its own altitude, indefinitely:
+The front page is a **view, not a ledger** — it answers "what governs us now, and what's next," never "what happened." It stays around one screen at its own altitude for the map's whole life, however long that is:
 
 - **Destination** — what reaching the end looks like, in a line or two every session orients to before picking an item.
 - **Standing decisions** — only the resolved decisions that still constrain choices. One that stopped mattering rolls off the page; its item record remains as archive.
@@ -49,9 +49,17 @@ Whoever closes an item updates the map — there is no central keeper. Every gen
 
 **Claiming:** before working an item, mark it claimed (a `claimed-by:` line, an assignee, or the venue's equivalent). An open unclaimed item is takeable; a claimed one isn't.
 
+The seeded rules also cover deliberation: **standing decisions bind any session working inside the effort** — challenge one only deliberately, naming it — and **deliberation sessions don't edit the map**; their outcomes land through this closer protocol. Seeding both means every consumer — any tool, any person — inherits the handling rules from the artifact itself.
+
 ## Steward pass
 
 Closers keep items correct; nobody keeps the whole. Periodically — after several closes, or on a stated cadence — run a **steward pass**: a plain deliberation session with the map as its topic. Does the frontier still point at the destination? Apply the roll-off closers skipped, merge sloppy updates, retire stale fog, propose sub-map splits, surface drift for the owner to rule on. The steward gardens the view; it does not approve closes.
+
+## Scale and lifetime
+
+A map is scoped to its effort, not to a project: an ephemeral map for one big task is as legitimate as a standing multi-year map, and a repo can hold several at different altitudes. Lifetime follows the effort — and so does stewarding: cadence proportionate to how long the map lives, which for a short-lived map may mean never.
+
+Maps end. When the destination is reached — or abandoned — close the map: mark it closed, archive it (the venue's archive, or just history), and land any residue that outlives it — a standing decision still binding beyond the effort graduates to the parent map or a durable decision record; everything else goes down with the map.
 
 ## Venues
 

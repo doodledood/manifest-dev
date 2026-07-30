@@ -1,11 +1,11 @@
 {
-  "source_commit": "84b010119f97146a2086b3b23582d7b997eab222",
+  "source_commit": "8d1f2189c397d0d7ca5a54987145863ed743aab3",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-30T14:57:38Z",
-  "notes": "Full sync at 84b01011 (forced: references/pi-cli.md changed — version example only, 3.4.0 -> 3.5.0). Verified full dist tree against sources; net change = the 5-file source delta with qualifier stripping in define/SKILL.md. component-namespaces.json regenerated (identical, 17 skills / 3 prompts). Root package.json 3.5.0 matches reference example."
+  "synced_at": "2026-07-30T17:20:50Z",
+  "notes": "Delta sync at 8d1f2189: 2 core reference files updated verbatim (define/tasks/references/MAP_CONVENTION.md, figure-out/references/WITH_DOCS.md). No qualifier/CLAUDE.md/tool-name substitutions needed. Skill set and versions unchanged; README/context files untouched."
 }
