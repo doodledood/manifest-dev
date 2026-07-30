@@ -1,10 +1,10 @@
 {
-  "source_commit": "dbdd22f3cad6bbc6ba16b6be07f0f59265087c8b",
+  "source_commit": "d76ce90bd43a7f41e223238db9bb2047ff2c7fbe",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-30T12:25:10Z",
-  "notes": "Delta sync: walk-pr SKILL.md + references/CANVAS_MODE.md copied verbatim (no operational tool-name references to remap) and new assets/canvas-reference.html added; manifest-dev-tools plugin version mirrored where the target carries one; skill set unchanged so README/context regeneration unnecessary."
+  "synced_at": "2026-07-30T17:27:47Z",
+  "notes": "Delta sync: WITH_DOCS intro count + PLANNING path-form fix; verbatim copies (no qualifiers/context-file refs in changed text)."
 }

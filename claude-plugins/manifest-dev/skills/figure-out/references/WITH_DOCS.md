@@ -1,6 +1,6 @@
 # figure-out: docs mode
 
-The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds three behaviors from that point: **bootstrap** (initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
+The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds four behaviors from that point: **bootstrap** (initialize CONTEXT.md if missing), **map awareness** (load an active decision map's front page when relevant), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
 
 ## Override: these writes ARE the action
 
@@ -19,6 +19,12 @@ Once project relevance exists, resolve the active context file and load it if it
 3. **Active `CONTEXT.md` exists** → load it as evidence. Project vocabulary is a source the user is already working from.
 4. **Active `CONTEXT.md` is missing** → offer minimal initialization for that context: *"No CONTEXT.md exists for this repo/context. Want a minimal scaffold I can grow as terms resolve?"* On accept, write a starter file at the active context path (context name, one-sentence purpose, empty Language section). On decline, skip the proactive scaffold and don't re-offer it for that context — but subsequent per-turn glossary captures may still create the active `CONTEXT.md` lazily on first earned resolution. (Declining the scaffold only declines the *proactive* write, not the inline captures that docs mode exists for.)
 5. **Multiple distinct domains emerge mid-session** → propose splitting via `CONTEXT-MAP.md` + per-context `CONTEXT.md`. Don't do this preemptively; only when the conversation actually crosses domain boundaries. If the user accepts a split and a relevant per-context `CONTEXT.md` is missing, offer the same minimal initialization for that new context.
+
+## Map awareness
+
+A project — or an effort within it — may carry an active **decision map**: a front page holding the effort's destination, standing decisions, frontier, fog, and rulings (per the define task references' map convention; commonly under `plans/` or linked from `CONTEXT.md`, though any venue and any altitude can host one). When the session's topic is relevant to a mapped effort, load the map's front page as evidence at the point that relevance emerges — the same gate as the rest of docs mode, so a session unrelated to the effort never pays for it.
+
+Discovery is this section's whole job. How to behave once a map is in context — standing decisions binding, topics routing to open items, outcomes landing through the closer — is the map's own seeded rules, carried in its body precisely so any session or person inherits them from the artifact: follow them as loaded context, whether the map was discovered here or handed to the session directly.
 
 ## Glossary captures (per-turn, inline, no offer)
 
