@@ -1,11 +1,11 @@
 {
-  "source_commit": "fd129eef43486e8c51b23c0e1c80aaaff327ff77",
+  "source_commit": "7ad858045f4590b244d2d7bfa29c081b1a09d10d",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-30T13:45:27Z",
-  "notes": "Delta sync: planning task files (figure-out/define tasks/PLANNING.md), SKILL.md detection rows + mid-session offer, 5.3.0/3.4.0 version mirrors; verified per-CLI transform-equivalence; empty re-check delta at source_commit."
+  "synced_at": "2026-07-30T13:48:21Z",
+  "notes": "Delta sync check at 7ad85804: no trigger changes (sync-tools SKILL.md / references unchanged), empty source delta since fd129eef; sync-meta refreshed only."
 }
