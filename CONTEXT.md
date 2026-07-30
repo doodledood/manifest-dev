@@ -137,7 +137,7 @@ A durable personal steering preference persisted only by offer-and-ratify — ca
 _Avoid_: Preference, style, judgment.
 
 **Map**:
-The one durable system answering "what needs doing" for an effort too large for one deliberation — a front page of destination, standing decisions, prioritized frontier, fog, and out-of-scope rulings, per the map convention (`skills/define/tasks/references/MAP_CONVENTION.md`).
+The one system answering "what needs doing" for an effort too large for one deliberation — any effort size, ephemeral or standing — a front page of destination, standing decisions, prioritized frontier, fog, and out-of-scope rulings, per the map convention (`skills/define/tasks/references/MAP_CONVENTION.md`).
 _Avoid_: Roadmap, backlog, board.
 
 **Decision item**:
