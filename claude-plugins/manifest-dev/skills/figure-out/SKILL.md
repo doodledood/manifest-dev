@@ -118,8 +118,11 @@ Load the matching probe file(s) from `tasks/` to surface angles that are easy to
 | Diagnosis | A symptom to explain — incident, anomaly, regression, "why is this happening" — code or not, fix not yet in sight | `DIAGNOSIS.md` |
 | Tech design doc | Authoring a design document from finished understanding; audience-fit doc, design narrative, technical design writeup | `TECH_DESIGN.md` |
 | Research | An external-evidence question — technology evaluation, library choice, "what's the state of X" | `RESEARCH.md` |
+| Planning | Charting an effort too large for one deliberation — a product, company, or migration decomposing into many loosely-coupled decisions worked over time | `PLANNING.md` |
 
-FEATURE/BUG/REFACTOR compose onto `CODING.md`; a code defect composes `DIAGNOSIS.md` (explain it) with `CODING.md` + `BUG.md` (fix it); TECH_DESIGN stands alone for the document-authoring shape, while unresolved underlying system design still loads CODING/FEATURE as relevant; DIAGNOSIS and RESEARCH stand alone when no code change is in play. Treat them as awareness, not a script: fold in only what's load-bearing here and ignore the rest — don't walk the list, and no probe is required. Nothing fits → probe generally.
+FEATURE/BUG/REFACTOR compose onto `CODING.md`; a code defect composes `DIAGNOSIS.md` (explain it) with `CODING.md` + `BUG.md` (fix it); TECH_DESIGN stands alone for the document-authoring shape, while unresolved underlying system design still loads CODING/FEATURE as relevant; DIAGNOSIS and RESEARCH stand alone when no code change is in play; PLANNING stands alone — the deliverable is the decomposition, not the work it routes. Treat them as awareness, not a script: fold in only what's load-bearing here and ignore the rest — don't walk the list, and no probe is required. Nothing fits → probe generally.
+
+The planning shape often reveals itself mid-session rather than in the opening ask: a topic that arrived as one question widens — decision threads multiplying that don't need each other and won't cohere into one read. That observed widening is the trigger, never the topic's size or ambition; when it fires, name what you're seeing and offer the map approach, loading `PLANNING.md` on accept — an offer, not a switch.
 
 ### Flags
 
