@@ -1,10 +1,10 @@
 {
-  "source_commit": "d76ce90bd43a7f41e223238db9bb2047ff2c7fbe",
+  "source_commit": "96b8d42d065457c47b87c954972784b52c3dd481",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-30T17:27:47Z",
-  "notes": "Delta sync: WITH_DOCS intro count + PLANNING path-form fix; verbatim copies (no qualifiers/context-file refs in changed text)."
+  "synced_at": "2026-07-30T19:18:06Z",
+  "notes": "Delta check through this SHA: only source plugin.json description changed; codex/opencode descriptions are target-specific per reference files, versions already mirrored \u2014 no dist file changes."
 }

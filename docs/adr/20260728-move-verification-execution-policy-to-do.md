@@ -1,7 +1,7 @@
 # ADR: Move verification execution policy to `/do`
 
 ## Status
-Accepted
+Accepted — omitted-flag default superseded by 20260730-consolidated-default-verification-mode
 
 ## Context
 
