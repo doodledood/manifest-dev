@@ -17,7 +17,7 @@ Encoding a decomposition read into a durable decision map — an effort too larg
 
 *Domain best practices for this task type.*
 
-- **Venue is an explicit encoding choice** — the manifest names where the map lives; local files are the default rendering, trackers are equal citizens (see MAP_CONVENTION.md, Venues)
+- **Venue is an explicit encoding choice** — the manifest names where the map lives; local files are the default rendering, trackers are equal citizens (see `references/MAP_CONVENTION.md`, Venues)
 - **Decisions resolve by deliberation, not here** — each decision item is later worked in its own session; the map manifest only creates the map
 - **Work routes to its delivery home** — a work item on the map is a pointer; execution gets its own manifest or delivery-board record, never a second life on the map
 - **Plan the steward cadence** — name when the map gets gardened (after N closes, or a period); the steward pass is a plain deliberation session with the map as its topic

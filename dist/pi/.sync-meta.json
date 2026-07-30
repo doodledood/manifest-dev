@@ -1,11 +1,11 @@
 {
-  "source_commit": "8d1f2189c397d0d7ca5a54987145863ed743aab3",
+  "source_commit": "d76ce90bd43a7f41e223238db9bb2047ff2c7fbe",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-07-30T17:20:50Z",
-  "notes": "Delta sync at 8d1f2189: 2 core reference files updated verbatim (define/tasks/references/MAP_CONVENTION.md, figure-out/references/WITH_DOCS.md). No qualifier/CLAUDE.md/tool-name substitutions needed. Skill set and versions unchanged; README/context files untouched."
+  "synced_at": "2026-07-30T17:27:47Z",
+  "notes": "Delta sync: WITH_DOCS intro count + PLANNING path-form fix; verbatim copies (no qualifiers/context-file refs in changed text)."
 }

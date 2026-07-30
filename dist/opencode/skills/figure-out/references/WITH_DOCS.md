@@ -1,6 +1,6 @@
 # figure-out: docs mode
 
-The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds three behaviors from that point: **bootstrap** (initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
+The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds four behaviors from that point: **bootstrap** (initialize CONTEXT.md if missing), **map awareness** (load an active decision map's front page when relevant), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
 
 ## Override: these writes ARE the action
 
