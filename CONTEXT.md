@@ -136,6 +136,24 @@ The full understanding-first loop (figure-out → define → do) that every Door
 A durable personal steering preference persisted only by offer-and-ratify — captured as preference, rationale, and flip condition in a harness memory file.
 _Avoid_: Preference, style, judgment.
 
+**Map**:
+The one durable system answering "what needs doing" for an effort too large for one deliberation — a front page of destination, standing decisions, prioritized frontier, fog, and out-of-scope rulings, per the map convention (`skills/define/tasks/references/MAP_CONVENTION.md`).
+_Avoid_: Roadmap, backlog, board.
+
+**Decision item**:
+A map item that is a question, worked by one deliberation session; resolving it leaves a Standing decision when the answer keeps constraining.
+_Avoid_: Ticket, task.
+
+**Work item**:
+A map item pointing at execution a resolved decision spawned; its detail lives in a delivery home (a Manifest, a delivery board) and the item rolls off the map's page when done.
+_Avoid_: Deliverable, story.
+
+**Standing decision**:
+A resolved Decision item whose answer still constrains the map's choices; it stays on the front page until it stops mattering or the destination moves.
+
+**Steward pass**:
+A periodic deliberation session with the Map as its topic — re-points the frontier at the destination, applies roll-off, retires stale fog.
+
 ## Relationships
 
 - A **Manifest** contains one or more **Deliverables**.
@@ -143,6 +161,7 @@ _Avoid_: Preference, style, judgment.
 - A **Manifest** has zero or more **Global Invariants**, applied across all Deliverables.
 - A **Task File** can contribute **Quality Gates** and **Defaults** to `/define`.
 - A **Quality Gate** becomes an acceptance-style gate in a **Manifest**.
+- A **Map** holds **Decision items** and **Work items**; a resolved **Decision item** can leave a **Standing decision**, spawn **Work items**, or open a child **Map**.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
 - **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.

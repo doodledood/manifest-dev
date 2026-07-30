@@ -1,21 +1,23 @@
 # PLANNING Task Guidance
 
-Encoding a decomposition read into a durable decision map — an effort too large for one deliberation, worked as decisions over time. The deliverable is the map itself; the work its decisions eventually spawn gets its own manifests.
+Encoding a decomposition read into a durable decision map — an effort too large for one deliberation, worked as items over time. The map is the one system answering "what needs doing"; execution detail lives in each item's delivery home. Gate evaluators consult `references/MAP_CONVENTION.md` for the full convention.
 
 ## Quality Gates
 
 | Aspect | Threshold |
 |--------|-----------|
-| Map as index | The map file gists and links; each decision's detail lives in exactly one place — its own file. The map restates nothing it can point to |
-| Frontier legibility | Every decision file carries a status and names what blocks it; the open-and-unblocked set is readable from the map alone, without opening each decision file |
-| Fog and scope sections | The map carries a not-yet-specified section (in-scope ground not yet statable as decisions, held un-sliced) and an out-of-scope section (ground consciously ruled beyond the destination, each ruling with its why) |
-| Seeded working rules | The map body states its own resolution protocol — record the answer in the decision file, update its status, graduate newly-statable fog into new decision files, re-wire blocking — so any later session inherits the process from the artifact rather than from memory |
-| Destination named | The map opens with what reaching its end looks like, in a line or two every future session orients to before picking a decision |
+| Front page as view | The page holds destination, standing decisions, prioritized frontier, fog, and out-of-scope rulings — no accumulated history; each item's detail lives in exactly one place, gisted and linked (per `references/MAP_CONVENTION.md`) |
+| Item kinds and roll-off | Decision items and work items are distinguishable and follow their lifecycles: resolved decisions that still constrain become standing decisions, ones that stopped mattering roll off the page; completed work items leave the page entirely |
+| Frontier legibility and priority | Every frontier item shows status, claim state, and what blocks it, readable from the page alone; the frontier follows the convention's priority default (Urgent → Unblocking → Impact → Cheap) or a per-map override stated on the page |
+| Seeded closer protocol | The map body carries the condensed closer protocol (claim before working; record outcome; update the page; graduate fog; re-wire blocks; spawn work to its delivery home) so any closer inherits the process from the artifact |
+| Recursion boundary | An effort inside the effort gets a child map with its own destination and one line + link on the parent — no item dump across altitudes |
+| Destination named | The map opens with what reaching its end looks like, in a line or two every session orients to |
 
 ## Defaults
 
 *Domain best practices for this task type.*
 
-- **Local markdown first** — The map is markdown files (one map + one per decision) at a location the manifest names; an external venue (GitHub issues, a tracker) is a per-manifest encoding choice made explicitly, never assumed
-- **Decisions resolve by deliberation, not here** — Each mapped decision is later worked in its own session against its decision file; the map manifest only creates the map
-- **Resolution hands off to execution** — A decision whose answer implies build work gets its own define/do cycle; the map records the decision and its status, never the execution
+- **Venue is an explicit encoding choice** — the manifest names where the map lives; local files are the default rendering, trackers are equal citizens (see MAP_CONVENTION.md, Venues)
+- **Decisions resolve by deliberation, not here** — each decision item is later worked in its own session; the map manifest only creates the map
+- **Work routes to its delivery home** — a work item on the map is a pointer; execution gets its own manifest or delivery-board record, never a second life on the map
+- **Plan the steward cadence** — name when the map gets gardened (after N closes, or a period); the steward pass is a plain deliberation session with the map as its topic
