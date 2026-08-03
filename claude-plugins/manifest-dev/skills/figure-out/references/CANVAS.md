@@ -48,7 +48,7 @@ Create the artifact as one self-contained HTML file in the host's temp directory
 
 Refresh it when the picture would otherwise be wrong: a crux resolved, a new question opened, fog sharpened into stations, the frontier moved. Not every turn, and never mid-thought — a canvas that changes while the user is reading it is worse than one that lags a turn behind.
 
-After replacing the data, tell the user the canvas is updated and to press **R** in it (or use the browser's normal reload command). An already-loaded `file://` page cannot observe its own replacement without polling or a server, and both are worse than one visible reload step. If the tab is gone, reopen the same path. Notes survive because they were never in the file.
+After replacing the data, tell the user the canvas is updated and to press **R** in it. An already-loaded `file://` page cannot observe its own replacement without polling or a server, and both are worse than one visible reload step. If the tab is gone, reopen the same path. Notes survive because they were never in the file.
 
 ## Failure handling
 
@@ -57,7 +57,7 @@ Every failure here is non-blocking. The canvas serves the investigation and neve
 - Writing the file fails → say so once and continue in chat.
 - No browser opens it → give the path and continue.
 - Clipboard write fails → the artifact shows the bundle as selectable text; the user copies manually.
-- Browser storage is denied — some hosts refuse it to a page opened from a file path → the canvas still renders and notes still work for as long as the page stays open. Before a needed reload, have the user return the bundle so those page-lifetime notes are not lost; otherwise let the picture lag. Degrade to that, never to a blank sheet.
+- Browser storage is denied — some hosts refuse it to a page opened from a file path → the canvas still renders and notes still work for as long as the page stays open. **R** opens the return bundle instead of reloading while page-only notes exist, and browser-native reload raises its unload warning. Return the bundle first; after successful clipboard copy, **R** is armed to reload. If clipboard access also fails, copy the selected bundle before accepting the browser warning. Otherwise let the picture lag. Degrade to that, never to a blank sheet.
 - The refresh would land mid-thought → let it lag and refresh at the next natural break.
 - Reload does not take or the tab is gone → give the same file path to reopen and continue in chat.
 
