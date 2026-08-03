@@ -89,7 +89,7 @@ For unattended runs of `/do` or `/auto` (the recommended way to run both), set y
 
 Babysit an existing PR through review without any manifest-dev setup: `/babysit-pr [pr-url]`. Details in the [manifest-dev-tools README](claude-plugins/manifest-dev-tools).
 
-Pass `--canvas` to `/figure-out` (desktop only) for a live, browser-rendered map of the session alongside the chat: the crux tree with the question you're standing on marked on it, what's still open around it, and how much ground is still unsurveyed. Annotate it in place and hand your notes back in one paste.
+Pass `--canvas` to `/figure-out` for a live, browser-rendered map of the session alongside the chat, readable on any screen: the crux tree with the question you're standing on marked on it, what's still open around it, and how much ground is still unsurveyed. Annotate it in place and hand your notes back in one paste.
 
 ## How It Works
 

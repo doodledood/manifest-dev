@@ -48,9 +48,11 @@
 -->
 <style>
 /* ============ tokens ============
-   ink      #070c16  sheet ground        film   #0e1728  plate surface
-   chalk    #dfe8f4  primary text        grap   #6d7f99  labels, secondary
-   survey   #79cfc0  surveyed ground     brass  #cfa14b  open questions
+   Paper slips on an ink field: the sheet is dark, the station plates are light.
+   ink      #070c16  sheet ground        paper  #e7ebe8  plate surface (settled)
+   chalk    #dfe8f4  text on the field   slate  #1b2a27  text on a plate
+   grap     #6d7f99  labels, secondary   vellum #f3e7ca  plate surface (open)
+   survey   #79cfc0  surveyed chains     brass  #cfa14b  open questions
    redink   #f2543d  the current station, and nothing else
 */
 *{box-sizing:border-box}
@@ -73,6 +75,7 @@ button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px
  box-shadow:0 0 0 1px rgba(127,168,216,.28);
  transition-property:background,color;transition-duration:.14s}
 #artchip:hover{background:rgba(127,168,216,.24);color:#d3e5f7}
+#artchip.hasnote{background:rgba(242,84,61,.18);color:#ffb2a4;font-weight:700}
 #artchip::after{content:'';position:absolute;inset:-9px}
 #title{font-size:17px;font-weight:650;letter-spacing:-.15px;color:#eef4fb;text-wrap:balance;margin-top:3px}
 #keys{font-size:11px;letter-spacing:.06em;color:#586883;padding-bottom:2px}
@@ -80,23 +83,21 @@ button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px
  border:1px solid rgba(125,145,175,.22);border-radius:4px;padding:1.5px 4.5px;margin:0 1px}
 
 /* ============ the sheet ============ */
-#stage{flex:1;position:relative;overflow:hidden;cursor:grab;
- background-image:
-  linear-gradient(rgba(125,145,175,.055) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(125,145,175,.055) 1px,transparent 1px),
-  radial-gradient(900px 620px at 62% 44%,rgba(52,80,120,.20),transparent 72%);
- background-size:44px 44px,44px 44px,100% 100%}
+#stage{flex:1;position:relative;overflow:hidden;cursor:grab;touch-action:none;background-image:linear-gradient(rgba(125,145,175,.07) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(125,145,175,.07) 1px,transparent 1px),
+  radial-gradient(1000px 680px at 62% 44%,rgba(38,62,98,.34),transparent 74%);background-size:44px 44px,44px 44px,100% 100%}
 #stage.drag{cursor:grabbing}
 #stage::after{content:'';position:absolute;inset:14px;border:1px solid rgba(125,145,175,.10);
  border-radius:3px;pointer-events:none}
 #layer{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
-#chains{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+#chains{position:absolute;left:0;top:0;overflow:visible;pointer-events:none;
+ transition:opacity .35s cubic-bezier(.2,0,0,1)}
 #chains path{fill:none;stroke-linecap:round}
-.ch-done{stroke:#79cfc0;stroke-opacity:.30;stroke-width:1.4;stroke-dasharray:13 5 2.5 5}
-.ch-open{stroke:#cfa14b;stroke-opacity:.34;stroke-width:1.3;stroke-dasharray:2.5 6}
-.ch-dead{stroke:#4a5a76;stroke-opacity:.30;stroke-width:1.1;stroke-dasharray:2 7}
+.ch-done{stroke:#79cfc0;stroke-opacity:.6;stroke-width:1.6;stroke-dasharray:13 5 2.5 5}
+.ch-open{stroke:#cfa14b;stroke-opacity:.62;stroke-width:1.5;stroke-dasharray:2.5 6}
+.ch-dead{stroke:#4a5a76;stroke-opacity:.45;stroke-width:1.1;stroke-dasharray:2 7}
 .ch-live{stroke:#f2543d;stroke-opacity:.85;stroke-width:2.2}
-.ch-fog{stroke:#6d7f99;stroke-opacity:.32;stroke-width:1.2;stroke-dasharray:1.5 7}
+.ch-fog{stroke:#6d7f99;stroke-opacity:.5;stroke-width:1.2;stroke-dasharray:1.5 7}
 .flow{stroke:#ffb9ad;stroke-opacity:.9;stroke-width:2.2;stroke-dasharray:5 15;animation:flow 1.15s linear infinite}
 @keyframes flow{to{stroke-dashoffset:-40}}
 
@@ -105,42 +106,36 @@ button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px
  transition-property:opacity,transform,filter;transition-duration:.42s,.2s,.35s;
  transition-timing-function:cubic-bezier(.2,0,0,1)}
 .st.in{opacity:1}
-.plate{position:relative;height:100%;border-radius:12px;padding:11px 13px 12px;
- display:flex;flex-direction:column;gap:6px;
- background:linear-gradient(180deg,#101b2e,#0b1424);
- box-shadow:0 0 0 1px rgba(125,145,175,.16),0 6px 18px -10px rgba(0,0,0,.8)}
+.plate{position:relative;height:100%;border-radius:12px;padding:11px 13px 12px;display:flex;flex-direction:column;gap:6px;background:linear-gradient(180deg,#e7ebe8,#d6dcd9);box-shadow:0 0 0 1px rgba(0,0,0,.16),0 14px 28px -14px rgba(0,0,0,.85)}
 .st:hover{transform:translateY(-2px)}
-.st:hover .plate{box-shadow:0 0 0 1px rgba(125,145,175,.34),0 12px 26px -12px rgba(0,0,0,.85)}
+.st:hover .plate{box-shadow:0 0 0 1px rgba(0,0,0,.3),0 20px 36px -16px rgba(0,0,0,.9)}
 .st .eb{font-family:ui-monospace,Menlo,monospace;font-size:9px;letter-spacing:.19em;
  text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:6px}
 .st .tick{width:13px;height:13px;border-radius:4px;display:grid;place-items:center;font-size:9px;
  line-height:1;flex:0 0 auto}
 .st .lbl{font-size:13.5px;font-weight:600;line-height:1.36;text-wrap:pretty}
-.st .note{position:absolute;top:-5px;right:-5px;width:13px;height:13px;border-radius:99px;
- background:#cfa14b;box-shadow:0 0 0 2.5px #070c16;display:none}
+.st .note{position:absolute;top:-5px;right:-5px;width:13px;height:13px;border-radius:99px;background:#cfa14b;box-shadow:0 0 0 2.5px #d6dcd9;display:none}
 .st.hasnote .note{display:block}
 
-.st.settled .eb{color:#5f9d92}
-.st.settled .tick{background:rgba(121,207,192,.13);color:#79cfc0}
-.st.settled .lbl{color:#9db3b0}
-.st.open .eb{color:#b08c3f}
-.st.open .tick{background:rgba(207,161,75,.14);color:#cfa14b}
-.st.open .lbl{color:#cdbc95}
+.st.settled .eb{color:#2f7568}
+.st.settled .tick{background:rgba(47,117,104,.14);color:#226256}
+.st.settled .lbl{color:#1b2a27}
+.st.open .eb{color:#8a6410}
+.st.open .tick{background:rgba(138,100,16,.15);color:#7a570c}
+.st.open .lbl{color:#3a2d10}
 .st.ruled{opacity:0}
 .st.ruled.in{opacity:.5}
-.st.ruled .eb{color:#546581}
-.st.ruled .tick{background:rgba(109,127,153,.12);color:#6d7f99}
-.st.ruled .lbl{color:#5e6d88;text-decoration:line-through;text-decoration-color:rgba(109,127,153,.5)}
+.st.ruled .eb{color:#3f4b5c}
+.st.ruled .tick{background:rgba(63,75,92,.16);color:#3f4b5c}
+.st.ruled .lbl{color:#2b3542;text-decoration:line-through;text-decoration-color:rgba(43,53,66,.6)}
 
 /* the one station that is fully lit */
 .st.current{z-index:8}
-.st.current .plate{background:linear-gradient(180deg,#16233a,#0d1727);border-radius:14px;
- box-shadow:0 0 0 1px rgba(242,84,61,.55),0 0 0 6px rgba(242,84,61,.07),
-  0 24px 60px -18px rgba(0,0,0,.95),0 2px 0 rgba(255,255,255,.04) inset}
-.st.current .eb{color:#f2543d}
-.st.current .tick{background:rgba(242,84,61,.16);color:#ff8574}
-.st.current .lbl{font-size:16.5px;color:#f4f8fd;line-height:1.3;letter-spacing:-.15px}
-.st.current .rd{font-size:11.5px;color:#a68a6a;display:flex;align-items:center;gap:5px;margin-top:1px}
+.st.current .plate{background:linear-gradient(180deg,#ffffff,#f2f4f6);border-radius:14px;box-shadow:0 0 0 2px #f2543d,0 0 0 9px rgba(242,84,61,.14),0 34px 72px -20px rgba(0,0,0,1)}
+.st.current .eb{color:#c22e19}
+.st.current .tick{background:rgba(242,84,61,.16);color:#c22e19}
+.st.current .lbl{font-size:16.5px;color:#101418;line-height:1.3;letter-spacing:-.15px}
+.st.current .rd{font-size:11.5px;color:#8a5a2c;display:flex;align-items:center;gap:5px;margin-top:1px}
 /* plotted crosshair — the sheet's signature mark */
 .cross{position:absolute;inset:-19px;pointer-events:none;opacity:0;
  transition:opacity .5s cubic-bezier(.2,0,0,1)}
@@ -160,11 +155,9 @@ button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px
 @keyframes pulse{0%,100%{opacity:.9;transform:scale(1)}50%{opacity:.18;transform:scale(1.035)}}
 
 /* focus mode dims the surveyed ground — three strengths, under test */
-#layer.focus .st:not(.current){filter:saturate(.5)}
-#layer.focus .st:not(.current){opacity:.55}
+#layer.focus .st:not(.current){opacity:.55;filter:saturate(.5)}
 #layer.focus .fog{opacity:.6}
 #layer.focus #chains{opacity:.72}
-#chains{transition:opacity .35s cubic-bezier(.2,0,0,1)}
 
 /* ---- unsurveyed ground: hachured, torn edge, never nodes ---- */
 .fog{position:absolute;cursor:pointer;opacity:0;
@@ -318,8 +311,8 @@ button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px
 #s-att .rq::before{content:'\21b3';color:#5c6e8a;flex:0 0 auto;font-size:13px;line-height:1.4}
 /* a station carrying one says so on the plate */
 .st .clip{font-family:ui-monospace,Menlo,monospace;font-size:8px;letter-spacing:.12em;
- background:rgba(127,168,216,.18);color:#8fb4dd;border-radius:99px;padding:2px 6px;margin-left:auto}
-.st .clip{background:rgba(30,70,110,.16);color:#245b86}
+ background:rgba(127,168,216,.18);color:#8fb4dd;border-radius:99px;padding:2px 6px;margin-left:auto;background:rgba(30,70,110,.16);color:#245b86}
+
 
 /* the crux's options, as a plotted comparison */
 #s-opts{margin-top:26px}
@@ -375,37 +368,12 @@ textarea::placeholder{color:#5a6b86}
  box-shadow:0 0 0 1px rgba(125,145,175,.12)}
 
 /* ================= the look: paper survey slips on an ink field ================= */
-
-/* ---------- 2 · PAPER ---------- */
-#stage{background-image:
-  linear-gradient(rgba(125,145,175,.07) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(125,145,175,.07) 1px,transparent 1px),
-  radial-gradient(1000px 680px at 62% 44%,rgba(38,62,98,.34),transparent 74%)}
-.plate{background:linear-gradient(180deg,#e7ebe8,#d6dcd9);
- box-shadow:0 0 0 1px rgba(0,0,0,.16),0 14px 28px -14px rgba(0,0,0,.85)}
-.st:hover .plate{box-shadow:0 0 0 1px rgba(0,0,0,.3),0 20px 36px -16px rgba(0,0,0,.9)}
-.st.settled .eb{color:#2f7568}
-.st.settled .tick{background:rgba(47,117,104,.14);color:#226256}
-.st.settled .lbl{color:#1b2a27}
+/* ---- station states: the paper palette ---- */
 .st.open .plate{background:linear-gradient(180deg,#f3e7ca,#e6d7b2)}
-.st.open .eb{color:#8a6410}
-.st.open .tick{background:rgba(138,100,16,.15);color:#7a570c}
-.st.open .lbl{color:#3a2d10}
 .st.ruled .plate{background:linear-gradient(180deg,#aab3bd,#98a2ae)}
-.st.ruled .eb{color:#3f4b5c}
-.st.ruled .tick{background:rgba(63,75,92,.16);color:#3f4b5c}
-.st.ruled .lbl{color:#2b3542;text-decoration-color:rgba(43,53,66,.6)}
-.st.current .plate{background:linear-gradient(180deg,#ffffff,#f2f4f6);
- box-shadow:0 0 0 2px #f2543d,0 0 0 9px rgba(242,84,61,.14),0 34px 72px -20px rgba(0,0,0,1)}
-.st.current .eb{color:#c22e19}
-.st.current .tick{background:rgba(242,84,61,.16);color:#c22e19}
-.st.current .lbl{color:#101418}
-.st.current .rd{color:#8a5a2c}
-.st .note{box-shadow:0 0 0 2.5px #d6dcd9}
-.ch-done{stroke-opacity:.6;stroke-width:1.6}
-.ch-open{stroke-opacity:.62;stroke-width:1.5}
-.ch-dead{stroke-opacity:.45}
-.ch-fog{stroke-opacity:.5}
+
+
+
 
 /* ==================================================================
    THE SHEET: a ledger. Rule-separated rows, kind in a fixed left column,
@@ -422,7 +390,52 @@ textarea::placeholder{color:#5a6b86}
  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
   transition-duration:.01ms!important}
 }
-@media (max-width:720px){#keys{display:none}}
+/* ==================================================================
+   ANY SCREEN. The sheet is read wherever the user is, so a phone is a
+   first-class target rather than a degraded desktop. Three things have to
+   hold at every width: the page never scrolls sideways, every control
+   stays reachable, and the detail surface stays readable.
+   The picture itself needs no breakpoint — layout() computes it and fit()
+   scales it to whatever stage it is given.
+   ================================================================== */
+
+/* every control clears a comfortable tap target, mouse or thumb */
+.btn,#x,#artchip,#s-note textarea,.at,#s-body summary{min-height:32px}
+#artchip{min-width:32px}
+
+@media (max-width:900px){
+ #top{padding:13px 16px 10px;gap:12px}
+ #bot{padding:10px 16px 12px}
+ #sh{padding:0 22px 34px}
+}
+
+@media (max-width:720px){
+ #keys{display:none}
+ /* the instrument bar wraps instead of overflowing — clipped buttons are
+    unreachable buttons, since the shell deliberately never scrolls */
+ #bot{flex-wrap:wrap;row-gap:8px}
+ #top{flex-wrap:wrap;align-items:flex-start}
+}
+
+@media (max-width:560px){
+ /* at phone width the sheet takes the screen; closing it returns the picture */
+ #sheet{width:100%}
+ #sh{padding:0 16px 32px}
+ #x{top:8px;right:8px}
+ #title{font-size:15.5px}
+ #eyebrow{letter-spacing:.24em}
+ #out{inset:4% 4%;padding:18px 16px}
+ #stick{padding:12px 0 10px}
+ /* the thumbnail earns less room than the claims do on a small screen */
+ #minisvg{max-height:96px}
+}
+
+@media (max-height:520px){
+ /* landscape phone: give the stage the room instead of the chrome */
+ #top{padding:8px 16px 6px}
+ #bot{padding:7px 16px 8px}
+ #title{font-size:14.5px}
+}
 </style></head><body>
 <div id="app">
  <div id="top">
@@ -600,9 +613,9 @@ N.forEach(n=>{
  const d=document.createElement('div');
  d.className='st '+n.state; d.tabIndex=0; d.dataset.id=n.id;
  d.style.width=(n.state==='current'?252:n.chip?178:216)+'px';
- d.innerHTML='<div class="plate"><div class="eb"><span class="tick">'+(T[n.state]||'')+'</span>'+n.eb+
+ d.innerHTML='<div class="plate"><div class="eb"><span class="tick">'+(T[n.state]||'')+'</span>'+esc(n.eb)+
   (n.att?'<span class="clip">proto</span>':'')+'</div>'+
-  '<div class="lbl">'+n.lbl+'</div>'+(n.rd?'<div class="rd">\u2937 '+n.rd+'</div>':'')+
+  '<div class="lbl">'+esc(n.lbl)+'</div>'+(n.rd?'<div class="rd">\u2937 '+esc(n.rd)+'</div>':'')+
   '<span class="note"></span></div>'+
   (n.state==='current'?'<div class="halo"></div><div class="cross"><i></i><i></i><i></i><i></i><u></u><u></u><u></u><u></u></div>':'');
  d.onclick=()=>{if(!dragged)openNode(n.id);};
@@ -696,7 +709,18 @@ function setFocus(on){focusOn=on;layer.classList.toggle('focus',on);
 focusBtn.onclick=()=>setFocus(!focusOn);
 
 /* ================= notes ================= */
-const note=id=>localStorage.getItem(LS+id)||'';
+/* Storage can be denied outright for a file:// document on some hosts. A canvas that
+   cannot remember notes is still worth reading, so degrade to a session without
+   persistence rather than taking the whole sheet down. */
+let noteFallback={},storageOK=true;
+const note=id=>{
+ try{return localStorage.getItem(LS+id)||'';}
+ catch(e){storageOK=false;return noteFallback[LS+id]||'';}
+};
+const putNote=(id,v)=>{
+ noteFallback[LS+id]=v;
+ try{localStorage.setItem(LS+id,v);}catch(e){storageOK=false;}
+};
 const mark=id=>{const el=id==='fog'?fogEl:(byId[id]||{}).el;if(el)el.classList.toggle('hasnote',!!note(id).trim());};
 
 /* ================= station sheet ================= */
@@ -713,7 +737,7 @@ function openNode(id){
   ? 'beyond the frontier'
   : (trail.length?trail.map(t=>'<b>'+esc(t)+'</b>').join(' \u2192 ')+' \u2192 here':'origin of the traverse');
  const eb=document.getElementById('s-eb');
- eb.innerHTML='<span class="tick" style="background:rgba(125,145,175,.12)">'+(T[n.state]||'\u25cc')+'</span>'+n.eb;
+ eb.innerHTML='<span class="tick" style="background:rgba(125,145,175,.12)">'+(T[n.state]||'\u25cc')+'</span>'+esc(n.eb);
  eb.style.color=EBC[n.eb]||'#8b9cb6';
  document.getElementById('s-claim').textContent=n.lbl;
  const pts=n.pts||[];
@@ -729,7 +753,7 @@ function openNode(id){
  drawMini(id==='session'?'root':id);
  const at=document.getElementById('s-att');
  at.innerHTML=n.att?'<div class="h">built to crack this — '+n.att.length+'</div>'+n.att.map(v=>
-  '<a class="at'+(v.cur?' cur':'')+'" href="'+v.h+'"><span class="ic">◱</span><span class="b">'+
+  '<a class="at'+(v.cur?' cur':'')+'" href="'+esc(v.h).replace(/"/g,'&quot;')+'"><span class="ic">◱</span><span class="b">'+
   '<span class="l">'+esc(v.l)+(v.cur?'<em>you are in it</em>':'')+'</span><span class="c">'+esc(v.c)+'</span>'+
   '<span class="pth">'+esc(v.h.replace('file://',''))+'</span></span>'+
   '<span class="go">open ↗</span></a>').join('')+
@@ -808,7 +832,7 @@ function drawMini(id){
 function close(){veil.classList.remove('on');sheet.classList.remove('on');cur=null;}
 document.getElementById('x').onclick=close;veil.onclick=close;
 ta.addEventListener('input',()=>{if(!cur)return;
- localStorage.setItem(LS+cur,ta.value);mark(cur);
+ putNote(cur,ta.value);mark(cur);markSession();
  const s=document.getElementById('saved');s.classList.add('on');
  clearTimeout(tmr);tmr=setTimeout(()=>s.classList.remove('on'),1500);});
 
@@ -818,16 +842,20 @@ addEventListener('keydown',e=>{
  if(e.target.tagName==='TEXTAREA')return;
  if(e.key==='f'||e.key==='F')return focusBtn.click();
  if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
-  const i=cur?walk.indexOf(cur):walk.indexOf('crux');
+  let i=cur?walk.indexOf(cur):walk.indexOf('crux');
+  // the session panel is not a station on the traverse; walk resumes from the crux
+  if(i<0){openNode('crux');e.preventDefault();return;}
   openNode(walk[cur?(i+(e.key==='ArrowRight'?1:-1)+walk.length)%walk.length:i]);e.preventDefault();}
 });
 
 /* ================= bundle ================= */
 function bundle(){
  const L=['My notes from the canvas:',''];
- N.concat([{id:'fog',lbl:FOG.lbl,state:'fog'}]).forEach(n=>{
+ N.concat([{id:'fog',lbl:FOG.lbl,state:'fog'},
+           {id:'session',lbl:SESSION.lbl,state:'session'}]).forEach(n=>{
   const v=note(n.id).trim();if(!v)return;
-  L.push('\u2014 '+n.lbl+(n.state==='current'?'   [the current crux]':n.state==='fog'?'   [fog]':''));
+  L.push('\u2014 '+n.lbl+(n.state==='current'?'   [the current crux]':n.state==='fog'?'   [fog]'
+         :n.state==='session'?'   [session artifacts]':''));
   L.push('  '+v.replace(/\n/g,'\n  '));L.push('');});
  if(L.length===2)L.push('(nothing yet)');
  return L.join('\n');
@@ -848,6 +876,11 @@ document.getElementById('copy').onclick=doCopy;document.getElementById('copy2').
 
 /* ================= plot the sheet: staggered, column by column ================= */
 N.concat([{id:'fog'}]).forEach(n=>mark(n.id));
+/* the session panel has no plate to carry a dot, so the header chip carries it —
+   otherwise a note left there is invisible until the bundle is opened */
+const markSession=()=>document.getElementById('artchip')
+ .classList.toggle('hasnote',!!note('session').trim());
+markSession();
 document.getElementById('title').textContent=TOPIC;
 document.getElementById('artchip').textContent=SESSION.att.length+' artifacts';
 document.getElementById('artchip').onclick=()=>openNode('session');

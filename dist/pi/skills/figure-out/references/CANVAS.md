@@ -22,6 +22,8 @@ Both surfaces run together. There is no canvas-only mode and nothing to announce
 
 **No unrequested text.** Nothing renders because a slot exists for it. Empty slots are skipped, not filled with placeholders.
 
+**Readable on whatever screen they have.** The canvas is opened wherever the user happens to be, so a phone is a first-class target rather than a degraded desktop: the picture, the detail surface, and every control stay reachable and legible at any width, and the page never asks the reader to scroll sideways. A canvas that only works in a wide window fails its reader exactly when they are away from their desk.
+
 ## Notes and the way back
 
 **Notes never live in the artifact.** The user's text goes to browser storage, keyed by stable station id under a namespace fixed once for the session. The reason is structural: the canvas is rewritten whenever the ground moves, so anything stored inside the file would be destroyed by the next refresh. Fixing the namespace per session — rather than per artifact — is what makes refreshing safe, and it is the one place this mode deliberately departs from `walk-pr`'s canvas, which regenerates once and therefore wants a fresh namespace each time.
@@ -53,6 +55,7 @@ Every failure here is non-blocking. The canvas serves the investigation and neve
 - Writing the file fails → say so once and continue in chat.
 - No browser opens it → give the path and continue.
 - Clipboard write fails → the artifact shows the bundle as selectable text; the user copies manually.
+- Browser storage is denied — some hosts refuse it to a page opened from a file path → the canvas still renders and notes still work for as long as the page stays open; they simply do not survive a reload. Degrade to that, never to a blank sheet.
 - The refresh would land mid-thought → let it lag and refresh at the next natural break.
 
 Never make the user fix the canvas to keep the session going.
@@ -72,11 +75,16 @@ What adaptation is judged against is the contract above, not fidelity to the tem
 - no unrequested text
 - notes live outside the file, keyed by stable station id under a session-fixed namespace
 - one action returns everything the user wrote, with the station it was left on
+- usable at any screen size, phone included — nothing reachable on a wide window becomes unreachable on a narrow one
 - no runtime dependency: no network, no build step, no server — it opens from a bare file path
 
 A canvas that keeps the template's structure and breaks one of these has failed. One that departs from the template freely and holds all of them is working as intended.
 
 There is no requirement on *how* the file is produced. Only the artifact matters.
+
+## Composition
+
+It composes the same way under `--autonomous` and `--team`. The artifact is still worth keeping in an unattended or multi-party run — it is where the session's accumulated state is legible, and someone reads it eventually — but the surfaces that wait on a person go quiet: do not stall for a reaction that is not coming, and treat an un-annotated canvas as the normal case rather than a missing answer. Under `--team` the counterparties are in Slack and no single reader owns the notes, so the canvas serves the operator in the local session; the deliberation itself stays where team mode puts it.
 
 ## Anti-patterns
 
@@ -87,3 +95,4 @@ There is no requirement on *how* the file is produced. Only the artifact matters
 - **Narrating the canvas in chat** — "I've updated the canvas, take a look." The user knows it is there.
 - **Thinning a turn** because the canvas carries the detail. The turn stands alone.
 - **Notes written into the file**, which the next refresh destroys.
+- **A desktop-only picture** — fixed widths, a detail surface wider than the screen, or controls that fall off the edge on a phone.
