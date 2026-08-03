@@ -618,8 +618,8 @@ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 /* ================= build ================= */
 const stage=document.getElementById('stage'),layer=document.getElementById('layer'),svg=document.getElementById('chains');
 const byId={};N.forEach(n=>byId[n.id]=n);
-// Identity never changes when the frontier moves; current state supplies the role.
-const frontier=N.find(n=>n.state==='current');
+// Identity never changes when the frontier moves; topology and state supply roles.
+const rootStation=N.find(n=>!n.p.length),frontier=N.find(n=>n.state==='current');
 N.forEach(n=>{
  const d=document.createElement('div');
  d.className='st '+n.state; d.tabIndex=0; d.dataset.id=n.id;
@@ -645,7 +645,9 @@ const COLGAP=80,ROWGAP=24,FOGW=190,FOGH=210;
 let box={W:1,H:1};
 function layout(){
  const dep={};N.forEach(n=>dep[n.id]=0);
- for(let k=0,ch=1;ch&&k<24;k++){ch=0;
+ // A DAG's longest path is shorter than its node count. Using that natural bound
+ // keeps the result independent of data order without imposing an arbitrary depth cap.
+ for(let k=0,ch=1;ch&&k<N.length;k++){ch=0;
   N.forEach(n=>n.p.forEach(pi=>{if(dep[pi]+1>dep[n.id]){dep[n.id]=dep[pi]+1;ch=1;}}));}
  const cols=[];N.forEach(n=>{(cols[dep[n.id]]=cols[dep[n.id]]||[]).push(n);});
  N.forEach(n=>{n.w=n.el.offsetWidth;n.h=n.el.offsetHeight;});
@@ -770,7 +772,7 @@ function openNode(id){
    (p.d?'<div class="d">'+esc(p.d)+'</div>':'')+'</details>';}).join('');
  wireAccordion();
  document.getElementById('ptcount').textContent=pts.length+(pts.length===1?' point':' points');
- drawMini(id==='session'?'root':id);
+ drawMini(id==='session'?rootStation.id:id);
  const at=document.getElementById('s-att'),rawAtt=n.att||[];
  // Station prototypes are authored chronologically and shown newest-first. Session
  // artifacts keep their authored order because they are different kinds, not revisions.
@@ -895,6 +897,10 @@ const outClose=()=>out.classList.remove('on');
 const showBundle=label=>{out.querySelector('.lb').textContent=label||'paste this into chat';
  document.getElementById('outpre').textContent=bundle();out.classList.add('on');};
 const hasNotes=()=>N.some(n=>note(n.id).trim())||note('fog').trim()||note('session').trim();
+// R can prevent an unsafe reload inside the page; guard browser-native reload too.
+addEventListener('beforeunload',e=>{
+ if(storageDegraded&&hasNotes()&&!reloadArmed){e.preventDefault();e.returnValue='';}
+});
 function reloadCanvas(){
  if(storageDegraded&&hasNotes()&&!reloadArmed){showBundle('copy these page-only notes before reloading');return;}
  location.reload();

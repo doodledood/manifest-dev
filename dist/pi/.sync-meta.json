@@ -1,11 +1,11 @@
 {
-  "source_commit": "c65393260606e12c8a15cb4a5863e0e7695c6690",
+  "source_commit": "0caac0fa43c6be70e0f0ae4c46ec2041b748b563",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-03T15:31:13Z",
-  "notes": "Delta sync: visible storage-degradation handling and unambiguous canvas status notices."
+  "synced_at": "2026-08-03T15:47:34Z",
+  "notes": "Delta sync: guarded native unload, topology-derived root, and input-bounded deep-tree layout."
 }
