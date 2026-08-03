@@ -4,7 +4,7 @@ An optional second surface for the session — a picture of the investigation, k
 
 It exists because a turn shows one point and the investigation log is chronological, so neither answers *where are we* — what is settled, what is still open, how much ground is unsurveyed. The canvas answers exactly that and nothing else.
 
-Both surfaces run together. There is no canvas-only mode and nothing to announce: the user passed the flag, so they know it is on. Never redirect them to it, and never thin a turn because the canvas exists — a turn stands on its own for a reader who never opens the file.
+Both surfaces run together. There is no canvas-only mode. Do not announce activation: the user passed the flag, so they know it is on. The two Lifecycle status notices are functional exceptions—one when there is no ground to draw yet, one after replacement when the loaded file needs a reload. Never redirect the user to the canvas, and never thin a turn because it exists—a turn stands on its own for a reader who never opens the file.
 
 ## What the picture depicts
 
@@ -95,7 +95,7 @@ It composes the same way under `--autonomous` and `--team`. The artifact is stil
 - **A generic tree with this session's labels swapped in.** The picture is derived from this session's actual questions; the user should recognise their own investigation on sight.
 - **Fog sliced into guesses** so it looks like progress.
 - **A tally, a percentage, or a progress bar over stations.**
-- **Narrating the canvas in chat**, except for the reload notice the Lifecycle requires.
+- **Narrating the canvas in chat**, except for the two status notices the Lifecycle requires.
 - **Thinning a turn** because the canvas carries the detail. The turn stands alone.
 - **Notes written into the file**, which the next refresh destroys.
 - **A desktop-only picture** — fixed widths, a detail surface wider than the screen, or controls that fall off the edge on a phone.
