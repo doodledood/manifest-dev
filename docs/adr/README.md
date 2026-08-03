@@ -54,5 +54,9 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-27 | [Manifest Intent leads with a required Problem, plus Appetite and Out of bounds](20260727-manifest-intent-leads-with-problem-appetite-and-bounds.md) | Accepted | define |
 | 2026-07-27 | [/define encodes for full /do autonomy](20260727-define-encodes-for-full-do-autonomy.md) | Accepted | define |
 | 2026-07-27 | [Shape Up adoption boundary — what is deliberately not imported](20260727-shape-up-adoption-boundary.md) | Accepted | Positioning |
-| 2026-07-27 | [figure-out adopts a concrete default turn shape](20260727-figure-out-adopts-a-default-turn-shape.md) | Accepted | figure-out |
+| 2026-07-27 | [figure-out adopts a concrete default turn shape](20260727-figure-out-adopts-a-default-turn-shape.md) | Superseded by [one concrete claim ADR](20260803-figure-out-turn-carries-one-concrete-claim.md) | figure-out |
 | 2026-07-28 | [Bound the acceptance contract from above, not only from below](20260728-bound-the-acceptance-contract-from-above.md) | Accepted | define / do |
+| 2026-08-03 | [figure-out gains an optional canvas whose spine is the crux tree and whose subject is the frontier](20260803-figure-out-gains-an-optional-canvas.md) | Accepted | figure-out |
+| 2026-08-03 | [define's canvas mode is deleted rather than kept or generalised](20260803-delete-defines-canvas-mode.md) | Accepted | define / figure-out |
+| 2026-08-03 | [A figure-out turn carries one concrete claim, in plain words, in a skimmable shape](20260803-figure-out-turn-carries-one-concrete-claim.md) | Accepted | figure-out |
+| 2026-08-03 | [A prototype attaches to the question it was built to crack, and the reaction lands there](20260803-prototypes-attach-to-the-station-they-crack.md) | Accepted | figure-out |

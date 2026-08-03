@@ -1,10 +1,10 @@
 {
-  "source_commit": "96b8d42d065457c47b87c954972784b52c3dd481",
+  "source_commit": "0e021e55f083de3442e78e85eb54c6d7c3126981",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-07-30T19:18:06Z",
-  "notes": "Delta check through this SHA: only source plugin.json description changed; codex/opencode descriptions are target-specific per reference files, versions already mirrored \u2014 no dist file changes."
+  "synced_at": "2026-08-03T16:15:43Z",
+  "notes": "Delta sync: touch-only canvas refresh uses guarded browser reload."
 }

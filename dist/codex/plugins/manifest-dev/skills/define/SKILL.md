@@ -1,7 +1,7 @@
 ---
 name: define
 description: 'Manifest builder. Turns shared understanding into a verifiable Manifest with Deliverables, Acceptance Criteria, Global Invariants, and an Initial Approach. Use when planning features, scoping refactors, debugging complex issues, or when the user asks to define, scope, plan, spec out, make a manifest, or break down a task.'
-argument-hint: '[task] [<manifest-path> to amend] [--babysit <pr-url>] [--canvas]'
+argument-hint: '[task] [<manifest-path> to amend] [--babysit <pr-url>]'
 user-invocable: true
 ---
 
@@ -177,7 +177,7 @@ A manifest path in `$ARGUMENTS` means amend. Read it fully. Before preserving an
 
 ## Flags
 
-`--babysit <pr-url>` — load `references/BABYSIT_MODE.md`; synthesizes a lifecycle-only manifest from a PR. `--canvas` — load `references/CANVAS_MODE.md`; generates a disposable Shared Understanding Canvas (temp-homed) during the interview. `--autonomous` skips summary approval and lets figure-out self-answer. When the task spans multiple repos (manifest declares `Repos:` in Intent), load `references/MULTI_REPO.md`.
+`--babysit <pr-url>` — load `references/BABYSIT_MODE.md`; synthesizes a lifecycle-only manifest from a PR. `--autonomous` skips summary approval and lets figure-out self-answer. When the task spans multiple repos (manifest declares `Repos:` in Intent), load `references/MULTI_REPO.md`.
 
 ## Summary for Approval
 

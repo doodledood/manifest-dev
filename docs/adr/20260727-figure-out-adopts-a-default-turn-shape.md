@@ -1,7 +1,7 @@
 # ADR: figure-out adopts a concrete default turn shape
 
 ## Status
-Accepted
+Superseded by 20260803-figure-out-turn-carries-one-concrete-claim
 
 ## Context
 
