@@ -1,11 +1,11 @@
 {
-  "source_commit": "cb4d2ff04d5f1e0a79d055f4ee586120ab01312f",
+  "source_commit": "ef9d38db8899b2b9a17546bd29ae50a6ca6154a0",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-03T12:29:50Z",
-  "notes": "Delta sync through this SHA: figure-out canvas mode added (references/CANVAS.md, assets/canvas-template.html), define canvas mode removed, figure-out SKILL.md turn contract and SCRATCH.md guard updated."
+  "synced_at": "2026-08-03T14:34:48Z",
+  "notes": "Delta sync: refreshed the figure-out canvas template after note-identity and disclosure repairs; regenerated ownership metadata."
 }
