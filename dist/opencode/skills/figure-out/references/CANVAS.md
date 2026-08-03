@@ -1,6 +1,6 @@
 # figure-out: canvas mode
 
-An optional second surface for the session — a picture of the investigation, kept current, that the user can read, annotate, and hand back. Chat still carries the deliberation; the canvas carries the state chat deliberately hides.
+An optional second surface for the session — a picture of the investigation, kept current through explicit refreshes, that the user can read, annotate, and hand back. Chat still carries the deliberation; the canvas carries the state chat deliberately hides.
 
 It exists because a turn shows one point and the investigation log is chronological, so neither answers *where are we* — what is settled, what is still open, how much ground is unsurveyed. The canvas answers exactly that and nothing else.
 
@@ -34,7 +34,7 @@ Both surfaces run together. There is no canvas-only mode and nothing to announce
 
 ## Artifacts attach to what they were built to crack
 
-A prototype, mock, or probe produced mid-investigation belongs to the crux or fog patch it was built to settle, and the user's reaction to it belongs in that station's own note.
+A prototype, mock, or probe produced mid-investigation belongs to the crux or fog patch it was built to settle, and the user's reaction to it belongs in that station's own note. When a station has several prototypes, the newest appears first.
 
 The reason is what happens downstream: a reaction is often a criterion the user could not state in the abstract, and a criterion that arrives detached from its question cannot be encoded as one — `/define` needs to know which question the reaction answers to turn it into a gate. Attaching it keeps that link without anyone having to remember it.
 
@@ -46,7 +46,9 @@ The canvas points at these artifacts; it never hosts one. When updating the canv
 
 Create the artifact as one self-contained HTML file in the host's temp directory when the flag is parsed and the session has ground worth drawing, and open it. Before then — flag passed, nothing surveyed yet — say the canvas will appear once there is a traverse to show, and carry on in chat.
 
-Refresh it when the picture would otherwise be wrong: a crux resolved, a new question opened, fog sharpened into stations, the frontier moved. Not every turn, and never mid-thought — a canvas that goes stale while the user is reading it is worse than one that lags a turn behind. Replace the data and leave the shell alone; notes survive because they were never in the file.
+Refresh it when the picture would otherwise be wrong: a crux resolved, a new question opened, fog sharpened into stations, the frontier moved. Not every turn, and never mid-thought — a canvas that changes while the user is reading it is worse than one that lags a turn behind.
+
+After replacing the data, tell the user the canvas is updated and to press **R** in it (or use the browser's normal reload command). An already-loaded `file://` page cannot observe its own replacement without polling or a server, and both are worse than one visible reload step. If the tab is gone, reopen the same path. Notes survive because they were never in the file.
 
 ## Failure handling
 
@@ -55,8 +57,9 @@ Every failure here is non-blocking. The canvas serves the investigation and neve
 - Writing the file fails → say so once and continue in chat.
 - No browser opens it → give the path and continue.
 - Clipboard write fails → the artifact shows the bundle as selectable text; the user copies manually.
-- Browser storage is denied — some hosts refuse it to a page opened from a file path → the canvas still renders and notes still work for as long as the page stays open; they simply do not survive a reload. Degrade to that, never to a blank sheet.
+- Browser storage is denied — some hosts refuse it to a page opened from a file path → the canvas still renders and notes still work for as long as the page stays open. Before a needed reload, have the user return the bundle so those page-lifetime notes are not lost; otherwise let the picture lag. Degrade to that, never to a blank sheet.
 - The refresh would land mid-thought → let it lag and refresh at the next natural break.
+- Reload does not take or the tab is gone → give the same file path to reopen and continue in chat.
 
 Never make the user fix the canvas to keep the session going.
 
@@ -92,7 +95,7 @@ It composes the same way under `--autonomous` and `--team`. The artifact is stil
 - **A generic tree with this session's labels swapped in.** The picture is derived from this session's actual questions; the user should recognise their own investigation on sight.
 - **Fog sliced into guesses** so it looks like progress.
 - **A tally, a percentage, or a progress bar over stations.**
-- **Narrating the canvas in chat** — "I've updated the canvas, take a look." The user knows it is there.
+- **Narrating the canvas in chat**, except for the reload notice the Lifecycle requires.
 - **Thinning a turn** because the canvas carries the detail. The turn stands alone.
 - **Notes written into the file**, which the next refresh destroys.
 - **A desktop-only picture** — fixed widths, a detail surface wider than the screen, or controls that fall off the edge on a phone.

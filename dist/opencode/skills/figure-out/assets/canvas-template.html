@@ -448,7 +448,7 @@ textarea::placeholder{color:#5a6b86}
    <div id="eyebrow" class="mono">figure-out · survey sheet <button id="artchip"></button></div>
    <div id="title"></div>
   </div>
-  <div id="keys"><kbd>tap</kbd> a station <kbd>←</kbd><kbd>→</kbd> walk <kbd>f</kbd> focus <kbd>esc</kbd> close · drag to pan</div>
+  <div id="keys"><kbd>tap</kbd> a station <kbd>←</kbd><kbd>→</kbd> walk <kbd>f</kbd> focus <kbd>r</kbd> reload <kbd>esc</kbd> close · drag to pan</div>
  </div>
  <div id="stage"><div id="layer"><svg id="chains"></svg></div></div>
  <div id="bot">
@@ -515,7 +515,8 @@ const LS='fo-canvas-SESSION-ID:';
    state: settled | open | current | ruled     (exactly one 'current')
    p:     parent ids                            (several = a join)
    pts:   [{t: the claim, one line}, {d: optional detail, hidden until asked}]
-   src:   where it came from        att: artifacts built to crack this station
+   src:   where it came from        att: artifacts built to crack this station,
+                                             oldest first (shell shows newest first)
    opts:  the ways out             ask: what you'd do      rd: a one-line ruling
    chip:  render narrow (for a short leaf) */
 const N=[
@@ -623,7 +624,7 @@ N.forEach(n=>{
  d.className='st '+n.state; d.tabIndex=0; d.dataset.id=n.id;
  d.style.width=(n.state==='current'?252:n.chip?178:216)+'px';
  d.innerHTML='<div class="plate"><div class="eb"><span class="tick">'+(T[n.state]||'')+'</span>'+esc(n.eb)+
-  (n.att?'<span class="clip">proto</span>':'')+'</div>'+
+  (n.att&&n.att.length?'<span class="clip">proto</span>':'')+'</div>'+
   '<div class="lbl">'+esc(n.lbl)+'</div>'+(n.rd?'<div class="rd">\u2937 '+esc(n.rd)+'</div>':'')+
   '<span class="note"></span></div>'+
   (n.state==='current'?'<div class="halo"></div><div class="cross"><i></i><i></i><i></i><i></i><u></u><u></u><u></u><u></u></div>':'');
@@ -768,21 +769,24 @@ function openNode(id){
  wireAccordion();
  document.getElementById('ptcount').textContent=pts.length+(pts.length===1?' point':' points');
  drawMini(id==='session'?'root':id);
- const at=document.getElementById('s-att');
- at.innerHTML=n.att?'<div class="h">built to crack this — '+n.att.length+'</div>'+n.att.map(v=>
+ const at=document.getElementById('s-att'),rawAtt=n.att||[];
+ // Station prototypes are authored chronologically and shown newest-first. Session
+ // artifacts keep their authored order because they are different kinds, not revisions.
+ const atts=id==='session'?rawAtt:rawAtt.slice().reverse();
+ at.innerHTML=atts.length?'<div class="h">built to crack this — '+atts.length+'</div>'+atts.map(v=>
   '<a class="at'+(v.cur?' cur':'')+'" href="'+esc(v.h).replace(/"/g,'&quot;')+'"><span class="ic">◱</span><span class="b">'+
   '<span class="l">'+esc(v.l)+(v.cur?'<em>you are in it</em>':'')+'</span><span class="c">'+esc(v.c)+'</span>'+
   '<span class="pth">'+esc(v.h.replace('file://',''))+'</span></span>'+
   '<span class="go">open ↗</span></a>').join('')+
   (n.rq?'<div class="rq">'+esc(n.rq)+'</div>':''):'';
- at.style.display=n.att?'':'none';
- const o=document.getElementById('s-opts');
- o.innerHTML=n.opts?'<div class="h">ways out</div>'+n.opts.map((v,i)=>
+ at.style.display=atts.length?'':'none';
+ const o=document.getElementById('s-opts'),opts=n.opts||[];
+ o.innerHTML=opts.length?'<div class="h">ways out</div>'+opts.map((v,i)=>
   '<div class="op'+(v.pick?' pick':'')+'"><div class="n">'+(i+1)+'</div><div class="b"><div class="l">'+
   esc(v.l)+'</div><div class="c">'+esc(v.c)+'</div></div>'+
   '<div class="eff"><div class="w">'+[1,2,3].map(j=>'<i'+(j<=(v.w||0)?' class="on"':'')+'></i>').join('')+
   '</div><div class="e">effort</div></div></div>').join(''):'';
- o.style.display=n.opts?'':'none';
+ o.style.display=opts.length?'':'none';
  const ask=document.getElementById('s-ask');
  ask.innerHTML=n.ask?'<span class="h">what I\u2019d do</span>'+esc(n.ask):'';ask.style.display=n.ask?'':'none';
  document.getElementById('decide').classList.toggle('plain',!n.ask);
@@ -857,6 +861,7 @@ const walk=N.map(n=>n.id).concat('fog');
 addEventListener('keydown',e=>{
  if(e.key==='Escape')return document.getElementById('out').classList.contains('on')?outClose():close();
  if(e.target.tagName==='TEXTAREA')return;
+ if(e.key==='r'||e.key==='R')return location.reload();
  if(e.key==='f'||e.key==='F')return focusBtn.click();
  if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
   let i=cur?walk.indexOf(cur):walk.indexOf(frontier.id);
@@ -895,12 +900,17 @@ document.getElementById('copy').onclick=doCopy;document.getElementById('copy2').
 N.concat([{id:'fog'}]).forEach(n=>mark(n.id));
 /* the session panel has no plate to carry a dot, so the header chip carries it —
    otherwise a note left there is invisible until the bundle is opened */
-const markSession=()=>document.getElementById('artchip')
- .classList.toggle('hasnote',!!note('session').trim());
+const artchip=document.getElementById('artchip'),sessionAtt=SESSION.att||[],sessionPts=SESSION.pts||[];
+const markSession=()=>{
+ const hasNote=!!note('session').trim(),hasGround=!!(sessionAtt.length||sessionPts.length);
+ artchip.classList.toggle('hasnote',hasNote);artchip.hidden=!(hasGround||hasNote);
+ artchip.textContent=sessionAtt.length
+  ? sessionAtt.length+' artifact'+(sessionAtt.length===1?'':'s')
+  : 'session note';
+};
 markSession();
 document.getElementById('title').textContent=TOPIC;
-document.getElementById('artchip').textContent=SESSION.att.length+' artifact'+(SESSION.att.length===1?'':'s');
-document.getElementById('artchip').onclick=()=>openNode('session');
+artchip.onclick=()=>openNode('session');
 box=layout();fit();
 function settle(){[].forEach.call(svg.querySelectorAll('path'),p=>{
  p.style.transition='';p.style.strokeDasharray='';p.style.strokeDashoffset='';});

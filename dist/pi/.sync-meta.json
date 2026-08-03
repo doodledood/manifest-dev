@@ -1,11 +1,11 @@
 {
-  "source_commit": "8414da8302d238bc918d311b5718fa89787be7f2",
+  "source_commit": "ec5bde5cc308c5e5eb72021ff51a3e8895b9b9a7",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-03T14:55:24Z",
-  "notes": "Delta sync: current frontier is derived from state while station IDs remain immutable."
+  "synced_at": "2026-08-03T15:16:39Z",
+  "notes": "Delta sync: explicit canvas reload lifecycle, deterministic prototype order, and empty-session suppression."
 }
