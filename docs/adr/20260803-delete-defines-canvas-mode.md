@@ -26,7 +26,7 @@ This decision stands on its own evidence and does not depend on figure-out gaini
 ## Alternatives Considered
 
 - **Keep it as it is**: Rejected — a flag costs nothing when unused, but keeping it sanctions a presentation contract this repo has already falsified against a real reader, and points users at it from three README surfaces.
-- **Move it into figure-out**: Rejected — the artifact worth having in figure-out is a different design with a different lifecycle and a different subject. What transfers is the *lifecycle* answer (live regeneration on meaningful events, auto-reload), not the shape, and that transfers as an idea rather than as a file.
+- **Move it into figure-out**: Rejected — the artifact worth having in figure-out is a different design with a different lifecycle and a different subject. What transfers is the *lifecycle* answer (regeneration on meaningful events, then reloading the existing file), not the shape, and that transfers as an idea rather than as a file.
 - **Generalise it into shared canvas machinery for define, figure-out and walk-pr**: Rejected, and already rejected twice in this repo — by `SCRATCH.md`'s refusal to reuse the machinery for heterogeneous content, and by `20260730`'s rejection of a shared generator because *"a fixed map schema pushes every PR toward the same topology and adds a runtime dependency."* The plugin split makes it worse: a shared asset would have to be duplicated across `manifest-dev` and `manifest-dev-tools` anyway.
 - **Deprecate rather than delete** (leave the file, drop it from the READMEs): Rejected — it leaves maintained-looking product code with no consumer, which is how it reached this state in the first place.
 
