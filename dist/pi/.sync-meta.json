@@ -1,11 +1,11 @@
 {
-  "source_commit": "bc2e60538a22adc7ed661647433c4e8ec9ed4b38",
+  "source_commit": "cb4d2ff04d5f1e0a79d055f4ee586120ab01312f",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-03T11:54:16Z",
-  "notes": "Delta check through this SHA: only source plugin.json description changed; codex/opencode descriptions are target-specific per reference files, versions already mirrored — no dist file changes."
+  "synced_at": "2026-08-03T12:29:50Z",
+  "notes": "Delta sync through this SHA: figure-out canvas mode added (references/CANVAS.md, assets/canvas-template.html), define canvas mode removed, figure-out SKILL.md turn contract and SCRATCH.md guard updated."
 }
