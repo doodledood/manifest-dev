@@ -713,17 +713,21 @@ function setFocus(on){focusOn=on;layer.classList.toggle('focus',on);
 focusBtn.onclick=()=>setFocus(!focusOn);
 
 /* ================= notes ================= */
-/* Storage can be denied outright for a file:// document on some hosts. A canvas that
-   cannot remember notes is still worth reading, so degrade to a session without
-   persistence rather than taking the whole sheet down. */
-let noteFallback={},storageOK=true;
+/* Storage can fail two different ways for a file:// document: denied outright, or
+   readable but refusing writes (quota). A canvas that cannot remember notes is still
+   worth reading, so degrade to a session without persistence rather than taking the
+   sheet down — and read the in-memory copy FIRST, so a note whose write was refused
+   still reaches the note markers and the outgoing bundle instead of being read back
+   stale from storage. */
+let noteFallback={};
 const note=id=>{
- try{return localStorage.getItem(LS+id)||'';}
- catch(e){storageOK=false;return noteFallback[LS+id]||'';}
+ const k=LS+id;
+ if(Object.prototype.hasOwnProperty.call(noteFallback,k))return noteFallback[k];
+ try{return localStorage.getItem(k)||'';}catch(e){return '';}
 };
 const putNote=(id,v)=>{
- noteFallback[LS+id]=v;
- try{localStorage.setItem(LS+id,v);}catch(e){storageOK=false;}
+ noteFallback[LS+id]=v;                 // authoritative for this page's lifetime
+ try{localStorage.setItem(LS+id,v);}catch(e){/* keeps the in-memory copy */}
 };
 const mark=id=>{const el=id==='fog'?fogEl:(byId[id]||{}).el;if(el)el.classList.toggle('hasnote',!!note(id).trim());};
 
@@ -747,7 +751,8 @@ function openNode(id){
  const pts=n.pts||[];
  document.getElementById('s-body').innerHTML=pts.map((p,i)=>{
   const k=KIND[id+':'+i]||'find';
-  return '<details class="pt"'+(pts.length===1?' open':'')+'><summary>'+
+  // every detail waits behind an explicit action — including on a one-point station
+  return '<details class="pt"><summary>'+
    '<span class="kd k-'+k+'"><i></i><span>'+KN[k]+'</span></span>'+
    '<span class="t">'+esc(p.t)+'</span>'+
    '<span class="chev">'+(p.d?'\u276f':'')+'</span></summary>'+
