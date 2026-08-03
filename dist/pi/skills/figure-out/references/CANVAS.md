@@ -48,7 +48,7 @@ Create the artifact as one self-contained HTML file in the host's temp directory
 
 Refresh it when the picture would otherwise be wrong: a crux resolved, a new question opened, fog sharpened into stations, the frontier moved. Not every turn, and never mid-thought — a canvas that changes while the user is reading it is worse than one that lags a turn behind.
 
-After replacing the data, tell the user the canvas is updated and to press **R** in it. An already-loaded `file://` page cannot observe its own replacement without polling or a server, and both are worse than one visible reload step. If the tab is gone, reopen the same path. Notes survive because they were never in the file.
+After replacing the data, tell the user the canvas is updated: press **R** when a keyboard is available; on a touch-only screen, use the browser's reload control. If the browser warns before reloading, cancel and follow the page-only-note fallback below. An already-loaded `file://` page cannot observe its own replacement without polling or a server, and both are worse than one explicit reload step. If the tab is gone, reopen the same path. Notes survive because they were never in the file.
 
 ## Failure handling
 

@@ -1,10 +1,10 @@
 {
-  "source_commit": "0caac0fa43c6be70e0f0ae4c46ec2041b748b563",
+  "source_commit": "0e021e55f083de3442e78e85eb54c6d7c3126981",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-03T15:47:34Z",
-  "notes": "Delta sync: guarded native unload, topology-derived root, and input-bounded deep-tree layout."
+  "synced_at": "2026-08-03T16:15:43Z",
+  "notes": "Delta sync: touch-only canvas refresh uses guarded browser reload."
 }
