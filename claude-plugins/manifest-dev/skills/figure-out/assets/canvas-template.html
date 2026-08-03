@@ -27,8 +27,9 @@
   station sheet, the accordion, note persistence, the bundle, pan/zoom/focus.
   Each piece guards against a real failure, so departing from it costs more
   than it looks. Two hard requirements the shell makes of the data:
-     - exactly one station has state 'current' and id 'crux' (the frontier)
-     - every station id is stable and declared, because notes key off it
+     - exactly one station has state 'current' (the frontier)
+     - every station id is stable, declared, and independent of its changing
+       role, because notes key off identity while focus follows current state
 
   ---------------------------------------------------------------------------
   WHY IT IS BUILT THIS WAY.
@@ -509,8 +510,9 @@ const TOPIC='Why checkout confirmation emails arrive late';
    string stays put. */
 const LS='fo-canvas-SESSION-ID:';
 
-/* The stations. ids are stable and declared — notes key off them.
-   state: settled | open | current | ruled     (exactly one 'current', id 'crux')
+/* The stations. ids are stable and declared — notes key off them. Never rename
+   a station when its role changes; the shell finds the frontier from state.
+   state: settled | open | current | ruled     (exactly one 'current')
    p:     parent ids                            (several = a join)
    pts:   [{t: the claim, one line}, {d: optional detail, hidden until asked}]
    src:   where it came from        att: artifacts built to crack this station
@@ -544,7 +546,7 @@ const N=[
        d:'Six attempts per failure at peak volume is enough to double the queue on its own.'}],
  src:'worker config: maxAttempts unset'},
 
-{id:'crux',p:['retry'],state:'current',eb:'where we are now',lbl:'Cap the retries, or give them their own lane?',
+{id:'retry-policy',p:['retry'],state:'current',eb:'where we are now',lbl:'Cap the retries, or give them their own lane?',
  pts:[{t:'Both fix the crowding; they differ in what they give up.',
        d:'Capping drops some genuinely recoverable sends. A separate lane keeps them but adds a queue to run.'},
       {t:'Nothing here needs the provider change the ask started with.',
@@ -556,11 +558,11 @@ const N=[
  att:[{l:'Queue-depth replay',c:'peak traffic against both options',h:'file:///tmp/example-replay.html',cur:1}],
  rq:'Open it, then say what you think in the note below. Your reaction is what turns this into a criterion — and because it lands here, it travels back attached to the question it answers.'},
 
-{id:'o1',p:['crux'],state:'open',eb:'open',lbl:'What does a cap cost in real deliveries?',
+{id:'o1',p:['retry-policy'],state:'open',eb:'open',lbl:'What does a cap cost in real deliveries?',
  pts:[{t:'Unmeasured. Needs the share of sends that succeed on attempt three or later.',
        d:'The number decides whether capping is cheap or quietly lossy, so it gates the choice above rather than following it.'}]},
 
-{id:'o2',p:['crux'],state:'open',eb:'open',lbl:'Does a second lane need a migration window?',
+{id:'o2',p:['retry-policy'],state:'open',eb:'open',lbl:'Does a second lane need a migration window?',
  pts:[{t:'Probably not, but the in-flight backlog has to drain somewhere.',d:'Unresolved.'}]},
 
 {id:'ruled',p:['what'],state:'ruled',eb:'off the sheet',lbl:'Switch email providers',
@@ -577,7 +579,7 @@ const KIND={
 'what:0':'ev','what:1':'ev',
 'queue:0':'ev','queue:1':'find',
 'retry:0':'find','retry:1':'ev',
-'crux:0':'find','crux:1':'dec',
+'retry-policy:0':'find','retry-policy:1':'dec',
 'o1:0':'open','o2:0':'open',
 'ruled:0':'dec',
 'fog:0':'risk','fog:1':'open'};
@@ -614,6 +616,8 @@ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 /* ================= build ================= */
 const stage=document.getElementById('stage'),layer=document.getElementById('layer'),svg=document.getElementById('chains');
 const byId={};N.forEach(n=>byId[n.id]=n);
+// Identity never changes when the frontier moves; current state supplies the role.
+const frontier=N.find(n=>n.state==='current');
 N.forEach(n=>{
  const d=document.createElement('div');
  d.className='st '+n.state; d.tabIndex=0; d.dataset.id=n.id;
@@ -662,7 +666,7 @@ function layout(){
   c.forEach((n,j)=>{n.col=i;n.row=j;});
  });
 
- const cx=byId.crux, fy=cx.cy-FOGH/2;
+ const cx=frontier, fy=cx.cy-FOGH/2;
  let minY=Math.min.apply(null,N.map(n=>n.y).concat([fy]))-24;
  let maxY=Math.max.apply(null,N.map(n=>n.y+n.h).concat([fy+FOGH]))+24;
  N.forEach(n=>{n.y-=minY;n.cy-=minY;n.el.style.left=n.x+'px';n.el.style.top=n.y+'px';});
@@ -703,14 +707,14 @@ stage.addEventListener('wheel',e=>{e.preventDefault();
  const ns=Math.min(2.4,Math.max(.28,sc*Math.exp(-e.deltaY*0.0016)));
  tx=mx-(mx-tx)*(ns/sc);ty=my-(my-ty)*(ns/sc);sc=ns;apply();},{passive:false});
 document.getElementById('fit').onclick=fit;
-addEventListener('resize',()=>{focusOn?center(byId.crux,1):fit();});
+addEventListener('resize',()=>{focusOn?center(frontier,1):fit();});
 
 const focusBtn=document.getElementById('focus');
 let focusOn=false;
 function setFocus(on){focusOn=on;layer.classList.toggle('focus',on);
  focusBtn.classList.toggle('on',on);
  focusBtn.textContent=on?'Show the whole sheet':'Focus the crux';
- if(on)center(byId.crux,1);else fit();}
+ if(on)center(frontier,1);else fit();}
 focusBtn.onclick=()=>setFocus(!focusOn);
 
 /* ================= notes ================= */
@@ -827,7 +831,7 @@ sheet.addEventListener('scroll',()=>{
 const msvg=document.getElementById('minisvg');
 function drawMini(id){
  msvg.setAttribute('viewBox','0 0 '+box.W+' '+box.H);
- const anc={};let q=id==='fog'?['crux']:(byId[id]||{p:[]}).p.slice();
+ const anc={};let q=id==='fog'?[frontier.id]:(byId[id]||{p:[]}).p.slice();
  while(q.length){const a=q.pop();if(!a||anc[a])continue;anc[a]=1;(byId[a]||{p:[]}).p.forEach(x=>q.push(x));}
  let s='';
  N.forEach(n=>n.p.forEach(pi=>{const a=byId[pi];
@@ -835,7 +839,7 @@ function drawMini(id){
  N.forEach(n=>{const c=n.id===id?'here':anc[n.id]?'anc':'';
   s+='<rect x="'+n.x+'" y="'+n.y+'" width="'+n.w+'" height="'+n.h+'" rx="7" class="'+c+'"/>';});
  const fr=fogEl.getBoundingClientRect;
- s+='<rect x="'+(box.W-190)+'" y="'+(byId.crux.cy-105)+'" width="190" height="210" rx="18" class="'+
+ s+='<rect x="'+(box.W-190)+'" y="'+(frontier.cy-105)+'" width="190" height="210" rx="18" class="'+
   (id==='fog'?'here':'fogr')+'"/>';
  msvg.innerHTML=s;
  const tot=Math.max.apply(null,N.map(n=>n.col))+1;
@@ -855,9 +859,9 @@ addEventListener('keydown',e=>{
  if(e.target.tagName==='TEXTAREA')return;
  if(e.key==='f'||e.key==='F')return focusBtn.click();
  if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
-  let i=cur?walk.indexOf(cur):walk.indexOf('crux');
-  // the session panel is not a station on the traverse; walk resumes from the crux
-  if(i<0){openNode('crux');e.preventDefault();return;}
+  let i=cur?walk.indexOf(cur):walk.indexOf(frontier.id);
+  // the session panel is not a station on the traverse; walk resumes from the frontier
+  if(i<0){openNode(frontier.id);e.preventDefault();return;}
   openNode(walk[cur?(i+(e.key==='ArrowRight'?1:-1)+walk.length)%walk.length:i]);e.preventDefault();}
 });
 
