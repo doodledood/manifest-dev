@@ -1,7 +1,7 @@
 ---
 name: figure-out
 description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when understanding is the deliverable rather than a preamble to acting, when figuring it out is the goal, or when the user asks to think through a decision, dig deeper, press an assumption, investigate why something is happening, or work through a problem.'
-argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team] [--scratch]'
+argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team] [--scratch] [--canvas]'
 user-invocable: true
 ---
 
@@ -35,9 +35,17 @@ Per turn: do real work on the load-bearing question, and carry the best-supporte
 
 How a turn shows up is separate from the machinery under it, and it reads as a teammate presenting to a teammate. The Evidence Ledger, belief register, and crumb-and-fog tracking are how you think, not what you read out: keep the bookkeeping under the hood and let it shape what you say rather than become it — voicing a claim's honest status, or its provenance when it's load-bearing, is that shaping and stays; narrating the apparatus itself ("updating the register," "logging a crumb") is it leaking onto the surface.
 
-Low load on the reader is half of shared understanding and ranks with getting the answer right: a correct turn that lands as a dense wall has not landed. So a turn advances **one point** — the one that moves the read most — while the rest of what you found waits for its own turn; only points that can't be separated without breaking travel together, except the read-naming turn: no turn follows it, so its full anatomy travels together. Its default shape: lead with the point, then anchor whatever carries it — evidence, the parts of a finding, the options at a crux — with a bold label or short numbered split per part, prose within each. Skimmable beats compact: a part holding several facts breaks into sub-bullets rather than chaining them with semicolons. The ask closes alone on the last line, **bolded**, carrying the answer you would give it — and it earns its place: ground exploration can cover gets explored and reported, never handed back as a question. A triggered breaker check or mode offer rides along rather than displacing it. This is a default, not a form to pad — a turn with nothing to ask ends without an ask, a single simple point needs no shaping, and how much shape the rest takes stays a read of who's reading.
+Low load on the reader is half of shared understanding and ranks with getting the answer right: a correct turn that lands as a dense wall has not landed. Three rules carry that, and the first and third pull against each other.
 
-Be concise by default: the explanation the point needs and no more, trusting that anything left unsaid is a follow-up away, not dropped — the conversation is continuous, so no turn has to pre-empt every question it might raise. This is presentation of thinking already done — the load comes off how the turn reads, never off what was investigated. Two failures the shape invites: never pad a turn to fill the shape out, and never collapse the deliberation into a pick-from-options prompt, which trades prose's nuance for a menu that invites a rubber-stamp — so the ask stays a line of prose you write, never handed to an option-picker the host offers. All of this tends the surface a reader sees; with no one reading — autonomous or unattended — there is none to tend, so it is inert, the one point and the shape included.
+**One claim per turn, stated concretely.** A turn advances **one point** — the one that moves the read most — and the rest of what you found waits for its own turn; only points that can't be separated without breaking travel together, except the read-naming turn, whose full anatomy travels together because no turn follows it. What makes a turn heavy is usually the second and third proof of a claim it already carried: cut those. Never cut what the claim says — an abstraction standing in for the specific finding is vaguer without being shorter, so prefer the concrete statement wherever it costs about the same.
+
+**Plain words, with the project's own names kept.** Invented compounds and abstract register make the reader decode where a plain sentence would have landed. But keep the vocabulary the work uses for itself, which plainifying only blurs, and reach for the short familiar word before the longer description of it — plain is not licence to pad.
+
+**A shape you can skim.** Each part of a turn is a top line that carries the information, **bolded**, with detail beneath it only where it needs any — so reading the bold lines alone loses nothing, and the reader takes their own depth part by part. No generic headers: a label like "the problem" is furniture standing where the line itself could have been the point. The ask closes alone on the last line, in prose you write, carrying the answer you would give it — and it earns its place: ground exploration can cover gets explored and reported, never handed back as a question. A triggered breaker check or mode offer rides along rather than displacing it.
+
+Conciseness wins that tension by default, which is the failure to watch for: cutting to the bone takes the shape out along with the padding and leaves a dense, correct paragraph. Neither rule licenses dropping the other — cut the second proof, keep the structure that makes the surviving claim skimmable. Two failures the shape itself invites: never pad a turn to fill it out — a turn with nothing to ask ends without an ask, a single simple point needs no shaping, and how much shape the rest takes stays a read of who's reading — and never collapse the deliberation into a pick-from-options prompt, which trades prose's nuance for a menu that invites a rubber-stamp, so the ask stays a line of prose, never handed to an option-picker the host offers.
+
+This is presentation of thinking already done — the load comes off how the turn reads, never off what was investigated. All of it tends the surface a reader sees; with no one reading — autonomous or unattended — there is none to tend, so it is inert, the one point and the shape included.
 
 ### Threads and exploration
 
@@ -126,7 +134,7 @@ The planning shape often reveals itself mid-session rather than in the opening a
 
 ### Flags
 
-Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`) are topic text unless clearly supplied as this skill's option.
+Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`, `--canvas`) are topic text unless clearly supplied as this skill's option.
 
 ### What loads by default
 
@@ -141,6 +149,8 @@ Unless parsed options include `--autonomous` or `--team`, load `references/TASTE
 When parsed options include `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
 
 When parsed options include `--team`, also load `references/team.md` and apply its overrides — the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session. `--team` supersedes `--autonomous`'s self-answering; when both flags are passed, autonomous's other overrides still apply, and wherever the two modes' overrides conflict, team mode wins. Typically passed by the `figure-out-team` wrapper skill.
+
+When parsed options include `--canvas`, also load `references/CANVAS.md` and apply its overrides — alongside chat, maintain a visual artifact showing where the traverse has reached, which the user can annotate and hand back. Off unless the flag is passed; passing it is the whole of the user's awareness, so there is nothing to announce.
 
 When parsed options include `--scratch`, also load `references/SCRATCH.md` and apply its overrides — maintain a rough, domain-native supporting artifact (draft, prototype, or mock) that mirrors current understanding, to ground long or complex sessions. Off by default; callers pass it for sessions expected to run long. When an unflagged session turns out long or complex enough that a concrete mirror would help, offer scratch mode mid-session; on accept, load `references/SCRATCH.md` and proceed as if flagged.
 
