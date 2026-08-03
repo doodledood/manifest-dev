@@ -1,10 +1,10 @@
 {
-  "source_commit": "ec5bde5cc308c5e5eb72021ff51a3e8895b9b9a7",
+  "source_commit": "c65393260606e12c8a15cb4a5863e0e7695c6690",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-03T15:16:39Z",
-  "notes": "Delta sync: explicit canvas reload lifecycle, deterministic prototype order, and empty-session suppression."
+  "synced_at": "2026-08-03T15:31:13Z",
+  "notes": "Delta sync: visible storage-degradation handling and unambiguous canvas status notices."
 }

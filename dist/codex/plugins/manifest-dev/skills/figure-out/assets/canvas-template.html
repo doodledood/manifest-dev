@@ -363,6 +363,7 @@ textarea::placeholder{color:#5a6b86}
 #saved{font-size:10px;color:#79cfc0;height:13px;margin-top:5px;opacity:0;transition:opacity .2s;
  font-family:ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase}
 #saved.on{opacity:1}
+#saved.warn{color:#d9aa52;opacity:1}
 
 #out{position:fixed;inset:8% 11%;z-index:22;background:#0b1220;border-radius:16px;
  box-shadow:0 0 0 1px rgba(125,145,175,.18),0 40px 90px -30px rgba(0,0,0,.9);
@@ -725,18 +726,19 @@ focusBtn.onclick=()=>setFocus(!focusOn);
    sheet down — and read the in-memory copy FIRST, so a note whose write was refused
    still reaches the note markers and the outgoing bundle instead of being read back
    stale from storage. */
-let noteFallback={};
+let noteFallback={},storageDegraded=false,reloadArmed=false;
 // "fog" is the sheet's routing name; storage follows the current patch's own id.
 const noteId=id=>id==='fog'?FOG.id:id;
 const note=id=>{
  const k=LS+noteId(id);
  if(Object.prototype.hasOwnProperty.call(noteFallback,k))return noteFallback[k];
- try{return localStorage.getItem(k)||'';}catch(e){return '';}
+ try{return localStorage.getItem(k)||'';}catch(e){storageDegraded=true;return '';}
 };
 const putNote=(id,v)=>{
  const k=LS+noteId(id);
  noteFallback[k]=v;                     // authoritative for this page's lifetime
- try{localStorage.setItem(k,v);}catch(e){/* keeps the in-memory copy */}
+ try{localStorage.setItem(k,v);}catch(e){storageDegraded=true;}
+ return !storageDegraded;
 };
 const mark=id=>{const el=id==='fog'?fogEl:(byId[id]||{}).el;if(el)el.classList.toggle('hasnote',!!note(id).trim());};
 
@@ -793,7 +795,10 @@ function openNode(id){
  document.getElementById('notelb').textContent=n.ask?'your call':'your note';
  const src=document.getElementById('s-src');
  src.innerHTML=n.src?'<span class="h">where this comes from</span>'+esc(n.src):'';src.style.display=n.src?'':'none';
- ta.value=note(id);document.getElementById('saved').classList.remove('on');
+ ta.value=note(id);
+ const saved=document.getElementById('saved');
+ saved.textContent=storageDegraded?'page only — copy before reload':'saved';
+ saved.classList.toggle('warn',storageDegraded);saved.classList.toggle('on',storageDegraded);
  // restart the staggered enter
  const secs=sheet.querySelectorAll('.sec');
  secs.forEach((s,i)=>{s.style.animation='none';void s.offsetWidth;
@@ -853,15 +858,18 @@ function drawMini(id){
 function close(){veil.classList.remove('on');sheet.classList.remove('on');cur=null;}
 document.getElementById('x').onclick=close;veil.onclick=close;
 ta.addEventListener('input',()=>{if(!cur)return;
- putNote(cur,ta.value);mark(cur);markSession();
- const s=document.getElementById('saved');s.classList.add('on');
- clearTimeout(tmr);tmr=setTimeout(()=>s.classList.remove('on'),1500);});
+ reloadArmed=false;
+ const persisted=putNote(cur,ta.value);mark(cur);markSession();
+ const s=document.getElementById('saved');
+ s.textContent=persisted?'saved':'page only — copy before reload';
+ s.classList.toggle('warn',!persisted);s.classList.add('on');clearTimeout(tmr);
+ if(persisted)tmr=setTimeout(()=>s.classList.remove('on'),1500);});
 
 const walk=N.map(n=>n.id).concat('fog');
 addEventListener('keydown',e=>{
  if(e.key==='Escape')return document.getElementById('out').classList.contains('on')?outClose():close();
  if(e.target.tagName==='TEXTAREA')return;
- if(e.key==='r'||e.key==='R')return location.reload();
+ if(e.key==='r'||e.key==='R')return reloadCanvas();
  if(e.key==='f'||e.key==='F')return focusBtn.click();
  if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
   let i=cur?walk.indexOf(cur):walk.indexOf(frontier.id);
@@ -884,12 +892,20 @@ function bundle(){
 }
 const out=document.getElementById('out');
 const outClose=()=>out.classList.remove('on');
-document.getElementById('show').onclick=()=>{document.getElementById('outpre').textContent=bundle();out.classList.add('on');};
+const showBundle=label=>{out.querySelector('.lb').textContent=label||'paste this into chat';
+ document.getElementById('outpre').textContent=bundle();out.classList.add('on');};
+const hasNotes=()=>N.some(n=>note(n.id).trim())||note('fog').trim()||note('session').trim();
+function reloadCanvas(){
+ if(storageDegraded&&hasNotes()&&!reloadArmed){showBundle('copy these page-only notes before reloading');return;}
+ location.reload();
+}
+document.getElementById('show').onclick=()=>showBundle();
 document.getElementById('outclose').onclick=outClose;
 function doCopy(){
  const t=bundle(),c=document.getElementById('copied');
- const ok=()=>{c.classList.add('on');setTimeout(()=>c.classList.remove('on'),1700);};
- const fb=()=>{document.getElementById('outpre').textContent=t;out.classList.add('on');
+ const ok=()=>{c.classList.add('on');setTimeout(()=>c.classList.remove('on'),1700);
+  if(storageDegraded){reloadArmed=true;out.querySelector('.lb').textContent='notes copied — press R to reload';}};
+ const fb=()=>{showBundle(storageDegraded?'copy these page-only notes, then use browser reload':'paste this into chat');
   const p=document.getElementById('outpre'),r=document.createRange();r.selectNodeContents(p);
   const s=getSelection();s.removeAllRanges();s.addRange(r);};
  navigator.clipboard?navigator.clipboard.writeText(t).then(ok,fb):fb();
