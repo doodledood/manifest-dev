@@ -1,11 +1,11 @@
 {
-  "source_commit": "ef9d38db8899b2b9a17546bd29ae50a6ca6154a0",
+  "source_commit": "8414da8302d238bc918d311b5718fa89787be7f2",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-03T14:34:48Z",
-  "notes": "Delta sync: refreshed the figure-out canvas template after note-identity and disclosure repairs; regenerated ownership metadata."
+  "synced_at": "2026-08-03T14:55:24Z",
+  "notes": "Delta sync: current frontier is derived from state while station IDs remain immutable."
 }
