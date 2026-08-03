@@ -7,7 +7,7 @@ Accepted
 
 figure-out produces disposable artifacts mid-investigation. `SKILL.md`'s one-shot probe covers the case where a criterion exists but cannot be stated: *"offer to make something concrete to react to — a reference to point at, a quick mock, or a few divergent options."* Scratch mode covers a rougher, session-long mirror of understanding. The distinction between them is already drawn: *"here the artifact leads — it generates a criterion not yet settled — where scratch mirrors understanding already reached."*
 
-Today both arrive through chat, and the reaction goes back through chat as free prose. That works while chat is the only surface. Once a canvas exists as a place the user can work in instead of chat, a produced artifact becomes invisible to a user who has switched — and so does the request to react to it. The session that raised this had already produced three prototypes against a single patch of fog; had the user been working in the canvas, they would have seen neither the artifacts nor the ask.
+Today both arrive through chat, and the reaction goes back through chat as free prose. That works while chat is the only surface. Once a canvas exists as a place the user can work in instead of chat, a produced artifact and its request for reaction become invisible there unless the canvas carries them.
 
 There is a downstream reason the reaction's anchor matters. `/define` treats reactions to concrete artifacts as binding: *"Criteria the user pinned by reacting to something concrete during figure-out — a mock, a reference, a chosen direction — are success criteria, not flavor: encode them as an Acceptance Criterion or Global Invariant."* A reaction that arrives detached from the question it answers loses what makes it encodable, and `SKILL.md` warns that reaction-derived criteria bind execution — *"a stray one becomes a gate."*
 
@@ -42,6 +42,6 @@ A prototype attaches to the crux or fog patch it was built to crack, and the use
 - The prototype-beats-canvas priority is stated but unmeasured; if canvas updates start being skipped routinely, the canvas is costing more than it returns and that is the signal to reopen it.
 
 ## Source
-- Session: figure-out session on a canvas for figure-out (2026-08-03). The rule was prototyped rather than argued: the session's own three canvas builds were attached to the patch of fog they were made to crack, and the user reacted to that.
+- Origin: figure-out investigation of how prototypes remain visible and encodable when a canvas is active (2026-08-03).
 - Related: 20260803-figure-out-gains-an-optional-canvas
 - Related: 20260714-figure-out-challenge-solution-existence-before-design

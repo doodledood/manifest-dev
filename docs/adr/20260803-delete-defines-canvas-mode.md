@@ -13,9 +13,7 @@ Two things have changed under it.
 
 **The interview it was built for no longer exists.** define was once the whole front end. It now delegates understanding upstream — `define/SKILL.md`: *"If the transcript lacks shared understanding, invoke `manifest-dev:figure-out` first"* — and keeps only encoding: *"figure-out reaches shared understanding of the problem; /define handles manifest-specific encoding judgment calls… Elicit whatever the conversation left unset — these are encoding decisions, not re-investigation."* The misalignment its canvas guarded against now surfaces during figure-out, which is where the glance-check belongs.
 
-Corroborating but not load-bearing: `git log --follow` shows the file created 2026-05-01 and last substantively changed within days of that, with every later touch a one- or three-line reword carried by an unrelated commit. Over the same window `figure-out/SKILL.md` took a dozen substantive commits and walk-pr's canvas was rebuilt whole. Its own activation gate also excludes the workflows the repo now pushes — amendment mode and any autonomous run.
-
-The status quo's job was tested before deciding, as `SKILL.md` requires. The job is still wanted; the venue moved.
+Its activation gate also excludes amendment mode and autonomous runs. The job is still wanted; the venue moved.
 
 ## Decision
 
@@ -45,6 +43,6 @@ This decision stands on its own evidence and does not depend on figure-out gaini
 - The `SCRATCH.md` guard has to be rewritten rather than merely repointed, since its argument is partly about *that specific machinery*.
 
 ## Source
-- Session: figure-out session on whether figure-out should gain a canvas (2026-08-03); user ruled the deletion after establishing that define no longer holds the interview the canvas served.
+- Origin: figure-out investigation of canvas ownership after understanding moved upstream from define (2026-08-03).
 - Related: 20260803-figure-out-gains-an-optional-canvas
 - Related: 20260730-walk-pr-attention-contract-picture-not-document, 20260705-front-figure-out-as-door-define-do-loop-as-house

@@ -593,9 +593,10 @@ const SESSION={id:'session',eb:'session artifacts',lbl:'What this session has pr
       {l:'Investigation log',c:'append-only, every meaningful turn',h:'file:///tmp/example-figure-out-log.md'}]};
 
 /* The unsurveyed patch. Territory, never nodes: one region with an extent,
-   not a list of sub-questions. Sharpen it into stations only once it can be
-   stated as a question. */
-const FOG={id:'fog',eb:'fog',lbl:'What else rides on this queue?',cap:'1 patch',
+   not a list of sub-questions. Its id is the patch's stable identity, not the
+   generic word "fog". If this patch sharpens into a station, carry the id onto
+   that station and give any remaining fog a new id, so each note keeps its home. */
+const FOG={id:'shared-queue-fog',eb:'fog',lbl:'What else rides on this queue?',cap:'1 patch',
  pts:[{t:'Other producers share the consumer, and we have not looked at them.',
        d:'If any of them is also retrying unbounded, the fix above treats a symptom of something wider.'},
       {t:'Not yet a question — we do not know what else publishes here.',
@@ -720,14 +721,17 @@ focusBtn.onclick=()=>setFocus(!focusOn);
    still reaches the note markers and the outgoing bundle instead of being read back
    stale from storage. */
 let noteFallback={};
+// "fog" is the sheet's routing name; storage follows the current patch's own id.
+const noteId=id=>id==='fog'?FOG.id:id;
 const note=id=>{
- const k=LS+id;
+ const k=LS+noteId(id);
  if(Object.prototype.hasOwnProperty.call(noteFallback,k))return noteFallback[k];
  try{return localStorage.getItem(k)||'';}catch(e){return '';}
 };
 const putNote=(id,v)=>{
- noteFallback[LS+id]=v;                 // authoritative for this page's lifetime
- try{localStorage.setItem(LS+id,v);}catch(e){/* keeps the in-memory copy */}
+ const k=LS+noteId(id);
+ noteFallback[k]=v;                     // authoritative for this page's lifetime
+ try{localStorage.setItem(k,v);}catch(e){/* keeps the in-memory copy */}
 };
 const mark=id=>{const el=id==='fog'?fogEl:(byId[id]||{}).el;if(el)el.classList.toggle('hasnote',!!note(id).trim());};
 
@@ -769,7 +773,7 @@ function openNode(id){
   (n.rq?'<div class="rq">'+esc(n.rq)+'</div>':''):'';
  at.style.display=n.att?'':'none';
  const o=document.getElementById('s-opts');
- o.innerHTML=n.opts?'<div class="h">the three ways out</div>'+n.opts.map((v,i)=>
+ o.innerHTML=n.opts?'<div class="h">ways out</div>'+n.opts.map((v,i)=>
   '<div class="op'+(v.pick?' pick':'')+'"><div class="n">'+(i+1)+'</div><div class="b"><div class="l">'+
   esc(v.l)+'</div><div class="c">'+esc(v.c)+'</div></div>'+
   '<div class="eff"><div class="w">'+[1,2,3].map(j=>'<i'+(j<=(v.w||0)?' class="on"':'')+'></i>').join('')+
@@ -891,7 +895,7 @@ const markSession=()=>document.getElementById('artchip')
  .classList.toggle('hasnote',!!note('session').trim());
 markSession();
 document.getElementById('title').textContent=TOPIC;
-document.getElementById('artchip').textContent=SESSION.att.length+' artifacts';
+document.getElementById('artchip').textContent=SESSION.att.length+' artifact'+(SESSION.att.length===1?'':'s');
 document.getElementById('artchip').onclick=()=>openNode('session');
 box=layout();fit();
 function settle(){[].forEach.call(svg.querySelectorAll('path'),p=>{
