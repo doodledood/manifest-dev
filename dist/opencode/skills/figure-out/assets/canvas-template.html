@@ -209,7 +209,11 @@ button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px
  border-radius:2px;opacity:0;transition:opacity .25s;z-index:22;pointer-events:none}
 #sheet.on ~ #prog,#prog.on{opacity:.85}
 #x{position:absolute;top:12px;right:14px;width:40px;height:40px;display:grid;place-items:center;
- background:none;border:0;color:#6d7f99;font-size:17px;cursor:pointer;border-radius:9px;z-index:3;
+ background:none;border:0;color:#6d7f99;font-size:17px;cursor:pointer;border-radius:9px;
+ /* above the sticky station header, which is also z-index 3 and comes later in the DOM:
+    at equal z-index the later element wins, which covered the close button and stole
+    its taps — leaving a sliver hittable and no way off the sheet on a touch screen */
+ z-index:6;
  transition-property:color,background;transition-duration:.14s}
 #x:hover{color:#eef4fb;background:rgba(125,145,175,.12)}
 #sh{padding:0 30px 40px;display:flex;flex-direction:column;gap:0}
