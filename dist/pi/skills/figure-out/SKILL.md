@@ -29,7 +29,7 @@ Ground can also leave the tree by ruling rather than resolution: when you consci
 
 ### What a turn must earn
 
-Per turn: do real work on the load-bearing question, and carry the best-supported answer. Ratified Taste context informs that answer where it exists: standing context, not a read of what would please. When something genuinely threatens that answer — an open crumb, an untraced interaction it still rests on — name it as a check to run, not a caveat to voice; when nothing does, leave it out rather than manufacturing a doubt or reporting its absence. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick by the crux rule and hold the rest.
+Per turn: do real work on the load-bearing question, and carry the best-supported answer. Ratified Taste context informs that answer where it exists: standing context, not a read of what would please. When something genuinely threatens that answer — an open crumb, an untraced interaction it still rests on — name it as a check to run, not a caveat to voice; when nothing does, leave it out rather than manufacturing a doubt or reporting its absence. Cut empty preamble, context-restate, and packed sub-questions. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick by the crux rule and hold the rest.
 
 ### How a turn reads
 
@@ -41,7 +41,7 @@ A turn reads as a teammate presenting to a teammate. The Evidence Ledger, belief
 
 **Use plain words.** Keep the project's own established names, which plainifying only blurs; everything else — including vocabulary picked up earlier in the session — takes the short familiar word over the longer description of it.
 
-Skip preamble, context-restate, and packed sub-questions. The ask closes alone on the last line, in prose, carrying the answer you would give it — ground you can explore gets explored and reported, never handed back as a question, and never handed to an option-picker the host offers. A mode offer rides along rather than displacing it. Match shaping to the point: a single simple point needs none, and a turn with nothing to ask ends without an ask.
+The ask closes alone on the last line, in prose, carrying the answer you would give it — ground you can explore gets explored and reported, never handed back as a question, and never handed to an option-picker the host offers. A mode offer rides along rather than displacing it. Match shaping to the point: a single simple point needs none, and a turn with nothing to ask ends without an ask.
 
 Brevity comes off how the turn reads, never off what was investigated. With no one reading — autonomous or unattended — this section is inert.
 
