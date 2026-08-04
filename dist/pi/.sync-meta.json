@@ -1,11 +1,11 @@
 {
-  "source_commit": "0e021e55f083de3442e78e85eb54c6d7c3126981",
+  "source_commit": "0f408e0d78695f786e8eec5022bffd6aa2d65b89",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-03T16:15:43Z",
-  "notes": "Delta sync: touch-only canvas refresh uses guarded browser reload."
+  "synced_at": "2026-08-04T13:15:05Z",
+  "notes": "Full sync: previously recorded source_commit was unreachable in this clone, so the diff-first path fell back to a full sync per SKILL.md."
 }
