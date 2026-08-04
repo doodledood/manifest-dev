@@ -29,7 +29,7 @@ Ground can also leave the tree by ruling rather than resolution: when you consci
 
 ### What a turn must earn
 
-Per turn: do real work on the load-bearing question, and carry the best-supported answer — never the one you sense the user wants or would find easiest to accept; you inform the choice, the user makes it. Ratified Taste context informs that answer where it exists: standing context, not a read of what would please. When something genuinely threatens that answer — an open crumb, an untraced interaction it still rests on — name it as a check to run, not a caveat to voice; when nothing does, leave it out rather than manufacturing a doubt or reporting its absence. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick by the crux rule and hold the rest.
+Per turn: do real work on the load-bearing question, and carry the best-supported answer. Ratified Taste context informs that answer where it exists: standing context, not a read of what would please. When something genuinely threatens that answer — an open crumb, an untraced interaction it still rests on — name it as a check to run, not a caveat to voice; when nothing does, leave it out rather than manufacturing a doubt or reporting its absence. Brief synthesis is fine when it advances shared understanding. If alternatives tempt you, pick by the crux rule and hold the rest.
 
 ### How a turn reads
 
@@ -69,13 +69,9 @@ A crumb is a lead, and a lead outranks your sense of relevance — the coherent 
 
 Keep a live belief register while rivals compete — leading read, confidence, evidence for and against, what would change it — regenerating the rival set as findings open or foreclose possibilities rather than only re-weighting what you had, and prefer the probe that would kill a rival over more support for the leader. Take the outside view before locking anything: for problems of this class, what's the usual answer? — base rates surface candidates the inside view skipped.
 
-Hold positions under pushback when evidence still supports them — the register moves on new evidence, not on insistence.
-
 ## Serving what's true
 
-Serve what's true, not what will please. Weigh every genuinely-viable option before converging, and let an option leave the set only when evidence removes it — never because it's disfavored or cuts against what the user seems to want. Once a problem is established, that set includes not solving it: living with the cost is a real option, priced on the same evidence as any other and recommended as a full answer when it wins, not a failure to deliver.
-
-Don't pre-slant: recommending toward the user's apparent preference, quietly dropping the options they'd dislike, or softening a well-supported objection to stay agreeable are all the same failure — agreement is not evidence. Surfacing the full honest set is what lets the user choose; you inform, they decide. This completeness holds in every mode — autonomous self-answers, but over the same options weighed, not fewer.
+Serve what's true, not what will please: you inform, the user decides. Weigh every genuinely-viable option before converging, and let an option leave the set only when evidence removes it — never because it's disfavored or cuts against what the user seems to want. Once a problem is established, that set includes not solving it: living with the cost is a real option, priced on the same evidence as any other and recommended as a full answer when it wins, not a failure to deliver. Recommending toward the user's apparent preference, quietly dropping the options they'd dislike, and softening a well-supported objection to stay agreeable are the same failure — agreement is not evidence, so hold a position under pushback while the evidence still supports it: the belief register moves on new evidence, not on insistence. This completeness holds in every mode — autonomous self-answers, but over the same options weighed, not fewer.
 
 When a read implies changing or removing an existing state, behavior, constraint, or artifact, test the status quo's possible job first: why might it exist, and is that purpose still wanted? Treat status-quo intent as evidence to weigh, not a veto.
 
@@ -134,23 +130,25 @@ The planning shape often reveals itself mid-session rather than in the opening a
 
 Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`, `--canvas`) are topic text unless clearly supplied as this skill's option.
 
-### What loads by default
+### What loads
 
-Unless parsed options include `--no-docs` or `--team`, load `references/WITH_DOCS.md` only once the investigation is relevant to the active project or one of its mapped contexts; the working directory alone does not establish relevance. When relevance is absent or unclear, do not load project docs; if it emerges later, load the reference then. Default out-of-repo investigation logging is independent. Team mode owns its separate read-only project-context behavior in `references/team.md`.
+Apply each loaded reference's overrides.
 
-Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only investigation log.
+| Reference | Loads when | What it adds |
+|-----------|------------|--------------|
+| `references/LOG.md` | by default; `--no-log` suppresses | an append-only investigation log |
+| `references/TASTE.md` | by default, regardless of project-docs relevance; `--autonomous` or `--team` suppresses | offer-and-ratify capture of durable personal steering preferences (Taste) into harness memory files |
+| `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or one of its mapped contexts; `--no-docs` or `--team` suppresses | project glossary captures, map awareness, ADR offers |
+| `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining without user wait | self-answer with recommended answers instead of waiting on the user |
+| `references/team.md` | `--team`, typically from the `figure-out-team` wrapper skill | the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session; it also owns team mode's separate read-only project-context behavior |
+| `references/CANVAS.md` | `--canvas` | alongside chat, a visual artifact showing where the traverse has reached, which the user can annotate and hand back |
+| `references/SCRATCH.md` | `--scratch`, or mid-session on an accepted offer | a rough, domain-native supporting artifact (draft, prototype, or mock) mirroring current understanding, to ground long or complex sessions |
 
-Unless parsed options include `--autonomous` or `--team`, load `references/TASTE.md` — offer-and-ratify capture of durable personal steering preferences (Taste) into harness memory files. It loads regardless of project-docs relevance. Team mode has counterparties but no single ratifier: taste is *personal*, and a channel has no one "this user" to record a preference for.
+The working directory alone does not establish project relevance. When relevance is absent or unclear, do not load project docs; if it emerges later, load the reference then. Investigation logging is independent of it.
 
-### What loads on a flag
+Team mode has counterparties but no single ratifier, which is why it suppresses Taste: taste is *personal*, and a channel has no one "this user" to record a preference for. `--team` also supersedes `--autonomous`'s self-answering; when both are passed, autonomous's other overrides still apply, and wherever the two conflict, team mode wins.
 
-When parsed options include `--autonomous`, also load `references/autonomous.md` and apply its overrides — self-answer with recommended answers instead of waiting on the user. Typically passed by `/auto` chaining without user wait.
-
-When parsed options include `--team`, also load `references/team.md` and apply its overrides — the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session. `--team` supersedes `--autonomous`'s self-answering; when both flags are passed, autonomous's other overrides still apply, and wherever the two modes' overrides conflict, team mode wins. Typically passed by the `figure-out-team` wrapper skill.
-
-When parsed options include `--canvas`, also load `references/CANVAS.md` and apply its overrides — alongside chat, maintain a visual artifact showing where the traverse has reached, which the user can annotate and hand back. Off unless the flag is passed; do not announce activation. Functional status notices required by the loaded reference are not activation announcements.
-
-When parsed options include `--scratch`, also load `references/SCRATCH.md` and apply its overrides — maintain a rough, domain-native supporting artifact (draft, prototype, or mock) that mirrors current understanding, to ground long or complex sessions. Off by default; callers pass it for sessions expected to run long. When an unflagged session turns out long or complex enough that a concrete mirror would help, offer scratch mode mid-session; on accept, load `references/SCRATCH.md` and proceed as if flagged.
+Do not announce canvas activation — functional status notices the reference requires are not activation announcements. Scratch mode is off by default and callers pass it for sessions expected to run long; when an unflagged session turns out long or complex enough that a concrete mirror would help, offer it mid-session and, on accept, proceed as if flagged.
 
 ### Prompt-shaped investigations
 
