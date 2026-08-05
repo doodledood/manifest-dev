@@ -1,7 +1,7 @@
 ---
 name: do
 description: 'Manifest executor. Works through Deliverables verifying every Acceptance Criterion and Global Invariant. Use when executing a manifest, running a plan, implementing a defined task, or when the user asks to run, execute, implement, or ship a manifest-backed plan.'
-argument-hint: '<manifest-path> [--verification per-gate|consolidated|self] [--verifier-model <model>] [--no-log]'
+argument-hint: '<manifest-path> [--verification per-gate|consolidated|self] [--verifier-model <model>] [--exhaustive-verification] [--no-log]'
 user-invocable: true
 ---
 
@@ -21,9 +21,21 @@ Before calling `/done`, evaluate every Acceptance Criterion and Global Invariant
 
 Evaluate gates through the selected reference's execution envelope. Respect phase ordering under every mode: only the lowest phase containing any gate without a fresh PASS is eligible. Within it, evaluate every gate that is unverified, stale, FAIL, or retryable BLOCKED; keep fresh PASS gates settled. A FAIL remains eligible after repair, and a retryable BLOCKED remains eligible at its next check. Every gate in that phase needs fresh PASS before a later phase becomes eligible, and any non-PASS leaves later phases unverified. Within the eligible phase, run in parallel only where the selected reference provides parallel evaluator executions.
 
+### What each gate's kind decides
+
+Every Acceptance Criterion and Global Invariant is one of two kinds, read from its `verify.instructions`: a **Deterministic Gate**, whose verdict comes from a command or check returning the same outcome for the same artifact state, or a **Judgment Gate**, whose verdict is a model's judgment over an open finding space, where a fresh evaluation surfaces findings the previous one did not even on an unchanged subject. `/define` states the kind in the instructions it authors. Where it is unstated or unclear, treat the gate as a Judgment Gate — but instructions naming explicit commands always run those commands in full, whatever the gate is called, since a command's cost is small and its answer is the evidence.
+
+A **Deterministic Gate re-runs freely and fully** whenever it is eligible. Narrowing what it reads buys nothing: the same state returns the same verdict.
+
+A **Judgment Gate runs under the Ratchet.** Its first evaluation reads the full change. Every later evaluation judges two things only — whether the findings it last reported were repaired, and whether the delta since that evaluation introduced anything its criterion catches. The evaluator still reads as widely as it needs to understand what it is looking at, and reports only within that scope. Re-sampling the whole change every round is what makes a Judgment Gate terminate on a sample that happens to come up empty rather than on the work being done; closing the finding space after the first full look is what lets the run end on repaired findings instead of on a lucky draw. The forgone recall — what a later full look might have turned up on ground already judged once — is the deliberate cost, and `--exhaustive-verification` is where a run buys it back.
+
+The **whole-change quality sweep** — the advisory review dimensions, which range over everything the run touched — takes its one full look late, after every Deterministic Gate and defect-finder gate holds a fresh PASS; `/define` encodes that ordering as a later phase. Its findings bind like any gate's: repair them in the run rather than handing them to the user, and let the repairs re-verify through the gates whose subjects they touched — in full for Deterministic Gates, ratcheted for Judgment Gates, including the sweep itself when it comes round again. It never takes a second full look. A Judgment Gate scoped to a single Deliverable takes its one full look when that Deliverable is complete, and ratchets from there.
+
+`--exhaustive-verification` restores full re-sampling for every Judgment Gate, at the round cost the Ratchet exists to bound. When it is passed, load `references/exhaustive-verification.md` and apply it; otherwise do not load it. Like the verification mode, this is run-level policy: it is fixed for the run and never written into the Manifest.
+
 ### The gate ledger
 
-Each evaluated gate returns PASS, FAIL, or BLOCKED; track its latest verdict, evidence, freshness, verification mode, evaluator provenance, and explicit or inherited verifier model in the gate ledger. A substantive change to a gate's subject after a PASS marks that gate stale; re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Unverified, stale, FAIL, and retryable BLOCKED gates re-evaluate when eligible; a settled fresh PASS does not re-run.
+Each evaluated gate returns PASS, FAIL, or BLOCKED; track its latest verdict, evidence, freshness, verification mode, evaluator provenance, and explicit or inherited verifier model in the gate ledger. A Judgment Gate carries two more entries, since they are what its next evaluation is scoped against: the artifact state its last evaluation read — for repository work, the head SHA — and the findings it reported there. A substantive change to a gate's subject after a PASS marks that gate stale; re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Unverified, stale, FAIL, and retryable BLOCKED gates re-evaluate when eligible; a settled fresh PASS does not re-run.
 
 ### When the run is done
 
@@ -107,4 +119,4 @@ The contract should also carry the objective, constraints, stop/block condition,
 
 ## Input
 
-`<manifest-path>` — required; no args → halt with usage. Parse only top-level `--verification`, `--verifier-model`, and `--no-log` options as flags; quoted or topic mentions are text. Read the manifest fully before any execution. Multi-repo manifests (declare `Repos: [name: path, ...]` in Intent) — use absolute paths in tool calls when working in a non-cwd repo.
+`<manifest-path>` — required; no args → halt with usage. Parse only top-level `--verification`, `--verifier-model`, `--exhaustive-verification`, and `--no-log` options as flags; quoted or topic mentions are text. Read the manifest fully before any execution. Multi-repo manifests (declare `Repos: [name: path, ...]` in Intent) — use absolute paths in tool calls when working in a non-cwd repo.
