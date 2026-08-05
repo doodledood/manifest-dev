@@ -93,6 +93,14 @@ The gate-ledger record of who evaluated a gate under which mode and explicit or 
 **Verifier Execution**:
 An independent host execution context launched by `/do` to evaluate one gate or a consolidated set of gates.
 
+**Judgment Gate**:
+A gate whose verdict is a model's judgment over an open finding space, so a fresh evaluation can surface findings the previous one did not, even on an unchanged subject.
+_Avoid_: Mood-based gate, subjective gate.
+
+**Deterministic Gate**:
+A gate whose verdict comes from a command or check that returns the same outcome for the same artifact state — tests, builds, typechecks.
+_Avoid_: Binary gate.
+
 **Skill**:
 A reusable capability that extends an agent's behavior.
 
