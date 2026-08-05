@@ -40,12 +40,16 @@ verdict flipping — the signature of re-sampling rather than instability.
 
 Classify every gate and bind re-verification to the class.
 
-**Kind is a property of the gate, read from its `verify.instructions`.** `/define`
-states it when authoring; `/do` reads an unstated or unclear kind as Judgment, while
-instructions naming explicit commands always run those commands in full. No schema
-field is added: the verify block still carries `instructions` and optional `phase` and
-nothing else, so existing manifests gain the behavior without migration and older
-executors do not reject newer manifests.
+**Kind is a property of the gate, declared in `verify.kind`.** The field is required on
+every Acceptance Criterion and Global Invariant and takes `judgment` or `deterministic`.
+There is no default and nothing is inferred: a gate that omits it makes the Manifest
+invalid, and `/do` rejects it by the same route it rejects any other schema violation.
+A gate mixing a command check with a judgment declares `judgment`; instructions naming
+explicit commands always run those commands in full whatever the declared kind.
+
+*(This paragraph was amended after the decision first shipped — see **Amendment:
+kind becomes a required schema field** below, which records why the original
+kind-as-instructions-prose form was reversed.)*
 
 **Deterministic Gates re-run freely and fully.** Narrowing what they read buys nothing.
 
@@ -99,10 +103,10 @@ reader. Thresholds themselves do not move.
 - **Raise the advisory threshold from no MEDIUM+ to no HIGH+**: rejected. It lowers
   the quality floor to catch only egregious findings, and under the Ratchet the
   MEDIUM bar costs one repair round rather than an unbounded number.
-- **Add a `verify.kind` schema field**: rejected. It buys explicitness at the price of
-  a migration, a validation change in `/do`, and version skew between executors and
-  manifests, when the instructions text already carries the fact and inference covers
-  what it omits.
+- **Add a `verify.kind` schema field**: initially rejected — it buys explicitness at the
+  price of a migration, a validation change in `/do`, and version skew between executors
+  and manifests, when the instructions text already carries the fact and inference covers
+  what it omits. **This rejection was reversed; see the amendment below.**
 
 ## Consequences
 
@@ -112,7 +116,8 @@ reader. Thresholds themselves do not move.
   stops rising as executing models get stronger.
 - The advisory tier keeps binding: findings are still repaired in-run, so `/done`
   remains the trust boundary.
-- No manifest schema change, so existing manifests benefit immediately.
+- Kind is visible in the schema rather than buried in prose, so a reader can tell from
+  the Manifest alone how each gate will re-verify (as amended).
 - Ratchet state is durable in the execution log, so long or compacted runs resume
   without re-opening settled ground.
 - Advisory severity is auditable from a written finding, matching what the `Trigger`
@@ -141,3 +146,30 @@ reader. Thresholds themselves do not move.
   `20260606-figure-out-process-trust-vs-define-do-artifact-trust`,
   `20260728-move-verification-execution-policy-to-do`
 - Manifest: `~/.manifest-dev/manifests/manifest-20260805-200316.md`
+
+## Amendment: kind becomes a required schema field
+
+Accepted the same day, superseding this ADR's rejection of a `verify.kind` field and
+its no-schema-change consequence. The rest of the decision — the Ratchet itself, the
+late single-sample sweep, `--exhaustive-verification`, the ledger and log state, the
+advisory severity floor — is unchanged.
+
+**Why.** Kind decides a gate's entire re-verification behaviour, and as instructions
+prose it was invisible in the schema, inferred when unstated, and silently wrong in the
+one direction that costs most: a judgment gate read as deterministic re-runs "freely and
+fully", which for a judgment gate means re-sampling every round — precisely the churn
+this ADR exists to remove. Reading a Manifest, you could not tell what any gate would
+do. A load-bearing property should be declared, not guessed.
+
+**What changed.** `verify.kind` is required on every gate, taking `judgment` or
+`deterministic`, with no default and no inference. `/do` and `/define` validate it like
+any other schema requirement; `/define` emits it on every gate it authors, the ceiling
+included; the kind-as-prose guidance is removed rather than left as a second mechanism;
+and a mixed gate declares `judgment`.
+
+**Cost accepted.** Manifests written before the field are invalid rather than migrated,
+and an older `/do` rejects a Manifest carrying it. Both were weighed and accepted
+deliberately — no migration machinery is provided. Requiring the field also removes the
+safety net the old inference default supplied: previously an unmarked judgment gate
+still ratcheted, where now an unmarked gate is simply refused. That is the intended
+trade, refusal being preferable to a wrong guess.
