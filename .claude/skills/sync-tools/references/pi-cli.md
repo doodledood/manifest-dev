@@ -45,7 +45,7 @@ The Pi package manifest shape is:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "3.7.1",
+  "version": "3.10.0",
   "private": true,
   "type": "module",
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
@@ -75,7 +75,7 @@ Apply these substitutions:
 
 Generate package-local prompt templates under `dist/pi/prompts/`:
 
-- `do.md` → `/do <manifest-path> [--verification per-gate|consolidated|self] [--verifier-model <model>] [--no-log]` expands to `Use the do skill with: $ARGUMENTS`
+- `do.md` → `/do <manifest-path> [--verification per-gate|consolidated|self] [--verifier-model <model>] [--exhaustive-verification] [--no-log]` expands to `Use the do skill with: $ARGUMENTS`
 - `auto.md` → `/auto <task> [--verification per-gate|consolidated|self] [--verifier-model <model>]` expands to `Use the auto skill with: $ARGUMENTS`
 - `babysit-pr.md` → `/babysit-pr ... [--verification per-gate|consolidated|self] [--verifier-model <model>]` expands to `Use the babysit-pr skill with: $ARGUMENTS`
 

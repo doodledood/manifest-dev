@@ -33,6 +33,8 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 
 **Encoding:** each dimension gate's `verify.instructions` tells `/do`'s selected evaluator to **activate** the `manifest-dev:review-code` skill for the dimension at the row's threshold — e.g. *"Activate the manifest-dev:review-code skill with dimension=code-bugs and review the change. PASS only if no LOW-or-higher findings."* There is no `verify.agent` field. Do not tell the evaluator to spawn another agent; a nested spawn drops the gate's PASS/FAIL/BLOCKED contract. See `define/SKILL.md` → "Encoding specialized gates".
 
+**Kind and phasing:** every dimension gate is a **Judgment Gate** — a reviewer's verdict over an open finding space, not a command outcome — so each carries `kind: judgment` in its verify block, which is what tells `/do` how the gate re-verifies. The four defect-finding dimensions sit at the same phase as the project's mechanical gates below (typecheck, lint, test, format), which are Deterministic Gates. The nine advisory dimensions are the whole-change quality sweep: give them the next phase up, so their one full look lands on a change the mechanical and defect-finding gates have already settled and their findings are repaired once instead of re-sampled every round. E2e phasing below stacks on top of that.
+
 ## Project Gates
 
 CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.

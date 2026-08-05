@@ -9,7 +9,7 @@ manifest-dev provides manifest-driven workflows for AI coding agents. The core f
 ```
 
 - **/define** — Interactive manifest builder. Probes for requirements, quality gates, edge cases. Outputs a manifest with deliverables, acceptance criteria, and global invariants.
-- **/do** — Manifest executor. Implements deliverables, weighs process guidance, adapts approach when reality diverges, and evaluates every gate using its verbatim instructions. `consolidated` is the independent default; `per-gate` is an opt-in higher-rigor mode and `self` an opt-in lower-assurance one. Optional `--verifier-model` applies to independent modes. It aggregates PASS / FAIL / BLOCKED, fixes failures, and re-evaluates. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping.
+- **/do** — Manifest executor. Implements deliverables, weighs process guidance, adapts approach when reality diverges, and evaluates every gate using its verbatim instructions. `consolidated` is the independent default; `per-gate` is an opt-in higher-rigor mode and `self` an opt-in lower-assurance one. Optional `--verifier-model` applies to independent modes. It aggregates PASS / FAIL / BLOCKED, fixes failures, and re-evaluates — command-backed gates in full, judgment gates over their prior findings' repairs and the changed delta after one full look, with `--exhaustive-verification` restoring full re-sampling. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping.
 - **/done** — Plain-prose completion summary called by /do after every criterion has fresh PASS evidence under the selected mode.
 - **/escalate** — Structured blocker handoff for unrecoverable failures or pending external action.
 
@@ -26,8 +26,11 @@ Every verify block has the same shape. It describes what evidence to gather and 
 ```yaml
 verify:
   instructions: "..."  # required, topology-neutral evaluation procedure
+  kind: judgment        # required: judgment | deterministic — no default, never inferred
   phase: 1              # optional integer, default 1 (lower phases run first)
 ```
+
+`kind` declares what settles the gate. A `deterministic` gate re-runs in full every round; a `judgment` gate reads the whole change once and afterwards judges only its prior findings' repairs and the changed delta. A gate mixing a command with a judgment is `judgment`. A manifest whose gate omits `kind` is invalid.
 
 Each gate evaluation returns **PASS**, **FAIL**, or **BLOCKED**. BLOCKED routes via /escalate (external action pending — deploy, human approval).
 

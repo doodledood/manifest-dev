@@ -100,7 +100,7 @@ Do NOT report on:
 - Multiple indirection layers that obscure simple operations
 - Extensive configurability used with single configuration
 
-**Medium**: Complexity that adds friction but doesn't severely impede understanding
+**Medium**: Complexity that adds friction but doesn't severely impede understanding. Each of these earns Medium only where the finding names the simpler shape and what the current one costs — the branch a future change has to trace, the context a reader must hold, the extra edit sites a modification touches. Where the case is that it could read better, it is Low.
 
 - Moderate over-abstraction (could be simpler but isn't egregious)
 - A concrete local reframing would collapse repeated branches or helper indirection in one module

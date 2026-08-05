@@ -93,6 +93,18 @@ The gate-ledger record of who evaluated a gate under which mode and explicit or 
 **Verifier Execution**:
 An independent host execution context launched by `/do` to evaluate one gate or a consolidated set of gates.
 
+**Judgment Gate**:
+A gate whose verdict is a model's judgment over an open finding space, so a fresh evaluation can surface findings the previous one did not, even on an unchanged subject.
+_Avoid_: Mood-based gate, subjective gate.
+
+**Deterministic Gate**:
+A gate whose verdict comes from a command or check that returns the same outcome for the same artifact state — tests, builds, typechecks.
+_Avoid_: Binary gate.
+
+**Ratchet**:
+A re-verification discipline for Judgment Gates where the first evaluation reads the full change and every later evaluation judges only the prior findings' repairs and the changed delta, closing the finding space after the first full look.
+_Avoid_: Round cap, round limit.
+
 **Skill**:
 A reusable capability that extends an agent's behavior.
 
@@ -170,6 +182,9 @@ A periodic deliberation session with the Map as its topic — re-points the fron
 - `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, evaluates failed-or-unverified **Acceptance Criteria** and **Global Invariants** under the selected **Verification Mode**, repairs FAILs, and routes BLOCKED gates.
 - `per-gate` launches one **Verifier Execution** per eligible gate, `consolidated` launches one for the outstanding gate set, and `self` launches none.
 - Every gate evaluation returns PASS, FAIL, or BLOCKED evidence plus **Verification Provenance** to the **Do/Verify Loop**.
+- Every **Acceptance Criterion** and **Global Invariant** is either a **Judgment Gate** or a **Deterministic Gate**; the kind is a property of the gate itself, readable from its **Gate Evaluation Instructions**.
+- The **Ratchet** governs how the **Do/Verify Loop** re-verifies **Judgment Gates** after repairs; **Deterministic Gates** re-run freely.
+- **Verification Mode** and the **Ratchet** are run-level `/do` policy, never **Manifest** content; **Verification Provenance** records what a given run used.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.
 - A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.
