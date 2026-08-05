@@ -1,11 +1,11 @@
 {
-  "source_commit": "5e483b41e358886c400cf686e98548262b12fa2b",
+  "source_commit": "3cd9b51f0271e2e9442112491971f7974bcb7a73",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-05T20:29:22Z",
-  "notes": "Delta sync of the Ratchet change (do, define, review-code skills + new do/references/exhaustive-verification.md), applied from the working tree; prior recorded commit was unreachable in this shallow clone. Skill set unchanged, so README component tables and context files were not regenerated."
+  "synced_at": "2026-08-05T20:35:30Z",
+  "notes": "Delta sync of the Ratchet change applied from the working tree across several commits; skill set unchanged, so README component tables and context files were not regenerated."
 }
