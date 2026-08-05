@@ -22,10 +22,13 @@ verify:
     Branch: <branch-name>
 
     Steering: <baseline | user customization>
-  kind: deterministic
+
+    Re-read the pull request's full current state on every evaluation rather than
+    only what changed since the last one.
+  kind: judgment
 ```
 
-`kind: deterministic` because the verdict is a read of the pull request's current state — CI conclusions, thread resolution, mergeability — which returns the same answer for the same state and moves outside the run, so it must be re-read in full every round rather than delta-checked.
+`kind: judgment` because the gate mixes both halves and the mixed case declares judgment: CI conclusions and mergeability are deterministic reads, while whether the description still reflects the diff's intent is a judgment over an open finding space. The full-re-read line is the per-gate Ratchet suspension `/do` already provides, and this gate needs it — its subject is a live pull request that moves outside the run, so a delta-scoped re-check would miss state no commit of ours produced.
 
 The `instructions` field is the steering surface — baseline content is enough to start; the user adds nuances (custom labels, named approvers, cadence/cap overrides) via amendment when needed.
 
