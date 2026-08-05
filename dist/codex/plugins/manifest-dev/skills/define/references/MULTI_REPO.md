@@ -50,6 +50,7 @@ Worked example:
       Hit POST /auth/sso at the backend repo with a test SAML assertion
       (curl -X POST http://localhost:8080/auth/sso -d @/tmp/saml-test.xml).
       PASS if response is 200 with a session cookie set.
+    kind: deterministic
   ```
 ```
 

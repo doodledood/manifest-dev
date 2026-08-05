@@ -26,8 +26,11 @@ Every verify block has the same shape. It describes what evidence to gather and 
 ```yaml
 verify:
   instructions: "..."  # required, topology-neutral evaluation procedure
+  kind: judgment        # required: judgment | deterministic — no default, never inferred
   phase: 1              # optional integer, default 1 (lower phases run first)
 ```
+
+`kind` declares what settles the gate. A `deterministic` gate re-runs in full every round; a `judgment` gate reads the whole change once and afterwards judges only its prior findings' repairs and the changed delta. A gate mixing a command with a judgment is `judgment`. A manifest whose gate omits `kind` is invalid.
 
 Each gate evaluation returns **PASS**, **FAIL**, or **BLOCKED**. BLOCKED routes via /escalate (external action pending — deploy, human approval).
 

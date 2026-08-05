@@ -92,6 +92,7 @@ Authors put whatever an evaluator needs directly into `instructions` — run a b
   ```yaml
   verify:
     instructions: "Run: grep -r 'password.*=' src/ | grep -v hash | grep -v test. PASS only if there are no matches."
+    kind: deterministic
   ```
 
 ## 4. Process Guidance
@@ -105,11 +106,13 @@ Authors put whatever an evaluator needs directly into `instructions` — run a b
   ```yaml
   verify:
     instructions: "Exercise POST /login with valid credentials. PASS only if it returns a valid JWT."
+    kind: deterministic
   ```
 - [AC-1.2] Invalid credentials return 401, not 500
   ```yaml
   verify:
     instructions: "Activate the manifest-dev:review-code skill with dimension=code-bugs and review the auth routes. PASS only if no LOW-or-higher findings (e.g. auth failures returning 500 instead of 401)."
+    kind: judgment
   ```
 ````
 

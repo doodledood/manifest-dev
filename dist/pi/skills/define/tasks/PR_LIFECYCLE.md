@@ -22,7 +22,10 @@ verify:
     Branch: <branch-name>
 
     Steering: <baseline | user customization>
+  kind: deterministic
 ```
+
+`kind: deterministic` because the verdict is a read of the pull request's current state — CI conclusions, thread resolution, mergeability — which returns the same answer for the same state and moves outside the run, so it must be re-read in full every round rather than delta-checked.
 
 The `instructions` field is the steering surface — baseline content is enough to start; the user adds nuances (custom labels, named approvers, cadence/cap overrides) via amendment when needed.
 

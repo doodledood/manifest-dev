@@ -91,7 +91,7 @@ The aliases are convenience templates. The skills own behavior.
 
 1. The main agent reads the Manifest and treats it as the acceptance contract.
 2. It implements Deliverables.
-3. It validates every Acceptance Criterion and Global Invariant has required `verify.instructions` plus optional integer `phase`.
+3. It validates every Acceptance Criterion and Global Invariant has required `verify.instructions`, a required `verify.kind` (`judgment` or `deterministic`, never inferred), plus optional integer `phase`.
 4. It fixes the run policy at launch: `consolidated` (default, one independent verifier for the outstanding gate set), `per-gate` (one fresh independent verifier per gate, for maximum rigor), or `self` (executor evaluation). Optional `--verifier-model` applies only to the independent modes.
 5. It preserves each instruction block verbatim, records a separate verdict and evaluator provenance per gate, repairs FAILs, and re-evaluates stale gates.
 6. It reports genuine BLOCKED gates with the missing external input or state.
