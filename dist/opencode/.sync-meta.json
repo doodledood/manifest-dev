@@ -1,10 +1,10 @@
 {
-  "source_commit": "3cd9b51f0271e2e9442112491971f7974bcb7a73",
+  "source_commit": "c0d13bd8f2d9a52c9d16d2e052cac19f79b906ab",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-05T20:35:30Z",
+  "synced_at": "2026-08-05T21:12:00Z",
   "notes": "Delta sync of the Ratchet change applied from the working tree across several commits; skill set unchanged, so README component tables and context files were not regenerated."
 }
