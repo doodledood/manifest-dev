@@ -5,6 +5,6 @@
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-05T20:19:24Z",
+  "synced_at": "2026-08-05T20:29:22Z",
   "notes": "Delta sync of the Ratchet change (do, define, review-code skills + new do/references/exhaustive-verification.md), applied from the working tree; prior recorded commit was unreachable in this shallow clone. Skill set unchanged, so README component tables and context files were not regenerated."
 }

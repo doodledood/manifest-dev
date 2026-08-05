@@ -79,7 +79,7 @@ Pi exposes installed skills as `/skill:<name>` commands when skill commands are 
 
 The package also ships prompt-template aliases for the common entrypoints:
 
-- `/do <manifest-path> [--verification per-gate|consolidated|self] [--verifier-model <model>] [--no-log]` expands to the `do` skill.
+- `/do <manifest-path> [--verification per-gate|consolidated|self] [--verifier-model <model>] [--exhaustive-verification] [--no-log]` expands to the `do` skill.
 - `/auto <task> [--verification per-gate|consolidated|self] [--verifier-model <model>]` expands to the `auto` skill.
 - `/babysit-pr <github-pr-url> [--manifest <path>] [--verification per-gate|consolidated|self] [--verifier-model <model>] [--ci] [--no-log]` expands to the `babysit-pr` skill.
 
