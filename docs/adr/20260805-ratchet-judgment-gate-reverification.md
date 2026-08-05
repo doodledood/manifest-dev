@@ -132,9 +132,12 @@ reader. Thresholds themselves do not move.
 - Correct scoping now depends on ledger and log state surviving the run. A log that
   loses a gate's last-read artifact state costs that gate a fresh full look — the old
   behavior, not a correctness failure, but the reason the log requirement is explicit.
-- Kind inference can misread an oddly worded deterministic gate as a Judgment Gate.
-  The commands-always-run rule bounds the damage to narrated scope rather than skipped
-  evidence.
+- Misclassification risk moves from the reader to the author (as amended). Nothing is
+  inferred any more, so a gate is exactly the kind it declares — and a mixed gate
+  labelled `deterministic` puts its judgment half back on a full re-sample every round,
+  which is the churn this decision exists to remove. The commands-always-run rule does
+  not reach that case, since it governs whether commands run rather than how widely the
+  gate re-reads. `/define` names it as the error to watch for, but no check detects it.
 - Requiring a stated cost will drop some true advisory Mediums whose reviewer sensed
   the problem but could not name what it costs. That is the same trade the `Trigger`
   field made, with the same honest loss.
