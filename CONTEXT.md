@@ -101,6 +101,10 @@ _Avoid_: Mood-based gate, subjective gate.
 A gate whose verdict comes from a command or check that returns the same outcome for the same artifact state — tests, builds, typechecks.
 _Avoid_: Binary gate.
 
+**Ratchet**:
+A re-verification discipline for Judgment Gates where the first evaluation reads the full change and every later evaluation judges only the prior findings' repairs and the changed delta, closing the finding space after the first full look.
+_Avoid_: Round cap, round limit.
+
 **Skill**:
 A reusable capability that extends an agent's behavior.
 
