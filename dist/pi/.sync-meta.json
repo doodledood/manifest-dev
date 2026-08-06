@@ -1,11 +1,11 @@
 {
-  "source_commit": "6a64566781bd793c7927e197dbf72b9b23728a82",
+  "source_commit": "0e200b3bc550465b2bf77af27fe75dc5cab2805e",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-06T20:47:18Z",
-  "notes": "Delta sync of the decouple-exit timing refinement (figure-out SKILL.md) and 6.0.1 version mirrors."
+  "synced_at": "2026-08-06T21:20:24Z",
+  "notes": "Delta sync: self-driving-loop refinement (figure-out SKILL.md, TICKET_CONVENTION.md) and 6.0.2 version mirrors."
 }

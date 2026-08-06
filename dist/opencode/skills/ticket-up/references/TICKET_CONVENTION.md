@@ -32,7 +32,7 @@ A question ticket carries Title, the question itself, why it matters, what's alr
 - **Status**: `open` → `done`. Done tickets roll off — close them in the venue; history is the archive.
 - **Claiming**: before working a ticket, mark it claimed (a `Claimed by:` line, an assignee, the venue's equivalent). Open and unclaimed means takeable; claimed means not.
 - **Ready**: a ticket is ready when it is open, unclaimed, and every ticket it depends on is done. Blocked is derived from unmet dependencies, never stored as a status.
-- **Closing**: record the outcome on the ticket (the work's landing place, or the question's answer), mark it done, and check whether closing it made other tickets ready or spawned new ones.
+- **Closing**: record the outcome on the ticket (the work's landing place, or the question's answer), mark it done, and check what the close changed: tickets it made ready, and outcomes that need interpreting. An outcome that needs judging while no existing ticket depends on this one spawns that question ticket as part of the close — the next thinking step stays reachable through the store, never through someone's initiative.
 
 ## Priority
 
