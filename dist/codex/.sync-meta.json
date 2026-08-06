@@ -1,10 +1,10 @@
 {
-  "source_commit": "75ef3648e49a6460c244c83cee5f4eec9864e55d",
+  "source_commit": "6a64566781bd793c7927e197dbf72b9b23728a82",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-06T18:36:02Z",
-  "notes": "Verified delta sync: prior recorded SHA unreachable after squash-merge, so dist was verified byte-equal to transform(pre-change sources) before applying the ticket-up/next-ticket addition and decision-map retirement; skill set changed, so READMEs/context files/namespace metadata regenerated and plugin versions mirrored (6.0.0)."
+  "synced_at": "2026-08-06T20:47:18Z",
+  "notes": "Delta sync of the decouple-exit timing refinement (figure-out SKILL.md) and 6.0.1 version mirrors."
 }
