@@ -17,6 +17,8 @@ Supporting workflows:
 - **/auto** — End-to-end autonomous: /figure-out → /define → /do in one command. It forwards `/do`'s verification options without putting them in the Manifest. Its unattended parent goal should treat full autonomous Read anatomy as a checkpoint before manifest creation when figure-out runs, then use manifest written plus /do gate-ledger PASS as the terminal condition. Supports `--babysit <pr-url>` for tending an existing PR end-to-end.
 - **/figure-out** — Truth-convergent thinking partner. /define auto-invokes it when the problem space is foggy.
 - **/figure-out-team** — /figure-out's discipline applied to a multi-party async Slack conversation.
+- **/ticket-up** — Splits a finished manifest into one self-sufficient, plain-prose ticket per deliverable plus explicit dependency edges, so teammates, agents, or later sessions can pick the work up in parallel — with or without manifest-dev. Files store by default; GitHub Issues out of the box; custom trackers from details you provide once.
+- **/next-ticket** — Reads a ticket store and names the single best ready ticket to work on now, with the reason.
 - **Tools skills** — /babysit-pr, /handoff, /prompt-engineering, /review-pr, /teach-me, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
 
 ## Manifest Schema — Evaluation Instructions

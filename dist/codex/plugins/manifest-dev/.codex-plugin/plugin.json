@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "5.8.0",
+  "version": "6.0.4",
   "description": "Manifest-driven workflows for Codex: /define writes topology-neutral gate instructions; /do executes them under per-gate, consolidated, or self verification. Includes the review-code skill.",
   "skills": "./skills/",
   "keywords": [
