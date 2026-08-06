@@ -1,10 +1,10 @@
 {
-  "source_commit": "c6ff29ce053fd8fb491bc73a46298272f018886a",
+  "source_commit": "94710854b740be151ac2d651486632bc9f5dde12",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-06T21:33:53Z",
-  "notes": "Delta sync: successor-wiring refinement (figure-out + ticket-up SKILL.md) and 6.0.3 version mirrors."
+  "synced_at": "2026-08-06T21:51:14Z",
+  "notes": "Delta sync: front-file + roll-off refinement (ticket-up SKILL/convention/GitHub venue, next-ticket) and 6.0.4 version mirrors."
 }

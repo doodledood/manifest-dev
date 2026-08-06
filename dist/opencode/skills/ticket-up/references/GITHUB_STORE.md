@@ -6,12 +6,13 @@ Renders the ticket convention onto GitHub Issues. Use whatever GitHub access the
 
 | Convention | GitHub realization |
 |---|---|
-| Store | The repository's issues, grouped under one **tracking issue** per effort whose body lists the effort's tickets with their edges |
+| Store | The repository's issues, grouped under one **tracking issue** per effort |
+| Front file | The tracking issue's body: destination, priority override, context pointers — plus its one piece of native mechanics, a list of the **open** tickets with their edges in priority order; a closed ticket's line is deleted at close, so the list never accumulates history |
 | Ticket | An issue; the full ticket anatomy is the issue body |
 | Kind | Labels `shaped` / `question` (create them if absent) |
 | Depends on | A `Depends on: #N` line in the issue body; additionally sub-issue or native blocked-by relations where the repo has them — the body line is canonical, relations are convenience |
 | Claimed | Assignee; unassigned and open means takeable |
-| Done / roll-off | Close the issue with the outcome as a closing comment; strike it through in the tracking issue |
+| Done / roll-off | Close the issue with the outcome as a closing comment; delete its line from the tracking issue's open list |
 | Priority | The tracking issue lists tickets in priority order (the convention's default rule, or the store's stated override) |
 | Ready | Open, unassigned, and every `Depends on:` issue closed |
 | Tidy pass | Re-groom the tracking issue: close stragglers, unassign stale claims, reorder |

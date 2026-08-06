@@ -27,12 +27,23 @@ A question ticket carries Title, the question itself, why it matters, what's alr
 
 **No machinery.** A ticket never contains tool-specific vocabulary a stranger wouldn't know: no verification YAML, no gate codes, no references to the manifest or workflow that produced it. If interpreting a ticket requires installing something, the ticket is wrong.
 
+## The front file
+
+Each effort's store carries one small front file (in a file store, a README beside the tickets; in a tracker, the tracking item's body) holding only content that doesn't change as tickets close:
+
+- **Destination** — what reaching the end of this effort looks like, in a line or two. Pickers orient to it; "impact" in the priority rule is measured against it.
+- **Priority rule override**, when the effort ranks differently than the default below.
+- **Context pointers** — the key decision records, and where the effort's reads or logs live, so a cold picker gets effort-level orientation before opening a ticket.
+- **Store config** — venue details, when not already in a store config file.
+
+Never put derivable state here: no ticket lists, statuses, or ready/next — anything a close would stale belongs to the tickets themselves, where it can't rot. (A tracker's grouping item may carry an open-tickets list as its native mechanics; done entries drop off at close.)
+
 ## Lifecycle
 
-- **Status**: `open` → `done`. Done tickets roll off — close them in the venue; history is the archive.
+- **Status**: `open` → `done`. Done tickets roll off **by location**: in a file store, closing moves the ticket into a `done/` subfolder beside the open ones; in a tracker, closing the item removes it from open queries. Reading the open set never scales with closed history — the archive is the `done/` folder, the tracker's closed items, and git.
 - **Claiming**: before working a ticket, mark it claimed (a `Claimed by:` line, an assignee, the venue's equivalent). Open and unclaimed means takeable; claimed means not.
 - **Ready**: a ticket is ready when it is open, unclaimed, and every ticket it depends on is done. Blocked is derived from unmet dependencies, never stored as a status.
-- **Closing**: record the outcome on the ticket (the work's landing place, or the question's answer), mark it done, and check what the close changed: tickets it made ready, and outcomes that need interpreting. An outcome that needs judging while no existing ticket depends on this one spawns that question ticket as part of the close — the next thinking step stays reachable through the store, never through someone's initiative.
+- **Closing**: record the outcome on the ticket (the work's landing place, or the question's answer), mark it done and roll it off (move it to `done/`, or close the item), and check what the close changed: tickets it made ready, and outcomes that need interpreting. An outcome that needs judging while no existing ticket depends on this one spawns that question ticket as part of the close — the next thinking step stays reachable through the store, never through someone's initiative.
 
 ## Priority
 

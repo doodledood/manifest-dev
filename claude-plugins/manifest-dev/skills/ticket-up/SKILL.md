@@ -35,7 +35,7 @@ The manifest's Deliverable order is uncertainty-based — least-proven first so 
 
 ## Where the tickets go
 
-**Files (default).** No configuration: write one markdown file per ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md` at the project root (create it), NN ordered by a sensible starting sequence. Each file opens with `Kind:`, `Status:`, `Depends on:`, `Claimed by:` lines, then the anatomy. Confirm the effort slug with the user when it isn't obvious from the manifest title.
+**Files (default).** No configuration: write one markdown file per ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md` at the project root (create it), NN ordered by a sensible starting sequence. Each file opens with `Kind:`, `Status:`, `Depends on:`, `Claimed by:` lines, then the anatomy. Write the effort's front file (`tickets/<effort-slug>/README.md`) alongside, per the convention: destination distilled from the manifest's Problem and Goal, any priority override, context pointers — and no ticket list or status, ever. Closed tickets get moved to `tickets/<effort-slug>/done/`. Confirm the effort slug with the user when it isn't obvious from the manifest title.
 
 **GitHub Issues.** When the user chooses GitHub (or the project's store config already names it), read `references/GITHUB_STORE.md` and follow its mapping.
 
