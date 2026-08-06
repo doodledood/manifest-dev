@@ -45,6 +45,8 @@ A store config, once written, also answers venue selection for future runs — c
 
 ## After emitting
 
+If the manifest's read named a successor question ticket — "the verdicts are in: what changed, what moves next?" — mint it now, with edges to the emitted tickets it judges: their IDs exist only at this point, which is why the read names it and this skill wires it. Offer the same when any emitted ticket's definition of done is a verdict rather than a shipped artifact (an experiment, a test, a probe): a verdict needs a judge, and the judge is a ticket, not someone's initiative.
+
 Present the ticket list with its edges — a short table: ID, title, kind, depends-on — and where they landed. Question tickets (from figure-out handoffs or written by hand) live in the same store under the same convention; this skill emits shaped ones. The `next-ticket` skill reads any store following the convention.
 
 ## Gotchas

@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "6.0.2",
+  "version": "6.0.3",
   "description": "Manifest-driven development: /figure-out reaches shared understanding, /define writes Deliverables with Acceptance Criteria and Global Invariants, and /do implements them. Verify blocks carry topology-neutral instructions, a required gate kind (judgment or deterministic, never inferred), plus optional phase; execution policy is selected at /do launch as consolidated (independent default), per-gate, or self, with an optional verifier model for independent modes. Every mode keeps a provenance-rich gate ledger and the run never downgrades itself. Re-verification follows each gate's declared kind: command-backed gates re-run in full, while judgment gates take one full look and then judge only prior findings' repairs and the changed delta, with --exhaustive-verification restoring full re-sampling. A default-on execution log preserves deviations and dead-end memory; --no-log opts out. For unattended runs, use a host-native goal-setting backstop whose completion contract requires fresh PASS evidence for every gate under the selected mode. /auto chains the full flow, and /figure-out-team extends deliberation to multi-party Slack sessions. /ticket-up splits a finished manifest into self-sufficient, implementer-agnostic tickets with dependency edges — files in-repo by default, GitHub Issues out of the box, custom trackers pluggable — and /next-ticket pulls the top ready ticket back out with its reason.",
   "keywords": [
     "manifest",
