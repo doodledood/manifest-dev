@@ -1,11 +1,11 @@
 {
-  "source_commit": "8b38574b75617b0407d5527ea78f52cb66e612a4",
+  "source_commit": "75ef3648e49a6460c244c83cee5f4eec9864e55d",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-05T21:31:04Z",
-  "notes": "Delta sync of the Ratchet change applied from the working tree across several commits; skill set unchanged, so README component tables and context files were not regenerated."
+  "synced_at": "2026-08-06T18:36:02Z",
+  "notes": "Verified delta sync: prior recorded SHA unreachable after squash-merge, so dist was verified byte-equal to transform(pre-change sources) before applying the ticket-up/next-ticket addition and decision-map retirement; skill set changed, so READMEs/context files/namespace metadata regenerated and plugin versions mirrored (6.0.0)."
 }
