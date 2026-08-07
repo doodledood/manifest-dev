@@ -81,8 +81,9 @@ A host-provided goal-setting, continuation, or completion-check capability that 
 **Phase Checkpoint**:
 A required intermediate workflow condition that must be satisfied before moving to the next phase, but is not the terminal success condition unless that phase's artifact is the deliverable.
 
-**Gate Evaluation Instructions**:
-The topology-neutral procedure inside `verify.instructions` that says what evidence to gather and what PASS means, without choosing who evaluates it or which model runs it.
+**Gate Text**:
+The single text a gate is — a title, a body, and a why — read by the reviewer and the evaluator alike. The body says what done means, what evidence settles it, and where the check *is* the definition, how to run it; the title summarizes it and the why is context. Neither the title nor the why adds a requirement the body does not state.
+_Avoid_: Gate evaluation instructions, verify prompt, criterion description.
 
 **Verification Mode**:
 The run-level `/do` policy that selects `per-gate`, `consolidated`, or `self` evaluation without changing the Manifest.
@@ -179,11 +180,11 @@ _Avoid_: Breakdown, sharding.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
 - **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.
-- Every **Acceptance Criterion** and **Global Invariant** carries **Gate Evaluation Instructions** in the **Manifest**.
+- Every **Acceptance Criterion** and **Global Invariant** is one **Gate Text** in the **Manifest**; `/do` points an evaluator at it by ID rather than copying it into a prompt.
 - `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, evaluates failed-or-unverified **Acceptance Criteria** and **Global Invariants** under the selected **Verification Mode**, repairs FAILs, and routes BLOCKED gates.
 - `per-gate` launches one **Verifier Execution** per eligible gate, `consolidated` launches one for the outstanding gate set, and `self` launches none.
 - Every gate evaluation returns PASS, FAIL, or BLOCKED evidence plus **Verification Provenance** to the **Do/Verify Loop**.
-- Every **Acceptance Criterion** and **Global Invariant** is either a **Judgment Gate** or a **Deterministic Gate**; the kind is a property of the gate itself, readable from its **Gate Evaluation Instructions**.
+- Every **Acceptance Criterion** and **Global Invariant** is either a **Judgment Gate** or a **Deterministic Gate**; the kind is a property of the gate itself, declared in its **Gate Text**.
 - The **Ratchet** governs how the **Do/Verify Loop** re-verifies **Judgment Gates** after repairs; **Deterministic Gates** re-run freely.
 - **Verification Mode** and the **Ratchet** are run-level `/do` policy, never **Manifest** content; **Verification Provenance** records what a given run used.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
