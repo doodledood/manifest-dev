@@ -63,7 +63,7 @@ The test reaches means, never ends. Where a mechanism was deliberately chosen as
 
 Keep it a conformance question, never a necessity one. It asks whether the change exceeded what was agreed, taking the manifest's premise as given exactly as every other gate does — it never asks whether the work was worth doing. That second question is premise-questioning: circular for a gate to ask, human-answerable rather than artifact-answerable, and owned by review rather than by the manifest. The distinction is what keeps this gate legal, so hold it in the wording: the other criteria ask whether the change *reaches* what was agreed, and this one asks whether it *stops there*. Nothing in its text may license the evaluator to judge whether the work was necessary, motivated, or worthwhile.
 
-Set `phase: 1`, so it runs every repair round beside the other gates. Within a round the gates re-verify anyway, so excess caught there is removed alongside that round's other fixes; excess caught once everything is green forces a fresh round against a diff where the extra work has entangled with passing gates. Running every round is also what makes the limit legible to the next round rather than to the last one.
+Leave it at the default phase, so it runs every repair round beside the other gates. Within a round the gates re-verify anyway, so excess caught there is removed alongside that round's other fixes; excess caught once everything is green forces a fresh round against a diff where the extra work has entangled with passing gates. Running every round is also what makes the limit legible to the next round rather than to the last one.
 
 **The ceiling is the one gate that reads the whole Manifest**, because the Manifest is its subject. Every other gate is judged on its own text alone; this one is told to read the file it is pointed at and to weigh its sections differently, so its text says which section does what rather than carrying a copy of any of them.
 
@@ -105,7 +105,7 @@ leave small, incidental, or imperfect changes inside an artifact already in scop
 Why: every other gate states a floor, so a contract bounded on one side only gives an executor
 disposed to thoroughness nothing to read as a limit.
 
-Judgment gate, phase 1.
+Judgment gate.
 ````
 
 **Gate text discipline.** A gate's body is a prompt the moment an evaluator follows it, and it is also the line a reviewer reads — so write it to the evaluator's precision, not to the comfort of prose. That is the failure this single-text shape is most exposed to: a body drifting into readable-but-vague description states an aspiration where the old evaluator-facing copy stated a check, and gates come out worse than they were. Before writing gate bodies, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. State the goal, the evidence to inspect, and the threshold that separates PASS from FAIL. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
@@ -182,7 +182,7 @@ put in front of so its criteria judge whether it works rather than whether it ex
 
 Why: [context, binds nothing]
 
-[Judgment | Deterministic] gate[, phase N].
+[Judgment | Deterministic] gate[, phase N — state only when higher than 1].
 ````
 
 `kind` and `phase` are the only structured metadata, and the closing line carries both: the kind is required and never inferred, while the phase is stated only when it is higher than the default of `1`. IDs are the heading's own — stable, and independent of position.

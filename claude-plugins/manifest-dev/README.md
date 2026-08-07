@@ -53,7 +53,7 @@ Done when /health returns 200 on all 50 concurrent requests, with no 5xx.
 
 Why: the load balancer drops a node after one failed check.
 
-Deterministic gate, phase 1.
+Deterministic gate.
 ```
 
 The title summarizes the body's headline requirement and never adds to it; a requirement living
