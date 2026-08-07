@@ -43,7 +43,7 @@ You plan a feature with the agent. It implements. The code looks reasonable. The
 
 ## Manifest Schema — One Gate, One Text
 
-Every Acceptance Criterion and Global Invariant is a single text: a title, a body, and a why.
+Every Acceptance Criterion and Global Invariant is a single text: a title, a body, and — where it earns its place — a why.
 The text a reviewer reads is the text that binds — there is no separate evaluator-facing copy.
 
 ```markdown
@@ -57,7 +57,8 @@ Deterministic gate.
 ```
 
 The title summarizes the body's headline requirement and never adds to it; a requirement living
-only in the title is a defect. The why is context and binds nothing. The body says what done
+only in the title is a defect. The why is optional and binds nothing — written where the body's
+purpose would not be obvious cold, omitted where the body already carries it. The body says what done
 means — and where the procedure that settles a criterion *is* what done means, that procedure
 belongs in the body. Where a skill is the definition of done, the body names the skill and its
 dimension and stops there: the skill owns its own threshold, so a bar copied into a gate is a

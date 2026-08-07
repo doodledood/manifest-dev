@@ -82,7 +82,7 @@ A host-provided goal-setting, continuation, or completion-check capability that 
 A required intermediate workflow condition that must be satisfied before moving to the next phase, but is not the terminal success condition unless that phase's artifact is the deliverable.
 
 **Gate Text**:
-The single text a gate is — a title, a body, and a why — read by the reviewer and the evaluator alike. The body says what done means, what evidence settles it, and where the check *is* the definition, how to run it; the title summarizes it and the why is context. Neither the title nor the why adds a requirement the body does not state.
+The single text a gate is — a title, a body, and an optional why — read by the reviewer and the evaluator alike. The body says what done means, what evidence settles it, any non-obvious context the evaluator needs, and where the check *is* the definition, how to run it; the title summarizes it and the why is context. Neither the title nor the why adds a requirement the body does not state.
 _Avoid_: Gate evaluation instructions, verify prompt, criterion description.
 
 **Verification Mode**:

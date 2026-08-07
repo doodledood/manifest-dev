@@ -23,7 +23,7 @@ Supporting workflows:
 
 ## Manifest Schema — Gate Text
 
-Every Acceptance Criterion and Global Invariant is **one text**: a title, a body, and a why. The
+Every Acceptance Criterion and Global Invariant is **one text**: a title, a body, and an optional why. The
 text a reviewer reads is the text that binds — there is no separate evaluator-facing copy, and no
 field selecting execution topology or model.
 
@@ -37,7 +37,7 @@ Why: the load balancer drops a node after one failed check.
 Deterministic gate.
 ```
 
-The title summarizes the body's headline requirement and never adds to it; the why is context and
+The title summarizes the body's headline requirement and never adds to it; the why is optional and
 binds nothing. Where the procedure that settles a criterion *is* what done means, it belongs in the
 body. `kind` and `phase` are the only structured metadata, carried on the closing line — phase
 stated only when higher than the default of 1.

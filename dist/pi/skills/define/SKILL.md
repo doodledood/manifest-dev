@@ -51,7 +51,7 @@ Identify task type and load the matching file(s) from `tasks/` — their Quality
 
 ## Writing the gates
 
-**One gate, one text.** A gate is a **title**, a **body**, and a **why**. There is no second, evaluator-facing copy: the text a reviewer reads is the text that binds. The title summarizes the body's headline requirement and never adds to it — a requirement existing only in the title is a defect, not a shorthand. The body states what done means. The why is context and binds nothing, under that same non-additive rule. `kind` and `phase` are the only structured metadata a gate carries.
+**One gate, one text.** A gate is a **title**, a **body**, and — where it earns its place — a **why**. There is no second, evaluator-facing copy: the text a reviewer reads is the text that binds. The title summarizes the body's headline requirement and never adds to it — a requirement existing only in the title is a defect, not a shorthand. The body states what done means. The why is optional and binds nothing, under that same non-additive rule: write it where the body's purpose would not be obvious to someone meeting this gate cold, and omit it where the body already says why it matters. `kind` and `phase` are the only structured metadata a gate carries.
 
 Write the body so the check follows from the definition rather than sitting beside it. Where the procedure that settles a criterion *is* what done means — "done when a request to /health returns 200" — that procedure belongs in the body; where a skill is the definition of done, the body names that skill and its dimension. What does not belong is anything true of every gate in the run: `/do` supplies the comparison evidence is read against and the PASS/FAIL/BLOCKED contract every evaluation returns, so a gate restating either is writing another copy of a rule that already has one home.
 
@@ -108,7 +108,7 @@ disposed to thoroughness nothing to read as a limit.
 Judgment gate.
 ````
 
-**Gate text discipline.** A gate's body is a prompt the moment an evaluator follows it, and it is also the line a reviewer reads — so write it to the evaluator's precision, not to the comfort of prose. That is the failure this single-text shape is most exposed to: a body drifting into readable-but-vague description states an aspiration where the old evaluator-facing copy stated a check, and gates come out worse than they were. Before writing gate bodies, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. State the goal, the evidence to inspect, and the threshold that separates PASS from FAIL. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
+**Gate text discipline.** A gate's body is a prompt the moment an evaluator follows it, and it is also the line a reviewer reads — so write it to the evaluator's precision, not to the comfort of prose. That is the failure this single-text shape is most exposed to: a body drifting into readable-but-vague description states an aspiration where the old evaluator-facing copy stated a check, and gates come out worse than they were. Before writing gate bodies, invoke the prompt-engineering skill if it is available; if not, apply its core discipline inline. State the goal, the evidence to inspect, the threshold that separates PASS from FAIL, and any non-obvious context the evaluator needs to judge correctly — a known false-positive shape, a distinction two readings would blur, the one place a defect of this kind actually hides. That context belongs in the **body**, not the why: it tells the evaluator what to inspect, which is part of what done means, where the why only explains why the criterion is worth having. An evaluator that has to infer it will infer it differently each time. Do not run a separate prompt-engineering interview — /define owns the manifest interview.
 
 Name the evidence precisely enough that two evaluations read the same thing. `/do` supplies the run-wide comparison, so a gate names its evidence in the terms that gate needs — which artifact, which surface, which commits — and only states a comparison of its own where it genuinely needs a different subject than the run-wide default, such as reading every commit on the branch rather than the net diff, because a gate reading only the net diff cannot see what appeared and was removed inside the branch.
 
@@ -120,7 +120,7 @@ Name the evidence precisely enough that two evaluations read the same thing. `/d
 #### AC-1.1 — <title stating the outcome the dimension protects>
 
 Done when the review-code skill, activated with dimension=<dimension>, reports
-nothing at or above that dimension's threshold. Report findings with severity.
+nothing at or above that dimension's threshold.
 
 Judgment gate.
 ````
@@ -154,7 +154,7 @@ The 13 dimensions are change-intent, code-bugs, contracts, type-safety (defect-f
 threshold separating PASS from FAIL. Where the procedure that settles this *is* what done means,
 it belongs here; where a skill is the definition of done, name that skill and its dimension.]
 
-Why: [context, binds nothing]
+Why: [optional context, binds nothing — omit where the body already carries it]
 
 [Judgment | Deterministic] gate[, phase N — state only when higher than 1].
 
@@ -180,7 +180,7 @@ put in front of so its criteria judge whether it works rather than whether it ex
 
 [Body, on the same terms as a Global Invariant's.]
 
-Why: [context, binds nothing]
+Why: [optional context, binds nothing — omit where the body already carries it]
 
 [Judgment | Deterministic] gate[, phase N — state only when higher than 1].
 ````
