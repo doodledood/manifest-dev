@@ -57,6 +57,8 @@ Principle: **manifest criteria are for what you want independently fix-targeted;
 
 - **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
 - **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
+- **Agree test seams before authoring tests** — Settle which public boundaries tests exercise before writing them, and assert behavior through those interfaces rather than internals; a test that breaks under refactor without a behavior change sits at the wrong seam
+- **Vertical slices, not bulk test-first** — One test, minimal implementation, repeat; writing all tests up front verifies imagined behavior and commits to test structure before the implementation has taught anything
 
 ## Multi-Repo
 

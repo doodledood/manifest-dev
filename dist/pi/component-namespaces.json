@@ -13,6 +13,7 @@
     "next-ticket": "manifest-dev",
     "poll-slack": "manifest-dev",
     "prompt-engineering": "manifest-dev-tools",
+    "re-pitch": "manifest-dev-tools",
     "review-code": "manifest-dev",
     "review-pr": "manifest-dev-tools",
     "review-prompt": "manifest-dev-tools",

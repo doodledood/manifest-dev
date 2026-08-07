@@ -1,11 +1,11 @@
 {
-  "source_commit": "94710854b740be151ac2d651486632bc9f5dde12",
+  "source_commit": "26cea5963c3996aefb785abcca12bf34eb60d677",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-06T21:51:14Z",
-  "notes": "Delta sync: front-file + roll-off refinement (ticket-up SKILL/convention/GitHub venue, next-ticket) and 6.0.4 version mirrors."
+  "synced_at": "2026-08-07T13:55:06Z",
+  "notes": "Delta sync: figure-out turn-shape update (sparse-attention skim framing, per-part length cap)."
 }

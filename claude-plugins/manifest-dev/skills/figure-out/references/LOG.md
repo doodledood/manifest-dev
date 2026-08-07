@@ -16,6 +16,8 @@ Append only. Never rewrite, reorder, compress, or delete prior entries. If an ol
 
 Append after each meaningful user turn or evidence-gathering pass, before asking the next question. Meaningful means the investigation gained evidence, found a surprise, changed its read, opened or closed a thread, or identified a new crux. Skip pure acknowledgements and empty procedural chatter.
 
+Credentials, tokens, and personal data never enter the log — it outlives the session and travels by path. When evidence involves a secret, record where it lives (an env var name, a vault path) rather than its value, and quote from captured output only the lines that carry the signal.
+
 When resuming an existing log, read enough of it to recover open threads, fog, and the current line of investigation before pressing forward.
 
 ## Entry Shape

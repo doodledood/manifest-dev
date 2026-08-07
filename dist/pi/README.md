@@ -72,6 +72,7 @@ Pi exposes installed skills as `/skill:<name>` commands when skill commands are 
 - `/skill:babysit-pr`
 - `/skill:handoff`
 - `/skill:prompt-engineering`
+- `/skill:re-pitch`
 - `/skill:review-prompt`
 - `/skill:review-pr`
 - `/skill:teach-me`

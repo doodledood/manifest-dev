@@ -8,10 +8,10 @@ manifest-dev ships **zero agents** — every capability is a skill. Quality revi
 
 | Type | Count | Description |
 |------|-------|-------------|
-| Skills | 18 | Core workflow skills plus manifest-dev-tools utilities (incl. `review-code`, `check-pr`, `poll-slack`, `review-prompt`) |
+| Skills | 20 | Core workflow skills plus manifest-dev-tools utilities (incl. `review-code`, `check-pr`, `poll-slack`, `review-prompt`) |
 | Plugin | 1 | Dependency-free OpenCode plugin that registers the skills payload, user-invocable slash-command wrappers, and AGENTS.md context |
 | Context | 1 | AGENTS.md workflow overview, registered via `instructions` |
-| Commands | 16 | Runtime command wrappers registered by the plugin for user-invocable skills; no command files are copied or generated |
+| Commands | 18 | Runtime command wrappers registered by the plugin for user-invocable skills; no command files are copied or generated |
 | Agents | 0 | None — all capabilities are skills |
 
 ## Requirements

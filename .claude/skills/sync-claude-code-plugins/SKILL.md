@@ -58,7 +58,7 @@ For each component (agents/skills):
 
 Source listing excludes `README.md` and `.claude-plugin/` (plugin metadata, not content).
 
-**Retirement denylist** (never copy or track, regardless of upstream): `agents/prompt-reviewer.md`. manifest-dev-tools ships its own `review-prompt` skill (plugin-owned symlink at `.claude/skills/review-prompt`) and manifest-dev ships **zero agents**, so the upstream prompt-engineering `prompt-reviewer` agent must not be reintroduced — it is already removed from `.claude/agents/` and dropped from the tracked set.
+**Retirement denylist** (never copy or track, regardless of upstream): `agents/prompt-reviewer.md`, `skills/prompt-engineering`. manifest-dev-tools ships its own `prompt-engineering` and `review-prompt` skills (plugin-owned symlinks at `.claude/skills/prompt-engineering` and `.claude/skills/review-prompt`) and manifest-dev ships **zero agents**, so neither the upstream `prompt-reviewer` agent nor the upstream `prompt-engineering` skill may be reintroduced — both are already dropped from the tracked set.
 
 ## .agents mirror
 
@@ -74,7 +74,7 @@ After each sync, ensure `.agents/skills/<name>` is a symlink to `../../.claude/s
 
 - **Source must exist**: missing source path means abort, not "delete all tracked items."
 - **Nested skills directory**: source skills live at `skills/prompt-engineering/`, `skills/compress-prompt/`, etc. Copy each skill directory into `.claude/skills/<skill-name>/` — don't copy the outer `skills/` folder or you get `.claude/skills/skills/`.
-- **`review-prompt` is plugin-owned, not upstream**: manifest-dev-tools ships its own `review-prompt` skill, symlinked at `.claude/skills/review-prompt`. The upstream prompt-engineering plugin also ships a `review-prompt`, but the "skip if target is a symlink" rule above means this sync leaves the plugin's symlink alone (it neither overwrites nor deletes it). Do not re-add `review-prompt` to the tracking file.
+- **`prompt-engineering` and `review-prompt` are plugin-owned, not upstream**: manifest-dev-tools ships its own versions of both skills, symlinked at `.claude/skills/prompt-engineering` and `.claude/skills/review-prompt`. The upstream plugin ships skills with the same names, but the "skip if target is a symlink" rule above means this sync leaves the plugin's symlinks alone (it neither overwrites nor deletes them). Do not re-add either to the tracking file.
 - **Symlinks look like directories to `cp`/`rm`/`find`**: a symlinked target overwritten by `cp -R` corrupts the linked plugin's source files; a symlinked directory deleted by `rm -rf` removes the link, not the plugin, but a recursive find that follows the link will. Use `[ -L path ]` before every overwrite and every delete.
 
 ## Output

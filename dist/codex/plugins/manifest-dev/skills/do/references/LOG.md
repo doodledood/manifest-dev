@@ -18,6 +18,8 @@ Append only. Never rewrite, reorder, compress, or delete prior entries. If an ol
 
 Read the log before deciding retries and comment judgments in a resumed or long-lived run; append after acting. Append after meaningful events — a deliverable implemented, a deviation from the Initial Approach or the Deliverable order, a Process Guidance departure, a fix attempt abandoned, a gate verdict or staleness change, an operational step (retrigger, wait), an escalation. Skip play-by-play narration.
 
+Credentials, tokens, and personal data never enter the log — it outlives the run and travels by path. When evidence involves a secret, record where it lives (an env var name, a vault path) rather than its value, and quote from command output only the lines that carry the signal.
+
 The first entry fixes the logical run's verification policy: selected mode, explicit verifier model or inherited model choice, and whether `--exhaustive-verification` is in force. A later invocation changing any of them always starts a fresh logical run and gate ledger. For `/do`'s default timestamped logs, resolve a new physical log file. In a caller-supplied journal, keep the same file, append a `Run initialized` boundary with the new policy, and start an empty active ledger; prior gate verdicts remain historical and are not carried into the new run. This preserves caller-owned continuity without mixing evidence provenance.
 
 ## Content

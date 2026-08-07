@@ -10,6 +10,7 @@ Angles that are easy to under-weight when explaining a symptom — an incident, 
 - **Comparison frame** — If the symptom is relative — before/after, X vs Y, one cohort or context versus another — what else differs besides the suspected mechanism: inputs, timing, incentives, population, observer, setup, or measurement?
 - **Evidence layer** — Which part of the situation does each observation actually describe — actor, interface, intermediary, downstream effect, environment, measurement, or outcome — and are you attributing across layers without proof?
 - **Locus vs cause** — Finding where the symptom concentrates is not the same as explaining why this case differs. What concrete mechanism at or around that locus would create the observed difference?
+- **First-fit anchoring** — Is the leading explanation just the first mechanism that fit? Name a rival that predicts the same evidence, and the observation that would tell them apart, before testing either.
 - **One symptom, several causes** — Is this definitely a single cause, or could the symptom be the sum of more than one acting together?
 - **Predicted collateral** — If the proposed mechanism is real, what else should it have broken or left behind — and did it?
 

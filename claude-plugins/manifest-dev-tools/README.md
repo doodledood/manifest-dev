@@ -1,6 +1,6 @@
 # manifest-dev-tools
 
-Utilities that sit alongside the define → do → verify workflow — prompt engineering, PR babysitting, PR walkthroughs and reviews, cross-boundary context handoff, and incremental teaching for session work.
+Utilities that sit alongside the define → do → verify workflow — prompt engineering, PR babysitting, PR walkthroughs and reviews, cross-boundary context handoff, incremental teaching for session work, and a re-pitch corrective for messages that didn't land.
 
 ## Skills
 
@@ -9,6 +9,7 @@ Utilities that sit alongside the define → do → verify workflow — prompt en
 | `/babysit-pr` | Author-side PR lifecycle babysitter and companion to `/review-pr`. Uses manifest grounding when available, synthesizes PR grounding when not, then runs the manifest lifecycle toward green and mergeable without pressing merge. Forwards `/do`'s opt-in `--verification` and `--verifier-model` execution policy; supports CI one-shot advancement via `--ci`; keeps a continuity journal by default under the user's home `.manifest-dev/logs/` directory, with `--no-log` to disable it. |
 | `/handoff` | Produce a self-contained context payload that lets a fresh agent continue without re-deriving understanding. Two triggers: cross-boundary transfer (tool switch, fresh session, another agent) and DIY sub-agent (spin off a focused side-session and hand back). Manually invoked. |
 | `/prompt-engineering` | Create, update, or review an LLM prompt — system prompt, skill, or agent. State the goal, trust the model, add only what closes a real gap in natural behavior. |
+| `/re-pitch` | Stop and re-pitch the last message — it didn't land. Re-explains with the context the reader was missing, in plain words and the project's own vocabulary, cutting every line that isn't value while keeping every fact that is. |
 | `/review-pr` | Autonomous PR review that posts high-signal, human-voiced comments under your account. Advances existing review threads, verifies fixes/replies/stale comments, and posts one GitHub review. Polymorphic on `--manifest`: without it, runs the generic reviewer fleet on the relevant diff range; with it, skips the fleet and independently verifies *only* the manifest — running each Acceptance Criterion and Global Invariant `verify.instructions` against the PR head with one fresh verifier per gate and posting PASS/FAIL. `--loop` schedules repeated one-shot passes with backoff. |
 | `/teach-me` | Teach the learner to deeply understand a body of work — the current session, a PR, an ADR, or any topic. Builds a three-pillar checklist, teaches incrementally, and quizzes for demonstrated mastery before wrapping up. |
 | `/walk-pr` | Walk through a PR or large diff together, one sub-changeset at a time. |

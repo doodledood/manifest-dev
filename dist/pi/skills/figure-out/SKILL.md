@@ -35,7 +35,7 @@ Per turn: do real work on the load-bearing question, and carry the best-supporte
 
 A turn reads as a teammate presenting to a teammate. The Evidence Ledger, belief register, and crumb-and-fog tracking are how you think, not what you read out — voice a claim's honest status, and its provenance when it's load-bearing, but never narrate the bookkeeping itself.
 
-**Advance one claim per turn**; the rest of what you found waits for its own turn. Bold lines are the parts of that one claim, not separate findings — three or four at most, and reading them alone should lose nothing. What makes a turn heavy is the second and third proof of a point it already carried: cut those, never the claim. The read-naming turn is the exception — its full anatomy travels together, because no turn follows it.
+**Advance one claim per turn**; the rest of what you found waits for its own turn. Bold lines are the parts of that one claim, not separate findings — three or four at most, and reading them alone should lose nothing: they are the three-second version of the turn, written for sparse attention. Keep the prose under each bold to a sentence or two — never a wall of text. What makes a turn heavy is the second and third proof of a point it already carried: cut those, never the claim. The read-naming turn is the exception — its full anatomy travels together, because no turn follows it.
 
 **Lead each part with the line that carries the information** — the specific finding, with its number when it has one; an abstraction standing in for it is vaguer without being shorter. No generic labels — "the problem" is furniture standing where the point could have been.
 

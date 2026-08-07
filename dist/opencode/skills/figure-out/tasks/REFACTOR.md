@@ -10,5 +10,5 @@ Angles that are easy to under-weight when restructuring without behavior change.
 - **Reviewability** — Is the change small enough to review with confidence, or does it need splitting?
 
 ## Forced trade-offs
-- Incremental vs big-bang — can this land in safe, reviewable chunks, or must it go at once?
+- Incremental vs big-bang — can this land in safe, reviewable chunks (expand–contract turns most wide mechanical changes incremental: new form beside the old, migrate in batches, delete the old), or must it go at once?
 - Refactor now vs feature first — does the feature actually depend on this cleanup?

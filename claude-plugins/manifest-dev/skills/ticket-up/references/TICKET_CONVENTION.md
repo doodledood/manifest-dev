@@ -27,6 +27,8 @@ A question ticket carries Title, the question itself, why it matters, what's alr
 
 **No machinery.** A ticket never contains tool-specific vocabulary a stranger wouldn't know: no verification YAML, no gate codes, no references to the manifest or workflow that produced it. If interpreting a ticket requires installing something, the ticket is wrong.
 
+**Write for the shelf.** A ticket may sit open while the codebase moves under it. Describe interfaces and behavior — what changes, and how a stranger can tell it worked — not file paths and line numbers, which go stale; name a file only when the file itself is the deliverable.
+
 ## The front file
 
 Each effort's store carries one small front file (in a file store, a README beside the tickets; in a tracker, the tracking item's body) holding only content that doesn't change as tickets close:
