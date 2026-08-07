@@ -164,7 +164,7 @@ manifest-dev's own `CLAUDE.md`-style context is not required for plugin consumer
 
 ## Known limitations
 
-1. **No agents at all** — manifest-dev ships zero agents. Reviewers are the `review-code` skill; `check-pr` / `poll-slack` / `review-prompt` are skills activated by `verify.instructions` under the selected mode.
+1. **No agents at all** — manifest-dev ships zero agents. Reviewers are the `review-code` skill; `check-pr` / `poll-slack` / `review-prompt` are skills a gate's body activates under the selected mode.
 2. **Hooks** — manifest-dev ships none to Codex; Codex hook execution remains limited (Issue #2109).
 3. **No `/auto` or `/babysit-pr` runtime command** — they ship as skills that chain `/do`; only Pi has native runtime wrappers.
 4. **Experimental tools** — `read_file`/`grep_files`/`list_dir` availability is model-gated server-side.

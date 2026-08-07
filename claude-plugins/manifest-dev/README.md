@@ -62,7 +62,7 @@ Authors put whatever an evaluator needs directly into `instructions` — run a b
 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
-| **Intent & Context** | Problem, appetite, goal, out of bounds, mental model | -- |
+| **Intent** | Problem, appetite, out of bounds | -- |
 | **Initial Approach** (complex tasks) | Architecture, risks, trade-offs | `R-{N}`, `T-{N}` |
 | **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
 | **Process Guidance** | Advisory recommendations on how to work; weighed, not enforced | `PG-{N}` |
@@ -74,28 +74,26 @@ Authors put whatever an evaluator needs directly into `instructions` — run a b
 ````markdown
 # Definition: User Authentication
 
-## 1. Intent & Context
+## 1. Intent
 - **Problem:** Anyone with the app URL reads every user's data — there is
   no login at all.
 - **Appetite:** Session auth over the existing endpoints, not an identity
   subsystem.
-- **Goal:** Add password-based auth to an Express app with JWT sessions.
 - **Out of bounds:** OAuth providers, account recovery, role permissions.
-- **Mental Model:** Auth is cross-cutting. Security invariants apply
-  globally; endpoint behavior is per-deliverable.
 
 ## 2. Initial Approach
 - **Architecture:** Middleware-based auth, JWT in httpOnly cookies
-- **Trade-offs:**
-  - [T-1] Simplicity vs Security → Prefer security (bcrypt, not md5)
 
 ## 3. Global Invariants (The Constitution)
-- [INV-G1] Passwords never stored in plaintext
-  ```yaml
-  verify:
-    instructions: "Run: grep -r 'password.*=' src/ | grep -v hash | grep -v test. PASS only if there are no matches."
-    kind: deterministic
-  ```
+
+### INV-G1 — Passwords are never stored in plaintext
+
+Done when `grep -r 'password.*=' src/ | grep -v hash | grep -v test` returns no matches.
+
+Why: a plaintext password in the store is unrecoverable once shipped — every other auth
+control is downstream of this one.
+
+Deterministic gate.
 
 ## 4. Process Guidance
 - [PG-1] Follow existing error handling patterns in the codebase
@@ -103,19 +101,24 @@ Authors put whatever an evaluator needs directly into `instructions` — run a b
 ## 6. Deliverables (The Work)
 
 ### Deliverable 1: Login round-trip
-**Acceptance Criteria:**
-- [AC-1.1] POST /login validates credentials, returns JWT
-  ```yaml
-  verify:
-    instructions: "Exercise POST /login with valid credentials. PASS only if it returns a valid JWT."
-    kind: deterministic
-  ```
-- [AC-1.2] Invalid credentials return 401, not 500
-  ```yaml
-  verify:
-    instructions: "Activate the manifest-dev:review-code skill with dimension=code-bugs and review the auth routes. PASS only if no LOW-or-higher findings (e.g. auth failures returning 500 instead of 401)."
-    kind: judgment
-  ```
+
+*What it is, and how it is exercised end-to-end:* signing in from the browser and reaching a
+protected page — the credential check, the cookie, and the redirect exercised together.
+
+#### AC-1.1 — POST /login returns a session for valid credentials
+
+Done when POST /login with valid credentials returns 200 and sets a JWT in an httpOnly cookie
+the protected routes accept.
+
+Deterministic gate.
+
+#### AC-1.2 — Invalid credentials fail cleanly
+
+Done when the manifest-dev:review-code skill, activated with dimension=code-bugs over the auth
+routes, reports nothing at or above that dimension's threshold — an invalid-credential path
+returning 500 instead of 401 is the shape this catches.
+
+Judgment gate.
 ````
 
 ## Manifest = Current State
