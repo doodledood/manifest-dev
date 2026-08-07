@@ -8,7 +8,6 @@
   "skills": [
     "auto-optimize-prompt",
     "compress-prompt",
-    "optimize-prompt-token-efficiency",
-    "prompt-engineering"
+    "optimize-prompt-token-efficiency"
   ]
 }

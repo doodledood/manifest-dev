@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-tools",
-  "version": "3.3.0",
-  "description": "Tools for prompts and PRs alongside the manifest workflow. Includes collaborative PR walkthroughs, autonomous PR review with independent per-gate manifest verification, author-side PR babysitting that forwards /do verification policy, gap-calibrated prompt engineering, cross-boundary context handoff, and incremental teaching.",
+  "version": "3.4.0",
+  "description": "Tools for prompts and PRs alongside the manifest workflow. Includes collaborative PR walkthroughs, autonomous PR review with independent per-gate manifest verification, author-side PR babysitting that forwards /do verification policy, gap-calibrated prompt engineering, cross-boundary context handoff, incremental teaching, and a re-pitch corrective for messages that didn't land.",
   "keywords": [
     "post-processing",
     "manifest",
@@ -19,6 +19,8 @@
     "teaching",
     "teach-me",
     "learning",
-    "session-explanation"
+    "session-explanation",
+    "wait-what",
+    "re-explain"
   ]
 }
