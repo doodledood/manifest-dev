@@ -2,7 +2,7 @@
 
 Verification-first manifest workflows for OpenCode CLI, distributed as an **OpenCode plugin**: a clone of this repo plus one line of config. No installer, no files copied into your config directories, nothing placed in shared Agent Skills directories (so nothing bleeds into Pi, Claude Code, or Codex installs).
 
-manifest-dev ships **zero agents** — every capability is a skill. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`). Manifests carry topology-neutral gate instructions, while `/do` selects `consolidated` (default), `per-gate`, or `self` verification at launch; optional `--verifier-model` applies to the independent modes. For TUI ergonomics, the plugin also registers slash-command wrappers for user-invocable skills (for example `/figure-out`, `/define`, `/do`, `/prompt-engineering`, `/review-pr`).
+manifest-dev ships **zero agents** — every capability is a skill. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`). Each manifest gate is one text — a title, a body, and a why, with a required kind and optional phase — while `/do` selects `consolidated` (default), `per-gate`, or `self` verification at launch; optional `--verifier-model` applies to the independent modes. For TUI ergonomics, the plugin also registers slash-command wrappers for user-invocable skills (for example `/figure-out`, `/define`, `/do`, `/prompt-engineering`, `/review-pr`).
 
 ## Components
 

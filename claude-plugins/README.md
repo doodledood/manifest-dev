@@ -27,7 +27,7 @@ Loop engineering's missing half: define what "done" means, then verify it. The l
 
 - **`/ticket-up` and `/next-ticket`** — split a finished Manifest into self-sufficient tickets anyone can pick up (files, GitHub Issues, or a custom tracker), and pull the top ready ticket back out with the reason it leads.
 
-Full schema, verify-block fields, verification skills, and task guidance live in the [manifest-dev README](./manifest-dev).
+Full schema, gate text, verification skills, and task guidance live in the [manifest-dev README](./manifest-dev).
 
 For non-Claude installs and updates, see the root README's [Multi-CLI Support](../README.md#multi-cli-support). Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`); it ships the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs.
 

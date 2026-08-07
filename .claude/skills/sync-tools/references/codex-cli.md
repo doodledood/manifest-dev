@@ -27,7 +27,7 @@ Nothing lands in the shared open-standard `~/.agents/skills/` directory, so mani
 **Agents are not a plugin component, and manifest-dev ships none.** Codex plugins bundle skills/MCP/apps/hooks only — but this is not a Codex-specific limitation: manifest-dev itself ships **zero agents** on every target. Consequences:
 
 - The 13 quality-dimension reviewers are **not agents** — they are dimensions of the bundled `review-code` skill. They ship automatically as part of that skill's directory.
-- The former functional agents are now **skills**: `check-pr`, `poll-slack`, and `review-prompt` ship as ordinary bundled skills. Gate evaluation instructions activate the relevant skill under `/do`'s selected verification mode — there is no `verify.agent` field. Do not generate TOML agent stubs.
+- The former functional agents are now **skills**: `check-pr`, `poll-slack`, and `review-prompt` ship as ordinary bundled skills. A gate's body activates the relevant skill under `/do`'s selected verification mode. Do not generate TOML agent stubs.
 
 ## Distribution layout
 
@@ -160,7 +160,7 @@ Installed plugins are cached under `~/.codex/plugins/cache/manifest-dev/<plugin>
 
 ## AGENTS.md / context
 
-manifest-dev's own `CLAUDE.md`-style context is not required for plugin consumers. If a generated context file is produced for the dist README, describe the workflow (define → do → verify → done) and note that manifest-dev ships no agents — `/do` applies a run-level verification mode to topology-neutral gate instructions (reviewers are the `review-code` skill's dimensions).
+manifest-dev's own `CLAUDE.md`-style context is not required for plugin consumers. If a generated context file is produced for the dist README, describe the workflow (define → do → verify → done) and note that manifest-dev ships no agents — `/do` applies a run-level verification mode, pointing evaluators at each gate's single text (reviewers are the `review-code` skill's dimensions).
 
 ## Known limitations
 

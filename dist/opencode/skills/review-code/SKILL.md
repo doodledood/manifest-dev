@@ -10,7 +10,7 @@ Audit a change along **one** review dimension and report findings. This skill is
 
 ## Input
 
-`$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. Manifest gate instructions activate this skill with the dimension under `/do`'s selected evaluator. If no dimension is given, list the available dimensions and ask which one — never audit "everything at once"; one invocation = one dimension.
+`$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. A manifest gate's body activates this skill with the dimension under `/do`'s selected evaluator; the gate names the dimension and this skill owns the threshold. If no dimension is given, list the available dimensions and ask which one — never audit "everything at once"; one invocation = one dimension.
 
 ## Dimensions and thresholds
 

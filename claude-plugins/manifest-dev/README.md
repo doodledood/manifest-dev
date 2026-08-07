@@ -31,7 +31,7 @@ You plan a feature with the agent. It implements. The code looks reasonable. The
 ## Skills
 
 - **`/figure-out`** — the thinking partner, and the conceptual core. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), takes the next load-bearing question first, recommends an answer, returns to dropped threads, investigates instead of asking when something is discoverable, and keeps a belief register on evidence-heavy work. Its read ships with an Evidence Ledger (load-bearing claims with provenance and verified/inferred/assumed status), confidence, and overturn conditions; loads probe task files by topic shape (code change, diagnosis, research, tech-design docs) and runs an independent fresh-context re-derivation before confident reads nobody will audit. `/define` auto-invokes it when the transcript lacks understanding; call it directly when figuring it out IS the goal. In attended sessions it can also offer to capture durable personal steering preferences (**Taste**) — drafted with rationale and flip condition, written to a marked section of the user-level or project-level memory file only on your explicit yes; autonomous, team, and unattended runs never offer or write taste. Docs mode and narrative logging are on by default; `--no-docs` skips bootstrap/glossary/ADR conventions, `--no-log` skips the default log under the user's home `.manifest-dev/logs/` directory, `--autonomous` lets it self-answer (used by `/auto`), `--team` moves the deliberation into a Slack channel or thread (used by `/figure-out-team`), `--scratch` (off by default) maintains a rough, domain-native supporting artifact under `.manifest-dev/scratch/` to ground long or complex sessions, and `--canvas` (off by default) keeps a refreshable visual map of the session, readable on any screen size, — the crux tree with the current question marked, what's open around it, and how much fog is left — which you can annotate and hand back in one paste.
-- **`/define`** — encodes shared understanding into a verifiable Manifest. Not an interview: it makes the manifest-specific judgment calls (invariant vs process guidance, AC scope and pass threshold, phase ordering, trade-offs to record as `[T-N]`) and pulls in `/figure-out` first if the understanding isn't there. Pass an existing manifest path in `$ARGUMENTS` to amend it in place. Supports `--babysit <pr-url>`. Emits a foreground `/do <manifest-path>` handoff; `/do` owns the durable manifest-completion contract.
+- **`/define`** — encodes shared understanding into a verifiable Manifest. Not an interview: it makes the manifest-specific judgment calls (invariant vs process guidance, AC scope and pass threshold, phase ordering) and pulls in `/figure-out` first if the understanding isn't there. Pass an existing manifest path in `$ARGUMENTS` to amend it in place. Supports `--babysit <pr-url>`. Emits a foreground `/do <manifest-path>` handoff; `/do` owns the durable manifest-completion contract.
 - **`/do`** — executes a Manifest and evaluates every Acceptance Criterion and Global Invariant by pointing an evaluator at that gate in the manifest, never at a copy of its text. `--verification` selects `consolidated` (default), `per-gate`, or `self`; optional `--verifier-model` applies to the independent modes. Re-verification follows each gate's declared kind: a Deterministic Gate re-runs in full, while a Judgment Gate takes one full look and thereafter judges only its prior findings' repairs and the changed delta, with the whole-change quality sweep phased after the mechanical and defect-finding gates; `--exhaustive-verification` restores full re-sampling for a run that wants it. It respects phase ordering, calls `/done` when every gate has fresh mode-appropriate PASS evidence, or routes through `/escalate` when blocked. The policy is fixed at launch and never downgrades itself. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping. The recommended unattended invocation uses the host's goal-setting or continuation backstop with the manifest's auditable completion condition: every criterion appears in a gate ledger with fresh evidence and provenance under the selected mode and `/done` reported. Bare `/do` runs a single foreground turn. An append-only execution log is on by default under the user's home `.manifest-dev/logs/` directory (`--no-log` opts out; a caller-supplied journal path is used instead when given), recording deviations from the Initial Approach or the Deliverable order, Process Guidance departures, dead ends, and operational notes — execution history lives there, never in the manifest. Mid-`/do` user messages default to invoking `/define` for amendment, with a one-line digest of amendment-time assumptions surfaced after.
 - **`/auto`** — chains `figure-out → define → do` autonomously, no approval gates. It accepts and forwards `/do`'s `--verification` and `--verifier-model` options without encoding them in the Manifest. Use the host's goal-setting or continuation backstop with one chain-complete condition for unattended cross-turn execution (recommended): if figure-out runs, full autonomous Read anatomy is a checkpoint before `/define`; terminal completion is manifest written plus `/do` gate-ledger PASS. Add `--babysit <pr-url>` for PR-lifecycle work.
 - **`/figure-out-team`** — thin discovery wrapper over `/figure-out --team`: the full figure-out discipline applied to a multi-party async Slack conversation, with the Slack mechanics (session-bound trust, `/loop` polling with `poll-slack` reads, mrkdwn, owner-by-Slack-handle convergence) living in figure-out's `references/team.md` overrides so team sessions inherit every figure-out upgrade. Docs context is loaded read-only by default unless `--no-docs`; local logging is on by default under the user's home `.manifest-dev/logs/` directory unless `--no-log`, and the log is never posted to Slack.
@@ -41,29 +41,54 @@ You plan a feature with the agent. It implements. The code looks reasonable. The
 - **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from you. Routed by `/do`.
 - **`/review-code`** — quality review along **one dimension per invocation** (bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, or CLAUDE.md adherence). Loads exactly that dimension's reference (progressive disclosure) and returns a PASS/FAIL report. A gate's body activates it; it replaces the per-dimension reviewer agents.
 
-## Manifest Schema — Evaluation Instructions, Not Execution Policy
+## Manifest Schema — One Gate, One Text
 
-Every verify block has the same shape:
+Every Acceptance Criterion and Global Invariant is a single text: a title, a body, and a why.
+The text a reviewer reads is the text that binds — there is no separate evaluator-facing copy.
 
-```yaml
-verify:
-  instructions: "..."  # required, topology-neutral evidence and PASS procedure
-  kind: judgment        # required: judgment | deterministic — no default, never inferred
-  phase: 1              # optional integer, default 1 (lower phases run first)
+```markdown
+#### AC-1.1 — Health endpoint answers under load
+
+Done when /health returns 200 on all 50 concurrent requests, with no 5xx.
+
+Why: the load balancer drops a node after one failed check.
+
+Deterministic gate, phase 1.
 ```
 
-`kind` declares what settles the gate, and `/do` re-verifies by it: a `deterministic` gate re-runs in full every round, while a `judgment` gate reads the whole change once and afterwards judges only its prior findings' repairs and the changed delta. A gate mixing a command with a judgment is `judgment`; its commands still run in full. A Manifest whose gate omits `kind` is invalid — nothing is guessed.
+The title summarizes the body's headline requirement and never adds to it; a requirement living
+only in the title is a defect. The why is context and binds nothing. The body says what done
+means — and where the procedure that settles a criterion *is* what done means, that procedure
+belongs in the body. Where a skill is the definition of done, the body names the skill and its
+dimension and stops there: the skill owns its own threshold, so a bar copied into a gate is a
+second statement that can contradict the first.
 
-Gate evaluations return one of three states. **PASS** — the criterion holds. **FAIL** — violated, with evidence: either a directive `/do` runs literally (when the instructions activate a specialized skill like `check-pr`) or a prose fix hint read with judgment. **BLOCKED** — can't be evaluated yet because an external action or state is pending (deploy, human approval); `/do` routes BLOCKED via `/escalate`.
+`kind` and `phase` are the only structured metadata, carried on the closing line — phase stated
+only when higher than the default of `1`. `kind` declares what settles the gate, and `/do`
+re-verifies by it: a `deterministic` gate re-runs in full every round, while a `judgment` gate
+reads the whole change once and afterwards judges only its prior findings' repairs and the
+changed delta. A gate mixing a command with a judgment is `judgment`; its commands still run in
+full. A Manifest whose gate omits `kind` is invalid — nothing is guessed. So is one whose gates
+carry a `verify` block: that is the superseded schema, rejected with an instruction to
+regenerate rather than migrated.
 
-Authors put whatever an evaluator needs directly into `instructions` — run a bash command and check the exit code, inspect files, query an API, fetch docs. The instructions must not assume one agent per gate, a consolidated verifier, self-verification, or a model. Those are `/do` launch choices, not Manifest schema.
+Gate evaluations return one of three states. **PASS** — the criterion holds. **FAIL** —
+violated, with evidence: either a directive `/do` runs literally (when the body activates a
+specialized skill like `check-pr`) or a prose fix hint read with judgment. **BLOCKED** — can't
+be evaluated yet because an external action or state is pending (deploy, human approval), or the
+Manifest itself could not be read; `/do` routes an actionable BLOCKED via `/escalate`.
+
+A gate body says whatever an evaluator needs — run a bash command and check the exit code,
+inspect files, query an API, fetch docs. It must not assume one agent per gate, a consolidated
+verifier, self-verification, or a model, and it does not restate the run-wide comparison or the
+verdict contract: those are `/do` launch choices and `/do` policy, not Manifest schema.
 
 ## Manifest Sections
 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
 | **Intent** | Problem, appetite, out of bounds | -- |
-| **Initial Approach** (complex tasks) | Architecture, risks, trade-offs | `R-{N}`, `T-{N}` |
+| **Initial Approach** (complex tasks) | Architecture — starting direction, departable | -- |
 | **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
 | **Process Guidance** | Advisory recommendations on how to work; weighed, not enforced | `PG-{N}` |
 | **Known Assumptions** | Low-impact items resolved with a default | `ASM-{N}` |
@@ -131,7 +156,7 @@ The manifest is the canonical source of truth for the PR or branch, not for a si
 
 manifest-dev ships **no agents of its own**. `/do` uses host execution contexts according to the selected verification mode, and every mode reads the same gate text from the manifest, which can call for running bash, inspecting files, querying external tools, or activating a skill. Read-only behavior is enforced by that text, so authors can point an evaluator at MCP servers or extra CLI tools the user has configured.
 
-Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`review-code` skill** — one dimension per invocation; gate instructions activate it when needed. The other functional skills are `check-pr` (PR mergeability checks) and `poll-slack` (tails Slack threads for `/figure-out-team`).
+Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`review-code` skill** — one dimension per invocation; a gate body activates it when needed. The other functional skills are `check-pr` (PR mergeability checks) and `poll-slack` (tails Slack threads for `/figure-out-team`).
 
 | Dimension | Role | Focus |
 |-----------|------|-------|

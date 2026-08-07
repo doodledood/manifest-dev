@@ -2,13 +2,13 @@
 
 Canonical reference for tasks whose changeset spans multiple repositories. Single-repo manifests are unaffected.
 
-A shared canonical manifest is the default: one manifest captures shared intent, every deliverable tagged with its repo, shared invariants, shared trade-offs. Splitting per repo is a legitimate user choice when work is loosely coupled — that case is just N independent single-repo manifests with no special rules. The manifest is **internal** (a working document for user and agent); PR descriptions stay summary-only. It lives at the durable manifests home `/define` chose at synthesis (emitted in the `Manifest complete:` line) with no primary repo owning it; if the file is ever lost, re-run /define against the same task and in-flight PRs continue under the new path. Multi-repo amendments use the single shared manifest — last-writer-wins on concurrent edits; collision rate is low, recovery is the writer noticing missing content and re-triggering. No file locking. /do reads `Repos:` and uses absolute paths when working in a non-cwd repo; user invokes /do once globally (agent navigates between repos) within one conversational session.
+A shared canonical manifest is the default: one manifest captures shared intent, every deliverable tagged with its repo, shared invariants. Splitting per repo is a legitimate user choice when work is loosely coupled — that case is just N independent single-repo manifests with no special rules. The manifest is **internal** (a working document for user and agent); PR descriptions stay summary-only. It lives at the durable manifests home `/define` chose at synthesis (emitted in the `Manifest complete:` line) with no primary repo owning it; if the file is ever lost, re-run /define against the same task and in-flight PRs continue under the new path. Multi-repo amendments use the single shared manifest — last-writer-wins on concurrent edits; collision rate is low, recovery is the writer noticing missing content and re-triggering. No file locking. /do reads `Repos:` and uses absolute paths when working in a non-cwd repo; user invokes /do once globally (agent navigates between repos) within one conversational session.
 
 ## Schema Additions
 
 Multi-repo manifests extend the standard schema with two optional fields. Single-repo manifests omit both.
 
-**Intent & Context** adds:
+**Intent** adds:
 
 - **Repos:** name → absolute-path map listing every repo in scope. Names are short identifiers used by deliverables; paths are absolute filesystem locations.
 
