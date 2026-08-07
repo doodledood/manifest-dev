@@ -164,6 +164,34 @@ Reserve absolutes for true invariants — safety rules, output contracts, hard c
 - For iterative or agentic prompts, normalize failure: *"if this approach doesn't work, try another"* prevents accumulated desperation from driving corner-cutting.
 - The emotional tone of the opening propagates through subsequent processing — calibrate early tokens, not just the closing.
 
+## Completion criterion
+
+**Gap** — a multi-step prompt where a step's "done" is vague ("understanding reached", "context gathered"). Two failures follow: *premature completion* — the visible later steps pull the agent forward and a fuzzy bound offers no resistance — and shallow work, because an undemanding criterion never forces the digging.
+
+**What it does** — ends each step on a bound that is *checkable* (the agent can tell done from not-done) and *demanding* (the wording binds an exhaustiveness bar). Sharpen the bound before restructuring; hide later steps only across a real context boundary (a subagent or handoff — an inline mention leaves them in view and clears nothing).
+
+```
+Vague:      "Explore the codebase until you understand the change."
+Checkable:  "Done when every modified function appears in the change
+             list with what changed and why."
+Demanding:  "every rule applied", "every caller enumerated" — wording
+             that requires the sweep, not just an endpoint.
+```
+
+## Positive framing
+
+**Gap** — a constraint written as a prohibition names the forbidden behavior, which drags it into context and makes it *more* available, not less — the negation half-reads as an instruction to do the thing.
+
+**What it does** — states the target behavior so the banned one is never spoken. A prohibition survives only as a hard guardrail that can't be phrased positively, and even then it rides beside the positive target so attention lands on what to do.
+
+```
+Bad:  Don't write long, multi-paragraph comments.
+Good: Write one-line comments.
+
+Bad:  Never theorize before reproducing the bug.
+Good: Reproduce first; the fix waits for a red loop.
+```
+
 ## Leading word
 
 **Gap** — a directive that survives the no-op cut still leans on several words to pin down a behavior the model won't reach from a plain restatement (*"be thorough"* is too weak; *"fast, deterministic, low-overhead"* is a mouthful). Cutting the no-op is only half the craft — the surviving line can still under-leverage.

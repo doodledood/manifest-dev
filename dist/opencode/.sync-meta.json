@@ -1,10 +1,10 @@
 {
-  "source_commit": "94710854b740be151ac2d651486632bc9f5dde12",
+  "source_commit": "1cd73f347863441d3e3a94aa6b284517d949a276",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-06T21:51:14Z",
-  "notes": "Delta sync: front-file + roll-off refinement (ticket-up SKILL/convention/GitHub venue, next-ticket) and 6.0.4 version mirrors."
+  "synced_at": "2026-08-07T13:00:03Z",
+  "notes": "Delta sync: red-loop BUG defaults, seam/vertical-slice CODING defaults, expand-contract REFACTOR, DIAGNOSIS anchoring probe, log/handoff redaction, ticket durability, prompt-engineering patterns, new wait-what skill; 6.1.0/3.4.0 version mirrors."
 }

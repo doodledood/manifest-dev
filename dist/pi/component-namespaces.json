@@ -17,6 +17,7 @@
     "review-pr": "manifest-dev-tools",
     "review-prompt": "manifest-dev-tools",
     "teach-me": "manifest-dev-tools",
+    "wait-what": "manifest-dev-tools",
     "ticket-up": "manifest-dev",
     "walk-pr": "manifest-dev-tools"
   },

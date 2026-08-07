@@ -42,6 +42,7 @@ A line that passes earn-your-place but fails boundary is fragile — works today
 | **Examples for known behaviors** | *"Here's how to format JSON: …"* | Cut — the model already knows |
 | **Why-this-exists framing prose** | Multi-paragraph motivation before the actual rules | Cut — the rule is the rule |
 | **Tables for non-tabular content** | A table with two rows of prose | Use prose |
+| **Restating the environment** | Prompt copies what `package.json` scripts, `--help` output, or config files already answer | Reference the lookup instead; a copy goes stale. Cache only what no file confesses — the unwritten convention, the why, the gotcha |
 
 **Carve-outs:**
 

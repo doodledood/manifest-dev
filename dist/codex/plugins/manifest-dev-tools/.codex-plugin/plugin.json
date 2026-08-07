@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-tools",
-  "version": "3.3.0",
-  "description": "manifest-dev companion tooling for Codex: /babysit-pr with verification-policy forwarding, independently per-gate /review-pr manifest mode, /walk-pr, /teach-me, /handoff, and prompt engineering.",
+  "version": "3.4.0",
+  "description": "manifest-dev companion tooling for Codex: /babysit-pr with verification-policy forwarding, independently per-gate /review-pr manifest mode, /walk-pr, /teach-me, /handoff, /wait-what, and prompt engineering.",
   "skills": "./skills/",
   "keywords": [
     "manifest-dev",
