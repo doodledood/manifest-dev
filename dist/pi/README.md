@@ -72,10 +72,10 @@ Pi exposes installed skills as `/skill:<name>` commands when skill commands are 
 - `/skill:babysit-pr`
 - `/skill:handoff`
 - `/skill:prompt-engineering`
+- `/skill:re-explain`
 - `/skill:review-prompt`
 - `/skill:review-pr`
 - `/skill:teach-me`
-- `/skill:wait-what`
 - `/skill:walk-pr`
 
 ## Slash Aliases

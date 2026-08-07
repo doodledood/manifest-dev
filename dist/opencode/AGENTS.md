@@ -19,7 +19,7 @@ Supporting workflows:
 - **/figure-out-team** — /figure-out's discipline applied to a multi-party async Slack conversation.
 - **/ticket-up** — Splits a finished manifest into one self-sufficient, plain-prose ticket per deliverable plus explicit dependency edges, so teammates, agents, or later sessions can pick the work up in parallel — with or without manifest-dev. Files store by default; GitHub Issues out of the box; custom trackers from details you provide once.
 - **/next-ticket** — Reads a ticket store and names the single best ready ticket to work on now, with the reason.
-- **Tools skills** — /babysit-pr, /handoff, /prompt-engineering, /review-pr, /teach-me, /wait-what, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
+- **Tools skills** — /babysit-pr, /handoff, /prompt-engineering, /re-explain, /review-pr, /teach-me, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
 
 ## Manifest Schema — Evaluation Instructions
 

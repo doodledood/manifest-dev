@@ -1,11 +1,11 @@
 {
-  "source_commit": "1cd73f347863441d3e3a94aa6b284517d949a276",
+  "source_commit": "b4580518fdd2a1f20e91d2f75b7310328aa79a56",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-07T13:00:03Z",
-  "notes": "Delta sync: red-loop BUG defaults, seam/vertical-slice CODING defaults, expand-contract REFACTOR, DIAGNOSIS anchoring probe, log/handoff redaction, ticket durability, prompt-engineering patterns, new wait-what skill; 6.1.0/3.4.0 version mirrors."
+  "synced_at": "2026-08-07T13:09:11Z",
+  "notes": "Delta sync: rename wait-what -> re-explain across skill payloads, tables, context files, and pi namespaces."
 }
