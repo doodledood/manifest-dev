@@ -6,7 +6,7 @@ The goal of /do under PR_LIFECYCLE is to drive the PR to a **mergeable** state �
 
 ## Quality Gates
 
-Lifecycle verification composes through a single AC whose evaluation instructions activate the `check-pr` **skill**. That skill owns the canonical gate set as internal implementation detail.
+Lifecycle verification composes through a single AC whose body activates the `check-pr` **skill**. That skill owns the canonical gate set as internal implementation detail.
 
 | Aspect | Verifier | Threshold |
 |--------|----------|-----------|
@@ -14,23 +14,24 @@ Lifecycle verification composes through a single AC whose evaluation instruction
 
 **Templated AC** — /define synthesizes one AC per repo with the following shape:
 
-```yaml
-verify:
-  instructions: |
-    Activate the manifest-dev:check-pr skill.
-    PR: https://github.com/<owner>/<repo>/pull/<N>
-    Branch: <branch-name>
+````markdown
+#### AC-N.M — The pull request is ready to merge
 
-    Steering: <baseline | user customization>
+Done when the manifest-dev:check-pr skill reports the pull request ready.
+PR: https://github.com/<owner>/<repo>/pull/<N>
+Branch: <branch-name>
 
-    Re-read the pull request's full current state on every evaluation rather than
-    only what changed since the last one.
-  kind: judgment
-```
+Steering: <baseline | user customization>
 
-`kind: judgment` because the gate mixes both halves and the mixed case declares judgment: CI conclusions and mergeability are deterministic reads, while whether the description still reflects the diff's intent is a judgment over an open finding space. The full-re-read line is the per-gate Ratchet suspension `/do` already provides, and this gate needs it — its subject is a live pull request that moves outside the run, so a delta-scoped re-check would miss state no commit of ours produced.
+Re-read the pull request's full current state on every evaluation rather than only what
+changed since the last one.
 
-The `instructions` field is the steering surface — baseline content is enough to start; the user adds nuances (custom labels, named approvers, cadence/cap overrides) via amendment when needed.
+Judgment gate.
+````
+
+The judgment kind, because the gate mixes both halves and the mixed case declares judgment: CI conclusions and mergeability are deterministic reads, while whether the description still reflects the diff's intent is a judgment over an open finding space. The full-re-read line is the per-gate Ratchet suspension `/do` already provides, and this gate needs it — its subject is a live pull request that moves outside the run, so a delta-scoped re-check would miss state no commit of ours produced.
+
+The gate's body is the steering surface — baseline content is enough to start; the user adds nuances (custom labels, named approvers, cadence/cap overrides) via amendment when needed.
 
 ## Defaults
 

@@ -21,11 +21,10 @@ The manifest is a contract between /define and /do. A ticket is a contract with 
 | Appetite, Out of bounds | The **Scope** line — how big this slice is worth, what not to touch |
 | Global Invariants | **Rules that must hold** — copied into *every* ticket, as plain rules stripped of verification wording |
 | Known Assumptions touching the slice | **Watch out for** — "we assumed X; if wrong, Y" |
-| Mental Model | Only the concepts *this* slice needs, folded into Why or Watch out for |
-| Initial Approach, Risk Areas | Optional **Suggested approach**, marked as advice |
-| Acceptance Criteria + their verify instructions | **Definition of done** — the substance of what each gate checks, rewritten as prose checks a stranger can judge |
+| Initial Approach | Optional **Suggested approach**, marked as advice |
+| Acceptance Criteria | **Definition of done** — each gate is already one prose text, so take its substance and drop what a stranger cannot use |
 | Process Guidance | Folded into Suggested approach as tips where relevant, else dropped — the binding/advisory distinction doesn't travel |
-| verify YAML, `kind`, `phase`, verification modes, gate/PG/ASM codes | **Stays behind.** Executor policy, meaningless outside manifest-dev |
+| A gate's kind and phase, verification modes, gate/PG/ASM codes | **Stays behind.** Executor policy, meaningless outside manifest-dev |
 
 The self-sufficiency test before emitting each ticket: could a competent stranger holding only this ticket understand why the work exists, know its bounds, avoid its traps, and judge it done? Manifest-dev vocabulary appearing anywhere in a ticket is a failure of this test.
 
@@ -51,6 +50,6 @@ Present the ticket list with its edges — a short table: ID, title, kind, depen
 
 ## Gotchas
 
-- The pull to keep manifest wording is strong and wrong: gate instructions name evaluators and thresholds ("activate the review skill, no MEDIUM+ findings") — a stranger has neither. Rewrite as the check's substance ("prose reads clean to a careful reviewer; no contradictions with existing docs").
+- The pull to keep manifest wording is strong and wrong: a gate body names evaluators and skills ("activate the review skill") — a stranger has neither. Rewrite as the check's substance ("prose reads clean to a careful reviewer; no contradictions with existing docs"). A gate's why is already context rather than requirement, so it feeds the ticket's own framing rather than its definition of done.
 - Copying the invariants into every ticket feels redundant; do it anyway. The one picker who reads only their own ticket is the one the convention exists for.
 - Don't emit the manifest's ceiling/scope-conformance invariant as a rule — "add nothing the tickets don't require" is meaningless to someone holding one ticket. Its substance already lives in each ticket's Scope line.

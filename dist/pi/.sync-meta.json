@@ -1,11 +1,11 @@
 {
-  "source_commit": "26cea5963c3996aefb785abcca12bf34eb60d677",
+  "source_commit": "6f30503f5ec9bde664d79b383f6071a1e8851c78",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-07T13:55:06Z",
-  "notes": "Delta sync: figure-out turn-shape update (sparse-attention skim framing, per-part length cap)."
+  "synced_at": "2026-08-07T23:30:00Z",
+  "notes": "Full re-sync of changed skills: gate schema collapsed to one text; recorded SHA was unreachable in this clone, so the diff-first path was unavailable."
 }
