@@ -1,11 +1,11 @@
 {
-  "source_commit": "b4580518fdd2a1f20e91d2f75b7310328aa79a56",
+  "source_commit": "5546a7abdb3e99f02cedf6fe89ec4f0adc6bc0c0",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-07T13:09:11Z",
-  "notes": "Delta sync: rename wait-what -> re-explain across skill payloads, tables, context files, and pi namespaces."
+  "synced_at": "2026-08-07T13:15:45Z",
+  "notes": "Delta sync: rename re-explain -> re-pitch across skill payloads, tables, context files, and pi namespaces."
 }

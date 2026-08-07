@@ -1,5 +1,5 @@
 ---
-name: re-explain
+name: re-pitch
 description: "Stop and re-pitch the last message — it didn't land. Re-explains with the context the reader was missing, in plain words, cutting every line that isn't value while keeping every fact that is. Use when the user says wait what, I'm lost, that didn't land, what do you mean, or asks for a re-explanation in plain English."
 argument-hint: '[what lost you]'
 user-invocable: true
