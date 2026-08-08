@@ -1,10 +1,10 @@
 {
-  "source_commit": "d872f054",
+  "source_commit": "a720f4f5c230a663cce4fdd78289402f562bf817",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-08T02:00:00Z",
-  "notes": "Gate schema collapsed to one text. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them already applied."
+  "synced_at": "2026-08-08T02:30:00Z",
+  "notes": "Gate schema collapsed to one text; major version bumps mirrored. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them already applied."
 }

@@ -45,7 +45,7 @@ The Pi package manifest shape is:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "4.2.0",
+  "version": "5.0.0",
   "private": true,
   "type": "module",
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
@@ -83,7 +83,7 @@ These templates are aliases only. The skill bodies own behavior.
 
 ## Runtime Boundary
 
-Pi no longer owns manifest-dev verifier fanout, manifest parsing, verdict aggregation, done/escalation gating, verifier concurrency flags, or wait-pending runtime tokens. `/do` follows the same portable verification-mode protocol as other hosts: it reads the Manifest, validates each gate's title, body, kind, and optional phase, fixes the launch policy as `per-gate`, `consolidated`, or `self`, evaluates every AC/GI under that policy, repairs FAILs, reports genuine BLOCKED blockers, and calls `done` only after all gates have fresh PASS evidence. `--verifier-model` is valid only for the independent modes and is never Manifest data.
+Pi no longer owns manifest-dev verifier fanout, manifest parsing, verdict aggregation, done/escalation gating, verifier concurrency flags, or wait-pending runtime tokens. `/do` follows the same portable verification-mode protocol as other hosts: it reads the Manifest, validates each gate's title, body, optional why, kind, and optional phase, fixes the launch policy as `per-gate`, `consolidated`, or `self`, evaluates every AC/GI under that policy, repairs FAILs, reports genuine BLOCKED blockers, and calls `done` only after all gates have fresh PASS evidence. `--verifier-model` is valid only for the independent modes and is never Manifest data.
 
 A host-provided goal/continuation feature is an optional outer backstop. If none exists or it is disabled, manifest-dev still runs normally, but no continuous host-level enforcement is guaranteed.
 
