@@ -51,7 +51,7 @@ The leverage lives upstream of the `while`: understand the problem before anythi
   </tr>
   <tr>
     <td><strong>It fakes "done."</strong> An agent reports success on broken code with total confidence.</td>
-    <td><strong><code>/do</code></strong> makes it prove otherwise: every criterion needs evidence under an explicit verification mode, and the default has an independent verifier evaluate every gate.</td>
+    <td><strong><code>/do</code></strong> makes it prove otherwise: every criterion needs evidence under an explicit verification mode, and the default independently verifies each gate.</td>
   </tr>
 </table>
 
