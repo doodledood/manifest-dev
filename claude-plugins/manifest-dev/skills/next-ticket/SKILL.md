@@ -17,5 +17,5 @@ Find the store, read it, name one ticket. The store follows the ticket conventio
 
 ## Gotchas
 
-- Don't silently skip a claimed ticket that looks abandoned — surface it ("claimed by X, untouched; a tidy pass could release it") rather than reassigning on your own.
-- Don't rank by what looks interesting or recent; the priority rule is the contract, and the why-line must cite it.
+- Surface a claimed ticket that looks abandoned ("claimed by X, untouched; a tidy pass could release it") and leave the reassignment to a person.
+- Rank by the priority rule — it is the contract, and the why-line cites it.

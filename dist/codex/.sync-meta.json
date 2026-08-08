@@ -1,10 +1,10 @@
 {
-  "source_commit": "06368994539b73b6495413c1eddf053e52e76781",
+  "source_commit": "dbded7e274d567fc1d265cd3d6780b0c787e6ee8",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-08T02:30:00Z",
-  "notes": "Gate schema collapsed to one text; major version bumps mirrored. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them already applied."
+  "synced_at": "2026-08-08T14:21:33Z",
+  "notes": "Gate extension rule, /do cadence clause removed, plugin-wide positive-framing sweep; manifest-dev 7.1.0 mirrored. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them applied."
 }

@@ -5,7 +5,7 @@ argument-hint: '[task] [--babysit <pr-url>] [--verification per-gate|consolidate
 user-invocable: true
 ---
 
-Chain `figure-out --autonomous` (when the transcript lacks shared understanding) → `define --autonomous` → `do` on a single task. The `--autonomous` flag on figure-out makes the model self-answer with recommended answers instead of waiting on the user (see `figure-out/references/autonomous.md`). Surface define's Summary for Approval for visibility but don't wait — treat as approved and proceed to /do.
+Chain `figure-out --autonomous` (when the transcript lacks shared understanding) → `define --autonomous` → `do` on a single task. The `--autonomous` flag on figure-out makes the model self-answer with recommended answers instead of waiting on the user (see `figure-out/references/autonomous.md`). Surface define's Summary for Approval for visibility, then treat it as approved and proceed to /do.
 
 **Task text** comes from `$ARGUMENTS`; if empty, infer from conversation context (summarize the discussed task into a concrete description). Fresh session with no context and no args → halt: `No task description provided and no conversation context to infer from. Usage: /auto <task description> | /auto --babysit <pr-url>`.
 
