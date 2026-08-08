@@ -9,9 +9,9 @@ Creating or updating LLM prompts, skills, agents, system instructions.
 | Intent analysis | `review-code` skill, dimension=`change-intent` | no LOW+ |
 | Prompt quality | `review-prompt` skill | no MEDIUM+ |
 
-Both gates encode as topology-neutral `verify.instructions` (no `verify.agent`) that activate a skill under `/do`'s selected evaluator: the intent gate activates the `manifest-dev:review-code` skill (dimension=change-intent); the prompt-quality gate activates the `manifest-dev-tools:review-prompt` skill. Both are Judgment Gates — a reviewer's verdict over an open finding space rather than a command outcome — so each carries `kind: judgment` in its verify block, which is what tells `/do` how it re-verifies.
+Both gates encode as a gate body that activates a skill under `/do`'s selected evaluator: the intent gate activates the `manifest-dev:review-code` skill (dimension=change-intent); the prompt-quality gate activates the `manifest-dev-tools:review-prompt` skill. Name the skill and dimension and stop — each skill owns its own threshold, and the bars in the table above orient the author rather than being copied into the gate. Both are Judgment Gates — a reviewer's verdict over an open finding space rather than a command outcome — so each declares the judgment kind, which is what tells `/do` how it re-verifies.
 
-When the review-prompt skill is not available, encode these as individual criteria with their own evaluation instructions:
+When the review-prompt skill is not available, encode these as individual criteria, each with its own body:
 
 | Gate | Threshold |
 |------|-----------|

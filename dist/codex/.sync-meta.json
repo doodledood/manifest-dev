@@ -1,10 +1,10 @@
 {
-  "source_commit": "26cea5963c3996aefb785abcca12bf34eb60d677",
+  "source_commit": "06368994539b73b6495413c1eddf053e52e76781",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-07T13:55:06Z",
-  "notes": "Delta sync: figure-out turn-shape update (sparse-attention skim framing, per-part length cap)."
+  "synced_at": "2026-08-08T02:30:00Z",
+  "notes": "Gate schema collapsed to one text; major version bumps mirrored. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them already applied."
 }

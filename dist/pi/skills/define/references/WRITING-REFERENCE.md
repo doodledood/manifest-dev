@@ -2,7 +2,7 @@
 
 Reference material for writing quality verification. Use as context when verifying writing task deliverables.
 
-**Purpose**: Topology-neutral writing-quality guidance. When no writing-review capability is available, incorporate the applicable rules from this file into the gate's evaluation instructions.
+**Purpose**: Topology-neutral writing-quality guidance. When no writing-review capability is available, incorporate the applicable rules from this file into the gate's body.
 
 **Not for /define interviews** — this file contains lookup tables and detailed rules. The task file (`tasks/WRITING.md`) has compressed summaries for interview probing. Do not load this file during `/define`.
 

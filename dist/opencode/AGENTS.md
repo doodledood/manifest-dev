@@ -9,7 +9,7 @@ manifest-dev provides manifest-driven workflows for AI coding agents. The core f
 ```
 
 - **/define** — Interactive manifest builder. Probes for requirements, quality gates, edge cases. Outputs a manifest with deliverables, acceptance criteria, and global invariants.
-- **/do** — Manifest executor. Implements deliverables, weighs process guidance, adapts approach when reality diverges, and evaluates every gate using its verbatim instructions. `consolidated` is the independent default; `per-gate` is an opt-in higher-rigor mode and `self` an opt-in lower-assurance one. Optional `--verifier-model` applies to independent modes. It aggregates PASS / FAIL / BLOCKED, fixes failures, and re-evaluates — command-backed gates in full, judgment gates over their prior findings' repairs and the changed delta after one full look, with `--exhaustive-verification` restoring full re-sampling. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping.
+- **/do** — Manifest executor. Implements deliverables, weighs process guidance, adapts approach when reality diverges, and evaluates every gate by pointing an evaluator at that gate in the Manifest rather than at a copy of its text. `consolidated` is the independent default; `per-gate` is an opt-in higher-rigor mode and `self` an opt-in lower-assurance one. Optional `--verifier-model` applies to independent modes. It aggregates PASS / FAIL / BLOCKED, fixes failures, and re-evaluates — command-backed gates in full, judgment gates over their prior findings' repairs and the changed delta after one full look, with `--exhaustive-verification` restoring full re-sampling. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping.
 - **/done** — Plain-prose completion summary called by /do after every criterion has fresh PASS evidence under the selected mode.
 - **/escalate** — Structured blocker handoff for unrecoverable failures or pending external action.
 
@@ -21,28 +21,45 @@ Supporting workflows:
 - **/next-ticket** — Reads a ticket store and names the single best ready ticket to work on now, with the reason.
 - **Tools skills** — /babysit-pr, /handoff, /prompt-engineering, /re-pitch, /review-pr, /teach-me, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
 
-## Manifest Schema — Evaluation Instructions
+## Manifest Schema — Gate Text
 
-Every verify block has the same shape. It describes what evidence to gather and what PASS means without selecting execution topology or model — there is no `agent` field.
+Every Acceptance Criterion and Global Invariant is **one text**: a title, a body, and an optional why. The
+text a reviewer reads is the text that binds — there is no separate evaluator-facing copy, and no
+field selecting execution topology or model.
 
-```yaml
-verify:
-  instructions: "..."  # required, topology-neutral evaluation procedure
-  kind: judgment        # required: judgment | deterministic — no default, never inferred
-  phase: 1              # optional integer, default 1 (lower phases run first)
+```markdown
+#### AC-1.1 — Health endpoint answers under load
+
+Done when /health returns 200 on all 50 concurrent requests, with no 5xx.
+
+Why: the load balancer drops a node after one failed check.
+
+Deterministic gate.
 ```
 
-`kind` declares what settles the gate. A `deterministic` gate re-runs in full every round; a `judgment` gate reads the whole change once and afterwards judges only its prior findings' repairs and the changed delta. A gate mixing a command with a judgment is `judgment`. A manifest whose gate omits `kind` is invalid.
+The title summarizes the body's headline requirement and never adds to it; the why is optional and
+binds nothing. Where the procedure that settles a criterion *is* what done means, it belongs in the
+body. `kind` and `phase` are the only structured metadata, carried on the closing line — phase
+stated only when higher than the default of 1.
+
+`kind` declares what settles the gate. A `deterministic` gate re-runs in full every round; a
+`judgment` gate reads the whole change once and afterwards judges only its prior findings' repairs
+and the changed delta. A gate mixing a command with a judgment is `judgment`. A manifest whose gate
+omits `kind` is invalid, as is one whose gates still carry a `verify` block — that is the superseded
+schema and there is no migration path.
+
+/do points an evaluator at a gate by ID, giving it the manifest path rather than a copy of the
+gate's text, so nothing can reword a gate between authoring and evaluation.
 
 Each gate evaluation returns **PASS**, **FAIL**, or **BLOCKED**. BLOCKED routes via /escalate (external action pending — deploy, human approval).
 
 ## PR Lifecycle
 
-PR-lifecycle gate instructions activate the `check-pr` skill under the selected mode through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /babysit-pr uses manifest/PR grounding and runs the lifecycle; /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
+PR-lifecycle gate bodies activate the `check-pr` skill under the selected mode through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /babysit-pr uses manifest/PR grounding and runs the lifecycle; /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
 
 ## Code review
 
-Quality review is the **`review-code` skill** (one dimension per invocation, each loading its own reference): `change-intent`, `code-bugs`, `contracts`, `type-safety` (defect-finders, no LOW+); `operational-readiness`, `code-design`, `code-maintainability`, `code-simplicity`, `code-testability`, `test-quality`, `docs`, `prose-value`, `context-file-adherence` (advisory, no MEDIUM+). Gate instructions activate `review-code` with the dimension.
+Quality review is the **`review-code` skill** (one dimension per invocation, each loading its own reference): `change-intent`, `code-bugs`, `contracts`, `type-safety` (defect-finders, no LOW+); `operational-readiness`, `code-design`, `code-maintainability`, `code-simplicity`, `code-testability`, `test-quality`, `docs`, `prose-value`, `context-file-adherence` (advisory, no MEDIUM+). A gate body activates `review-code` with the dimension; the skill owns each dimension's threshold, so the gate names the dimension and stops.
 
 ## Agents
 

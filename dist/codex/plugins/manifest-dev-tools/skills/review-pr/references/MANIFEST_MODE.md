@@ -4,13 +4,13 @@ In manifest mode the skill independently re-verifies the manifest's contract ins
 
 ## Verify the manifest
 
-Read and validate the manifest fully, then spawn one fresh **general-purpose** subagent per Acceptance Criterion and per Global Invariant, each driven by that gate's `verify.instructions:` **verbatim** — no rewording — evaluated against the PR head. A verify block contains required `instructions`, required `kind` (`judgment` or `deterministic`), and optional integer `phase` (default `1`); reject `prompt`, `model`, a missing or unrecognised `kind`, a missing `instructions`, or any other field with a clear request to create a fresh Manifest through `/define` without amending the incompatible file. Manifest review stays independently per-gate regardless of which `/do --verification` mode produced the branch. The reviewer context chooses the active model; model choice is not manifest data. Respect `phase:` ordering, serial across phases and parallel within. Each subagent returns PASS, FAIL, or BLOCKED.
+Read and validate the manifest fully, then spawn one fresh **general-purpose** subagent per Acceptance Criterion and per Global Invariant, each pointed at that gate by ID — given the manifest's absolute path and told to read the gate's text from the file rather than receiving a copy of it — evaluated against the PR head. A gate is a title, a body, an optional why, a required kind (`judgment` or `deterministic`), and an optional phase (default `1`); a gate carrying a `verify` block of any shape, or no stated kind, is the superseded schema: reject it with a clear request to create a fresh Manifest through `/define` without amending the incompatible file. Manifest review stays independently per-gate regardless of which `/do --verification` mode produced the branch. The reviewer context chooses the active model; model choice is not manifest data. Respect `phase:` ordering, serial across phases and parallel within. Each subagent returns PASS, FAIL, or BLOCKED.
 
 The generic `review-code` fleet is **not** also run. `/define` default-injects a `review-code` Global Invariant, so generic code-quality review already travels inside the manifest and runs *as* one of these verifications; the manifest is the single source of truth for what "done" requires. Running both would reintroduce a second source of truth and noisy duplicate comments on a contract-driven PR.
 
 ## PR-head checkout
 
-`verify.instructions` execute against the code at PR head (tests, builds, greps). Like `/do` and `babysit-pr`, manifest mode runs against the current working checkout: ensure it is at the PR head SHA before spawning verifiers — check the head out if the runner isn't already on it — and derive head from GitHub each run, never from session memory.
+Gate bodies execute against the code at PR head (tests, builds, greps). Like `/do` and `babysit-pr`, manifest mode runs against the current working checkout: ensure it is at the PR head SHA before spawning verifiers — check the head out if the runner isn't already on it — and derive head from GitHub each run, never from session memory.
 
 ## Posting & approval
 
@@ -38,5 +38,5 @@ The SKILL.md reviewer-fleet and holistic-pass cycle-summary lines do not apply i
 
 ## Gotchas
 
-- Run each `verify.instructions` block verbatim and never also run the generic reviewer fleet — the manifest (which `/define` default-injects a `review-code` invariant into) is the single source of truth, and running both reintroduces a second source of truth with duplicate comments.
+- Evaluate each gate from its own text in the manifest and never also run the generic reviewer fleet — the manifest (which `/define` default-injects a `review-code` invariant into) is the single source of truth, and running both reintroduces a second source of truth with duplicate comments.
 - Track PASS/FAIL comments by content fingerprint, not comment id — they recur after every push, and re-posting an unchanged FAIL loops `/do`/`babysit-pr` ingestion.

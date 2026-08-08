@@ -2,7 +2,7 @@
 
 Verification-first manifest workflows for OpenCode CLI, distributed as an **OpenCode plugin**: a clone of this repo plus one line of config. No installer, no files copied into your config directories, nothing placed in shared Agent Skills directories (so nothing bleeds into Pi, Claude Code, or Codex installs).
 
-manifest-dev ships **zero agents** — every capability is a skill. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`). Manifests carry topology-neutral gate instructions, while `/do` selects `consolidated` (default), `per-gate`, or `self` verification at launch; optional `--verifier-model` applies to the independent modes. For TUI ergonomics, the plugin also registers slash-command wrappers for user-invocable skills (for example `/figure-out`, `/define`, `/do`, `/prompt-engineering`, `/review-pr`).
+manifest-dev ships **zero agents** — every capability is a skill. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`). Each manifest gate is one text — a title, a body, and an optional why, with a required kind and optional phase — while `/do` selects `consolidated` (default), `per-gate`, or `self` verification at launch; optional `--verifier-model` applies to the independent modes. For TUI ergonomics, the plugin also registers slash-command wrappers for user-invocable skills (for example `/figure-out`, `/define`, `/do`, `/prompt-engineering`, `/review-pr`).
 
 ## Components
 
@@ -99,7 +99,7 @@ Evidence (live runs against real binaries, 2026-06-11, sandboxed `XDG_*` homes):
 
 ## Known Limitations
 
-1. **Frontmatter controls mostly ignored by OpenCode** — OpenCode's skill loader honors only `name`/`description`; `disable-model-invocation` has no effect, so all 18 skills remain model-visible through the `skill` tool. manifest-dev's plugin consumes `user-invocable` only for slash-wrapper registration: `done` and `escalate` are not slash-listed.
+1. **Frontmatter controls mostly ignored by OpenCode** — OpenCode's skill loader honors only `name`/`description`; `disable-model-invocation` has no effect, so all skills remain model-visible through the `skill` tool. manifest-dev's plugin consumes `user-invocable` only for slash-wrapper registration: `done` and `escalate` are not slash-listed.
 2. **Bare names, first-found-wins** — skills keep their original names (`define`, `do`, `auto`); OpenCode dedups same-name skills by discovery order with a logged warning. A project-local skill named `do` shadows manifest-dev's skill. Same-name user/project commands also shadow manifest-dev's slash wrappers because the plugin does not overwrite existing commands.
 3. **No hook backstop for `/do` or `/auto`** — use a host-provided goal-setting/continuation backstop when you want the host CLI to keep long runs moving across turns. `/do` needs auditable all-criteria-PASS: every manifest gate listed with fresh evidence and evaluator provenance under the selected mode, not a summary claim. `/auto` needs one full-chain parent goal whose terminal condition is manifest written plus `/do` gate-ledger PASS; when figure-out runs first, its full autonomous Read anatomy is a checkpoint before `/define`. If no such capability is available, copy the contract the skill prints into your continuation mechanism.
 4. **$ARGUMENTS pass-through** — slash wrappers use OpenCode command-template `$ARGUMENTS` to prompt `Use the <skill> skill with: $ARGUMENTS`.
@@ -111,7 +111,7 @@ dist/opencode/
 ├── plugin/                          # OpenCode plugin (the install surface)
 │   ├── package.json                 #   dependency-free ESM package
 │   └── index.js                     #   config hook: registers skills/ + slash wrappers + AGENTS.md
-├── skills/                          # 18 skills (core + tools), original names
+├── skills/                          # 20 skills (core + tools), original names
 │   ├── review-code/                 #   quality review, one dimension per invocation
 │   ├── check-pr/  poll-slack/       #   former functional agents, now skills
 │   ├── define/  do/  auto/  ...      #   workflow skills

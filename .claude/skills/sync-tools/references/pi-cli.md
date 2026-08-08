@@ -45,7 +45,7 @@ The Pi package manifest shape is:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "private": true,
   "type": "module",
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
@@ -62,8 +62,8 @@ There is no `pi.extensions` entry, no `packages/manifest-dev-pi-tools` workspace
 
 Copy all workflow skills from both source plugins, including:
 
-- Core: `auto`, `review-code`, `define`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `check-pr`, `poll-slack`
-- Tools: `adr`, `babysit-pr`, `handoff`, `prompt-engineering`, `review-prompt`, `review-pr`, `teach-me`, `walk-pr`
+- Core: `auto`, `check-pr`, `define`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `next-ticket`, `poll-slack`, `review-code`, `ticket-up`
+- Tools: `babysit-pr`, `handoff`, `prompt-engineering`, `re-pitch`, `review-pr`, `review-prompt`, `teach-me`, `walk-pr`
 
 Apply these substitutions:
 
@@ -83,7 +83,7 @@ These templates are aliases only. The skill bodies own behavior.
 
 ## Runtime Boundary
 
-Pi no longer owns manifest-dev verifier fanout, manifest parsing, verdict aggregation, done/escalation gating, verifier concurrency flags, or wait-pending runtime tokens. `/do` follows the same portable verification-mode protocol as other hosts: it reads the Manifest, validates topology-neutral `verify.instructions`, fixes the launch policy as `per-gate`, `consolidated`, or `self`, evaluates every AC/GI under that policy, repairs FAILs, reports genuine BLOCKED blockers, and calls `done` only after all gates have fresh PASS evidence. `--verifier-model` is valid only for the independent modes and is never Manifest data.
+Pi no longer owns manifest-dev verifier fanout, manifest parsing, verdict aggregation, done/escalation gating, verifier concurrency flags, or wait-pending runtime tokens. `/do` follows the same portable verification-mode protocol as other hosts: it reads the Manifest, validates each gate's title, body, optional why, kind, and optional phase, fixes the launch policy as `per-gate`, `consolidated`, or `self`, evaluates every AC/GI under that policy, repairs FAILs, reports genuine BLOCKED blockers, and calls `done` only after all gates have fresh PASS evidence. `--verifier-model` is valid only for the independent modes and is never Manifest data.
 
 A host-provided goal/continuation feature is an optional outer backstop. If none exists or it is disabled, manifest-dev still runs normally, but no continuous host-level enforcement is guaranteed.
 
