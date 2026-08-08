@@ -1,7 +1,7 @@
 # ADR: Consolidated as the default /do verification mode
 
 ## Status
-Accepted
+Superseded by 20260808-restore-per-gate-default-verification-mode
 
 ## Context
 

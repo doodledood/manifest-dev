@@ -1,10 +1,10 @@
 {
-  "source_commit": "09b17069a79c11f21d908691d95b5890ce04089c",
+  "source_commit": "b4ac2a68e53b4c7828cb721e5867809ea1b32b44",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-08T18:33:55Z",
-  "notes": "figure-out turn-shape fixes: turn opens on its conclusion; read-naming exemption re-scoped to the part-count cap so the per-part weight cap still binds; four named opacity shapes replace the abstract plain-words test. Body-only edit to one skill — skill set unchanged, so README and context files were not regenerated. manifest-dev 8.0.1 mirrored."
+  "synced_at": "2026-08-08T19:20:00Z",
+  "notes": "Restore per-gate as the omitted-flag /do verification default. Synced do, auto, and babysit-pr skill bodies; mirrored manifest-dev 8.1.0 and manifest-dev-tools 4.1.0; updated README and context-file prose that states the default independently of the skill files. Skill set unchanged. Prior meta recorded 09b1706 while dist already carried c760cbe; corrected to HEAD."
 }
