@@ -7,26 +7,20 @@ description: 'Turn a finished Manifest into self-sufficient tickets anyone can p
 
 Input: a manifest path. Without one, look for the most recent manifest in `~/.manifest-dev/manifests/` and confirm it's the intended one; if none exists, ask what to ticket up — a manifest is the input, so a session without one runs `/define` first.
 
-The move: one ticket per Deliverable, plus the dependency edges between them. Each Deliverable is already a vertical slice — finishable on its own, exercisable end-to-end — so it maps to a ticket whole. Never split below a Deliverable (the fragments couldn't be judged done); if a Deliverable is too big for one ticket, the cut is wrong in the manifest — fix it there. A one-Deliverable manifest legitimately yields one ticket.
+The move: one ticket per Deliverable, plus the dependency edges between them. Each Deliverable is already a vertical slice — finishable on its own, exercisable end-to-end — so it maps to a ticket whole — split below it and the fragments could no longer be judged done. If a Deliverable is too big for one ticket, the cut is wrong in the manifest — fix it there. A one-Deliverable manifest legitimately yields one ticket.
 
 Read `references/TICKET_CONVENTION.md` before emitting — it defines what a ticket is, its anatomy, lifecycle, and priority; the tickets you write must satisfy it.
 
 ## Translation: knowledge travels, machinery stays
 
-The manifest is a contract between /define and /do. A ticket is a contract with a stranger who may have neither. So translate, don't excerpt:
+The manifest is a contract between /define and /do. A ticket is a contract with a stranger who may have neither. So translate, don't excerpt: take each manifest section into the anatomy slot the convention defines for it, rewritten in the ticket's own words.
+
+The self-sufficiency test before emitting each ticket: could a competent stranger holding only this ticket understand why the work exists, know its bounds, avoid its traps, and judge it done? Manifest-dev vocabulary appearing anywhere in a ticket is a failure of this test. The convention's anatomy plus that test settle most of the mapping. Two things they don't:
 
 | From the manifest | Into each ticket |
 |---|---|
-| Problem, Goal | The slice's own **Why** — condensed to what this Deliverable relieves and must achieve |
-| Appetite, Out of bounds | The **Scope** line — how big this slice is worth, what not to touch |
 | Global Invariants | **Rules that must hold** — copied into *every* ticket, as plain rules stripped of verification wording |
-| Known Assumptions touching the slice | **Watch out for** — "we assumed X; if wrong, Y" |
-| Initial Approach | Optional **Suggested approach**, marked as advice |
-| Acceptance Criteria | **Definition of done** — each gate is already one prose text, so take its substance and drop what a stranger cannot use |
-| Process Guidance | Folded into Suggested approach as tips where relevant, else dropped — the binding/advisory distinction doesn't travel |
-| A gate's kind and phase, verification modes, gate/PG/ASM codes | **Stays behind.** Executor policy, meaningless outside manifest-dev |
-
-The self-sufficiency test before emitting each ticket: could a competent stranger holding only this ticket understand why the work exists, know its bounds, avoid its traps, and judge it done? Manifest-dev vocabulary appearing anywhere in a ticket is a failure of this test.
+| A gate's kind, the verification mode, gate/PG/ASM codes | **Stays behind.** Executor policy, meaningless outside manifest-dev |
 
 ## Dependency edges
 
@@ -34,7 +28,7 @@ The manifest's Deliverable order is uncertainty-based — least-proven first so 
 
 ## Where the tickets go
 
-**Files (default).** No configuration: write one markdown file per ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md` at the project root (create it), NN ordered by a sensible starting sequence. Each file opens with `Kind:`, `Status:`, `Depends on:`, `Claimed by:` lines, then the anatomy. Write the effort's front file (`tickets/<effort-slug>/README.md`) alongside, per the convention: destination distilled from the manifest's Problem and Goal, any priority override, context pointers — and no ticket list or status, ever. Closed tickets get moved to `tickets/<effort-slug>/done/`. Confirm the effort slug with the user when it isn't obvious from the manifest title.
+**Files (default).** No configuration: write one markdown file per ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md` at the project root (create it), NN ordered by a sensible starting sequence. Each file opens with `Kind:`, `Status:`, `Depends on:`, `Claimed by:` lines, then the anatomy. Write the effort's front file (`tickets/<effort-slug>/README.md`) alongside, per the convention: destination distilled from the manifest's Problem and Appetite, any priority override, context pointers — and no ticket list or status, ever. Closed tickets get moved to `tickets/<effort-slug>/done/`. Confirm the effort slug with the user when it isn't obvious from the manifest title.
 
 **GitHub Issues.** When the user chooses GitHub (or the project's store config already names it), read `references/GITHUB_STORE.md` and follow its mapping.
 

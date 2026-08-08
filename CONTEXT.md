@@ -85,6 +85,10 @@ A required intermediate workflow condition that must be satisfied before moving 
 The single text a gate is — a title, a body, and an optional why — read by the reviewer and the evaluator alike. The body says what done means, what evidence settles it, any non-obvious context the evaluator needs, and where the check *is* the definition, how to run it; the title summarizes it and the why is context. Neither the title nor the why adds a requirement the body does not state.
 _Avoid_: Gate evaluation instructions, verify prompt, criterion description.
 
+**Gate Extension**:
+How many things a gate ranges over — open when its body makes the evaluator enumerate a region and derive the instances, closed when it checks an inventory the author wrote down. Independent of the altitude a gate binds at, and anchored to the surface of the owning Deliverable, or to the Manifest's surface bounded by Appetite for a Global Invariant.
+_Avoid_: Gate scope, gate breadth, tightness.
+
 **Verification Mode**:
 The run-level `/do` policy that selects `per-gate`, `consolidated`, or `self` evaluation without changing the Manifest.
 
@@ -181,6 +185,7 @@ _Avoid_: Breakdown, sharding.
 - **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.
 - Every **Acceptance Criterion** and **Global Invariant** is one **Gate Text** in the **Manifest**; `/do` points an evaluator at it by ID rather than copying it into a prompt.
+- **Gate Extension** and gate altitude are independent axes of one **Gate Text**; `/define` sets both at write time, and an instance reported mid-run is evidence a gate's extension is too narrow rather than grounds for a sibling gate.
 - `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, evaluates failed-or-unverified **Acceptance Criteria** and **Global Invariants** under the selected **Verification Mode**, repairs FAILs, and routes BLOCKED gates.
 - `per-gate` launches one **Verifier Execution** per eligible gate, `consolidated` launches one for the outstanding gate set, and `self` launches none.
 - Every gate evaluation returns PASS, FAIL, or BLOCKED evidence plus **Verification Provenance** to the **Do/Verify Loop**.

@@ -4,7 +4,7 @@
 
 Deterministic Gates are unaffected: they already re-run freely and fully.
 
-The whole-change quality sweep keeps its late phase — ordering is what puts it after the gates whose findings would otherwise re-stale it — but it re-samples in full whenever it is eligible rather than judging only its prior findings' repairs.
+The whole-change quality sweep is still worth spending once the gates whose findings would otherwise re-stale it are settled — but it re-samples in full whenever it is eligible rather than judging only its prior findings' repairs.
 
 This is run-level policy, fixed at launch alongside the verification mode: it never changes mid-run in response to cost, elapsed rounds, or findings, and it is never written into the Manifest. A later invocation dropping or adding the flag starts a new run with a fresh gate ledger.
 

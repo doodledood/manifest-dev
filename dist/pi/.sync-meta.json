@@ -1,11 +1,11 @@
 {
-  "source_commit": "06368994539b73b6495413c1eddf053e52e76781",
+  "source_commit": "654f95aabc4db7b27466e70a531956677dc2722b",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-08T02:30:00Z",
-  "notes": "Gate schema collapsed to one text; major version bumps mirrored. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them already applied."
+  "synced_at": "2026-08-08T16:40:00Z",
+  "notes": "Gate phases removed (breaking manifest-schema change); verification-mode references de-duplicated into /do; Ratchet restated as a run-level dial; ceiling gate shipped rather than derived; ticket-up re-synced to the current schema; figure-out plain-words test. manifest-dev 8.0.0 and manifest-dev-tools 4.0.1 mirrored. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them applied."
 }
