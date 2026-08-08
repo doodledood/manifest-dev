@@ -1,11 +1,11 @@
 {
-  "source_commit": "6f30503f5ec9bde664d79b383f6071a1e8851c78",
+  "source_commit": "d872f054",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-07T23:30:00Z",
-  "notes": "Full re-sync of changed skills: gate schema collapsed to one text; recorded SHA was unreachable in this clone, so the diff-first path was unavailable."
+  "synced_at": "2026-08-08T02:00:00Z",
+  "notes": "Gate schema collapsed to one text. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them already applied."
 }
