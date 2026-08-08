@@ -7,7 +7,7 @@ description: 'Turn a finished Manifest into self-sufficient tickets anyone can p
 
 Input: a manifest path. Without one, look for the most recent manifest in `~/.manifest-dev/manifests/` and confirm it's the intended one; if none exists, ask what to ticket up — a manifest is the input, so a session without one runs `/define` first.
 
-The move: one ticket per Deliverable, plus the dependency edges between them. Each Deliverable is already a vertical slice — finishable on its own, exercisable end-to-end — so it maps to a ticket whole. Never split below a Deliverable (the fragments couldn't be judged done); if a Deliverable is too big for one ticket, the cut is wrong in the manifest — fix it there. A one-Deliverable manifest legitimately yields one ticket.
+The move: one ticket per Deliverable, plus the dependency edges between them. Each Deliverable is already a vertical slice — finishable on its own, exercisable end-to-end — so it maps to a ticket whole — split below it and the fragments could no longer be judged done. If a Deliverable is too big for one ticket, the cut is wrong in the manifest — fix it there. A one-Deliverable manifest legitimately yields one ticket.
 
 Read `references/TICKET_CONVENTION.md` before emitting — it defines what a ticket is, its anatomy, lifecycle, and priority; the tickets you write must satisfy it.
 

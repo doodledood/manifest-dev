@@ -6,7 +6,7 @@ metadata:
   internal: true
 ---
 
-Receive the manifest path, selected verification mode, explicit or inherited verifier-model provenance, and affected gate ledger entries including evaluator provenance from `/do`. Surface that policy/provenance with the blocker evidence: the criterion (INV-G or AC ID) that can't be met, what was tried and why each attempt failed, the resolutions you see (fix path, amend the criterion, drop it, descope), and what you need from the user to unblock. Lazy escalations ("I can't", "this is hard") are rejected — show the attempts.
+Receive the manifest path, selected verification mode, explicit or inherited verifier-model provenance, and affected gate ledger entries including evaluator provenance from `/do`. Surface that policy/provenance with the blocker evidence: the criterion (INV-G or AC ID) that can't be met, what was tried and why each attempt failed, the resolutions you see (fix path, amend the criterion, drop it, descope), and what you need from the user to unblock. Show the attempts — that is what separates this payload from "I can't" or "this is hard".
 
 Also name any Process Guidance departed from, any deviation from the Initial Approach or the Deliverable order, any findings a gate reported below its threshold, and any gate whose bar the run read as suspect without a user to ask, with why — nothing gates on these, so this payload is where they surface when the run exits here.
 
