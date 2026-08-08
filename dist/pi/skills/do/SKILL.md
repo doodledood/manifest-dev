@@ -23,7 +23,7 @@ Before calling `/done`, evaluate every Acceptance Criterion and Global Invariant
 
 Run state travels in the envelope, because it deliberately is not Manifest content: which gates are eligible, and each Judgment Gate's Ratchet scope. So does one framing line — **evaluate the named gate as written, and treat nothing else in the Manifest as binding on your verdict.** A gate's body states what done means on its own, so it depends on nothing else in the file; the line is what stops Process Guidance and the Initial Approach, now visible, from being read as though they bound. Multi-repo manifests declaring `Repos:` add the path map per `define/references/MULTI_REPO.md`; otherwise add no gate context.
 
-A Manifest path an evaluator cannot read is **BLOCKED**, not FAIL — the gate was never evaluated, and a FAIL would report a verdict nobody reached.
+An evaluator evaluates and never repairs the artifact. A Manifest path it cannot read is **BLOCKED**, not FAIL — the gate was never evaluated, and a FAIL would report a verdict nobody reached; where one execution covers a set of gates, that is BLOCKED for every gate in the set.
 
 ### What `/do` supplies once, so no gate restates it
 

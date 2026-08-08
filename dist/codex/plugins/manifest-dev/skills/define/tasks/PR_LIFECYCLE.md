@@ -23,13 +23,14 @@ Branch: <branch-name>
 
 Steering: <baseline | user customization>
 
-Re-read the pull request's full current state on every evaluation rather than only what
-changed since the last one.
+Subject: the pull request's current state on GitHub — CI conclusions, review threads,
+description, and mergeability — read fresh from GitHub on every evaluation, rather than the
+branch diff `/do` supplies by default.
 
 Judgment gate.
 ````
 
-The judgment kind, because the gate mixes both halves and the mixed case declares judgment: CI conclusions and mergeability are deterministic reads, while whether the description still reflects the diff's intent is a judgment over an open finding space. The full-re-read line is the per-gate Ratchet suspension `/do` already provides, and this gate needs it — its subject is a live pull request that moves outside the run, so a delta-scoped re-check would miss state no commit of ours produced.
+The judgment kind, because the gate mixes both halves and the mixed case declares judgment: CI conclusions and mergeability are deterministic reads, while whether the description still reflects the diff's intent is a judgment over an open finding space. The subject line is what makes the Ratchet work here rather than something to switch off: this gate's subject is a live pull request that moves outside the run, so naming it keeps the delta a ratcheted re-check measures — everything that arrived on the pull request since the last evaluation, including state no commit of ours produced. A gate left on `/do`'s default branch-diff subject would miss exactly that.
 
 The gate's body is the steering surface — baseline content is enough to start; the user adds nuances (custom labels, named approvers, cadence/cap overrides) via amendment when needed.
 

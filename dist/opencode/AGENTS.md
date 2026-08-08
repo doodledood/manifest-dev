@@ -39,14 +39,13 @@ Deterministic gate.
 
 The title summarizes the body's headline requirement and never adds to it; the why is optional and
 binds nothing. Where the procedure that settles a criterion *is* what done means, it belongs in the
-body. `kind` and `phase` are the only structured metadata, carried on the closing line — phase
-stated only when higher than the default of 1.
+body. `kind` is the only structured metadata, carried on the closing line.
 
 `kind` declares what settles the gate. A `deterministic` gate re-runs in full every round; a
 `judgment` gate reads the whole change once and afterwards judges only its prior findings' repairs
 and the changed delta. A gate mixing a command with a judgment is `judgment`. A manifest whose gate
-omits `kind` is invalid, as is one whose gates still carry a `verify` block — that is the superseded
-schema and there is no migration path.
+omits `kind` is invalid, as is one whose gates carry a `verify` block or state a `phase` — both are
+the superseded schema and there is no migration path.
 
 /do points an evaluator at a gate by ID, giving it the manifest path rather than a copy of the
 gate's text, so nothing can reword a gate between authoring and evaluation.
