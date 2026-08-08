@@ -33,7 +33,7 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 
 **Encoding:** each dimension gate's body tells `/do`'s selected evaluator to **activate** the `manifest-dev:review-code` skill for the dimension — e.g. *"Done when the manifest-dev:review-code skill, activated with dimension=code-bugs, reports nothing at or above that dimension's threshold."* Name the dimension and stop: `review-code` owns every threshold in its own table, and a bar copied into a gate is a second statement that can contradict the skill the gate activates. The thresholds in the table above orient the author, not the gate. Do not tell the evaluator to spawn another agent; a nested spawn drops the gate's PASS/FAIL/BLOCKED contract. See `define/SKILL.md` → "Encoding specialized gates".
 
-**Kind and phasing:** every dimension gate is a **Judgment Gate** — a reviewer's verdict over an open finding space, not a command outcome — so each declares the judgment kind, which is what tells `/do` how the gate re-verifies. The four defect-finding dimensions sit at the same phase as the project's mechanical gates below (typecheck, lint, test, format), which are Deterministic Gates. The nine advisory dimensions are the whole-change quality sweep: give them the next phase up, so their one full look lands on a change the mechanical and defect-finding gates have already settled and their findings are repaired once instead of re-sampled every round. E2e phasing below stacks on top of that.
+**Kind:** every dimension gate is a **Judgment Gate** — a reviewer's verdict over an open finding space, not a command outcome — so each declares the judgment kind, which is what tells `/do` how the gate re-verifies. The four defect-finding dimensions run alongside the project's mechanical gates below (typecheck, lint, test, format), which are Deterministic Gates. The nine advisory dimensions are the whole-change quality sweep, and `/do` already spends their one full look once the mechanical and defect-finding gates are settled — no gate has to ask for that.
 
 ## Project Gates
 
@@ -49,7 +49,7 @@ CLAUDE.md specifies project gates (typecheck, lint, test, format). These become 
 
 Principle: **manifest criteria are for what you want independently fix-targeted; the suite is for breadth.** Encode a scenario as its own criterion when an isolated PASS/FAIL gives precise repair targeting; otherwise let the suite carry it. Don't turn the manifest into a test-case list.
 
-**E2E phasing**: E2e tests are slow and often deploy-dependent — assign them a later phase than fast automated checks. Manual e2e goes in an even later phase. Only use manual when automated E2E is truly not feasible and user confirms no test data exists.
+**E2E cost**: e2e runs are slow and often deploy-dependent, so re-running one costs far more than a round of repairs. Say that in the gate's own body — how long a run takes, and what it depends on — since that is what tells `/do` to spend the evaluation on a settled state rather than one a repair is about to move. A manual e2e is the expensive extreme and says so the same way; only use manual when automated e2e is truly not feasible and the user confirms no test data exists.
 
 ## Defaults
 

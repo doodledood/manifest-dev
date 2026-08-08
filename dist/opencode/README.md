@@ -1,121 +1,182 @@
-# manifest-dev — OpenCode CLI Distribution
+# manifest-dev
 
-Verification-first manifest workflows for OpenCode CLI, distributed as an **OpenCode plugin**: a clone of this repo plus one line of config. No installer, no files copied into your config directories, nothing placed in shared Agent Skills directories (so nothing bleeds into Pi, Claude Code, or Codex installs).
+The loop is the easy part. This is the understanding and verification around it: figure out the problem, write down what you'd accept, and let the loop build and prove it against every line before you open the diff.
 
-manifest-dev ships **zero agents** — every capability is a skill. Quality review is the `review-code` skill (one dimension per invocation); the former functional agents are skills too (`check-pr`, `poll-slack`, `review-prompt`). Each manifest gate is one text — a title, a body, and an optional why, with a required kind and optional phase — while `/do` selects `consolidated` (default), `per-gate`, or `self` verification at launch; optional `--verifier-model` applies to the independent modes. For TUI ergonomics, the plugin also registers slash-command wrappers for user-invocable skills (for example `/figure-out`, `/define`, `/do`, `/prompt-engineering`, `/review-pr`).
+Three skills, one for each way an autonomous loop fails — skipping understanding (`/figure-out`), never defining "done" (`/define`), and faking it (`/do`).
 
-## Components
-
-| Type | Count | Description |
-|------|-------|-------------|
-| Skills | 20 | Core workflow skills plus manifest-dev-tools utilities (incl. `review-code`, `check-pr`, `poll-slack`, `review-prompt`) |
-| Plugin | 1 | Dependency-free OpenCode plugin that registers the skills payload, user-invocable slash-command wrappers, and AGENTS.md context |
-| Context | 1 | AGENTS.md workflow overview, registered via `instructions` |
-| Commands | 18 | Runtime command wrappers registered by the plugin for user-invocable skills; no command files are copied or generated |
-| Agents | 0 | None — all capabilities are skills |
-
-## Requirements
-
-**OpenCode v1.2.16 or newer.** Basis: this distribution was live-verified on v1.2.16, v1.3.13, v1.14.31, and v1.17.3 (plugin `config` hook + `skills.paths` registration + skill discovery, see Mechanism Verification below). Older versions can't be verified the same way (`opencode debug skill` doesn't exist before ~v1.2). Current OpenCode exposes skills through the `skill` tool; manifest-dev's slash UX is provided by plugin-registered command wrappers.
-
-## Installation
-
-1. Clone the repo (anywhere; `~/.manifest-dev/repo` is the documented default):
-
-```bash
-git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo
-```
-
-2. Add the plugin to your **global** OpenCode config (`~/.config/opencode/opencode.json`):
-
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": ["~/.manifest-dev/repo/dist/opencode/plugin"]
-}
-```
-
-3. Restart OpenCode. Config (including plugins and skills) loads once at startup and is not hot-reloaded.
-
-The `~/` form in plugin paths is live-verified on v1.17.3 but not explicitly documented by OpenCode (its docs show `./relative` — resolved from the declaring config file — and `file:///absolute`; bare absolute paths are also accepted by the spec parser and were live-verified across all four tested versions). If you prefer not to rely on `~` expansion, use an absolute path:
-
-```json
-{ "plugin": ["/home/you/.manifest-dev/repo/dist/opencode/plugin"] }
-```
-
-For a single project instead of global, put the same `plugin` entry in the project's `opencode.json`.
-
-### Updating
-
-Add this alias once (e.g. `~/.zshrc` / `~/.bashrc`):
-
-```bash
-alias manifest-dev-update='if [ -d ~/.manifest-dev/repo/.git ]; then git -C ~/.manifest-dev/repo pull --ff-only; else git clone https://github.com/doodledood/manifest-dev.git ~/.manifest-dev/repo; fi'
-```
-
-Then updating is one command — `manifest-dev-update` — followed by an OpenCode restart. The plugin has zero npm dependencies, so `git pull` is the entire update.
-
-### Uninstalling
-
-Remove the `plugin` entry from your opencode.json and delete the clone. Nothing else was installed.
-
-### Migrating from the retired installer
-
-Versions of this distribution before June 2026 shipped a `curl | bash` installer that copied suffixed skills and commands into `~/.config/opencode/`. Those copies keep loading as stale skills/commands until you remove them:
-
-```bash
-find ~/.config/opencode/skills -maxdepth 1 -name '*-manifest-dev*' -exec rm -rf {} + 2>/dev/null
-find ~/.config/opencode/commands -maxdepth 1 -name '*-manifest-dev*' -exec rm -f {} + 2>/dev/null
-```
-
-The old installer also copied an `AGENTS.md` to `~/.config/opencode/AGENTS.md` — delete it only if you haven't made it your own (the plugin registers this repo's copy automatically).
-
-## Usage
-
-Skills appear under their original names. Invoke user-facing skills via slash-command wrappers — `/figure-out`, `/define`, `/do`, `/auto`, `/babysit-pr`, `/review-pr`, `/prompt-engineering`, and the rest of the user-invocable set — or just describe the task and let skill auto-discovery match it. Internal helpers with `user-invocable: false` (`done`, `escalate`) remain available to the model through the `skill` tool but do not appear as slash commands.
-
-`/do`, `/auto`, and `/babysit-pr` accept `--verification per-gate|consolidated|self`; `--verifier-model <model>` is optional for the two independent modes and invalid with `self`. These are run-level options and never Manifest fields.
-
-## How It Works (Mechanism Verification)
-
-The plugin (`plugin/index.js`) is a dependency-free ES module. Its `config` hook mutates the live merged config once at startup: it appends `dist/opencode/skills` to `skills.paths`, scans the bundled skill frontmatter and adds `cfg.command` wrappers for user-invocable skills, and appends `dist/opencode/AGENTS.md` to `instructions`. All paths resolve from the plugin file's own location (`import.meta.url`), so the clone can live anywhere. Missing assets degrade to a console warning — a throwing config hook would break OpenCode startup.
-
-Evidence (live runs against real binaries, 2026-06-11, sandboxed `XDG_*` homes):
-
-- **Hook-before-discovery ordering**: a test plugin's `config` hook appended `skills.paths`; `opencode debug skill` then listed the registered skill — verified on v1.2.16, v1.3.13, v1.14.31, v1.17.3. With this repo's actual plugin on v1.17.3, all 18 skills were discovered from `dist/opencode/skills`, and `opencode debug config` showed the resolved config containing the `skills.paths`, `command`, and `instructions` entries.
-- **Plugin contract**: function export (default or named) returning a hooks object; `config(cfg)` is called "once on init with the merged config". Confirmed live and by OpenCode's own built-in `customize-opencode` skill (registered in code at `packages/core/src/plugin/skill.ts`, shipped inside `opencode-ai@1.17.3`), which also documents `skills.paths` ("scanned recursively for `**/SKILL.md`"), the `command` and `instructions` keys, and the plugin spec forms. Current upstream docs say skills are model-visible through the `skill` tool and slash commands are command-backed; manifest-dev registers wrappers accordingly.
-- **`~` in plugin paths**: a `"plugin": ["~/…"]` entry loaded and its skills were discovered (v1.17.3).
-- **Failure-soft**: invoking the hook with the sibling assets absent produced warnings and no throw; existing user `skills.paths`/`instructions` values are preserved (append, not overwrite), and existing user/project commands are not overwritten.
-- **Not exercised live**: actual injection of the AGENTS.md *content* into a session's system context (needs an LLM session, not available in the verification sandbox). Basis for shipping it: `instructions` is a documented config key and the resolved config accepted the entry.
-
-## Feature Parity with Claude Code
-
-| Feature | Claude Code | OpenCode | Notes |
-|---------|------------|----------|-------|
-| Skills | Full | Full | Identical payload, registered via plugin `skills.paths` |
-| Slash commands | Plugin-namespaced (`/manifest-dev:define`) | Plugin-registered wrappers, bare names (`/define`) | Wrappers call the corresponding skill and are generated only for user-invocable skills |
-| Agents | None (all skills) | None (all skills) | `/do` uses host contexts according to its selected verification mode |
-| Hooks | None shipped | None shipped | Use a durable goal-setting/continuation backstop for unattended turn continuation (`/do` = auditable all-criteria-PASS; `/auto` = Read checkpoint when figure-out runs, then manifest + `/do` gate ledger terminal evidence) |
-
-## Known Limitations
-
-1. **Frontmatter controls mostly ignored by OpenCode** — OpenCode's skill loader honors only `name`/`description`; `disable-model-invocation` has no effect, so all skills remain model-visible through the `skill` tool. manifest-dev's plugin consumes `user-invocable` only for slash-wrapper registration: `done` and `escalate` are not slash-listed.
-2. **Bare names, first-found-wins** — skills keep their original names (`define`, `do`, `auto`); OpenCode dedups same-name skills by discovery order with a logged warning. A project-local skill named `do` shadows manifest-dev's skill. Same-name user/project commands also shadow manifest-dev's slash wrappers because the plugin does not overwrite existing commands.
-3. **No hook backstop for `/do` or `/auto`** — use a host-provided goal-setting/continuation backstop when you want the host CLI to keep long runs moving across turns. `/do` needs auditable all-criteria-PASS: every manifest gate listed with fresh evidence and evaluator provenance under the selected mode, not a summary claim. `/auto` needs one full-chain parent goal whose terminal condition is manifest written plus `/do` gate-ledger PASS; when figure-out runs first, its full autonomous Read anatomy is a checkpoint before `/define`. If no such capability is available, copy the contract the skill prints into your continuation mechanism.
-4. **$ARGUMENTS pass-through** — slash wrappers use OpenCode command-template `$ARGUMENTS` to prompt `Use the <skill> skill with: $ARGUMENTS`.
-
-## Directory Structure
+## Quick Start
 
 ```
-dist/opencode/
-├── plugin/                          # OpenCode plugin (the install surface)
-│   ├── package.json                 #   dependency-free ESM package
-│   └── index.js                     #   config hook: registers skills/ + slash wrappers + AGENTS.md
-├── skills/                          # 20 skills (core + tools), original names
-│   ├── review-code/                 #   quality review, one dimension per invocation
-│   ├── check-pr/  poll-slack/       #   former functional agents, now skills
-│   ├── define/  do/  auto/  ...      #   workflow skills
-│   └── review-prompt/  prompt-engineering/  review-pr/  ...
-├── AGENTS.md                        # Context file, registered via instructions
-└── README.md                        # This file
+/figure-out "how should rate limiting behave here?"   # think it through
+/define "add rate limiting to the API"                # encode what you'd accept
+# recommended — set your host's goal/continuation backstop to a completion contract that carries across turns:
+Goal: Run /do ~/.manifest-dev/manifests/manifest-<timestamp>.md until every Acceptance Criterion and Global Invariant has fresh PASS evidence under the selected verification mode in a manifest gate ledger and /done is reported; don't stop while any gate is unverified, FAIL, stale after a relevant change, BLOCKED/actionable, or escalation-pending. The ledger should list every AC/GI with gate id, gate-text source, selected mode, evaluator provenance, explicit or inherited verifier model, latest verdict, evidence, and freshness. Do not accept unevidenced self-attestation, "looks done", or a summary claim instead of the selected mode's required evidence; fix FAILs and re-evaluate. Escalate only a blocker that genuinely needs me. Record compact progress checkpoints after implementation milestones, verification/repair cycles, and blockers. Stop after N turns if it stalls.
+/do ~/.manifest-dev/manifests/manifest-<timestamp>.md         # foreground variant, current turn only
 ```
+
+`/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/do` with a durable goal-setting or continuation backstop. `/do` executes the Manifest and evaluates every gate under a launch-locked run policy. The default `consolidated` mode uses one independent verifier for the outstanding gate set each round; `per-gate` is an explicit higher-rigor choice (one fresh independent verifier per gate) and `self` an explicit lower-assurance one. The backstop's argument should be the auditable all-criteria-PASS completion contract — a complete gate ledger with fresh evidence and provenance appropriate to the selected mode — keeping the run alive across turns until the condition holds.
+
+Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
+
+The `/do` session doesn't need to remember the `/define` conversation — the manifest is external state. Run `/do` in a fresh session with a durable goal-setting/continuation backstop, or `/compact` before starting.
+
+## The Mindset Shift
+
+Stop thinking about *how* to build it. Start thinking about *what you'd accept* — that's the loop's real stop condition.
+
+"What would make me approve this PR?" "What rules can't be broken?" "How would I know each piece is done?" The acceptance criteria are the pillar, not the implementation. LLMs are good at execution when they know exactly what's expected and bad at reading your mind — the manifest closes that gap before a line of code gets written.
+
+You plan a feature with the agent. It implements. The code looks reasonable. Then you review it and half the things aren't how you'd want them: wrong error handling, conventions ignored, edge cases skipped. You send it back. It fixes some, breaks others. Three rounds later you're satisfied, but you've spent more time reviewing than you saved. Manifest-dev front-loads that review energy — you spell out the criteria before implementation starts, so the do phase becomes mechanical and the output lands closer to what you'd accept as a reviewer.
+
+## Skills
+
+- **`/figure-out`** — the thinking partner, and the conceptual core. Walks every branch of the decision tree (design, diagnostic, commitment, exploratory), takes the next load-bearing question first, recommends an answer, returns to dropped threads, investigates instead of asking when something is discoverable, and keeps a belief register on evidence-heavy work. Its read ships with an Evidence Ledger (load-bearing claims with provenance and verified/inferred/assumed status), confidence, and overturn conditions; loads probe task files by topic shape (code change, diagnosis, research, tech-design docs) and runs an independent fresh-context re-derivation before confident reads nobody will audit. `/define` auto-invokes it when the transcript lacks understanding; call it directly when figuring it out IS the goal. In attended sessions it can also offer to capture durable personal steering preferences (**Taste**) — drafted with rationale and flip condition, written to a marked section of the user-level or project-level memory file only on your explicit yes; autonomous, team, and unattended runs never offer or write taste. Docs mode and narrative logging are on by default; `--no-docs` skips bootstrap/glossary/ADR conventions, `--no-log` skips the default log under the user's home `.manifest-dev/logs/` directory, `--autonomous` lets it self-answer (used by `/auto`), `--team` moves the deliberation into a Slack channel or thread (used by `/figure-out-team`), `--scratch` (off by default) maintains a rough, domain-native supporting artifact under `.manifest-dev/scratch/` to ground long or complex sessions, and `--canvas` (off by default) keeps a refreshable visual map of the session, readable on any screen size, — the crux tree with the current question marked, what's open around it, and how much fog is left — which you can annotate and hand back in one paste.
+- **`/define`** — encodes shared understanding into a verifiable Manifest. Not an interview: it makes the manifest-specific judgment calls (invariant vs process guidance, AC scope and pass threshold, gate kind) and pulls in `/figure-out` first if the understanding isn't there. Pass an existing manifest path in `$ARGUMENTS` to amend it in place. Supports `--babysit <pr-url>`. Emits a foreground `/do <manifest-path>` handoff; `/do` owns the durable manifest-completion contract.
+- **`/do`** — executes a Manifest and evaluates every Acceptance Criterion and Global Invariant by pointing an evaluator at that gate in the manifest, never at a copy of its text. `--verification` selects `consolidated` (default), `per-gate`, or `self`; optional `--verifier-model` applies to the independent modes. Re-verification follows each gate's declared kind: a Deterministic Gate re-runs in full, while a Judgment Gate takes one full look and thereafter judges only its prior findings' repairs and the changed delta; `--exhaustive-verification` restores full re-sampling for a run that wants it. An evaluation expensive to repeat — a long end-to-end suite, the whole-change quality sweep — is spent once the gates whose failures would move its subject are settled. It calls `/done` when every gate has fresh mode-appropriate PASS evidence, or routes through `/escalate` when blocked. The policy is fixed at launch and never downgrades itself. Caller overlays can narrow retry cadence, e.g. CI one-shot runs report wait-only states instead of sleeping. The recommended unattended invocation uses the host's goal-setting or continuation backstop with the manifest's auditable completion condition: every criterion appears in a gate ledger with fresh evidence and provenance under the selected mode and `/done` reported. Bare `/do` runs a single foreground turn. An append-only execution log is on by default under the user's home `.manifest-dev/logs/` directory (`--no-log` opts out; a caller-supplied journal path is used instead when given), recording deviations from the Initial Approach or the Deliverable order, Process Guidance departures, dead ends, and operational notes — execution history lives there, never in the manifest. Mid-`/do` user messages default to invoking `/define` for amendment, with a one-line digest of amendment-time assumptions surfaced after.
+- **`/auto`** — chains `figure-out → define → do` autonomously, no approval gates. It accepts and forwards `/do`'s `--verification` and `--verifier-model` options without encoding them in the Manifest. Use the host's goal-setting or continuation backstop with one chain-complete condition for unattended cross-turn execution (recommended): if figure-out runs, full autonomous Read anatomy is a checkpoint before `/define`; terminal completion is manifest written plus `/do` gate-ledger PASS. Add `--babysit <pr-url>` for PR-lifecycle work.
+- **`/figure-out-team`** — thin discovery wrapper over `/figure-out --team`: the full figure-out discipline applied to a multi-party async Slack conversation, with the Slack mechanics (session-bound trust, `/loop` polling with `poll-slack` reads, mrkdwn, owner-by-Slack-handle convergence) living in figure-out's `references/team.md` overrides so team sessions inherit every figure-out upgrade. Docs context is loaded read-only by default unless `--no-docs`; local logging is on by default under the user's home `.manifest-dev/logs/` directory unless `--no-log`, and the log is never posted to Slack.
+- **`/ticket-up`** — turns a finished Manifest into one self-sufficient, plain-prose ticket per Deliverable plus explicit dependency edges, so the work can be picked up in parallel by teammates, agents, or later sessions — with or without manifest-dev. Knowledge travels (why, scope, binding rules, traps, definition of done); manifest-dev machinery stays behind. Stores: files in the repo by default, GitHub Issues out of the box, or any custom tracker from details you provide once (persisted so later sessions don't re-ask).
+- **`/next-ticket`** — reads a ticket store and names the single best ticket to work on now, with the reason: ready tickets only (open, unclaimed, dependencies done), ordered urgent → unblocking → impact → cheap unless the store states its own rule. Offers to claim, then to execute a shaped ticket or open a `/figure-out` session for a question ticket. figure-out can also hand decoupled unknowns off as question tickets to the same store mid-session.
+- **`/done`** — completion summary in plain prose, called by `/do` after every criterion has fresh PASS evidence under the selected mode.
+- **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from you. Routed by `/do`.
+- **`/review-code`** — quality review along **one dimension per invocation** (bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, or CLAUDE.md adherence). Loads exactly that dimension's reference (progressive disclosure) and returns a PASS/FAIL report. A gate's body activates it; it replaces the per-dimension reviewer agents.
+
+## Manifest Schema — One Gate, One Text
+
+Every Acceptance Criterion and Global Invariant is a single text: a title, a body, and — where it earns its place — a why.
+The text a reviewer reads is the text that binds — there is no separate evaluator-facing copy.
+
+```markdown
+#### AC-1.1 — Health endpoint answers under load
+
+Done when /health returns 200 on all 50 concurrent requests, with no 5xx.
+
+Why: the load balancer drops a node after one failed check.
+
+Deterministic gate.
+```
+
+The title summarizes the body's headline requirement and never adds to it; a requirement living
+only in the title is a defect. The why is optional and binds nothing — written where the body's
+purpose would not be obvious cold, omitted where the body already carries it. The body says what done
+means — and where the procedure that settles a criterion *is* what done means, that procedure
+belongs in the body. Where a skill is the definition of done, the body names the skill and its
+dimension and stops there: the skill owns its own threshold, so a bar copied into a gate is a
+second statement that can contradict the first.
+
+`kind` is the only structured metadata, carried on the closing line. It declares what settles
+the gate, and `/do`
+re-verifies by it: a `deterministic` gate re-runs in full every round, while a `judgment` gate
+reads the whole change once and afterwards judges only its prior findings' repairs and the
+changed delta. A gate mixing a command with a judgment is `judgment`; its commands still run in
+full. A Manifest whose gate omits `kind` is invalid — nothing is guessed. So is one whose gates
+carry a `verify` block or state a `phase`: both are the superseded schema, rejected with an
+instruction to regenerate rather than migrated.
+
+Gate evaluations return one of three states. **PASS** — the criterion holds. **FAIL** —
+violated, with evidence: either a directive `/do` runs literally (when the body activates a
+specialized skill like `check-pr`) or a prose fix hint read with judgment. **BLOCKED** — can't
+be evaluated yet because an external action or state is pending (deploy, human approval), or the
+Manifest itself could not be read; `/do` routes an actionable BLOCKED via `/escalate`.
+
+A gate body says whatever an evaluator needs — run a bash command and check the exit code,
+inspect files, query an API, fetch docs. It must not assume one agent per gate, a consolidated
+verifier, self-verification, or a model, and it does not restate the run-wide comparison or the
+verdict contract: those are `/do` launch choices and `/do` policy, not Manifest schema.
+
+## Manifest Sections
+
+| Section | Purpose | ID Scheme |
+|---------|---------|-----------|
+| **Intent** | Problem, appetite, out of bounds | -- |
+| **Initial Approach** (complex tasks) | Architecture — starting direction, departable | -- |
+| **Global Invariants** | Task-level rules (task fails if violated) | `INV-G{N}` |
+| **Process Guidance** | Advisory recommendations on how to work; weighed, not enforced | `PG-{N}` |
+| **Known Assumptions** | Low-impact items resolved with a default | `ASM-{N}` |
+| **Deliverables** | Work items with Acceptance Criteria, least-proven first | `AC-{D}.{N}` |
+
+## Example Manifest
+
+````markdown
+# Definition: User Authentication
+
+## 1. Intent
+- **Problem:** Anyone with the app URL reads every user's data — there is
+  no login at all.
+- **Appetite:** Session auth over the existing endpoints, not an identity
+  subsystem.
+- **Out of bounds:** OAuth providers, account recovery, role permissions.
+
+## 2. Initial Approach
+- **Architecture:** Middleware-based auth, JWT in httpOnly cookies
+
+## 3. Global Invariants (The Constitution)
+
+### INV-G1 — Passwords are never stored in plaintext
+
+Done when `grep -r 'password.*=' src/ | grep -v hash | grep -v test` returns no matches.
+
+Why: a plaintext password in the store is unrecoverable once shipped — every other auth
+control is downstream of this one.
+
+Deterministic gate.
+
+## 4. Process Guidance
+- [PG-1] Follow existing error handling patterns in the codebase
+
+## 6. Deliverables (The Work)
+
+### Deliverable 1: Login round-trip
+
+*What it is, and how it is exercised end-to-end:* signing in from the browser and reaching a
+protected page — the credential check, the cookie, and the redirect exercised together.
+
+#### AC-1.1 — POST /login returns a session for valid credentials
+
+Done when POST /login with valid credentials returns 200 and sets a JWT in an httpOnly cookie
+the protected routes accept.
+
+Deterministic gate.
+
+#### AC-1.2 — Invalid credentials fail cleanly
+
+Done when the review-code skill, activated with dimension=code-bugs over the auth
+routes, reports nothing at or above that dimension's threshold — an invalid-credential path
+returning 500 instead of 401 is the shape this catches.
+
+Judgment gate.
+````
+
+## Manifest = Current State
+
+Amendments overwrite in place with stable IDs (modify `INV-G1` and it stays `INV-G1`; remove one and it's gone, no renumbering). No `## Amendments` log, no `INV-G1.1 amends INV-G1` chain — git carries the history.
+
+The manifest is the canonical source of truth for the PR or branch, not for a single task — feedback flows through it. When something's off mid-`/do` or after `/done` (a missed edge case, a reviewer comment, a late requirement), Self-Amendment routes it automatically: `/escalate` → `/define` re-invoked on the manifest path to amend → `/do` resumes with the updated manifest. Pure questions about the manifest get answered inline; everything else amends. `/done` stays unreachable until every criterion verifies PASS again, so each round trip grows the verification surface — bug fixes and late requirements become permanent checked criteria.
+
+## Verification Skills
+
+manifest-dev ships **no agents of its own**. `/do` uses host execution contexts according to the selected verification mode, and every mode reads the same gate text from the manifest, which can call for running bash, inspecting files, querying external tools, or activating a skill. Read-only behavior is enforced by that text, so authors can point an evaluator at MCP servers or extra CLI tools the user has configured.
+
+Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`review-code` skill** — one dimension per invocation; a gate body activates it when needed. The other functional skills are `check-pr` (PR mergeability checks) and `poll-slack` (tails Slack threads for `/figure-out-team`).
+
+| Dimension | Role | Focus |
+|-----------|------|-------|
+| `change-intent` | defect (no LOW+) | Adversarial intent analysis: reconstructs intent, finds behavioral divergences |
+| `code-bugs` | defect (no LOW+) | Mechanical defects: races, data loss, edge cases, resource leaks, dangerous defaults |
+| `contracts` | defect (no LOW+) | Bidirectional API/interface contract checks against docs, schemas, codebase definitions |
+| `type-safety` | defect (no LOW+) | Typed-language safety: type holes, representable invalid states, narrowing |
+| `operational-readiness` | advisory (no MEDIUM+) | Runtime/deploy readiness: env wiring, migrations, retries, rollback, scale, CI, observability |
+| `code-design` | advisory (no MEDIUM+) | Design fitness: reinvented wheels, wrong responsibility, under-engineering, PR coherence |
+| `code-maintainability` | advisory (no MEDIUM+) | DRY violations, coupling, cohesion, dead code, consistency |
+| `code-simplicity` | advisory (no MEDIUM+) | Over-engineering, premature optimization, cognitive complexity |
+| `code-testability` | advisory (no MEDIUM+) | Excessive mocking, logic buried in IO, hidden dependencies |
+| `test-quality` | advisory (no MEDIUM+) | Coverage gaps plus independent-oracle checks for tautology, mirror-impl, mock-SUT |
+| `docs` | advisory (no MEDIUM+) | Documentation accuracy against code changes |
+| `prose-value` | advisory (no MEDIUM+) | Comment/doc value: narrating-the-obvious, puffery, AI rhetorical patterns |
+| `context-file-adherence` | advisory (no MEDIUM+) | Compliance with CLAUDE.md / AGENTS.md project rules |
+
+## Task Guidance and References
+
+Task files come in two parallel, decoupled sets, each loaded by task type by its own skill: `skills/define/tasks/` carry domain-specific quality gates and Defaults that `/define` encodes into the manifest; `skills/figure-out/tasks/` carry probing fuel — blind-spot probes and forced trade-offs (verification among them) that `/figure-out` surfaces during understanding as awareness, not a checklist. Tech-design documents use both halves: figure-out surfaces audience/source/visual/taste probes, while /define encodes document gates. Source-type research material lives under `skills/define/tasks/research/sources/`. Mode and domain references in `skills/define/references/` (`BABYSIT_MODE.md`, `MULTI_REPO.md`, `WRITING-REFERENCE.md`) cover specialized flows.
+
+**Multi-repo** (`MULTI_REPO.md`): by default a single manifest covers the whole changeset (Intent declares `Repos:`, deliverables tag `repo:`). `/do` navigates absolute paths from the map natively. PR-lifecycle work templates one `check-pr` skill run per repo against the shared manifest. Splitting into per-repo manifests is fine when the work is loosely coupled.

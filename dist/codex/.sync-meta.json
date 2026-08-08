@@ -1,10 +1,10 @@
 {
-  "source_commit": "dbded7e274d567fc1d265cd3d6780b0c787e6ee8",
+  "source_commit": "654f95aabc4db7b27466e70a531956677dc2722b",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-08T14:21:33Z",
-  "notes": "Gate extension rule, /do cadence clause removed, plugin-wide positive-framing sweep; manifest-dev 7.1.0 mirrored. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them applied."
+  "synced_at": "2026-08-08T16:40:00Z",
+  "notes": "Gate phases removed (breaking manifest-schema change); verification-mode references de-duplicated into /do; Ratchet restated as a run-level dial; ceiling gate shipped rather than derived; ticket-up re-synced to the current schema; figure-out plain-words test. manifest-dev 8.0.0 and manifest-dev-tools 4.0.1 mirrored. Recorded SHA is the pre-sync head by construction, so the next diff-first run re-checks this sync commit's own source changes and finds them applied."
 }
