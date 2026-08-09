@@ -185,7 +185,7 @@ A named body of work a Ticket Store groups by — one destination, one front fil
 _Avoid_: Project, epic, milestone.
 
 **Ticket Store**:
-Where an effort's Tickets live, under the ticket convention — files in the repo by default, GitHub Issues or a custom tracker as pluggable venues; the convention is the contract, the venue a rendering.
+Where an effort's Tickets live, under the ticket convention — files in the repo, GitHub Issues, or a custom tracker as pluggable venues, on a venue asked once per project and recorded there; the convention is the contract, the venue a rendering.
 _Avoid_: Backlog, board.
 
 **Ticket-up**:

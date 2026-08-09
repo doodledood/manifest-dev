@@ -1,6 +1,6 @@
 ---
 name: ticket-up
-description: 'Turn a finished Manifest into self-sufficient tickets anyone can pick up — a teammate, an agent, or a future session, with or without manifest-dev. Emits one plain-prose ticket per Deliverable plus explicit dependency edges, into a file-based store by default or GitHub Issues or a custom tracker. Use when splitting a manifest into tickets, delegating work, parallelizing execution, or when the user asks to ticket up, break into tickets, or create tickets from a plan.'
+description: 'Turn a finished Manifest into self-sufficient tickets anyone can pick up — a teammate, an agent, or a future session, with or without manifest-dev. Emits one plain-prose ticket per Deliverable plus explicit dependency edges, into files, GitHub Issues, or a custom tracker — on a venue asked once per project and recorded there. Use when splitting a manifest into tickets, delegating work, parallelizing execution, or when the user asks to ticket up, break into tickets, or create tickets from a plan.'
 ---
 
 # ticket-up

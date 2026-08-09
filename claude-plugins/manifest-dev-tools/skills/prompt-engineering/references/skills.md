@@ -57,7 +57,7 @@ Three checks: *specific* (names the failure, not a category), *actionable* (says
 
 ## Setup and stateful skills
 
-Skills that need user-specific configuration (channel names, project IDs, output paths) persist that config in a file inside the skill directory. Read it on invocation; ask only if absent. Re-asking every session is a gap the skill exists to close.
+Skills that need configuration (channel names, project IDs, output paths) persist it at a fixed path in the project, not inside the skill directory — a skill directory is shared across every project under one install and private to one under another, and the instruction cannot say which. Read it on invocation; ask only if absent, then write the answer so nothing asks twice. Re-asking every session is a gap the skill exists to close.
 
 ## Naming
 

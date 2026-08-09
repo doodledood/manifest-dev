@@ -9,7 +9,7 @@ Creating or updating LLM prompts, skills, agents, system instructions.
 | Intent analysis | `review-code` skill, dimension=`change-intent` | no LOW+ |
 | Prompt quality | `review-prompt` skill | no MEDIUM+ |
 
-Both gates encode as a gate body that activates a skill under `/do`'s selected evaluator: the intent gate activates the `review-code` skill (dimension=change-intent); the prompt-quality gate activates the `review-prompt` skill. Name the skill and dimension and stop — each skill owns its own threshold, and the bars in the table above orient the author rather than being copied into the gate. Both are Judgment Gates — a reviewer's verdict over an open finding space rather than a command outcome — so each declares the judgment kind, which is what tells `/do` how it re-verifies.
+Both gates encode as a gate body that activates a skill under `/do`'s selected evaluator: the intent gate activates the `manifest-dev:review-code` skill (dimension=change-intent); the prompt-quality gate activates the `manifest-dev-tools:review-prompt` skill. Name the skill and dimension and stop — each skill owns its own threshold, and the bars in the table above orient the author rather than being copied into the gate. Both are Judgment Gates — a reviewer's verdict over an open finding space rather than a command outcome — so each declares the judgment kind, which is what tells `/do` how it re-verifies.
 
 When the review-prompt skill is not available, encode these as individual criteria, each with its own body:
 
@@ -45,7 +45,7 @@ When the task involves creating or updating a skill, also apply:
 *Domain best practices for this task type.*
 
 - **Identify skill type** — Determine which category the skill falls into (Library/API, Verification, Data, Business Process, Scaffolding, Code Quality, CI/CD, Runbook, Infra Ops) and match architecture to its core pattern
-- **Assess config needs** — If skill requires user-specific configuration (IDs, names, preferences), persist in a config file within the skill directory rather than re-asking each session
+- **Assess config needs** — If a skill requires configuration (IDs, names, preferences), persist it at a fixed path in the project rather than inside the skill directory, and read it instead of re-asking each session
 - **High-signal changes only** (updates) — Every change must address a real failure mode or materially improve clarity. Don't change for the sake of change. Don't overcorrect — one edge case doesn't warrant restructuring
 - **Probe for memento needs** — Multi-phase prompts that accumulate findings need externalized state; probe: does this prompt span multiple steps?
 - **Define empty input behavior** — What happens when the prompt receives no arguments; probe: should it ask, error, or use defaults?
