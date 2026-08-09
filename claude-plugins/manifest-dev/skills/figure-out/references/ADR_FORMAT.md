@@ -8,7 +8,7 @@ This file is self-contained: it carries both the bar a decision must clear to de
 
 A project may keep its own copy of these conventions at `docs/adr/CONVENTIONS.md`. **Where that file exists, it governs** — template, field set, naming, status lifecycle, immutability, cross-references, and index format are the project's to set, and a team that has edited them means it. Read it before writing an ADR into that project, and follow it where it differs from this file.
 
-What stays here is cadence: when to raise an ADR during a working session, and how the offer is made. That is workflow behavior rather than project convention, and a project's conventions file has no say in it.
+One thing is not the project's to set: **cadence** — when a session raises an ADR and how the offer is made. That is workflow behavior, it lives with the workflow that makes the offer, and a conventions file stating otherwise does not bind it.
 
 ## When a decision deserves a record
 

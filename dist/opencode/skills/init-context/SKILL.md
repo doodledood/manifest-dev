@@ -24,14 +24,16 @@ Read before writing, and never overwrite a surface the project already maintains
 
 - **`docs/adr/CONVENTIONS.md` exists** → the project has its own ADR convention. It governs. Do not replace it; follow it for anything written this run, and skip the conventions step.
 - **`CONTEXT.md` exists** (or the context named by a root `CONTEXT-MAP.md`) → load it. Mined vocabulary is proposed as additions to it, never as a replacement.
-- **`docs/adr/` holds records** → read the existing conventions and match them. Mined records join the corpus; they do not restate what is already recorded.
+- **`docs/adr/` holds records but there is no `CONVENTIONS.md`** → the project has an unwritten convention, and the records are the evidence of it. Infer it from them — naming scheme, which sections they carry, how they cross-reference, what the index looks like — and write the conventions file to describe *that*, adapting the shipped default rather than replacing it. Installing the default unchanged here would declare an existing corpus non-conforming, which is both wrong and the fastest way to get the file ignored. Where the corpus is inconsistent, or where following it would leave the index un-rebuildable, say so and let the user choose; never silently pick.
 - **A project context file already carries some of this wiring** → add what is missing and leave the rest alone.
 
 ## The run
 
 1. **Resolve the project context file.** Its name differs by CLI — `CLAUDE.md`, `AGENTS.md`, or another — so detect it rather than assuming. The detection table and per-CLI resolution order live in `../review-code/references/context-file-adherence.md`; read it and use it.
 
-2. **Install the ADR conventions.** Copy `../figure-out/references/ADR_FORMAT.md` to `docs/adr/CONVENTIONS.md`, replacing its `## Precedence` section with a short opening line stating that this file is the project's ADR convention and governs, and that tooling carrying its own defaults defers to it. Everything else travels verbatim — the file is written to be self-sufficient, and a reader with no tooling must be able to follow it end to end.
+2. **Install the ADR conventions**, unless `docs/adr/CONVENTIONS.md` already exists. Copy `../figure-out/references/ADR_FORMAT.md` to `docs/adr/CONVENTIONS.md`, replacing its `## Precedence` section with a short opening line stating that this file is the project's ADR convention and governs, and that tooling carrying its own defaults defers to it. Everything else travels verbatim — the file is written to be self-sufficient, and a reader with no tooling must be able to follow it end to end.
+
+   Where records already exist, this is not a straight copy: reconcile the default with the practice those records show, per *What already exists governs* above, and surface any divergence you had to resolve.
 
 3. **Seed, unless `--no-mine`.** Load `references/MINING.md` and follow it. It covers what each source can and cannot yield, how a record says so when the reasoning is gone, and why glossary candidates are ratified rather than written.
 
