@@ -57,7 +57,7 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-27 | [figure-out adopts a concrete default turn shape](20260727-figure-out-adopts-a-default-turn-shape.md) | Superseded by [one concrete claim ADR](20260803-figure-out-turn-carries-one-concrete-claim.md) | figure-out |
 | 2026-07-28 | [Bound the acceptance contract from above, not only from below](20260728-bound-the-acceptance-contract-from-above.md) | Accepted | define / do |
 | 2026-07-28 | [Move verification execution policy to `/do`](20260728-move-verification-execution-policy-to-do.md) | Accepted; omitted-flag default superseded by [consolidated default ADR](20260730-consolidated-default-verification-mode.md) | do |
-| 2026-07-30 | [Consolidated as the default /do verification mode](20260730-consolidated-default-verification-mode.md) | Accepted | do |
+| 2026-07-30 | [Consolidated as the default /do verification mode](20260730-consolidated-default-verification-mode.md) | Superseded by [per-gate restored ADR](20260808-restore-per-gate-default-verification-mode.md) | do |
 | 2026-07-30 | [Walk-pr runs on an attention contract — a picture, not a document](20260730-walk-pr-attention-contract-picture-not-document.md) | Accepted | PR review |
 | 2026-07-30 | [Walk-pr triages captured input before drafting comments](20260730-walk-pr-triages-before-drafting-comments.md) | Accepted | PR review |
 | 2026-08-03 | [figure-out gains an optional canvas whose spine is the crux tree and whose subject is the frontier](20260803-figure-out-gains-an-optional-canvas.md) | Accepted | figure-out |
@@ -66,3 +66,7 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-08-03 | [A prototype attaches to the question it was built to crack, and the reaction lands there](20260803-prototypes-attach-to-the-station-they-crack.md) | Accepted | figure-out |
 | 2026-08-05 | [Judgment Gates re-verify by Ratchet, not by re-sampling](20260805-ratchet-judgment-gate-reverification.md) | Accepted | define / do |
 | 2026-08-06 | [`/do`'s verification layer is bookkeeping and a stop condition, not a checking aid](20260806-verification-is-bookkeeping-and-a-stop-condition.md) | Accepted | do |
+| 2026-08-06 | [Retire the decision-map planning shape in favor of ticket-up and a ticket store](20260806-retire-decision-map-for-ticket-up-and-ticket-store.md) | Accepted | define / figure-out |
+| 2026-08-07 | [A gate is one text, not two](20260807-a-gate-is-one-text-not-two.md) | Accepted | define / do |
+| 2026-08-07 | [Trim the Manifest schema to fields that are read](20260807-trim-the-manifest-schema-to-fields-that-are-read.md) | Accepted | define / do |
+| 2026-08-08 | [Per-gate restored as the default `/do` verification mode](20260808-restore-per-gate-default-verification-mode.md) | Accepted | do |
