@@ -1,6 +1,6 @@
 # Per-gate verification
 
-Launch one fresh independent general-purpose verifier execution for every gate the spine marks eligible, and run those executions in parallel.
+Launch one fresh independent general-purpose verifier execution for every gate the spine marks eligible, and run those executions in parallel. Where two or more are eligible in the same round, order those launches per *Caching per-gate launches* and `references/CACHING.md` when the harness supports it.
 
 Each execution returns one record for its own gate.
 
