@@ -1,11 +1,11 @@
 {
-  "source_commit": "29035644eef32279ef64113f507a52abeab5ffab",
+  "source_commit": "58de0f3c815c8c1bd42abcd57c9a49b9ab520f1a",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-09T20:18:25Z",
-  "notes": "Round-3 sync. Carries the four 2026-08-09 decisions plus the corrected skill-authoring configuration guidance. Skill set unchanged, so README component tables were left as generated. The plugin-qualifier strip applies to define/tasks/PROMPTING.md and was re-applied after an earlier verbatim copy overwrote it; no other changed file carries a qualifier. Pi carries no plugin manifest; the repo-root package version moved to 6.3.0 because dist/pi assets changed. component-namespaces.json regenerated and unchanged, the component set being the same."
+  "synced_at": "2026-08-09T20:29:03Z",
+  "notes": "Carries the four 2026-08-09 decisions, the corrected skill-authoring configuration guidance, and figure-out's braided-work-stream offer. The plugin-qualifier strip applies to define/tasks/PROMPTING.md; no other distributed file carries a qualifier. No plugin manifest here; the repo-root package version is 6.3.0. component-namespaces.json matches the current component set."
 }
