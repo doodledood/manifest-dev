@@ -10,6 +10,10 @@ A project may keep its own copy of these conventions at `docs/adr/CONVENTIONS.md
 
 One thing is not the project's to set: **cadence** — when a session raises an ADR and how the offer is made. That is workflow behavior, it lives with the workflow that makes the offer, and a conventions file stating otherwise does not bind it.
 
+<!-- The heading below is a fixed boundary: init-context copies this file from here to the end
+     verbatim, replacing only what sits above it. Renaming it breaks that copy — change the
+     recipe in init-context/SKILL.md step 2 in the same edit. -->
+
 ## When a decision deserves a record
 
 The threshold is **downstream architectural impact** — decisions that shape the system's structure, constrain future options, or would be costly to reverse.

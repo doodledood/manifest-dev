@@ -35,13 +35,7 @@ Read before building plugins:
 
 **Read `docs/adr/` before re-deciding something.** Open the index at `docs/adr/README.md` when you are about to settle a question the project may already have settled, and when a change you are making contradicts or narrows an existing decision. Those two moments are the whole reason the corpus exists; outside them, leave it closed.
 
-**Writing a decision record is one act, not three.** When a decision meets the bar in `docs/adr/CONVENTIONS.md`, the same change must:
-
-1. write the new record;
-2. update the Status of every record whose standing it changes — superseded, narrowed, or partly lifted;
-3. rebuild `docs/adr/README.md` per the rebuild rules in `docs/adr/CONVENTIONS.md`.
-
-Doing one or two leaves the corpus asserting something untrue, and step 2 is the one that gets dropped. `docs/adr/CONVENTIONS.md` carries the bar, the template, and the rules — consult it there rather than working from memory.
+**Writing a decision record is one act, not three** — the record, the restatus, and the index, in one change. Step two is the one that gets dropped, and dropping any of them leaves the corpus asserting something untrue. Open `docs/adr/CONVENTIONS.md` before you start: it carries the bar, the template, and what each step actually requires.
 
 ## Repository Structure
 

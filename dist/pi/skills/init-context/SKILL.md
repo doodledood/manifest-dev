@@ -47,7 +47,7 @@ Read before writing, and never overwrite a surface the project already maintains
    - **When to open the decision records.** Before settling a question the project may already have settled, and when a change contradicts or narrows an existing decision. A pointer with no trigger is how a corpus goes unread.
    - **Writing a record is one act.** The new record, the restatus of everything whose standing it changes, and the index rebuild — in one change, pointing at the conventions file for how.
 
-5. **Report what landed.** Say plainly what was written, what was seeded and from which sources, and — the part that matters most — what could not be recovered. A user who knows the seed is thin will grow it; one who thinks it is complete will trust it.
+5. **Report what landed**, per the *Reporting* section of `references/MINING.md`, which specifies what the report must cover. A run that skipped seeding still reports — what was installed, and that nothing was seeded because there was nothing to seed from.
 
 ## Empty input
 
