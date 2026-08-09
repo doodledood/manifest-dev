@@ -1,11 +1,11 @@
 {
-  "source_commit": "b4ac2a68e53b4c7828cb721e5867809ea1b32b44",
+  "source_commit": "6ab932fcb8f24d229ab5a49b3507893166048180",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-08T19:20:00Z",
-  "notes": "Restore per-gate as the omitted-flag /do verification default. Synced do, auto, and babysit-pr skill bodies; mirrored manifest-dev 8.1.0 and manifest-dev-tools 4.1.0; updated README and context-file prose that states the default independently of the skill files. Skill set unchanged. Prior meta recorded 09b1706 while dist already carried c760cbe; corrected to HEAD."
+  "synced_at": "2026-08-09T05:40:27Z",
+  "notes": "Add /init-context to the core plugin; sync figure-out's ADR_FORMAT.md (now self-sufficient, with the record bar folded in, an Area field, and index rebuild rules) and WITH_DOCS.md (cadence only; Bootstrap loads the conventions and offers init-context). Skill set changed, so README component listings and the context file were regenerated; manifest-dev 8.2.0 mirrored. Previous recorded SHA b4ac2a6 was unreachable from HEAD (squash-merge rewrote it); re-anchored to ad6769f, whose plugin versions (8.1.0 / 4.1.0) match what the previous note recorded as synced, and took the delta from there."
 }
