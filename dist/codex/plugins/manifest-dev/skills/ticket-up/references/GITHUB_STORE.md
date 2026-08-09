@@ -19,7 +19,7 @@ Renders the ticket convention onto GitHub Issues. Use whatever GitHub access the
 | Ready | Open, unassigned, and every `Depends on:` issue closed |
 | Tidy pass | Re-groom: close stragglers, unassign stale claims, refresh the tracking issue's destination and pointers |
 
-The label earns its place next to the parent relation by answering a different question. Reading membership off the parent means already knowing which tracking issue to open; one open-issues query comes back with labels attached to every ticket, which names every effort in play from a cold start.
+The label earns its place next to the parent relation by answering a different question. Reading membership off the parent means already knowing which tracking issue to open; one open-issues query comes back with labels attached to every ticket, which names every effort in play from a cold start. The tracking issue carries both labels for the same reason they are two labels: `effort:<slug>` says which effort, `effort` says this is the front file rather than a ticket — so one query returns the group and can still tell its parts apart.
 
 ## Emitting
 
