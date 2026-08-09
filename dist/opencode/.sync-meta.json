@@ -6,5 +6,5 @@
     "claude-plugins/manifest-dev-tools"
   ],
   "synced_at": "2026-08-09T20:29:03Z",
-  "notes": "Carries the four 2026-08-09 decisions, the corrected skill-authoring configuration guidance, and figure-out's braided-work-stream offer. The plugin-qualifier strip applies to define/tasks/PROMPTING.md; no other distributed file carries a qualifier. AGENTS.md and README.md state the ticket-store venue rule and the derived effort pick. plugin/package.json holds manifest-dev 8.3.0."
+  "notes": "Records which source commit this tree was generated from. Per-CLI conversion rules \u2014 qualifier handling, context-file naming, tool-name mapping \u2014 live in the sync-tools reference for this CLI, which is the only place that states them."
 }
