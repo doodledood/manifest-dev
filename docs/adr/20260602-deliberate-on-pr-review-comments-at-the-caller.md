@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR review
+
 ## Context
 
 When `/do` tends a PR under PR-lifecycle work (regular `/define`→`/do` on a `github.com` origin, or `babysit-pr`), it acts on findings the `github-pr-lifecycle` agent surfaces — including open review threads. Observed failure: scope explodes from comments. The caller treats a reviewer's (or a bot's) comment as work to satisfy and implements it to make the thread go away, even when the comment is wrong, off-intent, or implies a far larger change than the PR set out to make.

@@ -1,7 +1,10 @@
 # ADR: Harden figure-out truth-seeking via inline general-case rigor; defer the independent verification pass
 
 ## Status
-Accepted
+Accepted; deferral lifted by 20260611-figure-out-evidence-ledger-and-independent-rederivation
+
+## Area
+figure-out
 
 ## Context
 

@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+OpenCode distribution
+
 ## Context
 
 The OpenCode plugin-native distribution ADR retired the old OpenCode installer and its copied command files. That direction still holds: package-local skills registered through the plugin avoid shared Agent Skills directory bleed, and uninstall remains one config-line removal plus deleting the clone.

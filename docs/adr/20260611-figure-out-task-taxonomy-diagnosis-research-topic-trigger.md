@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Task guidance
+
 ## Context
 
 figure-out's probe files load only "when the topic involves a code change" (`SKILL.md`), and the set mirrors only define's coding cluster (CODING + FEATURE/BUG/REFACTOR). Two of figure-out's most natural *standalone* uses therefore load no probe fuel at all: pure diagnosis ("why is prod latency spiking" — no fix in sight, sometimes no code subject) and research-shaped investigation (tech evaluation, library choice). BUG.md additionally mixes two phases — diagnosis probes (mechanism-not-shape, one-symptom-several-causes) and fix probes (shared-caller fallout, bad-data-left-behind) — under the change-gated trigger.

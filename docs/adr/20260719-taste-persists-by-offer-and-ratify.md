@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 manifest-dev persists two kinds of cross-session knowledge: decisions with their rationale (ADRs) and project vocabulary (CONTEXT.md). A third kind had no persistence path: durable personal steering preferences — recurring directional pushback like a standing lean toward low-surface-area changes — which users re-state session after session because nothing carries them forward. The tension is that persisted preference context can degrade deliberation quality: a behavioral prediction of the form "the user pushes toward Y on X-type questions" invites the agent to open at Y instead of arriving at Y, collapsing the deliberation the workflows exist to run, and it self-seals — once the agent preempts the preference, the corrective pushback that would test or update it stops occurring. In autonomous runs a wrong preference prior compounds with no user present to catch it.
 

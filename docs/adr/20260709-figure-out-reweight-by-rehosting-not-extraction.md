@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 figure-out's `SKILL.md` body has grown by accretion — 37 commits since 2026-04, each adding an individually justified behavior — into ~2,300 words of 23 flat, equally weighted imperative paragraphs with no headings. An LLM's attention is finite: when every paragraph presents at identical urgency, load-bearing spine instructions compete with 20-word edge guards and nothing is typographically foregrounded. Concretely: ~230 words of task-probe routing mechanics sit at position 2, ahead of the per-turn cadence rule; the epistemic spine is split by a five-paragraph band of guards and calibration, so the crumbs/fog vocabulary (consolidated conceptually in the confidence-spine change, PR #223) spans two paragraphs ~620 words apart.

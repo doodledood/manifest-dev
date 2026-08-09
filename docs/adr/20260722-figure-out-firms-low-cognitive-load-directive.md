@@ -3,6 +3,9 @@
 ## Status
 Superseded by 20260727-figure-out-adopts-a-default-turn-shape
 
+## Area
+figure-out
+
 ## Context
 
 figure-out's goal is *shared* understanding. Two things serve it: getting the answer right — rigor: evidence discipline, crumb and fog tracking, rival management, independent re-derivation — and making it land for the reader — presentation: low cognitive load. A turn that is correct but arrives as a dense wall the reader has to re-read has not produced shared understanding; the "shared" half failed even though the "understanding" half held.

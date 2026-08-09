@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+do
+
 ## Context
 
 `/do` evaluates every Acceptance Criterion and Global Invariant under a run-level

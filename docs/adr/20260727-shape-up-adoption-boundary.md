@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Positioning
+
 ## Context
 
 Shape Up (Basecamp) was read in full and mapped systematically against the workflow suite. The convergence is deep: Deliverables as exercisable slices match scopes and "get one piece done"; least-proven-first ordering matches "push the scariest work uphill first"; `/do`'s bound-repairs-by-subject escalation matches the circuit breaker's kernel (non-convergence means the shaping had a hole — reframe, don't grind); the figure-out/define track beside `/do` matches the shaping/building two-track split; the Summary for Approval matches the pitch-presentation moment. Where real gaps existed, concepts were adopted — Problem, Appetite, and Out of bounds in the manifest (`20260727-manifest-intent-leads-with-problem-appetite-and-bounds`), rabbit-hole probe fuel, breadboarding as a one-shot-probe form.

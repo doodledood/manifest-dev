@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Positioning
+
 ## Context
 manifest-dev's discovery surfaces (README first screen, repo metadata, directory listings, docs pages) need a single clear entry point. Presenting the integrated methodology first demands enrollment before any value is felt — a newcomer must buy the whole `/figure-out` → `/define` → `/do` arc to get anything — while the strongest first impression comes from one standalone skill solving a pain the visitor already has, felt within the first minute.
 

@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Prompt architecture
+
 ## Context
 
 A figure-out audit of the figure-out skill found that docs mode eagerly loads all of `references/ADR_FORMAT.md` (172 lines): `WITH_DOCS.md` instructs "The ADR gate, format, lifecycle … live in the adjacent `ADR_FORMAT.md` — read it." The gate must be checked after every user turn, so placing it inside the deferred file forces the whole file into context at mode start — the deferral buys nothing. Only ~30 of those lines (decision-worthiness categories, Decision Test, anti-patterns) are needed per-turn; the rest (template, naming, lifecycle, immutability, cross-references) earns its place only when an ADR is actually written.

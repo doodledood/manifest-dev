@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+define / do
+
 ## Context
 
 `/do` evaluates every Acceptance Criterion and Global Invariant each round until all

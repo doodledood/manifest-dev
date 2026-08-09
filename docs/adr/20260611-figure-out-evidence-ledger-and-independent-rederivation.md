@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 A fresh trust-gap pass over figure-out (post the 2026-06-06 hardening) found five residual gaps: **epistemic blur** (verified observation, inference, and recall voiced identically), **shapeless reads** (no required confidence / evidence / overturn conditions on the deliverable), **confirmation-shaped probing** (support accumulates for the leader instead of probes that split rivals), **staleness** (turn-3 claims recited at turn 40 in a verified voice, including post-compaction), and **self-grading at convergence** (nothing independent ever re-derives the read — worst under `--autonomous`).

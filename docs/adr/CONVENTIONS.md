@@ -1,14 +1,8 @@
-# ADR Format
+# ADR Conventions
 
 Architecture Decision Records capture significant decisions with their context, alternatives, and consequences. Based on the MADR (Markdown Any Decision Records) standard.
 
-This file is self-contained: it carries both the bar a decision must clear to deserve a record and the mechanics of writing one, so a reader with no tooling installed can follow it end to end.
-
-## Precedence
-
-A project may keep its own copy of these conventions at `docs/adr/CONVENTIONS.md`. **Where that file exists, it governs** — template, field set, naming, status lifecycle, immutability, cross-references, and index format are the project's to set, and a team that has edited them means it. Read it before writing an ADR into that project, and follow it where it differs from this file.
-
-What stays here is cadence: when to raise an ADR during a working session, and how the offer is made. That is workflow behavior rather than project convention, and a project's conventions file has no say in it.
+**This file is this project's ADR convention, and it governs.** Everything needed to decide whether a decision deserves a record and to write one correctly is here — no tool, plugin, or prior knowledge required. Any tooling that carries its own ADR defaults defers to this file; edit it when the project's practice should change, and the tooling follows.
 
 ## When a decision deserves a record
 

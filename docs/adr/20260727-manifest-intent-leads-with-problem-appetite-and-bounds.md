@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+define
+
 ## Context
 
 The manifest schema's Intent & Context carried two fields: Goal and Mental Model. Everything downstream of `/define` steers by them.

@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 `figure-out` weighs every genuinely-viable option before converging, and its existence challenge (20260714-figure-out-challenge-solution-existence-before-design) makes proposed solution structure earn its place. That decision deliberately carves out "goals or constraints the user has fixed" from the challenge — and names a poorly stated constraint set as residual risk.

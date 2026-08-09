@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Codex distribution
+
 ## Context
 
 manifest-dev distributes to non-Claude CLIs by syncing the Claude Code plugin into `dist/` via `/sync-tools`. Claude Code is the source of truth; Codex/Gemini/OpenCode are generated targets.

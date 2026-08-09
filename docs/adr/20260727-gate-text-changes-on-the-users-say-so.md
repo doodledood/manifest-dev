@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+do
+
 ## Context
 
 `/do` may amend the manifest when execution shows a manifest statement has gone false — an Architecture that no longer describes the work, a scope boundary the work has outgrown, a Known Assumption the run has settled. That route is sound for statements that do not bind: amending them reopens nothing.

@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+define
+
 ## Context
 
 `/define` carried detailed guidance on how to *verify* a Deliverable — thirteen `review-code` dimensions, two severity tiers, phase ordering, verifier-prompt discipline, an encoding pattern for every gate — and no guidance at all on how to *cut* one. The manifest schema's only statement about decomposition was an ordering annotation: "ordered by dependency then importance."

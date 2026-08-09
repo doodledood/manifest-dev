@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR review
+
 ## Context
 Walk-pr's canvas mode originally specified a document-shaped artifact: a prose PR primer, per-sub-changeset cards with behavior summaries and verification probes, boundary-view paragraphs, and two-sentence topic headlines, all rationed by progressive disclosure. Built faithfully against a large real PR, that artifact failed with its reviewer twice — "way too much text at once" — even after aggressive collapsing. The design that completed a real review inverted the medium: one persistent spatial system map of the PR, a stepped story animated onto it with short captions, review concerns as pins placed where they live on the map, comment-anywhere on every element, rationale and diffs strictly behind taps, and a single end-of-walk bundle. The reviewer's requirement is attention-shaped: high-level visual orientation first, one idea at a time, and digging only when the reviewer chooses.
 

@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+do
+
 ## Context
 
 Current frontier models verify and correct their own work without being told to, and vendor prompting guidance has caught up. Anthropic's Claude Opus 5 pages state that explicit verification instructions — "include a final verification step for any non-trivial task," "use a subagent to verify" — cause over-verification, that removing them "reduces wasted tokens with no loss in quality," and that "the same applies to legacy harness scaffolding that adds separate verification steps." The subagent section adds "do not use subagents to verify or double-check your own work." OpenAI's current guidance runs parallel on prompt leanness, reporting eval gains from leaner system prompts, while explicitly telling authors to keep "hard constraints, approval boundaries, and success criteria."

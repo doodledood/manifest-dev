@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+do
+
 ## Context
 Deviations from the Initial Approach were invisible: the docs-mode ADR gate lists "approach pivots" as ADR-worthy, but ADR capture lives only in figure-out, which /do never routes through unless an amendment lacks shared understanding — and pivots usually leave no manifest diff, so git doesn't record them either. Two capture homes were considered. An `## Execution Notes` manifest section was drafted first, then rejected on review: the manifest is the acceptance contract, and mixing execution history into it muddies that role. Meanwhile /do already carries a journal mechanism — caller-supplied today (the babysit-pr default journal) — whose content spec already names the pivot material: dead-end memory (fixes tried and reverted, approaches considered and rejected that left no commit) plus operational notes, and which also hosts runaway protection.
 

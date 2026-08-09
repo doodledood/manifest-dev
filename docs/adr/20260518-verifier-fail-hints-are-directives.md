@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Verifier reporting
+
 ## Context
 
 The `github-pr-lifecycle` agent inspects a GitHub PR and reports whether it's mergeable. When it isn't, the agent reports what's blocking — and the *shape* of that report has been the design question this ADR settles.

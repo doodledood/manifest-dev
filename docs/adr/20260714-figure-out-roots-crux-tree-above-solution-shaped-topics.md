@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 `figure-out` orders its questioning by Parent-before-child Crux Priority within a crux tree rooted at the stated topic, and its opening instruction presses that topic relentlessly. A companion decision (20260714-figure-out-challenge-solution-existence-before-design) makes solution structure earn its existence — but its trigger fires when the conversation *turns toward* a solution mid-investigation.

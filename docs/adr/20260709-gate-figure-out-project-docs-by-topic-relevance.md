@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 `figure-out` is intentionally topic-general: it can investigate any problem, idea, or decision, including subjects unrelated to the repository in the current working directory. Its default docs mode currently resolves and loads that repository's `CONTEXT.md` before pressing the topic, and may later write glossary entries or ADRs there.

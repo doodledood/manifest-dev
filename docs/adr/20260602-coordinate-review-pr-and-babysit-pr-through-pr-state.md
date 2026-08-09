@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR lifecycle
+
 ## Context
 
 `review-pr` and `babysit-pr` both operate on pull requests, but from opposite sides of the collaboration. `review-pr` is reviewer-side: it inspects a PR, advances its own prior threads, and posts comments a human reviewer would stand behind. `babysit-pr` is author-side: it tends an existing PR through CI, review threads, description sync, and mergeability without pressing merge.

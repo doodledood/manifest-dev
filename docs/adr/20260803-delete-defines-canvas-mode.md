@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+define / figure-out
+
 ## Context
 
 `/define` has carried a `--canvas` mode since 2026-05-01: a live browser-rendered side-channel, generated during the interview, whose stated job is *"the visual side-channel they glance at to spot 'that's not what I meant' on intent, flow, scope."*

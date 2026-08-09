@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 The prior landing contract evolved through `20260722-figure-out-firms-low-cognitive-load-directive`, `20260726-figure-out-narrows-presentation-no-trim-clause`, and `20260727-figure-out-adopts-a-default-turn-shape`. It settled one point per turn, concise-by-default prose, and the ask alone on the last line, but it still treated length as the main control.

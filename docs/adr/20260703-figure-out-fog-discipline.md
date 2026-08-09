@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 figure-out implements fog-clearing as behavior: crux-first parent-before-children ordering, emergent branches, a live rival set, one question per turn. But it had no vocabulary for the distinction between a question that is *sharp* — statable precisely now, even if unanswerable yet — and an area that is still *fog*: sensed to matter but not yet statable as a question. The gap surfaced in two places.

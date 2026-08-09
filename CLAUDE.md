@@ -28,7 +28,20 @@ Read before building plugins:
 - **@docs/CUSTOMER.md** - Who we build for, messaging guidelines
 - **@CONTEXT.md** - Project language (Manifest, Deliverable, etc.) and relationships
 - **docs/LLM_CODING_CAPABILITIES.md** - LLM strengths/limitations, informs workflow design
-- **docs/adr/** - Architecture Decision Records
+
+## Project Language and Decision Records
+
+**The glossary is not optional reading.** `CONTEXT.md` is imported above, so it is already in context. Where a harness does not support imports, read it at the start of every session before doing anything else. It exists to stop silent misreading, and nobody looks up a term they already believe they understand — which is why it is resident rather than referenced.
+
+**Read `docs/adr/` before re-deciding something.** Open the index at `docs/adr/README.md` when you are about to settle a question the project may already have settled, and when a change you are making contradicts or narrows an existing decision. Those two moments are the whole reason the corpus exists; outside them, leave it closed.
+
+**Writing a decision record is one act, not three.** When a decision meets the bar in `docs/adr/CONVENTIONS.md`, the same change must:
+
+1. write the new record;
+2. update the Status of every record whose standing it changes — superseded, narrowed, or partly lifted;
+3. rebuild `docs/adr/README.md` per the rebuild rules in `docs/adr/CONVENTIONS.md`.
+
+Doing one or two leaves the corpus asserting something untrue, and step 2 is the one that gets dropped. `docs/adr/CONVENTIONS.md` carries the bar, the template, and the rules — consult it there rather than working from memory.
 
 ## Repository Structure
 
@@ -102,9 +115,13 @@ Examples:
 
 See each plugin's README for architecture details.
 
-## ADR Format Ownership
+## ADR Convention Ownership
 
-`claude-plugins/manifest-dev/skills/figure-out/references/ADR_FORMAT.md` is the sole ADR write-time reference (the offer gate lives in figure-out's `WITH_DOCS.md`); ADRs are created through figure-out docs-mode sessions. Distributed skill files stay repo-agnostic — maintainer/governance notes like this one belong here, not in skill references that ship to user repos.
+`docs/adr/CONVENTIONS.md` is this project's ADR convention and governs here — the bar, the template and its `Area` field, naming, lifecycle, immutability, cross-references, and the index rebuild rules. Edit that file when the practice should change.
+
+`claude-plugins/manifest-dev/skills/figure-out/references/ADR_FORMAT.md` is the plugin's shipped default, carrying the same content for projects that have no conventions file of their own; it also states the precedence rule. The two are kept in step — change one, change the other. figure-out's `WITH_DOCS.md` owns only *cadence*: when a session offers to record a decision. A project's conventions file has no say in cadence, and the plugin has no say in a project's conventions.
+
+Distributed skill files stay repo-agnostic — maintainer/governance notes like this one belong here, not in skill references or in `docs/adr/CONVENTIONS.md`, which the init skill emits into other people's repositories.
 
 ## Versioning
 

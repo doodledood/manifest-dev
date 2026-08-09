@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+define / figure-out
+
 ## Context
 
 The planning shape shipped as a decision-map: figure-out charted an effort's decisions, define encoded them into a durable map artifact (destination, standing decisions, frontier, fog, rulings) worked over time. Its first real-world use showed the shape serving the wrong half of the problem. Deliberation is serial by nature — parent cruxes resolve before children — so a single deep session tends to settle an effort's decision space in one sitting; the observed map was created with every decision already closed and a frontier holding only small work items, and its standing decisions duplicated ADRs that already existed. Meanwhile the need that motivated a planning shape — decomposing a large, finished understanding into work that several people or agents can execute in parallel, or producing tickets as the deliverable rather than doing the work in-session — had no support: the map convention deliberately kept work items as thin pointers.

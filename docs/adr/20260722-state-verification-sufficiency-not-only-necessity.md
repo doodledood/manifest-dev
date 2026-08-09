@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+do
+
 ## Context
 
 `/do` drives a Do/Verify Loop: implement Deliverables, then verify every Acceptance Criterion and Global Invariant with an independent verifier execution per gate, repairing FAILs and re-verifying gates whose implementation changed, until every gate holds a fresh PASS. The skill prompt expressed this as a one-directional pressure toward completeness — "all must PASS fresh," "re-verify stale gates," and (in the unattended backstop) "do not accept self-attestation or 'looks done.'" Every line pushed against stopping too early.

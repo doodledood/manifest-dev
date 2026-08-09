@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+do
+
 ## Context
 
 `20260709-process-guidance-is-binding-but-unverified` made Process Guidance a binding constraint on execution: items that "must hold throughout a /do run even though no verifier checks them". The reasoning was that `/define` routes user-pinned but hard-to-verify success criteria into Process Guidance, so an advisory layer would silently drop them.

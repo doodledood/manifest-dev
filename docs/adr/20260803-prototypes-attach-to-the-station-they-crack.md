@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 figure-out produces disposable artifacts mid-investigation. `SKILL.md`'s one-shot probe covers the case where a criterion exists but cannot be stated: *"offer to make something concrete to react to — a reference to point at, a quick mock, or a few divergent options."* Scratch mode covers a rougher, session-long mirror of understanding. The distinction between them is already drawn: *"here the artifact leads — it generates a criterion not yet settled — where scratch mirrors understanding already reached."*

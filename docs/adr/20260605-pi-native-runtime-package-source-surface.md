@@ -5,6 +5,9 @@ Superseded by 20260623-use-host-continuation-as-optional-do-backstop
 
 Historical context for the former Pi-native runtime source surface. The current Pi target is a skill-only package with prompt-template aliases; verifier fanout is owned by the portable `/do` skill protocol plus optional host continuation.
 
+## Area
+Pi distribution
+
 ## Context
 
 manifest-dev has treated Claude Code plugin components as the source of truth, with other CLI distributions generated under `dist/`. That model works for prompt and skill assets because Agent Skills are portable and the core methodology can be expressed in shared Markdown.
