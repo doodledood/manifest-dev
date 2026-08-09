@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR lifecycle
+
 ## Context
 
 `babysit-pr` is expected to run both interactively and in CI. Interactive runs can reasonably keep tending a PR until it becomes mergeable or hits a real blocker. CI runs have different economics: keeping a runner alive while waiting for reviewers, checks, or bot scanners burns minutes, risks workflow timeouts, and makes concurrency cancellation harder.

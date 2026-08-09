@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+do
+
 ## Context
 Mid-/do user messages default to manifest amendment via /define, and /define treats any amendment whose caller is /do as autonomous — it skips the Summary-for-Approval wait and propagates `--autonomous` to figure-out. A suite-alignment scan flagged this as a seam: a user who is present and just spoke gets an amendment that self-answers ambiguities instead of asking them. The counter-model surfaced during review: mid-run messages are not conversation openers — users say something and leave immediately, using the message as a steering mechanism.
 

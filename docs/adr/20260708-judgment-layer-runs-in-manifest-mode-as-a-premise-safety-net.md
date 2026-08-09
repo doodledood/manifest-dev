@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR review
+
 ## Context
 
 review-pr operates in two modes. No-manifest mode runs the generic reviewer fleet plus the judgment layer. Manifest mode independently verifies a manifest's acceptance contract against the PR head and skips the generic fleet. The judgment layer asks whether a change earns its keep against the pain it solves.

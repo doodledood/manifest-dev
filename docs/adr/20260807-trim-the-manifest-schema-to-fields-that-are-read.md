@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+define / do
+
 ## Context
 
 The Manifest schema accumulated fields that nothing downstream consumes. A survey of every skill

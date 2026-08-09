@@ -3,6 +3,9 @@
 ## Status
 Superseded by 20260803-figure-out-turn-carries-one-concrete-claim
 
+## Area
+figure-out
+
 ## Context
 
 figure-out's landing half — making a turn land for the reader — has been patched three times in twelve days, each time in the same modality:

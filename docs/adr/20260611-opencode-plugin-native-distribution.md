@@ -3,6 +3,9 @@
 ## Status
 Accepted; slash-UX mechanism superseded by 20260611-opencode-slash-commands-use-plugin-wrappers
 
+## Area
+OpenCode distribution
+
 ## Context
 
 The OpenCode target ships a curl/`install.sh` installer that copies skills and generated slash commands into `~/.config/opencode/` with install-time suffix namespacing (`-manifest-dev` / `-manifest-dev-tools`, driven by `component-namespaces.json` + `install_helpers.py`). Three developments broke that design:

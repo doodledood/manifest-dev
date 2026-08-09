@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Goal setting
+
 ## Context
 
 The 2026-06-23 goal-setting work made unattended runs portable across hosts: source prompts describe a durable goal-setting / continuation capability instead of a single host command, and `/auto` owns one full-chain parent backstop spanning figure-out → define → do.

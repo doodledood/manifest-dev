@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+define / do
+
 ## Context
 
 A Manifest's Acceptance Criteria and Global Invariants all state a floor: what the work must reach before `/do` may call `/done`. Nothing in the contract states a ceiling — that reaching the floor is the whole of what is owed. That asymmetry was invisible while executing models under-reached: a model inclined to stop early fails floors, so every line of pressure in `/define` and `/do` was calibrated against under-delivery, and criteria that check a capability exists were the right defensive shape.

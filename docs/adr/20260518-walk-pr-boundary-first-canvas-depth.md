@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR review UX
+
 ## Context
 
 Walk-PR's `--canvas` mode produces a sub-changeset-by-sub-changeset, topic-by-topic review surface. Its initial design centered on **verbatim quotes from both sides, never paraphrased** — diff hunks were the canonical depth, "survived/cut/moved" prose summarized the line-level mapping, and topics often framed concerns at the level of specific lines or hunks.

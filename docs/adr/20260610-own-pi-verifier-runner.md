@@ -3,6 +3,9 @@
 ## Status
 Superseded by 20260623-use-host-continuation-as-optional-do-backstop
 
+## Area
+Pi runtime
+
 ## Context
 
 The now-superseded Pi Harness-level Do runtime verified a Manifest by deterministically parsing Acceptance Criteria and Global Invariants with `verify.prompt` blocks, grouping them by `phase`, and running one clean verifier per gate. The verifier model judged exactly one assigned gate and returned `VERDICT`, `EVIDENCE`, and `DETAILS`; it did not choose which gates existed or which gates should run.

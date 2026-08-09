@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR lifecycle
+
 ## Context
 
 `babysit-pr` should work for existing pull requests without requiring the user to author a manifest first. At the same time, it should not blindly treat the newest CI failure or review comment as the full specification. Reviewer comments are useful signals, but they may be local, stale, disputed, out of scope, or inconsistent with the PR's actual intent.

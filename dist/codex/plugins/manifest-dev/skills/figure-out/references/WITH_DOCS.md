@@ -1,6 +1,6 @@
 # figure-out: docs mode
 
-The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds three behaviors from that point: **bootstrap** (initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
+The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds three behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
 
 ## Override: these writes ARE the action
 
@@ -12,7 +12,11 @@ When project docs are active, that frame has two explicit exceptions. **Glossary
 
 ## Bootstrap (when project relevance exists)
 
-Once project relevance exists, resolve the active context file and load it if it exists:
+**Load the ADR conventions first.** Read the project's own `docs/adr/CONVENTIONS.md` when it exists — it governs, and a team that edited it meant to. Read the adjacent `ADR_FORMAT.md` when it does not. Either way the bar for what deserves a record is now in context, which is what lets the per-turn ADR check below run without another load.
+
+**No CONTEXT.md and no `docs/adr/` at all** — the project has never been set up. Offer `manifest-dev:init-context`, which installs the conventions file, the glossary, and the context-file wiring in one pass and can seed them from the project's own history. On accept, invoke it and continue from what it produced. On decline, fall through to the minimal path below and don't re-offer.
+
+Then resolve the active context file and load it if it exists:
 
 1. **`CONTEXT-MAP.md` at root** → the repo has multiple contexts. Follow the map to the relevant context's `CONTEXT.md`. Ask which context if unclear.
 2. **No `CONTEXT-MAP.md`** → the active context is the repo-root `CONTEXT.md`.
@@ -49,51 +53,27 @@ When the user uses a fuzzy or overloaded term, propose a canonical one: *"'Accou
 
 ## ADR offers (two-pass capture)
 
-This section carries the gate — everything needed to decide *whether* to offer, per turn, without loading another file. The write-time mechanics (template, MADR sections, naming, lifecycle, immutability, cross-references) live in the adjacent **`ADR_FORMAT.md`** — read it only when an offer is accepted and an ADR is about to be written.
+This section carries the **cadence** — when to raise an ADR during a session, and how the offer is made. The bar itself, and every write-time mechanic, live in the conventions Bootstrap already loaded: the project's `docs/adr/CONVENTIONS.md` where it exists, `ADR_FORMAT.md` otherwise. Apply that bar as loaded rather than a remembered version of it, and where the project's copy differs, the project's copy wins.
 
-### The gate
-
-The threshold is **downstream architectural impact** — decisions that shape the system's structure, constrain future options, or would be costly to reverse. The gate is category match + Decision Test + anti-patterns; there is no separate AND-of-conditions trigger.
-
-**ADR-worthy (record these):**
-
-| Source | What to capture |
-|--------|----------------|
-| **Architecture choices** | Technology, patterns, component structure, integration approach |
-| **Trade-off resolutions** | When competing concerns were weighed and one was preferred |
-| **Scope decisions with rationale** | Deliberate inclusion/exclusion that shapes the system boundary |
-| **Key constraint decisions** | Invariants established from multiple valid options |
-| **Approach pivots** | When implementation adjusts architecture based on reality |
-
-**NOT ADR-worthy (skip these):**
-
-| Category | Why not |
-|----------|---------|
-| **Quality gate selections** | Verification configuration, not architecture |
-| **Process guidance defaults** | How-to-work, not system structure |
-| **Mechanical choices** | Obvious implementations with no meaningful alternatives |
-| **Known assumptions** | Defaults chosen without deliberation — no alternatives weighed |
-| **Bug fixes** | Corrections, not decisions (unless the fix involves an architectural choice) |
-
-**Decision Test** (when uncertain): *"Would a new team member joining in 6 months benefit from knowing WHY this was decided this way?"* If yes → ADR. If they'd just accept it as obvious → skip.
+Cadence is this file's alone. A project may set what deserves a record and how it is written; it does not set when a session offers to write one.
 
 ### Pass 1 — per-turn (high-confidence)
 
-**After every counterparty response — or, in self-answered runs, every resolved question —** check the gate above. When it fires *clearly* on a decision just articulated — user chose B over A with explicit reasoning, a scope boundary just got drawn, a key constraint just got named — **offer immediately**:
+**After every counterparty response — or, in self-answered runs, every resolved question —** check the loaded bar. When it fires *clearly* on a decision just articulated — user chose B over A with explicit reasoning, a scope boundary just got drawn, a key constraint just got named — **offer immediately**:
 
-> *"This looks ADR-worthy — [name the category and the Decision Test result]. Want me to record it?"*
+> *"This looks worth recording — [name the category and the Decision Test result]. Want me to write it up?"*
 
-On accept: write per `ADR_FORMAT.md` (template, MADR sections, filename `YYYYMMDD-kebab-title.md`). Capture alternatives from the conversation you just had — if the user picked B over A, that's exactly what goes in the Alternatives Considered section. If alternatives weren't articulated, ask before writing: *"What did we consider and reject? I want to capture that in Alternatives."*
+On accept: write it as the loaded conventions specify — including their whole act, which is the new record plus restatusing whatever it supersedes plus refreshing the index, not the new file alone. Capture alternatives from the conversation you just had — if the user picked B over A, that's exactly what goes in the Alternatives Considered section. If alternatives weren't articulated, ask before writing: *"What did we consider and reject? I want to capture that in Alternatives."*
 
 ### Pass 2 — session-end sweep (recall guarantee)
 
-**Before naming the read** (or handing off to `/define`), review the session for ADR candidates that didn't trigger Pass 1. Apply the same gate. Present any survivors as a **batched offer**:
+**Before naming the read** (or handing off to `/define`), review the session for candidates that didn't trigger Pass 1. Apply the same loaded bar. Present any survivors as a **batched offer**:
 
-> *"Before we lock this in — these came up that look ADR-worthy: [N items, one line each: title + why]. Record any?"*
+> *"Before we lock this in — these came up that look worth recording: [N items, one line each: title + why]. Record any?"*
 
-For each accepted, write per `ADR_FORMAT.md`. Skip the sweep if the conversation didn't actually produce decisions worth capturing — an empty sweep is fine.
+For each accepted, write it the same way Pass 1 does. Skip the sweep if the conversation didn't actually produce decisions worth capturing — an empty sweep is fine.
 
-The two-pass shape exists because per-turn alone misses subtle decisions (the gate fires only at high confidence to keep interruption low), and sweep-only loses immediacy (alternatives are freshest right after the decision is made). Both passes together = inline coverage matches what a post-hoc sweep would catch.
+The two-pass shape exists because per-turn alone misses subtle decisions (the check fires only at high confidence to keep interruption low), and sweep-only loses immediacy (alternatives are freshest right after the decision is made). Both passes together = inline coverage matches what a post-hoc sweep would catch.
 
 ## CONTEXT.md format
 

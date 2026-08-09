@@ -3,6 +3,9 @@
 ## Status
 Accepted — omitted-flag default superseded by 20260730-consolidated-default-verification-mode
 
+## Area
+do
+
 ## Context
 
 A Manifest is the acceptance contract consumed by `/do`. It must carry enough

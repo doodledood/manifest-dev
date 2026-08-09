@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Goal setting
+
 ## Context
 
 manifest-dev added unattended-run backstops so long autonomous flows do not stop after the first model turn. The source prompts currently express that backstop using Claude-style `/goal` examples, while the Pi sync reference strips those `/goal` blocks because Pi does not expose that exact command. That creates two problems: the source text names a harness-specific primitive, and the generated distributions need special-case edits to preserve or remove the same intent.

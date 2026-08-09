@@ -3,6 +3,9 @@
 ## Status
 Superseded by 20260808-restore-per-gate-default-verification-mode
 
+## Area
+do
+
 ## Context
 
 `/do` evaluates every Acceptance Criterion and Global Invariant under a

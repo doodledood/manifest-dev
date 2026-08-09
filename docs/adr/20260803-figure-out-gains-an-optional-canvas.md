@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 Long figure-out sessions deliberately hide accumulated state from chat. `SKILL.md` keeps the Evidence Ledger, belief register, and crumb-and-fog tracking under the hood, while `20260727-figure-out-adopts-a-default-turn-shape` limits each turn to one point. That lowers turn load but leaves no direct view of where the investigation stands.

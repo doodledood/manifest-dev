@@ -10,6 +10,7 @@
     "figure-out": "manifest-dev",
     "figure-out-team": "manifest-dev",
     "handoff": "manifest-dev-tools",
+    "init-context": "manifest-dev",
     "next-ticket": "manifest-dev",
     "poll-slack": "manifest-dev",
     "prompt-engineering": "manifest-dev-tools",

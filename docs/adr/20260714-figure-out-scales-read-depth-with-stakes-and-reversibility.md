@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 `figure-out`'s investigative depth has a single dial: "All of this scales with the fog actually present" (`## Naming the read`). That is epistemic proportionality only. Senior-practitioner judgment adds a consequence axis — the one-way-door/two-way-door instinct: a read whose consequences are costly or impossible to unwind gets scouted harder even when fog looks light, while a cheap-to-reverse call can be named earlier at an honestly lower confidence, because further investigation costs more than being wrong would.

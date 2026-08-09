@@ -57,6 +57,22 @@ A maintained project surface treated as authoritative instead of generated outpu
 **Universal Language**:
 Prompt wording that names portable behavior or capability rather than a harness-specific primitive.
 
+**Project Context File**:
+The always-loaded instruction file a harness reads for a project — `CLAUDE.md` on Claude Code, `AGENTS.md` on Codex and OpenCode — resolved by detection rather than assumed by name.
+_Avoid_: CLAUDE.md (that is one harness's instance of it).
+
+**ADR Conventions**:
+A project-owned file stating what deserves a decision record and how to write one, self-contained so a reader with no tooling can follow it; where it exists it outranks any tool's shipped default on everything except cadence.
+_Avoid_: ADR format, ADR template.
+
+**Derived Index**:
+An index that asserts nothing its records don't, and is rebuilt from them rather than edited alongside them — so staleness is a repairable lag rather than lost information.
+_Avoid_: ADR list, table of contents.
+
+**Seed**:
+The deliberately under-produced vocabulary and decision corpus `/init-context` reconstructs from a project's history — a starting point that names what it could not recover, never a complete record.
+_Avoid_: Import, migration, backfill.
+
 **Progressive Disclosure**:
 A prompt-architecture pattern where always-needed behavior stays in the entry prompt and mode-specific mechanics live in companion references loaded only when their trigger applies — the trigger living in the loading layer, never inside the deferred reference, which can only be evaluated after the load it was meant to gate.
 
@@ -204,6 +220,10 @@ _Avoid_: Breakdown, sharding.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.
 - A **Re-host** preserves **Spine** content verbatim while making its **Altitude** typographically legible.
 - A **Taste** entry is ratified by the user and routed by scope to a user-level or project-level memory file; it is never inferred and applied silently, and it stays distinct from the review-time **Judgment Layer**.
+- `/init-context` installs a project's **ADR Conventions**, its glossary, and the **Project Context File** wiring that keeps sessions reading both; a **Seed** is layered on top wherever the project has history, and is never a substitute for the wiring.
+- figure-out loads the **ADR Conventions** at bootstrap and writes records under them, which is what makes the project's copy govern rather than the shipped default; cadence — when a session offers to record a decision — stays with figure-out and is not the project's to set.
+- A **Derived Index** is rebuilt from the decision records per the **ADR Conventions**, in the same act that writes a record and restatuses whatever it supersedes.
+- **Seed** entries destined for the glossary are ratified in one batch before any is written, because the glossary is resident in every session; figure-out's inline capture needs no such batch, its warrant being that the user just used the term.
 
 ## Flagged ambiguities
 

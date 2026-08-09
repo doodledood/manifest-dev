@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR review
+
 ## Context
 `review-pr` posts its comments **under the operator's own GitHub account** (`skills/review-pr/SKILL.md`) — the same account a human reviewer uses to comment manually. The skill identifies its own prior work purely by authorship: it advances "every unresolved thread we authored or replied to" and resolves from "our prior GitHub reviews/comments/replies" (`skills/review-pr/SKILL.md`). On a shared account, authorship cannot separate the skill's automated output from the human's manual comments.
 

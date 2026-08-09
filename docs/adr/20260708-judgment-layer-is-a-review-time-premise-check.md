@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR review
+
 ## Context
 
 Automated code review has been defect-finding on a concrete change: the `review-code` dimension fleet audits a diff for bugs, design, simplicity, and so on, taking the change's *intent as given*. Its actionability filters deliberately drop any finding the author chose intentionally — the fleet verifies a settled intent, it does not challenge it.

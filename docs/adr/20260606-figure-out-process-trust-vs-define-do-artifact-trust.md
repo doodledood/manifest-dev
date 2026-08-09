@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 figure-out is increasingly used as an investigation/research vehicle — root-cause analysis, pre-`/define` understanding, technology evaluation — not only as a quick thinking step before `/define`. This raised two coupled questions:

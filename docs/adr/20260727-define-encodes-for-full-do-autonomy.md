@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+define
+
 ## Context
 
 Mid-run human interaction is the costliest event in the workflow: an unattended `/do` run that stalls on an avoidable escalation forfeits the value unattended execution exists to provide — the practical cost is closer to losing development days than to the minutes the question takes. Meanwhile a question asked at `/define` time, while the user is already in the interview, is nearly free. That asymmetry says avoidable escalations should be manufactured out of the manifest before execution starts, not handled gracefully after.

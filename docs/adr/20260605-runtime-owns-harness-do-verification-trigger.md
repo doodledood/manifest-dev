@@ -5,6 +5,9 @@ Superseded by 20260623-use-host-continuation-as-optional-do-backstop
 
 Historical context for the former Pi runtime-owned verification trigger and done gate. The current Pi target is a skill-only package: `/do` follows the portable main-agent verifier protocol, and host continuation is an optional outer backstop.
 
+## Area
+Pi runtime
+
 ## Context
 
 At the time of this ADR, the Pi-native manifest-dev package treated verification as runtime-owned once requested: `manifest_dev_request_verification` parsed the Manifest, spawned clean verifier subagent sessions, aggregated PASS / FAIL / BLOCKED verdicts, and `manifest_dev_report_outcome` blocked done until verification passed. That runtime-owned direction is superseded by the host-continuation ADR.

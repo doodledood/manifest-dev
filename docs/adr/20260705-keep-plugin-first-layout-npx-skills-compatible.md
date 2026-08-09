@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Repo layout
+
 ## Context
 Individual-skill installability is a distribution path in its own right: users increasingly pull single skills into their own projects via cross-agent skill pickers rather than installing a whole plugin. The `npx skills` CLI (vercel-labs/skills, the skills.sh ecosystem) is the emerging standard for this, which raised the question of whether manifest-dev's layout — Claude Code plugins as first-class source under `claude-plugins/`, other CLIs generated into `dist/` — blocks it. A restructure was proposed: demote the Claude Code plugin to `dist/` like the other CLIs and hoist a canonical top-level `skills/` directory as the symlink source.
 

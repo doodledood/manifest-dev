@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Task guidance
+
 ## Context
 
 The experimental → 1.0.0 promotion (commit `17043f9`) over-slimmed the define/figure-out split. It stripped the domain probing fuel (Risks, Scenario Prompts, Trade-offs) out of `define/tasks/*` and declared probing to be figure-out's job (`tasks/README.md`: *"Probing of the conversation is figure-out's job — task files don't carry probing fuel."*). But figure-out was never given any domain probes, nor a mechanism to load them — it probes only with its general "walk every branch" discipline.

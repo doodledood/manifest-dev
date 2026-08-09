@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+Task guidance
+
 ## Context
 manifest-dev maintains parallel task-file sets for different phases. figure-out task files provide probing fuel for reaching shared understanding; /define task files provide encoder data that becomes Manifest gates and Process Guidance. Technical design documents sit across that boundary: the document's audience, layering, source-absorption policy, visual strategy, and taste criteria are part of the understanding that must exist before a Manifest is encoded, while the final document still needs /define-time gates for standalone readability, decision coverage, image quality, and source fidelity.
 

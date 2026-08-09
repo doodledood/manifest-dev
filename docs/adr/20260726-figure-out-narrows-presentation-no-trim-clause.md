@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 `20260722-figure-out-firms-low-cognitive-load-directive` firmed figure-out's landing directive so that edge-marking became a near-default on multi-point turns. That change carried a deliberate guardrail, so firming the presentation directive could not be read as license to cut rigor. The guardrail shipped in commit `3360836` (#234) as:

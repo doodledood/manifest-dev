@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 `figure-out` reaches shared understanding by walking the branches that could change its Read and settling the highest-level crux first. Its opening instruction previously grouped design choices together with diagnostic hypotheses and commitment questions as branches to walk.

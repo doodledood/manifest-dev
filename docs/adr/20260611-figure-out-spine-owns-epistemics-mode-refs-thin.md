@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 figure-out's trustworthiness methodology had drifted into mode references. `references/LOG.md` carried the only claim-provenance requirement ("Every factual claim needs provenance") — making audit discipline opt-in behind `--log`. `references/autonomous.md` restated spine behavior wholesale (its "What stays the same" section re-lists branch-walking, leverage ordering, verify-before-asserting). Both are scope-qualifier failures under the prompt-engineering boundary check: principles whose natural reach is the whole skill, gated behind flags — and restatements that drift as the spine evolves.

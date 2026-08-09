@@ -5,6 +5,9 @@ Accepted
 
 Supersedes `20260605-pi-native-runtime-package-source-surface` and the target architecture portions of `20260605-runtime-owns-harness-do-verification-trigger` and `20260610-own-pi-verifier-runner` that make Pi own deterministic Manifest parsing, verifier fanout, verdict aggregation, and done/escalation gating as a special runtime implementation. Those ADRs remain historical context for why the Pi runtime fanout existed.
 
+## Area
+Pi distribution
+
 ## Context
 
 manifest-dev's core `/do` contract is portable: the main agent reads the Manifest, implements Deliverables, and verifies every Acceptance Criterion and Global Invariant by launching an independent verifier execution for each gate using the gate's `verify.prompt` verbatim. Hosts differ in how much continuation they provide around that portable protocol. Codex CLI, for example, now exposes `/goal` as a durable thread-scoped objective that keeps working across turns until evidence satisfies the goal; other hosts may expose equivalent goal-setting or continuation capabilities, and some hosts may expose none or have them disabled.

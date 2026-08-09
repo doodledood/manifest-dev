@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+figure-out
+
 ## Context
 
 `figure-out`'s option-completeness rule ("weigh every genuinely-viable option before converging, and let an option leave the set only when evidence removes it") never names the option of not solving the problem at all. Once a problem is established, deliberation carries solving momentum: the user arrived wanting to act, and recommending inaction reads as unhelpful, so models suppress the do-nothing option even when it wins on evidence. Nothing in the spine, references, or task files puts it in the set.

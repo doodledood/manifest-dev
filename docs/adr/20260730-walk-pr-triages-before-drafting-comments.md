@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR review
+
 ## Context
 Walk-pr ends by turning the reviewer's captured responses into a posted PR review. The prior contract synthesized draft comments from every captured response and presented them as one batched plan for approval. A real walk exposed two failures. First, captured input is not homogeneous: alongside settled calls, the highest-value entries were questions ("does the design doc justify this deviation?") and objections whose answers lived in code, ADRs, or upstream design documents — and investigating them routinely flipped or reshaped the would-be comment. Drafting them directly would have posted wrong or premature comments under the reviewer's name. Second, a batched approval table recreated exactly the overload the walk exists to prevent.
 

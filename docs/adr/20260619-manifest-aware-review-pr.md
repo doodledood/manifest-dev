@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+PR review
+
 ## Context
 The manifest-dev workflow verifies a PR's Acceptance Criteria and Global Invariants **in-session** inside `/do`: before `/done`, `/do` spawns one general-purpose subagent per criterion using its `verify.prompt` verbatim (`skills/do/SKILL.md`). That verification is the *same model* that implemented the change. Correlated blind spots follow: if the implementer misreads a spec while building, a same-model verifier subagent can share the misread. The reviewer-side actor that *could* provide an independent cross-check — `review-pr` — runs a generic `review-code` dimension fleet (bugs, design, simplicity, intent) grounded *against* the manifest but does **not** execute the manifest's Acceptance-Criteria `verify.prompt`s (`skills/review-pr/SKILL.md`). So no independent actor re-verifies the contract.
 

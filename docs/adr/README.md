@@ -1,7 +1,5 @@
 # Architecture Decision Records
 
-Accepted design decisions for manifest-dev. ADRs are append-only records of why a direction was chosen; current implementation state may lag an ADR when the ADR describes a staged rollout.
-
 | Date | ADR | Status | Area |
 |------|-----|--------|------|
 | 2026-05-18 | [github-pr-lifecycle FAIL findings — workflow-neutral, vocabulary or prose](20260518-verifier-fail-hints-are-directives.md) | Accepted | Verifier reporting |
@@ -12,16 +10,16 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-06-02 | [Make babysit-pr manifest-aware but manifest-optional](20260602-make-babysit-pr-manifest-aware-but-manifest-optional.md) | Accepted | PR lifecycle |
 | 2026-06-02 | [Use CI one-shot cadence for babysit-pr](20260602-use-ci-one-shot-cadence-for-babysit-pr.md) | Accepted | PR lifecycle |
 | 2026-06-04 | [figure-out owns domain probing via mirrored probe task files](20260604-figure-out-owns-domain-probing-via-mirrored-task-files.md) | Accepted | Task guidance |
-| 2026-06-05 | [Pi-native runtime package as a source surface](20260605-pi-native-runtime-package-source-surface.md) | Superseded by [host continuation backstop ADR](20260623-use-host-continuation-as-optional-do-backstop.md) | Pi distribution |
-| 2026-06-05 | [Runtime owns Harness-level Do verification trigger](20260605-runtime-owns-harness-do-verification-trigger.md) | Superseded by [host continuation backstop ADR](20260623-use-host-continuation-as-optional-do-backstop.md) | Pi runtime |
+| 2026-06-05 | [Pi-native runtime package as a source surface](20260605-pi-native-runtime-package-source-surface.md) | Superseded by [20260623-use-host-continuation-as-optional-do-backstop](20260623-use-host-continuation-as-optional-do-backstop.md) | Pi distribution |
+| 2026-06-05 | [Runtime owns Harness-level Do verification trigger](20260605-runtime-owns-harness-do-verification-trigger.md) | Superseded by [20260623-use-host-continuation-as-optional-do-backstop](20260623-use-host-continuation-as-optional-do-backstop.md) | Pi runtime |
 | 2026-06-06 | [figure-out provides process trust, kept distinct from define→do's artifact trust](20260606-figure-out-process-trust-vs-define-do-artifact-trust.md) | Accepted | figure-out |
-| 2026-06-06 | [Harden figure-out truth-seeking via inline general-case rigor; defer the independent verification pass](20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass.md) | Accepted; deferral lifted by [evidence ledger ADR](20260611-figure-out-evidence-ledger-and-independent-rederivation.md) | figure-out |
-| 2026-06-10 | [Own Pi verifier execution with JSON subprocesses](20260610-own-pi-verifier-runner.md) | Superseded by [host continuation backstop ADR](20260623-use-host-continuation-as-optional-do-backstop.md) | Pi runtime |
-| 2026-06-11 | [OpenCode plugin-native distribution (retire install.sh)](20260611-opencode-plugin-native-distribution.md) | Accepted; slash UX superseded by [OpenCode slash commands use plugin wrappers](20260611-opencode-slash-commands-use-plugin-wrappers.md) | OpenCode distribution |
-| 2026-06-11 | [OpenCode slash commands use plugin wrappers](20260611-opencode-slash-commands-use-plugin-wrappers.md) | Accepted | OpenCode distribution |
+| 2026-06-06 | [Harden figure-out truth-seeking via inline general-case rigor; defer the independent verification pass](20260606-harden-figure-out-truth-seeking-inline-defer-independent-pass.md) | Accepted; deferral lifted by [20260611-figure-out-evidence-ledger-and-independent-rederivation](20260611-figure-out-evidence-ledger-and-independent-rederivation.md) | figure-out |
+| 2026-06-10 | [Own Pi verifier execution with JSON subprocesses](20260610-own-pi-verifier-runner.md) | Superseded by [20260623-use-host-continuation-as-optional-do-backstop](20260623-use-host-continuation-as-optional-do-backstop.md) | Pi runtime |
+| 2026-06-11 | [figure-out reads ship an Evidence Ledger and earn their terminals; the independent re-derivation pass is un-deferred](20260611-figure-out-evidence-ledger-and-independent-rederivation.md) | Accepted | figure-out |
 | 2026-06-11 | [figure-out's spine owns all epistemics; mode references thin to pure mechanics](20260611-figure-out-spine-owns-epistemics-mode-refs-thin.md) | Accepted | figure-out |
-| 2026-06-11 | [figure-out reads ship an Evidence Ledger and earn their terminals; independent re-derivation un-deferred](20260611-figure-out-evidence-ledger-and-independent-rederivation.md) | Accepted | figure-out |
-| 2026-06-11 | [figure-out gains DIAGNOSIS and RESEARCH probe files behind a topic-shaped trigger](20260611-figure-out-task-taxonomy-diagnosis-research-topic-trigger.md) | Accepted | Task guidance |
+| 2026-06-11 | [figure-out gains DIAGNOSIS and RESEARCH probe files behind a topic-shaped trigger; BUG slims to fix-side](20260611-figure-out-task-taxonomy-diagnosis-research-topic-trigger.md) | Accepted | Task guidance |
+| 2026-06-11 | [OpenCode plugin-native distribution (retire install.sh)](20260611-opencode-plugin-native-distribution.md) | Accepted; slash-UX mechanism superseded by [20260611-opencode-slash-commands-use-plugin-wrappers](20260611-opencode-slash-commands-use-plugin-wrappers.md) | OpenCode distribution |
+| 2026-06-11 | [OpenCode slash commands use plugin wrappers](20260611-opencode-slash-commands-use-plugin-wrappers.md) | Accepted | OpenCode distribution |
 | 2026-06-19 | [Manifest-aware review-pr instead of a standalone GitHub verification plugin](20260619-manifest-aware-review-pr.md) | Accepted | PR review |
 | 2026-06-22 | [Identify review-pr's own comments with a hidden marker, not account authorship](20260622-mark-review-pr-comments-with-hidden-marker.md) | Accepted | PR review |
 | 2026-06-23 | [Use host continuation as optional `/do` backstop, not a Pi-specific verifier runtime](20260623-use-host-continuation-as-optional-do-backstop.md) | Accepted | Pi distribution |
@@ -29,8 +27,8 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-06-24 | [Use outcome-gated terminal success for `/auto` continuation](20260624-use-outcome-gated-auto-continuation.md) | Accepted | Goal setting |
 | 2026-07-03 | [figure-out gains fog discipline; multi-session orchestration stays out of scope](20260703-figure-out-fog-discipline.md) | Accepted | figure-out |
 | 2026-07-03 | [Progressive-disclosure triggers live in the loading layer, never in the deferred reference](20260703-progressive-disclosure-triggers-live-in-loading-layer.md) | Accepted | Prompt architecture |
-| 2026-07-05 | [Keep the plugin-first repo layout; no restructure for skill-picker distribution](20260705-keep-plugin-first-layout-npx-skills-compatible.md) | Accepted | Repo layout |
 | 2026-07-05 | [Front `/figure-out` as the Door; the define/do loop remains the House](20260705-front-figure-out-as-door-define-do-loop-as-house.md) | Accepted | Positioning |
+| 2026-07-05 | [Keep the plugin-first repo layout; no restructure for skill-picker distribution](20260705-keep-plugin-first-layout-npx-skills-compatible.md) | Accepted | Repo layout |
 | 2026-07-07 | [Split the tech-design task profile by workflow role](20260707-split-tech-design-task-profile-by-workflow-role.md) | Accepted | Task guidance |
 | 2026-07-08 | [The judgment layer is a review-time premise check, distinct from define's gates](20260708-judgment-layer-is-a-review-time-premise-check.md) | Accepted | PR review |
 | 2026-07-08 | [The judgment layer runs in review-pr's manifest mode, not only no-manifest mode](20260708-judgment-layer-runs-in-manifest-mode-as-a-premise-safety-net.md) | Accepted | PR review |
@@ -38,31 +36,39 @@ Accepted design decisions for manifest-dev. ADRs are append-only records of why 
 | 2026-07-09 | [Re-weight figure-out's SKILL.md by re-hosting — sectioned arc, no extraction, evidence-gated trims](20260709-figure-out-reweight-by-rehosting-not-extraction.md) | Accepted | figure-out |
 | 2026-07-09 | [Gate figure-out project docs by topic relevance](20260709-gate-figure-out-project-docs-by-topic-relevance.md) | Accepted | figure-out |
 | 2026-07-09 | [Mid-/do steering stays autonomous, audited through Known Assumptions](20260709-mid-do-steering-stays-autonomous.md) | Accepted | do |
-| 2026-07-09 | [Process Guidance is binding but unverified](20260709-process-guidance-is-binding-but-unverified.md) | Superseded by [only gates bind ADR](20260726-only-gates-bind-process-guidance-is-advisory.md) | do |
-| 2026-07-14 | [figure-out roots the crux tree above solution-shaped topics](20260714-figure-out-roots-crux-tree-above-solution-shaped-topics.md) | Accepted | figure-out |
+| 2026-07-09 | [Process Guidance is binding but unverified](20260709-process-guidance-is-binding-but-unverified.md) | Superseded by [20260726-only-gates-bind-process-guidance-is-advisory](20260726-only-gates-bind-process-guidance-is-advisory.md) | do |
 | 2026-07-14 | [figure-out challenges solution existence before descendant design](20260714-figure-out-challenge-solution-existence-before-design.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out classifies stated constraints before they prune options](20260714-figure-out-classifies-constraints-before-they-prune.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out keeps the do-nothing option in the option set](20260714-figure-out-keeps-do-nothing-in-the-option-set.md) | Accepted | figure-out |
+| 2026-07-14 | [figure-out roots the crux tree above solution-shaped topics](20260714-figure-out-roots-crux-tree-above-solution-shaped-topics.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out scales read depth with stakes and reversibility, not fog alone](20260714-figure-out-scales-read-depth-with-stakes-and-reversibility.md) | Accepted | figure-out |
 | 2026-07-19 | [Taste persists by offer-and-ratify, never by silent inference](20260719-taste-persists-by-offer-and-ratify.md) | Accepted | figure-out |
+| 2026-07-22 | [figure-out firms the low-cognitive-load directive to match rigor's modality](20260722-figure-out-firms-low-cognitive-load-directive.md) | Superseded by [20260727-figure-out-adopts-a-default-turn-shape](20260727-figure-out-adopts-a-default-turn-shape.md) | figure-out |
 | 2026-07-22 | [`/do` states verification sufficiency, not only necessity](20260722-state-verification-sufficiency-not-only-necessity.md) | Accepted | do |
-| 2026-07-22 | [figure-out firms the low-cognitive-load directive to match rigor's modality](20260722-figure-out-firms-low-cognitive-load-directive.md) | Superseded by [default turn shape ADR](20260727-figure-out-adopts-a-default-turn-shape.md) | figure-out |
-| 2026-07-26 | [figure-out narrows the presentation no-trim clause to its guardrail](20260726-figure-out-narrows-presentation-no-trim-clause.md) | Accepted | figure-out |
 | 2026-07-26 | [Deliverables are exercisable slices, ordered by uncertainty](20260726-deliverables-are-exercisable-slices-ordered-by-uncertainty.md) | Accepted | define |
+| 2026-07-26 | [figure-out narrows the presentation no-trim clause to its guardrail](20260726-figure-out-narrows-presentation-no-trim-clause.md) | Accepted | figure-out |
 | 2026-07-26 | [Only gates bind; Process Guidance is advisory](20260726-only-gates-bind-process-guidance-is-advisory.md) | Accepted | do |
+| 2026-07-27 | [/define encodes for full /do autonomy](20260727-define-encodes-for-full-do-autonomy.md) | Accepted | define |
+| 2026-07-27 | [figure-out adopts a concrete default turn shape](20260727-figure-out-adopts-a-default-turn-shape.md) | Superseded by [20260803-figure-out-turn-carries-one-concrete-claim](20260803-figure-out-turn-carries-one-concrete-claim.md) | figure-out |
 | 2026-07-27 | [Gate text changes on the user's say-so, not the run's](20260727-gate-text-changes-on-the-users-say-so.md) | Accepted | do |
 | 2026-07-27 | [Manifest Intent leads with a required Problem, plus Appetite and Out of bounds](20260727-manifest-intent-leads-with-problem-appetite-and-bounds.md) | Accepted | define |
-| 2026-07-27 | [/define encodes for full /do autonomy](20260727-define-encodes-for-full-do-autonomy.md) | Accepted | define |
 | 2026-07-27 | [Shape Up adoption boundary — what is deliberately not imported](20260727-shape-up-adoption-boundary.md) | Accepted | Positioning |
-| 2026-07-27 | [figure-out adopts a concrete default turn shape](20260727-figure-out-adopts-a-default-turn-shape.md) | Superseded by [one concrete claim ADR](20260803-figure-out-turn-carries-one-concrete-claim.md) | figure-out |
 | 2026-07-28 | [Bound the acceptance contract from above, not only from below](20260728-bound-the-acceptance-contract-from-above.md) | Accepted | define / do |
-| 2026-07-28 | [Move verification execution policy to `/do`](20260728-move-verification-execution-policy-to-do.md) | Accepted; omitted-flag default superseded by [consolidated default ADR](20260730-consolidated-default-verification-mode.md) | do |
-| 2026-07-30 | [Consolidated as the default /do verification mode](20260730-consolidated-default-verification-mode.md) | Accepted | do |
+| 2026-07-28 | [Move verification execution policy to `/do`](20260728-move-verification-execution-policy-to-do.md) | Accepted — omitted-flag default superseded by [20260730-consolidated-default-verification-mode](20260730-consolidated-default-verification-mode.md) | do |
+| 2026-07-30 | [Consolidated as the default /do verification mode](20260730-consolidated-default-verification-mode.md) | Superseded by [20260808-restore-per-gate-default-verification-mode](20260808-restore-per-gate-default-verification-mode.md) | do |
 | 2026-07-30 | [Walk-pr runs on an attention contract — a picture, not a document](20260730-walk-pr-attention-contract-picture-not-document.md) | Accepted | PR review |
 | 2026-07-30 | [Walk-pr triages captured input before drafting comments](20260730-walk-pr-triages-before-drafting-comments.md) | Accepted | PR review |
-| 2026-08-03 | [figure-out gains an optional canvas whose spine is the crux tree and whose subject is the frontier](20260803-figure-out-gains-an-optional-canvas.md) | Accepted | figure-out |
 | 2026-08-03 | [define's canvas mode is deleted rather than kept or generalised](20260803-delete-defines-canvas-mode.md) | Accepted | define / figure-out |
-| 2026-08-03 | [A figure-out turn carries one concrete claim, in plain words, in a skimmable shape](20260803-figure-out-turn-carries-one-concrete-claim.md) | Accepted | figure-out |
-| 2026-08-03 | [A prototype attaches to the question it was built to crack, and the reaction lands there](20260803-prototypes-attach-to-the-station-they-crack.md) | Accepted | figure-out |
+| 2026-08-03 | [figure-out gains an optional canvas whose spine is the crux tree and whose subject is the frontier](20260803-figure-out-gains-an-optional-canvas.md) | Accepted | figure-out |
+| 2026-08-03 | [a figure-out turn carries one concrete claim, in plain words, in a skimmable shape](20260803-figure-out-turn-carries-one-concrete-claim.md) | Accepted | figure-out |
+| 2026-08-03 | [a prototype attaches to the question it was built to crack, and the reaction lands there](20260803-prototypes-attach-to-the-station-they-crack.md) | Accepted | figure-out |
 | 2026-08-05 | [Judgment Gates re-verify by Ratchet, not by re-sampling](20260805-ratchet-judgment-gate-reverification.md) | Accepted | define / do |
+| 2026-08-06 | [Retire the decision-map planning shape in favor of ticket-up and a ticket store](20260806-retire-decision-map-for-ticket-up-and-ticket-store.md) | Accepted | define / figure-out |
 | 2026-08-06 | [`/do`'s verification layer is bookkeeping and a stop condition, not a checking aid](20260806-verification-is-bookkeeping-and-a-stop-condition.md) | Accepted | do |
+| 2026-08-07 | [A gate is one text, not two](20260807-a-gate-is-one-text-not-two.md) | Accepted | define / do |
+| 2026-08-07 | [Trim the Manifest schema to fields that are read](20260807-trim-the-manifest-schema-to-fields-that-are-read.md) | Accepted | define / do |
+| 2026-08-08 | [Per-gate restored as the default `/do` verification mode](20260808-restore-per-gate-default-verification-mode.md) | Accepted | do |
+| 2026-08-09 | [ADR conventions ship into the repo as project knowledge, and the repo copy governs](20260809-adr-conventions-ship-as-project-knowledge.md) | Accepted | ADR conventions |
+| 2026-08-09 | [The ADR index is derived from the records, not authored alongside them](20260809-adr-index-is-derived-from-the-records.md) | Accepted | ADR conventions |
+| 2026-08-09 | [The glossary stays resident, and setup seeds it deliberately short](20260809-glossary-stays-resident-with-an-under-produced-seed.md) | Accepted | Project context |
+| 2026-08-09 | [The init-context skill lives in the core plugin, not in tools](20260809-init-context-skill-lives-in-core.md) | Accepted | Repo layout |

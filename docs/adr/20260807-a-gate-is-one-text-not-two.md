@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Area
+define / do
+
 ## Context
 
 Every Acceptance Criterion and Global Invariant is currently authored twice: once as a
