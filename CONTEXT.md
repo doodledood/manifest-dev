@@ -180,8 +180,12 @@ A Ticket ready to execute, carrying a plain-prose definition of done.
 A Ticket that needs figuring out before any building; done means the question is answered with evidence and recorded.
 _Avoid_: Spike.
 
+**Effort**:
+A named body of work a Ticket Store groups by — one destination, one front file, and its own Tickets; a store may hold several at once.
+_Avoid_: Project, epic, milestone.
+
 **Ticket Store**:
-Where an effort's Tickets live, under the ticket convention — files in the repo by default, GitHub Issues or a custom tracker as pluggable venues; the convention is the contract, the venue a rendering.
+Where an effort's Tickets live, under the ticket convention — files in the repo, GitHub Issues, or a custom tracker as pluggable venues, on a venue asked once per project and recorded there; the convention is the contract, the venue a rendering.
 _Avoid_: Backlog, board.
 
 **Ticket-up**:
@@ -196,6 +200,7 @@ _Avoid_: Breakdown, sharding.
 - A **Task File** can contribute **Quality Gates** and **Defaults** to `/define`.
 - A **Quality Gate** becomes an acceptance-style gate in a **Manifest**.
 - **Ticket-up** turns each **Deliverable** of a **Manifest** into a **Shaped Ticket** in a **Ticket Store**; figure-out can hand decoupled unknowns off as **Question Tickets** to the same store, and `next-ticket` answers "what's next" as a priority read over it.
+- A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them needs something the destinations alone don't supply.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
 - **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.

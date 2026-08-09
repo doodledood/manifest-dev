@@ -36,9 +36,8 @@ Each effort's store carries one small front file (in a file store, a README besi
 - **Destination** — what reaching the end of this effort looks like, in a line or two. Pickers orient to it; "impact" in the priority rule is measured against it.
 - **Priority rule override**, when the effort ranks differently than the default below.
 - **Context pointers** — the key decision records, and where the effort's reads or logs live, so a cold picker gets effort-level orientation before opening a ticket.
-- **Store config** — venue details, when not already in a store config file.
 
-Never put derivable state here: no ticket lists, statuses, or ready/next — anything a close would stale belongs to the tickets themselves, where it can't rot. (A tracker's grouping item may carry an open-tickets list as its native mechanics; done entries drop off at close.)
+Never put derivable state here: no ticket lists, statuses, or ready/next — anything a close would stale belongs to the tickets themselves, where it can't rot. Where a tracker groups its items natively, that grouping is the tracker's to keep current rather than a list anyone edits.
 
 ## Lifecycle
 

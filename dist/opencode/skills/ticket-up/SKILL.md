@@ -1,6 +1,6 @@
 ---
 name: ticket-up
-description: 'Turn a finished Manifest into self-sufficient tickets anyone can pick up — a teammate, an agent, or a future session, with or without manifest-dev. Emits one plain-prose ticket per Deliverable plus explicit dependency edges, into a file-based store by default or GitHub Issues or a custom tracker. Use when splitting a manifest into tickets, delegating work, parallelizing execution, or when the user asks to ticket up, break into tickets, or create tickets from a plan.'
+description: 'Turn a finished Manifest into self-sufficient tickets anyone can pick up — a teammate, an agent, or a future session, with or without manifest-dev. Emits one plain-prose ticket per Deliverable plus explicit dependency edges, into files, GitHub Issues, or a custom tracker — on a venue asked once per project and recorded there. Use when splitting a manifest into tickets, delegating work, parallelizing execution, or when the user asks to ticket up, break into tickets, or create tickets from a plan.'
 ---
 
 # ticket-up
@@ -28,13 +28,13 @@ The manifest's Deliverable order is uncertainty-based — least-proven first so 
 
 ## Where the tickets go
 
-**Files (default).** No configuration: write one markdown file per ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md` at the project root (create it), NN ordered by a sensible starting sequence. Each file opens with `Kind:`, `Status:`, `Depends on:`, `Claimed by:` lines, then the anatomy. Write the effort's front file (`tickets/<effort-slug>/README.md`) alongside, per the convention: destination distilled from the manifest's Problem and Appetite, any priority override, context pointers — and no ticket list or status, ever. Closed tickets get moved to `tickets/<effort-slug>/done/`. Confirm the effort slug with the user when it isn't obvious from the manifest title.
+**The venue lives at `tickets/store-config.md`, or gets asked for once.** One fixed, repo-relative location holds it, whatever the venue turns out to be. Read it first: when it names a venue, use that and don't ask. When it's missing, ask which venue this project tracks work in and write the answer there, so no later run asks again. Files are the answer to *recommend* absent a reason otherwise — never one taken in silence, since a run that creates a file store without having asked has chosen for the user. A project that deliberately keeps its store elsewhere says so in its own context file, which is already loaded when you run; follow that and skip the ask.
 
-**GitHub Issues.** When the user chooses GitHub (or the project's store config already names it), read `references/GITHUB_STORE.md` and follow its mapping.
+**Files.** Write one markdown file per ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md` at the project root (create it), NN ordered by a sensible starting sequence. Each file opens with `Kind:`, `Status:`, `Depends on:`, `Claimed by:` lines, then the anatomy. Write the effort's front file (`tickets/<effort-slug>/README.md`) alongside, per the convention: destination distilled from the manifest's Problem and Appetite, any priority override, context pointers — and no ticket list or status, ever. Closed tickets get moved to `tickets/<effort-slug>/done/`. Confirm the effort slug with the user when it isn't obvious from the manifest title.
 
-**Custom store.** When the user names any other tracker, ask for the few details the convention needs mapped — how to create an item, set labels/kind, express dependencies, assign, and close — then apply the same convention through those operations. Persist what they tell you in `store-config.md` inside this skill's directory so later sessions don't re-ask; if that directory isn't writable (managed plugin installs), keep the config at the store root instead, e.g. `tickets/store-config.md`.
+**GitHub Issues.** When the config names GitHub, or the user chooses it, read `references/GITHUB_STORE.md` and follow its mapping.
 
-A store config, once written, also answers venue selection for future runs — check for it before asking.
+**Custom store.** When the user names any other tracker, ask for the few details the convention needs mapped — how to create an item, set labels/kind, express dependencies, assign, and close — then apply the same convention through those operations. Record those details beside the venue in `tickets/store-config.md` so later sessions don't re-ask.
 
 ## After emitting
 

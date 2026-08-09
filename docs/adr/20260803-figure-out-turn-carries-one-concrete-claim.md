@@ -1,7 +1,7 @@
 # ADR: a figure-out turn carries one concrete claim, in plain words, in a skimmable shape
 
 ## Status
-Accepted
+Accepted — amended by 20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines
 
 ## Area
 figure-out
