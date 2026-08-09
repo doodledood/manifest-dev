@@ -31,7 +31,12 @@ Read before writing, and never overwrite a surface the project already maintains
 
 1. **Resolve the project context file.** Its name differs by CLI — `CLAUDE.md`, `AGENTS.md`, or another — so detect it rather than assuming. The detection table and per-CLI resolution order live in `../review-code/references/context-file-adherence.md`; read it and use it.
 
-2. **Install the ADR conventions**, unless `docs/adr/CONVENTIONS.md` already exists. Copy `../figure-out/references/ADR_FORMAT.md` to `docs/adr/CONVENTIONS.md`, replacing its `## Precedence` section with a short opening line stating that this file is the project's ADR convention and governs, and that tooling carrying its own defaults defers to it. Everything else travels verbatim — the file is written to be self-sufficient, and a reader with no tooling must be able to follow it end to end.
+2. **Install the ADR conventions**, unless `docs/adr/CONVENTIONS.md` already exists. Copy `../figure-out/references/ADR_FORMAT.md` to `docs/adr/CONVENTIONS.md` with exactly three changes to its opening, and nothing else:
+   - retitle the heading to `# ADR Conventions`;
+   - keep the sentence describing what ADRs are;
+   - replace both the self-contained note and the whole `## Precedence` section with one paragraph stating that this file is the project's ADR convention and governs, that everything needed to decide and write is here with no tool or prior knowledge required, and that tooling carrying its own defaults defers to it.
+
+   Everything from the first `##` section onward travels verbatim — the file is written to be self-sufficient, and a reader with no tooling must be able to follow it end to end.
 
    Where records already exist, this is not a straight copy: reconcile the default with the practice those records show, per *What already exists governs* above, and surface any divergence you had to resolve.
 
