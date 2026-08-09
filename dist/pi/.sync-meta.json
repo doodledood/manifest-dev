@@ -1,11 +1,11 @@
 {
-  "source_commit": "1b47df5341153f379448e1ee0f1c6a287ff23848",
+  "source_commit": "0797606a1d8da984bc618e4f0fab255b214b0034",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-09T05:50:57Z",
+  "synced_at": "2026-08-09T05:54:49Z",
   "notes": "Add /init-context to the core plugin; sync figure-out's ADR_FORMAT.md (now self-sufficient, with the record bar folded in, an Area field, and index rebuild rules) and WITH_DOCS.md (cadence only; Bootstrap loads the conventions and offers init-context). Skill set changed, so README component listings and the context file were regenerated; manifest-dev 8.2.0 mirrored. Previous recorded SHA b4ac2a6 was unreachable from HEAD (squash-merge rewrote it); re-anchored to ad6769f, whose plugin versions (8.1.0 / 4.1.0) match what the previous note recorded as synced, and took the delta from there. Re-synced ADR_FORMAT.md and init-context/SKILL.md after two prompt-quality repairs."
 }
