@@ -23,7 +23,7 @@ The label earns its place next to the parent relation by answering a different q
 
 ## Emitting
 
-1. Create the ticket issues first, then the tracking issue, then attach each ticket to it as a sub-issue — the relations need real numbers. Nothing lists the tickets in the tracking issue's body; the child list is GitHub's to render.
+1. Create the ticket issues first, then the tracking issue, then attach each ticket to it as a sub-issue — the relations need real numbers.
 2. Issue bodies are the same self-sufficient prose as the files venue — a GitHub reader gets no manifest-dev context either.
 3. On the first run against a repo, show the operations about to be performed (issues, labels, tracking issue, sub-issue links) and get a confirm before creating — issues are outward-facing and noisy to undo.
 

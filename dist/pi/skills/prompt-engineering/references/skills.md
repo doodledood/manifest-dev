@@ -26,7 +26,7 @@ Start here. Add only when the gap requires it.
 
 ## Skills are folders
 
-A skill is a directory, not a file. SKILL.md is the entry; companion files live alongside (`references/`, `assets/`, `scripts/`, config). The file system is part of the context engineering — what lives next to SKILL.md shapes what Claude can reach when the skill fires.
+A skill is a directory, not a file. SKILL.md is the entry; companion files live alongside (`references/`, `assets/`, `scripts/`). The file system is part of the context engineering — what lives next to SKILL.md shapes what Claude can reach when the skill fires.
 
 ## Description is activation prose
 
