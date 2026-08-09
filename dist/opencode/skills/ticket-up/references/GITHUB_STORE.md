@@ -10,8 +10,8 @@ Renders the ticket convention onto GitHub Issues. Use whatever GitHub access the
 | Front file | The tracking issue's body: destination, priority override, context pointers. No ticket list — GitHub's own child list is the grouping, and it stays current with nobody editing it |
 | Ticket | An issue; the full ticket anatomy is the issue body |
 | Effort membership | The native **sub-issue** relation, with the effort's tracking issue as the parent |
-| Effort | An `effort:<slug>` label, on every ticket and on its tracking issue |
-| Kind | Labels `shaped` / `question` on tickets; the tracking issue carries `effort` (create any that are absent) |
+| Effort | An `effort:<slug>` label, on every ticket and on its tracking issue — same slug the files venue would use for the directory name |
+| Kind | Labels `shaped` / `question` on tickets; the tracking issue carries `effort` (create any that are absent). It carries both labels because they answer different questions: which effort this belongs to, and what kind of thing it is |
 | Depends on | A `Depends on: #N` line in the body of the **blocked** issue, plus a native blocked-by relation where the repo has them. Not sub-issues — an issue has one parent, and membership holds it |
 | Claimed | Assignee; unassigned and open means takeable |
 | Done / roll-off | Close the issue with the outcome as a closing comment. Nothing to delete anywhere: a closed child stays in the tracking issue's list as progress, and `is:open` queries stop returning it |
