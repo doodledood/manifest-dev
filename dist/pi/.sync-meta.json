@@ -1,11 +1,11 @@
 {
-  "source_commit": "d49c94dc2822f556fe6a557b3f05d8183238448f",
+  "source_commit": "a4f528c05fb20758d9d5e0482f6e96f26cb12dd7",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
   "target": "pi",
-  "synced_at": "2026-08-09T06:48:50Z",
-  "notes": "Add /init-context to the core plugin; sync figure-out's ADR_FORMAT.md (now self-sufficient, with the record bar folded in, an Area field, and index rebuild rules) and WITH_DOCS.md (cadence only; Bootstrap loads the conventions and offers init-context). Skill set changed, so README component listings and the context file were regenerated; manifest-dev 8.2.0 mirrored. Previous recorded SHA b4ac2a6 was unreachable from HEAD (squash-merge rewrote it); re-anchored to ad6769f, whose plugin versions (8.1.0 / 4.1.0) match what the previous note recorded as synced, and took the delta from there. Re-synced ADR_FORMAT.md and init-context/SKILL.md after two prompt-quality repairs."
+  "synced_at": "2026-08-09T20:00:01Z",
+  "notes": "Delta sync of the four 2026-08-09 decisions: figure-out's turn budget, ticket-up's store location and first-run ask, GITHUB_STORE's sub-issue membership plus effort label, TICKET_CONVENTION's retired front-file carve-out, and next-ticket's derived effort pick. Five skill files, no substitutions applicable (no context-file, tool-name, or model-tier references in the changed text). Skill set unchanged, so READMEs, context files, and Pi namespace metadata were left as generated. manifest-dev 8.3.0 mirrored into the OpenCode plugin package and the Codex plugin manifest. The previously recorded SHA d49c94d was unreachable from HEAD (squash-merge rewrote it, as its own note anticipated); re-anchored to 7ef3994 after verifying all five files were byte-identical between that commit's sources and all three payloads, and confirming the only sync-tools reference change since was this run's own version example in pi-cli.md, which moves no substitution rule."
 }
