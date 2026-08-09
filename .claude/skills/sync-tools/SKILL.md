@@ -103,6 +103,7 @@ The CLI-native install method from the reference file is the primary method: Cod
 | Unmapped tool names in skill prose pass through unchanged | Only operational references remap; names without a lookup-table row are left as-is |
 | Empty component sets skip gracefully | Codex has no hooks — note in README, don't error |
 | Skill prompt bodies stay faithful to Claude Code originals | Prompts are carefully crafted — don't simplify, rewrite, or truncate for other CLIs |
+| After writing, confirm no operational context-file mention survives in the payload | The substitution rules are correct but nothing checked them, and a past sync left `define/tasks/CODING.md` naming `CLAUDE.md` four times in all three payloads. Grep the written payload for the source context-file name and classify each hit as operational or comparative before finishing. |
 | Always update `dist/{cli}/.sync-meta.json` at end of run | The recorded SHA is what next run's diff-first path keys on. Skipping the update silently degrades future syncs to full re-syncs. |
 
 ## Progress Log
