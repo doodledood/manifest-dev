@@ -1,10 +1,10 @@
 {
-  "source_commit": "f9c4082e52f6ba3bb991a2dfb396bd83a9424dbb",
+  "source_commit": "29035644eef32279ef64113f507a52abeab5ffab",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-08-09T20:12:44Z",
-  "notes": "Round-2 delta sync. Adds define/tasks/PROMPTING.md and manifest-dev-tools' prompt-engineering/references/skills.md to the previous five files, mirrors the corrected manifest-dev plugin description into the Codex manifest, bumps manifest-dev-tools to 4.1.1 there, and corrects the superseded ticket-store blurb in the OpenCode payload's always-loaded AGENTS.md. Skill set unchanged, so README component tables and Pi namespace metadata were left as generated. No substitutions applicable to any changed text."
+  "synced_at": "2026-08-09T20:18:25Z",
+  "notes": "Round-3 sync. Carries the four 2026-08-09 decisions plus the corrected skill-authoring configuration guidance. Skill set unchanged, so README component tables were left as generated. Codex keeps plugin qualifiers, so no substitution applies to any changed file. manifest-dev 8.3.0 and manifest-dev-tools 4.1.1 mirrored into the two plugin manifests, and the manifest-dev description re-mirrored from source."
 }
