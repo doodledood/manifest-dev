@@ -60,7 +60,7 @@
 | 2026-07-30 | [Walk-pr triages captured input before drafting comments](20260730-walk-pr-triages-before-drafting-comments.md) | Accepted | PR review |
 | 2026-08-03 | [define's canvas mode is deleted rather than kept or generalised](20260803-delete-defines-canvas-mode.md) | Accepted | define / figure-out |
 | 2026-08-03 | [figure-out gains an optional canvas whose spine is the crux tree and whose subject is the frontier](20260803-figure-out-gains-an-optional-canvas.md) | Accepted | figure-out |
-| 2026-08-03 | [a figure-out turn carries one concrete claim, in plain words, in a skimmable shape](20260803-figure-out-turn-carries-one-concrete-claim.md) | Accepted | figure-out |
+| 2026-08-03 | [a figure-out turn carries one concrete claim, in plain words, in a skimmable shape](20260803-figure-out-turn-carries-one-concrete-claim.md) | Accepted — amended by [20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines](20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines.md) | figure-out |
 | 2026-08-03 | [a prototype attaches to the question it was built to crack, and the reaction lands there](20260803-prototypes-attach-to-the-station-they-crack.md) | Accepted | figure-out |
 | 2026-08-05 | [Judgment Gates re-verify by Ratchet, not by re-sampling](20260805-ratchet-judgment-gate-reverification.md) | Accepted | define / do |
 | 2026-08-06 | [Retire the decision-map planning shape in favor of ticket-up and a ticket store](20260806-retire-decision-map-for-ticket-up-and-ticket-store.md) | Accepted | define / figure-out |
@@ -70,5 +70,9 @@
 | 2026-08-08 | [Per-gate restored as the default `/do` verification mode](20260808-restore-per-gate-default-verification-mode.md) | Accepted | do |
 | 2026-08-09 | [ADR conventions ship into the repo as project knowledge, and the repo copy governs](20260809-adr-conventions-ship-as-project-knowledge.md) | Accepted | ADR conventions |
 | 2026-08-09 | [The ADR index is derived from the records, not authored alongside them](20260809-adr-index-is-derived-from-the-records.md) | Accepted | ADR conventions |
+| 2026-08-09 | [figure-out budgets the whole turn, not its bold lines](20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines.md) | Accepted | figure-out |
 | 2026-08-09 | [The glossary stays resident, and setup seeds it deliberately short](20260809-glossary-stays-resident-with-an-under-produced-seed.md) | Accepted | Project context |
+| 2026-08-09 | [Group GitHub tickets by sub-issue membership and an effort label](20260809-group-github-tickets-by-sub-issue-membership-and-effort-label.md) | Accepted | Ticketing |
 | 2026-08-09 | [The init-context skill lives in the core plugin, not in tools](20260809-init-context-skill-lives-in-core.md) | Accepted | Repo layout |
+| 2026-08-09 | [Locate the ticket store by convention, not configuration](20260809-locate-the-ticket-store-by-convention-not-configuration.md) | Accepted | Ticketing |
+| 2026-08-09 | [next-ticket derives its pick instead of asking](20260809-next-ticket-derives-its-pick-instead-of-asking.md) | Accepted | Ticketing |
