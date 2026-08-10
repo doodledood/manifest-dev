@@ -189,7 +189,7 @@ A Ticket whose decision space is still open — however much prior context it ca
 _Avoid_: Spike.
 
 **Auto**:
-A per-Ticket marker, declared at write time on either kind, that taking the Ticket end to end — doing the work and judging it done — needs no human's knowledge, taste, or authority.
+An opt-in grant, declared at write time on either kind of Ticket, permitting unattended automation to take it end to end; absent the grant, automation leaves the Ticket entirely alone.
 _Avoid_: Autonomous ticket, agent-ready.
 
 **Effort**:
@@ -217,6 +217,8 @@ _Avoid_: Breakdown, sharding.
 - A **Quality Gate** becomes an acceptance-style gate in a **Manifest**.
 - **Ticket-up** turns each **Deliverable** of a **Manifest** into a **Shaped Ticket** in a **Ticket Store**; figure-out can hand decoupled unknowns off as **Question Tickets** to the same store, and `next-ticket` answers "what's next" as a priority read over it.
 - `next-ticket` claims the **Ticket** it names, which is what makes several sessions reading one **Ticket Store** get different ones — and it separates them only where the store's venue is a live surface every worker reads, never across separate checkouts of a file store.
+- The **Auto** grant requires that neither doing a **Ticket** nor judging it done needs any human's knowledge, taste, or authority — necessary but never sufficient: the author still chooses to grant.
+- Absence of **Auto** is one fence covering untrusted **Tickets**, **Tickets** with a designed-in human step, and venue items never written as **Tickets** at all.
 - Every venue a **Ticket Store** runs on has a **Venue Reference**.
 - A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them needs something the destinations alone don't supply.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
