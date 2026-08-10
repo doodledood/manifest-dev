@@ -15,7 +15,7 @@ Watch for directional preferences the user steers by, not one-off situational ca
 - **Directional** — it would steer future judgment calls the same way ("prefer the smallest clean change", "prose over tables"), not a fact about this task.
 - **Durable** — recurring within the session, or explicitly stated as a standing way of working; a single situational correction is not taste.
 - **Behavior-changing** — a future session that knew it would act differently; if the model already behaves this way unprompted, there is nothing to write.
-- **Personal** — you could want the opposite for some other user. Where the opposite would simply be the skill working badly, the behaviour is owed by every session rather than preferred by this one, and capturing it here makes weighable what should be held and binds it to whoever happened to ratify it. That is a gap in the prompt, repaired where the prompt states the rule; the offer is not made at all.
+- **Personal** — you could want the opposite for some other user. Where the opposite would simply be the skill working badly, the behavior is owed by every session rather than preferred by this one, and capturing it here makes weighable what should be held and binds it to whoever happened to ratify it. Make no offer, and don't reach for the prompt either: name the gap as one the prompt itself should close, and leave it there.
 
 Passing the gate makes a candidate eligible, not offered — an offer must also repay its interruption. When a preference is real but too minor for future sessions to meaningfully profit from, don't stop the session for it: let it ride the session-end sweep, where batching amortizes the cost, or leave it unoffered.
 
