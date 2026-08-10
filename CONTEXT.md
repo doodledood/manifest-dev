@@ -182,11 +182,15 @@ A self-sufficient prose work packet holding everything a stranger — person or 
 _Avoid_: Story, issue, task.
 
 **Shaped Ticket**:
-A Ticket ready to execute, carrying a plain-prose definition of done.
+A Ticket whose decision space is closed — no open question remains whose answer would change what gets built or what done means — ready to execute regardless of which workflow produced it, carrying a plain-prose definition of done.
 
 **Question Ticket**:
-A Ticket that needs figuring out before any building; done means the question is answered with evidence and recorded.
+A Ticket whose decision space is still open — however much prior context it carries; done means the question is answered with evidence and recorded.
 _Avoid_: Spike.
+
+**Auto**:
+A per-Ticket marker, declared at write time on either kind, that taking the Ticket end to end — doing the work and judging it done — needs no human's knowledge, taste, or authority.
+_Avoid_: Autonomous ticket, agent-ready.
 
 **Effort**:
 A named body of work a Ticket Store groups by — one destination, one front file, and its own Tickets; a store may hold several at once.
