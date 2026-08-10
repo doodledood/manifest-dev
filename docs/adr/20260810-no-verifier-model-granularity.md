@@ -13,7 +13,7 @@ under the independent modes. A proposal to split it — a cheaper model for comm
 and a strong one for judgment gates, or finer routing still — was raised to reduce cost and
 latency.
 
-Two records left this open on the same condition.
+Two records left neighbouring questions open on the same condition.
 20260728-move-verification-execution-policy-to-do rejected per-gate `verify.model` routing
 because "concrete model selection is execution policy and not portable across hosts. One
 run-level verifier model is sufficient until measured use cases justify a more expressive
@@ -102,9 +102,13 @@ nobody has that number.
   launches verifiers through, which takes a model and no effort setting, and `/do` rejects a
   policy the host cannot honor rather than pretending it applied.
 - **Consolidate the nine advisory dimensions into one reader** so the change is read once:
-  rejected on 20260808's own analysis. Shared-context accumulation grows with the square of the
-  set while the shared read saves a linear amount, and the crossover requires each gate's own
-  work to be nearly nil, which describes a command-backed gate and not a review dimension.
+  rejected on 20260808's own analysis, which found that sharing the read "saves approximately
+  nothing" — billing resends the context on every turn, so the read is re-billed either way.
+  What consolidation does save is the repeated orientation, a fixed amount per gate whose
+  orientation was skipped, so it grows linearly; what it costs is every finished gate staying
+  in the context of the gates after it, which grows with the square. The crossover requires
+  each gate's own work to be nearly nil, which describes a command-backed gate and not a review
+  dimension.
 - **Skip dimensions that cannot apply to a given change**: rejected as mostly already taken. A
   dimension reports on absence as readily as on presence — a change touching no documentation
   can still fail the docs dimension — so "no files of that type changed" does not make a
