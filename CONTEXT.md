@@ -105,6 +105,10 @@ _Avoid_: Gate evaluation instructions, verify prompt, criterion description.
 How many things a gate ranges over — open when its body makes the evaluator enumerate a region and derive the instances, closed when it checks an inventory the author wrote down. Independent of the altitude a gate binds at, and anchored to the surface of the owning Deliverable, or to the Manifest's surface bounded by Appetite for a Global Invariant.
 _Avoid_: Gate scope, gate breadth, tightness.
 
+**Bearer Test**:
+`/define`'s omission criterion for advisory-tier task-file gates — each advisory dimension protects a named future activity, and the gate is omitted only when that activity has no bearer on the manifest's surface within the artifact's life, with the missing bearer logged as a fact.
+_Avoid_: Proportionality check, gate triage.
+
 **Verification Mode**:
 The run-level `/do` policy that selects `per-gate`, `consolidated`, or `self` evaluation without changing the Manifest.
 
@@ -212,6 +216,7 @@ _Avoid_: Breakdown, sharding.
 - Every venue a **Ticket Store** runs on has a **Venue Reference**.
 - A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them needs something the destinations alone don't supply.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
+- The **Bearer Test** governs which advisory-tier **Quality Gates** a **Manifest** omits; defect-finding dimensions, deterministic project gates, and safety-critical **Global Invariants** are never eligible.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
 - **Parent-before-child Crux Priority** orders figure-out's crux selection before impact tie-breaking among same-level questions.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.
