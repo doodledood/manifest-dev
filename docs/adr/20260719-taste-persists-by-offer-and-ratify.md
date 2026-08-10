@@ -1,7 +1,7 @@
 # ADR: Taste persists by offer-and-ratify, never by silent inference
 
 ## Status
-Accepted
+Accepted — eligibility narrowed by 20260810-universal-discipline-belongs-in-the-prompt
 
 ## Area
 figure-out
