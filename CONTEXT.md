@@ -126,6 +126,10 @@ _Avoid_: Binary gate.
 A re-verification discipline for Judgment Gates where the first evaluation reads the full change and every later evaluation judges only the prior findings' repairs and the changed delta, closing the finding space after the first full look.
 _Avoid_: Round cap, round limit.
 
+**Amendment Envelope**:
+The bounded repair delegation `/do` holds in advance over gate text — raising a gate shown to pin an incidental mechanism to the outcome it served, raise-only, never reaching deliberately chosen mechanisms, audited and re-verified like any amendment.
+_Avoid_: Self-amendment, free amendment.
+
 **Skill**:
 A reusable capability that extends an agent's behavior.
 
@@ -219,6 +223,7 @@ _Avoid_: Breakdown, sharding.
 - Every **Acceptance Criterion** and **Global Invariant** is either a **Judgment Gate** or a **Deterministic Gate**; the kind is a property of the gate itself, declared in its **Gate Text**.
 - The **Ratchet** governs how the **Do/Verify Loop** re-verifies **Judgment Gates** after repairs; **Deterministic Gates** re-run freely.
 - **Verification Mode** and the **Ratchet** are run-level `/do` policy, never **Manifest** content; **Verification Provenance** records what a given run used.
+- The **Amendment Envelope** narrows gate immutability: inside it `/do` repairs a **Gate Text** by autonomous amendment; outside it every **Acceptance Criterion** and **Global Invariant** still changes only on the user's instance-by-instance say-so.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.
 - A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.
