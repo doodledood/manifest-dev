@@ -1,7 +1,7 @@
 # ADR: Gate text changes on the user's say-so, not the run's
 
 ## Status
-Accepted
+Accepted — narrowed by 20260810-gate-altitude-repairs-under-advance-delegation: raise-only altitude repairs outside the deliberately-chosen set run under advance delegation granted at encoding time; instance-by-instance say-so stands for everything else
 
 ## Area
 do

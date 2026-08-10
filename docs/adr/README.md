@@ -50,7 +50,7 @@
 | 2026-07-26 | [Only gates bind; Process Guidance is advisory](20260726-only-gates-bind-process-guidance-is-advisory.md) | Accepted | do |
 | 2026-07-27 | [/define encodes for full /do autonomy](20260727-define-encodes-for-full-do-autonomy.md) | Accepted | define |
 | 2026-07-27 | [figure-out adopts a concrete default turn shape](20260727-figure-out-adopts-a-default-turn-shape.md) | Superseded by [20260803-figure-out-turn-carries-one-concrete-claim](20260803-figure-out-turn-carries-one-concrete-claim.md) | figure-out |
-| 2026-07-27 | [Gate text changes on the user's say-so, not the run's](20260727-gate-text-changes-on-the-users-say-so.md) | Accepted | do |
+| 2026-07-27 | [Gate text changes on the user's say-so, not the run's](20260727-gate-text-changes-on-the-users-say-so.md) | Accepted — narrowed by [20260810-gate-altitude-repairs-under-advance-delegation](20260810-gate-altitude-repairs-under-advance-delegation.md): raise-only altitude repairs outside the deliberately-chosen set run under advance delegation granted at encoding time; instance-by-instance say-so stands for everything else | do |
 | 2026-07-27 | [Manifest Intent leads with a required Problem, plus Appetite and Out of bounds](20260727-manifest-intent-leads-with-problem-appetite-and-bounds.md) | Accepted | define |
 | 2026-07-27 | [Shape Up adoption boundary — what is deliberately not imported](20260727-shape-up-adoption-boundary.md) | Accepted | Positioning |
 | 2026-07-28 | [Bound the acceptance contract from above, not only from below](20260728-bound-the-acceptance-contract-from-above.md) | Accepted | define / do |
@@ -76,6 +76,7 @@
 | 2026-08-09 | [The init-context skill lives in the core plugin, not in tools](20260809-init-context-skill-lives-in-core.md) | Accepted | Repo layout |
 | 2026-08-09 | [Locate the ticket store by convention, not configuration](20260809-locate-the-ticket-store-by-convention-not-configuration.md) | Accepted | Ticketing |
 | 2026-08-09 | [next-ticket derives its pick instead of asking](20260809-next-ticket-derives-its-pick-instead-of-asking.md) | Accepted | Ticketing |
+| 2026-08-10 | [Gate altitude repairs run under advance user delegation](20260810-gate-altitude-repairs-under-advance-delegation.md) | Accepted | define / do |
 | 2026-08-10 | [Generate a venue reference for an unmapped tracker](20260810-generate-a-venue-reference-for-an-unmapped-tracker.md) | Accepted | Ticketing |
 | 2026-08-10 | [next-ticket claims the ticket it picks](20260810-next-ticket-claims-the-ticket-it-picks.md) | Accepted | Ticketing |
 | 2026-08-10 | [No verifier-model granularity — the lever is round count, not model routing](20260810-no-verifier-model-granularity.md) | Accepted | do |
