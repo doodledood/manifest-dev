@@ -186,4 +186,5 @@ Bump plugin version if plugin files changed.
 
 Ratified steering preferences for this repo. Each states the preference, why it holds, and when it should yield — weigh them rather than obey them.
 
+- **Speak in plain words, not this project's coined vocabulary.** Say what a term stands for rather than naming it — "the rule that narrows re-checking to the prior findings and the new delta", not the term for it. The glossary exists so agents model the project correctly, not so conversation is conducted in it, and a coined name used before it is unpacked costs the reader more than the words it saved. Yield where the reader is looking at an artifact that already uses the term — a manifest, a decision record, a gate ledger — since there the shared name is what makes the artifact legible.
 - **Default manifests here to no PR-lifecycle gates.** Pull requests in this repo run no CI and have a single maintainer as the only reviewer, so lifecycle criteria spend verification effort on nothing. Include them once a pull request carries required status checks, or a reviewer whose approval gates the merge.
