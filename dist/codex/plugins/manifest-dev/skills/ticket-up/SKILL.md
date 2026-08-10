@@ -22,6 +22,10 @@ The self-sufficiency test before emitting each ticket: could a competent strange
 | Global Invariants | **Rules that must hold** — copied into *every* ticket, as plain rules stripped of verification wording |
 | A gate's kind, the verification mode, gate/PG/ASM codes | **Stays behind.** Executor policy, meaningless outside manifest-dev |
 
+## The Auto grant
+
+Decide the convention's Auto grant per ticket as you emit. Grant it only when the criterion holds — neither doing the work nor judging it done needs any human's knowledge, taste, or authority — and nothing about the ticket calls for withholding trust; when in doubt, withhold. Manifest tickets often qualify, the deciding having happened before they were written, but an approval, credentials the picker won't have, or an irreversible act keeps the grant off however settled the ticket is. Absence is safe by design — an ungranted ticket waits for a person — so a wrong withhold costs a human glance where a wrong grant costs an unattended run doing what it shouldn't.
+
 ## Dependency edges
 
 The manifest's Deliverable order is uncertainty-based — least-proven first so one executor learns early. That order is not dependency: encode a `Depends on:` edge only where one Deliverable's outcome is genuinely required by another, and leave everything else parallel. When in doubt, leave the edge out and note the relationship under Watch out for instead.
@@ -32,7 +36,7 @@ The manifest's Deliverable order is uncertainty-based — least-proven first so 
 
 **When nothing names one, ask — and recommend the project's shared tracker.** Never choose in silence, since a run that creates a store without having asked has chosen for the user. What makes the recommendation is claiming: it is what keeps two people off one ticket, and it only does that where the store is a surface both of them read. Any hosted tracker is one, so recommend the tracker this project already runs; GitHub Issues is the one to name when the project has a GitHub remote the session can reach and nothing else is in play. Recommend files where there is no shared tracker — no remote, or work nobody else will touch — and say what choosing them costs: a file store's claims are versioned repo content, so they never cross clones, worktrees, or branches, and two sessions in separate checkouts will pick the same ticket without either noticing. Write the answer to `tickets/store-config.md` so no later run asks again.
 
-**Files.** Write one markdown file per ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md` at the project root (create it), NN ordered by a sensible starting sequence. Each file opens with `Kind:`, `Status:`, `Depends on:`, `Claimed by:` lines, then the anatomy. Write the effort's front file (`tickets/<effort-slug>/README.md`) alongside, per the convention: destination distilled from the manifest's Problem and Appetite, any priority override, context pointers — and no ticket list or status, ever. Closed tickets get moved to `tickets/<effort-slug>/done/`. Confirm the effort slug with the user when it isn't obvious from the manifest title.
+**Files.** Write one markdown file per ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md` at the project root (create it), NN ordered by a sensible starting sequence. Each file opens with `Kind:`, `Status:`, `Depends on:`, `Claimed by:` lines — plus `Auto: yes` when the grant is declared; no `Auto:` line means ungranted — then the anatomy. Write the effort's front file (`tickets/<effort-slug>/README.md`) alongside, per the convention: destination distilled from the manifest's Problem and Appetite, any priority override, context pointers — and no ticket list or status, ever. Closed tickets get moved to `tickets/<effort-slug>/done/`. Confirm the effort slug with the user when it isn't obvious from the manifest title.
 
 **GitHub Issues.** When the config names GitHub, or the user chooses it, read `references/GITHUB_STORE.md` and follow its mapping.
 

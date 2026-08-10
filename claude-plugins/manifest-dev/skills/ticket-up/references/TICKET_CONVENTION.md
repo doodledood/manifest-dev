@@ -4,10 +4,24 @@ A ticket is a self-sufficient prose work packet: everything needed to pick it up
 
 ## Two kinds
 
-- **Shaped ticket** — ready to execute. Someone picks it up and builds; its definition of done says when they're finished.
-- **Question ticket** — needs figuring out first. Someone picks it up and investigates; done means the question is answered with evidence and the answer recorded. Resolving one often spawns shaped tickets.
+The kinds split on one question: is the decision space closed?
+
+- **Shaped ticket** — every decision that shapes the work is already made: no open question remains whose answer would change what gets built or what done means. Someone picks it up and builds; its definition of done says when they're finished.
+- **Question ticket** — at least one such question is still open. Someone picks it up and investigates; done means the question is answered with evidence and the answer recorded. Resolving one often spawns shaped tickets.
+
+The write-time test: try to name a question whose answer would change the work or its definition of done. Naming one makes the ticket a question ticket, however much context it already carries — half-investigated work is a question ticket with a thick "what's already known", not a shaped ticket. Choices where any competent answer within the ticket's stated rules is acceptable — naming, internal structure, mechanical detail — are execution, not shaping, and leaving them open does not reopen the kind.
+
+The bar is a property of the ticket's content, never of where it came from: no particular workflow or artifact needs to have produced a shaped ticket, and none makes a ticket shaped while such a question stays open.
 
 The kind is declared on the ticket, so the picker knows which tool to bring.
+
+## The Auto grant
+
+A ticket of either kind may carry **Auto** — an opt-in grant, declared when the ticket is written, that unattended automation may take it end to end: do the work and judge it done, with nobody watching.
+
+- **Granting.** Grant only when neither doing the work nor judging it done needs any human's knowledge, taste, or authority — no done-judgment resting on someone's unstated criteria, no approval, no access an unattended worker won't have, no irreversible act, no decision deferred to mid-flight input. That bar is necessary but never sufficient: the author still chooses, and withheld trust alone is reason enough to withhold. When in doubt, don't grant.
+- **Absence is the fence.** A ticket without the grant is not touched by automation at all — no partial work, no prepping half the job. Nothing is ever marked "not auto"; silence already says it, which is also what keeps automation off items in a shared venue that were never tickets. A person may still hand an ungranted ticket to an agent and watch — that is the person working the ticket, outside the grant's jurisdiction.
+- **Surprises don't revoke.** A granted ticket's worker can still hit an unexpected blocker; it stops and surfaces rather than deciding what only a person can. That is the exception path working, not evidence the grant was wrong — only a step known at write time to need a person keeps the grant off.
 
 ## Anatomy
 
@@ -21,9 +35,10 @@ A shaped ticket carries, in plain language:
 - **Suggested approach** *(optional)* — a starting direction, marked as advice the picker may discard.
 - **Definition of done** — checks a stranger can judge for themselves, in prose.
 - **Depends on** — ticket IDs this one needs finished first. Structural needs only.
+- **Auto** *(when granted)* — the grant above, declared by the author; a ticket that doesn't carry it is ungranted, and nothing marks the negative.
 - **Status / Claimed by** — see lifecycle.
 
-A question ticket carries Title, the question itself, why it matters, what's already known, and dependencies/status/claim the same way. Its definition of done is built in: the question answered with evidence, recorded where the store says outcomes go.
+A question ticket carries Title, the question itself, why it matters, what's already known, and dependencies/the Auto grant/status/claim the same way. Its definition of done is built in: the question answered with evidence, recorded where the store says outcomes go.
 
 **No machinery.** A ticket never contains tool-specific vocabulary a stranger wouldn't know: no verification YAML, no gate codes, no references to the manifest or workflow that produced it. If interpreting a ticket requires installing something, the ticket is wrong.
 
