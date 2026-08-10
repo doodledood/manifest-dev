@@ -42,7 +42,7 @@
 | 2026-07-14 | [figure-out keeps the do-nothing option in the option set](20260714-figure-out-keeps-do-nothing-in-the-option-set.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out roots the crux tree above solution-shaped topics](20260714-figure-out-roots-crux-tree-above-solution-shaped-topics.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out scales read depth with stakes and reversibility, not fog alone](20260714-figure-out-scales-read-depth-with-stakes-and-reversibility.md) | Accepted | figure-out |
-| 2026-07-19 | [Taste persists by offer-and-ratify, never by silent inference](20260719-taste-persists-by-offer-and-ratify.md) | Accepted | figure-out |
+| 2026-07-19 | [Taste persists by offer-and-ratify, never by silent inference](20260719-taste-persists-by-offer-and-ratify.md) | Accepted — eligibility narrowed by [20260810-universal-discipline-belongs-in-the-prompt](20260810-universal-discipline-belongs-in-the-prompt.md) | figure-out |
 | 2026-07-22 | [figure-out firms the low-cognitive-load directive to match rigor's modality](20260722-figure-out-firms-low-cognitive-load-directive.md) | Superseded by [20260727-figure-out-adopts-a-default-turn-shape](20260727-figure-out-adopts-a-default-turn-shape.md) | figure-out |
 | 2026-07-22 | [`/do` states verification sufficiency, not only necessity](20260722-state-verification-sufficiency-not-only-necessity.md) | Accepted | do |
 | 2026-07-26 | [Deliverables are exercisable slices, ordered by uncertainty](20260726-deliverables-are-exercisable-slices-ordered-by-uncertainty.md) | Accepted | define |
@@ -78,4 +78,6 @@
 | 2026-08-09 | [next-ticket derives its pick instead of asking](20260809-next-ticket-derives-its-pick-instead-of-asking.md) | Accepted | Ticketing |
 | 2026-08-10 | [Generate a venue reference for an unmapped tracker](20260810-generate-a-venue-reference-for-an-unmapped-tracker.md) | Accepted | Ticketing |
 | 2026-08-10 | [next-ticket claims the ticket it picks](20260810-next-ticket-claims-the-ticket-it-picks.md) | Accepted | Ticketing |
+| 2026-08-10 | [No verifier-model granularity — the lever is round count, not model routing](20260810-no-verifier-model-granularity.md) | Accepted | do |
 | 2026-08-10 | [Recommend the project's shared tracker as the ticket venue](20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue.md) | Accepted | Ticketing |
+| 2026-08-10 | [A discipline every session owes belongs in the prompt, not in a ratified preference](20260810-universal-discipline-belongs-in-the-prompt.md) | Accepted | figure-out |
