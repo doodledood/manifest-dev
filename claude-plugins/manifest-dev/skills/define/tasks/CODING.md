@@ -8,7 +8,7 @@ CLAUDE.md may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
-Each gate is a **dimension** of the `review-code` skill (one ref per dimension, loaded on demand). Two tiers by dimension role. **Defect-finding dimensions** (every LOW finding is signal — a real divergence, defect, contract mismatch, or type hole): `no LOW+`. **Advisory dimensions** (LOW findings are usually taste-level — could-be-better, not is-broken): `no MEDIUM+`. The split is structural, not per-finding — it reflects what each dimension is built to detect.
+Each gate is a **dimension** of the `review-code` skill (one ref per dimension, loaded on demand). Two tiers by dimension role. **Defect-finding dimensions** (every LOW finding is signal — a real divergence, defect, contract mismatch, or type hole): `no LOW+`. **Advisory dimensions** (LOW findings are usually taste-level — could-be-better, not is-broken): `no MEDIUM+`. The split is structural, not per-finding — it reflects what each dimension is built to detect. The advisory tier is the tier eligible for `/define`'s bearer-test omission valve (`define/SKILL.md` → *The omission valve*); defect-finding dimensions always encode.
 
 | Aspect | Dimension | Threshold |
 |--------|-----------|-----------|
