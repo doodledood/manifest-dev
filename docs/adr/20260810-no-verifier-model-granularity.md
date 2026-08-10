@@ -23,7 +23,7 @@ would require a later execution-policy design."
 declared kind, noting it is "where the cost analysis points" and "worth reconsidering later on
 measured evidence."
 
-This is that reconsideration. It found the proposal aimed at the wrong mass.
+This record is the reconsideration both invited. It found the proposal aimed at the wrong mass.
 
 **The cheaper kind is also the smaller count.** A code manifest built from `CODING.md` carries
 eleven always-applicable dimension gates plus two conditional ones — thirteen gates whose
