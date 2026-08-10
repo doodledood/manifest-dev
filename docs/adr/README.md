@@ -77,9 +77,11 @@
 | 2026-08-09 | [Locate the ticket store by convention, not configuration](20260809-locate-the-ticket-store-by-convention-not-configuration.md) | Accepted | Ticketing |
 | 2026-08-09 | [next-ticket derives its pick instead of asking](20260809-next-ticket-derives-its-pick-instead-of-asking.md) | Accepted | Ticketing |
 | 2026-08-10 | [Advisory gates omit by a bearer test at define time](20260810-advisory-gates-omit-by-bearer-test.md) | Accepted | define |
+| 2026-08-10 | [The Auto marker is an opt-in grant; absence fences automation off entirely](20260810-auto-is-an-opt-in-grant-to-unattended-automation.md) | Accepted | Ticketing |
 | 2026-08-10 | [Gate altitude repairs run under advance user delegation](20260810-gate-altitude-repairs-under-advance-delegation.md) | Accepted | define / do |
 | 2026-08-10 | [Generate a venue reference for an unmapped tracker](20260810-generate-a-venue-reference-for-an-unmapped-tracker.md) | Accepted | Ticketing |
 | 2026-08-10 | [next-ticket claims the ticket it picks](20260810-next-ticket-claims-the-ticket-it-picks.md) | Accepted | Ticketing |
 | 2026-08-10 | [No verifier-model granularity — the lever is round count, not model routing](20260810-no-verifier-model-granularity.md) | Accepted — the wholesale rejection of dropping advisory dimensions (Alternatives) is narrowed by [20260810-advisory-gates-omit-by-bearer-test](20260810-advisory-gates-omit-by-bearer-test.md): per-manifest omission of advisory gates whose findings have no bearer is now permitted; the decision here (no model routing) is unchanged | do |
 | 2026-08-10 | [Recommend the project's shared tracker as the ticket venue](20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue.md) | Accepted | Ticketing |
+| 2026-08-10 | [Shaped means the decision space is closed, not that a workflow produced it](20260810-shaped-means-the-decision-space-is-closed.md) | Accepted | Ticketing |
 | 2026-08-10 | [A discipline every session owes belongs in the prompt, not in a ratified preference](20260810-universal-discipline-belongs-in-the-prompt.md) | Accepted | figure-out |
