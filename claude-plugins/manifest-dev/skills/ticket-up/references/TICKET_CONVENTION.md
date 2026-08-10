@@ -42,7 +42,7 @@ Never put derivable state here: no ticket lists, statuses, or ready/next — any
 ## Lifecycle
 
 - **Status**: `open` → `done`. Done tickets roll off **by location**: in a file store, closing moves the ticket into a `done/` subfolder beside the open ones; in a tracker, closing the item removes it from open queries. Reading the open set never scales with closed history — the archive is the `done/` folder, the tracker's closed items, and git.
-- **Claiming**: before working a ticket, mark it claimed (a `Claimed by:` line, an assignee, the venue's equivalent). Open and unclaimed means takeable; claimed means not.
+- **Claiming**: mark a ticket claimed (a `Claimed by:` line, an assignee, the venue's equivalent) when you pick it, not when you get around to starting it — the gap between the two is where somebody else picks the same one. Open and unclaimed means takeable; claimed means not.
 - **Ready**: a ticket is ready when it is open, unclaimed, and every ticket it depends on is done. Blocked is derived from unmet dependencies, never stored as a status.
 - **Closing**: record the outcome on the ticket (the work's landing place, or the question's answer), mark it done and roll it off (move it to `done/`, or close the item), and check what the close changed: tickets it made ready, and outcomes that need interpreting. An outcome that needs judging while no existing ticket depends on this one spawns that question ticket as part of the close — the next thinking step stays reachable through the store, never through someone's initiative.
 
@@ -58,6 +58,8 @@ Never put derivable state here: no ticket lists, statuses, or ready/next — any
 ## Dependencies and parallelism
 
 Edges are structural only: B depends on A when B genuinely cannot be done or judged without A's outcome. Never encode a preferred working order as a dependency. The cost of parallel pickup is honest and accepted: with one worker, surprises in an early ticket reshape later ones; with parallel workers they don't — only the edges carry ordering, so anything learned that should reshape another ticket must be written onto that ticket when it's learned.
+
+Claiming is what keeps two workers off one ticket, and it does that only where the store is a surface both of them read. A hosted tracker is one. Files in a repository are not, once the workers aren't in the same working copy: a claim written in one clone, worktree, or branch doesn't reach the others until it's merged, so two people can hold the same ticket and neither can tell. Parallel workers on a file store need to be sharing a checkout; otherwise the store belongs somewhere all of them can see it.
 
 ## Tidy pass
 

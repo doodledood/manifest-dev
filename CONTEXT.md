@@ -188,6 +188,10 @@ _Avoid_: Project, epic, milestone.
 Where an effort's Tickets live, under the ticket convention — files in the repo, GitHub Issues, or a custom tracker as pluggable venues, on a venue asked once per project and recorded there; the convention is the contract, the venue a rendering.
 _Avoid_: Backlog, board.
 
+**Venue Reference**:
+The mapping that renders the ticket convention onto one venue's own operations — shipped where a venue is supported out of the box, written from the user's description of their tracker where it is not.
+_Avoid_: Adapter, integration.
+
 **Ticket-up**:
 The move from a finished Manifest to one Ticket per Deliverable plus explicit structural dependency edges.
 _Avoid_: Breakdown, sharding.
@@ -200,6 +204,8 @@ _Avoid_: Breakdown, sharding.
 - A **Task File** can contribute **Quality Gates** and **Defaults** to `/define`.
 - A **Quality Gate** becomes an acceptance-style gate in a **Manifest**.
 - **Ticket-up** turns each **Deliverable** of a **Manifest** into a **Shaped Ticket** in a **Ticket Store**; figure-out can hand decoupled unknowns off as **Question Tickets** to the same store, and `next-ticket` answers "what's next" as a priority read over it.
+- `next-ticket` claims the **Ticket** it names, which is what makes several sessions reading one **Ticket Store** get different ones — and it separates them only where the store's venue is a live surface every worker reads, never across separate checkouts of a file store.
+- Every venue a **Ticket Store** runs on has a **Venue Reference**.
 - A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them needs something the destinations alone don't supply.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.

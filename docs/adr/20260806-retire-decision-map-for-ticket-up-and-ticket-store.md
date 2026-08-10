@@ -1,7 +1,7 @@
 # ADR: Retire the decision-map planning shape in favor of ticket-up and a ticket store
 
 ## Status
-Accepted
+Accepted — venue default narrowed by 20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue
 
 ## Area
 define / figure-out

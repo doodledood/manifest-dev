@@ -63,7 +63,7 @@
 | 2026-08-03 | [a figure-out turn carries one concrete claim, in plain words, in a skimmable shape](20260803-figure-out-turn-carries-one-concrete-claim.md) | Accepted — amended by [20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines](20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines.md) | figure-out |
 | 2026-08-03 | [a prototype attaches to the question it was built to crack, and the reaction lands there](20260803-prototypes-attach-to-the-station-they-crack.md) | Accepted | figure-out |
 | 2026-08-05 | [Judgment Gates re-verify by Ratchet, not by re-sampling](20260805-ratchet-judgment-gate-reverification.md) | Accepted | define / do |
-| 2026-08-06 | [Retire the decision-map planning shape in favor of ticket-up and a ticket store](20260806-retire-decision-map-for-ticket-up-and-ticket-store.md) | Accepted | define / figure-out |
+| 2026-08-06 | [Retire the decision-map planning shape in favor of ticket-up and a ticket store](20260806-retire-decision-map-for-ticket-up-and-ticket-store.md) | Accepted — venue default narrowed by [20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue](20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue.md) | define / figure-out |
 | 2026-08-06 | [`/do`'s verification layer is bookkeeping and a stop condition, not a checking aid](20260806-verification-is-bookkeeping-and-a-stop-condition.md) | Accepted | do |
 | 2026-08-07 | [A gate is one text, not two](20260807-a-gate-is-one-text-not-two.md) | Accepted | define / do |
 | 2026-08-07 | [Trim the Manifest schema to fields that are read](20260807-trim-the-manifest-schema-to-fields-that-are-read.md) | Accepted | define / do |
@@ -76,3 +76,6 @@
 | 2026-08-09 | [The init-context skill lives in the core plugin, not in tools](20260809-init-context-skill-lives-in-core.md) | Accepted | Repo layout |
 | 2026-08-09 | [Locate the ticket store by convention, not configuration](20260809-locate-the-ticket-store-by-convention-not-configuration.md) | Accepted | Ticketing |
 | 2026-08-09 | [next-ticket derives its pick instead of asking](20260809-next-ticket-derives-its-pick-instead-of-asking.md) | Accepted | Ticketing |
+| 2026-08-10 | [Generate a venue reference for an unmapped tracker](20260810-generate-a-venue-reference-for-an-unmapped-tracker.md) | Accepted | Ticketing |
+| 2026-08-10 | [next-ticket claims the ticket it picks](20260810-next-ticket-claims-the-ticket-it-picks.md) | Accepted | Ticketing |
+| 2026-08-10 | [Recommend the project's shared tracker as the ticket venue](20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue.md) | Accepted | Ticketing |
