@@ -12,6 +12,7 @@ Renders the ticket convention onto GitHub Issues. Use whatever GitHub access the
 | Effort membership | The native **sub-issue** relation, with the effort's tracking issue as the parent |
 | Effort | An `effort:<slug>` label, on every ticket and on its tracking issue — same slug the files venue would use for the directory name |
 | Kind | Labels `shaped` / `question` on tickets; the tracking issue carries `effort` (create any that are absent) |
+| Auto grant | An `auto` label on the ticket (create it when absent). No label means ungranted — automation leaves the issue alone entirely, which also covers issues that were never tickets |
 | Depends on | A `Depends on: #N` line in the body of the **blocked** issue, plus a native blocked-by relation where the repo has them. Not sub-issues — an issue has one parent, and membership holds it |
 | Claimed | Assignee; unassigned and open means takeable |
 | Done / roll-off | Close the issue with the outcome as a closing comment. Nothing to delete anywhere: a closed child stays in the tracking issue's list as progress, and `is:open` queries stop returning it |
