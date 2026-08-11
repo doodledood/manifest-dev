@@ -101,7 +101,6 @@ Per-skill body adaptations (unchanged from the open-standard rules):
 
 - **Tool-name references in operational prose** → Codex names: Bash→`shell_command`, Read→`read_file`, Edit→`apply_patch`, Grep→`grep_files`, Glob/Write/WebFetch→`shell_command`, WebSearch→`web_search`, AskUserQuestion→`request_user_input`, TaskCreate/Todo→`update_plan`. Leave teaching/reference content (`references/*.md` explaining Claude Code conventions) unchanged.
 - **Context file**: operational "write to CLAUDE.md" → "AGENTS.md". Do not rewrite "CLAUDE.md" in comparative/research text. The `review-code` skill's `context-file-adherence` dimension reference already uses generic "context file" language — no special handling.
-- **No native `/auto` or `/babysit-pr` runtime command**: Codex skills present `/do`, `/auto`, `/babysit-pr`; the latter two ship as ordinary skills that internally chain `/do`.
 
 ### Tool name mapping (Claude Code → Codex)
 

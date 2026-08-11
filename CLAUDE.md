@@ -22,9 +22,14 @@ ruff check --fix claude-plugins/ tests/ && black claude-plugins/ tests/ && mypy 
 ```
 
 `tests/` asserts properties of the shipped prompts themselves — that gate examples use the current
-schema, that mode mechanics stay out of the spine, that each distribution carries the rewrites its
-sync rules authorize and no others. Adding a skill, a dimension, or a distribution can therefore
-turn the suite red without any Python changing, and that red is the signal working as intended.
+schema, that mode mechanics stay out of the spine, that the bare-name distributions carry the
+qualifier strip their sync rules require. Adding a skill, a dimension, or a distribution can
+therefore turn the suite red without any Python changing, and that red is the signal working as
+intended.
+
+It does not check the other direction. Whether a distribution carries a rewrite **no** rule
+authorized is `/sync-tools`' own post-write check, not the suite's — so a green run is not evidence
+that a `dist/` edit was authorized.
 
 ## Foundational Documents
 

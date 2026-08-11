@@ -158,7 +158,7 @@ The manifest is the canonical source of truth for the PR or branch, not for a si
 
 manifest-dev ships **no agents of its own**. `/do` uses host execution contexts according to the selected verification mode, and every mode reads the same gate text from the manifest, which can call for running bash, inspecting files, querying external tools, or activating a skill. Read-only behavior is enforced by that text, so authors can point an evaluator at MCP servers or extra CLI tools the user has configured.
 
-Quality review (code, operational readiness, prose, contracts, types, design, testability, intent, docs) is the **`review-code` skill** — one dimension per invocation; a gate body activates it when needed. The other functional skills are `check-pr` (PR mergeability checks) and `poll-slack` (tails Slack threads for `/figure-out-team`).
+Quality review (bugs, design, types, contracts, testability, …) is the **`review-code` skill** — one dimension per invocation; a gate body activates it when needed. The other functional skills are `check-pr` (PR mergeability checks) and `poll-slack` (tails Slack threads for `/figure-out-team`).
 
 | Dimension | Role | Focus |
 |-----------|------|-------|

@@ -161,8 +161,8 @@ Full plugin and skill catalogs live in [`claude-plugins/README.md`](claude-plugi
 ./scripts/setup.sh
 source .venv/bin/activate
 
-# Lint, format, typecheck
-ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
+# Lint, format, typecheck, test
+ruff check --fix claude-plugins/ tests/ && black claude-plugins/ tests/ && mypy && python3 -m pytest tests/
 ```
 
 After changing plugin components, run `/sync-tools` to regenerate the `dist/` distributions.

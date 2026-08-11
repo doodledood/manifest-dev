@@ -95,9 +95,15 @@ the preferred outcome where it is available.**
    right instead of N, and the sites that used to be reachable are gone. This is the outcome worth
    reaching for, because it removes the class rather than each member of it.
 2. **Fixed at the site.** The same defect, repaired where it lives.
-3. **Named out of scope, with why.** The site is reachable in principle but deliberately left —
-   dead code, a different lifecycle that makes the condition unreachable, a region too large or too
-   diffuse to enumerate. The reason is what makes this a disposition rather than an omission.
+3. **Named out of scope, with why.** The site is reachable in principle but not this dimension's to
+   claim — dead code, a different lifecycle that makes the condition unreachable, a region too large
+   or too diffuse to enumerate, or a site whose defect claim belongs to a sibling dimension under
+   the mode you were invoked in. The reason is what makes this a disposition rather than an
+   omission.
+
+   The first three of those close the site; the fourth only re-homes it, and the enumeration says
+   which it is. Do not write "out of scope" over a site a sibling owns without naming the sibling —
+   that reads as remediated when nobody has looked at it yet.
 
 **The ordering expresses a preference and mandates nothing.** A change whose every site is fixed in
 place satisfies this dimension completely — do not report a finding because a restructure was
@@ -113,9 +119,10 @@ static-analysis rule is often good work, and it does not account for a site:
 - A check is a **new artifact to maintain**, where the first disposition removes surface.
 - A rule that fires on five unfixed sites has converted them into visible debt, not accounted for
   them.
-- And it is the cheapest thing on this list, which is the reason it is not on it. Given three
-  dispositions and a detection check, the check wins nearly every time on effort alone — so
-  offering it would quietly make it the answer, and the gate would stop buying what it exists for.
+
+It is also the cheapest of the four, which is the reason it is not among the three. Offered beside
+the dispositions above, a detection check wins nearly every time on effort alone — so listing it
+would quietly make it the answer, and the gate would stop buying what it exists for.
 
 A change may add such a check alongside a real disposition, and that is fine. It does not by itself
 discharge any site.
