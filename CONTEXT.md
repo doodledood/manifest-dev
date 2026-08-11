@@ -192,6 +192,10 @@ _Avoid_: Spike.
 An opt-in grant, declared at write time on either kind of Ticket, permitting unattended automation to take it end to end; absent the grant, automation leaves the Ticket entirely alone.
 _Avoid_: Autonomous ticket, agent-ready.
 
+**Ticket Type**:
+An optional, single-valued naming of a Ticket's chief nature, carried so an operator's automation policy can select granted work without re-reading it — absent where none of the store's values fits, and never matched by a type query when absent.
+_Avoid_: Task type (that is /define's composable gate-loading taxonomy), category, label.
+
 **Effort**:
 A named body of work a Ticket Store groups by — one destination, one front file, and its own Tickets; a store may hold several at once.
 _Avoid_: Project, epic, milestone.
@@ -219,6 +223,7 @@ _Avoid_: Breakdown, sharding.
 - `next-ticket` claims the **Ticket** it names, which is what makes several sessions reading one **Ticket Store** get different ones — and it separates them only where the store's venue is a live surface every worker reads, never across separate checkouts of a file store.
 - The **Auto** grant requires that neither doing a **Ticket** nor judging it done needs any human's knowledge, taste, or authority — necessary but never sufficient: the author still chooses to grant.
 - Absence of **Auto** is one fence covering untrusted **Tickets**, **Tickets** with a designed-in human step, and venue items never written as **Tickets** at all.
+- **Auto** says whether automation may touch a **Ticket** at all and is the author's call; a **Ticket Type** says which granted work an operator runs today and is the query's — keeping rollout schedule out of the grant, whose silence already carries three meanings.
 - Every venue a **Ticket Store** runs on has a **Venue Reference**.
 - A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them needs something the destinations alone don't supply.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.

@@ -85,3 +85,4 @@
 | 2026-08-10 | [Recommend the project's shared tracker as the ticket venue](20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue.md) | Accepted | Ticketing |
 | 2026-08-10 | [Shaped means the decision space is closed, not that a workflow produced it](20260810-shaped-means-the-decision-space-is-closed.md) | Accepted | Ticketing |
 | 2026-08-10 | [A discipline every session owes belongs in the prompt, not in a ratified preference](20260810-universal-discipline-belongs-in-the-prompt.md) | Accepted | figure-out |
+| 2026-08-11 | [A ticket's type is a rollout selector, not a classification](20260811-ticket-type-is-a-rollout-selector-not-a-classification.md) | Accepted | Ticketing |

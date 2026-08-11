@@ -23,6 +23,17 @@ A ticket of either kind may carry **Auto** — an opt-in grant, declared when th
 - **Absence is the fence.** A ticket without the grant is not touched by automation at all — no partial work, no prepping half the job. Nothing is ever marked "not auto"; silence already says it, which is also what keeps automation off items in a shared venue that were never tickets. A person may still hand an ungranted ticket to an agent and watch — that is the person working the ticket, outside the grant's jurisdiction.
 - **Surprises don't revoke.** A granted ticket's worker can still hit an unexpected blocker; it stops and surfaces rather than deciding what only a person can. That is the exception path working, not evidence the grant was wrong — only a step known at write time to need a person keeps the grant off.
 
+## Type
+
+A ticket may also say what kind of work it is: **bug**, **feature**, **refactor**, **docs**, or **chore**. This is a different question from the two kinds above — the kind says whether the work is decided, the type says what the work is — so a ticket can be shaped or question and carry any type, or none.
+
+- **What each covers.** `bug` — something behaves wrongly and should stop. `feature` — something the product couldn't do before. `refactor` — the same behaviour, differently arranged. `docs` — prose: guides, references, comments, anything written to be read. `chore` — upkeep: dependencies, configuration, tooling.
+- **One value, or none.** A ticket names the single type that best describes its work, never several. Where the work genuinely spans two, name the one that covers most of it. Where none of them fits, leave the type off — it is optional, and a ticket without one is a complete ticket.
+- **Silence is not a wildcard.** Anything selecting tickets by type — a person filtering the store, or unattended automation given a set of types to work through — passes over a ticket that carries none. A ticket answers only to a type it actually names, so leaving it off is the safe thing to do rather than a gap someone else's query will fill in.
+- **A project may use its own set.** These five are a default for stores that don't say otherwise. A project that thinks in different terms writes its own list in the same record that says where its store lives, and that list is then the list.
+
+The type says what a ticket is, never what should be done about it. Which types are worth handing to unattended automation, and in what order anyone widens that, is the decision of whoever runs the automation and belongs wherever they say which tickets to pick up — never on the ticket, which would freeze one operator's policy into work everyone reads.
+
 ## Anatomy
 
 A shaped ticket carries, in plain language:
@@ -36,9 +47,10 @@ A shaped ticket carries, in plain language:
 - **Definition of done** — checks a stranger can judge for themselves, in prose.
 - **Depends on** — ticket IDs this one needs finished first. Structural needs only.
 - **Auto** *(when granted)* — the grant above, declared by the author; a ticket that doesn't carry it is ungranted, and nothing marks the negative.
+- **Type** *(when one fits)* — one of the types above, naming what kind of work this is; omitted when none of them describes it.
 - **Status / Claimed by** — see lifecycle.
 
-A question ticket carries Title, the question itself, why it matters, what's already known, and dependencies/the Auto grant/status/claim the same way. Its definition of done is built in: the question answered with evidence, recorded where the store says outcomes go.
+A question ticket carries Title, the question itself, why it matters, what's already known, and dependencies/the Auto grant/type/status/claim the same way. Its definition of done is built in: the question answered with evidence, recorded where the store says outcomes go.
 
 **No machinery.** A ticket never contains tool-specific vocabulary a stranger wouldn't know: no verification YAML, no gate codes, no references to the manifest or workflow that produced it. If interpreting a ticket requires installing something, the ticket is wrong.
 
