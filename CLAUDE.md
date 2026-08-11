@@ -13,13 +13,23 @@ Set the bar there and no lower. Incidental working detail is fine and not worth 
 ## Development Commands
 
 ```bash
-# Lint, format, typecheck
-ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
+# Lint, format, typecheck, test
+ruff check --fix claude-plugins/ tests/ && black claude-plugins/ tests/ && mypy && python3 -m pytest tests/
 
 # Test plugin locally
 /plugin marketplace add /path/to/manifest-dev
 /plugin install manifest-dev@manifest-dev
 ```
+
+`tests/` asserts properties of the shipped prompts themselves — that gate examples use the current
+schema, that mode mechanics stay out of the spine, that the bare-name distributions carry the
+qualifier strip their sync rules require. Adding a skill, a dimension, or a distribution can
+therefore turn the suite red without any Python changing, and that red is the signal working as
+intended.
+
+It does not check the other direction. Whether a distribution carries a rewrite **no** rule
+authorized is `/sync-tools`' own post-write check, not the suite's — so a green run is not evidence
+that a `dist/` edit was authorized.
 
 ## Foundational Documents
 
@@ -176,8 +186,8 @@ Prefer `cp` and `mv` bash commands over the Write tool when duplicating or movin
 ## Before PR
 
 ```bash
-# Lint, format, typecheck
-ruff check --fix claude-plugins/ && black claude-plugins/ && mypy
+# Lint, format, typecheck, test
+ruff check --fix claude-plugins/ tests/ && black claude-plugins/ tests/ && mypy && python3 -m pytest tests/
 ```
 
 Bump plugin version if plugin files changed.

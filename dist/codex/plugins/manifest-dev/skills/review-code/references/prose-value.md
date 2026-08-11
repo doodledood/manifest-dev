@@ -94,7 +94,7 @@ Before reporting a finding, it must pass ALL of these criteria. **If it fails AN
 Do NOT report on:
 
 - **Documentation accuracy / drift** (docs say X but code does Y) → belongs to the docs dimension. The boundary: prose-value asks *does this prose earn its place*; docs asks *is it accurate vs the code*.
-- **Project-specific anti-comment policies** (AGENTS.md / AGENTS.md rules about commenting) → belongs to the context-file-adherence dimension
+- **Project-specific anti-comment policies** (CLAUDE.md / AGENTS.md rules about commenting) → belongs to the context-file-adherence dimension
 - **Dead code / commented-out code** → belongs to the code-maintainability dimension
 - **Code itself is verbose / over-engineered** → belongs to the code-simplicity dimension
 - **Standalone authored prose** (articles, marketing copy, blog posts) → outside this dimension's domain; general-purpose handles those when needed

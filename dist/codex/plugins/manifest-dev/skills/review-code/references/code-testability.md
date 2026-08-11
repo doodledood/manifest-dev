@@ -94,7 +94,7 @@ Beyond the shared report format, each finding should carry:
 - **Test friction**: number of mocks required and what they are.
 - **Logic at risk**: what business rules/behavior is hard to test.
 - **Why this matters**: concrete explanation of the testing difficulty and its consequence for THIS code.
-- **Suggestion**: how to reduce test friction. **Prefer extracting pure functions** as the primary recommendation — a pure function takes the data it needs as parameters and can be tested exhaustively with simple inputs while a thin shell fetches data and calls it. Alternatives: passing dependencies as parameters, leveraging the project's DI patterns, or accepting the friction with rationale if the tradeoff is reasonable.
+- **Suggestion**: how to reduce test friction. **Prefer extracting pure functions where the risk lives in the rule** — the discount stacking, the eligibility check, the pricing logic. There a pure function takes the data it needs as parameters and can be tested exhaustively with simple inputs while a thin shell fetches data and calls it. **Where the risk lives in the wiring instead** — which value, from where, at what freshness — extraction moves the easy part somewhere testable and leaves the failure in an untested shell, while adding a call site per shell for the mistake to be made at; prefer concentrating that wiring behind one interface and testing through it. Other alternatives: passing dependencies as parameters, leveraging the project's DI patterns, or accepting the friction with rationale if the tradeoff is reasonable.
 
 Example finding:
 
@@ -119,9 +119,9 @@ When no issues clear the bar, that is a valid, positive outcome — the code in 
 
 - **Ground issues in impact**: explain WHY the friction matters for THIS code.
 - **Suggest, don't mandate**: offer ways to improve; acknowledge when tradeoffs are acceptable.
-- **Prefer pure functions**: when suggesting improvements, favor extracting pure functions; acknowledge alternatives that fit the project's patterns.
+- **Prefer pure functions where the risk is in the rule**: favor extracting them when the logic at risk is the rule itself; where the risk is in the wiring, extraction relocates it into an untested shell, so prefer concentrating the wiring behind one interface and testing through it. Acknowledge alternatives that fit the project's patterns.
 - **Adapt to the codebase**: what's excessive in one project may be normal in another. Calibrate to local norms.
-- **Shell code gets a pass**: controller/orchestration code is expected to do IO — focus on whether important logic is extractable.
+- **Shell code gets a pass on doing IO**: controller/orchestration code is expected to do it — focus on whether important logic is extractable. The pass covers the IO, not the wiring: where the risk is in which value the shell assembles, from where, at what freshness, that is the case above and stays in scope.
 - **Every Critical/High issue must explain why the logic is important to test.**
 - Statistics must match detailed findings.
 

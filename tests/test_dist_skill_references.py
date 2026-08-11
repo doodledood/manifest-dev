@@ -49,6 +49,7 @@ CODE_REVIEW_DIMENSIONS = {
     "code-simplicity",
     "code-testability",
     "context-file-adherence",
+    "defect-class",
     "contracts",
     "docs",
     "operational-readiness",
@@ -58,6 +59,19 @@ CODE_REVIEW_DIMENSIONS = {
 }
 RETIRED_REVIEWER_AGENTS = {f"{d}-reviewer" for d in CODE_REVIEW_DIMENSIONS}
 REMOVED_SKILLS = ("verify",)
+
+# The superseded manifest schema gave a gate a `verify:` block (carrying
+# `instructions`/`prompt`/`model`) and an optional integer `phase`. Both are
+# retired: a gate is now a title, a body, an optional why, and a required
+# `kind`. Nothing distributed may reintroduce either field.
+RETIRED_GATE_FIELDS = re.compile(r"^[ \t]*(?:verify|phase):", re.MULTILINE)
+
+# A gate example in shipped docs: an `AC-`/`INV-G` heading whose block closes on
+# a kind declaration (or the schema template's placeholder for one).
+GATE_EXAMPLE_HEADING = re.compile(r"^#{3,4} (?:AC-|INV-G)")
+GATE_KIND_LINE = re.compile(
+    r"^(?:Judgment|Deterministic|\[Judgment \| Deterministic\]) gate\.$"
+)
 
 SELF_INDEPENDENCE_CLAIMS = (
     re.compile(
@@ -302,7 +316,9 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
     ]
     required_do_phrases = (
         "gate ledger covering every Acceptance Criterion and Global Invariant",
-        "`verify.instructions` source",
+        # The ledger column that pins each verdict to the text it was reached
+        # against; it names the gate itself now that `verify.instructions` is gone.
+        "gate-text source",
         "selected verification mode",
         "evaluator provenance",
         "Whenever `/do` invokes `/escalate`, pass the manifest path",
@@ -314,6 +330,8 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         text = path.read_text(encoding="utf-8")
         for phrase in required_do_phrases:
             assert phrase in text, f"{path}: missing {phrase!r}"
+        assert "verify.instructions" not in text, path
+        assert not RETIRED_GATE_FIELDS.search(text), path
 
     done_files = [
         ROOT / "claude-plugins/manifest-dev/skills/done/SKILL.md",
@@ -325,16 +343,21 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         "selected verification mode",
         "selected verification reference's evidence/provenance wording",
         "exactly from the supplied ledger and selected-reference wording",
-        "do not translate the mode into a second inline policy here",
+        # Model provenance is relayed from `/do`, never chosen or restated here.
+        "explicit or inherited verifier-model provenance",
         "fresh PASS evidence under the selected mode",
     )
     for path in done_files:
         text = path.read_text(encoding="utf-8")
         for phrase in required_done_phrases:
             assert phrase in text, f"{path}: missing {phrase!r}"
+        # `/done` relays the selected reference's wording; it must not inline a
+        # second copy of any mode's evidence policy.
         assert "independently verified per gate" not in text, path
         assert "independently verified by a consolidated verifier" not in text, path
         assert "`self` is executor self-verification" not in text, path
+        assert "verify.instructions" not in text, path
+        assert not RETIRED_GATE_FIELDS.search(text), path
 
     escalate_files = [
         ROOT / "claude-plugins/manifest-dev/skills/escalate/SKILL.md",
@@ -367,8 +390,10 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         text = path.read_text(encoding="utf-8")
         assert "manifest gate ledger" in text, path
         assert "fresh PASS evidence under the selected verification mode" in text, path
+        assert "gate-text source" in text, path
         assert "evaluator provenance" in text, path
         assert "self-attestation" in text, path
+        assert not RETIRED_GATE_FIELDS.search(text), path
 
 
 def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> None:
@@ -385,12 +410,26 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "--verification per-gate|consolidated|self" in text, path
         assert "--verifier-model <model>" in text, path
         assert "defaults to `per-gate`" in text, path
-        assert "Reject `prompt`, `model`, a missing `instructions`" in text, path
-        assert "or any other verify field" in text, path
-        assert "optional integer `phase`" in text, path
-        assert "Neither option is written into the Manifest" in text, path
+        # The whole schema a gate carries: no evaluator-facing copy, no ordering
+        # field, and a `kind` that is declared rather than inferred.
+        assert (
+            "A gate is a **title**, a **body**, an optional **why**, and a required "
+            "**kind** (`judgment` or `deterministic`)" in text
+        ), path
+        assert "There is no default kind and none is inferred" in text, path
+        # Both retired constructs stay rejected rather than migrated.
+        assert (
+            "Two shapes are the superseded schema and reject the same way" in text
+        ), path
+        assert "a gate carrying a `verify` block of any shape" in text, path
+        assert (
+            "a gate stating a `phase`, a field this workflow no longer has" in text
+        ), path
+        assert "Do not translate, ignore, migrate, or amend an old schema" in text, path
+        assert not RETIRED_GATE_FIELDS.search(text), path
+        assert "verify.instructions" not in text, path
+        assert "None of them is written into the Manifest" in text, path
         assert "never change in response to cost" in text, path
-        assert "any non-PASS leaves later phases unverified" in text, path
         assert "load exactly one matching reference" in text, path
         assert "`references/per-gate-verification.md`" in text, path
         assert "`references/consolidated-verification.md`" in text, path
@@ -399,13 +438,12 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
         assert "Evaluate gates through the selected reference's execution envelope" in (
             text
         ), path
-        assert (
-            "launch one fresh independent general-purpose verifier execution"
-            not in (text)
-        ), (path)
-        assert "Do not launch verifier executions" not in text, path
+        # Mode mechanics live in the loaded reference, never in the spine.
+        assert "independent general-purpose verifier execution" not in text, path
+        assert "Launch no verifier executions" not in text, path
         assert "Record provenance as `executor self-verification`" not in text, path
         assert "independently verified by a consolidated verifier" not in text, path
+        assert "independently verified per gate" not in text, path
 
         refs = path.parent / "references"
         per_gate = refs / "per-gate-verification.md"
@@ -417,35 +455,45 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
 
         per_gate_text = per_gate.read_text(encoding="utf-8")
         assert (
-            "one fresh independent general-purpose verifier execution" in per_gate_text
+            "Launch one fresh independent general-purpose verifier execution for "
+            "every gate the spine marks eligible" in per_gate_text
         )
-        assert "every gate the spine marks eligible" in per_gate_text
-        assert "Run those executions in parallel" in per_gate_text
-        assert "`--verifier-model <model>` is optional" in per_gate_text
+        assert "run those executions in parallel" in per_gate_text
+        assert "Each execution returns one record for its own gate" in per_gate_text
         assert "Record provenance as `independent per-gate verifier`" in per_gate_text
         assert "independently verified per gate" in per_gate_text
+        assert (
+            "include the explicit verifier model or inherited model choice"
+            in per_gate_text
+        )
 
-        assert "one fresh independent general-purpose verifier execution" in (
-            consolidated.read_text(encoding="utf-8")
-        )
         consolidated_text = consolidated.read_text(encoding="utf-8")
-        assert "every gate the spine marks eligible" in consolidated_text
         assert (
-            "one PASS, FAIL, or BLOCKED record with concrete evidence per gate"
-            in consolidated_text
+            "Launch one fresh independent general-purpose verifier execution for "
+            "all gates the spine marks eligible" in consolidated_text
         )
         assert (
-            "Reject an overall verdict that lacks a distinct record for every evaluated gate"
+            "Have it evaluate every eligible gate separately and return a distinct "
+            "record per gate" in consolidated_text
+        )
+        assert "Reject an overall verdict that lacks one" in consolidated_text
+        assert (
+            "a single gate's evidence or threshold never stands in for another's"
             in consolidated_text
         )
         assert "later phases remain unverified" not in consolidated_text
-        assert "`--verifier-model <model>` is optional" in consolidated_text
-        assert "independently verified by a consolidated verifier" in consolidated_text
-        assert "Do not launch verifier executions" in self_verification.read_text(
-            encoding="utf-8"
+        assert (
+            "include the explicit verifier model or inherited model choice"
+            in consolidated_text
         )
+        assert "independently verified by a consolidated verifier" in consolidated_text
+
         self_text = self_verification.read_text(encoding="utf-8")
-        assert "every gate the spine marks eligible" in self_text
+        assert "Launch no verifier executions" in self_text
+        assert (
+            "read each gate the spine marks eligible from the Manifest by its ID"
+            in (self_text)
+        )
         assert "stop before a later phase" not in self_text
         assert "does not make this evidence independent" in self_text
         assert "Reject `--verifier-model`" in self_text
@@ -454,9 +502,9 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
 
         for reference in (per_gate, consolidated, self_verification):
             assert reference.stat().st_mode & 0o111 == 0, reference
-            assert "Load this reference only" not in reference.read_text(
-                encoding="utf-8"
-            ), reference
+            reference_text = reference.read_text(encoding="utf-8")
+            assert "Load this reference only" not in reference_text, reference
+            assert not RETIRED_GATE_FIELDS.search(reference_text), reference
 
     define_files = [
         ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
@@ -466,19 +514,38 @@ def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> N
     ]
     for path in define_files:
         text = path.read_text(encoding="utf-8")
-        assert "instructions:" in text, path
-        assert "`verify.instructions`" in text, path
+        # `/define` validates an amend target against the same schema `/do` reads.
+        assert (
+            "a title, a body, an optional why, and a stated kind "
+            "(`judgment` or `deterministic`)" in text
+        ), path
+        assert "`kind` is the only structured metadata" in text, path
+        assert "A gate carrying a `verify` block of any shape" in text, path
+        assert (
+            "So is a gate stating a `phase`, a field this workflow no longer has"
+            in text
+        ), path
+        assert (
+            "a gate with no stated kind or one whose kind is unrecognised" in text
+        ), path
+        assert "verify.instructions" not in text, path
         assert "`verify.prompt`" not in text, path
         assert "`verify.model`" not in text, path
-        assert "optional integer `phase`, and no other fields" in text, path
+        assert not RETIRED_GATE_FIELDS.search(text), path
         assert "fresh `/define` regeneration" in text, path
         assert (
-            "never amend, translate, or preserve an incompatible schema" in text
+            "never amend, translate, or partially preserve an incompatible schema"
+            in text
         ), path
 
 
-def test_do_phase_eligibility_retries_every_non_passing_state() -> None:
-    """FAIL and retryable BLOCKED gates must not deadlock the phase spine."""
+def test_do_gate_eligibility_retries_every_non_passing_state() -> None:
+    """FAIL and retryable BLOCKED gates must not deadlock the run.
+
+    Eligibility is a property of each gate's own verdict state now that `phase`
+    is retired, so every non-passing state has to name its way back to eligible
+    and only a fresh PASS may settle.
+    """
     do_files = [
         ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
         DIST / "codex/plugins/manifest-dev/skills/do/SKILL.md",
@@ -486,19 +553,36 @@ def test_do_phase_eligibility_retries_every_non_passing_state() -> None:
         DIST / "pi/skills/do/SKILL.md",
     ]
     required_transitions = (
-        "only the lowest phase containing any gate without a fresh PASS is eligible",
-        "evaluate every gate that is unverified, stale, FAIL, or retryable BLOCKED",
+        "Every gate that is unverified, stale, FAIL, or retryable BLOCKED is eligible",
+        "a fresh PASS is settled and does not re-run",
         "A FAIL remains eligible after repair",
         "a retryable BLOCKED remains eligible at its next check",
+        "Unverified, stale, FAIL, and retryable BLOCKED gates re-evaluate when eligible",
         "a settled fresh PASS does not re-run",
+        "Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are "
+        "non-terminal",
+    )
+    # Eligibility must not go back to being ordered by a retired manifest field.
+    retired_phase_ordering = (
+        "lowest phase",
+        "later phases",
+        "next phase",
     )
     for path in do_files:
         text = path.read_text(encoding="utf-8")
         for transition in required_transitions:
             assert transition in text, f"{path}: missing {transition!r}"
+        for stale in retired_phase_ordering:
+            assert stale not in text, f"{path}: stale phase ordering {stale!r}"
 
 
-def test_every_operative_manifest_example_uses_the_strict_verify_schema() -> None:
+def test_every_operative_manifest_example_uses_the_current_gate_schema() -> None:
+    """Every shipped gate example is written in the current gate schema.
+
+    A gate example is an `AC-`/`INV-G` heading; its block must declare exactly one
+    kind and carry neither retired field. One malformed example is enough to teach
+    the schema wrong, so this walks every block rather than sampling.
+    """
     authoring_roots = [
         ROOT / "claude-plugins/manifest-dev/skills/define",
         DIST / "codex/plugins/manifest-dev/skills/define",
@@ -509,29 +593,30 @@ def test_every_operative_manifest_example_uses_the_strict_verify_schema() -> Non
     for authoring_root in authoring_roots:
         candidates.extend(authoring_root.rglob("*.md"))
 
-    verified_files: set[Path] = set()
+    example_files: set[Path] = set()
     for path in candidates:
-        lines = path.read_text(encoding="utf-8").splitlines()
-        for index, line in enumerate(lines):
-            if line.strip() != "verify:":
-                continue
-            verified_files.add(path)
-            verify_indent = len(line) - len(line.lstrip())
-            direct_keys: list[str] = []
-            for child in lines[index + 1 :]:
-                if not child.strip():
-                    continue
-                child_indent = len(child) - len(child.lstrip())
-                if child_indent <= verify_indent:
-                    break
-                if child_indent != verify_indent + 2:
-                    continue
-                key = re.match(r"([A-Za-z][A-Za-z0-9_-]*):", child.strip())
-                if key:
-                    direct_keys.append(key.group(1))
-            assert direct_keys, f"{path}:{index + 1}: empty verify block"
-            assert direct_keys[0] == "instructions", path
-            assert set(direct_keys) <= {"instructions", "phase"}, path
+        text = path.read_text(encoding="utf-8")
+        assert not RETIRED_GATE_FIELDS.search(text), path
+        lines = text.splitlines()
+        headings = [
+            index
+            for index, line in enumerate(lines)
+            if GATE_EXAMPLE_HEADING.match(line)
+        ]
+        if not headings:
+            continue
+        example_files.add(path)
+        for position, index in enumerate(headings):
+            end = headings[position + 1] if position + 1 < len(headings) else len(lines)
+            kinds = [
+                line
+                for line in lines[index + 1 : end]
+                if GATE_KIND_LINE.match(line.strip())
+            ]
+            assert len(kinds) == 1, (
+                f"{path}:{index + 1}: expected exactly one kind declaration, "
+                f"found {kinds}"
+            )
 
     required_examples = {
         "README.md",
@@ -539,7 +624,7 @@ def test_every_operative_manifest_example_uses_the_strict_verify_schema() -> Non
         "MULTI_REPO.md",
         "PR_LIFECYCLE.md",
     }
-    assert required_examples <= {path.name for path in verified_files}
+    assert required_examples <= {path.name for path in example_files}
 
 
 def test_operative_source_skills_have_no_legacy_schema_identifiers() -> None:
@@ -715,6 +800,7 @@ def test_operational_guidance_has_no_stale_per_gate_topology() -> None:
         text = path.read_text(encoding="utf-8")
         for phrase in stale_phrases:
             assert phrase not in text, f"{path}: stale topology wording {phrase!r}"
+        assert not RETIRED_GATE_FIELDS.search(text), path
 
     readme = (ROOT / "claude-plugins/manifest-dev/README.md").read_text(
         encoding="utf-8"
@@ -722,8 +808,11 @@ def test_operational_guidance_has_no_stale_per_gate_topology() -> None:
     example = readme.split("### Deliverable 1: Login round-trip", 1)[1].split(
         "````", 1
     )[0]
-    assert example.count("verify:") == 2
-    assert example.count("instructions:") == 2
+    # The deliverable's two gates each declare a kind and nothing else — one of
+    # each, so the example still shows both re-verification behaviors.
+    assert example.count("Deterministic gate.") == 1
+    assert example.count("Judgment gate.") == 1
+    assert not RETIRED_GATE_FIELDS.search(example)
 
 
 def test_parent_workflows_forward_policy_without_putting_it_in_manifests() -> None:
@@ -792,9 +881,28 @@ def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
     for path in references:
         text = path.read_text(encoding="utf-8")
         assert "one fresh **general-purpose** subagent per Acceptance Criterion" in text
-        assert "`verify.instructions:` **verbatim**" in text
+        # The reviewer reads the canonical gate text from the manifest rather than
+        # a copy handed to it — the guarantee the retired `verify.instructions`
+        # verbatim-pass rule used to carry.
+        assert "each pointed at that gate by ID" in text
+        assert (
+            "told to read the gate's text from the file rather than receiving a "
+            "copy of it" in text
+        )
         assert "regardless of which `/do --verification` mode" in text
         assert "model choice is not manifest data" in text
+        # Manifest mode validates against the same current schema `/do` enforces.
+        assert (
+            "A gate is a title, a body, an optional why, and a required kind "
+            "(`judgment` or `deterministic`)" in text
+        )
+        assert "a gate carrying a `verify` block of any shape" in text
+        assert (
+            "a gate stating a `phase` — a field the manifest schema no longer has"
+            in (text)
+        )
+        assert "verify.instructions" not in text
+        assert not RETIRED_GATE_FIELDS.search(text)
 
 
 def test_auto_parent_goal_carries_autonomous_read_checkpoint() -> None:

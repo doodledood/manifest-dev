@@ -4,7 +4,15 @@ Defect resolution, regression fixes, error corrections.
 
 ## Quality Gates
 
-No additional quality gates beyond CODING.md base.
+Beyond the CODING.md base gates:
+
+| Aspect | Dimension | Threshold |
+|--------|-----------|-----------|
+| Defect-class completeness | defect-class | no LOW+ |
+
+Encode it exactly as CODING.md's **Encoding** and **Kind** paragraphs prescribe for a dimension gate; BUG always composes onto CODING, so those rules govern this row too and are not restated here.
+
+It sits here rather than in the CODING base because it applies only where the change fixes a defect — the other dimensions all drop pre-existing code, so nothing else in the gate set can see a class the fix left open.
 
 ## Defaults
 
@@ -19,4 +27,4 @@ No additional quality gates beyond CODING.md base.
 - **Regression test at a correct seam, before the fix** — The test must exercise the real triggering pattern; a seam too shallow to replicate it gives false confidence, and when no correct seam exists, record that as an architecture finding instead of faking the test. Watch it fail, fix, watch it pass, then re-run the original un-minimised repro
 - **Regression check** — Identify all callers/dependents of changed code; verify no behavioral regression from the fix
 - **Test correctness** — Verify existing tests assert correct behavior, not the buggy behavior
-- **Systemic fix assessment** — Identify the class of bug; probe whether a pattern fix prevents recurrence, and name the confirmed mechanism in the commit or PR description so the next debugger inherits it
+- **Hand the mechanism forward** — Name the confirmed mechanism in the commit or PR description so the next debugger inherits it rather than re-deriving it. Identifying the class and accounting for the sites it reaches is not advisory and does not belong here — the defect-class gate above binds it

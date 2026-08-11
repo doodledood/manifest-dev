@@ -1,6 +1,6 @@
 ---
 name: review-code
-description: 'Review a change along one specific quality dimension — bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, or CLAUDE.md adherence. Loads exactly one dimension reference and audits the diff against it, returning a structured PASS/FAIL report with severities. Use when verifying a change before merge, auditing a diff for a named concern, or running a manifest acceptance gate.'
+description: 'Review a change along one specific quality dimension — bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, defect-class completeness after a fix, or CLAUDE.md adherence. Loads exactly one dimension reference and audits the diff against it, returning a structured PASS/FAIL report with severities. Use when verifying a change before merge, auditing a diff for a named concern, or running a manifest acceptance gate.'
 user-invocable: true
 ---
 
@@ -22,6 +22,7 @@ Load `references/<dimension>.md` for the requested dimension and follow it. The 
 | `code-bugs` | `references/code-bugs.md` | defect-finder | no LOW-or-higher findings |
 | `contracts` | `references/contracts.md` | defect-finder | no LOW-or-higher findings |
 | `type-safety` | `references/type-safety.md` | defect-finder | no LOW-or-higher findings |
+| `defect-class` | `references/defect-class.md` | defect-finder | no LOW-or-higher findings |
 | `operational-readiness` | `references/operational-readiness.md` | advisory | no MEDIUM-or-higher findings |
 | `code-design` | `references/code-design.md` | advisory | no MEDIUM-or-higher findings |
 | `code-maintainability` | `references/code-maintainability.md` | advisory | no MEDIUM-or-higher findings |
@@ -33,6 +34,8 @@ Load `references/<dimension>.md` for the requested dimension and follow it. The 
 | `context-file-adherence` | `references/context-file-adherence.md` | advisory | no MEDIUM-or-higher findings |
 
 The split is structural: **defect-finders** report only divergences/defects/contract-mismatches/type-holes that name their trigger — every LOW there is real signal. **Advisory** dimensions surface taste-level improvements where LOW is usually could-be-better, not is-broken.
+
+**Some dimensions are conditional**, and the caller decides whether they apply before requesting them: `contracts` where the change touches API surfaces or durable data contracts, `type-safety` on typed code, and `defect-class` where the change **fixes a defect**. `defect-class` is the one dimension that takes a defect as input rather than producing one as output — it asks whether the fix accounted for every site its mechanism reaches, so on a change that fixes nothing it has no input and nothing to judge. Requesting it anyway is not an error; it reports PASS and says no fix was found in scope.
 
 ## Determining scope (shared across dimensions)
 

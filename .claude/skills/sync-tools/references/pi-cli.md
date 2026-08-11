@@ -45,7 +45,7 @@ The Pi package manifest shape is:
 ```json
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "6.8.0",
+  "version": "6.9.0",
   "private": true,
   "type": "module",
   "keywords": ["pi-package", "manifest-dev", "agent-skills"],
@@ -62,14 +62,14 @@ There is no `pi.extensions` entry, no `packages/manifest-dev-pi-tools` workspace
 
 Copy all workflow skills from both source plugins, including:
 
-- Core: `auto`, `check-pr`, `define`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `next-ticket`, `poll-slack`, `review-code`, `ticket-up`
+- Core: `auto`, `check-pr`, `define`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `next-ticket`, `poll-slack`, `review-code`, `ticket-up`
 - Tools: `babysit-pr`, `handoff`, `prompt-engineering`, `re-pitch`, `review-pr`, `review-prompt`, `teach-me`, `walk-pr`
 
 Apply these substitutions:
 
 1. **Strip plugin qualifiers from skill references → bare names.** Pi invokes skills as `/skill:<name>` and has no plugin namespace. Rewrite `manifest-dev:<skill>` / `manifest-dev-tools:<skill>` to `<skill>` in copied skill bodies.
-2. **Omit Claude session-file handoff lines** where the target cannot provide an exact equivalent.
-3. **Preserve universal goal-setting backstop guidance.** If the active harness exposes goal-setting or continuation, the model should set the durable completion contract directly; otherwise it prints/carries the copy-pasteable fallback. Do not hardcode one host's primitive as the principle.
+   **Never inside an HTML comment.** Text in `<!-- ... -->` is not prose a reader resolves — it is a literal some skill matches on at runtime, and a qualifier there is part of the token rather than a reference to be localized. `review-pr`'s hidden self-marker is the case that proves it: its SKILL.md requires the string be byte-identical wherever review-pr runs, because a comment posted by one host must be recognizable to another, and rewriting it per distribution silently breaks that across hosts. Strip qualifiers everywhere except inside `<!-- ... -->`.
+2. **Preserve universal goal-setting backstop guidance.** If the active harness exposes goal-setting or continuation, the model should set the durable completion contract directly; otherwise it prints/carries the copy-pasteable fallback. Do not hardcode one host's primitive as the principle.
 
 ## Prompt Templates
 
