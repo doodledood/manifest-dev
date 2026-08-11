@@ -4,7 +4,15 @@ Defect resolution, regression fixes, error corrections.
 
 ## Quality Gates
 
-No additional quality gates beyond CODING.md base.
+Beyond the CODING.md base gates:
+
+| Aspect | Dimension | Threshold |
+|--------|-----------|-----------|
+| Defect-class completeness | defect-class | no LOW+ |
+
+**Encoding:** as with CODING.md's dimension gates, the gate body tells `/do`'s selected evaluator to **activate** the `review-code` skill for the dimension — e.g. *"Done when the review-code skill, activated with dimension=defect-class, reports nothing at or above that dimension's threshold."* Name the dimension and stop; `review-code` owns the threshold, and the bar above orients the author rather than being copied into the gate. Do not tell the evaluator to spawn another agent. It is a **Judgment Gate** — a reviewer's verdict over an open finding space — so it declares the judgment kind.
+
+This is the one dimension that takes a defect as input rather than producing one as output: it asks whether the fix accounted for every site its mechanism reaches, which is why it encodes here and not in the CODING.md base. The other dimensions all drop pre-existing code, so nothing else in the gate set can see a class the fix left open.
 
 ## Defaults
 
@@ -19,4 +27,4 @@ No additional quality gates beyond CODING.md base.
 - **Regression test at a correct seam, before the fix** — The test must exercise the real triggering pattern; a seam too shallow to replicate it gives false confidence, and when no correct seam exists, record that as an architecture finding instead of faking the test. Watch it fail, fix, watch it pass, then re-run the original un-minimised repro
 - **Regression check** — Identify all callers/dependents of changed code; verify no behavioral regression from the fix
 - **Test correctness** — Verify existing tests assert correct behavior, not the buggy behavior
-- **Systemic fix assessment** — Identify the class of bug; probe whether a pattern fix prevents recurrence, and name the confirmed mechanism in the commit or PR description so the next debugger inherits it
+- **Hand the mechanism forward** — Name the confirmed mechanism in the commit or PR description so the next debugger inherits it rather than re-deriving it. Identifying the class and accounting for the sites it reaches is not advisory and does not belong here — the defect-class gate above binds it

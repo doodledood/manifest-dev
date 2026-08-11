@@ -40,7 +40,7 @@ You plan a feature with the agent. It implements. The code looks reasonable. The
 - **`/init-context`** — sets a repository up with the surfaces the workflow reads from: a project-owned ADR conventions file (self-contained, so a teammate running no tooling can use it), a glossary, and a project-context-file section that makes every session read the glossary and maintain the decision records. Where the project has history, it seeds vocabulary and decision records from it, and says so in the record when the reasoning could not be recovered rather than inventing one. Glossary candidates are ratified in one batch before anything is written. Mining runs by default; `--no-mine` installs the wiring alone.
 - **`/done`** — completion summary in plain prose, called by `/do` after every criterion has fresh PASS evidence under the selected mode.
 - **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from you. Routed by `/do`.
-- **`/review-code`** — quality review along **one dimension per invocation** (bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, or the project context file adherence). Loads exactly that dimension's reference (progressive disclosure) and returns a PASS/FAIL report. A gate's body activates it; it replaces the per-dimension reviewer agents.
+- **`/review-code`** — quality review along **one dimension per invocation** (bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, defect-class completeness after a fix, or the project context file adherence). Loads exactly that dimension's reference (progressive disclosure) and returns a PASS/FAIL report. A gate's body activates it; it replaces the per-dimension reviewer agents.
 
 ## Manifest Schema — One Gate, One Text
 
@@ -166,6 +166,7 @@ Quality review (code, operational readiness, prose, contracts, types, design, te
 | `code-bugs` | defect (no LOW+) | Mechanical defects: races, data loss, edge cases, resource leaks, dangerous defaults |
 | `contracts` | defect (no LOW+) | Bidirectional API/interface contract checks against docs, schemas, codebase definitions |
 | `type-safety` | defect (no LOW+) | Typed-language safety: type holes, representable invalid states, narrowing |
+| `defect-class` | defect (no LOW+) | Completeness of a fix: the other sites the fixed mechanism reaches, and the disposition of each |
 | `operational-readiness` | advisory (no MEDIUM+) | Runtime/deploy readiness: env wiring, migrations, retries, rollback, scale, CI, observability |
 | `code-design` | advisory (no MEDIUM+) | Design fitness: reinvented wheels, wrong responsibility, under-engineering, PR coherence |
 | `code-maintainability` | advisory (no MEDIUM+) | DRY violations, coupling, cohesion, dead code, consistency |
