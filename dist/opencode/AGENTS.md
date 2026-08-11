@@ -59,7 +59,7 @@ PR-lifecycle gate bodies activate the `check-pr` skill under the selected mode t
 
 ## Code review
 
-Quality review is the **`review-code` skill** (one dimension per invocation, each loading its own reference): `change-intent`, `code-bugs`, `contracts`, `type-safety` (defect-finders, no LOW+); `operational-readiness`, `code-design`, `code-maintainability`, `code-simplicity`, `code-testability`, `test-quality`, `docs`, `prose-value`, `context-file-adherence` (advisory, no MEDIUM+). A gate body activates `review-code` with the dimension; the skill owns each dimension's threshold, so the gate names the dimension and stops.
+Quality review is the **`review-code` skill** (one dimension per invocation, each loading its own reference): `change-intent`, `code-bugs`, `contracts`, `type-safety`, `defect-class` (defect-finders, no LOW+); `operational-readiness`, `code-design`, `code-maintainability`, `code-simplicity`, `code-testability`, `test-quality`, `docs`, `prose-value`, `context-file-adherence` (advisory, no MEDIUM+). A gate body activates `review-code` with the dimension; the skill owns each dimension's threshold, so the gate names the dimension and stops.
 
 ## Agents
 

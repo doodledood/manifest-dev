@@ -121,7 +121,7 @@ When no issues clear the bar, that is a valid, positive outcome — the code in 
 - **Suggest, don't mandate**: offer ways to improve; acknowledge when tradeoffs are acceptable.
 - **Prefer pure functions where the risk is in the rule**: favor extracting them when the logic at risk is the rule itself; where the risk is in the wiring, extraction relocates it into an untested shell, so prefer concentrating the wiring behind one interface and testing through it. Acknowledge alternatives that fit the project's patterns.
 - **Adapt to the codebase**: what's excessive in one project may be normal in another. Calibrate to local norms.
-- **Shell code gets a pass**: controller/orchestration code is expected to do IO — focus on whether important logic is extractable.
+- **Shell code gets a pass on doing IO**: controller/orchestration code is expected to do it — focus on whether important logic is extractable. The pass covers the IO, not the wiring: where the risk is in which value the shell assembles, from where, at what freshness, that is the case above and stays in scope.
 - **Every Critical/High issue must explain why the logic is important to test.**
 - Statistics must match detailed findings.
 

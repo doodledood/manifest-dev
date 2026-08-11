@@ -10,9 +10,9 @@ Beyond the CODING.md base gates:
 |--------|-----------|-----------|
 | Defect-class completeness | defect-class | no LOW+ |
 
-**Encoding:** as with CODING.md's dimension gates, the gate body tells `/do`'s selected evaluator to **activate** the `manifest-dev:review-code` skill for the dimension — e.g. *"Done when the manifest-dev:review-code skill, activated with dimension=defect-class, reports nothing at or above that dimension's threshold."* Name the dimension and stop; `review-code` owns the threshold, and the bar above orients the author rather than being copied into the gate. Do not tell the evaluator to spawn another agent. It is a **Judgment Gate** — a reviewer's verdict over an open finding space — so it declares the judgment kind.
+Encode it exactly as CODING.md's **Encoding** and **Kind** paragraphs prescribe for a dimension gate; BUG always composes onto CODING, so those rules govern this row too and are not restated here.
 
-This is the one dimension that takes a defect as input rather than producing one as output: it asks whether the fix accounted for every site its mechanism reaches, which is why it encodes here and not in the CODING.md base. The other dimensions all drop pre-existing code, so nothing else in the gate set can see a class the fix left open.
+It sits here rather than in the CODING base because it applies only where the change fixes a defect — the other dimensions all drop pre-existing code, so nothing else in the gate set can see a class the fix left open.
 
 ## Defaults
 

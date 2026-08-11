@@ -172,8 +172,12 @@ unaccounted site on a critical path outranks four on a debug page. Refining the 
   the failure is the one just fixed elsewhere.
 - **Medium**: An unaccounted site reachable only through edge cases, optional parameters, or error
   recovery paths.
-- **Low**: An unaccounted site requiring several unusual preconditions, or one whose stated
-  out-of-scope reason is thin rather than absent.
+- **Low**: An unaccounted site requiring several unusual preconditions.
+
+A site carrying a stated out-of-scope reason is accounted for and has no grade — it was dropped by
+the actionability filter before reaching this ladder. Judging a stated reason thin is not a finding
+at any severity; that a plausible reason given in bad faith goes undetected is a cost this dimension
+accepts rather than a gap to close by grading reasons.
 
 This is a **defect-finder** dimension: PASS requires no LOW-or-higher findings. Every finding here
 carries a trigger the fix already demonstrated, so there is no taste-level band to tolerate — which
@@ -185,13 +189,18 @@ enumerated. If most reviews produce findings, the mechanisms are being stated to
 
 ## Report expectations (this dimension)
 
-Beyond the shared report format:
+Beyond the shared report format, this dimension adds two sections to the report **body, between
+`Files analyzed` and `## Findings`**. Both are required on PASS as well as FAIL — on the expected
+outcome, an empty findings list, they are the only thing distinguishing a walk that found nothing
+from a walk that never happened.
 
-- **Lead with the mechanism**, stated as a condition — this is what every finding is measured
-  against, and a reader cannot judge the findings without it.
-- **Include the enumeration**, not only the failures: the sites the mechanism reaches and the
-  disposition of each. A PASS is only meaningful if the reader can see what was walked. State how
-  the region was derived (the symbol searched, the paths followed) so the walk is reproducible.
+- **`## Mechanism`** — the mechanism stated as a condition a reader could check at a site. Every
+  finding is measured against it, and a reader cannot judge the findings without it.
+- **`## Enumeration`** — the sites the mechanism reaches and the disposition of each, not only the
+  failures, plus how the region was derived (the symbol searched, the paths followed) so the walk is
+  reproducible.
+
+Then, within the shared format:
 - Each finding names the **site**, the **path by which the mechanism reaches it**, and what a
   disposition would look like there. The shared **Trigger** field carries the mechanism's condition
   as it manifests at that site.
@@ -205,8 +214,9 @@ a well-scoped fix. Do not fabricate reachable sites to fill the report.
 
 - **Cannot identify the mechanism at all** — the change is large enough or diffuse enough that what
   it fixes cannot be stated as a condition: return **BLOCKED**, saying what you could not determine
-  and what would resolve it (usually a narrower scope or the author's diagnosis). BLOCKED is for
-  this case only.
+  and what would resolve it (usually a narrower scope or the author's diagnosis). This is the only
+  *enumeration* case that returns BLOCKED — the shared verifier contract's own BLOCKED cases still
+  apply, and this does not narrow them.
 - **Mechanism identified, region not enumerable** — the mechanism is anchored to a convention rather
   than to a symbol ("anything that assumes this callback fires before mount"), so there is nothing
   to search on. This is **not** BLOCKED. The region is named out of scope under the third
