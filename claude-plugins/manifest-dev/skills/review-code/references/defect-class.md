@@ -101,9 +101,9 @@ the preferred outcome where it is available.**
    the mode you were invoked in. The reason is what makes this a disposition rather than an
    omission.
 
-   The first three of those close the site; the fourth only re-homes it, and the enumeration says
-   which it is. Do not write "out of scope" over a site a sibling owns without naming the sibling —
-   that reads as remediated when nobody has looked at it yet.
+   A dead, unreachable, or un-walkable site is closed; a sibling-owned one is only re-homed, and the
+   enumeration says which it is. Do not write "out of scope" over a site a sibling owns without
+   naming the sibling — that reads as remediated when nobody has looked at it yet.
 
 **The ordering expresses a preference and mandates nothing.** A change whose every site is fixed in
 place satisfies this dimension completely — do not report a finding because a restructure was
@@ -120,9 +120,9 @@ static-analysis rule is often good work, and it does not account for a site:
 - A rule that fires on five unfixed sites has converted them into visible debt, not accounted for
   them.
 
-It is also the cheapest of the four, which is the reason it is not among the three. Offered beside
-the dispositions above, a detection check wins nearly every time on effort alone — so listing it
-would quietly make it the answer, and the gate would stop buying what it exists for.
+It is also cheaper than any of the dispositions above, which is why it is not one of them. Offered
+beside them, a detection check wins nearly every time on effort alone — so listing it would quietly
+make it the answer, and the gate would stop buying what it exists for.
 
 A change may add such a check alongside a real disposition, and that is fine. It does not by itself
 discharge any site.
