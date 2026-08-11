@@ -35,7 +35,7 @@ Load `references/<dimension>.md` for the requested dimension and follow it. The 
 
 The split is structural: **defect-finders** report only divergences/defects/contract-mismatches/type-holes that name their trigger — every LOW there is real signal. **Advisory** dimensions surface taste-level improvements where LOW is usually could-be-better, not is-broken.
 
-**Three dimensions are conditional**, and the caller decides whether they apply before requesting them: `contracts` where the change touches API surfaces or durable data contracts, `type-safety` on typed code, and `defect-class` where the change **fixes a defect**. `defect-class` is the one dimension that takes a defect as input rather than producing one as output — it asks whether the fix accounted for every site its mechanism reaches, so on a change that fixes nothing it has no input and nothing to judge. Requesting it anyway is not an error; it reports PASS and says no fix was found in scope.
+**Some dimensions are conditional**, and the caller decides whether they apply before requesting them: `contracts` where the change touches API surfaces or durable data contracts, `type-safety` on typed code, and `defect-class` where the change **fixes a defect**. `defect-class` is the one dimension that takes a defect as input rather than producing one as output — it asks whether the fix accounted for every site its mechanism reaches, so on a change that fixes nothing it has no input and nothing to judge. Requesting it anyway is not an error; it reports PASS and says no fix was found in scope.
 
 ## Determining scope (shared across dimensions)
 

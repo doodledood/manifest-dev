@@ -32,16 +32,18 @@ manifest gate and `review-pr`'s fleet both use — a sibling site in unchanged c
 every other dimension, so the test collapses and the site is yours. Under explicit-path review,
 where the caller named the paths, `code-bugs` and the rest accept pre-existing findings, so the
 same site now survives the deletion and belongs to whichever of them owns it on its own terms;
-report the site in your enumeration and leave the defect claim to them. Either way exactly one
-dimension owns it. The mode changes which one, and only the second case needs saying, because the
-first is what the test reads like when nobody names it.
+report the site in your enumeration under the third disposition, naming the sibling's ownership as
+the reason it is out of scope here, and leave the defect claim to them.
+
+Either way exactly one dimension owns the site, and every site you enumerate still carries exactly
+one disposition.
 
 ## Reading unchanged code
 
 This is the one dimension that reports on code the change did not touch. That licence rests on the
 trigger, not on a scope exemption, and the distinction is what stops it generalising.
 
-`review-code`'s shared bar requires a **stated trigger** — the condition under which a defect
+In diff-based review, `review-code`'s shared bar requires a **stated trigger** — the condition under which a defect
 manifests — rather than a confidence level, and the sibling dimensions bar pre-existing findings
 precisely because a defect nobody has observed in untouched code is speculation dressed as a
 finding. Here the trigger is not speculative and not yours to supply: the fix in front of you

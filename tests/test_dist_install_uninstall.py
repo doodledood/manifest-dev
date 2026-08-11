@@ -105,6 +105,7 @@ def test_codex_core_plugin_bundles_code_review_with_all_dimensions() -> None:
         "code-simplicity",
         "code-testability",
         "context-file-adherence",
+        "defect-class",
         "contracts",
         "docs",
         "operational-readiness",

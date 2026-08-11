@@ -49,6 +49,7 @@ CODE_REVIEW_DIMENSIONS = {
     "code-simplicity",
     "code-testability",
     "context-file-adherence",
+    "defect-class",
     "contracts",
     "docs",
     "operational-readiness",

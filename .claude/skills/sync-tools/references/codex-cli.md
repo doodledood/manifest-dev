@@ -26,7 +26,7 @@ Nothing lands in the shared open-standard `~/.agents/skills/` directory, so mani
 
 **Agents are not a plugin component, and manifest-dev ships none.** Codex plugins bundle skills/MCP/apps/hooks only — but this is not a Codex-specific limitation: manifest-dev itself ships **zero agents** on every target. Consequences:
 
-- The 13 quality-dimension reviewers are **not agents** — they are dimensions of the bundled `review-code` skill. They ship automatically as part of that skill's directory.
+- The quality-dimension reviewers are **not agents** — they are dimensions of the bundled `review-code` skill. They ship automatically as part of that skill's directory.
 - The former functional agents are now **skills**: `check-pr`, `poll-slack`, and `review-prompt` ship as ordinary bundled skills. A gate's body activates the relevant skill under `/do`'s selected verification mode. Do not generate TOML agent stubs.
 
 ## Distribution layout
@@ -94,15 +94,14 @@ Keep `version` in step with the source plugin's `.claude-plugin/plugin.json`.
 
 Skills copy under the Agent Skills Open Standard — same as before, into each plugin's `skills/` directory:
 
-- **Core plugin** (`manifest-dev`): the user-invocable and supporting skills from `claude-plugins/manifest-dev/skills/`, including `review-code/` with its full `references/` set. Exclude the `sync-tools` meta-tool.
+- **Core plugin** (`manifest-dev`): the user-invocable and supporting skills from `claude-plugins/manifest-dev/skills/`, including `review-code/` with its full `references/` set. Exclude the `sync-tools` meta-tool — it is outside the synced payload today, and this is stated deliberately so relocating it cannot make the generator ship itself.
 - **Tools plugin** (`manifest-dev-tools`): skills from `claude-plugins/manifest-dev-tools/skills/`.
 
 Per-skill body adaptations (unchanged from the open-standard rules):
 
 - **Tool-name references in operational prose** → Codex names: Bash→`shell_command`, Read→`read_file`, Edit→`apply_patch`, Grep→`grep_files`, Glob/Write/WebFetch→`shell_command`, WebSearch→`web_search`, AskUserQuestion→`request_user_input`, TaskCreate/Todo→`update_plan`. Leave teaching/reference content (`references/*.md` explaining Claude Code conventions) unchanged.
 - **Context file**: operational "write to CLAUDE.md" → "AGENTS.md". Do not rewrite "CLAUDE.md" in comparative/research text. The `review-code` skill's `context-file-adherence` dimension reference already uses generic "context file" language — no special handling.
-- **Model tiers**: in `references/execution-modes/`, replace Claude model names (haiku/sonnet/opus) with `inherit`.
-- **No `manifest-` command prefix**: Codex skills present `/do`, `/auto`, `/babysit-pr` (the Pi-only `manifest-` prefix never applied to Codex). Codex has no native `/auto` or `/babysit-pr` runtime command, so those skills ship as ordinary skills that internally chain `/do`.
+- **No `manifest-` command prefix**: Codex skills present `/do`, `/auto`, `/babysit-pr`. Codex has no native `/auto` or `/babysit-pr` runtime command, so those skills ship as ordinary skills that internally chain `/do`.
 
 ### Tool name mapping (Claude Code → Codex)
 
@@ -169,4 +168,3 @@ manifest-dev's own `CLAUDE.md`-style context is not required for plugin consumer
 3. **No `/auto` or `/babysit-pr` runtime command** — they ship as skills that chain `/do`; only Pi has native runtime wrappers.
 4. **Experimental tools** — `read_file`/`grep_files`/`list_dir` availability is model-gated server-side.
 5. **`$ARGUMENTS`** — Claude Code extension; skills relying on it use the open-standard argument mechanism Codex provides.
-6. **Model tier routing is Claude-only** — `execution-modes/*` Claude model names become `inherit`.
