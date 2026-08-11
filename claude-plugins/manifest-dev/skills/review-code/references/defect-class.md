@@ -27,6 +27,15 @@ Apply this to every candidate before reporting it. A finding that survives the d
 dimension is borrowing from a neighbour, and reporting it here means the same finding can arrive
 twice from two reviewers.
 
+**Ask it in the mode you were invoked in.** Under diff-based review — the default, and what a
+manifest gate and `review-pr`'s fleet both use — a sibling site in unchanged code is invisible to
+every other dimension, so the test collapses and the site is yours. Under explicit-path review,
+where the caller named the paths, `code-bugs` and the rest accept pre-existing findings, so the
+same site now survives the deletion and belongs to whichever of them owns it on its own terms;
+report the site in your enumeration and leave the defect claim to them. Either way exactly one
+dimension owns it. The mode changes which one, and only the second case needs saying, because the
+first is what the test reads like when nobody names it.
+
 ## Reading unchanged code
 
 This is the one dimension that reports on code the change did not touch. That licence rests on the
@@ -102,6 +111,9 @@ static-analysis rule is often good work, and it does not account for a site:
 - A check is a **new artifact to maintain**, where the first disposition removes surface.
 - A rule that fires on five unfixed sites has converted them into visible debt, not accounted for
   them.
+- And it is the cheapest thing on this list, which is the reason it is not on it. Given three
+  dispositions and a detection check, the check wins nearly every time on effort alone — so
+  offering it would quietly make it the answer, and the gate would stop buying what it exists for.
 
 A change may add such a check alongside a real disposition, and that is fine. It does not by itself
 discharge any site.
