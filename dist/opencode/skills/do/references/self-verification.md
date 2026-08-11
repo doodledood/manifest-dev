@@ -6,6 +6,6 @@ The spine's framing line still applies, and applies hardest here: evaluate the n
 
 Reject `--verifier-model`; self-verification necessarily uses the executor's model.
 
-Implementation familiarity, a summary claim, or a host continuation check is not gate evidence. Record what was inspected or run and why it meets the gate's own threshold. The host continuation capability remains an outer completion backstop and does not make this evidence independent.
+Implementation familiarity, a summary claim, or a host continuation check is not gate evidence. Neither is a description of having looked: "inspected the changed files" names an act, and this is the one mode where no other party produces the artifact, so an act recorded here is an act nobody can re-check. Record the artifact itself — the quoted line with its `file:line`, the command and its output — and why it meets the gate's own threshold. The host continuation capability remains an outer completion backstop and does not make this evidence independent.
 
 Record provenance as `executor self-verification`. Completion summaries and unattended backstops describe the evidence as `executor self-verification` without claiming independence or naming a separate verifier model.

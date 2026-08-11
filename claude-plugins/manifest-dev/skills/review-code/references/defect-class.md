@@ -43,17 +43,17 @@ one disposition.
 This is the one dimension that reports on code the change did not touch. That licence rests on the
 trigger, not on a scope exemption, and the distinction is what stops it generalising.
 
-In diff-based review, `review-code`'s shared bar requires a **stated trigger** — the condition under which a defect
-manifests — rather than a confidence level, and the sibling dimensions bar pre-existing findings
-precisely because a defect nobody has observed in untouched code is speculation dressed as a
-finding. Here the trigger is not speculative and not yours to supply: the fix in front of you
-established it. The bug happened. A second site reachable by that same mechanism is a door into a
-failure that has already occurred once.
+`review-code`'s shared bar requires a **stated trigger** — the condition under which a defect
+manifests — rather than a confidence level, and in diff-based review the sibling dimensions bar
+pre-existing findings precisely because a defect nobody has observed in untouched code is
+speculation dressed as a finding. Here the trigger is not speculative and not yours to supply:
+the fix in front of you established it. The bug happened. A second site reachable by that same
+mechanism is a door into a failure that has already occurred once.
 
 So the licence extends **exactly as far as the proven mechanism reaches, and no further.** It is not
 a general permission to surface technical debt found along the way. A problem you notice in
-unchanged code that the fixed mechanism does not reach is out of scope here and out of scope for
-every sibling too, because the change did not introduce it — leave it alone.
+unchanged code that the fixed mechanism does not reach is out of scope here — leave it alone.
+Whether any sibling can report it is theirs to decide under the mode they were invoked in.
 
 ## Deriving the mechanism
 

@@ -62,7 +62,7 @@ There is no `pi.extensions` entry, no `packages/manifest-dev-pi-tools` workspace
 
 Copy all workflow skills from both source plugins, including:
 
-- Core: `auto`, `check-pr`, `define`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `next-ticket`, `poll-slack`, `review-code`, `ticket-up`
+- Core: `auto`, `check-pr`, `define`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `next-ticket`, `poll-slack`, `review-code`, `ticket-up`
 - Tools: `babysit-pr`, `handoff`, `prompt-engineering`, `re-pitch`, `review-pr`, `review-prompt`, `teach-me`, `walk-pr`
 
 Apply these substitutions:
