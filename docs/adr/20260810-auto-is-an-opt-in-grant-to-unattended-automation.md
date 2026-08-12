@@ -1,7 +1,7 @@
 # ADR: The Auto marker is an opt-in grant; absence fences automation off entirely
 
 ## Status
-Accepted
+Accepted — irreversible-act authority narrowed by 20260812-auto-ticket-completes-after-required-landing: ordinary landing through declared repository protections is within Auto; actions requiring separate human authority remain excluded
 
 ## Area
 Ticketing
