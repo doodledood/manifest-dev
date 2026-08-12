@@ -223,6 +223,7 @@ _Avoid_: Breakdown, sharding.
 - `next-ticket` claims the **Ticket** it names, which is what makes several sessions reading one **Ticket Store** get different ones — and it separates them only where the store's venue is a live surface every worker reads, never across separate checkouts of a file store.
 - The **Auto** grant requires that neither doing a **Ticket** nor judging it done needs any human's knowledge, taste, or authority — necessary but never sufficient: the author still chooses to grant.
 - A **Ticket** remains the identity of its work across execution attempts: a successful attempt closes it, while an escalated attempt records its evidence and hands the same open **Ticket** to a person; a follow-up **Ticket** represents only separate work.
+- A follow-up **Ticket** receives **Auto** only when its source **Ticket** carries **Auto** and the follow-up independently meets the grant criterion; an ungranted source can create only ungranted follow-ups.
 - Absence of **Auto** is one fence covering untrusted **Tickets**, **Tickets** with a designed-in human step, and venue items never written as **Tickets** at all.
 - **Auto** says whether automation may touch a **Ticket** at all and is the author's call; a **Ticket Type** says which granted work an operator runs today and is the query's — keeping rollout schedule out of the grant, whose silence already carries three meanings.
 - Every venue a **Ticket Store** runs on has a **Venue Reference**.
