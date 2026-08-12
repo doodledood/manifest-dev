@@ -33,7 +33,7 @@ Each trigger carries what it **fires on** (concrete evidence) and what it **neve
 - **Never:** one unused parameter or a single narrow helper — that is a defect-dimension / dead-code concern, not this pass.
 
 ### 4. Solution-shape
-- **Fires on:** a materially simpler or more direct solution to the *same* pain is concretely nameable — the one-line-upstream fix, the existing primitive that removes the whole mechanism.
+- **Fires on:** a materially simpler or more direct solution to the *same* pain is concretely nameable — the one-line-upstream fix, the existing primitive that removes the whole mechanism. When a change modifies a shared core, runtime, or framework, test whether the whole capability is expressible through the existing extension surface instead. The evidence is the specific contract members — hooks, tool interfaces, options, middleware, or public functions — that together supply every capability the feature needs. If even one required capability is missing, this ground does not fire.
 - **Never:** "I'd architect it differently," with no concretely simpler solution to point at.
 
 ### 5. Omission-vs-pain
