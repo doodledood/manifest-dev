@@ -1,7 +1,7 @@
 # ADR: A ticket's type is a rollout selector, not a classification
 
 ## Status
-Accepted
+Accepted — per-Deliverable type assignment now applies only in explicit split mode after 20260812-tickets-follow-independently-schedulable-work-units; single-valued type semantics are unchanged
 
 ## Area
 Ticketing

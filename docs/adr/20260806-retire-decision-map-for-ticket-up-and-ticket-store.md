@@ -1,7 +1,7 @@
 # ADR: Retire the decision-map planning shape in favor of ticket-up and a ticket store
 
 ## Status
-Accepted — venue default narrowed by 20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue
+Accepted — venue default narrowed by 20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue; Ticket authoring boundary narrowed by 20260812-ticket-up-is-the-ticket-authoring-boundary; default cardinality and Question handoff narrowed by 20260812-tickets-follow-independently-schedulable-work-units
 
 ## Area
 define / figure-out

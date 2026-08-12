@@ -18,6 +18,7 @@
     "review-code": "manifest-dev",
     "review-pr": "manifest-dev-tools",
     "review-prompt": "manifest-dev-tools",
+    "run-ticket": "manifest-dev",
     "teach-me": "manifest-dev-tools",
     "ticket-up": "manifest-dev",
     "walk-pr": "manifest-dev-tools"

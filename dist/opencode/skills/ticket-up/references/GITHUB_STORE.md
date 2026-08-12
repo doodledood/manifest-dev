@@ -17,6 +17,7 @@ Renders the ticket convention onto GitHub Issues. Use whatever GitHub access the
 | Depends on | A `Depends on: #N` line in the body of the **blocked** issue, plus a native blocked-by relation where the repo has them. Not sub-issues — an issue has one parent, and membership holds it |
 | Claimed | Assignee; unassigned and open means takeable |
 | Done / roll-off | Close the issue with the outcome as a closing comment. Nothing to delete anywhere: a closed child stays in the tracking issue's list as progress, and `is:open` queries stop returning it |
+| Escalated attempt | Add the detailed handoff comment, leave the issue open, and assign the person needed next. If no person can be resolved, preserve an assignee and state the human handoff explicitly so the issue does not return to the ready set |
 | Priority | Derived by the convention's rule, or the store's stated override — never stored as an order |
 | Ready | Open, unassigned, and every `Depends on:` issue closed |
 | Tidy pass | Re-groom: close stragglers, unassign stale claims, refresh the tracking issue's destination and pointers |
@@ -30,3 +31,5 @@ The label earns its place next to the parent relation by answering a different q
 3. On the first run against a repo, show the operations about to be performed (issues, labels, tracking issue, sub-issue links) and get a confirm before creating — issues are outward-facing and noisy to undo.
 
 Record the venue in `tickets/store-config.md`, naming GitHub and the repository, so `next-ticket` and later runs read the same store without re-asking.
+
+When the project wants a fixed escalation recipient, record their GitHub handle in the same config. `run-ticket` prefers a person named by the Ticket, then this project contact, then the initiating human; it never invents a mention.

@@ -2,6 +2,12 @@
 
 A ticket is a self-sufficient prose work packet: everything needed to pick it up, do it, and judge it done — readable by a person or an agent, with or without manifest-dev. The convention is the contract; a venue (files, GitHub Issues, any tracker) is a rendering of it. Nothing may depend on a venue feature beyond what a venue reference maps.
 
+## The Ticket unit
+
+A Ticket is one independently schedulable lifecycle unit. Work belongs together when it shares one outcome and would be assigned, prioritized, blocked, and closed together. A separate Ticket earns its coordination cost only when managing it separately has real value.
+
+A finished Manifest therefore becomes one Shaped Ticket by default. Its Deliverables guide execution inside that Ticket. A caller who explicitly wants delegation or parallel pickup may split on those existing Deliverable boundaries. The same rule applies to findings and questions: group related items, and do not turn every thought or observation into store state.
+
 ## Two kinds
 
 The kinds split on one question: is the decision space closed?
@@ -9,7 +15,7 @@ The kinds split on one question: is the decision space closed?
 - **Shaped ticket** — every decision that shapes the work is already made: no open question remains whose answer would change what gets built or what done means. Someone picks it up and builds; its definition of done says when they're finished.
 - **Question ticket** — at least one such question is still open. Someone picks it up and investigates; done means the question is answered with evidence and the answer recorded. Resolving one often spawns shaped tickets.
 
-The write-time test: try to name a question whose answer would change the work or its definition of done. Naming one makes the ticket a question ticket, however much context it already carries — half-investigated work is a question ticket with a thick "what's already known", not a shaped ticket. Choices where any competent answer within the ticket's stated rules is acceptable — naming, internal structure, mechanical detail — are execution, not shaping, and leaving them open does not reopen the kind.
+The kind test applies after the Ticket unit is justified. A separate Question Ticket exists only when the question needs independent assignment, priority, blocking, or closure. Then try to name a question whose answer would change the work or its definition of done. Naming one makes that unit a Question Ticket, however much context it already carries — half-investigated work is a Question Ticket with a thick "what's already known", not a Shaped Ticket. Choices where any competent answer within the Ticket's stated rules is acceptable — naming, internal structure, mechanical detail — are execution, not shaping, and leaving them open does not reopen the kind.
 
 The bar is a property of the ticket's content, never of where it came from: no particular workflow or artifact needs to have produced a shaped ticket, and none makes a ticket shaped while such a question stays open.
 
@@ -22,6 +28,8 @@ A ticket of either kind may carry **Auto** — an opt-in grant, declared when th
 - **Granting.** Grant only when neither doing the work nor judging it done needs any human's knowledge, taste, or authority — no done-judgment resting on someone's unstated criteria, no approval, no access an unattended worker won't have, no irreversible act, no decision deferred to mid-flight input. That bar is necessary but never sufficient: the author still chooses, and withheld trust alone is reason enough to withhold. When in doubt, don't grant.
 - **Absence is the fence.** A ticket without the grant is not touched by automation at all — no partial work, no prepping half the job. Nothing is ever marked "not auto"; silence already says it, which is also what keeps automation off items in a shared venue that were never tickets. A person may still hand an ungranted ticket to an agent and watch — that is the person working the ticket, outside the grant's jurisdiction.
 - **Surprises don't revoke.** A granted ticket's worker can still hit an unexpected blocker; it stops and surfaces rather than deciding what only a person can. That is the exception path working, not evidence the grant was wrong — only a step known at write time to need a person keeps the grant off.
+
+A follow-up Ticket receives Auto only when its source Ticket carries Auto and the follow-up independently passes the granting test above. Either condition failing withholds the grant. In particular, a person manually running an ungranted source Ticket cannot cause unattended follow-up work merely by discovering it.
 
 ## Type
 
@@ -71,7 +79,8 @@ Never put derivable state here: no ticket lists, statuses, or ready/next — any
 - **Status**: `open` → `done`. Done tickets roll off **by location**: in a file store, closing moves the ticket into a `done/` subfolder beside the open ones; in a tracker, closing the item removes it from open queries. Reading the open set never scales with closed history — the archive is the `done/` folder, the tracker's closed items, and git.
 - **Claiming**: mark a ticket claimed (a `Claimed by:` line, an assignee, the venue's equivalent) when you pick it, not when you get around to starting it — the gap between the two is where somebody else picks the same one. Open and unclaimed means takeable; claimed means not.
 - **Ready**: a ticket is ready when it is open, unclaimed, and every ticket it depends on is done. Blocked is derived from unmet dependencies, never stored as a status.
-- **Closing**: record the outcome on the ticket (the work's landing place, or the question's answer), mark it done and roll it off (move it to `done/`, or close the item), and check what the close changed: tickets it made ready, and outcomes that need interpreting. An outcome that needs judging while no existing ticket depends on this one spawns that question ticket as part of the close — the next thinking step stays reachable through the store, never through someone's initiative.
+- **Closing**: record the outcome on the Ticket (the work's landing place, or the question's answer), mark it done and roll it off (move it to `done/`, or close the item), and check what the close changed: Tickets it made ready, and outcomes that need interpreting. Create a Question Ticket for interpretation only when that question needs an independently managed lifecycle; otherwise record or answer it with the current outcome.
+- **Escalating an attempt**: record the blocker, attempts, evidence, preserved-work references, and human input needed on the same Ticket. Leave it open and transfer or preserve its claim for human continuation. Escalation ends an execution attempt, not the Ticket's work, and never makes dependents ready.
 
 ## Priority
 

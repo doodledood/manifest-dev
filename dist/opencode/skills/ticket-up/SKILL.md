@@ -1,61 +1,72 @@
 ---
 name: ticket-up
-description: 'Turn a finished Manifest into self-sufficient tickets anyone can pick up — a teammate, an agent, or a future session, with or without manifest-dev. Emits one plain-prose ticket per Deliverable plus explicit dependency edges, into the project''s own tracker, GitHub Issues, or files in the repo — on a venue asked once per project and recorded there. Use when splitting a manifest into tickets, delegating work, parallelizing execution, or when the user asks to ticket up, break into tickets, or create tickets from a plan.'
+description: 'Author self-sufficient Tickets in the project''s store from a finished Manifest, a direct work request, an open question, or follow-up findings from another Ticket. A Manifest becomes one coherent Shaped Ticket by default; split it by Deliverable only when the caller explicitly wants delegation or parallel pickup. Use when creating Tickets, ticketing up a plan, recording follow-up work, or handing work to a teammate, agent, or later session.'
 ---
 
 # ticket-up
 
-Input: a manifest path. Without one, look for the most recent manifest in `~/.manifest-dev/manifests/` and confirm it's the intended one; if none exists, ask what to ticket up — a manifest is the input, so a session without one runs `/define` first.
+`ticket-up` is the single Ticket-authoring boundary. It shapes prose, applies the convention, deduplicates, and renders the result through the project's configured venue.
 
-The move: one ticket per Deliverable, plus the dependency edges between them. Each Deliverable is already a vertical slice — finishable on its own, exercisable end-to-end — so it maps to a ticket whole — split below it and the fragments could no longer be judged done. If a Deliverable is too big for one ticket, the cut is wrong in the manifest — fix it there. A one-Deliverable manifest legitimately yields one ticket.
+Read `references/TICKET_CONVENTION.md` before emitting. It defines the unit, kinds, anatomy, lifecycle, and priority every venue must preserve.
 
-Read `references/TICKET_CONVENTION.md` before emitting — it defines what a ticket is, its anatomy, lifecycle, and priority; the tickets you write must satisfy it.
+## Resolve the input and Ticket units
 
-## Translation: knowledge travels, machinery stays
+Accept any of these inputs:
 
-The manifest is a contract between /define and /do. A ticket is a contract with a stranger who may have neither. So translate, don't excerpt: take each manifest section into the anatomy slot the convention defines for it, rewritten in the ticket's own words.
+- a finished Manifest;
+- a direct work request that should enter the store;
+- one or more questions that need separate management;
+- findings discovered while running a source Ticket, with that source identified.
 
-The self-sufficiency test before emitting each ticket: could a competent stranger holding only this ticket understand why the work exists, know its bounds, avoid its traps, and judge it done? Manifest-dev vocabulary appearing anywhere in a ticket is a failure of this test. The convention's anatomy plus that test settle most of the mapping. Two things they don't:
+Without explicit input, use a recent Manifest only when the conversation already establishes it as the intended source; otherwise ask what should become a Ticket.
 
-| From the manifest | Into each ticket |
-|---|---|
-| Global Invariants | **Rules that must hold** — copied into *every* ticket, as plain rules stripped of verification wording |
-| A gate's kind, the verification mode, gate/PG/ASM codes | **Stays behind.** Executor policy, meaningless outside manifest-dev |
+One Ticket represents one independently schedulable lifecycle. Bundle work that shares one outcome and would be assigned, prioritized, and closed together. Split only where separate ownership, priority, blocking, or closure has real value. Do not turn every Deliverable, question, or minor finding into a Ticket.
 
-## The Auto grant
+**Manifest input defaults to one Shaped Ticket for the whole Manifest.** Its Deliverables remain an internal execution and verification structure. Split into one Ticket per Deliverable only when the caller explicitly asks for delegation or parallel pickup. Existing Deliverable boundaries are the smallest allowed split: if one is too large, amend the Manifest rather than slicing below a unit that can no longer be judged end to end.
 
-Decide the convention's Auto grant per ticket as you emit. Grant it only when the criterion holds — neither doing the work nor judging it done needs any human's knowledge, taste, or authority — and nothing about the ticket calls for withholding trust; when in doubt, withhold. Manifest tickets often qualify, the deciding having happened before they were written, but an approval, credentials the picker won't have, or an irreversible act keeps the grant off however settled the ticket is. Absence is safe by design — an ungranted ticket waits for a person — so a wrong withhold costs a human glance where a wrong grant costs an unattended run doing what it shouldn't.
+**Question input gets a separate Question Ticket only when the question needs its own lifecycle.** A question that the current work can answer, or that merely records an execution choice, stays inside the containing Ticket. Related questions managed together become one Question Ticket. An explicit request to track or delegate a question establishes that separate lifecycle.
 
-## The type
+**Follow-up input remains distinct from the source obligation.** Current-scope work stays on the source Ticket; a blocker to its definition of done escalates it. Search the effort's open set first, fold the finding into an existing Ticket when it already covers the work, and group related new findings before authoring. Every emitted follow-up links back to its source and carries the same effort membership unless the finding genuinely belongs elsewhere.
 
-Give each ticket the convention's type as you emit, one value or none, and take it from that Deliverable's own work rather than from the manifest as a whole — a manifest can hold a refactor Deliverable and a new-capability one, and stamping both with the manifest's subject loses exactly the distinction the type exists to make. Where a Deliverable genuinely spans two, name the one covering most of it; where none of the store's values fits, leave it off. The default vocabulary is bug, feature, refactor, docs, chore, and a project that replaced it says so in `tickets/store-config.md` alongside its venue — read it there rather than assuming the default.
+## Translate knowledge, not machinery
 
-The type is what the work is, not what may be done with it: it never substitutes for the Auto grant, and a ticket's type neither grants nor withholds anything.
+A Ticket is a contract with a stranger who may not have manifest-dev. Rewrite the source into the convention's anatomy rather than excerpting it. Could a competent stranger holding only this Ticket understand why the work exists, know its bounds, avoid its traps, and judge it done? Manifest-dev vocabulary in an emitted Ticket fails that test.
 
-## Dependency edges
+For Manifest input, translate the full coherent outcome into one Ticket. Problem and Goal become Why; Appetite and Out of bounds become Scope; all applicable Global Invariants become plain Rules that must hold; risks and assumptions become Watch out for; the Initial Approach remains optional advice; every Deliverable and gate contributes to one plain-prose Definition of done. Gate kinds, verification modes, codes, and evaluator instructions stay behind.
 
-The manifest's Deliverable order is uncertainty-based — least-proven first so one executor learns early. That order is not dependency: encode a `Depends on:` edge only where one Deliverable's outcome is genuinely required by another, and leave everything else parallel. When in doubt, leave the edge out and note the relationship under Watch out for instead.
+In explicit split mode, apply the same translation to each Deliverable and copy every applicable Global Invariant into every Ticket. Do not emit the Manifest's ceiling invariant as a rule; its substance already lives in each Ticket's Scope.
 
-## Where the tickets go
+## Auto grant
 
-**The venue lives at `tickets/store-config.md`, or gets asked for once.** One fixed, repo-relative location holds it, whatever the venue turns out to be. Read it first: when it names a venue, use that and don't ask. Same for a project that keeps its store elsewhere and says so in its own context file, already loaded when you run — follow it and skip the ask. A venue someone has already named is settled, whatever it names; it isn't a recommendation to weigh against your own.
+For an ordinary new Ticket, grant Auto only when neither doing the work nor judging it done needs human knowledge, taste, or authority, and the author chooses to trust unattended execution. When in doubt, withhold.
 
-**When nothing names one, ask — and recommend the project's shared tracker.** Never choose in silence, since a run that creates a store without having asked has chosen for the user. What makes the recommendation is claiming: it is what keeps two people off one ticket, and it only does that where the store is a surface both of them read. Any hosted tracker is one, so recommend the tracker this project already runs; GitHub Issues is the one to name when the project has a GitHub remote the session can reach and nothing else is in play. Recommend files where there is no shared tracker — no remote, or work nobody else will touch — and say what choosing them costs: a file store's claims are versioned repo content, so they never cross clones, worktrees, or branches, and two sessions in separate checkouts will pick the same ticket without either noticing. Write the answer to `tickets/store-config.md` so no later run asks again.
+For a follow-up, the grant is conjunctive: the source Ticket must carry Auto **and** the follow-up must independently pass the same grant criterion. An ungranted source can create only ungranted follow-ups, including when a person manually ran it through `run-ticket`. Never copy Auto from the source without the independent check.
 
-**Files.** Write one markdown file per ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md` at the project root (create it), NN ordered by a sensible starting sequence. Each file opens with `Kind:`, `Status:`, `Depends on:`, `Claimed by:` lines — plus `Auto: yes` when the grant is declared and `Type: <value>` when one fits; no `Auto:` line means ungranted, and no `Type:` line means untyped — then the anatomy. Write the effort's front file (`tickets/<effort-slug>/README.md`) alongside, per the convention: destination distilled from the manifest's Problem and Appetite, any priority override, context pointers — and no ticket list or status, ever. Closed tickets get moved to `tickets/<effort-slug>/done/`. Confirm the effort slug with the user when it isn't obvious from the manifest title.
+## Type and dependencies
 
-**GitHub Issues.** When the config names GitHub, or the user chooses it, read `references/GITHUB_STORE.md` and follow its mapping.
+Give each Ticket one type from the store vocabulary when one fits, otherwise none. For one-Ticket Manifest mode, use the chief nature of the complete work. In explicit split mode, type each Deliverable separately. Type never grants execution authority.
 
-**Any other tracker.** An unsupported tracker is a mapping to author, not a request to refuse. Say plainly that none ships for this one — the user should know the mapping is being written from their answers rather than shipped and exercised — then write it. Read `references/GITHUB_STORE.md` for the shape and ask what fills the same rows here: what the store and the front file are, what a ticket is, how efforts group, how kind, type, and dependencies are expressed, what claiming is, what returns the open set, what makes a ticket ready, how closing and roll-off work, and what a tidy pass does there. Write it to `tickets/<venue>-store.md`, and have `tickets/store-config.md` name the venue and point at it rather than carry the mapping itself. Readiness is the row to get right: a store whose record never says what takeable means is a store where claiming coordinates nothing.
+Encode `Depends on:` only when one Ticket's outcome is required to do or judge another. Preferred order is not a dependency. A follow-up that is merely related links to its source without blocking on it; add an edge only when the structural need exists.
 
-## After emitting
+## Choose and render the venue
 
-If the manifest's read named a successor question ticket — "the verdicts are in: what changed, what moves next?" — mint it now, with edges to the emitted tickets it judges: their IDs exist only at this point, which is why the read names it and this skill wires it. Offer the same when any emitted ticket's definition of done is a verdict rather than a shipped artifact (an experiment, a test, a probe): a verdict needs a judge, and the judge is a ticket, not someone's initiative.
+Read `tickets/store-config.md` first. A project context file may name another fixed location. When neither does, ask once and recommend the project's shared tracker; GitHub Issues is the recommendation when the project has a reachable GitHub remote and no other tracker is in play. Recommend files only where no shared tracker exists or nobody else will pick work, and explain that claims do not cross clones, worktrees, or branches. Record the answer at `tickets/store-config.md`.
 
-Present the ticket list with its edges — a short table: ID, title, kind, type, depends-on — and where they landed. Showing the type here is the author's one chance to catch a ticket stamped wrongly, before anything selects on it. Question tickets (from figure-out handoffs or written by hand) live in the same store under the same convention; this skill emits shaped ones. The `next-ticket` skill reads any store following the convention.
+**Files.** Write each Ticket to `tickets/<effort-slug>/NN-<ticket-slug>.md`. Open with `Kind:`, `Status:`, `Depends on:`, and `Claimed by:`, plus `Auto: yes` when granted and `Type: <value>` when typed. Keep the effort's stable destination, priority override, and context pointers in `tickets/<effort-slug>/README.md`; never add a Ticket list or status summary. Closed Tickets move to `done/`.
+
+**GitHub Issues.** Read `references/GITHUB_STORE.md` and follow its mapping.
+
+**Any other tracker.** Read `references/GITHUB_STORE.md` for the required mapping rows, ask what supplies each capability, and write `tickets/<venue>-store.md`. Have `tickets/store-config.md` name the venue and reference that file. An unsupported tracker needs a venue reference, not a refusal.
+
+Before outward-facing creation on a venue this project has not used before, show the planned Tickets, labels, tracking item, and relations and get confirmation. A configured venue already records that choice.
+
+## Report
+
+Present what was authored in a short table: ID, title, kind, type, Auto, and dependencies, plus where each Ticket landed. In Manifest mode, state whether the default coherent unit or explicit Deliverable split was used. In follow-up mode, include source links and which findings were grouped or deduplicated.
 
 ## Gotchas
 
-- The pull to keep manifest wording is strong and wrong: a gate body names evaluators and skills ("activate the review skill") — a stranger has neither. Rewrite as the check's substance ("prose reads clean to a careful reviewer; no contradictions with existing docs"). A gate's why is already context rather than requirement, so it feeds the ticket's own framing rather than its definition of done.
-- Copying the invariants into every ticket feels redundant; do it anyway. The one picker who reads only their own ticket is the one the convention exists for.
-- Don't emit the manifest's ceiling/scope-conformance invariant as a rule — "add nothing the tickets don't require" is meaningless to someone holding one ticket. Its substance already lives in each ticket's Scope line.
+- A gate may name evaluator machinery a stranger cannot use. Translate its substance into observable done prose.
+- A list of small questions is not automatically a list of Question Tickets. The lifecycle test comes first.
+- A discovered defect inside the current definition of done is unfinished source work, not a follow-up that makes the source closable.
+- A follow-up from an Auto source still needs its own grant decision; source Auto is necessary, never sufficient.

@@ -1,7 +1,7 @@
 # ADR: next-ticket claims the ticket it picks
 
 ## Status
-Accepted
+Accepted — execution handoff narrowed by 20260812-run-ticket-owns-attempt-not-dispatch
 
 ## Area
 Ticketing
