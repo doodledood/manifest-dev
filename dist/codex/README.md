@@ -16,7 +16,7 @@ The two plugins:
 
 | Plugin | Skills |
 |--------|--------|
-| `manifest-dev` | `define`, `do`, `auto`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `check-pr`, `poll-slack`, `review-code`, `ticket-up`, `next-ticket`, `run-ticket` |
+| `manifest-dev` | `define`, `do`, `auto`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `check-pr`, `poll-slack`, `review-code`, `ticket-up`, `next-ticket`, `run-ticket`, `sweep-tickets` |
 | `manifest-dev-tools` | `babysit-pr`, `handoff`, `prompt-engineering`, `re-pitch`, `review-pr`, `review-prompt`, `teach-me`, `walk-pr` |
 
 Local development against a checkout:
@@ -37,6 +37,10 @@ Uninstall: `codex plugin remove manifest-dev@manifest-dev && codex plugin remove
 ## Reviewers and verification skills
 
 manifest-dev ships **zero agents** — everything is a skill. The quality reviewers (bugs, design, simplicity, types, contracts, …) are **dimensions of the `review-code` skill**: a gate's body activates `review-code` with a dimension (e.g. `dimension=code-bugs`) and it loads exactly that dimension's reference. The former functional agents are now their own bundled skills too — `check-pr` (PR lifecycle), `poll-slack` (Slack deltas), and the tools-side `review-prompt` (prompt quality). Each gate is one text — a title, a body, and an optional why — with a required kind (`judgment` or `deterministic`, never inferred) as the only structured metadata; `/do` applies `per-gate` (default), `consolidated`, or `self` at launch, with optional `--verifier-model` for the independent modes. Judgment gates re-verify by ratchet — one full look, then prior findings' repairs and the changed delta — while command-backed gates re-run in full; `--exhaustive-verification` restores full re-sampling. A gate carrying a `verify` block is the superseded schema and is rejected rather than migrated.
+
+Hosted Ticket automation has two entrypoints: an eligible issue event invokes `run-ticket` with
+that issue, while a schedule invokes `sweep-tickets` to recover or start one Auto Ticket. The
+shared adapter contract lives under `ticket-up/references/AUTOMATED_EXECUTION.md`.
 
 ## Limitations
 

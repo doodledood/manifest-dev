@@ -23,11 +23,19 @@ The kind is declared on the ticket, so the picker knows which tool to bring.
 
 ## The Auto grant
 
-A ticket of either kind may carry **Auto** — an opt-in grant, declared when the ticket is written, that unattended automation may take it end to end: do the work and judge it done, with nobody watching.
+A ticket of either kind may carry **Auto** — an opt-in grant, declared when the ticket is written,
+that unattended automation may take it end to end: do the work, judge it done, and complete any
+required landing, with nobody watching. For repository work, end to end includes merging through
+the repository's normal protections before the Ticket closes.
 
-- **Granting.** Grant only when neither doing the work nor judging it done needs any human's knowledge, taste, or authority — no done-judgment resting on someone's unstated criteria, no approval, no access an unattended worker won't have, no irreversible act, no decision deferred to mid-flight input. That bar is necessary but never sufficient: the author still chooses, and withheld trust alone is reason enough to withhold. When in doubt, don't grant.
+- **Granting.** Grant only when neither doing the work nor judging it done needs any human's knowledge, taste, or authority — no done-judgment resting on someone's unstated criteria, no approval, no access an unattended worker won't have, no irreversible act that requires separate human authority beyond the Auto grant, no decision deferred to mid-flight input. Ordinary landing through the repository's declared protections is within Auto; a repository policy that requires human approval is not. That bar is necessary but never sufficient: the author still chooses, and withheld trust alone is reason enough to withhold. When in doubt, don't grant.
 - **Absence is the fence.** A ticket without the grant is not touched by automation at all — no partial work, no prepping half the job. Nothing is ever marked "not auto"; silence already says it, which is also what keeps automation off items in a shared venue that were never tickets. A person may still hand an ungranted ticket to an agent and watch — that is the person working the ticket, outside the grant's jurisdiction.
 - **Surprises don't revoke.** A granted ticket's worker can still hit an unexpected blocker; it stops and surfaces rather than deciding what only a person can. That is the exception path working, not evidence the grant was wrong — only a step known at write time to need a person keeps the grant off.
+
+Auto is durable authority, not mutable queue state. Claiming, retrying, completing, or escalating
+an attempt does not remove and reapply it. Open state, claim ownership, and dependencies determine
+whether a granted Ticket is runnable. A person directly invoking `run-ticket` on an ungranted
+Ticket supplies authority for that supervised run; that does not grant later unattended work.
 
 A follow-up Ticket receives Auto only when its source Ticket carries Auto and the follow-up independently passes the granting test above. Either condition failing withholds the grant. In particular, a person manually running an ungranted source Ticket cannot cause unattended follow-up work merely by discovering it.
 
@@ -77,10 +85,22 @@ Never put derivable state here: no ticket lists, statuses, or ready/next — any
 ## Lifecycle
 
 - **Status**: `open` → `done`. Done tickets roll off **by location**: in a file store, closing moves the ticket into a `done/` subfolder beside the open ones; in a tracker, closing the item removes it from open queries. Reading the open set never scales with closed history — the archive is the `done/` folder, the tracker's closed items, and git.
-- **Claiming**: mark a ticket claimed (a `Claimed by:` line, an assignee, the venue's equivalent) when you pick it, not when you get around to starting it — the gap between the two is where somebody else picks the same one. Open and unclaimed means takeable; claimed means not.
+- **Claiming**: mark a ticket claimed (a `Claimed by:` line, an assignee, the venue's equivalent) when you pick it, not when you get around to starting it — the gap between the two is where somebody else picks the same one. Open and unclaimed means takeable; a human claim pauses automation. A claim held by the store's stable automation identity represents work in progress or an interrupted attempt the scheduled recovery path may resume after the host's single-flight guard admits it.
 - **Ready**: a ticket is ready when it is open, unclaimed, and every ticket it depends on is done. Blocked is derived from unmet dependencies, never stored as a status.
-- **Closing**: record the outcome on the Ticket (the work's landing place, or the question's answer), mark it done and roll it off (move it to `done/`, or close the item), and check what the close changed: Tickets it made ready, and outcomes that need interpreting. Create a Question Ticket for interpretation only when that question needs an independently managed lifecycle; otherwise record or answer it with the current outcome.
-- **Escalating an attempt**: record the blocker, attempts, evidence, preserved-work references, and human input needed on the same Ticket. Leave it open and transfer or preserve its claim for human continuation. Escalation ends an execution attempt, not the Ticket's work, and never makes dependents ready.
+- **Closing**: record the outcome on the Ticket (the merged or otherwise landed work, or the question's recorded answer), mark it done and roll it off (move it to `done/`, or close the item), and check what the close changed: Tickets it made ready, and outcomes that need interpreting. A branch or mergeable pull request is not a landed repository outcome. Create a Question Ticket for interpretation only when that question needs an independently managed lifecycle; otherwise record or answer it with the current outcome.
+- **Escalating an attempt**: record the blocker, attempts, evidence, preserved-work references, and human input needed on the same Ticket. Leave it open, retain Auto when present, and transfer or preserve its claim for human continuation. The human records continuation context and releases the claim after resolving the blocker; the ordinary readiness rule then returns the Ticket to unattended eligibility. Escalation ends an execution attempt, not the Ticket's work, and never makes dependents ready.
+
+## Automated execution
+
+Issue events are a fast path for ready Auto Tickets. A scheduled `sweep-tickets` invocation is the
+correctness path: it resumes one interrupted automation-owned Ticket, or otherwise selects one
+ready Auto Ticket, invokes `run-ticket`, and stops. Closing one Ticket naturally makes a dependent
+Ticket eligible for a later sweep; no ready label or label pulse is needed.
+
+Both paths use one trigger adapter contract: stable automation identity, canonical per-Ticket
+single-flight, finite provider retries, and one terminal infrastructure-failure handoff to a
+configured person. Those are runner responsibilities, not Ticket fields. See
+`AUTOMATED_EXECUTION.md` for the integration boundary.
 
 ## Priority
 

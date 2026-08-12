@@ -77,7 +77,7 @@
 | 2026-08-09 | [Locate the ticket store by convention, not configuration](20260809-locate-the-ticket-store-by-convention-not-configuration.md) | Accepted | Ticketing |
 | 2026-08-09 | [next-ticket derives its pick instead of asking](20260809-next-ticket-derives-its-pick-instead-of-asking.md) | Accepted | Ticketing |
 | 2026-08-10 | [Advisory gates omit by a bearer test at define time](20260810-advisory-gates-omit-by-bearer-test.md) | Accepted | define |
-| 2026-08-10 | [The Auto marker is an opt-in grant; absence fences automation off entirely](20260810-auto-is-an-opt-in-grant-to-unattended-automation.md) | Accepted | Ticketing |
+| 2026-08-10 | [The Auto marker is an opt-in grant; absence fences automation off entirely](20260810-auto-is-an-opt-in-grant-to-unattended-automation.md) | Accepted — irreversible-act authority narrowed by [20260812-auto-ticket-completes-after-required-landing](20260812-auto-ticket-completes-after-required-landing.md): ordinary landing through declared repository protections is within Auto; actions requiring separate human authority remain excluded | Ticketing |
 | 2026-08-10 | [Gate altitude repairs run under advance user delegation](20260810-gate-altitude-repairs-under-advance-delegation.md) | Accepted | define / do |
 | 2026-08-10 | [Generate a venue reference for an unmapped tracker](20260810-generate-a-venue-reference-for-an-unmapped-tracker.md) | Accepted | Ticketing |
 | 2026-08-10 | [next-ticket claims the ticket it picks](20260810-next-ticket-claims-the-ticket-it-picks.md) | Accepted — execution handoff narrowed by [20260812-run-ticket-owns-attempt-not-dispatch](20260812-run-ticket-owns-attempt-not-dispatch.md) | Ticketing |
@@ -89,7 +89,13 @@
 | 2026-08-11 | [The defect-class gate binds on accounting for the class, not on redesigning it](20260811-defect-class-gates-bind-on-accounting-not-redesign.md) | Accepted | define / do |
 | 2026-08-11 | [A ticket's type is a rollout selector, not a classification](20260811-ticket-type-is-a-rollout-selector-not-a-classification.md) | Accepted — per-Deliverable type assignment now applies only in explicit split mode after [20260812-tickets-follow-independently-schedulable-work-units](20260812-tickets-follow-independently-schedulable-work-units.md); single-valued type semantics are unchanged | Ticketing |
 | 2026-08-12 | [An Auto follow-up requires both source authority and its own grant](20260812-auto-follow-up-grant-requires-source-and-local-grant.md) | Accepted | Ticketing |
+| 2026-08-12 | [An Auto Ticket completes only after its required landing](20260812-auto-ticket-completes-after-required-landing.md) | Accepted | Ticketing |
+| 2026-08-12 | [Human assignment pauses Auto Ticket execution](20260812-human-assignment-pauses-auto-ticket-execution.md) | Accepted | Ticketing |
 | 2026-08-12 | [run-ticket owns an execution attempt, not dispatch](20260812-run-ticket-owns-attempt-not-dispatch.md) | Accepted | Ticketing |
+| 2026-08-12 | [The scheduled Ticket sweep is recovery-first and handles one Ticket](20260812-scheduled-ticket-sweep-is-recovery-first-and-one-ticket.md) | Accepted | Ticketing |
 | 2026-08-12 | [Ticket identity follows the work across automated attempts](20260812-ticket-identity-follows-work-across-automated-attempts.md) | Accepted | Ticketing |
+| 2026-08-12 | [Ticket recovery uses coherent pushed checkpoints](20260812-ticket-recovery-uses-coherent-pushed-checkpoints.md) | Accepted | Ticketing |
 | 2026-08-12 | [ticket-up is the single Ticket-authoring boundary](20260812-ticket-up-is-the-ticket-authoring-boundary.md) | Accepted | Ticketing |
 | 2026-08-12 | [Tickets follow independently schedulable work units](20260812-tickets-follow-independently-schedulable-work-units.md) | Accepted | Ticketing |
+| 2026-08-12 | [Trigger adapters enforce single-flight per Ticket](20260812-trigger-adapters-enforce-per-ticket-single-flight.md) | Accepted | Ticketing |
+| 2026-08-12 | [Trigger adapters hand off exhausted runner failures](20260812-trigger-adapters-hand-off-exhausted-runner-failures.md) | Accepted | Ticketing |

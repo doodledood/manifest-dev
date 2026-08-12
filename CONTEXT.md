@@ -213,8 +213,12 @@ The single Ticket-authoring boundary: turns a finished Manifest, direct work req
 _Avoid_: Breakdown, sharding.
 
 **Run Ticket**:
-The harness-neutral execution move that receives one exact Ticket, claims it, invokes `auto`, and records DONE or ESCALATED evidence on that same Ticket; dispatch and backlog selection stay outside it.
+The harness-neutral execution move that receives one exact Ticket, claims or recovers it, invokes `auto`, completes any required protected landing, and records DONE or ESCALATED evidence on that same Ticket; dispatch and backlog selection stay outside it.
 _Avoid_: Auto picker, ticket trigger.
+
+**Ticket Sweep**:
+The scheduled one-Ticket dispatch move that first resumes an interrupted Ticket claimed by the automation identity, otherwise selects one ready Auto Ticket, invokes Run Ticket with that exact Ticket, and stops.
+_Avoid_: Batch runner, label pulse, dependency controller.
 
 ## Relationships
 
@@ -226,7 +230,9 @@ _Avoid_: Auto picker, ticket trigger.
 - **Ticket-up** is the only workflow boundary that authors **Tickets** in a **Ticket Store**. A finished **Manifest** becomes one **Shaped Ticket** by default; explicit delegation may split it on existing **Deliverable** boundaries.
 - A separate **Question Ticket** exists only when its question needs independent assignment, priority, blocking, or closure; related questions sharing one lifecycle stay grouped.
 - `next-ticket` claims and presents the **Ticket** it names, which is what makes several sessions reading one **Ticket Store** get different ones — and it separates them only where the store's venue is a live surface every worker reads, never across separate checkouts of a file store. It never executes the pick.
-- **Run Ticket** receives one exact **Ticket** from a person or dispatcher and invokes `auto` for one attempt; it never selects from the store and never enforces **Auto**.
+- **Run Ticket** receives one exact **Ticket** from a person or dispatcher and invokes `auto` for one attempt; it never selects from the store or enforces **Auto** eligibility at dispatch. For repository work it uses one durable branch and pull request across attempts, and DONE follows the required landing rather than a merely mergeable branch.
+- A **Ticket Sweep** handles at most one **Ticket** per invocation: recover an interrupted automation-owned Auto Ticket first, otherwise select one ready Auto Ticket, pass it to **Run Ticket**, and stop. Issue events are the fast path; the sweep is the correctness path.
+- Trigger adapters serialize **Run Ticket** by canonical Ticket identity, bound infrastructure retries, and assign a person with run evidence after retry exhaustion; claims and labels do not duplicate host liveness state.
 - The **Auto** grant requires that neither doing a **Ticket** nor judging it done needs any human's knowledge, taste, or authority — necessary but never sufficient: the author still chooses to grant.
 - A **Ticket** remains the identity of its work across execution attempts: a successful attempt closes it, while an escalated attempt records its evidence and transfers or preserves the same open **Ticket**'s claim for a person; a follow-up **Ticket** represents only separate work.
 - A follow-up **Ticket** receives **Auto** only when its source **Ticket** carries **Auto** and the follow-up independently meets the grant criterion; an ungranted source can create only ungranted follow-ups.

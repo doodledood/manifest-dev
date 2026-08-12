@@ -19,7 +19,8 @@ Supporting workflows:
 - **/figure-out-team** — /figure-out's discipline applied to a multi-party async Slack conversation.
 - **/ticket-up** — Authors convention-compliant Tickets from a Manifest, direct work, independently managed questions, or source-linked follow-ups. A Manifest stays one coherent Ticket by default; explicit delegation can split it on Deliverable boundaries.
 - **/next-ticket** — Reads the Ticket store, claims the single best ready Ticket, and presents it without starting execution.
-- **/run-ticket** — Runs one exact Ticket through /auto, then records DONE or ESCALATED evidence on that same Ticket. Dispatch policy and backlog selection stay outside it.
+- **/run-ticket** — Claims or recovers one exact Ticket, runs /auto, completes required protected landing, then records DONE or ESCALATED evidence on that same Ticket. Backlog selection stays outside it.
+- **/sweep-tickets** — Scheduled one-Ticket correctness path: resumes one interrupted automation-owned Auto Ticket, otherwise selects one ready Auto Ticket, invokes /run-ticket, and stops.
 - **/init-context** — Sets a repository up with project-owned ADR conventions, a glossary, and the context-file wiring that keeps sessions using them, seeding them from the project's own history where there is any.
 - **Tools skills** — /babysit-pr, /handoff, /prompt-engineering, /re-pitch, /review-pr, /teach-me, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
 
