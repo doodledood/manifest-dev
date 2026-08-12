@@ -16,7 +16,7 @@ The two plugins:
 
 | Plugin | Skills |
 |--------|--------|
-| `manifest-dev` | `define`, `do`, `auto`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `check-pr`, `poll-slack`, `review-code`, `ticket-up`, `next-ticket` |
+| `manifest-dev` | `define`, `do`, `auto`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `check-pr`, `poll-slack`, `review-code`, `ticket-up`, `next-ticket`, `run-ticket` |
 | `manifest-dev-tools` | `babysit-pr`, `handoff`, `prompt-engineering`, `re-pitch`, `review-pr`, `review-prompt`, `teach-me`, `walk-pr` |
 
 Local development against a checkout:

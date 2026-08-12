@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import pytest
-
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_SKILLS = ROOT / "claude-plugins" / "manifest-dev" / "skills"
 
@@ -53,18 +51,15 @@ def test_selector_presents_without_executing() -> None:
     assert "selection and execution are separate actions" in text
 
 
-@pytest.mark.parametrize(
-    "skills_root",
-    [
+def test_run_ticket_ships_on_every_distribution() -> None:
+    for skills_root in [
         ROOT / "dist" / "codex" / "plugins" / "manifest-dev" / "skills",
         ROOT / "dist" / "opencode" / "skills",
         ROOT / "dist" / "pi" / "skills",
-    ],
-)
-def test_run_ticket_ships_on_every_distribution(skills_root: Path) -> None:
-    text = skill_text(skills_root, "run-ticket")
+    ]:
+        text = skill_text(skills_root, "run-ticket")
 
-    assert "name: run-ticket" in text
-    assert "one exact Ticket" in text
-    assert "DONE" in text
-    assert "ESCALATED" in text
+        assert "name: run-ticket" in text
+        assert "one exact Ticket" in text
+        assert "DONE" in text
+        assert "ESCALATED" in text
