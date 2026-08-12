@@ -88,3 +88,4 @@
 | 2026-08-11 | [A review dimension may take a defect as input, and that is what earns it a slot](20260811-a-review-dimension-may-take-a-defect-as-input.md) | Accepted | Code review |
 | 2026-08-11 | [The defect-class gate binds on accounting for the class, not on redesigning it](20260811-defect-class-gates-bind-on-accounting-not-redesign.md) | Accepted | define / do |
 | 2026-08-11 | [A ticket's type is a rollout selector, not a classification](20260811-ticket-type-is-a-rollout-selector-not-a-classification.md) | Accepted | Ticketing |
+| 2026-08-12 | [Ticket identity follows the work across automated attempts](20260812-ticket-identity-follows-work-across-automated-attempts.md) | Accepted | Ticketing |
