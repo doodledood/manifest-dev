@@ -43,4 +43,4 @@ A follow-up Ticket is created only for genuinely separate work discovered during
 
 ## Source
 - Session: figure-out on unattended ticket automation (2026-08-12)
-- Related: 20260810-auto-is-an-opt-in-grant-to-unattended-automation, 20260810-next-ticket-claims-the-ticket-it-picks, 20260806-retire-decision-map-for-ticket-up-and-ticket-store
+- Related: 20260810-auto-is-an-opt-in-grant-to-unattended-automation, 20260810-next-ticket-claims-the-ticket-it-picks, 20260806-retire-decision-map-for-ticket-up-and-ticket-store, 20260812-run-ticket-owns-attempt-not-dispatch, 20260812-auto-follow-up-grant-requires-source-and-local-grant

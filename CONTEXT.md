@@ -178,7 +178,7 @@ A durable personal steering preference persisted only by offer-and-ratify — ca
 _Avoid_: Preference, style, judgment.
 
 **Ticket**:
-A self-sufficient prose work packet holding everything a stranger — person or agent, with or without manifest-dev — needs to pick it up, do it, and judge it done, per the ticket convention (`skills/ticket-up/references/TICKET_CONVENTION.md`).
+A self-sufficient prose work packet holding one independently schedulable lifecycle unit and everything a stranger — person or agent, with or without manifest-dev — needs to pick it up, do it, and judge it done, per the ticket convention (`skills/ticket-up/references/TICKET_CONVENTION.md`).
 _Avoid_: Story, issue, task.
 
 **Shaped Ticket**:
@@ -209,8 +209,12 @@ The mapping that renders the ticket convention onto one venue's own operations �
 _Avoid_: Adapter, integration.
 
 **Ticket-up**:
-The move from a finished Manifest to one Ticket per Deliverable plus explicit structural dependency edges.
+The single Ticket-authoring boundary: turns a finished Manifest, direct work request, independently managed question, or source-linked follow-up into convention-compliant Tickets in the configured store; a Manifest yields one Shaped Ticket by default and splits by Deliverable only for explicit delegation.
 _Avoid_: Breakdown, sharding.
+
+**Run Ticket**:
+The harness-neutral execution move that receives one exact Ticket, claims it, invokes `auto`, and records DONE or ESCALATED evidence on that same Ticket; dispatch and backlog selection stay outside it.
+_Avoid_: Auto picker, ticket trigger.
 
 ## Relationships
 
@@ -219,10 +223,12 @@ _Avoid_: Breakdown, sharding.
 - A **Manifest** has zero or more **Global Invariants**, applied across all Deliverables.
 - A **Task File** can contribute **Quality Gates** and **Defaults** to `/define`.
 - A **Quality Gate** becomes an acceptance-style gate in a **Manifest**.
-- **Ticket-up** turns each **Deliverable** of a **Manifest** into a **Shaped Ticket** in a **Ticket Store**; figure-out can hand decoupled unknowns off as **Question Tickets** to the same store, and `next-ticket` answers "what's next" as a priority read over it.
-- `next-ticket` claims the **Ticket** it names, which is what makes several sessions reading one **Ticket Store** get different ones — and it separates them only where the store's venue is a live surface every worker reads, never across separate checkouts of a file store.
+- **Ticket-up** is the only workflow boundary that authors **Tickets** in a **Ticket Store**. A finished **Manifest** becomes one **Shaped Ticket** by default; explicit delegation may split it on existing **Deliverable** boundaries.
+- A separate **Question Ticket** exists only when its question needs independent assignment, priority, blocking, or closure; related questions sharing one lifecycle stay grouped.
+- `next-ticket` claims and presents the **Ticket** it names, which is what makes several sessions reading one **Ticket Store** get different ones — and it separates them only where the store's venue is a live surface every worker reads, never across separate checkouts of a file store. It never executes the pick.
+- **Run Ticket** receives one exact **Ticket** from a person or dispatcher and invokes `auto` for one attempt; it never selects from the store and never enforces **Auto**.
 - The **Auto** grant requires that neither doing a **Ticket** nor judging it done needs any human's knowledge, taste, or authority — necessary but never sufficient: the author still chooses to grant.
-- A **Ticket** remains the identity of its work across execution attempts: a successful attempt closes it, while an escalated attempt records its evidence and hands the same open **Ticket** to a person; a follow-up **Ticket** represents only separate work.
+- A **Ticket** remains the identity of its work across execution attempts: a successful attempt closes it, while an escalated attempt records its evidence and transfers or preserves the same open **Ticket**'s claim for a person; a follow-up **Ticket** represents only separate work.
 - A follow-up **Ticket** receives **Auto** only when its source **Ticket** carries **Auto** and the follow-up independently meets the grant criterion; an ungranted source can create only ungranted follow-ups.
 - Absence of **Auto** is one fence covering untrusted **Tickets**, **Tickets** with a designed-in human step, and venue items never written as **Tickets** at all.
 - **Auto** says whether automation may touch a **Ticket** at all and is the author's call; a **Ticket Type** says which granted work an operator runs today and is the query's — keeping rollout schedule out of the grant, whose silence already carries three meanings.
