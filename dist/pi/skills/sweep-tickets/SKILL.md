@@ -31,8 +31,8 @@ human-assigned items untouched. Ignore tracking items and venue items that are n
 
 1. **Recover first.** From the eligible set, find Tickets claimed by this automation identity. The
    adapter's per-Ticket single-flight guarantees that a `run-ticket` invocation waits for any live
-   run with the same identity before it reaches this state. Choose one under the store's effort and
-   priority rules.
+   run for that same canonical Ticket before it reaches this state. Choose one under the store's
+   effort and priority rules.
 2. **Otherwise start ready work.** From unassigned Tickets in the eligible set, use the store's
    effort choice and priority rule.
 

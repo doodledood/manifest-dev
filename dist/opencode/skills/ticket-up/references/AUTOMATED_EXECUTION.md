@@ -19,8 +19,9 @@ Invoke the sweep-tickets skill
 
 Both routes converge on `run-ticket`. The event is the fast path. The sweep is the correctness
 path: it recovers interrupted work and eventually notices work made ready by another Ticket
-closing. Either route can operate alone; using both adds latency and parallelism benefits, not a
-second execution model.
+closing. The sweep can operate alone. Events are an optional fast path; without the sweep, missed
+deliveries and dependency closes are not recovered reliably. Using both adds latency and
+parallelism benefits, not a second execution model.
 
 ## Recommended setup
 

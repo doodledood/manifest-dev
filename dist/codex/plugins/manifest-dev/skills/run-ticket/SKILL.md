@@ -64,10 +64,6 @@ An ordinary assistant response, partial implementation, waiting check, runner fa
 exit does not. Fix agent-resolvable failures inside the autonomous chain; reserve Ticket escalation
 for a blocker that genuinely needs a person.
 
-After `/done`, update the marked attempt comment with the verified head commit, the gate-ledger
-completion evidence, and any pull-request reference. This is the durable completion checkpoint a
-fresh runner uses if the process stops during checks or after merge but before Ticket closure.
-
 ## Route findings without spraying Tickets
 
 Keep work required by the source Ticket on the source Ticket. Finish it there, or escalate that Ticket when a blocker prevents completion.
@@ -83,6 +79,11 @@ and push the coherent result to the stable branch, create or refresh its one pul
 that pull request through the repository's normal checks and review requirements. Activate the
 `manifest-dev:check-pr` skill for the current pull request and head before merge. Address
 agent-resolvable failures and re-check rather than handing routine repair to a person.
+
+After that coherent result is committed and pushed and its pull request exists, update the marked
+attempt comment with the verified head commit, gate-ledger completion evidence, and pull-request
+reference. This is the durable completion checkpoint a fresh runner uses if the process stops
+during checks or after merge but before Ticket closure.
 
 Immediately before any irreversible landing, refresh the Ticket, claim, Auto grant when the run is
 unattended, pull-request head, checks, mergeability, and repository protections. A direct human

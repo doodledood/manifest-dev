@@ -34,6 +34,12 @@ def test_run_ticket_recovers_and_lands_before_done() -> None:
     assert "requires Auto still to\nbe present" in text
     assert "merge through the venue's\nnormal protected mechanism" in text
     assert "After the required landing is observed" in text
+    assert text.index(
+        "After that coherent result is committed and pushed"
+    ) > text.index("create or refresh its one pull request")
+    assert text.index(
+        "update the marked\nattempt comment with the verified head commit"
+    ) < text.index("Immediately before any irreversible landing")
     assert (
         "Ordinary landing through the repository's declared protections is within Auto"
         in convention
@@ -92,6 +98,8 @@ def test_sweep_tickets_recovers_first_and_runs_at_most_one() -> None:
         "From the eligible set, find Tickets claimed by this automation identity"
         in text
     )
+    assert "run for that same canonical Ticket" in text
+    assert "run with the same identity" not in text
     assert "**Otherwise start ready work.**" in text
     assert "Human-assigned Tickets are paused" in text
     assert "Never mutate any claim during\nselection" in text
@@ -118,6 +126,12 @@ def test_trigger_adapter_contract_stays_thin_and_recoverable() -> None:
     assert "Schedule only is correct but starts at most one Ticket per tick" in text
     assert "Event plus schedule adds the fast\npath and parallelism" in text
     assert "A person may also run the exact-Ticket prompt manually" in text
+    assert "The sweep can operate alone" in text
+    assert (
+        "without the sweep, missed\ndeliveries and dependency closes are not recovered reliably"
+        in text
+    )
+    assert "Either route can operate alone" not in text
 
 
 def test_ticket_execution_skills_ship_on_every_distribution() -> None:
