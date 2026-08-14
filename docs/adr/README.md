@@ -38,7 +38,7 @@
 | 2026-07-09 | [Mid-/do steering stays autonomous, audited through Known Assumptions](20260709-mid-do-steering-stays-autonomous.md) | Accepted | do |
 | 2026-07-09 | [Process Guidance is binding but unverified](20260709-process-guidance-is-binding-but-unverified.md) | Superseded by [20260726-only-gates-bind-process-guidance-is-advisory](20260726-only-gates-bind-process-guidance-is-advisory.md) | do |
 | 2026-07-14 | [figure-out challenges solution existence before descendant design](20260714-figure-out-challenge-solution-existence-before-design.md) | Accepted | figure-out |
-| 2026-07-14 | [figure-out classifies stated constraints before they prune options](20260714-figure-out-classifies-stated-constraints-before-they-prune-options.md) | Accepted | figure-out |
+| 2026-07-14 | [figure-out classifies stated constraints before they prune options](20260714-figure-out-classifies-constraints-before-they-prune.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out keeps the do-nothing option in the option set](20260714-figure-out-keeps-do-nothing-in-the-option-set.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out roots the crux tree above solution-shaped topics](20260714-figure-out-roots-crux-tree-above-solution-shaped-topics.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out scales read depth with stakes and reversibility, not fog alone](20260714-figure-out-scales-read-depth-with-stakes-and-reversibility.md) | Accepted | figure-out |
