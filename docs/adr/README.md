@@ -26,7 +26,7 @@
 | 2026-06-23 | [Use universal goal-setting language for unattended run backstops](20260623-use-universal-goal-setting-language.md) | Accepted | Goal setting |
 | 2026-06-24 | [Use outcome-gated terminal success for `/auto` continuation](20260624-use-outcome-gated-auto-continuation.md) | Accepted | Goal setting |
 | 2026-07-03 | [figure-out gains fog discipline; multi-session orchestration stays out of scope](20260703-figure-out-fog-discipline.md) | Accepted | figure-out |
-| 2026-07-03 | [Progressive-disclosure triggers live in the loading layer, never in the deferred reference](20260703-progressive-disclosure-triggers-live-in-the-loading-layer.md) | Accepted | Prompt architecture |
+| 2026-07-03 | [Progressive-disclosure triggers live in the loading layer, never in the deferred reference](20260703-progressive-disclosure-triggers-live-in-loading-layer.md) | Accepted | Prompt architecture |
 | 2026-07-05 | [Front `/figure-out` as the Door; the define/do loop remains the House](20260705-front-figure-out-as-door-define-do-loop-as-house.md) | Accepted | Positioning |
 | 2026-07-05 | [Keep the plugin-first repo layout; no restructure for skill-picker distribution](20260705-keep-plugin-first-layout-npx-skills-compatible.md) | Accepted | Repo layout |
 | 2026-07-07 | [Split the tech-design task profile by workflow role](20260707-split-tech-design-task-profile-by-workflow-role.md) | Accepted | Task guidance |
@@ -38,7 +38,7 @@
 | 2026-07-09 | [Mid-/do steering stays autonomous, audited through Known Assumptions](20260709-mid-do-steering-stays-autonomous.md) | Accepted | do |
 | 2026-07-09 | [Process Guidance is binding but unverified](20260709-process-guidance-is-binding-but-unverified.md) | Superseded by [20260726-only-gates-bind-process-guidance-is-advisory](20260726-only-gates-bind-process-guidance-is-advisory.md) | do |
 | 2026-07-14 | [figure-out challenges solution existence before descendant design](20260714-figure-out-challenge-solution-existence-before-design.md) | Accepted | figure-out |
-| 2026-07-14 | [figure-out classifies stated constraints before they prune options](20260714-figure-out-classifies-constraints-before-they-prune.md) | Accepted | figure-out |
+| 2026-07-14 | [figure-out classifies stated constraints before they prune options](20260714-figure-out-classifies-stated-constraints-before-they-prune-options.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out keeps the do-nothing option in the option set](20260714-figure-out-keeps-do-nothing-in-the-option-set.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out roots the crux tree above solution-shaped topics](20260714-figure-out-roots-crux-tree-above-solution-shaped-topics.md) | Accepted | figure-out |
 | 2026-07-14 | [figure-out scales read depth with stakes and reversibility, not fog alone](20260714-figure-out-scales-read-depth-with-stakes-and-reversibility.md) | Accepted | figure-out |
