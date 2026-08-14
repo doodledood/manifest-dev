@@ -1,7 +1,7 @@
 # ADR: Per-gate restored as the default `/do` verification mode
 
 ## Status
-Accepted
+Accepted — the mode-comparison prose this decision rewrote in `/do` was later relocated to the README by [20260814-run-visible-surfaces-carry-no-cross-option-framing](20260814-run-visible-surfaces-carry-no-cross-option-framing.md); the default flip and all mode semantics stand
 
 ## Area
 do

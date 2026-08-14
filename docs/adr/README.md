@@ -67,7 +67,7 @@
 | 2026-08-06 | [`/do`'s verification layer is bookkeeping and a stop condition, not a checking aid](20260806-verification-is-bookkeeping-and-a-stop-condition.md) | Accepted | do |
 | 2026-08-07 | [A gate is one text, not two](20260807-a-gate-is-one-text-not-two.md) | Accepted | define / do |
 | 2026-08-07 | [Trim the Manifest schema to fields that are read](20260807-trim-the-manifest-schema-to-fields-that-are-read.md) | Accepted | define / do |
-| 2026-08-08 | [Per-gate restored as the default `/do` verification mode](20260808-restore-per-gate-default-verification-mode.md) | Accepted | do |
+| 2026-08-08 | [Per-gate restored as the default `/do` verification mode](20260808-restore-per-gate-default-verification-mode.md) | Accepted — mode-comparison prose relocated to the README by [20260814-run-visible-surfaces-carry-no-cross-option-framing](20260814-run-visible-surfaces-carry-no-cross-option-framing.md); default flip and mode semantics stand | do |
 | 2026-08-09 | [ADR conventions ship into the repo as project knowledge, and the repo copy governs](20260809-adr-conventions-ship-as-project-knowledge.md) | Accepted | ADR conventions |
 | 2026-08-09 | [The ADR index is derived from the records, not authored alongside them](20260809-adr-index-is-derived-from-the-records.md) | Accepted | ADR conventions |
 | 2026-08-09 | [figure-out budgets the whole turn, not its bold lines](20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines.md) | Accepted | figure-out |
@@ -101,3 +101,4 @@
 | 2026-08-12 | [Trigger adapters hand off exhausted runner failures](20260812-trigger-adapters-hand-off-exhausted-runner-failures.md) | Accepted | Ticketing |
 | 2026-08-14 | [Human-authored follow-ups may grant Auto independently of their source](20260814-human-authored-follow-ups-may-grant-auto-independently.md) | Accepted | Ticketing |
 | 2026-08-14 | [Ticket selection minimizes delay loss across the available executors](20260814-ticket-selection-minimizes-delay-loss-across-available-executors.md) | Accepted | Ticketing |
+| 2026-08-14 | [Run-visible prompt surfaces carry no comparative framing about options the run did not select](20260814-run-visible-surfaces-carry-no-cross-option-framing.md) | Accepted | Prompt architecture |
