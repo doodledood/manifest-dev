@@ -31,10 +31,15 @@ human-assigned items untouched. Ignore tracking items and venue items that are n
 
 1. **Recover first.** From the eligible set, find Tickets claimed by this automation identity. The
    adapter's per-Ticket single-flight guarantees that a `run-ticket` invocation waits for any live
-   run for that same canonical Ticket before it reaches this state. Choose one under the store's
-   effort and priority rules.
-2. **Otherwise start ready work.** From unassigned Tickets in the eligible set, use the store's
-   effort choice and priority rule.
+   run for that same canonical Ticket before it reaches this state. If any admitted interrupted
+   attempt exists, recover one before considering new work. When several recovery candidates exist,
+   use the store's explicit override or the convention's delay-loss rule to choose among them.
+2. **Otherwise start ready work.** Compare the unassigned Tickets in the eligible set using the
+   store's explicit priority override or the convention's expected-delay-loss rule. Judge current
+   unattended end-to-end execution and landing time only when its difference materially changes
+   what other eligible work loses by waiting. Do not infer days from traditional feature size or
+   apply a fixed agent-speed multiplier; when plausible runtimes are all short relative to the
+   consequences, treat them as effectively equal and use shorter duration only as a tiebreak.
 
 Human-assigned Tickets are paused, not recovery candidates. Never mutate any claim during
 selection, remove Auto, or create a ready/running/retry label. If no Ticket qualifies, report why
