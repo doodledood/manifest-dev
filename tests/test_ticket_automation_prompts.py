@@ -61,7 +61,7 @@ def test_run_ticket_preserves_ticket_identity_and_routes_follow_ups() -> None:
     assert "Never write a follow-up directly to the venue" in text
 
 
-def test_ticket_up_defaults_to_coherent_units_and_conjunctive_auto() -> None:
+def test_ticket_up_preserves_auto_authority_boundary() -> None:
     text = skill_text(SOURCE_SKILLS, "ticket-up")
 
     assert "Manifest input defaults to one Shaped Ticket for the whole Manifest" in text
@@ -69,9 +69,30 @@ def test_ticket_up_defaults_to_coherent_units_and_conjunctive_auto() -> None:
         "only when the caller explicitly asks for delegation or parallel pickup" in text
     )
     assert "Question Ticket only when the question needs its own lifecycle" in text
-    assert "source Ticket must carry Auto" in text
-    assert "follow-up must independently pass the same grant criterion" in text
-    assert "An ungranted source can create only ungranted follow-ups" in text
+    assert "fresh human grant for Auto" in text
+    assert "person directly authoring here" in text
+    assert "source Ticket must carry Auto **and**" in text
+    assert "Merely invoking `run-ticket` manually" in text
+    assert "Shaped never implies Auto" in text
+
+
+def test_ticket_priority_uses_delay_loss_and_executor_time() -> None:
+    convention = (
+        SOURCE_SKILLS / "ticket-up" / "references" / "TICKET_CONVENTION.md"
+    ).read_text(encoding="utf-8")
+    selector = skill_text(SOURCE_SKILLS, "next-ticket")
+    sweep = skill_text(SOURCE_SKILLS, "sweep-tickets")
+
+    assert "expected project value lost while work waits" in convention
+    assert "urgent → unblocking → impact → cheap" not in convention
+    assert "executor-native serial time" in convention
+    assert "compare their ready Tickets together" in selector
+    assert "human-plus-AI session" in selector
+    assert "Auto alone proves authority, not that a runner exists" in selector
+    assert "Do not infer days from traditional feature size" in selector
+    assert "**Recover first.**" in sweep
+    assert "expected-delay-loss rule" in sweep
+    assert "traditional feature size" in sweep
 
 
 def test_selector_presents_without_executing() -> None:
@@ -151,3 +172,18 @@ def test_ticket_execution_skills_ship_on_every_distribution() -> None:
         assert "name: sweep-tickets" in sweep
         assert "at most one Ticket" in sweep
         assert "Recover first" in sweep
+        assert "expected-delay-loss rule" in sweep
+
+        ticket_up = skill_text(skills_root, "ticket-up")
+        assert "fresh human grant for Auto" in ticket_up
+        assert "Shaped never implies Auto" in ticket_up
+
+        selector = skill_text(skills_root, "next-ticket")
+        assert "human-plus-AI session" in selector
+        assert "Auto alone proves authority, not that a runner exists" in selector
+
+        convention = (
+            skills_root / "ticket-up" / "references" / "TICKET_CONVENTION.md"
+        ).read_text(encoding="utf-8")
+        assert "expected project value lost while work waits" in convention
+        assert "urgent → unblocking → impact → cheap" not in convention
