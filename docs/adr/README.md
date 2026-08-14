@@ -75,7 +75,7 @@
 | 2026-08-09 | [Group GitHub tickets by sub-issue membership and an effort label](20260809-group-github-tickets-by-sub-issue-membership-and-effort-label.md) | Accepted | Ticketing |
 | 2026-08-09 | [The init-context skill lives in the core plugin, not in tools](20260809-init-context-skill-lives-in-core.md) | Accepted | Repo layout |
 | 2026-08-09 | [Locate the ticket store by convention, not configuration](20260809-locate-the-ticket-store-by-convention-not-configuration.md) | Accepted | Ticketing |
-| 2026-08-09 | [next-ticket derives its pick instead of asking](20260809-next-ticket-derives-its-pick-instead-of-asking.md) | Accepted | Ticketing |
+| 2026-08-09 | [next-ticket derives its pick instead of asking](20260809-next-ticket-derives-its-pick-instead-of-asking.md) | Superseded by [20260814-ticket-selection-minimizes-delay-loss-across-available-executors](20260814-ticket-selection-minimizes-delay-loss-across-available-executors.md) | Ticketing |
 | 2026-08-10 | [Advisory gates omit by a bearer test at define time](20260810-advisory-gates-omit-by-bearer-test.md) | Accepted | define |
 | 2026-08-10 | [The Auto marker is an opt-in grant; absence fences automation off entirely](20260810-auto-is-an-opt-in-grant-to-unattended-automation.md) | Accepted — irreversible-act authority narrowed by [20260812-auto-ticket-completes-after-required-landing](20260812-auto-ticket-completes-after-required-landing.md): ordinary landing through declared repository protections is within Auto; actions requiring separate human authority remain excluded | Ticketing |
 | 2026-08-10 | [Gate altitude repairs run under advance user delegation](20260810-gate-altitude-repairs-under-advance-delegation.md) | Accepted | define / do |
@@ -88,7 +88,7 @@
 | 2026-08-11 | [A review dimension may take a defect as input, and that is what earns it a slot](20260811-a-review-dimension-may-take-a-defect-as-input.md) | Accepted | Code review |
 | 2026-08-11 | [The defect-class gate binds on accounting for the class, not on redesigning it](20260811-defect-class-gates-bind-on-accounting-not-redesign.md) | Accepted | define / do |
 | 2026-08-11 | [A ticket's type is a rollout selector, not a classification](20260811-ticket-type-is-a-rollout-selector-not-a-classification.md) | Accepted — per-Deliverable type assignment now applies only in explicit split mode after [20260812-tickets-follow-independently-schedulable-work-units](20260812-tickets-follow-independently-schedulable-work-units.md); single-valued type semantics are unchanged | Ticketing |
-| 2026-08-12 | [An Auto follow-up requires both source authority and its own grant](20260812-auto-follow-up-grant-requires-source-and-local-grant.md) | Accepted | Ticketing |
+| 2026-08-12 | [An Auto follow-up requires both source authority and its own grant](20260812-auto-follow-up-grant-requires-source-and-local-grant.md) | Superseded by [20260814-human-authored-follow-ups-may-grant-auto-independently](20260814-human-authored-follow-ups-may-grant-auto-independently.md) | Ticketing |
 | 2026-08-12 | [An Auto Ticket completes only after its required landing](20260812-auto-ticket-completes-after-required-landing.md) | Accepted | Ticketing |
 | 2026-08-12 | [Human assignment pauses Auto Ticket execution](20260812-human-assignment-pauses-auto-ticket-execution.md) | Accepted | Ticketing |
 | 2026-08-12 | [run-ticket owns an execution attempt, not dispatch](20260812-run-ticket-owns-attempt-not-dispatch.md) | Accepted | Ticketing |
@@ -99,3 +99,5 @@
 | 2026-08-12 | [Tickets follow independently schedulable work units](20260812-tickets-follow-independently-schedulable-work-units.md) | Accepted | Ticketing |
 | 2026-08-12 | [Trigger adapters enforce single-flight per Ticket](20260812-trigger-adapters-enforce-per-ticket-single-flight.md) | Accepted | Ticketing |
 | 2026-08-12 | [Trigger adapters hand off exhausted runner failures](20260812-trigger-adapters-hand-off-exhausted-runner-failures.md) | Accepted | Ticketing |
+| 2026-08-14 | [Human-authored follow-ups may grant Auto independently of their source](20260814-human-authored-follow-ups-may-grant-auto-independently.md) | Accepted | Ticketing |
+| 2026-08-14 | [Ticket selection minimizes delay loss across the available executors](20260814-ticket-selection-minimizes-delay-loss-across-available-executors.md) | Accepted | Ticketing |

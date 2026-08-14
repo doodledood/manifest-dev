@@ -1,7 +1,7 @@
 # ADR: An Auto follow-up requires both source authority and its own grant
 
 ## Status
-Accepted
+Superseded by 20260814-human-authored-follow-ups-may-grant-auto-independently
 
 ## Area
 Ticketing

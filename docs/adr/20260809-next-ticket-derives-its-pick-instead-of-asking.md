@@ -1,7 +1,7 @@
 # ADR: next-ticket derives its pick instead of asking
 
 ## Status
-Accepted
+Superseded by 20260814-ticket-selection-minimizes-delay-loss-across-available-executors
 
 ## Area
 Ticketing

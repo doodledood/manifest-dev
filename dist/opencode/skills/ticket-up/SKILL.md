@@ -40,7 +40,11 @@ In explicit split mode, apply the same translation to each Deliverable and copy 
 
 For an ordinary new Ticket, grant Auto only when neither doing the work nor judging it done needs human knowledge, taste, or authority, and the author chooses to trust unattended execution. When in doubt, withhold.
 
-For a follow-up, the grant is conjunctive: the source Ticket must carry Auto **and** the follow-up must independently pass the same grant criterion. An ungranted source can create only ungranted follow-ups, including when a person manually ran it through `run-ticket`. Never copy Auto from the source without the independent check.
+For a follow-up, first establish whether this `ticket-up` authoring boundary has a fresh human grant for Auto on the new Ticket. A person directly authoring here, or explicitly reviewing and authorizing Auto here, may grant the follow-up independently of its source after the follow-up passes the normal Auto criterion. The person still chooses whether to trust unattended execution; Shaped never implies Auto.
+
+Without that fresh human grant, preserve authority rather than widening it: the source Ticket must carry Auto **and** the follow-up must independently pass the same grant criterion. An unattended or nested authoring step cannot turn an ungranted source into future unattended work. Merely invoking `run-ticket` manually on an ungranted source is not a fresh grant for follow-ups discovered inside that run; a person must separately authorize Auto at this authoring boundary.
+
+Never copy Auto from the source without the independent check.
 
 ## Type and dependencies
 
@@ -69,4 +73,4 @@ Present what was authored in a short table: ID, title, kind, type, Auto, and dep
 - A gate may name evaluator machinery a stranger cannot use. Translate its substance into observable done prose.
 - A list of small questions is not automatically a list of Question Tickets. The lifecycle test comes first.
 - A discovered defect inside the current definition of done is unfinished source work, not a follow-up that makes the source closable.
-- A follow-up from an Auto source still needs its own grant decision; source Auto is necessary, never sufficient.
+- A follow-up still needs its own grant decision. Source Auto is required unless a person grants Auto freshly at this `ticket-up` boundary.

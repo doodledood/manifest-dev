@@ -37,7 +37,9 @@ an attempt does not remove and reapply it. Open state, claim ownership, and depe
 whether a granted Ticket is runnable. A person directly invoking `run-ticket` on an ungranted
 Ticket supplies authority for that supervised run; that does not grant later unattended work.
 
-A follow-up Ticket receives Auto only when its source Ticket carries Auto and the follow-up independently passes the granting test above. Either condition failing withholds the grant. In particular, a person manually running an ungranted source Ticket cannot cause unattended follow-up work merely by discovering it.
+A follow-up authored without a fresh human Auto grant at its own `ticket-up` boundary receives Auto only when its source carries Auto and the follow-up independently passes the granting test above. This keeps unattended and nested execution from widening its own authority. A person merely invoking `run-ticket` on an ungranted source does not change that rule for follow-ups discovered inside the run.
+
+A person directly authoring the follow-up through `ticket-up`, or explicitly reviewing and authorizing Auto at that authoring boundary, may grant the new Ticket independently of source Auto after it passes the same granting test. The person still chooses whether to grant; Shaped never implies Auto.
 
 ## Type
 
@@ -76,7 +78,7 @@ A question ticket carries Title, the question itself, why it matters, what's alr
 
 Each effort's store carries one small front file (in a file store, a README beside the tickets; in a tracker, the tracking item's body) holding only content that doesn't change as tickets close:
 
-- **Destination** — what reaching the end of this effort looks like, in a line or two. Pickers orient to it; "impact" in the priority rule is measured against it.
+- **Destination** — what reaching the end of this effort looks like, in a line or two. Pickers use it to judge what project value is delayed when a Ticket waits.
 - **Priority rule override**, when the effort ranks differently than the default below.
 - **Context pointers** — the key decision records, and where the effort's reads or logs live, so a cold picker gets effort-level orientation before opening a ticket.
 
@@ -104,12 +106,15 @@ configured person. Those are runner responsibilities, not Ticket fields. See
 
 ## Priority
 
-"What should I work on?" reads the ready tickets in this order (a store may state a different rule; the stated rule wins):
+A store may state a different priority rule; that explicit rule wins. Otherwise choose among ready Tickets by **expected project value lost while work waits**, not by a fixed urgency, unblocking, impact, or cheapness ladder.
 
-1. **Urgent** — a real expiring window. Rare; jumps the queue.
-2. **Unblocking** — frees the most other tickets.
-3. **Impact** — biggest lever toward the effort's goal.
-4. **Cheap** — effort as tiebreak among equals.
+Compare the strongest candidates in the orderings that actually compete. If A goes first, ask what project value is lost while B waits for the constrained resource A occupies; reverse the comparison for B first. Prefer the ordering with lower expected loss. Count material consequences of delay: ongoing or expiring harm, durable benefit that starts later, downstream work whose earliest useful start actually moves, and information whose later arrival worsens or delays a material decision. These are causes of the same loss, not independent scores to add twice.
+
+Use current **executor-native serial time** only when duration materially changes what another Ticket loses by waiting. For a human-facing picker, the constrained time is interactive human attention until the human-dependent uncertainty or authority is resolved; routine implementation an AI can continue afterward is not human duration. For unattended work, use current end-to-end agent execution and landing time. Do not infer days from traditional feature size or apply a fixed agent-speed multiplier. When plausible runtimes are all short relative to the value consequences, treat them as effectively equal; shorter work is then only a tiebreak.
+
+Unless the conversation explicitly scopes an effort or the store declares an intentional effort order, a human-facing picker compares ready Tickets across efforts and reads the relevant effort destinations to judge the consequences. Continuity with an effort already in flight is only a tiebreak. Auto is not intrinsic priority, but it can affect allocation when project context or configured automation establishes that unattended capacity is actually available soon enough to take that work; the marker alone proves authority, not that such a runner exists. Type is never a priority input.
+
+An unattended picker first applies its own eligibility boundary — including Auto and configured filters — then uses the same delay-loss rule for new work inside that set. Recovery of an interrupted owned attempt remains ahead of starting new work because it is lifecycle recovery, not a fresh backlog choice.
 
 ## Dependencies and parallelism
 
