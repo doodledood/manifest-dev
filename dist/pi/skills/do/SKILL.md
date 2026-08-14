@@ -40,22 +40,22 @@ Evaluate gates through the selected reference's execution envelope. Every gate t
 
 Every Acceptance Criterion and Global Invariant declares its kind. A **Deterministic Gate** (`deterministic`) takes its verdict from a command or check returning the same outcome for the same artifact state. A **Judgment Gate** (`judgment`) takes its verdict from a model's judgment over an open finding space, where a fresh evaluation surfaces findings the previous one did not even on an unchanged subject. A gate that mixes the two — a command whose result is one input to a judgment — is a Judgment Gate; whatever a gate's kind, a body naming explicit commands always runs those commands in full, since a command's cost is small and its answer is the evidence.
 
-### How much checking to buy
+### Verification settings
 
-Two settings trade cost and time for verification quality; *Running gate evaluations* above resolves both and fixes them for the run.
+Two run-level settings; *Running gate evaluations* above resolves both and fixes them for the run. Guidance on choosing between their values is user-facing and lives in the README — the selection is made before launch, and the run works under it as given.
 
 **Who checks** — `--verification`:
 
-- `per-gate` *(default)* — a fresh independent verifier execution per gate, run concurrently. Each gate gets a whole context and a whole reader to itself, so a round costs about one gate's wall clock rather than the set's, and nothing one gate read weighs on another's judgment.
-- `consolidated` — one independent verifier execution works through the outstanding gates in sequence, in a single shared context. It pays the orientation once rather than per gate, but every gate it finishes stays in that context for the gates after it, so both elapsed time and tokens grow with the size of the set. Choose it where the gates are many and each is slight — mostly commands and quick checks — or where launching many executions at once is capped or costly.
-- `self` — the executor evaluates its own work. Cheapest and fastest, and it is marking its own homework.
+- `per-gate` *(default)* — a fresh verifier execution per eligible gate, run concurrently, each in its own context.
+- `consolidated` — one verifier execution works through the outstanding gates in sequence, in a single shared context.
+- `self` — the executor evaluates its own work; no verifier executions launch.
 
 **How much a Judgment Gate re-reads** — `--exhaustive-verification`:
 
-- *off (default)* — the **Ratchet**. A Judgment Gate reads the full change on its first evaluation; every later one judges two things only — whether the findings it last reported were repaired, and whether the delta since introduced anything its criterion catches. It still reads as widely as it needs to understand what it is looking at, and reports only within that scope. Fewer rounds, and the run ends on repaired findings rather than on a re-read that happened to come up empty. The cost is real and deliberate: a defect sitting in ground already judged once stays missed.
-- *on* — every Judgment Gate re-reads the full change whenever it is eligible. More rounds, and a better chance of catching what the first read walked past. Load `references/exhaustive-verification.md` when this is passed, and otherwise leave it unloaded.
+- *off (default)* — the **Ratchet**. A Judgment Gate reads the full change on its first evaluation; every later one judges two things only — whether the findings it last reported were repaired, and whether the delta since introduced anything its criterion catches. It still reads as widely as it needs to understand what it is looking at, and reports only within that scope.
+- *on* — every Judgment Gate re-reads the full change whenever it is eligible. Load `references/exhaustive-verification.md` when this is passed, and otherwise leave it unloaded.
 
-A **Deterministic Gate is outside the second setting**: the same state returns the same verdict, so it re-runs freely and in full whenever it is eligible. Narrowing what it reads buys nothing.
+A **Deterministic Gate is outside the second setting**: the same state returns the same verdict, so it re-runs freely and in full whenever it is eligible.
 
 **Spend an expensive evaluation on a state you expect to hold.** Where re-running a gate costs far more than a round of repairs — a long end-to-end suite, a deploy-dependent check — evaluate it once the gates whose failures would move its subject are settled, rather than on a state a repair is about to change. A gate whose cost is not obvious from reading it says so in its own body, which is what lets this be judged rather than guessed. The **whole-change quality sweep** is the standing case: the advisory review dimensions range over everything the run touched, so their one full look is worth spending after the run's mechanical and defect-finding gates hold a fresh PASS. Sweep findings bind like any gate's — repair them in the run rather than handing them to the user, and let the repairs re-verify through the gates whose subjects they touched.
 
