@@ -1,9 +1,6 @@
 ---
 name: just-do
-description: 'Goal-based Manifest executor. Reads a Manifest and pursues it with
-full autonomy: reach a state where every Acceptance Criterion and Global
-Invariant holds, deciding for itself how to get there. Use when the user asks
-to just do a manifest, run it goal-based, or execute with minimal process.'
+description: 'Goal-based Manifest executor. Reads a Manifest and pursues it with full autonomy: reach a state where every Acceptance Criterion and Global Invariant holds, deciding for itself how to get there. Use when the user asks to just do a manifest, run it goal-based, or execute with minimal process.'
 argument-hint: '<manifest-path>'
 user-invocable: true
 ---
