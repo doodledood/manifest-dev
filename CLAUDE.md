@@ -53,7 +53,7 @@ Read before building plugins:
 - `claude-plugins/` - Individual plugins, each with `.claude-plugin/plugin.json`
 - `pyproject.toml` - Python tooling config (ruff, black, mypy)
 
-**Symlink note**: `.claude/` skills/agents are symlinked to their `claude-plugins/manifest-dev/` counterparts for local development on environments where plugins aren't supported yet. When modifying plugin components, **always edit the `claude-plugins/` version** — `.claude/` resolves through the symlink to the same file. `dist/` is different — those are real per-CLI copies, not links, and each carries a transform, so a plugin change is not propagated until they are regenerated or edited in place. (Previous revisions used hardlinks; Edit's atomic-replace routinely broke them, so the convention is symlinks now. New agents/skills should be added with `ln -s ../../claude-plugins/manifest-dev/agents/<name>.md .claude/agents/<name>.md`.)
+**Symlink note**: `.claude/` skills/agents are symlinked to their `claude-plugins/manifest-dev/` counterparts for local development on environments where plugins aren't supported yet. When modifying plugin components, **always edit the `claude-plugins/` version** — `.claude/` resolves through the symlink to the same file. `dist/` is different — those are real per-CLI copies, not links, and each carries a transform, so a plugin change is not propagated until they are regenerated or edited in place. (Previous revisions used hardlinks; Edit's atomic-replace routinely broke them, so the convention is symlinks now. New agents/skills should be added with `ln -s ../../claude-plugins/manifest-dev/agents/<name>.md .claude/agents/<name>.md`.) `tests/test_local_skill_symlinks.py` fails a plugin skill with no `.claude/skills` link, a `.claude/skills` entry with no `.agents/skills` link, an `.agents/skills` entry whose counterpart is gone, and any link pointing at nothing.
 
 **Local Claude skills → `.agents/skills/`**: `.agents/skills/` mirrors `.claude/skills/` for the Agent Skills Open Standard (Codex CLI, etc.). **Whenever you add a new skill under `.claude/skills/`, also create the matching symlink in `.agents/skills/`**:
 
@@ -86,6 +86,10 @@ description: '...'         # Required: max 1024 chars, drives auto-discovery
 user-invocable: true       # Optional: show in slash command menu (default: true)
 ---
 ```
+
+**Keep `description` on one physical line**, however long it gets. Claude Code reads frontmatter leniently; Pi parses it with a strict YAML parser and drops the skill when the value does not parse — a startup warning names the file, but the skill is simply absent, and a Pi prompt template with the same fault is dropped with no diagnostic at all. A quoted value wrapped across lines parses only if its continuation lines are indented past the key, so a hard-wrapped description looks fine locally and disappears elsewhere, once per distribution copy. Two more shapes break the same way: an apostrophe inside a single-quoted value ends it early (double it — `''`), and in an unquoted value `: ` is read as a nested mapping while ` #` opens a comment that silently truncates the value.
+
+`tests/test_skill_frontmatter.py` fails any shipped `SKILL.md` — and any Pi prompt template, which loads through the same parser — carrying one of these. It enforces the convention rather than the YAML spec: a validly indented continuation and a block scalar both parse everywhere and are still refused, because one physical line is the rule. It also takes a closed key vocabulary — `name`, `description`, `user-invocable`, `argument-hint`, `metadata` — since an unrecognised key at column 0 is nearly always a wrapped value; adding a frontmatter key a CLI supports means adding it to `KNOWN_KEYS` in the same change.
 
 ### Tool Definitions
 

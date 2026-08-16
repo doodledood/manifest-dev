@@ -1,9 +1,6 @@
 ---
 name: just-auto
-description: 'Goal-based autonomous chain: figures out the task, encodes a
-Manifest, and pursues it end-to-end with full autonomy and minimal process.
-Use when the user asks to just build it, just auto it, run end-to-end
-goal-based, or go from idea to done without approval gates.'
+description: 'Goal-based autonomous chain: figures out the task, encodes a Manifest, and pursues it end-to-end with full autonomy and minimal process. Use when the user asks to just build it, just auto it, run end-to-end goal-based, or go from idea to done without approval gates.'
 argument-hint: '<task>'
 user-invocable: true
 ---
