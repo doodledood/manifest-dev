@@ -7,7 +7,10 @@ skill leaves a startup warning behind, a prompt template leaves nothing at all.
 
 The rules here are the shape a one-line top-level mapping must have, not a full
 parse (no YAML library is available: the suite is standard-library only, since the
-project declares no dependencies). They cover the ways a `description` has actually
+project declares no dependencies). Do not "fix" that by adding one: PyYAML and
+js-yaml both *accept* the wrapped value that broke Pi, so a lenient parser here
+would retire the guard while looking more rigorous than it is. The oracle these
+rules were checked against is the `yaml` package Pi itself bundles. They cover the ways a `description` has actually
 broken or can plausibly break: a value wrapped over several physical lines, a quote
 that closes early or never, and a plain value carrying `: `, which YAML reads as
 structure rather than text, or ` #`, which it reads as a comment and truncates at.
