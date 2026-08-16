@@ -1,7 +1,7 @@
 # ADR: Judgment Gates re-verify by Ratchet, not by re-sampling
 
 ## Status
-Accepted
+Accepted — narrowed by 20260816-an-invocation-is-the-signal-to-review-again, which keeps review-pr's ratchet at the pull request boundary on loop wakes but not on a fresh invocation
 
 ## Area
 define / do
