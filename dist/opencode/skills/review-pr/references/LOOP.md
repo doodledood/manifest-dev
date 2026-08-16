@@ -8,6 +8,8 @@ Bypass interactive approval prompts. Run one full one-shot pass immediately: adv
 
 After each pass, wait between checks with escalating intervals (~15 min -> 2 hours). If the harness exposes PR activity wakeups, subscribe so a commit push or thread reply resolves the wait early; otherwise use blocking `sleep`. Each wake runs the SKILL.md one-shot pass from scratch, deriving current head, our prior reviewed head, pending threads, and author replies from GitHub state.
 
+A wake is where the unchanged-head skip applies, in either mode: after thread advancement, skip re-verifying the code — the reviewer fleet, or the manifest contract — when the head has not moved since our latest review. SKILL.md's *an invocation always verifies the change* covers the invocation's own first pass, not the wakes after it — carrying it into every wake would make the Success Path below unreachable and re-review one commit for the loop's full 24 hours.
+
 ## Success Path
 
 Exit when a one-shot pass reports:

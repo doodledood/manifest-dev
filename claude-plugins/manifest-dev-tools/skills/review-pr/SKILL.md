@@ -16,10 +16,14 @@ High-signal autonomous PR review posted under your account. A review you'd put y
 Every invocation, including non-`--loop`, performs one complete PR-state advance:
 
 1. **Advance our existing threads.** For every unresolved thread we authored or replied to, run the per-comment verifier below. Post needed thread replies, resolve terminal threads, and leave genuinely pending threads open.
-2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range — determine that range from durable GitHub state: if we have a prior review on this PR, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. In **both** modes, the judgment pass (below) runs in parallel with the fleet/contract verification, gated to once per PR. In either mode, if the head is unchanged from our latest review, skip re-verifying the code only after thread advancement has run.
+2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range — determine that range from durable GitHub state: if we have a prior review on this PR and the head has moved since, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. In **both** modes, the judgment pass (below) runs in parallel with the fleet/contract verification, gated to once per PR.
 3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments. End with the cycle summary below.
 
 The one-shot pass is CI-shaped: it must make useful progress from only GitHub state and the current checkout. Do not rely on session memory such as `last-reviewed-sha`; derive it from our prior review/comment metadata and the PR history each run.
+
+**An invocation always verifies the change.** Choosing to run review-pr again is the operator's call — often a risky change worth a second read, under a different model — so a fresh invocation reviews the head even when we already reviewed it and nothing has moved since. There is nothing to pass for this. The review range is then the full PR diff, and the prune below is what keeps the pass to whatever it has new to add: a second read that simply concurs posts nothing.
+
+The unchanged-head skip survives in one place only — a `--loop` wake after that invocation's first pass (`references/LOOP.md`). There nobody re-decided anything, and re-reviewing one commit on every wake is the nag the check exists to prevent. Where a PR carries no prior review of ours, the pass is already a full review of the full diff and nothing about it differs.
 
 ## Per-Comment Verifier
 
@@ -60,7 +64,7 @@ The subagent:
 - **Prunes** any finding already covered on the PR: any prior comment (ours from a previous run, or another reviewer's), any concession or rebuttal on an existing thread, anything contradicted by the manifest, a commit message, or the PR description, or piling on an active thread.
 - **Dedupes** across reviewers: merge near-duplicates into one comment when they raise the same underlying concern.
 - **Premise-subsumption.** When a judgment finding questions the necessity or existence of a surface, subordinate the fleet's findings on that same surface under the premise question — drop the low-value ones, and fold any that survive beneath it ("if you keep X: also a, b") rather than listing them as independent peers. Never hard-delete a severe independent defect: the judgment finding is non-blocking, so a defect that matters even if the surface stays is still surfaced on its own.
-- **Bounds** surfaced findings to issues introduced or exposed by the reviewed range, unless this is the first review and the range is the full PR.
+- **Bounds** surfaced findings to issues introduced or exposed by the reviewed range, unless the range is the full PR diff — which covers a first review and a repeat review of an unchanged head alike. This keys on the range, never on whether we have reviewed before: bounding a repeat pass to the delta since our last review would have it read the whole PR and then surface nothing.
 - **Anchors** each surviving finding to exactly one of inline file:line (default), file-level (whole-file concern), or PR-level (cross-cutting, no specific anchor).
 - **Rewrites** every comment body and any drafted reply in the voice profile below.
 - **Omits a summary header by default** — adds one only when there's a real overall take the per-comment list misses (one short sentence, voice-compliant, no boilerplate).
@@ -86,6 +90,7 @@ Target voice: *"Empty input skips the null check — `if (input?.value)` at `par
 **Cycle summary.** Every one-shot pass ends with an operator-facing summary, whether it posted comments, resolved threads, asked for approval, or found nothing to do. Keep it compact but complete:
 
 - Reviewed range/head and concrete PR actions taken: new review comment count and anchors, thread replies, resolved threads, approval prompt/action, or no PR action.
+- Whether this pass re-reviewed a head we had already reviewed or reviewed a new delta, and on a re-review, the split between findings newly surfaced and findings dropped as already covered — the only thing distinguishing a second read that agreed from one that never happened.
 - Per-comment verifier subagents: one line per thread naming the anchor, disposition, and the verifier's short reason.
 - Reviewer fleet subagents (no-manifest mode): one line per spawned reviewer naming its actionable findings count and the substance of what it found, or `none`. In manifest mode, report per-criterion verifier results instead, per `references/MANIFEST_MODE.md`.
 - Holistic coherence pass (no-manifest mode): surviving comments, dedupes/merges, pruned findings with dominant reasons, range-bounding decisions, summary header if any, and truncation notes.
@@ -101,6 +106,8 @@ The cycle summary is for the operator transcript or run log only. Do not paste i
 - Never forward PR conversation or bundle context to a reviewer agent. Only the holistic pass may see that context.
 - Never re-raise a finding the holistic pass pruned in this run.
 - Never skip thread advancement because the code review range is empty; thread state can change without a new commit.
+- Never skip verification on a fresh invocation because the head is unchanged; that skip belongs to `--loop` wakes alone.
+- Never relax the prune, the dedupe, or manifest mode's content fingerprint to make a re-review produce output. They are what make a second read the delta rather than a duplicate wall.
 - In manifest mode (`--manifest`), follow `references/MANIFEST_MODE.md` for the verification, posting, and fingerprinting rules and its mode-specific gotchas.
 
 **`--loop`.** Load `references/LOOP.md`.
