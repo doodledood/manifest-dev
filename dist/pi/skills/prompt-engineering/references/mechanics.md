@@ -18,7 +18,7 @@ tools: …                    # optional; omit to inherit the invoker's tools
 
 Omit `tools` unless the skill needs a deliberately restricted set. Inheriting is almost always right.
 
-**The description is the skill's pointer** and is loaded at all times, so it earns the hardest pruning in the file. Write what the skill does, when to reach for it, and the words a user actually says, as prose — a trailing keyword list is not prose. Lead with the triggering word, and give one trigger per genuinely distinct case rather than several names for one.
+**The description is the skill's pointer**, resident at all times — so the pointer rules apply and it earns the hardest pruning in the file. Its content is what the skill does, when to reach for it, and the words a user actually says.
 
 **Naming** is kebab-case. A skill that performs an action takes a verb phrase (`review-code`, `check-pr`); one that is reference or teaching may take a noun (`prompt-engineering`, `claude-api`).
 

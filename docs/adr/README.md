@@ -103,3 +103,4 @@
 | 2026-08-14 | [Run-visible prompt surfaces carry no comparative framing about options the run did not select](20260814-run-visible-surfaces-carry-no-cross-option-framing.md) | Accepted | Prompt architecture |
 | 2026-08-14 | [Ticket selection minimizes delay loss across the available executors](20260814-ticket-selection-minimizes-delay-loss-across-available-executors.md) | Accepted | Ticketing |
 | 2026-08-16 | [An invocation is the signal to review a head again](20260816-an-invocation-is-the-signal-to-review-again.md) | Accepted | PR lifecycle |
+| 2026-08-17 | [A prompt line earns its place by provenance, not by a counterfactual judgment](20260817-prompt-lines-earn-their-place-by-provenance.md) | Accepted | Prompt architecture |

@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-description: 'Create, update, review, or discuss an LLM prompt — a system prompt, a skill, or an agent. State the goal, let the model supply the rest, and keep only the lines it could not reach on its own. Use when writing or improving a prompt, discussing a skill or agent, diagnosing prompt failures, or when the user says a prompt needs work.'
+description: 'Create, update, review, or discuss an LLM prompt — a system prompt, a skill, or an agent. Use when writing or improving a prompt, discussing a skill or agent, diagnosing prompt failures, or when the user says a prompt needs work.'
 argument-hint: '<request>'
 user-invocable: true
 ---
@@ -16,9 +16,13 @@ Ask this before asking whether the line helps. A line can be true, relevant, and
 - **It counteracts a default you have watched the model take** — keep, when the default is observed rather than feared.
 - **You worked it out from material the run will also read** — cut. A conclusion available in the corpus is one the run reaches itself, so writing it down buys nothing and spends load on every invocation.
 
-That last class is the one that feels most earned, because you did the work to reach it, and it is where over-specification comes from. Its tell is a line you could justify from the same sources the run gets.
+That last class is the one that feels most earned, because you did the work to reach it, and it is where over-specification comes from. Two tells: a line you could justify from the same sources the run gets, and a sentence arguing for the instruction above it — an instruction does not need advocacy, and the run is not persuaded by it.
 
-The older question — *would the model do this without the line?* — asks for a prediction about the model's own counterfactual behaviour, which is not reliably answerable from the inside. Ask it second, of what provenance already admitted.
+**A choice the request left open belongs to whoever made the request.** Some of what you would add is not padding but a decision — what ranks one candidate over another, an exception to a rule they gave you, a deliverable beyond what they asked for. It reads as thoroughness and it commits them to something they never chose, under their name, in a file they will quote back later. Ask where the answer would change the work; leave it out where it would not.
+
+**A finished prompt looks thinner than you expect it to, and that is the result rather than a warning sign.** Two rulings and a goal make a short document; the pull at that point is to fill it out — a section on how to rank, a definition of the term in its own name, a third source of evidence nobody asked for — and everything reached for that way comes from the class above. When it reads as too slight, check the goal is stated and the rulings are in it, then ship it.
+
+The older question — *would the model do this without the line?* — asks for a prediction about the model's own counterfactual behaviour, which is not reliably answerable from the inside. Ask it second, of what provenance already admitted: it can still cut a line provenance allowed, never keep one provenance rejected.
 
 When two people disagree about whether a line is doing work, the argument is about the model's default, so settle it by running the document with the line removed and comparing. That is a tiebreak available when it is worth the trouble, not a step every line has to pass.
 
@@ -71,7 +75,6 @@ A line can earn its place and still break where the prompt actually runs. Check 
 - Naming a harness-bound primitive — a specific tool, scheduler, or CLI — where the capability should be stated in plain language and the model left to find it.
 - A qualifier that quietly excludes cases the principle covers (*under mode X*, *by another reviewer*).
 - A mechanism stated as the only path — a fixed sequence, a hardcoded number — where the principle should stand and the number be a default.
-- A description ending in a keyword list rather than prose naming what the thing does and when to reach for it.
 
 ## Updating
 
@@ -82,5 +85,5 @@ Guard against building a wall around a single observed failure. One instance is 
 ## References
 
 - `references/mechanics.md` — the shapes: a skill's frontmatter, naming and layout; an agent's isolation and capability declarations; a knowledge skill whose gap is data rather than behaviour.
-- `references/system-prompts.md` — a system prompt that ships in a deployment loop, and the ready-made blocks for one: verification passes, tool-call budgets, ambiguity handling, output contracts, high-risk self-checks. For that artifact only — inserting prose written for a deployment loop is how a skill becomes long.
+- `references/system-prompts.md` — a system prompt that ships in a deployment loop, and the ready-made blocks for one: verification passes, tool-call budgets, ambiguity handling, output contracts, high-risk self-checks. For that artifact only.
 - `references/metaprompting.md` — diagnosing a failing prompt against logged traces.
