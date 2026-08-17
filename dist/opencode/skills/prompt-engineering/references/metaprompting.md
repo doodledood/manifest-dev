@@ -119,7 +119,7 @@ After applying the patch, re-run the failing queries. Repeat the cycle until the
 
 **Too many failure types in one metaprompt.** When the failure traces span unrelated modes (output too long + tool over-eagerness + unit confusion + hallucinated facts), the diagnosis call struggles to connect threads and the patch produces shallow fixes. Group similar failures and run the cycle separately for each. One cycle per coherent failure mode.
 
-**Accepting overly specific patch recommendations.** A single patch call may produce edits that fix the specific traces you fed it but generalize poorly — the model overfits. Run the patch call multiple times and look for changes that appear across runs; those are cross-cutting. Treat single-run-only suggestions as candidates for a smaller targeted patch rather than the main fix. This is also where the bidirectional update discipline matters (see `review.md`) — don't add a new wall around a single observed failure; check whether an existing line should be replaced instead.
+**Accepting overly specific patch recommendations.** A single patch call may produce edits that fix the specific traces you fed it but generalize poorly — the model overfits. Run the patch call multiple times and look for changes that appear across runs; those are cross-cutting. Treat single-run-only suggestions as candidates for a smaller targeted patch rather than the main fix. This is where `SKILL.md`'s updating discipline bites: check whether an existing line should be replaced rather than adding one beside it.
 
 ## When to add evals
 

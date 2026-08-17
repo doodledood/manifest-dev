@@ -23,7 +23,7 @@ Passing the gate makes a candidate eligible, not offered — an offer must also 
 
 ## Drafting (boundary form)
 
-A taste entry is a prompt line that will ride in every future session, so draft it as one: invoke the prompt-engineering skill if it is available; otherwise apply its core discipline inline — keep only what closes a real gap in natural model behavior, and check the line holds at the edges. Boundary form is required:
+A taste entry is a prompt line that will ride in every future session, so draft it as one: invoke the prompt-engineering skill if it is available; otherwise apply its core discipline inline — keep the line only where it carries something the model would not reach on its own, and check it holds at the edges. Boundary form is required:
 
 - **Preference** — the lean, stated plainly.
 - **Rationale** — why, so future sessions can weigh it rather than obey it.

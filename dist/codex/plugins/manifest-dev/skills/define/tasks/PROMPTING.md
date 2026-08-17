@@ -37,14 +37,13 @@ When the task involves creating or updating a skill, also apply:
 |------|-----------|
 | Folder architecture | Skill is a directory with SKILL.md + appropriate companions (references, assets, scripts) — not a standalone file |
 | Progressive disclosure | Domain knowledge and reference data in companion files, not front-loaded into SKILL.md |
-| Gotchas section | Contains observed failure modes — specific, actionable, grounded in real behavior (not theoretical) |
 | Description as activation prose | Description field naturally explains what the skill does and when it should activate; no appended keyword lists |
+| Provenance | Every line traces to a user ruling, to knowledge outside what the run will read, or to an observed model default it counteracts — not to the author's own reading of material the run also gets |
 
 ## Defaults
 
 *Domain best practices for this task type.*
 
-- **Identify skill type** — Determine which category the skill falls into (Library/API, Verification, Data, Business Process, Scaffolding, Code Quality, CI/CD, Runbook, Infra Ops) and match architecture to its core pattern
 - **Assess config needs** — If a skill requires configuration (IDs, names, preferences), persist it at a fixed path in the project rather than inside the skill directory, and read it instead of re-asking each session
 - **High-signal changes only** (updates) — Every change must address a real failure mode or materially improve clarity. Don't change for the sake of change. Don't overcorrect — one edge case doesn't warrant restructuring
 - **Probe for memento needs** — Multi-phase prompts that accumulate findings need externalized state; probe: does this prompt span multiple steps?
