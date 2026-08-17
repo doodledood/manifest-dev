@@ -8,6 +8,8 @@ Review LLM prompts. Report findings without modifying files — this skill diagn
 
 **First**: invoke the prompt-engineering skill to load the principles. Evaluate the prompt against them.
 
+The provenance question leads: for each line, where did it come from — a user ruling, knowledge outside what the run will read, or a default it counteracts? A line the author could have worked out from material the run also gets is the finding. Judge a prompt by what its lines do, never by sections it lacks: a short prompt with nothing spare is the target, not a deficient one.
+
 **Input**: if no prompt is given (file path or inline text), ask before analyzing — don't assume.
 
 Report format:
@@ -26,7 +28,7 @@ Report format:
 
 **Severity**:
 - **High** — the prompt actively misbehaves or breaks a contract. Examples: contradiction between two rules that can't both hold; missing the goal entirely; absolute used on a judgment call that observably misfires; the agent declares a need for a tool it doesn't have, or omits a tool it actually uses.
-- **Medium** — the prompt works but drifts toward known failure modes. Examples: vague directive that produces inconsistent behavior across runs; restated model default adding noise the model has to wade through; missing a gap-closer that the discipline says should be there; arbitrary numbers without a rubric; boundary failures — naming a harness-bound primitive, a rule-scope qualifier that silently excludes valid cases, mechanism stated as the only path, or one principle split across multiple places.
+- **Medium** — the prompt works but drifts toward known failure modes. Examples: vague directive that produces inconsistent behavior across runs; restated model default adding noise the model has to wade through; a line whose only provenance is the author's own reading; a real gap left unclosed; arbitrary numbers without a rubric; boundary failures — naming a harness-bound primitive, a rule-scope qualifier that silently excludes valid cases, mechanism stated as the only path, or one principle split across multiple places.
 - **Low** — minor friction with no functional impact. Examples: duplication that doesn't change behavior; awkward phrasing where the meaning is still unambiguous; stylistic-only cleanup.
 
 **Tag** (parsed as control flow by `/auto-optimize-prompt` — do not rename or repurpose):

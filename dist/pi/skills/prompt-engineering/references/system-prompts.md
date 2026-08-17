@@ -1,37 +1,71 @@
-# Writing a system prompt
+# System prompts
 
-A system prompt runs in a deployment loop — it sits in front of every turn for an assistant or agent in production. The gap it closes is *the entire posture* of the assistant: who it is, what it's trying to do, how it stops, what it refuses, what shape its output takes.
+For a prompt that ships in a deployment loop — sitting in front of every turn of a production assistant or agent. The gap it closes is the whole posture: who the model is, what it is trying to do, how it stops, what it refuses, what its output looks like.
 
-For a single-purpose system prompt with one Role and one Goal, the section template below is a useful frame. For multi-phase workflows, skills with subdomains, or instructional documents, organize by theme or phase instead — but every applicable section below should be answerable on a read.
+The blocks at the bottom are written for that artifact. They are prose to adapt into a deployment prompt, and dropping them into a skill is how a skill becomes long.
 
-## Section template
+## Sections
+
+For a single-purpose prompt with one role and one goal, this frame is useful. Multi-phase work organizes by phase instead — but each applicable section should still be answerable on a read.
 
 | Section | What goes here |
 |---------|----------------|
-| **Role** | Identity and stance — who the model is, what context it operates in, what it's responsible for. One or two sentences. |
-| **Personality** | Voice, tone, formality, warmth, directness. Skip when the prompt is a worker, pipeline, transformation, extraction, or any non-user-facing task. Personality is for user-facing surfaces only. |
-| **Goal** | The user-visible outcome the run produces. State the destination, not the path. |
-| **Success criteria** | What must be true before the final answer. Include the **degradation paths** — when to **retry** (transient failure), **fallback** (alternative method), **abstain** (refuse with reason), **ask** (for the smallest missing field). Naming the four prevents silent loops and silent guessing. |
-| **Constraints** | Rules that must hold throughout the run — policy, safety, business, evidence, side-effect limits. Reserve absolutes (MUST / NEVER) for true invariants; for judgment calls, use decision rules (`see patterns.md`). When multiple non-invariant rules apply, mark priority (MUST > SHOULD > PREFER). |
-| **Output** | Format, length, audience, structure. Be specific only where it changes behavior — don't over-prescribe shape the model already gets right from Goal. |
-| **Stop rules** | Loop control: when to stop pursuing more information and answer with what you have. Distinct from Success (target state) and degradation (non-success behavior). |
+| **Role** | Identity and stance — who the model is, what it is responsible for. A sentence or two. |
+| **Personality** | Voice, tone, formality, directness. User-facing surfaces only; skip it for workers, pipelines, and extraction. |
+| **Goal** | The user-visible outcome. The destination, not the path. |
+| **Success criteria** | What must be true before the final answer — including the degradation paths: when to **retry** (transient failure), **fall back** (another method), **abstain** (refuse, with the reason), **ask** (for the smallest missing field). Naming all four is what prevents silent loops and silent guessing. |
+| **Constraints** | What holds throughout — policy, safety, evidence, side-effect limits. Mark priority when several non-invariant rules apply. |
+| **Output** | Format, length, audience, structure — specified only where it changes behaviour. |
+| **Stop rules** | When to stop gathering and answer with what you have. |
 
-## Success vs Constraints vs Stop rules
+Three of those are routinely conflated. For a retrieval agent: success is *the answer addresses every part of the question*; a constraint is *ground every factual claim in retrieved content*; a stop rule is *when one more search would not change the answer, write*. Conflating success with stop gives over-search or premature answers; conflating constraints with success buries the target inside hard rules.
 
-Three different jobs that authors frequently conflate. For a retrieval agent:
+Constraints bound the path, not the destination — *don't fail to answer* restates the goal negatively and bounds nothing. The test: would it still apply if the goal changed?
 
-- **Success criteria**: *"answer addresses every part of the asked question"* — the target state.
-- **Constraints**: *"ground every factual claim in retrieved content; never invent citations"* — rules that hold throughout.
-- **Stop rules**: *"when one more search would not change the answer, write"* — the loop-exit rule.
+Add a section only where its gap is real. A simple prompt with one goal and no edge cases may be a role and a goal sentence and nothing else.
 
-Conflating Success and Stop → over-search or premature stop. Conflating Constraints and Success → target buried inside hard rules. Conflating Constraints and Stop → permanent rule turned into a one-shot exit.
+## Blocks
 
-Constraints bound the path, not the destination. *"Don't fail to answer"* just restates the goal negatively — adds no boundary. Test for a real constraint: would it still apply if the goal changed? *"Never invent citations"* would (any factual task); *"don't fail to answer"* wouldn't.
+Adapt these; do not paste them. Each closes a gap that appears in deployment loops.
 
-## When to add structure
+**A verification pass before an irreversible step** — for a prompt driving commits, deletes, deploys, or evidence-grounded output where a requirement miss would do real damage:
 
-The template above is a frame for non-trivial system prompts — those with real degradation paths, real constraints, real stop conditions. A simple system prompt with one goal and no edge cases doesn't need seven sections; a Role + Goal sentence may be the whole prompt.
+```
+Before any final answer or irreversible step, check: does the output cover what
+was asked? Are factual claims grounded in tool output or supplied context rather
+than memory? Does the format match what was requested? If the next action has
+external consequences, state the action and its parameters and wait for confirmation.
 
-Add a section only when the gap it closes is real. Examples-section earns its place when output shape is non-obvious. Stop-rules section earns its place when the prompt drives a loop that can run forever. Personality section earns its place when the prompt is user-facing and the default assistant voice is wrong for the audience.
+If a check fails, revise before continuing.
+```
 
-For techniques that slot into Constraints / Success / Output / Stop (verification loops, retrieval budgets, ambiguity handling, output contracts), see `patterns.md`.
+**Narrate, execute, confirm** — for an agent mutating external state with each call, where un-narrated actions cannot be recovered:
+
+```
+Treat every state-changing call as narrate → execute → confirm. Narrate what you
+are about to do and with what inputs; confirm the outcome and what you checked.
+```
+
+**A tool-call budget** — for search and retrieval loops that over-tool or under-tool depending on phrasing:
+
+```
+Default to the smallest number of searches that answers the question. Search again
+when the results do not answer it, a required fact is missing, the user asked for
+comparison or exhaustive coverage, or a named artifact must be opened. Otherwise
+answer.
+```
+
+**An output contract** — where the consumer has real needs and *produce a good answer* yields walls of text. Name the audience and what they already know, the length envelope, and the ordering (conclusion first, caveats last). For editing tasks, state the preservation posture: keep the original's length, structure and voice; improve clarity and correctness; add no new claims or sections.
+
+**Ambiguity handling** — where free-form input may be underspecified and silently picking one reading is the worst outcome:
+
+```
+When the request is ambiguous: ask the one or two precise questions that resolve it,
+when the missing information would change the answer or the action. Otherwise state
+the most likely reading with its assumptions labelled, and answer that.
+
+When facts may have changed and no tool can check, answer in general terms and say
+so. Invent no figures, dates, or sources.
+```
+
+**A high-risk self-check** — for legal, financial, medical, compliance or safety contexts, where an overstated claim causes real harm. Scan the draft for numbers not grounded in the provided context, assumptions the reader may not share, and absolute language; qualify them, state the assumptions, and replace an ungrounded claim with what would need to be checked.
