@@ -26,7 +26,7 @@ The counterfactual question survives in second place, applied to what provenance
 
 **Two failure modes get named because they survive the rules above.** A draft that traces cleanly still feels thin, and the pull is to fill it out with a ranking section, a definition, an extra source — so the skill states that a thin result is the correct outcome. And some additions are not padding but decisions belonging to whoever made the request; those are asked about, not settled in the file under their name.
 
-Structurally: `skills.md`, `agents.md` and `knowledge-skills.md` merge into one `mechanics.md`; `review.md`'s anti-pattern and pre-ship tables dissolve into the levers they restated; the paste-ready blocks move under `system-prompts.md`, the artifact they serve, so authoring a skill can no longer reach them; `metaprompting.md` is unchanged. 686 lines to 344.
+Structurally: `skills.md`, `agents.md` and `knowledge-skills.md` merge into one `mechanics.md`; `review.md`'s anti-pattern and pre-ship tables dissolve into the levers they restated; the paste-ready blocks move under `system-prompts.md`, the artifact they serve, so authoring a skill can no longer reach them; `metaprompting.md` keeps its job, losing only its pointer to the deleted `review.md`. 686 lines to 347.
 
 Two downstream surfaces move with it. `define`'s prompting task file required a new skill to carry a Gotchas section — content a new skill can satisfy only by inventing it, which the skill it gates forbids — and carried a skill-type taxonomy default; both are removed and a provenance gate replaces them. `review-prompt` leads with the provenance question and no longer treats an absent section as a finding.
 

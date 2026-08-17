@@ -1,6 +1,6 @@
 ---
 name: review-prompt
-description: 'Review LLM prompts against the prompt-engineering skill''s gap-calibration principles, reporting issues without modifying files. Use when reviewing prompt quality, auditing a prompt, evaluating a system prompt, or checking whether prompt issues are high-confidence and fixable.'
+description: 'Review LLM prompts against the prompt-engineering skill''s principles — leading with where each line came from — and report the findings without modifying files. Use when reviewing prompt quality, auditing a prompt, evaluating a system prompt, or checking whether prompt issues are high-confidence and fixable.'
 user-invocable: true
 ---
 
