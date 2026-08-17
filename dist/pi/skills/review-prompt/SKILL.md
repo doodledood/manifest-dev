@@ -31,7 +31,7 @@ Report format:
 - **Medium** — the prompt works but drifts toward known failure modes. Examples: vague directive that produces inconsistent behavior across runs; restated model default adding noise the model has to wade through; a line whose only provenance is the author's own reading; a real gap left unclosed; arbitrary numbers without a rubric; boundary failures — naming a harness-bound primitive, a rule-scope qualifier that silently excludes valid cases, mechanism stated as the only path, or one principle split across multiple places.
 - **Low** — minor friction with no functional impact. Examples: duplication that doesn't change behavior; awkward phrasing where the meaning is still unambiguous; stylistic-only cleanup.
 
-**Tag** (parsed as control flow by `/auto-optimize-prompt` — do not rename or repurpose):
+**Tag** — an optimization loop reads these to decide which findings it can act on alone, so the two values are a contract and stay exactly as written:
 - `NEEDS_USER_INPUT` — only the author can resolve: missing context, unclear intent, ambiguity the model can't infer.
 - `AUTO_FIXABLE` — a clear fix exists per the loaded principles.
 
