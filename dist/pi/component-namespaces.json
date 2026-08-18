@@ -2,6 +2,7 @@
   "skills": {
     "auto": "manifest-dev",
     "babysit-pr": "manifest-dev-tools",
+    "chat-surface": "manifest-dev",
     "check-pr": "manifest-dev",
     "define": "manifest-dev",
     "do": "manifest-dev",

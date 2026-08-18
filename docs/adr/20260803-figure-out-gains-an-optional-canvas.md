@@ -1,7 +1,7 @@
 # ADR: figure-out gains an optional canvas whose spine is the crux tree and whose subject is the frontier
 
 ## Status
-Accepted
+Superseded by 20260818-chat-surface-replaces-the-crux-map-canvas
 
 ## Area
 figure-out

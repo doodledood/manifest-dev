@@ -90,7 +90,7 @@ For unattended runs of `/do` or `/auto` (the recommended way to run both), set y
 
 Babysit an existing PR through review without any manifest-dev setup: `/babysit-pr [pr-url]`. Details in the [manifest-dev-tools README](claude-plugins/manifest-dev-tools).
 
-Pass `--canvas` to `/figure-out` for a refreshable, browser-rendered map of the session alongside the chat, readable on any screen: the crux tree with the question you're standing on marked on it, what's still open around it, and how much ground is still unsurveyed. Annotate it in place and hand your notes back in one paste.
+Pass `--surface chat-surface` to `/figure-out` — or invoke `/chat-surface` in any session — to move where the answers land: the conversation renders live into an HTML page you keep open, your messages verbatim and the agent's responses composed for low cognitive load — skimmable claims, charts and diagrams where they beat a sentence, decision cards for every open ask — updating in place as each turn arrives while you keep typing in the terminal.
 
 ## How it works
 
@@ -149,7 +149,7 @@ Each linked README covers that CLI's install, upgrade, and uninstall path. Archi
 
 | Plugin | Description |
 |--------|--------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/just-do`, `/done`, `/escalate`, `/auto`, `/just-auto`, `/figure-out-team`), project setup (`/init-context`), Ticket authoring and execution (`/ticket-up`, `/next-ticket`, `/run-ticket`, `/sweep-tickets`), and the verification skills, including `review-code`'s per-dimension quality gates and `review-writing`'s register-aware prose review. |
+| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/just-do`, `/done`, `/escalate`, `/auto`, `/just-auto`, `/figure-out-team`), project setup (`/init-context`), Ticket authoring and execution (`/ticket-up`, `/next-ticket`, `/run-ticket`, `/sweep-tickets`), the live rendered chat view (`/chat-surface`), and the verification skills, including `review-code`'s per-dimension quality gates and `review-writing`'s register-aware prose review. |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow: `/review-pr`, `/babysit-pr`, `/walk-pr` for PR collaboration, plus `/prompt-engineering`, `/handoff`, `/teach-me`, and `/re-pitch`. |
 
 Full plugin and skill catalogs live in [`claude-plugins/README.md`](claude-plugins/README.md) and each plugin's own README.

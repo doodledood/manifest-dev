@@ -26,9 +26,9 @@ If an update would fail any of these, it belongs to execution, not scratch — s
 
 Domain-native, not one fixed template. A tech-design session keeps a rough draft doc with open questions; a coding-shaped session may keep a small prototype; a UI-shaped session may keep an HTML mock. Not limited to a single file — use as many as the domain naturally produces.
 
-Do not force scratch content through canvas machinery. Scratch is heterogeneous by nature and has no common schema to re-render, so a renderer built for one shape flattens whatever does not fit it. When the domain itself is visual (a UI mock), producing HTML is the domain's own native format, not a reuse of canvas mode.
+Do not force scratch content through a rendering surface's machinery. Scratch is heterogeneous by nature and has no common schema to re-render, so a renderer built for one shape flattens whatever does not fit it. When the domain itself is visual (a UI mock), producing HTML is the domain's own native format, not a reuse of a surface.
 
-Scratch and `references/CANVAS.md` can both be live in one session, and they do not overlap: scratch mirrors the thing being designed, in that thing's own format, while the canvas views the investigation doing the designing. A draft doc, a prototype, a mock belong in scratch; where the traverse has reached belongs on the canvas. Neither renders the other.
+Scratch and a chat surface (`--surface chat-surface`) can both be live in one session, and they do not overlap: scratch mirrors the thing being designed, in that thing's own format, while the surface renders the conversation doing the designing. A draft doc, a prototype, a mock belong in scratch; the deliberation itself belongs on the surface. Neither renders the other.
 
 ## Location
 
