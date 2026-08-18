@@ -10,8 +10,8 @@ deliberate imperfection are **defects** in that register, not virtues: a specifi
 to read uniformly. Rules that hold in both registers live in `PROSE-FLOOR-REFERENCE.md` and are
 not repeated here.
 
-**Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference. Where
-the project states a rule this file also states, the project's rule governs.
+**Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference; the
+`review-writing` skill applies that rule and is its one home.
 
 **Severity.** CRITICAL = immediately identifiable as AI-written. HIGH = experienced readers would
 notice. MEDIUM/LOW = informational. (The documentation register grades on cost to the reader

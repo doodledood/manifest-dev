@@ -4,7 +4,7 @@ The loop is the easy part. This is the understanding and verification around it:
 
 Three skills, one for each way an autonomous loop fails — skipping understanding (`/figure-out`), never defining "done" (`/define`), and faking it (`/do`).
 
-## Quick Start
+## Quick start
 
 ```
 /figure-out "how should rate limiting behave here?"   # think it through
@@ -16,11 +16,11 @@ Goal: Run /do ~/.manifest-dev/manifests/manifest-<timestamp>.md until every Acce
 
 `/figure-out` is where the understanding happens. `/define` encodes that understanding into a Manifest — it auto-invokes `/figure-out` for you when the conversation hasn't reached understanding yet, so in practice the minimum is `/define` then `/do` with a durable goal-setting or continuation backstop. `/do` executes the Manifest and evaluates every gate under a launch-locked run policy. The default `per-gate` mode uses one fresh independent verifier per gate, run concurrently; `consolidated` is an explicit choice for large gate sets whose gates are each slight (one independent verifier for the outstanding set, worked in sequence) and `self` an explicit lower-assurance one. The backstop's argument should be the auditable all-criteria-PASS completion contract — a complete gate ledger with fresh evidence and provenance appropriate to the selected mode — keeping the run alive across turns until the condition holds.
 
-Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs. See the root README's [Multi-CLI Support](../../README.md#multi-cli-support).
+Non-Claude distributions are generated under `dist/`. OpenCode and Codex ship `/do`; Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`) for the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs. See the root README's [Multi-CLI support](../../README.md#multi-cli-support).
 
 The `/do` session doesn't need to remember the `/define` conversation — the manifest is external state. Run `/do` in a fresh session with a durable goal-setting/continuation backstop, or `/compact` before starting.
 
-## The Mindset Shift
+## The mindset shift
 
 Stop thinking about *how* to build it. Start thinking about *what you'd accept* — that's the loop's real stop condition.
 
@@ -53,7 +53,7 @@ in [`AUTOMATED_EXECUTION.md`](skills/ticket-up/references/AUTOMATED_EXECUTION.md
 - **`/review-code`** — quality review along **one dimension per invocation** (bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, defect-class completeness after a fix, or CLAUDE.md adherence). Loads exactly that dimension's reference (progressive disclosure) and returns a PASS/FAIL report. A gate's body activates it; it replaces the per-dimension reviewer agents.
 - **`/review-writing`** — reviews prose against the project's writing standards, in whichever register governs it: documentation (specs, reports, READMEs, reference material) or human-voiced writing (articles, copy, narrative). Detects the register, applies that register's rules plus the rules holding in both, and reports graded findings with the fix. Point it at a file, a directory, or pasted text; a project's own style sheet outranks the shipped standard. Review only — it reports, you edit.
 
-## Manifest Schema — One Gate, One Text
+## Manifest schema — one gate, one text
 
 Every Acceptance Criterion and Global Invariant is a single text: a title, a body, and — where it earns its place — a why.
 The text a reviewer reads is the text that binds — there is no separate evaluator-facing copy.
@@ -96,7 +96,7 @@ inspect files, query an API, fetch docs. It must not assume one agent per gate, 
 verifier, self-verification, or a model, and it does not restate the run-wide comparison or the
 verdict contract: those are `/do` launch choices and `/do` policy, not Manifest schema.
 
-## Manifest Sections
+## Manifest sections
 
 | Section | Purpose | ID Scheme |
 |---------|---------|-----------|
@@ -159,13 +159,13 @@ returning 500 instead of 401 is the shape this catches.
 Judgment gate.
 ````
 
-## Manifest = Current State
+## Manifest = current state
 
 Amendments overwrite in place with stable IDs (modify `INV-G1` and it stays `INV-G1`; remove one and it's gone, no renumbering). No `## Amendments` log, no `INV-G1.1 amends INV-G1` chain — git carries the history.
 
 The manifest is the canonical source of truth for the PR or branch, not for a single task — feedback flows through it. When something's off mid-`/do` or after `/done` (a missed edge case, a reviewer comment, a late requirement), Self-Amendment routes it automatically: `/escalate` → `/define` re-invoked on the manifest path to amend → `/do` resumes with the updated manifest. Pure questions about the manifest get answered inline; everything else amends. `/done` stays unreachable until every criterion verifies PASS again, so each round trip grows the verification surface — bug fixes and late requirements become permanent checked criteria.
 
-## Verification Skills
+## Verification skills
 
 manifest-dev ships **no agents of its own**. `/do` uses host execution contexts according to the selected verification mode, and every mode reads the same gate text from the manifest, which can call for running bash, inspecting files, querying external tools, or activating a skill. Read-only behavior is enforced by that text, so authors can point an evaluator at MCP servers or extra CLI tools the user has configured.
 
@@ -188,7 +188,7 @@ Quality review (bugs, design, types, contracts, testability, …) is the **`revi
 | `prose-value` | advisory (no MEDIUM+) | Comment/doc value: narrating-the-obvious, puffery, AI rhetorical patterns |
 | `context-file-adherence` | advisory (no MEDIUM+) | Compliance with CLAUDE.md / AGENTS.md project rules |
 
-## Task Guidance and References
+## Task guidance and references
 
 Task files come in two parallel, decoupled sets, each loaded by task type by its own skill: `skills/define/tasks/` carry domain-specific quality gates and Defaults that `/define` encodes into the manifest; `skills/figure-out/tasks/` carry probing fuel — blind-spot probes and forced trade-offs (verification among them) that `/figure-out` surfaces during understanding as awareness, not a checklist. Tech-design documents use both halves: figure-out surfaces audience/source/visual/taste probes, while /define encodes document gates. Source-type research material lives under `skills/define/tasks/research/sources/`. Mode and domain references in `skills/define/references/` (`BABYSIT_MODE.md`, `MULTI_REPO.md`, `WRITING-REFERENCE.md`) cover specialized flows.
 

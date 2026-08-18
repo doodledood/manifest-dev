@@ -8,11 +8,11 @@ floor. Documentation-register mechanics live in `DOCS-STYLE-REFERENCE.md`; human
 rules on rhythm, texture, and craft live in `WRITING-REFERENCE.md`. Neither set is repeated here,
 and a rule in this file is never contradicted by either.
 
-**Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference. Where
-the project states a rule this file also states, the project's rule governs.
+**Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference; the
+`review-writing` skill applies that rule and is its one home.
 
 **Not for `/define` interviews** — lookup data for gate evaluation. The task file
-(`tasks/WRITING.md`) carries the compressed gate text.
+(`tasks/PROSE_FLOOR.md`) carries the compressed gate text.
 
 ---
 
@@ -51,14 +51,6 @@ than single instances.
 | Opinion-avoidant framing | "commonly described as," "many find," "generally considered" | State the view directly |
 | Wind-up and wind-down | "In this section, we will…", "In conclusion, we have shown…" | Delete; start with the content and stop at the end |
 | Padding phrases | "in order to," "at this point in time," "the fact that" | "to," "now," "that" |
-
-## Substance floor
-
-- **Claims are supported.** Every factual claim traces to something — a source, a measurement, an artifact. A claim the writer cannot back is either cut or marked as uncertain in the text.
-- **No internal contradiction.** Two statements in one deliverable don't assert opposite things.
-- **Specifics survive.** Concrete details — names, numbers, dates, versions — stay concrete. Blurring them into category-level language ("various stakeholders", "significant improvements") is a defect in both registers. If a specific isn't known, say it isn't known.
-- **No subject puffery.** Don't elevate an arbitrary detail into "a microcosm of" or "a window into" something larger. Stop at the specific unless the piece has earned the generalization.
-- **Audience fit.** Language and depth match the reader the deliverable names, and no term of art appears undefined on first use for that reader.
 
 ## Register-neutral AI rhetorical patterns
 

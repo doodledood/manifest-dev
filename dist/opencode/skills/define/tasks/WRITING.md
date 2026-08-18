@@ -9,18 +9,22 @@ variation and deliberate imperfection are defects rather than virtues.
 
 ## Quality Gates
 
-| Aspect | Threshold |
-|--------|-----------|
-| Human-voice quality | no MEDIUM+ under `references/WRITING-REFERENCE.md` across structure, tone, rhetoric, craft, and negative space |
-| Statistical variation | Sentence-length variation and vocabulary diversity present; uniform rhythm is an AI tell |
-| Readability | Accessible to the target audience, scannable structure |
+| Aspect | Skill | Threshold |
+|--------|-------|-----------|
+| Human-voice quality | `review-writing`, `register=voice` | no MEDIUM+ |
+| Readability | — | Accessible to the target audience, scannable structure |
 
-Severity in this register grades how identifiable the prose is as AI-written, per the anchor in
-`references/WRITING-REFERENCE.md` — not what it costs a reader.
+The style gate encodes as a gate body that activates the `review-writing` skill with
+`register=voice` under `/do`'s selected evaluator. Name the skill and the register and stop — the
+skill owns the threshold and loads its own references, and `register=voice` brings the shared
+prose floor with it, so the bar in the table above orients the author rather than being copied
+into the gate. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
+
+Structure, tone, rhetoric, craft, negative space, statistical variation, and kill-list vocabulary
+all fall inside that one gate; they do not need gates of their own.
 
 ## Defaults
 
 *Domain best practices for this task type.*
 
-- **Kill-list cross-check** — full vocabulary kill-list applied to output before it is considered done
 - **Read it aloud** — the final pass is auditory; stumbling marks where the prose needs work

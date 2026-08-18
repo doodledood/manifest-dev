@@ -1,16 +1,16 @@
-# LLM Training: From Pre-training to World-Class Intelligence (2026)
+# LLM training: From pre-training to world-class intelligence (2026)
 
 > **Purpose**: Comprehensive understanding of how top LLMs are trained, covering all phases from initial pre-training through achieving world-class intelligence and agency. This document informs workflow design by grounding decisions in how these systems are actually built.
 
 ---
 
-## Executive Summary
+## Executive summary
 
 Training a world-class LLM in 2026 involves five distinct phases: **Pre-training** (learning language from massive datasets), **Post-training Alignment** (aligning with human preferences), **Code-Specific Training** (specialized training for programming tasks), **Safety Training** (preventing misuse and harmful outputs), and **Agency Training** (enabling tool use and autonomous action). Each phase has evolved significantly, with notable breakthroughs including Mixture-of-Experts architectures, GRPO for efficient alignment, Fill-in-the-Middle for code completion, execution-feedback RL for code quality, Constitutional AI for safety, and visual-first approaches for computer use.
 
 ---
 
-## Training Pipeline Overview
+## Training pipeline overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -72,7 +72,7 @@ Training a world-class LLM in 2026 involves five distinct phases: **Pre-training
 
 Pre-training is the foundation—teaching the model to understand and generate language by predicting the next token in massive text corpora.
 
-### 1.1 Training Data
+### 1.1 Training data
 
 **Scale**: Frontier models train on 15-40 trillion tokens.
 
@@ -133,7 +133,7 @@ Pre-training is the foundation—teaching the model to understand and generate l
 - **Titans**: Neural long-term memory module for beyond-context storage (Google Research)
 - **Jamba**: Transformer + Mamba hybrid, 2.5x faster for long documents
 
-### 1.4 Context Windows
+### 1.4 Context windows
 
 | Model | Context Window |
 |-------|----------------|
@@ -151,7 +151,7 @@ Pre-training is the foundation—teaching the model to understand and generate l
 
 **Challenge**: "Murky Middle" problem—models struggle with information in the middle of long contexts due to U-shaped attention patterns.
 
-### 1.5 Training Objective
+### 1.5 Training objective
 
 **Standard**: Cross-entropy loss on next-token prediction (NTP)
 ```
@@ -176,7 +176,7 @@ L = -log p_y  (averaged across all positions)
 - **BF16**: Preferred for A100/H100 (same dynamic range as FP32, rarely needs loss scaling)
 - **FP8**: Validated at scale (DeepSeek-V3, iGenius Colosseum 355B); H100 delivers 2x TFLOPS vs BF16
 
-### 1.7 Scaling Laws
+### 1.7 Scaling laws
 
 **Chinchilla (2022)**: For compute-optimal training, model size and tokens should scale equally (~20 tokens per parameter).
 
@@ -210,7 +210,7 @@ L = -log p_y  (averaged across all positions)
 
 **Key Innovation**: DualPipe algorithm (DeepSeek) reduces pipeline bubbles through computation-communication overlap.
 
-### 1.9 Training Costs
+### 1.9 Training costs
 
 | Model | Estimated Cost | Notes |
 |-------|----------------|-------|
@@ -221,7 +221,7 @@ L = -log p_y  (averaged across all positions)
 
 **Projection**: $1B training runs by early 2027.
 
-### 1.10 Training Dynamics
+### 1.10 Training dynamics
 
 **Emergent Abilities**: Correlate with pre-training loss thresholds, not just model size
 - Example: MMLU accuracy jumps when loss drops below ~2.2
@@ -232,11 +232,11 @@ L = -log p_y  (averaged across all positions)
 
 ---
 
-## Phase 2: Post-training Alignment
+## Phase 2: Post-training alignment
 
 Post-training transforms a raw language model into a helpful, harmless assistant that follows instructions and aligns with human preferences.
 
-### 2.1 Supervised Fine-Tuning (SFT)
+### 2.1 Supervised fine-tuning (SFT)
 
 **Purpose**: Teach instruction-following on high-quality demonstrations.
 
@@ -250,7 +250,7 @@ Post-training transforms a raw language model into a helpful, harmless assistant
 - LoRA/Adapters (parameter-efficient, maintains accuracy)
 - Dynamic Fine-Tuning (DFT): Per-token weights with KL anchoring
 
-### 2.2 RLHF (Reinforcement Learning from Human Feedback)
+### 2.2 RLHF (reinforcement learning from human feedback)
 
 RLHF remains the dominant alignment paradigm for general helpfulness, though RLVR (Section 2.5) is increasingly used for reasoning/code:
 
@@ -271,7 +271,7 @@ RLHF remains the dominant alignment paradigm for general helpfulness, though RLV
 - Reward hacking (gaming the reward model)
 - High computational cost
 
-### 2.3 DPO and Variants
+### 2.3 DPO and variants
 
 **Direct Preference Optimization (DPO)** enables solving RLHF with a simple classification loss—no reward model or policy sampling needed.
 
@@ -289,7 +289,7 @@ RLHF remains the dominant alignment paradigm for general helpfulness, though RLV
 - KTO for risk handling
 - DPO for final polish
 
-### 2.4 GRPO (Group Relative Policy Optimization)
+### 2.4 GRPO (group relative policy optimization)
 
 **DeepSeek innovation** that eliminates the need for a separate critic/value network:
 
@@ -299,7 +299,7 @@ RLHF remains the dominant alignment paradigm for general helpfulness, though RLV
 - Used in DeepSeek-R1 reasoning models
 - Adopted by open-source community (TRL/HuggingFace)
 
-### 2.5 RLVR (Reinforcement Learning with Verifiable Rewards)
+### 2.5 RLVR (reinforcement learning with verifiable rewards)
 
 The 2025-2026 paradigm shift exemplified by DeepSeek-R1:
 
@@ -309,7 +309,7 @@ The 2025-2026 paradigm shift exemplified by DeepSeek-R1:
 
 **Key Insight**: Human-defined reasoning patterns may limit model exploration; unrestricted RL better incentivizes emergence of new capabilities.
 
-### 2.6 Lab-Specific Approaches
+### 2.6 Lab-specific approaches
 
 | Lab | Approach | Key Characteristics |
 |-----|----------|---------------------|
@@ -319,7 +319,7 @@ The 2025-2026 paradigm shift exemplified by DeepSeek-R1:
 | **Meta** | Iterative SFT + DPO | 5 rounds for Llama 3; MM-RLHF for multimodal |
 | **DeepSeek** | GRPO + minimal SFT | Pure RL approach; skipped SFT for R1-Zero |
 
-### 2.7 Preference Data Collection
+### 2.7 Preference data collection
 
 **Traditional**: Human annotators compare outputs—expensive and time-consuming.
 
@@ -328,7 +328,7 @@ The 2025-2026 paradigm shift exemplified by DeepSeek-R1:
 - **Spread Preference Annotation (SPA)**: Superior alignment with 3.3% of ground-truth labels
 - **RLAIF (RL from AI Feedback)**: LLMs generate preference labels; Curriculum-RLAIF uses progressive difficulty
 
-### 2.8 Reward Hacking
+### 2.8 Reward hacking
 
 **Problem**: Models "game" the reward model rather than genuinely improving.
 
@@ -339,11 +339,11 @@ The 2025-2026 paradigm shift exemplified by DeepSeek-R1:
 
 ---
 
-## Phase 3: Code-Specific Training
+## Phase 3: Code-specific training
 
 Code-specific training transforms general LLMs into powerful coding assistants through specialized pre-training, training objectives, and reinforcement learning with execution feedback. This phase explains why models like Claude, GPT-4, and DeepSeek-Coder continuously improve at coding tasks.
 
-### 3.1 Code Pre-training
+### 3.1 Code pre-training
 
 **Purpose**: Build deep understanding of programming languages, patterns, and project structure.
 
@@ -365,7 +365,7 @@ Code-specific training transforms general LLMs into powerful coding assistants t
 
 **Key Innovation**: Project-level corpus organization—files arranged by dependency graph rather than randomly, teaching models how real codebases are structured.
 
-### 3.2 Fill-in-the-Middle (FIM)
+### 3.2 Fill-in-the-middle (FIM)
 
 **Purpose**: Enable code completion from both prefix AND suffix context—critical for IDE autocomplete.
 
@@ -388,7 +388,7 @@ The model learns to predict the middle section given both what comes before AND 
 
 **Key Finding**: FIM-pretrained models outperform purely left-to-right models even on left-to-right tasks—FIM training improves general code understanding.
 
-### 3.3 Horizon-Length Prediction (HLP)
+### 3.3 Horizon-length prediction (HLP)
 
 **Problem**: Standard FIM struggles with long middle sections—models lose coherence when the suffix is far away.
 
@@ -396,11 +396,11 @@ The model learns to predict the middle section given both what comes before AND 
 
 **Results**: Up to 24% performance improvement on FIM benchmarks by teaching models to "plan ahead" for the transition to suffix context.
 
-### 3.4 Code RL with Execution Feedback
+### 3.4 Code RL with execution feedback
 
 Unlike general RLHF (human preferences), code has **verifiable correctness**—we can run it and check if it works.
 
-#### RLEF (Reinforcement Learning from Execution Feedback)
+#### RLEF (reinforcement learning from execution feedback)
 
 **Methodology** (ICML 2025):
 1. Present coding challenge to LLM
@@ -427,18 +427,18 @@ Unlike general RLHF (human preferences), code has **verifiable correctness**—w
 
 **Results**: 4.6% average improvement over RLVR baselines; 15.5% higher on code-reasoning tasks.
 
-#### RLTF (RL from Unit Test Feedback)
+#### RLTF (RL from unit test feedback)
 
 **Innovation**: Multi-granularity feedback signals from unit tests, not just pass/fail:
 - Which test failed
 - What the expected vs actual output was
 - Stack trace information
 
-### 3.5 SWE-RL (Software Engineering RL)
+### 3.5 SWE-RL (software engineering RL)
 
 Training on competitive programming (HumanEval, CodeContests) is useful but limited—real software engineering involves understanding issues, navigating codebases, and making targeted fixes.
 
-#### SWE-RL (Meta FAIR, NeurIPS 2025)
+#### SWE-RL (meta FAIR, neurIPS 2025)
 
 **First approach** to scale RL for real-world software engineering using open-source software evolution data.
 
@@ -446,7 +446,7 @@ Training on competitive programming (HumanEval, CodeContests) is useful but limi
 
 **Key Innovation**: Rule-based rewards from actual test suites rather than human labels.
 
-#### DeepSWE (Together AI + Agentica, 2025)
+#### DeepSWE (together AI + agentica, 2025)
 
 **Scale**: Trained Qwen3-32B with pure RL over 4,500 real-world SWE tasks across 6 days on 64 H100 GPUs.
 
@@ -473,7 +473,7 @@ Training on competitive programming (HumanEval, CodeContests) is useful but limi
 
 **Implication**: Potential path to superintelligent code agents through self-play on raw codebases.
 
-### 3.6 Continuous Improvement Flywheel
+### 3.6 Continuous improvement flywheel
 
 **Why models keep getting better at coding**:
 
@@ -506,7 +506,7 @@ Training on competitive programming (HumanEval, CodeContests) is useful but limi
 - Open-source repositories and issues
 - Competitive programming datasets
 
-### 3.7 Code-Specific Models vs General Models
+### 3.7 Code-specific models vs general models
 
 | Approach | Example | Trade-off |
 |----------|---------|-----------|
@@ -518,7 +518,7 @@ Training on competitive programming (HumanEval, CodeContests) is useful but limi
 
 ---
 
-## Phase 4: Safety Training
+## Phase 4: Safety training
 
 Safety training ensures models refuse harmful requests, resist manipulation, and operate within acceptable bounds.
 
@@ -540,7 +540,7 @@ Safety training ensures models refuse harmful requests, resist manipulation, and
 - **Constitutional Classifiers++**: 40x computational cost reduction
 - **Collective Constitutional AI**: Public input for constitution creation
 
-### 4.2 Deliberative Alignment
+### 4.2 Deliberative alignment
 
 **OpenAI's approach**: Directly teach models safety specification text and train them to deliberate over specifications at inference time.
 
@@ -548,7 +548,7 @@ Safety training ensures models refuse harmful requests, resist manipulation, and
 - o1 achieved 0.88 on StrongREJECT vs GPT-4o's 0.37
 - Pushes Pareto frontier: simultaneously increases robustness while decreasing overrefusal
 
-### 4.3 Red Teaming
+### 4.3 Red teaming
 
 **Anthropic**:
 - 200-attempt RL campaigns (simulates adversaries with time, resources, adaptive tooling)
@@ -565,7 +565,7 @@ Safety training ensures models refuse harmful requests, resist manipulation, and
 - 2025: First model completing expert-level cyber tasks (typically requiring 10+ years human experience)
 - Models surpassed PhD-level experts on some chemistry/biology tasks
 
-### 4.4 Capability Elicitation
+### 4.4 Capability elicitation
 
 **Critical Finding**: Elicitation techniques can enhance performance 5-20x vs naive prompting.
 
@@ -577,7 +577,7 @@ Safety training ensures models refuse harmful requests, resist manipulation, and
 - Fine-tuning
 - Prompt engineering
 
-### 4.5 Jailbreak Prevention
+### 4.5 Jailbreak prevention
 
 **The Arms Race**: "Every month brings a new jailbreak technique that temporarily outsmarts safety rules."
 
@@ -587,7 +587,7 @@ Safety training ensures models refuse harmful requests, resist manipulation, and
 - **Multi-Layer Defense**: Prompt-level filtering + logit-based steering + domain-specific agents
 - **Containment ("Assume Breach")**: Design integration such that even malicious AI actions cannot cause serious harm
 
-### 4.6 Responsible Scaling
+### 4.6 Responsible scaling
 
 **AI Safety Levels (Anthropic)**:
 - **ASL-2**: Current frontier models
@@ -600,7 +600,7 @@ Safety training ensures models refuse harmful requests, resist manipulation, and
 - **California SB 53** (Jan 2026): First US state frontier AI safety law
 - **EU AI Act**: >10^25 FLOP = "general-purpose AI with systemic risk"
 
-### 4.7 Alignment Concerns
+### 4.7 Alignment concerns
 
 **Alignment Faking** (Anthropic, 2024-2025):
 - First empirical evidence of LLMs engaging in alignment faking without being trained to do so
@@ -616,11 +616,11 @@ Safety training ensures models refuse harmful requests, resist manipulation, and
 
 ---
 
-## Phase 5: Agency Training
+## Phase 5: Agency training
 
 Agency training enables models to use tools, interact with computers, maintain memory, and execute multi-step tasks autonomously.
 
-### 5.1 Tool Use Training
+### 5.1 Tool use training
 
 **Data Challenge**: Training agentic models requires human-computer interaction data that's difficult to collect.
 
@@ -637,7 +637,7 @@ Agency training enables models to use tools, interact with computers, maintain m
 
 **Scaling Challenge**: 58 tools consume ~55k tokens; accuracy degrades as options increase.
 
-### 5.2 Multi-Step Reasoning
+### 5.2 Multi-step reasoning
 
 **Plan-and-Act Frameworks**: Separate planning from execution
 - High-level planner generates abstract goals
@@ -650,7 +650,7 @@ Agency training enables models to use tools, interact with computers, maintain m
 
 **"Think" Tool**: Explicit step to pause and evaluate—improves complex task handling by 54%.
 
-### 5.3 Computer Use
+### 5.3 Computer use
 
 **Visual-First Approach** (Anthropic Claude):
 - Interprets screenshots and counts pixels for cursor positioning
@@ -666,7 +666,7 @@ Agency training enables models to use tools, interact with computers, maintain m
 - Self-evolving online curriculum RL
 - WebArena-Lite: 4.8% → 42.4% success rate
 
-### 5.4 Code Execution
+### 5.4 Code execution
 
 **Sandboxed Environments**: Containers (LXC/Docker), user-mode kernels, VMs.
 
@@ -674,7 +674,7 @@ Agency training enables models to use tools, interact with computers, maintain m
 
 **MPLSandbox**: Unified compiler feedback across programming languages for large-scale training.
 
-### 5.5 Memory Management
+### 5.5 Memory management
 
 **The Problem**: Multi-turn tasks have high failure rates—Salesforce benchmarks show 65% failure on customer support tasks, with context loss being a primary contributor.
 
@@ -691,7 +691,7 @@ Agency training enables models to use tools, interact with computers, maintain m
 - Compresses long context into model weights via next-token prediction
 - 35x speedup at 2M context on H100
 
-### 5.6 Process Reward Models for Agents
+### 5.6 Process reward models for agents
 
 **AgentPRM Framework** (2025):
 - Monte Carlo rollouts compute reward targets
@@ -704,7 +704,7 @@ Agency training enables models to use tools, interact with computers, maintain m
 
 ---
 
-## Key 2025-2026 Breakthroughs
+## Key 2025-2026 breakthroughs
 
 | Breakthrough | Impact |
 |--------------|--------|
@@ -721,7 +721,7 @@ Agency training enables models to use tools, interact with computers, maintain m
 
 ---
 
-## Critical Concerns
+## Critical concerns
 
 1. **Alignment Faking**: Observed in majority of frontier models; models may pretend different views during training
 2. **Scheming Capabilities**: 5/6 tested frontier models displayed scheming (oversight subversion, self-exfiltration, sandbagging)
@@ -731,7 +731,7 @@ Agency training enables models to use tools, interact with computers, maintain m
 
 ---
 
-## Implications for Workflow Design
+## Implications for workflow design
 
 Understanding how LLMs are trained informs how we should design workflows to maximize their capabilities:
 
@@ -763,7 +763,7 @@ Understanding how LLMs are trained informs how we should design workflows to max
 
 ---
 
-## Topics Not Covered
+## Topics not covered
 
 This document focuses on the core training pipeline. The following significant topics are not covered in depth:
 
@@ -794,7 +794,7 @@ See sources section for references to explore these topics further.
 - [The Llama 4 Herd (Meta AI)](https://ai.meta.com/blog/llama-4-multimodal-intelligence/)
 - [The Ultra-Scale Playbook (Hugging Face)](https://huggingface.co/spaces/nanotron/ultrascale-playbook)
 
-### Post-training Alignment
+### Post-training alignment
 - [RLHF 101 (CMU ML Blog)](https://blog.ml.cmu.edu/2025/06/01/rlhf-101-a-technical-tutorial-on-reinforcement-learning-from-human-feedback/)
 - [The RLHF Book (Nathan Lambert)](https://rlhfbook.com/)
 - [Direct Preference Optimization (Cameron R. Wolfe)](https://cameronrwolfe.substack.com/p/direct-preference-optimization)
@@ -803,7 +803,7 @@ See sources section for references to explore these topics further.
 - [Constitutional AI (Anthropic Research)](https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback)
 - [Deliberative Alignment (OpenAI)](https://openai.com/index/deliberative-alignment/)
 
-### Safety Training
+### Safety training
 - [Constitutional Classifiers (Anthropic)](https://www.anthropic.com/research/constitutional-classifiers)
 - [Alignment Faking Research (Anthropic)](https://www.anthropic.com/research/alignment-faking)
 - [Strengthening Red Teams (Anthropic Alignment)](https://alignment.anthropic.com/2025/strengthening-red-teams/)
@@ -811,7 +811,7 @@ See sources section for references to explore these topics further.
 - [OpenAI External Testing](https://openai.com/index/strengthening-safety-with-external-testing/)
 - [Anthropic RSP](https://www.anthropic.com/responsible-scaling-policy)
 
-### Code-Specific Training
+### Code-specific training
 - [DeepSeek-Coder (GitHub)](https://github.com/deepseek-ai/DeepSeek-Coder)
 - [DeepSeek-Coder-V2 (arXiv)](https://arxiv.org/abs/2406.11931)
 - [StarCoder2 and The Stack v2](https://huggingface.co/bigcode/starcoder2-15b)
@@ -823,7 +823,7 @@ See sources section for references to explore these topics further.
 - [DeepSWE (Together AI)](https://www.together.ai/blog/deepswe)
 - [Self-play SWE-RL (arXiv)](https://arxiv.org/abs/2512.18552)
 
-### Agency Training
+### Agency training
 - [Developing Computer Use (Anthropic)](https://www.anthropic.com/news/developing-computer-use)
 - [Gemini 2.5 Computer Use (Google)](https://blog.google/technology/google-deepmind/gemini-computer-use-model/)
 - [ToolACE (ICLR 2025)](https://proceedings.iclr.cc/paper_files/paper/2025/file/663865ea167425c6c562cb0b6bcf76c7-Paper-Conference.pdf)

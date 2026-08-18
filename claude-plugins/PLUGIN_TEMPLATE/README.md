@@ -1,4 +1,4 @@
-# Plugin Template
+# Plugin template
 
 Starting point for creating Claude Code plugins.
 

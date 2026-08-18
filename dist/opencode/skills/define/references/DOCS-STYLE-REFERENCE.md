@@ -10,11 +10,8 @@ by `WRITING-REFERENCE.md` instead, whose rules on rhythm, tonal texture, and del
 imperfection do not apply here and are not defects when absent here. Rules that hold in both
 registers live in `PROSE-FLOOR-REFERENCE.md` and are not repeated in this file.
 
-**Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference; this
-reference outranks external fallbacks. Where a project states a rule this file also states, the
-project's rule governs and no finding is raised. Where neither covers a question, fall back to
-the canonical guide linked at the foot of this file, then to Merriam-Webster's first-listed
-spelling.
+**Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference; the
+`review-writing` skill applies that rule and is its one home.
 
 **Not for `/define` interviews** — this file is lookup data for gate evaluation. The task files
 (`tasks/DOCUMENT.md`, `tasks/TECH_DESIGN.md`) carry the compressed gate text.

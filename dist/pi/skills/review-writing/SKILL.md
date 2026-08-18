@@ -12,24 +12,34 @@ explain, the author decides and edits.
 ## Input
 
 `$ARGUMENTS` carries what to review — a file path, a directory, a glob, or pasted text. It may
-also name a register explicitly (`register=docs`, `register=voice`) to override detection.
+also name a register explicitly (`register=docs`, `register=voice`) to override detection. A
+manifest gate's body activates this skill with a register under the run's selected evaluator; the
+gate names the register and this skill owns the threshold.
 
 With no argument, review the most recently modified prose file in the working tree and say which
 one you picked. If that is ambiguous or nothing prose-shaped has changed, ask what to review
 rather than guessing.
 
-## Registers
+## Registers and thresholds
 
 Two registers, mutually exclusive. Each has its own rules, and applying the wrong set produces
-findings the author should ignore — which costs more than reviewing nothing.
+findings the author should ignore — which costs more than reviewing nothing. The threshold is the
+bar a text must clear to PASS in that register:
 
-| Register | What it covers | Rules |
-|----------|----------------|-------|
-| `docs` | Specs, proposals, reports, formal and technical documentation, READMEs, reference material, API docs | `../define/references/DOCS-STYLE-REFERENCE.md` |
-| `voice` | Articles, blog posts, marketing and social copy, newsletters, narrative, creative writing | `../define/references/WRITING-REFERENCE.md` |
+| Register | What it covers | Rules | Threshold (PASS requires) |
+|----------|----------------|-------|---------------------------|
+| `docs` | Specs, proposals, reports, formal and technical documentation, READMEs, reference material, API docs | `../define/references/DOCS-STYLE-REFERENCE.md` | no MEDIUM-or-higher findings |
+| `voice` | Articles, blog posts, marketing and social copy, newsletters, narrative, creative writing | `../define/references/WRITING-REFERENCE.md` | no MEDIUM-or-higher findings |
 
-Both registers additionally take `../define/references/PROSE-FLOOR-REFERENCE.md`, which holds the
-rules common to both, including the accessibility and inclusive-language floors.
+Each register brings the shared floor with it: `../define/references/PROSE-FLOOR-REFERENCE.md`
+holds the rules common to both, including the accessibility and inclusive-language floors, and a
+finding from the floor is graded and reported on the same footing as one from the register. There
+is no separate floor-only invocation.
+
+The two thresholds sit at the same grade and still mean different things, because each register's
+severity anchor measures something different — what the prose costs a reader, against how
+identifiable it is as AI-written. Grade by the anchor of the register you applied, and never
+convert a finding from one scale to the other.
 
 **Load exactly two references**: the floor, plus the one register's. Never load both register
 files for one text — their rules contradict each other by design, and a finding drawn from the
@@ -57,15 +67,14 @@ Where detection is genuinely balanced, say so and ask, rather than picking silen
 
 ## Precedence
 
-A project's own style sheet or `AUTHOR_VOICE.md` outranks the shipped references. Before
-reviewing, look for one in the project; where it states a rule that differs from the reference,
-the project's rule governs and the reference's version raises no finding. Say in the report which
-style source you applied.
+A project's own style sheet or `AUTHOR_VOICE.md` outranks the shipped references — this is the
+one home for that rule, and it applies to every register. Before reviewing, look for one in the
+project; where it states a rule that differs from the reference, the project's rule governs and
+the reference's version raises no finding. Say in the report which style source you applied.
 
 ## Reporting
 
-Grade by the severity anchor of the register you applied — the two scales measure different things
-and don't convert. Report each finding with:
+Report each finding with:
 
 - the severity and the rule area
 - the exact quoted prose, with its location

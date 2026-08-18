@@ -7,22 +7,21 @@ documentation and human-voiced writing alike; the register overlays add the rest
 `WRITING.md` for human-voiced prose (articles, copy, social, creative), and `DOCUMENT.md` for
 documentation (specs, proposals, reports, formal docs). A deliverable takes one register, never
 both — the rules they carry contradict each other by design, and that is why they don't share a
-base.
-
-**Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks both this base and the
-register overlay. Where a project states a rule, that rule governs and the shipped reference
-yields to it.
+base. The register overlay carries the style gate; this base carries what a style reviewer cannot
+settle.
 
 ## Quality Gates
 
 | Aspect | Threshold |
 |--------|-----------|
-| Prose floor | no MEDIUM+ under `references/PROSE-FLOOR-REFERENCE.md` — kill-list vocabulary, puffery, filler, hedging, signposting, and the register-neutral AI rhetorical patterns |
-| Accuracy | Claims supported, no internal contradictions, specifics kept specific |
-| Audience fit | Language and depth match the reader the deliverable names; no undefined jargon on first use |
-| Accessibility | Meets the accessibility floor in `references/PROSE-FLOOR-REFERENCE.md` (conditional: only for a deliverable published as a document or page) |
-| Inclusive language | Meets the inclusive-language floor in `references/PROSE-FLOOR-REFERENCE.md` |
+| Accuracy | Every factual claim traceable to a source, measurement, or artifact the deliverable names; no two statements asserting opposite things; specifics kept specific rather than blurred into category-level language |
+| Audience fit | Language and depth match the reader the deliverable names, with no term of art left undefined on first use for that reader |
 | Voice compliance | Matches `AUTHOR_VOICE.md` (conditional: only when the project has one) |
+
+These are the rules a style reviewer cannot settle. It can flag a claim that *reads* unsupported,
+but not whether the claim is true, so accuracy is gated here rather than folded into the register's
+style gate. Encode each as a gate whose body names the deliverable's own claims and reader as the
+evidence.
 
 ## Defaults
 

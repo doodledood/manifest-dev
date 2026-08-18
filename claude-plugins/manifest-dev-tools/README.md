@@ -15,7 +15,7 @@ Utilities that sit alongside the define → do → verify workflow — prompt en
 | `/walk-pr` | Walk through a PR or large diff together, one sub-changeset at a time. |
 | `review-prompt` | Reviews LLM prompts against the `/prompt-engineering` skill's principles, leading with where each line came from. Reports issues without modifying files. Use when reviewing prompt quality, auditing a prompt, or evaluating a system prompt. A gate body activates it when needed. |
 
-## How It Works
+## How it works
 
 These tools sit alongside the manifest workflow (`/define` → `/do` → `/done`). `/handoff` produces a context payload for two use cases: cross-boundary transfer (tool switch, fresh session, multi-agent transfer) and DIY sub-agent flows (spin off a focused side-session and hand back to the parent without polluting its context). `/teach-me` turns a body of work — the session, a PR, an ADR, or any topic — into an incremental learning loop that verifies understanding before ending. `/prompt-engineering`, `/walk-pr`, `/review-pr`, and `/babysit-pr` are stand-alone collaboration tools — `/walk-pr` is the collaborative review surface, `/review-pr` is the autonomous reviewer, and `/babysit-pr` is the author-side PR lifecycle actor that orchestrates core manifest-dev skills.
 

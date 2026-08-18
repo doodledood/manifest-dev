@@ -10,16 +10,21 @@ is never a finding here.
 
 ## Quality Gates
 
-| Aspect | Threshold |
-|--------|-----------|
-| Documentation style | no MEDIUM+ under `references/DOCS-STYLE-REFERENCE.md` — voice and person, sentence construction, punctuation, capitalization, lists and procedures, numbers and dates, links, word choice, timelessness, and code and interface references |
-| Structure completeness | All required sections present |
-| Consistency | The same term names the same thing throughout; formatting conventions hold across the document |
-| External consistency | No contradictions with identified reference documentation (conditional: only when comparison docs surfaced during interview) |
-| Scope clarity | What's covered and what's not stated explicitly |
+| Aspect | Skill | Threshold |
+|--------|-------|-----------|
+| Documentation style | `review-writing`, `register=docs` | no MEDIUM+ |
+| Structure completeness | — | All required sections present |
+| External consistency | — | No contradictions with identified reference documentation (conditional: only when comparison docs surfaced during interview) |
+| Scope clarity | — | What's covered and what's not stated explicitly |
 
-Severity in this register grades what the prose costs a reader, per the anchor in
-`references/DOCS-STYLE-REFERENCE.md` — not how AI-written it sounds.
+The style gate encodes as a gate body that activates the `review-writing` skill with
+`register=docs` under `/do`'s selected evaluator. Name the skill and the register and stop — the
+skill owns the threshold and loads its own references, and `register=docs` brings the shared prose
+floor with it, so the bar in the table above orients the author rather than being copied into the
+gate. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
+
+Terminology consistency, formatting conventions, headings, lists, numbers, dates, links, and code
+references all fall inside that one gate; they do not need gates of their own.
 
 ## Defaults
 
