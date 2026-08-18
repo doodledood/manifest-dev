@@ -8,7 +8,8 @@
  *     re-renders that message in place (settling a decision card, fixing
  *     a value) without re-animating the page
  *   - role: "user" | "agent" | "compact" — while the last message's role
- *     is user or compact, the page shows "agent is rendering ⋯"
+ *     is user, the page shows "agent is rendering ⋯"; a compact row is a
+ *     completed exchange and expects nothing after it
  *   - optional per-message `script` runs after insertion as
  *     new Function('root', script)(firstRootElement) — the escape hatch
  *     for interactivity that earns its place

@@ -41,7 +41,8 @@
 
   BEHAVIOR
   - After the last message, an "agent is rendering ⋯" row shows while the
-    last role is "user" or "compact" (an agent reply is expected).
+    last role is "user" (an agent reply is expected); a compact row is a
+    completed exchange, so it is terminal.
   - The page follows the newest message unless the user scrolled up; a
     "↓ new" pill offers the way back down.
   - innerHTML never executes <script> tags — use the declarative hooks:
@@ -71,12 +72,16 @@
     .confidence .conf-text    confidence line (inside .agent.read)
     .toolrun .tr-chev .tr-cmd .tr-status(.ok/.fail) .tr-out .tr-more  tool runs
     .evcard .ev-head .ev-rows .ev-key .ev-day(.good/.bad) .ev-meaning  expected/got
-    .diff .diff-head .diff-body .ln(.add/.del/.hunk/.ctx)   diff block
+    .diff .diff-head .diff-body .ln(.add/.del/.hunk/.ctx)   diff block — set
+      data-lang on .diff for per-line syntax color; without it lines stay plain
+      (the ±gutters and tints still carry the diff)
     .artifacts .artifact      artifact links
     .resultline .rl           green result line
     .distilled .cmd-chip      distilled evidence line
     pre.codeblock > code      framed code block (auto-highlighted)
     .micro .micro.mut         mono micro-labels
+    svg .queue circle         animated queue dots inside a hand-drawn SVG —
+      give waiting/flow diagrams a gentle pulse (still under reduced-motion)
     svg text classes: .mlabel(.acc) .t .tm .tb .small .mv(.ink/.acc)
 -->
 
@@ -662,7 +667,10 @@ window.CHAT_SURFACE_DATA = {
       catch (e) { console.warn('chat-surface: highlight failed', e); }
     });
     qsa(root, '.diff').forEach(function (diff) {
-      var lang = diff.getAttribute('data-lang') || 'python';
+      /* per-line syntax color only when the author names the language —
+         a wrong guess mis-colors silently, and gutters+tints already carry the diff */
+      var lang = diff.getAttribute('data-lang');
+      if (!lang) return;
       diff.querySelectorAll('.ln').forEach(function (ln) {
         if (ln.classList.contains('hunk') || ln.dataset.hlDone) return;
         var src = ln.textContent;
