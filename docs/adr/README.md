@@ -104,4 +104,5 @@
 | 2026-08-14 | [Ticket selection minimizes delay loss across the available executors](20260814-ticket-selection-minimizes-delay-loss-across-available-executors.md) | Accepted | Ticketing |
 | 2026-08-16 | [An invocation is the signal to review a head again](20260816-an-invocation-is-the-signal-to-review-again.md) | Accepted | PR lifecycle |
 | 2026-08-17 | [A prompt line earns its place by provenance, not by a counterfactual judgment](20260817-prompt-lines-earn-their-place-by-provenance.md) | Accepted | Prompt architecture |
-| 2026-08-18 | [a live rendered chat surface replaces figure-out's crux-map canvas](20260818-chat-surface-replaces-the-crux-map-canvas.md) | Accepted | figure-out |
+| 2026-08-18 | [a live rendered chat surface replaces figure-out's crux-map canvas](20260818-chat-surface-replaces-the-crux-map-canvas.md) | Accepted — its rejection of terminal-only improvements is narrowed by [20260818-surface-skill-owns-the-rendering-contract](20260818-surface-skill-owns-the-rendering-contract.md) | figure-out |
+| 2026-08-18 | [the surface skill owns the rendering contract, and the terminal is one of its surfaces](20260818-surface-skill-owns-the-rendering-contract.md) | Accepted | Prompt architecture |

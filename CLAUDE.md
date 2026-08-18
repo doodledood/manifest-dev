@@ -91,6 +91,18 @@ user-invocable: true       # Optional: show in slash command menu (default: true
 
 `tests/test_skill_frontmatter.py` fails any shipped `SKILL.md` — and any Pi prompt template, which loads through the same parser — carrying one of these. It enforces the convention rather than the YAML spec: a validly indented continuation and a block scalar both parse everywhere and are still refused, because one physical line is the rule. It also takes a closed key vocabulary — `name`, `description`, `user-invocable`, `argument-hint`, `metadata` — since an unrecognised key at column 0 is nearly always a wrapped value; adding a frontmatter key a CLI supports means adding it to `KNOWN_KEYS` in the same change.
 
+**A flag or a mode means progressive disclosure.** When a skill grows a flag or a mode, what every invocation needs stays inline in `SKILL.md`, and that mode's mechanics move to a companion file under `references/` loaded only when the mode resolves. Otherwise the default invocation — the one nobody passes a flag for, and the one most sessions run — carries the whole file to use a fraction of it.
+
+The trigger stays in the loading layer. `SKILL.md` says which mode applies and what that mode loads; the deferred file never carries its own trigger, since it can only be read after the load the trigger was meant to gate. State it where a reader already looks for it — a `Modes` or `What loads` table beside the flags, the way `figure-out/SKILL.md` and `chat-surface/SKILL.md` do.
+
+Extraction is for bulk, not tidiness. A mode whose mechanics run to a paragraph stays inline: an indirection costs a load and a reader's place, and it can strand a trigger too subtle to survive the hop. Extract when a default invocation would otherwise carry substantial content it never reads — and when the alternative is restating one rule in two files that drift, prefer the restatement only where the files genuinely cannot reach each other. See `docs/adr/20260703-progressive-disclosure-triggers-live-in-loading-layer.md`.
+
+**A shipped skill stands alone — `CONTEXT.md` is not loaded where it runs.** The glossary is resident in *this* repo's sessions because the context file imports it. A skill installed in someone else's project has none of that: it gets its own `SKILL.md`, whatever references its loading layer names, and nothing else. So every term a skill's behavior depends on is defined where the skill first uses it, and no shipped file defers a definition to the glossary, to another skill, or to a section a reader may never reach. `figure-out`'s canonicalization of *fog* at first use is the pattern; a forward reference inside one always-loaded file is the mild version of the same fault and still worth a gloss.
+
+Keep the two vocabularies apart. The workflow's own terms — Manifest, Deliverable, Acceptance Criterion, Global Invariant, Ticket — are the product's language and travel with it, defined at use wherever the exact meaning binds. The words this repo uses to *reason about* its prompts — Spine, Altitude, Re-host, Form Vocabulary, Door, House — are maintainer vocabulary: they belong in `CONTEXT.md`, ADRs, and this file, not in anything under `claude-plugins/` or `dist/`. A skill neither speaks them nor defines them.
+
+None of this touches the user's own context file. Reading it, seeding it, and capturing into it are real skill behaviors — `init-context` installs one and `figure-out`'s docs mode writes to it. Those name *the project context file* resolved by detection, never a fixed filename, and the file they mean is the user's, never this repo's.
+
 ### Tool Definitions
 
 **Skills**: Omit `tools` frontmatter to inherit all tools from the invoking context (recommended default).

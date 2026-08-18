@@ -88,6 +88,10 @@ _Avoid_: Rewrite, refactor, cleanup.
 The weight class of a prompt line — Spine, mode-specific mechanic, or edge-case guard — determining how foregrounded it should be.
 _Avoid_: Priority, importance.
 
+**Form Vocabulary**:
+The set of shapes a given output destination can carry — tables, box diagrams, fenced code, charts — as opposed to the surface-independent rule that selects among them, which is Spine.
+_Avoid_: Rendering contract (that is the pair, selection rule included), formatting, style.
+
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a Manifest, verifies every Acceptance Criterion and Global Invariant, routes failures or blockers, and finishes only after all gates pass.
 
@@ -265,6 +269,7 @@ _Avoid_: Batch runner, label pulse, dependency controller.
 - **CI One-Shot** is a constrained mode of **Babysit PR**.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.
 - A **Re-host** preserves **Spine** content verbatim while making its **Altitude** typographically legible.
+- A **Form Vocabulary** belongs to wherever a turn's text lands — a surface, or a mode that redirects output, such as team mode's Slack posts — while the rule choosing among its shapes stays in the **Spine**, so it reaches every destination including those no `--surface` names.
 - A **Taste** entry is ratified by the user and routed by scope to a user-level or project-level memory file; it is never inferred and applied silently, and it stays distinct from the review-time **Judgment Layer**.
 - `/init-context` installs a project's **ADR Conventions**, its glossary, and the **Project Context File** wiring that keeps sessions reading both; a **Seed** is layered on top wherever the project has history, and is never a substitute for the wiring.
 - figure-out loads the **ADR Conventions** at bootstrap and writes records under them, which is what makes the project's copy govern rather than the shipped default; cadence — when a session offers to record a decision — stays with figure-out and is not the project's to set.

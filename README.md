@@ -90,7 +90,7 @@ For unattended runs of `/do` or `/auto` (the recommended way to run both), set y
 
 Babysit an existing PR through review without any manifest-dev setup: `/babysit-pr [pr-url]`. Details in the [manifest-dev-tools README](claude-plugins/manifest-dev-tools).
 
-Pass `--surface chat-surface` to `/figure-out` — or invoke `/chat-surface` in any session — to move where the answers land: the conversation renders live into an HTML page you keep open, your messages verbatim and the agent's responses composed for low cognitive load — skimmable claims, charts and diagrams where they beat a sentence, decision cards for every open ask — updating in place as each turn arrives while you keep typing in the terminal.
+`/chat-surface` owns how each answer is shaped for wherever it lands, under one contract: form chosen per point, prose as the fallback, and the ask set apart with its recommendation. `/figure-out` delegates to it — by default in terminal mode, where answers gain tables, box diagrams and fenced code wherever one beats a sentence. Pass `--surface chat-surface` (or invoke `/chat-surface` in any session) for canvas mode: the conversation renders live into an HTML page you keep open, your messages verbatim and the agent's responses carrying charts, diagrams and decision cards, updating in place as each turn arrives while you keep typing in the terminal.
 
 ## How it works
 
@@ -149,7 +149,7 @@ Each linked README covers that CLI's install, upgrade, and uninstall path. Archi
 
 | Plugin | Description |
 |--------|--------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/just-do`, `/done`, `/escalate`, `/auto`, `/just-auto`, `/figure-out-team`), project setup (`/init-context`), Ticket authoring and execution (`/ticket-up`, `/next-ticket`, `/run-ticket`, `/sweep-tickets`), the live rendered chat view (`/chat-surface`), and the verification skills, including `review-code`'s per-dimension quality gates and `review-writing`'s register-aware prose review. |
+| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/just-do`, `/done`, `/escalate`, `/auto`, `/just-auto`, `/figure-out-team`), project setup (`/init-context`), Ticket authoring and execution (`/ticket-up`, `/next-ticket`, `/run-ticket`, `/sweep-tickets`), the surface contract and its live rendered chat view (`/chat-surface`), and the verification skills, including `review-code`'s per-dimension quality gates and `review-writing`'s register-aware prose review. |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow: `/review-pr`, `/babysit-pr`, `/walk-pr` for PR collaboration, plus `/prompt-engineering`, `/handoff`, `/teach-me`, and `/re-pitch`. |
 
 Full plugin and skill catalogs live in [`claude-plugins/README.md`](claude-plugins/README.md) and each plugin's own README.

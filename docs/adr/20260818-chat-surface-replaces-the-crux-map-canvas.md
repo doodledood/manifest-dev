@@ -1,7 +1,7 @@
 # ADR: a live rendered chat surface replaces figure-out's crux-map canvas
 
 ## Status
-Accepted
+Accepted — its rejection of terminal-only improvements is narrowed by [20260818-surface-skill-owns-the-rendering-contract](20260818-surface-skill-owns-the-rendering-contract.md), which moves the rendering contract to a destination-neutral home the default terminal path reaches
 
 ## Area
 figure-out
