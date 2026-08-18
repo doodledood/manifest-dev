@@ -683,17 +683,24 @@ window.CHAT_SURFACE_DATA = {
     if (typeof echarts === 'undefined' || window.__echartsFailed) return;
     qsa(root, '[data-echarts]').forEach(function (el) {
       if (el.dataset.chartDone) return;
+      var ch = null;
       try {
         var opt = JSON.parse(el.getAttribute('data-echarts'));
         el.classList.add('is-live');
-        var fb = el.nextElementSibling;
-        if (fb && fb.classList && fb.classList.contains('chart-fallback')) fb.hidden = true;
-        var ch = echarts.init(el);
+        ch = echarts.init(el);
         if (reduced) opt.animation = false;
         ch.setOption(opt);
         charts.push(ch);
         el.dataset.chartDone = '1';
-      } catch (e) { console.warn('chat-surface: chart init failed', e); }
+        /* hide the fallback only once the chart has actually rendered */
+        var fb = el.nextElementSibling;
+        if (fb && fb.classList && fb.classList.contains('chart-fallback')) fb.hidden = true;
+      } catch (e) {
+        /* leave the .chart-fallback visible — it still carries the values */
+        el.classList.remove('is-live');
+        if (ch) { try { ch.dispose(); } catch (e2) {} }
+        console.warn('chat-surface: chart init failed', e);
+      }
     });
   }
 
@@ -878,9 +885,10 @@ window.CHAT_SURFACE_DATA = {
       } catch (e) { console.warn('chat-surface: render failed (id ' + m.id + ')', e); }
     });
 
-    /* waiting row: an agent reply is expected after a user/compact message */
+    /* waiting row: an agent reply is expected only after a user message —
+       a compact row is a completed exchange by construction, so it is terminal */
     var last = msgs.length ? msgs[msgs.length - 1] : null;
-    renderingRow.hidden = !(last && (last.role === 'user' || last.role === 'compact'));
+    renderingRow.hidden = !(last && last.role === 'user');
 
     checksSoon();
 

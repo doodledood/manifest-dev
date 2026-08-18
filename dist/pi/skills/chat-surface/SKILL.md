@@ -29,7 +29,7 @@ Every element earns its place by cutting cognitive load below what prose would c
 - **The skim layer is the test**: reading only claim lines and decision questions top to bottom must tell the session's story. Bold carries information, never decoration.
 - **The floor**: readable on a phone with no horizontal scroll; reduced motion respected; body text stays ink — color lives in structure, data, and interaction, and decision amber stays exclusive to decision cards.
 
-The template is the default look and vocabulary, not a cage: depart from it — components, layout, palette — when the session or the user calls for something better. What never departs is the contract above.
+The template is the default look and vocabulary, not a cage: depart from it — components, layout, palette — when the session or the user calls for something better. Departure happens at copy time or through `data.js` markup and `script` fields, never by editing the opened page, which the polling cannot reflect without a reload. What never departs is the contract above.
 
 ## Failure handling
 
