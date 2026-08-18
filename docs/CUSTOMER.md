@@ -1,14 +1,14 @@
-# CUSTOMER.md - Ideal Customer Profile
+# CUSTOMER.md — ideal customer profile
 
 > **Purpose**: Define WHO we're building for to guide all product, messaging, and prioritization decisions.
 
-## One-Liner
+## One-liner
 
 **Experienced developers frustrated by hype-driven AI coding tools, seeking first-principles workflows that deliver quality output they can trust.**
 
 ---
 
-## Primary Persona: "The Quality-First Developer"
+## Primary persona: "The Quality-First Developer"
 
 ### Demographics
 - **Experience**: Senior/experienced developers (5+ years)
@@ -22,7 +22,7 @@
 - **Expectation**: Realistic about LLM limitations; wants tools that work *with* those constraints, not ignore them
 - **Preference**: Low cognitive load - minimal steps, nothing to memorize, "just follow along and it works"
 
-### The Pain They Feel
+### The pain they feel
 
 > *"I'm sick of trying every new AI coding tool that pops up on Twitter, hoping this one will finally be the holy grail. They all promise magic but produce code I spend hours debugging. I just want something grounded that actually works."*
 
@@ -37,7 +37,7 @@
 
 ---
 
-## What Success Looks Like
+## What success looks like
 
 When using this marketplace's plugins, the customer experiences:
 
@@ -53,15 +53,15 @@ When using this marketplace's plugins, the customer experiences:
 
 ---
 
-## Problem We Solve
+## Problem we solve
 
-### Primary Problem
+### Primary problem
 Extending your coding agent's capabilities beyond defaults with **quality-focused, first-principles workflows** - not hype-driven prompts. Harness-agnostic: the workflows run on Claude Code, OpenCode, Codex, Pi, or any compatible agent CLI.
 
-### Secondary Problem
+### Secondary problem
 Sharing proven workflows and best practices with teams, creating consistency in how AI-assisted development is done.
 
-### Our Approach
+### Our approach
 - **First principles**: Workflows designed around how LLMs actually work, not how we wish they worked
 - **Honest scope**: We don't promise the world; we deliver reliable results within realistic constraints
 - **Play to strengths**: Maximize LLM capabilities while mitigating known limitations
@@ -71,7 +71,7 @@ Sharing proven workflows and best practices with teams, creating consistency in 
 
 ---
 
-## Anti-Personas (Who We're NOT Building For)
+## Anti-personas (who we're not building for)
 
 | Anti-Persona | Why Not |
 |--------------|---------|
@@ -83,7 +83,7 @@ Sharing proven workflows and best practices with teams, creating consistency in 
 
 ---
 
-## How They Find Us
+## How they find us
 
 **Primary channels** (organic, community-driven):
 1. GitHub discovery (search, trending, stars)
@@ -96,9 +96,9 @@ Sharing proven workflows and best practices with teams, creating consistency in 
 
 ---
 
-## Messaging Guidelines
+## Messaging guidelines
 
-### Do Say
+### Do say
 - "First-principles workflows for your coding agent"
 - "Quality output you can trust"
 - "Built by developers who understand LLM limitations"
@@ -107,19 +107,19 @@ Sharing proven workflows and best practices with teams, creating consistency in 
 - "Simple to use, sophisticated under the hood"
 - "Just follow along - it works"
 
-### Don't Say
+### Don't say
 - "Revolutionary" / "Game-changing" / "Magic"
 - "10x faster" / "Save hours instantly"
 - "The only tool you'll ever need"
 - "AI that writes perfect code"
 - Any hype-driven superlatives
 
-### Positioning Statement
+### Positioning statement
 > For experienced developers frustrated by hype-driven AI coding tools, manifest-dev provides first-principles workflows that maximize code quality through grounded, realistic approaches - unlike the endless stream of overpromising tools that require constant debugging and iteration. The workflows are harness-agnostic: they run on Claude Code, OpenCode, Codex, Pi, or any compatible agent CLI.
 
 ---
 
-## Usage Notes
+## Usage notes
 
 This document should be referenced when:
 - Prioritizing features (does this serve the quality-first developer?)

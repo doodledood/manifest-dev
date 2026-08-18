@@ -1,4 +1,4 @@
-# LLM Coding Capabilities: A Comprehensive Catalog of Strengths and Limitations
+# LLM coding capabilities: A catalog of strengths and limitations
 
 Large language models have transformed software development, yet their capabilities remain poorly understood. Research from 2024-2025 reveals a stark reality: **LLMs achieve 92% success on single-function generation but drop to just 23% on complex multi-file tasks**, with agentic tools like Devin succeeding on only **15% of real-world assignments**. This catalog synthesizes academic research, benchmark data, and practitioner experience to provide a first-principles understanding of where LLMs excel, where they fail, and why—essential knowledge for building effective agentic coding systems.
 
@@ -12,7 +12,7 @@ The implications are profound. Most coding benchmarks test isolated, well-specif
 
 ## Context window degradation: The "lost in the middle" problem
 
-### The U-shaped attention curve
+### The u-shaped attention curve
 
 Research from Liu et al. (TACL 2024) conclusively demonstrated that LLMs fail to utilize information positioned in the middle of their context windows.  Performance follows a **U-shaped curve**: highest when relevant information appears at the beginning or end, with **>20% accuracy degradation** for middle-positioned content. This phenomenon persists regardless of whether context fits within training-time limits.
 
@@ -177,7 +177,7 @@ Agentic systems compound this problem. Rather than recognizing a task is blocked
 
 -----
 
-## Where LLMs genuinely excel: The sweet spot
+## Where lLMs genuinely excel: The sweet spot
 
 ### High-reliability task categories (>80% success)
 

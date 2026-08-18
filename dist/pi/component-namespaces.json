@@ -20,6 +20,7 @@
     "review-code": "manifest-dev",
     "review-pr": "manifest-dev-tools",
     "review-prompt": "manifest-dev-tools",
+    "review-writing": "manifest-dev",
     "run-ticket": "manifest-dev",
     "sweep-tickets": "manifest-dev",
     "teach-me": "manifest-dev-tools",

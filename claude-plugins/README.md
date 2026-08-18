@@ -1,4 +1,4 @@
-# Claude Code Plugins
+# Claude Code plugins
 
 Loop engineering's missing half: define what "done" means, then verify it. The loop is the easy part — these plugins are the understanding and the verification that wrap around it.
 
@@ -10,14 +10,14 @@ Loop engineering's missing half: define what "done" means, then verify it. The l
 /plugin install manifest-dev@manifest-dev
 ```
 
-## Available Plugins
+## Available plugins
 
 | Plugin | What It Does |
 |--------|--------------|
 | [`manifest-dev`](./manifest-dev) | The core workflow: figure it out, encode what you'd accept, let it build and verify itself. `/figure-out` is the thinking partner; `/define` encodes that understanding into a Manifest; `/do` executes it and evaluates every gate under a run-level mode. `per-gate` is the independent default; `consolidated` is an opt-in mode for gate sets that are large and individually cheap, and `self` an opt-in lower-assurance one. `/just-do` is the goal-based executor beside `/do`: it reads the same Manifest and pursues a state where every gate holds, deciding order, method, and amount of checking for itself. `/just-auto` chains figure-out → define → just-do end-to-end under one chain-spanning goal. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. `/init-context` sets a repository up with the surfaces the workflow reads from — project-owned ADR conventions, a glossary, and the context-file wiring — seeding them from the project's own history where there is any. Multi-CLI distribution (OpenCode, Codex CLI, and a Pi package target). Running `/do` with a durable goal-setting/continuation backstop whose contract is auditable all-criteria-PASS — every manifest gate in a ledger with fresh mode-appropriate evidence — is the recommended unattended form; the backstop keeps the run alive across turns. |
 | [`manifest-dev-tools`](./manifest-dev-tools) | Tools alongside the workflow. `/prompt-engineering` builds and reviews prompts. `/walk-pr` (collaborative review), `/review-pr` (autonomous review with `--loop` follow-through), and `/babysit-pr` (author-side PR lifecycle babysitting that runs manifest machinery) cover PR collaboration. `/handoff` packages context for a fresh agent or a side-session. `/teach-me` turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks. `/re-pitch` re-pitches a message that didn't land, in plain words with the missing context. |
 
-## At a Glance
+## At a glance
 
 **manifest-dev** separates *what to build* (Deliverables with Acceptance Criteria) from *rules to follow* (Global Invariants). The three beats answer the three ways an autonomous loop goes wrong — skipping understanding, never defining "done," and faking it:
 
@@ -29,7 +29,7 @@ Loop engineering's missing half: define what "done" means, then verify it. The l
 
 Full schema, gate text, verification skills, and task guidance live in the [manifest-dev README](./manifest-dev).
 
-For non-Claude installs and updates, see the root README's [Multi-CLI Support](../README.md#multi-cli-support). Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`); it ships the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs.
+For non-Claude installs and updates, see the root README's [Multi-CLI support](../README.md#multi-cli-support). Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`); it ships the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs.
 
 **manifest-dev-tools** sits next to the workflow rather than inside it — prompt engineering, PR review and walkthroughs, PR babysitting, context handoff, incremental teaching, and a re-pitch corrective. Details in the [manifest-dev-tools README](./manifest-dev-tools).
 

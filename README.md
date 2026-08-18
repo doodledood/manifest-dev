@@ -59,7 +59,7 @@ manifest-dev puts understanding first, adversarially, before `/define` writes an
 
 manifest-dev rides on top of whatever runs your loop, including your host's own `/loop` and `/goal`, and leaves scheduling jobs and managing worktrees to that runtime. It supplies the part those primitives leave to you: what to verify, and how to know you're actually done.
 
-## Quick Start
+## Quick start
 
 The one-skill door is above. The full system installs as a plugin:
 
@@ -69,7 +69,7 @@ The one-skill door is above. The full system installs as a plugin:
 /plugin install manifest-dev@manifest-dev
 ```
 
-For OpenCode, Codex CLI, and Pi, see [Multi-CLI Support](#multi-cli-support) below.
+For OpenCode, Codex CLI, and Pi, see [Multi-CLI support](#multi-cli-support) below.
 
 Then work through the three beats:
 
@@ -92,7 +92,7 @@ Babysit an existing PR through review without any manifest-dev setup: `/babysit-
 
 Pass `--canvas` to `/figure-out` for a refreshable, browser-rendered map of the session alongside the chat, readable on any screen: the crux tree with the question you're standing on marked on it, what's still open around it, and how much ground is still unsurveyed. Annotate it in place and hand your notes back in one paste.
 
-## How It Works
+## How it works
 
 ```mermaid
 flowchart TD
@@ -119,18 +119,18 @@ flowchart TD
 
 FAIL routes back to a fix; a real blocker (amber) routes to `/escalate`.
 
-## What Changes
+## What changes
 
 Your first pass lands closer to done, and the fix loop cleans up what's left on its own. Writing acceptance criteria also keeps you engaged with your own code. That matters more the more you lean on the agent, right when the codebase starts to feel like someone else wrote it.
 
 > [!TIP]
 > Resist the urge to jump in mid-`/do`. It won't nail everything first try; that's expected. You invested in understanding the problem, so let the loop run.
 
-## Who This Is For
+## Who this is for
 
 You've burned out on the weekly "game-changing AI coding tool" cycle and want something grounded that works. You're an experienced developer who cares more about output quality than raw speed, and you've learned the hard way that AI code needs guardrails more than cheerleading. If you count every cent per token, or want the fastest possible output regardless of what it costs you in review, this isn't your thing.
 
-## Multi-CLI Support
+## Multi-CLI support
 
 The Claude Code plugins are the source of truth. The same components run in OpenCode, Codex CLI, and Pi through native per-CLI distributions under `dist/`, all carrying the same topology-neutral gate schema and run-level verification modes.
 
@@ -145,11 +145,11 @@ Individual skills also install into 18+ agents (Cursor, Copilot, Cline, and more
 
 Each linked README covers that CLI's install, upgrade, and uninstall path. Architecture decisions behind the multi-CLI design are indexed in [`docs/adr/`](docs/adr/README.md).
 
-## Available Plugins
+## Available plugins
 
 | Plugin | Description |
 |--------|--------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/just-do`, `/done`, `/escalate`, `/auto`, `/just-auto`, `/figure-out-team`), project setup (`/init-context`), Ticket authoring and execution (`/ticket-up`, `/next-ticket`, `/run-ticket`, `/sweep-tickets`), and the verification skills, including `review-code`'s per-dimension quality gates. |
+| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/just-do`, `/done`, `/escalate`, `/auto`, `/just-auto`, `/figure-out-team`), project setup (`/init-context`), Ticket authoring and execution (`/ticket-up`, `/next-ticket`, `/run-ticket`, `/sweep-tickets`), and the verification skills, including `review-code`'s per-dimension quality gates and `review-writing`'s register-aware prose review. |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow: `/review-pr`, `/babysit-pr`, `/walk-pr` for PR collaboration, plus `/prompt-engineering`, `/handoff`, `/teach-me`, and `/re-pitch`. |
 
 Full plugin and skill catalogs live in [`claude-plugins/README.md`](claude-plugins/README.md) and each plugin's own README.

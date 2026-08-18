@@ -1,25 +1,30 @@
 # WRITING Task Guidance
 
-Base guidance for all text-authoring tasks (articles, emails, marketing copy, social media, creative writing). Source: writing plugin v1.3.0.
+Human-voice register: articles, marketing and social copy, newsletters, narrative, and creative
+writing. Composes onto `PROSE_FLOOR.md`.
+
+**Register.** These gates judge whether prose reads as authentically human-voiced. They do not
+apply to documentation — a spec or a formal report takes `DOCUMENT.md` instead, where rhythm
+variation and deliberate imperfection are defects rather than virtues.
 
 ## Quality Gates
 
-| Aspect | Threshold |
-|--------|-----------|
-| Vocabulary, Structure, Tone, Rhetoric, Craft, Negative space | no MEDIUM+ under `references/WRITING-REFERENCE.md` |
-| Voice compliance | Matches AUTHOR_VOICE.md (conditional: only when doc exists) |
-| Readability | Accessible to target audience, scannable structure |
-| Anti-slop | No kill-list vocabulary, hedge words, filler phrases, generic phrasing |
-| Accuracy | Claims supported, no contradictions |
-| Audience fit | Language and depth match target reader |
-| Clarity | No ambiguous terms or undefined jargon |
-| Statistical variation | Sentence-length variation and vocabulary diversity present; uniform rhythm is an AI tell |
+| Aspect | Skill | Threshold |
+|--------|-------|-----------|
+| Human-voice quality | `review-writing`, `register=voice` | no MEDIUM+ |
+| Readability | — | Accessible to the target audience, scannable structure |
 
-Writing-review severity: CRITICAL = immediately identifiable as AI. HIGH = experienced readers would notice. MEDIUM/LOW = informational only.
+The style gate encodes as a gate body that activates the `review-writing` skill with
+`register=voice` under `/do`'s selected evaluator. Name the skill and the register and stop — the
+skill owns the threshold and loads its own references, and `register=voice` brings the shared
+prose floor with it, so the bar in the table above orients the author rather than being copied
+into the gate. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
+
+Structure, tone, rhetoric, craft, negative space, statistical variation, and kill-list vocabulary
+all fall inside that one gate; they do not need gates of their own.
 
 ## Defaults
 
 *Domain best practices for this task type.*
 
-- **Multi-layer editing** — Edit beyond vocabulary: word-level (kill-list), sentence-level (structure), paragraph-level (rhetoric/tone), content-level (substance). Never just word replacement
-- **Kill-list cross-check** — Full vocabulary kill-list applied to output
+- **Read it aloud** — the final pass is auditory; stumbling marks where the prose needs work

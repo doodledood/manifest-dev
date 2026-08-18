@@ -97,7 +97,8 @@ Do NOT report on:
 - **Project-specific anti-comment policies** (CLAUDE.md / AGENTS.md rules about commenting) → belongs to the context-file-adherence dimension
 - **Dead code / commented-out code** → belongs to the code-maintainability dimension
 - **Code itself is verbose / over-engineered** → belongs to the code-simplicity dimension
-- **Standalone authored prose** (articles, marketing copy, blog posts) → outside this dimension's domain; general-purpose handles those when needed
+- **Standalone authored prose** (articles, marketing copy, blog posts) → outside this dimension's domain; the `manifest-dev:review-writing` skill reviews a whole text against the project's writing standards, in whichever register governs it
+- **Style-standard conformance** (heading case, list punctuation, terminology consistency, link text, date and number format) → also `manifest-dev:review-writing`. The boundary: this dimension asks whether prose *earns its place* in a diff; that skill asks whether a text *conforms to the style standard* for its register. A README paragraph that says nothing is this dimension's finding; the same paragraph in title case with a bare-URL link is that skill's
 
 ## Special cases / handling ambiguity
 
