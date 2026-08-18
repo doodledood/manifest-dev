@@ -22,7 +22,8 @@ Two placements were live. Hosting the contract in the surface skill alone leaves
 
 **The surface skill owns how a turn is shaped for wherever its text lands. figure-out owns what a turn advances and what it spends, and delegates form selection entirely.**
 
-- `chat-surface` states the rendering contract once, destination-neutrally — no chart library, no `data.js`, no card component in any of its rules — and carries two modes supplying only their own form vocabulary and mechanics. **Terminal mode** creates nothing: its vocabulary is tables, box diagrams, fenced code, and emphasis, governed by the rule that a form must stay readable when nothing renders it. **Canvas mode** is today's live HTML page, unchanged.
+- `chat-surface` states the rendering contract once, destination-neutrally — no chart library, no `data.js`, no card component in any of its rules — and carries two modes supplying only their own form vocabulary and mechanics. **Terminal mode** creates nothing: its vocabulary is tables, box diagrams, fenced code, and emphasis, governed by the rule that a form must stay readable when nothing renders it. **Canvas mode** is today's live HTML page, unchanged, and remains the default for anyone asking for the chat surface by name.
+- The modes disclose progressively. `SKILL.md` carries what both need — the contract, the mode table, and terminal mode, whose mechanics are two paragraphs — while canvas mechanics move to `references/CANVAS.md`, loaded only when canvas resolves. The trigger stays in `SKILL.md` per `20260703`. This is what makes the load the default path pays a fraction of the skill rather than all of it.
 - The contract gains the rule the prototype pass produced: a non-prose form earns its place when it carries a relationship prose would need several sentences for. A grid holding what is really a list fails it.
 - figure-out's `--surface` default, `terminal`, activates `chat-surface` in terminal mode instead of loading nothing. Its turn section names the surface skill as the owner of form selection and states no form rule of its own; the skim-layer sentence it used to carry moves to the contract, leaving the budget clause behind.
 
@@ -43,7 +44,7 @@ Two placements were live. Hosting the contract in the surface skill alone leaves
 - The per-harness rendering question is answered by a property instead of a table someone must maintain.
 
 ### Negative
-- Every figure-out session now loads the surface skill, trading the property `20260803` protected — that a user who never passes the flag pays nothing. The cost is a prompt load on a workflow whose stated posture prefers quality over token efficiency, and it buys the contract that session actually uses.
+- Every figure-out session now loads the surface skill, trading the property `20260803` protected — that a user who never passes the flag pays nothing. Progressive disclosure keeps that load to the contract, the mode table, and terminal mode; the canvas mechanics a default session never uses stay behind their trigger. What remains is a prompt load on a workflow whose stated posture prefers quality over token efficiency, buying the contract that session actually uses.
 - `chat-surface` names a skill whose surfaces now include a terminal. The name strains until someone pays the rename.
 - Authorizing non-prose forms invites the padding `20260803` warned a named shape invites. The earning rule is the only thing holding that line; if turns start carrying a decorative table or diagram apiece, this should be reopened rather than firmed.
 
