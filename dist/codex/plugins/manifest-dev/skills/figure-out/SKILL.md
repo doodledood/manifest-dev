@@ -1,7 +1,7 @@
 ---
 name: figure-out
 description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when understanding is the deliverable rather than a preamble to acting, when figuring it out is the goal, or when the user asks to think through a decision, dig deeper, press an assumption, investigate why something is happening, or work through a problem.'
-argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team] [--scratch] [--canvas]'
+argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team] [--scratch] [--surface <name>]'
 user-invocable: true
 ---
 
@@ -127,7 +127,9 @@ Some sessions reach a point where the remaining unresolved questions stop depend
 
 ### Flags
 
-Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`, `--canvas`) are topic text unless clearly supplied as this skill's option.
+Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`, `--surface`) are topic text unless clearly supplied as this skill's option.
+
+`--surface <name>` selects where the session's answers land. The default, `terminal`, is this skill as written — chat only, nothing extra loads. Any other value names a surface-providing skill to activate for the session — `--surface chat-surface` invokes the `manifest-dev:chat-surface` skill, which renders the conversation live into an HTML page the user watches — and anything after the name passes through to that skill as its arguments. The turn discipline above is unchanged either way: the terminal reply still carries its claim and its ask.
 
 ### What loads
 
@@ -140,14 +142,13 @@ Apply each loaded reference's overrides.
 | `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or one of its mapped contexts; `--no-docs` or `--team` suppresses | project glossary captures, map awareness, ADR offers |
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining without user wait | self-answer with recommended answers instead of waiting on the user |
 | `references/team.md` | `--team`, typically from the `figure-out-team` wrapper skill | the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session; it also owns team mode's separate read-only project-context behavior |
-| `references/CANVAS.md` | `--canvas` | alongside chat, a visual artifact showing where the traverse has reached, which the user can annotate and hand back |
 | `references/SCRATCH.md` | `--scratch`, or mid-session on an accepted offer | a rough, domain-native supporting artifact (draft, prototype, or mock) mirroring current understanding, to ground long or complex sessions |
 
 The working directory alone does not establish project relevance. When relevance is absent or unclear, do not load project docs; if it emerges later, load the reference then. Investigation logging is independent of it.
 
 Team mode has counterparties but no single ratifier, which is why it suppresses Taste: taste is *personal*, and a channel has no one "this user" to record a preference for. `--team` also supersedes `--autonomous`'s self-answering; when both are passed, autonomous's other overrides still apply, and wherever the two conflict, team mode wins.
 
-Do not announce canvas activation — functional status notices the reference requires are not activation announcements. Scratch mode is off by default and callers pass it for sessions expected to run long; when an unflagged session turns out long or complex enough that a concrete mirror would help, offer it mid-session and, on accept, proceed as if flagged.
+Scratch mode is off by default and callers pass it for sessions expected to run long; when an unflagged session turns out long or complex enough that a concrete mirror would help, offer it mid-session and, on accept, proceed as if flagged.
 
 ### Prompt-shaped investigations
 

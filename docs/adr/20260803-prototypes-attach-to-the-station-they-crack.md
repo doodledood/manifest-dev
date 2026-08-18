@@ -1,7 +1,7 @@
 # ADR: a prototype attaches to the question it was built to crack, and the reaction lands there
 
 ## Status
-Accepted
+Deprecated — the canvas this bound to was deleted by 20260818-chat-surface-replaces-the-crux-map-canvas; the surviving principle (a reaction is encoded against the question it answers) lives in define's criteria-pinned-by-reaction rule
 
 ## Area
 figure-out
