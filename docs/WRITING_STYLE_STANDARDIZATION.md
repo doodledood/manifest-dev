@@ -1,6 +1,6 @@
 # Writing-style standardization — investigation read
 
-**Status**: Research read, not an implemented design. This document records an investigation into standardizing the project's writing-style guidance against the [Google developer documentation style guide](https://developers.google.com/style) and the repo's existing writing references. It is the input a future `/define` session would encode from; nothing in it is binding until a Manifest encodes it.
+**Status**: Implemented. This document records the investigation that produced the design — an examination of the [Google developer documentation style guide](https://developers.google.com/style) against the repo's existing writing references. The design it recommends now ships: `PROSE_FLOOR.md` carries the shared floor, `WRITING.md` and `DOCUMENT.md` are the two register overlays, `DOCS-STYLE-REFERENCE.md` and `PROSE-FLOOR-REFERENCE.md` are new evaluator references, and the `review-writing` skill applies the same standards outside a manifest run. The problem statement below describes the state before that change.
 
 **Date**: 2026-08-18. Google guide state as fetched that day (last upstream update July 7, 2026).
 

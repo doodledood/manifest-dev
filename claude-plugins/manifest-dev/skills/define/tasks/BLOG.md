@@ -1,6 +1,7 @@
 # BLOG Task Guidance
 
-Blog posts, articles, tutorials, newsletters. Composes with WRITING.md (base for all prose).
+Blog posts, articles, tutorials, newsletters. Composes onto `WRITING.md`, and through it onto
+`PROSE_FLOOR.md` — the human-voice register.
 
 ## Quality Gates
 

@@ -1,25 +1,26 @@
 # WRITING Task Guidance
 
-Base guidance for all text-authoring tasks (articles, emails, marketing copy, social media, creative writing). Source: writing plugin v1.3.0.
+Human-voice register: articles, marketing and social copy, newsletters, narrative, and creative
+writing. Composes onto `PROSE_FLOOR.md`.
+
+**Register.** These gates judge whether prose reads as authentically human-voiced. They do not
+apply to documentation — a spec or a formal report takes `DOCUMENT.md` instead, where rhythm
+variation and deliberate imperfection are defects rather than virtues.
 
 ## Quality Gates
 
 | Aspect | Threshold |
 |--------|-----------|
-| Vocabulary, Structure, Tone, Rhetoric, Craft, Negative space | no MEDIUM+ under `references/WRITING-REFERENCE.md` |
-| Voice compliance | Matches AUTHOR_VOICE.md (conditional: only when doc exists) |
-| Readability | Accessible to target audience, scannable structure |
-| Anti-slop | No kill-list vocabulary, hedge words, filler phrases, generic phrasing |
-| Accuracy | Claims supported, no contradictions |
-| Audience fit | Language and depth match target reader |
-| Clarity | No ambiguous terms or undefined jargon |
+| Human-voice quality | no MEDIUM+ under `references/WRITING-REFERENCE.md` across structure, tone, rhetoric, craft, and negative space |
 | Statistical variation | Sentence-length variation and vocabulary diversity present; uniform rhythm is an AI tell |
+| Readability | Accessible to the target audience, scannable structure |
 
-Writing-review severity: CRITICAL = immediately identifiable as AI. HIGH = experienced readers would notice. MEDIUM/LOW = informational only.
+Severity in this register grades how identifiable the prose is as AI-written, per the anchor in
+`references/WRITING-REFERENCE.md` — not what it costs a reader.
 
 ## Defaults
 
 *Domain best practices for this task type.*
 
-- **Multi-layer editing** — Edit beyond vocabulary: word-level (kill-list), sentence-level (structure), paragraph-level (rhetoric/tone), content-level (substance). Never just word replacement
-- **Kill-list cross-check** — Full vocabulary kill-list applied to output
+- **Kill-list cross-check** — full vocabulary kill-list applied to output before it is considered done
+- **Read it aloud** — the final pass is auditory; stumbling marks where the prose needs work

@@ -51,6 +51,7 @@ in [`AUTOMATED_EXECUTION.md`](skills/ticket-up/references/AUTOMATED_EXECUTION.md
 - **`/done`** — completion summary in plain prose, called by `/do` after every criterion has fresh PASS evidence under the selected mode.
 - **`/escalate`** — structured blocker: criterion, attempts and why each failed, possible resolutions, what's needed from you. Routed by `/do`.
 - **`/review-code`** — quality review along **one dimension per invocation** (bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, defect-class completeness after a fix, or the project context file adherence). Loads exactly that dimension's reference (progressive disclosure) and returns a PASS/FAIL report. A gate's body activates it; it replaces the per-dimension reviewer agents.
+- **`/review-writing`** — reviews prose against the project's writing standards, in whichever register governs it: documentation (specs, reports, READMEs, reference material) or human-voiced writing (articles, copy, narrative). Detects the register, applies that register's rules plus the rules holding in both, and reports graded findings with the fix. Point it at a file, a directory, or pasted text; a project's own style sheet outranks the shipped standard. Review only — it reports, you edit.
 
 ## Manifest Schema — One Gate, One Text
 

@@ -149,7 +149,7 @@ Each linked README covers that CLI's install, upgrade, and uninstall path. Archi
 
 | Plugin | Description |
 |--------|--------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/just-do`, `/done`, `/escalate`, `/auto`, `/just-auto`, `/figure-out-team`), project setup (`/init-context`), Ticket authoring and execution (`/ticket-up`, `/next-ticket`, `/run-ticket`, `/sweep-tickets`), and the verification skills, including `review-code`'s per-dimension quality gates. |
+| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/just-do`, `/done`, `/escalate`, `/auto`, `/just-auto`, `/figure-out-team`), project setup (`/init-context`), Ticket authoring and execution (`/ticket-up`, `/next-ticket`, `/run-ticket`, `/sweep-tickets`), and the verification skills, including `review-code`'s per-dimension quality gates and `review-writing`'s register-aware prose review. |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow: `/review-pr`, `/babysit-pr`, `/walk-pr` for PR collaboration, plus `/prompt-engineering`, `/handoff`, `/teach-me`, and `/re-pitch`. |
 
 Full plugin and skill catalogs live in [`claude-plugins/README.md`](claude-plugins/README.md) and each plugin's own README.

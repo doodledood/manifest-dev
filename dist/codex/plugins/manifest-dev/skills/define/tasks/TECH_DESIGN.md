@@ -1,6 +1,8 @@
 # TECH_DESIGN Task Guidance
 
-Standalone technical design documents. Composes with DOCUMENT.md and WRITING.md.
+Standalone technical design documents. Composes onto `DOCUMENT.md`, and through it onto
+`PROSE_FLOOR.md` — the documentation register, so its style gates come from
+`references/DOCS-STYLE-REFERENCE.md` and the human-voice register does not apply.
 
 ## Quality Gates
 
