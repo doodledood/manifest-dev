@@ -35,11 +35,15 @@ that a `dist/` edit was authorized.
 
 Read before building plugins:
 
-- **@docs/CUSTOMER.md** - Who we build for, messaging guidelines
+- **@NORTH_STAR.md** - The project's standing direction: who it's for, the promise, what winning means
 - **@CONTEXT.md** - Project language (Manifest, Deliverable, etc.) and relationships
 - **docs/LLM_CODING_CAPABILITIES.md** - LLM strengths/limitations, informs workflow design
 
-## Project Language and Decision Records
+## Project Surfaces
+
+This project keeps its direction, vocabulary, and decision memory in the repo — shared ground for every contributor and agent, regardless of tooling.
+
+**The North Star is the standing direction.** `NORTH_STAR.md` is imported above, so it is already in context; anchor scope, priority, and outward-facing claims on it. Each line carries a dated state (evidence / hypothesis / ruled / empty): new evidence may lower a state, but a position changes only by the owner's call, recorded as a decision record.
 
 **The glossary is not optional reading.** `CONTEXT.md` is imported above, so it is already in context. Where a harness does not support imports, read it at the start of every session before doing anything else. It exists to stop silent misreading, and nobody looks up a term they already believe they understand — which is why it is resident rather than referenced.
 

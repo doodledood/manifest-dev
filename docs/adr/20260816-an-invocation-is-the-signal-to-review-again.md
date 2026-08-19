@@ -65,7 +65,7 @@ and contract findings; it does not re-ask a premise question a human already ans
   needs no configuration.
 - **Remove the unchanged-head check everywhere, loop wakes included**: rejected. The loop's exit
   condition would never fire, and one commit would be re-reviewed for the loop's full 24-hour life —
-  the unbounded verification `docs/CUSTOMER.md` names as a workflow defect rather than a cost the
+  the unbounded verification `docs/CUSTOMER.md` (since absorbed into `NORTH_STAR.md`) names as a workflow defect rather than a cost the
   user should watch.
 - **Do nothing**: rejected on evidence rather than preference. Both clauses read durable GitHub
   state, so no session-level workaround reaches them and the capability did not exist by any route.

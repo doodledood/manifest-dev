@@ -18,7 +18,7 @@ Two distinctions decide it.
 
 **Checking is a capability; ruling that a run is finished is not.** A model handed a goal alone is both the party doing the work and the party deciding it is done. No improvement in self-verification changes that, because it is a question of position rather than skill.
 
-The same page's capability list says the model "coordinates teams of subagents well, with effective writer-verifier patterns," and reaches the do-not-use-subagents-to-verify line through the pointer "For cost-sensitive workloads, cap delegation." The guidance therefore prices the writer-verifier split rather than rejecting it. `docs/CUSTOMER.md` names cost optimizers as an audience this project does not serve.
+The same page's capability list says the model "coordinates teams of subagents well, with effective writer-verifier patterns," and reaches the do-not-use-subagents-to-verify line through the pointer "For cost-sensitive workloads, cap delegation." The guidance therefore prices the writer-verifier split rather than rejecting it. `docs/CUSTOMER.md` (since absorbed into `NORTH_STAR.md`) names cost optimizers as an audience this project does not serve.
 
 ## Decision
 

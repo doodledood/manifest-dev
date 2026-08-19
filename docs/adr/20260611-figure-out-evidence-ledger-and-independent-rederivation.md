@@ -41,7 +41,7 @@ Adopt an evidence-ledger trust core in the spine, mode-general:
 - "Underdetermined — here's what would decide it" enters the vocabulary without becoming an exit ramp.
 
 ### Negative
-- Spine weight increases; ledger upkeep and the re-derivation pass cost tokens (accepted: quality-first per CUSTOMER.md).
+- Spine weight increases; ledger upkeep and the re-derivation pass cost tokens (accepted: quality-first per CUSTOMER.md, since absorbed into NORTH_STAR.md).
 - The cheap re-derivation checks evidence→conclusion fit only; evidence-gathering blind spots remain partially open.
 
 ## Source

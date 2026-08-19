@@ -139,7 +139,7 @@ Apply each loaded reference's overrides.
 |-----------|------------|--------------|
 | `references/LOG.md` | by default; `--no-log` suppresses | an append-only investigation log |
 | `references/TASTE.md` | by default, regardless of project-docs relevance; `--autonomous` or `--team` suppresses | offer-and-ratify capture of durable personal steering preferences (Taste) into harness memory files |
-| `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or one of its mapped contexts; `--no-docs` or `--team` suppresses | project glossary captures, map awareness, ADR offers |
+| `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or one of its mapped contexts; `--no-docs` or `--team` suppresses | project glossary captures, map awareness, ADR offers, North Star updates |
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining without user wait | self-answer with recommended answers instead of waiting on the user |
 | `references/team.md` | `--team`, typically from the `figure-out-team` wrapper skill | the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session; it also owns team mode's separate read-only project-context behavior |
 | `manifest-dev:chat-surface` skill | always, in the mode `--surface` names — `text` by default | the rendering contract that selects a turn's form, plus that destination's form vocabulary |
