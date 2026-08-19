@@ -177,6 +177,10 @@ _Avoid_: Wedge, funnel.
 **House**:
 The full understanding-first loop (figure-out → define → do) that every Door opens into; the retention engine behind the Doors.
 
+**North Star**:
+The standing project-level strategy surface — why a project exists, who it is for, what it promises, how it makes money, how people find it, what winning means, and its standing nevers and stances — resident in every session and informing rather than binding, each slot carrying an epistemic status (evidence, hypothesis, or empty).
+_Avoid_: Steering layer, strategy doc, business context.
+
 **Taste**:
 A durable personal steering preference persisted only by offer-and-ratify — captured as preference, rationale, and flip condition in a harness memory file.
 _Avoid_: Preference, style, judgment.
