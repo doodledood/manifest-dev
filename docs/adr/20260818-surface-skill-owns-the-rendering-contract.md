@@ -1,7 +1,7 @@
 # ADR: the surface skill owns the rendering contract, and the terminal is one of its surfaces
 
 ## Status
-Accepted
+Accepted — its two modes are renamed by [20260819-surface-modes-name-their-output-format](20260819-surface-modes-name-their-output-format.md): terminal mode is now text mode and canvas mode is now html mode
 
 ## Area
 Prompt architecture

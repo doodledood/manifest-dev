@@ -1,7 +1,7 @@
 ---
 name: chat-surface
-description: 'Shapes where a conversation lands so each response is understood at the lowest cognitive load its content allows — skimmable claims, tables and diagrams where they beat a sentence, asks set apart with their recommendation. Runs in terminal mode (monospace forms, no artifact) or canvas mode (a live auto-updating HTML page with charts, SVG diagrams, and decision cards). Use when another skill activates a surface (e.g. figure-out --surface terminal or --surface chat-surface), or when the user asks for the chat surface, a rendered chat view, or a richer view of the conversation.'
-argument-hint: '[terminal | canvas] [optional surface arguments from the invoking skill]'
+description: 'Shapes where a conversation lands so each response is understood at the lowest cognitive load its content allows — skimmable claims, tables and diagrams where they beat a sentence, asks set apart with their recommendation. Runs in text mode (monospace forms, no artifact) or html mode (a live auto-updating HTML page with charts, SVG diagrams, and decision cards). Use when another skill activates a surface (e.g. figure-out --surface text or --surface chat-surface), or when the user asks for the chat surface, a rendered chat view, or a richer view of the conversation.'
+argument-hint: '[text | html] [optional surface arguments from the invoking skill]'
 user-invocable: true
 ---
 
@@ -13,10 +13,10 @@ Resolve the mode before the first turn, then load what that mode names. The cont
 
 | Mode | Selected when | Loads | Destination |
 |------|---------------|-------|-------------|
-| Canvas (default) | a bare invocation, `--surface chat-surface`, an argument of `canvas`, or any unrecognised argument — which passes through to that mode as its own | `references/CANVAS.md` | an HTML page the user keeps open beside the terminal; the terminal reply stays short because the full rendering lives on the page |
-| Terminal | an argument of `terminal` | nothing further — the section below is the whole of it | the terminal itself; nothing is created, copied, opened, or written to disk |
+| HTML (default) | a bare invocation, `--surface chat-surface`, an argument of `html`, or any unrecognised argument — which passes through to that mode as its own | `references/HTML.md` | an HTML page the user keeps open beside the terminal; the terminal reply stays short because the full rendering lives on the page |
+| Text | an argument of `text` | nothing further — the section below is the whole of it | the terminal itself; nothing is created, copied, opened, or written to disk |
 
-Canvas is the default because a user who asks for the chat surface by name means the page.
+HTML is the default because a user who asks for the chat surface by name means the page.
 
 ## The rendering contract
 
@@ -31,7 +31,7 @@ This holds in every mode, and for any destination a turn's text reaches — a te
 - **Weight follows information**: a logistics exchange renders compactly; a session's deliverable — a final read, a shipped fix — gets the fullest treatment the destination offers.
 - **The skim layer is the test**: reading only the claim lines and the asks, top to bottom, must tell the session's story. Emphasis carries information, never decoration.
 
-## Terminal mode
+## Text mode
 
 The form vocabulary is what a monospace destination can carry: markdown tables, box and ASCII diagrams, fenced code, inline code for short literals, and bold claim lines. Charts have no terminal form — where a chart would have been the answer, a short sentence with the numbers in it is.
 
