@@ -9,7 +9,7 @@ those files carry the register and accuracy gates, so this file does not repeat 
 
 | Aspect | Threshold |
 |--------|-----------|
-| Claim fidelity to the North Star | Every outward-facing claim the deliverable makes is consistent with the project's North Star `Promise` and crosses none of its `Never` entries |
+| Claim fidelity to the North Star | Every outward-facing claim the deliverable makes is consistent with the `Promise` in the project's North Star (its standing strategy doc, `NORTH_STAR.md`) and crosses none of its `Never` entries |
 | Arrival–offer match | The deliverable names the arrival it is written for — what the reader was doing and wanting when they got here — and its opening addresses that arrival; where the North Star's `How they arrive` names arrivals, the one addressed is among them |
 
 **Claim fidelity** encodes as a gate whose body has the evaluator read the project's
