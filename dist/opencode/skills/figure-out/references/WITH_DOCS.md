@@ -1,16 +1,18 @@
 # figure-out: docs mode
 
-The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds three behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), and **ADR offers** (record decisions worth keeping).
+The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds four behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), **ADR offers** (record decisions worth keeping), and **North Star updates** (keep the project's standing strategy surface current, under its update asymmetry).
 
 ## Override: these writes ARE the action
 
 The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal.
 
-When project docs are active, that frame has two explicit exceptions. **Glossary captures and ADR offers are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them.
+When project docs are active, that frame has three explicit exceptions. **Glossary captures, ADR offers, and North Star updates are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them. For the North Star the carve-out covers exactly what its asymmetry permits: a status change on evidence executes inline, and a position rewrite executes inline only once the owner has explicitly ruled.
 
-(The default figure-out posture still applies to everything else — design proposals, code edits, plan synthesis. Only glossary writes and ADR offers carve out.)
+(The default figure-out posture still applies to everything else — design proposals, code edits, plan synthesis. Only these three carve out.)
 
 ## Bootstrap (when project relevance exists)
+
+**Load the project's `NORTH_STAR.md` when it exists** — the standing strategy surface the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read.
 
 **Load the ADR conventions first.** Read the project's own `docs/adr/CONVENTIONS.md` when it exists — it governs, and a team that edited it meant to. Read the adjacent `ADR_FORMAT.md` when it does not. Either way the bar for what deserves a record is now in context, which is what lets the per-turn ADR check below run without another load.
 
@@ -74,6 +76,35 @@ On accept: write it as the loaded conventions specify — including their whole 
 For each accepted, write it the same way Pass 1 does. Skip the sweep if the conversation didn't actually produce decisions worth capturing — an empty sweep is fine.
 
 The two-pass shape exists because per-turn alone misses subtle decisions (the check fires only at high confidence to keep interruption low), and sweep-only loses immediacy (alternatives are freshest right after the decision is made). Both passes together = inline coverage matches what a post-hoc sweep would catch.
+
+## North Star updates (per-turn, under the asymmetry)
+
+The project's `NORTH_STAR.md` is a standing strategy doc whose every line carries a dated
+state — `evidence` (something happened), `hypothesis` (best thinking, untested), `ruled`
+(the owner decided; only the owner moves it), `empty` (unanswered, written with what would
+fill it). One asymmetry governs every update: **statuses move on evidence, positions move
+only on the owner's explicit ruling.**
+
+After every counterparty response — or, in self-answered runs, every resolved question —
+check whether the session's findings touched a North Star line:
+
+- **A finding contradicts a stated line** → surface the clash as a lead, exactly like a
+  glossary clash: *"The North Star says X; this session found Y — which stands?"* Only
+  the user's explicit ruling rewrites the position; on that ruling, write the new
+  position inline, set its state, and offer the decision record that remembers why it
+  moved (the ADR machinery above — a position change always clears its bar).
+- **A finding weakens a line without settling it** → lower the state inline, no offer
+  needed (evidence → hypothesis), appending one line naming what would settle it. Never
+  touch the position's words.
+- **A finding resolves an `empty` or `hypothesis` line** → present the evidence and the
+  filled line; the user's yes writes it with state `evidence` and its date.
+- **Fog that fits no field** → the doc's `Open` section (with what would fill it), or
+  nowhere — never forced into a field as content.
+
+In self-answered or unattended runs the ruling path is closed: lower states and flag
+contradictions in the session's output, never flip a position. Updates are event-driven —
+this check is the whole trigger; there is no review cadence, and the dated states are what
+keep staleness visible.
 
 ## CONTEXT.md format
 
