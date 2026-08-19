@@ -1,4 +1,4 @@
-# chat-surface: canvas mode
+# chat-surface: html mode
 
 The destination is an HTML page the user keeps open beside the terminal. The terminal reply stays short — the claim, the ask — because the full rendering lives on the page. The rendering contract in `SKILL.md` governs what goes on it; this file adds only what a page can do and how it is produced.
 

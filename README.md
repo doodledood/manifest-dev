@@ -90,7 +90,7 @@ For unattended runs of `/do` or `/auto` (the recommended way to run both), set y
 
 Babysit an existing PR through review without any manifest-dev setup: `/babysit-pr [pr-url]`. Details in the [manifest-dev-tools README](claude-plugins/manifest-dev-tools).
 
-`/chat-surface` owns how each answer is shaped for wherever it lands, under one contract: form chosen per point, prose as the fallback, and the ask set apart with its recommendation. `/figure-out` delegates to it — by default in terminal mode, where answers gain tables, box diagrams and fenced code wherever one beats a sentence. Pass `--surface chat-surface` (or invoke `/chat-surface` in any session) for canvas mode: the conversation renders live into an HTML page you keep open, your messages verbatim and the agent's responses carrying charts, diagrams and decision cards, updating in place as each turn arrives while you keep typing in the terminal.
+`/chat-surface` owns how each answer is shaped for wherever it lands, under one contract: form chosen per point, prose as the fallback, and the ask set apart with its recommendation. `/figure-out` delegates to it — by default in text mode, where answers gain tables, box diagrams and fenced code wherever one beats a sentence. Pass `--surface chat-surface` (or invoke `/chat-surface` in any session) for html mode: the conversation renders live into an HTML page you keep open, your messages verbatim and the agent's responses carrying charts, diagrams and decision cards, updating in place as each turn arrives while you keep typing in the terminal.
 
 ## How it works
 
