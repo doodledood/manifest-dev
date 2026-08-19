@@ -98,7 +98,8 @@ check whether the session's findings touched a North Star line:
 - **A finding resolves an `empty` or `hypothesis` line** → present the grounds and the
   filled line; the user's yes writes it with the state its grounding earns — `evidence`
   with its date when something happened in the world, `ruled` when the answer is the
-  owner's own choice.
+  owner's own choice. A `ruled` fill is a position change: offer the decision record
+  that remembers it, as on the contradiction branch.
 - **Fog that fits no field** → the doc's `Open` section (with what would fill it), or
   nowhere — never forced into a field as content.
 
