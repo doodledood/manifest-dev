@@ -12,9 +12,9 @@ When project docs are active, that frame has three explicit exceptions. **Glossa
 
 ## Bootstrap (when project relevance exists)
 
-**Load the project's `NORTH_STAR.md` when it exists** — the standing strategy surface the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read. Load the project's `docs/NORTH_STAR_CONVENTIONS.md` beside it when one exists: it owns the document's form — fields, states, rendering — and where it differs from the rules remembered here, the project's copy wins; cadence, below, stays this skill's.
-
 **Load the ADR conventions first.** Read the project's own `docs/adr/CONVENTIONS.md` when it exists — it governs, and a team that edited it meant to. Read the adjacent `ADR_FORMAT.md` when it does not. Either way the bar for what deserves a record is now in context, which is what lets the per-turn ADR check below run without another load.
+
+**Load the project's `NORTH_STAR.md` when it exists** — the standing strategy surface the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read. Load the project's `docs/NORTH_STAR_CONVENTIONS.md` beside it when one exists: it owns the document's form — fields, states, rendering — and where it or the doc's own header differs from anything remembered here, the project's copy wins; cadence, below, stays this skill's.
 
 **No CONTEXT.md and no `docs/adr/` at all** — the project has never been set up. Offer `init-context`, which installs the conventions file, the glossary, and the context-file wiring in one pass and can seed them from the project's own history. On accept, invoke it and continue from what it produced. On decline, fall through to the minimal path below and don't re-offer.
 
@@ -79,11 +79,10 @@ The two-pass shape exists because per-turn alone misses subtle decisions (the ch
 
 ## North Star updates (per-turn, under the asymmetry)
 
-The project's `NORTH_STAR.md` is a standing strategy doc whose every line carries a dated
-state — `evidence` (something happened), `hypothesis` (best thinking, untested), `ruled`
-(the owner decided; only the owner moves it), `empty` (unanswered, written with what would
-fill it). One asymmetry governs every update: **statuses move on evidence, positions move
-only on the owner's explicit ruling.**
+The loaded doc's own header and the project's conventions file define its states and
+rules — apply them as loaded, not a remembered version. What stays here is cadence, and
+the one asymmetry the bullets below branch on: **statuses move on evidence, positions
+move only on the owner's explicit ruling.**
 
 After every counterparty response — or, in self-answered runs, every resolved question —
 check whether the session's findings touched a North Star line:
@@ -96,8 +95,10 @@ check whether the session's findings touched a North Star line:
 - **A finding weakens a line without settling it** → lower the state inline, no offer
   needed (evidence → hypothesis), appending one line naming what would settle it. Never
   touch the position's words.
-- **A finding resolves an `empty` or `hypothesis` line** → present the evidence and the
-  filled line; the user's yes writes it with state `evidence` and its date.
+- **A finding resolves an `empty` or `hypothesis` line** → present the grounds and the
+  filled line; the user's yes writes it with the state its grounding earns — `evidence`
+  with its date when something happened in the world, `ruled` when the answer is the
+  owner's own choice.
 - **Fog that fits no field** → the doc's `Open` section (with what would fill it), or
   nowhere — never forced into a field as content.
 

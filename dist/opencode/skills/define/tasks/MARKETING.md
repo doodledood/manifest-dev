@@ -38,6 +38,6 @@ Both are Judgment Gates.
   wanted; the opening line answers that, not the product's self-description
 - **One promise per surface** — lead with the promise sentence; stacked claims dilute
   the one that converts
-- **Claims a stranger can check** — prefer the demonstrable ("verifies every criterion
-  independently") over the aspirational ("writes perfect code"); the reader has been
-  burned before
+- **Claims a stranger can check** — prefer the demonstrable over the aspirational; a
+  claim the reader can verify from the product converts the skeptical reader a superlative
+  loses

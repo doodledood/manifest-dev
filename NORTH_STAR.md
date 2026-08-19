@@ -21,9 +21,9 @@ governs and needs no tooling.
 
 Experienced developers don't trust agent output enough to hand off larger tasks, and the
 tool market compounds the problem instead of solving it: agents build before the problem
-is understood, and nothing verifies the output against a stated intent — because
-understanding and verification demo worse than generation, tools compete on generation
-and overpromise. The one sentence that changes everything if false: developers who care
+is understood, and nothing verifies the output against a stated intent. Understanding and
+verification demo worse than generation, so tools compete on generation and overpromise.
+The one sentence that changes everything if false: developers who care
 about quality will adopt workflows that spend more tokens and more up-front process to
 get output they can ship with minimal review.
 

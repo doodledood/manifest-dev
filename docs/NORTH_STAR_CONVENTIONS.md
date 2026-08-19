@@ -1,7 +1,7 @@
 # North Star Conventions
 
 A North Star is a project's standing strategy surface: one short document holding why the
-project exists, who it is for, what it promises, and what winning means, kept in the
+project exists, who it is for, what it promises, and what winning means. It lives in the
 project's own repository so every session and every contributor — with or without any
 particular tooling — anchors on the same direction. It is the project-level counterpart
 of a task-level spec: a task contract governs one piece of work and resets when it ends;
@@ -33,15 +33,17 @@ outgrows the page, never pre-emptively.
 ## The four states
 
 Every line carries one state, rendered as a dated provenance note under its section
-(e.g. `— hypothesis: matches ourselves; no outside user has confirmed it. 2026-08`).
-Without the state, a measurement, a guess, and a decision all read as equally settled.
+— for example, `— hypothesis: matches ourselves; no outside user has confirmed it.
+2026-08` or `— empty: no audience named. What would fill it: a person with a situation.
+2026-08`. Without the state, a measurement, a guess, and a decision all read as equally
+settled. The following table defines the four states:
 
 | State | Means | What moves it |
 |-------|-------|---------------|
-| `evidence` | Something happened in the world, dated | new evidence |
-| `hypothesis` | Best current thinking, untested | a test |
-| `ruled` | The owner decided it | only the owner |
-| `empty` | Nobody has answered — written **with what would fill it** | whoever answers it |
+| `evidence` | Something happened in the world, dated | New evidence |
+| `hypothesis` | Best current thinking, untested | A test |
+| `ruled` | The owner decided it | Only the owner |
+| `empty` | Nobody has answered — written **with what would fill it** | Whoever answers it |
 
 `ruled` is separate from `evidence` because evidence is about the world and a ruling is
 a choice: one is falsifiable, the other is not, and a form that calls both "evidence"
@@ -59,6 +61,8 @@ Unattended automation may lower states or flag, never change a position.
 
 ## The nine fields
 
+The following table names each field, what it holds, and the trap that most often ruins it:
+
 | Field | What it holds | The trap |
 |-------|---------------|----------|
 | **Diagnosis** | What is going on and what is in the way, plus the one sentence that changes everything if false | Writing the user's complaint instead of the barrier behind it |
@@ -67,7 +71,7 @@ Unattended automation may lower states or flag, never change a position.
 | **Promise** | The sentence a stranger reads at the moment they decide to try it | A feature list, or a quality claim no stranger can check |
 | **How they arrive** | What the person was doing when they got here, not only which channel | Naming channels alone — an offer matched to one arrival and shown to another measures nothing |
 | **Money — or what it feeds** | The mechanism and price; where there is none, what the project compounds instead | Leaving it at "free", which hides what justifies the effort |
-| **Winning, and the number watched** | The destination, and the single count that tracks it | Treating them as one — a destination with no number is unwatchable, a number with no destination tracks nothing |
+| **Winning, and the number watched** | The destination, and the single count that tracks it | Treating them as one — a destination with no number is unwatchable; a number with no destination tracks nothing |
 | **Never** | The standing boundaries, in checkable form — trade-off stances included, phrased as the prohibition they imply | Stating a stance and its prohibition as two entries; one rule split in two means only one copy gets read |
 | **Open** | Questions no field holds, each with what would fill it | Duplicating `empty` fields, which already carry their own filling condition |
 
@@ -124,14 +128,14 @@ owner's ruling, and each change is remembered as a decision record.
 ## Open
 ```
 
-## Producing it honestly
+## Produce it honestly
 
 Seed only what the repository's own artifacts evidence — a README's stated audience, a
-pricing page's price, a published tagline — each seeded line carrying `hypothesis` or
+pricing page's price, a published tagline. Each seeded line carries `hypothesis` or
 `evidence` per its actual grounding, with the artifact named in the provenance note. A
 field no artifact answers stays `empty` with its filling condition; a strategy line the
 artifacts don't support is fiction with a state on it, and inventing it wrongs every
 session that later anchors there. Fields that need working out rather than stating —
 who it's really for, the promise, the money mechanism — are one investigation each,
-run when the owner chooses; the `empty` and `hypothesis` lines are the doc's own to-do
+run when the owner chooses. The `empty` and `hypothesis` lines are the doc's own to-do
 list.
