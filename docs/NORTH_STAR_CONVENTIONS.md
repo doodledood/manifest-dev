@@ -1,4 +1,4 @@
-# The North Star — format and maintenance rules
+# North Star Conventions
 
 A North Star is a project's standing strategy surface: one short document holding why the
 project exists, who it is for, what it promises, and what winning means, kept in the
@@ -12,15 +12,12 @@ encoded in that work's own binding contract (for manifest-dev users: `/define` r
 "never" whose violation would be unsafe or irreversible to a Global Invariant). Keeping
 that line is what stops the document becoming a rulebook nobody reads.
 
-## Ownership and precedence
+## Ownership
 
-This file is the shipped default. When a repository is set up, a self-contained copy is
-emitted as `docs/NORTH_STAR_CONVENTIONS.md`, owned by the project — so a contributor
-with no tooling can learn how the document looks and functions from the repo alone,
-the same way the project's ADR conventions work. **Where a project's conventions file
-exists, it governs the document's form**, and tooling carrying this default defers to
-it. Only cadence — when a session offers an update — stays with the workflow; a
-project's file has no say in that.
+**This file is this project's North Star convention, and it governs.** Everything needed
+to read, fill, and maintain `NORTH_STAR.md` is here — no tool, plugin, or prior
+knowledge required. Tooling that carries its own North Star defaults defers to this
+file; edit it when the project's practice should change, and the tooling follows.
 
 ## Where it lives
 
@@ -125,29 +122,6 @@ owner's ruling, and each change is remembered as a decision record.
 ## Never
 
 ## Open
-```
-
-## The project-surfaces section
-
-The project context file carries this section so every session — and every contributor
-on any stack — knows the surfaces exist and how to treat them. Emit it (adapted to what
-the project actually has; extend an existing section rather than duplicating one):
-
-```markdown
-## Project surfaces
-
-This project keeps its direction, vocabulary, and decision memory in the repo — shared
-ground for every contributor and agent, regardless of tooling.
-
-- **NORTH_STAR.md** — why this project exists, who it's for, what winning means. Anchor
-  scope, priority, and marketing calls on it. Each line carries a dated state
-  (evidence / hypothesis / ruled / empty): new evidence may lower a state, but a
-  position changes only by the owner's call, recorded as a decision record.
-- **CONTEXT.md** — what words mean here. Read it before naming things; add a term when
-  the project settles one.
-- **docs/adr/** — why decisions went the way they did. Before settling a question the
-  project may already have settled, open `docs/adr/README.md`. Write new records per
-  `docs/adr/CONVENTIONS.md` — it is self-contained.
 ```
 
 ## Producing it honestly

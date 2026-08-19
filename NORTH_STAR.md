@@ -13,7 +13,9 @@ Every line below carries a state, rendered as a dated provenance note:
 - **empty** — nobody has answered yet, written with what would fill it.
 
 New evidence may lower a line's state. The position text itself changes only by the
-owner's ruling, and each change is remembered as a decision record in `docs/adr/`.
+owner's ruling, and each change is remembered as a decision record in `docs/adr/`. The
+full form — fields, states, maintenance — is `docs/NORTH_STAR_CONVENTIONS.md`, which
+governs and needs no tooling.
 
 ## Diagnosis
 

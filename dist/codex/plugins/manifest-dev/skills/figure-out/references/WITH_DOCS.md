@@ -12,7 +12,7 @@ When project docs are active, that frame has three explicit exceptions. **Glossa
 
 ## Bootstrap (when project relevance exists)
 
-**Load the project's `NORTH_STAR.md` when it exists** — the standing strategy surface the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read.
+**Load the project's `NORTH_STAR.md` when it exists** — the standing strategy surface the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read. Load the project's `docs/NORTH_STAR_CONVENTIONS.md` beside it when one exists: it owns the document's form — fields, states, rendering — and where it differs from the rules remembered here, the project's copy wins; cadence, below, stays this skill's.
 
 **Load the ADR conventions first.** Read the project's own `docs/adr/CONVENTIONS.md` when it exists — it governs, and a team that edited it meant to. Read the adjacent `ADR_FORMAT.md` when it does not. Either way the bar for what deserves a record is now in context, which is what lets the per-turn ADR check below run without another load.
 

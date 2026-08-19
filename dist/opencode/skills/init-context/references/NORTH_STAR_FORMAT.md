@@ -12,6 +12,16 @@ encoded in that work's own binding contract (for manifest-dev users: `/define` r
 "never" whose violation would be unsafe or irreversible to a Global Invariant). Keeping
 that line is what stops the document becoming a rulebook nobody reads.
 
+## Ownership and precedence
+
+This file is the shipped default. When a repository is set up, a self-contained copy is
+emitted as `docs/NORTH_STAR_CONVENTIONS.md`, owned by the project — so a contributor
+with no tooling can learn how the document looks and functions from the repo alone,
+the same way the project's ADR conventions work. **Where a project's conventions file
+exists, it governs the document's form**, and tooling carrying this default defers to
+it. Only cadence — when a session offers an update — stays with the workflow; a
+project's file has no say in that.
+
 ## Where it lives
 
 `NORTH_STAR.md` at the repository root, made resident so sessions meet it without being
