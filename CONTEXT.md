@@ -178,7 +178,7 @@ _Avoid_: Wedge, funnel.
 The full understanding-first loop (figure-out → define → do) that every Door opens into; the retention engine behind the Doors.
 
 **North Star**:
-The standing project-level strategy surface — why a project exists, who it is for, what it promises, how it makes money, how people find it, what winning means, and its standing nevers and stances — resident in every session and informing rather than binding, each slot carrying an epistemic status (evidence, hypothesis, or empty).
+The standing project-level strategy surface — a project's diagnosis and the assumptions it rests on, who it is for and not for, its promise, how people arrive, how it makes money or what it feeds, what winning means and the number watched, its standing nevers, and the open questions no field holds — resident in every session and informing rather than binding, every line carrying one of four states (evidence, hypothesis, ruled, or empty with its filling condition), positions moving only on the owner's ruling.
 _Avoid_: Steering layer, strategy doc, business context.
 
 **Taste**:
