@@ -110,3 +110,4 @@
 | 2026-08-20 | [Cost is a binding constraint, second to quality](20260820-cost-is-a-binding-constraint-second-to-quality.md) | Accepted | Positioning |
 | 2026-08-20 | [manifest-dev owns a project North Star surface](20260820-manifest-dev-owns-a-project-north-star.md) | Accepted | North Star |
 | 2026-08-20 | [North Star lines carry four states, and positions move only on the owner's ruling](20260820-north-star-lines-carry-states.md) | Accepted | North Star |
+| 2026-08-20 | [The project is the unit the workflows serve, not the single task](20260820-the-project-is-the-unit-not-the-task.md) | Accepted | Positioning |

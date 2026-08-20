@@ -19,16 +19,19 @@ governs and needs no tooling.
 
 ## Diagnosis
 
-Experienced developers don't trust agent output enough to hand off larger tasks, and the
-tool market compounds the problem instead of solving it: agents build before the problem
-is understood, and nothing verifies the output against a stated intent. Understanding and
+Agents can write almost anything now, and projects still drift. What the project is
+trying to become, what's worth doing next, and what done means live in whoever happens to
+be working — so every session and every teammate re-derives them from scratch, and the
+agent's speed just multiplies work nobody can tell was worth doing. Understanding and
 verification demo worse than generation, so tools compete on generation and overpromise.
-The one sentence that changes everything if false: developers who care
-about quality will adopt workflows that spend more tokens and more up-front process to
-get output they can ship with minimal review.
+The one sentence that changes everything if false: developers who care about quality will
+adopt workflows that spend more tokens and more up-front process to get output they can
+ship with minimal review.
 
-— hypothesis: grounded in our own daily use and the recorded frustration list carried
-  since the first strategy doc; untested as a market claim beyond ourselves. 2026-08
+— hypothesis: ruled 2026-08-20, after half of one month's decision records turned out to
+  sit above the single task the previous text named; grounded in our own daily use and
+  the frustration list carried since the first strategy doc, untested as a market claim
+  beyond ourselves. See docs/adr/20260820-the-project-is-the-unit-not-the-task.md.
 
 ## What this rests on
 
