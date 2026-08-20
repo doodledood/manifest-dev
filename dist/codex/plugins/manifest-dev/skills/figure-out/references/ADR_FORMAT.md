@@ -2,7 +2,10 @@
 
 <!-- Fixed boundary: copying starts below this comment. init-context reproduces the sentence
      below verbatim in a project's own `docs/adr/CONVENTIONS.md`, under a retitled heading,
-     and pauses at the next boundary. -->
+     then pauses at the next boundary. Every boundary comment in this file marks where
+     copying pauses or resumes, and the comments themselves are dropped from the copy.
+     Renaming or rewording the text any boundary comment sits above breaks that copy —
+     change the recipe in init-context/SKILL.md step 2 in the same edit. -->
 
 Architecture Decision Records capture significant decisions with their context, alternatives, and consequences. Based on the MADR (Markdown Any Decision Records) standard.
 
@@ -18,9 +21,7 @@ A project may keep its own copy of these conventions at `docs/adr/CONVENTIONS.md
 
 One thing is not the project's to set: **cadence** — when a session raises an ADR and how the offer is made. That is workflow behavior, it lives with the workflow that makes the offer, and a conventions file stating otherwise does not bind it.
 
-<!-- The heading below is a fixed boundary: init-context copies this file from here to the end
-     verbatim, replacing only what sits above it. Renaming it breaks that copy — change the
-     recipe in init-context/SKILL.md step 2 in the same edit. -->
+<!-- Fixed boundary: copying resumes at the heading below and runs to the end of the file. -->
 
 ## When a decision deserves a record
 

@@ -2,7 +2,11 @@
 
 <!-- Fixed boundary: copying starts below this comment. init-context reproduces the framing
      below verbatim in a project's own `docs/NORTH_STAR_CONVENTIONS.md`, under a retitled
-     heading, and pauses again at the next boundary. -->
+     heading, then pauses at the next boundary. What a copy carries is discontiguous: every
+     boundary comment in this file marks where copying pauses or resumes, and the comments
+     themselves are dropped from the copy. Renaming or rewording the text any boundary
+     comment sits above breaks that copy — change the recipe in init-context/SKILL.md step 3
+     in the same edit. -->
 
 A North Star is a project's standing strategy surface: one short document holding why the
 project exists, who it is for, what it promises, and what winning means. It lives in the
@@ -33,11 +37,8 @@ port what the project wants from a later default, and keep what it has ruled for
 Only cadence — when a session offers an update — stays with the workflow; a project's
 file has no say in that.
 
-<!-- Fixed boundary: init-context copies from the heading below into a project's own
-     `docs/NORTH_STAR_CONVENTIONS.md`, replacing only what sits above it. Copying pauses and
-     resumes at the boundaries marked further down, and these comments are themselves dropped
-     from the copy. Moving any of the three headings they mark breaks that copy — change the
-     recipe in init-context/SKILL.md step 3 in the same edit. -->
+<!-- Fixed boundary: copying resumes at the heading below and runs to
+     "## The project-surfaces section". -->
 
 ## Where it lives
 
