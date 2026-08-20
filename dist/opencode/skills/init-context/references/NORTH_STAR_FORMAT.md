@@ -74,6 +74,16 @@ cannot say which positions a measurement could ever move. An `empty` position is
 left bare — without its filling condition it reads as an oversight instead of an open
 question.
 
+A position also goes stale without anything contradicting it. When the work a project
+actually does drifts away from what a position says — every piece of it defensible on its
+own, none of it contradicting the text — the position keeps steering at a shape the project
+has left. Divergence is as much staleness as contradiction, and it is quieter: nobody meets
+it, because no single session is inconsistent with the text. A session that notices a
+mismatch says so and leaves the position alone; what makes it actionable is a run of them,
+which no one session can see. Treat the accumulation as a signal for the owner to weigh, not
+as something anyone repairs on the spot, and do not answer it with a scheduled review — the
+noticing belongs where work already stops.
+
 **The update asymmetry — the one rule every maintainer needs:** new evidence may *lower*
 a position's state (an `evidence` position whose grounding stops holding drops to
 `hypothesis`, with one line naming what would settle it). The position text itself
@@ -188,7 +198,9 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
 `CONTEXT.md` at the start of every session.
 
 - **NORTH_STAR.md** — why this project exists, who it's for, what winning means. Anchor
-  scope, priority, and marketing calls on it. Each position carries a dated state
+  scope, priority, outward claims, and any call the work's own contract does not settle
+  on it — a mid-run pivot, whether to act on a review comment, what to leave alone. Each
+  position carries a dated state
   (evidence / hypothesis / ruled / empty): new evidence may lower a state, but a
   position changes only by the owner's call, recorded as a decision record. The full
   form is `docs/NORTH_STAR_CONVENTIONS.md` — it is self-contained.
