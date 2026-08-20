@@ -1,4 +1,4 @@
-# ADR: a pointer to a skill in the same plugin carries no availability guard
+# ADR: a pointer's guard follows the plugin boundary; its fallback follows the target
 
 ## Status
 Accepted
@@ -34,17 +34,33 @@ to restate the rendering contract, which is precisely the two-homes duplication
 `prompt-engineering` avoids that trap only because the discipline it stands in for compresses to a
 single sentence; the rendering contract does not.
 
+A third pointer settles the shape. `re-pitch`, in `manifest-dev-tools`, stated the rendering
+contract's rules itself — bullets for parallel points, paragraph length, emphasis at the front of a
+line, a three-second skim of the emphasis alone — and now points at `chat-surface` instead. That
+pointer crosses a plugin boundary, so the absent case is real; but a fallback restating form would
+put the contract back in two places. Guard presence and guard content turn out to be separate
+questions, and only the first follows the plugin boundary.
+
 ## Decision
 
-**A pointer to a skill shipped in the same plugin carries no availability guard, no inline
-fallback, and no degraded path. A pointer that crosses a plugin boundary carries one.**
+**Whether a pointer carries an availability guard follows the plugin boundary. What that guard
+may say follows the target: a guard restates its target's discipline only where the restatement
+duplicates nothing.**
 
-- figure-out invokes `chat-surface` unconditionally, naming the mode. Where the skill is absent,
-  the model's own default governs how a turn is shaped. That is a partial install, and it is the
-  installer's to resolve.
-- figure-out's `prompt-engineering` pointer keeps its guard and its one-sentence inline fallback,
-  because `manifest-dev` without `manifest-dev-tools` is a configuration this repository ships.
-- The asymmetry between the two pointers is deliberate, and this record is what says so.
+- **Same plugin — no guard.** figure-out invokes `chat-surface` unconditionally, naming the mode.
+  Both ship in `manifest-dev`, so an install with one and not the other is not reachable through the
+  marketplace. Where the skill is missing anyway, the model's own default governs how a turn is
+  shaped; that is a partial install, and it is the installer's to resolve.
+- **Cross-plugin, compressible target — guard with a restating fallback.** figure-out's
+  `prompt-engineering` pointer keeps its guard and its one-sentence inline fallback. `manifest-dev`
+  without `manifest-dev-tools` is a configuration this repository ships, and the discipline the
+  fallback stands in for compresses to a sentence that duplicates nothing.
+- **Cross-plugin, non-compressible target — guard that states no rule.** re-pitch's `chat-surface`
+  pointer crosses from `manifest-dev-tools` into `manifest-dev`, so the absent case is real and the
+  guard is required. But the rendering contract does not compress: a one-line summary of it is still
+  a second statement of it, and it would be the version a reader meets first. The guard names the
+  absence and hands form selection to the model's default, stating no rule about form.
+- The asymmetry between these three pointers is deliberate, and this record is what says so.
 
 ## Alternatives Considered
 
@@ -59,6 +75,10 @@ fallback, and no degraded path. A pointer that crosses a plugin boundary carries
 - **Guard it with a one-line degraded rule** (*"otherwise keep the ask in plain prose"*): Rejected —
   a one-line summary of the contract is still a second statement of it, and it would be the version
   a reader meets first.
+- **Give re-pitch's guard a restating fallback, for symmetry with `prompt-engineering`**:
+  Rejected — symmetry of shape at the cost of the property the change exists to establish. Every
+  candidate one-liner ("keep one idea per line", "never a wall of text") is a form rule, so the
+  fallback would put the rendering contract back in two files while the record claimed it had one.
 - **Fail loudly when the skill is absent**: Rejected — a prompt cannot detect a missing skill, so
   this would have to be a runtime check the harness does not offer. Nothing to build against.
 - **Merge the two plugins so the distinction disappears**: Rejected — a packaging change of real
@@ -68,8 +88,11 @@ fallback, and no degraded path. A pointer that crosses a plugin boundary carries
 
 ### Positive
 - The rendering contract keeps exactly one home, with no fallback copy to drift from it.
-- The rule generalizes: a future cross-skill pointer's shape follows from which plugin the target
-  ships in, rather than from whichever nearby pointer the author happened to copy.
+- The rule generalizes on two axes a future author can actually evaluate: which plugin the target
+  ships in decides whether a guard exists, and whether the target's discipline compresses decides
+  what the guard says — rather than whichever nearby pointer the author happened to copy.
+- A guard can now be written for a target whose contract must stay single-homed, which is what lets
+  a skill in one plugin delegate to a contract in another without duplicating it.
 - Every figure-out run stops paying for a guard against an unreachable state.
 
 ### Negative
