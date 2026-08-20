@@ -177,6 +177,10 @@ _Avoid_: Wedge, funnel.
 **House**:
 The full understanding-first loop (figure-out → define → do) that every Door opens into; the retention engine behind the Doors.
 
+**North Star**:
+The standing project-level strategy surface — a project's diagnosis and the assumptions it rests on, who it is for and not for, its promise, how people arrive, how it makes money or what it feeds, what winning means and the number watched, its standing nevers, and the open questions no field holds — resident in every session and informing rather than binding, every line carrying one of four states (evidence, hypothesis, ruled, or empty with its filling condition), positions moving only on the owner's ruling.
+_Avoid_: Steering layer, strategy doc, business context.
+
 **Taste**:
 A durable personal steering preference persisted only by offer-and-ratify — captured as preference, rationale, and flip condition in a harness memory file.
 _Avoid_: Preference, style, judgment.
@@ -243,7 +247,11 @@ _Avoid_: Batch runner, label pulse, dependency controller.
 - Absence of **Auto** is one fence covering untrusted **Tickets**, **Tickets** with a designed-in human step, and venue items never written as **Tickets** at all.
 - **Auto** says whether automation may touch a **Ticket** at all and is the author's call; a **Ticket Type** says which granted work an operator runs today and is the query's — keeping rollout schedule out of the grant, whose silence already carries three meanings.
 - Every venue a **Ticket Store** runs on has a **Venue Reference**.
-- A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them needs something the destinations alone don't supply.
+- A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them takes the **North Star**'s winning definition, the measure the destinations alone don't supply.
+- A **North Star** informs every session by residency and never binds; the one binding route is `/define` routing an unsafe or irreversible Never to a **Global Invariant**.
+- A project-owned North Star conventions file (emitted by `init-context` beside the doc) governs the **North Star**'s form wherever it exists, with the plugin's shipped default applying otherwise — the same precedence the **ADR Conventions** carry; cadence stays with figure-out.
+- `init-context` installs and seeds a **North Star**; figure-out's docs mode keeps it current under the update asymmetry — evidence lowers a line's state, only the owner's ruling changes a position, and each position change is remembered as a decision record.
+- `next-ticket` reads the **North Star**'s winning definition for cross-**Effort** comparison and surfaces a candidate that would cross a Never; `/define`'s marketing task file gates outward-facing claims against its Promise and Never.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
 - The **Bearer Test** governs which advisory-tier **Quality Gates** a **Manifest** omits; defect-finding dimensions, deterministic project gates, and safety-critical **Global Invariants** are never eligible.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.
