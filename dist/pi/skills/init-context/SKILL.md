@@ -36,7 +36,7 @@ Compare the project's copy against **what the recipe below would emit today**, n
 
 An installed project holds no record of what the reference said when its copy was written, so a difference cannot be attributed: the reference may have gained something, or the project may have removed it deliberately. Present each difference as what the current default says, one at a time, for the user to take or leave — never as a defect, a staleness, or a non-conformance, and never as a single take-it-all offer, since one accepted batch can quietly overwrite a rule the project ruled for itself. Write only what the user accepts. A project is entitled to keep its own wording permanently, and its copy governs whether or not it matches.
 
-Porting a conventions file is rarely a one-file edit: it governs the documents written under it, so when an accepted difference changes what something is called or how it is written, say which of those documents now read as out of step. Report the comparison either way — naming what differs, or saying plainly that the copies were compared and carry everything the current default does.
+Porting a conventions file is rarely a one-file edit: it governs the documents written under it, so when an accepted difference changes what something is called or how it is written, say which of those documents now read as out of step.
 
 ## The run
 
@@ -57,7 +57,7 @@ Porting a conventions file is rarely a one-file edit: it governs the documents w
 
 5. **Wire the project context file.** Emit the project-surfaces section from `references/NORTH_STAR_FORMAT.md` — its template is the single source of the emitted text; adapt it to what the project has, extend an existing section rather than duplicating one, and add nothing beyond it, because this file is read on every session and every line here is a permanent cost. The template covers the North Star's residency and maintenance asymmetry, the glossary's residency, the decision-record triggers, and the one-act write rule; where the host supports imports, the session-start reads become imports, written as *the project context file*'s imports rather than a specific harness's filename.
 
-6. **Report what landed**, per the *Reporting* section of `references/MINING.md`, which specifies what the report must cover. A run that skipped seeding still reports — what was installed, and that nothing was seeded because there was nothing to seed from.
+6. **Report what landed** — what was installed, what the comparison found, and what was seeded. Where seeding ran, the *Reporting* section of `references/MINING.md` specifies what that half must cover. Give the comparison's outcome either way: which sections of which copies differ from what the recipe would emit today and what the user chose for each, or plainly that the copies were compared and already carry everything the current defaults do — an unreported comparison reads exactly like one that never ran, which is the failure this whole step exists to prevent. A run that skipped seeding still reports, saying that nothing was seeded because there was nothing to seed from.
 
 ## Empty input
 
