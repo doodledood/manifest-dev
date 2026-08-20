@@ -2,7 +2,7 @@
 
 Architecture Decision Records capture significant decisions with their context, alternatives, and consequences. Based on the MADR (Markdown Any Decision Records) standard.
 
-**This file is this project's ADR convention, and it governs.** Everything needed to decide whether a decision deserves a record and to write one correctly is here — no tool, plugin, or prior knowledge required. Any tooling that carries its own ADR defaults defers to this file; edit it when the project's practice should change, and the tooling follows.
+**This file is this project's ADR convention, and it governs.** Everything needed to decide whether a decision deserves a record and to write one correctly is here — no tool, plugin, or prior knowledge required. Any tooling that carries its own ADR defaults defers to this file; edit it when the project's practice should change, and the tooling follows. That deference makes this copy a fork no sync will update — keeping it current is this project's job; re-running the setup that installed this file is one way to see what a current default carries.
 
 ## When a decision deserves a record
 
