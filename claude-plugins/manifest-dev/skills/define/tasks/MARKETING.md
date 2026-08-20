@@ -42,3 +42,7 @@ Both are Judgment Gates.
 - **Claims a stranger can check** — prefer the demonstrable over the aspirational; a
   claim the reader can verify from the product converts the skeptical reader a superlative
   loses
+- **Capture durable choices beside the North Star** — voice rules, positioning language,
+  and channel learnings this task settles will outlive it; write them to an adjacent doc
+  linked from the North Star field they detail, never into its lines (which stay short
+  answers), so the next outward-facing task starts where this one ended

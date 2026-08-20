@@ -102,6 +102,9 @@ check whether the session's findings touched a North Star line:
   that remembers it, as on the contradiction branch.
 - **Fog that fits no field** → the doc's `Open` section (with what would fill it), or
   nowhere — never forced into a field as content.
+- **A resolution too big for its field** → the field keeps the short answer with its
+  state; the depth goes to an adjacent linked doc, per the conventions' split rule. The
+  field stays the authority the depth details — never the other way around.
 
 In self-answered or unattended runs the ruling path is closed: lower states and flag
 contradictions in the session's output, never flip a position. Updates are event-driven —
