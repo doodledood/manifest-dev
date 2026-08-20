@@ -101,17 +101,24 @@ getting the workflows right.
 - Hype registers on any surface we write: no "revolutionary", "game-changing", "magic",
   "10x faster", "the only tool you'll ever need", or any superlative promising what
   LLMs cannot reliably do.
-- Optimizing for token cost or speed at quality's expense — and the mirror image holds
-  too: a run that keeps verifying and repairing past the point its gates are satisfied
-  is a defect in our workflow, never a meter the user should have to watch.
+- Trading quality away for token cost or speed — quality stays the deciding axis. Cost
+  is a binding constraint now, not a non-goal: workflows must stay practically affordable
+  on high-end models, which is why the leaner paths exist (the `just-*` executors; the
+  consolidated and self verification modes beside per-gate) — and the mirror still holds:
+  a run that keeps verifying and repairing past the point its gates are satisfied is a
+  defect in our workflow, never a meter the user should have to watch.
 - Commentary on this repository's own adoption or popularity (stars, usage, traction)
   anywhere in the repo.
 - User-facing complexity: workflows may be sophisticated inside, but the experience
   stays minimal steps, nothing to memorize, "just follow along and it works".
 
 — ruled: each enforced in practice today — the messaging boundaries since the first
-  strategy doc, the bounded-not-cheap boundary added 2026-07-28, the traction rule in
-  the repository's contributor instructions. Only the owner moves these.
+  strategy doc, the bounded-not-cheap boundary added 2026-07-28 and revised 2026-08-20
+  (cost promoted from non-goal to binding constraint, second to quality, after high-end
+  model pricing forced leaner execution and verification paths into the suite out of
+  necessity — see docs/adr/20260820-cost-is-a-binding-constraint-second-to-quality.md),
+  the traction rule in the repository's contributor instructions. Only the owner moves
+  these.
 
 ## Open
 
