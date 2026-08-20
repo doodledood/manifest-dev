@@ -125,10 +125,11 @@ it's for sets who copy is written to — the copy is not in here. The promise bo
 marketing may claim — the campaigns are not in here. Live metric readings never enter
 the document: states carry dates, and staleness is read from them.
 
-Position text carries no details: a change in an example, a name, a number, or a path
-must never force this document to change. Write positions at the altitude that survives
-such changes, and let provenance notes carry compact pointers to where the specifics
-live.
+Position text stays at the altitude the document works at: a North Star is an alignment
+surface, so concrete work-level specifics — an example, a name, a number, a path — do
+not belong in a position, however stable or true they are. Name the shape, and let
+provenance notes carry compact pointers to where the specifics live. Such a document
+also churns less as details move, but altitude is the test, not churn.
 
 ## Document skeleton
 
