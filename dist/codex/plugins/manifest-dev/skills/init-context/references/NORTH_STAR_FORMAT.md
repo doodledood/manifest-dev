@@ -1,5 +1,13 @@
 # The North Star — format and maintenance rules
 
+<!-- Fixed boundary: copying starts below this comment. init-context reproduces the framing
+     below verbatim in a project's own `docs/NORTH_STAR_CONVENTIONS.md`, under a retitled
+     heading, then pauses at the next boundary. What a copy carries is discontiguous: every
+     boundary comment in this file marks where copying pauses or resumes, and the comments
+     themselves are dropped from the copy. Renaming or rewording the text any boundary
+     comment sits above breaks that copy — change the recipe in init-context/SKILL.md step 3
+     in the same edit. -->
+
 A North Star is a project's standing strategy surface: one short document holding why the
 project exists, who it is for, what it promises, and what winning means. It lives in the
 project's own repository so every session and every contributor — with or without any
@@ -11,6 +19,9 @@ the North Star persists across all of them and is edited on purpose.
 encoded in that work's own binding contract (for manifest-dev users: `/define` routes a
 "never" whose violation would be unsafe or irreversible to a Global Invariant). Keeping
 that line is what stops the document becoming a rulebook nobody reads.
+
+<!-- Fixed boundary: copying pauses here. The recipe replaces this section with a short
+     paragraph of its own, since a project's copy states its own ownership. -->
 
 ## Ownership and precedence
 
@@ -25,6 +36,9 @@ precisely what tooling must not overwrite. Keeping it current is the project's j
 port what the project wants from a later default, and keep what it has ruled for itself.
 Only cadence — when a session offers an update — stays with the workflow; a project's
 file has no say in that.
+
+<!-- Fixed boundary: copying resumes at the heading below and runs to
+     "## The project-surfaces section". -->
 
 ## Where it lives
 
@@ -59,6 +73,16 @@ a choice: one is falsifiable, the other is not, and a form that calls both "evid
 cannot say which positions a measurement could ever move. An `empty` position is never
 left bare — without its filling condition it reads as an oversight instead of an open
 question.
+
+A position also goes stale without anything contradicting it. When the work a project
+actually does drifts away from what a position says — every piece of it defensible on its
+own, none of it contradicting the text — the position keeps steering at a shape the project
+has left. Divergence is as much staleness as contradiction, and it is quieter: nobody meets
+it, because no single session is inconsistent with the text. A session that notices a
+mismatch notes it — a note, never a question — and leaves the position alone; what makes it
+actionable is a run of them, which no one session can see. Treat the accumulation as a signal
+for the owner to weigh, not as something anyone repairs on the spot, and do not answer it with
+a scheduled review.
 
 **The update asymmetry — the one rule every maintainer needs:** new evidence may *lower*
 a position's state (an `evidence` position whose grounding stops holding drops to
@@ -154,6 +178,10 @@ owner's ruling, and each change is remembered as a decision record.
 {one question per entry, each with what would fill it}
 ```
 
+<!-- Fixed boundary: copying pauses here. The chapter below is installer-facing and is
+     dropped from a project's copy, since a maintainer meets that section in the context file
+     itself. Copying resumes at the boundary below it. -->
+
 ## The project-surfaces section
 
 The project context file carries this section so every session — and every contributor
@@ -169,8 +197,10 @@ This project keeps its direction, vocabulary, and decision memory in the repo �
 ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.md` and
 `CONTEXT.md` at the start of every session.
 
-- **NORTH_STAR.md** — why this project exists, who it's for, what winning means. Anchor
-  scope, priority, and marketing calls on it. Each position carries a dated state
+- **NORTH_STAR.md** — why this project exists, who it's for, what winning means. Anchor on
+  it scope, priority, outward claims, and any call the work's own contract does not settle —
+  a mid-run pivot, whether to act on a review comment, what to leave alone. Each position
+  carries a dated state
   (evidence / hypothesis / ruled / empty): new evidence may lower a state, but a
   position changes only by the owner's call, recorded as a decision record. The full
   form is `docs/NORTH_STAR_CONVENTIONS.md` — it is self-contained.
@@ -182,6 +212,8 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   `docs/adr/CONVENTIONS.md` — it is self-contained, and writing one is one act: the
   record, the restatus of what it changes, and the index rebuild together.
 ```
+
+<!-- Fixed boundary: copying resumes at the heading below and runs to the end of the file. -->
 
 ## Produce it honestly
 

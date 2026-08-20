@@ -5,30 +5,33 @@ session and contributor anchors on. This document informs; it never binds. A bou
 must be enforced on a piece of work is encoded in that work's own binding contract (for
 manifest-dev users: `/define` routes an unsafe "never" to a Global Invariant).
 
-Every line below carries a state, rendered as a dated provenance note:
+Every position below carries a state, rendered as a dated provenance note:
 
 - **evidence** — something happened in the world, dated; new evidence moves it.
 - **hypothesis** — best current thinking, untested; a test moves it.
 - **ruled** — the owner decided it; only the owner moves it.
 - **empty** — nobody has answered yet, written with what would fill it.
 
-New evidence may lower a line's state. The position text itself changes only by the
+New evidence may lower a position's state. The position text itself changes only by the
 owner's ruling, and each change is remembered as a decision record in `docs/adr/`. The
 full form — fields, states, maintenance — is `docs/NORTH_STAR_CONVENTIONS.md`, which
 governs and needs no tooling.
 
 ## Diagnosis
 
-Experienced developers don't trust agent output enough to hand off larger tasks, and the
-tool market compounds the problem instead of solving it: agents build before the problem
-is understood, and nothing verifies the output against a stated intent. Understanding and
+Agents can write almost anything now, and projects still drift. What the project is
+trying to become, what's worth doing next, and what done means live in whoever happens to
+be working — so every session and every teammate re-derives them from scratch, and the
+agent's speed just multiplies work nobody can tell was worth doing. Understanding and
 verification demo worse than generation, so tools compete on generation and overpromise.
-The one sentence that changes everything if false: developers who care
-about quality will adopt workflows that spend more tokens and more up-front process to
-get output they can ship with minimal review.
+The one sentence that changes everything if false: developers who care about quality will
+adopt workflows that spend more tokens and more up-front process to get output they can
+ship with minimal review.
 
-— hypothesis: grounded in our own daily use and the recorded frustration list carried
-  since the first strategy doc; untested as a market claim beyond ourselves. 2026-08
+— hypothesis: ruled 2026-08-20, after half of one month's decision records turned out to
+  sit above the single task the previous text named; grounded in our own daily use and
+  the frustration list carried since the first strategy doc, untested as a market claim
+  beyond ourselves. See docs/adr/20260820-the-project-is-the-unit-not-the-task.md.
 
 ## What this rests on
 

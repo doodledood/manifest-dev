@@ -85,17 +85,17 @@ the one asymmetry the bullets below branch on: **statuses move on evidence, posi
 move only on the owner's explicit ruling.**
 
 After every counterparty response — or, in self-answered runs, every resolved question —
-check whether the session's findings touched a North Star line:
+check whether the session's findings touched a North Star position:
 
-- **A finding contradicts a stated line** → surface the clash as a lead, exactly like a
+- **A finding contradicts a stated position** → surface the clash as a lead, exactly like a
   glossary clash: *"The North Star says X; this session found Y — which stands?"* Only
   the user's explicit ruling rewrites the position; on that ruling, write the new
   position inline, set its state, and offer the decision record that remembers why it
   moved (the ADR machinery above — a position change always clears its bar).
-- **A finding weakens a line without settling it** → lower the state inline, no offer
+- **A finding weakens a position without settling it** → lower the state inline, no offer
   needed (evidence → hypothesis), appending one line naming what would settle it. Never
   touch the position's words.
-- **A finding resolves an `empty` or `hypothesis` line** → present the grounds and the
+- **A finding resolves an `empty` or `hypothesis` position** → present the grounds and the
   filled line; the user's yes writes it with the state its grounding earns — `evidence`
   with its date when something happened in the world, `ruled` when the answer is the
   owner's own choice. A `ruled` fill is a position change: offer the decision record
@@ -106,9 +106,19 @@ check whether the session's findings touched a North Star line:
   state; the depth goes to an adjacent linked doc, per the conventions' split rule. The
   field stays the authority the depth details — never the other way around.
 
+**At the moment a decision gets recorded**, where the project keeps a North Star, check the
+decision's subject against what the Diagnosis names, and where the decision sits outside it,
+say so in one line in the record's context — the field the loaded conventions use for what
+motivated the decision. This is the quiet failure: a position drifts out of date without
+anything contradicting it, because every session is locally consistent with the text and
+nobody meets the mismatch. One decision outside the Diagnosis means nothing, so it is a note
+and never a question put to the user — what makes it actionable is a run of them, which no
+single session can see, and the note is what lets a later reader see the run. Never edit a
+position on this; the asymmetry above is unchanged.
+
 In self-answered or unattended runs the ruling path is closed: lower states and flag
 contradictions in the session's output, never flip a position. Updates are event-driven —
-this check is the whole trigger; there is no review cadence, and the dated states are what
+these checks are the whole trigger; there is no review cadence, and the dated states are what
 keep staleness visible.
 
 ## CONTEXT.md format
