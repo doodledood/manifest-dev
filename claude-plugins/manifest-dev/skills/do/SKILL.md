@@ -25,6 +25,12 @@ Run state travels in the envelope, because it deliberately is not Manifest conte
 
 An evaluator evaluates and never repairs the artifact. A Manifest path it cannot read is **BLOCKED**, not FAIL — the gate was never evaluated, and a FAIL would report a verdict nobody reached; where one execution covers a set of gates, that is BLOCKED for every gate in the set.
 
+### Caching per-gate launches
+
+Every `per-gate` launch in a round resolves to the same verifier model — the run has one, explicit or inherited — so two or more gates eligible in the same round differ only in which gate ID the envelope names. Where the active harness provides a mechanical, executor-blind substitution (see `references/CACHING.md`), load it and order the envelope so everything but the gate ID — framing, comparison, verdict contract, multi-repo path map, and the manifest's full content substituted verbatim in place of a marker — forms one identical prefix, with the gate ID appended last. Launch the first evaluator in the round alone to write that prefix, then launch the round's remaining eligible gates in parallel to read it back. A round with only one eligible gate skips this — there is no second launch to share a prefix with — and so does `consolidated`, which runs one execution per round regardless of how many gates it covers, and `self`, which launches none.
+
+The substitution changes how the manifest content reaches the evaluator, not what it is asked to do or what governs its verdict: the block is the unmodified file, placed there by the harness mechanism rather than composed by the executor, so it carries no more risk of paraphrase, truncation, or reframing than the path-and-ID default does — *Pointing evaluators at the gate*'s prohibition holds regardless. Where the harness has no such mechanism, `per-gate` launches proceed in their default order and cost; caching is an accelerant layered on the default contract, never a substitute for it, and never falls back to the executor typing the manifest text in by hand.
+
 ### What `/do` supplies once, so no gate restates it
 
 Two things hold for every evaluation in the run, so they live here rather than being copied into every gate body:
