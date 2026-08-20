@@ -5,14 +5,14 @@ session and contributor anchors on. This document informs; it never binds. A bou
 must be enforced on a piece of work is encoded in that work's own binding contract (for
 manifest-dev users: `/define` routes an unsafe "never" to a Global Invariant).
 
-Every line below carries a state, rendered as a dated provenance note:
+Every position below carries a state, rendered as a dated provenance note:
 
 - **evidence** — something happened in the world, dated; new evidence moves it.
 - **hypothesis** — best current thinking, untested; a test moves it.
 - **ruled** — the owner decided it; only the owner moves it.
 - **empty** — nobody has answered yet, written with what would fill it.
 
-New evidence may lower a line's state. The position text itself changes only by the
+New evidence may lower a position's state. The position text itself changes only by the
 owner's ruling, and each change is remembered as a decision record in `docs/adr/`. The
 full form — fields, states, maintenance — is `docs/NORTH_STAR_CONVENTIONS.md`, which
 governs and needs no tooling.
