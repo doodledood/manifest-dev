@@ -62,10 +62,10 @@ actually does drifts away from what a position says — every piece of it defens
 own, none of it contradicting the text — the position keeps steering at a shape the project
 has left. Divergence is as much staleness as contradiction, and it is quieter: nobody meets
 it, because no single session is inconsistent with the text. A session that notices a
-mismatch says so and leaves the position alone; what makes it actionable is a run of them,
-which no one session can see. Treat the accumulation as a signal for the owner to weigh, not
-as something anyone repairs on the spot, and do not answer it with a scheduled review — the
-noticing belongs where work already stops.
+mismatch notes it — a note, never a question — and leaves the position alone; what makes it
+actionable is a run of them, which no one session can see. Treat the accumulation as a signal
+for the owner to weigh, not as something anyone repairs on the spot, and do not answer it with
+a scheduled review.
 
 **The update asymmetry — the one rule every maintainer needs:** new evidence may *lower*
 a position's state (an `evidence` position whose grounding stops holding drops to

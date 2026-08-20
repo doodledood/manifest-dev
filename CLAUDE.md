@@ -43,7 +43,7 @@ Read before building plugins:
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared ground for every contributor and agent, regardless of tooling.
 
-**The North Star is the standing direction.** `NORTH_STAR.md` is imported above, so it is already in context; anchor scope, priority, outward-facing claims, and any call the work's own contract does not settle on it — a mid-run pivot, whether to act on a review comment, what to leave alone. Each position carries a dated state (evidence / hypothesis / ruled / empty): new evidence may lower a state, but a position changes only by the owner's call, recorded as a decision record. The full form is `docs/NORTH_STAR_CONVENTIONS.md` — it is self-contained.
+**The North Star is the standing direction.** `NORTH_STAR.md` is imported above, so it is already in context; anchor on it scope, priority, outward-facing claims, and any call the work's own contract does not settle — a mid-run pivot, whether to act on a review comment, what to leave alone. Each position carries a dated state (evidence / hypothesis / ruled / empty): new evidence may lower a state, but a position changes only by the owner's call, recorded as a decision record. The full form is `docs/NORTH_STAR_CONVENTIONS.md` — it is self-contained.
 
 **The glossary is not optional reading.** `CONTEXT.md` is imported above, so it is already in context. Where a harness does not support imports, read it at the start of every session before doing anything else. It exists to stop silent misreading, and nobody looks up a term they already believe they understand — which is why it is resident rather than referenced.
 
