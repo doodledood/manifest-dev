@@ -1,6 +1,14 @@
 # ADR Format
 
+<!-- Fixed boundary: copying starts below this comment. init-context reproduces the sentence
+     below verbatim in a project's own `docs/adr/CONVENTIONS.md`, under a retitled heading,
+     and pauses at the next boundary. -->
+
 Architecture Decision Records capture significant decisions with their context, alternatives, and consequences. Based on the MADR (Markdown Any Decision Records) standard.
+
+<!-- Fixed boundary: copying pauses here. The recipe replaces the note below and the
+     whole Precedence section with a short paragraph of its own, then resumes at the
+     boundary further down. -->
 
 This file is self-contained: it carries both the bar a decision must clear to deserve a record and the mechanics of writing one, so a reader with no tooling installed can follow it end to end.
 

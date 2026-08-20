@@ -1,5 +1,9 @@
 # The North Star — format and maintenance rules
 
+<!-- Fixed boundary: copying starts below this comment. init-context reproduces the framing
+     below verbatim in a project's own `docs/NORTH_STAR_CONVENTIONS.md`, under a retitled
+     heading, and pauses again at the next boundary. -->
+
 A North Star is a project's standing strategy surface: one short document holding why the
 project exists, who it is for, what it promises, and what winning means. It lives in the
 project's own repository so every session and every contributor — with or without any
@@ -11,6 +15,9 @@ the North Star persists across all of them and is edited on purpose.
 encoded in that work's own binding contract (for manifest-dev users: `/define` routes a
 "never" whose violation would be unsafe or irreversible to a Global Invariant). Keeping
 that line is what stops the document becoming a rulebook nobody reads.
+
+<!-- Fixed boundary: copying pauses here. The recipe replaces this section with a short
+     paragraph of its own, since a project's copy states its own ownership. -->
 
 ## Ownership and precedence
 
@@ -25,6 +32,12 @@ precisely what tooling must not overwrite. Keeping it current is the project's j
 port what the project wants from a later default, and keep what it has ruled for itself.
 Only cadence — when a session offers an update — stays with the workflow; a project's
 file has no say in that.
+
+<!-- Fixed boundary: init-context copies from the heading below into a project's own
+     `docs/NORTH_STAR_CONVENTIONS.md`, replacing only what sits above it. Copying pauses and
+     resumes at the boundaries marked further down, and these comments are themselves dropped
+     from the copy. Moving any of the three headings they mark breaks that copy — change the
+     recipe in init-context/SKILL.md step 3 in the same edit. -->
 
 ## Where it lives
 
@@ -154,6 +167,10 @@ owner's ruling, and each change is remembered as a decision record.
 {one question per entry, each with what would fill it}
 ```
 
+<!-- Fixed boundary: copying pauses here. The chapter below is installer-facing and is
+     dropped from a project's copy, since a maintainer meets that section in the context file
+     itself. Copying resumes at the boundary below it. -->
+
 ## The project-surfaces section
 
 The project context file carries this section so every session — and every contributor
@@ -182,6 +199,8 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   `docs/adr/CONVENTIONS.md` — it is self-contained, and writing one is one act: the
   record, the restatus of what it changes, and the index rebuild together.
 ```
+
+<!-- Fixed boundary: copying resumes at the heading below and runs to the end of the file. -->
 
 ## Produce it honestly
 
