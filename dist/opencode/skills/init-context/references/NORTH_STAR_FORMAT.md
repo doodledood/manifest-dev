@@ -19,8 +19,12 @@ emitted as `docs/NORTH_STAR_CONVENTIONS.md`, owned by the project — so a contr
 with no tooling can learn how the document looks and functions from the repo alone,
 the same way the project's ADR conventions work. **Where a project's conventions file
 exists, it governs the document's form**, and tooling carrying this default defers to
-it. Only cadence — when a session offers an update — stays with the workflow; a
-project's file has no say in that.
+it. That deference makes the copy a fork from the moment it is written: improvements to
+this default never reach it, and no sync carries them, because a project's own file is
+precisely what tooling must not overwrite. Keeping it current is the project's job —
+port what the project wants from a later default, and keep what it has ruled for itself.
+Only cadence — when a session offers an update — stays with the workflow; a project's
+file has no say in that.
 
 ## Where it lives
 
