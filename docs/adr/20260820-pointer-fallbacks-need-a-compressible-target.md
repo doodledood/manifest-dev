@@ -36,19 +36,18 @@ single sentence; the rendering contract does not.
 
 A third pointer settles the shape. `re-pitch`, in `manifest-dev-tools`, stated the rendering
 contract's rules itself — bullets for parallel points, paragraph length, emphasis at the front of a
-line, a three-second skim of the emphasis alone — and now points at `chat-surface` instead. That
-pointer crosses a plugin boundary, so unlike figure-out's its absent case is reachable. The first
-draft of this record concluded that the boundary therefore earned it a guard, and gave it one that
-stated no rule about form. Running `review-prompt` over the change found that guard inert: a
-sentence telling the model to use its own judgment describes what it does with no instruction at
-all. What the boundary actually changes is who can meet the absent case, not whether anything
-useful can be said about it.
+line, a three-second skim of the emphasis alone — and now points at `chat-surface` instead. Its
+pointer crosses a plugin boundary, so unlike figure-out's, its absent case is reachable. That makes
+the boundary look like the thing that earns a guard. It is not. The only guard available for a
+non-compressible target is a sentence telling the model to use its own judgment, and that describes
+what the model does with no instruction at all. What the boundary changes is who can meet the
+absent case, not whether anything useful can be said about it.
 
 ## Decision
 
 **A pointer carries a fallback only where the target's discipline compresses to a sentence that
-duplicates nothing. The plugin boundary decides whether anyone will ever meet the absent case; it
-does not by itself earn a fallback.**
+duplicates nothing. Which plugin the target ships in tells you whether anyone can meet the absent
+case; it does not by itself earn a fallback.**
 
 - **Compressible target — a fallback.** figure-out's `prompt-engineering` pointer keeps its guard
   and its one-sentence inline fallback. `manifest-dev` without `manifest-dev-tools` is a
@@ -59,7 +58,7 @@ does not by itself earn a fallback.**
   one-line summary of it is still a second statement of it, and it would be the version a reader
   meets first. With no fallback worth writing, the absent case falls to the model's own default —
   which is what would happen anyway.
-- **The plugin boundary explains, it does not decide.** figure-out and `chat-surface` both ship in
+- **The plugin boundary explains rather than decides.** figure-out and `chat-surface` both ship in
   `manifest-dev`, so nobody reaches its absent case through the marketplace; re-pitch, in
   `manifest-dev-tools`, can. That difference is worth knowing and changes nothing about the two
   pointers, because neither has a fallback available to it.
@@ -84,10 +83,9 @@ does not by itself earn a fallback.**
   candidate one-liner ("keep one idea per line", "never a wall of text") is a form rule, so the
   fallback would put the rendering contract back in two files while the record claimed it had one.
 - **Keep a rule-free guard sentence on re-pitch** (*"if it is not available, shape the re-pitch by
-  your own judgment"*): Rejected, and this record's first draft had it. A sentence instructing the
-  model to use its own judgment describes what the model does absent any instruction, so it is
-  load with no behaviour attached — and it made the record assert a guard that guarded nothing.
-  Caught by running `review-prompt` over the change.
+  your own judgment"*): Rejected — a sentence instructing the model to use its own judgment
+  describes what the model does absent any instruction, so it is load with no behavior
+  attached, and it lets a record assert a guard that guards nothing.
 - **Fail loudly when the skill is absent**: Rejected — a prompt cannot detect a missing skill, so
   this would have to be a runtime check the harness does not offer. Nothing to build against.
 - **Merge the two plugins so the distinction disappears**: Rejected — a packaging change of real

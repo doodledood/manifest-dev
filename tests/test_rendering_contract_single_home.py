@@ -37,16 +37,14 @@ FORM_RULE_PHRASES = (
     "three-second pass",
 )
 
-# A line may name a form when it is handing that choice to the surface skill. These are
-# deferrals, not rules — figure-out's "which lines carry the emphasis is the surface
-# contract's call" must pass while a restored rule fails.
-DEFERRAL_MARKERS = (
-    "surface contract's call",
-    "surface skill's call",
-    "states none of its own",
-    "owns which form",
-    "owns how a turn is shaped",
-)
+# There is deliberately no exemption for lines that also defer to the surface skill.
+# An earlier version excused any line containing a deferral marker, which meant a form
+# rule appended to the pointer's own line escaped — the single most likely way the defect
+# returns, since that is exactly where an author would put the inline fallback the
+# decision record forbids. The phrases above are specific enough that the deferring lines
+# (figure-out's "which lines carry the emphasis is the surface contract's call", its
+# "a sentence, a table, a diagram", re-pitch's pointer) match none of them, so the
+# exemption bought nothing and only opened a hole.
 
 # The contract's own home, plus the two files the manifest's gate names as outside its
 # subject: review-pr's structural defaults govern a GitHub comment published under the
@@ -125,15 +123,23 @@ def test_every_figure_out_copy_invokes_chat_surface_with_its_mode() -> None:
 
 
 def test_no_shipped_skill_outside_chat_surface_states_a_form_rule() -> None:
+    inspected = [
+        p for p in shipped_skill_files() if owning_skill(p) not in EXEMPT_SKILLS
+    ]
+
+    # A sweep that reaches nothing reports nothing, so it would pass on any defect at
+    # all. Pin what it must have covered rather than trusting the glob.
+    roots = {p.relative_to(ROOT).parts[0] for p in inspected}
+    assert roots == {"claude-plugins", "dist"}, (
+        f"the sweep reached only {sorted(roots)} — with a tree missing, this check passes "
+        "by inspecting nothing"
+    )
+
     offenders: list[str] = []
-    for path in shipped_skill_files():
-        if owning_skill(path) in EXEMPT_SKILLS:
-            continue
+    for path in inspected:
         for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
             lowered = line.lower()
             if not any(phrase in lowered for phrase in FORM_RULE_PHRASES):
-                continue
-            if any(marker in lowered for marker in DEFERRAL_MARKERS):
                 continue
             offenders.append(f"{path.relative_to(ROOT)}:{number}: {line.strip()[:100]}")
 
