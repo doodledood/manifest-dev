@@ -81,11 +81,13 @@ def owning_skill(path: Path) -> str:
 
 
 def test_every_figure_out_copy_invokes_chat_surface_with_its_mode() -> None:
-    """Both sites that name chat-surface must name an operation, checked separately.
+    """The loading row carries the directive; the flag paragraph resolves the modes.
 
-    Asserting only that *some* line carries a verb lets either site rot while the other
-    keeps the test green — which is how a passive `--surface` paragraph and an inert
-    table row both shipped at once.
+    Both are checked separately. Asserting only that *some* line in the file carries a
+    verb lets either site rot while the other keeps the test green — which is how a
+    passive `--surface` paragraph and an inert table row both shipped at once. The
+    directive belongs in the loading row because that row is unconditional, where the
+    flag paragraph reads as scoped to runs that passed the flag.
     """
     copies = [
         p
@@ -98,28 +100,27 @@ def test_every_figure_out_copy_invokes_chat_surface_with_its_mode() -> None:
         where = path.relative_to(ROOT)
         lines = path.read_text(encoding="utf-8").splitlines()
 
-        flag = [ln for ln in lines if ln.startswith("`--surface <name>`")]
-        assert (
-            len(flag) == 1
-        ), f"{where}: expected one --surface paragraph, found {len(flag)}"
-        directive = INVOCATION.search(flag[0])
-        assert directive is not None, (
-            f"{where}: the --surface paragraph carries no imperative invocation of chat-surface "
-            "naming its mode. A pointer that only describes a state does not fire, and a bare "
-            "invocation lands in html while figure-out's default is text."
-        )
-        assert directive.group("mode") == "text", (
-            f"{where}: the --surface directive names mode "
-            f"{directive.group('mode')!r}; figure-out's default is text."
-        )
-
         rows = [ln for ln in lines if ln.startswith("|") and "chat-surface" in ln]
         assert (
             len(rows) == 1
         ), f"{where}: expected one chat-surface loading row, found {len(rows)}"
-        assert "invoke" in rows[0].lower(), (
-            f"{where}: the loading-table row names chat-surface but no operation. Every other "
-            "row is a readable path; this one is reached only by invoking it."
+        directive = INVOCATION.search(rows[0])
+        assert directive is not None, (
+            f"{where}: the loading row carries no imperative invocation of chat-surface naming "
+            "its mode. Every other row in that table is a readable path; this one is reached "
+            "only by invoking it, and a bare invocation lands in html."
+        )
+        assert (
+            directive.group("mode") == "text"
+        ), f"{where}: the loading row names mode {directive.group('mode')!r}; the default is text."
+
+        flag = [ln for ln in lines if ln.startswith("`--surface <name>`")]
+        assert (
+            len(flag) == 1
+        ), f"{where}: expected one --surface paragraph, found {len(flag)}"
+        assert "`text`" in flag[0] and "`html`" in flag[0], (
+            f"{where}: the --surface paragraph must resolve both modes, since the loading row "
+            "defers to it for anything other than the default."
         )
 
 

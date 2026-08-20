@@ -129,7 +129,7 @@ Some sessions reach a point where the remaining unresolved questions stop depend
 
 Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--scratch`, `--surface`) are topic text unless clearly supplied as this skill's option.
 
-`--surface <name>` selects where the session's answers land. Before shaping the first turn, invoke the `manifest-dev:chat-surface` skill with: `text` — or with `html` when the value is `chat-surface`, which renders the conversation live into an HTML page the user watches. Always pass the mode; a bare invocation lands in html. That skill owns how a turn is shaped for its destination. Any other value names a different surface-providing skill to invoke instead, and in every case anything after the name passes through as that skill's arguments. The turn discipline above is unchanged throughout: the terminal reply still carries its claim and its ask.
+`--surface <name>` selects where the session's answers land, and which mode the row below invokes: the default resolves to `text`, and `chat-surface` resolves to `html`, rendering the conversation live into an HTML page the user watches. Any other value names a different surface-providing skill to invoke in its place, and in every case anything after the name passes through as that skill's arguments. The turn discipline above is unchanged throughout: the terminal reply still carries its claim and its ask.
 
 ### What loads
 
@@ -142,7 +142,7 @@ Apply each loaded reference's overrides.
 | `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or one of its mapped contexts; `--no-docs` or `--team` suppresses | project glossary captures, map awareness, ADR offers, North Star updates |
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining without user wait | self-answer with recommended answers instead of waiting on the user |
 | `references/team.md` | `--team`, typically from the `figure-out-team` wrapper skill | the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session; it also owns team mode's separate read-only project-context behavior |
-| the `manifest-dev:chat-surface` skill — invoke it, don't read it | always, in the mode `--surface` names — `text` by default | the rendering contract that selects a turn's form, plus that destination's form vocabulary |
+| invoke the `manifest-dev:chat-surface` skill with: `text` — or the mode `--surface` resolves to. Invoke it; there is nothing here to read | always, before the first turn is shaped | the rendering contract that selects a turn's form, plus that destination's form vocabulary |
 | `references/SCRATCH.md` | `--scratch`, or mid-session on an accepted offer | a rough, domain-native supporting artifact (draft, prototype, or mock) mirroring current understanding, to ground long or complex sessions |
 
 The working directory alone does not establish project relevance. When relevance is absent or unclear, do not load project docs; if it emerges later, load the reference then. Investigation logging is independent of it.

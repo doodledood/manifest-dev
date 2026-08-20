@@ -1,4 +1,4 @@
-# ADR: a pointer's guard follows the plugin boundary; its fallback follows the target
+# ADR: a cross-skill pointer carries a fallback only where the target's discipline compresses
 
 ## Status
 Accepted
@@ -37,30 +37,34 @@ single sentence; the rendering contract does not.
 A third pointer settles the shape. `re-pitch`, in `manifest-dev-tools`, stated the rendering
 contract's rules itself — bullets for parallel points, paragraph length, emphasis at the front of a
 line, a three-second skim of the emphasis alone — and now points at `chat-surface` instead. That
-pointer crosses a plugin boundary, so the absent case is real; but a fallback restating form would
-put the contract back in two places. Guard presence and guard content turn out to be separate
-questions, and only the first follows the plugin boundary.
+pointer crosses a plugin boundary, so unlike figure-out's its absent case is reachable. The first
+draft of this record concluded that the boundary therefore earned it a guard, and gave it one that
+stated no rule about form. Running `review-prompt` over the change found that guard inert: a
+sentence telling the model to use its own judgment describes what it does with no instruction at
+all. What the boundary actually changes is who can meet the absent case, not whether anything
+useful can be said about it.
 
 ## Decision
 
-**Whether a pointer carries an availability guard follows the plugin boundary. What that guard
-may say follows the target: a guard restates its target's discipline only where the restatement
-duplicates nothing.**
+**A pointer carries a fallback only where the target's discipline compresses to a sentence that
+duplicates nothing. The plugin boundary decides whether anyone will ever meet the absent case; it
+does not by itself earn a fallback.**
 
-- **Same plugin — no guard.** figure-out invokes `chat-surface` unconditionally, naming the mode.
-  Both ship in `manifest-dev`, so an install with one and not the other is not reachable through the
-  marketplace. Where the skill is missing anyway, the model's own default governs how a turn is
-  shaped; that is a partial install, and it is the installer's to resolve.
-- **Cross-plugin, compressible target — guard with a restating fallback.** figure-out's
-  `prompt-engineering` pointer keeps its guard and its one-sentence inline fallback. `manifest-dev`
-  without `manifest-dev-tools` is a configuration this repository ships, and the discipline the
-  fallback stands in for compresses to a sentence that duplicates nothing.
-- **Cross-plugin, non-compressible target — guard that states no rule.** re-pitch's `chat-surface`
-  pointer crosses from `manifest-dev-tools` into `manifest-dev`, so the absent case is real and the
-  guard is required. But the rendering contract does not compress: a one-line summary of it is still
-  a second statement of it, and it would be the version a reader meets first. The guard names the
-  absence and hands form selection to the model's default, stating no rule about form.
-- The asymmetry between these three pointers is deliberate, and this record is what says so.
+- **Compressible target — a fallback.** figure-out's `prompt-engineering` pointer keeps its guard
+  and its one-sentence inline fallback. `manifest-dev` without `manifest-dev-tools` is a
+  configuration this repository ships, so the absent case is real, and the discipline the fallback
+  stands in for compresses to a sentence that duplicates nothing.
+- **Non-compressible target — no fallback, whichever plugin it lives in.** figure-out's and
+  re-pitch's `chat-surface` pointers are both bare. The rendering contract does not compress: a
+  one-line summary of it is still a second statement of it, and it would be the version a reader
+  meets first. With no fallback worth writing, the absent case falls to the model's own default —
+  which is what would happen anyway.
+- **The plugin boundary explains, it does not decide.** figure-out and `chat-surface` both ship in
+  `manifest-dev`, so nobody reaches its absent case through the marketplace; re-pitch, in
+  `manifest-dev-tools`, can. That difference is worth knowing and changes nothing about the two
+  pointers, because neither has a fallback available to it.
+- So the pointers differ in exactly one way — whether a fallback sentence follows — and that
+  difference is deliberate. This record is what says so.
 
 ## Alternatives Considered
 
@@ -79,6 +83,11 @@ duplicates nothing.**
   Rejected — symmetry of shape at the cost of the property the change exists to establish. Every
   candidate one-liner ("keep one idea per line", "never a wall of text") is a form rule, so the
   fallback would put the rendering contract back in two files while the record claimed it had one.
+- **Keep a rule-free guard sentence on re-pitch** (*"if it is not available, shape the re-pitch by
+  your own judgment"*): Rejected, and this record's first draft had it. A sentence instructing the
+  model to use its own judgment describes what the model does absent any instruction, so it is
+  load with no behaviour attached — and it made the record assert a guard that guarded nothing.
+  Caught by running `review-prompt` over the change.
 - **Fail loudly when the skill is absent**: Rejected — a prompt cannot detect a missing skill, so
   this would have to be a runtime check the harness does not offer. Nothing to build against.
 - **Merge the two plugins so the distinction disappears**: Rejected — a packaging change of real
@@ -88,11 +97,13 @@ duplicates nothing.**
 
 ### Positive
 - The rendering contract keeps exactly one home, with no fallback copy to drift from it.
-- The rule generalizes on two axes a future author can actually evaluate: which plugin the target
-  ships in decides whether a guard exists, and whether the target's discipline compresses decides
-  what the guard says — rather than whichever nearby pointer the author happened to copy.
-- A guard can now be written for a target whose contract must stay single-homed, which is what lets
-  a skill in one plugin delegate to a contract in another without duplicating it.
+- The rule turns on one thing a future author can actually evaluate — can this target's discipline
+  be said in a sentence that duplicates nothing — rather than on whichever nearby pointer they
+  happened to copy.
+- A skill in one plugin can delegate to a single-homed contract in another without duplicating it,
+  because the answer to "what about the absent case" is now *nothing, deliberately* rather than a
+  summary that drifts.
+- No prompt pays load for a sentence that only says "use your judgment".
 - Every figure-out run stops paying for a guard against an unreachable state.
 
 ### Negative
