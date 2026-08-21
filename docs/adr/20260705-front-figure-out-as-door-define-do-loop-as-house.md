@@ -1,7 +1,7 @@
 # ADR: Front `/figure-out` as the Door; the define/do loop remains the House
 
 ## Status
-Accepted
+Accepted — its conversion rationale is retired by 20260821-positioning-drops-the-conversion-funnel; the standalone-first shape it chose stands, now on the grounds that meeting one skill first is the honest entry to the method rather than that it converts newcomers
 
 ## Area
 Positioning

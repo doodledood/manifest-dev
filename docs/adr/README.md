@@ -27,7 +27,7 @@
 | 2026-06-24 | [Use outcome-gated terminal success for `/auto` continuation](20260624-use-outcome-gated-auto-continuation.md) | Accepted | Goal setting |
 | 2026-07-03 | [figure-out gains fog discipline; multi-session orchestration stays out of scope](20260703-figure-out-fog-discipline.md) | Accepted | figure-out |
 | 2026-07-03 | [Progressive-disclosure triggers live in the loading layer, never in the deferred reference](20260703-progressive-disclosure-triggers-live-in-loading-layer.md) | Accepted | Prompt architecture |
-| 2026-07-05 | [Front `/figure-out` as the Door; the define/do loop remains the House](20260705-front-figure-out-as-door-define-do-loop-as-house.md) | Accepted | Positioning |
+| 2026-07-05 | [Front `/figure-out` as the Door; the define/do loop remains the House](20260705-front-figure-out-as-door-define-do-loop-as-house.md) | Accepted — its conversion rationale is retired by [20260821-positioning-drops-the-conversion-funnel](20260821-positioning-drops-the-conversion-funnel.md); the standalone-first shape it chose stands, now on the grounds that meeting one skill first is the honest entry to the method rather than that it converts newcomers | Positioning |
 | 2026-07-05 | [Keep the plugin-first repo layout; no restructure for skill-picker distribution](20260705-keep-plugin-first-layout-npx-skills-compatible.md) | Accepted | Repo layout |
 | 2026-07-07 | [Split the tech-design task profile by workflow role](20260707-split-tech-design-task-profile-by-workflow-role.md) | Accepted | Task guidance |
 | 2026-07-08 | [The judgment layer is a review-time premise check, distinct from define's gates](20260708-judgment-layer-is-a-review-time-premise-check.md) | Accepted | PR review |
@@ -112,4 +112,6 @@
 | 2026-08-20 | [North Star lines carry four states, and positions move only on the owner's ruling](20260820-north-star-lines-carry-states.md) | Accepted | North Star |
 | 2026-08-20 | [a cross-skill pointer carries a fallback only where the target's discipline compresses](20260820-pointer-fallbacks-need-a-compressible-target.md) | Accepted | Prompt architecture |
 | 2026-08-20 | [The project is the unit the workflows serve, not the single task](20260820-the-project-is-the-unit-not-the-task.md) | Accepted | Positioning |
+| 2026-08-21 | [Positioning drops the conversion funnel; the standalone shape stays on honest grounds](20260821-positioning-drops-the-conversion-funnel.md) | Accepted | Positioning |
+| 2026-08-21 | [The bet is about the practice, not about whether a market adopts it](20260821-the-bet-is-about-the-practice-not-the-market.md) | Accepted | Positioning |
 | 2026-08-21 | [Winning is our own projects running the full loop; recognition is a consequence](20260821-winning-is-our-own-projects-running-the-full-loop.md) | Accepted | Positioning |

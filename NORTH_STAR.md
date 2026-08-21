@@ -24,14 +24,17 @@ trying to become, what's worth doing next, and what done means live in whoever h
 be working — so every session and every teammate re-derives them from scratch, and the
 agent's speed just multiplies work nobody can tell was worth doing. Understanding and
 verification demo worse than generation, so tools compete on generation and overpromise.
-The one sentence that changes everything if false: developers who care about quality will
-adopt workflows that spend more tokens and more up-front process to get output they can
-ship with minimal review.
+The one sentence that changes everything if false: spending more tokens and more up-front
+process — on understanding, on what's worth doing next, and on what done means — leaves a
+project better off than moving faster without them.
 
-— hypothesis: ruled 2026-08-20, after half of one month's decision records turned out to
-  sit above the single task the previous text named; grounded in our own daily use and
-  the frustration list carried since the first strategy doc, untested as a market claim
-  beyond ourselves. See docs/adr/20260820-the-project-is-the-unit-not-the-task.md.
+— hypothesis: the unit ruled 2026-08-20, after half of one month's decision records
+  turned out to sit above the single task the previous text named; the bet sentence ruled
+  2026-08-21, moving the stop condition from market adoption to the practice itself.
+  Grounded in our own daily use and the frustration list carried since the first strategy
+  doc; untested beyond ourselves. See
+  docs/adr/20260820-the-project-is-the-unit-not-the-task.md and
+  docs/adr/20260821-the-bet-is-about-the-practice-not-the-market.md.
 
 ## What this rests on
 
@@ -44,11 +47,6 @@ ship with minimal review.
   Claude Code, OpenCode, Codex, and Pi.
 
   — evidence: shipped and maintained as per-CLI packages under `dist/` since 2026-06.
-
-- A single standalone skill, met first, converts a newcomer into a user of the full loop.
-
-  — hypothesis: named unmeasured in its own record,
-  `docs/adr/20260705-front-figure-out-as-door-define-do-loop-as-house.md`. 2026-08
 
 ## Who it's for
 
@@ -65,23 +63,27 @@ hype chasers, and people not using a coding agent at all.
 ## Promise
 
 First-principles workflows that make an agent's output trustworthy enough to ship with
-minimal review — invest upfront, ship with confidence. The bar a user should hold us to:
-*"I can give the agent a complex task and trust the output enough to ship it with
-minimal review."*
+minimal review, on work you can tell was worth doing — invest upfront, ship with
+confidence. Trustworthy output is what gets felt first, and it is not the whole of it: an
+agent can be exactly right about the wrong work. The bar a user should hold us to: *"I can
+give the agent a complex task and trust the output enough to ship it with minimal review —
+and come back to the project weeks later and find it still knows what it's becoming,
+what's next, and what done means."*
 
-— hypothesis: this sentence has never been put in front of a stranger as the reason to
-  try the project. 2026-08
+— hypothesis: both halves ruled to stand together 2026-08-21; neither has been put in
+  front of a stranger as the reason to try the project. See
+  docs/adr/20260821-positioning-drops-the-conversion-funnel.md.
 
 ## How they arrive
 
-Burned by another overpromising AI coding tool and searching for something grounded:
-GitHub discovery (search, trending), agent-CLI communities (Discord, forums, official
-docs), developer Twitter/X, blogs and newsletters, word of mouth, Reddit. Each discovery
-surface is fronted by one standalone skill so the first minute delivers value without
-adopting the whole method
-(`docs/adr/20260705-front-figure-out-as-door-define-do-loop-as-house.md`).
+However they find it. The project is built in public and shared as it is used; no channel
+is worked and no funnel is maintained. Whatever someone meets first stands alone, so
+nothing has to be adopted whole to be useful.
 
-— hypothesis: channels named, none instrumented; no arrival has been measured. 2026-08
+— ruled: 2026-08-21, arrival is not pursued; the standalone shape is kept because it is
+  the honest entry to the method, not because it converts. See
+  docs/adr/20260821-positioning-drops-the-conversion-funnel.md. Only the owner moves
+  this.
 
 ## Money — or what it feeds
 
@@ -132,7 +134,6 @@ how many of our own projects are running all three tiers at once.
 
 ## Open
 
-- Does the standalone-skill front door actually convert? Its decision record names this
-  a hypothesis until measured, and commits to reopening the positioning if it doesn't.
-  What would fill it: any real signal from a fronted surface — installs, invocations,
-  or a user arriving through one. 2026-08
+- Does the project-level half of the promise hold for anyone but its author? What would
+  fill it: someone who is not the maintainer keeping a project's direction, its queue,
+  and its definition of done in these surfaces. 2026-08
