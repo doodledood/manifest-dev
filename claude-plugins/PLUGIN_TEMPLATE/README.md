@@ -1,31 +1,31 @@
 # Plugin template
 
-Starting point for creating Claude Code plugins.
+Copy this directory to start a new plugin in this repository.
 
-## Structure
+## Layout
 
 ```
 your-plugin-name/
 ├── .claude-plugin/
-│   └── plugin.json          # Required: metadata
-├── agents/                   # Specialized agents
-│   └── example-agent.md
-├── skills/                   # Skills (user and auto-invoked)
+│   └── plugin.json          # required: name, description, version
+├── skills/                   # one directory per skill, each with SKILL.md
 │   └── example/
 │       └── SKILL.md
-├── hooks/                    # Event handlers
-│   └── hooks.json
 └── README.md
 ```
 
-## Setup
+Agents and hooks are also supported; this repository ships skills only.
 
-1. Copy this template:
+## Steps
+
+1. Copy the template:
+
    ```bash
    cp -r claude-plugins/PLUGIN_TEMPLATE claude-plugins/your-plugin-name
    ```
 
-2. Edit `.claude-plugin/plugin.json`:
+2. Fill in `.claude-plugin/plugin.json`:
+
    ```json
    {
      "name": "your-plugin-name",
@@ -34,11 +34,12 @@ your-plugin-name/
    }
    ```
 
-3. Add components as needed
+3. Write the skills.
 
-4. Register in `.claude-plugin/marketplace.json`
+4. Register the plugin in the repository's `.claude-plugin/marketplace.json`.
 
-5. Test locally:
+5. Install from your checkout and try it:
+
    ```bash
    /plugin marketplace add /path/to/manifest-dev
    /plugin install your-plugin-name@manifest-dev
@@ -46,21 +47,12 @@ your-plugin-name/
 
 ## Skills
 
-Skills are the primary way to extend Claude Code. Each skill lives in `skills/{skill-name}/SKILL.md`.
+Each skill is a `SKILL.md` under `skills/<name>/`. Its frontmatter `description` is what the agent matches against when deciding whether to invoke it, so write that line for discovery. Users can also invoke a skill directly as `/<name>`.
 
-**Invocation modes**:
-- **Auto-invoked**: Claude discovers skills based on semantic matching with the description
-- **User-invoked**: Users invoke via `/skill-name` (controlled by `user-invocable` frontmatter)
+[`CLAUDE.md`](../../CLAUDE.md) at the repository root carries this repository's conventions. It covers naming, frontmatter rules, when to bump a version, and which files to keep in step.
 
-See [CLAUDE.md](../../CLAUDE.md) for detailed guidelines.
+## Before you open a pull request
 
-## Testing
-
-- [ ] Plugin installs without errors
-- [ ] Agents are accessible
-- [ ] Skills activate in appropriate contexts
-
-## Resources
-
-- [CLAUDE.md](../../CLAUDE.md) - Development guidelines
-- [Claude Code Docs](https://code.claude.com/docs)
+- The plugin installs from a local checkout without errors.
+- Each skill activates when you'd expect it to, and can be invoked directly.
+- The README lists what the plugin ships.

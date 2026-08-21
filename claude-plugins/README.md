@@ -1,42 +1,28 @@
 # Claude Code plugins
 
-Loop engineering's missing half: define what "done" means, then verify it. The loop is the easy part — these plugins are the understanding and the verification that wrap around it.
+Two plugins ship from this repository. Install the first if you want the workflow; add the second if you also work on pull requests and prompts.
 
-## Installation
+## Install
 
 ```bash
-/plugin marketplace add https://github.com/doodledood/manifest-dev
-/plugin list
+/plugin marketplace add doodledood/manifest-dev
 /plugin install manifest-dev@manifest-dev
+/plugin install manifest-dev-tools@manifest-dev
 ```
 
-## Available plugins
+## The plugins
 
-| Plugin | What It Does |
-|--------|--------------|
-| [`manifest-dev`](./manifest-dev) | The core workflow: figure it out, encode what you'd accept, let it build and verify itself. `/figure-out` is the thinking partner; `/define` encodes that understanding into a Manifest; `/do` executes it and evaluates every gate under a run-level mode. `per-gate` is the independent default; `consolidated` is an opt-in mode for gate sets that are large and individually cheap, and `self` an opt-in lower-assurance one. `/just-do` is the goal-based executor beside `/do`: it reads the same Manifest and pursues a state where every gate holds, deciding order, method, and amount of checking for itself. `/just-auto` chains figure-out → define → just-do end-to-end under one chain-spanning goal. The manifest is the canonical source of truth for the PR/branch — feedback during `/do` or after `/done` defaults to amending it. `/init-context` sets a repository up with the surfaces the workflow reads from — a North Star (the project's standing strategy surface, informing every session and never binding), project-owned ADR conventions, a glossary, and the context-file wiring — seeding them from the project's own history where there is any, and comparing what it already installed against the current defaults when re-run. Multi-CLI distribution (OpenCode, Codex CLI, and a Pi package target). Running `/do` with a durable goal-setting/continuation backstop whose contract is auditable all-criteria-PASS — every manifest gate in a ledger with fresh mode-appropriate evidence — is the recommended unattended form; the backstop keeps the run alive across turns. |
-| [`manifest-dev-tools`](./manifest-dev-tools) | Tools alongside the workflow. `/prompt-engineering` builds and reviews prompts. `/walk-pr` (collaborative review), `/review-pr` (autonomous review with `--loop` follow-through), and `/babysit-pr` (author-side PR lifecycle babysitting that runs manifest machinery) cover PR collaboration. `/handoff` packages context for a fresh agent or a side-session. `/teach-me` turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks. `/re-pitch` re-pitches a message that didn't land, in plain words with the missing context. |
+Each one installs on its own:
 
-## At a glance
+| Plugin | What it covers |
+|--------|----------------|
+| [`manifest-dev`](./manifest-dev) | Understanding a problem, writing down what you'd accept, executing against it and verifying the result. Also project setup, ticket authoring and execution, and the review skills the criteria call on. |
+| [`manifest-dev-tools`](./manifest-dev-tools) | Pull-request collaboration, prompt authoring and review, teaching, handoff between sessions. |
 
-**manifest-dev** separates *what to build* (Deliverables with Acceptance Criteria) from *rules to follow* (Global Invariants). The three beats answer the three ways an autonomous loop goes wrong — skipping understanding, never defining "done," and faking it:
+For an unattended run, point your host's goal-setting or continuation capability at the completion contract `/do` prints.
 
-- **`/figure-out`** — reach shared understanding of the problem. A peer that investigates before it claims, walks the decision tree, and holds positions under pushback. The conceptual core; call it directly when figuring it out IS the goal. Delegates how each answer is shaped to the `/chat-surface` skill — text mode by default, and `--surface chat-surface` for html mode, where the conversation renders live into an HTML page while you keep typing in the terminal.
-- **`/define`** — encode that understanding into a Manifest. Auto-invokes `/figure-out` when the understanding isn't there yet. Supports `--babysit <pr-url>`.
-- **`/do`** — execute and verify. It points evaluators at each gate in the manifest rather than copying its text, while applying a run-level policy: `per-gate` (default, one fresh independent verifier per gate, run concurrently), `consolidated` (one independent verifier for the outstanding gate set, worked in sequence), or `self` (executor evaluation). Optional `--verifier-model` applies only to the independent modes. It aggregates PASS / FAIL / BLOCKED, fixes failures, and re-evaluates — command-backed gates in full, judgment gates over their prior findings' repairs and the delta after one full look, with `--exhaustive-verification` restoring full re-sampling. Caller overlays can narrow retry cadence for CI one-shot workflows. Use the host's goal-setting/continuation backstop with the auditable all-criteria-PASS completion contract (the recommended unattended form): every manifest gate in a ledger with fresh mode-appropriate evidence and provenance, not a summary claim. `/auto` chains all three autonomously; use one chain-complete goal contract there too, with the autonomous Read as a checkpoint before manifest encoding and terminal completion judged by `/do` gate-ledger PASS.
+Each plugin's README lists everything it ships. The repository [README](../README.md) covers what the workflow is for and how the pieces fit together.
 
-- **`/ticket-up`, `/next-ticket`, `/run-ticket`, and `/sweep-tickets`** — author self-sufficient Tickets, claim and present the top ready one, run one exact Ticket through landing, or let a scheduled trigger recover/start one Auto Ticket. A Manifest stays one coherent Ticket by default; explicit delegation can split it on Deliverable boundaries.
+## Add a plugin
 
-Full schema, gate text, verification skills, and task guidance live in the [manifest-dev README](./manifest-dev).
-
-For non-Claude installs and updates, see the root README's [Multi-CLI support](../README.md#multi-cli-support). Pi installs the repo-root package (`pi install git:github.com/doodledood/manifest-dev@main`); it ships the full skill set plus prompt-template aliases for `/do`, `/auto`, and `/babysit-pr`. Host goal/continuation support is optional and acts as an outer backstop for unattended runs.
-
-**manifest-dev-tools** sits next to the workflow rather than inside it — prompt engineering, PR review and walkthroughs, PR babysitting, context handoff, incremental teaching, and a re-pitch corrective. Details in the [manifest-dev-tools README](./manifest-dev-tools).
-
-## Contributing
-
-Each plugin lives in its own directory. See [CLAUDE.md](../CLAUDE.md) for development commands and plugin structure.
-
-## License
-
-MIT
+[`PLUGIN_TEMPLATE/`](./PLUGIN_TEMPLATE) is the starting point. [`CLAUDE.md`](../CLAUDE.md) carries the conventions.
