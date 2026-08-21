@@ -112,3 +112,4 @@
 | 2026-08-20 | [North Star lines carry four states, and positions move only on the owner's ruling](20260820-north-star-lines-carry-states.md) | Accepted | North Star |
 | 2026-08-20 | [a cross-skill pointer carries a fallback only where the target's discipline compresses](20260820-pointer-fallbacks-need-a-compressible-target.md) | Accepted | Prompt architecture |
 | 2026-08-20 | [The project is the unit the workflows serve, not the single task](20260820-the-project-is-the-unit-not-the-task.md) | Accepted | Positioning |
+| 2026-08-21 | [Winning is our own projects running the full loop; recognition is a consequence](20260821-winning-is-our-own-projects-running-the-full-loop.md) | Accepted | Positioning |

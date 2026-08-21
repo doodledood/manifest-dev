@@ -95,9 +95,16 @@ getting the workflows right.
 
 ## Winning, and the number watched
 
-— empty: no success definition or watched number has been chosen. Filling it means the
-  owner deciding whether winning is external adoption or the workflows serving our own
-  projects end-to-end — and then naming the one count that tracks it. 2026-08
+Winning is our own projects running end-to-end on all three tiers — a North Star that
+stands, work pulled from a Ticket store rather than from whoever is at the keyboard, and
+execution against a Manifest with gate evidence. Outside recognition is welcome as a
+consequence of that working; it is never a target traded against it. The number watched:
+how many of our own projects are running all three tiers at once.
+
+— ruled: 2026-08-21, the owner's choice between the two candidates the empty field named,
+  grounded in the standing ruling that distribution stays secondary to getting the
+  workflows right. See docs/adr/20260821-winning-is-our-own-projects-running-the-full-loop.md.
+  Only the owner moves this.
 
 ## Never
 
