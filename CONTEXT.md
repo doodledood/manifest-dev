@@ -92,6 +92,10 @@ _Avoid_: Priority, importance.
 The set of shapes a given output destination can carry — tables, box diagrams, fenced code, charts — as opposed to the surface-independent rule that selects among them, which is Spine.
 _Avoid_: Rendering contract (that is the pair, selection rule included), formatting, style.
 
+**Re-entry Cost**:
+What a reader pays to resume a turn after looking away — a glance where the form can be entered at any point, a restart where meaning accumulates across sentences.
+_Avoid_: Readability, skimmability, cognitive load (that is the goal; re-entry cost is the test for it).
+
 **Do/Verify Loop**:
 The execution cycle where `/do` implements toward a Manifest, verifies every Acceptance Criterion and Global Invariant, routes failures or blockers, and finishes only after all gates pass.
 
@@ -278,6 +282,7 @@ _Avoid_: Batch runner, label pulse, dependency controller.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.
 - A **Re-host** preserves **Spine** content verbatim while making its **Altitude** typographically legible.
 - A **Form Vocabulary** belongs to wherever a turn's text lands — a surface, or a mode that redirects output, such as team mode's Slack posts — while the rule choosing among its shapes stays in the **Spine**, so it reaches every destination including those no `--surface` names.
+- **Re-entry Cost** is the whole-turn test the **Form Vocabulary**'s selection rule answers to; a form that lets an omission pass unseen fails it as surely as one that is merely dense.
 - A **Taste** entry is ratified by the user and routed by scope to a user-level or project-level memory file; it is never inferred and applied silently, and it stays distinct from the review-time **Judgment Layer**.
 - `/init-context` installs a project's **ADR Conventions**, its glossary, and the **Project Context File** wiring that keeps sessions reading both; a **Seed** is layered on top wherever the project has history, and is never a substitute for the wiring.
 - figure-out loads the **ADR Conventions** at bootstrap and writes records under them, which is what makes the project's copy govern rather than the shipped default; cadence — when a session offers to record a decision — stays with figure-out and is not the project's to set.
