@@ -6,177 +6,128 @@
 
 # manifest-dev
 
-#### Your agent builds the wrong thing, confidently.
+Skills for agentic coding CLIs. They keep three things in your project instead of in your head: what it's becoming, what's worth doing next, and what done means here. The agent reads them, works against them, and checks the result before reporting it finished.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/license-MIT-15803D" alt="MIT license">
-  <img src="https://img.shields.io/badge/loop-verification--first-15803D" alt="Verification-first">
-  <img src="https://img.shields.io/badge/runs_in-Claude_Code_·_OpenCode_·_Codex_·_Pi-475569" alt="Runs in four CLIs">
-</p>
+Agents can write almost anything. What they can't do is tell you whether it was worth writing. So a project drifts: every session re-derives the direction from scratch, and speed produces more work than anyone can evaluate. Writing those three things down where the agent reads them is the whole idea.
 
-Not broken code — wrong code. It compiles. The tests pass. And it solves a problem you don't have, because the agent started typing before it understood what you meant.
+Start with one command, in any repository:
 
-**`/figure-out` is the pushback.** An adversarial thinking partner. It digs through your codebase on its own and presses on the question that decides the work. It refuses to touch code until you both know what "right" is, holds its position under pushback, and changes its mind when the evidence changes.
+```bash
+/figure-out why do half my background jobs silently stall?
+```
+
+It reads your code first, then comes back with the question that decides the work. Nothing gets built until you both know what "right" means here.
+
+## The three things, and where they live
+
+Each one makes the next decidable. You can't judge what's worth doing without knowing what the project is for, and you can't judge a diff without knowing what done means:
+
+| What it answers | Where it lives | Lifetime |
+|-----------------|----------------|----------|
+| What is this project becoming? | A North Star, in the repo | Stands until you change it |
+| What's worth doing next? | A Ticket, in your tracker or in files | As long as that piece of work |
+| What does done mean here? | A Manifest, written per run | Resets every run |
+
+`/init-context` sets up the first of these, along with a glossary and decision-record conventions, seeding them from the project's own history where there is any. `/ticket-up` writes the second. `/define` writes the third, and `/do` executes against it.
+
+## Install
+
+Claude Code is the primary target:
+
+```bash
+/plugin marketplace add doodledood/manifest-dev
+/plugin install manifest-dev@manifest-dev
+```
+
+Every skill also works on its own. If you only want the one from the top of this page:
 
 ```bash
 npx skills add doodledood/manifest-dev --skill figure-out
 ```
 
-```
-/figure-out why do half my background jobs silently stall?
-```
+## The workflow
 
-A minute in, it has read your code and come back with the question you hadn't thought to ask. That first question is the fastest way to find out whether this tool is for you.
-
-**Every skill here works standalone. Take what you want.** No framework to adopt, nothing else to install. If you never run another command from this repo, `/figure-out` still earns its keep.
-
-## The loop was never the hard part
-
-Everyone's writing loops now: the shift from prompting an agent by hand to designing the system that prompts it. But a loop pointed at a shallow understanding just ships the wrong thing faster. And the loop vouches for itself. It runs, declares victory on a confident summary. You find out in review.
-
-The leverage lives upstream of the `while`: understand the problem before anything is built, define what "done" means, then verify it independently. That's the rest of manifest-dev: loop engineering, with a stop condition you can trust.
-
-<table>
-  <tr>
-    <th align="left">How the loop fails</th>
-    <th align="left">The skill that answers it</th>
-  </tr>
-  <tr>
-    <td><strong>It skips understanding.</strong> A loop should be a faster path through a problem you already grasp; skipping that step turns it into a substitute for thinking.</td>
-    <td><strong><code>/figure-out</code></strong> is the door you just walked through: adversarial understanding, before anything gets built.</td>
-  </tr>
-  <tr>
-    <td><strong>It has no real stop condition.</strong> "Run until done" is worthless when "done" was never written down.</td>
-    <td><strong><code>/define</code></strong> encodes what you'd accept: the acceptance criteria you'd reject in review but wouldn't think to specify up front.</td>
-  </tr>
-  <tr>
-    <td><strong>It fakes "done."</strong> An agent reports success on broken code with total confidence.</td>
-    <td><strong><code>/do</code></strong> makes it prove otherwise: every criterion needs evidence under an explicit verification mode, and the default independently verifies each gate.</td>
-  </tr>
-</table>
-
-manifest-dev puts understanding first, adversarially, before `/define` writes anything down. Most spec-driven tools generate the spec straight from your description, so the spec runs only as deep as what you already said.
-
-manifest-dev rides on top of whatever runs your loop, including your host's own `/loop` and `/goal`, and leaves scheduling jobs and managing worktrees to that runtime. It supplies the part those primitives leave to you: what to verify, and how to know you're actually done.
-
-## Quick start
-
-The one-skill door is above. The full system installs as a plugin:
+Three skills, run in order, though each is useful alone:
 
 ```bash
-# Claude Code (primary)
-/plugin marketplace add doodledood/manifest-dev
-/plugin install manifest-dev@manifest-dev
+/figure-out <topic>          # understand the problem before touching anything
+/define <what you want>      # write down what you'd accept
+/do <manifest-path>          # build it, then verify every criterion
 ```
 
-For OpenCode, Codex CLI, and Pi, see [Multi-CLI support](#multi-cli-support) below.
+`/define` turns understanding into a Manifest: the deliverables, the criteria each one has to meet, and the rules that hold across all of them. It calls `/figure-out` first if the conversation hasn't reached understanding yet.
 
-Then work through the three beats:
-
-```bash
-/figure-out <topic or problem>     # 1. Figure it out — understand before acting
-/define <what you want to build>   # 2. Encode what you'd accept into a manifest
-/do <manifest-path>                # 3. Execute and verify every criterion inline
-/do <manifest-path> --verification consolidated  # opt in to one verifier per round
-/do <manifest-path> --verification self          # opt in to executor verification
-/do <manifest-path> --exhaustive-verification    # opt in to re-sampling every judgment gate each round
-
-/auto <what you want to build>     # Or run all three, chained, no approval gates
-```
-
-`/define` takes the understanding you reached and *encodes* it into a manifest, auto-invoking `/figure-out` first if you skipped ahead. `/do` implements toward the manifest and can't call it done until every criterion has fresh evidence under the selected mode, keeping a default-on execution log of deviations and dead ends as it goes (`--no-log` skips it). The default `per-gate` mode runs one fresh independent verifier per gate, concurrently, so each gate gets a whole reader to itself; opt-in `consolidated` puts the outstanding gate set through a single verifier in sequence, which pays off where the gates are many and each is slight, and opt-in `self` trades independence for the lowest execution cost. `--verifier-model <model>` optionally selects the independent verifier model and is invalid with `self`. Re-verification follows each gate's declared kind: a gate whose verdict comes from a command re-runs in full, while a gate whose verdict is a model's judgment takes one full look and afterwards judges only its prior findings' repairs and what changed since — so runs converge on repaired findings instead of on a review round that happens to come up empty (`--exhaustive-verification` restores full re-sampling — more rounds, for a better chance of catching what a first read walked past; without it a defect sitting in ground already judged once stays missed). `/auto` chains all three with no waiting and forwards the same execution flags without putting them in the manifest.
-
-For unattended runs of `/do` or `/auto` (the recommended way to run both), set your host's goal-setting or continuation capability to the completion contract those skills print; see the [manifest-dev plugin README](claude-plugins/manifest-dev/README.md#quick-start) for the full contract text and why it's shaped that way.
-
-Babysit an existing PR through review without any manifest-dev setup: `/babysit-pr [pr-url]`. Details in the [manifest-dev-tools README](claude-plugins/manifest-dev-tools).
-
-`/chat-surface` owns how each answer is shaped for wherever it lands, under one contract: form chosen per point, prose as the fallback, and the ask set apart with its recommendation. `/figure-out` delegates to it — by default in text mode, where answers gain tables, box diagrams and fenced code wherever one beats a sentence. Pass `--surface chat-surface` (or invoke `/chat-surface` in any session) for html mode: the conversation renders live into an HTML page you keep open, your messages verbatim and the agent's responses carrying charts, diagrams and decision cards, updating in place as each turn arrives while you keep typing in the terminal.
-
-## How it works
+`/do` implements against that Manifest and can't report completion until every criterion has evidence behind it. Verification runs independently of the work by default, so "it's done" is a finding rather than a claim.
 
 ```mermaid
 flowchart TD
-    A["/figure-out 'problem'"] --> B["Shared understanding"]
-    B --> C["/define"]
-    C --> D["Manifest = what you'd accept"]
-    D --> E["/do manifest.md"]
-    E --> F{"For each Deliverable"}
-    F --> G["Implement toward ACs"]
-    G --> H["Evaluate gates under selected mode"]
-    H -->|any FAIL| I["Fix everything the round found"]
-    I -->|re-verify per head| H
-    H -->|all PASS| J["/done"]
-    F -->|risk surfaces| K["Consult trade-offs, adjust approach"]
-    K -->|reachable| F
-    K -->|stuck| L["/escalate"]
+    A["/define"] --> B["Manifest — what you'd accept"]
+    B --> C["/do"]
+    C --> D["Implement"]
+    D --> E["Verify every criterion"]
+    E -->|any fail| F["Fix, re-verify"]
+    F --> E
+    E -->|all pass| G["Done, with evidence"]
+    E -->|real blocker| H["Escalate"]
     classDef gate fill:#15803D,stroke:#0F172A,color:#FFFFFF;
     classDef done fill:#0F172A,stroke:#15803D,color:#FFFFFF;
     classDef stop fill:#B45309,stroke:#0F172A,color:#FFFFFF;
-    class H gate;
-    class J done;
-    class L stop;
+    class E gate;
+    class G done;
+    class H stop;
 ```
 
-FAIL routes back to a fix; a real blocker (amber) routes to `/escalate`.
+`/auto` chains all three without stopping for approval between them. `/just-do` and `/just-auto` are leaner variants that pursue the same Manifest with less process.
 
-## What changes
+For an unattended run, point your host's goal-setting or continuation capability at the completion contract `/do` prints. Where a host offers neither, `/do` prints the contract for you to use with whatever keeps the run alive.
 
-Your first pass lands closer to done, and the fix loop cleans up what's left on its own. Writing acceptance criteria also keeps you engaged with your own code. That matters more the more you lean on the agent, right when the codebase starts to feel like someone else wrote it.
+## What it costs
 
-> [!TIP]
-> Resist the urge to jump in mid-`/do`. It won't nail everything first try; that's expected. You invested in understanding the problem, so let the loop run.
+More tokens and more work up front than prompting directly. What you get back is a first pass that lands closer to done and a result you can check rather than take on trust. Writing acceptance criteria also keeps you engaged with your own code, which matters more the more of it the agent writes.
 
-## Who this is for
+Resist jumping in mid-`/do`. It won't get everything first try — that's what the verify loop is for.
 
-You've burned out on the weekly "game-changing AI coding tool" cycle and want something grounded that works. You're an experienced developer who cares more about output quality than raw speed, and you've learned the hard way that AI code needs guardrails more than cheerleading. If you count every cent per token, or want the fastest possible output regardless of what it costs you in review, this isn't your thing.
+## What's in it
 
-## Multi-CLI support
+Two plugins ship from this repository:
 
-The Claude Code plugins are the source of truth. The same components run in OpenCode, Codex CLI, and Pi through native per-CLI distributions under `dist/`, all carrying the same topology-neutral gate schema and run-level verification modes.
+| Plugin | What it covers |
+|--------|----------------|
+| [`manifest-dev`](claude-plugins/manifest-dev) | The workflow itself, project setup, ticket authoring and execution, and the review skills the criteria call on |
+| [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Pull-request collaboration, prompt work, teaching, and handoff between sessions |
 
-| CLI | Install | Details |
-|-----|---------|---------|
-| Claude Code | `/plugin install manifest-dev@manifest-dev` | Primary target |
-| OpenCode | clone + one config line | [README](dist/opencode/README.md) |
-| Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` | [README](dist/codex/README.md) |
-| Pi | `pi install git:github.com/doodledood/manifest-dev@main` | [README](dist/pi/README.md) |
+Each plugin's README lists what it ships.
 
-Individual skills also install into 18+ agents (Cursor, Copilot, Cline, and more) via `npx skills add doodledood/manifest-dev --skill <name>`.
+## Other CLIs
 
-Each linked README covers that CLI's install, upgrade, and uninstall path. Architecture decisions behind the multi-CLI design are indexed in [`docs/adr/`](docs/adr/README.md).
+The Claude Code plugins are the source; `dist/` carries generated distributions for other hosts.
 
-## Available plugins
+| CLI | Install |
+|-----|---------|
+| Claude Code | `/plugin install manifest-dev@manifest-dev` |
+| Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` — [details](dist/codex/README.md) |
+| Pi | `pi install git:github.com/doodledood/manifest-dev@main` — [details](dist/pi/README.md) |
+| OpenCode | clone, then add one path to your config — [details](dist/opencode/README.md) |
 
-| Plugin | Description |
-|--------|--------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The core workflow (`/figure-out`, `/define`, `/do`, `/just-do`, `/done`, `/escalate`, `/auto`, `/just-auto`, `/figure-out-team`), project setup (`/init-context`, installing the project's North Star, glossary, and ADR conventions), Ticket authoring and execution (`/ticket-up`, `/next-ticket`, `/run-ticket`, `/sweep-tickets`), the surface contract and its live rendered chat view (`/chat-surface`), and the verification skills, including `review-code`'s per-dimension quality gates and `review-writing`'s register-aware prose review. |
-| [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Tools alongside the workflow: `/review-pr`, `/babysit-pr`, `/walk-pr` for PR collaboration, plus `/prompt-engineering`, `/handoff`, `/teach-me`, and `/re-pitch`. |
+Individual skills install into many other agents through `npx skills add doodledood/manifest-dev --skill <name>`.
 
-Full plugin and skill catalogs live in [`claude-plugins/README.md`](claude-plugins/README.md) and each plugin's own README.
+Decisions behind the multi-CLI design are indexed in [`docs/adr/`](docs/adr/README.md).
 
 ## Development
 
 ```bash
-# Setup (first time)
 ./scripts/setup.sh
 source .venv/bin/activate
 
-# Lint, format, typecheck, test
 ruff check --fix claude-plugins/ tests/ && black claude-plugins/ tests/ && mypy && python3 -m pytest tests/
 ```
 
-After changing plugin components, run `/sync-tools` to regenerate the `dist/` distributions.
+Run `/sync-tools` after changing plugin components to regenerate `dist/`.
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for plugin development guidelines.
+This is built for its author's own projects and shared as it's used. See [CONTRIBUTING.md](./CONTRIBUTING.md) for how the plugins are put together.
 
 ## License
 
 MIT
-
----
-
-*Built by developers who understand LLM limitations, and design around them.*
-
-Follow along: [@aviramkofman](https://x.com/aviramkofman)
