@@ -96,7 +96,7 @@
 | 2026-08-12 | [Ticket identity follows the work across automated attempts](20260812-ticket-identity-follows-work-across-automated-attempts.md) | Accepted | Ticketing |
 | 2026-08-12 | [Ticket recovery uses coherent pushed checkpoints](20260812-ticket-recovery-uses-coherent-pushed-checkpoints.md) | Accepted | Ticketing |
 | 2026-08-12 | [ticket-up is the single Ticket-authoring boundary](20260812-ticket-up-is-the-ticket-authoring-boundary.md) | Accepted | Ticketing |
-| 2026-08-12 | [Tickets follow independently schedulable work units](20260812-tickets-follow-independently-schedulable-work-units.md) | Accepted | Ticketing |
+| 2026-08-12 | [Tickets follow independently schedulable work units](20260812-tickets-follow-independently-schedulable-work-units.md) | Accepted — narrowed by [20260823-split-tickets-are-exercisable-end-to-end](20260823-split-tickets-are-exercisable-end-to-end.md) | Ticketing |
 | 2026-08-12 | [Trigger adapters enforce single-flight per Ticket](20260812-trigger-adapters-enforce-per-ticket-single-flight.md) | Accepted | Ticketing |
 | 2026-08-12 | [Trigger adapters hand off exhausted runner failures](20260812-trigger-adapters-hand-off-exhausted-runner-failures.md) | Accepted | Ticketing |
 | 2026-08-14 | [Human-authored follow-ups may grant Auto independently of their source](20260814-human-authored-follow-ups-may-grant-auto-independently.md) | Accepted | Ticketing |

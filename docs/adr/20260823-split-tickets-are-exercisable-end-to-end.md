@@ -75,5 +75,5 @@ prevent.
 
 ## Source
 - Session: figure-out, ticket-up vertical slicing (2026-08-23)
-- Related: 20260812-tickets-follow-independently-schedulable-work-units
+- Narrows: 20260812-tickets-follow-independently-schedulable-work-units
 - Related: 20260726-deliverables-are-exercisable-slices-ordered-by-uncertainty
