@@ -116,3 +116,4 @@
 | 2026-08-21 | [the rendering contract judges the whole turn, not the element](20260821-rendering-contract-judges-the-whole-turn.md) | Accepted | Prompt architecture |
 | 2026-08-21 | [The bet is about the practice, not about whether a market adopts it](20260821-the-bet-is-about-the-practice-not-the-market.md) | Accepted | Positioning |
 | 2026-08-21 | [Winning is our own projects running the full loop; recognition is a consequence](20260821-winning-is-our-own-projects-running-the-full-loop.md) | Accepted | Positioning |
+| 2026-08-23 | [Every split Ticket is exercisable end-to-end; verticality governs cut direction, never count](20260823-split-tickets-are-exercisable-end-to-end.md) | Accepted | Ticketing |
