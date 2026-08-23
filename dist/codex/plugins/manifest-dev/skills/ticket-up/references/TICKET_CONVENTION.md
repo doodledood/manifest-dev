@@ -6,6 +6,8 @@ A ticket is a self-sufficient prose work packet: everything needed to pick it up
 
 A Ticket is one independently schedulable lifecycle unit. Work belongs together when it shares one outcome and would be assigned, prioritized, blocked, and closed together. A separate Ticket earns its coordination cost only when managing it separately has real value.
 
+Whether to split is one question; where the cut falls is another. Wherever work does split, every shaped ticket it produces stands as a slice someone can exercise end to end on its own — put in front of its real use and seen working, not merely inspected as present. A ticket cut along an implementation layer — the schema, the endpoints, the screen — has nothing to run, so its definition of done falls back to checking that something exists, and whoever picks it up cannot tell whether the work helped. Work that arrives framed in layers is re-cut rather than passed through; renaming a layer does not re-cut it. A question ticket is outside this: an investigation has no slice to run.
+
 A finished Manifest therefore becomes one Shaped Ticket by default. Its Deliverables guide execution inside that Ticket. A caller who explicitly wants delegation or parallel pickup may split on those existing Deliverable boundaries. The same rule applies to findings and questions: group related items, and do not turn every thought or observation into store state.
 
 ## Two kinds
