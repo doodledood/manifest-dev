@@ -1,7 +1,7 @@
 # ADR: Tickets follow independently schedulable work units
 
 ## Status
-Accepted
+Accepted — narrowed by 20260823-split-tickets-are-exercisable-end-to-end
 
 ## Area
 Ticketing

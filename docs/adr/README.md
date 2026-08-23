@@ -96,7 +96,7 @@
 | 2026-08-12 | [Ticket identity follows the work across automated attempts](20260812-ticket-identity-follows-work-across-automated-attempts.md) | Accepted | Ticketing |
 | 2026-08-12 | [Ticket recovery uses coherent pushed checkpoints](20260812-ticket-recovery-uses-coherent-pushed-checkpoints.md) | Accepted | Ticketing |
 | 2026-08-12 | [ticket-up is the single Ticket-authoring boundary](20260812-ticket-up-is-the-ticket-authoring-boundary.md) | Accepted | Ticketing |
-| 2026-08-12 | [Tickets follow independently schedulable work units](20260812-tickets-follow-independently-schedulable-work-units.md) | Accepted | Ticketing |
+| 2026-08-12 | [Tickets follow independently schedulable work units](20260812-tickets-follow-independently-schedulable-work-units.md) | Accepted — narrowed by [20260823-split-tickets-are-exercisable-end-to-end](20260823-split-tickets-are-exercisable-end-to-end.md) | Ticketing |
 | 2026-08-12 | [Trigger adapters enforce single-flight per Ticket](20260812-trigger-adapters-enforce-per-ticket-single-flight.md) | Accepted | Ticketing |
 | 2026-08-12 | [Trigger adapters hand off exhausted runner failures](20260812-trigger-adapters-hand-off-exhausted-runner-failures.md) | Accepted | Ticketing |
 | 2026-08-14 | [Human-authored follow-ups may grant Auto independently of their source](20260814-human-authored-follow-ups-may-grant-auto-independently.md) | Accepted | Ticketing |
@@ -116,3 +116,4 @@
 | 2026-08-21 | [the rendering contract judges the whole turn, not the element](20260821-rendering-contract-judges-the-whole-turn.md) | Accepted | Prompt architecture |
 | 2026-08-21 | [The bet is about the practice, not about whether a market adopts it](20260821-the-bet-is-about-the-practice-not-the-market.md) | Accepted | Positioning |
 | 2026-08-21 | [Winning is our own projects running the full loop; recognition is a consequence](20260821-winning-is-our-own-projects-running-the-full-loop.md) | Accepted | Positioning |
+| 2026-08-23 | [Every split Ticket is exercisable end-to-end; verticality governs cut direction, never count](20260823-split-tickets-are-exercisable-end-to-end.md) | Accepted | Ticketing |
