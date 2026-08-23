@@ -9,8 +9,8 @@ Ticketing
 ## Decision
 
 When work becomes multiple Shaped Tickets — from any input path, not only a Manifest — every
-Ticket must be a slice that can be exercised end-to-end on its own: put in front of its real use
-and judged working, not merely inspected as present. A cut along an implementation layer ("the
+Ticket must be a slice that can be exercised end-to-end on its own: run, read, or otherwise
+judged in the situation it is for, not merely inspected as present. A cut along an implementation layer ("the
 data model", "the API", "the UI") is not a legal Ticket boundary, because such a Ticket's
 definition of done can only check existence.
 
