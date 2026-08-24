@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "9.5.0",
+  "version": "9.6.0",
   "description": "Manifest-driven workflows: /define writes a verifiable Manifest, /do executes it, /ticket-up authors coherent Ticket units, /run-ticket recovers and lands one exact Ticket, and /sweep-tickets advances one Auto Ticket per scheduled invocation.",
   "skills": "./skills/",
   "keywords": [
