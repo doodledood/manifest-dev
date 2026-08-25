@@ -90,15 +90,19 @@ Never put derivable state here: no ticket lists, statuses, or ready/next — any
 
 - **Status**: `open` → `done`. Done tickets roll off **by location**: in a file store, closing moves the ticket into a `done/` subfolder beside the open ones; in a tracker, closing the item removes it from open queries. Reading the open set never scales with closed history — the archive is the `done/` folder, the tracker's closed items, and git.
 - **Claiming**: mark a ticket claimed (a `Claimed by:` line, an assignee, the venue's equivalent) when you pick it, not when you get around to starting it — the gap between the two is where somebody else picks the same one. Open and unclaimed means takeable; a human claim pauses automation. A claim held by the store's stable automation identity represents work in progress or an interrupted attempt the scheduled recovery path may resume after the host's single-flight guard admits it.
-- **Ready**: a ticket is ready when it is open, unclaimed, and every ticket it depends on is done. Blocked is derived from unmet dependencies, never stored as a status.
+- **Ready**: a ticket is ready when it is open, unclaimed, and every ticket it depends on is done. Blocked is derived from unmet dependencies, never stored as a status. Readiness is the same question for everyone; unattended execution narrows it further with the grant and the escalation mark, per *Automated execution* below.
 - **Closing**: record the outcome on the Ticket (the merged or otherwise landed work, or the question's recorded answer), mark it done and roll it off (move it to `done/`, or close the item), and check what the close changed: Tickets it made ready, and outcomes that need interpreting. A branch or mergeable pull request is not a landed repository outcome. Create a Question Ticket for interpretation only when that question needs an independently managed lifecycle; otherwise record or answer it with the current outcome.
-- **Escalating an attempt**: record the blocker, attempts, evidence, preserved-work references, and human input needed on the same Ticket. Leave it open, retain Auto when present, and transfer or preserve its claim for human continuation. The human records continuation context and releases the claim after resolving the blocker; the ordinary readiness rule then returns the Ticket to unattended eligibility. Escalation ends an execution attempt, not the Ticket's work, and never makes dependents ready.
+- **Escalating an attempt**: record the blocker, attempts, evidence, preserved-work references, and the human input needed on the same Ticket, as a handoff record carrying a mark automation can recognize. Leave it open, retain Auto when present, and release the claim. The mark, not a claim, is what holds automation off: unattended dispatch skips a marked Ticket, while the Ticket stays open and unclaimed so a picker ranks it against everything else and the person named in the handoff can take it. A venue reference maps how the mark renders — a label where the venue has them, and otherwise the marker the handoff record itself carries, which any venue can hold. After resolving the blocker, that person records the continuation context and clears the mark, which returns the Ticket to unattended eligibility. Escalation ends an execution attempt, not the Ticket's work, and never makes dependents ready.
 
 ## Automated execution
 
 Issue events are a fast path for ready Auto Tickets. A scheduled `sweep-tickets` invocation is the
 correctness path: it resumes one interrupted automation-owned Ticket, or otherwise selects one
-ready Auto Ticket, invokes `run-ticket`, and stops. Closing one Ticket naturally makes a dependent
+ready Auto Ticket, invokes `run-ticket`, and stops.
+
+Neither path touches a Ticket carrying the escalation mark, and each tests for it where it decides
+rather than trusting the other to have done so — releasing the claim is itself an event a dispatcher
+acts on, so a skipped test restarts the attempt the escalation ended. Closing one Ticket naturally makes a dependent
 Ticket eligible for a later sweep; no ready label or label pulse is needed.
 
 Both paths use one trigger adapter contract: stable automation identity, canonical per-Ticket

@@ -55,8 +55,12 @@ invocation does not require Auto and does not change the unattended trigger rule
 Keep the adapter thin. It owns only what the host can know or enforce:
 
 1. **Event eligibility.** Before launching an issue event, confirm that the item is a Ticket,
-   open, unassigned, carries Auto, has no open dependency, and matches any configured effort or
-   type filter. A schedule delegates those store-level checks to `sweep-tickets`.
+   open, unassigned, carries Auto, carries no escalation mark, has no open dependency, and matches
+   any configured effort or type filter. A schedule delegates those store-level checks to
+   `sweep-tickets`. The escalation check is what makes this path safe rather than merely tidy: an
+   escalating attempt releases the Ticket's claim, and that release is itself an unassignment event
+   this adapter listens for, so an adapter that omits the check relaunches the attempt that just
+   ended — immediately, and on every escalation.
 2. **Stable automation identity.** Use one recognizable claim identity, distinct from the people
    who receive escalations. Record that identity and the human escalation recipient in the
    project's store config.
@@ -75,8 +79,9 @@ Keep the adapter thin. It owns only what the host can know or enforce:
    repeated hook updates the same comment instead of duplicating it.
 
 The adapter does not remove and re-add `auto`, keep a retry counter on the Ticket, infer process
-liveness from the assignee, or create ready/blocked/running labels. Claims express ownership.
-Dependencies express blocking. The host's execution system is the source of truth for live jobs.
+liveness from the assignee, clear an escalation mark, or create ready/blocked/running labels.
+Claims express ownership. Dependencies express blocking. The escalation mark expresses a handoff
+awaiting a person. The host's execution system is the source of truth for live jobs.
 
 ## Authority at landing
 
@@ -112,6 +117,9 @@ unpushed commits may be lost; coherent pushed checkpoints are the durability bou
 - Reapplying `auto` as a retry pulse can create an event loop and erases the useful distinction
   between durable authority and delivery.
 - Assigning the configured person is a pause. After resolving the blocker, that person records
-  the continuation context and unassigns the Ticket; readiness then becomes true naturally.
+  the continuation context and unassigns the Ticket; readiness then becomes true naturally. This
+  is the terminal infrastructure-failure handoff, not a Ticket escalation, and the two are
+  deliberately unalike: infrastructure exhaustion assigns a person because no attempt reached a
+  verdict, while an escalation releases the claim and leaves its mark because an attempt did.
 - A provider crash is not a Ticket-level ESCALATED outcome. Only the terminal failure hook may
   convert exhausted infrastructure retries into a human operational handoff.
