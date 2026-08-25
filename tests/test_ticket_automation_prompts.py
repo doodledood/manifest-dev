@@ -253,8 +253,13 @@ def test_picker_reads_a_ticket_whole_not_just_its_body() -> None:
         in flat(text)
     )
     assert "Present the complete Ticket, its attached context included" in flat(text)
-    # Cost is bounded rather than unbounded across every candidate.
-    assert "read it for the candidates that actually compete" in flat(text)
+    # Every evaluated candidate is read whole — a subset would let the ranking
+    # decide what informs the ranking.
+    assert (
+        "Read every candidate whole, not just the ones already looking strong"
+        in flat(text)
+    )
+    assert "candidates that actually compete" not in flat(text)
     # The venue reference owns which surfaces those are; the skill stays venue-neutral.
     assert "the venue reference names those surfaces" in flat(text)
     assert "| Ticket context | Everything the issue carries beyond its body" in github
