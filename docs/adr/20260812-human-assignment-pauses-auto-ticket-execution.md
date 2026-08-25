@@ -1,7 +1,7 @@
 # ADR: Human assignment pauses Auto Ticket execution
 
 ## Status
-Accepted
+Accepted — its escalation branch is narrowed by 20260825-escalation-clears-the-claim-and-carries-its-own-mark: escalation no longer assigns the person needed next, but clears the claim and records the escalated state in its own marked handoff record, which every unattended dispatch path excludes. The rejection of a separate marker is overturned for that state alone. Human claims continue to pause unattended execution, and an automation-held claim continues to mean an interrupted attempt eligible for the sweep's recovery path.
 
 ## Area
 Ticketing
