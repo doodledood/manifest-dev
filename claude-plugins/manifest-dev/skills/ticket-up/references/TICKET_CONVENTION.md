@@ -101,9 +101,8 @@ correctness path: it resumes one interrupted automation-owned Ticket, or otherwi
 ready Auto Ticket, invokes `run-ticket`, and stops.
 
 Neither path touches a Ticket carrying the escalation mark, and each tests for it where it decides
-rather than trusting the other to have done so. Releasing the claim on escalation is itself the
-kind of event a dispatcher listens for, so a path that skips the test starts the very attempt the
-escalation ended. Closing one Ticket naturally makes a dependent
+rather than trusting the other to have done so — releasing the claim is itself an event a dispatcher
+acts on, so a skipped test restarts the attempt the escalation ended. Closing one Ticket naturally makes a dependent
 Ticket eligible for a later sweep; no ready label or label pulse is needed.
 
 Both paths use one trigger adapter contract: stable automation identity, canonical per-Ticket

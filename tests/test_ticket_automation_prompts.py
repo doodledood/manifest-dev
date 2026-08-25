@@ -189,6 +189,8 @@ def test_run_ticket_escalation_releases_the_claim_and_marks_the_ticket() -> None
         in flat(text)
     )
     assert "clears the mark, which makes the Ticket eligible" in flat(text)
+    # Ordering is load-bearing: releasing the claim is itself a dispatch event.
+    assert "release the claim — in that order, mark first" in flat(text)
     # An escalation mark is a dispatch rule, enforced by dispatchers rather than here.
     assert "never stops a person who invokes this skill on it deliberately" in flat(
         text
@@ -235,6 +237,8 @@ def test_github_venue_renders_the_escalation_mark_as_a_label() -> None:
         in flat(text)
     )
     assert "assign the person needed next" not in flat(text)
+    # Tidying surfaces a stale escalation; only the continuation step clears the mark.
+    assert "clearing that label belongs to the continuation step" in flat(text)
 
 
 def test_human_picker_needs_no_escalation_special_case() -> None:

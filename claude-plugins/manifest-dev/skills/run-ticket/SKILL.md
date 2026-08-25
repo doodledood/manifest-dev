@@ -126,11 +126,11 @@ The record contains:
 - any separately warranted follow-up Ticket links;
 - a mention of the person needed next, resolved from the Ticket, project escalation contact, or initiating human.
 
-Leave the Ticket open and retain its Auto grant when it is still present, and release the claim.
-The escalation mark is what holds unattended dispatch off, which is why the claim does not: the
-Ticket stays open and unclaimed, so a human picker ranks it against everything else and the person
-the handoff names can take it. A later escalation replaces that handoff record and its mark rather
-than adding a second. After resolving the blocker, that person records the continuation context and
+Leave the Ticket open and retain its Auto grant when it is still present, and release the claim —
+in that order, mark first. Releasing a claim is itself an event dispatchers act on, so a dispatcher
+that re-reads the Ticket before the mark has landed sees ordinary ready work and starts the attempt
+this one just ended. A later escalation replaces that handoff record and its mark rather than
+adding a second. After resolving the blocker, that person records the continuation context and
 clears the mark, which makes the Ticket eligible for unattended execution again. Escalation ends
 this attempt, not the work. Never close the source or
 create a replacement Ticket for its unfinished obligation.

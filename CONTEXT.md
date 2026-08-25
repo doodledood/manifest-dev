@@ -228,6 +228,10 @@ _Avoid_: Breakdown, sharding.
 The harness-neutral execution move that receives one exact Ticket, claims or recovers it, invokes `auto`, completes any required protected landing, and records DONE or ESCALATED evidence on that same Ticket; dispatch and backlog selection stay outside it.
 _Avoid_: Auto picker, ticket trigger.
 
+**Escalation Mark**:
+The durable record an escalated attempt leaves on a Ticket saying a person is needed — the thing that holds unattended dispatch off, so the claim does not have to and the Ticket stays takeable; cleared by the person's continuation step, and rendered by each venue's own reference.
+_Avoid_: Blocked status, escalated state.
+
 **Ticket Sweep**:
 The scheduled one-Ticket dispatch move that first resumes an interrupted Ticket claimed by the automation identity, otherwise selects one ready Auto Ticket, invokes Run Ticket with that exact Ticket, and stops.
 _Avoid_: Batch runner, label pulse, dependency controller.
@@ -244,9 +248,10 @@ _Avoid_: Batch runner, label pulse, dependency controller.
 - `next-ticket` claims and presents the **Ticket** it names, which is what makes several sessions reading one **Ticket Store** get different ones — and it separates them only where the store's venue is a live surface every worker reads, never across separate checkouts of a file store. It never executes the pick.
 - **Run Ticket** receives one exact **Ticket** from a person or dispatcher and invokes `auto` for one attempt; it never selects from the store or enforces **Auto** eligibility at dispatch. For repository work it uses one durable branch and pull request across attempts, and DONE follows the required landing rather than a merely mergeable branch.
 - A **Ticket Sweep** handles at most one **Ticket** per invocation: recover an interrupted automation-owned Auto Ticket first, otherwise select one ready Auto Ticket, pass it to **Run Ticket**, and stop. Issue events are the fast path; the sweep is the correctness path.
+- Every unattended dispatch path — the **Ticket Sweep** and the issue-event adapter alike — excludes a Ticket carrying an **Escalation Mark**, each testing for it where it decides; a human picker applies no such filter, which is what lets escalated work compete for attention on the ordinary priority rule.
 - Trigger adapters serialize **Run Ticket** by canonical Ticket identity, bound infrastructure retries, and assign a person with run evidence after retry exhaustion; claims and labels do not duplicate host liveness state.
 - The **Auto** grant requires that neither doing a **Ticket** nor judging it done needs any human's knowledge, taste, or authority — necessary but never sufficient: the author still chooses to grant.
-- A **Ticket** remains the identity of its work across execution attempts: a successful attempt closes it, while an escalated attempt records its evidence and transfers or preserves the same open **Ticket**'s claim for a person; a follow-up **Ticket** represents only separate work.
+- A **Ticket** remains the identity of its work across execution attempts: a successful attempt closes it, while an escalated attempt records its evidence and releases the same open **Ticket**'s claim under an **Escalation Mark**; a follow-up **Ticket** represents only separate work.
 - A follow-up **Ticket** receives **Auto** only when its source **Ticket** carries **Auto** and the follow-up independently meets the grant criterion; an ungranted source can create only ungranted follow-ups.
 - Absence of **Auto** is one fence covering untrusted **Tickets**, **Tickets** with a designed-in human step, and venue items never written as **Tickets** at all.
 - **Auto** says whether automation may touch a **Ticket** at all and is the author's call; a **Ticket Type** says which granted work an operator runs today and is the query's — keeping rollout schedule out of the grant, whose silence already carries three meanings.
