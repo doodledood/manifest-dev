@@ -241,6 +241,25 @@ def test_github_venue_renders_the_escalation_mark_as_a_label() -> None:
     assert "clearing that label belongs to the continuation step" in flat(text)
 
 
+def test_picker_reads_a_ticket_whole_not_just_its_body() -> None:
+    text = skill_text(SOURCE_SKILLS, "next-ticket")
+    github = (SOURCE_SKILLS / "ticket-up" / "references" / "GITHUB_STORE.md").read_text(
+        encoding="utf-8"
+    )
+
+    # The rule reaches both points the picker touches a Ticket.
+    assert (
+        "A Ticket is everything its venue holds for it, not the item body alone"
+        in flat(text)
+    )
+    assert "Present the complete Ticket, its attached context included" in flat(text)
+    # Cost is bounded rather than unbounded across every candidate.
+    assert "read it for the candidates that actually compete" in flat(text)
+    # The venue reference owns which surfaces those are; the skill stays venue-neutral.
+    assert "the venue reference names those surfaces" in flat(text)
+    assert "| Ticket context | Everything the issue carries beyond its body" in github
+
+
 def test_human_picker_needs_no_escalation_special_case() -> None:
     """Releasing the claim is what lets the selector rank escalated work unchanged."""
     text = skill_text(SOURCE_SKILLS, "next-ticket")
