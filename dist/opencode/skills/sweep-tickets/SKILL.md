@@ -24,10 +24,11 @@ identity, or policy context stops before selection.
 
 ## Select one Ticket
 
-Build the eligible set before choosing a branch: open Auto Tickets that match every configured
-effort or type filter and whose dependencies are all closed. A type filter never treats an untyped
-Ticket as a wildcard. Leave closed, ungranted, dependency-blocked, policy-filtered, and
-human-assigned items untouched. Ignore tracking items and venue items that are not Tickets.
+Build the eligible set before choosing a branch: open Auto Tickets that carry no escalation mark,
+match every configured effort or type filter, and whose dependencies are all closed. A type filter
+never treats an untyped Ticket as a wildcard. Leave closed, ungranted, escalated,
+dependency-blocked, policy-filtered, and human-assigned items untouched. Ignore tracking items and
+venue items that are not Tickets.
 
 1. **Recover first.** From the eligible set, find Tickets claimed by this automation identity. The
    adapter's per-Ticket single-flight guarantees that a `run-ticket` invocation waits for any live
@@ -41,8 +42,12 @@ human-assigned items untouched. Ignore tracking items and venue items that are n
    apply a fixed agent-speed multiplier; when plausible runtimes are all short relative to the
    consequences, treat them as effectively equal and use shorter duration only as a tiebreak.
 
-Human-assigned Tickets are paused, not recovery candidates. Never mutate any claim during
-selection, remove Auto, or create a ready/running/retry label. If no Ticket qualifies, report why
+Human-assigned Tickets are paused, not recovery candidates. An escalated Ticket is not one either,
+and for a different reason: its attempt did not stop mid-flight, it ended by handing the work to a
+person. It holds no claim, so nothing about it looks interrupted and nothing distinguishes it from
+ordinary ready work except the mark — which is why the eligible set tests for that mark rather than
+the recovery branch catching it. Never mutate any claim during selection, remove Auto, clear an
+escalation mark, or create a ready/running/retry label. If no Ticket qualifies, report why
 and stop without a write.
 
 ## Run and stop
