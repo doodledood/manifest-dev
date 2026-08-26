@@ -26,7 +26,7 @@ Supporting workflows:
 - **/sweep-tickets** — Scheduled one-Ticket correctness path: resumes one interrupted automation-owned Auto Ticket, otherwise selects one ready Auto Ticket, invokes /run-ticket, and stops.
 - **/init-context** — Sets a repository up with project-owned ADR conventions, a glossary, and the context-file wiring that keeps sessions using them, seeding them from the project's own history where there is any.
 - **/review-writing** — Reviews prose against the project's writing standards in its own register: documentation or human-voiced writing. Detects the register, applies it plus the shared floor, and reports graded findings. Distinct from review-code's prose-value dimension, which asks whether prose in a diff earns its place.
-- **Tools skills** — /babysit-pr, /handoff, /prompt-engineering, /re-pitch, /review-pr, /teach-me, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
+- **Tools skills** — /babysit-pr, /eli5, /handoff, /prompt-engineering, /re-pitch, /review-pr, /teach-me, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
 
 ## Manifest Schema — Gate Text
 
