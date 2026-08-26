@@ -2,7 +2,7 @@
 
 The destination is an HTML page the user keeps open beside the terminal. The terminal reply stays short — the claim, the ask — because the full rendering lives on the page. The rendering contract in `SKILL.md` governs what goes on it; this file adds only what a page can do and how it is produced.
 
-## Form vocabulary
+## What a page can carry
 
 A page carries what a terminal cannot: charts from the linked charting library, hand-drawn SVG diagrams (never the chart library), decision cards for asks, unfolds for detail behind a summary, and syntax-highlighted code with diff gutters and add/remove tints.
 

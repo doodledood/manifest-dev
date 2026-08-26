@@ -117,5 +117,7 @@
 | 2026-08-21 | [The bet is about the practice, not about whether a market adopts it](20260821-the-bet-is-about-the-practice-not-the-market.md) | Accepted | Positioning |
 | 2026-08-21 | [Winning is our own projects running the full loop; recognition is a consequence](20260821-winning-is-our-own-projects-running-the-full-loop.md) | Accepted | Positioning |
 | 2026-08-23 | [Every split Ticket is exercisable end-to-end; verticality governs cut direction, never count](20260823-split-tickets-are-exercisable-end-to-end.md) | Accepted | Ticketing |
-| 2026-08-24 | [The undiscussed-surface sweep lives in figure-out's read-naming checkpoint](20260824-undiscussed-surface-sweep-lives-in-read-naming-checkpoint.md) | Accepted | figure-out |
+| 2026-08-24 | [The undiscussed-surface sweep lives in figure-out's read-naming checkpoint](20260824-undiscussed-surface-sweep-lives-in-read-naming-checkpoint.md) | Accepted; its checkpoint now also carries the output-sensing precondition from [20260826-sensing-the-output-is-a-precondition-of-naming-a-read](20260826-sensing-the-output-is-a-precondition-of-naming-a-read.md) | figure-out |
 | 2026-08-25 | [Escalation clears the claim and carries its own mark](20260825-escalation-clears-the-claim-and-carries-its-own-mark.md) | Accepted | Ticketing |
+| 2026-08-26 | [Prototyping and scratch are one mechanism; scratch mode is deleted](20260826-prototyping-and-scratch-are-one-mechanism.md) | Accepted | figure-out |
+| 2026-08-26 | [Sensing the output is a precondition of naming a read](20260826-sensing-the-output-is-a-precondition-of-naming-a-read.md) | Accepted | figure-out |

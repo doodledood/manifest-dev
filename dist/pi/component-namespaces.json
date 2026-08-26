@@ -7,6 +7,7 @@
     "define": "manifest-dev",
     "do": "manifest-dev",
     "done": "manifest-dev",
+    "eli5": "manifest-dev-tools",
     "escalate": "manifest-dev",
     "figure-out": "manifest-dev",
     "figure-out-team": "manifest-dev",

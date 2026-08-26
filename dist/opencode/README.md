@@ -23,7 +23,7 @@ Two source plugins contribute skills:
 | From | Skills |
 |------|--------|
 | `manifest-dev` | `auto`, `chat-surface`, `check-pr`, `define`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `just-auto`, `just-do`, `next-ticket`, `poll-slack`, `review-code`, `review-writing`, `run-ticket`, `sweep-tickets`, `ticket-up` |
-| `manifest-dev-tools` | `babysit-pr`, `handoff`, `prompt-engineering`, `re-pitch`, `review-pr`, `review-prompt`, `teach-me`, `walk-pr` |
+| `manifest-dev-tools` | `babysit-pr`, `eli5`, `handoff`, `prompt-engineering`, `re-pitch`, `review-pr`, `review-prompt`, `teach-me`, `walk-pr` |
 
 Start with `figure-out` on a problem you already have; the rest of the workflow follows from it. The [repository README](https://github.com/doodledood/manifest-dev) covers what each part is for.
 
