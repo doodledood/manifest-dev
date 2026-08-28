@@ -145,7 +145,7 @@ When /do is the top-level execution entrypoint, establish a durable goal-setting
 
 **What to emit.** Otherwise, when no parent backstop is visible, emit the blocks below verbatim, substituting only `<manifest-path>`. Do not summarize, shorten, reword, or re-punctuate them. Set them through the harness's goal-setting, continuation, or durable-completion-condition capability where one exists; print it in copy-pasteable form for the user's own continuation mechanism where none does. Emit the goal block, then the gate-ledger clause, as one contract.
 
-```
+```goal-block
 Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.
 
 The Manifest is the contract, not the run's to rewrite: it changes only through /define, never by direct edit, and a changed gate returns unverified.
@@ -155,7 +155,7 @@ Record compact checkpoint notes as work proceeds: what changed, what was verifie
 Stop only when blocked on something a person must resolve.
 ```
 
-```
+```gate-ledger-clause
 Maintain a gate ledger covering every Acceptance Criterion and Global Invariant: gate id, gate-text source, selected verification mode, evaluator provenance, explicit or inherited verifier model, latest verdict, evidence, and freshness relative to the last relevant change to its subject. Completion requires every listed gate to have fresh PASS evidence under the selected verification mode. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are non-terminal. A substantive change to a gate's subject after a PASS marks it stale until re-evaluated, while re-reading, re-examining, and cosmetic or no-op edits do not. Never accept unevidenced self-attestation, "looks done", or a summary claim in place of the selected mode's required evidence.
 ```
 

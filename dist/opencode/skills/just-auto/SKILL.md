@@ -18,11 +18,11 @@ one exists; print it in copy-pasteable form for the user's own continuation
 mechanism where none does. Emit the chain prefix first, then the goal block,
 and proceed either way.
 
-```
+```chain-prefix
 Reach shared understanding of the task, then write a Manifest from it. Where figure-out runs, complete a full-anatomy Read checkpoint before /define: every load-bearing branch pressed; Evidence Ledger explicit; assumptions separated from verified and inferred claims; independent re-derivation run or explicitly unavailable; rival set no longer moving; confidence, evidence, and overturn conditions stated. For diagnosis-shaped work, the Read checkpoint is not complete if it only localizes where the symptom concentrates: name the concrete mechanism — the variable, difference, or sequence that produces the symptom, including why this case differs when the question is comparative — or earn an underdetermined Read by naming the surviving explanations and showing which feasible probes that could distinguish them were run, what they showed, or why they were blocked. Treat a missing or weak Read checkpoint as a phase defect to repair before /define, not a post-hoc terminal failure after /do has fresh all-gate PASS evidence. Record the Manifest's path in a checkpoint note as soon as define reports it; <manifest-path> below is that path. Stop if the run stalls — consecutive turns moving neither the work nor its verification.
 ```
 
-```
+```goal-block
 Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.
 
 The Manifest is the contract, not the run's to rewrite: it changes only through /define, never by direct edit, and a changed gate returns unverified.

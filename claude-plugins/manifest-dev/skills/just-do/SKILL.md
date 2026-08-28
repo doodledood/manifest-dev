@@ -28,7 +28,7 @@ goal-setting, continuation, or durable-completion-condition capability where
 one exists; print it in copy-pasteable form for the user's own continuation
 mechanism where none does. Proceed with the work either way.
 
-```
+```goal-block
 Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.
 
 The Manifest is the contract, not the run's to rewrite: it changes only through /define, never by direct edit, and a changed gate returns unverified.

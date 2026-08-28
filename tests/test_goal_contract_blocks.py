@@ -11,11 +11,12 @@ beside it had already drifted into three separate wordings. A convention that li
 only as a sentence in CLAUDE.md drifts exactly that way, which is why it is checked
 here.
 
-**A block is recognized by a phrase in its body, never by its opening line.** That is
-the whole trick, and it is load-bearing: matching on the opening line means rewording
-that line makes the block unrecognizable rather than different, so it drops out of the
-comparison and the remaining copies still agree. A body signature turns the same edit
-into a visible second variant.
+**A block is identified by its fence label, not by any of its own text.** That is the
+whole trick, and it is load-bearing: a checker that keys on the text it is verifying has
+one class of drift it cannot see — reword the line it matches on and the block stops
+being a block, drops out of the comparison, and the survivors still agree. A label makes
+identity separable from content, so the same edit surfaces as a second variant. Body
+signatures survive only as a guard against the label itself being removed.
 
 Four properties, because the contract has four moving parts and locking down only the
 goal block leaves the rest free to drift:
@@ -63,22 +64,23 @@ NO_MANIFEST_BACKSTOP = ("figure-out/references/autonomous.md",)
 # trailing pronoun differs between one-block and multi-block sites.
 NO_PARAPHRASE = "Do not summarize, shorten, reword, or re-punctuate"
 
-# name -> a phrase from the block's BODY that identifies it. Never the opening line:
-# see the module docstring. Each must be unique to its block across the whole tree,
-# which `test_signatures_identify_exactly_one_block` enforces.
-BLOCKS = {
-    "goal block": "it changes only through /define, never by direct edit",
-    "gate-ledger clause": (
+# Fence label -> a phrase from that block's body. The label is the identity; the
+# signature exists only so `test_every_shared_block_is_labelled` can catch a block
+# whose label was stripped, which would otherwise make it invisible again.
+SIGNATURES = {
+    "goal-block": "it changes only through /define, never by direct edit",
+    "gate-ledger-clause": (
         "explicit or inherited verifier model, latest verdict, evidence"
     ),
-    "chain prefix": (
+    "chain-prefix": (
         "Record the Manifest's path in a checkpoint note as soon as define reports it"
     ),
-    "PR-tend prefix": "Never press merge. Report a wait-only CI state as pending",
+    "pr-tend-prefix": "Never press merge. Report a wait-only CI state as pending",
 }
-GOAL_BLOCK = "goal block"
+LABELS = tuple(SIGNATURES)
+GOAL_BLOCK = "goal-block"
 
-FENCE = re.compile(r"^```[^\n]*\n(.*?)^```", re.MULTILINE | re.DOTALL)
+FENCE = re.compile(r"^```([^\n]*)\n(.*?)^```", re.MULTILINE | re.DOTALL)
 
 
 def shipped_markdown() -> list[Path]:
@@ -92,30 +94,23 @@ def shipped_markdown() -> list[Path]:
     )
 
 
-def fenced_blocks(path: Path) -> list[str]:
+def fenced_blocks(path: Path) -> list[tuple[str, str]]:
+    """(fence label, block text) for every fenced block in the file."""
     return FENCE.findall(path.read_text())
 
 
-def name_of(block: str) -> str | None:
-    """Which shared block this fenced text is, by body signature."""
-    return next((name for name, sig in BLOCKS.items() if sig in block), None)
-
-
 def blocks_in(path: Path) -> set[str]:
-    """Which shared blocks this file carries."""
-    return {
-        name for block in fenced_blocks(path) if (name := name_of(block)) is not None
-    }
+    """Which labelled shared blocks this file carries."""
+    return {label for label, _ in fenced_blocks(path) if label in SIGNATURES}
 
 
 def copies_by_block() -> dict[str, dict[str, list[Path]]]:
-    """block name -> exact text -> the files carrying that text."""
-    found: dict[str, dict[str, list[Path]]] = {name: {} for name in BLOCKS}
+    """label -> exact text -> the files carrying that text."""
+    found: dict[str, dict[str, list[Path]]] = {label: {} for label in SIGNATURES}
     for path in shipped_markdown():
-        for block in fenced_blocks(path):
-            name = name_of(block)
-            if name is not None:
-                found[name].setdefault(block, []).append(path)
+        for label, text in fenced_blocks(path):
+            if label in SIGNATURES:
+                found[label].setdefault(text, []).append(path)
     return found
 
 
@@ -221,21 +216,25 @@ def test_every_backstop_site_forbids_paraphrase() -> None:
     )
 
 
-def test_signatures_identify_exactly_one_block() -> None:
-    """Every signature must be unique, or two blocks collapse into one comparison."""
-    collisions = [
-        f"  {name}: also matches {other}"
-        for name, sig in BLOCKS.items()
-        for other, other_sig in BLOCKS.items()
-        if name != other and sig in other_sig
+def test_every_shared_block_is_labelled() -> None:
+    """A shared block that lost its fence label would be invisible to every check."""
+    unlabelled = [
+        f"  {rel(path)}: a block matching {label!r} carries the label {found!r}"
+        for path in shipped_markdown()
+        for found, text in fenced_blocks(path)
+        for label, sig in SIGNATURES.items()
+        if sig in text and found != label
     ]
-    assert not collisions, "block signatures overlap:\n" + "\n".join(collisions)
+    assert not unlabelled, (
+        "these fenced blocks are shared contract blocks but are not labelled as "
+        "such, so nothing compares them:\n" + "\n".join(unlabelled)
+    )
 
 
 def test_the_blocks_are_actually_present() -> None:
     """Guards the checks above from passing vacuously on an empty search."""
     found = copies_by_block()
-    for name in BLOCKS:
+    for name in SIGNATURES:
         carriers = [p for paths in found[name].values() for p in paths]
-        assert carriers, f"no file carries the {name}"
+        assert carriers, f"no file carries the {name} block"
     assert backstop_sites(), "no file arms a completion backstop"

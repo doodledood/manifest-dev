@@ -15,11 +15,11 @@ Babysit an existing PR by running the manifest workflow. This is the author-side
 
 **Unattended launch.** At the start of a standalone tend, before invoking `/define` or `/do`, establish a durable PR-tend goal-setting backstop. It spans manifest discovery or synthesis and `/do`, including the `--manifest` path where `/define` is skipped, and during `/do` it carries the manifest gate ledger below. It is the outer backstop for the tend: nested `/define` handoff text and `/do` unattended-launch text should not set or print competing narrower goals while this babysit backstop exists. Emit the blocks below verbatim, substituting `<pr-url>`. Substitute `<manifest-path>` only where `--manifest` already supplied one; otherwise it stays literal, and the PR-tend prefix defines it. Do not summarize, shorten, reword, or re-punctuate them. Set it through the harness's goal-setting, continuation, or durable-completion-condition capability where one exists; print it in copy-pasteable form for the user's own continuation mechanism where none does. Emit the PR-tend prefix, then the goal block, then the gate-ledger clause, as one contract.
 
-```
+```pr-tend-prefix
 Drive the pull request at <pr-url> until it is mergeable or only a genuine external wait or blocker remains. Never press merge. Report a wait-only CI state as pending rather than sleeping on it. Discover or synthesize the Manifest for this pull request and record its path in a checkpoint note as soon as it exists; <manifest-path> below is that path.
 ```
 
-```
+```goal-block
 Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.
 
 The Manifest is the contract, not the run's to rewrite: it changes only through /define, never by direct edit, and a changed gate returns unverified.
@@ -29,7 +29,7 @@ Record compact checkpoint notes as work proceeds: what changed, what was verifie
 Stop only when blocked on something a person must resolve.
 ```
 
-```
+```gate-ledger-clause
 Maintain a gate ledger covering every Acceptance Criterion and Global Invariant: gate id, gate-text source, selected verification mode, evaluator provenance, explicit or inherited verifier model, latest verdict, evidence, and freshness relative to the last relevant change to its subject. Completion requires every listed gate to have fresh PASS evidence under the selected verification mode. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are non-terminal. A substantive change to a gate's subject after a PASS marks it stale until re-evaluated, while re-reading, re-examining, and cosmetic or no-op edits do not. Never accept unevidenced self-attestation, "looks done", or a summary claim in place of the selected mode's required evidence.
 ```
 
