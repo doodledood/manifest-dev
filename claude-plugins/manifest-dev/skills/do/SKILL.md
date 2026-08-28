@@ -61,7 +61,7 @@ A **Deterministic Gate is outside the second setting**: the same state returns t
 
 ### The gate ledger
 
-Each evaluated gate returns PASS, FAIL, or BLOCKED; track its latest verdict, evidence, freshness, verification mode, evaluator provenance, and explicit or inherited verifier model in the gate ledger. A Judgment Gate carries two more entries, since they are what its next evaluation is scoped against: the artifact state its last evaluation read — for repository work, the head SHA — and the findings it reported there. A substantive change to a gate's subject after a PASS marks it stale until re-evaluated, while re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Unverified, stale, FAIL, and retryable BLOCKED gates re-evaluate when eligible; a settled fresh PASS does not re-run.
+Use the selected reference's evidence/provenance wording when recording each gate's provenance. Each evaluated gate returns PASS, FAIL, or BLOCKED; track its latest verdict, evidence, freshness, verification mode, evaluator provenance, and explicit or inherited verifier model in the gate ledger. A Judgment Gate carries two more entries, since they are what its next evaluation is scoped against: the artifact state its last evaluation read — for repository work, the head SHA — and the findings it reported there. A substantive change to a gate's subject after a PASS marks it stale until re-evaluated, while re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Unverified, stale, FAIL, and retryable BLOCKED gates re-evaluate when eligible; a settled fresh PASS does not re-run.
 
 ### When the run is done
 
@@ -141,9 +141,9 @@ Then surface a one-line digest of what the amendment assumed (the new or changed
 
 When /do is the top-level execution entrypoint, establish a durable goal-setting backstop whose completion contract is auditable from the transcript after /do reads the manifest.
 
-**Where the contract lives.** If a broader parent workflow backstop is already visible (for example `/auto`'s full-chain contract or `/babysit-pr`'s PR-tend contract) and it carries the gate-ledger clause below, do not set or print a second narrower goal; operate under the parent contract. If the visible parent lacks that clause, supplement it before continuing.
+**Where the contract lives.** If a broader parent workflow backstop is already visible (for example `/auto`'s full-chain contract or `/babysit-pr`'s PR-tend contract) and it carries the gate-ledger clause below, do not set or print a second narrower goal; operate under the parent contract. If the visible parent lacks that clause, supplement it with the gate-ledger clause below before continuing.
 
-**What to emit.** Otherwise emit the blocks below verbatim, substituting only `<manifest-path>`. Do not summarize, shorten, reword, or re-punctuate it. Set it through the harness's goal-setting, continuation, or durable-completion-condition capability where one exists; print it in copy-pasteable form for the user's own continuation mechanism where none does. Emit the goal block, then the gate-ledger clause, as one contract. Use the selected reference's evidence/provenance wording when recording each gate's provenance in that ledger.
+**What to emit.** Otherwise, when no parent backstop is visible, emit the blocks below verbatim, substituting only `<manifest-path>`. Do not summarize, shorten, reword, or re-punctuate them. Set them through the harness's goal-setting, continuation, or durable-completion-condition capability where one exists; print it in copy-pasteable form for the user's own continuation mechanism where none does. Emit the goal block, then the gate-ledger clause, as one contract.
 
 ```
 Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.

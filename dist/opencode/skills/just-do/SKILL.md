@@ -16,8 +16,8 @@ for it.
 
 The Manifest is read-only. Never edit it. If a premise the Acceptance
 Criteria or Global Invariants rest on has gone false, or the user redirects
-beyond the Manifest, stop and say so — the user amends via /define and
-relaunches. Advisory content gone stale is not a stop: departing from it is
+beyond the Manifest, stop and say so — this run never invokes /define itself:
+it stops and reports, and the user amends and relaunches. Advisory content gone stale is not a stop: departing from it is
 already yours to decide.
 
 Before starting work, arm the completion backstop. If a goal is already
