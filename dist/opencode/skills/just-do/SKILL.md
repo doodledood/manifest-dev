@@ -16,22 +16,30 @@ for it.
 
 The Manifest is read-only. Never edit it. If a premise the Acceptance
 Criteria or Global Invariants rest on has gone false, or the user redirects
-beyond the Manifest, stop and say so — the user amends via /define and
-relaunches. Advisory content gone stale is not a stop: departing from it is
+beyond the Manifest, stop and say so — this run never invokes /define itself:
+it stops and reports, and the user amends and relaunches. Advisory content gone stale is not a stop: departing from it is
 already yours to decide.
 
 Before starting work, arm the completion backstop. If a goal is already
-active for this Manifest's path, continue under it. Otherwise, if the harness
-provides a goal-setting, continuation, or durable-completion-condition
-capability, set this goal: "Every Acceptance Criterion and Global Invariant
-in <manifest-path> holds, with evidence from the artifacts the gates name,
-and completion has been reported. The Manifest at that path is canonical and
-read-only. Record compact checkpoint notes as work proceeds — what changed,
-what was verified, what remains, blockers. Stop only when blocked on
-something a person must resolve." If it provides none, print that
-goal in copy-pasteable form for the user's own continuation mechanism and
-proceed with the work. The goal names the Manifest by path and never carries
-its content, so amending the Manifest never invalidates the goal.
+active for this Manifest's path, continue under it. Otherwise emit the block
+below verbatim, substituting only `<manifest-path>`. Do not summarize,
+shorten, reword, or re-punctuate it. Set it through the harness's
+goal-setting, continuation, or durable-completion-condition capability where
+one exists; print it in copy-pasteable form for the user's own continuation
+mechanism where none does. Proceed with the work either way.
+
+```goal-block
+Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.
+
+The Manifest is the contract, not the run's to rewrite: it changes only through /define, never by direct edit, and a changed gate returns unverified.
+
+Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
+
+Stop only when blocked on something a person must resolve.
+```
+
+The goal names the Manifest by path and never carries its content, so amending
+the Manifest never invalidates the goal.
 
 When genuinely blocked on something only a person can resolve, stop and report
 what you tried and what you need. When done, report what changed and your
