@@ -12,14 +12,14 @@ only as a sentence in CLAUDE.md drifts exactly that way, which is why it is chec
 here.
 
 **A block is identified by its fence label, not by any of its own text.** That is the
-whole trick, and it is load-bearing: a checker that keys on the text it is verifying has
-one class of drift it cannot see — reword the line it matches on and the block stops
-being a block, drops out of the comparison, and the survivors still agree. A label makes
-identity separable from content, so the same edit surfaces as a second variant. Body
-signatures survive only as a guard against the label itself being removed.
+whole trick, and it is load-bearing: a checker that keys on the text it is verifying
+has one class of drift it cannot see — reword the line it matches on and the block
+stops being a block, drops out of the comparison, and the survivors still agree. A
+label makes identity separable from content, so the same edit surfaces as a second
+variant. Body signatures survive only as a guard against the label being removed.
 
-Four properties, because the contract has four moving parts and locking down only the
-goal block leaves the rest free to drift:
+Five properties, because the contract has that many moving parts and locking down
+only the goal block leaves the rest free to drift:
 
 1. every shared block is one text wherever it appears;
 2. every `dist/` copy carries the same blocks its `claude-plugins/` source does — a
@@ -27,7 +27,8 @@ goal block leaves the rest free to drift:
 3. every site arming a Manifest backstop carries the goal block;
 4. every such site carries the instruction forbidding paraphrase — the block is only
    half the mechanism, and a prose-tightening pass that leaves fenced content alone
-   would strip the other half without a signal.
+   would strip the other half without a signal;
+5. no shared block has lost its label, which would make it invisible to (1) and (2).
 
 The checks derive their own subject rather than listing today's sites, so a site added
 later is covered without this file being edited.
@@ -37,6 +38,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from typing import Literal
 
 ROOT = Path(__file__).parent.parent
 SEARCH_ROOTS = (ROOT / "claude-plugins", ROOT / "dist")
@@ -56,6 +58,7 @@ NAMES_THE_CAPABILITY = re.compile(r"goal-setting[^.]*?capability")
 # Arms a backstop but carries no Manifest goal block, deliberately: its goal names a
 # topic, not a Manifest, because no Manifest exists in that workflow. Excluded by name
 # with its reason, rather than by relying on it phrasing the capability differently.
+# Matched with `Path.match` so the separator stays platform-independent.
 # See docs/adr/20260828-continuation-goals-emit-verbatim-from-one-block.md.
 NO_MANIFEST_BACKSTOP = ("figure-out/references/autonomous.md",)
 
@@ -64,10 +67,13 @@ NO_MANIFEST_BACKSTOP = ("figure-out/references/autonomous.md",)
 # trailing pronoun differs between one-block and multi-block sites.
 NO_PARAPHRASE = "Do not summarize, shorten, reword, or re-punctuate"
 
+Label = Literal["goal-block", "gate-ledger-clause", "chain-prefix", "pr-tend-prefix"]
+
 # Fence label -> a phrase from that block's body. The label is the identity; the
 # signature exists only so `test_every_shared_block_is_labelled` can catch a block
-# whose label was stripped, which would otherwise make it invisible again.
-SIGNATURES = {
+# whose label was stripped, which would otherwise make it invisible again. Typing the
+# keys as a closed union is what stops `GOAL_BLOCK` and a renamed key drifting apart.
+SIGNATURES: dict[Label, str] = {
     "goal-block": "it changes only through /define, never by direct edit",
     "gate-ledger-clause": (
         "explicit or inherited verifier model, latest verdict, evidence"
@@ -77,10 +83,22 @@ SIGNATURES = {
     ),
     "pr-tend-prefix": "Never press merge. Report a wait-only CI state as pending",
 }
-LABELS = tuple(SIGNATURES)
-GOAL_BLOCK = "goal-block"
+GOAL_BLOCK: Label = "goal-block"
 
-FENCE = re.compile(r"^```([^\n]*)\n(.*?)^```", re.MULTILINE | re.DOTALL)
+# The closing delimiter is backreferenced to the opener, so a four-backtick example
+# wrapping a three-backtick block parses as one block rather than desynchronizing
+# every fence after it. Thirteen shipped files already nest fences that way.
+FENCE = re.compile(r"^(`{3,})([^\n]*)\n(.*?)^\1[ \t]*$", re.MULTILINE | re.DOTALL)
+
+
+def read(path: Path) -> str:
+    """Always UTF-8.
+
+    The shipped prose is full of em dashes and curly quotes, so a runner with LANG
+    unset would raise instead of returning a verdict — and a gate that errors is a
+    gate that is not enforced.
+    """
+    return path.read_text(encoding="utf-8")
 
 
 def shipped_markdown() -> list[Path]:
@@ -95,22 +113,30 @@ def shipped_markdown() -> list[Path]:
 
 
 def fenced_blocks(path: Path) -> list[tuple[str, str]]:
-    """(fence label, block text) for every fenced block in the file."""
-    return FENCE.findall(path.read_text())
+    """(fence label, block text) for every fenced block in the file.
+
+    Built from explicit groups rather than `findall`, whose element type silently
+    follows the pattern's group count — a `(...)` edit would otherwise change what
+    every caller unpacks, with mypy still clean. Here it raises at this line.
+    """
+    return [(m.group(2), m.group(3)) for m in FENCE.finditer(read(path))]
 
 
-def blocks_in(path: Path) -> set[str]:
+def blocks_in(path: Path) -> set[Label]:
     """Which labelled shared blocks this file carries."""
-    return {label for label, _ in fenced_blocks(path) if label in SIGNATURES}
+    return {
+        label for raw, _ in fenced_blocks(path) for label in SIGNATURES if raw == label
+    }
 
 
-def copies_by_block() -> dict[str, dict[str, list[Path]]]:
+def copies_by_block() -> dict[Label, dict[str, list[Path]]]:
     """label -> exact text -> the files carrying that text."""
-    found: dict[str, dict[str, list[Path]]] = {label: {} for label in SIGNATURES}
+    found: dict[Label, dict[str, list[Path]]] = {label: {} for label in SIGNATURES}
     for path in shipped_markdown():
-        for label, text in fenced_blocks(path):
-            if label in SIGNATURES:
-                found[label].setdefault(text, []).append(path)
+        for raw, text in fenced_blocks(path):
+            for label in SIGNATURES:
+                if raw == label:
+                    found[label].setdefault(text, []).append(path)
     return found
 
 
@@ -119,14 +145,18 @@ def backstop_sites() -> list[Path]:
     return [
         path
         for path in shipped_markdown()
-        if ARMS_A_BACKSTOP.search(text := path.read_text())
+        if ARMS_A_BACKSTOP.search(text := read(path))
         and NAMES_THE_CAPABILITY.search(text)
-        and not any(str(path).endswith(skip) for skip in NO_MANIFEST_BACKSTOP)
+        and not any(path.match(skip) for skip in NO_MANIFEST_BACKSTOP)
     ]
 
 
 def source_skills() -> dict[str, Path]:
-    """skill directory name -> its authored SKILL.md under claude-plugins/."""
+    """skill directory name -> its authored SKILL.md under claude-plugins/.
+
+    Keyed by bare name because `dist/` lays the plugins out differently per target;
+    `test_skill_names_are_unique_across_plugins` is what makes that key safe.
+    """
     return {
         path.parent.name: path
         for path in (ROOT / "claude-plugins").rglob("skills/*/SKILL.md")
@@ -158,13 +188,13 @@ def test_every_shared_block_is_one_text() -> None:
     buries the one filename the reader needs.
     """
     drifted = []
-    for name, variants in copies_by_block().items():
+    for label, variants in copies_by_block().items():
         if len(variants) > 1:
             listing = "\n".join(
                 f"    {len(paths)} copy(ies): {', '.join(rel(p) for p in sorted(paths))}"
                 for paths in sorted(variants.values(), key=len)
             )
-            drifted.append(f"  {name}\n{listing}")
+            drifted.append(f"  {label}\n{listing}")
     assert not drifted, "shared goal blocks have drifted apart:\n" + "\n".join(drifted)
 
 
@@ -190,6 +220,24 @@ def test_dist_copies_carry_the_same_blocks_as_their_source() -> None:
     )
 
 
+def test_skill_names_are_unique_across_plugins() -> None:
+    """`source_skills` and `dist_copies` key on the bare skill name.
+
+    Two plugins shipping a skill of the same name would silently drop one source
+    from the parity check and compare the survivor against the other plugin's
+    distribution. Cheaper to forbid the collision than to carry the ambiguity.
+    """
+    names: dict[str, list[str]] = {}
+    for path in (ROOT / "claude-plugins").rglob("skills/*/SKILL.md"):
+        if TEMPLATE_PLUGIN not in path.parts:
+            names.setdefault(path.parent.name, []).append(rel(path))
+    clashes = [f"  {n}: {', '.join(p)}" for n, p in names.items() if len(p) > 1]
+    assert not clashes, (
+        "these skill names exist in more than one plugin, so the name is no longer a "
+        "safe key here:\n" + "\n".join(clashes)
+    )
+
+
 def test_every_backstop_site_carries_the_goal_block() -> None:
     """A site that arms a backstop emits the goal block, not a variant of its own."""
     missing = [rel(p) for p in backstop_sites() if GOAL_BLOCK not in blocks_in(p)]
@@ -208,7 +256,7 @@ def test_every_backstop_site_forbids_paraphrase() -> None:
     missing = [
         rel(p)
         for p in backstop_sites()
-        if normalized(NO_PARAPHRASE) not in normalized(p.read_text())
+        if normalized(NO_PARAPHRASE) not in normalized(read(p))
     ]
     assert not missing, (
         "these files emit a goal block without instructing that it not be reworded:\n"
@@ -219,11 +267,11 @@ def test_every_backstop_site_forbids_paraphrase() -> None:
 def test_every_shared_block_is_labelled() -> None:
     """A shared block that lost its fence label would be invisible to every check."""
     unlabelled = [
-        f"  {rel(path)}: a block matching {label!r} carries the label {found!r}"
+        f"  {rel(path)}: a block matching {label!r} is labelled {raw!r}"
         for path in shipped_markdown()
-        for found, text in fenced_blocks(path)
+        for raw, text in fenced_blocks(path)
         for label, sig in SIGNATURES.items()
-        if sig in text and found != label
+        if sig in text and raw != label
     ]
     assert not unlabelled, (
         "these fenced blocks are shared contract blocks but are not labelled as "
@@ -234,7 +282,7 @@ def test_every_shared_block_is_labelled() -> None:
 def test_the_blocks_are_actually_present() -> None:
     """Guards the checks above from passing vacuously on an empty search."""
     found = copies_by_block()
-    for name in SIGNATURES:
-        carriers = [p for paths in found[name].values() for p in paths]
-        assert carriers, f"no file carries the {name} block"
+    for label in SIGNATURES:
+        carriers = [p for paths in found[label].values() for p in paths]
+        assert carriers, f"no file carries the {label} block"
     assert backstop_sites(), "no file arms a completion backstop"
