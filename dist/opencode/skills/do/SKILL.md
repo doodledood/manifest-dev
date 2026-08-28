@@ -61,7 +61,7 @@ A **Deterministic Gate is outside the second setting**: the same state returns t
 
 ### The gate ledger
 
-Each evaluated gate returns PASS, FAIL, or BLOCKED; track its latest verdict, evidence, freshness, verification mode, evaluator provenance, and explicit or inherited verifier model in the gate ledger. A Judgment Gate carries two more entries, since they are what its next evaluation is scoped against: the artifact state its last evaluation read — for repository work, the head SHA — and the findings it reported there. A substantive change to a gate's subject after a PASS marks that gate stale; re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Unverified, stale, FAIL, and retryable BLOCKED gates re-evaluate when eligible; a settled fresh PASS does not re-run.
+Each evaluated gate returns PASS, FAIL, or BLOCKED; track its latest verdict, evidence, freshness, verification mode, evaluator provenance, and explicit or inherited verifier model in the gate ledger. A Judgment Gate carries two more entries, since they are what its next evaluation is scoped against: the artifact state its last evaluation read — for repository work, the head SHA — and the findings it reported there. A substantive change to a gate's subject after a PASS marks it stale until re-evaluated, while re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Unverified, stale, FAIL, and retryable BLOCKED gates re-evaluate when eligible; a settled fresh PASS does not re-run.
 
 ### When the run is done
 
