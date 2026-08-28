@@ -23,7 +23,7 @@
 | 2026-06-19 | [Manifest-aware review-pr instead of a standalone GitHub verification plugin](20260619-manifest-aware-review-pr.md) | Accepted | PR review |
 | 2026-06-22 | [Identify review-pr's own comments with a hidden marker, not account authorship](20260622-mark-review-pr-comments-with-hidden-marker.md) | Accepted | PR review |
 | 2026-06-23 | [Use host continuation as optional `/do` backstop, not a Pi-specific verifier runtime](20260623-use-host-continuation-as-optional-do-backstop.md) | Accepted | Pi distribution |
-| 2026-06-23 | [Use universal goal-setting language for unattended run backstops](20260623-use-universal-goal-setting-language.md) | Accepted | Goal setting |
+| 2026-06-23 | [Use universal goal-setting language for unattended run backstops](20260623-use-universal-goal-setting-language.md) | Accepted; narrowed by [20260828-continuation-goals-emit-verbatim-from-one-block](20260828-continuation-goals-emit-verbatim-from-one-block.md) | Goal setting |
 | 2026-06-24 | [Use outcome-gated terminal success for `/auto` continuation](20260624-use-outcome-gated-auto-continuation.md) | Accepted | Goal setting |
 | 2026-07-03 | [figure-out gains fog discipline; multi-session orchestration stays out of scope](20260703-figure-out-fog-discipline.md) | Accepted | figure-out |
 | 2026-07-03 | [Progressive-disclosure triggers live in the loading layer, never in the deferred reference](20260703-progressive-disclosure-triggers-live-in-loading-layer.md) | Accepted | Prompt architecture |
@@ -121,3 +121,4 @@
 | 2026-08-25 | [Escalation clears the claim and carries its own mark](20260825-escalation-clears-the-claim-and-carries-its-own-mark.md) | Accepted | Ticketing |
 | 2026-08-26 | [Prototyping and scratch are one mechanism; scratch mode is deleted](20260826-prototyping-and-scratch-are-one-mechanism.md) | Accepted | figure-out |
 | 2026-08-26 | [Sensing the output is a precondition of naming a read](20260826-sensing-the-output-is-a-precondition-of-naming-a-read.md) | Accepted | figure-out |
+| 2026-08-28 | [Continuation goals emit verbatim from one shared block](20260828-continuation-goals-emit-verbatim-from-one-block.md) | Accepted | Goal setting |

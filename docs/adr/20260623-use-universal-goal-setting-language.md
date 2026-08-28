@@ -1,7 +1,7 @@
 # ADR: Use universal goal-setting language for unattended run backstops
 
 ## Status
-Accepted
+Accepted; narrowed by [20260828-continuation-goals-emit-verbatim-from-one-block](20260828-continuation-goals-emit-verbatim-from-one-block.md) — the capability-based emission boundary stands, but the goal text itself no longer varies per distribution.
 
 ## Area
 Goal setting
