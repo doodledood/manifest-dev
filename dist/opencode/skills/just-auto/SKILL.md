@@ -9,18 +9,17 @@ Run the flow for the task given or inferable from the conversation; with
 neither, halt with usage.
 
 First, arm the completion backstop: continue under an active goal covering
-this outcome, or emit both blocks below verbatim, chain prefix first, leaving
-`<manifest-path>` literal — the chain prefix defines it. Do not
+this outcome, or emit both blocks below verbatim, chain prefix first. Do not
 summarize, shorten, reword, or re-punctuate them. Set them through the
 harness's goal-setting, continuation, or durable-completion-condition
 capability, else print them copy-pasteable. Proceed either way.
 
 ```chain-prefix
-Reach shared understanding of the task, then write a Manifest from it. Where an investigation phase runs, complete a full-anatomy Read checkpoint before the Manifest is written: every load-bearing branch pressed; Evidence Ledger explicit; assumptions separated from verified and inferred claims; independent re-derivation run or explicitly unavailable; rival set no longer moving; confidence, evidence, and overturn conditions stated. For diagnosis-shaped work, the Read checkpoint is not complete if it only localizes where the symptom concentrates: name the concrete mechanism — the variable, difference, or sequence that produces the symptom, including why this case differs when the question is comparative — or earn an underdetermined Read by naming the surviving explanations and showing which feasible probes that could distinguish them were run, what they showed, or why they were blocked. Treat a missing or weak Read checkpoint as a phase defect to repair before the Manifest is written, not a post-hoc terminal failure after execution has fresh all-gate PASS evidence. Record the Manifest's path in a checkpoint note as soon as the Manifest-writing step reports it; <manifest-path> below is that path. Stop if the run stalls — consecutive turns moving neither the work nor its verification.
+Reach shared understanding of the task, then write a Manifest from it. Where an investigation phase runs, complete a full-anatomy Read checkpoint before the Manifest is written: every load-bearing branch pressed; Evidence Ledger explicit; assumptions separated from verified and inferred claims; independent re-derivation run or explicitly unavailable; rival set no longer moving; confidence, evidence, and overturn conditions stated. For diagnosis-shaped work, the Read checkpoint is not complete if it only localizes where the symptom concentrates: name the concrete mechanism — the variable, difference, or sequence that produces the symptom, including why this case differs when the question is comparative — or earn an underdetermined Read by naming the surviving explanations and showing which feasible probes that could distinguish them were run, what they showed, or why they were blocked. Treat a missing or weak Read checkpoint as a phase defect to repair before the Manifest is written, not a post-hoc terminal failure after execution has fresh all-gate PASS evidence. Stop if the run stalls — consecutive turns moving neither the work nor its verification.
 ```
 
 ```goal-block
-Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.
+Work under this run's Manifest until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Record the Manifest's path in a checkpoint note as soon as it exists.
 
 The Manifest is the contract, not the run's to rewrite: it changes only through the skill that wrote it, never by direct edit, and a changed gate returns unverified.
 

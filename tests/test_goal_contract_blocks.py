@@ -79,8 +79,8 @@ SIGNATURES: dict[Label, str] = {
         "explicit or inherited verifier model, latest verdict, evidence"
     ),
     "chain-prefix": (
-        "Record the Manifest's path in a checkpoint note as soon as the "
-        "Manifest-writing step reports it"
+        "Treat a missing or weak Read checkpoint as a phase defect to repair "
+        "before the Manifest is written"
     ),
     "pr-tend-prefix": "Never press merge. Report a wait-only CI state as pending",
 }

@@ -13,13 +13,13 @@ the Manifest, or only a person can unblock you. When done, report what changed
 and your basis per gate.
 
 First, arm the completion backstop: continue under an active goal for this Manifest,
-or emit the block below verbatim, substituting only `<manifest-path>`. Do not
+or emit the block below verbatim. Do not
 summarize, shorten, reword, or re-punctuate it. Set it through the harness's
 goal-setting, continuation, or durable-completion-condition capability, else print it
 copy-pasteable.
 
 ```goal-block
-Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.
+Work under this run's Manifest until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Record the Manifest's path in a checkpoint note as soon as it exists.
 
 The Manifest is the contract, not the run's to rewrite: it changes only through the skill that wrote it, never by direct edit, and a changed gate returns unverified.
 
