@@ -143,7 +143,7 @@ When /do is the top-level execution entrypoint, establish a durable goal-setting
 
 **Where the contract lives.** If a broader parent workflow backstop is already visible (for example `/auto`'s full-chain contract or `/babysit-pr`'s PR-tend contract) and it carries the gate-ledger clause below, do not set or print a second narrower goal; operate under the parent contract. If the visible parent lacks that clause, supplement it with the gate-ledger clause below before continuing.
 
-**What to emit.** Otherwise, when no parent backstop is visible, emit the blocks below verbatim. Do not summarize, shorten, reword, or re-punctuate them. Set them through the harness's goal-setting, continuation, or durable-completion-condition capability where one exists; print it in copy-pasteable form for the user's own continuation mechanism where none does. Emit the goal block, then the gate-ledger clause, as one contract.
+**What to emit.** Otherwise, when no parent backstop is visible, emit the blocks below verbatim. Do not summarize, shorten, reword, or re-punctuate them. Set them through the harness's goal-setting, continuation, or durable-completion-condition capability where one exists; print it in copy-pasteable form for the user's own continuation mechanism where none does. Emit the goal block, then the gate-ledger clause, as one contract: one unlabeled block introduced by a sentence of your own, since the fences and their labels are this file's markers rather than part of what you emit.
 
 ```goal-block
 Work under this run's Manifest until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Record the Manifest's path in a checkpoint note as soon as it exists.
