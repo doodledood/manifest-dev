@@ -223,6 +223,7 @@ Bump plugin version if plugin files changed.
 Ratified steering preferences for this repo. Each states the preference, why it holds, and when it should yield — weigh them rather than obey them.
 
 - **Default manifests here to no PR-lifecycle gates.** Pull requests in this repo run no CI and have a single maintainer as the only reviewer, so lifecycle criteria spend verification effort on nothing. Include them once a pull request carries required status checks, or a reviewer whose approval gates the merge.
+- **Prototype renderings ship as Artifacts where the harness offers them.** When a session renders a disposable draft for reaction — figure-out's prototyping, or any render-to-react flow — publish it as an Artifact page rather than loose .md/.html files: in remote and web sessions loose files are hard to open, and a page the user can actually look at is the whole point of rendering. Yield to a plain file when the session has no Artifact capability, or when the user asks for the file itself.
 
 ## Coding Conventions
 
