@@ -1,7 +1,7 @@
 # ADR: Continuation goals emit verbatim from one shared block
 
 ## Status
-Accepted
+Accepted — narrowed by 20260830-shared-contract-blocks-name-the-beat-not-the-skill: the one-text-per-block property and the no-per-site-variant requirement both stand; only the wording that satisfies them changes.
 
 ## Area
 Goal setting

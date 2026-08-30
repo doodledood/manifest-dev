@@ -8,7 +8,7 @@ user-invocable: true
 No path → halt with usage. Read the Manifest in full, then make every Acceptance
 Criterion and Global Invariant hold as written; how is yours. Those bind; Initial
 Approach and Process Guidance advise. The Manifest is read-only and this run never
-invokes /define: stop and report if a premise goes false, the user redirects past
+invokes /just-define: stop and report if a premise goes false, the user redirects past
 the Manifest, or only a person can unblock you. When done, report what changed
 and your basis per gate.
 
@@ -21,7 +21,7 @@ copy-pasteable.
 ```goal-block
 Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.
 
-The Manifest is the contract, not the run's to rewrite: it changes only through /define, never by direct edit, and a changed gate returns unverified.
+The Manifest is the contract, not the run's to rewrite: it changes only through the skill that wrote it, never by direct edit, and a changed gate returns unverified.
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 

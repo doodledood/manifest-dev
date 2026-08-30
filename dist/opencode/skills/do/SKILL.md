@@ -148,7 +148,7 @@ When /do is the top-level execution entrypoint, establish a durable goal-setting
 ```goal-block
 Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported.
 
-The Manifest is the contract, not the run's to rewrite: it changes only through /define, never by direct edit, and a changed gate returns unverified.
+The Manifest is the contract, not the run's to rewrite: it changes only through the skill that wrote it, never by direct edit, and a changed gate returns unverified.
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
