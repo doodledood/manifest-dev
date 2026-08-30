@@ -916,7 +916,7 @@ def test_auto_parent_goal_carries_autonomous_read_checkpoint() -> None:
     required_phrases = (
         "The terminal success condition is outcome-gated",
         "phase checkpoint before `/define`",
-        "full-anatomy Read checkpoint before /define",
+        "full-anatomy Read checkpoint before the Manifest is written",
         "every load-bearing branch pressed",
         "Evidence Ledger explicit",
         "assumptions separated from verified and inferred claims",

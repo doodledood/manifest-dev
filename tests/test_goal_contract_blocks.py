@@ -74,12 +74,13 @@ Label = Literal["goal-block", "gate-ledger-clause", "chain-prefix", "pr-tend-pre
 # whose label was stripped, which would otherwise make it invisible again. Typing the
 # keys as a closed union is what stops `GOAL_BLOCK` and a renamed key drifting apart.
 SIGNATURES: dict[Label, str] = {
-    "goal-block": "it changes only through /define, never by direct edit",
+    "goal-block": "it changes only through the skill that wrote it, never by direct edit",
     "gate-ledger-clause": (
         "explicit or inherited verifier model, latest verdict, evidence"
     ),
     "chain-prefix": (
-        "Record the Manifest's path in a checkpoint note as soon as define reports it"
+        "Record the Manifest's path in a checkpoint note as soon as the "
+        "Manifest-writing step reports it"
     ),
     "pr-tend-prefix": "Never press merge. Report a wait-only CI state as pending",
 }

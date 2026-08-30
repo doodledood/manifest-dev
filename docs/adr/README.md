@@ -121,6 +121,7 @@
 | 2026-08-25 | [Escalation clears the claim and carries its own mark](20260825-escalation-clears-the-claim-and-carries-its-own-mark.md) | Accepted | Ticketing |
 | 2026-08-26 | [Prototyping and scratch are one mechanism; scratch mode is deleted](20260826-prototyping-and-scratch-are-one-mechanism.md) | Accepted | figure-out |
 | 2026-08-26 | [Sensing the output is a precondition of naming a read](20260826-sensing-the-output-is-a-precondition-of-naming-a-read.md) | Accepted | figure-out |
-| 2026-08-28 | [Continuation goals emit verbatim from one shared block](20260828-continuation-goals-emit-verbatim-from-one-block.md) | Accepted | Goal setting |
+| 2026-08-28 | [Continuation goals emit verbatim from one shared block](20260828-continuation-goals-emit-verbatim-from-one-block.md) | Accepted — narrowed by [20260830-shared-contract-blocks-name-the-beat-not-the-skill](20260830-shared-contract-blocks-name-the-beat-not-the-skill.md): the one-text-per-block property and the no-per-site-variant requirement both stand; only the wording that satisfies them changes. | Goal setting |
 | 2026-08-30 | [`just-do` states the floor and keys its log to the Manifest; /do and /auto stay the control](20260830-just-do-states-the-floor-and-keys-its-log-to-the-manifest.md) | Accepted | Prompt architecture |
 | 2026-08-30 | [the rendering contract folds into figure-out, and chat-surface is retired](20260830-rendering-contract-folds-into-figure-out.md) | Accepted | Prompt architecture |
+| 2026-08-30 | [a shared contract block names the beat, not one arm's skill](20260830-shared-contract-blocks-name-the-beat-not-the-skill.md) | Accepted | Goal setting |
