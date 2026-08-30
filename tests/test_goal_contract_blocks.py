@@ -67,6 +67,13 @@ NO_MANIFEST_BACKSTOP = ("figure-out/references/autonomous.md",)
 # trailing pronoun differs between one-block and multi-block sites.
 NO_PARAPHRASE = "Do not summarize, shorten, reword, or re-punctuate"
 
+# The rule that keeps the fence label out of what the user sees. The labels exist so a
+# block's identity is separable from its text; a site that emits them verbatim prints
+# this file's own bookkeeping into someone's terminal. Checked for the same reason as
+# NO_PARAPHRASE: it is prose sitting beside fenced content, so a pass that tightens
+# prose can strip it without any block changing.
+LABEL_NOT_EMITTED = "this file's markers rather than part of what you emit"
+
 Label = Literal["goal-block", "gate-ledger-clause", "chain-prefix", "pr-tend-prefix"]
 
 # Fence label -> a phrase from that block's body. The label is the identity; the
@@ -262,6 +269,24 @@ def test_every_backstop_site_forbids_paraphrase() -> None:
     assert not missing, (
         "these files emit a goal block without instructing that it not be reworded:\n"
         "  " + "\n  ".join(missing)
+    )
+
+
+def test_every_backstop_site_keeps_the_fence_label_out_of_the_emission() -> None:
+    """Emitting a block verbatim must not mean emitting its fence label.
+
+    The labels are identity markers for the checks in this file, not contract text. A
+    site that says only "emit the block below verbatim" invites a faithful reader to
+    print the fence and its label too, which is what a user reported seeing.
+    """
+    missing = [
+        rel(p)
+        for p in backstop_sites()
+        if normalized(LABEL_NOT_EMITTED) not in normalized(read(p))
+    ]
+    assert not missing, (
+        "these files emit a goal block without saying the fence label is not part of "
+        "what to emit:\n  " + "\n  ".join(missing)
     )
 
 
