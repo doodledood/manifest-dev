@@ -1,7 +1,7 @@
 # ADR: the surface skill owns the rendering contract, and the terminal is one of its surfaces
 
 ## Status
-Accepted — its two modes are renamed by [20260819-surface-modes-name-their-output-format](20260819-surface-modes-name-their-output-format.md): terminal mode is now text mode and canvas mode is now html mode. Narrowed by [20260821-rendering-contract-judges-the-whole-turn](20260821-rendering-contract-judges-the-whole-turn.md), which replaces the earning rule this record shipped: the contract's unit of judgment moves from the individual element to the whole turn.
+Superseded by 20260830-rendering-contract-folds-into-figure-out — the surface skill is retired and the contract's surviving sentences live in figure-out's own turn section
 
 ## Area
 Prompt architecture

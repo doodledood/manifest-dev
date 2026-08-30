@@ -77,7 +77,7 @@ flowchart TD
     class H stop;
 ```
 
-`/auto` chains all three without stopping for approval between them. `/just-do` and `/just-auto` are leaner variants that pursue the same Manifest with less process.
+`/auto` chains all three without stopping for approval between them. `/just-figure-out`, `/just-define`, `/just-do` and `/just-auto` are leaner variants of the same beats — same contracts, minimal process.
 
 For an unattended run, point your host's goal-setting or continuation capability at the completion contract `/do` prints. Where a host offers neither, `/do` prints the contract for you to use with whatever keeps the run alive.
 

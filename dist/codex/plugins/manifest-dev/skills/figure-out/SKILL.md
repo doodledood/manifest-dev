@@ -1,7 +1,7 @@
 ---
 name: figure-out
 description: 'Figure things out together — any topic, problem, or idea. Presses relentlessly until shared understanding is reached. Use when understanding is the deliverable rather than a preamble to acting, when figuring it out is the goal, or when the user asks to think through a decision, dig deeper, press an assumption, investigate why something is happening, or work through a problem.'
-argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team] [--surface <name>]'
+argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team]'
 user-invocable: true
 ---
 
@@ -35,13 +35,15 @@ Per turn: do real work on the load-bearing question, and carry the best-supporte
 
 A turn reads as a teammate presenting to a teammate. The Evidence Ledger, belief register, and crumb-and-fog tracking are how you think, not what you read out — voice a claim's honest status, and its provenance when it's load-bearing.
 
-**Advance one claim per turn**; the rest of what you found waits for its own turn. The budget is the whole turn, not the parts of it that happen to be bolded — the closing ask, prose sitting between bolds rather than under one, and anything you report about work done along the way, such as a glossary entry written inline, all spend from it. A part is one piece of the claim the turn carries; keep each to a sentence or two. What makes a turn heavy is the second and third proof of a point it already carried: cut those, never the claim. Bolding is how the turn is read, never the unit being counted — which lines carry the emphasis is the surface contract's call. The read-naming turn is the exception — its full anatomy travels together, because no turn follows it, but each part still gets its sentence or two.
+You are talking to one person with limited attention: they should see at a glance where things stand, what changed, and what you need from them, and be able to leave the turn and come back without re-reading it. When a turn carries several things of one kind — findings, options, steps — give them a form with one slot each, so a dropped member shows as a gap instead of vanishing into a sentence. Set the ask apart at the end. Beyond that, form is yours: pick whatever shape makes the point land at a glance, and let plain prose carry what prose carries well.
+
+**Advance one claim per turn**; the rest of what you found waits for its own turn. The budget is the whole turn, not the parts of it that happen to be bolded — the closing ask, prose sitting between bolds rather than under one, and anything you report about work done along the way, such as a glossary entry written inline, all spend from it. A part is one piece of the claim the turn carries; keep each to a sentence or two. What makes a turn heavy is the second and third proof of a point it already carried: cut those, never the claim. Bolding is how the turn is read, never the unit being counted. The read-naming turn is the exception — its full anatomy travels together, because no turn follows it, but each part still gets its sentence or two.
 
 **Lead each part with the line that carries the information** — the specific finding, with its number when it has one. Name the thing itself: "the problem" is furniture standing where the point could have been. The turn's first line is where this matters most: it lands the conclusion, not the step that reached it, your stance on it, or a note on what you are about to do — and where nothing is concluded yet, the best-supported answer you have.
 
 **Use plain words, and unpack what you compress.** A term of art earns its place only where the user meets it in what they receive — the manifest they get, the read you name. Manifest, Deliverable, Acceptance Criterion, Appetite clear that bar, and it is the meeting that clears it — the project's glossary confers nothing, existing so you model the project correctly rather than so the conversation is conducted in its vocabulary. Five shapes do not: a phrase you coined — this turn or an earlier one — used before you say what it stands for ("paid three tolls"); a design compressed into a parenthetical ("a demo tier (anonymous analyzer + gate persistence)"); another field's term used bare ("register", "psychographic"); a glossary term the user has not met in what they receive, however settled it is in the project's own vocabulary; and this prompt's own name for one of its parts, label included where a later section supplies one — say what would change your mind, never "the flip condition". Take the short familiar word over the longer description of it.
 
-**The ask is the turn's open call** — the one where the user's judgment changes the answer, carrying the answer you would give it in a sentence: the recommendation, not the case for it, since a bare question hands the thinking back while an argued one spends the turn's budget a second time. Ground you can explore gets explored and reported, and sequencing is yours to settle — which finding to work first, in what order, whether to check one more file — so a turn asking the user to schedule your work has closed on nothing they can decide. Keep the ask in prose rather than an option-picker the host offers. A mode offer rides along rather than displacing it. A turn with nothing to ask ends without one, as does the read-naming turn, which ends the session. Which form carries a point — a sentence, a table, a diagram — is the active surface skill's call under its own contract, not this section's; what a turn advances and what it spends stay here.
+**The ask is the turn's open call** — the one where the user's judgment changes the answer, carrying the answer you would give it in a sentence: the recommendation, not the case for it, since a bare question hands the thinking back while an argued one spends the turn's budget a second time. Ground you can explore gets explored and reported, and sequencing is yours to settle — which finding to work first, in what order, whether to check one more file — so a turn asking the user to schedule your work has closed on nothing they can decide. Keep the ask in prose rather than an option-picker the host offers. A mode offer rides along rather than displacing it. A turn with nothing to ask ends without one, as does the read-naming turn, which ends the session.
 
 Investigate as widely as the question needs; the turn carries one claim out of that work and the rest waits for its own. Low load is the default here rather than a setting a user has to find — a ratified Taste entry can bend it, through the same standing context that informs the answer itself. With no one reading — autonomous or unattended — this section is inert.
 
@@ -135,9 +137,7 @@ Some sessions reach a point where the remaining unresolved questions stop depend
 
 ### Flags
 
-Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`, `--surface`) are topic text unless clearly supplied as this skill's option.
-
-`--surface <name>` selects where the session's answers land, and which mode the row below invokes: the default resolves to `text`, and `chat-surface` resolves to `html`, rendering the conversation live into an HTML page the user watches. Any other value names a different surface-providing skill to invoke in its place, and in every case anything after the name passes through as that skill's arguments. The turn discipline above is unchanged throughout: the terminal reply still carries its claim and its ask.
+Interpret only top-level skill options as flags; quoted, code-formatted, or topic mentions of any skill option (`--no-docs`, `--no-log`, `--autonomous`, `--team`) are topic text unless clearly supplied as this skill's option.
 
 ### What loads
 
@@ -150,7 +150,6 @@ Apply each loaded reference's overrides.
 | `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or one of its mapped contexts; `--no-docs` or `--team` suppresses | project glossary captures, map awareness, ADR offers, North Star updates |
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining without user wait | self-answer with recommended answers instead of waiting on the user |
 | `references/team.md` | `--team`, typically from the `figure-out-team` wrapper skill | the counterparty becomes a Slack channel or thread and the deliberation runs there, with the operator in the local chat session; it also owns team mode's separate read-only project-context behavior |
-| invoke the `manifest-dev:chat-surface` skill with: `text` — or, where `--surface` was passed, whichever skill and mode it resolves to instead — nothing here to read | always, before the first turn is shaped | the rendering contract that selects a turn's form, plus the shapes that destination can carry |
 
 The working directory alone does not establish project relevance. When relevance is absent or unclear, do not load project docs; if it emerges later, load the reference then. Investigation logging is independent of it.
 
