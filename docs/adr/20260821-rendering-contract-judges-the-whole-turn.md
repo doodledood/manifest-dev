@@ -1,7 +1,7 @@
 # ADR: the rendering contract judges the whole turn, not the element
 
 ## Status
-Accepted
+Superseded by 20260830-rendering-contract-folds-into-figure-out — the contract's home is retired; its whole-turn re-entry principle and set-completeness rule survive as figure-out's folded turn contract
 
 ## Area
 Prompt architecture

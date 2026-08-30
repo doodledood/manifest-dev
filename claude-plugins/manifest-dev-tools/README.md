@@ -33,7 +33,6 @@ These carry context across a boundary:
 |-------|--------------|
 | `/handoff` | Packages what a session established so a fresh agent can carry on without re-deriving it. |
 | `/teach-me` | Teaches a body of work — this session, a pull request, a decision record, any topic — and checks you've got it before moving on. |
-| `/re-pitch` | Re-explains a message that didn't land, in plainer words, keeping every fact and cutting everything else. |
 | `/eli5` | Explains any topic from zero, as an HTML page of big pictures and few words. |
 
 `/review-pr` and `/babysit-pr` can run on the same pull request at once: one applies review pressure, the other drives it toward mergeable.

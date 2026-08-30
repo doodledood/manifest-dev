@@ -1,7 +1,7 @@
 # ADR: surface modes are named for their output format, not their device or metaphor
 
 ## Status
-Accepted
+Superseded by 20260830-rendering-contract-folds-into-figure-out — the modes this record named are retired with chat-surface
 
 ## Area
 Prompt architecture

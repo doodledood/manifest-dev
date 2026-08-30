@@ -20,13 +20,15 @@ Run them in order, though each works on its own:
 
 ## Run it unattended
 
-Three variants trade approval points for autonomy:
+These trade approval points and process for autonomy:
 
 | Skill | What it does |
 |-------|--------------|
 | `/auto` | Chains figure-out, define and do without stopping for approval between them. |
+| `/just-figure-out` | The lean figure-out: presses a topic to a named read — conclusion, confidence, evidence, what would overturn it — deciding for itself how to get there. Offers `/just-define` when the read implies work. |
+| `/just-define` | The lean define: encodes shared understanding into the same Manifest contract, deciding for itself how to interview. Hands execution to `/just-do`. |
 | `/just-do` | Executes a Manifest with more autonomy and less process — same contract, fewer steps. Keeps an execution log keyed to the Manifest, so a relaunched run picks up where the last one stopped; `--no-log` opts out. |
-| `/just-auto` | The same leaner posture across the whole chain. |
+| `/just-auto` | The same leaner posture across the whole chain: just-figure-out, just-define, just-do. |
 
 ## Project surfaces
 
@@ -56,7 +58,6 @@ These shape where a session's answers land:
 
 | Skill | What it does |
 |-------|--------------|
-| `/chat-surface` | Shapes where answers land so each is readable at a glance — in the terminal, or rendered live into a page you keep open. |
 | `/figure-out-team` | Runs the same deliberation in a Slack channel or thread, for people who can't all sit in one session. |
 | `/poll-slack` | Reports what's new in a channel or thread since a cursor. |
 
