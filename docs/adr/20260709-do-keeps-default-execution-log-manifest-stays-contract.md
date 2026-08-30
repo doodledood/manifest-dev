@@ -1,7 +1,7 @@
 # ADR: /do keeps a default-on execution log; the manifest stays a pure contract
 
 ## Status
-Accepted
+Accepted — extended by 20260830-just-do-states-the-floor-and-keys-its-log-to-the-manifest, which gives `just-do` the same log keyed to the Manifest rather than to the invocation; the decision here is unchanged for /do
 
 ## Area
 do

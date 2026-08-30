@@ -25,7 +25,7 @@ Three variants trade approval points for autonomy:
 | Skill | What it does |
 |-------|--------------|
 | `/auto` | Chains figure-out, define and do without stopping for approval between them. |
-| `/just-do` | Executes a Manifest with more autonomy and less process — same contract, fewer steps. |
+| `/just-do` | Executes a Manifest with more autonomy and less process — same contract, fewer steps. Keeps an execution log keyed to the Manifest, so a relaunched run picks up where the last one stopped; `--no-log` opts out. |
 | `/just-auto` | The same leaner posture across the whole chain. |
 
 ## Project surfaces

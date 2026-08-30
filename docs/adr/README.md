@@ -23,7 +23,7 @@
 | 2026-06-19 | [Manifest-aware review-pr instead of a standalone GitHub verification plugin](20260619-manifest-aware-review-pr.md) | Accepted | PR review |
 | 2026-06-22 | [Identify review-pr's own comments with a hidden marker, not account authorship](20260622-mark-review-pr-comments-with-hidden-marker.md) | Accepted | PR review |
 | 2026-06-23 | [Use host continuation as optional `/do` backstop, not a Pi-specific verifier runtime](20260623-use-host-continuation-as-optional-do-backstop.md) | Accepted | Pi distribution |
-| 2026-06-23 | [Use universal goal-setting language for unattended run backstops](20260623-use-universal-goal-setting-language.md) | Accepted; narrowed by [20260828-continuation-goals-emit-verbatim-from-one-block](20260828-continuation-goals-emit-verbatim-from-one-block.md) | Goal setting |
+| 2026-06-23 | [Use universal goal-setting language for unattended run backstops](20260623-use-universal-goal-setting-language.md) | Accepted; narrowed by [20260828-continuation-goals-emit-verbatim-from-one-block](20260828-continuation-goals-emit-verbatim-from-one-block.md) — the capability-based emission boundary stands, but the goal text itself no longer varies per distribution. | Goal setting |
 | 2026-06-24 | [Use outcome-gated terminal success for `/auto` continuation](20260624-use-outcome-gated-auto-continuation.md) | Accepted | Goal setting |
 | 2026-07-03 | [figure-out gains fog discipline; multi-session orchestration stays out of scope](20260703-figure-out-fog-discipline.md) | Accepted | figure-out |
 | 2026-07-03 | [Progressive-disclosure triggers live in the loading layer, never in the deferred reference](20260703-progressive-disclosure-triggers-live-in-loading-layer.md) | Accepted | Prompt architecture |
@@ -32,7 +32,7 @@
 | 2026-07-07 | [Split the tech-design task profile by workflow role](20260707-split-tech-design-task-profile-by-workflow-role.md) | Accepted | Task guidance |
 | 2026-07-08 | [The judgment layer is a review-time premise check, distinct from define's gates](20260708-judgment-layer-is-a-review-time-premise-check.md) | Accepted | PR review |
 | 2026-07-08 | [The judgment layer runs in review-pr's manifest mode, not only no-manifest mode](20260708-judgment-layer-runs-in-manifest-mode-as-a-premise-safety-net.md) | Accepted | PR review |
-| 2026-07-09 | [/do keeps a default-on execution log; the manifest stays a pure contract](20260709-do-keeps-default-execution-log-manifest-stays-contract.md) | Accepted | do |
+| 2026-07-09 | [/do keeps a default-on execution log; the manifest stays a pure contract](20260709-do-keeps-default-execution-log-manifest-stays-contract.md) | Accepted — extended by [20260830-just-do-states-the-floor-and-keys-its-log-to-the-manifest](20260830-just-do-states-the-floor-and-keys-its-log-to-the-manifest.md), which gives `just-do` the same log keyed to the Manifest rather than to the invocation; the decision here is unchanged for /do | do |
 | 2026-07-09 | [Re-weight figure-out's SKILL.md by re-hosting — sectioned arc, no extraction, evidence-gated trims](20260709-figure-out-reweight-by-rehosting-not-extraction.md) | Accepted | figure-out |
 | 2026-07-09 | [Gate figure-out project docs by topic relevance](20260709-gate-figure-out-project-docs-by-topic-relevance.md) | Accepted | figure-out |
 | 2026-07-09 | [Mid-/do steering stays autonomous, audited through Known Assumptions](20260709-mid-do-steering-stays-autonomous.md) | Accepted | do |
@@ -117,8 +117,9 @@
 | 2026-08-21 | [The bet is about the practice, not about whether a market adopts it](20260821-the-bet-is-about-the-practice-not-the-market.md) | Accepted | Positioning |
 | 2026-08-21 | [Winning is our own projects running the full loop; recognition is a consequence](20260821-winning-is-our-own-projects-running-the-full-loop.md) | Accepted | Positioning |
 | 2026-08-23 | [Every split Ticket is exercisable end-to-end; verticality governs cut direction, never count](20260823-split-tickets-are-exercisable-end-to-end.md) | Accepted | Ticketing |
-| 2026-08-24 | [The undiscussed-surface sweep lives in figure-out's read-naming checkpoint](20260824-undiscussed-surface-sweep-lives-in-read-naming-checkpoint.md) | Accepted; its checkpoint now also carries the output-sensing precondition from [20260826-sensing-the-output-is-a-precondition-of-naming-a-read](20260826-sensing-the-output-is-a-precondition-of-naming-a-read.md) | figure-out |
+| 2026-08-24 | [The undiscussed-surface sweep lives in figure-out's read-naming checkpoint](20260824-undiscussed-surface-sweep-lives-in-read-naming-checkpoint.md) | Accepted; the checkpoint it places the sweep in now also carries the output-sensing precondition added by [20260826-sensing-the-output-is-a-precondition-of-naming-a-read](20260826-sensing-the-output-is-a-precondition-of-naming-a-read.md) | figure-out |
 | 2026-08-25 | [Escalation clears the claim and carries its own mark](20260825-escalation-clears-the-claim-and-carries-its-own-mark.md) | Accepted | Ticketing |
 | 2026-08-26 | [Prototyping and scratch are one mechanism; scratch mode is deleted](20260826-prototyping-and-scratch-are-one-mechanism.md) | Accepted | figure-out |
 | 2026-08-26 | [Sensing the output is a precondition of naming a read](20260826-sensing-the-output-is-a-precondition-of-naming-a-read.md) | Accepted | figure-out |
 | 2026-08-28 | [Continuation goals emit verbatim from one shared block](20260828-continuation-goals-emit-verbatim-from-one-block.md) | Accepted | Goal setting |
+| 2026-08-30 | [`just-do` states the floor and keys its log to the Manifest; /do and /auto stay the control](20260830-just-do-states-the-floor-and-keys-its-log-to-the-manifest.md) | Accepted | Prompt architecture |

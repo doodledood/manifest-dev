@@ -171,7 +171,7 @@ A mid-/do user message treated as fire-and-forget direction — encoded into the
 _Avoid_: Interrupt, mid-run question.
 
 **Execution Log**:
-An append-only, out-of-repo journal /do keeps by default (`--no-log` opts out) recording deviations from the Initial Approach or Deliverable order, Process Guidance departures, dead-end memory, and operational events — execution history never lives in the Manifest.
+An append-only, out-of-repo journal `/do` and `just-do` keep by default (`--no-log` opts out) recording deviations from the Initial Approach or Deliverable order, Process Guidance departures, dead-end memory, and operational events — execution history never lives in the Manifest. Where it is keyed to the Manifest rather than to the invocation, a relaunched or compacted run re-finds the record its predecessor wrote.
 _Avoid_: Execution notes, amendments log, changelog.
 
 **Door**:
@@ -282,6 +282,7 @@ _Avoid_: Batch runner, label pulse, dependency controller.
 - **Review PR** in manifest mode independently re-verifies a **Manifest** against the pull request head.
 - The **Judgment Layer** runs inside **Review PR** (both modes) as non-binding questions, kept distinct from a **Manifest**'s binding **Acceptance Criteria** and from the defect fleet.
 - A **Steering Message** is encoded by autonomous amendment, with judgment calls audited as Known Assumptions and pivots recorded in the **Execution Log**.
+- `/do` and `just-do` each keep an **Execution Log**: `/do` keys it to the invocation, `just-do` to the Manifest, which is what lets a relaunch reopen the same file.
 - **Babysit PR** uses **PR Grounding** so newer comments do not override stronger sources of intent by recency alone.
 - **CI One-Shot** is a constrained mode of **Babysit PR**.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.
