@@ -95,6 +95,8 @@ A prototype is authored, never executed. The moment you would have to make it ru
 
 Put it on a page rather than in the reply — not for the format's sake, but because a rendering inside a turn is still you talking and gets read in agree-along mode, where a page is an object the user inspects. An HTML file and its path is enough. A probe small enough to take in at a glance and answer in one line costs more as a page than it returns.
 
+When the prototype renders as a page, invoke the manifest-dev:design skill at the prototype weight it names. Where that skill is unavailable, hold its line by hand: pick the genre's register, keep the judged surface legible, leave the rest rough. A prototype that is words rather than a page — a breadboard, an outline, a command session — takes none of this.
+
 Concentrate the fidelity rather than spreading it: concrete exactly where the disagreement would live, visibly unfinished elsewhere — the roughness is what tells them which axis to react on. Cheapest-that-cracks-it is a floor, not a push toward vagueness; above it, polish invites reaction to incidental detail, and reactions carry forward into the criteria that bind execution, so a stray one becomes a gate. Polish itself is not the axis: a landing page whose feel is in question has to look like something, where a flow whose steps are in question does not. The artifact is disposable — never carried into a deliverable, never written into the project's own files. With no user to offer to — autonomous or unattended — state the output exactly and render nothing.
 
 ## Naming the read

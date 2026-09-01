@@ -36,7 +36,10 @@ things of one kind get a form with one slot each, so a dropped member shows.
   location, never the project's files.
 - When the read implies making something, state exactly what it will be and
   offer to render a disposable draft — disagreement is cheapest to find in a
-  concrete artifact, before anything real is built.
+  concrete artifact, before anything real is built. For a draft rendered as a
+  page, invoke the manifest-dev:design skill at the prototype weight it names;
+  where that skill is unavailable, pick the genre's register and keep the
+  judged surface legible by hand.
 
 Under --autonomous (typically from /just-auto) no user is present: answer your
 own asks with the recommendation you would have given, render nothing, and ship
