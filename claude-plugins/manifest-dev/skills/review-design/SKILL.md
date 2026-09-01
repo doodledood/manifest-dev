@@ -22,7 +22,7 @@ A verdict formed from reading markup, styles, or components alone is not a desig
 
 The standards this skill judges against live with the `design` skill, so the two cannot drift apart:
 
-- `../design/SKILL.md` — the five decisions, the register tables, the compressed floor checklist.
+- `../design/SKILL.md` — the six decisions, the task-model block the layout must trace to, the register tables, the compressed floor checklist.
 - `../design/references/registers.md` — genres beyond web/app, their success metrics, failure smells, and per-genre behavior probes.
 - `../design/references/floors.md` — the full floor numbers, density rules, and banned rationales.
 - `../design/references/craft.md` — per-domain craft checklists; load the domains the artifact touches.
@@ -33,14 +33,17 @@ Load `../design/SKILL.md` plus whichever references the artifact's genre and tou
 ## Procedure
 
 1. **Name the genre and register** you are judging against, in one line, before any finding — a finding graded under the wrong register is noise the author should ignore. An explicit `genre=` argument wins; otherwise detect from the artifact's job, and where detection is genuinely balanced, say so and ask — with no user to ask, judge under the closer register and name the call in the report.
-2. **Run the machine checks**: `node ../design/scripts/design-check.mjs <artifact.html>` (path relative to this skill's directory) for any HTML artifact. Its findings enter the report like any other, and its passing proves only the mechanical layer — it licenses nothing about register fit or hierarchy.
-3. **Render and exercise** per the section above. For the genre's behavior probe, use the one listed with its register in the loaded standards.
-4. **Judge the renders** against the loaded standards, in this order: register fit; functional floors (states, error paths, recovery); composition and hierarchy, including the blur test as the standards specify it; craft consistency (spacing rhythm, alignment spine, palette discipline, type); copy; where the artifact claims distinctiveness, whether its signature element derives from the subject or from the overused-looks list.
+2. **Name the loop the artifact serves**, in one line, before judging anything: the person at it, the sequence they repeat, and what has to be on screen at the same time for each step of that sequence to happen without them holding a value in their head. Take it from whatever the activation supplied — a task model the author wrote, a pinned reference, the gate body — and otherwise derive it from the artifact's own job, the way a labeling tool's loop is *read the item → judge it → answer → next*. Where the job is genuinely unreadable from the artifact and nothing supplied it, say so and judge everything else; never invent a loop and then convict the artifact against it.
+3. **Run the machine checks**: `node ../design/scripts/design-check.mjs <artifact.html>` (path relative to this skill's directory) for any HTML artifact. Its findings enter the report like any other, and its passing proves only the mechanical layer — it licenses nothing about task fit, register fit, or hierarchy.
+4. **Render and exercise** per the section above. Run the loop from step 2 yourself, twice, and watch what each pass costs. For the genre's behavior probe, use the one listed with its register in the loaded standards.
+5. **Judge the renders** against the loaded standards, in this order: task fit — whether the arrangement lets that loop run, with what the loop needs together visible together, the repeated action reachable without hunting, and the sequence's order matching the reading order; register fit; functional floors (states, error paths, recovery); composition and hierarchy, including the blur test as the standards specify it; craft consistency (spacing rhythm, alignment spine, palette discipline, type); copy; where the artifact claims distinctiveness, whether its signature element derives from the subject or from the overused-looks list.
+
+Task fit comes first because it is the one dimension whose repair restructures the artifact: every finding below it is graded against an arrangement that may not survive. It is judged against the artifact's job, never against the arrangement you would have chosen — an unfamiliar layout that runs the loop cleanly is not a finding.
 
 ## Grading
 
-- **CRITICAL** — the artifact fails its genre's job: the form loses input on error, the deck's argument cannot be restated, content is unreachable or unreadable.
-- **HIGH** — a floor violation the audience will hit in normal use: a missing empty or error state, failed contrast on body text, a broken narrow-viewport layout.
+- **CRITICAL** — the artifact fails its genre's job: the form loses input on error, the deck's argument cannot be restated, content is unreachable or unreadable, the repeated loop cannot be completed at all.
+- **HIGH** — a floor violation the audience will hit in normal use: a missing empty or error state, failed contrast on body text, a broken narrow-viewport layout, or an arrangement that breaks the loop's co-visibility so every pass costs a scroll away from what is being acted on or a value carried in the head.
 - **MEDIUM** — a rule violation a careful audience member would notice: register mismatch in a region, spacing rhythm broken, mixed alignment, off-token values, misleading copy on a control.
 - **LOW** — polish: optical alignment, a duration slightly off the motion table, a wordier-than-needed label.
 

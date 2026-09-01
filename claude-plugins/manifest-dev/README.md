@@ -50,7 +50,7 @@ Manifest criteria call these; you can also invoke them directly:
 |-------|--------------|
 | `/review-code` | Reviews a change along one named quality dimension and reports findings. Manifest criteria call it by dimension. |
 | `/review-writing` | Reviews prose against this project's writing standards, in whichever register the text is in. |
-| `/design` | Builds or restyles a user-visible artifact — page, dashboard, document, deck, form, game — deciding purpose and register before code, tokens before markup, and verifying against rendered evidence. |
+| `/design` | Builds or restyles a user-visible artifact — page, dashboard, document, deck, form, game — modelling the loop the artifact serves and deciding purpose and register before code, tokens before markup, and verifying against rendered evidence. |
 | `/review-design` | Reviews a user-visible artifact against the same design standards: renders it (or returns BLOCKED), runs machine checks, exercises its states, and reports graded findings. Manifest criteria call it for design gates. |
 | `/check-pr` | Inspects a pull request's state and reports whether it's ready. Read-only; never merges. |
 

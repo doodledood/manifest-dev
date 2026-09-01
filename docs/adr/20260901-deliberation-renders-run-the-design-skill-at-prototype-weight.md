@@ -1,7 +1,7 @@
 # ADR: Deliberation renders run the design skill at prototype weight
 
 ## Status
-Accepted
+Accepted — extended by 20260901-design-derives-structure-from-a-written-task-model: a task-model decision was added between purpose and register, and it too runs in full at prototype weight, so three decisions now do rather than the two this record named. The weight's own rules — minimal token block, floors only where the fidelity concentrates, roughness kept elsewhere, verification skipped — all stand.
 
 ## Area
 Design skills
