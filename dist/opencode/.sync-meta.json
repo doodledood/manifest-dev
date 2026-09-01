@@ -1,10 +1,10 @@
 {
-  "source_commit": "84f7ee64811303b9899d0b935521202b2258badf",
+  "source_commit": "dde2673bf57a53eaf6a94fc228151d1334dad539",
   "source_path": "claude-plugins/manifest-dev",
   "source_paths": [
     "claude-plugins/manifest-dev",
     "claude-plugins/manifest-dev-tools"
   ],
-  "synced_at": "2026-09-01T13:39:04Z",
+  "synced_at": "2026-09-01T13:49:39Z",
   "notes": "Records which source commit this tree was generated from. Per-CLI conversion rules \u2014 qualifier handling, context-file naming, tool-name mapping \u2014 live in the sync-tools reference for this CLI, which is the only place that states them."
 }
