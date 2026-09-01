@@ -1,6 +1,6 @@
 # Registers beyond the web page
 
-The register layer for every genre past the five web/app registers in `SKILL.md`: what each genre must do to achieve its purpose, where generated output fails it, and the behavior probe that verifies it. Loaded when the artifact is one of these genres, when the purpose pick is contested, when an editorial treatment is chosen, or when Decision 4 needs the genre's probe.
+The register layer for every genre past the five web/app registers in `SKILL.md`: what each genre must do to achieve its purpose, where generated output fails it, and the behavior probe that verifies it.
 
 ## The cross-genre taxonomy
 

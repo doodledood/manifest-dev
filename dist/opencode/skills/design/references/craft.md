@@ -1,6 +1,6 @@
 # Craft domains
 
-Per-domain checklists behind the floors. Load when the work touches a domain; each rule is an action with its number or check. Copy and density live in `floors.md`; this file carries the rest.
+Per-domain checklists behind the floors; each rule is an action with its number or check. Copy and density live in `floors.md`; this file carries the rest.
 
 ## Composition & layout
 
