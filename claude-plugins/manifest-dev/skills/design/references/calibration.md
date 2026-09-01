@@ -1,6 +1,6 @@
 # Dated calibration — currently-overused looks
 
-**As of 2026-09.** This file rots in months and is refreshed by observation, not extended: every list of banned looks eventually mints the next cliché, because whatever replaces the banned default becomes the new default. So treat these as convergence attractors to avoid *where the choice is free* — a brief that asks for one gets it — and prefer the durable counter over growing this list: derive palette, faces, and signature moves from the subject's own world (`SKILL.md` Decision 2; `craft.md` style derivation).
+**As of 2026-09.** This file rots in months and is refreshed by observation, not extended: every list of banned looks eventually mints the next cliché, because whatever replaces the banned default becomes the new default. So treat these as convergence attractors to avoid *where the choice is free* — a brief that asks for one gets it — and prefer the durable counter over growing this list: derive palette, faces, and signature moves from the subject's own world (`SKILL.md` Decision 3; `craft.md` style derivation).
 
 ## Cliché clusters, by generation
 

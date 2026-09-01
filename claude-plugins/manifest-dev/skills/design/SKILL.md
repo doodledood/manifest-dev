@@ -1,16 +1,16 @@
 ---
 name: design
-description: 'Design and build user-visible artifacts — pages, dashboards, tools, documents, reports, decks, infographics, posters, forms, emails, games, explorables. Decides purpose and register before aesthetics, declares a token system before markup, holds functional craft floors (states, contrast, spacing, alignment), and verifies against renders and machine checks rather than intention. Use when creating or restyling anything a person will see and judge — including disposable prototypes rendered mid-deliberation to provoke a reaction, which run it at prototype weight: purpose, register, and legibility floors on the surface being judged, no verification loop, deliberate roughness kept everywhere else.'
+description: 'Design and build user-visible artifacts — pages, dashboards, tools, documents, reports, decks, infographics, posters, forms, emails, games, explorables. Names the purpose, then writes a task model — who is at it, the loop they repeat, what must stay co-visible during it — that the layout has to trace to, asking once where the brief does not carry the loop; then picks the register, declares a token system before markup, holds functional craft floors (states, contrast, spacing, alignment), and verifies against renders and machine checks rather than intention. Use when creating or restyling anything a person will see and judge — including disposable prototypes rendered mid-deliberation to provoke a reaction, which run it at prototype weight: purpose, task model, register, and legibility floors on the surface being judged, no verification loop, deliberate roughness kept everywhere else.'
 user-invocable: true
 ---
 
 # design — user-visible artifacts that work and are worth looking at
 
-Generated visual artifacts fail in three ways, and each needs its own counter. Styling effort lands on the wrong layer while the functional layer collapses — pages ship with no empty state, no error path, no undo. Stated principles do not survive into output — what holds is external evidence: a render, a machine check, a counted budget, never your own account of what you did. And unforced style choices converge on the same few looks — distinctiveness must be derived from the subject at hand, never sampled from habit.
+Generated visual artifacts fail in four ways, and each needs its own counter. Structure is drawn from habit rather than from the work the artifact supports — questions land under the thing they ask about, filters above the table, controls at the bottom of the form, whether or not the work can be done in that arrangement; the counter is a written model of that work, declared before layout and binding on it. Styling effort lands on the wrong layer while the functional layer collapses — pages ship with no empty state, no error path, no undo. Stated principles do not survive into output — what holds is external evidence: a render, a machine check, a counted budget, never your own account of what you did. And unforced style choices converge on the same few looks — distinctiveness must be derived from the subject at hand, never sampled from habit.
 
-So work through five decisions, in order. Each bounds the next; skipping one is where those failures enter.
+So work through six decisions, in order. Each bounds the next; skipping one is where those failures enter.
 
-**Purpose picks the metric, register picks the rules, tokens hold the system, floors guard the layer that collapses, and verification is external evidence per genre — with distinctiveness derived from the subject and spent only where the register allows.**
+**Purpose picks the metric, the task model picks the structure, register picks the rules, tokens hold the system, floors guard the layer that collapses, and verification is external evidence per genre — with distinctiveness derived from the subject and spent only where the register allows.**
 
 ## Decision 0 — name the purpose
 
@@ -25,7 +25,20 @@ State which one thing the artifact optimizes for. The four purposes want differe
 
 Difficulty belongs in the task, never in the surface: a retention artifact asks the reader to predict before revealing, on a maximally legible page. Hard-to-read styling teaches nothing and costs trust.
 
-## Decision 1 — name the register before any aesthetic choice
+## Decision 1 — model the task before any layout
+
+Purpose names what the artifact optimizes for. It does not name what the person at it actually *does*, and the doing is what structure has to follow. Write the model down before any layout — four lines, kept beside the token block and treated the same way:
+
+- **Who** — the person at the artifact, and what they already know when they arrive.
+- **The loop** — the one sequence they repeat, in verbs: *read the task → judge it → answer three questions → next*. One loop, the one that runs most. A sequence that runs rarely — setup, export, an admin correction — is a side path, and side paths never set the structure.
+- **Co-visible** — for each step of the loop, what has to be on screen *at the same time* for that step to happen without the person holding something in their head. This is the line that decides the arrangement: two things needed together cannot be a scroll apart, and this constraint binds before register, aesthetics, or any familiar layout does.
+- **Rate** — how often the loop runs and how long one pass takes. A loop run three hundred times a day earns keyboard paths and a dense arrangement that a once-a-quarter form must not spend on.
+
+The layout traces to this block. Before writing markup, take each region and name the line of the model that put it there; a region tracing to nothing is decoration or a missing model line, and which one it is gets decided on the spot — the same call as a value outside the token system. A layout that breaks a co-visibility pair is wrong however well it is made, and what gets revised on new evidence about the work is the model line, never the layout that traced to it.
+
+**When the brief does not carry the loop, ask — once, and narrowly.** Most briefs name an artifact and no work: *a page for labeling tasks* says nothing about whether the labeler judges one long document or fifty short strings. Ask for the loop and its co-visibility in one bounded question — two or three specifics, with the structural choice each answer would settle stated beside it, so the answer is cheap to give and visibly worth giving. Never open an interview, and never ask what the brief already settles. Where there is nobody to ask — an unattended run, an evaluation, a render made mid-deliberation — write the model down as an assumption, mark it as assumed, and build on it; the model is never left unstated, because an unstated model is the habit layout wearing the work's name.
+
+## Decision 2 — name the register before any aesthetic choice
 
 A **register** is the density, type, and visual-furniture regime a genre demands — how packed the layout runs, how type is scaled and weighted, how much decoration (borders, shadows, backgrounds, imagery) the genre tolerates. Naming it first is the highest-leverage single decision here: the register decides everything the aesthetics are allowed to do. The web/app registers:
 
@@ -46,7 +59,7 @@ Two rules that ride with the pick:
 
 The register also sets the *feeling* budget. Spectacle pays on first-contact surfaces where the visitor is judging the maker (launch pages, portfolios) and damages surfaces visited repeatedly or mid-task (tools, dashboards, forms, checkout) — on those, any surprise converts to pure latency on the second visit.
 
-## Decision 2 — declare tokens before markup
+## Decision 3 — declare tokens before markup
 
 Before any component, write a compact system block and derive everything from it:
 
@@ -59,9 +72,9 @@ This is where distinctiveness enters: derive palette and typefaces from the subj
 
 At the end of the build, audit that only token values appear. A value outside the system is either a defect or a missing token — decide which, on the spot.
 
-## Decision 3 — hold the floors
+## Decision 4 — hold the floors
 
-The floors are where generated output measurably collapses. They are checks against the artifact, never against your narration of it. The compressed checklist — full numbers and per-domain craft load from `references/floors.md` and `references/craft.md`; the full file also carries register fit as a floor of its own, which Decision 1 already covers here:
+The floors are where generated output measurably collapses. They are checks against the artifact, never against your narration of it. The compressed checklist — full numbers and per-domain craft load from `references/floors.md` and `references/craft.md`; the full file also carries register fit as a floor of its own, which Decision 2 already covers here:
 
 1. **States exist or the UI is unfinished.** Every dynamic region ships loading, empty (what would be here + how to get it), error (what failed, what to do, input preserved), and the happy path; destructive actions get undo or confirmation.
 2. **Contrast by number, not by eye.** Body text 4.5:1 minimum, secondary text included — de-emphasize by stepping shade, never below the floor.
@@ -77,7 +90,7 @@ The floors are where generated output measurably collapses. They are checks agai
 
 Floor-versus-polish priority is register-conditional: floors dominate tools, dashboards, and forms; on first-contact persuasion surfaces, polish *is* the floor. Both, not either, wherever the budget covers both.
 
-## Decision 4 — verify in the artifact's own behavior loop
+## Decision 5 — verify in the artifact's own behavior loop
 
 Never accept your own narration as evidence. The render or the machine check, only.
 
@@ -91,7 +104,7 @@ Never accept your own narration as evidence. The render or the machine check, on
 
 ## Prototype weight
 
-A disposable render made mid-deliberation to provoke a reaction — a prototype of an output still being deliberated, judged once and thrown away — runs this skill at reduced weight rather than skipping it. Decisions 0 and 1 still run in full: the purpose is the reaction being sought, and the register still gets picked, because a render in the wrong register draws reactions to the wrong thing. Declare a minimal token block, and hold the floors only where the fidelity concentrates — the surface the reaction is about must be legible: contrast by number, one spacing rhythm, an alignment spine, real copy. Everywhere else stays visibly unfinished, and finishing it is a defect at this weight: polish on an incidental region invites reaction to it, and on an artifact rendered to elicit criteria, a stray reaction hardens into a requirement. Skip Decision 4 entirely — the reader's reaction is the verification, and the artifact is disposed of either way.
+A disposable render made mid-deliberation to provoke a reaction — a prototype of an output still being deliberated, judged once and thrown away — runs this skill at reduced weight rather than skipping it. Decisions 0 through 2 still run in full: the purpose is the reaction being sought; the task model still gets written, because structure is most of what a prototype gets reacted to, and one in the wrong arrangement pulls the reaction onto the arrangement instead of onto the question the render was made to ask; and the register still gets picked, because a render in the wrong register draws reactions to the wrong thing. Declare a minimal token block, and hold the floors only where the fidelity concentrates — the surface the reaction is about must be legible: contrast by number, one spacing rhythm, an alignment spine, real copy. Everywhere else stays visibly unfinished, and finishing it is a defect at this weight: polish on an incidental region invites reaction to it, and on an artifact rendered to elicit criteria, a stray reaction hardens into a requirement. Skip Decision 5 entirely — the reader's reaction is the verification, and the artifact is disposed of either way.
 
 ## What loads
 
