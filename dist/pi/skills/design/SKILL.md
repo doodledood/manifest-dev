@@ -1,6 +1,6 @@
 ---
 name: design
-description: 'Design and build user-visible artifacts — pages, dashboards, tools, documents, reports, decks, infographics, posters, forms, emails, games, explorables. Decides purpose and register before aesthetics, declares a token system before markup, holds functional craft floors (states, contrast, spacing, alignment), and verifies against renders and machine checks rather than intention. Use when creating or restyling anything a person will see and judge. Not for deliberately rough throwaway sketches rendered mid-deliberation to provoke a reaction — roughness is the point there and this skill would polish it away.'
+description: 'Design and build user-visible artifacts — pages, dashboards, tools, documents, reports, decks, infographics, posters, forms, emails, games, explorables. Decides purpose and register before aesthetics, declares a token system before markup, holds functional craft floors (states, contrast, spacing, alignment), and verifies against renders and machine checks rather than intention. Use when creating or restyling anything a person will see and judge — including disposable prototypes rendered mid-deliberation to provoke a reaction, which run it at prototype weight: purpose, register, and legibility floors on the surface being judged, no verification loop, deliberate roughness kept everywhere else.'
 user-invocable: true
 ---
 
@@ -88,6 +88,10 @@ Never accept your own narration as evidence. The render or the machine check, on
 **Then the genre's own behavior probe.** Every genre is measured in a behavior loop a screenshot cannot see. For the web/app registers, the probes are these: open the dashboard and time how fast the one deviant number is found; read the document's headings and bold lines alone and check they carry the argument; walk the tool's primary action through failure and recovery with input preserved; on the landing page, state what is being offered and what to do next from five seconds of looking; play the game's loop twice and check the second run still gives feedback. Probes for every genre beyond these are listed with their registers in `references/registers.md`.
 
 **Editing is the common case, and it degrades.** Edits are generated against local context while the token system ages out of attention — by the tenth edit the spacing system no longer exists. Discipline: before any edit, re-read the token block and the register declaration; after any edit, re-run the machine checks and diff the changed values against the tokens.
+
+## Prototype weight
+
+A disposable render made mid-deliberation to provoke a reaction — a prototype of an output still being deliberated, judged once and thrown away — runs this skill at reduced weight rather than skipping it. Decisions 0 and 1 still run in full: the purpose is the reaction being sought, and the register still gets picked, because a render in the wrong register draws reactions to the wrong thing. Declare a minimal token block, and hold the floors only where the fidelity concentrates — the surface the reaction is about must be legible: contrast by number, one spacing rhythm, an alignment spine, real copy. Everywhere else stays visibly unfinished, and finishing it is a defect at this weight: polish on an incidental region invites reaction to it, and on an artifact rendered to elicit criteria, a stray reaction hardens into a requirement. Skip Decision 4 entirely — the reader's reaction is the verification, and the artifact is disposed of either way.
 
 ## What loads
 
