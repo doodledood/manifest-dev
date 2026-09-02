@@ -11,6 +11,8 @@ Per-domain checklists behind the floors; each rule is an action with its number 
 5. **A grid is an alignment minimizer.** One base spacing unit, few alignment edges, structure matched to task: columns for reading, modules for browsing and comparison.
 6. **Optical beats mathematical inside components; the layout spine stays mathematical.** Nudge asymmetric glyphs toward their visual center (a play triangle sits slightly right of geometric center); when a centered element looks wrong, believe the look. This never licenses breaking the layout-level alignment spine.
 7. **Macro whitespace is a register lever, not a virtue.** Generous space reads premium and calm; packed space reads utilitarian and urgent. Set it by what the subject world should signal, not by habit.
+8. **Repeated things are one object.** Siblings share edges, baselines, and internal spacing; the container's height comes from its content, never a fixed value that clips; a row never strands one item alone; clipped or overflowing text is a bug, not a styling choice.
+9. **One owner per property.** A class rule and an element rule competing for the same property is a defect: resolve it at the owner — restructure the selector or the markup — never with `!important` or a more specific override stacked on top.
 
 ## Motion
 
@@ -33,7 +35,7 @@ Per-domain checklists behind the floors; each rule is an action with its number 
 ## Imagery & icons
 
 1. **An image earns its place by answering a reader question.** Real-subject imagery draws attention; decorative stock is skipped. Default hero for reports, tools, and explainers is typographic or data-led. Illustration lives in empty states, errors, and onboarding — one spot, not one per section.
-2. **Generated imagery is admissible only where stock would be.** Mood slots yes; evidence slots never — no generated diagrams, charts, UI screenshots, or real people; a fabricated information-carrying image is a false claim. One style block reused verbatim across all images; never rasterize text inside a generated image.
+2. **Generated imagery is admissible only where stock would be.** This governs image-model output. Mood slots yes; evidence slots never — no generated diagrams, charts, UI screenshots, or real people; a fabricated information-carrying image is a false claim. One style block reused verbatim across all images; never rasterize text inside a generated image. A hand-drawn inline SVG figure or chart is not imagery but an information graphic: the task model's encoding line places it, `figures.md` governs how it is drawn, and no imagery or decoration budget removes it.
 3. **Icon craft has numbers.** 24px canvas, ~20px live area, 2px stroke, one stroke weight across the set; respect optical sizes (a 24px icon scaled to 16px loses its counters). Fill state is never the only selection signal.
 4. **Icons don't work alone.** Visible labels, not hover-only; if no icon comes to mind in 5 seconds, use text. The glyph is not the target — it sits inside the standard hit area.
 5. **Artifacts travel: design the link-card surface.** One social-preview image at 1200×630 designed as a poster read small — one message, title ≥60px on the canvas, safe margins; favicon as a single glyph drawn for 16px, checked against light and dark tabs.
