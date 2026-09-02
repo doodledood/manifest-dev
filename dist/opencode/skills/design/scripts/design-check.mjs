@@ -4,7 +4,9 @@
 // Usage: node design-check.mjs <file.html>
 //
 // Static checks always run (no browser needed): focus-visible presence,
-// reduced-motion gating, single-theme color definitions, spacing-rhythm drift.
+// reduced-motion gating, single-theme color definitions, spacing-rhythm drift,
+// and figures against structural content (a page carrying sequences,
+// definition lists, or comparison/flow vocabulary with no figure at all).
 // Render checks (text contrast, horizontal overflow at 390px, touch-target
 // size, transparent body background) run when Playwright with a Chromium
 // browser is available; otherwise they are reported as SKIPPED so the gap
@@ -128,6 +130,53 @@ if (distinct.length > 10) {
   );
 } else if (distinct.length) {
   ok.push(`spacing rhythm (${distinct.length} distinct values)`);
+}
+
+// Figures against structural content: a page whose subject is structural or
+// comparative — sequences, definition lists, comparison or flow vocabulary in
+// its headings — and which carries no figure at all is the signature of
+// content encoded as prose that a figure would carry. Heuristic: the
+// structural signals are counted, not judged, so a prose-only page over a
+// non-structural subject stays clean.
+const bodyHtml = html
+  .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+  .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
+const proseWords = bodyHtml
+  .replace(/<[^>]+>/g, " ")
+  .split(/\s+/)
+  .filter(Boolean).length;
+const figureCount = (bodyHtml.match(/<(svg|figure|img|canvas|picture|video)\b/gi) || []).length;
+const structuralSignals = [];
+const dlCount = [...bodyHtml.matchAll(/<dl\b[\s\S]*?<\/dl>/gi)].filter(
+  (m) => (m[0].match(/<dt\b/gi) || []).length >= 3,
+).length;
+if (dlCount) structuralSignals.push(`${dlCount} definition list(s) of 3+ terms`);
+const olCount = [...bodyHtml.matchAll(/<ol\b[\s\S]*?<\/ol>/gi)].filter(
+  (m) => (m[0].match(/<li\b/gi) || []).length >= 3,
+).length;
+if (olCount) structuralSignals.push(`${olCount} ordered list(s) of 3+ steps`);
+const headingText = [...bodyHtml.matchAll(/<(h[1-6]|caption|th)\b[^>]*>([\s\S]*?)<\/\1>/gi)]
+  .map((m) => m[2].replace(/<[^>]+>/g, " "))
+  .join(" | ");
+const flowWords = headingText.match(
+  /\b(vs\.?|versus|before|after|flow|flows|pipeline|lane|lanes|phase|phases|stack|architecture|stage|stages|lifecycle|state|states|route|routes|compare|comparison|option|options)\b|→|⇒/gi,
+) || [];
+if (flowWords.length)
+  structuralSignals.push(
+    `comparison/flow vocabulary in ${flowWords.length} heading(s) or table label(s)`,
+  );
+if (figureCount === 0 && proseWords >= 400 && structuralSignals.length >= 2) {
+  findings.push(
+    `figures: no figure on a page carrying structural content (${structuralSignals.join("; ")}; ${proseWords} words of prose) — a mechanism, comparison, or sequence assembled from prose that a figure would carry; see the task model's encoding line`,
+  );
+} else if (figureCount === 0 && proseWords >= 400 && structuralSignals.length === 1) {
+  notes.push(
+    `figures: none on a ${proseWords}-word page with ${structuralSignals[0]} — check the encoding line assigned that content to prose deliberately`,
+  );
+} else if (figureCount) {
+  ok.push(`figures (${figureCount} figure-bearing element(s))`);
+} else {
+  ok.push("figures (no structural content detected)");
 }
 
 // ---------- render checks ----------
