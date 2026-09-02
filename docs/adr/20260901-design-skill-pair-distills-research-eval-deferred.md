@@ -1,7 +1,7 @@
 # ADR: Design ships as a doer/evaluator skill pair distilling external research; effectiveness eval deferred
 
 ## Status
-Accepted
+Accepted — extended by 20260902-design-chooses-an-encoding-per-claim-figures-are-information-not-decoration: the distillation boundary in choice 3 now also covers material drawn from host-shipped skills, carried as rules without provenance or dependency on the host; a new `references/figures.md` joins the shared standards home. Placement, the pair, and the deferred eval all stand.
 
 ## Area
 Design skills
