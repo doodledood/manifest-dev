@@ -1,16 +1,22 @@
-# Judgment pass (premise check)
+---
+name: review-pr-judgment
+description: 'Called by review-pr in both of its modes: the whole-PR premise check that asks whether a change earns its keep against the pain it solves, firing only on concrete evidence and returning non-blocking author-facing questions, one per root, with no severity. Not for direct use.'
+user-invocable: false
+---
+
+# review-pr-judgment
 
 The reviewer-fleet dimensions find defects inside a change whose intent is taken as given — they drop anything the author chose deliberately. The judgment pass adds the one thing they structurally cannot: it asks whether the change **earns its keep** — whether it should exist, in this shape, at this footprint, given the pain it claims to solve.
 
 **The single question:** *Does this change — its existence, its approach, and its footprint — earn its keep against the pain it solves, and is anything the pain requires missing?*
 
-It runs as a **wide-context pass** — fed the PR description, conversation, and (in manifest mode) the manifest's Intent that the narrow-lens fleet never receives. It is **non-blocking**: every finding is a question the author answers, never a gate. (The host wires *how* it runs — a parallel subagent whose findings the coherence pass consolidates, gated to once per PR; see the review-pr SKILL and `MANIFEST_MODE.md`.)
+It runs as a **wide-context pass**. **Receives:** the PR description, the PR conversation, the codebase direction, the **full PR-head diff** (`base..head`, the whole PR), and, in manifest mode, the manifest's Intent as the stated pain — context the narrow-lens defect reviewers never see. It is **non-blocking**: every finding is a question the author answers, never a gate. The caller decides where this runs and gates fresh generation to once per PR; this skill only judges and returns.
 
 ## Altitude — whole-PR only
 
 The judgment pass operates on the **PR as a whole, or a major component of it** — the big question, never line-level ones. It must never fire on a small-item nitpick — an unused parameter, a single narrow helper, one incidental line; those belong to the defect dimensions or are dropped. The surface, omission, and precedent triggers fire only on a **material footprint**: a subsystem, a new public API area, a cluster of knobs, an established pattern — never a single incidental item.
 
-Whole-PR altitude is unconditional: whenever the pass runs, it reads the **entire PR head**, not just the incrementally-reviewed range on a loop or re-review pass, so its question always concerns the whole change. Judgment findings are therefore exempt from any reviewed-range bounding that scopes defect findings to the latest delta. (Because generation is gated to once per PR, the pass runs on the first pass over the PR rather than every round — the host owns that gate.)
+Whole-PR altitude is unconditional: whenever the pass runs, it reads the **entire PR head**, not just the incrementally-reviewed range on a loop or re-review pass, so its question always concerns the whole change. Judgment findings are therefore exempt from any reviewed-range bounding that scopes defect findings to the latest delta. (Because the caller gates generation to once per PR, the pass runs on the first pass over the PR rather than every round.)
 
 ## The evidence bar
 
@@ -56,14 +62,14 @@ A judgment finding is **not** placed on the defect severity scale (low / medium 
 { trigger, concrete evidence, author-facing question }
 ```
 
-and **no severity**. This is load-bearing, not cosmetic:
+and **no severity**. **Return shape:** the list of such findings, already collapsed to one per root (below), or an empty list. This is load-bearing, not cosmetic:
 
-- The holistic-coherence pass drops Low-severity findings before posting — the **only** place a drop-Low filter exists, and only because it posts publicly. A judgment finding tagged Low would be silently deleted there. So judgment findings are **exempt from the drop-Low filter** and carry their own inclusion rule: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
+- The caller's consolidation step drops Low-severity defect findings before posting — the **only** place a drop-Low filter exists, and only because it posts publicly. A judgment finding tagged Low would be silently deleted there. So judgment findings are **exempt from the drop-Low filter** and carry their own inclusion rule: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
 - No other context has a drop-Low filter. Manifest-mode contract verification and `/do` gate verification keep low findings by their own acceptance thresholds; the judgment class is orthogonal to all of that.
 
 ## Synthesis — one question per root
 
-When several triggers fire on the **same** root — necessity + solution-shape + surface all pointing at one over-built change — collapse them into **one** "does this earn its keep, here's why I ask" question. Never post one comment per trigger. The pass does this collapsing **itself, before returning**, so one-question-per-root holds in every mode (it does not depend on the no-manifest holistic pass — which merely dedupes the already-synthesized questions against the fleet's findings on top). Enumeration is exactly how this pass would become the noise it exists to remove.
+When several triggers fire on the **same** root — necessity + solution-shape + surface all pointing at one over-built change — collapse them into **one** "does this earn its keep, here's why I ask" question. Never post one comment per trigger. The pass does this collapsing **itself, before returning**, so one-question-per-root holds in every mode (it does not depend on any later consolidation step — which merely dedupes the already-synthesized questions against defect findings on top). Enumeration is exactly how this pass would become the noise it exists to remove.
 
 ## Non-blocking — always a question, never a gate
 
