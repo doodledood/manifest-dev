@@ -89,12 +89,13 @@ Resist jumping in mid-`/do`. It won't get everything first try — that's what t
 
 ## What's in it
 
-Two plugins ship from this repository:
+Three plugins ship from this repository:
 
 | Plugin | What it covers |
 |--------|----------------|
 | [`manifest-dev`](claude-plugins/manifest-dev) | The workflow itself, project setup, ticket authoring and execution, design build-and-review, and the review skills the criteria call on |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Pull-request collaboration, prompt work, teaching, explaining, and handoff between sessions |
+| [`manifest-dev-meta`](claude-plugins/manifest-dev-meta) | Maintainer-facing tooling for developing manifest-dev's own plugins. |
 
 Each plugin's README lists what it ships.
 
