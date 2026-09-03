@@ -96,7 +96,7 @@ grading it as a defect.
 
 This skill reviews **prose the user points it at**, on request, in any register.
 
-It does not overlap the `prose-value` dimension of `manifest-dev:review-code`, which asks a
+It does not overlap the `prose-value` dimension of `review-code`, which asks a
 different question on a different surface: whether prose *inside a code change* — code comments
 and repo doc files in a diff — earns its place at all. That dimension is diff-scoped and runs as
 part of a code review; this skill reads a whole text on demand and judges it against a style

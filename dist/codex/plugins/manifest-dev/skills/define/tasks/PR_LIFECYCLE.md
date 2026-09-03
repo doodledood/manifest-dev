@@ -17,7 +17,7 @@ Lifecycle verification composes through a single AC whose body activates the `ch
 ````markdown
 #### AC-N.M — The pull request is ready to merge
 
-Done when the manifest-dev:check-pr skill reports the pull request ready.
+Done when the check-pr skill reports the pull request ready.
 PR: https://github.com/<owner>/<repo>/pull/<N>
 Branch: <branch-name>
 

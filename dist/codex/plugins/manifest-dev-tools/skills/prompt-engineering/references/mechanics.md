@@ -30,7 +30,7 @@ Length follows the gap. A behaviour skill whose gap is *how* to approach a task 
 
 ## Agents
 
-Prefer a skill. A general-purpose agent told to activate a skill reproduces agent behaviour in nearly every case, and skills are portable across harnesses where agents need a representation per harness. Reach for an agent when you need what a skill cannot declare: a restricted tool allow-list, or an isolated model or subagent type.
+Prefer a skill. A general-purpose agent told to activate a skill reproduces agent behaviour in nearly every case, and skills are portable across harnesses where agents need a representation per harness. Reach for an agent when you need what a skill cannot declare: a restricted tool allow-list, or an isolated model or execution-context type.
 
 An agent starts with nothing — no parent conversation, no loaded files, no inherited permissions. The spawn prompt is its whole world, which creates two gaps nothing else closes:
 

@@ -120,6 +120,10 @@ def test_codex_core_plugin_bundles_code_review_with_all_dimensions() -> None:
 # --------------------------------------------------------------------------
 
 OPENCODE = DIST / "opencode"
+SOURCE_SKILL_ROOTS = (
+    ROOT / "claude-plugins" / "manifest-dev" / "skills",
+    ROOT / "claude-plugins" / "manifest-dev-tools" / "skills",
+)
 
 
 def test_opencode_ships_no_installer_artifacts() -> None:
@@ -129,6 +133,7 @@ def test_opencode_ships_no_installer_artifacts() -> None:
         "install_helpers.py",
         "component-namespaces.json",
         "commands",
+        "skills",
     ):
         assert not (
             OPENCODE / retired
@@ -157,7 +162,8 @@ def test_opencode_plugin_entry_shape() -> None:
 
 
 def test_opencode_plugin_config_hook_registers_payload(tmp_path: Path) -> None:
-    """The config hook appends package-local skills.paths, command wrappers, and instructions."""
+    """The config hook appends the source skill directories to skills.paths, registers
+    command wrappers for user-invocable skills, and adds the instructions file."""
     script = tmp_path / "smoke.mjs"
     script.write_text(
         f"""
@@ -179,7 +185,7 @@ console.log(JSON.stringify(cfg))
     cfg = json.loads(result.stdout)
     assert cfg["skills"]["paths"] == [
         "/user/existing",
-        (OPENCODE / "skills").as_posix(),
+        *(root.as_posix() for root in SOURCE_SKILL_ROOTS),
     ]
     assert cfg["instructions"] == ["USER.md", (OPENCODE / "AGENTS.md").as_posix()]
 
@@ -198,9 +204,12 @@ console.log(JSON.stringify(cfg))
     )
     assert "done" not in commands
     assert "escalate" not in commands
+    assert "poll-slack" not in commands
+    assert "review-pr-judgment" not in commands
     expected_commands = {
         path.name
-        for path in (OPENCODE / "skills").iterdir()
+        for root in SOURCE_SKILL_ROOTS
+        for path in root.iterdir()
         if path.is_dir()
         and "user-invocable: false"
         not in (path / "SKILL.md").read_text(encoding="utf-8").split("---", 2)[1]
@@ -234,14 +243,11 @@ console.log(JSON.stringify(cfg))
     assert json.loads(result.stdout) == {}
 
 
-def test_opencode_bundles_all_skills_under_original_names() -> None:
-    skills_dir = OPENCODE / "skills"
-    skills = {p.name for p in skills_dir.iterdir() if p.is_dir()}
-    assert {"define", "do", "auto", "review-code", "check-pr"} <= skills
-    assert set(TOOLS_SKILLS) <= skills
-    for skill in skills:
-        skill_md = skills_dir / skill / "SKILL.md"
-        assert skill_md.is_file()
-        # Native discovery requires frontmatter name == directory name.
-        frontmatter = skill_md.read_text(encoding="utf-8").split("---", 2)[1]
-        assert f"name: {skill}" in frontmatter, f"{skill}: frontmatter name mismatch"
+def test_opencode_registers_every_source_skill_root() -> None:
+    index = (OPENCODE / "plugin" / "index.js").read_text(encoding="utf-8")
+    for root in SOURCE_SKILL_ROOTS:
+        assert root.is_dir()
+        assert {"define", "do", "auto", "review-code", "check-pr"} <= {
+            p.name for r in SOURCE_SKILL_ROOTS for p in r.iterdir() if p.is_dir()
+        }
+    assert '"claude-plugins", plugin, "skills"' in index
