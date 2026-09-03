@@ -1,7 +1,7 @@
 # ADR: Keep the plugin-first repo layout; no restructure for skill-picker distribution
 
 ## Status
-Accepted
+Accepted; narrowed by [20260903-shipped-skills-are-host-neutral-and-distributions-read-source](20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md) — the layout stands, but the `metadata: internal: true` follow-up is withdrawn for runtime dependencies (they ship as `user-invocable: false` instead) and the sync-tools rewrite is retired in favor of distributions that read the source tree.
 
 ## Area
 Repo layout
