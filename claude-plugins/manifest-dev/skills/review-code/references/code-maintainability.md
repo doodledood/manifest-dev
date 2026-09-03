@@ -139,7 +139,7 @@ The shared severity ladder applies; this dimension refines it as follows.
 
 - **Read full files before flagging.** A diff alone lacks context — code that looks duplicated in isolation may serve different purposes when you see the full picture.
 - **Be specific and actionable**: always reference exact file paths, line numbers, and code snippets; every issue needs a concrete, implementable fix suggestion.
-- **Account for project conventions** from CLAUDE.md files and existing patterns.
+- **Account for project conventions** from the project context file and existing patterns.
 - **Common false positives to avoid**:
   - Test file duplication (test setup repetition is often intentional for isolation).
   - Type definitions that mirror API contracts (not duplication — documentation).

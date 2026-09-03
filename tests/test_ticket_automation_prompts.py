@@ -26,7 +26,7 @@ def test_run_ticket_has_exact_input_and_dispatch_boundaries() -> None:
     assert "Never scan the store, rank work, or invoke `next-ticket`" in text
     assert "Do not check for the Auto grant to decide whether to begin" in text
     assert "a person may invoke\n`run-ticket` on an ungranted Ticket" in text
-    assert "Invoke `manifest-dev:auto`" in text
+    assert "Invoke `auto`" in text
     assert "A conflicting human claim stops the attempt" in text
 
 
@@ -40,7 +40,7 @@ def test_run_ticket_recovers_and_lands_before_done() -> None:
     assert "one stable branch for the life of the Ticket" in text
     assert "Discover and reuse the pull request" in text
     assert "Push coherent checkpoints" in text
-    assert "Activate the\n`manifest-dev:check-pr` skill" in text
+    assert "Activate the\n`check-pr` skill" in text
     assert "Immediately before any irreversible landing" in text
     assert "requires Auto still to\nbe present" in text
     assert "merge through the venue's\nnormal protected mechanism" in text
@@ -68,7 +68,7 @@ def test_run_ticket_preserves_ticket_identity_and_routes_follow_ups() -> None:
     assert "Leave the Ticket open" in text
     assert "Escalation ends this attempt, not the work" in flat(text)
     assert "Never close the source or\ncreate a replacement Ticket" in text
-    assert "invoke `manifest-dev:ticket-up`" in text
+    assert "invoke `ticket-up`" in text
     assert "Never write a follow-up directly to the venue" in text
 
 
@@ -135,7 +135,7 @@ def test_sweep_tickets_recovers_first_and_runs_at_most_one() -> None:
     assert "**Otherwise start ready work.**" in text
     assert "Human-assigned Tickets are paused" in text
     assert "Never mutate any claim during selection" in flat(text)
-    assert "Invoke the `manifest-dev:run-ticket` skill" in text
+    assert "Invoke the `run-ticket` skill" in text
     assert "Do not invoke `next-ticket`" in text
     assert "Do not select a second Ticket" in text
 
@@ -145,8 +145,8 @@ def test_trigger_adapter_contract_stays_thin_and_recoverable() -> None:
         SOURCE_SKILLS / "ticket-up" / "references" / "AUTOMATED_EXECUTION.md"
     ).read_text(encoding="utf-8")
 
-    assert "Invoke the manifest-dev:run-ticket skill" in text
-    assert "Invoke the manifest-dev:sweep-tickets skill" in text
+    assert "Invoke the run-ticket skill" in text
+    assert "Invoke the sweep-tickets skill" in text
     assert "**Per-Ticket single-flight.**" in text
     assert "**Finite runner retries.**" in text
     assert "**Terminal runner-failure handoff.**" in text
@@ -278,8 +278,6 @@ def test_human_picker_needs_no_escalation_special_case() -> None:
 def test_ticket_execution_skills_ship_on_every_distribution() -> None:
     for skills_root in [
         ROOT / "dist" / "codex" / "plugins" / "manifest-dev" / "skills",
-        ROOT / "dist" / "opencode" / "skills",
-        ROOT / "dist" / "pi" / "skills",
     ]:
         text = skill_text(skills_root, "run-ticket")
 

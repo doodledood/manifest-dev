@@ -19,7 +19,7 @@ Pinned mocks, references, and reaction-pinned criteria land on the fidelity gate
 
 *Domain best practices for this task type.*
 
-- **Build with the design skill** — Invoke the `manifest-dev:design` skill when creating or restyling the artifact; it front-loads the purpose decision, the task model the layout must trace to, the register, the token system, and the floor checklist the gate will later judge
+- **Build with the design skill** — Invoke the `design` skill when creating or restyling the artifact; it front-loads the purpose decision, the task model the layout must trace to, the register, the token system, and the floor checklist the gate will later judge
 - **Screenshot as you build** — Render and look at each changed surface during development, not only at review time; a layout defect caught mid-build costs a tweak, one caught at the gate costs a repair round
 - **Develop against realistic content** — Real-length text, real data shapes, non-square images; placeholder-sized content hides the truncation, wrapping, and spacing defects the review will find
 - **Keep pinned references in view** — Where the user reacted to a mock, reference, or option during definition, keep that artifact at hand while implementing rather than reconstructing it from memory

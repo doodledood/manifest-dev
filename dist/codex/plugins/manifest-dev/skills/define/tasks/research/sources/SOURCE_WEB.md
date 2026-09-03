@@ -6,7 +6,7 @@ Composes with `RESEARCH.md` (base for all research tasks). This file provides we
 
 ## Compressed Awareness
 
-**Web-researcher sub-agent delegation** — For multi-facet web research, delegate orthogonal sub-topics to parallel web-researcher sub-agents (each gets assigned AND excluded scope). Main agent decomposes, coordinates, and synthesizes — never searches directly. Search coverage improves dramatically: simple keyword searches miss 60-72% of relevant content; multiple semantically distinct query formulations are essential.
+**Delegated web research** — For multi-facet web research, delegate orthogonal sub-topics to parallel isolated execution contexts (each gets assigned AND excluded scope); where no isolated context is available, work the sub-topics one at a time inline, each as a fresh pass. The coordinating session decomposes, coordinates, and synthesizes — never searches directly. Search coverage improves dramatically: simple keyword searches miss 60-72% of relevant content; multiple semantically distinct query formulations are essential.
 
 ## Quality Gates
 
@@ -43,7 +43,7 @@ Instantiates RESEARCH.md's abstract source rigor gates for web sources:
 
 *Domain best practices for web research.*
 
-- **Web-researcher sub-agent delegation** — Parallel web-researcher sub-agents for multi-facet web research, each with assigned AND excluded scope
+- **Delegated web research** — Parallel isolated execution contexts for multi-facet web research, each with assigned AND excluded scope, worked sequentially inline where none is available
 - **Multi-query coverage** — Multiple semantically distinct query formulations per research facet. Single-query passes miss 60-72% of relevant content
 - **Iterative reformulation** — Terminology from found sources seeds follow-up searches (pearl growing)
 - **Vocabulary expansion** — Synonym variants, alternative phrasings, and domain-specific terminology to overcome vocabulary mismatch barriers

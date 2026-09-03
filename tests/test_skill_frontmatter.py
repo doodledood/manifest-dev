@@ -676,3 +676,185 @@ def test_detector_accepts_valid_shapes() -> None:
     assert (
         not false_positives
     ), f"detector rejected valid frontmatter: {false_positives}"
+
+
+# ---------------------------------------------------------------------------
+# Host-neutral shipped text
+# ---------------------------------------------------------------------------
+#
+# Every host reads the same skill files — OpenCode and Pi point at
+# claude-plugins/*/skills, Codex carries a byte-identical copy, and the skills.sh
+# picker installs the plugin copies — so a word one harness uses for a capability
+# every harness has makes the text wrong everywhere else. These rules hold over
+# every shipped markdown file. Exempt: HTML comments (runtime literals matched
+# across hosts, never prose a reader resolves) and the research digests under
+# references/research/, which describe other systems in their own words.
+
+SHIPPED_SKILL_ROOTS = (
+    ROOT / "claude-plugins" / "manifest-dev" / "skills",
+    ROOT / "claude-plugins" / "manifest-dev-tools" / "skills",
+)
+HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
+RESEARCH_DIGEST = "references/research/"
+PLUGIN_QUALIFIER = re.compile(r"manifest-dev(?:-tools)?:(?=[a-z])")
+HOST_TOOL_NAMES = re.compile(
+    r"\b(?:WebFetch|WebSearch|AskUserQuestion|TodoWrite)\b"
+    r"|\b(?:Task|Skill|Bash) tool\b"
+)
+CONTEXT_FILE_NAME = "CLAUDE.md"
+OTHER_CONTEXT_FILE_NAME = "AGENTS.md"
+LAUNCH_VERB = re.compile(r"\bsub-?agents?\b", re.IGNORECASE)
+# A delegation site: prose telling the reader to run work in another execution
+# context. Each must carry, in the same paragraph, what to do on a host without one.
+DELEGATION = re.compile(
+    r"\b[Ll]aunch (?:one|an|a|each|every)\b[^.\n]{0,120}"
+    r"\b(?:isolated (?:execution )?contexts?|verifier executions?)\b"
+)
+FALLBACK = re.compile(
+    r"\binline\b|\bwhere none is available\b|\bno such (?:capability|context)\b"
+    r"|\bno isolated (?:execution )?context\b"
+)
+
+
+def shipped_markdown() -> list[Path]:
+    files = [
+        path for root in SHIPPED_SKILL_ROOTS for path in sorted(root.rglob("*.md"))
+    ]
+    assert files, "no shipped markdown found"
+    return files
+
+
+def in_research_digest(path: Path) -> bool:
+    return RESEARCH_DIGEST in path.as_posix()
+
+
+def outside_html_comments(text: str) -> str:
+    return HTML_COMMENT.sub("", text)
+
+
+def line_hits(text: str, pattern: re.Pattern[str]) -> list[int]:
+    return [
+        number
+        for number, line in enumerate(text.splitlines(), 1)
+        if pattern.search(line)
+    ]
+
+
+def test_shipped_text_names_no_plugin_qualifier_outside_html_comments() -> None:
+    problems = []
+    for path in shipped_markdown():
+        prose = outside_html_comments(path.read_text(encoding="utf-8"))
+        for number in line_hits(prose, PLUGIN_QUALIFIER):
+            problems.append(
+                f"{path.relative_to(ROOT)}:{number}: plugin-qualified skill id"
+            )
+    assert not problems, "\n".join(problems)
+
+
+def test_shipped_text_names_no_host_tool() -> None:
+    problems = []
+    for path in shipped_markdown():
+        text = path.read_text(encoding="utf-8")
+        for number in line_hits(text, HOST_TOOL_NAMES):
+            problems.append(f"{path.relative_to(ROOT)}:{number}: host tool name")
+    assert not problems, "\n".join(problems)
+
+
+def test_shipped_text_names_the_context_file_only_where_it_detects_or_compares() -> (
+    None
+):
+    """`CLAUDE.md` is one harness's instance of the project context file. A file may
+    name it only as one of several (a detection table or a comparison also naming
+    `AGENTS.md`) or inside a research digest."""
+    problems = []
+    for path in shipped_markdown():
+        if in_research_digest(path):
+            continue
+        text = path.read_text(encoding="utf-8")
+        if CONTEXT_FILE_NAME in text and OTHER_CONTEXT_FILE_NAME not in text:
+            for number, line in enumerate(text.splitlines(), 1):
+                if CONTEXT_FILE_NAME in line:
+                    problems.append(
+                        f"{path.relative_to(ROOT)}:{number}: names {CONTEXT_FILE_NAME} alone"
+                    )
+    assert not problems, "\n".join(problems)
+
+
+def test_shipped_text_never_names_a_subagent_outside_research_digests() -> None:
+    problems = []
+    for path in shipped_markdown():
+        if in_research_digest(path):
+            continue
+        text = path.read_text(encoding="utf-8")
+        for number in line_hits(text, LAUNCH_VERB):
+            problems.append(f"{path.relative_to(ROOT)}:{number}: names a subagent")
+    assert not problems, "\n".join(problems)
+
+
+def test_every_delegation_site_carries_an_inline_fallback() -> None:
+    problems = []
+    for path in shipped_markdown():
+        if in_research_digest(path):
+            continue
+        text = path.read_text(encoding="utf-8")
+        for paragraph in re.split(r"\n[ \t]*\n", text):
+            if DELEGATION.search(paragraph) and not FALLBACK.search(paragraph):
+                first = paragraph.strip().splitlines()[0][:80]
+                problems.append(f"{path.relative_to(ROOT)}: no fallback near {first!r}")
+    assert not problems, "\n".join(problems)
+
+
+def test_no_shipped_skill_is_marked_internal() -> None:
+    """`metadata.internal` reads as "do not install" to skill pickers, which dropped
+    /do's own dependencies. A dependency ships as user-invocable: false instead."""
+    problems = []
+    for root in SHIPPED_SKILL_ROOTS:
+        for skill_md in sorted(root.glob("*/SKILL.md")):
+            block = frontmatter_block(skill_md.read_text(encoding="utf-8")) or []
+            if any(line.strip().startswith("internal:") for line in block):
+                problems.append(f"{skill_md.relative_to(ROOT)}: metadata.internal")
+    assert not problems, "\n".join(problems)
+
+
+SKILL_REFERENCE = re.compile(
+    r"(?:invoke|activate|activates|activating|launch|run|runs|running|delegate|delegates)"
+    r"[^.\n]{0,60}?the `([a-z0-9-]+)` skill",
+    re.IGNORECASE,
+)
+
+
+def test_every_skill_a_shipped_skill_names_ships_beside_it() -> None:
+    shipped = {
+        path.name
+        for root in SHIPPED_SKILL_ROOTS
+        for path in root.iterdir()
+        if path.is_dir()
+    }
+    problems = []
+    for path in shipped_markdown():
+        text = outside_html_comments(path.read_text(encoding="utf-8"))
+        for match in SKILL_REFERENCE.finditer(text):
+            name = match.group(1)
+            if name not in shipped:
+                problems.append(
+                    f"{path.relative_to(ROOT)}: names `{name}`, which does not ship"
+                )
+    assert not problems, "\n".join(problems)
+
+
+def test_every_dependency_only_skill_is_not_user_invocable() -> None:
+    """A skill whose description says another skill calls it is a dependency and
+    must not appear in slash menus."""
+    problems = []
+    for root in SHIPPED_SKILL_ROOTS:
+        for skill_md in sorted(root.glob("*/SKILL.md")):
+            text = skill_md.read_text(encoding="utf-8")
+            block = frontmatter_block(text) or []
+            description = declared_description(text)
+            called = re.search(r"\b[Cc]alled by\b", description) is not None
+            hidden = any(line.strip() == "user-invocable: false" for line in block)
+            if called and not hidden:
+                problems.append(
+                    f"{skill_md.relative_to(ROOT)}: called-by skill is user-invocable"
+                )
+    assert not problems, "\n".join(problems)

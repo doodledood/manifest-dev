@@ -12,12 +12,11 @@ def test_pi_package_is_skill_and_prompt_only() -> None:
 
     assert package["name"] == "@doodledood/manifest-dev-pi"
     assert re.fullmatch(r"\d+\.\d+\.\d+", package["version"])
-    pi_reference = (
-        ROOT / ".claude" / "skills" / "sync-tools" / "references" / "pi-cli.md"
-    ).read_text(encoding="utf-8")
-    assert f'"version": "{package["version"]}"' in pi_reference
     assert package["pi"] == {
-        "skills": ["./dist/pi/skills"],
+        "skills": [
+            "./claude-plugins/manifest-dev/skills",
+            "./claude-plugins/manifest-dev-tools/skills",
+        ],
         "prompts": ["./dist/pi/prompts"],
     }
     assert "extensions" not in package["pi"]
@@ -45,9 +44,7 @@ def test_pi_runtime_fanout_symbols_are_absent_from_live_sources() -> None:
     live_paths = [
         ROOT / "package.json",
         ROOT / "dist" / "pi" / "README.md",
-        ROOT / "dist" / "pi" / ".sync-meta.json",
-        ROOT / "dist" / "pi" / "component-namespaces.json",
-        ROOT / ".claude" / "skills" / "sync-tools" / "references" / "pi-cli.md",
+        ROOT / ".claude" / "skills" / "sync-tools" / "SKILL.md",
     ]
     stale = [
         "manifest-verifier-max-concurrent",

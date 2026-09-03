@@ -8,7 +8,7 @@ user-invocable: true
 Encode the conversation's shared understanding as a Manifest at
 `~/.manifest-dev/manifests/manifest-<ts>.md` (create the dir); how you interview
 is yours. No shared understanding in the transcript → invoke
-manifest-dev:just-figure-out first. A manifest path in the arguments means
+just-figure-out first. A manifest path in the arguments means
 amend: targeted changes only, IDs stable, no renumbering.
 
 The Manifest is the acceptance contract — what the user accepts as "I'd ship

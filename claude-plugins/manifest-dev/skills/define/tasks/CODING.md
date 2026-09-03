@@ -4,7 +4,7 @@ Base guidance for all code-change tasks (features, bugs, refactors).
 
 ## Quality Gates
 
-CLAUDE.md may specify project-specific preferences.
+The project context file (the always-loaded instruction file the harness reads for this project, resolved by detection rather than assumed by name) may specify project-specific preferences.
 
 ### Base Gates (always applicable)
 
@@ -22,7 +22,7 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 | Documentation | docs | no MEDIUM+ |
 | Design fitness | code-design | no MEDIUM+ |
 | Prose value | prose-value | no MEDIUM+ |
-| CLAUDE.md adherence | context-file-adherence | no MEDIUM+ |
+| Context-file adherence | context-file-adherence | no MEDIUM+ |
 
 ### Conditional Gates (when applicable)
 
@@ -31,13 +31,13 @@ Each gate is a **dimension** of the `review-code` skill (one ref per dimension, 
 | Contract correctness | contracts | no LOW+ | When code calls external/internal APIs, changes public interfaces, crosses service boundaries, or changes durable data contracts (API/event payloads, database schema/table-field semantics, exports, analytics feeds) |
 | Type safety | type-safety | no LOW+ | When using typed languages (TypeScript, Python with type hints, Java/Kotlin, Go, Rust, C#) |
 
-**Encoding:** each dimension gate's body tells `/do`'s selected evaluator to **activate** the `manifest-dev:review-code` skill for the dimension — e.g. *"Done when the manifest-dev:review-code skill, activated with dimension=code-bugs, reports nothing at or above that dimension's threshold."* Name the dimension and stop: `review-code` owns every threshold in its own table, and a bar copied into a gate is a second statement that can contradict the skill the gate activates. The thresholds in the table above orient the author, not the gate. Do not tell the evaluator to spawn another agent; a nested spawn drops the gate's PASS/FAIL/BLOCKED contract. See `define/SKILL.md` → "Encoding specialized gates".
+**Encoding:** each dimension gate's body tells `/do`'s selected evaluator to **activate** the `review-code` skill for the dimension — e.g. *"Done when the review-code skill, activated with dimension=code-bugs, reports nothing at or above that dimension's threshold."* Name the dimension and stop: `review-code` owns every threshold in its own table, and a bar copied into a gate is a second statement that can contradict the skill the gate activates. The thresholds in the table above orient the author, not the gate. Do not tell the evaluator to spawn another agent; a nested spawn drops the gate's PASS/FAIL/BLOCKED contract. See `define/SKILL.md` → "Encoding specialized gates".
 
 **Kind:** every dimension gate is a **Judgment Gate** — a reviewer's verdict over an open finding space, not a command outcome — so each declares the judgment kind, which is what tells `/do` how the gate re-verifies. The defect-finding dimensions above run alongside the project's mechanical gates below (typecheck, lint, test, format), which are Deterministic Gates — and an overlay task file may add a defect-finding dimension, as `BUG.md` adds `defect-class`. The advisory dimensions above are the whole-change quality sweep, and `/do` already spends their one full look once the mechanical and defect-finding gates are settled — no gate has to ask for that.
 
 ## Project Gates
 
-CLAUDE.md specifies project gates (typecheck, lint, test, format). These become Global Invariants.
+The project context file specifies project gates (typecheck, lint, test, format). These become Global Invariants.
 
 ## E2E Verification
 
@@ -56,7 +56,7 @@ Principle: **manifest criteria are for what you want independently fix-targeted;
 *Domain best practices for this task type.*
 
 - **Run existing tests before modifying test files** — Verify current test state before changing tests; prevents masking pre-existing failures
-- **Read project gates from CLAUDE.md** — Discover project-specific commands (typecheck, lint, test, format) before implementation
+- **Read project gates from the project context file** — Discover project-specific commands (typecheck, lint, test, format) before implementation
 - **Agree test seams before authoring tests** — Settle which public boundaries tests exercise before writing them, and assert behavior through those interfaces rather than internals; a test that breaks under refactor without a behavior change sits at the wrong seam
 - **Vertical slices, not bulk test-first** — One test, minimal implementation, repeat; writing all tests up front verifies imagined behavior and commits to test structure before the implementation has taught anything
 

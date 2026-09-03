@@ -30,8 +30,8 @@ Record compact checkpoint notes as work proceeds: what changed, what was verifie
 Stop only when blocked on something a person must resolve.
 ```
 
-Then: where shared understanding is missing, invoke manifest-dev:just-figure-out
-with the task and `--autonomous`; invoke manifest-dev:just-define; invoke
-manifest-dev:just-do with the Manifest path just-define reports; the chain goal
+Then: where shared understanding is missing, invoke just-figure-out
+with the task and `--autonomous`; invoke just-define; invoke
+just-do with the Manifest path just-define reports; the chain goal
 already owns the backstop, so just-do continues under it. No path → stop and
 report.

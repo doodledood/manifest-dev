@@ -94,7 +94,7 @@ When no source file exists for a relevant source type, the general quality gates
 
 *Domain best practices for this task type.*
 
-- **Multi-agent delegation** — For multi-facet research, delegate orthogonal sub-topics to parallel source-type-appropriate sub-agents (each gets assigned AND excluded scope). Main agent decomposes, coordinates, and synthesizes — never researches directly
+- **Delegated research** — For multi-facet research, delegate orthogonal sub-topics to parallel isolated execution contexts, one per source type (each gets assigned AND excluded scope); where no isolated context is available, work the sub-topics one at a time inline, each as a fresh pass. The coordinating session decomposes, coordinates, and synthesizes — never researches directly
 - **Parallel verification over serial** — Multiple agents independently checking the same claims, not serial chains where each builds on the last
 - **Sycophancy-aware framing** — Frame research questions to avoid implying expected findings. Include explicit counter-hypothesis: "research X, including evidence X does NOT hold"
 - **Rigor-task fit** — Formal rigor for novel, uncertain, or multi-source synthesis. Simpler heuristics for well-structured, single-source tasks

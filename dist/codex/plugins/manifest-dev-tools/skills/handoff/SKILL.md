@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: 'Produce a self-contained context payload that lets a fresh agent continue without re-deriving what this session established. Use for cross-boundary transfer such as switching tools, starting a clean session, or handing off to another agent, and for DIY sub-agent flows where a focused side-session returns context to the parent.'
+description: 'Produce a self-contained context payload that lets a fresh agent continue without re-deriving what this session established. Use for cross-boundary transfer such as switching tools, starting a clean session, or handing off to another agent, and for DIY delegation flows where a focused side-session returns context to the parent.'
 argument-hint: '<what the next session is for>'
 user-invocable: true
 ---

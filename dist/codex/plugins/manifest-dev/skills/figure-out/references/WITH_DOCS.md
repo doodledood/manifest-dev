@@ -16,7 +16,7 @@ When project docs are active, that frame has three explicit exceptions. **Glossa
 
 **Load the project's `NORTH_STAR.md` when it exists** — the standing strategy surface the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read. Load the project's `docs/NORTH_STAR_CONVENTIONS.md` beside it when one exists: it owns the document's form — fields, states, rendering — and where it or the doc's own header differs from anything remembered here, the project's copy wins; cadence, below, stays this skill's.
 
-**No CONTEXT.md and no `docs/adr/` at all** — the project has never been set up. Offer `manifest-dev:init-context`, which installs the conventions file, the glossary, and the context-file wiring in one pass and can seed them from the project's own history. On accept, invoke it and continue from what it produced. On decline, fall through to the minimal path below and don't re-offer.
+**No CONTEXT.md and no `docs/adr/` at all** — the project has never been set up. Offer `init-context`, which installs the conventions file, the glossary, and the context-file wiring in one pass and can seed them from the project's own history. On accept, invoke it and continue from what it produced. On decline, fall through to the minimal path below and don't re-offer.
 
 Then resolve the active context file and load it if it exists:
 

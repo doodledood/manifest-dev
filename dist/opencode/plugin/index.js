@@ -1,8 +1,9 @@
 // manifest-dev OpenCode plugin.
 //
-// Registers the sibling `../skills` payload via `skills.paths` and the sibling
-// `../AGENTS.md` via `instructions`, both resolved from this file's location so
-// the clone can live anywhere. The `config` hook mutates the live merged config
+// Registers the plugin source skill directories (`claude-plugins/*/skills` at the
+// repo root) via `skills.paths` and the sibling `../AGENTS.md` via `instructions`,
+// all resolved from this file's location so the clone can live anywhere. OpenCode
+// reads the same files the Claude Code plugin ships; there is no per-host copy. The `config` hook mutates the live merged config
 // once at startup (verified on opencode 1.2.16 → 1.17.3; see ../README.md).
 //
 // Failure-soft by design: a missing asset logs a warning instead of throwing,
@@ -14,6 +15,10 @@ import { join } from "node:path"
 import { fileURLToPath } from "node:url"
 
 const distRoot = fileURLToPath(new URL("..", import.meta.url))
+const repoRoot = fileURLToPath(new URL("../../..", import.meta.url))
+const SKILL_SOURCES = ["manifest-dev", "manifest-dev-tools"].map((plugin) =>
+  join(repoRoot, "claude-plugins", plugin, "skills"),
+)
 
 const stripYamlQuotes = (value) => {
   const trimmed = value.trim()
@@ -77,13 +82,14 @@ export const ManifestDevPlugin = async () => {
   return {
     config: async (cfg) => {
       try {
-        const skillsDir = join(distRoot, "skills")
-        if (existsSync(skillsDir)) {
-          cfg.skills = cfg.skills ?? {}
-          cfg.skills.paths = [...(cfg.skills.paths ?? []), skillsDir]
-          registerSkillCommandWrappers(cfg, skillsDir)
-        } else {
-          console.warn(`[manifest-dev] skills directory not found, skipping: ${skillsDir}`)
+        for (const skillsDir of SKILL_SOURCES) {
+          if (existsSync(skillsDir)) {
+            cfg.skills = cfg.skills ?? {}
+            cfg.skills.paths = [...(cfg.skills.paths ?? []), skillsDir]
+            registerSkillCommandWrappers(cfg, skillsDir)
+          } else {
+            console.warn(`[manifest-dev] skills directory not found, skipping: ${skillsDir}`)
+          }
         }
 
         const agentsFile = join(distRoot, "AGENTS.md")

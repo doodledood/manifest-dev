@@ -52,7 +52,7 @@ and stop without a write.
 
 ## Run and stop
 
-Invoke the `manifest-dev:run-ticket` skill with the chosen Ticket's canonical reference and the
+Invoke the `run-ticket` skill with the chosen Ticket's canonical reference and the
 complete current venue context. Do not invoke `next-ticket`: it is a human selector, does not
 filter on Auto, and stops after presentation.
 

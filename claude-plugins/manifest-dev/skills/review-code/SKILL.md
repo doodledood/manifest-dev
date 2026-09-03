@@ -1,6 +1,6 @@
 ---
 name: review-code
-description: 'Review a change along one specific quality dimension — bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, defect-class completeness after a fix, or CLAUDE.md adherence. Loads exactly one dimension reference and audits the diff against it, returning a structured PASS/FAIL report with severities. Use when verifying a change before merge, auditing a diff for a named concern, or running a manifest acceptance gate.'
+description: 'Review a change along one specific quality dimension — bugs, design, simplicity, maintainability, testability, test quality, type safety, contracts, operational readiness, docs, prose value, change intent, defect-class completeness after a fix, or context-file adherence. Loads exactly one dimension reference and audits the diff against it, returning a structured PASS/FAIL report with severities. Use when verifying a change before merge, auditing a diff for a named concern, or running a manifest acceptance gate.'
 user-invocable: true
 ---
 
