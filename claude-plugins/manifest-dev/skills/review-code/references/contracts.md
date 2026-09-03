@@ -71,7 +71,7 @@ Verify that changes to interfaces, public APIs, or contracts don't break existin
 **Every finding MUST cite evidence.** Evidence-based verification, not speculation, is what this dimension is for.
 
 **Acceptable evidence sources:**
-- **API documentation** — fetched via WebFetch from official docs, API reference pages, or OpenAPI/Swagger specs
+- **API documentation** — fetched from official docs, API reference pages, or OpenAPI/Swagger specs
 - **Internal API definitions** — read from the codebase (route handlers, controller definitions, generated clients, SDKs, type exports, shared constants/enums, protobuf/GraphQL schemas)
 - **Consumer code** — actual callers found via codebase search that depend on the contract
 - **Data/analytics definitions** — dashboard SQL, warehouse/dbt models, BI semantic layers, data catalog docs, export specs, scheduled query/ETL definitions, or downstream repo code
@@ -80,16 +80,16 @@ Verify that changes to interfaces, public APIs, or contracts don't break existin
 **Evidence workflow:**
 1. Identify API calls or interface changes in the diff.
 2. Look for the authoritative source of truth before judging handwritten code: generated client, SDK, schema, shared constants, docs, or established neighboring pattern.
-3. For outbound: locate the API documentation (WebFetch for external, codebase read for internal).
+3. For outbound: locate the API documentation (fetch it for external, codebase read for internal).
 4. For inbound: search the codebase for consumers of the changed interface, including available data consumers such as warehouse models, dashboard/report definitions, ETL jobs, export specs, and linked downstream repositories.
 5. Compare the code against the evidence.
 6. Report only verified mismatches.
 
-**When evidence is unavailable:** If you cannot find documentation for an external API (WebFetch fails, no docs URL discoverable), cannot locate consumers of an internal interface, or can only suspect external analytics/reporting/product consumers without available docs or code, note the gap in the report's **Unverified** section but do NOT fabricate API behavior or assume consumer existence.
+**When evidence is unavailable:** If you cannot find documentation for an external API (the fetch fails, no docs URL discoverable), cannot locate consumers of an internal interface, or can only suspect external analytics/reporting/product consumers without available docs or code, note the gap in the report's **Unverified** section but do NOT fabricate API behavior or assume consumer existence.
 
 ## Tool usage
 
-Use **WebFetch** to pull external API documentation, reference pages, and OpenAPI/Swagger specs as evidence; fall back to **WebSearch** to discover a docs URL when none is referenced in the project. Before resorting to web search, try the project's existing documentation references (config files, comments with URLs). For internal APIs, search the codebase for route definitions, type exports, and function signatures.
+Fetch external API documentation, reference pages, and OpenAPI/Swagger specs as evidence; fall back to a web search to discover a docs URL when none is referenced in the project. Before resorting to web search, try the project's existing documentation references (config files, comments with URLs). For internal APIs, search the codebase for route definitions, type exports, and function signatures.
 
 ## Actionability filter
 

@@ -37,7 +37,7 @@ things of one kind get a form with one slot each, so a dropped member shows.
 - When the read implies making something, state exactly what it will be and
   offer to render a disposable draft — disagreement is cheapest to find in a
   concrete artifact, before anything real is built. For a draft rendered as a
-  page, invoke the manifest-dev:design skill at the prototype weight it names;
+  page, invoke the design skill at the prototype weight it names;
   where that skill is unavailable, write down the loop the reader repeats and
   what has to stay visible together during it, arrange the page to that, pick
   the genre's register, and keep the judged surface legible by hand.

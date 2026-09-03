@@ -61,7 +61,7 @@ These shape where a session's answers land:
 | Skill | What it does |
 |-------|--------------|
 | `/figure-out-team` | Runs the same deliberation in a Slack channel or thread, for people who can't all sit in one session. |
-| `/poll-slack` | Reports what's new in a channel or thread since a cursor. |
+| `poll-slack` | Reports what's new in a channel or thread since a cursor. Called by `/figure-out-team` rather than invoked by hand. |
 
 ## How it fits together
 

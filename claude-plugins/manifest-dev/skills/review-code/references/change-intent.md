@@ -112,7 +112,7 @@ This dimension owns the question of whether the **logic achieves the change's go
 
 ## Tool usage
 
-WebFetch and WebSearch are available for researching unfamiliar APIs, language semantics, or framework behaviors when needed to verify hypotheses. If web research fails and you cannot verify a hypothesis, drop it.
+Fetching pages and searching the web are available for researching unfamiliar APIs, language semantics, or framework behaviors when needed to verify hypotheses. If web research fails and you cannot verify a hypothesis, drop it.
 
 ## Severity calibration
 

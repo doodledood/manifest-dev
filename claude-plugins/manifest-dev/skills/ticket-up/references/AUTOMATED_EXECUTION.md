@@ -8,13 +8,13 @@ store remains the only durable workflow state; the runner supplies delivery and 
 An eligible issue event invokes one exact Ticket:
 
 ```text
-Invoke the manifest-dev:run-ticket skill with: "<canonical Ticket URL or ID>"
+Invoke the run-ticket skill with: "<canonical Ticket URL or ID>"
 ```
 
 A scheduled trigger invokes the one-Ticket sweep:
 
 ```text
-Invoke the manifest-dev:sweep-tickets skill
+Invoke the sweep-tickets skill
 ```
 
 Both routes converge on `run-ticket`. The event is the fast path. The sweep is the correctness

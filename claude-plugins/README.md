@@ -17,7 +17,7 @@ Each one installs on its own:
 | Plugin | What it covers |
 |--------|----------------|
 | [`manifest-dev`](./manifest-dev) | Understanding a problem, writing down what you'd accept, executing against it and verifying the result — with lean `just-*` variants of each beat (`/just-figure-out`, `/just-define`, `/just-do`, `/just-auto`). Also project setup, ticket authoring and execution, design build-and-review (`/design`, `/review-design`), and the review skills the criteria call on. |
-| [`manifest-dev-tools`](./manifest-dev-tools) | Pull-request collaboration, prompt authoring and review, teaching, plain-language explainers, handoff between sessions. |
+| [`manifest-dev-tools`](./manifest-dev-tools) | Pull-request collaboration, prompt authoring and review, teaching, plain-language explainers, handoff between sessions. Also `review-pr-thread-verify`, `review-pr-holistic`, and `review-pr-judgment`, called by `/review-pr` rather than invoked by hand. |
 
 For an unattended run, point your host's goal-setting or continuation capability at the completion contract `/do` prints.
 

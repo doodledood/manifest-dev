@@ -16,6 +16,14 @@ Three skills cover the two sides of a review:
 | `/babysit-pr` | The author's side: tends a pull request through checks, review threads, and mergeability. Never presses merge. |
 | `/walk-pr` | Walks a large diff with you, one piece at a time. |
 
+Three more ship for `/review-pr` to call rather than for you to invoke — each runs in its own execution context where the host offers one, and inline where it does not:
+
+| Skill | Called by `/review-pr` to |
+|-------|--------------------------|
+| `review-pr-thread-verify` | Judge one existing review thread against the current head and return a disposition. |
+| `review-pr-holistic` | Prune, deduplicate, and bound a cycle's findings into the comments that get posted. |
+| `review-pr-judgment` | Ask the non-binding premise questions — necessity, pain, proportionality — once per pull request. |
+
 ## Prompts
 
 One writes prompts, the other reviews them:

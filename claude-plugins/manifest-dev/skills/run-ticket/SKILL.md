@@ -53,7 +53,7 @@ another non-repository artifact; record that fact rather than inventing one.
 
 ## Execute
 
-Invoke `manifest-dev:auto` with the Ticket's complete prose anatomy, kind, definition of done,
+Invoke `auto` with the Ticket's complete prose anatomy, kind, definition of done,
 source reference, durable progress, and relevant project context as the task. The Ticket bounds the
 work. Keep its identity available throughout the run so results return to the same store item.
 
@@ -70,7 +70,7 @@ for a blocker that genuinely needs a person.
 
 Keep work required by the source Ticket on the source Ticket. Finish it there, or escalate that Ticket when a blocker prevents completion.
 
-A discovered item earns a follow-up Ticket only when it is genuinely separate work that someone could assign, prioritize, block on, and close independently. Group related findings into one coherent follow-up. Search the effort's open Tickets before authoring to avoid duplicates, then invoke `manifest-dev:ticket-up` with the source Ticket, grouped finding, relationship, and execution evidence. Never write a follow-up directly to the venue.
+A discovered item earns a follow-up Ticket only when it is genuinely separate work that someone could assign, prioritize, block on, and close independently. Group related findings into one coherent follow-up. Search the effort's open Tickets before authoring to avoid duplicates, then invoke `ticket-up` with the source Ticket, grouped finding, relationship, and execution evidence. Never write a follow-up directly to the venue.
 
 Questions that do not need their own lifecycle stay in the result comment. A question that blocks the current definition of done escalates the source Ticket rather than becoming a substitute for it.
 
@@ -79,7 +79,7 @@ Questions that do not need their own lifecycle stay in the result comment. A que
 `/done` proves the task contract; it does not by itself prove that repository work landed. Commit
 and push the coherent result to the stable branch, create or refresh its one pull request, and drive
 that pull request through the repository's normal checks and review requirements. Activate the
-`manifest-dev:check-pr` skill for the current pull request and head before merge. Address
+`check-pr` skill for the current pull request and head before merge. Address
 agent-resolvable failures and re-check rather than handing routine repair to a person.
 
 After that coherent result is committed and pushed and its pull request exists, update the marked
