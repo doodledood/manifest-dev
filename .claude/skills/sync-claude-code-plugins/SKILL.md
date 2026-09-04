@@ -38,8 +38,8 @@ The tracked set lives in `.claude/.claude-code-plugins-sync.json`:
 {
   "version": 1,
   "last_synced_at": "ISO-8601 timestamp",
-  "agents": ["prompt-reviewer.md", "..."],
-  "skills": ["prompt-engineering", "..."]
+  "agents": ["<agent-file>.md", "..."],
+  "skills": ["<skill-dir>", "..."]
 }
 ```
 
@@ -47,7 +47,14 @@ First run (file missing): `tracked` is empty, no deletions happen, file is writt
 
 ## Sync algorithm
 
-Pre-flight: abort if `<source_repo>/claude-plugins/prompt-engineering/` is missing — silent absence is a misconfigured path, not upstream removal. Do not delete on this signal. If the source is a clean git repo, `git pull --ff-only` first; surface a warning and proceed if pulling fails.
+Pre-flight: if the source is a clean git repo, `git pull --ff-only` first; surface a warning and proceed if pulling fails.
+
+Then, when `<source_repo>/claude-plugins/prompt-engineering/` is missing, decide which of two different situations produced that one signal before doing anything else. A misconfigured path and a retired-upstream plugin look identical from the target side, and treating retirement as misconfiguration is what strands a retirement: the tracked items stay forever, because the only machinery that could remove them refuses to run.
+
+- **Misconfigured path — the default.** `<source_repo>` itself does not resolve, is not a git repository, or is a partial or mid-clone checkout. Abort. Delete nothing, and leave the tracking file untouched.
+- **Confirmed upstream removal.** `<source_repo>` resolves to a healthy full clone, and its own history shows the plugin deliberately removed — a commit deleting `claude-plugins/prompt-engineering/`, and a decision record in `<source_repo>/docs/adr/` stating the retirement. Both are required: a directory absent from a healthy clone with no such history is still treated as misconfiguration. On confirmation, run the sync with an empty source listing — every tracked item becomes eligible for deletion under the ordinary `tracked − source` rule, the `.agents/` mirror symlinks go with them, and the tracking file is left with empty `agents` and `skills` arrays. Add the removed components to the retirement denylist in the same change, so a stale checkout cannot reintroduce them, and record the propagation in this repo's own `docs/adr/`.
+
+When the evidence for removal is not available — no access to the source repo's history, or history that does not settle it — take the misconfigured-path branch. Aborting costs a stale copy that a later run fixes; deleting on a wrong reading costs files no run restores.
 
 For each component (agents/skills):
 
@@ -58,7 +65,19 @@ For each component (agents/skills):
 
 Source listing excludes `README.md` and `.claude-plugin/` (plugin metadata, not content).
 
-**Retirement denylist** (never copy or track, regardless of upstream): `agents/prompt-reviewer.md`, `skills/prompt-engineering`. manifest-dev-tools ships its own `prompt-engineering` and `review-prompt` skills (plugin-owned symlinks at `.claude/skills/prompt-engineering` and `.claude/skills/review-prompt`) and manifest-dev ships **zero agents**, so neither the upstream `prompt-reviewer` agent nor the upstream `prompt-engineering` skill may be reintroduced — both are already dropped from the tracked set.
+**Retirement denylist** (never copy or track, regardless of upstream):
+
+| Component | Why it may not come back |
+|-----------|--------------------------|
+| `skills/prompt-engineering` | manifest-dev-tools ships its own, as a plugin-owned symlink at `.claude/skills/prompt-engineering` |
+| `agents/prompt-reviewer.md` | manifest-dev ships **zero agents**; `review-prompt` covers the capability as a plugin-owned symlink at `.claude/skills/review-prompt` |
+| `agents/prompt-compression-verifier.md` | retired upstream 2026-08-17 |
+| `agents/prompt-token-efficiency-verifier.md` | retired upstream 2026-08-17 |
+| `skills/auto-optimize-prompt` | retired upstream 2026-08-17 |
+| `skills/compress-prompt` | retired upstream 2026-08-17 |
+| `skills/optimize-prompt-token-efficiency` | retired upstream 2026-08-17 |
+
+The last five were retired as *capability lost, not capability moved* — there is no replacement to point at, and an older upstream checkout that still ships them must not reintroduce them. All seven are already dropped from the tracked set.
 
 ## .agents mirror
 
@@ -73,7 +92,7 @@ After each sync, ensure `.agents/skills/<name>` is a symlink to `../../.claude/s
 - **Upstream copies drop the internal flag.** Upstream `claude-code-plugins` skills ship without `metadata: internal: true`; a plain copy silently reverts the flag on the non-symlink synced skills (observed 2026-07-05). The re-apply step above exists for this — do not skip it.
 
 - **Source must exist**: missing source path means abort, not "delete all tracked items."
-- **Nested skills directory**: source skills live at `skills/prompt-engineering/`, `skills/compress-prompt/`, etc. Copy each skill directory into `.claude/skills/<skill-name>/` — don't copy the outer `skills/` folder or you get `.claude/skills/skills/`.
+- **Nested skills directory**: source skills live one directory down, at `skills/<skill-name>/`. Copy each skill directory into `.claude/skills/<skill-name>/` — don't copy the outer `skills/` folder or you get `.claude/skills/skills/`.
 - **`prompt-engineering` and `review-prompt` are plugin-owned, not upstream**: manifest-dev-tools ships its own versions of both skills, symlinked at `.claude/skills/prompt-engineering` and `.claude/skills/review-prompt`. The upstream plugin ships skills with the same names, but the "skip if target is a symlink" rule above means this sync leaves the plugin's symlinks alone (it neither overwrites nor deletes them). Do not re-add either to the tracking file.
 - **Symlinks look like directories to `cp`/`rm`/`find`**: a symlinked target overwritten by `cp -R` corrupts the linked plugin's source files; a symlinked directory deleted by `rm -rf` removes the link, not the plugin, but a recursive find that follows the link will. Use `[ -L path ]` before every overwrite and every delete.
 
@@ -88,6 +107,6 @@ Summary table per component (agents/skills): items added, updated, removed, syml
 - Create `.agents/` itself (only manage `.agents/skills/<name>` entries inside an existing `.agents/`)
 - Delete items not in the tracked set — even if they're not in source
 - Delete the `sync-claude-code-plugins` skill
-- Treat a missing source path as upstream removal — abort instead
+- Treat a missing source path as upstream removal on the absence alone — abort unless the source repo's own history confirms a deliberate removal, per the pre-flight
 - Copy plugin metadata (`README.md`, `.claude-plugin/`) or the source repo's own `.claude/` directory
 - Modify the source repo (other than the optional `git pull --ff-only`)
