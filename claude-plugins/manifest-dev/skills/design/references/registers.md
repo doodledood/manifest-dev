@@ -4,7 +4,7 @@ The register layer for every genre past the five web/app registers in `SKILL.md`
 
 ## The cross-genre taxonomy
 
-Purpose picks the metric; the metric picks the design; decoration is what survives when you forget the metric.
+Purpose picks the metric and directs the creative ambition. Each genre expresses it through the experience its audience needs.
 
 | Genre | Job | Design center | Success metric | Failure smell |
 |---|---|---|---|---|
@@ -60,35 +60,20 @@ Animation per se teaches nothing once information is equal, and most readers nev
 
 Generated explorables over-produce decorative interactivity and hide load-bearing content in tabs, accordions, and tooltips *because* it looks sophisticated. *Probe:* print it. Does the story survive on paper?
 
-## The feeling budget
+## Feeling and use context
 
-Felt quality runs on two independent axes: the pragmatic axis is the floors; the hedonic axis — novelty, identity — raises attractiveness once the floors hold and never buys back a broken basic.
+Choose the emotional effect from the purpose and audience. A launch page may earn attention through an expressive composition; a serious report through authoritative typography and a revealing figure; a daily tool through a beautiful, immediate view of the work. Each needs a deliberate visual identity within the user's requirements and existing design system.
 
-- **Spectacle-positive surfaces:** marketing and launch pages, portfolios, campaign pieces, brand homepages for expert audiences. The visitor evaluates *the maker*, grants seconds, and expert audiences tolerate a higher novelty dose.
-- **Spectacle-negative surfaces:** tools, dashboards, forms, docs, checkout — anything visited repeatedly or mid-task. Repetition converts any surprise into pure latency, and control-stealing effects (scroll hijacking, forced reveals) read as bugs.
-- **Middle band:** product landing pages for lay audiences — keep the first frame simple and recognizable, with at most one signature move.
+Keep the first frame readable and usable. On repeated-use surfaces, let visual character come from the composition and craft; animation must give useful feedback without delaying the task. On narrative surfaces, story and surprise can carry the central idea, with all load-bearing content visible without interaction. Never gate meaningful pixels behind a loader or an orchestrated reveal.
 
-Even where spectacle is licensed, sequencing governs: **the first painted frame stays fluent** — a recognizable skeleton for the category, complexity erring simple (overshooting complexity is punished about three times harder than undershooting) — and novelty is what the second look finds. Deviate from the genre's convention on one or two salient dimensions while the category stays recognizable within one second; every deliberate strangeness needs a designed resolution within seconds. Never gate meaningful pixels behind a loader or an orchestrated reveal: appeal is judged in well under a second. And never imitate a famous signature look — by the time it is famous enough to copy, its novelty is spent and its association is someone else's.
-
-Craft rules for delight moments once a register licenses them — endings, celebration, personality — are in `craft.md` (emotion section).
-
-## Editorial machinery
-
-Only for editorial treatments — utilitarian pages skip all of it:
-
-1. **Philosophy, then expression.** Name a 1–2-word direction drawn from the subject's world, write two or three sentences of the aesthetic worldview, then build it. Derivation grounds distinctiveness; skipping to "make it beautiful" samples the monoculture.
-2. **One signature element; everything else quiet.** Spend the boldness in one place. Before coding, privately name the layout this category would default to, then compare two materially different compositions — change topology, density, and evidence placement, not merely palette.
-3. **The non-transplant test.** The signature move must belong to its material: if it could be transplanted unchanged onto an unrelated artifact, it is decoration, not identity.
-4. **Refine what exists; don't add.** The refinement pass sharpens the chosen direction — it never introduces a second one.
-
-One honest bound: this machinery improves a single artifact's fit. It does not make your *body of output* diverse — run-to-run variety requires state outside the session (a project memory of past directions, real subject data, the user's choice), so where a portfolio must vary, ask for or record that state rather than trusting the procedure.
+Refinement strengthens the chosen direction. A different subject may need a different idea; copying a famous look or adding more effects does not establish one. Craft rules for endings, celebration, and personality live in `craft.md` (emotion section).
 
 ## The ten rules under every genre
 
 1. Declare the purpose — comprehension, retention, persuasion, or action — and apply its column; they conflict.
 2. Design for the partial read: title + headings + bold phrases + figure titles must carry the whole argument alone.
 3. Verdict first, key claim also last; nothing load-bearing buried mid-list or mid-document.
-4. Every element earns its place; cut decoration and interesting-but-irrelevant asides.
+4. Every element earns its place through the purpose or creative direction; cut unrelated effects and asides.
 5. Labels in the figure, explanation beside it, never "see above".
 6. Say it once, in the best medium — prose or figure or caption, not all three.
 7. One visual channel for the one thing that must pop; comparisons on a common aligned scale, where the eye reads differences precisely.
