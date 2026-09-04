@@ -1,7 +1,7 @@
 # ADR: The design skill chooses an encoding per claim; figures are information graphics, never decoration
 
 ## Status
-Accepted
+Accepted — amended by 20260905-design-obligations-follow-the-medium-and-task: narrows static-on-arrival to orientation and necessary controls where interaction or pacing is judged; equivalent accessible representations remain available.
 
 ## Area
 Design skills

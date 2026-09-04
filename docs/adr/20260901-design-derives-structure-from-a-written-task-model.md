@@ -1,7 +1,7 @@
 # ADR: The design skill derives structure from a written task model, and asks when the brief lacks one
 
 ## Status
-Accepted — extended by 20260902-design-chooses-an-encoding-per-claim-figures-are-information-not-decoration: the task-model block gains a fifth line, *Encoding*, choosing per claim whether prose, a table, or a figure carries it; the four lines this record named, the trace rule, and the ask-once rule all stand.
+Accepted — extended by 20260902-design-chooses-an-encoding-per-claim-figures-are-information-not-decoration: the task-model block gains a fifth line, *Encoding*, choosing per claim whether prose, a table, or a figure carries it; the four lines this record named, the trace rule, and the ask-once rule all stand. Further amended by 20260905-design-obligations-follow-the-medium-and-task: extends the task model with conditional medium, continuity, agency and delivery routing.
 
 ## Area
 Design skills
