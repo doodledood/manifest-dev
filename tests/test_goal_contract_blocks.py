@@ -74,20 +74,18 @@ NO_PARAPHRASE = "Do not summarize, shorten, reword, or re-punctuate"
 # prose can strip it without any block changing.
 LABEL_NOT_EMITTED = "this file's markers rather than part of what you emit"
 
-Label = Literal[
-    "goal-block", "gate-ledger-clause", "manifest-reference", "pr-tend-prefix"
-]
+Label = Literal["goal-block", "gate-ledger-clause", "pr-goal-block", "pr-tend-prefix"]
 
 # Fence label -> a phrase from that block's body. The label is the identity; the
 # signature exists only so `test_every_shared_block_is_labelled` can catch a block
 # whose label was stripped, which would otherwise make it invisible again. Typing the
 # keys as a closed union is what stops `GOAL_BLOCK` and a renamed key drifting apart.
 SIGNATURES: dict[Label, str] = {
-    "goal-block": "it changes only through the skill that wrote it, never by direct edit",
+    "goal-block": "Work under the Manifest at <manifest-path>",
     "gate-ledger-clause": (
         "explicit or inherited verifier model, latest verdict, evidence"
     ),
-    "manifest-reference": "Read this file before resuming execution.",
+    "pr-goal-block": "Work until every Acceptance Criterion and Global Invariant in the Manifest holds",
     "pr-tend-prefix": "Discover or synthesize the Manifest for this pull request.",
 }
 GOAL_BLOCK: Label = "goal-block"
@@ -247,7 +245,12 @@ def test_skill_names_are_unique_across_plugins() -> None:
 
 def test_every_backstop_site_carries_the_goal_block() -> None:
     """A site that arms a backstop emits the goal block, not a variant of its own."""
-    missing = [rel(p) for p in backstop_sites() if GOAL_BLOCK not in blocks_in(p)]
+    missing = [
+        rel(p)
+        for p in backstop_sites()
+        if ("pr-goal-block" if p.match("babysit-pr/SKILL.md") else GOAL_BLOCK)
+        not in blocks_in(p)
+    ]
     assert not missing, (
         "these files arm a completion backstop but carry no recognizable goal "
         "block:\n  " + "\n  ".join(missing)
@@ -337,24 +340,27 @@ def test_executor_contract_identifies_manifest_without_prior_context(
     for name in ("do", "just-do"):
         for path in [source_skills()[name], *dist_copies(name)]:
             blocks = dict(fenced_blocks(path))
-            assert "manifest-reference" in blocks, path
+            assert "manifest-reference" not in blocks, path
+            assert "<manifest-path>" in blocks["goal-block"].splitlines()[0], path
             instructions = normalized(read(path))
             assert "absolute Manifest path" in instructions, path
             assert "substituting `<manifest-path>`" in instructions, path
-            assert "manifest reference, then the goal block" in instructions, path
+            assert "Emit the goal block" in instructions, path
             assert (
                 f"including when called by /{'auto' if name == 'do' else 'just-auto'}"
                 in instructions
             ), path
             # Replay only the explicit substitution. The recovery half receives
             # the assembled contract, not the invocation or checkpoint history.
-            emitted = (blocks["manifest-reference"] + blocks["goal-block"]).replace(
-                "<manifest-path>", str(manifest)
-            )
+            emitted = blocks["goal-block"].replace("<manifest-path>", str(manifest))
             assert "<manifest-path>" not in emitted
             assert "this run's Manifest" not in emitted
             assert "Read this file before resuming execution." in emitted
-            recovered = Path(emitted.splitlines()[0].removeprefix("Manifest: "))
+            recovered = Path(
+                emitted.split("Work under the Manifest at ", 1)[1].split(
+                    " until every Acceptance Criterion", 1
+                )[0]
+            )
             assert recovered.read_text(encoding="utf-8") == "# Distinct test Manifest\n"
             contracts.add(emitted)
     assert len(contracts) == 1

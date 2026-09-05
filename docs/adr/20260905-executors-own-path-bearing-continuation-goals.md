@@ -25,16 +25,15 @@ Manifest path produced by definition and emit no earlier goal. Autonomous
 investigation inside `auto` retains its Read checkpoint without setting a phase
 goal; standalone autonomous investigation keeps its existing backstop.
 
-Each executor emits a concrete absolute Manifest reference followed by the shared
-completion block. The reference instructs a resumed run to read that file. Native
+Each executor emits the same goal block with the concrete absolute Manifest path
+in its opening sentence. The block instructs a resumed run to read that file. Native
 and manual emission use the same text, with only the path substituted. Shared
 blocks retain byte-identity checks, literal emission, and non-emitted fence labels.
 
 `babysit-pr` retains its independent PR lifecycle ownership. Its known PR reference
 identifies the work before discovery or synthesis; it continues to record the
-Manifest path when available and carries the shared completion and gate-ledger
-blocks. It does not emit the executor-only Manifest reference with an unknown
-value. Nested execution preserves this broader contract.
+Manifest path when available and carries a separate PR goal block plus the shared
+gate-ledger clause. The PR goal has no unknown Manifest-path slot. Nested execution preserves this broader contract.
 
 ## Alternatives Considered
 
@@ -70,10 +69,10 @@ value. Nested execution preserves this broader contract.
 - Narrows 20260624-use-outcome-gated-auto-continuation: artifact-gated completion and
   the investigation checkpoint remain; the full-chain goal is retired.
 - Narrows 20260828-continuation-goals-emit-verbatim-from-one-block: byte identity and
-  verbatim emission remain; the chain prefix is retired and executors add a concrete
-  Manifest reference.
+  verbatim emission remain; the chain prefix is retired and executors put the concrete
+  Manifest path in the goal block itself.
 - Narrows 20260830-shared-contract-blocks-name-the-beat-not-the-skill: shared text
   stays neutral between workflow variants; the chain prefix is retired.
 - Narrows 20260830-a-contract-slot-exists-only-where-its-value-is-known: slots still
-  require known values, but executors now include their known path in a reference
+  require known values, but executors now include their known path in the goal
   block instead of omitting it to accommodate pre-Manifest callers.

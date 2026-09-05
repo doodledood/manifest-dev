@@ -83,14 +83,11 @@ flowchart TD
 
 For an unattended run, `/do` or `/just-do` sets a host-native goal-setting or continuation contract before implementation, with the Manifest’s absolute path included. Where a host offers neither capability, the executor prints the same contract for you to apply manually. `/auto` and `/just-auto` leave this to the executor: understanding and definition have no continuation goal, so an interruption there needs a restart.
 
-An executor’s contract begins with the resolved file, for example:
+An executor’s goal names the resolved file directly, for example:
 
 ```text
-Manifest: /workspace/manifests/search.md
-Read this file before resuming execution.
+Work under the Manifest at /workspace/manifests/search.md until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Read this file before resuming execution.
 ```
-
-The completion conditions follow in the same goal.
 
 ## What it costs
 

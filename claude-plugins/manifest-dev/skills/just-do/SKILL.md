@@ -17,17 +17,12 @@ and arm the completion backstop: continue under an active goal identifying this 
 or emit the blocks below verbatim, substituting `<manifest-path>` with the absolute Manifest path.
 Do not summarize, shorten, reword, or re-punctuate them. Set them through the harness's
 goal-setting, continuation, or durable-completion-condition capability, else print them
-copy-pasteable. Emit the manifest reference, then the goal block, as one completion contract:
+copy-pasteable. Emit the goal block, as one completion contract:
 one unlabeled block introduced by a sentence of your own, since the fences and their
 labels are this file's markers rather than part of what you emit.
 
-```manifest-reference
-Manifest: <manifest-path>
-Read this file before resuming execution.
-```
-
 ```goal-block
-Work until every Acceptance Criterion and Global Invariant in the Manifest holds, each with evidence from the artifacts that gate names, and completion has been reported.
+Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Read this file before resuming execution.
 
 The Manifest is the contract, not the run's to rewrite: it changes only through the skill that wrote it, never by direct edit, and a changed gate returns unverified.
 
