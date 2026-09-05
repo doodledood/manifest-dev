@@ -1,14 +1,4 @@
-"""Repo-local skill directories are links onto the plugin sources, and none dangle.
-
-`.claude/skills/` and `.agents/skills/` are what this repository's own sessions load
-skills from. A copied directory instead of a link means a session silently runs a
-stale duplicate of a skill edited under `claude-plugins/`, and a link left behind by
-a deleted or renamed skill points at nothing. Neither shows up anywhere else, so the
-convention is checked here rather than only described in CLAUDE.md.
-
-Repo-local development skills (those with no plugin counterpart) are real
-directories by design; they still need their `.agents/skills/` link.
-"""
+"""Plugin skills load only through plugins; local maintenance links stay valid."""
 
 from __future__ import annotations
 
@@ -38,17 +28,15 @@ def links_to(link: Path, target: Path) -> bool:
     return link.is_symlink() and link.resolve() == target.resolve()
 
 
-def test_every_plugin_skill_is_linked_from_claude() -> None:
-    broken = [
-        str(skill.relative_to(ROOT))
-        for skill in plugin_skill_dirs()
-        if not links_to(CLAUDE_SKILLS / skill.name, skill)
+def test_plugin_skills_are_not_exposed_as_local_skills() -> None:
+    names = {skill.name for skill in plugin_skill_dirs()}
+    duplicates = [
+        str(entry.relative_to(ROOT))
+        for parent in (CLAUDE_SKILLS, AGENTS_SKILLS)
+        for entry in local_skill_entries(parent)
+        if entry.name in names or (ROOT / "claude-plugins") in entry.resolve().parents
     ]
-    assert not broken, (
-        "plugin skills missing a .claude/skills symlink onto their source: "
-        f"{broken}; create with "
-        "ln -s ../../claude-plugins/<plugin>/skills/<name> .claude/skills/<name>"
-    )
+    assert not duplicates, f"plugin skills duplicated in local discovery: {duplicates}"
 
 
 def test_every_claude_skill_is_linked_from_agents() -> None:
