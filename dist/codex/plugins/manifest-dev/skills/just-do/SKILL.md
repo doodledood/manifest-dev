@@ -12,15 +12,17 @@ invokes /just-define: stop and report if a premise goes false, the user redirect
 the Manifest, or only a person can unblock you. When done, report what changed
 and your basis per gate.
 
-First, arm the completion backstop: continue under an active goal for this Manifest,
-or emit the block below verbatim. Do not
-summarize, shorten, reword, or re-punctuate it. Set it through the harness's
-goal-setting, continuation, or durable-completion-condition capability, else print it
-copy-pasteable: one unlabeled block introduced by a sentence of your own, since the
-fence and its label are this file's markers rather than part of what you emit.
+Before implementation, including when called by /just-auto, resolve the absolute Manifest path
+and arm the completion backstop: continue under an active goal identifying this same file,
+or emit the blocks below verbatim, substituting `<manifest-path>` with the absolute Manifest path.
+Do not summarize, shorten, reword, or re-punctuate them. Set them through the harness's
+goal-setting, continuation, or durable-completion-condition capability, else print them
+copy-pasteable. Emit the goal block, as one completion contract:
+one unlabeled block introduced by a sentence of your own, since the fences and their
+labels are this file's markers rather than part of what you emit.
 
 ```goal-block
-Work under this run's Manifest until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Record the Manifest's path in a checkpoint note as soon as it exists.
+Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Read this file before resuming execution.
 
 The Manifest is the contract, not the run's to rewrite: it changes only through the skill that wrote it, never by direct edit, and a changed gate returns unverified.
 

@@ -1,7 +1,7 @@
 # ADR: Use outcome-gated terminal success for `/auto` continuation
 
 ## Status
-Accepted
+Accepted Further narrowed by 20260905-executors-own-path-bearing-continuation-goals: auto chains defer continuation to execution; executors include the known Manifest path and the shared chain prefix is retired.
 
 ## Area
 Goal setting

@@ -1,7 +1,7 @@
 # ADR: Use universal goal-setting language for unattended run backstops
 
 ## Status
-Accepted; narrowed by [20260828-continuation-goals-emit-verbatim-from-one-block](20260828-continuation-goals-emit-verbatim-from-one-block.md) — the capability-based emission boundary stands, but the goal text itself no longer varies per distribution.
+Accepted; narrowed by [20260828-continuation-goals-emit-verbatim-from-one-block](20260828-continuation-goals-emit-verbatim-from-one-block.md) — the capability-based emission boundary stands, but the goal text itself no longer varies per distribution. Further narrowed by 20260905-executors-own-path-bearing-continuation-goals: auto chains defer continuation to execution; executors include the known Manifest path and the shared chain prefix is retired.
 
 ## Area
 Goal setting

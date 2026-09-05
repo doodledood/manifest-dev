@@ -261,7 +261,7 @@ def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
     source_skill_files = [
         ROOT / "claude-plugins/manifest-dev/skills/figure-out/references/autonomous.md",
         ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
-        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
+        ROOT / "claude-plugins/manifest-dev/skills/just-do/SKILL.md",
         ROOT / "claude-plugins/manifest-dev/skills/do/SKILL.md",
     ]
     for path in source_skill_files:
@@ -282,7 +282,7 @@ def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
     dist_skill_files = [
         DIST / "codex/plugins/manifest-dev/skills/figure-out/references/autonomous.md",
         DIST / "codex/plugins/manifest-dev/skills/define/SKILL.md",
-        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
+        DIST / "codex/plugins/manifest-dev/skills/just-do/SKILL.md",
         DIST / "codex/plugins/manifest-dev/skills/do/SKILL.md",
     ]
     stale_phrases = (
@@ -363,9 +363,7 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
             assert phrase in text, f"{path}: missing {phrase!r}"
 
     parent_goal_files = [
-        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
         ROOT / "claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
-        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
         DIST / "codex/plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
     ]
     for path in parent_goal_files:
@@ -856,38 +854,23 @@ def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
         assert not RETIRED_GATE_FIELDS.search(text)
 
 
-def test_auto_parent_goal_carries_autonomous_read_checkpoint() -> None:
-    """The /auto parent backstop carries Read rigor as a phase checkpoint."""
-    auto_files = [
-        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
-        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
-    ]
-    required_phrases = (
-        "The terminal success condition is outcome-gated",
-        "phase checkpoint before `/define`",
-        "full-anatomy Read checkpoint before the Manifest is written",
-        "every load-bearing branch pressed",
-        "Evidence Ledger explicit",
-        "assumptions separated from verified and inferred claims",
-        "independent re-derivation run or explicitly unavailable",
-        "rival set no longer moving",
-        "the Read checkpoint is not complete if it only localizes where the symptom concentrates",
-        "name the concrete mechanism",
-        "naming the surviving explanations",
-        "feasible probes that could distinguish them were run",
-        "Treat a missing or weak Read checkpoint as a phase defect",
-        "manifest gate ledger",
-    )
-    forbidden_phrases = (
-        "contract must carry both child completion bars",
-        "until figure-out names a Read",
-    )
-    for path in auto_files:
-        text = path.read_text(encoding="utf-8")
-        for phrase in required_phrases:
-            assert phrase in text, f"{path}: missing {phrase!r}"
-        for phrase in forbidden_phrases:
-            assert phrase not in text, f"{path}: forbidden {phrase!r}"
+def test_auto_investigation_keeps_read_bar_without_a_phase_goal() -> None:
+    """Suppress the child goal before its generic standalone/parent rules run."""
+    for root in (
+        ROOT / "claude-plugins/manifest-dev/skills",
+        DIST / "codex/plugins/manifest-dev/skills",
+    ):
+        auto = (root / "auto/SKILL.md").read_text(encoding="utf-8")
+        child = (root / "figure-out/references/autonomous.md").read_text(
+            encoding="utf-8"
+        )
+        assert "keep its full Read bar as the checkpoint before define" in auto
+        assert "When chained under auto" in child
+        assert "do not set or print a continuation goal" in child
+        assert child.index("When chained under auto") < child.index(
+            "Otherwise, your first action"
+        )
+        assert "Outside auto, this is the standalone-run backstop" in child
 
 
 def test_autonomous_figure_out_supplements_weak_parent_backstops() -> None:
@@ -938,7 +921,7 @@ def test_autonomous_diagnosis_goal_requires_mechanism_or_earned_underdeterminati
         assert expected in text, path
 
 
-def test_continuation_backstop_is_owned_by_top_level_entrypoint() -> None:
+def test_continuation_ownership_preserves_babysit_parent() -> None:
     """Nested workflow skills should not set competing narrower goals."""
     define_files = [
         ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
@@ -958,19 +941,9 @@ def test_continuation_backstop_is_owned_by_top_level_entrypoint() -> None:
     ]
     for path in do_files:
         text = path.read_text(encoding="utf-8")
-        assert "When /do is the top-level execution entrypoint" in text, path
+        assert "Before implementation, including when called by /auto" in text, path
         assert "broader parent workflow backstop" in text, path
         assert "do not set or print a second narrower goal" in text, path
-
-    auto_files = [
-        ROOT / "claude-plugins/manifest-dev/skills/auto/SKILL.md",
-        DIST / "codex/plugins/manifest-dev/skills/auto/SKILL.md",
-    ]
-    for path in auto_files:
-        text = path.read_text(encoding="utf-8")
-        assert "/auto` owns this backstop as the chain entrypoint" in text, path
-        assert "`figure-out --autonomous` suppresses" in text, path
-        assert "/do` operates under the existing full-chain contract" in text, path
 
     babysit_files = [
         ROOT / "claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",

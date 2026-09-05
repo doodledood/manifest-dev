@@ -1,7 +1,7 @@
 # ADR: Continuation goals emit verbatim from one shared block
 
 ## Status
-Accepted — narrowed by 20260830-shared-contract-blocks-name-the-beat-not-the-skill: the one-text-per-block property and the no-per-site-variant requirement both stand; only the wording that satisfies them changes. Further narrowed by 20260830-a-contract-slot-exists-only-where-its-value-is-known: the `<manifest-path>` slot this record kept is removed, since three sites arm the backstop before a Manifest exists and can never fill it; verbatim emission and one text per block stand.
+Accepted — narrowed by 20260830-shared-contract-blocks-name-the-beat-not-the-skill: the one-text-per-block property and the no-per-site-variant requirement both stand; only the wording that satisfies them changes. Further narrowed by 20260830-a-contract-slot-exists-only-where-its-value-is-known: the `<manifest-path>` slot this record kept is removed, since three sites arm the backstop before a Manifest exists and can never fill it; verbatim emission and one text per block stand. Further narrowed by 20260905-executors-own-path-bearing-continuation-goals: auto chains defer continuation to execution; executors include the known Manifest path and the shared chain prefix is retired.
 
 ## Area
 Goal setting
