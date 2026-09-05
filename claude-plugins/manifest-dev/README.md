@@ -50,7 +50,7 @@ Manifest criteria call these; you can also invoke them directly:
 |-------|--------------|
 | `/review-code` | Reviews a change along one named quality dimension and reports findings. Manifest criteria call it by dimension. |
 | `/review-writing` | Reviews prose against this project's writing standards, in whichever register the text is in. |
-| `/design` | Builds or restyles digital artifacts, including interfaces, files, media and conversational tools. Models the task and delivery medium, develops a creative direction, and verifies applicable behavior and access requirements. |
+| `/design` | Builds or restyles digital artifacts, including interfaces, files, media and conversational tools. Models the task and delivery medium, coordinates layout, type, color, imagery and motion, and compares improvements against the incumbent. Verifies visual expression, behavior and access. |
 | `/review-design` | Reviews artifacts against the same applicable standards using the delivered medium, bounded machine checks and exercised behavior. Reports findings and unavailable verification; style defaults alone are not failures. Manifest criteria call it for design gates. |
 | `/check-pr` | Inspects a pull request's state and reports whether it's ready. Read-only; never merges. |
 

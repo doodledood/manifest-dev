@@ -1,28 +1,27 @@
-# Figures — what to draw, and how to draw it
+# Figures — choose the representation and preserve its meaning
 
-The reference behind the task model's encoding line: what a figure depicts once a claim has earned one, how options are compared, the inline-SVG mechanics that keep a hand-drawn figure legible in both themes, and the one rule for charts. Each rule is an action with its check. Whether a claim gets a figure at all is decided in the task model, not here — the test is that a cold reader would otherwise assemble a mechanism from prose, and that a sentence does not say it faster.
+Use the task model to choose a representation: photographs or screenshots for observed appearance and context; diagrams for structure, containment, relationships or sequence; charts for quantitative patterns; tables for exact lookup and mixed-attribute comparison. An illustration can explain or express; motion and interaction can reveal change or alternatives. These can complement each other. Use `craft.md` for imagery and temporal composition.
 
-## What to draw
+## Information and composition
 
-1. **Depict the mechanism, not its name.** A box labeled "cache" says less than the sentence did; the path a request takes through it, the two stores it sits between, and the arrow that disappears when the cache is removed say what the words cannot. Show the parts the argument hinges on — the boundary crossed, the hop added, the data that moves — and leave out the parts it does not. Check: cover the labels; the shapes and arrows alone should still show something happening.
-2. **Comparing options? Draw the difference.** Two architectures side by side, a before and an after, the one edge each option adds or removes — the reader must be able to point at what they are choosing between. A separate labeled box per option with nothing connecting it to the system is a restated option list, not a comparison. Check: the two panels share a skeleton and differ where the decision differs, and nowhere else.
-3. **Match complexity to the stakes.** A one-hop question is a three-box figure; a migration that reroutes writes through a queue needs the queue, the writer, the reader, and the ordering arrow. Draw as much as the decision turns on — no forced minimalism, no inventory of the whole system. Check: every element removed would lose a fact the decision needs; every element added would add none.
-4. **Label the arrows.** An unlabeled arrow is "related somehow"; `writes`, `invalidates`, `polls every 30s` is information. Put the meaning on the mark itself; a legend earns its place only when one encoding (dashed, colored, doubled) repeats across the figure.
-5. **One figure, one claim.** The caption states what the picture shows, in a sentence a reader could repeat. Split overloaded figures where useful; length of the necessary explanation alone does not establish overload.
-6. **Use efficient, equivalent explanations.** Remove prose that merely repeats an already clear visual explanation. Preserve captions, labels, complementary explanations, uncertainty and accessible equivalents; a complex figure can need a long description or data table.
+1. **Choose what the reader needs to see.** A hierarchy, distribution, geography, process and comparison call for different structures. Depict the relevant relationship; not every diagram is a flow and not every chart has one predetermined conclusion.
+2. **Make encodings truthful.** Position, enclosure, size, connectors, color and line treatment convey meaning. Define relevant notation and label directional relationships. Keep referents stable between marks, text, controls and neighboring views.
+3. **Compose the explanation.** Titles orient, labels identify, annotations explain and prose qualifies. Place each where its relationship is clear; sentences may belong beside a feature. Match complexity to the actual question and audience, preserving uncertainty and necessary context.
+4. **Compare with a meaningful frame.** Comparable panels share the relevant structure, units and scales unless a difference is deliberate and clear. A table and chart can supply complementary precision and pattern. Inspect what the reader must remember or reconstruct.
+5. **Preserve evidence and access.** Verify factual images, marks and labels against supplied sources. Supply equivalent information appropriate to the task, including relationships, uncertainty or interaction states; a single takeaway or data table may not be enough. Distinguish illustration and simulation from observation.
 
-## Inline SVG mechanics
+## Production and delivery
 
-Hand-author inline `<svg>` with native shapes (`rect`, `circle`, `line`, `polyline`, `path`) and `<text>` — no library, no runtime, no external image.
+Choose plotting, diagramming, image or native layout tools suited to the artifact and required editability. Small inline diagrams can use hand-authored SVG; these mechanics apply when that is the chosen medium:
 
-1. **Size by `viewBox`.** Set `viewBox="0 0 W H"` and let CSS scale it (`max-width: 100%; height: auto`); choose W and H for the content, never a preset. Choose flow direction for the content and reading context; keep labels and orientation clear.
-2. **Theme with `currentColor`.** Strokes, text, and arrowheads in `currentColor` inherit the page's foreground in light and dark alike. Reserve one literal hue for the one element that carries meaning — the option leaned toward, the hop under discussion — and check it against both grounds by number, the same contrast floor as text.
-3. **Arrowheads are markers or polygons.** A `<defs><marker>` referenced by `marker-end="url(#arrow)"`, or a small `<polygon>` at the line's end — never an image, never a Unicode arrow in `<text>` standing in for a line.
-4. **Keep labels legible.** Roughly 11–13px at the drawn scale, `text-anchor` for alignment, a word or three per label; sentences belong in the caption below the figure, not in the drawing. Check at the narrow viewport: if labels become unreadable, change arrangement, scale or split the figure; enlarging the viewBox at fixed rendered width makes labels smaller.
-5. **Align to a grid.** Shared baselines, equal box sizes for equal roles, even gaps — most of what makes a hand figure read as deliberate. Eyeballed offsets read as noise. Use the page's spacing values for the gaps.
-6. **Preserve equivalent meaning.** Name meaningful SVGs and supply the needed description or data equivalent. Use a caption when it helps. Avoid duplicate announcements; do not hide the only accessible representation. Decorative graphics are handled differently from information graphics.
-7. **Stay self-contained.** No `<script>`, `<style>`, or `<foreignObject>` inside the SVG; gradients, patterns, and `<use>` reference ids in the same fragment (`href="#id"`), and ids are unique across the page when several figures share it. Long decorative path data means the drawing wants a graphics tool — simplify instead.
+1. **Size by `viewBox`.** Set a content-appropriate `viewBox`; allow CSS to scale it while checking actual label size. Recompose, annotate differently or split when a narrow display loses meaning.
+2. **Theme by role.** `currentColor` can inherit a suitable foreground; use distinct roles for categories, states or the creative direction. Inspect actual text and graphical elements against their rendered backgrounds under the applicable text/non-text contrast requirements and exceptions.
+3. **Use native geometry and clear notation.** SVG paths and markers can draw directional relationships. Shared baselines and sizes support equal roles; purposeful variation can encode differences.
+4. **Check text and references.** Keep critical labels controllable and legible in the final output. IDs are unique where figures share a document; internal references resolve. Give meaningful graphics appropriate names and descriptions; hide them from assistive technology only when a sufficient equivalent is available.
+5. **Inspect the destination.** Check crop, resolution, supported themes, export, reading order and interaction in the delivered medium. A browser preview does not certify a native document or video.
 
-## Charts
+## Quantitative graphics
 
-1. **Draw to one scale.** Every mark in a chart is placed by the same scale, and every axis label names a value the chart actually reaches — a bar drawn to look right rather than to its value is a false claim. Chart text, gridlines, and marks take their colors from the page's tokens, never a library default; series colors follow the color-construction rules in `craft.md`. One chart, one comparison; a chart the reader cannot restate in a sentence is decoration.
+Choose the chart for the analytical question: magnitude, change, distribution, relationship, part-to-whole or spatial pattern. Geographic area is useful when location matters; ranking alone may be clearer in aligned marks.
+
+Map each encoded variable faithfully through its own scale. Use a baseline appropriate to the encoding, disclose consequential truncation or transformations, and keep comparison domains consistent where required. Axis ticks can extend beyond observed values; x and y need not share a scale. Inspect units, denominators, aggregation, missingness, uncertainty, dates and observed versus projected values. Interpolation and smoothing must not invent a pattern. Styling and motion preserve these relationships while making them legible and compelling.

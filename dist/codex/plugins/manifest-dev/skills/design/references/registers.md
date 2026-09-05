@@ -8,17 +8,17 @@ Purpose picks the metric and directs the creative ambition. Each genre expresses
 
 | Genre | Job | Design center | Success metric | Failure smell |
 |---|---|---|---|---|
-| Landing page | Persuade → one action | Message clarity in the visitor's vocabulary; anxiety removed at the call to action | Conversion on the one goal | Beautiful hero, vague promise; three equal calls to action |
+| Landing page | Persuade → one action | Message clarity in the visitor's vocabulary; anxiety removed at the call to action | Successful informed choice and relevant action | Beautiful hero, vague promise; three equal calls to action |
 | Form / checkout | Enable a transaction | Fewest *considered* fields; forgiving inputs; validate late, reward early | Completion and error-recovery rate | Looks clean, punishes typing; an error wipes input |
-| Dashboard | Monitor and decide | The 3–5 decisions it serves; deviation visible at a glance | Time to detect the deviant number | Wall of tiles, everything equally loud |
-| Report / memo | Persuade a decision-maker | Answer first; evidence beneath; stable page references | Decision made from page 1 | Conclusion on page 6; no page numbers |
+| Dashboard | Monitor and decide | Consequential conditions and uncertainty visible; context for investigation | Correct prioritization and investigation | Wall of tiles, everything equally loud |
+| Report / memo | Persuade a decision-maker | Decision or unresolved trade-off early; comparable evidence and stable references | Reader identifies the decision, evidence and remaining uncertainty | Conclusion on page 6; no page numbers |
 | Talk deck | Persuade or teach a room | One assertion per slide, visual evidence, legible in a 3-second glance | Audience can restate the argument | Slides used as speaker notes; 40-bullet slides |
 | Slidedoc (reading deck) | Inform without a presenter | 50–150 words per page, full sentences, reading hierarchy | Reader acts on it alone | The projected/emailed hybrid that serves neither |
 | Infographic | One takeaway spreads | A title that states the finding; one governing metaphor; plain data marks | Takeaway recalled correctly | Icon soup; ten facts, no message |
-| Data story | Walk a reader through evidence | Author-driven sequence; everything load-bearing always visible | Story lands without interaction | Load-bearing tooltips; exploration instead of narrative |
+| Data story | Walk a reader through evidence | Purposeful sequence with clear orientation and appropriate equivalent access | Reader follows and can explain the evidence in the intended medium | Load-bearing tooltips; exploration instead of narrative |
 | Poster / one-pager | Inform at a glance | One plain-language finding legible at distance; three-layer read | Message received in 3 seconds at 3 meters | Paragraphs on a poster |
 | Explainer / explorable | Build a mental model | Useful initial state; interaction exposes the mechanism where appropriate | Reader predicts the system's behavior | Sliders that demonstrate nothing; content behind hover |
-| Game / toy | Delight → re-engagement | Input answered under 100ms; rich feedback on a working core; teach by doing | Unprompted second session | One spectacle, identical the tenth time |
+| Game / toy | Delight → re-engagement | Input answered under 100ms; rich feedback on a working core; teach by doing | Enjoyable, understandable play; return when relevant | One spectacle, identical the tenth time |
 
 ## Genre rules and probes
 
@@ -30,9 +30,9 @@ Generated decks reproduce documented bad practice — evenly-weighted bullets, t
 
 ### Infographics, data stories, posters
 
-Name what the reader must be able to *do*, then hold the order truthful → functional → beautiful. Pipeline: one-sentence big idea → simple familiar chart forms → declutter → gray everything plus one accent → annotate the takeaway. **Keep data marks plain and honest; spend richness on the frame** — subject imagery, one governing metaphor, and above all the title: for an author-driven data story, use a finding title with a verb and a direction. Pictogram-style encodings are fine; check whether decoration competes with the task. Place essential findings where the intended reader encounters them; hover cannot be the only access path. The artifact travels alone: finding, source, and data date answerable from the artifact itself.
+Name what the reader must understand or do, then compose truthful evidence and compelling expression together. Choose forms, color roles, annotations and pacing for that task; a single-accent treatment is one option. **Keep quantitative encoding faithful; imagery, metaphor and annotation can help carry meaning within or beside the marks.** An evidence-led story can use a supported finding as its title; an exploratory comparison or poster may need a question or subject instead. Pictogram-style encodings are fine; check whether decoration competes with the task. Place essential findings where the intended reader encounters them; hover cannot be the only access path. The artifact travels alone: finding, source, and data date answerable from the artifact itself.
 
-Generated failures: icon soup, unmoored numbers, decoration-first ordering, topic titles, emphasis everywhere, text rasterized inside images. Hard gates: every number traces to a supplied source or does not render; critical text typeset in the medium’s controllable layout layer with equivalent access; color roles appropriate to the data and creative direction. *Probe:* cover everything but the title — does it state the finding? Ask what the reader would repeat to a colleague.
+Generated failures: icon soup, unmoored numbers, decoration-first ordering, titles that fail to orient the reader, emphasis everywhere, text rasterized inside images. Hard gates: every number traces to a supplied source or does not render; critical text typeset in the medium’s controllable layout layer with equivalent access; color roles appropriate to the data and creative direction. *Probe:* does the title orient the reader to the finding, question or subject the artifact actually supports? Ask what the reader would repeat to a colleague.
 
 ### Conversion surfaces and forms
 
@@ -50,9 +50,9 @@ Generated failures: juicing before the core works, the same confetti on every ev
 
 ### Print-shaped documents and email
 
-Fixed layout earns its place only when the artifact will be printed, needs stable page references, or *is* its layout (poster, certificate); everything else reflows. Structure outranks typography: **the answer first, about three grouped reasons, evidence beneath** — a report whose conclusion arrives on page 6 has an ordering defect, not a length problem. Typography levers: 10–12pt print body, line-height 120–145%, 45–90 characters per line — line length sets the margins. Email is its own constraint set: ~600px single column, button styles that survive client rewriting, colors that survive forced dark-mode inversion.
+Fixed layout earns its place only when the artifact will be printed, needs stable page references, or *is* its layout (poster, certificate); everything else reflows. For decision documents, place the answer or unresolved trade-off early, with comparable evidence and uncertainty. The content determines the number of supporting reasons. Typography levers: 10–12pt print body, line-height 120–145%, 45–90 characters per line — line length sets the margins. Email is its own constraint set: ~600px single column, button styles that survive client rewriting, colors that survive forced dark-mode inversion.
 
-Generated documents write background → analysis → conclusion, the inverse of what a decision-maker needs; fix ordering first. *Probe:* read page 1 alone — can the decision be made from it?
+Generated documents write background → analysis → conclusion, the inverse of what a decision-maker needs; fix ordering first. *Probe:* read page 1 alone — can the reader identify the decision, relevant evidence and remaining uncertainty?
 
 ### Explorables
 
@@ -64,7 +64,7 @@ A decorative slider that changes no meaningful relationship is a defect; purpose
 
 Choose the emotional effect from the purpose and audience. A launch page may earn attention through an expressive composition; a serious report through authoritative typography and a revealing figure; a daily tool through a beautiful, immediate view of the work. Each needs a deliberate visual identity within the user's requirements and existing design system.
 
-Keep the first frame readable and usable. On repeated-use surfaces, let visual character come from the composition and craft; animation must give useful feedback without delaying the task. On narrative surfaces, story and surprise can carry the central idea, with all load-bearing content visible without interaction. Never gate meaningful pixels behind a loader or an orchestrated reveal.
+Keep the first frame readable and usable. On repeated-use surfaces, let visual character come from the composition and craft; animation must give useful feedback without delaying the task. On narrative surfaces, story and surprise can carry the central idea, and sequence or interaction can carry the content. Keep orientation and necessary controls available, with equivalent access suited to the medium; a deliberate reveal can serve prediction or storytelling.
 
 Refinement strengthens the chosen direction. A different subject may need a different idea; copying a famous look or adding more effects does not establish one. Craft rules for endings, celebration, and personality live in `craft.md` (emotion section).
 
