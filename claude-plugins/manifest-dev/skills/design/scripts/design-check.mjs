@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// design-check.mjs — mechanical design checks for an HTML artifact.
+// design-check.mjs — bounded triage for an HTML artifact, not conformance.
 //
 // Usage: node design-check.mjs <file.html>
 //
-// Static checks always run (no browser needed): focus-visible presence,
+// Static heuristics always run (no browser needed): focus-visible presence,
 // reduced-motion gating, single-theme color definitions, spacing-rhythm drift,
 // and figures against structural content (a page carrying sequences,
 // definition lists, or comparison/flow vocabulary with no figure at all).
-// Render checks (text contrast, horizontal overflow at 390px, touch-target
-// size, transparent body background) run when Playwright with a Chromium
+// Render samples (opaque flat-color text contrast, overflow at 320/390px, target
+// candidates, transparent body background) run when Playwright with a Chromium
 // browser is available; otherwise they are reported as SKIPPED so the gap
 // stays visible instead of silently passing.
 //
@@ -34,7 +34,7 @@ try {
   process.exit(1);
 }
 
-const findings = [];
+const findings = []; // Measured candidates, still subject to applicability review.
 const notes = [];
 const ok = [];
 const skipped = [];
@@ -57,16 +57,16 @@ const hasFocusVisible = /:focus-visible/.test(css);
 const stripsOutline = /outline\s*:\s*(none|0)/.test(css + inlineStyles);
 
 if (hasInteractive && !hasFocusVisible) {
-  findings.push(
-    "focus-visible: interactive elements present but no :focus-visible rule — keyboard users get no focus indicator beyond the default" +
+  notes.push(
+    "focus-visible: interactive elements present but no :focus-visible rule — a visible browser default may be sufficient; verify it" +
       (stripsOutline ? ", and an outline:none rule strips even that" : ""),
   );
 } else if (stripsOutline && !hasFocusVisible) {
-  findings.push(
+  notes.push(
     "focus-visible: outline stripped (outline:none) with no :focus-visible replacement",
   );
 } else {
-  ok.push("focus-visible");
+  notes.push("focus: source syntax inspected; verify the actual keyboard indicator and order");
 }
 
 const hasMotion =
@@ -74,11 +74,11 @@ const hasMotion =
   /animation\s*:|transition\s*:/.test(inlineStyles);
 const hasReducedMotion = /prefers-reduced-motion/.test(css);
 if (hasMotion && !hasReducedMotion) {
-  findings.push(
+  notes.push(
     "reduced-motion: animations/transitions present but no prefers-reduced-motion block gates them",
   );
 } else {
-  ok.push("reduced-motion");
+  notes.push("motion: source syntax inspected; verify actual behavior with the preference enabled");
 }
 
 // Single-theme colors: custom properties defined only inside a dark-scheme
@@ -101,15 +101,15 @@ if (darkBlocks) {
   const lightProps = propDefs(lightCss);
   const darkOnly = [...darkProps].filter((p) => !lightProps.has(p));
   if (darkOnly.length) {
-    findings.push(
+    notes.push(
       `single-theme colors: defined only in the dark block, no light value: ${darkOnly.join(", ")}`,
     );
   } else {
-    ok.push("two-theme tokens");
+    notes.push("two-theme tokens");
   }
 } else {
   notes.push(
-    "themes: no prefers-color-scheme block found (fine for a deliberately single-theme artifact; a defect if both themes are claimed)",
+    "themes: no prefers-color-scheme block detected; class/attribute themes and actual support require inspection",
   );
 }
 
@@ -124,12 +124,12 @@ if (distinct.length > 10) {
   const counts = {};
   for (const v of spacingVals) counts[v] = (counts[v] || 0) + 1;
   const singles = distinct.filter((v) => counts[v] === 1);
-  findings.push(
+  notes.push(
     `spacing rhythm: ${distinct.length} distinct px spacing values (${distinct.join(", ")}) — a held rhythm needs far fewer` +
       (singles.length ? `; used once each (off-scale candidates): ${singles.join(", ")}` : ""),
   );
 } else if (distinct.length) {
-  ok.push(`spacing rhythm (${distinct.length} distinct values)`);
+  notes.push(`spacing rhythm (${distinct.length} distinct values)`);
 }
 
 // Figures against structural content: a page whose subject is structural or
@@ -166,17 +166,17 @@ if (flowWords.length)
     `comparison/flow vocabulary in ${flowWords.length} heading(s) or table label(s)`,
   );
 if (figureCount === 0 && proseWords >= 400 && structuralSignals.length >= 2) {
-  findings.push(
-    `figures: no figure on a page carrying structural content (${structuralSignals.join("; ")}; ${proseWords} words of prose) — a mechanism, comparison, or sequence assembled from prose that a figure would carry; see the task model's encoding line`,
+  notes.push(
+    `figures: review encoding on a page with no detected figure (${structuralSignals.join("; ")}; ${proseWords} words of prose) — vocabulary is not proof a figure is needed; inspect the task model and existing tables`,
   );
 } else if (figureCount === 0 && proseWords >= 400 && structuralSignals.length === 1) {
   notes.push(
     `figures: none on a ${proseWords}-word page with ${structuralSignals[0]} — check the encoding line assigned that content to prose deliberately`,
   );
 } else if (figureCount) {
-  ok.push(`figures (${figureCount} figure-bearing element(s))`);
+  notes.push(`figures (${figureCount} figure-bearing element(s))`);
 } else {
-  ok.push("figures (no structural content detected)");
+  notes.push("figures (no structural content detected)");
 }
 
 // ---------- render checks ----------
@@ -184,7 +184,7 @@ if (figureCount === 0 && proseWords >= 400 && structuralSignals.length >= 2) {
 const relLum = ({ r, g, b }) => {
   const f = (c) => {
     c /= 255;
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   };
   return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
 };
@@ -229,13 +229,13 @@ async function launchBrowser() {
 }
 
 if (!chromium) {
-  skipped.push("contrast, overflow@390, touch targets, body background — Playwright not available");
+  skipped.push("render samples — Playwright not available");
 } else {
   let browser;
   try {
     browser = await launchBrowser();
-    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-    await page.goto("file://" + resolve(file), { waitUntil: "load" });
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: "light" });
+    await page.goto(pathToFileURL(resolve(file)).href, { waitUntil: "load" });
     // Freeze animations/transitions so geometry and color measurements are
     // stable (a rotating element inflates its own bounding box).
     await page.addStyleTag({
@@ -243,7 +243,7 @@ if (!chromium) {
     });
 
     const parse = (s) => {
-      const m = s && s.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+      const m = s && s.match(/^rgba?\((\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)(?:,\s*([\d.]+))?\)$/);
       return m
         ? { r: +m[1], g: +m[2], b: +m[3], a: m[4] === undefined ? 1 : +m[4] }
         : null;
@@ -256,16 +256,18 @@ if (!chromium) {
     });
     const bodyC = parse(bodyBg.body);
     const htmlC = parse(bodyBg.html);
-    if ((!bodyC || bodyC.a === 0) && (!htmlC || htmlC.a === 0)) {
-      findings.push(
+    if (!bodyC || !htmlC) {
+      skipped.push("body background: unsupported color syntax; inspect the actual canvas");
+    } else if (bodyC.a === 0 && htmlC.a === 0) {
+      notes.push(
         "body background: transparent on both <body> and <html> — the artifact borrows its host's background and can render unreadable",
       );
     } else {
       ok.push("body background");
     }
 
-    // Contrast on visible text elements.
-    const textSamples = await page.evaluate(() => {
+    // Conservative samples only: unhandled paint is SKIPPED, never a pass.
+    const textInventory = await page.evaluate(() => {
       const out = [];
       const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
       const seen = new Set();
@@ -276,107 +278,98 @@ if (!chromium) {
         if (!el || seen.has(el)) continue;
         seen.add(el);
         const cs = getComputedStyle(el);
-        if (cs.visibility === "hidden" || cs.display === "none") continue;
         const rect = el.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) continue;
-        // Effective background: nearest ancestor with a non-transparent color;
-        // background images make contrast uncomputable here — mark them.
-        let bg = null;
-        let hasImage = false;
+        if (cs.visibility !== "visible" || cs.display === "none" || !rect.width || !rect.height) continue;
+        const backgrounds = [];
+        const effects = [];
+        if (el.namespaceURI !== "http://www.w3.org/1999/xhtml") effects.push("non-HTML text paint");
         for (let a = el; a; a = a.parentElement) {
-          const acs = getComputedStyle(a);
-          if (acs.backgroundImage && acs.backgroundImage !== "none") {
-            hasImage = true;
-            break;
-          }
-          const c = acs.backgroundColor;
-          if (c && !c.startsWith("rgba(0, 0, 0, 0")) {
-            bg = c;
-            break;
-          }
+          const style = getComputedStyle(a);
+          backgrounds.push(style.backgroundColor);
+          if (Number(style.opacity) !== 1) effects.push("opacity");
+          if (style.backgroundImage !== "none") effects.push("background image");
+          if (style.filter !== "none" || (style.backdropFilter && style.backdropFilter !== "none")) effects.push("filter");
+          if (style.mixBlendMode !== "normal" || style.backgroundBlendMode !== "normal") effects.push("blend");
+          if (style.maskImage && style.maskImage !== "none") effects.push("mask");
+          if (style.textShadow !== "none") effects.push("text shadow");
         }
+        if (cs.webkitTextFillColor && cs.webkitTextFillColor !== cs.color) effects.push("text fill");
+        if (parseFloat(cs.webkitTextStrokeWidth) > 0) effects.push("text stroke");
+        if (el.closest('[disabled], [aria-disabled="true"]')) effects.push("inactive-control exception needs review");
         out.push({
-          text: n.textContent.trim().slice(0, 40),
-          tag: el.tagName.toLowerCase(),
-          cls: (el.className && String(el.className).slice(0, 40)) || "",
-          color: cs.color,
-          bg,
-          hasImage,
-          fontSize: parseFloat(cs.fontSize),
-          fontWeight: parseInt(cs.fontWeight, 10) || 400,
+          text: n.textContent.trim().slice(0, 40), tag: el.tagName.toLowerCase(),
+          color: cs.color, backgrounds, effects,
+          fontSize: parseFloat(cs.fontSize), fontWeight: parseInt(cs.fontWeight, 10) || 400,
         });
       }
-      return out.slice(0, 400);
+      return { samples: out.slice(0, 400), total: out.length };
     });
-
+    let measured = 0;
     let contrastFails = 0;
-    let imageSkips = 0;
-    for (const s of textSamples) {
-      if (s.hasImage) {
-        imageSkips++;
-        continue;
+    const exclusions = new Map();
+    const exclude = (reason) => exclusions.set(reason, (exclusions.get(reason) || 0) + 1);
+    for (const sample of textInventory.samples) {
+      if (sample.effects.length) { exclude([...new Set(sample.effects)].join(", ")); continue; }
+      const fg = parse(sample.color);
+      if (!fg || fg.a !== 1) { exclude("unsupported or transparent foreground"); continue; }
+      let bg = null;
+      let reason = "no known opaque background";
+      for (const value of sample.backgrounds) {
+        const color = parse(value);
+        if (!color) { reason = "unsupported background color"; break; }
+        if (color.a === 0) continue;
+        if (color.a !== 1) { reason = "transparent background requires compositing"; break; }
+        bg = color;
+        break;
       }
-      const fg = parse(s.color);
-      const bg = parse(s.bg) || { r: 255, g: 255, b: 255, a: 1 };
-      if (!fg) continue;
-      const large = s.fontSize >= 24 || (s.fontSize >= 18.66 && s.fontWeight >= 700);
-      const floor = large ? 3.0 : 4.5;
-      const r = ratio(fg, bg);
-      if (r < floor - 0.01) {
+      if (!bg) { exclude(reason); continue; }
+      measured++;
+      const large = sample.fontSize >= 24 || (sample.fontSize >= 14 * 96 / 72 && sample.fontWeight >= 700);
+      const floor = large ? 3 : 4.5;
+      const value = ratio(fg, bg);
+      if (value < floor) {
         contrastFails++;
-        if (contrastFails <= 10) {
-          findings.push(
-            `contrast: ${r.toFixed(2)}:1 (< ${floor}:1) on <${s.tag}${s.cls ? " ." + s.cls : ""}> "${s.text}" — ${s.color} on ${s.bg || "default white"}`,
-          );
-        }
-      }
-    }
-    if (contrastFails > 10)
-      findings.push(`contrast: ${contrastFails - 10} further failing text elements not listed`);
-    if (!contrastFails) ok.push(`contrast (${textSamples.length} text elements sampled)`);
-    if (imageSkips)
-      notes.push(
-        `contrast: ${imageSkips} text elements sit over background images — verify those against the image's worst region by eye`,
-      );
-
-    // 390px checks.
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.waitForTimeout(150);
-    const narrow = await page.evaluate(() => {
-      const doc = document.scrollingElement || document.documentElement;
-      const overflow = doc.scrollWidth > window.innerWidth + 1;
-      const small = [];
-      for (const el of document.querySelectorAll(
-        'button, a[href], input[type="button"], input[type="submit"], [role="button"]',
-      )) {
-        const r = el.getBoundingClientRect();
-        const cs = getComputedStyle(el);
-        if (cs.display === "none" || cs.visibility === "hidden") continue;
-        if (r.width === 0 || r.height === 0) continue;
-        if (r.width < 24 || r.height < 24)
-          small.push({
-            tag: el.tagName.toLowerCase(),
-            text: (el.textContent || "").trim().slice(0, 30),
-            w: Math.round(r.width),
-            h: Math.round(r.height),
-          });
-      }
-      return { overflow, scrollWidth: doc.scrollWidth, small: small.slice(0, 10) };
-    });
-    if (narrow.overflow) {
-      findings.push(
-        `overflow@390: page scrolls horizontally at 390px (content width ${narrow.scrollWidth}px) — wide content needs its own overflow-x wrapper`,
-      );
-    } else {
-      ok.push("overflow@390");
-    }
-    if (narrow.small.length) {
-      for (const t of narrow.small)
-        findings.push(
-          `touch target: <${t.tag}> "${t.text}" is ${t.w}×${t.h}px at 390px — below the 24px floor (44px is the target)`,
+        if (contrastFails <= 10) findings.push(
+          `contrast candidate: ${value.toFixed(4)}:1 (< ${floor}:1) on <${sample.tag}> "${sample.text}" — confirm applicable text exceptions and actual paint`,
         );
-    } else {
-      ok.push("touch targets@390");
+      }
+    }
+    if (contrastFails > 10) findings.push(`contrast: ${contrastFails - 10} further below-threshold samples`);
+    const excluded = [...exclusions.values()].reduce((a, b) => a + b, 0);
+    notes.push(`contrast coverage light@1440: ${measured} measured, ${contrastFails} below threshold, ${excluded} skipped, ${textInventory.total - textInventory.samples.length} beyond sample limit`);
+    for (const [reason, count] of exclusions) skipped.push(`contrast: ${count} sample(s): ${reason}`);
+    if (textInventory.total > textInventory.samples.length) skipped.push("contrast: remaining text beyond the 400-element sample limit");
+    if (measured && !contrastFails) ok.push(`contrast: ${measured} supported opaque samples met their thresholds; other paint, states and text are not certified`);
+    notes.push("render scope: initial light-theme DOM text, animations frozen; inspect overlap, pseudo-elements, canvas/SVG, other themes and interactive states with appropriate tools");
+
+    // Width and target candidates require applicability/exception review.
+    for (const width of [320, 390]) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.waitForTimeout(150);
+      const narrow = await page.evaluate(() => {
+        const doc = document.scrollingElement || document.documentElement;
+        const small = [];
+        let inspected = 0;
+        for (const el of document.querySelectorAll(
+          'button, a[href], input:not([type="hidden"]), select, textarea, summary, [role="button"], [role="checkbox"], [role="radio"], [role="switch"], [role="tab"]',
+        )) {
+          const rect = el.getBoundingClientRect();
+          const style = getComputedStyle(el);
+          if (style.display === "none" || style.visibility !== "visible" || !rect.width || !rect.height) continue;
+          inspected++;
+          if (rect.width < 24 || rect.height < 24) small.push({
+            tag: el.tagName.toLowerCase(), text: (el.textContent || "").trim().slice(0, 30),
+            w: Math.round(rect.width), h: Math.round(rect.height),
+          });
+        }
+        return { overflow: doc.scrollWidth > window.innerWidth + 1, scrollWidth: doc.scrollWidth, small: small.slice(0, 10), smallCount: small.length, inspected };
+      });
+      if (narrow.overflow) notes.push(`overflow@${width}: content width ${narrow.scrollWidth}px — inspect loss of content/function and necessary two-dimensional-content exceptions`);
+      else ok.push(`overflow@${width}: no page-width overflow in this state; zoom and content loss remain separate checks`);
+      for (const target of narrow.small) notes.push(
+        `target candidate@${width}: <${target.tag}> "${target.text}" ${target.w}×${target.h}px — review spacing, equivalent, inline, user-agent and essential exceptions before grading`,
+      );
+      notes.push(`target coverage@${width}: ${narrow.inspected} detected controls, ${narrow.smallCount} undersized bounding boxes; effective hit areas and custom controls need review`);
     }
   } catch (e) {
     skipped.push(`render checks failed to run: ${e.message.split("\n")[0]}`);

@@ -1,7 +1,7 @@
 # ADR: Deliberation renders run the design skill at prototype weight
 
 ## Status
-Accepted — extended by 20260901-design-derives-structure-from-a-written-task-model: a task-model decision was added between purpose and register, and it too runs in full at prototype weight, so three decisions now do rather than the two this record named. The weight's own rules — minimal token block, floors only where the fidelity concentrates, roughness kept elsewhere, verification skipped — all stand. Further extended by 20260902-design-chooses-an-encoding-per-claim-figures-are-information-not-decoration: the legibility floors held on the judged surface now include the page being at rest at load, and the task model that runs in full carries its encoding line.
+Accepted — extended by 20260901-design-derives-structure-from-a-written-task-model: a task-model decision was added between purpose and register, and it too runs in full at prototype weight, so three decisions now do rather than the two this record named. The weight's own rules — minimal token block, floors only where the fidelity concentrates, roughness kept elsewhere, verification skipped — all stand. Further extended by 20260902-design-chooses-an-encoding-per-claim-figures-are-information-not-decoration: the legibility floors held on the judged surface now include the page being at rest at load, and the task model that runs in full carries its encoding line. Further amended by 20260905-design-obligations-follow-the-medium-and-task: narrows the static-on-arrival constraint to orientation and necessary controls; prototypes judging interaction or pacing must expose that behavior.
 
 ## Area
 Design skills

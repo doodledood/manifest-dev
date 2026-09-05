@@ -1,36 +1,85 @@
-# Web/app floors — the full numbers
+# Web requirements and craft defaults
 
-The ranked inventory behind the checklist in `SKILL.md`, in the order generated output most reliably breaks it. Each rule is an action with its number or check; verify against the artifact, never against your account of it.
+Apply requirements to the actual artifact. Standards carry levels and exceptions;
+style and dimension examples are starting points, not universal pass/fail rules.
+A review failure needs an applicable requirement, brief/system constraint or
+observable consequence for the task.
 
-1. **States exist or the UI is unfinished.** Every dynamic region ships four designs: loading (under ~1 second show nothing; 1–10 seconds an indeterminate indicator; over 10 seconds percent-done; a skeleton screen only when it matches the real layout, with a slow left-to-right shimmer), empty (what would be here and how to get it — status plus a direct pathway; never bare "No data"), error (what failed, what to do, retry available, input preserved), and the happy path. Destructive actions get undo where possible, confirmation only for the irreversible — routine confirmations train click-through, and confirmation buttons restate outcomes ("Delete project" / "Keep project"), never Yes/No. Any action over ~1 second shows a busy indicator. Progress bars never move backwards or park at 99%.
-2. **Register fit.** The register table in `SKILL.md` is binding: the marketing-card look never touches a dashboard, report, or tool. One register per region on hybrid pages.
-3. **Contrast by number.** Normal text ≥4.5:1 against its actual background; large text (≥24px, or ≥19px bold) ≥3:1. Secondary and muted text still clears 4.5:1 — de-emphasize by stepping the shade, never below the floor. Check white-on-accent buttons; assumed passes fail most often there. On dark surfaces the ratio arithmetic flatters: keep body-text lightness far from surface lightness, and treat ~4.5:1 as the minimum, not the target. Text over images: 4.5:1 against the image's *worst* region — use a 40–60% overlay or bottom gradient, then re-check.
-4. **One spacing rhythm, held by the parent.** Declare the spacing values once (example: within-group 8/12, card padding 24, section gap 48–96) and reuse exactly those. Lay out siblings with flex/grid `gap`, never per-child margins — give every gap one owner, and repair a bad transition at the owner, never with a one-off margin. The inequality that must hold: within-element < within-group < between-group < between-section. Space above a heading ≈ 2–3× the space below it. Every gap is a grouping claim: a label equidistant between two fields is ambiguous no matter what the markup says — within-group gaps sit at least one rhythm step below between-group.
-5. **Alignment has a spine.** One left alignment edge per region; fewer distinct alignment edges is the measurable virtue of a grid. Numbers right-aligned with equal-width digits. Never mix centered and left-aligned blocks in one column; center only short, symmetric elements.
-6. **Neutrals do 90% of the work.** ~8–10 shades of one slightly-tinted neutral carry the page; one accent appears roughly once per view at full strength; semantic hues (success/warning/danger) are reserved and never decorative. No gradient text, no colored headings, no multi-hue cards. Construction of the ramps: `craft.md`, color section.
-7. **Dark mode is designed, not inverted.** Dark-gray surfaces (the #121212 class, never pure black — pure white on pure black blooms); elevation rendered as a lighter surface (white overlay rising ~5% at low elevation to ~16% at high); accents lightened and desaturated 20–40% (saturated color vibrates on dark); text at ~87% / 60% / 38% white for primary/secondary/disabled; images dimmed slightly, never inverted. Every color is a two-theme token. Platform mechanics: define the complete light palette on bare `:root`, override only tokens in the dark block, give `body` an explicit token background — a transparent body borrows the host's theme and ships the unreadable-artifact bug.
-8. **Prose measure and display type.** Body prose `max-width: 65–70ch`; body 16–18px at line-height 1.5–1.6. Headings: line-height 1.1–1.25, slight negative letter-spacing at ≥30px. Uppercase labels get +5–10% letter-spacing. Hierarchy from weight and color before size — two weights (400 and 600–700) suffice; giant thin display text over weak body is the single-lever hierarchy error.
-9. **Data typography.** `font-variant-numeric: tabular-nums` wherever digits align — and verify the font actually has the feature: render `1111111` against `0000000`; unequal widths means route numerals to a mono face. Consistent decimals per column; thousands separators via `Intl.NumberFormat`; "—" for missing values, never "0"; no float noise.
-10. **Craft consistency.** One radius system — a nested radius = outer radius − padding. Hairline borders *or* shadows *or* a background shift to separate surfaces — never stacked. One icon set at one stroke weight; every navigational icon gets a visible label (only home, print, and search approach universal recognition); never emoji as icons. Truncation planned against 3×-length strings: `min-width: 0`, ellipsis, line-clamp. Controls in one row share exact height. Repeated things are composed as one object: siblings share edges and baselines, container height comes from content, no row strands a lone item, and clipped text is a bug.
-11. **Accessibility mechanics.** `:focus-visible` ring (2px, offset, accent-colored) — never strip outlines without replacement. `prefers-reduced-motion` gates all non-essential animation — degrade to a fast cross-fade, never `animation: none !important`, which also kills state feedback. Touch targets ≥44px with ≥8px gaps (24px is the legal floor models mistake for the target; corners want ~64px); the padding carries the size — glyph small, hit area full. Real `<button>` and `<a href>`, visible labels on inputs, one `h1`, no skipped heading levels. Deeper layer — screen-reader navigation, modal focus, live regions: `craft.md`, accessibility section.
-12. **The page is at rest at load.** Everything readable is visible on arrival: no element parked at `opacity: 0` waiting on an intersection observer, no reveal-on-scroll on load-bearing content, no hero sized to the viewport instead of to its content. A tool opens in a realistic working state — example rows, a filled form, a populated list — plainly marked as sample data, never an empty shell the reader must fill before judging it. Check by loading the page cold, scrolling nowhere, clicking nothing: what is visible is the page.
-13. **Structure is information.** Numbered markers only when the content is a sequence the reader follows in order; eyebrows, dividers, and section furniture only where they encode something true about the content (a phase change, a new speaker, a different source). Furniture applied for rhythm is a false claim about structure — check each device by naming what it encodes; one that encodes nothing goes.
-14. **Copy is design material.** Buttons name the specific outcome ("Save changes", "Delete 3 files") — verb + object, sentence case, differentiating word first, one primary action per view. Scanners see roughly the first 2 words of a heading, link, or list item — front-load the payload; "An Overview of…" spends the scan window on scaffolding. Errors: what happened, what to do, blame the system, never the user; red plus icon plus text, never color alone. A placeholder is never a label. Plain language helps experts too: aim for short sentences (≤15–20 words), keep the domain's precise terms, cut connective sludge ("in order to", "please feel free to"). Voice fixed per artifact; tone flexes toward matter-of-fact at failure moments, never toward playful.
+## Function and access
 
-## Density
+1. **Applicable states.** Design loading, empty, failure, recovery and successful
+   states where they can occur. Acknowledge actions promptly and preserve input.
+   Show determinate progress only when meaningful progress is measurable; otherwise
+   provide truthful status. Skeletons are an option when they match the content,
+   not a required loading pattern. State continuity loads from `experience.md`.
+2. **Consequential actions.** Prefer useful undo where possible; make irreversible
+   outcomes clear before commitment. A confirmation names the outcome, not Yes/No.
+   Avoid routine confirmations that add no decision value.
+3. **Text contrast.** For WCAG 2.2 AA, normal text needs at least 4.5:1; large text
+   at least 3:1 (18pt, or 14pt bold: 24 CSS px, or 18⅔ CSS px bold). Compare the
+   unrounded ratio against the threshold. Placeholder and secondary text are not
+   exempt. Apply the criterion's exceptions, including inactive controls, decorative
+   or incidental text and logotypes. Check actual backgrounds and states; image,
+   alpha, gradients and unsupported colors require appropriate measurement.
+4. **Non-text meaning.** Required control/state and graphical distinctions need
+   applicable non-text contrast; color alone must not carry meaning. Preserve
+   labels and equivalent access to images, figures and charts.
+5. **Keyboard and semantics.** Use suitable native controls, meaningful names,
+   visible labels, sensible reading/focus order and visible keyboard focus.
+   A browser's visible default focus can be sufficient. Removing it needs an
+   effective replacement; a `:focus-visible` selector alone proves nothing.
+6. **Targets.** WCAG 2.2 AA target size is 24×24 CSS px, subject to spacing,
+   equivalent-control, inline, user-agent and essential exceptions. Its enhanced
+   44×44 criterion is AAA with its own exceptions. Use comfortable targets for
+   the supported input and actual platform guidance; CSS px, pt and dp are not
+   interchangeable. These criteria do not by themselves establish legal compliance.
+7. **Enlargement and reflow.** Check 200% text resizing without loss under the
+   applicable criterion. For vertical-scrolling web content, check reflow at
+   320 CSS px; horizontal-scrolling content uses 256 CSS px height. Necessary
+   two-dimensional content has exceptions; the surrounding content still reflows.
+   A 390px screenshot or a `clamp()` formula alone does not settle these checks.
+8. **Motion.** Respect reduced-motion needs while preserving feedback, using an
+   immediate state change or a suitable reduced effect. WCAG's interaction-motion
+   criterion is AAA and concerns disabling nonessential motion; a particular CSS
+   block is a technique, not the requirement. Also inspect applicable autoplay
+   pause/stop controls and flash limits.
+9. **Forms and recovery.** Explain what failed and how to recover, adjacent to the
+   relevant field and through appropriate announcements. Preserve valid input,
+   support suitable autocomplete and password-manager/paste behavior. Check actual
+   validation timing rather than marking unfinished input wrong. Apply redundant
+   entry, authentication and dragging criteria with their stated exceptions.
 
-Density buys information; disorganization pays for it. The license to densify is conditional on alignment, grouping, and hierarchy — dense-and-structured beats sparse-and-fragmented, and a clean page that hides everything behind clicks is sparse in *time*. Density is task-dependent, never a style: reading wants room, monitoring wants information per glance. Ship a comfortable default and a compact mode (compact ≈ padding stepped down one rhythm unit, row heights 48→40→32); exempt dialogs, alerts, form validation, pickers, and touch-primary surfaces from compaction. Floors do not compress: touch targets, ≥12px body text, contrast unchanged. Prose columns keep their measure — squeezing text below ~40 characters per line has a real reading cost.
+## Coherent craft
 
-## Banned rationales
+- **Grouping and alignment.** Related content should read as related. Keep a
+  coherent spacing system and give each gap a clear owner. Logical start edges
+  support the writing direction; numeric alignment supports comparison. Mixed
+  alignment, borders plus shadows or a nonstandard gap are not defects by syntax.
+- **Color and themes.** Choose roles that realize the creative direction and make
+  states distinguishable. Neutral-heavy palettes and a restrained accent are useful
+  options, not mandatory proportions. Black backgrounds, colored headings and
+  gradients can be appropriate. Test every supported theme; define the intended
+  canvas background when the artifact is meant to stand alone.
+- **Type and measure.** A 65–70ch prose column and 16–18px body type are starting
+  examples for some web reading, not universal limits. Verify actual language,
+  glyphs, size, enlargement and reading context. WCAG sets no general minimum body
+  font size. Use consistent numeric precision and localized units; distinguish
+  missing data from zero and uncertainty from known values.
+- **Density.** Match information density to the task, input and expertise. Offer
+  a compact mode when useful; do not add one automatically. Preserve grouping,
+  legibility, applicable targets and recovery under compaction.
+- **Copy and structure.** Controls name outcomes. Headings and labels help find
+  the relevant content. Numbering encodes sequence where sequence matters; other
+  visual grouping earns its place through meaning or the creative direction.
+- **Entry state.** Orientation and essential narrative are available without
+  forced reveals. Demonstration data is labeled, real empty states truthful.
+  Content may extend beyond the viewport; make continuation discoverable. Games,
+  creative tools and simulations can require interaction to carry their purpose.
 
-Never justify a design choice with any of these — each is documented lore or outright debunked, and each marks generated reasoning as unexamined:
+## Unsupported rationales
 
-- The golden ratio as a layout justification.
-- "Whitespace increases comprehension by 20%."
-- The F-pattern as a layout *target* (it describes what users do when a page gives no hierarchy — it is the failure, not the goal).
-- The Z-pattern or Gutenberg diagram as science.
-- "60-30-10" color proportions as a rule with evidence.
-- Survey-derived delight classifications ("this is an exciter/delighter") as evidence.
-- "Award-winning sites convert worse" as a measured fact.
-
-If a choice is right, it has a reason in this file, in the register, or in the subject; if the only available justification is on this list, re-derive the choice.
+Do not justify a choice with a universal golden ratio, a 20% whitespace boost,
+a fixed scan pattern, a 40% complexity target, a threefold complexity penalty,
+or a claim that an automated scan establishes accessibility. Choose on the
+artifact's task and evidence. Numerical templates and style examples need no
+invented scientific authority to be useful defaults.
