@@ -71,10 +71,10 @@ observable consequence for the task.
 - **Copy and structure.** Controls name outcomes. Headings and labels help find
   the relevant content. Numbering encodes sequence where sequence matters; other
   visual grouping earns its place through meaning or the creative direction.
-- **Entry state.** Orientation and essential narrative are available without
-  forced reveals. Demonstration data is labeled, real empty states truthful.
-  Content may extend beyond the viewport; make continuation discoverable. Games,
-  creative tools and simulations can require interaction to carry their purpose.
+- **Entry state.** Orientation and necessary controls are available on arrival.
+  Demonstration data is labeled; real empty states are truthful. Make continuation
+  discoverable. Narrative, learning and other temporal or interactive tasks may
+  use sequence or deliberate reveals, with appropriate equivalent access.
 
 ## Unsupported rationales
 
