@@ -48,7 +48,7 @@ TEMPLATE_PLUGIN = "PLUGIN_TEMPLATE"
 # capability that arming looks for. Two signals, because either alone is wrong: the
 # capability sentence appears in READMEs and in `define`, which only describe the
 # mechanism, while the word "backstop" appears in verification references that merely
-# mention one. Neither signal keys on an incidental phrasing — the five Manifest sites
+# mention one. Neither signal keys on an incidental phrasing — the Manifest sites
 # say "goal-setting, continuation, or durable-completion-condition capability" and
 # figure-out says "goal-setting or continuation capability", and harmonizing those is
 # an ordinary copy-edit that must not change which files this test examines.
@@ -74,7 +74,9 @@ NO_PARAPHRASE = "Do not summarize, shorten, reword, or re-punctuate"
 # prose can strip it without any block changing.
 LABEL_NOT_EMITTED = "this file's markers rather than part of what you emit"
 
-Label = Literal["goal-block", "gate-ledger-clause", "chain-prefix", "pr-tend-prefix"]
+Label = Literal[
+    "goal-block", "gate-ledger-clause", "manifest-reference", "pr-tend-prefix"
+]
 
 # Fence label -> a phrase from that block's body. The label is the identity; the
 # signature exists only so `test_every_shared_block_is_labelled` can catch a block
@@ -85,10 +87,7 @@ SIGNATURES: dict[Label, str] = {
     "gate-ledger-clause": (
         "explicit or inherited verifier model, latest verdict, evidence"
     ),
-    "chain-prefix": (
-        "Treat a missing or weak Read checkpoint as a phase defect to repair "
-        "before the Manifest is written"
-    ),
+    "manifest-reference": "Read this file before resuming execution.",
     "pr-tend-prefix": "Discover or synthesize the Manifest for this pull request.",
 }
 GOAL_BLOCK: Label = "goal-block"
@@ -312,3 +311,50 @@ def test_the_blocks_are_actually_present() -> None:
         carriers = [p for paths in found[label].values() for p in paths]
         assert carriers, f"no file carries the {label} block"
     assert backstop_sites(), "no file arms a completion backstop"
+
+
+def test_auto_chains_leave_goal_emission_to_the_executor() -> None:
+    """A chain must remain goal-free until it has handed over a Manifest."""
+    for name, executor in (("auto", "do"), ("just-auto", "just-do")):
+        for path in [source_skills()[name], *dist_copies(name)]:
+            text = normalized(read(path))
+            assert not blocks_in(path), path
+            assert "```chain-prefix" not in read(path), path
+            assert "Do not set or print a continuation goal" in text, path
+            assert f"/{executor} owns the completion backstop" in text, path
+            assert "Manifest path" in text, path
+            assert "No path → stop and report" in text, path
+
+
+def test_executor_contract_identifies_manifest_without_prior_context(
+    tmp_path: Path,
+) -> None:
+    """Static emission/recovery simulation, not a model-compliance test."""
+    manifest = tmp_path / "a directory with spaces" / "manifest.md"
+    manifest.parent.mkdir()
+    manifest.write_text("# Distinct test Manifest\n", encoding="utf-8")
+    contracts: set[str] = set()
+    for name in ("do", "just-do"):
+        for path in [source_skills()[name], *dist_copies(name)]:
+            blocks = dict(fenced_blocks(path))
+            assert "manifest-reference" in blocks, path
+            instructions = normalized(read(path))
+            assert "absolute Manifest path" in instructions, path
+            assert "substituting `<manifest-path>`" in instructions, path
+            assert "manifest reference, then the goal block" in instructions, path
+            assert (
+                f"including when called by /{'auto' if name == 'do' else 'just-auto'}"
+                in instructions
+            ), path
+            # Replay only the explicit substitution. The recovery half receives
+            # the assembled contract, not the invocation or checkpoint history.
+            emitted = (blocks["manifest-reference"] + blocks["goal-block"]).replace(
+                "<manifest-path>", str(manifest)
+            )
+            assert "<manifest-path>" not in emitted
+            assert "this run's Manifest" not in emitted
+            assert "Read this file before resuming execution." in emitted
+            recovered = Path(emitted.splitlines()[0].removeprefix("Manifest: "))
+            assert recovered.read_text(encoding="utf-8") == "# Distinct test Manifest\n"
+            contracts.add(emitted)
+    assert len(contracts) == 1

@@ -81,7 +81,16 @@ flowchart TD
 
 `/auto` chains all three without stopping for approval between them. `/just-figure-out`, `/just-define`, `/just-do` and `/just-auto` are leaner variants of the same beats — same contracts, minimal process.
 
-For an unattended run, point your host's goal-setting or continuation capability at the completion contract `/do` prints. Where a host offers neither, `/do` prints the contract for you to use with whatever keeps the run alive.
+For an unattended run, `/do` or `/just-do` sets a host-native goal-setting or continuation contract before implementation, with the Manifest’s absolute path included. Where a host offers neither capability, the executor prints the same contract for you to apply manually. `/auto` and `/just-auto` leave this to the executor: understanding and definition have no continuation goal, so an interruption there needs a restart.
+
+An executor’s contract begins with the resolved file, for example:
+
+```text
+Manifest: /workspace/manifests/search.md
+Read this file before resuming execution.
+```
+
+The completion conditions follow in the same goal.
 
 ## What it costs
 

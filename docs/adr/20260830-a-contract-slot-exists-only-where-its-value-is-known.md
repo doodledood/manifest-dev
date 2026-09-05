@@ -1,7 +1,7 @@
 # ADR: A contract slot exists only where its value is known at emission
 
 ## Status
-Accepted
+Accepted Further narrowed by 20260905-executors-own-path-bearing-continuation-goals: auto chains defer continuation to execution; executors include the known Manifest path and the shared chain prefix is retired.
 
 ## Area
 Goal setting

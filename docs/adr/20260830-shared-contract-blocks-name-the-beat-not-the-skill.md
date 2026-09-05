@@ -1,7 +1,7 @@
 # ADR: a shared contract block names the beat, not one arm's skill
 
 ## Status
-Accepted — narrowed by 20260830-a-contract-slot-exists-only-where-its-value-is-known: the chain prefix's path-recording clause moves into the goal block and the `<manifest-path>` slot is removed; the beat-naming rule this record set stands.
+Accepted — narrowed by 20260830-a-contract-slot-exists-only-where-its-value-is-known: the chain prefix's path-recording clause moves into the goal block and the `<manifest-path>` slot is removed; the beat-naming rule this record set stands. Further narrowed by 20260905-executors-own-path-bearing-continuation-goals: auto chains defer continuation to execution; executors include the known Manifest path and the shared chain prefix is retired.
 
 ## Area
 Goal setting
