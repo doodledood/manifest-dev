@@ -1,7 +1,7 @@
 # ADR: a figure-out turn carries one concrete claim, in plain words, in a skimmable shape
 
 ## Status
-Accepted — amended by 20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines
+Accepted — amended by 20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines; amended by 20260905-investigation-messages-do-not-require-acknowledgment: the attention budget applies per message, and evidence-resolvable questions no longer require a user turn; the low-load and existence-first purposes remain
 
 ## Area
 figure-out

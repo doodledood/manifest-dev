@@ -8,13 +8,12 @@ The reviewer **lives in the repo** (knows the modules, idioms, naming convention
 
 ## Activation gate
 
-Evaluate **immediately** when `--canvas` is set, before opening the first sub-changeset. If any condition holds, skip canvas behavior and fall back to chat-only /walk-pr (first match wins; conditions 1–2 silent, condition 3 prints one warning):
+Evaluate **immediately** when `--canvas` is set, before opening the first sub-changeset. If any condition holds, skip canvas behavior and fall back to chat-only /walk-pr (first match wins; a trivial diff needs no warning):
 
 1. **Trivial diff** — canvas setup cost exceeds the review's information need. Rough threshold: single file with tens of net lines changed.
-2. **Non-local medium** — the user isn't at a host with browser access.
-3. **No graphical-browser launcher** — none of `xdg-open`, `open`, `start` on PATH. Print: `--canvas requires a desktop environment with a graphical browser; skipping artifact generation`.
+2. **No interactive delivery** — the host cannot make an interactive page available to the user through a browser, an artifact surface, or an accessible HTML file. Say which capability is missing.
 
-If none match: generate the canvas as one self-contained HTML file in the host's temp directory (`walk-pr-canvas-{ts}.html`, `{ts}` = invocation timestamp), open it, and disengage until the paste-back.
+Otherwise generate one self-contained page, deliver it through the host's browser or artifact capability (an accessible HTML file is sufficient), and disengage until the paste-back. A local file goes in the host's temp directory as `walk-pr-canvas-{ts}.html`, where `{ts}` is the invocation timestamp. A desktop launcher is one delivery method, not a prerequisite.
 
 ## The reference shell
 
@@ -55,7 +54,7 @@ Chat stays empty during the walk. The agent re-engages only when the user pastes
 Any canvas-related failure is **non-blocking**:
 
 - File write fails → warn once, fall back to chat-only walkthrough.
-- Browser launcher fails → print the `file://` path, continue.
+- Opening fails → use another available delivery surface or provide an accessible file link; if the user cannot receive the interactive page, fall back to chat.
 - Clipboard write fails → the artifact pre-selects the bundle in a visible block (the shell already does this).
 - PR-post failure → keep the drafted plan, surface the API error inline, offer retry.
 

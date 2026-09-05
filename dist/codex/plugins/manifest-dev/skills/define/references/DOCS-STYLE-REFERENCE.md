@@ -20,8 +20,7 @@ registers live in `PROSE-FLOOR-REFERENCE.md` and are not repeated in this file.
 
 ## Severity anchor
 
-Documentation-register findings are graded on what the prose costs a reader, not on how
-AI-generated it sounds. The AI-detection scale used in the human-voice register does not apply.
+Documentation-register findings are graded on what the prose costs a reader.
 
 | Severity | Bar |
 |----------|-----|
@@ -41,7 +40,7 @@ Grade by consequence, not by rule count: ten MEDIUM inconsistencies do not aggre
 - Don't call a task "simple", "easy", "quick", or tell the reader to "just" do something. What is simple for the author may not be for the reader, and the word adds nothing when the step is genuinely easy.
 - Keep jokes, pop-culture references, and wordplay out. They date, they distract, and they don't translate.
 - Don't use figurative language or metaphor where a plain statement works, and don't attribute human qualities to software or hardware: a system *detects* a device rather than *seeing* it; an object *specifies* a value rather than *telling* something.
-- Don't pre-announce unreleased features or plans.
+- In published instructions for an available product, describe released behavior. Specifications, proposals, and planning reports may describe intended behavior; distinguish it from what exists and label unsettled choices.
 
 ## Person, mood, and tense
 
@@ -65,7 +64,7 @@ where the reader is the actor and passive voice hides that from them.
 ## Punctuation
 
 - **Serial comma**: required. "Locations are divided into zones, regions, and multi-regions."
-- **Em dash**: correct for a break in the flow of a sentence—like this—with no space before or after. (The human-voice register restricts em dashes for a different reason; that restriction does not apply here.)
+- **Em dash**: correct for a break in the flow of a sentence—like this—with no space before or after.
 - **En dash**: don't use. Use a hyphen, or the word "to".
 - **Semicolon**: avoid where a period or comma will serve. Acceptable to join two closely related independent clauses, and to separate list items that contain their own commas.
 - **Exclamation point**: don't use in conceptual or reference documentation. Acceptable in a tutorial to mark a genuine milestone, and in code or literal output where the syntax requires it.
@@ -128,7 +127,9 @@ where the reader is the actor and passive voice hides that from them.
 - Expand an acronym on first use, then use the acronym. Don't use periods in acronyms. If the first mention falls in a heading, expand it in the following paragraph instead.
 - Write around jargon where plain language exists. Where a term must appear, define it briefly on first use or link to a definition.
 
-## Timeless documentation
+## Timeless product documentation
+
+These rules govern ongoing instructions and reference material for an available product. Specifications, proposals, decision records, and planning reports may describe changes over time; make the status of each claim clear.
 
 - Don't write "currently", "now", "at this time", "presently", "soon", "eventually", "new", "newer", "latest", or "does not yet". Documentation describes the product as it is; these words are either implied or will go stale.
 - Where a change genuinely needs anchoring, anchor it to a release or date: "The January 2026 release adds …".

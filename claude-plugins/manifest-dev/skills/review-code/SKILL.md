@@ -6,7 +6,7 @@ user-invocable: true
 
 # review-code — one dimension per invocation
 
-Audit a change along **one** review dimension and report findings. This skill is the single home for the quality reviewers that used to be separate agents; each dimension's detection content lives in its own reference file and loads only when requested (progressive disclosure).
+Audit a change along **one** review dimension and report findings. Load only that dimension's reference.
 
 ## Input
 
@@ -40,7 +40,7 @@ The split is structural: **defect-finders** report only divergences/defects/cont
 ## Determining scope (shared across dimensions)
 
 1. **Caller specifies files/paths** → review exactly those.
-2. **Otherwise** → diff against the base branch: `git diff origin/main...HEAD && git diff`. If `origin/main` is an unknown revision, retry `origin/master`; if neither resolves and no base is given, ask for the base branch.
+2. **Otherwise** → review the complete change. Resolve the comparison base from the PR target or the repository's remote default branch; ask only if neither can be established. Inspect committed changes with `git diff <base>...HEAD`, staged changes with `git diff --cached`, unstaged changes with `git diff`, and relevant new files from `git ls-files --others --exclude-standard`. Read each new file's contents; a path listing alone is not its diff.
 3. **Empty / non-reviewable diff** → ask the caller to clarify scope.
 
 Stay within scope — never audit the whole project unless explicitly asked. Skip generated files (`*.generated.*`, `generated/`, `dist/`, `build/`), lock files, vendored deps (`vendor/`, `node_modules/`, `third_party/`), and binaries.

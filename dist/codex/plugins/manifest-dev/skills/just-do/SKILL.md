@@ -26,15 +26,16 @@ The Manifest is the contract, not the run's to rewrite: it changes only through 
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
-Stop only when blocked on something a person must resolve.
+Stop after reporting completion, a blocker requiring a person, or an external wait that this run's no-wait policy makes terminal. Continue while authorized, actionable work remains.
 ```
 
 ## What holds for every gate
 
 A gate declares `judgment` or `deterministic`; an undeclared kind is invalid, never
 inferred. Read a gate from the Manifest by ID, never from a copy. For repository
-work, read the change as `origin/main...HEAD` — the remote-tracking default branch,
-since a local ref sits stale. A judgment gate reads the full change once, then only
+work, compare against the repository's actual remote-tracking default branch,
+unless the gate names another subject. Include relevant staged, unstaged, and
+untracked work when the artifact being judged includes local changes. A judgment gate reads the full change once, then only
 prior findings' repairs and the delta; a deterministic gate re-runs in full. Findings
 below a passing gate's bar are handed over, not fixed. A bar never moves down, and a
 summary claim is not evidence — stop and report instead.

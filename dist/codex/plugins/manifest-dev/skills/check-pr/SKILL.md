@@ -24,9 +24,9 @@ The PR is ready when each gate holds:
 
 1. **PR exists** — exactly one open PR on the named branch.
 2. **CI green** — required checks pass on the current head commit.
-3. **Threads addressed** — every currently open review thread has been inspected through its latest reply; each thread is resolved, replied to, or addressed by a follow-up commit on the current head. Human-authored threads can only be resolved by the original author. Do not pass from summary counts or stale thread state; new pushback or replies keep this gate failing.
+3. **Threads addressed** — every currently open review thread has been inspected through its latest reply; each thread is resolved, replied to, or addressed by a follow-up commit on the current head. Leave human-authored threads open for their authors to resolve; this is the workflow policy, not a GitHub permission limit. Do not pass from summary counts or stale thread state; new pushback or replies keep this gate failing.
 4. **Description in sync** — PR description reflects the current diff's intent.
-5. **Mergeable** — GitHub's composite mergeability signal says the PR can merge. Non-GREEN FAILs the gate.
+5. **Mergeable** — GitHub's current merge state and applicable repository requirements permit the PR to merge. Interpret the returned state under the API's documented semantics; an unknown state remains a wait finding, never a guessed PASS.
 
 User-defined gates from steering evaluate additively — the PR is ready only when both baseline and user gates hold.
 
@@ -45,14 +45,14 @@ Do not merge unless the operator explicitly authorized it — PASS is a mergeabi
 
 The do-not-merge line is always present on PASS. The terminal of this skill is "mergeable", not "merged"; PASS must not be treated as an implicit go-ahead to merge.
 
-**FAIL** — a per-gate breakdown with a **finding** per failing gate. A finding's `Suggested:` field carries either a workflow-neutral GitHub-action directive (literal command, drawn from the fixed vocabulary below — the caller executes verbatim) or a free-form prose description (solvable-but-novel observation — the caller reads with judgment).
+**FAIL** — a per-gate breakdown with a **finding** per failing gate. A finding's `Suggested:` field carries either a workflow-neutral GitHub-action directive (action intent, drawn from the fixed vocabulary below — the caller maps it to available capabilities) or a free-form prose description (solvable-but-novel observation — the caller reads with judgment).
 
 The workflow-neutral directive vocabulary (each names a concrete GitHub-state action, not a workflow step):
 
-- `bash sleep <N>; reinvoke` — wait `<N>` seconds (≤ 600, harness sleep cap), then reinvoke this skill.
+- `wait <N>; reinvoke` — wait `<N>` seconds through the caller's scheduling or timed-wait capability, then reinvoke this skill; a no-wait caller reports pending instead.
 - `retrigger <check-name>` — retrigger the named CI check.
 - `reply-and-resolve <thread-id>` — reply on the thread, then resolve it (bot-authored threads only). `<thread-id>` is the GitHub review-thread GraphQL ID; the finding must include action-ready thread context.
-- `reply <thread-id>` — reply on the thread; leave it open (human-authored threads — only the author can resolve via GitHub). `<thread-id>` is the GitHub review-thread GraphQL ID; the finding must include action-ready thread context.
+- `reply <thread-id>` — reply on the thread; leave it open (human-authored threads — this workflow leaves resolution to the author). `<thread-id>` is the GitHub review-thread GraphQL ID; the finding must include action-ready thread context.
 - `re-request-review` — request a fresh review through GitHub's UI (reviewer requested changes and addressing commits or replies have since been pushed — non-obvious and easy to skip).
 - `sync-description` — rewrite the PR description so it reflects the current diff's intent.
 
@@ -82,7 +82,7 @@ Example wait-in-progress FAIL (reviewer-pending — execute the sleep and reinvo
 Reason: Reviewer @bob (per CODEOWNERS) has not approved; CI green, threads clean. Waiting is the resolution — execute the sleep and reinvoke.
 
 Breakdown:
-- Mergeable: FAIL — bash sleep 600; reinvoke
+- Mergeable: FAIL — wait 600; reinvoke
 ```
 
 Example terminal-condition FAIL (surfaced as a prose finding — no workflow token):
@@ -102,11 +102,11 @@ Breakdown:
 ```
 - <gate>: FAIL
   Reason: <what was observed for this gate>
-  Suggested: <either a vocabulary-token directive (literal command) OR free-form prose describing a suggested approach>
+  Suggested: <either a vocabulary-token directive (action intent) OR free-form prose describing a suggested approach>
   Context: <supporting info: action targets, thread excerpt, check log, reviewer activity, IDs, GraphQL state, etc.>
 ```
 
-The `Suggested:` field carries one of two things: a recognized vocabulary token (literal command) or free-form prose (read with judgment). `Reason:` and `Context:` are diagnostic. Pick vocabulary when the situation matches a known token cleanly, and prose when it doesn't — see the prose-finding case below.
+The `Suggested:` field carries one of two things: a recognized vocabulary token (action intent) or free-form prose (read with judgment). `Reason:` and `Context:` are diagnostic. Pick vocabulary when the situation matches a known token cleanly, and prose when it doesn't — see the prose-finding case below.
 
 Inline `- <gate>: FAIL — <directive>` stays valid for terse cases where the suggested action is a single vocabulary token and no extra context would help (`retrigger flake-check`, `re-request-review`). Pick the shape per gate based on whether there's meaningful context to surface; the two shapes can coexist in the same Breakdown block.
 
@@ -141,14 +141,14 @@ Breakdown:
 
 ## Wait cadence policy
 
-Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emit `bash sleep <N>; reinvoke` directives. **Waiting is the action, not a no-op** — the caller executes the sleep and reinvokes; reviewer-pending and CI-in-flight FAILs typically resolve on a subsequent cycle without further intervention. Treat sleep-then-reverify as the standard resolution path for time-bound blockers; pick `<N>` based on what's being waited on.
+Wait-shaped failures (reviewer pending, CI in flight, bot scanner scheduled) emit `wait <N>; reinvoke` directives. The caller waits and reinspects under its selected cadence; no-wait callers report pending. Pick `<N>` from the observed state and steering. Host limits determine how a wait is scheduled or divided, not whether the PR passes.
 
 **Per-cycle duration defaults**:
 
 | What's being waited on | Per-cycle wait |
 |------------------------|----------------|
 | CI in flight | ~300s |
-| Reviewer pending | ~600s (harness sleep cap) |
+| Reviewer pending | ~600s |
 | Bot scanner pending | ~120s |
 
 **No nudging by default.** When a gate waits on a human (reviewer pending, comment pending, approver pending), do not propose outreach — no "ping @reviewer", no "DM the team", no "comment on the PR to nudge". `Suggested:` describes the wait state and offers options like "keep waiting" or "hand off to a human" only. Operators authorize nudging via steering (e.g. `Steering: nudge @bob after 3 cycles`); silent steering means no nudge.
@@ -187,4 +187,4 @@ These are invariants. They hold regardless of steering or context.
 ## Gotchas
 
 - **Bot comments repeat after push.** Bots re-scan after every commit and emit new comment IDs for the same finding. Track by content fingerprint, not comment ID, to avoid loops on recurring bot suggestions. `review-pr`'s own comments carry a hidden `<!-- manifest-dev:review-pr -->` marker (in manifest mode, with the criterion id) — an exact signal for this category, even when posted under a human's account.
-- **Thread resolution is permanent.** GitHub doesn't reopen resolved threads via API. Be conservative — leave open when the addressing signal is ambiguous.
+- **Resolution needs evidence.** Leave a thread open when the addressing signal is ambiguous. GitHub supports reopening a resolved thread, but this inspector only reports state; any correction belongs to the authorized caller.

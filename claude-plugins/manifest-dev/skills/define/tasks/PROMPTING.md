@@ -15,17 +15,17 @@ When the review-prompt skill is not available, encode these as individual criter
 
 | Gate | Threshold |
 |------|-----------|
-| Clarity | No ambiguous instructions, no vague language, no implicit expectations |
+| Clarity | Goal, binding requirements, and consequential choices are unambiguous; implementation choices may remain with the run |
 | No conflicts | No contradictory rules, no priority collisions, edge cases covered |
 | Structure | Critical rules surfaced prominently, clear hierarchy, no unintentional redundancy |
 | Information density | Every word earns its place |
-| No anti-patterns | No prescriptive HOW, arbitrary limits, capability instructions, weak hedging, unjustified absolutes |
+| No anti-patterns | Required mechanisms and limits carry a user ruling, external constraint, or observed failure; incidental HOW stays with the run |
 | Invocation fit | Prompt's trigger, caller identity, and output consumer match deployment context |
 | Domain context | Domain terms, conventions, and constraints captured—not guessed |
 | Complexity fit | Prompt complexity matches the task—not over-engineered, not under-specified |
 | Memento (if multi-phase) | Multi-step prompts externalize state correctly |
 | Description (if skill/agent) | Description is natural-language activation prose: what it does, when to use it, and phrases users actually say |
-| Edge case coverage | Handles boundary inputs and unusual conditions, not just the happy path |
+| Edge case coverage | Required boundary behavior is reachable and consistent with the goal and caller; no speculative procedure is added merely for completeness |
 | Model-prompt fit | Stays within model capabilities—doesn't assume unreliable behaviors |
 | Guardrail calibration | Safety boundaries neither too loose nor too tight |
 | Output calibration | Output format, length, and detail level match the use case and consumer |

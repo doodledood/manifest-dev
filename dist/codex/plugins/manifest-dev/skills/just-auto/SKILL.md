@@ -27,7 +27,7 @@ The Manifest is the contract, not the run's to rewrite: it changes only through 
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
-Stop only when blocked on something a person must resolve.
+Stop after reporting completion, a blocker requiring a person, or an external wait that this run's no-wait policy makes terminal. Continue while authorized, actionable work remains.
 ```
 
 Then: where shared understanding is missing, invoke just-figure-out

@@ -84,7 +84,7 @@ The test reaches means, never ends. Where a mechanism was deliberately chosen as
 Read this Manifest. This is a conformance check: take its intent as given, and do not judge
 whether the work was necessary, motivated, or worthwhile.
 
-Done when the work this run added carries nothing the Deliverables, Acceptance Criteria, and
+Done when the work this run added carries nothing beyond what the Deliverables, Acceptance Criteria, and
 Global Invariants — this one excluded — required, and nothing that nominally serves one of
 them while far exceeding the surface the Appetite allows.
 

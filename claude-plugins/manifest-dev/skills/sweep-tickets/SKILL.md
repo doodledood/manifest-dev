@@ -67,7 +67,8 @@ graph again.
 - Closing a dependency needs no label pulse or dependent-issue mutation. The next sweep derives
   that the dependent Ticket is ready.
 - Two overlapping sweep jobs may initially name the same Ticket. The adapter's canonical
-  per-Ticket single-flight serializes their `run-ticket` calls; the later call refreshes state and
-  stops when the earlier one finished or handed the Ticket to a person.
+  per-Ticket single-flight serializes their `run-ticket` calls; after waiting, the adapter
+  revalidates unattended eligibility, including any escalation mark or revoked Auto grant,
+  before admitting the later call.
 - One Ticket per invocation is the simplicity boundary. Throughput comes from issue events and
   independent Ticket keys, not from turning a sweep into a batch orchestrator.

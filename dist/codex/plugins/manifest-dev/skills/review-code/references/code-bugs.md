@@ -86,11 +86,11 @@ Note: This is about code paths that should fail explicitly but don't. If the stu
 Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.**
 
 1. **In scope** — Two modes:
-   - **Diff-based review** (default): ONLY report bugs in lines added or modified by this change. Pre-existing bugs in unchanged lines are strictly out of scope.
+   - **Diff-based review** (default): Report bugs introduced or exposed by the change, including failures in unchanged code newly reached by it. Name the changed trigger; unrelated pre-existing bugs remain out of scope.
    - **Explicit path review** (caller specified): Audit everything in scope. Pre-existing bugs are valid findings.
 2. **Discrete and actionable** — One clear issue with one clear fix. Not "this whole approach is wrong."
 3. **Provably affects code — at mechanism level** — You must identify the specific code path that breaks as a concrete mechanism, not a category label. The finding must name the variable, location, value (vs. expected), and sequence of events that produces the wrong behavior. "Race condition possible on userId" is a shape — reject. "useEffect at line 42 reads `userIdRef.current` after the cleanup at line 58 clears it; second fire produces `undefined`" is a mechanism — accept. The same test as /define's bug-convergence: can you answer *"at line X, variable Y holds value Z because sequence M"*? If not, you have a hypothesis, not a finding — keep tracing or drop it.
-4. **Matches codebase rigor** — Before reporting missing error handling or validation, verify the omission is inconsistent with the surrounding codebase. If nearby comparable functions also omit it, the pattern is intentional — drop the finding.
+4. **Concrete failure, not optional hardening** — Missing error handling or validation must produce the traced failure above. Similar omissions nearby do not establish that the failure was knowingly accepted; only evidence of that accepted tradeoff can exclude it.
 5. **Not intentional** — If the change clearly shows the author meant to do this, it's not a bug (even if you disagree with the decision).
 6. **Unambiguous unintended behavior** — Would the bug cause behavior the author clearly did not intend? If intent is unclear, drop the finding.
 

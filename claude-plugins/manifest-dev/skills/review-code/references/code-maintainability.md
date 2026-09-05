@@ -52,7 +52,7 @@ Do NOT report on these — they belong elsewhere:
 
 For deleted files in the diff: skip reviewing deleted file contents, but search for imports/references to the deleted file paths across the codebase and report any remaining references as potential orphaned code.
 
-Cross-file analysis should only examine files directly connected to the scoped changes: files that the changed files import from, and files that import from the changed files. Do not traverse further (no imports-of-imports). Issues outside scope go in a brief "Related Concerns" note, not deep analysis.
+Follow dependencies as far as the evidence for an in-scope maintainability finding requires. The shared reading/reporting scope applies; dependency depth does not change what findings belong in the report.
 
 High-churn files deserve extra scrutiny since issues there have outsized impact. Files that always change together with files outside scope may indicate coupling — note in "Related Concerns".
 

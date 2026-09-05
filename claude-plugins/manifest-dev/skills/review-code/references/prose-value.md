@@ -112,7 +112,7 @@ HIGH severity findings should be rare — reserved for prose that clearly signal
 
 Medium is the blocking grade here, so it separates from Low on what the prose costs a reader, not on how weak it sounds:
 
-- **Medium** — the prose actively misleads or displaces information a reader needs: a comment stating something the code no longer does, a doc paragraph whose claim a reader would act on and be wrong, puffery standing where the load-bearing WHY should be on a surface readers rely on.
+- **Medium** — surplus prose displaces information a reader needs: puffery standing where the load-bearing WHY should be, or repeated narration obscuring the reason a reader needs to modify the code. Inaccurate claims belong to the docs dimension.
 - **Low** — the prose is merely surplus: it restates what the line below already says, or carries a tell without misleading anyone. Deleting it loses nothing, and leaving it costs a reader a few seconds.
 
 A finding that cannot say which of those two it is has not made a Medium case.

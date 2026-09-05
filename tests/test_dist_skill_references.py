@@ -535,8 +535,9 @@ def test_do_gate_eligibility_retries_every_non_passing_state() -> None:
         "a retryable BLOCKED remains eligible at its next check",
         "Unverified, stale, FAIL, and retryable BLOCKED gates re-evaluate when eligible",
         "a settled fresh PASS does not re-run",
-        "Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are "
-        "non-terminal",
+        "Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates do "
+        "not satisfy successful completion",
+        "A terminal wait is reported as pending, never as success",
     )
     # Eligibility must not go back to being ordered by a retired manifest field.
     retired_phase_ordering = (

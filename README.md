@@ -55,6 +55,8 @@ Three skills, run in order, though each is useful alone:
 /do <manifest-path>          # build it, then verify every criterion
 ```
 
+`/figure-out` and `/just-figure-out` carry the investigation forward until they need your knowledge, judgment, or authority, or can give a supported conclusion. Short progress messages do not require acknowledgment to continue.
+
 `/define` turns understanding into a Manifest: the deliverables, the criteria each one has to meet, and the rules that hold across all of them. It calls `/figure-out` first if the conversation hasn't reached understanding yet.
 
 `/do` implements against that Manifest and can't report completion until every criterion has evidence behind it. Verification runs independently of the work by default, so "it's done" is a finding rather than a claim.

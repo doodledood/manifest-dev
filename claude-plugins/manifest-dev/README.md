@@ -12,7 +12,7 @@ Run them in order, though each works on its own:
 
 | Skill | What it does |
 |-------|--------------|
-| `/figure-out` | Presses on a problem until you both understand it. Investigates your code on its own, holds a position under pushback, and changes its mind when the evidence does. Useful on its own, whether or not anything gets built after. |
+| `/figure-out` | Presses on a problem until you both understand it. Investigates on its own, asks when your contribution changes the answer, and carries acknowledgments forward into the next question. Holds a position under pushback and changes it on evidence. Useful on its own, whether or not anything gets built after. |
 | `/define` | Turns that understanding into a Manifest — the deliverables, the criteria each has to meet, and the rules holding across all of them. Calls `/figure-out` first if understanding isn't there yet. |
 | `/do` | Implements against the Manifest and verifies every criterion before reporting completion. Verification runs independently of the work by default. |
 

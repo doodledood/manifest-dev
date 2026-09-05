@@ -89,7 +89,7 @@ SIGNATURES: dict[Label, str] = {
         "Treat a missing or weak Read checkpoint as a phase defect to repair "
         "before the Manifest is written"
     ),
-    "pr-tend-prefix": "Never press merge. Report a wait-only CI state as pending",
+    "pr-tend-prefix": "Discover or synthesize the Manifest for this pull request.",
 }
 GOAL_BLOCK: Label = "goal-block"
 

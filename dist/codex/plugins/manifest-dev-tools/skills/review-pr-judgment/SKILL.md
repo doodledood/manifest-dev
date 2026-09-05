@@ -16,7 +16,7 @@ It runs as a **wide-context pass**. **Receives:** the PR description, the PR con
 
 The judgment pass operates on the **PR as a whole, or a major component of it** — the big question, never line-level ones. It must never fire on a small-item nitpick — an unused parameter, a single narrow helper, one incidental line; those belong to the defect dimensions or are dropped. The surface, omission, and precedent triggers fire only on a **material footprint**: a subsystem, a new public API area, a cluster of knobs, an established pattern — never a single incidental item.
 
-Whole-PR altitude is unconditional: whenever the pass runs, it reads the **entire PR head**, not just the incrementally-reviewed range on a loop or re-review pass, so its question always concerns the whole change. Judgment findings are therefore exempt from any reviewed-range bounding that scopes defect findings to the latest delta. (Because the caller gates generation to once per PR, the pass runs on the first pass over the PR rather than every round.)
+Whole-PR altitude is unconditional: whenever the pass runs, it reads the **entire PR head**, not just the incrementally-reviewed range on a loop or re-review pass, so its question always concerns the whole change. Judgment findings are therefore exempt from any reviewed-range bounding that scopes defect findings to the latest delta.
 
 ## The evidence bar
 

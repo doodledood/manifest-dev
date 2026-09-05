@@ -1,7 +1,7 @@
 # ADR: Prototyping and scratch are one mechanism; scratch mode is deleted
 
 ## Status
-Accepted
+Accepted; amended by 20260905-disposable-prototypes-may-expose-behavior: disposable prototypes may execute to expose the behavior being judged; product implementation and real external actions remain separate
 
 ## Area
 figure-out

@@ -1,7 +1,7 @@
 # ADR: figure-out challenges solution existence before descendant design
 
 ## Status
-Accepted
+Accepted; amended by 20260905-investigation-messages-do-not-require-acknowledgment: the attention budget applies per message, and evidence-resolvable questions no longer require a user turn; the low-load and existence-first purposes remain
 
 ## Area
 figure-out
