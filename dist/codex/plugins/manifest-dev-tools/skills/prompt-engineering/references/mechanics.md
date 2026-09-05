@@ -12,11 +12,10 @@ name: kebab-case-name       # required, lowercase, hyphens, max 64 chars
 description: '…'            # required, activation prose, max 1024 chars, one physical line
 argument-hint: '<request>'  # optional, shown in the slash-command UI
 user-invocable: true        # optional, default true; false hides it from the command menu
-tools: …                    # optional; omit to inherit the invoker's tools
 ---
 ```
 
-Omit `tools` unless the skill needs a deliberately restricted set. Inheriting is almost always right.
+Use only metadata supported by the target hosts. Tool restrictions and inheritance are host capabilities, not portable skill fields; check the host schema and effective permissions before relying on them.
 
 **The description is the skill's pointer**, resident at all times — so the pointer rules apply and it earns the hardest pruning in the file. Its content is what the skill does, when to reach for it, and the words a user actually says.
 
@@ -32,21 +31,9 @@ Length follows the gap. A behaviour skill whose gap is *how* to approach a task 
 
 Prefer a skill. A general-purpose agent told to activate a skill reproduces agent behaviour in nearly every case, and skills are portable across harnesses where agents need a representation per harness. Reach for an agent when you need what a skill cannot declare: a restricted tool allow-list, or an isolated model or execution-context type.
 
-An agent starts with nothing — no parent conversation, no loaded files, no inherited permissions. The spawn prompt is its whole world, which creates two gaps nothing else closes:
+Check what the host actually inherits: conversation, loaded instructions, tools, and permissions may differ by execution type. Supply the goal, missing context, constraints, inputs, and return shape. Verify that the required capabilities are available; declaring a tool cannot grant a permission the host withholds.
 
-- **Capabilities must be declared.** Read what the agent does step by step, and check that every action it takes — searching, reading, editing, running commands, fetching docs, spawning, writing a log — has a matching declaration. A missing capability does not degrade gracefully; the action is simply unavailable, and an agent told to write a log without file-write will report a write that never happened.
-- **Context must be passed.** Brief it like someone who just walked in: goal, inputs, the facts and constraints and prior decisions it needs, and the shape of what it should return. *As we discussed* means nothing to it. Brevity here is a false economy — it cannot ask.
-
-Say what the return should look like. Without a stated shape, agents over-narrate.
-
-```yaml
----
-name: agent-name
-description: '…'   # required, used in the agent listing
-tools: …           # optional, harness-specific capability list
-model: inherit     # optional, harness-specific
----
-```
+Use the target host's schema for an agent definition. Specify only overrides the task requires, and use its supported communication channel when missing information must return to the caller.
 
 ## Knowledge skills
 

@@ -16,11 +16,11 @@ and a rule in this file is never contradicted by either.
 
 ---
 
-## Vocabulary kill-list
+## Stock vocabulary
 
-Statistically flagged as AI-generated across peer-reviewed studies of millions of documents.
-Never use when *writing*. When *reviewing* existing prose, judge by density and clustering rather
-than single instances.
+Watch for stock wording that replaces a precise claim with a generic one. These examples
+are prompts to inspect meaning, not a ban on technical terms or isolated occurrences.
+When reviewing, judge the cost of repetition and clustering in the actual passage.
 
 **Nouns**: delve, tapestry, landscape, realm, testament, journey, insight, resilience, ecosystem, milestone, prowess, utilization
 
@@ -32,30 +32,29 @@ than single instances.
 
 **Phrases**: "ever-evolving landscape," "in today's fast-paced world," "as we navigate the complexities," "It isn't just X, it's Y," "it's important to note," "it's worth noting that," "without further ado," "in conclusion," "at the heart of"
 
-**Puffery / promotional drift**: "breathtaking," "stunning," "must-see," "must-visit," "iconic," "world-class," "rich cultural tapestry," "hidden gem." AI drifts toward advertisement-like writing even when prompted for a neutral or encyclopedic register — watch for this puffery vocabulary as the canary.
+**Puffery / promotional drift**: "breathtaking," "stunning," "must-see," "must-visit," "iconic," "world-class," "rich cultural tapestry," "hidden gem." In neutral prose, report promotional language when it replaces evidence or adds an unsupported claim.
 
 **Hedging phrases**: "it could be argued," "this might suggest," "may potentially," "what could be considered"
 
-**Verb substitution**: AI systematically replaces simple verbs ("is," "are") with elaborate alternatives ("serves as a," "features," "offers"). Over 10% decrease in simple verb usage in AI text.
+**Verb substitution**: Prefer a direct verb when it carries the same meaning; "serves as a" may need only "is". Keep a specific verb when it adds information.
 
 **False intensifiers**: "genuinely," "truly," "actually" (when used to simulate conviction)
 
-**Era-tracked vocabulary**: AI vocabulary shifts over time. "Delve" peaked 2023–early 2024 then declined as model training data caught up to public awareness; "align with," "fostering," and "showcasing" rose with later models. Treat the kill-list as a living snapshot, not a fixed law — fresh anti-AI corpora keep moving.
 
 ## Filler, hedging, and signposting
 
 | Pattern | Tell | Fix |
 |---------|------|-----|
 | Compulsive signposting | "It's worth noting," "It's important to remember" | Trust the reader; state the point |
-| Excessive hedging | "may potentially offer what could be considered significant benefits" | Strip to: "this works" |
+| Excessive hedging | "may potentially offer what could be considered significant benefits" | Remove redundant qualifiers while keeping warranted uncertainty |
 | Opinion-avoidant framing | "commonly described as," "many find," "generally considered" | State the view directly |
 | Wind-up and wind-down | "In this section, we will…", "In conclusion, we have shown…" | Delete; start with the content and stop at the end |
 | Padding phrases | "in order to," "at this point in time," "the fact that" | "to," "now," "that" |
 
-## Register-neutral AI rhetorical patterns
+## Repeated rhetorical patterns
 
-These read as machine-written in any register, so they fail on a documentation deliverable and a
-narrative one alike.
+Inspect these patterns for lost precision, emphasis, or comprehension. Report the concrete cost;
+the construction alone is not a defect. Keep repetition that serves the passage.
 
 | Pattern | Tell | Fix |
 |---------|------|-----|
@@ -64,7 +63,7 @@ narrative one alike.
 | Hedge-and-pivot transition | "While X is true, it's important to note that Y" as a default connector | Cut the setup; state Y |
 | Contrast-and-correct opener | "While many think X, in fact Y" where no one actually thinks X | Open with the claim itself |
 | Stacked conjunctions | "Moreover," "Furthermore," "Additionally" opening successive paragraphs | Let the sentences carry the logic |
-| Repeated sentence openers | Three or more consecutive sentences starting the same way ("You can…", "This is…") | Vary or combine |
+| Repeated sentence openers | Identical openings that obscure emphasis or make distinct claims hard to distinguish | Vary or combine; retain useful parallel structure |
 | Rhetorical question staging | "How do we solve this?" followed by the pre-composed answer | Ask a real question or state the point |
 
 ## Mechanics floor
@@ -102,12 +101,12 @@ Binds every prose deliverable in either register.
 - Prefer "person-hours" to "man-hours", "humanity" to "mankind", "staffed" to "manned".
 - Use diverse names, genders, ages, and locations in examples, and avoid references that assume one country's culture.
 
-## Editing passes
+## Review passes
 
-Applies in both registers; the register references add their own passes on top.
+Applies in both registers; judge the output without performing edits when invoked as a reviewer.
 
-1. **Word level** — remove kill-list vocabulary on sight. Strip adjectives that carry no information: "robust system" becomes "handles 10k requests per second without data loss".
-2. **Sentence level** — read the first few words of consecutive sentences; where three or more share a pattern, cut or combine.
-3. **Structural** — remove meta-commentary and recap conclusions. Merge overlapping sections.
+1. **Word level** — inspect stock wording for lost precision or repeated filler. Ask what an adjective claims; replace it only with a supported specific, never an invented measurement.
+2. **Sentence level** — inspect repeated openings and constructions where they impede emphasis or comprehension. Parallel content can use parallel sentences.
+3. **Structural** — check whether meta-commentary, recap conclusions, or overlapping sections add information the reader needs.
 4. **Content** — check that every claim is supported and every specific is still specific.
-5. **Read it aloud** — stumbling marks where the prose needs work. This is the single most effective check in either register.
+5. **Flow** — read for stumbling points, ambiguous references, and breaks in the argument. Name the reader-facing problem before suggesting a repair.

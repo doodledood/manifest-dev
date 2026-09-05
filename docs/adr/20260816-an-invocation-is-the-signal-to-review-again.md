@@ -1,7 +1,7 @@
 # ADR: An invocation is the signal to review a head again
 
 ## Status
-Accepted
+Accepted; amended by 20260905-review-loops-checkpoint-completed-verification: loop wakes may use invocation-local completed-verification checkpoints; cross-actor coordination stays in PR state and fresh invocations still verify
 
 ## Area
 PR lifecycle

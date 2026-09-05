@@ -1,7 +1,7 @@
 # ADR: Coordinate review-pr and babysit-pr through PR state
 
 ## Status
-Accepted
+Accepted; amended by 20260905-review-loops-checkpoint-completed-verification: loop wakes may use invocation-local completed-verification checkpoints; cross-actor coordination stays in PR state and fresh invocations still verify
 
 ## Area
 PR lifecycle

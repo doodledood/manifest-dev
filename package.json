@@ -1,6 +1,6 @@
 {
   "name": "@doodledood/manifest-dev-pi",
-  "version": "8.9.0",
+  "version": "8.9.1",
   "private": true,
   "description": "Pi package surface for manifest-dev: the plugin skills read straight from claude-plugins/*/skills, plus prompt-template aliases (/do, /auto, /babysit-pr).",
   "type": "module",

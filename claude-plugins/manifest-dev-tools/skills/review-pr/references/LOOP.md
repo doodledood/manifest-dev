@@ -1,31 +1,47 @@
 # --loop mode
 
-`--loop` is scheduling around the SKILL.md one-shot pass, not a separate review brain.
+`--loop` schedules the SKILL.md one-shot pass. Run a full pass immediately, bypassing
+interactive approval prompts. Then wait for PR activity and repeat as needed.
 
-Bypass interactive approval prompts. Run one full one-shot pass immediately: advance our existing threads, review the relevant range, post comments/replies/resolutions, and emit the SKILL.md cycle summary from GitHub state. Then watch for PR activity or wait with backoff and run the same one-shot pass again.
+## Completed-pass checkpoint
 
-## Watch Cadence
+Record each completed verification's PR identity, head, reviewed range, findings,
+and relevant gate evidence in this invocation's continuation checkpoints, including
+passes that post nothing. This records work done, not a public GitHub review. An
+interrupted or BLOCKED evaluation does not establish completed verification for
+its scope. Preserve unresolved findings and gate results alongside the checkpoint.
 
-After each pass, wait between checks with escalating intervals (~15 min -> 2 hours). If the harness exposes PR activity wakeups, subscribe so a commit push or thread reply resolves the wait early; otherwise use blocking `sleep`. Each wake runs the SKILL.md one-shot pass from scratch, deriving current head, our prior reviewed head, pending threads, and author replies from GitHub state.
+On every wake, refresh head, comments, threads, checks, and other relevant evidence
+from GitHub. After thread advancement, skip a previously completed code review when
+its head and relevant inputs have not changed; otherwise review the new range from
+the checkpoint's head. If the head no longer descends from that checkpoint, review
+the full PR diff. Manifest gates with FAIL/BLOCKED or changed evidence still need
+evaluation; an unchanged head alone cannot settle them.
 
-A wake is where the unchanged-head skip applies, in either mode: after thread advancement, skip re-verifying the code — the reviewer fleet, or the manifest contract — when the head has not moved since our latest review. SKILL.md's *an invocation always verifies the change* covers the invocation's own first pass, not the wakes after it — carrying it into every wake would make the Success Path below unreachable and re-review one commit for the loop's full 24 hours.
+Use this checkpoint for later wakes only. A missing checkpoint triggers a fresh
+pass from GitHub state. A new explicit invocation always verifies again under
+SKILL.md's range rule, even at the same head.
 
-## Success Path
+## Wait cadence
 
-Exit when a one-shot pass reports:
+Wait between checks with increasing intervals, roughly 15 minutes to 2 hours.
+Use PR activity subscriptions where available so a push or reply wakes the run
+early; otherwise use the host's timed-wait capability. Divide waits as the host
+requires while preserving the intended cadence.
 
-- all threads we authored or replied to are terminal,
-- the current head has no unreviewed range since our latest review,
-- the latest one-shot review produced no surviving findings.
+## Success
 
-Exit clean after emitting the final one-shot cycle summary, without posting an approval. `--loop` bypasses interactive approval prompts; an approval review requires an explicit operator request outside the loop.
+Exit when our threads are terminal, completed verification covers the current
+head and relevant evidence, and no surviving findings or non-PASS Manifest gates
+remain. Emit the final cycle summary without posting an approval or an empty
+review merely to record the head.
 
-## Termini
+## Other terminal paths
 
-First to fire wins:
+Stop after 24 hours from invocation start, or when the longest wait interval passes
+with comments pending and no new PR activity. Report the latest checked head,
+current head, pending findings, and actions taken; never post a bump comment.
 
-1. Clean one-shot pass on the latest head.
-2. **24h wall-clock backstop** from initial post.
-3. The longest wait interval (~2h) elapses with our comments still pending and no new PR activity.
-
-On (2) or (3): silent unsubscribe from PR activity if subscribed + chat summary to the user with the final one-shot cycle summary, latest reviewed head, current head, which comments remain unaddressed, and which dispositions were applied across the loop. **Never post a bump comment on the PR** — the cap is "I'm done watching," not "I escalate."
+On every exit, including success, cancellation, or terminal failure, cancel this
+invocation's activity subscriptions and scheduled wakes. If cleanup fails, report
+the active handle and failure to the operator.

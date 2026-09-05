@@ -12,13 +12,7 @@ These files may already be loaded into your context by the parent framework. Che
 
 ### Detecting the CLI
 
-Determine which CLI you're running in to know which context file to prioritize:
-
-| Signal | CLI | Primary context file |
-|--------|-----|---------------------|
-| `~/.codex/` directory exists | Codex CLI | `AGENTS.md` |
-| `.opencode/` dir or `opencode.json` in project | OpenCode | `AGENTS.md` |
-| Default (none of the above) | Claude Code | `CLAUDE.md` |
+Use the active host's identity, loaded instructions, and configuration to establish which context files govern this invocation. An installed tool directory proves availability, not which host is running. Use the known host's resolution rules below; for another host, inspect its configured context-file discovery. If identity or configuration cannot be established, ask the caller rather than defaulting to a different host.
 
 ### Where to look (priority order per detected CLI)
 

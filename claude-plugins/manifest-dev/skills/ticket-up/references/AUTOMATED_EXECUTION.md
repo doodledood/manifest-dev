@@ -66,8 +66,11 @@ Keep the adapter thin. It owns only what the host can know or enforce:
    project's store config.
 3. **Per-Ticket single-flight.** Key execution by canonical Ticket identity. For GitHub, use
    `<owner>/<repository>#<issue-number>`. At most one run for that key may be active. A queued run
-   resolves the Ticket again after the preceding run ends and stops if it is closed or assigned
-   to a person. Different Ticket keys may run concurrently.
+   resolves the Ticket again after the preceding run ends and revalidates current unattended
+   eligibility before starting: Auto, escalation mark, claim, open state, dependencies, and any
+   configured filters. An automation-owned interrupted attempt may recover under the recovery
+   rules; a human claim or escalation mark stops unattended work. Different Ticket keys may run
+   concurrently.
 4. **Finite runner retries.** Configure a finite provider-native retry policy for runner failures.
    Retry count, delay, timeout, schedule cadence, and overall concurrency are deployment choices,
    not Ticket fields or skill behavior.

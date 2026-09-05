@@ -12,8 +12,8 @@ Three skills cover the two sides of a review:
 
 | Skill | What it does |
 |-------|--------------|
-| `/review-pr` | Reviews a pull request on its own and posts the findings under your account, advancing existing threads rather than repeating them. |
-| `/babysit-pr` | The author's side: tends a pull request through checks, review threads, and mergeability. Never presses merge. |
+| `/review-pr` | Reviews a pull request on its own and posts the findings under your account, advancing existing threads rather than repeating them. A loop remembers completed reviews even when there is nothing to post. |
+| `/babysit-pr` | The author's side: tends a pull request through checks, review threads, and mergeability. CI one-shot runs report pending once only waiting remains. Never presses merge. |
 | `/walk-pr` | Walks a large diff with you, one piece at a time. |
 
 Three more ship for `/review-pr` to call rather than for you to invoke — each runs in its own execution context where the host offers one, and inline where it does not:

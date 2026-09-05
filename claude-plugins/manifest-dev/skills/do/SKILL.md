@@ -105,13 +105,13 @@ When a finding carries **external review input** — a PR review comment or bot 
 
 Weigh whether it's correct, whether it serves this PR's intent, and whether addressing it is proportionate to that intent — a valid point that needs work beyond the PR's intent belongs in separate work, not this PR. Adopt the comments that clear that bar; on the ones that don't — a false positive, or a valid-but-separate-scope ask — reply with your reasoning rather than changing code.
 
-Push back even on a human reviewer when you are confident, with a respectful reply that leaves the thread open for them to resolve; when you are not — a borderline-valid point, or a substantive design objection — surface it to the user, or in an autonomous run reply non-committally and leave it for a human rather than bulldozing. Making this call autonomously is safe because `/do` drives to mergeable, never merged — a human still reviews the diff before the button.
+Push back even on a human reviewer when you are confident, with a respectful reply that leaves the thread open for them to resolve; when you are not — a borderline-valid point, or a substantive design objection — surface it to the user, or in an autonomous run reply non-committally and leave it for a human rather than bulldozing. Landing authority belongs to the caller; judge review input on its evidence and scope without assuming a later human review.
 
 When the user does want a beyond-intent ask incorporated, that is an amendment: invoke `define` again with the manifest path and the amendment context — `/define` reads "manifest path in args = amend" and applies targeted changes.
 
 ## Caller overlays
 
-Caller overlays may narrow retry cadence without changing the manifest. In CI one-shot / no-wait contexts, execute immediately actionable findings (fix, test, commit/push when authorized, retrigger, reply, resolve, sync), then stop instead of executing long wait directives such as `bash sleep <N>; reinvoke`.
+Caller overlays may narrow retry cadence without changing the manifest. In CI one-shot / no-wait contexts, execute immediately actionable findings (fix, test, commit/push when authorized, retrigger, reply, resolve, sync), then stop instead of executing long wait directives such as `wait <N>; reinvoke`.
 
 If only wait-shaped findings remain, report the waiting state as pending; do not call `/done`, do not call `/escalate`, and do not keep the runner alive. That summary reports the selected verification mode, evaluator provenance for every reported gate, and explicit or inherited verifier-model provenance. It also carries what the other two exits carry — Process Guidance departed from, deviation from the Initial Approach or the Deliverable order, findings a gate reported below its threshold, and any gate whose bar the run read as suspect without a user to ask — since it is the only thing the user sees on this exit.
 
@@ -123,7 +123,7 @@ Execution history never lives in the manifest — logged or not, the manifest st
 
 ## Steering & amendment
 
-Mid-/do user messages default to invoking `define` for amendment — the manifest is the source of truth, silent scope drift is worse than an extra amendment cycle. A message that *reverses or redefines a rule* rather than adding work amends too: it widens no scope, so the drift rationale never reaches it, yet it is the class most likely to leave the manifest describing a system that no longer exists. After the amendment returns, re-read the full Manifest and reconcile the active gate ledger before resuming.
+User steering that changes the requested outcome, scope, or a rule invokes `define` for amendment. Acknowledgments and requests to continue resume the current work; status questions are answered inline. The Manifest remains the source of truth for substantive changes. A message that *reverses or redefines a rule* rather than adding work amends too: it widens no scope, so the drift rationale never reaches it, yet it is the class most likely to leave the manifest describing a system that no longer exists. After the amendment returns, re-read the full Manifest and reconcile the active gate ledger before resuming.
 
 **When the manifest itself is what's wrong.** Verifiers and execution both surface evidence that a manifest statement has gone false — an Architecture that no longer describes the work still ahead, a scope boundary too narrow for that work, a Known Assumption the run has settled. That is not execution history and does not belong in the log: the log records the run deviating from the plan, and this is the plan deviating from reality. Amend, and say so — noting it in a completion summary is not repairing it. A boundary this run already exceeded is the other case, and routes per *The run never widens scope on its own reading to absorb work it already did*.
 
@@ -152,11 +152,11 @@ The Manifest is the contract, not the run's to rewrite: it changes only through 
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
-Stop only when blocked on something a person must resolve.
+Stop after reporting completion, a blocker requiring a person, or an external wait that this run's no-wait policy makes terminal. Continue while authorized, actionable work remains.
 ```
 
 ```gate-ledger-clause
-Maintain a gate ledger covering every Acceptance Criterion and Global Invariant: gate id, gate-text source, selected verification mode, evaluator provenance, explicit or inherited verifier model, latest verdict, evidence, and freshness relative to the last relevant change to its subject. Completion requires every listed gate to have fresh PASS evidence under the selected verification mode. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates are non-terminal. A substantive change to a gate's subject after a PASS marks it stale until re-evaluated, while re-reading, re-examining, and cosmetic or no-op edits do not. Never accept unevidenced self-attestation, "looks done", or a summary claim in place of the selected mode's required evidence.
+Maintain a gate ledger covering every Acceptance Criterion and Global Invariant: gate id, gate-text source, selected verification mode, evaluator provenance, explicit or inherited verifier model, latest verdict, evidence, and freshness relative to the last relevant change to its subject. Completion requires every listed gate to have fresh PASS evidence under the selected verification mode. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates do not satisfy successful completion. A terminal wait is reported as pending, never as success. A substantive change to a gate's subject after a PASS marks it stale until re-evaluated, while re-reading, re-examining, and cosmetic or no-op edits do not. Never accept unevidenced self-attestation, "looks done", or a summary claim in place of the selected mode's required evidence.
 ```
 
 ## Input

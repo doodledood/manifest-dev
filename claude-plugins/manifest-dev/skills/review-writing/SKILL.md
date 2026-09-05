@@ -37,8 +37,8 @@ finding from the floor is graded and reported on the same footing as one from th
 is no separate floor-only invocation.
 
 The two thresholds sit at the same grade and still mean different things, because each register's
-severity anchor measures something different — what the prose costs a reader, against how
-identifiable it is as AI-written. Grade by the anchor of the register you applied, and never
+severity anchor measures its own reader-facing cost — usability of documentation, or loss of
+meaning and intended voice in authored prose. Grade by the anchor of the register you applied, and never
 convert a finding from one scale to the other.
 
 **Load exactly two references**: the floor, plus the one register's. Never load both register
