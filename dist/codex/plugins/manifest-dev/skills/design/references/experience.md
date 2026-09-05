@@ -10,9 +10,8 @@ supported inputs; arrival, interruption and return; people affected and permissi
 access, language and environment; final host and export format. Establish objects,
 labels, navigation and information needed together before arranging screens.
 
-Separate facts from assumed user behavior. Inspect available research and existing
-usage; when an unknown would materially change the design, resolve it or label the
-assumption. Model role-play and screenshot critique are not observed user research.
+Apply Decision 0's evidence and uncertainty rules to the experience model. Model
+role-play and screenshot critique are not observed user research.
 
 For unfamiliar media or platforms, consult current authoritative guidance for the
 actual target and identify unavailable specialist verification. Do not infer that

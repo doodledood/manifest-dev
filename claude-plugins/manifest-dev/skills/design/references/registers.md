@@ -4,19 +4,19 @@ Guidance for established visual genres; unfamiliar media and lifecycle condition
 
 ## The cross-genre taxonomy
 
-Purpose picks the metric and directs the creative ambition. Each genre expresses it through the experience its audience needs.
+The established intent picks the success evidence and directs creative ambition. These genre rows are examples; the actual audience, purpose and uncertainty govern the probe.
 
 | Genre | Job | Design center | Success metric | Failure smell |
 |---|---|---|---|---|
 | Landing page | Persuade → one action | Message clarity in the visitor's vocabulary; anxiety removed at the call to action | Successful informed choice and relevant action | Beautiful hero, vague promise; three equal calls to action |
 | Form / checkout | Enable a transaction | Fewest *considered* fields; forgiving inputs; validate late, reward early | Completion and error-recovery rate | Looks clean, punishes typing; an error wipes input |
 | Dashboard | Monitor and decide | Consequential conditions and uncertainty visible; context for investigation | Correct prioritization and investigation | Wall of tiles, everything equally loud |
-| Report / memo | Persuade a decision-maker | Decision or unresolved trade-off early; comparable evidence and stable references | Reader identifies the decision, evidence and remaining uncertainty | Conclusion on page 6; no page numbers |
+| Report / memo | Support the requested decision, explanation or audit | Relevant answer or question early; comparable evidence and traceable reasoning | Reader makes the intended judgment or reconstructs the claim and its limits | Important answer or evidence cannot be found |
 | Talk deck | Persuade or teach a room | One assertion per slide, visual evidence, legible in a 3-second glance | Audience can restate the argument | Slides used as speaker notes; 40-bullet slides |
 | Slidedoc (reading deck) | Inform without a presenter | 50–150 words per page, full sentences, reading hierarchy | Reader acts on it alone | The projected/emailed hybrid that serves neither |
 | Infographic | One takeaway spreads | A title that states the finding; one governing metaphor; plain data marks | Takeaway recalled correctly | Icon soup; ten facts, no message |
 | Data story | Walk a reader through evidence | Purposeful sequence with clear orientation and appropriate equivalent access | Reader follows and can explain the evidence in the intended medium | Load-bearing tooltips; exploration instead of narrative |
-| Poster / one-pager | Inform at a glance | One plain-language finding legible at distance; three-layer read | Message received in 3 seconds at 3 meters | Paragraphs on a poster |
+| Poster / one-pager | Communicate the subject, event, finding or experience | Viewing context determines scale, emphasis and interpretive depth | Intended meaning and relevant details received in that context | Treatment ignores the actual distance, exposure or purpose |
 | Explainer / explorable | Build a mental model | Useful initial state; interaction exposes the mechanism where appropriate | Reader predicts the system's behavior | Sliders that demonstrate nothing; content behind hover |
 | Game / toy | Delight → re-engagement | Input answered under 100ms; rich feedback on a working core; teach by doing | Enjoyable, understandable play; return when relevant | One spectacle, identical the tenth time |
 
