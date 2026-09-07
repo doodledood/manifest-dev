@@ -16,7 +16,7 @@ Babysit an existing PR by running the manifest workflow. This is the author-side
 **Unattended launch.** At the start of a standalone tend, before invoking `/define` or `/do`, establish a durable PR-tend goal-setting backstop. It spans manifest discovery or synthesis and `/do`, including the `--manifest` path where `/define` is skipped, and during `/do` it carries the manifest gate ledger below. It is the outer backstop for the tend: nested `/define` handoff text and `/do` unattended-launch text should not set or print competing narrower goals while this babysit backstop exists. Emit the blocks below verbatim, substituting `<pr-url>`. Do not summarize, shorten, reword, or re-punctuate them. Set it through the harness's goal-setting, continuation, or durable-completion-condition capability where one exists; print it in copy-pasteable form for the user's own continuation mechanism where none does. Emit the PR-tend prefix, then the PR goal block, then the gate-ledger clause, as one contract: one unlabeled block introduced by a sentence of your own, since the fences and their labels are this file's markers rather than part of what you emit.
 
 ```pr-tend-prefix
-Drive the pull request at <pr-url> until it is mergeable or a blocker requires a person. Never press merge. In CI one-shot mode, report an external wait as pending once no actionable work remains; otherwise keep tending through waits. Discover or synthesize the Manifest for this pull request. Record its path in a checkpoint note as soon as it exists.
+Drive the pull request at <pr-url> until it is mergeable or a blocker requires a person and no useful independent work remains. Never press merge. In CI one-shot mode, report an external wait as pending once no actionable work remains; otherwise keep tending through waits. Discover or synthesize the Manifest for this pull request. Record its path in a checkpoint note as soon as it exists.
 ```
 
 ```pr-goal-block
@@ -26,7 +26,7 @@ The Manifest is the contract, not the run's to rewrite: it changes only through 
 
 Record compact checkpoint notes as work proceeds: what changed, what was verified, what remains, blockers.
 
-Stop after reporting completion, a blocker requiring a person, or an external wait that this run's no-wait policy makes terminal. Continue while authorized, actionable work remains.
+Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, or an external wait that this run's no-wait policy makes terminal. Continue while authorized, actionable work remains.
 ```
 
 ```gate-ledger-clause

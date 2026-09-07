@@ -1,15 +1,34 @@
 ---
 name: escalate
-description: 'Structured escalation when /do hits an unrecoverable blocker. Surfaces what was tried, why it failed, and what the user can decide. Called by /do when work is blocked, cannot proceed, hits an unrecoverable failure, needs a user decision, or gets stuck.'
+description: 'Terminal escalation for do or just-do when unresolved blockers require outside intervention and no useful independent work remains. Reports the evidence, recovery attempts, completed work, and intervention needed.'
 user-invocable: false
 ---
 
-Receive the manifest path, selected verification mode, explicit or inherited verifier-model provenance, and affected gate ledger entries including evaluator provenance from `/do`. Surface that policy/provenance with the blocker evidence: the criterion (INV-G or AC ID) that can't be met, what was tried and why each attempt failed, the resolutions you see (fix path, amend the criterion, drop it, descope), and what you need from the user to unblock. Show the attempts — that is what separates this payload from "I can't" or "this is hard".
+This is a terminal handoff, called only after useful independent work is exhausted.
+An earlier blocker notice belongs in the executor's progress report; it does not
+end the run. If useful independent work remains, return to the calling executor
+to continue it before escalating.
 
-Also name any Process Guidance departed from, any deviation from the Initial Approach or the Deliverable order, any findings a gate reported below its threshold, and any gate whose bar the run read as suspect without a user to ask, with why — nothing gates on these, so this payload is where they surface when the run exits here.
+Receive the manifest path, selected verification mode, explicit or inherited verifier-model provenance, and affected gate ledger entries including evaluator provenance from `/do`. From `just-do`, receive the Manifest path and its actual gate evidence and evaluator provenance; relay any supplied policy without inventing a mode or independent verification it did not use. Surface that policy/provenance with the blocker evidence: the criterion (INV-G or AC ID) that can't be met, the credible recovery paths investigated and why they failed, and the intervention needed — unavailable knowledge or access, new authority, or a change to a binding requirement. Name what independent work completed and why the remainder depends on that intervention. Recommend a resolution; report it without starting a question-and-wait loop.
 
-A gate whose criterion misdescribes what it judges routes here too — reported by its verifier, or surfaced by execution — passing or failing, wherever `/do`'s advance delegation does not reach the repair: the deliberately-chosen set, unclear provenance, or anything that is not a raise-only altitude repair. A gate whose criterion is right but whose bar costs more than it returns arrives the same way, carrying what recent rounds found and what another round would re-verify. Quote the report or name what execution showed, in place of attempts a passing gate does not have, and name the decision being asked for: whether the gate's text changes. That is the user's call, never the run's, which is why it arrives here rather than as an amendment.
+Also name material autonomous decisions and their rationale, including Appetite revisions and the benefit that justified their added complexity or maintenance; any Process Guidance departed from; any deviation from the Initial Approach or the Deliverable order; findings a gate reported below its threshold; and any costly-threshold concern the run recorded while continuing repairs. Include these even when the execution log already holds them.
 
-A BLOCKED verifier verdict routes here too when a person can act on it — "awaiting human approval" names someone who can act, while "the scheduled build has not run yet" names only elapsed time — with the BLOCKED note quoted from the verifier and the suggested user action carried through. Under a caller's no-wait overlay a BLOCKED that leaves only waiting reports as pending rather than arriving here; without that overlay it waits and re-verifies instead. Pure questions about the manifest or process are answered inline by /do, not escalated.
+A false binding premise outside the caller's amendment authority can arrive here
+even when its gate passed. Quote the report or name what execution showed in place
+of attempts a passing gate does not have. A costly bar alone is not a blocker
+while repairs remain viable; it is reported as a concern, never lowered by this
+skill.
 
-**If the user responds with a scope change rather than addressing the blocker** ("change AC-X", "drop that criterion", "add a check for Y", "actually we also need Z"), invoke `/define <manifest-path>` to amend the manifest, then resume /do. Otherwise (user clears the blocker or supplies missing context), resume /do directly.
+A BLOCKED verifier verdict is not sufficient on its own: the executor first
+investigates what it can recover and completes useful independent work. Quote the
+remaining BLOCKED note and name the required outside action. A pure external wait
+reports as pending under a no-wait policy; otherwise the executor waits and
+re-verifies. A stalled wait with no viable recovery path names the intervention
+needed here. Pure user questions about the manifest or process are answered inline
+by the executor.
+
+**If the user later supplies a scope or requirement change**, invoke the calling
+executor's authoring skill with the Manifest path (`define` for `/do`,
+`just-define` for `just-do`), then resume that executor. If they clear the blocker
+or supply the missing context, resume it directly. Their response is steering;
+resumed execution remains unattended.

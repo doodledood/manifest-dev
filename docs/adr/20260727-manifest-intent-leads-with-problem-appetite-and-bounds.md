@@ -1,7 +1,7 @@
 # ADR: Manifest Intent leads with a required Problem, plus Appetite and Out of bounds
 
 ## Status
-Accepted
+Accepted; amended by 20260907-executors-own-unattended-decisions-within-explicit-bounds: Appetite may be revised prospectively under bounded executor authority; explicit exclusions remain fixed and are encoded as invariants
 
 ## Area
 define

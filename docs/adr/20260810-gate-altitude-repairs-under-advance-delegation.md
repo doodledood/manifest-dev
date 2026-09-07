@@ -1,7 +1,7 @@
 # ADR: Gate altitude repairs run under advance user delegation
 
 ## Status
-Accepted
+Accepted; amended by 20260907-executors-own-unattended-decisions-within-explicit-bounds: gate-repair delegation stands; costly-threshold concerns are recorded while viable repairs continue, without asking during execution
 
 ## Area
 define / do

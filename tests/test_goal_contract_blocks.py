@@ -316,6 +316,18 @@ def test_the_blocks_are_actually_present() -> None:
     assert backstop_sites(), "no file arms a completion backstop"
 
 
+def test_blocker_continuation_survives_every_outer_goal() -> None:
+    """A caller's shorter stop rule must not park useful independent work."""
+    for label in (GOAL_BLOCK, "pr-goal-block", "pr-tend-prefix"):
+        for text, paths in copies_by_block()[label].items():
+            assert "no useful independent work remains" in text, paths
+            if label != "pr-tend-prefix":
+                assert "Assume the user is AFK" in text, paths
+                assert "Surface blockers promptly" in text, paths
+                assert "continue useful independent work" in text, paths
+            assert "a blocker requiring a person, or" not in text, paths
+
+
 def test_auto_chains_leave_goal_emission_to_the_executor() -> None:
     """A chain must remain goal-free until it has handed over a Manifest."""
     for name, executor in (("auto", "do"), ("just-auto", "just-do")):

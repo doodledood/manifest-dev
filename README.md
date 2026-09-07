@@ -70,7 +70,7 @@ flowchart TD
     E -->|any fail| F["Fix, re-verify"]
     F --> E
     E -->|all pass| G["Done, with evidence"]
-    E -->|real blocker| H["Escalate"]
+    E -->|blocked and no independent work| H["Escalate"]
     classDef gate fill:#15803D,stroke:#0F172A,color:#FFFFFF;
     classDef done fill:#0F172A,stroke:#15803D,color:#FFFFFF;
     classDef stop fill:#B45309,stroke:#0F172A,color:#FFFFFF;
@@ -80,6 +80,8 @@ flowchart TD
 ```
 
 `/auto` chains all three without stopping for approval between them. `/just-figure-out`, `/just-define`, `/just-do` and `/just-auto` are leaner variants of the same beats — same contracts, minimal process.
+
+`/do` and `/just-do` assume you are away: they make decisions without asking follow-up questions, including after a steering message. They may revise the planned size of the change before doing broader work when that produces a better long-term solution to your requested outcome. Explicit exclusions and binding requirements stay fixed. They report material choices afterward, surface blockers promptly, and continue useful independent work before escalating.
 
 For an unattended run, `/do` or `/just-do` sets a host-native goal-setting or continuation contract before implementation, with the Manifest’s absolute path included. Where a host offers neither capability, the executor prints the same contract for you to apply manually. `/auto` and `/just-auto` leave this to the executor: understanding and definition have no continuation goal, so an interruption there needs a restart.
 

@@ -1,7 +1,7 @@
 # ADR: /define encodes for full /do autonomy
 
 ## Status
-Accepted
+Accepted; amended by 20260907-executors-own-unattended-decisions-within-explicit-bounds: encoding discipline stands; execution now explicitly owns AFK decisions, recovery, and continued independent work before escalation
 
 ## Area
 define

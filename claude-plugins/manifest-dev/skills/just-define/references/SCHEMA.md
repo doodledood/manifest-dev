@@ -5,9 +5,10 @@
 
 ## 1. Intent
 - **Problem:** [The specific story of what breaks or grates today — the baseline this work improves on]
-- **Appetite:** [The size of change this problem is worth — a bound on complexity and surface]
-- **Out of bounds:** [What this deliberately leaves alone. Each bound stated once: one that must
-  hold is written as the Global Invariant that binds it and appears nowhere else.]
+- **Appetite:** [The current size of change this problem is worth — complexity and surface;
+  revisable prospectively within the executor's delegation]
+- **Out of bounds:** [IDs of the Global Invariants stating explicit exclusions; state each
+  exclusion only in its invariant.]
 
 ## 2. Initial Approach (Complex Tasks Only)
 *Initial direction, not rigid plan. Expect adjustment when reality diverges.*

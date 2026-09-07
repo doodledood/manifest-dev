@@ -26,6 +26,8 @@ For `/do` runs, the first entry fixes the logical run's verification policy: sel
 
 Record what completed state won't reconstruct on its own:
 
+- **Autonomous decisions** — material choices and assumptions, their rationale, and any prospective Appetite revision with its benefit and added complexity or maintenance.
+- **Blocker notices** — the affected obligation, evidence and intervention needed, independent work continued, and whether the blocker cleared or remained for terminal escalation.
 - **Deviations from the Initial Approach or the Deliverable order** — what changed and why, including a resequencing and what forced it. Both are soft; the record of leaving them is not.
 - **Process Guidance departures** — which item was set aside and why.
 - **Dead-end memory** — fixes tried and reverted, approaches considered and rejected that left no commit.

@@ -376,6 +376,44 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         assert not RETIRED_GATE_FIELDS.search(text), path
 
 
+def test_executor_authority_is_shared_and_standalone() -> None:
+    """Independently loaded executors must carry the same delegation and limits.
+
+    This guards policy drift between the lean and procedural paths; it does not
+    claim to test a model's compliance with the instructions.
+    """
+    policies = {}
+    for name in ("do", "just-do"):
+        path = ROOT / f"claude-plugins/manifest-dev/skills/{name}/SKILL.md"
+        text = path.read_text(encoding="utf-8")
+        policy = text.split("## Autonomous execution\n", 1)[1].split("\n## ", 1)[0]
+        policies[name] = policy
+        assert "before broader work starts" in policy, path
+        assert "Explicit Out of bounds exclusions, binding requirements" in policy, path
+        assert "Never revise Appetite to excuse excess already produced" in policy, path
+        assert "A blocker notice is not a terminal escalation" in policy, path
+        assert "no useful independent work remains" in policy, path
+    assert policies["do"] == policies["just-do"]
+
+
+def test_lean_executor_amendments_preserve_verification() -> None:
+    """Prospective scope authority must reach the author and invalidate evidence."""
+    base = ROOT / "claude-plugins/manifest-dev/skills"
+    executor = (base / "just-do/SKILL.md").read_text(encoding="utf-8")
+    author = (base / "just-define/SKILL.md").read_text(encoding="utf-8")
+    executor = " ".join(executor.split())
+    author = " ".join(author.split())
+    assert "Invoke `just-define` with the Manifest path" in executor
+    assert "Wait for active gate evaluations to finish before amending" in executor
+    assert "discard that evaluation's verdicts" in executor
+    assert "including the ceiling when Appetite changes" in executor
+    assert "An amendment from `just-do` is unattended" in author
+    assert "ask no questions, and wait for no approval" in author
+    assert "it has not already been done as excess" in author
+    assert "it crosses no explicit exclusion or binding requirement" in author
+    assert "The Manifest is read-only" not in executor
+
+
 def test_manifest_schema_is_topology_neutral_and_do_owns_execution_policy() -> None:
     """Schema, mode mechanics, and model choice must not collapse back together."""
     do_files = [

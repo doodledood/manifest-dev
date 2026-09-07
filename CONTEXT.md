@@ -30,7 +30,7 @@ A verifiable task-file item that `/define` encodes as an acceptance-style gate.
 A non-probed task-file item that `/define` carries into Process Guidance — unless violating it would be unsafe or irreversible, which routes it to a Global Invariant instead.
 
 **Appetite**:
-The size of change a problem is worth — a scope bound on complexity and surface set before solutioning, so high-impact work stays prioritized over expanding one solution; independent of time and token cost.
+The current size of change a problem is worth — a bound on complexity and surface, independent of time and token cost, revisable prospectively under executor delegation when the benefit to the requested outcome justifies added complexity and maintenance without crossing explicit exclusions or binding requirements.
 _Avoid_: Estimate, budget, deadline.
 
 **Task File**:

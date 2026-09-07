@@ -1,6 +1,6 @@
 # Per-gate verification
 
-Launch one fresh independent general-purpose verifier execution for every gate the spine marks eligible, and run those executions in parallel. Where the host exposes no isolated execution context to launch, this mode cannot run here: never fall back to evaluating inline as if it had — stop and report that the selected mode is unavailable on this host, so the user can relaunch with `--verification self` and its weaker, self-attested provenance.
+Launch one fresh independent general-purpose verifier execution for every gate the spine marks eligible, and run those executions in parallel. Where the host exposes no isolated execution context to launch, this mode cannot run here: never fall back to evaluating inline as if it had — report verification blocked with the missing capability, preserve the selected mode, and continue useful independent work. Escalate only when none remains; the user can then supply the capability or explicitly choose a different mode for a new run.
 
 Each execution returns one record for its own gate.
 

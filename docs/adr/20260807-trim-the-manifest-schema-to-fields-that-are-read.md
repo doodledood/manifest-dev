@@ -1,7 +1,7 @@
 # ADR: Trim the Manifest schema to fields that are read
 
 ## Status
-Accepted
+Accepted; amended by 20260907-executors-own-unattended-decisions-within-explicit-bounds: the single-statement rule stands; every explicit exclusion is an invariant referenced from Intent, while advisory omissions belong in the plan
 
 ## Area
 define / do

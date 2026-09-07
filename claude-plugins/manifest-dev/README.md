@@ -16,18 +16,22 @@ Run them in order, though each works on its own:
 | `/define` | Turns that understanding into a Manifest — the deliverables, the criteria each has to meet, and the rules holding across all of them. Calls `/figure-out` first if understanding isn't there yet. |
 | `/do` | Implements against the Manifest and verifies every criterion before reporting completion. Verification runs independently of the work by default. |
 
-`/done` and `/escalate` are how `/do` finishes: one reports what was built, the other surfaces a blocker that needs you.
+`/done` reports completed `/do` work. `/escalate` is the terminal handoff for either executor when unresolved blockers need outside intervention and no useful independent work remains.
 
 ## Run it unattended
 
-These trade approval points and process for autonomy:
+`/do` and `/just-do` assume you are away for the entire execution, even after you send a steering message. They decide without asking follow-up questions and report material choices and their rationale afterward. A failed approach calls for another approach; a blocker requires something the executor cannot responsibly supply. Blockers are reported promptly while useful independent work continues.
+
+Both may revise Appetite — the planned size of the change — before broader work starts when the benefit to your requested outcome justifies added complexity and maintenance. Explicit exclusions and binding requirements stay fixed. Unrelated improvements and changing the contract to excuse excess work are outside that delegation.
+
+These entrypoints extend unattended work through planning or reduce its process:
 
 | Skill | What it does |
 |-------|--------------|
 | `/auto` | Chains figure-out, define and do without stopping for approval between them. |
 | `/just-figure-out` | The lean figure-out: presses a topic to a named read — conclusion, confidence, evidence, what would overturn it — deciding for itself how to get there. Offers `/just-define` when the read implies work. |
 | `/just-define` | The lean define: encodes shared understanding into the same Manifest contract, deciding for itself how to interview. Hands execution to `/just-do`. |
-| `/just-do` | Executes a Manifest with more autonomy and less process — same contract, fewer steps. Keeps an execution log keyed to the Manifest, so a relaunched run picks up where the last one stopped; `--no-log` opts out. |
+| `/just-do` | Executes a Manifest with the same unattended decision authority and less process. Keeps an execution log keyed to the Manifest, so a relaunched run picks up where the last one stopped; `--no-log` opts out. |
 | `/just-auto` | The same leaner posture across the whole chain: just-figure-out, just-define, just-do. |
 
 ## Project surfaces

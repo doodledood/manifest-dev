@@ -13,6 +13,6 @@ Chain `figure-out --autonomous` (when the transcript lacks shared understanding)
 
 **Babysit mode** (`--babysit <pr-url>`) skips fresh synthesis. Invoke `define` with `--babysit <pr-url> --autonomous`, then /do with the parsed verification options. PR-lifecycle platform auto-detects from PR URL host (`github.com` → github composition); non-github host → halt. Multi-repo manifest produced by /define → single /do invocation navigates all repos.
 
-**Failure handling.** /define returns no manifest path → stop, report. /do escalates (BLOCKED criterion or other blocker) → surface the escalation verbatim to the user with the action it requests.
+**Failure handling.** /define returns no manifest path → stop, report. /do invokes terminal escalation after useful independent work is exhausted → surface the escalation verbatim to the user with the intervention it names. An earlier blocker notice is progress, not a terminal result.
 
 **Continuation.** Do not set or print a continuation goal during understanding or definition. When invoking figure-out, keep its full Read bar as the checkpoint before define, without a phase goal. Pass the exact Manifest path define reports to /do; /do owns the completion backstop, including native goal-setting and the manual completion contract. No path → stop and report. Automatic continuation begins at execution; an interrupted earlier phase must be restarted by the caller.
