@@ -1,0 +1,1 @@
+../../claude-plugins/manifest-dev/hooks/inline_manifest_hook.py
