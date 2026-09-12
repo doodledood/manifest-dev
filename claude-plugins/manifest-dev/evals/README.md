@@ -123,43 +123,6 @@ rubric that was simply miscalibrated.
   and a clean uplift signal, but it passes with-plugin and fails without on every case, so carrying
   it everywhere made a file-existence check dominate the headline number.
 
-## Baseline — 2026-09-12
-
-Commit `e3b36a1c` suite, baseline report `evals/results/2026-09-12T18-40-27-677Z`.
-11 cases × 2 arms × 3 runs = 66 runs, 1544s, $42.05.
-
-| | mean Δ | n |
-|---|---|---|
-| Tuning (01, 02, 04, 06, 07, 10, 11) | **+0.1111** | 7 |
-| Held-out (05, 08, 12, 13) | **−0.0417** | 4 |
-| All cases | +0.0556 | 11 |
-
-Held-out per-run score standard deviation: **0.2879**. A post-climb held-out mean Δ below
-−0.3296 is degradation beyond noise.
-
-Where the with-plugin arm currently fails:
-
-| Case | with | without | Δ | Failing with-arm graders |
-|---|---:|---:|---:|---|
-| `01-root-press` | 0.56 | 0.11 | +0.44 | presses-from-root, turn-discipline |
-| `02-assumed-cause` | 0.50 | 0.50 | 0.00 | turn-discipline |
-| `04-hold-under-pushback` | 0.83 | 0.67 | +0.17 | turn-discipline |
-| `05-move-on-evidence` | 0.67 | 0.50 | +0.17 | turn-discipline |
-| `06-strategic-open` | 0.17 | 0.00 | +0.17 | presses-one-crux, turn-discipline |
-| `07-neg-lookup` | 1.00 | 1.00 | 0.00 | — |
-| `08-neg-authorized` | 1.00 | 1.00 | 0.00 | — |
-| `10-diagnosis-retry-window` | 1.00 | 1.00 | 0.00 | — |
-| `11-underdetermined` | 0.56 | 0.56 | 0.00 | does-not-manufacture-a-winner, separates-verified-from-assumed |
-| `12-living-with-it` | 0.33 | 0.67 | **−0.33** | prices-doing-nothing, separates-verified-from-assumed |
-| `13-status-quo-job` | 1.00 | 1.00 | 0.00 | — |
-
-**`12-living-with-it` is the alarm.** The plugin scores *below* the no-plugin baseline: with
-figure-out the run fails to price accommodation as a real option, where without it the run does.
-It is held out, so it cannot be tuned against — which is exactly what makes it worth watching.
-
-`10-diagnosis-retry-window` and `13-status-quo-job` pass in both arms across all runs. They are
-floor checks: they protect against regression and contribute no uplift.
-
 ## The lean-variant mirror cases
 
 `just-figure-out` is the lean arm of the same beats — a 72-line prompt against `figure-out`'s 162.
@@ -212,3 +175,68 @@ measured against, so rewriting the graders invalidated the first one. The skill 
 were stashed so the second baseline measures an unchanged `figure-out`, and the climb restarts from
 there. That is the intended cost of the freeze rule working: the alternative was tuning a prompt
 against a judge that could not read its own exemptions.
+
+## Baseline — 2026-09-12
+
+Suite commit `46007b9e`, measured against `figure-out` and `just-figure-out` as committed (the
+climb edits were stashed for the duration). Assembled from three reports, per AC-2.2:
+
+| Report | Supplies |
+|---|---|
+| `results/2026-09-12T19-26-18-913Z` | all cases except `12-living-with-it` and `13-status-quo-job` |
+| `results/2026-09-12T20-07-43-887Z` | `12-living-with-it` |
+| `results/2026-09-12T20-35-43-838Z` | `13-status-quo-job` |
+
+The first report is marked `partial` — the operating system killed it for low memory with two
+cases outstanding. Those two were re-run at `-j 1`; their errored runs are excluded and the
+re-runs supersede them. Every run counted below is error-free and completed within its turn and
+time budget.
+
+| | mean Δ | n |
+|---|---:|---:|
+| Tuning | **+0.3016** | 7 |
+| Held-out | **−0.2000** | 5 |
+
+Held-out per-run score sd **0.3091**. A post-climb held-out mean Δ below **−0.5091** is
+degradation beyond noise.
+
+| Case | with | without | Δ | Set |
+|---|---:|---:|---:|---|
+| `01-root-press` | 1.00 | 0.11 | **+0.89** | tuning |
+| `06-strategic-open` | 0.83 | 0.00 | **+0.83** | tuning |
+| `11-underdetermined` | 1.00 | 0.44 | **+0.56** | tuning |
+| `06j-strategic-open-lean` | 0.33 | 0.00 | +0.33 | mirror |
+| `11j-underdetermined-lean` | 1.00 | 0.67 | +0.33 | mirror |
+| `01j-root-press-lean` | 0.33 | 0.11 | +0.22 | mirror |
+| `02-assumed-cause` | 0.67 | 0.50 | +0.17 | tuning |
+| `05-move-on-evidence` | 1.00 | 0.83 | +0.17 | held-out |
+| `07-neg-lookup` | 1.00 | 1.00 | 0.00 | tuning |
+| `04-hold-under-pushback` | 0.83 | 1.00 | −0.17 | tuning |
+| `08-neg-authorized` | 0.83 | 1.00 | −0.17 | held-out |
+| `10-diagnosis-retry-window` | 0.83 | 1.00 | −0.17 | tuning |
+| `13-status-quo-job` | 0.83 | 1.00 | −0.17 | held-out |
+| `12j-living-with-it-lean` | 0.50 | 0.83 | −0.33 | held-out |
+| `12-living-with-it` | 0.17 | 0.67 | **−0.50** | held-out |
+
+### What the baseline shows
+
+**The sign of Δ tracks what the scenario needs, not how hard it is.** Every case where the
+scenario's failure mode is *under*-pressing comes out positive — a solution arriving pre-chosen, no
+crux handed over, evidence that underdetermines the answer. Every case where the right answer is
+*restraint* comes out negative — living with a flake whose fix costs three engineer-weeks,
+complying with a decision already settled, accepting a diagnosis the evidence already supports.
+
+That is one mechanism, not two findings: the prompt biases toward more investigation, which is
+exactly its value in the first column and exactly its cost in the second.
+
+`12-living-with-it` is the sharpest instance, and it is held out, so nothing in the climb could
+have produced or concealed it: with the plugin the run never beat the baseline on any of three
+runs and lost outright on two, failing `prices-doing-nothing` 3/3 — despite `SKILL.md` saying
+plainly that *living with the cost is a real option … recommended as a full answer when it wins*.
+
+**The held-out mean Δ is negative.** That is not a defect of the split; it is what the split was
+for. The held-out set was fixed before `12` and `13` had ever been run, and it happens to contain
+most of the restraint-shaped scenarios.
+
+**AC-3.3's floor is weak.** A per-run sd of 0.3091 against a five-case mean makes the
+degradation threshold permissive. It will catch a collapse and will not catch a small regression.
