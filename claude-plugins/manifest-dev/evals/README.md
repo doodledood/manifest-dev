@@ -159,3 +159,56 @@ It is held out, so it cannot be tuned against — which is exactly what makes it
 
 `10-diagnosis-retry-window` and `13-status-quo-job` pass in both arms across all runs. They are
 floor checks: they protect against regression and contribute no uplift.
+
+## The lean-variant mirror cases
+
+`just-figure-out` is the lean arm of the same beats — a 72-line prompt against `figure-out`'s 162.
+The `just-*` family is an experiment: the claim under test is that the prompt can be narrowed
+substantially because a modern base model already carries much of the discipline. **The no-plugin
+baseline arm of this suite is exactly that claim's comparison**, which is what lets this instrument
+speak to it.
+
+Four scenarios are mirrored. Each mirror's `prompt.md` differs from its original in exactly one
+line — the skill it names — and its graders are byte-identical:
+
+| Scenario | Full | Lean |
+|---|---|---|
+| Solution arrives pre-chosen | `01-root-press` | `01j-root-press-lean` |
+| No crux handed over | `06-strategic-open` | `06j-strategic-open-lean` |
+| Evidence underdetermines the answer | `11-underdetermined` | `11j-underdetermined-lean` |
+| Living with it is the right answer | `12-living-with-it` | `12j-living-with-it-lean` |
+
+That yields three numbers per scenario: the no-plugin baseline, the lean prompt, and the full
+prompt.
+
+**Held out from tuning, updated: `05-move-on-evidence`, `08-neg-authorized`, `12-living-with-it`,
+`13-status-quo-job`, and `12j-living-with-it-lean`.** The mirror of a held-out case is held out
+too — tuning against it would defeat the split on both sides of the comparison.
+
+**What this comparison cannot do.** Four scenarios cannot settle whether a lean variant should
+replace a fuller one. The result is evidence toward a decision the repository's owner holds, and
+this suite reports it that way — never as a recommendation to graduate or retire either variant.
+What would move confidence further is stated alongside the numbers.
+
+## Grader calibration — why two rubrics were rewritten
+
+The first baseline exposed two graders whose verdicts could not be predicted from reading the
+output. `turn-discipline` failed `02-assumed-cause`, a turn carrying one claim in two parts and a
+single ask with its own guess. `does-not-manufacture-a-winner` failed a response that ranked its
+rivals, kept a rival register, stated moderate confidence, named a deciding check, and explicitly
+refused to design off the read.
+
+Both rubrics had the same shape: a requirement followed by a list of exemptions ("these do NOT
+count as failures"). A sonnet-tier judge applied the requirement and skipped the exemptions.
+
+Both were rewritten to **enumerate before judging** — the judge must first list and classify what
+it found (every ask, classified substantive or logistical; the stated cause, and whether a live
+rival and a deciding observation are present), and only then reach a verdict on that classification.
+A verdict that follows from an enumeration is predictable from the text; a verdict that depends on
+a judge honouring a prose exemption is not.
+
+**This cost a second baseline.** Under INV-G2 a case file may not move after the baseline it is
+measured against, so rewriting the graders invalidated the first one. The skill edits under trial
+were stashed so the second baseline measures an unchanged `figure-out`, and the climb restarts from
+there. That is the intended cost of the freeze rule working: the alternative was tuning a prompt
+against a judge that could not read its own exemptions.
