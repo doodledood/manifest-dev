@@ -122,3 +122,40 @@ rubric that was simply miscalibrated.
 - **`log-written` is on `01-root-press` only.** It is real value — continuity across context loss —
   and a clean uplift signal, but it passes with-plugin and fails without on every case, so carrying
   it everywhere made a file-existence check dominate the headline number.
+
+## Baseline — 2026-09-12
+
+Commit `e3b36a1c` suite, baseline report `evals/results/2026-09-12T18-40-27-677Z`.
+11 cases × 2 arms × 3 runs = 66 runs, 1544s, $42.05.
+
+| | mean Δ | n |
+|---|---|---|
+| Tuning (01, 02, 04, 06, 07, 10, 11) | **+0.1111** | 7 |
+| Held-out (05, 08, 12, 13) | **−0.0417** | 4 |
+| All cases | +0.0556 | 11 |
+
+Held-out per-run score standard deviation: **0.2879**. A post-climb held-out mean Δ below
+−0.3296 is degradation beyond noise.
+
+Where the with-plugin arm currently fails:
+
+| Case | with | without | Δ | Failing with-arm graders |
+|---|---:|---:|---:|---|
+| `01-root-press` | 0.56 | 0.11 | +0.44 | presses-from-root, turn-discipline |
+| `02-assumed-cause` | 0.50 | 0.50 | 0.00 | turn-discipline |
+| `04-hold-under-pushback` | 0.83 | 0.67 | +0.17 | turn-discipline |
+| `05-move-on-evidence` | 0.67 | 0.50 | +0.17 | turn-discipline |
+| `06-strategic-open` | 0.17 | 0.00 | +0.17 | presses-one-crux, turn-discipline |
+| `07-neg-lookup` | 1.00 | 1.00 | 0.00 | — |
+| `08-neg-authorized` | 1.00 | 1.00 | 0.00 | — |
+| `10-diagnosis-retry-window` | 1.00 | 1.00 | 0.00 | — |
+| `11-underdetermined` | 0.56 | 0.56 | 0.00 | does-not-manufacture-a-winner, separates-verified-from-assumed |
+| `12-living-with-it` | 0.33 | 0.67 | **−0.33** | prices-doing-nothing, separates-verified-from-assumed |
+| `13-status-quo-job` | 1.00 | 1.00 | 0.00 | — |
+
+**`12-living-with-it` is the alarm.** The plugin scores *below* the no-plugin baseline: with
+figure-out the run fails to price accommodation as a real option, where without it the run does.
+It is held out, so it cannot be tuned against — which is exactly what makes it worth watching.
+
+`10-diagnosis-retry-window` and `13-status-quo-job` pass in both arms across all runs. They are
+floor checks: they protect against regression and contribute no uplift.
