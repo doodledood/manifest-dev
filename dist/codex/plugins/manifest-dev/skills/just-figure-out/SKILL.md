@@ -76,6 +76,6 @@ Nothing fits → probe generally.
 ## The log
 
 Unless --no-log, keep an append-only log at
-~/.manifest-dev/logs/figure-out-<UTC yyyymmdd-hhmmss>.md (create the dir) and
+~/.manifest-dev/logs/figure-out-log-<UTC yyyymmdd-hhmmss>.md (create the dir) and
 surface the path up front: what was learned with its evidence, how the read
 shifted, what's still open. Read it before resuming; append as you go.
