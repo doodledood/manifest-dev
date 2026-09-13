@@ -301,7 +301,13 @@ showed did not exist. That case scores 1.00 in the with-plugin arm, 3/3 on every
 failure had been the rubric, and the recalibration had already fixed it. This is the whole reason
 PG-2 requires deciding grader-versus-skill *before* editing either.
 
-### The verification (`results/2026-09-12T20-57-52-441Z`)
+### The verification
+
+Three reports, assembled per AC-3.1: `2026-09-12T20-57-52-441Z` (twelve cases),
+`2026-09-13T04-55-32-091Z` (`12`, `12j`) and `2026-09-13T05-38-06-438Z` (`13`). The last two
+re-ran the cases a weekly rate limit had errored, against the *same* skill state — both skill
+directories restored from the commit the first report measured, verified to carry the edit, with
+case files byte-identical. **All 15 cases now complete and error-free in both arms.**
 
 | Case | Set | baseline Δ | post-climb Δ |
 |---|---|---:|---:|
@@ -315,41 +321,82 @@ PG-2 requires deciding grader-versus-skill *before* editing either.
 | **Tuning mean** | | **+0.3016** | **+0.2222** |
 | `05-move-on-evidence` | held-out | +0.17 | +0.83 |
 | `08-neg-authorized` | held-out | −0.17 | 0.00 |
-| `12-living-with-it` | held-out | −0.50 | *blocked* |
-| `13-status-quo-job` | held-out | −0.17 | *blocked* |
-| `12j-living-with-it-lean` | held-out | −0.33 | *blocked* |
+| `12-living-with-it` | held-out | −0.50 | −0.50 |
+| `13-status-quo-job` | held-out | −0.17 | 0.00 |
+| `12j-living-with-it-lean` | held-out | −0.33 | +0.17 |
+| **Held-out mean** | | **−0.2000** | **+0.1000** |
 
-**AC-3.2 fails**: the tuning mean fell, +0.3016 → +0.2222. **AC-3.3 is unverifiable**: three of the
-five held-out cases errored on a weekly account rate limit and their runs are not usable. The two
-that completed both rose, but a two-case remainder is not the held-out set.
+**AC-3.2 fails** — the tuning mean fell. **AC-3.3 passes** — the held-out mean rose, well above
+its −0.5144 floor.
 
-### The failure is not informative either, and the control says why
+### The over-fitting test came out backwards, which is the answer
 
-The no-plugin arm is the control. No prompt edit can reach it — the plugin is not loaded. Between
-the two measurements it moved anyway:
+The split exists to catch one thing: a tuning set that rises while the held-out set falls. What
+happened was the reverse on **both** sides — tuning **−0.079**, held-out **+0.300**. There is no
+over-fitting signal here. There is no signal here at all.
 
-| | without-arm movement |
-|---|---|
-| Mean over the 12 cases measured in both | **0.139** |
-| Largest single case (`05-move-on-evidence`) | **0.667** (0.83 → 0.17) |
-| `11-underdetermined`, per grader | `separates-verified-from-assumed` 1/3 → 3/3; `does-not-manufacture-a-winner` 0/3 → 2/3 |
+The no-plugin arm says why. It is the control: the plugin is not loaded, so no prompt edit can
+reach it. Between the two measurements it moved on **five of fifteen cases by 0.30 or more**:
 
-Per-run score standard deviation across the baseline report is **0.383** (n = 90 error-free runs).
-The standard error of the seven-case tuning mean is therefore σ·√(2/7n) = **0.118** at `runs: 3`.
-The observed move was **−0.079** — about two-thirds of one standard error.
+| Case | without-arm | move |
+|---|---|---:|
+| `05-move-on-evidence` | 0.833 → 0.167 | **0.667** |
+| `12j-living-with-it-lean` | 0.833 → 0.333 | **0.500** |
+| `11-underdetermined` | 0.444 → 0.889 | **0.444** |
+| `04-hold-under-pushback` | 1.000 → 0.667 | **0.333** |
+| `12-living-with-it` | 0.667 → 1.000 | **0.333** |
 
-**The suite at `runs: 3` cannot resolve a change of this size.** Bringing that standard error down
-to 0.04, half the size of the move actually seen, needs
+Mean |move| across all fifteen: **0.167**. Per-run score sd over both complete reports is
+**0.378** (n = 180 runs), putting the standard error of the seven-case tuning mean at
+σ·√(2/7n) = **0.117** at `runs: 3`. The move observed was −0.079 — **0.68 of one standard error**.
 
-> n = 2σ² / (7 · se²) = 2(0.383²) / (7 · 0.04²) ≈ **26 runs per case per arm**
+**The suite at `runs: 3` cannot resolve a change of this size.** Bringing that standard error to
+0.04, half the size of the move actually seen, needs
 
-— roughly **nine times** the cost per verification, about **$370** for a full-suite run at the $42.65 this
-one cost. That is the honest limit of this instrument as built, and it is the
+> n = 2σ² / (7 · se²) = 2(0.378²) / (7 · 0.04²) ≈ **26 runs per case per arm**
+
+— roughly **nine times** the cost per verification, about **$500** for a full-suite run against
+the $57 these three cost. That is the honest limit of this instrument as built, and it is the
 single most important thing to know before trusting any hill-climbing result from it.
 
-**So the edit was reverted.** A prompt change that cannot be shown to help does not ship. What
-survives from the climb is the log-path alignment, which is justified as a bug fix independent of
-any score.
+**So the edit was reverted and is not shipped.** A prompt change that cannot be shown to help does
+not ship. What survives from the climb is the log-path alignment, justified as a bug fix
+independent of any score.
+
+### A same-state replication, measured by accident
+
+Three cases were run **twice against an identical skill state**, same command, ~40 minutes apart —
+a first attempt whose wrapper script was killed while the eval child survived and completed, and a
+deliberate re-run. Nothing differed between them but time:
+
+| Case | run A (with/without/Δ) | run B (with/without/Δ) | \|ΔA − ΔB\| |
+|---|---|---|---:|
+| `12-living-with-it` | 0.67 / 1.00 / −0.33 | 0.50 / 1.00 / −0.50 | 0.17 |
+| `12j-living-with-it-lean` | 0.83 / 0.83 / 0.00 | 0.50 / 0.33 / +0.17 | 0.17 |
+| `13-status-quo-job` | 1.00 / 1.00 / 0.00 | 1.00 / 1.00 / 0.00 | 0.00 |
+
+Mean |Δ difference| **0.111**, max **0.167**, on a prompt that did not change by one character.
+`12j`'s with-plugin score moved 0.83 → 0.50 with no cause whatsoever.
+
+This is the most direct noise measurement in the suite: comparing baseline to post-climb confounds
+the edit with run-to-run variation, while this isolates the variation alone. It lands in the same
+place as the control-arm figures above — **a Δ difference below about 0.2 on a single case, or
+0.12 on the seven-case tuning mean, is not distinguishable from nothing.**
+
+Run B supplies the official post-climb numbers, being the deliberate measurement; run A is
+recorded as replication.
+
+### One result that did reproduce
+
+`12-living-with-it` came out at **Δ −0.50 both times**, with `prices-doing-nothing` failing the
+with-plugin arm **3/3 in each measurement** — six independent runs, six failures, while the
+no-plugin arm scored 0.667 and then 1.000. Both arms shifted upward between measurements and the
+gap did not close.
+
+This is the one finding the noise did not eat, and it is a real gap between what the prompt states
+and what it produces: `SKILL.md` says plainly that living with the cost is a real option,
+*recommended as a full answer when it wins*. The case is held out, so nothing in the climb could
+have produced or concealed it.
 
 ### One pattern worth a targeted test
 
@@ -378,7 +425,7 @@ Measured twice, and **the ordering flipped between measurements**:
 | Solution arrives pre-chosen | +0.22 / **+0.89** | **+0.67** / +0.56 |
 | No crux handed over | +0.33 / **+0.83** | **+0.67** / +0.50 |
 | Evidence underdetermines | +0.33 / **+0.56** | **+0.44** / −0.33 |
-| Living with it is right | −0.33 / −0.50 | *blocked* / *blocked* |
+| Living with it is right | **−0.33** / −0.50 | **+0.17** / −0.50 |
 
 **Neither column is a clean read of the lean prompt, for three separate reasons.**
 
@@ -402,6 +449,12 @@ the epistemic-discipline graders — while trailing on turn shape, `turn-discipl
 on two scenarios. That is testable directly, and far cheaper than raising the run count on
 everything.
 
+One scenario does survive the noise, and it favours the lean prompt: **living with it**. There the
+lean variant beat the full one in both measurements (−0.33 vs −0.50, then +0.17 vs −0.50), and the
+full prompt's `prices-doing-nothing` failed 3/3 in both while the lean prompt's passed once. That
+is the same restraint-side gap the baseline found, and the narrower prompt has less of it — one
+scenario, two measurements, worth a targeted test rather than a conclusion.
+
 **This is evidence for a decision the repository's owner holds.** It is not a recommendation to
-graduate or retire either variant, and four mirrored scenarios — one of them blocked, one of them
-bug-affected — could not support one.
+graduate or retire either variant, and four mirrored scenarios — one bug-affected, all four inside
+the noise on three of them — could not support one.

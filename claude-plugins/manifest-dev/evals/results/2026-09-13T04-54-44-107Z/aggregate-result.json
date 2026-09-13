@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.270",
+  "startedAt": "2026-09-13T04:54:44.107Z",
+  "durationSeconds": 24,
+  "costUsd": 0.246405,
+  "partial": false,
+  "suite": {
+    "root": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev",
+    "ablation": "with-without",
+    "judgeModel": "sonnet",
+    "caseFilter": "07*",
+    "threshold": 1,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "manifest-dev",
+        "version": "11.9.1",
+        "path": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "07-neg-lookup",
+      "dir": "evals/07-neg-lookup",
+      "source": "prose",
+      "promptMarkdown": "whats the difference between git reset --soft and --mixed again?",
+      "model": "opus",
+      "runsPerCase": 3,
+      "timeoutSeconds": 180,
+      "maxTurns": 8,
+      "graders": [
+        {
+          "name": "answers-without-deliberating",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "This is a direct factual lookup with a known answer. The correct behavior is to answer it.\n\nPASS requires both:\n1. The reply answers correctly: `--soft` moves HEAD and leaves both the index (staging area) and the working tree untouched, so the changes remain staged; `--mixed` (the default) moves HEAD and resets the index, so the changes remain in the working tree but unstaged. Neither touches the working tree's file contents. A reply that gets this substantively right PASSES point 1 regardless of wording or added detail.\n2. The reply does not open a deliberation. No crux question posed back to the user, no investigation proposed, no belief register, no confidence rating with overturn conditions, no framing of this as a topic to be figured out together, no asking what the user is really trying to accomplish before answering.\n\nA short clarifying aside, a worked example, or a one-line offer of related help does not fail point 2. What fails is treating a lookup as something to deliberate.",
+          "config": {
+            "criteria": "This is a direct factual lookup with a known answer. The correct behavior is to answer it.\n\nPASS requires both:\n1. The reply answers correctly: `--soft` moves HEAD and leaves both the index (staging area) and the working tree untouched, so the changes remain staged; `--mixed` (the default) moves HEAD and resets the index, so the changes remain in the working tree but unstaged. Neither touches the working tree's file contents. A reply that gets this substantively right PASSES point 1 regardless of wording or added detail.\n2. The reply does not open a deliberation. No crux question posed back to the user, no investigation proposed, no belief register, no confidence rating with overturn conditions, no framing of this as a topic to be figured out together, no asking what the user is really trying to accomplish before answering.\n\nA short clarifying aside, a worked example, or a one-line offer of related help does not fail point 2. What fails is treating a lookup as something to deliberate.",
+            "focus": "last_message"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 1,
+            "costUsd": 0.135662,
+            "judgeCostUsd": 0.00462,
+            "durationSeconds": 11,
+            "startedAt": "2026-09-13T04:54:44.167Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-eepHal/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "answers-without-deliberating",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Both move `HEAD` to the target commit and leave your working tree files alone. The difference is the index (staging area):\n\n- **`--soft`** — only `HEAD` moves. The index keeps the old content, so everything from the undone commits shows up as **staged** changes, ready to re-commit.\n- **`--mixed`** (the default) — `HEAD` moves *and* the index is reset to match it. The same changes show up as **unstaged** modifications, so you'd need to `git add` again.\n\nSo after `git reset --soft HEAD~1`:\n```\nChanges to be committed:\n    modified:   foo.py\n```\n\nAfter `git reset --mixed HEAD~1`:\n```\nChanges not staged for commit:\n    modified:   foo.py\n```\n\nRule of thumb: `--soft` when you just want to redo the commit message or squash the last few commits into one; `--mixed` when you want to re-pick which pieces get staged. (`--hard` is the one that also throws away the working tree changes.)"
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 1,
+            "costUsd": 0.11074300000000001,
+            "judgeCostUsd": 0.004925999999999999,
+            "durationSeconds": 13,
+            "startedAt": "2026-09-13T04:54:55.040Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-MXDjDJ/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "answers-without-deliberating",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Both move `HEAD` to the target commit and leave your working tree files untouched. The only difference is the index (staging area):\n\n- **`--soft`** — leaves the index alone. The changes from the commits you undid show up as **staged** (`git status` lists them under \"Changes to be committed\"). This is the \"redo my commit message / squash these into one\" move: `git reset --soft HEAD~1` then `git commit`.\n- **`--mixed`** (the default) — resets the index to match the new `HEAD`. Same changes, but now **unstaged** (\"Changes not staged for commit\"). You'd `git add` again to recommit. This is the \"let me re-pick what goes in\" move.\n\nSo the ladder is:\n\n| | HEAD | index | working tree |\n|---|---|---|---|\n| `--soft` | moved | kept | kept |\n| `--mixed` | moved | reset | kept |\n| `--hard` | moved | reset | reset (changes gone) |\n\nMnemonic: each level throws away one more layer. `--soft` throws away nothing but the commit pointer, `--mixed` also throws away your staging, `--hard` also throws away your edits."
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 1,
+        "passRate": 1,
+        "scoreWithout": 1,
+        "passRateWithout": 1,
+        "delta": 0
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 1,
+    "overallScore": 1,
+    "overallPassRate": 1,
+    "meanDelta": 0
+  }
+}
