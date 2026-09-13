@@ -363,6 +363,49 @@ single most important thing to know before trusting any hill-climbing result fro
 not ship. What survives from the climb is the log-path alignment, justified as a bug fix
 independent of any score.
 
+### Decompose every Δ by arm before believing it
+
+On the complete data the edit looks *better* on every subset except the one AC-3.2 measures:
+
+| Subset | baseline → post | move | in standard errors |
+|---|---|---:|---:|
+| Tuning (AC-3.2's measure) | +0.3016 → +0.2222 | **−0.079** | 0.68 se |
+| Held-out (AC-3.3) | −0.2000 → +0.1000 | **+0.300** | **2.17 se** |
+| Lean mirrors | +0.2963 → +0.5926 | +0.296 | 1.66 se |
+| Whole suite | +0.1333 → +0.2556 | +0.122 | 1.53 se |
+
+The held-out move is the only quantity in the dataset above two standard errors, and it is
+positive on cases never tuned against. Taken at face value it argues the edit generalized and the
+tuning subset drew a bad sample — that reverting was wrong.
+
+**It does not survive being decomposed.** Δ = with − without, and only the with-arm can respond to
+a prompt edit:
+
+| Subset | Δ move | = with-arm move | − control-arm move |
+|---|---:|---:|---:|
+| Tuning | −0.079 | −0.064 | +0.016 |
+| Held-out | +0.300 | **+0.133** | **−0.167** |
+| Whole suite | +0.122 | +0.074 | −0.048 |
+
+More than half the held-out "improvement" is the **control arm getting worse**. Per case:
+
+| Held-out case | Δ move | with | control | source |
+|---|---:|---:|---:|---|
+| `05-move-on-evidence` | +0.667 | **0.000** | −0.667 | control collapsed |
+| `12j-living-with-it-lean` | +0.500 | **0.000** | −0.500 | control collapsed |
+| `08-neg-authorized` | +0.167 | +0.167 | 0.000 | with-arm rose |
+| `13-status-quo-job` | +0.167 | +0.167 | 0.000 | with-arm rose |
+| `12-living-with-it` | 0.000 | +0.333 | +0.333 | both rose equally |
+
+`05` and `12j` alone contribute **+0.233 of the +0.300**, and in both the with-plugin score did not
+move by a single point. The apparent generalization is an artifact of the baseline arm having
+scored unusually well on those two cases the first time.
+
+**This is the rule the suite exists to enforce: a Δ that improves because the control got worse is
+not an improvement.** It is the same failure the suite was rebuilt to escape — the previous
+version reported uplift that was a file-existence check — wearing different clothes. Any future
+climb here decomposes its Δ by arm before believing it.
+
 ### A same-state replication, measured by accident
 
 Three cases were run **twice against an identical skill state**, same command, ~40 minutes apart —
