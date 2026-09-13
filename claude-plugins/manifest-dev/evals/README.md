@@ -178,14 +178,19 @@ against a judge that could not read its own exemptions.
 
 ## Baseline — 2026-09-12
 
-Suite commit `46007b9e`, measured against `figure-out` and `just-figure-out` as committed (the
-climb edits were stashed for the duration). Assembled from three reports, per AC-2.2:
+Measured against `figure-out` and `just-figure-out` as committed at the suite's
+`test(evals): recalibrate two graders, add lean-variant mirror cases` commit, with the climb edits
+stashed for the duration. Assembled from three reports, per AC-2.2:
 
 | Report | Supplies |
 |---|---|
 | `results/2026-09-12T19-26-18-913Z` | all cases except `12-living-with-it` and `13-status-quo-job` |
 | `results/2026-09-12T20-07-43-887Z` | `12-living-with-it` |
 | `results/2026-09-12T20-35-43-838Z` | `13-status-quo-job` |
+
+Run reports are **not committed** — they are regenerable, run to megabytes each, and embed full
+model transcripts. The timestamps above identify runs in a local `results/` directory; the tables
+on this page are the durable record.
 
 The first report is marked `partial` — the operating system killed it for low memory with two
 cases outstanding. Those two were re-run at `-j 1`; their errored runs are excluded and the
@@ -218,6 +223,14 @@ degradation beyond noise.
 | `12j-living-with-it-lean` | 0.50 | 0.83 | −0.33 | held-out |
 | `12-living-with-it` | 0.17 | 0.67 | **−0.50** | held-out |
 
+> **These numbers are already stale in one respect.** While this suite was running, `main`
+> rewrote the paragraph of `figure-out/SKILL.md` that states the ask rule — the same paragraph the
+> climb targeted — and added a momentum rule to `just-figure-out`. Every number on this page
+> describes the prompts as they stood before those commits. The suite is the durable artifact; the
+> baseline is not, and it must be re-measured before the next climb. That is the ordinary cost of
+> baselining a prompt that is still being edited, and the reason AC-2.2 allows a baseline to be
+> assembled rather than demanding one atomic run.
+
 ### What the baseline shows
 
 **The sign of Δ tracks what the scenario needs, not how hard it is.** Every case where the
@@ -240,3 +253,122 @@ most of the restraint-shaped scenarios.
 
 **AC-3.3's floor is weak.** A per-run sd of 0.3091 against a five-case mean makes the
 degradation threshold permissive. It will catch a collapse and will not catch a small regression.
+
+## The climb — attempted, measured, reverted
+
+**One edit was made, to both skills.** The ask rule said *the ask is the turn's open call* but
+never said which ask survives when two compete, and turns were closing on two. The edit said so.
+It traced to `turn-discipline` failing the with-plugin arm on `02-assumed-cause` and
+`04-hold-under-pushback`, `presses-one-crux` on `06-strategic-open` (2/3), and `turn-discipline`
+on both lean mirrors (1/3 each, against the full skill's 3/3).
+
+**A second edit was prepared and dropped before it was made.** It targeted
+`11-underdetermined`'s `does-not-manufacture-a-winner` failure — which the recalibrated baseline
+showed did not exist. That case scores 1.00 in the with-plugin arm, 3/3 on every grader. The
+failure had been the rubric, and the recalibration had already fixed it. This is the whole reason
+PG-2 requires deciding grader-versus-skill *before* editing either.
+
+### The verification (`results/2026-09-12T20-57-52-441Z`)
+
+| Case | Set | baseline Δ | post-climb Δ |
+|---|---|---:|---:|
+| `01-root-press` | tuning | +0.89 | +0.56 |
+| `02-assumed-cause` | tuning | +0.17 | +0.50 |
+| `04-hold-under-pushback` | tuning | −0.17 | +0.33 |
+| `06-strategic-open` | tuning | +0.83 | +0.50 |
+| `07-neg-lookup` | tuning | 0.00 | 0.00 |
+| `10-diagnosis-retry-window` | tuning | −0.17 | 0.00 |
+| `11-underdetermined` | tuning | +0.56 | −0.33 |
+| **Tuning mean** | | **+0.3016** | **+0.2222** |
+| `05-move-on-evidence` | held-out | +0.17 | +0.83 |
+| `08-neg-authorized` | held-out | −0.17 | 0.00 |
+| `12-living-with-it` | held-out | −0.50 | *blocked* |
+| `13-status-quo-job` | held-out | −0.17 | *blocked* |
+| `12j-living-with-it-lean` | held-out | −0.33 | *blocked* |
+
+**AC-3.2 fails**: the tuning mean fell, +0.3016 → +0.2222. **AC-3.3 is unverifiable**: three of the
+five held-out cases errored on a weekly account rate limit and their runs are not usable. The two
+that completed both rose, but a two-case remainder is not the held-out set.
+
+### The failure is not informative either, and the control says why
+
+The no-plugin arm is the control. No prompt edit can reach it — the plugin is not loaded. Between
+the two measurements it moved anyway:
+
+| | without-arm movement |
+|---|---|
+| Mean over the 12 cases measured in both | **0.139** |
+| Largest single case (`05-move-on-evidence`) | **0.667** (0.83 → 0.17) |
+| `11-underdetermined`, per grader | `separates-verified-from-assumed` 1/3 → 3/3; `does-not-manufacture-a-winner` 0/3 → 2/3 |
+
+Per-run score standard deviation across the baseline report is **0.383** (n = 90 error-free runs).
+The standard error of the seven-case tuning mean is therefore σ·√(2/7n) = **0.118** at `runs: 3`.
+The observed move was **−0.079** — about two-thirds of one standard error.
+
+**The suite at `runs: 3` cannot resolve a change of this size.** Bringing that standard error down
+to 0.04, half the size of the move actually seen, needs
+
+> n = 2σ² / (7 · se²) = 2(0.383²) / (7 · 0.04²) ≈ **26 runs per case per arm**
+
+— roughly **nine times** the cost per verification, about **$370** for a full-suite run at the $42.65 this
+one cost. That is the honest limit of this instrument as built, and it is the
+single most important thing to know before trusting any hill-climbing result from it.
+
+**So the edit was reverted.** A prompt change that cannot be shown to help does not ship. What
+survives from the climb is the log-path alignment, which is justified as a bug fix independent of
+any score.
+
+### One pattern worth a targeted test
+
+At grader level the same sentence moved in opposite directions on the two prompts:
+
+| | `turn-discipline`, with-plugin arm |
+|---|---|
+| `01j-root-press-lean` | 1/3 → **3/3** |
+| `06j-strategic-open-lean` | 1/3 → **3/3** |
+| `06-strategic-open` (full) | 3/3 → **1/3** |
+| `01-root-press` (full), `presses-from-root` | 3/3 → **1/3** |
+| `11-underdetermined` (full), two graders | 3/3 → **1/3** each |
+
+A plausible reading is that the clause had room in the 72-line prompt and diluted an already-dense
+paragraph in the 162-line one. It is equally consistent with the noise measured above — the control
+produced two-flip moves with no cause at all. It is recorded as a hypothesis with a cheap test
+attached: run the edit against the lean skill alone, at a run count the arithmetic above says is
+adequate.
+
+## The lean variant — what the three-way comparison shows
+
+Measured twice, and **the ordering flipped between measurements**:
+
+| Scenario | baseline: lean / full | post-climb: lean / full |
+|---|---|---|
+| Solution arrives pre-chosen | +0.22 / **+0.89** | **+0.67** / +0.56 |
+| No crux handed over | +0.33 / **+0.83** | **+0.67** / +0.50 |
+| Evidence underdetermines | +0.33 / **+0.56** | **+0.44** / −0.33 |
+| Living with it is right | −0.33 / −0.50 | *blocked* / *blocked* |
+
+**Neither column is a clean read of the lean prompt, for three separate reasons.**
+
+*The lean skill changed twice between the two measurements* — the one-ask edit (since reverted) and
+the log-path fix. The second measurement is not a re-measurement of the same artifact.
+
+*The baseline column is depressed by a bug.* `01-root-press` and its mirror are the suite's only
+cases carrying a `log-written` grader, and until the log-path fix the lean skill wrote
+`figure-out-<ts>.md` where the grader globbed `figure-out-log-*.md`. Its baseline `log-written`
+was 0/3 against the full skill's 3/3 — a third of that case's score, lost to a filename. Repaired,
+the first row's baseline reads **+0.56 / +0.89** rather than +0.22 / +0.89.
+
+*Both columns sit inside the noise measured above.* The differences here are smaller than moves the
+no-plugin control produced with no cause.
+
+**This suite cannot currently separate the two variants.** The grader-level baseline detail is the
+better lead, because it is a claim about *which* rules survive compression rather than an aggregate
+that noise dominates: on `11-underdetermined` the lean prompt matched the full prompt exactly —
+3/3 on `chases-the-crumb`, `does-not-manufacture-a-winner`, and `separates-verified-from-assumed`,
+the epistemic-discipline graders — while trailing on turn shape, `turn-discipline` 1/3 against 3/3
+on two scenarios. That is testable directly, and far cheaper than raising the run count on
+everything.
+
+**This is evidence for a decision the repository's owner holds.** It is not a recommendation to
+graduate or retire either variant, and four mirrored scenarios — one of them blocked, one of them
+bug-affected — could not support one.

@@ -1,0 +1,3 @@
+# Run artifacts: regenerable, several MB per run, and each report embeds full
+# model transcripts. The numbers that matter are extracted into README.md.
+results/
