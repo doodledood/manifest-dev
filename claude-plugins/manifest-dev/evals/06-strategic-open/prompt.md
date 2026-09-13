@@ -3,7 +3,7 @@ max_turns: 25
 timeout_seconds: 600
 allowed_tools: [Skill, Read, Glob, Grep, Write]
 model: opus
-runs: 3
+runs: 12
 ---
 use the figure-out skill for this.
 
