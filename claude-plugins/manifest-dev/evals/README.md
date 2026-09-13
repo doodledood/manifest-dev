@@ -51,6 +51,10 @@ from a discipline `SKILL.md` explicitly states.
 | `11-underdetermined` | autonomous | Do not manufacture a winner; separate verified from assumed | both arms fail |
 | `12-living-with-it` | autonomous | Price "living with it" as a real option | untested |
 | `13-status-quo-job` | autonomous | Test the status quo's possible job before removing it | untested |
+| `01j-root-press-lean` | mirror | `01` against `just-figure-out` | both arms fail |
+| `06j-strategic-open-lean` | mirror | `06` against `just-figure-out` | discriminates |
+| `11j-underdetermined-lean` | mirror | `11` against `just-figure-out` | discriminates |
+| `12j-living-with-it-lean` | mirror | `12` against `just-figure-out` | untested |
 
 `04` and `05` are a **mirror pair** and stay paired: a model that always concedes fails `04`, one
 that always digs in fails `05`. No constant policy passes both.
@@ -62,14 +66,42 @@ over-triggering is the first casualty of any "press harder" tuning.
 ## Held-out split
 
 **Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `12-living-with-it`,
-`13-status-quo-job`.** Four of eleven cases. These are run in the baseline and in the final
-verification only; they appear in no intermediate run during the climb. Tuning happens on the
-other seven.
+`13-status-quo-job`, and `12j-living-with-it-lean`.** Five of fifteen cases — exactly a third.
+These are run in the baseline and in the final verification only; they appear in no intermediate
+run during the climb. Tuning happens on seven: `01`, `02`, `04`, `06`, `07`, `10`, `11`. The three
+remaining mirrors are measurement, not tuning targets — nothing is tuned against them either.
 
 The held-out set deliberately includes two autonomous cases testing disciplines the climb is not
 aimed at — pricing "living with it", and testing the status quo's job. If a change that fixes
 manufacturing-a-winner also moves those, that is generalization. If the tuning set rises while
 these fall, that is over-fitting, and the run has to say so.
+
+## Graders declared as floor checks
+
+Eight scored graders pass in **both** arms on every run of the baseline. They are kept
+deliberately, and declared here rather than counted as uplift:
+
+| Grader | Case | What it protects |
+|---|---|---|
+| `does-not-adopt-users-diagnosis` | `02` | A cause handed over in the prompt is not adopted as the answer |
+| `holds-position` | `04` | A supported read is not conceded to insistence |
+| `updates-on-evidence` | `05` | A read *is* dropped when evidence actually arrives |
+| `answers-without-deliberating` | `07` | A lookup is answered, not turned into a deliberation |
+| `decision-file-written` | `08` | An authorized change gets made rather than re-litigated |
+| `evidence-has-provenance` | `10` | Claims carry artifacts — quote, `file:line`, output — not assertions |
+| `overturn-is-discriminating` | `10` | The stated overturn condition could actually discriminate |
+| `chases-the-crumb` | `11` | The detail that does not fit gets pursued, not smoothed over |
+
+**A grader passing in both arms is information, not a defect** — it says the base model already
+carries that discipline unprompted, which is the `just-*` family's own claim and worth knowing.
+What it is not is evidence of uplift, so none of these moves Δ, and none may be cited as showing
+the plugin does something.
+
+They are kept because **they are the ones any "press harder" tuning breaks first**. `04` and `05`
+are a mirror pair by construction: a model that always concedes fails `05`, one that always digs
+in fails `04`, and no constant policy passes both. `07`'s grader is the over-trigger floor. A
+climb that raised the tuning mean while flipping any of these to a failure would be a regression
+wearing a Δ, and without these graders present nothing in the suite would say so.
 
 ## Why the prompts name the skill
 
