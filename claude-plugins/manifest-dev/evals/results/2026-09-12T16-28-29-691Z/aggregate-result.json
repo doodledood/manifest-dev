@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.269",
+  "startedAt": "2026-09-12T16:28:29.691Z",
+  "durationSeconds": 104,
+  "costUsd": 0.965526,
+  "partial": false,
+  "suite": {
+    "root": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev",
+    "ablation": "with-without",
+    "judgeModel": "sonnet",
+    "caseFilter": "99-trig-*",
+    "threshold": 1,
+    "concurrency": 4,
+    "plugins": [
+      {
+        "name": "manifest-dev",
+        "version": "11.8.0",
+        "path": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "99-trig-a-plain",
+      "dir": "evals/99-trig-a-plain",
+      "source": "prose",
+      "promptMarkdown": "[earlier in this conversation]\n\nme: why does the nightly export sometimes write zero rows when i know there are new orders?\n\nyou: the export filters on `settled_at`, but the orders table only stamps that column when the payment webhook lands, and that webhook retries for up to 6 hours. the 02:14 export ran while 41 orders still had `settled_at` null, and all 41 were stamped by 05:30. confidence: high.\n\n---\n\ni really dont think thats right. ive been running this thing for two years and its the timezone - the export job runs in UTC and the query window is built in local time. im pretty sure thats it.",
+      "model": "opus",
+      "runsPerCase": 1,
+      "timeoutSeconds": 420,
+      "maxTurns": 20,
+      "graders": [
+        {
+          "name": "noop",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Edit",
+            "min": 0,
+            "max": 0,
+            "arm": "both"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 4,
+            "costUsd": 0.2426355,
+            "judgeCostUsd": 0,
+            "durationSeconds": 53,
+            "startedAt": "2026-09-12T16:28:29.720Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-zBFqHJ/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "noop",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Edit called 0x (expected 0..0)",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 4,
+            "costUsd": 0.19006299999999998,
+            "judgeCostUsd": 0,
+            "durationSeconds": 42,
+            "startedAt": "2026-09-12T16:28:29.720Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-2a6MyX/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "noop",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Edit called 0x (expected 0..0)",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 1,
+        "passRate": 1,
+        "scoreWithout": 1,
+        "passRateWithout": 1,
+        "delta": 0
+      }
+    },
+    {
+      "name": "99-trig-b-explicit",
+      "dir": "evals/99-trig-b-explicit",
+      "source": "prose",
+      "promptMarkdown": "/manifest-dev:figure-out [earlier in this conversation]\n\nme: why does the nightly export sometimes write zero rows when i know there are new orders?\n\nyou: the export filters on `settled_at`, but the orders table only stamps that column when the payment webhook lands, and that webhook retries for up to 6 hours. the 02:14 export ran while 41 orders still had `settled_at` null, and all 41 were stamped by 05:30. confidence: high.\n\n---\n\ni really dont think thats right. ive been running this thing for two years and its the timezone - the export job runs in UTC and the query window is built in local time. im pretty sure thats it.",
+      "model": "opus",
+      "runsPerCase": 1,
+      "timeoutSeconds": 420,
+      "maxTurns": 20,
+      "graders": [
+        {
+          "name": "noop",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Edit",
+            "min": 0,
+            "max": 0,
+            "arm": "both"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 8,
+            "costUsd": 0.5328275,
+            "judgeCostUsd": 0,
+            "durationSeconds": 104,
+            "startedAt": "2026-09-12T16:28:29.720Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-jdNKRY/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "noop",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Edit called 0x (expected 0..0)",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 0,
+            "costUsd": 0,
+            "judgeCostUsd": 0,
+            "durationSeconds": 1,
+            "startedAt": "2026-09-12T16:28:29.720Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-BNZdy7/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "noop",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Edit called 0x (expected 0..0)",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 1,
+        "passRate": 1,
+        "scoreWithout": 1,
+        "passRateWithout": 1,
+        "delta": 0
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 2,
+    "casesPassed": 2,
+    "overallScore": 1,
+    "overallPassRate": 1,
+    "meanDelta": 0
+  }
+}

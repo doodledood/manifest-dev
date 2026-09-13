@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.269",
+  "startedAt": "2026-09-12T19:09:45.280Z",
+  "durationSeconds": 145,
+  "costUsd": 0.9817250000000001,
+  "partial": false,
+  "suite": {
+    "root": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev",
+    "ablation": "with-without",
+    "judgeModel": "sonnet",
+    "caseFilter": "06-strategic-open",
+    "threshold": 1,
+    "concurrency": 2,
+    "plugins": [
+      {
+        "name": "manifest-dev",
+        "version": "11.8.0",
+        "path": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "06-strategic-open",
+      "dir": "evals/06-strategic-open",
+      "source": "prose",
+      "promptMarkdown": "use the figure-out skill for this.\n\ni want us to think this through properly before organizing anything.\n\nthe workout tracker app thing - its for people who already lift and already track, they just hate the apps they use. everything out there is either a spreadsheet or a social network. i want to start organizing how we're going to go about it, penetration surfaces, features roadmap etc\n\n(write any notes or logs you keep into the current directory rather than your home directory)",
+      "model": "opus",
+      "runsPerCase": 3,
+      "timeoutSeconds": 600,
+      "maxTurns": 25,
+      "graders": [
+        {
+          "name": "presses-one-crux",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "The user asked for strategic organizing and named deliverables they expect (\"penetration surfaces, features roadmap\"). No crux was handed over. Judge whether the reply selects and presses one load-bearing question instead of producing the artifact that was asked for.\n\nPASS requires both:\n1. The reply identifies ONE load-bearing question and presses it — for example whether \"they hate the apps they use\" is established or assumed, who exactly the segment is, or whether a roadmap is the right next move at all. It carries its own best-supported answer to that question rather than only asking it.\n2. The reply does NOT deliver a roadmap, a phased plan, a list of penetration surfaces, or an enumerated set of workstreams.\n\nPoint 2 is a disqualifier, not a neutral addition: a reply that names a good crux AND also supplies the roadmap FAILS, because the roadmap converts an open strategic question into a plan before the question is settled.\n\nA brief framing sentence before the press is fine. Multiple parallel strategic questions raised at once FAIL point 1.",
+          "config": {
+            "criteria": "The user asked for strategic organizing and named deliverables they expect (\"penetration surfaces, features roadmap\"). No crux was handed over. Judge whether the reply selects and presses one load-bearing question instead of producing the artifact that was asked for.\n\nPASS requires both:\n1. The reply identifies ONE load-bearing question and presses it — for example whether \"they hate the apps they use\" is established or assumed, who exactly the segment is, or whether a roadmap is the right next move at all. It carries its own best-supported answer to that question rather than only asking it.\n2. The reply does NOT deliver a roadmap, a phased plan, a list of penetration surfaces, or an enumerated set of workstreams.\n\nPoint 2 is a disqualifier, not a neutral addition: a reply that names a good crux AND also supplies the roadmap FAILS, because the roadmap converts an open strategic question into a plan before the question is settled.\n\nA brief framing sentence before the press is fine. Multiple parallel strategic questions raised at once FAIL point 1.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "min": 1
+          }
+        },
+        {
+          "name": "turn-discipline",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Judge one thing only: how much deliberation load the turn hands the user. This targets the failure \"it makes it too complicated.\"\n\nPASS when the turn leaves the user with ONE substantive thing to answer — a single question, decision, or confirmation about the topic — clearly identifiable, and carrying the writer's own recommended answer rather than handing back a bare question.\n\nFAIL when any of these is true:\n- The user is left with two or more distinct substantive questions or decisions about the topic, wherever they sit in the turn.\n- The substantive ask is buried — the reader cannot tell what they are being asked without hunting for it.\n- The turn asks nothing at all AND does not read as a closing conclusion that needs no reply.\n\nThese do NOT count as a second ask, and do NOT fail this grader:\n- A request for access or missing material: pointing at a repo, a path, a file, permission to read something, or noting the working directory is empty.\n- A one-line clarification of an ambiguous term the user used (\"I read X as meaning Y — say so if you meant the other thing\").\n- Caveats, confidence statements, or notes about what could not be checked.\n- Length, structure, headers, bullets, or bolded sections developing a single claim.\n- Rhetorical questions used to frame reasoning, where only one real ask is made.\n\nThe test is the reader's: after reading this once, do I know the single thing I am being asked to think about?",
+          "config": {
+            "criteria": "Judge one thing only: how much deliberation load the turn hands the user. This targets the failure \"it makes it too complicated.\"\n\nPASS when the turn leaves the user with ONE substantive thing to answer — a single question, decision, or confirmation about the topic — clearly identifiable, and carrying the writer's own recommended answer rather than handing back a bare question.\n\nFAIL when any of these is true:\n- The user is left with two or more distinct substantive questions or decisions about the topic, wherever they sit in the turn.\n- The substantive ask is buried — the reader cannot tell what they are being asked without hunting for it.\n- The turn asks nothing at all AND does not read as a closing conclusion that needs no reply.\n\nThese do NOT count as a second ask, and do NOT fail this grader:\n- A request for access or missing material: pointing at a repo, a path, a file, permission to read something, or noting the working directory is empty.\n- A one-line clarification of an ambiguous term the user used (\"I read X as meaning Y — say so if you meant the other thing\").\n- Caveats, confidence statements, or notes about what could not be checked.\n- Length, structure, headers, bullets, or bolded sections developing a single claim.\n- Rhetorical questions used to frame reasoning, where only one real ask is made.\n\nThe test is the reader's: after reading this once, do I know the single thing I am being asked to think about?",
+            "focus": "last_message"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 0,
+            "passed": false,
+            "turns": 9,
+            "costUsd": 0.5233850000000001,
+            "judgeCostUsd": 0.015012,
+            "durationSeconds": 103,
+            "startedAt": "2026-09-12T19:09:45.421Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-ddgbWh/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "presses-one-crux",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "Log: `figure-out-log-20260912-191048.md` in this directory.\n\n**The gap you're pointing at isn't quality, it's a seam — and that reframes what we'd be building.** \"Spreadsheet or social network\" reads like two failed attempts at one product, but they're two different jobs. The spreadsheet holds *program logic* — the progression rules, the autoregulation, the deload math. The app holds *in-gym capture* — fast entry with 60 seconds of rest and chalk on your hands. Your user lives on the seam: they do the thinking in one place and the typing in another, and pay a tax every session crossing it.\n\n**That matters because your target has already solved their problem.** Someone with four years of Hevy history or a tuned spreadsheet has a working system. Hate in this category is remarkably compatible with a decade of retention — people complain about their tracker and open it again tomorrow. So \"they hate their apps\" isn't yet a reason anyone switches; the cost of the seam might be.\n\n**And the seam is unclosed for a structural reason, not an oversight.** Serious lifters' programs are unboundedly heterogeneous — 5/3/1 variants, RPE autoregulation, block periodization, whatever their coach invented. Encode them and you become a rigid template picker (Boostcamp, Juggernaut); expose them and you've shipped a programming language on a phone. Everyone who has tried has landed on one horn. Any roadmap worth writing aims at that, so I'd rather not draft one until we know it's the real target.\n\nTwo things to flag: I'm reading \"penetration surfaces\" as market-entry wedges rather than anything security-related — say if that's wrong, it redirects most of this. And none of the above is researched yet; it's reasoning from your framing plus how this category usually goes.\n\n**So:** what's the actual moment this fails for you or whoever you watched — the specific thing that happens in the gym or on Sunday night when you're programming the week? My bet is it's the seam: you already know what the workout should be, and the app makes you retype it rather than know it with you. But it could just as easily be that capture itself is too slow, or that you can't ask your own data a question — and those three point at very different products."
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              },
+              {
+                "name": "turn-discipline",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "Log: `figure-out-log-20260912-191048.md` in this directory.\n\n**The gap you're pointing at isn't quality, it's a seam — and that reframes what we'd be building.** \"Spreadsheet or social network\" reads like two failed attempts at one product, but they're two different jobs. The spreadsheet holds *program logic* — the progression rules, the autoregulation, the deload math. The app holds *in-gym capture* — fast entry with 60 seconds of rest and chalk on your hands. Your user lives on the seam: they do the thinking in one place and the typing in another, and pay a tax every session crossing it.\n\n**That matters because your target has already solved their problem.** Someone with four years of Hevy history or a tuned spreadsheet has a working system. Hate in this category is remarkably compatible with a decade of retention — people complain about their tracker and open it again tomorrow. So \"they hate their apps\" isn't yet a reason anyone switches; the cost of the seam might be.\n\n**And the seam is unclosed for a structural reason, not an oversight.** Serious lifters' programs are unboundedly heterogeneous — 5/3/1 variants, RPE autoregulation, block periodization, whatever their coach invented. Encode them and you become a rigid template picker (Boostcamp, Juggernaut); expose them and you've shipped a programming language on a phone. Everyone who has tried has landed on one horn. Any roadmap worth writing aims at that, so I'd rather not draft one until we know it's the real target.\n\nTwo things to flag: I'm reading \"penetration surfaces\" as market-entry wedges rather than anything security-related — say if that's wrong, it redirects most of this. And none of the above is researched yet; it's reasoning from your framing plus how this category usually goes.\n\n**So:** what's the actual moment this fails for you or whoever you watched — the specific thing that happens in the gym or on Sunday night when you're programming the week? My bet is it's the seam: you already know what the workout should be, and the app makes you retype it rather than know it with you. But it could just as easily be that capture itself is too slow, or that you can't ask your own data a question — and those three point at very different products."
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 0,
+            "passed": false,
+            "turns": 6,
+            "costUsd": 0.45833999999999997,
+            "judgeCostUsd": 0.009863999999999996,
+            "durationSeconds": 145,
+            "startedAt": "2026-09-12T19:09:45.421Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-cNNHDL/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "presses-one-crux",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "`NOTES-workout-tracker.md` in the current directory. I deliberately did **not** scaffold a doc tree, roadmap board, or spec folder yet — that's the \"organizing\" you wanted to hold off on until the thinking settles. (Side note: my persistent memory directory is blocked by this session's permissions, so the notes file is the only durable record.)\n\nTwo things I'd flag about my own output above: the \"what they hate\" list is my prior, not evidence — Phase 0 exists specifically to kill or confirm it. And I've assumed you're building for a market rather than scratching your own itch; if it's the latter, most of the go-to-market section is noise and the roadmap gets much shorter.\n\nAnswer those four questions — especially the first — and I'll turn this into an actual structure: program data model sketch, Phase 1 scope cut, and a Phase 0 interview plan."
+              },
+              {
+                "name": "turn-discipline",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "`NOTES-workout-tracker.md` in the current directory. I deliberately did **not** scaffold a doc tree, roadmap board, or spec folder yet — that's the \"organizing\" you wanted to hold off on until the thinking settles. (Side note: my persistent memory directory is blocked by this session's permissions, so the notes file is the only durable record.)\n\nTwo things I'd flag about my own output above: the \"what they hate\" list is my prior, not evidence — Phase 0 exists specifically to kill or confirm it. And I've assumed you're building for a market rather than scratching your own itch; if it's the latter, most of the go-to-market section is noise and the roadmap gets much shorter.\n\nAnswer those four questions — especially the first — and I'll turn this into an actual structure: program data model sketch, Phase 1 scope cut, and a Phase 0 interview plan."
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 0,
+        "passRate": 0,
+        "scoreWithout": 0,
+        "passRateWithout": 0,
+        "delta": 0
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 0,
+    "overallScore": 0,
+    "overallPassRate": 0,
+    "meanDelta": 0
+  }
+}

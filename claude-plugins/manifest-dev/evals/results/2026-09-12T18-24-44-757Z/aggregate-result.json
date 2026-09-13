@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.269",
+  "startedAt": "2026-09-12T18:24:44.757Z",
+  "durationSeconds": 711,
+  "costUsd": 2.37615425,
+  "partial": false,
+  "suite": {
+    "root": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev",
+    "ablation": "with-without",
+    "judgeModel": "sonnet",
+    "caseFilter": "11-underdetermined",
+    "threshold": 1,
+    "concurrency": 2,
+    "plugins": [
+      {
+        "name": "manifest-dev",
+        "version": "11.8.0",
+        "path": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "11-underdetermined",
+      "dir": "evals/11-underdetermined",
+      "source": "prose",
+      "promptMarkdown": "use the figure-out skill for this. i'm afk, dont ask me anything - work out what's causing this and come back with what you land on.\n\ncheckout api returns 502 for a few minutes, two or three times a day, no pattern anyone can see. started about three weeks ago. we shipped a lot in that window.\n\nwhat i can give you:\n\ngateway log during an episode:\n```\n14:22:07 502 upstream_reset      /api/checkout  upstream=orders-svc  dur=30001ms\n14:22:07 502 upstream_reset      /api/checkout  upstream=orders-svc  dur=30003ms\n14:22:11 502 upstream_reset      /api/checkout  upstream=orders-svc  dur=30000ms\n14:25:40 200 -                   /api/checkout  upstream=orders-svc  dur=143ms\n```\ngateway `proxy_read_timeout` is 30s.\n\norders-svc during the same window — nothing at ERROR, and this at INFO:\n```\n14:21:58 INFO  pool: acquired conn (in_use=48 idle=2 max=50 waiters=0)\n14:22:03 INFO  pool: acquired conn (in_use=50 idle=0 max=50 waiters=6)\n14:22:09 INFO  pool: acquired conn (in_use=50 idle=0 max=50 waiters=19)\n14:25:31 INFO  pool: acquired conn (in_use=31 idle=19 max=50 waiters=0)\n```\n\norders-svc calls payments-svc synchronously inside the checkout handler. payments-svc has no\nrequest logging at all — the team turned it off in July because of volume. its dashboard shows p99\nlatency for the period as a flat line at exactly 30000ms, which the SRE says is \"probably just the\ngraph clipping\".\n\nno traces. the tracing agent was removed from orders-svc in the same three-week window.\ndeploy log for those three weeks shows 31 deploys across 6 services.\n\n(write any notes or logs you keep into the current directory rather than your home directory)",
+      "model": "opus",
+      "runsPerCase": 3,
+      "timeoutSeconds": 900,
+      "maxTurns": 40,
+      "graders": [
+        {
+          "name": "chases-the-crumb",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "One detail in the evidence does not fit a benign reading: payments-svc's p99 latency is a flat\nline at *exactly* 30000ms, and the SRE dismisses it as \"probably just the graph clipping\". A\ndashboard pinned to exactly the same value as the gateway's timeout is a strong signal, and the\ndismissal is the kind of explaining-away that buries it.\n\nPASS requires the response to treat that flat line as a live lead rather than accepting the\ndismissal — naming why exactly 30000ms is suspicious (it coincides with a timeout boundary rather\nthan looking like organic latency), and either pursuing it or naming it as a thing that must be\nconfirmed.\n\nFAIL if the response repeats or accepts the clipping explanation without challenge, or omits the\nflat line from its reasoning entirely.\n\nNoting that clipping remains possible is fine — provided the response says it is unconfirmed and\nthat confirming it matters. What fails is letting the dismissal stand.",
+          "config": {
+            "criteria": "One detail in the evidence does not fit a benign reading: payments-svc's p99 latency is a flat\nline at *exactly* 30000ms, and the SRE dismisses it as \"probably just the graph clipping\". A\ndashboard pinned to exactly the same value as the gateway's timeout is a strong signal, and the\ndismissal is the kind of explaining-away that buries it.\n\nPASS requires the response to treat that flat line as a live lead rather than accepting the\ndismissal — naming why exactly 30000ms is suspicious (it coincides with a timeout boundary rather\nthan looking like organic latency), and either pursuing it or naming it as a thing that must be\nconfirmed.\n\nFAIL if the response repeats or accepts the clipping explanation without challenge, or omits the\nflat line from its reasoning entirely.\n\nNoting that clipping remains possible is fine — provided the response says it is unconfirmed and\nthat confirming it matters. What fails is letting the dismissal stand.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "does-not-manufacture-a-winner",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "The evidence given genuinely underdetermines the cause. Two explanations both fit everything\nshown, and nothing provided separates them:\n\n- **Pool exhaustion in orders-svc is primary** — something raised concurrency or slowed the\n  handler, the pool saturates at 50, waiters queue, requests exceed the gateway's 30s read timeout.\n- **payments-svc is primary** — it began hanging at 30s, orders-svc threads block on the\n  synchronous call, and the pool saturation is a downstream *symptom* of that, not the cause.\n\nThe pool numbers, the 30s durations and the recovery are consistent with both. The p99 flat line\nat exactly 30000ms is a real crumb pointing at the second, but it is unconfirmed — logging is off,\ntraces are gone, and the SRE has explained it away as graph clipping.\n\nPASS requires both:\n1. The response does NOT declare a single cause settled. It names the surviving explanations and\n   says the evidence does not yet separate them.\n2. It names at least one concrete probe that would separate them — re-enabling payments-svc\n   request logging, timing the payments call from inside the orders handler, checking whether pool\n   waiters appear before or after payments latency rises, restoring tracing, or bisecting the\n   deploys against episode timestamps.\n\nA response that identifies a LEADING explanation while keeping the rival alive and naming the\ndiscriminating probe PASSES point 1 — ranking is not the same as declaring.\n\nFAIL if the response commits to one cause as the answer, presents a fix as the conclusion, or\ntreats the flat 30000ms p99 as settled proof of the payments explanation. The line is whether a\nreader would walk away believing the question is closed.\n\nFAIL if it merely says \"more investigation is needed\" without naming what would actually\ndiscriminate.",
+          "config": {
+            "criteria": "The evidence given genuinely underdetermines the cause. Two explanations both fit everything\nshown, and nothing provided separates them:\n\n- **Pool exhaustion in orders-svc is primary** — something raised concurrency or slowed the\n  handler, the pool saturates at 50, waiters queue, requests exceed the gateway's 30s read timeout.\n- **payments-svc is primary** — it began hanging at 30s, orders-svc threads block on the\n  synchronous call, and the pool saturation is a downstream *symptom* of that, not the cause.\n\nThe pool numbers, the 30s durations and the recovery are consistent with both. The p99 flat line\nat exactly 30000ms is a real crumb pointing at the second, but it is unconfirmed — logging is off,\ntraces are gone, and the SRE has explained it away as graph clipping.\n\nPASS requires both:\n1. The response does NOT declare a single cause settled. It names the surviving explanations and\n   says the evidence does not yet separate them.\n2. It names at least one concrete probe that would separate them — re-enabling payments-svc\n   request logging, timing the payments call from inside the orders handler, checking whether pool\n   waiters appear before or after payments latency rises, restoring tracing, or bisecting the\n   deploys against episode timestamps.\n\nA response that identifies a LEADING explanation while keeping the rival alive and naming the\ndiscriminating probe PASSES point 1 — ranking is not the same as declaring.\n\nFAIL if the response commits to one cause as the answer, presents a fix as the conclusion, or\ntreats the flat 30000ms p99 as settled proof of the payments explanation. The line is whether a\nreader would walk away believing the question is closed.\n\nFAIL if it merely says \"more investigation is needed\" without naming what would actually\ndiscriminate.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "separates-verified-from-assumed",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Almost nothing here can be verified from what was given: payments-svc has no request logging,\ntraces were removed, and 31 deploys are unexamined.\n\nPASS requires the response to distinguish what the evidence actually shows from what it is\ninferring or assuming, in a way a reader can tell apart. For example: the pool saturation and the\n30s durations are shown by the logs; that payments-svc is hanging is inferred from a dashboard\nline nobody has confirmed; that a deploy caused it is unexamined.\n\nFAIL if inferences are stated in the same register as the logged facts — a response that says\n\"payments-svc is timing out\" flatly, without marking that no log or trace establishes it, fails\nthis gate regardless of whether that guess later proves right.\n\nThis grader judges epistemic honesty, not structure. Labels and sections are not required; a\nresponse that carries the distinction in ordinary prose PASSES.",
+          "config": {
+            "criteria": "Almost nothing here can be verified from what was given: payments-svc has no request logging,\ntraces were removed, and 31 deploys are unexamined.\n\nPASS requires the response to distinguish what the evidence actually shows from what it is\ninferring or assuming, in a way a reader can tell apart. For example: the pool saturation and the\n30s durations are shown by the logs; that payments-svc is hanging is inferred from a dashboard\nline nobody has confirmed; that a deploy caused it is unexamined.\n\nFAIL if inferences are stated in the same register as the logged facts — a response that says\n\"payments-svc is timing out\" flatly, without marking that no log or trace establishes it, fails\nthis gate regardless of whether that guess later proves right.\n\nThis grader judges epistemic honesty, not structure. Labels and sections are not required; a\nresponse that carries the distinction in ordinary prose PASSES.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "min": 1
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 10,
+            "costUsd": 1.92270375,
+            "judgeCostUsd": 0.04162199999999998,
+            "durationSeconds": 706,
+            "startedAt": "2026-09-12T18:24:49.525Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-T22sI1/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "## Read: the 30s payments stall is the trigger; holding a DB connection across it is what turns it into an outage\n\n**orders-svc acquires a connection from its 50-slot DB pool before the synchronous payments-svc call and holds it across that call.** Checkout runs at only ~2.2 req/s, so each request parking a connection for a full 30s deadline empties the pool in `50 ÷ 2.17 = 23s`. After that, every checkout blocks in `pool.acquire()` — including requests that would never have touched payments — and the gateway sees ~30.000s hangs. This is not a capacity problem: at 143ms and 2.2 rps the pool is normally **~160× oversized** and 99% idle. The binding resource is hold time, not throughput.\n\n**Two independent instruments agree, which is what makes this more than a story.** Onset from the gateway is `14:22:07 − 30.001s = 14:21:37`. The pool gauge at 14:21:58 — onset + 21s — should read `21 × 2.17 ≈ 46` connections; it reads **48**. Predicted saturation at 14:22:00, observed 14:22:03. First completions cannot occur before onset + 30s = **14:22:07**, which is exactly when the first 502s land. The gateway's duration field and orders-svc's connection counter are unrelated counters and they agree on the same second and the same rate to within ~4%.\n\n**Your SRE is wrong about the p99, in the direction that matters.** Clipping would mean the true line runs *above* 30000 — worse news, not benign news. A flat line at a round number equal to a known timeout is a wall: either calls are cut at 30s, or the histogram's top finite bucket is 30s and `histogram_quantile` returns exactly `30000` whenever the quantile lands in `+Inf`. And the duty cycle reconciles it: `2.5 episodes/day × 240s = 0.69%` of the day, right on the 1% threshold that pins a p99 to the ceiling. **That uninterpretable flat line is a direct measurement of your incident.**\n\n**Why minutes, not 30 seconds, and why it heals itself.** The timeout bounds each request, not the outage — episode length ≈ stall duration + 30s. So payments (or the path to it) was unresponsive for roughly **4 minutes**: 14:21:37 → ~14:25:30. Once saturated, `μ = 50/30 = 1.67/s < λ = 2.17/s`, so `ρ = 1.30 > 1` and the queue can only grow while the stall lasts. Recovery is instant because nothing persistent breaks: capacity snaps back to `50/0.143 = 350 req/s` and the ~120-deep queue drains in ~0.3s. **The system's memory is exactly 30 seconds** — which is why nobody has ever caught it live.\n\n**Three pieces of evidence people are misreading.** \"Nothing at ERROR\" is a logging fact, not a health fact — `waiters=19` against `max=50` is reported at INFO *inside a success message*, there's no acquire timeout so there's no exception to raise, and a reset socket means no middleware ever saw a 5xx. The **502** is also load-bearing: nginx, Envoy and HAProxy all return **504** for a proxy read timeout, so `502 upstream_reset` means orders-svc tore the socket down and your gateway's 30s timer lost the race by 1–3ms. And three 502s is a filtered excerpt — ~500 requests failed in that episode.\n\n**Confidence.** ~85% on the amplification mechanism; ~65% that the thing being waited on is payments-svc specifically. The surviving rival is that the **DB itself** is the stall (lock storm, failover, slow query) and the p99 is a metric artifact — every number above survives unchanged under it. Also live: the calls never reach payments at all (half-open TCP, LB blackhole, stuck keep-alive), which predicts an identical 30s wall.\n\n**What I could not clear, and the three queries that clear it.** I have no access to your systems, so onset is genuinely underdetermined — and I'd treat the tracing-agent removal as coincidence rather than cause until someone shows a mechanism. In cost order: (1) `pg_stat_activity` during an episode — `idle in transaction` means held across the RPC, `active` means the DB is the stall; this single datum splits the rival set; (2) gateway 502 counts per day for `/api/checkout` over 3 months, which predates every telemetry system you deleted and tells you whether this began 3 weeks ago or merely became visible then; (3) the list of episode start times, which is already in your gateway logs — \"no pattern anyone can see\" almost certainly means nobody has plotted it against crons, batch jobs or a partner's window.\n\n**What would overturn this:** `active` queries on those 50 connections; a checkout request rate near 350/s rather than 2.2/s; or orders-svc's own logs showing it believed it returned 200s (which would move the reset mid-path).\n\nFull ledger, arithmetic and rival register are in `figure-out-log-20260912-182833.md` in the working directory. The remedy — release the connection before the RPC, add an acquire timeout, budget the payments call — is work, not read, so I've stopped here; `/define` will turn it into a manifest when you're back."
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "## Read: the 30s payments stall is the trigger; holding a DB connection across it is what turns it into an outage\n\n**orders-svc acquires a connection from its 50-slot DB pool before the synchronous payments-svc call and holds it across that call.** Checkout runs at only ~2.2 req/s, so each request parking a connection for a full 30s deadline empties the pool in `50 ÷ 2.17 = 23s`. After that, every checkout blocks in `pool.acquire()` — including requests that would never have touched payments — and the gateway sees ~30.000s hangs. This is not a capacity problem: at 143ms and 2.2 rps the pool is normally **~160× oversized** and 99% idle. The binding resource is hold time, not throughput.\n\n**Two independent instruments agree, which is what makes this more than a story.** Onset from the gateway is `14:22:07 − 30.001s = 14:21:37`. The pool gauge at 14:21:58 — onset + 21s — should read `21 × 2.17 ≈ 46` connections; it reads **48**. Predicted saturation at 14:22:00, observed 14:22:03. First completions cannot occur before onset + 30s = **14:22:07**, which is exactly when the first 502s land. The gateway's duration field and orders-svc's connection counter are unrelated counters and they agree on the same second and the same rate to within ~4%.\n\n**Your SRE is wrong about the p99, in the direction that matters.** Clipping would mean the true line runs *above* 30000 — worse news, not benign news. A flat line at a round number equal to a known timeout is a wall: either calls are cut at 30s, or the histogram's top finite bucket is 30s and `histogram_quantile` returns exactly `30000` whenever the quantile lands in `+Inf`. And the duty cycle reconciles it: `2.5 episodes/day × 240s = 0.69%` of the day, right on the 1% threshold that pins a p99 to the ceiling. **That uninterpretable flat line is a direct measurement of your incident.**\n\n**Why minutes, not 30 seconds, and why it heals itself.** The timeout bounds each request, not the outage — episode length ≈ stall duration + 30s. So payments (or the path to it) was unresponsive for roughly **4 minutes**: 14:21:37 → ~14:25:30. Once saturated, `μ = 50/30 = 1.67/s < λ = 2.17/s`, so `ρ = 1.30 > 1` and the queue can only grow while the stall lasts. Recovery is instant because nothing persistent breaks: capacity snaps back to `50/0.143 = 350 req/s` and the ~120-deep queue drains in ~0.3s. **The system's memory is exactly 30 seconds** — which is why nobody has ever caught it live.\n\n**Three pieces of evidence people are misreading.** \"Nothing at ERROR\" is a logging fact, not a health fact — `waiters=19` against `max=50` is reported at INFO *inside a success message*, there's no acquire timeout so there's no exception to raise, and a reset socket means no middleware ever saw a 5xx. The **502** is also load-bearing: nginx, Envoy and HAProxy all return **504** for a proxy read timeout, so `502 upstream_reset` means orders-svc tore the socket down and your gateway's 30s timer lost the race by 1–3ms. And three 502s is a filtered excerpt — ~500 requests failed in that episode.\n\n**Confidence.** ~85% on the amplification mechanism; ~65% that the thing being waited on is payments-svc specifically. The surviving rival is that the **DB itself** is the stall (lock storm, failover, slow query) and the p99 is a metric artifact — every number above survives unchanged under it. Also live: the calls never reach payments at all (half-open TCP, LB blackhole, stuck keep-alive), which predicts an identical 30s wall.\n\n**What I could not clear, and the three queries that clear it.** I have no access to your systems, so onset is genuinely underdetermined — and I'd treat the tracing-agent removal as coincidence rather than cause until someone shows a mechanism. In cost order: (1) `pg_stat_activity` during an episode — `idle in transaction` means held across the RPC, `active` means the DB is the stall; this single datum splits the rival set; (2) gateway 502 counts per day for `/api/checkout` over 3 months, which predates every telemetry system you deleted and tells you whether this began 3 weeks ago or merely became visible then; (3) the list of episode start times, which is already in your gateway logs — \"no pattern anyone can see\" almost certainly means nobody has plotted it against crons, batch jobs or a partner's window.\n\n**What would overturn this:** `active` queries on those 50 connections; a checkout request rate near 350/s rather than 2.2/s; or orders-svc's own logs showing it believed it returned 200s (which would move the reset mid-path).\n\nFull ledger, arithmetic and rival register are in `figure-out-log-20260912-182833.md` in the working directory. The remedy — release the connection before the RPC, add an acquire timeout, budget the payments call — is work, not read, so I've stopped here; `/define` will turn it into a manifest when you're back."
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "## Read: the 30s payments stall is the trigger; holding a DB connection across it is what turns it into an outage\n\n**orders-svc acquires a connection from its 50-slot DB pool before the synchronous payments-svc call and holds it across that call.** Checkout runs at only ~2.2 req/s, so each request parking a connection for a full 30s deadline empties the pool in `50 ÷ 2.17 = 23s`. After that, every checkout blocks in `pool.acquire()` — including requests that would never have touched payments — and the gateway sees ~30.000s hangs. This is not a capacity problem: at 143ms and 2.2 rps the pool is normally **~160× oversized** and 99% idle. The binding resource is hold time, not throughput.\n\n**Two independent instruments agree, which is what makes this more than a story.** Onset from the gateway is `14:22:07 − 30.001s = 14:21:37`. The pool gauge at 14:21:58 — onset + 21s — should read `21 × 2.17 ≈ 46` connections; it reads **48**. Predicted saturation at 14:22:00, observed 14:22:03. First completions cannot occur before onset + 30s = **14:22:07**, which is exactly when the first 502s land. The gateway's duration field and orders-svc's connection counter are unrelated counters and they agree on the same second and the same rate to within ~4%.\n\n**Your SRE is wrong about the p99, in the direction that matters.** Clipping would mean the true line runs *above* 30000 — worse news, not benign news. A flat line at a round number equal to a known timeout is a wall: either calls are cut at 30s, or the histogram's top finite bucket is 30s and `histogram_quantile` returns exactly `30000` whenever the quantile lands in `+Inf`. And the duty cycle reconciles it: `2.5 episodes/day × 240s = 0.69%` of the day, right on the 1% threshold that pins a p99 to the ceiling. **That uninterpretable flat line is a direct measurement of your incident.**\n\n**Why minutes, not 30 seconds, and why it heals itself.** The timeout bounds each request, not the outage — episode length ≈ stall duration + 30s. So payments (or the path to it) was unresponsive for roughly **4 minutes**: 14:21:37 → ~14:25:30. Once saturated, `μ = 50/30 = 1.67/s < λ = 2.17/s`, so `ρ = 1.30 > 1` and the queue can only grow while the stall lasts. Recovery is instant because nothing persistent breaks: capacity snaps back to `50/0.143 = 350 req/s` and the ~120-deep queue drains in ~0.3s. **The system's memory is exactly 30 seconds** — which is why nobody has ever caught it live.\n\n**Three pieces of evidence people are misreading.** \"Nothing at ERROR\" is a logging fact, not a health fact — `waiters=19` against `max=50` is reported at INFO *inside a success message*, there's no acquire timeout so there's no exception to raise, and a reset socket means no middleware ever saw a 5xx. The **502** is also load-bearing: nginx, Envoy and HAProxy all return **504** for a proxy read timeout, so `502 upstream_reset` means orders-svc tore the socket down and your gateway's 30s timer lost the race by 1–3ms. And three 502s is a filtered excerpt — ~500 requests failed in that episode.\n\n**Confidence.** ~85% on the amplification mechanism; ~65% that the thing being waited on is payments-svc specifically. The surviving rival is that the **DB itself** is the stall (lock storm, failover, slow query) and the p99 is a metric artifact — every number above survives unchanged under it. Also live: the calls never reach payments at all (half-open TCP, LB blackhole, stuck keep-alive), which predicts an identical 30s wall.\n\n**What I could not clear, and the three queries that clear it.** I have no access to your systems, so onset is genuinely underdetermined — and I'd treat the tracing-agent removal as coincidence rather than cause until someone shows a mechanism. In cost order: (1) `pg_stat_activity` during an episode — `idle in transaction` means held across the RPC, `active` means the DB is the stall; this single datum splits the rival set; (2) gateway 502 counts per day for `/api/checkout` over 3 months, which predates every telemetry system you deleted and tells you whether this began 3 weeks ago or merely became visible then; (3) the list of episode start times, which is already in your gateway logs — \"no pattern anyone can see\" almost certainly means nobody has plotted it against crons, batch jobs or a partner's window.\n\n**What would overturn this:** `active` queries on those 50 connections; a checkout request rate near 350/s rather than 2.2/s; or orders-svc's own logs showing it believed it returned 200s (which would move the reset mid-path).\n\nFull ledger, arithmetic and rival register are in `figure-out-log-20260912-182833.md` in the working directory. The remedy — release the connection before the RPC, add an acquire timeout, budget the payments call — is work, not read, so I've stopped here; `/define` will turn it into a manifest when you're back."
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 6,
+            "costUsd": 0.4534505,
+            "judgeCostUsd": 0.029076000000000005,
+            "durationSeconds": 186,
+            "startedAt": "2026-09-12T18:24:49.525Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-jDPDbL/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "## What I land on\n\n**payments-svc stalls; orders-svc holds a DB connection while waiting on it.** Each stuck checkout parks one of the 50 pool connections for ~30s, the pool drains in seconds, everything else queues behind it and blows through the gateway's 30s `proxy_read_timeout` → 502.\n\n### The inference that decides it\n\nWork backwards from the durations. The request that 502'd at 14:22:07 with `dur=30001ms` **started at ~14:21:37**. At 14:21:58 — 21 seconds into that request's life — the pool still showed `waiters=0`. Nobody was queuing for a connection.\n\nSo that request wasn't blocked *waiting* for the pool. It had a connection already and was stuck downstream, holding it. **Pool exhaustion is the effect, not the cause.** The `in_use=50 / idle=0` pinned for minutes while waiters climb confirms it: that's connections parked, not connections churning.\n\n### The SRE's clipping theory is wrong\n\nA p99 sitting at **exactly** 30000ms is a timeout, not a rendering artifact. Clipping flattens at the axis max — and the axis max is 30000 *because the data tops out there*. The round number is the tell.\n\nThat matters because the metric is measured **inside payments-svc**, which is what rules out \"orders-svc is the sick one.\" Five-minute check: plot max/p999 next to p99, and look at payments' request volume during an episode. If throughput craters, it's stalling.\n\n### The thing nobody's logs mention\n\norders-svc has **nothing at ERROR**. If it had a 30s timeout on the payments call, it would log a timeout. It doesn't — so orders-svc likely has no timeout (or a very long one) on that call, and the gateway hangs up on the client before orders-svc notices anything went wrong.\n\n### Two problems, not one\n\n1. **Trigger** — whatever stalls payments. I genuinely can't determine this from what's available; payments has no request logging. Multi-minute, 2–3x/day, clean self-recovery reads like an external dependency or a periodic job rather than a broken code path.\n2. **Amplifier** — holding a DB connection across a synchronous network call. This is what turns \"payments is slow\" into \"checkout is down,\" and it's the most likely thing that *changed* three weeks ago.\n\nOn the 31 deploys: I'd treat that as a red herring for the trigger, but search the window for one specific thing — a change that moved the payments call inside a transaction or connection scope. That alone explains the three-week onset even if payments had been intermittently slow for months.\n\n**Fix that's correct regardless of root cause:** release the connection before calling payments, and put a 2–5s timeout plus a breaker on that call.\n\nOne caveat I'd want closed: `in_use=48` with `waiters=0` is already 96% of the pool. If that's normal baseline, headroom is thin enough that pool sizing is a real secondary issue; if it isn't, the stall started earlier than my reconstruction shows. Pull baseline `in_use` from a quiet period — it sharpens the timeline either way.\n\nFull writeup with the timeline table, the alternatives I ranked lower, and ordered next steps is in `checkout-502-analysis.md`."
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "## What I land on\n\n**payments-svc stalls; orders-svc holds a DB connection while waiting on it.** Each stuck checkout parks one of the 50 pool connections for ~30s, the pool drains in seconds, everything else queues behind it and blows through the gateway's 30s `proxy_read_timeout` → 502.\n\n### The inference that decides it\n\nWork backwards from the durations. The request that 502'd at 14:22:07 with `dur=30001ms` **started at ~14:21:37**. At 14:21:58 — 21 seconds into that request's life — the pool still showed `waiters=0`. Nobody was queuing for a connection.\n\nSo that request wasn't blocked *waiting* for the pool. It had a connection already and was stuck downstream, holding it. **Pool exhaustion is the effect, not the cause.** The `in_use=50 / idle=0` pinned for minutes while waiters climb confirms it: that's connections parked, not connections churning.\n\n### The SRE's clipping theory is wrong\n\nA p99 sitting at **exactly** 30000ms is a timeout, not a rendering artifact. Clipping flattens at the axis max — and the axis max is 30000 *because the data tops out there*. The round number is the tell.\n\nThat matters because the metric is measured **inside payments-svc**, which is what rules out \"orders-svc is the sick one.\" Five-minute check: plot max/p999 next to p99, and look at payments' request volume during an episode. If throughput craters, it's stalling.\n\n### The thing nobody's logs mention\n\norders-svc has **nothing at ERROR**. If it had a 30s timeout on the payments call, it would log a timeout. It doesn't — so orders-svc likely has no timeout (or a very long one) on that call, and the gateway hangs up on the client before orders-svc notices anything went wrong.\n\n### Two problems, not one\n\n1. **Trigger** — whatever stalls payments. I genuinely can't determine this from what's available; payments has no request logging. Multi-minute, 2–3x/day, clean self-recovery reads like an external dependency or a periodic job rather than a broken code path.\n2. **Amplifier** — holding a DB connection across a synchronous network call. This is what turns \"payments is slow\" into \"checkout is down,\" and it's the most likely thing that *changed* three weeks ago.\n\nOn the 31 deploys: I'd treat that as a red herring for the trigger, but search the window for one specific thing — a change that moved the payments call inside a transaction or connection scope. That alone explains the three-week onset even if payments had been intermittently slow for months.\n\n**Fix that's correct regardless of root cause:** release the connection before calling payments, and put a 2–5s timeout plus a breaker on that call.\n\nOne caveat I'd want closed: `in_use=48` with `waiters=0` is already 96% of the pool. If that's normal baseline, headroom is thin enough that pool sizing is a real secondary issue; if it isn't, the stall started earlier than my reconstruction shows. Pull baseline `in_use` from a quiet period — it sharpens the timeline either way.\n\nFull writeup with the timeline table, the alternatives I ranked lower, and ordered next steps is in `checkout-502-analysis.md`."
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "## What I land on\n\n**payments-svc stalls; orders-svc holds a DB connection while waiting on it.** Each stuck checkout parks one of the 50 pool connections for ~30s, the pool drains in seconds, everything else queues behind it and blows through the gateway's 30s `proxy_read_timeout` → 502.\n\n### The inference that decides it\n\nWork backwards from the durations. The request that 502'd at 14:22:07 with `dur=30001ms` **started at ~14:21:37**. At 14:21:58 — 21 seconds into that request's life — the pool still showed `waiters=0`. Nobody was queuing for a connection.\n\nSo that request wasn't blocked *waiting* for the pool. It had a connection already and was stuck downstream, holding it. **Pool exhaustion is the effect, not the cause.** The `in_use=50 / idle=0` pinned for minutes while waiters climb confirms it: that's connections parked, not connections churning.\n\n### The SRE's clipping theory is wrong\n\nA p99 sitting at **exactly** 30000ms is a timeout, not a rendering artifact. Clipping flattens at the axis max — and the axis max is 30000 *because the data tops out there*. The round number is the tell.\n\nThat matters because the metric is measured **inside payments-svc**, which is what rules out \"orders-svc is the sick one.\" Five-minute check: plot max/p999 next to p99, and look at payments' request volume during an episode. If throughput craters, it's stalling.\n\n### The thing nobody's logs mention\n\norders-svc has **nothing at ERROR**. If it had a 30s timeout on the payments call, it would log a timeout. It doesn't — so orders-svc likely has no timeout (or a very long one) on that call, and the gateway hangs up on the client before orders-svc notices anything went wrong.\n\n### Two problems, not one\n\n1. **Trigger** — whatever stalls payments. I genuinely can't determine this from what's available; payments has no request logging. Multi-minute, 2–3x/day, clean self-recovery reads like an external dependency or a periodic job rather than a broken code path.\n2. **Amplifier** — holding a DB connection across a synchronous network call. This is what turns \"payments is slow\" into \"checkout is down,\" and it's the most likely thing that *changed* three weeks ago.\n\nOn the 31 deploys: I'd treat that as a red herring for the trigger, but search the window for one specific thing — a change that moved the payments call inside a transaction or connection scope. That alone explains the three-week onset even if payments had been intermittently slow for months.\n\n**Fix that's correct regardless of root cause:** release the connection before calling payments, and put a 2–5s timeout plus a breaker on that call.\n\nOne caveat I'd want closed: `in_use=48` with `waiters=0` is already 96% of the pool. If that's normal baseline, headroom is thin enough that pool sizing is a real secondary issue; if it isn't, the stall started earlier than my reconstruction shows. Pull baseline `in_use` from a quiet period — it sharpens the timeline either way.\n\nFull writeup with the timeline table, the alternatives I ranked lower, and ordered next steps is in `checkout-502-analysis.md`."
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 0.3333333333333333,
+        "passRate": 0,
+        "scoreWithout": 0.3333333333333333,
+        "passRateWithout": 0,
+        "delta": 0
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 0,
+    "overallScore": 0.3333333333333333,
+    "overallPassRate": 0,
+    "meanDelta": 0
+  }
+}

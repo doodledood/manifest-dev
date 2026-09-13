@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.269",
+  "startedAt": "2026-09-12T18:07:00.587Z",
+  "durationSeconds": 246,
+  "costUsd": 0.7607894999999999,
+  "partial": false,
+  "suite": {
+    "root": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev",
+    "ablation": "none",
+    "judgeModel": "sonnet",
+    "caseFilter": "10-diagnosis-retry-window",
+    "threshold": 1,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "manifest-dev",
+        "version": "11.8.0",
+        "path": "/Users/aviramkofman/code/manifest-dev/claude-plugins/manifest-dev"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "10-diagnosis-retry-window",
+      "dir": "evals/10-diagnosis-retry-window",
+      "source": "prose",
+      "promptMarkdown": "the nightly order export writes zero rows maybe once or twice a week and nobody can work out why. the rows are definitely in the db. finance has been reconciling by hand for a month.\n\nfigure this out for me. i'm afk for the next few hours - dont ask me anything, work it out on your own and come back with what you land on, how sure you are, what its based on, and what would change your mind.\n\neverything i can give you is below.\n\nthe job runs on a cron at 20:45 UTC. container env: `TZ=UTC`, `EXPORT_WINDOW_HOURS=24`, `EXPORT_WINDOW_TZ=Asia/Jerusalem`, `MAX_ATTEMPTS=3`, `BACKOFF=4`.\n\n```python\nWINDOW_HOURS = int(os.environ[\"EXPORT_WINDOW_HOURS\"])\nWINDOW_TZ    = ZoneInfo(os.environ[\"EXPORT_WINDOW_TZ\"])\n\ndef compute_window(now):\n    local_mid = now.astimezone(WINDOW_TZ).replace(\n        hour=0, minute=0, second=0, microsecond=0)\n    end   = local_mid.astimezone(timezone.utc)\n    start = end - timedelta(hours=WINDOW_HOURS)\n    return start, end\n\ndef run():\n    for attempt in range(1, MAX_ATTEMPTS + 1):\n        start, end = compute_window(datetime.now(timezone.utc))\n        try:\n            rows = db.query(SETTLED_BETWEEN, start, end)\n            log.info(\"window %s..%s, matched %d\", start, end, len(rows))\n            write_csv(rows)\n            return\n        except TransientError as e:\n            log.warning(\"attempt %d failed: %s\", attempt, e)\n            time.sleep(BACKOFF ** attempt)\n```\n\na normal night:\n\n```\n2026-09-09T20:45:02Z INFO  export start\n2026-09-09T20:45:04Z INFO  window 2026-09-08T21:00:00+00:00..2026-09-09T21:00:00+00:00, matched 3184\n2026-09-09T20:45:09Z INFO  wrote orders-20260909.csv\n```\n\na zero night:\n\n```\n2026-09-11T20:45:02Z INFO  export start\n2026-09-11T20:45:31Z WARN  attempt 1 failed: TransientError('connection reset by peer')\n2026-09-11T20:49:35Z WARN  attempt 2 failed: TransientError('connection reset by peer')\n2026-09-11T21:05:51Z INFO  window 2026-09-11T21:00:00+00:00..2026-09-12T21:00:00+00:00, matched 0\n2026-09-11T21:05:51Z INFO  wrote orders-20260911.csv\n```\n\nthe db team says there was a brief network blip on the 11th but the same blip happened on the 6th and that night exported fine. and someone pointed out the container is on UTC while the window config says Asia/Jerusalem, which looks wrong to them.\n\n(write any notes or logs you keep into the current directory rather than your home directory)",
+      "model": "opus",
+      "runsPerCase": 3,
+      "timeoutSeconds": 900,
+      "maxTurns": 40,
+      "graders": [
+        {
+          "name": "evidence-has-provenance",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Judge whether the load-bearing claims in the response are tied to the specific artifact that\nsupports them, rather than asserted flatly.\n\nPASS requires both:\n1. At least two distinct claims that carry the conclusion are tied to a named artifact — a quoted\n   log line or its timestamp, a specific config key and value, or a named line or call in the code\n   (for example `compute_window` being called inside the loop, the 21:05:51Z timestamp, the\n   20:45 UTC cron time, or the `matched 0` window bounds).\n2. The response distinguishes what it established from the given evidence from what it is\n   inferring or assuming — for example flagging that it cannot confirm the database contents, the\n   real backoff timing, or what happened on nights it was not shown.\n\nFAIL if the conclusion is stated without reference to which artifact produced it, or if inferences\nare presented in the same register as things the evidence directly shows.\n\nThis grader is about grounding, not formatting. A response that weaves file and log references\ninto prose PASSES. A response with a section labelled \"Evidence\" that lists restated conclusions\nwithout pointing at artifacts FAILS.",
+          "config": {
+            "criteria": "Judge whether the load-bearing claims in the response are tied to the specific artifact that\nsupports them, rather than asserted flatly.\n\nPASS requires both:\n1. At least two distinct claims that carry the conclusion are tied to a named artifact — a quoted\n   log line or its timestamp, a specific config key and value, or a named line or call in the code\n   (for example `compute_window` being called inside the loop, the 21:05:51Z timestamp, the\n   20:45 UTC cron time, or the `matched 0` window bounds).\n2. The response distinguishes what it established from the given evidence from what it is\n   inferring or assuming — for example flagging that it cannot confirm the database contents, the\n   real backoff timing, or what happened on nights it was not shown.\n\nFAIL if the conclusion is stated without reference to which artifact produced it, or if inferences\nare presented in the same register as things the evidence directly shows.\n\nThis grader is about grounding, not formatting. A response that weaves file and log references\ninto prose PASSES. A response with a section labelled \"Evidence\" that lists restated conclusions\nwithout pointing at artifacts FAILS.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "names-the-mechanism",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "The evidence supports one specific mechanism. Judge whether the response actually names it.\n\nThe mechanism: `compute_window` is called INSIDE the retry loop, so the window is recomputed from\n`datetime.now()` on every attempt. The job starts at 20:45 UTC, which is 23:45 Asia/Jerusalem —\njust before local midnight. When attempts fail and the backoff pushes a later attempt past 21:00\nUTC (00:00 Jerusalem), `local_mid` advances by a full day, so the window jumps forward 24 hours\nto a period that has barely begun. The query matches zero rows, the job treats that as success,\nwrites an empty CSV, and returns — masking the original failure and leaving the day unexported.\n\nPASS requires the response to identify, in substance, BOTH halves:\n1. The window is recomputed per attempt rather than once before the loop, and\n2. A retry crossing local midnight is what shifts it — producing an empty window that is then\n   recorded as a successful export.\n\nWording is free. \"The retry recalculates the date boundary and after midnight it asks for\ntomorrow's data\" satisfies this. The response may also correctly note the zero result is silently\ntreated as success.\n\nFAIL if the response stops at localization rather than mechanism — \"something is wrong with the\nretry logic\", \"a race condition around midnight\", \"the window calculation is buggy\" — without\nsaying what the sequence actually does.\n\nFAIL if it lands on either decoy as the cause: the `TZ=UTC` vs `Asia/Jerusalem` mismatch (a red\nherring — `astimezone` handles it correctly, and the normal night's window is right), or the\nnetwork blip alone (present on a night that exported fine).\n\nA response that names the mechanism and ALSO notes the empty-result-as-success bug PASSES. A\nresponse naming only the empty-result-as-success bug, without the window shift, FAILS — that is\nthe consequence, not the cause.",
+          "config": {
+            "criteria": "The evidence supports one specific mechanism. Judge whether the response actually names it.\n\nThe mechanism: `compute_window` is called INSIDE the retry loop, so the window is recomputed from\n`datetime.now()` on every attempt. The job starts at 20:45 UTC, which is 23:45 Asia/Jerusalem —\njust before local midnight. When attempts fail and the backoff pushes a later attempt past 21:00\nUTC (00:00 Jerusalem), `local_mid` advances by a full day, so the window jumps forward 24 hours\nto a period that has barely begun. The query matches zero rows, the job treats that as success,\nwrites an empty CSV, and returns — masking the original failure and leaving the day unexported.\n\nPASS requires the response to identify, in substance, BOTH halves:\n1. The window is recomputed per attempt rather than once before the loop, and\n2. A retry crossing local midnight is what shifts it — producing an empty window that is then\n   recorded as a successful export.\n\nWording is free. \"The retry recalculates the date boundary and after midnight it asks for\ntomorrow's data\" satisfies this. The response may also correctly note the zero result is silently\ntreated as success.\n\nFAIL if the response stops at localization rather than mechanism — \"something is wrong with the\nretry logic\", \"a race condition around midnight\", \"the window calculation is buggy\" — without\nsaying what the sequence actually does.\n\nFAIL if it lands on either decoy as the cause: the `TZ=UTC` vs `Asia/Jerusalem` mismatch (a red\nherring — `astimezone` handles it correctly, and the normal night's window is right), or the\nnetwork blip alone (present on a night that exported fine).\n\nA response that names the mechanism and ALSO notes the empty-result-as-success bug PASSES. A\nresponse naming only the empty-result-as-success bug, without the window shift, FAILS — that is\nthe consequence, not the cause.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "overturn-is-discriminating",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Judge whether the response states what would overturn its conclusion, and whether that condition\nwould actually discriminate.\n\nPASS requires a stated overturn condition that, if observed, would genuinely undermine the\nconclusion — and that distinguishes this explanation from a rival. Examples that qualify: a zero\nnight whose final attempt timestamp is BEFORE 21:00 UTC (the mechanism predicts every zero night's\nsuccessful attempt lands after local midnight); a zero night with no preceding failed attempt at\nall; the export succeeding normally on a night where a retry did cross 21:00 UTC; the cron time\nhaving been changed to a hour far from local midnight during the affected period.\n\nFAIL if no overturn condition is given.\n\nFAIL if what is offered is generic doubt that would not discriminate — \"if I'm wrong about the\ntimezone\", \"more logs would help\", \"I could be missing something\", \"if the code is different in\nproduction\" — none of which name an observation that separates this explanation from the rivals.\n\nA confidence level stated without any overturn condition FAILS. The test is whether a reader could\ngo look at one thing and come back knowing the answer was wrong.",
+          "config": {
+            "criteria": "Judge whether the response states what would overturn its conclusion, and whether that condition\nwould actually discriminate.\n\nPASS requires a stated overturn condition that, if observed, would genuinely undermine the\nconclusion — and that distinguishes this explanation from a rival. Examples that qualify: a zero\nnight whose final attempt timestamp is BEFORE 21:00 UTC (the mechanism predicts every zero night's\nsuccessful attempt lands after local midnight); a zero night with no preceding failed attempt at\nall; the export succeeding normally on a night where a retry did cross 21:00 UTC; the cron time\nhaving been changed to a hour far from local midnight during the affected period.\n\nFAIL if no overturn condition is given.\n\nFAIL if what is offered is generic doubt that would not discriminate — \"if I'm wrong about the\ntimezone\", \"more logs would help\", \"I could be missing something\", \"if the code is different in\nproduction\" — none of which name an observation that separates this explanation from the rivals.\n\nA confidence level stated without any overturn condition FAILS. The test is whether a reader could\ngo look at one thing and come back knowing the answer was wrong.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "rival-actually-killed",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Two decoy explanations are planted in the prompt: the network blip (also occurred on the 6th,\nwhich exported fine) and the `TZ=UTC` vs `EXPORT_WINDOW_TZ=Asia/Jerusalem` mismatch (which\n`astimezone` handles correctly — the normal night's window bounds are right).\n\nPASS requires the response to raise at least one of these as a candidate and remove it using\nevidence — naming what rules it out. For the blip: that the same failure occurred on a night that\nexported successfully, so it cannot be sufficient on its own. For the timezone: that the normal\nnight's logged window (`2026-09-08T21:00Z..2026-09-09T21:00Z`) is exactly a correct Jerusalem day,\nso the conversion is working.\n\nFAIL if rivals are never raised, or if they are dropped by silence — the response simply presents\nits own answer without addressing the two explanations it was handed.\n\nFAIL if a rival is dismissed by assertion alone (\"that's not it\", \"unlikely\") without naming the\nevidence that removes it.\n\nRaising the blip as a genuine CONTRIBUTING factor — the trigger that causes the retry, without\nwhich the window never shifts — is correct and PASSES, provided the response is clear that the\nblip alone does not produce the zero.",
+          "config": {
+            "criteria": "Two decoy explanations are planted in the prompt: the network blip (also occurred on the 6th,\nwhich exported fine) and the `TZ=UTC` vs `EXPORT_WINDOW_TZ=Asia/Jerusalem` mismatch (which\n`astimezone` handles correctly — the normal night's window bounds are right).\n\nPASS requires the response to raise at least one of these as a candidate and remove it using\nevidence — naming what rules it out. For the blip: that the same failure occurred on a night that\nexported successfully, so it cannot be sufficient on its own. For the timezone: that the normal\nnight's logged window (`2026-09-08T21:00Z..2026-09-09T21:00Z`) is exactly a correct Jerusalem day,\nso the conversion is working.\n\nFAIL if rivals are never raised, or if they are dropped by silence — the response simply presents\nits own answer without addressing the two explanations it was handed.\n\nFAIL if a rival is dismissed by assertion alone (\"that's not it\", \"unlikely\") without naming the\nevidence that removes it.\n\nRaising the blip as a genuine CONTRIBUTING factor — the trigger that causes the retry, without\nwhich the window never shifts — is correct and PASSES, provided the response is clear that the\nblip alone does not produce the zero.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "min": 1
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 0.8,
+            "passed": false,
+            "turns": 7,
+            "costUsd": 0.7607894999999999,
+            "judgeCostUsd": 0.05097000000000001,
+            "durationSeconds": 245,
+            "startedAt": "2026-09-12T18:07:01.413Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-mbO3rW/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "evidence-has-provenance",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Worked it out. Notes in `export-zero-rows-findings.md`; the short version:\n\n## What's happening\n\n`compute_window()` is called **inside** the retry loop, so the window is re-derived from the wall clock on every attempt. It anchors to local midnight in Asia/Jerusalem. The cron fires at 20:45 UTC = **23:45 local** during IDT — 15 minutes before that anchor jumps a day. The backoff sleeps total 20 minutes.\n\nSo on the 11th, attempt 3 ran at 00:05 local on the 12th, and the window became `2026-09-11T21:00Z..2026-09-12T21:00Z` — five minutes old, 23h55m of it in the future. Zero rows is the correct answer to the wrong question. Then it writes the empty file and returns success.\n\n## It's deterministic, which answers the db team\n\nEven if both failures returned instantly, attempt 3 cannot start before **21:05:02 UTC**, and local midnight is **21:00:00 UTC**. So:\n\n- fails once, recovers on attempt 2 → before the boundary → fine\n- reaches attempt 3 at all → **always** past it → **always** zero\n\nTwo consecutive failed attempts guarantees a silent zero export. That's the whole rule — and it's why the 6th was fine with the same blip: it recovered on attempt 2. The blip isn't the cause, it's just what pushes you into attempt 3. \"Once or twice a week\" is how often a blip outlasts a single retry.\n\n**The TZ mismatch is a red herring.** The code uses an explicit `ZoneInfo` and an aware `now`, and never touches the container's local time. Changing `TZ` fixes nothing. What's genuinely wrong is pairing a 20:45 UTC cron with a Jerusalem-anchored window: a 15-minute budget for a 20-minute retry policy.\n\n## Confidence\n\n**High on the mechanism** — the logged windows match the arithmetic to the second on both nights. **High on \"two failures ⇒ guaranteed zero.\"** Lower on one input, below.\n\nFalsifiable prediction: when IDT ends **Oct 25**, local midnight moves to 22:00 UTC and headroom becomes 1h15m. The bug should **vanish on its own, unfixed**, and **come back Mar 26 2027**. If zero nights continue into November, I'm wrong.\n\n## Where the snippet and the logs disagree\n\nI trusted the logs. Both places need checking against real source:\n\n- **Window direction.** Your snippet does `end = local_mid; start = end - 24h`. Both logged windows match the *forward* form (`start = local_mid; end = start + 24h`) exactly and neither matches the snippet. This matters: the backward version wouldn't have this bug — crossing midnight would hand it fresher correct data. Load-bearing for the diagnosis.\n- **Backoff units.** `4 ** attempt` seconds is 4s/16s; observed gaps are 4m04s and 16m16s. Seconds would mean attempt 3 was a 16-minute successful query against a ~2s baseline. Minutes makes every query 4–29s. Load-bearing for \"deterministic\" — with true 4s/16s sleeps it'd be rare and timing-dependent instead of guaranteed, but root cause and fix don't change.\n\n## Two other things I found\n\n1. **A 15-minute hole every night, including good ones.** The window covers the in-progress local day, but the query runs at 23:45 local. Orders settling 23:45–00:00 don't exist yet, and tomorrow's window starts at the next midnight. Never exported, ever. Probably part of what finance is seeing on nights that looked clean.\n2. **Oct 25 is a 25-hour local day** (DST ends 03:00→02:00), so a fixed `WINDOW_HOURS=24` silently drops an hour.\n\n## Fixes\n\nThe one-line one: **hoist `compute_window()` out of the loop.** Kills the bug class outright.\n\nThen, in order: take the business date as an explicit parameter defaulted from the schedule (makes it idempotent and gives you the backfill path); **hard-fail on `end > now` and on zero rows** — the worst property here is that it reports success while writing nothing; and move the cron to just after local midnight to export the *completed* day, which fixes the nightly hole and buys an hour of retry room instead of fifteen minutes.\n\n**Backfill needed:** Sep 11 is permanently missing — the Sep 12 run only covers Sep 12. `orders-20260911.csv` exists, is named correctly, and is empty. Same for every zero night this month."
+              },
+              {
+                "name": "names-the-mechanism",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Worked it out. Notes in `export-zero-rows-findings.md`; the short version:\n\n## What's happening\n\n`compute_window()` is called **inside** the retry loop, so the window is re-derived from the wall clock on every attempt. It anchors to local midnight in Asia/Jerusalem. The cron fires at 20:45 UTC = **23:45 local** during IDT — 15 minutes before that anchor jumps a day. The backoff sleeps total 20 minutes.\n\nSo on the 11th, attempt 3 ran at 00:05 local on the 12th, and the window became `2026-09-11T21:00Z..2026-09-12T21:00Z` — five minutes old, 23h55m of it in the future. Zero rows is the correct answer to the wrong question. Then it writes the empty file and returns success.\n\n## It's deterministic, which answers the db team\n\nEven if both failures returned instantly, attempt 3 cannot start before **21:05:02 UTC**, and local midnight is **21:00:00 UTC**. So:\n\n- fails once, recovers on attempt 2 → before the boundary → fine\n- reaches attempt 3 at all → **always** past it → **always** zero\n\nTwo consecutive failed attempts guarantees a silent zero export. That's the whole rule — and it's why the 6th was fine with the same blip: it recovered on attempt 2. The blip isn't the cause, it's just what pushes you into attempt 3. \"Once or twice a week\" is how often a blip outlasts a single retry.\n\n**The TZ mismatch is a red herring.** The code uses an explicit `ZoneInfo` and an aware `now`, and never touches the container's local time. Changing `TZ` fixes nothing. What's genuinely wrong is pairing a 20:45 UTC cron with a Jerusalem-anchored window: a 15-minute budget for a 20-minute retry policy.\n\n## Confidence\n\n**High on the mechanism** — the logged windows match the arithmetic to the second on both nights. **High on \"two failures ⇒ guaranteed zero.\"** Lower on one input, below.\n\nFalsifiable prediction: when IDT ends **Oct 25**, local midnight moves to 22:00 UTC and headroom becomes 1h15m. The bug should **vanish on its own, unfixed**, and **come back Mar 26 2027**. If zero nights continue into November, I'm wrong.\n\n## Where the snippet and the logs disagree\n\nI trusted the logs. Both places need checking against real source:\n\n- **Window direction.** Your snippet does `end = local_mid; start = end - 24h`. Both logged windows match the *forward* form (`start = local_mid; end = start + 24h`) exactly and neither matches the snippet. This matters: the backward version wouldn't have this bug — crossing midnight would hand it fresher correct data. Load-bearing for the diagnosis.\n- **Backoff units.** `4 ** attempt` seconds is 4s/16s; observed gaps are 4m04s and 16m16s. Seconds would mean attempt 3 was a 16-minute successful query against a ~2s baseline. Minutes makes every query 4–29s. Load-bearing for \"deterministic\" — with true 4s/16s sleeps it'd be rare and timing-dependent instead of guaranteed, but root cause and fix don't change.\n\n## Two other things I found\n\n1. **A 15-minute hole every night, including good ones.** The window covers the in-progress local day, but the query runs at 23:45 local. Orders settling 23:45–00:00 don't exist yet, and tomorrow's window starts at the next midnight. Never exported, ever. Probably part of what finance is seeing on nights that looked clean.\n2. **Oct 25 is a 25-hour local day** (DST ends 03:00→02:00), so a fixed `WINDOW_HOURS=24` silently drops an hour.\n\n## Fixes\n\nThe one-line one: **hoist `compute_window()` out of the loop.** Kills the bug class outright.\n\nThen, in order: take the business date as an explicit parameter defaulted from the schedule (makes it idempotent and gives you the backfill path); **hard-fail on `end > now` and on zero rows** — the worst property here is that it reports success while writing nothing; and move the cron to just after local midnight to export the *completed* day, which fixes the nightly hole and buys an hour of retry room instead of fifteen minutes.\n\n**Backfill needed:** Sep 11 is permanently missing — the Sep 12 run only covers Sep 12. `orders-20260911.csv` exists, is named correctly, and is empty. Same for every zero night this month."
+              },
+              {
+                "name": "overturn-is-discriminating",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Worked it out. Notes in `export-zero-rows-findings.md`; the short version:\n\n## What's happening\n\n`compute_window()` is called **inside** the retry loop, so the window is re-derived from the wall clock on every attempt. It anchors to local midnight in Asia/Jerusalem. The cron fires at 20:45 UTC = **23:45 local** during IDT — 15 minutes before that anchor jumps a day. The backoff sleeps total 20 minutes.\n\nSo on the 11th, attempt 3 ran at 00:05 local on the 12th, and the window became `2026-09-11T21:00Z..2026-09-12T21:00Z` — five minutes old, 23h55m of it in the future. Zero rows is the correct answer to the wrong question. Then it writes the empty file and returns success.\n\n## It's deterministic, which answers the db team\n\nEven if both failures returned instantly, attempt 3 cannot start before **21:05:02 UTC**, and local midnight is **21:00:00 UTC**. So:\n\n- fails once, recovers on attempt 2 → before the boundary → fine\n- reaches attempt 3 at all → **always** past it → **always** zero\n\nTwo consecutive failed attempts guarantees a silent zero export. That's the whole rule — and it's why the 6th was fine with the same blip: it recovered on attempt 2. The blip isn't the cause, it's just what pushes you into attempt 3. \"Once or twice a week\" is how often a blip outlasts a single retry.\n\n**The TZ mismatch is a red herring.** The code uses an explicit `ZoneInfo` and an aware `now`, and never touches the container's local time. Changing `TZ` fixes nothing. What's genuinely wrong is pairing a 20:45 UTC cron with a Jerusalem-anchored window: a 15-minute budget for a 20-minute retry policy.\n\n## Confidence\n\n**High on the mechanism** — the logged windows match the arithmetic to the second on both nights. **High on \"two failures ⇒ guaranteed zero.\"** Lower on one input, below.\n\nFalsifiable prediction: when IDT ends **Oct 25**, local midnight moves to 22:00 UTC and headroom becomes 1h15m. The bug should **vanish on its own, unfixed**, and **come back Mar 26 2027**. If zero nights continue into November, I'm wrong.\n\n## Where the snippet and the logs disagree\n\nI trusted the logs. Both places need checking against real source:\n\n- **Window direction.** Your snippet does `end = local_mid; start = end - 24h`. Both logged windows match the *forward* form (`start = local_mid; end = start + 24h`) exactly and neither matches the snippet. This matters: the backward version wouldn't have this bug — crossing midnight would hand it fresher correct data. Load-bearing for the diagnosis.\n- **Backoff units.** `4 ** attempt` seconds is 4s/16s; observed gaps are 4m04s and 16m16s. Seconds would mean attempt 3 was a 16-minute successful query against a ~2s baseline. Minutes makes every query 4–29s. Load-bearing for \"deterministic\" — with true 4s/16s sleeps it'd be rare and timing-dependent instead of guaranteed, but root cause and fix don't change.\n\n## Two other things I found\n\n1. **A 15-minute hole every night, including good ones.** The window covers the in-progress local day, but the query runs at 23:45 local. Orders settling 23:45–00:00 don't exist yet, and tomorrow's window starts at the next midnight. Never exported, ever. Probably part of what finance is seeing on nights that looked clean.\n2. **Oct 25 is a 25-hour local day** (DST ends 03:00→02:00), so a fixed `WINDOW_HOURS=24` silently drops an hour.\n\n## Fixes\n\nThe one-line one: **hoist `compute_window()` out of the loop.** Kills the bug class outright.\n\nThen, in order: take the business date as an explicit parameter defaulted from the schedule (makes it idempotent and gives you the backfill path); **hard-fail on `end > now` and on zero rows** — the worst property here is that it reports success while writing nothing; and move the cron to just after local midnight to export the *completed* day, which fixes the nightly hole and buys an hour of retry room instead of fifteen minutes.\n\n**Backfill needed:** Sep 11 is permanently missing — the Sep 12 run only covers Sep 12. `orders-20260911.csv` exists, is named correctly, and is empty. Same for every zero night this month."
+              },
+              {
+                "name": "rival-actually-killed",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Worked it out. Notes in `export-zero-rows-findings.md`; the short version:\n\n## What's happening\n\n`compute_window()` is called **inside** the retry loop, so the window is re-derived from the wall clock on every attempt. It anchors to local midnight in Asia/Jerusalem. The cron fires at 20:45 UTC = **23:45 local** during IDT — 15 minutes before that anchor jumps a day. The backoff sleeps total 20 minutes.\n\nSo on the 11th, attempt 3 ran at 00:05 local on the 12th, and the window became `2026-09-11T21:00Z..2026-09-12T21:00Z` — five minutes old, 23h55m of it in the future. Zero rows is the correct answer to the wrong question. Then it writes the empty file and returns success.\n\n## It's deterministic, which answers the db team\n\nEven if both failures returned instantly, attempt 3 cannot start before **21:05:02 UTC**, and local midnight is **21:00:00 UTC**. So:\n\n- fails once, recovers on attempt 2 → before the boundary → fine\n- reaches attempt 3 at all → **always** past it → **always** zero\n\nTwo consecutive failed attempts guarantees a silent zero export. That's the whole rule — and it's why the 6th was fine with the same blip: it recovered on attempt 2. The blip isn't the cause, it's just what pushes you into attempt 3. \"Once or twice a week\" is how often a blip outlasts a single retry.\n\n**The TZ mismatch is a red herring.** The code uses an explicit `ZoneInfo` and an aware `now`, and never touches the container's local time. Changing `TZ` fixes nothing. What's genuinely wrong is pairing a 20:45 UTC cron with a Jerusalem-anchored window: a 15-minute budget for a 20-minute retry policy.\n\n## Confidence\n\n**High on the mechanism** — the logged windows match the arithmetic to the second on both nights. **High on \"two failures ⇒ guaranteed zero.\"** Lower on one input, below.\n\nFalsifiable prediction: when IDT ends **Oct 25**, local midnight moves to 22:00 UTC and headroom becomes 1h15m. The bug should **vanish on its own, unfixed**, and **come back Mar 26 2027**. If zero nights continue into November, I'm wrong.\n\n## Where the snippet and the logs disagree\n\nI trusted the logs. Both places need checking against real source:\n\n- **Window direction.** Your snippet does `end = local_mid; start = end - 24h`. Both logged windows match the *forward* form (`start = local_mid; end = start + 24h`) exactly and neither matches the snippet. This matters: the backward version wouldn't have this bug — crossing midnight would hand it fresher correct data. Load-bearing for the diagnosis.\n- **Backoff units.** `4 ** attempt` seconds is 4s/16s; observed gaps are 4m04s and 16m16s. Seconds would mean attempt 3 was a 16-minute successful query against a ~2s baseline. Minutes makes every query 4–29s. Load-bearing for \"deterministic\" — with true 4s/16s sleeps it'd be rare and timing-dependent instead of guaranteed, but root cause and fix don't change.\n\n## Two other things I found\n\n1. **A 15-minute hole every night, including good ones.** The window covers the in-progress local day, but the query runs at 23:45 local. Orders settling 23:45–00:00 don't exist yet, and tomorrow's window starts at the next midnight. Never exported, ever. Probably part of what finance is seeing on nights that looked clean.\n2. **Oct 25 is a 25-hour local day** (DST ends 03:00→02:00), so a fixed `WINDOW_HOURS=24` silently drops an hour.\n\n## Fixes\n\nThe one-line one: **hoist `compute_window()` out of the loop.** Kills the bug class outright.\n\nThen, in order: take the business date as an explicit parameter defaulted from the schedule (makes it idempotent and gives you the backfill path); **hard-fail on `end > now` and on zero rows** — the worst property here is that it reports success while writing nothing; and move the cron to just after local midnight to export the *completed* day, which fixes the nightly hole and buys an hour of retry room instead of fifteen minutes.\n\n**Backfill needed:** Sep 11 is permanently missing — the Sep 12 run only covers Sep 12. `orders-20260911.csv` exists, is named correctly, and is empty. Same for every zero night this month."
+              },
+              {
+                "name": "skill-fired",
+                "passed": false,
+                "weight": 1,
+                "explanation": "Skill called 0x (expected 1..∞)",
+                "withOnly": false,
+                "scored": true
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 0.8,
+        "passRate": 0
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 0,
+    "overallScore": 0.8,
+    "overallPassRate": 0
+  }
+}

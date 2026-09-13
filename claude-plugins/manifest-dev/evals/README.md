@@ -188,9 +188,10 @@ stashed for the duration. Assembled from three reports, per AC-2.2:
 | `results/2026-09-12T20-07-43-887Z` | `12-living-with-it` |
 | `results/2026-09-12T20-35-43-838Z` | `13-status-quo-job` |
 
-Run reports are **not committed** — they are regenerable, run to megabytes each, and embed full
-model transcripts. The timestamps above identify runs in a local `results/` directory; the tables
-on this page are the durable record.
+Each run's `aggregate-result.json` is committed under `results/`, so every number on this page can
+be recomputed from the repository — scores, per-grader verdicts, costs and turn counts, for both
+arms of every run. The rendered HTML reports and the per-run traces are not: they duplicate the
+JSON or hold full model output, and they regenerate.
 
 The first report is marked `partial` — the operating system killed it for low memory with two
 cases outstanding. Those two were re-run at `-j 1`; their errored runs are excluded and the

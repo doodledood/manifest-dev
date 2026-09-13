@@ -1,3 +1,8 @@
-# Run artifacts: regenerable, several MB per run, and each report embeds full
-# model transcripts. The numbers that matter are extracted into README.md.
-results/
+# Run artifacts. `aggregate-result.json` is committed — it is the evidence the
+# README's numbers are extracted from, and it holds scores, costs and grader
+# verdicts, not transcripts. Everything else is regenerable bulk: the rendered
+# HTML report duplicates the JSON, and traces hold full model output.
+results/**
+!results/
+!results/*/
+!results/*/aggregate-result.json
