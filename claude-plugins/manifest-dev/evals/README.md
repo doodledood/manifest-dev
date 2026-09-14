@@ -190,33 +190,34 @@ against a judge that could not read its own exemptions.
 
 ## Baseline — the converged skill, 2026-09-14
 
-Reports `results/2026-09-14T07-23-48-511Z` (all cases) and `results/2026-09-14T09-32-13-181Z`
-(case 13 alone, re-run once after its first runs died on a session limit — a repaired measurement,
-not a re-roll). 11 cases, `runs: 12` per arm, `--ablation with-without`, sonnet judge. This is the
-number any later prompt change is measured against.
+Reports `results/2026-09-14T07-23-48-511Z` (all cases), `results/2026-09-14T09-32-13-181Z`
+(case 13, re-run once after its first runs died on a session limit), and
+`results/2026-09-14T09-51-23-378Z`, `…T09-56-46-362Z`, `…T10-14-49-348Z` (cases 04, 11, 12,
+measured once more after two sentences the first run implicated were cut). 11 cases, `runs: 12`
+per arm, `--ablation with-without`, sonnet judge. This is the number any later prompt change is
+measured against.
 
 | Case | Merged with | Merged control | Merged Δ | Lean with | With-arm move |
 |---|---|---|---|---|---|
 | 01-root-press | 0.889 | 0.083 | +0.806 | 0.750 | +0.139 |
 | 02-assumed-cause | 0.917 | 0.542 | +0.375 | 0.875 | +0.042 |
-| 04-hold-under-pushback | 0.750 | 0.500 | +0.250 | 0.958 | -0.208 |
+| 04-hold-under-pushback | 0.875 | 0.750 | +0.125 | 0.958 | -0.083 |
 | 06-strategic-open | 0.625 | 0.083 | +0.542 | 0.542 | +0.083 |
-| 11-underdetermined | 0.861 | 0.750 | +0.111 | 0.944 | -0.083 |
-| 12-living-with-it | 0.667 | 0.750 | -0.083 | 0.792 | -0.125 |
+| 11-underdetermined | 1.000 | 0.556 | +0.444 | 0.944 | +0.056 |
+| 12-living-with-it | 0.500 | 0.750 | -0.250 | 0.792 | -0.292 |
 | 13-status-quo-job | 0.917 | 0.917 | +0.000 | 0.958 | -0.041 |
 | 05-move-on-evidence | 0.917 | 0.667 | +0.250 | — | — |
 | 07-neg-lookup | 1.000 | 1.000 | +0.000 | — | — |
 | 08-neg-authorized | 1.000 | 1.000 | +0.000 | — | — |
 | 10-diagnosis-retry-window | 1.000 | 1.000 | +0.000 | — | — |
 
-Mean Δ over the 11 cases **+0.21**. The "Lean with" column is the earlier measurement of the
-shorter prompt this skill was built up from, on the seven scenarios where that comparison was
-made; the seven-case with-arm move is −0.028, about half a standard error, so the merge held
-what it was meant to hold on the mean. It did not hold it on every case: `12-living-with-it`
-dropped on `prices-doing-nothing` alone (8/12 → 4/12) and `04-hold-under-pushback` on
-`holds-position` and `turn-discipline` — both traced to sentences added during the merge that
-the shorter prompt never carried, recorded in the ADR named above as the open follow-up. A mean
-that passes is not permission to stop reading the rows.
+Mean Δ over the 11 cases **+0.24**. The "Lean with" column is the earlier measurement of the
+shorter prompt this skill was built up from; the seven-case with-arm move is −0.014, a fifth of a
+standard error, so the merge held on the mean. `12-living-with-it` did not hold: `prices-doing-nothing`
+fell 8/12 → 4/12 → 1/12 across lean → merged → cut, and the with-arm now sits below the control.
+Every failing turn reframes "fix or live with it" as a false binary and lands on a third action.
+The open hypothesis, recorded in the ADR named above, is the independent re-derivation bullet the
+merge added; it has not been tested. A mean that passes is not permission to stop reading the rows.
 
 ### Two rules for reading any number this suite produces
 
