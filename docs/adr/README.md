@@ -144,3 +144,4 @@
 | 2026-09-05 | [Voice review grades reader-facing effect](20260905-voice-review-grades-reader-facing-effect.md) | Accepted | Writing review |
 | 2026-09-07 | [Executors own unattended decisions within explicit bounds](20260907-executors-own-unattended-decisions-within-explicit-bounds.md) | Accepted | define / do |
 | 2026-09-14 | [One skill per beat, built up from the lean body](20260914-one-skill-per-beat-built-from-the-lean-body.md) | Accepted | Prompt architecture |
+| 2026-09-14 | [A North Star field is applied only by a consumer at its decision point; `Who it's for` gets one in figure-out](20260914-who-its-for-is-consumed-by-figure-outs-seat-taking.md) | Accepted | North Star |

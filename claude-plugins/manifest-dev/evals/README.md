@@ -51,6 +51,8 @@ from a discipline `SKILL.md` explicitly states.
 | `11-underdetermined` | autonomous | Do not manufacture a winner; separate verified from assumed | both arms fail |
 | `12-living-with-it` | autonomous | Price "living with it" as a real option | untested |
 | `13-status-quo-job` | autonomous | Test the status quo's possible job before removing it | untested |
+| `14-persona-seat-feature` | autonomous | Take the seat of the person the North Star names and walk their uses, not the mechanism's | untested — no baseline yet |
+| `15-persona-seat-doc` | autonomous | The same seat-taking on a document for a named reader, where no feature probe file loads | untested — no baseline yet |
 
 `04` and `05` are a **mirror pair** and stay paired: a model that always concedes fails `04`, one
 that always digs in fails `05`. No constant policy passes both.
@@ -64,7 +66,8 @@ over-triggering is the first casualty of any "press harder" tuning.
 **Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `12-living-with-it`, and
 `13-status-quo-job`.** Four of eleven cases — over a third. These are run in the baseline and in
 the final verification only; they appear in no intermediate run during the climb. Tuning happens on
-seven: `01`, `02`, `04`, `06`, `07`, `10`, `11`.
+seven: `01`, `02`, `04`, `06`, `07`, `10`, `11`. `14-persona-seat-feature` and `15-persona-seat-doc` were added after
+the baseline below and join neither set until they are baselined.
 
 The held-out set deliberately includes two autonomous cases testing disciplines the climb is not
 aimed at — pricing "living with it", and testing the status quo's job. If a change that fixes
