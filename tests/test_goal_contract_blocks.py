@@ -74,7 +74,7 @@ NO_PARAPHRASE = "Do not summarize, shorten, reword, or re-punctuate"
 # prose can strip it without any block changing.
 LABEL_NOT_EMITTED = "this file's markers rather than part of what you emit"
 
-Label = Literal["goal-block", "gate-ledger-clause", "pr-goal-block", "pr-tend-prefix"]
+Label = Literal["goal-block", "gate-clause", "pr-goal-block", "pr-tend-prefix"]
 
 # Fence label -> a phrase from that block's body. The label is the identity; the
 # signature exists only so `test_every_shared_block_is_labelled` can catch a block
@@ -82,9 +82,7 @@ Label = Literal["goal-block", "gate-ledger-clause", "pr-goal-block", "pr-tend-pr
 # keys as a closed union is what stops `GOAL_BLOCK` and a renamed key drifting apart.
 SIGNATURES: dict[Label, str] = {
     "goal-block": "Work under the Manifest at <manifest-path>",
-    "gate-ledger-clause": (
-        "explicit or inherited verifier model, latest verdict, evidence"
-    ),
+    "gate-clause": ("its latest verdict, the evidence behind that verdict"),
     "pr-goal-block": "Work until every Acceptance Criterion and Global Invariant in the Manifest holds",
     "pr-tend-prefix": "Discover or synthesize the Manifest for this pull request.",
 }
@@ -330,7 +328,7 @@ def test_blocker_continuation_survives_every_outer_goal() -> None:
 
 def test_auto_chains_leave_goal_emission_to_the_executor() -> None:
     """A chain must remain goal-free until it has handed over a Manifest."""
-    for name, executor in (("auto", "do"), ("just-auto", "just-do")):
+    for name, executor in (("auto", "do"),):
         for path in [source_skills()[name], *dist_copies(name)]:
             text = normalized(read(path))
             assert not blocks_in(path), path
@@ -349,7 +347,7 @@ def test_executor_contract_identifies_manifest_without_prior_context(
     manifest.parent.mkdir()
     manifest.write_text("# Distinct test Manifest\n", encoding="utf-8")
     contracts: set[str] = set()
-    for name in ("do", "just-do"):
+    for name in ("do",):
         for path in [source_skills()[name], *dist_copies(name)]:
             blocks = dict(fenced_blocks(path))
             assert "manifest-reference" not in blocks, path
@@ -358,10 +356,7 @@ def test_executor_contract_identifies_manifest_without_prior_context(
             assert "absolute Manifest path" in instructions, path
             assert "substituting `<manifest-path>`" in instructions, path
             assert "Emit the goal block" in instructions, path
-            assert (
-                f"including when called by /{'auto' if name == 'do' else 'just-auto'}"
-                in instructions
-            ), path
+            assert "including when called by /auto" in instructions, path
             # Replay only the explicit substitution. The recovery half receives
             # the assembled contract, not the invocation or checkpoint history.
             emitted = blocks["goal-block"].replace("<manifest-path>", str(manifest))

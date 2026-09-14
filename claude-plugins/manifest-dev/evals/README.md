@@ -51,10 +51,6 @@ from a discipline `SKILL.md` explicitly states.
 | `11-underdetermined` | autonomous | Do not manufacture a winner; separate verified from assumed | both arms fail |
 | `12-living-with-it` | autonomous | Price "living with it" as a real option | untested |
 | `13-status-quo-job` | autonomous | Test the status quo's possible job before removing it | untested |
-| `01j-root-press-lean` | mirror | `01` against `just-figure-out` | both arms fail |
-| `06j-strategic-open-lean` | mirror | `06` against `just-figure-out` | discriminates |
-| `11j-underdetermined-lean` | mirror | `11` against `just-figure-out` | discriminates |
-| `12j-living-with-it-lean` | mirror | `12` against `just-figure-out` | untested |
 
 `04` and `05` are a **mirror pair** and stay paired: a model that always concedes fails `04`, one
 that always digs in fails `05`. No constant policy passes both.
@@ -65,11 +61,10 @@ over-triggering is the first casualty of any "press harder" tuning.
 
 ## Held-out split
 
-**Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `12-living-with-it`,
-`13-status-quo-job`, and `12j-living-with-it-lean`.** Five of fifteen cases — exactly a third.
-These are run in the baseline and in the final verification only; they appear in no intermediate
-run during the climb. Tuning happens on seven: `01`, `02`, `04`, `06`, `07`, `10`, `11`. The three
-remaining mirrors are measurement, not tuning targets — nothing is tuned against them either.
+**Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `12-living-with-it`, and
+`13-status-quo-job`.** Four of eleven cases — over a third. These are run in the baseline and in
+the final verification only; they appear in no intermediate run during the climb. Tuning happens on
+seven: `01`, `02`, `04`, `06`, `07`, `10`, `11`.
 
 The held-out set deliberately includes two autonomous cases testing disciplines the climb is not
 aimed at — pricing "living with it", and testing the status quo's job. If a change that fixes
@@ -93,7 +88,7 @@ deliberately, and declared here rather than counted as uplift:
 | `chases-the-crumb` | `11` | The detail that does not fit gets pursued, not smoothed over |
 
 **A grader passing in both arms is information, not a defect** — it says the base model already
-carries that discipline unprompted, which is the `just-*` family's own claim and worth knowing.
+carries that discipline unprompted, which is exactly what decides how much prompt to spend on it.
 What it is not is evidence of uplift, so none of these moves Δ, and none may be cited as showing
 the plugin does something.
 
@@ -155,35 +150,20 @@ rubric that was simply miscalibrated.
   and a clean uplift signal, but it passes with-plugin and fails without on every case, so carrying
   it everywhere made a file-existence check dominate the headline number.
 
-## The lean-variant mirror cases
+## The comparison this suite was also used for
 
-`just-figure-out` is the lean arm of the same beats — a 72-line prompt against `figure-out`'s 162.
-The `just-*` family is an experiment: the claim under test is that the prompt can be narrowed
-substantially because a modern base model already carries much of the discipline. **The no-plugin
-baseline arm of this suite is exactly that claim's comparison**, which is what lets this instrument
-speak to it.
+For one round, four of these scenarios were duplicated into mirror cases that named a shorter
+draft of the skill instead of the shipped one, so each scenario yielded three numbers: the
+no-plugin baseline, the shorter prompt, and the longer one. That comparison is finished and the
+mirrors are retired — the shorter prompt became the shipped one, and there is no second variant
+left to measure against. The numbers and the reasoning are recorded in
+`docs/adr/20260914-one-skill-per-beat-built-from-the-lean-body.md`.
 
-Four scenarios are mirrored. Each mirror's `prompt.md` differs from its original in exactly one
-line — the skill it names — and its graders are byte-identical:
-
-| Scenario | Full | Lean |
-|---|---|---|
-| Solution arrives pre-chosen | `01-root-press` | `01j-root-press-lean` |
-| No crux handed over | `06-strategic-open` | `06j-strategic-open-lean` |
-| Evidence underdetermines the answer | `11-underdetermined` | `11j-underdetermined-lean` |
-| Living with it is the right answer | `12-living-with-it` | `12j-living-with-it-lean` |
-
-That yields three numbers per scenario: the no-plugin baseline, the lean prompt, and the full
-prompt.
-
-**Held out from tuning, updated: `05-move-on-evidence`, `08-neg-authorized`, `12-living-with-it`,
-`13-status-quo-job`, and `12j-living-with-it-lean`.** The mirror of a held-out case is held out
-too — tuning against it would defeat the split on both sides of the comparison.
-
-**What this comparison cannot do.** Four scenarios cannot settle whether a lean variant should
-replace a fuller one. The result is evidence toward a decision the repository's owner holds, and
-this suite reports it that way — never as a recommendation to graduate or retire either variant.
-What would move confidence further is stated alongside the numbers.
+What the episode leaves behind for this suite is the shape of the instrument rather than the
+result: **the no-plugin arm is the comparison that matters**, because it is the only one that says
+whether the prompt is buying anything over a capable base model. A mirror case comparing two
+versions of our own prompt is a tool to reach for when a rewrite is on the table, not a permanent
+fixture.
 
 ## Grader calibration — why two rubrics were rewritten
 

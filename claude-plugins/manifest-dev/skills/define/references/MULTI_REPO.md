@@ -59,7 +59,7 @@ Deterministic gate.
 
 Cross-repo verification often depends on prerequisites the user controls ("all PRs deployed to staging"). The selected evaluator for such an AC returns **BLOCKED** with a note describing what's pending, and /do routes the BLOCKED via /escalate so the user can take the action. After the user signals readiness ("deployed", "go ahead"), re-invoke /do to re-evaluate the criterion.
 
-When the manifest declares `Repos:`, `/do` adds the cross-repo path map to the envelope it builds, alongside the Manifest path and gate IDs it points the evaluator at, so every verification mode has access to all repos' paths:
+When the manifest declares `Repos:`, `/do` keeps the cross-repo path map in view while it works and while it judges each gate, so every repo's path is reachable:
 
 ```
 Available repos: backend=/home/user/projects/api, frontend=/home/user/projects/web

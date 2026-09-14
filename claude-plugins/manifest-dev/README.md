@@ -20,7 +20,7 @@ Run them in order, though each works on its own:
 
 ## Run it unattended
 
-`/do` and `/just-do` assume you are away for the entire execution, even after you send a steering message. They decide without asking follow-up questions and report material choices and their rationale afterward. A failed approach calls for another approach; a blocker requires something the executor cannot responsibly supply. Blockers are reported promptly while useful independent work continues.
+`/do` assumes you are away for the entire execution, even after you send a steering message. It decides without asking follow-up questions and reports material choices and their rationale afterward. A failed approach calls for another approach; a blocker requires something the executor cannot responsibly supply. Blockers are reported promptly while useful independent work continues.
 
 Both may revise Appetite — the planned size of the change — before broader work starts when the benefit to your requested outcome justifies added complexity and maintenance. Explicit exclusions and binding requirements stay fixed. Unrelated improvements and changing the contract to excuse excess work are outside that delegation.
 
@@ -29,10 +29,6 @@ These entrypoints extend unattended work through planning or reduce its process:
 | Skill | What it does |
 |-------|--------------|
 | `/auto` | Chains figure-out, define and do without stopping for approval between them. |
-| `/just-figure-out` | The lean figure-out: presses a topic to a named read — conclusion, confidence, evidence, what would overturn it — deciding for itself how to get there. Offers `/just-define` when the read implies work. |
-| `/just-define` | The lean define: encodes shared understanding into the same Manifest contract, deciding for itself how to interview. Hands execution to `/just-do`. |
-| `/just-do` | Executes a Manifest with the same unattended decision authority and less process. Keeps an execution log keyed to the Manifest, so a relaunched run picks up where the last one stopped; `--no-log` opts out. |
-| `/just-auto` | The same leaner posture across the whole chain: just-figure-out, just-define, just-do. |
 
 ## Project surfaces
 
@@ -73,7 +69,7 @@ A Manifest separates *what to build* — deliverables, each with criteria — fr
 
 The Manifest is the source of truth for a run. Feedback during `/do`, or after it finishes, amends the Manifest rather than being applied straight to the code.
 
-For an unattended run, `/do` or `/just-do` sets a host-native goal-setting or continuation contract before implementation, with the Manifest’s absolute path included. Where a host offers neither capability, the executor prints the same contract for you to apply manually. `/auto` and `/just-auto` leave this to the executor: understanding and definition have no continuation goal, so an interruption there needs a restart.
+For an unattended run, `/do` sets a host-native goal-setting or continuation contract before implementation, with the Manifest’s absolute path included. Where a host offers neither capability, the executor prints the same contract for you to apply manually. `/auto` leaves this to the executor: understanding and definition have no continuation goal, so an interruption there needs a restart.
 
 ## Manifest sections
 

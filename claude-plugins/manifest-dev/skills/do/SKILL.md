@@ -1,9 +1,14 @@
 ---
 name: do
-description: 'Manifest executor. Works through Deliverables verifying every Acceptance Criterion and Global Invariant. Use when executing a manifest, running a plan, implementing a defined task, or when the user asks to run, execute, implement, or ship a manifest-backed plan.'
-argument-hint: '<manifest-path> [--verification per-gate|consolidated|self] [--verifier-model <model>] [--exhaustive-verification] [--no-log]'
+description: 'Manifest executor. Reads a Manifest and pursues it with full autonomy: reach a state where every Acceptance Criterion and Global Invariant holds, deciding for itself how to get there. Use when executing a manifest, running a plan, implementing a defined task, or when the user asks to run, execute, implement, or ship a manifest-backed plan.'
+argument-hint: '<manifest-path> [--no-log]'
 user-invocable: true
 ---
+
+No path → halt with usage. Read the Manifest in full, then make every Acceptance
+Criterion and Global Invariant hold as written; how is yours. Those bind; Initial
+Approach and Process Guidance advise. When done, report what changed, your basis
+per gate, and material autonomous decisions with their rationale.
 
 ## Autonomous execution
 
@@ -15,143 +20,35 @@ A blocked obligation has no viable authorized path after investigating credible 
 
 Surface an established blocker promptly with its evidence and the intervention needed, then continue useful independent work that does not depend on guessing the blocked decision. A blocker notice is not a terminal escalation. Every route to `/escalate` in this skill applies only when no useful independent work remains; invoke it then with the unresolved blockers. An external process still progressing is a wait, governed by the run's waiting policy, never successful completion.
 
-## Execution
-
-### What binds the run
-
-Work toward the manifest's Deliverables in the order listed. Acceptance Criteria and Global Invariants are the binding layer — they are what the run owes, and gates are the only thing that can hold it open. Process Guidance is advisory: recommendations on how to work, weighed rather than enforced, and set aside when the work is better for it — name every departure on whichever terminal path the run takes — completion summary, escalation payload, or pending summary — and in the execution log too when a log is being kept, since advisory only stays safe while departing stays visible. The Initial Approach and the Deliverable order are likewise plan, not contract: pivot either when reality diverges, and name the deviation the same way a departure is named. Resequence when execution changes what the order was built on — a real dependency the order missed, or a shift in which Deliverable is now least proven, since proving the leading approach is exactly what ordering by uncertainty is for. Every judgment the run weighs rather than obeys — departing from Process Guidance, pivoting the Initial Approach, resequencing, choosing what stays below a bar on a terminal path — steers by the manifest's Intent: better than the Problem's baseline story, within the size the Appetite says the problem is worth, comparing down to that baseline rather than up to an ideal.
-
-### Running gate evaluations
-
-Resolve execution policy before implementation starts. `--verification` accepts `per-gate`, `consolidated`, or `self` and defaults to `per-gate`; after resolving that default, load exactly one matching reference: `references/per-gate-verification.md`, `references/consolidated-verification.md`, or `references/self-verification.md`. The selected reference owns evaluator topology, evaluator provenance, and mode-specific evidence wording for completion and unattended backstops. `--verifier-model <model>` is optional and applies to the independent modes: when supplied, use it for every verifier execution and report verification blocked if the active host cannot honor that selector, preserving it while useful independent work continues; when omitted, verifier executions inherit the invoking context's model choice. The selected mode, the verifier-model provenance, and whether `--exhaustive-verification` is in force are fixed for the run and never change in response to cost, elapsed rounds, findings, or model preference. A later invocation changing any of them — including adding or dropping the flag — starts a new run with a fresh gate ledger rather than mixing evidence provenance. None of them is written into the Manifest.
-
-Read and validate every gate before work. A gate is a **title**, a **body**, an optional **why**, and a required **kind** (`judgment` or `deterministic`). There is no default kind and none is inferred — a gate that does not declare its kind makes the Manifest invalid, because the declaration is what decides how that gate re-verifies. Two shapes are the superseded schema and reject the same way: a gate carrying a `verify` block of any shape — `instructions`, `prompt`, `model`, or a description paired with a separate evaluator text — and a gate stating a `phase`, a field this workflow no longer has. Reject the Manifest with a clear instruction to create a fresh one by running `/define`, without passing the incompatible Manifest as an amendment input. Do not translate, ignore, migrate, or amend an old schema — silently dropping a stated phase would discard an ordering its author chose deliberately.
-
-### Pointing evaluators at the gate
-
-Before calling `/done`, evaluate every Acceptance Criterion and Global Invariant under the selected mode. **Point evaluators at the gate; never copy its text into the envelope.** A per-gate execution receives the Manifest's absolute path and the ID of the gate it evaluates; a consolidated execution receives that path and the set of eligible gate IDs. The canonical text is read from the file, so nothing can paraphrase, truncate, or reframe a gate between authoring and evaluation — and the party that would otherwise be assembling that copy is the executor, whose interest in how a gate reads is exactly what verification exists to neutralize.
-
-Run state travels in the envelope, because it deliberately is not Manifest content: which gates are eligible, and how much each Judgment Gate re-reads on this evaluation — its Ratchet scope, defined under *Verification settings* below. So does one framing line — **evaluate the named gate as written, and treat nothing else in the Manifest as binding on your verdict.** A gate's body states what done means on its own, so it depends on nothing else in the file; the line is what stops Process Guidance and the Initial Approach, now visible, from being read as though they bound. Multi-repo manifests declaring `Repos:` add the path map per `define/references/MULTI_REPO.md`; otherwise add no gate context.
-
-An evaluator evaluates and never repairs the artifact. A Manifest path it cannot read is **BLOCKED**, not FAIL — the gate was never evaluated, and a FAIL would report a verdict nobody reached; where one execution covers a set of gates, that is BLOCKED for every gate in the set.
-
-### What `/do` supplies once, so no gate restates it
-
-Two things hold for every evaluation in the run, so they live here rather than being copied into every gate body:
-
-- **The comparison.** For repository work, read the change as `origin/main...HEAD` — `origin/main` rather than `main`, since a local ref can sit stale in a fresh or shallow clone and fail a gate on the wrong evidence. Substitute the repository's actual default branch where it differs. A gate needing a different subject — every commit on the branch rather than the net diff, because a gate reading only the net diff cannot see what appeared and was removed inside it — says so in its own body, as an exception to this default.
-- **The verdict contract.** Every evaluation returns PASS, FAIL, or BLOCKED with concrete evidence. A gate does not restate it.
-
-Gate bodies that activate a skill name the skill and its dimension and stop there: `review-code` owns each dimension's threshold in its own table, so a threshold copied into a gate is a second statement that can contradict the first. Under every mode, an evaluator meeting such a body **activates** that skill in its own context — never spawns a further agent to run it, which would bypass the gate's PASS/FAIL/BLOCKED contract.
-
-Evaluate gates through the selected reference's execution envelope. Every gate that is unverified, stale, FAIL, or retryable BLOCKED is eligible; a fresh PASS is settled and does not re-run. A FAIL remains eligible after repair, and a retryable BLOCKED remains eligible at its next check. Run eligible gates in parallel only where the selected reference provides parallel evaluator executions.
-
-### What each gate's kind decides
-
-Every Acceptance Criterion and Global Invariant declares its kind. A **Deterministic Gate** (`deterministic`) takes its verdict from a command or check returning the same outcome for the same artifact state. A **Judgment Gate** (`judgment`) takes its verdict from a model's judgment over an open finding space, where a fresh evaluation surfaces findings the previous one did not even on an unchanged subject. A gate that mixes the two — a command whose result is one input to a judgment — is a Judgment Gate; whatever a gate's kind, a body naming explicit commands always runs those commands in full, since a command's cost is small and its answer is the evidence.
-
-### Verification settings
-
-Two run-level settings; *Running gate evaluations* above resolves both and fixes them for the run. Guidance on choosing between their values is user-facing and lives in the README — the selection is made before launch, and the run works under it as given.
-
-**Who checks** — `--verification`:
-
-- `per-gate` *(default)* — a fresh verifier execution per eligible gate, run concurrently, each in its own context.
-- `consolidated` — one verifier execution works through the outstanding gates in sequence, in a single shared context.
-- `self` — the executor evaluates its own work; no verifier executions launch.
-
-**How much a Judgment Gate re-reads** — `--exhaustive-verification`:
-
-- *off (default)* — the **Ratchet**. A Judgment Gate reads the full change on its first evaluation; every later one judges two things only — whether the findings it last reported were repaired, and whether the delta since introduced anything its criterion catches. It still reads as widely as it needs to understand what it is looking at, and reports only within that scope.
-- *on* — every Judgment Gate re-reads the full change whenever it is eligible. Load `references/exhaustive-verification.md` when this is passed, and otherwise leave it unloaded.
-
-A **Deterministic Gate is outside the second setting**: the same state returns the same verdict, so it re-runs freely and in full whenever it is eligible.
-
-**Spend an expensive evaluation on a state you expect to hold.** Where re-running a gate costs far more than a round of repairs — a long end-to-end suite, a deploy-dependent check — evaluate it once the gates whose failures would move its subject are settled, rather than on a state a repair is about to change. A gate whose cost is not obvious from reading it says so in its own body, which is what lets this be judged rather than guessed. The **whole-change quality sweep** is the standing case: the advisory review dimensions range over everything the run touched, so their one full look is worth spending after the run's mechanical and defect-finding gates hold a fresh PASS. Sweep findings bind like any gate's — repair them in the run rather than handing them to the user, and let the repairs re-verify through the gates whose subjects they touched.
-
-### The gate ledger
-
-Use the selected reference's evidence/provenance wording when recording each gate's provenance. Each evaluated gate returns PASS, FAIL, or BLOCKED; track its latest verdict, evidence, freshness, verification mode, evaluator provenance, and explicit or inherited verifier model in the gate ledger. A Judgment Gate carries two more entries, since they are what its next evaluation is scoped against: the artifact state its last evaluation read — for repository work, the head SHA — and the findings it reported there. A substantive change to a gate's subject after a PASS marks it stale until re-evaluated, while re-reading, re-examining, and cosmetic or no-op edits do not. Manifest amendments invalidate evidence for new or definition-changed gates as described under Steering & amendment. Unverified, stale, FAIL, and retryable BLOCKED gates re-evaluate when eligible; a settled fresh PASS does not re-run.
-
-### When the run is done
-
-A fresh evidenced PASS on every Acceptance Criterion and Global Invariant under the selected mode is both **necessary and sufficient** for done: necessary — never declare done on an unevidenced self-attestation or a "looks done" judgment in place of executing what the gate asks for; sufficient — once every gate holds a fresh PASS the run is complete, so invoke `/done` with the manifest path, selected mode, verifier-model provenance, gate ledger, and the selected reference's evidence/provenance wording, then stop. A passing gate is settled, not provisional, and its PASS evidence ends the loop.
-
-Sufficiency runs over gates whose premises stand. A PASS whose criterion misdescribes what it judges is not a settled PASS: do not complete on it — it routes per *Gate text is the exception* below, which owns that route: an autonomous envelope repair where the advance delegation reaches the gate, `/escalate` otherwise. A repair or a user's amendment changes the gate's identity, so it returns to the ledger unverified and re-verifies like any other changed gate; a user affirming the text as written leaves the existing PASS standing. That is the only thing a passing gate owes on its own premise.
-
-### Acting on verdicts
-
-A verifier's BLOCKED is a finding to investigate, not a declaration that the whole run must stop. Recover what you can within your authority; otherwise surface the blocker and continue independent work under *Autonomous execution*. A BLOCKED that leaves only waiting is the retryable kind: it reports as pending under a no-wait overlay once no actionable work remains; see *Caller overlays*. Without that overlay it waits and re-verifies on an interval proportionate to what is being waited on — the evaluator's own note usually implies one — and investigates recovery once the wait has no visible end, bounded by *Runaway protection*. FAIL bodies carry findings or a natural-language hint — read them and act on what they say. When two evaluations of the same subject disagree about whether a rule holds, the disagreement is the finding: a subject two careful reads judge oppositely is under-specified, whichever verdict is technically right. Sharpen the subject under test — the artifact both evaluations read, and only within what this run is changing — rather than adopting the more convincing verdict; unless what they read oppositely is a gate's own criterion, which routes per *Gate text is the exception* rather than being rewritten here.
-
-### Loop discipline
-
-**Verify per head, not per fix.** A round's findings were all true of the same commit, so decide everything you will change from that round, change it, then re-verify once. Fixing and re-running evaluations one at a time re-stales every gate whose subject moved and learns nothing the round had not already told you — and it strands evaluations still running against a head that no longer exists.
-
-**A gate's threshold is the bar, not a starting point.** A PASS settles that gate's subject: the default on a passing gate is to do nothing further there, and findings it reported beneath its bar are handed over rather than worked. That threshold was chosen deliberately — treating a lower severity as free to fix while already in the file overrides someone's decision and re-stales every gate whose subject that file touches. Findings below the bar are real and worth recording for the user, but they are not owed. Repairing them in-loop costs a full re-verification of everything the change touches, and a branch that keeps growing to chase advisory findings pays that cost repeatedly for work no gate asked for. Hand them over on whichever terminal path the run takes — completion summary, escalation payload, or pending summary — the same way a Process Guidance departure is named, and move on. Where the manifest carries a ceiling invariant, that cost has a second edge: the invariant can fail work no criterion required, so a round that reaches past the artifacts already in scope to chase advisory findings risks failing it as well.
-
-The exception is a finding that shows the change unfinished rather than imperfect — an obligation introduced with no recipient, a rule written that contradicts one kept. Repair those in the round that found them instead of handing them over: severity ranks impact, not completeness, and shipping a half-wired change is not restraint. A ceiling invariant does not reach them either, since completing what a criterion started is work that criterion required. This bounds what a repair round covers, not when the run may stop — gates alone decide that.
-
-**A rule lives in more places than the one you are editing.** Search its distinctive wording before changing it, rather than after the next verifier points at another copy — the first pass is where the sweep is cheapest, and the site a finding named is where it was noticed, not where it lives. It is not done until every statement agrees in scope as well as in wording: other files carrying the rule, a caller's copy of a contract, generated or distributed copies, and the surfaces that discharge it, since an obligation with no recipient is announced rather than stated. Where one statement is already right, adopt its wording instead of composing a fresh one — solving a solved problem twice yields two answers, and the second is rarely the better one.
-
-## Failure routing
-
-Repair failures, including by changing the approach, while a viable authorized route remains. Findings and hints inform that judgment; a label such as unrecoverable or human-decision-needed does not establish a blocker by itself. Apply *Autonomous execution* before any terminal escalation.
-
-Whenever `/do` invokes `/escalate`, pass the manifest path, selected verification mode, explicit or inherited verifier-model provenance, and affected gate ledger entries including evaluator provenance; `/escalate` reports them with the blocker.
-
-**Reconsider the design when repairs stop converging.** Findings in one subject getting smaller and fewer mean the loop is working; each fix spawning a comparable one calls for a different design rather than another local patch. Investigate that alternative and choose it autonomously within the run's authority. Escalation follows exhausted viable recovery paths, not a fixed number of findings or the failure of one design.
-
-**A costly threshold is not a blocker while repairs are converging.** A gate can describe its subject correctly and still sit at a bar costing more than it returns. Record what recent rounds found and what another round would re-verify, keep repairing toward the bar as written, and report the concern on the terminal path. Never ask for a discretionary threshold decision or lower the bar yourself. If the user supplies a threshold change, amend and re-verify normally; an affirmation settles that concern for this run.
-
-**The run never widens scope on its own reading to absorb work it already did.** Any manifest edit that stops already-completed work from being judged — narrowing Out of bounds or widening Appetite to cover it, folding it into a ceiling's inherited-work list, or refreshing a ceiling's authorized list from an Initial Approach the run amended to match work it had already done — is the executor deciding after the fact what it owed — the thing a ceiling invariant exists to prevent — and it hides itself, since the widened manifest passes on the next round and the loop reports success over exactly what it was meant to catch. That holds whenever the question arises on the run's own reading, not only once a ceiling has failed. So a ceiling FAIL is repaired by removing the excess; where removing it is genuinely the wrong answer, that scope question goes to `/escalate` rather than being settled by the run, the way a disputed gate text does.
-
-Three neighbouring cases are not this one. A justified Appetite revision for work still *ahead* amends within *Autonomous execution*'s delegation. A user's steering message that widens scope over work already done is theirs to give — encode it by amendment on the normal steering path, without asking back. And `/define` naming completed work when it backfills a ceiling or replaces a criterion is the opposite move, not this one: that list is bounded to what the criteria then in force required, where this rule targets relabelling work nothing required.
-
-## External review input
-
-When a finding carries **external review input** — a PR review comment or bot suggestion, as opposed to the manifest's own Acceptance Criteria and Global Invariants, which stay authority and must be satisfied — judge it before acting instead of implementing it to make the thread go away.
-
-Weigh whether it's correct, whether it serves this PR's intent, and whether addressing it is proportionate to that intent — a valid point that needs work beyond the PR's intent belongs in separate work, not this PR. Adopt the comments that clear that bar; on the ones that don't — a false positive, or a valid-but-separate-scope ask — reply with your reasoning rather than changing code.
-
-Push back even on a human reviewer when you are confident, with a respectful reply that leaves the thread open for them to resolve; when you are not — a borderline-valid point, or a substantive design objection — record it for the user and, when replying is authorized, reply non-committally and leave it for a human rather than bulldozing. Landing authority belongs to the caller; judge review input on its evidence and scope without assuming a later human review.
-
-When the user does want a beyond-intent ask incorporated, that is an amendment: invoke `define` again with the manifest path and the amendment context — `/define` reads "manifest path in args = amend" and applies targeted changes.
-
-## Caller overlays
-
-Caller overlays may narrow retry cadence without changing the manifest. In CI one-shot / no-wait contexts, execute immediately actionable findings (fix, test, commit/push when authorized, retrigger, reply, resolve, sync), then stop instead of executing long wait directives such as `wait <N>; reinvoke`.
-
-If only wait-shaped findings remain, report the waiting state as pending; do not call `/done`, do not call `/escalate`, and do not keep the runner alive. That summary reports the selected verification mode, evaluator provenance for every reported gate, and explicit or inherited verifier-model provenance. It also carries what the other two exits carry — material autonomous decisions and Appetite revisions with their rationale, Process Guidance departed from, deviation from the Initial Approach or the Deliverable order, findings a gate reported below its threshold, and any gate whose bar the run read as suspect without a user to ask — since it is the only thing the user sees on this exit.
-
-## Execution log
-
-Execution history never lives in the manifest — logged or not, the manifest stays the acceptance contract. Unless parsed options include `--no-log`, load `references/LOG.md` and keep an append-only execution log — deviations from the Initial Approach or Deliverable order, Process Guidance departures, dead-end memory, and operational notes; a caller-supplied journal path is that log. Under `--no-log`, run without one — the log is an aid, not a precondition.
-
-**Runaway protection.** Holds regardless of logging; the log is where its memory lives. Lifecycle verifiers like `check-pr` are stateless, so use the log plus run memory to stop repeating a fix or wait that no longer yields progress or new evidence. Investigate a different viable route; when none remains, identify the intervention needed and apply *Autonomous execution*'s blocker routing. In no-wait mode, a pure external wait instead ends pending after actionable work is exhausted.
-
-## Steering & amendment
-
-User steering that changes the requested outcome, scope, or a rule invokes `define` for amendment. Acknowledgments and requests to continue resume the current work; status questions are answered inline. The Manifest remains the source of truth for substantive changes. A message that *reverses or redefines a rule* rather than adding work amends too: it widens no scope, so the drift rationale never reaches it, yet it is the class most likely to leave the manifest describing a system that no longer exists. After the amendment returns, re-read the full Manifest and reconcile the active gate ledger before resuming.
-
-**When the manifest's plan no longer fits.** An Architecture that no longer describes the work ahead, a justified Appetite revision, or a settled Known Assumption calls for autonomous amendment via `define`. Pass the decision and its rationale, including the benefit and added complexity or maintenance for an Appetite revision; amend before broader work starts. This delegation never changes explicit exclusions or binding requirements. A false binding premise routes through *Gate text is the exception*; excess already produced routes through *The run never widens scope on its own reading to absorb work it already did*. Report material amendments on the terminal path as well as in the log.
-
-**Gate text is the exception — and one class of its say-so is granted in advance.** Gate text changes on the user's say-so, not the run's: never amend an Acceptance Criterion or Global Invariant on the run's own reading that it misdescribes what it judges — the binding layer a run rewrites for itself binds nothing. One repair carries that say-so in advance: when execution or a verifier shows a gate pinning a *mechanism* the run legitimately pivoted away from while the outcome that mechanism served is met, and the manifest shows nothing marking that mechanism deliberately chosen, amend autonomously via `define` to raise the gate to that outcome, at the altitude of the manifest's Problem and Appetite. Raise-only: the repaired gate must still catch the outcome the original claimed — never lower a bar, narrow a region, or drop a gate. The changed gate returns to the ledger unverified and re-verifies like any amended gate, and the call lands as `(auto)`/ASM entries plus the digest — the user's audit trail. The delegation never reaches the deliberately-chosen set — a safety-critical invariant, a criterion the user pinned by reacting to something concrete, a bound routed from Out of bounds, a Known Assumptions triage settlement, or a gate whose why or provenance shows the mechanism is the point — and unclear provenance reads as deliberate. Everything outside the delegation stays instance-by-instance: those gates, every weakening, and any other misdescription route to `/escalate` with what the verifier reported or what execution surfaced, whether the gate passed or failed, and a human decides.
-
-**Amendments do not land mid-evaluation.** Evaluators read the Manifest rather than a copy of it, so an amendment written while evaluations are in flight changes the contract under them. Wait for the round to return before amending; if one lands anyway, discard that round's verdicts and re-evaluate against the amended Manifest rather than crediting evidence gathered against text that no longer exists.
-
-**Reconciling the ledger.** A gate's verification identity is its complete effective evaluation input: ID, title, body, why, kind, and any caller-injected wrapper context such as a multi-repo path map. New gates and gates whose identity changed become unverified, with prior verdicts retained only as history; removed gates retire from the active ledger; unchanged gates retain their verdict and freshness subject to relevant changes in their subject. A run-level mode or verifier-model-provenance change invalidates the whole active ledger rather than changing individual gate identities. Run outstanding verification as usual.
-
-Which gates an amendment actually reaches is a judgment, not a byte comparison: an Intent edit reaches every gate whose region or interpretation it changes, including the ceiling when Appetite changes. **Record that call per gate**: which gates the amendment left settled and why. The run benefits from deciding it re-verifies less, so an unrecorded judgment is a lever on the run's own rigor; a recorded one is auditable. When it is genuinely unclear whether a gate was reached, treat it as reached and re-verify.
-
-Then surface a one-line digest of what the amendment assumed (the new or changed `(auto)`/ASM entries) so a user who steered and left can audit on return. Pure questions about the manifest or process are answered inline.
-
-## Unattended launch
-
-Before implementation, including when called by /auto, establish a durable goal-setting backstop after reading the Manifest. Resolve its absolute Manifest path for the contract below.
-
-**Where the contract lives.** If a broader parent workflow backstop is already visible (for example `/babysit-pr`'s PR-tend contract) and it carries the gate-ledger clause below, do not set or print a second narrower goal; operate under the parent contract. If the visible parent lacks that clause, supplement it with the gate-ledger clause below before continuing.
-
-**What to emit.** Otherwise, when no parent backstop is visible, emit the blocks below verbatim, substituting `<manifest-path>` with the absolute Manifest path. Do not summarize, shorten, reword, or re-punctuate them. Set them through the harness's goal-setting, continuation, or durable-completion-condition capability where one exists; print it in copy-pasteable form for the user's own continuation mechanism where none does. Emit the goal block, then the gate-ledger clause, as one completion contract: one unlabeled block introduced by a sentence of your own, since the fences and their labels are this file's markers rather than part of what you emit.
+## Amendments
+
+Invoke `define` with the Manifest path and the decision to amend the plan,
+settled assumptions, or Appetite within your delegated authority, or to encode
+user steering. Pass the rationale and keep the amendment unattended. An Appetite
+revision names the benefit to the requested outcome and the added complexity and
+maintenance; apply it before broader work starts. Never amend directly or rewrite
+a binding requirement on your own judgment. A false binding premise is a blocker;
+a failed approach is yours to replace.
+
+Wait for active gate evaluations to finish before amending. If an amendment races
+an evaluation, discard that evaluation's verdicts and evaluate the amended file.
+Re-read the amended Manifest. Re-verify every gate whose text, subject, or
+interpretation changed, including the ceiling when Appetite changes; keep other
+evidence only while it remains valid. Report material amendments on every terminal
+path and record them in the execution log when kept.
+
+## Continuation
+
+Before implementation, including when called by /auto, resolve the absolute Manifest path
+and arm the completion backstop: continue under an active goal identifying this same file,
+or emit the blocks below verbatim, substituting `<manifest-path>` with the absolute Manifest path.
+Where a broader parent workflow backstop is already visible and already requires evidence for every
+gate — a PR-tend contract, say — operate under it: do not set or print a second narrower goal.
+Do not summarize, shorten, reword, or re-punctuate them. Set them through the harness's
+goal-setting, continuation, or durable-completion-condition capability, else print them
+copy-pasteable. Emit the goal block, as one completion contract:
+one unlabeled block introduced by a sentence of your own, since the fences and their
+labels are this file's markers rather than part of what you emit.
 
 ```goal-block
 Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Read this file before resuming execution.
@@ -163,10 +60,24 @@ Record compact checkpoint notes as work proceeds: what changed, what was verifie
 Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, or an external wait that this run's no-wait policy makes terminal. Continue while authorized, actionable work remains.
 ```
 
-```gate-ledger-clause
-Maintain a gate ledger covering every Acceptance Criterion and Global Invariant: gate id, gate-text source, selected verification mode, evaluator provenance, explicit or inherited verifier model, latest verdict, evidence, and freshness relative to the last relevant change to its subject. Completion requires every listed gate to have fresh PASS evidence under the selected verification mode. Unverified, FAIL, stale, BLOCKED/actionable, or escalation-pending gates do not satisfy successful completion. A terminal wait is reported as pending, never as success. A substantive change to a gate's subject after a PASS marks it stale until re-evaluated, while re-reading, re-examining, and cosmetic or no-op edits do not. Never accept unevidenced self-attestation, "looks done", or a summary claim in place of the selected mode's required evidence.
-```
+## What holds for every gate
 
-## Input
+A gate declares `judgment` or `deterministic`; an undeclared kind is invalid, never
+inferred. Read a gate from the Manifest by ID, never from a copy. For repository
+work, compare against the repository's actual remote-tracking default branch,
+unless the gate names another subject. Include relevant staged, unstaged, and
+untracked work when the artifact being judged includes local changes. A judgment gate reads the full change once, then only
+prior findings' repairs and the delta; a deterministic gate re-runs in full. Findings
+below a passing gate's bar are handed over, not fixed. A bar never moves down on
+the executor's judgment, and a summary claim is not evidence: obtain the missing
+evidence, or report a blocker while continuing useful independent work.
 
-`<manifest-path>` — required; no args → halt with usage. Parse only top-level `--verification`, `--verifier-model`, `--exhaustive-verification`, and `--no-log` options as flags; quoted or topic mentions are text. Read the manifest fully before any execution. Multi-repo manifests (declare `Repos: [name: path, ...]` in Intent) — use absolute paths in tool calls when working in a non-cwd repo.
+## The execution log
+
+Unless `--no-log`, keep an append-only log at `~/.manifest-dev/logs/do-<name>-<hash>.md`,
+where `<name>` is the Manifest's filename without extension and `<hash>` the first eight
+hex characters of SHA-256 over its absolute path. Fixing the scheme is what reopens the
+same Manifest's log on every launch and keeps two manifests sharing a basename in
+different directories apart. Read it before resuming and append as you go: it is where
+the goal block's checkpoint notes land. `references/LOG.md` holds the entry shape
+and append discipline — not its path rule.

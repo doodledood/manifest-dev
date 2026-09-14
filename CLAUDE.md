@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-manifest-dev marketplace — manifest-driven workflows for Claude Code. `/define` interviews and writes a Manifest; `/do` executes it and evaluates every Acceptance Criterion and Global Invariant under a run-level verification mode. Ships skills, not custom agents.
+manifest-dev marketplace — manifest-driven workflows for Claude Code. `/define` interviews and writes a Manifest; `/do` executes it and makes every Acceptance Criterion and Global Invariant hold on fresh evidence. Ships skills, not custom agents.
 
 ## Public Repository Discipline
 

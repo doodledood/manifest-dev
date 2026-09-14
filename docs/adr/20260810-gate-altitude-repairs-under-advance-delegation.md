@@ -1,7 +1,7 @@
 # ADR: Gate altitude repairs run under advance user delegation
 
 ## Status
-Accepted; amended by 20260907-executors-own-unattended-decisions-within-explicit-bounds: gate-repair delegation stands; costly-threshold concerns are recorded while viable repairs continue, without asking during execution
+Superseded by 20260914-one-skill-per-beat-built-from-the-lean-body — the advance delegation was retired with the procedural executor that held it; gate text now changes only through the authoring skill on the user's say-so. The gate-altitude discipline it rests on stays in `/define`
 
 ## Area
 define / do

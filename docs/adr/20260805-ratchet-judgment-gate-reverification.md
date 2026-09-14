@@ -1,7 +1,7 @@
 # ADR: Judgment Gates re-verify by Ratchet, not by re-sampling
 
 ## Status
-Accepted — narrowed by 20260816-an-invocation-is-the-signal-to-review-again, which keeps review-pr's ratchet at the pull request boundary on loop wakes but not on a fresh invocation
+Accepted — narrowed by 20260816-an-invocation-is-the-signal-to-review-again, which keeps review-pr's ratchet at the pull request boundary on loop wakes but not on a fresh invocation; narrowed again by 20260914-one-skill-per-beat-built-from-the-lean-body, which retired `--exhaustive-verification` so the Ratchet is now `/do`'s only judgment-gate re-read behavior rather than a default with an opt-out
 
 ## Area
 define / do

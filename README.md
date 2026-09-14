@@ -55,11 +55,11 @@ Three skills, run in order, though each is useful alone:
 /do <manifest-path>          # build it, then verify every criterion
 ```
 
-`/figure-out` and `/just-figure-out` carry the investigation forward until they need your knowledge, judgment, or authority, or can give a supported conclusion. Short progress messages do not require acknowledgment to continue.
+`/figure-out` carries the investigation forward until it needs your knowledge, judgment, or authority, or can give a supported conclusion. Short progress messages do not require acknowledgment to continue.
 
 `/define` turns understanding into a Manifest: the deliverables, the criteria each one has to meet, and the rules that hold across all of them. It calls `/figure-out` first if the conversation hasn't reached understanding yet.
 
-`/do` implements against that Manifest and can't report completion until every criterion has evidence behind it. Verification runs independently of the work by default, so "it's done" is a finding rather than a claim.
+`/do` implements against that Manifest and can't report completion until every criterion has evidence behind it, so "it's done" is a finding rather than a claim.
 
 ```mermaid
 flowchart TD
@@ -79,11 +79,11 @@ flowchart TD
     class H stop;
 ```
 
-`/auto` chains all three without stopping for approval between them. `/just-figure-out`, `/just-define`, `/just-do` and `/just-auto` are leaner variants of the same beats — same contracts, minimal process.
+`/auto` chains all three without stopping for approval between them.
 
-`/do` and `/just-do` assume you are away: they make decisions without asking follow-up questions, including after a steering message. They may revise the planned size of the change before doing broader work when that produces a better long-term solution to your requested outcome. Explicit exclusions and binding requirements stay fixed. They report material choices afterward, surface blockers promptly, and continue useful independent work before escalating.
+`/do` assumes you are away: it makes decisions without asking follow-up questions, including after a steering message. It may revise the planned size of the change before doing broader work when that produces a better long-term solution to your requested outcome. Explicit exclusions and binding requirements stay fixed. It reports material choices afterward, surfaces blockers promptly, and continues useful independent work before escalating.
 
-For an unattended run, `/do` or `/just-do` sets a host-native goal-setting or continuation contract before implementation, with the Manifest’s absolute path included. Where a host offers neither capability, the executor prints the same contract for you to apply manually. `/auto` and `/just-auto` leave this to the executor: understanding and definition have no continuation goal, so an interruption there needs a restart.
+For an unattended run, `/do` sets a host-native goal-setting or continuation contract before implementation, with the Manifest’s absolute path included. Where a host offers neither capability, the executor prints the same contract for you to apply manually. `/auto` leaves this to the executor: understanding and definition have no continuation goal, so an interruption there needs a restart.
 
 An executor’s goal names the resolved file directly, for example:
 
