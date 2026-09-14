@@ -188,17 +188,35 @@ were stashed so the second baseline measures an unchanged `figure-out`, and the 
 there. That is the intended cost of the freeze rule working: the alternative was tuning a prompt
 against a judge that could not read its own exemptions.
 
-## Measurements — pending
+## Baseline — the converged skill, 2026-09-14
 
-**Every earlier measurement on this suite is void.** The scenarios were originally written from
-real project material; they have been rewritten into fictional domains that preserve each case's
-logical structure, decoys, evidence and difficulty exactly. A prompt change invalidates the
-baseline it was measured against, so the suite is being re-baselined from scratch and the run
-reports from the previous scenarios have been removed rather than kept as misleading history.
+Reports `results/2026-09-14T07-23-48-511Z` (all cases) and `results/2026-09-14T09-32-13-181Z`
+(case 13 alone, re-run once after its first runs died on a session limit — a repaired measurement,
+not a re-roll). 11 cases, `runs: 12` per arm, `--ablation with-without`, sonnet judge. This is the
+number any later prompt change is measured against.
 
-What carries over from the earlier work is method, not numbers: the held-out split, the floor-check
-declarations, the grader calibration, and — most importantly — the two rules below, which were
-learned the expensive way and apply to whatever this suite measures next.
+| Case | Merged with | Merged control | Merged Δ | Lean with | With-arm move |
+|---|---|---|---|---|---|
+| 01-root-press | 0.889 | 0.083 | +0.806 | 0.750 | +0.139 |
+| 02-assumed-cause | 0.917 | 0.542 | +0.375 | 0.875 | +0.042 |
+| 04-hold-under-pushback | 0.750 | 0.500 | +0.250 | 0.958 | -0.208 |
+| 06-strategic-open | 0.625 | 0.083 | +0.542 | 0.542 | +0.083 |
+| 11-underdetermined | 0.861 | 0.750 | +0.111 | 0.944 | -0.083 |
+| 12-living-with-it | 0.667 | 0.750 | -0.083 | 0.792 | -0.125 |
+| 13-status-quo-job | 0.917 | 0.917 | +0.000 | 0.958 | -0.041 |
+| 05-move-on-evidence | 0.917 | 0.667 | +0.250 | — | — |
+| 07-neg-lookup | 1.000 | 1.000 | +0.000 | — | — |
+| 08-neg-authorized | 1.000 | 1.000 | +0.000 | — | — |
+| 10-diagnosis-retry-window | 1.000 | 1.000 | +0.000 | — | — |
+
+Mean Δ over the 11 cases **+0.21**. The "Lean with" column is the earlier measurement of the
+shorter prompt this skill was built up from, on the seven scenarios where that comparison was
+made; the seven-case with-arm move is −0.028, about half a standard error, so the merge held
+what it was meant to hold on the mean. It did not hold it on every case: `12-living-with-it`
+dropped on `prices-doing-nothing` alone (8/12 → 4/12) and `04-hold-under-pushback` on
+`holds-position` and `turn-discipline` — both traced to sentences added during the merge that
+the shorter prompt never carried, recorded in the ADR named above as the open follow-up. A mean
+that passes is not permission to stop reading the rows.
 
 ### Two rules for reading any number this suite produces
 
