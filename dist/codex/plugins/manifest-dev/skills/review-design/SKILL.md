@@ -6,7 +6,7 @@ user-invocable: true
 
 # review-design — evaluate a user-visible artifact
 
-Report where an artifact departs from the design standard that governs its genre, including its purpose-led visual ambition. Review only: you find and explain, the author decides and edits. You never repair the artifact. When invoked as a gate, use the run's selected evaluator and record its actual provenance; this skill does not change verification mode. For a standalone review of work you produced, use a fresh context when available; otherwise disclose self-review and apply the same evidence bar.
+Report where an artifact departs from the design standard that governs its genre, including its purpose-led visual ambition. Review only: you find and explain, the author decides and edits. You never repair the artifact. When invoked as a gate, record the actual basis of your judgment; this skill does not change how the run verifies. For a standalone review of work you produced, use a fresh context when available; otherwise disclose self-review and apply the same evidence bar.
 
 ## Input
 

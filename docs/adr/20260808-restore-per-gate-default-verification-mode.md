@@ -1,7 +1,7 @@
 # ADR: Per-gate restored as the default `/do` verification mode
 
 ## Status
-Accepted — the mode-comparison prose this decision rewrote in `/do` was later relocated to the README by [20260814-run-visible-surfaces-carry-no-cross-option-framing](20260814-run-visible-surfaces-carry-no-cross-option-framing.md); the default flip and all mode semantics stand
+Superseded by 20260914-one-skill-per-beat-built-from-the-lean-body — verification modes were retired, so there is no default to restore; the reasoning about independent evaluation remains the record of why they existed
 
 ## Area
 do

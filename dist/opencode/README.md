@@ -22,7 +22,7 @@ Two source plugins contribute skills:
 
 | From | Skills |
 |------|--------|
-| `manifest-dev` | `auto`, `check-pr`, `define`, `design`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `just-auto`, `just-define`, `just-do`, `just-figure-out`, `next-ticket`, `poll-slack`, `review-code`, `review-design`, `review-writing`, `run-ticket`, `sweep-tickets`, `ticket-up` |
+| `manifest-dev` | `auto`, `check-pr`, `define`, `design`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `next-ticket`, `poll-slack`, `review-code`, `review-design`, `review-writing`, `run-ticket`, `sweep-tickets`, `ticket-up` |
 | `manifest-dev-tools` | `babysit-pr`, `eli5`, `handoff`, `prompt-engineering`, `review-pr`, `review-pr-holistic`, `review-pr-judgment`, `review-pr-thread-verify`, `review-prompt`, `teach-me`, `walk-pr` |
 
 Six of these are dependencies other skills invoke rather than entry points: `done`, `escalate`, and `poll-slack` are called by the ticket workflows, and the three `review-pr-*` skills are called by `review-pr`. They ship so the calling skill resolves on every host; they are not meant to be invoked by hand.

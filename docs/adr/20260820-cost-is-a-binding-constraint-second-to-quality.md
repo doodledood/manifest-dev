@@ -1,7 +1,7 @@
 # ADR: Cost is a binding constraint, second to quality
 
 ## Status
-Accepted
+Accepted — revised by 20260914-one-skill-per-beat-built-from-the-lean-body: the leaner paths this decision justified as a parallel family became the only family, on evidence that the leaner prompt investigated better rather than merely cheaper
 
 ## Area
 Positioning

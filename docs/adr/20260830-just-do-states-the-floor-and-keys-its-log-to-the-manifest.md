@@ -1,7 +1,7 @@
 # ADR: `just-do` states the floor and keys its log to the Manifest; /do and /auto stay the control
 
 ## Status
-Accepted; amended by 20260907-executors-own-unattended-decisions-within-explicit-bounds: the log and verification floor stand; both executors now share AFK authority, and just-do gains bounded prospective amendments rather than keeping do unchanged as the control for that policy
+Superseded by 20260914-one-skill-per-beat-built-from-the-lean-body — the lean executor this decision shaped became the only `/do`, so its floor and Manifest-keyed log are now `/do`'s own rather than one variant's
 
 ## Area
 Prompt architecture

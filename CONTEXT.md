@@ -109,15 +109,6 @@ _Avoid_: Gate scope, gate breadth, tightness.
 `/define`'s omission criterion for advisory-tier task-file gates — each advisory dimension protects a named future activity, and the gate is omitted only when that activity has no bearer on the manifest's surface within the artifact's life, with the missing bearer logged as a fact.
 _Avoid_: Proportionality check, gate triage.
 
-**Verification Mode**:
-The run-level `/do` policy that selects `per-gate`, `consolidated`, or `self` evaluation without changing the Manifest.
-
-**Verification Provenance**:
-The gate-ledger record of who evaluated a gate under which mode and explicit or inherited model choice.
-
-**Verifier Execution**:
-An independent host execution context launched by `/do` to evaluate one gate or a consolidated set of gates.
-
 **Judgment Gate**:
 A gate whose verdict is a model's judgment over an open finding space, so a fresh evaluation can surface findings the previous one did not, even on an unchanged subject.
 _Avoid_: Mood-based gate, subjective gate.
@@ -129,10 +120,6 @@ _Avoid_: Binary gate.
 **Ratchet**:
 A re-verification discipline for Judgment Gates where the first evaluation reads the full change and every later evaluation judges only the prior findings' repairs and the changed delta, closing the finding space after the first full look.
 _Avoid_: Round cap, round limit.
-
-**Amendment Envelope**:
-The bounded repair delegation `/do` holds in advance over gate text — raising a gate shown to pin an incidental mechanism to the outcome it served, raise-only, never reaching deliberately chosen mechanisms, audited and re-verified like any amendment.
-_Avoid_: Self-amendment, free amendment.
 
 **Skill**:
 A reusable capability that extends an agent's behavior.
@@ -163,7 +150,7 @@ A mid-/do user message treated as fire-and-forget direction — encoded into the
 _Avoid_: Interrupt, mid-run question.
 
 **Execution Log**:
-An append-only, out-of-repo journal `/do` and `just-do` keep by default (`--no-log` opts out) recording deviations from the Initial Approach or Deliverable order, Process Guidance departures, dead-end memory, and operational events — execution history never lives in the Manifest. Where it is keyed to the Manifest rather than to the invocation, a relaunched or compacted run re-finds the record its predecessor wrote.
+An append-only, out-of-repo journal `/do` keeps by default (`--no-log` opts out) recording deviations from the Initial Approach or Deliverable order, Process Guidance departures, dead-end memory, and operational events — execution history never lives in the Manifest. It is keyed to the Manifest rather than to the invocation, so a relaunched or compacted run re-finds the record its predecessor wrote.
 _Avoid_: Execution notes, amendments log, changelog.
 
 **Door**:
@@ -260,13 +247,12 @@ _Avoid_: Batch runner, label pulse, dependency controller.
 - `/define` encodes the understanding a figure-out **Read** establishes into a **Manifest** rather than re-deriving or re-investigating it.
 - Every **Acceptance Criterion** and **Global Invariant** is one **Gate Text** in the **Manifest**; `/do` points an evaluator at it by ID rather than copying it into a prompt.
 - **Gate Extension** and gate altitude are independent axes of one **Gate Text**; `/define` sets both at write time, and an instance reported mid-run is evidence a gate's extension is too narrow rather than grounds for a sibling gate.
-- `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, evaluates failed-or-unverified **Acceptance Criteria** and **Global Invariants** under the selected **Verification Mode**, repairs FAILs, and routes BLOCKED gates.
-- `per-gate` launches one **Verifier Execution** per eligible gate, `consolidated` launches one for the outstanding gate set, and `self` launches none.
-- Every gate evaluation returns PASS, FAIL, or BLOCKED evidence plus **Verification Provenance** to the **Do/Verify Loop**.
+- `/do` owns the **Do/Verify Loop**: it implements **Deliverables**, judges failed-or-unverified **Acceptance Criteria** and **Global Invariants** against the evidence each names, repairs FAILs, and routes BLOCKED gates.
+- Every gate evaluation returns PASS, FAIL, or BLOCKED with the concrete evidence behind it.
 - Every **Acceptance Criterion** and **Global Invariant** is either a **Judgment Gate** or a **Deterministic Gate**; the kind is a property of the gate itself, declared in its **Gate Text**.
 - The **Ratchet** governs how the **Do/Verify Loop** re-verifies **Judgment Gates** after repairs; **Deterministic Gates** re-run freely.
-- **Verification Mode** and the **Ratchet** are run-level `/do` policy, never **Manifest** content; **Verification Provenance** records what a given run used.
-- The **Amendment Envelope** narrows gate immutability: inside it `/do` repairs a **Gate Text** by autonomous amendment; outside it every **Acceptance Criterion** and **Global Invariant** still changes only on the user's instance-by-instance say-so.
+- The **Ratchet** is run-level `/do` behavior, never **Manifest** content.
+- Gate text is immutable to the run: every **Acceptance Criterion** and **Global Invariant** changes only on the user's say-so, through the skill that authored it.
 - A **Skill** may invoke other **Skills** and may run through host **Agent** contexts.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.
 - A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.
@@ -274,7 +260,7 @@ _Avoid_: Batch runner, label pulse, dependency controller.
 - **Review PR** in manifest mode independently re-verifies a **Manifest** against the pull request head.
 - The **Judgment Layer** runs inside **Review PR** (both modes) as non-binding questions, kept distinct from a **Manifest**'s binding **Acceptance Criteria** and from the defect fleet.
 - A **Steering Message** is encoded by autonomous amendment, with judgment calls audited as Known Assumptions and pivots recorded in the **Execution Log**.
-- `/do` and `just-do` each keep an **Execution Log**: `/do` keys it to the invocation, `just-do` to the Manifest, which is what lets a relaunch reopen the same file.
+- `/do` keeps an **Execution Log** keyed to the **Manifest**, which is what lets a relaunch reopen the same file.
 - **Babysit PR** uses **PR Grounding** so newer comments do not override stronger sources of intent by recency alone.
 - **CI One-Shot** is a constrained mode of **Babysit PR**.
 - One **Door** per discovery surface; every **Door** opens into the same **House**.

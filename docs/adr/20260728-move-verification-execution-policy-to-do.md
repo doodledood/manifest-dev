@@ -1,7 +1,7 @@
 # ADR: Move verification execution policy to `/do`
 
 ## Status
-Accepted — omitted-flag default superseded by 20260730-consolidated-default-verification-mode
+Accepted — omitted-flag default superseded by 20260730-consolidated-default-verification-mode; the run-level verification policy this decision located in `/do` was retired wholesale by 20260914-one-skill-per-beat-built-from-the-lean-body
 
 ## Area
 do

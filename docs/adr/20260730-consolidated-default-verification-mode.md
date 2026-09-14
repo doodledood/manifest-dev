@@ -1,7 +1,7 @@
 # ADR: Consolidated as the default /do verification mode
 
 ## Status
-Superseded by 20260808-restore-per-gate-default-verification-mode
+Superseded by 20260808-restore-per-gate-default-verification-mode; verification modes were retired entirely by 20260914-one-skill-per-beat-built-from-the-lean-body
 
 ## Area
 do

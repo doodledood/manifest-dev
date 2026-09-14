@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-manifest-dev marketplace — manifest-driven workflows for Claude Code. `/define` interviews and writes a Manifest; `/do` executes it and evaluates every Acceptance Criterion and Global Invariant under a run-level verification mode. Ships skills, not custom agents.
+manifest-dev marketplace — manifest-driven workflows for Claude Code. `/define` interviews and writes a Manifest; `/do` executes it and makes every Acceptance Criterion and Global Invariant hold on fresh evidence. Ships skills, not custom agents.
 
 ## Public Repository Discipline
 
@@ -30,6 +30,15 @@ research digest), and every skill a shipped skill names ships beside it — neve
 a dimension, or a delegation site can therefore turn the suite red without any Python changing,
 and that red is the signal working as intended. The same suite fails when `dist/codex` drifts from
 the source tree it copies.
+
+`claude-plugins/manifest-dev/evals/` is a behavioral eval suite for `figure-out`, run with
+`claude plugin eval . --ablation with-without --judge-model sonnet --allow-tools Write Bash`
+from the plugin directory. It measures **uplift** — every case runs with the plugin and without
+it, and the headline number is Δ, not pass rate — so a case both arms pass teaches nothing and is
+removed. `tests/` is a property suite that must stay green; the eval suite is a measurement whose
+numbers go stale whenever a prompt it covers is edited, and its `evals/README.md` carries the
+baseline, the held-out split, and — most importantly before trusting any result from it — how
+much run-to-run noise it has. Read that section before using a Δ to justify a prompt change.
 
 ## Foundational Documents
 

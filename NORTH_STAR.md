@@ -115,10 +115,12 @@ how many of our own projects are running all three tiers at once.
   LLMs cannot reliably do.
 - Trading quality away for token cost or speed — quality stays the deciding axis. Cost
   is a binding constraint now, not a non-goal: workflows must stay practically affordable
-  on high-end models, which is why the leaner paths exist (the `just-*` executors; the
-  consolidated and self verification modes beside per-gate) — and the mirror still holds:
-  a run that keeps verifying and repairing past the point its gates are satisfied is a
-  defect in our workflow, never a meter the user should have to watch.
+  on high-end models. The answer is one lean path per beat rather than a lean variant
+  beside a procedural one — a prompt that states its goal and gets out of the way spends
+  less of the model's attention on being told what it already knows, which measured
+  better as well as cheaper. And the mirror still holds: a run that keeps verifying and
+  repairing past the point its gates are satisfied is a defect in our workflow, never a
+  meter the user should have to watch.
 - Commentary on this repository's own adoption or popularity (stars, usage, traction)
   anywhere in the repo.
 - User-facing complexity: workflows may be sophisticated inside, but the experience
@@ -129,8 +131,11 @@ how many of our own projects are running all three tiers at once.
   (cost promoted from non-goal to binding constraint, second to quality, after high-end
   model pricing forced leaner execution and verification paths into the suite out of
   necessity — see docs/adr/20260820-cost-is-a-binding-constraint-second-to-quality.md),
-  the traction rule in the repository's contributor instructions. Only the owner moves
-  these.
+  and revised again 2026-09-14 when the owner ruled that one lean path per beat replaces
+  the parallel variants, on evidence that the leaner prompt investigated better rather
+  than merely cheaper — see
+  docs/adr/20260914-one-skill-per-beat-built-from-the-lean-body.md. The traction rule
+  lives in the repository's contributor instructions. Only the owner moves these.
 
 ## Open
 
