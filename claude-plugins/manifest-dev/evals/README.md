@@ -52,7 +52,7 @@ from a discipline `SKILL.md` explicitly states.
 | `12-living-with-it` | autonomous | Price "living with it" as a real option | untested |
 | `13-status-quo-job` | autonomous | Test the status quo's possible job before removing it | untested |
 | `14-persona-seat-feature` | autonomous | Take the seat of the person the North Star names and walk their uses, not the mechanism's | untested — no baseline yet |
-| `15-persona-seat-doc` | autonomous | The same seat-taking on a document for a named reader, where no feature probe file loads | untested — no baseline yet |
+| `15-persona-seat-doc` | autonomous | Take the seat of the reader the North Star names on a document, where no feature probe file loads | untested — no baseline yet |
 
 `04` and `05` are a **mirror pair** and stay paired: a model that always concedes fails `04`, one
 that always digs in fails `05`. No constant policy passes both.

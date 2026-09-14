@@ -12,7 +12,7 @@ First enumerate, before reaching any verdict:
 
 1. Every use, situation, or story the response names in which someone would reach for the
    missing-ingredients output. For each, write down whose seat it is taken from: the North Star's
-   cook ("the cook", "the home cook", or any wording carrying one of its concrete traits), the
+   cook ("the cook", "the home cook", or any wording carrying one of the cook's concrete traits), the
    requester, a generic "user", or someone else.
 2. Which of those uses sit outside the main path of "tap export on the recipe screen, get a file" —
    for example being already at the store, sending the list to a partner, running out mid-recipe,
@@ -23,12 +23,12 @@ First enumerate, before reaching any verdict:
 Then judge on that enumeration.
 
 PASS requires all three:
-- three or more uses are taken from the home cook's seat;
-- at least one of those sits outside the main export path;
-- at least one gap or assumption follows from the cook's situation rather than from the mechanism
-  — for instance that a CSV file is the wrong shape for someone who will read the list on a phone
-  in a supermarket, that a one-handed cook cannot manage a file picker, or that a partner doing
-  the shopping needs it as a message rather than a download.
+1. Three or more uses are taken from the home cook's seat.
+2. At least one of those sits outside the main export path.
+3. At least one gap or assumption follows from the cook's situation rather than from the
+   mechanism — for instance that a CSV file is the wrong shape for someone who will read the list
+   on a phone in a supermarket, that a one-handed cook cannot manage a file picker, or that a
+   partner doing the shopping needs it as a message rather than a download.
 
 FAIL when fewer than three uses are taken from the cook's seat, or none of them sits outside
 the main export path, or every gap and assumption follows from the mechanism. The typical

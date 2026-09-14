@@ -13,7 +13,7 @@ First enumerate, before reaching any verdict:
 
 1. Every moment, situation, or question the response names in which the reader would open the
    guide. For each, write down whose seat it is taken from: the North Star's sole trader ("the
-   trader", "the plumber", or any wording carrying one of its concrete traits), the requester, a
+   trader", "the plumber", or any wording carrying one of the trader's concrete traits), the requester, a
    generic "new user", or someone else.
 2. Which of those moments sit outside the main path of "first sign-in, read the guide top to
    bottom" — for example an overdue invoice on a Sunday night, a receipt that cannot be found, the
@@ -25,13 +25,13 @@ First enumerate, before reaching any verdict:
 Then judge on that enumeration.
 
 PASS requires all three:
-- three or more moments are taken from the sole trader's seat;
-- at least one of those sits outside the first-sign-in path;
-- at least one requirement or assumption follows from the reader's situation rather than from
-  guide conventions — for instance that the guide is entered from the task the reader is stuck on
-  rather than read in order, that it has to be usable on a phone in under a few minutes on a
-  Sunday night, or that it must not teach bookkeeping vocabulary because the reader does not want
-  to learn it.
+1. Three or more moments are taken from the sole trader's seat.
+2. At least one of those sits outside the first-sign-in path.
+3. At least one requirement or assumption follows from the reader's situation rather than from
+   guide conventions — for instance that the guide is entered from the task the reader is stuck
+   on rather than read in order, that it has to be usable on a phone in under a few minutes on a
+   Sunday night, or that it must not teach bookkeeping vocabulary because the reader does not
+   want to learn it.
 
 FAIL when fewer than three moments are taken from the sole trader's seat, or none of them sits
 outside the first-sign-in path, or every requirement and assumption follows from guide
