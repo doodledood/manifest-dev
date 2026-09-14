@@ -9,6 +9,7 @@ Angles that are easy to under-weight on new functionality. Considerations, not a
 - **Rollback** — If this ships and goes wrong, how is it reversed — flag, migration rollback, manual revert?
 - **Slow-motion walk** — Played the use case through one step at a time, rather than at the altitude of "and then it works"? The holes sit between the steps nobody narrated.
 - **Undiscussed surface** — Which user-visible surfaces does this create — screens, output, flow — whose look and feel the conversation never touched? The mechanism gets pressed; the surface the user judges fills in from defaults.
+- **Their stories, not ours** — The seat-taking, pressed per user story: which stories would the person it is for want that the proposal never narrated, niche branches included?
 
 ## Forced trade-offs
 - Graceful degradation vs fail-fast — when this breaks, should the surrounding functionality keep working or stop loudly?

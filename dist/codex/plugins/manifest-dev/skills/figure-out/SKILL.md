@@ -61,6 +61,11 @@ permission to do the next piece of research.
   the session — provisioning access, signing up to judge an API — is offered
   rather than done silently, and with no user to offer to it becomes a named
   blocker or a flagged assumption.
+- Whatever the read implies making is for someone: the person the project's
+  North Star names under *Who it's for*, or find out who. Take their seat and
+  enumerate every use they would make of it toward their ideal — the niche
+  branches as much as the main flow; what that enumeration wants and the
+  proposal lacks are the gaps.
 - When the read implies making something, state exactly what it will be and
   offer to render a disposable draft — disagreement is cheapest to find in a
   concrete artifact, before anything real is built. Put it on a page rather than
