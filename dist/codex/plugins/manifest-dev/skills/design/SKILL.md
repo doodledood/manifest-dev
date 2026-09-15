@@ -18,9 +18,9 @@ Respect the user's requirements, then the existing design system, then this skil
 
 ## Give the experience a coherent idea
 
-Choose a creative direction specific to the subject and the audience's encounter with it. Decide what carries that idea—typography, imagery, data, material, interaction, motion—and compose them together. Attention may need a focal point, a comparison field or an unfolding sequence. Let the task decide; different regions can have different jobs within one coherent whole.
+Choose a subject-specific creative direction whose central idea is perceptible in the composition or behavior, not only in a headline beside an illustration. Decide what carries that idea—typography, imagery, data, material, interaction, motion—and compose them together. Attention may need a focal point, a comparison field or an unfolding sequence. Let the task decide; different regions can have different jobs within one coherent whole.
 
-Choose the representation—prose, table, image, diagram, chart or interaction—that makes the important relationships perceptible. Use copy for meaning the audience still needs, rather than repeatedly explaining what the design already says. Retain labels, evidence, uncertainty and complementary explanations that support understanding and access. Judge the whole composition: individually reasonable panels, summaries and captions can collectively make everything equally loud.
+Choose the representation—prose, table, image, diagram, chart or interaction—that makes the important relationships perceptible. Use copy for precision, qualification, voice and meaning the form cannot carry. Simplicity is not minimalism: retain labels, evidence, uncertainty and complementary explanations that support understanding and access. Judge the whole composition: individually reasonable panels, summaries and captions can collectively make everything equally loud.
 
 Motion earns its place through what time contributes: feedback, continuity, transformation, rhythm, atmosphere or play. Compare it with what a still view or simultaneous comparison offers. Keep essential orientation and controls available, and preserve meaning and agency when motion is reduced. Judge the sequence and repeated use, not only its strongest frame.
 
@@ -32,7 +32,7 @@ Applicable functional and accessibility requirements bind; style examples are de
 
 ## Verify the encounter and the use
 
-Inspect the artifact in its intended browser, native host, player or device. Exercise the actual path, including consequential state changes and recovery where they exist; repeat interactions whose feel changes with repetition. Check composition and reading hierarchy alongside the behavior: what becomes clear, what competes for attention, where the person must hunt or remember, and whether the creative direction survives active use and endings.
+Inspect the artifact in its intended browser, native host, player or device. Exercise the actual path, including consequential state changes and recovery where they exist; repeat interactions whose feel changes with repetition. Check composition and reading hierarchy alongside the behavior: what the form makes clear, what still depends on explanation, what competes for attention, where the person must hunt or remember, and whether the creative direction survives active use and endings.
 
 Use established project checks. For HTML, run `scripts/design-check.mjs <artifact.html>` from this skill's directory as bounded triage: exit zero means it ran, NOTE items need judgment, and SKIPPED items remain unverified. A source selector or automated pass does not establish access, motion quality or audience comprehension. Responsive web starting views are 1440×900 and 390×844; test applicable 320 CSS px reflow, text enlargement, keyboard paths and supported themes. Inspect actual motion and its reduced alternative separately from static captures.
 
