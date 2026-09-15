@@ -26,13 +26,13 @@ The core asks the composition or behavior to carry the central idea, while copy 
 
 The builder and reviewer share these boundaries. The reviewer judges the whole encounter and actual use, and must identify a consequence rather than convict against a removed stylistic default. Motion remains optional; when present, its sequence, repetition, and reduced alternative need inspection. Prototype weight keeps the task and creative direction, concentrates fidelity on the question, and uses the reader's reaction rather than a full shipping-verification cycle.
 
-This is a reversible prompt-architecture choice, not an established design-quality improvement. In the preserved pilot of the initial compact core, blind reviewers preferred the first original-skill output in all three briefs, including over a second original-skill output. That pilot does not evaluate the later wording clarifications. The final samples had no established MEDIUM-or-higher finding in the inspected scope, but lost on grouping or pacing. The small pilot cannot separate instruction effects from generation variation; it does not establish equivalence either. Two core clarifications and new loading pointers also changed after the intermediate, so that comparison is not a pure ablation of reference deletion.
+This is a reversible prompt-architecture choice, not an established design-quality improvement. In a pilot of the initial compact core, blind reviewers preferred the first original-skill output in all three briefs, including over a second original-skill output. That pilot does not evaluate the later wording clarifications. The final samples had no established MEDIUM-or-higher finding in the inspected scope, but lost on grouping or pacing. The small pilot cannot separate instruction effects from generation variation; it does not establish equivalence either. Two core clarifications and new loading pointers also changed after the intermediate, so that comparison is not a pure ablation of reference deletion.
 
 One recurring implementation change is clear: all six original-package samples used named multi-step spacing scales; none of the six new-core samples did. The rendered reviews found no corresponding material system-drift defect, and maintenance was not tested. Keep the compact-system obligation without restoring an exclusive token-only procedure, while disclosing this weaker implementation discipline. Repeated visible inconsistency or higher maintenance cost would be grounds to restore a focused counter.
 
 ## Alternatives Considered
 
-- **Shorten only the core:** lowers its load but leaves common tasks loading thousands of words of broadly applicable recipes. The intermediate samples preserve this option for comparison.
+- **Shorten only the core:** lowers its load but leaves common tasks loading thousands of words of broadly applicable recipes. This was evaluated as an intermediate configuration.
 - **Compress all six references in place:** retains familiar paths but keeps a general design manual as the organizing idea. Three distinct constraint branches provide a smaller discovery surface.
 - **Remove every reference:** smallest prompt, but loses useful units, exceptions, fidelity constraints, and delivery distinctions that prevent consequential misapplication.
 - **Restore the explicit spacing-token procedure:** would preserve an implementation habit that the new core lost. The pilot establishes that change, but not its maintenance cost or a material rendered consequence. Retain the outcome and expose the loss rather than treat syntax alone as a quality verdict.
@@ -43,7 +43,6 @@ One recurring implementation change is clear: all six original-package samples u
 
 - The audience's experience is the organizing goal rather than the completion of a prescribed design procedure.
 - Specialized instructions load for a narrower reason, and the reviewer cannot silently resurrect the retired catalogs.
-- Actual artifacts and observations make the choice inspectable and allow later feedback to challenge it.
 
 ### Negative
 
@@ -53,7 +52,6 @@ One recurring implementation change is clear: all six original-package samples u
 
 ## Source
 
-- Baseline: commit `160acfc3`; evaluation: [design-experience pilot](https://github.com/doodledood/manifest-dev/blob/ace69a1ed18c568454561084ab17285d70a4b7f7/docs/verification/design-experience-20260915/README.md), preserved at `ace69a1e`. Its instruction-identity verifier applies to that revision.
 - Apple's [Design principles](https://developer.apple.com/design/human-interface-guidelines/design-principles), especially Simplicity, supports keeping useful detail rather than treating minimalism as the goal. [The 2017 design-principles session](https://developer.apple.com/videos/play/wwdc2017/802/) illustrates grouping, mapping, and the trade-offs of visibility. These are sources for Apple's recommendations, not independent proof of universal usability or prompt effectiveness.
 - [Current Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) supply task-specific Apple-platform detail. The design skill points to applicable articles rather than carrying a copy of the source corpus.
 - Amends 20260901-design-skill-pair-distills-research-eval-deferred: retains the pair and shared constraints; replaces the general research-derived reference library. General effectiveness remains unestablished.
