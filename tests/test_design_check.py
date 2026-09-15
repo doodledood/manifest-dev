@@ -149,6 +149,21 @@ def test_modern_background_is_unknown_not_transparent(tmp_path: Path) -> None:
     assert "transparent on both" not in output
 
 
+def test_figure_note_does_not_require_retired_task_model_field(
+    tmp_path: Path,
+) -> None:
+    output = run_check(
+        tmp_path,
+        "",
+        "<ol><li>Read</li><li>Compare</li><li>Choose</li></ol>"
+        + "<p>"
+        + "Context " * 400
+        + "</p>",
+    )
+    assert "NOTE     figures: none on a " in output
+    assert "encoding line" not in output
+
+
 def test_class_themes_do_not_require_a_media_query(tmp_path: Path) -> None:
     output = run_check(
         tmp_path,

@@ -1,7 +1,7 @@
 # ADR: Design obligations follow the medium and task
 
 ## Status
-Accepted
+Accepted — amended by 20260915-design-keeps-experience-goals-and-conditional-constraints: preserves applicability and actual-medium verification while narrowing the reference library to conditional constraints.
 
 ## Area
 Design skills
