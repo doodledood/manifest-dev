@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Harbor — Route reliability</title>
+  <style>
+    :root {
+      --paper: #f3f2eb;
+      --surface: #fffef8;
+      --ink: #193c34;
+      --text: #263f37;
+      --muted: #59665d;
+      --line: #bac4b8;
+      --soft-line: #dce2d7;
+      --green: #286351;
+      --selection: #e7eee2;
+      --detail: #edf0e5;
+      --track: #d9e0d5;
+      --late: #b17a28;
+      --cancelled: #283a35;
+      --negative: #943d2a;
+      --positive: #215b47;
+      --focus: #1759a1;
+      --mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      --serif: Georgia, "Times New Roman", serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      border-top: 6px solid var(--ink);
+      background: var(--paper);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button, a, label { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    a { color: var(--ink); text-underline-offset: 4px; }
+    button, fieldset, section, aside, div { min-width: 0; }
+
+    button:focus-visible, a:focus-visible, [tabindex="-1"]:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 4px;
+    }
+
+    .shell {
+      width: min(1264px, calc(100% - 64px));
+      margin-inline: auto;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -80px;
+      left: 24px;
+      z-index: 10;
+      padding: 12px 18px;
+      background: var(--surface);
+      font-weight: 700;
+    }
+
+    .skip-link:focus { top: 16px; }
+
+    .masthead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      padding-block: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .brand-symbol { flex: 0 0 38px; }
+
+    .brand-name {
+      display: block;
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .17em;
+      line-height: 1.25;
+    }
+
+    .brand-description {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .sample-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .sample-label strong {
+      border: 1px solid var(--ink);
+      padding: 3px 8px;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 32px;
+      padding-block: 30px 26px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.5;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(36px, 4vw, 54px);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -.045em;
+      color: var(--ink);
+    }
+
+    .period {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .cohort-control {
+      flex-shrink: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .cohort-control legend {
+      padding: 0;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 650;
+      color: var(--muted);
+    }
+
+    .cohort-options {
+      display: flex;
+      gap: 3px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .cohort-option {
+      position: relative;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .cohort-option span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .cohort-option input:checked + span {
+      color: var(--surface);
+      background: var(--ink);
+    }
+
+    .cohort-option input:focus-visible + span {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .priority {
+      display: grid;
+      grid-template-columns: 142px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 22px;
+      padding: 19px 24px;
+      background: #e3e9dc;
+      border-block: 1px solid #a7b5a0;
+    }
+
+    .priority .eyebrow {
+      margin: 0;
+      color: var(--ink);
+    }
+
+    .priority-copy {
+      padding-left: 22px;
+      border-left: 1px solid #a7b5a0;
+    }
+
+    .priority h2 {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 650;
+      line-height: 1.3;
+      letter-spacing: -.015em;
+    }
+
+    .priority p:not(.eyebrow) {
+      margin: 4px 0 0;
+      color: #455746;
+      font-size: 13px;
+    }
+
+    .priority-cohort {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #455746;
+      white-space: nowrap;
+    }
+
+    .workbench {
+      display: grid;
+      grid-template-columns: minmax(0, 1.8fr) minmax(330px, 1fr);
+      margin-top: 24px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .comparison { padding: 26px 28px 20px; }
+
+    .section-heading {
+      margin: 0;
+      color: var(--ink);
+      font-size: 24px;
+      font-weight: 650;
+      line-height: 1.25;
+      letter-spacing: -.035em;
+    }
+
+    .section-description {
+      margin: 9px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      margin-block: 23px 25px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-fill {
+      display: inline-block;
+      width: 22px;
+      height: 9px;
+      background: var(--green);
+    }
+
+    .legend-marker {
+      display: inline-block;
+      width: 3px;
+      height: 16px;
+      margin-inline: 8px;
+      background: var(--ink);
+    }
+
+    .legend-scale {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .axis-row, .route-choice {
+      display: grid;
+      grid-template-columns: 135px minmax(0, 1fr) 94px;
+      column-gap: 18px;
+      align-items: center;
+    }
+
+    .axis-row {
+      padding: 0 17px 11px 21px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .025em;
+      text-transform: uppercase;
+    }
+
+    .axis {
+      display: flex;
+      justify-content: space-between;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .axis-current { text-align: right; }
+
+    .route-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .route-list li {
+      margin: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .route-choice {
+      width: 100%;
+      min-height: 119px;
+      border: 0;
+      border-left: 4px solid transparent;
+      padding: 19px 17px;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      border-radius: 0;
+    }
+
+    .route-choice[aria-pressed="true"] {
+      border-left-color: var(--ink);
+      background: var(--selection);
+    }
+
+    .route-choice:focus-visible {
+      position: relative;
+      z-index: 2;
+      outline-offset: -3px;
+    }
+
+    .route-name {
+      display: block;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -.02em;
+    }
+
+    .route-count {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .selection-label {
+      display: block;
+      visibility: hidden;
+      margin-top: 5px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .045em;
+      text-transform: uppercase;
+    }
+
+    [aria-pressed="true"] .selection-label { visibility: visible; }
+
+    .track {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 17px;
+      background: var(--track);
+    }
+
+    .current-bar {
+      display: block;
+      height: 100%;
+      width: var(--current);
+      background: var(--green);
+    }
+
+    .previous-marker {
+      position: absolute;
+      top: -5px;
+      bottom: -5px;
+      left: var(--previous);
+      width: 3px;
+      transform: translateX(-50%);
+      background: var(--ink);
+      box-shadow: 0 0 0 2px var(--surface);
+    }
+
+    .previous-caption {
+      display: block;
+      margin-top: 11px;
+      font-size: 11px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .plot-scale { display: none; }
+
+    .route-result {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .route-rate {
+      display: block;
+      font-size: 32px;
+      line-height: 1.15;
+      font-weight: 650;
+      letter-spacing: -.05em;
+    }
+
+    .route-change {
+      display: block;
+      margin-top: 7px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .negative { color: var(--negative); }
+    .positive { color: var(--positive); }
+    .neutral { color: var(--muted); }
+
+    .comparison-help {
+      margin: 15px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      max-width: 58ch;
+    }
+
+    .selection-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      margin-top: 18px;
+      padding-top: 13px;
+      border-top: 1px solid var(--soft-line);
+      font-size: 12px;
+    }
+
+    .selection-footer p { margin: 0; color: var(--muted); }
+
+    .detail-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      gap: 9px;
+      font-weight: 650;
+    }
+
+    .detail {
+      padding: 26px 30px 24px;
+      border-left: 1px solid var(--line);
+      background: var(--detail);
+    }
+
+    .detail h2 {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 36px;
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -.04em;
+      scroll-margin-top: 24px;
+    }
+
+    .detail-context {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .rate-summary { margin-block: 24px 20px; }
+
+    .rate-label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .detail-rate {
+      margin-top: 3px;
+      color: var(--ink);
+      font-size: 76px;
+      line-height: 1.07;
+      font-weight: 600;
+      letter-spacing: -.065em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .detail-percent { font-size: .46em; margin-left: 4px; }
+
+    .rate-comparison {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 5px 10px;
+      margin-top: 9px;
+      font-size: 12px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .detail-change {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .mix-bar {
+      display: flex;
+      width: 100%;
+      height: 8px;
+      margin-bottom: 16px;
+      background: var(--track);
+    }
+
+    .mix-bar span { display: block; height: 100%; }
+    .mix-on-time { background: var(--green); }
+    .mix-late { background: var(--late); }
+    .mix-cancelled { background: var(--cancelled); }
+
+    .outcomes-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .outcomes-table caption {
+      margin-bottom: 8px;
+      text-align: left;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .outcomes-table th {
+      font-weight: 400;
+      text-align: left;
+    }
+
+    .outcomes-table td {
+      text-align: right;
+      font-family: var(--mono);
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .outcomes-table th, .outcomes-table td {
+      padding: 10px 0;
+      border-bottom: 1px solid #cbd4c4;
+    }
+
+    .outcomes-table td { padding-left: 16px; }
+
+    .outcomes-table tfoot th, .outcomes-table tfoot td {
+      padding-top: 12px;
+      border-bottom: 0;
+      font-weight: 700;
+    }
+
+    .outcome-key {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 8px;
+      vertical-align: 1px;
+    }
+
+    .key-on-time { background: var(--green); }
+    .key-late { background: var(--late); }
+    .key-cancelled { background: var(--cancelled); }
+
+    .count-note {
+      margin: 18px 0 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .method-footer {
+      display: grid;
+      grid-template-columns: 150px 1fr 1fr;
+      gap: 24px;
+      padding-block: 22px 30px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .method-footer p { margin: 0; }
+    .method-footer .eyebrow { margin-top: 2px; }
+    .method-footer strong { color: var(--text); font-weight: 650; }
+
+    .no-script {
+      display: block;
+      padding: 16px;
+      margin-block: 16px;
+      border: 2px solid var(--negative);
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    @media (hover: hover) {
+      .route-choice:not([aria-pressed="true"]):hover { background: #f0f3e9; }
+      .cohort-option input:not(:checked):not(:disabled) + span:hover {
+        background: var(--selection);
+      }
+      .detail-link:hover { text-decoration-thickness: 2px; }
+    }
+
+    @media (max-width: 1120px) and (min-width: 981px) {
+      .comparison { padding-inline: 20px; }
+      .detail { padding-inline: 24px; }
+      .axis-row, .route-choice {
+        grid-template-columns: 110px minmax(0, 1fr) 82px;
+        column-gap: 12px;
+      }
+      .route-name { font-size: 16px; }
+      .route-rate { font-size: 29px; }
+      .legend-scale { margin-left: 0; }
+    }
+
+    @media (max-width: 980px) {
+      .workbench { grid-template-columns: 1fr; }
+      .detail { border-left: 0; border-top: 1px solid var(--line); }
+      .priority { grid-template-columns: 126px minmax(0, 1fr); }
+      .priority-cohort { display: none; }
+      .method-footer { grid-template-columns: 126px 1fr; gap: 16px 24px; }
+      .method-footer p:last-child { grid-column: 2; }
+    }
+
+    @media (min-width: 661px) and (max-width: 980px) {
+      .detail-content {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+        gap: 32px;
+        margin-top: 20px;
+      }
+      .detail .rate-summary { margin-block: 0; }
+      .detail .detail-rate { font-size: 84px; }
+    }
+
+    @media (max-width: 660px) {
+      .shell { width: calc(100% - 32px); }
+      .masthead { padding-block: 17px; gap: 12px; }
+      .brand { gap: 9px; }
+      .brand-symbol { width: 30px; flex-basis: 30px; }
+      .brand-name { font-size: 15px; }
+      .brand-description { font-size: 9px; letter-spacing: .025em; }
+      .sample-label { flex-direction: column; align-items: flex-end; gap: 3px; font-size: 10px; }
+      .sample-label strong { padding: 2px 5px; font-size: 9px; }
+      .page-heading {
+        display: block;
+        padding-block: 24px 20px;
+      }
+      .period { font-size: 13px; max-width: 33ch; }
+      .cohort-control { margin-top: 23px; }
+      .cohort-option span { padding-inline: 16px; }
+      .priority {
+        display: block;
+        padding: 16px 18px;
+      }
+      .priority .eyebrow { margin-bottom: 7px; }
+      .priority-copy { padding: 0; border: 0; }
+      .priority h2 { font-size: 18px; }
+      .priority p:not(.eyebrow) { margin-top: 6px; }
+      .workbench { margin-top: 18px; }
+      .comparison { padding: 21px 16px 16px; }
+      .section-heading { font-size: 23px; }
+      .legend { margin-block: 18px; gap: 8px 16px; }
+      .legend-scale { margin-left: 0; }
+      .axis-row { display: none; }
+      .route-choice {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+          "identity result"
+          "plot plot";
+        gap: 15px 12px;
+        padding: 16px 13px;
+      }
+      .route-identity { grid-area: identity; }
+      .route-plot { grid-area: plot; }
+      .route-result { grid-area: result; }
+      .route-name { font-size: 17px; }
+      .route-rate { font-size: 31px; }
+      .route-count { font-size: 11px; }
+      .plot-scale {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 10px;
+      }
+      .track { height: 14px; }
+      .previous-caption { margin-top: 9px; text-align: right; }
+      .comparison-help { line-height: 1.6; }
+      .selection-footer { display: block; }
+      .detail-link { margin-top: 3px; }
+      .detail { padding: 23px 22px; }
+      .detail h2 { font-size: 35px; }
+      .detail-rate { font-size: 72px; }
+      .method-footer {
+        display: block;
+        padding-block: 21px 28px;
+      }
+      .method-footer p + p { margin-top: 11px; }
+    }
+
+    @media (forced-colors: active) {
+      .route-choice[aria-pressed="true"] { border-left-color: Highlight; }
+      .cohort-option input:checked + span { outline: 2px solid Highlight; }
+      .track, .mix-bar { border: 1px solid CanvasText; }
+      .current-bar, .mix-on-time { background: Highlight; }
+      .previous-marker { background: CanvasText; outline: 2px solid Canvas; }
+      .mix-late { background: GrayText; }
+      .mix-cancelled { background: CanvasText; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to route comparison</a>
+
+  <header class="masthead shell">
+    <div class="brand">
+      <svg class="brand-symbol" width="38" height="38" viewBox="0 0 38 38"
+           fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="36" height="36" rx="18" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 24h18M10 28h18M14 20V11h10v9M9 20h20l-4 4H13l-4-4Z"
+              stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M19 11v9" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <div>
+        <span class="brand-name">HARBOR</span>
+        <span class="brand-description">Operations / Shift desk</span>
+      </div>
+    </div>
+    <div class="sample-label">
+      <strong>Sample data</strong>
+      <span>Fictional · not live</span>
+    </div>
+  </header>
+
+  <main id="main" class="shell">
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">Service performance</p>
+        <h1>Route reliability</h1>
+        <p class="period">Latest four weeks compared with the preceding four weeks.</p>
+      </div>
+
+      <fieldset id="cohort-control" class="cohort-control" disabled>
+        <legend>Day type</legend>
+        <div class="cohort-options">
+          <label class="cohort-option">
+            <input class="sr-only" type="radio" name="cohort" value="Weekday" checked>
+            <span>Weekday</span>
+          </label>
+          <label class="cohort-option">
+            <input class="sr-only" type="radio" name="cohort" value="Weekend">
+            <span>Weekend</span>
+          </label>
+        </div>
+      </fieldset>
+    </div>
+
+    <noscript>
+      <p class="no-script">
+        JavaScript is disabled. This is the Weekday view with West Pier selected.
+        Enable JavaScript to switch day type or inspect another route.
+      </p>
+    </noscript>
+
+    <section class="priority" aria-labelledby="priority-title">
+      <p class="eyebrow">Investigation<br>priority</p>
+      <div class="priority-copy">
+        <h2 id="priority-title">Start with West Pier</h2>
+        <p id="priority-evidence">
+          Lowest on-time rate at 87%, down 5 percentage points from 92%.
+        </p>
+      </div>
+      <span id="priority-cohort" class="priority-cohort">Weekday cohort</span>
+    </section>
+
+    <div class="workbench">
+      <section class="comparison" aria-labelledby="comparison-title">
+        <p class="eyebrow">01 / Compare · <span id="comparison-cohort">Weekday</span></p>
+        <h2 id="comparison-title" class="section-heading">On-time arrivals</h2>
+        <p class="section-description">
+          Arriving no more than five minutes after the scheduled arrival.
+        </p>
+
+        <div class="legend">
+          <span class="legend-item">
+            <span class="legend-fill" aria-hidden="true"></span>
+            Latest four weeks
+          </span>
+          <span class="legend-item">
+            <span class="legend-marker" aria-hidden="true"></span>
+            Previous four weeks
+          </span>
+          <span class="legend-scale">Shared 0–100% scale</span>
+        </div>
+
+        <div class="axis-row" aria-hidden="true">
+          <span>Route</span>
+          <span class="axis">
+            <span>0</span><span>25</span><span>50</span><span>75</span><span>100%</span>
+          </span>
+          <span class="axis-current">Current</span>
+        </div>
+
+        <ul class="route-list" aria-label="Select a route to inspect its trip counts">
+          <li>
+            <button type="button" class="route-choice" data-route="West Pier"
+                    aria-pressed="true" aria-controls="route-detail" disabled>
+              <span class="route-identity">
+                <span class="route-name">West Pier</span>
+                <span class="route-count" data-field="count">174 / 200 on time</span>
+                <span class="selection-label" aria-hidden="true">Selected</span>
+              </span>
+              <span class="route-plot">
+                <span class="plot-scale" aria-hidden="true">
+                  <span>0%</span><span>50%</span><span>100%</span>
+                </span>
+                <span class="track" style="--current:87%;--previous:92%" aria-hidden="true">
+                  <span class="current-bar"></span>
+                  <span class="previous-marker"></span>
+                </span>
+                <span class="previous-caption" data-field="previous">Previous 92%</span>
+              </span>
+              <span class="route-result">
+                <span class="route-rate" data-field="rate">87%</span>
+                <span class="route-change negative" data-field="change">−5 pp</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="route-choice" data-route="East Bank"
+                    aria-pressed="false" aria-controls="route-detail" disabled>
+              <span class="route-identity">
+                <span class="route-name">East Bank</span>
+                <span class="route-count" data-field="count">152 / 160 on time</span>
+                <span class="selection-label" aria-hidden="true">Selected</span>
+              </span>
+              <span class="route-plot">
+                <span class="plot-scale" aria-hidden="true">
+                  <span>0%</span><span>50%</span><span>100%</span>
+                </span>
+                <span class="track" style="--current:95%;--previous:94%" aria-hidden="true">
+                  <span class="current-bar"></span>
+                  <span class="previous-marker"></span>
+                </span>
+                <span class="previous-caption" data-field="previous">Previous 94%</span>
+              </span>
+              <span class="route-result">
+                <span class="route-rate" data-field="rate">95%</span>
+                <span class="route-change positive" data-field="change">+1 pp</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="route-choice" data-route="North Quay"
+                    aria-pressed="false" aria-controls="route-detail" disabled>
+              <span class="route-identity">
+                <span class="route-name">North Quay</span>
+                <span class="route-count" data-field="count">108 / 120 on time</span>
+                <span class="selection-label" aria-hidden="true">Selected</span>
+              </span>
+              <span class="route-plot">
+                <span class="plot-scale" aria-hidden="true">
+                  <span>0%</span><span>50%</span><span>100%</span>
+                </span>
+                <span class="track" style="--current:90%;--previous:90%" aria-hidden="true">
+                  <span class="current-bar"></span>
+                  <span class="previous-marker"></span>
+                </span>
+                <span class="previous-caption" data-field="previous">Previous 90%</span>
+              </span>
+              <span class="route-result">
+                <span class="route-rate" data-field="rate">90%</span>
+                <span class="route-change neutral" data-field="change">0 pp</span>
+              </span>
+            </button>
+          </li>
+        </ul>
+
+        <p class="comparison-help">
+          Rate = on-time trips ÷ all scheduled trips, including cancellations.
+          Select a route for its counts and rate change.
+        </p>
+
+        <div class="selection-footer">
+          <p id="selection-summary">Selected: West Pier · Weekday</p>
+          <a id="detail-link" class="detail-link" href="#route-detail-title">
+            View route detail <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+
+      <aside id="route-detail" class="detail" aria-labelledby="route-detail-title">
+        <p class="eyebrow">02 / Selected route</p>
+        <h2 id="route-detail-title" tabindex="-1">West Pier</h2>
+        <p id="detail-context" class="detail-context">Weekday · 200 scheduled trips</p>
+
+        <div class="detail-content">
+          <div class="rate-summary">
+            <span class="rate-label">On-time rate · latest four weeks</span>
+            <div class="detail-rate">
+              <span id="detail-rate">87</span><span class="detail-percent">%</span>
+            </div>
+            <div class="rate-comparison">
+              <strong id="detail-change" class="detail-change negative">−5 pp</strong>
+              <span id="detail-previous">vs 92% in the previous four weeks</span>
+            </div>
+          </div>
+
+          <div class="outcomes">
+            <div class="mix-bar" aria-hidden="true">
+              <span id="mix-on-time" class="mix-on-time" style="width:87%"></span>
+              <span id="mix-late" class="mix-late" style="width:9%"></span>
+              <span id="mix-cancelled" class="mix-cancelled" style="width:4%"></span>
+            </div>
+
+            <table class="outcomes-table">
+              <caption id="outcome-caption">Latest four weeks · trip counts</caption>
+              <thead class="sr-only">
+                <tr><th scope="col">Trip outcome</th><th scope="col">Count</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">
+                    <span class="outcome-key key-on-time" aria-hidden="true"></span>On time
+                  </th>
+                  <td id="count-on-time">174</td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <span class="outcome-key key-late" aria-hidden="true"></span>Arrived more than 5 min late
+                  </th>
+                  <td id="count-late">18</td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <span class="outcome-key key-cancelled" aria-hidden="true"></span>Cancelled
+                  </th>
+                  <td id="count-cancelled">8</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row">All scheduled trips</th>
+                  <td id="count-scheduled">200</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <p class="count-note">
+          These outcomes divide the scheduled trips into three separate groups.
+          Cancellations are included in the rate’s denominator, not counted again
+          as late arrivals.
+        </p>
+      </aside>
+    </div>
+
+    <footer class="method-footer" aria-label="Interpretation notes">
+      <p class="eyebrow">Reading the numbers</p>
+      <p>
+        <strong>pp means percentage points.</strong>
+        The change is the current on-time rate minus the previous four-week rate,
+        for the same route and day type.
+      </p>
+      <p>
+        <strong>A starting point, not a diagnosis.</strong>
+        The priority highlights the lowest current rate. These fictional counts
+        do not explain what caused delays.
+      </p>
+    </footer>
+
+    <div id="status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const data = {
+        Weekday: {
+          "West Pier":  { scheduled: 200, onTime: 174, cancelled: 8, previous: 92 },
+          "East Bank":  { scheduled: 160, onTime: 152, cancelled: 2, previous: 94 },
+          "North Quay": { scheduled: 120, onTime: 108, cancelled: 4, previous: 90 }
+        },
+        Weekend: {
+          "West Pier":  { scheduled: 80, onTime: 76, cancelled: 1, previous: 93 },
+          "East Bank":  { scheduled: 96, onTime: 84, cancelled: 3, previous: 91 },
+          "North Quay": { scheduled: 60, onTime: 57, cancelled: 1, previous: 94 }
+        }
+      };
+
+      let cohort = "Weekday";
+      let selectedRoute = "West Pier";
+
+      const format = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
+      const routeButtons = [...document.querySelectorAll(".route-choice")];
+      const cohortInputs = [...document.querySelectorAll('input[name="cohort"]')];
+      const byId = (id) => document.getElementById(id);
+      const setText = (id, value) => { byId(id).textContent = value; };
+
+      function measures(row) {
+        const rate = row.onTime / row.scheduled * 100;
+        return {
+          rate,
+          change: Number((rate - row.previous).toFixed(1)),
+          late: row.scheduled - row.onTime - row.cancelled
+        };
+      }
+
+      function changeClass(change) {
+        return change < 0 ? "negative" : change > 0 ? "positive" : "neutral";
+      }
+
+      function changeLabel(change) {
+        const sign = change < 0 ? "−" : change > 0 ? "+" : "";
+        return `${sign}${format.format(Math.abs(change))} pp`;
+      }
+
+      function changeWords(change) {
+        if (change === 0) return "unchanged";
+        const direction = change < 0 ? "down" : "up";
+        const unit = Math.abs(change) === 1 ? "percentage point" : "percentage points";
+        return `${direction} ${format.format(Math.abs(change))} ${unit}`;
+      }
+
+      function priorityRoute() {
+        return Object.keys(data[cohort]).reduce((lowest, route) => {
+          return measures(data[cohort][route]).rate < measures(data[cohort][lowest]).rate
+            ? route
+            : lowest;
+        });
+      }
+
+      function renderRoutes() {
+        routeButtons.forEach((button) => {
+          const route = button.dataset.route;
+          const row = data[cohort][route];
+          const { rate, change } = measures(row);
+
+          button.setAttribute("aria-pressed", String(route === selectedRoute));
+          button.setAttribute(
+            "aria-label",
+            `${route}, ${cohort}. ${format.format(rate)} percent on time: ` +
+            `${row.onTime} of ${row.scheduled} scheduled trips. ` +
+            `Previous rate ${format.format(row.previous)} percent; ${changeWords(change)}. ` +
+            `Inspect route counts.`
+          );
+
+          button.querySelector('[data-field="count"]').textContent =
+            `${row.onTime} / ${row.scheduled} on time`;
+          button.querySelector('[data-field="rate"]').textContent =
+            `${format.format(rate)}%`;
+          button.querySelector('[data-field="previous"]').textContent =
+            `Previous ${format.format(row.previous)}%`;
+
+          const changeElement = button.querySelector('[data-field="change"]');
+          changeElement.textContent = changeLabel(change);
+          changeElement.className = `route-change ${changeClass(change)}`;
+
+          const track = button.querySelector(".track");
+          track.style.setProperty("--current", `${rate}%`);
+          track.style.setProperty("--previous", `${row.previous}%`);
+        });
+      }
+
+      function renderDetail() {
+        const row = data[cohort][selectedRoute];
+        const { rate, change, late } = measures(row);
+
+        setText("route-detail-title", selectedRoute);
+        setText("detail-context", `${cohort} · ${row.scheduled} scheduled trips`);
+        setText("detail-rate", format.format(rate));
+        setText("detail-change", changeLabel(change));
+        byId("detail-change").className = `detail-change ${changeClass(change)}`;
+        setText("detail-previous", `vs ${format.format(row.previous)}% in the previous four weeks`);
+
+        setText("count-on-time", row.onTime);
+        setText("count-late", late);
+        setText("count-cancelled", row.cancelled);
+        setText("count-scheduled", row.scheduled);
+        setText("outcome-caption", `${cohort} · latest four weeks · trip counts`);
+
+        byId("mix-on-time").style.width = `${rate}%`;
+        byId("mix-late").style.width = `${late / row.scheduled * 100}%`;
+        byId("mix-cancelled").style.width = `${row.cancelled / row.scheduled * 100}%`;
+
+        setText("selection-summary", `Selected: ${selectedRoute} · ${cohort}`);
+        byId("detail-link").setAttribute(
+          "aria-label", `View ${selectedRoute} route detail for ${cohort}`
+        );
+      }
+
+      function render(announce = false) {
+        const priority = priorityRoute();
+        const priorityData = data[cohort][priority];
+        const priorityMeasures = measures(priorityData);
+
+        cohortInputs.forEach((input) => { input.checked = input.value === cohort; });
+        setText("comparison-cohort", cohort);
+        setText("priority-cohort", `${cohort} cohort`);
+        setText("priority-title", `Start with ${priority}`);
+        setText(
+          "priority-evidence",
+          `Lowest on-time rate at ${format.format(priorityMeasures.rate)}%, ` +
+          `${changeWords(priorityMeasures.change)} from ${format.format(priorityData.previous)}%.`
+        );
+
+        renderRoutes();
+        renderDetail();
+
+        if (announce) {
+          const selected = data[cohort][selectedRoute];
+          const selectedMeasures = measures(selected);
+          setText(
+            "status",
+            `${cohort}. ${selectedRoute} selected: ` +
+            `${format.format(selectedMeasures.rate)} percent on time, ` +
+            `${changeWords(selectedMeasures.change)} from the previous four weeks. ` +
+            `${selected.onTime} of ${selected.scheduled} scheduled trips on time; ` +
+            `${selected.cancelled} cancellations. ` +
+            `${priority} has the lowest current rate in this cohort.`
+          );
+        }
+      }
+
+      cohortInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+          if (!input.checked) return;
+          cohort = input.value;
+          render(true);
+        });
+      });
+
+      routeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedRoute = button.dataset.route;
+          render(true);
+        });
+      });
+
+      render();
+      byId("cohort-control").disabled = false;
+      routeButtons.forEach((button) => { button.disabled = false; });
+    })();
+  </script>
+</body>
+</html>

@@ -6,7 +6,7 @@ user-invocable: true
 
 # review-design — evaluate a user-visible artifact
 
-Report where an artifact departs from the design standard that governs its genre, including its purpose-led visual ambition. Review only: you find and explain, the author decides and edits. You never repair the artifact. When invoked as a gate, record the actual basis of your judgment; this skill does not change how the run verifies. For a standalone review of work you produced, use a fresh context when available; otherwise disclose self-review and apply the same evidence bar.
+Judge whether the audience can understand, engage with and use the artifact as intended, including its purpose-led visual ambition. Review only: you find and explain, the author decides and edits. You never repair the artifact. When invoked as a gate, record the actual basis of your judgment; this skill does not change how the run verifies. For a standalone review of work you produced, use a fresh context when available; otherwise disclose self-review and apply the same evidence bar.
 
 ## Input
 
@@ -22,24 +22,21 @@ A verdict from source inspection alone is not a complete design evaluation. Insp
 
 The standards this skill judges against live with the `design` skill, so the two cannot drift apart:
 
-- `../design/SKILL.md` — the six decisions, the task-model block the layout must trace to, the register tables, the compressed floor checklist.
-- `../design/references/experience.md` — medium, journey, continuity, consequence and final-delivery probes.
-- `../design/references/registers.md` — genres beyond web/app, their success metrics, failure smells, and per-genre behavior probes.
-- `../design/references/floors.md` — the full floor numbers, density rules, and banned rationales.
-- `../design/references/craft.md` — per-domain craft checklists; load the domains the artifact touches.
-- `../design/references/calibration.md` — dated style observations, not a blacklist.
-- `../design/references/figures.md` — what a figure depicts, how options are compared, the inline-SVG mechanics, faithful quantitative mappings.
+- `../design/SKILL.md` — the experience goal, task model, creative direction, building constraints and verification boundaries.
+- `../design/references/experience.md` — continuity, consequences and final-delivery probes.
+- `../design/references/floors.md` — web access requirements, exceptions and behavioral checks.
+- `../design/references/figures.md` — representation, faithful encoding and equivalent access.
 
 Load `../design/SKILL.md` plus whichever references the artifact's genre and touched domains call for, under that file's own loading table. These paths are where the files sit when the whole plugin is installed; where they are absent — a single-skill install, or a host that lays skills out differently — search for them by name before giving up, and where they genuinely cannot be found, say so and report only the findings you can support without them rather than reviewing against remembered rules.
 
 ## Procedure
 
-1. **Name the genre and register** you are judging against, in one line, before any finding — a finding graded under the wrong register is noise the author should ignore. An explicit `genre=` argument wins; otherwise detect from the artifact's job, and where detection is genuinely balanced, say so and ask — with no user to ask, judge under the closer register and name the call in the report.
-2. **Recover the intended result and work** from the supplied brief, evidence and requirements before judging the artifact. Apply `../design/SKILL.md` Decision 0, then name the relevant loop and information needed together. If intent is unavailable, distinguish what can be assessed from unverified purpose fit. The artifact can reveal its apparent operation; that does not establish that it serves the intended outcome. Do not invent a goal and convict against it.
+1. **Name the genre and use context** you are judging against, in one line, before any finding — a finding graded for the wrong use is noise the author should ignore. An explicit `genre=` argument wins; otherwise detect from the artifact's job, and where detection is genuinely balanced, say so and ask — with no user to ask, judge under the closer use context and name the call in the report.
+2. **Recover the intended result and work** from the supplied brief, evidence and requirements before judging the artifact. Apply the task-model and evidence guidance in `../design/SKILL.md`, then name the relevant path or loop and information needed together. If intent is unavailable, distinguish what can be assessed from unverified purpose fit. The artifact can reveal its apparent operation; that does not establish that it serves the intended outcome. Do not invent a goal and convict against it.
 3. **Run applicable checks.** Use established project tooling and, for HTML, `node ../design/scripts/design-check.mjs <artifact.html>`. Exit zero means completed, not clean. Validate measured candidates and NOTE items against the actual artifact and applicable exceptions before grading; SKIPPED properties remain unverified. Neither selector presence nor a heuristic count establishes a requirement violation or pass.
-4. **Render and exercise** per the section above. Run the loop from step 2 yourself, twice, and watch what each pass costs. Use the intended result to select the observation; genre probes in the loaded standards are starting examples.
+4. **Render and exercise** per the section above. Run the loop from step 2 yourself, twice, and watch what each pass costs. Use the intended result to select the observation; delivery probes in the loaded standards are starting examples.
 5. **For improvements, compare with the incumbent** under matched content, state, output size and useful fidelity. Use the builder’s edit contract in `../design/SKILL.md`; identify gains and losses in the actual task and visual expression. If the original is unavailable, state that limit rather than claim superiority.
-6. **Judge the renders** against the loaded standards, in this order: task fit — whether the arrangement lets that loop run, with what the loop needs together visible together, the repeated action reachable without hunting, and the sequence's order matching the reading order, and whether the chosen representation serves the information or experience under the shared encoding guidance in `../design/references/figures.md`; register fit; functional floors (states, error paths, recovery); composition and hierarchy, using appropriate visual probes as judgment aids; craft consistency (spacing rhythm, alignment spine, palette discipline, type); copy; visual impact and creative direction — whether the composition, typography, color, imagery, material, interaction and motion make the artifact compelling in a way that serves its purpose and subject. Apply this to every genre, within the user's requirements and existing design system; mechanical correctness alone does not establish finished design. Inspect the relevant experience beyond its strongest frame, including active use, endings and return. Distinguish a judgment about a coherent, memorable idea from a measured claim about audience recall or preference.
+6. **Judge the renders** against the loaded standards, in this order: task fit — whether the arrangement lets that loop run, with what the loop needs together visible together, the repeated action reachable without hunting, and the sequence's order matching the reading order, and whether the chosen representation serves the information or experience under the shared encoding guidance in `../design/references/figures.md`; fitness for the use context; functional floors (states, error paths, recovery); composition and hierarchy, using appropriate visual probes as judgment aids; craft consistency (grouping, alignment, color roles, typography); copy; visual impact and creative direction — whether the composition, typography, color, imagery, material, interaction and motion make the artifact compelling in a way that serves its purpose and subject. Apply this to every genre, within the user's requirements and existing design system; mechanical correctness alone does not establish finished design. Judge the whole encounter as well as its parts: where relationships become clear, where emphasis competes, and where explanation adds meaning or merely repeats it. Inspect beyond the strongest frame, including active use, endings and return; compare motion with its still or reduced alternative where relevant. Distinguish design judgment from measured audience understanding, recall or preference.
 
 Task fit comes first because it is the one dimension whose repair restructures the artifact: every finding below it is graded against an arrangement that may not survive. It is judged against the artifact's job, never against the arrangement you would have chosen — an unfamiliar layout that runs the loop cleanly is not a finding.
 
@@ -51,7 +48,7 @@ A finding about visual ambition must point to what the render leaves unresolved 
 
 - **CRITICAL** — the artifact fails its genre's job: the form loses input on error, the deck's argument cannot be restated, content is unreachable or unreadable, the repeated loop cannot be completed at all.
 - **HIGH** — a floor violation the audience will hit in normal use: a missing empty or error state, failed contrast on body text, a broken narrow-viewport layout, or an arrangement that breaks the loop's co-visibility so every pass costs a scroll away from what is being acted on or a value carried in the head, or a misleading or unsuitable representation that materially obscures information the task needs.
-- **MEDIUM** — a supported defect a careful audience member would notice, rather than a different valid style choice: register mismatch in a region, an unresolved creative direction supported by the rendered evidence above, spacing rhythm broken, mixed alignment, off-token values, misleading copy on a control.
+- **MEDIUM** — a supported defect a careful audience member would notice, rather than a different valid style choice: a region unsuited to its use, an unresolved creative direction supported by the rendered evidence above, grouping or alignment that obscures a relationship, inconsistent use of the governing design system, misleading copy on a control.
 - **LOW** — a supported polish issue: awkward optical alignment, unnecessarily distracting timing or a wordier-than-needed label.
 
 The threshold, unless the activating gate states its own: **no MEDIUM-or-higher findings** to PASS.
@@ -65,7 +62,7 @@ Report each finding with:
 - what the standard requires, and why this instance fails it
 - the concrete fix — the changed value or rule where one line is enough, the shape of the change where it isn't
 
-Order findings by severity, then by position. A clean artifact is a real result: say so plainly, name the genre, register, and references you applied, and stop. Never pad a report with marginal findings to look thorough. When the artifact has many instances of one pattern, report the pattern once with two or three examples and a count. Where a rule's application is a genuine judgment call, say that in the finding instead of grading it as a defect.
+Order findings by severity, then by position. A clean artifact is a real result: say so plainly, name the genre, use context, and references you applied, and stop. Never pad a report with marginal findings to look thorough. When the artifact has many instances of one pattern, report the pattern once with two or three examples and a count. Where a rule's application is a genuine judgment call, say that in the finding instead of grading it as a defect.
 
 ## Scope, and what this is not
 

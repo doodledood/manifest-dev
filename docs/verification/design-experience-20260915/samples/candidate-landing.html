@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1e8">
+  <meta name="description" content="Relay is a project-handoff concept for small design studios. Try a local example with decisions, open questions and a clear next owner.">
+  <title>Relay — Pass the work. Keep the context.</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f4f1e8;
+      --sheet: #fffdf7;
+      --ink: #203d31;
+      --muted: #526157;
+      --line: #c2c7b9;
+      --mount: #dee5d6;
+      --lime: #d8ee8c;
+      --receipt: #edf2e5;
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --mono: "Courier New", Courier, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection { background: var(--lime); color: var(--ink); }
+    a { color: inherit; text-underline-offset: 4px; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    button:not(:disabled), a { touch-action: manipulation; }
+    a:focus-visible, button:focus-visible, [tabindex="-1"]:focus-visible {
+      outline: 3px solid var(--ink);
+      outline-offset: 5px;
+    }
+
+    .shell { width: min(1280px, calc(100% - 96px)); margin-inline: auto; }
+    .skip-link {
+      position: fixed;
+      z-index: 10;
+      top: 12px;
+      left: 12px;
+      padding: 12px 18px;
+      background: var(--ink);
+      color: var(--sheet);
+      transform: translateY(-180%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 96px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 31px;
+      font-weight: 700;
+      letter-spacing: -1.7px;
+      text-decoration: none;
+    }
+    .brand svg { width: 35px; height: 35px; flex-shrink: 0; }
+    .navigation { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+    .navigation a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .navigation a:hover { text-decoration: underline; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      align-items: start;
+      gap: clamp(32px, 5vw, 76px);
+      padding-block: 64px 80px;
+    }
+    .hero-copy { padding-top: 29px; min-width: 0; }
+    .eyebrow {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .hero-eyebrow { display: flex; align-items: center; gap: 12px; }
+    .hero-eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 2px;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+    h1 {
+      margin: 28px 0;
+      font-family: var(--serif);
+      font-size: clamp(3.5rem, 5.7vw, 5.4rem);
+      font-weight: 400;
+      line-height: 1.01;
+      letter-spacing: -0.065em;
+    }
+    h1 span { display: block; }
+    h1 em {
+      display: inline-block;
+      padding-right: 0.08em;
+      font-weight: 400;
+      background: linear-gradient(transparent 77%, var(--lime) 77%, var(--lime) 93%, transparent 93%);
+    }
+    .intro {
+      max-width: 370px;
+      margin: 0 0 29px;
+      font-size: 19px;
+      line-height: 1.6;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 54px;
+      padding: 15px 21px;
+      border: 1px solid var(--ink);
+      border-radius: 3px;
+      background: var(--ink);
+      color: var(--sheet);
+      font-weight: 600;
+      line-height: 1.4;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 150ms ease, color 150ms ease;
+    }
+    .button:hover { background: #315643; }
+    .button svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .hero-cta { min-width: 216px; }
+    .cta-note { margin: 12px 0 0; color: var(--muted); font-size: 13px; }
+    .margin-note {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      max-width: 290px;
+      margin-top: 56px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .margin-note svg { width: 36px; height: 36px; flex-shrink: 0; }
+
+    .demo {
+      min-width: 0;
+      padding: 23px;
+      background: var(--mount);
+      border: 1px solid #c3cdbd;
+      border-radius: 4px;
+      scroll-margin-top: 24px;
+    }
+    .demo-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin: 0 0 18px;
+    }
+    .demo-tag {
+      border: 1px solid #879681;
+      border-radius: 2px;
+      padding: 4px 7px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .handoff-sheet {
+      position: relative;
+      background: var(--sheet);
+      padding: 27px 26px 23px;
+      border: 1px solid #bdc6b6;
+      box-shadow: 5px 6px 0 #cad3c0;
+    }
+    .handoff-sheet::after {
+      content: "";
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      border-top: 19px solid var(--mount);
+      border-left: 19px solid #c4cebc;
+    }
+    .sheet-header { padding-bottom: 21px; }
+    .sheet-header .eyebrow { color: var(--muted); font-size: 10px; }
+    .sheet-header h2 {
+      margin: 11px 0 3px;
+      font-family: var(--serif);
+      font-size: clamp(29px, 2.5vw, 36px);
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -1.3px;
+    }
+    .sheet-subtitle { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .handoff-details { margin: 0; }
+    .detail-row {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      gap: 16px;
+      padding-block: 17px;
+      border-top: 1px solid var(--line);
+    }
+    .detail-row dt {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .detail-row dd { margin: 0; font-size: 15px; line-height: 1.5; }
+    .row-marker {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--ink);
+      flex-shrink: 0;
+    }
+    .row-marker.open { background: transparent; border: 1px solid var(--ink); }
+    .owner { font-weight: 600; }
+    .next-step { background: linear-gradient(transparent 60%, #e6efc9 60%); }
+    .ack-area {
+      margin-top: 3px;
+      padding-top: 19px;
+      border-top: 1px solid var(--line);
+    }
+    .role-label { margin: 0 0 12px; font-size: 13px; }
+    .ack-button { width: 100%; gap: 12px; font-size: 14px; }
+    .ack-button.is-received { background: var(--sheet); color: var(--ink); }
+    .ack-button.is-received:hover { background: var(--receipt); }
+    .button-symbol { font-size: 21px; line-height: 1; flex-shrink: 0; }
+    .ack-note { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
+
+    .receipt {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-height: 81px;
+      margin-top: 20px;
+      padding: 14px 16px;
+      border: 1px dashed #879681;
+      background: #e8eddf;
+      transition: background-color 150ms ease;
+    }
+    .receipt.is-received { background: var(--lime); border-style: solid; }
+    .receipt-icon {
+      display: grid;
+      place-items: center;
+      width: 29px;
+      height: 29px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .receipt-icon svg { width: 17px; height: 17px; }
+    .receipt .check-icon { display: none; }
+    .receipt.is-received .waiting-icon { display: none; }
+    .receipt.is-received .check-icon { display: block; }
+    .receipt-label {
+      display: block;
+      margin-bottom: 3px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .receipt-message { display: block; font-size: 13px; line-height: 1.45; font-weight: 600; }
+    .demo-disclosure {
+      margin: 15px 0 0;
+      color: #45543f;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    noscript p { padding: 12px; border: 1px solid var(--ink); font-size: 14px; }
+
+    .how-it-works {
+      padding: 38px 0 64px;
+      border-top: 1px solid var(--line);
+      scroll-margin-top: 30px;
+    }
+    .section-heading {
+      margin: 0 0 32px;
+      font-family: var(--serif);
+      font-size: clamp(30px, 3vw, 39px);
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -1px;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 40px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .step-number {
+      display: block;
+      margin-bottom: 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .steps h3 { margin: 0 0 9px; font-size: 17px; font-weight: 600; }
+    .steps p { max-width: 310px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin: 0 0 44px;
+      padding: 48px;
+      background: var(--ink);
+      color: var(--sheet);
+      scroll-margin-top: 24px;
+    }
+    .pricing .eyebrow { color: var(--lime); }
+    .pricing h2 {
+      margin: 19px 0;
+      font-family: var(--serif);
+      font-size: clamp(38px, 4vw, 54px);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -1.8px;
+    }
+    .concept-note { max-width: 330px; margin: 0; color: #d8e0d6; font-size: 14px; line-height: 1.7; }
+    .offer { align-self: center; }
+    .price-line { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 21px; }
+    .price {
+      font-family: var(--serif);
+      font-size: 80px;
+      line-height: 1.1;
+      letter-spacing: -5px;
+      font-variant-numeric: lining-nums;
+    }
+    .price-unit { max-width: 150px; font-size: 15px; line-height: 1.5; }
+    .terms { margin: 14px 0 24px; font-size: 15px; }
+    .pricing .button { background: var(--lime); color: var(--ink); border-color: var(--lime); min-width: 216px; }
+    .pricing .button:hover { background: #e8f6b8; }
+    .pricing a:focus-visible { outline-color: var(--sheet); }
+    .site-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      padding-bottom: 28px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .footer-brand { color: var(--ink); font-size: 17px; font-weight: 700; letter-spacing: -0.5px; }
+    .footer-note { display: flex; align-items: center; gap: 12px; }
+    .site-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+
+    @media (min-width: 901px) and (max-width: 1100px) {
+      .shell { width: calc(100% - 64px); }
+      .hero { gap: 32px; }
+      .demo { padding: 18px; }
+      .handoff-sheet { padding-inline: 21px; }
+      .detail-row { grid-template-columns: 90px minmax(0, 1fr); gap: 12px; }
+    }
+    @media (max-width: 900px) {
+      .shell { width: min(640px, calc(100% - 48px)); }
+      .hero { grid-template-columns: 1fr; padding-block: 39px 52px; gap: 39px; }
+      .hero-copy { padding-top: 0; }
+      h1 { font-size: clamp(3.3rem, 9vw, 4.6rem); }
+      .intro { max-width: 450px; }
+      .margin-note { display: none; }
+      .steps { gap: 24px; }
+      .pricing { gap: 32px; padding: 32px; }
+      .pricing h2 { font-size: 38px; }
+      .price { font-size: 68px; }
+      .pricing .button { min-width: 0; width: 100%; }
+    }
+    @media (max-width: 580px) {
+      .shell { width: calc(100% - 36px); }
+      .site-header { min-height: 78px; gap: 14px; }
+      .brand { font-size: 28px; gap: 7px; }
+      .brand svg { width: 29px; height: 29px; }
+      .navigation { gap: 14px; }
+      .navigation a { font-size: 12px; }
+      .hero { padding-top: 31px; }
+      .hero-eyebrow { font-size: 10px; letter-spacing: 1.1px; }
+      h1 { margin-block: 21px; font-size: clamp(2.5rem, 12.6vw, 4rem); line-height: 1.04; }
+      .intro { margin-bottom: 23px; font-size: 17px; }
+      .demo { padding: 15px; }
+      .demo-meta { margin-bottom: 14px; }
+      .demo-meta .eyebrow { font-size: 10px; letter-spacing: 1px; }
+      .handoff-sheet { padding: 23px 19px 20px; }
+      .detail-row { grid-template-columns: 1fr; gap: 6px; padding-block: 16px; }
+      .detail-row dt { font-size: 11px; }
+      .detail-row dd { font-size: 15px; }
+      .receipt { padding: 13px 11px; }
+      .receipt-message { font-size: 12px; }
+      .how-it-works { padding-block: 30px 40px; }
+      .section-heading { max-width: 300px; }
+      .steps { grid-template-columns: 1fr; gap: 24px; }
+      .steps li { position: relative; padding-left: 39px; }
+      .step-number { position: absolute; top: 3px; left: 0; margin: 0; }
+      .steps p { max-width: none; }
+      .pricing { grid-template-columns: 1fr; padding: 28px 24px; gap: 27px; margin-bottom: 24px; }
+      .pricing h2 { font-size: 43px; }
+      .offer { border-top: 1px solid #64796b; padding-top: 21px; }
+      .price { font-size: 76px; }
+      .price-unit { max-width: 120px; }
+      .terms { font-size: 14px; }
+      .site-footer { align-items: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+    @media (forced-colors: active) {
+      .button, .receipt, .demo, .handoff-sheet { border: 1px solid ButtonText; }
+      .row-marker { border: 1px solid CanvasText; }
+    }
+  </style>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="shell">
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Relay home">
+        <svg viewBox="0 0 36 36" fill="none" aria-hidden="true">
+          <path d="M4 5H19V12H11V24H4V5Z" fill="currentColor"/>
+          <path d="M32 31H17V24H25V12H32V31Z" fill="currentColor"/>
+          <path d="M14 15H22V21H14V15Z" fill="currentColor"/>
+        </svg>
+        relay
+      </a>
+      <nav class="navigation" aria-label="Main navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <div class="hero">
+        <section class="hero-copy" aria-labelledby="hero-title">
+          <p class="eyebrow hero-eyebrow">For small design studios</p>
+          <h1 id="hero-title">
+            <span>Pass the work.</span>
+            <span>Keep the</span>
+            <span><em>context.</em></span>
+          </h1>
+          <p class="intro">
+            Decisions, open questions and who’s next.
+            Relay keeps them on one shared handoff page,
+            with an acknowledgement so you know it’s been received.
+          </p>
+          <a class="button hero-cta" href="#handoff">
+            Try a handoff
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <path d="M4 12H20M13 5L20 12L13 19"/>
+            </svg>
+          </a>
+          <p class="cta-note">A working example. No signup, nothing sent.</p>
+          <div class="margin-note">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+              <path d="M6 8H23V28H6Z"/>
+              <path d="M17 12H33V33H17"/>
+              <path d="M12 17H28M24 13L28 17L24 21"/>
+            </svg>
+            <span>For the space between “my part’s done” and “over to you.”</span>
+          </div>
+        </section>
+
+        <section class="demo" id="handoff" tabindex="-1" aria-labelledby="handoff-title" aria-describedby="demo-disclosure">
+          <div class="demo-meta">
+            <p class="eyebrow">An example to try / 01</p>
+            <span class="demo-tag">Local demo</span>
+          </div>
+
+          <div class="handoff-sheet">
+            <header class="sheet-header">
+              <p class="eyebrow">Design → Production</p>
+              <h2 id="handoff-title">Harbor identity</h2>
+              <p class="sheet-subtitle">The handoff page</p>
+            </header>
+
+            <dl class="handoff-details">
+              <div class="detail-row">
+                <dt><span class="row-marker" aria-hidden="true"></span>Decision</dt>
+                <dd>Use the wordmark without the wave symbol.</dd>
+              </div>
+              <div class="detail-row">
+                <dt><span class="row-marker open" aria-hidden="true"></span>Open question</dt>
+                <dd>Does the packaging need a bilingual version?</dd>
+              </div>
+              <div class="detail-row">
+                <dt><span class="row-marker" aria-hidden="true"></span>Next owner</dt>
+                <dd class="owner">The production designer</dd>
+              </div>
+              <div class="detail-row">
+                <dt><span class="row-marker" aria-hidden="true"></span>Next step</dt>
+                <dd>Prepare a print proof <span class="next-step">by Thursday.</span></dd>
+              </div>
+            </dl>
+
+            <div class="ack-area">
+              <p class="role-label">In this example, <strong>you’re the production designer.</strong></p>
+              <button class="button ack-button" id="acknowledge" type="button" aria-describedby="ack-note demo-disclosure" hidden>
+                <span id="ack-label">Acknowledge handoff</span>
+                <span class="button-symbol" id="ack-symbol" aria-hidden="true">✓</span>
+              </button>
+              <p class="ack-note" id="ack-note">Confirm receipt, not completion of the work.</p>
+              <noscript>
+                <p>Enable JavaScript to acknowledge and undo this local example. The handoff remains readable above.</p>
+              </noscript>
+            </div>
+          </div>
+
+          <div class="receipt" id="receipt">
+            <span class="receipt-icon" aria-hidden="true">
+              <svg class="waiting-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M10 5V10L13 12"/>
+              </svg>
+              <svg class="check-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 10L8 14L16 6"/>
+              </svg>
+            </span>
+            <div role="status" aria-live="polite" aria-atomic="true">
+              <span class="receipt-label">Demo sender sees</span>
+              <span class="receipt-message" id="receipt-message">Waiting for acknowledgement.</span>
+            </div>
+          </div>
+          <p class="demo-disclosure" id="demo-disclosure">
+            Only this demo changes. Nothing is saved or sent.
+            You can undo your acknowledgement; refreshing also resets it.
+          </p>
+        </section>
+      </div>
+
+      <section class="how-it-works" id="how-it-works" aria-labelledby="how-title">
+        <h2 class="section-heading" id="how-title">The handoff is part of the work.</h2>
+        <ol class="steps">
+          <li>
+            <span class="step-number" aria-hidden="true">01 /</span>
+            <h3>Gather the context.</h3>
+            <p>Keep decisions and open questions together, on one shared page.</p>
+          </li>
+          <li>
+            <span class="step-number" aria-hidden="true">02 /</span>
+            <h3>Name the next owner.</h3>
+            <p>Pair a clear owner with a next step, so the recipient knows what’s theirs.</p>
+          </li>
+          <li>
+            <span class="step-number" aria-hidden="true">03 /</span>
+            <h3>Know it was received.</h3>
+            <p>The recipient acknowledges the handoff. The sender can see that it arrived.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="pricing" id="pricing" aria-labelledby="pricing-title">
+        <div>
+          <p class="eyebrow">The concept offer</p>
+          <h2 id="pricing-title">Small studio.<br>Simple terms.</h2>
+          <p class="concept-note">
+            Relay is a product concept, not a live service.
+            Explore the example here—there’s no real trial or signup on this page.
+          </p>
+        </div>
+        <div class="offer">
+          <div class="price-line">
+            <span class="price">$12</span>
+            <span class="price-unit">per workspace<br>per month</span>
+          </div>
+          <p class="terms">14-day trial. No credit card required.</p>
+          <a class="button" href="#handoff">
+            Try a handoff
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <path d="M4 12H20M13 5L20 12L13 19"/>
+            </svg>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-note">
+        <span class="footer-brand">relay</span>
+        <span>A product concept for the next pair of hands.</span>
+      </div>
+      <a href="#top">Back to top ↑</a>
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      const demo = document.getElementById("handoff");
+      const button = document.getElementById("acknowledge");
+      const label = document.getElementById("ack-label");
+      const symbol = document.getElementById("ack-symbol");
+      const receipt = document.getElementById("receipt");
+      const message = document.getElementById("receipt-message");
+      let acknowledged = false;
+
+      button.hidden = false;
+
+      button.addEventListener("click", () => {
+        acknowledged = !acknowledged;
+
+        button.classList.toggle("is-received", acknowledged);
+        receipt.classList.toggle("is-received", acknowledged);
+
+        label.textContent = acknowledged
+          ? "Undo acknowledgement"
+          : "Acknowledge handoff";
+
+        symbol.textContent = acknowledged ? "↶" : "✓";
+
+        message.textContent = acknowledged
+          ? "Acknowledged by the production designer."
+          : "Waiting for acknowledgement.";
+
+        // The same button remains focused, so undo is immediately available.
+        // No storage, network request or real handoff is involved.
+      });
+
+      document.querySelectorAll('a[href="#handoff"]').forEach((link) => {
+        link.addEventListener("click", () => {
+          // Keep the native anchor navigation, while moving keyboard focus
+          // to the beginning of the example rather than past its context.
+          demo.focus({ preventScroll: true });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

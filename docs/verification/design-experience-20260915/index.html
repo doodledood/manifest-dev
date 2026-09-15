@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design skill — working comparisons</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f4f6fa;
+      --surface: #fff;
+      --ink: #17233d;
+      --muted: #4f5c72;
+      --line: #c5cddd;
+      --accent: #294fad;
+      --s1: .5rem;
+      --s2: 1rem;
+      --s3: 1.5rem;
+      --s4: 2rem;
+      --s6: 3rem;
+      --s8: 4rem;
+      font: 100%/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
+    .skip { position: absolute; left: var(--s2); top: var(--s2); padding: var(--s2); background: var(--surface); transform: translateY(-180%); }
+    .skip:focus { transform: none; }
+    main { max-width: 1200px; margin: auto; padding: var(--s6) var(--s3) var(--s8); }
+    header { border-bottom: 2px solid var(--ink); padding-bottom: var(--s4); }
+    .eyebrow { color: var(--muted); font: .8125rem/1.5 ui-monospace, monospace; text-transform: uppercase; letter-spacing: .08em; }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; letter-spacing: -.04em; max-width: 20ch; margin: var(--s2) 0; }
+    .intro { max-width: 66ch; font-size: 1.125rem; }
+    .jump { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); margin-top: var(--s3); }
+    .jump a { padding-block: var(--s1); }
+    section { padding-top: var(--s6); scroll-margin-top: var(--s2); }
+    h2 { font-size: 1.625rem; line-height: 1.25; margin: 0 0 var(--s1); }
+    .task { color: var(--muted); max-width: 76ch; margin: 0 0 var(--s3); }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
+    .sample { display: block; color: var(--ink); text-decoration: none; border: 1px solid var(--line); background: var(--surface); }
+    .sample:hover { border-color: var(--accent); }
+    .sample-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s2); padding: var(--s2); }
+    .sample-head strong { font-size: 1.125rem; }
+    .sample-head span { font-size: .875rem; color: var(--muted); }
+    .sample img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; object-position: top; border-block: 1px solid var(--line); }
+    .open { display: block; padding: var(--s2); color: var(--accent); font-weight: 650; text-decoration: underline; text-underline-offset: .2em; }
+    .more { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3); align-items: baseline; padding-top: var(--s2); }
+    .more span { color: var(--muted); font-size: .875rem; }
+    .more a { padding-block: var(--s1); }
+    details { margin-top: var(--s8); padding: var(--s3); border: 1px solid var(--line); background: var(--surface); }
+    summary { cursor: pointer; font-weight: 650; }
+    details p, details ul { max-width: 80ch; }
+    details li { margin-block: var(--s1); }
+    footer { margin-top: var(--s4); color: var(--muted); font-size: .875rem; }
+    @media (max-width: 650px) {
+      main { padding: var(--s4) var(--s2); }
+      .pair { grid-template-columns: 1fr; }
+      .sample-head { flex-wrap: wrap; gap: var(--s1); }
+      .more { display: block; }
+      .more a { display: block; width: fit-content; }
+    }
+  </style>
+</head>
+<body>
+<a class="skip" href="#comparisons">Skip to comparisons</a>
+<main>
+  <header>
+    <div class="eyebrow">Design-skill pilot · 15 September 2026</div>
+    <h1>Same brief.<br>Different instructions.</h1>
+    <p class="intro">Open a page and use it. Each pair starts from the same brief and supplied facts, with different design instructions. The previews are only the first frame; the full pages have working controls.</p>
+    <p>These are raw, unedited fictional samples—not production products. “Reworked skill” identifies a version, not a winner.</p>
+    <nav class="jump" aria-label="Comparisons">
+      <a href="#relay">Relay · landing page</a>
+      <a href="#harbor">Harbor · analytics</a>
+      <a href="#alder">Alder · presentation</a>
+    </nav>
+  </header>
+  <div id="comparisons">
+    <section id="relay" aria-labelledby="relay-title">
+      <h2 id="relay-title">Relay: understand it, then try a handoff</h2>
+      <p class="task">You lead a small studio. Find out what the product does, try acknowledging the sample handoff, then undo it. Is the offer clear? Does the result of your action make sense?</p>
+      <div class="pair">
+        <a class="sample" href="samples/baseline-landing.html" aria-label="Open the original-skill Relay landing page">
+          <div class="sample-head"><strong>Original skill</strong><span>First generation</span></div>
+          <img src="screenshots/baseline-landing-desktop.png" alt="Preview of the original Relay landing page" width="1440" height="900">
+          <span class="open">Open working page →</span>
+        </a>
+        <a class="sample" href="samples/candidate-landing.html" aria-label="Open the reworked-skill Relay landing page">
+          <div class="sample-head"><strong>Reworked skill</strong><span>Final package</span></div>
+          <img src="screenshots/candidate-landing-desktop.png" alt="Preview of the reworked-skill Relay landing page" width="1440" height="900">
+          <span class="open">Open working page →</span>
+        </a>
+      </div>
+      <div class="more"><span>More context:</span><a href="samples/baseline-repeat-landing.html">A second original-skill generation</a><a href="samples/intermediate-landing.html">New core with the old references</a></div>
+    </section>
+    <section id="harbor" aria-labelledby="harbor-title">
+      <h2 id="harbor-title">Harbor: compare, select, investigate</h2>
+      <p class="task">You supervise ferry operations. Compare the routes, select one and inspect its counts. Switch between Weekday and Weekend. Which page keeps the evidence you need together?</p>
+      <div class="pair">
+        <a class="sample" href="samples/baseline-analytics.html" aria-label="Open the original-skill Harbor analytics page">
+          <div class="sample-head"><strong>Original skill</strong><span>First generation</span></div>
+          <img src="screenshots/baseline-analytics-desktop.png" alt="Preview of the original Harbor analytics page" width="1440" height="900" loading="lazy">
+          <span class="open">Open working page →</span>
+        </a>
+        <a class="sample" href="samples/candidate-analytics.html" aria-label="Open the reworked-skill Harbor analytics page">
+          <div class="sample-head"><strong>Reworked skill</strong><span>Final package</span></div>
+          <img src="screenshots/candidate-analytics-desktop.png" alt="Preview of the reworked-skill Harbor analytics page" width="1440" height="900" loading="lazy">
+          <span class="open">Open working page →</span>
+        </a>
+      </div>
+      <div class="more"><span>More context:</span><a href="samples/baseline-repeat-analytics.html">A second original-skill generation</a><a href="samples/intermediate-analytics.html">New core with the old references</a></div>
+    </section>
+    <section id="alder" aria-labelledby="alder-title">
+      <h2 id="alder-title">Alder Library: follow the case for a pilot</h2>
+      <p class="task">You are a trustee hearing a short proposal. Move through five slides using Next or the arrow keys. What is being requested, what does the evidence actually show, and what must happen before it starts?</p>
+      <div class="pair">
+        <a class="sample" href="samples/baseline-presentation.html" aria-label="Open the original-skill Alder Library presentation">
+          <div class="sample-head"><strong>Original skill</strong><span>First generation</span></div>
+          <img src="screenshots/baseline-presentation-desktop.png" alt="Opening slide of the original Alder Library presentation" width="1440" height="900" loading="lazy">
+          <span class="open">Open working presentation →</span>
+        </a>
+        <a class="sample" href="samples/candidate-presentation.html" aria-label="Open the reworked-skill Alder Library presentation">
+          <div class="sample-head"><strong>Reworked skill</strong><span>Final package</span></div>
+          <img src="screenshots/candidate-presentation-desktop.png" alt="Opening slide of the reworked-skill Alder Library presentation" width="1440" height="900" loading="lazy">
+          <span class="open">Open working presentation →</span>
+        </a>
+      </div>
+      <div class="more"><span>More context:</span><a href="samples/baseline-repeat-presentation.html">A second original-skill generation</a><a href="samples/intermediate-presentation.html">New core with the old references</a></div>
+    </section>
+  </div>
+  <details>
+    <summary>Read the findings after trying the pages</summary>
+    <p>Blind reviewers preferred the first original-skill sample in all three briefs. They also preferred it to the second original-skill generation. This small pilot does not establish that the rewrite improves design—or that the differences are caused by the instructions.</p>
+    <ul>
+      <li><strong>Landing:</strong> the original was more compact; the final explains acknowledgement more explicitly but adds reading and framing.</li>
+      <li><strong>Analytics:</strong> the original gives comparison and detail the strongest shared view; the final has a cohesive ledger treatment and a good phone detail jump.</li>
+      <li><strong>Presentation:</strong> the original makes the evidence gap visible; the final has a strong opening but a heavier finish.</li>
+    </ul>
+    <p>Known defects remain in the raw samples: the intermediate landing has contradictory receipt icons; the repeat-original analytics can leave a keyboard-selected route offscreen. The final presentation hides direct slide jumps on phones. None was silently repaired.</p>
+    <p><a href="README.md">Read the full method, findings and limitations</a></p>
+  </details>
+  <footer>One model · three briefs · twelve frozen outputs. No audience study, conversion test or non-HTML validation. These pages work offline; use your browser’s Back action to return here.</footer>
+</main>
+</body>
+</html>

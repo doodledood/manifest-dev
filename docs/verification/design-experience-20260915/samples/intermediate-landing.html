@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f0e6">
+  <meta name="description" content="Relay is a project-handoff concept for small design studios. Try a local example with decisions, open questions, a next owner and an acknowledgement.">
+  <title>Relay — Pass it on. Keep it together.</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f3f0e6;
+      --paper: #fffdf7;
+      --ink: #192c42;
+      --muted: #536070;
+      --blue: #2948c7;
+      --blue-dark: #1e36a0;
+      --lime: #e0edac;
+      --rule: #c7cbca;
+      --success: #294b34;
+      --success-bg: #edf2da;
+      --space: 8px;
+      --sans: Arial, Helvetica, sans-serif;
+      --serif: Georgia, "Times New Roman", serif;
+      --mono: "Courier New", Courier, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-block-start: 24px;
+    }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    a { color: inherit; }
+    svg { display: block; flex-shrink: 0; }
+    [hidden] { display: none !important; }
+
+    a:focus-visible,
+    button:focus-visible,
+    [tabindex="-1"]:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 5px;
+    }
+
+    .wrap {
+      inline-size: min(100% - 80px, 1280px);
+      margin-inline: auto;
+    }
+
+    .skip-link {
+      position: absolute;
+      inset-block-start: 12px;
+      inset-inline-start: 12px;
+      z-index: 5;
+      padding: 12px 18px;
+      background: var(--paper);
+      transform: translateY(-180%);
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    .sr-only {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .site-header {
+      min-block-size: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      padding-block: 24px;
+      border-block-end: 1px solid var(--rule);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-block-size: 44px;
+      text-decoration: none;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    .brand-mark { color: var(--blue); }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .site-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 44px;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 5px;
+      text-decoration-color: transparent;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr);
+      align-items: start;
+      gap: clamp(32px, 5vw, 76px);
+      padding-block: 64px 88px;
+    }
+
+    .intro { padding-block: 16px; }
+
+    .eyebrow,
+    .micro-label {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-block-end: 28px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      inline-size: 10px;
+      block-size: 10px;
+      flex-shrink: 0;
+      background: var(--blue);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(58px, 7.5vw, 100px);
+      font-weight: 800;
+      line-height: .99;
+      letter-spacing: -.065em;
+    }
+
+    h1 span { display: block; }
+
+    h1 .display-serif {
+      color: var(--blue);
+      font-family: var(--serif);
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: -.07em;
+    }
+
+    .hero-description {
+      max-inline-size: 37ch;
+      margin-block: 30px 26px;
+      font-size: 19px;
+      line-height: 1.6;
+    }
+
+    .primary-link,
+    .ack-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-block-size: 56px;
+      padding: 15px 22px;
+      border: 2px solid transparent;
+      border-radius: 3px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.35;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .primary-link { min-inline-size: 220px; }
+
+    .trial-note {
+      max-inline-size: 37ch;
+      margin-block: 16px 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .trial-note strong { color: var(--ink); }
+
+    .demo-frame {
+      min-inline-size: 0;
+      padding: 24px;
+      background: var(--blue);
+      box-shadow: 10px 10px 0 #d7d8cf;
+    }
+
+    .demo-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-block-end: 18px;
+      color: #fff;
+    }
+
+    .demo-bar .micro-label { font-size: 11px; }
+
+    .demo-tag {
+      flex-shrink: 0;
+      padding: 4px 8px;
+      background: var(--lime);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      line-height: 1.5;
+    }
+
+    .handoff-sheet {
+      position: relative;
+      background: var(--paper);
+    }
+
+    .sheet-content { padding: 26px 28px 24px; }
+
+    .sheet-heading-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-block-end: 7px;
+      color: var(--muted);
+    }
+
+    .sheet-heading-line .micro-label { font-size: 11px; }
+
+    .sheet-heading-line svg { color: var(--blue); }
+
+    .project-title {
+      inline-size: fit-content;
+      max-inline-size: 100%;
+      margin: 0 0 23px;
+      font-size: clamp(27px, 2.7vw, 35px);
+      line-height: 1.12;
+      font-weight: 700;
+      letter-spacing: -.045em;
+      scroll-margin-block-start: 28px;
+    }
+
+    .handoff-details { margin: 0; }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 108px minmax(0, 1fr);
+      gap: 16px;
+      padding-block: 14px;
+      border-block-start: 1px solid var(--rule);
+    }
+
+    .detail-row dt {
+      padding-block-start: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .detail-row dd {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .owner-row dd { font-weight: 700; }
+
+    .question-mark {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      inline-size: 17px;
+      block-size: 17px;
+      margin-inline-start: 3px;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      font-family: var(--sans);
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .action-area {
+      margin-block-start: 8px;
+      padding-block-start: 18px;
+      border-block-start: 1px solid var(--rule);
+    }
+
+    .action-role {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .action-role strong { color: var(--ink); }
+
+    .ack-button {
+      inline-size: 100%;
+      min-block-size: 52px;
+      gap: 16px;
+      padding: 12px 16px;
+      font-size: 15px;
+      text-align: start;
+    }
+
+    .ack-button[data-acknowledged="true"] {
+      border-color: var(--ink);
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .ack-button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .receipt {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 28px 22px;
+      border-block-start: 1px dashed #858e96;
+      background: #eeeee6;
+      transition: background-color 180ms ease;
+    }
+
+    .receipt::before,
+    .receipt::after {
+      content: "";
+      position: absolute;
+      inset-block-start: -8px;
+      inline-size: 16px;
+      block-size: 16px;
+      background: var(--blue);
+      border-radius: 50%;
+    }
+
+    .receipt::before { inset-inline-start: -8px; }
+    .receipt::after { inset-inline-end: -8px; }
+
+    .receipt[data-acknowledged="true"] {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .receipt .micro-label {
+      margin-block-end: 6px;
+      font-size: 10px;
+    }
+
+    .receipt-title {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -.025em;
+    }
+
+    .receipt-detail {
+      max-inline-size: 36ch;
+      margin: 7px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .receipt-symbol {
+      display: grid;
+      place-items: center;
+      inline-size: 44px;
+      block-size: 44px;
+      border: 1.5px solid currentColor;
+      border-radius: 50%;
+    }
+
+    .demo-scope {
+      margin: 18px 0 0;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .demo-scope strong { font-weight: 700; }
+
+    .no-script {
+      margin-block: 12px 0;
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .how-section {
+      padding-block: 54px 72px;
+      border-block-start: 1px solid var(--rule);
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 32px;
+      align-items: start;
+      margin-block-end: 38px;
+    }
+
+    .section-heading .micro-label { padding-block-start: 9px; }
+
+    .section-heading h2 {
+      max-inline-size: 23ch;
+      margin: 0;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1.12;
+      font-weight: 500;
+      letter-spacing: -.045em;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 36px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .step {
+      padding-block-start: 18px;
+      border-block-start: 2px solid var(--ink);
+    }
+
+    .step-number {
+      display: block;
+      margin-block-end: 20px;
+      color: var(--blue);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .step h3 {
+      margin: 0 0 10px;
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -.025em;
+    }
+
+    .step p {
+      max-inline-size: 34ch;
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .pricing-section {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 44px;
+      align-items: center;
+      margin-block-end: 40px;
+      padding: 48px 52px;
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .pricing-section .micro-label {
+      color: var(--lime);
+      margin-block-end: 22px;
+    }
+
+    .pricing-section h2 {
+      margin: 0;
+      font-size: clamp(32px, 4vw, 50px);
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -.045em;
+    }
+
+    .pricing-description {
+      max-inline-size: 34ch;
+      margin: 20px 0 0;
+      color: #dde3e7;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .price-line {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      margin: 0 0 12px;
+    }
+
+    .price {
+      font-size: 84px;
+      line-height: 1;
+      letter-spacing: -.075em;
+    }
+
+    .price-unit {
+      max-inline-size: 15ch;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .pricing-terms {
+      margin: 0 0 24px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .pricing-section .primary-link {
+      background: var(--lime);
+      color: var(--ink);
+    }
+
+    .pricing-section a:focus-visible {
+      outline-color: var(--paper);
+    }
+
+    .pricing-limit {
+      margin: 12px 0 0;
+      color: #dde3e7;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .site-footer {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px 32px;
+      padding-block: 0 32px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .site-footer p { margin: 0; }
+    .site-footer strong { color: var(--ink); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .site-nav a:hover { text-decoration-color: currentColor; }
+      .brand:hover .brand-mark { color: var(--ink); }
+      .primary-link:hover,
+      .ack-button:not(:disabled):hover { background: var(--blue-dark); }
+      .ack-button[data-acknowledged="true"]:hover { background: #e8ecf5; }
+      .pricing-section .primary-link:hover { background: #f0f6d3; }
+    }
+
+    @media (max-width: 1050px) and (min-width: 821px) {
+      .wrap { inline-size: calc(100% - 56px); }
+      .hero { gap: 32px; }
+      .demo-frame { padding: 18px; }
+      .sheet-content { padding: 22px; }
+      .detail-row { grid-template-columns: 1fr; gap: 5px; }
+      .receipt { padding-inline: 22px; }
+    }
+
+    @media (max-width: 820px) {
+      .wrap { inline-size: min(100% - 48px, 620px); }
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding-block: 40px 64px;
+      }
+      .intro { padding: 0; }
+      h1 { font-size: clamp(64px, 12vw, 92px); }
+      .hero-description { max-inline-size: 42ch; }
+      .demo-frame { box-shadow: 7px 7px 0 #d7d8cf; }
+      .section-heading { grid-template-columns: 1fr; gap: 16px; }
+      .section-heading h2 { max-inline-size: 24ch; }
+      .steps { grid-template-columns: 1fr; gap: 30px; }
+      .step {
+        display: grid;
+        grid-template-columns: 36px minmax(0, 1fr);
+        gap: 16px;
+      }
+      .step-number { margin-block: 3px 0; }
+      .step p { max-inline-size: 48ch; }
+      .pricing-section {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        padding: 36px;
+      }
+      .pricing-description { max-inline-size: 42ch; }
+      .price-unit { max-inline-size: none; }
+    }
+
+    @media (max-width: 480px) {
+      .wrap { inline-size: calc(100% - 40px); }
+      .site-header { min-block-size: 84px; padding-block: 18px; gap: 12px; }
+      .brand { font-size: 30px; gap: 7px; }
+      .brand svg { inline-size: 27px; block-size: 27px; }
+      .site-nav { gap: 16px; font-size: 12px; }
+      .hero { padding-block-start: 32px; }
+      .eyebrow { font-size: 10px; margin-block-end: 22px; }
+      h1 { font-size: clamp(52px, 15vw, 70px); }
+      .hero-description {
+        margin-block: 24px;
+        font-size: 17px;
+        line-height: 1.6;
+      }
+      .primary-link { min-inline-size: 210px; }
+      .demo-frame { padding: 16px; }
+      .demo-bar { gap: 8px; margin-block-end: 14px; }
+      .demo-bar .micro-label { font-size: 10px; letter-spacing: .025em; }
+      .demo-tag { font-size: 10px; padding-inline: 6px; }
+      .sheet-content { padding: 22px 20px 20px; }
+      .project-title { font-size: 29px; margin-block-end: 20px; }
+      .detail-row { grid-template-columns: 1fr; gap: 5px; padding-block: 13px; }
+      .detail-row dt { padding: 0; }
+      .detail-row dd { font-size: 16px; }
+      .ack-button { padding-inline: 12px; gap: 10px; font-size: 14px; }
+      .receipt { padding: 20px; gap: 12px; }
+      .receipt-title { font-size: 20px; }
+      .receipt-symbol { inline-size: 36px; block-size: 36px; }
+      .receipt-symbol svg { inline-size: 20px; block-size: 20px; }
+      .how-section { padding-block: 36px 48px; }
+      .section-heading { margin-block-end: 28px; }
+      .pricing-section { padding: 30px 24px; }
+      .price { font-size: 76px; }
+      .price-unit { max-inline-size: 13ch; }
+      .pricing-section .primary-link { min-inline-size: 0; inline-size: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+
+    @media (forced-colors: active) {
+      .demo-frame,
+      .handoff-sheet,
+      .receipt,
+      .pricing-section { border: 1px solid CanvasText; }
+      .primary-link,
+      .ack-button { border-color: ButtonText; }
+      .receipt::before,
+      .receipt::after { display: none; }
+    }
+  </style>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header wrap">
+    <a class="brand" href="#top" aria-label="Relay home">
+      <svg class="brand-mark" width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+        <path d="M3 8H22V15H3V8ZM12 19H31V26H12V19Z" fill="currentColor"/>
+        <path d="M22 8L29 15H22V8ZM12 26L5 19H12V26Z" fill="currentColor"/>
+      </svg>
+      relay
+    </a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="#how-it-works">How it works</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <div class="hero wrap">
+      <section class="intro" aria-labelledby="hero-title">
+        <p class="eyebrow">Project handoffs for small studios</p>
+        <h1 id="hero-title">
+          <span>Pass it on.</span>
+          <span>Keep it</span>
+          <span class="display-serif">together.</span>
+        </h1>
+        <p class="hero-description">
+          Relay keeps a project’s decisions, open questions and next owner on one
+          shared handoff page. So the next person knows where to pick up.
+        </p>
+        <a class="primary-link" href="#demo" data-try>
+          Try a handoff
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <p class="trial-note">
+          <strong>A working example. No signup.</strong><br>
+          Concept offer: $12/workspace/month.<br>
+          14-day trial. No credit card required.
+        </p>
+      </section>
+
+      <section class="demo-frame" aria-labelledby="demo">
+        <div class="demo-bar">
+          <p class="micro-label">Take the receiving seat</p>
+          <span class="demo-tag">LOCAL DEMO</span>
+        </div>
+
+        <article class="handoff-sheet" aria-label="Harbor identity sample handoff">
+          <div class="sheet-content">
+            <div class="sheet-heading-line">
+              <p class="micro-label">Shared handoff</p>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 19L19 5M6 5H19V18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <h2 class="project-title" id="demo" tabindex="-1">Harbor identity</h2>
+
+            <dl class="handoff-details">
+              <div class="detail-row">
+                <dt>Decision</dt>
+                <dd>Use the wordmark without the wave symbol.</dd>
+              </div>
+              <div class="detail-row">
+                <dt>Open question <span class="question-mark" aria-hidden="true">?</span></dt>
+                <dd>Does the packaging need a bilingual version?</dd>
+              </div>
+              <div class="detail-row owner-row">
+                <dt>Next owner</dt>
+                <dd>The production designer</dd>
+              </div>
+              <div class="detail-row">
+                <dt>Next step</dt>
+                <dd>Prepare a print proof by Thursday.</dd>
+              </div>
+            </dl>
+
+            <div class="action-area">
+              <p class="action-role">
+                In this example, <strong>you’re the production designer.</strong>
+              </p>
+              <button
+                class="ack-button"
+                id="ack-button"
+                type="button"
+                aria-describedby="demo-scope"
+                aria-controls="sender-receipt"
+                data-acknowledged="false"
+                disabled
+              >
+                <span id="ack-label">Acknowledge handoff</span>
+                <svg id="ack-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <svg id="undo-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden>
+                  <path d="M9 5L4 10L9 15M4 10H14A6 6 0 0 1 14 22" transform="translate(0 -2)" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <noscript>
+                <p class="no-script">
+                  JavaScript is off. You can read the example, but enable JavaScript
+                  to acknowledge it and undo the acknowledgement.
+                </p>
+              </noscript>
+            </div>
+          </div>
+
+          <div class="receipt" id="sender-receipt" data-acknowledged="false">
+            <div>
+              <p class="micro-label">What the sender sees · demo</p>
+              <p class="receipt-title" id="receipt-title">Not acknowledged</p>
+              <p class="receipt-detail" id="receipt-detail">
+                Waiting for the production designer.
+              </p>
+            </div>
+            <div class="receipt-symbol" aria-hidden="true">
+              <svg id="waiting-symbol" width="25" height="25" viewBox="0 0 24 24" fill="none">
+                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <svg id="received-symbol" width="25" height="25" viewBox="0 0 24 24" fill="none" hidden>
+                <path d="M5 12L10 17L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </article>
+
+        <p class="demo-scope" id="demo-scope">
+          <strong>Only this example changes.</strong> Nothing is sent or saved.
+          Undo any time; reloading resets the demo.
+        </p>
+        <div class="sr-only" id="demo-announcement" role="status" aria-live="polite" aria-atomic="true"></div>
+      </section>
+    </div>
+
+    <section class="how-section wrap" id="how-it-works" aria-labelledby="how-title">
+      <div class="section-heading">
+        <p class="micro-label">The idea behind Relay</p>
+        <h2 id="how-title">The essentials travel<br>with the work.</h2>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="step-number" aria-hidden="true">01 /</span>
+          <div>
+            <h3>Keep the why.</h3>
+            <p>
+              Put settled decisions and still-open questions on the same page.
+              A handoff doesn’t have to pretend everything is resolved.
+            </p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-number" aria-hidden="true">02 /</span>
+          <div>
+            <h3>Name who’s next.</h3>
+            <p>
+              Keep the next owner beside the next step.
+              “Over to you” comes with a clear place to start.
+            </p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-number" aria-hidden="true">03 /</span>
+          <div>
+            <h3>Know it landed.</h3>
+            <p>
+              The recipient acknowledges the handoff. The sender can see it was
+              received—not that the work is already done.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="pricing-section wrap" id="pricing" aria-labelledby="pricing-title">
+      <div>
+        <p class="micro-label">The concept offer</p>
+        <h2 id="pricing-title">One workspace.<br>Room to pass it on.</h2>
+        <p class="pricing-description">
+          A shared place for the decisions, questions and people
+          carrying your projects forward.
+        </p>
+      </div>
+      <div>
+        <p class="price-line">
+          <span class="price">$12</span>
+          <span class="price-unit">per workspace<br>per month</span>
+        </p>
+        <p class="pricing-terms">14-day trial. No credit card required.</p>
+        <a class="primary-link" href="#demo" data-try>
+          Try a handoff
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <p class="pricing-limit">
+          Relay is a product concept, not a live service.<br>
+          This opens the local demo, not a trial or checkout.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer wrap">
+    <p><strong>relay</strong> &nbsp; Good work deserves a clear handoff.</p>
+    <p>Offline concept demo. No accounts, submissions or tracking.</p>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const button = document.getElementById("ack-button");
+      const buttonLabel = document.getElementById("ack-label");
+      const acknowledgeIcon = document.getElementById("ack-icon");
+      const undoIcon = document.getElementById("undo-icon");
+      const receipt = document.getElementById("sender-receipt");
+      const receiptTitle = document.getElementById("receipt-title");
+      const receiptDetail = document.getElementById("receipt-detail");
+      const waitingSymbol = document.getElementById("waiting-symbol");
+      const receivedSymbol = document.getElementById("received-symbol");
+      const announcement = document.getElementById("demo-announcement");
+      const demoHeading = document.getElementById("demo");
+
+      let acknowledged = false;
+
+      button.disabled = false;
+
+      button.addEventListener("click", () => {
+        acknowledged = !acknowledged;
+        const state = String(acknowledged);
+
+        button.dataset.acknowledged = state;
+        receipt.dataset.acknowledged = state;
+
+        buttonLabel.textContent = acknowledged
+          ? "Undo acknowledgement"
+          : "Acknowledge handoff";
+
+        acknowledgeIcon.hidden = acknowledged;
+        undoIcon.hidden = !acknowledged;
+        waitingSymbol.hidden = acknowledged;
+        receivedSymbol.hidden = !acknowledged;
+
+        receiptTitle.textContent = acknowledged
+          ? "Received"
+          : "Not acknowledged";
+
+        receiptDetail.textContent = acknowledged
+          ? "Acknowledged by the production designer."
+          : "Waiting for the production designer.";
+
+        announcement.textContent = acknowledged
+          ? "Demo acknowledged. The sender’s receipt now says: Received, acknowledged by the production designer. Nothing was sent or saved. You can undo the acknowledgement."
+          : "Acknowledgement undone. The demo is reset. The sender’s receipt is waiting for the production designer again.";
+      });
+
+      document.querySelectorAll("[data-try]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+          }
+
+          event.preventDefault();
+          const reduceMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+          ).matches;
+
+          demoHeading.focus({ preventScroll: true });
+          demoHeading.scrollIntoView({
+            behavior: reduceMotion ? "auto" : "smooth",
+            block: "start"
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

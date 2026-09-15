@@ -1,0 +1,26 @@
+{
+  "sample": "baseline-repeat-analytics",
+  "provider": "openai",
+  "model": "gpt-6-astra",
+  "started_at": "2026-09-15T09:55:15.090Z",
+  "completed_at": "2026-09-15T09:57:50.236Z",
+  "max_agent_turns": 12,
+  "inherited_conversation": false,
+  "attempt": 1,
+  "generator_tools_used": [
+    "read"
+  ],
+  "references_read": [
+    "references/experience.md",
+    "references/figures.md",
+    "references/floors.md",
+    "references/craft.md"
+  ],
+  "skill_sha256": "f2a23fcbf1d737ed38d7c0c3d49d4ef57ea80587c442adcab4627f00ae8344ef",
+  "artifact_sha256": "93b94e0284972bcab87b27ce7cf816f77d4cb8915cb92c9eedf5ae8285e90c72",
+  "artifact_bytes": 38252,
+  "post_generation_edits": false,
+  "rendered_by_generator": false,
+  "design_note": "**Task model:** A shift lead scans all three routes, selects one to inspect, then changes the day-type cohort to check whether the pattern persists. Rates, previous-period comparisons and cancellations stay together; the selected route is retained when the cohort changes. Repeated desktop use favors aligned rows, while phone layouts keep all three routes together above the detail panel.\n\n**Creative direction:** A harbor operations ledger: warm chart-paper surfaces, deep navy inspection panel, teal current-period bars and rust-colored declines. Shared 0–100% scales preserve magnitude; exact values carry smaller differences.\n\n**Assigned skill read:** `design/SKILL.md`  \n**References read:**\n- `design/references/experience.md`\n- `design/references/figures.md`\n- `design/references/floors.md`\n- `design/references/craft.md`\n\n**Verification:** No files were written. Rendering, interaction, responsive behavior and accessibility have not been tested.\n",
+  "design_note_sha256": "fc585e22549ddca44aa7ce00c65cc1c580be66df357bc121c105ffeeb3e96722"
+}

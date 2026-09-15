@@ -1,0 +1,25 @@
+{
+  "sample": "candidate-landing",
+  "provider": "openai",
+  "model": "gpt-6-astra",
+  "started_at": "2026-09-15T09:54:59.948Z",
+  "completed_at": "2026-09-15T09:57:02.014Z",
+  "max_agent_turns": 12,
+  "inherited_conversation": false,
+  "attempt": 1,
+  "generator_tools_used": [
+    "read"
+  ],
+  "references_read": [
+    "references/floors.md",
+    "references/experience.md",
+    "references/figures.md"
+  ],
+  "skill_sha256": "18009b9f6ace367831410078ad8356672a7aea7e2f81cfc1f9a410dcbca731ff",
+  "artifact_sha256": "9d495bbed625c22ad3d5a68bb7af11a94066adf3de1b21aa8ac3e7c79120d3aa",
+  "artifact_bytes": 23037,
+  "post_generation_edits": false,
+  "rendered_by_generator": false,
+  "design_note": "**Design note.** The visitor’s path is to understand Relay, inspect a realistic handoff, acknowledge it as the recipient, and see what changes for the sender. The example keeps the decision, question, owner and next step together; acknowledgement is reversible and lasts only until refresh.\n\nThe direction is a studio handoff sheet: warm paper, forest-green ink, oversized editorial typography and a lime action accent. The working example is the main visual, not a separate product mockup. On phones, it follows the introduction in reading order.\n\nRead the assigned skill at `design/SKILL.md` and these references:\n- `design/references/floors.md`\n- `design/references/experience.md`\n- `design/references/figures.md`\n\nNo files were written. Render, behavior, responsive layout and assistive-technology verification were not performed.\n",
+  "design_note_sha256": "877b11480c777550496027a5caf48317331d5747c5de80f5f203f9f8cf5b5a59"
+}

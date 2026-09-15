@@ -1,0 +1,25 @@
+{
+  "sample": "candidate-presentation",
+  "provider": "openai",
+  "model": "gpt-6-astra",
+  "started_at": "2026-09-15T09:55:07.614Z",
+  "completed_at": "2026-09-15T09:58:27.182Z",
+  "max_agent_turns": 12,
+  "inherited_conversation": false,
+  "attempt": 1,
+  "generator_tools_used": [
+    "read"
+  ],
+  "references_read": [
+    "references/floors.md",
+    "references/figures.md",
+    "references/experience.md"
+  ],
+  "skill_sha256": "18009b9f6ace367831410078ad8356672a7aea7e2f81cfc1f9a410dcbca731ff",
+  "artifact_sha256": "a8ed079f2da04d16d268e0c076cbc85c90168e1d98564ab7d748b5c464de05a5",
+  "artifact_bytes": 31201,
+  "post_generation_edits": false,
+  "rendered_by_generator": false,
+  "design_note": "**Design note.** The deck follows the trustees’ decision: proposal → evidence and limits → cost → staffing condition → authorization and review. Large editorial type, warm paper, forest green and a rust-colored extension marker give it a library-like character without a slide template. A proportionate hours diagram anchors the opening; a dark budget slide changes the pace. On phones, content stacks and scrolls while navigation remains available. Slide links preserve position and browser history.\n\nRead the assigned brief, generation contract, `design/SKILL.md`, and these exact references:\n- `design/references/floors.md`\n- `design/references/figures.md`\n- `design/references/experience.md`\n\nNo files were written. Rendering, behavior, accessibility and projected readability remain unverified.\n",
+  "design_note_sha256": "e8a0eef33e42da6893294bf514f30a93b1a75fcfa1fe40e8dfa6874c8ffe3734"
+}

@@ -1,0 +1,226 @@
+{
+  "desktop": {
+    "animations": [],
+    "controls": [
+      {
+        "disabled": false,
+        "height": 44,
+        "id": "",
+        "name": "Slide 1: The proposal",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 44,
+        "x": 632.421875,
+        "y": 834.5
+      },
+      {
+        "disabled": false,
+        "height": 44,
+        "id": "",
+        "name": "Slide 2: Evidence and limits",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 44,
+        "x": 680.421875,
+        "y": 834.5
+      },
+      {
+        "disabled": false,
+        "height": 44,
+        "id": "",
+        "name": "Slide 3: Time and cost",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 44,
+        "x": 728.421875,
+        "y": 834.5
+      },
+      {
+        "disabled": false,
+        "height": 44,
+        "id": "",
+        "name": "Slide 4: The start condition",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 44,
+        "x": 776.421875,
+        "y": 834.5
+      },
+      {
+        "disabled": false,
+        "height": 44,
+        "id": "",
+        "name": "Slide 5: Authorize and learn",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 44,
+        "x": 824.421875,
+        "y": 834.5
+      },
+      {
+        "disabled": false,
+        "height": 48,
+        "id": "previous",
+        "name": "Previous slide",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 93.921875,
+        "x": 1172.296875,
+        "y": 832.5
+      },
+      {
+        "disabled": false,
+        "height": 48,
+        "id": "next",
+        "name": "Next slide",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 91.78125,
+        "x": 1276.21875,
+        "y": 832.5
+      }
+    ],
+    "document": {
+      "clientWidth": 1440,
+      "scrollHeight": 900,
+      "scrollWidth": 1440
+    },
+    "headings": [
+      {
+        "height": 229.09375,
+        "level": "H1",
+        "text": "Two more hours.\nSix Saturdays.",
+        "width": 1296,
+        "x": 72,
+        "y": 196.75
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Alder Library\nSaturday hours\nProposal to trustees\n\nTHE REQUEST\n\nTwo more hours.\nSix Saturdays.\n\nA limited pilot of later Saturday closing—not a permanent change.\n\nSaturday opening hours\n10:00\n14:00\n16:00\nCurrent hours\n+2 pilot hours\n01/05\nThe proposal\n← → to navigate · Home / End\n1\n2\n3\n4\n5\n←\nBack\nNext\n→",
+    "title": "Alder Library — The proposal (1 of 5)",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    }
+  },
+  "mobile": {
+    "animations": [],
+    "controls": [
+      {
+        "disabled": false,
+        "height": 48,
+        "id": "previous",
+        "name": "Previous slide",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 86.75,
+        "x": 186.578125,
+        "y": 779.5
+      },
+      {
+        "disabled": false,
+        "height": 48,
+        "id": "next",
+        "name": "Next slide",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 84.671875,
+        "x": 281.328125,
+        "y": 779.5
+      }
+    ],
+    "document": {
+      "clientWidth": 390,
+      "scrollHeight": 844,
+      "scrollWidth": 390
+    },
+    "headings": [
+      {
+        "height": 97.625,
+        "level": "H1",
+        "text": "Two more hours.\nSix Saturdays.",
+        "width": 342,
+        "x": 24,
+        "y": 134.890625
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Alder Library\nSaturday hours\nProposal to trustees\n\nTHE REQUEST\n\nTwo more hours.\nSix Saturdays.\n\nA limited pilot of later Saturday closing—not a permanent change.\n\nSaturday opening hours\n10:00\n14:00\n16:00\nCurrent hours\n+2 pilot hours\n01/05\n←\nBack\nNext\n→",
+    "title": "Alder Library — The proposal (1 of 5)",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  "reflow": {
+    "animations": [],
+    "controls": [
+      {
+        "disabled": false,
+        "height": 48,
+        "id": "previous",
+        "name": "Previous slide",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 83.15625,
+        "x": 127.765625,
+        "y": 779.5
+      },
+      {
+        "disabled": false,
+        "height": 48,
+        "id": "next",
+        "name": "Next slide",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 81.078125,
+        "x": 218.921875,
+        "y": 779.5
+      }
+    ],
+    "document": {
+      "clientWidth": 320,
+      "scrollHeight": 844,
+      "scrollWidth": 320
+    },
+    "headings": [
+      {
+        "height": 84.71875,
+        "level": "H1",
+        "text": "Two more hours.\nSix Saturdays.",
+        "width": 280,
+        "x": 20,
+        "y": 134.890625
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Alder Library\nSaturday hours\nProposal to trustees\n\nTHE REQUEST\n\nTwo more hours.\nSix Saturdays.\n\nA limited pilot of later Saturday closing—not a permanent change.\n\nSaturday opening hours\n10:00\n14:00\n16:00\nCurrent hours\n+2 pilot hours\n01/05\n←\nBack\nNext\n→",
+    "title": "Alder Library — The proposal (1 of 5)",
+    "viewport": {
+      "height": 844,
+      "width": 320
+    }
+  }
+}

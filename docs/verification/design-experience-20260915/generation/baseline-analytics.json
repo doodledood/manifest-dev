@@ -1,0 +1,26 @@
+{
+  "sample": "baseline-analytics",
+  "provider": "openai",
+  "model": "gpt-6-astra",
+  "started_at": "2026-09-15T09:37:35.615Z",
+  "completed_at": "2026-09-15T09:40:45.668Z",
+  "max_agent_turns": 12,
+  "inherited_conversation": false,
+  "attempt": 1,
+  "generator_tools_used": [
+    "read"
+  ],
+  "references_read": [
+    "references/experience.md",
+    "references/figures.md",
+    "references/floors.md",
+    "references/craft.md"
+  ],
+  "skill_sha256": "f2a23fcbf1d737ed38d7c0c3d49d4ef57ea80587c442adcab4627f00ae8344ef",
+  "artifact_sha256": "568748410b5450bc227674095c78fe0e7c0bc52c46431668f3bd6b53fc6db0be",
+  "artifact_bytes": 36944,
+  "post_generation_edits": false,
+  "rendered_by_generator": false,
+  "design_note": "**Design note.** The working loop is compare three routes → inspect one → switch day type while retaining that route. Current rates, previous rates, changes, and denominators remain together; the selected route’s counts sit alongside on desktop and below on phones. The visual direction is a harbor instrument board: ink-blue surfaces, warm paper, calibrated bars, and restrained serif headings. The largest decline is highlighted without implying a cause.\n\nRead the assigned skill at `design/SKILL.md` and these references:\n- `design/references/experience.md`\n- `design/references/figures.md`\n- `design/references/floors.md`\n- `design/references/craft.md`\n\nNo rendering or behavior verification was performed. Responsive layout, keyboard interaction, and assistive-technology behavior remain unverified.\n",
+  "design_note_sha256": "42e7988aab033cbd4a98ecbb992070032f25b01df3288f6b67dfe9dacce1331e"
+}

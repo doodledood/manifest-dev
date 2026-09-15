@@ -1,0 +1,27 @@
+{
+  "sample": "intermediate-presentation",
+  "provider": "openai",
+  "model": "gpt-6-astra",
+  "started_at": "2026-09-15T09:38:25.887Z",
+  "completed_at": "2026-09-15T09:41:08.888Z",
+  "max_agent_turns": 12,
+  "inherited_conversation": false,
+  "attempt": 1,
+  "generator_tools_used": [
+    "read"
+  ],
+  "references_read": [
+    "references/floors.md",
+    "references/craft.md",
+    "references/registers.md",
+    "references/figures.md",
+    "references/experience.md"
+  ],
+  "skill_sha256": "11390c9320811757c2b1e150ddda535e4d0af9a2d7ea5c66d0843d67ce9eca3e",
+  "artifact_sha256": "4affab074303abc2731ce5247e741f5984230b5c347a31411987d4f72e8d271a",
+  "artifact_bytes": 28983,
+  "post_generation_edits": false,
+  "rendered_by_generator": false,
+  "design_note": "**Design note.** The task is a 90-second trustee decision: authorize a bounded pilot without mistaking suggestive evidence for proven demand. The five-slide path is proposal → evidence and limits → cost and staffing → learning plan → authorization. Large headlines and native diagrams serve projection; reflowing content, persistent navigation, keyboard controls and slide URLs support later phone reading.\n\nThe creative direction is a civic-library broadside: warm paper, forest ink, serif headlines and a gold band identifying the proposed extra hours. No decorative imagery stands in for evidence.\n\nRead the assigned `SKILL.md` and these exact references under `design/references/`: `floors.md`, `craft.md`, `registers.md`, `figures.md`, and `experience.md`.\n\nRender, behavior, device and accessibility verification were not performed, as required by the generation contract.\n",
+  "design_note_sha256": "1623c7e52d2d18dc618c21c4433647bf9a5fc9ad87a045c781a1fd01633c8e9e"
+}

@@ -1,0 +1,4 @@
+{
+  "detail": "02 / SELECTED ROUTE\n\nEast Bank\n\nWeekend · 96 scheduled trips\n\nOn-time rate · latest four weeks\n87.5%\n−3.5 pp\nvs 91% in the previous four weeks\nWEEKEND · LATEST FOUR WEEKS · TRIP COUNTS\nTrip outcome\tCount\nOn time\t84\nArrived more than 5 min late\t9\nCancelled\t3\nAll scheduled trips\t96\n\nThese outcomes divide the scheduled trips into three separate groups. Cancellations are included in the rate’s denominator, not counted again as late arrivals.",
+  "resources": []
+}

@@ -1,0 +1,497 @@
+{
+  "desktop": {
+    "animations": [],
+    "controls": [
+      {
+        "height": 48,
+        "id": "",
+        "name": "Skip to content",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 145.078125,
+        "x": 12,
+        "y": -74.4000015258789
+      },
+      {
+        "height": 46.5,
+        "id": "",
+        "name": "Relay home",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 107.6875,
+        "x": 72.5,
+        "y": 24.25
+      },
+      {
+        "height": 44,
+        "id": "",
+        "name": "How it works",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 81.640625,
+        "x": 1199.5625,
+        "y": 25.5
+      },
+      {
+        "height": 44,
+        "id": "",
+        "name": "Pricing",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 43.296875,
+        "x": 1309.203125,
+        "y": 25.5
+      },
+      {
+        "height": 54.390625,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 216,
+        "x": 72.5,
+        "y": 660.734375
+      },
+      {
+        "disabled": false,
+        "height": 54,
+        "id": "acknowledge",
+        "name": "Acknowledge handoff\n✓",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 516.734375,
+        "x": 784.765625,
+        "y": 652.6875
+      },
+      {
+        "height": 54.390625,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 216,
+        "x": 736.5,
+        "y": 1537.046875
+      },
+      {
+        "height": 44,
+        "id": "",
+        "name": "Back to top ↑",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 71.796875,
+        "x": 1280.703125,
+        "y": 1701.625
+      }
+    ],
+    "document": {
+      "clientWidth": 1425,
+      "scrollHeight": 1774,
+      "scrollWidth": 1425
+    },
+    "headings": [
+      {
+        "height": 248.671875,
+        "level": "H1",
+        "text": "Pass the work.\nKeep the\ncontext.",
+        "width": 589.265625,
+        "x": 72.5,
+        "y": 233.5
+      },
+      {
+        "height": 43.1875,
+        "level": "H2",
+        "text": "Harbor identity",
+        "width": 516.734375,
+        "x": 784.765625,
+        "y": 281
+      },
+      {
+        "height": 46.796875,
+        "level": "H2",
+        "text": "The handoff is part of the work.",
+        "width": 1280,
+        "x": 72.5,
+        "y": 1056.0625
+      },
+      {
+        "height": 25.5,
+        "level": "H3",
+        "text": "Gather the context.",
+        "width": 400,
+        "x": 72.5,
+        "y": 1172.859375
+      },
+      {
+        "height": 25.5,
+        "level": "H3",
+        "text": "Name the next owner.",
+        "width": 400,
+        "x": 512.5,
+        "y": 1172.859375
+      },
+      {
+        "height": 25.5,
+        "level": "H3",
+        "text": "Know it was received.",
+        "width": 400,
+        "x": 952.5,
+        "y": 1172.859375
+      },
+      {
+        "height": 113.375,
+        "level": "H2",
+        "text": "Small studio.\nSimple terms.",
+        "width": 568,
+        "x": 120.5,
+        "y": 1405.859375
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Skip to content\nrelay\nHow it works\nPricing\n\nFOR SMALL DESIGN STUDIOS\n\nPass the work.\nKeep the\ncontext.\n\nDecisions, open questions and who’s next. Relay keeps them on one shared handoff page, with an acknowledgement so you know it’s been received.\n\nTry a handoff\n\nA working example. No signup, nothing sent.\n\nFor the space between “my part’s done” and “over to you.”\n\nAN EXAMPLE TO TRY / 01\n\nLOCAL DEMO\n\nDESIGN → PRODUCTION\n\nHarbor identity\n\nThe handoff page\n\nDecision\nUse the wordmark without the wave symbol.\nOpen question\nDoes the packaging need a bilingual version?\nNext owner\nThe production designer\nNext step\nPrepare a print proof by Thursday.\n\nIn this example, you’re the production designer.\n\nAcknowledge handoff\n✓\n\nConfirm receipt, not completion of the work.\n\nDEMO SENDER SEES\nWaiting for acknowledgement.\n\nOnly this demo changes. Nothing is saved or sent. You can undo your acknowledgement; refreshing also resets it.\n\nThe handoff is part of the work.\n01 /\nGather the context.\n\nKeep decisions and open questions together, on one shared page.\n\n02 /\nName the next owner.\n\nPair a clear owner with a next step, so the recipient knows what’s theirs.\n\n03 /\nKnow it was received.\n\nThe recipient acknowledges the handoff. The sender can see that it arrived.\n\nTHE CONCEPT OFFER\n\nSmall studio.\nSimple terms.\n\nRelay is a product concept, not a live service. Explore the example here—there’s no real trial or signup on this page.\n\n$12\nper workspace\nper month\n\n14-day trial. No credit card required.\n\nTry a handoff\nrelay\nA product concept for the next pair of hands.\nBack to top ↑",
+    "title": "Relay — Pass the work. Keep the context.",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    }
+  },
+  "mobile": {
+    "animations": [],
+    "controls": [
+      {
+        "height": 48,
+        "id": "",
+        "name": "Skip to content",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 145.078125,
+        "x": 12,
+        "y": -74.4000015258789
+      },
+      {
+        "height": 42,
+        "id": "",
+        "name": "Relay home",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 91.796875,
+        "x": 18,
+        "y": 17.5
+      },
+      {
+        "height": 44,
+        "id": "",
+        "name": "How it works",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 69.984375,
+        "x": 235.90625,
+        "y": 16.5
+      },
+      {
+        "height": 44,
+        "id": "",
+        "name": "Pricing",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 37.109375,
+        "x": 319.890625,
+        "y": 16.5
+      },
+      {
+        "height": 54.390625,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 216,
+        "x": 18,
+        "y": 451.03125
+      },
+      {
+        "disabled": false,
+        "height": 54,
+        "id": "acknowledge",
+        "name": "Acknowledge handoff\n✓",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 267,
+        "x": 54,
+        "y": 1190.71875
+      },
+      {
+        "height": 54.390625,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 291,
+        "x": 42,
+        "y": 2450.546875
+      },
+      {
+        "height": 44,
+        "id": "",
+        "name": "Back to top ↑",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 71.796875,
+        "x": 18,
+        "y": 2594.4375
+      }
+    ],
+    "document": {
+      "clientWidth": 375,
+      "scrollHeight": 2666,
+      "scrollWidth": 375
+    },
+    "headings": [
+      {
+        "height": 153.28125,
+        "level": "H1",
+        "text": "Pass the work.\nKeep the\ncontext.",
+        "width": 339,
+        "x": 18,
+        "y": 145
+      },
+      {
+        "height": 34.796875,
+        "level": "H2",
+        "text": "Harbor identity",
+        "width": 267,
+        "x": 54,
+        "y": 680.921875
+      },
+      {
+        "height": 72,
+        "level": "H2",
+        "text": "The handoff is part of the work.",
+        "width": 300,
+        "x": 18,
+        "y": 1566.28125
+      },
+      {
+        "height": 25.5,
+        "level": "H3",
+        "text": "Gather the context.",
+        "width": 300,
+        "x": 57,
+        "y": 1670.28125
+      },
+      {
+        "height": 25.5,
+        "level": "H3",
+        "text": "Name the next owner.",
+        "width": 300,
+        "x": 57,
+        "y": 1779.78125
+      },
+      {
+        "height": 25.5,
+        "level": "H3",
+        "text": "Know it was received.",
+        "width": 300,
+        "x": 57,
+        "y": 1889.28125
+      },
+      {
+        "height": 90.28125,
+        "level": "H2",
+        "text": "Small studio.\nSimple terms.",
+        "width": 291,
+        "x": 42,
+        "y": 2078.28125
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Skip to content\nrelay\nHow it works\nPricing\n\nFOR SMALL DESIGN STUDIOS\n\nPass the work.\nKeep the\ncontext.\n\nDecisions, open questions and who’s next. Relay keeps them on one shared handoff page, with an acknowledgement so you know it’s been received.\n\nTry a handoff\n\nA working example. No signup, nothing sent.\n\nAN EXAMPLE TO TRY / 01\n\nLOCAL DEMO\n\nDESIGN → PRODUCTION\n\nHarbor identity\n\nThe handoff page\n\nDecision\nUse the wordmark without the wave symbol.\nOpen question\nDoes the packaging need a bilingual version?\nNext owner\nThe production designer\nNext step\nPrepare a print proof by Thursday.\n\nIn this example, you’re the production designer.\n\nAcknowledge handoff\n✓\n\nConfirm receipt, not completion of the work.\n\nDEMO SENDER SEES\nWaiting for acknowledgement.\n\nOnly this demo changes. Nothing is saved or sent. You can undo your acknowledgement; refreshing also resets it.\n\nThe handoff is part of the work.\n01 /\nGather the context.\n\nKeep decisions and open questions together, on one shared page.\n\n02 /\nName the next owner.\n\nPair a clear owner with a next step, so the recipient knows what’s theirs.\n\n03 /\nKnow it was received.\n\nThe recipient acknowledges the handoff. The sender can see that it arrived.\n\nTHE CONCEPT OFFER\n\nSmall studio.\nSimple terms.\n\nRelay is a product concept, not a live service. Explore the example here—there’s no real trial or signup on this page.\n\n$12\nper workspace\nper month\n\n14-day trial. No credit card required.\n\nTry a handoff\nrelay\nA product concept for the next pair of hands.\nBack to top ↑",
+    "title": "Relay — Pass the work. Keep the context.",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  "reflow": {
+    "animations": [],
+    "controls": [
+      {
+        "height": 48,
+        "id": "",
+        "name": "Skip to content",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 145.078125,
+        "x": 12,
+        "y": -74.4000015258789
+      },
+      {
+        "height": 42,
+        "id": "",
+        "name": "Relay home",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 91.796875,
+        "x": 18,
+        "y": 17.5
+      },
+      {
+        "height": 44,
+        "id": "",
+        "name": "How it works",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 69.984375,
+        "x": 165.90625,
+        "y": 16.5
+      },
+      {
+        "height": 44,
+        "id": "",
+        "name": "Pricing",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 37.109375,
+        "x": 249.890625,
+        "y": 16.5
+      },
+      {
+        "height": 54.390625,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 216,
+        "x": 18,
+        "y": 450.703125
+      },
+      {
+        "disabled": false,
+        "height": 71.1875,
+        "id": "acknowledge",
+        "name": "Acknowledge handoff\n✓",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 197,
+        "x": 54,
+        "y": 1235.890625
+      },
+      {
+        "height": 54.390625,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 221,
+        "x": 42,
+        "y": 2797.484375
+      },
+      {
+        "height": 44,
+        "id": "",
+        "name": "Back to top ↑",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 71.796875,
+        "x": 18,
+        "y": 2951.875
+      }
+    ],
+    "document": {
+      "clientWidth": 305,
+      "scrollHeight": 3024,
+      "scrollWidth": 305
+    },
+    "headings": [
+      {
+        "height": 125.765625,
+        "level": "H1",
+        "text": "Pass the work.\nKeep the\ncontext.",
+        "width": 269,
+        "x": 18,
+        "y": 145
+      },
+      {
+        "height": 34.796875,
+        "level": "H2",
+        "text": "Harbor identity",
+        "width": 197,
+        "x": 54,
+        "y": 703.59375
+      },
+      {
+        "height": 72,
+        "level": "H2",
+        "text": "The handoff is part of the work.",
+        "width": 269,
+        "x": 18,
+        "y": 1646.640625
+      },
+      {
+        "height": 25.5,
+        "level": "H3",
+        "text": "Gather the context.",
+        "width": 230,
+        "x": 57,
+        "y": 1750.640625
+      },
+      {
+        "height": 25.5,
+        "level": "H3",
+        "text": "Name the next owner.",
+        "width": 230,
+        "x": 57,
+        "y": 1885.640625
+      },
+      {
+        "height": 25.5,
+        "level": "H3",
+        "text": "Know it was received.",
+        "width": 230,
+        "x": 57,
+        "y": 2020.640625
+      },
+      {
+        "height": 180.5625,
+        "level": "H2",
+        "text": "Small studio.\nSimple terms.",
+        "width": 221,
+        "x": 42,
+        "y": 2235.140625
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Skip to content\nrelay\nHow it works\nPricing\n\nFOR SMALL DESIGN STUDIOS\n\nPass the work.\nKeep the\ncontext.\n\nDecisions, open questions and who’s next. Relay keeps them on one shared handoff page, with an acknowledgement so you know it’s been received.\n\nTry a handoff\n\nA working example. No signup, nothing sent.\n\nAN EXAMPLE TO TRY / 01\n\nLOCAL DEMO\n\nDESIGN → PRODUCTION\n\nHarbor identity\n\nThe handoff page\n\nDecision\nUse the wordmark without the wave symbol.\nOpen question\nDoes the packaging need a bilingual version?\nNext owner\nThe production designer\nNext step\nPrepare a print proof by Thursday.\n\nIn this example, you’re the production designer.\n\nAcknowledge handoff\n✓\n\nConfirm receipt, not completion of the work.\n\nDEMO SENDER SEES\nWaiting for acknowledgement.\n\nOnly this demo changes. Nothing is saved or sent. You can undo your acknowledgement; refreshing also resets it.\n\nThe handoff is part of the work.\n01 /\nGather the context.\n\nKeep decisions and open questions together, on one shared page.\n\n02 /\nName the next owner.\n\nPair a clear owner with a next step, so the recipient knows what’s theirs.\n\n03 /\nKnow it was received.\n\nThe recipient acknowledges the handoff. The sender can see that it arrived.\n\nTHE CONCEPT OFFER\n\nSmall studio.\nSimple terms.\n\nRelay is a product concept, not a live service. Explore the example here—there’s no real trial or signup on this page.\n\n$12\nper workspace\nper month\n\n14-day trial. No credit card required.\n\nTry a handoff\nrelay\nA product concept for the next pair of hands.\nBack to top ↑",
+    "title": "Relay — Pass the work. Keep the context.",
+    "viewport": {
+      "height": 844,
+      "width": 320
+    }
+  }
+}

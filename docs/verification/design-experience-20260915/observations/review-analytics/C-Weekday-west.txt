@@ -1,0 +1,1 @@
+"SELECTED ROUTE\nWeekday\nWest Pier\nOn-time arrivals · latest four weeks\n87.0%\n\n174 of 200 scheduled trips\n\nPrevious four weeks\n92.0%\nRate change\n−5.0 pp\nScheduled trips\n200\nCancellations\n8\n\nThe 8 cancellations are included in the 200 scheduled trips used to calculate the on-time rate."

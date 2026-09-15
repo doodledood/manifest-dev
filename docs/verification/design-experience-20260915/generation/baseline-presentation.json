@@ -1,0 +1,27 @@
+{
+  "sample": "baseline-presentation",
+  "provider": "openai",
+  "model": "gpt-6-astra",
+  "started_at": "2026-09-15T09:37:38.911Z",
+  "completed_at": "2026-09-15T09:41:59.629Z",
+  "max_agent_turns": 12,
+  "inherited_conversation": false,
+  "attempt": 1,
+  "generator_tools_used": [
+    "read"
+  ],
+  "references_read": [
+    "references/experience.md",
+    "references/registers.md",
+    "references/figures.md",
+    "references/craft.md",
+    "references/floors.md"
+  ],
+  "skill_sha256": "f2a23fcbf1d737ed38d7c0c3d49d4ef57ea80587c442adcab4627f00ae8344ef",
+  "artifact_sha256": "4d67c1183c4603367e90012bd26a20c92d439ba5439e41b83327ae9b6fe6df5a",
+  "artifact_bytes": 30722,
+  "post_generation_edits": false,
+  "rendered_by_generator": false,
+  "design_note": "**Design note.** The task model is a trustee following a five-step argument: proposal → survey signal → evidence gap → cost and staffing → authorization and review. Claims stay beside their limits; numbered navigation supports interruption and return. The pacing targets roughly 18 seconds per slide. A warm-paper, library-editorial direction uses large serif assertions, proportional time bands, and restrained color to distinguish observed evidence from proposed hours. Phone layouts reflow rather than shrink the slides.\n\nReferences read:\n- `design/references/experience.md`\n- `design/references/registers.md`\n- `design/references/figures.md`\n- `design/references/craft.md`\n- `design/references/floors.md`\n\nThis is source-only generation. No rendering, interaction, contrast measurement, or assistive-technology verification was performed.\n",
+  "design_note_sha256": "ccc0f455989f1cf4a10fb27f65d2c34b01d68c30ed433a68491d10037910190c"
+}

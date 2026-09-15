@@ -1,0 +1,26 @@
+{
+  "sample": "intermediate-landing",
+  "provider": "openai",
+  "model": "gpt-6-astra",
+  "started_at": "2026-09-15T09:38:14.241Z",
+  "completed_at": "2026-09-15T09:40:20.279Z",
+  "max_agent_turns": 12,
+  "inherited_conversation": false,
+  "attempt": 1,
+  "generator_tools_used": [
+    "read"
+  ],
+  "references_read": [
+    "references/floors.md",
+    "references/craft.md",
+    "references/registers.md",
+    "references/experience.md"
+  ],
+  "skill_sha256": "11390c9320811757c2b1e150ddda535e4d0af9a2d7ea5c66d0843d67ce9eca3e",
+  "artifact_sha256": "1b1e3161018391edd4fa98681d0141ca50da201e00eff4ed28827f554c9dc129",
+  "artifact_bytes": 27917,
+  "post_generation_edits": false,
+  "rendered_by_generator": false,
+  "design_note": "**Design note.** The visitor’s path is: understand the handoff model → read the sample → acknowledge it → see the sender’s receipt → undo. The live example doubles as the product illustration, keeping the decision, question, owner and next step together. The direction is a studio routing slip: warm paper, oversized editorial type, cobalt backing and a perforated receipt. Pricing is explicit, with no signup or implied live service.\n\nRead the assigned contract, brief and skill, plus these references:\n- `design/references/floors.md`\n- `design/references/craft.md`\n- `design/references/registers.md`\n- `design/references/experience.md`\n\nGeneration was read-only. No rendering, browser testing or behavior verification was performed.\n",
+  "design_note_sha256": "e5703a9feb58179f9ded6743331c6f1a5d57516383d843a600ca41fa5a202fbe"
+}

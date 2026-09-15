@@ -1,0 +1,437 @@
+{
+  "desktop": {
+    "animations": [],
+    "controls": [
+      {
+        "height": 48,
+        "id": "",
+        "name": "Skip to route comparison",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 217.375,
+        "x": 12,
+        "y": -64.80000305175781
+      },
+      {
+        "checked": true,
+        "disabled": false,
+        "height": 1,
+        "id": "",
+        "name": "Weekday",
+        "pressed": null,
+        "tag": "INPUT",
+        "type": "radio",
+        "value": "Weekday",
+        "width": 1,
+        "x": 1134.765625,
+        "y": 162.671875
+      },
+      {
+        "checked": false,
+        "disabled": false,
+        "height": 1,
+        "id": "",
+        "name": "Weekend",
+        "pressed": null,
+        "tag": "INPUT",
+        "type": "radio",
+        "value": "Weekend",
+        "width": 1,
+        "x": 1236.71875,
+        "y": 162.671875
+      },
+      {
+        "disabled": false,
+        "height": 129.796875,
+        "id": "",
+        "name": "West Pier, 87.0% on time",
+        "pressed": "true",
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 770.0625,
+        "x": 81.5,
+        "y": 500.671875
+      },
+      {
+        "disabled": false,
+        "height": 129.796875,
+        "id": "",
+        "name": "East Bank, 95.0% on time",
+        "pressed": "false",
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 770.0625,
+        "x": 81.5,
+        "y": 630.46875
+      },
+      {
+        "disabled": false,
+        "height": 128.796875,
+        "id": "",
+        "name": "North Quay, 90.0% on time",
+        "pressed": "false",
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 770.0625,
+        "x": 81.5,
+        "y": 760.265625
+      }
+    ],
+    "document": {
+      "clientWidth": 1425,
+      "scrollHeight": 1137,
+      "scrollWidth": 1425
+    },
+    "headings": [
+      {
+        "height": 50.59375,
+        "level": "H1",
+        "text": "Route reliability",
+        "width": 385.078125,
+        "x": 80.5,
+        "y": 129.078125
+      },
+      {
+        "height": 26,
+        "level": "H2",
+        "text": "First look: West Pier",
+        "width": 1040,
+        "x": 304.5,
+        "y": 257.671875
+      },
+      {
+        "height": 30,
+        "level": "H2",
+        "text": "Route comparison",
+        "width": 160.9375,
+        "x": 103.5,
+        "y": 373.671875
+      },
+      {
+        "height": 36.796875,
+        "level": "H2",
+        "text": "West Pier",
+        "width": 419.921875,
+        "x": 900.5625,
+        "y": 411.671875
+      },
+      {
+        "height": 21,
+        "level": "H3",
+        "text": "All 200 scheduled trips",
+        "width": 419.921875,
+        "x": 900.5625,
+        "y": 721.96875
+      },
+      {
+        "height": 58.5,
+        "level": "H2",
+        "text": "Reading these numbers",
+        "width": 200,
+        "x": 80.5,
+        "y": 1005.96875
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Skip to route comparison\nHARBOR\nFerry operations\nSample data\nNot live service data\n\nSHIFT BRIEFING / SERVICE PERFORMANCE\n\nRoute reliability\n\nLatest four weeks compared with the preceding four weeks.\n\nDay type\nWeekday\nWeekend\n↘\nLowest on-time rate\nin this cohort\nFirst look: West Pier\n\nWeekday · 87.0% on time, down 5.0 percentage points from the preceding four weeks.\n\nRoute comparison\nWeekday · 3 routes\n\nSelect a route to inspect its trip counts.\n\nLatest 4 weeks\nPrevious 4 weeks\n0%\n50%\n100%\nWest Pier\n200 scheduled\n87.0%\non time\n−5.0 pp\nvs prior\nPreviously 92.0%\nSelected ✓\nEast Bank\n160 scheduled\n95.0%\non time\n+1.0 pp\nvs prior\nPreviously 94.0%\nInspect →\nNorth Quay\n120 scheduled\n90.0%\non time\n0.0 pp\nvs prior\nPreviously 90.0%\nInspect →\nSELECTED ROUTE\nWeekday\nWest Pier\n87.0%\n\nOn-time arrivals · latest four weeks\n\n174 on-time / 200 scheduled trips\n\nPrevious four weeks\n92.0%\nChange in on-time rate\n−5.0 pp\nAll 200 scheduled trips\nWest Pier weekday trip outcomes in the latest four weeks\nOutcome\tTrips\nOn time\t174\nArrived >5 min late\t18\nCancelled\t8\n\nThe 8 cancellations are included in the 200 scheduled trips, not counted as late arrivals.\n\nReading these numbers\n\nOn time means arrival no more than five minutes after schedule. The rate is on-time trips ÷ all scheduled trips, including cancellations. “pp” means percentage points.\n\nThese counts identify patterns, not causes. Late arrivals are scheduled trips minus on-time trips and cancellations. Each route is compared with its own preceding four weeks in the same day type.\n\nHARBOR / OPERATIONS DESK\nFictional four-week demonstration · No live connection",
+    "title": "Harbor — Route reliability",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    }
+  },
+  "mobile": {
+    "animations": [],
+    "controls": [
+      {
+        "height": 48,
+        "id": "",
+        "name": "Skip to route comparison",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 217.375,
+        "x": 12,
+        "y": -64.80000305175781
+      },
+      {
+        "checked": true,
+        "disabled": false,
+        "height": 1,
+        "id": "",
+        "name": "Weekday",
+        "pressed": null,
+        "tag": "INPUT",
+        "type": "radio",
+        "value": "Weekday",
+        "width": 1,
+        "x": 21,
+        "y": 258.28125
+      },
+      {
+        "checked": false,
+        "disabled": false,
+        "height": 1,
+        "id": "",
+        "name": "Weekend",
+        "pressed": null,
+        "tag": "INPUT",
+        "type": "radio",
+        "value": "Weekend",
+        "width": 1,
+        "x": 186.5,
+        "y": 258.28125
+      },
+      {
+        "disabled": false,
+        "height": 126.09375,
+        "id": "",
+        "name": "West Pier, 87.0% on time",
+        "pressed": "true",
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 337,
+        "x": 19,
+        "y": 642.46875
+      },
+      {
+        "disabled": false,
+        "height": 126.09375,
+        "id": "",
+        "name": "East Bank, 95.0% on time",
+        "pressed": "false",
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 337,
+        "x": 19,
+        "y": 768.5625
+      },
+      {
+        "disabled": false,
+        "height": 125.09375,
+        "id": "",
+        "name": "North Quay, 90.0% on time",
+        "pressed": "false",
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 337,
+        "x": 19,
+        "y": 894.65625
+      }
+    ],
+    "document": {
+      "clientWidth": 375,
+      "scrollHeight": 1969,
+      "scrollWidth": 375
+    },
+    "headings": [
+      {
+        "height": 37.390625,
+        "level": "H1",
+        "text": "Route reliability",
+        "width": 339,
+        "x": 18,
+        "y": 115.390625
+      },
+      {
+        "height": 24.6875,
+        "level": "H2",
+        "text": "First look: West Pier",
+        "width": 339,
+        "x": 18,
+        "y": 394.28125
+      },
+      {
+        "height": 28.5,
+        "level": "H2",
+        "text": "Route comparison",
+        "width": 154.9375,
+        "x": 36,
+        "y": 516.96875
+      },
+      {
+        "height": 36.796875,
+        "level": "H2",
+        "text": "West Pier",
+        "width": 293,
+        "x": 41,
+        "y": 1097.75
+      },
+      {
+        "height": 21,
+        "level": "H3",
+        "text": "All 200 scheduled trips",
+        "width": 293,
+        "x": 41,
+        "y": 1404.046875
+      },
+      {
+        "height": 19.5,
+        "level": "H2",
+        "text": "Reading these numbers",
+        "width": 339,
+        "x": 18,
+        "y": 1682.046875
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Skip to route comparison\nHARBOR\nFerry operations\nSample data\nNot live service data\n\nSHIFT BRIEFING / SERVICE PERFORMANCE\n\nRoute reliability\n\nLatest four weeks compared with the preceding four weeks.\n\nDay type\nWeekday\nWeekend\n↘\nLowest on-time rate\nin this cohort\nFirst look: West Pier\n\nWeekday · 87.0% on time, down 5.0 percentage points from the preceding four weeks.\n\nRoute comparison\nWeekday · 3 routes\n\nSelect a route to inspect its trip counts.\n\nLatest 4 weeks\nPrevious 4 weeks\n0%\n50%\n100%\nWest Pier\n200 scheduled\n87.0%\non time\n−5.0 pp\nvs prior\nPreviously 92.0%\nSelected ✓\nEast Bank\n160 scheduled\n95.0%\non time\n+1.0 pp\nvs prior\nPreviously 94.0%\nInspect →\nNorth Quay\n120 scheduled\n90.0%\non time\n0.0 pp\nvs prior\nPreviously 90.0%\nInspect →\nSELECTED ROUTE\nWeekday\nWest Pier\n87.0%\n\nOn-time arrivals · latest four weeks\n\n174 on-time / 200 scheduled trips\n\nPrevious four weeks\n92.0%\nChange in on-time rate\n−5.0 pp\nAll 200 scheduled trips\nWest Pier weekday trip outcomes in the latest four weeks\nOutcome\tTrips\nOn time\t174\nArrived >5 min late\t18\nCancelled\t8\n\nThe 8 cancellations are included in the 200 scheduled trips, not counted as late arrivals.\n\nReading these numbers\n\nOn time means arrival no more than five minutes after schedule. The rate is on-time trips ÷ all scheduled trips, including cancellations. “pp” means percentage points.\n\nThese counts identify patterns, not causes. Late arrivals are scheduled trips minus on-time trips and cancellations. Each route is compared with its own preceding four weeks in the same day type.\n\nHARBOR / OPERATIONS DESK\nFictional four-week demonstration · No live connection",
+    "title": "Harbor — Route reliability",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  "reflow": {
+    "animations": [],
+    "controls": [
+      {
+        "height": 48,
+        "id": "",
+        "name": "Skip to route comparison",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 217.375,
+        "x": 12,
+        "y": -64.80000305175781
+      },
+      {
+        "checked": true,
+        "disabled": false,
+        "height": 1,
+        "id": "",
+        "name": "Weekday",
+        "pressed": null,
+        "tag": "INPUT",
+        "type": "radio",
+        "value": "Weekday",
+        "width": 1,
+        "x": 17,
+        "y": 273.671875
+      },
+      {
+        "checked": false,
+        "disabled": false,
+        "height": 1,
+        "id": "",
+        "name": "Weekend",
+        "pressed": null,
+        "tag": "INPUT",
+        "type": "radio",
+        "value": "Weekend",
+        "width": 1,
+        "x": 151.5,
+        "y": 273.671875
+      },
+      {
+        "disabled": false,
+        "height": 123.890625,
+        "id": "",
+        "name": "West Pier, 87.0% on time",
+        "pressed": "true",
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 275,
+        "x": 15,
+        "y": 728.859375
+      },
+      {
+        "disabled": false,
+        "height": 123.890625,
+        "id": "",
+        "name": "East Bank, 95.0% on time",
+        "pressed": "false",
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 275,
+        "x": 15,
+        "y": 852.75
+      },
+      {
+        "disabled": false,
+        "height": 122.890625,
+        "id": "",
+        "name": "North Quay, 90.0% on time",
+        "pressed": "false",
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 275,
+        "x": 15,
+        "y": 976.640625
+      }
+    ],
+    "document": {
+      "clientWidth": 305,
+      "scrollHeight": 2096,
+      "scrollWidth": 305
+    },
+    "headings": [
+      {
+        "height": 37.390625,
+        "level": "H1",
+        "text": "Route reliability",
+        "width": 277,
+        "x": 14,
+        "y": 130.78125
+      },
+      {
+        "height": 24.6875,
+        "level": "H2",
+        "text": "First look: West Pier",
+        "width": 277,
+        "x": 14,
+        "y": 409.671875
+      },
+      {
+        "height": 28.5,
+        "level": "H2",
+        "text": "Route comparison",
+        "width": 154.9375,
+        "x": 32,
+        "y": 551.859375
+      },
+      {
+        "height": 36.796875,
+        "level": "H2",
+        "text": "West Pier",
+        "width": 237,
+        "x": 34,
+        "y": 1174.53125
+      },
+      {
+        "height": 21,
+        "level": "H3",
+        "text": "All 200 scheduled trips",
+        "width": 237,
+        "x": 34,
+        "y": 1480.828125
+      },
+      {
+        "height": 19.5,
+        "level": "H2",
+        "text": "Reading these numbers",
+        "width": 277,
+        "x": 14,
+        "y": 1773.828125
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Skip to route comparison\nHARBOR\nFerry operations\nSample data\nNot live service data\n\nSHIFT BRIEFING / SERVICE PERFORMANCE\n\nRoute reliability\n\nLatest four weeks compared with the preceding four weeks.\n\nDay type\nWeekday\nWeekend\n↘\nLowest on-time rate\nin this cohort\nFirst look: West Pier\n\nWeekday · 87.0% on time, down 5.0 percentage points from the preceding four weeks.\n\nRoute comparison\nWeekday · 3 routes\n\nSelect a route to inspect its trip counts.\n\nLatest 4 weeks\nPrevious 4 weeks\n0%\n50%\n100%\nWest Pier\n200 scheduled\n87.0%\non time\n−5.0 pp\nvs prior\nPreviously 92.0%\nSelected ✓\nEast Bank\n160 scheduled\n95.0%\non time\n+1.0 pp\nvs prior\nPreviously 94.0%\nInspect →\nNorth Quay\n120 scheduled\n90.0%\non time\n0.0 pp\nvs prior\nPreviously 90.0%\nInspect →\nSELECTED ROUTE\nWeekday\nWest Pier\n87.0%\n\nOn-time arrivals · latest four weeks\n\n174 on-time / 200 scheduled trips\n\nPrevious four weeks\n92.0%\nChange in on-time rate\n−5.0 pp\nAll 200 scheduled trips\nWest Pier weekday trip outcomes in the latest four weeks\nOutcome\tTrips\nOn time\t174\nArrived >5 min late\t18\nCancelled\t8\n\nThe 8 cancellations are included in the 200 scheduled trips, not counted as late arrivals.\n\nReading these numbers\n\nOn time means arrival no more than five minutes after schedule. The rate is on-time trips ÷ all scheduled trips, including cancellations. “pp” means percentage points.\n\nThese counts identify patterns, not causes. Late arrivals are scheduled trips minus on-time trips and cancellations. Each route is compared with its own preceding four weeks in the same day type.\n\nHARBOR / OPERATIONS DESK\nFictional four-week demonstration · No live connection",
+    "title": "Harbor — Route reliability",
+    "viewport": {
+      "height": 844,
+      "width": 320
+    }
+  }
+}

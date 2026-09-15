@@ -1,0 +1,335 @@
+{
+  "desktop": {
+    "animations": [],
+    "controls": [
+      {
+        "height": 50,
+        "id": "",
+        "name": "Skip to content",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 155.84375,
+        "x": 16,
+        "y": -84
+      },
+      {
+        "height": 48,
+        "id": "",
+        "name": "Relay home",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 111.8125,
+        "x": 120.5,
+        "y": 24
+      },
+      {
+        "height": 48,
+        "id": "",
+        "name": "Pricing",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 86.234375,
+        "x": 1218.265625,
+        "y": 24
+      },
+      {
+        "height": 58,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 198.453125,
+        "x": 120.5,
+        "y": 595.96875
+      },
+      {
+        "disabled": false,
+        "height": 48,
+        "id": "acknowledge",
+        "name": "Acknowledge handoff",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 499.015625,
+        "x": 780.46875,
+        "y": 641.546875
+      },
+      {
+        "height": 48,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 132.453125,
+        "x": 120.5,
+        "y": 1282.921875
+      }
+    ],
+    "document": {
+      "clientWidth": 1425,
+      "scrollHeight": 1474,
+      "scrollWidth": 1425
+    },
+    "headings": [
+      {
+        "height": 192.96875,
+        "level": "H1",
+        "text": "Great work.\nOver to you.",
+        "width": 467.90625,
+        "x": 120.5,
+        "y": 219
+      },
+      {
+        "height": 34.546875,
+        "level": "H2",
+        "text": "Harbor identity",
+        "width": 499.015625,
+        "x": 780.46875,
+        "y": 238
+      },
+      {
+        "height": 124.375,
+        "level": "H2",
+        "text": "A handoff doesn’t end at “sent.”",
+        "width": 530.28125,
+        "x": 120.5,
+        "y": 1014.546875
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Skip to content\nRelay\nA PRODUCT CONCEPT\nPricing\n\nPROJECT HANDOFFS FOR SMALL DESIGN STUDIOS\n\nGreat work.\nOver to you.\n\nThe decisions. The open questions. Who’s up next. Relay keeps them on one shared handoff page—so the next person has somewhere to start.\n\nTry a handoff\n\n$12 per workspace / month. 14-day trial.\n\nNo credit card required. Product concept only.\n\nTry the example. No account, no sending.\n\nINTERACTIVE EXAMPLE\nLOCAL ONLY\n\nPROJECT HANDOFF\n\nHarbor identity\nDECISION\nUse the wordmark without the wave symbol.\nOPEN QUESTION\nDoes the packaging need a bilingual version?\nNEXT OWNER\nThe production designer\nNEXT STEP\nPrepare a print proof by Thursday.\n\nYour turn: play the production designer.\n\nAcknowledge handoff\n\nChanges only this demo. Nothing is sent.\nUndo anytime; refreshing resets it.\n\nSENDER’S VIEW · DEMO\nWaiting for acknowledgement\n\nA LITTLE CLARITY BETWEEN PEOPLE\nA handoff doesn’t end at “sent.”\n\nThe recipient can acknowledge the handoff, so the sender can see it was received. The decisions, loose ends, and next owner stay together on the shared page.\n\nTry a handoff\n\nTHE CONCEPT OFFER\n\n$12\nper workspace\nper month\n\n14-day trial.\n\nNo credit card required.\n\nRelay is a product concept, not a live service. There’s no signup or payment here—just a small example you can try for yourself.\n\nRelay\n\nA local demo. No account, no data sent, no loose ends.",
+    "title": "Relay — Great work. Over to you.",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    }
+  },
+  "mobile": {
+    "animations": [],
+    "controls": [
+      {
+        "height": 50,
+        "id": "",
+        "name": "Skip to content",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 155.84375,
+        "x": 16,
+        "y": -84
+      },
+      {
+        "height": 48,
+        "id": "",
+        "name": "Relay home",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 111.8125,
+        "x": 24,
+        "y": 16
+      },
+      {
+        "height": 48,
+        "id": "",
+        "name": "Pricing",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 86.234375,
+        "x": 264.765625,
+        "y": 16
+      },
+      {
+        "height": 58,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 327,
+        "x": 24,
+        "y": 415
+      },
+      {
+        "disabled": false,
+        "height": 48,
+        "id": "acknowledge",
+        "name": "Acknowledge handoff",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 293,
+        "x": 41,
+        "y": 1212.546875
+      },
+      {
+        "height": 48,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 132.453125,
+        "x": 24,
+        "y": 1775.921875
+      }
+    ],
+    "document": {
+      "clientWidth": 375,
+      "scrollHeight": 2313,
+      "scrollWidth": 375
+    },
+    "headings": [
+      {
+        "height": 112,
+        "level": "H1",
+        "text": "Great work.\nOver to you.",
+        "width": 324.78125,
+        "x": 24,
+        "y": 147
+      },
+      {
+        "height": 34.546875,
+        "level": "H2",
+        "text": "Harbor identity",
+        "width": 293,
+        "x": 41,
+        "y": 721
+      },
+      {
+        "height": 86.375,
+        "level": "H2",
+        "text": "A handoff doesn’t end at “sent.”",
+        "width": 327,
+        "x": 24,
+        "y": 1545.546875
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Skip to content\nRelay\nPricing\n\nPROJECT HANDOFFS FOR SMALL DESIGN STUDIOS\n\nGreat work.\nOver to you.\n\nThe decisions. The open questions. Who’s up next. Relay keeps them on one shared handoff page—so the next person has somewhere to start.\n\nTry a handoff\n\n$12 per workspace / month. 14-day trial.\n\nNo credit card required. Product concept only.\n\nTry the example. No account, no sending.\n\nINTERACTIVE EXAMPLE\nLOCAL ONLY\n\nPROJECT HANDOFF\n\nHarbor identity\nDECISION\nUse the wordmark without the wave symbol.\nOPEN QUESTION\nDoes the packaging need a bilingual version?\nNEXT OWNER\nThe production designer\nNEXT STEP\nPrepare a print proof by Thursday.\n\nYour turn: play the production designer.\n\nAcknowledge handoff\n\nChanges only this demo. Nothing is sent.\nUndo anytime; refreshing resets it.\n\nSENDER’S VIEW · DEMO\nWaiting for acknowledgement\n\nA LITTLE CLARITY BETWEEN PEOPLE\nA handoff doesn’t end at “sent.”\n\nThe recipient can acknowledge the handoff, so the sender can see it was received. The decisions, loose ends, and next owner stay together on the shared page.\n\nTry a handoff\n\nTHE CONCEPT OFFER\n\n$12\nper workspace\nper month\n\n14-day trial.\n\nNo credit card required.\n\nRelay is a product concept, not a live service. There’s no signup or payment here—just a small example you can try for yourself.\n\nRelay\n\nA local demo. No account, no data sent, no loose ends.",
+    "title": "Relay — Great work. Over to you.",
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  "reflow": {
+    "animations": [],
+    "controls": [
+      {
+        "height": 50,
+        "id": "",
+        "name": "Skip to content",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 155.84375,
+        "x": 16,
+        "y": -84
+      },
+      {
+        "height": 48,
+        "id": "",
+        "name": "Relay home",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 111.8125,
+        "x": 16,
+        "y": 16
+      },
+      {
+        "height": 48,
+        "id": "",
+        "name": "Pricing",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 86.234375,
+        "x": 202.765625,
+        "y": 16
+      },
+      {
+        "height": 58,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 273,
+        "x": 16,
+        "y": 452
+      },
+      {
+        "disabled": false,
+        "height": 48,
+        "id": "acknowledge",
+        "name": "Acknowledge handoff",
+        "pressed": null,
+        "tag": "BUTTON",
+        "type": "button",
+        "value": "",
+        "width": 239,
+        "x": 33,
+        "y": 1358.234375
+      },
+      {
+        "height": 48,
+        "id": "",
+        "name": "Try a handoff",
+        "pressed": null,
+        "tag": "A",
+        "type": "",
+        "width": 132.453125,
+        "x": 16,
+        "y": 2030.796875
+      }
+    ],
+    "document": {
+      "clientWidth": 305,
+      "scrollHeight": 2631,
+      "scrollWidth": 305
+    },
+    "headings": [
+      {
+        "height": 104,
+        "level": "H1",
+        "text": "Great work.\nOver to you.",
+        "width": 273,
+        "x": 16,
+        "y": 165
+      },
+      {
+        "height": 30.234375,
+        "level": "H2",
+        "text": "Harbor identity",
+        "width": 239,
+        "x": 33,
+        "y": 826
+      },
+      {
+        "height": 129.5625,
+        "level": "H2",
+        "text": "A handoff doesn’t end at “sent.”",
+        "width": 273,
+        "x": 16,
+        "y": 1733.234375
+      }
+    ],
+    "reducedMotion": false,
+    "text": "Skip to content\nRelay\nPricing\n\nPROJECT HANDOFFS FOR SMALL DESIGN STUDIOS\n\nGreat work.\nOver to you.\n\nThe decisions. The open questions. Who’s up next. Relay keeps them on one shared handoff page—so the next person has somewhere to start.\n\nTry a handoff\n\n$12 per workspace / month. 14-day trial.\n\nNo credit card required. Product concept only.\n\nTry the example. No account, no sending.\n\nINTERACTIVE EXAMPLE\nLOCAL ONLY\n\nPROJECT HANDOFF\n\nHarbor identity\nDECISION\nUse the wordmark without the wave symbol.\nOPEN QUESTION\nDoes the packaging need a bilingual version?\nNEXT OWNER\nThe production designer\nNEXT STEP\nPrepare a print proof by Thursday.\n\nYour turn: play the production designer.\n\nAcknowledge handoff\n\nChanges only this demo. Nothing is sent.\nUndo anytime; refreshing resets it.\n\nSENDER’S VIEW · DEMO\nWaiting for acknowledgement\n\nA LITTLE CLARITY BETWEEN PEOPLE\nA handoff doesn’t end at “sent.”\n\nThe recipient can acknowledge the handoff, so the sender can see it was received. The decisions, loose ends, and next owner stay together on the shared page.\n\nTry a handoff\n\nTHE CONCEPT OFFER\n\n$12\nper workspace\nper month\n\n14-day trial.\n\nNo credit card required.\n\nRelay is a product concept, not a live service. There’s no signup or payment here—just a small example you can try for yourself.\n\nRelay\n\nA local demo. No account, no data sent, no loose ends.",
+    "title": "Relay — Great work. Over to you.",
+    "viewport": {
+      "height": 844,
+      "width": 320
+    }
+  }
+}

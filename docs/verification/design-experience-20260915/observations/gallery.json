@@ -1,0 +1,75 @@
+{
+  "links_opened_and_returned": [
+    {
+      "sample": "samples/baseline-landing.html",
+      "title": "Relay \u2014 Great work. Over to you."
+    },
+    {
+      "sample": "samples/candidate-landing.html",
+      "title": "Relay \u2014 Pass the work. Keep the context."
+    },
+    {
+      "sample": "samples/baseline-repeat-landing.html",
+      "title": "Relay \u2014 Your work. Their move."
+    },
+    {
+      "sample": "samples/intermediate-landing.html",
+      "title": "Relay \u2014 Pass it on. Keep it together."
+    },
+    {
+      "sample": "samples/baseline-analytics.html",
+      "title": "Harbor \u2014 On-time performance"
+    },
+    {
+      "sample": "samples/candidate-analytics.html",
+      "title": "Harbor \u2014 Route reliability"
+    },
+    {
+      "sample": "samples/baseline-repeat-analytics.html",
+      "title": "Harbor Operations \u2014 Route Reliability"
+    },
+    {
+      "sample": "samples/intermediate-analytics.html",
+      "title": "Harbor \u2014 Route reliability"
+    },
+    {
+      "sample": "samples/baseline-presentation.html",
+      "title": "Alder Library \u2014 Six Saturdays"
+    },
+    {
+      "sample": "samples/candidate-presentation.html",
+      "title": "Alder Library \u2014 The proposal (1 of 5)"
+    },
+    {
+      "sample": "samples/baseline-repeat-presentation.html",
+      "title": "Alder Library \u2014 1/5 \u00b7 Proposal"
+    },
+    {
+      "sample": "samples/intermediate-presentation.html",
+      "title": "Alder Library \u2014 1/5 \u2014 Saturday-hours pilot"
+    }
+  ],
+  "viewports": {
+    "1440": {
+      "clientWidth": 1425,
+      "scrollWidth": 1425,
+      "width": 1440
+    },
+    "390": {
+      "clientWidth": 375,
+      "scrollWidth": 375,
+      "width": 390
+    },
+    "320": {
+      "clientWidth": 305,
+      "scrollWidth": 305,
+      "width": 320
+    }
+  },
+  "keyboard_skip": {
+    "outline": "solid",
+    "text": "Skip to comparisons"
+  },
+  "first_sample_after_skip": "Open the original-skill Relay landing page",
+  "findings_disclosure_toggled": true
+}

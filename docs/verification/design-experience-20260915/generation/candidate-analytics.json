@@ -1,0 +1,25 @@
+{
+  "sample": "candidate-analytics",
+  "provider": "openai",
+  "model": "gpt-6-astra",
+  "started_at": "2026-09-15T09:55:03.744Z",
+  "completed_at": "2026-09-15T09:57:56.657Z",
+  "max_agent_turns": 12,
+  "inherited_conversation": false,
+  "attempt": 1,
+  "generator_tools_used": [
+    "read"
+  ],
+  "references_read": [
+    "references/floors.md",
+    "references/figures.md",
+    "references/experience.md"
+  ],
+  "skill_sha256": "18009b9f6ace367831410078ad8356672a7aea7e2f81cfc1f9a410dcbca731ff",
+  "artifact_sha256": "6d6494535482b6da77ece352288a3c177b13539fbd4d1aa3741f32213039cfc5",
+  "artifact_bytes": 36382,
+  "post_generation_edits": false,
+  "rendered_by_generator": false,
+  "design_note": "**Design note.** The shift lead’s loop is compare → inspect → change cohort, with the selected route preserved across cohort changes. The direction is a harbor operations ledger: warm paper, deep green ink, aligned numerical comparisons, and a connected detail panel rather than separate dashboard cards. Shared-scale bars show the pattern; exact counts and previous rates preserve the evidence.\n\nReferences read:\n- `design/references/floors.md`\n- `design/references/figures.md`\n- `design/references/experience.md`\n\nNo files were written. Rendering, responsive behavior, keyboard interaction, and assistive-technology behavior remain unverified.\n",
+  "design_note_sha256": "41057d0f0fed66ac6f13636ee5b162d08841edbbf4e05e275b26b5c56bad0f56"
+}

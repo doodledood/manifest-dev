@@ -171,7 +171,7 @@ if (figureCount === 0 && proseWords >= 400 && structuralSignals.length >= 2) {
   );
 } else if (figureCount === 0 && proseWords >= 400 && structuralSignals.length === 1) {
   notes.push(
-    `figures: none on a ${proseWords}-word page with ${structuralSignals[0]} — check the encoding line assigned that content to prose deliberately`,
+    `figures: none on a ${proseWords}-word page with ${structuralSignals[0]} — inspect whether prose suits the information and task`,
   );
 } else if (figureCount) {
   notes.push(`figures (${figureCount} figure-bearing element(s))`);

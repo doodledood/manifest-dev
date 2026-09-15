@@ -1,0 +1,66 @@
+{
+  "baseline_commit": "160acfc3",
+  "model": "gpt-6-astra",
+  "provider": "openai",
+  "generation_contract_sha256": "c2f539c1f66cd66fb5a5539058435d00d5ee3c8b8eb15690b06048ef14dc39c3",
+  "briefs": {
+    "analytics": "ed5981a22e701d1429b3a0922c3467e91febea4c95697df5db5318075f308c21",
+    "landing": "d3e18217771db0789ed7b9f57f8e2e13df5c8e624d4942de88b0a5ff3e83705e",
+    "presentation": "28ede0d731dea26634e863d18b9fad1c0779d895d42fec32a1834ed4c077374f"
+  },
+  "packages": {
+    "baseline": {
+      "SKILL.md": "f2a23fcbf1d737ed38d7c0c3d49d4ef57ea80587c442adcab4627f00ae8344ef",
+      "references/calibration.md": "5c00213ad35722b57f36534ba74f853ec6dada8cfa69aa1d61482c45e691b50c",
+      "references/craft.md": "c1a37e611af72cdd3cf0163868322207f4f2e422f58c6929f01f11a001ef7cd1",
+      "references/experience.md": "59c336cfd68a37bad8718b1f64aea6775e52c5e99f586ec991b7c5f4a99c5b0f",
+      "references/figures.md": "466255eae10ef250a9c907f51373112ca4cff6429c2de21e8e2a8b84e2b898b2",
+      "references/floors.md": "5e755db5f9bbc9e91ba2b9465d8312d2f30e27be67a030530822c7a6d309f937",
+      "references/registers.md": "f61532b5eee658d957ebdb33420c909e0dbc1e4874dd194b7acb99e2b190b24d",
+      "scripts/design-check.mjs": "a2663620bf78993ebf7e894e3edff78cbc2f73d04a045a9749ef4feb30883247"
+    },
+    "intermediate": {
+      "SKILL.md": "11390c9320811757c2b1e150ddda535e4d0af9a2d7ea5c66d0843d67ce9eca3e",
+      "references/calibration.md": "5c00213ad35722b57f36534ba74f853ec6dada8cfa69aa1d61482c45e691b50c",
+      "references/craft.md": "c1a37e611af72cdd3cf0163868322207f4f2e422f58c6929f01f11a001ef7cd1",
+      "references/experience.md": "2bd0714d2755799e19d260d4a00e2df7d2753a3806cbd4c3531de85f3ab79934",
+      "references/figures.md": "466255eae10ef250a9c907f51373112ca4cff6429c2de21e8e2a8b84e2b898b2",
+      "references/floors.md": "5e755db5f9bbc9e91ba2b9465d8312d2f30e27be67a030530822c7a6d309f937",
+      "references/registers.md": "f61532b5eee658d957ebdb33420c909e0dbc1e4874dd194b7acb99e2b190b24d",
+      "scripts/design-check.mjs": "e4643affab07196e5b3e80ef604da6ceae346cad20ad1acba1fd65b686821e1e"
+    },
+    "candidate": {
+      "SKILL.md": "18009b9f6ace367831410078ad8356672a7aea7e2f81cfc1f9a410dcbca731ff",
+      "references/experience.md": "aadb3e2e3c0b22e6cb9f08290e6114d97c6900ca1788cc96417f9f3534cd4112",
+      "references/figures.md": "b8d6dc8e7d0a7108273ff17e55984db5e78386d0fc4cc6c00766b49efbe7df51",
+      "references/floors.md": "41287c72d663eb8d59ea1db6baab300176c83dc9ddbe61e17ae28120e4e53e9d",
+      "scripts/design-check.mjs": "b902d52de8689d6f526cb697efcee9ea7c7145402c2ec56181641e1f8e243802"
+    }
+  },
+  "candidate_word_counts": {
+    "SKILL.md": 1031,
+    "references/experience.md": 422,
+    "references/figures.md": 292,
+    "references/floors.md": 514
+  },
+  "blind_label_mapping": {
+    "landing": {
+      "A": "baseline-repeat",
+      "B": "candidate",
+      "C": "baseline",
+      "D": "intermediate"
+    },
+    "analytics": {
+      "A": "intermediate",
+      "B": "baseline",
+      "C": "baseline-repeat",
+      "D": "candidate"
+    },
+    "presentation": {
+      "A": "candidate",
+      "B": "intermediate",
+      "C": "baseline",
+      "D": "baseline-repeat"
+    }
+  }
+}

@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f0e6">
+  <title>Alder Library — Saturday-hours pilot</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f0e6;
+      --ink: #183b32;
+      --muted: #52645b;
+      --accent: #ac3e25;
+      --rule: #b4beb1;
+      --header-space: 76px;
+      --footer-space: 88px;
+      --gutter: clamp(24px, 5vw, 80px);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      font-size: 18px;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding-bottom: var(--footer-space);
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    body.night {
+      color-scheme: dark;
+      --paper: #183b32;
+      --ink: #f5f0e6;
+      --muted: #d0dbce;
+      --accent: #ffb18e;
+      --rule: #728f80;
+    }
+
+    button { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    button:focus-visible,
+    a:focus-visible,
+    [tabindex="-1"]:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 5px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .masthead {
+      min-height: 76px;
+      padding: 16px var(--gutter);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .brand {
+      font-size: 1rem;
+      font-weight: 750;
+      letter-spacing: -.025em;
+      white-space: nowrap;
+    }
+
+    .brand::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 24px;
+      margin-right: 12px;
+      background: var(--accent);
+      vertical-align: -5px;
+    }
+
+    .masthead-caption {
+      font-size: .76rem;
+      line-height: 1.4;
+      text-align: right;
+      letter-spacing: .045em;
+    }
+
+    main { outline: none; }
+
+    .slide {
+      max-width: 1600px;
+      min-height: calc(100svh - var(--header-space) - var(--footer-space));
+      margin-inline: auto;
+      padding: clamp(28px, 4.2vh, 48px) var(--gutter);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(24px, 3.6vh, 40px);
+    }
+
+    .slide[hidden] { display: none; }
+
+    .kicker {
+      margin: 0 0 16px;
+      color: var(--accent);
+      font-size: .82rem;
+      line-height: 1.4;
+      font-weight: 750;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p, figure { margin: 0; }
+
+    h1, h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      letter-spacing: -.045em;
+    }
+
+    h1 {
+      font-size: clamp(4rem, 7.8vw, 6.4rem);
+      line-height: 1.02;
+    }
+
+    h2 {
+      font-size: clamp(2.8rem, 5.1vw, 4.2rem);
+      line-height: 1.06;
+    }
+
+    .line { display: block; }
+    .accent { color: var(--accent); }
+
+    .lede {
+      max-width: 42rem;
+      font-size: clamp(1.25rem, 2.1vw, 1.65rem);
+      line-height: 1.4;
+      text-wrap: pretty;
+    }
+
+    .tabular { font-variant-numeric: tabular-nums; }
+
+    /* One time scale: four existing hours, two proposed hours. */
+    .hours-figure {
+      margin-top: 6px;
+      max-width: 1180px;
+    }
+
+    .hours-figure figcaption {
+      margin-bottom: 18px;
+      font-size: 1.08rem;
+      font-weight: 650;
+    }
+
+    .time-labels {
+      position: relative;
+      height: 38px;
+      font-size: 1.3rem;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .time-labels span { position: absolute; top: 0; }
+    .time-labels span:nth-child(1) { left: 0; }
+    .time-labels span:nth-child(2) {
+      left: 66.666667%;
+      transform: translateX(-50%);
+    }
+    .time-labels span:nth-child(3) { right: 0; }
+
+    .hours-track {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      height: 28px;
+    }
+
+    .existing-hours { background: var(--ink); }
+
+    .additional-hours {
+      border: 2px solid var(--accent);
+      border-left: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent 0,
+        transparent 7px,
+        var(--accent) 7px,
+        var(--accent) 10px
+      );
+    }
+
+    .segment-labels {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      margin-top: 12px;
+      font-size: 1.2rem;
+      line-height: 1.35;
+    }
+
+    .segment-labels span:first-child { padding-right: 16px; }
+    .segment-labels span:last-child {
+      padding-left: 16px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Independent evidence, deliberately not drawn on a shared scale. */
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-top: 4px;
+    }
+
+    .evidence-item { padding-right: 48px; }
+
+    .evidence-item + .evidence-item {
+      padding-right: 0;
+      padding-left: 48px;
+      border-left: 1px solid var(--rule);
+    }
+
+    .metric {
+      font-size: clamp(4.5rem, 8vw, 6.4rem);
+      line-height: 1;
+      font-weight: 650;
+      letter-spacing: -.065em;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .denominator {
+      margin-left: 8px;
+      color: var(--muted);
+      font-size: .43em;
+      font-weight: 450;
+      letter-spacing: -.035em;
+    }
+
+    .metric-description {
+      margin-top: 16px;
+      max-width: 26rem;
+      font-size: 1.45rem;
+      line-height: 1.35;
+    }
+
+    .evidence-limit {
+      max-width: 27rem;
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 1.16rem;
+      line-height: 1.45;
+    }
+
+    /* A quiet, high-contrast interruption in the paper-colored sequence. */
+    .budget-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      align-items: center;
+      gap: 56px;
+      margin-top: 6px;
+    }
+
+    .total {
+      font-size: clamp(5rem, 11vw, 9.3rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -.075em;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .total-label {
+      margin-top: 12px;
+      font-size: 1.45rem;
+      line-height: 1.35;
+    }
+
+    .calculation {
+      margin-top: 26px;
+      color: var(--accent);
+      font-size: 1.35rem;
+      line-height: 1.4;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .scope {
+      margin: 0;
+      border-top: 1px solid var(--rule);
+    }
+
+    .scope > div {
+      padding: 22px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .scope dt {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: .9rem;
+      letter-spacing: .075em;
+      text-transform: uppercase;
+    }
+
+    .scope dd {
+      margin: 0;
+      font-size: 1.6rem;
+      line-height: 1.3;
+    }
+
+    .scope .small {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 1.12rem;
+      line-height: 1.4;
+    }
+
+    .staffing-heading { max-width: 17ch; }
+
+    .staffing-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      align-items: center;
+      gap: 64px;
+    }
+
+    .volunteer-number {
+      font-size: clamp(5rem, 9.5vw, 7.3rem);
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: -.055em;
+    }
+
+    .volunteer-copy {
+      margin-top: 10px;
+      max-width: 22rem;
+      font-size: 1.55rem;
+      line-height: 1.35;
+    }
+
+    .unconfirmed {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 1.2rem;
+      line-height: 1.4;
+    }
+
+    .start-condition {
+      border-left: 7px solid var(--accent);
+      padding: 12px 0 12px 32px;
+    }
+
+    .start-condition .kicker { margin-bottom: 14px; }
+
+    .start-condition h3 {
+      max-width: 16ch;
+      font-size: clamp(1.9rem, 3.1vw, 2.65rem);
+      line-height: 1.16;
+      font-weight: 650;
+      letter-spacing: -.035em;
+    }
+
+    .decision .lede { max-width: 48rem; }
+
+    .learning-label {
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: .86rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .learning-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 32px;
+    }
+
+    .learning-item {
+      border-top: 3px solid var(--ink);
+      padding-top: 18px;
+    }
+
+    .learning-item h3 {
+      margin-bottom: 10px;
+      font-size: 1.65rem;
+      font-weight: 650;
+      letter-spacing: -.035em;
+    }
+
+    .learning-item p {
+      max-width: 19rem;
+      font-size: 1.23rem;
+      line-height: 1.4;
+    }
+
+    .decision-line {
+      padding-left: 18px;
+      border-left: 4px solid var(--accent);
+      font-size: 1.4rem;
+      line-height: 1.4;
+      font-weight: 550;
+      color: var(--accent);
+    }
+
+    /* Navigation is permanent; slide content can scroll behind its reserved space. */
+    .deck-controls {
+      position: fixed;
+      z-index: 10;
+      inset: auto 0 0;
+      min-height: 88px;
+      padding: 14px var(--gutter);
+      padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px 28px;
+      border-top: 1px solid var(--rule);
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .position {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .counter {
+      font-size: 1rem;
+      font-weight: 750;
+      letter-spacing: .03em;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .counter .of {
+      margin-inline: 5px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .position-details {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    #position-title {
+      font-size: .87rem;
+      font-weight: 650;
+    }
+
+    .key-hint {
+      color: var(--muted);
+      font-size: .7rem;
+      line-height: 1.35;
+    }
+
+    .slide-jumps {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .jump {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: 50%;
+      color: var(--ink);
+      background: transparent;
+      font-size: .88rem;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .jump[aria-current="step"] {
+      color: var(--paper);
+      background: var(--ink);
+    }
+
+    .jump:not([aria-current="step"]):hover { border-color: var(--ink); }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .control {
+      min-height: 48px;
+      padding: .6rem .8rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid var(--ink);
+      border-radius: 3px;
+      color: var(--ink);
+      background: transparent;
+      font-size: .9rem;
+      font-weight: 650;
+      line-height: 1.2;
+      cursor: pointer;
+    }
+
+    .control:hover:not([aria-disabled="true"]) {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .control[aria-disabled="true"] {
+      color: var(--muted);
+      border-color: var(--rule);
+      cursor: default;
+    }
+
+    .noscript {
+      margin: 20px var(--gutter);
+      padding: 16px;
+      border: 2px solid var(--accent);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    @media (min-width: 851px) and (max-height: 760px) {
+      .masthead { min-height: 64px; padding-block: 12px; }
+      .slide { padding-block: 24px; gap: 22px; }
+      h1 { font-size: clamp(3.8rem, 6.4vw, 4.8rem); }
+      h2 { font-size: 3rem; }
+      .kicker { margin-bottom: 10px; }
+      .lede { font-size: 1.3rem; }
+      .metric { font-size: 5rem; }
+      .metric-description { font-size: 1.27rem; margin-top: 12px; }
+      .evidence-limit { font-size: 1.08rem; margin-top: 16px; padding-top: 12px; }
+      .total { font-size: 7rem; }
+      .calculation { margin-top: 18px; }
+      .scope > div { padding-block: 16px; }
+      .volunteer-number { font-size: 5.5rem; }
+      .learning-label { margin-bottom: 12px; }
+      .learning-item { padding-top: 12px; }
+      .learning-item h3 { font-size: 1.45rem; }
+      .learning-item p { font-size: 1.1rem; }
+      .decision-line { font-size: 1.2rem; }
+      .deck-controls { min-height: 76px; padding-block: 12px; }
+    }
+
+    @media (max-width: 1050px) {
+      .position-details { display: none; }
+      .evidence-item { padding-right: 32px; }
+      .evidence-item + .evidence-item { padding-left: 32px; }
+      .budget-grid, .staffing-grid { gap: 36px; }
+    }
+
+    @media (max-width: 850px) {
+      :root { --gutter: 28px; }
+      .slide-jumps { display: none; }
+      .slide { padding-block: 36px; }
+      h1 { font-size: clamp(3.2rem, 8.7vw, 5rem); }
+      h2 { font-size: clamp(2.5rem, 6vw, 3.6rem); }
+      .metric { font-size: 4.8rem; }
+      .metric-description { font-size: 1.3rem; }
+      .evidence-limit { font-size: 1.08rem; }
+      .budget-grid { grid-template-columns: 1.2fr 1fr; gap: 24px; }
+      .total { font-size: clamp(3.7rem, 10.5vw, 5rem); }
+      .scope dd { font-size: 1.3rem; }
+      .calculation { font-size: 1.15rem; }
+      .learning-grid { gap: 22px; }
+      .learning-item p { font-size: 1.1rem; }
+      .learning-item h3 { font-size: 1.4rem; }
+    }
+
+    @media (max-width: 600px) {
+      :root { --gutter: 24px; }
+      .masthead { min-height: 68px; padding-block: 14px; gap: 12px; }
+      .brand { font-size: .9rem; }
+      .brand::before { width: 6px; margin-right: 8px; height: 21px; }
+      .masthead-caption { font-size: .66rem; letter-spacing: 0; }
+      .slide {
+        gap: 28px;
+        justify-content: flex-start;
+        padding-block: 34px 40px;
+      }
+      .kicker { font-size: .75rem; margin-bottom: 14px; }
+      h1 { font-size: clamp(2.2rem, 11.7vw, 3.2rem); line-height: 1.07; }
+      h2 { font-size: clamp(2.05rem, 10.5vw, 3rem); line-height: 1.1; }
+      .lede { font-size: 1.2rem; line-height: 1.45; }
+      .hours-figure { margin-top: 10px; }
+      .hours-figure figcaption { font-size: .95rem; margin-bottom: 16px; }
+      .time-labels { font-size: 1rem; height: 32px; }
+      .hours-track { height: 24px; }
+      .segment-labels { font-size: 1rem; }
+      .segment-labels span:last-child { padding-left: 10px; }
+      .evidence-grid { grid-template-columns: 1fr; gap: 28px; }
+      .evidence-item { padding: 0; }
+      .evidence-item + .evidence-item {
+        padding: 28px 0 0;
+        border-left: 0;
+        border-top: 1px solid var(--rule);
+      }
+      .metric { font-size: 4.6rem; }
+      .metric-description { font-size: 1.25rem; }
+      .evidence-limit {
+        margin-top: 14px;
+        padding-top: 0;
+        border: 0;
+        font-size: 1.06rem;
+      }
+      .budget-grid { grid-template-columns: 1fr; gap: 30px; }
+      .total { font-size: clamp(3.55rem, 18vw, 5.2rem); }
+      .total-label { font-size: 1.2rem; margin-top: 10px; }
+      .calculation { margin-top: 18px; font-size: 1.12rem; }
+      .scope > div { padding-block: 18px; }
+      .scope dt { font-size: .78rem; }
+      .scope dd { font-size: 1.35rem; }
+      .scope .small { font-size: 1rem; }
+      .staffing-grid { grid-template-columns: 1fr; gap: 32px; }
+      .volunteer-number { font-size: 5rem; }
+      .volunteer-copy { font-size: 1.3rem; }
+      .unconfirmed { margin-top: 12px; font-size: 1.06rem; }
+      .start-condition { padding: 8px 0 8px 22px; border-left-width: 5px; }
+      .start-condition h3 { font-size: 1.8rem; }
+      .learning-label { font-size: .76rem; margin-bottom: 16px; }
+      .learning-grid { grid-template-columns: 1fr; gap: 24px; }
+      .learning-item { padding-top: 14px; border-top-width: 2px; }
+      .learning-item h3 { font-size: 1.4rem; margin-bottom: 6px; }
+      .learning-item p { max-width: none; font-size: 1.13rem; }
+      .decision-line { font-size: 1.18rem; padding-left: 14px; }
+      .deck-controls { min-height: 82px; padding-inline: var(--gutter); gap: 12px; }
+      .counter { font-size: .9rem; }
+      .control { font-size: .87rem; padding: .65rem .7rem; gap: 8px; }
+      .actions { gap: 8px; }
+    }
+
+    @media (max-width: 350px) {
+      :root { --gutter: 20px; }
+      .masthead-caption { font-size: .61rem; }
+      .brand { font-size: .85rem; }
+      .counter .of { margin-inline: 2px; }
+      .control { padding-inline: .6rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    @media print {
+      :root, body.night {
+        --paper: #fff;
+        --ink: #183b32;
+        --muted: #52645b;
+        --accent: #ac3e25;
+        --rule: #b4beb1;
+      }
+      body { padding: 0; }
+      .masthead, .deck-controls, .noscript { display: none !important; }
+      .slide, .slide[hidden] {
+        display: flex !important;
+        min-height: 0;
+        margin: 0;
+        padding: 1.2cm;
+        break-after: page;
+        break-inside: avoid;
+      }
+      .slide:last-child { break-after: auto; }
+      h1 { font-size: 48pt; }
+      h2 { font-size: 36pt; }
+      .metric { font-size: 60pt; }
+      .total { font-size: 76pt; }
+      @page { size: landscape; margin: 0.8cm; }
+    }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand">Alder Library</div>
+    <div class="masthead-caption">
+      Saturday hours<br>
+      Proposal to trustees
+    </div>
+  </header>
+
+  <main id="deck" tabindex="-1" aria-label="Saturday-hours pilot proposal">
+    <section
+      class="slide proposal"
+      id="slide-1"
+      data-title="The proposal"
+      role="group"
+      aria-roledescription="slide"
+      aria-label="1 of 5: The proposal"
+      aria-labelledby="title-1"
+    >
+      <div>
+        <p class="kicker">The request</p>
+        <h1 id="title-1" tabindex="-1">
+          <span class="line">Two more hours.</span>
+          <span class="line accent">Six Saturdays.</span>
+        </h1>
+      </div>
+
+      <p class="lede">
+        A limited pilot of later Saturday closing—not a permanent change.
+      </p>
+
+      <figure class="hours-figure">
+        <figcaption>Saturday opening hours</figcaption>
+        <div
+          role="img"
+          aria-label="The library currently opens from 10:00 to 14:00, four hours. The proposed pilot keeps the 10:00 opening and adds two hours, from 14:00 to 16:00."
+        >
+          <div aria-hidden="true">
+            <div class="time-labels">
+              <span>10:00</span>
+              <span>14:00</span>
+              <span>16:00</span>
+            </div>
+            <div class="hours-track">
+              <div class="existing-hours"></div>
+              <div class="additional-hours"></div>
+            </div>
+            <div class="segment-labels">
+              <span>Current hours</span>
+              <span>+2 pilot hours</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    <section
+      class="slide evidence"
+      id="slide-2"
+      data-title="Evidence & limits"
+      role="group"
+      aria-roledescription="slide"
+      aria-label="2 of 5: Evidence and limits"
+      aria-labelledby="title-2"
+      hidden
+    >
+      <div>
+        <p class="kicker">Why test it?</p>
+        <h2 id="title-2" tabindex="-1">
+          <span class="line">A reason to test.</span>
+          <span class="line accent">Not proof of demand.</span>
+        </h2>
+      </div>
+
+      <div class="evidence-grid">
+        <div class="evidence-item">
+          <p class="metric">
+            <span class="sr-only">72 of 120</span>
+            <span aria-hidden="true">72<span class="denominator">/ 120</span></span>
+          </p>
+          <p class="metric-description">
+            survey respondents requested later Saturday hours.
+          </p>
+          <p class="evidence-limit">
+            Opt-in survey.<br>
+            Not a representative sample.
+          </p>
+        </div>
+
+        <div class="evidence-item">
+          <p class="metric">400</p>
+          <p class="metric-description">
+            visits counted manually, <span class="tabular">12:00–14:00</span>,
+            across the last four Saturdays.
+          </p>
+          <p class="evidence-limit">
+            Visits, not unique people. These counts do not measure demand after
+            <span class="tabular">14:00</span>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="slide budget"
+      id="slide-3"
+      data-title="Time & cost"
+      role="group"
+      aria-roledescription="slide"
+      aria-label="3 of 5: Time and cost"
+      aria-labelledby="title-3"
+      hidden
+    >
+      <div>
+        <p class="kicker">Bound the commitment</p>
+        <h2 id="title-3" tabindex="-1">
+          <span class="line">A defined cost.</span>
+          <span class="line">A defined end.</span>
+        </h2>
+      </div>
+
+      <div class="budget-grid">
+        <div>
+          <p class="total">$1,080</p>
+          <p class="total-label">Extra staffing for the full pilot.</p>
+          <p class="calculation">6 Saturdays × $180 per Saturday</p>
+        </div>
+
+        <dl class="scope">
+          <div>
+            <dt>Duration</dt>
+            <dd>Six consecutive Saturdays</dd>
+          </div>
+          <div>
+            <dt>Pilot opening hours</dt>
+            <dd>
+              <span class="tabular">10:00–16:00</span>
+              <span class="small">
+                Closing at 16:00 instead of 14:00.
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section
+      class="slide staffing"
+      id="slide-4"
+      data-title="The start condition"
+      role="group"
+      aria-roledescription="slide"
+      aria-label="4 of 5: The start condition"
+      aria-labelledby="title-4"
+      hidden
+    >
+      <div>
+        <p class="kicker">Before the first Saturday</p>
+        <h2 class="staffing-heading" id="title-4" tabindex="-1">
+          Interest isn’t a staffing plan.
+        </h2>
+      </div>
+
+      <div class="staffing-grid">
+        <div>
+          <p class="volunteer-number">2</p>
+          <p class="volunteer-copy">volunteers have expressed interest.</p>
+          <p class="unconfirmed">Their availability is not confirmed.</p>
+        </div>
+
+        <div class="start-condition">
+          <p class="kicker">Condition for starting</p>
+          <h3>The pilot starts only with confirmed staffing.</h3>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="slide decision"
+      id="slide-5"
+      data-title="Authorize & learn"
+      role="group"
+      aria-roledescription="slide"
+      aria-label="5 of 5: Authorize and learn"
+      aria-labelledby="title-5"
+      hidden
+    >
+      <div>
+        <p class="kicker">For trustee authorization</p>
+        <h2 id="title-5" tabindex="-1">
+          <span class="line">Six Saturdays.</span>
+          <span class="line accent">Then a decision.</span>
+        </h2>
+      </div>
+
+      <p class="lede">
+        Authorize the pilot and its $1,080 extra staffing cost,
+        subject to confirmed staffing.
+      </p>
+
+      <div>
+        <p class="learning-label">During the pilot</p>
+        <div class="learning-grid">
+          <div class="learning-item">
+            <h3>Visits</h3>
+            <p>Count visits from <span class="tabular">14:00 to 16:00</span>.</p>
+          </div>
+          <div class="learning-item">
+            <h3>Feedback</h3>
+            <p>Collect visitor feedback.</p>
+          </div>
+          <div class="learning-item">
+            <h3>Staffing</h3>
+            <p>Review staffing feasibility.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="decision-line">
+        Review the findings before deciding whether to continue.
+      </p>
+    </section>
+  </main>
+
+  <footer class="deck-controls" aria-label="Presentation controls">
+    <div class="position">
+      <div class="counter" aria-label="Slide position">
+        <span id="current-number">01</span><span class="of">/</span><span>05</span>
+      </div>
+      <div class="position-details">
+        <span id="position-title">The proposal</span>
+        <span class="key-hint">← → to navigate · Home / End</span>
+      </div>
+    </div>
+
+    <nav class="slide-jumps" aria-label="Go to a slide">
+      <button class="jump" type="button" data-slide="0"
+        aria-label="Slide 1: The proposal" aria-current="step">1</button>
+      <button class="jump" type="button" data-slide="1"
+        aria-label="Slide 2: Evidence and limits">2</button>
+      <button class="jump" type="button" data-slide="2"
+        aria-label="Slide 3: Time and cost">3</button>
+      <button class="jump" type="button" data-slide="3"
+        aria-label="Slide 4: The start condition">4</button>
+      <button class="jump" type="button" data-slide="4"
+        aria-label="Slide 5: Authorize and learn">5</button>
+    </nav>
+
+    <div class="actions">
+      <button class="control" id="previous" type="button"
+        aria-label="Previous slide" aria-controls="deck" aria-disabled="true">
+        <span aria-hidden="true">←</span><span>Back</span>
+      </button>
+      <button class="control" id="next" type="button"
+        aria-label="Next slide" aria-controls="deck" aria-disabled="false">
+        <span>Next</span><span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </footer>
+
+  <p id="announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+
+  <noscript>
+    <style>
+      .slide[hidden] { display: flex; }
+      .deck-controls { display: none; }
+      body { padding-bottom: 0; }
+      .slide { border-bottom: 1px solid var(--rule); }
+    </style>
+    <p class="noscript">
+      JavaScript is disabled. All five slides are available above in order.
+      Enable JavaScript for previous/next controls and keyboard navigation.
+    </p>
+  </noscript>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const jumps = Array.from(document.querySelectorAll(".jump"));
+      const previous = document.getElementById("previous");
+      const next = document.getElementById("next");
+      const currentNumber = document.getElementById("current-number");
+      const positionTitle = document.getElementById("position-title");
+      const announcement = document.getElementById("announcement");
+      const masthead = document.querySelector(".masthead");
+      const controls = document.querySelector(".deck-controls");
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      let current = -1;
+
+      function indexFromHash() {
+        const match = window.location.hash.match(/^#slide-([1-5])$/);
+        return match ? Number(match[1]) - 1 : 0;
+      }
+
+      function reserveChromeSpace() {
+        document.documentElement.style.setProperty(
+          "--header-space", Math.ceil(masthead.getBoundingClientRect().height) + "px"
+        );
+        document.documentElement.style.setProperty(
+          "--footer-space", Math.ceil(controls.getBoundingClientRect().height) + "px"
+        );
+      }
+
+      function render(index, announce) {
+        const boundedIndex = Math.max(0, Math.min(slides.length - 1, index));
+        if (boundedIndex === current) return;
+
+        const focusWasInSlide =
+          current >= 0 && slides[current].contains(document.activeElement);
+
+        current = boundedIndex;
+
+        slides.forEach((slide, slideIndex) => {
+          slide.hidden = slideIndex !== current;
+        });
+
+        jumps.forEach((button, buttonIndex) => {
+          if (buttonIndex === current) {
+            button.setAttribute("aria-current", "step");
+          } else {
+            button.removeAttribute("aria-current");
+          }
+        });
+
+        previous.setAttribute("aria-disabled", String(current === 0));
+        next.setAttribute("aria-disabled", String(current === slides.length - 1));
+
+        const title = slides[current].dataset.title;
+        currentNumber.textContent = String(current + 1).padStart(2, "0");
+        positionTitle.textContent = title;
+
+        document.body.classList.toggle("night", current === 2);
+        themeMeta.setAttribute("content", current === 2 ? "#183b32" : "#f5f0e6");
+        document.title =
+          "Alder Library — " + title + " (" + (current + 1) + " of " + slides.length + ")";
+
+        if (focusWasInSlide) {
+          slides[current].querySelector("h1, h2").focus({ preventScroll: true });
+        }
+
+        if (announce) {
+          announcement.textContent =
+            "Slide " + (current + 1) + " of " + slides.length + ": " + title + ".";
+        }
+
+        reserveChromeSpace();
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      }
+
+      function navigate(index) {
+        const boundedIndex = Math.max(0, Math.min(slides.length - 1, index));
+        if (boundedIndex === current) return;
+
+        const fragment = "#slide-" + (boundedIndex + 1);
+        try {
+          window.history.pushState({ slide: boundedIndex + 1 }, "", fragment);
+        } catch {
+          window.location.hash = fragment;
+        }
+
+        render(boundedIndex, true);
+      }
+
+      previous.addEventListener("click", () => navigate(current - 1));
+      next.addEventListener("click", () => navigate(current + 1));
+
+      jumps.forEach(button => {
+        button.addEventListener("click", () => navigate(Number(button.dataset.slide)));
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        if (event.target instanceof Element &&
+            event.target.closest("input, textarea, select, [contenteditable]")) return;
+
+        let destination;
+        switch (event.key) {
+          case "ArrowRight":
+          case "PageDown":
+            destination = current + 1;
+            break;
+          case "ArrowLeft":
+          case "PageUp":
+            destination = current - 1;
+            break;
+          case "Home":
+            destination = 0;
+            break;
+          case "End":
+            destination = slides.length - 1;
+            break;
+          default:
+            return;
+        }
+
+        event.preventDefault();
+        navigate(destination);
+      });
+
+      window.addEventListener("popstate", () => render(indexFromHash(), true));
+      window.addEventListener("hashchange", () => render(indexFromHash(), true));
+      window.addEventListener("resize", reserveChromeSpace);
+
+      if ("ResizeObserver" in window) {
+        const observer = new ResizeObserver(reserveChromeSpace);
+        observer.observe(masthead);
+        observer.observe(controls);
+      }
+
+      render(indexFromHash(), false);
+    })();
+  </script>
+</body>
+</html>

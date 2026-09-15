@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#293db7">
+  <meta name="description" content="Relay is a project-handoff concept for small design studios. Try a local example with decisions, open questions, a next owner, and an acknowledgement.">
+  <title>Relay — Your work. Their move.</title>
+  <style>
+    /*
+      TASK MODEL
+      Who: Studio leads arriving from a colleague's link; laptop or phone,
+           keyboard or pointer; no prior product knowledge.
+      Loop: Understand → inspect handoff → acknowledge → inspect receipt → undo.
+      Co-visible: Project decisions, open question, owner, next step, action,
+                  and simulated receipt remain in one continuous handoff sheet.
+      Rate: One short exploration, with immediate and repeatable feedback.
+      Encoding: Editorial prose for the offer; a labelled definition list for
+                the handoff; native controls and text for state and recovery.
+
+      SYSTEM
+      Color: Cobalt is the brand surround; yellow marks the entry action;
+             paper carries project content; green is receipt success only.
+      Type: Georgia for display; Arial for reading and controls;
+            Courier New for compact routing labels.
+      Spacing: 4, 8, 12, 16, 24, 32, 48, 64, 80 CSS px at default text size.
+      Corners: Square surfaces, 2px controls, circular receipt marks.
+      Delivery: One offline HTML file. State exists in memory only.
+    */
+
+    :root {
+      color-scheme: light;
+
+      --brand: #293db7;
+      --brand-deep: #1a287c;
+      --brand-rule: #7787da;
+      --on-brand: #fffef8;
+      --on-brand-muted: #e0e5ff;
+      --yellow: #f2efac;
+      --yellow-hover: #fffbc9;
+      --paper: #fffef8;
+      --paper-muted: #f0f0e6;
+      --ink: #242e30;
+      --ink-hover: #394648;
+      --muted: #596365;
+      --rule: #d1d5cd;
+      --success: #24543d;
+      --success-surface: #e8f0df;
+      --focus: var(--yellow);
+
+      --font-display: Georgia, "Times New Roman", serif;
+      --font-body: Arial, Helvetica, sans-serif;
+      --font-utility: "Courier New", Courier, monospace;
+
+      --text-small: 0.8125rem;
+      --text-note: 0.875rem;
+      --text-body: 1rem;
+      --text-project: 1.0625rem;
+      --text-lead: 1.25rem;
+      --text-brand: 2rem;
+      --text-project-title: 2.25rem;
+      --text-section: clamp(2.25rem, 3.6vw, 3.5rem);
+      --text-hero: clamp(3.75rem, 6.7vw, 6.5rem);
+      --text-price: 5rem;
+
+      --weight-normal: 400;
+      --weight-bold: 700;
+      --leading-body: 1.5;
+      --leading-tight: 1.1;
+      --leading-display: 1.02;
+      --tracking-label: 0.075em;
+      --tracking-display: -0.045em;
+
+      --s1: 0.25rem;
+      --s2: 0.5rem;
+      --s3: 0.75rem;
+      --s4: 1rem;
+      --s5: 1.5rem;
+      --s6: 2rem;
+      --s7: 3rem;
+      --s8: 4rem;
+      --s9: 5rem;
+
+      --radius-control: 2px;
+      --radius-round: 50%;
+      --hairline: 1px;
+      --strong-line: 2px;
+      --focus-width: 3px;
+
+      --page-width: 80rem;
+      --page-gutter: var(--s7);
+      --target-height: 3.25rem;
+      --icon-size: 1.5rem;
+      --receipt-mark-size: 2.5rem;
+      --label-width: 6.5rem;
+      --transition: 140ms ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-padding-block: var(--s5);
+    }
+
+    body {
+      margin: 0;
+      background: var(--brand);
+      color: var(--on-brand);
+      font-family: var(--font-body);
+      font-size: var(--text-body);
+      line-height: var(--leading-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, p, dl, dt, dd {
+      margin: 0;
+    }
+
+    h1, h2 {
+      font-weight: var(--weight-normal);
+    }
+
+    a {
+      color: inherit;
+      text-underline-offset: var(--s1);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    :focus-visible {
+      outline: var(--focus-width) solid var(--focus);
+      outline-offset: var(--s1);
+    }
+
+    ::selection {
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
+    .wrap {
+      inline-size: min(
+        calc(100% - var(--page-gutter) - var(--page-gutter)),
+        var(--page-width)
+      );
+      margin-inline: auto;
+    }
+
+    .sr-only {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 10;
+      inset-block-start: var(--s4);
+      inset-inline-start: var(--s4);
+      padding: var(--s3) var(--s5);
+      background: var(--yellow);
+      color: var(--ink);
+      transform: translateY(-200%);
+      --focus: var(--ink);
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    .masthead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s5);
+      padding-block: var(--s5);
+      border-block-end: var(--hairline) solid var(--brand-rule);
+    }
+
+    .identity {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--s4);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s3);
+      min-block-size: var(--target-height);
+      text-decoration: none;
+      font-size: var(--text-brand);
+      font-weight: var(--weight-bold);
+      line-height: 1;
+      letter-spacing: var(--tracking-display);
+    }
+
+    .brand-mark {
+      position: relative;
+      display: inline-block;
+      inline-size: var(--s6);
+      block-size: var(--s6);
+      flex: 0 0 var(--s6);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inline-size: var(--s5);
+      block-size: var(--s2);
+      background: currentColor;
+      transform: skewX(-25deg);
+    }
+
+    .brand-mark::before {
+      inset-block-start: var(--s2);
+      inset-inline-start: 0;
+    }
+
+    .brand-mark::after {
+      inset-block-start: var(--s5);
+      inset-inline-start: var(--s2);
+    }
+
+    .concept-label {
+      padding-inline-start: var(--s4);
+      border-inline-start: var(--hairline) solid var(--brand-rule);
+      color: var(--on-brand-muted);
+      font-size: var(--text-note);
+    }
+
+    .navigation {
+      display: flex;
+      align-items: center;
+      gap: var(--s6);
+    }
+
+    .navigation a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--s3);
+      min-block-size: var(--target-height);
+      text-decoration: none;
+    }
+
+    .navigation .nav-demo {
+      font-weight: var(--weight-bold);
+    }
+
+    .arrow {
+      inline-size: var(--icon-size);
+      block-size: var(--icon-size);
+      flex: 0 0 var(--icon-size);
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+      align-items: center;
+      gap: var(--s8);
+      padding-block: var(--s7) var(--s9);
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--s6);
+      padding-block: var(--s5);
+    }
+
+    .eyebrow {
+      font-family: var(--font-utility);
+      font-size: var(--text-small);
+      font-weight: var(--weight-bold);
+      line-height: var(--leading-body);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: var(--text-hero);
+      line-height: var(--leading-display);
+      letter-spacing: var(--tracking-display);
+    }
+
+    .hero h1 span {
+      display: block;
+    }
+
+    .hero h1 em {
+      color: var(--yellow);
+      font-weight: var(--weight-normal);
+    }
+
+    .hero-description {
+      max-inline-size: 36ch;
+      font-size: var(--text-lead);
+      line-height: var(--leading-body);
+      color: var(--on-brand-muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--s3);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s6);
+      min-block-size: var(--target-height);
+      padding: var(--s4) var(--s5);
+      border: var(--strong-line) solid transparent;
+      border-radius: var(--radius-control);
+      font-size: var(--text-body);
+      font-weight: var(--weight-bold);
+      line-height: 1.25;
+      text-align: start;
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        background-color var(--transition),
+        color var(--transition);
+    }
+
+    .button-primary {
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
+    .hero-note {
+      color: var(--on-brand-muted);
+      font-size: var(--text-note);
+    }
+
+    .demo-wrap {
+      min-inline-size: 0;
+    }
+
+    .routing-tab {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--s2) var(--s5);
+      padding: var(--s3) var(--s5);
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
+    .routing-tab span:last-child {
+      font-size: var(--text-note);
+    }
+
+    .sheet {
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: var(--s3) var(--s3) 0 var(--brand-deep);
+      scroll-margin-block-start: var(--s5);
+      --focus: var(--brand);
+    }
+
+    .sheet:target {
+      outline: var(--strong-line) solid var(--yellow);
+      outline-offset: var(--s2);
+    }
+
+    .sheet:focus-visible {
+      outline: var(--focus-width) solid var(--yellow);
+      outline-offset: var(--s2);
+    }
+
+    .sheet-body {
+      padding: var(--s6);
+    }
+
+    .project-heading {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s2);
+      padding-block-end: var(--s5);
+    }
+
+    .project-heading h2 {
+      font-family: var(--font-display);
+      font-size: var(--text-project-title);
+      line-height: var(--leading-tight);
+      letter-spacing: var(--tracking-display);
+    }
+
+    .project-heading p {
+      color: var(--muted);
+      font-size: var(--text-note);
+    }
+
+    .handoff-details {
+      border-block-start: var(--strong-line) solid var(--ink);
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: var(--label-width) minmax(0, 1fr);
+      align-items: start;
+      gap: var(--s5);
+      padding-block: var(--s4);
+      border-block-end: var(--hairline) solid var(--rule);
+    }
+
+    .detail-row dt {
+      padding-block-start: var(--s1);
+      color: var(--muted);
+      font-family: var(--font-utility);
+      font-size: var(--text-small);
+      font-weight: var(--weight-bold);
+      line-height: var(--leading-body);
+    }
+
+    .detail-row dd {
+      font-size: var(--text-project);
+      line-height: var(--leading-body);
+      overflow-wrap: anywhere;
+    }
+
+    .detail-row.owner dd {
+      font-weight: var(--weight-bold);
+    }
+
+    .detail-row:last-child {
+      border-block-end: 0;
+    }
+
+    .recipient-action {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s3);
+      padding-block-start: var(--s5);
+    }
+
+    .recipient-instruction {
+      font-size: var(--text-note);
+      color: var(--muted);
+    }
+
+    .acknowledge-button {
+      inline-size: 100%;
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .button-symbol {
+      min-inline-size: var(--icon-size);
+      text-align: center;
+      font-size: var(--text-lead);
+      line-height: 1;
+    }
+
+    .acknowledge-button:disabled {
+      cursor: not-allowed;
+      background: var(--muted);
+    }
+
+    .local-note {
+      color: var(--muted);
+      font-size: var(--text-small);
+      text-align: center;
+    }
+
+    .receipt {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--s4);
+      padding: var(--s5) var(--s6);
+      background: var(--paper-muted);
+      border-block-start: var(--strong-line) dashed var(--rule);
+    }
+
+    .receipt::before,
+    .receipt::after {
+      content: "";
+      position: absolute;
+      inset-block-start: calc(-1 * var(--s2));
+      inline-size: var(--s4);
+      block-size: var(--s4);
+      border-radius: var(--radius-round);
+      background: var(--brand);
+    }
+
+    .receipt::before {
+      inset-inline-start: calc(-1 * var(--s2));
+    }
+
+    .receipt::after {
+      inset-inline-end: calc(-1 * var(--s2));
+    }
+
+    .receipt-mark {
+      display: grid;
+      place-items: center;
+      flex: 0 0 var(--receipt-mark-size);
+      inline-size: var(--receipt-mark-size);
+      block-size: var(--receipt-mark-size);
+      border: var(--strong-line) dotted var(--muted);
+      border-radius: var(--radius-round);
+      color: var(--muted);
+      font-size: var(--text-lead);
+      line-height: 1;
+    }
+
+    .receipt-copy {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s1);
+      min-inline-size: 0;
+    }
+
+    .receipt-label {
+      color: var(--muted);
+      font-family: var(--font-utility);
+      font-size: var(--text-small);
+      line-height: var(--leading-body);
+    }
+
+    .receipt-title {
+      font-weight: var(--weight-bold);
+    }
+
+    .receipt-detail {
+      font-size: var(--text-note);
+      color: var(--muted);
+    }
+
+    .sheet[data-state="acknowledged"] .receipt {
+      background: var(--success-surface);
+    }
+
+    .sheet[data-state="acknowledged"] .receipt-mark {
+      border-style: solid;
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .sheet[data-state="acknowledged"] .receipt-title {
+      color: var(--success);
+    }
+
+    noscript p {
+      padding: var(--s4);
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
+    .offer {
+      padding-block: var(--s8);
+      background: var(--paper);
+      color: var(--ink);
+      --focus: var(--brand);
+    }
+
+    .offer-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+      gap: var(--s8);
+      align-items: center;
+    }
+
+    .offer-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--s5);
+    }
+
+    .offer-copy h2 {
+      max-inline-size: 17ch;
+      font-family: var(--font-display);
+      font-size: var(--text-section);
+      letter-spacing: var(--tracking-display);
+      line-height: var(--leading-tight);
+    }
+
+    .offer-copy > p:last-child {
+      max-inline-size: 43ch;
+      color: var(--muted);
+      font-size: var(--text-project);
+    }
+
+    .offer .eyebrow {
+      color: var(--brand);
+    }
+
+    .price-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--s5);
+      padding-inline-start: var(--s6);
+      border-inline-start: var(--hairline) solid var(--rule);
+    }
+
+    .price-line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--s5);
+    }
+
+    .price {
+      font-family: var(--font-display);
+      font-size: var(--text-price);
+      letter-spacing: var(--tracking-display);
+      font-variant-numeric: lining-nums tabular-nums;
+      line-height: 1;
+    }
+
+    .price-unit {
+      color: var(--muted);
+      font-size: var(--text-body);
+    }
+
+    .price-unit span {
+      display: block;
+    }
+
+    .terms {
+      font-size: var(--text-project);
+    }
+
+    .price-disclaimer {
+      max-inline-size: 42ch;
+      color: var(--muted);
+      font-size: var(--text-note);
+    }
+
+    .text-action {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s4);
+      min-block-size: var(--target-height);
+      color: var(--brand);
+      font-weight: var(--weight-bold);
+      text-decoration-thickness: var(--hairline);
+    }
+
+    .footer {
+      color: var(--ink);
+      background: var(--paper);
+      --focus: var(--brand);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--s5);
+      padding-block: var(--s5);
+      border-block-start: var(--hairline) solid var(--rule);
+    }
+
+    .footer-name {
+      font-weight: var(--weight-bold);
+      font-size: var(--text-lead);
+      letter-spacing: var(--tracking-display);
+    }
+
+    .footer p {
+      color: var(--muted);
+      font-size: var(--text-note);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .navigation a:hover {
+        text-decoration: underline;
+      }
+
+      .button-primary:hover {
+        background: var(--yellow-hover);
+      }
+
+      .acknowledge-button:not(:disabled):hover {
+        background: var(--ink-hover);
+      }
+
+      .text-action:hover {
+        color: var(--brand-deep);
+        text-decoration-thickness: var(--strong-line);
+      }
+    }
+
+    @media (max-width: 70rem) {
+      :root {
+        --page-gutter: var(--s6);
+      }
+
+      .hero,
+      .offer-grid {
+        gap: var(--s7);
+      }
+
+      .sheet-body {
+        padding: var(--s5);
+      }
+
+      .detail-row {
+        grid-template-columns: 5.5rem minmax(0, 1fr);
+        gap: var(--s4);
+      }
+
+      .receipt {
+        padding: var(--s5);
+      }
+    }
+
+    @media (max-width: 58rem) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+        gap: var(--s7);
+        padding-block: var(--s7) var(--s8);
+      }
+
+      .hero-copy {
+        gap: var(--s5);
+        padding-block: 0;
+      }
+
+      .hero h1 {
+        font-size: clamp(3rem, 10vw, 5rem);
+      }
+
+      .hero-description {
+        max-inline-size: 43ch;
+      }
+
+      .demo-wrap {
+        inline-size: 100%;
+        max-inline-size: 40rem;
+        justify-self: end;
+      }
+
+      .detail-row {
+        grid-template-columns: var(--label-width) minmax(0, 1fr);
+        gap: var(--s5);
+      }
+
+      .offer-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .offer-copy h2 {
+        max-inline-size: 22ch;
+      }
+
+      .price-block {
+        padding-inline-start: 0;
+        padding-block-start: var(--s6);
+        border-inline-start: 0;
+        border-block-start: var(--hairline) solid var(--rule);
+      }
+    }
+
+    @media (max-width: 36rem) {
+      :root {
+        --page-gutter: var(--s5);
+      }
+
+      .masthead {
+        padding-block: var(--s4);
+        gap: var(--s4);
+      }
+
+      .identity {
+        gap: var(--s2);
+      }
+
+      .concept-label {
+        border: 0;
+        padding-inline-start: 0;
+        flex-basis: 100%;
+        font-size: var(--text-small);
+      }
+
+      .navigation {
+        gap: var(--s4);
+      }
+
+      .navigation .nav-demo {
+        display: none;
+      }
+
+      .hero {
+        padding-block-start: var(--s6);
+      }
+
+      .hero-description {
+        font-size: var(--text-project);
+      }
+
+      .hero-actions {
+        inline-size: 100%;
+      }
+
+      .button-primary {
+        inline-size: 100%;
+      }
+
+      .routing-tab {
+        padding-inline: var(--s4);
+      }
+
+      .sheet-body {
+        padding: var(--s5) var(--s4);
+      }
+
+      .detail-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--s2);
+      }
+
+      .detail-row dt {
+        padding-block-start: 0;
+      }
+
+      .receipt {
+        padding: var(--s5) var(--s4);
+        gap: var(--s3);
+      }
+
+      .offer {
+        padding-block: var(--s7);
+      }
+
+      .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--s2);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (forced-colors: active) {
+      .button {
+        border-color: ButtonText;
+      }
+
+      .sheet {
+        border: var(--hairline) solid CanvasText;
+      }
+
+      .receipt-mark {
+        border-color: CanvasText;
+      }
+    }
+  </style>
+</head>
+
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead wrap">
+    <div class="identity">
+      <a class="brand" href="#top" aria-label="Relay home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>relay</span>
+      </a>
+      <span class="concept-label">A product concept</span>
+    </div>
+
+    <nav class="navigation" aria-label="Main navigation">
+      <a href="#pricing">Pricing</a>
+      <a class="nav-demo" href="#handoff">
+        Try a handoff
+        <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12h15M13 6l6 6-6 6"></path>
+        </svg>
+      </a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Project handoffs for small design studios</p>
+
+        <h1 id="hero-title">
+          <span>Your work.</span>
+          <span><em>Their move.</em></span>
+        </h1>
+
+        <p class="hero-description">
+          Relay keeps decisions, open questions and the next owner on one
+          shared handoff page. So the next person knows where to pick up.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button button-primary" href="#handoff">
+            Try a handoff
+            <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 12h15M13 6l6 6-6 6"></path>
+            </svg>
+          </a>
+          <p class="hero-note">A working local example. No sign-up.</p>
+        </div>
+      </div>
+
+      <div class="demo-wrap">
+        <div class="routing-tab">
+          <span class="eyebrow">Interactive example</span>
+          <span>Nothing leaves this page.</span>
+        </div>
+
+        <article
+          class="sheet"
+          id="handoff"
+          data-state="waiting"
+          tabindex="-1"
+          aria-labelledby="project-name"
+          aria-describedby="demo-scope"
+        >
+          <div class="sheet-body">
+            <header class="project-heading">
+              <p>A shared handoff page</p>
+              <h2 id="project-name">Harbor identity</h2>
+            </header>
+
+            <dl class="handoff-details">
+              <div class="detail-row">
+                <dt>Decision</dt>
+                <dd>Use the wordmark without the wave symbol.</dd>
+              </div>
+              <div class="detail-row">
+                <dt>Open question</dt>
+                <dd>Does the packaging need a bilingual version?</dd>
+              </div>
+              <div class="detail-row owner">
+                <dt>Next owner</dt>
+                <dd>The production designer</dd>
+              </div>
+              <div class="detail-row">
+                <dt>Next step</dt>
+                <dd>Prepare a print proof by Thursday.</dd>
+              </div>
+            </dl>
+
+            <div class="recipient-action">
+              <p class="recipient-instruction" id="recipient-instruction">
+                Take the production designer’s seat. Acknowledge that
+                you’ve received the handoff.
+              </p>
+
+              <button
+                class="button acknowledge-button"
+                id="acknowledge"
+                type="button"
+                aria-describedby="recipient-instruction demo-scope"
+                disabled
+              >
+                <span id="acknowledge-label">Acknowledge handoff</span>
+                <span class="button-symbol" id="button-symbol" aria-hidden="true">✓</span>
+              </button>
+
+              <p class="local-note" id="demo-scope">
+                Demo only. Nothing is sent or saved. Reloading resets it.
+              </p>
+
+              <noscript>
+                <p>
+                  JavaScript is needed to acknowledge this local example.
+                  Enable it and reload to try the demo; no account is needed.
+                </p>
+              </noscript>
+            </div>
+          </div>
+
+          <div class="receipt">
+            <span class="receipt-mark" id="receipt-mark" aria-hidden="true">—</span>
+            <div class="receipt-copy">
+              <p class="receipt-label">Sender’s receipt · demo</p>
+              <p class="receipt-title" id="receipt-title">
+                Waiting for acknowledgement
+              </p>
+              <p class="receipt-detail" id="receipt-detail">
+                Try the button to see what the sender would see.
+              </p>
+            </div>
+          </div>
+
+          <p class="sr-only" id="demo-announcement" role="status" aria-atomic="true"></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="offer" id="pricing" aria-labelledby="offer-title">
+      <div class="offer-grid wrap">
+        <div class="offer-copy">
+          <p class="eyebrow">The context. And the confirmation.</p>
+          <h2 id="offer-title">A place for the handoff.<br>A signal it landed.</h2>
+          <p>
+            Keep what’s settled beside what’s still open. Name the next owner.
+            When they acknowledge the handoff, the sender can see it was received.
+          </p>
+        </div>
+
+        <div class="price-block">
+          <p class="eyebrow">Concept pricing</p>
+
+          <p class="price-line">
+            <span class="price">$12</span>
+            <span class="price-unit">
+              <span>per workspace</span>
+              <span>per month</span>
+            </span>
+          </p>
+
+          <p class="terms">
+            <strong>14-day trial.</strong> No credit card required.
+          </p>
+
+          <p class="price-disclaimer">
+            That’s the proposed offer. Relay is a product concept, not a
+            live service. You can explore the example here; no trial or
+            subscription is started.
+          </p>
+
+          <a class="text-action" href="#handoff">
+            Try a handoff
+            <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 12h15M13 6l6 6-6 6"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner wrap">
+      <span class="footer-name">relay</span>
+      <p>For the work between one pair of hands and the next.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const sheet = document.getElementById("handoff");
+      const button = document.getElementById("acknowledge");
+      const buttonLabel = document.getElementById("acknowledge-label");
+      const buttonSymbol = document.getElementById("button-symbol");
+      const receiptMark = document.getElementById("receipt-mark");
+      const receiptTitle = document.getElementById("receipt-title");
+      const receiptDetail = document.getElementById("receipt-detail");
+      const announcement = document.getElementById("demo-announcement");
+
+      let acknowledged = false;
+
+      function updateDemo() {
+        sheet.dataset.state = acknowledged ? "acknowledged" : "waiting";
+
+        buttonLabel.textContent = acknowledged
+          ? "Undo acknowledgement"
+          : "Acknowledge handoff";
+
+        buttonSymbol.textContent = acknowledged ? "↶" : "✓";
+        receiptMark.textContent = acknowledged ? "✓" : "—";
+
+        receiptTitle.textContent = acknowledged
+          ? "Received by you"
+          : "Waiting for acknowledgement";
+
+        receiptDetail.textContent = acknowledged
+          ? "The production designer has acknowledged this handoff."
+          : "Try the button to see what the sender would see.";
+
+        announcement.textContent = acknowledged
+          ? "Demo acknowledged. The simulated sender’s receipt now shows it was received. You can undo the acknowledgement."
+          : "Demo reset. The handoff is waiting for acknowledgement again. Nothing has been sent or saved.";
+      }
+
+      button.addEventListener("click", () => {
+        acknowledged = !acknowledged;
+        updateDemo();
+      });
+
+      button.disabled = false;
+
+      document.querySelectorAll('a[href="#handoff"]').forEach((link) => {
+        link.addEventListener("click", () => {
+          /*
+            Preserve native fragment navigation and history, then explicitly
+            focus the example so the acknowledgement is the next tab stop.
+          */
+          window.requestAnimationFrame(() => {
+            sheet.focus({ preventScroll: true });
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
