@@ -53,7 +53,7 @@ One recurring implementation change is clear: all six original-package samples u
 
 ## Source
 
-- Baseline: commit `160acfc3`; evaluation: [design-experience pilot](../verification/design-experience-20260915/README.md), preserved at `ace69a1e`. Its instruction-identity verifier applies to that revision.
+- Baseline: commit `160acfc3`; evaluation: [design-experience pilot](https://github.com/doodledood/manifest-dev/blob/ace69a1ed18c568454561084ab17285d70a4b7f7/docs/verification/design-experience-20260915/README.md), preserved at `ace69a1e`. Its instruction-identity verifier applies to that revision.
 - Apple's [Design principles](https://developer.apple.com/design/human-interface-guidelines/design-principles), especially Simplicity, supports keeping useful detail rather than treating minimalism as the goal. [The 2017 design-principles session](https://developer.apple.com/videos/play/wwdc2017/802/) illustrates grouping, mapping, and the trade-offs of visibility. These are sources for Apple's recommendations, not independent proof of universal usability or prompt effectiveness.
 - [Current Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) supply task-specific Apple-platform detail. The design skill points to applicable articles rather than carrying a copy of the source corpus.
 - Amends 20260901-design-skill-pair-distills-research-eval-deferred: retains the pair and shared constraints; replaces the general research-derived reference library. General effectiveness remains unestablished.

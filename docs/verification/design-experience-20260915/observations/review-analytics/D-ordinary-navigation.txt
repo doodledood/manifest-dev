@@ -1,5 +1,0 @@
-{
-  "detailTop": 6.078125,
-  "focused": "H2#route-detail-title",
-  "scrollY": 1410
-}

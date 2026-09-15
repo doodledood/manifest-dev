@@ -1,4 +1,0 @@
-{
-  "detail": "SELECTED ROUTE\nWeekend\nEast Bank\nOn-time arrivals · latest four weeks\n87.5%\n\n84 of 96 scheduled trips\n\nPrevious four weeks\n91.0%\nRate change\n−3.5 pp\nScheduled trips\n96\nCancellations\n3\n\nThe 3 cancellations are included in the 96 scheduled trips used to calculate the on-time rate.",
-  "resources": []
-}

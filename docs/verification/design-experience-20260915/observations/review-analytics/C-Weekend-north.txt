@@ -1,1 +1,0 @@
-"SELECTED ROUTE\nWeekend\nNorth Quay\nOn-time arrivals · latest four weeks\n95.0%\n\n57 of 60 scheduled trips\n\nPrevious four weeks\n94.0%\nRate change\n+1.0 pp\nScheduled trips\n60\nCancellations\n1\n\nThe 1 cancellation is included in the 60 scheduled trips used to calculate the on-time rate."

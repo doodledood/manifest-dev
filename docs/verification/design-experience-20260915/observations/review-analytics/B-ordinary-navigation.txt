@@ -1,5 +1,0 @@
-{
-  "detailTop": 451.859375,
-  "focused": "H2#detail-heading",
-  "scrollY": 683
-}
