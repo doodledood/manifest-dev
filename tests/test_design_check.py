@@ -18,7 +18,8 @@ SCRIPT = Path(
     os.environ.get(
         "DESIGN_CHECK_TEST_SCRIPT",
         str(
-            ROOT / "claude-plugins/manifest-dev/skills/design/scripts/design-check.mjs"
+            ROOT
+            / "claude-plugins/manifest-dev/skills/review-design/scripts/design-check.mjs"
         ),
     )
 )

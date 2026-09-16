@@ -75,8 +75,9 @@ permission to do the next piece of research.
   roughness is what tells them which axis to react on. Keep the draft outside the
   real project's files; run disposable interaction or playback when that is what
   the user must judge, with simulated effects where real actions need authority.
-  For a draft rendered as a page, invoke the design skill at the prototype weight
-  it names; where that skill is unavailable, write down the loop the reader
+  For a draft rendered as a page, invoke the design skill for its visual direction,
+  keeping this draft's fidelity concentrated on the question; where that skill is
+  unavailable, write down the loop the reader
   repeats and what has to stay visible together during it, arrange the page to
   that, pick the genre's register, and keep the judged surface legible by hand.
 - Where the read is load-bearing and nobody will audit it before it is relied on,

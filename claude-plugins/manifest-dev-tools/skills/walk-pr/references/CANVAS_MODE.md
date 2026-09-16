@@ -21,7 +21,7 @@ Otherwise generate one self-contained page, deliver it through the host's browse
 
 Default: keep the interaction shell, replace the scene and data. What is always bespoke per PR: the map's topology and layout, its visual vocabulary, the story steps and captions, the whys, the element blurbs, the pins, the diff groups and diffs, and the localStorage namespace (always fresh per artifact). Depart from the shell itself when this PR's shape genuinely calls for a different picture or interaction — judged against the attention contract, never back toward a document. There is no requirement on *how* the HTML is produced; only the resulting artifact matters.
 
-Styling the bespoke parts — the map's visual vocabulary, element and edge treatment, captions, sheets — is design work: invoke the design skill for it, bounded by this mode's own lifecycle — its purpose, register, token, and floor decisions apply; its critique loop and screenshot passes do not, because the one-shot contract below forbids polish loops before handover. Where that skill is unavailable, hold the floors by hand: contrast by number, one spacing rhythm, uniform control heights, visible focus.
+Styling the bespoke parts — the map's visual vocabulary, element and edge treatment, captions, sheets — is design work: invoke the design skill for visual direction, then create the canvas under this mode's one-shot lifecycle. Where that skill is unavailable, hold the floors by hand: contrast by number, one spacing rhythm, uniform control heights, visible focus.
 
 ## The map
 

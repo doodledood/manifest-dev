@@ -1,7 +1,7 @@
 # ADR: Design keeps experience goals and conditional constraints, not a general craft manual
 
 ## Status
-Accepted
+Accepted — amended by 20260916-design-is-reference-calibrated-guidance: reference-calibrated guidance replaces the builder; the conditional standards and checker move unchanged to review-design, and prototype lifecycle stays with callers.
 
 ## Area
 Design skills

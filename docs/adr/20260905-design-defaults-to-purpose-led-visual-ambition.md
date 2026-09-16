@@ -1,7 +1,7 @@
 # ADR: Design defaults to purpose-led visual ambition across genres
 
 ## Status
-Accepted — amended by 20260915-design-keeps-experience-goals-and-conditional-constraints: preserves purpose-led visual ambition across genres within an experience-led core rather than a numbered decision flow.
+Accepted — amended by 20260915-design-keeps-experience-goals-and-conditional-constraints: preserves purpose-led visual ambition across genres within an experience-led core rather than a numbered decision flow. Further amended by 20260916-design-is-reference-calibrated-guidance: audience-centered art direction and the curated profile replace the builder's universal ambition contract; evaluator findings still require task consequences.
 
 ## Area
 Design skills

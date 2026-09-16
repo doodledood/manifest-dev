@@ -8,16 +8,16 @@ Prefer complete public decks over gallery previews. HTML is the preferred execut
 
 ## Approved calibration pair
 
-| Reference | What to borrow |
+| Reference | What to study and borrow |
 |---|---|
-| [Auto-Animate — Slides](https://slides.com/news/auto-animate/fullscreen) | Clean frames connected by object continuity and expressive transitions. |
-| [Writing a NES Emulator — Sven Andersson](https://slides.com/andsve/writing-a-nes-emulator/fullscreen) | Progressive visual construction and demonstrations inside the deck. Match density to the audience rather than copying every technical frame's load. |
+| [Auto-Animate — Slides](https://slides.com/news/auto-animate/fullscreen) | A feature-demo deck: a circle carries across compositions; square-to-diamond comparisons expose easing and duration differences within a stable labeled grid. Borrow object continuity and expressive transitions between clean frames. |
+| [Writing a NES Emulator — Sven Andersson](https://slides.com/andsve/writing-a-nes-emulator/fullscreen) | A technical lesson: color-matched callouts link Donkey Kong tiles to their source atlas, and a hardware diagram grows from components into data paths. Borrow progressive visual construction, not every technical frame's density. |
 
 ## Established references
 
 | Reference | Role and scope |
 |---|---|
-| [Building Better Interfaces — Hakim El Hattab](https://team.slides.com/hakimel/cssday-2019) | Strongest earlier HTML-presentation anchor: sparse frames enriched by browser-native behavior. |
+| [Building Better Interfaces — Hakim El Hattab](https://team.slides.com/hakimel/cssday-2019) | CSS Day talk on the Slides UI: oversized section titles and peach/charcoal diagonal framing give way to a single hover-menu demo carried across question frames. Strongest earlier HTML-presentation anchor for sparse frames enriched by interface behavior. |
 | [Vsevolod Kaigorodov — Pitch presentation](https://pitch.com/public/809093a9-055b-48c1-a02e-8fbc561f85ac) | Strongest earlier visual-composition anchor: cleanliness and restraint. |
 | [Linear — pitch deck](https://static.linear.app/assets/lyysny/linear_pitch_deck.pdf) | Hierarchy and polished restraint. This is a direct PDF composition reference, not an HTML implementation reference. |
 | [Superlist — full-deck walkthrough](https://startupfundraising.com/library/articles/superlist-pitch-deck-teardown) | Polished product presentation with more personality. The link is a walkthrough, not a native deck; use only the visible slide material. |
@@ -27,4 +27,4 @@ Prefer complete public decks over gallery previews. HTML is the preferred execut
 
 [Jessica Hoke West — Design Proposal](https://pitch.com/public/27fe2dd0-6c52-48c9-811c-8a2a1e60f716) was the closest of a less compelling composition batch, not a top selection.
 
-[Ochi — agency presentation](https://pitch.com/public/990c4ffa-7ba1-4eb6-90cd-b50301f108c1) had acceptable presentation mechanics but an unselected visual style. It is not a style target for this profile. Content-heavy pitch conventions should not override the preference for clean, low-density frames.
+[Ochi — presentation template](https://pitch.com/public/990c4ffa-7ba1-4eb6-90cd-b50301f108c1) opens with a saturated blue slide, a large white serif title, hand-drawn black accents and sparse footer labels. Its presentation mechanics were acceptable, but its visual style was unselected; it is not a style target for this profile. Content-heavy pitch conventions should not override the preference for clean, low-density frames.

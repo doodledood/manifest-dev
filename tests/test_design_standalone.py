@@ -1,4 +1,4 @@
-"""Keep the experimental replacement installable without sibling design skills."""
+"""Keep design standalone and its evaluator's supporting files reachable."""
 
 from __future__ import annotations
 
@@ -11,8 +11,8 @@ import pytest
 
 ROOT = Path(__file__).parent.parent
 SKILL_DIRS = (
-    ROOT / "claude-plugins/manifest-dev/skills/design-v2",
-    ROOT / "dist/codex/plugins/manifest-dev/skills/design-v2",
+    ROOT / "claude-plugins/manifest-dev/skills/design",
+    ROOT / "dist/codex/plugins/manifest-dev/skills/design",
 )
 
 
@@ -20,7 +20,7 @@ SKILL_DIRS = (
 def test_references_resolve_in_an_isolated_install(
     skill_dir: Path, tmp_path: Path
 ) -> None:
-    isolated = tmp_path / "design-v2"
+    isolated = tmp_path / "design"
     shutil.copytree(skill_dir, isolated, symlinks=True)
     assert (isolated / "SKILL.md").is_file()
     for document in isolated.rglob("*.md"):
@@ -58,3 +58,17 @@ def test_entrypoint_stays_design_guidance(skill_dir: Path) -> None:
     )
     text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     assert not execution.search(text), skill_dir
+
+
+@pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=("source", "codex"))
+def test_review_support_paths_resolve(skill_dir: Path) -> None:
+    review_dir = skill_dir.with_name("review-design")
+    for document in review_dir.rglob("*.md"):
+        text = document.read_text(encoding="utf-8")
+        targets = re.findall(r"`(?:node )?([^`\s]+\.(?:md|mjs))(?: [^`]*)?`", text)
+        for target in targets:
+            local = (document.parent / target).resolve()
+            assert local.is_relative_to(skill_dir.parent.resolve()), target
+            assert local.is_file(), (document.name, target)
+    assert (review_dir / "scripts/design-check.mjs").is_file()
+    assert not skill_dir.with_name("design-v2").exists()

@@ -50,17 +50,18 @@ Manifest criteria call these; you can also invoke them directly:
 |-------|--------------|
 | `/review-code` | Reviews a change along one named quality dimension and reports findings. Manifest criteria call it by dimension. |
 | `/review-writing` | Reviews prose against this project's writing standards, in whichever register the text is in. |
-| `/design` | Builds or restyles digital artifacts, including interfaces, files, media and conversational tools. Models the task and delivery medium, coordinates layout, type, color, imagery and motion, and compares improvements against the incumbent. Verifies visual expression, behavior and access. |
-| `/review-design` | Reviews artifacts against the same applicable standards using the delivered medium, bounded machine checks and exercised behavior. Reports findings and unavailable verification; style defaults alone are not failures. Manifest criteria call it for design gates. |
+| `/review-design` | Reviews artifacts using the delivered medium, applicable access and fidelity standards, bounded machine checks and exercised behavior. Reports findings and unavailable verification; style defaults alone are not failures. Manifest criteria call it for design gates. |
 | `/check-pr` | Inspects a pull request's state and reports whether it's ready. Read-only; never merges. |
 
 ## Reference-calibrated design
 
-`/design-v2` is opt-in, standalone design guidance and an experimental replacement for `/design`, which remains unchanged until promotion. It teaches purpose-led art direction, information design and interaction design using its own [reference catalog](skills/design-v2/SKILL.md#what-loads). Technical implementation and verification belong to the invoking agent, not this skill. It has no dependency on `/design` or `/review-design`.
+`/design` supplies standalone, audience-centered art direction, information design and interaction design. It requires visual study of relevant examples from its [reference catalog](skills/design/SKILL.md#what-loads) before composing, connecting observed lessons to choices such as color, hierarchy and pacing. Quick explainers make the picture carry the central relationship rather than leaving readers to assemble it from prose.
+
+Technical implementation stays with the invoking agent; `/review-design` evaluates the result. The design skill has no dependency on the evaluator.
 
 ```text
-/design-v2 explain these experiment results to a PM as a compact visual ELI5 page
-/design-v2 turn this outline into clean HTML slides with purposeful motion
+/design explain these experiment results to a PM as a compact visual ELI5 page
+/design turn this outline into clean HTML slides with purposeful motion
 ```
 
 The catalog distinguishes approved references from narrower motion/composition facets, reserves and spectacle boundaries. Three quick-visual references are approved so far; the catalog does not pad that category with unapproved examples.
