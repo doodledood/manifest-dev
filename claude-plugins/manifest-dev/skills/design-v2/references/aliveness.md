@@ -12,5 +12,3 @@ Motion is a cross-cutting design preference, not a separate artifact category. T
 The spectacle limits live with their artifacts: [Active Theory in landing pages](landing-pages.md#spectacle-boundary) and [Dithering in long-form explainers](long-form-explainers.md#visual-intensity-boundary). Their craft was admired; their intensity is not the default.
 
 [Kinopio](https://kinopio.club/) was not selected for its intentionally rough, handmade visual language. Novelty alone is not the desired personality; polished execution remains part of this profile.
-
-Use recordings to inspect movement and live demos to inspect interaction when available. Neither a still screenshot nor a source-level animation declaration establishes how something feels in use. Preserve that distinction when reporting what a reference or a finished artifact demonstrates.

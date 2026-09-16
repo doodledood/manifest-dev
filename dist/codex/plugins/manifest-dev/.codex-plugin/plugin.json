@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev",
-  "version": "11.12.1",
-  "description": "Manifest-driven workflows: /define writes a verifiable Manifest, /do executes it, /ticket-up authors coherent Ticket units, /run-ticket recovers and lands one exact Ticket, and /sweep-tickets advances one Auto Ticket per scheduled invocation. /design-v2 is a standalone experimental design successor: it builds and verifies reference-calibrated HTML-first artifacts with purpose-aware aliveness.",
+  "version": "11.12.2",
+  "description": "Manifest-driven workflows: /define writes a verifiable Manifest, /do executes it, /ticket-up authors coherent Ticket units, /run-ticket recovers and lands one exact Ticket, and /sweep-tickets advances one Auto Ticket per scheduled invocation. /design-v2 is standalone experimental design guidance for HTML-first artifacts, with curated references, clean hierarchy and purposeful aliveness.",
   "skills": "./skills/",
   "keywords": [
     "manifest-dev",

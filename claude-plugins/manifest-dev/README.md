@@ -51,13 +51,12 @@ Manifest criteria call these; you can also invoke them directly:
 | `/review-code` | Reviews a change along one named quality dimension and reports findings. Manifest criteria call it by dimension. |
 | `/review-writing` | Reviews prose against this project's writing standards, in whichever register the text is in. |
 | `/design` | Builds or restyles digital artifacts, including interfaces, files, media and conversational tools. Models the task and delivery medium, coordinates layout, type, color, imagery and motion, and compares improvements against the incumbent. Verifies visual expression, behavior and access. |
-| `/design-v2` | Standalone experimental successor to `/design`. Designs, builds and verifies HTML-first artifacts with curated references, clean hierarchy and purposeful aliveness. |
 | `/review-design` | Reviews artifacts against the same applicable standards using the delivered medium, bounded machine checks and exercised behavior. Reports findings and unavailable verification; style defaults alone are not failures. Manifest criteria call it for design gates. |
 | `/check-pr` | Inspects a pull request's state and reports whether it's ready. Read-only; never merges. |
 
 ## Reference-calibrated design
 
-`/design-v2` is an opt-in, fully standalone experimental replacement for `/design`, which remains unchanged until the replacement is promoted. It uses its own [reference catalog](skills/design-v2/SKILL.md#what-loads) and owns creation, accessibility and verification; it does not invoke or load `/design`, `/review-design` or their reference files. It can be installed and used on its own.
+`/design-v2` is opt-in, standalone design guidance and an experimental replacement for `/design`, which remains unchanged until promotion. It teaches purpose-led art direction, information design and interaction design using its own [reference catalog](skills/design-v2/SKILL.md#what-loads). Technical implementation and verification belong to the invoking agent, not this skill. It has no dependency on `/design` or `/review-design`.
 
 ```text
 /design-v2 explain these experiment results to a PM as a compact visual ELI5 page
