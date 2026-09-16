@@ -44,3 +44,17 @@ def test_prompts_do_not_delegate_to_another_skill(skill_dir: Path) -> None:
     for document in skill_dir.rglob("*.md"):
         text = document.read_text(encoding="utf-8")
         assert not invocation.search(text), document
+
+
+@pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=("source", "codex"))
+def test_entrypoint_stays_design_guidance(skill_dir: Path) -> None:
+    # Bounded guard against the execution vocabulary removed from this prompt.
+    # Reference titles and external pages are not execution instructions.
+    execution = re.compile(
+        r"\b(?:build(?:s|ing)?|implement(?:s|ed|ing|ation)?|"
+        r"render(?:s|ed|ing)?|verif(?:y|ies|ied|ying|ication)|"
+        r"repair(?:s|ed|ing)?|deliver(?:s|ed|ing|y)?)\b",
+        re.IGNORECASE,
+    )
+    text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    assert not execution.search(text), skill_dir
