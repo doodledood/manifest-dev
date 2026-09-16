@@ -22,6 +22,10 @@ explicit_package_bases = true
 ignore_missing_imports = true
 follow_imports = "skip"
 
+[[tool.mypy.overrides]]
+module = ["pytest", "_pytest.*"]
+follow_imports = "normal"
+
 [tool.ruff]
 target-version = "py310"
 line-length = 88

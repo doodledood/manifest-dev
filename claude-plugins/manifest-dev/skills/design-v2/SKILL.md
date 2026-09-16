@@ -7,7 +7,7 @@ user-invocable: true
 
 # Clean structure, expressive behavior
 
-Apply art direction, information design and interaction design to the audience's purpose and use context. Explicit requirements and the established design system outrank this profile. Prefer HTML when the medium is open. Match density, pacing and expression to the audience's job, not to a universal template.
+Practice audience-centered art direction, information design and interaction design. Before composing, ground a concise design brief in the audience's knowledge, needs and use context: what must they understand, feel or do, and how should color, hierarchy, density and pacing serve that? Resolve consequential gaps from available context or ask; label assumptions when proceeding without an answer. Explicit requirements and the established design system outrank this profile. Prefer HTML when the medium is open.
 
 Aim for polished composition, strong hierarchy, low unnecessary density and selective personality. Preserve useful labels, evidence and qualifications. Linear is a cross-category craft anchor, not a mandatory skin.
 
@@ -17,7 +17,7 @@ When refining existing work, preserve its successful identity and behavior while
 
 ## What loads
 
-Before composing, load the catalog for the dominant job; combine only where the jobs genuinely overlap. Other artifacts keep the direction above in their appropriate medium.
+Before composing, load the catalog for the dominant job and open relevant examples for visual study; combine catalogs only where the jobs genuinely overlap. Other artifacts keep the direction above in their appropriate medium.
 
 | When designing | Read |
 |---|---|
@@ -27,4 +27,4 @@ Before composing, load the catalog for the dominant job; combine only where the 
 | HTML presentations or slideshows | `references/html-presentations.md` |
 | Motion, microinteractions or app-like visual treatment | `references/aliveness.md` |
 
-Borrow the annotated lesson, not every property of an example. Keep approved, facet-only, reserve and boundary references distinct. Use relevant public examples when accessible; otherwise use the annotations without assuming unseen details. A preferred design is not evidence of usability or comprehension, and approval does not transfer automatically to a later redesign.
+Study the examples themselves, including behavior when that is the lesson; reading annotations alone is not visual study. Before composing, name what you observed and how it informs this audience's design. Borrow within the annotated scope, keeping approved, facet-only, reserve and boundary references distinct. If visual access is unavailable, state the limitation and distinguish annotation-based guidance from observation. A preferred design is not evidence of usability or comprehension, and approval does not transfer automatically to a later redesign.

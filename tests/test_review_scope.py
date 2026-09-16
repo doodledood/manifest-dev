@@ -28,7 +28,7 @@ def review_commands() -> list[list[str]]:
     ]
 
 
-@pytest.mark.parametrize(  # type: ignore[untyped-decorator]
+@pytest.mark.parametrize(
     "state", ["committed", "staged", "unstaged", "untracked", "staged-then-reverted"]
 )
 def test_review_scope_includes_each_change_state(tmp_path: Path, state: str) -> None:
