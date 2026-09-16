@@ -51,8 +51,20 @@ Manifest criteria call these; you can also invoke them directly:
 | `/review-code` | Reviews a change along one named quality dimension and reports findings. Manifest criteria call it by dimension. |
 | `/review-writing` | Reviews prose against this project's writing standards, in whichever register the text is in. |
 | `/design` | Builds or restyles digital artifacts, including interfaces, files, media and conversational tools. Models the task and delivery medium, coordinates layout, type, color, imagery and motion, and compares improvements against the incumbent. Verifies visual expression, behavior and access. |
+| `/design-v2` | Adds curated art direction for HTML-first landing pages, quick visual explainers, long-form visual research and slideshows. Clean hierarchy and purposeful aliveness; invokes `/design` for implementation and verification. |
 | `/review-design` | Reviews artifacts against the same applicable standards using the delivered medium, bounded machine checks and exercised behavior. Reports findings and unavailable verification; style defaults alone are not failures. Manifest criteria call it for design gates. |
 | `/check-pr` | Inspects a pull request's state and reports whether it's ready. Read-only; never merges. |
+
+## Reference-calibrated design
+
+`/design-v2` is opt-in; `/design` remains the general workflow. It loads the relevant [reference catalog](skills/design-v2/SKILL.md#what-loads), selects what fits the audience and purpose, and passes that direction to `/design`. Install the plugin to keep both skills available.
+
+```text
+/design-v2 explain these experiment results to a PM as a compact visual ELI5 page
+/design-v2 turn this outline into clean HTML slides with purposeful motion
+```
+
+The catalog distinguishes approved references from narrower motion/composition facets, reserves and spectacle boundaries. Three quick-visual references are approved so far; the catalog does not pad that category with unapproved examples.
 
 ## Conversation
 
