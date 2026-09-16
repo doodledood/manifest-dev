@@ -1,7 +1,7 @@
 # ADR: The design skill chooses an encoding per claim; figures are information graphics, never decoration
 
 ## Status
-Accepted — amended by 20260905-design-obligations-follow-the-medium-and-task: narrows static-on-arrival to orientation and necessary controls where interaction or pacing is judged; equivalent accessible representations remain available. Further amended by 20260915-design-keeps-experience-goals-and-conditional-constraints: preserves explicit representation choice and fidelity while retiring the fixed encoding line and SVG tutorial.
+Accepted — amended by 20260905-design-obligations-follow-the-medium-and-task: narrows static-on-arrival to orientation and necessary controls where interaction or pacing is judged; equivalent accessible representations remain available. Further amended by 20260915-design-keeps-experience-goals-and-conditional-constraints: preserves explicit representation choice and fidelity while retiring the fixed encoding line and SVG tutorial. Further amended by 20260916-design-is-reference-calibrated-guidance: quick explainers keep visual-first explanation; the fidelity reference and checker move to review-design while the builder procedure is retired.
 
 ## Area
 Design skills

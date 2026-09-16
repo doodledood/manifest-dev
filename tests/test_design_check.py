@@ -18,7 +18,8 @@ SCRIPT = Path(
     os.environ.get(
         "DESIGN_CHECK_TEST_SCRIPT",
         str(
-            ROOT / "claude-plugins/manifest-dev/skills/design/scripts/design-check.mjs"
+            ROOT
+            / "claude-plugins/manifest-dev/skills/review-design/scripts/design-check.mjs"
         ),
     )
 )
@@ -59,7 +60,7 @@ def require_render(output: str) -> None:
         pytest.skip("Render capability unavailable: " + output)
 
 
-@pytest.mark.parametrize(  # type: ignore[untyped-decorator]  # mypy skips pytest imports
+@pytest.mark.parametrize(
     ("css", "body"),
     [
         ("", "<button>Save</button>"),
@@ -84,7 +85,7 @@ def test_source_syntax_never_certifies_focus_or_motion(
     assert "NOTE" in output
 
 
-@pytest.mark.parametrize(  # type: ignore[untyped-decorator]  # mypy skips pytest imports
+@pytest.mark.parametrize(
     ("css", "body", "reason"),
     [
         ("p{color:rgba(0,0,0,.1)}", "<p>Text</p>", "foreground"),
