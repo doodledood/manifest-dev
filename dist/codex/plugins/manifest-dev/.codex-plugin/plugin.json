@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "12.0.0",
+  "version": "12.0.1",
   "description": "Manifest-driven workflows: /define writes a verifiable Manifest, /do executes it, /ticket-up authors coherent Ticket units, /run-ticket recovers and lands one exact Ticket, and /sweep-tickets advances one Auto Ticket per scheduled invocation. /design supplies standalone audience-centered design guidance through direct study of curated examples, clean hierarchy and purposeful aliveness. Implementation stays with the invoking workflow; /review-design owns artifact evaluation and its supporting checks.",
   "skills": "./skills/",
   "keywords": [

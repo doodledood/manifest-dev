@@ -67,19 +67,21 @@ permission to do the next piece of research.
   branches as much as the main flow; what that enumeration wants and the
   proposal lacks are the gaps.
 - When the read implies making something, state exactly what it will be and
-  offer to render a disposable draft — disagreement is cheapest to find in a
-  concrete artifact, before anything real is built. Put it on a page rather than
+  offer to render a quick disposable draft for ideation and general agreement.
+  Show it as soon as the current idea can be judged; let the user's reaction
+  choose what to refine in the next iteration. General agreement ends the
+  prototype loop unless the user wants more detail. Put it on a page rather than
   in the reply: a rendering inside a turn is still you talking, and gets read in
-  agree-along mode. Be concrete at the seams — where the parts meet, where a
-  choice could have gone another way — and visibly rough between, since the
-  roughness is what tells them which axis to react on. Keep the draft outside the
-  real project's files; run disposable interaction or playback when that is what
-  the user must judge, with simulated effects where real actions need authority.
+  agree-along mode. Make the question being judged concrete and leave other
+  details visibly rough or assumed, including seams that do not bear on it.
+  Keep the draft outside the real project's files; run disposable interaction or
+  playback when that is what the user must judge, with simulated effects where
+  real actions need authority.
   For a draft rendered as a page, invoke the design skill for its visual direction,
-  keeping this draft's fidelity concentrated on the question; where that skill is
-  unavailable, write down the loop the reader
-  repeats and what has to stay visible together during it, arrange the page to
-  that, pick the genre's register, and keep the judged surface legible by hand.
+  passing along this iteration's question and rough fidelity so design guidance
+  serves the next reaction. Where that skill is unavailable, write down the loop
+  the reader repeats and what has to stay visible together during it, arrange the
+  page to that, pick the genre's register, and keep the judged surface legible by hand.
 - Where the read is load-bearing and nobody will audit it before it is relied on,
   re-derive it independently first: hand the question and the gathered evidence,
   your conclusion stripped, to a fresh context and let it reach its own. Agreement
