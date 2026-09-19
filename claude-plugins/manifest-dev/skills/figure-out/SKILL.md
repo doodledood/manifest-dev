@@ -67,13 +67,18 @@ permission to do the next piece of research.
   branches as much as the main flow; what that enumeration wants and the
   proposal lacks are the gaps.
 - When the read implies making something, state exactly what it will be and
-  offer to render a quick disposable draft for ideation and general agreement.
+  offer to render a quick disposable draft that makes the proposed result concrete
+  enough to choose a direction and agree on what will be produced. Refine details
+  after that choice, unless the user asks to explore them now.
   Show it as soon as the current idea can be judged; let the user's reaction
   choose what to refine in the next iteration. General agreement ends the
-  prototype loop unless the user wants more detail. Put it on a page rather than
-  in the reply: a rendering inside a turn is still you talking, and gets read in
-  agree-along mode. Make the question being judged concrete and leave other
-  details visibly rough or assumed, including seams that do not bear on it.
+  prototype loop unless the user wants more detail. Default to one artifact,
+  using an Artifact page where available. When the user asks for variants, keep
+  them together with a way to switch between them and compare the same content
+  or scenario, so the differences inform the choice. Yield to another form when
+  the user requests it or the medium needs it. Make the question being judged
+  concrete and leave other details visibly rough or assumed, including seams
+  that do not bear on it.
   Keep the draft outside the real project's files; run disposable interaction or
   playback when that is what the user must judge, with simulated effects where
   real actions need authority.
