@@ -17,7 +17,7 @@ When refining existing work, preserve its successful identity and behavior while
 
 ## What loads
 
-Before composing, load the catalog for the dominant job and open relevant examples for visual study; combine catalogs only where the jobs genuinely overlap. Other artifacts keep the direction above in their appropriate medium.
+Before composing, load the catalog for the dominant job and visually study multiple relevant examples with distinct lessons; let the range of design choices the task needs guide the selection. Combine catalogs only where the jobs genuinely overlap. Other artifacts keep the direction above in their appropriate medium.
 
 | When designing | Read |
 |---|---|
@@ -27,4 +27,4 @@ Before composing, load the catalog for the dominant job and open relevant exampl
 | HTML presentations or slideshows | `references/html-presentations.md` |
 | Motion, microinteractions or app-like visual treatment | `references/aliveness.md` |
 
-Study the examples themselves, including behavior when that is the lesson; reading annotations alone is not visual study. Before composing, name what you observed and how it informs this audience's design. Borrow within the annotated scope, keeping approved, facet-only, reserve and boundary references distinct. If visual access is unavailable, state the limitation and distinguish annotation-based guidance from observation. A preferred design is not evidence of usability or comprehension, and approval does not transfer automatically to a later redesign.
+Study the examples themselves, including behavior when that is the lesson; reading annotations alone is not visual study. Before composing, briefly compare what the examples taught you and how those observations inform this audience's design. Borrow within the annotated scope, keeping approved, facet-only, reserve and boundary references distinct. If visual access is unavailable, state the limitation and distinguish annotation-based guidance from observation. A preferred design is not evidence of usability or comprehension, and approval does not transfer automatically to a later redesign.
