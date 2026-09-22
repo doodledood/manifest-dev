@@ -1,8 +1,6 @@
-# Run artifacts. `aggregate-result.json` is committed — it is the evidence the
-# README's numbers are extracted from, and it holds scores, costs and grader
-# verdicts, not transcripts. Everything else is regenerable bulk: the rendered
-# HTML report duplicates the JSON, and traces hold full model output.
-results/**
-!results/
-!results/*/
-!results/*/aggregate-result.json
+# Run artifacts are ignored. A run the README promotes to a baseline has its
+# `aggregate-result.json` added with `git add -f` — it holds scores, costs and
+# grader verdicts, not transcripts, and is the evidence the README's numbers are
+# extracted from. The rendered HTML report duplicates the JSON, and traces hold
+# full model output; neither is ever committed.
+results/
