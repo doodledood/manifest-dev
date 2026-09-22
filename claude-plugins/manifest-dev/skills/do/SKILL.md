@@ -70,8 +70,8 @@ untracked work when the artifact being judged includes local changes. A judgment
 prior findings' repairs and the delta; a deterministic gate re-runs in full. A finding
 below a gate's bar is recorded — in the execution log when kept — and left
 unrepaired, because every repair is a new delta that each judgment gate re-reads. A
-pre-existing issue met along the way is fixed when it is related to the current change
-and otherwise recorded the same way; `/done` and `/escalate` surface both for the user to
+pre-existing issue the run meets on its own, rather than one a gate reported, is fixed when
+it is related to the current change and otherwise recorded the same way; `/done` and `/escalate` surface both for the user to
 decide. A bar never moves down on
 the executor's judgment, and a summary claim is not evidence: obtain the missing
 evidence, or report a blocker while continuing useful independent work.
