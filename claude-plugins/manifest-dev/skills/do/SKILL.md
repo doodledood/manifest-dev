@@ -68,7 +68,7 @@ work, compare against the repository's actual remote-tracking default branch,
 unless the gate names another subject. Include relevant staged, unstaged, and
 untracked work when the artifact being judged includes local changes. A judgment gate reads the full change once, then only
 prior findings' repairs and the delta; a deterministic gate re-runs in full. A finding
-below a passing gate's bar is recorded — in the execution log when kept — and left
+below a gate's bar is recorded — in the execution log when kept — and left
 unrepaired, because every repair is a new delta that each judgment gate re-reads. A
 pre-existing issue met along the way is fixed when it is related to the current change
 and otherwise recorded the same way; `/done` and `/escalate` surface both for the user to
