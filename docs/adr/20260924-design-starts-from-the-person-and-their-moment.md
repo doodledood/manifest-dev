@@ -1,0 +1,58 @@
+# ADR: Design starts from the person and their moment; the example catalogs are retired
+
+## Status
+Accepted
+
+## Area
+Design skills
+
+## Context
+
+The `design` skill supplied art direction through five catalogs of curated example sites. Every run loaded the catalog for its genre and studied several examples before composing. The catalogs were drawn mostly from software products and developer-facing material, and they recorded one owner's preferences at one point in time.
+
+Recent models produce strong visual work without guidance. The open question was whether the catalogs still improved results or mainly steered every artifact toward the catalogs' own look.
+
+Four rounds of blind comparisons tested this. Each round generated the same brief under different prompts in isolated contexts, and the owner ranked the results without knowing which prompt produced which page:
+
+1. **Round 1** — bakery, charity and developer-tool landing pages. The catalog skill and no skill were roughly even. The catalog skill won only the developer tool, the one brief inside its catalog's domain, and took about twice the time and 1.4 times the tokens. A prompt asking for a brief of audience, goal, feeling and a "must not tip into" guardrail came last on all three briefs: the model picked cautious feelings and defensive guardrails, and the pages came out plain. All nine pages shared one palette and type treatment across unrelated subjects.
+2. **Round 2** — jazz club, payroll software and hospice volunteering. A two-sentence prompt beat no skill on all three: make the audience feel something, find the visual idea in the subject's materials, rituals and artifacts, and take palette, type and texture from the subject rather than a house style.
+3. **Round 3** — a product-manager explainer, a live slide deck and a support-ticket tool. The two-sentence prompt won the explainer and the deck and came last on the tool, where it turned a screen used all day into a themed costume. A variant adding "sketch three ideas and build the least obvious" never won.
+4. **Round 4** — a kitchen order display, a child's party invitation and a library annual report. The two-sentence prompt, extended with the person's moment (who is there, what they came to do, how long they stay), won two of three. It won the kitchen display on practicality and did not lose the invitation's delight.
+
+These results come from one judge and one model, with HTML artifacts only. Run-to-run noise was not measured, and the intensity wording adopted below was not tested separately. Within a single brief, prompts that differed still converged on the same visual concept; the wording mainly changed emphasis.
+
+## Decision
+
+Replace the skill with a short prompt built on one principle: the person and their moment decide which feeling the artifact should create and how strongly, and the subject supplies the material that creates it.
+
+The prompt asks who is present, what they came to do and how long they will stay. It asks for the feeling that moment wants, at the strength it wants, unless the request names a strength. It takes the visual idea, palette, type and texture from the subject and the audience's world rather than from a house style. Explicit requirements and an existing design system outrank it, and refinement keeps what works and changes what the feedback names. Artifact type is not modelled separately; it stands in for the moment, and the moment is what the prompt names.
+
+Delete the five catalogs. `review-design` keeps ownership of its standards and HTML checker as before, and still consults `design` for art direction beneath the brief and any established design system.
+
+## Alternatives Considered
+
+- **Keep the catalogs:** tied with no skill at roughly twice the cost, won only inside its own domain, and pulled unrelated subjects toward one look.
+- **An audience, feeling and guardrail brief:** came last on every brief it was tried on; asking the model to reason about feelings and their limits made it cautious.
+- **No skill:** a strong baseline, but lost to the subject-first prompt on five of six briefs across rounds 2 and 3.
+- **Sketch three ideas and build the least obvious:** produced different metaphors from the same subject, never won, and took longer.
+- **A rule specific to work tools:** would fix the observed tool failure as a special case. The moment framing covers the same failure without encoding artifact types.
+
+## Consequences
+
+### Positive
+
+- A design run loads two paragraphs instead of a catalog and several external sites, so it is faster and cheaper.
+- Visual direction comes from each artifact's own subject and audience rather than one fixed profile, which reduces the shared look across unrelated work.
+- Tools used for hours and one-time delight pieces are covered by the same principle.
+
+### Negative
+
+- The evidence is narrow: one judge, one model, HTML only, with noise unmeasured. The new prompt may underperform on other media or models.
+- The prompt does not break the convergence on one concept within a single brief.
+- The intensity wording ("quiet to spectacular — unless the request says otherwise") has not been tested on its own.
+- The owner's recorded taste examples no longer ship; the preferences they captured are no longer available to runs.
+
+## Source
+
+- Supersedes 20260916-design-is-reference-calibrated-guidance.md: the guidance-only boundary and `review-design`'s ownership of its standards and checker are carried forward here; the curated catalogs and required reference study are retired.
+- Related: 20260915-design-keeps-experience-goals-and-conditional-constraints
