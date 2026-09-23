@@ -1,7 +1,7 @@
 # ADR: Design is reference-calibrated guidance; the evaluator owns review machinery
 
 ## Status
-Accepted
+Superseded by 20260924-design-starts-from-the-person-and-their-moment
 
 ## Area
 Design skills

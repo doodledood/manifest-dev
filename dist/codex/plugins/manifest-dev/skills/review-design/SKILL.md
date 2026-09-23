@@ -20,7 +20,7 @@ A verdict from source inspection alone is not a complete design evaluation. Insp
 
 ## Standards
 
-Use `../design/SKILL.md` and its genre-relevant catalog for audience-centered art direction and reference calibration. Treat its profile as guidance beneath the brief and established design system, not a style-conformance gate. If the companion skill is absent, judge against the supplied brief and references without inventing its defaults.
+Use `../design/SKILL.md` for audience-centered art direction. Treat it as guidance beneath the brief and established design system, not a style-conformance gate. If the companion skill is absent, judge against the supplied brief and references without inventing its defaults.
 
 This evaluator owns the conditional standards below. Load those the artifact's medium and touched domains call for:
 

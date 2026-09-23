@@ -19,7 +19,7 @@ Pinned mocks, references, and reaction-pinned criteria land on the fidelity gate
 
 *Domain best practices for this task type.*
 
-- **Ground the design** — Invoke the `design` skill for audience-centered visual direction and reference study when creating or restyling the artifact; implementation stays with the executor
+- **Ground the design** — Invoke the `design` skill for audience-centered visual direction when creating or restyling the artifact; implementation stays with the executor
 - **Screenshot as you build** — Render and look at each changed surface during development, not only at review time; a layout defect caught mid-build costs a tweak, one caught at the gate costs a repair round
 - **Develop against realistic content** — Real-length text, real data shapes, non-square images; placeholder-sized content hides the truncation, wrapping, and spacing defects the review will find
 - **Keep pinned references in view** — Where the user reacted to a mock, reference, or option during definition, keep that artifact at hand while implementing rather than reconstructing it from memory

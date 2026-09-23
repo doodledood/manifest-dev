@@ -55,9 +55,9 @@ Manifest criteria call these; you can also invoke them directly:
 | `/review-design` | Reviews artifacts using the delivered medium, applicable access and fidelity standards, bounded machine checks and exercised behavior. Reports findings and unavailable verification; style defaults alone are not failures. Manifest criteria call it for design gates. |
 | `/check-pr` | Inspects a pull request's state and reports whether it's ready. Read-only; never merges. |
 
-## Reference-calibrated design
+## First-principles design
 
-`/design` supplies standalone, audience-centered art direction, information design and interaction design. It requires visual study of relevant examples from its [reference catalog](skills/design/SKILL.md#what-loads) before composing, connecting observed lessons to choices such as color, hierarchy and pacing. Quick explainers make the picture carry the central relationship rather than leaving readers to assemble it from prose.
+`/design` supplies standalone art direction, information design and interaction design from the person an artifact is for, the moment they meet it in, and its subject. The moment sets the feeling and how strong it should be — a first glance, a meeting, a working day each want something different — and the subject and the audience's world supply the visual idea, palette, type and texture instead of a house style. A request that names the intensity it wants overrides the moment's default.
 
 Technical implementation stays with the invoking agent; `/review-design` evaluates the result. The design skill has no dependency on the evaluator.
 
@@ -65,8 +65,6 @@ Technical implementation stays with the invoking agent; `/review-design` evaluat
 /design explain these experiment results to a PM as a compact visual ELI5 page
 /design turn this outline into clean HTML slides with purposeful motion
 ```
-
-The catalog distinguishes approved references from narrower motion/composition facets, reserves and spectacle boundaries. Three quick-visual references are approved so far; the catalog does not pad that category with unapproved examples.
 
 ## Conversation
 
