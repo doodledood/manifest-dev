@@ -6,6 +6,8 @@
 
 # manifest-dev
 
+**[See it explained →](https://doodledood.github.io/manifest-dev/)** One request, run with a plain agent and then with manifest-dev.
+
 Skills for agentic coding CLIs. They keep three things in your project instead of in your head: what it's becoming, what's worth doing next, and what done means here. The agent reads them, works against them, and checks the result before reporting it finished.
 
 Agents can write almost anything. What they can't do is tell you whether it was worth writing. So a project drifts: every session re-derives the direction from scratch, and speed produces more work than anyone can evaluate. Writing those three things down where the agent reads them is the whole idea.

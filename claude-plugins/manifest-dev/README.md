@@ -2,6 +2,8 @@
 
 The workflow: understand the problem, write down what you'd accept, then build and verify against it. Plus the surfaces that keep a project's direction and its queue of work out of any one person's head.
 
+[See it explained →](https://doodledood.github.io/manifest-dev/)
+
 ```bash
 /plugin install manifest-dev@manifest-dev
 ```

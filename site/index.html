@@ -1,0 +1,1245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>manifest-dev — done, with evidence</title>
+<meta name="description" content="Open-source skills for coding agents. The agent investigates first, you agree in writing what done means, and nothing is called finished until every criterion has evidence.">
+<meta property="og:title" content="manifest-dev — done, with evidence">
+<meta property="og:description" content="Every coding agent says done. manifest-dev makes it show you why: understand first, write down what done means, verify every gate.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#04060c">
+<meta property="og:url" content="https://doodledood.github.io/manifest-dev/">
+<meta property="og:image" content="https://doodledood.github.io/manifest-dev/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="manifest-dev — done, with evidence">
+<meta name="twitter:description" content="Every coding agent says done. manifest-dev makes it show you why: understand first, write down what done means, verify every gate.">
+<meta name="twitter:image" content="https://doodledood.github.io/manifest-dev/og.png">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04060c; --ink:#e9edf5; --dim:#8f9ab0; --faint:#7a86a0;
+  --hot:#ff3d7f; --amber:#ffb13b; --cool:#7fd8ff; --mint:#4dffa0; --red:#ff4d4d;
+  --line:rgba(255,255,255,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);scrollbar-width:thin;scrollbar-color:#223 transparent}
+body{color:var(--ink);font:400 17px/1.62 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(120% 90% at 62% 48%,transparent 45%,rgba(2,3,8,.8) 100%)}
+.grain{position:fixed;inset:-50%;pointer-events:none;z-index:1;opacity:.07;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation:grain 1.2s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+
+#bar{position:fixed;top:0;left:0;height:2px;width:0;z-index:20;background:linear-gradient(90deg,var(--hot),var(--amber) 30%,var(--cool) 60%,var(--mint));box-shadow:0 0 12px rgba(127,216,255,.6)}
+#brand{position:fixed;top:22px;left:6vw;z-index:2;font:500 13px/1 'JetBrains Mono',monospace;letter-spacing:.02em;color:var(--dim);display:flex;align-items:center;gap:10px}
+#brand i{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint);display:inline-block}
+#brand b{color:var(--ink);font-weight:500}
+
+#links{position:fixed;top:16px;right:5vw;z-index:6;display:flex;gap:8px}
+#links a{font:500 12.5px/1 'JetBrains Mono',monospace;color:var(--dim);text-decoration:none;padding:9px 13px;border-radius:999px;border:1px solid var(--line);background:rgba(7,10,20,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:color .2s,border-color .2s,background .2s}
+#links a:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+#links a.try{color:var(--mint);border-color:rgba(77,255,160,.45)}
+#links a.gone{opacity:0;pointer-events:none}
+#links a.try:hover{background:rgba(77,255,160,.12)}
+#hud{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:6px;padding:5px;border-radius:999px;
+  border:1px solid var(--line);background:rgba(7,10,20,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  font:500 11.5px/1 'JetBrains Mono',monospace;opacity:0;transition:opacity .5s;pointer-events:none;white-space:nowrap}
+#hud.on{opacity:1}
+#hud .run{display:flex;align-items:center;gap:8px;padding:6px 11px;border-radius:999px;letter-spacing:.06em;text-transform:uppercase;font-size:10.5px}
+#hud .run i{width:7px;height:7px;border-radius:50%}
+#hud .run.r1{color:#ffb0c8;background:rgba(255,61,127,.12)} #hud .run.r1 i{background:var(--hot);box-shadow:0 0 10px var(--hot)}
+#hud .run.r2{color:#bfeeff;background:rgba(127,216,255,.1)} #hud .run.r2 i{background:var(--cool);box-shadow:0 0 10px var(--cool)}
+#hud .run.vs{color:var(--ink);background:rgba(255,255,255,.06)} #hud .run.vs i{background:linear-gradient(90deg,var(--hot) 50%,var(--mint) 50%)}
+#hud .steps{display:flex;align-items:center;gap:2px;padding-right:6px}
+#hud .steps i{font-style:normal;color:var(--faint);padding:6px 8px;border-radius:999px;transition:color .3s,background .3s}
+#hud .steps b{color:rgba(255,255,255,.18);font-weight:400}
+#hud .steps i.on{color:#fff;background:rgba(127,216,255,.16)}
+#hud .steps i.done{color:var(--mint)} #hud .steps i.done::before{content:'✓ '}
+#hud .steps.hide{display:none}
+#labels{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.lbl{position:absolute;left:0;top:0;font:500 11.5px/1.25 'JetBrains Mono',monospace;color:#e2e9f6;white-space:nowrap;
+  padding:5px 9px;border:1px solid rgba(255,255,255,.14);background:rgba(7,10,20,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border-radius:7px;opacity:0;will-change:transform,opacity}
+.lbl .st{margin-left:6px;font-style:normal}
+.lbl .st.pass{color:var(--mint)} .lbl .st.fail{color:var(--red)} .lbl .st.scan{color:#fff}
+.lbl.claim{font:600 20px/1 Inter,sans-serif;letter-spacing:.04em;padding:10px 16px;border-radius:999px;border:none;color:#1a0610;
+  background:linear-gradient(135deg,#ff8a2a,#ff3d7f);box-shadow:0 0 40px rgba(255,61,127,.55);transition:background .4s,color .4s,box-shadow .4s}
+.lbl.claim.doubt{background:rgba(20,8,14,.7);color:#ff8fb2;box-shadow:0 0 0 1px rgba(255,61,127,.5);text-decoration:line-through;text-decoration-color:rgba(255,77,77,.9)}
+.lbl.ghost{border-style:dashed;color:#fff;background:rgba(255,255,255,.06)}
+.lbl.node{font-size:12px}
+.lbl.node.read{border-color:rgba(216,241,255,.6);color:#fff;box-shadow:0 0 24px rgba(127,216,255,.3)}
+.lbl.node.read b{color:var(--cool);font-weight:600}
+.lbl.you{font-size:12px;border-color:rgba(255,226,180,.7);color:#fff3e0;box-shadow:0 0 26px rgba(255,200,120,.25)}
+.lbl.you b{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;color:#1a1206;background:#ffe2b4;padding:3px 6px;border-radius:4px;margin-right:7px;vertical-align:1px}
+.lbl.def{font-size:11px;color:#ffb3b3;border-color:rgba(255,77,77,.6);background:rgba(30,6,8,.7)}
+.lbl.def b{color:var(--red);margin-right:5px}
+.lbl.def i{font-style:normal;color:var(--mint)}
+.lbl.node.out{color:#aab3c6;text-decoration:line-through;text-decoration-color:rgba(255,77,77,.8);border-color:rgba(255,255,255,.1)}
+.lbl.dname{color:var(--cool);border-color:rgba(127,216,255,.3)}
+.lbl.tier{font-size:12.5px;padding:7px 11px}
+.lbl.tier b{display:block;font:500 15px/1.2 Inter,sans-serif;margin-bottom:2px}
+.lbl.tier.star b{color:var(--amber)} .lbl.tier.tk b{color:#ffd9a0} .lbl.tier.mf b{color:var(--mint)}
+.lbl.cmp{font:600 14px/1.2 Inter,sans-serif;padding:8px 13px}
+.lbl.cmp.l{color:#ffb0c8;border-color:rgba(255,61,127,.45)} .lbl.cmp.l.bad{color:var(--red);border-color:rgba(255,77,77,.7)}
+.lbl.cmp.r{color:var(--mint);border-color:rgba(77,255,160,.5);box-shadow:0 0 30px rgba(77,255,160,.2)}
+
+main{position:relative;z-index:3}
+.step{min-height:100vh;display:flex;align-items:center;padding:0 6vw;pointer-events:none}
+.step.bottom{align-items:flex-end;justify-content:center;padding-bottom:7vh}
+.step.center{justify-content:center;text-align:center}
+.card{pointer-events:auto;max-width:450px;padding:28px 30px 30px;border-radius:18px;
+  background:linear-gradient(180deg,rgba(10,14,27,.74),rgba(7,10,19,.62));border:1px solid var(--line);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.step.bottom .card{max-width:860px;width:100%}
+.step.center .card{max-width:700px}
+.chip{display:inline-flex;align-items:center;gap:8px;font:500 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:16px}
+.chip i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.chip.hot i{background:var(--hot);box-shadow:0 0 10px var(--hot)} .chip.cool i{background:var(--cool);box-shadow:0 0 10px var(--cool)}
+.chip.mint i{background:var(--mint);box-shadow:0 0 10px var(--mint)} .chip.amber i{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+h1,h2{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:-.01em}
+h1{font-size:clamp(44px,5.4vw,80px);line-height:1;max-width:14ch}
+h2{font-size:clamp(30px,3vw,42px);line-height:1.06;margin-bottom:14px}
+h1 em,h2 em{font-style:italic;color:#fff}
+p{color:#c3cbdb} p+p{margin-top:12px}
+b{color:var(--ink);font-weight:600}
+code{font:500 .86em 'JetBrains Mono',monospace;color:#fff;background:rgba(255,255,255,.07);padding:2px 6px;border-radius:5px}
+.hot{color:var(--hot)} .red{color:#ff6b6b} .mint{color:var(--mint)} .cool{color:var(--cool)} .amber{color:var(--amber)}
+.hero .lede{max-width:520px;margin-top:26px;font-size:18.5px;color:#b8c1d3}
+.hint{margin-top:44px;font:500 12px/1 'JetBrains Mono',monospace;color:var(--dim);letter-spacing:.06em;display:flex;align-items:center;gap:12px}
+.hint span{display:inline-block;width:1px;height:34px;background:linear-gradient(var(--cool),transparent);animation:drip 1.8s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.hero-wrap{pointer-events:auto}
+
+.tiers{list-style:none;margin-top:16px;display:grid;gap:12px}
+.tiers li{display:grid;grid-template-columns:14px 1fr;gap:12px;align-items:start}
+.tiers li i{width:10px;height:10px;border-radius:3px;margin-top:7px}
+.tiers li span{color:#c3cbdb;font-size:15.5px}
+
+table.cmp{width:100%;border-collapse:collapse;margin-top:6px;font-size:14.5px}
+table.cmp th,table.cmp td{text-align:left;padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+table.cmp th{font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);border-top:none;padding-top:4px}
+table.cmp td:first-child{color:var(--dim);white-space:nowrap}
+table.cmp td:nth-child(2){color:#ffb0c8} table.cmp td:nth-child(3){color:#b6ffd6}
+.btn{pointer-events:auto;margin-top:18px;font:500 13px/1 'JetBrains Mono',monospace;color:#04130b;background:var(--mint);border:none;border-radius:999px;padding:11px 18px;cursor:pointer;
+  box-shadow:0 0 24px rgba(77,255,160,.35);transition:transform .15s,box-shadow .2s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 0 34px rgba(77,255,160,.55)} .btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--mint);box-shadow:inset 0 0 0 1px rgba(77,255,160,.5)}
+
+.cmd{position:relative;margin-top:14px;text-align:left;font:500 14px/1.5 'JetBrains Mono',monospace;color:#eafff3;background:rgba(0,0,0,.45);border:1px solid rgba(77,255,160,.25);
+  border-radius:10px;padding:14px 66px 14px 16px;overflow-x:auto;white-space:pre}
+.cmd.big{font-size:14.5px;border-color:rgba(77,255,160,.5);box-shadow:0 0 40px rgba(77,255,160,.12)}
+.cmd .p{color:var(--mint)}
+.copy{position:absolute;top:9px;right:9px;font:500 11px/1 'JetBrains Mono',monospace;color:var(--dim);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:6px;padding:6px 8px;cursor:pointer}
+.copy:hover{color:#fff}
+.small{font-size:13.5px;color:var(--dim);margin-top:16px}
+a{color:var(--cool);text-decoration:none;border-bottom:1px solid rgba(127,216,255,.35)} a:hover{border-color:var(--cool)}
+
+#term{position:fixed;right:24px;bottom:24px;width:min(430px,33vw);z-index:10;border-radius:12px;overflow:hidden;
+  background:rgba(5,8,16,.94);border:1px solid var(--line);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  opacity:0;transform:translateY(14px);transition:opacity .45s,transform .45s;pointer-events:none;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+#term.on{opacity:1;transform:none}
+#term .bd,#term .hd{transition:opacity .6s} #term.on .bd,#term.on .hd{opacity:.5}
+#term.on.pulse .bd,#term.on.pulse .hd{opacity:1;transition:opacity .15s}
+#term .hd{display:flex;align-items:center;gap:7px;padding:9px 12px;border-bottom:1px solid var(--line);font:500 11px/1 'JetBrains Mono',monospace;color:var(--dim)}
+#term .hd i{width:9px;height:9px;border-radius:50%;background:#2a3246}
+#term .hd span{margin-left:8px}
+#term .bd{padding:10px 13px 12px;height:172px;overflow:hidden;font:400 11.3px/1.6 'JetBrains Mono',monospace;color:#aeb8cc;display:flex;flex-direction:column;justify-content:flex-end}
+.ln{white-space:pre-wrap;animation:lnIn .35s ease-out both}
+@keyframes lnIn{from{opacity:0;transform:translateY(5px);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
+.ln.cmd0{color:#fff} .ln.ok{color:var(--mint)} .ln.bad{color:var(--red)} .ln.warn{color:var(--amber)} .ln.dim{color:var(--faint)} .ln.hot{color:#ff9fbf} .ln.q{color:var(--cool)} .ln.you{color:#ffe2b4} .ln.read{color:#fff;font-weight:600} .ln.inv{color:#b9e6ff}
+
+#rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;gap:12px}
+#rail button{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:flex-end;gap:10px;font:500 10.5px/1 'JetBrains Mono',monospace;color:transparent;letter-spacing:.04em;transition:color .25s}
+#rail button i{width:6px;height:6px;border-radius:50%;background:#3a4460;transition:all .3s}
+#rail:hover button{color:var(--faint)}
+#rail button.on{color:var(--ink)}
+#rail button.on i{background:var(--mint);box-shadow:0 0 10px var(--mint);transform:scale(1.4)}
+
+.lbl.verdict{font:500 12px/1.35 'JetBrains Mono',monospace;padding:10px 14px;border-radius:11px}
+.lbl.verdict b{display:block;font:600 21px/1.1 Inter,sans-serif;letter-spacing:.02em;margin-bottom:4px}
+.lbl.verdict.hot{border-color:rgba(255,61,127,.5);color:#ffb0c8;box-shadow:0 0 30px rgba(255,61,127,.22)} .lbl.verdict.hot b{color:#ff8fb2}
+.lbl.verdict.mint{border-color:rgba(77,255,160,.6);color:#b6ffd6;box-shadow:0 0 40px rgba(77,255,160,.28)} .lbl.verdict.mint b{color:var(--mint)}
+.lbl.verdict .no{color:var(--red)}
+.rv{animation:rise 1.4s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0s)}
+@keyframes rise{from{opacity:0;transform:translateY(22px);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+#rw{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 3px)}
+#rw b{position:absolute;top:70px;right:5vw;font:600 12.5px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#ffc2d6;text-shadow:0 0 18px rgba(255,61,127,.8);animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.3}}
+.card.cta{max-width:560px}
+.card .feel{font-family:'Instrument Serif',serif;font-style:italic;font-size:21px;line-height:1.3;color:var(--ink);margin-top:14px}
+.card .note{margin-top:14px;font-size:12.5px;color:var(--faint)}
+.bars{margin:22px auto 6px;max-width:560px;text-align:left;font:500 11px/1 'JetBrains Mono',monospace;color:var(--dim)}
+.bars .row{margin-top:12px} .bars .nm{margin-bottom:7px;letter-spacing:.05em;text-transform:uppercase}
+.bars .bar{display:flex;height:26px;border-radius:7px;overflow:hidden;gap:2px}
+.bars .bar span{display:flex;align-items:center;padding:0 9px;white-space:nowrap;overflow:hidden;font-size:10.5px}
+.bars .u{background:rgba(127,216,255,.22);color:#cdefff} .bars .d{background:rgba(127,216,255,.34);color:#e4f6ff}
+.bars .b{background:rgba(255,255,255,.12);color:#e9edf5} .bars .v{background:rgba(77,255,160,.3);color:#c8ffe1}
+.bars .t{background:rgba(77,255,160,.1);color:#9fdcbc}
+.bars .r{background:rgba(255,61,127,.2);color:#ffc0d4}
+.bars .cap{margin-top:10px;color:var(--faint);font-size:10.5px}
+.stepn{display:flex;align-items:center;gap:10px;margin-top:22px;font:500 11.5px/1 'JetBrains Mono',monospace;letter-spacing:.07em;text-transform:uppercase;color:var(--dim)}
+.stepn span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(77,255,160,.14);color:var(--mint);font-size:11px;letter-spacing:0}
+.tabs{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.tabs button{all:unset;cursor:pointer;font:500 12px/1 'JetBrains Mono',monospace;color:var(--dim);padding:8px 11px;border-radius:8px;border:1px solid var(--line);transition:color .2s,background .2s,border-color .2s}
+.tabs button:hover{color:#fff}
+.tabs button.on{color:var(--mint);background:rgba(77,255,160,.08);border-color:rgba(77,255,160,.7)}
+.cmd.inst{margin-top:10px;font-size:13px}
+.ask.idle{animation:askp 2.4s ease-in-out infinite}
+@keyframes askp{50%{border-color:rgba(77,255,160,.95);box-shadow:0 0 0 4px rgba(77,255,160,.08),0 0 56px rgba(77,255,160,.3)}}
+.ask{position:relative;margin-top:12px;display:flex;align-items:center;gap:10px;font:500 14.5px/1.5 'JetBrains Mono',monospace;background:rgba(0,0,0,.45);border:1px solid rgba(77,255,160,.5);border-radius:10px;padding:13px 76px 13px 16px;box-shadow:0 0 40px rgba(77,255,160,.12);cursor:text;transition:border-color .2s,box-shadow .2s}
+.ask .p{color:var(--mint);white-space:nowrap}
+.ask input{all:unset;flex:1;min-width:0;color:#eafff3}
+.ask input::placeholder{color:#86a595}
+.ask:focus-within{border-color:var(--mint);box-shadow:0 0 56px rgba(77,255,160,.28)}
+.ask .copy{top:50%;transform:translateY(-50%)}
+.copy.hit{color:#04130b;background:var(--mint);border-color:var(--mint)}
+@media (max-width:800px){
+  body{font-size:16px}
+  .step{align-items:flex-end;padding:0 4vw 5vh}
+  .step.center{align-items:center}
+  .card{max-width:100%;padding:22px}
+  #term,#rail{display:none}
+  .lbl{font-size:10px}
+  .lbl.claim{font-size:15px}
+  .hero .step{align-items:center}
+  .hero-wrap{background:radial-gradient(ellipse at 40% 50%,rgba(8,12,26,.78),rgba(8,12,26,.45) 60%,transparent 80%);margin:0 -4vw;padding:24px 4vw}
+  .hero .lede{color:#d3d9e6;text-shadow:0 1px 12px rgba(6,9,20,.9)}
+  table.cmp{font-size:12.5px} table.cmp td,table.cmp th{padding:7px 6px}
+  .card,.card.cta,.step.center .card{max-width:100%;min-width:0}
+  .cmd.inst{font-size:11.5px}
+  .ask{font-size:13px;padding-right:70px}
+  #rw b{display:none}
+  #hud{top:58px;font-size:10px;max-width:94vw} #hud .run{padding:5px 8px;font-size:9.5px} #hud .steps i{padding:5px 5px}
+  .chip .hosts{display:none}
+  .hero .step{align-items:flex-end;padding-bottom:6vh}
+  .cmd.inst{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;padding-right:62px}
+  #links{right:4vw;top:14px} #links a{padding:8px 10px;font-size:11.5px} #links a.gh{display:none}
+  #brand{top:22px}
+  .bars .bar span{font-size:9.5px;padding:0 5px}
+}
+.nogl #gl{display:none} .nogl body,.nogl{background:radial-gradient(ellipse at 70% 30%,#132040,#04060c 70%) fixed}
+@media (prefers-reduced-motion:reduce){.grain{animation:none}.hint span{animation:none}.rv{animation:none}#rw b{animation:none}.ask.idle{animation:none}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.164.1/build/three.module.js","three/addons/":"https://unpkg.com/three@0.164.1/examples/jsm/"}}
+</script>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div id="labels"></div>
+<div id="rw"></div>
+<div id="bar"></div>
+<div id="brand"><i></i><b>manifest-dev</b></div>
+<div id="hud"><span class="run"><i></i><span id="hudRun"></span></span><span class="steps" id="hudSteps"><i data-s="1">figure-out</i><b>→</b><i data-s="2">define</i><b>→</b><i data-s="3">do</i></span></div>
+<nav id="links"><a class="try" href="#try">Try it ↓</a><a class="gh" href="https://github.com/doodledood/manifest-dev" target="_blank" rel="noopener">GitHub ↗</a></nav>
+
+<nav id="rail"></nav>
+
+<div id="term"><div class="hd"><i></i><i></i><i></i><span id="termTitle">session</span></div><div class="bd" id="termBody"></div></div>
+
+<main>
+  <!-- 0 · HERO -->
+  <section data-ch="0" data-name="Intro" class="hero">
+    <div class="step"><div class="hero-wrap">
+      <div class="chip cool rv" style="--d:.9s"><i></i>Open-source skills<span class="hosts"> · Claude Code · Codex · Pi · OpenCode</span></div>
+      <h1><span class="rv" style="--d:1.15s;display:block">Every coding agent says <em>done.</em></span><span class="rv" style="--d:1.7s;display:block;margin-top:.12em">Checked against <em>what?</em></span></h1>
+      <p class="lede rv" style="--d:2.2s">manifest-dev makes that check mark a finding instead of a claim. The agent investigates first, you agree in writing on what done means, and nothing is called finished until every criterion has evidence.</p>
+      <div class="hint rv" style="--d:2.7s"><span></span>SCROLL · ONE REQUEST, RUN TWO WAYS</div>
+    </div></div>
+  </section>
+
+  <!-- 1 · PURE AGENT -->
+  <section data-ch="1" data-name="Pure agent">
+    <div class="step"><div class="card">
+      <div class="chip hot"><i></i>Run 1 · a plain agent</div>
+      <h2>It starts building the moment you hit enter.</h2>
+      <p>The request: <code>half my background jobs silently stall</code>. A plain agent doesn't ask what "stall" means. It takes the likeliest guess and starts writing: fast, confident, plausible.</p>
+      <p class="note">An illustrative example, run two ways.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>Then it reports <span class="hot">✓ Done.</span></h2>
+      <p>Nobody wrote down what done means, so the agent drew its own finish line. That check mark is the agent's claim about its own work. Nobody has checked it.</p>
+      <p class="feel">You've been here. It says done, and the checking becomes your job.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>Look closer. Three problems nobody checked for.</h2>
+      <p>The root cause is untouched. The new retries hide the error that would have told you why. And what you needed, the outline on the right, was a different shape.</p>
+      <p><b>Built confidently, checked by no one, aimed at the wrong thing.</b></p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>Next session, it starts from zero.</h2>
+      <p>Nothing it figured out was written down, so the next session works it all out again.</p>
+    </div></div>
+  </section>
+
+  <!-- 2 · FIGURE-OUT -->
+  <section data-ch="2" data-name="/figure-out">
+    <div class="step"><div class="card">
+      <div class="chip hot"><i></i>◀◀ Rewind</div>
+      <h2>Same request. Same codebase. Run it again.</h2>
+      <p>This time with manifest-dev, in three steps: <b class="cool">understand</b> the problem, <b class="cool">define</b> what done means, then <b class="mint">build and check</b>. Watch how much happens before a single line of code gets written.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <div class="chip cool"><i></i>Step 1 of 3 · understand</div>
+      <h2><code>/figure-out</code> reads first. It builds nothing yet.</h2>
+      <p>Before writing a line, it reads your code and your logs. Everything you <em>might</em> mean is still out of focus.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>That haze turns into questions, the big ones first.</h2>
+      <p>It settles the question that decides the work first, and drops a branch only when the evidence rules it out. <i>"Is the queue overloaded?"</i> Checked. Queue depth stayed flat. Ruled out.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>It ends with a <em>Read</em>, and asks you one thing.</h2>
+      <p>The retry wrapper swallows timeouts: 48 of 50 stalled jobs had retried. Run 1 added another retry. Then the one call the code can't make: <i>when a job stalls, retry quietly or fail and alert?</i> That one's yours.</p>
+      <p class="feel">Now you both know what "right" means.</p>
+    </div></div>
+  </section>
+
+  <!-- 3 · DEFINE -->
+  <section data-ch="3" data-name="/define">
+    <div class="step"><div class="card">
+      <div class="chip cool"><i></i>Step 2 of 3 · define</div>
+      <h2>Write down what you'd accept, before anything gets built.</h2>
+      <p>The work splits into <b>Deliverables</b>: pieces you can run and watch work on their own. Not "change the retry wrapper", but "timeouts fail loudly".</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>Each piece gets a gate it has to pass.</h2>
+      <p><b>Acceptance Criteria</b> check the outcome, like <i>"a retried timeout still reports the original error"</i>. "Wrote some tests" doesn't count. Each one is a ring the work has to pass through.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>Plus rules that hold everywhere.</h2>
+      <p><b>Global Invariants</b> hold across every piece, like <i>"no job is marked done without a result."</i></p>
+      <p>Together, that's the <b>Manifest</b>: your definition of done, in a file. You read it and approve it <em>before</em> any code exists.</p>
+    </div></div>
+  </section>
+
+  <!-- 4 · DO -->
+  <section data-ch="4" data-name="/do">
+    <div class="step"><div class="card">
+      <div class="chip mint"><i></i>Step 3 of 3 · build and check</div>
+      <h2>Now it builds, against the Manifest.</h2>
+      <p>The agent decides <em>how</em> to do the work on its own. It doesn't get to decide on its own what counts as finished.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>The same bug Run 1 shipped. <span class="red">This time it's caught.</span></h2>
+      <p>AC-2.1 fails: the retried timeout still comes back "ok", the exact failure under Run 1's check mark. <code>/do</code> fixes it and checks again from scratch. The agent still makes mistakes. This time a gate was waiting for this one.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>Then the rules that cover everything.</h2>
+      <p>No job marked done without a result. The existing suite still green. Checked last, against all the finished work.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>Done is a <span class="mint">finding</span>, not a claim.</h2>
+      <p class="feel">You don't have to take its word for it.</p>
+      <p><code>/do</code> can't say done until every gate passes with evidence attached: a command's output, or a separate review against the gate's own text. If it's stuck, it stops and shows you why.</p>
+    </div></div>
+  </section>
+
+  <!-- 5 · COMPARE -->
+  <section data-ch="5" data-name="Side by side">
+    <div class="step bottom"><div class="card">
+      <h2>Both runs say done. Only one can show you why.</h2>
+      <table class="cmp">
+        <tr><th></th><th>Plain agent</th><th>manifest-dev</th></tr>
+        <tr><td>Starts by</td><td>writing code</td><td>reading, then asking the deciding question</td></tr>
+        <tr><td>"Done" means</td><td>whatever the agent decided</td><td>criteria you approved, written down first</td></tr>
+        <tr><td>A failure is caught by</td><td>you, later</td><td>a gate, before it reports</td></tr>
+        <tr><td>You're left with</td><td>a diff and a claim</td><td>a diff, plus evidence for every gate</td></tr>
+      </table>
+    </div></div>
+    <div class="step bottom"><div class="card" style="max-width:560px">
+      <h2>Put both under the x-ray.</h2>
+      <p>On the left, the defects that were there all along. On the right, each one had a gate, checked before anyone said done. Gates only cover what you wrote down, which is why <code>/figure-out</code> comes first.</p>
+      <button class="btn" id="xrayBtn">Turn the x-ray off</button>
+    </div></div>
+  </section>
+
+  <!-- 6 · WEEKS LATER -->
+  <section data-ch="6" data-name="Weeks later">
+    <div class="step"><div class="card">
+      <div class="chip amber"><i></i>Beyond one run</div>
+      <h2>What one run learns, the next one reads.</h2>
+      <p>It's written down where every session looks, so the next one starts from what was decided, not from zero:</p>
+      <ul class="tiers">
+        <li><i style="background:var(--amber);box-shadow:0 0 10px var(--amber)"></i><span><b>North Star</b>: what the project is becoming.</span></li>
+        <li><i style="background:#ffd9a0"></i><span><b>Tickets</b>: what's worth doing next.</span></li>
+        <li><i style="background:var(--mint);box-shadow:0 0 10px var(--mint)"></i><span><b>Manifests</b>: what done meant, run by run.</span></li>
+      </ul>
+    </div></div>
+      </section>
+
+  <!-- 7 · TRADE -->
+  <section data-ch="7" data-name="The trade">
+    <div class="step center"><div class="card">
+      <div class="chip amber"><i></i>The honest part</div>
+      <h2>The trade, stated plainly.</h2>
+      <p>It spends more tokens and more time up front than prompting directly. It's for developers who'd rather put the effort in before building than review afterwards. If shipping fastest is all that matters, a plain agent fits better.</p>
+      <div class="bars" aria-label="Where the time goes">
+        <div class="row"><div class="nm">Plain agent</div><div class="bar"><span class="b" style="flex:2.2">build</span><span class="r" style="flex:2.6">review · rework</span></div></div>
+        <div class="row"><div class="nm">manifest-dev</div><div class="bar"><span class="u" style="flex:1.8">understand</span><span class="d" style="flex:1.2">define</span><span class="b" style="flex:2.2">build</span><span class="v" style="flex:1.1">verify</span><span class="t" style="flex:.7">review</span></div></div>
+        <div class="cap">Where the time goes, not how much of it. Illustrative.</div>
+      </div>
+      <p>The bet: time spent understanding and verifying leaves a project better off. It rests on daily use on our own projects, not a measured study.</p>
+    </div></div>
+  </section>
+
+  <!-- 8 · START -->
+  <section data-ch="8" data-name="Try it" id="try">
+    <div class="step"><div class="card">
+      <div class="chip mint"><i></i>Run 2 · the same check mark</div>
+      <h2>Same check mark. <em>This one comes with evidence.</em></h2>
+      <p>Each ring is a gate you approved before any code existed, checked against the finished work. The agent still does the building. <b>Done now means what you agreed it means</b>, and you can see why.</p>
+    </div></div>
+    <div class="step"><div class="card cta">
+      <div class="chip mint"><i></i>Try it on your next task</div>
+      <h2>Make your next <span class="mint">✓</span> mean something.</h2>
+      <div class="stepn"><span>1</span>Install</div>
+      <div class="tabs" id="tabs"><button class="on" data-tab="cc">Claude Code</button><button data-tab="cx">Codex</button><button data-tab="pi">Pi</button><button data-tab="oc">OpenCode</button></div>
+      <div class="cmd inst"><span id="instTxt"></span><button class="copy" id="instCopy">copy</button></div>
+      <div class="stepn"><span>2</span>Ask about something real</div>
+      <label class="ask idle"><span class="p" id="askP">/figure-out</span><input id="ask" placeholder="why do my jobs silently stall?" spellcheck="false" autocomplete="off"><button class="copy" id="askCopy">copy</button></label>
+      <p class="small">Type the bug you keep putting off. It reads your code, then asks the question that decides the work. Nothing gets built until you agree on what "right" means.</p>
+      <p class="small">Want it without the approval stops? <code id="autoHint">/auto &lt;task&gt;</code> chains all three on its own.</p>
+      <p class="small"><a href="https://github.com/doodledood/manifest-dev" target="_blank" rel="noopener">github.com/doodledood/manifest-dev</a> · just one skill: <code>npx skills add doodledood/manifest-dev --skill figure-out</code></p>
+    </div></div>
+  </section>
+</main>
+
+<script>
+// CTA: plain script, so install + copy work even if WebGL or the CDN fails
+(() => {
+const INST = {
+  cc: '/plugin marketplace add doodledood/manifest-dev\n/plugin install manifest-dev@manifest-dev',
+  cx: 'codex plugin marketplace add doodledood/manifest-dev\ncodex plugin add manifest-dev@manifest-dev',
+  pi: 'pi install git:github.com/doodledood/manifest-dev@main',
+  oc: 'git clone https://github.com/doodledood/manifest-dev\n# then add <clone>/dist/opencode/plugin to "plugin"\n# in ~/.config/opencode/opencode.json',
+};
+const ASKP = { cc: '/figure-out', cx: '$figure-out', pi: '/skill:figure-out', oc: '/figure-out' }, AUTOP = { cc: '/auto', cx: '$auto', pi: '/auto', oc: '/auto' };
+let tab = 'cc'; const instTxt = document.querySelector('#instTxt');
+const setTab = k => { tab = k; instTxt.textContent = INST[k]; document.querySelector('#askP').textContent = ASKP[k]; document.querySelector('#autoHint').textContent = AUTOP[k] + ' <task>'; document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === k)); };
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => setTab(b.dataset.tab)); setTab('cc');
+const flash = b => { const o = b.textContent; b.textContent = 'copied'; b.classList.add('hit'); setTimeout(() => { b.textContent = o; b.classList.remove('hit'); }, 1300); dispatchEvent(new Event('md:burst')); };
+document.querySelector('#instCopy').onclick = e => { e.preventDefault(); navigator.clipboard?.writeText(INST[tab]); flash(e.currentTarget); };
+const askIn = document.querySelector('#ask');
+document.querySelector('#askCopy').onclick = e => { e.preventDefault(); navigator.clipboard?.writeText(ASKP[tab] + ' ' + (askIn.value.trim() || askIn.placeholder)); flash(e.currentTarget); };
+askIn.addEventListener('focus', () => askIn.closest('.ask').classList.remove('idle'));
+askIn.addEventListener('keydown', e => { if (e.key === 'Enter') document.querySelector('#askCopy').click(); });
+
+})();
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const $ = s => document.querySelector(s);
+const MOBILE = matchMedia('(max-width: 800px)').matches; // particle budget, fixed at load
+let NARROW = MOBILE; // layout decisions, live
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const N = MOBILE ? 6000 : 12000;
+const TAU = Math.PI * 2;
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+
+/* ---------- renderer ---------- */
+const canvas = $('#gl');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' }); }
+catch (e) { document.documentElement.classList.add('nogl'); throw e; } // cards and CTA stay usable without 3D
+renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 1.75));
+renderer.setSize(innerWidth, innerHeight);
+renderer.setClearColor(0x03050b, 1);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 300);
+camera.position.set(0, 2, 16);
+const camLook = new THREE.Vector3(0, 1, 0);
+let camOff = MOBILE ? 0 : 0.13;
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.8, 0.55, 0.1);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+/* ---------- palette ---------- */
+const C = h => new THREE.Color(h);
+const HOT1 = C('#ff2f75'), HOT2 = C('#ff8424'), COOL = C('#6fd0ff'), ICE = C('#d8f1ff'), MINT = C('#3dff98'),
+  RED = C('#ff2020'), FOGC = C('#51607e'), GREY = C('#8a93a8'), POOL = C('#3561d0'), DUSTC = C('#34466e'),
+  AMBER = C('#ffae34'), WHITE = C('#ffffff'), TICK = C('#ffd9a0');
+
+/* ---------- world layout ---------- */
+const DEL = [
+  { x: -3.4, w: 2.0, h: 2.0, d: 2.0, rings: [1.0], name: 'D1 · timeouts fail loudly' },
+  { x: 0.0, w: 2.0, h: 3.0, d: 2.0, rings: [1.5], name: 'D2 · retries keep the error' },
+  { x: 3.4, w: 2.0, h: 2.4, d: 2.0, rings: [0.8, 1.7], name: 'D3 · stall alert' },
+];
+const DEFC = [[-1.1, 0.35, 0.6, 0.85], [0.9, 2.95, -0.4, 0.7], [1.6, 4.7, 0.5, 0.6]]; // root cause, swallowed error, unreproduced stall
+const TB = [ // leaning tower the plain agent builds: cx,cy,cz,w,h,d
+  [0.0, 0.6, 0.0, 2.6, 1.2, 2.2], [0.25, 1.72, 0.12, 2.2, 1.05, 1.9], [0.55, 2.74, -0.1, 1.85, 1.0, 1.6],
+  [0.95, 3.68, 0.12, 1.5, 0.9, 1.35], [1.35, 4.52, 0.0, 1.15, 0.8, 1.1], [1.8, 5.28, 0.1, 0.8, 0.7, 0.8],
+];
+const NODES = [
+  { p: [0, 4.3, 0], t: 0.30, txt: 'hung, or never reported?' },
+  { p: [3.6, 2.8, -0.5], t: 0.40, out: 0.45, txt: 'queue overloaded?' },
+  { p: [-2.8, 2.5, 0.4], t: 0.47, txt: 'only retried jobs?' },
+  { p: [-0.8, 0.8, 1.0], t: 0.58, txt: 'where does the timeout go?' },
+  { p: [2.2, -0.6, 1.4], t: 0.72, read: true, txt: '<b>Read</b> · retry() swallows timeouts' },
+];
+const EDGES = [[0, 1], [0, 2], [2, 3], [3, 4]];
+const STAR = new THREE.Vector3(0, 7.2, 0);
+// the check mark: hero = the agent's claim (hollow, glitching); finale = the verified one (solid lattice, gated)
+const CK = [[-3.1, 1.5], [-1.0, -0.6], [3.4, 4.4]], CKC = new THREE.Vector3(0.2, 1.8, 0), CKR = 0.62;
+const CKL1 = Math.hypot(CK[1][0] - CK[0][0], CK[1][1] - CK[0][1]), CKL2 = Math.hypot(CK[2][0] - CK[1][0], CK[2][1] - CK[1][1]), CKLT = CKL1 + CKL2;
+function ckAt(s) { const d = s * CKLT; let a, b, u; if (d < CKL1) { a = CK[0]; b = CK[1]; u = d / CKL1; } else { a = CK[1]; b = CK[2]; u = (d - CKL1) / CKL2; }
+  const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); return [a[0] + dx * u, a[1] + dy * u, dx / L, dy / L]; }
+const CKG = [0.1, 0.26, 0.42, 0.58, 0.74, 0.9]; // six gates along the stroke: AC-1.1, 2.1, 3.1, 3.2, INV-G1, INV-G2
+
+/* ---------- particles ---------- */
+const P = new Float32Array(N * 3), V = new Float32Array(N * 3), COL = new Float32Array(N * 3);
+const SZ = new Float32Array(N), AL = new Float32Array(N), K = new Float32Array(N);
+const R = new Float32Array(N * 8);
+const DUST = new Uint8Array(N), DEF = new Uint8Array(N), DI = new Uint8Array(N);
+const TOW = new Float32Array(N * 3), CELL = new Float32Array(N * 3), DH = new Float32Array(N * 3), FH = new Float32Array(N * 3), SPH = new Float32Array(N * 3);
+const SPLIT = new Float32Array(N);
+const CKS = new Float32Array(N * 3), CKL = new Float32Array(N * 3), CKP = new Float32Array(N), CKF = new Uint8Array(N);
+
+for (let i = 0; i < N; i++) {
+  const o = i * 8, i3 = i * 3;
+  for (let k = 0; k < 8; k++) R[o + k] = Math.random();
+  const r1 = R[o], r2 = R[o + 1], r3 = R[o + 2], r4 = R[o + 3], r6 = R[o + 5];
+  DUST[i] = i % 6 === 5 ? 1 : 0;
+  SPLIT[i] = Math.random();
+  K[i] = 0.022 + Math.random() * 0.03;
+  // dust shell
+  { const th = r1 * TAU, ph = Math.acos(2 * r2 - 1), rr = 18 + r3 * 26;
+    DH[i3] = Math.sin(ph) * Math.cos(th) * rr; DH[i3 + 1] = Math.cos(ph) * rr * 0.6; DH[i3 + 2] = Math.sin(ph) * Math.sin(th) * rr; }
+  // fog home
+  FH[i3] = (r1 - 0.5) * 21; FH[i3 + 1] = (r2 - 0.38) * 7.5; FH[i3 + 2] = (r3 - 0.62) * 11;
+  // tower surface sample
+  { const b = Math.min(5, Math.floor(Math.pow(R[o + 6], 1.3) * 6)); const [cx, cy, cz, w, h, d] = TB[b];
+    const face = Math.floor(R[o + 7] * 6), u = Math.random() - 0.5, v = Math.random() - 0.5; let x, y, z;
+    if (face === 0) { x = cx + w / 2; y = cy + u * h; z = cz + v * d; }
+    else if (face === 1) { x = cx - w / 2; y = cy + u * h; z = cz + v * d; }
+    else if (face === 2) { z = cz + d / 2; y = cy + u * h; x = cx + v * w; }
+    else if (face === 3) { z = cz - d / 2; y = cy + u * h; x = cx + v * w; }
+    else if (face === 4) { y = cy + h / 2; x = cx + u * w; z = cz + v * d; }
+    else { y = cy - h / 2; x = cx + u * w; z = cz + v * d; }
+    const j = 0.09;
+    TOW[i3] = x + (Math.random() - 0.5) * j; TOW[i3 + 1] = y + (Math.random() - 0.5) * j; TOW[i3 + 2] = z + (Math.random() - 0.5) * j;
+    // three hidden defects: compact clusters, so grey reads as the healthy-looking bulk
+    for (const [dx, dy, dz, dr] of DEFC) { const ex = TOW[i3] - dx, ey = TOW[i3 + 1] - dy, ez = TOW[i3 + 2] - dz; if (ex * ex + ey * ey + ez * ez < dr * dr) DEF[i] = 1; } }
+  // lattice cell inside a deliverable (surface shell + floors), rises with r1
+  { const d = Math.min(2, Math.floor(r6 * 3)); DI[i] = d; const B = DEL[d]; const s = 0.2;
+    const nx = Math.round(B.w / s), ny = Math.round(B.h / s), nz = Math.round(B.d / s);
+    const yi = Math.min(ny - 1, Math.floor(r1 * ny)), a = Math.floor(r2 * nx), bb = Math.floor(r3 * nz); let x, y, z;
+    if (r4 < 0.8) { const f = Math.floor(r4 / 0.8 * 4); y = (yi + 0.5) * s;
+      if (f === 0) { x = B.w / 2; z = -B.d / 2 + (bb + 0.5) * s; }
+      else if (f === 1) { x = -B.w / 2; z = -B.d / 2 + (bb + 0.5) * s; }
+      else if (f === 2) { z = B.d / 2; x = -B.w / 2 + (a + 0.5) * s; }
+      else { z = -B.d / 2; x = -B.w / 2 + (a + 0.5) * s; }
+    } else { y = Math.min(ny, Math.floor(yi / 5) * 5 + 5) * s; x = -B.w / 2 + (a + 0.5) * s; z = -B.d / 2 + (bb + 0.5) * s; }
+    CELL[i3] = B.x + x; CELL[i3 + 1] = y; CELL[i3 + 2] = z; }
+  // check mark samples: shell (hollow) and snapped lattice (solid)
+  { const s = Math.random(); const [px, py, ux, uy] = ckAt(s); const nx = -uy, ny = ux; CKP[i] = s;
+    const a = Math.random() * TAU, rs = CKR * (0.9 + 0.2 * Math.random());
+    CKS[i3] = px + nx * Math.cos(a) * rs; CKS[i3 + 1] = py + ny * Math.cos(a) * rs; CKS[i3 + 2] = Math.sin(a) * rs * 0.85;
+    const rl = CKR * 0.95 * Math.sqrt(Math.random()), a2 = Math.random() * TAU, q = 0.2;
+    CKL[i3] = Math.round((px + nx * Math.cos(a2) * rl) / q) * q; CKL[i3 + 1] = Math.round((py + ny * Math.cos(a2) * rl) / q) * q; CKL[i3 + 2] = Math.round(Math.sin(a2) * rl * 0.85 / q) * q;
+    CKF[i] = Math.random() < 0.6 ? 1 : 0; }
+  // fibonacci sphere
+  { const k = i + 0.5, phi = Math.acos(1 - 2 * k / N), th = Math.PI * (1 + Math.sqrt(5)) * k;
+    SPH[i3] = Math.cos(th) * Math.sin(phi); SPH[i3 + 1] = Math.cos(phi); SPH[i3 + 2] = Math.sin(th) * Math.sin(phi); }
+  // big-bang start
+  if (REDUCE) { P[i3] = DH[i3] * 0.2; P[i3 + 1] = DH[i3 + 1] * 0.2; P[i3 + 2] = DH[i3 + 2] * 0.2; }
+  else { P[i3] = 0; P[i3 + 1] = 1; P[i3 + 2] = 0;
+    const th = Math.random() * TAU, ph = Math.acos(2 * Math.random() - 1), sp = 0.15 + Math.random() * 0.9;
+    V[i3] = Math.sin(ph) * Math.cos(th) * sp; V[i3 + 1] = Math.cos(ph) * sp; V[i3 + 2] = Math.sin(ph) * Math.sin(th) * sp; }
+  COL[i3] = 1; COL[i3 + 1] = 0.6; COL[i3 + 2] = 0.4; SZ[i] = 1; AL[i] = 0;
+}
+
+const geo = new THREE.BufferGeometry();
+const aPos = new THREE.BufferAttribute(P, 3).setUsage(THREE.DynamicDrawUsage);
+const aCol = new THREE.BufferAttribute(COL, 3).setUsage(THREE.DynamicDrawUsage);
+const aSz = new THREE.BufferAttribute(SZ, 1).setUsage(THREE.DynamicDrawUsage);
+const aAl = new THREE.BufferAttribute(AL, 1).setUsage(THREE.DynamicDrawUsage);
+geo.setAttribute('position', aPos); geo.setAttribute('aColor', aCol); geo.setAttribute('aSize', aSz); geo.setAttribute('aAlpha', aAl);
+const pmat = new THREE.ShaderMaterial({
+  uniforms: { uPR: { value: renderer.getPixelRatio() }, uScale: { value: innerHeight / 900 } },
+  vertexShader: `
+    attribute vec3 aColor; attribute float aSize; attribute float aAlpha;
+    uniform float uPR; uniform float uScale;
+    varying vec3 vColor; varying float vAlpha;
+    void main(){
+      vec4 mv = modelViewMatrix * vec4(position,1.0);
+      gl_Position = projectionMatrix * mv;
+      gl_PointSize = min(aSize * uPR * uScale * (58.0 / max(0.5, -mv.z)), 44.0 * uPR);
+      vColor = aColor; vAlpha = aAlpha * smoothstep(0.6, 3.5, -mv.z);
+    }`,
+  fragmentShader: `
+    varying vec3 vColor; varying float vAlpha;
+    void main(){
+      vec2 c = gl_PointCoord - 0.5; float d = length(c);
+      if (d > 0.5) discard;
+      float core = smoothstep(0.5, 0.0, d);
+      float a = pow(core, 1.8);
+      gl_FragColor = vec4(vColor * (0.6 + core*0.8), a * vAlpha);
+    }`,
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+});
+const points = new THREE.Points(geo, pmat);
+points.frustumCulled = false;
+scene.add(points);
+
+/* ---------- blueprint (the Manifest) ---------- */
+const add = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending };
+const bp = new THREE.Group(); scene.add(bp);
+const boxes = DEL.map(B => {
+  const g = new THREE.BoxGeometry(B.w, B.h, B.d); g.translate(0, B.h / 2, 0);
+  const grp = new THREE.Group(); grp.position.x = B.x;
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: COOL, opacity: 0, ...add }));
+  const f = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: COOL, opacity: 0, side: THREE.DoubleSide, ...add }));
+  grp.add(e, f); bp.add(grp);
+  return { grp, e, f };
+});
+const ringGeo = new THREE.TorusGeometry(1.62, 0.024, 8, 160);
+const rings = [];
+DEL.forEach((B, d) => B.rings.forEach((ry, k) => {
+  const m = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: COOL, opacity: 0, ...add }));
+  m.rotation.x = Math.PI / 2; m.position.set(B.x, ry, 0); bp.add(m);
+  rings.push({ m, d, y: ry, id: `AC-${d + 1}.${k + 1}` });
+}));
+const invRing = new THREE.Mesh(new THREE.TorusGeometry(6.3, 0.03, 8, 256), new THREE.MeshBasicMaterial({ color: COOL, opacity: 0, ...add }));
+invRing.rotation.x = Math.PI / 2; bp.add(invRing);
+const invScan = new THREE.Mesh(new THREE.TorusGeometry(6.3, 0.04, 8, 256), new THREE.MeshBasicMaterial({ color: WHITE, opacity: 0, ...add }));
+invScan.rotation.x = Math.PI / 2; bp.add(invScan);
+const dome = new THREE.Mesh(new THREE.SphereGeometry(6.3, 40, 12, 0, TAU, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ color: COOL, wireframe: true, opacity: 0, ...add }));
+bp.add(dome);
+const grid = new THREE.GridHelper(18, 36, 0x4a78c0, 0x22375e);
+grid.material.transparent = true; grid.material.opacity = 0; grid.material.depthWrite = false;
+bp.add(grid);
+
+/* ---------- figure-out probe + edges ---------- */
+const probe = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 14), new THREE.MeshBasicMaterial({ color: new THREE.Color(2.2, 3.2, 4), transparent: true, opacity: 0 }));
+scene.add(probe);
+const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d');
+  const g = x.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.25, 'rgba(255,255,255,.35)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+const probeGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: COOL, opacity: 0, ...add }));
+probeGlow.scale.set(2.4, 2.4, 1); scene.add(probeGlow);
+const edgeLines = EDGES.map(([a, b]) => {
+  const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...NODES[a].p), new THREE.Vector3(...NODES[b].p)]);
+  const l = new THREE.Line(g, new THREE.LineBasicMaterial({ color: ICE, opacity: 0, ...add })); scene.add(l); return l;
+});
+
+/* ---------- weeks later: star, tickets, beam ---------- */
+const weeks = new THREE.Group(); scene.add(weeks);
+const starCore = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 16), new THREE.MeshBasicMaterial({ color: new THREE.Color(4, 3, 1.6), transparent: true, opacity: 0 }));
+starCore.position.copy(STAR);
+const starGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: AMBER, opacity: 0, ...add })); starGlow.scale.set(4, 4, 1); starGlow.position.copy(STAR);
+const rayH = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: AMBER, opacity: 0, ...add })); rayH.scale.set(9, 0.22, 1); rayH.position.copy(STAR);
+const rayV = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: AMBER, opacity: 0, rotation: Math.PI / 2, ...add })); rayV.scale.set(6, 0.18, 1); rayV.position.copy(STAR);
+const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1, 6), new THREE.MeshBasicMaterial({ color: AMBER, opacity: 0, ...add }));
+weeks.add(starCore, starGlow, rayH, rayV, beam);
+const tickets = [];
+for (let j = 0; j < 6; j++) {
+  const g = new THREE.PlaneGeometry(1.15, 0.72);
+  const grp = new THREE.Group();
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: TICK, opacity: 0, ...add }));
+  const f = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: TICK, opacity: 0, side: THREE.DoubleSide, ...add }));
+  // three "text lines" on each ticket
+  const lines = new THREE.Group();
+  for (let q = 0; q < 3; q++) { const w = q === 0 ? 0.7 : 0.5 - q * 0.08;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, 0.05), new THREE.MeshBasicMaterial({ color: TICK, opacity: 0, ...add }));
+    m.position.set(-0.42 + w / 2, 0.18 - q * 0.16, 0.001); lines.add(m); }
+  grp.add(e, f, lines); weeks.add(grp); tickets.push({ grp, e, f, lines });
+}
+
+/* ---------- verified check: gate rings, seal, shockwave ---------- */
+const ckG = new THREE.Group(); ckG.position.set(CKC.x, 0, 0); scene.add(ckG);
+const ckRingGeo = new THREE.TorusGeometry(0.92, 0.022, 8, 120);
+const ckRings = CKG.map(s => { const [px, py, ux, uy] = ckAt(s);
+  const m = new THREE.Mesh(ckRingGeo, new THREE.MeshBasicMaterial({ color: COOL, opacity: 0, ...add }));
+  m.position.set(px - CKC.x, py, 0); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(ux, uy, 0)); ckG.add(m); return m; });
+const seal = new THREE.Mesh(new THREE.TorusGeometry(4.9, 0.03, 8, 256), new THREE.MeshBasicMaterial({ color: MINT, opacity: 0, ...add }));
+seal.position.set(0, CKC.y, -0.4); ckG.add(seal);
+const seal2 = new THREE.Mesh(new THREE.TorusGeometry(5.15, 0.012, 6, 256), new THREE.MeshBasicMaterial({ color: MINT, opacity: 0, ...add }));
+seal2.position.copy(seal.position); ckG.add(seal2);
+const shock = new THREE.Mesh(new THREE.TorusGeometry(4.9, 0.05, 8, 256), new THREE.MeshBasicMaterial({ color: WHITE, opacity: 0, ...add }));
+shock.position.copy(seal.position); ckG.add(shock);
+let shockT = -99, burst = false;
+
+/* ---------- labels ---------- */
+const labelsEl = $('#labels');
+const LB = {};
+function mk(key, html, cls = '') { const el = document.createElement('div'); el.className = 'lbl ' + cls; el.innerHTML = html; labelsEl.appendChild(el);
+  LB[key] = { el, op: 0, target: 0, pos: new THREE.Vector3(), txt: '' }; return LB[key]; }
+mk('claim', '✓ DONE', 'claim');
+mk('ghost', 'what was actually needed', 'ghost');
+NODES.forEach((n, k) => mk('n' + k, n.txt, 'node' + (n.read ? ' read' : '')));
+DEL.forEach((B, d) => mk('d' + d, B.name, 'dname'));
+rings.forEach((r, k) => mk('g' + k, `<b>${r.id}</b><i class="st"></i>`));
+mk('inv', '<b>INV-G1 · INV-G2</b><i class="st"></i>');
+mk('cmpL', '✓ done, claimed', 'cmp l');
+mk('cmpR', '✓ done · 6/6 gates, with evidence', 'cmp r');
+mk('star', '<b>North Star</b>what it’s becoming', 'tier star');
+mk('tk', '<b>Tickets</b>what’s worth doing next', 'tier tk');
+mk('mf', '<b>Manifest</b>what done means, this run', 'tier mf');
+mk('you', '<b>YOU</b>fail loudly, and alert me', 'you');
+mk('appr', '<b>Manifest</b>approved by you · nothing built yet', 'tier mf');
+const DEFL = [['root cause untouched', 'root cause → <i>AC-1.1</i>'], ['retry swallows the error', 'swallowed error → <i>AC-2.1 · caught</i>'], ['stall never reproduced', 'never reproduced → <i>every gate needs evidence</i>']];
+DEFL.forEach((d, k) => mk('df' + k, '<b>✕</b>' + d[0], 'def'));
+mk('vh', '<b>✓ done</b>claimed by: the agent<br>checked against: <span class="no">nothing</span>', 'verdict hot');
+mk('vf', '<b>✓ done</b>6/6 gates you approved<br>evidence: attached to each', 'verdict mint');
+const bpWorld = (x, y, z, out) => out.set(bp.position.x + x * bp.scale.x, bp.position.y + y * bp.scale.x, bp.position.z + z * bp.scale.x);
+function setTxt(L, html) { if (L.txt !== html) { L.txt = html; L.el.innerHTML = html; L.w = L.h = 0; } } // re-measure: clamping uses the width
+function setSt(L, st) { const el = L.el.querySelector('.st'); const map = { idle: ['', ''], scan: ['checking…', 'scan'], fail: ['✕ FAIL', 'fail'], pass: ['✓ PASS', 'pass'] };
+  const [t, c] = map[st] || ['', '']; if (el.textContent !== t) { el.textContent = t; el.className = 'st ' + c; L.w = L.h = 0; } }
+
+/* ---------- terminal logs ---------- */
+const LOGS = {
+  1: { title: 'agent · no plan, no gates', lines: [
+    [0.00, 'cmd0', '› fix: half my background jobs silently stall'],
+    [0.05, 'hot', 'agent  raising job timeout 30s → 120s'],
+    [0.11, 'hot', 'agent  wrapping worker.run in retry(3)'],
+    [0.17, 'hot', 'agent  refactoring queue config while I’m here'],
+    [0.30, 'hot', 'agent  ✓ Done! Jobs should be reliable now.'],
+    [0.56, 'bad', 'x-ray  root cause untouched'],
+    [0.61, 'bad', 'x-ray  retry now swallows the timeout error'],
+    [0.66, 'bad', 'x-ray  no stall was ever reproduced'],
+    [0.79, 'dim', '─── new session · context: none ───'],
+    [0.85, 'hot', 'agent  let me explore the codebase…'],
+  ]},
+  2: { title: '/figure-out', lines: [
+    [0.00, 'cmd0', '› /figure-out why do half my background jobs silently stall?'],
+    [0.08, 'dim', 'reading  worker/  queue/  retry wrapper  30d of job logs'],
+    [0.30, 'q', 'Q  does "stall" mean hung, or finished and never reported?'],
+    [0.35, 'dim', '   logs: status stays "running" · never reported'],
+    [0.40, 'q', 'Q  is the queue overloaded?'],
+    [0.45, 'dim', '   queue depth flat during stalls · ruled out'],
+    [0.47, 'q', 'Q  only jobs that were retried?'],
+    [0.53, 'dim', '   48 of 50 stalled jobs hit a retry'],
+    [0.58, 'q', 'Q  where does the timeout error go?'],
+    [0.66, 'dim', '   retry() catches it; last attempt returns null'],
+    [0.72, 'read', 'READ  retry wrapper swallows timeouts · confidence: high'],
+    [0.735, 'dim', '      overturned by: a stalled job that never retried'],
+    [0.75, 'q', 'Q  your call: when a job stalls, retry quietly or fail and alert?'],
+    [0.79, 'you', 'you  fail loudly, and alert me'],
+  ].sort((a, b) => a[0] - b[0]) },
+  3: { title: '/define → manifest.md', lines: [
+    [0.00, 'cmd0', '› /define'],
+    [0.06, 'q', 'D1      timeouts surface as failures'],
+    [0.13, 'q', 'D2      retries preserve the original error'],
+    [0.20, 'q', 'D3      alert on stalled jobs'],
+    [0.36, '', 'AC-1.1  a hung job fails within 30s, logged'],
+    [0.42, '', 'AC-2.1  a retried timeout reports the original error'],
+    [0.49, '', 'AC-3.1  alert fires when a job passes its limit'],
+    [0.55, '', 'AC-3.2  alert carries job id + last heartbeat'],
+    [0.68, 'inv', 'INV-G1  no job is marked done without a result'],
+    [0.74, 'inv', 'INV-G2  the existing suite stays green'],
+    [0.86, 'ok', 'manifest written · reviewed by you · nothing built yet'],
+  ]},
+  4: { title: '/do manifest.md', lines: [
+    [0.00, 'cmd0', '› /do manifest.md'],
+    [0.02, 'dim', 'D1  building: timeouts surface as failures'],
+    [0.15, 'ok', 'AC-1.1  hung job fails in 30s, logged ........ PASS'],
+    [0.16, 'dim', 'D2  building: retries preserve the error'],
+    [0.30, 'bad', 'AC-2.1  retried timeout keeps its error ...... FAIL'],
+    [0.33, 'bad', '        evidence: final retry returns "ok"'],
+    [0.35, 'hot', '        same failure run 1 shipped · caught before done'],
+    [0.38, 'warn', '        fixing: rethrow last error after final try'],
+    [0.44, 'ok', 'AC-2.1  re-verified ........................... PASS'],
+    [0.46, 'dim', 'D3  building: stall alert'],
+    [0.59, 'ok', 'AC-3.1  alert fires past job limit ........... PASS'],
+    [0.63, 'ok', 'AC-3.2  alert carries id + heartbeat ......... PASS'],
+    [0.71, 'ok', 'INV-G1  no job done without a result ......... PASS'],
+    [0.74, 'ok', 'INV-G2  existing suite green ................. PASS'],
+    [0.79, 'ok', 'done · every criterion has fresh evidence'],
+  ]},
+};
+const term = $('#term'), termTitle = $('#termTitle'), termBody = $('#termBody');
+let termCh = -1, termCount = 0;
+const tryLink = $('#links .try'), rwEl = $('#rw'), hud = $('#hud'), hudRunWrap = hud.querySelector('.run'), hudRun = $('#hudRun'), hudSteps = $('#hudSteps'), hudI = [...hudSteps.querySelectorAll('i')];
+let hudKey = '';
+function updHud(ch, traw) {
+  let run = '', cls = '', step = 0;
+  if (ch === 1) { run = 'Run 1 · plain agent'; cls = 'r1'; }
+  else if (ch === 2 && traw > 0.08) { run = 'Run 2 · manifest-dev'; cls = 'r2'; step = traw > 0.24 ? 1 : 0; }
+  else if (ch === 3) { run = 'Run 2 · manifest-dev'; cls = 'r2'; step = 2; }
+  else if (ch === 4) { run = 'Run 2 · manifest-dev'; cls = 'r2'; step = traw > 0.93 ? 4 : 3; }
+  else if (ch === 5) { run = 'Run 1 vs Run 2'; cls = 'vs'; step = -1; }
+  const key = run + step; if (key === hudKey) return; hudKey = key;
+  hud.classList.toggle('on', !!run); if (!run) return;
+  hudRun.textContent = run; hudRunWrap.className = 'run ' + cls;
+  hudSteps.classList.toggle('hide', cls !== 'r2');
+  hudI.forEach((el, k) => { el.classList.toggle('on', k + 1 === step); el.classList.toggle('done', k + 1 < step); });
+}
+let termPulse = 0;
+function updTerm(ch, t, hide) {
+  const L = LOGS[ch];
+  term.classList.toggle('on', !!L && !hide);
+  if (!L) return;
+  if (ch !== termCh) { termCh = ch; termCount = 0; termBody.innerHTML = ''; termTitle.textContent = L.title; }
+  let n = 0; while (n < L.lines.length && t >= L.lines[n][0]) n++;
+  if (termCount < n) { term.classList.add('pulse'); clearTimeout(termPulse); termPulse = setTimeout(() => term.classList.remove('pulse'), 1800); }
+  while (termCount < n) { const [, cls, txt] = L.lines[termCount]; const d = document.createElement('div'); d.className = 'ln ' + cls; d.textContent = txt; termBody.appendChild(d); termCount++; }
+  while (termCount > n) { termBody.lastChild.remove(); termCount--; }
+}
+
+/* ---------- sections, rail, progress ---------- */
+const secs = [...document.querySelectorAll('section[data-ch]')];
+let TOPS = [], HS = [];
+function measure() { TOPS = secs.map(s => s.offsetTop); HS = secs.map(s => s.offsetHeight); }
+measure(); addEventListener('load', measure); document.fonts && document.fonts.ready.then(measure);
+const rail = $('#rail');
+const railBtns = secs.map((s, k) => { const b = document.createElement('button'); b.innerHTML = `${s.dataset.name}<i></i>`;
+  b.onclick = () => scrollTo({ top: TOPS[k] + (k === 0 ? 0 : innerHeight * 0.02), behavior: 'smooth' }); rail.appendChild(b); return b; });
+const bar = $('#bar');
+
+let xrayUser = null, XRAY = 0;
+const xrayBtn = $('#xrayBtn');
+$('#xrayBtn').onclick = () => { xrayUser = !(xrayUser ?? (XRAY > 0.5)); };
+
+addEventListener('md:burst', () => { burst = true; });
+
+/* ---------- mouse ---------- */
+const mouse = new THREE.Vector2(0, 0), mouseN = new THREE.Vector2(-9, -9); let mouseOn = false;
+addEventListener('pointermove', e => { mouse.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); mouseN.copy(mouse); mouseOn = true; });
+addEventListener('pointerleave', () => mouseOn = false);
+const ray = new THREE.Raycaster(), plane = new THREE.Plane(), MW = new THREE.Vector3(), tmpV = new THREE.Vector3();
+let par = new THREE.Vector2();
+
+/* ---------- camera keys ---------- */
+const CAM = [
+  { p0: [0, 2.4, 18.5], p1: [0, 2.8, 15.5], l: [0, 1.6, 0], off: 0.17 },
+  { p0: [7.0, 4.2, 16.5], p1: [4.0, 5.0, 15], l: [0.4, 2.2, 0], off: 0.14 },
+  { p0: [0, 1.8, 17], p1: [1.0, 1.2, 15.5], l: [0, 0.6, 0], off: 0.14 },
+  { p0: [-2, 7.5, 19.5], p1: [2.5, 6, 17.5], l: [0, 0.9, 0], off: 0.14 },
+  { p0: [2.5, 6.2, 18], p1: [-2.5, 5.2, 16.5], l: [0, 0.9, 0], off: 0.14 },
+  { p0: [0, 5.2, 22], p1: [0, 4.4, 20], l: [0, -0.4, 0], off: 0 },
+  { p0: [0, 5.5, 19], p1: [3.5, 3.8, 17], l: [0, 2.8, 0], off: 0.14 },
+  { p0: [0, 10, 24], p1: [0, 9, 23], l: [0, 2.2, 0], off: 0 },
+  { p0: [0.4, 2.3, 17.5], p1: [1.4, 1.9, 16], l: [0.3, 1.8, 0], off: 0.16 },
+];
+
+/* ---------- formation state (per frame) ---------- */
+let tx, ty, tz, cr, cg, cb, ts, ta;
+const col = (c, m = 1) => { cr = c.r * m; cg = c.g * m; cb = c.b * m; };
+const mixc = (a, b, t, m = 1) => { cr = (a.r + (b.r - a.r) * t) * m; cg = (a.g + (b.g - a.g) * t) * m; cb = (a.b + (b.b - a.b) * t) * m; };
+const FILL = [0, 0, 0], PASSED = [false, false, false], SCANY = [-1, -1, -1];
+let DONE = 0, D2FAIL = 0, D2WRONG = 0, PRB = new THREE.Vector3(), poolCx = 0;
+
+function swirl(i, time, cy) {
+  const o = i * 8, r1 = R[o], r2 = R[o + 1], r3 = R[o + 2], r4 = R[o + 3];
+  const Rr = 0.7 + r1 * 5.6;
+  const ang = r2 * TAU + time * (1.3 / (0.5 + r1 * 2.4));
+  const y = (r3 - 0.5) * (0.4 + r1 * 2.2) + Math.sin(ang * 2 + r4 * 6) * 0.3;
+  const x = Math.cos(ang) * Rr, z = Math.sin(ang) * Rr;
+  tx = x; ty = cy + y * 0.93 - z * 0.36; tz = y * 0.36 + z * 0.93;
+  mixc(HOT1, HOT2, r4, 0.9);
+  if (R[o + 4] > 0.94) col(COOL, 1.1);
+  ts = 0.6 + R[o + 5] * 1.1; ta = 0.7;
+}
+function tower(i, ox, sc, time, scan) {
+  const i3 = i * 3, o = i * 8;
+  let x = TOW[i3], y = TOW[i3 + 1], z = TOW[i3 + 2];
+  x += Math.sin(time * 1.3 + y * 0.8) * 0.035 * y;
+  tx = ox + x * sc; ty = y * sc; tz = z * sc;
+  mixc(HOT2, HOT1, clamp(R[o + 3] * 0.6 + y / 7), 0.95);
+  ts = 0.85; ta = 0.85;
+  if (scan > -1 && y < scan) {
+    if (DEF[i]) { col(RED, 1.35); ts = 1.4 + Math.sin(time * 14 + i) * 0.45; ta = 1; }
+    else { col(GREY, 0.75); ts = 0.8; ta = 0.6; }
+  }
+}
+const hash = x => { const s = Math.sin(x) * 43758.5453; return s - Math.floor(s); };
+let PHI = 0;
+function ckXf(x, y, z) { const lx = x - CKC.x, c = Math.cos(PHI), sn = Math.sin(PHI); tx = CKC.x + lx * c + z * sn; ty = y; tz = -lx * sn + z * c; }
+function checkClaim(i, time) {
+  const i3 = i * 3, o = i * 8;
+  if (R[o + 4] > 0.9) { swirl(i, time, 1.8); ta = 0.35; return; }
+  const y = CKS[i3 + 1], band = Math.floor((y + 10) / 0.42), tick = Math.floor(time * 7);
+  let gl = hash(band * 12.9898 + tick * 78.233) > 0.93 ? (hash(band + tick * 1.7) - 0.5) * 1.5 : 0;
+  if (time % 3.4 < 0.13) gl += (hash(band * 3.1 + tick) - 0.5) * 0.9;
+  ckXf(CKS[i3] + gl + Math.sin(time * 3 + i) * 0.03, y, CKS[i3 + 2]);
+  mixc(HOT1, HOT2, CKP[i] * 0.8 + R[o + 3] * 0.2, 0.62);
+  if (gl !== 0) col(R[o + 2] > 0.5 ? COOL : WHITE, 0.9);
+  ts = 0.7 + R[o + 5] * 0.75; ta = 0.3 + 0.4 * hash(i * 0.37 + Math.floor(time * 9));
+}
+const FG = [0, 0, 0, 0, 0, 0]; let FDONE = 0, FBUILT = 0, FDIM = 1;
+function checkFinal(i, time) {
+  const i3 = i * 3, o = i * 8, s = CKP[i];
+  if (s > FBUILT) { const a = R[o + 7] * TAU + time * 0.12, rr = 6.5 + R[o + 2] * 3.5;
+    tx = CKC.x + Math.cos(a) * rr; ty = CKC.y + (R[o + 1] - 0.5) * 3; tz = Math.sin(a) * rr - 2; col(POOL, 0.6 + R[o + 3] * 0.4); ts = 0.7; ta = 0.5; return; }
+  const lat = CKF[i] === 1;
+  if (lat) ckXf(CKL[i3], CKL[i3 + 1], CKL[i3 + 2]); else ckXf(CKS[i3], CKS[i3 + 1], CKS[i3 + 2]);
+  mixc(COOL, MINT, 0.88, lat ? 0.95 : 0.6); ts = lat ? 0.95 : 0.7; ta = lat ? 0.9 : 0.6;
+  if (FBUILT < 1.02 && FBUILT - s < 0.035) { col(WHITE, 1.1); ts = 1.2; }
+  for (let k = 0; k < 6; k++) if (FG[k] === 1 && Math.abs(s - CKG[k]) < 0.04) { col(WHITE, 1.7); ts = 1.7; }
+  if (FDONE > 0) { const p = Math.max(0, Math.sin(s * 14 - time * 3.2)) * FDONE; ts += p * 0.4; cr *= 1 + p * 0.5; cg *= 1 + p * 0.5; cb *= 1 + p * 0.5; }
+  cr *= FDIM; cg *= FDIM; cb *= FDIM;
+}
+function pool(i, time) {
+  // soft nebula of unbuilt material: triangular spreads so the edges fade instead of cutting off
+  const o = i * 8, a = R[o + 7] * TAU + time * 0.08, dr = R[o + 2] + R[o + 5] - 1, dv = R[o + 1] + R[o + 6] - 1;
+  const rr = 5.4 + dr * 2.6;
+  tx = poolCx + Math.cos(a) * rr; ty = 6.3 + dv * 1.5 + Math.sin(a * 2 + time * 0.6) * 0.18 - Math.sin(a) * rr * 0.12; tz = Math.sin(a) * rr;
+  const edge = 1 - Math.max(Math.abs(dr), Math.abs(dv));
+  col(POOL, 0.45 + R[o + 3] * 0.45); ts = 0.65 + edge * 0.35; ta = 0.2 + edge * 0.45;
+}
+function boxAt(i) {
+  const i3 = i * 3, s = bp.scale.x;
+  tx = bp.position.x + CELL[i3] * s; ty = bp.position.y + CELL[i3 + 1] * s; tz = bp.position.z + CELL[i3 + 2] * s;
+}
+
+/* ---------- per-frame scene state ---------- */
+const GATES = [
+  { scan: [0.12, 0.15] },
+  { scan: [0.27, 0.30], fail: [0.30, 0.40], rescan: [0.40, 0.44] },
+  { scan: [0.56, 0.59] },
+  { scan: [0.60, 0.63] },
+];
+function gstate(g, t) {
+  if (t < g.scan[0]) return 'idle';
+  if (t < g.scan[1]) return 'scan';
+  if (g.rescan) { if (t < g.fail[1]) return 'fail'; if (t < g.rescan[1]) return 'scan'; }
+  return 'pass';
+}
+function scanFrac(g, t) {
+  if (t >= g.scan[0] && t < g.scan[1]) return (t - g.scan[0]) / (g.scan[1] - g.scan[0]);
+  if (g.rescan && t >= g.rescan[0] && t < g.rescan[1]) return (t - g.rescan[0]) / (g.rescan[1] - g.rescan[0]);
+  return -1;
+}
+const tc = new THREE.Color();
+function fade(mat, target, rate) { mat.opacity += (target - mat.opacity) * rate; }
+function tint(mat, c, rate) { mat.color.lerp(c, rate); }
+
+/* ---------- loop ---------- */
+let sy = scrollY, last = performance.now(), time = 0, bpTarget = new THREE.Vector3(), bpST = 1;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  time += dt * (REDUCE ? 0.35 : 1);
+  const f = Math.min(dt * 60, 2.2), rate = 1 - Math.pow(0.9, f), slow = 1 - Math.pow(0.96, f);
+  sy += (scrollY - sy) * (1 - Math.pow(0.0006, dt));
+  const center = sy + innerHeight * 0.5;
+  let ch = 0; for (let k = 0; k < TOPS.length; k++) if (center >= TOPS[k]) ch = k;
+  const traw = clamp((center - TOPS[ch]) / HS[ch]);
+  const t = ch === 2 ? clamp((traw - 0.25) / 0.75) : traw; // ch2 opens with a rewind step
+  const TUN = ch === 2 ? 1 - sstep(0.17, 0.27, traw) : 0;
+  const docH = document.documentElement.scrollHeight - innerHeight;
+  bar.style.width = (scrollY / Math.max(1, docH) * 100) + '%';
+  railBtns.forEach((b, k) => b.classList.toggle('on', k === ch));
+
+  /* chapter-derived state */
+  // blueprint transform
+  if (ch === 5) { bpTarget.set(5.8, 0, 0); bpST = 0.8; }
+  else if (ch === 6 || ch === 7) { bpTarget.set(0, -0.4, 0); bpST = 0.38; }
+  else { bpTarget.set(0, 0, 0); bpST = 1; }
+  bp.position.lerp(bpTarget, slow * 1.4); const ns = lerp(bp.scale.x, bpST, slow * 1.4); bp.scale.setScalar(ns);
+  poolCx = 0;
+
+  // do-chapter timeline
+  if (ch === 4) {
+    FILL[0] = sstep(0.0, 0.11, t); FILL[1] = sstep(0.14, 0.26, t); FILL[2] = sstep(0.44, 0.55, t);
+    PASSED[0] = t >= 0.15; PASSED[1] = t >= 0.44; PASSED[2] = t >= 0.63;
+    for (let d = 0; d < 3; d++) SCANY[d] = -1;
+    GATES.forEach((g, k) => { const sf = scanFrac(g, t); if (sf >= 0) { const d = rings[k].d; SCANY[d] = sf * DEL[d].h; } });
+    D2FAIL = t >= 0.30 && t < 0.40 ? 1 : 0;
+    D2WRONG = sstep(0.29, 0.31, t) * (1 - sstep(0.37, 0.42, t));
+    DONE = sstep(0.78, 0.82, t);
+  } else if (ch === 5 || ch === 6 || ch === 7) { FILL[0] = FILL[1] = FILL[2] = 1; PASSED[0] = PASSED[1] = PASSED[2] = true; SCANY[0] = SCANY[1] = SCANY[2] = -1; D2FAIL = 0; D2WRONG = 0; DONE = 1; }
+
+  // check mark state
+  PHI = ch === 0 ? Math.sin(time * 0.3) * 0.45 : Math.sin(time * 0.22) * 0.3 - 0.08;
+  if (ch === 8) { FBUILT = sstep(0.0, 0.14, t) * 1.08;
+    for (let k = 0; k < 6; k++) { const a = 0.13 + k * 0.03; FG[k] = t < a ? 0 : t < a + 0.03 ? 1 : 2; }
+    FDIM = 1 - 0.55 * sstep(0.55, 0.68, t); FDONE = sstep(0.33, 0.37, t); if (t > 0.33 && shockT < 0) shockT = time; if (t < 0.3) shockT = -99; }
+  else { FDONE = 0; shockT = -99; }
+  if (burst && ch === 8) shockT = time;
+
+  // x-ray (compare)
+  const xrT = ch === 5 ? (xrayUser !== null ? (xrayUser ? 1 : 0) : (t > 0.5 ? 1 : 0)) : 0;
+  XRAY += (xrT - XRAY) * (1 - Math.pow(0.975, f));
+
+  // probe path (figure-out)
+  if (ch === 2) {
+    const keys = [[0.0, [-9, 3.5, -4]], [0.2, [-4, 0.5, -1.5]], [0.30, NODES[0].p], [0.40, NODES[1].p], [0.47, NODES[2].p], [0.58, NODES[3].p], [0.74, NODES[4].p], [1, NODES[4].p]];
+    let k = 0; while (k < keys.length - 2 && t > keys[k + 1][0]) k++;
+    const [ta0, a] = keys[k], [tb0, b] = keys[k + 1]; const u = sstep(ta0, tb0, t);
+    PRB.set(lerp(a[0], b[0], u), lerp(a[1], b[1], u) + Math.sin(time * 2) * 0.08, lerp(a[2], b[2], u));
+  }
+
+  // mouse world point
+  let mOn = false;
+  if (mouseOn) { ray.setFromCamera(mouseN, camera); camera.getWorldDirection(tmpV); plane.setFromNormalAndCoplanarPoint(tmpV, camLook); mOn = !!ray.ray.intersectPlane(plane, MW); }
+  const MR2 = 2.2, mx = MW.x, my = MW.y, mz = MW.z;
+
+  /* ---- particles ---- */
+  const damp = Math.pow(0.84, f), crate = Math.min(1, 0.09 * f);
+  const da = time * 0.012, dca = Math.cos(da), dsa = Math.sin(da);
+  for (let i = 0; i < N; i++) {
+    const i3 = i * 3, o = i * 8;
+    if (DUST[i]) {
+      tx = DH[i3] * dca - DH[i3 + 2] * dsa; ty = DH[i3 + 1]; tz = DH[i3] * dsa + DH[i3 + 2] * dca;
+      col(DUSTC, 0.5 + R[o + 3] * 0.9); ts = 0.7 + R[o + 4] * 1.2; ta = 0.5 + 0.3 * Math.sin(time * 1.5 + i);
+    } else switch (ch) {
+      case 0: checkClaim(i, time); break;
+      case 1: {
+        const r1 = R[o];
+        const built = sstep(0.01, 0.2, t), scatter = sstep(0.77, 0.94, t);
+        const scan = t < 0.52 ? -1 : lerp(-0.5, 6.5, sstep(0.52, 0.68, t));
+        if (r1 < built && (1 - r1) > scatter) tower(i, 0, 1, time, scatter > 0 ? -1 : scan);
+        else { swirl(i, time, 1.5); if (t < 0.25) { ta = 0.55; } }
+        if (scatter > 0 && !(r1 < built && (1 - r1) > scatter)) { ta = 0.6; }
+        break;
+      }
+      case 2: {
+        if (TUN > 0 && R[o + 2] < TUN) {
+          const z = 20 + R[o] * 92, th = R[o + 1] * TAU + z * 0.05 + time * 0.35, rr = 2.3 + R[o + 3] * 2.0;
+          tx = Math.cos(th) * rr; ty = 1.2 + Math.sin(th) * rr; tz = z;
+          const q = clamp((z - 20) / 92); mixc(COOL, HOT1, q * q, 0.95); if (R[o + 6] > 0.9) col(WHITE, 1.0);
+          ts = 0.9 + R[o + 5] * 1.0; ta = 0.85; break;
+        }
+        let x = FH[i3] + Math.sin(time * 0.17 + R[o + 3] * 20) * 0.6, y = FH[i3 + 1] + Math.cos(time * 0.13 + R[o + 6] * 20) * 0.35, z = FH[i3 + 2];
+        const dx = x - PRB.x, dy = y - PRB.y, dz = z - PRB.z; const g = Math.exp(-(dx * dx + dy * dy + dz * dz) / 4.0);
+        tx = x; ty = y; tz = z; mixc(FOGC, ICE, g * 0.9, 0.95 + g * 1.1); ts = 1.25 + g * 1.2; ta = 0.62;
+        if (R[o + 4] < 0.36) {
+          const n = NODES[Math.floor(R[o + 5] * 5)];
+          if (t >= n.t && !(n.out && t >= n.out)) {
+            const th = R[o + 6] * TAU + time * 0.6, ph = Math.acos(2 * R[o + 7] - 1), rr = (n.read ? 0.5 : 0.36) + 0.28 * R[o + 1];
+            const arrive = sstep(n.t, n.t + 0.04, t);
+            tx = lerp(x, n.p[0] + Math.sin(ph) * Math.cos(th) * rr, arrive); ty = lerp(y, n.p[1] + Math.cos(ph) * rr, arrive); tz = lerp(z, n.p[2] + Math.sin(ph) * Math.sin(th) * rr, arrive);
+            if (n.read) mixc(ICE, COOL, 0.35, 1.05); else col(ICE, 0.6);
+            ts = 1.0; ta = 0.75;
+          } else if (n.out && t >= n.out) { col(GREY, 0.45); }
+        }
+        break;
+      }
+      case 3: pool(i, time); break;
+      case 4: {
+        const d = DI[i], r1 = R[o];
+        if (R[o + 4] < 0.2 || r1 >= FILL[d]) { pool(i, time); break; }
+        boxAt(i);
+        let ly = CELL[i3 + 1];
+        if (d === 1 && D2WRONG > 0 && r1 > 0.5) { tx += (ly - 1.5) * 0.55 * D2WRONG + Math.sin(time * 9 + i) * 0.04 * D2WRONG; tz += 0.3 * D2WRONG; }
+        if (PASSED[d]) mixc(COOL, MINT, 0.8, 0.95); else col(ICE, 0.75);
+        ts = 0.85; ta = 0.85;
+        if (d === 1 && D2FAIL && r1 > 0.5) { col(RED, 1.3); ts = 1.1; }
+        if (SCANY[d] >= 0 && Math.abs(ly - SCANY[d]) < 0.22) { col(WHITE, 1.6); ts = 1.7; }
+        if (DONE > 0) { const pulse = Math.max(0, Math.sin((time * 1.6 - ly * 0.6) % TAU)); ts += pulse * 0.5 * DONE; col(MINT, 0.9 + pulse * 0.5 * DONE); }
+        break;
+      }
+      case 5: {
+        if (SPLIT[i] < 0.42) {
+          const scan = XRAY > 0.01 ? lerp(-0.5, 6.5, XRAY) : -1;
+          tower(i, -5.8, 0.8, time, scan);
+        } else {
+          boxAt(i); mixc(COOL, MINT, 0.85, 0.9); ts = 0.8; ta = 0.85;
+          if (XRAY > 0.01) { const ly = CELL[i3 + 1], sc = lerp(-0.3, 3.3, XRAY); if (Math.abs(ly - sc) < 0.2) { col(WHITE, 1.4); ts = 1.4; } }
+        }
+        break;
+      }
+      case 6: case 7: {
+        const q = R[o + 4];
+        if (q < 0.07) {
+          const th = R[o + 6] * TAU + time * 0.4, ph = Math.acos(2 * R[o + 7] - 1), rr = 0.35 + R[o + 1] * 0.55;
+          tx = STAR.x + Math.sin(ph) * Math.cos(th) * rr; ty = STAR.y + Math.cos(ph) * rr; tz = STAR.z + Math.sin(ph) * Math.sin(th) * rr;
+          mixc(AMBER, WHITE, R[o + 2] * 0.5, 0.9); ts = 1.0; ta = 0.8;
+        } else if (q < 0.32) { boxAt(i); col(MINT, 0.85); ts = 0.7; ta = 0.85; }
+        else {
+          const Rr = 2.8 + Math.pow(R[o], 0.85) * 9, arm = Math.floor(R[o + 5] * 3);
+          const ang = arm * TAU / 3 + Rr * 0.38 + (R[o + 1] - 0.5) * 0.9 + time * 0.05;
+          tx = Math.cos(ang) * Rr; tz = Math.sin(ang) * Rr; ty = -0.5 + (R[o + 2] - 0.5) * 0.4 * (1 + Rr * 0.06);
+          mixc(POOL, COOL, R[o + 3], 0.75); if (R[o + 6] > 0.92) col(MINT, 0.8);
+          ts = 0.75; ta = ch === 7 ? 0.5 : 0.7;
+        }
+        break;
+      }
+      case 8: checkFinal(i, time);
+        if (burst) { const dx = P[i3] - CKC.x, dy = P[i3 + 1] - CKC.y, dz = P[i3 + 2], d = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.3; const kb = (0.25 + R[o + 3] * 0.35) / d; V[i3] += dx * kb; V[i3 + 1] += dy * kb; V[i3 + 2] += dz * kb + 0.1 * (R[o + 5] - 0.5); }
+        break;
+    }
+    // physics
+    const k = K[i] * f;
+    let vx = V[i3] * damp + (tx - P[i3]) * k, vy = V[i3 + 1] * damp + (ty - P[i3 + 1]) * k, vz = V[i3 + 2] * damp + (tz - P[i3 + 2]) * k;
+    if (mOn && !DUST[i]) {
+      const dx = P[i3] - mx, dy = P[i3 + 1] - my, dz = P[i3 + 2] - mz, d2 = dx * dx + dy * dy + dz * dz;
+      if (d2 < MR2) { const s = (1 - d2 / MR2) * 0.06 * f / Math.sqrt(d2 + 0.02); vx += dx * s; vy += dy * s; vz += dz * s; }
+    }
+    V[i3] = vx; V[i3 + 1] = vy; V[i3 + 2] = vz;
+    P[i3] += vx * f; P[i3 + 1] += vy * f; P[i3 + 2] += vz * f;
+    COL[i3] += (cr - COL[i3]) * crate; COL[i3 + 1] += (cg - COL[i3 + 1]) * crate; COL[i3 + 2] += (cb - COL[i3 + 2]) * crate;
+    SZ[i] += (ts - SZ[i]) * crate; AL[i] += (ta - AL[i]) * crate * 0.6;
+  }
+  aPos.needsUpdate = aCol.needsUpdate = aSz.needsUpdate = aAl.needsUpdate = true;
+  burst = false;
+
+  /* ---- blueprint objects ---- */
+  const ghost = ch === 1 ? sstep(0.56, 0.64, t) * (1 - sstep(0.77, 0.84, t)) : 0;
+  boxes.forEach((b, d) => {
+    let op = 0, c = COOL, sy_ = 1, fop = 0;
+    if (ch === 1) { op = ghost * 0.55; c = WHITE; }
+    else if (ch === 3) { op = 0.85; sy_ = Math.max(0.001, sstep(0.02 + d * 0.06, 0.14 + d * 0.06, t)); fop = 0.03; }
+    else if (ch === 4) { op = 0.8; fop = 0.025; c = (d === 1 && D2FAIL) ? RED : PASSED[d] ? MINT : COOL; }
+    else if (ch === 5 || ch === 6 || ch === 7) { op = 0.75; c = MINT; fop = 0.02; }
+    fade(b.e.material, op, rate); tint(b.e.material, c, rate); fade(b.f.material, fop, rate); tint(b.f.material, c, rate);
+    b.grp.scale.y += (sy_ - b.grp.scale.y) * rate;
+  });
+  rings.forEach((r, k) => {
+    let op = 0, c = COOL, s = 1, st = 'idle';
+    if (ch === 3) { op = sstep(0.34 + k * 0.05, 0.42 + k * 0.05, t) * 0.5; }
+    else if (ch === 4) { st = gstate(GATES[k], t);
+      if (st === 'idle') { op = 0.35; } else if (st === 'scan') { op = 1; c = WHITE; s = 1 + 0.05 * Math.sin(time * 22); }
+      else if (st === 'fail') { op = 1; c = RED; s = 1 + 0.03 * Math.sin(time * 30); } else { op = 0.95; c = MINT; } }
+    else if (ch === 5) { op = 0.65 + 0.35 * XRAY; c = MINT; }
+    else if (ch === 6 || ch === 7) { op = 0.55; c = MINT; }
+    fade(r.m.material, op, rate); tint(r.m.material, c, Math.min(1, rate * 2)); r.m.scale.setScalar(s); r.st = st;
+  });
+  {
+    let op = 0, c = COOL, dop = 0, gop = 0, sop = 0, sy2 = 0, ss = 1;
+    if (ch === 3) { op = sstep(0.66, 0.78, t) * 0.8; dop = sstep(0.7, 0.85, t) * 0.03; gop = sstep(0, 0.1, t) * 0.18; }
+    else if (ch === 4) { op = 0.7; dop = 0.022; gop = 0.14; c = t >= 0.74 ? MINT : COOL;
+      if (t >= 0.64 && t < 0.74) { const u = (t - 0.64) / 0.1; sop = Math.sin(u * Math.PI); sy2 = u * 3.4; }
+      else if (t >= 0.78 && t < 0.92) { const u = (t - 0.78) / 0.14; sop = 1 - u; ss = 1 + u * 0.9; } }
+    else if (ch === 5) { op = 0.45; dop = 0.016; c = MINT; }
+    fade(invRing.material, op, rate); tint(invRing.material, c, rate); fade(dome.material, dop, rate); tint(dome.material, c, rate);
+    fade(grid.material, gop, rate);
+    invScan.material.opacity = sop; invScan.position.y = sy2; invScan.scale.set(ss, ss, 1); invScan.material.color.copy(sy2 > 0 ? WHITE : MINT);
+  }
+
+  /* ---- verified check objects ---- */
+  ckG.rotation.y = PHI;
+  ckRings.forEach((m, k) => { let op = 0, c = COOL, sc = 1;
+    if (ch === 8) { const st = FG[k]; op = FBUILT > CKG[k] ? (st === 0 ? 0.35 : 1) : 0; c = st === 1 ? WHITE : st === 2 ? MINT : COOL; if (st === 1) sc = 1 + 0.08 * Math.sin(time * 24); }
+    fade(m.material, op, rate); tint(m.material, c, Math.min(1, rate * 2)); m.scale.setScalar(sc); });
+  const ctaDim = ch === 8 ? 1 - 0.72 * sstep(0.55, 0.68, t) : 1;
+  bloom.strength += ((ch === 8 ? 0.8 - 0.35 * sstep(0.55, 0.68, t) : 0.8) - bloom.strength) * 0.08;
+  { const on = ch === 8 ? sstep(0.3, 0.35, t) * ctaDim : 0; fade(seal.material, on * 0.75, rate); fade(seal2.material, on * 0.35, rate);
+    seal.rotation.z = time * 0.1; const u = (time - shockT) / 1.3;
+    if (u >= 0 && u < 1) { shock.material.opacity = (1 - u) * 0.9; shock.scale.setScalar(1 + u * 1.1); } else shock.material.opacity = 0; }
+
+  /* ---- figure-out objects ---- */
+  const prOn = ch === 2 && TUN < 0.3; fade(probe.material, prOn ? 1 : 0, rate); fade(probeGlow.material, prOn ? 0.8 : 0, rate);
+  probe.position.copy(PRB); probeGlow.position.copy(PRB);
+  edgeLines.forEach((l, k) => { const [a, b] = EDGES[k]; const on = ch === 2 && t >= Math.max(NODES[a].t, NODES[b].t) + 0.02;
+    const out = NODES[b].out && t >= NODES[b].out; fade(l.material, on ? (out ? 0.12 : 0.55) : 0, rate); tint(l.material, b === 4 ? COOL : ICE, rate); });
+
+  /* ---- weeks objects ---- */
+  const wOn = ch === 6 ? sstep(0.0, 0.12, t) : ch === 7 ? 1 : 0;
+  const pulse = 0.85 + 0.15 * Math.sin(time * 2.2);
+  fade(starCore.material, wOn, rate); fade(starGlow.material, wOn * 0.9 * pulse, rate); fade(rayH.material, wOn * 0.7, rate); fade(rayV.material, wOn * 0.5, rate);
+  rayH.material.rotation = time * 0.05; rayV.material.rotation = Math.PI / 2 + time * 0.05;
+  { const top = STAR.y - 0.3, bot = bp.position.y + 1.3 * bp.scale.x; beam.position.set(0, (top + bot) / 2, 0); beam.scale.set(1, Math.max(0.01, top - bot), 1); fade(beam.material, wOn * 0.35, rate); }
+  const pull = ch === 6 ? sstep(0.4, 0.62, t) : ch === 7 ? 1 : 0;
+  tickets.forEach((tk, j) => {
+    const a = j / 6 * TAU + time * 0.13, orbit = tmpV.set(Math.cos(a) * 6.6, 3.2 + Math.sin(a * 2 + j) * 0.3, Math.sin(a) * 6.6);
+    let op = wOn, sc = 1;
+    if (j === 0) { const dest = new THREE.Vector3(0, bp.position.y + 1.9 * bp.scale.x, 0); tk.grp.position.lerpVectors(orbit, dest, pull); sc = 1 - pull * 0.55; op = wOn * (1 - sstep(0.85, 1, pull)); op *= 1 + 0.6 * (ch === 6 ? sstep(0.3, 0.45, t) : 0); }
+    else tk.grp.position.copy(orbit);
+    tk.grp.scale.setScalar(sc); tk.grp.lookAt(camera.position);
+    const bright = j === 0 ? 1 : 0.6;
+    fade(tk.e.material, op * 0.9 * bright, rate); fade(tk.f.material, op * 0.06, rate); tk.lines.children.forEach(m => fade(m.material, op * 0.5 * bright, rate));
+  });
+
+  /* ---- camera ---- */
+  const K_ = CAM[ch]; const cu = sstep(0, 1, t);
+  const mScale = NARROW ? (ch === 0 ? 1.9 : (ch >= 3 && ch <= 5) || ch === 8 ? 1.6 : 1.3) : 1;
+  let cx = lerp(K_.p0[0], K_.p1[0], cu), cy = lerp(K_.p0[1], K_.p1[1], cu), cz = lerp(K_.p0[2], K_.p1[2], cu) * mScale;
+  let lkx = K_.l[0], lky = K_.l[1], lkz = K_.l[2];
+  if (ch === 0 && NARROW) { lkx = 1.0; lky = -7.2; }
+  if (ch === 2 && traw < 0.25) { const u = sstep(0.0, 0.25, traw); cx = 0; cy = 1.2; cz = lerp(128, 17 * mScale, u); lkx = 0; lky = 1.1; lkz = cz - 40; }
+  par.x += ((mouseOn ? mouse.x : 0) - par.x) * 0.04; par.y += ((mouseOn ? mouse.y : 0) - par.y) * 0.04;
+  let ox = 0, oz = 0; if (ch === 0) { ox = Math.sin(time * 0.12) * 1.5; oz = Math.cos(time * 0.12) * 0.8; }
+  camera.position.x += (cx + ox + par.x * 0.9 - camera.position.x) * slow;
+  camera.position.y += (cy + par.y * 0.5 - camera.position.y) * slow;
+  camera.position.z += (cz + oz - camera.position.z) * slow;
+  camLook.x += (lkx - camLook.x) * slow; camLook.y += (lky - camLook.y) * slow; camLook.z += (lkz - camLook.z) * slow;
+  camera.lookAt(camLook);
+  camOff += ((NARROW ? 0 : K_.off) - camOff) * slow;
+  camera.setViewOffset(innerWidth, innerHeight, -innerWidth * camOff, 0, innerWidth, innerHeight);
+
+  /* ---- labels ---- */
+  for (const k in LB) LB[k].target = 0;
+  const L = LB;
+  if (ch === 0) { L.vh.target = time > 3.0 && !NARROW ? 1 : 0; L.vh.pos.set(CK[2][0] + 0.9, CK[2][1] + 1.3, 0); }
+  if (ch === 8) { L.vf.target = sstep(0.36, 0.4, t) * (1 - sstep(NARROW ? 0.5 : 0.56, NARROW ? 0.55 : 0.62, t)); L.vf.pos.set(CK[2][0] + 0.9, CK[2][1] + 1.3, 0); }
+  if (ch === 1) {
+    const on = sstep(0.28, 0.32, t) * (1 - sstep(0.77, 0.8, t));
+    L.claim.target = on; L.claim.pos.set(1.9, 6.4, 0); L.claim.el.classList.toggle('doubt', t > 0.55);
+    setTxt(L.claim, t > 0.55 ? '✓ DONE?' : '✓ DONE');
+    L.ghost.target = ghost * (NARROW && t > 0.5 ? 0 : 1); bpWorld(3.4, 2.95, 0, L.ghost.pos);
+    DEFC.forEach((c, k) => { const Lk = L['df' + k]; Lk.target = sstep(0.53 + k * 0.03, 0.56 + k * 0.03, t) * (1 - sstep(0.77, 0.8, t));
+      Lk.pos.set(c[0] - 1.9, c[1] + 0.1, c[2]); setTxt(Lk, '<b>✕</b>' + DEFL[k][0]); });
+  }
+  if (ch === 2) NODES.forEach((n, k) => { const Lk = L['n' + k]; const out = n.out && t >= n.out;
+    Lk.target = t >= n.t + 0.02 ? (out ? 0.55 : 1) : 0; Lk.pos.set(n.p[0], n.p[1] + (n.read ? 0.95 : 0.75), n.p[2]);
+    Lk.el.classList.toggle('out', !!out); setTxt(Lk, out ? 'queue overloaded? · depth flat · ruled out' : n.txt); });
+  if (ch === 2) { L.you.target = sstep(0.79, 0.82, t); L.you.pos.set(NARROW ? 0.2 : -1.9, NARROW ? 5.4 : -1.1, 1.4); }
+  if (ch === 3 || ch === 4) {
+    DEL.forEach((B, d) => { const Lk = L['d' + d]; Lk.target = ch === 3 ? sstep(0.06 + d * 0.06, 0.16 + d * 0.06, t) : 0.85; bpWorld(B.x, B.h + 0.5, 0, Lk.pos); });
+    rings.forEach((r, k) => { const Lk = L['g' + k]; Lk.target = ch === 3 ? sstep(0.36 + k * 0.05, 0.44 + k * 0.05, t) : 1; bpWorld(DEL[r.d].x, r.y, 1.62, Lk.pos); setSt(Lk, ch === 4 ? r.st : 'idle'); });
+    L.inv.target = ch === 3 ? sstep(0.68, 0.78, t) : 1; bpWorld(-3.2, 0, 5.45, L.inv.pos);
+    if (ch === 3) { L.appr.target = sstep(0.78, 0.82, t); bpWorld(0, 4.6, 0, L.appr.pos); }
+    setSt(L.inv, ch === 4 ? (t >= 0.74 ? 'pass' : t >= 0.64 ? 'scan' : 'idle') : 'idle');
+  }
+  if (ch === 5) {
+    L.cmpL.target = 1; L.cmpL.pos.set(-5.8 + 1.4 * 0.8, 6.2 * 0.8 + 0.5, 0);
+    const bad = XRAY > 0.6; L.cmpL.el.classList.toggle('bad', bad); setTxt(L.cmpL, bad ? '✕ 3 hidden problems' : '✓ done, claimed');
+    L.cmpR.target = NARROW ? 1 - sstep(0.3, 0.6, XRAY) : 1; bpWorld(0, 3.7, 0, L.cmpR.pos);
+    DEFC.forEach((c, k) => { const Lk = L['df' + k]; Lk.target = sstep(0.75, 0.95, XRAY) * (t > 0.45 ? 1 : 0);
+      Lk.pos.set(-5.8 + c[0] * 0.8 + (NARROW ? 0.3 : -1.7), c[1] * 0.8, c[2] * 0.8); setTxt(Lk, '<b>✕</b>' + DEFL[k][1]); });
+    { const on = xrayUser !== null ? xrayUser : t > 0.5; const txt = on ? 'Turn the x-ray off' : 'Turn the x-ray on'; if (xrayBtn.textContent !== txt) xrayBtn.textContent = txt; }
+  }
+  if (ch === 6) {
+    L.star.target = sstep(0.05, 0.15, t); L.star.pos.set(STAR.x, STAR.y + 1.2, STAR.z);
+    L.tk.target = sstep(0.1, 0.2, t);
+    { let best = null, bx = -1e9; for (let j = 1; j < tickets.length; j++) { tmpV.copy(tickets[j].grp.position).project(camera); if (tmpV.x < 0.9 && tmpV.x > bx && tmpV.y < 0.6) { bx = tmpV.x; best = tickets[j]; } }
+      if (best) L.tk.pos.copy(best.grp.position).y += 0.8; }
+    L.mf.target = sstep(0.15, 0.25, t); bpWorld(-3.4, 3.2, 0, L.mf.pos);
+  }
+  const W = innerWidth, H = innerHeight;
+  for (const k in LB) {
+    const Lk = LB[k]; Lk.op += (Lk.target - Lk.op) * Math.min(1, 0.14 * f);
+    if (Lk.op < 0.01) { if (Lk.el.style.opacity !== '0') Lk.el.style.opacity = '0'; continue; }
+    tmpV.copy(Lk.pos).project(camera);
+    if (tmpV.z > 1) { Lk.el.style.opacity = '0'; continue; }
+    const hw = (Lk.w || (Lk.w = Lk.el.offsetWidth)) / 2 + 12, hh = (Lk.h || (Lk.h = Lk.el.offsetHeight)) / 2 + 12;
+    const x = clamp((tmpV.x * 0.5 + 0.5) * W, hw, W - hw - 40), y = clamp((-tmpV.y * 0.5 + 0.5) * H, hh + 40, H - hh);
+    Lk.el.style.opacity = Lk.op.toFixed(3);
+    Lk.el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-50%) scale(${(0.92 + Lk.op * 0.08).toFixed(3)})`;
+  }
+
+  rwEl.style.opacity = (ch === 2 ? sstep(0.0, 0.03, traw) * (1 - sstep(0.15, 0.23, traw)) : 0).toFixed(3);
+  updTerm(ch, t, ch === 2 && traw < 0.22);
+  updHud(ch, traw);
+  tryLink.classList.toggle('gone', ch === 8);
+  composer.render();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); bloom.setSize(innerWidth, innerHeight);
+  pmat.uniforms.uScale.value = innerHeight / 900; NARROW = innerWidth <= 800; measure();
+});
+</script>
+</body>
+</html>
