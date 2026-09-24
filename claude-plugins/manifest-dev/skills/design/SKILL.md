@@ -1,6 +1,6 @@
 ---
 name: design
-description: 'Guide visual and interaction design from the person it is for, the moment they meet it in, and the subject it is about: the feeling that moment wants and how strong, with the visual idea, palette, type and texture drawn from the subject and the audience''s world rather than a house style. Use when creating or restyling a visual artifact, choosing a design direction, or designing a disposable prototype.'
+description: 'Guide visual and interaction design from the person it is for, the moment they meet it in, and the subject it is about, rather than a house style. Use when creating or restyling a visual artifact, choosing a design direction, or designing a disposable prototype.'
 argument-hint: '<artifact, brief or existing file>'
 user-invocable: true
 ---
