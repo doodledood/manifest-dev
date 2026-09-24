@@ -92,8 +92,9 @@ permission to do the next piece of research.
   real actions need authority.
   For a draft rendered as a page, invoke the design skill for its visual direction,
   passing along that person, their moment and our goal, any feeling or strength
-  the user named, and this iteration's question and rough fidelity so design
-  guidance serves the next reaction. Where that skill is unavailable, write down the loop
+  the user named, for each variant the answer it gives to the open choice, and
+  this iteration's question and rough fidelity so design guidance serves the next
+  reaction. Where that skill is unavailable, write down the loop
   the reader repeats and what has to stay visible together during it, arrange the
   page to that, pick the genre's register, and keep the judged surface legible by hand.
 - Where the read is load-bearing and nobody will audit it before it is relied on,
