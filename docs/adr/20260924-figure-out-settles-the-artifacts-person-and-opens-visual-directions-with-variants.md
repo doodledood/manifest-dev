@@ -16,10 +16,10 @@ The draft step also defaulted to one artifact, a default set in PR #327, with va
 
 ## Decision
 
-Two changes in figure-out's spine, both clauses on existing bullets:
+The decision makes two changes to figure-out's spine, both as clauses on existing bullets:
 
 1. **The seat names the artifact's own person.** Start from the North Star's *Who it's for*, then name the narrower slice and moment the artifact serves where it has one, and take that seat.
-2. **The draft step settles the person, then shows the choice.** Before the first draft, settle what that person came to do and what we want from the artifact, asking only what the conversation has not answered. Do not ask for a feeling in the abstract. A visual draft whose direction is still open opens with two or three variants. Each variant gives a different answer to the open choice, either how it should feel and how strongly, or the visual idea. The variants share the same content and sit side by side with a way to switch. Once the user chooses, the loop continues with one artifact. The design skill receives the person, their moment and our goal, any feeling or strength the user named, and the iteration's question and fidelity.
+2. **The draft step settles the person, then shows the choice.** Before the first draft, settle what that person came to do and what we want from the artifact, asking only what the conversation has not answered. Do not ask for a feeling in the abstract. A visual draft whose direction is still open opens with two or three variants. Each variant gives a different answer to the open choice, either how it should feel and how strongly, or the visual idea. The variants share the same content and sit side by side with a way to switch. After the user chooses, the loop continues with one artifact. The design skill receives the person, their moment, and our goal; any feeling or strength the user named; for each variant, the answer it gives to the open choice; and the iteration's question and fidelity.
 
 Non-visual drafts and visual drafts whose direction is settled keep the one-artifact default.
 
