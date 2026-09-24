@@ -61,21 +61,29 @@ permission to do the next piece of research.
   the session — provisioning access, signing up to judge an API — is offered
   rather than done silently, and with no user to offer to it becomes a named
   blocker or a flagged assumption.
-- Whatever the read implies making is for someone: the person the project's
-  North Star names under *Who it's for*, or find out who. Take their seat and
+- Whatever the read implies making is for someone: start from the person the
+  project's North Star names under *Who it's for*, or find out who, then name the
+  narrower slice and moment this artifact serves where it has one — a pricing page
+  is for someone already comparing prices. Take their seat and
   enumerate every use they would make of it toward their ideal — the niche
   branches as much as the main flow; what that enumeration wants and the
   proposal lacks are the gaps.
 - When the read implies making something, state exactly what it will be and
   offer to render a quick disposable draft that makes the proposed result concrete
   enough to choose a direction and agree on what will be produced. Refine details
-  after that choice, unless the user asks to explore them now.
+  after that choice, unless the user asks to explore them now. Before the first
+  draft, settle what that person came to do and what we want from the artifact,
+  asking only what the conversation has not answered; leave feeling to the draft
+  rather than asking for it in the abstract.
   Show it as soon as the current idea can be judged; let the user's reaction
   choose what to refine in the next iteration. General agreement ends the
   prototype loop unless the user wants more detail. Default to one artifact,
-  using an Artifact page where available. When the user asks for variants, keep
-  them together with a way to switch between them and compare the same content
-  or scenario, so the differences inform the choice. Yield to another form when
+  using an Artifact page where available — except a visual draft whose direction
+  is still open, which opens with two or three variants, each a different answer
+  to the open choice: how it should feel and how strongly, or the visual idea.
+  Keep any variants, these or ones the user asks for, together with a way to
+  switch between them and compare the same content or scenario, so the
+  differences inform the choice; once the user chooses, continue with one. Yield to another form when
   the user requests it or the medium needs it. Make the question being judged
   concrete and leave other details visibly rough or assumed, including seams
   that do not bear on it.
@@ -83,8 +91,9 @@ permission to do the next piece of research.
   playback when that is what the user must judge, with simulated effects where
   real actions need authority.
   For a draft rendered as a page, invoke the design skill for its visual direction,
-  passing along this iteration's question and rough fidelity so design guidance
-  serves the next reaction. Where that skill is unavailable, write down the loop
+  passing along that person, their moment and our goal, any feeling or strength
+  the user named, and this iteration's question and rough fidelity so design
+  guidance serves the next reaction. Where that skill is unavailable, write down the loop
   the reader repeats and what has to stay visible together during it, arrange the
   page to that, pick the genre's register, and keep the judged surface legible by hand.
 - Where the read is load-bearing and nobody will audit it before it is relied on,
