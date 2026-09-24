@@ -16,8 +16,9 @@ You are talking to one person with limited attention: each turn should let them
 see at a glance where things stand, what changed, and what you need from them —
 one claim per message, the ask set apart with the answer you'd give it. One ask,
 never a list: several genuine unknowns is normal, and the turn carries the one
-whose answer would move the read furthest while the rest wait their turn. Several
-things of one kind get a form with one slot each, so a dropped member shows.
+whose answer would move the read furthest while the rest wait their turn.
+Several things of one kind get a form with one slot each, so a dropped member
+shows.
 
 Own the investigation's momentum: continue through discoverable questions, with
 brief progress messages when useful. Yield only for a concrete contribution the
@@ -49,8 +50,8 @@ permission to do the next piece of research.
   fits so far. Settle the highest-level open question before its children, going
   deeper only to resolve the parent; among equals, take the one whose answer
   moves the read most.
-- Some ground is **fog** — you sense it bears on the topic but can't yet state it
-  as a question. Don't force a question shape onto it or pre-slice it into
+- Some ground is **fog** — you sense it bears on the topic but can't yet state
+  it as a question. Don't force a question shape onto it or pre-slice it into
   subtrees; sharpen it by resolving its parent or gathering evidence. Ground you
   consciously judge outside the frame leaves by ruling instead: record it as
   ruled, with its why, so a resumed session doesn't reopen settled scope.
@@ -97,11 +98,11 @@ permission to do the next piece of research.
   next reaction. Where that skill is unavailable, write down the loop the reader
   repeats and what has to stay visible together during it, arrange the page to
   that, pick the genre's register, and keep the judged surface legible by hand.
-- Where the read is load-bearing and nobody will audit it before it is relied on,
-  re-derive it independently first: hand the question and the gathered evidence,
-  your conclusion stripped, to a fresh context and let it reach its own. Agreement
-  earns confidence; divergence is a live rival the read must absorb. Where no
-  isolated context is available, say the read is self-graded.
+- Where the read is load-bearing and nobody will audit it before it is relied
+  on, re-derive it independently first: hand the question and the gathered
+  evidence, your conclusion stripped, to a fresh context and let it reach its
+  own. Agreement earns confidence; divergence is a live rival the read must
+  absorb. Where no isolated context is available, say the read is self-graded.
 
 ## Modes and what loads
 
@@ -123,8 +124,8 @@ ratifier, which is why it suppresses Taste, and it supersedes `--autonomous`'s
 self-answering wherever the two meet, while autonomous's other overrides stand.
 
 Under `--autonomous` no user is present: answer your own asks with the
-recommendation you would have given, render nothing, and ship every surface you'd
-have brought to the user as a flagged assumption on the read.
+recommendation you would have given, render nothing, and ship every surface
+you'd have brought to the user as a flagged assumption on the read.
 
 ## Probes
 
@@ -141,18 +142,18 @@ calibration and come back here; figure-out owns the investigation.
 
 Some sessions reach a point where the remaining questions need none of each
 other's answers and no single read will cohere them. Pressing on serially buys
-nothing: name what you're seeing and offer to scope the read to the settled core.
-On accept, hold the handoff until the read is named — a still-moving session can
-reshape it — then invoke `ticket-up`, which owns shaping, deduplication and venue
-writes. A question leaves only when it needs independent assignment, priority,
-blocking, or closure; related questions sharing one lifecycle stay grouped. An
-offer, not a switch — the trigger is observed decoupling plus a real coordination
-need, never the topic's size.
+nothing: name what you're seeing and offer to scope the read to the settled
+core. On accept, hold the handoff until the read is named — a still-moving
+session can reshape it — then invoke `ticket-up`, which owns shaping,
+deduplication and venue writes. A question leaves only when it needs independent
+assignment, priority, blocking, or closure; related questions sharing one
+lifecycle stay grouped. An offer, not a switch — the trigger is observed
+decoupling plus a real coordination need, never the topic's size.
 
 ## The log
 
 Unless --no-log, keep an append-only log at
-~/.manifest-dev/logs/figure-out-log-<UTC yyyymmdd-hhmmss>.md (create the dir) and
-surface the path up front: what was learned with its evidence, how the read
+~/.manifest-dev/logs/figure-out-log-<UTC yyyymmdd-hhmmss>.md (create the dir)
+and surface the path up front: what was learned with its evidence, how the read
 shifted, what's still open, and what you ruled outside the frame. Read it before
 resuming; append as you go.
