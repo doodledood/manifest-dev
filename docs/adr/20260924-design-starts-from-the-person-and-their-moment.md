@@ -1,7 +1,7 @@
 # ADR: Design starts from the person and their moment; the example catalogs are retired
 
 ## Status
-Accepted
+Accepted — amended by 20260925-design-composes-artifacts-and-creative-directions: the person-and-moment foundation remains; selective artifact and creative-direction guides supplement it. Required example-site study remains retired.
 
 ## Area
 Design skills

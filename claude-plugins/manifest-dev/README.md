@@ -59,6 +59,10 @@ Manifest criteria call these; you can also invoke them directly:
 
 `/design` supplies standalone art direction, information design and interaction design from the person an artifact is for, the moment they meet it in, and its subject. The moment sets the feeling and how strong it should be — a first glance, a meeting, a working day each want something different — and the subject and the audience's world supply the visual idea, palette, type and texture instead of a house style. A request that names the intensity it wants overrides the moment's default.
 
+For a new composition or substantial redesign, `/design` selects concise guides from two linked indexes: [artifacts](skills/design/references/artifacts/index.md), organized by how people use the work, and [creative directions](skills/design/references/directions/index.md), organized by the feeling it should create. Read only the relevant guides. Both repertoires allow combinations and approaches beyond the listed examples. App guidance covers coherence across screens; individual screen guides address their particular uses.
+
+For example, a cinematic landing page combines the cinematic direction with landing-page guidance. An editorial collection can add playful discovery, while a reference tool can combine precision with interactive exploration. Naming a direction selects it without requiring a separate skill. Narrow refinements keep their scope.
+
 Technical implementation stays with the invoking agent; `/review-design` evaluates the result. The design skill has no dependency on the evaluator.
 
 ```text
