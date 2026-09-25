@@ -7,13 +7,15 @@ user-invocable: true
 
 Design for a person in a moment: who is here, what they came to do, and how long they'll stay — a first glance, a meeting, a working day. Make them feel what that moment wants, as strongly as it wants — quiet to spectacular — unless the request says otherwise. Find the visual idea in the subject and in their world, and take palette, type and texture from there rather than from a house style.
 
-Establish the intended use, desired action or understanding, supported claims, available assets, and constraints from the request, conversation, and project. Fill these in where the evidence is clear. Ask focused questions when missing information would materially change the design, and wait before committing to affected choices. State reasonable assumptions for minor gaps and proceed. Choose visual techniques that suit the concept and the constraints.
+Establish the intended use, desired action or understanding, supported claims, available assets, and constraints from the request, conversation, and project. Fill these in where the evidence is clear. State reasonable assumptions for minor gaps and proceed. Choose visual techniques that suit the concept and the constraints.
 
 Explicit requirements and an existing design system outrank this. Make any proposed departure explicit. When refining existing work, keep what works and change what the feedback names.
 
-## What to read
+## Choose before composing
 
-For a new composition or a substantial redesign, use the relevant indexes to select and read only the guides that serve the brief. A named artifact or direction routes directly through its index; honor the requested choice. A narrow refinement needs only guidance bearing on that change.
+Before composing a new artifact or substantially redesigning one, identify its uses and choose the creative direction or combination that serves its goal. Infer these choices from the request and context, honoring explicit preferences. Use the indexes to select and read only the relevant guides. For substantial work, briefly state the chosen approach and why.
+
+Ask focused questions when missing information or unresolved alternatives would materially change the design. For creative choices, offer concrete options. Wait for those answers before committing to affected choices; otherwise proceed. Keep narrow refinements within their existing direction, reading only guidance bearing on the change.
 
 | Question | Index |
 |---|---|

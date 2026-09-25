@@ -16,7 +16,7 @@ A direction and an artifact answer different questions. A cinematic landing page
 
 Keep one design entrypoint and add two reference collections, each with a concise index and individual guides. Artifact guides describe how people use the work. Creative directions describe the intended feeling and concrete visual choices that support it. Whole-app guidance belongs with artifacts and can compose with guides for individual screens.
 
-The entrypoint owns brief completion, precedence, selective loading, and composition. New compositions and substantial redesigns use the indexes to read only relevant guides. Narrow refinements retain their scope. Explicit creative choices remain choices; the references do not reopen them.
+The entrypoint owns brief completion, precedence, selective loading, and composition. Before composing, it infers artifact uses and creative directions from the brief and reads only the relevant guides. Substantial work states the chosen approach and its reason. Material unresolved choices prompt concrete alternatives; sufficient context lets work proceed without a routine approval gate. Narrow refinements retain their scope. Explicit creative choices remain choices; the references do not reopen them.
 
 Both collections are non-exhaustive and composable. A blend has a coherent center rather than accumulating every guide's instructions. The subject supplies palette, typography, and visual material. The guides do not require external example-site study or prescribe implementation, verification, or delivery. Platform-specific guides are outside this change.
 
