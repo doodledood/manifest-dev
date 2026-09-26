@@ -1,0 +1,36 @@
+[
+  {
+    "id": "case12",
+    "dimension": "defect-class",
+    "threshold": "no LOW-or-higher findings",
+    "verdict": "PASS",
+    "files_analyzed": ["callers.py", "owner.py"],
+    "mechanism": "An unchecked quantity <= 0 reaches owner.send, which appends it to sent. The repair rejects that value before send in both tracked callers.",
+    "enumeration_method": "Read the exact base-to-head diff and all tracked Python files at the supplied head; traced both imports/calls of send to sent.append.",
+    "enumeration": [
+      {"site": "callers.py:web", "disposition": "Fixed at the site", "reason": "The added quantity <= 0 guard raises before calling send."},
+      {"site": "callers.py:batch", "disposition": "Fixed at the site", "reason": "The added quantity <= 0 guard raises before calling send."},
+      {"site": "owner.py:send", "disposition": "Named out of scope, with why", "reason": "The author explicitly excludes this site because current application callers guard the input and the patch planned only callers.py. This does not eliminate send(-1), but the loaded baseline actionability filter accepts a stated out-of-scope reason without grading its adequacy or requiring an owner exclusion."}
+    ],
+    "findings": [],
+    "rationale": "Both application callers are repaired. The remaining supported direct operation is explicitly dispositioned by the author. Baseline filter 5 and severity calibration require dropping a site with a stated exclusion reason; they expressly prohibit grading a thin reason. PASS here is the policy's accounting verdict, not a claim that send itself rejects nonpositive quantities."
+  },
+  {
+    "id": "case13",
+    "dimension": "defect-class",
+    "threshold": "no LOW-or-higher findings",
+    "verdict": "BLOCKED",
+    "files_analyzed": ["owner.py", "callers.py"],
+    "mechanism": "An unchecked quantity <= 0 is appended as a shipment. The repair guards owner.send before sent.append, protecting both tracked callers through that operation.",
+    "enumeration_method": "Read the exact base-to-head diff and all tracked Python files at the supplied head; traced web and batch through send. External registry and plugin code are unavailable.",
+    "enumeration": [
+      {"site": "owner.py:send", "disposition": "Fixed at the site", "reason": "The added quantity <= 0 guard raises before appending."},
+      {"site": "callers.py:web", "disposition": "The site no longer exists", "reason": "The unchecked path is eliminated by the common shipping guard."},
+      {"site": "callers.py:batch", "disposition": "The site no longer exists", "reason": "The unchecked path is eliminated by the common shipping guard."},
+      {"site": "External deployment shipment integrations", "disposition": "Author names the region out of scope because it cannot be searched", "reason": "No concrete external defect is asserted. Nevertheless, the binding task explicitly requires verifying remediation in these integrations, and the supplied facts permit independent transports that bypass owner.send."}
+    ],
+    "findings": [],
+    "blocker": "The required external integrations cannot be evaluated: no registry inventory, plugin sources, or runtime access is available. Obtain their inventory and inspectable implementations or runnable deployment evidence to verify nonpositive quantities are rejected across each transport.",
+    "rationale": "The repository-local repair passes with no reportable siblings. The reference permits an unenumerable region to be accounted out of scope, but explicitly preserves the shared verifier contract's BLOCKED cases. Here missing external evidence prevents evaluating an explicitly required part of the binding task, rather than merely leaving a convention-based region too diffuse to enumerate. The author's disposition cannot establish the requested external verification; the overall required gate remains BLOCKED."
+  }
+]

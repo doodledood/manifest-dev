@@ -6,7 +6,7 @@ user-invocable: false
 
 # review-pr-judgment
 
-The reviewer-fleet dimensions find defects inside a change whose intent is taken as given — they drop anything the author chose deliberately. The judgment pass adds the one thing they structurally cannot: it asks whether the change **earns its keep** — whether it should exist, in this shape, at this footprint, given the pain it claims to solve.
+The reviewer-fleet dimensions find defects inside a change whose intent is taken as given — they judge implementation against explicit requirements and weigh the author's rationale as evidence. The judgment pass adds the one thing they structurally cannot: it asks whether the change **earns its keep** — whether it should exist, in this shape, at this footprint, given the pain it claims to solve.
 
 **The single question:** *Does this change — its existence, its approach, and its footprint — earn its keep against the pain it solves, and is anything the pain requires missing?*
 
@@ -20,7 +20,7 @@ Whole-PR altitude is unconditional: whenever the pass runs, it reads the **entir
 
 ## The evidence bar
 
-The pass exists to *remove* noise (unjustified changes, orphaned surface). It becomes noise the instant it fires on taste. So every trigger fires **only on concrete, nameable evidence** — something you can point at. "I'd have done it differently" is not evidence and stays dropped, exactly as the defect dimensions drop intentional choices. When in doubt, stay silent: a missed premise question costs less than an arrogant one.
+The pass exists to *remove* noise (unjustified changes, orphaned surface). It becomes noise the instant it fires on taste. So every trigger fires **only on concrete, nameable evidence** — something you can point at. "I'd have done it differently" is not evidence and stays dropped, just as implementation review requires evidence rather than a competing preference. When in doubt, stay silent: a missed premise question costs less than an arrogant one.
 
 ## Triggers
 
@@ -64,7 +64,7 @@ A judgment finding is **not** placed on the defect severity scale (low / medium 
 
 and **no severity**. **Return shape:** the list of such findings, already collapsed to one per root (below), or an empty list. This is load-bearing, not cosmetic:
 
-- The caller's consolidation step drops Low-severity defect findings before posting — the **only** place a drop-Low filter exists, and only because it posts publicly. A judgment finding tagged Low would be silently deleted there. So judgment findings are **exempt from the drop-Low filter** and carry their own inclusion rule: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
+- The caller's consolidation step drops Low-severity fleet findings other than defect-class before posting — the **only** place a drop-Low filter exists, and only because it posts publicly. A judgment finding tagged Low would be silently deleted there. So judgment findings are **exempt from the drop-Low filter** and carry their own inclusion rule: **surface if the evidence-gate fired and the PR does not already cover the point.** They are still deduped and merged like any other finding.
 - No other context has a drop-Low filter. Manifest-mode contract verification and `/do` gate verification keep low findings by their own acceptance thresholds; the judgment class is orthogonal to all of that.
 
 ## Synthesis — one question per root

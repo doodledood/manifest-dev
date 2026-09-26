@@ -20,6 +20,8 @@ Run them in order, though each works on its own:
 
 `/done` reports completed `/do` work. `/escalate` is the terminal handoff for either executor when unresolved blockers need outside intervention and no useful independent work remains.
 
+The workflow favors durable outcomes and makes ease of subsequent correct work part of acceptance. Existing quality reviews judge concrete burdens; sound structure needs no redesign. Defect repair review requires proportionate prevention or an evidenced reason for weaker protection.
+
 ## Run it unattended
 
 `/do` assumes you are away for the entire execution, even after you send a steering message. It decides without asking follow-up questions and reports material choices and their rationale afterward. A failed approach calls for another approach; a blocker requires something the executor cannot responsibly supply. Blockers are reported promptly while useful independent work continues.

@@ -37,7 +37,7 @@ Skip generated files, vendored dependencies, and type stubs/declarations from ex
 Before reporting a type safety issue, it must pass ALL of these. If a finding fails ANY criterion, drop it entirely.
 
 1. **In scope** — Two modes:
-   - *Diff-based review* (default): ONLY report type issues introduced by this change. Pre-existing `any` or type holes are strictly out of scope.
+   - *Diff-based review* (default): Report type issues introduced or exposed by a consumer path this change adds or extends. Name that path; unrelated pre-existing type holes are out of scope.
    - *Explicit path review* (caller specified paths): Audit everything in scope. Pre-existing type issues are valid findings.
 2. **Worth the complexity** — Type-level gymnastics that hurt readability may not be worth it. Balance type safety gains against added complexity.
 3. **Matches codebase strictness** — If `strict` mode is off, don't demand strict-mode patterns. If `any` is used liberally elsewhere, flagging one more is low value.
@@ -61,6 +61,8 @@ Before reporting a type safety issue, it must pass ALL of these. If a finding fa
 - `!` assertions without runtime justification
 
 ## Orthogonality — what belongs to other dimensions
+
+- **Adequacy of a repair against its demonstrated failure mechanism** → the defect-class dimension, including whether proportionate prevention was omitted.
 
 Whether a null check is *correct at runtime* (will it crash?) belongs to the code-bugs dimension. This dimension focuses on whether the *type system* could catch it at compile time. Do not report:
 

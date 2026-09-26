@@ -30,6 +30,10 @@ items with matching `ASM-*` entries naming the rationale and impact if wrong.
 The Manifest is the acceptance contract — what the user accepts as "I'd ship the
 outcome of executing this" — and `/do` executes it later with none of this
 conversation's context, so everything binding lives in the gate texts themselves.
+For work others will use or extend, include ease of doing that correctly in the
+existing quality gates or relevant Acceptance Criteria. Judge concrete burdens
+the work creates or perpetuates, proportionate to its useful life and explicit
+bounds; sound existing structure needs no redesign.
 That gives a floor that isn't ceremony:
 
 - Follow the schema in `references/SCHEMA.md` exactly — it is what the executor

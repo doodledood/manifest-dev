@@ -24,6 +24,8 @@ Three more ship for `/review-pr` to call rather than for you to invoke — each 
 | `review-pr-holistic` | Prune, deduplicate, and bound a cycle's findings into the comments that get posted. |
 | `review-pr-judgment` | Ask the non-binding premise questions — necessity, pain, proportionality — once per pull request. |
 
+PR review retains justified defect-remediation findings through consolidation, including Low-severity findings, while keeping unrelated debt and unrelated later changes outside their scope.
+
 ## Prompts
 
 One writes prompts, the other reviews them:

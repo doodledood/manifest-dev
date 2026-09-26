@@ -61,6 +61,8 @@ Three skills, run in order, though each is useful alone:
 
 `/define` turns understanding into a Manifest: the deliverables, the criteria each one has to meet, and the rules that hold across all of them. It calls `/figure-out` first if the conversation hasn't reached understanding yet.
 
+The default is durable work that makes subsequent changes easier to do correctly. Quality reviews require proportionate improvements to the work being done, respect explicit scope limits, and accept sound existing structure. Defect repairs must prevent the demonstrated mechanism when a concrete, proportionate boundary is available, or justify a weaker remedy.
+
 `/do` implements against that Manifest and can't report completion until every criterion has evidence behind it, so "it's done" is a finding rather than a claim.
 
 ```mermaid

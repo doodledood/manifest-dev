@@ -1,0 +1,92 @@
+[
+  {
+    "id": "case01",
+    "verdict": "FAIL",
+    "findings": [
+      {
+        "severity": "Medium",
+        "description": "The existing supported owner.send operation is an unaccounted entry path for the same mechanism: owner.send(-1) appends -1 and owner.send(0) appends 0. The caller guards do not intercept a direct call to this supported operation. This is a demonstrated existing path, not a hypothetical future sibling. Reject nonpositive quantities in send, or explicitly account for this supported path under the policy dispositions.",
+        "location": "owner.py:4"
+      }
+    ],
+    "rationale": "A nonpositive quantity reaches owner.send and is appended to owner.sent before any rejection. Enumerated owner.send, callers.web, and callers.batch by tracing all tracked Python imports/calls. web and batch are fixed at their sites; direct supported send remains reachable and has no stated disposition. Under this diff-based review, the pre-existing direct entry becomes reportable as another instance of the demonstrated mechanism; without the fix the defect-class review has no input. No finding demands consolidation merely because consolidation is possible."
+  },
+  {
+    "id": "case02",
+    "verdict": "FAIL",
+    "findings": [
+      {
+        "severity": "Medium",
+        "description": "The existing supported owner.send operation is an unaccounted entry path for the same mechanism: owner.send(-1) appends -1 and owner.send(0) appends 0. The checked_send helper guard do not intercept a direct call to this supported operation. This is a demonstrated existing path, not a hypothetical future sibling. Reject nonpositive quantities in send, or explicitly account for this supported path under the policy dispositions.",
+        "location": "owner.py:4"
+      }
+    ],
+    "rationale": "A nonpositive quantity reaches owner.send and is appended to owner.sent before any rejection. Enumerated owner.send, helpers.checked_send, callers.web, and callers.batch. Both tracked callers route through checked_send and reject -1/0; checked_send is guarded. The expressly public supported owner.send remains directly callable and permissive, with no exclusion. Sharing a helper covers the two callers but does not account for this existing bypass path. The finding is about that demonstrated path, not disagreement with helper design."
+  },
+  {
+    "id": "case03",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "A nonpositive quantity reaches owner.send and is appended to owner.sent before any rejection. Enumerated owner.send and both callers. owner.send rejects before its only append; both web and batch inherit that rejection. All three supported paths reject -1 and 0 without mutating sent and still ship 1. There are no remaining reachable invalid-shipment sites in tracked code."
+  },
+  {
+    "id": "case04",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "Reviewed the complete owner.py change and callers.py dependency. The guard is at the single operation performing shipment; web and batch acquire it without repeated validation or additional coupling. The diff introduces no actionable duplication or extensibility risk. Pre-existing module state is outside this diff-based maintainability review. Actual diff adds two lines, despite the supplied context saying three; that discrepancy does not change the verdict."
+  },
+  {
+    "id": "case05",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "A nonpositive quantity reaches owner.send and is appended to owner.sent before any rejection. Enumerated owner.send and its web/batch callers; all are protected by the shared guard. Also inspected credits.adjust: it appends to a distinct credits list, records valid refunds, and never reaches shipment state. It is outside this mechanism, not an omitted shipping sibling. Probes confirm credits.adjust(-1) still returns -1 while all shipping paths reject nonpositive quantities."
+  },
+  {
+    "id": "case06",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "A nonpositive quantity reaches owner.send and is appended to owner.sent before any rejection. web and batch are fixed at their sites. Direct owner.send remains permissive, but the supplied owner constraint explicitly excludes modification of this frozen external SDK surface and records future-caller exposure. The baseline policy treats a named exclusion with a reason as accounted for and accepts fixes at every current caller without demanding redesign. Therefore the supported SDK boundary is enumerated as out of scope, not remediated. Supplied claims of regression checks are not corroborated by tracked test files; independent probes verified both callers at -1, 0, and 1. Test presence belongs to a sibling dimension."
+  },
+  {
+    "id": "case07",
+    "verdict": "FAIL",
+    "findings": [
+      {
+        "severity": "Medium",
+        "description": "The existing supported owner.send operation is an unaccounted entry path for the same mechanism: owner.send(-1) appends -1 and owner.send(0) appends 0. The caller guards do not intercept a direct call to this supported operation. This is a demonstrated existing path, not a hypothetical future sibling. Reject nonpositive quantities in send, or explicitly account for this supported path under the policy dispositions.",
+        "location": "owner.py:4"
+      }
+    ],
+    "rationale": "A nonpositive quantity reaches owner.send and is appended to owner.sent before any rejection. web is fixed; batch still ships -1 and 0. The author gives a stated reason for excluding batch (the initial plan named only web), which the baseline actionability filter explicitly accepts without grading whether the reviewer agrees. Therefore batch itself has no severity-bearing finding under this policy. However the distinct existing supported owner.send direct path has no stated exclusion and remains unaccounted; that demonstrated bypass earns the finding. The original plan is not treated as a blanket exclusion of every unmentioned operation."
+  },
+  {
+    "id": "case08",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "No fix was found in the supplied base..head range: only the README heading changes. Mechanism: not applicable. Enumeration: no defect-class region is activated. The pre-existing permissive owner.send is visible in the source but cannot be manufactured into an input to this review. This PASS makes no claim that the earlier repair closed the supported API."
+  },
+  {
+    "id": "case09",
+    "verdict": "FAIL",
+    "findings": [
+      {
+        "severity": "Medium",
+        "description": "The existing supported owner.send operation is an unaccounted entry path for the same mechanism: owner.send(-1) appends -1 and owner.send(0) appends 0. The caller guards do not intercept a direct call to this supported operation. This is a demonstrated existing path, not a hypothetical future sibling. Reject nonpositive quantities in send, or explicitly account for this supported path under the policy dispositions.",
+        "location": "owner.py:4"
+      }
+    ],
+    "rationale": "A nonpositive quantity reaches owner.send and is appended to owner.sent before any rejection. web and batch are fixed at their sites; direct owner.send remains an observable supported unaccounted path. User-supplied plugins are unavailable and unenumerated. The author explicitly excludes that unwalkable region; the baseline policy accepts this disposition and specifically says an identified mechanism with an unenumerable region is not BLOCKED. Plugin completeness therefore remains unresolved but produces no additional finding under this policy. The independently reproducible owner.send bypass is sufficient to FAIL."
+  },
+  {
+    "id": "case10",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "A nonpositive quantity reaches owner.send and is appended to owner.sent before any rejection. web and batch are fixed at their sites. owner.send still accepts -1 and 0, so the stated binding task outcome is observably unmet. Nevertheless, the explicit permission limit freezes owner.py and forbids replacement; under this baseline defect-class policy a named out-of-scope reason accounts for a site, and intent-behavior/API-contract correctness are assigned to sibling dimensions. This dimension therefore passes the enumerated caller repair, with owner.send enumerated as excluded rather than repaired. No inability to inspect evidence blocks this review; the conflict between required outcome and permitted edit remains unresolved for the task owner."
+  },
+  {
+    "id": "case11",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "Inspected all processors and the added gamma function. gamma repeats the existing alpha/beta event-recording obligation, creating a concrete future-extension risk. However the baseline actionability filter requires all criteria: it assumes an identical repeated existing pattern is intentional, rejects demanding abstractions absent elsewhere, and defines a worthwhile refactor through substantial net removal of problematic lines. The supplied context explicitly identifies copying as deliberate and a dispatcher as adding lines; this candidate fails those filters and is dropped entirely even though the severity examples would otherwise label repeated cross-cutting behavior High. Current alpha, beta, and gamma each record their successful results in an in-memory probe. Future processors remain a design limitation, not a qualifying finding under this policy."
+  }
+]

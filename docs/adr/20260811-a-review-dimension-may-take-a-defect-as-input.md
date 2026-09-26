@@ -1,7 +1,7 @@
 # ADR: A review dimension may take a defect as input, and that is what earns it a slot
 
 ## Status
-Accepted
+Accepted; amended by 20260926-defect-remediation-requires-justified-prevention: defect-class owns justified protection as well as affected-site accounting; unchanged enabling boundaries and explicit-path ownership follow the repair-adequacy distinction
 
 ## Area
 Code review

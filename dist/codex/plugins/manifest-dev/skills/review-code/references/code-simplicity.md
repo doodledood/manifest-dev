@@ -57,7 +57,7 @@ Layers that add complexity without value. Focus on **local indirection within a 
 Before reporting an issue, it must pass ALL of these criteria. **If it fails ANY criterion, drop it entirely.** Only report complexity you are CERTAIN is unnecessary — "this might be over-engineered" is not sufficient; "this abstraction serves no purpose and could be replaced with X" is required.
 
 1. **In scope** — Two modes:
-   - **Diff-based review** (default): ONLY report simplicity issues introduced by this change. Pre-existing complexity is strictly out of scope.
+   - **Diff-based review** (default): Report complexity introduced, worsened, or exposed by a dependency this change adds or extends. Name that dependency and its concrete burden; unrelated pre-existing complexity is out of scope.
    - **Explicit path review** (caller specified paths): Audit everything in scope. Pre-existing complexity is valid to report.
 2. **Actually unnecessary** — The complexity must provide no value. If there's a legitimate reason (scale, requirements, constraints), it's not over-engineering. Check comments and context for justification before flagging.
 3. **Simpler alternative exists** — You must describe a concrete simpler approach that would work. "This is complex" without a better alternative is not actionable.
