@@ -1,0 +1,44 @@
+[
+  {
+    "id": "case12",
+    "dimension": "defect-class",
+    "threshold": "no LOW+",
+    "verdict": "FAIL",
+    "files_analyzed": ["callers.py", "owner.py"],
+    "mechanism": "The supported owner.send operation appends any supplied quantity to sent, including nonpositive quantities. The repair guards web and batch independently but leaves this enabling operation unchanged.",
+    "enumeration": [
+      {"site": "callers.py:3 web", "disposition": "repaired locally", "evidence": "Rejects quantity <= 0 before invoking send."},
+      {"site": "callers.py:8 batch", "disposition": "repaired locally", "evidence": "Rejects quantity <= 0 before invoking send."},
+      {"site": "owner.py:3 send", "disposition": "unresolved", "evidence": "The supported operation still accepts and records nonpositive quantities; executing the exact head code with send(-1) and send(0) appended both values."}
+    ],
+    "protection": "Current tracked callers reject invalid input, but ordinary supported use of send can omit those caller guards. The claimed scope limitation is an implementation preference rather than an explicit exclusion or authority limit.",
+    "findings": [
+      {
+        "title": "Supported shipping operation still permits the demonstrated invalid shipment",
+        "location": "owner.py:4",
+        "severity": "Medium",
+        "description": "Guarding both current callers does not prevent the demonstrated nonpositive-shipment mechanism at the supported shipping operation.",
+        "trigger": "Call the supported owner.send(-1) or owner.send(0) directly; the quantity is appended to sent.",
+        "impact": "Nonpositive input on this supported edge path still creates a forbidden shipment.",
+        "recommended_fix": "Reject quantity <= 0 in owner.send before sent.append. This reuses the existing owner with a simple guard and removes reliance on independent caller obligations; no incompatible semantics, migration risk or binding exclusion is supplied."
+      }
+    ]
+  },
+  {
+    "id": "case13",
+    "dimension": "defect-class",
+    "threshold": "no LOW+",
+    "verdict": "BLOCKED",
+    "files_analyzed": ["callers.py", "owner.py"],
+    "mechanism": "Before the repair, owner.send appended nonpositive quantities. The changed owner now rejects them before append. External plugins can use separate transports, so this guard establishes no guarantee for those separate operations.",
+    "enumeration": [
+      {"site": "callers.py:3 web", "disposition": "prevented", "evidence": "Unconditionally invokes the guarded owner.send."},
+      {"site": "callers.py:6 batch", "disposition": "prevented", "evidence": "Unconditionally invokes the guarded owner.send."},
+      {"site": "owner.py:3 send", "disposition": "prevented", "evidence": "Exact head execution rejects -1 and 0 with ValueError and leaves sent empty; positive 1 is appended."},
+      {"site": "external registry shipment plugins and separate transports", "disposition": "unresolved", "evidence": "Required by the binding task, but no registry inventory, source or runtime access is available. The region cannot be enumerated and its enforcement cannot be traced."}
+    ],
+    "protection": "The visible application code has proportionate prevention at its supported owning operation. Overall acceptance cannot be established because the binding scope includes inaccessible integrations. The author's assertion that the region is closed because it cannot be searched is unsupported and must not be credited as closure.",
+    "findings": [],
+    "blocker": "Obtain the deployed plugin inventory plus source or runtime evidence identifying each shipping operation and its nonpositive-quantity enforcement. No concrete remaining plugin defect or misuse trigger can be established from the supplied evidence, so do not invent one or grade a hypothetical failure. The reference explicitly directs BLOCKED where missing evidence prevents a verdict; despite its separate instruction to FAIL unsupported closure claims, the shared defect-finder trigger requirement and consequence-based severity do not justify fabricating a severity-bearing plugin defect here."
+  }
+]

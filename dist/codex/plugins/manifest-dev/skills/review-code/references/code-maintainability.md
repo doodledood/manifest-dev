@@ -31,6 +31,8 @@ These categories are guidance, not exhaustive. If you spot a maintainability iss
 
 ## Out of scope (belongs to other dimensions)
 
+- **Adequacy of a repair against its demonstrated failure mechanism** → the defect-class dimension, including whether proportionate prevention was omitted.
+
 Do NOT report on these — they belong elsewhere:
 
 - **Intent-behavior divergence** (does the change achieve its goal?) → the change-intent dimension.
@@ -61,13 +63,13 @@ High-churn files deserve extra scrutiny since issues there have outsized impact.
 Before reporting an issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this might be a problem" is not sufficient; "this WILL cause X problem because Y" is required. Style-consistency findings are the exception this dimension owns: a divergent form imposes reader cost rather than a failure, so name the divergence and the surfaces it splits across, per criterion 5.
 
 1. **In scope** — Two modes:
-   - **Diff-based review** (default, no paths specified): ONLY report issues introduced or meaningfully worsened by this change. "Meaningfully worsened" means the change added significant new duplication to a pre-existing issue, added a new instance of an already-problematic pattern (e.g., third copy of duplicate code), or changed a single-file fix into a multi-file change. Pre-existing tech debt is strictly out of scope.
+   - **Diff-based review** (default, no paths specified): ONLY report issues introduced or meaningfully worsened by this change. "Meaningfully worsened" means the change added significant new duplication to a pre-existing issue, added a new instance of an already-problematic pattern (e.g., third copy of duplicate code), or changed a single-file fix into a multi-file change. Also include an existing obligation this change newly relies on or extends when its concrete future-change burden is evidenced. Unrelated pre-existing debt stays out of scope.
    - **Explicit path review** (caller specified files/directories): Audit everything in scope. Pre-existing issues are valid findings since a full review of those paths was requested.
-2. **Worth the churn** — Fix value must clearly exceed refactor cost. A refactor is worth it when the lines of problematic code eliminated substantially outweigh the lines added for the new abstraction plus modified call sites.
+2. **Worth the churn** — Compare the concrete burden on subsequent work with added concepts, coupling, migration risk and coordination cost. Removing independent obligations can justify added lines; fewer lines alone establish no benefit.
 3. **Matches codebase patterns** — Don't demand abstractions absent elsewhere. If the codebase doesn't use dependency injection, don't flag its absence.
-4. **Not an intentional tradeoff** — Some duplication is intentional (test isolation, avoiding coupling). If identical patterns exist in multiple other places in the codebase, assume it's an intentional convention.
+4. **Substantiated tradeoff** — Evaluate the reason for duplication or another burden against its actual benefit (such as test isolation or avoiding coupling). Repetition establishes prevalence, not justification; an author's rationale is evidence, while explicit owner requirements bind.
 5. **Concrete impact** — "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible." Style-consistency findings under Consistency state their impact as reader cost — the scan or learning tax a divergent form imposes on someone working across both — and land at Low. That is the whole severity they are entitled to; they never rise above it.
-6. **Author would prioritize** — Given limited time, would a reasonable author fix this before shipping, or defer it? If defer, it's Low severity at best.
+6. **Grade the consequence** — Use the concrete future-change burden below, not the author's willingness to defer it. Explicit task limits constrain the remedy, not the evidence or severity.
 
 For conditional accretion, the finding must name the cleaner owner for the logic and why leaving the branch in place creates forgettability risk. For large-file growth, line count alone is never enough; the finding must identify separable concerns introduced by the diff and why extracting them would reduce review or future-change risk.
 

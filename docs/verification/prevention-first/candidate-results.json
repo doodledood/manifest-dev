@@ -1,0 +1,98 @@
+[
+  {
+    "id": "case01",
+    "verdict": "FAIL",
+    "findings": [
+      {
+        "severity": "Medium",
+        "description": "The repair guards both known callers but leaves the supported operation send permissive: owner.send(-1) or owner.send(0) still appends an invalid shipment. Put the same guard at owner.send before sent.append. That sole operation is a concrete mandatory prevention boundary, costs one guard without a new abstraction, and eliminates two independent caller obligations; no exclusion or migration cost justifies weaker protection.",
+        "location": "callers.py:4; callers.py:9; owner.py:3"
+      }
+    ],
+    "rationale": "Mechanism: send appends nonpositive quantities without validation. Enumeration: web and batch are repaired locally; supported direct send remains unprotected. Checks at exact base/head reproduce the original failure and show both patched callers rejecting -1 and 0, while send still accepts them; positive 2 remains valid. Protection is local repair only, insufficient under the policy when proportionate prevention is available. No unresolved evidence affects this verdict."
+  },
+  {
+    "id": "case02",
+    "verdict": "FAIL",
+    "findings": [
+      {
+        "severity": "Medium",
+        "description": "checked_send centralizes validation but is optional: the public supported owner.send(-1) and owner.send(0) still append invalid shipments. The prevention claim therefore exceeds the guarantee. Enforce the guard in owner.send before append, which protects ordinary supported use without requiring every caller to select a helper; no substantiated reason justifies the bypass.",
+        "location": "helpers.py:3; callers.py:1; owner.py:3"
+      }
+    ],
+    "rationale": "Mechanism: validation is outside the operation that records shipment. Enumeration: web and batch now use the helper and reject invalid inputs; checked_send protects its own users; direct supported send bypasses it. Runtime checks confirm these paths at the supplied commits. Helper centralization is not mandatory enforcement. No unknown site is assumed safe."
+  },
+  {
+    "id": "case03",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "Mechanism: invalid quantities previously reached sent.append through send. Enumeration: web, batch, and the direct supported send operation are all prevented at owner.py:4 before append. Runtime checks for -1 and 0 raise ValueError without shipment on every path, while 2 ships. This reuses the sole owner, adds no abstraction, and removes the need for callers to remember validation. No other tracked shipment path exists; no unresolved evidence in the supplied scope."
+  },
+  {
+    "id": "case04",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "Maintainability: owner.py:4 makes validation one obligation in the operation that ships, shared naturally by web and batch. The exact diff adds two lines (the task prose says three); added line count does not establish maintenance cost. No new coupling, duplicated caller obligation, or concrete future-change burden is introduced. Existing global state is unchanged debt and no new cross-module access is added. Summary: zero findings in every category and severity; no priority fixes. Repair adequacy belongs to defect-class, not this invocation."
+  },
+  {
+    "id": "case05",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "Mechanism and enumeration: web, batch, and direct send all converge on owner.py:4, which rejects -1 and 0 before shipment; runtime checks also verify positive 2. credits.adjust appends to a distinct account-adjustment collection, does not call send, and legitimately accepts negative refunds (confirmed with adjust(-1)). Similar append syntax does not give it the shipping invariant. All affected shipment sites are prevented; the credits operation is outside this mechanism, not an unresolved shipping site."
+  },
+  {
+    "id": "case06",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "Containment, not prevention of all future supported callers. Enumeration: both current application paths web and batch locally reject -1 and 0 and preserve positive shipments, verified at exact head; owner.send remains permissive. The explicit maintenance-release requirement freezes owner.py and confines edits to callers.py, while requiring current application callers to reject invalid quantities. This substantiated authority boundary justifies local guards and permits the residual future-caller exposure. Context states author-supplied regression checks; no test files are tracked in this tiny fixture, so those checks were not independently inspectable, but the evaluation executed both entry points directly. No unresolved evidence prevents this bounded verdict."
+  },
+  {
+    "id": "case07",
+    "verdict": "FAIL",
+    "findings": [
+      {
+        "severity": "Medium",
+        "description": "The web-only guard leaves the active supported batch entry point unrepaired: batch(-1) and batch(0) call permissive send and append invalid shipments. The initial plan naming web is not an owner exclusion. Move enforcement to owner.send before append to protect web, batch and direct supported use with one mandatory guard.",
+        "location": "callers.py:4; callers.py:8; owner.py:3"
+      }
+    ],
+    "rationale": "Enumeration: web is repaired locally; batch and supported send remain reachable and unremediated. Runtime checks reproduce invalid batch shipments at head. The affected region follows the shared shipment operation, not the initial plan. No evidence is missing for the failure; no permission restriction forbids the concrete owning-boundary remedy."
+  },
+  {
+    "id": "case08",
+    "verdict": "PASS",
+    "findings": [],
+    "rationale": "No repair was found in the supplied range: the only diff changes the README heading from Orders to Order shipping. Caller guards and permissive owner.send predate base and are unchanged, as source inspection and runtime comparison confirm. The defect-class dimension therefore has no repair input; reopening the earlier patch would violate the incremental scope. No in-scope mechanism requires enumeration or remediation."
+  },
+  {
+    "id": "case09",
+    "verdict": "FAIL",
+    "findings": [
+      {
+        "severity": "Medium",
+        "description": "The current caller-only repair leaves a demonstrated supported misuse: owner.send(-1) or owner.send(0) appends an invalid shipment. Enforce validation at send before append; no authorized exclusion or cost justifies leaving that operation permissive. The author's closure claim for unavailable plugins is also unsupported: all supported shipment paths are required, and an unenumerated region cannot be marked closed.",
+        "location": "callers.py:4; callers.py:9; owner.py:3"
+      }
+    ],
+    "rationale": "Known enumeration: web and batch repaired locally, supported send unprotected. Runtime checks establish the remaining supported misuse independently of plugins, which is sufficient for FAIL. Unresolved evidence: plugin inventory, implementations, and routes to shipment are unavailable; no individual plugin defect or complete plugin coverage is asserted. Obtain those or evidence of an unavoidable enforcement boundary before claiming complete accounting. Missing plugin evidence blocks closure of that region but does not erase the independently established failure or justify PASS."
+  },
+  {
+    "id": "case10",
+    "verdict": "BLOCKED",
+    "findings": [],
+    "rationale": "Mechanism is established: both current callers reject -1 and 0, but supported owner.send still appends them, verified at exact head. The binding outcome explicitly requires owner.send itself to reject invalid quantities including new callers; the permission limit forbids changing owner.py, replacing the API, or using another approved owner. Caller containment cannot meet that outcome. Per policy, this authority conflict is BLOCKED rather than a demand for a forbidden edit or a weakened PASS. Unblock by authorizing enforcement at owner.send or revising the binding outcome/approved ownership boundary. Enumeration of the tracked sites is complete; the unresolved item is authority, not uncertain runtime behavior."
+  },
+  {
+    "id": "case11",
+    "verdict": "FAIL",
+    "findings": [
+      {
+        "severity": "High",
+        "description": "Category: Extensibility Risk. Adding gamma creates a third processor that must independently remember events.append((name, result)). More processors are planned: each addition must reproduce event recording, and an event-format or recording-policy change now requires edits in three implementations. Put successful-result recording in a common dispatcher or mandatory wrapper and leave each processor responsible for its transformation, preserving entry-point compatibility. This is a moderate refactor within one module; it reduces independent obligations despite adding lines. Copying an existing pattern to keep this diff short does not substantiate the continuing burden.",
+        "location": "processors.py:13; processors.py:15 (siblings at processors.py:5 and processors.py:10)"
+      }
+    ],
+    "rationale": "All of processors.py and the exact gamma diff were read. The transformations intentionally differ, but event recording has identical cross-cutting semantics and a concrete shared owner. The new feature extends a demonstrated future-change burden; no runtime defect is invented. High follows the dimension's explicit calibration for 2+ sibling components manually implementing the same cross-cutting behavior. Summary: Extensibility Risk 1; High 1; all other categories/severities 0. Priority fix: centralize mandatory successful-result recording. No unresolved evidence affects this verdict."
+  }
+]

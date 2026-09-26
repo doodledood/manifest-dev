@@ -1,7 +1,7 @@
 # ADR: The defect-class gate binds on accounting for the class, not on redesigning it
 
 ## Status
-Accepted
+Superseded by 20260926-defect-remediation-requires-justified-prevention
 
 ## Area
 define / do

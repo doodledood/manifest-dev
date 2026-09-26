@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev-tools",
-  "version": "6.3.5",
+  "version": "6.4.0",
   "description": "Tools for prompts and PRs alongside the manifest workflow. Includes collaborative PR walkthroughs, autonomous PR review that independently re-verifies a manifest gate by gate, author-side PR babysitting that drives the lifecycle toward green and mergeable, gap-calibrated prompt engineering, cross-boundary context handoff, incremental teaching, and an eli5 explainer that renders any topic as big pictures and few words.",
   "keywords": [
     "post-processing",

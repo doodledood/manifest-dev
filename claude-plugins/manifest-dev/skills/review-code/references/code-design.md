@@ -95,6 +95,8 @@ Note: This category requires understanding the change as a whole, not just indiv
 
 ## Out of scope (belongs to a sibling dimension)
 
+- **Adequacy of a repair against its demonstrated failure mechanism** → the defect-class dimension, including whether proportionate prevention was omitted.
+
 - **Intent-behavior divergence** (does the change achieve its goal?) → the change-intent dimension
 - **Mechanical code defects** (race conditions, resource leaks, null handling) → the code-bugs dimension
 - **API contract correctness** (wrong params, consumer breakage) → the contracts dimension
@@ -119,11 +121,11 @@ Note: This category requires understanding the change as a whole, not just indiv
 Before reporting a design issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this approach might be wrong" is not sufficient; "this approach IS wrong because X already provides this / Y should own this / Z will obviously need A" is required.
 
 1. **In scope** — Two modes:
-   - **Diff-based review** (default): ONLY report design issues introduced by this change. Pre-existing design debt is strictly out of scope.
+   - **Diff-based review** (default): Report design issues introduced, worsened, or exposed by a dependency this change adds or extends. Name the changed dependency and concrete burden; unrelated pre-existing debt is out of scope.
    - **Explicit path review** (caller specified paths): Audit everything in scope. Pre-existing design issues are valid findings.
 2. **Concrete better alternative exists** — You must identify the specific framework feature, existing utility, configuration system, owning layer/system, or interface shape that would be better. "This feels wrong" without a concrete alternative is not actionable.
 3. **Matches codebase context** — If the codebase has no configuration system, don't demand one. If the framework version doesn't support the suggested feature, it's not reinventing. Account for project maturity, team size, and domain.
-4. **Not an intentional choice** — If the author clearly chose this approach deliberately (comments explaining why, prior discussion, trade-off with another concern), it's not a design issue even if you disagree. If evidence suggests intentional avoidance, drop the finding.
+4. **Substantiated choice** — Evaluate the author's rationale against the demonstrated cost and alternative. Deliberateness alone does not settle design fitness; explicit owner requirements remain authoritative.
 5. **Worth the change** — The design improvement must justify the refactoring cost. A slightly suboptimal approach in non-critical code isn't worth flagging.
 6. **Author would accept** — Would a reasonable author say "good catch, I didn't know that existed / that should be in config / I need to handle that case" or "that's a reasonable approach for our context"?
 
@@ -152,6 +154,6 @@ This dimension is **advisory**: PASS requires no MEDIUM-or-higher finding. LOW f
 
 - **Search before flagging "Use Existing."** A reinvention finding requires evidence that the capability actually exists — search the framework and codebase first; point to the concrete existing solution.
 - **Consider the author's context.** Not every author knows every framework feature. Frame findings as "this exists and handles your use case," not "you should have known this."
-- **Respect intentional choices.** Comments, commit messages, and code structure may reveal the author deliberately chose this approach. Deliberate trade-offs are not design defects.
+- **Respect explicit requirements.** Read the rationale for a design choice and test whether it explains the concrete tradeoff; do not substitute taste for evidence.
 - **Be practical.** A slightly suboptimal design in non-critical internal code isn't worth the review noise.
 - **Under-engineering vs over-engineering.** "Should also build X" is only a finding if X is demonstrably imminent; speculative "should also build Y" is over-engineering and belongs to the code-simplicity dimension, not here.
