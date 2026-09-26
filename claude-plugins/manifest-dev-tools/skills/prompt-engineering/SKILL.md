@@ -16,6 +16,8 @@ Ask this before asking whether the line helps. A line can be true, relevant, and
 - **It counteracts a default you have watched the model take** — keep, when the default is observed rather than feared.
 - **You worked it out from material the run will also read** — cut. A conclusion available in the corpus is one the run reaches itself, so writing it down buys nothing and spends load on every invocation.
 
+When you want live-traffic proof that a wording change actually changed the model's behavior, not just a diff that reads like it should: invoke the manifest-dev-meta:behavior-verification skill.
+
 That last class is the one that feels most earned, because you did the work to reach it, and it is where over-specification comes from. Two tells: a line you could justify from the same sources the run gets, and a sentence arguing for the instruction above it — an instruction does not need advocacy, and the run is not persuaded by it.
 
 **A choice the request left open belongs to whoever made the request.** Some of what you would add is not padding but a decision — what ranks one candidate over another, an exception to a rule they gave you, a deliverable beyond what they asked for. It reads as thoroughness and it commits them to something they never chose, under their name, in a file they will quote back later. Ask where the answer would change the work; leave it out where it would not.
