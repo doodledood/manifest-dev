@@ -1,6 +1,6 @@
 # Workspaces
 
-Make repeated work comfortable and direct, with the information needed for each decision visible together.
+Make repeated work comfortable and direct, with the information needed for each decision visible together, and nothing that decision doesn't need.
 
 Arrange the surface around the loop the person repeats: inspect, act, see the result, continue. Keep primary controls, selection, and context stable while the work changes. Give dense material a readable hierarchy, and distinguish information that needs attention from information that merely exists.
 
