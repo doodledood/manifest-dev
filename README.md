@@ -108,7 +108,7 @@ Two plugins ship from this repository:
 | Plugin | What it covers |
 |--------|----------------|
 | [`manifest-dev`](claude-plugins/manifest-dev) | The workflow itself, project setup, ticket authoring and execution, first-principles design with composable artifact and creative-direction guides (`/design`), artifact review, and the review skills the criteria call on |
-| [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Pull-request collaboration, prompt work, teaching, explaining, and handoff between sessions — plus `review-pr-thread-verify`, `review-pr-holistic`, and `review-pr-judgment`, called by `/review-pr` rather than invoked by hand |
+| [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Pull-request collaboration, prompt work, standalone goals from Manifests (`/manifest-to-goal`, at most 4,000 characters), teaching, explaining, and handoff between sessions — plus `review-pr-thread-verify`, `review-pr-holistic`, and `review-pr-judgment`, called by `/review-pr` rather than invoked by hand |
 
 Each plugin's README lists what it ships.
 
