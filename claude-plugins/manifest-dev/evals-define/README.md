@@ -42,3 +42,30 @@ so judge reliability remains unestablished.
 The input now requests verbatim gate bodies. Graders were not relaxed. This input change
 invalidates comparison with the initial scores; both revisions must be rerun on the updated
 inputs. Artifact visibility and judge agreement must be checked before trusting any score.
+
+## Corrected artifact-observable pilot — 2026-10-04
+
+CLI 2.1.289, opus case model, sonnet judge, `--runs 1 --ablation with-without
+--allow-tools Write --no-publish --keep-temp`. Same corrected inputs and unchanged graders
+in both revisions; baseline `e957e914`, patch production prompt `dd9f8dc8` (the subsequent
+fixture correction is `1087d921`). Both reports are complete with no execution errors.
+
+| Case | Main with | Main without | Patch with | Patch without |
+|---|---:|---:|---:|---:|
+| Overlapping evidence | 0 | 1 | 1 | 1 |
+| Conflicting budgets | 1 | 1 | 1 | 1 |
+| Straightforward export | 1 | 1 | 1 | 1 |
+
+The six with-plugin final replies contain their saved Manifest text verbatim, checked against
+preserved sandbox artifacts. The patch's visual contract retains a universal visual obligation,
+a finite shared evidence plan with limits, and pending curator decisions with a disagreement
+boundary. Its budget contract keeps every frame lossless, no server and the memory ceiling,
+with proposed timings awaiting owner decision. Its ordinary export finishes unattended.
+
+This is one paired pilot: with-plugin 2/3 → 3/3, while both controls passed 3/3. It establishes
+one observed positive case and a regression floor on these inputs, not general effectiveness,
+reliable uplift, or a measured noise floor. One control export judgment split 2–1; all other
+scored votes were unanimous. The initial pilot's grading disagreement remains reason to audit
+outputs, not to equate vote agreement with validity. These cases were authored for this change,
+so there is no held-out validation or unseen-task result. Full local reports and traces are
+operator evidence, not committed run outputs or published reports.
