@@ -6,8 +6,10 @@ model: opus
 runs: 3
 ---
 Use the define skill for this. Shared understanding is settled below; this is contract
-encoding, not implementation. Keep any files in the current directory. Show the proposed
-contract or the unresolved owner decision in your final message so I can review it.
+encoding, not implementation. Keep any files in the current directory. After your digest, reproduce any Manifest you write **verbatim** in your final
+message, including all gate bodies. If an owner decision blocks completion, show the
+unresolved decision and keep the contract visibly pending. This lets me review the
+actual contract rather than a summary or path.
 
 We agreed to a browser archive explorer so researchers can scrub an entire recording and
 inspect exact original frames. The owner explicitly requires lossless access to every frame;
