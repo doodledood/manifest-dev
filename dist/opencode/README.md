@@ -23,7 +23,7 @@ Two source plugins contribute skills:
 | From | Skills |
 |------|--------|
 | `manifest-dev` | `auto`, `check-pr`, `define`, `design`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `init-context`, `next-ticket`, `poll-slack`, `review-code`, `review-design`, `review-writing`, `run-ticket`, `sweep-tickets`, `ticket-up` |
-| `manifest-dev-tools` | `babysit-pr`, `eli5`, `handoff`, `prompt-engineering`, `review-pr`, `review-pr-holistic`, `review-pr-judgment`, `review-pr-thread-verify`, `review-prompt`, `teach-me`, `walk-pr` |
+| `manifest-dev-tools` | `babysit-pr`, `eli5`, `handoff`, `manifest-to-goal`, `prompt-engineering`, `review-pr`, `review-pr-holistic`, `review-pr-judgment`, `review-pr-thread-verify`, `review-prompt`, `teach-me`, `walk-pr` |
 
 Six of these are dependencies other skills invoke rather than entry points: `done`, `escalate`, and `poll-slack` are called by the ticket workflows, and the three `review-pr-*` skills are called by `review-pr`. They ship so the calling skill resolves on every host; they are not meant to be invoked by hand.
 
@@ -35,7 +35,7 @@ The workflow is the same; the packaging differs:
 
 | Component | Status |
 |-----------|--------|
-| Skills | All 33, read from the source tree under their original names |
+| Skills | All skills, read from the source tree under their original names |
 | Agents | None — manifest-dev ships no agents on any host. Delegated work is a skill activated in an isolated execution context, with an inline fallback where the host has none. |
 | Hooks | Not shipped |
 | Slash commands | Registered at startup by the plugin, for every skill that is user-invocable |
