@@ -15,4 +15,4 @@ Make completion checkable. Carry the specified checks and pass conditions into t
 
 Check the draft against the complete source for lost obligations, invented requirements and conflicting scope. Cut repetition, examples and rationale before sacrificing what changes the result. Count the final paragraph programmatically, including spaces and punctuation, and revise until it is within 4,000 characters; the limit is a ceiling, not a target. If a material choice is needed to fit faithfully, ask rather than conceal the omission.
 
-Print only the goal paragraph, without a heading, preamble, code fence, character-count note or follow-up. This invocation drafts text: it does not edit the Manifest, set a running goal or begin the work it describes.
+Print the goal paragraph inside a single plain-text code fence for easy copying, with no heading, preamble, character-count note or follow-up. The 4,000-character limit applies to the goal text inside the fence. This invocation drafts text: it does not edit the Manifest, set a running goal or begin the work it describes.

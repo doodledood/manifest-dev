@@ -33,7 +33,7 @@ Write and review prompts, or turn a Manifest into a standalone goal:
 | Skill | What it does |
 |-------|--------------|
 | `/prompt-engineering` | Writes, revises, or discusses a prompt — a system prompt, a skill, or an agent. |
-| `/manifest-to-goal <manifest-path>` | Prints one standalone goal paragraph of at most 4,000 characters, preserving the work's intent and constraints without a file reference. |
+| `/manifest-to-goal <manifest-path>` | Prints one standalone goal paragraph of at most 4,000 characters in a copyable code block, preserving the work's intent and constraints without a file reference. |
 | `review-prompt` | Reviews a prompt against those principles and reports what it finds without editing anything. |
 
 ## People and sessions
