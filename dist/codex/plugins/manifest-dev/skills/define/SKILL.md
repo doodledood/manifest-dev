@@ -54,8 +54,10 @@ That gives a floor that isn't ceremony:
 - Every Acceptance Criterion and Global Invariant is one text — title, body,
   optional why — stating what done means, the evidence to inspect, and the
   threshold between PASS and FAIL, precise enough that two evaluations read the
-  same thing. The title never adds a requirement the body omits, and the why
-  binds nothing.
+  same thing. For subjective quality, anchor that threshold to the user's chosen
+  references and observable effect, or a named owner's acceptance; record who
+  decides and what resolves disagreement. The title never adds a requirement the
+  body omits, and the why binds nothing.
 - Every gate declares "Judgment gate." or "Deterministic gate." — never
   inferred; an executor handed an undeclared kind is broken by it. A gate mixing
   a command with a judgment is a judgment gate.
@@ -72,7 +74,19 @@ That gives a floor that isn't ceremony:
   derive the instances, so tomorrow's instance is caught too. Make the procedure
   exact rather than the list. An Acceptance Criterion's region is its
   Deliverable's surface; a Global Invariant's is the Manifest's, bounded by
-  Appetite.
+  Appetite. Distinguish the property owed across that region from the evidence
+  sufficient to accept it: use finite, justified coverage where exhaustive
+  observation is infeasible, state its limits, and share evidence across gates
+  that inspect the same surface. Representative evidence never turns an explicit
+  universal requirement into a sampled one.
+- Check that the gates can hold **together** within the stated scope and operating
+  conditions. Settle open-ended horizons and competing resource or performance
+  demands before handoff, with proposed bounds grounded in the intended use.
+  Surface unresolved tradeoffs for the owner (or return a blocker outside an
+  unattended caller's delegation); preserve the ambition and explicit requirements
+  until that decision authorizes a change. Completion uses the agreed evidence and
+  thresholds; a new preference changes the contract rather than reopening a
+  satisfied gate.
 - Anything whose violation would be unsafe or irreversible becomes a Global
   Invariant — never Process Guidance, never dropped for resisting verification.
   Where only part of it is judgable from the artifacts, gate that part and record
