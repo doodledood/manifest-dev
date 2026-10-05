@@ -26,14 +26,15 @@ and macOS raises a "Keychain Not Found" dialog per child, hundreds per suite. A 
 macOS keychain, and a detached container also keeps running if the launching session ends:
 
 ```bash
-docker build -t manifest-dev-evals claude-plugins/manifest-dev/evals
-docker run -d --security-opt seccomp=unconfined --security-opt apparmor=unconfined \
-  -e ANTHROPIC_API_KEY -v "$PWD":/work -w /work/claude-plugins/manifest-dev \
-  manifest-dev-evals claude plugin eval . --tag figure-out --ablation with-without \
-  --judge-model sonnet --allow-tools Write Bash -j 4 --no-publish --trust-plugin
+scripts/evals/run_eval.sh figure-out-run evals/results/figure-out-run/aggregate-result.json \
+  --tag figure-out --ablation with-without --judge-model sonnet
 ```
 
-The Dockerfile pins the CLI version; bump it deliberately, since a different CLI can move scores.
+The script builds the image if it is missing, starts colima if Docker is down, reads
+`ANTHROPIC_API_KEY` from the shell profile when the environment lacks it, and starts a named,
+detached container; `docker wait <name>` blocks until it exits. The Dockerfile pins the CLI
+version; bump it deliberately, since a different CLI can move scores. A run writes its results
+only when it finishes, so a killed run loses all of its work.
 
 ## What the pilots established
 
@@ -228,6 +229,33 @@ Record the resolved model ID, the CLI version, the commit the skill was measured
 next to every baseline. The cases say only `model: opus`, and `aggregate-result.json` records the
 CLI version but not the model, which is how the baseline below went stale unnoticed when the
 model changed.
+
+## Hill-climbing a prompt against a suite
+
+To improve a skill against one grader while holding the rest, run rounds of
+analyze → change → rerun → compare against a recorded baseline. Each round costs roughly what
+the baseline's plugin arm did (about $150 for `define` at 6 runs per case). Keep the loop's
+state in a gitignored directory under `results/`, for example `results/hillclimb-<suite>/`,
+with a `_state.json` holding `train_ids` and `test_ids` and one `vN/` directory per round.
+
+1. **Split once, before round 1.** Use the suite's documented held-out cases as test. An
+   analyzer reads only train cases' outputs, and the test score decides whether a change is
+   kept.
+2. **Extract train outputs** for the analyzer. A finished run keeps each run's judged artifact
+   but no transcript:
+   `python3 scripts/evals/extract_outputs.py <result.json> --out <dir> --cases <train cases...>`.
+   Use `--report <report.html>` when the JSON's evidence has been stripped, as it is in the
+   committed baselines.
+3. **Make one change per round**, sized to clear the noise floor, and save its diff and
+   rationale in `vN/`.
+4. **Rerun only the plugin arm**, since the no-plugin arm doesn't move:
+   `scripts/evals/run_eval.sh <name> evals/results/hillclimb-<suite>/vN/aggregate-result.json --tag <suite> --ablation none --judge-model <the suite's judge>`.
+5. **Compare** per grader and split:
+   `python3 scripts/evals/score_rounds.py --state <dir>/_state.json baseline=<baseline json> v1=<dir>/v1/aggregate-result.json`.
+   Keep the change only if test moves outside noise and no guardrail grader falls.
+
+Once a winner is kept, re-record the full baseline with both arms. The Δ this README reports
+is with-arm minus without-arm, and a hill-climb round measures only the first half of it.
 
 ## Baseline — 2026-10-05
 
