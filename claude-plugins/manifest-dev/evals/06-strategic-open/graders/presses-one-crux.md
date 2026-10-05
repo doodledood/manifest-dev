@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The user asked for strategic organizing and named deliverables they expect ("penetration surfaces, features roadmap"). No crux was handed over. Judge whether the reply selects and presses one load-bearing question instead of producing the artifact that was asked for.
 
 PASS requires both:

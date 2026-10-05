@@ -5,6 +5,9 @@ focus:
   path: manifest.md
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The request is phrased in open-ended absolutes: "excellent", "every statement accurate",
 "nothing missing", "consistent style". The user also supplied what bounds them: the OpenAPI spec (the source of truth for
 endpoints, params, responses), docs/STYLE.md (the style rules), and the reader (external

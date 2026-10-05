@@ -7,16 +7,26 @@ which would therefore make every case a vanity win.
 Run it from the plugin directory:
 
 ```bash
-claude plugin eval . --tag define --ablation with-without --judge-model sonnet --allow-tools Write Bash -j 8
+claude plugin eval . --tag define --ablation with-without --judge-model opus --allow-tools Write Bash -j 8
 ```
 
 The headline number is **Δ**, the with-plugin score minus the no-plugin baseline. Read the
 figure-out suite's README (`../README.md`) before trusting a Δ from this one: its rules on
 decomposing Δ by arm, the noise floor, and changing graders apply here unchanged.
 
-**Status: not yet piloted.** No case here has been run. Expect some cases to show no headroom
-(both arms pass), which removes them, and some graders to need calibration. Both are decided by
-reading outputs, never by loosening a grader until it passes.
+**The judge is opus, not sonnet.** The CLI's judge must reply with one word, PASS or FAIL, with no
+room to reason on the page. On a 20k-character Manifest, a sonnet judge failed whole-document
+checks it passes when allowed to reason: a sound Manifest scored FAIL on nearly every vote. An
+opus judge matched known answers on a clean Manifest and on a copy with an unstable gate, an
+ungated rule, and an invented threshold planted in it. Keep opus here unless that check is
+repeated with a cheaper judge.
+
+**Status: piloted once, numbers not usable.** The first pilot (2026-10-05) ran with a sonnet judge
+and rubrics that asked the judge to list before answering, which the one-word reply cannot hold.
+Its case-specific graders showed uplift on `d01`, `d08`, and `d09` and none elsewhere; the shared
+graders failed both arms on nearly every run. The rubrics and judge have since changed, so the
+next run is the baseline. Expect some cases to show no headroom (both arms pass), which removes
+them. Decide that by reading outputs, never by loosening a grader until it passes.
 
 ## How the cases are built
 
@@ -41,8 +51,9 @@ reading outputs, never by loosening a grader until it passes.
 `gates-are-settleable.md` runs on every case that should produce a spec. It targets the most
 expensive failure a Manifest has in execution: a gate written so loosely that evaluators disagree
 or keep finding new issues on unchanged work, or so tightly that no work can pass it. Either one
-sends `/do` round the repair loop. The judge lists every gate and classifies it SETTLEABLE,
-UNSTABLE, or UNREACHABLE before giving a verdict. `d10-loop-bait` is the case built to press it
+sends `/do` round the repair loop. The judge fails a spec only when it can name a specific gate
+that is unstable or unreachable; delegation to a named review with a stated scope counts as
+settleable. `d10-loop-bait` is the case built to press it
 hardest.
 
 The copies are one rubric: `tests/test_eval_shared_graders.py` fails if they drift. Edit all of them
@@ -56,13 +67,13 @@ causes rework when the executor meets the intent another way. `d02` covers that 
 Both come from what `manifest-to-goal` keeps when it boils a Manifest down to a standalone
 definition of done for an executor with no other context.
 
-- `binding-lives-in-gates.md`: lists every requirement stated outside the gates (in the problem,
-  approach, guidance, or assumptions) and fails any no gate checks. An executor working from the
+- `binding-lives-in-gates.md`: looks for a requirement stated outside the gates (in the problem,
+  approach, guidance, or assumptions) that no gate checks. An executor working from the
   gates finds an ungated rule only mid-run, as rework. One rubric across its copies; the drift
   test covers it.
-- `no-invented-thresholds.md`: lists every number, budget, format, report, or sign-off in the
-  gates and fails any that neither came from the request nor is recorded as an assumption with a
-  reason. This is the too-tight half that `gates-are-settleable` cannot see: an invented bar is
+- `no-invented-thresholds.md`: looks for a number, budget, format, report, or sign-off in the
+  gates that neither came from the request nor is recorded as an assumption with a reason. A
+  convention the stated stack already fixes, such as a standard HTTP status code, is fine. This is the too-tight half that `gates-are-settleable` cannot see: an invented bar is
   still settleable. It skips checks that review the change itself, which `define` adds by design.
   Each copy embeds its case's request, since a grader reading the file cannot see the prompt, so
   the copies differ by case. Regenerate them if a prompt changes.

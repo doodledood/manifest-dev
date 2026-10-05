@@ -5,6 +5,9 @@ focus:
   path: manifest.md
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 "Doesn't feel dead" is subjective. The user supplied what anchors it: a reference (Linear's empty inbox — calm, one
 small illustration, one clear next action), the specific action ("connect a data source"), and a
 decider (Dana, whose call wins on disagreement).

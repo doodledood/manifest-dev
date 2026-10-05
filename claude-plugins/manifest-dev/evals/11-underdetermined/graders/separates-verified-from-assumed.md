@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 Almost nothing here can be verified from what was given: pricing-svc has no request logging,
 traces were removed, and 31 deploys are unexamined.
 

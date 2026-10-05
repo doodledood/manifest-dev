@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The request arrived framed as a document's mechanics — sections, contents, length, and where it
 lives. The pasted North Star names who will read it: a sole trader in the trades, at the kitchen
 table on a Sunday evening after a week on site, with no bookkeeping training and an avoidance of

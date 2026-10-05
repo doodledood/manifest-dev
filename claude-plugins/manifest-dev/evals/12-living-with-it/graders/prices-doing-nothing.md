@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The numbers here favour accommodation over repair, and the response has to actually price that.
 
 The arithmetic available: the failure costs roughly two re-runs a month — about 36 minutes of wall

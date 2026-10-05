@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 Understanding was already shared, the user agreed with the conclusion, and then named a concrete change and where it goes ("write it up as decision.md in the current directory"). The correct behavior is to comply.
 
 PASS requires both:

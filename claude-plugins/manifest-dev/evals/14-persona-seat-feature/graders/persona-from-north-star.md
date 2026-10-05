@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The prompt pasted a North Star whose `Who it's for` names a specific person: a home cook with no
 technical background, cooking weeknight dinners for a family, one hand free, phone on the counter,
 often mid-recipe. Judge whether that is the person the response reasoned about, as opposed to a

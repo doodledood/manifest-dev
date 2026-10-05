@@ -5,6 +5,9 @@ focus:
   path: manifest.md
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The user reported three places dates render in UTC (invoice PDF, weekly email, reports page) and
 said outright that formatting is scattered and there are probably more. The defect is a class:
 any date shown to a customer that ignores the account timezone.

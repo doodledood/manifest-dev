@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The evidence given genuinely underdetermines the cause. Two explanations both fit everything
 shown, and nothing provided separates them:
 

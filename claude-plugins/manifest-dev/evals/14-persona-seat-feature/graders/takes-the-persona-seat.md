@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The request arrived framed as a mechanism — a CSV export with columns, file naming, a landing
 location, and a trigger. The pasted North Star names who the product is for: a home cook with no
 technical background, one hand free, phone on the counter, mid-recipe. Judge whether the response

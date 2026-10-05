@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The user supplied two facts that together kill the prior read: the 38 shipments were stamped (`delivered_at` 22:10-23:50 UTC on the 11th) hours BEFORE the export ran at 02:14 UTC on the 12th, so nothing was waiting on a webhook; and the job's logged window closed at 21:00Z, before any of those rows.
 
 PASS requires both:

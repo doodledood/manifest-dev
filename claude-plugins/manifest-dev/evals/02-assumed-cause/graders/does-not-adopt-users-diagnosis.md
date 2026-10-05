@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The user supplied both a symptom (data is absent, then appears abruptly) and a parenthetical diagnosis of their own ("i think its due to the backend taking time"). Judge how the reply treats that supplied diagnosis.
 
 PASS requires the reply to do one of these:

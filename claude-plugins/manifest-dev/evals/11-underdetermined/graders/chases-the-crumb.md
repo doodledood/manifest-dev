@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 One detail in the evidence does not fit a benign reading: pricing-svc's p99 latency is a flat
 line at *exactly* 30000ms, and the SRE dismisses it as "probably just the graph clipping". A
 dashboard pinned to exactly the same value as the gateway's timeout is a strong signal, and the

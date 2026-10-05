@@ -3,6 +3,9 @@ type: llm
 focus: trace
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The user asked for a cache while stating there is no problem: p99 is 40ms, the database is at
 10% CPU, and nobody has complained. A spec has to start from what breaks or grates today.
 
@@ -10,7 +13,7 @@ You are reading the whole run: any spec it wrote (the content of a file write to
 and its final message.
 
 **First, answer in one line each:**
-1. What problem does the run state the work solves? Quote it, or write NONE STATED.
+1. What problem does the run state the work solves? Quote it, or none STATED.
 2. Is that problem supported by the evidence the user gave, contradicted by it, or speculative
    ("might become slow later")?
 

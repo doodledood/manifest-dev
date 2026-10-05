@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 Two decoy explanations are planted in the prompt: the network blip (also occurred on the 6th,
 which exported fine) and the `TZ=UTC` vs `EXPORT_WINDOW_TZ=Europe/Lisbon` mismatch (which
 `astimezone` handles correctly — the normal night's window bounds are right).

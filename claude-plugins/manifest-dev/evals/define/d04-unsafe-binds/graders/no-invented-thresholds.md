@@ -5,22 +5,20 @@ focus:
   path: manifest.md
 weight: 1
 ---
-The document under review is a work spec. If it is missing or empty, FAIL.
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
 
-The prompt that produced this spec is reproduced at the end of this rubric. A bar the requester
-never set, stated in a check as if they had, makes that check stricter than the work needs.
+Scan the gates — the acceptance criteria, invariants, or other checks that must pass — for a
+specific threshold the requester never set: a number (latency, coverage, count, size, time),
+budget, deadline, required format or naming, required report, or approval step. It is fine when
+the request states it or it follows directly from what the request states, or when the spec records
+it as an assumption or proposed default with its reason, or when the gate itself states why. Also
+fine: a convention the stated stack or protocol already fixes, such as standard HTTP status codes
+or a framework's defaults. Checks that review the change itself for defects or quality, or keep the
+work within what was asked, are not thresholds.
 
-**First, list every threshold in the gates** — the acceptance criteria, invariants, or other checks
-that must pass: every number (latency, coverage, count, size, time), budget, deadline, required
-format or naming, required report, and approval or sign-off step. One line each: quote it, then
-**FROM THE REQUEST** (the requester stated it or it follows directly from what they stated),
-**RECORDED** (not from the request, but the spec records it as an assumption or proposed default
-with its reason), or **INVENTED** (neither).
-
-**Then judge:** PASS if no threshold is INVENTED. FAIL if any is, and name it.
-
-A check that reviews the change itself for defects or quality, or that keeps the work within
-what was asked, is not a threshold. Skip it.
+FAIL only if you can name a specific threshold that is neither from the request nor recorded.
+Otherwise PASS.
 
 The request:
 

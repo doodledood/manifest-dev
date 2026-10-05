@@ -5,6 +5,9 @@ focus:
   path: manifest.md
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The user proposed a mechanism (a cron that flushes redis every minute) and then stated what
 actually matters: no customer sees a price more than a minute older than the current one.
 

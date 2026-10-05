@@ -3,6 +3,9 @@ type: llm
 focus: trace
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The two requirements cannot both hold as stated. A read served from an asynchronously replicated
 eu-west replica lags writes by 100–500ms, so it cannot both answer under 50ms and *always* reflect
 the latest committed write. Any read that must be fresh needs to go to us-east (~300ms), or the

@@ -5,6 +5,9 @@ focus:
   path: manifest.md
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 This is a mechanical rename with no behavior change. A proportionate spec is small: one
 deliverable, checks that the old name is gone and the new one works (typecheck and tests pass, no
 remaining references), and anything that reviews the rename itself. A disproportionate one adds

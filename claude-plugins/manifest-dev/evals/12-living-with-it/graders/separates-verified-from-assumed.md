@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 One load-bearing item here is explicitly unconfirmed: the "best current guess" that the race is in
 the test harness rather than the service. Two engineers spent a week and could not confirm it.
 

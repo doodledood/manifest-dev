@@ -5,6 +5,9 @@ focus:
   path: manifest.md
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The user also stated a deliberate mechanism: price changes must keep flowing through the existing
 PriceEvents bus, because compliance audits every price change from it.
 

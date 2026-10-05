@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 Three `DeviceAttachFailed` events with `identity_not_found` payloads, all from a single afternoon
 in March, are the sharpest evidence in the prompt — they show the failure the sleep guards against
 still occurs even WITH the sleep in place.

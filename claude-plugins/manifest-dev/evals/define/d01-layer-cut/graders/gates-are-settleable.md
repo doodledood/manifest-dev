@@ -5,30 +5,22 @@ focus:
   path: manifest.md
 weight: 1
 ---
-The document under review is a work spec. If it is missing or empty, FAIL.
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
 
-The question is whether an executor could run this spec to completion without looping: every
-check it must pass has to be one an evaluator can settle, and one some finite amount of work can
-satisfy.
+Scan the gates — every acceptance criterion, invariant, or other check the spec says must pass
+before the work counts as done — for a specific gate that would send an executor round a repair
+loop:
 
-**First, list every gate** — every acceptance criterion, invariant, or other check the spec says
-must pass before the work counts as done (not advisory guidance, not assumptions). One line per
-gate: its ID or title, then exactly one classification:
+- **UNSTABLE** — it states no threshold, procedure, reference, bound, or named decider, so two
+  evaluators on unchanged work could disagree or keep finding new issues: "the code is clean",
+  "docs are high quality", "find and fix all issues", "well tested".
+- **UNREACHABLE** — no finite work satisfies it or nothing could check it: "zero bugs", "works for
+  every possible input", exhaustive evidence where only sampling is feasible, or a contradiction
+  with another gate.
 
-- **SETTLEABLE** — a fresh evaluator looking at the finished work reaches PASS or FAIL by the
-  procedure or against the threshold the gate states, and finite work can make it pass.
-- **UNSTABLE** — no threshold or procedure is stated, so two evaluators on unchanged work could
-  reasonably disagree, or each re-evaluation could find new issues without end. Examples: "the
-  code is clean", "docs are high quality", "find and fix all issues", "well tested", with no
-  anchor, reference, bound, or named decider.
-- **UNREACHABLE** — as written, no finite work satisfies it or nothing could check it: an absolute
-  claim over an open space ("zero bugs", "works for every possible input"), exhaustive evidence
-  where only sampling is feasible, or a gate that contradicts another gate.
+These are settleable, so skip them: a gate that hands judgment to a named skill or review and says
+what it covers; a gate that lists what to check or names the command to run; a gate with a BLOCKED
+exit for when it cannot be checked; a subjective gate anchored to a named reference or decider.
 
-**Then judge:** PASS if every gate is SETTLEABLE. FAIL if any gate is UNSTABLE or UNREACHABLE —
-name it.
-
-Classify on what the gate says, not how it is formatted. A subjective gate anchored to a named
-reference, an observable effect, or a named person who decides is SETTLEABLE. A gate that hands
-judgment to a named review is SETTLEABLE when it names what that review covers; one that says
-only "review it" is UNSTABLE.
+FAIL only if you can name a specific gate that is UNSTABLE or UNREACHABLE. Otherwise PASS.

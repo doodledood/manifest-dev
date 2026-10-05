@@ -18,6 +18,23 @@ cases burn their turn reporting that writing is disabled.
 
 The headline number is **Δ** — with-plugin score minus the no-plugin baseline.
 
+## Running on macOS
+
+Run the suites in the Linux container defined by `Dockerfile` in this directory. On macOS, every
+eval child tries to store a key in the login keychain from a sandboxed home that has no keychain,
+and macOS raises a "Keychain Not Found" dialog per child, hundreds per suite. A container has no
+macOS keychain, and a detached container also keeps running if the launching session ends:
+
+```bash
+docker build -t manifest-dev-evals claude-plugins/manifest-dev/evals
+docker run -d --security-opt seccomp=unconfined --security-opt apparmor=unconfined \
+  -e ANTHROPIC_API_KEY -v "$PWD":/work -w /work/claude-plugins/manifest-dev \
+  manifest-dev-evals claude plugin eval . --tag figure-out --ablation with-without \
+  --judge-model sonnet --allow-tools Write Bash -j 4 --no-publish --trust-plugin
+```
+
+The Dockerfile pins the CLI version; bump it deliberately, since a different CLI can move scores.
+
 ## What the pilots established
 
 Three independent case designs were built and run before this suite settled. Two of them produced
@@ -193,7 +210,10 @@ count as failures"). A sonnet-tier judge applied the requirement and skipped the
 Both were rewritten to **enumerate before judging** — the judge must first list and classify what
 it found (every ask, classified substantive or logistical; the stated cause, and whether a live
 rival and a deciding observation are present), and only then reach a verdict on that classification.
-A verdict that follows from an enumeration is predictable from the text; a verdict that depends on
+The enumeration happens in the judge's head: every LLM grader opens by telling it to work
+privately and reply with one word, because the CLI's judge must answer exactly PASS or FAIL and
+scores anything written out as FAIL. `tests/test_eval_shared_graders.py` enforces that opening
+line. A verdict that follows from an enumeration is predictable from the text; a verdict that depends on
 a judge honouring a prose exemption is not.
 
 **This cost a second baseline.** Under INV-G2 a case file may not move after the baseline it is

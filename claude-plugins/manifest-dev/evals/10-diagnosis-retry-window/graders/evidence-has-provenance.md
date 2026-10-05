@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 Judge whether the load-bearing claims in the response are tied to the specific artifact that
 supports them, rather than asserted flatly.
 

@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The user arrived with a solution already chosen (remove the archive pages from the tab row, link them from the footer). Judge whether the reply presses from the true root instead of designing the chosen solution.
 
 PASS requires all three:

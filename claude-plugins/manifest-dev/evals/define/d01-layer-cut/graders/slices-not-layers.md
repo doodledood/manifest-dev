@@ -5,6 +5,9 @@ focus:
   path: manifest.md
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The request handed over a plan cut by technical layer: a model and migration, then REST
 endpoints, then a UI.
 

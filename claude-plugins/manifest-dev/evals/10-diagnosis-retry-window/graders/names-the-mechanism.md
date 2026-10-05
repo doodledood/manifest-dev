@@ -3,6 +3,9 @@ type: llm
 focus: last_message
 weight: 1
 ---
+Work through the steps below privately, without writing them out. Your entire reply is one word:
+PASS or FAIL.
+
 The evidence supports one specific mechanism. Judge whether the response actually names it.
 
 The mechanism: `compute_window` is called INSIDE the retry loop, so the window is recomputed from
