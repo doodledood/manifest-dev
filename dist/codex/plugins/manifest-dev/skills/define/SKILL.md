@@ -58,6 +58,14 @@ That gives a floor that isn't ceremony:
   references and observable effect, or a named owner's acceptance; record who
   decides and what resolves disagreement. The title never adds a requirement the
   body omits, and the why binds nothing.
+- Every specific in a gate has a source. Where the request sets no bar, the
+  threshold is the behavior it does state — a pass/fail property, a command, a
+  named reference — not a number made up to look measurable. A specific the user
+  did not give — a number, duration, sample size, rate, format, required
+  write-up, sign-off, or edge-case behavior — enters a gate only when derived
+  from a stated requirement and said so in its why, or as a choice: an `(auto)`
+  `ASM-*` carrying the value and its reason, cited by the gate, so the user can
+  veto the value instead of meeting it mid-run as a requirement.
 - Every gate declares "Judgment gate." or "Deterministic gate." — never
   inferred; an executor handed an undeclared kind is broken by it. A gate mixing
   a command with a judgment is a judgment gate.
@@ -75,13 +83,15 @@ That gives a floor that isn't ceremony:
   exact rather than the list. An Acceptance Criterion's region is its
   Deliverable's surface; a Global Invariant's is the Manifest's, bounded by
   Appetite. Distinguish the property owed across that region from the evidence
-  sufficient to accept it: use finite, justified coverage where exhaustive
-  observation is infeasible, state its limits, and share evidence across gates
-  that inspect the same surface. Representative evidence never turns an explicit
+  sufficient to accept it: where exhaustive observation is infeasible, the gate
+  names a closed coverage set — a list or a count, never "at least these, plus
+  any others" — sourced like any other chosen specific; state its limits, and
+  share evidence across gates that inspect the same surface. Representative evidence never turns an explicit
   universal requirement into a sampled one.
 - Check that the gates can hold **together** within the stated scope and operating
   conditions. Settle open-ended horizons and competing resource or performance
-  demands before handoff, with proposed bounds grounded in the intended use.
+  demands before handoff, with proposed bounds grounded in the intended use and
+  recorded as proposals.
   Surface unresolved tradeoffs for the owner (or return a blocker outside an
   unattended caller's delegation); preserve the ambition and explicit requirements
   until that decision authorizes a change. Completion uses the agreed evidence and

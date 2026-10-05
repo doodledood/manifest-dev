@@ -59,6 +59,35 @@ Mean Δ over the 10 cases **+0.41**.
 The 2026-10-05 pilot before this ran with a sonnet judge and rubrics the one-word reply could not
 hold; its shared-grader numbers are not comparable and are not kept.
 
+## Hill-climb on invented thresholds — 2026-10-05
+
+Two rounds against `no-invented-thresholds`, plugin arm only (`--ablation none`), 6 runs per case,
+same CLI, agent, and judge as the baseline, train/test split as below. Reports
+`results/define-hillclimb-v1-20261005` and `results/define-hillclimb-v2-20261005`.
+
+| Grader | Baseline | v1 | v2 (kept) |
+|---|---|---|---|
+| no-invented-thresholds, train | 14/30 | 24/30 | 22/30 |
+| no-invented-thresholds, test | 10/18 | 15/18 | 18/18 |
+| gates-are-settleable, train · test | 28/30 · 18/18 | 24/30 · 18/18 | 28/30 · 16/18 |
+| binding-lives-in-gates, train · test | 27/30 · 17/18 | 28/30 · 17/18 | 27/30 · 16/18 |
+| case graders | 64/66 | 64/66 | 65/66 |
+| agent cost per suite | $23.73 | $23.37 | $23.60 |
+
+- **v1** added a floor rule to `SKILL.md`: every specific in a gate has a source. A value the
+  request never set enters a gate only when derived from a stated requirement, said in its why,
+  or as an `(auto)` assumption the gate cites. Every failing train Manifest had stated chosen
+  numbers, windows, write-ups, or sign-offs as requirements; the passing ones already filed
+  them as assumptions.
+- **v2** closed a hole v1 opened: two `d05` Manifests left a zero-failure gate's evidence set
+  open ("at least these, plus any others"), which no finite run completes. The coverage clause
+  now requires a closed list or count.
+- **Read with care.** The threshold gain replicates across both rounds (39/48 and 40/48 against
+  24/48). The test settleable and binding dips in v2 are one run each on `d04` and `d06` and sit
+  inside the noise. The opus judge spends roughly twice as much grading the new Manifests; the
+  agent's cost is unchanged. The baseline Δ above predates this change and has not been
+  re-recorded with both arms.
+
 ## How the cases are built
 
 - **Each case plants one trap** that a rule in `define/SKILL.md` exists to catch: a request cut
@@ -127,10 +156,10 @@ definition of done for an executor with no other context.
 `d07` and `d08` are the over-planning floor. Keep at least one through any tuning that pushes
 `define` to encode harder.
 
-## Held-out split (proposed)
+## Held-out split
 
-Hold out `d04`, `d06`, and `d08` from tuning: one binding-rule case, one anchoring case, one
-negative. Fix the split after the pilot drops any cases, before the baseline.
+`d04`, `d06`, and `d08` are held out from tuning: one binding-rule case, one anchoring case, one
+negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the other seven.
 
 ## Known limits
 
