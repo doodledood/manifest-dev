@@ -51,6 +51,22 @@ together.
 What it does not catch: a gate that pins an incidental mechanism is settleable, but it still
 causes rework when the executor meets the intent another way. `d02` covers that one separately.
 
+## Two more graders on every spec case
+
+Both come from what `manifest-to-goal` keeps when it boils a Manifest down to a standalone
+definition of done for an executor with no other context.
+
+- `binding-lives-in-gates.md`: lists every requirement stated outside the gates (in the problem,
+  approach, guidance, or assumptions) and fails any no gate checks. An executor working from the
+  gates finds an ungated rule only mid-run, as rework. One rubric across its copies; the drift
+  test covers it.
+- `no-invented-thresholds.md`: lists every number, budget, format, report, or sign-off in the
+  gates and fails any that neither came from the request nor is recorded as an assumption with a
+  reason. This is the too-tight half that `gates-are-settleable` cannot see: an invented bar is
+  still settleable. It skips checks that review the change itself, which `define` adds by design.
+  Each copy embeds its case's request, since a grader reading the file cannot see the prompt, so
+  the copies differ by case. Regenerate them if a prompt changes.
+
 ## Cases
 
 | Case | Trap | Scored graders |

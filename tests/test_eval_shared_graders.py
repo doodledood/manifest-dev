@@ -7,7 +7,11 @@ from pathlib import Path
 import pytest
 
 EVALS = Path(__file__).parent.parent / "claude-plugins/manifest-dev/evals"
-SHARED = ["define/*/graders/gates-are-settleable.md", "*/graders/turn-discipline.md"]
+SHARED = [
+    "define/*/graders/gates-are-settleable.md",
+    "define/*/graders/binding-lives-in-gates.md",
+    "*/graders/turn-discipline.md",
+]
 
 
 @pytest.mark.parametrize("pattern", SHARED)
