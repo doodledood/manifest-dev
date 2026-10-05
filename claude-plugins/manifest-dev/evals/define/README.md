@@ -21,12 +21,43 @@ opus judge matched known answers on a clean Manifest and on a copy with an unsta
 ungated rule, and an invented threshold planted in it. Keep opus here unless that check is
 repeated with a cheaper judge.
 
-**Status: piloted once, numbers not usable.** The first pilot (2026-10-05) ran with a sonnet judge
-and rubrics that asked the judge to list before answering, which the one-word reply cannot hold.
-Its case-specific graders showed uplift on `d01`, `d08`, and `d09` and none elsewhere; the shared
-graders failed both arms on nearly every run. The rubrics and judge have since changed, so the
-next run is the baseline. Expect some cases to show no headroom (both arms pass), which removes
-them. Decide that by reading outputs, never by loosening a grader until it passes.
+## Baseline — 2026-10-05
+
+Report `results/define-baseline-20261005-1845`. Measured at `9a312219`, CLI 2.1.289, agent
+`claude-opus-5-5`, judge `claude-opus-5-5`, 6 runs per arm — pilot depth, so read single-case
+moves against the noise rules in `../README.md`. The committed `aggregate-result.json` has each
+verdict's judged Manifest stripped; the local HTML report keeps it.
+
+| Case | With | Without | Δ |
+|---|---|---|---|
+| d01-layer-cut | 1.00 | 0.33 | +0.67 |
+| d02-outcome-not-mechanism | 0.93 | 0.53 | +0.40 |
+| d03-class-not-instances | 0.83 | 0.54 | +0.29 |
+| d04-unsafe-binds | 0.79 | 0.46 | +0.33 |
+| d05-conflicting-goals | 0.71 | 0.38 | +0.33 |
+| d06-subjective-anchor | 0.83 | 0.50 | +0.33 |
+| d07-neg-no-problem | 1.00 | 1.00 | 0.00 |
+| d08-neg-small | 1.00 | 0.29 | +0.71 |
+| d09-amend-widen | 0.67 | 0.00 | +0.67 |
+| d10-loop-bait | 0.67 | 0.33 | +0.33 |
+
+Mean Δ over the 10 cases **+0.41**.
+
+- **Requirements living in gates is the widest gap.** `binding-lives-in-gates` passes 5–6 of 6
+  with the plugin and 0–1 of 6 without on every case that carries it.
+- **Slicing, proportion, and amendment show clean case-level uplift:** `slices-not-layers` 6/6
+  vs 0/6, `proportionate` 6/6 vs 0/6, `widens-not-siblings` 4/6 vs 0/6.
+- **Invented thresholds are the open hill.** `no-invented-thresholds` is low in both arms — 0/6
+  with the plugin on `d05`, 1/6 on `d10`, 2/6 on `d04` and `d06`. `define` still writes bars the
+  request never set, which is the too-tight half of a looping Manifest.
+- **Eight case graders show no headroom** and act as floor checks: `binds-outcome-not-cron`,
+  `keeps-deliberate-mechanism`, `gate-covers-the-class`, `safety-rules-bind`,
+  `conflict-surfaced`, `quality-anchored`, `does-not-invent-a-problem`, and
+  `bounds-the-open-ends` pass every run in both arms. Their cases stay, since each still
+  separates the arms on a shared grader; `d07` stays as the over-planning floor.
+
+The 2026-10-05 pilot before this ran with a sonnet judge and rubrics the one-word reply could not
+hold; its shared-grader numbers are not comparable and are not kept.
 
 ## How the cases are built
 

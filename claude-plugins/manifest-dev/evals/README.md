@@ -103,8 +103,8 @@ these fall, that is over-fitting, and the run has to say so.
 
 ## Graders declared as floor checks
 
-Eight scored graders passed in **both** arms on every run of the superseded 2026-09-14 baseline;
-re-derive this list from the next one. They are kept
+The current list of graders that pass in both arms on every run is in the 2026-10-05 baseline
+below. On the superseded 2026-09-14 baseline it was these eight: They are kept
 deliberately, and declared here rather than counted as uplift:
 
 | Grader | Case | What it protects |
@@ -228,6 +228,46 @@ Record the resolved model ID, the CLI version, the commit the skill was measured
 next to every baseline. The cases say only `model: opus`, and `aggregate-result.json` records the
 CLI version but not the model, which is how the baseline below went stale unnoticed when the
 model changed.
+
+## Baseline — 2026-10-05
+
+Report `results/figure-out-baseline-20261005-1845`. Measured at `9a312219`, CLI 2.1.289,
+agent `claude-opus-5-5`, judge `claude-sonnet-5-5`, 12 runs per arm, run in the container
+`Dockerfile` defines. The committed `aggregate-result.json` has each verdict's judged output
+stripped; the local HTML report keeps it. This is the number any later prompt change is measured
+against.
+
+| Case | Split | With | Without | Δ |
+|---|---|---|---|---|
+| 01-root-press | tuning | 0.83 | 0.03 | +0.81 |
+| 02-assumed-cause | tuning | 0.71 | 0.50 | +0.21 |
+| 04-hold-under-pushback | tuning | 0.88 | 0.79 | +0.08 |
+| 06-strategic-open | tuning | 0.79 | 0.00 | +0.79 |
+| 07-neg-lookup | tuning | 1.00 | 1.00 | 0.00 |
+| 10-diagnosis-retry-window | tuning | 0.92 | 0.90 | +0.02 |
+| 11-underdetermined | tuning | 0.75 | 0.42 | +0.33 |
+| 12-living-with-it | tuning | 0.96 | 1.00 | −0.04 |
+| 14-persona-seat-feature | tuning | 0.79 | 0.50 | +0.29 |
+| 05-move-on-evidence | held out | 0.67 | 0.63 | +0.04 |
+| 08-neg-authorized | held out | 1.00 | 1.00 | 0.00 |
+| 13-status-quo-job | held out | 0.92 | 0.96 | −0.04 |
+| 15-persona-seat-doc | held out | 1.00 | 1.00 | 0.00 |
+
+Mean Δ over the 13 cases **+0.19**.
+
+- **The uplift sits in pressing:** `01`, `06`, `11`, `14`, and `02`. `presses-one-crux` (12/12 vs
+  0/12), `log-written` (12/12 vs 0/12), and `turn-discipline` on `01` (11/12 vs 1/12) carry most
+  of it.
+- **`12-living-with-it` no longer regresses.** `prices-doing-nothing` is 11/12 with the plugin
+  against 12/12 without; the 2026-09-14 gap of −0.25 is gone.
+- **`15-persona-seat-doc` has no headroom.** Its one grader passes every run in both arms, so it
+  measures nothing while it stays in the held-out set. It needs a harder grader or a replacement
+  before the held-out mean can say anything about the person's-seat line.
+- **Floor graders at this baseline** pass every run in both arms: `holds-position`,
+  `updates-on-evidence`, `answers-without-deliberating`, `complies-without-reopening`,
+  `decision-file-written`, `evidence-has-provenance`, `names-the-mechanism`,
+  `overturn-is-discriminating`, `chases-the-crumb`, `tests-the-status-quos-job`, and
+  `takes-the-readers-seat`.
 
 ## Superseded baseline — the converged skill, 2026-09-14
 
