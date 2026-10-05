@@ -50,28 +50,47 @@ def split_of(case: str, state: dict[str, Any]) -> str:
     return "other"
 
 
+def plugin_fired(case: dict[str, Any]) -> set[str]:
+    """Graders that check the skill fired rather than output quality.
+
+    Under ``--ablation with-without`` the CLI leaves them out of the score; under
+    ``none`` it scores them. Dropping them in both modes keeps rounds comparable.
+    """
+    return {
+        g["name"]
+        for g in case["graders"]
+        if g["type"] == "tool_used" and (g.get("config") or {}).get("tool") == "Skill"
+    }
+
+
 def tally(
     data: dict[str, Any], state: dict[str, Any], shared: set[str]
-) -> tuple[dict[tuple[str, str], list[int]], dict[str, float], float, int]:
+) -> tuple[dict[tuple[str, str], list[int]], dict[str, float], dict[str, float], int]:
     counts: dict[tuple[str, str], list[int]] = defaultdict(lambda: [0, 0])
     per_case: dict[str, float] = {}
-    cost, errors = 0.0, 0
+    cost = {"agent": 0.0, "judge": 0.0}
+    errors = 0
     for case in data["cases"]:
         runs = case["arms"]["with"]
         split = split_of(case["name"], state)
-        per_case[case["name"]] = sum(r["score"] for r in runs) / len(runs)
+        skip = plugin_fired(case)
+        scores = []
         for run in runs:
-            cost += run["costUsd"] + (run.get("judgeCostUsd") or 0)
+            # costUsd already includes the judge's share.
+            judge = run.get("judgeCostUsd") or 0
+            cost["agent"] += run["costUsd"] - judge
+            cost["judge"] += judge
             errors += bool(run.get("error"))
-            for grader in run["graders"]:
-                # A with-only grader (`tool_used: Skill`) is a plugin-fired check, not
-                # quality; skip it in both ablation modes so rounds stay comparable.
-                if not grader["scored"] or grader.get("withOnly"):
-                    continue
+            kept = [g for g in run["graders"] if g["scored"] and g["name"] not in skip]
+            weight = sum(g["weight"] for g in kept)
+            if weight:
+                scores.append(sum(g["weight"] * g["passed"] for g in kept) / weight)
+            for grader in kept:
                 key = grader["name"] if grader["name"] in shared else POOLED
                 for bucket in ((split, key), ("all", key)):
                     counts[bucket][0] += grader["passed"]
                     counts[bucket][1] += 1
+        per_case[case["name"]] = sum(scores) / len(scores) if scores else float("nan")
     return counts, per_case, cost, errors
 
 
@@ -84,7 +103,8 @@ def main(argv: list[str] | None = None) -> int:
     state = json.loads(args.state.read_text())
     labelled = [r.split("=", 1) for r in args.runs]
     datas = {label: load(Path(path)) for label, path in labelled}
-    shared = shared_graders(list(datas.values()))
+    fired = {n for d in datas.values() for c in d["cases"] for n in plugin_fired(c)}
+    shared = shared_graders(list(datas.values())) - fired
     results = {label: tally(d, state, shared) for label, d in datas.items()}
     labels = list(results)
 
@@ -112,7 +132,11 @@ def main(argv: list[str] | None = None) -> int:
     print()
     for label in labels:
         _, _, cost, errors = results[label]
-        print(f"{label}: with-arm cost ${cost:.2f}, errored runs {errors}")
+        print(
+            f"{label}: with-arm cost ${cost['agent'] + cost['judge']:.2f} "
+            f"(agent ${cost['agent']:.2f}, judge ${cost['judge']:.2f}), "
+            f"errored runs {errors}"
+        )
     return 0
 
 
