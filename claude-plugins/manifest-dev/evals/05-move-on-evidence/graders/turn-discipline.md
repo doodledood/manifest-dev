@@ -12,7 +12,9 @@ each as a short quote. Classify each one as:
 - **SUBSTANTIVE** — it asks the user to supply information, exercise judgment, or decide something
   about the topic itself.
 - **LOGISTICAL** — it asks for access, a path, a file, permission to read something; reports that
-  the working directory is empty; or confirms how an ambiguous word was interpreted.
+  the working directory is empty; confirms how an ambiguous word was interpreted; or offers a
+  next step (render a draft, run /define, write it up) that the user can ignore without the
+  investigation stalling.
 
 **Then judge, on the count alone:**
 

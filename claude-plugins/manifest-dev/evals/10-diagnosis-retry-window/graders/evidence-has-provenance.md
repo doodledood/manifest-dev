@@ -9,8 +9,8 @@ supports them, rather than asserted flatly.
 PASS requires both:
 1. At least two distinct claims that carry the conclusion are tied to a named artifact — a quoted
    log line or its timestamp, a specific config key and value, or a named line or call in the code
-   (for example `compute_window` being called inside the loop, the 21:05:51Z timestamp, the
-   20:45 UTC cron time, or the `matched 0` window bounds).
+   (for example `compute_window` being called inside the loop, the 23:00:38Z successful attempt, the
+   22:45 UTC cron time, or the `matched 0` window bounds).
 2. The response distinguishes what it established from the given evidence from what it is
    inferring or assuming — for example flagging that it cannot confirm the database contents, the
    real backoff timing, or what happened on nights it was not shown.

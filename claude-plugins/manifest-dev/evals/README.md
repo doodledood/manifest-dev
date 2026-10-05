@@ -1,12 +1,15 @@
 # figure-out eval suite
 
+This directory also holds the `define` suite under `define/`, with its own README. Each case is
+tagged with its suite; run one with `--tag figure-out` or `--tag define`.
+
 Measures whether `figure-out` delivers the discipline its own prompt states — not whether it
 reaches a correct answer, which a strong base model does unaided.
 
 Run it:
 
 ```bash
-claude plugin eval . --ablation with-without --judge-model sonnet --allow-tools Write Bash -j 8
+claude plugin eval . --tag figure-out --ablation with-without --judge-model sonnet --allow-tools Write Bash -j 8
 ```
 
 `--allow-tools Write Bash` is required. `allowed_tools` in a case's `prompt.md` declares what the
@@ -38,21 +41,24 @@ from a discipline `SKILL.md` explicitly states.
 
 ## Cases
 
-| Case | Kind | Discipline under test | Headroom at baseline |
+| Case | Kind | Discipline under test | Split |
 |---|---|---|---|
-| `01-root-press` | press | Press from the true root when a solution arrives pre-chosen | both arms fail |
-| `02-assumed-cause` | press | Do not adopt a diagnosis the user handed over | floor check |
-| `04-hold-under-pushback` | press | Hold a supported read against insistence | floor check |
-| `05-move-on-evidence` | press | Update when evidence actually arrives | floor check |
-| `06-strategic-open` | press | Press one crux rather than delivering the artifact asked for | discriminates |
-| `07-neg-lookup` | negative | Do not deliberate on a lookup | floor check |
-| `08-neg-authorized` | negative | Comply when the decision is settled and the change named | floor check |
-| `10-diagnosis-retry-window` | autonomous | Reach a mechanism, not a location; kill rivals with evidence | floor check |
-| `11-underdetermined` | autonomous | Do not manufacture a winner; separate verified from assumed | both arms fail |
-| `12-living-with-it` | autonomous | Price "living with it" as a real option | untested |
-| `13-status-quo-job` | autonomous | Test the status quo's possible job before removing it | untested |
-| `14-persona-seat-feature` | autonomous | Take the seat of the person the North Star names and walk their uses, not the mechanism's | untested — no baseline yet |
-| `15-persona-seat-doc` | autonomous | Take the seat of the reader the North Star names on a document, where no feature probe file loads | untested — no baseline yet |
+| `01-root-press` | press | Press from the true root when a solution arrives pre-chosen | tuning |
+| `02-assumed-cause` | press | Do not adopt a diagnosis the user handed over | tuning |
+| `04-hold-under-pushback` | press | Hold a supported read against insistence | tuning |
+| `05-move-on-evidence` | press | Update when evidence actually arrives | held out |
+| `06-strategic-open` | press | Press one crux rather than delivering the artifact asked for | tuning |
+| `07-neg-lookup` | negative | Do not deliberate on a lookup | tuning |
+| `08-neg-authorized` | negative | Comply when the decision is settled and the change named | held out |
+| `10-diagnosis-retry-window` | autonomous | Reach a mechanism, not a location; kill rivals with evidence | tuning |
+| `11-underdetermined` | autonomous | Do not manufacture a winner; separate verified from assumed | tuning |
+| `12-living-with-it` | autonomous | Price "living with it" as a real option | tuning |
+| `13-status-quo-job` | autonomous | Test the status quo's possible job before removing it | held out |
+| `14-persona-seat-feature` | autonomous | Take the seat of the person the North Star names and walk their uses, not the mechanism's | tuning |
+| `15-persona-seat-doc` | autonomous | Take the seat of the reader the North Star names on a document, where no feature probe file loads | held out |
+
+Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
+below describe an older skill and model, so no case is labelled with them here.
 
 `04` and `05` are a **mirror pair** and stay paired: a model that always concedes fails `04`, one
 that always digs in fails `05`. No constant policy passes both.
@@ -63,20 +69,25 @@ over-triggering is the first casualty of any "press harder" tuning.
 
 ## Held-out split
 
-**Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `12-living-with-it`, and
-`13-status-quo-job`.** Four of eleven cases — over a third. These are run in the baseline and in
-the final verification only; they appear in no intermediate run during the climb. Tuning happens on
-seven: `01`, `02`, `04`, `06`, `07`, `10`, `11`. `14-persona-seat-feature` and `15-persona-seat-doc` were added after
-the baseline below and join neither set until they are baselined.
+**Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`, and
+`15-persona-seat-doc`.** Four of thirteen cases. These are run in the baseline and in the final
+verification only; they appear in no intermediate run during the climb. Tuning happens on the
+other nine.
 
-The held-out set deliberately includes two autonomous cases testing disciplines the climb is not
-aimed at — pricing "living with it", and testing the status quo's job. If a change that fixes
+`12-living-with-it` was held out until 2026-09-14. It is no longer: it was re-run to decide
+whether to cut two sentences from the skill, and the cut was made because its grader fell, so it
+steered the prompt. `15` takes its place. No feature probe file loads for `15`, so it tests whether
+the person's-seat line generalizes beyond the probe that `14` exercises.
+
+The held-out set deliberately includes autonomous cases testing disciplines the climb is not
+aimed at: testing the status quo's job, and taking the reader's seat on a document. If a change that fixes
 manufacturing-a-winner also moves those, that is generalization. If the tuning set rises while
 these fall, that is over-fitting, and the run has to say so.
 
 ## Graders declared as floor checks
 
-Eight scored graders pass in **both** arms on every run of the baseline. They are kept
+Eight scored graders passed in **both** arms on every run of the superseded 2026-09-14 baseline;
+re-derive this list from the next one. They are kept
 deliberately, and declared here rather than counted as uplift:
 
 | Grader | Case | What it protects |
@@ -191,7 +202,20 @@ were stashed so the second baseline measures an unchanged `figure-out`, and the 
 there. That is the intended cost of the freeze rule working: the alternative was tuning a prompt
 against a judge that could not read its own exemptions.
 
-## Baseline — the converged skill, 2026-09-14
+## Recording a baseline
+
+Record the resolved model ID, the CLI version, the commit the skill was measured at, and the date
+next to every baseline. The cases say only `model: opus`, and `aggregate-result.json` records the
+CLI version but not the model, which is how the baseline below went stale unnoticed when the
+model changed.
+
+## Superseded baseline — the converged skill, 2026-09-14
+
+**Superseded.** Measured at `ef9806fa` on CLI 2.1.270 with the model `opus` resolved to at the
+time. Since then the skill has changed (the person's-seat line, the FEATURE probe, the rewritten
+draft step), the model has changed, and several graders were corrected (case 10's timestamps,
+case 01's opening clause, case 04's exemption list, `turn-discipline`'s treatment of offers). Kept
+for its reasoning, not as a comparison point.
 
 Reports `results/2026-09-14T07-23-48-511Z` (all cases), `results/2026-09-14T09-32-13-181Z`
 (case 13, re-run once after its first runs died on a session limit), and

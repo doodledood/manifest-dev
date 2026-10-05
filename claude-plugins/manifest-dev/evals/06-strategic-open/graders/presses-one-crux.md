@@ -11,4 +11,4 @@ PASS requires both:
 
 Point 2 is a disqualifier, not a neutral addition: a reply that names a good crux AND also supplies the roadmap FAILS, because the roadmap converts an open strategic question into a plan before the question is settled.
 
-A brief framing sentence before the press is fine. Multiple parallel strategic questions raised at once FAIL point 1.
+A brief framing sentence before the press is fine.

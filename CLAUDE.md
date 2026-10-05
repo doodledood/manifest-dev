@@ -31,8 +31,9 @@ a dimension, or a delegation site can therefore turn the suite red without any P
 and that red is the signal working as intended. The same suite fails when `dist/codex` drifts from
 the source tree it copies.
 
-`claude-plugins/manifest-dev/evals/` is a behavioral eval suite for `figure-out`, run with
-`claude plugin eval . --ablation with-without --judge-model sonnet --allow-tools Write Bash`
+`claude-plugins/manifest-dev/evals/` holds behavioral eval suites for `figure-out` and, under
+`evals/define/` with its own README, for `define` — run one with
+`claude plugin eval . --tag <figure-out|define> --ablation with-without --judge-model sonnet --allow-tools Write Bash`
 from the plugin directory. It measures **uplift** — every case runs with the plugin and without
 it, and the headline number is Δ, not pass rate — so a case both arms pass teaches nothing and is
 removed. `tests/` is a property suite that must stay green; the eval suite is a measurement whose
