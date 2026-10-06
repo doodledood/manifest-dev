@@ -21,7 +21,102 @@ opus judge matched known answers on a clean Manifest and on a copy with an unsta
 ungated rule, and an invented threshold planted in it. Keep opus here unless that check is
 repeated with a cheaper judge.
 
+## Baseline — 2026-10-06, after the threshold rubric fix
+
+Report `results/define-baseline-20261006b`. Skill at `62481855`, graders as committed with this
+section, CLI 2.1.289, agent `claude-opus-5-5`, judge `claude-opus-5-5`, 6 runs per arm, $189. It
+re-measures the suite after `no-invented-thresholds` was clarified (all eight copies): the grader
+now also scans required deliverables, names a required report or write-up (a runbook, change
+notes, a release or support note) as a specific the request must have asked for, and counts the
+severity bar a review gate applies.
+
+| Case | With | Without | Δ |
+|---|---|---|---|
+| d01-layer-cut | 1.00 | 0.25 | +0.75 |
+| d02-outcome-not-mechanism | 1.00 | 0.50 | +0.50 |
+| d03-class-not-instances | 0.92 | 0.71 | +0.21 |
+| d04-unsafe-binds | 0.96 | 0.38 | +0.58 |
+| d05-conflicting-goals | 0.67 | 0.50 | +0.17 |
+| d06-subjective-anchor | 0.92 | 0.50 | +0.42 |
+| d07-neg-no-problem | 1.00 | 1.00 | 0.00 |
+| d08-neg-small | 0.96 | 0.46 | +0.50 |
+| d09-amend-widen | 0.50 | 0.00 | +0.50 |
+| d10-loop-bait | 0.88 | 0.50 | +0.38 |
+
+Mean Δ over the 10 cases **+0.40**.
+
+- **`d08` was noise.** The plugin arm is back to 0.96, `binding-lives-in-gates` 5/6 and
+  `proportionate` 6/6, so the drop the previous baseline asked about did not replicate.
+- **`d05` was the threshold hill the old rubric hid**: `no-invented-thresholds` 0/6 in both arms.
+  Each plugin run carried at least one specific the request never set: a required runbook or
+  design-doc write-up in five of six, otherwise a tolerance, sample size, run length, or second
+  pass bar inside a larger check. The old rubric did not count write-ups.
+- **Other headroom**: `widens-not-siblings` on `d09` (3/6) and `gates-are-settleable` on `d10`
+  (3/6), both on tuning cases.
+
+## Hill-climb on invented thresholds, round 2 — 2026-10-06
+
+Plugin arm only, 6 runs per case, against the baseline above, split as below (held out `d04`,
+`d06`, `d08`). One edit: `define`'s rule on specifics names where they slip in — a tolerance,
+sample size, or run length; a second pass bar beside the stated one; a sign-off; an artifact
+beyond the change itself, such as a runbook or design doc — and asks for a reread of every gate
+body before handoff.
+
+| Grader | Split | Baseline | Round |
+|---|---|---|---|
+| `no-invented-thresholds` | tuning | 23/30 | 27/30 |
+| `no-invented-thresholds` | held out | 16/18 | 16/18 |
+| `binding-lives-in-gates` | tuning · held out | 28/30 · 16/18 | 27/30 · 15/18 |
+| `gates-are-settleable` | tuning · held out | 26/30 · 18/18 | 28/30 · 17/18 |
+
+- **Kept.** `d05` went from 0/6 to 5/6 on its target, and the held-out set held at 16/18.
+- **Watch `binding-lives-in-gates`** on `d05` (5/6 → 4/6) and `d06` (5/6 → 4/6). Each is one run
+  inside six-run noise, but both point the same way, and the next both-arm baseline should say
+  whether the drop is real.
+- The held-out set could not show a gain here: it was already near its ceiling on the target
+  grader.
+
+## Baseline — 2026-10-06
+
+**Superseded** by the re-measure above: `no-invented-thresholds` has changed since.
+
+Report `results/define-baseline-20261006`. Measured at `03025008` (after the threshold
+hill-climb below), CLI 2.1.289, agent `claude-opus-5-5`, judge `claude-opus-5-5`, 6 runs per arm,
+$191.
+
+| Case | With | Without | Δ |
+|---|---|---|---|
+| d01-layer-cut | 0.96 | 0.21 | +0.75 |
+| d02-outcome-not-mechanism | 0.97 | 0.67 | +0.30 |
+| d03-class-not-instances | 1.00 | 0.67 | +0.33 |
+| d04-unsafe-binds | 0.96 | 0.38 | +0.58 |
+| d05-conflicting-goals | 0.88 | 0.50 | +0.38 |
+| d06-subjective-anchor | 0.92 | 0.50 | +0.42 |
+| d07-neg-no-problem | 1.00 | 1.00 | 0.00 |
+| d08-neg-small | 0.79 | 0.42 | +0.37 |
+| d09-amend-widen | 0.50 | 0.00 | +0.50 |
+| d10-loop-bait | 0.83 | 0.50 | +0.33 |
+
+Mean Δ over the 10 cases **+0.40**, against +0.41 on 2026-10-05 — the same headline from a
+different mix, so read it by arm.
+
+- **The plugin arm rose on the cases the threshold change aimed at:** `d04` 0.79 → 0.96, `d05`
+  0.71 → 0.88, `d10` 0.67 → 0.83, `d03` 0.83 → 1.00. `no-invented-thresholds` is now 39/48 with
+  the plugin against 6/48 without.
+- **The no-plugin arm moved too**, by up to ±0.17 a case with nothing changed on its side — `d02`,
+  `d03`, `d08`, and `d10` up, `d01` down. That is the noise the figure-out README describes, and it
+  is why the mean held while the plugin arm improved.
+- **Watch `d08`.** The plugin arm fell 1.00 → 0.79: `binding-lives-in-gates` 3/6 and
+  `proportionate` 5/6 on the mechanical rename. Six runs cannot separate a regression from noise;
+  the next define baseline should say which.
+- **Little headroom is left in the plugin arm.** `d09`'s `widens-not-siblings` (3/6) is the one
+  case-level hill, on a single tuning case with no held-out sibling, so a climb on it cannot be
+  judged on the held-out set yet.
+
 ## Baseline — 2026-10-05
+
+**Superseded** by the 2026-10-06 baseline above; kept for the hill-climb below, which measured
+against it.
 
 Report `results/define-baseline-20261005-1845`. Measured at `9a312219`, CLI 2.1.289, agent
 `claude-opus-5-5`, judge `claude-opus-5-5`, 6 runs per arm — pilot depth, so read single-case
@@ -85,8 +180,7 @@ same CLI, agent, and judge as the baseline, train/test split as below. Reports
 - **Read with care.** The threshold gain replicates across both rounds (39/48 and 40/48 against
   24/48). The test settleable and binding dips in v2 are one run each on `d04` and `d06` and sit
   inside the noise. The opus judge spends roughly twice as much grading the new Manifests; the
-  agent's cost is unchanged. The baseline Δ above predates this change and has not been
-  re-recorded with both arms.
+  agent's cost is unchanged. The 2026-10-06 baseline re-records both arms with this change in.
 
 ## How the cases are built
 
