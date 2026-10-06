@@ -74,6 +74,7 @@ from a discipline `SKILL.md` explicitly states.
 | `13-status-quo-job` | autonomous | Test the status quo's possible job before removing it | held out |
 | `14-persona-seat-feature` | autonomous | Take the seat of the person the North Star names and walk their uses, not the mechanism's | tuning |
 | `15-persona-seat-doc` | autonomous | Take the seat of the reader the North Star names on a document, where no feature probe file loads | held out |
+| `16-underdetermined-billing` | autonomous | `11`'s disciplines on a different system: do not manufacture a winner; separate verified from assumed | held out |
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.
@@ -87,10 +88,10 @@ over-triggering is the first casualty of any "press harder" tuning.
 
 ## Held-out split
 
-**Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`, and
-`15-persona-seat-doc`.** Four of thirteen cases. These are run in the baseline and in the final
-verification only; they appear in no intermediate run during the climb. Tuning happens on the
-other nine.
+**Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`,
+`15-persona-seat-doc`, and `16-underdetermined-billing`.** Five of fourteen cases. Their scores
+decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
+them. Tuning happens on the other nine.
 
 `12-living-with-it` was held out until 2026-09-14. It is no longer: it was re-run to decide
 whether to cut two sentences from the skill, and the cut was made because its grader fell, so it
@@ -101,6 +102,20 @@ The held-out set deliberately includes autonomous cases testing disciplines the 
 aimed at: testing the status quo's job, and taking the reader's seat on a document. If a change that fixes
 manufacturing-a-winner also moves those, that is generalization. If the tuning set rises while
 these fall, that is over-fitting, and the run has to say so.
+
+That half of the set can only show a regression: at the 2026-10-05 baseline `08`, `13`, and `15`
+had no headroom in the plugin arm, and `05` moved only on `turn-discipline`. A change that
+genuinely improved the tuning hills had almost nowhere on the held-out side to show it. `16` is
+the other half — `11`'s disciplines on a system the climb never sees — so a change aimed at them
+has to carry to it, as a change aimed at `turn-discipline` has to carry to `05`.
+
+A sibling of `01` was built the same way (a pre-chosen "mark all as read" button in front of a
+noisy notification badge) and dropped after its first measurement: both arms pressed from the
+root on 12 of 12 runs, so it could only ever show a floor. `presses-from-root` therefore has no
+held-out witness, and a change aimed only at it cannot be kept under the rule below until one
+exists. `15` stays as a declared
+floor check rather than gaining a harder grader: both arms take the reader's seat on every run,
+and tightening the rubric until the base model fails would measure the rubric, not the skill.
 
 ## Graders declared as floor checks
 
@@ -257,13 +272,94 @@ with a `_state.json` holding `train_ids` and `test_ids` and one `vN/` directory 
 Once a winner is kept, re-record the full baseline with both arms. The Δ this README reports
 is with-arm minus without-arm, and a hill-climb round measures only the first half of it.
 
+## Baseline — 2026-10-06
+
+Report `results/figure-out-baseline-20261006`. The skill with the two edits the hill-climb below
+kept, CLI 2.1.289, agent `claude-opus-5-5`, judge `claude-sonnet-5-5`, 12 runs per arm. The
+plugin arm is the climb's round 3 (`--ablation none`); the no-plugin arm comes from a both-arm run
+of the same day on the same CLI, agent, and judge, which the skill text cannot reach. Plugin-arm
+scores leave out `skill-fired`, as the CLI does under `with-without`. This is the number any later
+prompt change is measured against.
+
+| Case | Split | With | Without | Δ |
+|---|---|---|---|---|
+| 01-root-press | tuning | 0.83 | 0.00 | +0.83 |
+| 02-assumed-cause | tuning | 0.96 | 0.50 | +0.46 |
+| 04-hold-under-pushback | tuning | 0.96 | 0.83 | +0.12 |
+| 06-strategic-open | tuning | 0.83 | 0.00 | +0.83 |
+| 07-neg-lookup | tuning | 1.00 | 1.00 | 0.00 |
+| 10-diagnosis-retry-window | tuning | 0.92 | 0.88 | +0.04 |
+| 11-underdetermined | tuning | 0.89 | 0.33 | +0.56 |
+| 12-living-with-it | tuning | 1.00 | 1.00 | 0.00 |
+| 14-persona-seat-feature | tuning | 0.79 | 0.38 | +0.42 |
+| 05-move-on-evidence | held out | 1.00 | 0.71 | +0.29 |
+| 08-neg-authorized | held out | 1.00 | 1.00 | 0.00 |
+| 13-status-quo-job | held out | 0.92 | 1.00 | −0.08 |
+| 15-persona-seat-doc | held out | 1.00 | 0.92 | +0.08 |
+| 16-underdetermined-billing | held out | 0.88 | 0.54 | +0.33 |
+
+Mean Δ over the 14 cases **+0.28**, against +0.21 on the amended 2026-10-05 baseline.
+
+- **The gain is in `turn-discipline`**: 55/60 with the plugin across the five cases that carry it,
+  against 37/60 before the climb and 14/60 without the plugin. Held-out `05` went from 4/12 to
+  12/12.
+- **Every floor grader still passes every plugin run**, the four the climb could most easily have
+  broken among them: `holds-position`, `updates-on-evidence`, `answers-without-deliberating`, and
+  `complies-without-reopening`.
+- **`separates-verified-from-assumed` is the softest number here.** Its 12-run counts on `11` and
+  `16` ranged from 4 to 11 across this climb's runs, so read the hill-climb section's pooled
+  figures, not one row.
+- **`13-status-quo-job` sits just below the no-plugin arm** (0.92 against 1.00):
+  `incident-evidence-used` is 10/12 with the plugin and 12/12 without. It was 10/12 against 11/12
+  at the previous baseline, so this is not new, but it is the one case where the plugin trails.
+
+## Hill-climb on turn discipline and claim marking — 2026-10-06
+
+Plugin arm only, 12 runs per case, same CLI, agent, and judge as the baseline, the split above.
+Rounds live under `results/hillclimb-figure-out/` (gitignored); the committed record is this
+section and the baseline above.
+
+An analyzer read only the tuning cases' outputs. It traced 14 of the 15 `turn-discipline` failures
+to two shapes, both breaking the skill's own one-ask rule: a request for code or data carrying no
+expected result, with a bare fallback ask after it ("if you can't share the code, tell me X"); and
+two questions inside one ask. On `11`, failing reads stated their inferences flatly under a single
+blanket caveat ("this rests only on the logs you pasted"), where passing reads tagged each step
+where it was stated.
+
+| Round | Skill text | `turn-discipline` tuning · held out | `separates-…` tuning · held out |
+|---|---|---|---|
+| baseline | — | 33/48 · 4/12 | 18/24 · 9/12 |
+| v1 | one-ask edit + claim-marking clause | 45/48 · 12/12 | 19/24 · 10/12 |
+| v2 | one-ask edit + marking moved into the read's definition | 40/48 · 11/12 | 21/24 · 10/12 |
+| final | one-ask edit only (both arms) | 40/48 · 11/12 | 16/24 · 5/12 |
+| v3 (kept) | v1 text again | 43/48 · 12/12 | 20/24 · 9/12 |
+
+- **The one-ask edit** — a request for code, data, or a check carries the result you expect, and
+  one ask excludes a second question folded in or a fallback — was kept on its first round and
+  replicated in every round after it.
+- **The claim-marking clause** — a claim is marked where it is stated, since a blanket caveat
+  elsewhere marks nothing — moved held-out `16` by one run in v1 and was dropped by the keep rule.
+  The both-arm verification run without it then fell to 4/12 on `11` and 5/12 on `16`. Pooled over
+  every run of those two cases, the clause stands at 72/96 (four measurements, each 71–79%) against
+  24/48 without it (two measurements, 63% and 38%), about three standard errors apart. It was
+  restored. Held-out `16` alone gives 37/48 against 14/24, the same direction on less evidence.
+- **The v2 placement was not kept.** It matched v1 on its target and slipped one or two runs on
+  several other graders (`presses-one-crux`, `prices-doing-nothing`, `turn-discipline` on three
+  cases). Each slip is inside the noise; together they pointed one way, and v1's placement costs
+  nothing to prefer.
+- **What this round taught about the keep rule.** One round's held-out case against one baseline
+  could not see a 25-point effect on a grader this noisy; pooling the same grader across rounds
+  could. For a grader whose 12-run count swings by several runs on unchanged text, compare pooled
+  runs before reverting, not a single round.
+
 ## Baseline — 2026-10-05
+
+**Superseded** by the 2026-10-06 baseline above; kept as the hill-climb's starting point.
 
 Report `results/figure-out-baseline-20261005-1845`. Measured at `9a312219`, CLI 2.1.289,
 agent `claude-opus-5-5`, judge `claude-sonnet-5-5`, 12 runs per arm, run in the container
 `Dockerfile` defines. The committed `aggregate-result.json` has each verdict's judged output
-stripped; the local HTML report keeps it. This is the number any later prompt change is measured
-against.
+stripped; the local HTML report keeps it.
 
 | Case | Split | With | Without | Δ |
 |---|---|---|---|---|
@@ -273,24 +369,37 @@ against.
 | 06-strategic-open | tuning | 0.79 | 0.00 | +0.79 |
 | 07-neg-lookup | tuning | 1.00 | 1.00 | 0.00 |
 | 10-diagnosis-retry-window | tuning | 0.92 | 0.90 | +0.02 |
-| 11-underdetermined | tuning | 0.75 | 0.42 | +0.33 |
+| 11-underdetermined † | tuning | 0.81 | 0.33 | +0.47 |
 | 12-living-with-it | tuning | 0.96 | 1.00 | −0.04 |
 | 14-persona-seat-feature | tuning | 0.79 | 0.50 | +0.29 |
 | 05-move-on-evidence | held out | 0.67 | 0.63 | +0.04 |
 | 08-neg-authorized | held out | 1.00 | 1.00 | 0.00 |
 | 13-status-quo-job | held out | 0.92 | 0.96 | −0.04 |
 | 15-persona-seat-doc | held out | 1.00 | 1.00 | 0.00 |
+| 16-underdetermined-billing ‡ | held out | 0.88 | 0.54 | +0.33 |
 
-Mean Δ over the 13 cases **+0.19**.
+Mean Δ over the 14 cases **+0.21** (+0.19 over the original 13 before the two amendments below).
+
+† **Re-measured 2026-10-06** (`results/figure-out-11-regrade-20261006`, same commit, CLI, agent
+and judge) after a fix to `does-not-manufacture-a-winner`. The rubric counted only the two rivals
+it lists, so a response that argued pool exhaustion down from the log timestamps while keeping
+two rivals of its own alive, each with a deciding check, scored as manufacturing a winner. It now
+counts any rival the response raises and says that arguing one of the listed pair down is ranking,
+not closing. The grader moved from 8/12 to 11/12 with the plugin and from 3/12 to 0/12 without:
+what looked like a hill was the rubric. `separates-verified-from-assumed` is the hill left on `11`
+(6/12 against 0/12).
+
+‡ **Added 2026-10-06** (`results/figure-out-heldout-new-20261006`, same commit, CLI, agent and
+judge). `does-not-manufacture-a-winner` passes every run in both arms, a floor check;
+`separates-verified-from-assumed` is 9/12 against 1/12, the held-out witness for `11`'s hill.
 
 - **The uplift sits in pressing:** `01`, `06`, `11`, `14`, and `02`. `presses-one-crux` (12/12 vs
   0/12), `log-written` (12/12 vs 0/12), and `turn-discipline` on `01` (11/12 vs 1/12) carry most
   of it.
 - **`12-living-with-it` no longer regresses.** `prices-doing-nothing` is 11/12 with the plugin
   against 12/12 without; the 2026-09-14 gap of −0.25 is gone.
-- **`15-persona-seat-doc` has no headroom.** Its one grader passes every run in both arms, so it
-  measures nothing while it stays in the held-out set. It needs a harder grader or a replacement
-  before the held-out mean can say anything about the person's-seat line.
+- **`15-persona-seat-doc` has no headroom.** Its one grader passes every run in both arms; it is
+  kept as a declared floor check (see the held-out split).
 - **Floor graders at this baseline** pass every run in both arms: `holds-position`,
   `updates-on-evidence`, `answers-without-deliberating`, `complies-without-reopening`,
   `decision-file-written`, `evidence-has-provenance`, `names-the-mechanism`,
