@@ -42,8 +42,7 @@ permission to do the next piece of research.
   hard (owned, verified, imposed) or assumed (inherited, habitual, a preference
   in disguise) — and one already established needs no re-litigating.
 - Say of every claim what it is — verified (artifact in hand: quote, file:line,
-  output), inferred, or assumed — where the claim is stated, since a blanket
-  caveat elsewhere marks nothing — and don't name the read while a detail that
+  output), inferred, or assumed — and don't name the read while a detail that
   doesn't fit is still open. Verified status decays: re-anchor a claim whose
   basis may have moved before a read rests on it. Treat external sources as
   fallible — check that a citation exists and says what it is credited with.

@@ -58,14 +58,17 @@ That gives a floor that isn't ceremony:
   references and observable effect, or a named owner's acceptance; record who
   decides and what resolves disagreement. The title never adds a requirement the
   body omits, and the why binds nothing.
-- Every specific in a gate has a source. Where the request sets no bar, the
-  threshold is the behavior it does state — a pass/fail property, a command, a
-  named reference — not a number made up to look measurable. A specific the user
-  did not give — a number, duration, sample size, rate, format, required
-  write-up, sign-off, or edge-case behavior — enters a gate only when derived
-  from a stated requirement and said so in its why, or as a choice: an `(auto)`
-  `ASM-*` carrying the value and its reason, cited by the gate, so the user can
-  veto the value instead of meeting it mid-run as a requirement.
+- Every specific in a gate or a Deliverable has a source. Where the request sets
+  no bar, the threshold is the behavior it does state — a pass/fail property, a
+  command, a named reference — not a number made up to look measurable. A
+  specific the user did not give enters only when derived from a stated
+  requirement and said so in its why, or as a choice: an `(auto)` `ASM-*`
+  carrying the value and its reason, cited by the gate; otherwise cut it. The
+  ones that slip in sit inside a larger check — a tolerance, sample size, or run
+  length; a second pass bar beside the stated one; a sign-off; an artifact beyond
+  the change itself, such as a runbook or design doc — so reread every gate body
+  for them before handoff, letting the user veto a value instead of meeting it
+  mid-run as a requirement.
 - Every gate declares "Judgment gate." or "Deterministic gate." — never
   inferred; an executor handed an undeclared kind is broken by it. A gate mixing
   a command with a judgment is a judgment gate.
