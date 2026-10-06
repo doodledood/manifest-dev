@@ -9,7 +9,7 @@ reaches a correct answer, which a strong base model does unaided.
 Run it:
 
 ```bash
-claude plugin eval . --tag figure-out --ablation with-without --judge-model sonnet --allow-tools Write Bash -j 8
+claude plugin eval . --tag figure-out --ablation with-without --judge-model opus --allow-tools Write Bash -j 8
 ```
 
 `--allow-tools Write Bash` is required. `allowed_tools` in a case's `prompt.md` declares what the
@@ -17,6 +17,10 @@ case *wants*; the operator grant is what enables it. Without it, file graders fa
 cases burn their turn reporting that writing is disabled.
 
 The headline number is **Δ** — with-plugin score minus the no-plugin baseline.
+
+**Judge with `opus`.** A sonnet-tier judge disagreed with itself across its three votes on the same
+output and failed outputs an opus judge passed unanimously; see the 2026-10-06 baseline. Every
+number before that baseline is sonnet-judged and does not compare with it.
 
 ## Running on macOS
 
@@ -27,7 +31,7 @@ macOS keychain, and a detached container also keeps running if the launching ses
 
 ```bash
 scripts/evals/run_eval.sh figure-out-run evals/results/figure-out-run/aggregate-result.json \
-  --tag figure-out --ablation with-without --judge-model sonnet
+  --tag figure-out --ablation with-without --judge-model opus
 ```
 
 The script builds the image if it is missing, starts colima if Docker is down, reads
@@ -119,8 +123,8 @@ and tightening the rubric until the base model fails would measure the rubric, n
 
 ## Graders declared as floor checks
 
-The current list of graders that pass in both arms on every run is in the 2026-10-05 baseline
-below. On the superseded 2026-09-14 baseline it was these eight: They are kept
+The current list of graders that pass in both arms on every run is in the opus-judged
+2026-10-06 baseline below. On the superseded 2026-09-14 baseline it was these eight: They are kept
 deliberately, and declared here rather than counted as uplift:
 
 | Grader | Case | What it protects |
@@ -272,15 +276,104 @@ with a `_state.json` holding `train_ids` and `test_ids` and one `vN/` directory 
 Once a winner is kept, re-record the full baseline with both arms. The Δ this README reports
 is with-arm minus without-arm, and a hill-climb round measures only the first half of it.
 
-## Baseline — 2026-10-06
+## Baseline — 2026-10-06, opus judge
+
+Report `results/figure-out-baseline-20261006c`, with `14-persona-seat-feature` from
+`results/figure-out-14-regrade-20261006` after its rubric fix. Skill at `62481855`, graders as
+committed with this section, CLI 2.1.289, agent `claude-opus-5-5`, judge `claude-opus-5-5`, 12
+runs per arm. This is the number any later prompt change is measured against.
+
+| Case | Split | With | Without | Δ |
+|---|---|---|---|---|
+| 01-root-press | tuning | 0.89 | 0.03 | +0.86 |
+| 02-assumed-cause | tuning | 1.00 | 0.50 | +0.50 |
+| 04-hold-under-pushback | tuning | 1.00 | 0.96 | +0.04 |
+| 06-strategic-open | tuning | 0.79 | 0.00 | +0.79 |
+| 07-neg-lookup | tuning | 1.00 | 1.00 | 0.00 |
+| 10-diagnosis-retry-window | tuning | 1.00 | 0.98 | +0.02 |
+| 11-underdetermined | tuning | 1.00 | 0.72 | +0.28 |
+| 12-living-with-it | tuning | 1.00 | 1.00 | 0.00 |
+| 14-persona-seat-feature | tuning | 0.83 | 0.67 | +0.17 |
+| 05-move-on-evidence | held out | 1.00 | 0.83 | +0.17 |
+| 08-neg-authorized | held out | 1.00 | 1.00 | 0.00 |
+| 13-status-quo-job | held out | 1.00 | 1.00 | 0.00 |
+| 15-persona-seat-doc | held out | 1.00 | 1.00 | 0.00 |
+| 16-underdetermined-billing | held out | 0.96 | 0.96 | 0.00 |
+
+Mean Δ over the 14 cases **+0.20**. It is lower than the sonnet-judged +0.28 below, and the two do
+not compare: the judge changed, and so did seven rubrics.
+
+**Why the judge changed.** Re-judging the same outputs of `11` showed a sonnet judge failing three
+outputs, splitting its votes on two of them (FAIL PASS FAIL, PASS FAIL FAIL), that an opus judge
+passed unanimously, while opus still failed unanimously an output that was genuinely wrong. Several of the earlier climb's conclusions rested on those votes.
+
+**What the rubric audit changed.** Each rubric whose verdicts disagreed across votes was rewritten to
+classify before judging:
+
+- `turn-discipline` (all five copies): a two-part question is two asks unless the parts only mean
+  something together; listing the questions deferred to later is not an ask; a turn with no
+  substantive ask passes; an offer to read code is logistical.
+- `presses-from-root` (`01`): the headline position is classified as reframe, verdict, design, or
+  bar, and only a reframe passes.
+- `presses-one-crux` (`06`): each channel, feature, or workstream is classified as conditional on
+  the crux or as plan; a sequenced plan, or two plan items, fails.
+- `rival-actually-killed` (`10`): each decoy is classified as removed with evidence, asserted,
+  accepted, or absent.
+- `separates-verified-from-assumed` (`11`, `16`): the two load-bearing claims are each classified
+  as marked or flat, and neither a blanket caveat nor an overturn condition marks a claim.
+- `takes-the-persona-seat` (`14`): uses that share one hand-off count once, each use needs a
+  consequence, and marking a persona as inferred neither helps nor hurts.
+
+What the opus-judged baseline shows:
+
+- **The uplift sits in pressing and turn discipline**: `01`, `06`, and `02`. `presses-one-crux`
+  is 12/12 against 0/12, `presses-from-root` 8/12 against 0/12, and `turn-discipline` 55/60 across
+  its five cases against 20/60.
+- **`11` keeps real uplift**: `does-not-manufacture-a-winner` 12/12 against 6/12 and
+  `separates-verified-from-assumed` 12/12 against 8/12.
+- **`16` shows none.** Both arms score 11/12 on `separates-verified-from-assumed`, so the
+  held-out witness for `11`'s hill is now a floor. Under the sonnet judge it read as 9/12 against
+  1/12; most of that gap was the judge.
+- **`10` and `13` are floors in both arms.** The small gaps the sonnet-judged baseline showed there
+  came from the judge and, on `10`, from `rival-actually-killed`'s old rubric.
+- **Remaining headroom is on tuning cases only**: `turn-discipline` on `06` (7/12),
+  `presses-from-root` on `01` (8/12), and `takes-the-persona-seat` on `14` (8/12). None has a
+  held-out witness with headroom, so a change aimed at them can show a regression on the held-out
+  set, never generalization.
+
+## Hill-climb round 4 — 2026-10-06, opus judge
+
+Plugin arm only, 12 runs per case, against the baseline above. Two edits in one round, aimed at
+graders on different cases so their effects stay separable.
+
+| Edit | Target | Result | Kept |
+|---|---|---|---|
+| Name an "and" that adds a second thing to answer as a second ask | `turn-discipline` on `06` | 7/12 → 7/12 | no |
+| Drop the claim-marking clause | `separates-verified-from-assumed` holds | `11`, `12`, `16` all 12/12 | yes — dropped |
+
+- **`06`'s remaining failures are one shape**: a question about where a claim comes from and what
+  it is, joined by "and" ("which is the real complaint, and is that from your own practice?").
+  Two wordings aimed at exactly that have now left it unchanged, so it was not worth a third. It
+  is also debatable whether a person reads that as two asks.
+- **The claim-marking clause was dead weight under the reliable judge**, so it came out. The
+  earlier pooled evidence for it (below) was sonnet-judged.
+- **Nothing else moved outside noise**: every held-out case scored 1.00, and no floor grader
+  dropped. `presses-from-root` read 10/12 and `takes-the-persona-seat` 7/12, inside each
+  grader's noise.
+
+The shipped text is round 4's minus the one-ask rewording, that is, the baseline's skill with the
+claim-marking clause removed. That exact text was not run as a round of its own.
+
+## Baseline — 2026-10-06, sonnet judge
+
+**Superseded** by the opus-judged baseline above. Its judge mis-scored several graders, so its Δ
+and the climb conclusions drawn from it do not stand.
 
 Report `results/figure-out-baseline-20261006`. The skill with the two edits the hill-climb below
 kept, CLI 2.1.289, agent `claude-opus-5-5`, judge `claude-sonnet-5-5`, 12 runs per arm. The
 plugin arm is the climb's round 3 (`--ablation none`); the no-plugin arm comes from a both-arm run
 of the same day on the same CLI, agent, and judge, which the skill text cannot reach. Plugin-arm
-scores leave out `skill-fired`, as the CLI does under `with-without`. This is the number any later
-prompt change is measured against.
-
+scores leave out `skill-fired`, as the CLI does under `with-without`. 
 | Case | Split | With | Without | Δ |
 |---|---|---|---|---|
 | 01-root-press | tuning | 0.83 | 0.00 | +0.83 |
@@ -313,7 +406,10 @@ Mean Δ over the 14 cases **+0.28**, against +0.21 on the amended 2026-10-05 bas
   `incident-evidence-used` is 10/12 with the plugin and 12/12 without. It was 10/12 against 11/12
   at the previous baseline, so this is not new, but it is the one case where the plugin trails.
 
-## Hill-climb on turn discipline and claim marking — 2026-10-06
+## Hill-climb on turn discipline and claim marking — 2026-10-06, sonnet judge
+
+**Sonnet-judged.** Round 4 above re-tested its claim-marking conclusion under the opus judge and
+reversed it.
 
 Plugin arm only, 12 runs per case, same CLI, agent, and judge as the baseline, the split above.
 Rounds live under `results/hillclimb-figure-out/` (gitignored); the committed record is this
@@ -354,7 +450,7 @@ where it was stated.
 
 ## Baseline — 2026-10-05
 
-**Superseded** by the 2026-10-06 baseline above; kept as the hill-climb's starting point.
+**Superseded** by both 2026-10-06 baselines above; kept as the hill-climb's starting point.
 
 Report `results/figure-out-baseline-20261005-1845`. Measured at `9a312219`, CLI 2.1.289,
 agent `claude-opus-5-5`, judge `claude-sonnet-5-5`, 12 runs per arm, run in the container
