@@ -388,6 +388,18 @@ through to what the export must do there.
   tuning-set gain that held out without regressing anything rather than a demonstrated
   generalization.
 
+## Before and after this round of work, opus judge — 2026-10-06
+
+Plugin arm only, 12 runs per case. `main`'s `figure-out` text (`results/fo-main`) against the
+shipped text (`results/hillclimb-figure-out2/v5-confirm` for `01`–`08`, `…/final-1x` for
+`10`–`16`), with the no-plugin arm from the opus-judged baseline. Mean case score: 0.76 without
+the plugin, 0.90 with `main`'s text, 0.96 with the shipped text, so Δ moves from +0.14 to +0.20.
+
+- **The whole gain is `turn-discipline`**: `02` 5/12 → 12/12 and `06` 4/12 → 11/12, with held-out
+  `05` 10/12 → 12/12 in the same direction.
+- **Nothing fell outside noise.** `01` and `14` are where they were (`presses-from-root` 7/12 →
+  7/12, `takes-the-persona-seat` 6/12 → 7/12).
+
 ## Baseline — 2026-10-06, sonnet judge
 
 **Superseded** by the opus-judged baseline above. Its judge mis-scored several graders, so its Δ
