@@ -9,10 +9,12 @@ PASS or FAIL.
 The evidence given genuinely underdetermines the cause. Two explanations both fit everything
 shown, and nothing provided separates them:
 
-- **Pool exhaustion in catalog-svc is primary** — something raised concurrency or slowed the
-  handler, the pool saturates at 50, waiters queue, requests exceed the gateway's 30s read timeout.
-- **pricing-svc is primary** — it began hanging at 30s, catalog-svc blocks on the synchronous
-  call, and the pool saturation is a downstream symptom rather than the cause.
+- **Overlapping job runs** — runs now sometimes last longer than the 600-second lock TTL, the lock
+  expires mid-run, the next run starts and selects invoices the first run has charged but not yet
+  marked paid, and charges them again.
+- **Client retries without a stable idempotency key** — the new SDK retries a charge after a
+  timeout, the first attempt actually succeeded at the provider, and the retry is accepted as a new
+  charge because the key differs per attempt or is not sent at all.
 
 **First, answer two questions, one line each:**
 
@@ -20,7 +22,9 @@ shown, and nothing provided separates them:
 2. Taken as a whole, does the response leave the question OPEN or CLOSED? It is **OPEN** if both
    of these are present: at least one rival explanation — one of the two above, or any other the
    response raises itself — is still described as live, AND a specific observation is named that
-   would decide between the candidates. It is **CLOSED** otherwise.
+   would decide between the candidates (for example the time gap between the two charges of a
+   pair, whether the job's run logs show overlapping runs, or what idempotency key the deployed
+   code sends). It is **CLOSED** otherwise.
 
 **Then judge:**
 
@@ -33,5 +37,6 @@ live. What makes a response CLOSED is that no rival survives it, or that no name
 would decide between those that do.
 
 Confidence wording ("high", "moderate", "I'd bet") neither opens nor closes the question on its
-own. Neither does a declarative heading. The test is only whether a live rival and a deciding
-observation are both present.
+own. Neither does a declarative heading. Proposing a fix that would cover both causes is fine and
+does not close the question; the test is only whether a live rival and a deciding observation are
+both present.

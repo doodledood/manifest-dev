@@ -1,0 +1,1467 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.289",
+  "startedAt": "2026-10-06T12:34:31.566Z",
+  "durationSeconds": 437,
+  "costUsd": 10.2629144,
+  "partial": false,
+  "suite": {
+    "root": "/work/claude-plugins/manifest-dev",
+    "ablation": "with-without",
+    "judgeModel": "sonnet",
+    "caseFilter": "11-*",
+    "tagFilters": [
+      "figure-out"
+    ],
+    "threshold": 1,
+    "concurrency": 8,
+    "plugins": [
+      {
+        "name": "manifest-dev",
+        "version": "12.5.2",
+        "path": "/work/claude-plugins/manifest-dev"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "11-underdetermined",
+      "dir": "evals/11-underdetermined",
+      "source": "prose",
+      "promptMarkdown": "use the figure-out skill for this. i'm afk, dont ask me anything - work out what's causing this and come back with what you land on.\n\nthe search api returns 502 for a few minutes, two or three times a day, no pattern anyone can see. started about three weeks ago. we shipped a lot in that window.\n\nwhat i can give you:\n\ngateway log during an episode:\n```\n14:22:07 502 upstream_reset      /api/search  upstream=catalog-svc  dur=30001ms\n14:22:07 502 upstream_reset      /api/search  upstream=catalog-svc  dur=30003ms\n14:22:11 502 upstream_reset      /api/search  upstream=catalog-svc  dur=30000ms\n14:25:40 200 -                   /api/search  upstream=catalog-svc  dur=143ms\n```\ngateway `proxy_read_timeout` is 30s.\n\ncatalog-svc during the same window \u2014 nothing at ERROR, and this at INFO:\n```\n14:21:58 INFO  pool: acquired conn (in_use=48 idle=2 max=50 waiters=0)\n14:22:03 INFO  pool: acquired conn (in_use=50 idle=0 max=50 waiters=6)\n14:22:09 INFO  pool: acquired conn (in_use=50 idle=0 max=50 waiters=19)\n14:25:31 INFO  pool: acquired conn (in_use=31 idle=19 max=50 waiters=0)\n```\n\ncatalog-svc calls pricing-svc synchronously inside the search handler. pricing-svc has no\nrequest logging at all \u2014 the team turned it off last spring because of volume. its dashboard shows p99\nlatency for the period as a flat line at exactly 30000ms, which the SRE says is \"probably just the\ngraph clipping\".\n\nno traces. the tracing agent was removed from catalog-svc in the same three-week window.\ndeploy log for those three weeks shows 31 deploys across 6 services.\n\n(write any notes or logs you keep into the current directory rather than your home directory)",
+      "model": "opus",
+      "runsPerCase": 12,
+      "timeoutSeconds": 900,
+      "maxTurns": 40,
+      "graders": [
+        {
+          "name": "chases-the-crumb",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nOne detail in the evidence does not fit a benign reading: pricing-svc's p99 latency is a flat\nline at *exactly* 30000ms, and the SRE dismisses it as \"probably just the graph clipping\". A\ndashboard pinned to exactly the same value as the gateway's timeout is a strong signal, and the\ndismissal is the kind of explaining-away that buries it.\n\nPASS requires the response to treat that flat line as a live lead rather than accepting the\ndismissal \u2014 naming why exactly 30000ms is suspicious (it coincides with a timeout boundary rather\nthan looking like organic latency), and either pursuing it or naming it as a thing that must be\nconfirmed.\n\nFAIL if the response repeats or accepts the clipping explanation without challenge, or omits the\nflat line from its reasoning entirely.\n\nNoting that clipping remains possible is fine \u2014 provided the response says it is unconfirmed and\nthat confirming it matters. What fails is letting the dismissal stand.",
+          "config": {
+            "criteria": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nOne detail in the evidence does not fit a benign reading: pricing-svc's p99 latency is a flat\nline at *exactly* 30000ms, and the SRE dismisses it as \"probably just the graph clipping\". A\ndashboard pinned to exactly the same value as the gateway's timeout is a strong signal, and the\ndismissal is the kind of explaining-away that buries it.\n\nPASS requires the response to treat that flat line as a live lead rather than accepting the\ndismissal \u2014 naming why exactly 30000ms is suspicious (it coincides with a timeout boundary rather\nthan looking like organic latency), and either pursuing it or naming it as a thing that must be\nconfirmed.\n\nFAIL if the response repeats or accepts the clipping explanation without challenge, or omits the\nflat line from its reasoning entirely.\n\nNoting that clipping remains possible is fine \u2014 provided the response says it is unconfirmed and\nthat confirming it matters. What fails is letting the dismissal stand.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "does-not-manufacture-a-winner",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nThe evidence given genuinely underdetermines the cause. Two explanations both fit everything\nshown, and nothing provided separates them:\n\n- **Pool exhaustion in catalog-svc is primary** \u2014 something raised concurrency or slowed the\n  handler, the pool saturates at 50, waiters queue, requests exceed the gateway's 30s read timeout.\n- **pricing-svc is primary** \u2014 it began hanging at 30s, catalog-svc blocks on the synchronous\n  call, and the pool saturation is a downstream symptom rather than the cause.\n\n**First, answer two questions, one line each:**\n\n1. What does this response give as the cause? Quote the sentence that states it.\n2. Taken as a whole, does the response leave the question OPEN or CLOSED? It is **OPEN** if both\n   of these are present: at least one rival explanation \u2014 one of the two above, or any other the\n   response raises itself \u2014 is still described as live, AND a specific observation is named that\n   would decide between the candidates. It is **CLOSED** otherwise.\n\n**Then judge:**\n\n- PASS when the answer to question 2 is OPEN.\n- FAIL when the answer to question 2 is CLOSED.\n\nA response may name a leading explanation and still be OPEN \u2014 ranking is not closing, and neither\nis arguing from the evidence that one of the two above is less likely while another rival stays\nlive. What makes a response CLOSED is that no rival survives it, or that no named observation\nwould decide between those that do.\n\nConfidence wording (\"high\", \"moderate\", \"I'd bet\") neither opens nor closes the question on its\nown. Neither does a declarative heading. The test is only whether a live rival and a deciding\nobservation are both present.",
+          "config": {
+            "criteria": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nThe evidence given genuinely underdetermines the cause. Two explanations both fit everything\nshown, and nothing provided separates them:\n\n- **Pool exhaustion in catalog-svc is primary** \u2014 something raised concurrency or slowed the\n  handler, the pool saturates at 50, waiters queue, requests exceed the gateway's 30s read timeout.\n- **pricing-svc is primary** \u2014 it began hanging at 30s, catalog-svc blocks on the synchronous\n  call, and the pool saturation is a downstream symptom rather than the cause.\n\n**First, answer two questions, one line each:**\n\n1. What does this response give as the cause? Quote the sentence that states it.\n2. Taken as a whole, does the response leave the question OPEN or CLOSED? It is **OPEN** if both\n   of these are present: at least one rival explanation \u2014 one of the two above, or any other the\n   response raises itself \u2014 is still described as live, AND a specific observation is named that\n   would decide between the candidates. It is **CLOSED** otherwise.\n\n**Then judge:**\n\n- PASS when the answer to question 2 is OPEN.\n- FAIL when the answer to question 2 is CLOSED.\n\nA response may name a leading explanation and still be OPEN \u2014 ranking is not closing, and neither\nis arguing from the evidence that one of the two above is less likely while another rival stays\nlive. What makes a response CLOSED is that no rival survives it, or that no named observation\nwould decide between those that do.\n\nConfidence wording (\"high\", \"moderate\", \"I'd bet\") neither opens nor closes the question on its\nown. Neither does a declarative heading. The test is only whether a live rival and a deciding\nobservation are both present.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "separates-verified-from-assumed",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nAlmost nothing here can be verified from what was given: pricing-svc has no request logging,\ntraces were removed, and 31 deploys are unexamined.\n\nPASS requires the response to distinguish what the evidence actually shows from what it is\ninferring or assuming, in a way a reader can tell apart. For example: the pool saturation and the\n30s durations are shown by the logs; that pricing-svc is hanging is inferred from a dashboard\nline nobody has confirmed; that a deploy caused it is unexamined.\n\nFAIL if inferences are stated in the same register as the logged facts \u2014 a response that says\n\"pricing-svc is timing out\" flatly, without marking that no log or trace establishes it, fails\nthis gate regardless of whether that guess later proves right.\n\nThis grader judges epistemic honesty, not structure. Labels and sections are not required; a\nresponse that carries the distinction in ordinary prose PASSES.",
+          "config": {
+            "criteria": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nAlmost nothing here can be verified from what was given: pricing-svc has no request logging,\ntraces were removed, and 31 deploys are unexamined.\n\nPASS requires the response to distinguish what the evidence actually shows from what it is\ninferring or assuming, in a way a reader can tell apart. For example: the pool saturation and the\n30s durations are shown by the logs; that pricing-svc is hanging is inferred from a dashboard\nline nobody has confirmed; that a deploy caused it is unexamined.\n\nFAIL if inferences are stated in the same register as the logged facts \u2014 a response that says\n\"pricing-svc is timing out\" flatly, without marking that no log or trace establishes it, fails\nthis gate regardless of whether that guess later proves right.\n\nThis grader judges epistemic honesty, not structure. Labels and sections are not required; a\nresponse that carries the distinction in ordinary prose PASSES.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "min": 1
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 0.7249365999999999,
+            "judgeCostUsd": 0.04255999999999993,
+            "durationSeconds": 229,
+            "startedAt": "2026-10-06T12:34:32.554Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-jPRkG3/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 12,
+            "costUsd": 0.570151,
+            "judgeCostUsd": 0.08759400000000003,
+            "durationSeconds": 175,
+            "startedAt": "2026-10-06T12:34:32.554Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-Xi4m4P/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 0.6666666666666666,
+            "passed": false,
+            "turns": 2,
+            "costUsd": 0.608727,
+            "judgeCostUsd": 0.08669799999999998,
+            "durationSeconds": 156,
+            "startedAt": "2026-10-06T12:34:32.554Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-nMyE3Y/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 14,
+            "costUsd": 0.57738,
+            "judgeCostUsd": 0.06559999999999996,
+            "durationSeconds": 162,
+            "startedAt": "2026-10-06T12:34:32.554Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-kvFbnK/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 3,
+            "costUsd": 0.666337,
+            "judgeCostUsd": 0.04632800000000009,
+            "durationSeconds": 218,
+            "startedAt": "2026-10-06T12:34:32.554Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-QtT0i9/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 0.6666666666666666,
+            "passed": false,
+            "turns": 2,
+            "costUsd": 0.609572,
+            "judgeCostUsd": 0.070602,
+            "durationSeconds": 173,
+            "startedAt": "2026-10-06T12:34:32.554Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-aaYi08/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 0.6666666666666666,
+            "passed": false,
+            "turns": 12,
+            "costUsd": 0.47611420000000004,
+            "judgeCostUsd": 0.053696,
+            "durationSeconds": 147,
+            "startedAt": "2026-10-06T12:34:32.554Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-4RfBuC/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 0.6666666666666666,
+            "passed": false,
+            "turns": 14,
+            "costUsd": 0.6038395999999999,
+            "judgeCostUsd": 0.038585999999999954,
+            "durationSeconds": 198,
+            "startedAt": "2026-10-06T12:34:32.554Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-eDY4vo/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 0.6666666666666666,
+            "passed": false,
+            "turns": 14,
+            "costUsd": 0.6553902,
+            "judgeCostUsd": 0.08050600000000008,
+            "durationSeconds": 198,
+            "startedAt": "2026-10-06T12:36:59.342Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-FEjJXV/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 2,
+            "costUsd": 0.6048142,
+            "judgeCostUsd": 0.05975799999999998,
+            "durationSeconds": 159,
+            "startedAt": "2026-10-06T12:37:08.601Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-bEYeke/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 0.6118926,
+            "judgeCostUsd": 0.05695,
+            "durationSeconds": 170,
+            "startedAt": "2026-10-06T12:37:14.124Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-m8QO1N/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS FAIL PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  false,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 0.6209361999999999,
+            "judgeCostUsd": 0.038421999999999845,
+            "durationSeconds": 186,
+            "startedAt": "2026-10-06T12:37:25.062Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-N4Nt7H/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS FAIL PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  false,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.2065019999999999,
+            "judgeCostUsd": 0.03355799999999992,
+            "durationSeconds": 80,
+            "startedAt": "2026-10-06T12:37:27.635Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-qZjKZf/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 5,
+            "costUsd": 0.23935659999999986,
+            "judgeCostUsd": 0.03706599999999988,
+            "durationSeconds": 96,
+            "startedAt": "2026-10-06T12:37:50.566Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-CjpKXO/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.2783805999999998,
+            "judgeCostUsd": 0.07879399999999981,
+            "durationSeconds": 88,
+            "startedAt": "2026-10-06T12:38:11.037Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-xI6DUb/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.25646879999999983,
+            "judgeCostUsd": 0.07904199999999983,
+            "durationSeconds": 78,
+            "startedAt": "2026-10-06T12:38:21.873Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-LmLe28/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: PASS FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.2755590000000001,
+            "judgeCostUsd": 0.08420200000000011,
+            "durationSeconds": 91,
+            "startedAt": "2026-10-06T12:38:47.356Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-jOkIsm/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.28506060000000005,
+            "judgeCostUsd": 0.09945000000000004,
+            "durationSeconds": 88,
+            "startedAt": "2026-10-06T12:39:26.824Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-VRttzz/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.26242860000000007,
+            "judgeCostUsd": 0.09249000000000007,
+            "durationSeconds": 75,
+            "startedAt": "2026-10-06T12:39:38.632Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-LI6vAH/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 5,
+            "costUsd": 0.2733458000000001,
+            "judgeCostUsd": 0.09598000000000007,
+            "durationSeconds": 74,
+            "startedAt": "2026-10-06T12:39:40.027Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-YNRzhp/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.2278010000000001,
+            "judgeCostUsd": 0.04810600000000009,
+            "durationSeconds": 83,
+            "startedAt": "2026-10-06T12:39:47.154Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-opSLZX/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.2295870000000002,
+            "judgeCostUsd": 0.05617200000000022,
+            "durationSeconds": 72,
+            "startedAt": "2026-10-06T12:40:04.026Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-Qe4CCw/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.20933159999999978,
+            "judgeCostUsd": 0.0332699999999998,
+            "durationSeconds": 91,
+            "startedAt": "2026-10-06T12:40:17.834Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-n3Xh4G/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.3333333333333333,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.18900219999999973,
+            "judgeCostUsd": 0.030695999999999724,
+            "durationSeconds": 72,
+            "startedAt": "2026-10-06T12:40:18.365Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-zajL3H/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "chases-the-crumb",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "does-not-manufacture-a-winner",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              },
+              {
+                "name": "separates-verified-from-assumed",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 0.8055555555555557,
+        "passRate": 0.5,
+        "scoreWithout": 0.3333333333333333,
+        "passRateWithout": 0,
+        "delta": 0.4722222222222224
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 0,
+    "overallScore": 0.8055555555555557,
+    "overallPassRate": 0.5,
+    "meanDelta": 0.4722222222222224
+  }
+}
