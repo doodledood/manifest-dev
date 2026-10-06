@@ -336,7 +336,7 @@ What the opus-judged baseline shows:
   1/12; most of that gap was the judge.
 - **`10` and `13` are floors in both arms.** The small gaps the sonnet-judged baseline showed there
   came from the judge and, on `10`, from `rival-actually-killed`'s old rubric.
-- **Remaining headroom is on tuning cases only**: `turn-discipline` on `06` (7/12),
+- **Remaining headroom is on tuning cases only** (round 5 below moved the first): `turn-discipline` on `06` (7/12),
   `presses-from-root` on `01` (8/12), and `takes-the-persona-seat` on `14` (8/12). None has a
   held-out witness with headroom, so a change aimed at them can show a regression on the held-out
   set, never generalization.
@@ -363,6 +363,30 @@ graders on different cases so their effects stay separable.
 
 The shipped text is round 4's minus the one-ask rewording, that is, the baseline's skill with the
 claim-marking clause removed. That exact text was not run as a round of its own.
+
+## Hill-climb round 5 — 2026-10-06, opus judge
+
+Plugin arm only, 12 runs per case, against the opus-judged baseline. Three edits, each aimed at a
+grader on a different tuning case. The failing outputs behind each: `06` asked where a claim came
+from and what it was in one question; `01` opened by agreeing with the user's chosen fix and
+reframed only after; `14` named the cook's uses as a list of destinations and walked none of them
+through to what the export must do there.
+
+| Edit | Target | Baseline · v4 · v5 | Kept |
+|---|---|---|---|
+| One ask is one that one short answer settles | `turn-discipline` on `06` | 7/12 · 7/12 · 10/12 | yes |
+| State the problem first, ahead of any lean on the stated solution | `presses-from-root` on `01` | 8/12 · 10/12 · 9/12 | no |
+| Walk every use through to what it asks of the artifact | `takes-the-persona-seat` on `14` | 8/12 · 7/12 · 8/12 | no |
+
+- **The `06` gain replicated.** Cases `01`–`08` re-run on the shipped text (the one-ask edit
+  alone) gave `06` 11/12, so 21/24 across both runs against 14/24 on the two before. Held-out `05`
+  stayed 12/12 in both, and `07`, `08`, and every other floor grader passed every run.
+- **The other two edits bought nothing** and were reverted. `presses-from-root` read 7/12 on the
+  confirmation run with its text unchanged, so its spread across rounds (7 to 10) is noise, and
+  both hills are left where they were.
+- `06` has no held-out witness of its own beyond `05`, which was already at ceiling, so this is a
+  tuning-set gain that held out without regressing anything rather than a demonstrated
+  generalization.
 
 ## Baseline — 2026-10-06, sonnet judge
 
