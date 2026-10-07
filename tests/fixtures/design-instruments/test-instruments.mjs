@@ -818,6 +818,70 @@ test("shipped runtime contains no browser acquisition dependency", async () => {
   assert(!catalog.other.includes("print"));
 });
 
+test("HTML candidates distinguish option/value text from labels and image-link alternatives", async () => {
+  const path = await fixture(
+    "source-name-evidence.html",
+    '<select id="choice"><option>London</option></select><textarea id="note">My value</textarea><a href="/tickets"><img alt="Buy tickets" src="ticket.png"></a><label for="named">City</label><select id="named"><option>London</option></select>',
+  );
+  const report = observation(["inspect", path, "--tools", "access"]);
+  const controls = report.observations.access.controls;
+  assert.equal(
+    controls.find((c) => c.sourceId === "choice").nameCandidate,
+    null,
+  );
+  assert.equal(controls.find((c) => c.sourceId === "note").nameCandidate, null);
+  assert.equal(
+    controls.find((c) => c.tag === "a").nameCandidate,
+    "Buy tickets",
+  );
+  assert.equal(
+    controls.find((c) => c.sourceId === "named").nameCandidate,
+    "City",
+  );
+});
+
+test("appearance feature input preserves frozen axes and rejects invented/missing values", async () => {
+  const profile = JSON.parse(
+    await readFile(join(skill, "scripts/appearance-profile.json"), "utf8"),
+  );
+  const values = Object.fromEntries(
+    profile.models.complexity.features.map((name, i) => [
+      name,
+      profile.models.complexity.model.means[i],
+    ]),
+  );
+  const path = await json("appearance-features.json", { features: values });
+  const result = observation(["appearance", path]);
+  assert.equal(
+    result.observations.appearance.frozenModelSHA256,
+    profile.frozenModelSHA256,
+  );
+  assert.deepEqual(Object.keys(result.observations.appearance.axes), [
+    "complexity",
+    "aesthetics",
+    "craftsmanship",
+    "novelty",
+  ]);
+  assert(
+    !Object.hasOwn(result.observations.appearance.axes, "technical-condition"),
+  );
+  assert.match(result.observations.appearance.limits, /not UX quality/);
+  const missing = await json("appearance-missing.json", {
+    features: { gradient_512: 0 },
+  });
+  assert.match(
+    run(["appearance", missing]).stderr,
+    /Missing\/nonfinite feature/,
+  );
+  const falseValue = await json("appearance-bool.json", {
+    features: { ...values, gradient_128: false },
+  });
+  assert.match(
+    run(["appearance", falseValue]).stderr,
+    /Missing\/nonfinite feature/,
+  );
+});
+
 test("native observations reject contradictory clips and incomplete hit evidence", async () => {
   const offscreen = await json("contradictory-clip.json", {
     entities: {

@@ -8,15 +8,10 @@ import {
   finite,
   object,
   array,
-  named,
   content,
   compare,
   viewing,
   palette,
-  associations,
-  coVisibility,
-  textSummary,
-  colorSamples,
   journey,
   fidelity,
   timeline,
@@ -52,15 +47,15 @@ const structuredCommands = {
   viewing,
   palette,
 };
-const help = `Optional design instruments ${VERSION}
+const help = `Development capture adapter ${VERSION}
 
-node scripts/design-tools.mjs catalog
-node scripts/design-tools.mjs inspect <HTML-or-loopback-URL> --tools geometry,visibility --spec plan.json
-node scripts/design-tools.mjs image <PNG-JPEG-WebP-GIF-SVG> --artifacts views
-node scripts/design-tools.mjs probe <HTML-or-loopback-URL> --spec steps.json
-node scripts/design-tools.mjs ${Object.keys(structuredCommands).join("|")} <JSON>
-node scripts/design-tools.mjs print <HTML-or-loopback-URL> --artifacts pages --paper A4|Letter [--landscape]
-node scripts/design-tools.mjs compare <report.json> --other <report.json>
+node scripts/design-evals/capture.mjs catalog
+node scripts/design-evals/capture.mjs inspect <HTML-or-loopback-URL> --tools geometry,visibility --spec plan.json
+node scripts/design-evals/capture.mjs image <PNG-JPEG-WebP-GIF-SVG> --artifacts views
+node scripts/design-evals/capture.mjs probe <HTML-or-loopback-URL> --spec steps.json
+node scripts/design-evals/capture.mjs ${Object.keys(structuredCommands).join("|")} <JSON>
+node scripts/design-evals/capture.mjs print <HTML-or-loopback-URL> --artifacts pages --paper A4|Letter [--landscape]
+node scripts/design-evals/capture.mjs compare <report.json> --other <report.json>
 
 Options: --width 1440 --height 900 --theme light|dark --motion no-preference|reduce
 --direction ltr|rtl --text-scale 1 --images-off --vision none|blurredVision|achromatopsia|deuteranopia|protanopia|tritanopia
@@ -71,7 +66,7 @@ Choose instruments; none is a required suite or design verdict. Browser commands
 Playwright + Chromium. Set DESIGN_TOOLS_PLAYWRIGHT to a module directory when it is
 outside the project. Network is blocked except loopback unless explicitly enabled.
 --text-scale changes CSS text sizes; it is a stress simulation, not browser zoom.
-See references/instruments/index.md and usage.md in this skill for input schemas and limits.
+See scripts/design-evals/README.md for acquisition scope and shared instrument limits.
 `;
 async function jsonFile(file) {
   if (!file) throw new Error("An input file is required");

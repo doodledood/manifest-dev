@@ -13,8 +13,9 @@ Paths below are relative to the installed design skill. Use the installed script
 | HTML source | Source text, headings, label/control attributes, language and media declarations | Node.js 20+ and Python 3 |
 | PNG, JPEG, WebP, GIF | Decoded image variation and derived inspection views | Node.js 20+, Python 3 and Pillow |
 | RGBA JSON | Supplied bounded pixels; no decoder required | Node.js 20+ |
+| Appearance feature JSON | Frozen first-impression estimates from the profile recipe | Node.js 20+ and Python 3 |
 
-HTML extraction uses Python's standard library. Image decoding uses the established Pillow library rather than a custom decoder. Install Pillow in the Python environment when needed; `DESIGN_TOOLS_PYTHON` selects another interpreter. JSON/text tools do not need Python. Neither path needs a browser installation or an analysis service.
+HTML extraction uses Python's standard library. Image decoding uses the established Pillow library rather than a custom decoder. Install Pillow in the Python environment when needed; `DESIGN_TOOLS_PYTHON` selects another interpreter. JSON/text tools except `appearance` do not need Python. Neither path needs a browser installation or an analysis service.
 
 Each instrument needs only the evidence its question requires. Source HTML cannot establish layout, computed paint, actual pointer reception or motion. Supplied observations can come from a browser, native app, design tool, screenshot annotations or another source. Record the collection method, artifact/state, viewport/crop and coordinate units in `scope`; keep estimates distinct from measurements. Missing evidence is unmeasured or rejected, never an empty success.
 
@@ -81,6 +82,8 @@ Descriptors use supplied image pixels, composited over white and downsampled wit
 `--artifacts` writes an edge-map SVG plus grayscale, blur and thumbnail PNGs for native images. These are transforms of supplied pixels, not new captures or eyesight simulations. Map colors normalize within each image; numeric magnitudes are needed for comparisons across maps. `--edge-threshold` (0.08) and `--tile-size` (16 analysis pixels) are descriptor parameters, not quality thresholds. No OCR, gaze, congestion or learned importance predictor is included.
 
 A decoder-free input is `{"width":2,"height":2,"data":[...16 integer RGBA bytes...]}`. Dimensions must be positive and maximum edge 512; alpha is composited over white. The supplied resolution is retained. No original size, frame or resampling provenance is inferred. RGBA analysis can emit the edge map; other views require a native image.
+
+For historical homepage first impressions, read [calibration and scope](calibration.md), then optionally run `node scripts/design-tools.mjs appearance screenshot.png`. It reports four separate estimates and the native image features; it needs Python and Pillow, with no scientific-computing dependency. A supplied `{"features":{...}}` object also works, including on stdin, using Python's standard library. Match the feature names and recipe in the [frozen profile](../../scripts/appearance-profile.json) and [extractor](../../scripts/appearance.py); the caller owns feature provenance. A generic 512px RGBA view cannot reproduce features independently resized from the original at 128/256/512px. The raw `image` command remains a descriptor without these empirical estimates.
 
 ## Structured declarations
 

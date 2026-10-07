@@ -1,5 +1,12 @@
 #!/usr/bin/env node
-import { mkdir, writeFile, readFile, mkdtemp, cp } from "node:fs/promises";
+import {
+  mkdir,
+  writeFile,
+  readFile,
+  readdir,
+  mkdtemp,
+  cp,
+} from "node:fs/promises";
 import { resolve, join, basename } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { tmpdir } from "node:os";
@@ -17,6 +24,35 @@ import { transferCases } from "./transfer.mjs";
 import { gallery } from "./gallery.mjs";
 const root = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const cli = fileURLToPath(new URL("./capture.mjs", import.meta.url));
+const provenanceFiles = (
+  await Promise.all(
+    [
+      "claude-plugins/manifest-dev/skills/design/scripts",
+      "scripts/design-evals",
+    ].map(async (directory) =>
+      (await readdir(join(root, directory)))
+        .filter(
+          (name) => /\.(mjs|py|json)$/.test(name) && name !== "summary.json",
+        )
+        .map((name) => `${directory}/${name}`),
+    ),
+  )
+)
+  .flat()
+  .sort();
+async function sourceHashes() {
+  return Object.fromEntries(
+    await Promise.all(
+      provenanceFiles.map(async (path) => [
+        path,
+        createHash("sha256")
+          .update(await readFile(join(root, path)))
+          .digest("hex"),
+      ]),
+    ),
+  );
+}
+const initialSourceHashes = await sourceHashes();
 const out = process.argv[2]
   ? resolve(process.argv[2])
   : await mkdtemp(join(tmpdir(), "design-instruments-review-"));
@@ -709,6 +745,7 @@ await writeFile(
 await writeFile(join(out, "index.html"), gallery(results));
 const publicSummary = {
   schemaVersion: 1,
+  sourceHashes: initialSourceHashes,
   evidence: results.evidence,
   provenance: results.provenance,
   calibration: results.calibration,
@@ -732,6 +769,11 @@ const publicSummary = {
   isolated: results.isolated,
   failures,
 };
+const finalSourceHashes = await sourceHashes();
+if (JSON.stringify(finalSourceHashes) !== JSON.stringify(initialSourceHashes))
+  throw new Error(
+    "Instrument or harness source changed during the run. Preserve the output and rerun with stable source before reporting it as evidence.",
+  );
 await writeFile(
   join(out, "summary.json"),
   JSON.stringify(publicSummary, null, 2) + "\n",

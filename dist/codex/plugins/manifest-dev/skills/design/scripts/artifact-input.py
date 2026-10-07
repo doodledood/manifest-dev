@@ -25,8 +25,12 @@ class SourceHTML(HTMLParser):
             "attributes": dict(attrs),
             "ancestors": list(self.stack),
             "text": [],
+            "nameText": [],
         }
         self.elements.append(e)
+        if tag == "img" and e["attributes"].get("alt"):
+            for ancestor in self.stack:
+                ancestor["nameText"].append(e["attributes"]["alt"])
         if tag not in {
             "area",
             "base",
@@ -63,6 +67,8 @@ class SourceHTML(HTMLParser):
             return
         for e in self.stack:
             e["text"].append(data)
+            if not any(p["tag"] in {"select", "textarea"} for p in self.stack):
+                e["nameText"].append(data)
         self.nodes.append(
             {
                 "id": f"text-{len(self.nodes)}",
@@ -142,7 +148,7 @@ class SourceHTML(HTMLParser):
             candidate = (
                 a.get("aria-label")
                 or " ".join(associated)
-                or text(e)
+                or " ".join("".join(e["nameText"]).split())
                 or (
                     a.get("value")
                     if e["tag"] == "input"

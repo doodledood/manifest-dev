@@ -2,6 +2,8 @@
 
 This harness evaluates the optional instruments shipped with `design`, then creates a local blind comparison gallery. It checks constructed geometric, semantic and behavioral facts. It does **not** measure human preference, task speed, comprehension or the design skill's causal improvement over an unassisted model.
 
+[Real-site calibration](REAL_SITES.md) separately fits and tests optional image estimates against human ratings, checks transfer to an independent full-page study, and evaluates recorded search tasks. It retains failed predictors, annotated source barriers and actual applicability trials. The fixture results below remain factual regressions.
+
 ## Run
 
 Use Node.js 20+, Playwright 1.48+ with Chromium, Python with `pypdf` and Pillow, and Poppler's `pdftoppm`. Browser capture and PDF tooling are development dependencies; shipped instruments consume supplied artifacts and do not install or run a browser. `capture.mjs`, `browser.mjs` and `browser-pixels.mjs` obtain development evidence and call the same shipped observation/math modules. Captures also save `observations.json` for replay through an isolated public CLI. Install these in an existing development environment rather than in the skill distribution.

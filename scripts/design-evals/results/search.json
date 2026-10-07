@@ -1,0 +1,571 @@
+{
+  "frozenSHA256": "106c0d4c59a8f0891bd0476e3df9cad6869bfae9b4a212c4a2120d12d0adf3a9",
+  "testLabelsSHA256": "accb5ad78464a39f73406df209df302bfc3d8f212ef267c9c8b75bf8f6c0643e",
+  "arms": {
+    "cue_control": {
+      "nDuplicateGroups": 117,
+      "spearman": 0.2690298584396334,
+      "spearman95CI": [
+        0.2056770854410116,
+        0.3288473533804487
+      ],
+      "baselineSpearman": 0.2690298584396334,
+      "deltaSpearman95CI": [
+        0.0,
+        0.0
+      ],
+      "mae": 2.47027338718696,
+      "baselineMAE": 2.47027338718696,
+      "deltaMAE95CI": [
+        0.0,
+        0.0
+      ],
+      "separatedPairAccuracy": 0.6117552455398886,
+      "separatedPairCount": 106948,
+      "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+      "nCells": 549,
+      "nImages": 117,
+      "logMAE": 0.5640210418082836,
+      "baselineLogMAE": 0.5640210418082836,
+      "deltaLogMAE95CI": [
+        0.0,
+        0.0
+      ],
+      "byCue": {
+        "i": {
+          "nDuplicateGroups": 117,
+          "spearman": null,
+          "spearman95CI": null,
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 1.6604259951257756,
+          "baselineMAE": 1.6604259951257756,
+          "deltaMAE95CI": [
+            0.0,
+            0.0
+          ],
+          "separatedPairAccuracy": 0.5,
+          "separatedPairCount": 12048,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 205,
+          "nImages": 117,
+          "logMAE": 0.5229991813196945,
+          "baselineLogMAE": 0.5229991813196945,
+          "deltaLogMAE95CI": [
+            0.0,
+            0.0
+          ]
+        },
+        "t": {
+          "nDuplicateGroups": 108,
+          "spearman": null,
+          "spearman95CI": null,
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 2.940593601446123,
+          "baselineMAE": 2.940593601446123,
+          "deltaMAE95CI": [
+            0.0,
+            0.0
+          ],
+          "separatedPairAccuracy": 0.5,
+          "separatedPairCount": 10738,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 167,
+          "nImages": 108,
+          "logMAE": 0.5903928195760817,
+          "baselineLogMAE": 0.5903928195760817,
+          "deltaLogMAE95CI": [
+            0.0,
+            0.0
+          ]
+        },
+        "tc": {
+          "nDuplicateGroups": 109,
+          "spearman": null,
+          "spearman95CI": null,
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 2.964483780357935,
+          "baselineMAE": 2.964483780357935,
+          "deltaMAE95CI": [
+            0.0,
+            0.0
+          ],
+          "separatedPairAccuracy": 0.5,
+          "separatedPairCount": 11934,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 177,
+          "nImages": 109,
+          "logMAE": 0.5866503893390094,
+          "baselineLogMAE": 0.5866503893390094,
+          "deltaLogMAE95CI": [
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "unseenParticipantsAndImages": {
+        "nDuplicateGroups": 110,
+        "spearman": 0.24670045035769925,
+        "spearman95CI": [
+          0.12000381969114327,
+          0.3572661954572525
+        ],
+        "baselineSpearman": 0.24670045035769925,
+        "deltaSpearman95CI": [
+          0.0,
+          0.0
+        ],
+        "mae": 2.4787226169349097,
+        "baselineMAE": 2.4787226169349097,
+        "deltaMAE95CI": [
+          0.0,
+          0.0
+        ],
+        "separatedPairAccuracy": 0.5966953415127156,
+        "separatedPairCount": 21273,
+        "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+        "nCells": 249,
+        "nImages": 110,
+        "logMAE": 0.6728593725348896,
+        "baselineLogMAE": 0.6728593725348896,
+        "deltaLogMAE95CI": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "target_geometry": {
+      "nDuplicateGroups": 117,
+      "spearman": 0.3266558343960947,
+      "spearman95CI": [
+        0.2658612250839124,
+        0.38563168486198196
+      ],
+      "baselineSpearman": 0.2690298584396334,
+      "deltaSpearman95CI": [
+        0.0023749483184850274,
+        0.11078780888126138
+      ],
+      "mae": 2.407395308645506,
+      "baselineMAE": 2.47027338718696,
+      "deltaMAE95CI": [
+        -0.12160097365662975,
+        -0.003986039609511654
+      ],
+      "separatedPairAccuracy": 0.6419287878221192,
+      "separatedPairCount": 106948,
+      "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+      "nCells": 549,
+      "nImages": 117,
+      "logMAE": 0.5382170695052523,
+      "baselineLogMAE": 0.5640210418082836,
+      "deltaLogMAE95CI": [
+        -0.04122340630353808,
+        -0.011019840034492273
+      ],
+      "byCue": {
+        "i": {
+          "nDuplicateGroups": 117,
+          "spearman": 0.2057336674058143,
+          "spearman95CI": [
+            0.0707861548926349,
+            0.33914398488529657
+          ],
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 1.352598858423973,
+          "baselineMAE": 1.6604259951257756,
+          "deltaMAE95CI": [
+            -0.39668364239989673,
+            -0.2173821514341672
+          ],
+          "separatedPairAccuracy": 0.5986885790172642,
+          "separatedPairCount": 12048,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 205,
+          "nImages": 117,
+          "logMAE": 0.4285836080204319,
+          "baselineLogMAE": 0.5229991813196945,
+          "deltaLogMAE95CI": [
+            -0.1221994980395277,
+            -0.0659301431188801
+          ]
+        },
+        "t": {
+          "nDuplicateGroups": 108,
+          "spearman": 0.10541144823830105,
+          "spearman95CI": [
+            -0.04878101276756407,
+            0.2398679644689455
+          ],
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 3.008951307007719,
+          "baselineMAE": 2.940593601446123,
+          "deltaMAE95CI": [
+            -0.024751390538557138,
+            0.16639540392807714
+          ],
+          "separatedPairAccuracy": 0.5423728813559322,
+          "separatedPairCount": 10738,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 167,
+          "nImages": 108,
+          "logMAE": 0.6025324787946266,
+          "baselineLogMAE": 0.5903928195760817,
+          "deltaLogMAE95CI": [
+            -0.007112494471616454,
+            0.0331063063733928
+          ]
+        },
+        "tc": {
+          "nDuplicateGroups": 109,
+          "spearman": 0.1395612302865534,
+          "spearman95CI": [
+            -0.0035887917407119055,
+            0.2824470633595699
+          ],
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 3.061482430503838,
+          "baselineMAE": 2.964483780357935,
+          "deltaMAE95CI": [
+            -0.0014749615722659606,
+            0.19980825669278898
+          ],
+          "separatedPairAccuracy": 0.5495223730517849,
+          "separatedPairCount": 11934,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 177,
+          "nImages": 109,
+          "logMAE": 0.6045119070931768,
+          "baselineLogMAE": 0.5866503893390094,
+          "deltaLogMAE95CI": [
+            -0.0032745414429656903,
+            0.03988924011194337
+          ]
+        }
+      },
+      "unseenParticipantsAndImages": {
+        "nDuplicateGroups": 110,
+        "spearman": 0.2975846056507377,
+        "spearman95CI": [
+          0.17348873124656392,
+          0.39946351889569887
+        ],
+        "baselineSpearman": 0.24670045035769925,
+        "deltaSpearman95CI": [
+          -0.015609135685594569,
+          0.12034799242233908
+        ],
+        "mae": 2.4004245015531107,
+        "baselineMAE": 2.4787226169349097,
+        "deltaMAE95CI": [
+          -0.168449861119431,
+          0.02055921939960256
+        ],
+        "separatedPairAccuracy": 0.622761246650684,
+        "separatedPairCount": 21273,
+        "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+        "nCells": 249,
+        "nImages": 110,
+        "logMAE": 0.6393932174572218,
+        "baselineLogMAE": 0.6728593725348896,
+        "deltaLogMAE95CI": [
+          -0.05680840074954856,
+          -0.007379240343195042
+        ]
+      }
+    },
+    "global_image": {
+      "nDuplicateGroups": 117,
+      "spearman": 0.34316768821138915,
+      "spearman95CI": [
+        0.2722590225399688,
+        0.4141651080511735
+      ],
+      "baselineSpearman": 0.2690298584396334,
+      "deltaSpearman95CI": [
+        0.01753817286282879,
+        0.12559624433385982
+      ],
+      "mae": 2.3789365611052484,
+      "baselineMAE": 2.47027338718696,
+      "deltaMAE95CI": [
+        -0.13861622149675307,
+        -0.03575774489798007
+      ],
+      "separatedPairAccuracy": 0.6531117926468938,
+      "separatedPairCount": 106948,
+      "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+      "nCells": 549,
+      "nImages": 117,
+      "logMAE": 0.5352484345782331,
+      "baselineLogMAE": 0.5640210418082836,
+      "deltaLogMAE95CI": [
+        -0.04081598008703097,
+        -0.015006250012530418
+      ],
+      "byCue": {
+        "i": {
+          "nDuplicateGroups": 117,
+          "spearman": 0.13329191552841982,
+          "spearman95CI": [
+            -0.009659741127956168,
+            0.27959564873692944
+          ],
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 1.3900333584276947,
+          "baselineMAE": 1.6604259951257756,
+          "deltaMAE95CI": [
+            -0.3545840796231042,
+            -0.1859421179873938
+          ],
+          "separatedPairAccuracy": 0.5656125498007968,
+          "separatedPairCount": 12048,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 205,
+          "nImages": 117,
+          "logMAE": 0.44234122623547634,
+          "baselineLogMAE": 0.5229991813196945,
+          "deltaLogMAE95CI": [
+            -0.10715549526363098,
+            -0.054040611995143824
+          ]
+        },
+        "t": {
+          "nDuplicateGroups": 108,
+          "spearman": 0.19060895211104384,
+          "spearman95CI": [
+            0.05476379621477085,
+            0.3267408421927408
+          ],
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 2.9332471702302816,
+          "baselineMAE": 2.940593601446123,
+          "deltaMAE95CI": [
+            -0.08698183042448461,
+            0.07354471189777688
+          ],
+          "separatedPairAccuracy": 0.5833954181411809,
+          "separatedPairCount": 10738,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 167,
+          "nImages": 108,
+          "logMAE": 0.5877039417506359,
+          "baselineLogMAE": 0.5903928195760817,
+          "deltaLogMAE95CI": [
+            -0.019454742424352172,
+            0.01379320548057013
+          ]
+        },
+        "tc": {
+          "nDuplicateGroups": 109,
+          "spearman": 0.19571959269777786,
+          "spearman95CI": [
+            0.05265433516436783,
+            0.32374993898881893
+          ],
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 3.0012828030545013,
+          "baselineMAE": 2.964483780357935,
+          "deltaMAE95CI": [
+            -0.040959831176702655,
+            0.11774753154061071
+          ],
+          "separatedPairAccuracy": 0.5803586391821686,
+          "separatedPairCount": 11934,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 177,
+          "nImages": 109,
+          "logMAE": 0.5933609092249782,
+          "baselineLogMAE": 0.5866503893390094,
+          "deltaLogMAE95CI": [
+            -0.008979148645747267,
+            0.023087963457898576
+          ]
+        }
+      },
+      "unseenParticipantsAndImages": {
+        "nDuplicateGroups": 110,
+        "spearman": 0.26638805242369784,
+        "spearman95CI": [
+          0.13561605117028702,
+          0.385352178763623
+        ],
+        "baselineSpearman": 0.24670045035769925,
+        "deltaSpearman95CI": [
+          -0.056876811713192026,
+          0.09427470985965748
+        ],
+        "mae": 2.396026332043263,
+        "baselineMAE": 2.4787226169349097,
+        "deltaMAE95CI": [
+          -0.16389839698233039,
+          0.0008457673483552875
+        ],
+        "separatedPairAccuracy": 0.6139472570864476,
+        "separatedPairCount": 21273,
+        "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+        "nCells": 249,
+        "nImages": 110,
+        "logMAE": 0.6411110577744732,
+        "baselineLogMAE": 0.6728593725348896,
+        "deltaLogMAE95CI": [
+          -0.053641053305934765,
+          -0.011129874910479412
+        ]
+      }
+    },
+    "target_and_image": {
+      "nDuplicateGroups": 117,
+      "spearman": 0.36594437830903687,
+      "spearman95CI": [
+        0.2979966966183319,
+        0.42940306369663755
+      ],
+      "baselineSpearman": 0.2690298584396334,
+      "deltaSpearman95CI": [
+        0.03903439580772996,
+        0.14666224381543833
+      ],
+      "mae": 2.35571531315916,
+      "baselineMAE": 2.47027338718696,
+      "deltaMAE95CI": [
+        -0.18131303961741851,
+        -0.042713942887379966
+      ],
+      "separatedPairAccuracy": 0.66035830497064,
+      "separatedPairCount": 106948,
+      "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+      "nCells": 549,
+      "nImages": 117,
+      "logMAE": 0.5258954610641324,
+      "baselineLogMAE": 0.5640210418082836,
+      "deltaLogMAE95CI": [
+        -0.0560873888538608,
+        -0.020230494112551928
+      ],
+      "byCue": {
+        "i": {
+          "nDuplicateGroups": 117,
+          "spearman": 0.2478741204927085,
+          "spearman95CI": [
+            0.126811421733619,
+            0.376985385172409
+          ],
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 1.3381971286954695,
+          "baselineMAE": 1.6604259951257756,
+          "deltaMAE95CI": [
+            -0.42763274237206883,
+            -0.22101902846414598
+          ],
+          "separatedPairAccuracy": 0.6102257636122178,
+          "separatedPairCount": 12048,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 205,
+          "nImages": 117,
+          "logMAE": 0.42343228513514075,
+          "baselineLogMAE": 0.5229991813196945,
+          "deltaLogMAE95CI": [
+            -0.1331082663362412,
+            -0.067430419155059
+          ]
+        },
+        "t": {
+          "nDuplicateGroups": 108,
+          "spearman": 0.20596857444876218,
+          "spearman95CI": [
+            0.05756987847908623,
+            0.3453844548149952
+          ],
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 2.9170939532323192,
+          "baselineMAE": 2.940593601446123,
+          "deltaMAE95CI": [
+            -0.1291076786970809,
+            0.08569857233911082
+          ],
+          "separatedPairAccuracy": 0.5879120879120879,
+          "separatedPairCount": 10738,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 167,
+          "nImages": 108,
+          "logMAE": 0.583022209651117,
+          "baselineLogMAE": 0.5903928195760817,
+          "deltaLogMAE95CI": [
+            -0.02940073044055109,
+            0.014228254937684036
+          ]
+        },
+        "tc": {
+          "nDuplicateGroups": 109,
+          "spearman": 0.22411880866732087,
+          "spearman95CI": [
+            0.0796212285780168,
+            0.3573082376510876
+          ],
+          "baselineSpearman": null,
+          "deltaSpearman95CI": null,
+          "mae": 3.0045344935141807,
+          "baselineMAE": 2.964483780357935,
+          "deltaMAE95CI": [
+            -0.0595655996438215,
+            0.1515487253091525
+          ],
+          "separatedPairAccuracy": 0.5847159376571142,
+          "separatedPairCount": 11934,
+          "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+          "nCells": 177,
+          "nImages": 109,
+          "logMAE": 0.5906682523150757,
+          "baselineLogMAE": 0.5866503893390094,
+          "deltaLogMAE95CI": [
+            -0.017317312185640192,
+            0.026306152549737137
+          ]
+        }
+      },
+      "unseenParticipantsAndImages": {
+        "nDuplicateGroups": 110,
+        "spearman": 0.2971248303537681,
+        "spearman95CI": [
+          0.17296489612013413,
+          0.4056371510881508
+        ],
+        "baselineSpearman": 0.24670045035769925,
+        "deltaSpearman95CI": [
+          -0.017008615974790826,
+          0.12075328989339183
+        ],
+        "mae": 2.370463283698003,
+        "baselineMAE": 2.4787226169349097,
+        "deltaMAE95CI": [
+          -0.2232408002156867,
+          0.01829805308962727
+        ],
+        "separatedPairAccuracy": 0.6234663658158228,
+        "separatedPairCount": 21273,
+        "pairLimits": "Pairs share screens/targets; separated pairs differ by>=1 second in cell medians, not independent sample size.",
+        "nCells": 249,
+        "nImages": 110,
+        "logMAE": 0.6285658120645145,
+        "baselineLogMAE": 0.6728593725348896,
+        "deltaLogMAE95CI": [
+          -0.07430759201291673,
+          -0.012160742268416945
+        ]
+      }
+    }
+  },
+  "winner": "target_geometry",
+  "limits": "Observed search duration, not verified success. Static screenshots viewed on laboratory monitors. Test source images unseen in fitting; same participants may occur in the main result. Strict participant sensitivity excludes held-out people from both fitting/development. Bootstrap clusters screenshot/template groups and omits remaining participant variation."
+}

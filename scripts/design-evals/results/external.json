@@ -1,0 +1,1188 @@
+{
+  "modelsSHA256": "35b8cafe4e2cfb2898479b600021e7e515cf139f527417a4f18b23fb5751ef9d",
+  "featuresSHA256": "3c0685b6a4e1e29e597b12e3bcf6cd89e616cf517a6180f63ab57cc1c5be852d",
+  "variants": {
+    "full": {
+      "aesthetics_selected": {
+        "AE": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.21760667577480597,
+          "spearman95CI": [
+            0.12587905600548185,
+            0.3071403692073062
+          ],
+          "baselineSpearman": 0.14169176534042546,
+          "deltaSpearman95CI": [
+            0.03383074000475755,
+            0.11723519795823732
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.19216723885329431,
+              "spearman95CI": [
+                0.028211787148397303,
+                0.3395553510376873
+              ],
+              "baselineSpearman": 0.0912991187597035,
+              "deltaSpearman95CI": [
+                0.028028990915019564,
+                0.17920441594456585
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2812359231156109,
+              "spearman95CI": [
+                0.13689196015213695,
+                0.42208172443086445
+              ],
+              "baselineSpearman": 0.2483566945835429,
+              "deltaSpearman95CI": [
+                -0.035244288373771165,
+                0.10277381477599928
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.1991428134088474,
+              "spearman95CI": [
+                0.02524486173413735,
+                0.3622431508656351
+              ],
+              "baselineSpearman": 0.09701078043340404,
+              "deltaSpearman95CI": [
+                0.026226845256393308,
+                0.1872762385244124
+              ]
+            }
+          }
+        },
+        "US": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.1615014014494737,
+          "spearman95CI": [
+            0.0656937408905725,
+            0.2570088413802708
+          ],
+          "baselineSpearman": 0.13547566272241582,
+          "deltaSpearman95CI": [
+            -0.020484111166022362,
+            0.07386647837733028
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.24418009665216162,
+              "spearman95CI": [
+                0.06917951285950866,
+                0.3937880051090719
+              ],
+              "baselineSpearman": 0.19628698257199717,
+              "deltaSpearman95CI": [
+                -0.0433291394080535,
+                0.13196806877704753
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.07428658896590935,
+              "spearman95CI": [
+                -0.08704581664575455,
+                0.24770137523581498
+              ],
+              "baselineSpearman": 0.09381382432048284,
+              "deltaSpearman95CI": [
+                -0.09256615585910952,
+                0.05900691890538366
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.17255253547921545,
+              "spearman95CI": [
+                0.006302524425355626,
+                0.32761019117346457
+              ],
+              "baselineSpearman": 0.10822418053399228,
+              "deltaSpearman95CI": [
+                -0.02383941190121611,
+                0.14897113097338568
+              ]
+            }
+          }
+        },
+        "TRU": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.12059316824763341,
+          "spearman95CI": [
+            0.020411850871246237,
+            0.21095513022824475
+          ],
+          "baselineSpearman": 0.03344544389221513,
+          "deltaSpearman95CI": [
+            0.04448489471596991,
+            0.1269357799026625
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2120487196868645,
+              "spearman95CI": [
+                0.031392786396355905,
+                0.3687080426946434
+              ],
+              "baselineSpearman": 0.09202947672257333,
+              "deltaSpearman95CI": [
+                0.04455338960360888,
+                0.20195924434684553
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.05126063283112113,
+              "spearman95CI": [
+                -0.11368521458680829,
+                0.2257167404669334
+              ],
+              "baselineSpearman": -0.006822505521418733,
+              "deltaSpearman95CI": [
+                -0.01665059076747069,
+                0.12970316384001324
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.10836850276617614,
+              "spearman95CI": [
+                -0.06796668172039905,
+                0.27894551948752844
+              ],
+              "baselineSpearman": -0.022229997157289367,
+              "deltaSpearman95CI": [
+                0.04943352463966674,
+                0.21184307780962897
+              ]
+            }
+          }
+        }
+      },
+      "aesthetics_native": {
+        "AE": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.2897259702638418,
+          "spearman95CI": [
+            0.19883612060253622,
+            0.3755793768976437
+          ],
+          "baselineSpearman": 0.14169176534042546,
+          "deltaSpearman95CI": [
+            0.1054936782239729,
+            0.18864774809311777
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.22169206883733136,
+              "spearman95CI": [
+                0.05373597432365833,
+                0.362774842809163
+              ],
+              "baselineSpearman": 0.0912991187597035,
+              "deltaSpearman95CI": [
+                0.06798153288813431,
+                0.19515613806218546
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.3381469900067788,
+              "spearman95CI": [
+                0.1930754512950192,
+                0.48241651976904965
+              ],
+              "baselineSpearman": 0.2483566945835429,
+              "deltaSpearman95CI": [
+                0.026246275118446512,
+                0.16157197701766154
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.34381929107170195,
+              "spearman95CI": [
+                0.1951763122078419,
+                0.4853475322466119
+              ],
+              "baselineSpearman": 0.09701078043340404,
+              "deltaSpearman95CI": [
+                0.17030953470821955,
+                0.33406884634297074
+              ]
+            }
+          }
+        }
+      },
+      "complexity_selected": {
+        "AE": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.22169027521212054,
+          "spearman95CI": [
+            0.12812722988973105,
+            0.314110576233772
+          ],
+          "baselineSpearman": 0.14169176534042546,
+          "deltaSpearman95CI": [
+            -0.07220035354439924,
+            0.24755999122043
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.25965756270363655,
+              "spearman95CI": [
+                0.0994840295595363,
+                0.4199830048369922
+              ],
+              "baselineSpearman": 0.0912991187597035,
+              "deltaSpearman95CI": [
+                -0.07943143500320046,
+                0.4154190758226553
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.07557236885263827,
+              "spearman95CI": [
+                -0.08203037087629318,
+                0.22808420516174674
+              ],
+              "baselineSpearman": 0.2483566945835429,
+              "deltaSpearman95CI": [
+                -0.4493736938214086,
+                0.11768061278014703
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.4171131180162254,
+              "spearman95CI": [
+                0.27139806829077745,
+                0.5494476968523705
+              ],
+              "baselineSpearman": 0.09701078043340404,
+              "deltaSpearman95CI": [
+                0.06038400455708039,
+                0.5548126491612477
+              ]
+            }
+          }
+        },
+        "US": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": -0.002493049442295186,
+          "spearman95CI": [
+            -0.10339526333679806,
+            0.09513758246463348
+          ],
+          "baselineSpearman": 0.13547566272241582,
+          "deltaSpearman95CI": [
+            -0.29871472804871035,
+            0.03497071184592575
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": -0.09243182961229802,
+              "spearman95CI": [
+                -0.2403995698370992,
+                0.07787087067764775
+              ],
+              "baselineSpearman": 0.19628698257199717,
+              "deltaSpearman95CI": [
+                -0.5299375832576324,
+                -0.006001815919477878
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": -0.06984758697601191,
+              "spearman95CI": [
+                -0.24392512912609027,
+                0.11543398134191189
+              ],
+              "baselineSpearman": 0.09381382432048284,
+              "deltaSpearman95CI": [
+                -0.4895977169720279,
+                0.14965383295809734
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.21961470337407887,
+              "spearman95CI": [
+                0.0693992955541733,
+                0.35962471639266014
+              ],
+              "baselineSpearman": 0.10822418053399228,
+              "deltaSpearman95CI": [
+                -0.14463922895980844,
+                0.35518272318011007
+              ]
+            }
+          }
+        },
+        "TRU": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.3031526741729181,
+          "spearman95CI": [
+            0.211582242745528,
+            0.39273083335484704
+          ],
+          "baselineSpearman": 0.03344544389221513,
+          "deltaSpearman95CI": [
+            0.1096690252924072,
+            0.4268241656693198
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.3132142310467736,
+              "spearman95CI": [
+                0.14509509178750055,
+                0.4618366775589121
+              ],
+              "baselineSpearman": 0.09202947672257333,
+              "deltaSpearman95CI": [
+                -0.03577656054955467,
+                0.4865500226001142
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.23860401040869436,
+              "spearman95CI": [
+                0.07108217235611941,
+                0.3900814644088608
+              ],
+              "baselineSpearman": -0.006822505521418733,
+              "deltaSpearman95CI": [
+                -0.06643141918078814,
+                0.5284378194297259
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.5227438717718834,
+              "spearman95CI": [
+                0.37856562693046053,
+                0.6283015394173485
+              ],
+              "baselineSpearman": -0.022229997157289367,
+              "deltaSpearman95CI": [
+                0.2875179160455148,
+                0.7817002994930917
+              ]
+            }
+          }
+        }
+      },
+      "craftsmanship_selected": {
+        "AE": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.3496615222146546,
+          "spearman95CI": [
+            0.2630790441631531,
+            0.43762121978114227
+          ],
+          "baselineSpearman": 0.14169176534042546,
+          "deltaSpearman95CI": [
+            0.15074649351796957,
+            0.2710596794153178
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2208436290481293,
+              "spearman95CI": [
+                0.04509404662963126,
+                0.3689032228142407
+              ],
+              "baselineSpearman": 0.0912991187597035,
+              "deltaSpearman95CI": [
+                0.03537415385001507,
+                0.2177284772916437
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.43925564715400933,
+              "spearman95CI": [
+                0.2910825430044923,
+                0.5722787739684405
+              ],
+              "baselineSpearman": 0.2483566945835429,
+              "deltaSpearman95CI": [
+                0.0943648606704665,
+                0.28768619208512314
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.4300758785069209,
+              "spearman95CI": [
+                0.2849383704726225,
+                0.5626466949893975
+              ],
+              "baselineSpearman": 0.09701078043340404,
+              "deltaSpearman95CI": [
+                0.23140722980756556,
+                0.44561884978649174
+              ]
+            }
+          }
+        },
+        "US": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.16437297587530864,
+          "spearman95CI": [
+            0.06749192317187976,
+            0.2595411033861513
+          ],
+          "baselineSpearman": 0.13547566272241582,
+          "deltaSpearman95CI": [
+            -0.032044133040594475,
+            0.09305758470319937
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.21323391135116226,
+              "spearman95CI": [
+                0.043135940401693273,
+                0.36008223503856235
+              ],
+              "baselineSpearman": 0.19628698257199717,
+              "deltaSpearman95CI": [
+                -0.07275207399606962,
+                0.11076284674595907
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.11425072707791216,
+              "spearman95CI": [
+                -0.04444932299143513,
+                0.281610017436088
+              ],
+              "baselineSpearman": 0.09381382432048284,
+              "deltaSpearman95CI": [
+                -0.07580197910272818,
+                0.12019843593718561
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.22682644158229648,
+              "spearman95CI": [
+                0.054380327330592254,
+                0.3824928793013839
+              ],
+              "baselineSpearman": 0.10822418053399228,
+              "deltaSpearman95CI": [
+                0.0037174171753290783,
+                0.22442061526802928
+              ]
+            }
+          }
+        },
+        "TRU": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.23273860477019223,
+          "spearman95CI": [
+            0.13766832097222692,
+            0.32138235870061127
+          ],
+          "baselineSpearman": 0.03344544389221513,
+          "deltaSpearman95CI": [
+            0.13913457894305234,
+            0.25879223580465965
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2737574074479019,
+              "spearman95CI": [
+                0.09457943768610029,
+                0.4214342617152457
+              ],
+              "baselineSpearman": 0.09202947672257333,
+              "deltaSpearman95CI": [
+                0.0884724921225269,
+                0.28329625063790614
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.17516345586145068,
+              "spearman95CI": [
+                -0.0025898618212549583,
+                0.34501590743028876
+              ],
+              "baselineSpearman": -0.006822505521418733,
+              "deltaSpearman95CI": [
+                0.08465642028830127,
+                0.2795015409045553
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2945441822833527,
+              "spearman95CI": [
+                0.1436146554681595,
+                0.44620098418192494
+              ],
+              "baselineSpearman": -0.022229997157289367,
+              "deltaSpearman95CI": [
+                0.2108012446177,
+                0.42387160040216537
+              ]
+            }
+          }
+        }
+      }
+    },
+    "top900": {
+      "aesthetics_selected": {
+        "AE": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.3833573724502811,
+          "spearman95CI": [
+            0.29833170250926827,
+            0.4707636913457108
+          ],
+          "baselineSpearman": 0.3671204809227133,
+          "deltaSpearman95CI": [
+            -0.016980805401750582,
+            0.04692972437967846
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.3931206402659028,
+              "spearman95CI": [
+                0.22627120526022013,
+                0.5426598051219876
+              ],
+              "baselineSpearman": 0.341685071395771,
+              "deltaSpearman95CI": [
+                -0.015145383485417755,
+                0.1164628739572317
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.29465351730773437,
+              "spearman95CI": [
+                0.1294085284736141,
+                0.4561636331576405
+              ],
+              "baselineSpearman": 0.29324528219369794,
+              "deltaSpearman95CI": [
+                -0.07161222326879571,
+                0.07595013812612918
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.4848483523211827,
+              "spearman95CI": [
+                0.3313122257540134,
+                0.6157054895354406
+              ],
+              "baselineSpearman": 0.4722704511163107,
+              "deltaSpearman95CI": [
+                -0.033641622007974936,
+                0.05794231006642243
+              ]
+            }
+          }
+        },
+        "US": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.18707362286634277,
+          "spearman95CI": [
+            0.09143216524364135,
+            0.2862912030986971
+          ],
+          "baselineSpearman": 0.19458370755260193,
+          "deltaSpearman95CI": [
+            -0.041799862099804484,
+            0.025592198277759024
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.28525507861188254,
+              "spearman95CI": [
+                0.1316290349238579,
+                0.43392890029634396
+              ],
+              "baselineSpearman": 0.2624609127287836,
+              "deltaSpearman95CI": [
+                -0.0413848420696345,
+                0.0847871006449408
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.03582690078939888,
+              "spearman95CI": [
+                -0.14517068127898827,
+                0.20994393367682362
+              ],
+              "baselineSpearman": 0.07105027224421073,
+              "deltaSpearman95CI": [
+                -0.10557130815897196,
+                0.030193217347289626
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2830640047232731,
+              "spearman95CI": [
+                0.107780529998445,
+                0.4406363202324956
+              ],
+              "baselineSpearman": 0.27719052721348764,
+              "deltaSpearman95CI": [
+                -0.05105635497609878,
+                0.057065371719890456
+              ]
+            }
+          }
+        },
+        "TRU": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.30240388469970264,
+          "spearman95CI": [
+            0.21057558638726465,
+            0.3971772407437947
+          ],
+          "baselineSpearman": 0.28578182739941027,
+          "deltaSpearman95CI": [
+            -0.017906067026904355,
+            0.0497699901263438
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.30879272266077723,
+              "spearman95CI": [
+                0.14379693256648537,
+                0.46303190341388584
+              ],
+              "baselineSpearman": 0.25237147667883936,
+              "deltaSpearman95CI": [
+                -0.008377647673970826,
+                0.12608433881433945
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.19703046073779276,
+              "spearman95CI": [
+                0.02064611656430983,
+                0.3616148878354035
+              ],
+              "baselineSpearman": 0.19890227635520766,
+              "deltaSpearman95CI": [
+                -0.07514209198582188,
+                0.07414995849373357
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.4053005619820254,
+              "spearman95CI": [
+                0.258544467660765,
+                0.5450665424475145
+              ],
+              "baselineSpearman": 0.411257134110341,
+              "deltaSpearman95CI": [
+                -0.05328755828004565,
+                0.03955961122960873
+              ]
+            }
+          }
+        }
+      },
+      "aesthetics_native": {
+        "AE": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.3701093219673257,
+          "spearman95CI": [
+            0.28047425916441926,
+            0.4582667477291233
+          ],
+          "baselineSpearman": 0.3671204809227133,
+          "deltaSpearman95CI": [
+            -0.024140681273634074,
+            0.02865052670399301
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.3742494150576196,
+              "spearman95CI": [
+                0.21136066345143484,
+                0.527542377541516
+              ],
+              "baselineSpearman": 0.341685071395771,
+              "deltaSpearman95CI": [
+                -0.016862205872403148,
+                0.08421882705315124
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2684787124707529,
+              "spearman95CI": [
+                0.10521012021452725,
+                0.43678243608644224
+              ],
+              "baselineSpearman": 0.29324528219369794,
+              "deltaSpearman95CI": [
+                -0.08109486138448503,
+                0.03372858268429233
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.4706697863593624,
+              "spearman95CI": [
+                0.32172676727137905,
+                0.6077031849409049
+              ],
+              "baselineSpearman": 0.4722704511163107,
+              "deltaSpearman95CI": [
+                -0.04702955219245362,
+                0.043144594717368936
+              ]
+            }
+          }
+        }
+      },
+      "complexity_selected": {
+        "AE": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": -0.15606794013247566,
+          "spearman95CI": [
+            -0.25590693748248305,
+            -0.06317271017258815
+          ],
+          "baselineSpearman": 0.3671204809227133,
+          "deltaSpearman95CI": [
+            -0.6719812869359206,
+            -0.37971217722153283
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": -0.19316000087468022,
+              "spearman95CI": [
+                -0.3567237502544095,
+                -0.017726112864847675
+              ],
+              "baselineSpearman": 0.341685071395771,
+              "deltaSpearman95CI": [
+                -0.7813112048618741,
+                -0.26918093157071654
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.012433578972688113,
+              "spearman95CI": [
+                -0.16440334515399233,
+                0.18795198073974945
+              ],
+              "baselineSpearman": 0.29324528219369794,
+              "deltaSpearman95CI": [
+                -0.5621933572478571,
+                0.008116573461618135
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": -0.26991318799064096,
+              "spearman95CI": [
+                -0.42771055150189896,
+                -0.0971373916704855
+              ],
+              "baselineSpearman": 0.4722704511163107,
+              "deltaSpearman95CI": [
+                -0.9736748494922323,
+                -0.4868228311760781
+              ]
+            }
+          }
+        },
+        "US": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": -0.15642702865986444,
+          "spearman95CI": [
+            -0.2548218589003036,
+            -0.061493243964822836
+          ],
+          "baselineSpearman": 0.19458370755260193,
+          "deltaSpearman95CI": [
+            -0.5068637884646932,
+            -0.19276774958354304
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": -0.255673394415167,
+              "spearman95CI": [
+                -0.41619525229794413,
+                -0.08350953314691345
+              ],
+              "baselineSpearman": 0.2624609127287836,
+              "deltaSpearman95CI": [
+                -0.7526151209445132,
+                -0.25626212802734893
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": -0.016269051627998514,
+              "spearman95CI": [
+                -0.1803604537313717,
+                0.15748417821565458
+              ],
+              "baselineSpearman": 0.07105027224421073,
+              "deltaSpearman95CI": [
+                -0.34694729508609606,
+                0.1952524576234721
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": -0.23583564759134942,
+              "spearman95CI": [
+                -0.3874938933696015,
+                -0.07681263339143642
+              ],
+              "baselineSpearman": 0.27719052721348764,
+              "deltaSpearman95CI": [
+                -0.7892574064318982,
+                -0.23054598976214585
+              ]
+            }
+          }
+        },
+        "TRU": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": -0.10654806109202108,
+          "spearman95CI": [
+            -0.20179603632824078,
+            -0.012381560611644514
+          ],
+          "baselineSpearman": 0.28578182739941027,
+          "deltaSpearman95CI": [
+            -0.549274138620699,
+            -0.24722184133163186
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": -0.11330169906627892,
+              "spearman95CI": [
+                -0.2827486523112188,
+                0.041683921415743605
+              ],
+              "baselineSpearman": 0.25237147667883936,
+              "deltaSpearman95CI": [
+                -0.6242611082634246,
+                -0.12872069414061316
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.06952832870481732,
+              "spearman95CI": [
+                -0.09481512297536644,
+                0.2352254914429688
+              ],
+              "baselineSpearman": 0.19890227635520766,
+              "deltaSpearman95CI": [
+                -0.39164497282665506,
+                0.1560893292265602
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": -0.2609302223874397,
+              "spearman95CI": [
+                -0.41628226376496735,
+                -0.09676509494137261
+              ],
+              "baselineSpearman": 0.411257134110341,
+              "deltaSpearman95CI": [
+                -0.9426045480639988,
+                -0.4216318125569944
+              ]
+            }
+          }
+        }
+      },
+      "craftsmanship_selected": {
+        "AE": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.3372939431953372,
+          "spearman95CI": [
+            0.24766219179388665,
+            0.42048213245874594
+          ],
+          "baselineSpearman": 0.3671204809227133,
+          "deltaSpearman95CI": [
+            -0.06965950377793122,
+            0.007571495439546065
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.3124401390741511,
+              "spearman95CI": [
+                0.1481209119344243,
+                0.4686231449401068
+              ],
+              "baselineSpearman": 0.341685071395771,
+              "deltaSpearman95CI": [
+                -0.09698995602199642,
+                0.04267002339760841
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2811047210863528,
+              "spearman95CI": [
+                0.11907180647203845,
+                0.4454166325570466
+              ],
+              "baselineSpearman": 0.29324528219369794,
+              "deltaSpearman95CI": [
+                -0.10220779177868575,
+                0.07580422261761062
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.4256893573287267,
+              "spearman95CI": [
+                0.27220760074965084,
+                0.5676425611368828
+              ],
+              "baselineSpearman": 0.4722704511163107,
+              "deltaSpearman95CI": [
+                -0.11226885130870669,
+                0.012122401775660605
+              ]
+            }
+          }
+        },
+        "US": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.14105295381493094,
+          "spearman95CI": [
+            0.04009132739708598,
+            0.23999541846890482
+          ],
+          "baselineSpearman": 0.19458370755260193,
+          "deltaSpearman95CI": [
+            -0.09773872284773638,
+            -0.010172832509305204
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2516236251120684,
+              "spearman95CI": [
+                0.09860837807569597,
+                0.4066706644119144
+              ],
+              "baselineSpearman": 0.2624609127287836,
+              "deltaSpearman95CI": [
+                -0.08118828053097034,
+                0.06019928747969457
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.04224268002011765,
+              "spearman95CI": [
+                -0.15289299561127637,
+                0.21653910977341895
+              ],
+              "baselineSpearman": 0.07105027224421073,
+              "deltaSpearman95CI": [
+                -0.12210164305492757,
+                0.062196650890457436
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.16728258730401702,
+              "spearman95CI": [
+                -0.0007266795036806288,
+                0.32668022524702095
+              ],
+              "baselineSpearman": 0.27719052721348764,
+              "deltaSpearman95CI": [
+                -0.18523172299766794,
+                -0.044780271131963215
+              ]
+            }
+          }
+        },
+        "TRU": {
+          "nImages": 420,
+          "nExactPixelGroups": 420,
+          "spearman": 0.26710242121553973,
+          "spearman95CI": [
+            0.1737608834039309,
+            0.3608572724017323
+          ],
+          "baselineSpearman": 0.28578182739941027,
+          "deltaSpearman95CI": [
+            -0.06040897340052343,
+            0.025155571907827676
+          ],
+          "byGenre": {
+            "banks": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.2636111171852792,
+              "spearman95CI": [
+                0.09428312523386377,
+                0.41653636959464
+              ],
+              "baselineSpearman": 0.25237147667883936,
+              "deltaSpearman95CI": [
+                -0.06802193380881896,
+                0.08610454133765823
+              ]
+            },
+            "ecommerce": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.17695217686033546,
+              "spearman95CI": [
+                0.0014303946816230076,
+                0.33935513522799393
+              ],
+              "baselineSpearman": 0.19890227635520766,
+              "deltaSpearman95CI": [
+                -0.10899828209999857,
+                0.061894926134658516
+              ]
+            },
+            "universities": {
+              "nImages": 140,
+              "nExactPixelGroups": 140,
+              "spearman": 0.36789486344055466,
+              "spearman95CI": [
+                0.21588248112341424,
+                0.5080927725709985
+              ],
+              "baselineSpearman": 0.411257134110341,
+              "deltaSpearman95CI": [
+                -0.11341641202646285,
+                0.018733489037960755
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "overlapCandidates": [],
+  "limits": "Published2024 independent rating study;420 filename-hash-selected full-page homepages. AE appearance, US perceived ease, TRU perceived trust; no task success or actual trust. CIs cluster exact pixels, not raters/brands/templates. Scores trained on1-7 first impressions are assessed by ranks against participant-standardized ratings, without refitting or MAE comparison across incompatible scales. Exploratory US/TRU correlations are associations, not predicted task behavior."
+}

@@ -32,6 +32,7 @@ const help = `Optional design instruments ${VERSION}
 node scripts/design-tools.mjs catalog
 node scripts/design-tools.mjs inspect <HTML|text|observations.json> [--tools copy,geometry,...] [--spec plan.json]
 node scripts/design-tools.mjs image <PNG|JPEG|WebP|GIF|RGBA.json> [--artifacts views]
+node scripts/design-tools.mjs appearance <image|features.json|->
 node scripts/design-tools.mjs ${Object.keys(structured).join("|")} <JSON>
 node scripts/design-tools.mjs compare <report.json> --other <report.json>
 Options: --output report.json --edge-threshold 0.08 --tile-size 16
@@ -164,11 +165,11 @@ async function main() {
           version: VERSION,
           instruments,
           structured: Object.keys(structured),
-          other: ["image", "compare"],
+          other: ["image", "appearance", "compare"],
           inputs: {
             html: ["copy", "access", "media"],
             text: ["copy"],
-            raster: ["image"],
+            raster: ["image", "appearance"],
             observations: "choose fields needed by the question",
           },
         },
@@ -197,6 +198,25 @@ async function main() {
         compare: compare(await jsonFile(input), await jsonFile(v.other)),
       },
     };
+  } else if (command === "appearance") {
+    const r = spawnSync(
+      process.env.DESIGN_TOOLS_PYTHON || "python3",
+      [
+        fileURLToPath(new URL("./appearance.py", import.meta.url)),
+        input === "-" ? "-" : resolve(input),
+      ],
+      {
+        input: input === "-" ? await source(input) : undefined,
+        encoding: "utf8",
+        timeout: 30000,
+        maxBuffer: 1024 * 1024,
+      },
+    );
+    if (r.error)
+      throw new Error(`Appearance analysis needs Python 3: ${r.error.message}`);
+    if (r.status !== 0)
+      throw new Error(r.stderr.trim() || "Appearance analysis failed");
+    result = JSON.parse(r.stdout);
   } else if (command === "image") result = await image(input, v, artifacts);
   else if (command === "inspect") {
     const ext = extname(input).toLowerCase();

@@ -1,9 +1,31 @@
 {
   "schemaVersion": 1,
+  "sourceHashes": {
+    "claude-plugins/manifest-dev/skills/design/scripts/appearance-profile.json": "1fc28a2b75e62cff264708e3eb904f613222bae29574a82464aa568d22278ae6",
+    "claude-plugins/manifest-dev/skills/design/scripts/appearance.py": "bb9474db8a19d1aec55a54ca396f1a9ec2722fc7e6e3465e49b07d6a57b7be0f",
+    "claude-plugins/manifest-dev/skills/design/scripts/artifact-input.py": "97b444b3dde2d1b7dd16816eae4efec70bd217228d7cf546cfcab7876a5f3dad",
+    "claude-plugins/manifest-dev/skills/design/scripts/design-tools.mjs": "9d120be00cca45223c23de729475bc485108ad3733fad9ff3eebf4e9dd813b38",
+    "claude-plugins/manifest-dev/skills/design/scripts/measurements.mjs": "4a468fc745d6b5f7faf32e14da20e3e005ebffe57e72ea162878c034d311b544",
+    "claude-plugins/manifest-dev/skills/design/scripts/observations.mjs": "f07e1bf4075a8a863d6891922468256d3d4c487e8e121b6e340b4f59a0472a56",
+    "claude-plugins/manifest-dev/skills/design/scripts/pixels.mjs": "196e8409d0d8af3f3ee25c2355ec775b21b41ecc86f5c7e2ef44e26b0946f43c",
+    "scripts/design-evals/browser-pixels.mjs": "34b9bf242ed72e27cccd61e3631f1dd9a887df77cb34476dc0448be184556702",
+    "scripts/design-evals/browser.mjs": "45a33a4fe35d6d83cf45774b763442a6f878065ae04d2de4c0f7294ef05973da",
+    "scripts/design-evals/calibration.mjs": "7860b14432042d5090d59c7f4eabc6648ffd5739633039796fe9655afd08d14f",
+    "scripts/design-evals/capture.mjs": "536f9594d3e2bc3f660cf8f54e14216b750d71db0f766bc9f503cb6354aa0594",
+    "scripts/design-evals/external-calibration.py": "e81dc16f76cb91335b4c8dd459aabf9d6477f84e9cac39245a41d02916e97f29",
+    "scripts/design-evals/fixtures.mjs": "b11f5a6913e38566d2133e0f61e4399fc9e0ecc7dab56567737adaf60ae0c93d",
+    "scripts/design-evals/gallery.mjs": "96f1df6dd4dd4f375ee1be0a3e43019bcc3bd2f4b891586cd0186c1b7725a3d9",
+    "scripts/design-evals/pdf-evidence.py": "907752650772b1e6876eb8cea6908977789e428c931bf3fa1f482c60eff00569",
+    "scripts/design-evals/run.mjs": "000bfde5e566e6b9658b375995342e945f9edc041c6797c1a6aba5f271bfb3e7",
+    "scripts/design-evals/search-calibration.py": "034c95e4f0d31ccecd5f6a1226300445f0b91980608d1e6b1427b42a3839798c",
+    "scripts/design-evals/site-calibration.py": "44ad07c0e244ec442683170f7c4e876d1031214eaa272a0f572fbddbc4c1af21",
+    "scripts/design-evals/transfer-freeze.json": "ceab4380bbae511fba5fc1603c6ce8bc36115208d33c822d3bc337a2041a1c48",
+    "scripts/design-evals/transfer.mjs": "6b44c4eef93a55a9a2ca64295009bfda53d389815ef9a16d1d16b855ff4f6582"
+  },
   "evidence": "Constructed fixtures and local observations; no human preference or participant UX outcomes.",
   "provenance": {
     "fixtureSHA256": "b11f5a6913e38566d2133e0f61e4399fc9e0ecc7dab56567737adaf60ae0c93d",
-    "calibrationSHA256": "bb161ef7be873bdf4839716f4cdbff3b946dbc72c82f2c1967a4ea97132fd841"
+    "calibrationSHA256": "7860b14432042d5090d59c7f4eabc6648ffd5739633039796fe9655afd08d14f"
   },
   "calibration": {
     "evidence": "Constructed known-relation observations. No participants, measured task speed, preference or general UX-quality validation.",
@@ -305,7 +327,7 @@
           "expectedVariation": true,
           "baselineVariation": false,
           "refinedVariation": true,
-          "meanGradient": 0.04436748430974422
+          "meanGradient": 0.04436748430974384
         },
         {
           "id": "challenge-uniform",
@@ -341,10 +363,11 @@
     },
     "evidence": "Cases were independently specified for the initial frozen evaluation. Reruns use now-known cases as regression evidence; original hashes remain traceable.",
     "instrumentHashes": {
-      "measurements.mjs": "46439acd8952d34f26f2c458d9f953ffa20d9e34b6dd2049628ffab65bc4366e",
-      "browser.mjs": "45a33a4fe35d6d83cf45774b763442a6f878065ae04d2de4c0f7294ef05973da",
-      "pixels.mjs": "6afd07359385ae8d1a726f7b458326c3d0e362d40d235e655e26bb1503f90565",
-      "design-tools.mjs": "34f11affd411883a031c3c1f61c40934c85be0777f272c69505a22a4f9cb1ce2"
+      "measurements.mjs": "4a468fc745d6b5f7faf32e14da20e3e005ebffe57e72ea162878c034d311b544",
+      "observations.mjs": "f07e1bf4075a8a863d6891922468256d3d4c487e8e121b6e340b4f59a0472a56",
+      "pixels.mjs": "196e8409d0d8af3f3ee25c2355ec775b21b41ecc86f5c7e2ef44e26b0946f43c",
+      "artifact-input.py": "97b444b3dde2d1b7dd16816eae4efec70bd217228d7cf546cfcab7876a5f3dad",
+      "design-tools.mjs": "9d120be00cca45223c23de729475bc485108ad3733fad9ff3eebf4e9dd813b38"
     },
     "cases": [
       {
@@ -530,7 +553,7 @@
               }
             ],
             "alignments": [],
-            "limits": "Reported boxes, not optical boundaries or quality. No required geometry scale."
+            "limits": "Supplied geometry, not optical boundaries or understood relationships. Em distances are unmeasured without a supplied font size."
           },
           "visibility": {
             "groups": [
@@ -541,6 +564,11 @@
                   "price"
                 ],
                 "fullyVisible": [
+                  "label",
+                  "price"
+                ],
+                "unmeasuredAncestorClipping": [],
+                "fullyWithinViewport": [
                   "label",
                   "price"
                 ],
@@ -562,7 +590,7 @@
               "width": 800,
               "height": 600
             },
-            "limits": "Viewport and named-element boxes. Content loss can occur without page overflow."
+            "limits": "Supplied viewport/clip evidence only. Missing paint or internal text clipping is not inferred."
           }
         }
       },
@@ -583,6 +611,10 @@
                 "fullyVisible": [
                   "gate"
                 ],
+                "unmeasuredAncestorClipping": [],
+                "fullyWithinViewport": [
+                  "gate"
+                ],
                 "hidden": [],
                 "clippedContentCandidates": [],
                 "bounds": {
@@ -601,7 +633,7 @@
               "width": 400,
               "height": 670
             },
-            "limits": "Viewport and named-element boxes. Content loss can occur without page overflow."
+            "limits": "Supplied viewport/clip evidence only. Missing paint or internal text clipping is not inferred."
           }
         },
         "revisedObserved": true
@@ -721,7 +753,7 @@
               {
                 "index": 0,
                 "action": "focus",
-                "elapsedMs": 19.631957999999997,
+                "elapsedMs": 18.348792000000003,
                 "values": {},
                 "activeElement": {
                   "id": "open",
@@ -739,7 +771,7 @@
               {
                 "index": 1,
                 "action": "press",
-                "elapsedMs": 3.8918749999999704,
+                "elapsedMs": 4.097417000000007,
                 "values": {
                   "#size": {
                     "text": "",
@@ -770,7 +802,7 @@
               {
                 "index": 2,
                 "action": "fill",
-                "elapsedMs": 3.634584000000018,
+                "elapsedMs": 3.6137090000000285,
                 "values": {},
                 "activeElement": {
                   "id": "size",
@@ -788,7 +820,7 @@
               {
                 "index": 3,
                 "action": "click",
-                "elapsedMs": 21.16987499999999,
+                "elapsedMs": 13.774833999999998,
                 "values": {
                   "#size": {
                     "text": "",
@@ -819,7 +851,7 @@
               {
                 "index": 4,
                 "action": "press",
-                "elapsedMs": 26.62420800000001,
+                "elapsedMs": 23.679374999999993,
                 "values": {
                   "#size": {
                     "text": "",
@@ -1169,7 +1201,7 @@
     }
   ],
   "isolated": {
-    "browserControls": 2,
+    "suppliedControls": 2,
     "dataSeries": 1,
     "selfContained": true
   },
