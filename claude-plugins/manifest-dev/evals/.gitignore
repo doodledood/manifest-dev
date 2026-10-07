@@ -1,6 +1,4 @@
-# Run artifacts are ignored. A run the README promotes to a baseline has its
-# `aggregate-result.json` added with `git add -f` — it holds scores, costs and
-# grader verdicts, not transcripts, and is the evidence the README's numbers are
-# extracted from. The rendered HTML report duplicates the JSON, and traces hold
-# full model output; neither is ever committed.
+# Run artifacts are never committed: they carry sandbox paths and judged model
+# output, and go stale with the CLI, model, or judge. The README records each
+# baseline's numbers and provenance. tests/test_eval_results_untracked.py enforces it.
 results/

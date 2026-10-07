@@ -249,6 +249,13 @@ next to every baseline. The cases say only `model: opus`, and `aggregate-result.
 CLI version but not the model, which is how the baseline below went stale unnoticed when the
 model changed.
 
+**Run results stay out of the repository.** `results/` is gitignored and nothing under it is
+committed: a result file carries sandbox paths and, unless stripped, every judged model output,
+and the copy goes stale as soon as the CLI, model, judge, or a rubric changes. The record is this
+README — each baseline's table, its provenance line, and what it showed. A `results/<run>` name
+in a section below is the local run directory it was read from, not a file in the repository.
+`tests/test_eval_results_untracked.py` fails if one is added.
+
 ## Hill-climbing a prompt against a suite
 
 To improve a skill against one grader while holding the rest, run rounds of
@@ -263,8 +270,7 @@ with a `_state.json` holding `train_ids` and `test_ids` and one `vN/` directory 
 2. **Extract train outputs** for the analyzer. A finished run keeps each run's judged artifact
    but no transcript:
    `python3 scripts/evals/extract_outputs.py <result.json> --out <dir> --cases <train cases...>`.
-   Use `--report <report.html>` when the JSON's evidence has been stripped, as it is in the
-   committed baselines.
+   Use `--report <report.html>` when the JSON's evidence has been stripped.
 3. **Make one change per round**, sized to clear the noise floor, and save its diff and
    rationale in `vN/`.
 4. **Rerun only the plugin arm**, since the no-plugin arm doesn't move:
@@ -524,8 +530,7 @@ where it was stated.
 
 Report `results/figure-out-baseline-20261005-1845`. Measured at `9a312219`, CLI 2.1.289,
 agent `claude-opus-5-5`, judge `claude-sonnet-5-5`, 12 runs per arm, run in the container
-`Dockerfile` defines. The committed `aggregate-result.json` has each verdict's judged output
-stripped; the local HTML report keeps it.
+`Dockerfile` defines.
 
 | Case | Split | With | Without | Δ |
 |---|---|---|---|---|

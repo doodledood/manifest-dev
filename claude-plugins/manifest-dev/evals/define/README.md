@@ -120,8 +120,7 @@ against it.
 
 Report `results/define-baseline-20261005-1845`. Measured at `9a312219`, CLI 2.1.289, agent
 `claude-opus-5-5`, judge `claude-opus-5-5`, 6 runs per arm — pilot depth, so read single-case
-moves against the noise rules in `../README.md`. The committed `aggregate-result.json` has each
-verdict's judged Manifest stripped; the local HTML report keeps it.
+moves against the noise rules in `../README.md`.
 
 | Case | With | Without | Δ |
 |---|---|---|---|
