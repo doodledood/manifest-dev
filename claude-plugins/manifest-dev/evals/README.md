@@ -400,6 +400,38 @@ the plugin, 0.90 with `main`'s text, 0.96 with the shipped text, so Δ moves fro
 - **Nothing fell outside noise.** `01` and `14` are where they were (`presses-from-root` 7/12 →
   7/12, `takes-the-persona-seat` 6/12 → 7/12).
 
+## Hill-climb on the persona seat — 2026-10-07, opus judge
+
+Aimed at `takes-the-persona-seat` on `14`, the weakest grader left. Plugin arm only. Results in
+`results/hillclimb-persona/`; round 1 and 2 each ran on `10`–`16` and then on `14` alone, so their
+`14` counts are pooled.
+
+**This grader is noisier than 12 runs suggest.** Six measurements of `14` on text that does not
+touch the persona line read 8, 7, 8, 6, 7, and 10 of 12: 46/72, or 64%. A single round moving it
+by two runs says nothing; read pooled counts.
+
+**Diagnosis.** A run with transcripts kept (`--keep-temp`) showed the failing runs do take the
+cook's seat: their logs list the cook's uses one by one. The final read then folds them into a
+single hand-off ("a text to their partner, Notes, Reminders: all take plain text") and stops where
+the list leaves the app, never following it to the store, a partner shopping, or the next shop,
+where different requirements appear. One run moved its whole spec into a side file and left a
+summary in the reply.
+
+| Round | Edit to the persona line | `14` pooled | Kept |
+|---|---|---|---|
+| — | unchanged text | 46/72 (64%) | — |
+| 1 | each use, with what it asks of the artifact, is evidence the read carries | 15/24 (63%) | no |
+| 2 | each use followed past where it leaves the artifact to where it ends | 27/36 (75%) | no |
+
+- **Round 1 did nothing.**
+- **Round 2 points the right way but did not clear noise**: about 1.2 standard errors, and the
+  unchanged text has reached 10/12 by itself. It was not kept, under the rule that a line has to
+  buy a measured effect.
+- **Every guard held in both rounds**: `15`, `13`, `16`, `10`–`12` at or near 12/12.
+- **What is left to try** is outside the persona line: the `FEATURE` probe file, or the case
+  itself, whose request names the mechanism's four parts and asks to hand the result straight
+  to `/define`, which pulls the read toward the spec.
+
 ## Baseline — 2026-10-06, sonnet judge
 
 **Superseded** by the opus-judged baseline above. Its judge mis-scored several graders, so its Δ
