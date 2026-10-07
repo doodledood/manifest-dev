@@ -35,7 +35,7 @@ An example plan:
 }
 ```
 
-Each named selector must match exactly one element. Links declare the semantic relation and competitors; groups declare what the task needs together; alignments declare comparable roles. The model chooses these. Without a plan, instruments still inventory candidates; they do not invent semantic relationships. Alignment axes are `left`, `right`, `top`, `bottom`, `width`, `height`.
+Each named selector must match exactly one element. Select the information meant by the question: a container may include empty padding beyond its text. Include the context that makes an action or value interpretable, such as its disclosure or units. Links declare the semantic relation and competitors; groups declare what the task needs together; alignments declare comparable roles. The model chooses these. Without a plan, instruments still inventory candidates; they do not invent semantic relationships. Alignment axes are `left`, `right`, `top`, `bottom`, `width`, `height`.
 
 `--tools` selects any of `geometry,visibility,typography,copy,color,access,targets,media,motion,image`. Choose as many as help. Options: `--width`, `--height`, `--theme light|dark`, `--motion no-preference|reduce`, `--direction ltr|rtl`, `--text-scale 1.5`, `--images-off`, and `--vision none|blurredVision|achromatopsia|deuteranopia|protanopia|tritanopia`. Text scaling changes CSS font sizes; it is a stress simulation rather than browser zoom. Direction does not translate text or know which icons should mirror. Chromium vision simulation is an inspection aid, not a model of every person's vision.
 

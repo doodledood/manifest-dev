@@ -66,6 +66,16 @@ The run reports zero failed checks. Independent reviews also exercised browser b
 
 Not every attack is an executed artifact: `summary.json` labels executed cases and reasoned counterexamples separately. No single direction is desirable for total words, edge density, animation count, path length or spacing. Neither the runtime skill nor this harness has a composite quality score or a required optimization loop.
 
+## Existing-product refinement — 2026-10-07
+
+A separate private review uses genuine frozen product screens, rather than these constructed fixtures: one complete landing, a seating workspace in two languages, and two complete statistical views. It captures 27 versions at two viewport sizes, including the unchanged incumbents. Source/data and every candidate patch remain beside the private captures; they are not bundled into this public harness. The landing's later candidates follow measured and visual feedback. The other cases use small parameter searches, not an autonomous search algorithm.
+
+The landing's chosen arrival facts increase from 2/4 to 4/4. A numerical winner is rejected because it moves the signup disclosure out of view. A later disclosure guard falsely rejects visible text by including empty container padding; selecting the text resolves that measurement error. Independent full-page review then repairs stretched, disconnected continuation content on a metric plateau. These are observed metric and composition changes; owner preference and audience outcomes remain pending.
+
+The seating toolbar increases from 4/5 to 5/5 named actions at the narrower desktop width in one language. Its other language already exposes 5/5; that view is a transfer and preservation check. Subsequent sidebar compaction offers no metric gain. Both statistical incumbents already expose all selected task facts, and tighter candidates are discarded. The modern CSS colors in the seating application also reveal a contrast-coverage gap, which remains unmeasured rather than reported as a pass.
+
+Bounded Chromium scenarios check invalid-email handling and keyboard focus, guest-dialog cancellation and pointer reception, and stable board dimensions and scope-button response. This evidence does not cover backend submission, assistive-reader behavior or physical touch hardware. No original product was changed or deployed. The private reviewer gallery replaces the fictional gallery as the design judgment surface; these fixtures remain engineering regressions. No controlled comparison with an unassisted model or general UX uplift is established.
+
 ## Limits and future calibration
 
 Research coverage is broader than these constructed checks. The [runtime basis map](../../claude-plugins/manifest-dev/skills/design/references/instruments/basis.md) accounts for contextual concerns such as expression, emotion, trust, novelty, fun and audience learning. A local adjacent-pixel map is not the published feature-congestion model; no learned visual-importance model is bundled. Native slides, actual email clients, assistive announcements, touch hardware, physical projection and audience outcomes remain outside this adapter's evidence.
