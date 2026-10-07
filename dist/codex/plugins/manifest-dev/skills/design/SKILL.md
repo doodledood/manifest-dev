@@ -40,3 +40,7 @@ Ask focused questions when missing information or unresolved alternatives would 
 | What feeling and visual character will serve that use? | [Creative directions](references/directions/index.md) |
 
 These are non-exhaustive repertoires, not required categories. Combine or invent approaches when the brief calls for them. In a blend, give the design a coherent center and use supporting qualities where they help; do not stack every guide's instructions as independent obligations. Different parts of an artifact can serve different moments while sharing a visual identity.
+
+## Consult an instrument when it helps
+
+For a concrete question about the design, the [optional instrument index](references/instruments/index.md) offers measurements of supplied artifacts and observations. Read it when such evidence would help; choose only what fits the person, moment and subject. Keep judgment over the result, including when to reject a better number or use no metric. These tools add no required suite, score target or fixed refinement loop.

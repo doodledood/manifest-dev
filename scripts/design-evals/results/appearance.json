@@ -1,0 +1,798 @@
+{
+  "modelsSHA256": "35b8cafe4e2cfb2898479b600021e7e515cf139f527417a4f18b23fb5751ef9d",
+  "featureSHA256": "67d0698a345a715ccf36e1fc94248a71bc5bf43a3aebdeba2afc4ddd42005bfb",
+  "testLabelSHA256": "a0706c41f531cf61b814189c316db9c4e0f6e57a645ec60ca0ee944a7f5a7c0f",
+  "axes": {
+    "complexity": {
+      "nImages": 756,
+      "nDuplicateGroups": 755,
+      "spearman": 0.5575383325060006,
+      "spearman95CI": [
+        0.5026069481460672,
+        0.6083883271026588
+      ],
+      "baselineSpearman": 0.44820608823371255,
+      "deltaSpearman95CI": [
+        0.06334935477235681,
+        0.15320288154105288
+      ],
+      "mae": 0.6720361234255602,
+      "baselineMAE": 0.711148433123526,
+      "deltaMAE95CI": [
+        -0.05872355924786891,
+        -0.020202239883028925
+      ],
+      "separatedPairAccuracy": 0.8011364873397052,
+      "separatedPairCount": 137793,
+      "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+      "baselineIdentity": "Development-selected ridge on existing four512px descriptors, fit with train labels only",
+      "adjacentGradientSpearman": 0.40419249079276115,
+      "nativeOnlyRefinement": {
+        "nImages": 756,
+        "nDuplicateGroups": 755,
+        "spearman": 0.554937756962995,
+        "spearman95CI": [
+          0.4984470898387215,
+          0.6071283003528758
+        ],
+        "baselineSpearman": 0.44820608823371255,
+        "deltaSpearman95CI": [
+          0.06785410939445954,
+          0.14892978057963346
+        ],
+        "mae": 0.6763145266190314,
+        "baselineMAE": 0.711148433123526,
+        "deltaMAE95CI": [
+          -0.053211851154454,
+          -0.01762822958350458
+        ],
+        "separatedPairAccuracy": 0.7996052049088125,
+        "separatedPairCount": 137793,
+        "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+        "bySource": {
+          "CHI_20": {
+            "nImages": 261,
+            "nDuplicateGroups": 261,
+            "spearman": 0.5708062176214452,
+            "spearman95CI": [
+              0.4816270986193201,
+              0.6551439456344745
+            ],
+            "baselineSpearman": 0.4509273268207321,
+            "deltaSpearman95CI": [
+              0.05965523311571032,
+              0.18041839881905042
+            ],
+            "mae": 0.78595695930367,
+            "baselineMAE": 0.8199501881591315,
+            "deltaMAE95CI": [
+              -0.06669161494318891,
+              -0.002614700493295834
+            ],
+            "separatedPairAccuracy": 0.7941526156506701,
+            "separatedPairCount": 18504,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          },
+          "ICWE_19": {
+            "nImages": 495,
+            "nDuplicateGroups": 494,
+            "spearman": 0.5512092725486791,
+            "spearman95CI": [
+              0.4768769522085479,
+              0.6095226176697607
+            ],
+            "baselineSpearman": 0.45369749181457675,
+            "deltaSpearman95CI": [
+              0.0465483541173709,
+              0.14601170682204648
+            ],
+            "mae": 0.6185030621125857,
+            "baselineMAE": 0.6537802350138433,
+            "deltaMAE95CI": [
+              -0.05643304165602545,
+              -0.014771957279598012
+            ],
+            "separatedPairAccuracy": 0.8045570651167956,
+            "separatedPairCount": 54026,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          }
+        }
+      },
+      "constantTrainMeanMAE": 0.8004341785232713,
+      "ratingCountRange": [
+        5,
+        42
+      ],
+      "medianRatingSEM": 0.42857142857142855,
+      "bySource": {
+        "CHI_20": {
+          "nImages": 261,
+          "nDuplicateGroups": 261,
+          "spearman": 0.5684153426255071,
+          "spearman95CI": [
+            0.47992518221687097,
+            0.6540815470656041
+          ],
+          "baselineSpearman": 0.4509273268207321,
+          "deltaSpearman95CI": [
+            0.047686358612711796,
+            0.18555033949903602
+          ],
+          "mae": 0.7970145277370099,
+          "baselineMAE": 0.8199501881591315,
+          "deltaMAE95CI": [
+            -0.05916580335876734,
+            0.012087602499724145
+          ],
+          "separatedPairAccuracy": 0.7923692174664937,
+          "separatedPairCount": 18504,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        },
+        "ICWE_19": {
+          "nImages": 495,
+          "nDuplicateGroups": 494,
+          "spearman": 0.560585392943066,
+          "spearman95CI": [
+            0.4872698225036284,
+            0.6182032147379386
+          ],
+          "baselineSpearman": 0.45369749181457675,
+          "deltaSpearman95CI": [
+            0.05117850239128612,
+            0.15879801478666183
+          ],
+          "mae": 0.6061384193340686,
+          "baselineMAE": 0.6537802350138433,
+          "deltaMAE95CI": [
+            -0.06861585772346146,
+            -0.025231660460847447
+          ],
+          "separatedPairAccuracy": 0.8099618702106394,
+          "separatedPairCount": 54026,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        }
+      },
+      "randomObservationHalfAgreement": {
+        "medianSpearman": 0.619820664560532,
+        "range95": [
+          0.5955139772144288,
+          0.6445043832853729
+        ],
+        "limits": "Random halves of observed per-image ratings, not participant-blocked reliability or a latent predictive ceiling."
+      }
+    },
+    "aesthetics": {
+      "nImages": 756,
+      "nDuplicateGroups": 755,
+      "spearman": 0.44863056674863505,
+      "spearman95CI": [
+        0.3828082993177213,
+        0.5087042149945435
+      ],
+      "baselineSpearman": 0.3687770531707179,
+      "deltaSpearman95CI": [
+        0.05520038421437477,
+        0.10778782917004397
+      ],
+      "mae": 0.6185284928225335,
+      "baselineMAE": 0.6078285592373838,
+      "deltaMAE95CI": [
+        -0.003330052231808436,
+        0.025429227539727838
+      ],
+      "separatedPairAccuracy": 0.7643869067925951,
+      "separatedPairCount": 111386,
+      "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+      "baselineIdentity": "Development-selected ridge on existing four512px descriptors, fit with train labels only",
+      "adjacentGradientSpearman": -0.2106025144521984,
+      "nativeOnlyRefinement": {
+        "nImages": 756,
+        "nDuplicateGroups": 755,
+        "spearman": 0.44517587789496227,
+        "spearman95CI": [
+          0.38007137064525726,
+          0.5057674017009546
+        ],
+        "baselineSpearman": 0.3687770531707179,
+        "deltaSpearman95CI": [
+          0.05685491975890914,
+          0.09724889384024371
+        ],
+        "mae": 0.5994014591746077,
+        "baselineMAE": 0.6078285592373838,
+        "deltaMAE95CI": [
+          -0.018157655910243254,
+          0.0013881493181371548
+        ],
+        "separatedPairAccuracy": 0.7607149911119889,
+        "separatedPairCount": 111386,
+        "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+        "bySource": {
+          "CHI_20": {
+            "nImages": 261,
+            "nDuplicateGroups": 261,
+            "spearman": 0.3920112287553594,
+            "spearman95CI": [
+              0.2669622391682892,
+              0.501471339518572
+            ],
+            "baselineSpearman": 0.3000845713103288,
+            "deltaSpearman95CI": [
+              0.05933799583182139,
+              0.1306833282580451
+            ],
+            "mae": 0.7504573279022361,
+            "baselineMAE": 0.7400328762849924,
+            "deltaMAE95CI": [
+              -0.007804277548628507,
+              0.028500254324502643
+            ],
+            "separatedPairAccuracy": 0.7320286036883703,
+            "separatedPairCount": 13285,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          },
+          "ICWE_19": {
+            "nImages": 495,
+            "nDuplicateGroups": 494,
+            "spearman": 0.46774191348787403,
+            "spearman95CI": [
+              0.3909423894030864,
+              0.5385128842021372
+            ],
+            "baselineSpearman": 0.3925633392302563,
+            "deltaSpearman95CI": [
+              0.05021131497892943,
+              0.10041553631655067
+            ],
+            "mae": 0.51975381930004,
+            "baselineMAE": 0.5381208284304627,
+            "deltaMAE95CI": [
+              -0.03035142599458811,
+              -0.006927656232278072
+            ],
+            "separatedPairAccuracy": 0.7848860741410919,
+            "separatedPairCount": 42001,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          }
+        }
+      },
+      "constantTrainMeanMAE": 0.677901846850876,
+      "ratingCountRange": [
+        6,
+        47
+      ],
+      "medianRatingSEM": 0.43749999999999994,
+      "bySource": {
+        "CHI_20": {
+          "nImages": 261,
+          "nDuplicateGroups": 261,
+          "spearman": 0.4008608326956402,
+          "spearman95CI": [
+            0.27982674792764317,
+            0.5115865906861286
+          ],
+          "baselineSpearman": 0.3000845713103288,
+          "deltaSpearman95CI": [
+            0.05342952927148095,
+            0.14917230691636338
+          ],
+          "mae": 0.7912974744302043,
+          "baselineMAE": 0.7400328762849924,
+          "deltaMAE95CI": [
+            0.027713505296188636,
+            0.07500353792757973
+          ],
+          "separatedPairAccuracy": 0.7308995107263832,
+          "separatedPairCount": 13285,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        },
+        "ICWE_19": {
+          "nImages": 495,
+          "nDuplicateGroups": 494,
+          "spearman": 0.4643621822218314,
+          "spearman95CI": [
+            0.38582945429855164,
+            0.5363008956418939
+          ],
+          "baselineSpearman": 0.3925633392302563,
+          "deltaSpearman95CI": [
+            0.03955702492624762,
+            0.1054754920234222
+          ],
+          "mae": 0.5274321207021252,
+          "baselineMAE": 0.5381208284304627,
+          "deltaMAE95CI": [
+            -0.028417292928086053,
+            0.006813243073494862
+          ],
+          "separatedPairAccuracy": 0.7863146115568677,
+          "separatedPairCount": 42001,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        }
+      },
+      "randomObservationHalfAgreement": {
+        "medianSpearman": 0.5010307712179138,
+        "range95": [
+          0.4602820394779608,
+          0.5348290615591423
+        ],
+        "limits": "Random halves of observed per-image ratings, not participant-blocked reliability or a latent predictive ceiling."
+      }
+    },
+    "craftsmanship": {
+      "nImages": 756,
+      "nDuplicateGroups": 755,
+      "spearman": 0.46669277229295253,
+      "spearman95CI": [
+        0.40457134322362676,
+        0.5273700584421709
+      ],
+      "baselineSpearman": 0.4060588413186824,
+      "deltaSpearman95CI": [
+        0.034560646135293305,
+        0.08832782058007317
+      ],
+      "mae": 0.6575296814122625,
+      "baselineMAE": 0.6474213203184549,
+      "deltaMAE95CI": [
+        -0.00369161527851537,
+        0.022577070871075224
+      ],
+      "separatedPairAccuracy": 0.7627967495642354,
+      "separatedPairCount": 122199,
+      "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+      "baselineIdentity": "Development-selected ridge on existing four512px descriptors, fit with train labels only",
+      "adjacentGradientSpearman": -0.2107449447443475,
+      "nativeOnlyRefinement": {
+        "nImages": 756,
+        "nDuplicateGroups": 755,
+        "spearman": 0.46669277229295253,
+        "spearman95CI": [
+          0.40457134322362676,
+          0.5273700584421709
+        ],
+        "baselineSpearman": 0.4060588413186824,
+        "deltaSpearman95CI": [
+          0.034560646135293305,
+          0.08832782058007317
+        ],
+        "mae": 0.6575296814122625,
+        "baselineMAE": 0.6474213203184549,
+        "deltaMAE95CI": [
+          -0.00369161527851537,
+          0.022577070871075224
+        ],
+        "separatedPairAccuracy": 0.7627967495642354,
+        "separatedPairCount": 122199,
+        "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+        "bySource": {
+          "CHI_20": {
+            "nImages": 261,
+            "nDuplicateGroups": 261,
+            "spearman": 0.3412669228109618,
+            "spearman95CI": [
+              0.22378553443335428,
+              0.4357299699428253
+            ],
+            "baselineSpearman": 0.24831112335069874,
+            "deltaSpearman95CI": [
+              0.04998264468365804,
+              0.13676421805383143
+            ],
+            "mae": 0.8440072178108683,
+            "baselineMAE": 0.8149967369826552,
+            "deltaMAE95CI": [
+              0.005502493262245421,
+              0.05292160123437903
+            ],
+            "separatedPairAccuracy": 0.6934781151551712,
+            "separatedPairCount": 14919,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          },
+          "ICWE_19": {
+            "nImages": 495,
+            "nDuplicateGroups": 494,
+            "spearman": 0.5080150347965994,
+            "spearman95CI": [
+              0.4389584865195918,
+              0.5713305912643348
+            ],
+            "baselineSpearman": 0.47360560397438867,
+            "deltaSpearman95CI": [
+              0.003387631423228083,
+              0.06373041174302438
+            ],
+            "mae": 0.5592051622202705,
+            "baselineMAE": 0.5590633733500585,
+            "deltaMAE95CI": [
+              -0.014522889383465926,
+              0.016036020278036023
+            ],
+            "separatedPairAccuracy": 0.803756048687941,
+            "separatedPairCount": 46911,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          }
+        }
+      },
+      "constantTrainMeanMAE": 0.7664578190339321,
+      "ratingCountRange": [
+        4,
+        23
+      ],
+      "medianRatingSEM": 0.46291004988627565,
+      "bySource": {
+        "CHI_20": {
+          "nImages": 261,
+          "nDuplicateGroups": 261,
+          "spearman": 0.3412669228109618,
+          "spearman95CI": [
+            0.22378553443335428,
+            0.4357299699428253
+          ],
+          "baselineSpearman": 0.24831112335069874,
+          "deltaSpearman95CI": [
+            0.04998264468365804,
+            0.13676421805383143
+          ],
+          "mae": 0.8440072178108683,
+          "baselineMAE": 0.8149967369826552,
+          "deltaMAE95CI": [
+            0.005502493262245421,
+            0.05292160123437903
+          ],
+          "separatedPairAccuracy": 0.6934781151551712,
+          "separatedPairCount": 14919,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        },
+        "ICWE_19": {
+          "nImages": 495,
+          "nDuplicateGroups": 494,
+          "spearman": 0.5080150347965994,
+          "spearman95CI": [
+            0.4389584865195918,
+            0.5713305912643348
+          ],
+          "baselineSpearman": 0.47360560397438867,
+          "deltaSpearman95CI": [
+            0.003387631423228083,
+            0.06373041174302438
+          ],
+          "mae": 0.5592051622202705,
+          "baselineMAE": 0.5590633733500585,
+          "deltaMAE95CI": [
+            -0.014522889383465926,
+            0.016036020278036023
+          ],
+          "separatedPairAccuracy": 0.803756048687941,
+          "separatedPairCount": 46911,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        }
+      },
+      "randomObservationHalfAgreement": {
+        "medianSpearman": 0.4866118508515711,
+        "range95": [
+          0.4519329803097685,
+          0.517773825517744
+        ],
+        "limits": "Random halves of observed per-image ratings, not participant-blocked reliability or a latent predictive ceiling."
+      }
+    },
+    "novelty": {
+      "nImages": 756,
+      "nDuplicateGroups": 755,
+      "spearman": 0.5605065629258591,
+      "spearman95CI": [
+        0.5087304793012871,
+        0.6117283830324254
+      ],
+      "baselineSpearman": 0.46307580154787986,
+      "deltaSpearman95CI": [
+        0.05588863416063508,
+        0.13614688770795194
+      ],
+      "mae": 0.7035930523485809,
+      "baselineMAE": 0.8499362437749567,
+      "deltaMAE95CI": [
+        -0.19431648882591876,
+        -0.10102570405273743
+      ],
+      "separatedPairAccuracy": 0.8028403092812919,
+      "separatedPairCount": 140196,
+      "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+      "baselineIdentity": "Development-selected ridge on existing four512px descriptors, fit with train labels only",
+      "adjacentGradientSpearman": -0.08357593101360908,
+      "nativeOnlyRefinement": {
+        "nImages": 756,
+        "nDuplicateGroups": 755,
+        "spearman": 0.5594715659302414,
+        "spearman95CI": [
+          0.506927679750517,
+          0.6086644407870049
+        ],
+        "baselineSpearman": 0.46307580154787986,
+        "deltaSpearman95CI": [
+          0.07152232895429546,
+          0.12217946071162587
+        ],
+        "mae": 0.6685084892271469,
+        "baselineMAE": 0.8499362437749567,
+        "deltaMAE95CI": [
+          -0.2129008386029274,
+          -0.14940092029991997
+        ],
+        "separatedPairAccuracy": 0.8004008673571286,
+        "separatedPairCount": 140196,
+        "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+        "bySource": {
+          "CHI_20": {
+            "nImages": 261,
+            "nDuplicateGroups": 261,
+            "spearman": 0.48929651567570914,
+            "spearman95CI": [
+              0.3795116021152837,
+              0.5773701368900098
+            ],
+            "baselineSpearman": 0.37065342501794146,
+            "deltaSpearman95CI": [
+              0.06731196826369537,
+              0.17196932704749057
+            ],
+            "mae": 0.7460014722488298,
+            "baselineMAE": 0.7927918325828794,
+            "deltaMAE95CI": [
+              -0.10120885273266654,
+              0.007411410512524013
+            ],
+            "separatedPairAccuracy": 0.7603567656378359,
+            "separatedPairCount": 17042,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          },
+          "ICWE_19": {
+            "nImages": 495,
+            "nDuplicateGroups": 494,
+            "spearman": 0.587511646811268,
+            "spearman95CI": [
+              0.525716894275844,
+              0.6491018025144168
+            ],
+            "baselineSpearman": 0.49421821278774786,
+            "deltaSpearman95CI": [
+              0.060526769868734724,
+              0.12422801958437371
+            ],
+            "mae": 0.627648552724805,
+            "baselineMAE": 0.8800669333125972,
+            "deltaMAE95CI": [
+              -0.28684817037092064,
+              -0.21702287980877305
+            ],
+            "separatedPairAccuracy": 0.8262715644122527,
+            "separatedPairCount": 56053,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          }
+        }
+      },
+      "constantTrainMeanMAE": 0.9351270949094558,
+      "ratingCountRange": [
+        4,
+        22
+      ],
+      "medianRatingSEM": 0.5121366487426449,
+      "bySource": {
+        "CHI_20": {
+          "nImages": 261,
+          "nDuplicateGroups": 261,
+          "spearman": 0.5213254721759724,
+          "spearman95CI": [
+            0.419446043750003,
+            0.6084903904170158
+          ],
+          "baselineSpearman": 0.37065342501794146,
+          "deltaSpearman95CI": [
+            0.08153782790881839,
+            0.2234686030709364
+          ],
+          "mae": 0.8550245001884819,
+          "baselineMAE": 0.7927918325828794,
+          "deltaMAE95CI": [
+            -0.017193588364604186,
+            0.14673783794119355
+          ],
+          "separatedPairAccuracy": 0.7801901185306889,
+          "separatedPairCount": 17042,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        },
+        "ICWE_19": {
+          "nImages": 495,
+          "nDuplicateGroups": 494,
+          "spearman": 0.5684733346682125,
+          "spearman95CI": [
+            0.5016722462791731,
+            0.6318566826910351
+          ],
+          "baselineSpearman": 0.49421821278774786,
+          "deltaSpearman95CI": [
+            0.025256191112607473,
+            0.12345729907612696
+          ],
+          "mae": 0.6237473798511788,
+          "baselineMAE": 0.8800669333125972,
+          "deltaMAE95CI": [
+            -0.3092021215483292,
+            -0.20028428668046985
+          ],
+          "separatedPairAccuracy": 0.8183148091984372,
+          "separatedPairCount": 56053,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        }
+      },
+      "randomObservationHalfAgreement": {
+        "medianSpearman": 0.520079047666102,
+        "range95": [
+          0.4822918508212742,
+          0.5523761734354291
+        ],
+        "limits": "Random halves of observed per-image ratings, not participant-blocked reliability or a latent predictive ceiling."
+      }
+    },
+    "technical-condition": {
+      "nImages": 756,
+      "nDuplicateGroups": 755,
+      "spearman": 0.3095987042273698,
+      "spearman95CI": [
+        0.24270556133808008,
+        0.3769351448756393
+      ],
+      "baselineSpearman": 0.2871553924952241,
+      "deltaSpearman95CI": [
+        -0.02204146570883401,
+        0.0673026431727227
+      ],
+      "mae": 0.7740515121591286,
+      "baselineMAE": 0.7376108265836123,
+      "deltaMAE95CI": [
+        0.0031826134675439714,
+        0.0740242455127858
+      ],
+      "separatedPairAccuracy": 0.6712748153964515,
+      "separatedPairCount": 126081,
+      "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+      "baselineIdentity": "Development-selected ridge on existing four512px descriptors, fit with train labels only",
+      "adjacentGradientSpearman": 0.24973958147595066,
+      "nativeOnlyRefinement": {
+        "nImages": 756,
+        "nDuplicateGroups": 755,
+        "spearman": 0.3095987042273698,
+        "spearman95CI": [
+          0.24270556133808008,
+          0.3769351448756393
+        ],
+        "baselineSpearman": 0.2871553924952241,
+        "deltaSpearman95CI": [
+          -0.02204146570883401,
+          0.0673026431727227
+        ],
+        "mae": 0.7740515121591286,
+        "baselineMAE": 0.7376108265836123,
+        "deltaMAE95CI": [
+          0.0031826134675439714,
+          0.0740242455127858
+        ],
+        "separatedPairAccuracy": 0.6712748153964515,
+        "separatedPairCount": 126081,
+        "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means.",
+        "bySource": {
+          "CHI_20": {
+            "nImages": 261,
+            "nDuplicateGroups": 261,
+            "spearman": 0.2177684473305999,
+            "spearman95CI": [
+              0.08078332106955691,
+              0.32885172612359415
+            ],
+            "baselineSpearman": 0.177436394493371,
+            "deltaSpearman95CI": [
+              -0.03163771758921186,
+              0.11399357058428798
+            ],
+            "mae": 1.0749749039614367,
+            "baselineMAE": 0.8649946899407102,
+            "deltaMAE95CI": [
+              0.15469892858115944,
+              0.26657284733765974
+            ],
+            "separatedPairAccuracy": 0.6091561727668588,
+            "separatedPairCount": 16994,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          },
+          "ICWE_19": {
+            "nImages": 495,
+            "nDuplicateGroups": 494,
+            "spearman": 0.3185032449317527,
+            "spearman95CI": [
+              0.2390905860513342,
+              0.3988190708289378
+            ],
+            "baselineSpearman": 0.31271803302118795,
+            "deltaSpearman95CI": [
+              -0.05482105609285586,
+              0.06056730968993313
+            ],
+            "mae": 0.615382814663366,
+            "baselineMAE": 0.6704447895407788,
+            "deltaMAE95CI": [
+              -0.09233650586550182,
+              -0.009582440671690924
+            ],
+            "separatedPairAccuracy": 0.710962029319419,
+            "separatedPairCount": 44271,
+            "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+          }
+        }
+      },
+      "constantTrainMeanMAE": 0.7786508648147974,
+      "ratingCountRange": [
+        4,
+        25
+      ],
+      "medianRatingSEM": 0.5546624015273625,
+      "bySource": {
+        "CHI_20": {
+          "nImages": 261,
+          "nDuplicateGroups": 261,
+          "spearman": 0.2177684473305999,
+          "spearman95CI": [
+            0.08078332106955691,
+            0.32885172612359415
+          ],
+          "baselineSpearman": 0.177436394493371,
+          "deltaSpearman95CI": [
+            -0.03163771758921186,
+            0.11399357058428798
+          ],
+          "mae": 1.0749749039614367,
+          "baselineMAE": 0.8649946899407102,
+          "deltaMAE95CI": [
+            0.15469892858115944,
+            0.26657284733765974
+          ],
+          "separatedPairAccuracy": 0.6091561727668588,
+          "separatedPairCount": 16994,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        },
+        "ICWE_19": {
+          "nImages": 495,
+          "nDuplicateGroups": 494,
+          "spearman": 0.3185032449317527,
+          "spearman95CI": [
+            0.2390905860513342,
+            0.3988190708289378
+          ],
+          "baselineSpearman": 0.31271803302118795,
+          "deltaSpearman95CI": [
+            -0.05482105609285586,
+            0.06056730968993313
+          ],
+          "mae": 0.615382814663366,
+          "baselineMAE": 0.6704447895407788,
+          "deltaMAE95CI": [
+            -0.09233650586550182,
+            -0.009582440671690924
+          ],
+          "separatedPairAccuracy": 0.710962029319419,
+          "separatedPairCount": 44271,
+          "pairLimits": "Pairs share images; pair count is not an independent sample size. Eligibility uses>=1 point difference in human means."
+        }
+      },
+      "randomObservationHalfAgreement": {
+        "medianSpearman": 0.392050117049977,
+        "range95": [
+          0.3539929012752048,
+          0.4243372871671806
+        ],
+        "limits": "Random halves of observed per-image ratings, not participant-blocked reliability or a latent predictive ceiling."
+      }
+    }
+  },
+  "limits": "One new rating study across six image source collections. Bootstrap samples duplicate groups, not raters; confidence intervals omit systematic rater variation. Screenshot judgments are first impressions, not task performance. Artificial IDs cannot guarantee independent domains/templates."
+}

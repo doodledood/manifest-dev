@@ -1,0 +1,1209 @@
+{
+  "schemaVersion": 1,
+  "sourceHashes": {
+    "claude-plugins/manifest-dev/skills/design/scripts/appearance-profile.json": "1fc28a2b75e62cff264708e3eb904f613222bae29574a82464aa568d22278ae6",
+    "claude-plugins/manifest-dev/skills/design/scripts/appearance.py": "bb9474db8a19d1aec55a54ca396f1a9ec2722fc7e6e3465e49b07d6a57b7be0f",
+    "claude-plugins/manifest-dev/skills/design/scripts/artifact-input.py": "97b444b3dde2d1b7dd16816eae4efec70bd217228d7cf546cfcab7876a5f3dad",
+    "claude-plugins/manifest-dev/skills/design/scripts/design-tools.mjs": "9d120be00cca45223c23de729475bc485108ad3733fad9ff3eebf4e9dd813b38",
+    "claude-plugins/manifest-dev/skills/design/scripts/measurements.mjs": "4a468fc745d6b5f7faf32e14da20e3e005ebffe57e72ea162878c034d311b544",
+    "claude-plugins/manifest-dev/skills/design/scripts/observations.mjs": "f07e1bf4075a8a863d6891922468256d3d4c487e8e121b6e340b4f59a0472a56",
+    "claude-plugins/manifest-dev/skills/design/scripts/pixels.mjs": "196e8409d0d8af3f3ee25c2355ec775b21b41ecc86f5c7e2ef44e26b0946f43c",
+    "scripts/design-evals/browser-pixels.mjs": "34b9bf242ed72e27cccd61e3631f1dd9a887df77cb34476dc0448be184556702",
+    "scripts/design-evals/browser.mjs": "45a33a4fe35d6d83cf45774b763442a6f878065ae04d2de4c0f7294ef05973da",
+    "scripts/design-evals/calibration.mjs": "7860b14432042d5090d59c7f4eabc6648ffd5739633039796fe9655afd08d14f",
+    "scripts/design-evals/capture.mjs": "536f9594d3e2bc3f660cf8f54e14216b750d71db0f766bc9f503cb6354aa0594",
+    "scripts/design-evals/external-calibration.py": "e81dc16f76cb91335b4c8dd459aabf9d6477f84e9cac39245a41d02916e97f29",
+    "scripts/design-evals/fixtures.mjs": "b11f5a6913e38566d2133e0f61e4399fc9e0ecc7dab56567737adaf60ae0c93d",
+    "scripts/design-evals/gallery.mjs": "96f1df6dd4dd4f375ee1be0a3e43019bcc3bd2f4b891586cd0186c1b7725a3d9",
+    "scripts/design-evals/pdf-evidence.py": "907752650772b1e6876eb8cea6908977789e428c931bf3fa1f482c60eff00569",
+    "scripts/design-evals/run.mjs": "000bfde5e566e6b9658b375995342e945f9edc041c6797c1a6aba5f271bfb3e7",
+    "scripts/design-evals/search-calibration.py": "034c95e4f0d31ccecd5f6a1226300445f0b91980608d1e6b1427b42a3839798c",
+    "scripts/design-evals/site-calibration.py": "44ad07c0e244ec442683170f7c4e876d1031214eaa272a0f572fbddbc4c1af21",
+    "scripts/design-evals/transfer-freeze.json": "ceab4380bbae511fba5fc1603c6ce8bc36115208d33c822d3bc337a2041a1c48",
+    "scripts/design-evals/transfer.mjs": "6b44c4eef93a55a9a2ca64295009bfda53d389815ef9a16d1d16b855ff4f6582"
+  },
+  "evidence": "Constructed fixtures and local observations; no human preference or participant UX outcomes.",
+  "provenance": {
+    "fixtureSHA256": "b11f5a6913e38566d2133e0f61e4399fc9e0ecc7dab56567737adaf60ae0c93d",
+    "calibrationSHA256": "7860b14432042d5090d59c7f4eabc6648ffd5739633039796fe9655afd08d14f"
+  },
+  "calibration": {
+    "evidence": "Constructed known-relation observations. No participants, measured task speed, preference or general UX-quality validation.",
+    "association": {
+      "target": "Caller-labelled relationships in curated proximity examples and a connector exception. Independent semantic ownership comes from the fixture, not from the distance calculation; no human comprehension is measured.",
+      "baseline": "Center distance",
+      "refinement": "Boundary gap relative to named competitors in label em; endpoint visibility is exposed separately.",
+      "cases": [
+        {
+          "id": "field-help",
+          "split": "train",
+          "expectedOwner": true,
+          "baseline": true,
+          "refined": true,
+          "gapEm": 0.5,
+          "marginEm": 9.5
+        },
+        {
+          "id": "wide-return-path",
+          "split": "train",
+          "expectedOwner": true,
+          "baseline": false,
+          "refined": true,
+          "gapEm": 0.25,
+          "marginEm": 1.625
+        },
+        {
+          "id": "distant-caption",
+          "split": "train",
+          "expectedOwner": false,
+          "baseline": false,
+          "refined": false,
+          "gapEm": 12.5,
+          "marginEm": -12
+        },
+        {
+          "id": "compact-table",
+          "split": "train",
+          "expectedOwner": true,
+          "baseline": true,
+          "refined": true,
+          "gapEm": 0.3333333333333333,
+          "marginEm": 14.666666666666666
+        },
+        {
+          "id": "slide-wide-evidence",
+          "split": "challenge",
+          "expectedOwner": true,
+          "baseline": false,
+          "refined": true,
+          "gapEm": 0.35714285714285715,
+          "marginEm": 2.5
+        },
+        {
+          "id": "poster-far-source",
+          "split": "challenge",
+          "expectedOwner": false,
+          "baseline": false,
+          "refined": false,
+          "gapEm": 17.916666666666668,
+          "marginEm": -17.5
+        },
+        {
+          "id": "rtl-referent",
+          "split": "challenge",
+          "expectedOwner": true,
+          "baseline": false,
+          "refined": true,
+          "gapEm": 0.375,
+          "marginEm": 0.875
+        },
+        {
+          "id": "connected-far-referent",
+          "split": "challenge",
+          "expectedOwner": true,
+          "baseline": false,
+          "refined": false,
+          "gapEm": 12.5,
+          "marginEm": -11.25
+        },
+        {
+          "id": "diagram-container",
+          "split": "challenge",
+          "expectedOwner": true,
+          "baseline": false,
+          "refined": true,
+          "gapEm": 0.25,
+          "marginEm": 1.3125
+        }
+      ],
+      "train": {
+        "baseline": {
+          "correct": 3,
+          "total": 4
+        },
+        "refined": {
+          "correct": 4,
+          "total": 4
+        }
+      },
+      "challenge": {
+        "baseline": {
+          "correct": 1,
+          "total": 5
+        },
+        "refined": {
+          "correct": 4,
+          "total": 5
+        }
+      },
+      "thresholdSearch": {
+        "search": [
+          {
+            "cutoff": 0,
+            "correct": 1,
+            "total": 4
+          },
+          {
+            "cutoff": 0.25,
+            "correct": 2,
+            "total": 4
+          },
+          {
+            "cutoff": 0.5,
+            "correct": 4,
+            "total": 4
+          },
+          {
+            "cutoff": 1,
+            "correct": 4,
+            "total": 4
+          },
+          {
+            "cutoff": 2,
+            "correct": 4,
+            "total": 4
+          },
+          {
+            "cutoff": 3,
+            "correct": 4,
+            "total": 4
+          },
+          {
+            "cutoff": 4,
+            "correct": 4,
+            "total": 4
+          },
+          {
+            "cutoff": 8,
+            "correct": 4,
+            "total": 4
+          }
+        ],
+        "selected": {
+          "cutoff": 0.5,
+          "correct": 4,
+          "total": 4
+        },
+        "challenge": [
+          {
+            "id": "slide-wide-evidence",
+            "predicted": true,
+            "expected": true
+          },
+          {
+            "id": "poster-far-source",
+            "predicted": false,
+            "expected": false
+          },
+          {
+            "id": "rtl-referent",
+            "predicted": true,
+            "expected": true
+          },
+          {
+            "id": "connected-far-referent",
+            "predicted": false,
+            "expected": true
+          },
+          {
+            "id": "diagram-container",
+            "predicted": true,
+            "expected": true
+          }
+        ],
+        "disposition": "WITHHELD as a general grouping threshold: fitted to constructed training layouts; enclosure, optical ink, connectors, scale and genre can change interpretation."
+      }
+    },
+    "visibility": {
+      "target": "Named box fully in viewport and not clipped by a declared ancestor.",
+      "baseline": "Dimension/visibility flags only",
+      "refinement": "Viewport intersection plus ancestor clip intersection, separate dimensional fit and observed visibility.",
+      "cases": [
+        {
+          "id": "normal",
+          "split": "train",
+          "expected": true,
+          "baseline": true,
+          "refined": true
+        },
+        {
+          "id": "page-overflow",
+          "split": "train",
+          "expected": false,
+          "baseline": true,
+          "refined": false
+        },
+        {
+          "id": "hidden",
+          "split": "train",
+          "expected": false,
+          "baseline": false,
+          "refined": false
+        },
+        {
+          "id": "ancestor-clipped",
+          "split": "challenge",
+          "expected": false,
+          "baseline": true,
+          "refined": false
+        },
+        {
+          "id": "partially-clipped",
+          "split": "challenge",
+          "expected": false,
+          "baseline": true,
+          "refined": false
+        },
+        {
+          "id": "shifted-group",
+          "split": "challenge",
+          "expected": false,
+          "baseline": true,
+          "refined": false
+        }
+      ],
+      "train": {
+        "baseline": {
+          "correct": 2,
+          "total": 3
+        },
+        "refined": {
+          "correct": 3,
+          "total": 3
+        }
+      },
+      "challenge": {
+        "baseline": {
+          "correct": 0,
+          "total": 3
+        },
+        "refined": {
+          "correct": 3,
+          "total": 3
+        }
+      },
+      "disposition": "Descriptive box observation retained; internal glyph clipping and paint occlusion need independent inspection."
+    },
+    "image": {
+      "target": "Detect adjacent-pixel variation in constructed patterns.",
+      "baseline": "Centered derivative",
+      "refinement": "Forward adjacent differences, bounded downsampling and explicit local normalization.",
+      "cases": [
+        {
+          "id": "train-uniform",
+          "split": "train",
+          "expectedVariation": false,
+          "baselineVariation": false,
+          "refinedVariation": false,
+          "meanGradient": 0
+        },
+        {
+          "id": "train-vertical-lines",
+          "split": "train",
+          "expectedVariation": true,
+          "baselineVariation": true,
+          "refinedVariation": true,
+          "meanGradient": 0.23241830065359534
+        },
+        {
+          "id": "train-horizontal-lines",
+          "split": "train",
+          "expectedVariation": true,
+          "baselineVariation": true,
+          "refinedVariation": true,
+          "meanGradient": 0.23241830065359534
+        },
+        {
+          "id": "challenge-checkerboard",
+          "split": "challenge",
+          "expectedVariation": true,
+          "baselineVariation": false,
+          "refinedVariation": true,
+          "meanGradient": 0.7043338134171883
+        },
+        {
+          "id": "challenge-low-contrast-checkerboard",
+          "split": "challenge",
+          "expectedVariation": true,
+          "baselineVariation": false,
+          "refinedVariation": true,
+          "meanGradient": 0.04436748430974384
+        },
+        {
+          "id": "challenge-uniform",
+          "split": "challenge",
+          "expectedVariation": false,
+          "baselineVariation": false,
+          "refinedVariation": false,
+          "meanGradient": 0
+        }
+      ],
+      "disposition": "Pixel descriptor retained. Complexity, gaze and beauty predictors withheld; tuning the edge threshold does not establish UX quality."
+    },
+    "unfit": [
+      "Global word-count minimization",
+      "Global edge-density minimization",
+      "Global animation-count minimization",
+      "Shortest declared path as service quality",
+      "Flat text contrast as categorical discriminability",
+      "Training-fit spacing threshold as universal grouping"
+    ]
+  },
+  "transfer": {
+    "initialEvaluation": {
+      "date": "2026-10-07",
+      "evidence": "Initial independent six-case evaluation: cases specified after these instrument versions were frozen and before first execution. Later reruns use known cases as regressions.",
+      "instrumentHashes": {
+        "measurements.mjs": "46439acd8952d34f26f2c458d9f953ffa20d9e34b6dd2049628ffab65bc4366e",
+        "browser.mjs": "f6a80581bcd581d5500e69639ceae1c399f3b0b8b5789f5f1e37a133ac9a2fa2",
+        "pixels.mjs": "6afd07359385ae8d1a726f7b458326c3d0e362d40d235e655e26bb1503f90565",
+        "design-tools.mjs": "c114be35db78c2b785415d28f9bc4480433f01ff1a7e1cd051bcf2396be86539"
+      },
+      "transferCaseSHA256": "6b44c4eef93a55a9a2ca64295009bfda53d389815ef9a16d1d16b855ff4f6582"
+    },
+    "evidence": "Cases were independently specified for the initial frozen evaluation. Reruns use now-known cases as regression evidence; original hashes remain traceable.",
+    "instrumentHashes": {
+      "measurements.mjs": "4a468fc745d6b5f7faf32e14da20e3e005ebffe57e72ea162878c034d311b544",
+      "observations.mjs": "f07e1bf4075a8a863d6891922468256d3d4c487e8e121b6e340b4f59a0472a56",
+      "pixels.mjs": "196e8409d0d8af3f3ee25c2355ec775b21b41ecc86f5c7e2ef44e26b0946f43c",
+      "artifact-input.py": "97b444b3dde2d1b7dd16816eae4efec70bd217228d7cf546cfcab7876a5f3dad",
+      "design-tools.mjs": "9d120be00cca45223c23de729475bc485108ad3733fad9ff3eebf4e9dd813b38"
+    },
+    "cases": [
+      {
+        "id": "museum-enclosure",
+        "expected": "The enclosing admission panel owns the €12 price; both facts visible. Proximity-only interpretation is inapplicable and must retain its unfavorable negative margin.",
+        "applicability": "Proximity proxy INAPPLICABLE: common region supplies the association.",
+        "observed": true,
+        "observations": {
+          "geometry": {
+            "entities": {
+              "label": {
+                "box": {
+                  "x": 204,
+                  "y": 64,
+                  "width": 130,
+                  "height": 24
+                },
+                "visibleBox": {
+                  "x": 204,
+                  "y": 64,
+                  "width": 130,
+                  "height": 24
+                },
+                "visible": true,
+                "contentClipCandidate": false,
+                "tag": "strong",
+                "text": "Gallery entry",
+                "fontSize": 16,
+                "scrollWidth": 130,
+                "clientWidth": 130,
+                "scrollHeight": 24,
+                "clientHeight": 24,
+                "overflowX": "visible",
+                "overflowY": "visible",
+                "direction": "ltr",
+                "position": "absolute",
+                "font": "700 16px sans-serif",
+                "fontFamily": "sans-serif",
+                "lineHeight": "normal",
+                "weight": "700",
+                "color": "rgb(0, 0, 0)",
+                "nameCandidate": "Gallery entry",
+                "namingSource": "text",
+                "formAttributes": {
+                  "type": null,
+                  "inputmode": null,
+                  "autocomplete": null,
+                  "required": null,
+                  "min": null,
+                  "max": null,
+                  "minlength": null,
+                  "maxlength": null,
+                  "pattern": null,
+                  "multiple": null,
+                  "readonly": null
+                },
+                "placeholder": null,
+                "role": null,
+                "tabIndex": -1,
+                "selector": "#label"
+              },
+              "price": {
+                "box": {
+                  "x": 64,
+                  "y": 234,
+                  "width": 280,
+                  "height": 40
+                },
+                "visibleBox": {
+                  "x": 64,
+                  "y": 234,
+                  "width": 280,
+                  "height": 40
+                },
+                "visible": true,
+                "contentClipCandidate": false,
+                "tag": "p",
+                "text": "€12 / adult",
+                "fontSize": 16,
+                "scrollWidth": 280,
+                "clientWidth": 280,
+                "scrollHeight": 40,
+                "clientHeight": 40,
+                "overflowX": "visible",
+                "overflowY": "visible",
+                "direction": "ltr",
+                "position": "absolute",
+                "font": "16px sans-serif",
+                "fontFamily": "sans-serif",
+                "lineHeight": "normal",
+                "weight": "400",
+                "color": "rgb(0, 0, 0)",
+                "nameCandidate": "€12 / adult",
+                "namingSource": "text",
+                "formAttributes": {
+                  "type": null,
+                  "inputmode": null,
+                  "autocomplete": null,
+                  "required": null,
+                  "min": null,
+                  "max": null,
+                  "minlength": null,
+                  "maxlength": null,
+                  "pattern": null,
+                  "multiple": null,
+                  "readonly": null
+                },
+                "placeholder": null,
+                "role": null,
+                "tabIndex": -1,
+                "selector": "#price"
+              },
+              "audio": {
+                "box": {
+                  "x": 380,
+                  "y": 64,
+                  "width": 180,
+                  "height": 40
+                },
+                "visibleBox": {
+                  "x": 380,
+                  "y": 64,
+                  "width": 180,
+                  "height": 40
+                },
+                "visible": true,
+                "contentClipCandidate": false,
+                "tag": "aside",
+                "text": "Audio guide €4",
+                "fontSize": 16,
+                "scrollWidth": 176,
+                "clientWidth": 176,
+                "scrollHeight": 36,
+                "clientHeight": 36,
+                "overflowX": "visible",
+                "overflowY": "visible",
+                "direction": "ltr",
+                "position": "absolute",
+                "font": "16px sans-serif",
+                "fontFamily": "sans-serif",
+                "lineHeight": "normal",
+                "weight": "400",
+                "color": "rgb(0, 0, 0)",
+                "nameCandidate": "Audio guide €4",
+                "namingSource": "text",
+                "formAttributes": {
+                  "type": null,
+                  "inputmode": null,
+                  "autocomplete": null,
+                  "required": null,
+                  "min": null,
+                  "max": null,
+                  "minlength": null,
+                  "maxlength": null,
+                  "pattern": null,
+                  "multiple": null,
+                  "readonly": null
+                },
+                "placeholder": null,
+                "role": null,
+                "tabIndex": -1,
+                "selector": "#audio"
+              }
+            },
+            "associations": [
+              {
+                "id": "admission-price",
+                "from": "label",
+                "to": "price",
+                "endpointVisibility": {
+                  "from": true,
+                  "to": true
+                },
+                "intendedGapPx": 146,
+                "gapInLabelEm": 9.125,
+                "baselineCenterDistancePx": 189.49670181826383,
+                "closestCompetitor": {
+                  "id": "audio",
+                  "gap": 46
+                },
+                "competitorMinusIntendedEm": -6.25,
+                "limits": "Geometry describes proximity, not whether a relationship is understood. Competing elements must be named by the caller."
+              }
+            ],
+            "alignments": [],
+            "limits": "Supplied geometry, not optical boundaries or understood relationships. Em distances are unmeasured without a supplied font size."
+          },
+          "visibility": {
+            "groups": [
+              {
+                "id": "admission",
+                "members": [
+                  "label",
+                  "price"
+                ],
+                "fullyVisible": [
+                  "label",
+                  "price"
+                ],
+                "unmeasuredAncestorClipping": [],
+                "fullyWithinViewport": [
+                  "label",
+                  "price"
+                ],
+                "hidden": [],
+                "clippedContentCandidates": [],
+                "bounds": {
+                  "x": 64,
+                  "y": 64,
+                  "width": 280,
+                  "height": 210
+                },
+                "boundsFitViewport": true,
+                "allFullyVisibleNow": true,
+                "verticalSpanInViewports": 0.35,
+                "limits": "Named information, CSS boxes and ancestor clipping. Does not detect every paint occlusion or internal clipped glyph, or establish the usefulness of simultaneous visibility."
+              }
+            ],
+            "documentSize": {
+              "width": 800,
+              "height": 600
+            },
+            "limits": "Supplied viewport/clip evidence only. Missing paint or internal text clipping is not inferred."
+          }
+        }
+      },
+      {
+        "id": "departure-board",
+        "expected": "Only gate fully visible initially; moving notice top to420 keeps text and makes both fully visible.",
+        "applicability": "Initial-view box availability, not comprehension.",
+        "observed": true,
+        "observations": {
+          "visibility": {
+            "groups": [
+              {
+                "id": "boarding-decision",
+                "members": [
+                  "gate",
+                  "notice"
+                ],
+                "fullyVisible": [
+                  "gate"
+                ],
+                "unmeasuredAncestorClipping": [],
+                "fullyWithinViewport": [
+                  "gate"
+                ],
+                "hidden": [],
+                "clippedContentCandidates": [],
+                "bounds": {
+                  "x": 24,
+                  "y": 24,
+                  "width": 280,
+                  "height": 646
+                },
+                "boundsFitViewport": false,
+                "allFullyVisibleNow": false,
+                "verticalSpanInViewports": 1.0766666666666667,
+                "limits": "Named information, CSS boxes and ancestor clipping. Does not detect every paint occlusion or internal clipped glyph, or establish the usefulness of simultaneous visibility."
+              }
+            ],
+            "documentSize": {
+              "width": 400,
+              "height": 670
+            },
+            "limits": "Supplied viewport/clip evidence only. Missing paint or internal text clipping is not inferred."
+          }
+        },
+        "revisedObserved": true
+      },
+      {
+        "id": "thermometer-scale",
+        "expected": "Values agree; mark errors0,0,+10,0; zero included and none outside axis.",
+        "applicability": "Supplied linear coordinates only; descending scale supported.",
+        "observed": true,
+        "observations": {
+          "data": [
+            {
+              "id": "gallery-temperature",
+              "marks": [
+                {
+                  "value": -10,
+                  "position": 300,
+                  "expectedPosition": 300,
+                  "positionErrorPx": 0
+                },
+                {
+                  "value": 0,
+                  "position": 250,
+                  "expectedPosition": 250,
+                  "positionErrorPx": 0
+                },
+                {
+                  "value": 10,
+                  "position": 210,
+                  "expectedPosition": 200,
+                  "positionErrorPx": 10
+                },
+                {
+                  "value": 30,
+                  "position": 100,
+                  "expectedPosition": 100,
+                  "positionErrorPx": 0
+                }
+              ],
+              "proportional": null,
+              "differences": [],
+              "units": "°C",
+              "sourceReference": "fictional fixed thermometer readings",
+              "axis": {
+                "minimum": -10,
+                "maximum": 30
+              },
+              "sourceRange": [
+                -10,
+                30
+              ],
+              "valuesOutsideAxis": [],
+              "zeroIncluded": true,
+              "limits": "Checks declared numbers, declared mark coordinates on a linear scale, not extraction from rendered marks or truth of the supplied source. Zero is contextual to the encoding."
+            }
+          ]
+        }
+      },
+      {
+        "id": "audio-tour",
+        "expected": "Speech4000ms/2 words per second; map3000ms; overlap1500ms then gap1200ms; exit500ms/8 words per second.",
+        "applicability": "Declared exposure/overlap, no safe-rate verdict.",
+        "observed": true,
+        "observations": {
+          "timeline": {
+            "events": [
+              {
+                "id": "speech",
+                "start": 1000,
+                "end": 5000,
+                "text": "The east bell marks the entrance to atrium.",
+                "durationMs": 4000,
+                "wordsPerSecond": 2
+              },
+              {
+                "id": "map",
+                "start": 3500,
+                "end": 6500,
+                "durationMs": 3000,
+                "wordsPerSecond": null
+              },
+              {
+                "id": "exit",
+                "start": 7700,
+                "end": 8200,
+                "text": "Continue through the arch.",
+                "durationMs": 500,
+                "wordsPerSecond": 8
+              }
+            ],
+            "relations": [
+              {
+                "from": "speech",
+                "to": "map",
+                "overlapMs": 1500,
+                "gapMs": 0
+              },
+              {
+                "from": "map",
+                "to": "exit",
+                "overlapMs": 0,
+                "gapMs": 1200
+              }
+            ],
+            "limits": "Caller-supplied intervals. Timing proximity and exposure do not establish understanding, comfort or an appropriate reading rate."
+          }
+        }
+      },
+      {
+        "id": "costume-picker",
+        "expected": "Open Size M focused; cancel hides it and retains L, focus returns to open; reopen L focused.",
+        "applicability": "Supplied cancellation/focus scenario, not a full dialog audit.",
+        "observed": true,
+        "observations": {
+          "probe": {
+            "records": [
+              {
+                "index": 0,
+                "action": "focus",
+                "elapsedMs": 18.348792000000003,
+                "values": {},
+                "activeElement": {
+                  "id": "open",
+                  "tag": "button",
+                  "box": {
+                    "x": 8,
+                    "y": 79.875,
+                    "width": 66.390625,
+                    "height": 21
+                  },
+                  "text": "Edit size"
+                },
+                "animationCount": 0
+              },
+              {
+                "index": 1,
+                "action": "press",
+                "elapsedMs": 4.097417000000007,
+                "values": {
+                  "#size": {
+                    "text": "",
+                    "value": "M",
+                    "visible": true,
+                    "checked": false,
+                    "visibleBox": {
+                      "x": 35.546875,
+                      "y": 100.875,
+                      "width": 153,
+                      "height": 21
+                    }
+                  }
+                },
+                "activeElement": {
+                  "id": "size",
+                  "tag": "input",
+                  "box": {
+                    "x": 35.546875,
+                    "y": 100.875,
+                    "width": 153,
+                    "height": 21
+                  },
+                  "text": ""
+                },
+                "animationCount": 0
+              },
+              {
+                "index": 2,
+                "action": "fill",
+                "elapsedMs": 3.6137090000000285,
+                "values": {},
+                "activeElement": {
+                  "id": "size",
+                  "tag": "input",
+                  "box": {
+                    "x": 35.546875,
+                    "y": 100.875,
+                    "width": 153,
+                    "height": 21
+                  },
+                  "text": ""
+                },
+                "animationCount": 0
+              },
+              {
+                "index": 3,
+                "action": "click",
+                "elapsedMs": 13.774833999999998,
+                "values": {
+                  "#size": {
+                    "text": "",
+                    "value": "L",
+                    "visible": false,
+                    "checked": false,
+                    "visibleBox": {
+                      "x": 0,
+                      "y": 0,
+                      "width": 0,
+                      "height": 0
+                    }
+                  }
+                },
+                "activeElement": {
+                  "id": "open",
+                  "tag": "button",
+                  "box": {
+                    "x": 8,
+                    "y": 79.875,
+                    "width": 66.390625,
+                    "height": 21
+                  },
+                  "text": "Edit size"
+                },
+                "animationCount": 0
+              },
+              {
+                "index": 4,
+                "action": "press",
+                "elapsedMs": 23.679374999999993,
+                "values": {
+                  "#size": {
+                    "text": "",
+                    "value": "L",
+                    "visible": true,
+                    "checked": false,
+                    "visibleBox": {
+                      "x": 35.546875,
+                      "y": 100.875,
+                      "width": 153,
+                      "height": 21
+                    }
+                  }
+                },
+                "activeElement": {
+                  "id": "size",
+                  "tag": "input",
+                  "box": {
+                    "x": 35.546875,
+                    "y": 100.875,
+                    "width": 153,
+                    "height": 21
+                  },
+                  "text": ""
+                },
+                "animationCount": 0
+              }
+            ],
+            "limits": "Action elapsed times include automation overhead and waiting; they are noisy observations, not input-to-photon latency. Supplied scenarios do not establish production reliability or human understanding."
+          }
+        }
+      },
+      {
+        "id": "recipe-dependencies",
+        "expected": "preheat absent/-1; mix prerequisite false; bake mix true/preheat false.",
+        "applicability": "Declared order/necessity supplied, no measured learning.",
+        "observed": true,
+        "observations": {
+          "content": {
+            "items": [
+              {
+                "id": "weigh",
+                "role": "prepare",
+                "position": 1,
+                "present": true,
+                "prerequisites": []
+              },
+              {
+                "id": "mix",
+                "role": "step",
+                "position": 0,
+                "present": true,
+                "prerequisites": [
+                  {
+                    "id": "weigh",
+                    "introducedEarlier": false
+                  }
+                ]
+              },
+              {
+                "id": "preheat",
+                "role": "prepare",
+                "position": -1,
+                "present": false,
+                "prerequisites": []
+              },
+              {
+                "id": "bake",
+                "role": "step",
+                "position": 2,
+                "present": true,
+                "prerequisites": [
+                  {
+                    "id": "mix",
+                    "introducedEarlier": true
+                  },
+                  {
+                    "id": "preheat",
+                    "introducedEarlier": false
+                  }
+                ]
+              }
+            ],
+            "limits": "Declared content order and dependencies only. Does not establish prerequisite necessity, truth of claims, comprehension or learning."
+          }
+        }
+      }
+    ]
+  },
+  "families": [
+    {
+      "id": "dashboard",
+      "split": "train",
+      "title": "Compare an operational exception",
+      "brief": "An operator needs the exception and station readings together, without carrying values between views.",
+      "selection": "Selected co-visibility because the task names two facts needed together."
+    },
+    {
+      "id": "form",
+      "split": "train",
+      "title": "Recover a draft after failure",
+      "brief": "Keep the exact entered note when saving fails, and make the retry action usable.",
+      "selection": "Selected an actual failure probe rather than inferring recovery from screenshots."
+    },
+    {
+      "id": "chart",
+      "split": "train",
+      "title": "Compare counts on one scale",
+      "brief": "Preserve all labels/values and use a common plot width so bar length means the same thing in every row.",
+      "selection": "Selected shared plot geometry. Supplied numeric equality alone would miss differently sized plots."
+    },
+    {
+      "id": "article",
+      "split": "train",
+      "title": "Keep a decisive qualification",
+      "brief": "A decision maker must see the result, uncertainty and adoption boundary.",
+      "selection": "Rejected the shorter candidate: it deletes the decisive study limitation. Lower word count is the tempting improvement."
+    },
+    {
+      "id": "explainer",
+      "split": "train",
+      "title": "Connect a label to its route",
+      "brief": "First-time readers should identify the return-channel label and retain the intake distinction.",
+      "selection": "Selected named relationship distances; semantic ownership comes from the brief."
+    },
+    {
+      "id": "game",
+      "split": "train",
+      "title": "Answer repeated interaction",
+      "brief": "Every tap updates the toy counter, including the second and third tap.",
+      "selection": "Selected repeated-action probes. Animation count does not establish game feel or fun."
+    },
+    {
+      "id": "deck",
+      "split": "heldout",
+      "title": "Keep an assertion with its assumption",
+      "brief": "A reading-deck slide must show the reserve claim and operating assumption together.",
+      "selection": "Selected co-visibility, not a slide word budget. This is a reading deck rather than a live talk."
+    },
+    {
+      "id": "poster",
+      "split": "heldout",
+      "title": "Give an exhibition its expression",
+      "brief": "A fictional exhibition poster should express light through leaves and preserve event details.",
+      "selection": "Chose no quality metric. The question is subject-led expression; supplied event facts remain in both alternatives."
+    },
+    {
+      "id": "rtl",
+      "split": "heldout",
+      "title": "Read a mixed-direction transfer",
+      "brief": "Keep Hebrew labels, a Latin account ID, amount and action available on a narrow account screen.",
+      "selection": "Selected narrow-layout and mixed-direction observations; no automatic mirroring score."
+    },
+    {
+      "id": "email",
+      "split": "heldout",
+      "title": "Keep an action with images absent",
+      "brief": "A visible route-review action should remain available when images are hidden. A browser simulation does not prove an email-client result.",
+      "selection": "Selected the images-off stress view. Actual email-client delivery remains unverified."
+    },
+    {
+      "id": "report",
+      "split": "heldout",
+      "title": "Preserve a printed decision",
+      "brief": "Print the decision, costs, rollback and review sections without hiding their text.",
+      "selection": "Selected actual Chromium PDF output; the screen view cannot settle pagination."
+    },
+    {
+      "id": "explorable",
+      "split": "heldout",
+      "title": "Keep calculator state consistent",
+      "brief": "For 333 L/min, show 2400/333 minutes and the matching input. Invalid input must preserve the preceding valid result.",
+      "selection": "Selected independent formula/state probes. A polished result can still use premature rounding or stale context."
+    }
+  ],
+  "attacks": [
+    {
+      "id": "clipped-facts",
+      "evidence": "Executed artifact"
+    },
+    {
+      "id": "hidden-hit-box",
+      "evidence": "Executed artifact"
+    },
+    {
+      "id": "monochrome-series",
+      "evidence": "Executed artifact"
+    },
+    {
+      "id": "paint-gap",
+      "evidence": "Executed artifact"
+    },
+    {
+      "id": "tiny-type",
+      "evidence": "Reasoned counterexample; no measured outcome",
+      "outcome": "context-dependent",
+      "correction": "Keep physical size/angle and actual render beside co-visibility."
+    },
+    {
+      "id": "missing-qualification",
+      "evidence": "Executed family comparison",
+      "outcome": "harmful",
+      "correction": "Reject the lower-count candidate; preserve semantic requirements."
+    },
+    {
+      "id": "plot-width-drift",
+      "evidence": "Executed family comparison",
+      "outcome": "harmful",
+      "correction": "Measure common plot geometry and independently obtained mark positions."
+    },
+    {
+      "id": "fake-route",
+      "evidence": "Executed misleading declaration and actual form failure trace",
+      "outcome": "harmful",
+      "correction": "Use an executed scenario; declaration is not observed behavior."
+    },
+    {
+      "id": "one-tap-only",
+      "evidence": "Executed family comparison",
+      "outcome": "harmful",
+      "correction": "Probe second and third use, not only first-frame feedback."
+    },
+    {
+      "id": "image-only-cta",
+      "evidence": "Executed family comparison",
+      "outcome": "harmful",
+      "correction": "Inspect images-off and candidate names/actual pointer reception."
+    },
+    {
+      "id": "premature-rounding",
+      "evidence": "Executed family comparison",
+      "outcome": "harmful",
+      "correction": "Check independent formula values and invalid-input preservation."
+    },
+    {
+      "id": "hidden-print-text",
+      "evidence": "Executed family comparison",
+      "outcome": "harmful",
+      "correction": "Inspect actual print output; screen observations do not clear pagination."
+    },
+    {
+      "id": "fine-pattern",
+      "evidence": "Executed pixel calibration",
+      "outcome": "harmful",
+      "correction": "Change derivative; inspect aliasing at the analysis size."
+    },
+    {
+      "id": "instant-text",
+      "evidence": "Executed timeline",
+      "outcome": "harmful",
+      "correction": "Return undefined rate for zero exposure."
+    },
+    {
+      "id": "fabricated-survey",
+      "evidence": "Reasoned counterexample; no measured outcome",
+      "outcome": "invalid-evidence",
+      "correction": "Label constructed/model evidence; do not claim human outcomes."
+    }
+  ],
+  "designSearch": {
+    "family": "dashboard",
+    "objective": "Explore named facts simultaneously visible",
+    "candidates": [
+      {
+        "requestedMarginTopPx": 8,
+        "fullyVisibleFacts": 2,
+        "preservedTableText": true,
+        "selected": false
+      },
+      {
+        "requestedMarginTopPx": 20,
+        "fullyVisibleFacts": 2,
+        "preservedTableText": true,
+        "selected": true
+      },
+      {
+        "requestedMarginTopPx": 60,
+        "fullyVisibleFacts": 2,
+        "preservedTableText": true,
+        "selected": false
+      },
+      {
+        "requestedMarginTopPx": 120,
+        "fullyVisibleFacts": 2,
+        "preservedTableText": true,
+        "selected": false
+      },
+      {
+        "requestedMarginTopPx": 240,
+        "fullyVisibleFacts": 1,
+        "preservedTableText": true,
+        "selected": false
+      },
+      {
+        "requestedMarginTopPx": 350,
+        "fullyVisibleFacts": 1,
+        "preservedTableText": true,
+        "selected": false
+      }
+    ],
+    "selection": "20 px CSS margin retained by the author on a co-visibility plateau. Adjacent margins collapse, so requested margin is not measured separation; 8 px and 20 px render identically. Equal objective values do not resolve composition; owner judgment is pending."
+  },
+  "structuredCommands": [
+    "journey",
+    "data",
+    "timeline",
+    "content",
+    "survey",
+    "viewing",
+    "palette"
+  ],
+  "errors": [
+    {
+      "command": "inspect",
+      "expected": "needs --tools",
+      "observed": true
+    },
+    {
+      "command": "data",
+      "expected": "Cannot read JSON",
+      "observed": true
+    },
+    {
+      "command": "inspect",
+      "expected": "finite number",
+      "observed": true
+    },
+    {
+      "command": "image",
+      "expected": "Unsupported image",
+      "observed": true
+    },
+    {
+      "command": "print",
+      "expected": "requires --artifacts",
+      "observed": true
+    },
+    {
+      "command": "inspect",
+      "expected": "Remote URLs require",
+      "observed": true
+    },
+    {
+      "command": "inspect",
+      "expected": "must match exactly one",
+      "observed": true
+    }
+  ],
+  "isolated": {
+    "suppliedControls": 2,
+    "dataSeries": 1,
+    "selfContained": true
+  },
+  "failures": []
+}

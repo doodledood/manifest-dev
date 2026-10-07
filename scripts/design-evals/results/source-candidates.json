@@ -1,0 +1,86 @@
+[
+  {
+    "page": "home",
+    "version": "before",
+    "nameCandidatesMissing": 8,
+    "imageAltAbsent": 33,
+    "unlabelledFormCandidates": [
+      "select"
+    ],
+    "limits": "Author-labeled demonstrator, not independent population outcomes or complete conformance. Source candidates do not replace computed names."
+  },
+  {
+    "page": "home",
+    "version": "after",
+    "nameCandidatesMissing": 0,
+    "imageAltAbsent": 0,
+    "unlabelledFormCandidates": [],
+    "limits": "Author-labeled demonstrator, not independent population outcomes or complete conformance. Source candidates do not replace computed names."
+  },
+  {
+    "page": "news",
+    "version": "before",
+    "nameCandidatesMissing": 5,
+    "imageAltAbsent": 39,
+    "unlabelledFormCandidates": [
+      "select"
+    ],
+    "limits": "Author-labeled demonstrator, not independent population outcomes or complete conformance. Source candidates do not replace computed names."
+  },
+  {
+    "page": "news",
+    "version": "after",
+    "nameCandidatesMissing": 0,
+    "imageAltAbsent": 0,
+    "unlabelledFormCandidates": [],
+    "limits": "Author-labeled demonstrator, not independent population outcomes or complete conformance. Source candidates do not replace computed names."
+  },
+  {
+    "page": "tickets",
+    "version": "before",
+    "nameCandidatesMissing": 5,
+    "imageAltAbsent": 26,
+    "unlabelledFormCandidates": [
+      "select"
+    ],
+    "limits": "Author-labeled demonstrator, not independent population outcomes or complete conformance. Source candidates do not replace computed names."
+  },
+  {
+    "page": "tickets",
+    "version": "after",
+    "nameCandidatesMissing": 0,
+    "imageAltAbsent": 0,
+    "unlabelledFormCandidates": [],
+    "limits": "Author-labeled demonstrator, not independent population outcomes or complete conformance. Source candidates do not replace computed names."
+  },
+  {
+    "page": "survey",
+    "version": "before",
+    "nameCandidatesMissing": 17,
+    "imageAltAbsent": 24,
+    "unlabelledFormCandidates": [
+      "select",
+      "input",
+      "input",
+      "input",
+      "input",
+      "input",
+      "input",
+      "select",
+      "input",
+      "input",
+      "input",
+      "input",
+      "input"
+    ],
+    "limits": "Author-labeled demonstrator, not independent population outcomes or complete conformance. Source candidates do not replace computed names."
+  },
+  {
+    "page": "survey",
+    "version": "after",
+    "nameCandidatesMissing": 0,
+    "imageAltAbsent": 0,
+    "unlabelledFormCandidates": [],
+    "limits": "Author-labeled demonstrator, not independent population outcomes or complete conformance. Source candidates do not replace computed names."
+  }
+]
