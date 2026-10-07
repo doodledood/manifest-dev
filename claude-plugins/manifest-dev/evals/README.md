@@ -403,8 +403,9 @@ the plugin, 0.90 with `main`'s text, 0.96 with the shipped text, so Δ moves fro
 ## Hill-climb on the persona seat — 2026-10-07, opus judge
 
 Aimed at `takes-the-persona-seat` on `14`, the weakest grader left. Plugin arm only. Results in
-`results/hillclimb-persona/`; round 1 and 2 each ran on `10`–`16` and then on `14` alone, so their
-`14` counts are pooled.
+`results/hillclimb-persona/`. Round 1 ran on `10`–`16` and once more on `14` alone; round 2 ran on
+`10`–`16`, on the full suite, and four more times on `14` alone, so its `14` count matches the
+unchanged text's 72 runs. Every case's `14` counts are pooled.
 
 **This grader is noisier than 12 runs suggest.** Six measurements of `14` on text that does not
 touch the persona line read 8, 7, 8, 6, 7, and 10 of 12: 46/72, or 64%. A single round moving it
@@ -421,13 +422,14 @@ summary in the reply.
 |---|---|---|---|
 | — | unchanged text | 46/72 (64%) | — |
 | 1 | each use, with what it asks of the artifact, is evidence the read carries | 15/24 (63%) | no |
-| 2 | each use followed past where it leaves the artifact to where it ends | 27/36 (75%) | no |
+| 2 | each use followed past where it leaves the artifact to where it ends | 51/72 (71%) | no |
 
 - **Round 1 did nothing.**
-- **Round 2 points the right way but did not clear noise**: about 1.2 standard errors, and the
-  unchanged text has reached 10/12 by itself. It was not kept, under the rule that a line has to
-  buy a measured effect.
-- **Every guard held in both rounds**: `15`, `13`, `16`, `10`–`12` at or near 12/12.
+- **Round 2 looked better at 36 runs (75%) and faded at 72 (71%)**: its last four runs of `14`
+  read 8 each. Seven points over 72 runs a side is under one standard error, so it was not kept.
+  This is the trap the noise note above describes: an early lead on a noisy grader regresses.
+- **Every guard held in both rounds.** The full-suite run of round 2 scored every case at or near
+  its baseline (`06` `turn-discipline` 9/12, inside the 10–11 it reads on the shipped text).
 - **What is left to try** is outside the persona line: the `FEATURE` probe file, or the case
   itself, whose request names the mechanism's four parts and asks to hand the result straight
   to `/define`, which pulls the read toward the spec.

@@ -1,0 +1,659 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.289",
+  "startedAt": "2026-10-07T08:27:31.764Z",
+  "durationSeconds": 320,
+  "costUsd": 11.337120799999996,
+  "partial": false,
+  "suite": {
+    "root": "/work/claude-plugins/manifest-dev",
+    "ablation": "none",
+    "judgeModel": "opus",
+    "caseFilter": "14-*",
+    "tagFilters": [
+      "figure-out"
+    ],
+    "threshold": 1,
+    "concurrency": 8,
+    "plugins": [
+      {
+        "name": "manifest-dev",
+        "version": "12.5.5",
+        "path": "/work/claude-plugins/manifest-dev"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "14-persona-seat-feature",
+      "dir": "evals/14-persona-seat-feature",
+      "source": "prose",
+      "promptMarkdown": "use the figure-out skill for this. i'm afk, dont ask me anything - work it out and come back with what you land on.\n\nwe're adding a CSV export of the missing-ingredients list to Pantry. figure out what the export\nneeds - the columns, the file naming, where the file lands, and how it gets triggered from the\nrecipe screen. i want to hand this straight to define.\n\nwhat exists today:\n\n- recipes are stored with structured ingredient lines (`name`, `quantity`, `unit`, `note`).\n- on a recipe screen the cook can tick each ingredient as \"have\" or leave it unticked; unticked\n  is treated as missing. ticks are remembered per ingredient name across recipes.\n- there is no shopping list feature yet and no integration with any list or grocery app.\n- the app is phone-only. there is no web or desktop client.\n\nthe project's north star, so you have it:\n\n```\n## Who it's for\nHome cooks with no technical background, cooking weeknight dinners for a family, usually with\nthe phone propped on the counter and one hand free, often already mid-recipe when they discover\nsomething is missing. Not for: professional kitchens, meal-prep optimizers, or people who enjoy\nconfiguring apps.\n\u2014 hypothesis 2026-09\n\n## Promise\nOpen the app mid-recipe and know in one glance what you have and what you're missing.\n\u2014 hypothesis 2026-09\n\n## Never\n- Ask the cook to set up anything before they can cook.\n\u2014 ruled 2026-09\n```\n\n(write any notes or logs you keep into the current directory rather than your home directory)",
+      "model": "opus",
+      "runsPerCase": 12,
+      "timeoutSeconds": 900,
+      "maxTurns": 40,
+      "graders": [
+        {
+          "name": "persona-from-north-star",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nThe prompt pasted a North Star whose `Who it's for` names a specific person: a home cook with no\ntechnical background, cooking weeknight dinners for a family, one hand free, phone on the counter,\noften mid-recipe. Judge whether that is the person the response reasoned about, as opposed to a\nperson it invented or the requester.\n\nFirst enumerate every phrase in the response that names who the export is for or whose situation\nis being reasoned from. Classify each as one of: the North Star's cook \u2014 \"the cook\", \"the home\ncook\", or any wording carrying one of the cook's concrete traits (non-technical, one-handed, phone on\nthe counter, mid-recipe, family weeknight); the requester or \"we\"; a generic \"user\" or \"users\"; a\ndifferent invented persona (a power user, a meal-prepper, a developer, a professional cook).\n\nThen judge on that classification.\n\nPASS when the majority of those phrases resolve to the North Star's cook, and at least two of the\ncook's concrete traits are used to reason about the export rather than recited \u2014 for example\n\"one hand free\" leading to a conclusion about how the export is triggered, or \"mid-recipe\" leading\nto a conclusion about what the output has to show first.\n\nFAIL when half or more of those phrases resolve to someone other than the North Star's cook, or\nwhen fewer than two of the cook's traits produce a conclusion about the export. The typical\nfailing shapes: a generic user reasoned about throughout; a persona the North Star lists under\n`Not for` (a meal-prep optimizer, a professional kitchen) at the centre; the cook's traits present\nonly as a quoted or paraphrased block with no conclusion drawn from any of them.\n\nQuoting the North Star is neither a pass nor a fail on its own \u2014 the counts above decide. Judge substance only, not the\nresponse's length, shape, or opening.",
+          "config": {
+            "criteria": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nThe prompt pasted a North Star whose `Who it's for` names a specific person: a home cook with no\ntechnical background, cooking weeknight dinners for a family, one hand free, phone on the counter,\noften mid-recipe. Judge whether that is the person the response reasoned about, as opposed to a\nperson it invented or the requester.\n\nFirst enumerate every phrase in the response that names who the export is for or whose situation\nis being reasoned from. Classify each as one of: the North Star's cook \u2014 \"the cook\", \"the home\ncook\", or any wording carrying one of the cook's concrete traits (non-technical, one-handed, phone on\nthe counter, mid-recipe, family weeknight); the requester or \"we\"; a generic \"user\" or \"users\"; a\ndifferent invented persona (a power user, a meal-prepper, a developer, a professional cook).\n\nThen judge on that classification.\n\nPASS when the majority of those phrases resolve to the North Star's cook, and at least two of the\ncook's concrete traits are used to reason about the export rather than recited \u2014 for example\n\"one hand free\" leading to a conclusion about how the export is triggered, or \"mid-recipe\" leading\nto a conclusion about what the output has to show first.\n\nFAIL when half or more of those phrases resolve to someone other than the North Star's cook, or\nwhen fewer than two of the cook's traits produce a conclusion about the export. The typical\nfailing shapes: a generic user reasoned about throughout; a persona the North Star lists under\n`Not for` (a meal-prep optimizer, a professional kitchen) at the centre; the cook's traits present\nonly as a quoted or paraphrased block with no conclusion drawn from any of them.\n\nQuoting the North Star is neither a pass nor a fail on its own \u2014 the counts above decide. Judge substance only, not the\nresponse's length, shape, or opening.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "min": 1
+          }
+        },
+        {
+          "name": "takes-the-persona-seat",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nThe request arrived framed as a mechanism \u2014 a CSV export with columns, file naming, a landing\nlocation, and a trigger. The pasted North Star names who the product is for: a home cook with no\ntechnical background, one hand free, phone on the counter, mid-recipe. Judge whether the response\nworked from that person's seat or from the mechanism's.\n\nFirst enumerate, before reaching any verdict:\n\n1. Every use, situation, or story the response names in which someone would reach for the\n   missing-ingredients output. For each, write down whose seat it is taken from \u2014 the North Star's\n   cook (\"the cook\", \"the home cook\", or any wording carrying one of the cook's concrete traits),\n   the requester, a generic \"user\", or someone else \u2014 and the consequence for the export the\n   response draws from that use specifically: what it must send, show, or avoid there. Then merge:\n   uses answered by one shared conclusion are one use. Apps or places named together for one\n   hand-off (\"text a partner, Notes, Reminders \u2014 all take plain text\") are one use, and become\n   more only where the response draws a separate consequence for one of them (pasted into\n   Reminders, each line must become its own item). A use with no consequence drawn from it is not\n   counted.\n2. Which of those uses sit outside the main path. The main path is the cook at the counter tapping\n   export on the recipe screen; it is one use however its ergonomics are described (one thumb, no\n   picker, a large label). Outside it are, for example, being already at the store, a partner\n   doing the shopping, keeping the list for the next shop, looking for a saved file later, having\n   no signal.\n3. Every gap, missing requirement, or flagged assumption the response raises \u2014 including its\n   reasons for changing or dropping the requested CSV \u2014 and what it follows from: the named\n   person's situation, or the mechanics of CSV and files.\n\nA use, need, or gap the response marks as inferred, assumed, or reasoned from the North Star\ncounts exactly as an unmarked one: the prompt carries no user data, so every use is inferred, and\nmarking it is not a step away from the cook's seat.\n\nThen judge on that enumeration.\n\nPASS requires all three:\n1. Three or more uses, counted after merging, are taken from the home cook's seat.\n2. At least one of those sits outside the main path.\n3. At least one gap or assumption follows from the cook's situation rather than from the\n   mechanism \u2014 for instance that a CSV file is the wrong shape for someone who will read the list\n   on a phone in a supermarket, that a one-handed cook cannot manage a file picker, or that a\n   partner doing the shopping needs it as a message rather than a download.\n\nFAIL when fewer than three uses are taken from the cook's seat, or none of them sits outside\nthe main path, or every gap and assumption follows from the mechanism. The typical\nfailing shapes: the export designed as asked \u2014 columns, naming, path, trigger \u2014 for an unnamed or\ngeneric user, however well; the cook present only as a label (\"for our home cooks\") with no use\nwalked from their seat; the cook's uses named once as a list of destinations and never walked;\nevery gap about encoding, delimiters, or filename collisions.\n\nRecommending against a CSV file, or replacing it with a share sheet, a message, or an in-app\nlist, does not fail this grader and does not pass it on its own \u2014 the counts above decide.\nJudge substance only: the response's length, shape, headings, or opening are not evidence either\nway.",
+          "config": {
+            "criteria": "Work through the steps below privately, without writing them out. Your entire reply is one word:\nPASS or FAIL.\n\nThe request arrived framed as a mechanism \u2014 a CSV export with columns, file naming, a landing\nlocation, and a trigger. The pasted North Star names who the product is for: a home cook with no\ntechnical background, one hand free, phone on the counter, mid-recipe. Judge whether the response\nworked from that person's seat or from the mechanism's.\n\nFirst enumerate, before reaching any verdict:\n\n1. Every use, situation, or story the response names in which someone would reach for the\n   missing-ingredients output. For each, write down whose seat it is taken from \u2014 the North Star's\n   cook (\"the cook\", \"the home cook\", or any wording carrying one of the cook's concrete traits),\n   the requester, a generic \"user\", or someone else \u2014 and the consequence for the export the\n   response draws from that use specifically: what it must send, show, or avoid there. Then merge:\n   uses answered by one shared conclusion are one use. Apps or places named together for one\n   hand-off (\"text a partner, Notes, Reminders \u2014 all take plain text\") are one use, and become\n   more only where the response draws a separate consequence for one of them (pasted into\n   Reminders, each line must become its own item). A use with no consequence drawn from it is not\n   counted.\n2. Which of those uses sit outside the main path. The main path is the cook at the counter tapping\n   export on the recipe screen; it is one use however its ergonomics are described (one thumb, no\n   picker, a large label). Outside it are, for example, being already at the store, a partner\n   doing the shopping, keeping the list for the next shop, looking for a saved file later, having\n   no signal.\n3. Every gap, missing requirement, or flagged assumption the response raises \u2014 including its\n   reasons for changing or dropping the requested CSV \u2014 and what it follows from: the named\n   person's situation, or the mechanics of CSV and files.\n\nA use, need, or gap the response marks as inferred, assumed, or reasoned from the North Star\ncounts exactly as an unmarked one: the prompt carries no user data, so every use is inferred, and\nmarking it is not a step away from the cook's seat.\n\nThen judge on that enumeration.\n\nPASS requires all three:\n1. Three or more uses, counted after merging, are taken from the home cook's seat.\n2. At least one of those sits outside the main path.\n3. At least one gap or assumption follows from the cook's situation rather than from the\n   mechanism \u2014 for instance that a CSV file is the wrong shape for someone who will read the list\n   on a phone in a supermarket, that a one-handed cook cannot manage a file picker, or that a\n   partner doing the shopping needs it as a message rather than a download.\n\nFAIL when fewer than three uses are taken from the cook's seat, or none of them sits outside\nthe main path, or every gap and assumption follows from the mechanism. The typical\nfailing shapes: the export designed as asked \u2014 columns, naming, path, trigger \u2014 for an unnamed or\ngeneric user, however well; the cook present only as a label (\"for our home cooks\") with no use\nwalked from their seat; the cook's uses named once as a list of destinations and never walked;\nevery gap about encoding, delimiters, or filename collisions.\n\nRecommending against a CSV file, or replacing it with a share sheet, a message, or an in-app\nlist, does not fail this grader and does not pass it on its own \u2014 the counts above decide.\nJudge substance only: the response's length, shape, headings, or opening are not evidence either\nway.",
+            "focus": "last_message"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 2,
+            "costUsd": 1.0955829999999995,
+            "judgeCostUsd": 0.5680799999999997,
+            "durationSeconds": 169,
+            "startedAt": "2026-10-07T08:27:31.927Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-fsrcyU/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 13,
+            "costUsd": 1.0253533999999997,
+            "judgeCostUsd": 0.5460959999999997,
+            "durationSeconds": 166,
+            "startedAt": "2026-10-07T08:27:31.927Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-DFmYZo/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.6666666666666666,
+            "passed": false,
+            "turns": 13,
+            "costUsd": 1.1008288,
+            "judgeCostUsd": 0.6341679999999998,
+            "durationSeconds": 153,
+            "startedAt": "2026-10-07T08:27:31.927Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-XNPLDV/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 2,
+            "costUsd": 0.9648333999999998,
+            "judgeCostUsd": 0.5030119999999999,
+            "durationSeconds": 149,
+            "startedAt": "2026-10-07T08:27:31.927Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-HgyXLx/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 12,
+            "costUsd": 1.0602375999999998,
+            "judgeCostUsd": 0.6197039999999997,
+            "durationSeconds": 159,
+            "startedAt": "2026-10-07T08:27:31.927Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-FuZkkf/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 2,
+            "costUsd": 0.6916452,
+            "judgeCostUsd": 0.22884399999999996,
+            "durationSeconds": 135,
+            "startedAt": "2026-10-07T08:27:31.927Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-zsxigK/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.6666666666666666,
+            "passed": false,
+            "turns": 2,
+            "costUsd": 1.0452883999999998,
+            "judgeCostUsd": 0.5859519999999998,
+            "durationSeconds": 156,
+            "startedAt": "2026-10-07T08:27:31.927Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-zq2UP5/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 1.0436873999999996,
+            "judgeCostUsd": 0.5273879999999997,
+            "durationSeconds": 164,
+            "startedAt": "2026-10-07T08:27:31.927Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-qlolQe/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 13,
+            "costUsd": 0.8290231999999998,
+            "judgeCostUsd": 0.36065599999999987,
+            "durationSeconds": 173,
+            "startedAt": "2026-10-07T08:29:46.587Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-7xP1Eh/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 11,
+            "costUsd": 0.7013823999999997,
+            "judgeCostUsd": 0.29647599999999974,
+            "durationSeconds": 146,
+            "startedAt": "2026-10-07T08:30:00.479Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-Cizj4f/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.6666666666666666,
+            "passed": false,
+            "turns": 13,
+            "costUsd": 0.7959909999999999,
+            "judgeCostUsd": 0.34265999999999996,
+            "durationSeconds": 167,
+            "startedAt": "2026-10-07T08:30:04.963Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-vm8GOh/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: PASS FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  false,
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "score": 0.6666666666666666,
+            "passed": false,
+            "turns": 2,
+            "costUsd": 0.9832669999999998,
+            "judgeCostUsd": 0.4063279999999998,
+            "durationSeconds": 153,
+            "startedAt": "2026-10-07T08:30:07.858Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-Xdcq89/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "persona-from-north-star",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ]
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..\u221e)",
+                "withOnly": false,
+                "scored": true
+              },
+              {
+                "name": "takes-the-persona-seat",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL PASS FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  true,
+                  false
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 0.8888888888888887,
+        "passRate": 0.6666666666666666
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 0,
+    "overallScore": 0.8888888888888887,
+    "overallPassRate": 0.6666666666666666
+  }
+}
