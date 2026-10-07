@@ -1,7 +1,7 @@
 # ADR: Design composes artifact guidance and creative directions
 
 ## Status
-Accepted
+Accepted — amended by 20261007-design-exposes-optional-instruments-with-bounded-evidence: adds a selectively loaded instrument catalog beneath design judgment.
 
 ## Area
 Design skills

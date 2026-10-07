@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-07",
+  "evidence": "Initial independent six-case evaluation: cases specified after these instrument versions were frozen and before first execution. Later reruns use known cases as regressions.",
+  "instrumentHashes": {
+    "measurements.mjs": "46439acd8952d34f26f2c458d9f953ffa20d9e34b6dd2049628ffab65bc4366e",
+    "browser.mjs": "f6a80581bcd581d5500e69639ceae1c399f3b0b8b5789f5f1e37a133ac9a2fa2",
+    "pixels.mjs": "6afd07359385ae8d1a726f7b458326c3d0e362d40d235e655e26bb1503f90565",
+    "design-tools.mjs": "c114be35db78c2b785415d28f9bc4480433f01ff1a7e1cd051bcf2396be86539"
+  },
+  "transferCaseSHA256": "6b44c4eef93a55a9a2ca64295009bfda53d389815ef9a16d1d16b855ff4f6582"
+}

@@ -65,6 +65,8 @@ Before a new composition or substantial redesign, `/design` infers artifact uses
 
 For example, a cinematic landing page combines the cinematic direction with landing-page guidance. An editorial collection can add playful discovery, while a reference tool can combine precision with interactive exploration. Naming a direction selects it without requiring a separate skill. Narrow refinements keep their scope.
 
+For a concrete design question, `/design` also exposes [optional instruments](skills/design/references/instruments/index.md): local measurements, visual simulations and supplied scenario observations. The model chooses what applies and keeps judgment over the result. There is no required suite, universal score or fixed refinement loop. Coverage and limits travel with the observations; better numbers can still make a design worse. Dependencies and examples are in the instrument usage guide.
+
 Technical implementation stays with the invoking agent; `/review-design` evaluates the result. The design skill has no dependency on the evaluator.
 
 ```text
