@@ -8,6 +8,7 @@ import {
 import { describePixels } from "../../claude-plugins/manifest-dev/skills/design/scripts/pixels.mjs";
 const entity = (x, y, w, h, font = 16, visible = true) => ({
   box: { x, y, width: w, height: h },
+  visibleBox: { x, y, width: w, height: h },
   fontSize: font,
   visible,
 });

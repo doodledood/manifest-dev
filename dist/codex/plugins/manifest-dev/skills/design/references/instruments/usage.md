@@ -1,127 +1,105 @@
-# Running an instrument
+# Supplying evidence to an instrument
 
-The examples below use paths relative to this skill directory. To run from your project, use the installed script's absolute path instead; Playwright resolves from the invoking directory or the skill location. If you run from the skill directory while Playwright is installed in another project, set `DESIGN_TOOLS_PLAYWRIGHT` to that project's module directory.
+The agent obtains artifacts and observations with the tools available in its environment. These scripts analyze local inputs; they do not open a browser, fetch resources, execute HTML, take screenshots, run interactions or export documents. Supply a screenshot, an HTML/text file, measured observations or a structured declaration. PDF pages and video frames can be supplied as images; obtain their text, timing or interaction evidence separately when the question needs it.
 
-The scripts travel with the skill; they do not need another skill, an evaluation checkout or the research corpus. All commands produce JSON on stdout, or at `--output`. Failures exit nonzero with an explanation. A completed command is an observation, not a design pass.
+Paths below are relative to the installed design skill. Use the installed script's absolute path from your project. Commands return JSON on stdout or at `--output`; errors exit nonzero. `catalog` and `--help` list the current interface.
 
-## Dependencies and inputs
+## Inputs and dependencies
 
-Use Node.js 20 or newer. Structured JSON commands need only Node. Browser/image/print commands need Playwright 1.48+ and its Chromium browser. Install in the caller's project and invoke the installed script from there (replace the example absolute path):
+| Input | Supported evidence | Runtime |
+|---|---|---|
+| Observations/declarations JSON | Selected supplied fields and arithmetic | Node.js 20+ |
+| Text or Markdown | Text counts/repeated strings; Markdown is treated as text | Node.js 20+ |
+| HTML source | Source text, headings, label/control attributes, language and media declarations | Node.js 20+ and Python 3 |
+| PNG, JPEG, WebP, GIF | Decoded image variation and derived inspection views | Node.js 20+, Python 3 and Pillow |
+| RGBA JSON | Supplied bounded pixels; no decoder required | Node.js 20+ |
+
+HTML extraction uses Python's standard library. Image decoding uses the established Pillow library rather than a custom decoder. Install Pillow in the Python environment when needed; `DESIGN_TOOLS_PYTHON` selects another interpreter. JSON/text tools do not need Python. Neither path needs a browser installation or an analysis service.
+
+Each instrument needs only the evidence its question requires. Source HTML cannot establish layout, computed paint, actual pointer reception or motion. Supplied observations can come from a browser, native app, design tool, screenshot annotations or another source. Record the collection method, artifact/state, viewport/crop and coordinate units in `scope`; keep estimates distinct from measurements. Missing evidence is unmeasured or rejected, never an empty success.
+
+## HTML and text
 
 ```sh
-npm install --save-dev playwright
-npx playwright install chromium
-node /absolute/path/to/design/scripts/design-tools.mjs catalog
+node scripts/design-tools.mjs inspect screen.html --tools copy,access,media --output source-report.json
+node scripts/design-tools.mjs inspect article.md --tools copy
 ```
 
-If the module lives elsewhere, set `DESIGN_TOOLS_PLAYWRIGHT` to its module directory. `DESIGN_TOOLS_CHROMIUM` optionally selects an installed compatible Chromium executable. A missing module/browser is an error; there is no empty-report fallback.
+HTML's default instruments are `copy,access,media`; text defaults to `copy`. Hidden-by-CSS source text can appear in the inventory. Scripts, styles, templates and head text are excluded; scripts and external resources are not executed or fetched. This is a source parser, without browser tree repair or accessible-name computation. Labels and attributes are candidates, not complete accessible names. Hidden inputs are excluded from action candidates. Declared image dimensions do not establish actual rendered dimensions or crop.
 
-Supply trusted local HTML, a loopback URL, a supported image, or JSON. HTML executes in Chromium, so use a trusted artifact. External page requests and WebSockets are blocked by default; file/data/blob and loopback resources are allowed. Blocked origins and page errors are reported, so incomplete assets remain visible. `--allow-network` explicitly permits remote URLs and asset loading; the instruments do not send an artifact to an analysis service. Do not infer an isolation/security guarantee from request interception.
-
-## Browser observations
+## Supplied observations
 
 ```sh
-node scripts/design-tools.mjs inspect example.html --tools geometry,visibility,typography --spec plan.json --width 1440 --height 900 --artifacts views --output report.json
+node scripts/design-tools.mjs inspect observations.json --tools geometry,visibility --spec plan.json --output report.json
 ```
 
-An example plan:
+A minimal observation for geometry/visibility:
 
 ```json
 {
-  "entities": {"label":"#label", "value":"#value", "other":"#other"},
-  "links": [{"id":"label-value", "from":"label", "to":"value", "competitors":["other"]}],
-  "groups": [{"id":"decision", "members":["label","value"]}],
-  "alignments": [{"id":"values", "members":["value","other"], "axis":"left"}]
+  "scope": {"artifact":"screen.png", "coordinateUnits":"image pixels", "method":"supplied region annotations"},
+  "viewport": {"x":0,"y":0,"width":390,"height":844},
+  "entities": {
+    "label": {"box":{"x":20,"y":20,"width":80,"height":20},"visible":true},
+    "value": {"box":{"x":20,"y":48,"width":160,"height":32},"visible":true}
+  }
 }
 ```
 
-Each named selector must match exactly one element. Select the information meant by the question: a container may include empty padding beyond its text. Include the context that makes an action or value interpretable, such as its disclosure or units. Links declare the semantic relation and competitors; groups declare what the task needs together; alignments declare comparable roles. The model chooses these. Without a plan, instruments still inventory candidates; they do not invent semantic relationships. Alignment axes are `left`, `right`, `top`, `bottom`, `width`, `height`.
-
-`--tools` selects any of `geometry,visibility,typography,copy,color,access,targets,media,motion,image`. Choose as many as help. Options: `--width`, `--height`, `--theme light|dark`, `--motion no-preference|reduce`, `--direction ltr|rtl`, `--text-scale 1.5`, `--images-off`, and `--vision none|blurredVision|achromatopsia|deuteranopia|protanopia|tritanopia`. Text scaling changes CSS font sizes; it is a stress simulation rather than browser zoom. Direction does not translate text or know which icons should mirror. Chromium vision simulation is an inspection aid, not a model of every person's vision.
-
-Saved evidence includes a live viewport screenshot, grayscale/blur/thumbnail views and, when selected, geometry SVG and a local edge-map SVG. The map colors normalize within each image; compare numeric magnitudes under matching parameters rather than colors across maps. `--edge-threshold` (default 0.08) and `--tile-size` (default 16 analysis pixels) are descriptor parameters, not quality thresholds. Active animation can advance between the DOM sample and screenshot: provide a stable state for precise comparisons. Named offscreen elements remain in geometry; check endpoint visibility. CSS clipping is inspected, but internal clipped glyphs, pseudo-elements, shadow roots, frames and unusual paint can exceed coverage. DOM text-node counts change with markup and whitespace tokenization is language-dependent; do not treat totalWords as reading load.
-
-## Image-only evidence
-
-```sh
-node scripts/design-tools.mjs image diagram.png --artifacts image-views --output image-report.json
-```
-
-PNG, JPEG, WebP, GIF and SVG are decoded in Chromium. Descriptors sample the original image, downscaled to a maximum edge of 512 pixels and composited over white. The preview fits the viewport; vision simulation affects the preview, not the original-pixel descriptors. A GIF contributes the browser-decoded frame, not temporal behavior. Compare matched source dimensions/content and inspect small-size aliasing. No OCR, gaze prediction or learned importance model is included.
-
-## Supplied interaction scenarios
-
-```sh
-node scripts/design-tools.mjs probe form.html --spec scenario.json --output trace.json
-```
-
-The `probe` command records the supplied steps, then a DOM coverage inventory. Its `--tools` option does not add another instrument; run `inspect` for additional observations.
+An optional plan, also accepted as the input's `plan` field:
 
 ```json
-{"steps":[
-  {"action":"fill", "selector":"#email", "value":"sample@example.test"},
-  {"action":"click", "selector":"#save", "observe":["#email","#status"], "capture":true},
-  {"action":"press", "key":"Tab", "observe":["#status"]}
-]}
+{"links":[{"id":"label-value","from":"label","to":"value"}],"groups":[{"id":"decision","members":["label","value"]}],"alignments":[{"id":"left-edges","members":["label","value"],"axis":"left"}]}
 ```
 
-Actions: `click`, `fill`, `press`, `focus`, `hover`, `scroll` (numeric `x`,`y`), `wait` (`ms` 0–30000), `observe`. Targeted actions require one matched selector. Capture adds PNG base64 in that step's JSON record. Observations contain text/value/checked/visibility, active-element identity and geometry, and animation count. Wait is explicit; no arbitrary delay is treated as readiness. Action elapsed time includes automation and waiting, so it is noisy and is not input-to-photon latency. Browser behavior must be supplied by the fixture/application; a declared graph is not an executed interaction.
+The caller names relationships, competitors and facts needed together. Boxes use pixel coordinates (CSS pixels or image pixels); convert other units before supplying them and record the conversion. Boxes must share a coordinate system and have finite `x,y,width,height`; dimensions are nonnegative. Geometry retains pixel gaps when `fontSize` is absent and returns null em distances. Alignment axes are `left,right,top,bottom,width,height`.
+
+Visibility requires a viewport and observed `visible` booleans. Supply `visibleBox` when the evidence establishes the area remaining after ancestor clipping. Without it, viewport containment is reported but ancestor clipping and full co-visibility remain unmeasured unless another known failure already settles the result. Select the information itself: empty container padding is not the text, and a button's relevant context may include its disclosure or units. Boxes do not establish every paint occlusion or internal glyph clipping.
+
+Other fields are supplied only when selecting their instrument:
+
+| Instrument | Fields |
+|---|---|
+| `copy` | `nodes`: records with `text`; optional `headings` and `controls` |
+| `typography` | `nodes` with measured `lines` and positive `fontSize`; optional font/weight/lineHeight/box and `glyphWidths` |
+| `color` | `nodes` with `color`, nearest-first `backgrounds` and explicit `paintEffects` exclusions |
+| `access` | `controls`; optional `headings,media,languages` |
+| `targets` | `controls` with boxes; optional `points` containing measured pointer reception |
+| `media` | `media` asset records |
+| `motion` | `animations` timing records |
+
+Text records need not have unique parent IDs: fragmented text can share an element. Line counts/fonts are not inferred from source. Color supports opaque `rgb()/rgba()` samples; unsupported/translucent/layered paint remains unmeasured. Supplying an empty paint-effects array is a claim about inspected coverage. Target boxes alone do not establish hit reception; missing pointer samples are listed explicitly. Timing records establish only their supplied state.
+
+## Images
+
+```sh
+node scripts/design-tools.mjs image screenshot.png --artifacts views --output image-report.json
+```
+
+Descriptors use supplied image pixels, composited over white and downsampled with Pillow LANCZOS to a maximum edge of 512. Reports record decoder/version/resampling; compare matched crops, content and analysis parameters. EXIF orientation is applied; embedded ICC profiles are not transformed. GIF uses the first frame, not temporal behavior. SVG rasterization belongs to acquisition: supply a raster image.
+
+`--artifacts` writes an edge-map SVG plus grayscale, blur and thumbnail PNGs for native images. These are transforms of supplied pixels, not new captures or eyesight simulations. Map colors normalize within each image; numeric magnitudes are needed for comparisons across maps. `--edge-threshold` (0.08) and `--tile-size` (16 analysis pixels) are descriptor parameters, not quality thresholds. No OCR, gaze, congestion or learned importance predictor is included.
+
+A decoder-free input is `{"width":2,"height":2,"data":[...16 integer RGBA bytes...]}`. Dimensions must be positive and maximum edge 512; alpha is composited over white. The supplied resolution is retained. No original size, frame or resampling provenance is inferred. RGBA analysis can emit the edge map; other views require a native image.
 
 ## Structured declarations
 
-Invoke the command with a JSON file, for example `node scripts/design-tools.mjs journey graph.json`. Missing, duplicate or unknown IDs and invalid numeric inputs are errors where identities or numbers bind the observation.
+Invoke `node scripts/design-tools.mjs <command> input.json`. JSON/text inputs also accept `-` for stdin. Missing/duplicate/unknown IDs and invalid numeric values fail where they bind the computation.
 
-**Journey:** nodes, directed edges and tasks. Costs must be finite/nonnegative; omitted edge cost is 1. An unreachable destination returns `reachable:false`, `minimumDeclaredCost:null`.
+| Command | Supplied input and interpretation |
+|---|---|
+| `journey` | `nodes:[{id}], edges:[{from,to,cost}], tasks:[{from,to}]`. Nonnegative finite costs; default edge cost 1. Unreachable destinations retain `reachable:false` and null cost. Declared routes do not predict human effort. |
+| `data` | `series:[{id,source:[values],display:[values],axis:[min,max],axisPx:[start,end],marks:[{value,position}]}]`. Independent source values/mark coordinates are caller-owned. Optional `proportional` checks length/area/count against supplied references. |
+| `timeline` | `events:[{id,start,end,text}], links:[{from,to}]`, milliseconds. Zero exposure has no defined reading rate. No recommended timing or comprehension verdict. |
+| `content` | `items:[{id,prerequisites:[ids]}], order:[ids]`. Presence and prerequisite order only; missing items remain missing. |
+| `survey` | `minimum,maximum,items:[{id,axis,reverse}],responses:[{itemId:value}]`. Actual responses, separate axes and missingness; no fabricated participants or composite score. |
+| `viewing` | `distanceMm,elements:[{id,sizeMm}]`. Geometric angular size, not a legibility threshold. |
+| `palette` | `colors:[{id,hex}],pairs:[[id,id]],order:[ids]`. Opaque six-digit sRGB, Oklab/OKLCH distances and contrast; no aesthetic/semantic verdict. Conversion follows [Ottosson's equations](https://bottosson.github.io/posts/oklab/). |
 
-```json
-{"nodes":[{"id":"start"},{"id":"saved"}],"edges":[{"from":"start","to":"saved","cost":1}],"tasks":[{"id":"save","from":"start","to":"saved"}]}
-```
-
-**Data:** arrays of declared source/display values. Optional `axis` is numeric minimum/maximum; `axisPx` maps them to pixel endpoints (which may descend). Optional `marks` are independently obtained value/position observations on that linear scale. This command does not parse a chart or verify the supplied source. Zero inclusion is information, not a rule for every encoding. Optional `proportional` checks length, area or repeated-count amounts against a supplied positive reference: `{"kind":"area","referenceValue":10,"referenceAmount":20,"observedQuantity":"radius","marks":[{"value":40,"amount":40}]}`. Radius observations under area encoding use a square-root relation. These are declared geometry checks, not extracted chart measurements.
-
-```json
-{"series":[{"id":"counts","source":[8,12],"display":[8,12],"units":"items","sourceReference":"fixture","axis":[0,20],"axisPx":[0,200],"marks":[{"value":8,"position":80},{"value":12,"position":120}]}]}
-```
-
-**Timeline:** unique event IDs, `start`/`end` in milliseconds, optional text and links. Zero exposure has no defined reading rate.
-
-```json
-{"events":[{"id":"label","start":0,"end":2000,"text":"The intake"},{"id":"part","start":500,"end":2500}],"links":[{"from":"label","to":"part"}]}
-```
-
-**Content:** unique items and their declared prerequisites, plus the presented ID order. Omitted items remain `present:false`; they do not silently count as introduced.
-
-```json
-{"items":[{"id":"concept"},{"id":"example","prerequisites":["concept"]}],"order":["concept","example"]}
-```
-
-**Survey:** only actual supplied responses, one response object per respondent, item/axis IDs, scale endpoints and optional `reverse:true`. Missing answers are excluded from item aggregates and incomplete respondent/axis combinations are counted separately; axes are never fused. Models' reactions must be labeled as model evidence outside this command.
-
-```json
-{"minimum":1,"maximum":5,"items":[{"id":"clear","axis":"clarity"},{"id":"confusing","axis":"clarity","reverse":true}],"responses":[{"clear":4,"confusing":2},{"clear":3}]}
-```
-
-**Viewing:** physical size and distance in millimeters. Returns geometric angle in arcminutes, with no legibility verdict.
-
-```json
-{"distanceMm":3000,"elements":[{"id":"caption-height","sizeMm":8}]}
-```
-
-## Print and comparisons
+## Comparisons
 
 ```sh
-node scripts/design-tools.mjs print report.html --artifacts pages --paper A4
 node scripts/design-tools.mjs compare before.json --other after.json
 ```
 
-Print creates `artifact.pdf` through Chromium print CSS. `--paper A4|Letter` and `--landscape` apply unless CSS supplies page size. Inspect the actual PDF for page breaks, crops and content loss; browser screen measurements cannot establish pagination or native-host fidelity.
-
-Compare aligns object keys and arrays of unique string IDs, plus positional numeric arrays. Unalignable arrays, identity changes and nonnumeric changes are listed explicitly. Automatically assigned DOM IDs can change after edits; rely on stable named entities for comparisons. `scopeMatched:false` is a reason to investigate changed conditions. No delta has an inherent good direction. Keep the original reports to interpret meaning and coverage.
-
-**Palette:** named opaque six-digit sRGB hex colors. Optional pairs select the relevant contrast/distinction topology (all pairs otherwise); optional order describes a ramp. Oklab distances use 0–1 coordinate units, not CIELAB ΔE units, and have no built-in success cutoff. Inspect actual colors and vision previews separately.
-
-```json
-{"colors":[{"id":"ink","hex":"#102938"},{"id":"paper","hex":"#ffffff"}],"pairs":[["ink","paper"]],"order":["ink","paper"]}
-```
-
-The Oklab conversion follows [Ottosson's published equations](https://bottosson.github.io/posts/oklab/), available in the public domain. Wide-gamut color, alpha compositing and a palette's cultural/semantic fitness remain outside this command.
+Comparison matches object keys and arrays of unique IDs, plus positional numeric arrays. Identity changes, unalignable arrays and nonnumeric changes remain explicit. Keep source reports and use stable named entities. No delta has an inherent good direction; changed state, units, decoder or crop can make a comparison inappropriate. Inspect the artifact before retaining an edit.

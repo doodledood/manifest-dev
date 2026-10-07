@@ -16,10 +16,7 @@ import { calibration, attacks } from "./calibration.mjs";
 import { transferCases } from "./transfer.mjs";
 import { gallery } from "./gallery.mjs";
 const root = resolve(fileURLToPath(new URL("../..", import.meta.url)));
-const cli = join(
-  root,
-  "claude-plugins/manifest-dev/skills/design/scripts/design-tools.mjs",
-);
+const cli = fileURLToPath(new URL("./capture.mjs", import.meta.url));
 const out = process.argv[2]
   ? resolve(process.argv[2])
   : await mkdtemp(join(tmpdir(), "design-instruments-review-"));
@@ -512,7 +509,12 @@ await cp(
 );
 const isolatedCli = join(isolated, "design/scripts/design-tools.mjs");
 const standalone = await command(
-  ["inspect", join(out, "form/after.html"), "--tools", "targets"],
+  [
+    "inspect",
+    join(out, "form/after-wide/observations.json"),
+    "--tools",
+    "targets",
+  ],
   isolatedCli,
 );
 const standaloneData = await command(
@@ -520,12 +522,12 @@ const standaloneData = await command(
   isolatedCli,
 );
 results.isolated = {
-  browserControls: standalone.observations.targets.controls.length,
+  suppliedControls: standalone.observations.targets.controls.length,
   dataSeries: standaloneData.observations.data.length,
   selfContained: true,
 };
 check(
-  results.isolated.browserControls > 0 && results.isolated.dataSeries === 1,
+  results.isolated.suppliedControls > 0 && results.isolated.dataSeries === 1,
   "isolated install executes",
 );
 // Actionable failures are part of the exercised contract.
@@ -611,22 +613,26 @@ results.transfer = {
     "Cases were independently specified for the initial frozen evaluation. Reruns use now-known cases as regression evidence; original hashes remain traceable.",
   instrumentHashes: Object.fromEntries(
     await Promise.all(
-      ["measurements.mjs", "browser.mjs", "pixels.mjs", "design-tools.mjs"].map(
-        async (name) => [
-          name,
-          createHash("sha256")
-            .update(
-              await readFile(
-                join(
-                  root,
-                  "claude-plugins/manifest-dev/skills/design/scripts",
-                  name,
-                ),
+      [
+        "measurements.mjs",
+        "observations.mjs",
+        "pixels.mjs",
+        "artifact-input.py",
+        "design-tools.mjs",
+      ].map(async (name) => [
+        name,
+        createHash("sha256")
+          .update(
+            await readFile(
+              join(
+                root,
+                "claude-plugins/manifest-dev/skills/design/scripts",
+                name,
               ),
-            )
-            .digest("hex"),
-        ],
-      ),
+            ),
+          )
+          .digest("hex"),
+      ]),
     ),
   ),
   cases: [],

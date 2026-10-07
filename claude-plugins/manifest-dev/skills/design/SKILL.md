@@ -43,4 +43,4 @@ These are non-exhaustive repertoires, not required categories. Combine or invent
 
 ## Consult an instrument when it helps
 
-For a concrete question about the design, the [optional instrument index](references/instruments/index.md) offers measurements, simulations and scenario observations. Read it when such evidence would help; choose only what fits the person, moment and subject. Keep judgment over the result, including when to reject a better number or use no metric. These tools add no required suite, score target or fixed refinement loop.
+For a concrete question about the design, the [optional instrument index](references/instruments/index.md) offers measurements of supplied artifacts and observations. Read it when such evidence would help; choose only what fits the person, moment and subject. Keep judgment over the result, including when to reject a better number or use no metric. These tools add no required suite, score target or fixed refinement loop.

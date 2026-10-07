@@ -1,7 +1,8 @@
 """Public CLI and observation regressions for optional design instruments.
 
-DESIGN_TOOLS_TEST_BROWSER=1 requires the browser cases to execute. Playwright's
-module/browser locations follow the runtime tool's documented environment flags.
+DESIGN_TOOLS_TEST_BROWSER=1 requires development capture cases to execute.
+DESIGN_TOOLS_TEST_IMAGES=1 requires the native Pillow image case. The shipped
+runtime itself has no browser dependency.
 """
 
 from __future__ import annotations
@@ -35,7 +36,10 @@ def test_optional_instruments_contract() -> None:
     )
     assert result.returncode == 0, result.stdout + result.stderr
     assert "# fail 0" in result.stdout
-    if os.environ.get("DESIGN_TOOLS_TEST_BROWSER") == "1":
+    if (
+        os.environ.get("DESIGN_TOOLS_TEST_BROWSER") == "1"
+        and os.environ.get("DESIGN_TOOLS_TEST_IMAGES") == "1"
+    ):
         assert "# skipped 0" in result.stdout, result.stdout
 
 

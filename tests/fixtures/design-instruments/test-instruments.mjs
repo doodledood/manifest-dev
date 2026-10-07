@@ -29,6 +29,9 @@ const skill = fileURLToPath(
   ),
 );
 const cli = join(skill, "scripts/design-tools.mjs");
+const capture = fileURLToPath(
+  new URL("../../../scripts/design-evals/capture.mjs", import.meta.url),
+);
 const dir = await mkdtemp(join(tmpdir(), "design-instrument-tests-"));
 function run(args, script = cli, env = process.env) {
   const result = spawnSync(process.execPath, [script, ...args], {
@@ -55,6 +58,12 @@ async function json(name, value) {
   const path = join(dir, name);
   await writeFile(path, JSON.stringify(value));
   return path;
+}
+function captured(args) {
+  return observation(args, capture);
+}
+function captureRun(args) {
+  return run(args, capture);
 }
 const browser = { skip: process.env.DESIGN_TOOLS_TEST_BROWSER !== "1" };
 
@@ -270,7 +279,7 @@ test("public structured CLI and actionable errors", async () => {
   for (const [args, text] of [
     [["inspect", path], "needs --tools"],
     [["data", join(dir, "missing")], "Cannot read JSON"],
-    [["image", path], "Unsupported image"],
+    [["image", path], "positive dimensions"],
     [["--bogus"], "Unknown option"],
   ]) {
     const r = run(args);
@@ -298,47 +307,8 @@ test("harness retries cannot mix artifacts with a prior successful gallery", asy
     "Previous artifact",
   );
 });
-test("missing configured browser dependency fails rather than returning empty evidence", async () => {
-  const isolated = join(dir, "missing-module");
-  await cp(skill, isolated, { recursive: true });
-  const html = await fixture("dependency.html", "<p>Test</p>");
-  const r = run(
-    ["inspect", html, "--tools", "copy"],
-    join(isolated, "scripts/design-tools.mjs"),
-    { ...process.env, DESIGN_TOOLS_PLAYWRIGHT: "/nonexistent/module" },
-  );
-  assert.notEqual(r.status, 0);
-  assert(
-    r.stderr.includes("Playwright unavailable") ||
-      r.stderr.includes("Executable"),
-    r.stderr,
-  );
-});
-test("older browser adapter cannot silently omit WebSocket interception", async () => {
-  const adapter = join(dir, "old-playwright");
-  await mkdir(adapter);
-  await writeFile(
-    join(adapter, "package.json"),
-    JSON.stringify({ main: "index.cjs" }),
-  );
-  await writeFile(
-    join(adapter, "index.cjs"),
-    "module.exports={chromium:{launch:async()=>({newPage:async()=>({}),close:async()=>{}})}}",
-  );
-  const html = await fixture(
-    "old-adapter.html",
-    "<p>Trusted local artifact</p>",
-  );
-  const r = run(["inspect", html, "--tools", "copy"], cli, {
-    ...process.env,
-    DESIGN_TOOLS_PLAYWRIGHT: adapter,
-  });
-  assert.notEqual(r.status, 0);
-  assert(r.stderr.includes("Playwright 1.48 or newer"), r.stderr);
-  assert.equal(r.stdout, "");
-});
 test(
-  "all browser instruments execute in an isolated copy",
+  "development acquisition feeds the shared observation algorithms",
   browser,
   async () => {
     const isolated = join(dir, "isolated");
@@ -351,7 +321,7 @@ test(
       entities: { value: "#value", save: "#save" },
       groups: [{ id: "needed", members: ["value", "save"] }],
     });
-    const r = observation(
+    const r = captured(
       [
         "inspect",
         html,
@@ -362,7 +332,7 @@ test(
         "--artifacts",
         join(dir, "views"),
       ],
-      join(isolated, "scripts/design-tools.mjs"),
+      capture,
     );
     assert.equal(Object.keys(r.observations).length, 10);
     assert.equal(r.environment.pageErrors.length, 0);
@@ -396,7 +366,7 @@ test(
       entities: { gone: "#gone", hidden: "#hidden" },
       groups: [{ id: "fact", members: ["gone"] }],
     });
-    const r = observation([
+    const r = captured([
       "inspect",
       html,
       "--tools",
@@ -415,8 +385,8 @@ test(
       steps: [{ action: "observe", observe: ["#hidden"] }],
     });
     assert.equal(
-      observation(["probe", html, "--spec", steps]).observations.probe
-        .records[0].values["#hidden"].visible,
+      captured(["probe", html, "--spec", steps]).observations.probe.records[0]
+        .values["#hidden"].visible,
       false,
     );
   },
@@ -429,7 +399,7 @@ test(
       "paint.html",
       '<p>Opaque</p><p style="color:rgba(0,0,0,.1)">Translucent</p><div style="position:relative"><div style="position:absolute;inset:0;background:black"></div><p style="position:relative;color:white">Layered</p></div>',
     );
-    const r = observation(["inspect", html, "--tools", "color"]).observations
+    const r = captured(["inspect", html, "--tools", "color"]).observations
       .color;
     assert(r.measured.some((n) => n.text === "Opaque"));
     assert(r.unmeasured.some((n) => n.reason.includes("foreground")));
@@ -457,7 +427,7 @@ test(
         },
       ],
     });
-    const r = observation([
+    const r = captured([
       "probe",
       html,
       "--spec",
@@ -467,7 +437,7 @@ test(
     assert.equal(r.values["#status"].text, "Failed; try again");
     assert(r.screenshotBase64.length > 100);
     const bad = await json("bad-action.json", { steps: [{ action: "click" }] });
-    const e = run(["probe", html, "--spec", bad]);
+    const e = captureRun(["probe", html, "--spec", bad]);
     assert.notEqual(e.status, 0);
     assert(e.stderr.includes("needs a selector"));
   },
@@ -481,7 +451,7 @@ test(
       '<h1>Delivery</h1><p>Preserved text</p><img src="https://example.test/pixel.png" alt="Remote illustrative asset">',
       "@media print{h1{break-after:page}}",
     );
-    const r = observation([
+    const r = captured([
       "inspect",
       html,
       "--tools",
@@ -492,7 +462,7 @@ test(
       join(dir, "delivery"),
     ]);
     assert(r.environment.blockedOrigins.includes("https://example.test"));
-    const img = observation([
+    const img = captured([
       "image",
       join(dir, "delivery/view.png"),
       "--artifacts",
@@ -502,7 +472,7 @@ test(
       img.observations.image.analysisSize.width <= 512 &&
         img.observations.image.analysisSize.height <= 512,
     );
-    const print = observation([
+    const print = captured([
       "print",
       html,
       "--artifacts",
@@ -527,7 +497,7 @@ test(
       "document.querySelector('#load').onclick=async()=>{try{await fetch('https://example.test/late.json')}catch{document.querySelector('#status').textContent='Unavailable'}}",
     );
     const { openArtifact } =
-      await import("../../../claude-plugins/manifest-dev/skills/design/scripts/browser.mjs");
+      await import("../../../scripts/design-evals/browser.mjs");
     const r = await openArtifact(
       pathToFileURL(html).href,
       {
@@ -590,7 +560,7 @@ test(
     const { gallery } =
       await import("../../../scripts/design-evals/gallery.mjs");
     const { browserEngine } =
-      await import("../../../claude-plugins/manifest-dev/skills/design/scripts/browser.mjs");
+      await import("../../../scripts/design-evals/browser.mjs");
     const image =
       "data:image/svg+xml," +
       encodeURIComponent(
@@ -686,3 +656,241 @@ test(
     }
   },
 );
+
+test("copied skill inventories source HTML without browser or execution", async () => {
+  const isolated = join(dir, "portable-install");
+  await cp(skill, isolated, { recursive: true });
+  const html = await fixture(
+    "source-only.html",
+    '<h1>Task</h1><label for="n">Count &amp; units</label><input id="n"><div style="display:none"><p>Source-only qualification</p></div><img src="https://example.test/remote.png" alt="Map">',
+    "",
+    `throw new Error('Do not execute'); fetch('https://example.test/never');`,
+  );
+  const r = run(["inspect", html], join(isolated, "scripts/design-tools.mjs"), {
+    ...process.env,
+    DESIGN_TOOLS_PLAYWRIGHT: "/nonexistent/module",
+  });
+  assert.equal(r.status, 0, r.stderr);
+  const report = JSON.parse(r.stdout);
+  assert.equal(report.coverage.rendered, false);
+  assert(
+    report.observations.copy.entries.some(
+      (n) => n.text === "Source-only qualification",
+    ),
+  );
+  assert(
+    report.observations.access.controls[0].associatedLabels.includes(
+      "Count & units",
+    ),
+  );
+  assert.equal(
+    report.observations.media.assets[0].src,
+    "https://example.test/remote.png",
+  );
+  assert(
+    !report.observations.copy.entries.some((n) => n.text.includes("fetch(")),
+  );
+  assert.equal(report.observations.copy.entries[0].lines, undefined);
+  const unsupported = run(["inspect", html, "--tools", "visibility"]);
+  assert.notEqual(unsupported.status, 0);
+  assert(unsupported.stderr.includes("Source input cannot establish rendered"));
+  assert(!report.environment);
+});
+
+test("supplied boxes work without acquisition and missing evidence stays unknown", async () => {
+  const box = { x: 0, y: 10, width: 20, height: 20 };
+  const input = await json("supplied-observations.json", {
+    scope: { coordinateUnits: "image pixels", artifact: "supplied mockup" },
+    entities: {
+      label: { box, visible: true },
+      value: { box: { ...box, y: 40 }, visible: true },
+    },
+    viewport: { x: 0, y: 0, width: 100, height: 100 },
+    plan: {
+      links: [{ from: "label", to: "value" }],
+      groups: [{ id: "needed", members: ["label", "value"] }],
+    },
+  });
+  const r = observation(["inspect", input, "--tools", "geometry,visibility"]);
+  assert.equal(r.observations.geometry.associations[0].intendedGapPx, 10);
+  assert.equal(r.observations.geometry.associations[0].gapInLabelEm, null);
+  assert.equal(r.observations.visibility.groups[0].allFullyVisibleNow, null);
+  assert.deepEqual(r.observations.visibility.groups[0].fullyWithinViewport, [
+    "label",
+    "value",
+  ]);
+  assert.deepEqual(
+    r.observations.visibility.groups[0].unmeasuredAncestorClipping,
+    ["label", "value"],
+  );
+  const noGeometry = await json("no-geometry.json", {
+    nodes: [{ text: "A value" }],
+  });
+  const missing = run(["inspect", noGeometry, "--tools", "typography"]);
+  assert.notEqual(missing.status, 0);
+  assert(missing.stderr.includes("rendered line counts"));
+  const unsupported = run([
+    "inspect",
+    "https://example.test/page",
+    "--tools",
+    "copy",
+  ]);
+  assert.notEqual(unsupported.status, 0);
+  assert(unsupported.stderr.includes("agent owns acquisition"));
+});
+
+test("raw RGBA and stdin need neither browser nor Python", async () => {
+  const input = JSON.stringify({
+    width: 2,
+    height: 2,
+    data: Array(4).fill([0, 0, 0, 0]).flat(),
+  });
+  const r = spawnSync(process.execPath, [cli, "image", "-"], {
+    input,
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      DESIGN_TOOLS_PYTHON: "/nonexistent/python",
+      DESIGN_TOOLS_PLAYWRIGHT: "/nonexistent/module",
+    },
+  });
+  assert.equal(r.status, 0, r.stderr);
+  const measured = JSON.parse(r.stdout).observations.image;
+  assert.equal(measured.meanGradient, 0);
+  assert.equal(measured.colorfulnessDescriptor, 0);
+  assert.equal(measured.luminanceHistogramEntropyBits, 0);
+  assert.throws(() => describePixels([256, 0, 0, 255], 1, 1), /integer bytes/);
+});
+
+test(
+  "native raster decoding is browser-free and records provenance",
+  { skip: process.env.DESIGN_TOOLS_TEST_IMAGES !== "1" },
+  async () => {
+    const path = join(dir, "transparent.png");
+    const python = spawnSync(
+      process.env.DESIGN_TOOLS_PYTHON || "python3",
+      [
+        "-c",
+        "from PIL import Image; import sys; Image.new('RGBA', (640, 320), (0,0,0,0)).save(sys.argv[1])",
+        path,
+      ],
+      { encoding: "utf8" },
+    );
+    assert.equal(python.status, 0, python.stderr);
+    const r = run(
+      ["image", path, "--artifacts", join(dir, "native-views")],
+      cli,
+      { ...process.env, DESIGN_TOOLS_PLAYWRIGHT: "/nonexistent/module" },
+    );
+    assert.equal(r.status, 0, r.stderr);
+    const report = JSON.parse(r.stdout);
+    assert.deepEqual(report.observations.image.originalSize, {
+      width: 640,
+      height: 320,
+    });
+    assert.equal(report.observations.image.analysisSize.width, 512);
+    assert.equal(report.observations.image.meanGradient, 0);
+    assert(report.scope.decoder.startsWith("Pillow"));
+    for (const name of [
+      "grayscale.png",
+      "blur.png",
+      "thumbnail.png",
+      "edges.svg",
+    ])
+      assert((await readFile(join(dir, "native-views", name))).length > 0);
+  },
+);
+
+test("shipped runtime contains no browser acquisition dependency", async () => {
+  const { readdir } = await import("node:fs/promises");
+  for (const name of await readdir(join(skill, "scripts"))) {
+    if (!/\.(mjs|py)$/.test(name)) continue;
+    const code = await readFile(join(skill, "scripts", name), "utf8");
+    assert(
+      !/playwright|chromium|page\.evaluate|page\.screenshot|openArtifact/.test(
+        code,
+      ),
+      name,
+    );
+  }
+  const catalog = observation(["catalog"]);
+  assert(!catalog.other.includes("probe"));
+  assert(!catalog.other.includes("print"));
+});
+
+test("native observations reject contradictory clips and incomplete hit evidence", async () => {
+  const offscreen = await json("contradictory-clip.json", {
+    entities: {
+      value: {
+        box: { x: 500, y: 500, width: 20, height: 20 },
+        visibleBox: { x: 0, y: 0, width: 20, height: 20 },
+        visible: true,
+      },
+    },
+    viewport: { x: 0, y: 0, width: 100, height: 100 },
+    plan: { groups: [{ id: "value", members: ["value"] }] },
+  });
+  assert.match(
+    run(["inspect", offscreen, "--tools", "visibility"]).stderr,
+    /within its original box/,
+  );
+  const incomplete = await json("incomplete-hit.json", {
+    controls: [
+      {
+        id: "save",
+        box: { x: 0, y: 0, width: 20, height: 20 },
+        points: [{ x: 10, y: 10 }],
+      },
+    ],
+  });
+  assert.match(
+    run(["inspect", incomplete, "--tools", "targets"]).stderr,
+    /observed receivesPointer/,
+  );
+  const source = await json("source-observations.json", {
+    coverage: { rendered: false },
+    nodes: [{ text: "Source text" }],
+  });
+  assert.equal(
+    observation(["inspect", source, "--tools", "copy"]).observations.copy
+      .totalWords,
+    2,
+  );
+  const badColor = await json("invalid-rgb.json", {
+    nodes: [
+      {
+        id: "ink",
+        text: "Ink",
+        color: "rgb(999,999,999)",
+        backgrounds: ["rgb(255,255,255)"],
+        paintEffects: [],
+      },
+    ],
+  });
+  const r = observation(["inspect", badColor, "--tools", "color"]).observations
+    .color;
+  assert.equal(r.measured.length, 0);
+  assert.equal(r.unmeasured.length, 1);
+});
+
+test("source labels preserve inline word fragments and dir-only context", async () => {
+  const html = await fixture(
+    "fragments.html",
+    '<div dir="rtl"><button>Re<span>try</span></button></div>',
+  );
+  const r = observation(["inspect", html]);
+  assert.equal(r.observations.access.controls[0].nameCandidate, "Retry");
+  assert(r.observations.access.languages.some((e) => e.direction === "rtl"));
+});
+
+test("source action candidates include native and declared controls without hidden inputs", async () => {
+  const html = await fixture(
+    "source-controls.html",
+    '<input type="hidden" name="token"><input type="submit" value="Save"><details><summary>Details</summary></details><div role="tab">Tab</div><div role="switch">Switch</div>',
+  );
+  const controls = observation(["inspect", html]).observations.access.controls;
+  assert.equal(controls.length, 4);
+  assert(controls.some((c) => c.nameCandidate === "Save"));
+  assert(controls.some((c) => c.tag === "summary"));
+  assert(controls.some((c) => c.role === "switch"));
+});

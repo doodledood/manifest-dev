@@ -48,9 +48,11 @@ export function rgb(value) {
   const m = value?.match(
     /^rgba?\((\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)(?:,\s*([\d.]+))?\)$/,
   );
-  return m
-    ? [+m[1] / 255, +m[2] / 255, +m[3] / 255, m[4] === undefined ? 1 : +m[4]]
-    : null;
+  if (!m) return null;
+  const channels = [+m[1], +m[2], +m[3]],
+    alpha = m[4] === undefined ? 1 : +m[4];
+  if (channels.some((v) => v > 255) || alpha < 0 || alpha > 1) return null;
+  return [...channels.map((v) => v / 255), alpha];
 }
 export const luminance = (c) =>
   0.2126 * linear(c[0]) + 0.7152 * linear(c[1]) + 0.0722 * linear(c[2]);
@@ -70,19 +72,19 @@ export function associations(links, entities) {
     }));
     candidates.sort((x, y) => x.gap - y.gap);
     const gap = distance(a.box, b.box),
-      scale = Math.max(a.fontSize || 1, 1);
+      scale =
+        typeof a.fontSize === "number" && a.fontSize > 0 ? a.fontSize : null;
     return {
       id: link.id || `${link.from} → ${link.to}`,
       from: link.from,
       to: link.to,
       endpointVisibility: { from: a.visible, to: b.visible },
       intendedGapPx: gap,
-      gapInLabelEm: gap / scale,
+      gapInLabelEm: scale ? gap / scale : null,
       baselineCenterDistancePx: centerDistance(a.box, b.box),
       closestCompetitor: candidates[0] || null,
-      competitorMinusIntendedEm: candidates.length
-        ? (candidates[0].gap - gap) / scale
-        : null,
+      competitorMinusIntendedEm:
+        candidates.length && scale ? (candidates[0].gap - gap) / scale : null,
       limits:
         "Geometry describes proximity, not whether a relationship is understood. Competing elements must be named by the caller.",
     };
@@ -94,7 +96,10 @@ export function coVisibility(groups, entities, viewport) {
     const full = members.filter(
       (e) =>
         e.visible &&
-        intersection(e.visibleBox || e.box, viewport) >=
+        e.visibleBox &&
+        e.box.width > 0 &&
+        e.box.height > 0 &&
+        intersection(e.visibleBox, viewport) >=
           e.box.width * e.box.height - 0.01,
     );
     const bounds = {
@@ -111,6 +116,17 @@ export function coVisibility(groups, entities, viewport) {
       id: g.id,
       members: g.members,
       fullyVisible: full.map((e) => e.id),
+      unmeasuredAncestorClipping: members
+        .filter((e) => !e.visibleBox)
+        .map((e) => e.id),
+      fullyWithinViewport: members
+        .filter(
+          (e) =>
+            e.box.width > 0 &&
+            e.box.height > 0 &&
+            intersection(e.box, viewport) >= e.box.width * e.box.height - 0.01,
+        )
+        .map((e) => e.id),
       hidden: members.filter((e) => !e.visible).map((e) => e.id),
       clippedContentCandidates: members
         .filter((e) => e.contentClipCandidate)
@@ -118,7 +134,19 @@ export function coVisibility(groups, entities, viewport) {
       bounds,
       boundsFitViewport:
         bounds.width <= viewport.width && bounds.height <= viewport.height,
-      allFullyVisibleNow: full.length === members.length,
+      allFullyVisibleNow:
+        full.length === members.length
+          ? true
+          : members.some(
+                (e) =>
+                  !e.visible ||
+                  !e.box.width ||
+                  !e.box.height ||
+                  intersection(e.visibleBox || e.box, viewport) <
+                    e.box.width * e.box.height - 0.01,
+              )
+            ? false
+            : null,
       verticalSpanInViewports: bounds.height / viewport.height,
       limits:
         "Named information, CSS boxes and ancestor clipping. Does not detect every paint occlusion or internal clipped glyph, or establish the usefulness of simultaneous visibility.",
@@ -191,9 +219,15 @@ export function colorSamples(nodes) {
         ratio: contrast(a, b),
         fontSizePx: n.fontSize,
         weight: n.weight,
-        largeText:
-          n.fontSize >= 24 ||
-          (n.fontSize >= (14 * 96) / 72 && Number(n.weight) >= 700),
+        largeText: !Number.isFinite(n.fontSize)
+          ? null
+          : n.fontSize >= 24
+            ? true
+            : n.fontSize < (14 * 96) / 72
+              ? false
+              : n.weight !== undefined && Number.isFinite(Number(n.weight))
+                ? Number(n.weight) >= 700
+                : null,
       });
   }
   return {

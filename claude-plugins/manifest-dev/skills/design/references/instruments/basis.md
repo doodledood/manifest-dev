@@ -9,16 +9,16 @@ This map covers design concerns across web interfaces, information graphics, doc
 | Hierarchy and reading layers | Type/action inventories, thumbnail/blur/grayscale views, local edge map | Where attention should go and whether it goes there; these views are not gaze maps |
 | Density, externalized memory and expertise | Named task facts visible together, clipping, declared routes | Whether compactness or disclosure helps the particular task; no universal item/word budget |
 | Copy, headings, labels, errors and information scent | Strings, candidate names, state traces, geometry | Meaning, specificity, honesty, tone, accessibility equivalents and appropriate repetition |
-| Type, numerals, scripts and fallback | DOM advances/properties, multi-size/direction/text-scale views | Typeface voice, legibility, glyph quality, script coverage, actual fallback/swap and optical shaping |
-| Color roles, contrast, dark mode and category distinctions | Supported samples and Chromium vision/theme previews | Complete paint coverage, meaningful redundancy, cultural conventions, gamut and comfort |
+| Type, numerals, scripts and fallback | Supplied advances/properties and matched views | Typeface voice, legibility, glyph quality, script coverage, actual fallback/swap and optical shaping |
+| Color roles, contrast, dark mode and category distinctions | Supplied supported paint samples and previews | Complete paint coverage, meaningful redundancy, cultural conventions, gamut and comfort |
 | Semantics, keyboard, focus, targets and forms | DOM candidates/attributes, pointer samples, supplied focus/recovery traces | Accessibility tree, assistive announcements, actual touch devices and standards exceptions |
-| Responsive layouts, bidi, translation and mobile reach | Size/direction/text-scale probes, languages, clipping | Correct translations, mirroring exceptions, browser chrome/keyboards/notches, physical ergonomics |
+| Responsive layouts, bidi, translation and mobile reach | Supplied viewport/direction observations, languages, clipping | Correct translations, mirroring exceptions, browser chrome/keyboards/notches, physical ergonomics |
 | Data stories, quantitative encodings and provenance | Declared values/linear coordinates/ranges, units and source fields | Source truth, nonlinear/projection choices, uncertainty, equivalents and suitability of representation |
 | Teaching, examples, dependencies and multimedia | Declared order/prerequisites, co-visibility, temporal overlap/exposure | What the learner knows, useful reveals, mental models and measured retention/transfer |
-| Journeys, agency, continuity, conversion and trust | Declared paths plus actual supplied state/recovery probes | Unnecessary asks, motivation, anxiety, traffic, long-term outcomes and effects on other people |
-| Motion, feedback, rhythm, interruption and endings | Active animation inventory, temporal declarations, repeated probes | Perceived smoothness, input-to-photon/frame time, comfort and expressive purpose |
+| Journeys, agency, continuity, conversion and trust | Declared paths and agent-obtained state/recovery evidence | Unnecessary asks, motivation, anxiety, traffic, long-term outcomes and effects on other people |
+| Motion, feedback, rhythm, interruption and endings | Supplied animation inventory, temporal declarations and traces | Perceived smoothness, input-to-photon/frame time, comfort and expressive purpose |
 | Imagery, icons, crop and documentary evidence | Asset dimensions/alternatives, images-off and small-size previews | Relevance, identity, truth, recognizability and actual delivery channels |
-| Decks, posters, documents, email and physical delivery | Matched views, angular-size arithmetic, Chromium PDF export | Projection/print/reading distance, native page/slide hosts, actual email-client matrix |
+| Decks, posters, documents, email and physical delivery | Agent-obtained views/pages and angular-size arithmetic | Projection/print/reading distance, native page/slide hosts, actual email-client matrix |
 | Games, explorables, spectacle and emotional encounters | Task/state traces, active motion and local visual descriptors | Fun, novelty, awe, delight, genre fit, remembered experience and repeated audience response |
 | Outcome/evaluation validity | Known-fact checks, adversarial contrasts, separate response axes/missingness | Constructed fixtures and model reviews are not measured human performance or preference |
 

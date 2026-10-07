@@ -12,6 +12,7 @@ export function describePixels(
     !Number.isInteger(height) ||
     width < 1 ||
     height < 1 ||
+    !data ||
     data.length !== width * height * 4
   )
     throw new Error("pixels need positive dimensions and matching RGBA data");
@@ -24,9 +25,13 @@ export function describePixels(
     rg = [],
     yb = [];
   for (let i = 0; i < gray.length; i++) {
-    const r = data[i * 4] / 255,
-      g = data[i * 4 + 1] / 255,
-      b = data[i * 4 + 2] / 255;
+    const bytes = Array.from(data.slice(i * 4, i * 4 + 4));
+    if (bytes.some((v) => !Number.isInteger(v) || v < 0 || v > 255))
+      throw new Error("RGBA channels must be integer bytes in [0,255]");
+    const alpha = bytes[3] / 255,
+      r = (bytes[0] / 255) * alpha + 1 - alpha,
+      g = (bytes[1] / 255) * alpha + 1 - alpha,
+      b = (bytes[2] / 255) * alpha + 1 - alpha;
     gray[i] = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     hist[Math.min(31, Math.floor(gray[i] * 32))]++;
     rg.push(r - g);
@@ -88,64 +93,10 @@ export function describePixels(
       "Downsampled encoded-RGB image descriptors; transparent pixels are composited over white. Tile map colors are normalized within each image and cannot compare absolute strength between maps. Edge density is not feature congestion; gradient energy is not gaze, complexity preference, cognitive load or beauty. Compare matched content, crop and analysis size.",
   };
 }
-export async function decodePixels(page, buffer, mime, maxEdge = 512) {
-  return page.evaluate(
-    async ({ data, mime, maxEdge }) => {
-      const img = new Image();
-      img.src = `data:${mime};base64,${data}`;
-      await img.decode();
-      const scale = Math.min(
-        1,
-        maxEdge / Math.max(img.naturalWidth, img.naturalHeight),
-      );
-      const width = Math.max(1, Math.round(img.naturalWidth * scale)),
-        height = Math.max(1, Math.round(img.naturalHeight * scale));
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const c = canvas.getContext("2d");
-      c.fillStyle = "white";
-      c.fillRect(0, 0, width, height);
-      c.drawImage(img, 0, 0, width, height);
-      return {
-        data: Array.from(c.getImageData(0, 0, width, height).data),
-        width,
-        height,
-        originalSize: { width: img.naturalWidth, height: img.naturalHeight },
-      };
-    },
-    { data: buffer.toString("base64"), mime, maxEdge },
-  );
-}
 export function heatmapSvg(result) {
   const max = result.tiles.reduce(
     (max, t) => Math.max(max, t.meanGradient),
     0.0001,
   );
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${result.analysisSize.width}" height="${result.analysisSize.height}">${result.tiles.map((t) => `<rect x="${t.x}" y="${t.y}" width="${t.width}" height="${t.height}" fill="rgb(255,${Math.round(255 * (1 - t.meanGradient / max))},0)"/>`).join("")}</svg>`;
-}
-
-export async function inspectionViews(page, buffer) {
-  return page.evaluate(async (data) => {
-    const img = new Image();
-    img.src = `data:image/png;base64,${data}`;
-    await img.decode();
-    const views = {};
-    for (const [name, filter, scale] of [
-      ["grayscale", "grayscale(1)", 1],
-      ["blur", "blur(8px)", 1],
-      ["thumbnail", "none", Math.min(1, 240 / img.naturalWidth)],
-    ]) {
-      const c = document.createElement("canvas");
-      c.width = Math.max(1, Math.round(img.naturalWidth * scale));
-      c.height = Math.max(1, Math.round(img.naturalHeight * scale));
-      const ctx = c.getContext("2d");
-      ctx.fillStyle = "white";
-      ctx.fillRect(0, 0, c.width, c.height);
-      ctx.filter = filter;
-      ctx.drawImage(img, 0, 0, c.width, c.height);
-      views[name] = c.toDataURL("image/png").split(",")[1];
-    }
-    return views;
-  }, buffer.toString("base64"));
 }

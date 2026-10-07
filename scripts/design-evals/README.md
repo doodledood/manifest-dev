@@ -4,7 +4,7 @@ This harness evaluates the optional instruments shipped with `design`, then crea
 
 ## Run
 
-Use Node.js 20+, Playwright 1.48+ with Chromium, Python with `pypdf`, and Poppler's `pdftoppm`. The last two are development dependencies for extracting and rendering the actual printed PDF; ordinary instrument users do not need them. Install these in an existing development environment rather than in the skill distribution.
+Use Node.js 20+, Playwright 1.48+ with Chromium, Python with `pypdf` and Pillow, and Poppler's `pdftoppm`. Browser capture and PDF tooling are development dependencies; shipped instruments consume supplied artifacts and do not install or run a browser. `capture.mjs`, `browser.mjs` and `browser-pixels.mjs` obtain development evidence and call the same shipped observation/math modules. Captures also save `observations.json` for replay through an isolated public CLI. Install these in an existing development environment rather than in the skill distribution.
 
 ```sh
 npm install --save-dev playwright
@@ -18,7 +18,7 @@ Open `http://127.0.0.1:8765`. The output directory contains HTML alternatives, o
 
 An explicit output directory must not already exist, and its parent must exist. Each rerun uses a fresh directory, so a failed run cannot mix new artifacts into a prior successful gallery. Omitting the argument creates a unique temporary directory and prints its location.
 
-For dependencies installed elsewhere, set `DESIGN_TOOLS_PLAYWRIGHT` to the module directory, `DESIGN_EVAL_PYTHON` to the Python executable with `pypdf`, and `DESIGN_EVAL_PDFTOPPM` to the `pdftoppm` executable. `DESIGN_TOOLS_CHROMIUM` optionally selects a compatible Chromium executable. Missing dependencies fail rather than producing empty evidence.
+For dependencies installed elsewhere, set `DESIGN_TOOLS_PLAYWRIGHT` to the module directory, `DESIGN_EVAL_PYTHON` to the Python executable with `pypdf`, `DESIGN_TOOLS_PYTHON` to the Python executable with Pillow, and `DESIGN_EVAL_PDFTOPPM` to the `pdftoppm` executable. `DESIGN_TOOLS_CHROMIUM` optionally selects a compatible Chromium executable. Missing dependencies fail rather than producing empty evidence.
 
 The focused regressions run with:
 
@@ -26,7 +26,7 @@ The focused regressions run with:
 DESIGN_TOOLS_TEST_BROWSER=1 node --test tests/fixtures/design-instruments/test-instruments.mjs
 ```
 
-Without `DESIGN_TOOLS_TEST_BROWSER=1`, browser regressions explicitly skip; a skipped run does not establish browser behavior. The Python property suite also invokes these regressions through `tests/test_design_instruments.py`.
+`DESIGN_TOOLS_TEST_IMAGES=1` requires the native Pillow image case. Without `DESIGN_TOOLS_TEST_BROWSER=1`, development browser regressions explicitly skip; a skipped run does not establish browser behavior. The Python property suite also invokes these regressions through `tests/test_design_instruments.py`.
 
 ## Evidence and splits
 
@@ -34,9 +34,9 @@ Without `DESIGN_TOOLS_TEST_BROWSER=1`, browser regressions explicitly skip; a sk
 
 `fixtures.mjs` supplies twelve fictional gallery families: dashboard, form, chart, article, explainer, game, reading deck, poster, mixed-direction transfer, email, printed report and explorable. Six develop the tools; six transfer the approach to other artifact families. All twelve were available during development. Their different jobs and content do not establish broad stylistic generalization, native-host fidelity or a representative sample of real products. The internal `heldout` tag labels the latter gallery group; the gallery calls it “Transfer families” to avoid implying untouched data.
 
-`transfer.mjs` supplies a separate six-case evaluation, specified in an independent review context after the instrument code was frozen, before its first execution. It covers common-region ownership, a clipped departure notice, a descending linear scale, audio-tour intervals, dialog cancellation/focus and recipe prerequisites. [transfer-freeze.json](transfer-freeze.json) records those initial instrument and case hashes; each run also records the current instrument hashes. The cases were not used to retune the measurements. Subsequent reviews repaired browser compatibility/resource reporting and consolidated CLI registration/artifact manifests; these adapter repairs leave the measurement algorithms intact. Reruns use the now-known cases as regressions. Their expected facts come from the independent fixture specification, not from the instruments' output. Six cases remain a small constructed sample; a successful factual check is not a UX-quality success.
+`transfer.mjs` supplies a separate six-case evaluation, specified in an independent review context after the instrument code was frozen, before its first execution. It covers common-region ownership, a clipped departure notice, a descending linear scale, audio-tour intervals, dialog cancellation/focus and recipe prerequisites. [transfer-freeze.json](transfer-freeze.json) records those initial instrument and case hashes; each run also records the current instrument hashes. The cases were not used to retune the measurements. Subsequent reviews repaired browser compatibility/resource reporting and consolidated CLI registration/artifact manifests; these adapter repairs leave the measurement algorithms intact. The input-only revision subsequently makes missing font scale/clipping explicitly unknown and validates raw RGBA compositing; its current hashes differ from the original freeze, and its known cases are regressions, not another untouched holdout. Reruns use the now-known cases as regressions. Their expected facts come from the independent fixture specification, not from the instruments' output. Six cases remain a small constructed sample; a successful factual check is not a UX-quality success.
 
-`run.mjs` invokes the public CLI, including every advertised command, selected browser simulations, malformed inputs and a copied standalone skill. It also renders deliberately misleading edits and a six-candidate dashboard spacing search. It compares actual rendered table text with the incumbent before accepting a search candidate. PDF text extraction and page rasterization are both retained: extraction alone cannot reveal clipped glyphs.
+`run.mjs` obtains development evidence through the capture adapter and exercises the shared shipped measurements, selected browser simulations and malformed capture inputs. It also replays supplied observations and data through the public CLI in a copied standalone skill. The focused regressions cover native HTML/images, raw pixels, missing evidence and the browser-free runtime boundary. It also renders deliberately misleading edits and a six-candidate dashboard spacing search. It compares actual rendered table text with the incumbent before accepting a search candidate. PDF text extraction and page rasterization are both retained: extraction alone cannot reveal clipped glyphs.
 
 The gallery initially conceals which side is original/revised and all measurement explanations. Choices are empty until supplied by the reviewer. A revelation is remembered across reload, so later choices remain marked as informed. Judgments are stored under the fixture hash in the local browser and can be exported. Changing fixtures starts a separate set of choices. This supports an owner comparison, not a controlled population study.
 
