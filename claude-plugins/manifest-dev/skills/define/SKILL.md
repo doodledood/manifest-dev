@@ -262,3 +262,7 @@ Manifest complete: <manifest-path>
 To execute: /do <manifest-path>
 For unattended execution, invoke /do <manifest-path> as the execution entrypoint. /do reads the manifest and owns the manifest-completion contract: it sets that completion contract when the active harness exposes a goal-setting or continuation capability, or prints the manual copy-paste contract when not. /define does not set a separate /do goal.
 ```
+
+Then stop. A yes to the plan approves the Manifest, not its execution: /do runs
+only when the user or a calling workflow invokes it, so the lines above are for
+them, never an instruction to you.

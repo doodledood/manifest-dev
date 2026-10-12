@@ -29,7 +29,34 @@ cat > manifest.md <<'EOF'
 
 ## 3. Global Invariants
 
-### INV-G1 — Tests pass
+### INV-G1 — The change stops at what this Manifest authorized
+
+Read this Manifest. This is a conformance check: take its intent as given, and do not judge
+whether the work was necessary, motivated, or worthwhile.
+
+Done when the work this run added carries nothing beyond what the Deliverables, Acceptance Criteria, and
+Global Invariants — this one excluded — required, and nothing that nominally serves one of
+them while far exceeding the surface the Appetite allows.
+
+Read Problem, Appetite, and Out of bounds as the intent. Read the Deliverables and the other
+gates as what the work owes. Read the Initial Approach and Process Guidance as mechanisms that
+were *authorized rather than owed* — the ones expected, never the only ones permitted, so work
+reaching a Deliverable by a route this Manifest does not name is required by that Deliverable.
+
+Required although no criterion names it: work inherited rather than added — the artifact this
+Manifest was synthesized over, and anything arriving from outside the run such as a base branch
+merged into the head — and work discharging what a criterion required, including sweeping a
+changed rule into every copy and surface that holds it.
+
+FAIL only on work none of the above accounts for. Treat an unclear case as required work, and
+leave small, incidental, or imperfect changes inside an artifact already in scope alone.
+
+Why: every other gate states a floor, so a contract bounded on one side only gives an executor
+disposed to thoroughness nothing to read as a limit.
+
+Judgment gate.
+
+### INV-G2 — Tests pass
 
 Run `python -m pytest` in `cardpress`. PASS when it exits 0.
 
