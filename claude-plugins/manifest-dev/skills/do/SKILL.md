@@ -1,11 +1,14 @@
 ---
 name: do
-description: 'Manifest executor. Reads a Manifest and pursues it with full autonomy: reach a state where every Acceptance Criterion and Global Invariant holds, deciding for itself how to get there. Use when executing a manifest, running a plan, implementing a defined task, or when the user asks to run, execute, implement, or ship a manifest-backed plan.'
+description: 'Manifest executor. Reads a Manifest and pursues it with full autonomy: reach a state where every Acceptance Criterion and Global Invariant holds, deciding for itself how to get there. Use when executing a manifest, running a plan, implementing a defined task, or when the user asks to run, execute, implement, or ship a manifest-backed plan. Not when the user has only approved a plan.'
 argument-hint: '<manifest-path> [--no-log]'
 user-invocable: true
 ---
 
-No path → halt with usage. Read the Manifest in full, then make every Acceptance
+No path → halt with usage. Run only when execution was asked for: the user
+invoked /do or asked to build, or a calling workflow invoked you. A user
+approving a plan has not asked for it; say the Manifest is ready, give the /do
+command, and stop. Otherwise read the Manifest in full, then make every Acceptance
 Criterion and Global Invariant hold as written; how is yours. Those bind; Initial
 Approach and Process Guidance advise. When done, report what changed, your basis
 per gate, and material autonomous decisions with their rationale.
