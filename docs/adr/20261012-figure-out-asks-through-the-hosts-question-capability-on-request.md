@@ -10,7 +10,13 @@ figure-out
 The user
 
 ## Context
-figure-out writes its one ask per turn in plain text. `20260727-figure-out-adopts-a-default-turn-shape` rejected delivering asks through the harness's question-selection primitive on three grounds: a reader typed free text through it, so its convenience went unused; it is harness-bound where the skill names capabilities in universal language; and a menu invites a rubber-stamp. Those grounds hold for most users. Some users still prefer to answer by choosing an option, and they had no way to get it.
+figure-out writes its one ask per turn in plain text. `20260727-figure-out-adopts-a-default-turn-shape` rejected delivering asks through the harness's question-selection primitive on three grounds:
+
+- A reader typed free text through it, so its convenience went unused.
+- It is harness-bound, where the skill names capabilities in universal language.
+- A menu invites a rubber-stamp.
+
+Those grounds hold for most users. Some users still prefer to answer by choosing an option, and they had no way to get it.
 
 ## Decision
 Plain text stays the default. When the user's instructions ask for it and the host offers a question-selection capability, figure-out delivers the ask through that capability, with its recommended answer as the first option. The rule names the capability in universal language, so it binds no single harness. Autonomous runs still never ask, and team mode still asks in its channel.

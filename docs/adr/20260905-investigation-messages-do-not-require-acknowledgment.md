@@ -1,7 +1,7 @@
 # ADR: Investigation messages do not require acknowledgment
 
 ## Status
-Accepted
+Accepted — amended by 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals: a user's call that a Taste entry settles is decided and cited instead of asked
 
 ## Area
 figure-out

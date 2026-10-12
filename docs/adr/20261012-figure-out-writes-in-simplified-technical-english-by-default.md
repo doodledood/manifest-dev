@@ -13,7 +13,7 @@ The user
 figure-out's turns already follow a plain-language floor and a one-claim shape. Its messages still read too dense: the maintainer could not answer one question until it was rewritten in ASD-STE100 (Simplified Technical English) style. ASD-STE100 sets sentence-length limits — 20 words for an instruction, 25 for a description — and prefers the active voice, common words, and one term for one thing.
 
 ## Decision
-Everything figure-out writes for people — turns, the read, offers, log entries, team posts — follows ASD-STE100 writing rules by default: short sentences, active voice, common words, one term for one thing. The strict STE dictionary is not required; the target is about 90% conformance, for easier reading rather than strict compliance. The user's own instructions on style win, with no flag needed.
+Everything figure-out writes for people follows ASD-STE100 writing rules by default. That covers turns, the read, offers, log entries, and team posts. The rules used are short sentences, active voice, common words, and one term for one thing. The strict STE dictionary is not required; the target is about 90% conformance, for easier reading rather than strict compliance. The user's own instructions on style win, with no flag needed.
 
 ## Alternatives Considered
 - **Strict ASD-STE100, dictionary included**: the dictionary bans many precise words; the goal is easier reading, not certification.
