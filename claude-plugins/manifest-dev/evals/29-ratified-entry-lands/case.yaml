@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 29-ratified-entry-lands
+context:
+  scaffold_script: scaffold.sh

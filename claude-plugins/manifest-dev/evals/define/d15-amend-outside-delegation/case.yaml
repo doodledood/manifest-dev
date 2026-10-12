@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: d15-amend-outside-delegation
+context:
+  scaffold_script: scaffold.sh

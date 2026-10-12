@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 17-agreement-is-not-a-go
+context:
+  scaffold_script: scaffold.sh

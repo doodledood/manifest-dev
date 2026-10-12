@@ -1,7 +1,7 @@
 # ADR: figure-out adopts a concrete default turn shape
 
 ## Status
-Superseded by 20260803-figure-out-turn-carries-one-concrete-claim
+Superseded by 20260803-figure-out-turn-carries-one-concrete-claim; its rejected alternative of delivering asks through the question-selection primitive narrowed by 20261012-figure-out-asks-through-the-hosts-question-capability-on-request: taken when the user's instructions ask for it
 
 ## Area
 figure-out

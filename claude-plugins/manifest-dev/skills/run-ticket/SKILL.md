@@ -77,7 +77,8 @@ Questions that do not need their own lifecycle stay in the result comment. A que
 ## Land completed work
 
 `/done` proves the task contract; it does not by itself prove that repository work landed. Commit
-and push the coherent result to the stable branch, create or refresh its one pull request, and drive
+and push the coherent result to the stable branch, create or refresh its one pull request — its
+description listing the run's material decisions, the user's calls first — and drive
 that pull request through the repository's normal checks and review requirements. Activate the
 `check-pr` skill for the current pull request and head before merge. Address
 agent-resolvable failures and re-check rather than handing routine repair to a person.
@@ -101,6 +102,18 @@ branch, bypass protection, treat a merely open or mergeable pull request as DONE
 for work the Ticket does not authorize. For a non-repository Ticket, observe its actual durable
 landing place instead.
 
+## The user's calls
+
+**The user's call.** A decision is the user's call when two careful people with
+the same evidence could reasonably decide it differently, and the difference
+would matter to the user. Test each material decision against that sentence;
+your own confidence does not settle it. At a user's call, check the user's Taste
+entries — ratified preferences in a `## Taste` section of a loaded memory file.
+Follow an entry only where it clearly bears: following it would change the
+choice. Otherwise decide on the evidence. Wherever decisions are reported, list
+the user's calls first, each with the alternative not taken and what decided
+it — the entry followed, or that no entry applied.
+
 ## DONE
 
 After the required landing is observed, write a completion comment containing:
@@ -108,7 +121,8 @@ After the required landing is observed, write a completion comment containing:
 - what changed or what question was answered;
 - evidence that the definition of done holds;
 - branch, commit, pull-request, deployed-artifact, or recorded-answer references that exist;
-- follow-up Ticket links, or a clear statement that none were warranted.
+- follow-up Ticket links, or a clear statement that none were warranted;
+- the run's material decisions, the user's calls first, each with the alternative not taken and what decided it.
 
 Then close the same Ticket as done using the venue mapping. Closing is the assertion that its work
 is complete and, where applicable, merged — not merely implemented on a branch.
@@ -124,7 +138,8 @@ The record contains:
 - what was tried, what each attempt showed, and why it did not resolve the blocker;
 - branch, commit, and pull-request references for preserved work, or an explicit statement that none were produced;
 - any separately warranted follow-up Ticket links;
-- a mention of the person needed next, resolved from the Ticket, project escalation contact, or initiating human.
+- a mention of the person needed next, resolved from the Ticket, project escalation contact, or initiating human;
+- the run's material decisions, the user's calls first, each with the alternative not taken and what decided it.
 
 Leave the Ticket open and retain its Auto grant when it is still present, and release the claim —
 in that order, mark first. Releasing a claim is itself an event dispatchers act on, so a dispatcher

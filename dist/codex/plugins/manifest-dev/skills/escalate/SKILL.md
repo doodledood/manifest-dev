@@ -11,7 +11,17 @@ to continue it before escalating.
 
 Receive the Manifest path from `/do`, along with the affected gates and the actual evidence behind each. Relay that evidence as supplied, without inventing verification the run did not perform. Surface it with the blocker evidence: the criterion (INV-G or AC ID) that can't be met, the credible recovery paths investigated and why they failed, and the intervention needed — unavailable knowledge or access, new authority, or a change to a binding requirement. Name what independent work completed and why the remainder depends on that intervention. Recommend a resolution; report it without starting a question-and-wait loop.
 
-Also name material autonomous decisions and their rationale, including Appetite revisions and the benefit that justified their added complexity or maintenance; any Process Guidance departed from; any deviation from the Initial Approach or the Deliverable order; findings a gate reported below its threshold and pre-existing issues left as unrelated to the change, offering `ticket-up` for any the user wants worked; and any costly-threshold concern the run recorded while continuing repairs. Include these even when the execution log already holds them.
+Also name material autonomous decisions and their rationale, including Appetite revisions and the benefit that justified their added complexity or maintenance; any Process Guidance departed from; any deviation from the Initial Approach or the Deliverable order; findings a gate reported below its threshold and pre-existing issues left as unrelated to the change, offering `ticket-up` for any the user wants worked; and any costly-threshold concern the run recorded while continuing repairs. Include these even when the execution log already holds them. Carry any drafted Taste entry `/do` supplies verbatim, with its question for the user's yes.
+
+**The user's call.** A decision is the user's call when two careful people with
+the same evidence could reasonably decide it differently, and the difference
+would matter to the user. Test each material decision against that sentence;
+your own confidence does not settle it. At a user's call, check the user's Taste
+entries — ratified preferences in a `## Taste` section of a loaded memory file.
+Follow an entry only where it clearly bears: following it would change the
+choice. Otherwise decide on the evidence. Wherever decisions are reported, list
+the user's calls first, each with the alternative not taken and what decided
+it — the entry followed, or that no entry applied.
 
 A false binding premise outside the caller's amendment authority can arrive here
 even when its gate passed. Quote the report or name what execution showed in place

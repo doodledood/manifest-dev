@@ -9,7 +9,21 @@ reaches a correct answer, which a strong base model does unaided.
 Run it:
 
 ```bash
-claude plugin eval . --tag figure-out --ablation with-without --judge-model opus --allow-tools Write Bash -j 8
+claude plugin eval . --tag figure-out --ablation with-without --judge-model opus --allow-tools Write Bash --scaffold -j 8
+```
+
+`--scaffold` runs each case's `scaffold.sh` (declared in its `case.yaml`) before the agent starts,
+so cases that need a repository, project docs, or a context file find them in the working
+directory. Without it, those cases run against an empty directory and measure nothing. Only pass
+it for case files from this repository: a scaffold is bash that runs as you.
+
+Two cases test behavior that exists only with the plugin — offering a Taste entry, and not
+offering one for a discipline every session owes — so the no-plugin arm passes or fails them by
+construction. They carry the tag `figure-out-plugin-only` instead of `figure-out` and run on the
+plugin arm alone:
+
+```bash
+claude plugin eval . --tag figure-out-plugin-only --ablation none --judge-model opus --allow-tools Write Bash --scaffold -j 8
 ```
 
 `--allow-tools Write Bash` is required. `allowed_tools` in a case's `prompt.md` declares what the
@@ -31,7 +45,7 @@ macOS keychain, and a detached container also keeps running if the launching ses
 
 ```bash
 scripts/evals/run_eval.sh figure-out-run evals/results/figure-out-run/aggregate-result.json \
-  --tag figure-out --ablation with-without --judge-model opus
+  --tag figure-out --ablation with-without --judge-model opus --scaffold
 ```
 
 The script builds the image if it is missing, starts colima if Docker is down, reads
@@ -79,12 +93,32 @@ from a discipline `SKILL.md` explicitly states.
 | `14-persona-seat-feature` | autonomous | Take the seat of the person the North Star names and walk their uses, not the mechanism's | tuning |
 | `15-persona-seat-doc` | autonomous | Take the seat of the reader the North Star names on a document, where no feature probe file loads | held out |
 | `16-underdetermined-billing` | autonomous | `11`'s disciplines on a different system: do not manufacture a winner; separate verified from assumed | held out |
+| `17-agreement-is-not-a-go` | negative, repository | Bare agreement with a read is not a go: leave the code alone and stop at the read | tuning · unmeasured |
+| `18-read-only-experiment` | autonomous, repository | Test a hypothesis in a throwaway location, never in the project's files, and do not apply the fix | tuning · unmeasured |
+| `19-headline-number` | autonomous | Test whether a headline figure is valid before designing how to show it | tuning · unmeasured |
+| `20-one-failed-repro` | autonomous | One failed reproduction under unrepresentative conditions does not exclude a cause | tuning · unmeasured |
+| `21-how-it-gets-checked` | autonomous | Settle how a feature will be exercised end to end, and the surfaces its users see, before naming the read | tuning · unmeasured |
+| `22-draft-before-feel` | press | Offer a disposable draft for an open visual direction instead of asking how it should feel | tuning · unmeasured |
+| `23-term-and-record` | docs, repository | Capture a term the user defined; land an accepted record with the superseded record's restatus and the index rebuild | tuning · unmeasured |
+| `24-ruled-position-holds` | autonomous, repository | Keep a ruled North Star position's text, seek a design that keeps it, and mark a self-accepted record as unattended | held out · unmeasured |
+| `25-users-call-and-taste` | autonomous, Taste | Flag the user's calls, leave the agent's own call unflagged, follow only the Taste entry that bears, make no Taste offer | tuning · unmeasured |
+| `26-asks-only-the-users-call` | press, Taste | Ask only the user's call; decide and cite a call a narrow entry settles; do not stretch a broad entry; write plainly | tuning · unmeasured |
+| `27-taste-offers` | Taste, plugin arm only | At the session-end sweep, offer an entry for a stated preference and for an explained reversal, built on the user's reason; write nothing before a yes | tuning · unmeasured |
+| `28-universal-not-taste` | Taste, plugin arm only | Make no Taste offer for a discipline every session owes | held out · unmeasured |
+| `29-ratified-entry-lands` | Taste, repository | After the user's yes, write the entry inside the `## Taste` section and change nothing else in the file | tuning · unmeasured |
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.
 
 `04` and `05` are a **mirror pair** and stay paired: a model that always concedes fails `04`, one
 that always digs in fails `05`. No constant policy passes both.
+
+The cases from `17` on were added in one change and have never been run: their headroom, noise,
+and whether either arm already passes them are unknown. The first both-arm run decides which stay,
+under the rules below. Their pairs: `17` mirrors `08` (agreement without a named change against an
+authorized change); `27` mirrors `28` (offer an entry against offer none); `25` and `26` are the
+same three-call shape, unattended and interactive; and `24` is the held-out witness for `23`'s
+docs disciplines.
 
 `07` and `08` are the should-NOT-fire floor. At least one always stays. Without them a large Δ
 cannot distinguish pressing well from turning every message into a deliberation, and
@@ -93,7 +127,8 @@ over-triggering is the first casualty of any "press harder" tuning.
 ## Held-out split
 
 **Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`,
-`15-persona-seat-doc`, and `16-underdetermined-billing`.** Five of fourteen cases. Their scores
+`15-persona-seat-doc`, `16-underdetermined-billing`, `24-ruled-position-holds`, and
+`28-universal-not-taste`.** Seven of twenty-seven cases. Their scores
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
 them. Tuning happens on the other nine.
 
@@ -178,6 +213,12 @@ That contamination is contained in the graders rather than the prompts: **every 
 judges substance, never the shape, length or opening of a response.** Trigger reliability is
 reported separately by `skill-fired`, which is display-only and never scored.
 
+`autonomous-flag-passed` is display-only in the same way: it shows whether the skill was invoked
+with `--autonomous`, which is what loads the autonomous reference. It sits on every unattended
+case. Cases `10`–`16` say the user is away but never pass the flag, so their recorded numbers
+measure figure-out's interactive text answering itself, not its autonomous mode; this grader
+makes that visible. Cases from `18` on name the flag in their prompt.
+
 ## Changing this suite
 
 **When a case fails, decide whether the grader or the skill is wrong before touching either, and
@@ -190,8 +231,24 @@ rubric that was simply miscalibrated.
 
 ## Known limits
 
-- **The sandbox working directory is empty.** Every prompt carries its evidence inline. A case that
-  points at a repository degenerates into "point me at the code" in both arms.
+- **A case gets a repository only through its scaffold.** Cases `01`–`16`, `19`–`22`, and `25`–`28`
+  carry their evidence inline. The others build a small repository, project docs, or a context
+  file with `scaffold.sh`, and degenerate into "point me at the code" when run without
+  `--scaffold`.
+- **No memory file loads in the sandbox.** Taste cases put the user's memory file in
+  `append_system_prompt`, so they test how the skill uses entries it is shown, not how the host
+  finds the file.
+- **Earlier turns are written into the prompt.** The harness has no scripted second turn, so a
+  case that needs history (`17`, `23`, `27`–`29`) quotes it inline.
+- **Not covered, by choice.** Team mode needs a chat-channel stand-in. Acts that leave state
+  outside the session need an external-service stub. Log safety and resume have shown no failure,
+  and the default log path is outside what a grader reads. Splitting questions into tickets needs
+  a ticket-store fixture. Rendering beyond the draft offer needs operator opt-in to publishing and
+  several turns. Under-firing is excluded because prompts name the skill by design. A mechanism
+  that only appears when components interact, and calibrating to the user's expertise, have no
+  case: `10` already floors on reaching a mechanism, and expertise has no observable bar. Held-out
+  witnesses for `19` and `20` were left out to bound cost; add one before keeping a change aimed
+  at either. Build any of these when a miss shows in use.
 - **Press cases observe one turn.** Autonomous cases observe a whole investigation, because
   autonomous mode runs to completion and names a Read in a single run. That is why the suite's
   headroom lives there.
@@ -283,6 +340,14 @@ Once a winner is kept, re-record the full baseline with both arms. The Δ this R
 is with-arm minus without-arm, and a hill-climb round measures only the first half of it.
 
 ## Baseline — 2026-10-06, opus judge
+
+**This baseline predates the change that added cases `17`–`29`.** That change also edited the
+skill this suite measures: figure-out now writes in Simplified Technical English style by
+default, asks through the host's question capability when the user's instructions ask for it,
+yields only for a fact the user holds, authority it lacks, or a user's call no Taste entry
+settles, flags the user's calls in autonomous mode by a disagreement test instead of low
+confidence, and captures a Taste entry from a reversal the user explains. Re-record both arms
+before measuring against it.
 
 Report `results/figure-out-baseline-20261006c`, with `14-persona-seat-feature` from
 `results/figure-out-14-regrade-20261006` after its rubric fix. Skill at `62481855`, graders as

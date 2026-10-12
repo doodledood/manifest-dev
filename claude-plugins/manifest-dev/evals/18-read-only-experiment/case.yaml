@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 18-read-only-experiment
+context:
+  scaffold_script: scaffold.sh

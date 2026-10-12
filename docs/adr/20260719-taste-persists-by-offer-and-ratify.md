@@ -1,7 +1,7 @@
 # ADR: Taste persists by offer-and-ratify, never by silent inference
 
 ## Status
-Accepted — eligibility narrowed by 20260810-universal-discipline-belongs-in-the-prompt
+Accepted — eligibility narrowed by 20260810-universal-discipline-belongs-in-the-prompt; amended by 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals: a single reversal the user explains now qualifies, and entries are checked at each user's call and followed only where they bear rather than held passively
 
 ## Area
 figure-out

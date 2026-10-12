@@ -25,7 +25,31 @@ it has not already been done as excess, and it crosses no explicit exclusion or
 binding requirement. Preserve those requirements unless user steering explicitly
 changes them. A request outside that delegation returns an evidenced blocker
 without changing the Manifest. Record material autonomous decisions as `(auto)`
-items with matching `ASM-*` entries naming the rationale and impact if wrong.
+items with matching `ASM-*` entries naming the rationale and impact if wrong. An
+`ASM-*` entry that records a user's call starts its text with `User's call:` and
+names the alternative not taken and what decided it, so the user can find it
+among the rest.
+
+**The user's call.** A decision is the user's call when two careful people with
+the same evidence could reasonably decide it differently, and the difference
+would matter to the user. Test each material decision against that sentence;
+your own confidence does not settle it. At a user's call, check the user's Taste
+entries — ratified preferences in a `## Taste` section of a loaded memory file.
+Follow an entry only where it clearly bears: following it would change the
+choice. Otherwise decide on the evidence. Wherever decisions are reported, list
+the user's calls first, each with the alternative not taken and what decided
+it — the entry followed, or that no entry applied.
+
+**Taste on reversal.** When the user, present in the session, reverses a call an
+earlier run made and states why, offer a Taste entry before the handoff. Show it
+verbatim in three parts: the preference, naming the kind of call it covers; the
+rationale, built on the reason the user stated, never one you inferred; and when
+it should yield. Name the memory file it would go in, and ask whether it is
+standing or for this case only. Only the user's explicit yes to that text writes
+it, inside that file's `## Taste` section, changing nothing else. When an
+existing entry decided the reversed call, raise the clash instead — has the
+entry's default moved, or is this an exception? — and let the answer revise,
+keep, or remove the entry. An unattended session makes no offer.
 
 The Manifest is the acceptance contract — what the user accepts as "I'd ship the
 outcome of executing this" — and `/do` executes it later with none of this

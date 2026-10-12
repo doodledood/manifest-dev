@@ -60,6 +60,9 @@ Accepted
 ## Area
 [One short label naming the part of the system this decision governs.]
 
+## Decided by
+[The user | An agent in an unattended run, with no review]
+
 ## Context
 [What situation motivated this decision? What constraints, requirements, or tensions existed?]
 
@@ -84,6 +87,8 @@ Accepted
 ````
 
 **Area** is a single short label — reuse an existing one wherever the decision fits it, and mint a new one only when nothing fits. It is read by the index, so keep it stable: renaming a label means editing every record that carries it.
+
+**Decided by** names who made the decision, so a later reader can tell a person's ruling from an agent's. Write `The user` when a person decided it or reviewed the record before it was accepted. Write `An agent in an unattended run, with no review` when a run with no person present accepts its own record. When a person later reviews such a record and keeps its decision, change the value to `The user` in place; a person who changes the decision writes a new record instead.
 
 ## File Naming and Location
 
@@ -128,6 +133,7 @@ When reality shifts, write a new ADR and update the old one's Status:
 - Typo fixes, broken-link repairs, formatting
 - Status changes and cross-references (e.g., `Related: 20260518-foo`)
 - Adding or correcting the `Area` field
+- Changing `Decided by` to `The user` after a person reviews an unattended record and keeps its decision
 - Clarifying confusing prose without changing the decision
 
 **NOT editable in place** (requires a new ADR):

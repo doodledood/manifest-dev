@@ -7,8 +7,13 @@ which would therefore make every case a vanity win.
 Run it from the plugin directory:
 
 ```bash
-claude plugin eval . --tag define --ablation with-without --judge-model opus --allow-tools Write Bash -j 8
+claude plugin eval . --tag define --ablation with-without --judge-model opus --allow-tools Write Bash --scaffold -j 8
 ```
+
+`--scaffold` runs the `scaffold.sh` that `d15` and `d16` declare in their `case.yaml`: `d15` starts
+from a saved Manifest and `d16` from a saved Manifest beside a small repository. Without it, both
+run against an empty directory and measure nothing. Only pass it for case files from this
+repository: a scaffold is bash that runs as you.
 
 The headline number is **Δ**, the with-plugin score minus the no-plugin baseline. Read the
 figure-out suite's README (`../README.md`) before trusting a Δ from this one: its rules on
@@ -22,6 +27,15 @@ ungated rule, and an invented threshold planted in it. Keep opus here unless tha
 repeated with a cheaper judge.
 
 ## Baseline — 2026-10-06, after the threshold rubric fix
+
+**This baseline predates a change that edited `define` and this suite.** `define` now states the
+shared rule for the user's calls (two careful people with the same evidence could reasonably
+decide differently, and the difference would matter to the user), checks the user's Taste entries
+at those calls, marks an `ASM-*` entry that records one, and offers a Taste entry when the user
+reverses an earlier call and says why. The same change added `d11`–`d17` and gave `d05` a scored
+grader, `keeps-other-requirements`, moved from the retired `evals-define/` pilot. `d05`'s recorded
+number no longer compares: it now carries one more scored grader. Re-record both arms before
+measuring against this.
 
 Report `results/define-baseline-20261006b`. Skill at `62481855`, graders as committed with this
 section, CLI 2.1.289, agent `claude-opus-5-5`, judge `claude-opus-5-5`, 6 runs per arm, $189. It
@@ -245,20 +259,52 @@ definition of done for an executor with no other context.
 | `d08-neg-small` | **Negative:** mechanical rename | `proportionate`, settleable |
 | `d09-amend-widen` | Amendment: steering names an instance an existing gate should have claimed | `widens-not-siblings` |
 | `d10-loop-bait` | Open-ended absolutes ("excellent", "nothing missing") with the anchors supplied | `bounds-the-open-ends`, settleable |
+| `d11-experienced-wait` | A speed requirement stated as what users wait for, on old phones at production scale, beside a fast server and a tiny fixture | `gates-the-experienced-wait`, shared three · unmeasured |
+| `d12-true-not-present` | A data summary over readings with gaps, aborted runs, and empty runs | `gates-truth-and-edges`, shared three · unmeasured |
+| `d13-owner-keeps-the-yes` | A rule reserving the owner's yes for real charges, beside "I test with my own card" | `no-live-charge-as-proof`, `owner-yes-not-delegated`, shared three · unmeasured |
+| `d14-small-but-risky` | A one-line fix on a money path, with the project's check commands named | `keeps-the-defect-checks`, shared three · unmeasured |
+| `d15-amend-outside-delegation` | An unattended amendment request to loosen a binding rule, outside the executor's delegation | `binding-rule-kept`, `blocker-raised` · unmeasured |
+| `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, `does-not-edit-project`, `does-not-write-project` · unmeasured |
+| `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, `no-taste-write`, shared three · unmeasured |
+
+"Shared three" is `binding-lives-in-gates`, `gates-are-settleable`, and `no-invented-thresholds`.
+`d05` also carries `keeps-other-requirements`: resolving the conflict must not lower or drop
+another stated requirement without saying so.
+
+`d11`–`d17` were added in one change and have never been run; the first both-arm run decides
+which stay. `d14` mirrors `d08`: a small change that keeps its full review because it touches
+money, against a small change that should stay small. `d13` and `d04` witness each other on rules
+that must bind.
+
+Every case that writes a spec also carries two display-only regex graders, never scored:
+`ceiling-verbatim` (the ceiling invariant appears verbatim in `manifest.md`; a test ties its
+pattern to `SCHEMA.md`) and `handoff-line` (the last message names the Manifest with a
+`Manifest complete:` line). They show schema conformance without counting it as uplift, since
+the no-plugin arm has no schema to follow.
 
 `d07` and `d08` are the over-planning floor. Keep at least one through any tuning that pushes
 `define` to encode harder.
 
 ## Held-out split
 
-`d04`, `d06`, and `d08` are held out from tuning: one binding-rule case, one anchoring case, one
-negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the other seven.
+`d04`, `d06`, `d08`, `d12`, and `d15` are held out from tuning: two binding-rule cases (`d04` and
+the amendment `d15`), one anchoring case, one data-truth case, and one negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the other seven.
 
 ## Known limits
 
-- **No repository.** Every prompt describes the codebase inline and says it is unavailable. A
-  case that needs `define` to read real code would degenerate in both arms.
-- **One turn of the interview.** The suite measures unattended encoding. Interview quality
-  (which questions `define` surfaces, which it auto-decides) is out of scope.
-- **The amendment manifest is inline.** Seeding files before a run is undocumented in the CLI,
-  so `d09` asks the agent to save the pasted manifest before amending it.
+- **A case gets files only through its scaffold.** Most prompts describe the codebase inline and
+  say it is unavailable. `d15` and `d16` seed a Manifest (and, for `d16`, a small repository) with
+  `scaffold.sh`. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
+- **One turn of the interview.** The suite measures unattended encoding, plus one interactive
+  turn after approval (`d16`). Interview order, re-asking settled ground, and the digest's form
+  need a scripted second turn the harness does not run, so they are out of scope.
+- **No memory file loads in the sandbox.** `d17` puts the user's memory file in
+  `append_system_prompt`.
+- **Not covered, by choice.** Babysit mode needs a GitHub stand-in, and multi-repo Manifests need
+  two repositories. Handing off to figure-out when understanding is missing has shown no failure
+  and only the plugin arm can do it. Composing writing registers and visual gates is partly
+  covered by `d06` and `d10`. Checking that every gate declares its kind and that each `(auto)`
+  item pairs with an `ASM-*` entry needs a judge over the whole Manifest on every run, which
+  costs more than it would show; `ceiling-verbatim` covers the one schema element that ships
+  verbatim. Raising a conflict and flagging the user's call already have `d05` and `d17`; the
+  reversal offer in `define` is checked by reading its text. Build one when a miss shows in use.

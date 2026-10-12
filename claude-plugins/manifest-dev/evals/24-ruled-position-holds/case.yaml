@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 24-ruled-position-holds
+context:
+  scaffold_script: scaffold.sh
