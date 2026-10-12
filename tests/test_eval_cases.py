@@ -102,6 +102,10 @@ def test_graders_use_only_their_types_keys(case: Path) -> None:
         assert data.get("arm") in (None, "with-only", "both"), grader.name
         if kind == "llm":
             assert body.strip(), f"{grader.name}: empty rubric"
+        if kind == "tool_used" and "max" in data:
+            # The harness defaults `min` to 1, so a "never called" grader without `min: 0`
+            # fails every run, including the ones that never call the tool.
+            assert "min" in data, f"{grader.name}: `max` without `min`"
         for key in ("pattern", "input_match"):
             if key in data:
                 # The harness compiles these as JavaScript regular expressions, which take

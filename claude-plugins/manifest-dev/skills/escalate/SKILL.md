@@ -18,10 +18,12 @@ the same evidence could reasonably decide it differently, and the difference
 would matter to the user. Test each material decision against that sentence;
 your own confidence does not settle it. At a user's call, check the user's Taste
 entries — ratified preferences in a `## Taste` section of a loaded memory file.
-Follow an entry only where it clearly bears: following it would change the
-choice. Otherwise decide on the evidence. Wherever decisions are reported, list
-the user's calls first, each with the alternative not taken and what decided
-it — the entry followed, or that no entry applied.
+Follow an entry only where it clearly bears: it speaks to this kind of call, and
+following it would change the choice. A general lean that would tilt almost any
+call, such as less effort or lower cost, does not bear on its own. Otherwise
+decide on the evidence. Wherever decisions are reported, list the user's calls
+first, each with the alternative not taken and what decided it — the entry
+followed, or that no entry applied.
 
 A false binding premise outside the caller's amendment authority can arrive here
 even when its gate passed. Quote the report or name what execution showed in place
