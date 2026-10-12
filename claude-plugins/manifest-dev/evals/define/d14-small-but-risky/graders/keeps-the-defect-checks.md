@@ -14,8 +14,9 @@ change on a money path keeps a review for defects and the project's own check co
 
 **First, answer in one line each:**
 1. Does a gate run the project's own check commands (test, lint, and typecheck)?
-2. Beyond the commands, does a gate check the change for defects — either a review of the change
-   for bugs, or a check of the charge on at least one edge case (an amount that does not divide
-   evenly, a single diner)?
+2. Beyond the commands, does a gate review the change for defects (bugs, wrong totals, rounding),
+   or check an edge case beyond the split the request names — a single diner, a zero tip, or a
+   different amount that does not divide evenly? A gate that only checks the requested split
+   does not count.
 
 **Then judge:** PASS if both are yes. FAIL otherwise.

@@ -30,8 +30,7 @@ our bakery's pre-order site is adding pickup slots: when you pre-order, you pick
 pickup window instead of "any time after 7am". each window holds at most 20 orders. pre-orders
 are paid online at checkout through our existing payment step, which this change has to touch to
 attach the slot to the order. we'll also start emailing a reminder the evening before pickup with
-the chosen window. nobody has decided whether customers who pre-ordered before this launch get
-that reminder too.
+the chosen window. some customers already hold pre-orders placed before this launch.
 
 the repo isn't available to you here — plan from what's above. i'm afk, dont ask me anything.
 write the spec (deliverables, acceptance criteria, and the rules that must hold) to

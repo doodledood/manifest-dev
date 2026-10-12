@@ -134,3 +134,17 @@ def test_ceiling_grader_matches_the_schemas_ceiling() -> None:
     assert copies
     pattern = str(_frontmatter(copies[0])[0]["pattern"])
     assert re.search(pattern, SCHEMA.read_text(encoding="utf-8"))
+
+
+def test_rubrics_quote_their_cases_current_request() -> None:
+    # A rubric that embeds the request goes stale silently when the prompt is edited.
+    stale = []
+    for grader in sorted(EVALS.rglob("graders/*.md")):
+        text = grader.read_text(encoding="utf-8")
+        if "\nThe request:\n" not in text:
+            continue
+        quoted = text.split("\nThe request:\n", 1)[1]
+        _, body = _frontmatter(grader.parent.parent / "prompt.md")
+        if " ".join(quoted.split()) != " ".join(body.split()):
+            stale.append(_case_id(grader.parent.parent))
+    assert not stale, f"rubric request differs from prompt.md: {stale}"
