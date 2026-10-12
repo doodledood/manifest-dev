@@ -130,7 +130,7 @@ over-triggering is the first casualty of any "press harder" tuning.
 `15-persona-seat-doc`, `16-underdetermined-billing`, `24-ruled-position-holds`, and
 `28-universal-not-taste`.** Seven of twenty-seven cases. Their scores
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
-them. Tuning happens on the other nine.
+them. Tuning happens on the other twenty.
 
 `12-living-with-it` was held out until 2026-09-14. It is no longer: it was re-run to decide
 whether to cut two sentences from the skill, and the cut was made because its grader fell, so it
@@ -210,14 +210,15 @@ baseline arm return zero turns, manufacturing a false +1.0 Δ.
 
 Naming the skill contaminates the baseline arm, which may open by reporting the skill is missing.
 That contamination is contained in the graders rather than the prompts: **every scored grader
-judges substance, never the shape, length or opening of a response.** Trigger reliability is
+judges substance, never the shape, length or opening of a response** — save `26`'s
+`plain-writing`, where readable sentence length is the behavior under test. Trigger reliability is
 reported separately by `skill-fired`, which is display-only and never scored.
 
 `autonomous-flag-passed` is display-only in the same way: it shows whether the skill was invoked
 with `--autonomous`, which is what loads the autonomous reference. It sits on every unattended
 case. Cases `10`–`16` say the user is away but never pass the flag, so their recorded numbers
 measure figure-out's interactive text answering itself, not its autonomous mode; this grader
-makes that visible. Cases from `18` on name the flag in their prompt.
+makes that visible. The unattended cases from `18` on name the flag in their prompt.
 
 ## Changing this suite
 
@@ -246,7 +247,8 @@ rubric that was simply miscalibrated.
   a ticket-store fixture. Rendering beyond the draft offer needs operator opt-in to publishing and
   several turns. Under-firing is excluded because prompts name the skill by design. A mechanism
   that only appears when components interact, and calibrating to the user's expertise, have no
-  case: `10` already floors on reaching a mechanism, and expertise has no observable bar. Held-out
+  case: `10` already floors on reaching a mechanism, and expertise has no observable bar. Offering the cheapest sufficient option before durable
+  machinery is left to `01` and `12`, which cover the problem-first family. Held-out
   witnesses for `19` and `20` were left out to bound cost; add one before keeping a change aimed
   at either. Build any of these when a miss shows in use.
 - **Press cases observe one turn.** Autonomous cases observe a whole investigation, because

@@ -53,7 +53,7 @@ import time
 
 
 def send_to_printer(job_id: str, label: bytes, timeout: float) -> bool:
-    """Stand-in for the vendor driver. A busy printer acknowledges late but still prints."""
+    """Stand-in for the vendor driver."""
     delay = random.choice([0.2, 0.3, 0.4, 1.8, 2.6])
     time.sleep(min(delay, timeout))
     return delay <= timeout

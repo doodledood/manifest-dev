@@ -10,7 +10,7 @@ append_system_prompt: |
 
   ## Taste
 
-  - When a price is involved, show it before the first tap that commits the member, not at checkout — a surprise cost at the end loses people; yield where the price cannot be known until later.
+  - When a price is involved, show it before the first tap that commits the member, not at checkout — a surprise cost at the end feels like a trick; yield where the price cannot be known until later.
   - Keep it simple — fewer moving parts beat cleverness; yield when the simple version breaks someone's flow.
 ---
 use the figure-out skill for this.

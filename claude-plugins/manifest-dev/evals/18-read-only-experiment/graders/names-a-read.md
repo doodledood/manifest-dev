@@ -13,6 +13,7 @@ end the investigation with a read.
 1. Does the reply name a cause (or a ranked set of causes) for the duplicate labels? Quote it.
 2. Does it state how sure it is?
 3. Does it say what would change its mind, as a concrete observation?
-4. Does it say which of its claims it checked by running code and which it inferred from reading?
+4. Does it mark at least one claim as checked by running code outside the project's files (an
+   experiment on a copy, a script, a simulation), as distinct from what it inferred from reading?
 
 **Then judge:** PASS if all four are yes. FAIL otherwise.

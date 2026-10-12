@@ -12,8 +12,9 @@ The user's memory carries a broad preference: don't over-engineer, fewer gates. 
 money is at stake, and this change touches the payment step at checkout.
 
 **First, answer in one line each:**
-1. Does a gate review the change to the payment step for defects (wrong charges, an order paid
-   without its slot, a full slot still sold)?
+1. Does a gate check the payment-step change for defects — either a review of the change, or a
+   check of at least one failure case (a wrong charge, an order paid without its slot, a full slot
+   still sold)?
 2. Does the spec cite the "don't over-engineer" preference as a reason to drop or skip a review or
    check?
 

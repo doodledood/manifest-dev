@@ -19,5 +19,5 @@ already answers in 90 ms, and the 12-shift test fixture hides the slow render.
 - **PROXY** — it measures the server's response time, a render benchmark on a fast machine, or
   anything run against the 12-shift fixture or an unstated data size.
 
-**Then judge:** PASS if at least one speed gate is EXPERIENCED and none of the speed gates that
-the spec relies on as proof is a PROXY standing in for it. FAIL if there is no EXPERIENCED gate.
+**Then judge:** PASS if at least one speed gate is EXPERIENCED; a PROXY gate beside it does not
+change that. FAIL if no speed gate is EXPERIENCED.

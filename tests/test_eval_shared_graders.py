@@ -15,6 +15,9 @@ SHARED = [
     "**/graders/skill-fired.md",
     "define/*/graders/ceiling-verbatim.md",
     "define/*/graders/handoff-line.md",
+    "**/graders/no-taste-offer.md",
+    "**/graders/no-taste-write.md",
+    "**/graders/no-taste-edit.md",
 ]
 
 
