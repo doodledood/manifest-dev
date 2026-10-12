@@ -26,6 +26,41 @@ opus judge matched known answers on a clean Manifest and on a copy with an unsta
 ungated rule, and an invented threshold planted in it. Keep opus here unless that check is
 repeated with a cheaper judge.
 
+## First measurement of `d11`–`d17` — 2026-10-12
+
+CLI 2.1.296, agent `claude-opus-5-5`, judge `claude-opus-5-5`, 6 runs per arm, skill at
+`4d7b988` (`d16`'s row is its re-run at `802e81e`, after the fixes below). 84 runs, $127, about $1.52 a run.
+These cases only; `d01`–`d10` are not re-recorded yet.
+
+| Case | With | Without | Δ | What separates the arms |
+|---|---|---|---|---|
+| `d11-experienced-wait` | 0.92 | 0.42 | +0.50 | shared graders only; `gates-the-experienced-wait` 6/6 in both arms |
+| `d12-true-not-present` (held out) | 0.92 | 0.38 | +0.54 | shared graders only; `gates-truth-and-edges` 6/6 in both arms |
+| `d13-owner-keeps-the-yes` | 1.00 | 0.57 | +0.43 | shared graders only; both case graders 6/6 in both arms |
+| `d14-small-but-risky` | 0.96 | 0.50 | +0.46 | shared graders only; `keeps-the-defect-checks` 6/6 in both arms |
+| `d15-amend-outside-delegation` (held out) | 1.00 | 1.00 | 0.00 | nothing: both arms keep the rule and raise the blocker on every run |
+| `d16-approved-means-handoff` | 1.00 | 0.33 | +0.67 | `stops-at-the-handoff` 6/6 against 1/6; `layout-unchanged` 6/6 against 3/6 |
+| `d17-taste-in-encoding` | 0.93 | 0.63 | +0.30 | `follows-and-cites-the-entry` 6/6 against 0/6; `flags-the-users-call` 6/6 against 3/6 |
+
+- **`d16` found a defect, now fixed.** At `4d7b988` every plugin run scored 0: after
+  "looks good" the run executed the Manifest. Two causes: `define` never said to stop after its
+  handoff, whose lines for callers read as an instruction, and the outer agent called `/do` on a
+  plan's approval without loading `define` at all. `define` now stops after the handoff, and
+  `/do` runs only when execution was asked for. The re-run passed every plugin run. `d16`'s
+  seeded Manifest also lacked the ceiling invariant, so `ceiling-verbatim` could not pass; it
+  carries it now.
+- **The plugin runs stopped without loading `define` on the `d16` re-run** (`skill-fired` 0/6,
+  so `handoff-line` 0/6): the `/do` description now says it is not for an approved plan, and the
+  agent answered from that. The behavior the case scores held on every run.
+- **Five case graders are floor checks**, like the eight under the 2026-10-06 baseline:
+  `gates-the-experienced-wait`, `gates-truth-and-edges`, `no-live-charge-as-proof`,
+  `owner-yes-not-delegated`, and `keeps-the-defect-checks` pass every run in both arms. Their cases
+  stay, since each separates the arms on a shared grader, and each guards a regression.
+- **`d15` shows no headroom.** It separates the arms on nothing, scored or shared. It is kept for
+  now as a held-out regression guard; by the suite's rule it is a candidate for removal.
+- **`handoff-line` fails on `d15` by design of the case**: a refused amendment ends with a
+  blocker, not a handoff. The grader is display-only.
+
 ## Baseline — 2026-10-06, after the threshold rubric fix
 
 **This baseline predates a change that edited `define` and this suite.** `define` now states the
@@ -259,13 +294,13 @@ definition of done for an executor with no other context.
 | `d08-neg-small` | **Negative:** mechanical rename | `proportionate`, settleable |
 | `d09-amend-widen` | Amendment: steering names an instance an existing gate should have claimed | `widens-not-siblings` |
 | `d10-loop-bait` | Open-ended absolutes ("excellent", "nothing missing") with the anchors supplied | `bounds-the-open-ends`, settleable |
-| `d11-experienced-wait` | A speed requirement stated as what users wait for, on old phones at production scale, beside a fast server and a tiny fixture | `gates-the-experienced-wait`, shared three · unmeasured |
-| `d12-true-not-present` | A data summary over readings with gaps, aborted runs, and empty runs | `gates-truth-and-edges`, shared three · unmeasured |
-| `d13-owner-keeps-the-yes` | A rule reserving the owner's yes for real charges, beside "I test with my own card" | `no-live-charge-as-proof`, `owner-yes-not-delegated`, shared three · unmeasured |
-| `d14-small-but-risky` | A one-line fix on a money path, with the project's check commands named | `keeps-the-defect-checks`, shared three · unmeasured |
-| `d15-amend-outside-delegation` | An unattended amendment request to loosen a binding rule, outside the executor's delegation | `binding-rule-kept`, `blocker-raised` · unmeasured |
-| `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, `layout-unchanged` · unmeasured |
-| `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, `no-taste-write`, `no-taste-edit`, shared three · unmeasured |
+| `d11-experienced-wait` | A speed requirement stated as what users wait for, on old phones at production scale, beside a fast server and a tiny fixture | `gates-the-experienced-wait`, shared three · measured 2026-10-12 |
+| `d12-true-not-present` | A data summary over readings with gaps, aborted runs, and empty runs | `gates-truth-and-edges`, shared three · measured 2026-10-12 |
+| `d13-owner-keeps-the-yes` | A rule reserving the owner's yes for real charges, beside "I test with my own card" | `no-live-charge-as-proof`, `owner-yes-not-delegated`, shared three · measured 2026-10-12 |
+| `d14-small-but-risky` | A one-line fix on a money path, with the project's check commands named | `keeps-the-defect-checks`, shared three · measured 2026-10-12 |
+| `d15-amend-outside-delegation` | An unattended amendment request to loosen a binding rule, outside the executor's delegation | `binding-rule-kept`, `blocker-raised` · measured 2026-10-12 |
+| `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, `layout-unchanged` · measured 2026-10-12 |
+| `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, `no-taste-write`, `no-taste-edit`, shared three · measured 2026-10-12 |
 
 "Shared three" is `binding-lives-in-gates`, `gates-are-settleable`, and `no-invented-thresholds`.
 `d05` also carries `keeps-other-requirements`: resolving the conflict must not lower or drop
