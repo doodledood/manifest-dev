@@ -10,9 +10,9 @@ Run it from the plugin directory:
 claude plugin eval . --tag define --ablation with-without --judge-model opus --allow-tools Write Bash --scaffold -j 8
 ```
 
-`--scaffold` runs the `scaffold.sh` that `d15` and `d16` declare in their `case.yaml`: `d15` starts
-from a saved Manifest and `d16` from a saved Manifest beside a small repository. Without it, both
-run against an empty directory and measure nothing. Only pass it for case files from this
+`--scaffold` runs the `scaffold.sh` that `d16` declares in its `case.yaml`: it starts from a saved
+Manifest beside a small repository. Without it, the case runs against an empty directory and
+measures nothing. Only pass it for case files from this
 repository: a scaffold is bash that runs as you.
 
 The headline number is **Δ**, the with-plugin score minus the no-plugin baseline. Read the
@@ -52,14 +52,12 @@ These cases only; `d01`–`d10` are not re-recorded yet.
 - **The plugin runs stopped without loading `define` on the `d16` re-run** (`skill-fired` 0/6,
   so `handoff-line` 0/6): the `/do` description now says it is not for an approved plan, and the
   agent answered from that. The behavior the case scores held on every run.
-- **Five case graders are floor checks**, like the eight under the 2026-10-06 baseline:
-  `gates-the-experienced-wait`, `gates-truth-and-edges`, `no-live-charge-as-proof`,
-  `owner-yes-not-delegated`, and `keeps-the-defect-checks` pass every run in both arms. Their cases
-  stay, since each separates the arms on a shared grader, and each guards a regression.
-- **`d15` shows no headroom.** It separates the arms on nothing, scored or shared. It is kept for
-  now as a held-out regression guard; by the suite's rule it is a candidate for removal.
-- **`handoff-line` fails on `d15` by design of the case**: a refused amendment ends with a
-  blocker, not a handoff. The grader is display-only.
+- **`d11`–`d15` were removed after this run.** Each case's own graders passed every run in both
+  arms, so the base model already does what it targets: an experienced wait gated on the device,
+  edge cases in a data summary, the owner's yes kept, a defect review on a small money change, a
+  binding rule kept through an unattended amendment. `d11`–`d14` separated the arms only on the
+  shared graders, which `d01`–`d10` already measure, and `d15` on nothing. At about $1.52 a run
+  they bought no signal the suite lacked. Rebuild one only if the plugin is seen to regress there.
 
 ## Baseline — 2026-10-06, after the threshold rubric fix
 
@@ -67,7 +65,7 @@ These cases only; `d01`–`d10` are not re-recorded yet.
 shared rule for the user's calls (two careful people with the same evidence could reasonably
 decide differently, and the difference would matter to the user), checks the user's Taste entries
 at those calls, marks an `ASM-*` entry that records one, and offers a Taste entry when the user
-reverses an earlier call and says why. The same change added `d11`–`d17` and gave `d05` a scored
+reverses an earlier call and says why. The same change added `d16` and `d17` and gave `d05` a scored
 grader, `keeps-other-requirements`, moved from the retired `evals-define/` pilot. `d05`'s recorded
 number no longer compares: it now carries one more scored grader. Re-record both arms before
 measuring against this.
@@ -294,22 +292,12 @@ definition of done for an executor with no other context.
 | `d08-neg-small` | **Negative:** mechanical rename | `proportionate`, settleable |
 | `d09-amend-widen` | Amendment: steering names an instance an existing gate should have claimed | `widens-not-siblings` |
 | `d10-loop-bait` | Open-ended absolutes ("excellent", "nothing missing") with the anchors supplied | `bounds-the-open-ends`, settleable |
-| `d11-experienced-wait` | A speed requirement stated as what users wait for, on old phones at production scale, beside a fast server and a tiny fixture | `gates-the-experienced-wait`, shared three · measured 2026-10-12 |
-| `d12-true-not-present` | A data summary over readings with gaps, aborted runs, and empty runs | `gates-truth-and-edges`, shared three · measured 2026-10-12 |
-| `d13-owner-keeps-the-yes` | A rule reserving the owner's yes for real charges, beside "I test with my own card" | `no-live-charge-as-proof`, `owner-yes-not-delegated`, shared three · measured 2026-10-12 |
-| `d14-small-but-risky` | A one-line fix on a money path, with the project's check commands named | `keeps-the-defect-checks`, shared three · measured 2026-10-12 |
-| `d15-amend-outside-delegation` | An unattended amendment request to loosen a binding rule, outside the executor's delegation | `binding-rule-kept`, `blocker-raised` · measured 2026-10-12 |
 | `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, `layout-unchanged` · measured 2026-10-12 |
 | `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, `no-taste-write`, `no-taste-edit`, shared three · measured 2026-10-12 |
 
 "Shared three" is `binding-lives-in-gates`, `gates-are-settleable`, and `no-invented-thresholds`.
 `d05` also carries `keeps-other-requirements`: resolving the conflict must not lower or drop
 another stated requirement without saying so.
-
-`d11`–`d17` were added in one change and have never been run; the first both-arm run decides
-which stay. `d14` mirrors `d08`: a small change that keeps its full review because it touches
-money, against a small change that should stay small. `d13` and `d04` witness each other on rules
-that must bind.
 
 Every case that writes a spec also carries two display-only regex graders, never scored:
 `ceiling-verbatim` (the ceiling invariant appears verbatim in `manifest.md`; a test ties its
@@ -322,14 +310,13 @@ the no-plugin arm has no schema to follow.
 
 ## Held-out split
 
-`d04`, `d06`, `d08`, `d12`, and `d15` are held out from tuning: two binding-rule cases (`d04` and
-the amendment `d15`), one anchoring case, one data-truth case, and one negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the other twelve.
+`d04`, `d06`, and `d08` are held out from tuning: one binding-rule case, one anchoring case, and one
+negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the other nine.
 
 ## Known limits
 
 - **A case gets files only through its scaffold.** Most prompts describe the codebase inline and
-  say it is unavailable. `d15` and `d16` seed a Manifest (and, for `d16`, a small repository) with
-  `scaffold.sh`. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
+  say it is unavailable. `d16` seeds a Manifest and a small repository with `scaffold.sh`. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
 - **One turn of the interview.** The suite measures unattended encoding, plus one interactive
   turn after approval (`d16`). Interview order, re-asking settled ground, and the digest's form
   need a scripted second turn the harness does not run, so they are out of scope.
