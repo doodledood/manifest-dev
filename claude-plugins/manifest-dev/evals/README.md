@@ -245,7 +245,8 @@ rubric that was simply miscalibrated.
   outside the session need an external-service stub. Log safety and resume have shown no failure,
   and the default log path is outside what a grader reads. Splitting questions into tickets needs
   a ticket-store fixture. Rendering beyond the draft offer needs operator opt-in to publishing and
-  several turns. Under-firing is excluded because prompts name the skill by design. A mechanism
+  several turns. Under-firing is excluded because prompts name the skill by design. Asking through a host's question-selection capability has no case: the headless harness
+  offers no such tool, so neither the opt-in path nor the plain-text default can be observed. A mechanism
   that only appears when components interact, and calibrating to the user's expertise, have no
   case: `10` already floors on reaching a mechanism, and expertise has no observable bar. Offering the cheapest sufficient option before durable
   machinery is left to `01` and `12`, which cover the problem-first family. Held-out
