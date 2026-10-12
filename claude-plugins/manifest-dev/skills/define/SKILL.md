@@ -196,8 +196,10 @@ reasoning, on one of two grounds: it is clearly inapplicable, or — advisory-ti
 gates only — it fails the **bearer test**. Each advisory dimension protects some
 future activity (modification, regression-catching, reading, operating, the next
 contributor); omit the gate only where that activity will not occur on this
-manifest's surface within the artifact's life, and log the missing bearer as a
-fact — "no future reader exists", never "unlikely to find much". Weigh surface
+manifest's surface within the artifact's life, and record the omission as an
+`ASM-*` whose assumption is the missing bearer, stated as a fact — "no future
+reader exists", never "unlikely to find much" — and whose impact if wrong names
+what goes unreviewed. Weigh surface
 and stakes together, never size alone: a one-line change on a payment path keeps
 the full sweep. The full set is the default and doubt includes. Never eligible:
 defect-finding dimensions, deterministic project gates, safety-critical Global

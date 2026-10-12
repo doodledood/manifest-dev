@@ -29,7 +29,8 @@ research digest), and every skill a shipped skill names ships beside it — neve
 `metadata.internal`, and `user-invocable: false` when it exists only to be called. Adding a skill,
 a dimension, or a delegation site can therefore turn the suite red without any Python changing,
 and that red is the signal working as intended. The same suite fails when `dist/codex` drifts from
-the source tree it copies.
+the source tree it copies. It also fails when a shipped file points to a section of another
+(`` `FILE.md` → *Section* ``) that no longer exists there under that name.
 
 `claude-plugins/manifest-dev/evals/` holds behavioral eval suites for `figure-out` and, under
 `evals/define/` with its own README, for `define` — run one with
