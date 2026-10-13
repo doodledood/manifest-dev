@@ -13,8 +13,8 @@ answered them.
 - The project-surfaces section records its surfaces version and gains an entry for the
   project's verification surface.
 - A verification surface is seeded for each artifact future runs will change: its form and
-  location, existing verification assets adopted, entries catalogued from source as
-  `unverified`, its README, and a repository check that its entries still point at things
+  location, existing verification assets adopted within the scope the project gave them,
+  entries catalogued from source as `unverified` (`unmeasured` for an eval suite), its README, and a repository check that its entries still point at things
   that exist.
 
-Digest: 282dd591424936117a1a2956d4898825089321abd3cecda08b792fa2a33b4467
+Digest: b97c5614139abe454049a7b1010a825cfd6ca4e689fa47213fd459fc5ed59ae5

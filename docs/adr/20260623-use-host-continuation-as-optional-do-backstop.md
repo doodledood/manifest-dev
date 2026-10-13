@@ -53,6 +53,9 @@ Pi-specific runtime code may still provide native command wrappers, package load
 - Without a host continuation capability, unattended runs can still stop prematurely, as in other prompt-level hosts.
 - Any future implementation needs tests or review coverage for skipped gates, weak verifier evidence, phase-order drift, and premature completion under both continuation-capable and continuation-absent modes.
 
+## Enforced by
+partly — `tests/test_pi_extension_runtime.py` — `test_pi_package_is_skill_and_prompt_only` and `test_pi_runtime_fanout_symbols_are_absent_from_live_sources` fail if Pi ships a runtime verifier or extension; that `/do`'s protocol stays portable is judgment.
+
 ## Source
 
 - Design note: host continuation is described as a generic capability rather than a machine-specific setup; when none exists or it is disabled, regular main-agent verification applies without continuous enforcement.

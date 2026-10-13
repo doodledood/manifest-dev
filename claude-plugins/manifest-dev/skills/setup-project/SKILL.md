@@ -40,11 +40,11 @@ Where the project records a version, the update offers the `CHANGES.md` entries 
 On a project that already carries surfaces, the run is an update. What it covers depends on the version the project records. With the newest version, it offers nothing and reports that the project is current. With an older version, it offers only the `CHANGES.md` entries after that version, applying each accepted one to the places below it touches. With no version, it covers all of these:
 
 - **The conventions, the North Star conventions, and the surfaces section** — by comparison, per *Compare, then offer* below.
-- **The records written under the conventions** — only their editable fields. Add `Enforced by` where a check already holds the record's decision: code that cites the record, or a lint or test configuration that pins what it decided; leave a record with no check found without the line. Add a missing `Area`. Rebuild the index per the conventions. Never change a record's body.
+- **The records written under the conventions** — only their editable fields. Add `Enforced by` where a check already holds the record's decision: code that cites the record, or a lint or test configuration that pins what it decided — one that would fail if the decision were reversed; leave a record with no check found without the line. Add a missing `Area`. Rebuild the index per the conventions. Never change a record's body.
 - **The verification surface** — adopt and extend the verification assets the project already has rather than building a second set beside them, and add the surface's entry to the project-surfaces section, per `references/VERIFICATION_SURFACE.md`.
 - **The glossary** — additions only, ratified as mining describes.
 
-Show each backfilled line and each verification-surface change in the offer, and write only what the user accepts, the same as a convention difference. Mine only where the project records no version, and offer only candidates its glossary and records do not already settle. Once every offered item has an answer, write the newest surfaces version and report what was offered, applied and declined.
+Show each backfilled line and each verification-surface change in the offer, and write only what the user accepts, the same as a convention difference. Report an item the project already satisfies as in place, without offering it. Mine only where the project records no version, and offer only candidates its glossary and records do not already settle. Once every offered item has an answer, write the newest surfaces version and report what was offered, applied and declined.
 
 ### Compare, then offer
 

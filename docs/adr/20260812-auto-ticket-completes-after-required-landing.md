@@ -53,6 +53,9 @@ launch, and `run-ticket` refreshes Auto again before unattended landing.
 - A withdrawn Auto grant or changed claim near merge stops the run even after implementation is complete.
 - Repositories that require human approval cannot grant Auto to Tickets needing that approval.
 
+## Enforced by
+`tests/test_ticket_automation_prompts.py` — `test_run_ticket_recovers_and_lands_before_done`.
+
 ## Source
 - Session: unattended Ticket automation design (2026-08-12)
 - Related: Narrows 20260810-auto-is-an-opt-in-grant-to-unattended-automation; see also 20260812-run-ticket-owns-attempt-not-dispatch, 20260812-ticket-identity-follows-work-across-automated-attempts

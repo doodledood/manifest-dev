@@ -25,5 +25,8 @@ Load published skills through installed plugins. Keep plugin source and distribu
 ### Negative
 - Contributors must install the plugin to use its skills in this repository.
 
+## Enforced by
+`tests/test_local_skill_symlinks.py` — `test_plugin_skills_are_not_exposed_as_local_skills`.
+
 ## Source
 - Supersedes in part 20260705-keep-plugin-first-layout-npx-skills-compatible

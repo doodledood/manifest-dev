@@ -38,6 +38,25 @@ The headline number is **Δ** — with-plugin score minus the no-plugin baseline
 output and failed outputs an opus judge passed unanimously; see the 2026-10-06 baseline. Every
 number before that baseline is sonnet-judged and does not compare with it.
 
+## Scope and statuses
+
+These two suites are this repository's behavior check for its prompts. They cover `figure-out`
+and `define` only, on purpose: a suite run is expensive, and those two skills shape every
+Manifest the others work from. A change to another skill is checked by tracing its text against
+the situations it changes, and adds no case here.
+
+Each case carries one status:
+
+- `unmeasured` — written but never run. Not proof of anything.
+- `measured` — run, with the date and the result, recorded in a results section below.
+- `stale` — a prompt it covers changed after it was measured, so its numbers no longer hold. A
+  bold line opening a results section, such as *Every recorded number in this file is stale as
+  of 2026-10-13*, marks every number under it.
+
+A row in the case table shows `unmeasured` until the case's first run; a row without it was
+measured, and the latest results section says whether that number still holds.
+`tests/test_eval_cases.py` fails when a case directory has no row, or a row has no directory.
+
 ## Running on macOS
 
 Run the suites in the Linux container defined by `Dockerfile` in this directory. On macOS, every
@@ -147,7 +166,7 @@ below describe an older skill and model, so no case is labelled with them here.
 that always digs in fails `05`. No constant policy passes both.
 
 The cases from `17` on were added in one change and have never been run: their headroom, noise,
-and whether either arm already passes them are unknown. The first both-arm run decides which stay,
+and whether either arm already passes them are unknown. Their first run decides which stay,
 under the rules below. Their pairs: `17` mirrors `08` (agreement without a named change against an
 authorized change); `27` mirrors `28` (offer an entry against offer none); `25` and `26` are the
 same three-call shape, unattended and interactive; and `24` is the held-out witness for `23`'s

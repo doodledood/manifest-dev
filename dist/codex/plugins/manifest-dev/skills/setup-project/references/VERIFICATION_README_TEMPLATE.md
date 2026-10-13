@@ -20,13 +20,19 @@ each with what success looks like.>
 
 ## Statuses
 
-Every entry carries one:
+Every entry carries one. <For a feature map or a reader-task list:>
 
 - `unverified` — catalogued but not yet exercised. Not proof of anything.
 - `verified` — exercised by a run, with the date.
-- `stale` — a run found it drifting from <the product | the prompt | the document>. The entry
-  carries a dated line naming what differs, for example
+- `stale` — a run found it drifting from <the product | the document>. The entry carries a
+  dated line naming what differs, for example
   `stale (YYYY-MM-DD): the route moved from /settings to /preferences`.
+
+<For an eval suite:>
+
+- `unmeasured` — written but never run. Not proof of anything.
+- `measured` — run, with the date and the result.
+- `stale` — a prompt it covers changed after it was measured, so its numbers no longer hold.
 
 A run that changes something an entry covers updates and exercises that entry. A run that finds
 an entry it is not changing drifting marks it stale and leaves the repair to the next run that

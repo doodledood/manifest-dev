@@ -41,6 +41,9 @@ A follow-up Ticket is created only for genuinely separate work discovered during
 - The automation needs a distinct way to show that an open Ticket is awaiting a person and must not start another attempt without an explicit retry.
 - Reporting systems cannot treat every terminated automated run as a closed Ticket.
 
+## Enforced by
+`tests/test_ticket_automation_prompts.py` — `test_run_ticket_preserves_ticket_identity_and_routes_follow_ups`.
+
 ## Source
 - Session: figure-out on unattended ticket automation (2026-08-12)
 - Related: 20260810-auto-is-an-opt-in-grant-to-unattended-automation, 20260810-next-ticket-claims-the-ticket-it-picks, 20260806-retire-decision-map-for-ticket-up-and-ticket-store, 20260812-run-ticket-owns-attempt-not-dispatch, 20260812-auto-follow-up-grant-requires-source-and-local-grant

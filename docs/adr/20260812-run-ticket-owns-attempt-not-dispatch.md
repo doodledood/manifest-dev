@@ -38,6 +38,9 @@ The dispatcher owns event delivery, agent launch, credentials, checkout, and the
 - Each hosted runner still needs a small adapter that supplies the exact Ticket context.
 - Dispatchers must enforce Auto and any trusted-actor policy outside the skill.
 
+## Enforced by
+`tests/test_ticket_automation_prompts.py` — `test_run_ticket_has_exact_input_and_dispatch_boundaries`.
+
 ## Source
 - Session: unattended Ticket automation design (2026-08-12)
 - Related: 20260810-next-ticket-claims-the-ticket-it-picks, 20260812-ticket-identity-follows-work-across-automated-attempts

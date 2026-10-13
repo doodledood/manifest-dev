@@ -50,6 +50,9 @@ stored on the Ticket.
 - The handoff can conservatively pause a Ticket whose last process failed after completing durable work but before writing its outcome.
 - Retry tuning remains an operational responsibility outside manifest-dev.
 
+## Enforced by
+partly — `tests/test_ticket_automation_prompts.py` — `test_trigger_adapter_contract_stays_thin_and_recoverable` checks finite retries and a marked handoff; assigning a person is judgment.
+
 ## Source
 - Session: unattended Ticket automation design (2026-08-12)
 - Related: 20260812-trigger-adapters-enforce-per-ticket-single-flight, 20260812-ticket-recovery-uses-coherent-pushed-checkpoints, 20260812-human-assignment-pauses-auto-ticket-execution

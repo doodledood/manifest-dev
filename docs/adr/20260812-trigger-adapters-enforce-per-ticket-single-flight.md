@@ -43,6 +43,9 @@ The trigger adapter owns this serialization because the host knows which executi
 - A hung run blocks later runs for that Ticket until the host terminates or times it out.
 - A queued trigger may start only to discover that the earlier run already completed or escalated the Ticket.
 
+## Enforced by
+partly — `tests/test_ticket_automation_prompts.py` — `test_trigger_adapter_contract_stays_thin_and_recoverable` checks the adapter contract names per-Ticket single-flight; what single-flight requires is judgment.
+
 ## Source
 
 - Session: unattended Ticket automation design (2026-08-12)

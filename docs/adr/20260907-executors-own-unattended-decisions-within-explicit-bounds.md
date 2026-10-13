@@ -95,6 +95,9 @@ work proceeds; they never silently downgrade verification.
 - `just-do` carries additional authority and amendment rules to make its autonomy
   safe across authoring and verification boundaries.
 
+## Enforced by
+partly — `tests/test_dist_skill_references.py` — `test_executor_amendments_preserve_verification` checks amendment routing, evidence invalidation, and scope bounds; the blocker half is judgment.
+
 ## Source
 
 - Amends: 20260727-manifest-intent-leads-with-problem-appetite-and-bounds,

@@ -45,6 +45,9 @@ The completion condition remains concrete and checkable: figure-out autonomous r
 - Documentation that currently teaches `/goal` as the recommended form needs wording updates so Claude-style command examples do not look like the only supported mechanism.
 - Verification has to check behavior across harnesses at the capability level, which is less grep-simple than checking for a literal `/goal` token.
 
+## Enforced by
+`tests/test_dist_skill_references.py` — `test_goal_setting_backstop_is_universal_across_source_and_dist`.
+
 ## Source
 
 - Related: `20260605-pi-native-runtime-package-source-surface`

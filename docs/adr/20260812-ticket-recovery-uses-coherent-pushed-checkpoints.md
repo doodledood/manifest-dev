@@ -43,6 +43,9 @@ Uncommitted work and commits that were not pushed may be lost when a runner stop
 - `run-ticket` must create or resolve the stable branch and record it before substantial repository work.
 - Agents must inspect existing branch, pull-request, and CI state before continuing.
 
+## Enforced by
+`tests/test_ticket_automation_prompts.py` — `test_run_ticket_recovers_and_lands_before_done`.
+
 ## Source
 
 - Session: unattended Ticket automation design (2026-08-12)

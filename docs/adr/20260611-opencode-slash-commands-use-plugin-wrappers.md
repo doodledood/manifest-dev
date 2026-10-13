@@ -51,6 +51,9 @@ No command files are generated or copied. The command layer is runtime config mu
 - OpenCode's command namespace is bare and shared; a user/project `/do` command can shadow manifest-dev's wrapper.
 - The plugin now parses enough YAML frontmatter to read flat `name`, `description`, and `user-invocable` values; if skill frontmatter becomes more complex, the parser may need to be replaced with a real YAML parser or kept within the supported flat subset.
 
+## Enforced by
+`tests/test_dist_install_uninstall.py` — `test_opencode_plugin_config_hook_registers_payload`.
+
 ## Source
 
 - Evidence: local `opencode debug skill` discovered all 18 bundled skills; asking the model to use `figure-out` worked; `/` autocomplete did not show the skills until command wrappers were added.

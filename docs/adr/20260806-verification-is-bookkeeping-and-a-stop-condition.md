@@ -59,6 +59,9 @@ Verification cost — the concern that opened this question — is addressed by 
 - Vendor guidance is followed selectively, so runs cost more tokens than the leanest configuration those pages describe. That trade matches this project's stated audience, but it is a real cost paid on every run.
 - Keeping a bar that a model would clear unaided risks paying for a check twice as models improve. The evidence that would retire it is a bare-goal run whose output passes the gates when evaluated afterwards, and that experiment has not been run.
 
+## Enforced by
+partly — `tests/test_dist_skill_references.py` — `test_do_completion_contract_requires_auditable_gate_ledger` checks completion requires per-gate evidence; ledger and threshold discipline are judgment.
+
 ## Source
 
 - Session: figure-out investigation, 2026-08-06 — current Anthropic and OpenAI prompting guidance read at source, audited against this repository's prompts and the recorded `/do` run of 2026-08-05

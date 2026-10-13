@@ -39,6 +39,9 @@ Claiming is unconditional across venues. Where the venue cannot make the claim v
 ### Accepted risk
 - Two sessions starting within the same pick window can both read a ticket as unclaimed and both claim it — the window is the whole pick, not the write. No reservation protocol is added: collisions are rare in practice, and the cost of one is bounded and visible.
 
+## Enforced by
+`tests/test_ticket_automation_prompts.py` — `test_selector_presents_without_executing`.
+
 ## Source
 - Session: figure-out on parallel ticket sessions (2026-08-10)
 - Related: 20260806-retire-decision-map-for-ticket-up-and-ticket-store, 20260809-next-ticket-derives-its-pick-instead-of-asking, 20260810-recommend-the-projects-shared-tracker-as-the-ticket-venue

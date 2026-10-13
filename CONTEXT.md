@@ -70,8 +70,12 @@ An index that asserts nothing its records don't, and is rebuilt from them rather
 _Avoid_: ADR list, table of contents.
 
 **Verification Surface**:
-A project's durable means of checking that an artifact future runs will change still does its job, in the artifact's own form — a harness plus a feature map for a runnable product, a behavior eval suite for prompts and skills, a reader-task list for a living document — with each entry unverified, verified, or stale; built and repaired by normal runs where the work touches it, never by a separate maintenance pass.
+A project's durable means of checking that an artifact future runs will change still does its job, in the artifact's own form — a harness plus a feature map for a runnable product, a behavior eval suite for prompts and skills, a reader-task list for a living document — with each entry unverified, verified, or stale (an eval case unmeasured, measured, or stale); built and repaired by normal runs where the work touches it, never by a separate maintenance pass.
 _Avoid_: Test suite, e2e suite, control skill.
+
+**Surfaces Version**:
+The integer a project's context file records, in its project-surfaces section, for the setup-project version that last set it up or updated it; it decides what an update offers — nothing at the newest version, the later change-list entries at an older one, a full comparison when absent. Unrelated to the plugin's own version.
+_Avoid_: Plugin version, setup version, template version.
 
 **Lock**:
 A check installed from a correction so the corrected class of mistake fails for every later contributor — a type or structure, a lint or architecture test, an invariant test, or one owning site — with a declared scope; its repository-wide hits that a run leaves unfixed are reported as debt.

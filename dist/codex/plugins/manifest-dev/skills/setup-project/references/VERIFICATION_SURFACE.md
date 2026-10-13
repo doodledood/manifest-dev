@@ -16,7 +16,7 @@ The form follows the artifact:
 |---|---|---|
 | A runnable product — service, CLI, UI, app | A harness plus a feature map | One user-facing feature |
 | Prompts, skills, agents | A behavior eval suite | One behavior the prompt owes |
-| A living document — README, runbook, guide | A list of reader tasks, each walked by a reader with fresh context | One task a reader comes to do |
+| A living document — README, runbook, guide, or a site or page whose job is to inform | A list of reader tasks, each walked by a reader with fresh context | One task a reader comes to do |
 
 A project with several such artifacts keeps one surface per artifact and lists each in the
 project-surfaces section of the context file.
@@ -27,6 +27,11 @@ Before writing anything, look for verification assets the project already has: e
 specs, test harnesses, scripts that drive the product, an eval suite, a verification skill,
 documented manual checks. Adopt and extend them. A second harness beside an existing one gives
 the next run two ways to verify the same thing, and it will pick either.
+
+An adopted asset keeps the scope the project gave it. Setup adds the parts the surface lacks —
+statuses, the README, the repository check — and never entries for what that scope leaves out:
+an eval suite that covers two skills on purpose is not a gap for every other skill. Where the
+asset already has a README, extend that README instead of writing a second one.
 
 ## A runnable product: the harness
 
@@ -75,8 +80,11 @@ about any feature can be placed. Runs then verify the entries they exercise.
 
 One case per behavior the prompt owes, run against the prompt as shipped, judged on what it
 did — files it opened and wrote, what it reported — never on its own account of what it did,
-and with no eval wording in what the candidate sees. Each case carries a status: measured, with
-the date and result, or unmeasured. A changed prompt makes the numbers that measured it stale.
+and with no eval wording in what the candidate sees. Each case carries a status:
+
+- `unmeasured` — written but never run; not proof of anything;
+- `measured` — run, with the date and the result;
+- `stale` — a prompt it covers changed after it was measured, so its numbers no longer hold.
 
 ## A living document: the reader-task list
 
@@ -99,7 +107,7 @@ where it got stuck. Each entry carries the same three statuses as a feature map.
 ## What setup creates, and what runs build
 
 Setup seeds the surface: it records the form and location, adopts existing assets, catalogs
-entries from source as `unverified`, writes the README and the repository check, and wires the
-project-surfaces entry. It builds harness commands only as far as existing assets already
+entries from source in the form's first status (`unverified`, or `unmeasured` for an eval
+suite), writes the README and the repository check, and wires the project-surfaces entry. It builds harness commands only as far as existing assets already
 reach. The run that first needs to exercise an entry builds the rest, inside the change that
 needs it.

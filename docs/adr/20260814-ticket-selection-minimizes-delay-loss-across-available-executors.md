@@ -61,6 +61,9 @@ Auto and Type remain orthogonal Ticket facts. Type is never a priority input. Au
 - A global ready-set comparison can require reading more effort destinations than effort-first selection.
 - Executor duration and alternative-capacity judgments can be uncertain, so the policy must avoid pretending small estimated differences are meaningful.
 
+## Enforced by
+`tests/test_ticket_automation_prompts.py` — `test_ticket_priority_uses_delay_loss_and_executor_time`.
+
 ## Source
 - Session: figure-out on project Ticket prioritization, 2026-08-14
 - Supersedes 20260809-next-ticket-derives-its-pick-instead-of-asking

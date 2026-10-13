@@ -60,6 +60,9 @@ gate-ledger clause. The PR goal has no unknown Manifest-path slot. Nested execut
   or transfer them between machines.
 - PR tending retains its existing PR-based discovery and checkpoint dependency.
 
+## Enforced by
+`tests/test_goal_contract_blocks.py` — `test_auto_chains_leave_goal_emission_to_the_executor` and `test_executor_contract_identifies_manifest_without_prior_context`.
+
 ## Source
 
 - Decision: accept execution-only continuation in exchange for an explicit Manifest
