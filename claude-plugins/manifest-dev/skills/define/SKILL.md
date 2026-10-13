@@ -14,7 +14,7 @@ means amend: targeted changes only, IDs stable, no renumbering.
 
 Before encoding a new Manifest for work in a repository, read what earlier work left on it —
 logs and Manifests for this repository, open debt tickets, and pull requests' "Debt left"
-sections — following figure-out's `references/RECALL.md`: the few most relevant, as dated leads
+sections — following `../figure-out/references/RECALL.md`: the few most relevant, as dated leads
 to check rather than evidence, never another repository's. Note in the digest when the project's
 surfaces version is missing or older than setup-project's newest, without stopping to update.
 
