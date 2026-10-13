@@ -17,7 +17,7 @@ in `README.md` beside this file.
 
 ## Install it in another CLI
 
-- **Where:** `README.md` → *Other CLIs*; `dist/codex/README.md` → *Install* and *Parity with Claude Code*; `dist/opencode/README.md` → *Install* and *Parity with Claude Code*; `dist/pi/README.md` → *Install*
+- **Where:** `README.md` → *Other CLIs*; `dist/codex/README.md` → *Install* and *Parity with Claude Code*; `dist/opencode/README.md` → *Install* and *Parity with Claude Code*; `dist/pi/README.md` → *Install* and *Parity with Claude Code*
 - **Ends able to:** install it in Codex, OpenCode, or Pi, and name what differs from Claude Code.
 - **Status:** unverified
 
@@ -84,5 +84,17 @@ in `README.md` beside this file.
 ## Pick the tools skill for a job
 
 - **Where:** `claude-plugins/manifest-dev-tools/README.md` → *Pull requests* and *Prompts* and *People and sessions*
-- **Ends able to:** name the tools skill that reviews someone else's pull request, tends your own, reviews a prompt, or hands a session to a fresh agent.
+- **Ends able to:** name the tools skill that reviews another author's pull request, tends the reader's own, reviews a prompt, or hands a session to a fresh agent.
+- **Status:** unverified
+
+## Review a change outside a run
+
+- **Where:** `claude-plugins/manifest-dev/README.md` → *Review and verification*
+- **Ends able to:** pick the review skill for code, prose, a design, or a pull request, and invoke it directly.
+- **Status:** unverified
+
+## Get design direction for an artifact
+
+- **Where:** `claude-plugins/manifest-dev/README.md` → *First-principles design*
+- **Ends able to:** ask `/design` for direction on an artifact and know which skill evaluates the result.
 - **Status:** unverified
