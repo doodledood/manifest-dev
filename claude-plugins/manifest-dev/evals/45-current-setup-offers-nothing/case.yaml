@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 45-current-setup-offers-nothing
+context:
+  scaffold_script: scaffold.sh
