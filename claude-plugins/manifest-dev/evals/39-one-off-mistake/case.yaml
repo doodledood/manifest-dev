@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 39-one-off-mistake
+context:
+  scaffold_script: scaffold.sh

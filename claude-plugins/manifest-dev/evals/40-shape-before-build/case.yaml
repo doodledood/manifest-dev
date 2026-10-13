@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 40-shape-before-build
+context:
+  scaffold_script: scaffold.sh

@@ -106,6 +106,32 @@ from a discipline `SKILL.md` explicitly states.
 | `27-taste-offers` | Taste, plugin arm only | At the session-end sweep, offer an entry for a stated preference and for an explained reversal, built on the user's reason; write nothing before a yes | tuning · unmeasured |
 | `28-universal-not-taste` | Taste, plugin arm only | Make no Taste offer for a discipline every session owes | held out · unmeasured |
 | `29-ratified-entry-lands` | Taste, repository | After the user's yes, write the entry inside the `## Taste` section and change nothing else in the file | tuning · unmeasured |
+| `30-update-offer-for-older-setup` | docs, repository, plugin arm only | Offer the setup update for a project set up before surfaces versions existed — only what the newer setup adds, never a redo of what it has | unmeasured |
+| `31-record-names-what-enforces-it` | docs, repository, plugin arm only | A recorded decision names what enforces it, or why nothing can | unmeasured |
+| `32-reads-the-verification-surface` | autonomous, repository | Plan the check through the project's verification surface and treat an `unverified` entry as not yet proof | unmeasured |
+| `33-no-verification-surface` | autonomous, repository | With no way to check the product, plan a durable one scoped to what the change touches | unmeasured |
+| `34-checking-a-skill-change` | autonomous, repository | Check a skill change by behavior cases, and note which recorded numbers go stale | unmeasured |
+| `35-checking-a-readme-change` | autonomous, repository | Check a document change by the tasks its reader comes to do | unmeasured |
+| `36-marks-drift-it-wont-fix` | autonomous, repository, plugin arm only | Mark an untouched drifting map entry stale with a dated line; leave touched entries for the work | unmeasured |
+| `37-correction-becomes-a-lock` | press, repository | Turn a stated invariant into a check with its kind and scope, not a comment | unmeasured |
+| `38-stated-rule-conflicts-with-a-record` | autonomous, repository | Raise a requested rule's conflict with a recorded decision before locking it | unmeasured |
+| `39-one-off-mistake` | negative, repository | Call a one-off a one-off; no check aimed at a single sentence | unmeasured |
+| `40-shape-before-build` | autonomous, repository | Sketch the shape, compare a second one, and settle one owner for shared state | unmeasured |
+| `41-hand-synced-list` | autonomous, repository | Derive one list from the other, or check they agree, instead of editing both by hand | unmeasured |
+| `42-one-line-fix` | negative, repository | No design ceremony for a typo | unmeasured |
+| `43-recalls-earlier-work` | autonomous, repository, plugin arm only | Bring in this repository's earlier ruling as a dated lead; ignore another repository's log | unmeasured |
+| `44-debt-on-the-path` | autonomous, repository | Offer recorded debt on the change's path as a behavior-preserving first step | unmeasured |
+
+Cases `30`–`44` were written on 2026-10-13 and have never been run. Their split — tuning or held
+out — and which survive are decided at their first both-arm run. `30` uses a project set up before
+surfaces versions existed: until a second surfaces version ships, that is the only way a project
+can be behind, and the case grades the same behavior an older recorded version would — offering
+what the newer setup adds, not a redo. `31`, `36` and `43` exist only with the plugin and run on the
+plugin arm alone, like `27` and `28`.
+
+**Every recorded number in this file is stale as of 2026-10-13.** That change edited figure-out's
+spine, its docs-mode and autonomous references, and its task files, so no earlier result measures
+the skill as it ships now. The next baseline replaces them.
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.

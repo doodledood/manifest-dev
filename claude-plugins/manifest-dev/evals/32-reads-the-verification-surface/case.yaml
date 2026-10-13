@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 32-reads-the-verification-surface
+context:
+  scaffold_script: scaffold.sh

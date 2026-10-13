@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 37-correction-becomes-a-lock
+context:
+  scaffold_script: scaffold.sh

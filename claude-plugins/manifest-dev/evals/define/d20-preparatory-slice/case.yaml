@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: d20-preparatory-slice
+context:
+  scaffold_script: scaffold.sh

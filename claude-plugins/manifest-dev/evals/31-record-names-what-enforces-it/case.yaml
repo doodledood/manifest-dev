@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 31-record-names-what-enforces-it
+context:
+  scaffold_script: scaffold.sh

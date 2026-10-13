@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 35-checking-a-readme-change
+context:
+  scaffold_script: scaffold.sh

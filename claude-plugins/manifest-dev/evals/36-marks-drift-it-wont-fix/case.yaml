@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 36-marks-drift-it-wont-fix
+context:
+  scaffold_script: scaffold.sh

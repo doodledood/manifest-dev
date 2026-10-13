@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 44-debt-on-the-path
+context:
+  scaffold_script: scaffold.sh
