@@ -15,7 +15,7 @@ Manifest beside a small repository. Without it, the case runs against an empty d
 measures nothing. Only pass it for case files from this
 repository: a scaffold is bash that runs as you.
 
-Its scope and the meaning of each case's status are in the figure-out suite's README
+This suite's scope and the meaning of each case's status are in the figure-out suite's README
 (`../README.md`, *Scope and statuses*). The headline number is **Δ**, the with-plugin score minus
 the no-plugin baseline. Read the figure-out suite's README (`../README.md`) before trusting a Δ
 from this one: its rules on decomposing Δ by arm, the noise floor, and changing graders apply here

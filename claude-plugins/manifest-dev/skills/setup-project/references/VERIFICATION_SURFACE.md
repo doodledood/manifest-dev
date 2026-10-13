@@ -95,8 +95,10 @@ where it got stuck. Each entry carries the same three statuses as a feature map.
 ## Every form
 
 - **A repository check** fails when an entry points at something that no longer exists — a
-  route, a command, a selector, a case, a section. It runs with the project's tests, or as a script the harness's doctor calls where the project has
-  no test runner, with or without CI, so structural drift fails even for contributors who never use this
+  route, a command, a selector, a case, a section. It runs with the project's tests, or as a
+  script the harness's doctor calls where the project has
+  no test runner, with or without CI, so structural drift fails even for contributors who never
+  use this
   workflow.
 - **The surface's own README** says what the surface covers, how to run it, what each status
   means, and how a stale line reads. Emit it from `VERIFICATION_README_TEMPLATE.md` beside this
@@ -108,6 +110,7 @@ where it got stuck. Each entry carries the same three statuses as a feature map.
 
 Setup seeds the surface: it records the form and location, adopts existing assets, catalogs
 entries from source in the form's first status (`unverified`, or `unmeasured` for an eval
-suite), writes the README and the repository check, and wires the project-surfaces entry. It builds harness commands only as far as existing assets already
+suite), writes the README and the repository check, and wires the project-surfaces entry. It
+builds harness commands only as far as existing assets already
 reach. The run that first needs to exercise an entry builds the rest, inside the change that
 needs it.

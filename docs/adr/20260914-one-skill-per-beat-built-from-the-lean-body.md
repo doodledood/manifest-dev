@@ -123,6 +123,9 @@ What each beat keeps differs, and only the first is measured:
 - The mirror cases are retired, so the comparison cannot be re-run: one of the two prompts no longer
   exists. These numbers are the record.
 
+## Enforced by
+partly — `tests/test_dist_skill_references.py` — `test_manifest_schema_stays_topology_neutral` fails if `do` regains the verification modes or their references; that each beat converges on one skill is judgment.
+
 ## Source
 - Related: Supersedes 20260830-just-do-states-the-floor-and-keys-its-log-to-the-manifest;
   narrows 20260728-move-verification-execution-policy-to-do,

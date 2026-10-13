@@ -74,7 +74,7 @@ A project's durable means of checking that an artifact future runs will change s
 _Avoid_: Test suite, e2e suite, control skill.
 
 **Surfaces Version**:
-The integer a project's context file records, in its project-surfaces section, for the setup-project version that last set it up or updated it; it decides what an update offers — nothing at the newest version, the later change-list entries at an older one, a full comparison when absent. Unrelated to the plugin's own version.
+The integer, listed in setup-project's `CHANGES.md`, that a project's context file records in its project-surfaces section when setup-project installs or updates its surfaces. The recorded number decides what an update offers: nothing at the newest version, the later `CHANGES.md` entries at an older one, and a full comparison when the project records none. Unrelated to the plugin's own version.
 _Avoid_: Plugin version, setup version, template version.
 
 **Lock**:

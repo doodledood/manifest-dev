@@ -14,7 +14,7 @@ answered them.
   project's verification surface.
 - A verification surface is seeded for each artifact future runs will change: its form and
   location, existing verification assets adopted within the scope the project gave them,
-  entries catalogued from source as `unverified` (`unmeasured` for an eval suite), its README, and a repository check that its entries still point at things
-  that exist.
+  entries catalogued from source as `unverified` (`unmeasured` for an eval suite), its README,
+  and a repository check that its entries still point at things that exist.
 
-Digest: b97c5614139abe454049a7b1010a825cfd6ca4e689fa47213fd459fc5ed59ae5
+Digest: ee6a51649c1478a9810c1984a3108e7f67a90a61debbe9392d94f43630c08b01

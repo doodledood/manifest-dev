@@ -152,6 +152,9 @@ schema. No translation path is provided.
   the execution runs. Manifests live outside the repository, so this holds across fresh clones
   and worktrees, but an unreadable path is a new BLOCKED cause rather than a silent wrong verdict.
 
+## Enforced by
+partly — `tests/test_dist_skill_references.py` — `test_every_operative_manifest_example_uses_the_current_gate_schema` fails if a shipped gate example regains the `verify` split; that a title summarizes and never adds is judgment.
+
 ## Source
 - Session: figure-out session, 2026-08-07
 - Related: [20260728-move-verification-execution-policy-to-do](20260728-move-verification-execution-policy-to-do.md)

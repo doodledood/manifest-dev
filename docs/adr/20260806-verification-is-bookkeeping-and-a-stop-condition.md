@@ -60,7 +60,7 @@ Verification cost — the concern that opened this question — is addressed by 
 - Keeping a bar that a model would clear unaided risks paying for a check twice as models improve. The evidence that would retire it is a bare-goal run whose output passes the gates when evaluated afterwards, and that experiment has not been run.
 
 ## Enforced by
-partly — `tests/test_dist_skill_references.py` — `test_do_completion_contract_requires_auditable_gate_ledger` checks completion requires per-gate evidence; ledger and threshold discipline are judgment.
+partly — `tests/test_dist_skill_references.py` — `test_do_completion_contract_requires_auditable_gate_ledger` checks that completion requires per-gate evidence; ledger and threshold discipline are judgment.
 
 ## Source
 

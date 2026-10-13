@@ -33,8 +33,8 @@ Every entry carries one:
 
 A run that changes something an entry covers updates and walks that entry. A run that finds an
 entry it is not changing drifting marks it stale and leaves the repair to the next run that
-touches it. A failure that is the document's fault, not the entry's, is reported, never papered
-over by weakening the entry.
+touches it. When the document is at fault, not the entry, the run reports it and never weakens the
+entry to pass.
 
 ## Evidence
 

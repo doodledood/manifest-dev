@@ -48,13 +48,15 @@ the situations it changes, and adds no case here.
 Each case carries one status:
 
 - `unmeasured` — written but never run. Not proof of anything.
-- `measured` — run, with the date and the result, recorded in a results section below.
+- `measured` — run, with the date and the result, recorded in a dated results section later
+  in this file.
 - `stale` — a prompt it covers changed after it was measured, so its numbers no longer hold. A
-  bold line opening a results section, such as *Every recorded number in this file is stale as
-  of 2026-10-13*, marks every number under it.
+  bold dated line, such as *Every recorded number in this file is stale as of 2026-10-13*,
+  marks every number recorded before that date.
 
-A row in the case table shows `unmeasured` until the case's first run; a row without it was
-measured, and the latest results section says whether that number still holds.
+A case shows `unmeasured`, in its row or in the heading of the table that lists it, until its
+first run. A case without it was measured, and the latest results section says whether that
+number still holds.
 `tests/test_eval_cases.py` fails when a case directory has no row, or a row has no directory.
 
 ## Running on macOS

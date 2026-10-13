@@ -13,8 +13,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TASKS = ROOT / "docs" / "reader-tasks" / "TASKS.md"
 
-ENTRY = re.compile(r"^### (.+?)\n(.*?)(?=^### |\Z)", re.MULTILINE | re.DOTALL)
-POINTER = re.compile(r"`([\w./-]+\.(?:md|html))` → \*([^*\n]+)\*")
+ENTRY = re.compile(r"^## (.+?)\n(.*?)(?=^## |\Z)", re.MULTILINE | re.DOTALL)
+POINTER = re.compile(
+    r"`([\w./-]+\.(?:md|html))` → \*([^*\n]+)\*((?: and \*[^*\n]+\*)*)"
+)
 STATUS = re.compile(
     r"^- \*\*Status:\*\* (unverified|verified \(\d{4}-\d{2}-\d{2}\)|stale \(\d{4}-\d{2}-\d{2}\).*)$",
     re.MULTILINE,
@@ -41,12 +43,16 @@ def test_every_entry_points_at_existing_sections_and_carries_a_status() -> None:
         pointers = POINTER.findall(body)
         if not pointers:
             broken.append(f"{task}: names no document section")
+        if body.count("→") + body.count("->") != len(pointers):
+            broken.append(f"{task}: a pointer is not written `FILE` → *Section*")
         if not STATUS.search(body):
             broken.append(f"{task}: no valid status")
-        for file, title in pointers:
+        for file, title, more in pointers:
             path = ROOT / file
             if not path.is_file():
                 broken.append(f"{task}: {file} does not exist")
-            elif not _has_section(path, title):
-                broken.append(f"{task}: {file} has no section *{title}*")
+                continue
+            for name in [title, *re.findall(r"\*([^*\n]+)\*", more)]:
+                if not _has_section(path, name):
+                    broken.append(f"{task}: {file} has no section *{name}*")
     assert not broken, "\n".join(broken)

@@ -44,7 +44,7 @@ Keep metric development beside a reproducible evaluation harness, outside ordina
 - Native hosts, assistive announcements, physical devices and unusual paint remain explicit coverage limits.
 
 ## Enforced by
-partly — `tests/test_design_instruments.py` — `test_optional_instruments_contract` checks the instruments take input only and drive no browser; that no universal score is reported is judgment.
+partly — `tests/test_design_instruments.py` — `test_optional_instruments_contract` checks that the instruments take input only and drive no browser; that no universal score is reported is judgment.
 
 ## Source
 
