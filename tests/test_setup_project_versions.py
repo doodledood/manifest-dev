@@ -21,6 +21,7 @@ SKILLS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "skills"
 SETUP = SKILLS / "setup-project" / "references"
 CHANGES = SETUP / "CHANGES.md"
 NORTH_STAR_FORMAT = SETUP / "NORTH_STAR_FORMAT.md"
+EVALS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "evals"
 
 # Every file whose text setup-project copies or emits into a project.
 EMITTED = (
@@ -94,22 +95,24 @@ def test_surfaces_template_carries_the_latest_version() -> None:
     )
 
 
-EVALS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "evals"
+NEWEST_VERSION_CASE = "45-current-setup-offers-nothing"
 
 
 def test_eval_cases_track_the_newest_version() -> None:
-    # One case records the newest version and is graded on no offer. From v2 on, another
-    # records the version before it, the only way to exercise the update for an older version.
+    # The newest-version case is graded on no offer, so it records the newest version. From
+    # v2 on, another case records the version before it, the only way to exercise the update
+    # for a project recording an older version.
     newest = versions()[-1][0]
-
-    def recording(version: int) -> list[str]:
-        marker = f"<!-- setup-project surfaces v{version} -->"
-        return [
-            p.parent.name
-            for p in sorted(EVALS.glob("*/scaffold.sh"))
-            if marker in p.read_text(encoding="utf-8")
-        ]
-
-    assert recording(newest), f"no eval case records the newest version, v{newest}"
+    recorded = {
+        p.parent.name: {
+            int(v) for v in TEMPLATE_VERSION.findall(p.read_text(encoding="utf-8"))
+        }
+        for p in EVALS.glob("*/scaffold.sh")
+    }
+    assert newest in recorded.get(
+        NEWEST_VERSION_CASE, set()
+    ), f"{NEWEST_VERSION_CASE} must record the newest version, v{newest}"
     if newest >= 2:
-        assert recording(newest - 1), f"no eval case records v{newest - 1}, one behind"
+        assert any(
+            newest - 1 in versions_ for versions_ in recorded.values()
+        ), f"no eval case records v{newest - 1}, one behind"

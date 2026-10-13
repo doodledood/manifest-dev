@@ -40,7 +40,7 @@ An agent copies the nearest example and takes the easiest path that passes its c
 - **Corrections become checks.** When `/do` fixes something a review or a person caught, it adds the type, lint, or test that would have caught it, scoped so it flags real problems, and the decision record names that check.
 - **Debt stays visible.** What a run finds and does not fix is listed when it finishes and in a "Debt left" section of every pull request it opens, where any later run can read it. The next change that passes through that code is offered the fix first.
 - **A way to verify that stays fresh.** Each project keeps a durable way to check its result — a small harness and a map of features for a product, behavior cases for prompts, reader tasks for a document. Runs build it when it is missing and repair it when it drifts.
-- **Earlier work is not lost.** A new session starts from what earlier sessions on the same repository ruled and found, and a project set up by an older version is offered only what changed since.
+- **Earlier work is not lost.** A session working on a repository, whether on a bug, a change, a design, or a decision, starts from what earlier sessions on it ruled and found, and a project set up by an older version is offered only what changed since.
 
 ## Install
 

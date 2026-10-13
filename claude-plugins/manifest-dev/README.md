@@ -42,7 +42,7 @@ Nothing new to remember: the same commands move a codebase toward one the workfl
 - **Corrections become checks** — `/do` turns a caught mistake into a scoped type, lint, or test, and the decision record names it.
 - **Debt in `done` and in pull requests** — what a run leaves unfixed is listed at the end and in a "Debt left" section of each pull request; the next change on that path is offered the fix.
 - **A verification surface kept fresh by runs** — a harness and feature map, behavior cases, or reader tasks, built when missing and repaired when drifting.
-- **Recall and update offers** — sessions that will change a repository start from earlier work on it, and set-up projects are offered what changed since their recorded surfaces version.
+- **Recall and update offers** — sessions working on a repository, whether on a bug, a change, a design, or a decision, start from earlier work on it, and set-up projects are offered what changed since their recorded surfaces version.
 
 ## Project surfaces
 

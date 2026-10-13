@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-mkdir -p docs/adr src
+mkdir -p docs/adr src tests
 cat > CLAUDE.md <<'EOF'
 # Shelfnote
 
@@ -105,7 +105,6 @@ def save(loans):
     PATH.write_text(json.dumps(loans))
 EOF
 
-mkdir -p src tests
 cat > README.md <<'EOF'
 # Shelfnote
 
