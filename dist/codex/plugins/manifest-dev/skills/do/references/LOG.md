@@ -8,7 +8,7 @@ This log is not a transcript, a handoff, an ADR (a deviation that proves genuine
 
 Resolve the active log path before execution starts and surface it immediately. The log's first line is a title naming the Manifest's topic, and the next names the repository it is about — its remote URL, or its path when it has none — so a later session's recall can match logs by repository and topic and skip the rest.
 
-Create the log at `~/.manifest-dev/logs/do-log-{timestamp}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from multi-day runs survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS`.
+Use the path `SKILL.md` names, which is keyed to the Manifest so every launch on it reopens the same log. Create the directory (`~` = `$HOME` / `%USERPROFILE%`), and fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory is not writable.
 
 **Caller-supplied journal.** When a caller supplies a journal/log path (for example, the default `/babysit-pr` journal), that path *is* the log — no second file.
 
@@ -20,7 +20,7 @@ Read the log before deciding retries and comment judgments in a resumed or long-
 
 Credentials, tokens, and personal data never enter the log — it outlives the run and travels by path. When evidence involves a secret, record where it lives (an env var name, a vault path) rather than its value, and quote from command output only the lines that carry the signal.
 
-For `/do` runs, the first entry fixes the logical run's verification policy: selected mode, explicit verifier model or inherited model choice, and whether `--exhaustive-verification` is in force. A later invocation changing any of them always starts a fresh logical run and gate ledger. For `/do`'s default timestamped logs, resolve a new physical log file. In a caller-supplied journal, keep the same file, append a `Run initialized` boundary with the new policy, and start an empty active ledger; prior gate verdicts remain historical and are not carried into the new run. This preserves caller-owned continuity without mixing evidence provenance.
+A launch on a Manifest that already has a log resumes from it. A caller-supplied journal can hold more than one run: when the caller reinvokes `/do` on it for a new run, append a `Run initialized` boundary and start an empty active ledger; prior gate verdicts remain historical and are not carried into the new run.
 
 ## Content
 

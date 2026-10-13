@@ -54,7 +54,7 @@ Each case carries one status:
   bold dated line, such as *Every recorded number in this file is stale as of 2026-10-13*,
   marks every number recorded before that date.
 
-A change to a prompt a case covers updates that case where the change affects what it tests, and
+A change to a prompt that a case covers updates that case where the change affects what it tests, and
 either runs the measured cases or marks them stale; unmeasured cases stay unmeasured.
 
 A case shows `unmeasured`, in its row or in the heading of the table that lists it, until its

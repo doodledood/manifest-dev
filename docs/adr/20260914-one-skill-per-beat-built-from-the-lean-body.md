@@ -124,7 +124,7 @@ What each beat keeps differs, and only the first is measured:
   exists. These numbers are the record.
 
 ## Enforced by
-partly — `tests/test_dist_skill_references.py` — `test_manifest_schema_stays_topology_neutral` fails if `do` regains the retired verification-mode references or names such as `verification mode` and `--exhaustive-verification`; that each beat converges on one skill is judgment.
+partly — `tests/test_dist_skill_references.py` — `test_manifest_schema_stays_topology_neutral` fails if `do` regains the retired verification-mode references or names such as `verification mode` and `--exhaustive-verification`, and `test_do_log_path_is_stated_once` fails if a `do` file other than `SKILL.md` names a log path; that each beat converges on one skill is judgment.
 
 ## Source
 - Related: Supersedes 20260830-just-do-states-the-floor-and-keys-its-log-to-the-manifest;

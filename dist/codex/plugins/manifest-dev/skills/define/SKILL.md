@@ -16,7 +16,8 @@ Before encoding a new Manifest for work in a repository, read what earlier work 
 logs and Manifests for this repository, open Tickets on the work's paths, and pull requests' "Debt left"
 sections — following `../figure-out/references/RECALL.md`. Note in the digest when the project's
 surfaces version is missing or older than setup-project's newest, without stopping to update, and
-record it, with any offer flagged upstream, as an `ASM-*` entry so the completion report names it.
+record it as an `ASM-*` entry. Record each offer flagged upstream as its own `ASM-*` entry, so the
+completion report names it.
 
 figure-out reaches understanding of the *problem*; this skill owns the *encoding*
 calls — invariant versus guidance, what a gate ranges over, where it binds, its

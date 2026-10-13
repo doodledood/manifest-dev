@@ -536,7 +536,7 @@ def test_verification_policy_prompts_preserve_portable_boundaries() -> None:
     ]
     for path in log_files:
         text = path.read_text(encoding="utf-8")
-        assert "default timestamped logs" in text, path
+        assert "Use the path `SKILL.md` names" in text, path
         assert "caller-supplied journal" in text, path
         assert "append a `Run initialized` boundary" in text, path
         assert "prior gate verdicts remain historical" in text, path
@@ -920,3 +920,19 @@ def test_check_pr_stays_workflow_neutral_on_every_surface() -> None:
         assert path.exists(), path
         forbidden = "WAIT" + "-PENDING"
         assert forbidden not in path.read_text(encoding="utf-8"), path
+
+
+# Holds the decision in docs/adr/20260914-one-skill-per-beat-built-from-the-lean-body.md.
+def test_do_log_path_is_stated_once() -> None:
+    """Only do/SKILL.md names the log path; a second path lets a run write where
+    the next launch never looks."""
+    for skill in (
+        ROOT / "claude-plugins/manifest-dev/skills/do",
+        DIST / "codex/plugins/manifest-dev/skills/do",
+    ):
+        naming = sorted(
+            str(path.relative_to(skill))
+            for path in skill.rglob("*.md")
+            if "manifest-dev/logs/" in path.read_text(encoding="utf-8")
+        )
+        assert naming == ["SKILL.md"], (skill, naming)

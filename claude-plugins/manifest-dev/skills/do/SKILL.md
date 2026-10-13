@@ -110,4 +110,4 @@ hex characters of SHA-256 over its absolute path. Fixing the scheme is what reop
 same Manifest's log on every launch and keeps two manifests sharing a basename in
 different directories apart. Read it before resuming and append as you go: it is where
 the goal block's checkpoint notes land. `references/LOG.md` holds the entry shape
-and append discipline — not its path rule.
+and append discipline; the path rule is this one.

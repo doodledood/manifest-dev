@@ -6,7 +6,7 @@ This directory is how this project checks that its living documents still do the
 - `claude-plugins/README.md`;
 - `claude-plugins/manifest-dev/README.md`;
 - `claude-plugins/manifest-dev-tools/README.md`;
-- `dist/codex/README.md`, `dist/opencode/README.md` and `dist/pi/README.md`;
+- `dist/codex/README.md`, `dist/opencode/README.md`, and `dist/pi/README.md`;
 - `CONTRIBUTING.md`;
 - the explainer site, `site/index.html`.
 

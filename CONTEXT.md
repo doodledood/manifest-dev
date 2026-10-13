@@ -74,7 +74,7 @@ A project's durable means of checking that an artifact future runs will change s
 _Avoid_: Test suite, e2e suite, control skill.
 
 **Reader Task**:
-One entry in a living document's verification surface: a task a reader comes to the document to do, the sections the reader relies on, what the reader should end up able to do, and a status. A reader with fresh context, given only the document, walks it.
+One entry in a living document's verification surface: a task a reader comes to the document to do, the sections the reader relies on, what the reader should end up able to do, and a status. A reader with fresh context, given only the document, walks the entry.
 _Avoid_: User story, test case, doc test.
 
 **Surfaces Version**:
@@ -86,7 +86,7 @@ A check installed from a correction so the corrected class of mistake fails for 
 _Avoid_: Rule (that is prose), guard, concurrency lock.
 
 **Debt**:
-What a run found and did not fix: unfixed lock hits, refactor flags from workaround comments, constraint comments awaiting encoding, new suppressions, reshapes outside the change's scope, product regressions the verification surface exposed, and a new verification surface the user may remove. A run names it in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket; a later run whose work reaches the same area offers to fold it in.
+What a run found and did not fix: unfixed lock hits, refactor flags from workaround comments, constraint comments awaiting encoding, new suppressions, reshapes outside the change's scope, product regressions the verification surface exposed, and a new verification surface the user may remove. A run names it in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket. A later run whose work reaches the same area offers to fold it in.
 _Avoid_: Tech debt (too broad), TODO, backlog.
 
 **Seed**:
