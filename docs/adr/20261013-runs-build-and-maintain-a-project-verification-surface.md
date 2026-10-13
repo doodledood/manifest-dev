@@ -19,6 +19,7 @@ Each Manifest designs its own verification, and nothing durable remains after th
 - A repository check that map entries still reference existing routes, commands, or selectors is part of the surface, so structural drift fails even for contributors who do not use this workflow.
 - Unattended runs build a missing surface too, scoped to the features the change touches, and the completion report lists it as a new project surface the user can remove. A harness for the touched features is verification code for the change, like a regression test. It is not in the class of handoffs that install or rewire the project's context surfaces, which an unattended run only flags.
 - The creation mechanics live in a core init-context reference. init-context can seed the surface when it runs.
+- figure-out marks a drifting entry that the current work will not repair: it writes a dated stale line into the entry, naming what differs, the way docs mode lowers a North Star position on evidence. The next run that touches the entry repairs it. This is the one write figure-out makes to the verification surface.
 - No scheduled sweep. An entry that no run touches may go stale; the next run that touches it repairs it.
 
 ## Alternatives Considered
@@ -38,6 +39,7 @@ Each Manifest designs its own verification, and nothing durable remains after th
 - The first run in a project without a surface is heavier.
 - One more gate on each Manifest that touches a mapped feature.
 - Entries that no run touches can go stale.
+- figure-out gains one more exception to its read-only stance: the stale marker.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
