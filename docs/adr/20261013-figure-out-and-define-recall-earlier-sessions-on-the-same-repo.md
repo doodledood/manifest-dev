@@ -14,8 +14,8 @@ Each skill reads back only its own file. figure-out reads a log when it resumes 
 
 ## Decision
 - figure-out recalls once an investigation concerns work in the active repository: a bug, change, design, or decision. define recalls when it writes a new Manifest. Each scans the workflow's logs and Manifests for sessions on the same repository whose topic overlaps.
-- Recall is proportional. A general or quick question that the repository's history cannot bear on loads nothing. The scan matches each log's first lines, which name its topic and repository, before reading any file whole. How much it reads scales with what missing an earlier ruling would cost.
-- It reads only the leading conclusion, the rulings, and the out-of-scope calls of the few most relevant, not whole logs.
+- Recall is proportional. A general or quick question that the repository's history cannot bear on loads nothing. The scan matches each log's repository line and first entry title before reading any file whole, and lists recent pull requests in one query, reading only their "Debt left" sections. How much it reads scales with what missing an earlier ruling would cost.
+- It reads only the leading conclusion, the rulings, and the out-of-scope calls of the logs it opens, not whole logs.
 - It carries what it finds as dated leads from an earlier session, to check before relying on them, under the same rule that already makes verified status decay. A recalled claim never counts as verified evidence by itself.
 - A ruling found there that never became a decision record or a Taste entry is offered for capture.
 - Each log records the repository it is about, so recall matches by repository and nothing carries from one repository's sessions into another's.
