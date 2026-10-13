@@ -124,7 +124,7 @@ from a discipline `SKILL.md` explicitly states.
 | `43-recalls-earlier-work` | autonomous, repository, plugin arm only | Bring in this repository's earlier ruling as a dated lead; ignore another repository's log | unmeasured |
 | `44-debt-on-the-path` | autonomous, repository | Offer recorded debt on the change's path as a behavior-preserving first step | unmeasured |
 | `45-current-setup-offers-nothing` | docs, repository, plugin arm only | Offer no setup update to a project that records the newest surfaces version, and do not re-offer the items it declined | unmeasured |
-| `46-general-question-skips-recall` | autonomous, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
+| `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and have never been run. Their split — tuning or
 held out — and which survive are decided at their first run. `30` uses a project set up before
