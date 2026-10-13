@@ -161,6 +161,7 @@
 | 2026-10-12 | [Unattended runs flag the user's calls by a disagreement test, not by their own confidence](20261012-unattended-runs-flag-the-users-calls-by-disagreement-not-confidence.md) | Accepted | define / do |
 | 2026-10-13 | [The code-simplicity review asks which reshaping makes needed complexity disappear](20261013-code-simplicity-asks-what-reshaping-removes.md) | Accepted | Code review |
 | 2026-10-13 | [A correction becomes a scoped lock where one exists, and the lock's hits across the repository are reported as debt](20261013-corrections-become-scoped-locks-and-their-hits-become-reported-debt.md) | Accepted | do |
+| 2026-10-13 | [Debt is paid on the path of work, so a codebase converges through normal runs](20261013-debt-is-paid-on-the-path-of-work.md) | Accepted | define / do |
 | 2026-10-13 | [Decision records name what enforces them, and that line is editable in place](20261013-decision-records-name-what-enforces-them.md) | Accepted | ADR conventions |
 | 2026-10-13 | [Design judgment moves to design time as task-file probes and Defaults; review dimensions stay as post-code gates](20261013-design-judgment-moves-to-design-time-as-task-file-probes.md) | Accepted | Task guidance |
 | 2026-10-13 | [figure-out and define recall earlier sessions on the same repository and topic](20261013-figure-out-and-define-recall-earlier-sessions-on-the-same-repo.md) | Accepted | define / figure-out |

@@ -21,7 +21,7 @@ Each change keeps to one concern, which keeps a fix from turning into a bundle o
 - The effect intended: maintenance cost concentrates where change happens, and the flow pays debt exactly there while locks keep known classes from returning. The parts of the codebase that change most become the easiest to change. A part that no run touches costs nothing until one does.
 
 ## Alternatives Considered
-- **Leave reported debt to the user**: with the user working only through the four entry points, it does not get paid.
+- **Rely only on the user following up reported debt**: the follow-up stays available inside the flow — the completion report offers ticket-up, and a later auto run can take the tickets — but debt that sits on the path of later work would still wait for someone to pick it, while the run that touches it already has its context loaded.
 - **Fold all known debt into every run**: it bundles unrelated work into each change.
 - **A periodic cleanup pass**: it needs infrastructure or someone to remember it.
 - **Let the flow start structural refactors on its own**: the direction of the architecture is the user's call; the flow proposes it with evidence instead.
