@@ -46,7 +46,7 @@ The completion condition remains concrete and checkable: figure-out autonomous r
 - Verification has to check behavior across harnesses at the capability level, which is less grep-simple than checking for a literal `/goal` token.
 
 ## Enforced by
-`tests/test_dist_skill_references.py` — `test_goal_setting_backstop_is_universal_across_source_and_dist`.
+`tests/test_dist_skill_references.py` — `test_goal_setting_backstop_is_universal_across_source_and_dist` fails if the figure-out, define, or do source prompts name `/goal` or lose the goal-setting or completion-contract wording, or the Codex copies bring back the old `/goal` wording.
 
 ## Source
 

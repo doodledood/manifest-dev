@@ -40,7 +40,7 @@ Claiming is unconditional across venues. Where the venue cannot make the claim v
 - Two sessions starting within the same pick window can both read a ticket as unclaimed and both claim it — the window is the whole pick, not the write. No reservation protocol is added: collisions are rare in practice, and the cost of one is bounded and visible.
 
 ## Enforced by
-`tests/test_ticket_automation_prompts.py` — `test_selector_presents_without_executing`.
+`tests/test_ticket_automation_prompts.py` — `test_selector_presents_without_executing` fails if next-ticket stops claiming the Ticket before it presents it, or starts to execute it or invoke `run-ticket`.
 
 ## Source
 - Session: figure-out on parallel ticket sessions (2026-08-10)

@@ -97,7 +97,7 @@ escalation stops expressing its pause through the claim field.
   comment.
 
 ## Enforced by
-`tests/test_ticket_automation_prompts.py` — `test_convention_escalation_releases_the_claim_and_marks_the_ticket`, `test_run_ticket_escalation_releases_the_claim_and_marks_the_ticket`, `test_sweep_excludes_escalated_tickets_from_the_eligible_set`, `test_event_eligibility_excludes_escalated_tickets`, and `test_github_venue_renders_the_escalation_mark_as_a_label`. Also `tests/test_ticket_automation_prompts.py` — `test_human_picker_needs_no_escalation_special_case`, `test_ticket_execution_skills_ship_on_every_distribution` fail if next-ticket gains an escalation special case or the distributed copies lose the claim release and escalation mark.
+`tests/test_ticket_automation_prompts.py` — `test_convention_escalation_releases_the_claim_and_marks_the_ticket`, `test_run_ticket_escalation_releases_the_claim_and_marks_the_ticket`, `test_sweep_excludes_escalated_tickets_from_the_eligible_set`, `test_event_eligibility_excludes_escalated_tickets`, and `test_github_venue_renders_the_escalation_mark_as_a_label` fail if escalation stops marking the Ticket before it releases the claim, keeps or transfers the claim, or marked Tickets stop being excluded by the sweep, the event check, or the GitHub `escalated` label. Also `tests/test_ticket_automation_prompts.py` — `test_human_picker_needs_no_escalation_special_case`, `test_ticket_execution_skills_ship_on_every_distribution` fail if next-ticket gains an escalation special case or the distributed copies lose the claim release and escalation mark.
 
 ## Source
 - Session: figure-out on cross-awareness among the Ticket skills (2026-08-25)

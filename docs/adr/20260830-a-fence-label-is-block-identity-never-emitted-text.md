@@ -86,7 +86,7 @@ changing.
   not.
 
 ## Enforced by
-`tests/test_goal_contract_blocks.py` — `test_every_shared_block_is_labelled` and `test_every_backstop_site_keeps_the_fence_label_out_of_the_emission`.
+`tests/test_goal_contract_blocks.py` — `test_every_shared_block_is_labelled` and `test_every_backstop_site_keeps_the_fence_label_out_of_the_emission` fail if a shared contract block loses its fence label, or a site that emits a goal block stops saying the label is not part of what to emit.
 
 ## Source
 

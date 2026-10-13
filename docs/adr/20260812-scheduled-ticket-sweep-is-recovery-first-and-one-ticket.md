@@ -52,7 +52,7 @@ controller is introduced.
 - The adapter must expose a stable automation claim identity so recovery candidates are recognizable.
 
 ## Enforced by
-`tests/test_ticket_automation_prompts.py` — `test_sweep_tickets_recovers_first_and_runs_at_most_one`. Also `tests/test_ticket_automation_prompts.py` — `test_ticket_execution_skills_ship_on_every_distribution` fails if the distributed copy loses recovery first or the one-Ticket limit.
+`tests/test_ticket_automation_prompts.py` — `test_sweep_tickets_recovers_first_and_runs_at_most_one` fails if sweep-tickets stops recovering a Ticket claimed by its own automation identity first, drops a readiness filter, changes a claim while it selects, or selects a second Ticket. Also `tests/test_ticket_automation_prompts.py` — `test_ticket_execution_skills_ship_on_every_distribution` fails if the distributed copy loses recovery first or the one-Ticket limit.
 
 ## Source
 - Session: unattended Ticket automation design (2026-08-12)

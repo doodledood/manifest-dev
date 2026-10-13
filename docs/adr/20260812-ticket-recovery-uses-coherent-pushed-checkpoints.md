@@ -44,7 +44,7 @@ Uncommitted work and commits that were not pushed may be lost when a runner stop
 - Agents must inspect existing branch, pull-request, and CI state before continuing.
 
 ## Enforced by
-`tests/test_ticket_automation_prompts.py` — `test_run_ticket_recovers_and_lands_before_done`.
+`tests/test_ticket_automation_prompts.py` — `test_run_ticket_recovers_and_lands_before_done` fails if run-ticket drops the one stable branch, the marked attempt comment, reuse of the existing pull request, or pushing coherent checkpoints.
 
 ## Source
 

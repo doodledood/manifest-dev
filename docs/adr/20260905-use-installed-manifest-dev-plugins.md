@@ -26,7 +26,7 @@ Load published skills through installed plugins. Keep plugin source and distribu
 - Contributors must install the plugin to use its skills in this repository.
 
 ## Enforced by
-`tests/test_local_skill_symlinks.py` — `test_plugin_skills_are_not_exposed_as_local_skills`.
+`tests/test_local_skill_symlinks.py` — `test_plugin_skills_are_not_exposed_as_local_skills` fails if `.claude/skills` or `.agents/skills` holds an entry with a plugin skill's name or one that links into `claude-plugins/`.
 
 ## Source
 - Supersedes in part 20260705-keep-plugin-first-layout-npx-skills-compatible

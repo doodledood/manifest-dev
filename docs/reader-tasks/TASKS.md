@@ -65,7 +65,7 @@ in `README.md` beside this file.
 
 ## Add a plugin
 
-- **Where:** `CONTRIBUTING.md` → *Plugin Development Process*; `claude-plugins/README.md` → *Add a plugin*
+- **Where:** `CONTRIBUTING.md` → *Plugin Development Process*; `claude-plugins/README.md` → *Add a plugin*; `claude-plugins/PLUGIN_TEMPLATE/README.md` → *Layout* and *Steps*
 - **Ends able to:** create a plugin from the template, register it in the marketplace, and test it locally.
 - **Status:** unverified
 

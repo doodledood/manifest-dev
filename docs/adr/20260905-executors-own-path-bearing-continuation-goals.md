@@ -61,7 +61,7 @@ gate-ledger clause. The PR goal has no unknown Manifest-path slot. Nested execut
 - PR tending retains its existing PR-based discovery and checkpoint dependency.
 
 ## Enforced by
-`tests/test_goal_contract_blocks.py` — `test_auto_chains_leave_goal_emission_to_the_executor` and `test_executor_contract_identifies_manifest_without_prior_context`. Also `tests/test_dist_skill_references.py` — `test_auto_investigation_keeps_read_bar_without_a_phase_goal`, `test_continuation_ownership_preserves_babysit_parent` fail if investigation under `/auto` sets its own continuation goal, or define or do sets a narrower goal under babysit-pr's backstop.
+`tests/test_goal_contract_blocks.py` — `test_auto_chains_leave_goal_emission_to_the_executor` and `test_executor_contract_identifies_manifest_without_prior_context` fail if `/auto` carries or prints its own continuation goal, or do's goal block stops opening with the absolute Manifest path that a resumed run reads. Also `tests/test_dist_skill_references.py` — `test_auto_investigation_keeps_read_bar_without_a_phase_goal`, `test_continuation_ownership_preserves_babysit_parent` fail if investigation under `/auto` sets its own continuation goal, or define or do sets a narrower goal under babysit-pr's backstop.
 
 ## Source
 

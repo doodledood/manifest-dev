@@ -3,7 +3,7 @@
 This directory is how this project checks that its living documents still do their job:
 
 - the root `README.md`;
-- `claude-plugins/README.md`;
+- `claude-plugins/README.md` and `claude-plugins/PLUGIN_TEMPLATE/README.md`;
 - `claude-plugins/manifest-dev/README.md`;
 - `claude-plugins/manifest-dev-tools/README.md`;
 - `dist/codex/README.md`, `dist/opencode/README.md`, and `dist/pi/README.md`;

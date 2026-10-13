@@ -52,7 +52,7 @@ No command files are generated or copied. The command layer is runtime config mu
 - The plugin now parses enough YAML frontmatter to read flat `name`, `description`, and `user-invocable` values; if skill frontmatter becomes more complex, the parser may need to be replaced with a real YAML parser or kept within the supported flat subset.
 
 ## Enforced by
-`tests/test_dist_install_uninstall.py` — `test_opencode_plugin_config_hook_registers_payload`.
+`tests/test_dist_install_uninstall.py` — `test_opencode_plugin_config_hook_registers_payload` fails if the config hook stops adding a `Use the <skill> skill with: $ARGUMENTS` command for each user-invocable skill, adds one for a `user-invocable: false` skill, or overwrites a user's command.
 
 ## Source
 
