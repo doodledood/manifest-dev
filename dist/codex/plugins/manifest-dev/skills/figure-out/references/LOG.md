@@ -6,7 +6,7 @@ This log is not a transcript (raw conversation history), a handoff (curated rewr
 
 ## Path
 
-Resolve the active log path before the first question and surface it immediately. The log's first lines name the repository it is about — its remote URL, or its path when it has none — so a later session's recall can match logs to repositories and skip the rest.
+Resolve the active log path before the first question and surface it immediately. The log's first line is a title naming the topic, and the next names the repository it is about — its remote URL, or its path when it has none — so a later session's recall can match logs by repository and topic and skip the rest.
 
 Create the log at `~/.manifest-dev/logs/figure-out-log-{timestamp}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from long investigations survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS`.
 

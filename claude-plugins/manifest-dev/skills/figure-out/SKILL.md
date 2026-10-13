@@ -137,7 +137,7 @@ its overrides.
 | Reference | Loads when | What it adds |
 |---|---|---|
 | `references/LOG.md` | by default; `--no-log` suppresses | the investigation log's entry shape and append discipline |
-| `references/RECALL.md` | once the investigation concerns work in the active repository — a bug, change, design or decision; a general or quick question that repository's history cannot bear on loads nothing | what earlier sessions, tickets and pull requests left on this repository: dated leads, the debt on this topic's path, hotspots |
+| `references/RECALL.md` | once the investigation concerns work in the active repository — a bug, change, design, or decision; a general or quick question that repository's history cannot bear on loads nothing | what earlier sessions, tickets and pull requests left on this repository: dated leads, the debt on this topic's path, hotspots |
 | `references/TASTE.md` | by default; `--autonomous` or `--team` suppresses | offer-and-ratify capture of durable personal steering preferences into harness memory |
 | `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or a mapped context; `--no-docs` or `--team` suppresses | glossary captures, ADR offers, North Star updates, map awareness, the update offer for an older setup, a stale marker on a drifting verification-surface entry — and it loads the project's ADR conventions, or the shipped default beside it |
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining | self-answer with the recommendation you would have given, without waiting |

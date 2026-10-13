@@ -30,6 +30,10 @@ if __name__ == "__main__":
 EOF
 
 git init -q . && git remote add origin https://example.com/club/shelfnote.git
+if [ -n "$(ls -A "$HOME/.manifest-dev/logs" 2>/dev/null)" ]; then
+  echo "HOME already holds workflow logs; run this scaffold with a scratch HOME" >&2
+  exit 1
+fi
 mkdir -p "$HOME/.manifest-dev/logs"
 cat > "$HOME/.manifest-dev/logs/figure-out-log-20260901-101500.md" <<'EOF'
 # figure-out: overdue reminders by text message
