@@ -58,7 +58,7 @@ Porting a conventions file is rarely a one-file edit: it governs the documents w
 
 ## The run
 
-Steps 2 to 6 install what a project lacks. On a project that already carries surfaces, they run only through *The update pass* above: nothing in them is written unless the update offered it and the user accepted.
+Steps 2 to 6 install what a project lacks. On a project that already carries surfaces, they run only through *The update pass* above: nothing in them is written unless the update offered it and the user accepted. A surface the project lacks entirely — no conventions file, no North Star, no surfaces section — is still installed by its step, offered as one item of the update.
 
 1. **Resolve the project context file.** Its name differs by CLI — `CLAUDE.md`, `AGENTS.md`, or another — so detect it rather than assuming. The active-host detection and context-file resolution rules live in `../review-code/references/context-file-adherence.md`; read them and use them. Resolve the glossary through `CONTEXT-MAP.md` where present, otherwise `CONTEXT.md`. Preserve an existing glossary; create a missing one with the known project name, one-line purpose, and empty Language section before mining or wiring. This also runs under `--no-mine`.
 
