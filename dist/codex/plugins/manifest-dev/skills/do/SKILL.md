@@ -79,7 +79,7 @@ Assume the user is AFK; make authorized decisions without asking questions. Surf
 
 ## Corrections, debt and the verification surface
 
-When the run repairs a finding or receives a correction, and before it reports, load
+When the run repairs a finding, fixes a defect or receives a correction, and before it reports, load
 `references/HARVEST.md`: a correction becomes a lock where a check can hold it, and the debt the
 run leaves goes into its report and into every pull request it opens or updates. When the
 Manifest gates a verification-surface entry, or the work needs a surface the project lacks or

@@ -37,14 +37,14 @@ Where the project records a version, the update offers the `CHANGES.md` entries 
 
 ### The update pass
 
-On a project that already carries surfaces, the run is an update, and it covers more than the conventions themselves:
+On a project that already carries surfaces, the run is an update. What it covers depends on the version the project records. With the newest version, it offers nothing and reports that the project is current. With an older version, it offers only the `CHANGES.md` entries after that version, applying each accepted one to the places below it touches. With no version, it covers all of these:
 
 - **The conventions, the North Star conventions, and the surfaces section** — by version where one is recorded, by comparison otherwise.
 - **The records written under the conventions** — only their editable fields. Add `Enforced by` where a check already holds the record's decision: code that cites the record, or a lint or test configuration that pins what it decided; leave a record with no check found without the line. Add a missing `Area`. Rebuild the index per the conventions. Never change a record's body.
 - **The verification surface** — adopt and extend the verification assets the project already has rather than building a second set beside them, and add the surface's entry to the project-surfaces section, per `references/VERIFICATION_SURFACE.md`.
 - **The glossary** — additions only, ratified as mining describes.
 
-Show each backfilled line and each verification-surface change in the offer, and write only what the user accepts, the same as a convention difference. On an update, mine only the history since the commit that last wrote the surfaces version line: older history was offered in an earlier run, and offering its candidates again would re-offer what the user already declined. A project with no version line yet offers only candidates its glossary and records do not already settle. Finish by writing the newest surfaces version, and report what was offered, applied and declined.
+Show each backfilled line and each verification-surface change in the offer, and write only what the user accepts, the same as a convention difference. Mine only where the project records no version, and offer only candidates its glossary and records do not already settle. Once every offered item has an answer, write the newest surfaces version and report what was offered, applied and declined. A declined item leaves the project unchanged, so the recorded version is what keeps the next run from offering it again.
 
 ### Compare, then offer
 
@@ -73,7 +73,7 @@ Porting a conventions file is rarely a one-file edit: it governs the documents w
 
 4. **Seed the verification surface** for each artifact future runs will change. Load `references/VERIFICATION_SURFACE.md` and follow its *What setup creates* section: record the form and location, adopt existing verification assets, catalog entries from source as `unverified`, and write the surface's README and repository check. A project with no such artifact gets none; say so in the report. This runs under `--no-mine` too: the catalog comes from the source as it stands, not from history.
 
-5. **Seed, unless `--no-mine`.** Load `references/MINING.md` and follow it. It covers what each source can and cannot yield, how a record says so when the reasoning is gone, and why glossary candidates are ratified rather than written.
+5. **Seed, unless `--no-mine` or the project records a surfaces version** (an update mines only per *The update pass*). Load `references/MINING.md` and follow it. It covers what each source can and cannot yield, how a record says so when the reasoning is gone, and why glossary candidates are ratified rather than written.
 
 6. **Wire the project context file.** Emit the project-surfaces section from `references/NORTH_STAR_FORMAT.md` — its template is the single source of the emitted text; adapt it to what the project has, extend an existing section rather than duplicating one, and add nothing beyond it, because this file is read on every session and every line here is a permanent cost. The template covers the surfaces version, the North Star's residency and maintenance asymmetry, the glossary's residency, the decision-record triggers, the one-act write rule, and the verification surface's location and form; where the host supports imports, the session-start reads become imports, written as *the project context file*'s imports rather than a specific harness's filename.
 
