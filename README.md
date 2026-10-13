@@ -42,7 +42,6 @@ An agent copies the nearest example and takes the easiest path that passes its c
 - **A way to verify that stays fresh.** Each project keeps a durable way to check its result — a small harness and a map of features for a product, behavior cases for prompts, reader tasks for a document — that runs build when it is missing and repair when it drifts.
 - **Earlier work is not lost.** A new session starts from what earlier sessions on the same repository ruled and found, and a project set up by an older version is offered only what changed since.
 
-
 ## Install
 
 Claude Code is the primary target:

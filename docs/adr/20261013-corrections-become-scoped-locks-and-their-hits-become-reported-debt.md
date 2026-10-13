@@ -41,7 +41,7 @@ A study of about 700 review comments from one production codebase asked, for eac
 - No eval suite measures this yet, because it happens during execution.
 
 ## Enforced by
-partly — eval cases `37-correction-becomes-a-lock`, `38-stated-rule-conflicts-with-a-record` and `39-one-off-mistake` measure it once run; the harvest itself is judgment in the executor.
+partly — eval cases `37-correction-becomes-a-lock`, `38-stated-rule-conflicts-with-a-record`, and `39-one-off-mistake` measure it once run; the harvest itself is judgment in the executor.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions; aggregate figures only.

@@ -19,9 +19,10 @@ it for case files from this repository: a scaffold is bash that runs as you.
 
 Six cases test behavior that exists only with the plugin — offering a Taste entry and not
 offering one for a discipline every session owes (`27`, `28`), offering a setup update (`30`), a
-record naming what enforces it (`31`), the verification surface's stale marker (`36`), and recall
-of earlier sessions (`43`) — so the no-plugin arm passes or fails them by construction. They carry the tag `figure-out-plugin-only` instead of `figure-out` and run on the
-plugin arm alone:
+record naming what enforces it (`31`), the verification surface's stale marker (`36`), and
+recall of earlier sessions (`43`) — so the no-plugin arm passes or fails them by construction.
+They carry the tag `figure-out-plugin-only` instead of `figure-out` and run on the plugin arm
+alone:
 
 ```bash
 claude plugin eval . --tag figure-out-plugin-only --ablation none --judge-model opus --allow-tools Write Bash --scaffold -j 8

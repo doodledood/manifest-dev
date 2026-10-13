@@ -123,6 +123,7 @@ code{font:500 .86em 'JetBrains Mono',monospace;color:#fff;background:rgba(255,25
 .tiers{list-style:none;margin-top:16px;display:grid;gap:12px}
 .tiers li{display:grid;grid-template-columns:14px 1fr;gap:12px;align-items:start}
 .tiers li i{width:10px;height:10px;border-radius:3px;margin-top:7px}
+.tiers li span{text-wrap:pretty}
 .tiers li span{color:#c3cbdb;font-size:15.5px}
 
 table.cmp{width:100%;border-collapse:collapse;margin-top:6px;font-size:14.5px}
@@ -377,10 +378,10 @@ a{color:var(--cool);text-decoration:none;border-bottom:1px solid rgba(127,216,25
         <li><i style="background:#ffd9a0"></i><span><b>Tickets</b>: what's worth doing next.</span></li>
         <li><i style="background:var(--mint);box-shadow:0 0 10px var(--mint)"></i><span><b>Manifests</b>: what done meant, run by run.</span></li>
       </ul>
-      <p style="margin-top:18px">And in the repository itself, so the right path is the easy one for the next agent:</p>
+      <p style="margin-top:18px">And in the repository and its pull requests, so the right path is the easy one for the next agent:</p>
       <ul class="tiers">
         <li><i style="background:var(--cool);box-shadow:0 0 10px var(--cool)"></i><span><b>Checks</b>: a correction that names a kind of mistake becomes a type, lint or test.</span></li>
-        <li><i style="background:#bfe9ff"></i><span><b>Decisions</b>: each record names what enforces it, or why nothing can.</span></li>
+        <li><i style="background:#bfe9ff"></i><span><b>Decisions</b>: each new record names what enforces it, or why nothing can.</span></li>
         <li><i style="background:transparent;border:1.5px solid var(--cool);box-sizing:border-box"></i><span><b>A way to verify</b>: runs that use it keep it fresh.</span></li>
         <li><i style="background:var(--hot);opacity:.75"></i><span><b>Debt</b>: what a run leaves unfixed, listed in its pull request and offered to the next change there.</span></li>
       </ul>
