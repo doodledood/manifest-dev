@@ -17,9 +17,10 @@ so cases that need a repository, project docs, or a context file find them in th
 directory. Without it, those cases run against an empty directory and measure nothing. Only pass
 it for case files from this repository: a scaffold is bash that runs as you.
 
-Two cases test behavior that exists only with the plugin — offering a Taste entry, and not
-offering one for a discipline every session owes — so the no-plugin arm passes or fails them by
-construction. They carry the tag `figure-out-plugin-only` instead of `figure-out` and run on the
+Six cases test behavior that exists only with the plugin — offering a Taste entry and not
+offering one for a discipline every session owes (`27`, `28`), offering a setup update (`30`), a
+record naming what enforces it (`31`), the verification surface's stale marker (`36`), and recall
+of earlier sessions (`43`) — so the no-plugin arm passes or fails them by construction. They carry the tag `figure-out-plugin-only` instead of `figure-out` and run on the
 plugin arm alone:
 
 ```bash
@@ -126,8 +127,8 @@ Cases `30`–`44` were written on 2026-10-13 and have never been run. Their spli
 out — and which survive are decided at their first both-arm run. `30` uses a project set up before
 surfaces versions existed: until a second surfaces version ships, that is the only way a project
 can be behind, and the case grades the same behavior an older recorded version would — offering
-what the newer setup adds, not a redo. `31`, `36` and `43` exist only with the plugin and run on the
-plugin arm alone, like `27` and `28`.
+what the newer setup adds, not a redo. `30`, `31`, `36` and `43` exist only with the plugin and run on
+the plugin arm alone, like `27` and `28`.
 
 **Every recorded number in this file is stale as of 2026-10-13.** That change edited figure-out's
 spine, its docs-mode and autonomous references, and its task files, so no earlier result measures
