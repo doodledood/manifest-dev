@@ -41,6 +41,9 @@ The block is stated, word for word, in each skill that applies it, because a shi
 - The blind check caught 7 of 12 misses, so some user's calls still pass unflagged.
 - The separate classification pass costs one more context per autonomous figure-out run.
 
+## Enforced by
+`tests/test_shared_blocks.py` — `test_block_is_verbatim_in_each_file` and `test_block_lives_only_in_declared_files` fail when a copy of the user's-call block differs or appears elsewhere.
+
 ## Source
 - Session: figure-out investigation with a backtest over recorded decisions; aggregate figures only.
 - Related: 20261012-taste-is-checked-per-call-and-captured-from-explained-reversals

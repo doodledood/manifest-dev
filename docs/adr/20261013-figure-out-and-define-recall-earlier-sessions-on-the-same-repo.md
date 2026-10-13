@@ -37,6 +37,9 @@ Each skill reads back only its own file. figure-out reads a log when it resumes 
 - Each session spends tokens at the start on the scan.
 - A topic match can be wrong, and a recalled lead can be stale; the label and the repository match limit both.
 
+## Enforced by
+partly — eval case `43-recalls-earlier-work` measures it once run.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
 - Related: 20260611-figure-out-evidence-ledger-and-independent-rederivation

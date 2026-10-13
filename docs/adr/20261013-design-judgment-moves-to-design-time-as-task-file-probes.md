@@ -40,6 +40,9 @@ An agent sees only the files it opened, copies the nearest example, and takes th
 - The red-flag list is maintained in two task-file sets.
 - A Default is advisory, so the define step binds only as Process Guidance.
 
+## Enforced by
+none — what a probe asks is judgment; CLAUDE.md names the red-flag lists kept in both task-file sets as pairs to change together.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions; aggregate figures only.
 - Related: 20260604-figure-out-owns-domain-probing-via-mirrored-task-files

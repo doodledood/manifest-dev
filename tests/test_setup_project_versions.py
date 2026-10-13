@@ -61,16 +61,16 @@ def versions() -> list[tuple[int, str, str]]:
 
 def test_versions_count_up_from_one() -> None:
     numbers = [number for number, _, _ in versions()]
-    assert numbers == list(range(1, len(numbers) + 1)), (
-        f"{CHANGES} versions must run 1, 2, 3, … in order; found {numbers}"
-    )
+    assert numbers == list(
+        range(1, len(numbers) + 1)
+    ), f"{CHANGES} versions must run 1, 2, 3, … in order; found {numbers}"
 
 
 def test_every_version_says_what_projects_gain() -> None:
     for number, body, _ in versions():
-        assert re.search(r"^- \S", body, re.MULTILINE), (
-            f"{CHANGES} entry v{number} lists nothing an installed project gains"
-        )
+        assert re.search(
+            r"^- \S", body, re.MULTILINE
+        ), f"{CHANGES} entry v{number} lists nothing an installed project gains"
 
 
 def test_latest_version_matches_what_setup_project_emits() -> None:

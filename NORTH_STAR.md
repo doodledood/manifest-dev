@@ -48,6 +48,14 @@ project better off than moving faster without them.
 
   — evidence: shipped and maintained as per-CLI packages under `dist/` since 2026-06.
 
+- A codebase converges toward one the workflow can maintain on its own when every correction
+  becomes a check, debt is paid on the path of the next change, and each long-lived artifact
+  keeps a way to verify it that normal runs keep fresh.
+
+  — hypothesis: grounded in a stress test of about 700 review comments from one production
+  codebase and in published practice; unmeasured until the eval baseline and real projects run
+  it. 2026-10
+
 ## Who it's for
 
 Quality-first developers: five-plus years of experience, already driving an agentic
@@ -68,10 +76,13 @@ confidence. Trustworthy output is what gets felt first, and it is not the whole 
 agent can be exactly right about the wrong work. The bar a user should hold us to: *"I can
 give the agent a complex task and trust the output enough to ship it with minimal review —
 and come back to the project weeks later and find it still knows what it's becoming,
-what's next, and what done means."*
+what's next, and what done means — and find the codebase easier to change correctly than
+when I started."*
 
-— hypothesis: both halves ruled to stand together 2026-08-21; neither has been put in
-  front of a stranger as the reason to try the project. See
+— ruled: 2026-10-13, the owner extended the bar with the codebase half; the first two halves
+  were ruled to stand together 2026-08-21. None of it has been put in front of a stranger as
+  the reason to try the project. See
+  docs/adr/20261013-the-promise-includes-a-codebase-that-gets-easier-to-change.md and
   docs/adr/20260821-positioning-drops-the-conversion-funnel.md.
 
 ## How they arrive

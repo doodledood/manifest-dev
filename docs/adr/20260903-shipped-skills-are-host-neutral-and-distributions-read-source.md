@@ -40,6 +40,9 @@ With the text host-neutral, the distributions stop carrying copies: the OpenCode
 - A host that gains a primitive worth naming gets it only through capability language, never a per-host rewrite.
 - `dist/codex` still duplicates the source tree in git, so the drift test is what keeps it honest.
 
+## Enforced by
+`tests/test_skill_frontmatter.py` — `test_shipped_text_names_no_plugin_qualifier_outside_html_comments` and `test_shipped_text_names_no_host_tool`; `tests/test_dist_skill_references.py` — `test_opencode_reads_the_source_skill_directories`.
+
 ## Source
 - Session: figure-out session of 2026-09-03 on skill installability across hosts, executed under a Manifest the same day
 - Related: narrows 20260705-keep-plugin-first-layout-npx-skills-compatible — the layout it kept stands; the `metadata: internal: true` follow-up it accepted is withdrawn for runtime dependencies, and the "sync-tools untouched" consequence no longer holds. See also 20260531-codex-plugin-native-distribution, 20260611-opencode-plugin-native-distribution, 20260623-use-host-continuation-as-optional-do-backstop

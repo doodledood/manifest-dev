@@ -40,6 +40,9 @@ setup-project writes copies that each project owns — the ADR conventions, the 
 - Every release has to keep the change list current.
 - A project that deletes the recorded version loses attribution until the next update.
 
+## Enforced by
+`tests/test_setup_project_versions.py` — `test_latest_version_matches_what_setup_project_emits` and `test_surfaces_template_carries_the_latest_version` fail when an emitted template changes without a new surfaces version and change-list entry.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
 - Related: 20261013-init-context-is-renamed-setup-project

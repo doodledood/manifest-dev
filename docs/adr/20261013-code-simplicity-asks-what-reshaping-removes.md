@@ -32,6 +32,9 @@ The code-simplicity dimension asked "Is this harder to understand than it needs 
 - Its findings propose larger changes, which pressure scope.
 - No eval suite covers review-code yet, so the effect is measured only in real runs.
 
+## Enforced by
+none — it is a question a reviewer asks; no check can hold what a review looks for.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
 - Related: 20260810-no-verifier-model-granularity

@@ -35,6 +35,9 @@ The concrete case was a project verification surface (a harness plus a feature m
 - A surface that no run touches can go stale until a run touches it.
 - The four entry points carry more content, so their task files and references grow.
 
+## Enforced by
+partly — `tests/test_entry_points.py` (`test_user_invocable_skills_are_the_declared_set`) fails when a skill users must invoke is added or removed; that nothing assumes infrastructure stays judgment.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
 - Related: 20260705-front-figure-out-as-door-define-do-loop-as-house

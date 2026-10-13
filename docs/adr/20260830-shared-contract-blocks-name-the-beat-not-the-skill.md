@@ -49,6 +49,9 @@ The test's block signatures move with the text in the same change. A signature l
 - The rule has no enforcement of its own. Byte-identity is tested; whether a shared block's wording is arm-neutral is a judgment made when the block is edited, and a future block can reintroduce a skill name with the suite still green.
 - Two published records now quote the superseded mutability sentence in their bodies. Their bodies are immutable, so the cost is paid with a Status cross-reference rather than an edit.
 
+## Enforced by
+partly — `tests/test_goal_contract_blocks.py` (`test_every_shared_block_is_one_text`, `test_dist_copies_carry_the_same_blocks_as_their_source`) keeps one text per block; naming the beat rather than the skill stays judgment.
+
 ## Source
 - Session: follow-up to the chat-surface retirement and just-\* world, 2026-08-30, prompted by the lean chain's blocks still naming the regular arm after `just-auto` was re-pointed.
 - Related: 20260828-continuation-goals-emit-verbatim-from-one-block — narrowed by this record: the one-text-per-block property and the no-per-site-variant requirement both stand; only the wording that satisfies them changes.

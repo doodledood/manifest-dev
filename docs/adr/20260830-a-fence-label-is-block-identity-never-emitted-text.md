@@ -85,6 +85,9 @@ changing.
   open, so a reader may meet this record expecting it to settle that and find it deliberately did
   not.
 
+## Enforced by
+`tests/test_goal_contract_blocks.py` — `test_every_shared_block_is_labelled` and `test_every_backstop_site_keeps_the_fence_label_out_of_the_emission`.
+
 ## Source
 
 - Session: a user report that `/just-auto` printed its contract as bracketed, labelled blocks,

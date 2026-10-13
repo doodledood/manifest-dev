@@ -57,6 +57,9 @@ The mutability sentence is written to hold at every site without a per-site vari
 - Three shared blocks plus one site-specific prefix is more structure than a single block would have been, and an author adding a backstop site has to pick which blocks apply.
 - Sites carrying a prefix emit a literal `<manifest-path>` token whose meaning the prefix defines, rather than a substituted path, because they arm the backstop before a Manifest exists.
 
+## Enforced by
+`tests/test_goal_contract_blocks.py` — `test_every_shared_block_is_one_text`, `test_every_backstop_site_carries_the_goal_block` and `test_every_backstop_site_forbids_paraphrase` fail when a copy of a goal block differs or a site drops it.
+
 ## Source
 
 - Session: probe of 24 emissions across three prose forms, two context loads, and a restatement boundary; results recorded in the investigation log for the session.

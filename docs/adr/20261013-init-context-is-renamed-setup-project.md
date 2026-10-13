@@ -34,6 +34,9 @@ The skill installs and later compares a project's durable surfaces: the ADR conv
 - A major version bump for a rename.
 - Older records and outside links use the old name.
 
+## Enforced by
+none — a one-time rename; decision records keep the old name on purpose.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
 - Related: 20260809-init-context-skill-lives-in-core

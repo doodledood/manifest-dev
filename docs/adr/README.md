@@ -169,5 +169,6 @@
 | 2026-10-13 | [New capabilities live inside figure-out, define, do, and auto, and maintain themselves during normal runs](20261013-new-capabilities-live-inside-the-four-workflow-entry-points.md) | Accepted | Positioning |
 | 2026-10-13 | [Runs build and maintain a verification surface for each artifact that future runs will change](20261013-runs-build-and-maintain-a-project-verification-surface.md) | Accepted | define / do |
 | 2026-10-13 | [Set-up projects receive updates through a recorded version, offered by figure-out](20261013-set-up-projects-receive-updates-through-a-version-marker.md) | Accepted | Project context |
+| 2026-10-13 | [The promise includes a codebase that gets easier to change correctly](20261013-the-promise-includes-a-codebase-that-gets-easier-to-change.md) | Accepted | North Star |
 | 2026-10-13 | [A rule the user states overrides a conflicting plugin Default](20261013-the-users-rules-override-plugin-defaults.md) | Accepted | define |
 | 2026-10-13 | [A workaround comment in the project's own code becomes a refactor flag; a constraint comment becomes an offer to encode it](20261013-workaround-comments-become-refactor-flags-constraint-comments-become-checks.md) | Accepted | Code review |

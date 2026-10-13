@@ -29,6 +29,9 @@ define's task files carry Defaults that each Manifest receives without probing. 
 ### Negative
 - It depends on the run finding and reading the user's rules.
 
+## Enforced by
+partly — eval case `d21-user-rule-over-default` measures it once run.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
 - Related: 20260809-adr-conventions-ship-as-project-knowledge

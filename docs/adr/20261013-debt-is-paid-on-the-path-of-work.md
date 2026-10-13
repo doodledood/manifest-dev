@@ -40,6 +40,9 @@ Each change keeps to one concern, which keeps a fix from turning into a bundle o
 - When an area counts as resisting a change, or as a hotspot, is a judgment.
 - Whether a codebase actually converges is not measured yet; the signals are debt per run in an area falling, verified verification entries rising, and the share of review findings a check could have prevented falling.
 
+## Enforced by
+partly — eval cases `44-debt-on-the-path` and `d20-preparatory-slice` measure it once run.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
 - Related: 20261013-corrections-become-scoped-locks-and-their-hits-become-reported-debt

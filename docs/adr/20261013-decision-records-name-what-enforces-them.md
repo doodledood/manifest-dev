@@ -34,6 +34,9 @@ A decision recorded only in prose depends on every later contributor reading the
 - One more field to fill in each record.
 - The in-place edit is one more exception to record immutability.
 
+## Enforced by
+`tests/test_project_conventions_forks.py` — `test_forks_reproduce_the_emitted_default` keeps this project's conventions, which carry the field, in step with the shipped default; eval case `31-record-names-what-enforces-it` measures that records carry it.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions; aggregate figures only.
 - Related: 20260809-adr-conventions-ship-as-project-knowledge

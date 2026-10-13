@@ -99,6 +99,9 @@ The path is still recoverable everywhere it matters — from the invocation at `
   block's identity, so the move is routine — but it is the second time a signature has followed
   its text, and each such move is a moment where a stripped label would go unnoticed.
 
+## Enforced by
+partly — `tests/test_goal_contract_blocks.py` (`test_executor_contract_identifies_manifest_without_prior_context`, `test_auto_chains_leave_goal_emission_to_the_executor`) pins where the path-bearing slot appears; whether a value is known at a site stays judgment.
+
 ## Source
 
 - Session: investigation of a `/just-auto` run whose printed contract carried an unfilled

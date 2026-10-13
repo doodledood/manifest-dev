@@ -40,6 +40,9 @@ The cut runs between **criteria and cadence**. Criteria travel into the repo —
 - The conventions exist in two places — the plugin default and each project's copy — and must be kept in step.
 - A project copy frozen at setup time will not pick up later improvements to the shipped default unless someone refreshes it.
 
+## Enforced by
+`tests/test_project_conventions_forks.py` — `test_forks_reproduce_the_emitted_default` keeps this project's conventions copy in step with the shipped default.
+
 ## Source
 - Session: figure-out session, 2026-08-09
 - Related: 20260703-progressive-disclosure-triggers-live-in-loading-layer

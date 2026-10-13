@@ -32,6 +32,9 @@ Agents copy what they find, including workarounds that a comment explains, and t
 - The debt list grows.
 - Telling a comment about an external constraint from one about the project's own code takes judgment.
 
+## Enforced by
+partly — eval case `d19-workaround-comment` measures it once run; telling an external constraint from the project's own stays judgment.
+
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
 - Related: 20261013-corrections-become-scoped-locks-and-their-hits-become-reported-debt
