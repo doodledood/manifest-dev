@@ -21,6 +21,7 @@ A study of about 700 review comments from one production codebase asked, for eac
 - Before locking a stated intent, check it against recorded decisions and current practice. A conflict is raised, not locked.
 - The lock runs across the repository. Whether to fix its hits is the run's judgment within scope. Hits left unfixed, and structural refactors that no lock can create, join the below-threshold findings and pre-existing issues that done and escalate already report, with the offer to ticket them.
 - A lock local to the fix ships with the fix. A repository-wide cleanup is reported, not folded into the fix.
+- A new suppression of a lock carries its reason on the suppressing line and is reported as debt, so locks cannot wear away unnoticed. It needs no human approval to land; the user can leave the debt as it is.
 
 ## Alternatives Considered
 - **Prose rules in context files**: they go unenforced.
