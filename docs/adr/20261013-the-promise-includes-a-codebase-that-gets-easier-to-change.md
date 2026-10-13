@@ -18,7 +18,7 @@ get easier to change correctly over time. Nothing in the promise said so, and a 
 only by the owner's ruling.
 
 ## Decision
-- The Promise's bar sentence gains a third half: "— and find the codebase easier to change
+- The Promise's bar sentence gains a third part: "— and find the codebase easier to change
   correctly than when I started."
 - *What this rests on* gains the hypothesis that a codebase converges toward one the workflow
   can maintain on its own when every correction becomes a check, debt is paid on the path of the

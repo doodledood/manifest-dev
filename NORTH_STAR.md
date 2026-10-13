@@ -79,7 +79,7 @@ and come back to the project weeks later and find it still knows what it's becom
 what's next, and what done means — and find the codebase easier to change correctly than
 when I started."*
 
-— ruled: 2026-10-13, the owner extended the bar with the codebase half; the first two halves
+— ruled: 2026-10-13, the owner extended the bar with a codebase part; the first two parts
   were ruled to stand together 2026-08-21. None of it has been put in front of a stranger as
   the reason to try the project. See
   docs/adr/20261013-the-promise-includes-a-codebase-that-gets-easier-to-change.md and
