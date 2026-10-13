@@ -17,4 +17,4 @@ answered them.
   entries catalogued from source as `unverified` (`unmeasured` for an eval suite), its README,
   and a repository check that its entries still point at things that exist.
 
-Digest: ee6a51649c1478a9810c1984a3108e7f67a90a61debbe9392d94f43630c08b01
+Digest: 67ea232904eeab5c341571c87c3b06e6109fe887879993d9e32620ed91d674e5

@@ -38,6 +38,9 @@ A separate Question Ticket is created only when the question needs independent a
 - Explicit split mode is required to maximize parallel pickup.
 - An escalation can keep a whole Manifest Ticket open after some internal Deliverables have landed.
 
+## Enforced by
+`tests/test_ticket_automation_prompts.py` — `test_ticket_up_preserves_auto_authority_boundary` fails if a Manifest stops becoming one Shaped Ticket by default, or splits without the caller asking.
+
 ## Source
 - Session: unattended Ticket automation design (2026-08-12)
 - Narrows: 20260806-retire-decision-map-for-ticket-up-and-ticket-store

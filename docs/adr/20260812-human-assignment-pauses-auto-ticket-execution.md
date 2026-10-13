@@ -41,6 +41,9 @@ No retry label, status, or automation-queue assignment is added. An open Ticket 
 - A person who resolves the blocker but forgets to unassign the Ticket leaves automation paused.
 - Without an unassignment event trigger, continuation waits for the next scheduled sweep.
 
+## Enforced by
+`tests/test_ticket_automation_prompts.py` — `test_sweep_tickets_recovers_first_and_runs_at_most_one` fails if the sweep stops leaving human-assigned Tickets paused.
+
 ## Source
 
 - Session: unattended Ticket automation design (2026-08-12)

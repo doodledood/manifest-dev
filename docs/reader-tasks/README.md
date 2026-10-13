@@ -9,9 +9,10 @@ current as they go.
 ## What it covers
 
 `TASKS.md` holds one entry per task a reader comes to a document to do: the task, the document
-and section the reader relies on, what the reader should end up able to do, and a status. A
-Markdown section is named by its heading; a site section by its chapter name, the
-`data-name` its `<section>` carries.
+and section the reader relies on, what the reader should end up able to do, and a status. The `Where:` line writes each document
+as `` `FILE` → *Section* ``, with further sections of the same file joined as *A* and *B*, and
+pointers separated by "; ". A Markdown section is named by its heading; a site section by its
+chapter name, the `data-name` its `<section>` carries.
 
 ## How to run it
 
@@ -20,7 +21,7 @@ task from the document alone. Success is the reader ending able to do what the e
 where it got stuck as the entry's evidence.
 
 `tests/test_reader_tasks.py` runs with the project's tests and fails when an entry names a file
-or section that no longer exists, or carries no valid status.
+or section that no longer exists, a pointer written any other way, or an entry with no valid status.
 
 ## Statuses
 

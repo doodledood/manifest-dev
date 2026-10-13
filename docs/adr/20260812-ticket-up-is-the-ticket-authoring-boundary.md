@@ -35,6 +35,9 @@ Callers supply the work and relationship context. `ticket-up` decides the conven
 - `ticket-up` supports several input shapes and must distinguish them clearly.
 - A caller that already has tracker access still delegates the write through another skill boundary.
 
+## Enforced by
+partly — `tests/test_ticket_automation_prompts.py` — `test_run_ticket_preserves_ticket_identity_and_routes_follow_ups` fails if run-ticket writes follow-ups to the venue instead of through `ticket-up`; the other callers' routing is judgment.
+
 ## Source
 - Session: unattended Ticket automation design (2026-08-12)
 - Related: 20260806-retire-decision-map-for-ticket-up-and-ticket-store, 20260810-generate-a-venue-reference-for-an-unmapped-tracker

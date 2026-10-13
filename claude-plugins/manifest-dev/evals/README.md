@@ -55,8 +55,8 @@ Each case carries one status:
   marks every number recorded before that date.
 
 A case shows `unmeasured`, in its row or in the heading of the table that lists it, until its
-first run. A case without it was measured, and the latest results section says whether that
-number still holds.
+first run. A case without it was measured, and the bold stale line under the case table says
+whether its number still holds.
 `tests/test_eval_cases.py` fails when a case directory has no row, or a row has no directory.
 
 ## Running on macOS

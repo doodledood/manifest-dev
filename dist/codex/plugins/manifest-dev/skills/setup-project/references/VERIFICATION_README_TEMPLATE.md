@@ -33,7 +33,8 @@ Every entry carries one. <For a feature map or a reader-task list:>
 - `unmeasured` — written but never run. Not proof of anything.
 - `measured` — run, with the date and the result.
 - `stale` — a prompt it covers changed after it was measured, so its numbers no longer hold. A
-  run that changes a prompt and does not run the cases covering it marks them stale.
+  run that changes a prompt and does not run its measured cases marks them stale; unmeasured
+  cases stay unmeasured.
 
 A run that changes something an entry covers updates and exercises that entry. A run that finds
 an entry it is not changing drifting marks it stale and leaves the repair to the next run that

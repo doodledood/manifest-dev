@@ -12,7 +12,7 @@ reader-task list, statuses, repository check — are in setup-project's
 - **Touched entries:** add a missing entry for a touched path. Update each touched entry to match
   the change, exercise it, and mark it with the form's exercised status: `verified` with the date,
   or `measured` with the date and result for an eval case. A change to a prompt that leaves its
-  cases unrun marks them `stale`.
+  measured cases unrun marks them `stale`; unmeasured cases stay `unmeasured`.
 - **Drift:** when an exercise fails because the entry is wrong about the product, repair the
   entry within scope. When an entry the change does not touch is found drifting, mark it `stale`
   with a dated line naming what differs, and leave the repair to the next run that touches it.

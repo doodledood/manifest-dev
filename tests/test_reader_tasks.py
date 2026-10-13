@@ -1,7 +1,8 @@
 """The reader-task surface for this repository's living documents points at sections that exist.
 
-Each entry in `docs/reader-tasks/TASKS.md` names the documents a reader relies on as
-`FILE` → *Section*: a Markdown heading, or a site chapter's `data-name`. A renamed or removed
+Each entry in `docs/reader-tasks/TASKS.md` names the documents a reader relies on on its
+`Where:` line, as pointers `FILE` → *Section* joined by "; ", where a pointer may name more
+sections as *A* and *B*. A section is a Markdown heading, or a site chapter's `data-name`. A renamed or removed
 section leaves the entry pointing at nothing, so the walk it describes cannot run.
 """
 
@@ -14,9 +15,9 @@ ROOT = Path(__file__).resolve().parent.parent
 TASKS = ROOT / "docs" / "reader-tasks" / "TASKS.md"
 
 ENTRY = re.compile(r"^## (.+?)\n(.*?)(?=^## |\Z)", re.MULTILINE | re.DOTALL)
-POINTER = re.compile(
-    r"`([\w./-]+\.(?:md|html))` → \*([^*\n]+)\*((?: and \*[^*\n]+\*)*)"
-)
+SECTION = r"\*([^*\n]+)\*"
+POINTER = re.compile(rf"`([\w./-]+\.(?:md|html))` → ({SECTION}(?: and {SECTION})*)")
+WHERE = re.compile(r"^- \*\*Where:\*\* (.+)$", re.MULTILINE)
 STATUS = re.compile(
     r"^- \*\*Status:\*\* (unverified|verified \(\d{4}-\d{2}-\d{2}\)|stale \(\d{4}-\d{2}-\d{2}\).*)$",
     re.MULTILINE,
@@ -40,19 +41,22 @@ def test_entries_are_found() -> None:
 def test_every_entry_points_at_existing_sections_and_carries_a_status() -> None:
     broken = []
     for task, body in ENTRIES:
-        pointers = POINTER.findall(body)
-        if not pointers:
+        where = WHERE.search(body)
+        parts = where.group(1).split("; ") if where else []
+        if not parts:
             broken.append(f"{task}: names no document section")
-        if body.count("→") + body.count("->") != len(pointers):
-            broken.append(f"{task}: a pointer is not written `FILE` → *Section*")
         if not STATUS.search(body):
             broken.append(f"{task}: no valid status")
-        for file, title, more in pointers:
-            path = ROOT / file
-            if not path.is_file():
-                broken.append(f"{task}: {file} does not exist")
+        for part in parts:
+            pointer = POINTER.fullmatch(part)
+            if not pointer:
+                broken.append(f"{task}: not written `FILE` → *Section*: {part}")
                 continue
-            for name in [title, *re.findall(r"\*([^*\n]+)\*", more)]:
+            path = ROOT / pointer.group(1)
+            if not path.is_file():
+                broken.append(f"{task}: {pointer.group(1)} does not exist")
+                continue
+            for name in re.findall(SECTION, pointer.group(2)):
                 if not _has_section(path, name):
-                    broken.append(f"{task}: {file} has no section *{name}*")
+                    broken.append(f"{task}: {pointer.group(1)} has no section *{name}*")
     assert not broken, "\n".join(broken)

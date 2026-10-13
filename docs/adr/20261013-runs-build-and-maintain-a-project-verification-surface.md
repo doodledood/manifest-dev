@@ -26,7 +26,7 @@ The need is not limited to code. A prompt or skill is checked by behavior cases 
 - Unattended runs build a missing surface too, and the completion report lists it as a new project surface the user can remove. A surface for the work at hand is verification code for the change, like a regression test. It is not in the class of handoffs that install or rewire the project's context surfaces, which an unattended run only flags.
 - The creation mechanics live in a core init-context reference. init-context can seed the surface when it runs.
 - figure-out marks a drifting entry that the current work will not repair: it writes a dated stale line into the entry, naming what differs, the way docs mode lowers a North Star position on evidence. The next run that touches the entry repairs it. This is the one write figure-out makes to the verification surface.
-- An adopted verification asset keeps the scope the project gave it. Setup adds what the surface lacks — statuses, a README, the repository check — and never entries for what that scope leaves out, so an eval suite narrowed on purpose, because runs are expensive, is not a gap for the skills it leaves out. A site or page whose job is to inform is a living document and gets reader tasks.
+- An adopted verification asset keeps the scope the project gave it. Setup adds what the surface lacks — statuses, a README, the repository check — and never entries for what that scope leaves out. An eval suite narrowed on purpose, because runs are expensive, has no gap for the skills it omits. A site or page whose job is to inform is a living document and gets reader tasks.
 - No scheduled sweep. An entry that no run touches may go stale; the next run that touches it repairs it.
 
 ## Alternatives Considered

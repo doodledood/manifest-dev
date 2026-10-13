@@ -43,6 +43,9 @@ Default-off is what makes shared venues safe: nothing is ever marked "not auto" 
 - Grant quality rests on the author's judgment of the criterion — a wrongly granted ticket is caught only by the escalation valve.
 - Agent help on ungranted tickets must be dispatched and supervised manually; the store offers no middle tier.
 
+## Enforced by
+partly — `tests/test_ticket_automation_prompts.py` — `test_ticket_up_preserves_auto_authority_boundary` fails if Shaped starts implying Auto or Auto stops needing a fresh human grant; the granting criterion is judgment.
+
 ## Source
 - Session: figure-out session, 2026-08-10
 - Related: [20260810-shaped-means-the-decision-space-is-closed](20260810-shaped-means-the-decision-space-is-closed.md), [20260806-retire-decision-map-for-ticket-up-and-ticket-store](20260806-retire-decision-map-for-ticket-up-and-ticket-store.md)
