@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
+if [ -n "$(ls -A "$HOME/.manifest-dev/logs" 2>/dev/null)" ]; then
+  echo "HOME already holds workflow logs; run this scaffold with a scratch HOME" >&2
+  exit 1
+fi
 mkdir -p src tests
 cat > README.md <<'EOF'
 # Shelfnote
@@ -35,10 +39,6 @@ def body(line): return "Hello " + line.split(",")[1] + ", your book is due."
 def footer(line): return "Sent to " + line.split(",")[1]
 EOF
 git init -q . && git remote add origin https://example.com/club/shelfnote.git
-if [ -n "$(ls -A "$HOME/.manifest-dev/logs" 2>/dev/null)" ]; then
-  echo "HOME already holds workflow logs; run this scaffold with a scratch HOME" >&2
-  exit 1
-fi
 mkdir -p "$HOME/.manifest-dev/logs"
 cat > "$HOME/.manifest-dev/logs/do-manifest-20260920-1a2b3c4d.md" <<'EOF'
 # /do: reminder email wording

@@ -92,3 +92,20 @@ def test_surfaces_template_carries_the_latest_version() -> None:
         f"the project-surfaces template in {NORTH_STAR_FORMAT.relative_to(REPO_ROOT)} must "
         f"carry exactly one `<!-- setup-project surfaces v{latest_number} -->`; found {found}"
     )
+
+
+EVALS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "evals"
+
+
+def test_each_later_version_has_a_one_behind_eval_case() -> None:
+    # The update path for a project recording an older version can only be exercised once a
+    # second version exists, so every version from v2 on brings a case recording the one before.
+    scaffolds = "\n".join(
+        p.read_text(encoding="utf-8") for p in EVALS.glob("*/scaffold.sh")
+    )
+    for version, _body, _digest in versions():
+        if version >= 2:
+            marker = f"<!-- setup-project surfaces v{version - 1} -->"
+            assert (
+                marker in scaffolds
+            ), f"v{version} has no eval case recording v{version - 1}"
