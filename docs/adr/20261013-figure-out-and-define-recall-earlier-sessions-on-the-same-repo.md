@@ -10,7 +10,7 @@ define / figure-out
 The user
 
 ## Context
-Each skill reads back only its own file. figure-out reads a log when it resumes that same log; define reads a Manifest when it is given that Manifest's path to amend; do reopens the log keyed to its own Manifest. Nothing looks across sessions, so a new session on a related topic starts from nothing while earlier investigations — their evidence, rulings, dead ends, and out-of-scope calls — sit unread beside it. On one machine the workflow's home held over three hundred logs and nearly two hundred Manifests. An investigation into this design proposed, as a new idea, a tool that an earlier session on the same repository had already tested. Logs also did not record which repository they were about.
+Each skill reads back only its own file. figure-out reads a log when it resumes that same log; define reads a Manifest when it is given that Manifest's path to amend; do reopens the log keyed to its own Manifest. Nothing looks across sessions, so a new session on a related topic starts from nothing while earlier investigations — their evidence, rulings, dead ends, and out-of-scope calls — sit unread beside it. On one machine the workflow's home held over 300 logs and nearly 200 Manifests. An investigation into this design proposed, as a new idea, a tool that an earlier session on the same repository had already tested. Logs also did not record which repository they were about.
 
 ## Decision
 - At the start of figure-out, and at the start of define when it writes a new Manifest, the run scans the workflow's logs and Manifests for sessions on the same repository whose topic overlaps.
