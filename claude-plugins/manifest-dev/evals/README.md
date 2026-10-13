@@ -127,8 +127,9 @@ from a discipline `SKILL.md` explicitly states.
 Cases `30`–`44` were written on 2026-10-13 and have never been run. Their split — tuning or held
 out — and which survive are decided at their first both-arm run. `30` uses a project set up before
 surfaces versions existed: until a second surfaces version ships, that is the only way a project
-can be behind, and the case grades the same behavior an older recorded version would — offering
-what the newer setup adds, not a redo. `30`, `31`, `36`, and `43` exist only with the plugin and run
+can be behind. It exercises the comparison path, graded on offering what the newer setup adds and
+not a redo. The path for a project that records an older version has no case yet; the change that
+adds v2 adds one, as the repository's context file requires. `30`, `31`, `36`, and `43` exist only with the plugin and run
 on the plugin arm alone, like `27` and `28`.
 
 **Every recorded number in this file is stale as of 2026-10-13.** That change edited figure-out's
