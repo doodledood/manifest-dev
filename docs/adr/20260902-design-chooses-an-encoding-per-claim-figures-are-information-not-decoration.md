@@ -48,6 +48,9 @@ The transferable fundamentals land beside the rules they extend, in the same reg
 - The script's figure check is a heuristic over markup signals; a prose-only page over a genuinely structural subject that uses none of the counted signals passes it, and a page with one figure passes regardless of what the figure shows — the judgment probe is what catches those.
 - The effectiveness of the added instruction rests on one behavioral probe on the exposing brief, the same standing gap the earlier design records name; the deferred blind pairwise eval is what would close it.
 
+## Enforced by
+partly — `tests/test_design_check.py` — `test_figure_note_does_not_require_retired_task_model_field` fails if the checker stops noting structural content that carries no figure; whether an encoding fits its claim is judgment.
+
 ## Source
 - Session: just-figure-out → just-define → just-do run, 2026-09-02, from the owner's report of a wall-of-text decision memo built by the skill standalone.
 - Related: 20260901-design-derives-structure-from-a-written-task-model (extended: the task model gains its fifth line), 20260901-design-skill-pair-distills-research-eval-deferred (extended: the distillation boundary now also covers material drawn from host-shipped skills), 20260901-deliberation-renders-run-the-design-skill-at-prototype-weight (extended: the legibility floors held on the judged surface now include the page being at rest at load), 20260703-progressive-disclosure-triggers-live-in-loading-layer (why the trigger sits in the loading table and the bulk in a reference).

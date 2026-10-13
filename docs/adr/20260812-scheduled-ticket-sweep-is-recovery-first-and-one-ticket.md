@@ -53,6 +53,7 @@ controller is introduced.
 
 ## Enforced by
 `tests/test_ticket_automation_prompts.py` — `test_sweep_tickets_recovers_first_and_runs_at_most_one`.
+Also `tests/test_ticket_automation_prompts.py` — `test_ticket_execution_skills_ship_on_every_distribution`.
 
 ## Source
 - Session: unattended Ticket automation design (2026-08-12)

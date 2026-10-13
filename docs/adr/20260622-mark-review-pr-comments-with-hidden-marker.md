@@ -44,6 +44,9 @@ The marker does **not** replace the content fingerprint: "re-post only when the 
 - `review-pr`'s "ours" detection gains a marker dependency; the convention must stay in sync across `review-pr` and `check-pr`.
 - The whole mechanism is moot if `review-pr` is never run on accounts shared with human reviewers — but the premise is that it is.
 
+## Enforced by
+partly — `tests/test_dist_skill_references.py` — `test_skill_activation_names_are_bare_on_every_surface` fails if `review-pr` drops either marker literal; that every posted comment carries one is judgment.
+
 ## Source
 - Governs behavior of the `review-pr` and `check-pr` skills.
 - Related: 20260619-manifest-aware-review-pr

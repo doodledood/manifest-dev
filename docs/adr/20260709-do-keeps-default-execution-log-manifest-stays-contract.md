@@ -29,6 +29,9 @@ Deviations from the Initial Approach were invisible: the docs-mode ADR gate list
 - Execution history lives out of sight of the manifest reader; consumers (amendment, /done, users) must be pointed at the log path.
 - Default-on writing adds a small per-run overhead and another file per run under `~/.manifest-dev/logs/`.
 
+## Enforced by
+partly — `tests/test_dist_skill_references.py` — `test_do_log_prompts_preserve_journal_boundaries` fails if the log reference stops treating a caller-supplied journal as the log or stops deferring to the path `SKILL.md` names; what the log records is judgment.
+
 ## Source
 - Grounding: suite-alignment review — /do's caller-supplied journal (the babysit-pr default) already carried the deviation and dead-end-memory content spec this decision generalizes; the docs-mode "approach pivots" ADR category had no reachable capture path.
 - Related: 20260709-mid-do-steering-stays-autonomous

@@ -136,6 +136,7 @@ def test_scaffold_runs_in_an_empty_directory(script: Path) -> None:
         assert any(Path(workdir).iterdir()), "scaffold wrote nothing"
 
 
+# Holds the decision in docs/adr/20260728-bound-the-acceptance-contract-from-above.md.
 def test_ceiling_grader_matches_the_schemas_ceiling() -> None:
     copies = sorted(EVALS.glob("define/*/graders/ceiling-verbatim.md"))
     assert copies
@@ -209,6 +210,7 @@ def _case_table_rows(readme: Path) -> set[str]:
     }
 
 
+# Holds the decision in docs/adr/20261013-runs-build-and-maintain-a-project-verification-surface.md.
 @pytest.mark.parametrize(
     "suite", [EVALS, EVALS / "define"], ids=["figure-out", "define"]
 )

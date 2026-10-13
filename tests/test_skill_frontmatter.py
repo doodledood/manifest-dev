@@ -762,6 +762,7 @@ def test_shipped_text_names_no_host_tool() -> None:
     assert not problems, "\n".join(problems)
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_shipped_text_names_the_context_file_only_where_it_detects_or_compares() -> (
     None
 ):
@@ -782,6 +783,7 @@ def test_shipped_text_names_the_context_file_only_where_it_detects_or_compares()
     assert not problems, "\n".join(problems)
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_shipped_text_never_names_a_subagent_outside_research_digests() -> None:
     problems = []
     for path in shipped_markdown():
@@ -793,6 +795,7 @@ def test_shipped_text_never_names_a_subagent_outside_research_digests() -> None:
     assert not problems, "\n".join(problems)
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_every_delegation_site_carries_an_inline_fallback() -> None:
     problems = []
     for path in shipped_markdown():
@@ -806,6 +809,7 @@ def test_every_delegation_site_carries_an_inline_fallback() -> None:
     assert not problems, "\n".join(problems)
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_no_shipped_skill_is_marked_internal() -> None:
     """`metadata.internal` reads as "do not install" to skill pickers, which dropped
     /do's own dependencies. A dependency ships as user-invocable: false instead."""
@@ -825,6 +829,7 @@ SKILL_REFERENCE = re.compile(
 )
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_every_skill_a_shipped_skill_names_ships_beside_it() -> None:
     shipped = {
         path.name
@@ -844,6 +849,7 @@ def test_every_skill_a_shipped_skill_names_ships_beside_it() -> None:
     assert not problems, "\n".join(problems)
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_every_dependency_only_skill_is_not_user_invocable() -> None:
     """A skill whose description says another skill calls it is a dependency and
     must not appear in slash menus."""

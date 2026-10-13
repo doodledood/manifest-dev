@@ -52,6 +52,9 @@ Delete the five catalogs. `review-design` keeps ownership of its standards and H
 - The intensity wording ("quiet to spectacular — unless the request says otherwise") has not been tested on its own.
 - The catalogs no longer ship, so the owner preferences they recorded are no longer available to runs.
 
+## Enforced by
+partly — `tests/test_design_standalone.py` — `test_review_support_paths_resolve` fails if the HTML checker leaves `review-design`; starting from the person and their moment is judgment.
+
 ## Source
 
 - Supersedes 20260916-design-is-reference-calibrated-guidance: the guidance-only boundary and `review-design`'s ownership of its standards and checker are carried forward here; the curated catalogs and required reference study are retired.

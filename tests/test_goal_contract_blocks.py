@@ -312,6 +312,7 @@ def test_every_shared_block_is_labelled() -> None:
     )
 
 
+# Holds the decision in docs/adr/20260828-continuation-goals-emit-verbatim-from-one-block.md.
 def test_the_blocks_are_actually_present() -> None:
     """Guards the checks above from passing vacuously on an empty search."""
     found = copies_by_block()
@@ -321,6 +322,7 @@ def test_the_blocks_are_actually_present() -> None:
     assert backstop_sites(), "no file arms a completion backstop"
 
 
+# Holds the decision in docs/adr/20260907-executors-own-unattended-decisions-within-explicit-bounds.md.
 def test_blocker_continuation_survives_every_outer_goal() -> None:
     """A caller's shorter stop rule must not park useful independent work."""
     for label in (GOAL_BLOCK, "pr-goal-block", "pr-tend-prefix"):

@@ -59,6 +59,7 @@ The marketplace mechanism was validated locally on Codex v0.135 (2026-05-31): a 
 
 ## Enforced by
 `tests/test_dist_skill_references.py` — `test_codex_distribution_is_plugin_native`, `test_codex_copy_matches_source`, and `test_codex_plugins_carry_their_skill_split`.
+Also `tests/test_dist_install_uninstall.py` — `test_codex_ships_no_installer_artifacts`, `test_codex_marketplace_registers_both_plugins`, `test_codex_plugins_bundle_skills`; `tests/test_dist_skill_references.py` — `test_codex_marketplace_points_at_existing_plugins`.
 
 ## Source
 - Related: See also 20260518-verifier-fail-hints-are-directives (the `/do` verification model these hooks backstopped)

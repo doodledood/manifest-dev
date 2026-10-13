@@ -98,6 +98,7 @@ escalation stops expressing its pause through the claim field.
 
 ## Enforced by
 `tests/test_ticket_automation_prompts.py` — `test_convention_escalation_releases_the_claim_and_marks_the_ticket`, `test_run_ticket_escalation_releases_the_claim_and_marks_the_ticket`, `test_sweep_excludes_escalated_tickets_from_the_eligible_set`, `test_event_eligibility_excludes_escalated_tickets`, and `test_github_venue_renders_the_escalation_mark_as_a_label`.
+Also `tests/test_ticket_automation_prompts.py` — `test_human_picker_needs_no_escalation_special_case`, `test_ticket_execution_skills_ship_on_every_distribution`.
 
 ## Source
 - Session: figure-out on cross-awareness among the Ticket skills (2026-08-25)

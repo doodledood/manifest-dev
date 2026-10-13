@@ -59,6 +59,7 @@ The mutability sentence is written to hold at every site without a per-site vari
 
 ## Enforced by
 `tests/test_goal_contract_blocks.py` — `test_every_shared_block_is_one_text`, `test_every_backstop_site_carries_the_goal_block`, and `test_every_backstop_site_forbids_paraphrase` fail when a copy of a goal block differs or a site drops it.
+Also `tests/test_goal_contract_blocks.py` — `test_the_blocks_are_actually_present`.
 
 ## Source
 

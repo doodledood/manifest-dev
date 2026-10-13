@@ -43,5 +43,8 @@ Operationally, the desired "execution + independent verification collaborate ove
 - The reviewer-side actor must obtain a PR-head checkout to execute AC `verify.prompt`s — real machinery, though no worse than what in-session verification already needs.
 - Cross-model AC re-execution may have low marginal value if in-session fresh-context AC subagents already catch most same-model misreads; the durable win then concentrates in the encoded `review-code` invariant rather than AC re-running.
 
+## Enforced by
+partly — `tests/test_dist_skill_references.py` — `test_review_pr_manifest_mode_remains_independently_per_gate` fails if `review-pr` loses its manifest mode or its per-gate independent verification; skipping the generic fleet when a Manifest is present is judgment.
+
 ## Source
 - Governs behavior of the `review-pr`, `define`, `do`, and `babysit-pr` skills.

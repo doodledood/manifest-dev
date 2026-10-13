@@ -38,6 +38,7 @@ def test_entries_are_found() -> None:
     assert ENTRIES, "no entries matched; check ENTRY against TASKS.md"
 
 
+# Holds the decision in docs/adr/20261013-runs-build-and-maintain-a-project-verification-surface.md.
 def test_every_entry_points_at_existing_sections_and_carries_a_status() -> None:
     broken = []
     for task, body in ENTRIES:

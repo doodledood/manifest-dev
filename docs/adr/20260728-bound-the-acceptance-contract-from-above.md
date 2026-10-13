@@ -73,5 +73,8 @@ Premise-questioning — whether the change earns its keep at all — remains whe
 - Requiring a stated trigger will drop some true findings whose mechanism a reviewer sensed but could not name. That is the intended trade — an empty report beats a false positive on a defect-finder — but it is a genuine loss, not a free one. Taste-level type hygiene is the concrete case: it names no trigger, so `type-safety` no longer reports it as a type hole. It moves to `code-maintainability` under Consistency, where it is advisory rather than blocking — which is the right home for it, but a lower bar than where it sat before.
 - The conformance/necessity distinction is one wording slip away from collapsing. A ceiling prompt that drifts into asking whether work was warranted rebuilds the gate `20260708` rejected, and would halt runs on questions no engine can settle.
 
+## Enforced by
+partly — `tests/test_eval_cases.py` — `test_ceiling_grader_matches_the_schemas_ceiling` fails if the schema's ceiling invariant drifts from the wording its grader checks; whether `/define` emits it is judgment.
+
 ## Source
 - Related: See also `20260708-judgment-layer-is-a-review-time-premise-check`, `20260726-only-gates-bind-process-guidance-is-advisory`, `20260722-state-verification-sufficiency-not-only-necessity`.

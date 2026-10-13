@@ -118,6 +118,9 @@ a gate delegating to it, the way `CODING.md`'s base gates delegate to theirs.
 - If a future dimension proposal fails the delete-the-fix test but is admitted anyway, the
   admission rule recorded here decays into a rationalisation for this one case.
 
+## Enforced by
+partly — `tests/test_dist_install_uninstall.py` — `test_codex_core_plugin_bundles_code_review_with_all_dimensions`; `tests/test_dist_skill_references.py` — `test_codex_code_review_skill_carries_every_dimension` fail if `defect-class` leaves the dimension set; the admission test and its boundaries are judgment.
+
 ## Source
 
 - Session: figure-out investigation, 2026-08-11 — `review-code`'s thirteen dimension references,

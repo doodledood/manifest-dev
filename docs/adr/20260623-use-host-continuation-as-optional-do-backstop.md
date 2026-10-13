@@ -55,6 +55,7 @@ Pi-specific runtime code may still provide native command wrappers, package load
 
 ## Enforced by
 partly — `tests/test_pi_extension_runtime.py` — `test_pi_package_is_skill_and_prompt_only` and `test_pi_runtime_fanout_symbols_are_absent_from_live_sources` fail if Pi ships a runtime verifier or extension; that `/do`'s protocol stays portable is judgment.
+Also `tests/test_dist_skill_references.py` — `test_pi_live_docs_do_not_claim_runtime_verifier_fanout`.
 
 ## Source
 

@@ -96,7 +96,7 @@ work proceeds; they never silently downgrade verification.
   safe across authoring and verification boundaries.
 
 ## Enforced by
-partly — `tests/test_dist_skill_references.py` — `test_executor_amendments_preserve_verification` checks amendment routing, evidence invalidation, and scope bounds; the blocker half is judgment.
+partly — `tests/test_dist_skill_references.py` — `test_executor_amendments_preserve_verification` checks amendment routing, evidence invalidation, and scope bounds; `tests/test_goal_contract_blocks.py` — `test_blocker_continuation_survives_every_outer_goal` pins the blocker-continuation wording in every goal block, and whether an executor acts on it is judgment.
 
 ## Source
 

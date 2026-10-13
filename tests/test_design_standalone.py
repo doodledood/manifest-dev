@@ -60,6 +60,7 @@ def test_entrypoint_stays_design_guidance(skill_dir: Path) -> None:
     assert not execution.search(text), skill_dir
 
 
+# Holds the decision in docs/adr/20260924-design-starts-from-the-person-and-their-moment.md.
 @pytest.mark.parametrize("skill_dir", SKILL_DIRS, ids=("source", "codex"))
 def test_review_support_paths_resolve(skill_dir: Path) -> None:
     review_dir = skill_dir.with_name("review-design")

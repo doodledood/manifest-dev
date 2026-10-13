@@ -42,6 +42,7 @@ With the text host-neutral, the distributions stop carrying copies: the OpenCode
 
 ## Enforced by
 `tests/test_skill_frontmatter.py` — `test_shipped_text_names_no_plugin_qualifier_outside_html_comments` and `test_shipped_text_names_no_host_tool`; `tests/test_dist_skill_references.py` — `test_opencode_reads_the_source_skill_directories`.
+Also `tests/test_dist_install_uninstall.py` — `test_opencode_ships_no_installer_artifacts`, `test_opencode_registers_every_source_skill_root`; `tests/test_dist_skill_references.py` — `test_sync_tools_is_a_wrapper_around_the_copy_script`, `test_pi_package_metadata_points_to_source_skills_and_prompts`, `test_pi_dist_carries_only_prompt_aliases`; `tests/test_skill_frontmatter.py` — `test_shipped_text_names_the_context_file_only_where_it_detects_or_compares`, `test_shipped_text_never_names_a_subagent_outside_research_digests`, `test_every_delegation_site_carries_an_inline_fallback`, `test_no_shipped_skill_is_marked_internal`, `test_every_skill_a_shipped_skill_names_ships_beside_it`, `test_every_dependency_only_skill_is_not_user_invocable`.
 
 ## Source
 - Session: figure-out session of 2026-09-03 on skill installability across hosts, executed under a Manifest the same day

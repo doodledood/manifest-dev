@@ -40,6 +40,7 @@ The dispatcher owns event delivery, agent launch, credentials, checkout, and the
 
 ## Enforced by
 `tests/test_ticket_automation_prompts.py` — `test_run_ticket_has_exact_input_and_dispatch_boundaries`.
+Also `tests/test_ticket_automation_prompts.py` — `test_ticket_execution_skills_ship_on_every_distribution`.
 
 ## Source
 - Session: unattended Ticket automation design (2026-08-12)

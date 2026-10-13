@@ -62,6 +62,7 @@ gate-ledger clause. The PR goal has no unknown Manifest-path slot. Nested execut
 
 ## Enforced by
 `tests/test_goal_contract_blocks.py` — `test_auto_chains_leave_goal_emission_to_the_executor` and `test_executor_contract_identifies_manifest_without_prior_context`.
+Also `tests/test_dist_skill_references.py` — `test_auto_investigation_keeps_read_bar_without_a_phase_goal`, `test_continuation_ownership_preserves_babysit_parent`.
 
 ## Source
 

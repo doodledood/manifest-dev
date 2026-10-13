@@ -284,6 +284,7 @@ def test_picker_reads_a_ticket_whole_not_just_its_body() -> None:
     assert "| Ticket context | Everything the issue carries beyond its body" in github
 
 
+# Holds the decision in docs/adr/20260825-escalation-clears-the-claim-and-carries-its-own-mark.md.
 def test_human_picker_needs_no_escalation_special_case() -> None:
     """Releasing the claim is what lets the selector rank escalated work unchanged."""
     text = skill_text(SOURCE_SKILLS, "next-ticket")
@@ -294,6 +295,11 @@ def test_human_picker_needs_no_escalation_special_case() -> None:
     assert "escalat" not in text.lower()
 
 
+# Holds the decision in docs/adr/20260825-escalation-clears-the-claim-and-carries-its-own-mark.md.
+# Holds the decision in docs/adr/20260812-scheduled-ticket-sweep-is-recovery-first-and-one-ticket.md.
+# Holds the decision in docs/adr/20260814-ticket-selection-minimizes-delay-loss-across-available-executors.md.
+# Holds the decision in docs/adr/20260810-auto-is-an-opt-in-grant-to-unattended-automation.md.
+# Holds the decision in docs/adr/20260812-run-ticket-owns-attempt-not-dispatch.md.
 def test_ticket_execution_skills_ship_on_every_distribution() -> None:
     for skills_root in [
         ROOT / "dist" / "codex" / "plugins" / "manifest-dev" / "skills",

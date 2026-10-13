@@ -25,6 +25,7 @@ TOOLS_SKILLS = tuple(
 CODEX_PLUGINS = ("manifest-dev", "manifest-dev-tools")
 
 
+# Holds the decision in docs/adr/20260531-codex-plugin-native-distribution.md.
 def test_codex_ships_no_installer_artifacts() -> None:
     """The legacy Codex installer is retired; none of its files may remain."""
     codex = DIST / "codex"
@@ -43,6 +44,7 @@ def test_codex_ships_no_installer_artifacts() -> None:
         ).exists(), f"retired Codex artifact present: {retired}"
 
 
+# Holds the decision in docs/adr/20260531-codex-plugin-native-distribution.md.
 def test_codex_marketplace_registers_both_plugins() -> None:
     marketplace = json.loads(
         (ROOT / ".agents" / "plugins" / "marketplace.json").read_text(encoding="utf-8")
@@ -69,6 +71,7 @@ def test_codex_marketplace_only_file_under_agents_plugins() -> None:
     assert list(agents_plugins.rglob("SKILL.md")) == []
 
 
+# Holds the decision in docs/adr/20260531-codex-plugin-native-distribution.md.
 def test_codex_plugins_bundle_skills() -> None:
     for plugin in CODEX_PLUGINS:
         plugin_dir = DIST / "codex" / "plugins" / plugin
@@ -86,6 +89,7 @@ def test_codex_plugins_bundle_skills() -> None:
             assert (skills_dir / skill / "SKILL.md").is_file()
 
 
+# Holds the decision in docs/adr/20260811-a-review-dimension-may-take-a-defect-as-input.md.
 def test_codex_core_plugin_bundles_code_review_with_all_dimensions() -> None:
     refs = (
         DIST
@@ -126,6 +130,8 @@ SOURCE_SKILL_ROOTS = (
 )
 
 
+# Holds the decision in docs/adr/20260611-opencode-plugin-native-distribution.md.
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_opencode_ships_no_installer_artifacts() -> None:
     """The OpenCode installer is retired; none of its files may remain."""
     for retired in (
@@ -140,6 +146,7 @@ def test_opencode_ships_no_installer_artifacts() -> None:
         ).exists(), f"retired OpenCode artifact present: {retired}"
 
 
+# Holds the decision in docs/adr/20260611-opencode-plugin-native-distribution.md.
 def test_opencode_plugin_entry_shape() -> None:
     """Dependency-free ESM plugin whose version mirrors the core plugin."""
     manifest = json.loads(
@@ -244,6 +251,7 @@ console.log(JSON.stringify(cfg))
     assert json.loads(result.stdout) == {}
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_opencode_registers_every_source_skill_root() -> None:
     index = (OPENCODE / "plugin" / "index.js").read_text(encoding="utf-8")
     for root in SOURCE_SKILL_ROOTS:

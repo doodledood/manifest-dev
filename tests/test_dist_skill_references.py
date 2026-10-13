@@ -146,6 +146,7 @@ def test_codex_plugin_versions_match_sources() -> None:
         assert codex["version"] == source["version"], plugin
 
 
+# Holds the decision in docs/adr/20260811-a-review-dimension-may-take-a-defect-as-input.md.
 def test_codex_code_review_skill_carries_every_dimension() -> None:
     refs = (
         DIST
@@ -170,6 +171,7 @@ def test_codex_does_not_ship_reviewer_agents_or_removed_skills() -> None:
         assert not (RETIRED_REVIEWER_AGENTS & skills)
 
 
+# Holds the decision in docs/adr/20260531-codex-plugin-native-distribution.md.
 def test_codex_marketplace_points_at_existing_plugins() -> None:
     marketplace = json.loads(
         (ROOT / ".agents" / "plugins" / "marketplace.json").read_text(encoding="utf-8")
@@ -221,6 +223,7 @@ def test_former_functional_agents_are_skills_in_every_dist() -> None:
 # --------------------------------------------------------------------------
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_sync_tools_is_a_wrapper_around_the_copy_script() -> None:
     """The per-host rewrite is retired: sync-tools runs scripts/sync_dist.py and
     lists the hand-maintained packaging files; its reference files are gone."""
@@ -529,6 +532,7 @@ def test_self_independence_detector_catches_semantic_variants() -> None:
         assert not claims_self_verification_is_independent(claim), claim
 
 
+# Holds the decision in docs/adr/20260709-do-keeps-default-execution-log-manifest-stays-contract.md.
 def test_do_log_prompts_preserve_journal_boundaries() -> None:
     log_files = [
         ROOT / "claude-plugins/manifest-dev/skills/do/references/LOG.md",
@@ -587,6 +591,7 @@ def test_define_task_gates_do_not_select_evaluator_topology() -> None:
     assert "tables with Agent + Threshold" not in project_context
 
 
+# Holds the decision in docs/adr/20260807-a-gate-is-one-text-not-two.md.
 def test_operational_guidance_has_no_stale_per_gate_topology() -> None:
     files = [
         ROOT / "README.md",
@@ -626,6 +631,7 @@ def test_operational_guidance_has_no_stale_per_gate_topology() -> None:
     assert not RETIRED_GATE_FIELDS.search(example)
 
 
+# Holds the decision in docs/adr/20260619-manifest-aware-review-pr.md.
 def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
     references = [
         ROOT
@@ -662,6 +668,7 @@ def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
         assert not RETIRED_GATE_FIELDS.search(text)
 
 
+# Holds the decision in docs/adr/20260905-executors-own-path-bearing-continuation-goals.md.
 def test_auto_investigation_keeps_read_bar_without_a_phase_goal() -> None:
     """Suppress the child goal before its generic standalone/parent rules run."""
     for root in (
@@ -729,6 +736,7 @@ def test_autonomous_diagnosis_goal_requires_mechanism_or_earned_underdeterminati
         assert expected in text, path
 
 
+# Holds the decision in docs/adr/20260905-executors-own-path-bearing-continuation-goals.md.
 def test_continuation_ownership_preserves_babysit_parent() -> None:
     """Nested workflow skills should not set competing narrower goals."""
     define_files = [
@@ -771,6 +779,7 @@ def test_continuation_ownership_preserves_babysit_parent() -> None:
 # --------------------------------------------------------------------------
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_pi_package_metadata_points_to_source_skills_and_prompts() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
@@ -793,6 +802,7 @@ def test_pi_package_metadata_points_to_source_skills_and_prompts() -> None:
     assert not (ROOT / "packages" / "manifest-dev-pi-tools").exists()
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_pi_dist_carries_only_prompt_aliases() -> None:
     prompt_files = {path.stem for path in (DIST / "pi" / "prompts").glob("*.md")}
     assert prompt_files == set(PI_PROMPTS)
@@ -812,6 +822,7 @@ def test_pi_prompt_aliases_expand_to_matching_skills() -> None:
         assert "description:" in text
 
 
+# Holds the decision in docs/adr/20260623-use-host-continuation-as-optional-do-backstop.md.
 def test_pi_live_docs_do_not_claim_runtime_verifier_fanout() -> None:
     live_paths = [
         ROOT / "README.md",
@@ -866,6 +877,7 @@ def _skill_markdowns(*roots: Path) -> list[Path]:
     return [p for root in roots for p in root.rglob("*.md")]
 
 
+# Holds the decision in docs/adr/20260622-mark-review-pr-comments-with-hidden-marker.md.
 def test_skill_activation_names_are_bare_on_every_surface() -> None:
     """Cross-skill references name the skill bare (`check-pr`, `review-prompt`), never
     plugin-qualified: every host reads the same text, and a plugin namespace is one

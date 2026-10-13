@@ -60,6 +60,7 @@ def require_render(output: str) -> None:
         pytest.skip("Render capability unavailable: " + output)
 
 
+# Holds the decision in docs/adr/20260905-design-obligations-follow-the-medium-and-task.md.
 @pytest.mark.parametrize(
     ("css", "body"),
     [
@@ -85,6 +86,7 @@ def test_source_syntax_never_certifies_focus_or_motion(
     assert "NOTE" in output
 
 
+# Holds the decision in docs/adr/20260905-design-obligations-follow-the-medium-and-task.md.
 @pytest.mark.parametrize(
     ("css", "body", "reason"),
     [
@@ -119,6 +121,7 @@ def test_unhandled_paint_is_counted_as_skipped(
     assert "OK       contrast" not in output
 
 
+# Holds the decision in docs/adr/20260905-design-obligations-follow-the-medium-and-task.md.
 def test_mixed_coverage_keeps_measured_and_skipped_separate(tmp_path: Path) -> None:
     output = run_check(
         tmp_path,
@@ -143,6 +146,7 @@ def test_opaque_readable_text_is_actually_measured(tmp_path: Path) -> None:
     assert "1 measured, 0 below threshold, 0 skipped" in output
 
 
+# Holds the decision in docs/adr/20260905-design-obligations-follow-the-medium-and-task.md.
 def test_modern_background_is_unknown_not_transparent(tmp_path: Path) -> None:
     output = run_check(tmp_path, "body{background:oklch(100% 0 0)}", "<p>Text</p>")
     require_render(output)
@@ -150,6 +154,7 @@ def test_modern_background_is_unknown_not_transparent(tmp_path: Path) -> None:
     assert "transparent on both" not in output
 
 
+# Holds the decision in docs/adr/20260902-design-chooses-an-encoding-per-claim-figures-are-information-not-decoration.md.
 def test_figure_note_does_not_require_retired_task_model_field(
     tmp_path: Path,
 ) -> None:
@@ -174,6 +179,7 @@ def test_class_themes_do_not_require_a_media_query(tmp_path: Path) -> None:
     assert "a defect if both themes are claimed" not in output
 
 
+# Holds the decision in docs/adr/20260905-design-obligations-follow-the-medium-and-task.md.
 def test_targets_are_candidates_and_include_checkboxes(tmp_path: Path) -> None:
     output = run_check(
         tmp_path,

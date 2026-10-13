@@ -67,6 +67,7 @@ def test_versions_count_up_from_one() -> None:
     ), f"{CHANGES} versions must run 1, 2, 3, … in order; found {numbers}"
 
 
+# Holds the decision in docs/adr/20261013-set-up-projects-receive-updates-through-a-version-marker.md.
 def test_every_version_says_what_projects_gain() -> None:
     for number, body, _ in versions():
         assert re.search(

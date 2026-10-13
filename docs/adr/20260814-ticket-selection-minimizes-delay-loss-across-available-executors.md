@@ -63,6 +63,7 @@ Auto and Type remain orthogonal Ticket facts. Type is never a priority input. Au
 
 ## Enforced by
 `tests/test_ticket_automation_prompts.py` — `test_ticket_priority_uses_delay_loss_and_executor_time`.
+Also `tests/test_ticket_automation_prompts.py` — `test_ticket_execution_skills_ship_on_every_distribution`.
 
 ## Source
 - Session: figure-out on project Ticket prioritization, 2026-08-14
