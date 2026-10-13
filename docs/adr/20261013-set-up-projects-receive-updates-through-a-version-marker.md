@@ -41,8 +41,7 @@ setup-project writes copies that each project owns — the ADR conventions, the 
 - A project that deletes the recorded version loses attribution until the next update.
 
 ## Enforced by
-`tests/test_setup_project_versions.py` — `test_latest_version_matches_what_setup_project_emits` and `test_surfaces_template_carries_the_latest_version` fail when an emitted template changes without a new surfaces version and change-list entry.
-Also `tests/test_setup_project_versions.py` — `test_every_version_says_what_projects_gain`.
+`tests/test_setup_project_versions.py` — `test_latest_version_matches_what_setup_project_emits` and `test_surfaces_template_carries_the_latest_version` fail when an emitted template changes without a new surfaces version and change-list entry. Also `tests/test_setup_project_versions.py` — `test_every_version_says_what_projects_gain` fails if a version ships without a change list.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.

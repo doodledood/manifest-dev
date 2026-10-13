@@ -119,7 +119,7 @@ a gate delegating to it, the way `CODING.md`'s base gates delegate to theirs.
   admission rule recorded here decays into a rationalisation for this one case.
 
 ## Enforced by
-partly — `tests/test_dist_install_uninstall.py` — `test_codex_core_plugin_bundles_code_review_with_all_dimensions`; `tests/test_dist_skill_references.py` — `test_codex_code_review_skill_carries_every_dimension` fail if `defect-class` leaves the dimension set; the admission test and its boundaries are judgment.
+partly — `test_codex_core_plugin_bundles_code_review_with_all_dimensions` (`tests/test_dist_install_uninstall.py`) and `test_codex_code_review_skill_carries_every_dimension` (`tests/test_dist_skill_references.py`) fail if `defect-class` leaves the dimension set; the admission test and its boundaries are judgment.
 
 ## Source
 

@@ -49,8 +49,7 @@ Result across all four hosts — Claude Code plugin, Codex plugin marketplace, P
 - Existing installer users need a migration note (remove suffixed copies, or the old uninstall path) to avoid lingering duplicates.
 
 ## Enforced by
-`tests/test_dist_skill_references.py` — `test_opencode_reads_the_source_skill_directories` and `test_opencode_ships_no_agents`.
-Also `tests/test_dist_install_uninstall.py` — `test_opencode_ships_no_installer_artifacts`, `test_opencode_plugin_entry_shape`.
+`tests/test_dist_skill_references.py` — `test_opencode_reads_the_source_skill_directories` and `test_opencode_ships_no_agents`. Also `tests/test_dist_install_uninstall.py` — `test_opencode_ships_no_installer_artifacts`, `test_opencode_plugin_entry_shape` fail if an installer artifact returns or the plugin entry stops being a `package.json` plus `index.js`.
 
 ## Source
 - Related: See also 20260531-codex-plugin-native-distribution (sibling decision; same retire-the-installer arc on Codex)

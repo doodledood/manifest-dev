@@ -153,8 +153,7 @@ schema. No translation path is provided.
   and worktrees, but an unreadable path is a new BLOCKED cause rather than a silent wrong verdict.
 
 ## Enforced by
-partly — `tests/test_dist_skill_references.py` — `test_every_operative_manifest_example_uses_the_current_gate_schema` fails if a shipped gate example regains the `verify` split; that a title summarizes and never adds is judgment.
-Also `tests/test_dist_skill_references.py` — `test_operational_guidance_has_no_stale_per_gate_topology`.
+partly — `tests/test_dist_skill_references.py` — `test_every_operative_manifest_example_uses_the_current_gate_schema` fails if a shipped gate example regains the `verify` split; that a title summarizes and never adds is judgment. Also `tests/test_dist_skill_references.py` — `test_operational_guidance_has_no_stale_per_gate_topology` fails if operational guidance regains a per-gate `verify:` or `phase:` field.
 
 ## Source
 - Session: figure-out session, 2026-08-07

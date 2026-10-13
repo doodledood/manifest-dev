@@ -58,8 +58,7 @@ The mutability sentence is written to hold at every site without a per-site vari
 - Sites carrying a prefix emit a literal `<manifest-path>` token whose meaning the prefix defines, rather than a substituted path, because they arm the backstop before a Manifest exists.
 
 ## Enforced by
-`tests/test_goal_contract_blocks.py` — `test_every_shared_block_is_one_text`, `test_every_backstop_site_carries_the_goal_block`, and `test_every_backstop_site_forbids_paraphrase` fail when a copy of a goal block differs or a site drops it.
-Also `tests/test_goal_contract_blocks.py` — `test_the_blocks_are_actually_present`.
+`tests/test_goal_contract_blocks.py` — `test_every_shared_block_is_one_text`, `test_every_backstop_site_carries_the_goal_block`, and `test_every_backstop_site_forbids_paraphrase` fail when a copy of a goal block differs or a site drops it. Also `tests/test_goal_contract_blocks.py` — `test_the_blocks_are_actually_present` fails if a labelled goal block or backstop site disappears, so the other checks cannot pass on nothing.
 
 ## Source
 

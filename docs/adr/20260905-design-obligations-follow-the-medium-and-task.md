@@ -39,7 +39,7 @@ This extends the written task model and shared reference structure. It narrows t
 - Regression fixtures establish specific repairs, not general design-quality improvement.
 
 ## Enforced by
-partly — `tests/test_design_check.py` — `test_source_syntax_never_certifies_focus_or_motion`, `test_unhandled_paint_is_counted_as_skipped`, `test_mixed_coverage_keeps_measured_and_skipped_separate`, `test_modern_background_is_unknown_not_transparent`, `test_targets_are_candidates_and_include_checkboxes` fail if the checker certifies what it cannot measure, guesses at unsupported syntax, or merges skipped evidence with measured evidence; deriving obligations from the medium and task is judgment.
+partly — `tests/test_design_check.py` — `test_source_syntax_never_certifies_focus_or_motion`, `test_unhandled_paint_is_counted_as_skipped`, `test_mixed_coverage_keeps_measured_and_skipped_separate`, `test_modern_background_is_unknown_not_transparent`, `test_targets_are_candidates_and_include_checkboxes` (render-gated: they skip unless `DESIGN_CHECK_NODE_DIR` supplies Playwright) fail if the checker certifies what it cannot measure, guesses at unsupported syntax, or merges skipped evidence with measured evidence; deriving obligations from the medium and task is judgment.
 
 ## Source
 

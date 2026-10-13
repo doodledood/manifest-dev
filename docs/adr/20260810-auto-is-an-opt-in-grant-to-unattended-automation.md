@@ -44,8 +44,7 @@ Default-off is what makes shared venues safe: nothing is ever marked "not auto" 
 - Agent help on ungranted tickets must be dispatched and supervised manually; the store offers no middle tier.
 
 ## Enforced by
-partly — `tests/test_ticket_automation_prompts.py` — `test_ticket_up_preserves_auto_authority_boundary` fails if Shaped starts implying Auto or Auto stops needing a fresh human grant; the granting criterion is judgment.
-Also `tests/test_ticket_automation_prompts.py` — `test_ticket_execution_skills_ship_on_every_distribution`.
+partly — `tests/test_ticket_automation_prompts.py` — `test_ticket_up_preserves_auto_authority_boundary` fails if Shaped starts implying Auto or Auto stops needing a fresh human grant; the granting criterion is judgment. Also `tests/test_ticket_automation_prompts.py` — `test_ticket_execution_skills_ship_on_every_distribution` fails if the distributed copy loses the rule that Shaped never implies Auto.
 
 ## Source
 - Session: figure-out session, 2026-08-10

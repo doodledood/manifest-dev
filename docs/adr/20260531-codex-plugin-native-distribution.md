@@ -58,8 +58,7 @@ Staged across two PRs to keep the change additive until proven in the wild:
 The marketplace mechanism was validated locally on Codex v0.135 (2026-05-31): a two-plugin marketplace rooted at `.agents/plugins/marketplace.json` installed cleanly via `codex plugin marketplace add <root>` + `codex plugin add <plugin>@<mp>`. Skills and `agents/*.md` both rode into an isolated, versioned plugin cache (`~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/`) intact — no manual namespacing needed, and the `config.toml` footprint is a single `[plugins."<plugin>@<mp>"] enabled = true`. The one open check is the git source: whether `codex plugin marketplace add owner/repo --sparse dist/codex` resolves the subdir root the same way the local path did.
 
 ## Enforced by
-`tests/test_dist_skill_references.py` — `test_codex_distribution_is_plugin_native`, `test_codex_copy_matches_source`, and `test_codex_plugins_carry_their_skill_split`.
-Also `tests/test_dist_install_uninstall.py` — `test_codex_ships_no_installer_artifacts`, `test_codex_marketplace_registers_both_plugins`, `test_codex_plugins_bundle_skills`; `tests/test_dist_skill_references.py` — `test_codex_marketplace_points_at_existing_plugins`.
+`tests/test_dist_skill_references.py` — `test_codex_distribution_is_plugin_native`, `test_codex_copy_matches_source`, and `test_codex_plugins_carry_their_skill_split`. Also `tests/test_dist_install_uninstall.py` — `test_codex_ships_no_installer_artifacts`, `test_codex_marketplace_registers_both_plugins`, `test_codex_plugins_bundle_skills`; `tests/test_dist_skill_references.py` — `test_codex_marketplace_points_at_existing_plugins` fail if an installer artifact returns, the marketplace stops registering both plugins at manifests that exist, or a plugin stops bundling its skills.
 
 ## Source
 - Related: See also 20260518-verifier-fail-hints-are-directives (the `/do` verification model these hooks backstopped)
