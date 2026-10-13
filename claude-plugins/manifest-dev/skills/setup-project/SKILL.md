@@ -39,12 +39,12 @@ Where the project records a version, the update offers the `CHANGES.md` entries 
 
 On a project that already carries surfaces, the run is an update. What it covers depends on the version the project records. With the newest version, it offers nothing and reports that the project is current. With an older version, it offers only the `CHANGES.md` entries after that version, applying each accepted one to the places below it touches. With no version, it covers all of these:
 
-- **The conventions, the North Star conventions, and the surfaces section** — by version where one is recorded, by comparison otherwise.
+- **The conventions, the North Star conventions, and the surfaces section** — by comparison, per *Compare, then offer* below.
 - **The records written under the conventions** — only their editable fields. Add `Enforced by` where a check already holds the record's decision: code that cites the record, or a lint or test configuration that pins what it decided; leave a record with no check found without the line. Add a missing `Area`. Rebuild the index per the conventions. Never change a record's body.
 - **The verification surface** — adopt and extend the verification assets the project already has rather than building a second set beside them, and add the surface's entry to the project-surfaces section, per `references/VERIFICATION_SURFACE.md`.
 - **The glossary** — additions only, ratified as mining describes.
 
-Show each backfilled line and each verification-surface change in the offer, and write only what the user accepts, the same as a convention difference. Mine only where the project records no version, and offer only candidates its glossary and records do not already settle. Once every offered item has an answer, write the newest surfaces version and report what was offered, applied and declined. A declined item leaves the project unchanged, so the recorded version is what keeps the next run from offering it again.
+Show each backfilled line and each verification-surface change in the offer, and write only what the user accepts, the same as a convention difference. Mine only where the project records no version, and offer only candidates its glossary and records do not already settle. Once every offered item has an answer, write the newest surfaces version and report what was offered, applied and declined.
 
 ### Compare, then offer
 
@@ -57,6 +57,8 @@ Without a recorded surfaces version, a project holds no record of what the refer
 Porting a conventions file is rarely a one-file edit: it governs the documents written under it, so when an accepted difference changes what something is called or how it is written, say which of those documents now read as out of step.
 
 ## The run
+
+Steps 2 to 6 install what a project lacks. On a project that already carries surfaces, they run only through *The update pass* above: nothing in them is written unless the update offered it and the user accepted.
 
 1. **Resolve the project context file.** Its name differs by CLI — `CLAUDE.md`, `AGENTS.md`, or another — so detect it rather than assuming. The active-host detection and context-file resolution rules live in `../review-code/references/context-file-adherence.md`; read them and use them. Resolve the glossary through `CONTEXT-MAP.md` where present, otherwise `CONTEXT.md`. Preserve an existing glossary; create a missing one with the known project name, one-line purpose, and empty Language section before mining or wiring. This also runs under `--no-mine`.
 

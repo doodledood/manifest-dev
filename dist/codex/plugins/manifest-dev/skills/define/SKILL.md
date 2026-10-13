@@ -12,18 +12,11 @@ shared understanding in the transcript → invoke `figure-out` first, propagatin
 `--autonomous` when the caller is unattended. A manifest path in the arguments
 means amend: targeted changes only, IDs stable, no renumbering.
 
-Before encoding a new Manifest for work in a repository, read what earlier work left on it: the
-workflow's own logs under `~/.manifest-dev/` whose recorded repository is this one, and
-Manifests there that name it or its paths, on an overlapping topic; open debt tickets; and the
-"Debt left" sections of recent pull requests on the paths the work touches — without pull
-requests, tickets and local logs are what there is. Read only the leading conclusions, rulings
-and out-of-scope calls of the few most relevant, and skip anything recorded for another
-repository. Each is a dated lead to check, never evidence; a ticket's status settles whether its
-debt is done, and declines are not recorded. Local logs never reach another runner, so a ruling
-found only in one, and not already a decision record or a Taste entry, is offered for capture as
-a decision record. When one area carries debt from several earlier runs, say so in the digest
-with the count and propose a dedicated topic. Note in the digest when the project's surfaces
-version is missing or older than setup-project's newest, without stopping to update.
+Before encoding a new Manifest for work in a repository, read what earlier work left on it —
+logs and Manifests for this repository, open debt tickets, and pull requests' "Debt left"
+sections — following figure-out's `references/RECALL.md`: the few most relevant, as dated leads
+to check rather than evidence, never another repository's. Note in the digest when the project's
+surfaces version is missing or older than setup-project's newest, without stopping to update.
 
 figure-out reaches understanding of the *problem*; this skill owns the *encoding*
 calls — invariant versus guidance, what a gate ranges over, where it binds, its
