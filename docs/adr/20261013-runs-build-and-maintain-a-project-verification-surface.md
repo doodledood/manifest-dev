@@ -17,6 +17,7 @@ Each Manifest designs its own verification, and nothing durable remains after th
 - define encodes building or repairing the surface as the first Deliverable when it is needed, scoped to the features the change touches, with gates that drive those entries. A Manifest that touches a mapped user-facing feature carries a gate: that feature's entry is updated and driven live.
 - do builds and maintains the surface. When a drive fails because the map or the harness drifted, the run fixes the surface within scope. A product regression is reported as debt, and a journey is never weakened to make it pass.
 - A repository check that map entries still reference existing routes, commands, or selectors is part of the surface, so structural drift fails even for contributors who do not use this workflow.
+- Unattended runs build a missing surface too, scoped to the features the change touches, and the completion report lists it as a new project surface the user can remove. A harness for the touched features is verification code for the change, like a regression test. It is not in the class of handoffs that install or rewire the project's context surfaces, which an unattended run only flags.
 - The creation mechanics live in a core init-context reference. init-context can seed the surface when it runs.
 - No scheduled sweep. An entry that no run touches may go stale; the next run that touches it repairs it.
 
@@ -25,6 +26,7 @@ Each Manifest designs its own verification, and nothing durable remains after th
 - **User-invoked skills to create and maintain the surface**: they depend on memory.
 - **A scheduled maintenance pass**: it needs infrastructure the user may not have.
 - **A tools-plugin skill**: core can depend on it only when it is installed.
+- **Only flag a missing surface in unattended runs**: a project that runs unattended would never get one, and the surface is what lets a user trust output without reading it.
 
 ## Consequences
 
