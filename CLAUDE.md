@@ -64,7 +64,7 @@ This project keeps its direction, vocabulary, and decision memory in the repo �
 
 **Writing a decision record is one act, not three** — the record, the restatus, and the index, in one change. Step two is the one that gets dropped, and dropping any of them leaves the corpus asserting something untrue. Open `docs/adr/CONVENTIONS.md` before you start: it carries the bar, the template, and what each step actually requires.
 
-**The verification surface is `claude-plugins/manifest-dev/evals/` and `tests/`.** The eval suites are a behavior eval suite for the skills: each case carries its status in the suite READMEs (`evals/README.md`, `evals/define/README.md`) — unmeasured, measured with its date, or stale once a covered prompt changes. `tests/` holds the property checks every change keeps green. Read `evals/README.md` before changing a prompt it covers.
+**The verification surface is `claude-plugins/manifest-dev/evals/` and `tests/`.** The eval suites test the skills' behavior: each case carries its status in the suite READMEs (`evals/README.md`, `evals/define/README.md`) — unmeasured, measured with its date, or stale once a covered prompt changes. `tests/` holds the property checks every change keeps green. Read `evals/README.md` before changing a prompt it covers.
 
 ## Repository Structure
 
@@ -160,9 +160,9 @@ The same split holds for the North Star: `docs/NORTH_STAR_CONVENTIONS.md` is thi
 
 Distributed skill files stay repo-agnostic — maintainer/governance notes like this one belong here, not in skill references or in `docs/adr/CONVENTIONS.md` or `docs/NORTH_STAR_CONVENTIONS.md`, which setup-project emits into other people's repositories.
 
-## Setup-Project Surfaces Versions
+## Setup-Project Surfaces Version
 
-Every file setup-project copies or emits into projects — `figure-out/references/ADR_FORMAT.md`, `setup-project/references/NORTH_STAR_FORMAT.md`, and `setup-project/references/VERIFICATION_README_TEMPLATE.md` — is pinned to the latest surfaces version in `setup-project/references/CHANGES.md`. A change to any of them needs, in the same change, a new `## vN` entry listing what an installed project gains, with the digest `tests/test_setup_project_versions.py` prints, and the version comment in `NORTH_STAR_FORMAT.md`'s surfaces template set to `vN`. Installed projects record the version they carry, and an update offers only the entries after it, so a change shipped without a version never reaches them. HTML comments are outside the digest, so maintainer notes need no version.
+Every file setup-project copies or emits into projects — `figure-out/references/ADR_FORMAT.md`, `setup-project/references/NORTH_STAR_FORMAT.md`, and `setup-project/references/VERIFICATION_README_TEMPLATE.md` — is pinned to the latest surfaces version in `setup-project/references/CHANGES.md`. A change to any of them needs a new `## vN` entry in the same change. The entry lists what an installed project gains and carries the digest the version test prints on failure, and the version comment in the surfaces template of `NORTH_STAR_FORMAT.md` moves to `vN`. Installed projects record the version they carry, and an update offers only the entries after it, so a change shipped without a version never reaches them. HTML comments are outside the digest, so maintainer notes need no version.
 
 ## Red-Flag Mirror Pairs
 

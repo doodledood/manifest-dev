@@ -127,8 +127,8 @@ Cases `30`–`44` were written on 2026-10-13 and have never been run. Their spli
 out — and which survive are decided at their first both-arm run. `30` uses a project set up before
 surfaces versions existed: until a second surfaces version ships, that is the only way a project
 can be behind, and the case grades the same behavior an older recorded version would — offering
-what the newer setup adds, not a redo. `30`, `31`, `36` and `43` exist only with the plugin and run on
-the plugin arm alone, like `27` and `28`.
+what the newer setup adds, not a redo. `30`, `31`, `36`, and `43` exist only with the plugin and run
+on the plugin arm alone, like `27` and `28`.
 
 **Every recorded number in this file is stale as of 2026-10-13.** That change edited figure-out's
 spine, its docs-mode and autonomous references, and its task files, so no earlier result measures

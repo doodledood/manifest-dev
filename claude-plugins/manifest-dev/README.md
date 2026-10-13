@@ -34,12 +34,12 @@ These entrypoints extend unattended work through planning or reduce its process:
 |-------|--------------|
 | `/auto` | Chains figure-out, define and do without stopping for approval between them. |
 
-## What an updated project gets
+## What the workflow maintains
 
-Nothing new to remember: the same commands now move a codebase toward one the workflow can keep correct.
+Nothing new to remember: the same commands move a codebase toward one the workflow can keep correct.
 
 - **Design before code** — figure-out sketches the shape of a change, compares a second one, and screens both for patterns the next agent would copy; define puts a behavior-preserving restructuring first when the area resists the change.
-- **Corrections become checks** — `/do` turns a caught mistake into a scoped type, lint or test, and the decision record names it.
+- **Corrections become checks** — `/do` turns a caught mistake into a scoped type, lint, or test, and the decision record names it.
 - **Debt in `done` and in pull requests** — what a run leaves unfixed is listed at the end and in a "Debt left" section of each pull request; the next change on that path is offered the fix.
 - **A verification surface kept fresh by runs** — a harness and feature map, behavior cases, or reader tasks, built when missing and repaired when drifting.
 - **Recall and update offers** — sessions start from earlier work on the same repository, and set-up projects are offered what changed since their recorded surfaces version.
@@ -50,7 +50,7 @@ These set up and feed the two longer-lived tiers:
 
 | Skill | What it does |
 |-------|--------------|
-| `/setup-project` | Sets a repository up with a North Star, a glossary, decision-record conventions and a verification surface, plus the wiring that makes every session read them. Seeds them from the project's own history where there is any, and later offers a set-up project only what changed since the surfaces version it records. `/figure-out` offers it, so you rarely type it. |
+| `/setup-project` | Sets a repository up with a North Star, a glossary, decision-record conventions, and a verification surface, plus the wiring that makes every session read them. Seeds them from the project's own history where there is any, and later offers a set-up project only what changed since the surfaces version it records. `/figure-out` offers it, so you rarely type it. |
 | `/ticket-up` | Writes work into your ticket store — from a finished Manifest, a direct request, an open question, or findings from other work. |
 | `/next-ticket` | Reads the store, picks the one to work on now, claims it, and says why it leads. |
 | `/run-ticket` | Takes one specific ticket end to end and records the outcome back on it. |
