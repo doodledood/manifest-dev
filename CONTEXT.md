@@ -70,7 +70,7 @@ An index that asserts nothing its records don't, and is rebuilt from them rather
 _Avoid_: ADR list, table of contents.
 
 **Verification Surface**:
-A project's durable means of driving the real product and proving behavior — a harness (launch, doctor, drive, evidence, cleanup) plus a feature map with one entry per user-facing feature — built and repaired by normal runs where the work touches it, never by a separate maintenance pass.
+A project's durable means of checking that an artifact future runs will change still does its job, in the artifact's own form — a harness plus a feature map for a runnable product, a behavior eval suite for prompts and skills, a reader-task list for a living document — with each entry unverified, verified, or stale; built and repaired by normal runs where the work touches it, never by a separate maintenance pass.
 _Avoid_: Test suite, e2e suite, control skill.
 
 **Lock**:

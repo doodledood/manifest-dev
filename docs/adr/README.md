@@ -163,7 +163,8 @@
 | 2026-10-13 | [A correction becomes a scoped lock where one exists, and the lock's hits across the repository are reported as debt](20261013-corrections-become-scoped-locks-and-their-hits-become-reported-debt.md) | Accepted | do |
 | 2026-10-13 | [Decision records name what enforces them, and that line is editable in place](20261013-decision-records-name-what-enforces-them.md) | Accepted | ADR conventions |
 | 2026-10-13 | [Design judgment moves to design time as task-file probes and Defaults; review dimensions stay as post-code gates](20261013-design-judgment-moves-to-design-time-as-task-file-probes.md) | Accepted | Task guidance |
+| 2026-10-13 | [figure-out and define recall earlier sessions on the same repository and topic](20261013-figure-out-and-define-recall-earlier-sessions-on-the-same-repo.md) | Accepted | define / figure-out |
 | 2026-10-13 | [New capabilities live inside figure-out, define, do, and auto, and maintain themselves during normal runs](20261013-new-capabilities-live-inside-the-four-workflow-entry-points.md) | Accepted | Positioning |
-| 2026-10-13 | [Runs build and maintain a project verification surface — a harness and a feature map](20261013-runs-build-and-maintain-a-project-verification-surface.md) | Accepted | define / do |
+| 2026-10-13 | [Runs build and maintain a verification surface for each artifact that future runs will change](20261013-runs-build-and-maintain-a-project-verification-surface.md) | Accepted | define / do |
 | 2026-10-13 | [A rule the user states overrides a conflicting plugin Default](20261013-the-users-rules-override-plugin-defaults.md) | Accepted | define |
 | 2026-10-13 | [A workaround comment in the project's own code becomes a refactor flag; a constraint comment becomes an offer to encode it](20261013-workaround-comments-become-refactor-flags-constraint-comments-become-checks.md) | Accepted | Code review |
