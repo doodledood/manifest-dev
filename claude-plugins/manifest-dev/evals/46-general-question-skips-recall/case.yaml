@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 46-general-question-skips-recall
+context:
+  scaffold_script: scaffold.sh

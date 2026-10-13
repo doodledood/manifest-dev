@@ -1,6 +1,6 @@
 # Recall: what earlier work on this repository left
 
-Recall matches by repository and topic, so it reads nothing when neither overlaps.
+Spend in proportion to what missing an earlier ruling would cost. Match before reading anything whole: a log's first lines name its topic and repository, and a search for this repository's name or paths finds the Manifests that mention it. Open the few most relevant for work that settles a design or a decision, and fewer for a small, contained change. When nothing overlaps, recall is done.
 
 - **The workflow's own logs and Manifests** under `~/.manifest-dev/` on an overlapping topic: logs whose recorded repository is this one, and Manifests that name it or its paths. Read only the leading conclusions, rulings and out-of-scope calls of the few most relevant, never whole logs. Skip any recorded for another repository.
 - **Debt any runner can see** — open debt tickets in the project's Ticket store, the "Debt left" sections of recent pull requests that touched the paths this topic concerns where the host can reach the forge, and entries marked `stale` on the project's verification surface (its durable way to check its result: a feature map, an eval suite or a reader-task list). Without pull requests, tickets and local logs are what there is.

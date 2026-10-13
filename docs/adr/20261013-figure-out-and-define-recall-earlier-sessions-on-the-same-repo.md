@@ -13,7 +13,8 @@ The user
 Each skill reads back only its own file. figure-out reads a log when it resumes that same log; define reads a Manifest when it is given that Manifest's path to amend; do reopens the log keyed to its own Manifest. Nothing looks across sessions, so a new session on a related topic starts from nothing while earlier investigations — their evidence, rulings, dead ends, and out-of-scope calls — sit unread beside it. On one machine the workflow's home held over 300 logs and nearly 200 Manifests. An investigation into this design proposed, as a new idea, a tool that an earlier session on the same repository had already tested. Logs also did not record which repository they were about.
 
 ## Decision
-- At the start of figure-out, and at the start of define when it writes a new Manifest, the run scans the workflow's logs and Manifests for sessions on the same repository whose topic overlaps.
+- figure-out recalls once an investigation concerns a change, design, or decision in the active repository, and define recalls when it writes a new Manifest. Each scans the workflow's logs and Manifests for sessions on the same repository whose topic overlaps.
+- Recall is proportional. A general or quick question that the repository's history cannot bear on loads nothing. The scan matches each log's first lines, which name its topic and repository, before reading any file whole. How much it reads scales with what missing an earlier ruling would cost.
 - It reads only the leading conclusion, the rulings, and the out-of-scope calls of the few most relevant, not whole logs.
 - It carries what it finds as dated leads from an earlier session, to check before relying on them, under the same rule that already makes verified status decay. A recalled claim never counts as verified evidence by itself.
 - A ruling found there that never became a decision record or a Taste entry is offered for capture.
@@ -23,6 +24,7 @@ Each skill reads back only its own file. figure-out reads a log when it resumes 
 
 ## Alternatives Considered
 - **No recall**: each session repeats or contradicts work that is already on disk.
+- **Recall at the start of every figure-out investigation**: figure-out also serves general and small questions, where recall slows the session and spends tokens on history that cannot bear on the answer.
 - **Recall in every skill, including do**: do's Manifest already holds what it needs, so the cost buys nothing there.
 - **Read whole logs**: costs too many tokens and pulls in detail that has gone stale.
 - **Treat recalled claims as facts**: an earlier session can be wrong or superseded; in the motivating case, two logs on the same day disagreed about the same tool.
@@ -34,11 +36,12 @@ Each skill reads back only its own file. figure-out reads a log when it resumes 
 - Rulings that were never recorded get a second chance to become records.
 
 ### Negative
-- Each session spends tokens at the start on the scan.
+- A session that changes the repository spends tokens on the scan; one that does not spends none.
 - A topic match can be wrong, and a recalled lead can be stale; the label and the repository match limit both.
+- A session that looked unrelated can miss an earlier ruling that would have applied.
 
 ## Enforced by
-partly — eval case `43-recalls-earlier-work` measures it once run.
+partly — eval cases `43-recalls-earlier-work` and `46-general-question-skips-recall` measure it once run.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
