@@ -42,7 +42,7 @@ A follow-up Ticket is created only for genuinely separate work discovered during
 - Reporting systems cannot treat every terminated automated run as a closed Ticket.
 
 ## Enforced by
-`tests/test_ticket_automation_prompts.py` — `test_run_ticket_preserves_ticket_identity_and_routes_follow_ups` fails if run-ticket stops closing the same Ticket on success or leaving it open on escalation, or may replace the source Ticket or write a follow-up without ticket-up.
+`tests/test_ticket_automation_prompts.py` — `test_run_ticket_preserves_ticket_identity_and_routes_follow_ups` fails if run-ticket stops closing the same Ticket on success, stops leaving it open on escalation, gains leave to replace the source Ticket, or writes a follow-up without ticket-up.
 
 ## Source
 - Session: figure-out on unattended ticket automation (2026-08-12)

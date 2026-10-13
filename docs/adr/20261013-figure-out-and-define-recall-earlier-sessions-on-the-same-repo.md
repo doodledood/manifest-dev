@@ -41,7 +41,7 @@ Each skill reads back only its own file. figure-out reads a log when it resumes 
 - A session that looked unrelated can miss an earlier ruling that would have applied.
 
 ## Enforced by
-partly — eval cases `43-recalls-earlier-work` and `46-general-question-skips-recall` measure it once run.
+partly — eval cases `43-recalls-earlier-work` and `46-general-question-skips-recall` measure it once run; how deep a recall should go for the stakes stays judgment.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.

@@ -30,7 +30,7 @@ define's task files carry Defaults that each Manifest receives without probing. 
 - It depends on the run finding and reading the user's rules.
 
 ## Enforced by
-partly — eval case `d21-user-rule-over-default` measures it once run.
+partly — eval case `d21-user-rule-over-default` measures it once run; whether a stated rule covers the case at hand stays judgment.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.

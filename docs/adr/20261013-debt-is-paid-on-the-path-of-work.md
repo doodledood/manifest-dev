@@ -41,7 +41,7 @@ Each change keeps to one concern, which keeps a fix from turning into a bundle o
 - Whether a codebase actually converges is not measured yet; the signals are debt per run in an area falling, verified verification entries rising, and the share of review findings a check could have prevented falling.
 
 ## Enforced by
-partly — eval cases `44-debt-on-the-path` and `d20-preparatory-slice` measure it once run.
+partly — eval cases `44-debt-on-the-path` and `d20-preparatory-slice` measure it once run; whether an item lies on the path of the work stays judgment.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.
