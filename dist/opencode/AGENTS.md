@@ -24,7 +24,7 @@ Supporting workflows:
 - **/setup-project** — Sets a repository up with project-owned ADR conventions, a glossary, a verification surface, and the context-file wiring that keeps sessions using them, seeding them from the project's own history where there is any; later offers a set-up project only what changed since the surfaces version it records.
 - **/review-writing** — Reviews prose against the project's writing standards in its own register: documentation or human-voiced writing. Detects the register, applies it plus the shared floor, and reports graded findings. Distinct from review-code's prose-value dimension, which asks whether prose in a diff earns its place.
 - **/design** — Guides visual and interaction design from the person, their moment and the subject. The invoking workflow creates or changes the artifact; /design supplies the visual direction.
-- **/review-design** — Evaluates the artifact against the brief, design system and applicable standards in its actual medium; owns the review references and HTML checker. Reports graded findings or BLOCKED where inspection is unavailable. A design gate's body activates it under the selected mode.
+- **/review-design** — Evaluates the artifact against the brief, design system and applicable standards in its actual medium; owns the review references and HTML checker. Reports graded findings or BLOCKED where inspection is unavailable. A design gate's body activates it.
 - **Tools skills** — /babysit-pr, /eli5, /handoff, /prompt-engineering, /review-pr, /teach-me, and /walk-pr ship alongside the core skills under their original names. /babysit-pr is the author-side companion to /review-pr and supports CI one-shot advancement via `--ci`; /teach-me turns a body of work — the session, a PR, an ADR, or any topic — into an incremental teaching loop with mastery checks.
 
 ## Manifest Schema — Gate Text
@@ -60,7 +60,7 @@ Each gate evaluation returns **PASS**, **FAIL**, or **BLOCKED**. BLOCKED routes 
 
 ## PR Lifecycle
 
-PR-lifecycle gate bodies activate the `check-pr` skill under the selected mode through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /babysit-pr uses manifest/PR grounding and runs the lifecycle; /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
+PR-lifecycle gate bodies activate the `check-pr` skill through `tasks/PR_LIFECYCLE.md` task guidance. `/define --babysit <pr-url>` synthesizes a lifecycle manifest from an existing PR. /babysit-pr uses manifest/PR grounding and runs the lifecycle; /do drives the PR to a mergeable state and stops — the merge button is left to a human or GitHub auto-merge.
 
 ## Code review
 
@@ -68,7 +68,7 @@ Quality review is the **`review-code` skill** (one dimension per invocation, eac
 
 ## Agents
 
-manifest-dev ships no agents. `/do` uses host execution contexts according to the selected mode; formerly-agent capabilities ship as skills (`check-pr`, `poll-slack`, and the tools-side `review-prompt`).
+manifest-dev ships no agents. `/do` uses host execution contexts where the host offers them; formerly-agent capabilities ship as skills (`check-pr`, `poll-slack`, and the tools-side `review-prompt`).
 
 ## Unattended Execution
 

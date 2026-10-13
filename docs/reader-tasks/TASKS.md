@@ -63,6 +63,12 @@ in `README.md` beside this file.
 - **Ends able to:** name the plugin that ships a given skill and install only that one.
 - **Status:** unverified
 
+## Add a plugin
+
+- **Where:** `CONTRIBUTING.md` → *Plugin Development Process*; `claude-plugins/README.md` → *Add a plugin*
+- **Ends able to:** create a plugin from the template, register it in the marketplace, and test it locally.
+- **Status:** unverified
+
 ## Contribute a change
 
 - **Where:** `CONTRIBUTING.md` → *Pull Request Process*; `README.md` → *Development*
@@ -78,5 +84,5 @@ in `README.md` beside this file.
 ## Pick the tools skill for a job
 
 - **Where:** `claude-plugins/manifest-dev-tools/README.md` → *Pull requests* and *Prompts* and *People and sessions*
-- **Ends able to:** name the tools skill that reviews someone else's pull request, tends their own, reviews a prompt, or hands a session to a fresh agent.
+- **Ends able to:** name the tools skill that reviews someone else's pull request, tends your own, reviews a prompt, or hands a session to a fresh agent.
 - **Status:** unverified

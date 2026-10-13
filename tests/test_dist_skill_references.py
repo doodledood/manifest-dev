@@ -529,7 +529,7 @@ def test_self_independence_detector_catches_semantic_variants() -> None:
         assert not claims_self_verification_is_independent(claim), claim
 
 
-def test_verification_policy_prompts_preserve_portable_boundaries() -> None:
+def test_do_log_prompts_preserve_journal_boundaries() -> None:
     log_files = [
         ROOT / "claude-plugins/manifest-dev/skills/do/references/LOG.md",
         DIST / "codex/plugins/manifest-dev/skills/do/references/LOG.md",
@@ -933,6 +933,9 @@ def test_do_log_path_is_stated_once() -> None:
         naming = sorted(
             str(path.relative_to(skill))
             for path in skill.rglob("*.md")
-            if "manifest-dev/logs/" in path.read_text(encoding="utf-8")
+            if re.search(
+                r"manifest-dev/logs/|do-log|\{timestamp\}",
+                path.read_text(encoding="utf-8"),
+            )
         )
         assert naming == ["SKILL.md"], (skill, naming)

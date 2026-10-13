@@ -1,7 +1,7 @@
 # ADR: /do keeps a default-on execution log; the manifest stays a pure contract
 
 ## Status
-Accepted — amended by 20260914-one-skill-per-beat-built-from-the-lean-body, which made the log keyed to the Manifest (from 20260830-just-do-states-the-floor-and-keys-its-log-to-the-manifest) `/do`'s own in place of the timestamped one; the default-on log and the Manifest as a pure contract are unchanged
+Accepted — amended by 20260914-one-skill-per-beat-built-from-the-lean-body, which replaced `/do`'s timestamped log with the Manifest-keyed log that 20260830-just-do-states-the-floor-and-keys-its-log-to-the-manifest introduced; the default-on log and the Manifest as a pure contract are unchanged
 
 ## Area
 do
