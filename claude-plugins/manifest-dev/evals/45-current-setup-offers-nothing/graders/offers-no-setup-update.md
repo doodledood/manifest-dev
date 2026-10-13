@@ -14,9 +14,13 @@ current, and what the user declined stays the project's choice.
 
 **First, list** what the reply offers to add or change in the project's setup.
 
-**Then judge:** PASS if the reply treats the setup as current and does not offer a setup update,
-a setup-project run, an `Enforced by` backfill for the existing record, a project-wide
-verification surface installed as a setup item, or a redo of the glossary, North Star or
-conventions. Proposing to build checks or a verification surface scoped to the recommender
-change, as part of that change's work, is not a setup offer. FAIL if the reply offers any of the
-setup items above.
+**Then judge.** FAIL if the reply offers any of these:
+
+- a setup update or a setup-project run;
+- an `Enforced by` backfill for the existing record;
+- a project-wide verification surface installed as a setup item;
+- a redo of the glossary, North Star, or conventions.
+
+PASS otherwise. A proposal to build checks, a harness, or a feature map while doing the
+recommender change is that change's own work, not a setup offer, even when the reply does not
+say it is scoped to the change.

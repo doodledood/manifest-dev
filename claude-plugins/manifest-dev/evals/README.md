@@ -17,12 +17,12 @@ so cases that need a repository, project docs, or a context file find them in th
 directory. Without it, those cases run against an empty directory and measure nothing. Only pass
 it for case files from this repository: a scaffold is bash that runs as you.
 
-Seven cases test behavior that exists only with the plugin — offering a Taste entry and not
+Seven cases test behavior that exists only with the plugin: offering a Taste entry and not
 offering one for a discipline every session owes (`27`, `28`), offering a setup update and
 offering none to a current project (`30`, `45`), a record naming what enforces it (`31`), the
-verification surface's stale marker (`36`), and recall of earlier sessions (`43`) — so the
-no-plugin arm passes or fails them by construction. They carry the tag `figure-out-plugin-only`
-instead of `figure-out` and run on the plugin arm alone:
+verification surface's stale marker (`36`), and recall of earlier sessions (`43`). The no-plugin
+arm passes or fails them by construction. They carry the tag `figure-out-plugin-only` instead of
+`figure-out` and run on the plugin arm alone:
 
 ```bash
 claude plugin eval . --tag figure-out-plugin-only --ablation none --judge-model opus --allow-tools Write Bash --scaffold -j 8
@@ -125,8 +125,8 @@ from a discipline `SKILL.md` explicitly states.
 | `44-debt-on-the-path` | autonomous, repository | Offer recorded debt on the change's path as a behavior-preserving first step | unmeasured |
 | `45-current-setup-offers-nothing` | docs, repository, plugin arm only | Offer no setup update to a project that records the newest surfaces version, and do not re-offer the items it declined | unmeasured |
 
-Cases `30`–`45` were written on 2026-10-13 and have never been run. Their split — tuning or held
-out — and which survive are decided at their first both-arm run. `30` uses a project set up
+Cases `30` to `45` were written on 2026-10-13 and have never been run. Their split — tuning or
+held out — and which survive are decided at their first both-arm run. `30` uses a project set up
 before surfaces versions existed: until a second surfaces version ships, that is the only way a
 project can be behind. It tests the update offer for a project with no recorded version, graded
 on offering what v1 adds and not a redo. `45` tests the other branch of the recorded-version
