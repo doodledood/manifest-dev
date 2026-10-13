@@ -27,8 +27,8 @@ task from the document alone. Success is the reader ending able to do what the e
 where it got stuck as the entry's evidence.
 
 `tests/test_reader_tasks.py` runs with the project's tests and fails when an entry names a file
-or section that no longer exists, writes a pointer any other way, or lacks exactly one `Where:`
-line and one valid status.
+or section that no longer exists, writes a pointer any other way, or does not have exactly one
+`Where:` line and one valid status.
 
 ## Statuses
 

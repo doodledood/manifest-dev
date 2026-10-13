@@ -93,13 +93,12 @@ short messages do not require permission to do the next piece of research.
   branches as much as the main flow; what that enumeration wants and the
   proposal lacks are the gaps.
 - When the read implies making something, state exactly what it will be and
-  how it will be checked, and offer to render a quick disposable draft that makes the proposed result
+  how it will be checked — through the project's verification surface, its
+  durable way to check a result (a harness and feature map, an eval suite, or a
+  reader-task list), found where the context file's project-surfaces section
+  names it or, with none named, among the verification assets the project keeps
+  — and offer to render a quick disposable draft that makes the proposed result
   concrete enough to choose a direction and agree on what will be produced.
-  Check it through the project's verification surface, its durable way to check
-  a result: a harness and feature map, an eval suite, or a reader-task list.
-  Find it where the context file's project-surfaces section names it; with none
-  named, look among the verification assets the project keeps before concluding
-  it has none.
   Refine details after that choice, unless the user asks to explore them now.
   Before the first draft, settle what that person came to do and what we want
   from the artifact, asking only what the conversation has not answered; leave

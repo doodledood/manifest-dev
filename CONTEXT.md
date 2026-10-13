@@ -73,6 +73,10 @@ _Avoid_: ADR list, table of contents.
 A project's durable means of checking that an artifact future runs will change still does its job, in the artifact's own form: a harness plus a feature map for a runnable product, a behavior eval suite for prompts and skills, a reader-task list for a living document. Each entry is unverified, verified, or stale; an eval case is unmeasured, measured, or stale. Normal runs build and repair it where the work touches it, never a separate maintenance pass.
 _Avoid_: Test suite, e2e suite, control skill.
 
+**Reader Task**:
+One entry in a living document's verification surface: a task a reader comes to the document to do, the sections the reader relies on, what the reader should end up able to do, and a status. A reader with fresh context, given only the document, walks it.
+_Avoid_: User story, test case, doc test.
+
 **Surfaces Version**:
 The integer, listed in setup-project's `CHANGES.md`, that a project's context file records in its project-surfaces section. Setup-project writes it when it installs or updates the surfaces, and figure-out writes it when the user declines the whole update offer. The recorded number decides what an update offers: nothing at the newest version, the later `CHANGES.md` entries at an older one, and a full comparison when the project records none. Unrelated to the plugin's own version.
 _Avoid_: Plugin version, setup version, template version.

@@ -8,8 +8,9 @@ reader-task list, statuses, repository check — are in setup-project's
   verification assets the project keeps. Build the surface from what is found, or from nothing,
   scoped to what the change touches — the form the artifact
   needs, existing verification assets adopted rather than duplicated, the harness parts the
-  change needs, entries for the touched features, the README and the repository check. Name it with the verification-surface bullet of
-  setup-project's surfaces template, in the project-surfaces section of the project-level context
+  change needs, entries for the touched features, the README and the repository check. Record it with the verification-surface bullet of the
+  surfaces template in `../../setup-project/references/NORTH_STAR_FORMAT.md` → *The project-surfaces
+  section*, in the project-surfaces section of the project-level context
   file the detected host reads, resolved per `../../review-code/references/context-file-adherence.md`;
   create the file or the section, holding only that bullet, where it is missing. Build it unattended too: it is verification for the change, like a regression test. Name it in the
   completion report as a new project surface the user can remove.
