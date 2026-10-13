@@ -1,6 +1,6 @@
 # PROMPTING — probing fuel
 
-Angles that are easy to under-weight when changing a prompt, skill or agent. Considerations, not an agenda. Press the load-bearing ones; priority stays yours. Wording itself is the prompt-engineering skill's.
+Angles that are easy to under-weight when changing a prompt, skill or agent. Considerations, not an agenda. Press the load-bearing ones; priority stays yours. Wording itself is the prompt-engineering skill's, where it is available.
 
 ## Blind-spot probes
 - **How it gets checked** — Which behaviors does the change owe, and which behavior cases exercise them, judged on what the run did rather than what it reports? Does the project's eval suite already cover them, and which recorded numbers does this change make stale?

@@ -30,6 +30,7 @@ if __name__ == "__main__":
 EOF
 
 mkdir -p docs
+sed -i.bak 's/choices=\["csv", "json"\]/choices=["csv"], help="Export format: csv (see docs\/formats.md)"/' src/shelfnote.py && rm -f src/shelfnote.py.bak
 cat > docs/formats.md <<'EOF'
 # Export formats
 

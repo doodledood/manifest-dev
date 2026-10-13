@@ -19,7 +19,7 @@ mistake fails for every later contributor, with or without this workflow.
 - **Intent first:** before locking a stated intent, check it against the project's decision
   records and its current practice. A conflict is raised, not locked.
 - **Scope:** every lock declares its scope — production code only, a date cutoff, generated code
-  excluded — or fails only when a change adds more. Noisy hits across the repository mean the
+  excluded — and fails only when a change adds more where hits in that scope stay unfixed. Noisy hits across the repository mean the
   scope or the rule is wrong, not that the hits are debt.
 - **Across the repository:** run the lock everywhere. Fix related hits inside the change's scope;
   report a repository-wide cleanup instead of folding it into the fix. A lock local to the fix

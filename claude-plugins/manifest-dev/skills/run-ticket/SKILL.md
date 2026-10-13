@@ -78,7 +78,8 @@ Questions that do not need their own lifecycle stay in the result comment. A que
 
 `/done` proves the task contract; it does not by itself prove that repository work landed. Commit
 and push the coherent result to the stable branch, create or refresh its one pull request — its
-description listing the run's material decisions, the user's calls first — and drive
+description listing the run's material decisions, the user's calls first, and a "Debt left"
+section carrying the debt `/done` named, one line each — and drive
 that pull request through the repository's normal checks and review requirements. Activate the
 `check-pr` skill for the current pull request and head before merge. Address
 agent-resolvable failures and re-check rather than handing routine repair to a person.

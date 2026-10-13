@@ -32,7 +32,7 @@ Then resolve the active context file and load it if it exists:
 
 Before the first question, recall what earlier work on this repository left:
 
-- **The workflow's own logs and Manifests** under `~/.manifest-dev/` whose recorded repository is this one and whose topic overlaps. Read only the leading conclusions, rulings and out-of-scope calls of the few most relevant, never whole logs. Skip any recorded for another repository.
+- **The workflow's own logs and Manifests** under `~/.manifest-dev/` on an overlapping topic: logs whose recorded repository is this one, and Manifests that name it or its paths. Read only the leading conclusions, rulings and out-of-scope calls of the few most relevant, never whole logs. Skip any recorded for another repository.
 - **Debt any runner can see** — open debt tickets in the project's Ticket store, and the "Debt left" sections of recent pull requests that touched the paths this topic concerns, where the host can reach the forge. Without pull requests, tickets and local logs are what there is.
 
 Carry each as a dated lead from an earlier session, to check before relying on it — never as verified evidence. Local logs are a personal cache that another runner or teammate never sees, so a ruling found only in one is offered for capture as a decision record, through the ADR offer below.

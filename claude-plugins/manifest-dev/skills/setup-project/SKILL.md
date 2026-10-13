@@ -44,7 +44,7 @@ On a project that already carries surfaces, the run is an update, and it covers 
 - **The verification surface** — adopt and extend the verification assets the project already has rather than building a second set beside them, and add the surface's entry to the project-surfaces section, per `references/VERIFICATION_SURFACE.md`.
 - **The glossary** — additions only, ratified as mining describes.
 
-Finish by writing the newest surfaces version, and report what was offered, applied and declined.
+Show each backfilled line and each verification-surface change in the offer, and write only what the user accepts, the same as a convention difference. On an update, mine only the history since the commit that last wrote the surfaces version line: older history was offered in an earlier run, and offering its candidates again would re-offer what the user already declined. Finish by writing the newest surfaces version, and report what was offered, applied and declined.
 
 ### Compare, then offer
 

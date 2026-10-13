@@ -12,12 +12,18 @@ shared understanding in the transcript → invoke `figure-out` first, propagatin
 `--autonomous` when the caller is unattended. A manifest path in the arguments
 means amend: targeted changes only, IDs stable, no renumbering.
 
-Before encoding a new Manifest for work in a repository, read what earlier work left on it,
-as figure-out does when it ran first: the workflow's own logs and Manifests recorded for this
-repository on an overlapping topic, open debt tickets, and the "Debt left" sections of recent
-pull requests on the paths the work touches — each a dated lead to check, never evidence. Note
-in the digest when the project's surfaces version is missing or older than setup-project's
-newest, without stopping to update.
+Before encoding a new Manifest for work in a repository, read what earlier work left on it:
+the workflow's own logs under `~/.manifest-dev/` whose recorded repository is this one, and
+Manifests there that name it or its paths, on an overlapping topic; open debt tickets; and the
+"Debt left" sections of recent pull requests on the paths the work touches — without pull
+requests, tickets and local logs are what there is. Read only the leading conclusions, rulings
+and out-of-scope calls of the few most relevant, and skip anything recorded for another
+repository. Each is a dated lead to check, never evidence; a ticket's status settles whether
+its debt is done, and declines are not recorded. Local logs never reach another runner, so a
+ruling found only in one is offered for capture as a decision record. When one area carries
+debt from several earlier runs, say so in the digest with the count and propose a dedicated
+topic. Note in the digest when the project's surfaces version is missing or older than
+setup-project's newest, without stopping to update.
 
 figure-out reaches understanding of the *problem*; this skill owns the *encoding*
 calls — invariant versus guidance, what a gate ranges over, where it binds, its
@@ -100,7 +106,8 @@ That gives a floor that isn't ceremony:
   `references/VERIFICATION_SURFACE.md` gives for that artifact — is missing, or drifting where
   the work touches it, cut building or repairing it, scoped to what the change touches, as the
   first Deliverable; unattended runs build it too. A Manifest that touches anything the surface
-  maps carries a gate that each touched entry is updated and exercised live, with its status set.
+  maps, or a path it should map but does not, carries a gate that each touched entry is added or
+  updated and exercised live, with its status set.
 - Every Acceptance Criterion and Global Invariant is one text — title, body,
   optional why — stating what done means, the evidence to inspect, and the
   threshold between PASS and FAIL, precise enough that two evaluations read the

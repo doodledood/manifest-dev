@@ -82,8 +82,8 @@ Assume the user is AFK; make authorized decisions without asking questions. Surf
 When the run repairs a finding or receives a correction, and before it reports, load
 `references/HARVEST.md`: a correction becomes a lock where a check can hold it, and the debt the
 run leaves goes into its report and into every pull request it opens or updates. When the
-Manifest gates a verification-surface entry, or the work needs a surface the project lacks,
-load `references/VERIFICATION.md`.
+Manifest gates a verification-surface entry, or the work needs a surface the project lacks or
+touches a path the surface has no entry for, load `references/VERIFICATION.md`.
 
 ## What holds for every gate
 

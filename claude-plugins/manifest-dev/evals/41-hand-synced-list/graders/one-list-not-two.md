@@ -7,7 +7,8 @@ Work through the steps below privately, without writing them out. Your entire re
 PASS or FAIL.
 
 The export formats are listed twice by hand: in the argument parser's `choices` and in a
-separate table in docs/formats.md that the help text is copied from.
+separate table in docs/formats.md, which the option's help text points readers to. A third copy
+sits in `src/formats.py`'s exporter registry.
 
 **First, answer in one line:** Does the reply notice the two hand-kept lists?
 
