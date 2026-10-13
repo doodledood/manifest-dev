@@ -1,0 +1,13 @@
+# Recall: what earlier work on this repository left
+
+Before the first question, recall what earlier work on this repository left. It matches by
+repository and topic, so it reads nothing when neither overlaps.
+
+- **The workflow's own logs and Manifests** under `~/.manifest-dev/` on an overlapping topic: logs whose recorded repository is this one, and Manifests that name it or its paths. Read only the leading conclusions, rulings and out-of-scope calls of the few most relevant, never whole logs. Skip any recorded for another repository.
+- **Debt any runner can see** — open debt tickets in the project's Ticket store, the "Debt left" sections of recent pull requests that touched the paths this topic concerns where the host can reach the forge, and entries marked `stale` on the project's verification surface (its durable way to check its result: a feature map, an eval suite or a reader-task list). Without pull requests, tickets and local logs are what there is.
+
+Carry each as a dated lead from an earlier session, to check before relying on it — never as verified evidence. Local logs are a personal cache that another runner or teammate never sees, so a ruling found only in one, and not already a decision record or a Taste entry, is offered for capture: as a decision record through the ADR offer when project docs are loaded, otherwise named in the read as a ruling worth recording.
+
+**Debt on the path.** When this topic's work will touch an area with recorded debt, check each item against the current code — a lock re-run, a flagged comment still there, a ticket's status — and offer to fold the items still standing into the work as a preparatory slice: make the change easy, then make the easy change. Leave debt off the path where it is. Declines are not recorded; the check keeps a repeated offer real.
+
+**Hotspots.** When one area carries debt from several earlier runs, say so in the read with the count, and propose a dedicated topic — a structural refactor, or a paved path for that kind of work. The user rules on it; once accepted it runs through the same flow.
