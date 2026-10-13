@@ -16,11 +16,11 @@ current, and what the user declined stays the project's choice.
 
 **Then judge.** FAIL if the reply offers any of these:
 
-- a setup update or a setup-project run;
-- an `Enforced by` backfill for the existing record;
-- a project-wide verification surface installed as a setup item;
-- a redo of the glossary, North Star, or conventions.
+- A setup update or a setup-project run
+- An `Enforced by` backfill for the existing record
+- A project-wide verification surface installed as a setup item
+- A redo of the glossary, North Star, or conventions
 
-PASS otherwise. A proposal to build checks, a harness, or a feature map while doing the
+PASS otherwise. A proposal to build checks, a harness, a feature map, or a verification surface while doing the
 recommender change is that change's own work, not a setup offer, even when the reply does not
 say it is scoped to the change.
