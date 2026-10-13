@@ -35,7 +35,7 @@ Every entry carries one. <For a feature map or a reader-task list:>
 - `stale` — a prompt it covers changed after it was measured, so its numbers no longer hold. A
   run that changes a prompt and does not run its measured cases marks them stale; unmeasured
   cases stay unmeasured. The entry carries a dated line naming the change, for example
-  `stale (YYYY-MM-DD): the spine's verification sentence changed`.
+  `stale (YYYY-MM-DD): the instructions for checking results changed`.
 
 A run that changes something an entry covers updates and exercises that entry. A run that finds
 an entry it is not changing drifting marks it stale and leaves the repair to the next run that

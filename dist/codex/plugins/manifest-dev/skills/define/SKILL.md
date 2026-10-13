@@ -93,17 +93,18 @@ That gives a floor that isn't ceremony:
   tests, and able to land as its own pull request. Recorded debt on the work's path that
   still stands, checked against the current code, joins it — offered to an attended user,
   decided within the caller's delegation when unattended. Debt off the path stays where it is.
-- **Verification comes before the work it checks.** Where the project's verification surface —
-  its durable way to check an artifact still does its job, in the form setup-project's
-  `references/VERIFICATION_SURFACE.md` gives for that artifact, found where the context file's project-surfaces
-  section names it or among the verification assets the project keeps — is missing, or drifting where
-  the work touches it, cut building or repairing it, scoped to what the change touches, as the
+- **Verification comes before the work it checks.** The project's verification surface is its
+  durable way to check an artifact still does its job, in the form setup-project's
+  `references/VERIFICATION_SURFACE.md` gives for that artifact. Find it where the context file's
+  project-surfaces section names it, or among the verification assets the project keeps. Where it
+  is missing, or drifting where the work touches it, cut building or repairing it, scoped to what the change touches, as the
   first Deliverable, ahead of any preparatory slice; unattended runs build it too. A Manifest that touches anything the surface
   maps, or a path it should map but does not, carries a gate that each touched entry is added or
   updated and exercised live, with its status set.
-- **A recorded check still to be built is built.** When the work implements or touches a decision
-  whose record's `Enforced by` reads `not yet`, a gate holds that the named check exists, fails
-  when the decision is reversed, carries a comment citing the record, and replaces the line.
+- **A recorded check still to be built is built.** Search the project's decision records for
+  `Enforced by` lines reading `not yet`. When the work implements or touches such a decision, a
+  gate holds that the named check exists, fails when the decision is reversed, and carries a
+  comment citing the record, and that the record's line names the check in place of `not yet`.
 - Every Acceptance Criterion and Global Invariant is one text — title, body,
   optional why — stating what done means, the evidence to inspect, and the
   threshold between PASS and FAIL, precise enough that two evaluations read the

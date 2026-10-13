@@ -18,9 +18,9 @@ ENTRY = re.compile(r"^## (.+?)\n(.*?)(?=^## |\Z)", re.MULTILINE | re.DOTALL)
 SECTION = r"\*([^*\n]+)\*"
 POINTER = re.compile(rf"`([\w./-]+\.(?:md|html))` → ({SECTION}(?: and {SECTION})*)")
 WHERE = re.compile(r"^- \*\*Where:\*\* (.+)$", re.MULTILINE)
+STATUS_LINE = re.compile(r"^- \*\*Status:\*\* (.*)$", re.MULTILINE)
 STATUS = re.compile(
-    r"^- \*\*Status:\*\* (unverified|verified \(\d{4}-\d{2}-\d{2}\)|stale \(\d{4}-\d{2}-\d{2}\).*)$",
-    re.MULTILINE,
+    r"unverified|verified \(\d{4}-\d{2}-\d{2}\)|stale \(\d{4}-\d{2}-\d{2}\).*"
 )
 
 
@@ -45,11 +45,8 @@ def test_every_entry_points_at_existing_sections_and_carries_a_status() -> None:
         if len(wheres) != 1:
             broken.append(f"{task}: {len(wheres)} Where lines, expected one")
         parts = wheres[0].split("; ") if wheres else []
-        statuses = STATUS.findall(body)
-        if (
-            len(statuses) != 1
-            or len(re.findall(r"^- \*\*Status:\*\*", body, re.MULTILINE)) != 1
-        ):
+        statuses = STATUS_LINE.findall(body)
+        if len(statuses) != 1 or not STATUS.fullmatch(statuses[0]):
             broken.append(f"{task}: needs exactly one valid status line")
         for part in parts:
             pointer = POINTER.fullmatch(part)

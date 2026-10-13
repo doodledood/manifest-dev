@@ -8,7 +8,7 @@ answered them.
 ## v1
 
 - Decision records gain an `Enforced by` field naming the strongest check that holds the
-  decision, or `not yet` with the check a later run should build. It is editable in place, and superseding or narrowing a record retargets or
+  decision, or `not yet` with the check a later run builds. It is editable in place, and superseding or narrowing a record retargets or
   retires the old record's check.
 - The project-surfaces section records its surfaces version and gains an entry for the
   project's verification surface, telling every contributor that a change to what an entry
@@ -18,4 +18,4 @@ answered them.
   entries catalogued from source as `unverified` (`unmeasured` for an eval suite), its README,
   and a repository check that its entries still point at things that exist.
 
-Digest: b311b82148f4a8ed815d6b7ac3df77a8d7a48b140f6781f128269c8ab3f122bc
+Digest: da90c4ccd748aa536d84461ee3530690097de3080a519644f9e1437fb5d880da

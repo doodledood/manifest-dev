@@ -4,11 +4,14 @@ The surface's forms and parts — harness, feature map, eval suite,
 reader-task list, statuses, repository check — are in setup-project's
 `references/VERIFICATION_SURFACE.md`.
 
-- **Missing surface:** a surface is missing when the context file's project-surfaces section names
-  none and the project keeps no verification assets of its own. Build it, scoped to what the change touches — the form the artifact
+- **Missing surface:** when the context file's project-surfaces section names none, look among the
+  verification assets the project keeps. Build the surface from what is found, or from nothing,
+  scoped to what the change touches — the form the artifact
   needs, existing verification assets adopted rather than duplicated, the harness parts the
-  change needs, entries for the touched features, the README and the repository check. Name it in the project-surfaces section, adding a section
-  that holds only that bullet where the context file has none. Build it unattended too: it is verification for the change, like a regression test. Name it in the
+  change needs, entries for the touched features, the README and the repository check. Name it with the verification-surface bullet of
+  setup-project's surfaces template, in the project-surfaces section of the project-level context
+  file the detected host reads, resolved per `../../review-code/references/context-file-adherence.md`;
+  create the file or the section, holding only that bullet, where it is missing. Build it unattended too: it is verification for the change, like a regression test. Name it in the
   completion report as a new project surface the user can remove.
 - **Touched entries:** add a missing entry for a touched path. Update each touched entry to match
   the change, exercise it, and mark it with the form's exercised status: `verified` with the date,

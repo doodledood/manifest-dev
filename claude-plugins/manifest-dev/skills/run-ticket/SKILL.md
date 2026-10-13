@@ -126,7 +126,7 @@ After the required landing is observed, write a completion comment containing:
 - branch, commit, pull-request, deployed-artifact, or recorded-answer references that exist;
 - follow-up Ticket links, or a clear statement that none were warranted;
 - the debt `/done` named, one line each, so it outlives the runner even where no pull request carries it;
-- each offer the run flagged for a person rather than accepting, and each decision record it wrote with an agent as decider, with what accepting or reviewing it does;
+- the flagged offers, agent-decided records and drafted Taste entries `/done` named, each with what accepting or reviewing it would change;
 - the run's material decisions, the user's calls first, each with the alternative not taken and what decided it.
 
 Then close the same Ticket as done using the venue mapping. Closing is the assertion that its work
@@ -144,7 +144,7 @@ The record contains:
 - branch, commit, and pull-request references for preserved work, or an explicit statement that none were produced;
 - any separately warranted follow-up Ticket links;
 - the debt `/escalate` named, one line each;
-- each offer the run flagged for a person rather than accepting, and each decision record it wrote with an agent as decider, with what accepting or reviewing it does;
+- the flagged offers, agent-decided records and drafted Taste entries `/escalate` named, each with what accepting or reviewing it would change;
 - a mention of the person needed next, resolved from the Ticket, project escalation contact, or initiating human;
 - the run's material decisions, the user's calls first, each with the alternative not taken and what decided it.
 

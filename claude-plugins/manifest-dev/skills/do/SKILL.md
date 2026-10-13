@@ -79,9 +79,9 @@ Assume the user is AFK; make authorized decisions without asking questions. Surf
 
 ## Corrections, debt and the verification surface
 
-When the run repairs a finding, fixes a defect, receives a correction or touches a comment that
-explains a workaround or claims a constraint, and before it reports, load `references/HARVEST.md`:
-a correction becomes a lock where a check can hold it, such a comment becomes a refactor flag or
+Load `references/HARVEST.md` before the run reports, and earlier as soon as it repairs a finding,
+fixes a defect, receives a correction or touches a comment that explains a workaround or claims a
+constraint: a correction becomes a lock where a check can hold it, such a comment becomes a refactor flag or
 an encoding offer, and the debt the run leaves goes into its report and into every pull request it opens or updates. When the
 Manifest gates a verification-surface entry, or the work needs a surface the project lacks or
 touches a path the surface has no entry for, load `references/VERIFICATION.md`.

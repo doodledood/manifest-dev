@@ -82,7 +82,7 @@ A check installed from a correction so the corrected class of mistake fails for 
 _Avoid_: Rule (that is prose), guard, concurrency lock.
 
 **Debt**:
-What a run found and did not fix: unfixed lock hits, refactor flags from workaround comments, constraint comments awaiting encoding, new suppressions, reshapes outside the change's scope, and product regressions the verification surface exposed. A run names it in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket; a later run whose work reaches the same area offers to fold it in.
+What a run found and did not fix: unfixed lock hits, refactor flags from workaround comments, constraint comments awaiting encoding, new suppressions, reshapes outside the change's scope, product regressions the verification surface exposed, and a new verification surface the user may remove. A run names it in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket; a later run whose work reaches the same area offers to fold it in.
 _Avoid_: Tech debt (too broad), TODO, backlog.
 
 **Seed**:
