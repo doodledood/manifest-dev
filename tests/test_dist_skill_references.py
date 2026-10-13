@@ -688,6 +688,29 @@ def test_auto_investigation_keeps_read_bar_without_a_phase_goal() -> None:
         assert "Outside auto, this is the standalone-run backstop" in child
 
 
+def test_auto_continues_past_each_child_skills_stop() -> None:
+    """A child's stop hands control back to /auto, which continues in the same turn.
+
+    With no chain-level goal, nothing else carries /auto past figure-out's read or
+    define's handoff, and a run was observed ending on figure-out's read.
+    """
+    for root in (
+        ROOT / "claude-plugins/manifest-dev/skills",
+        DIST / "codex/plugins/manifest-dev/skills",
+    ):
+        auto = " ".join((root / "auto/SKILL.md").read_text(encoding="utf-8").split())
+        child = " ".join(
+            (root / "figure-out/references/autonomous.md")
+            .read_text(encoding="utf-8")
+            .split()
+        )
+        assert "invoke define with `--autonomous`" in auto, root
+        assert "checkpoints that return control to this flow" in auto, root
+        assert "invoke the next step in the same turn" in auto, root
+        assert "returns the read to the caller" in child, root
+        assert "chaining into execution belongs to the caller" not in child, root
+
+
 def test_autonomous_figure_out_supplements_weak_parent_backstops() -> None:
     """A weak parent is supplemented without replacing it with a Read-only goal."""
     files = [
