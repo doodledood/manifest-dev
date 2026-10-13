@@ -17,7 +17,7 @@ in `README.md` beside this file.
 
 ## Install it in another CLI
 
-- **Where:** `README.md` → *Other CLIs*; `dist/pi/README.md` → *Install*
+- **Where:** `README.md` → *Other CLIs*; `dist/codex/README.md` → *Install* and *Parity with Claude Code*; `dist/opencode/README.md` → *Install* and *Parity with Claude Code*; `dist/pi/README.md` → *Install*
 - **Ends able to:** install it in Codex, OpenCode, or Pi, and name what differs from Claude Code.
 - **Status:** unverified
 
@@ -73,4 +73,10 @@ in `README.md` beside this file.
 
 - **Where:** `site/index.html` → *Try it*
 - **Ends able to:** install it and run a first session from the site alone.
+- **Status:** unverified
+
+## Pick the tools skill for a job
+
+- **Where:** `claude-plugins/manifest-dev-tools/README.md` → *Pull requests* and *Prompts* and *People and sessions*
+- **Ends able to:** name the tools skill that reviews someone else's pull request, tends their own, reviews a prompt, or hands a session to a fresh agent.
 - **Status:** unverified
