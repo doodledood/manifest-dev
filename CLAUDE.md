@@ -64,7 +64,7 @@ This project keeps its direction, vocabulary, and decision memory in the repo �
 
 **Writing a decision record is one act, not three** — the record, the restatus, and the index, in one change. Step two is the one that gets dropped, and dropping any of them leaves the corpus asserting something untrue. Open `docs/adr/CONVENTIONS.md` before you start: it carries the bar, the template, and what each step actually requires.
 
-**The verification surface is `claude-plugins/manifest-dev/evals/` and `tests/`.** The eval suites test the skills' behavior: each case carries its status in the suite READMEs (`evals/README.md`, `evals/define/README.md`) — unmeasured, measured with its date, or stale once a covered prompt changes. `tests/` holds the property checks every change keeps green. Read `evals/README.md` before changing a prompt it covers.
+**The verification surface is `claude-plugins/manifest-dev/evals/` and `tests/`.** The eval suites test the skills' behavior: each case carries its status in the suite READMEs (`evals/README.md`, `evals/define/README.md`) — unmeasured, measured with its date, or stale once a covered prompt changes. `tests/` holds the property checks every change keeps green. `tests/test_eval_cases.py` fails when a suite README's case tables and its case directories disagree, so a case added or removed lands with its row. Read `evals/README.md` before changing a prompt it covers.
 
 ## Repository Structure
 

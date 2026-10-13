@@ -188,3 +188,37 @@ def test_scaffold_writing_home_refuses_a_home_with_logs(script: Path) -> None:
             "existing.md"
         ], "wrote into the user's logs"
         assert not any(Path(workdir).iterdir()), "wrote fixtures before refusing"
+
+
+CASE_ROW = re.compile(r"^\| `([^`]+)` \|", re.MULTILINE)
+
+
+def _case_dirs(suite: Path) -> set[str]:
+    return {
+        p.name
+        for p in suite.iterdir()
+        if (p / "prompt.md").exists() or (p / "case.yaml").exists()
+    }
+
+
+def _case_table_rows(readme: Path) -> set[str]:
+    # Case tables sit under headings that start with "## Cases"; other tables in the same
+    # README name graders or prompts, not cases.
+    sections = re.split(r"^## ", readme.read_text(encoding="utf-8"), flags=re.MULTILINE)
+    return {
+        name
+        for section in sections
+        if section.startswith("Cases")
+        for name in CASE_ROW.findall(section)
+    }
+
+
+@pytest.mark.parametrize(
+    "suite", [EVALS, EVALS / "define"], ids=["figure-out", "define"]
+)
+def test_suite_readme_lists_exactly_its_cases(suite: Path) -> None:
+    # The README is the suite's index and carries each case's status; a case missing from it
+    # has no status, and a row for a removed case points at nothing.
+    dirs, rows = _case_dirs(suite), _case_table_rows(suite / "README.md")
+    assert not dirs - rows, f"cases with no README row: {sorted(dirs - rows)}"
+    assert not rows - dirs, f"README rows with no case: {sorted(rows - dirs)}"
