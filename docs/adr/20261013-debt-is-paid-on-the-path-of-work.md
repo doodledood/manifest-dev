@@ -18,11 +18,14 @@ Each change keeps to one concern, which keeps a fix from turning into a bundle o
 - When the sketch shows that the area a change touches resists it — a value threaded through layers, state with more than one writer, a missing seam, a workaround the change would extend — define encodes a behavior-preserving preparatory Deliverable first: make the change easy, then make the easy change. It is scoped to what this change needs, pinned by existing or characterization tests, and stays its own slice, which can land as its own pull request.
 - While recalling earlier sessions, figure-out and define look for recorded debt on the change's path — debt reported by earlier runs, open debt tickets, stale verification entries — and offer to fold the items on the path into that preparatory slice. Debt off the path stays recorded.
 - When one area keeps producing debt across runs, the read says so, with the count, and proposes a dedicated topic such as a structural refactor or a paved path for that kind of work. The user rules on it; once accepted, it runs through the same flow.
+- Debt a run leaves is written where any runner can read it. Every pull request a run opens or updates carries a "Debt left" section, attended or not. When the user accepts the ticket-up offer, items become tickets, which track whether the debt got paid. The run's local log keeps a copy for that machine only. A repository without pull requests falls back to tickets and local logs.
+- Recall reads open debt tickets and the "Debt left" sections of recent pull requests that touched the change's paths, plus local logs where present. Each item is checked against the current code before it is offered, and a ticket's status settles whether it is done. Declines are not recorded; the check keeps a repeated offer real.
 - The effect intended: maintenance cost concentrates where change happens, and the flow pays debt exactly there while locks keep known classes from returning. The parts of the codebase that change most become the easiest to change. A part that no run touches costs nothing until one does.
 
 ## Alternatives Considered
 - **Rely only on the user following up reported debt**: the follow-up stays available inside the flow — the completion report offers ticket-up, and a later auto run can take the tickets — but debt that sits on the path of later work would still wait for someone to pick it, while the run that touches it already has its context loaded.
 - **Fold all known debt into every run**: it bundles unrelated work into each change.
+- **Keep debt in local logs only**: a cloud runner or a teammate sees none of it, and an unattended run cannot file tickets.
 - **A periodic cleanup pass**: it needs infrastructure or someone to remember it.
 - **Let the flow start structural refactors on its own**: the direction of the architecture is the user's call; the flow proposes it with evidence instead.
 

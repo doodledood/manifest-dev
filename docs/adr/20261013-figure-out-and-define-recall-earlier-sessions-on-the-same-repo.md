@@ -18,6 +18,7 @@ Each skill reads back only its own file. figure-out reads a log when it resumes 
 - It carries what it finds as dated leads from an earlier session, to check before relying on them, under the same rule that already makes verified status decay. A recalled claim never counts as verified evidence by itself.
 - A ruling found there that never became a decision record or a Taste entry is offered for capture.
 - Each log records the repository it is about, so recall matches by repository and nothing carries from one repository's sessions into another's.
+- Local logs are a personal cache: a cloud runner or a teammate never sees them. Recall therefore also reads what any runner can reach — open debt tickets and the "Debt left" sections of recent pull requests on the change's paths. Anything that must reach every runner lives in the repository or on the forge: decisions in records, corrections as locks, proof in the verification surface, debt in pull requests and tickets. A ruling found only in a local log is offered for capture as a record for that reason.
 - do does not recall: its Manifest already carries the context. auto receives recall through figure-out and define.
 
 ## Alternatives Considered
