@@ -29,7 +29,7 @@ in `README.md` beside this file.
 
 ## Know what persists between runs
 
-- **Where:** `README.md` → *The codebase gets easier to change, run by run*; `site/index.html` → *Weeks later*
+- **Where:** `README.md` → *The codebase gets easier to change, run by run*; `claude-plugins/manifest-dev/README.md` → *What the workflow maintains*; `site/index.html` → *Weeks later*
 - **Ends able to:** name what a later run inherits from an earlier one, and where each piece lives.
 - **Status:** unverified
 
@@ -90,11 +90,17 @@ in `README.md` beside this file.
 ## Review a change outside a run
 
 - **Where:** `claude-plugins/manifest-dev/README.md` → *Review and verification*
-- **Ends able to:** pick the review skill for code, prose, a design, or a pull request, and invoke it directly.
+- **Ends able to:** pick the review skill for code, prose, or a design, or check a pull request's readiness, and invoke it directly.
 - **Status:** unverified
 
 ## Get design direction for an artifact
 
 - **Where:** `claude-plugins/manifest-dev/README.md` → *First-principles design*
 - **Ends able to:** ask `/design` for direction on an artifact and know which skill evaluates the result.
+- **Status:** unverified
+
+## Deliberate with people who cannot share a session
+
+- **Where:** `claude-plugins/manifest-dev/README.md` → *Conversation*
+- **Ends able to:** run a figure-out deliberation in a Slack channel or thread with `/figure-out-team`.
 - **Status:** unverified
