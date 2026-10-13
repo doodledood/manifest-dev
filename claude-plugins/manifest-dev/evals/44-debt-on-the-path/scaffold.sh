@@ -41,7 +41,7 @@ if [ -n "$(ls -A "$HOME/.manifest-dev/logs" 2>/dev/null)" ]; then
 fi
 mkdir -p "$HOME/.manifest-dev/logs"
 cat > "$HOME/.manifest-dev/logs/do-manifest-20260920-1a2b3c4d.md" <<'EOF'
-# Execution log — manifest-20260920
+# /do: reminder email wording
 
 Repository: https://example.com/club/shelfnote.git
 
