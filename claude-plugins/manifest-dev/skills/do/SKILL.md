@@ -77,6 +77,14 @@ Record compact checkpoint notes as work proceeds: what changed, what was verifie
 Assume the user is AFK; make authorized decisions without asking questions. Surface blockers promptly and continue useful independent work. Stop after reporting completion, a blocker requiring a person when no useful independent work remains, or an external wait that this run's no-wait policy makes terminal. Continue while authorized, actionable work remains.
 ```
 
+## Corrections, debt and the verification surface
+
+When the run repairs a finding or receives a correction, and before it reports, load
+`references/HARVEST.md`: a correction becomes a lock where a check can hold it, and the debt the
+run leaves goes into its report and into every pull request it opens or updates. When the
+Manifest gates a verification-surface entry, or the work needs a surface the project lacks,
+load `references/VERIFICATION.md`.
+
 ## What holds for every gate
 
 A gate declares `judgment` or `deterministic`; an undeclared kind is invalid, never

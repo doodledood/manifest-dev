@@ -1,14 +1,14 @@
 # figure-out: docs mode
 
-The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds four behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), **ADR offers** (record decisions worth keeping), and **North Star updates** (keep the project's standing strategy surface current, under its update asymmetry).
+The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds these behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), **ADR offers** (record decisions worth keeping), **North Star updates** (keep the project's standing strategy surface current, under its update asymmetry), **earlier work** (recall what earlier sessions, tickets and pull requests left on this repository, and the debt on this topic's path), and a **stale marker** on a drifting verification-surface entry.
 
 ## Override: these writes ARE the action
 
 The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal.
 
-When project docs are active, that frame has three explicit exceptions. **Glossary captures, ADR offers, and North Star updates are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them. For the North Star the carve-out covers exactly what its asymmetry permits: a status change on evidence executes inline, and a position rewrite executes inline only once the owner has explicitly ruled.
+When project docs are active, that frame has four explicit exceptions. **Glossary captures, ADR offers, North Star updates, and the stale marker on a verification-surface entry are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them. For the North Star the carve-out covers exactly what its asymmetry permits: a status change on evidence executes inline, and a position rewrite executes inline only once the owner has explicitly ruled.
 
-(The default figure-out posture still applies to everything else — design proposals, code edits, plan synthesis. Only these three carve out.)
+(The default figure-out posture still applies to everything else — design proposals, code edits, plan synthesis. Only these four carve out, plus writing the surfaces version line when the user declines a whole update offer, below.)
 
 ## Bootstrap (when project relevance exists)
 
@@ -16,7 +16,9 @@ When project docs are active, that frame has three explicit exceptions. **Glossa
 
 **Load the project's `NORTH_STAR.md` when it exists** — the standing strategy surface the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read. Load the project's `docs/NORTH_STAR_CONVENTIONS.md` beside it when one exists: it owns the document's form — fields, states, rendering — and where it or the doc's own header differs from anything remembered here, the project's copy wins; cadence, below, stays this skill's.
 
-**No CONTEXT.md and no `docs/adr/` at all** — the project has never been set up. Offer `init-context`, which installs the conventions file, the glossary, and the context-file wiring in one pass and can seed them from the project's own history. On accept, invoke it and continue from what it produced. On decline, fall through to the minimal path below and don't re-offer.
+**No CONTEXT.md and no `docs/adr/` at all** — the project has never been set up. Offer `setup-project`, which installs the conventions file, the glossary, a verification surface, and the context-file wiring in one pass and can seed them from the project's own history. On accept, invoke it and continue from what it produced. On decline, fall through to the minimal path below and don't re-offer.
+
+**Surfaces present, but the version is missing or old** — the project context file's project-surfaces section records no surfaces version, or one older than the newest entry in setup-project's `references/CHANGES.md`. Offer setup-project's update, listing the `CHANGES.md` entries after the recorded version (every entry, and a comparison against the current defaults, when none is recorded). On accept, invoke it and continue. On a decline of the whole offer, write the newest version into the section's version comment so the same offer is not made again, and continue.
 
 Then resolve the active context file and load it if it exists:
 
@@ -25,6 +27,23 @@ Then resolve the active context file and load it if it exists:
 3. **Active `CONTEXT.md` exists** → load it as evidence. Project vocabulary is a source the user is already working from.
 4. **Active `CONTEXT.md` is missing** → offer minimal initialization for that context: *"No CONTEXT.md exists for this repo/context. Want a minimal scaffold I can grow as terms resolve?"* On accept, write a starter file at the active context path (context name, one-sentence purpose, empty Language section). On decline, skip the proactive scaffold and don't re-offer it for that context — but subsequent per-turn glossary captures may still create the active `CONTEXT.md` lazily on first earned resolution. (Declining the scaffold only declines the *proactive* write, not the inline captures that docs mode exists for.)
 5. **Multiple distinct domains emerge mid-session** → propose splitting via `CONTEXT-MAP.md` + per-context `CONTEXT.md`. Don't do this preemptively; only when the conversation actually crosses domain boundaries. If the user accepts a split and a relevant per-context `CONTEXT.md` is missing, offer the same minimal initialization for that new context.
+
+## Earlier work (at bootstrap)
+
+Before the first question, recall what earlier work on this repository left:
+
+- **The workflow's own logs and Manifests** under `~/.manifest-dev/` whose recorded repository is this one and whose topic overlaps. Read only the leading conclusions, rulings and out-of-scope calls of the few most relevant, never whole logs. Skip any recorded for another repository.
+- **Debt any runner can see** — open debt tickets in the project's Ticket store, and the "Debt left" sections of recent pull requests that touched the paths this topic concerns, where the host can reach the forge. Without pull requests, tickets and local logs are what there is.
+
+Carry each as a dated lead from an earlier session, to check before relying on it — never as verified evidence. Local logs are a personal cache that another runner or teammate never sees, so a ruling found only in one is offered for capture as a decision record, through the ADR offer below.
+
+**Debt on the path.** When this topic's work will touch an area with recorded debt, check each item against the current code — a lock re-run, a flagged comment still there, a ticket's status — and offer to fold the items still standing into the work as a preparatory slice: make the change easy, then make the easy change. Leave debt off the path where it is. Declines are not recorded; the check keeps a repeated offer real.
+
+**Hotspots.** When one area carries debt from several earlier runs, say so in the read with the count, and propose a dedicated topic — a structural refactor, or a paved path for that kind of work. The user rules on it; once accepted it runs through the same flow.
+
+## Stale marker on the verification surface (inline, no offer)
+
+When the read finds a verification-surface entry drifting from what it describes, and the work this read implies will not touch it, write one dated line into that entry naming what differs — `stale (YYYY-MM-DD): <what differs>` — and change nothing else in it or anywhere in the project. The next run that touches the entry repairs it. An entry the work does touch is the work's to repair, so the read states that repair instead of marking it.
 
 ## Glossary captures (per-turn, inline, no offer)
 

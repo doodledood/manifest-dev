@@ -59,6 +59,10 @@ Principle: **manifest criteria are for what you want independently fix-targeted;
 - **Read project gates from the project context file** — Discover project-specific commands (typecheck, lint, test, format) before implementation
 - **Agree test seams before authoring tests** — Settle which public boundaries tests exercise before writing them, and assert behavior through those interfaces rather than internals; a test that breaks under refactor without a behavior change sits at the wrong seam
 - **Vertical slices, not bulk test-first** — One test, minimal implementation, repeat; writing all tests up front verifies imagined behavior and commits to test structure before the implementation has taught anything
+- **Sketch the shape before implementing** — For a change that crosses a function boundary, sketch it first — how callers use it, the data shape, seams where outside data is parsed and IO happens, one owner per piece of state, placement and public surface, test seams, what it reuses or deletes — then sketch one structurally different shape and keep the better
+- **Screen for what the next agent copies** — Check the shape for two ways to do one task, a list kept in sync by hand, state with two writers, internals a caller can import, and IO mixed into decisions; where one remains, add the type, lint or test that locks the better shape
+- **Reshape, don't patch** — Surface any departure from the sketch instead of absorbing it. When the same workaround appears at unrelated call sites, or types need casts or other escape hatches to compile, the shape is wrong: reshape it rather than patching around it
+- **Build the lever** — When work isn't trivial, build the script, codemod or generator that does it or proves it, so a reviewer can rerun it instead of trusting hand edits
 
 ## Multi-Repo
 

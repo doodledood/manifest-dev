@@ -12,6 +12,13 @@ shared understanding in the transcript → invoke `figure-out` first, propagatin
 `--autonomous` when the caller is unattended. A manifest path in the arguments
 means amend: targeted changes only, IDs stable, no renumbering.
 
+Before encoding a new Manifest for work in a repository, read what earlier work left on it,
+as figure-out does when it ran first: the workflow's own logs and Manifests recorded for this
+repository on an overlapping topic, open debt tickets, and the "Debt left" sections of recent
+pull requests on the paths the work touches — each a dated lead to check, never evidence. Note
+in the digest when the project's surfaces version is missing or older than setup-project's
+newest, without stopping to update.
+
 figure-out reaches understanding of the *problem*; this skill owns the *encoding*
 calls — invariant versus guidance, what a gate ranges over, where it binds, its
 kind. Surface the load-bearing ones with a recommended answer; auto-decide the
@@ -80,6 +87,20 @@ That gives a floor that isn't ceremony:
   inspections rather than uses. A request framed as layers is the requester's
   convenience: re-cut it, don't encode it. Order least-proven first within real
   dependencies, so an unworkable direction surfaces while there is room to turn.
+- **Make the change easy first.** When the shape of a change that crosses a function
+  boundary — figure-out's sketch, or one drawn here for a direct request — shows that the area
+  it touches resists it (a value threaded through layers, state with more than one writer, a
+  missing seam, a workaround the change would extend), cut a behavior-preserving preparatory
+  Deliverable first: scoped to what this change needs, pinned by existing or characterization
+  tests, and able to land as its own pull request. Recorded debt on the work's path that
+  still stands, checked against the current code, joins it — offered to an attended user,
+  decided within the caller's delegation when unattended. Debt off the path stays where it is.
+- **Verification comes before the work it checks.** Where the project's verification surface —
+  its durable way to check an artifact still does its job, in the form setup-project's
+  `references/VERIFICATION_SURFACE.md` gives for that artifact — is missing, or drifting where
+  the work touches it, cut building or repairing it, scoped to what the change touches, as the
+  first Deliverable; unattended runs build it too. A Manifest that touches anything the surface
+  maps carries a gate that each touched entry is updated and exercised live, with its status set.
 - Every Acceptance Criterion and Global Invariant is one text — title, body,
   optional why — stating what done means, the evidence to inspect, and the
   threshold between PASS and FAIL, precise enough that two evaluations read the
@@ -159,7 +180,9 @@ Identify the task type and load the matching file(s) from `tasks/`. Their
 **Quality Gates** auto-encode as `INV-G*`/`AC-*` and their **Defaults** as `PG-*`
 before the interview, so the dialogue carries the encoding forward; a Default
 whose violation would be unsafe or irreversible routes to a Global Invariant
-instead. Per-repo for multi-repo manifests. These carry encoder data only —
+instead. A rule the user has stated — in the session or in a context file —
+overrides a conflicting Default: omit or adjust the Default and record which and
+why in an `ASM-*`. Taste entries stay weighed per call, as above. Per-repo for multi-repo manifests. These carry encoder data only —
 figure-out's own probe files are a separate set this skill never reads, and any
 `tasks/**/references/*.md` is gate-evaluation lookup data, not loaded here.
 
@@ -176,11 +199,12 @@ figure-out's own probe files are a separate set this skill never reads, and any
 | Writing | Human-voice register: prose, articles, copy, social, creative | `WRITING.md` |
 | Document | Documentation register: specs, proposals, reports, formal docs | `DOCUMENT.md` |
 | Tech design | Design docs consolidating finished understanding | `TECH_DESIGN.md` |
+| Performance | A number is the point — latency, throughput, memory, cost — or a change claims to move one | `PERF.md` |
 | Research | Investigations, analyses, comparisons | `research/RESEARCH.md` |
 | Blog | Blog posts, articles, tutorials | `BLOG.md` |
 | Marketing | Landing pages, launch posts, ads, pricing and positioning copy | `MARKETING.md` |
 
-FEATURE/BUG/REFACTOR compose onto `CODING.md`, adding `UI.md` where the change
+FEATURE/BUG/REFACTOR/PERF compose onto `CODING.md` when code changes, adding `UI.md` where the change
 touches something seen; `UI.md` stands alone for a non-code visual artifact.
 Text-authoring composes `PROSE_FLOOR.md` with exactly one register — `WRITING.md`
 (BLOG, MARKETING compose onto it) or `DOCUMENT.md` (TECH_DESIGN composes onto

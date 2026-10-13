@@ -20,3 +20,5 @@ The first three gates *inspect* the artifact; **Behavioral exercise** *runs* it 
 - **Document load-bearing assumptions** — Identify what must remain true for the feature to work; surface invisible dependencies
 - **Identify affected consumers** — All downstream consumers of changed interfaces or data contracts identified before implementation, including services, related products, analytics/BI/reporting, data pipelines, and exports where relevant
 - **Define rollback strategy** — How to reverse the feature if it fails in production; feature flags, migration rollback, or manual revert
+- **One concern per change** — Keep a fix apart from experiments and unrelated improvements; each lands as its own slice with its own evidence
+- **No step that depends on memory** — Where a step relies on someone remembering it, carry it in a check or in the workflow instead

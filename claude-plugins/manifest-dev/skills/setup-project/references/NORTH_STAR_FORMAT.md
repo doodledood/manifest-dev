@@ -1,11 +1,11 @@
 # The North Star — format and maintenance rules
 
-<!-- Fixed boundary: copying starts below this comment. init-context reproduces the framing
+<!-- Fixed boundary: copying starts below this comment. setup-project reproduces the framing
      below verbatim in a project's own `docs/NORTH_STAR_CONVENTIONS.md`, under a retitled
      heading, then pauses at the next boundary. What a copy carries is discontiguous: every
      boundary comment in this file marks where copying pauses or resumes, and the comments
      themselves are dropped from the copy. Renaming or rewording the text any boundary
-     comment sits above breaks that copy — change the recipe in init-context/SKILL.md step 3
+     comment sits above breaks that copy — change the recipe in setup-project/SKILL.md step 3
      in the same edit. -->
 
 A North Star is a project's standing strategy surface: one short document holding why the
@@ -189,10 +189,15 @@ The project context file carries this section so every session — and every con
 on any stack — knows the surfaces exist and how to treat them. The template below is the
 single source of the emitted text. Emit it adapted to what the project actually has, and
 extend an existing section rather than duplicating one; where the host supports imports,
-the session-start reads become imports.
+the session-start reads become imports. The version comment records which surfaces version
+the project carries, so a later update offers only what changed since; write the current
+version from `CHANGES.md` beside this file. Include the verification-surface entry only where
+the project has one, naming where it lives and which form it takes.
 
 ```markdown
 ## Project surfaces
+
+<!-- setup-project surfaces v1 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared
 ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.md` and
@@ -212,6 +217,9 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   contradicts or narrows an existing decision. Write new records per
   `docs/adr/CONVENTIONS.md` — it is self-contained, and writing one is one act: the
   record, the restatus of what it changes, and the index rebuild together.
+- **Verification surface** — `<path>`, <a harness and feature map | a behavior eval suite |
+  a list of reader tasks>: how this project checks that its result still does its job.
+  Read its README before exercising a change; runs keep its entries current.
 ```
 
 <!-- Fixed boundary: copying resumes at the heading below and runs to the end of the file. -->

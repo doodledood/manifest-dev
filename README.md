@@ -30,7 +30,7 @@ Each one makes the next decidable. You can't judge what's worth doing without kn
 | What's worth doing next? | A Ticket, in your tracker or in files | As long as that piece of work |
 | What does done mean here? | A Manifest, written per run | Resets every run |
 
-`/init-context` sets up the first of these, along with a glossary and decision-record conventions, seeding them from the project's own history where there is any. `/ticket-up` writes the second. `/define` writes the third, and `/do` executes against it.
+`/setup-project` sets up the first of these, along with a glossary and decision-record conventions, seeding them from the project's own history where there is any. `/ticket-up` writes the second. `/define` writes the third, and `/do` executes against it.
 
 ## Install
 

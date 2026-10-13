@@ -2,7 +2,7 @@
 
 Find code where implementation complexity exceeds problem complexity — over-engineering, premature optimization, and cognitive burden that make code harder to understand than the problem requires.
 
-**The question for every piece of code: "Is this harder to understand than it needs to be?"**
+**The questions for every piece of code: "Is this harder to understand than it needs to be?" and "Which behavior-preserving restructuring would make branches, helpers, modes, conditionals or layers unnecessary?"** The second reaches complexity that is not excess — code the current shape makes necessary — and finds what readability edits alone never will.
 
 ## What to inspect
 
@@ -17,7 +17,7 @@ Solutions more complex than the problem demands:
 - **Premature abstraction**: Generalizing before concrete use cases justify it (factory for one implementation, plugin system for one plugin)
 - **Unnecessary configurability**: Options that never vary in practice
 - **Speculative generality**: Code for hypothetical future requirements ("what if we need to...")
-- **Missed structural simplification**: A concrete behavior-preserving reframing would delete whole branches, helper layers, modes, or concepts rather than merely polish them. Report only when the simpler shape is visible from the code, preserves behavior, and materially reduces what the reader must hold in their head.
+- **Missed structural simplification**: A concrete behavior-preserving reframing would delete whole branches, helper layers, modes, or concepts rather than merely polish them. Report only when the simpler shape is visible from the code, preserves behavior, and materially reduces what the reader must hold in their head. Count complexity the code needs only because of its current shape, not just excess. A reshaping that reaches beyond the change's scope is reported as a follow-up for the run's debt list, never applied inside the change.
 
 ### 2. Premature Optimization
 

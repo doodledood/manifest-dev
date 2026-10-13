@@ -32,3 +32,6 @@ references all fall inside that one gate; they do not need gates of their own.
 
 - **Fix terminology before drafting** — choose the term for each recurring concept once and reuse it exactly; a synonym introduced for variety reads as a new concept
 - **Front-load each section** — the first sentence carries the point, so a reader scanning headings and openers gets the document
+- **One mode per document** — tutorial, how-to, reference or explanation; split and link rather than mixing them
+- **Generate or link what code owns** — a flag, a default or a count that code or configuration owns is generated or linked, not restated, and any count or tree is true at the commit with the command that regenerates it
+- **One copy of each fact** — a fact another document already states is linked, not repeated

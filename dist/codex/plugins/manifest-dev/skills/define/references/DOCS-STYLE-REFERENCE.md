@@ -136,6 +136,12 @@ These rules govern ongoing instructions and reference material for an available 
 - Describe how the product works now — not how it has changed, and not how it might change.
 - Exception: release notes, changelogs, and blog posts, where the point *is* the change over time.
 
+## Document mode
+
+- Give each document one mode: **tutorial** (a newcomer learns by doing, with a visible result at every step), **how-to** (steps to a goal for someone already competent), **reference** (dry, complete facts for lookup, mirroring the structure of what it describes), or **explanation** (the why: context, trade-offs, alternatives). A document that mixes modes serves none of its readers; split it and link the parts.
+- Name the real thing. Write the actual file, symbol, flag or command name rather than a synonym or a description of it; the codebase is the word list.
+- Keep counts and trees true at the commit that lands them, and give the command that regenerates them, so a reader can check the number instead of trusting it.
+
 ## Code and interface references
 
 - Use code font for: filenames, paths, and extensions; class, method, function, and enum names; environment variables; command names and their output; HTTP verbs, status codes, and content types; data types, constants, and keywords; placeholders; ports and IP addresses; query parameters; and text the reader types into a field.

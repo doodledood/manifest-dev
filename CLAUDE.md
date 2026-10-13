@@ -112,7 +112,7 @@ Extraction is for bulk, not tidiness. A mode whose mechanics run to a paragraph 
 
 Keep the two vocabularies apart. The workflow's own terms — Manifest, Deliverable, Acceptance Criterion, Global Invariant, Ticket — are the product's language and travel with it, defined at use wherever the exact meaning binds. The words this repo uses to *reason about* its prompts — Spine, Altitude, Re-host, Door, House — are maintainer vocabulary: they belong in `CONTEXT.md`, ADRs, and this file, not in anything under `claude-plugins/` or `dist/`. A skill neither speaks them nor defines them.
 
-None of this touches the user's own context file. Reading it, seeding it, and capturing into it are real skill behaviors — `init-context` installs one and `figure-out`'s docs mode writes to it. Those name *the project context file* resolved by detection, never a fixed filename, and the file they mean is the user's, never this repo's.
+None of this touches the user's own context file. Reading it, seeding it, and capturing into it are real skill behaviors — `setup-project` installs one and `figure-out`'s docs mode writes to it. Those name *the project context file* resolved by detection, never a fixed filename, and the file they mean is the user's, never this repo's.
 
 ### Tool Definitions
 
@@ -152,7 +152,7 @@ See each plugin's README for architecture details.
 
 `claude-plugins/manifest-dev/skills/figure-out/references/ADR_FORMAT.md` is the plugin's shipped default, carrying the same content for projects that have no conventions file of their own; it also states the precedence rule. The two are kept in step — change one, change the other. figure-out's `WITH_DOCS.md` owns only *cadence*: when a session offers to record a decision. A project's conventions file has no say in cadence, and the plugin has no say in a project's conventions.
 
-The same split holds for the North Star: `docs/NORTH_STAR_CONVENTIONS.md` is this project's convention and governs; `claude-plugins/manifest-dev/skills/init-context/references/NORTH_STAR_FORMAT.md` is the plugin's shipped default carrying the same content plus the installer-facing emission templates, and states the precedence rule. The two are kept in step — change one, change the other. Cadence (when a session offers a North Star update) stays with figure-out's docs mode.
+The same split holds for the North Star: `docs/NORTH_STAR_CONVENTIONS.md` is this project's convention and governs; `claude-plugins/manifest-dev/skills/setup-project/references/NORTH_STAR_FORMAT.md` is the plugin's shipped default carrying the same content plus the installer-facing emission templates, and states the precedence rule. The two are kept in step — change one, change the other. Cadence (when a session offers a North Star update) stays with figure-out's docs mode.
 
 Distributed skill files stay repo-agnostic — maintainer/governance notes like this one belong here, not in skill references or in `docs/adr/CONVENTIONS.md` or `docs/NORTH_STAR_CONVENTIONS.md`, which the init skill emits into other people's repositories.
 

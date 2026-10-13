@@ -1,11 +1,11 @@
 # ADR Format
 
-<!-- Fixed boundary: copying starts below this comment. init-context reproduces the sentence
+<!-- Fixed boundary: copying starts below this comment. setup-project reproduces the sentence
      below verbatim in a project's own `docs/adr/CONVENTIONS.md`, under a retitled heading,
      then pauses at the next boundary. Every boundary comment in this file marks where
      copying pauses or resumes, and the comments themselves are dropped from the copy.
      Renaming or rewording the text any boundary comment sits above breaks that copy —
-     change the recipe in init-context/SKILL.md step 2 in the same edit. -->
+     change the recipe in setup-project/SKILL.md step 2 in the same edit. -->
 
 Architecture Decision Records capture significant decisions with their context, alternatives, and consequences. Based on the MADR (Markdown Any Decision Records) standard.
 
@@ -81,6 +81,9 @@ Accepted
 ### Negative
 - [What becomes harder or is traded away]
 
+## Enforced by
+[The strongest check that holds the decision, and what it pins | partly — <check>; <what stays judgment> | none — <why no check can hold it>]
+
 ## Source
 - Session: [transcript / conversation reference]
 - Related: [Supersedes / Superseded by / See also]
@@ -89,6 +92,8 @@ Accepted
 **Area** is a single short label — reuse an existing one wherever the decision fits it, and mint a new one only when nothing fits. It is read by the index, so keep it stable: renaming a label means editing every record that carries it.
 
 **Decided by** names who made the decision, so a later reader can tell a person's ruling from an agent's. Write `The user` when a person decided it or reviewed the record before it was accepted. Write `An agent in an unattended run, with no review` when a run with no person present accepts its own record. When a person later reviews such a record and keeps its decision, change the value to `The user` in place; a person who changes the decision writes a new record instead.
+
+**Enforced by** names what makes the decision hold for contributors who never read the record. Name the strongest rung that applies: a type or structure that makes the wrong code fail to compile; a lint or architecture test that fails the build; an invariant test that states a property; one owning site that every caller goes through. Name the check by file and test or rule, and what it pins. Where a check holds only part of the decision, write `partly —` with the check and the part that stays judgment. Where no check can hold it — metric design, a deliberate non-action, a one-time operational choice — write `none —` with the reason. The check carries a comment citing the record, so someone about to weaken it meets the decision first. The line records current enforcement, not the decision, so it is editable in place.
 
 ## File Naming and Location
 
@@ -112,7 +117,7 @@ ADRs follow a four-state lifecycle: `Proposed` → `Accepted` → `Deprecated` �
 Adding a record means doing all three of these in the same change:
 
 1. **Write the new record** per the template above.
-2. **Update every record it changes the standing of** — a superseded decision's Status becomes `Superseded by <filename>`; a decision narrowed, amended, or partly lifted by the new one says so in its own Status line. This is required by the lifecycle above, and it is the step that gets skipped: it means editing a published ADR, which the immutability rule below explicitly permits.
+2. **Update every record it changes the standing of** — a superseded decision's Status becomes `Superseded by <filename>`; a decision narrowed, amended, or partly lifted by the new one says so in its own Status line. Retarget or retire the check named in the old record's `Enforced by` so it holds the new decision instead of the old one, and update that line. This is required by the lifecycle above, and it is the step that gets skipped: it means editing a published ADR, which the immutability rule below explicitly permits.
 3. **Refresh the index** per *The index* below.
 
 Doing one or two of these leaves the corpus asserting something untrue. Treat them as a single act.
@@ -134,6 +139,7 @@ When reality shifts, write a new ADR and update the old one's Status:
 - Status changes and cross-references (e.g., `Related: 20260518-foo`)
 - Adding or correcting the `Area` field
 - Changing `Decided by` to `The user` after a person reviews an unattended record and keeps its decision
+- Updating `Enforced by` when the check that holds the decision changes
 - Clarifying confusing prose without changing the decision
 
 **NOT editable in place** (requires a new ADR):

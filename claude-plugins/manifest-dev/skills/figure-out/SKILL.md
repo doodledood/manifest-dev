@@ -93,7 +93,7 @@ short messages do not require permission to do the next piece of research.
   branches as much as the main flow; what that enumeration wants and the
   proposal lacks are the gaps.
 - When the read implies making something, state exactly what it will be and
-  offer to render a quick disposable draft that makes the proposed result
+  how it will be checked, and offer to render a quick disposable draft that makes the proposed result
   concrete enough to choose a direction and agree on what will be produced.
   Refine details after that choice, unless the user asks to explore them now.
   Before the first draft, settle what that person came to do and what we want
@@ -155,7 +155,8 @@ you'd have brought to the user as a flagged assumption on the read.
 ## Probes
 
 Load the matching file(s) from `tasks/` for the topic's shape — coding, feature,
-bug, refactor, diagnosis, tech design, research. They carry only angles the
+bug, refactor, diagnosis, tech design, research, performance, documents, prompts.
+They carry only angles the
 model under-weights by default; fold in what's load-bearing and ignore the rest.
 Nothing fits → probe generally.
 

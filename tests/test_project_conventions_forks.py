@@ -1,6 +1,6 @@
-"""A project-owned conventions copy must reproduce what init-context would emit today.
+"""A project-owned conventions copy must reproduce what setup-project would emit today.
 
-`init-context` writes self-contained conventions files into a project so the project runs
+`setup-project` writes self-contained conventions files into a project so the project runs
 without the plugin installed. Those copies govern, which means nothing may overwrite them —
 so each one is a fork, and an improvement to the shipped default never reaches it. This
 repo carries two such forks of its own. Nothing but this check would notice when a default
@@ -66,7 +66,7 @@ FORKS = (
         name="North Star conventions",
         copy_path=REPO_ROOT / "docs" / "NORTH_STAR_CONVENTIONS.md",
         default_path=PLUGIN_SKILLS
-        / "init-context"
+        / "setup-project"
         / "references"
         / "NORTH_STAR_FORMAT.md",
         spans=(
@@ -109,7 +109,7 @@ def _locate(text: str, needle: str, where: Path, after: int = 0) -> int:
             f"boundary {needle!r} is missing from {where} at or after offset {after}. A "
             f"boundary is load-bearing: renaming or reordering one silently changes what "
             f"a project's copy should carry. Restore it, or update this test's span table "
-            f"and the recipe in init-context/SKILL.md in the same edit."
+            f"and the recipe in setup-project/SKILL.md in the same edit."
         )
     return index
 

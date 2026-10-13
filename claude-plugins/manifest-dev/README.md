@@ -40,7 +40,7 @@ These set up and feed the two longer-lived tiers:
 
 | Skill | What it does |
 |-------|--------------|
-| `/init-context` | Sets a repository up with a North Star, a glossary, and decision-record conventions, plus the wiring that makes every session read them. Seeds them from the project's own history where there is any. |
+| `/setup-project` | Sets a repository up with a North Star, a glossary, and decision-record conventions, plus the wiring that makes every session read them. Seeds them from the project's own history where there is any. |
 | `/ticket-up` | Writes work into your ticket store — from a finished Manifest, a direct request, an open question, or findings from other work. |
 | `/next-ticket` | Reads the store, picks the one to work on now, claims it, and says why it leads. |
 | `/run-ticket` | Takes one specific ticket end to end and records the outcome back on it. |

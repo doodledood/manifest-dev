@@ -27,4 +27,5 @@ It sits here rather than in the CODING base because it applies only where the ch
 - **Regression test at a correct seam, before the fix** — The test must exercise the real triggering pattern; a seam too shallow to replicate it gives false confidence, and when no correct seam exists, record that as an architecture finding instead of faking the test. Watch it fail, fix, watch it pass, then re-run the original un-minimised repro
 - **Regression check** — Identify all callers/dependents of changed code; verify no behavioral regression from the fix
 - **Test correctness** — Verify existing tests assert correct behavior, not the buggy behavior
+- **The repro arranges, never forces** — Setup may arrange the bug's preconditions, never inject or force the symptom itself; name the correct and the broken end state first, so an expected loading state or dialog is not mistaken for the bug
 - **Hand the mechanism forward** — Name the confirmed mechanism in the commit or PR description so the next debugger inherits it rather than re-deriving it. Adequacy of protection and affected-site accounting belong to the defect-class gate above

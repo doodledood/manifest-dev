@@ -37,7 +37,8 @@ These categories are guidance, not exhaustive. If you identify a prose-value iss
 
 Comments earn their place by capturing knowledge a future reader cannot recover from the code itself:
 
-- **Load-bearing-WHY**: A comment that documents non-obvious reasoning — a hidden constraint, a subtle invariant, a workaround for a specific bug, behavior that would surprise a reader, or the *reason* a particular approach was taken over an obvious alternative. These earn their place.
+- **Load-bearing-WHY**: A comment that documents non-obvious reasoning — a hidden constraint, a subtle invariant, a workaround forced by something the project cannot change (an external dependency, platform or protocol), behavior that would surprise a reader, or the *reason* a particular approach was taken over an obvious alternative. These earn their place.
+- **Workaround in the project's own code** *(flag as a refactor target)*: A comment explaining why code the project owns works around itself. Agents copy the workaround and cite the comment as the reason to leave the problem unsolved. Report it as a refactor flag naming the symbol to reshape; the comment stays until the reshape removes the need for it.
 - **WHAT-restatement** *(flag)*: A comment that paraphrases what the next line of code does. `// increment counter`, `// loop through items`, `// return the result`. Removing it loses nothing — well-named identifiers already convey this.
 - **Past-iteration narration** *(flag)*: A comment narrating change history or past attempts — `// previously this used a loop, switched to map`, `// fixed the bug from issue #123`, `// added for the new auth flow`. This belongs in commit messages or PR descriptions, not in code; it rots as the codebase evolves.
 - **Caller / context references** *(flag)*: `// used by X`, `// called from the Y workflow`. These are search-recoverable and rot when callers change. Belong in PR descriptions, not code.

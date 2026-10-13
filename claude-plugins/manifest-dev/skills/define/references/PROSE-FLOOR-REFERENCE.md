@@ -51,6 +51,15 @@ When reviewing, judge the cost of repetition and clustering in the actual passag
 | Wind-up and wind-down | "In this section, we will…", "In conclusion, we have shown…" | Delete; start with the content and stop at the end |
 | Padding phrases | "in order to," "at this point in time," "the fact that" | "to," "now," "that" |
 
+## Specific over sterile
+
+| Pattern | Tell | Fix |
+|---------|------|-----|
+| A feeling where a mechanism belongs | "types that follow your schema", "the database stays close at hand" | Name the mechanism or the number: "a column rename fails the build" |
+| A sentence any project could carry | The sentence would read unchanged in another project's documentation | Say what is true of this one, or cut it |
+| Over-compression | Arrows for verbs, verbless fragments, dropped articles, symbol-speak — "parser rejects bad date → exit 2, no write" | Write whole sentences: "The parser rejects a bad date, exits with code 2, and writes nothing." |
+| Abstract metaphor nouns | "substrate", "wedge", "vector", "flywheel", "surface" or "harness" used as a figure of speech | Use the concrete word. A term the document defines where it first uses it is a defined term, not a metaphor |
+
 ## Repeated rhetorical patterns
 
 Inspect these patterns for lost precision, emphasis, or comprehension. Report the concrete cost;
