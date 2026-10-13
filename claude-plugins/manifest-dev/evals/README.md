@@ -125,12 +125,12 @@ from a discipline `SKILL.md` explicitly states.
 | `44-debt-on-the-path` | autonomous, repository | Offer recorded debt on the change's path as a behavior-preserving first step | unmeasured |
 
 Cases `30`–`44` were written on 2026-10-13 and have never been run. Their split — tuning or held
-out — and which survive are decided at their first both-arm run. `30` uses a project set up before
-surfaces versions existed: until a second surfaces version ships, that is the only way a project
-can be behind. It exercises the comparison path, graded on offering what the newer setup adds and
-not a redo. The path for a project that records an older version has no case yet; the change that
-adds v2 adds one, as the repository's context file requires. `30`, `31`, `36`, and `43` exist only with the plugin and run
-on the plugin arm alone, like `27` and `28`.
+out — and which survive are decided at their first both-arm run. `30` uses a project set up
+before surfaces versions existed: until a second surfaces version ships, that is the only way a
+project can be behind. It tests the update offer for a project with no recorded version, graded
+on offering what v1 adds and not a redo. A project that records an older version gets its own
+case in the change that adds v2, as the repository's context file requires. `30`, `31`, `36`,
+and `43` exist only with the plugin and run on the plugin arm alone, like `27` and `28`.
 
 **Every recorded number in this file is stale as of 2026-10-13.** That change edited figure-out's
 spine, its docs-mode and autonomous references, and its task files, so no earlier result measures
