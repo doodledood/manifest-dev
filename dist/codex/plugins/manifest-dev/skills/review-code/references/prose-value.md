@@ -82,7 +82,7 @@ Leftover assistant-voice that escaped into shipped artifacts:
 
 ## Actionability filter
 
-Before reporting a finding, it must pass ALL of these criteria. **If it fails ANY criterion, drop it entirely.**
+Before reporting a finding, it must pass ALL of these criteria. **If it fails ANY criterion, drop it entirely.** A refactor flag for a workaround in the project's own code is the one exception to criterion 2: the comment carries understanding and stays, and what the flag reports is the code it explains.
 
 1. **In scope** — Diff-based by default (only flag prose introduced or modified by this change). Pre-existing prose is out of scope unless the user invoked an explicit path review.
 2. **Removing the prose loses nothing** — For comments: would a future reader, encountering the code without this comment, lose understanding? For doc prose: does this paragraph carry information that's not elsewhere in the doc? If removal is lossless, flag.
@@ -117,6 +117,8 @@ Medium is the blocking grade here, so it separates from Low on what the prose co
 - **Low** — the prose is merely surplus: it restates what the line below already says, or carries a tell without misleading anyone. Deleting it loses nothing, and leaving it costs a reader a few seconds.
 
 A finding that cannot say which of those two it is has not made a Medium case.
+
+A refactor flag is graded **Low**: it hands the workaround to the run's debt list rather than blocking the change.
 
 ## Dimension-specific report fields
 

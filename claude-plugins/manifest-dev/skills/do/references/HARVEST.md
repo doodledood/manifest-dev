@@ -1,8 +1,5 @@
 # do: corrections become locks, and debt stays visible
 
-`SKILL.md` loads this when the run repairs a finding or receives a correction, and before it
-reports.
-
 ## The harvest
 
 At each repaired finding and each correction, ask which check, type or structure would have made

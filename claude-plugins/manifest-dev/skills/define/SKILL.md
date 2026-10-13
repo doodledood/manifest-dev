@@ -97,7 +97,7 @@ That gives a floor that isn't ceremony:
   boundary — figure-out's sketch, or one drawn here for a direct request — shows that the area
   it touches resists it (a value threaded through layers, state with more than one writer, a
   missing seam, a workaround the change would extend), cut a behavior-preserving preparatory
-  Deliverable first: scoped to what this change needs, pinned by existing or characterization
+  Deliverable before the change itself: scoped to what this change needs, pinned by existing or characterization
   tests, and able to land as its own pull request. Recorded debt on the work's path that
   still stands, checked against the current code, joins it — offered to an attended user,
   decided within the caller's delegation when unattended. Debt off the path stays where it is.
@@ -105,7 +105,7 @@ That gives a floor that isn't ceremony:
   its durable way to check an artifact still does its job, in the form setup-project's
   `references/VERIFICATION_SURFACE.md` gives for that artifact — is missing, or drifting where
   the work touches it, cut building or repairing it, scoped to what the change touches, as the
-  first Deliverable; unattended runs build it too. A Manifest that touches anything the surface
+  first Deliverable, ahead of any preparatory slice; unattended runs build it too. A Manifest that touches anything the surface
   maps, or a path it should map but does not, carries a gate that each touched entry is added or
   updated and exercised live, with its status set.
 - Every Acceptance Criterion and Global Invariant is one text — title, body,
@@ -189,7 +189,8 @@ before the interview, so the dialogue carries the encoding forward; a Default
 whose violation would be unsafe or irreversible routes to a Global Invariant
 instead. A rule the user has stated — in the session or in a context file —
 overrides a conflicting Default: omit or adjust the Default and record which and
-why in an `ASM-*`. Taste entries stay weighed per call, as above. Per-repo for multi-repo manifests. These carry encoder data only —
+why in an `ASM-*`. Taste entries stay weighed per call, as above. Per-repo for
+multi-repo manifests. These carry encoder data only —
 figure-out's own probe files are a separate set this skill never reads, and any
 `tasks/**/references/*.md` is gate-evaluation lookup data, not loaded here.
 

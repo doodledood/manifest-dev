@@ -1,7 +1,6 @@
 # do: building and keeping the verification surface
 
-`SKILL.md` loads this when the Manifest gates a verification-surface entry, or the work needs a
-surface the project lacks. The surface's forms and parts — harness, feature map, eval suite,
+The surface's forms and parts — harness, feature map, eval suite,
 reader-task list, statuses, repository check — are in setup-project's
 `references/VERIFICATION_SURFACE.md`.
 
