@@ -69,6 +69,14 @@ _Avoid_: ADR format, ADR template.
 An index that asserts nothing its records don't, and is rebuilt from them rather than edited alongside them — so staleness is a repairable lag rather than lost information.
 _Avoid_: ADR list, table of contents.
 
+**Verification Surface**:
+A project's durable means of driving the real product and proving behavior — a harness (launch, doctor, drive, evidence, cleanup) plus a feature map with one entry per user-facing feature — built and repaired by normal runs where the work touches it, never by a separate maintenance pass.
+_Avoid_: Test suite, e2e suite, control skill.
+
+**Lock**:
+A check installed from a correction so the corrected class of mistake fails for every later contributor — a type or structure, a lint or architecture test, an invariant test, or one owning site — with a declared scope; its repository-wide hits that a run leaves unfixed are reported as debt.
+_Avoid_: Rule (that is prose), guard, concurrency lock.
+
 **Seed**:
 The deliberately under-produced vocabulary and decision corpus `/init-context` reconstructs from a project's history — a starting point that names what it could not recover, never a complete record.
 _Avoid_: Import, migration, backfill.
