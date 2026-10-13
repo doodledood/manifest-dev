@@ -114,5 +114,5 @@ def test_eval_cases_track_the_newest_version() -> None:
     ), f"{NEWEST_VERSION_CASE} must record the newest version, v{newest}"
     if newest >= 2:
         assert any(
-            newest - 1 in versions_ for versions_ in recorded.values()
+            newest - 1 in found for found in recorded.values()
         ), f"no eval case records v{newest - 1}, one behind"
