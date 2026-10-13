@@ -8,6 +8,7 @@ schema; when the CLI accepts a new key, add it here in the same change that firs
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import tempfile
@@ -116,10 +117,16 @@ def test_graders_use_only_their_types_keys(case: Path) -> None:
 
 @pytest.mark.parametrize("script", SCAFFOLDS, ids=lambda p: _case_id(p.parent))
 def test_scaffold_runs_in_an_empty_directory(script: Path) -> None:
-    with tempfile.TemporaryDirectory() as workdir:
+    # The harness runs a scaffold with HOME set to the run's own temporary home, and some
+    # scaffolds write fixture logs there; the user's real HOME must never receive them.
+    with (
+        tempfile.TemporaryDirectory() as workdir,
+        tempfile.TemporaryDirectory() as home,
+    ):
         result = subprocess.run(
             ["bash", str(script)],
             cwd=workdir,
+            env={**os.environ, "HOME": home},
             capture_output=True,
             text=True,
             timeout=SCAFFOLD_LIMIT_SECONDS,
