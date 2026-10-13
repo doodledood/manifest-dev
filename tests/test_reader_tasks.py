@@ -1,7 +1,7 @@
 """The reader-task surface for this repository's living documents points at sections that exist.
 
-Each entry in `docs/reader-tasks/TASKS.md` names the documents a reader relies on on its
-`Where:` line, as pointers `FILE` → *Section* joined by "; ", where a pointer may name more
+Each entry in `docs/reader-tasks/TASKS.md` names, on its `Where:` line, the documents a
+reader relies on, as pointers `FILE` → *Section* joined by "; ", where a pointer may name more
 sections as *A* and *B*. A section is a Markdown heading, or a site chapter's `data-name`. A renamed or removed
 section leaves the entry pointing at nothing, so the walk it describes cannot run.
 """
@@ -41,12 +41,16 @@ def test_entries_are_found() -> None:
 def test_every_entry_points_at_existing_sections_and_carries_a_status() -> None:
     broken = []
     for task, body in ENTRIES:
-        where = WHERE.search(body)
-        parts = where.group(1).split("; ") if where else []
-        if not parts:
-            broken.append(f"{task}: names no document section")
-        if not STATUS.search(body):
-            broken.append(f"{task}: no valid status")
+        wheres = WHERE.findall(body)
+        if len(wheres) != 1:
+            broken.append(f"{task}: {len(wheres)} Where lines, expected one")
+        parts = wheres[0].split("; ") if wheres else []
+        statuses = STATUS.findall(body)
+        if (
+            len(statuses) != 1
+            or len(re.findall(r"^- \*\*Status:\*\*", body, re.MULTILINE)) != 1
+        ):
+            broken.append(f"{task}: needs exactly one valid status line")
         for part in parts:
             pointer = POINTER.fullmatch(part)
             if not pointer:

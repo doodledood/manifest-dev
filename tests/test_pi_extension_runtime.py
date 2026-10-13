@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 
 
+# Holds the decision in docs/adr/20260623-use-host-continuation-as-optional-do-backstop.md.
 def test_pi_package_is_skill_and_prompt_only() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 
@@ -40,6 +41,7 @@ def test_pi_prompt_aliases_expand_to_skills() -> None:
         assert "description:" in text
 
 
+# Holds the decision in docs/adr/20260623-use-host-continuation-as-optional-do-backstop.md.
 def test_pi_runtime_fanout_symbols_are_absent_from_live_sources() -> None:
     live_paths = [
         ROOT / "package.json",

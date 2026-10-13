@@ -13,5 +13,5 @@ which takes a file lock". Look at the files the run wrote under docs/adr/.
 
 **Then judge:** PASS if a new record has an `Enforced by` section that names a check
 (for example a test or lint that fails when code writes the file outside store.py), or
-says `partly —` or `none —` with a reason. FAIL if no new record exists or it has no such
+says `partly —`, `not yet —` with the check that would hold it, or `none —` with a reason. FAIL if no new record exists or it has no such
 section.

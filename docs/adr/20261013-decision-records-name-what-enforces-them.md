@@ -13,7 +13,7 @@ The user
 A decision recorded only in prose depends on every later contributor reading the record. In one sampled codebase, roughly half to two-thirds of the decision records pinned something that a type, a schema, an import rule, or a test could check. Few of them named such a check. The rest were metric design, deliberate non-actions, or one-time operational choices that no check can hold.
 
 ## Decision
-- The record template gains `## Enforced by`. It names the strongest check that holds the decision — a type or structure, a lint or architecture test, an invariant test, or one owning site — and what the check pins. A partial case reads `partly — <check>; <what stays judgment>`. A case with no possible check reads `none — <why>`.
+- The record template gains `## Enforced by`. It names the strongest check that holds the decision — a type or structure, a lint or architecture test, an invariant test, or one owning site — and what the check pins. A partial case reads `partly — <check>; <what stays judgment>`. A decision a check could hold, before anyone has built it, reads `not yet — <the check that would hold it>`; a session that cannot write code records a decision this way, and the run that implements the decision builds the check and replaces the line. A case with no possible check reads `none — <why>`.
 - The check carries a comment that cites the record, so a contributor about to weaken it meets the decision first.
 - The line records current enforcement, not the decision. It is editable in place, like Status and cross-references.
 - Writing a record that supersedes or narrows another also retargets or retires the old record's check in the same change, and updates the old record's `Enforced by` line.

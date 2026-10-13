@@ -39,6 +39,9 @@ The moment that best shows a preference is often a reversal: the user overturns 
 - Older entries name no kind of call and read broader than intended until re-ratified.
 - Reversal offers add interruptions; the existing bar that an offer repay its interruption still applies.
 
+## Enforced by
+partly — `tests/test_shared_blocks.py` (`test_block_is_verbatim_in_each_file[users-call]`, `test_block_lives_only_in_declared_files[users-call]`) fails when a skill that states the user's-call block drops or alters its per-call Taste check; capturing entries from explained reversals stays judgment.
+
 ## Source
 - Session: figure-out investigation with a backtest over recorded decisions; aggregate figures only.
 - Amends 20260719-taste-persists-by-offer-and-ratify: offer-and-ratify stands; the earned-entry bar widens to explained reversals, and passive use becomes a per-call check.

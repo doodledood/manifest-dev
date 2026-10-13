@@ -28,6 +28,7 @@ def links_to(link: Path, target: Path) -> bool:
     return link.is_symlink() and link.resolve() == target.resolve()
 
 
+# Holds the decision in docs/adr/20260905-use-installed-manifest-dev-plugins.md.
 def test_plugin_skills_are_not_exposed_as_local_skills() -> None:
     names = {skill.name for skill in plugin_skill_dirs()}
     duplicates = [

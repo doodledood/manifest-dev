@@ -70,16 +70,20 @@ An index that asserts nothing its records don't, and is rebuilt from them rather
 _Avoid_: ADR list, table of contents.
 
 **Verification Surface**:
-A project's durable means of checking that an artifact future runs will change still does its job, in the artifact's own form — a harness plus a feature map for a runnable product, a behavior eval suite for prompts and skills, a reader-task list for a living document — with each entry unverified, verified, or stale (an eval case unmeasured, measured, or stale); built and repaired by normal runs where the work touches it, never by a separate maintenance pass.
+A project's durable means of checking that an artifact future runs will change still does its job, in the artifact's own form: a harness plus a feature map for a runnable product, a behavior eval suite for prompts and skills, a reader-task list for a living document. Each entry is unverified, verified, or stale; an eval case is unmeasured, measured, or stale. Normal runs build and repair it where the work touches it, never a separate maintenance pass.
 _Avoid_: Test suite, e2e suite, control skill.
 
 **Surfaces Version**:
-The integer, listed in setup-project's `CHANGES.md`, that a project's context file records in its project-surfaces section when setup-project installs or updates its surfaces, or when the user declines an update offer. The recorded number decides what an update offers: nothing at the newest version, the later `CHANGES.md` entries at an older one, and a full comparison when the project records none. Unrelated to the plugin's own version.
+The integer, listed in setup-project's `CHANGES.md`, that a project's context file records in its project-surfaces section. Setup-project writes it when it installs or updates the surfaces, and figure-out writes it when the user declines the whole update offer. The recorded number decides what an update offers: nothing at the newest version, the later `CHANGES.md` entries at an older one, and a full comparison when the project records none. Unrelated to the plugin's own version.
 _Avoid_: Plugin version, setup version, template version.
 
 **Lock**:
 A check installed from a correction so the corrected class of mistake fails for every later contributor — a type or structure, a lint or architecture test, an invariant test, or one owning site — with a declared scope; its repository-wide hits that a run leaves unfixed are reported as debt.
 _Avoid_: Rule (that is prose), guard, concurrency lock.
+
+**Debt**:
+What a run found and did not fix: unfixed lock hits, refactor flags from workaround comments, constraint comments awaiting encoding, new suppressions, reshapes outside the change's scope, and product regressions the verification surface exposed. A run names it in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket; a later run whose work reaches the same area offers to fold it in.
+_Avoid_: Tech debt (too broad), TODO, backlog.
 
 **Seed**:
 The deliberately under-produced vocabulary and decision corpus `/setup-project` reconstructs from a project's history — a starting point that names what it could not recover, never a complete record.

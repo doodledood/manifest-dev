@@ -74,6 +74,8 @@ def test_every_version_says_what_projects_gain() -> None:
         ), f"{CHANGES} entry v{number} lists nothing an installed project gains"
 
 
+# Holds the decision in docs/adr/20261013-runs-build-and-maintain-a-project-verification-surface.md.
+# Holds the decision in docs/adr/20261013-set-up-projects-receive-updates-through-a-version-marker.md.
 def test_latest_version_matches_what_setup_project_emits() -> None:
     latest_number, _, latest_digest = versions()[-1]
     current = emitted_digest()
@@ -86,6 +88,7 @@ def test_latest_version_matches_what_setup_project_emits() -> None:
     )
 
 
+# Holds the decision in docs/adr/20261013-set-up-projects-receive-updates-through-a-version-marker.md.
 def test_surfaces_template_carries_the_latest_version() -> None:
     latest_number = versions()[-1][0]
     found = TEMPLATE_VERSION.findall(NORTH_STAR_FORMAT.read_text(encoding="utf-8"))

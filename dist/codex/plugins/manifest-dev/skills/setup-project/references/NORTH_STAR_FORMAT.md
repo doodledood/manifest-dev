@@ -219,7 +219,8 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   record, the restatus of what it changes, and the index rebuild together.
 - **Verification surface** — `<path>`, <a harness and feature map | a behavior eval suite |
   a list of reader tasks>: how this project checks that its result still does its job.
-  Read its README before exercising a change; runs keep its entries current.
+  A change to anything an entry covers updates that entry and exercises it, as its README
+  describes.
 ```
 
 <!-- Fixed boundary: copying resumes at the heading below and runs to the end of the file. -->

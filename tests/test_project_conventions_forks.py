@@ -181,6 +181,8 @@ def _sections_behind(fork: Fork) -> list[str]:
     return behind
 
 
+# Holds the decision in docs/adr/20260809-adr-conventions-ship-as-project-knowledge.md.
+# Holds the decision in docs/adr/20261013-decision-records-name-what-enforces-them.md.
 def test_forks_reproduce_the_emitted_default() -> None:
     report = []
     for fork in FORKS:

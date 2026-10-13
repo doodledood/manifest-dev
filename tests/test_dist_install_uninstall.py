@@ -161,6 +161,7 @@ def test_opencode_plugin_entry_shape() -> None:
     assert (OPENCODE / "plugin" / "index.js").is_file()
 
 
+# Holds the decision in docs/adr/20260611-opencode-slash-commands-use-plugin-wrappers.md.
 def test_opencode_plugin_config_hook_registers_payload(tmp_path: Path) -> None:
     """The config hook appends the source skill directories to skills.paths, registers
     command wrappers for user-invocable skills, and adds the instructions file."""

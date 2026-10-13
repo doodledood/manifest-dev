@@ -13,7 +13,7 @@ shared understanding in the transcript → invoke `figure-out` first, propagatin
 means amend: targeted changes only, IDs stable, no renumbering.
 
 Before encoding a new Manifest for work in a repository, read what earlier work left on it —
-logs and Manifests for this repository, open debt tickets, and pull requests' "Debt left"
+logs and Manifests for this repository, open Tickets on the work's paths, and pull requests' "Debt left"
 sections — following `../figure-out/references/RECALL.md`. Note in the digest when the project's
 surfaces version is missing or older than setup-project's newest, without stopping to update.
 
@@ -95,11 +95,15 @@ That gives a floor that isn't ceremony:
   decided within the caller's delegation when unattended. Debt off the path stays where it is.
 - **Verification comes before the work it checks.** Where the project's verification surface —
   its durable way to check an artifact still does its job, in the form setup-project's
-  `references/VERIFICATION_SURFACE.md` gives for that artifact — is missing, or drifting where
+  `references/VERIFICATION_SURFACE.md` gives for that artifact, found where the context file's project-surfaces
+  section names it or among the verification assets the project keeps — is missing, or drifting where
   the work touches it, cut building or repairing it, scoped to what the change touches, as the
   first Deliverable, ahead of any preparatory slice; unattended runs build it too. A Manifest that touches anything the surface
   maps, or a path it should map but does not, carries a gate that each touched entry is added or
   updated and exercised live, with its status set.
+- **A recorded check still to be built is built.** When the work implements or touches a decision
+  whose record's `Enforced by` reads `not yet`, a gate holds that the named check exists, fails
+  when the decision is reversed, carries a comment citing the record, and replaces the line.
 - Every Acceptance Criterion and Global Invariant is one text — title, body,
   optional why — stating what done means, the evidence to inspect, and the
   threshold between PASS and FAIL, precise enough that two evaluations read the

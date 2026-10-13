@@ -54,7 +54,7 @@ The need is not limited to code. A prompt or skill is checked by behavior cases 
 - figure-out gains one more exception to its read-only stance: the stale marker.
 
 ## Enforced by
-partly — `tests/test_setup_project_versions.py` pins the emitted README template; eval cases `32` to `36` and `d18-map-gate` measure the behavior once run.
+partly — `tests/test_setup_project_versions.py` (`test_latest_version_matches_what_setup_project_emits`) fails when the emitted surface README template changes without a new surfaces version; eval cases `32` to `36` and `d18-map-gate` measure the behavior once run.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.

@@ -740,6 +740,7 @@ def line_hits(text: str, pattern: re.Pattern[str]) -> list[int]:
     ]
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_shipped_text_names_no_plugin_qualifier_outside_html_comments() -> None:
     problems = []
     for path in shipped_markdown():
@@ -751,6 +752,7 @@ def test_shipped_text_names_no_plugin_qualifier_outside_html_comments() -> None:
     assert not problems, "\n".join(problems)
 
 
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_shipped_text_names_no_host_tool() -> None:
     problems = []
     for path in shipped_markdown():

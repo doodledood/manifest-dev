@@ -120,6 +120,7 @@ def codex_plugin_skills(plugin: str) -> set[str]:
     return {p.name for p in skills_dir.iterdir() if p.is_dir()}
 
 
+# Holds the decision in docs/adr/20260531-codex-plugin-native-distribution.md.
 def test_codex_plugins_carry_their_skill_split() -> None:
     assert codex_plugin_skills("manifest-dev") == set(CORE_SKILLS)
     assert codex_plugin_skills("manifest-dev-tools") == set(TOOLS_SKILLS)
@@ -186,6 +187,8 @@ def test_codex_marketplace_points_at_existing_plugins() -> None:
 # --------------------------------------------------------------------------
 
 
+# Holds the decision in docs/adr/20260611-opencode-plugin-native-distribution.md.
+# Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
 def test_opencode_reads_the_source_skill_directories() -> None:
     """OpenCode registers claude-plugins/*/skills directly; no copied payload exists."""
     index = (DIST / "opencode" / "plugin" / "index.js").read_text(encoding="utf-8")
@@ -195,6 +198,7 @@ def test_opencode_reads_the_source_skill_directories() -> None:
     assert not (DIST / "pi" / "skills").exists()
 
 
+# Holds the decision in docs/adr/20260611-opencode-plugin-native-distribution.md.
 def test_opencode_ships_no_agents() -> None:
     # manifest-dev ships zero agents on every target; OpenCode drops its agents/ dir.
     assert not (DIST / "opencode" / "agents").exists()
@@ -229,6 +233,7 @@ def test_sync_tools_is_a_wrapper_around_the_copy_script() -> None:
     assert not list(DIST.rglob(".sync-meta.json"))
 
 
+# Holds the decision in docs/adr/20260531-codex-plugin-native-distribution.md.
 def test_codex_copy_matches_source() -> None:
     """dist/codex/plugins/*/skills is a byte-identical copy of claude-plugins/*/skills."""
     result = subprocess.run(
@@ -240,6 +245,7 @@ def test_codex_copy_matches_source() -> None:
     assert result.returncode == 0, result.stderr
 
 
+# Holds the decision in docs/adr/20260531-codex-plugin-native-distribution.md.
 def test_codex_distribution_is_plugin_native() -> None:
     readme = (DIST / "codex" / "README.md").read_text(encoding="utf-8")
     assert "codex plugin marketplace add doodledood/manifest-dev" in readme
@@ -250,6 +256,7 @@ def test_codex_distribution_is_plugin_native() -> None:
     assert not (DIST / "codex" / "agents").exists()
 
 
+# Holds the decision in docs/adr/20260623-use-universal-goal-setting-language.md.
 def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
     """Unattended-run backstops are a portable capability, not a literal /goal rule.
 
@@ -296,6 +303,7 @@ def test_goal_setting_backstop_is_universal_across_source_and_dist() -> None:
             assert stale not in text, f"{path}: stale goal wording {stale!r}"
 
 
+# Holds the decision in docs/adr/20260806-verification-is-bookkeeping-and-a-stop-condition.md.
 def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
     """The backstop must preserve mode, provenance, and incomplete-gate state."""
     do_files = [
@@ -370,6 +378,7 @@ def test_do_completion_contract_requires_auditable_gate_ledger() -> None:
         assert not RETIRED_GATE_FIELDS.search(text), path
 
 
+# Holds the decision in docs/adr/20260907-executors-own-unattended-decisions-within-explicit-bounds.md.
 def test_executor_amendments_preserve_verification() -> None:
     """Prospective scope authority must reach the author and invalidate evidence."""
     base = ROOT / "claude-plugins/manifest-dev/skills"
@@ -388,6 +397,7 @@ def test_executor_amendments_preserve_verification() -> None:
     assert "The Manifest is read-only" not in executor
 
 
+# Holds the decision in docs/adr/20260914-one-skill-per-beat-built-from-the-lean-body.md.
 def test_manifest_schema_stays_topology_neutral() -> None:
     """The Manifest must not regain an evaluator copy, an ordering field, or an
     inferred kind. Run-level verification policy was retired with the modes."""
@@ -420,6 +430,7 @@ def test_manifest_schema_stays_topology_neutral() -> None:
         assert not (refs / "exhaustive-verification.md").exists(), path
 
 
+# Holds the decision in docs/adr/20260807-a-gate-is-one-text-not-two.md.
 def test_every_operative_manifest_example_uses_the_current_gate_schema() -> None:
     """Every shipped gate example is written in the current gate schema.
 

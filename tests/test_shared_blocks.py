@@ -62,6 +62,8 @@ def _shipped() -> dict[str, str]:
     }
 
 
+# Holds the decision in docs/adr/20261012-taste-is-checked-per-call-and-captured-from-explained-reversals.md.
+# Holds the decision in docs/adr/20261012-unattended-runs-flag-the-users-calls-by-disagreement-not-confidence.md.
 @pytest.mark.parametrize("name", sorted(BLOCKS))
 def test_block_is_verbatim_in_each_file(name: str) -> None:
     text, _, files = BLOCKS[name]
@@ -70,6 +72,8 @@ def test_block_is_verbatim_in_each_file(name: str) -> None:
     assert not missing, f"{name} differs or is missing in: {missing}"
 
 
+# Holds the decision in docs/adr/20261012-taste-is-checked-per-call-and-captured-from-explained-reversals.md.
+# Holds the decision in docs/adr/20261012-unattended-runs-flag-the-users-calls-by-disagreement-not-confidence.md.
 @pytest.mark.parametrize("name", sorted(BLOCKS))
 def test_block_lives_only_in_declared_files(name: str) -> None:
     _, marker, files = BLOCKS[name]

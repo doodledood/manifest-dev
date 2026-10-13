@@ -183,6 +183,8 @@ def normalized(text: str) -> str:
     return " ".join(text.split())
 
 
+# Holds the decision in docs/adr/20260828-continuation-goals-emit-verbatim-from-one-block.md.
+# Holds the decision in docs/adr/20260830-shared-contract-blocks-name-the-beat-not-the-skill.md.
 def test_every_shared_block_is_one_text() -> None:
     """No block may have two variants — that is drift, wherever the copy lives.
 
@@ -201,6 +203,7 @@ def test_every_shared_block_is_one_text() -> None:
     assert not drifted, "shared goal blocks have drifted apart:\n" + "\n".join(drifted)
 
 
+# Holds the decision in docs/adr/20260830-shared-contract-blocks-name-the-beat-not-the-skill.md.
 def test_dist_copies_carry_the_same_blocks_as_their_source() -> None:
     """A distribution may not quietly ship a skill missing one of its blocks.
 
@@ -241,6 +244,7 @@ def test_skill_names_are_unique_across_plugins() -> None:
     )
 
 
+# Holds the decision in docs/adr/20260828-continuation-goals-emit-verbatim-from-one-block.md.
 def test_every_backstop_site_carries_the_goal_block() -> None:
     """A site that arms a backstop emits the goal block, not a variant of its own."""
     missing = [
@@ -255,6 +259,7 @@ def test_every_backstop_site_carries_the_goal_block() -> None:
     )
 
 
+# Holds the decision in docs/adr/20260828-continuation-goals-emit-verbatim-from-one-block.md.
 def test_every_backstop_site_forbids_paraphrase() -> None:
     """The block is half the mechanism; the instruction not to reword it is the rest.
 
@@ -272,6 +277,7 @@ def test_every_backstop_site_forbids_paraphrase() -> None:
     )
 
 
+# Holds the decision in docs/adr/20260830-a-fence-label-is-block-identity-never-emitted-text.md.
 def test_every_backstop_site_keeps_the_fence_label_out_of_the_emission() -> None:
     """Emitting a block verbatim must not mean emitting its fence label.
 
@@ -290,6 +296,7 @@ def test_every_backstop_site_keeps_the_fence_label_out_of_the_emission() -> None
     )
 
 
+# Holds the decision in docs/adr/20260830-a-fence-label-is-block-identity-never-emitted-text.md.
 def test_every_shared_block_is_labelled() -> None:
     """A shared block that lost its fence label would be invisible to every check."""
     unlabelled = [
@@ -326,6 +333,8 @@ def test_blocker_continuation_survives_every_outer_goal() -> None:
             assert "a blocker requiring a person, or" not in text, paths
 
 
+# Holds the decision in docs/adr/20260830-a-contract-slot-exists-only-where-its-value-is-known.md.
+# Holds the decision in docs/adr/20260905-executors-own-path-bearing-continuation-goals.md.
 def test_auto_chains_leave_goal_emission_to_the_executor() -> None:
     """A chain must remain goal-free until it has handed over a Manifest."""
     for name, executor in (("auto", "do"),):
@@ -339,6 +348,8 @@ def test_auto_chains_leave_goal_emission_to_the_executor() -> None:
             assert "No path → stop and report" in text, path
 
 
+# Holds the decision in docs/adr/20260830-a-contract-slot-exists-only-where-its-value-is-known.md.
+# Holds the decision in docs/adr/20260905-executors-own-path-bearing-continuation-goals.md.
 def test_executor_contract_identifies_manifest_without_prior_context(
     tmp_path: Path,
 ) -> None:

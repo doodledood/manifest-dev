@@ -8,13 +8,14 @@ answered them.
 ## v1
 
 - Decision records gain an `Enforced by` field naming the strongest check that holds the
-  decision. It is editable in place, and superseding or narrowing a record retargets or
+  decision, or `not yet` with the check a later run should build. It is editable in place, and superseding or narrowing a record retargets or
   retires the old record's check.
 - The project-surfaces section records its surfaces version and gains an entry for the
-  project's verification surface.
+  project's verification surface, telling every contributor that a change to what an entry
+  covers updates and exercises that entry.
 - A verification surface is seeded for each artifact future runs will change: its form and
   location, existing verification assets adopted within the scope the project gave them,
   entries catalogued from source as `unverified` (`unmeasured` for an eval suite), its README,
   and a repository check that its entries still point at things that exist.
 
-Digest: 67ea232904eeab5c341571c87c3b06e6109fe887879993d9e32620ed91d674e5
+Digest: b311b82148f4a8ed815d6b7ac3df77a8d7a48b140f6781f128269c8ab3f122bc

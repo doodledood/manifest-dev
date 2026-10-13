@@ -57,6 +57,7 @@ def user_invocable(plugin: str) -> set[str]:
     return found
 
 
+# Holds the decision in docs/adr/20261013-new-capabilities-live-inside-the-four-workflow-entry-points.md.
 def test_user_invocable_skills_are_the_declared_set() -> None:
     for plugin, expected in USER_INVOCABLE.items():
         actual = user_invocable(plugin)

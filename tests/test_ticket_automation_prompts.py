@@ -19,6 +19,7 @@ def convention_text(root: Path) -> str:
     )
 
 
+# Holds the decision in docs/adr/20260812-run-ticket-owns-attempt-not-dispatch.md.
 def test_run_ticket_has_exact_input_and_dispatch_boundaries() -> None:
     text = skill_text(SOURCE_SKILLS, "run-ticket")
 
@@ -30,6 +31,8 @@ def test_run_ticket_has_exact_input_and_dispatch_boundaries() -> None:
     assert "A conflicting human claim stops the attempt" in text
 
 
+# Holds the decision in docs/adr/20260812-auto-ticket-completes-after-required-landing.md.
+# Holds the decision in docs/adr/20260812-ticket-recovery-uses-coherent-pushed-checkpoints.md.
 def test_run_ticket_recovers_and_lands_before_done() -> None:
     text = skill_text(SOURCE_SKILLS, "run-ticket")
     convention = (
@@ -61,6 +64,8 @@ def test_run_ticket_recovers_and_lands_before_done() -> None:
     )
 
 
+# Holds the decision in docs/adr/20260812-ticket-identity-follows-work-across-automated-attempts.md.
+# Holds the decision in docs/adr/20260812-ticket-up-is-the-ticket-authoring-boundary.md.
 def test_run_ticket_preserves_ticket_identity_and_routes_follow_ups() -> None:
     text = skill_text(SOURCE_SKILLS, "run-ticket")
 
@@ -72,6 +77,9 @@ def test_run_ticket_preserves_ticket_identity_and_routes_follow_ups() -> None:
     assert "Never write a follow-up directly to the venue" in text
 
 
+# Holds the decision in docs/adr/20260810-auto-is-an-opt-in-grant-to-unattended-automation.md.
+# Holds the decision in docs/adr/20260812-tickets-follow-independently-schedulable-work-units.md.
+# Holds the decision in docs/adr/20260814-human-authored-follow-ups-may-grant-auto-independently.md.
 def test_ticket_up_preserves_auto_authority_boundary() -> None:
     text = skill_text(SOURCE_SKILLS, "ticket-up")
 
@@ -87,6 +95,7 @@ def test_ticket_up_preserves_auto_authority_boundary() -> None:
     assert "Shaped never implies Auto" in text
 
 
+# Holds the decision in docs/adr/20260814-ticket-selection-minimizes-delay-loss-across-available-executors.md.
 def test_ticket_priority_uses_delay_loss_and_executor_time() -> None:
     convention = (
         SOURCE_SKILLS / "ticket-up" / "references" / "TICKET_CONVENTION.md"
@@ -106,6 +115,7 @@ def test_ticket_priority_uses_delay_loss_and_executor_time() -> None:
     assert "traditional feature size" in sweep
 
 
+# Holds the decision in docs/adr/20260810-next-ticket-claims-the-ticket-it-picks.md.
 def test_selector_presents_without_executing() -> None:
     text = skill_text(SOURCE_SKILLS, "next-ticket")
 
@@ -114,6 +124,8 @@ def test_selector_presents_without_executing() -> None:
     assert "selection and execution are separate actions" in text
 
 
+# Holds the decision in docs/adr/20260812-human-assignment-pauses-auto-ticket-execution.md.
+# Holds the decision in docs/adr/20260812-scheduled-ticket-sweep-is-recovery-first-and-one-ticket.md.
 def test_sweep_tickets_recovers_first_and_runs_at_most_one() -> None:
     text = skill_text(SOURCE_SKILLS, "sweep-tickets")
 
@@ -140,6 +152,8 @@ def test_sweep_tickets_recovers_first_and_runs_at_most_one() -> None:
     assert "Do not select a second Ticket" in text
 
 
+# Holds the decision in docs/adr/20260812-trigger-adapters-enforce-per-ticket-single-flight.md.
+# Holds the decision in docs/adr/20260812-trigger-adapters-hand-off-exhausted-runner-failures.md.
 def test_trigger_adapter_contract_stays_thin_and_recoverable() -> None:
     text = (
         SOURCE_SKILLS / "ticket-up" / "references" / "AUTOMATED_EXECUTION.md"
@@ -166,6 +180,7 @@ def test_trigger_adapter_contract_stays_thin_and_recoverable() -> None:
     assert "Either route can operate alone" not in text
 
 
+# Holds the decision in docs/adr/20260825-escalation-clears-the-claim-and-carries-its-own-mark.md.
 def test_convention_escalation_releases_the_claim_and_marks_the_ticket() -> None:
     text = convention_text(SOURCE_SKILLS)
 
@@ -179,6 +194,7 @@ def test_convention_escalation_releases_the_claim_and_marks_the_ticket() -> None
     assert "transfer or preserve its claim" not in flat(text)
 
 
+# Holds the decision in docs/adr/20260825-escalation-clears-the-claim-and-carries-its-own-mark.md.
 def test_run_ticket_escalation_releases_the_claim_and_marks_the_ticket() -> None:
     text = skill_text(SOURCE_SKILLS, "run-ticket")
 
@@ -199,6 +215,7 @@ def test_run_ticket_escalation_releases_the_claim_and_marks_the_ticket() -> None
     assert "Transfer its claim to the identified person" not in flat(text)
 
 
+# Holds the decision in docs/adr/20260825-escalation-clears-the-claim-and-carries-its-own-mark.md.
 def test_sweep_excludes_escalated_tickets_from_the_eligible_set() -> None:
     text = skill_text(SOURCE_SKILLS, "sweep-tickets")
 
@@ -209,6 +226,7 @@ def test_sweep_excludes_escalated_tickets_from_the_eligible_set() -> None:
     assert "An escalated Ticket is not one either" in flat(text)
 
 
+# Holds the decision in docs/adr/20260825-escalation-clears-the-claim-and-carries-its-own-mark.md.
 def test_event_eligibility_excludes_escalated_tickets() -> None:
     text = (
         SOURCE_SKILLS / "ticket-up" / "references" / "AUTOMATED_EXECUTION.md"
@@ -221,6 +239,7 @@ def test_event_eligibility_excludes_escalated_tickets() -> None:
     assert "infrastructure exhaustion assigns a person" in flat(text)
 
 
+# Holds the decision in docs/adr/20260825-escalation-clears-the-claim-and-carries-its-own-mark.md.
 def test_github_venue_renders_the_escalation_mark_as_a_label() -> None:
     text = (SOURCE_SKILLS / "ticket-up" / "references" / "GITHUB_STORE.md").read_text(
         encoding="utf-8"

@@ -17,6 +17,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 
+# Holds the decision in docs/adr/20261007-design-exposes-optional-instruments-with-bounded-evidence.md.
 def test_optional_instruments_contract() -> None:
     node = shutil.which("node")
     if node is None:
