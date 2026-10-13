@@ -18,7 +18,7 @@ When project docs are active, that frame has four explicit exceptions. **Glossar
 
 **No CONTEXT.md and no `docs/adr/` at all** — the project has never been set up. Offer `setup-project`, which installs the conventions file, the glossary, a verification surface, and the context-file wiring in one pass and can seed them from the project's own history. On accept, invoke it and continue from what it produced. On decline, fall through to the minimal path below and don't re-offer.
 
-**Surfaces present, but the version is missing or old** — the project context file's project-surfaces section records no surfaces version, or one older than the newest entry in setup-project's `references/CHANGES.md`. Offer setup-project's update, listing the `CHANGES.md` entries after the recorded version (every entry, and a comparison against the current defaults, when none is recorded). On accept, invoke it and continue. On a decline of the whole offer, write the newest version into the section's version comment so the same offer is not made again, and continue.
+**Surfaces present, but the version is missing or old** — the project has a glossary or decision records, and its context file records no surfaces version (no project-surfaces section counts as none), or one older than the newest entry in setup-project's `references/CHANGES.md`. Offer setup-project's update, listing the `CHANGES.md` entries after the recorded version (every entry, and a comparison against the current defaults, when none is recorded). On accept, invoke it and continue. On a decline of the whole offer, write the newest version into the section's version comment so the same offer is not made again, and continue.
 
 Then resolve the active context file and load it if it exists:
 
