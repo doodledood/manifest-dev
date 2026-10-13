@@ -97,15 +97,19 @@ def test_surfaces_template_carries_the_latest_version() -> None:
 EVALS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "evals"
 
 
-def test_each_later_version_has_a_one_behind_eval_case() -> None:
-    # The update path for a project recording an older version can only be exercised once a
-    # second version exists, so every version from v2 on brings a case recording the one before.
-    scaffolds = "\n".join(
-        p.read_text(encoding="utf-8") for p in EVALS.glob("*/scaffold.sh")
-    )
-    for version, _body, _digest in versions():
-        if version >= 2:
-            marker = f"<!-- setup-project surfaces v{version - 1} -->"
-            assert (
-                marker in scaffolds
-            ), f"v{version} has no eval case recording v{version - 1}"
+def test_eval_cases_track_the_newest_version() -> None:
+    # One case records the newest version and is graded on no offer. From v2 on, another
+    # records the version before it, the only way to exercise the update for an older version.
+    newest = versions()[-1][0]
+
+    def recording(version: int) -> list[str]:
+        marker = f"<!-- setup-project surfaces v{version} -->"
+        return [
+            p.parent.name
+            for p in sorted(EVALS.glob("*/scaffold.sh"))
+            if marker in p.read_text(encoding="utf-8")
+        ]
+
+    assert recording(newest), f"no eval case records the newest version, v{newest}"
+    if newest >= 2:
+        assert recording(newest - 1), f"no eval case records v{newest - 1}, one behind"
