@@ -32,7 +32,7 @@ Each skill reads back only its own file. figure-out reads a log when it resumes 
 ## Consequences
 
 ### Positive
-- A new session starts from what earlier sessions learned and ruled.
+- A session working on the repository starts from what earlier sessions learned and ruled.
 - Rulings that were never recorded get a second chance to become records.
 
 ### Negative
