@@ -194,11 +194,7 @@ CASE_ROW = re.compile(r"^\| `([^`]+)` \|", re.MULTILINE)
 
 
 def _case_dirs(suite: Path) -> set[str]:
-    return {
-        p.name
-        for p in suite.iterdir()
-        if (p / "prompt.md").exists() or (p / "case.yaml").exists()
-    }
+    return {case.name for case in CASES if case.parent == suite}
 
 
 def _case_table_rows(readme: Path) -> set[str]:
@@ -208,7 +204,7 @@ def _case_table_rows(readme: Path) -> set[str]:
     return {
         name
         for section in sections
-        if section.startswith("Cases")
+        if re.match(r"Cases\b", section)
         for name in CASE_ROW.findall(section)
     }
 
