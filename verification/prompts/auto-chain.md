@@ -1,0 +1,1 @@
+/manifest-dev:auto add a script greet.py that prints "hello, <name>" for the name given as its first argument, with a unittest that runs it — done when `python3 greet.py Ana` prints exactly `hello, Ana` and the test passes.

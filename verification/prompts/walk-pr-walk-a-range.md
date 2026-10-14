@@ -1,0 +1,1 @@
+First, in this repository, make two commits: one adding `greet.py` with a function `greet(name)` that returns `"hello, " + name`, and one changing it to strip surrounding whitespace from the name and adding `test_greet.py` with a test for that. Then run /manifest-dev-tools:walk-pr HEAD~1..HEAD

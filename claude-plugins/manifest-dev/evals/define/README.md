@@ -42,7 +42,7 @@ as of 2026-10-14**: the 2026-10-13 change edited define's spine and its task fil
 2026-10-14 change moved its verification wording to one harness, so the next baseline replaces
 them. A single 2026-10-14 drive of `d01` (not a measurement) found define keeping the
 requested layer cut as a user's call; define's slicing rule now says a requested cut is never one,
-and a re-drive came back re-cut (`docs/features/evidence/define/`).
+and a re-drive came back re-cut (`verification/evidence/define/`).
 
 ## First measurement of `d11`–`d17` — 2026-10-12
 

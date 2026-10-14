@@ -181,18 +181,41 @@ def evidence_for(recipe: Recipe) -> list[Evidence]:
     return sorted((read_evidence(p) for p in folder.glob("*.md")), key=lambda e: e.when) if folder.is_dir() else []
 
 
+def git(*args: str) -> str:
+    """Output of a git command in the project, or "" outside a repository or on failure."""
+    done = subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True, text=True)
+    return done.stdout.strip() if done.returncode == 0 else ""
+
+
+def commit_time(line: str) -> dt.datetime:
+    # Python before 3.11 reads no trailing "Z", which git prints for UTC times.
+    return dt.datetime.fromisoformat(line.replace("Z", "+00:00")).astimezone(dt.timezone.utc)
+
+
 def last_change(paths: list[str]) -> dt.datetime | None:
-    """When the covered paths last changed: uncommitted edits count as now."""
+    """When the covered paths last changed: an uncommitted edit counts from the file's mtime."""
     if not paths:
         return None
-    git = ["git", "-C", str(ROOT)]
-    dirty = subprocess.run([*git, "status", "--porcelain", "--", *paths], capture_output=True, text=True)
-    if dirty.returncode == 0 and dirty.stdout.strip():
-        return dt.datetime.now(dt.timezone.utc)
-    log = subprocess.run([*git, "log", "-1", "--format=%cI", "--", *paths], capture_output=True, text=True)
-    if log.returncode != 0 or not log.stdout.strip():
-        return None
-    return dt.datetime.fromisoformat(log.stdout.strip()).astimezone(dt.timezone.utc)
+    dirty = git("status", "--porcelain", "-uall", "--", *paths)
+    if dirty:
+        times = []
+        for line in dirty.splitlines():
+            path = ROOT / line[3:].split(" -> ")[-1].strip('"')
+            stamp = path.stat().st_mtime if path.exists() else dt.datetime.now().timestamp()
+            times.append(dt.datetime.fromtimestamp(stamp, dt.timezone.utc))
+        return max(times)
+    log = git("log", "-1", "--format=%cI", "--", *paths)
+    return commit_time(log) if log else None
+
+
+def checked_at(evidence: Evidence) -> dt.datetime:
+    """When evidence entered the history: the commit that first added it, following moves.
+
+    Evidence is committed with the change it checked, so that commit and the covered change
+    share a time; a later commit to a covered path then makes it stale. Uncommitted evidence
+    counts from its own stamp."""
+    added = git("log", "--follow", "--diff-filter=A", "--format=%cI", "--", rel(evidence.path))
+    return max(evidence.when, commit_time(added.splitlines()[-1])) if added else evidence.when
 
 
 def status(recipe: Recipe, history: list[Evidence] | None = None) -> str:
@@ -206,8 +229,7 @@ def status(recipe: Recipe, history: list[Evidence] | None = None) -> str:
     latest = history[-1]
     label = f"{latest.outcome} ({latest.when:%Y-%m-%d})"
     changed = last_change(recipe.covers)
-    # A day's slack: evidence dated by day only would otherwise go stale on its own commit.
-    if changed and changed.date() > latest.when.date():
+    if changed and changed > checked_at(latest):
         return f"stale ({changed:%Y-%m-%d}): covered files changed after {label}"
     return label
 
@@ -283,7 +305,8 @@ def rel(path: Path) -> str:
 
 
 def cmd_list(kind: str | None) -> None:
-    rows = [(r.name, r.kind, status(r), "ask-first" if r.ask_first else "") for r in recipes()]
+    # The list shows each status up to its reason; `verify help <recipe>` prints the whole line.
+    rows = [(r.name, r.kind, status(r).split(": ")[0], "ask-first" if r.ask_first else "") for r in recipes()]
     rows = [row for row in rows if kind is None or row[1] == kind]
     if not rows:
         die(f"no recipes of kind {kind!r}")
@@ -339,7 +362,7 @@ def cmd_drive(name: str, only: str | None, yes: bool, dry: bool, kind: str | Non
     for scenario in chosen:
         if dry:
             print(f"would run [{scenario.name}]: {scenario.run}")
-            print(f"evidence:  {rel(EVIDENCE / recipe.name)}/<stamp>.md")
+            print(f"evidence:  {rel(EVIDENCE / recipe.name)}/<stamp>.md", flush=True)
             if recipe.dry_run:
                 env = {**os.environ, "VERIFY_DRY_RUN": "1"}
                 subprocess.run(scenario.run, shell=True, cwd=ROOT, env=env, check=False)

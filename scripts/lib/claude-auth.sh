@@ -1,5 +1,5 @@
 # Resolve the credential a headless Claude Code run inside a container uses.
-# Sourced by scripts/features/drive.sh and scripts/evals/run_eval.sh — one place for the rule.
+# Sourced by scripts/drive-skill.sh, scripts/walk.sh and scripts/evals/run_eval.sh — one place for the rule.
 #
 # Two credentials exist:
 #   - a Claude subscription: run `claude setup-token` once and export the token it prints as

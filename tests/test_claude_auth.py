@@ -2,7 +2,7 @@
 
 `scripts/lib/claude-auth.sh` picks the credential both container scripts pass in. A subscription
 login lives in the macOS keychain, which a container cannot read, so the subscription path is the
-long-lived token `claude setup-token` prints. These tests run the real `drive.sh` with a stub
+long-lived token `claude setup-token` prints. These tests run the real `drive-skill.sh` with a stub
 `docker` that records what it was given, and a stub `zsh` so the developer's own shell profile
 never leaks in.
 """
@@ -13,8 +13,8 @@ import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DRIVE = REPO_ROOT / "scripts" / "features" / "drive.sh"
-PROMPT = REPO_ROOT / "docs" / "features" / "README.md"
+DRIVE = REPO_ROOT / "scripts" / "drive-skill.sh"
+PROMPT = REPO_ROOT / "verification" / "recipes" / "figure-out.md"
 
 
 def run_drive(

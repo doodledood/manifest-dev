@@ -52,6 +52,9 @@ Comments are signals, not authority. `babysit-pr` reconciles comments against st
 - Synthesized lifecycle manifests may need amendment when new comments reveal missing or changed intent.
 - High-confidence manifest discovery requires conservative heuristics; otherwise the workflow must fall back to PR-grounded synthesis.
 
+## Enforced by
+partly — `tests/test_goal_contract_blocks.py` — `test_every_backstop_site_carries_the_goal_block` fails if `babysit-pr` arms its tend backstop without the `pr-goal-block` that makes completion every Acceptance Criterion and Global Invariant in the Manifest holding; `tests/test_dist_skill_references.py` — `test_continuation_ownership_preserves_babysit_parent` fails if `babysit-pr` drops the `--manifest` path where `/define` is skipped. Synthesizing the Manifest from PR Grounding when none is supplied, the grounding order, and treating comments as signals rather than authority are judgment.
+
 ## Source
 
 - Related: `20260602-coordinate-review-pr-and-babysit-pr-through-pr-state`

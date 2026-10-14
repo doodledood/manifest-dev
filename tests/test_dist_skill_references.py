@@ -768,6 +768,7 @@ def test_autonomous_diagnosis_goal_requires_mechanism_or_earned_underdeterminati
 
 
 # Holds the decision in docs/adr/20260905-executors-own-path-bearing-continuation-goals.md.
+# Holds the decision in docs/adr/20260602-make-babysit-pr-manifest-aware-but-manifest-optional.md.
 def test_continuation_ownership_preserves_babysit_parent() -> None:
     """Nested workflow skills should not set competing narrower goals."""
     define_files = [

@@ -1,0 +1,1 @@
+First use the ticket-up skill to file two small Tickets in a file store in this repo: "add a --version flag to the CLI that prints the installed version and exits" and "fix the README's install command, which names the wrong package". Then run /manifest-dev:next-ticket.

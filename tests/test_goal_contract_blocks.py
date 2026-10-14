@@ -245,6 +245,7 @@ def test_skill_names_are_unique_across_plugins() -> None:
 
 
 # Holds the decision in docs/adr/20260828-continuation-goals-emit-verbatim-from-one-block.md.
+# Holds the decision in docs/adr/20260602-make-babysit-pr-manifest-aware-but-manifest-optional.md.
 def test_every_backstop_site_carries_the_goal_block() -> None:
     """A site that arms a backstop emits the goal block, not a variant of its own."""
     missing = [

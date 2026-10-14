@@ -1,0 +1,1 @@
+First use the ticket-up skill to file one Ticket, granted Auto, in a file store in this repo: "add a script greet.py that prints `hello, <name>` for the name given as its first argument — done when `python3 greet.py Ana` prints exactly `hello, Ana`". Then run /manifest-dev:sweep-tickets.

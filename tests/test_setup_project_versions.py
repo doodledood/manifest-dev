@@ -45,7 +45,9 @@ def emitted_digest() -> str:
     digest = hashlib.sha256()
     for path in EMITTED:
         text = HTML_COMMENT.sub("", path.read_text(encoding="utf-8"))
-        digest.update(path.relative_to(SETUP.parent.parent).as_posix().encode("utf-8") + b"\n")
+        digest.update(
+            path.relative_to(SETUP.parent.parent).as_posix().encode("utf-8") + b"\n"
+        )
         digest.update(re.sub(r"\s+", " ", text).strip().encode("utf-8") + b"\n")
     return digest.hexdigest()
 
@@ -82,7 +84,7 @@ def test_every_version_says_what_projects_gain() -> None:
 
 # Holds the decision in docs/adr/20261013-runs-build-and-maintain-a-project-verification-surface.md.
 # Holds the decision in docs/adr/20261013-set-up-projects-receive-updates-through-a-version-marker.md.
-# Holds the decision in docs/adr/20261014-the-feature-map-is-a-navigation-contract-over-what-users-invoke.md.
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
 def test_latest_version_matches_what_setup_project_emits() -> None:
     latest_number, _, latest_digest = versions()[-1]
     current = emitted_digest()
@@ -137,7 +139,9 @@ def test_one_upgrade_guide_per_older_version_each_to_the_newest() -> None:
     # Each guide takes a project straight to the newest version, so a new version updates
     # every guide: a guide still naming an older target would walk a project to a replaced shape.
     newest = versions()[-1][0]
-    guides = {int(m.group(1)): p for p in UPGRADES.glob("*.md") if (m := GUIDE.match(p.name))}
+    guides = {
+        int(m.group(1)): p for p in UPGRADES.glob("*.md") if (m := GUIDE.match(p.name))
+    }
     assert sorted(guides) == list(range(1, newest)), (
         f"{UPGRADES.relative_to(REPO_ROOT)} must hold v1-to-current.md … "
         f"v{newest - 1}-to-current.md and none for v{newest}; found "
