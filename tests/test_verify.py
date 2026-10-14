@@ -51,7 +51,9 @@ def run_verify(
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,
-        env=env,
+        # A caller's VERIFY_ROOT or VERIFY_DATA would point the tool at another harness, so a
+        # run against this repository carries neither.
+        env=env or {k: v for k, v in os.environ.items() if not k.startswith("VERIFY_")},
     )
 
 
@@ -1373,7 +1375,10 @@ def test_a_stopped_command_gets_the_grace_to_clean_up(
     marker = tmp_path / "cleaned-up"
     env = _covering(
         tmp_path,
-        f"trap '' INT; trap 'sleep 0.5; echo $? >{marker}; exit 0' {trapped}; sleep 30 & wait",
+        # A second delivery during the cleanup is logged, so a stray signal fails the test whenever
+        # it lands rather than only when it kills the cleanup's first step.
+        f"trap '' INT; trap 'trap \"echo again >>{marker}\" TERM HUP; sleep 0.5; "
+        f"echo $? >>{marker}; exit 0' {trapped}; sleep 30 & wait",
         "verification/recipes",
     )
     drive = _start_drive(env)
@@ -1473,6 +1478,7 @@ def test_a_drive_whose_container_fails_before_the_session_is_unreachable(
     )
     assert result.returncode == 3, result.stderr
     assert "seed step broke" in result.stderr and "container exit 7" in result.stderr
+    assert "stderr.log" not in result.stderr  # the session never ran, so it wrote none
 
 
 @pytest.mark.parametrize(
