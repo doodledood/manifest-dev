@@ -459,21 +459,24 @@ function status(recipe: Recipe, history: Evidence[] = evidenceFor(recipe)): stri
   const oldest = latest.reduce((a, e) => (e.when < a.when ? e : a));
   // The date is the worst scenario's run, or for a recipe whose scenarios all passed, the
   // oldest of their runs: how fresh the weakest proof is.
-  const ran = day(worst.outcome === "verified" ? oldest.when : worst.when);
   const notRun = unrun.length ? `no run yet for ${unrun.join(", ")}` : "";
   const label =
-    worst.outcome === "verified" && notRun ? `unverified (${day(oldest.when)}): ${notRun}` : `${worst.outcome} (${ran})`;
+    worst.outcome === "verified" && notRun
+      ? `unverified (${day(oldest.when)}): ${notRun}`
+      : `${worst.outcome} (${day(worst.outcome === "verified" ? oldest.when : worst.when)})`;
   if (!recipe.covers.length) return label;
   // Evidence that recorded what it checked is stale when the covered files now differ; older
   // evidence falls back to comparing times.
   const now = latest.some((e) => e.covers) ? fingerprint(recipe.covers) : "";
   const legacy = latest.filter((e) => !e.covers);
   const changed = legacy.length || latest.some((e) => e.covers !== now) ? lastChange(recipe.covers) : undefined;
-  const stale = latest.some((e) =>
+  const outdated = latest.filter((e) =>
     e.covers ? e.covers !== now : changed !== undefined && changed.getTime() > checkedAt(e).getTime(),
   );
-  if (!stale) return label;
-  const after = `covered files changed after the ${worst.outcome} run of ${ran}`;
+  if (!outdated.length) return label;
+  // Name the newest run the change outdated, which need not be the worst run.
+  const last = outdated.reduce((a, e) => (e.when > a.when ? e : a));
+  const after = `covered files changed after the ${last.outcome} run of ${day(last.when)}`;
   return `stale (${day(changed ?? new Date())}): ${notRun ? `${after}; ${notRun}` : after}`;
 }
 
