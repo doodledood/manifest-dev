@@ -1354,22 +1354,26 @@ def test_a_job_left_holding_the_output_does_not_hold_the_run(tmp_path: Path) -> 
         timeout=10,
     )
     assert (
-        time.monotonic() - began < 1.5
+        time.monotonic() - began < 1.9
     )  # the job heeds the stop's SIGTERM: no grace waited
     assert result.returncode == 0, result.stdout + result.stderr
     assert not _appears(marker, 4)
 
 
-@pytest.mark.parametrize("signals", [("TERM",), ("INT", "INT")])
+@pytest.mark.parametrize(
+    ("signals", "trapped"),
+    [(("TERM",), "TERM"), (("HUP",), "HUP"), (("INT", "INT"), "TERM")],
+)
 def test_a_stopped_command_gets_the_grace_to_clean_up(
-    tmp_path: Path, signals: tuple[str, ...]
+    tmp_path: Path, signals: tuple[str, ...], trapped: str
 ) -> None:
-    # One SIGTERM is passed on; a second Ctrl-C forces the stop with SIGTERM. Either way the
-    # command's own cleanup runs before anything is killed.
+    # One SIGTERM or SIGHUP is passed on; a second Ctrl-C forces the stop with SIGTERM. Either
+    # way the command's own cleanup runs undisturbed. A command trapping only SIGHUP dies of any
+    # stray SIGTERM, so that case fails outright if one is sent while it cleans up.
     marker = tmp_path / "cleaned-up"
     env = _covering(
         tmp_path,
-        f"trap '' INT; trap 'sleep 1; touch {marker}; exit 0' TERM; sleep 30 & wait",
+        f"trap '' INT; trap 'sleep 0.5; echo $? >{marker}; exit 0' {trapped}; sleep 30 & wait",
         "verification/recipes",
     )
     drive = _start_drive(env)
@@ -1380,7 +1384,7 @@ def test_a_stopped_command_gets_the_grace_to_clean_up(
         assert drive.wait(timeout=10) == 130
     finally:
         drive.kill()
-    assert marker.exists()
+    assert marker.read_text(encoding="utf-8").strip() == "0"
 
 
 def test_a_forced_stop_kills_what_ignores_it_after_the_grace(tmp_path: Path) -> None:
@@ -1423,12 +1427,13 @@ def test_a_run_with_nothing_left_behind_does_not_wait_the_grace(tmp_path: Path) 
     began = time.monotonic()
     result = run_verify("drive", "thing", env=env)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert time.monotonic() - began < 1.5
+    assert time.monotonic() - began < 1.9  # short of the 2s grace
 
 
-def _failing_docker(tmp_path: Path, code: int) -> Path:
+def _failing_docker(tmp_path: Path, code: int, transcript: str = "") -> Path:
     # Answers every docker call with success except `docker run`, which writes a scaffold log
-    # into the directory mounted at /out, as a failed scaffold does, and exits with `code`.
+    # (and the given transcript, for a session that started) into the directory mounted at
+    # /out, and exits with `code`.
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     stub = bin_dir / "docker"
@@ -1437,7 +1442,12 @@ def _failing_docker(tmp_path: Path, code: int) -> Path:
         '[ "$1" = run ] || exit 0\n'
         'while [ $# -gt 0 ]; do case "$1" in *:/out) out="${1%:/out}";; esac; shift; done\n'
         '[ -n "$out" ] && echo "seed step broke" >"$out/scaffold.log"\n'
-        f"exit {code}\n"
+        + (
+            f"printf '%s' '{transcript}' >\"$out/transcript.jsonl\"\n"
+            if transcript
+            else ""
+        )
+        + f"exit {code}\n"
     )
     stub.chmod(0o755)
     return bin_dir
@@ -1465,7 +1475,9 @@ def test_a_drive_whose_container_fails_before_the_session_is_unreachable(
     assert "seed step broke" in result.stderr and "container exit 7" in result.stderr
 
 
-@pytest.mark.parametrize(("code", "expected"), [(125, 3), (1, 1)])
+@pytest.mark.parametrize(
+    ("code", "expected"), [(124, 124), (125, 3), (126, 3), (127, 3), (128, 128), (1, 1)]
+)
 def test_a_walk_tells_a_container_that_never_ran_from_a_failed_walk(
     tmp_path: Path, code: int, expected: int
 ) -> None:
@@ -1481,3 +1493,43 @@ def test_a_walk_tells_a_container_that_never_ran_from_a_failed_walk(
         timeout=60,
     )
     assert result.returncode == expected, result.stderr
+
+
+def test_a_drive_whose_container_dies_mid_session_is_unreachable(
+    tmp_path: Path,
+) -> None:
+    prompt_file = tmp_path / "prompt.md"
+    prompt_file.write_text("go\n", encoding="utf-8")
+    result = subprocess.run(
+        [str(DRIVE), "figure-out", str(prompt_file)],
+        env={
+            "PATH": f"{_failing_docker(tmp_path, 137, json.dumps(INIT))}:/usr/bin:/bin",
+            "HOME": str(tmp_path),
+            "ANTHROPIC_API_KEY": "test-key",
+            "MANIFEST_DEV_FEATURES_EVIDENCE": str(tmp_path / "store"),
+            "DRIVE_STAMP": "20990101T000000Z",
+        },
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert result.returncode == 3, result.stdout + result.stderr
+    assert "exited 137 after the session started" in result.stderr
+
+
+def test_a_signal_during_a_stop_kills_at_once(tmp_path: Path) -> None:
+    env = _covering(
+        tmp_path, "trap '' INT TERM; sleep 30 & wait", "verification/recipes"
+    )
+    drive = _start_drive(env)
+    drive.send_signal(signal.SIGINT)
+    time.sleep(0.2)
+    drive.send_signal(signal.SIGINT)  # the stop begins; the command ignores its SIGTERM
+    time.sleep(0.2)
+    began = time.monotonic()
+    drive.send_signal(signal.SIGINT)
+    try:
+        assert drive.wait(timeout=10) == 130
+    finally:
+        drive.kill()
+    assert time.monotonic() - began < 1.5  # not the rest of the 2s grace

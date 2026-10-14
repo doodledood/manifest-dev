@@ -142,8 +142,12 @@ container=0
 # the skill was never tried.
 if [[ ! -s $out/transcript.jsonl ]]; then
   [[ -s $out/scaffold.log ]] && { echo "scaffold.log (last lines):"; tail -n 20 "$out/scaffold.log"; } >&2
-  unreachable "the session wrote no transcript (container exit $container); see $out/stderr.log"
+  [[ -s $out/stderr.log ]] && { echo "stderr.log (last lines):"; tail -n 20 "$out/stderr.log"; } >&2
+  unreachable "the session wrote no transcript (container exit $container)"
 fi
+# A container that died after the session started (killed, out of memory, a failed capture step)
+# left a partial record: a drive that never finished, not a skill that wrote nothing.
+((container == 0)) || unreachable "the container exited $container after the session started; its record is in $out"
 python3 - "$out" "$feature" "$tools" <<'PY'
 import json, pathlib, sys
 out, feature, tools = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3] == "1"
