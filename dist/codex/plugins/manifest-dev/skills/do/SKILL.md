@@ -92,8 +92,12 @@ A gate declares `judgment` or `deterministic`; an undeclared kind is invalid, ne
 inferred. Read a gate from the Manifest by ID, never from a copy. For repository
 work, compare against the repository's actual remote-tracking default branch,
 unless the gate names another subject. Include relevant staged, unstaged, and
-untracked work when the artifact being judged includes local changes. A judgment gate reads the full change once, then only
-prior findings' repairs and the delta; a deterministic gate re-runs in full. A finding
+untracked work when the artifact being judged includes local changes. A judgment gate reads the
+full change once; after that it judges only whether its findings were repaired and whether the
+delta introduces anything the gate catches. An issue the delta did not introduce, even in a line
+it touches, is pre-existing: recorded, not a finding. A brief to another evaluator carries that
+scope, and a checker or loop asking for fresh evidence gets the delta check — only the user asking
+again buys a second full look. A deterministic gate re-runs in full. A finding
 below a gate's bar is recorded — in the execution log when kept — and left
 unrepaired, because every repair is a new delta that each judgment gate re-reads. A
 pre-existing issue the run meets on its own, rather than one a gate reported, is fixed when
