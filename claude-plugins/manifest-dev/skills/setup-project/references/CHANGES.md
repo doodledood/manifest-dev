@@ -45,3 +45,11 @@ Digest: da90c4ccd748aa536d84461ee3530690097de3080a519644f9e1437fb5d880da
   in effect.
 
 Digest: 5eb79c2e86bc14e2238e3982f48453e0c33db05d376b0a7e4abb0a730efcb794
+
+## v3
+
+- The project-surfaces section's feature-map entry says the map's README holds the commands and
+  what a drive needs, and that a change to a feature updates that feature's entry and drives it,
+  so a session knows how to use and keep the map from the context file alone.
+
+Digest: 80bc7de905bfb2a9d5eebb592ab7335742eac591ad98a58b73bc4b1a5e307178

@@ -14,7 +14,8 @@ reader-task list, statuses, repository check — are in setup-project's
   file the detected host reads, resolved per `../../review-code/references/context-file-adherence.md`;
   create the file or the section, holding only that bullet, where it is missing. Build it unattended too: it is verification for the change, like a regression test. Name it in the
   completion report as a new project surface the user can remove.
-- **Touched entries:** add a missing entry for a touched path. Update each touched entry to match
+- **Touched entries:** the surface's entries and, where the project keeps one, the feature map's.
+  Add a missing entry for a touched path. Update each touched entry to match
   the change, exercise it, and mark it with the form's exercised status: `verified` with the date,
   or `measured` with the date and result for an eval case. A change to a prompt that leaves its
   measured cases unrun marks them `stale`; unmeasured cases stay `unmeasured`.

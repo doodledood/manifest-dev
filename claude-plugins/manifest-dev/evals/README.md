@@ -17,10 +17,10 @@ so cases that need a repository, project docs, or a context file find them in th
 directory. Without it, those cases run against an empty directory and measure nothing. Only pass
 it for case files from this repository: a scaffold is bash that runs as you.
 
-Nine cases test behavior that exists only with the plugin: offering a Taste entry and not
+Ten cases test behavior that exists only with the plugin: offering a Taste entry and not
 offering one for a discipline every session owes (`27`, `28`), offering a setup update to a
 project with no version or one version behind and offering none to a current project (`30`,
-`47`, `45`), a record naming what enforces it (`31`), the
+`47`, `49`, `45`), a record naming what enforces it (`31`), the
 verification surface's stale marker (`36`), and recall of earlier sessions only where they bear
 on the work (`43`, `46`). The no-plugin arm passes or fails them by construction. They carry the
 tag `figure-out-plugin-only` instead of `figure-out` and run on the plugin arm alone:
@@ -154,6 +154,7 @@ from a discipline `SKILL.md` explicitly states.
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
 | `47-update-offer-from-previous-version` | docs, repository, plugin arm only | Offer the setup update for a project one surfaces version behind — only what the newer version adds, never what it already carries | unmeasured |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | unmeasured |
+| `49-update-offer-from-v2` | docs, repository, plugin arm only | Offer the setup update for a project on v2 — only v3's feature-map wording, nothing v1 or v2 already gave it | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and have never been run. Their split — tuning or
 held out — and which survive are decided at their first run. `30` uses a project set up before
@@ -163,8 +164,8 @@ offering what v1 adds and not a redo. `45` tests the other branch of the recorde
 a project that records the newest version and declined some of its items gets no offer at all.
 `47`, added with v2 on 2026-10-14 and never run, is the third branch: a project one version
 behind, graded on offering only what v2 adds and nothing v1 already gave it. `30`, `31`, `36`,
-`43`, `45`, `46`, and `47` exist only with the plugin and run on the plugin arm alone, like `27`
-and `28`. `48`, added on 2026-10-14 and never run, holds the design-time depth and reuse probes: a
+`43`, `45`, `46`, `47`, and `49` exist only with the plugin and run on the plugin arm alone, like `27`
+and `28`. `49`, added with v3 and never run, is a project one version behind v3. `48`, added on 2026-10-14 and never run, holds the design-time depth and reuse probes: a
 requested service class that would mostly forward to two existing functions.
 
 **Every recorded number in this file is stale as of 2026-10-13.** That change edited figure-out's

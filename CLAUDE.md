@@ -52,7 +52,7 @@ Read before building plugins:
 
 ## Project Surfaces
 
-<!-- setup-project surfaces v2 -->
+<!-- setup-project surfaces v3 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared ground for every contributor and agent, regardless of tooling.
 
@@ -66,7 +66,7 @@ This project keeps its direction, vocabulary, and decision memory in the repo �
 
 **The verification surfaces are `claude-plugins/manifest-dev/evals/` with `tests/`, and `docs/reader-tasks/`; `docs/features/` is the feature map over them.**
 - **The prompts:** the eval suites test the skills' behavior, and cover `figure-out` and `define` only, on purpose — runs are expensive and those two shape every Manifest. Each case carries its status in the suite READMEs (`evals/README.md`, `evals/define/README.md`) — unmeasured, measured with its date, or stale after a covered prompt changes. A change to a prompt that a case covers updates that case where the change affects what it tests, and runs it or marks it stale. Unmeasured cases stay unmeasured, as `evals/README.md` describes. `tests/` holds the property checks every change keeps green. `tests/test_eval_cases.py` fails when a suite README's case tables and its case directories disagree, so a case added or removed lands with its row. Read `evals/README.md` before changing a prompt it covers. `scripts/design-evals/` is the harness for the code instruments the `design` skill ships; its README says how to run it and what it does not measure.
-- **The feature map:** `docs/features/` has one entry per user-invocable skill and one for the design instruments, each saying how a user reaches it, how to drive it, how it is checked and what traps a run, with a status. Start there to place a report or find what a change touches. `tests/test_feature_map.py` fails when a user-invocable skill has no entry or an entry names a path that no longer exists. A change to a skill's entry points, flags or outputs updates its entry, and a run that drives an entry sets its status.
+- **The feature map:** `docs/features/` has one entry per user-invocable skill and one for the design instruments, each saying how a user reaches it, how to drive it, how it is checked and what traps a run, with a status. Start there to place a report or find what a change touches, and drive an entry with `scripts/features/drive.sh` (a Claude subscription token from `claude setup-token`, or an API key; `docs/features/README.md` has the rest). `tests/test_feature_map.py` fails when a user-invocable skill has no entry or an entry names a path that no longer exists. A change to a skill's entry points, flags or outputs updates its entry, and a run that drives an entry sets its status.
 - **The living documents:** `docs/reader-tasks/` lists the tasks readers bring to the user-facing READMEs, `CONTRIBUTING.md`, and the explainer site, each with a status. `tests/test_reader_tasks.py` fails when an entry names a file or section that no longer exists, or breaks the entry format. A change to one of those documents, or to code they describe, updates and walks the entries it touches, as `docs/reader-tasks/README.md` describes.
 
 ## Repository Structure

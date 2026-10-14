@@ -198,7 +198,7 @@ only where people invoke the artifact and the map is not already that surface.
 ```markdown
 ## Project surfaces
 
-<!-- setup-project surfaces v2 -->
+<!-- setup-project surfaces v3 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared
 ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.md` and
@@ -223,7 +223,8 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   A change to anything an entry covers updates that entry and exercises it, as its README
   describes.
 - **Feature map** — `<path>`: how a user reaches each feature and how to drive and check
-  it. Start there to place a report or find what a change touches. <Omit this bullet where
+  it; its README gives the commands and what a drive needs. Start there to place a report or
+  find what a change touches; a change to a feature updates its entry and drives it. <Omit this bullet where
   the verification surface above is already a harness and feature map, or where nobody
   invokes the artifact.>
 ```

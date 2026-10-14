@@ -104,7 +104,7 @@ That gives a floor that isn't ceremony:
   project-surfaces section names it, or among the verification assets the project keeps. Where it
   is missing, or drifting or not fit to trust (`../setup-project/references/VERIFICATION_SURFACE.md` → *Fit to trust*) where the work touches it, cut building or repairing it, scoped to what the change touches, as the
   first Deliverable, ahead of any preparatory slice; unattended runs build it too. A Manifest that touches anything the surface
-  maps, or a path it should map but does not, carries a gate that each touched entry is added or
+  or the project's feature map covers, or a path either should cover but does not, carries a gate that each touched entry is added or
   updated and exercised live, with its status set.
 - **A recorded check still to be built is built.** Search the project's decision records for
   `Enforced by` lines reading `not yet`. When the work implements or touches such a decision, a
