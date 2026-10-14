@@ -326,8 +326,14 @@ function status(recipe: Recipe, history: Evidence[] = evidenceFor(recipe)): stri
   if (!outdated.length) return label;
   // Name the newest run the change outdated, which need not be the worst run.
   const last = outdated.reduce((a, e) => (e.when > a.when ? e : a));
-  const after = `covered files changed after the ${last.outcome} run of ${day(last.when)}`;
-  return `stale (${day(changed ?? new Date())}): ${notRun ? `${after}; ${notRun}` : after}`;
+  const run = `the ${last.outcome} run of ${day(last.when)}`;
+  // A fingerprint can differ with no change dated after the run: the run checked an edit that
+  // was later undone. Then the files differ from what it checked, and that is all that is known.
+  const [since, what] =
+    changed && changed > last.when
+      ? [changed, `covered files changed after ${run}`]
+      : [last.when, `covered files differ from what ${run} checked`];
+  return `stale (${day(since)}): ${notRun ? `${what}; ${notRun}` : what}`;
 }
 
 // --- commands ---------------------------------------------------------------------------

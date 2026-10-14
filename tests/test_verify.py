@@ -358,13 +358,13 @@ def test_status_goes_stale_when_covered_files_change_after_the_evidence(
     assert "stale (" in committed.stdout, committed.stdout
 
 
-def test_a_stale_recipe_with_an_unrun_scenario_says_both_plainly(
-    tmp_path: Path,
-) -> None:
-    env = _harness(tmp_path, "", TWO_SCENARIOS)
-    _evidence(
-        tmp_path, "20260101T000000Z", "- **Scenario:** one\n- **Outcome:** verified\n"
-    )
+def _covered_repo(
+    tmp_path: Path, scenarios: str, evidence: dict[str, str]
+) -> dict[str, str]:
+    # A recipe covering src.txt, committed on 2026-01-02 with the evidence given (stamp: text).
+    env = _harness(tmp_path, "", scenarios)
+    for stamp, text in evidence.items():
+        _evidence(tmp_path, stamp, text)
     recipe = tmp_path / "verification" / "recipes" / "thing.md"
     recipe.write_text(
         recipe.read_text(encoding="utf-8").replace(
@@ -375,9 +375,24 @@ def test_a_stale_recipe_with_an_unrun_scenario_says_both_plainly(
     (tmp_path / "src.txt").write_text("one\n", encoding="utf-8")
     _git(tmp_path, "init", "-q")
     _git(tmp_path, "add", "-A")
-    _git(tmp_path, "commit", "-qm", "change and its evidence")
+    _git(tmp_path, "commit", "-qm", "the change and its evidence")
+    return env
+
+
+def _later_change(tmp_path: Path, when: str) -> None:
     (tmp_path / "src.txt").write_text("two\n", encoding="utf-8")
-    _git(tmp_path, "commit", "-qam", "a later change", when="2026-01-03T00:00:00Z")
+    _git(tmp_path, "commit", "-qam", "a later change", when=when)
+
+
+def test_a_stale_recipe_with_an_unrun_scenario_says_both_plainly(
+    tmp_path: Path,
+) -> None:
+    env = _covered_repo(
+        tmp_path,
+        TWO_SCENARIOS,
+        {"20260101T000000Z": "- **Scenario:** one\n- **Outcome:** verified\n"},
+    )
+    _later_change(tmp_path, "2026-01-03T00:00:00Z")
     shown = run_verify("help", "thing", env=env)
     assert (
         "stale (2026-01-03): covered files changed after the verified run of 2026-01-01; "
@@ -385,25 +400,20 @@ def test_a_stale_recipe_with_an_unrun_scenario_says_both_plainly(
     ), (shown.stdout + shown.stderr)
 
 
-def test_a_stale_message_names_the_run_the_change_outdated(tmp_path: Path) -> None:
-    # The run that failed came after the change, so the change outdated the older passing run.
-    env = _harness(tmp_path, "", TWO_SCENARIOS)
-    _evidence(
-        tmp_path, "20260101T000000Z", "- **Scenario:** one\n- **Outcome:** verified\n"
+def test_a_stale_message_names_the_newest_run_the_change_outdated(
+    tmp_path: Path,
+) -> None:
+    # The change outdated the runs of 12-30 (failed) and 01-01; the failed run of 01-05 came
+    # after it. The newest outdated run is named, not the worst or the oldest.
+    env = _covered_repo(
+        tmp_path,
+        TWO_SCENARIOS + "\n### three\nRun: `true`\n",
+        {
+            "20251230T000000Z": "- **Scenario:** three\n- **Outcome:** failed\n",
+            "20260101T000000Z": "- **Scenario:** one\n- **Outcome:** verified\n",
+        },
     )
-    recipe = tmp_path / "verification" / "recipes" / "thing.md"
-    recipe.write_text(
-        recipe.read_text(encoding="utf-8").replace(
-            "kind: feature\n", "kind: feature\ncovers: src.txt\n"
-        ),
-        encoding="utf-8",
-    )
-    (tmp_path / "src.txt").write_text("one\n", encoding="utf-8")
-    _git(tmp_path, "init", "-q")
-    _git(tmp_path, "add", "-A")
-    _git(tmp_path, "commit", "-qm", "change and its evidence")
-    (tmp_path / "src.txt").write_text("two\n", encoding="utf-8")
-    _git(tmp_path, "commit", "-qam", "a later change", when="2026-01-04T00:00:00Z")
+    _later_change(tmp_path, "2026-01-04T00:00:00Z")
     _evidence(
         tmp_path, "20260105T000000Z", "- **Scenario:** two\n- **Outcome:** failed\n"
     )
@@ -413,6 +423,27 @@ def test_a_stale_message_names_the_run_the_change_outdated(tmp_path: Path) -> No
     assert (
         "stale (2026-01-04): covered files changed after the verified run of 2026-01-01"
         in shown.stdout
+    ), (shown.stdout + shown.stderr)
+
+
+def test_a_run_of_an_edit_since_undone_differs_rather_than_predates(
+    tmp_path: Path,
+) -> None:
+    # The run checked a working-tree edit (its Covers line) that was then undone: the last
+    # commit to src.txt predates the run, so the files only differ from what it checked.
+    env = _covered_repo(tmp_path, TWO_SCENARIOS, {})
+    _evidence(
+        tmp_path,
+        "20260109T000000Z",
+        "- **Scenario:** one\n- **Outcome:** failed\n"
+        "- **Covers:** sha256:0000000000000000\n",
+    )
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-qm", "its evidence", when="2026-01-09T00:00:00Z")
+    shown = run_verify("help", "thing", env=env)
+    assert (
+        "stale (2026-01-09): covered files differ from what the failed run of 2026-01-09 "
+        "checked; no run yet for two" in shown.stdout
     ), (shown.stdout + shown.stderr)
 
 
