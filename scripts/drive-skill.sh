@@ -100,7 +100,7 @@ if [[ $dry == 1 ]]; then
   credential=$( (claude_auth_resolve && echo "$CLAUDE_AUTH_ENV") 2>/dev/null) ||
     credential="none found — the drive would stop as unreachable"
   echo "would drive: $feature  model=$model  scaffold=${scaffold:-none}"
-  echo "container:   docker run --rm -e <credential> -v <checkout>:/repo:ro -v <evidence>:/out $image"
+  echo "container:   ${EVAL_RUN[*]} -e <credential> -v <checkout>:/repo:ro -v <evidence>:/out $image"
   echo "             claude -p --model $model ${plugins[*]} --max-turns $max_turns <prompt>"
   echo "credential:  $credential"
   echo "evidence:    $out (full, kept on this machine)"
@@ -124,8 +124,7 @@ fi
 scaffold_in=""
 [[ -n $scaffold ]] && scaffold_in="/repo/${scaffold#"$root"/}/scaffold.sh"
 
-# --init: a signal passed on by the Docker CLI reaches the session and everything it started.
-docker run --rm --init -e TINI_KILL_PROCESS_GROUP=1 -e "$CLAUDE_AUTH_ENV" -e PROMPT="$prompt" -e SCAFFOLD="$scaffold_in" \
+"${EVAL_RUN[@]}" -e "$CLAUDE_AUTH_ENV" -e PROMPT="$prompt" -e SCAFFOLD="$scaffold_in" \
   -v "$root":/repo:ro -v "$out":/out "$image" bash -c '
     set -euo pipefail
     mkdir -p /tmp/scratch && cd /tmp/scratch && git init -q

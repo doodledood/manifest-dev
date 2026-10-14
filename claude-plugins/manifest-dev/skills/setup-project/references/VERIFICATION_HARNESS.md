@@ -47,9 +47,9 @@ cases, and living documents are all recipes in the same harness.
   agent skill, and an ask-first document walk.
 - **Evidence.** Each run writes `evidence/<recipe>/<stamp>.md`: the scenario, command, exit
   code, outcome, a fingerprint of the files the recipe covers, what it proves, and the output
-  with local paths removed. An interrupted run keeps none and stops what its command started; a command
-  that crashes is recorded failed. It is committed with
-  the change it checked. Fuller evidence — transcripts, screenshots — stays where the scenario's
+  with local paths removed. Whatever a command started is stopped when it ends, SIGTERM first so
+  it can clean up. An interrupted run keeps none; a command that crashes is recorded failed. It
+  is committed with the change it checked. Fuller evidence — transcripts, screenshots — stays where the scenario's
   command keeps it, and the summary says where.
 
 ## Statuses come from evidence

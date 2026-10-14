@@ -44,7 +44,7 @@ if [[ $dry == 1 ]]; then
   credential=$( (claude_auth_resolve && echo "$CLAUDE_AUTH_ENV") 2>/dev/null) ||
     credential="none found — the walk would stop as unreachable"
   echo "would walk: ${docs[*]}  model=$model"
-  echo "container:  docker run --rm -e <credential> $EVAL_IMAGE"
+  echo "container:  ${EVAL_RUN[*]} -e <credential> $EVAL_IMAGE"
   echo "            claude -p --model $model --tools \"\" --no-session-persistence <task + documents>"
   echo "credential: $credential"
   echo "evidence:   printed; scripts/verify keeps it"
@@ -59,6 +59,5 @@ prompt="You are a reader who has never seen this project. Using only the documen
 Then report: whether you ended able to do it (yes, partly, or no), the steps or facts you relied on, quoted with the section they came from, and every point where you got stuck or had to guess.
 $inline"
 
-# --init: a signal passed on by the Docker CLI reaches the session and everything it started.
-docker run --rm --init -e TINI_KILL_PROCESS_GROUP=1 -e "$CLAUDE_AUTH_ENV" -e PROMPT="$prompt" -e MODEL="$model" "$EVAL_IMAGE" bash -c '
+"${EVAL_RUN[@]}" -e "$CLAUDE_AUTH_ENV" -e PROMPT="$prompt" -e MODEL="$model" "$EVAL_IMAGE" bash -c '
   cd "$(mktemp -d)" && claude -p --model "$MODEL" --tools "" --no-session-persistence "$PROMPT"'

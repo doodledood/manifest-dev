@@ -19,6 +19,7 @@ SHARED = (
     "later sessions will change",
     "a home or scratch folder",
     "folder holding one finished artifact",
+    "a question that does not concern the folder",
 )
 # Skills that gate verification also keep one-off work inside a project as project work.
 ONE_OFF = "One-off work inside a project is still project work"

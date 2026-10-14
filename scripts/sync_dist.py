@@ -54,6 +54,11 @@ def tool_copies() -> dict[Path, str]:
     return wanted
 
 
+def current(path: Path) -> str | None:
+    """A copy's text, or None when it is missing: drift to report and a copy to recreate."""
+    return path.read_text(encoding="utf-8") if path.exists() else None
+
+
 def target_dir(plugin: str) -> Path:
     return ROOT / "dist" / "codex" / "plugins" / plugin / "skills"
 
@@ -86,8 +91,10 @@ def regenerate() -> None:
         shutil.copytree(src, dst, symlinks=False)
         print(f"copied {src.relative_to(ROOT)} -> {dst.relative_to(ROOT)}")
     for path, text in tool_copies().items():
-        if path.read_text(encoding="utf-8") != text:
+        if current(path) != text:
             path.write_text(text, encoding="utf-8")
+            if path.name == "verify":
+                path.chmod(0o755)
             print(f"copied the shipped verify tool into {path.relative_to(ROOT)}")
 
 
@@ -97,9 +104,14 @@ def check() -> int:
         for plugin in PLUGINS
         for d in differences(source_dir(plugin), target_dir(plugin))
     ] + [
-        f"{path.relative_to(ROOT)}: differs from the shipped verify tool"
+        f"{path.relative_to(ROOT)}: "
+        + (
+            "missing"
+            if current(path) is None
+            else "differs from the shipped verify tool"
+        )
         for path, text in tool_copies().items()
-        if path.read_text(encoding="utf-8") != text
+        if current(path) != text
     ]
     if drift:
         print("copies are out of date; run scripts/sync_dist.py:", file=sys.stderr)

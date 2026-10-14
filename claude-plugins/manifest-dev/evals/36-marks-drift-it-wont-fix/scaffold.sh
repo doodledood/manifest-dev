@@ -449,15 +449,16 @@ function status(recipe: Recipe, history: Evidence[] = evidenceFor(recipe)): stri
   const drift = drifts.at(-1);
   const perScenario = latestPerScenario(recipe, history);
   const latest = [...new Set(perScenario.values())];
-  const newest = latest.reduce<Date | undefined>((a, e) => (!a || e.when > a ? e.when : a), undefined);
-  if (drift && (!newest || drift[0] >= day(newest))) return `stale (${drift[0]}): ${drift[1]}`;
+  // A scenario that never ran proves nothing, so passing the others does not verify the recipe.
+  const unrun = recipe.scenarios.map((s) => s.name).filter((name) => !perScenario.has(name));
+  const oldestRun = latest.reduce<Date | undefined>((a, e) => (!a || e.when < a ? e.when : a), undefined);
+  // A Drift line holds until every scenario has run since it: one scenario's run repairs only itself.
+  if (drift && (!oldestRun || unrun.length || drift[0] >= day(oldestRun))) return `stale (${drift[0]}): ${drift[1]}`;
   if (!latest.length) return "unverified";
   const worst = latest.reduce((a, e) => (SEVERITY[e.outcome] > SEVERITY[a.outcome] ? e : a));
   const oldest = latest.reduce((a, e) => (e.when < a.when ? e : a));
   // The date is the worst scenario's run, or for a recipe whose scenarios all passed, the
   // oldest of their runs: how fresh the weakest proof is.
-  // A scenario that never ran proves nothing, so passing the others does not verify the recipe.
-  const unrun = recipe.scenarios.map((s) => s.name).filter((name) => !perScenario.has(name));
   const label =
     worst.outcome === "verified" && unrun.length
       ? `unverified (${day(oldest.when)}): no run yet for ${unrun.join(", ")}`
@@ -517,8 +518,9 @@ of its scenarios' latest runs:
                         drifting and added \`Drift (DATE): what differs\` to the recipe
 
 Evidence: each run writes {evidence}/RECIPE/STAMP.md (command, exit code, outcome, a fingerprint
-of the covered files, output with local paths removed). Commit it with the change it checked. An
-interrupted run keeps none, and stops what its command started; a command that crashes is failed.
+of the covered files, output with local paths removed). Commit it with the change it checked.
+Whatever a command started is stopped when it ends: SIGTERM, then SIGKILL after a grace. An
+interrupted run keeps no evidence; a command that crashes is failed.
 
 Adding a recipe: copy any file in {recipes}, keep the front matter keys (kind, covers,
 ask-first when it applies, dry-run: honored when its commands obey VERIFY_DRY_RUN=1), and give
@@ -591,48 +593,74 @@ interface Run {
   interrupted: boolean;
 }
 
+/** Signals that stop a run: Ctrl-C, a polite kill, a closed terminal, Ctrl-\. */
+const STOP_SIGNALS: NodeJS.Signals[] = ["SIGINT", "SIGTERM", "SIGHUP", "SIGQUIT"];
+
+/** Seconds a stop waits between SIGTERM and SIGKILL. */
+const GRACE_SECONDS = 2;
+
+/** Send a signal to a process group; false when the group is already gone. */
+function signalGroup(pid: number, signal: NodeJS.Signals | 0): boolean {
+  try {
+    process.kill(-pid, signal);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Ctrl-C and termination while a scenario runs. Installed before a run reserves its evidence
  * file, so a signal at any point leaves that file to be removed rather than killing the tool.
- * The command runs in its own process group: the first signal is passed on to that group, and
- * a second stops the whole group, including what the command started.
+ * The command runs in its own process group. The first signal is passed on to that group. Once
+ * the command's shell is gone, for any reason, or on a second signal, the group is stopped:
+ * SIGTERM, which a container client passes on to the session inside, then SIGKILL for whatever
+ * is still there after a grace. A signal during that grace kills at once.
  */
 class Interrupts {
   interrupted = false;
   child: ChildProcess | undefined;
+  private readonly stopping = new Set<number>();
   private readonly handle = (signal: NodeJS.Signals): void => {
     const pid = this.child?.pid;
     if (pid !== undefined) {
-      // Once the command's shell is gone, whatever it left holding the output is killed outright.
-      const ended = this.child?.exitCode !== null || this.child?.signalCode !== null;
-      try {
-        process.kill(-pid, this.interrupted || ended ? "SIGKILL" : signal);
-      } catch {
-        // the group already ended
-      }
+      if (this.stopping.has(pid)) signalGroup(pid, "SIGKILL");
+      else if (this.interrupted) this.stop(pid);
+      else signalGroup(pid, signal);
     }
     this.interrupted = true;
   };
   constructor() {
     for (const signal of STOP_SIGNALS) process.on(signal, this.handle);
   }
+  /** Stop a command's process group: SIGTERM now, SIGKILL for what outlasts the grace. */
+  stop(pid: number): void {
+    if (this.stopping.has(pid) || !signalGroup(pid, "SIGTERM")) return;
+    this.stopping.add(pid);
+    const deadline = Date.now() + GRACE_SECONDS * 1000;
+    // Kept referenced: the tool stays until the group is gone, even once the output has closed.
+    const poll = setInterval(() => {
+      if (signalGroup(pid, 0) && Date.now() < deadline) return;
+      signalGroup(pid, "SIGKILL");
+      clearInterval(poll);
+      this.stopping.delete(pid);
+    }, 50);
+  }
   release(): void {
     for (const signal of STOP_SIGNALS) process.off(signal, this.handle);
   }
 }
-
-/** Signals that stop a run: Ctrl-C, a polite kill, a closed terminal, Ctrl-\. */
-const STOP_SIGNALS: NodeJS.Signals[] = ["SIGINT", "SIGTERM", "SIGHUP", "SIGQUIT"];
 
 /**
  * Runs the scenario command inside its process group beside a watchdog that kills the whole
  * group once this tool is gone, so a command never outlives a tool killed without warning
  * (SIGKILL, a timeout that kills the tool's group). The watchdog waits on descriptor 3, a pipe
  * whose other end only this tool holds: it reads end-of-file the moment the tool is gone, even
- * before anyone reaps it. The command does not inherit it, and its own exit status is kept.
+ * before anyone reaps it, and stops the group as a stop above does, ignoring the SIGTERM it
+ * sends. The command does not inherit the descriptor, and its own exit status is kept.
  */
 const WATCHED = [
-  "( read -r _ <&3; kill -KILL 0 ) </dev/null >/dev/null 2>&1 &",
+  `( read -r _ <&3; trap '' TERM; kill -TERM 0; sleep ${GRACE_SECONDS}; kill -KILL 0 ) </dev/null >/dev/null 2>&1 &`,
   "watchdog=$!",
   'sh -c "$VERIFY_COMMAND" 3<&-',
   "status=$?",
@@ -672,16 +700,10 @@ function runShown(command: string, interrupts: Interrupts): Promise<Run> {
       if (echo) process.stderr.write(chunk);
     });
     child.on("error", fail);
-    // The command's shell is gone without its own cleanup — interrupted, or killed by a signal
-    // this tool did not send: kill what it left behind (a background job, the watchdog, both
-    // ignoring Ctrl-C), so the output pipes close and the run can end.
-    child.on("exit", (_code, signal) => {
-      if ((!interrupts.interrupted && signal === null) || child.pid === undefined) return;
-      try {
-        process.kill(-child.pid, "SIGKILL");
-      } catch {
-        // nothing was left
-      }
+    // The command's shell is gone, however it ended: stop what it left behind (a background job
+    // still holding the output, the watchdog), so the run can end and nothing outlives it.
+    child.on("exit", () => {
+      if (child.pid !== undefined) interrupts.stop(child.pid);
     });
     child.on("close", (code, signal) => {
       interrupts.child = undefined;

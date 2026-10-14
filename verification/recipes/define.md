@@ -38,6 +38,11 @@ Run: `scripts/drive-skill.sh define verification/prompts/define-feature-defaults
 Proves: for a feature whose installs upgrade on different days, the Manifest keeps old and new versions working side by side on shared data.
 Check: read
 
+### bounded-growth
+Run: `scripts/drive-skill.sh define verification/prompts/define-bounded-growth.md --scaffold claude-plugins/manifest-dev/evals/define/d20-preparatory-slice`
+Proves: for data that grows for years, the Manifest carries *Bound what grows*: a gate keeps append and per-member query cost tolerable at a stated scale.
+Check: read
+
 ### prompting-defaults
 Run: `scripts/drive-skill.sh define verification/prompts/define-prompting-defaults.md`
 Proves: for a prompt change needing an exact count, the Manifest holds the exact count with a check over real runs, not an instruction alone.

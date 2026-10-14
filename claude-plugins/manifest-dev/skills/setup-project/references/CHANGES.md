@@ -1,9 +1,9 @@
 # Surfaces versions
 
 What each surfaces version gives a project that setup-project has set up. A project's context
-file records the version it carries in its project-surfaces section; an update offers the
-entries after that version, each on its own, and records the newest version once the user has
-answered them.
+file records the version it carries in its project-surfaces section; an update offers what
+changed after that version, as the upgrade guide for it in `upgrades/` says, and records the
+newest version once the user has answered.
 
 ## v1
 
@@ -75,4 +75,4 @@ Digest: 80bc7de905bfb2a9d5eebb592ab7335742eac591ad98a58b73bc4b1a5e307178
   recipes, keeping their content, customizations and evidence, following the upgrade guide for
   the version the project records.
 
-Digest: ff61d49165dbc44785c62599bbc3cb0e2d155a7538d4f84f675c03ea27a9cced
+Digest: 86d411a0b99d0ef3022569fbd34c990bcb950d5ae73c7bc1a6c9840ee0f47ab8

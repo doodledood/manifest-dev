@@ -835,6 +835,8 @@ def test_drive_dry_run_names_container_credential_and_evidence(
     )
     assert result.returncode == 0, result.stderr
     assert "docker run" in result.stdout and "--plugin-dir" in result.stdout
+    # Without an init process, the container ignores the signal that should stop the session.
+    assert "--init -e TINI_KILL_PROCESS_GROUP=1" in result.stdout
     assert f"credential:  {named}" in result.stdout, result.stdout
     assert "verification/evidence/figure-out/" in result.stdout
     assert "tok" not in result.stdout.replace("CLAUDE_CODE_OAUTH_TOKEN", "")
@@ -849,6 +851,7 @@ def test_walk_dry_run_names_container_and_credential() -> None:
     )
     assert result.returncode == 0, result.stderr
     assert "docker run" in result.stdout and '--tools ""' in result.stdout
+    assert "--init -e TINI_KILL_PROCESS_GROUP=1" in result.stdout
     assert "credential: ANTHROPIC_API_KEY" in result.stdout
 
 
@@ -1266,3 +1269,131 @@ def test_a_command_that_signals_its_own_group_ends_the_run_as_failed(
     (evidence,) = (tmp_path / "verification" / "evidence" / "thing").iterdir()
     text = evidence.read_text(encoding="utf-8")
     assert f"- **Exit code:** {code}" in text and "- **Outcome:** failed" in text
+
+
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
+def test_a_drift_line_holds_until_every_scenario_has_run_since(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "- **Outcome:** verified\n", TWO_SCENARIOS)
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8") + "\nDrift (2026-03-01): changed.\n",
+        encoding="utf-8",
+    )
+    _evidence(
+        tmp_path,
+        "20260401T000000Z",
+        "- **Scenario:** one\n- **Outcome:** verified\n",
+    )
+    assert "stale (2026-03-01)" in run_verify("list", env=env).stdout
+    _evidence(
+        tmp_path,
+        "20260402T000000Z",
+        "- **Scenario:** two\n- **Outcome:** verified\n",
+    )
+    assert "verified (2026-04-01)" in run_verify("list", env=env).stdout
+
+
+def test_a_killed_tool_lets_its_command_stop_cleanly_first(tmp_path: Path) -> None:
+    # SIGTERM before SIGKILL: what a container client needs to stop the session inside.
+    marker = tmp_path / "stopped-cleanly"
+    env = _covering(
+        tmp_path,
+        f"trap 'touch {marker}; exit 0' TERM; sleep 30 & wait",
+        "verification/recipes",
+    )
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith("running [once]")
+    time.sleep(0.5)
+    drive.kill()
+    drive.wait(timeout=10)
+    deadline = time.monotonic() + 5
+    while not marker.exists() and time.monotonic() < deadline:
+        time.sleep(0.1)
+    assert marker.exists()
+
+
+def _start_drive(env: dict[str, str]) -> subprocess.Popen[str]:
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith("running [once]")
+    time.sleep(0.5)  # the line prints just before the command starts
+    return drive
+
+
+def _appears(path: Path, within: float) -> bool:
+    deadline = time.monotonic() + within
+    while not path.exists() and time.monotonic() < deadline:
+        time.sleep(0.1)
+    return path.exists()
+
+
+def test_a_job_left_holding_the_output_does_not_hold_the_run(tmp_path: Path) -> None:
+    marker = tmp_path / "outlived"
+    env = _covering(
+        tmp_path, f"(sleep 3; touch {marker}) & echo started", "verification/recipes"
+    )
+    began = time.monotonic()
+    result = subprocess.run(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    assert time.monotonic() - began < 2.5
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert not _appears(marker, 4)
+
+
+@pytest.mark.parametrize("signals", [("TERM",), ("INT", "INT")])
+def test_a_stopped_command_gets_the_grace_to_clean_up(
+    tmp_path: Path, signals: tuple[str, ...]
+) -> None:
+    # One SIGTERM is passed on; a second Ctrl-C forces the stop with SIGTERM. Either way the
+    # command's own cleanup runs before anything is killed.
+    marker = tmp_path / "cleaned-up"
+    env = _covering(
+        tmp_path,
+        f"trap '' INT; trap 'sleep 1; touch {marker}; exit 0' TERM; sleep 30 & wait",
+        "verification/recipes",
+    )
+    drive = _start_drive(env)
+    for name in signals:
+        drive.send_signal(getattr(signal, f"SIG{name}"))
+        time.sleep(0.2)
+    try:
+        assert drive.wait(timeout=10) == 130
+    finally:
+        drive.kill()
+    assert marker.exists()
+
+
+def test_a_forced_stop_kills_what_ignores_it_after_the_grace(tmp_path: Path) -> None:
+    marker = tmp_path / "outlived"
+    env = _covering(
+        tmp_path,
+        f"(trap '' INT TERM; sleep 4; touch {marker}) >/dev/null 2>&1 & trap '' INT; wait",
+        "verification/recipes",
+    )
+    drive = _start_drive(env)
+    drive.send_signal(signal.SIGINT)
+    time.sleep(0.2)
+    drive.send_signal(signal.SIGINT)
+    try:
+        assert drive.wait(timeout=10) == 130
+    finally:
+        drive.kill()
+    assert not _appears(marker, 6)

@@ -37,7 +37,8 @@ Keep everything the project wrote; change only its shape:
   For an entry that had other evidence — screenshots, transcripts, files with other names — those
   files stay where they are or move beside the summary keeping their names, and a new summary
   `evidence/<recipe>/<DATE>.md` carries the two lines and says where they are. An entry with no
-  evidence at all starts `unverified`, and the report names each one.
+  evidence at all starts `unverified`, unless the next step gives it a Drift line, and the
+  report names each one.
 - **Drift is kept as a `Drift` line**, the form the tool reads, so the entry shows `stale` until
   a run repairs it and removes the line. An entry whose status was `stale (DATE): <what differs>`
   gains `Drift (DATE): <what differs>` in its recipe. Where git shows a covered path changed after
