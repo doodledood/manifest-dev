@@ -154,10 +154,10 @@ will change — code, documents, a product; a new one the user is starting count
 and the investigation is relevant to it when the topic concerns that work. Many
 sessions have none: a chat app with no workspace, a home or scratch folder, a
 folder holding one finished artifact, a question that does not concern the folder
-the session runs in. One-off work inside a project is still project work.
-There, offer, build or mention no project surface — no
-setup, no verification harness or recipe, no decision record, glossary or North
-Star — and run the rest of the method whole. Where relevance is absent or
+the session runs in. In a session with none, offer, build or mention no project
+surface — no setup, no verification harness or recipe, no decision record,
+glossary or North Star — and run the rest of the method whole. One-off work
+inside a project is still project work. Where relevance is absent or
 unclear, don't load project docs; load them later if it emerges.
 Logging is independent of that. Team mode has counterparties but no single
 ratifier, which is why it suppresses Taste, and it supersedes `--autonomous`'s

@@ -169,7 +169,7 @@ offering what v1 adds and not a redo. `45` tests the other branch of the recorde
 a project that records the newest version and declined some of its items gets no offer at all.
 `47`, added with v2 on 2026-10-14 and never run, is the third branch: a project one version
 behind, graded on offering only what v2 adds and nothing v1 already gave it. `30`, `31`, `36`,
-`43`, `45`, `46`, `47`, `49`, `50`, and `51` exist only with the plugin and run on the plugin arm alone, like `27`
+`43`, `45`, `46`, `47`, `49`, `50`, `51`, and `52` exist only with the plugin and run on the plugin arm alone, like `27`
 and `28`. `49`, added with v3 and never run, is a project on v2. `50`, added with v4 on 2026-10-14 and
 never run, is the project one version behind v4: a setup-project run is graded on offering the
 move into one harness and nothing earlier versions gave it. `51`, added the same day, is a

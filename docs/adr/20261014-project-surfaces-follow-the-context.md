@@ -22,7 +22,11 @@ figure-out, define, do and setup-project offer, build, read and gate on project 
 - **A flag that turns project surfaces off.** Rejected: the person in a chat app does not know the flag exists, and the default would still be wrong for them. `--no-docs` stays for a project where the user wants no captures.
 
 ## Consequences
+
+### Positive
 - The workflow works in chat apps and scratch folders without offering project machinery.
+
+### Negative
 - A session in a folder that is a project but looks like scratch may miss an offer; the user can still run setup-project.
 - The project definition is restated in figure-out, define, do and setup-project; a change to it changes all four, and `tests/test_projectless.py` fails when a copy loses a shared clause.
 
@@ -30,4 +34,4 @@ figure-out, define, do and setup-project offer, build, read and gate on project 
 partly — `tests/test_projectless.py` checks that the four skills state the same definition. Eval cases `52-projectless-chat-offers-no-surfaces` and `define/d22-projectless-manifest-builds-no-harness` specify the behavior and are unmeasured until their first run. Whether a given folder is a project stays judgment.
 
 ## Source
-- Related: 20261014-one-verification-harness-per-project; 20261014-setup-project-audits-the-whole-setup-when-run
+- Related: generalizes 20260709-gate-figure-out-project-docs-by-topic-relevance; 20261014-one-verification-harness-per-project; 20261014-setup-project-audits-the-whole-setup-when-run
