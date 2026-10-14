@@ -1364,20 +1364,23 @@ def test_a_job_left_holding_the_output_does_not_hold_the_run(tmp_path: Path) -> 
 
 @pytest.mark.parametrize(
     ("signals", "trapped"),
-    [(("TERM",), "TERM"), (("HUP",), "HUP"), (("INT", "INT"), "TERM")],
+    [
+        (("TERM",), "TERM"),
+        (("HUP",), "HUP"),
+        (("QUIT",), "QUIT"),
+        (("INT", "INT"), "TERM"),
+    ],
 )
 def test_a_stopped_command_gets_the_grace_to_clean_up(
     tmp_path: Path, signals: tuple[str, ...], trapped: str
 ) -> None:
-    # One SIGTERM or SIGHUP is passed on; a second Ctrl-C forces the stop with SIGTERM. Either
-    # way the command's own cleanup runs undisturbed. A command trapping only SIGHUP dies of any
-    # stray SIGTERM, so that case fails outright if one is sent while it cleans up.
+    # One SIGTERM, SIGHUP or SIGQUIT is passed on; a second Ctrl-C forces the stop with SIGTERM.
+    # Either way the command's own cleanup runs undisturbed. The cleanup logs any second
+    # delivery, so a stray signal fails the test whenever it lands.
     marker = tmp_path / "cleaned-up"
     env = _covering(
         tmp_path,
-        # A second delivery during the cleanup is logged, so a stray signal fails the test whenever
-        # it lands rather than only when it kills the cleanup's first step.
-        f"trap '' INT; trap 'trap \"echo again >>{marker}\" TERM HUP; sleep 0.5; "
+        f"trap '' INT; trap 'trap \"echo again >>{marker}\" TERM HUP QUIT; sleep 0.5; "
         f"echo $? >>{marker}; exit 0' {trapped}; sleep 30 & wait",
         "verification/recipes",
     )
@@ -1539,3 +1542,18 @@ def test_a_signal_during_a_stop_kills_at_once(tmp_path: Path) -> None:
     finally:
         drive.kill()
     assert time.monotonic() - began < 1.5  # not the rest of the 2s grace
+
+
+def test_the_command_runs_as_the_tools_own_child(tmp_path: Path) -> None:
+    # The command's shell replaces the one that started the watchdog, so no wrapper sits between
+    # the tool and the command for a signal to end, or to be swallowed by, before it starts.
+    marker = tmp_path / "parent"
+    env = _covering(tmp_path, f"echo $PPID >{marker}", "verification/recipes")
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    assert drive.wait(timeout=10) == 0
+    assert marker.read_text(encoding="utf-8").strip() == str(drive.pid)

@@ -654,8 +654,10 @@ class Interrupts {
  * stopped even if the tool dies during the grace. The watchdog ignores the SIGTERM and SIGHUP a
  * stop sends. The command's shell then replaces the one that started the watchdog, so the process
  * this tool watches is the command's own: a signal passed on to it ends the run only once the
- * command has finished with it, and no stop starts while the command is still cleaning up. The
- * command does not inherit the descriptor, and its exit status is the run's.
+ * command's shell has finished with it, and no stop starts while that shell is still cleaning up.
+ * A child of a shell that does not handle the signal is stopped with the rest of the group once
+ * the shell has died of it. The command does not inherit the descriptor, and its exit status is
+ * the run's.
  */
 const WATCHED = [
   `( trap '' TERM HUP; read -r _ <&3; kill -TERM 0; sleep ${GRACE_SECONDS}; kill -KILL 0 ) </dev/null >/dev/null 2>&1 &`,
