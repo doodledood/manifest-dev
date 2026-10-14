@@ -124,6 +124,7 @@ fi
 scaffold_in=""
 [[ -n $scaffold ]] && scaffold_in="/repo/${scaffold#"$root"/}/scaffold.sh"
 
+container=0
 "${EVAL_RUN[@]}" -e "$CLAUDE_AUTH_ENV" -e PROMPT="$prompt" -e SCAFFOLD="$scaffold_in" \
   -v "$root":/repo:ro -v "$out":/out "$image" bash -c '
     set -euo pipefail
@@ -135,9 +136,14 @@ scaffold_in=""
     git status --porcelain >/out/files-written.txt
     git diff >/out/scratch.diff; git ls-files --others --exclude-standard -z | xargs -0 -r tar -cf /out/untracked.tar
     [[ -d $HOME/.manifest-dev ]] && tar -cf /out/home-manifest-dev.tar -C "$HOME" .manifest-dev || true
-  '
+  ' || container=$?
 
-[[ -s $out/transcript.jsonl ]] || unreachable "the session wrote no transcript; see $out/stderr.log"
+# No transcript means no session ran: the container, the scaffold or the credential failed, and
+# the skill was never tried.
+if [[ ! -s $out/transcript.jsonl ]]; then
+  [[ -s $out/scaffold.log ]] && { echo "scaffold.log (last lines):"; tail -n 20 "$out/scaffold.log"; } >&2
+  unreachable "the session wrote no transcript (container exit $container); see $out/stderr.log"
+fi
 python3 - "$out" "$feature" "$tools" <<'PY'
 import json, pathlib, sys
 out, feature, tools = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3] == "1"

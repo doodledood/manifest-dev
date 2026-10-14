@@ -1353,7 +1353,9 @@ def test_a_job_left_holding_the_output_does_not_hold_the_run(tmp_path: Path) -> 
         text=True,
         timeout=10,
     )
-    assert time.monotonic() - began < 2.5
+    assert (
+        time.monotonic() - began < 1.5
+    )  # the job heeds the stop's SIGTERM: no grace waited
     assert result.returncode == 0, result.stdout + result.stderr
     assert not _appears(marker, 4)
 
@@ -1397,3 +1399,85 @@ def test_a_forced_stop_kills_what_ignores_it_after_the_grace(tmp_path: Path) -> 
     finally:
         drive.kill()
     assert not _appears(marker, 6)
+
+
+def test_a_tool_killed_during_the_grace_still_stops_what_was_left(
+    tmp_path: Path,
+) -> None:
+    marker = tmp_path / "outlived"
+    env = _covering(
+        tmp_path,
+        f"(trap '' TERM; sleep 4; touch {marker}) & echo started",
+        "verification/recipes",
+    )
+    drive = _start_drive(
+        env
+    )  # the command has ended; its job ignores the stop's SIGTERM
+    drive.kill()
+    drive.wait(timeout=10)
+    assert not _appears(marker, 6)
+
+
+def test_a_run_with_nothing_left_behind_does_not_wait_the_grace(tmp_path: Path) -> None:
+    env = _covering(tmp_path, "echo done", "verification/recipes")
+    began = time.monotonic()
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert time.monotonic() - began < 1.5
+
+
+def _failing_docker(tmp_path: Path, code: int) -> Path:
+    # Answers every docker call with success except `docker run`, which writes a scaffold log
+    # into the directory mounted at /out, as a failed scaffold does, and exits with `code`.
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    stub = bin_dir / "docker"
+    stub.write_text(
+        "#!/bin/sh\n"
+        '[ "$1" = run ] || exit 0\n'
+        'while [ $# -gt 0 ]; do case "$1" in *:/out) out="${1%:/out}";; esac; shift; done\n'
+        '[ -n "$out" ] && echo "seed step broke" >"$out/scaffold.log"\n'
+        f"exit {code}\n"
+    )
+    stub.chmod(0o755)
+    return bin_dir
+
+
+def test_a_drive_whose_container_fails_before_the_session_is_unreachable(
+    tmp_path: Path,
+) -> None:
+    prompt_file = tmp_path / "prompt.md"
+    prompt_file.write_text("go\n", encoding="utf-8")
+    result = subprocess.run(
+        [str(DRIVE), "figure-out", str(prompt_file)],
+        env={
+            "PATH": f"{_failing_docker(tmp_path, 7)}:/usr/bin:/bin",
+            "HOME": str(tmp_path),
+            "ANTHROPIC_API_KEY": "test-key",
+            "MANIFEST_DEV_FEATURES_EVIDENCE": str(tmp_path / "store"),
+            "DRIVE_STAMP": "20990101T000000Z",
+        },
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert result.returncode == 3, result.stderr
+    assert "seed step broke" in result.stderr and "container exit 7" in result.stderr
+
+
+@pytest.mark.parametrize(("code", "expected"), [(125, 3), (1, 1)])
+def test_a_walk_tells_a_container_that_never_ran_from_a_failed_walk(
+    tmp_path: Path, code: int, expected: int
+) -> None:
+    result = subprocess.run(
+        [str(WALK), "Find the install steps.", "README.md"],
+        env={
+            "PATH": f"{_failing_docker(tmp_path, code)}:/usr/bin:/bin",
+            "HOME": str(tmp_path),
+            "ANTHROPIC_API_KEY": "test-key",
+        },
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert result.returncode == expected, result.stderr

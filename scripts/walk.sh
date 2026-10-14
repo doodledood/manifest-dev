@@ -59,5 +59,12 @@ prompt="You are a reader who has never seen this project. Using only the documen
 Then report: whether you ended able to do it (yes, partly, or no), the steps or facts you relied on, quoted with the section they came from, and every point where you got stuck or had to guess.
 $inline"
 
+status=0
 "${EVAL_RUN[@]}" -e "$CLAUDE_AUTH_ENV" -e PROMPT="$prompt" -e MODEL="$model" "$EVAL_IMAGE" bash -c '
-  cd "$(mktemp -d)" && claude -p --model "$MODEL" --tools "" --no-session-persistence "$PROMPT"'
+  cd "$(mktemp -d)" && claude -p --model "$MODEL" --tools "" --no-session-persistence "$PROMPT"' || status=$?
+# 125-127 are Docker's own: the container did not start or could not run the session.
+if ((status >= 125 && status <= 127)); then
+  echo "walk: unreachable — the container did not run the session (docker exit $status)" >&2
+  exit 3
+fi
+exit "$status"

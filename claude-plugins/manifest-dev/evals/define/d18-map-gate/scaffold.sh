@@ -496,52 +496,45 @@ const STOP_SIGNALS: NodeJS.Signals[] = ["SIGINT", "SIGTERM", "SIGHUP", "SIGQUIT"
 /** Seconds a stop waits between SIGTERM and SIGKILL. */
 const GRACE_SECONDS = 2;
 
-/** Send a signal to a process group; false when the group is already gone. */
-function signalGroup(pid: number, signal: NodeJS.Signals | 0): boolean {
+/** Send a signal to a process group that may already be gone. */
+function signalGroup(pid: number, signal: NodeJS.Signals): void {
   try {
     process.kill(-pid, signal);
-    return true;
   } catch {
-    return false;
+    // the group already ended
   }
+}
+
+/** Hand a command's process group to its watchdog to stop, by closing the watchdog's pipe. */
+function stop(child: ChildProcess): void {
+  child.stdio[3]?.destroy();
+}
+
+function stopping(child: ChildProcess): boolean {
+  return child.stdio[3]?.destroyed === true;
 }
 
 /**
  * Ctrl-C and termination while a scenario runs. Installed before a run reserves its evidence
  * file, so a signal at any point leaves that file to be removed rather than killing the tool.
- * The command runs in its own process group. The first signal is passed on to that group. Once
- * the command's shell is gone, for any reason, or on a second signal, the group is stopped:
- * SIGTERM, which a container client passes on to the session inside, then SIGKILL for whatever
- * is still there after a grace. A signal during that grace kills at once.
+ * The first signal is passed on to the running command's process group. A second hands the
+ * group to its watchdog to stop; one more, or a signal once the command's shell is gone, kills
+ * the group at once. A group still in its grace when the tool exits is left to its watchdog.
  */
 class Interrupts {
   interrupted = false;
   child: ChildProcess | undefined;
-  private readonly stopping = new Set<number>();
   private readonly handle = (signal: NodeJS.Signals): void => {
-    const pid = this.child?.pid;
-    if (pid !== undefined) {
-      if (this.stopping.has(pid)) signalGroup(pid, "SIGKILL");
-      else if (this.interrupted) this.stop(pid);
-      else signalGroup(pid, signal);
+    const child = this.child;
+    if (child?.pid !== undefined) {
+      if (stopping(child)) signalGroup(child.pid, "SIGKILL");
+      else if (this.interrupted) stop(child);
+      else signalGroup(child.pid, signal);
     }
     this.interrupted = true;
   };
   constructor() {
     for (const signal of STOP_SIGNALS) process.on(signal, this.handle);
-  }
-  /** Stop a command's process group: SIGTERM now, SIGKILL for what outlasts the grace. */
-  stop(pid: number): void {
-    if (this.stopping.has(pid) || !signalGroup(pid, "SIGTERM")) return;
-    this.stopping.add(pid);
-    const deadline = Date.now() + GRACE_SECONDS * 1000;
-    // Kept referenced: the tool stays until the group is gone, even once the output has closed.
-    const poll = setInterval(() => {
-      if (signalGroup(pid, 0) && Date.now() < deadline) return;
-      signalGroup(pid, "SIGKILL");
-      clearInterval(poll);
-      this.stopping.delete(pid);
-    }, 50);
   }
   release(): void {
     for (const signal of STOP_SIGNALS) process.off(signal, this.handle);
@@ -549,20 +542,18 @@ class Interrupts {
 }
 
 /**
- * Runs the scenario command inside its process group beside a watchdog that kills the whole
- * group once this tool is gone, so a command never outlives a tool killed without warning
- * (SIGKILL, a timeout that kills the tool's group). The watchdog waits on descriptor 3, a pipe
- * whose other end only this tool holds: it reads end-of-file the moment the tool is gone, even
- * before anyone reaps it, and stops the group as a stop above does, ignoring the SIGTERM it
- * sends. The command does not inherit the descriptor, and its own exit status is kept.
+ * Runs the scenario command in a process group of its own beside a watchdog that stops the
+ * group: SIGTERM, which a container client passes on to the session inside, then SIGKILL for
+ * whatever outlasts the grace. It waits on descriptor 3, a pipe whose other end only this tool
+ * holds, and stops the group when that end closes: when this tool closes it (the command's
+ * shell has ended, or a stop was asked for), and when this tool is gone, however it died, even
+ * before anyone reaps it. So a command never outlives the tool, and what it leaves behind is
+ * stopped even if the tool dies during the grace. The watchdog ignores the SIGTERM and SIGHUP a
+ * stop sends; the command does not inherit the descriptor, and its exit status is the run's.
  */
 const WATCHED = [
-  `( read -r _ <&3; trap '' TERM; kill -TERM 0; sleep ${GRACE_SECONDS}; kill -KILL 0 ) </dev/null >/dev/null 2>&1 &`,
-  "watchdog=$!",
+  `( trap '' TERM HUP; read -r _ <&3; kill -TERM 0; sleep ${GRACE_SECONDS}; kill -KILL 0 ) </dev/null >/dev/null 2>&1 &`,
   'sh -c "$VERIFY_COMMAND" 3<&-',
-  "status=$?",
-  'kill "$watchdog" 2>/dev/null',
-  'exit "$status"',
 ].join("\n");
 
 // Output keeps being collected when whoever reads this tool's output goes away (`| head`).
@@ -598,10 +589,8 @@ function runShown(command: string, interrupts: Interrupts): Promise<Run> {
     });
     child.on("error", fail);
     // The command's shell is gone, however it ended: stop what it left behind (a background job
-    // still holding the output, the watchdog), so the run can end and nothing outlives it.
-    child.on("exit", () => {
-      if (child.pid !== undefined) interrupts.stop(child.pid);
-    });
+    // still holding the output), so the run can end and nothing outlives it.
+    child.on("exit", () => stop(child));
     child.on("close", (code, signal) => {
       interrupts.child = undefined;
       done({

@@ -54,6 +54,7 @@ Check: read
 
 ## Gotchas
 
+- Drift (2026-10-14): update-from-v1's evidence is a v1 update that wrote v2, the shape this scenario now skips; it proves the old path, not the move straight to the harness.
 - It writes many project files and changes every later session's context. Scratch directory only.
 - It never overwrites a project-owned copy: differences are offered, not applied.
 - It writes scenarios only as far as existing commands reach; drive work beyond that comes from the change that needs it.

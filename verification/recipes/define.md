@@ -34,12 +34,12 @@ Proves: the Manifest's guidance carries the CODING Defaults that apply — what 
 Check: read
 
 ### feature-defaults
-Run: `scripts/drive-skill.sh define verification/prompts/define-feature-defaults.md --scaffold claude-plugins/manifest-dev/evals/define/d20-preparatory-slice`
+Run: `scripts/drive-skill.sh define verification/prompts/define-feature-defaults.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing`
 Proves: for a feature whose installs upgrade on different days, the Manifest keeps old and new versions working side by side on shared data.
 Check: read
 
 ### bounded-growth
-Run: `scripts/drive-skill.sh define verification/prompts/define-bounded-growth.md --scaffold claude-plugins/manifest-dev/evals/define/d20-preparatory-slice`
+Run: `scripts/drive-skill.sh define verification/prompts/define-bounded-growth.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing`
 Proves: for data that grows for years, the Manifest carries *Bound what grows*: a gate keeps append and per-member query cost tolerable at a stated scale.
 Check: read
 
@@ -63,6 +63,6 @@ Check: read
 - An old Manifest with a `verify` block is refused, not migrated.
 - A yes approves the Manifest, not execution: it never runs `/do` itself.
 - "It didn't stop for approval" is define only under `--autonomous` or when called by `auto`; a whole chain that never stopped is the auto entry.
-- Earlier evidence for feature-defaults does not record which scaffold its drive used; the prompt's "this repo" is the shelfnote project, which `d20-preparatory-slice` scaffolds.
+- The scaffold in the feature-defaults and bounded-growth Run lines is inferred: their earlier drives did not record one. Their replies find no loan period setting, which `d20-preparatory-slice` has, and bounded-growth's cites the storage record's "a few hundred loans", which the set-up shelfnote scaffolds such as `45-current-setup-offers-nothing` carry. The next run of each settles it.
 - Also checked by the define behavior suite, `claude-plugins/manifest-dev/evals/define/` cases `d01` to `d21` (tag `define`), statuses in `claude-plugins/manifest-dev/evals/define/README.md`; `tests/test_shared_blocks.py` and `tests/test_goal_contract_blocks.py` pin the blocks its handoff carries.
 - Not yet driven: the bare slash command, the description phrases, auto, do's amendments, babysit-pr, figure-out's offer.
