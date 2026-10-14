@@ -358,6 +358,33 @@ def test_status_goes_stale_when_covered_files_change_after_the_evidence(
     assert "stale (" in committed.stdout, committed.stdout
 
 
+def test_a_stale_recipe_with_an_unrun_scenario_says_both_plainly(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "", TWO_SCENARIOS)
+    _evidence(
+        tmp_path, "20260101T000000Z", "- **Scenario:** one\n- **Outcome:** verified\n"
+    )
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8").replace(
+            "kind: feature\n", "kind: feature\ncovers: src.txt\n"
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "src.txt").write_text("one\n", encoding="utf-8")
+    _git(tmp_path, "init", "-q")
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-qm", "change and its evidence")
+    (tmp_path / "src.txt").write_text("two\n", encoding="utf-8")
+    _git(tmp_path, "commit", "-qam", "a later change", when="2026-01-03T00:00:00Z")
+    shown = run_verify("help", "thing", env=env)
+    assert (
+        "stale (2026-01-03): covered files changed after the verified run of 2026-01-01; "
+        "no run yet for two" in shown.stdout
+    ), (shown.stdout + shown.stderr)
+
+
 # Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
 def test_a_drift_line_marks_the_recipe_stale(tmp_path: Path) -> None:
     env = _harness(tmp_path, "- **Outcome:** verified\n")

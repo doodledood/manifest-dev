@@ -36,7 +36,7 @@ The user
 - Map entries that restate a description add upkeep without guiding anyone; the shape asks entries to carry only what the description does not.
 
 ## Enforced by
-partly — `tests/test_feature_map.py` holds this repository's map: every user-invocable skill has an entry, each entry has the shape and a status, and every path it names exists. `tests/test_setup_project_versions.py` (`test_latest_version_matches_what_setup_project_emits`) fails when the emitted surface README changes without a new surfaces version. Whether an entry carries more than its description, and whether a project's map covers what users invoke, stays judgment.
+retargeted — the map's checks moved with it to `tests/test_verify.py` (`test_every_user_invocable_skill_has_a_recipe`, `test_every_recipe_parses_and_names_only_existing_paths`), which now holds 20261014-one-verification-harness-per-project; `tests/test_feature_map.py` was removed. Before that: partly — `tests/test_feature_map.py` held this repository's map: every user-invocable skill had an entry, each entry had the shape and a status, and every path it named existed. `tests/test_setup_project_versions.py` (`test_latest_version_matches_what_setup_project_emits`) fails when the emitted surface README changes without a new surfaces version. Whether an entry carries more than its description, and whether a project's map covers what users invoke, stays judgment.
 
 ## Source
 - Session: investigation of setup-project's update behavior and of pstack's feature map.
