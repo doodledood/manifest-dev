@@ -76,9 +76,9 @@ scripts/evals/run_eval.sh figure-out-run evals/results/figure-out-run/aggregate-
 ```
 
 The script builds the image if it is missing, starts colima if Docker is down, reads
-`ANTHROPIC_API_KEY` from the shell profile when the environment lacks it — an API key, not a
-Claude subscription, because a suite is hundreds of automated sessions and Anthropic's Consumer
-Terms allow automated access to a subscription only where Anthropic permits it — and starts a named,
+a Claude credential from the shell profile when the environment lacks it — a subscription
+token from `claude setup-token` in `CLAUDE_CODE_OAUTH_TOKEN` when one is set, otherwise
+`ANTHROPIC_API_KEY`; on a subscription a full suite counts against its usage limits — and starts a named,
 detached container; `docker wait <name>` blocks until it exits. The Dockerfile pins the CLI
 version; bump it deliberately, since a different CLI can move scores. A run writes its results
 only when it finishes, so a killed run loses all of its work.

@@ -25,12 +25,12 @@ evals="$root/claude-plugins/manifest-dev/evals"
 cli=$(sed -n 's/.*install.sh | bash -s -- \([0-9.]*\).*/\1/p' "$evals/Dockerfile")
 image="manifest-dev-evals:$cli"
 
-# A full suite is hundreds of automated sessions, so it runs on an API key only: Anthropic's
-# Consumer Terms allow automated access to a Claude subscription only where Anthropic permits it,
-# and the subscription's limits assume ordinary individual use.
+# A Claude subscription token (`claude setup-token`) when one is set, otherwise an API key.
 # shellcheck source=../lib/claude-auth.sh
 source "$root/scripts/lib/claude-auth.sh"
-claude_auth_resolve --api-key-only || exit 1
+claude_auth_resolve || exit 1
+[[ $CLAUDE_AUTH_ENV == CLAUDE_CODE_OAUTH_TOKEN ]] &&
+  echo "run_eval: using your Claude subscription; a full suite is many sessions and counts against its usage limits" >&2
 
 docker info >/dev/null 2>&1 || colima start
 docker image inspect "$image" >/dev/null 2>&1 || docker build -t "$image" "$evals"

@@ -110,13 +110,22 @@ def test_no_credential_fails_with_both_ways_to_get_one(tmp_path: Path) -> None:
     )
 
 
-def test_eval_suite_refuses_a_subscription_token(tmp_path: Path) -> None:
-    # A full suite is heavy automated use: it runs on an API key only.
+def test_eval_suite_uses_a_subscription_token_when_set(tmp_path: Path) -> None:
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
-    for name in ("docker", "zsh"):
-        stub = bin_dir / name
-        stub.write_text("#!/bin/sh\nexit 0\n")
+    record = tmp_path / "docker-run.txt"
+    docker = bin_dir / "docker"
+    docker.write_text(
+        "#!/bin/sh\n"
+        'if [ "$1" = run ]; then\n'
+        f'  printf "%s\\n" "$@" > {record}\n'
+        f'  env | grep -E "^(CLAUDE_CODE_OAUTH_TOKEN|ANTHROPIC_API_KEY)=" >> {record}\n'
+        "fi\n"
+        "exit 0\n"
+    )
+    zsh = bin_dir / "zsh"
+    zsh.write_text("#!/bin/sh\nexit 0\n")
+    for stub in (docker, zsh):
         stub.chmod(0o755)
     result = subprocess.run(
         [str(REPO_ROOT / "scripts/evals/run_eval.sh"), "n", "evals/results/x.json"],
@@ -124,10 +133,12 @@ def test_eval_suite_refuses_a_subscription_token(tmp_path: Path) -> None:
             "PATH": f"{bin_dir}:/usr/bin:/bin",
             "HOME": str(tmp_path),
             "CLAUDE_CODE_OAUTH_TOKEN": "tok",
+            "ANTHROPIC_API_KEY": "key",
         },
         capture_output=True,
         text=True,
         timeout=60,
     )
-    assert result.returncode != 0
-    assert "API key" in result.stderr
+    assert result.returncode == 0, result.stderr
+    assert credentials_seen(record.read_text()) == {"CLAUDE_CODE_OAUTH_TOKEN"}
+    assert "usage limits" in result.stderr

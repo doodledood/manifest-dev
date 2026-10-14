@@ -16,8 +16,7 @@ how a user reaches it and how a run drives it.
   `CLAUDE_CODE_OAUTH_TOKEN` (the container cannot read the macOS keychain your login uses); with an
   API key, export `ANTHROPIC_API_KEY`. When both are set the subscription token is used. The
   subscription token is Anthropic's documented way to run the unmodified Claude Code CLI from a
-  script; keep drives to ordinary, occasional use on your own subscription, and use an API key for
-  anything heavier (the eval suite always does).
+  script; its usage counts against your subscription's limits.
 - Health first: `scripts/features/drive.sh doctor` exits `0`. It starts one throwaway session and
   checks that the plugin loaded and its skills are listed. A session that only answers proves
   nothing, so a drive whose session did not load the plugin or the named skill is reported
