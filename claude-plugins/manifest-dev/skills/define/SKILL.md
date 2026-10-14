@@ -17,7 +17,7 @@ records, the glossary, the North Star — belong to a project: a repository or w
 holding, or about to hold, work later sessions will change — a new one the user is starting
 counts — which this work concerns. A chat with no workspace, a home or scratch folder, a folder
 holding one finished artifact, or a question that does not concern the folder the session runs in
-is none. There, offer, build, gate on or record none of them, and write the Manifest as usual,
+is none. There, offer, build, read for, gate on or record none of them, and write the Manifest as usual,
 its own gates checking the work directly. One-off work inside a project is still project work: it
 keeps the gate of every recipe whose paths it touches.
 
@@ -116,8 +116,7 @@ That gives a floor that isn't ceremony:
   covers, or a path one should cover but does not, carries a gate that each touched recipe is added or
   updated and run, its evidence committed. A recipe marked ask-first is run only where the
   project's setting or the user allows; otherwise its gate holds that the recipe is updated and
-  that the run it still owes is named in the report. With no project, there is no harness to build
-  or recipe to gate: the Manifest's own gates check the work directly.
+  that the run it still owes is named in the report.
 - **A recorded check still to be built is built.** Search the project's decision records for
   `Enforced by` lines reading `not yet`. When the work implements or touches such a decision, a
   gate holds that the named check exists, fails when the decision is reversed, and carries a

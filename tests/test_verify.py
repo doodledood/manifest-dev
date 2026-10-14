@@ -1099,7 +1099,7 @@ def test_a_link_to_a_directory_counts_by_its_target_not_its_contents(
 
 def test_a_command_never_outlives_a_killed_tool(tmp_path: Path) -> None:
     marker = tmp_path / "finished"
-    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
+    env = _covering(tmp_path, f"sleep 4; touch {marker}", "verification/recipes")
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -1112,7 +1112,7 @@ def test_a_command_never_outlives_a_killed_tool(tmp_path: Path) -> None:
     time.sleep(0.5)  # the line prints just before the command starts
     drive.kill()  # SIGKILL: no handler runs, as when a timeout kills the tool
     drive.wait(timeout=10)
-    time.sleep(4)
+    time.sleep(6)
     assert not marker.exists(), "the command kept running after the tool was killed"
 
 
@@ -1208,7 +1208,7 @@ def test_a_killed_tool_stops_its_command_before_anyone_reaps_it(
     tmp_path: Path,
 ) -> None:
     marker = tmp_path / "finished"
-    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
+    env = _covering(tmp_path, f"sleep 4; touch {marker}", "verification/recipes")
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -1220,6 +1220,49 @@ def test_a_killed_tool_stops_its_command_before_anyone_reaps_it(
     assert drive.stdout.readline().startswith("running [once]")
     time.sleep(0.5)
     os.kill(drive.pid, signal.SIGKILL)  # left a zombie: not waited for until the end
-    time.sleep(4)
+    time.sleep(6)
     assert not marker.exists(), "the command ran on while its tool was a zombie"
     drive.wait(timeout=10)
+
+
+def test_help_shows_whole_recipe_evidence_under_each_scenario(tmp_path: Path) -> None:
+    env = _harness(
+        tmp_path,
+        "- **Outcome:** verified\n",
+        "### one\nRun: `true`\n\n### two\nRun: `true`\n",
+    )
+    shown = run_verify("help", "thing", env=env).stdout
+    assert "one: verified, verification/evidence/thing/20260101T000000Z.md" in shown
+    assert "two: verified, verification/evidence/thing/20260101T000000Z.md" in shown
+
+
+def test_a_drift_line_kept_as_a_list_item_still_marks_the_recipe_stale(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "- **Outcome:** verified\n")
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8")
+        + "\n## Traps\n\n- Drift (2099-01-01): the export now writes JSON\n",
+        encoding="utf-8",
+    )
+    assert "stale (2099-01-01)" in run_verify("list", env=env).stdout
+
+
+@pytest.mark.parametrize(("sent", "code"), [("INT", 130), ("QUIT", 131)])
+def test_a_command_that_signals_its_own_group_ends_the_run_as_failed(
+    tmp_path: Path, sent: str, code: int
+) -> None:
+    # The watchdog ignores these two signals, so the run must clean it up itself.
+    env = _covering(tmp_path, f"kill -{sent} 0", "verification/recipes")
+    result = subprocess.run(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    assert result.returncode == 1, result.stdout + result.stderr
+    (evidence,) = (tmp_path / "verification" / "evidence" / "thing").iterdir()
+    text = evidence.read_text(encoding="utf-8")
+    assert f"- **Exit code:** {code}" in text and "- **Outcome:** failed" in text

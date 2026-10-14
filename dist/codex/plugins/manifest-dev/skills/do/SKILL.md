@@ -91,7 +91,8 @@ counts — which this work concerns. A chat with no workspace, a home or scratch
 holding one finished artifact, or a question that does not concern the folder the session runs in
 is none. With none, the Manifest's gates are the whole
 verification: build no harness and add no project surface. One-off work inside a project is still
-project work: it keeps and runs the recipes whose paths it touches.
+project work: it keeps the recipes whose paths it touches and runs them as
+`references/VERIFICATION.md` says.
 
 ## What holds for every gate
 

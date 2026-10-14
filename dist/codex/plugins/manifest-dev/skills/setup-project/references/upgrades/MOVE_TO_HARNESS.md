@@ -36,11 +36,14 @@ Keep everything the project wrote; change only its shape:
   A Markdown summary already named that way moves there keeping its name and gains those lines.
   For an entry that had other evidence — screenshots, transcripts, files with other names — those
   files stay where they are or move beside the summary keeping their names, and a new summary
-  `evidence/<recipe>/<DATE>.md` carries the two lines and says where they are. Write no
-  `verified` outcome where git shows a covered path changed after DATE: the entry starts
-  `unverified`. An entry with no evidence at all starts `unverified`. The report names every entry
-  that lost its old status this way. Hand-kept `Status:` lines are removed, since
-  statuses now come from evidence.
+  `evidence/<recipe>/<DATE>.md` carries the two lines and says where they are. An entry with no
+  evidence at all starts `unverified`, and the report names each one.
+- **Drift is kept as a `Drift` line**, the form the tool reads, so the entry shows `stale` until
+  a run repairs it and removes the line. An entry whose status was `stale (DATE): <what differs>`
+  gains `Drift (DATE): <what differs>` in its recipe. Where git shows a covered path changed after
+  an entry's evidence DATE, its recipe gains `Drift (<today>): <path> changed after the check of
+  DATE`: the summary's time comes from the move, not the run, so without the line it would read
+  current. Hand-kept `Status:` lines are then removed, since statuses now come from evidence.
 - **Costly recipes get the `ask-first` mark** with the reason: any scenario that starts an agent
   session, uses a paid API or cloud resources, runs far longer than the usual tests, loads a
   shared environment, or has effects outside the repository. Free drives stay unmarked.

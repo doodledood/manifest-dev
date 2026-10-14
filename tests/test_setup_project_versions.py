@@ -31,6 +31,7 @@ EMITTED = (
     SKILLS / "figure-out" / "references" / "ADR_FORMAT.md",
     NORTH_STAR_FORMAT,
     HARNESS / "verify",
+    HARNESS / "verify.mts",
     HARNESS / "harness.md",
     *sorted((HARNESS / "recipes").glob("*.md")),
 )

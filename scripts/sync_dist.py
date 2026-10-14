@@ -106,7 +106,7 @@ def check() -> int:
         for line in drift:
             print(f"  {line}", file=sys.stderr)
         return 1
-    print("dist/codex matches source")
+    print("dist/codex and the tool copies match source")
     return 0
 
 

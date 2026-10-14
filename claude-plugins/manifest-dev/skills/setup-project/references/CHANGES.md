@@ -75,4 +75,4 @@ Digest: 80bc7de905bfb2a9d5eebb592ab7335742eac591ad98a58b73bc4b1a5e307178
   recipes, keeping their content, customizations and evidence, following the upgrade guide for
   the version the project records.
 
-Digest: 3d009a4b4a67b5dda736f4e92612bf1edafb4a262ae181d712ea4b78790bb248
+Digest: ff61d49165dbc44785c62599bbc3cb0e2d155a7538d4f84f675c03ea27a9cced

@@ -19,7 +19,7 @@ same turn rather than ending it or offering the step to the user. The run ends w
 when define reports no path.
 
 The chain runs the same with or without a project — a chat with no workspace, a home or
-scratch folder. Each skill it invokes decides which project surfaces apply there.
+scratch folder. Each skill it invokes decides whether any project surface applies.
 
 Do not set or print a continuation goal during understanding or definition.
 /do owns the completion backstop. Automatic continuation begins at execution;

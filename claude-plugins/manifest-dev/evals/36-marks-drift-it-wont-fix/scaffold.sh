@@ -182,7 +182,8 @@ const SEVERITY: Record<Outcome, number> = { failed: 3, unreachable: 2, unjudged:
 
 const STAMP = /(\d{8}T\d{6}Z)(?:-(\d+))?/;
 const DATE = /(\d{4}-\d{2}-\d{2})/;
-const DRIFT = /^Drift \((\d{4}-\d{2}-\d{2})\): (.+)$/gm;
+// On its own line, or as a list item among the recipe's traps.
+const DRIFT = /^(?:[-*] )?Drift \((\d{4}-\d{2}-\d{2})\): (.+)$/gm;
 const OUTCOME_LINE = /^- \*\*Outcome:\*\* (\w+)/m;
 const COVERS_LINE = /^- \*\*Covers:\*\* (\S+)/m;
 // Committed evidence must not carry paths that exist only on the machine that ran it.
@@ -431,7 +432,6 @@ function checkedAt(evidence: Evidence): Date {
  * The latest evidence for each scenario. Evidence naming no scenario covered the whole
  * recipe, so it stands for every scenario until that scenario has newer evidence of its own.
  */
-/** Each scenario's latest evidence; evidence naming no scenario stands for all of them. */
 function latestPerScenario(recipe: Recipe, history: Evidence[]): Map<string, Evidence> {
   const names = new Set(recipe.scenarios.map((s) => s.name));
   const latest = new Map<string, Evidence>();
@@ -560,8 +560,9 @@ function cmdShow(name: string): number {
   if (recipe.askFirst) console.log(`ask-first: ${recipe.askFirst}`);
   console.log(recipe.body.trim());
   console.log("\nLatest evidence per scenario:");
+  const latest = latestPerScenario(recipe, history); // the same evidence the status is worked out from
   for (const scenario of recipe.scenarios) {
-    const mine = history.filter((e) => e.scenario === scenario.name).at(-1);
+    const mine = latest.get(scenario.name);
     console.log(`  ${scenario.name}: ${mine ? `${mine.outcome}, ${rel(mine.path)}` : "none"}`);
   }
   return 0;
@@ -671,10 +672,11 @@ function runShown(command: string, interrupts: Interrupts): Promise<Run> {
       if (echo) process.stderr.write(chunk);
     });
     child.on("error", fail);
-    // An interrupted command's shell has exited: kill what it left behind (a background job
-    // ignores Ctrl-C), so the output pipes close and the run can end.
-    child.on("exit", () => {
-      if (!interrupts.interrupted || child.pid === undefined) return;
+    // The command's shell is gone without its own cleanup — interrupted, or killed by a signal
+    // this tool did not send: kill what it left behind (a background job, the watchdog, both
+    // ignoring Ctrl-C), so the output pipes close and the run can end.
+    child.on("exit", (_code, signal) => {
+      if ((!interrupts.interrupted && signal === null) || child.pid === undefined) return;
       try {
         process.kill(-child.pid, "SIGKILL");
       } catch {

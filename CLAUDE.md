@@ -181,6 +181,10 @@ figure-out's task files and define's task files are decoupled, so a red-flag lis
 
 The rule that a slice must be exercisable end-to-end on its own — put in front of its real use rather than inspected as present — lives in two shipped skills: `/define`'s Deliverable cutting and `ticket-up`'s Ticket cutting (stated in both its `SKILL.md` and `references/TICKET_CONVENTION.md`). The duplication is deliberate: a shipped skill stands alone, and `ticket-up` authors Tickets from direct requests and figure-out handoffs that never pass through `/define`, so it cannot defer the rule there. Change one, change the others — a sharpening that lands in only one home leaves the other paths cutting by layer, which is the defect the rule exists to prevent. What the rule governs is where a cut falls, never how many Deliverables or Tickets come out; count stays with each skill's own unit test.
 
+## Project Definition Ownership
+
+What counts as a project — a repository or working folder holding, or about to hold, work later sessions will change, with a new one counting — and what does not (a chat with no workspace, a home or scratch folder, a folder holding one finished artifact, a question that does not concern the folder the session runs in) is stated in four shipped skills: `figure-out/SKILL.md` (*Modes and what loads*), `define/SKILL.md`, `do/SKILL.md` and `setup-project/SKILL.md`. The first three also say that one-off work inside a project is still project work, so it keeps its recipe gates. The duplication is deliberate: a shipped skill stands alone, and each of the four decides on its own whether to offer, build, read for or gate on a project surface. Change one, change the others; `tests/test_projectless.py` fails when a copy loses a shared clause. See `docs/adr/20261014-project-surfaces-follow-the-context.md`.
+
 ## Versioning
 
 When updating plugin files, bump that plugin's `.claude-plugin/plugin.json`:

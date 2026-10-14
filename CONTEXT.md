@@ -62,7 +62,7 @@ The always-loaded instruction file a harness reads for a project — `CLAUDE.md`
 _Avoid_: CLAUDE.md (that is one harness's instance of it).
 
 **Projectless Session**:
-A session with no project behind its topic — a chat with no workspace, a home or scratch folder, a folder holding one finished artifact, a question that does not concern the folder it runs in. One-off work inside a project is project work. A project is a repository or working folder holding, or about to hold, work later sessions will change; a new one the user is starting counts. The workflow skills offer, build and gate on no project surface in a projectless session and still run whole.
+A session with no project behind its topic — a chat with no workspace, a home or scratch folder, a folder holding one finished artifact, a question that does not concern the folder it runs in. One-off work inside a project is project work. A project is a repository or working folder holding, or about to hold, work later sessions will change; a new one the user is starting counts. The workflow skills offer, build, read for and gate on no project surface in a projectless session and still run whole.
 _Avoid_: No repo (a project need not be a git repository).
 
 **ADR Conventions**:

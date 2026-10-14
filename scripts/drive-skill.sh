@@ -75,7 +75,7 @@ while [[ $# -gt 0 ]]; do
 done
 if [[ -n $scaffold ]]; then
   [[ -f $scaffold/scaffold.sh ]] || die "no scaffold.sh in $scaffold"
-  scaffold=$(cd "$scaffold" && pwd)
+  scaffold=$(cd "$scaffold" && pwd -P)
   case $scaffold in "$root"/*) ;; *) die "scaffold must be inside this checkout" ;; esac
 fi
 
@@ -124,7 +124,8 @@ fi
 scaffold_in=""
 [[ -n $scaffold ]] && scaffold_in="/repo/${scaffold#"$root"/}/scaffold.sh"
 
-docker run --rm -e "$CLAUDE_AUTH_ENV" -e PROMPT="$prompt" -e SCAFFOLD="$scaffold_in" \
+# --init: a signal passed on by the Docker CLI reaches the session and everything it started.
+docker run --rm --init -e TINI_KILL_PROCESS_GROUP=1 -e "$CLAUDE_AUTH_ENV" -e PROMPT="$prompt" -e SCAFFOLD="$scaffold_in" \
   -v "$root":/repo:ro -v "$out":/out "$image" bash -c '
     set -euo pipefail
     mkdir -p /tmp/scratch && cd /tmp/scratch && git init -q
