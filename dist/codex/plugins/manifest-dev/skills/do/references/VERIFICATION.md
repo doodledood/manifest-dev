@@ -1,31 +1,34 @@
-# do: building and keeping the verification surface
+# do: building and keeping the verification harness
 
-The surface's forms and parts — harness, feature map, eval suite,
-reader-task list, statuses, repository check — are in setup-project's
-`references/VERIFICATION_SURFACE.md`.
+The harness's parts — the tool, recipes, settings, evidence, statuses, the ask-first mark and the
+repository check — are in setup-project's `references/VERIFICATION_HARNESS.md`.
 
-- **Missing surface:** when the context file's project-surfaces section names none, look among the
-  verification assets the project keeps. Build the surface from what is found, or from nothing,
-  scoped to what the change touches — the form the artifact
-  needs, existing verification assets adopted rather than duplicated, the harness parts the
-  change needs, entries for the touched features, the README and the repository check. Record it with the verification-surface bullet of the
-  surfaces template in `../../setup-project/references/NORTH_STAR_FORMAT.md` → *The project-surfaces
-  section*, in the project-surfaces section of the project-level context
-  file the detected host reads, resolved per `../../review-code/references/context-file-adherence.md`;
-  create the file or the section, holding only that bullet, where it is missing. Build it unattended too: it is verification for the change, like a regression test. Name it in the
-  completion report as a new project surface the user can remove.
-- **Touched entries:** the surface's entries and, where the project keeps one, the feature map's.
-  Add a missing entry for a touched path. Update each touched entry to match
-  the change, exercise it, and mark it with the form's exercised status: `verified` with the date,
-  or `measured` with the date and result for an eval case. A change to a prompt that leaves its
-  measured cases unrun marks them `stale`; unmeasured cases stay `unmeasured`.
-- **Drift:** when an exercise fails because the entry is wrong about the product, repair the
-  entry within scope. When an entry the change does not touch is found drifting, mark it `stale`
-  with a dated line naming what differs, and leave the repair to the next run that touches it.
-- **Unfit surface:** when the work finds the surface not fit to trust for what it touches —
-  `../../setup-project/references/VERIFICATION_SURFACE.md` → *Fit to trust* — repair it within
+- **Missing harness:** when the context file's project-surfaces section names none, look among
+  the verification assets the project keeps. Build the harness from what is found, or from
+  nothing, scoped to what the change touches: the tool copied from
+  `../../setup-project/references/harness/`, settings with `ask-first: ask`, recipes for the
+  touched features that delegate to existing assets rather than duplicate them, and the
+  repository check. Record it with the verification bullet of the surfaces template in
+  `../../setup-project/references/NORTH_STAR_FORMAT.md` → *The project-surfaces section*, in the
+  project-surfaces section of the project-level context file the detected host reads, resolved
+  per `../../review-code/references/context-file-adherence.md`; create the file or the section,
+  holding only that bullet, where it is missing. Build it unattended too: it is verification for
+  the change, like a regression test. Name it in the completion report as a new project surface
+  the user can remove.
+- **Touched recipes:** add a missing recipe for a touched path. Update each touched recipe to
+  match the change and run it with the harness, committing its evidence; where its proof needs
+  reading, read it and record the verdict with `judge`. A recipe marked ask-first runs only where
+  the project's setting is `run` or the user agreed; otherwise update it, leave it unrun, and
+  name the run it owes in the report. A change to a prompt that leaves its measured eval cases
+  unrun marks them `stale`; unmeasured cases stay `unmeasured`.
+- **Drift:** when a run fails because the recipe is wrong about the product, repair the recipe
+  within scope. When a recipe the change does not touch is found drifting, add a dated
+  `Drift (YYYY-MM-DD): <what differs>` line to it, and leave the repair to the next run that
+  touches it.
+- **Unfit harness:** when the work finds the harness not fit to trust for what it touches —
+  `../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust* — repair it within
   scope, as for drift, and report the rest as debt.
-- **Regressions:** when an exercise fails because the product is broken, report it as debt with
-  the evidence. Never weaken an entry or a journey to make it pass.
-- **Evidence:** keep exercise evidence where the harness names it, so the completion report can
-  link it for a person to open.
+- **Regressions:** when a run fails because the product is broken, report it as debt with the
+  evidence. Never weaken a recipe or a scenario to make it pass.
+- **Evidence:** keep the evidence the harness writes, so the completion report can link it for a
+  person to open.

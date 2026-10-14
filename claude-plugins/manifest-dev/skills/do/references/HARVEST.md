@@ -40,7 +40,7 @@ mistake fails for every later contributor, with or without this workflow.
 
 Debt is what the run found and did not fix: unfixed lock hits; refactor flags; constraint
 comments awaiting encoding; new suppressions; reshapes outside the change's scope; product
-regressions the verification surface exposed; a new verification surface the user may remove.
+regressions the verification harness exposed; a new verification harness the user may remove; ask-first recipes the change touched and did not run.
 
 - Record each item in the execution log as it is found.
 - Hand the list to `/done` or `/escalate`, which name it with the ticket-up offer.

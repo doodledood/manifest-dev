@@ -32,14 +32,15 @@ repeated with a cheaper judge.
 
 | Case | Discipline under test |
 |---|---|
-| `d18-map-gate` | A change touching a mapped feature gates that its verification-surface entry is updated and exercised live |
+| `d18-map-gate` | A change touching a feature with a recipe gates that the recipe is updated and run with the harness |
 | `d19-workaround-comment` | A workaround comment in touched code becomes a refactor target, not a deletion |
 | `d20-preparatory-slice` | When the touched area resists the change, a behavior-preserving restructuring comes first |
 | `d21-user-rule-over-default` | A rule the project states overrides a conflicting task-file Default, and the adjustment is recorded |
 
 These have never been run; the first both-arm run decides which stay. **Every number below is stale
-as of 2026-10-13**: that change edited define's spine and its task files, so the next baseline
-replaces them. A single 2026-10-14 drive of `d01` (not a measurement) found define keeping the
+as of 2026-10-14**: the 2026-10-13 change edited define's spine and its task files, and the
+2026-10-14 change moved its verification wording to one harness, so the next baseline replaces
+them. A single 2026-10-14 drive of `d01` (not a measurement) found define keeping the
 requested layer cut as a user's call; define's slicing rule now says a requested cut is never one,
 and a re-drive came back re-cut (`docs/features/evidence/define/`).
 

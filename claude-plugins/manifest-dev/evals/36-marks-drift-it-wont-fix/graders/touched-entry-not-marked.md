@@ -2,7 +2,7 @@
 type: regex
 target:
   source: file
-  path: verify/features/overdue.md
-pattern: 'stale \('
+  path: verification/recipes/overdue.md
+pattern: 'Drift \('
 match: not_contains
 ---

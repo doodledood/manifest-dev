@@ -1,7 +1,7 @@
 # ADR: The feature map is a navigation contract over whatever users invoke, with a fixed shape and a proof run
 
 ## Status
-Accepted
+Superseded by 20261014-one-verification-harness-per-project
 
 ## Area
 define / do

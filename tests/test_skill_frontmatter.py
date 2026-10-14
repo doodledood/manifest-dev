@@ -400,14 +400,25 @@ def test_the_walk_reaches_every_surface_the_pi_package_ships() -> None:
 
     Pi reads prompt-template frontmatter with the same parser as skills, so a
     directory declared there and absent from PARSED_ROOTS is an unguarded surface.
+    In a skills directory Pi parses each `SKILL.md` and any Markdown file sitting
+    directly in the directory as a standalone skill; data files deeper in a skill,
+    such as the harness recipes setup-project ships, carry their own frontmatter
+    and are never loaded as skills.
     """
     declared = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))["pi"]
+
+    def pi_parses(path: Path, directory: Path, key: str) -> bool:
+        if key == "prompts":
+            return True
+        return path.name == "SKILL.md" or path.parent == directory
+
     shipped = {
         path
         for key in ("skills", "prompts")
         for directory in declared.get(key, [])
         for path in (ROOT / directory).rglob("*.md")
-        if path.read_text(encoding="utf-8").startswith("---")
+        if pi_parses(path, ROOT / directory, key)
+        and path.read_text(encoding="utf-8").startswith("---")
     }
     unreached = shipped - walked_files()
     assert not unreached, (

@@ -22,12 +22,17 @@ SETUP = SKILLS / "setup-project" / "references"
 CHANGES = SETUP / "CHANGES.md"
 NORTH_STAR_FORMAT = SETUP / "NORTH_STAR_FORMAT.md"
 EVALS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "evals"
+UPGRADES = SETUP / "upgrades"
+HARNESS = SETUP / "harness"
 
-# Every file whose text setup-project copies or emits into a project.
+# Every file whose text setup-project copies or emits into a project: the conventions, the
+# surfaces template, and the verification harness it copies (the tool and its example data).
 EMITTED = (
     SKILLS / "figure-out" / "references" / "ADR_FORMAT.md",
     NORTH_STAR_FORMAT,
-    SETUP / "VERIFICATION_README_TEMPLATE.md",
+    HARNESS / "verify",
+    HARNESS / "harness.md",
+    *sorted((HARNESS / "recipes").glob("*.md")),
 )
 
 HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
@@ -40,7 +45,7 @@ def emitted_digest() -> str:
     digest = hashlib.sha256()
     for path in EMITTED:
         text = HTML_COMMENT.sub("", path.read_text(encoding="utf-8"))
-        digest.update(path.name.encode("utf-8") + b"\n")
+        digest.update(path.relative_to(SETUP.parent.parent).as_posix().encode("utf-8") + b"\n")
         digest.update(re.sub(r"\s+", " ", text).strip().encode("utf-8") + b"\n")
     return digest.hexdigest()
 
@@ -122,3 +127,25 @@ def test_eval_cases_track_the_newest_version() -> None:
         assert any(
             newest - 1 in found for found in recorded.values()
         ), f"no eval case records v{newest - 1}, one behind"
+
+
+GUIDE = re.compile(r"^v(\d+)-to-current\.md$")
+
+
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
+def test_one_upgrade_guide_per_older_version_each_to_the_newest() -> None:
+    # Each guide takes a project straight to the newest version, so a new version updates
+    # every guide: a guide still naming an older target would walk a project to a replaced shape.
+    newest = versions()[-1][0]
+    guides = {int(m.group(1)): p for p in UPGRADES.glob("*.md") if (m := GUIDE.match(p.name))}
+    assert sorted(guides) == list(range(1, newest)), (
+        f"{UPGRADES.relative_to(REPO_ROOT)} must hold v1-to-current.md … "
+        f"v{newest - 1}-to-current.md and none for v{newest}; found "
+        f"{sorted(p.name for p in guides.values())}"
+    )
+    for number, path in guides.items():
+        targets = set(re.findall(r"\bto v(\d+)\b", path.read_text(encoding="utf-8")))
+        assert targets == {str(newest)}, (
+            f"{path.relative_to(REPO_ROOT)} must upgrade v{number} to v{newest}, the newest; "
+            f"it names {sorted(targets)}"
+        )

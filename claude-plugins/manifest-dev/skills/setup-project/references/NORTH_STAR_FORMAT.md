@@ -191,14 +191,15 @@ single source of the emitted text. Emit it adapted to what the project actually 
 extend an existing section rather than duplicating one; where the host supports imports,
 the session-start reads become imports. The version comment records which surfaces version
 the project carries, so a later update can tell what changed since; write the current
-version from `CHANGES.md` beside this file. Include the verification-surface entry only where
-the project has one, naming where it lives and which form it takes, and the feature-map entry
-only where people invoke the artifact and the map is not already that surface.
+version from `CHANGES.md` beside this file. Include the verification entry only where the
+project has a verification harness, naming the command that runs it. It is written for anyone
+who opens the repository, with or without this workflow, so it uses no term `--help` does not
+explain.
 
 ```markdown
 ## Project surfaces
 
-<!-- setup-project surfaces v3 -->
+<!-- setup-project surfaces v4 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared
 ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.md` and
@@ -218,15 +219,12 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   contradicts or narrows an existing decision. Write new records per
   `docs/adr/CONVENTIONS.md` — it is self-contained, and writing one is one act: the
   record, the restatus of what it changes, and the index rebuild together.
-- **Verification surface** — `<path>`, <a harness and feature map | a behavior eval suite |
-  a list of reader tasks>: how this project checks that its result still does its job.
-  A change to anything an entry covers updates that entry and exercises it, as its README
-  describes.
-- **Feature map** — `<path>`: how a user reaches each feature and how to drive and check
-  it; its README gives the commands and what a drive needs. Start there to place a report or
-  find what a change touches; a change to a feature updates its entry and drives it. <Omit this bullet where
-  the verification surface above is already a harness and feature map, or where nobody
-  invokes the artifact.>
+- **Verification** — `<command>`: how this project checks that its work still does its job.
+  Run it before saying a change works, when reproducing a reported problem, and when a change
+  touches something one of its recipes covers (`<command> list` shows them); a change that
+  needs a check no recipe has adds one. Recipes marked ask-first cost money, time or shared
+  resources: run those only when a person runs them or has agreed. `<command> --help` gives the
+  rest. <Omit this bullet where the project has no verification harness.>
 ```
 
 <!-- Fixed boundary: copying resumes at the heading below and runs to the end of the file. -->

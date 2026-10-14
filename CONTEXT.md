@@ -69,21 +69,21 @@ _Avoid_: ADR format, ADR template.
 An index that asserts nothing its records don't, and is rebuilt from them rather than edited alongside them — so staleness is a repairable lag rather than lost information.
 _Avoid_: ADR list, table of contents.
 
-**Verification Surface**:
-A project's durable means of checking that an artifact future runs will change still does its job, in the artifact's own form: a harness plus a feature map for a runnable product, a behavior eval suite for prompts and skills, a reader-task list for a living document. Where people invoke the artifact, a feature map covers it whatever the form, saying how a user reaches each feature and how to drive and check it. Each entry is unverified, verified, stale, or (a map entry) unreachable; an eval case is unmeasured, measured, or stale. Normal runs build and repair it where the work touches it, never a separate maintenance pass.
-_Avoid_: Test suite, e2e suite, control skill.
+**Verification Harness**:
+A project's one command for checking that what future runs will change still does its job — `--help` says everything — reading one Recipe per feature, skill, document walk or eval suite. Statuses (unverified, verified, failed, unreachable, unjudged, stale) are worked out from committed evidence, never kept by hand. Normal runs build and repair it where the work touches it, never a separate maintenance pass. It replaced the verification surface, feature map and reader-task list of earlier setups.
+_Avoid_: Verification surface, feature map, reader-task list, test suite, control skill.
+
+**Recipe**:
+One Markdown file in the Verification Harness: what a thing is, how a user reaches it, the scenarios that exercise it (each an exact command and what it proves), and its traps. A walk recipe has a fresh reader do a task from a document alone; an eval recipe starts a behavior suite without redefining its statuses.
+_Avoid_: Feature-map entry, reader task, test case.
+
+**Ask-first**:
+The mark on a Recipe whose run costs something a person should weigh — money or quota, long run time, shared environments, effects outside the repository — with its reason. By default the harness runs it only with `--yes`, given when a person ran it or agreed; the project's setting can change that. It follows what a run costs, not its kind: a local browser or CLI drive is unmarked.
+_Avoid_: Paid, model-session, slow.
 
 **Fit to Trust**:
-Whether an existing verification surface can be relied on, judged by the jobs it does — a cold proof run of one entry passes and leaves evidence that survives cleanup, health is checkable, runs are isolated, and PASS means the real path — never by whether it has every part or the shipped tooling.
+Whether an existing Verification Harness can be relied on for the recipes a change touches, judged by the jobs it does — a cold proof run of one scenario passes and leaves evidence that survives cleanup, health is checkable, runs are isolated, and PASS means the real path — never by whether it has every part or the shipped tooling.
 _Avoid_: Complete, conformant, healthy.
-
-**Feature Map**:
-The index plus one file per feature that says, from the user's side only, how each thing people invoke — a route, a command, a public call, a skill — is reached, driven and checked, with a status per entry; it navigates, and each entry names the check that holds it.
-_Avoid_: Test plan, e2e list.
-
-**Reader Task**:
-One entry in a living document's verification surface: a task a reader comes to the document to do, the sections the reader relies on, what the reader should end up able to do, and a status. A reader with fresh context, given only the document, walks the entry.
-_Avoid_: User story, test case, doc test.
 
 **Surfaces Version**:
 The integer, listed in setup-project's `CHANGES.md`, that a project's context file records in its project-surfaces section. Setup-project writes it when it installs or updates the surfaces, and figure-out writes it when the user declines the whole update offer. The recorded number decides whether figure-out offers an update — none at the newest version — and lets a setup-project run mark which of its offers are new since then; a setup-project run audits the whole setup whatever number is recorded, and compares in full when none is. Unrelated to the plugin's own version.
@@ -94,7 +94,7 @@ A check installed from a correction so the corrected class of mistake fails for 
 _Avoid_: Rule (that is prose), guard, concurrency lock.
 
 **Debt**:
-What a run found and did not fix: unfixed lock hits, refactor flags from workaround comments, constraint comments awaiting encoding, new suppressions, reshapes outside the change's scope, product regressions the verification surface exposed, and a new verification surface the user may remove. A run names it in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket. A later run whose work reaches the same area offers to fold it in.
+What a run found and did not fix: unfixed lock hits, refactor flags from workaround comments, constraint comments awaiting encoding, new suppressions, reshapes outside the change's scope, product regressions the verification harness exposed, and a new verification harness the user may remove. A run names it in its completion report, in the "Debt left" section of every pull request it opens, and on its Ticket. A later run whose work reaches the same area offers to fold it in.
 _Avoid_: Tech debt (too broad), TODO, backlog.
 
 **Seed**:
