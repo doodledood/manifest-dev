@@ -37,6 +37,16 @@ Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-au
 Proves: it offers gaps item by item though the version is current, and backfills `Enforced by` only on records in effect.
 Check: read
 
+### upgrade-this-repository-from-v3
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-upgrade-this-repository.md --scaffold verification/scaffolds/this-repository-at-v3 --max-turns 300`
+Proves: on this repository's last commit at v3, the update offers the move to one harness and applies it: a recipe per skill, walk and eval suite, the evidence moved with an Outcome line, `docs/features/` and `docs/reader-tasks/` removed, the version line at the newest. The run's `scratch.diff` is what the later hand-completed commit started from.
+Check: read
+
+### this-repository
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-this-repository.md --scaffold verification/scaffolds/this-repository --max-turns 200`
+Proves: on this repository, set up at the newest version, the audit offers nothing and writes nothing; the summary shows no files written.
+Check: read
+
 ### install
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-install.md --max-turns 80`
 Proves: `docs/adr/CONVENTIONS.md`, `CONTEXT.md`, `NORTH_STAR.md` and `docs/NORTH_STAR_CONVENTIONS.md` exist, and the context file carries the newest version line.
@@ -47,6 +57,7 @@ Check: read
 - It writes many project files and changes every later session's context. Scratch directory only.
 - It never overwrites a project-owned copy: differences are offered, not applied.
 - It writes scenarios only as far as existing commands reach; drive work beyond that comes from the change that needs it.
-- Each prompt file starts `/manifest-dev:setup-project`, followed by whether the user accepts every item.
+- `this-repository` copies the last commit, not the working tree: commit before driving it.
+- Each prompt file except the two `setup-project-*-repository.md` ones starts `/manifest-dev:setup-project`, followed by whether the user accepts every item.
 - `tests/test_setup_project_versions.py` (a change to an emitted file ships a new version) and `tests/test_project_conventions_forks.py` (this repo's copies match the defaults) also check it; behavior cases `30`, `45`, `47`, `49` cover figure-out's offer of it, and `50`, `51` a setup run (all `unmeasured`).
 - Not yet driven: the description phrases, figure-out's offer.

@@ -188,7 +188,8 @@ def git(*args: str) -> str:
 
 
 def commit_time(line: str) -> dt.datetime:
-    return dt.datetime.fromisoformat(line).astimezone(dt.timezone.utc)
+    # Python before 3.11 reads no trailing "Z", which git prints for UTC times.
+    return dt.datetime.fromisoformat(line.replace("Z", "+00:00")).astimezone(dt.timezone.utc)
 
 
 def last_change(paths: list[str]) -> dt.datetime | None:
