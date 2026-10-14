@@ -349,18 +349,27 @@ function status(recipe: Recipe, history: Evidence[] = evidenceFor(recipe)): stri
   // A scenario that never ran proves nothing, so passing the others does not verify the recipe.
   const unrun = recipe.scenarios.map((s) => s.name).filter((name) => !perScenario.has(name));
   const oldestRun = latest.reduce<Date | undefined>((a, e) => (!a || e.when < a ? e.when : a), undefined);
+  const worst = latest.reduce<Evidence | undefined>(
+    (a, e) => (!a || SEVERITY[e.outcome] > SEVERITY[a.outcome] ? e : a),
+    undefined,
+  );
+  // A run that failed or could not start says more than a proof found outdated, so it shows
+  // first: over a Drift line it ran after, and over covered files changed after another run.
+  const failing = worst !== undefined && SEVERITY[worst.outcome] >= SEVERITY.unreachable;
   // A Drift line holds until every scenario has run since it: one scenario's run repairs only itself.
-  if (drift && (!oldestRun || unrun.length || drift[0] >= day(oldestRun))) return `stale (${drift[0]}): ${drift[1]}`;
-  if (!latest.length) return "unverified";
-  const worst = latest.reduce((a, e) => (SEVERITY[e.outcome] > SEVERITY[a.outcome] ? e : a));
+  const driftHolds = drift && (!oldestRun || unrun.length || drift[0] >= day(oldestRun));
+  if (driftHolds && !(failing && day(worst.when) >= drift[0])) return `stale (${drift[0]}): ${drift[1]}`;
+  if (!worst) return "unverified";
   const oldest = latest.reduce((a, e) => (e.when < a.when ? e : a));
   // The date is the worst scenario's run, or for a recipe whose scenarios all passed, the
   // oldest of their runs: how fresh the weakest proof is.
   const notRun = unrun.length ? `no run yet for ${unrun.join(", ")}` : "";
   const label =
-    worst.outcome === "verified" && notRun
-      ? `unverified (${day(oldest.when)}): ${notRun}`
-      : `${worst.outcome} (${day(worst.outcome === "verified" ? oldest.when : worst.when)})`;
+    worst.outcome === "verified"
+      ? notRun
+        ? `unverified (${day(oldest.when)}): ${notRun}`
+        : `verified (${day(oldest.when)})`
+      : `${worst.outcome} (${day(worst.when)})${notRun ? `: ${notRun}` : ""}`;
   if (!recipe.covers.length) return label;
   // Evidence that recorded what it checked is stale when the covered files now differ; older
   // evidence falls back to comparing times.
@@ -371,9 +380,7 @@ function status(recipe: Recipe, history: Evidence[] = evidenceFor(recipe)): stri
     e.covers ? e.covers !== now : changed !== undefined && changed.getTime() > checkedAt(e).getTime(),
   );
   if (!outdated.length) return label;
-  // A run that failed or could not start against the current files says more than a proof
-  // the change outdated, so it shows first.
-  if (SEVERITY[worst.outcome] >= SEVERITY.unreachable && !outdated.includes(worst)) return label;
+  if (failing && !outdated.includes(worst)) return label;
   // Name the newest run the change outdated, which need not be the worst run.
   const last = outdated.reduce((a, e) => (e.when > a.when ? e : a));
   const run = `the ${last.outcome} run of ${day(last.when)}`;
@@ -425,9 +432,10 @@ of its scenarios' latest runs:
   failed (DATE)         a scenario's latest run failed
   unreachable (DATE)    a scenario's latest run could not start: a prerequisite was missing
   unjudged (DATE)       a scenario's latest run finished; its proof needs reading — see \`verify judge\`
-  stale (DATE): ...     what the recipe covers changed after that evidence, or someone found it
-                        drifting and added \`Drift (DATE): what differs\` to the recipe. A run
-                        that failed or was unreachable on the current files shows instead
+  stale (DATE): ...     what the recipe covers changed after that evidence (or, when nothing is
+                        dated after it, differs from what it checked; DATE is then the run's),
+                        or someone found it drifting and added \`Drift (DATE): what differs\` to
+                        the recipe. A failed or unreachable run since then shows instead
 
 Evidence: each run writes {evidence}/RECIPE/STAMP.md (command, exit code, outcome, a fingerprint
 of the covered files, output with local paths removed). Commit it with the change it checked.

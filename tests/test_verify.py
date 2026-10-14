@@ -254,6 +254,7 @@ def _evidence(tmp_path: Path, stamp: str, text: str) -> Path:
 
 
 TWO_SCENARIOS = "### one\nRun: `true`\n\n### two\nRun: `true`\n"
+ONCE = "### once\nRun: `true`\n"
 
 
 # Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
@@ -328,18 +329,9 @@ def _git(repo: Path, *args: str, when: str = "2026-01-02T00:00:00Z") -> None:
 def test_status_goes_stale_when_covered_files_change_after_the_evidence(
     tmp_path: Path,
 ) -> None:
-    env = _harness(tmp_path, "- **Outcome:** verified\n")
-    recipe = tmp_path / "verification" / "recipes" / "thing.md"
-    recipe.write_text(
-        recipe.read_text(encoding="utf-8").replace(
-            "kind: feature\n", "kind: feature\ncovers: src.txt\n"
-        ),
-        encoding="utf-8",
+    env = _covered_repo(
+        tmp_path, ONCE, {"20260101T000000Z": "- **Outcome:** verified\n"}
     )
-    (tmp_path / "src.txt").write_text("one\n", encoding="utf-8")
-    _git(tmp_path, "init", "-q")
-    _git(tmp_path, "add", "-A")
-    _git(tmp_path, "commit", "-qm", "change and its evidence")
     fresh = run_verify("list", env=env)
     assert "verified (2026-01-01)" in fresh.stdout, fresh.stdout + fresh.stderr
 
@@ -358,12 +350,12 @@ def test_status_goes_stale_when_covered_files_change_after_the_evidence(
     assert "stale (" in committed.stdout, committed.stdout
 
 
-def _covered_repo(
-    tmp_path: Path, scenarios: str, evidence: dict[str, str]
+def _covering_src(
+    tmp_path: Path, scenarios: str = ONCE, evidence: dict[str, str] | None = None
 ) -> dict[str, str]:
-    # A recipe covering src.txt, committed on 2026-01-02 with the evidence given (stamp: text).
+    # A recipe covering src.txt, with the evidence given (stamp: text).
     env = _harness(tmp_path, "", scenarios)
-    for stamp, text in evidence.items():
+    for stamp, text in (evidence or {}).items():
         _evidence(tmp_path, stamp, text)
     recipe = tmp_path / "verification" / "recipes" / "thing.md"
     recipe.write_text(
@@ -373,6 +365,14 @@ def _covered_repo(
         encoding="utf-8",
     )
     (tmp_path / "src.txt").write_text("one\n", encoding="utf-8")
+    return env
+
+
+def _covered_repo(
+    tmp_path: Path, scenarios: str, evidence: dict[str, str]
+) -> dict[str, str]:
+    # The same, committed on 2026-01-02 in a new repository.
+    env = _covering_src(tmp_path, scenarios, evidence)
     _git(tmp_path, "init", "-q")
     _git(tmp_path, "add", "-A")
     _git(tmp_path, "commit", "-qm", "the change and its evidence")
@@ -481,6 +481,35 @@ def test_a_run_of_an_edit_since_undone_differs_rather_than_predates(
         "stale (2026-01-09): covered files differ from what the failed run of 2026-01-09 "
         "checked; no run yet for two" in shown.stdout
     ), (shown.stdout + shown.stderr)
+
+
+def test_a_failed_recipe_names_its_unrun_scenarios(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", TWO_SCENARIOS)
+    _evidence(
+        tmp_path, "20260101T000000Z", "- **Scenario:** one\n- **Outcome:** failed\n"
+    )
+    shown = run_verify("help", "thing", env=env)
+    assert shown.stdout.splitlines()[0].endswith(
+        "failed (2026-01-01): no run yet for two"
+    ), (shown.stdout + shown.stderr)
+    assert "failed (2026-01-01)" in run_verify("list", env=env).stdout
+
+
+def test_a_failure_since_a_drift_line_shows_before_it(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", TWO_SCENARIOS)
+    _evidence(
+        tmp_path, "20260101T000000Z", "- **Scenario:** one\n- **Outcome:** verified\n"
+    )
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8") + "\nDrift (2026-01-03): a flag changed.\n",
+        encoding="utf-8",
+    )
+    assert "stale (2026-01-03)" in run_verify("list", env=env).stdout
+    _evidence(
+        tmp_path, "20260105T000000Z", "- **Scenario:** two\n- **Outcome:** failed\n"
+    )
+    assert "failed (2026-01-05)" in run_verify("list", env=env).stdout
 
 
 # Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
@@ -653,15 +682,7 @@ def test_evidence_after_a_drift_line_clears_it(tmp_path: Path) -> None:
 def test_an_edit_after_the_run_stays_stale_however_it_is_committed(
     tmp_path: Path,
 ) -> None:
-    env = _harness(tmp_path, "", "### once\nRun: `true`\n")
-    recipe = tmp_path / "verification" / "recipes" / "thing.md"
-    recipe.write_text(
-        recipe.read_text(encoding="utf-8").replace(
-            "kind: feature\n", "kind: feature\ncovers: src.txt\n"
-        ),
-        encoding="utf-8",
-    )
-    (tmp_path / "src.txt").write_text("one\n", encoding="utf-8")
+    env = _covering_src(tmp_path)
     _git(tmp_path, "init", "-q")
     assert run_verify("drive", "thing", env=env).returncode == 0
     _git(tmp_path, "add", "-A")
@@ -840,15 +861,7 @@ def test_ignored_files_do_not_make_evidence_stale(tmp_path: Path) -> None:
 def test_outside_a_repository_an_edit_still_makes_evidence_stale(
     tmp_path: Path,
 ) -> None:
-    env = _harness(tmp_path, "", "### once\nRun: `true`\n")
-    recipe = tmp_path / "verification" / "recipes" / "thing.md"
-    recipe.write_text(
-        recipe.read_text(encoding="utf-8").replace(
-            "kind: feature\n", "kind: feature\ncovers: src.txt\n"
-        ),
-        encoding="utf-8",
-    )
-    (tmp_path / "src.txt").write_text("one\n", encoding="utf-8")
+    env = _covering_src(tmp_path)
     assert run_verify("drive", "thing", env=env).returncode == 0
     assert "verified (" in run_verify("list", env=env).stdout
     (tmp_path / "src.txt").write_text("two\n", encoding="utf-8")
