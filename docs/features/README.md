@@ -11,8 +11,13 @@ how a user reaches it and how a run drives it.
 
 - A checkout of this repository at the commit under test, with the virtual environment active
   (`source .venv/bin/activate`; `scripts/setup.sh` creates it).
-- Docker running (colima on macOS) and `ANTHROPIC_API_KEY` in the environment or the shell
-  profile.
+- Docker running (colima on macOS) and a Claude credential in the environment or the shell
+  profile: with a Claude subscription, run `claude setup-token` once and export the token as
+  `CLAUDE_CODE_OAUTH_TOKEN` (the container cannot read the macOS keychain your login uses); with an
+  API key, export `ANTHROPIC_API_KEY`. When both are set the subscription token is used. The
+  subscription token is Anthropic's documented way to run the unmodified Claude Code CLI from a
+  script; keep drives to ordinary, occasional use on your own subscription, and use an API key for
+  anything heavier (the eval suite always does).
 - Health first: `scripts/features/drive.sh doctor` exits `0`. It starts one throwaway session and
   checks that the plugin loaded and its skills are listed. A session that only answers proves
   nothing, so a drive whose session did not load the plugin or the named skill is reported

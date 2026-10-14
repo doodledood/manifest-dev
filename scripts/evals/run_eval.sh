@@ -25,19 +25,19 @@ evals="$root/claude-plugins/manifest-dev/evals"
 cli=$(sed -n 's/.*install.sh | bash -s -- \([0-9.]*\).*/\1/p' "$evals/Dockerfile")
 image="manifest-dev-evals:$cli"
 
-# The interactive-shell alias that launches Claude Code strips the key; read it from the profile.
-if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
-  ANTHROPIC_API_KEY=$(zsh -ic 'printf %s "$ANTHROPIC_API_KEY"' 2>/dev/null || true)
-fi
-[[ -n "${ANTHROPIC_API_KEY:-}" ]] || { echo "ANTHROPIC_API_KEY is not set" >&2; exit 1; }
-export ANTHROPIC_API_KEY
+# A full suite is hundreds of automated sessions, so it runs on an API key only: Anthropic's
+# Consumer Terms allow automated access to a Claude subscription only where Anthropic permits it,
+# and the subscription's limits assume ordinary individual use.
+# shellcheck source=../lib/claude-auth.sh
+source "$root/scripts/lib/claude-auth.sh"
+claude_auth_resolve --api-key-only || exit 1
 
 docker info >/dev/null 2>&1 || colima start
 docker image inspect "$image" >/dev/null 2>&1 || docker build -t "$image" "$evals"
 mkdir -p "$(dirname "$root/claude-plugins/manifest-dev/$out")"
 
 docker run -d --name "$name" --security-opt seccomp=unconfined --security-opt apparmor=unconfined \
-  -e ANTHROPIC_API_KEY -v "$root":/work -w /work/claude-plugins/manifest-dev \
+  -e "$CLAUDE_AUTH_ENV" -v "$root":/work -w /work/claude-plugins/manifest-dev \
   "$image" claude plugin eval . --allow-tools Write Bash -j 8 --no-publish --trust-plugin \
   --json "$out" "$@"
 echo "started $name — follow with: docker logs -f $name"

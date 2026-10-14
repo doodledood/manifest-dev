@@ -23,7 +23,9 @@
 # plugins and skills, final reply with local paths removed, files written — goes to
 # docs/features/evidence/<feature>/<stamp>.md to commit. A drive whose session did not load the plugin or the skill is reported, not counted.
 #
-# Needs: docker (colima on macOS), and ANTHROPIC_API_KEY in the environment or the shell profile.
+# Needs: docker (colima on macOS), and a Claude credential — a subscription token from
+# `claude setup-token` in CLAUDE_CODE_OAUTH_TOKEN, or an API key in ANTHROPIC_API_KEY
+# (scripts/lib/claude-auth.sh says which is used).
 # MODEL selects the model (default: opus).
 set -euo pipefail
 
@@ -88,11 +90,9 @@ fi
 command -v docker >/dev/null || die "docker not found; install it (or colima on macOS)"
 docker info >/dev/null 2>&1 || colima start >/dev/null 2>&1 || die "docker is not running"
 docker image inspect "$image" >/dev/null 2>&1 || docker build -q -t "$image" "$evals" >/dev/null
-if [[ -z ${ANTHROPIC_API_KEY:-} ]]; then
-  ANTHROPIC_API_KEY=$(zsh -ic 'printf %s "$ANTHROPIC_API_KEY"' 2>/dev/null || true)
-fi
-[[ -n ${ANTHROPIC_API_KEY:-} ]] || die "ANTHROPIC_API_KEY is not set"
-export ANTHROPIC_API_KEY
+# shellcheck source=../lib/claude-auth.sh
+source "$root/scripts/lib/claude-auth.sh"
+claude_auth_resolve || die "set a Claude credential (see above)"
 
 if [[ $feature == doctor ]]; then
   # Under $store, not mktemp: colima shares only the home directory with the container.
@@ -106,7 +106,7 @@ fi
 scaffold_in=""
 [[ -n $scaffold ]] && scaffold_in="/repo/${scaffold#"$root"/}/scaffold.sh"
 
-docker run --rm -e ANTHROPIC_API_KEY -e PROMPT="$prompt" -e SCAFFOLD="$scaffold_in" \
+docker run --rm -e "$CLAUDE_AUTH_ENV" -e PROMPT="$prompt" -e SCAFFOLD="$scaffold_in" \
   -v "$root":/repo:ro -v "$out":/out "$image" bash -c '
     set -euo pipefail
     mkdir -p /tmp/scratch && cd /tmp/scratch && git init -q
@@ -175,7 +175,7 @@ out, dest, feature, stamp = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
 s = json.loads((out / "summary.json").read_text(encoding="utf-8"))
 # The summary is committed to a public repository: paths that exist only on the driving machine
 # or inside the removed container mean nothing to a reader, so they are replaced.
-LOCAL = re.compile(r"`?(?:~|/home/eval|/tmp/scratch)/[^\s`]*`?")
+LOCAL = re.compile(r"`?(?:~|/home/eval|/tmp|/Users|/private|/var/folders)/[^\s`]*`?")
 redact = lambda text: LOCAL.sub("[local path]", text)
 prompt = (out / "prompt.md").read_text(encoding="utf-8").strip()
 files = s["files_written"] or "(none)"
