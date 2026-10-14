@@ -403,8 +403,8 @@ def test_a_stale_recipe_with_an_unrun_scenario_says_both_plainly(
 def test_a_stale_message_names_the_newest_run_the_change_outdated(
     tmp_path: Path,
 ) -> None:
-    # The change outdated the runs of 12-30 (failed) and 01-01; the failed run of 01-05 came
-    # after it. The newest outdated run is named, not the worst or the oldest.
+    # The change outdated the runs of 12-30 (failed) and 01-01; the run of 01-05 came after
+    # it. The newest outdated run is named, not the worst or the oldest.
     env = _covered_repo(
         tmp_path,
         TWO_SCENARIOS + "\n### three\nRun: `true`\n",
@@ -415,14 +415,50 @@ def test_a_stale_message_names_the_newest_run_the_change_outdated(
     )
     _later_change(tmp_path, "2026-01-04T00:00:00Z")
     _evidence(
+        tmp_path, "20260105T000000Z", "- **Scenario:** two\n- **Outcome:** verified\n"
+    )
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-qm", "a run", when="2026-01-05T00:00:00Z")
+    shown = run_verify("help", "thing", env=env)
+    first = shown.stdout.splitlines()[0]
+    assert first.endswith(
+        "stale (2026-01-04): covered files changed after the verified run of 2026-01-01"
+    ), (shown.stdout + shown.stderr)
+
+
+def test_a_failure_on_the_current_files_shows_before_stale(tmp_path: Path) -> None:
+    env = _covered_repo(
+        tmp_path,
+        TWO_SCENARIOS,
+        {"20260101T000000Z": "- **Scenario:** one\n- **Outcome:** verified\n"},
+    )
+    _later_change(tmp_path, "2026-01-04T00:00:00Z")
+    _evidence(
         tmp_path, "20260105T000000Z", "- **Scenario:** two\n- **Outcome:** failed\n"
     )
     _git(tmp_path, "add", "-A")
     _git(tmp_path, "commit", "-qm", "a failed run", when="2026-01-05T00:00:00Z")
+    listed = run_verify("list", env=env)
+    assert "failed (2026-01-05)" in listed.stdout, listed.stdout + listed.stderr
+
+
+def test_a_fingerprinted_run_outdated_by_a_later_commit_says_changed_after(
+    tmp_path: Path,
+) -> None:
+    env = _covered_repo(tmp_path, "### once\nRun: `true`\n", {})
+    run = run_verify("drive", "thing", env={**env, "VERIFY_STAMP": "20260102T000000Z"})
+    assert run.returncode == 0, run.stdout + run.stderr
+    assert "- **Covers:** sha256:" in next(
+        (tmp_path / "verification" / "evidence" / "thing").glob("*.md")
+    ).read_text(encoding="utf-8")
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-qm", "its evidence", when="2026-01-02T00:00:01Z")
+    assert "verified (2026-01-02)" in run_verify("list", env=env).stdout
+    _later_change(tmp_path, "2026-01-06T00:00:00Z")
     shown = run_verify("help", "thing", env=env)
-    assert (
-        "stale (2026-01-04): covered files changed after the verified run of 2026-01-01"
-        in shown.stdout
+    first = shown.stdout.splitlines()[0]
+    assert first.endswith(
+        "stale (2026-01-06): covered files changed after the verified run of 2026-01-02"
     ), (shown.stdout + shown.stderr)
 
 

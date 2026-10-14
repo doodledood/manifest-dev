@@ -324,6 +324,9 @@ function status(recipe: Recipe, history: Evidence[] = evidenceFor(recipe)): stri
     e.covers ? e.covers !== now : changed !== undefined && changed.getTime() > checkedAt(e).getTime(),
   );
   if (!outdated.length) return label;
+  // A run that failed or could not start against the current files says more than a proof
+  // the change outdated, so it shows first.
+  if (SEVERITY[worst.outcome] >= SEVERITY.unreachable && !outdated.includes(worst)) return label;
   // Name the newest run the change outdated, which need not be the worst run.
   const last = outdated.reduce((a, e) => (e.when > a.when ? e : a));
   const run = `the ${last.outcome} run of ${day(last.when)}`;
@@ -376,7 +379,8 @@ of its scenarios' latest runs:
   unreachable (DATE)    a scenario's latest run could not start: a prerequisite was missing
   unjudged (DATE)       a scenario's latest run finished; its proof needs reading — see \`verify judge\`
   stale (DATE): ...     what the recipe covers changed after that evidence, or someone found it
-                        drifting and added \`Drift (DATE): what differs\` to the recipe
+                        drifting and added \`Drift (DATE): what differs\` to the recipe. A run
+                        that failed or was unreachable on the current files shows instead
 
 Evidence: each run writes {evidence}/RECIPE/STAMP.md (command, exit code, outcome, a fingerprint
 of the covered files, output with local paths removed). Commit it with the change it checked.
