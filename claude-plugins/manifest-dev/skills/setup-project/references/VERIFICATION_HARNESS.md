@@ -15,14 +15,17 @@ cases, and living documents are all recipes in the same harness.
 
 ## The parts
 
-- **The command-line tool.** `harness/verify` beside this file is a working implementation,
-  standard-library Python, to copy into the project (`scripts/verify` by default) and adapt. Its
-  subcommands are the contract: `--help` (the whole picture), `list` (every recipe, its kind,
+- **The command-line tool.** `harness/verify` and `harness/verify.mts` beside this file are a
+  working implementation to copy into the project (`scripts/` by default) and adapt. The default
+  is TypeScript with no dependencies, which Node 22.18 or newer runs directly; `verify` is a
+  shell entry that starts it, and stops with exit 3 naming that Node when it is missing or older.
+  Seed this default without asking and say so in the offer. The user may override it, at setup
+  or later: a project that wants another language, or cannot run Node, ports the tool and keeps
+  the `verify` entry, so nothing that calls it changes. Its subcommands are the contract: `--help` (the whole picture), `list` (every recipe, its kind,
   status and ask-first mark), `help <recipe>`, `drive <recipe> [scenario]` (with `walk` and
   `eval` as the same for those kinds), `judge` (record the verdict on evidence that needed
   reading), `doctor` (prerequisites, free) and `check` (every recipe parses and names only paths
-  that exist). A project in another language may write its own, keeping these subcommands and
-  what they print.
+  that exist). A port keeps these subcommands and what they print.
 - **Recipes.** One Markdown file per thing a user reaches or a reader relies on, in the recipes
   directory (`verification/recipes/` by default). Front matter: `kind` (a free label — feature,
   skill, walk, eval, …), `covers` (the paths whose change makes its evidence stale), `ask-first`
@@ -34,23 +37,26 @@ cases, and living documents are all recipes in the same harness.
   what a reader cannot get elsewhere; one that restates a description the artifact already shows
   its users costs upkeep and guides nobody. Where in the code a feature lives is read from the
   code at run time.
-- **Settings.** `harness.md` in the same directory: the `ask-first` setting, an optional
+- **Settings.** `harness.md` beside the recipes directory (`verification/harness.md` by
+  default), never inside it: the `ask-first` setting, an optional
   `doctor:` command, and notes `--help` prints — what every run starts from, what it needs (a
   running service, a credential), driving conventions. `harness/` beside this file carries an
   example settings file and three example recipes: a free browser-and-CLI feature, an ask-first
   agent skill, and an ask-first document walk.
 - **Evidence.** Each run writes `evidence/<recipe>/<stamp>.md`: the scenario, command, exit
-  code, outcome, what it proves, and the output with local paths removed. It is committed with
+  code, outcome, a fingerprint of the files the recipe covers, what it proves, and the output
+  with local paths removed. An interrupted run keeps none. It is committed with
   the change it checked. Fuller evidence — transcripts, screenshots — stays where the scenario's
   command keeps it, and the summary says where.
 
 ## Statuses come from evidence
 
-Nothing about a status is kept by hand. The tool works it out from a recipe's latest evidence:
-`unverified` (none yet — proves nothing), `verified`, `failed`, `unreachable` (a prerequisite
-was missing; the command exits 3), or `unjudged` (the run finished and its proof needs reading,
-until `verify judge` records the verdict), each with its date; and `stale` when a path the recipe
-covers changed after that evidence, or when someone found it drifting and added a
+Nothing about a status is kept by hand. The tool works it out from the latest evidence of each
+of a recipe's scenarios and shows the worst: `unverified` (none yet — proves nothing),
+`verified` (every scenario's latest run passed), `failed`, `unreachable` (a prerequisite was
+missing; the command exits 3), or `unjudged` (the run finished and its proof needs reading,
+until `verify judge` records the verdict), each with its date; and `stale` when a file the
+recipe covers no longer matches the fingerprint that evidence recorded, or when someone found it drifting and added a
 `Drift (YYYY-MM-DD): <what differs>` line to the recipe, which the run that repairs it removes. A run never reports an entry point as verified because a
 different one worked: the evidence names the scenario it came from.
 
@@ -128,10 +134,11 @@ gaps, as long as one command still tells a newcomer how to verify.
 
 ## What setup creates, and what runs build
 
-Setup seeds the harness: it copies and adapts the tool, writes `harness.md` with the ask-first
-choice the user made, adopts existing assets as recipes that delegate to them, catalogs recipes
+Setup seeds the harness: it copies and adapts the tool — TypeScript by default, said in the
+offer, ported where the user asks for another language or the project cannot run Node — asks the
+ask-first choice (default `ask`) and writes it to `harness.md`, adopts existing assets as recipes that delegate to them, catalogs recipes
 from source (routes, commands, menus, invocable skills, the tasks readers bring to the documents)
-so a vague report about any of them can be placed, and wires the context-file bullet. It writes
+so a vague report about any of them can be placed, adds the repository check, and wires the context-file bullet. It writes
 scenarios only as far as existing assets already reach. Then, where one can run without asking,
 it runs one scenario end to end and checks the evidence survives cleanup; where none can, its
 report names the recipe it tried and what stopped it, and builds nothing more to get there. A

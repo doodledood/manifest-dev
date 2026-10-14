@@ -12,24 +12,24 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
+import signal
 import subprocess
-import sys
+import time
 from pathlib import Path
 
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VERIFY = REPO_ROOT / "scripts" / "verify"
-SHIPPED_VERIFY = (
-    REPO_ROOT
-    / "claude-plugins"
-    / "manifest-dev"
-    / "skills"
-    / "setup-project"
+SHIPPED_HARNESS = (
+    (REPO_ROOT / "claude-plugins" / "manifest-dev" / "skills" / "setup-project")
     / "references"
     / "harness"
-    / "verify"
 )
+# The tool is TypeScript that Node runs directly; `verify` is the shell entry that starts it.
+TOOL_FILES = ("verify", "verify.mts")
+NODE = shutil.which("node")
 RECIPES = REPO_ROOT / "verification" / "recipes"
 DRIVE = REPO_ROOT / "scripts" / "drive-skill.sh"
 WALK = REPO_ROOT / "scripts" / "walk.sh"
@@ -42,8 +42,12 @@ POINTER = re.compile(rf"`([\w./-]+\.(?:md|html))` → ({SECTION}(?: and {SECTION
 def run_verify(
     *args: str, env: dict[str, str] | None = None
 ) -> subprocess.CompletedProcess[str]:
+    if NODE is None:
+        pytest.fail(
+            "node is not on PATH; the verification tool needs Node 22.18 or newer"
+        )
     return subprocess.run(
-        [sys.executable, str(VERIFY), *args],
+        [str(VERIFY), *args],
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,
@@ -98,11 +102,65 @@ def test_every_user_invocable_skill_has_a_recipe() -> None:
 
 
 # Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
-def test_this_repositorys_tool_is_the_shipped_one() -> None:
-    assert VERIFY.read_bytes() == SHIPPED_VERIFY.read_bytes(), (
-        "scripts/verify differs from the tool setup-project ships; change the shipped copy "
+@pytest.mark.parametrize("name", TOOL_FILES)
+def test_this_repositorys_tool_is_the_shipped_one(name: str) -> None:
+    assert (REPO_ROOT / "scripts" / name).read_bytes() == (
+        SHIPPED_HARNESS / name
+    ).read_bytes(), (
+        f"scripts/{name} differs from the tool setup-project ships; change the shipped copy "
         "(with a new surfaces version) and copy it here"
     )
+
+
+EVALS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "evals"
+EMBEDDED = re.compile(
+    r"cat > scripts/(verify(?:\.mts)?) <<'VERIFY_TOOL_EOF'\n(.*?\n)VERIFY_TOOL_EOF\n",
+    re.S,
+)
+
+
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md: an eval case
+# that seeds a harness seeds the tool a project would get, so a grade measures the shipped one.
+@pytest.mark.parametrize(
+    "scaffold",
+    sorted(
+        p
+        for p in EVALS.rglob("scaffold.sh")
+        if "VERIFY_TOOL_EOF" in p.read_text(encoding="utf-8")
+    ),
+    ids=lambda p: str(p.parent.relative_to(EVALS)),
+)
+def test_eval_scaffolds_seed_the_shipped_tool(scaffold: Path) -> None:
+    embedded = dict(EMBEDDED.findall(scaffold.read_text(encoding="utf-8")))
+    assert set(embedded) == set(TOOL_FILES), f"{scaffold} must write {TOOL_FILES}"
+    for name, text in embedded.items():
+        assert text == (SHIPPED_HARNESS / name).read_text(
+            encoding="utf-8"
+        ), f"{scaffold.relative_to(REPO_ROOT)} writes a {name} that differs from the shipped one"
+
+
+def _path_with_node_version(tmp_path: Path, version: str | None) -> str:
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    if version:
+        stub = bin_dir / "node"
+        stub.write_text(f"#!/bin/sh\necho {version}\n")
+        stub.chmod(0o755)
+    return str(bin_dir)
+
+
+@pytest.mark.parametrize("version", [None, "v20.11.0", "v22.17.1", "v23.5.0"])
+def test_the_entry_names_the_node_it_needs(tmp_path: Path, version: str | None) -> None:
+    # Without a Node that runs TypeScript, the entry stops as unreachable and says what to
+    # install, rather than failing on the first line of TypeScript.
+    result = subprocess.run(
+        [str(VERIFY), "list"],
+        capture_output=True,
+        text=True,
+        env={"PATH": _path_with_node_version(tmp_path, version)},
+    )
+    assert result.returncode == 3, result.stderr
+    assert "Node 22.18 or newer" in result.stderr
 
 
 def _has_section(path: Path, title: str) -> bool:
@@ -145,20 +203,73 @@ def test_ask_first_recipe_is_refused_without_yes() -> None:
     assert result.returncode == 4 and "ask-first" in result.stderr, result.stderr
 
 
-def _harness(tmp_path: Path, history: str) -> dict[str, str]:
+def _harness(
+    tmp_path: Path,
+    history: str,
+    scenarios: str = "### once\nRun: `true`\nProves: it runs.\n",
+) -> dict[str, str]:
     data = tmp_path / "verification"
     (data / "recipes").mkdir(parents=True)
     (data / "recipes" / "thing.md").write_text(
         "---\nkind: feature\n---\n# Thing\n\nDoes a thing.\n\n## Scenarios\n\n"
-        "### once\nRun: `true`\nProves: it runs.\n",
+        + scenarios,
         encoding="utf-8",
     )
     if history:
-        (data / "evidence" / "thing").mkdir(parents=True)
-        (data / "evidence" / "thing" / "20260101T000000Z.md").write_text(
-            history, encoding="utf-8"
-        )
+        _evidence(tmp_path, "20260101T000000Z", history)
     return {**os.environ, "VERIFY_ROOT": str(tmp_path), "VERIFY_DATA": str(data)}
+
+
+def _evidence(tmp_path: Path, stamp: str, text: str) -> Path:
+    folder = tmp_path / "verification" / "evidence" / "thing"
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / f"{stamp}.md"
+    path.write_text(text, encoding="utf-8")
+    return path
+
+
+TWO_SCENARIOS = "### one\nRun: `true`\n\n### two\nRun: `true`\n"
+
+
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
+def test_runs_from_one_second_keep_the_order_they_were_written_in(
+    tmp_path: Path,
+) -> None:
+    # One drive writes STAMP.md, STAMP-2.md, … ; a directory listing orders -10 before -2 and
+    # may order them any way at all.
+    env = _harness(tmp_path, "", TWO_SCENARIOS)
+    for n in range(1, 11):
+        _evidence(
+            tmp_path,
+            "20260101T000000Z" if n == 1 else f"20260101T000000Z-{n}",
+            "- **Scenario:** one\n- **Outcome:** "
+            + ("failed" if n == 10 else "verified")
+            + "\n",
+        )
+    _evidence(
+        tmp_path,
+        "20260101T000000Z-11",
+        "- **Scenario:** two\n- **Outcome:** verified\n",
+    )
+    listed = run_verify("list", env=env)
+    assert "failed (2026-01-01)" in listed.stdout, listed.stdout + listed.stderr
+
+
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
+def test_a_recipe_shows_the_worst_of_its_scenarios_latest_runs(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", TWO_SCENARIOS)
+    _evidence(
+        tmp_path, "20260101T000000Z", "- **Scenario:** one\n- **Outcome:** failed\n"
+    )
+    _evidence(
+        tmp_path, "20260102T000000Z", "- **Scenario:** two\n- **Outcome:** verified\n"
+    )
+    assert "failed (2026-01-01)" in run_verify("list", env=env).stdout
+    _evidence(
+        tmp_path, "20260103T000000Z", "- **Scenario:** one\n- **Outcome:** verified\n"
+    )
+    # Every scenario passed; the date is the weakest proof's.
+    assert "verified (2026-01-02)" in run_verify("list", env=env).stdout
 
 
 # Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
@@ -211,6 +322,12 @@ def test_status_goes_stale_when_covered_files_change_after_the_evidence(
     edited = run_verify("list", env=env)
     assert "stale (" in edited.stdout, edited.stdout
 
+    # Evidence newer than an uncommitted edit is fresh: the edit counts from its own time.
+    os.utime(tmp_path / "src.txt", (1767225600, 1767225600))  # 2026-01-01T00:00:00Z
+    _evidence(tmp_path, "20260101T000001Z", "- **Outcome:** verified\n")
+    rerun = run_verify("list", env=env)
+    assert "verified (2026-01-01)" in rerun.stdout, rerun.stdout
+
     _git(tmp_path, "commit", "-qam", "a later change", when="2026-01-03T00:00:00Z")
     committed = run_verify("list", env=env)
     assert "stale (" in committed.stdout, committed.stdout
@@ -231,6 +348,225 @@ def test_a_drift_line_marks_the_recipe_stale(tmp_path: Path) -> None:
     assert "stale (2099-01-01)" in listed.stdout and "flag" not in listed.stdout
 
 
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
+@pytest.mark.parametrize(
+    ("scenario", "outcome", "code"),
+    [
+        ("Run: `true`\n", "verified", 0),
+        ("Run: `exit 1`\n", "failed", 1),
+        ("Run: `exit 3`\n", "unreachable", 1),
+        ("Run: `true`\nCheck: read\n", "unjudged", 0),
+    ],
+)
+def test_a_drive_keeps_evidence_that_reads_back_as_its_outcome(
+    tmp_path: Path, scenario: str, outcome: str, code: int
+) -> None:
+    env = {
+        **_harness(tmp_path, "", f"### once\n{scenario}"),
+        "VERIFY_STAMP": "20260101T000000Z",
+    }
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == code, result.stdout + result.stderr
+    kept = (
+        tmp_path / "verification" / "evidence" / "thing" / "20260101T000000Z.md"
+    ).read_text(encoding="utf-8")
+    assert f"- **Outcome:** {outcome}\n" in kept and "- **Scenario:** once\n" in kept
+    assert f"{outcome} (2026-01-01)" in run_verify("list", env=env).stdout
+
+
+def test_kept_output_carries_no_local_paths(tmp_path: Path) -> None:
+    env = _harness(
+        tmp_path, "", "### once\nRun: `echo /Users/someone/secret ~/x /tmp/y`\n"
+    )
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    (kept,) = (tmp_path / "verification" / "evidence" / "thing").iterdir()
+    text = kept.read_text(encoding="utf-8").split("## Output", 1)[1]
+    assert "/Users" not in text and "~/x" not in text and "/tmp/y" not in text, text
+    assert text.count("[local path]") == 3
+
+
+def test_runs_in_one_second_get_their_own_evidence(tmp_path: Path) -> None:
+    env = {
+        **_harness(tmp_path, "", "### once\nRun: `true`\n"),
+        "VERIFY_STAMP": "20260101T000000Z",
+    }
+    for _ in range(2):
+        assert run_verify("drive", "thing", env=env).returncode == 0
+    made = sorted(
+        p.name for p in (tmp_path / "verification" / "evidence" / "thing").iterdir()
+    )
+    assert made == ["20260101T000000Z-2.md", "20260101T000000Z.md"], made
+
+
+@pytest.mark.parametrize("has_outcome", [True, False])
+def test_judge_records_one_verdict(tmp_path: Path, has_outcome: bool) -> None:
+    env = _harness(tmp_path, "")
+    lines = "- **Scenario:** once\n" + (
+        "- **Outcome:** unjudged\n" if has_outcome else ""
+    )
+    path = _evidence(
+        tmp_path, "20260101T000000Z", f"# thing / once\n\n{lines}\n## Output\n\nok\n"
+    )
+    result = run_verify(
+        "judge", "thing", "20260101T000000Z", "verified", "read", "it", env=env
+    )
+    assert result.returncode == 0, result.stderr
+    text = path.read_text(encoding="utf-8")
+    assert text.count("- **Outcome:**") == 1 and "- **Outcome:** verified" in text
+    assert text.endswith("## Verdict\n\nverified: read it\n")
+    assert "verified (2026-01-01)" in run_verify("list", env=env).stdout
+
+
+@pytest.mark.parametrize(
+    ("recipe", "evidence", "problem"),
+    [
+        (
+            "---\nkind: feature\ncovers: missing.txt\n---\n# T\n",
+            "",
+            "covers missing.txt",
+        ),
+        (
+            "---\nkind: feature\n---\n# T\n\n## Scenarios\n\n### a\nRun: `src/nope.sh`\n",
+            "",
+            "names src/nope.sh",
+        ),
+        (
+            "---\nkind: feature\n---\n# T\n\n## Scenarios\n\n### a\nRun: `true`\n",
+            "- **Scenario:** ghost\n",
+            "'ghost' is not in",
+        ),
+        ("---\ncovers: src\n---\n# T\n", "", "no `kind:`"),
+    ],
+)
+def test_check_reports_what_would_send_a_run_to_nothing(
+    tmp_path: Path, recipe: str, evidence: str, problem: str
+) -> None:
+    env = _harness(tmp_path, "")
+    (tmp_path / "src").mkdir()
+    (tmp_path / "verification" / "recipes" / "thing.md").write_text(
+        recipe, encoding="utf-8"
+    )
+    if evidence:
+        _evidence(tmp_path, "20260101T000000Z", evidence)
+    result = run_verify("check", env=env)
+    assert result.returncode == 1 and problem in result.stdout, result.stdout
+
+
+def test_detail_beside_the_summaries_is_kept_and_a_misnamed_summary_reported(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "- **Outcome:** verified\n")
+    folder = tmp_path / "verification" / "evidence" / "thing"
+    (folder / "transcript.md").write_text("what the session said\n", encoding="utf-8")
+    assert "verified (2026-01-01)" in run_verify("list", env=env).stdout
+    assert run_verify("check", env=env).returncode == 0
+    (folder / "browser-run.md").write_text("- **Outcome:** failed\n", encoding="utf-8")
+    assert "verified (2026-01-01)" in run_verify("list", env=env).stdout
+    result = run_verify("check", env=env)
+    assert (
+        result.returncode == 1
+        and "browser-run.md: reads as a run summary" in result.stdout
+    )
+
+
+def test_check_leaves_a_directory_a_run_creates_alone(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### a\nRun: `mkdir -p out && touch out/new.txt`\n")
+    result = run_verify("check", env=env)
+    assert result.returncode == 0, result.stdout
+
+
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
+def test_evidence_after_a_drift_line_clears_it(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "- **Outcome:** verified\n")
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8")
+        + "\nDrift (2025-11-30): older.\nDrift (2025-12-31): newer.\n",
+        encoding="utf-8",
+    )
+    assert "verified (2026-01-01)" in run_verify("list", env=env).stdout
+    _evidence(tmp_path, "20251201T000000Z", "- **Outcome:** verified\n")
+    (tmp_path / "verification" / "evidence" / "thing" / "20260101T000000Z.md").unlink()
+    shown = run_verify("help", "thing", env=env).stdout
+    assert "stale (2025-12-31): newer." in shown, shown
+
+
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
+def test_an_edit_after_the_run_stays_stale_however_it_is_committed(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "", "### once\nRun: `true`\n")
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8").replace(
+            "kind: feature\n", "kind: feature\ncovers: src.txt\n"
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "src.txt").write_text("one\n", encoding="utf-8")
+    _git(tmp_path, "init", "-q")
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-qm", "change and its evidence")
+    assert "verified (" in run_verify("list", env=env).stdout
+
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    (tmp_path / "src.txt").write_text("two\n", encoding="utf-8")
+    _git(
+        tmp_path, "add", "-A"
+    )  # the edit and the evidence of the run before it, together
+    _git(
+        tmp_path,
+        "commit",
+        "-qm",
+        "edit committed with older evidence",
+        when="2099-01-01T00:00:00Z",
+    )
+    listed = run_verify("list", env=env).stdout
+    assert "stale (" in listed, listed
+
+
+def test_an_interrupted_run_keeps_no_evidence(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### slow\nRun: `sleep 5`\n")
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        start_new_session=True,
+    )
+    folder = tmp_path / "verification" / "evidence" / "thing"
+    deadline = time.monotonic() + 10
+    while (
+        not (folder.is_dir() and any(folder.iterdir())) and time.monotonic() < deadline
+    ):
+        time.sleep(0.05)
+    os.killpg(drive.pid, signal.SIGINT)  # Ctrl-C reaches the whole foreground group
+    _, err = drive.communicate(timeout=10)
+    assert drive.returncode == 130, err
+    assert not list(folder.iterdir()), "an interrupted run left evidence behind"
+
+
+def test_output_that_is_not_utf8_is_still_kept(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### bytes\nRun: `printf 'a\\377b'`\n")
+    # The command's own output passes through as bytes; only the kept copy is decoded.
+    result = subprocess.run(
+        [str(VERIFY), "drive", "thing"], capture_output=True, env=env
+    )
+    assert result.returncode == 0, result.stderr
+    assert b"a\xffb" in result.stdout
+    assert "verified (" in run_verify("list", env=env).stdout
+
+
+def test_an_empty_evidence_file_is_reported_and_proves_nothing(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    _evidence(tmp_path, "20260101T000000Z", "")
+    assert "unverified" in run_verify("list", env=env).stdout
+    checked = run_verify("check", env=env)
+    assert checked.returncode == 1 and "empty" in checked.stdout, checked.stdout
+
+
 def test_runner_scripts_parse() -> None:
     # A broken runner fails here, not in the first run that needs it.
     for script in (DRIVE, WALK):
@@ -240,8 +576,12 @@ def test_runner_scripts_parse() -> None:
         assert result.returncode == 0, f"{script.name}: {result.stderr}"
 
 
-# No docker on PATH: a dry run that tried to start anything would fail.
-DRY_ENV = {"PATH": "/usr/bin:/bin", "HOME": "/nonexistent-home"}
+# No docker on PATH: a dry run that tried to start anything would fail. Node stays reachable for
+# the tool itself.
+DRY_ENV = {
+    "PATH": ":".join(([str(Path(NODE).parent)] if NODE else []) + ["/usr/bin", "/bin"]),
+    "HOME": "/nonexistent-home",
+}
 
 
 @pytest.mark.parametrize(
@@ -311,13 +651,80 @@ def test_drive_refuses_a_feature_with_no_recipe() -> None:
     assert result.returncode != 0 and "no recipe" in result.stderr
 
 
-def _stub_docker(tmp_path: Path) -> Path:
+def _stub_docker(tmp_path: Path, transcript: str = "") -> Path:
+    # Answers every docker call with success; `docker run` writes the given transcript into the
+    # directory mounted at /out, standing in for the session.
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
+    (tmp_path / "transcript.jsonl").write_text(transcript, encoding="utf-8")
     stub = bin_dir / "docker"
-    stub.write_text("#!/bin/sh\nexit 0\n")
+    stub.write_text(
+        "#!/bin/sh\n"
+        '[ "$1" = run ] || exit 0\n'
+        'while [ $# -gt 0 ]; do case "$1" in *:/out) out="${1%:/out}";; esac; shift; done\n'
+        f'cp "{tmp_path / "transcript.jsonl"}" "$out/transcript.jsonl"\n'
+    )
     stub.chmod(0o755)
     return bin_dir
+
+
+INIT = {
+    "type": "system",
+    "subtype": "init",
+    "model": "m",
+    "plugins": [{"name": "manifest-dev"}],
+}
+
+
+def _drive_with(
+    tmp_path: Path, transcript: str, prompt: str = "go\n"
+) -> subprocess.CompletedProcess[str]:
+    prompt_file = tmp_path / "prompt.md"
+    prompt_file.write_text(prompt, encoding="utf-8")
+    return subprocess.run(
+        [str(DRIVE), "figure-out", str(prompt_file)],
+        env={
+            "PATH": f"{_stub_docker(tmp_path, transcript)}:/usr/bin:/bin",
+            "HOME": str(tmp_path),
+            "ANTHROPIC_API_KEY": "test-key",
+            "MANIFEST_DEV_FEATURES_EVIDENCE": str(tmp_path / "store"),
+            "DRIVE_STAMP": "20990101T000000Z",
+        },
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+
+
+@pytest.mark.parametrize(
+    ("events", "says"),
+    [
+        ([{"type": "assistant"}], "no init event"),
+        ([{**INIT, "skills": ["manifest-dev:define"]}], "did not load"),
+    ],
+)
+def test_a_session_that_did_not_load_the_skill_is_unreachable(
+    tmp_path: Path, events: list[dict[str, object]], says: str
+) -> None:
+    result = _drive_with(tmp_path, "".join(json.dumps(e) + "\n" for e in events))
+    assert result.returncode == 3 and says in result.stderr, result.stderr
+
+
+def test_a_prompt_with_front_matter_sends_only_its_body(tmp_path: Path) -> None:
+    events = [
+        {**INIT, "skills": ["manifest-dev:figure-out"]},
+        {"type": "result", "num_turns": 1, "result": "done"},
+    ]
+    result = _drive_with(
+        tmp_path,
+        "".join(json.dumps(e) + "\n" for e in events),
+        "---\ntags: a\n---\nthe body\n",
+    )
+    assert result.returncode == 0, result.stderr
+    sent = (
+        tmp_path / "store" / "figure-out" / "20990101T000000Z" / "prompt.md"
+    ).read_text(encoding="utf-8")
+    assert sent == "the body\n"
 
 
 def test_drive_never_reuses_an_evidence_directory(tmp_path: Path) -> None:

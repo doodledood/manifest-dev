@@ -21,9 +21,8 @@ name=$1 out=$2
 shift 2
 
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
-evals="$root/claude-plugins/manifest-dev/evals"
-cli=$(sed -n 's/.*install.sh | bash -s -- \([0-9.]*\).*/\1/p' "$evals/Dockerfile")
-image="manifest-dev-evals:$cli"
+# shellcheck source=../lib/eval-container.sh
+source "$root/scripts/lib/eval-container.sh"
 
 # A Claude subscription token (`claude setup-token`) when one is set, otherwise an API key.
 # shellcheck source=../lib/claude-auth.sh
@@ -32,12 +31,11 @@ claude_auth_resolve || exit 1
 [[ $CLAUDE_AUTH_ENV == CLAUDE_CODE_OAUTH_TOKEN ]] &&
   echo "run_eval: using your Claude subscription; a full suite is many sessions and counts against its usage limits" >&2
 
-docker info >/dev/null 2>&1 || colima start
-docker image inspect "$image" >/dev/null 2>&1 || docker build -t "$image" "$evals"
+eval_container_ready
 mkdir -p "$(dirname "$root/claude-plugins/manifest-dev/$out")"
 
 docker run -d --name "$name" --security-opt seccomp=unconfined --security-opt apparmor=unconfined \
   -e "$CLAUDE_AUTH_ENV" -v "$root":/work -w /work/claude-plugins/manifest-dev \
-  "$image" claude plugin eval . --allow-tools Write Bash -j 8 --no-publish --trust-plugin \
+  "$EVAL_IMAGE" claude plugin eval . --allow-tools Write Bash -j 8 --no-publish --trust-plugin \
   --json "$out" "$@"
 echo "started $name — follow with: docker logs -f $name"

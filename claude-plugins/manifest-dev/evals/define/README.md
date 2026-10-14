@@ -4,7 +4,8 @@ Measures whether `define` encodes a Manifest by the disciplines its own prompt s
 whether it writes a document shaped like a Manifest, which only the with-plugin arm can do and
 which would therefore make every case a vanity win.
 
-Run it from the plugin directory:
+A run is many model sessions: the owner runs it, or an agent runs it after asking, naming the
+cases and why. Run it from the plugin directory:
 
 ```bash
 claude plugin eval . --tag define --ablation with-without --judge-model opus --allow-tools Write Bash --scaffold -j 8

@@ -56,7 +56,9 @@ Each case carries one status:
   marks every number recorded before that date.
 
 A change to a prompt that a case covers updates that case where the change affects what it tests, and
-either runs the measured cases or marks them stale; unmeasured cases stay unmeasured.
+marks the measured cases stale; unmeasured cases stay unmeasured. A run is many model sessions:
+the owner runs it, or an agent runs it after asking, naming the cases and why. Marking a case
+stale needs no one's agreement.
 
 A case shows `unmeasured`, in its row or in the heading of the table that lists it, until its
 first run. A case without it was measured, and the bold stale line under the case table says
@@ -152,11 +154,11 @@ from a discipline `SKILL.md` explicitly states.
 | `44-debt-on-the-path` | autonomous, repository | Offer recorded debt on the change's path as a behavior-preserving first step | unmeasured |
 | `45-current-setup-offers-nothing` | docs, repository, plugin arm only | Offer no setup update to a project that records the newest surfaces version, and do not re-offer the items it declined | unmeasured |
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
-| `47-update-offer-from-previous-version` | docs, repository, plugin arm only | Offer the setup update for a project one surfaces version behind — only what the newer version adds, never what it already carries | unmeasured |
+| `47-update-offer-from-previous-version` | docs, repository, plugin arm only | Offer the setup update for a project on v1 — the move to one harness, never the v2 or v3 shapes v4 replaced, nor what it already carries | unmeasured |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | unmeasured |
-| `49-update-offer-from-v2` | docs, repository, plugin arm only | Offer the setup update for a project on v2 — only what v3 and v4 add, nothing v1 or v2 already gave it | unmeasured |
+| `49-update-offer-from-v2` | docs, repository, plugin arm only | Offer the setup update for a project on v2 — the move to one harness, never v3's bullet wording v4 replaced, nor what v1 or v2 already gave it | unmeasured |
 | `50-update-moves-v3-into-harness` | docs, repository, plugin arm only | A setup-project run on a v3 project offers moving its feature map and reader tasks into one harness, keeping their content, and nothing v1 to v3 already gave it | unmeasured |
-| `51-setup-offers-harness-for-app` | docs, repository, plugin arm only | A setup-project run on a small app with tests offers one harness that adopts the existing test command, one verification bullet, and no ask-first marks for free runs | unmeasured |
+| `51-setup-offers-harness-for-app` | docs, repository, plugin arm only | A setup-project run on a small app with tests offers one harness — the shipped TypeScript tool by default — that adopts the existing test command, one verification bullet, and no ask-first marks for free runs | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and have never been run. Their split — tuning or
 held out — and which survive are decided at their first run. `30` uses a project set up before

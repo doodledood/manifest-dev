@@ -41,7 +41,7 @@ Nothing new to remember: the same commands move a codebase toward one the workfl
 - **Design before code** — figure-out sketches the shape of a change, compares a second one, and screens both for patterns the next agent would copy; define puts a behavior-preserving restructuring first when the area resists the change.
 - **Corrections become checks** — `/do` turns a caught mistake into a scoped type, lint, or test, and the decision record names it.
 - **Debt in `done` and in pull requests** — what a run leaves unfixed is listed at the end and in a "Debt left" section of each pull request; the next change on that path is offered the fix.
-- **One verification harness kept fresh by runs** — a command whose `--help` says how to check the project, with a recipe per feature, skill, document or eval suite, built when missing and repaired when drifting; costly checks are marked to ask first.
+- **One verification harness kept fresh by runs** — a command whose `--help` says how to check the project, with a recipe per feature, skill, document walk or eval suite, built when missing and repaired when drifting; costly checks are marked to ask first.
 - **Recall and update offers** — sessions working on a repository, whether on a bug, a change, a design, or a decision, start from earlier work on it, and set-up projects are offered what changed since their recorded surfaces version.
 
 ## Project surfaces

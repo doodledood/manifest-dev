@@ -33,4 +33,6 @@ Proves: exit code 0, and stdout holds the new note's ID and title.
 - Pressing `n` inside a text field types the letter instead of opening an editor.
 - Titles are trimmed on save. Compare against the rendered title, not the typed value.
 - `Note saved` alone proves nothing. Reopen the note from the list.
-- `tests/e2e/create_note.spec.ts` also covers the save path on every build.
+- `tests/e2e/create_note.spec.ts` covers the save path on every build but stops at the save
+  toast; `browser-save` adopts the same launcher and goes on to reopen the note and keep the
+  snapshot, which the spec does not.

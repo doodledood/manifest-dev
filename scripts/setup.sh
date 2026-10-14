@@ -64,6 +64,15 @@ fi
 info "Installing dev dependencies..."
 uv pip install --python .venv/bin/python ruff black mypy pytest
 
+# Node runs scripts/verify; its type check needs the dev dependencies in scripts/
+info "Checking Node (22.18 or later runs scripts/verify)..."
+if command -v node &> /dev/null && node -e 'const [a,b]=process.versions.node.split(".").map(Number);process.exit(a>22||(a===22&&b>=18)?0:1)'; then
+    info "Found Node $(node --version)"
+    npm --prefix scripts ci --silent
+else
+    error "Node 22.18 or later is required for scripts/verify. Install it, then re-run this script."
+fi
+
 # Verify installations
 info "Verifying installations..."
 .venv/bin/ruff --version
@@ -81,4 +90,5 @@ echo "Development commands:"
 echo "  ruff check --fix claude-plugins/ tests/   # Lint"
 echo "  black claude-plugins/ tests/              # Format"
 echo "  mypy                                      # Type check"
+echo "  npm --prefix scripts run typecheck        # Type check scripts/verify.mts"
 echo "  python3 -m pytest tests/                  # Run tests"

@@ -17,9 +17,16 @@ surface and their bullets (v4).
 
 **First, list** what the reply offers to add or change in the project's setup.
 
-**Then judge.** PASS if the reply offers to update the setup and names the move to one harness of
-recipes, or the feature-map entry's wording (where the commands live, or that a changed
-feature's entry is updated and driven), and
-does not offer any of these as missing: the version line, an `Enforced by` field, a verification
-surface, the records-in-effect rule, the feature map itself or its shape, or a redo of the
-glossary, North Star or conventions. FAIL otherwise.
+An update goes straight to the newest version: v4 replaces the feature-map bullet, so offering
+v3's wording for it is offering a shape the project would only have to move out of again.
+
+**Then judge.** PASS only if all of these hold:
+
+- It offers to update the setup, and offers the move of the feature map and `tests/` surface into
+  one harness of recipes.
+- It does not offer v3's feature-map bullet wording, or keeping the feature map beside the
+  harness.
+- It does not offer as missing what the project has: the version line, an `Enforced by` field,
+  the records-in-effect rule, or a redo of the glossary, North Star or conventions.
+
+FAIL otherwise.

@@ -18,8 +18,16 @@ recipe per feature, that replaces the verification surface and the feature map.
 
 **First, list** what the reply offers to add or change in the project's setup.
 
-**Then judge.** PASS if the reply offers to update the setup and names at least one item the
-newer versions add — the move to one harness of recipes, the feature-map shape, a proof run of
-the verification surface, the records-in-effect rule, or the setup audit — and does not offer any of these as missing: the
-version line, an `Enforced by` field for the existing record, a verification surface, or a
-redo of the glossary, North Star or conventions. FAIL otherwise.
+An update goes straight to the newest version: the v2 feature-map shape and the v3 bullet wording
+were replaced by v4, so offering either is offering a shape the project would only have to move
+out of again.
+
+**Then judge.** PASS only if all of these hold:
+
+- It offers to update the setup, and offers the move of `verify/` into one harness of recipes.
+- It does not offer the fixed feature-map shape, a feature-map index, a feature-map bullet, or a
+  proof run of the old verification surface as something to add.
+- It does not offer as missing what the project has: the version line, an `Enforced by` field
+  for the existing record, or a redo of the glossary, North Star or conventions.
+
+FAIL otherwise.

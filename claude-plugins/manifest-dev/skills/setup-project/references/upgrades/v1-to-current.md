@@ -12,7 +12,8 @@ Offer, each as its own item:
    check, and citing a record as a ruling read only records in effect.
 2. **The harness**, per `MOVE_TO_HARNESS.md` beside this file: the tool, `harness.md`, a recipe
    for each entry the v1 surface carries with its content and evidence, the `ask-first` marks,
-   and the removal of the old surface, its README and its repository check. Where the project has
+   and the removal of the old surface, its README and its repository check — except an eval suite,
+   which stays as it is. Where the project has
    no surface and holds something future runs will change, offer a new harness seeded per
    `../VERIFICATION_HARNESS.md` → *What setup creates, and what runs build* instead.
 3. **The ask-first setting** — `ask` by default, or `run`.

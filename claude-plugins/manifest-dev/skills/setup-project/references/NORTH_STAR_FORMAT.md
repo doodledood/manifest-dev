@@ -222,9 +222,11 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
 - **Verification** — `<command>`: how this project checks that its work still does its job.
   Run it before saying a change works, when reproducing a reported problem, and when a change
   touches something one of its recipes covers (`<command> list` shows them); a change that
-  needs a check no recipe has adds one. Recipes marked ask-first cost money, time or shared
-  resources: run those only when a person runs them or has agreed. `<command> --help` gives the
-  rest. <Omit this bullet where the project has no verification harness.>
+  needs a check no recipe has adds one. Recipes marked ask-first cost money, time, shared
+  resources or effects outside the repository: run those only when a person runs them or has
+  agreed. `<command> --help` gives the rest. <Where the harness setting is `ask-first: run`,
+  replace the ask-first sentence with "Recipes marked ask-first may run freely here." Omit this
+  bullet where the project has no verification harness.>
 ```
 
 <!-- Fixed boundary: copying resumes at the heading below and runs to the end of the file. -->

@@ -155,7 +155,7 @@ plugins = {p["name"] for p in init.get("plugins", [])}
 skills = set(init.get("skills", []))
 need = {"manifest-dev"} | ({"manifest-dev-tools"} if tools else set())
 missing = sorted(need - plugins)
-if feature not in ("doctor", "design-instruments"):
+if feature != "doctor":
     owner = "manifest-dev-tools" if tools and f"manifest-dev-tools:{feature}" in skills else "manifest-dev"
     if f"{owner}:{feature}" not in skills:
         missing.append(f"skill {owner}:{feature}")
@@ -189,13 +189,11 @@ if [[ $feature == doctor ]]; then
   echo "doctor: ok — plugin and skills load in an isolated session"; rm -rf "$out"; exit 0
 fi
 python3 - "$out" "$out/summary.md" "$feature" "$stamp" <<'PY'
-import json, pathlib, re, sys
+import json, pathlib, sys
 out, dest, feature, stamp = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), sys.argv[3], sys.argv[4]
 s = json.loads((out / "summary.json").read_text(encoding="utf-8"))
-# The summary is committed to a public repository: paths that exist only on the driving machine
-# or inside the removed container mean nothing to a reader, so they are replaced.
-LOCAL = re.compile(r"`?(?:~|/home/eval|/tmp|/Users|/private|/var/folders)/[^\s`]*`?")
-redact = lambda text: LOCAL.sub("[local path]", text)
+# scripts/verify keeps this summary as committed evidence and removes local paths from it then;
+# the full record stays on this machine.
 prompt = (out / "prompt.md").read_text(encoding="utf-8").strip()
 files = s["files_written"] or "(none)"
 summary = f"""# Drive: {feature} — {stamp}
@@ -218,7 +216,7 @@ summary = f"""# Drive: {feature} — {stamp}
 
 ## Final reply
 
-{redact(s['result'])}
+{s['result']}
 """
 dest.write_text(summary, encoding="utf-8")
 print(summary)

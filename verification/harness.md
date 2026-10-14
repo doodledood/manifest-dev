@@ -7,7 +7,8 @@ doctor: scripts/drive-skill.sh preflight
   `walk`), and the two behavior suites (kind `eval`). `tests/test_verify.py` runs
   `verify check` with the project's tests and fails when a user-invocable skill has no recipe.
 - Every run starts from a checkout at the commit under test with the virtual environment active
-  (`source .venv/bin/activate`; `scripts/setup.sh` creates it).
+  (`source .venv/bin/activate`; `scripts/setup.sh` creates it). `scripts/verify` needs Node 22.18
+  or newer and says so, exiting 3, when it is missing.
 - Skill recipes drive a real session through `scripts/drive-skill.sh <recipe> <prompt-file>
   [--scaffold <eval-case-dir>] [--tools] [--max-turns N]`. It needs Docker (colima on macOS) and
   a Claude credential: with a Claude subscription, run `claude setup-token` once and export the
@@ -16,7 +17,8 @@ doctor: scripts/drive-skill.sh preflight
   used, and its usage counts against the subscription's limits. Each drive starts a model
   session, so skill recipes are ask-first.
 - Health first: `scripts/verify doctor` runs `scripts/drive-skill.sh preflight`, which checks
-  Docker, the image and the credential and starts nothing. `scripts/drive-skill.sh doctor` goes
+  Docker, the image and the credential and starts no model session (it may start Docker and
+  build the image). `scripts/drive-skill.sh doctor` goes
   further: it starts one throwaway session (model quota) and checks that the plugin loaded and
   its skills are listed. A drive whose session did not load the
   plugin or the named skill exits 3 and is recorded `unreachable`, never counted.

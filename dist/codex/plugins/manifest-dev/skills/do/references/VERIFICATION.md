@@ -22,7 +22,7 @@ repository check — are in setup-project's `references/VERIFICATION_HARNESS.md`
   name the run it owes in the report. A change to a prompt that leaves its measured eval cases
   unrun marks them `stale`; unmeasured cases stay `unmeasured`.
 - **Drift:** when a run fails because the recipe is wrong about the product, repair the recipe
-  within scope. When a recipe the change does not touch is found drifting, add a dated
+  within scope, and remove its `Drift (…)` line when the repair lands. When a recipe the change does not touch is found drifting, add a dated
   `Drift (YYYY-MM-DD): <what differs>` line to it, and leave the repair to the next run that
   touches it.
 - **Unfit harness:** when the work finds the harness not fit to trust for what it touches —

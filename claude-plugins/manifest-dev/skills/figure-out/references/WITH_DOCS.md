@@ -1,6 +1,6 @@
 # figure-out: docs mode
 
-The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds these behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), **ADR offers** (record decisions worth keeping), **North Star updates** (keep the project's standing strategy surface current, under its update asymmetry), and a **stale marker** on a drifting verification-surface entry.
+The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds these behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), **ADR offers** (record decisions worth keeping), **North Star updates** (keep the project's standing strategy surface current, under its update asymmetry), and a **drift marker** on a recipe found drifting.
 
 ## Override: these writes ARE the action
 

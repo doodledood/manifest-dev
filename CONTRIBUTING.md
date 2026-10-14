@@ -5,7 +5,7 @@ Thank you for your interest in contributing! This guide will help you add plugin
 ## Quick Start
 
 1. **Fork and clone** the repository
-2. **Set up development environment**: `./scripts/setup.sh && source .venv/bin/activate`
+2. **Set up development environment** (needs Python 3.10+ and Node 22.18+): `./scripts/setup.sh && source .venv/bin/activate`
 3. **Create a branch**: `git checkout -b plugin/your-plugin-name`
 4. **Use the template**: Copy `claude-plugins/PLUGIN_TEMPLATE` as your starting point
 5. **Develop your plugin** following the structure below

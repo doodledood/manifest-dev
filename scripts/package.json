@@ -1,0 +1,12 @@
+{
+  "name": "manifest-dev-scripts",
+  "private": true,
+  "description": "Development tooling for this repository's scripts: the typecheck of the verification tool. Kept out of the repo-root package.json, which Pi installs from.",
+  "scripts": {
+    "typecheck": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "7.0.2"
+  }
+}

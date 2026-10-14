@@ -1,6 +1,6 @@
 ---
 name: sync-tools
-description: 'Regenerate the Codex distribution copy of the plugin skills and check it for drift. Run after changing anything under claude-plugins/*/skills. OpenCode and Pi read the source tree directly and need no sync.'
+description: 'Regenerate the Codex distribution copy of the plugin skills, and the copies of the shipped verify tool, and check them for drift. Run after changing anything under claude-plugins/*/skills. OpenCode and Pi read the source tree directly and need no sync.'
 user-invocable: true
 metadata:
   internal: true
@@ -14,6 +14,8 @@ Every host reads the same skill files. The Claude Code plugins under `claude-plu
 python3 scripts/sync_dist.py          # regenerate dist/codex/plugins/*/skills byte-identically from source
 python3 scripts/sync_dist.py --check  # exit 1 on any drift (tests/test_dist_skill_references.py runs this)
 ```
+
+The same commands copy the verification tool setup-project ships (`setup-project/references/harness/verify` and `verify.mts`) to `scripts/` and into the eval scaffolds that embed it, and check those copies too.
 
 Run the first command after any change under `claude-plugins/*/skills`, then commit the regenerated tree with the change. There is no per-host rewrite: shipped skill text names no host primitive (`tests/test_skill_frontmatter.py` enforces that), so a copy is a copy.
 

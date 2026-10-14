@@ -58,19 +58,21 @@ Digest: 80bc7de905bfb2a9d5eebb592ab7335742eac591ad98a58b73bc4b1a5e307178
 
 - One verification harness replaces the verification surface, the feature map and the
   reader-task list: a command-line tool (`scripts/verify` by default, copied from a shipped
-  implementation) whose `--help` tells anyone how to verify the project, reading one Markdown
-  recipe per feature, skill, document walk or eval suite. Recipes delegate to the project's
+  implementation in TypeScript that Node 22.18 or newer runs directly, ported on request) whose
+  `--help` tells anyone how to verify the project, reading one Markdown recipe per feature,
+  skill, document walk or eval suite. Recipes delegate to the project's
   existing test and drive commands; statuses are worked out from committed evidence, not kept by
-  hand; `verify check` is the repository check.
+  hand, and go stale when a covered file no longer matches the fingerprint its evidence recorded;
+  `verify check` is the repository check.
 - Recipes whose runs cost something a person should weigh — money or quota, long run time,
   shared environments, effects outside the repository — carry an `ask-first` mark with the
   reason. By default the tool runs them only with `--yes`, given when a person ran them or
   agreed; the user picks that default at setup and can change it in the harness settings.
 - The project-surfaces section carries one verification bullet, written for any reader with or
-  without this workflow: the command, when to run it, and to ask before ask-first recipes. It
+  without this workflow: the command, when to run it, and how ask-first recipes run here. It
   replaces the verification-surface and feature-map bullets.
 - An update moves an existing verification surface, feature map and reader-task list into
   recipes, keeping their content, customizations and evidence, following the upgrade guide for
   the version the project records.
 
-Digest: e3cd7d5bd2eae3e73a425e14aa60bae5a19ce9c4f08b4fea8e52b3038b7af923
+Digest: 19ba19cf0f33d566549b1de2e8006b0637af300c0848516e2d5a0557d2cdb774

@@ -148,7 +148,9 @@ def test_one_upgrade_guide_per_older_version_each_to_the_newest() -> None:
         f"{sorted(p.name for p in guides.values())}"
     )
     for number, path in guides.items():
-        targets = set(re.findall(r"\bto v(\d+)\b", path.read_text(encoding="utf-8")))
+        targets = set(
+            re.findall(r"\b(?:to|record) v(\d+)\b", path.read_text(encoding="utf-8"))
+        )
         assert targets == {str(newest)}, (
             f"{path.relative_to(REPO_ROOT)} must upgrade v{number} to v{newest}, the newest; "
             f"it names {sorted(targets)}"

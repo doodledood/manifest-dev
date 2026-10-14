@@ -94,7 +94,7 @@ short messages do not require permission to do the next piece of research.
   proposal lacks are the gaps.
 - When the read implies making something, state exactly what it will be and
   how it will be checked — through the project's verification harness, its
-  one command for checking a result, with a recipe per feature, skill, document
+  one command for checking a result, with a recipe per feature, skill, document walk
   or eval suite, found where the context file's project-surfaces section names it
   or, with none named, among the verification assets the project keeps; its
   `list` is where a report or a change is placed first — and offer to render a quick disposable draft that makes the proposed result
@@ -143,7 +143,7 @@ its overrides.
 | `references/LOG.md` | by default; `--no-log` suppresses | the investigation log's entry shape and append discipline |
 | `references/RECALL.md` | once the investigation concerns work in the active repository — a bug, change, design, or decision; a general or quick question that repository's history cannot bear on loads nothing | what earlier sessions, tickets, and pull requests left on this repository: dated leads, the debt on this topic's path, hotspots |
 | `references/TASTE.md` | by default; `--autonomous` or `--team` suppresses | offer-and-ratify capture of durable personal steering preferences into harness memory |
-| `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or a mapped context; `--no-docs` or `--team` suppresses | glossary captures, ADR offers, North Star updates, map awareness, the update offer for an older setup, a stale marker on a drifting verification-surface entry — and it loads the project's ADR conventions, or the shipped default beside it |
+| `references/WITH_DOCS.md` | by default, but only once the investigation is relevant to the active project or a mapped context; `--no-docs` or `--team` suppresses | glossary captures, ADR offers, North Star updates, map awareness, the update offer for an older setup, a drift marker on a recipe found drifting — and it loads the project's ADR conventions, or the shipped default beside it |
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining | self-answer with the recommendation you would have given, without waiting |
 | `references/team.md` | `--team`, typically from the `figure-out-team` wrapper | the counterparty becomes a Slack channel or thread, with the operator in the local session; owns team mode's own read-only project-context behavior |
 
