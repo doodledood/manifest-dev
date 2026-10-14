@@ -1,0 +1,5 @@
+# Holds the decision in docs/adr/20261014-project-surfaces-follow-the-context.md — that record's Enforced by line names this case; weakening or removing it means updating that line in the same change.
+schema_version: "1.0"
+name: 52-projectless-chat-offers-no-surfaces
+context:
+  scaffold_script: scaffold.sh

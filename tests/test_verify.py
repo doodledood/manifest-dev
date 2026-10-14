@@ -149,6 +149,29 @@ def _path_with_node_version(tmp_path: Path, version: str | None) -> str:
     return str(bin_dir)
 
 
+@pytest.mark.parametrize("version", ["v22.18.0", "v23.6.0", "v24.0.0"])
+def test_the_entry_starts_the_tool_on_a_node_that_runs_it(
+    tmp_path: Path, version: str
+) -> None:
+    # The stub reports the version, then hands the tool to it, standing in for that Node.
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    stub = bin_dir / "node"
+    stub.write_text(
+        f'#!/bin/sh\n[ "$1" = --version ] && {{ echo {version}; exit 0; }}\necho "started $*"\n'
+    )
+    stub.chmod(0o755)
+    result = subprocess.run(
+        ["sh", str(VERIFY), "list"],
+        capture_output=True,
+        text=True,
+        env={"PATH": f"{bin_dir}:/usr/bin:/bin"},
+    )
+    assert result.returncode == 0 and result.stdout.startswith(
+        "started "
+    ), result.stderr
+
+
 @pytest.mark.parametrize("version", [None, "v20.11.0", "v22.17.1", "v23.5.0"])
 def test_the_entry_names_the_node_it_needs(tmp_path: Path, version: str | None) -> None:
     # Without a Node that runs TypeScript, the entry stops as unreachable and says what to
@@ -385,6 +408,14 @@ def test_kept_output_carries_no_local_paths(tmp_path: Path) -> None:
     assert text.count("[local path]") == 3
 
 
+def test_a_scenario_that_never_ran_leaves_the_recipe_unverified(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### one\nRun: `true`\n\n### two\nRun: `false`\n")
+    assert run_verify("drive", "thing", "one", env=env).returncode == 0
+    assert "unverified (" in run_verify("list", env=env).stdout
+    shown = run_verify("help", "thing", env=env).stdout
+    assert "no run yet for two" in shown, shown
+
+
 def test_runs_in_one_second_get_their_own_evidence(tmp_path: Path) -> None:
     env = {
         **_harness(tmp_path, "", "### once\nRun: `true`\n"),
@@ -537,15 +568,213 @@ def test_an_interrupted_run_keeps_no_evidence(tmp_path: Path) -> None:
         start_new_session=True,
     )
     folder = tmp_path / "verification" / "evidence" / "thing"
-    deadline = time.monotonic() + 10
-    while (
-        not (folder.is_dir() and any(folder.iterdir())) and time.monotonic() < deadline
-    ):
-        time.sleep(0.05)
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith(
+        "running [slow]"
+    )  # the command has started
     os.killpg(drive.pid, signal.SIGINT)  # Ctrl-C reaches the whole foreground group
     _, err = drive.communicate(timeout=10)
     assert drive.returncode == 130, err
     assert not list(folder.iterdir()), "an interrupted run left evidence behind"
+
+
+@pytest.mark.parametrize("when", ["before the command", "while it runs"])
+def test_a_signal_at_any_point_keeps_no_evidence(tmp_path: Path, when: str) -> None:
+    # A large covered tree keeps the run busy hashing before the command starts.
+    env = _harness(tmp_path, "", "### slow\nRun: `sleep 5`\n")
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8").replace(
+            "kind: feature\n", "kind: feature\ncovers: big\n"
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "big").mkdir()
+    for i in range(400):
+        (tmp_path / "big" / f"{i}.txt").write_bytes(b"x" * 50_000)
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    folder = tmp_path / "verification" / "evidence" / "thing"
+    if when == "before the command":
+        deadline = time.monotonic() + 10
+        while (
+            not (folder.is_dir() and any(folder.iterdir()))
+            and time.monotonic() < deadline
+        ):
+            time.sleep(0.005)
+    else:
+        assert drive.stdout is not None and drive.stdout.readline().startswith(
+            b"running"
+        )
+    drive.send_signal(signal.SIGTERM)  # to the tool alone, as a process manager would
+    started = time.monotonic()
+    drive.communicate(timeout=10)
+    assert drive.returncode == 130
+    assert time.monotonic() - started < 4, "the signal did not reach the command"
+    assert not list(folder.iterdir()), "an interrupted run left evidence behind"
+
+
+def test_a_second_signal_stops_what_the_command_started(tmp_path: Path) -> None:
+    env = _harness(
+        tmp_path, "", "### stubborn\nRun: `trap '' INT TERM; sleep 8; echo finished`\n"
+    )
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    assert drive.stdout is not None and drive.stdout.readline().startswith(b"running")
+    time.sleep(0.3)
+    drive.send_signal(signal.SIGINT)
+    time.sleep(0.3)
+    drive.send_signal(signal.SIGINT)
+    started = time.monotonic()
+    out, _ = drive.communicate(timeout=10)
+    assert drive.returncode == 130 and b"finished" not in out
+    assert time.monotonic() - started < 4
+
+
+def test_a_command_that_dies_by_its_own_signal_failed(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### crash\nRun: `kill -ABRT $$`\n")
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == 1, result.stdout + result.stderr
+    (kept,) = (tmp_path / "verification" / "evidence" / "thing").iterdir()
+    text = kept.read_text(encoding="utf-8")
+    assert "- **Outcome:** failed\n" in text and "- **Exit code:** 134\n" in text, text
+
+
+def test_a_reader_that_goes_away_still_leaves_whole_evidence(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### loud\nRun: `seq 1 20000`\n")
+    piped = subprocess.run(
+        f"'{VERIFY}' drive thing | head -n1",
+        shell=True,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    assert piped.stdout.startswith("running"), piped.stderr
+    (kept,) = (tmp_path / "verification" / "evidence" / "thing").iterdir()
+    text = kept.read_text(encoding="utf-8")
+    assert "- **Outcome:** verified\n" in text and "\n20000\n" in text
+
+
+@pytest.mark.parametrize(
+    ("setting", "args", "code"),
+    [("ask", ("--yes",), 0), ("run", (), 0), ("maybe", (), 1)],
+)
+def test_an_ask_first_recipe_runs_when_agreed_or_allowed(
+    tmp_path: Path, setting: str, args: tuple[str, ...], code: int
+) -> None:
+    env = _harness(tmp_path, "", "### once\nRun: `true`\n")
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8").replace(
+            "kind: feature\n", "kind: feature\nask-first: costs money\n"
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "verification" / "harness.md").write_text(
+        f"---\nask-first: {setting}\n---\n", encoding="utf-8"
+    )
+    result = run_verify("drive", "thing", *args, env=env)
+    assert result.returncode == code, result.stdout + result.stderr
+    if code == 0:
+        assert "verified (" in run_verify("list", env=env).stdout
+    else:
+        assert "must be `ask` or `run`" in result.stderr
+
+
+def test_ignored_files_do_not_make_evidence_stale(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### once\nRun: `true`\n")
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8").replace(
+            "kind: feature\n", "kind: feature\ncovers: src\n"
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "a.txt").write_text("a\n", encoding="utf-8")
+    (tmp_path / ".gitignore").write_text("*.log\n", encoding="utf-8")
+    (tmp_path / "src" / "link").symlink_to("a.txt")
+    _git(tmp_path, "init", "-q")
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    (tmp_path / "src" / "x.log").write_text("noise\n", encoding="utf-8")
+    assert "verified (" in run_verify("list", env=env).stdout
+    (tmp_path / "src" / "new.txt").write_text("new\n", encoding="utf-8")
+    assert "stale (" in run_verify("list", env=env).stdout
+
+
+def test_outside_a_repository_an_edit_still_makes_evidence_stale(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "", "### once\nRun: `true`\n")
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8").replace(
+            "kind: feature\n", "kind: feature\ncovers: src.txt\n"
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "src.txt").write_text("one\n", encoding="utf-8")
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    assert "verified (" in run_verify("list", env=env).stdout
+    (tmp_path / "src.txt").write_text("two\n", encoding="utf-8")
+    assert "stale (" in run_verify("list", env=env).stdout
+
+
+@pytest.mark.parametrize(
+    ("evidence", "shows"),
+    [
+        (
+            [
+                ("20260101T000000Z", "one", "unjudged"),
+                ("20260101T000001Z", "two", "unreachable"),
+            ],
+            "unreachable (2026-01-01)",
+        ),
+        (
+            [
+                ("20260101T000000Z", "", "verified"),
+                ("20260102T000000Z", "one", "failed"),
+            ],
+            "failed (2026-01-02)",
+        ),
+        (
+            [
+                ("20260101T000000Z", "", "verified"),
+                ("20260102T000000Z", "ghost", "failed"),
+            ],
+            "verified (2026-01-01)",
+        ),
+    ],
+)
+def test_a_recipe_shows_the_worst_of_its_scenarios(
+    tmp_path: Path, evidence: list[tuple[str, str, str]], shows: str
+) -> None:
+    env = _harness(tmp_path, "", "### one\nRun: `true`\n\n### two\nRun: `true`\n")
+    for stamp, scenario, outcome in evidence:
+        line = f"- **Scenario:** {scenario}\n" if scenario else ""
+        _evidence(tmp_path, stamp, f"# x\n\n{line}- **Outcome:** {outcome}\n")
+    assert shows in run_verify("list", env=env).stdout
+
+
+@pytest.mark.parametrize(
+    "args",
+    [
+        ("list", "a", "b"),
+        ("drive", "thing", "--bogus"),
+        ("judge", "thing", "x", "maybe"),
+    ],
+)
+def test_usage_errors_exit_2(tmp_path: Path, args: tuple[str, ...]) -> None:
+    env = _harness(tmp_path, "")
+    assert run_verify(*args, env=env).returncode == 2
 
 
 def test_output_that_is_not_utf8_is_still_kept(tmp_path: Path) -> None:
@@ -805,3 +1034,192 @@ def test_drive_fails_fast_when_it_cannot_create_evidence(tmp_path: Path) -> None
     finally:
         (store / "figure-out").chmod(0o755)
     assert result.returncode != 0 and "cannot create" in result.stderr, result.stderr
+
+
+# Holds the decision in docs/adr/20261014-one-verification-harness-per-project.md.
+@pytest.mark.parametrize(
+    ("doctor", "code", "last_line"),
+    [("true", 0, "doctor: ok"), ("false", 1, "doctor: not ready")],
+)
+def test_doctor_runs_the_settings_health_command(
+    tmp_path: Path, doctor: str, code: int, last_line: str
+) -> None:
+    env = _harness(tmp_path, "")
+    (tmp_path / "verification" / "harness.md").write_text(
+        f"---\nask-first: ask\ndoctor: {doctor}\n---\n", encoding="utf-8"
+    )
+    result = run_verify("doctor", env=env)
+    assert result.returncode == code, result.stdout + result.stderr
+    assert result.stdout.strip().splitlines()[-1] == last_line
+
+
+def _covering(tmp_path: Path, run: str, covers: str) -> dict[str, str]:
+    env = _harness(tmp_path, "", f"### once\nRun: `{run}`\n")
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8").replace(
+            "kind: feature\n", f"kind: feature\ncovers: {covers}\n"
+        ),
+        encoding="utf-8",
+    )
+    return env
+
+
+@pytest.mark.parametrize("in_repo", [True, False])
+def test_links_under_covers_count_by_their_target(
+    tmp_path: Path, in_repo: bool
+) -> None:
+    env = _covering(tmp_path, "true", "src")
+    (tmp_path / "src" / "dir").mkdir(parents=True)
+    (tmp_path / "src" / "to-dir").symlink_to("dir")
+    (tmp_path / "src" / "dangling").symlink_to("nowhere")
+    if in_repo:
+        _git(tmp_path, "init", "-q")
+    drove = run_verify("drive", "thing", env=env)
+    assert drove.returncode == 0, drove.stdout + drove.stderr
+    assert "verified (" in run_verify("list", env=env).stdout
+    (tmp_path / "src" / "dangling").unlink()
+    (tmp_path / "src" / "dangling").symlink_to("elsewhere")
+    assert "stale (" in run_verify("list", env=env).stdout
+
+
+def test_a_link_to_a_directory_counts_by_its_target_not_its_contents(
+    tmp_path: Path,
+) -> None:
+    env = _covering(tmp_path, "true", "src")
+    for name in ("one", "two"):
+        (tmp_path / "src" / name).mkdir(parents=True)
+        (tmp_path / "src" / name / "same.txt").write_text("x\n", encoding="utf-8")
+    (tmp_path / "src" / "to-dir").symlink_to("one")
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    (tmp_path / "src" / "to-dir").unlink()
+    (tmp_path / "src" / "to-dir").symlink_to("two")  # same contents, new target
+    assert "stale (" in run_verify("list", env=env).stdout
+
+
+def test_a_command_never_outlives_a_killed_tool(tmp_path: Path) -> None:
+    marker = tmp_path / "finished"
+    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith("running [once]")
+    time.sleep(0.5)  # the line prints just before the command starts
+    drive.kill()  # SIGKILL: no handler runs, as when a timeout kills the tool
+    drive.wait(timeout=10)
+    time.sleep(4)
+    assert not marker.exists(), "the command kept running after the tool was killed"
+
+
+@pytest.mark.parametrize("sig", [signal.SIGHUP, signal.SIGQUIT])
+def test_a_closed_terminal_stops_the_run_and_keeps_no_evidence(
+    tmp_path: Path, sig: signal.Signals
+) -> None:
+    marker = tmp_path / "finished"
+    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith("running [once]")
+    drive.send_signal(sig)  # to the tool alone; it passes the signal on
+    _, err = drive.communicate(timeout=10)
+    assert drive.returncode == 130, err
+    time.sleep(3)
+    assert not marker.exists()
+    assert not list((tmp_path / "verification" / "evidence" / "thing").iterdir())
+
+
+def test_an_interrupted_dry_run_stops(tmp_path: Path) -> None:
+    marker = tmp_path / "second"
+    env = _harness(
+        tmp_path,
+        "",
+        f"### one\nRun: `sleep 2`\n\n### two\nRun: `touch {marker}`\n",
+    )
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8").replace(
+            "kind: feature\n", "kind: feature\ndry-run: honored\n"
+        ),
+        encoding="utf-8",
+    )
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing", "--dry-run"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        start_new_session=True,
+    )
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith("would run [one]")
+    time.sleep(0.5)
+    os.killpg(drive.pid, signal.SIGINT)
+    drive.communicate(timeout=10)
+    assert drive.returncode == 130
+    assert not marker.exists()
+
+
+def test_a_command_that_kills_its_own_group_is_failed(tmp_path: Path) -> None:
+    env = _covering(tmp_path, "kill -TERM 0", "verification/recipes")
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == 1, result.stdout + result.stderr
+    (evidence,) = (tmp_path / "verification" / "evidence" / "thing").iterdir()
+    text = evidence.read_text(encoding="utf-8")
+    assert "- **Exit code:** 143" in text and "- **Outcome:** failed" in text
+
+
+def test_one_ctrl_c_stops_a_background_job_too(tmp_path: Path) -> None:
+    marker = tmp_path / "background"
+    env = _covering(
+        tmp_path, f"(sleep 3; touch {marker}) & sleep 3", "verification/recipes"
+    )
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        start_new_session=True,
+    )
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith("running [once]")
+    time.sleep(0.5)
+    started = time.monotonic()
+    os.killpg(drive.pid, signal.SIGINT)  # a background job ignores this one
+    drive.communicate(timeout=10)
+    assert drive.returncode == 130
+    assert time.monotonic() - started < 2, "the run waited on the background job"
+    time.sleep(3)
+    assert not marker.exists()
+
+
+def test_a_killed_tool_stops_its_command_before_anyone_reaps_it(
+    tmp_path: Path,
+) -> None:
+    marker = tmp_path / "finished"
+    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith("running [once]")
+    time.sleep(0.5)
+    os.kill(drive.pid, signal.SIGKILL)  # left a zombie: not waited for until the end
+    time.sleep(4)
+    assert not marker.exists(), "the command ran on while its tool was a zombie"
+    drive.wait(timeout=10)

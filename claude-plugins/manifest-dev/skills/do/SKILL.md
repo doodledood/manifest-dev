@@ -84,7 +84,14 @@ fixes a defect, receives a correction or touches a comment that explains a worka
 constraint: a correction becomes a lock where a check can hold it, such a comment becomes a refactor flag or
 an encoding offer, and the debt the run leaves goes into its report and into every pull request it opens or updates. When the
 Manifest gates a verification recipe, or the work needs a harness the project lacks or
-touches a path no recipe covers, load `references/VERIFICATION.md`.
+touches a path no recipe covers, load `references/VERIFICATION.md`. A harness belongs to a project:
+a repository or working folder
+holding, or about to hold, work later sessions will change — a new one the user is starting
+counts — which this work concerns. A chat with no workspace, a home or scratch folder, a folder
+holding one finished artifact, or a question that does not concern the folder the session runs in
+is none. With none, the Manifest's gates are the whole
+verification: build no harness and add no project surface. One-off work inside a project is still
+project work: it keeps and runs the recipes whose paths it touches.
 
 ## What holds for every gate
 

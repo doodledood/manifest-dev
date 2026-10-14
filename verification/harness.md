@@ -30,6 +30,8 @@ doctor: scripts/drive-skill.sh preflight
 - Walk recipes run `scripts/walk.sh`: a fresh reader in the same container, with no tools and no
   plugins, given only the named documents; its account is the evidence. Each walk is one model
   session, so walk recipes are ask-first.
+- Before running an ask-first recipe or an eval case, ask the owner, naming it and why. A prompt
+  change marks the eval cases it covers stale rather than running them.
 - `--dry-run` on a skill or walk recipe prints the container command, the credential that would
   be used and where evidence would go, and starts nothing.
 - Prompts live in `verification/prompts/`, one file per scenario, exactly as a user would type

@@ -65,12 +65,12 @@ info "Installing dev dependencies..."
 uv pip install --python .venv/bin/python ruff black mypy pytest
 
 # Node runs scripts/verify; its type check needs the dev dependencies in scripts/
-info "Checking Node (22.18 or later runs scripts/verify)..."
-if command -v node &> /dev/null && node -e 'const [a,b]=process.versions.node.split(".").map(Number);process.exit(a>22||(a===22&&b>=18)?0:1)'; then
+info "Checking Node (22.18+, or 23.6+ on Node 23, runs scripts/verify)..."
+if command -v node &> /dev/null && node -e 'const [a,b]=process.versions.node.split(".").map(Number);process.exit(a>23||(a===23&&b>=6)||(a===22&&b>=18)?0:1)'; then
     info "Found Node $(node --version)"
     npm --prefix scripts ci --silent
 else
-    error "Node 22.18 or later is required for scripts/verify. Install it, then re-run this script."
+    error "Node 22.18 or later (23.6 or later on Node 23) is required for scripts/verify. Install it, then re-run this script."
 fi
 
 # Verify installations

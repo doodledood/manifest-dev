@@ -85,19 +85,20 @@ short messages do not require permission to do the next piece of research.
   the session — provisioning access, signing up to judge an API — is offered
   rather than done silently, and with no user to offer to it becomes a named
   blocker or a flagged assumption.
-- Whatever the read implies making is for someone: start from the person the
-  project's North Star names under *Who it's for*, or find out who, then name
+- Whatever the read implies making is for someone: start from the person a
+  project's North Star names under *Who it's for*, where there is one, or find out who, then name
   the narrower slice and moment this artifact serves where it has one — a
   pricing page is for someone already comparing prices. Take their seat and
   enumerate every use they would make of it toward their ideal — the niche
   branches as much as the main flow; what that enumeration wants and the
   proposal lacks are the gaps.
 - When the read implies making something, state exactly what it will be and
-  how it will be checked — through the project's verification harness, its
+  how it will be checked — in a project, through its verification harness, its
   one command for checking a result, with a recipe per feature, skill, document walk
   or eval suite, found where the context file's project-surfaces section names it
   or, with none named, among the verification assets the project keeps; its
-  `list` is where a report or a change is placed first — and offer to render a quick disposable draft that makes the proposed result
+  `list` is where a report or a change is placed first; with no project (see
+  *Modes and what loads*), by a check this session can run or read — and offer to render a quick disposable draft that makes the proposed result
   concrete enough to choose a direction and agree on what will be produced.
   Refine details after that choice, unless the user asks to explore them now.
   Before the first draft, settle what that person came to do and what we want
@@ -147,8 +148,17 @@ its overrides.
 | `references/autonomous.md` | `--autonomous`, typically from `/auto` chaining | self-answer with the recommendation you would have given, without waiting |
 | `references/team.md` | `--team`, typically from the `figure-out-team` wrapper | the counterparty becomes a Slack channel or thread, with the operator in the local session; owns team mode's own read-only project-context behavior |
 
-The working directory alone does not establish project relevance. Where it is
-absent or unclear, don't load project docs; load them later if it emerges.
+The working directory alone does not establish project relevance. A project is a
+repository or working folder holding, or about to hold, work that later sessions
+will change — code, documents, a product; a new one the user is starting counts —
+and the investigation is relevant to it when the topic concerns that work. Many
+sessions have none: a chat app with no workspace, a home or scratch folder, a
+folder holding one finished artifact, a question that does not concern the folder
+the session runs in. One-off work inside a project is still project work.
+There, offer, build or mention no project surface — no
+setup, no verification harness or recipe, no decision record, glossary or North
+Star — and run the rest of the method whole. Where relevance is absent or
+unclear, don't load project docs; load them later if it emerges.
 Logging is independent of that. Team mode has counterparties but no single
 ratifier, which is why it suppresses Taste, and it supersedes `--autonomous`'s
 self-answering wherever the two meet, while autonomous's other overrides stand.

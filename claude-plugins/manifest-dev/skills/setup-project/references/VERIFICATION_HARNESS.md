@@ -17,11 +17,13 @@ cases, and living documents are all recipes in the same harness.
 
 - **The command-line tool.** `harness/verify` and `harness/verify.mts` beside this file are a
   working implementation to copy into the project (`scripts/` by default) and adapt. The default
-  is TypeScript with no dependencies, which Node 22.18 or newer runs directly; `verify` is a
+  is TypeScript with no dependencies, which Node 22.18 or newer (23.6 or newer on Node 23) runs
+  directly; `verify` is a
   shell entry that starts it, and stops with exit 3 naming that Node when it is missing or older.
   Seed this default without asking and say so in the offer. The user may override it, at setup
-  or later: a project that wants another language, or cannot run Node, ports the tool and keeps
-  the `verify` entry, so nothing that calls it changes. Its subcommands are the contract: `--help` (the whole picture), `list` (every recipe, its kind,
+  or later: a project that wants another language, or whose environments cannot run Node, ports
+  the tool and keeps the `verify` entry, so nothing that calls it changes. A machine that merely
+  lacks Node is not a reason to port: the entry's exit-3 message goes in the report. Its subcommands are the contract: `--help` (the whole picture), `list` (every recipe, its kind,
   status and ask-first mark), `help <recipe>`, `drive <recipe> [scenario]` (with `walk` and
   `eval` as the same for those kinds), `judge` (record the verdict on evidence that needed
   reading), `doctor` (prerequisites, free) and `check` (every recipe parses and names only paths
@@ -45,7 +47,8 @@ cases, and living documents are all recipes in the same harness.
   agent skill, and an ask-first document walk.
 - **Evidence.** Each run writes `evidence/<recipe>/<stamp>.md`: the scenario, command, exit
   code, outcome, a fingerprint of the files the recipe covers, what it proves, and the output
-  with local paths removed. An interrupted run keeps none. It is committed with
+  with local paths removed. An interrupted run keeps none and stops what its command started; a command
+  that crashes is recorded failed. It is committed with
   the change it checked. Fuller evidence — transcripts, screenshots — stays where the scenario's
   command keeps it, and the summary says where.
 
@@ -53,7 +56,8 @@ cases, and living documents are all recipes in the same harness.
 
 Nothing about a status is kept by hand. The tool works it out from the latest evidence of each
 of a recipe's scenarios and shows the worst: `unverified` (none yet — proves nothing),
-`verified` (every scenario's latest run passed), `failed`, `unreachable` (a prerequisite was
+`verified` (every scenario's latest run passed; a scenario that never ran leaves the recipe
+`unverified`, naming it), `failed`, `unreachable` (a prerequisite was
 missing; the command exits 3), or `unjudged` (the run finished and its proof needs reading,
 until `verify judge` records the verdict), each with its date; and `stale` when a file the
 recipe covers no longer matches the fingerprint that evidence recorded, or when someone found it drifting and added a
@@ -134,8 +138,7 @@ gaps, as long as one command still tells a newcomer how to verify.
 
 ## What setup creates, and what runs build
 
-Setup seeds the harness: it copies and adapts the tool — TypeScript by default, said in the
-offer, ported where the user asks for another language or the project cannot run Node — asks the
+Setup seeds the harness: it copies and adapts the tool in the language *The parts* sets, asks the
 ask-first choice (default `ask`) and writes it to `harness.md`, adopts existing assets as recipes that delegate to them, catalogs recipes
 from source (routes, commands, menus, invocable skills, the tasks readers bring to the documents)
 so a vague report about any of them can be placed, adds the repository check, and wires the context-file bullet. It writes

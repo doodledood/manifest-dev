@@ -12,9 +12,18 @@ shared understanding in the transcript → invoke `figure-out` first, propagatin
 `--autonomous` when the caller is unattended. A manifest path in the arguments
 means amend: targeted changes only, IDs stable, no renumbering.
 
-Before encoding a new Manifest for work in a repository, read what earlier work left on it —
+Project surfaces — setup and its update, the verification harness and its recipes, decision
+records, the glossary, the North Star — belong to a project: a repository or working folder
+holding, or about to hold, work later sessions will change — a new one the user is starting
+counts — which this work concerns. A chat with no workspace, a home or scratch folder, a folder
+holding one finished artifact, or a question that does not concern the folder the session runs in
+is none. There, offer, build, gate on or record none of them, and write the Manifest as usual,
+its own gates checking the work directly. One-off work inside a project is still project work: it
+keeps the gate of every recipe whose paths it touches.
+
+Before encoding a new Manifest for work in a project, read what earlier work left on it —
 logs and Manifests for this repository, open Tickets on the work's paths, and pull requests' "Debt left"
-sections — following `../figure-out/references/RECALL.md`. Note in the digest when the project's
+sections — following `../figure-out/references/RECALL.md`. For a project, note in the digest when its
 surfaces version, read from the context file on disk, is missing or older than setup-project's newest, without stopping to update, and
 record it as an `ASM-*` entry. Record each offer flagged upstream as its own `ASM-*` entry, so the
 completion report names it.
@@ -98,7 +107,7 @@ That gives a floor that isn't ceremony:
   tests, and able to land as its own pull request. Recorded debt on the work's path that
   still stands, checked against the current code, joins it — offered to an attended user,
   decided within the caller's delegation when unattended. Debt off the path stays where it is.
-- **Verification comes before the work it checks.** The project's verification harness is its
+- **Verification comes before the work it checks.** In a project, its verification harness is its
   one command for checking that its work still does its job, with a recipe per thing it checks,
   as setup-project's `references/VERIFICATION_HARNESS.md` describes. Find it where the context
   file's project-surfaces section names it, or among the verification assets the project keeps.
@@ -107,7 +116,8 @@ That gives a floor that isn't ceremony:
   covers, or a path one should cover but does not, carries a gate that each touched recipe is added or
   updated and run, its evidence committed. A recipe marked ask-first is run only where the
   project's setting or the user allows; otherwise its gate holds that the recipe is updated and
-  that the run it still owes is named in the report.
+  that the run it still owes is named in the report. With no project, there is no harness to build
+  or recipe to gate: the Manifest's own gates check the work directly.
 - **A recorded check still to be built is built.** Search the project's decision records for
   `Enforced by` lines reading `not yet`. When the work implements or touches such a decision, a
   gate holds that the named check exists, fails when the decision is reversed, and carries a

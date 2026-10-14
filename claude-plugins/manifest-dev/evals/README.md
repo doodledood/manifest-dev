@@ -17,12 +17,12 @@ so cases that need a repository, project docs, or a context file find them in th
 directory. Without it, those cases run against an empty directory and measure nothing. Only pass
 it for case files from this repository: a scaffold is bash that runs as you.
 
-Twelve cases test behavior that exists only with the plugin: offering a Taste entry and not
+Thirteen cases test behavior that exists only with the plugin: offering a Taste entry and not
 offering one for a discipline every session owes (`27`, `28`), offering a setup update to a
 project with no version or an older one and offering none to a current project (`30`,
 `47`, `49`, `45`), what a setup-project run offers an older or a new project (`50`, `51`), a
 record naming what enforces it (`31`), the verification harness's drift marker (`36`), and recall of earlier sessions only where they bear
-on the work (`43`, `46`). The no-plugin arm passes or fails them by construction. They carry the
+on the work (`43`, `46`), and offering no project surface where there is no project (`52`). The no-plugin arm passes or fails them by construction. They carry the
 tag `figure-out-plugin-only` instead of `figure-out` and run on the plugin arm alone:
 
 ```bash
@@ -159,6 +159,7 @@ from a discipline `SKILL.md` explicitly states.
 | `49-update-offer-from-v2` | docs, repository, plugin arm only | Offer the setup update for a project on v2 — the move to one harness, never v3's bullet wording v4 replaced, nor what v1 or v2 already gave it | unmeasured |
 | `50-update-moves-v3-into-harness` | docs, repository, plugin arm only | A setup-project run on a v3 project offers moving its feature map and reader tasks into one harness, keeping their content, and nothing v1 to v3 already gave it | unmeasured |
 | `51-setup-offers-harness-for-app` | docs, repository, plugin arm only | A setup-project run on a small app with tests offers one harness — the shipped TypeScript tool by default — that adopts the existing test command, one verification bullet, and no ask-first marks for free runs | unmeasured |
+| `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and have never been run. Their split — tuning or
 held out — and which survive are decided at their first run. `30` uses a project set up before

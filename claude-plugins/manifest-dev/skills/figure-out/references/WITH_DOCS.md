@@ -12,6 +12,8 @@ When project docs are active, that frame has four explicit exceptions. **Glossar
 
 ## Bootstrap (when project relevance exists)
 
+Everything below is for a project as `SKILL.md` → *Modes and what loads* defines it. A session found to have none — even after this mode loaded — skips the bootstrap, makes no offer, and leaves this mode; the rest of the investigation runs as usual.
+
 **Load the ADR conventions first.** Read the project's own `docs/adr/CONVENTIONS.md` when it exists — it governs, and a team that edited it meant to. Read the adjacent `ADR_FORMAT.md` when it does not. Either way the bar for what deserves a record is now in context, which is what lets the per-turn ADR check below run without another load.
 
 **Load the project's `NORTH_STAR.md` when it exists** — the standing strategy surface the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read. Load the project's `docs/NORTH_STAR_CONVENTIONS.md` beside it when one exists: it owns the document's form — fields, states, rendering — and where it or the doc's own header differs from anything remembered here, the project's copy wins; cadence, below, stays this skill's.

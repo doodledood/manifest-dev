@@ -15,7 +15,8 @@ Offer, each as its own item:
    and the removal of the old surface, its README and its repository check — except an eval suite,
    which stays as it is. Where the project has
    no surface and holds something future runs will change, offer a new harness seeded per
-   `../VERIFICATION_HARNESS.md` → *What setup creates, and what runs build* instead.
+   `../VERIFICATION_HARNESS.md` → *What setup creates, and what runs build* instead; its
+   ask-first choice and bullet are the items below.
 3. **The ask-first setting** — `ask` by default, or `run`.
 4. **The context-file bullet** — the one verification bullet replacing the verification-surface
    bullet v1 carried.

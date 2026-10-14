@@ -18,7 +18,7 @@ finished deliverable, and check every claim a stranger would take as a promise �
 the product does, for whom, at what price — against the `Promise` and `Never` fields.
 A price stated anywhere in the deliverable must match the North Star's `Money` field
 exactly: a different number is a different offer, and a price stated while that field is
-`empty` FAILs until the field is filled or the manifest states the offer. **When the project has no North Star,
+`empty` FAILs until the field is filled or the manifest states the offer. **When the project has no North Star, or the session has no project,
 the gate does not silently pass:** the manifest must itself state the promise the
 deliverable is allowed to make and the claims it must not, and the evaluator checks
 against that manifest text instead — a marketing deliverable with no stated promise
@@ -42,7 +42,7 @@ Both are Judgment Gates.
 - **Claims a stranger can check** — prefer the demonstrable over the aspirational; a
   claim the reader can verify from the product converts the skeptical reader a superlative
   loses
-- **Capture durable choices beside the North Star** — voice rules, positioning language,
+- **Capture durable choices beside the North Star** — where the project keeps one: voice rules, positioning language,
   and channel learnings this task settles will outlive it; write them to an adjacent doc
   linked from the North Star field they detail, never into its lines (which stay short
   answers), so the next outward-facing task starts where this one ended

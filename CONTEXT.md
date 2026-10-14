@@ -61,6 +61,10 @@ Prompt wording that names portable behavior or capability rather than a harness-
 The always-loaded instruction file a harness reads for a project — `CLAUDE.md` on Claude Code, `AGENTS.md` on Codex and OpenCode — resolved by detection rather than assumed by name.
 _Avoid_: CLAUDE.md (that is one harness's instance of it).
 
+**Projectless Session**:
+A session with no project behind its topic — a chat with no workspace, a home or scratch folder, a folder holding one finished artifact, a question that does not concern the folder it runs in. One-off work inside a project is project work. A project is a repository or working folder holding, or about to hold, work later sessions will change; a new one the user is starting counts. The workflow skills offer, build and gate on no project surface in a projectless session and still run whole.
+_Avoid_: No repo (a project need not be a git repository).
+
 **ADR Conventions**:
 A project-owned file stating what deserves a decision record and how to write one, self-contained so a reader with no tooling can follow it; where it exists it outranks any tool's shipped default on everything except cadence.
 _Avoid_: ADR format, ADR template.

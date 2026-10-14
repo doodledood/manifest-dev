@@ -11,6 +11,8 @@ Three things get installed, and only the first is essential:
 - **A verification harness** — the project's one command for checking that what future runs will change still does its job, with a recipe per thing it checks, seeded from what the project already has, per `references/VERIFICATION_HARNESS.md`.
 - **A seed** — vocabulary and decision records reconstructed from the project's own history. This runs wherever there is history to read, and it is enrichment on top of the wiring, never a substitute for it.
 
+All of this is for a project: a repository or working folder holding, or about to hold, work later sessions will change — a new or empty one the user is starting counts, as *Empty input* below says. When this skill runs where there is none — a chat with no workspace, a home or scratch folder, a folder holding one finished artifact — say so, ask which folder to set up, and write nothing until one is named.
+
 Aim for a good starting point rather than a complete record. Most of a project's past reasoning is genuinely unrecoverable; a seed that is honest about what it could not recover is worth far more than one that reads complete and isn't.
 
 ## Flags

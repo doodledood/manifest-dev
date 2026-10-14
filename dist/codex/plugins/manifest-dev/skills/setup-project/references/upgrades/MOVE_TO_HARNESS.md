@@ -4,9 +4,9 @@ A project set up before v4 may carry up to three verification pieces: a verifica
 (a harness, an eval suite, or a reader-task list, with its own README and statuses), a feature
 map (an index plus one file per feature, each with a `Status:` line), and the context-file
 bullets that named them. v4 replaces all of them with one harness, as
-`../VERIFICATION_HARNESS.md` describes. Offer the move as one item, showing what it writes; the
-version guide that loaded this file offers the context-file bullet and the ask-first setting as
-items of their own.
+`../VERIFICATION_HARNESS.md` describes. Offer the move as one item, showing what it writes. The
+context-file bullet and the ask-first setting are items of their own, offered by the version guide
+that loaded this file or, where the project records no version, by the update pass.
 
 Keep everything the project wrote; change only its shape:
 
@@ -26,20 +26,25 @@ Keep everything the project wrote; change only its shape:
 - **Existing harness commands are adopted by delegation**: a scenario's `Run:` calls the
   project's existing script rather than a rewrite of it.
 - **Evidence keeps its files and gains a summary the tool reads.** The tool reads only
-  `evidence/<recipe>/<stamp-or-date>.md` summaries. A Markdown summary already named with a stamp
-  (`20260101T120000Z`) or a date (`2026-01-01`) moves there keeping its name and gets
-  `- **Outcome:** verified` when its entry was `verified (DATE)`. Any other evidence —
-  screenshots, transcripts, files with other names — stays where it is or moves beside the
-  summary keeping its name, and for an entry that was `verified (DATE)` a new summary
-  `evidence/<recipe>/<DATE>.md` records the scenario, `- **Outcome:** verified`, and where those
-  files are. An entry verified with no evidence at all becomes `unverified`, and the report says
-  so. Hand-kept `Status:` lines are removed, since
+  `evidence/<recipe>/` Markdown files whose names carry a stamp (`20260101T120000Z`) or a date
+  (`2026-01-01`), and from each takes two lines:
+  - `- **Scenario:** <name>`, only where one of the recipe's scenarios carried the old check, with
+    that scenario's exact name; leave it out otherwise, so the summary stands for the whole recipe;
+  - `- **Outcome:** <outcome>`: `verified` for an entry that was `verified (DATE)`, `failed` or
+    `unreachable` for one that was, and no line for any other status, which reads as `unjudged`.
+
+  A Markdown summary already named that way moves there keeping its name and gains those lines.
+  For an entry that had other evidence — screenshots, transcripts, files with other names — those
+  files stay where they are or move beside the summary keeping their names, and a new summary
+  `evidence/<recipe>/<DATE>.md` carries the two lines and says where they are. Write no
+  `verified` outcome where git shows a covered path changed after DATE: the entry starts
+  `unverified`. An entry with no evidence at all starts `unverified`. The report names every entry
+  that lost its old status this way. Hand-kept `Status:` lines are removed, since
   statuses now come from evidence.
 - **Costly recipes get the `ask-first` mark** with the reason: any scenario that starts an agent
   session, uses a paid API or cloud resources, runs far longer than the usual tests, loads a
   shared environment, or has effects outside the repository. Free drives stay unmarked.
-- **The tool** is copied as `verify` and `verify.mts` — TypeScript by default, ported where the
-  user asks for another language or the project cannot run Node, per `../VERIFICATION_HARNESS.md`.
+- **The tool** is copied as `../VERIFICATION_HARNESS.md` → *The parts* says.
 - **The project's customizations stay**: extra sections, its own wording, its own locations. A
   project whose verification lived at a non-default path may keep it there and set the path
   lines at the top of the tool.

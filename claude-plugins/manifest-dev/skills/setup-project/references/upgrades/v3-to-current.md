@@ -9,7 +9,8 @@ Offer, each as its own item:
    for each feature-map entry and reader task with its content and evidence, the `ask-first`
    marks, and the removal of the old directories and their checks. Where the project has none of
    those pieces and holds something future runs will change, offer a new harness seeded per
-   `../VERIFICATION_HARNESS.md` → *What setup creates, and what runs build* instead.
+   `../VERIFICATION_HARNESS.md` → *What setup creates, and what runs build* instead; its
+   ask-first choice and bullet are the items below.
 2. **The ask-first setting** — `ask` by default, or `run`.
 3. **The context-file bullet** — the one verification bullet replacing the verification-surface
    and feature-map bullets v3 carried.

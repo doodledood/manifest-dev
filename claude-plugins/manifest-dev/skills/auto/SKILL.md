@@ -18,6 +18,9 @@ checkpoints that return control to this flow, so invoke the next step in the
 same turn rather than ending it or offering the step to the user. The run ends when do finishes or escalates, or
 when define reports no path.
 
+The chain runs the same with or without a project — a chat with no workspace, a home or
+scratch folder. Each skill it invokes decides which project surfaces apply there.
+
 Do not set or print a continuation goal during understanding or definition.
 /do owns the completion backstop. Automatic continuation begins at execution;
 an interrupted earlier phase must be restarted by the caller.

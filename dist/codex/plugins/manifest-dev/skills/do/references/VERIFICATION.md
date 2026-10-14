@@ -3,7 +3,8 @@
 The harness's parts — the tool, recipes, settings, evidence, statuses, the ask-first mark and the
 repository check — are in setup-project's `references/VERIFICATION_HARNESS.md`.
 
-- **Missing harness:** when the context file's project-surfaces section names none, look among
+- **Missing harness:** only in a project, as `SKILL.md` defines it. When the context file's
+  project-surfaces section names none, look among
   the verification assets the project keeps. Build the harness from what is found, or from
   nothing, scoped to what the change touches: the tool copied from
   `../../setup-project/references/harness/`, settings with `ask-first: ask`, recipes for the

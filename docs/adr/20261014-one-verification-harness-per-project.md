@@ -10,7 +10,7 @@ define / do
 The user
 
 ## Context
-20261013-runs-build-and-maintain-a-project-verification-surface gave each artifact a surface in its own form — a harness and feature map for a product, an eval suite for prompts, a reader-task list for documents — and 20261014-the-feature-map-is-a-navigation-contract-over-what-users-invoke added a feature map over anything users invoke. A project could then carry three verification concepts, each with its own folder, statuses kept by hand, test and context-file bullet. In this repository that was 25 map entries, 17 reader tasks, a drive script, two tests and two bullets,, all kept current by hand, with no shared vocabulary for what a map entry's commands or a reader task were. An agent outside this workflow found no single place to learn how to check its work. Separately, some checks cost money, time or shared resources, and nothing told an agent which ones to ask about.
+20261013-runs-build-and-maintain-a-project-verification-surface gave each artifact a surface in its own form — a harness and feature map for a product, an eval suite for prompts, a reader-task list for documents — and 20261014-the-feature-map-is-a-navigation-contract-over-what-users-invoke added a feature map over anything users invoke. A project could then carry three verification concepts, each with its own folder, statuses kept by hand, test and context-file bullet. In this repository that was 25 map entries, 17 reader tasks, a drive script, two tests and two bullets, all kept current by hand, with no shared vocabulary for what a map entry's commands or a reader task were. An agent outside this workflow found no single place to learn how to check its work. Separately, some checks cost money, time or shared resources, and nothing told an agent which ones to ask about.
 
 ## Decision
 - A project keeps one verification harness: a command-line tool whose `--help` tells anyone everything about verifying the project. Its subcommands — `list`, `help`, `drive` (with `walk` and `eval`), `judge`, `doctor`, `check` — are the contract; setup-project ships a working implementation projects copy and adapt: TypeScript with no dependencies, which Node 22.18 or newer runs directly, behind a `verify` shell entry. That is the default, seeded without asking; a project that wants another language or cannot run Node ports the tool and keeps the entry and the contract.
@@ -26,8 +26,8 @@ The user
 - **A skill as the unit, the way pstack's verification skill holds its map and helper scripts**: works only on hosts that load skills, and an agent outside the workflow never finds it.
 - **Recipes as code inside the tool**: stronger per-recipe checks, but harder for an agent to add one and nothing to read outside the code; the tool already turns a recipe's command and proof into evidence.
 - **A form per artifact, as before**: three ways to verify, and a reader has to learn which applies first.
-- **The tool in standard-library Python**, as first built: runs wherever Python does, with no type checking unless a project adds it. TypeScript is easier to maintain: the compiler checks every change in strict mode, and Node runs the file directly, with no build step.
-- **Statuses by comparing commit times**, as first built: evidence committed together with a later edit counted as checking it.
+- **The tool in standard-library Python**: runs wherever Python does, with no type checking unless a project adds it. TypeScript is easier to maintain: the compiler checks every change in strict mode, and Node runs the file directly, with no build step.
+- **Statuses by comparing commit times**: evidence committed in the same commit as a later edit counts as checking that edit, so a recipe reads verified when it is not.
 - **Marking only model-using runs**: misses the slow company-wide suite and the deploy; cost has more than one kind.
 
 ## Consequences

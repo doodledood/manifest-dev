@@ -136,12 +136,13 @@ mkdir -p scripts verification/recipes
 cat > scripts/verify <<'VERIFY_TOOL_EOF'
 #!/bin/sh
 # Starts this project's verification tool, verify.mts beside this file: TypeScript that Node
-# 22.18 or newer runs directly. `verify --help` says everything else.
-# A project that ports the tool to another language keeps this entry and changes the last line.
+# 22.18 or newer (23.6 or newer on Node 23) runs directly. `verify --help` says everything else.
+# A project that ports the tool to another language keeps this file's name and replaces
+# everything below this comment, the Node check included, with a line that starts the port.
 v=$(node --version 2>/dev/null) || { echo "verify: needs Node 22.18 or newer (https://nodejs.org); node was not found" >&2; exit 3; }
 major=${v#v}; minor=${major#*.}; major=${major%%.*}; minor=${minor%%.*}
 if [ "$major" -lt 22 ] || { [ "$major" -eq 22 ] && [ "$minor" -lt 18 ]; } || { [ "$major" -eq 23 ] && [ "$minor" -lt 6 ]; }; then
-  echo "verify: needs Node 22.18 or newer, which runs TypeScript directly; found $v" >&2
+  echo "verify: needs Node 22.18 or newer (23.6 or newer on Node 23), which runs TypeScript directly; found $v" >&2
   exit 3
 fi
 exec node "$(dirname "$0")/verify.mts" "$@"
@@ -153,12 +154,14 @@ cat > scripts/verify.mts <<'VERIFY_TOOL_EOF'
 // which checks to ask about before running. Recipes are Markdown files in the recipes
 // directory; this file reads them and never needs editing to add one.
 //
-// TypeScript with no dependencies, run by Node 22.18 or newer, which strips the types itself.
+// TypeScript with no dependencies, run by Node 22.18 or newer (23.6 or newer on Node 23),
+// which strips the types itself.
 // `verify` beside this file starts it and says so when Node is missing or too old.
 
-import { spawn, spawnSync } from "node:child_process";
+import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, openSync, closeSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, openSync, closeSync, readdirSync, readFileSync, readlinkSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { constants } from "node:os";
 import { isAbsolute, join, relative, resolve } from "node:path";
 
 // Where the harness keeps its data. A project that moves it changes these lines.
@@ -352,13 +355,22 @@ function coveredFiles(paths: string[]): string[] {
     const listed = git("ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", ...paths);
     return [...new Set(listed.split("\0").filter(Boolean))].sort();
   }
-  const walk = (path: string): string[] =>
-    !existsSync(join(ROOT, path))
-      ? []
-      : statSync(join(ROOT, path)).isDirectory()
-        ? readdirSync(join(ROOT, path)).flatMap((name) => walk(join(path, name)))
-        : [path];
+  // A link is one entry, counted by its target, as git lists it; following it could loop.
+  const walk = (path: string): string[] => {
+    const full = join(ROOT, path);
+    if (isLink(full)) return [path];
+    if (!existsSync(full)) return [];
+    return statSync(full).isDirectory() ? readdirSync(full).flatMap((name) => walk(join(path, name))) : [path];
+  };
   return paths.flatMap(walk).sort();
+}
+
+function isLink(path: string): boolean {
+  try {
+    return lstatSync(path).isSymbolicLink();
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -369,7 +381,16 @@ function fingerprint(paths: string[]): string {
   const hash = createHash("sha256");
   for (const path of coveredFiles(paths)) {
     const full = join(ROOT, path);
-    hash.update(`${path}\0`).update(existsSync(full) ? readFileSync(full) : "(deleted)").update("\0");
+    const entry = existsSync(full) || isLink(full) ? lstatSync(full) : undefined;
+    // A link counts by where it points; a submodule by the commit it records.
+    const content = !entry
+      ? "(deleted)"
+      : entry.isSymbolicLink()
+        ? `link:${readlinkSync(full)}`
+        : entry.isFile()
+          ? readFileSync(full)
+          : `entry:${git("ls-files", "-s", "--", path).trim()}`;
+    hash.update(`${path}\0`).update(content).update("\0");
   }
   return `sha256:${hash.digest("hex").slice(0, 16)}`;
 }
@@ -380,11 +401,13 @@ function lastChange(paths: string[]): Date | undefined {
   // -z keeps each entry whole: no quoting, and the leading status column survives.
   const entries = git("status", "--porcelain=v1", "-z", "-uall", "--", ...paths).split("\0");
   const times: number[] = [];
+  // Status paths are relative to the repository's top, which may sit above this project.
+  const top = git("rev-parse", "--show-toplevel").trim() || ROOT;
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i] ?? "";
     if (entry.length < 4) continue;
     if (entry[0] === "R" || entry[0] === "C") i++; // the next entry is the rename's source
-    const path = join(ROOT, entry.slice(3));
+    const path = join(top, entry.slice(3));
     times.push(existsSync(path) ? statSync(path).mtimeMs : Date.now());
   }
   if (times.length) return new Date(Math.max(...times));
@@ -408,7 +431,8 @@ function checkedAt(evidence: Evidence): Date {
  * The latest evidence for each scenario. Evidence naming no scenario covered the whole
  * recipe, so it stands for every scenario until that scenario has newer evidence of its own.
  */
-function latestPerScenario(recipe: Recipe, history: Evidence[]): Evidence[] {
+/** Each scenario's latest evidence; evidence naming no scenario stands for all of them. */
+function latestPerScenario(recipe: Recipe, history: Evidence[]): Map<string, Evidence> {
   const names = new Set(recipe.scenarios.map((s) => s.name));
   const latest = new Map<string, Evidence>();
   for (const item of history) {
@@ -417,13 +441,14 @@ function latestPerScenario(recipe: Recipe, history: Evidence[]): Evidence[] {
       latest.set(name, item);
     }
   }
-  return [...new Set(latest.values())];
+  return latest;
 }
 
 function status(recipe: Recipe, history: Evidence[] = evidenceFor(recipe)): string {
   const drifts = [...recipe.body.matchAll(DRIFT)].map((m) => [m[1] ?? "", m[2] ?? ""] as const).sort();
   const drift = drifts.at(-1);
-  const latest = latestPerScenario(recipe, history);
+  const perScenario = latestPerScenario(recipe, history);
+  const latest = [...new Set(perScenario.values())];
   const newest = latest.reduce<Date | undefined>((a, e) => (!a || e.when > a ? e.when : a), undefined);
   if (drift && (!newest || drift[0] >= day(newest))) return `stale (${drift[0]}): ${drift[1]}`;
   if (!latest.length) return "unverified";
@@ -431,7 +456,12 @@ function status(recipe: Recipe, history: Evidence[] = evidenceFor(recipe)): stri
   const oldest = latest.reduce((a, e) => (e.when < a.when ? e : a));
   // The date is the worst scenario's run, or for a recipe whose scenarios all passed, the
   // oldest of their runs: how fresh the weakest proof is.
-  const label = `${worst.outcome} (${day(worst.outcome === "verified" ? oldest.when : worst.when)})`;
+  // A scenario that never ran proves nothing, so passing the others does not verify the recipe.
+  const unrun = recipe.scenarios.map((s) => s.name).filter((name) => !perScenario.has(name));
+  const label =
+    worst.outcome === "verified" && unrun.length
+      ? `unverified (${day(oldest.when)}): no run yet for ${unrun.join(", ")}`
+      : `${worst.outcome} (${day(worst.outcome === "verified" ? oldest.when : worst.when)})`;
   if (!recipe.covers.length) return label;
   // Evidence that recorded what it checked is stale when the covered files now differ; older
   // evidence falls back to comparing times.
@@ -470,13 +500,15 @@ change touches what a recipe covers. A change that needs a check no recipe has a
 Ask first: a recipe marked ask-first costs something a person should weigh — money or quota,
 long run time, load on shared systems, effects outside this repository. Its reason is shown in
 \`verify help RECIPE\`. This project's setting: ask-first = {policy}.
-  ask  run an ask-first recipe only when a person runs it or has agreed; then pass --yes
+  ask  run an ask-first recipe only when a person runs it or has agreed: ask first, naming the
+       recipe and why; then pass --yes
   run  run them freely
 Change it in {settings}. Recipes without the mark run freely.
 
 Statuses (worked out from evidence; nothing to keep current by hand). A recipe shows the worst
 of its scenarios' latest runs:
   unverified            no evidence yet; proves nothing
+  unverified (DATE): .. the scenarios that ran passed, and those it names have never run
   verified (DATE)       every scenario's latest run passed; DATE is the oldest of those runs
   failed (DATE)         a scenario's latest run failed
   unreachable (DATE)    a scenario's latest run could not start: a prerequisite was missing
@@ -486,7 +518,7 @@ of its scenarios' latest runs:
 
 Evidence: each run writes {evidence}/RECIPE/STAMP.md (command, exit code, outcome, a fingerprint
 of the covered files, output with local paths removed). Commit it with the change it checked. An
-interrupted run keeps none.
+interrupted run keeps none, and stops what its command started; a command that crashes is failed.
 
 Adding a recipe: copy any file in {recipes}, keep the front matter keys (kind, covers,
 ask-first when it applies, dry-run: honored when its commands obey VERIFY_DRY_RUN=1), and give
@@ -558,35 +590,105 @@ interface Run {
   interrupted: boolean;
 }
 
+/**
+ * Ctrl-C and termination while a scenario runs. Installed before a run reserves its evidence
+ * file, so a signal at any point leaves that file to be removed rather than killing the tool.
+ * The command runs in its own process group: the first signal is passed on to that group, and
+ * a second stops the whole group, including what the command started.
+ */
+class Interrupts {
+  interrupted = false;
+  child: ChildProcess | undefined;
+  private readonly handle = (signal: NodeJS.Signals): void => {
+    const pid = this.child?.pid;
+    if (pid !== undefined) {
+      // Once the command's shell is gone, whatever it left holding the output is killed outright.
+      const ended = this.child?.exitCode !== null || this.child?.signalCode !== null;
+      try {
+        process.kill(-pid, this.interrupted || ended ? "SIGKILL" : signal);
+      } catch {
+        // the group already ended
+      }
+    }
+    this.interrupted = true;
+  };
+  constructor() {
+    for (const signal of STOP_SIGNALS) process.on(signal, this.handle);
+  }
+  release(): void {
+    for (const signal of STOP_SIGNALS) process.off(signal, this.handle);
+  }
+}
+
+/** Signals that stop a run: Ctrl-C, a polite kill, a closed terminal, Ctrl-\. */
+const STOP_SIGNALS: NodeJS.Signals[] = ["SIGINT", "SIGTERM", "SIGHUP", "SIGQUIT"];
+
+/**
+ * Runs the scenario command inside its process group beside a watchdog that kills the whole
+ * group once this tool is gone, so a command never outlives a tool killed without warning
+ * (SIGKILL, a timeout that kills the tool's group). The watchdog waits on descriptor 3, a pipe
+ * whose other end only this tool holds: it reads end-of-file the moment the tool is gone, even
+ * before anyone reaps it. The command does not inherit it, and its own exit status is kept.
+ */
+const WATCHED = [
+  "( read -r _ <&3; kill -KILL 0 ) </dev/null >/dev/null 2>&1 &",
+  "watchdog=$!",
+  'sh -c "$VERIFY_COMMAND" 3<&-',
+  "status=$?",
+  'kill "$watchdog" 2>/dev/null',
+  'exit "$status"',
+].join("\n");
+
+// Output keeps being collected when whoever reads this tool's output goes away (`| head`).
+let echo = true;
+for (const stream of [process.stdout, process.stderr]) {
+  stream.on("error", (error: NodeJS.ErrnoException) => {
+    if (error.code !== "EPIPE") throw error;
+    echo = false;
+  });
+}
+
 /** Run a scenario's command, showing its output as it arrives and keeping a copy. */
-function runShown(command: string): Promise<Run> {
+function runShown(command: string, interrupts: Interrupts): Promise<Run> {
   return new Promise((done, fail) => {
-    const child = spawn(command, { shell: true, cwd: ROOT, stdio: ["inherit", "pipe", "pipe"] });
-    const chunks: Buffer[] = [];
-    let interrupted = false;
-    // Ctrl-C reaches the command too; stay alive long enough to discard the evidence. A
-    // second one stops a command that ignores the first.
-    const stop = (): void => {
-      if (interrupted) child.kill("SIGKILL");
-      interrupted = true;
-    };
-    process.on("SIGINT", stop).on("SIGTERM", stop);
-    child.stdout.on("data", (chunk: Buffer) => {
-      chunks.push(chunk);
-      process.stdout.write(chunk);
+    // Scenario commands take no input: they run unattended, in a process group of their own.
+    const child = spawn("sh", ["-c", WATCHED], {
+      cwd: ROOT,
+      detached: true,
+      stdio: ["ignore", "pipe", "pipe", "pipe"],
+      env: { ...process.env, VERIFY_COMMAND: command },
     });
-    child.stderr.on("data", (chunk: Buffer) => {
+    interrupts.child = child;
+    const [, stdout, stderr] = child.stdio;
+    if (!stdout || !stderr) throw new Error("the command's output pipes were not opened");
+    const chunks: Buffer[] = [];
+    stdout.on("data", (chunk: Buffer) => {
       chunks.push(chunk);
-      process.stderr.write(chunk);
+      if (echo) process.stdout.write(chunk);
+    });
+    stderr.on("data", (chunk: Buffer) => {
+      chunks.push(chunk);
+      if (echo) process.stderr.write(chunk);
     });
     child.on("error", fail);
+    // An interrupted command's shell has exited: kill what it left behind (a background job
+    // ignores Ctrl-C), so the output pipes close and the run can end.
+    child.on("exit", () => {
+      if (!interrupts.interrupted || child.pid === undefined) return;
+      try {
+        process.kill(-child.pid, "SIGKILL");
+      } catch {
+        // nothing was left
+      }
+    });
     child.on("close", (code, signal) => {
-      process.off("SIGINT", stop).off("SIGTERM", stop);
+      interrupts.child = undefined;
       done({
-        code: code ?? 128,
+        // A command that died by a signal nobody sent here failed, the way a shell reports it.
+        code: code ?? 128 + (signal ? constants.signals[signal] : 0),
         // Invalid UTF-8 becomes U+FFFD rather than stopping the run.
         output: Buffer.concat(chunks).toString("utf8"),
-        interrupted: interrupted || signal !== null,
+        interrupted: interrupts.interrupted,
       });
     });
   });
@@ -604,45 +706,53 @@ async function cmdDrive(name: string, only: string | undefined, yes: boolean, dr
     );
   }
   let worst = 0;
-  for (const scenario of chosen) {
-    if (dry) {
-      console.log(`would run [${scenario.name}]: ${scenario.run}`);
-      console.log(`evidence:  ${rel(join(EVIDENCE, recipe.name))}/<stamp>.md`);
-      if (recipe.dryRun) {
-        spawnSync(scenario.run, { shell: true, cwd: ROOT, stdio: "inherit", env: { ...process.env, VERIFY_DRY_RUN: "1" } });
+  const interrupts = new Interrupts();
+  try {
+    for (const scenario of chosen) {
+      if (dry) {
+        console.log(`would run [${scenario.name}]: ${scenario.run}`);
+        console.log(`evidence:  ${rel(join(EVIDENCE, recipe.name))}/<stamp>.md`);
+        if (recipe.dryRun) {
+          spawnSync(scenario.run, { shell: true, cwd: ROOT, stdio: "inherit", env: { ...process.env, VERIFY_DRY_RUN: "1" } });
+          // A signal that arrived during the blocking call is handled once the event loop turns.
+          await new Promise((resolve) => setImmediate(resolve));
+          if (interrupts.interrupted) return 130;
+        }
+        continue;
       }
-      continue;
-    }
-    const [path, stamp] = reserve(recipe);
-    let written = false;
-    try {
-      const covers = recipe.covers.length ? fingerprint(recipe.covers) : "";
-      console.log(`running [${scenario.name}]: ${scenario.run}`);
-      const run = await runShown(scenario.run);
-      if (run.interrupted) {
-        console.error(`interrupted: no evidence kept for [${scenario.name}]`);
-        return 130;
+      const [path, stamp] = reserve(recipe);
+      let written = false;
+      try {
+        const covers = recipe.covers.length ? fingerprint(recipe.covers) : "";
+        console.log(`running [${scenario.name}]: ${scenario.run}`);
+        const run = interrupts.interrupted ? undefined : await runShown(scenario.run, interrupts);
+        if (!run || run.interrupted) {
+          console.error(`interrupted: no evidence kept for [${scenario.name}]`);
+          return 130;
+        }
+        const outcome: Outcome =
+          run.code === EXIT_UNREACHABLE ? "unreachable" : run.code !== 0 ? "failed" : scenario.judged ? "unjudged" : "verified";
+        writeFileSync(
+          path,
+          `# ${recipe.name} / ${scenario.name} — ${stamp}\n\n` +
+            `- **Scenario:** ${scenario.name}\n` +
+            `- **Command:** \`${scenario.run}\`\n` +
+            `- **Exit code:** ${run.code}\n` +
+            `- **Outcome:** ${outcome}\n` +
+            (covers ? `- **Covers:** ${covers}\n` : "") +
+            `- **Proves:** ${scenario.proves || "(not stated)"}\n\n` +
+            `## Output\n\n${run.output.trim().replace(LOCAL_PATH, "[local path]") || "(none)"}\n`,
+        );
+        written = true;
+        console.log(`${outcome}: evidence in ${rel(path)}`);
+        if (outcome === "failed" || outcome === "unreachable") worst = 1;
+      } finally {
+        // A run that did not finish leaves nothing behind to pass for evidence.
+        if (!written) rmSync(path, { force: true });
       }
-      const outcome: Outcome =
-        run.code === EXIT_UNREACHABLE ? "unreachable" : run.code !== 0 ? "failed" : scenario.judged ? "unjudged" : "verified";
-      writeFileSync(
-        path,
-        `# ${recipe.name} / ${scenario.name} — ${stamp}\n\n` +
-          `- **Scenario:** ${scenario.name}\n` +
-          `- **Command:** \`${scenario.run}\`\n` +
-          `- **Exit code:** ${run.code}\n` +
-          `- **Outcome:** ${outcome}\n` +
-          (covers ? `- **Covers:** ${covers}\n` : "") +
-          `- **Proves:** ${scenario.proves || "(not stated)"}\n\n` +
-          `## Output\n\n${run.output.trim().replace(LOCAL_PATH, "[local path]") || "(none)"}\n`,
-      );
-      written = true;
-      console.log(`${outcome}: evidence in ${rel(path)}`);
-      if (outcome === "failed" || outcome === "unreachable") worst = 1;
-    } finally {
-      // A run that did not finish leaves nothing behind to pass for evidence.
-      if (!written) rmSync(path, { force: true });
     }
+  } finally {
+    interrupts.release();
   }
   return worst;
 }

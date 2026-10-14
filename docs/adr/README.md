@@ -175,5 +175,6 @@
 | 2026-10-14 | [Design-time probes cover what the reviewers can know, and every shipped default yields to the user's and the project's rules](20261014-design-time-probes-cover-what-reviewers-can-know-and-defaults-yield-to-stated-rules.md) | Accepted | Task guidance |
 | 2026-10-14 | [One verification harness per project — a self-describing CLI reading recipe files, with ask-first runs](20261014-one-verification-harness-per-project.md) | Accepted | define / do |
 | 2026-10-14 | [Only records in effect carry enforcement](20261014-only-records-in-effect-carry-enforcement.md) | Accepted | ADR conventions |
+| 2026-10-14 | [Project surfaces follow the context, so the workflow runs without a project](20261014-project-surfaces-follow-the-context.md) | Accepted | Project context |
 | 2026-10-14 | [setup-project audits the whole setup when run, and figure-out fixes what is on its path](20261014-setup-project-audits-the-whole-setup-when-run.md) | Accepted | Project context |
 | 2026-10-14 | [The feature map is a navigation contract over whatever users invoke, with a fixed shape and a proof run](20261014-the-feature-map-is-a-navigation-contract-over-what-users-invoke.md) | Superseded by [20261014-one-verification-harness-per-project](20261014-one-verification-harness-per-project.md) | define / do |
