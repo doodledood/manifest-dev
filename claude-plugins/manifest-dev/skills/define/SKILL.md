@@ -125,7 +125,7 @@ That gives a floor that isn't ceremony:
     bullet through the verification assets the project keeps — its tests, scripts and checklists —
     and no gate or Deliverable builds or repairs a harness the project did not choose. Where none
     of them can check what the work touches, the first Deliverable adds that check in the project's
-    own form. With no bullet, record the harness as an offer the report carries, as an `ASM-*`,
+    own form. With no bullet, record the harness as a recommendation the report carries, as an `ASM-*`,
     never as work.
 - **A recorded check still to be built is built.** Search the project's decision records for
   `Enforced by` lines reading `not yet`. When the work implements or touches such a decision, a

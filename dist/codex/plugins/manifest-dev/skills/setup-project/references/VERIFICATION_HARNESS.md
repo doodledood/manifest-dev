@@ -16,10 +16,11 @@ trust*. It is judged by those, never by how closely it matches this file.
 
 ## When a project gets one
 
-A harness is offered, never imposed. Offer one when a project holds something future runs will
-change; one-shot work — a single report, a throwaway script — is checked in its own run and gets
-none. A project that already verifies its own way — its own scripts, suites or checklists — may
-decline it. The choice lives in one place: the verification bullet of the context file's
+A harness is optional and recommended. Setup installs one by default when a project holds
+something future runs will change; one-shot work — a single report, a throwaway script — is
+checked in its own run and gets none. A project that already verifies its own way — its own
+scripts, suites or checklists — may opt out, and every workflow skill still does its whole job
+without a harness. The choice lives in one place: the verification bullet of the context file's
 project-surfaces section, in its harness form or its own-way form (`NORTH_STAR_FORMAT.md` beside
 this file → *The project-surfaces section*). Every run reads it there:
 
@@ -28,7 +29,7 @@ this file → *The project-surfaces section*). Every run reads it there:
 - **Own-way form:** runs verify through the means the bullet names, add any check a change needs in
   that same form, and never build, repair, gate on or offer a harness.
 - **No bullet yet:** runs verify through what the project already has, add only the check a change
-  needs in the project's own form, build no harness, and offer one in their report.
+  needs in the project's own form, build no harness, and recommend one in their report.
 
 A project that keeps a harness keeps one, whatever it holds: a product's features, a plugin's
 skills, prompts with behavior cases, and living documents are all recipes in the same harness.

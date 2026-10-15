@@ -302,7 +302,7 @@ the `/setup-project` setup the project has. When the number is older than the ne
 ## Verification
 
 ### Verification Harness
-<!-- context: 067ffcafd0fe -->
+<!-- context: 10346be68d2a -->
 The Verification Harness is the one command in a project that agents and people use to find if the
 work still does its job. Its `--help` says all about it. It reads one Recipe for each feature,
 skill, document walk or eval suite. It calculates each status from Evidence in the repository, not
@@ -311,7 +311,8 @@ from a list that a person keeps. It can also start, observe, reset and stop what
 It exists because without it each session must find again how to test the project, and a test that
 nobody runs becomes stale.
 
-A harness is optional. A project can keep its own way to examine its work. The verification line of
+A harness is optional, but we recommend it. `/setup-project` adds it unless you opt out. A project
+can keep its own way to examine its work. The verification line of
 the Project Context File records the choice. When a project keeps a harness, normal runs repair it
 where their work touches it. When a project keeps its own way, runs use that way and do not add a
 harness.

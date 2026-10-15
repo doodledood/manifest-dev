@@ -85,7 +85,7 @@ To climb a level:
 
 | Skill | Use it to |
 |---|---|
-| `/setup-project` | Give a project its North Star, glossary and decision-record conventions, and offer a verification harness. Run it again to find gaps. |
+| `/setup-project` | Give a project its North Star, glossary and decision-record conventions, and add a verification harness unless you opt out. Run it again to find gaps. |
 | `/ticket-up` | Write work into your Ticket Store as Tickets. |
 | `/next-ticket` | Select the next Ticket, claim it, and see why it is first. |
 | `/run-ticket` | Do one Ticket from start to end and record the result on it. |
@@ -112,7 +112,7 @@ or `/skill:name`.
 - A project keeps a North Star, a glossary and decision records. It can also keep a verification
   harness. `/setup-project` installs them, and normal runs keep them current.
 - A verification harness has one Recipe for each feature, skill, document walk or eval suite.
-  `/do` runs the recipes that a change touches. A project can decline the harness and keep its own
+  `/do` runs the recipes that a change touches. A project can opt out of the harness and keep its own
   checks. Then `/do` uses those checks.
 - A Ticket holds one unit of work. `/ticket-up` writes it, `/next-ticket` selects it, and
   `/run-ticket` does it.

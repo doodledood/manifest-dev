@@ -34,11 +34,12 @@ rather than more.
   needs in that same form. No run builds, repairs, gates on or offers a harness.
 - Where there is no bullet, the project never chose. Runs verify through the checks the project
   already has, add only the check the change needs in the project's own form, build no harness, and
-  offer the harness in their report.
+  recommend the harness in their report.
 - Verification still comes before the work: when nothing the project has can check what a change
   touches, the first step adds such a check, in the project's own form.
-- setup-project asks once. A yes seeds the harness; a no writes the own-way bullet, so no later run
-  offers it again. The upgrade guides offer the same choice to installed projects.
+- The harness is recommended, so setup-project installs it by default; the user opts out to keep
+  the project's own way, which writes the own-way bullet, so no later run offers it again. Every
+  skill still does its whole job without a harness. The upgrade guides offer the same choice to installed projects.
 - Evidence stays uniform for every scenario a harness runs. A scenario a CI service also runs gets
   no exception, so the workflow does not depend on CI and carries no second evidence rule.
 

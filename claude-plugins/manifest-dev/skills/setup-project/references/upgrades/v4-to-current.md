@@ -7,7 +7,7 @@ creep, keep one summary per scenario, find what a diff touches, and narrow the a
 cost.
 
 Offer, each as its own item and as a default the project may adapt or decline where its own way
-already does the job. The project may also decline the harness whole and keep its own way of
+already does the job. The harness is recommended, but the project may opt out of it whole and keep its own way of
 verifying: then offer none of the harness items, and offer instead the own-way form of the
 verification bullet from `../NORTH_STAR_FORMAT.md` → *The project-surfaces section*, naming its
 commands and steps, so no later run builds or offers a harness:

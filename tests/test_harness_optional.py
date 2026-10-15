@@ -40,7 +40,7 @@ CONDITIONS = {
         "the project verifies its own way, or never chose",
     ),
     "setup-project/SKILL.md": (
-        "adopt the harness, or keep verifying the project's own way",
+        "install it unless the user opts out to keep verifying the project's own way",
         "record them in the own-way form of the verification bullet",
     ),
     "setup-project/references/NORTH_STAR_FORMAT.md": (

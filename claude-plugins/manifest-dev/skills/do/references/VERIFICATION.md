@@ -21,7 +21,8 @@ its own `--help`.
   within scope, and remove its `Drift (…)` line when the repair lands. When a recipe the change
   does not touch is found drifting, add a dated `Drift (YYYY-MM-DD): <what differs>` line to it,
   and leave the repair to the next run that touches it.
-- **Unfit harness:** when the harness is not fit to trust for what the work touches
+- **Unfit harness:** where the project-surfaces section names the harness and it is not fit to
+  trust for what the work touches
   (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it within
   scope, and report the rest as debt.
 - **Over its line:** when a check the work touches is over its time line, find where the time
