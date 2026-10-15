@@ -29,6 +29,7 @@ Workload: varies
 ### one-version-behind
 Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v4/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v4`
 Proves: the reply offers the update and names only what v5 adds — control commands for the overdue page in place of its fixed port, dropping `full-suite`'s run-time-only ask-first mark, the tool and the bullet — and nothing v1 to v4 gave.
+Check: read
 Workload: varies
 
 ### from-v1

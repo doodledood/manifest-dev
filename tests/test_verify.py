@@ -2105,6 +2105,20 @@ def test_an_undeclared_control_command_is_absent_from_help(tmp_path: Path) -> No
         assert f"no `{name}:` command" in refused.stderr, refused.stderr
 
 
+def test_every_flag_help_shows_for_a_control_command_is_accepted(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "")
+    _settings(tmp_path, **{name: "true" for name in CONTROL})
+    shown = run_verify("--help", env=env).stdout
+    for name in CONTROL:
+        line = re.search(rf"^  verify {name}\b(.*)$", shown, re.M)
+        assert line, (name, shown)
+        flags = ["--run", "abc"] if "[--run ID]" in line.group(1) else []
+        result = run_verify(name, *flags, env=env)
+        assert result.returncode == 0, (name, result.stderr)
+
+
 def test_a_project_declaring_no_control_has_no_control_section(tmp_path: Path) -> None:
     env = _harness(tmp_path, "")
     shown = run_verify("--help", env=env).stdout

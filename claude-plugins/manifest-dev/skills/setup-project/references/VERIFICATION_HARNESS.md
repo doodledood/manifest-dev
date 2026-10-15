@@ -36,15 +36,16 @@ cases, and living documents are all recipes in the same harness.
   with a one-line reason when it applies, and `dry-run: honored` when its commands obey
   `VERIFY_DRY_RUN=1`. Body: a title and one paragraph on what the user sees it do; *How a user
   reaches it* — every entry point past the obvious one; *Scenarios* — each a `### name` heading
-  with `Run:` (the exact command), `Proves:` (what a passing run shows) and `Check: read` when the
-  exit code cannot decide; *Gotchas* — traps that waste or invalidate a run. A recipe carries
+  with `Run:` (the exact command), `Proves:` (what a passing run shows), `Check: read` when the
+  exit code cannot decide, and `Workload: varies` when its work changes from run to run; *Gotchas* — traps that waste or invalidate a run. A recipe carries
   what a reader cannot get elsewhere; one that restates a description the artifact already shows
   its users costs upkeep and guides nobody. Where in the code a feature lives is read from the
   code at run time.
 - **Settings.** `harness.md` beside the recipes directory (`verification/harness.md` by
   default), never inside it: the `ask-first` setting, an optional `doctor:` command, the control
   commands, optional `grace:` (seconds between SIGTERM and SIGKILL when a run stops what it
-  started), `headroom:` and `raise:` for time lines, and notes `--help` prints — what every run
+  started), `headroom:` (25% by default, at least 1 s) and `raise:` (`run` lets an agent raise a
+  line with its reason, `ask` needs a person) for time lines, and notes `--help` prints — what every run
   starts from, what it needs (a running service, a credential), driving conventions. `harness/`
   beside this file carries an example settings file and three example recipes: a free
   browser-and-CLI feature, an ask-first agent skill, and an ask-first document walk.
@@ -85,8 +86,8 @@ different one worked: the evidence names the scenario it came from.
 A scenario with a fixed workload gets a time line: its first passing run on a kind of machine,
 plus headroom for noise. It is an alarm against a check slowly getting slower, and it only
 reports — it never decides when a check runs or who may run it. One run over is noise; two in a
-row show `over its line` and make `drive` exit non-zero. A faster run lowers the line, so the
-gain is kept. It moves up only by `verify raise` with a reason, or is held at the overshoot by
+row show `over its line` and make `drive` exit non-zero. A run faster by more than the headroom
+lowers the line, so the gain is kept. It moves up only by `verify raise` with a reason, or is held at the overshoot by
 `verify freeze` naming the debt Ticket that pays it down. A scenario whose work varies — the affected
 tests, or an agent session whose work the model decides each run — declares `Workload: varies`
 and gets none. Lines are derived
@@ -103,7 +104,8 @@ driving a web app in a local browser, running a CLI, or calling a local API is u
 freely, as do tests, dry runs and static checks.
 
 An ask-first recipe runs with a person's agreement, which the project's setting, the user in the
-session, or an approved Manifest whose gate runs that recipe can carry. By default
+session, or a Manifest a person approved whose gate runs that recipe can carry. A Manifest written
+and executed in one unattended chain carries none. By default
 (`ask-first: ask`) the tool refuses one unless the run passes `--yes`, which an agent passes only
 on that agreement. The default is the
 user's to change: setup offers the choice, records it in `harness.md`, `--help` prints it, and

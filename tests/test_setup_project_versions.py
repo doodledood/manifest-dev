@@ -111,18 +111,23 @@ def test_surfaces_template_carries_the_latest_version() -> None:
 NEWEST_VERSION_CASE = "45-current-setup-offers-nothing"
 
 
+def recorded_versions() -> dict[str, set[int]]:
+    """The surfaces versions each eval case's scaffold records, by case, across both suites."""
+    return {
+        p.parent.name: {
+            int(v) for v in TEMPLATE_VERSION.findall(p.read_text(encoding="utf-8"))
+        }
+        for p in EVALS.rglob("scaffold.sh")
+    }
+
+
 # Holds the decision in docs/adr/20261014-setup-project-audits-the-whole-setup-when-run.md.
 def test_eval_cases_track_the_newest_version() -> None:
     # The newest-version case is graded on no offer, so it records the newest version. From
     # v2 on, another case records the version before it, the only way to exercise the update
     # for a project recording an older version.
     newest = versions()[-1][0]
-    recorded = {
-        p.parent.name: {
-            int(v) for v in TEMPLATE_VERSION.findall(p.read_text(encoding="utf-8"))
-        }
-        for p in EVALS.glob("*/scaffold.sh")
-    }
+    recorded = recorded_versions()
     assert newest in recorded.get(
         NEWEST_VERSION_CASE, set()
     ), f"{NEWEST_VERSION_CASE} must record the newest version, v{newest}"
@@ -130,6 +135,26 @@ def test_eval_cases_track_the_newest_version() -> None:
         assert any(
             newest - 1 in found for found in recorded.values()
         ), f"no eval case records v{newest - 1}, one behind"
+
+
+def test_a_new_version_replaces_the_one_behind_case_instead_of_adding_one() -> None:
+    # Each version used to add a case beside the last, so the suite grew by one paid case per
+    # version while every one of them tested the same offer. One case stays one behind; a new
+    # version moves it (or replaces it) rather than leaving the old one in place.
+    newest = versions()[-1][0]
+    behind = {
+        case: sorted(v for v in found if v < newest)
+        for case, found in recorded_versions().items()
+        if any(v < newest for v in found)
+    }
+    assert all(found == [newest - 1] for found in behind.values()), (
+        f"eval cases recording a version older than v{newest - 1}: {behind}. Move the "
+        f"one-behind case to v{newest - 1} and retire the others"
+    )
+    assert len(behind) <= 1, (
+        f"more than one eval case records v{newest - 1}: {sorted(behind)}. A new version "
+        "replaces the one-behind case rather than adding one"
+    )
 
 
 GUIDE = re.compile(r"^v(\d+)-to-current\.md$")

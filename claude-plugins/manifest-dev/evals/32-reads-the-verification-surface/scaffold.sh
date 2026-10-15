@@ -710,7 +710,7 @@ function cmdHelp(): number {
   const declared = (Object.keys(CONTROL) as Control[]).filter((name) => conf.control[name]);
   const control = declared.length
     ? `\nControl (this project's commands, declared in {settings}):\n` +
-      declared.map((name) => `  verify ${`${name} [--run ID]`.padEnd(24)}${CONTROL[name]}: ${conf.control[name]}\n`).join("")
+      declared.map((name) => `  verify ${`${name}${name === "running" ? "" : " [--run ID]"}`.padEnd(24)}${CONTROL[name]}: ${conf.control[name]}\n`).join("")
     : "";
   const fill: Record<string, string> = {
     recipes: rel(RECIPES),

@@ -87,7 +87,7 @@ Digest: 932d17190a24d0fb7e0b99b039d1821ac54a13769d05b56f2b32b2bff7f118e9
 - A failed or unreachable run's evidence keeps what the `logs:` command printed for it.
 - Evidence records each run's duration and kind of machine. A fixed-workload scenario gets a time
   line from its first passing run on that kind of machine plus headroom: two runs over it in a row
-  show `over its line` and make `drive` exit 5; a faster run lowers it; `verify raise` (with a
+  show `over its line` and make `drive` exit 5; a run faster by more than the headroom lowers it; `verify raise` (with a
   reason) and `verify freeze` (with a debt Ticket) move or hold it. Lines live in evidence, never
   in a file every run edits; `Workload: varies` scenarios — the affected tests, an agent session —
   get none.
@@ -99,8 +99,9 @@ Digest: 932d17190a24d0fb7e0b99b039d1821ac54a13769d05b56f2b32b2bff7f118e9
   running user's actual home and temporary directories, wherever they are.
 - The ask-first mark means cost only — money or quota, load on shared systems, effects outside
   the repository; run time alone is not a reason, and every other check is free to run as often
-  as it helps. Agreement can come from the project's setting, the user, or an approved Manifest
-  whose gate runs the recipe.
+  as it helps. Agreement can come from the project's setting, the user, or a Manifest a person
+  approved whose gate runs the recipe; one written and executed in one unattended chain carries
+  none.
 - *Fit to trust* gains three jobs: fast enough (no touched check over its line without a reason),
   controllable (started, observed and stopped through the harness, each run on its own), and a
   failure explains itself.

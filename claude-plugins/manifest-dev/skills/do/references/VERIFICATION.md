@@ -21,7 +21,8 @@ repository check — are in setup-project's `references/VERIFICATION_HARNESS.md`
   recipe to match the change and run it with the harness, committing its evidence; where its
   proof needs reading, read it and record the verdict with `judge`. Free recipes run as often as
   they help. A recipe marked ask-first runs only with agreement — the project's setting is `run`,
-  the user agreed, or the approved Manifest has a gate that runs it; otherwise update it, leave
+  the user agreed, or a person approved this Manifest with a gate that runs it (a Manifest written
+  and executed in one unattended chain carries no agreement); otherwise update it, leave
   it unrun, and name the run it owes in the report. A change to a prompt that leaves its measured eval cases
   unrun marks them `stale`; unmeasured cases stay `unmeasured`.
 - **Drift:** when a run fails because the recipe is wrong about the product, repair the recipe
@@ -36,8 +37,8 @@ repository check — are in setup-project's `references/VERIFICATION_HARNESS.md`
   what the change added — a slow new test, a sleep — or the fix lies in code the change already
   touches. When the fix needs shared code the change does not touch, or a broad refactor, open
   or join one debt Ticket, `verify freeze` the overshoot with it, and report it as debt. Raise
-  the line only when the new time is in new tests for new behavior and the existing tests are no
-  slower, with that reason in `verify raise` and one line in the pull request. Never weaken a
+  the line only when the new time is in new tests for new behavior, the existing tests are no
+  slower and no cheap waste remains, with that reason in `verify raise` and one line in the pull request. Never weaken a
   check to make it faster.
 - **Regressions:** when a run fails because the product is broken, report it as debt with the
   evidence. Never weaken a recipe or a scenario to make it pass.

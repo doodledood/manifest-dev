@@ -1,0 +1,5 @@
+# Holds the decision in docs/adr/20261015-runs-keep-the-harness-fit-for-speed-control-and-diagnosis.md — that record's Enforced by line names this case; weakening or removing it means updating that line in the same change.
+schema_version: "1.0"
+name: d23-unfit-recipe-repaired-first
+context:
+  scaffold_script: scaffold.sh
