@@ -82,7 +82,7 @@ One Markdown file in the Verification Harness: what a thing is, how a user reach
 _Avoid_: Feature-map entry, reader task, test case.
 
 **Ask-first**:
-The mark on a Recipe whose run costs something a person should weigh — money or quota, long run time, shared environments, effects outside the repository — with its reason. By default the harness runs it only with `--yes`, given when a person ran it or agreed; the project's setting can change that. It follows what a run costs, not its kind: a local browser or CLI drive is unmarked.
+The mark on a Recipe whose run costs something a person should weigh — money or quota, load on shared systems, effects outside the repository — with its reason; run time alone is not a cost. By default the harness runs it only with `--yes`, given when a person ran it or agreed; the project's setting can change that. It follows what a run costs, not its kind: a local browser or CLI drive is unmarked.
 _Avoid_: Paid, model-session, slow.
 
 **Fit to Trust**:
