@@ -23,7 +23,7 @@ USER_INVOCABLE = {
         "do",
         "figure-out",
         "figure-out-team",
-        "help",
+        "manifest-explain",
         "next-ticket",
         "review-code",
         "review-design",
@@ -61,7 +61,7 @@ def user_invocable(plugin: str) -> set[str]:
 # Holds the decision in docs/adr/20261013-new-capabilities-live-inside-the-four-workflow-entry-points.md.
 # Holds the decision in docs/adr/20260809-init-context-skill-lives-in-core.md.
 # Holds the decision in docs/adr/20260901-design-skill-pair-distills-research-eval-deferred.md.
-# Holds the decision in docs/adr/20261015-a-help-skill-explains-manifest-dev-in-simplified-technical-english.md.
+# Holds the decision in docs/adr/20261015-manifest-explain-answers-questions-about-manifest-dev-in-simplified-english.md.
 def test_user_invocable_skills_are_the_declared_set() -> None:
     for plugin, expected in USER_INVOCABLE.items():
         actual = user_invocable(plugin)

@@ -1,9 +1,9 @@
 ---
-name: help
+name: manifest-explain
 description: 'Answer any question a person has about manifest-dev, with the why behind it: what it is for, its workflow and the autonomy ladder, each term a user meets (Manifest, Acceptance Criterion, Global Invariant, verification harness, recipe, ask-first, Lock, Debt, Ticket and the rest), how the parts relate, why each part exists, the practices it encodes, and what a Manifest, a run report, a pull request section or a file the workflow wrote means. Use when the user asks what something in manifest-dev is, why it works that way, how its skills relate, or where to start. Not for help with the user''s own task.'
 ---
 
-# help
+# manifest-explain
 
 People come here to ask about anything in manifest-dev that they do not understand, and why it works
 that way. Answer each question with what the part is and why it exists. Write each answer close to
@@ -96,11 +96,10 @@ To climb a level:
 | `/design` | Get design direction for a page, app, document or other visual work. |
 | `/review-design` | Review a design in the medium that it is for. |
 | `/check-pr` | Find if a pull request is ready to merge. It does not merge. |
-| `/help` | Read this guide. |
+| `/manifest-explain` | Read this guide, or ask it a question. |
 
-This guide writes each skill as `/name`. Your host can use a different prefix. On some hosts, a
-command of the host has the name `/help`. Then type the plugin name, a colon and `help`, or ask your
-question in words.
+This guide writes each skill as `/name`. Your host can use a different prefix, for example `$name`
+or `/skill:name`.
 
 ## How the parts relate
 

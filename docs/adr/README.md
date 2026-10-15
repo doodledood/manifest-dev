@@ -178,10 +178,10 @@
 | 2026-10-14 | [Project surfaces follow the context, so the workflow runs without a project](20261014-project-surfaces-follow-the-context.md) | Accepted | Project context |
 | 2026-10-14 | [setup-project audits the whole setup when run, and figure-out fixes what is on its path](20261014-setup-project-audits-the-whole-setup-when-run.md) | Accepted | Project context |
 | 2026-10-14 | [The feature map is a navigation contract over whatever users invoke, with a fixed shape and a proof run](20261014-the-feature-map-is-a-navigation-contract-over-what-users-invoke.md) | Superseded by [20261014-one-verification-harness-per-project](20261014-one-verification-harness-per-project.md) | define / do |
-| 2026-10-15 | [A help skill explains manifest-dev in Simplified Technical English, held level with the glossary](20261015-a-help-skill-explains-manifest-dev-in-simplified-technical-english.md) | Accepted | Positioning |
 | 2026-10-15 | [Ask-first marks cost, not slowness](20261015-ask-first-marks-cost-not-slowness.md) | Accepted | define / do |
 | 2026-10-15 | [A check's run time is held by an alarm against creep, set from measurement and moved only on purpose](20261015-check-run-time-is-held-by-an-alarm-against-creep.md) | Accepted | define / do |
 | 2026-10-15 | [`/do` states the goal and its conventions, and leaves method to the run](20261015-do-states-the-goal-and-its-conventions-and-leaves-method-to-the-run.md) | Accepted | Prompt architecture |
+| 2026-10-15 | [manifest-explain answers questions about manifest-dev in Simplified Technical English, held level with the glossary](20261015-manifest-explain-answers-questions-about-manifest-dev-in-simplified-english.md) | Accepted | Positioning |
 | 2026-10-15 | [Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it](20261015-projects-drive-themselves-as-far-as-each-user-climbs.md) | Accepted | North Star |
 | 2026-10-15 | [Runs keep the harness fit to trust for speed, control and diagnosis, through one list](20261015-runs-keep-the-harness-fit-for-speed-control-and-diagnosis.md) | Accepted | define / do |
 | 2026-10-15 | [The shipped verification harness is a default shape a project adapts](20261015-the-shipped-harness-is-a-default-shape-a-project-adapts.md) | Accepted | define / do |

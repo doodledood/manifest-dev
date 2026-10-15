@@ -107,11 +107,14 @@ nothing has to be adopted whole to be useful. The levels form an autonomy ladder
 skill used on its own, one piece of work understood, defined and verified, a project that
 keeps its direction, vocabulary, decisions and checks, a shared queue of work, and
 unattended runs that take work from that queue — and each level works without the ones
-above it and without anyone else on the team adopting any of it.
+above it and without anyone else on the team adopting any of it. manifest-dev ships no
+orchestrator: unattended runs start from whatever scheduler or orchestrator the user already
+runs, and the skills are the protocol it drives.
 
 — ruled: 2026-08-21, arrival is not pursued; the standalone shape is kept because it is
   the honest entry to the method, not because it converts. Extended 2026-10-15 to the
-  autonomy ladder, each level working without the ones above it and without the team. See
+  autonomy ladder, each level working without the ones above it and without the team, and
+  the same day to stay the protocol any orchestrator drives rather than ship one. See
   docs/adr/20260821-positioning-drops-the-conversion-funnel.md and
   docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. Only the owner moves this.
 
@@ -155,7 +158,9 @@ how many of our own projects are running all three tiers at once.
   beside a procedural one — a prompt that states its goal and gets out of the way spends
   less of the model's attention on being told what it already knows, which measured
   better as well as cheaper. Speed binds the same way: a run's verification rounds must
-  stay fast enough that many agents working at once are not held up by them. And the
+  stay fast enough that many agents working at once are not held up by them. Once runs go
+  unattended, cost is judged per unit of merged work, not per run, so cheap runs that
+  escalate count against it. And the
   mirror still holds: a run that keeps verifying and repairing past the point its gates
   are satisfied is a defect in our workflow, never a meter the user should have to watch.
 - Commentary on this repository's own adoption or popularity (stars, usage, traction)
@@ -165,6 +170,8 @@ how many of our own projects are running all three tiers at once.
 - Requiring anyone else to adopt it: what a user adds to a shared repository reads as
   plain files and plain instructions, and nothing in it stops a colleague who does not use
   manifest-dev from working as they did.
+- Agents granting themselves work: a Ticket an agent writes carries Auto only when a person
+  grants it, so the queue grows on what people judge worth doing.
 
 — ruled: each enforced in practice today — the messaging boundaries since the first
   strategy doc, the bounded-not-cheap boundary added 2026-07-28 and revised 2026-08-20
@@ -180,7 +187,10 @@ how many of our own projects are running all three tiers at once.
   docs/adr/20261015-verification-speed-binds-like-cost-second-to-quality.md. The boundary
   against requiring anyone else to adopt it was added 2026-10-15, when the owner ruled that
   the project fits inside teams and codebases where most colleagues do not use it; what
-  setup adds to a shared context file has not yet been checked against it — see
+  setup adds to a shared context file has not yet been checked against it. The same day the
+  owner ruled that cost is judged per unit of merged work once runs go unattended, and that
+  agents never grant themselves work; `ticket-up` still passes Auto from a granted source
+  Ticket to a qualifying follow-up, and has not yet been changed to match — see
   docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. The traction
   rule lives in the repository's contributor instructions. Only the owner moves these.
 
@@ -188,15 +198,8 @@ how many of our own projects are running all three tiers at once.
 
 - Does the project-level half of the promise hold for anyone but its author? What would
   fill it: someone who is not the maintainer keeping a project's direction, its queue,
-  and its definition of done in these surfaces. 2026-08
+  and its definition of done in these surfaces. The owner assumes it does; no one else has
+  tried it. 2026-08, owner's assumption 2026-10-15
 - Which count tracks the self-driving part of winning — the share of merged work that
   needed a person only for judgment, taste or authority, or another? What would fill it:
   the owner's choice, once our own projects run unattended work. 2026-10-15
-- Does the cost boundary stay per run, or become cost per unit of merged value once many
-  agents run at once? What would fill it: the owner's ruling, grounded in the spend of a
-  stretch of unattended runs. 2026-10-15
-- What keeps a self-feeding queue from growing on low-value work that agents ticket up?
-  What would fill it: a measured run of agent-authored tickets done unattended, judged on
-  whether they were worth doing. 2026-10-15
-- Does manifest-dev ship the orchestrator that starts unattended runs, or stay the
-  protocol any orchestrator drives? What would fill it: the owner's ruling. 2026-10-15
