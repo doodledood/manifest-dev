@@ -74,7 +74,7 @@ An index that asserts nothing its records don't, and is rebuilt from them rather
 _Avoid_: ADR list, table of contents.
 
 **Verification Harness**:
-A project's one command for checking that what future runs will change still does its job — `--help` says everything — reading one Recipe per feature, skill, document walk or eval suite. Statuses (unverified, verified, failed, unreachable, unjudged, stale) are worked out from committed evidence, never kept by hand. Normal runs build and repair it where the work touches it, never a separate maintenance pass. It replaced the verification surface, feature map and reader-task list of earlier setups.
+A project's one command, for agents and people alike, for controlling what future runs will change — starting it in a known state, driving it, observing it, stopping it — and for checking that it still does its job — `--help` says everything — reading one Recipe per feature, skill, document walk or eval suite. Statuses (unverified, verified, failed, unreachable, unjudged, stale) are worked out from committed evidence, never kept by hand. Normal runs build it and keep its control, its speed and its checks sound where the work touches it, never a separate maintenance pass. It replaced the verification surface, feature map and reader-task list of earlier setups.
 _Avoid_: Verification surface, feature map, reader-task list, test suite, control skill.
 
 **Recipe**:
