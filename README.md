@@ -51,7 +51,7 @@ Claude Code is the primary target. Inside a Claude Code session, run:
 /plugin install manifest-dev@manifest-dev
 ```
 
-Then start a session in the repository you want to work on and type `/figure-out <topic>`.
+Then start a session in the repository you want to work on and type `/figure-out <topic>`. When a term or a file the workflow leaves behind is unclear, ask `/manifest-dev:help` (Claude Code's own `/help` takes the bare name) or simply ask what it means.
 
 Every skill also works on its own. If you only want the one from the top of this page:
 

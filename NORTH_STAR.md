@@ -56,17 +56,28 @@ project better off than moving faster without them.
   codebase and in published practice; unmeasured until the eval baseline and real projects run
   it. 2026-10
 
+- Gates that carry evidence can stand in for a person reviewing each change, so work can
+  land unattended wherever it needs no one's judgment, taste or authority.
+
+  — hypothesis: the self-driving part of the direction rests on it; our own runs land work
+  on gate evidence, but no project has yet run unattended work at volume and compared it
+  with reviewed work. See docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. 2026-10
+
 ## Who it's for
 
-Quality-first developers: five-plus years of experience, already driving an agentic
-coding CLI, solo or small-team, willing to spend tokens and up-front effort for output
-they can trust. Secondary: small teams standardizing how AI-assisted development is done.
+Quality-first developers: five-plus years of experience, already working with an agentic
+coding CLI, willing to spend tokens and up-front effort for output they can trust — in a
+team of any size, on a project of their own or inside an existing codebase where most of
+their colleagues do not use manifest-dev. Each takes the levels of the autonomy ladder that
+fit their situation. Secondary: teams standardizing how AI-assisted development is done.
 
 Not for: cost optimizers, speed-first shippers, tinkerers who want to tweak everything,
 hype chasers, and people not using a coding agent at all.
 
-— hypothesis: matches ourselves; no user beyond the maintainer has confirmed the
-  segment. 2026-08
+— ruled: 2026-10-15, the owner widened the person from solo or small-team to any team,
+  including codebases where colleagues do not use it; the person still matches ourselves,
+  and no user beyond the maintainer has confirmed the segment. See
+  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md.
 
 ## Promise
 
@@ -77,11 +88,14 @@ agent can be exactly right about the wrong work. The bar a user should hold us t
 give the agent a complex task and trust the output enough to ship it with minimal review —
 and come back to the project weeks later and find it still knows what it's becoming,
 what's next, and what done means — and find the codebase easier to change correctly than
-when I started."*
+when I started — and, as far up the autonomy ladder as I choose to go, find the project
+moving forward on its own, taking its next work from its queue and asking me only when it
+needs my judgment, taste or authority."*
 
-— ruled: 2026-10-13, the owner extended the bar with a codebase part; the first two parts
-  were ruled to stand together 2026-08-21. None of it has been put in front of a stranger as
-  the reason to try the project. See
+— ruled: 2026-10-15, the owner added the part where the project moves forward on its own,
+  as far as each user chooses; the codebase part was ruled 2026-10-13, and the first two
+  parts to stand together 2026-08-21. None of it has been put in front of a stranger as the
+  reason to try the project. See docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md,
   docs/adr/20261013-the-promise-includes-a-codebase-that-gets-easier-to-change.md and
   docs/adr/20260821-positioning-drops-the-conversion-funnel.md.
 
@@ -89,12 +103,17 @@ when I started."*
 
 However they find it. The project is built in public and shared as it is used; no channel
 is worked and no funnel is maintained. Whatever someone meets first stands alone, so
-nothing has to be adopted whole to be useful.
+nothing has to be adopted whole to be useful. The levels form an autonomy ladder — one
+skill used on its own, one piece of work understood, defined and verified, a project that
+keeps its direction, vocabulary, decisions and checks, a shared queue of work, and
+unattended runs that take work from that queue — and each level works without the ones
+above it and without anyone else on the team adopting any of it.
 
 — ruled: 2026-08-21, arrival is not pursued; the standalone shape is kept because it is
-  the honest entry to the method, not because it converts. See
-  docs/adr/20260821-positioning-drops-the-conversion-funnel.md. Only the owner moves
-  this.
+  the honest entry to the method, not because it converts. Extended 2026-10-15 to the
+  autonomy ladder, each level working without the ones above it and without the team. See
+  docs/adr/20260821-positioning-drops-the-conversion-funnel.md and
+  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. Only the owner moves this.
 
 ## Money — or what it feeds
 
@@ -110,13 +129,19 @@ getting the workflows right.
 
 Winning is our own projects running end-to-end on all three tiers — a North Star that
 stands, work pulled from a Ticket store rather than from whoever is at the keyboard, and
-execution against a Manifest with gate evidence. Outside recognition is welcome as a
+execution against a Manifest with gate evidence — and driving themselves wherever they
+can: agents take work from the store, finish it, and ticket up what they find, while
+people step in only where a run is blocked or needs their judgment, taste or authority.
+Outside recognition is welcome as a
 consequence of that working; it is never a target traded against it. The number watched:
 how many of our own projects are running all three tiers at once.
 
 — ruled: 2026-08-21, the owner's choice between the two candidates the empty field named,
   grounded in the standing ruling that distribution stays secondary to getting the
-  workflows right. See docs/adr/20260821-winning-is-our-own-projects-running-the-full-loop.md.
+  workflows right. The destination extended 2026-10-15 to projects that drive themselves
+  wherever they can; the number is unchanged, and whether that part needs its own count is
+  Open. See docs/adr/20260821-winning-is-our-own-projects-running-the-full-loop.md and
+  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md.
   Only the owner moves this.
 
 ## Never
@@ -137,6 +162,9 @@ how many of our own projects are running all three tiers at once.
   anywhere in the repo.
 - User-facing complexity: workflows may be sophisticated inside, but the experience
   stays minimal steps, nothing to memorize, "just follow along and it works".
+- Requiring anyone else to adopt it: what a user adds to a shared repository reads as
+  plain files and plain instructions, and nothing in it stops a colleague who does not use
+  manifest-dev from working as they did.
 
 — ruled: each enforced in practice today — the messaging boundaries since the first
   strategy doc, the bounded-not-cheap boundary added 2026-07-28 and revised 2026-08-20
@@ -149,7 +177,11 @@ how many of our own projects are running all three tiers at once.
   docs/adr/20260914-one-skill-per-beat-built-from-the-lean-body.md — and again 2026-10-15
   when the owner ruled that verification speed binds like cost, second to quality, so that
   many agents working at once are not held up by slow rounds — see
-  docs/adr/20261015-verification-speed-binds-like-cost-second-to-quality.md. The traction
+  docs/adr/20261015-verification-speed-binds-like-cost-second-to-quality.md. The boundary
+  against requiring anyone else to adopt it was added 2026-10-15, when the owner ruled that
+  the project fits inside teams and codebases where most colleagues do not use it; what
+  setup adds to a shared context file has not yet been checked against it — see
+  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. The traction
   rule lives in the repository's contributor instructions. Only the owner moves these.
 
 ## Open
@@ -157,3 +189,14 @@ how many of our own projects are running all three tiers at once.
 - Does the project-level half of the promise hold for anyone but its author? What would
   fill it: someone who is not the maintainer keeping a project's direction, its queue,
   and its definition of done in these surfaces. 2026-08
+- Which count tracks the self-driving part of winning — the share of merged work that
+  needed a person only for judgment, taste or authority, or another? What would fill it:
+  the owner's choice, once our own projects run unattended work. 2026-10
+- Does the cost boundary stay per run, or become cost per unit of merged value once many
+  agents run at once? What would fill it: the owner's ruling, grounded in the spend of a
+  stretch of unattended runs. 2026-10
+- What keeps a self-feeding queue from growing on low-value work that agents ticket up?
+  What would fill it: a measured run of agent-authored tickets done unattended, judged on
+  whether they were worth doing. 2026-10
+- Does manifest-dev ship the orchestrator that starts unattended runs, or stay the
+  protocol any orchestrator drives? What would fill it: the owner's ruling. 2026-10

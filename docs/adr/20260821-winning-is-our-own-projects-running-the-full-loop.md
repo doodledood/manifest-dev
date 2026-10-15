@@ -1,7 +1,7 @@
 # ADR: Winning is our own projects running the full loop; recognition is a consequence
 
 ## Status
-Accepted
+Accepted — amended by [20261015-projects-drive-themselves-as-far-as-each-user-climbs](20261015-projects-drive-themselves-as-far-as-each-user-climbs.md): the destination extends to projects that drive themselves wherever they can; the number watched is unchanged.
 
 ## Area
 Positioning

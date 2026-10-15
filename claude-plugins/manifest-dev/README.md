@@ -93,6 +93,12 @@ These shape where a session's answers land:
 | `/figure-out-team` | Runs the same deliberation in a Slack channel or thread, for people who can't all sit in one session. |
 | `poll-slack` | Reports what's new in a channel or thread since a cursor. Called by `/figure-out-team` rather than invoked by hand. |
 
+## Help
+
+| Skill | What it does |
+|-------|--------------|
+| `/help` | Explains manifest-dev in plain, simplified English: what it is for, the workflow, the autonomy ladder from one skill to unattended runs, every term you meet with why it exists, and good practice. Ask it what a recipe, a gate or a Lock is. In Claude Code, the built-in `/help` takes the bare name, so type `/manifest-dev:help` or just ask your question. |
+
 ## How it fits together
 
 A Manifest separates *what to build* — deliverables, each with criteria — from *what must hold throughout*. `/do` can't call it finished while any criterion lacks evidence, which is what makes "done" a finding rather than a claim.

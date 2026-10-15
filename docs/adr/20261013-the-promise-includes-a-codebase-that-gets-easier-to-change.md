@@ -1,7 +1,7 @@
 # ADR: The promise includes a codebase that gets easier to change correctly
 
 ## Status
-Accepted
+Accepted — amended by [20261015-projects-drive-themselves-as-far-as-each-user-climbs](20261015-projects-drive-themselves-as-far-as-each-user-climbs.md): the bar sentence gains a fourth part, a project that moves forward on its own as far up the autonomy ladder as the user chooses.
 
 ## Area
 North Star
