@@ -19,7 +19,7 @@ commands and steps, so no later run builds or offers a harness:
    for each entry the v1 surface carries with its content and evidence, the `ask-first` marks,
    and the removal of the old surface, its README and its repository check — except an eval suite,
    which stays as it is. Where the project has
-   no surface and holds something future runs will change, offer a new harness seeded per
+   no surface and holds something future runs will change, recommend a new harness seeded per
    `../VERIFICATION_HARNESS.md` → *What setup creates, and what runs build* instead; its
    ask-first choice and bullet are the items below.
 3. **The ask-first setting** — `ask` by default, or `run`.

@@ -205,7 +205,7 @@ gaps, as long as one command still tells a newcomer how to verify.
 
 ## What setup creates, and what runs build
 
-Where the user accepts the harness, setup seeds it in this default shape, fitted to what the project already has: it copies and adapts the tool in the language *The parts* sets, asks the
+Where setup installs the harness (the user did not opt out), it seeds it in this default shape, fitted to what the project already has: it copies and adapts the tool in the language *The parts* sets, asks the
 ask-first choice (default `ask`) and writes it to `harness.md`, declares the control commands
 the project's existing scripts already provide (and none where nothing runs), adopts existing
 assets as recipes that delegate to them, catalogs recipes
