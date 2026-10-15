@@ -20,7 +20,9 @@ run time, so creep is invisible until it dominates.
 A number a person picks is arbitrary, and a growing app cannot keep a small number forever.
 Comparing each run to the one before misses creep, because each step sits inside the timing
 noise. The owner also does not want slowness to decide when a check runs: fast and slow are
-something the agent is aware of, not a rule.
+something the agent is aware of, not a rule. And the owner runs many agents at once on one
+project, working on different things but sharing one harness and one suite. A rule that makes
+every crossing run rewrite shared test code would have those agents collide.
 
 ## Decision
 - Every run records its wall-clock duration in its evidence, with the kind of machine it ran on.
@@ -35,9 +37,20 @@ something the agent is aware of, not a rule.
   the new time is in new tests for new behavior, the existing tests are no slower, and no cheap
   waste remains. That run then writes one line in its pull request saying why. By default the
   agent may raise a line. A project can require a person instead, with one setting.
-- A crossing that growth did not earn is paid down by the run that crosses it, before it is
-  done. One too large to pay inside the change is reported with its evidence. A crossing counts
-  only after one re-run confirms it.
+- Where its fix lives decides what happens to a crossing that growth did not earn, not its size.
+  When the time came from what this change added, such as a slow new test or a sleep, or the fix
+  lies in code the change already touches, the run that crosses the line pays it down before it
+  is done. When the fix needs shared code the change does not touch, such as fixtures, test
+  infrastructure or the harness itself, or needs a broad refactor, the run does not fold it in.
+  It opens or joins one debt Ticket instead. The Ticket freezes the overshoot at its current
+  level. Other runs are not held up by it, but time past that level is new creep, and the run
+  that causes it pays. One owner pays the Ticket as its own change. This is the same scope line
+  runs already follow for lock hits and pre-existing issues, and it is also where agents working
+  side by side would collide.
+- A line, its raises and lowerings, and the Ticket that freezes an overshoot are derived from
+  each run's own evidence, like a status. They are never kept in a file every run edits, so runs
+  side by side never conflict over them.
+- A crossing counts only after one re-run confirms it.
 - Speed is never bought with proof. Mocking past a real boundary, or deleting or skipping a slow
   test, weakens a check, and runs never weaken a check to make it pass.
 
@@ -52,6 +65,10 @@ something the agent is aware of, not a rule.
 - **CPU time instead of wall time**: steadier, but it hides waiting. Waiting was most of this
   repository's suite: 94 s of wall time against 36.5 s of CPU.
 - **Report a crossing as debt and finish**: the creep stays visible but builds up again.
+- **Pay every crossing in the change that finds it**: whichever agent crosses first rewrites
+  shared test code, many pull requests do it at once and collide, and unrelated changes widen.
+- **Defer above a size threshold**: an arbitrary number, and it does not follow where agents
+  collide.
 - **Reuse results across runs when the covered files are unchanged**: the largest saving at
   scale, but `covers` lists are written by hand, so a cache hit can vouch for a dependency
   nobody tested. Left for later, and never for the check before done.
@@ -66,11 +83,13 @@ something the agent is aware of, not a rule.
 - Timing noise and differences between machines need headroom and a line for each kind of
   machine, and a crossing costs one confirming re-run.
 - Deciding whether growth earned the time is a judgment that review has to hold.
+- A frozen overshoot leaves the suite slower until its Ticket is paid.
 
 ## Enforced by
 not yet — `tests/test_verify.py` cases that evidence records duration and machine, that a
-fixed-workload scenario over its line shows in the recipe's status until it is paid or raised,
-and that a raise without a recorded reason is refused.
+fixed-workload scenario over its line shows in the recipe's status until it is paid, raised or
+frozen by a Ticket, that a raise without a recorded reason is refused, and that a frozen
+overshoot fails a run only once time passes the frozen level.
 
 ## Source
 - Session: figure-out investigation of the verification harness's control, speed and
