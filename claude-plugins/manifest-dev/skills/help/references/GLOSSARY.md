@@ -243,7 +243,7 @@ repository, not in the memory of one person.
 ### North Star
 <!-- context: bc1fde256fe2 -->
 The North Star is a file in the project that states its long-term direction. It says why the
-project exists, who it is for, what it promises, what success means and what it must never do.
+project exists, who it is for, what it promises, what winning means and what it must never do.
 Each position has a state with a date: evidence, hypothesis, ruled or empty. It informs each
 session but does not bind. Only the owner changes a position, and a Decision Record remembers
 each change.
@@ -251,7 +251,7 @@ each change.
 ### Glossary
 <!-- context: 34518718d381 -->
 The Glossary is the vocabulary file of the project, `CONTEXT.md` by default. Each session reads
-it, because the Project Context File loads it. It defines each term that the project agreed, so that no session reads a term with the wrong sense. A term goes into it when the project agrees
+it, because the Project Context File loads it. It defines each term that the project agreed, so that no session reads a term with the wrong meaning. A term goes into it when the project agrees
 on that term.
 
 ### Decision Record

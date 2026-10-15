@@ -183,7 +183,7 @@ The rule that a slice must be exercisable end-to-end on its own — put in front
 
 ## Help Glossary Ownership
 
-`help/references/GLOSSARY.md` restates `CONTEXT.md`'s product terms for users, in ASD-STE100 and with the why behind each, because no installed skill can read this repository's glossary. Every change to a `CONTEXT.md` entry rereads its help entry in the same change: each help entry records the fingerprint of the `CONTEXT.md` entry it was written from, and `tests/test_help_skill.py` fails — printing the new fingerprint — when the two differ, when a term is added or removed on one side only, or when help breaks STE's counted limits. A term only maintainers use goes in that test's `MAINTAINER_TERMS` instead. See `docs/adr/20261015-a-help-skill-explains-manifest-dev-in-simplified-technical-english.md`.
+`help/references/GLOSSARY.md` restates `CONTEXT.md`'s product terms for users, close to ASD-STE100 (about 90% of it) and with the why behind each, because no installed skill can read this repository's glossary. Every change to a `CONTEXT.md` entry rereads its help entry in the same change: each help entry records the fingerprint of the `CONTEXT.md` entry it was written from, and `tests/test_help_skill.py` fails — printing the new fingerprint — when the two differ, when a term is added or removed on one side only, or when help breaks STE's counted limits. A term only maintainers use goes in that test's `MAINTAINER_TERMS` instead. See `docs/adr/20261015-a-help-skill-explains-manifest-dev-in-simplified-technical-english.md`.
 
 ## Project Definition Ownership
 

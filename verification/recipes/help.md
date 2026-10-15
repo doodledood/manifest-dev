@@ -6,7 +6,7 @@ dry-run: honored
 ---
 # help
 
-Explains manifest-dev to a person in ASD-STE100: what it is for, the workflow, the autonomy ladder, every term a user meets with why it exists, how the parts relate, and good practice.
+Explains manifest-dev to a person in English close to ASD-STE100: what it is for, the workflow, the autonomy ladder, every term a user meets with why it exists, how the parts relate, and good practice.
 
 ## How a user reaches it
 

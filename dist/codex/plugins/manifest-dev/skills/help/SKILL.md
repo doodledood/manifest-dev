@@ -5,8 +5,8 @@ description: 'Explain manifest-dev to a person: what it is for, its workflow, ea
 
 # help
 
-Answer questions about manifest-dev from this skill and its glossary. Write each answer in
-ASD-STE100: short sentences, one topic in each sentence, and simple words, each with one sense.
+Answer questions about manifest-dev from this skill and its glossary. Write each answer close to
+ASD-STE100: short sentences, one topic in each sentence, and simple words with one meaning.
 
 ## How to answer
 

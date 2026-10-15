@@ -25,8 +25,10 @@ each exists. Adding a user-invocable skill is a decision under
 - It is an optional extra in that record's sense: the workflow never depends on a user
   invoking it, and its description lets a host reach it when a user asks what a term means.
   The four entry points stay the only names a user must learn.
-- It is written in ASD-STE100, so a reader with any level of English reads one meaning in each
-  sentence.
+- It is written close to ASD-STE100 — about 90% of it: short sentences, one topic in each,
+  simple words with one meaning — so a reader with any level of English reads one meaning in each
+  sentence. The standard's approved dictionary and its ban on -ing forms are not applied, where
+  they would cost natural wording.
 - It is a hand-written copy of the glossary in a second register, not a link: a shipped skill
   cannot read this repository's `CONTEXT.md`, and in a user's project that file is the user's
   own glossary. Its entries add the why and the relations, which `CONTEXT.md` does not carry.
@@ -56,14 +58,14 @@ each exists. Adding a user-invocable skill is a decision under
 ### Negative
 - The glossary exists in two registers. The test holds their names and their fingerprints;
   whether the meaning still agrees stays a review judgment.
-- STE's approved-word dictionary is not checked mechanically; only its counted limits and the
-  -ing rule are.
+- Only STE's counted limits are checked mechanically; the rest of its clarity is a review
+  judgment.
 
 ## Enforced by
 partly — `tests/test_help_skill.py` fails when a `CONTEXT.md` term outside the maintainer set
 has no help entry or help defines a term `CONTEXT.md` lacks, when a `CONTEXT.md` entry changes
 without its help entry's fingerprint, when a user-invocable core skill is not named in help, and
-when help breaks STE's counted limits or its -ing rule; `tests/test_entry_points.py` holds the
+when help breaks STE's counted limits; `tests/test_entry_points.py` holds the
 declared set with `help` in it. Whether help's meaning agrees with `CONTEXT.md` stays judgment.
 
 ## Source

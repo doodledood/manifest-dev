@@ -1,8 +1,8 @@
 """help explains manifest-dev to a person, in ASD-STE100.
 
 It restates the glossary in a second register for users, so its term set is held level with
-CONTEXT.md and its skill list with the plugin; their meaning stays a review judgment. The
-ASD-STE100 rules a count or a word list can hold are held here too. See
+CONTEXT.md and its skill list with the plugin; their meaning stays a review judgment. The owner
+asked for about 90% ASD-STE100, so its counted limits are held here and the rest is judged. See
 docs/adr/20261015-a-help-skill-explains-manifest-dev-in-simplified-technical-english.md.
 """
 
@@ -37,20 +37,6 @@ MAINTAINER_TERMS = {
 PROCEDURAL_MAX = 20
 DESCRIPTIVE_MAX = 25
 PARAGRAPH_MAX = 6
-
-# STE allows no verb in its -ing form outside a technical name. The glossary's own terms are
-# the technical names; these are the other -ing words that are not verb forms.
-NOT_VERB_FORMS = {
-    "anything",
-    "bring",
-    "during",
-    "everything",
-    "nothing",
-    "something",
-    "string",
-    "thing",
-    "things",
-}
 
 CONTEXT_TERM = re.compile(r"^\*\*([^*]+)\*\*:\s*$", re.MULTILINE)
 HELP_TERM = re.compile(r"^### (.+?)\s*$", re.MULTILINE)
@@ -150,8 +136,8 @@ def sentences(unit: str) -> list[str]:
     return [s for s in SENTENCE_END.split(unit) if words(s)]
 
 
-def ste_problems(text: str, names: frozenset[str] = frozenset()) -> list[str]:
-    """What breaks a counted STE rule; `names` are technical names, exempt from the -ing rule."""
+def ste_problems(text: str) -> list[str]:
+    """What breaks one of ASD-STE100's counted limits."""
     problems = []
     for kind, unit in units(text):
         parts = sentences(unit)
@@ -163,12 +149,6 @@ def ste_problems(text: str, names: frozenset[str] = frozenset()) -> list[str]:
         for sentence in parts:
             if words(sentence) > limit:
                 problems.append(f"{words(sentence)} words (max {limit}): {sentence}")
-        plain = CODE_SPAN.sub(" ", unit)
-        for name in sorted(names, key=len, reverse=True):
-            plain = plain.replace(name, " ")
-        for word in WORD.findall(plain):
-            if word.lower().endswith("ing") and word.lower() not in NOT_VERB_FORMS:
-                problems.append(f"-ing form {word!r}: {unit[:80]}…")
     return problems
 
 
@@ -200,9 +180,7 @@ def test_help_keeps_the_counted_ste_rules() -> None:
     problems = [
         f"{path.relative_to(REPO_ROOT)}: {problem}"
         for path in help_files()
-        for problem in ste_problems(
-            path.read_text(encoding="utf-8"), frozenset(help_terms())
-        )
+        for problem in ste_problems(path.read_text(encoding="utf-8"))
     ]
     assert not problems, "ASD-STE100:\n" + "\n".join(problems)
 
@@ -211,18 +189,13 @@ def test_the_ste_counter_catches_each_rule() -> None:
     long_step = "1. " + " ".join(["Read"] + ["the"] * 20) + "."
     long_sentence = " ".join(["The"] + ["file"] * 25) + "."
     long_paragraph = " ".join(["It is short."] * 7)
-    ing = "The run is starting."
     assert ste_problems("1. " + " ".join(["Read"] + ["the"] * 19) + ".") == []
-    for text in (long_step, long_sentence, long_paragraph, ing):
+    for text in (long_step, long_sentence, long_paragraph):
         assert ste_problems(text), text
     assert (
         ste_problems("Run `a very long command with many many words in it` now.") == []
     )
-    assert ste_problems("Nothing is something.") == []
-    assert (
-        ste_problems("A Steering Message changes it.", frozenset({"Steering Message"}))
-        == []
-    )
+    assert ste_problems("The run is starting.") == []
 
 
 def test_every_help_entry_was_written_from_the_current_context_entry() -> None:
