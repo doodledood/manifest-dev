@@ -35,7 +35,7 @@ cases burn their turn reporting that writing is disabled.
 
 The headline number is **Δ** — with-plugin score minus the no-plugin baseline.
 
-**Judge with `sonnet`, 3 runs per arm.** The owner's call on 2026-10-15: these suites are a proxy
+**Judge with `sonnet`, one run per arm.** The owner's call on 2026-10-15: these suites are a proxy
 that gives a prompt change a direction and shows roughly where the skills stand, not a precise
 measure, so a run is kept cheap and its noise is worked with rather than bought down. A sonnet
 judge is the noisier one on record: on 2026-10-06 it split its votes on outputs an opus judge
@@ -71,25 +71,24 @@ whether its number still holds.
 
 ## Reading a result at this depth
 
-Three runs per arm and a noisy judge give a direction, not a precise number. Read a result this
-way:
+Every case runs once per arm, under a noisy judge. That gives a direction and a rough picture of
+where the skills stand, never a verdict on one case. Read a result this way:
 
-- **A clean split is real; anything closer is unread.** Three of three against none of three on
-  a case grader is a 1-in-20 chance result. A one- or two-run difference is not evidence either
-  way: top that case up with 3 more runs per arm, and pool them, before acting on it.
-- **Direction comes from pooled numbers.** Across many cases the noise averages out, so the
-  suite-wide Δ, or a grader pooled over the cases that carry it, is what a hill-climb moves. A
-  single case's Δ below about 0.6 is noise.
-- **The judge's error can lean one way.** A gap that appears on a case grader for the first time
-  may be the judge's: read the outputs on both sides before believing it, as the `16` gap above
-  shows.
-- **Retire only on a clean floor.** Both arms pass every case grader on every run, and the case is
-  not a declared guard. A close call gets topped up first.
-- **Hill-climb on the plugin arm only.** The no-plugin arm cannot respond to a prompt edit, so it
-  is measured once per baseline, and again when the model, the CLI or the judge changes. Keep a
-  change only when the pooled train and test graders move together and no guard grader falls; a
-  change that wins narrowly is re-run once before it is kept, rather than every case getting more
-  runs.
+- **Direction comes from the whole suite.** One run per case is a coin flip on its own, but across
+  the suite the noise averages out: with about forty both-arm cases, the suite-wide Δ is read to
+  within about ±0.17. A hill-climb round reads the plugin arm pooled over the train cases, and
+  separately over the held-out cases.
+- **A single case is a reason to read its output, never a result.** A case that flips, or a gap
+  that appears for the first time, is where to look; the judge's error can lean one way, as the
+  `16` gap above shows, so read the outputs on both sides before believing it.
+- **Three runs where one case decides something.** Re-run that case with `--case '<name>' --runs 3`
+  before retiring it, and retire it only when both arms pass every case grader on every run and it
+  is not a declared guard. A change that wins a hill-climb round narrowly gets the cases it aims at
+  re-run the same way before it is kept.
+- **Hill-climb on the plugin arm only** (`--ablation none`). The no-plugin arm cannot respond to a
+  prompt edit; it feeds only the headline Δ, and is measured again with each baseline and when the
+  model, the CLI or the judge changes. Keep a change only when the pooled train and held-out
+  scores move together and no guard grader falls.
 
 ## Running on macOS
 
@@ -294,46 +293,48 @@ Every case marked *first run decides* has never run, so the next baseline buys m
 there. Run them in this order; a partial budget stops wherever it runs out and still has the cases
 most likely to separate the arms.
 
-**Runs and cost.** Each case runs 3 times per arm, so a both-arm case is 6 runs and a
-plugin-arm-only case is 3. No run has been costed with the sonnet judge. The only measured figure
+**Runs and cost.** Each case runs once per arm, so a both-arm case is 2 runs and a
+plugin-arm-only case is 1. No run has been costed with the sonnet judge. The only measured figure
 is the define suite's $1.52 a run under an opus judge (`define/README.md`, 2026-10-12), so the
 totals below are upper bounds.
 
 | Order | Cases | Runs | Why here |
 |---|---|---|---|
-| 1 | `54`, `55` | 12 | Cover what this change shipped; the base model likely plans around the broken recipe and leaves the broken test |
-| 2 | `17` | 6 | Single turn; headroom likely |
-| 3 | `22` | 6 | Single turn; the base model tends to settle a look in prose |
-| 4 | `19` | 6 | The base model likely designs the display as asked |
-| 5 | `48` | 6 | Design probes with no other case |
-| 6 | `40` + `42` | 12 | Pair; `42` is the negative guard |
-| 7 | `41` | 6 | |
-| 8 | `44` | 6 | |
-| 9 | `18` | 6 | |
-| 10 | `21` | 6 | |
-| 11 | `23` + `24` | 12 | `24` is `23`'s held-out witness |
-| 12 | `25` + `26` | 12 | Pair |
-| 13 | `32` + `33` | 12 | Same prompt, with and without a harness |
-| 14 | `38` | 6 | |
-| 15 | `34`, `35` | 12 | |
-| 16 | `37` + `39` | 12 | Headroom likely low |
-| 17 | `20` | 6 | Both arms likely pass |
-| 18 | `29` | 6 | Likely a floor |
-| 19 | `31` | 6 | Likely a floor |
-| 20 | `30`, `53`, `45` (plugin arm) | 9 | The version path; `53` and `45` for status |
-| 21 | `43` + `46` (plugin arm) | 6 | Pair |
-| 22 | `27` + `28` (plugin arm) | 6 | Pair |
-| 23 | `36` (plugin arm) | 3 | |
-| 24 | `52` (plugin arm) | 3 | Guard; status only |
+| 1 | `54`, `55` | 4 | Cover what this change shipped; the base model likely plans around the broken recipe and leaves the broken test |
+| 2 | `17` | 2 | Single turn; headroom likely |
+| 3 | `22` | 2 | Single turn; the base model tends to settle a look in prose |
+| 4 | `19` | 2 | The base model likely designs the display as asked |
+| 5 | `48` | 2 | Design probes with no other case |
+| 6 | `40` + `42` | 4 | Pair; `42` is the negative guard |
+| 7 | `41` | 2 | |
+| 8 | `44` | 2 | |
+| 9 | `18` | 2 | |
+| 10 | `21` | 2 | |
+| 11 | `23` + `24` | 4 | `24` is `23`'s held-out witness |
+| 12 | `25` + `26` | 4 | Pair |
+| 13 | `32` + `33` | 4 | Same prompt, with and without a harness |
+| 14 | `38` | 2 | |
+| 15 | `34`, `35` | 4 | |
+| 16 | `37` + `39` | 4 | Headroom likely low |
+| 17 | `20` | 2 | Both arms likely pass |
+| 18 | `29` | 2 | Likely a floor |
+| 19 | `31` | 2 | Likely a floor |
+| 20 | `30`, `53`, `45` (plugin arm) | 3 | The version path; `53` and `45` for status |
+| 21 | `43` + `46` (plugin arm) | 2 | Pair |
+| 22 | `27` + `28` (plugin arm) | 2 | Pair |
+| 23 | `36` (plugin arm) | 1 | |
+| 24 | `52` (plugin arm) | 1 | Guard; status only |
 
-All of it is 183 runs, under $280. A full baseline also re-measures the 13 kept both-arm cases
-(`01`–`16`), another 78 runs, under $120, since every recorded number is stale. **A smaller
-budget** runs rows 1 to 7 first: 54 runs, under $85. Top-ups under *Reading a result at this
-depth* come on top. What each result decides:
+All of it is 61 runs, under $95. A full baseline also re-measures the 13 kept both-arm cases
+(`01`–`16`), another 26 runs, under $40, since every recorded number is stale. **A smaller
+budget** runs rows 1 to 7 first: 18 runs, under $30. The three-run checks under *Reading a
+result at this depth* come on top, at 6 runs a case. What each result decides:
 
-- both arms pass every case grader on every run, and the case is not a declared guard → retire it;
-- the plugin arm fails a case grader traced to a rule the skill states → keep it as a hill;
-- the arms separate cleanly on a case grader → keep it as uplift, and settle its split;
+- both arms pass every case grader, and the case is not a declared guard → re-run it with three
+  runs per arm, and retire it if both arms pass every run;
+- the plugin arm fails a case grader traced to a rule the skill states → a candidate hill;
+- the arms separate on a case grader → a candidate for uplift; its standing settles over later
+  runs;
 - a verdict that cannot be predicted from reading the output → sharpen the grader before keeping
   any number from it.
 
@@ -544,7 +545,7 @@ in a section below is the local run directory it was read from, not a file in th
 
 To improve a skill against one grader while holding the rest, run rounds of
 analyze → change → rerun → compare against a recorded baseline. Each round costs roughly what
-the suite's plugin arm does at 3 runs per case. Keep the loop's
+the suite's plugin arm does at one run per case. Keep the loop's
 state in a gitignored directory under `results/`, for example `results/hillclimb-<suite>/`,
 with a `_state.json` holding `train_ids` and `test_ids` and one `vN/` directory per round.
 
@@ -919,5 +920,5 @@ cases were measured twice against an identical prompt roughly forty minutes apar
 difference| was **0.111**, max **0.167**, on text that did not change by a character. Per-run score
 sd was 0.378 across 180 runs, putting the standard error of a seven-case mean at ~0.117 at
 `runs: 3`. A move smaller than that is not evidence of anything. Resolving a ~0.08 effect takes
-roughly **26 runs per case per arm**, which this suite does not buy: at 3 runs per arm it reads
-large effects per case and smaller ones only pooled, as *Reading a result at this depth* says.
+roughly **26 runs per case per arm**, which this suite does not buy: at one run per arm it reads
+direction from the whole suite only, as *Reading a result at this depth* says.

@@ -244,10 +244,10 @@ def test_suite_readme_lists_exactly_its_cases(suite: Path) -> None:
     assert not rows - dirs, f"README rows with no case: {sorted(rows - dirs)}"
 
 
-# The owner's 2026-10-15 call: every case runs 3 times per arm under a sonnet judge, and the
+# The owner's 2026-10-15 call: every case runs once per arm under a sonnet judge, and the
 # suites' READMEs say how to read a result at that depth. A case left at another count, or a
 # documented command naming another judge, would make one baseline mix depths or judges.
-RUNS_PER_ARM = 3
+RUNS_PER_ARM = 1
 JUDGE = "sonnet"
 JUDGE_DOCS = [
     EVALS / "README.md",

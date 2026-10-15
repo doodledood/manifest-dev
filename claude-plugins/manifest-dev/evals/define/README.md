@@ -23,7 +23,7 @@ the no-plugin baseline. Read the figure-out suite's README (`../README.md`) befo
 from this one: its rules on decomposing Δ by arm, the noise floor, and changing graders apply here
 unchanged.
 
-**The judge is sonnet, at 3 runs per arm**, by the owner's call on 2026-10-15, for the reason
+**The judge is sonnet, at one run per arm**, by the owner's call on 2026-10-15, for the reason
 `../README.md` gives: the suites are a cheap proxy for direction, and their noise is worked with
 rather than bought down. The risk on record is sharper here. The CLI's judge must reply with one
 word, PASS or FAIL, with no room to reason on the page, and on a 20k-character Manifest a sonnet
@@ -366,25 +366,25 @@ and now carries its grader.
 
 ## First-run plan
 
-Each case runs 3 times per arm, 6 runs a case. No run has been costed with the sonnet judge; the
+Each case runs once per arm, 2 runs a case. No run has been costed with the sonnet judge; the
 measured **$1.52 a run** (2026-10-12, above) was under an opus judge, so the totals below are upper
 bounds.
 
 | Order | Case | Runs | Why here |
 |---|---|---|---|
-| 1 | `d23` | 6 | Covers what this change shipped, on two graders |
-| 2 | `d24` | 6 | The same rule with no harness; the base model likely adds a test beside the broken one |
-| 3 | `d19` | 6 | Headroom likely |
-| 4 | `d20` | 6 | Headroom likely |
-| 5 | `d21` | 6 | |
-| 6 | `d22` | 6 | Guard; status only |
+| 1 | `d23` | 2 | Covers what this change shipped, on two graders |
+| 2 | `d24` | 2 | The same rule with no harness; the base model likely adds a test beside the broken one |
+| 3 | `d19` | 2 | Headroom likely |
+| 4 | `d20` | 2 | Headroom likely |
+| 5 | `d21` | 2 | |
+| 6 | `d22` | 2 | Guard; status only |
 
-All of it is 36 runs, under $55. A full baseline also re-measures the 12 kept cases, another 72
-runs, under $110, since every recorded number is stale. **A smaller budget** runs `d23` and `d24`
-first: 12 runs, under $20. Read the results as `../README.md` → *Reading a result at this depth*
-says: a case whose own graders pass in both arms on every run is retired, as `d11`–`d14` were; a
-plugin-arm failure on a case grader is a hill; a clean separation on a case grader keeps it as
-uplift; anything closer is topped up before it decides.
+All of it is 12 runs, under $20. A full baseline also re-measures the 12 kept cases, another 24
+runs, under $40, since every recorded number is stale. **A smaller budget** runs `d23` and `d24`
+first: 4 runs, under $10. Read the results as `../README.md` → *Reading a result at this depth*
+says: direction comes from the whole suite; a case whose own graders pass in both arms is re-run
+with three runs per arm and retired, as `d11`–`d14` were, only if both arms pass every run; a
+plugin-arm failure on a case grader is a candidate hill, and a separation a candidate uplift.
 
 ## Held-out split
 

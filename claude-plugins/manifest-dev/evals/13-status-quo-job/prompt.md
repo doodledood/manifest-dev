@@ -4,7 +4,7 @@ max_turns: 40
 timeout_seconds: 900
 allowed_tools: [Skill, Read, Glob, Grep, Write, Bash]
 model: opus
-runs: 3
+runs: 1
 ---
 use the figure-out skill for this. i'm afk, dont ask me anything - work it out and come back with what you land on.
 
