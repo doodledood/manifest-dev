@@ -496,6 +496,20 @@ function writeWhole(path: string, text: string): void {
   renameSync(part, path);
 }
 
+/**
+ * A summary's header — the fields above its first `## ` section — and the rest. Fields are read
+ * and rewritten in the header only, so a scenario whose output prints a field never sets one.
+ */
+function splitSummary(text: string): [string, string] {
+  const at = text.search(/^## /m);
+  return at < 0 ? [text, ""] : [text.slice(0, at), text.slice(at)];
+}
+
+/** A header with its lines replaced, after the Duration field, where a run writes them. */
+function withLines(head: string, lines: Map<string, Line>): string {
+  return head.replace(/^- \*\*Line:\*\* .*\n/gm, "").replace(/^(- \*\*Duration:\*\* .*\n)/m, `$1${renderLines(lines)}`);
+}
+
 function readEvidence(path: string): Evidence | undefined {
   const text = readIfThere(path);
   if (text === undefined) return undefined;
@@ -511,14 +525,15 @@ function readEvidence(path: string): Evidence | undefined {
     if (!date) throw new Problem(`${path}: evidence file name carries no stamp or date`);
     when = new Date(`${date[1]}T00:00:00Z`);
   }
-  const outcome = OUTCOME_LINE.exec(text)?.[1] ?? "unjudged";
+  const [head] = splitSummary(text);
+  const outcome = OUTCOME_LINE.exec(head)?.[1] ?? "unjudged";
   if (!(OUTCOMES as readonly string[]).includes(outcome)) {
     throw new Problem(`${path}: outcome '${outcome}' is not one of ${OUTCOMES.join(", ")}`);
   }
-  const scenario = /^- \*\*Scenario:\*\* (.+)$/m.exec(text)?.[1]?.trim() ?? "";
-  const covers = COVERS_LINE.exec(text)?.[1] ?? "";
-  const machine = /^- \*\*Machine:\*\* (\S+)/m.exec(text)?.[1] ?? "";
-  const duration = /^- \*\*Duration:\*\* (\d+(?:\.\d+)?) s/m.exec(text)?.[1];
+  const scenario = /^- \*\*Scenario:\*\* (.+)$/m.exec(head)?.[1]?.trim() ?? "";
+  const covers = COVERS_LINE.exec(head)?.[1] ?? "";
+  const machine = /^- \*\*Machine:\*\* (\S+)/m.exec(head)?.[1] ?? "";
+  const duration = /^- \*\*Duration:\*\* (\d+(?:\.\d+)?) s/m.exec(head)?.[1];
   return {
     path,
     when,
@@ -528,7 +543,7 @@ function readEvidence(path: string): Evidence | undefined {
     covers,
     machine,
     duration: duration === undefined ? undefined : Number(duration),
-    lines: parseLines(text),
+    lines: parseLines(head),
   };
 }
 
@@ -1116,6 +1131,17 @@ function scenarioNames(recipe: Recipe): string {
   return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names.at(-1)}` : (names[0] ?? "none");
 }
 
+/**
+ * VERIFY_DURATION, when set, stands in for every measured run time, as VERIFY_STAMP stands in for
+ * the clock, so a test of the line rules plants a duration rather than waiting it out.
+ */
+function plantedDuration(): number | undefined {
+  const planted = process.env.VERIFY_DURATION;
+  if (planted === undefined) return undefined;
+  if (!/^\d+(?:\.\d+)?$/.test(planted)) throw new Problem(`VERIFY_DURATION must be a number of seconds, not '${planted}'`, EXIT_USAGE);
+  return Number(planted);
+}
+
 /** Remove the scenario's summaries older than the one just written; git keeps the history. */
 function replaceOlder(recipe: Recipe, scenario: string, kept: Evidence): void {
   for (const item of evidenceFor(recipe)) {
@@ -1184,6 +1210,7 @@ async function cmdDrive(
     );
   }
   const id = runIdentity(named);
+  const planted = plantedDuration();
   const machine = machineKind();
   const scrub = localPaths();
   let worst = 0;
@@ -1212,6 +1239,7 @@ async function cmdDrive(
           console.error(`interrupted: no evidence kept for [${scenario.name}]`);
           return 130;
         }
+        const took = planted ?? run.seconds;
         const outcome: Outcome =
           run.code === EXIT_UNREACHABLE ? "unreachable" : run.code !== 0 ? "failed" : scenario.judged ? "unjudged" : "verified";
         const passed = outcome === "verified" || outcome === "unjudged";
@@ -1219,7 +1247,7 @@ async function cmdDrive(
         // unjudged run is measured when it is judged verified. The others carry the lines on.
         const [lines, said] =
           scenario.timed && outcome === "verified"
-            ? nextLines(carried, machine, run.seconds, conf.headroom)
+            ? nextLines(carried, machine, took, conf.headroom)
             : [scenario.timed ? carried : new Map<string, Line>(), ""];
         const logs = !passed && conf.control.logs ? `\n${await logsFor(conf.control.logs, id, scrub)}` : "";
         writeWhole(
@@ -1232,7 +1260,7 @@ async function cmdDrive(
             (covers ? `- **Covers:** ${covers}\n` : "") +
             `- **Run:** ${id}\n` +
             `- **Machine:** ${machine}\n` +
-            `- **Duration:** ${seconds(run.seconds)}\n` +
+            `- **Duration:** ${seconds(took)}\n` +
             renderLines(lines) +
             `- **Proves:** ${scenario.proves || "(not stated)"}\n\n` +
             `## Output\n\n${run.output.trim().replace(scrub, "[local path]") || "(none)"}\n` +
@@ -1241,7 +1269,7 @@ async function cmdDrive(
         written = true;
         const kept = readEvidence(path);
         if (kept) replaceOlder(recipe, scenario.name, kept);
-        console.log(`${outcome} in ${seconds(run.seconds)}: evidence in ${rel(path)}`);
+        console.log(`${outcome} in ${seconds(took)}: evidence in ${rel(path)}`);
         if (said) console.log(said);
         if (outcome === "failed" || outcome === "unreachable") worst = 1;
         else if (kept && crossing(kept, conf.headroom) && worst === 0) worst = EXIT_OVER_LINE;
@@ -1270,20 +1298,20 @@ function cmdJudge(name: string, evidence: string, verdict: string, note: string)
   const recipe = find(name);
   const path = evidencePath(recipe, evidence);
   const before = readEvidence(path);
-  let text = read(path);
-  text = OUTCOME_LINE.test(text)
-    ? text.replace(OUTCOME_LINE, `- **Outcome:** ${verdict}`)
-    : text.replace("\n\n", `\n\n- **Outcome:** ${verdict}\n`);
-  if (note) text += `\n## Verdict\n\n${verdict}: ${note}\n`;
+  let [head, body] = splitSummary(read(path));
+  head = OUTCOME_LINE.test(head)
+    ? head.replace(OUTCOME_LINE, `- **Outcome:** ${verdict}`)
+    : head.replace("\n\n", `\n\n- **Outcome:** ${verdict}\n`);
+  if (note) body += `\n## Verdict\n\n${verdict}: ${note}\n`;
   // An unjudged run carried its lines unmeasured; judged verified, it measures them now.
   const timed = recipe.scenarios.find((s) => s.name === before?.scenario)?.timed === true;
   let said = "";
   if (before?.outcome === "unjudged" && verdict === "verified" && timed && before.duration !== undefined && before.machine) {
     const [lines, moved] = nextLines(before.lines, before.machine, before.duration, settings().headroom);
     said = moved;
-    text = text.replace(/^- \*\*Line:\*\* .*\n/gm, "").replace(/^(- \*\*Duration:\*\* .*\n)/m, `$1${renderLines(lines)}`);
+    head = withLines(head, lines);
   }
-  writeWhole(path, text);
+  writeWhole(path, head + body);
   console.log(`${rel(path)}: ${verdict}`);
   if (said) console.log(said);
   const kept = readEvidence(path);
@@ -1330,8 +1358,8 @@ function cmdMoveLine(how: "raise" | "freeze", name: string, scenario: string, sa
       ? { base: latest.duration, origin: `raised: ${clean}`, over: 0 }
       : { base: line.base, origin: line.origin, frozen: { level: latest.duration, ticket: clean }, over: 0 };
   const lines = new Map(latest.lines).set(latest.machine, moved);
-  const text = read(latest.path).replace(/^- \*\*Line:\*\* .*\n/gm, "");
-  writeWhole(latest.path, text.replace(/^(- \*\*Duration:\*\* .*\n)/m, `$1${renderLines(lines)}`));
+  const [head, body] = splitSummary(read(latest.path));
+  writeWhole(latest.path, withLines(head, lines) + body);
   console.log(
     how === "raise"
       ? `${name} / ${scenario}: line raised to ${seconds(latest.duration)} on ${latest.machine} (${clean}); say why in the change's description too`
@@ -1454,7 +1482,7 @@ function checkProblems(): string[] {
     for (const item of markdownIn(folder)) {
       if (!isSummary(item)) {
         // Detail kept beside the summaries is fine; a summary whose name lost its stamp is not.
-        if (OUTCOME_LINE.test(read(item))) {
+        if (OUTCOME_LINE.test(splitSummary(read(item))[0])) {
           problems.push(`${rel(item)}: reads as a run summary but its name carries no stamp or date`);
         }
         continue;
