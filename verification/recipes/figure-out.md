@@ -59,5 +59,5 @@ Workload: varies
 - Docs mode writes into the project (glossary, records, surfaces line); the drive's scratch project absorbs it.
 - The context file's surfaces version is an HTML comment, and the host strips comments from the copy it loads into the session; a run that reports no version without reading the file from disk has hit that, not a missing line.
 - `--team` needs Slack access; without it the team entry point is `unreachable`.
-- Also checked by the figure-out behavior suite, `claude-plugins/manifest-dev/evals/` cases `01` to `51` (tags `figure-out`, `figure-out-plugin-only`), all `unmeasured` or stale per `claude-plugins/manifest-dev/evals/README.md`; `tests/test_eval_cases.py` keeps its case list in step.
+- Also checked by the figure-out behavior suite, `claude-plugins/manifest-dev/evals/` (tags `figure-out`, `figure-out-plugin-only`), all `unmeasured` or stale per `claude-plugins/manifest-dev/evals/README.md`; `tests/test_eval_cases.py` keeps its case list in step.
 - Not yet driven: the bare slash command, the description phrases, auto, define, figure-out-team.

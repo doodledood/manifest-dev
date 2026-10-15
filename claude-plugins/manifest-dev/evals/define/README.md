@@ -410,5 +410,7 @@ negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the 
   recall); an approved Manifest whose gate runs an ask-first recipe carrying the agreement to run
   it, which needs an approval a grader can see; building a missing harness as the first
   Deliverable (`d23` covers the unfit one, figure-out's `33` the missing one); a criterion pinned
-  by reacting to something concrete becoming a gate; and an `Enforced by: not yet` check on the
-  work's path getting built.
+  by reacting to something concrete becoming a gate; an `Enforced by: not yet` check on the
+  work's path getting built; and the *fast enough* job of *Trust the check*, a touched check over
+  its time line repaired first, which needs evidence carrying a recorded line (figure-out's
+  README names the same gap).

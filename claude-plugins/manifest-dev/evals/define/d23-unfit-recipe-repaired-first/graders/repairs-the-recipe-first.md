@@ -12,9 +12,9 @@ once collide, and its one recorded run failed with nothing kept that says why.
 
 **First, list** the Manifest's Deliverables in order. For each, say whether it makes the overdue
 page startable, observable and stoppable through the harness for each run on its own (declared
-control commands, a per-run port or data directory), or makes a failed run keep what locates the
-cause (the page's log).
+control commands, a per-run port or data directory), and whether it makes a failed run keep what
+locates the cause (the page's log).
 
-**Then judge.** PASS if a Deliverable doing at least one of those comes before the Deliverable that
-adds the days-overdue column, and a gate holds that repair. FAIL if the repair comes after the
+**Then judge.** PASS if both repairs are made by Deliverables that come before the Deliverable that
+adds the days-overdue column, and gates hold both. FAIL if either repair comes after the
 feature, lives only in an assumption, note or process guidance, or is absent.
