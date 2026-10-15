@@ -10,7 +10,7 @@
 
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
-import { existsSync, lstatSync, mkdirSync, openSync, closeSync, readdirSync, readFileSync, readlinkSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, mkdtempSync, openSync, closeSync, readdirSync, readFileSync, readlinkSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { arch, availableParallelism, constants, homedir, platform, tmpdir } from "node:os";
 import { isAbsolute, join, relative, resolve } from "node:path";
 
@@ -41,6 +41,10 @@ const CONTROL = {
   stop: "stop an instance this harness started",
 } as const;
 type Control = keyof typeof CONTROL;
+// Own keys only: `in` would also match what every object inherits, such as `toString`.
+const isControl = (name: string): name is Control => Object.hasOwn(CONTROL, name);
+// Control commands that act on an instance an earlier invocation started, so they name it.
+const NAMES_A_RUN: readonly Control[] = ["logs", "reset", "stop"];
 
 const STAMP = /(\d{8}T\d{6}Z)(?:-(\d+))?/;
 const DATE = /(\d{4}-\d{2}-\d{2})/;
@@ -55,7 +59,12 @@ const CONFIRMING_RUNS = 2;
 /** However short a scenario, its line sits at least this many seconds above what it measured. */
 const MIN_HEADROOM_SECONDS = 1;
 /** How long a failed run waits on the project's `logs:` command before giving up on it. */
+// The default branches `affected` tries, in order, after origin/HEAD when given no base.
+const DEFAULT_BRANCHES = ["origin/main", "origin/master", "main", "master"];
 const LOGS_TIMEOUT_SECONDS = 60;
+// A failure's logs keep their end, where the failure is, and say where they were cut.
+const LOGS_TAIL_LINES = 200;
+const LOGS_TAIL_CHARS = 64 * 1024;
 
 class Problem extends Error {
   readonly code: number;
@@ -238,7 +247,7 @@ function settings(): Settings {
   if (!/^\d+(?:\.\d+)?%$/.test(headroom)) {
     throw new Problem(`${rel(SETTINGS)}: headroom must be a percentage, such as \`25%\`, not '${headroom}'`);
   }
-  const control: Partial<Record<Control, string>> = {};
+  const control: Partial<Record<Control, string>> = Object.create(null);
   for (const name of Object.keys(CONTROL) as Control[]) {
     if (meta[name]) control[name] = meta[name];
   }
@@ -264,14 +273,17 @@ function machineKind(): string {
  * directories, ports and containers can be per run. `--run ID` names an earlier run's instance;
  * a command started inside a run inherits that run's identity.
  */
-function runIdentity(named: string | undefined): string {
+function runIdentity(named: string | undefined, needed?: string): string {
   const id = named ?? process.env.VERIFY_RUN_ID;
   if (id !== undefined) {
     if (!/^[A-Za-z0-9][\w.-]*$/.test(id)) {
-      throw new Problem(`run id '${id}' must be letters, digits, '.', '_' or '-'`, EXIT_USAGE);
+      const from = named === undefined ? "VERIFY_RUN_ID, inherited from the environment," : `run id '${id}'`;
+      throw new Problem(`${from} must be letters, digits, '.', '_' or '-'${named === undefined ? `; it is '${id}'` : ""}`, EXIT_USAGE);
     }
     return id;
   }
+  // A fresh identity names no instance, so a command meant for one would act on nothing.
+  if (needed) throw new Problem(`verify ${needed}: name the instance with --run ID, the id \`verify start\` printed`, EXIT_USAGE);
   const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "").replace("T", "-");
   return `${stamp}-${randomBytes(3).toString("hex")}`;
 }
@@ -579,13 +591,13 @@ This tool lists them, runs them, keeps their evidence, and works out their statu
 Commands:
   verify list [KIND]          every recipe with its kind, status and ask-first mark
   verify help RECIPE          one recipe in full, with each scenario's latest evidence and line
-  verify drive RECIPE [SCENARIO] [--yes] [--dry-run]
+  verify drive RECIPE [SCENARIO] [--yes] [--dry-run] [--run ID]
                               run a recipe's scenarios (all, or the one named) and keep evidence
   verify walk RECIPE ...      the same, for a recipe of kind walk
   verify eval RECIPE ...      the same, for a recipe of kind eval
   verify affected [BASE]      the recipes whose covered paths changed since BASE, and the changed
                               paths no recipe covers. Without BASE: since the branch left the
-                              default branch, or the last commit when there is no remote
+                              default branch (origin/HEAD, else ${DEFAULT_BRANCHES.join(", ")})
   verify judge RECIPE EVIDENCE verified|failed [NOTE]
                               record the verdict on evidence a person or agent had to read
   verify raise RECIPE SCENARIO REASON...{raiseYes}
@@ -612,8 +624,9 @@ Change it in {settings}. Recipes without the mark run freely.
 
 Run identity: every command this tool starts gets VERIFY_RUN_ID, one per invocation, so data
 directories, ports and containers can be per run and runs can go side by side. \`--run ID\` on a
-control command reaches the instance an earlier run started; a command started inside a run
-inherits that run's identity.
+drive or a control command reaches the instance an earlier run started (\`verify start\` prints its
+id); logs, reset and stop need it. A command started inside a run inherits that run's identity.
+A control command for an id its instance does not know exits non-zero, saying so.
 
 Statuses (worked out from evidence; nothing to keep current by hand). A recipe shows the worst
 of its scenarios' latest runs:
@@ -631,15 +644,16 @@ of its scenarios' latest runs:
                         the recipe. A failed or unreachable run since then shows instead
 
 Lines: an alarm against a check slowly getting slower, and nothing else — a line never decides
-when a check runs or who may run it. A scenario's first passing run on a kind of machine sets
-its line there; a run counts as over it past the line plus headroom ({headroom}, at least
-${MIN_HEADROOM_SECONDS} s). One run over is noise until a second in a row confirms it: then the status says so
+when a check runs or who may run it. A scenario's first verified run on a kind of machine sets
+its line there (a run needing a verdict counts once judged verified); a run counts as over it
+past the line plus headroom ({headroom}, at least ${MIN_HEADROOM_SECONDS} s). One run over is noise until a second in a row confirms it: then the status says so
 and \`drive\` exits ${EXIT_OVER_LINE}. A run faster than the line by more than the headroom lowers it. A line
 moves up only by \`verify raise\` with its reason{raisePolicy}, or is held by \`verify freeze\` while a
 debt Ticket pays the overshoot down; a run past the frozen level is new creep. A scenario whose
-work varies — the affected tests, an agent session — says \`Workload: varies\` and gets no line. Lines live in each
-scenario's latest evidence, per kind of machine (set VERIFY_MACHINE to name one, such as a CI
-runner label); no file is edited by every run.
+work varies — the affected tests, an agent session — says \`Workload: varies\` and gets no line.
+Lines live in each scenario's latest evidence, per kind of machine (set VERIFY_MACHINE to name
+one, such as a CI runner label); no file is edited by every run. When merged branches leave two
+summaries, the next run keeps the line allowing the most, so a raise or freeze survives.
 
 Evidence: each run writes {evidence}/RECIPE/STAMP.md (command, exit code, outcome, run identity,
 kind of machine, duration, lines, a fingerprint of the covered files, output with local paths
@@ -650,7 +664,8 @@ when it ends: SIGTERM, then SIGKILL after {grace} s (\`grace:\` in {settings}). 
 keeps no evidence; a command that crashes is failed.
 
 Exit codes: 0 done; 1 a scenario failed or could not start, or a problem; 2 usage; 3 a
-prerequisite is missing; 4 refused without a person's agreement (--yes); 5 over a line.
+prerequisite is missing; 4 refused without a person's agreement (--yes); 5 over a line. A
+control command exits with its project command's own code.
 
 Adding a recipe: copy any file in {recipes}, keep the front matter keys (kind, covers,
 ask-first when it applies, dry-run: honored when its commands obey VERIFY_DRY_RUN=1), and give
@@ -724,25 +739,48 @@ function cmdShow(name: string): number {
   return 0;
 }
 
-/** A fresh evidence file: two runs started in the same second each get their own. */
-function reserve(recipe: Recipe): [string, string] {
+// A run holds its evidence name with a marker beside it, never an empty summary: `check` and
+// another run's status would read an empty summary as a run that never finished.
+const RESERVED = /^\.(.+)\.reserved$/;
+
+/**
+ * A fresh evidence name, held by a marker until the summary is written over it: two runs
+ * started in the same second each get their own. Returns the summary's path, its stamp and
+ * the marker to remove once the run ends.
+ */
+function reserve(recipe: Recipe): [string, string, string] {
   const folder = join(EVIDENCE, recipe.name);
   mkdirSync(folder, { recursive: true });
   const stamp = process.env.VERIFY_STAMP || new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
   // After the run it replaces, not into a name that run freed: a reused name would sort first.
   const taken = readdirSync(folder)
-    .map((name) => new RegExp(`^${stamp}(?:-(\\d+))?\\.md$`).exec(name))
+    .map((name) => new RegExp(`^\\.?${stamp}(?:-(\\d+))?\\.(?:md|reserved)$`).exec(name))
     .filter((m): m is RegExpExecArray => m !== null)
     .map((m) => Number(m[1] ?? 1));
   for (let n = Math.max(0, ...taken) + 1; ; n++) {
     const candidate = n === 1 ? stamp : `${stamp}-${n}`;
     const path = join(folder, `${candidate}.md`);
+    const marker = join(folder, `.${candidate}.reserved`);
     try {
-      closeSync(openSync(path, "wx"));
-      return [path, candidate];
+      writeFileSync(marker, `${process.pid}\n`, { flag: "wx" });
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+      continue;
     }
+    if (!existsSync(path)) return [path, candidate, marker];
+    rmSync(marker, { force: true });
+  }
+}
+
+/** True while the process that wrote a reservation marker is still running. */
+function holderAlive(marker: string): boolean {
+  const pid = Number(readIfThere(marker)?.trim());
+  if (!Number.isInteger(pid) || pid <= 0) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return (error as NodeJS.ErrnoException).code === "EPERM";
   }
 }
 
@@ -904,6 +942,30 @@ function nextLines(previous: Map<string, Line>, machine: string, took: number, h
   return [lines, ""];
 }
 
+/**
+ * The lines a scenario's next run starts from. Normally one summary carries them; after two
+ * branches merge, each branch's summary carries its own until the next run folds them into one.
+ * Per kind of machine the line allowing the most wins, so a raise or a freeze recorded on either
+ * branch survives the fold.
+ */
+function carriedLines(history: Evidence[], scenario: string, headroom: number): Map<string, Line> {
+  const lines = new Map<string, Line>();
+  for (const item of history) {
+    if (item.scenario !== scenario) continue;
+    for (const [kind, line] of item.lines) {
+      const held = lines.get(kind);
+      if (!held || allowance(line, headroom) > allowance(held, headroom)) lines.set(kind, line);
+    }
+  }
+  return lines;
+}
+
+/** "a, b and c": the scenarios a recipe has, for a message naming one it does not. */
+function scenarioNames(recipe: Recipe): string {
+  const names = recipe.scenarios.map((s) => s.name);
+  return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names.at(-1)}` : (names[0] ?? "none");
+}
+
 /** Remove the scenario's summaries older than the one just written; git keeps the history. */
 function replaceOlder(recipe: Recipe, scenario: string, kept: Evidence): void {
   for (const item of evidenceFor(recipe)) {
@@ -911,32 +973,59 @@ function replaceOlder(recipe: Recipe, scenario: string, kept: Evidence): void {
   }
 }
 
-/** The project's `logs:` output for a run, for evidence that has to explain a failure. */
-function logsFor(command: string, id: string, scrub: RegExp): string {
-  const done = spawnSync(command, {
-    shell: true,
-    cwd: ROOT,
-    env: withRun(id),
-    encoding: "utf8",
-    timeout: LOGS_TIMEOUT_SECONDS * 1000,
-    killSignal: "SIGKILL",
-  });
-  const output = `${done.stdout ?? ""}${done.stderr ?? ""}`.trim().replace(scrub, "[local path]") || "(none)";
-  const ended =
-    done.error && (done.error as NodeJS.ErrnoException).code === "ETIMEDOUT"
-      ? `did not finish within ${LOGS_TIMEOUT_SECONDS} s`
-      : done.status === 0
-        ? ""
-        : `exited ${done.status ?? done.signal}`;
-  const said = ended ? `The logs command \`${command}\` ${ended}; what it printed:` : `From \`${command}\`:`;
+/**
+ * The project's `logs:` output for a run, for evidence that has to explain a failure. It goes
+ * to a file rather than a pipe, so a process the command leaves running cannot hold the run
+ * open; the command runs in its own process group, killed when it ends or times out.
+ */
+async function logsFor(command: string, id: string, scrub: RegExp): Promise<string> {
+  const folder = mkdtempSync(join(tmpdir(), "verify-logs-"));
+  const file = join(folder, "output");
+  const fd = openSync(file, "w");
+  let printed: string;
+  let ended: string;
+  try {
+    const child = spawn(command, { shell: true, cwd: ROOT, env: withRun(id), stdio: ["ignore", fd, fd], detached: true });
+    let timedOut = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      if (child.pid !== undefined) signalGroup(child.pid, "SIGKILL");
+    }, LOGS_TIMEOUT_SECONDS * 1000);
+    const [code, signal] = await new Promise<[number | null, NodeJS.Signals | null]>((done, fail) => {
+      child.once("error", fail);
+      child.once("exit", (c, s) => done([c, s]));
+    });
+    clearTimeout(timer);
+    if (child.pid !== undefined) signalGroup(child.pid, "SIGKILL"); // whatever it left running
+    ended = timedOut ? `did not finish within ${LOGS_TIMEOUT_SECONDS} s` : code === 0 ? "" : `exited ${code ?? signal}`;
+    printed = readFileSync(file, "utf8");
+  } finally {
+    closeSync(fd);
+    rmSync(folder, { recursive: true, force: true });
+  }
+  const all = printed.trim().split("\n");
+  let tail = all.slice(-LOGS_TAIL_LINES).join("\n");
+  if (tail.length > LOGS_TAIL_CHARS) tail = tail.slice(-LOGS_TAIL_CHARS);
+  const cut = tail.length < printed.trim().length ? ` (its last ${tail.split("\n").length} of ${all.length} lines)` : "";
+  const output = tail.replace(scrub, "[local path]") || "(none)";
+  const said = ended ? `The logs command \`${command}\` ${ended}; what it printed${cut}:` : `From \`${command}\`${cut}:`;
   return `## Logs\n\n${said.replace(scrub, "[local path]")}\n\n${output}\n`;
 }
 
-async function cmdDrive(name: string, only: string | undefined, yes: boolean, dry: boolean, kind: string | undefined): Promise<number> {
+async function cmdDrive(
+  name: string,
+  only: string | undefined,
+  yes: boolean,
+  dry: boolean,
+  kind: string | undefined,
+  named: string | undefined,
+): Promise<number> {
   const recipe = find(name);
   if (kind && recipe.kind !== kind) throw new Problem(`${name} is of kind ${recipe.kind}; use \`verify drive ${name}\``);
   const chosen = recipe.scenarios.filter((s) => only === undefined || s.name === only);
-  if (!chosen.length) throw new Problem(only ? `${name} has no scenario '${only}'` : `${name} has no scenarios to run`);
+  if (!chosen.length) {
+    throw new Problem(only ? `${name} has no scenario '${only}'; its scenarios are ${scenarioNames(recipe)}` : `${name} has no scenarios to run`);
+  }
   const conf = settings();
   if (recipe.askFirst && conf.askFirst === "ask" && !yes && !dry) {
     throw new Problem(
@@ -944,7 +1033,7 @@ async function cmdDrive(name: string, only: string | undefined, yes: boolean, dr
       EXIT_ASK_FIRST,
     );
   }
-  const id = runIdentity(undefined);
+  const id = runIdentity(named);
   const machine = machineKind();
   const scrub = localPaths();
   let worst = 0;
@@ -962,8 +1051,8 @@ async function cmdDrive(name: string, only: string | undefined, yes: boolean, dr
         }
         continue;
       }
-      const previous = latestPerScenario(recipe, evidenceFor(recipe)).get(scenario.name);
-      const [path, stamp] = reserve(recipe);
+      const carried = carriedLines(evidenceFor(recipe), scenario.name, conf.headroom);
+      const [path, stamp, marker] = reserve(recipe);
       let written = false;
       try {
         const covers = recipe.covers.length ? fingerprint(recipe.covers) : "";
@@ -976,12 +1065,13 @@ async function cmdDrive(name: string, only: string | undefined, yes: boolean, dr
         const outcome: Outcome =
           run.code === EXIT_UNREACHABLE ? "unreachable" : run.code !== 0 ? "failed" : scenario.judged ? "unjudged" : "verified";
         const passed = outcome === "verified" || outcome === "unjudged";
-        // Only a passing run measures the check: a failure can end at any point. Evidence that
-        // covered the whole recipe carries no line of this scenario's.
-        const carried = previous?.scenario === scenario.name ? previous.lines : new Map<string, Line>();
+        // Only a verified run measures the check: a failure can end at any point, and an
+        // unjudged run is measured when it is judged verified. The others carry the lines on.
         const [lines, said] =
-          scenario.timed && passed ? nextLines(carried, machine, run.seconds, conf.headroom) : [scenario.timed ? carried : new Map<string, Line>(), ""];
-        const logs = !passed && conf.control.logs ? `\n${logsFor(conf.control.logs, id, scrub)}` : "";
+          scenario.timed && outcome === "verified"
+            ? nextLines(carried, machine, run.seconds, conf.headroom)
+            : [scenario.timed ? carried : new Map<string, Line>(), ""];
+        const logs = !passed && conf.control.logs ? `\n${await logsFor(conf.control.logs, id, scrub)}` : "";
         writeWhole(
           path,
           `# ${recipe.name} / ${scenario.name} — ${stamp}\n\n` +
@@ -1008,6 +1098,7 @@ async function cmdDrive(name: string, only: string | undefined, yes: boolean, dr
       } finally {
         // A run that did not finish leaves nothing behind to pass for evidence.
         if (!written) rmSync(path, { force: true });
+        rmSync(marker, { force: true });
       }
     }
   } finally {
@@ -1026,15 +1117,27 @@ function cmdJudge(name: string, evidence: string, verdict: string, note: string)
   if (verdict !== "verified" && verdict !== "failed") {
     throw new Problem("judge: the verdict is `verified` or `failed`", EXIT_USAGE);
   }
-  const path = evidencePath(find(name), evidence);
+  const recipe = find(name);
+  const path = evidencePath(recipe, evidence);
+  const before = readEvidence(path);
   let text = read(path);
   text = OUTCOME_LINE.test(text)
     ? text.replace(OUTCOME_LINE, `- **Outcome:** ${verdict}`)
     : text.replace("\n\n", `\n\n- **Outcome:** ${verdict}\n`);
   if (note) text += `\n## Verdict\n\n${verdict}: ${note}\n`;
+  // An unjudged run carried its lines unmeasured; judged verified, it measures them now.
+  const timed = recipe.scenarios.find((s) => s.name === before?.scenario)?.timed === true;
+  let said = "";
+  if (before?.outcome === "unjudged" && verdict === "verified" && timed && before.duration !== undefined && before.machine) {
+    const [lines, moved] = nextLines(before.lines, before.machine, before.duration, settings().headroom);
+    said = moved;
+    text = text.replace(/^- \*\*Line:\*\* .*\n/gm, "").replace(/^(- \*\*Duration:\*\* .*\n)/m, `$1${renderLines(lines)}`);
+  }
   writeWhole(path, text);
   console.log(`${rel(path)}: ${verdict}`);
-  return 0;
+  if (said) console.log(said);
+  const kept = readEvidence(path);
+  return kept && crossing(kept, settings().headroom) ? EXIT_OVER_LINE : 0;
 }
 
 /**
@@ -1044,7 +1147,9 @@ function cmdJudge(name: string, evidence: string, verdict: string, note: string)
  */
 function cmdMoveLine(how: "raise" | "freeze", name: string, scenario: string, said: string, yes: boolean): number {
   const recipe = find(name);
-  if (!recipe.scenarios.some((s) => s.name === scenario)) throw new Problem(`${name} has no scenario '${scenario}'`);
+  const declared = recipe.scenarios.find((s) => s.name === scenario);
+  if (!declared) throw new Problem(`${name} has no scenario '${scenario}'; its scenarios are ${scenarioNames(recipe)}`);
+  if (!declared.timed) throw new Problem(`${name} / ${scenario} says \`Workload: varies\`, so it has no line to ${how}`);
   const what = how === "raise" ? "the reason the time was earned" : "the debt Ticket that will pay it down";
   if (!said.trim()) throw new Problem(`${how}: give ${what}: verify ${how} ${name} ${scenario} ${how === "raise" ? "REASON..." : "TICKET"}`, EXIT_USAGE);
   const conf = settings();
@@ -1055,6 +1160,14 @@ function cmdMoveLine(how: "raise" | "freeze", name: string, scenario: string, sa
   const line = latest?.lines.get(latest.machine);
   if (!latest || latest.scenario !== scenario || !line || latest.duration === undefined) {
     throw new Problem(`${name} / ${scenario} has no run with a line yet; drive it first`);
+  }
+  // Only a verified run measured the check; a failed one can end at any point.
+  if (latest.outcome !== "verified") {
+    throw new Problem(
+      latest.outcome === "unjudged"
+        ? `${name} / ${scenario}: its latest run is unjudged; judge it (\`verify judge\`) before moving its line`
+        : `${name} / ${scenario}: its latest run is ${latest.outcome} and measured nothing; drive it to a pass first`,
+    );
   }
   if (latest.duration <= allowance(line, conf.headroom)) {
     throw new Problem(
@@ -1086,7 +1199,7 @@ function cmdControl(name: Control, named: string | undefined): number {
       EXIT_USAGE,
     );
   }
-  const id = runIdentity(named);
+  const id = runIdentity(named, NAMES_A_RUN.includes(name) ? name : undefined);
   if (name === "start") console.log(`run ${id}: reach this instance later with --run ${id}`);
   const done = spawnSync(command, { shell: true, cwd: ROOT, stdio: "inherit", env: withRun(id) });
   if (done.error) throw done.error;
@@ -1101,16 +1214,25 @@ function changedSince(base: string): string[] {
     ...git("diff", "--name-only", "-z", "--no-renames", base, "--").split("\0"),
     ...git("ls-files", "-z", "--others", "--exclude-standard", "--full-name").split("\0"),
   ].filter(Boolean);
-  return [...new Set(fromTop.map((path) => relative(ROOT, join(top, path))))]
+  // git reports real paths, so a project reached through a link compares by its real path.
+  const root = realpathSync(ROOT);
+  return [...new Set(fromTop.map((path) => relative(root, join(top, path))))]
     .filter((path) => path && !path.startsWith(".."))
     .sort();
 }
 
-/** Where the branch left the default branch, or the last commit where there is no remote. */
+/** Where the branch left the default branch: origin/HEAD, else the first of DEFAULT_BRANCHES. */
 function defaultBase(): [string, string] {
-  const remote = git("rev-parse", "--abbrev-ref", "origin/HEAD").trim();
-  const fork = remote ? git("merge-base", "HEAD", remote).trim() : "";
-  return fork ? [fork, `where this branch left ${remote}`] : ["HEAD", "the last commit (no origin/HEAD to compare with)"];
+  const remote = git("symbolic-ref", "--quiet", "--short", "refs/remotes/origin/HEAD").trim();
+  for (const branch of [remote, ...DEFAULT_BRANCHES].filter(Boolean)) {
+    const fork = git("merge-base", "HEAD", branch).trim();
+    if (fork) return [fork, `where this branch left ${branch}`];
+  }
+  // Comparing with the last commit instead would hide everything this branch committed.
+  throw new Problem(
+    `affected: no default branch to compare with (origin/HEAD, ${DEFAULT_BRANCHES.join(", ")}); name one: verify affected BASE`,
+    EXIT_USAGE,
+  );
 }
 
 function covering(recipe: Recipe, path: string): boolean {
@@ -1172,7 +1294,14 @@ function checkProblems(): string[] {
       }
     }
     const names = new Set(recipe.scenarios.map((s) => s.name));
-    for (const item of markdownIn(join(EVIDENCE, recipe.name))) {
+    const folder = join(EVIDENCE, recipe.name);
+    for (const name of existsSync(folder) ? readdirSync(folder) : []) {
+      // A live run's marker is how it holds its name; one whose run is gone was left by a kill.
+      if (RESERVED.test(name) && !holderAlive(join(folder, name))) {
+        problems.push(`${rel(join(folder, name))}: left by a run that was killed; delete it`);
+      }
+    }
+    for (const item of markdownIn(folder)) {
       if (!isSummary(item)) {
         // Detail kept beside the summaries is fine; a summary whose name lost its stamp is not.
         if (OUTCOME_LINE.test(read(item))) {
@@ -1235,12 +1364,12 @@ async function main(argv: string[]): Promise<number> {
     } else if (arg.startsWith("--")) flags.add(arg);
     else args.push(arg);
   }
-  const isControl = command in CONTROL;
+  const control = isControl(command) ? command : undefined;
   const allowed = ["drive", "walk", "eval"].includes(command)
-    ? ["--yes", "--dry-run"]
+    ? ["--yes", "--dry-run", "--run"]
     : command === "raise"
       ? ["--yes"]
-      : isControl && command !== "running"
+      : control && control !== "running"
         ? ["--run"]
         : [];
   const unknown = [...flags].filter((f) => !allowed.includes(f));
@@ -1261,7 +1390,7 @@ async function main(argv: string[]): Promise<number> {
     case "walk":
     case "eval":
       arity(1, 2);
-      return cmdDrive(args[0] ?? "", args[1], flags.has("--yes"), flags.has("--dry-run"), command === "drive" ? undefined : command);
+      return cmdDrive(args[0] ?? "", args[1], flags.has("--yes"), flags.has("--dry-run"), command === "drive" ? undefined : command, run);
     case "affected":
       arity(0, 1);
       return cmdAffected(args[0]);
@@ -1279,9 +1408,9 @@ async function main(argv: string[]): Promise<number> {
       arity(0, 0);
       return cmdCheck();
     default:
-      if (isControl) {
+      if (control) {
         arity(0, 0);
-        return cmdControl(command as Control, run);
+        return cmdControl(control, run);
       }
       throw new Problem(`${USAGE}\nverify: unknown command '${command}'`, EXIT_USAGE);
   }

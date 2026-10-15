@@ -40,6 +40,15 @@ SECTION = r"\*([^*\n]+)\*"
 POINTER = re.compile(rf"`([\w./-]+\.(?:md|html))` → ({SECTION}(?: and {SECTION})*)")
 
 
+def outer_env() -> dict[str, str]:
+    """This process's environment without the tool's own variables.
+
+    A caller's VERIFY_ROOT, VERIFY_DATA or VERIFY_RUN_ID — set when the property suite itself
+    runs under `scripts/verify drive` — would point the tool at another harness or another run.
+    """
+    return {k: v for k, v in os.environ.items() if not k.startswith("VERIFY_")}
+
+
 def run_verify(
     *args: str, env: dict[str, str] | None = None
 ) -> subprocess.CompletedProcess[str]:
@@ -52,9 +61,7 @@ def run_verify(
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,
-        # A caller's VERIFY_ROOT or VERIFY_DATA would point the tool at another harness, so a
-        # run against this repository carries neither.
-        env=env or {k: v for k, v in os.environ.items() if not k.startswith("VERIFY_")},
+        env=env or outer_env(),
     )
 
 
@@ -243,7 +250,7 @@ def _harness(
     )
     if history:
         _evidence(tmp_path, "20260101T000000Z", history)
-    return {**os.environ, "VERIFY_ROOT": str(tmp_path), "VERIFY_DATA": str(data)}
+    return {**outer_env(), "VERIFY_ROOT": str(tmp_path), "VERIFY_DATA": str(data)}
 
 
 def _evidence(tmp_path: Path, stamp: str, text: str) -> Path:
@@ -1568,18 +1575,27 @@ def test_a_tool_killed_during_the_grace_still_stops_what_was_left(
     tmp_path: Path,
 ) -> None:
     marker = tmp_path / "outlived"
+    job = tmp_path / "job"
     env = _covering(
         tmp_path,
-        f"(trap '' TERM; sleep 2; touch {marker}) & echo started",
+        # Ignored before the job starts, so the stop's SIGTERM cannot beat the job's own trap.
+        f"trap '' TERM; sh -c 'echo $$ > {job}; sleep 3; touch {marker}' & echo started",
         "verification/recipes",
     )
-    _short_grace(tmp_path)
+    # A grace well past _start_drive's half-second wait, so the kill lands inside it.
+    _settings(tmp_path, grace="1.5")
     drive = _start_drive(
         env
     )  # the command has ended; its job ignores the stop's SIGTERM
+    assert _appears(job, 2)
+    while not job.read_text(encoding="utf-8").strip():  # created before it is written
+        time.sleep(0.05)
+    os.kill(
+        int(job.read_text(encoding="utf-8")), 0
+    )  # still in its grace, not yet killed
     drive.kill()
     drive.wait(timeout=10)
-    assert not _appears(marker, 3)
+    assert not _appears(marker, 4)
 
 
 def test_a_run_with_nothing_left_behind_does_not_wait_the_grace(tmp_path: Path) -> None:
@@ -1885,6 +1901,65 @@ def test_summaries_from_merged_branches_fold_into_one_on_the_next_run(
     assert detail.exists(), "detail kept beside the summaries was removed"
 
 
+# Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
+def test_a_freeze_from_either_merged_branch_survives_the_fold(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    # The older summary froze an overshoot; the newer one, from the other branch, did not.
+    for stamp, line in (
+        ("20260101T000000Z", "0.0 s; first run; frozen at 3.0 s by T-1"),
+        ("20260102T000000Z", "0.0 s; first run"),
+    ):
+        _evidence(
+            tmp_path,
+            stamp,
+            f"- **Scenario:** once\n- **Outcome:** verified\n- **Machine:** {MACHINE}\n"
+            f"- **Duration:** 0.0 s\n- **Line:** {MACHINE} {line}\n",
+        )
+    _delay(tmp_path, 1.3)  # over the bare line, under the frozen level
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == 0 and "over" not in result.stdout, result.stdout
+    assert "frozen at 3.0 s by T-1" in _only_summary(tmp_path)
+
+
+def test_a_run_needing_a_verdict_moves_its_line_only_once_judged_verified(
+    tmp_path: Path,
+) -> None:
+    env = _timed(tmp_path, '### once\nRun: `sleep "$(cat delay)"`\nCheck: read\n')
+    _line(tmp_path, "0.0 s; first run", 0.0)
+    _delay(tmp_path, 1.3)
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == 0 and "over" not in result.stdout, result.stdout
+    (first,) = _summaries(tmp_path)
+    carried = f"- **Line:** {MACHINE} 0.0 s; first run\n"
+    assert carried in first.read_text(encoding="utf-8")
+    # Judged failed, the run measured nothing: the line stays as it was.
+    assert run_verify("judge", "thing", first.stem, "failed", env=env).returncode == 0
+    assert carried in first.read_text(encoding="utf-8")
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    (second,) = _summaries(tmp_path)
+    judged = run_verify("judge", "thing", second.stem, "verified", env=env)
+    assert "over its line once" in judged.stdout, judged.stdout
+    assert f"{MACHINE} 0.0 s; first run; over 1\n" in second.read_text(encoding="utf-8")
+
+
+def test_a_line_moves_only_from_a_verified_run(tmp_path: Path) -> None:
+    env = _timed(
+        tmp_path,
+        '### once\nRun: `sleep "$(cat delay)"; exit "$(cat code)"`\n\n'
+        "### varies\nRun: `true`\nWorkload: varies\n",
+    )
+    (tmp_path / "code").write_text("1\n", encoding="utf-8")
+    _line(tmp_path, "0.0 s; first run; over 1", 1.3)
+    _delay(tmp_path, 1.3)
+    assert run_verify("drive", "thing", "once", env=env).returncode == 1
+    for how, said in (("raise", "new tests"), ("freeze", "T-9")):
+        refused = run_verify(how, "thing", "once", said, env=env)
+        assert refused.returncode == 1, refused.stdout
+        assert "measured nothing" in refused.stderr, refused.stderr
+    varies = run_verify("raise", "thing", "varies", "new tests", env=env)
+    assert "Workload: varies" in varies.stderr and "no line" in varies.stderr
+
+
 def test_a_new_run_of_a_judged_scenario_needs_judging_again(tmp_path: Path) -> None:
     env = _harness(tmp_path, "", "### once\nRun: `true`\nCheck: read\n")
     assert run_verify("drive", "thing", env=env).returncode == 0
@@ -1899,17 +1974,24 @@ def test_a_new_run_of_a_judged_scenario_needs_judging_again(tmp_path: Path) -> N
 # --- lines -----------------------------------------------------------------------------
 
 
+def _quick_line(text: str, origin: str) -> bool:
+    # A near-instant run measures 0.0 or 0.1 s depending on load; either is a quick line.
+    return bool(
+        re.search(rf"^- \*\*Line:\*\* {MACHINE} 0\.[01] s; {origin}$", text, re.M)
+    )
+
+
 # Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
 def test_the_first_run_on_a_kind_of_machine_sets_its_line_there(tmp_path: Path) -> None:
     env = _timed(tmp_path)
     assert run_verify("drive", "thing", env=env).returncode == 0
-    assert f"- **Line:** {MACHINE} 0.0 s; first run\n" in _only_summary(tmp_path)
+    assert _quick_line(_only_summary(tmp_path), "first run")
     other = {**env, "VERIFY_MACHINE": "another-machine"}
     _delay(tmp_path, 1.2)  # over the first machine's line, but never compared with it
     result = run_verify("drive", "thing", env=other)
     assert result.returncode == 0 and "over" not in result.stdout, result.stdout
     kept = _only_summary(tmp_path)
-    assert f"- **Line:** {MACHINE} 0.0 s; first run\n" in kept, kept
+    assert _quick_line(kept, "first run"), kept
     assert re.search(
         r"^- \*\*Line:\*\* another-machine 1\.\d s; first run$", kept, re.M
     )
@@ -1955,7 +2037,7 @@ def test_a_run_faster_by_more_than_the_headroom_lowers_the_line(tmp_path: Path) 
     _line(tmp_path, "5.0 s; first run", 5.0)
     result = run_verify("drive", "thing", env=env)
     assert "line lowered from 5.0 s" in result.stdout, result.stdout
-    assert f"- **Line:** {MACHINE} 0.0 s; lowered\n" in _only_summary(tmp_path)
+    assert _quick_line(_only_summary(tmp_path), "lowered")
 
 
 def test_a_run_within_the_headroom_keeps_the_line(tmp_path: Path) -> None:
@@ -2109,7 +2191,7 @@ def test_every_flag_help_shows_for_a_control_command_is_accepted(
     tmp_path: Path,
 ) -> None:
     env = _harness(tmp_path, "")
-    _settings(tmp_path, **{name: "true" for name in CONTROL})
+    _settings(tmp_path, **dict.fromkeys(CONTROL, "true"))
     shown = run_verify("--help", env=env).stdout
     for name in CONTROL:
         line = re.search(rf"^  verify {name}\b(.*)$", shown, re.M)
@@ -2185,6 +2267,77 @@ def test_a_run_id_that_is_not_a_plain_name_is_refused(tmp_path: Path) -> None:
         assert result.returncode == 2, (bad, result.stderr)
 
 
+def test_a_drive_in_progress_leaves_the_harness_check_clean(tmp_path: Path) -> None:
+    # The scenario checks its own harness while its drive holds an evidence name.
+    env = _harness(tmp_path, "", f"### once\nRun: `{VERIFY} check`\n")
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "check: ok" in _only_summary(tmp_path)
+    folder = tmp_path / "verification" / "evidence" / "thing"
+    assert not list(folder.glob(".*.reserved")), "the run left its reservation behind"
+
+
+def test_check_reports_a_reservation_a_killed_run_left(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    folder = tmp_path / "verification" / "evidence" / "thing"
+    folder.mkdir(parents=True)
+    (folder / ".20260101T000000Z.reserved").write_text("999999999\n", encoding="utf-8")
+    (folder / ".20260102T000000Z.reserved").write_text(f"{os.getpid()}\n", "utf-8")
+    result = run_verify("check", env=env)
+    assert result.returncode == 1, result.stdout
+    assert ".20260101T000000Z.reserved: left by a run that was killed" in result.stdout
+    assert "20260102T000000Z" not in result.stdout, "a live run's marker was reported"
+
+
+def test_a_drive_reaches_a_started_instance_by_its_run_id(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", '### once\nRun: `echo "$VERIFY_RUN_ID" > seen`\n')
+    assert run_verify("drive", "thing", "--run", "inst-1", env=env).returncode == 0
+    assert (tmp_path / "seen").read_text(encoding="utf-8").strip() == "inst-1"
+    assert "- **Run:** inst-1\n" in _only_summary(tmp_path)
+
+
+def test_commands_for_an_earlier_instance_need_its_run_id(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    _settings(tmp_path, stop='echo "stop $VERIFY_RUN_ID"')
+    bare = run_verify("stop", env=env)
+    assert bare.returncode == 2 and "--run ID" in bare.stderr, bare.stderr
+    assert "stop r1" in run_verify("stop", "--run", "r1", env=env).stdout
+    assert "stop r2" in run_verify("stop", env={**env, "VERIFY_RUN_ID": "r2"}).stdout
+    bad = run_verify("stop", env={**env, "VERIFY_RUN_ID": "a b"})
+    assert bad.returncode == 2 and "inherited from the environment" in bad.stderr
+
+
+def test_a_name_every_object_inherits_is_not_a_command(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    for name in ("toString", "constructor", "hasOwnProperty"):
+        result = run_verify(name, env=env)
+        assert result.returncode == 2, (name, result.stderr)
+        assert "unknown command" in result.stderr, (name, result.stderr)
+
+
+def test_failed_evidence_keeps_the_end_of_long_logs_and_says_where_they_were_cut(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "", "### bad\nRun: `exit 1`\n")
+    _settings(tmp_path, logs="seq 1 500")
+    assert run_verify("drive", "thing", env=env).returncode == 1
+    logs = _only_summary(tmp_path).split("## Logs", 1)[1]
+    assert "(its last 200 of 500 lines)" in logs, logs
+    assert "\n301\n" in logs and logs.rstrip().endswith("500")
+    assert "\n300\n" not in logs
+
+
+def test_a_process_the_logs_command_leaves_running_does_not_hold_the_run(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "", "### bad\nRun: `exit 1`\n")
+    _settings(tmp_path, logs="sleep 8 & echo the log")
+    began = time.monotonic()
+    assert run_verify("drive", "thing", env=env).returncode == 1
+    assert time.monotonic() - began < 5
+    assert "the log" in _only_summary(tmp_path)
+
+
 # Holds the decision in docs/adr/20261015-the-verification-harness-controls-what-it-checks.md.
 def test_failed_evidence_keeps_the_instances_logs(tmp_path: Path) -> None:
     logs = tmp_path / "logs"
@@ -2240,7 +2393,10 @@ def _example_problems(harness: Path) -> list[str]:
             if var not in TOOL_SETS | defined:
                 problems.append(f"{name} uses ${var}, which nothing sets")
         for port in re.findall(
-            r"(?:127\.0\.0\.1|localhost|--port[ =]):?(\d{2,5})", text
+            r"(?:\bport\s+|--port[ =]|\bPORT=|-p\s+|(?:127\.0\.0\.1|localhost|0\.0\.0\.0|\])"
+            r":)(\d{2,5})\b",
+            text,
+            re.I,
         ):
             problems.append(f"{name} names the fixed port {port}")
     return problems
@@ -2265,6 +2421,16 @@ def test_the_example_check_catches_an_unset_variable_and_a_fixed_port(
     )
     found = _example_problems(tmp_path)
     assert any("$RUN_ID" in p for p in found) and any("4173" in p for p in found)
+    for way in (
+        "serves the UI on port 4173",
+        "`http://0.0.0.0:4173`",
+        "`docker run -p 4173:4173 app`",
+        "`PORT=4173 npm start`",
+        "`http://[::1]:4173`",
+        "`serve --port 4173`",
+    ):
+        (tmp_path / "harness.md").write_text(f"- {way}\n", encoding="utf-8")
+        assert any("4173" in p for p in _example_problems(tmp_path)), way
 
 
 # --- end to end: a real instance -------------------------------------------------------
@@ -2470,13 +2636,47 @@ def test_a_changed_recipe_counts_as_touching_itself(tmp_path: Path) -> None:
     assert "no recipe covers" not in result.stdout
 
 
-def test_affected_without_a_base_says_what_it_compared_with(tmp_path: Path) -> None:
+def test_affected_without_a_base_compares_with_where_the_branch_left_the_default(
+    tmp_path: Path,
+) -> None:
+    # No origin/HEAD here, as in a fresh clone that never set it: the work this branch already
+    # committed still counts, never only what is uncommitted.
     env = _affected_project(tmp_path)
-    (tmp_path / "lib/l.py").write_text("edited\n", encoding="utf-8")
+    _git(tmp_path, "checkout", "-q", "-b", "feature/x")
+    (tmp_path / "lib/l.py").write_text("committed on the branch\n", encoding="utf-8")
+    _git(tmp_path, "commit", "-qam", "edit", when="2026-01-03T00:00:00Z")
     result = run_verify("affected", env=env)
     assert result.returncode == 0, result.stderr
-    assert "since the last commit (no origin/HEAD" in result.stdout, result.stdout
+    assert "since where this branch left main" in result.stdout, result.stdout
     assert "  idle  feature" in result.stdout
+
+
+def test_affected_without_a_base_or_a_default_branch_asks_for_one(
+    tmp_path: Path,
+) -> None:
+    env = _affected_project(tmp_path)
+    _git(tmp_path, "branch", "-m", "main", "trunk")
+    result = run_verify("affected", env=env)
+    assert result.returncode == 2, result.stdout
+    assert "verify affected BASE" in result.stderr, result.stderr
+
+
+def test_affected_through_a_linked_project_root_sees_its_changes(
+    tmp_path: Path,
+) -> None:
+    real = tmp_path / "real"
+    real.mkdir()
+    env = _affected_project(real)
+    (real / "lib/l.py").write_text("edited\n", encoding="utf-8")
+    link = tmp_path / "link"
+    link.symlink_to(real)
+    linked = {
+        **env,
+        "VERIFY_ROOT": str(link),
+        "VERIFY_DATA": str(link / "verification"),
+    }
+    result = run_verify("affected", "HEAD", env=linked)
+    assert "1 path(s) changed" in result.stdout, result.stdout
 
 
 def test_affected_refuses_a_base_that_is_not_a_commit(tmp_path: Path) -> None:

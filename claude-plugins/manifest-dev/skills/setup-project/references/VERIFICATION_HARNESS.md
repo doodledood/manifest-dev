@@ -56,8 +56,8 @@ cases, and living documents are all recipes in the same harness.
   the project's own commands.
 - **Run identity.** Every command the tool starts — scenarios, control, doctor, dry runs —
   receives `VERIFY_RUN_ID`, one per invocation, so data directories, ports and containers can be
-  per run and runs can go side by side. A later invocation reaches an instance an earlier one
-  started with `--run ID`.
+  per run and runs can go side by side. A later drive or control command reaches an instance an
+  earlier one started with `--run ID`; `logs`, `reset` and `stop` refuse to run without one.
 - **Evidence.** Each run writes `evidence/<recipe>/<stamp>.md`: the scenario, command, exit
   code, outcome, run identity, kind of machine, duration, time lines, a fingerprint of the files
   the recipe covers, what it proves, and the output with local paths removed. It replaces that
@@ -83,15 +83,16 @@ different one worked: the evidence names the scenario it came from.
 
 ## Time lines
 
-A scenario with a fixed workload gets a time line: its first passing run on a kind of machine,
-plus headroom for noise. It is an alarm against a check slowly getting slower, and it only
+A scenario with a fixed workload gets a time line: its first verified run on a kind of machine
+(a run whose proof needs reading counts once judged verified), plus headroom for noise. It is an alarm against a check slowly getting slower, and it only
 reports — it never decides when a check runs or who may run it. One run over is noise; two in a
 row show `over its line` and make `drive` exit non-zero. A run faster by more than the headroom
 lowers the line, so the gain is kept. It moves up only by `verify raise` with a reason, or is held at the overshoot by
 `verify freeze` naming the debt Ticket that pays it down. A scenario whose work varies — the affected
 tests, or an agent session whose work the model decides each run — declares `Workload: varies`
 and gets none. Lines are derived
-from each scenario's latest evidence, never kept in a file every run edits.
+from each scenario's latest evidence, never kept in a file every run edits; when merged branches
+leave two summaries, the next run keeps the line allowing the most, so a raise or freeze survives.
 
 ## Ask first
 
@@ -141,7 +142,8 @@ instead. Scenario commands start what the project needs from an empty state to a
 names) rather than coordinates, expose what the stack can show (logs, traces, console output),
 and clean up only what they started, never the evidence. Control commands take their data
 directory, port and container names from `VERIFY_RUN_ID` rather than a fixed value, so two runs
-never meet, and the `logs:` command prints what locates a failure for that run.
+never meet; one given an id it has no instance for exits non-zero and says so, and the `logs:`
+command prints what locates a failure for that run.
 
 ## A repository check
 

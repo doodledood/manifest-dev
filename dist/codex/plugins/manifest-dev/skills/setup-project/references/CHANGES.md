@@ -83,24 +83,30 @@ Digest: 932d17190a24d0fb7e0b99b039d1821ac54a13769d05b56f2b32b2bff7f118e9
   `reset` and `stop` commands, which `verify` runs and `--help` lists only when declared; setup
   declares those the project's existing scripts already provide, and none where nothing runs.
   Every command a run starts receives `VERIFY_RUN_ID`, so instances, data and ports are per run
-  and runs can go side by side; `--run ID` reaches an instance an earlier run started.
-- A failed or unreachable run's evidence keeps what the `logs:` command printed for it.
+  and runs can go side by side; `--run ID` on a drive or a control command reaches an instance an
+  earlier run started, and `logs`, `reset` and `stop` refuse to run without one.
+- A failed or unreachable run's evidence keeps the end of what the `logs:` command printed for
+  it, saying where it was cut.
 - Evidence records each run's duration and kind of machine. A fixed-workload scenario gets a time
-  line from its first passing run on that kind of machine plus headroom: two runs over it in a row
-  show `over its line` and make `drive` exit 5; a faster run lowers it; `verify raise` (with a
+  line from its first verified run on that kind of machine plus headroom (a run needing a verdict
+  counts once judged verified): two runs over it in a row
+  show `over its line` and make `drive` exit 5; a run faster by more than the headroom lowers it; `verify raise` (with a
   reason) and `verify freeze` (with a debt Ticket) move or hold it. Lines live in evidence, never
   in a file every run edits; `Workload: varies` scenarios — the affected tests, an agent session —
   get none.
 - The evidence folder keeps one summary per scenario: a new run replaces the older one, and git
-  keeps the history.
+  keeps the history; after a merge, the line allowing the most survives the fold. A run in
+  progress holds its evidence name with a marker, so `check` stays clean beside it.
 - `verify affected [BASE]` lists the recipes a diff touches and the changed paths no recipe
-  covers.
+  covers; without BASE it compares with where the branch left `origin/HEAD`, `origin/main`,
+  `origin/master`, `main` or `master`, and asks for one when none exists.
 - The stop grace is a `grace:` setting (2 s when unset), and kept output drops paths under the
   running user's actual home and temporary directories, wherever they are.
 - The ask-first mark means cost only — money or quota, load on shared systems, effects outside
-  the repository; run time alone is not a reason, and every other check is free to run as often
-  as it helps. Agreement can come from the project's setting, the user, or an approved Manifest
-  whose gate runs the recipe.
+  the repository; run time alone is not a reason (replacing v4's "long run time"), and every
+  other check is free to run as often as it helps. Agreement can come from the project's setting, the user, or a Manifest a person
+  approved whose gate runs the recipe; one written and executed in one unattended chain carries
+  none.
 - *Fit to trust* gains three jobs: fast enough (no touched check over its line without a reason),
   controllable (started, observed and stopped through the harness, each run on its own), and a
   failure explains itself.
@@ -109,4 +115,4 @@ Digest: 932d17190a24d0fb7e0b99b039d1821ac54a13769d05b56f2b32b2bff7f118e9
 - The shipped example settings declare control commands on a per-run data directory and a free
   port, and its feature recipe shows a `Workload: varies` scenario.
 
-Digest: 88671dc725dea89d9ef23818fd8461c9c3a0f28b535228f383c745acd47b6b07
+Digest: 80b0d5297e241f10f1aee5c451c19a598e2ec00d285bf978f6df5c6349d9032d
