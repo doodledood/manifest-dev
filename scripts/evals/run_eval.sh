@@ -9,7 +9,7 @@
 #
 # Example, one hill-climb round (plugin arm only, the define suite's opus judge):
 #   scripts/evals/run_eval.sh define-hc-v2 evals/results/hillclimb-define/v2/aggregate-result.json \
-#     --tag define --ablation none --judge-model opus
+#     --tag define --ablation none --judge-model sonnet
 #
 # Why a container: on macOS every eval child raises a "Keychain Not Found" dialog (see
 # evals/README.md), and a detached container survives the launching session ending. The

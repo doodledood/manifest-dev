@@ -9,7 +9,7 @@ reaches a correct answer, which a strong base model does unaided.
 Run it:
 
 ```bash
-claude plugin eval . --tag figure-out --ablation with-without --judge-model opus --allow-tools Write Bash --scaffold -j 8
+claude plugin eval . --tag figure-out --ablation with-without --judge-model sonnet --allow-tools Write Bash --scaffold -j 8
 ```
 
 `--scaffold` runs each case's `scaffold.sh` (declared in its `case.yaml`) before the agent starts,
@@ -26,7 +26,7 @@ project (`52`). The no-plugin arm passes or fails them by construction. They car
 tag `figure-out-plugin-only` instead of `figure-out` and run on the plugin arm alone:
 
 ```bash
-claude plugin eval . --tag figure-out-plugin-only --ablation none --judge-model opus --allow-tools Write Bash --scaffold -j 8
+claude plugin eval . --tag figure-out-plugin-only --ablation none --judge-model sonnet --allow-tools Write Bash --scaffold -j 8
 ```
 
 `--allow-tools Write Bash` is required. `allowed_tools` in a case's `prompt.md` declares what the
@@ -35,9 +35,13 @@ cases burn their turn reporting that writing is disabled.
 
 The headline number is **Δ** — with-plugin score minus the no-plugin baseline.
 
-**Judge with `opus`.** A sonnet-tier judge disagreed with itself across its three votes on the same
-output and failed outputs an opus judge passed unanimously; see the 2026-10-06 baseline. Every
-number before that baseline is sonnet-judged and does not compare with it.
+**Judge with `sonnet`, 3 runs per arm.** The owner's call on 2026-10-15: these suites are a proxy
+that gives a prompt change a direction and shows roughly where the skills stand, not a precise
+measure, so a run is kept cheap and its noise is worked with rather than bought down. A sonnet
+judge is the noisier one on record: on 2026-10-06 it split its votes on outputs an opus judge
+passed unanimously, and read a 9/12 against 1/12 gap on `16` that opus judged 11/12 against 11/12
+(see the opus-judged 2026-10-06 baseline). Numbers judged by different models do not compare.
+*Reading a result at this depth*, below, says how to read one.
 
 ## Scope and statuses
 
@@ -65,6 +69,28 @@ first run. A case without it was measured, and the bold stale line under the cas
 whether its number still holds.
 `tests/test_eval_cases.py` fails when a case directory has no row, or a row has no directory.
 
+## Reading a result at this depth
+
+Three runs per arm and a noisy judge give a direction, not a precise number. Read a result this
+way:
+
+- **A clean split is real; anything closer is unread.** Three of three against none of three on
+  a case grader is a 1-in-20 chance result. A one- or two-run difference is not evidence either
+  way: top that case up with 3 more runs per arm, and pool them, before acting on it.
+- **Direction comes from pooled numbers.** Across many cases the noise averages out, so the
+  suite-wide Δ, or a grader pooled over the cases that carry it, is what a hill-climb moves. A
+  single case's Δ below about 0.6 is noise.
+- **The judge's error can lean one way.** A gap that appears on a case grader for the first time
+  may be the judge's: read the outputs on both sides before believing it, as the `16` gap above
+  shows.
+- **Retire only on a clean floor.** Both arms pass every case grader on every run, and the case is
+  not a declared guard. A close call gets topped up first.
+- **Hill-climb on the plugin arm only.** The no-plugin arm cannot respond to a prompt edit, so it
+  is measured once per baseline, and again when the model, the CLI or the judge changes. Keep a
+  change only when the pooled train and test graders move together and no guard grader falls; a
+  change that wins narrowly is re-run once before it is kept, rather than every case getting more
+  runs.
+
 ## Running on macOS
 
 Run the suites in the Linux container defined by `Dockerfile` in this directory. On macOS, every
@@ -74,7 +100,7 @@ macOS keychain, and a detached container also keeps running if the launching ses
 
 ```bash
 scripts/evals/run_eval.sh figure-out-run evals/results/figure-out-run/aggregate-result.json \
-  --tag figure-out --ablation with-without --judge-model opus --scaffold
+  --tag figure-out --ablation with-without --judge-model sonnet --scaffold
 ```
 
 The script builds the image if it is missing, starts colima if Docker is down, reads
@@ -264,52 +290,50 @@ change adds for its own disciplines; `55` and `define/d24` are the pair added wh
 
 ## First-run plan
 
-Every case marked *first run decides* has never run, so next week's baseline buys most of its
-signal there. Run them in this order; a partial budget stops wherever it runs out and still has
-the cases most likely to separate the arms.
+Every case marked *first run decides* has never run, so the next baseline buys most of its signal
+there. Run them in this order; a partial budget stops wherever it runs out and still has the cases
+most likely to separate the arms.
 
-**Cost.** This suite records no per-run cost of its own. The figure below assumes **$1.50 a run**,
-taken from the define suite's measured $1.52 (`define/README.md`, 2026-10-12); single-turn press
-cases cost less, so it is an upper bound for them. A both-arm case is 24 runs (12 per arm), about
-$36; a plugin-arm-only case is 12 runs, about $18.
+**Runs and cost.** Each case runs 3 times per arm, so a both-arm case is 6 runs and a
+plugin-arm-only case is 3. No run has been costed with the sonnet judge. The only measured figure
+is the define suite's $1.52 a run under an opus judge (`define/README.md`, 2026-10-12), so the
+totals below are upper bounds.
 
-| Order | Cases | Runs | ≈ $ | Why here |
-|---|---|---|---|---|
-| 1 | `54`, `55` | 48 | 72 | Cover what this change shipped; the base model likely plans around the broken recipe and leaves the broken test |
-| 2 | `17` | 24 | 36 | Single turn; headroom likely |
-| 3 | `22` | 24 | 36 | Single turn; the base model tends to settle a look in prose |
-| 4 | `19` | 24 | 36 | The base model likely designs the display as asked |
-| 5 | `48` | 24 | 36 | Design probes with no other case |
-| 6 | `40` + `42` | 48 | 72 | Pair; `42` is the negative guard |
-| 7 | `41` | 24 | 36 | |
-| 8 | `44` | 24 | 36 | |
-| 9 | `18` | 24 | 36 | |
-| 10 | `21` | 24 | 36 | |
-| 11 | `23` + `24` | 48 | 72 | `24` is `23`'s held-out witness |
-| 12 | `25` + `26` | 48 | 72 | Pair |
-| 13 | `32` + `33` | 48 | 72 | Same prompt, with and without a harness |
-| 14 | `38` | 24 | 36 | |
-| 15 | `34`, `35` | 48 | 72 | |
-| 16 | `37` + `39` | 48 | 72 | Headroom likely low |
-| 17 | `20` | 24 | 36 | Both arms likely pass |
-| 18 | `29` | 24 | 36 | Likely a floor |
-| 19 | `31` | 24 | 36 | Likely a floor |
-| 20 | `30`, `53`, `45` (plugin arm) | 36 | 54 | The version path; `53` and `45` for status |
-| 21 | `43` + `46` (plugin arm) | 24 | 36 | Pair |
-| 22 | `27` + `28` (plugin arm) | 24 | 36 | Pair |
-| 23 | `36` (plugin arm) | 12 | 18 | |
-| 24 | `52` (plugin arm) | 12 | 18 | Guard; status only |
+| Order | Cases | Runs | Why here |
+|---|---|---|---|
+| 1 | `54`, `55` | 12 | Cover what this change shipped; the base model likely plans around the broken recipe and leaves the broken test |
+| 2 | `17` | 6 | Single turn; headroom likely |
+| 3 | `22` | 6 | Single turn; the base model tends to settle a look in prose |
+| 4 | `19` | 6 | The base model likely designs the display as asked |
+| 5 | `48` | 6 | Design probes with no other case |
+| 6 | `40` + `42` | 12 | Pair; `42` is the negative guard |
+| 7 | `41` | 6 | |
+| 8 | `44` | 6 | |
+| 9 | `18` | 6 | |
+| 10 | `21` | 6 | |
+| 11 | `23` + `24` | 12 | `24` is `23`'s held-out witness |
+| 12 | `25` + `26` | 12 | Pair |
+| 13 | `32` + `33` | 12 | Same prompt, with and without a harness |
+| 14 | `38` | 6 | |
+| 15 | `34`, `35` | 12 | |
+| 16 | `37` + `39` | 12 | Headroom likely low |
+| 17 | `20` | 6 | Both arms likely pass |
+| 18 | `29` | 6 | Likely a floor |
+| 19 | `31` | 6 | Likely a floor |
+| 20 | `30`, `53`, `45` (plugin arm) | 9 | The version path; `53` and `45` for status |
+| 21 | `43` + `46` (plugin arm) | 6 | Pair |
+| 22 | `27` + `28` (plugin arm) | 6 | Pair |
+| 23 | `36` (plugin arm) | 3 | |
+| 24 | `52` (plugin arm) | 3 | Guard; status only |
 
-All of it is about 732 runs, about $1,100. A full baseline also re-measures the 13 kept both-arm
-cases (`01`–`16`), another 312 runs, about $470, since every recorded number is stale.
-
-**A smaller budget** runs rows 1 to 7 first: 216 runs, about $325. A cheaper triage runs every row
-at 6 runs per arm, about $550: six runs show a case both arms pass every time, which is the retire
-signal, but are too few to measure Δ. What each result decides:
+All of it is 183 runs, under $280. A full baseline also re-measures the 13 kept both-arm cases
+(`01`–`16`), another 78 runs, under $120, since every recorded number is stale. **A smaller
+budget** runs rows 1 to 7 first: 54 runs, under $85. Top-ups under *Reading a result at this
+depth* come on top. What each result decides:
 
 - both arms pass every case grader on every run, and the case is not a declared guard → retire it;
 - the plugin arm fails a case grader traced to a rule the skill states → keep it as a hill;
-- the arms separate on a case grader → keep it as uplift, and settle its split;
+- the arms separate cleanly on a case grader → keep it as uplift, and settle its split;
 - a verdict that cannot be predicted from reading the output → sharpen the grader before keeping
   any number from it.
 
@@ -504,8 +528,8 @@ against a judge that could not read its own exemptions.
 
 ## Recording a baseline
 
-Record the resolved model ID, the CLI version, the commit the skill was measured at, and the date
-next to every baseline. The cases say only `model: opus`, and `aggregate-result.json` records the
+Record the resolved model ID, the judge, the runs per arm, the CLI version, the commit the skill
+was measured at, and the date next to every baseline. The cases say only `model: opus`, and `aggregate-result.json` records the
 CLI version but not the model, which is how the baseline below went stale unnoticed when the
 model changed.
 
@@ -520,7 +544,7 @@ in a section below is the local run directory it was read from, not a file in th
 
 To improve a skill against one grader while holding the rest, run rounds of
 analyze → change → rerun → compare against a recorded baseline. Each round costs roughly what
-the baseline's plugin arm did (about $150 for `define` at 6 runs per case). Keep the loop's
+the suite's plugin arm does at 3 runs per case. Keep the loop's
 state in a gitignored directory under `results/`, for example `results/hillclimb-<suite>/`,
 with a `_state.json` holding `train_ids` and `test_ids` and one `vN/` directory per round.
 
@@ -895,4 +919,5 @@ cases were measured twice against an identical prompt roughly forty minutes apar
 difference| was **0.111**, max **0.167**, on text that did not change by a character. Per-run score
 sd was 0.378 across 180 runs, putting the standard error of a seven-case mean at ~0.117 at
 `runs: 3`. A move smaller than that is not evidence of anything. Resolving a ~0.08 effect takes
-roughly **26 runs per case per arm**.
+roughly **26 runs per case per arm**, which this suite does not buy: at 3 runs per arm it reads
+large effects per case and smaller ones only pooled, as *Reading a result at this depth* says.

@@ -4,7 +4,7 @@ max_turns: 25
 timeout_seconds: 600
 allowed_tools: [Skill, Read, Glob, Grep, Write, Edit, Bash]
 model: opus
-runs: 12
+runs: 3
 append_system_prompt: |
   The user's memory file (~/.claude/CLAUDE.md, user-level, loaded in every session) contains:
 

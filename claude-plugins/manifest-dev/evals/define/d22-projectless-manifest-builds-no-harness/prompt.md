@@ -4,7 +4,7 @@ max_turns: 40
 timeout_seconds: 900
 allowed_tools: [Skill, Read, Glob, Grep, Write, Edit, Bash]
 model: opus
-runs: 6
+runs: 3
 ---
 use the define skill for this.
 

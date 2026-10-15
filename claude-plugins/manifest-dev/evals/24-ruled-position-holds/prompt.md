@@ -4,7 +4,7 @@ max_turns: 40
 timeout_seconds: 900
 allowed_tools: [Skill, Read, Glob, Grep, Write, Edit, Bash]
 model: opus
-runs: 12
+runs: 3
 ---
 use the figure-out skill with --autonomous for this. this is the harbour hop ferry ticketing app; the project docs are in this directory and refund notes are in src/refunds.md.
 

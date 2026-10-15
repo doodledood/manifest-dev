@@ -242,3 +242,37 @@ def test_suite_readme_lists_exactly_its_cases(suite: Path) -> None:
     dirs, rows = _case_dirs(suite), _case_table_rows(suite / "README.md")
     assert not dirs - rows, f"cases with no README row: {sorted(dirs - rows)}"
     assert not rows - dirs, f"README rows with no case: {sorted(rows - dirs)}"
+
+
+# The owner's 2026-10-15 call: every case runs 3 times per arm under a sonnet judge, and the
+# suites' READMEs say how to read a result at that depth. A case left at another count, or a
+# documented command naming another judge, would make one baseline mix depths or judges.
+RUNS_PER_ARM = 3
+JUDGE = "sonnet"
+JUDGE_DOCS = [
+    EVALS / "README.md",
+    EVALS / "define/README.md",
+    ROOT / "verification/recipes/figure-out-evals.md",
+    ROOT / "verification/recipes/define-evals.md",
+    ROOT / "scripts/evals/run_eval.sh",
+]
+
+
+def test_every_case_runs_the_agreed_depth() -> None:
+    off = {
+        _case_id(p.parent): data.get("runs")
+        for p in sorted(EVALS.rglob("prompt.md"))
+        for data, _ in [_frontmatter(p)]
+        if data.get("runs") != RUNS_PER_ARM
+    }
+    assert not off, f"cases not at runs: {RUNS_PER_ARM}: {off}"
+
+
+def test_every_documented_run_uses_the_agreed_judge() -> None:
+    found = {
+        f"{doc.relative_to(ROOT)}: {model}"
+        for doc in JUDGE_DOCS
+        for model in re.findall(r"--judge-model (\S+)", doc.read_text(encoding="utf-8"))
+        if model != JUDGE and not model.startswith("<")
+    }
+    assert not found, f"commands naming another judge: {sorted(found)}"

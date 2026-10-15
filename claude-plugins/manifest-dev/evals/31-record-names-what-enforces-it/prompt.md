@@ -4,7 +4,7 @@ max_turns: 40
 timeout_seconds: 900
 allowed_tools: [Skill, Read, Glob, Grep, Write, Edit, Bash]
 model: opus
-runs: 12
+runs: 3
 ---
 use the figure-out skill with --autonomous for this. the project is this repo; its context file is ./CLAUDE.md.
 

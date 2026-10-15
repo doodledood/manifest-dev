@@ -9,7 +9,7 @@ cases and why. A prompt change marks the cases it covers stale rather than runni
 `../README.md` → *Scope and statuses* says. Run it from the plugin directory:
 
 ```bash
-claude plugin eval . --tag define --ablation with-without --judge-model opus --allow-tools Write Bash --scaffold -j 8
+claude plugin eval . --tag define --ablation with-without --judge-model sonnet --allow-tools Write Bash --scaffold -j 8
 ```
 
 `--scaffold` runs the `scaffold.sh` that `d16` and `d19`–`d24` declare in their `case.yaml`: a
@@ -23,12 +23,14 @@ the no-plugin baseline. Read the figure-out suite's README (`../README.md`) befo
 from this one: its rules on decomposing Δ by arm, the noise floor, and changing graders apply here
 unchanged.
 
-**The judge is opus, not sonnet.** The CLI's judge must reply with one word, PASS or FAIL, with no
-room to reason on the page. On a 20k-character Manifest, a sonnet judge failed whole-document
-checks it passes when allowed to reason: a sound Manifest scored FAIL on nearly every vote. An
-opus judge matched known answers on a clean Manifest and on a copy with an unstable gate, an
-ungated rule, and an invented threshold planted in it. Keep opus here unless that check is
-repeated with a cheaper judge.
+**The judge is sonnet, at 3 runs per arm**, by the owner's call on 2026-10-15, for the reason
+`../README.md` gives: the suites are a cheap proxy for direction, and their noise is worked with
+rather than bought down. The risk on record is sharper here. The CLI's judge must reply with one
+word, PASS or FAIL, with no room to reason on the page, and on a 20k-character Manifest a sonnet
+judge once failed a sound Manifest on nearly every vote, where an opus judge matched known answers.
+The graders have since been rewritten to classify before judging, which that check predates. So
+before acting on a FAIL from a grader that reads the whole Manifest, read the Manifest it failed.
+Numbers judged by different models do not compare.
 
 ## Cases added 2026-10-13 to 2026-10-15 — unmeasured
 
@@ -364,23 +366,25 @@ and now carries its grader.
 
 ## First-run plan
 
-Cost comes from this suite's measured **$1.52 a run** (2026-10-12, above). A case is 12 runs, 6
-per arm, about $18.
+Each case runs 3 times per arm, 6 runs a case. No run has been costed with the sonnet judge; the
+measured **$1.52 a run** (2026-10-12, above) was under an opus judge, so the totals below are upper
+bounds.
 
-| Order | Case | Runs | ≈ $ | Why here |
-|---|---|---|---|---|
-| 1 | `d23` | 12 | 18 | Covers what this change shipped, on two graders |
-| 2 | `d24` | 12 | 18 | The same rule with no harness; the base model likely adds a test beside the broken one |
-| 3 | `d19` | 12 | 18 | Headroom likely |
-| 4 | `d20` | 12 | 18 | Headroom likely |
-| 5 | `d21` | 12 | 18 | |
-| 6 | `d22` | 12 | 18 | Guard; status only |
+| Order | Case | Runs | Why here |
+|---|---|---|---|
+| 1 | `d23` | 6 | Covers what this change shipped, on two graders |
+| 2 | `d24` | 6 | The same rule with no harness; the base model likely adds a test beside the broken one |
+| 3 | `d19` | 6 | Headroom likely |
+| 4 | `d20` | 6 | Headroom likely |
+| 5 | `d21` | 6 | |
+| 6 | `d22` | 6 | Guard; status only |
 
-All of it is 72 runs, about $109. A full baseline also re-measures the 12 kept cases, another 144
-runs, about $219, since every recorded number is stale. **A smaller budget** runs `d23` and `d24`
-first: 24 runs, about $36. A case whose own graders pass in both arms on every run is retired, as
-`d11`–`d14` were; a plugin-arm failure on a case grader is a hill; separation on a case grader
-keeps it as uplift.
+All of it is 36 runs, under $55. A full baseline also re-measures the 12 kept cases, another 72
+runs, under $110, since every recorded number is stale. **A smaller budget** runs `d23` and `d24`
+first: 12 runs, under $20. Read the results as `../README.md` → *Reading a result at this depth*
+says: a case whose own graders pass in both arms on every run is retired, as `d11`–`d14` were; a
+plugin-arm failure on a case grader is a hill; a clean separation on a case grader keeps it as
+uplift; anything closer is topped up before it decides.
 
 ## Held-out split
 
