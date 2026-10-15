@@ -1,5 +1,5 @@
 ---
-tags: [figure-out-plugin-only]
+tags: [figure-out]
 max_turns: 40
 timeout_seconds: 900
 allowed_tools: [Skill, Read, Glob, Grep, Write, Edit, Bash]

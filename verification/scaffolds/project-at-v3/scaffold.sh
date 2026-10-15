@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+# A Shelfnote project recording surfaces v3: the setup-project recipe's update-from-v3 scenario.
 set -euo pipefail
-mkdir -p docs/adr docs/features src tests
+mkdir -p docs/adr docs/features docs/reader-tasks src tests
 cat > CLAUDE.md <<'EOF'
 # Shelfnote
 
@@ -8,7 +9,7 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v2 -->
+<!-- setup-project surfaces v3 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
@@ -20,7 +21,10 @@ This project keeps its direction, vocabulary, and decision memory in the repo. R
 - **Verification surface** — `tests/`, a test suite: how this project checks that the CLI
   still does its job. A change to anything a test covers updates that test and runs it.
 - **Feature map** — `docs/features/`: how a user reaches each feature and how to drive and check
-  it. Start there to place a report or find what a change touches.
+  it; its README gives the commands and what a drive needs. Start there to place a report or
+  find what a change touches; a change to a feature updates its entry and drives it.
+- **Reader tasks** — `docs/reader-tasks/TASKS.md`: what a reader comes to the README to do, each
+  walked by a fresh reader given only the README.
 EOF
 cat > CONTEXT.md <<'EOF'
 # Shelfnote
@@ -204,6 +208,10 @@ Preconditions: the baseline in the index.
 ## Gotchas
 
 - The command parses its arguments and prints its name; it does not read loans yet.
+
+## Club notes
+
+- Organizers check out several books at once at the monthly meeting; drive it twice in a row.
 EOF
 cat > docs/features/return.md <<'EOF'
 # return
@@ -239,7 +247,7 @@ cat > docs/features/overdue.md <<'EOF'
 
 Lists loans past their due date.
 
-Status: unverified
+Status: verified (2026-09-30)
 
 ## Sub-features
 
@@ -262,4 +270,35 @@ Preconditions: the baseline in the index.
 ## Gotchas
 
 - The command parses its arguments and prints its name; it does not read loans yet.
+EOF
+mkdir -p docs/features/evidence/overdue docs/reader-tasks/evidence
+cat > docs/features/evidence/overdue/20260930T101500Z.md <<'EOF'
+# Drive: overdue — 20260930T101500Z
+
+- **Command:** `python3 src/shelfnote.py overdue`
+- **Exit code:** 0
+
+## Output
+
+overdue
+EOF
+cat > docs/reader-tasks/TASKS.md <<'EOF'
+# Reader tasks
+
+## Check out a book
+
+- **Where:** `README.md`
+- **Ends able to:** record a loan for a member from the command line.
+- **Status:** verified (2026-09-30)
+
+## Export the loans
+
+- **Where:** `README.md`
+- **Ends able to:** export every loan as CSV.
+- **Status:** unverified
+EOF
+cat > docs/reader-tasks/evidence/check-out-a-book-2026-09-30.md <<'EOF'
+# Walk: Check out a book — 2026-09-30
+
+The reader found the checkout example in the README and ran it; nothing was unclear.
 EOF

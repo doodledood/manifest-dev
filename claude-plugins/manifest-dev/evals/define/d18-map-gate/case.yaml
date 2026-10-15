@@ -1,5 +1,0 @@
-# Holds the decision in docs/adr/20261013-runs-build-and-maintain-a-project-verification-surface.md — that record's Enforced by line names this case; weakening or removing it means updating that line in the same change.
-schema_version: "1.0"
-name: d18-map-gate
-context:
-  scaffold_script: scaffold.sh

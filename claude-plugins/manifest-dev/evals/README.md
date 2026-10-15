@@ -17,12 +17,12 @@ so cases that need a repository, project docs, or a context file find them in th
 directory. Without it, those cases run against an empty directory and measure nothing. Only pass
 it for case files from this repository: a scaffold is bash that runs as you.
 
-Thirteen cases test behavior that exists only with the plugin: offering a Taste entry and not
+Nine cases test behavior that exists only with the plugin: offering a Taste entry and not
 offering one for a discipline every session owes (`27`, `28`), offering a setup update to a
-project with no version or an older one and offering none to a current project (`30`,
-`47`, `49`, `45`), what a setup-project run offers an older or a new project (`50`, `51`), a
-record naming what enforces it (`31`), the verification harness's drift marker (`36`), and recall of earlier sessions only where they bear
-on the work (`43`, `46`), and offering no project surface where there is no project (`52`). The no-plugin arm passes or fails them by construction. They carry the
+project with no recorded version or one version behind and offering none to a current project
+(`30`, `53`, `45`), the verification harness's drift marker (`36`), recall of earlier sessions
+only where they bear on the work (`43`, `46`), and offering no project surface where there is no
+project (`52`). The no-plugin arm passes or fails them by construction. They carry the
 tag `figure-out-plugin-only` instead of `figure-out` and run on the plugin arm alone:
 
 ```bash
@@ -119,7 +119,6 @@ from a discipline `SKILL.md` explicitly states.
 | `08-neg-authorized` | negative | Comply when the decision is settled and the change named | held out |
 | `10-diagnosis-retry-window` | autonomous | Reach a mechanism, not a location; kill rivals with evidence | tuning |
 | `11-underdetermined` | autonomous | Do not manufacture a winner; separate verified from assumed | tuning |
-| `12-living-with-it` | autonomous | Price "living with it" as a real option | tuning |
 | `13-status-quo-job` | autonomous | Test the status quo's possible job before removing it | held out |
 | `14-persona-seat-feature` | autonomous | Take the seat of the person the North Star names and walk their uses, not the mechanism's | tuning |
 | `15-persona-seat-doc` | autonomous | Take the seat of the reader the North Star names on a document, where no feature probe file loads | held out |
@@ -138,7 +137,7 @@ from a discipline `SKILL.md` explicitly states.
 | `28-universal-not-taste` | Taste, plugin arm only | Make no Taste offer for a discipline every session owes | held out · unmeasured |
 | `29-ratified-entry-lands` | Taste, repository | After the user's yes, write the entry inside the `## Taste` section and change nothing else in the file | tuning · unmeasured |
 | `30-update-offer-for-older-setup` | docs, repository, plugin arm only | Offer the setup update for a project set up before surfaces versions existed — only what the newer setup adds, never a redo of what it has | unmeasured |
-| `31-record-names-what-enforces-it` | docs, repository, plugin arm only | A recorded decision names what enforces it, or why nothing can | unmeasured |
+| `31-record-names-what-enforces-it` | docs, repository | A recorded decision names what enforces it, or why nothing can | unmeasured |
 | `32-reads-the-verification-surface` | autonomous, repository | Plan the check through the project's verification harness and treat an `unverified` recipe as not yet proof | unmeasured |
 | `33-no-verification-surface` | autonomous, repository | With no way to check the product, plan a durable one scoped to what the change touches | unmeasured |
 | `34-checking-a-skill-change` | autonomous, repository | Check a skill change by behavior cases, and note which recorded numbers go stale | unmeasured |
@@ -154,31 +153,22 @@ from a discipline `SKILL.md` explicitly states.
 | `44-debt-on-the-path` | autonomous, repository | Offer recorded debt on the change's path as a behavior-preserving first step | unmeasured |
 | `45-current-setup-offers-nothing` | docs, repository, plugin arm only | Offer no setup update to a project that records the newest surfaces version, and do not re-offer the items it declined | unmeasured |
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
-| `47-update-offer-from-previous-version` | docs, repository, plugin arm only | Offer the setup update for a project on v1 — the move to one harness, never the v2 or v3 shapes v4 replaced, nor what it already carries | unmeasured |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | unmeasured |
-| `49-update-offer-from-v2` | docs, repository, plugin arm only | Offer the setup update for a project on v2 — the move to one harness, never v3's bullet wording v4 replaced, nor what v1 or v2 already gave it | unmeasured |
-| `50-update-moves-v3-into-harness` | docs, repository, plugin arm only | A setup-project run on a v3 project offers moving its feature map and reader tasks into one harness, keeping their content, and nothing v1 to v3 already gave it | unmeasured |
-| `51-setup-offers-harness-for-app` | docs, repository, plugin arm only | A setup-project run on a small app with tests offers one harness — the shipped TypeScript tool by default — that adopts the existing test command, one verification bullet, and no ask-first marks for free runs | unmeasured |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | unmeasured |
 | `53-update-offer-from-v4` | docs, repository, plugin arm only | Offer the setup update for a project on v4 — control commands in place of a fixed port, dropping a run-time-only ask-first mark, the tool and bullet — and nothing v1 to v4 already gave it | unmeasured |
+| `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | unmeasured |
 
-Cases `30` to `46` were written on 2026-10-13 and have never been run. Their split — tuning or
-held out — and which survive are decided at their first run. `30` uses a project set up before
-surfaces versions existed: until a second surfaces version ships, that is the only way a project
-can be behind. It tests the update offer for a project with no recorded version, graded on
-offering what v1 adds and not a redo. `45` tests the other branch of the recorded-version path:
-a project that records the newest version and declined some of its items gets no offer at all.
-`47`, added with v2 on 2026-10-14 and never run, is the third branch: a project one version
-behind, graded on offering only what v2 adds and nothing v1 already gave it. `30`, `31`, `36`,
-`43`, `45`, `46`, `47`, `49`, `50`, `51`, `52` and `53` exist only with the plugin and run on the plugin arm alone, like `27`
-and `28`. `49`, added with v3 and never run, is a project on v2. `50`, added with v4 on 2026-10-14 and
-never run, is the project one version behind v4: a setup-project run is graded on offering the
-move into one harness and nothing earlier versions gave it. `51`, added the same day, is a
-setup-project run on an app with tests and no surfaces. Cases `32`, `36`, `47`, `49` and `d18`
-were updated the same day for the harness; none had been run. `48`, added on 2026-10-14 and never run, holds the design-time depth and reuse probes: a
-requested service class that would mostly forward to two existing functions. `53`, added with v5 on
-2026-10-15 and never run, is the project one version behind v5; `45` moved to v5 and `47`, `49`
-and `50` name v5 as the newest the same day.
+Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14; none has been run. Their
+split — tuning or held out — and which survive are decided at their first run. The setup-update
+offer has three cases, one per branch of the recorded-version path: `30` a project set up before
+surfaces versions existed (graded on offering what the newer setup adds, straight to the newest
+shape, never a redo), `53` a project one version behind, and `45` a project at the newest version
+that declined some items and gets no offer. A new surfaces version moves `53` to the version
+before it rather than adding a case beside it, and `tests/test_setup_project_versions.py` fails
+when two cases sit behind the newest. `48` holds the design-time depth and reuse probes: a
+requested service class that would mostly forward to two existing functions. `54`, added with v5
+on 2026-10-15, holds the *Fit to trust* jobs v5 added: a touched recipe that cannot be started,
+observed and stopped per run, or whose failure explains nothing, is repaired as part of the work.
 
 **Every recorded number in this file is stale as of 2026-10-14.** The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, and the
@@ -202,17 +192,133 @@ docs disciplines.
 cannot distinguish pressing well from turning every message into a deliberation, and
 over-triggering is the first casualty of any "press harder" tuning.
 
+## Classification
+
+Every case's standing as of 2026-10-15, under this file's selection rules: a case stays for
+measured uplift or as a declared guard (a floor, a mirror pair, a negative, a held-out witness);
+an unmeasured case stays until its first run decides; a case is retired when it duplicates a kept
+case's discipline, exercises a skill outside this suite's scope, or floored in both arms without
+being declared a guard. `tests/test_eval_cases.py` fails when a case has no row here.
+
+| Case | Standing | Why |
+|---|---|---|
+| `01` | keep | Uplift +0.86; `presses-from-root` still a hill |
+| `02` | keep | Uplift +0.50 on `turn-discipline`; its own grader a declared floor |
+| `04` | keep | Mirror pair with `05` |
+| `05` | keep | Mirror pair with `04`; held out |
+| `06` | keep | Largest uplift, +0.79 |
+| `07` | keep | Declared negative floor |
+| `08` | keep | Declared negative floor; held out; mirror of `17` |
+| `10` | keep | Declared floor graders: provenance and a discriminating overturn |
+| `11` | keep | Uplift +0.28 |
+| `13` | keep | Held-out witness |
+| `14` | keep | Uplift +0.17; `takes-the-persona-seat` still a hill |
+| `15` | keep | Held-out witness for `14`; declared floor |
+| `16` | keep | Held-out witness for `11` |
+| `17` | first run decides | `d16` caught the plugin arm acting on approval, so headroom is likely |
+| `18` | first run decides | Editing project files during an experiment is a costly miss nothing else checks |
+| `19` | first run decides | The base model tends to design how to show a number before testing it |
+| `20` | first run decides | The race is plain in the log, so both arms may pass; it is the only exclusion case |
+| `21` | first run decides | The end-to-end exercise is what a Manifest's gates later depend on |
+| `22` | first run decides | The only draft-offer case |
+| `23` | first run decides | The only docs-mode capture case; regex graders, cheap to judge |
+| `24` | first run decides | Held-out witness for `23` |
+| `25` | first run decides | The user's-call rule, unattended; pairs with `26` |
+| `26` | first run decides | The user's-call rule, interactive; pairs with `25` |
+| `27` | first run decides | Plugin arm only; the Taste offer, mirror of `28` |
+| `28` | first run decides | Plugin arm only; held out, mirror of `27` |
+| `29` | first run decides | Likely a floor; retire it if both arms pass every run |
+| `30` | first run decides | Plugin arm only; the no-version branch, and since 2026-10-15 the straight-to-newest check `47` and `49` held |
+| `31` | first run decides | Both arms since 2026-10-15: the scaffold's conventions file spells out the field, so the no-plugin arm can pass; retire it if it does |
+| `32` | first run decides | Planning through an existing harness; pairs with `33` |
+| `33` | first run decides | No harness: plan a durable one; pairs with `32` |
+| `34` | first run decides | The only skill-change verification case |
+| `35` | first run decides | The only document-change verification case |
+| `36` | first run decides | Plugin arm only; the drift marker |
+| `37` | first run decides | Correction becomes a lock; pairs with negative `39` |
+| `38` | first run decides | The only rule-conflicts-with-a-record case |
+| `39` | first run decides | Negative half of `37` |
+| `40` | first run decides | Shape before build; pairs with negative `42` |
+| `41` | first run decides | The only hand-synced-list case |
+| `42` | first run decides | Negative half of `40` |
+| `43` | first run decides | Plugin arm only; recall, mirror of `46` |
+| `44` | first run decides | Debt on the change's path, the only case for it in this suite |
+| `45` | keep | Plugin arm only; the newest-version branch, pinned by `tests/test_setup_project_versions.py` |
+| `46` | first run decides | Plugin arm only; mirror of `43` |
+| `48` | first run decides | Reuse and module depth before code |
+| `52` | first run decides | Plugin arm only; a declared guard: the no-plugin arm passes by construction |
+| `53` | keep | Plugin arm only; the one-behind branch, which the version test requires |
+| `54` | first run decides | New on 2026-10-15: the *Fit to trust* jobs v5 added |
+
+Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
+second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
+check moved to `30`'s grader), `50` and `51` (setup-project runs, outside this suite's scope; their
+scaffolds live on under `verification/scaffolds/` for the setup-project recipe). `53` was added
+with v5 as the one-behind case they leave, and `54` and `define/d23` are the two cases this
+change adds for its own disciplines.
+
+## First-run plan
+
+Every case marked *first run decides* has never run, so next week's baseline buys most of its
+signal there. Run them in this order; a partial budget stops wherever it runs out and still has
+the cases most likely to separate the arms.
+
+**Cost.** This suite records no per-run cost of its own. The figure below assumes **$1.50 a run**,
+taken from the define suite's measured $1.52 (`define/README.md`, 2026-10-12); single-turn press
+cases cost less, so it is an upper bound for them. A both-arm case is 24 runs (12 per arm), about
+$36; a plugin-arm-only case is 12 runs, about $18.
+
+| Order | Cases | Runs | ≈ $ | Why here |
+|---|---|---|---|---|
+| 1 | `54` | 24 | 36 | Covers what this change shipped; the base model likely plans around the broken recipe |
+| 2 | `17` | 24 | 36 | Single turn; headroom likely |
+| 3 | `22` | 24 | 36 | Single turn; the base model tends to settle a look in prose |
+| 4 | `19` | 24 | 36 | The base model likely designs the display as asked |
+| 5 | `48` | 24 | 36 | Design probes with no other case |
+| 6 | `40` + `42` | 48 | 72 | Pair; `42` is the negative guard |
+| 7 | `41` | 24 | 36 | |
+| 8 | `44` | 24 | 36 | |
+| 9 | `18` | 24 | 36 | |
+| 10 | `21` | 24 | 36 | |
+| 11 | `23` + `24` | 48 | 72 | `24` is `23`'s held-out witness |
+| 12 | `25` + `26` | 48 | 72 | Pair |
+| 13 | `32` + `33` | 48 | 72 | Same prompt, with and without a harness |
+| 14 | `38` | 24 | 36 | |
+| 15 | `34`, `35` | 48 | 72 | |
+| 16 | `37` + `39` | 48 | 72 | Headroom likely low |
+| 17 | `20` | 24 | 36 | Both arms likely pass |
+| 18 | `29` | 24 | 36 | Likely a floor |
+| 19 | `31` | 24 | 36 | Likely a floor |
+| 20 | `30`, `53`, `45` (plugin arm) | 36 | 54 | The version path; `53` and `45` for status |
+| 21 | `43` + `46` (plugin arm) | 24 | 36 | Pair |
+| 22 | `27` + `28` (plugin arm) | 24 | 36 | Pair |
+| 23 | `36` (plugin arm) | 12 | 18 | |
+| 24 | `52` (plugin arm) | 12 | 18 | Guard; status only |
+
+All of it is about 708 runs, about $1,060. A full baseline also re-measures the 13 kept both-arm
+cases (`01`–`16`), another 312 runs, about $470, since every recorded number is stale.
+
+**A smaller budget** runs rows 1 to 7 first: 192 runs, about $290. A cheaper triage runs every row
+at 6 runs per arm, about $530: six runs show a case both arms pass every time, which is the retire
+signal, but are too few to measure Δ. What each result decides:
+
+- both arms pass every case grader on every run, and the case is not a declared guard → retire it;
+- the plugin arm fails a case grader traced to a rule the skill states → keep it as a hill;
+- the arms separate on a case grader → keep it as uplift, and settle its split;
+- a verdict that cannot be predicted from reading the output → sharpen the grader before keeping
+  any number from it.
+
 ## Held-out split
 
 **Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`,
 `15-persona-seat-doc`, `16-underdetermined-billing`, `24-ruled-position-holds`, and
-`28-universal-not-taste`.** Seven of twenty-seven cases. Their scores
+`28-universal-not-taste`.** Seven of forty-seven cases. Their scores
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
-them. Tuning happens on the other twenty.
+them. Tuning happens on the others; the split of cases `30` onward is settled at their first run.
 
-`12-living-with-it` was held out until 2026-09-14. It is no longer: it was re-run to decide
-whether to cut two sentences from the skill, and the cut was made because its grader fell, so it
-steered the prompt. `15` takes its place. No feature probe file loads for `15`, so it tests whether
+`15` took the place of `12-living-with-it`, held out until 2026-09-14, when it was re-run to
+decide whether to cut two sentences from the skill and so steered the prompt; `12` was retired on
+2026-10-15 as a floor in both arms. No feature probe file loads for `15`, so it tests whether
 the person's-seat line generalizes beyond the probe that `14` exercises.
 
 The held-out set deliberately includes autonomous cases testing disciplines the climb is not
@@ -327,9 +433,20 @@ rubric that was simply miscalibrated.
   offers no such tool, so neither the opt-in path nor the plain-text default can be observed. A mechanism
   that only appears when components interact, and calibrating to the user's expertise, have no
   case: `10` already floors on reaching a mechanism, and expertise has no observable bar. Offering the cheapest sufficient option before durable
-  machinery is left to `01` and `12`, which cover the problem-first family. Held-out
+  machinery, and pricing "living with it" as a real option, are left to `01`: `12`, which priced
+  it, passed in both arms on every recorded run and was retired on 2026-10-15. Held-out
   witnesses for `19` and `20` were left out to bound cost; add one before keeping a change aimed
   at either. Build any of these when a miss shows in use.
+- **Disciplines with no case yet**, ranked by what a miss would cost a user, each waiting on a
+  miss seen in use or a budget for one more case (this change held the suite to two new ones):
+  under `--autonomous`, never self-accepting an offer that hands off to setup-project or
+  ticket-up; the *fast enough* job v5 added to *Fit to trust* (a touched check over its time line
+  with no reason), which needs evidence carrying a recorded line; failure visibility and silent
+  regression (`10`'s empty export treated as success is this failure, but no grader asks for it);
+  an independent re-derivation before an unaudited, load-bearing read; and classifying a stated
+  constraint as hard or assumed before it prunes options. setup-project going straight to the
+  newest shape on an update is held by `30`'s grader and by `tests/test_setup_project_versions.py`;
+  its own runs are checked by `verification/recipes/setup-project.md`, outside this suite.
 - **Press cases observe one turn.** Autonomous cases observe a whole investigation, because
   autonomous mode runs to completion and names a Read in a single run. That is why the suite's
   headroom lives there.

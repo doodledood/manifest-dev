@@ -33,7 +33,7 @@ Check: read
 Workload: varies
 
 ### from-v1
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/47-update-offer-from-previous-version/prompt.md --scaffold claude-plugins/manifest-dev/evals/47-update-offer-from-previous-version`
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-from-v1.md --scaffold verification/scaffolds/project-at-v1`
 Proves: the reply offers the update and names only what v2 to v5 add, including the move to one harness.
 Check: read
 Workload: varies

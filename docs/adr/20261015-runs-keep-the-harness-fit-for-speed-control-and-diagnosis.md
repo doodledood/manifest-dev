@@ -59,7 +59,9 @@ Star's hypothesis that a codebase converges when debt is paid on the path of the
 partly — the fast-enough job is held by the time line of
 20261015-check-run-time-is-held-by-an-alarm-against-creep: `verify drive` exits 5 on a confirmed
 crossing (`test_one_run_over_the_line_is_noise_until_a_second_confirms_it` in
-`tests/test_verify.py`). Whether a run noticed friction and whether a failure explains itself
+`tests/test_verify.py`). Eval cases `54-touched-recipe-not-fit` (figure-out folds the repair into
+the work) and `d23-unfit-recipe-repaired-first` (define cuts the repair as the first Deliverable)
+measure the repair once run. Whether a run noticed friction and whether a failure explains itself
 stay judgment.
 
 ## Source

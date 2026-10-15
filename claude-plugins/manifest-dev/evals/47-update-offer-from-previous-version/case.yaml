@@ -1,5 +1,0 @@
-# Holds the decision in docs/adr/20261014-setup-project-audits-the-whole-setup-when-run.md — that record's Enforced by line names this case; weakening or removing it means updating that line in the same change.
-schema_version: "1.0"
-name: 47-update-offer-from-previous-version
-context:
-  scaffold_script: scaffold.sh

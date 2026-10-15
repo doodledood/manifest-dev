@@ -210,6 +210,28 @@ def _case_table_rows(readme: Path) -> set[str]:
     }
 
 
+CLASSIFICATION_ROW = re.compile(
+    r"^\| `([^`]+)` \| (keep|first run decides) \| \S", re.MULTILINE
+)
+
+
+@pytest.mark.parametrize(
+    "suite", [EVALS, EVALS / "define"], ids=["figure-out", "define"]
+)
+def test_every_case_is_classified_with_a_reason(suite: Path) -> None:
+    # A run is expensive, so each case says why it stays — measured uplift, a declared guard,
+    # or a first run still owed — and a case nobody can justify is the one to retire.
+    sections = re.split(
+        r"^## ", (suite / "README.md").read_text(encoding="utf-8"), flags=re.MULTILINE
+    )
+    (section,) = [s for s in sections if s.startswith("Classification\n")]
+    rows = set(CLASSIFICATION_ROW.findall(section))
+    ids = {case_id for case_id, _ in rows}
+    dirs = {name.split("-", 1)[0] for name in _case_dirs(suite)}
+    assert not dirs - ids, f"cases with no classification row: {sorted(dirs - ids)}"
+    assert not ids - dirs, f"classification rows with no case: {sorted(ids - dirs)}"
+
+
 # Holds the decision in docs/adr/20261013-runs-build-and-maintain-a-project-verification-surface.md.
 @pytest.mark.parametrize(
     "suite", [EVALS, EVALS / "define"], ids=["figure-out", "define"]

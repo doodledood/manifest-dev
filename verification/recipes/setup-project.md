@@ -24,19 +24,19 @@ Check: read
 Workload: varies
 
 ### update-from-v3
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/50-update-moves-v3-into-harness --max-turns 80`
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold verification/scaffolds/project-at-v3 --max-turns 80`
 Proves: the report lists what it offered, applied and declined; the context file ends at the newest version with one verification bullet; the summary's files include `scripts/verify`, `verification/harness.md`, a recipe per former feature-map entry and reader task (the checkout recipe keeps its *Club notes*), the moved evidence, and the removal of `docs/features/` and `docs/reader-tasks/`. Nothing was written that the run did not offer and accept.
 Check: read
 Workload: varies
 
 ### update-from-v1
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/47-update-offer-from-previous-version --max-turns 80`
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold verification/scaffolds/project-at-v1 --max-turns 80`
 Proves: it follows the v1 guide straight to the harness — the loose `verify/` feature map becomes recipes without first taking v2's fixed map shape — and adds the records-in-effect rule.
 Check: read
 Workload: varies
 
 ### app-project
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-install.md --scaffold claude-plugins/manifest-dev/evals/51-setup-offers-harness-for-app --max-turns 80`
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-install.md --scaffold verification/scaffolds/app-without-surfaces --max-turns 80`
 Proves: the harness it seeds runs the existing `python3 -m pytest tests/` and the CLI commands, marks none of them ask-first, and `scripts/verify check` passes; one context-file verification bullet.
 Check: read
 Workload: varies
@@ -73,5 +73,5 @@ Workload: varies
 - It writes scenarios only as far as existing commands reach; drive work beyond that comes from the change that needs it.
 - `this-repository` copies the last commit, not the working tree: commit before driving it.
 - Each prompt file except the two `setup-project-*-repository.md` ones starts `/manifest-dev:setup-project`, followed by whether the user accepts every item.
-- `tests/test_setup_project_versions.py` (a change to an emitted file ships a new version) and `tests/test_project_conventions_forks.py` (this repo's copies match the defaults) also check it; behavior cases `30`, `45`, `47`, `49` cover figure-out's offer of it, and `50`, `51` a setup run (all `unmeasured`).
+- `tests/test_setup_project_versions.py` (a change to an emitted file ships a new version) and `tests/test_project_conventions_forks.py` (this repo's copies match the defaults) also check it; behavior cases `30`, `45` and `53` cover figure-out's offer of it (all `unmeasured`). The eval suites cover `figure-out` and `define` only, so setup-project's own runs are checked here: the v1, v3 and app scaffolds live under `verification/scaffolds/`.
 - Not yet driven: the description phrases, figure-out's offer.

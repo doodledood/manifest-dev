@@ -148,8 +148,8 @@ def test_a_new_version_replaces_the_one_behind_case_instead_of_adding_one() -> N
         if any(v < newest for v in found)
     }
     assert all(found == [newest - 1] for found in behind.values()), (
-        f"eval cases recording a version older than v{newest - 1}: {behind}. Move the "
-        f"one-behind case to v{newest - 1} and retire the others"
+        f"eval cases behind the newest version, v{newest}: {behind}. Only one may stay, at "
+        f"v{newest - 1}: move the one-behind case there and retire the others"
     )
     assert len(behind) <= 1, (
         f"more than one eval case records v{newest - 1}: {sorted(behind)}. A new version "

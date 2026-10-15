@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# A Shelfnote project with no surfaces: the setup-project recipe's app-project scenario.
 set -euo pipefail
 mkdir -p src tests
 cat > CLAUDE.md <<'EOF'

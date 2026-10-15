@@ -12,9 +12,9 @@ cases and why. A prompt change marks the cases it covers stale rather than runni
 claude plugin eval . --tag define --ablation with-without --judge-model opus --allow-tools Write Bash --scaffold -j 8
 ```
 
-`--scaffold` runs the `scaffold.sh` that `d16` declares in its `case.yaml`: it starts from a saved
-Manifest beside a small repository. Without it, the case runs against an empty directory and
-measures nothing. Only pass it for case files from this
+`--scaffold` runs the `scaffold.sh` that `d16` and `d19`–`d23` declare in their `case.yaml`: a
+saved Manifest beside a small repository for `d16`, a small project for the others. Without it,
+those cases run against an empty directory and measure nothing. Only pass it for case files from this
 repository: a scaffold is bash that runs as you.
 
 This suite's scope and the meaning of each case's status are in the figure-out suite's README
@@ -30,14 +30,14 @@ opus judge matched known answers on a clean Manifest and on a copy with an unsta
 ungated rule, and an invented threshold planted in it. Keep opus here unless that check is
 repeated with a cheaper judge.
 
-## Cases added 2026-10-13 and 2026-10-14 — unmeasured
+## Cases added 2026-10-13 to 2026-10-15 — unmeasured
 
 | Case | Discipline under test |
 |---|---|
-| `d18-map-gate` | A change touching a feature with a recipe gates that the recipe is updated and run with the harness |
 | `d19-workaround-comment` | A workaround comment in touched code becomes a refactor target, not a deletion |
 | `d20-preparatory-slice` | When the touched area resists the change, a behavior-preserving restructuring comes first |
 | `d21-user-rule-over-default` | A rule the project states overrides a conflicting task-file Default, and the adjustment is recorded |
+| `d23-unfit-recipe-repaired-first` | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — cuts repairing that recipe as the first Deliverable, and gates that the touched recipe is updated and run. It carries `d18-map-gate`'s grader: same prompt and project, so `d18` was retired into it on 2026-10-15 |
 | `d22-projectless-manifest-builds-no-harness` | A one-off script outside any project gets a Manifest whose gates check its output, with no harness, recipe, decision record or setup. A guard: the no-plugin arm is expected to pass it, so a Δ of zero is no reason to remove it |
 
 These have never been run; the first both-arm run decides which stay. **Every number below is stale
@@ -329,6 +329,55 @@ the no-plugin arm has no schema to follow.
 `d07` and `d08` are the over-planning floor. Keep at least one through any tuning that pushes
 `define` to encode harder.
 
+## Classification
+
+Every case's standing as of 2026-10-15, under the selection rules in `../README.md`: measured
+uplift or a declared guard keeps a case, an unmeasured case stays until its first run decides, and
+a duplicate, an out-of-scope skill, or an undeclared floor in both arms retires it.
+`tests/test_eval_cases.py` fails when a case has no row here.
+
+| Case | Standing | Why |
+|---|---|---|
+| `d01` | keep | Uplift +0.75 |
+| `d02` | keep | Uplift +0.50, but on the shared graders only: its own graders floored on 2026-10-05, the pattern that retired `d11`–`d14`. Retire it if the next baseline repeats that |
+| `d03` | keep | Uplift +0.21; the same watch as `d02` |
+| `d04` | keep | Held out; uplift +0.58 |
+| `d05` | keep | `no-invented-thresholds` is a hill in both arms |
+| `d06` | keep | Held out; uplift +0.42 |
+| `d07` | keep | Declared negative floor |
+| `d08` | keep | Held-out negative; uplift +0.50 |
+| `d09` | keep | A hill: the plugin arm scores 0.50 |
+| `d10` | keep | Uplift +0.38 on settleable gates |
+| `d16` | keep | Uplift +0.67 |
+| `d17` | keep | Uplift +0.30 |
+| `d19` | first run decides | The base model tends to delete a workaround comment as noise |
+| `d20` | first run decides | The base model tends to thread a change through resisting code rather than prepare it |
+| `d21` | first run decides | The only case for a project rule overriding a Default |
+| `d22` | keep | Declared guard: the no-plugin arm is expected to pass; run once for status |
+| `d23` | first run decides | New on 2026-10-15: define's rule that an unfit touched recipe is repaired first, plus the touched-recipe gate `d18` held |
+
+Retired on 2026-10-15: `d18-map-gate`, folded into `d23`, which has the same prompt and project
+and now carries its grader.
+
+## First-run plan
+
+Cost comes from this suite's measured **$1.52 a run** (2026-10-12, above). A case is 12 runs, 6
+per arm, about $18.
+
+| Order | Case | Runs | ≈ $ | Why here |
+|---|---|---|---|---|
+| 1 | `d23` | 12 | 18 | Covers what this change shipped, on two graders |
+| 2 | `d19` | 12 | 18 | Headroom likely |
+| 3 | `d20` | 12 | 18 | Headroom likely |
+| 4 | `d21` | 12 | 18 | |
+| 5 | `d22` | 12 | 18 | Guard; status only |
+
+All of it is 60 runs, about $91. A full baseline also re-measures the 12 kept cases, another 144
+runs, about $219, since every recorded number is stale. **A smaller budget** runs `d23` and `d19`
+first: 24 runs, about $36. A case whose own graders pass in both arms on every run is retired, as
+`d11`–`d14` were; a plugin-arm failure on a case grader is a hill; separation on a case grader
+keeps it as uplift.
+
 ## Held-out split
 
 `d04`, `d06`, and `d08` are held out from tuning: one binding-rule case, one anchoring case, and one
@@ -337,7 +386,8 @@ negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the 
 ## Known limits
 
 - **A case gets files only through its scaffold.** Most prompts describe the codebase inline and
-  say it is unavailable. `d16` seeds a Manifest and a small repository with `scaffold.sh`. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
+  say it is unavailable. `d16` seeds a Manifest and a small repository with `scaffold.sh`, and
+  `d19`–`d23` a small project. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
 - **One turn of the interview.** The suite measures unattended encoding, plus one interactive
   turn after approval (`d16`). Interview order, re-asking settled ground, and the digest's form
   need a scripted second turn the harness does not run, so they are out of scope.
@@ -353,3 +403,12 @@ negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the 
   reversal offer in `define` is checked by reading its text. A stale Intent after an amendment,
   and a reversed decision left without a gate, have a guard in the skill and `d09` covers
   amendment. Build one when a miss shows in use.
+- **Disciplines with no case yet**, ranked by what a miss would cost, each waiting on a miss seen
+  in use or a budget for one more case (this change held the suite to its size): reading earlier
+  work (logs, Manifests, open Tickets, pull requests' debt) before encoding, and noting an old
+  surfaces version, which needs fixtures of earlier sessions (figure-out's `43` and `46` cover
+  recall); an approved Manifest whose gate runs an ask-first recipe carrying the agreement to run
+  it, which needs an approval a grader can see; building a missing harness as the first
+  Deliverable (`d23` covers the unfit one, figure-out's `33` the missing one); a criterion pinned
+  by reacting to something concrete becoming a gate; and an `Enforced by: not yet` check on the
+  work's path getting built.
