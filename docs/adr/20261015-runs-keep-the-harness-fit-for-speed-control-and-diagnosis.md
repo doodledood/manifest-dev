@@ -26,7 +26,7 @@ Star's hypothesis that a codebase converges when debt is paid on the path of the
 - *Fit to trust* gains three jobs. **Fast enough**: no check the work touches sits over its time
   line without a reason (20261015-check-run-time-is-held-by-an-alarm-against-creep).
   **Controllable**: what the work touches can be started in a known state, observed and stopped
-  through the harness, each run on its own
+  through the harness or the project's own scripts, each run on its own
   (20261015-the-verification-harness-controls-what-it-checks). **A failure explains itself**:
   failed evidence carries what locates the cause.
 - That list is the hook, and no skill gets a rule of its own. figure-out asks about these jobs,

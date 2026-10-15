@@ -58,7 +58,9 @@ REPAIR = {
         "A check of theirs that is broken or not fit to trust is repaired as part of the work, in "
         "its own form"
     ),
-    "setup-project/references/VERIFICATION_HARNESS.md": "The line is build versus maintain",
+    "setup-project/references/VERIFICATION_HARNESS.md": (
+        "every run keeps sound the checks the project has, in whatever form"
+    ),
 }
 
 # Sentences that built or seeded a harness wherever the project named none.

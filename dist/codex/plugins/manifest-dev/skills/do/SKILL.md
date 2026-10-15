@@ -87,8 +87,9 @@ counts as chosen — and the work needs a part it lacks or touches a path no rec
 `references/VERIFICATION.md`. The harness is the project's choice: where that section names the
 project's own way of verifying, verify through the means it names; where it names none and no harness
 is on disk, through what the project keeps. Either way add any check the change needs in the project's own form, build
-no harness, repair a check the change touches that is broken or not fit to trust in its own form,
-and only where none is named recommend one in the report. A harness belongs to a project:
+no harness, and only where none is named recommend one in the report. In every project, harness or
+not, repair a check the change touches that is broken or not fit to trust in its own form, or
+report it as debt. A harness belongs to a project:
 a repository or working folder
 holding, or about to hold, work later sessions will change — a new one the user is starting
 counts — which this work concerns. A chat with no workspace, a home or scratch folder, a folder

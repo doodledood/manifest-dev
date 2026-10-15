@@ -10,7 +10,7 @@ Offer, each as its own item and as a default the project may adapt or decline wh
 already does the job. The harness is recommended, but the project may opt out of it whole and keep its own way of
 verifying: then offer none of the harness items, and offer instead the own-way form of the
 verification bullet from `../NORTH_STAR_FORMAT.md` → *The project-surfaces section*, naming its
-commands and steps, so no later run builds or offers a harness:
+commands and steps, so no figure-out, define or do run builds or offers one:
 
 1. **The tool update** — the shipped `../harness/verify.mts` (and `verify` entry) shown as a
    difference from the project's own copy, so its customizations stay visible; a ported tool gets

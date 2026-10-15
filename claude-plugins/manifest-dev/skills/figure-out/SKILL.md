@@ -98,7 +98,9 @@ short messages do not require permission to do the next piece of research.
   command for checking a result, with a recipe per feature, skill, document walk or
   eval suite, whose `list` is where a report or a change is placed first; or the
   project's own commands and steps; or, with no bullet, the verification assets the
-  project keeps, never a harness the project did not choose; with no project (see
+  project keeps (a harness among them counts as chosen), never a harness the project did
+  not choose; in any form, a touched check that is broken or not fit to trust is repaired
+  as part of the work; with no project (see
   *Modes and what loads*), by a check this session can run or read — and offer to render a quick disposable draft that makes the proposed result
   concrete enough to choose a direction and agree on what will be produced.
   Refine details after that choice, unless the user asks to explore them now.
