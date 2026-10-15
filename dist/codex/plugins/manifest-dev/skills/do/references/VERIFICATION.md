@@ -5,9 +5,9 @@ What a harness is, what it owes and what shape it takes by default are in
 its own `--help`.
 
 - **Missing parts:** this file applies where the project keeps a verification harness, which is
-  the project's choice and never the run's. Only where the project-surfaces section of the context
-  file names that harness, build what the change needs that it lacks, scoped to what the change
-  touches, as
+  the project's choice and never the run's: named in the project-surfaces section of the context
+  file, or on disk with no verification bullet there, which counts as chosen, and the report then
+  suggests recording its bullet. Build what the change needs that the harness lacks, scoped to what the change touches, as
   `../../setup-project/references/VERIFICATION_HARNESS.md` → *What setup creates, and what runs build*
   describes, unattended too: it is verification for the change, like a regression test.
 - **Touched recipes:** `verify affected` lists the recipes the change touches and the changed
@@ -21,8 +21,7 @@ its own `--help`.
   within scope, and remove its `Drift (…)` line when the repair lands. When a recipe the change
   does not touch is found drifting, add a dated `Drift (YYYY-MM-DD): <what differs>` line to it,
   and leave the repair to the next run that touches it.
-- **Unfit harness:** where the project-surfaces section names the harness and it is not fit to
-  trust for what the work touches
+- **Unfit harness:** when the harness is not fit to trust for what the work touches
   (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it within
   scope, and report the rest as debt.
 - **Over its line:** when a check the work touches is over its time line, find where the time

@@ -302,7 +302,7 @@ the `/setup-project` setup the project has. When the number is older than the ne
 ## Verification
 
 ### Verification Harness
-<!-- context: 10346be68d2a -->
+<!-- context: 3307d91dd337 -->
 The Verification Harness is the one command in a project that agents and people use to find if the
 work still does its job. Its `--help` says all about it. It reads one Recipe for each feature,
 skill, document walk or eval suite. It calculates each status from Evidence in the repository, not
@@ -318,7 +318,11 @@ where their work touches it. When a project keeps its own way, runs use that way
 harness.
 
 When a project did not record a choice, runs use the checks that it has. Their reports offer a
-harness.
+harness. A harness that is already in the project counts as a choice.
+
+Runs never add a harness that the project did not select. But runs always repair the checks that
+the project has, when the work touches them. A broken test gets a repair, and so does a broken
+recipe.
 
 The shape that `/setup-project` ships is a default, and you can change it to fit
 your project. Each harness must give one place to learn how to examine the project. Each harness
@@ -366,19 +370,20 @@ When nobody can agree, for example in an unattended run, the run leaves the reci
 the run that it owes in its report. The project can change this rule.
 
 ### Fit to Trust
-<!-- context: 7eeda6b11bab -->
-Fit to Trust says if you can rely on a harness for the recipes that a change touches. The jobs that
-the harness does decide it, not the parts that it has. The jobs are:
+<!-- context: 7c88c9b6888b -->
+Fit to Trust says if you can rely on a check for what a change touches. The check can be a recipe
+in a harness, or a test, a script or a checklist step of the project. The jobs that the check does
+decide it, not the parts that it has. The jobs are:
 
 - A first run of one Scenario from a clean start passes, and its Evidence stays after cleanup.
 - You can examine the health of the harness.
 - Each run is isolated from the other runs.
 - PASS means that the real path worked.
 - The checks are fast enough, and none is over its Time Line without a reason.
-- You can control what the change touches through the harness.
+- You can control what the change touches through the harness or the scripts of the project.
 - A failure explains itself.
 
-When a harness is not fit to trust, the run repairs it first.
+When a check is not fit to trust, the run repairs it first.
 
 ### Lock
 <!-- context: ad749d95a942 -->

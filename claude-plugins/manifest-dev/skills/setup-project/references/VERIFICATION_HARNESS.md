@@ -27,9 +27,16 @@ this file → *The project-surfaces section*). Every run reads it there:
 - **Harness form:** runs use the harness, build the parts the work needs that it lacks and keep it
   fit, as this file describes.
 - **Own-way form:** runs verify through the means the bullet names, add any check a change needs in
-  that same form, and never build, repair, gate on or offer a harness.
-- **No bullet yet:** runs verify through what the project already has, add only the check a change
-  needs in the project's own form, build no harness, and recommend one in their report.
+  that same form, and never build, gate on or offer a harness.
+- **No bullet yet:** a harness already on disk counts as chosen — runs treat it as the harness form
+  and suggest recording its bullet. Otherwise runs verify through what the project already has, add
+  only the check a change needs in the project's own form, build no harness, and recommend one in
+  their report.
+
+The line is build versus maintain, not harness versus none. No run builds a verification system the
+project did not choose; every run keeps sound the checks the project has, in whatever form — a
+test, a script, a checklist step, a recipe — where its work touches them, by the jobs in *Fit to
+trust*. An opt-out means only that no harness is built or offered.
 
 A project that keeps a harness keeps one, whatever it holds: a product's features, a plugin's
 skills, prompts with behavior cases, and living documents are all recipes in the same harness.
@@ -178,10 +185,11 @@ It needs no CI.
 
 ## Fit to trust
 
-A harness can have every part and still not be worth trusting. A run judges it only for the
-recipes its own work touches, and builds only what that work needs; the harness grows with the
-work, never ahead of it. Judge it by the jobs it has to do there, never by how this file would
-have built it:
+A check can exist and still not be worth trusting. These jobs apply to whatever checks a project
+keeps, in any form: a harness's recipes, a test suite, a script, a checklist. A run judges them
+only for the checks its own work touches, repairs what fails there within its scope in the check's
+own form, and reports the rest as debt; a harness grows with the work, never ahead of it. Judge a
+check by the jobs it has to do there, never by how this file would have built it:
 
 - **A cold proof run passes** — one scenario, run from nothing, leaves evidence that is still
   there after cleanup.
@@ -190,9 +198,10 @@ have built it:
 - **PASS means the real path** — not mocks past a boundary the product does not isolate, not a
   test-only endpoint, not a skipped entry point counted as another's success.
 - **Fast enough** — no check the work touches sits over its time line without a raise or a
-  freeze that says why.
+  freeze that says why, or, outside a harness, has grown slower through the change without a
+  reason.
 - **Controllable** — what the work touches can be started in a known state, observed and stopped
-  through the harness, each run on its own.
+  through the harness or the project's own scripts, each run on its own.
 - **A failure explains itself** — failed evidence carries what locates the cause: the instance's
   logs or traces from that run, or where they are.
 

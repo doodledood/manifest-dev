@@ -234,8 +234,9 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   project verifies its own way, emit this form of the bullet instead:>
 - **Verification** — how this project checks that its work still does its job: <each command or
   step, with what it covers>. Run them before saying a change works and when reproducing a reported
-  problem; a change that needs a check none of them has adds one in the same form. This project
-  verifies its own way by choice: add no separate verification tool to it.
+  problem; a change that needs a check none of them has adds one in the same form, and a change
+  that finds one of them broken, flaky or slow repairs it. This project verifies its own way by
+  choice: add no separate verification tool to it.
 ```
 
 <!-- Fixed boundary: copying resumes at the heading below and runs to the end of the file. -->

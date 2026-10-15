@@ -31,10 +31,16 @@ rather than more.
 - Where the bullet names the harness, nothing changes: runs build the parts a change needs, keep
   recipes current and repair what is unfit, as before.
 - Where it names the project's own way, runs verify through that way and add any check a change
-  needs in that same form. No run builds, repairs, gates on or offers a harness.
-- Where there is no bullet, the project never chose. Runs verify through the checks the project
-  already has, add only the check the change needs in the project's own form, build no harness, and
-  recommend the harness in their report.
+  needs in that same form. No run builds, gates on or offers a harness.
+- Where there is no bullet, a harness already on disk counts as chosen: runs treat it as the
+  harness form and suggest recording its bullet. Otherwise the project never chose: runs verify
+  through the checks the project already has, add only the check the change needs in the project's
+  own form, build no harness, and recommend the harness in their report.
+- The line is build versus maintain, not harness versus none. No run builds a verification system
+  the project did not choose, and every run keeps sound the checks the project has, in whatever
+  form — a test, a script, a checklist step, a recipe — where its work touches them. The *Fit to
+  trust* jobs judge any check, and a touched check that fails one is repaired within scope in its
+  own form or reported as debt. An opt-out means only that no harness is built or offered.
 - Verification still comes before the work: when nothing the project has can check what a change
   touches, the first step adds such a check, in the project's own form.
 - The harness is recommended, so setup-project installs it by default; the user opts out to keep
@@ -49,6 +55,9 @@ rather than more.
   so every run would build or offer it again.
 - **A separate setting or file recording the choice**: rejected. The verification bullet already
   names how the project verifies; a second record could disagree with it.
+- **Repair only checks inside a chosen harness**: rejected. A project's own test suite is as much
+  its verification as a harness is; leaving it broken because it has another form would let the
+  checks the work relies on rot.
 - **Make evidence optional for deterministic scenarios a CI service covers**: rejected. It ties the
   workflow to CI, and adds a rule about which scenarios need evidence.
 
@@ -67,7 +76,8 @@ rather than more.
 ## Enforced by
 partly — `tests/test_harness_optional.py` fails when define's, do's, figure-out's or
 setup-project's shipped text loses the condition that harness work applies only where the project
-chose it, or stops naming the project's own way as the other path; whether each sentence behaves
+chose it, stops naming the project's own way as the other path, or drops the duty to repair a
+touched check in the project's own form; whether each sentence behaves
 right on each kind of project stays judgment.
 
 ## Source

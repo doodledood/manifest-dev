@@ -110,11 +110,13 @@ That gives a floor that isn't ceremony:
 - **Verification comes before the work it checks.** In a project, the verification bullet of the
   context file's project-surfaces section records how the project checks that its work still does
   its job: its verification harness — one command with a recipe per thing it checks, as
-  setup-project's `references/VERIFICATION_HARNESS.md` describes — or its own way, named there. The
-  harness is the project's choice, never the run's.
+  setup-project's `references/VERIFICATION_HARNESS.md` describes — or its own way, named there; a
+  harness already on disk with no bullet counts as chosen. The harness is the project's choice,
+  never the run's. Building is the choice's; keeping sound is every run's: in any form, a check the
+  work touches that is broken, drifting or not fit to trust (`../setup-project/references/VERIFICATION_HARNESS.md`
+  → *Fit to trust*) is repaired within scope, ahead of the work that relies on it.
   - **Harness:** where it lacks what the work needs, or a recipe the work touches is drifting or not
-    fit to trust (`../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), cut
-    building or repairing it, scoped to what the change touches, as the first Deliverable, ahead of
+    fit to trust, cut building or repairing it, scoped to what the change touches, as the first Deliverable, ahead of
     any preparatory slice; unattended runs build it too. A Manifest that touches anything a recipe
     covers, or a path one should cover but does not, carries a gate that each touched recipe is
     added or updated and run, its evidence committed. A recipe marked ask-first is run only where
@@ -123,9 +125,10 @@ That gives a floor that isn't ceremony:
     named in the report.
   - **Its own way, or no bullet yet:** gates verify through the means the bullet names, or with no
     bullet through the verification assets the project keeps — its tests, scripts and checklists —
-    and no gate or Deliverable builds or repairs a harness the project did not choose. Where none
-    of them can check what the work touches, the first Deliverable adds that check in the project's
-    own form. With no bullet, record the harness as a recommendation the report carries, as an `ASM-*`,
+    and no gate or Deliverable builds a harness the project did not choose. A touched check of
+    theirs that fails *Fit to trust* is repaired in its own form, cut as the first Deliverable like a
+    harness repair. Where none of them can check what the work touches, the first Deliverable adds
+    that check in the project's own form. With no bullet, record the harness as a recommendation the report carries, as an `ASM-*`,
     never as work.
 - **A recorded check still to be built is built.** Search the project's decision records for
   `Enforced by` lines reading `not yet`. When the work implements or touches such a decision, a
