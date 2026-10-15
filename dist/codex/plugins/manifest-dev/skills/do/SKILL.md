@@ -84,7 +84,7 @@ an encoding offer, and the debt the run leaves goes into its report and into eve
 Manifest gates a verification recipe, or the project keeps a verification harness — named in the
 project-surfaces section of the context file, or on disk with no verification bullet there, which
 counts as chosen — and the work needs a part it lacks or touches a path no recipe covers, load
-`references/VERIFICATION.md`; where such a harness has no bullet, the report suggests recording it.
+`references/VERIFICATION.md`. Wherever a harness is on disk with no bullet, the report suggests recording it.
 The harness is the project's choice: where that section names the project's own way of verifying,
 verify through the means it names, and recommend no harness. Where the section records no choice and
 no harness is on disk, verify through what the project keeps, and recommend a harness in the report.
