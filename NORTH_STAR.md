@@ -129,9 +129,10 @@ how many of our own projects are running all three tiers at once.
   on high-end models. The answer is one lean path per beat rather than a lean variant
   beside a procedural one — a prompt that states its goal and gets out of the way spends
   less of the model's attention on being told what it already knows, which measured
-  better as well as cheaper. And the mirror still holds: a run that keeps verifying and
-  repairing past the point its gates are satisfied is a defect in our workflow, never a
-  meter the user should have to watch.
+  better as well as cheaper. Speed binds the same way: a run's verification rounds must
+  stay fast enough that many agents working at once are not held up by them. And the
+  mirror still holds: a run that keeps verifying and repairing past the point its gates
+  are satisfied is a defect in our workflow, never a meter the user should have to watch.
 - Commentary on this repository's own adoption or popularity (stars, usage, traction)
   anywhere in the repo.
 - User-facing complexity: workflows may be sophisticated inside, but the experience
@@ -145,8 +146,11 @@ how many of our own projects are running all three tiers at once.
   and revised again 2026-09-14 when the owner ruled that one lean path per beat replaces
   the parallel variants, on evidence that the leaner prompt investigated better rather
   than merely cheaper — see
-  docs/adr/20260914-one-skill-per-beat-built-from-the-lean-body.md. The traction rule
-  lives in the repository's contributor instructions. Only the owner moves these.
+  docs/adr/20260914-one-skill-per-beat-built-from-the-lean-body.md — and again 2026-10-15
+  when the owner ruled that verification speed binds like cost, second to quality, so that
+  many agents working at once are not held up by slow rounds — see
+  docs/adr/20261015-verification-speed-binds-like-cost-second-to-quality.md. The traction
+  rule lives in the repository's contributor instructions. Only the owner moves these.
 
 ## Open
 
