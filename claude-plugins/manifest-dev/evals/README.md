@@ -9,7 +9,7 @@ reaches a correct answer, which a strong base model does unaided.
 Run it:
 
 ```bash
-claude plugin eval . --tag figure-out --ablation with-without --judge-model sonnet --allow-tools Write Bash --scaffold -j 8
+claude plugin eval . --tag figure-out --ablation with-without --judge-model sonnet --allow-tools Write Bash --scaffold -j 8 --max-cost-usd 120
 ```
 
 `--scaffold` runs each case's `scaffold.sh` (declared in its `case.yaml`) before the agent starts,
@@ -26,8 +26,14 @@ project (`52`). The no-plugin arm passes or fails them by construction. They car
 tag `figure-out-plugin-only` instead of `figure-out` and run on the plugin arm alone:
 
 ```bash
-claude plugin eval . --tag figure-out-plugin-only --ablation none --judge-model sonnet --allow-tools Write Bash --scaffold -j 8
+claude plugin eval . --tag figure-out-plugin-only --ablation none --judge-model sonnet --allow-tools Write Bash --scaffold -j 8 --max-cost-usd 15
 ```
+
+`--max-cost-usd` is the hard stop: the CLI checks its list-price estimate, judge calls included,
+before launching each run, and stops at the ceiling, finishing only the runs already in flight. Each
+ceiling is the suite's run count at the $1.52 a run measured under an opus judge (*First-run plan*),
+an upper bound under sonnet; a run cut short exits 2 with a partial result, which
+`score_rounds.py` refuses to score.
 
 `--allow-tools Write Bash` is required. `allowed_tools` in a case's `prompt.md` declares what the
 case *wants*; the operator grant is what enables it. Without it, file graders fail in both arms and
@@ -83,12 +89,18 @@ where the skills stand, never a verdict on one case. Read a result this way:
   `16` gap above shows, so read the outputs on both sides before believing it.
 - **Three runs where one case decides something.** Re-run that case with `--case '<name>' --runs 3`
   before retiring it, and retire it only when both arms pass every case grader on every run and it
-  is not a declared guard. A change that wins a hill-climb round narrowly gets the cases it aims at
-  re-run the same way before it is kept.
-- **Hill-climb on the plugin arm only** (`--ablation none`). The no-plugin arm cannot respond to a
-  prompt edit; it feeds only the headline Δ, and is measured again with each baseline and when the
-  model, the CLI or the judge changes. Keep a change only when the pooled train and held-out
-  scores move together and no guard grader falls.
+  is not a declared guard.
+- **Hill-climb on the cases that can move, at three runs, plugin arm only.** A case whose plugin
+  arm already passes every grader cannot show a gain, so a round spends nothing on it: it re-runs
+  the train cases with room to improve and the guards the changed prompt covers, three runs each.
+  About ten cases at three runs cost what thirty cost at one and read a change on those ten about
+  √3 times finer. The no-plugin arm cannot respond to a prompt edit; it feeds only the headline Δ,
+  and is measured again with each baseline and when the model, the CLI or the judge changes.
+- **Keep a change when the climb set moves and nothing falls.** The held-out cases mostly pass every
+  grader already, so they can show a regression but rarely a gain: they guard, and a change is not
+  required to raise them. What keeps a change from fitting the cases it was tuned on is that the
+  analyzer reads only train outputs. A kept change is confirmed by the full suite, both arms; a
+  held-out case or guard grader that falls there gets its three-run re-run before the change stays.
 
 ## Running on macOS
 
@@ -99,7 +111,7 @@ macOS keychain, and a detached container also keeps running if the launching ses
 
 ```bash
 scripts/evals/run_eval.sh figure-out-run evals/results/figure-out-run/aggregate-result.json \
-  --tag figure-out --ablation with-without --judge-model sonnet --scaffold
+  --tag figure-out --ablation with-without --judge-model sonnet --scaffold --max-cost-usd 120
 ```
 
 The script builds the image if it is missing, starts colima if Docker is down, reads
@@ -544,25 +556,35 @@ in a section below is the local run directory it was read from, not a file in th
 ## Hill-climbing a prompt against a suite
 
 To improve a skill against one grader while holding the rest, run rounds of
-analyze → change → rerun → compare against a recorded baseline. Each round costs roughly what
-the suite's plugin arm does at one run per case. Keep the loop's
-state in a gitignored directory under `results/`, for example `results/hillclimb-<suite>/`,
-with a `_state.json` holding `train_ids` and `test_ids` and one `vN/` directory per round.
+analyze → change → rerun → compare, as *Reading a result at this depth* sets out. Each round
+costs three runs per case in its climb set. Keep the loop's state in a gitignored directory under
+`results/`, for example `results/hillclimb-<suite>/`, with a `_state.json` holding `train_ids`
+and `test_ids` and one `vN/` directory per round.
 
 1. **Split once, before round 1.** Use the suite's documented held-out cases as test. An
-   analyzer reads only train cases' outputs, and the test score decides whether a change is
-   kept.
-2. **Extract train outputs** for the analyzer. A finished run keeps each run's judged artifact
+   analyzer reads only train cases' outputs.
+2. **Fix the climb set once, before round 1**: the train cases whose plugin arm failed a grader in
+   the latest baseline, plus the declared guards the prompt under change covers.
+3. **Run the unchanged skill as `v0`**, the control every round is compared with, one invocation
+   per case, plugin arm only, three runs:
+   ```bash
+   for c in <climb set>; do
+     scripts/evals/run_eval.sh "hc-v0-$c" "evals/results/hillclimb-<suite>/v0/$c.json" \
+       --case "$c" --tag <suite> --ablation none --runs 3 --judge-model sonnet --scaffold --max-cost-usd 6
+     docker wait "hc-v0-$c"
+   done
+   ```
+4. **Extract train outputs** for the analyzer. A finished run keeps each run's judged artifact
    but no transcript:
    `python3 scripts/evals/extract_outputs.py <result.json> --out <dir> --cases <train cases...>`.
    Use `--report <report.html>` when the JSON's evidence has been stripped.
-3. **Make one change per round**, sized to clear the noise floor, and save its diff and
+5. **Make one change per round**, sized to clear the noise floor, and save its diff and
    rationale in `vN/`.
-4. **Rerun only the plugin arm**, since the no-plugin arm doesn't move:
-   `scripts/evals/run_eval.sh <name> evals/results/hillclimb-<suite>/vN/aggregate-result.json --tag <suite> --ablation none --judge-model <the suite's judge>`.
-5. **Compare** per grader and split:
-   `python3 scripts/evals/score_rounds.py --state <dir>/_state.json baseline=<baseline json> v1=<dir>/v1/aggregate-result.json`.
-   Keep the change only if test moves outside noise and no guardrail grader falls.
+6. **Rerun the climb set** the same way into `vN/`.
+7. **Compare** per grader and split:
+   `python3 scripts/evals/score_rounds.py --state <dir>/_state.json v0=<dir>/v0 vN=<dir>/vN`.
+   It merges a directory's results, compares only the cases every run carries, and counts a
+   grader only where every run scores it, so a round can also be set beside a full baseline.
 
 Once a winner is kept, re-record the full baseline with both arms. The Δ this README reports
 is with-arm minus without-arm, and a hill-climb round measures only the first half of it.

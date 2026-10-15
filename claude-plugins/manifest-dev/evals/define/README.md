@@ -9,8 +9,10 @@ cases and why. A prompt change marks the cases it covers stale rather than runni
 `../README.md` → *Scope and statuses* says. Run it from the plugin directory:
 
 ```bash
-claude plugin eval . --tag define --ablation with-without --judge-model sonnet --allow-tools Write Bash --scaffold -j 8
+claude plugin eval . --tag define --ablation with-without --judge-model sonnet --allow-tools Write Bash --scaffold -j 8 --max-cost-usd 60
 ```
+
+`--max-cost-usd` is the plan's estimate below, a hard stop as `../README.md` describes.
 
 `--scaffold` runs the `scaffold.sh` that `d16` and `d19`–`d24` declare in their `case.yaml`: a
 saved Manifest beside a small repository for `d16`, a small project for the others. Without it,
@@ -396,6 +398,13 @@ negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the 
 - **A case gets files only through its scaffold.** Most prompts describe the codebase inline and
   say it is unavailable. `d16` seeds a Manifest and a small repository with `scaffold.sh`, and
   `d19`–`d24` a small project. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
+- **Most judge graders read the whole Manifest.** 39 of the suite's 51 `llm` graders judge
+  `manifest.md` entire, often near 20k characters, where the CLI's guidance is a regex for long
+  output and the judge for short output; it is where the sonnet judge failed a sound Manifest.
+  A property a pattern can settle (a section present, a gate kind declared) moves to a `regex`
+  grader when its case is next edited, taking it off the judge; one that needs the whole document,
+  such as a requirement no gate checks, stays with the judge, and its FAIL is read against the
+  Manifest before anything is done about it.
 - **One turn of the interview.** The suite measures unattended encoding, plus one interactive
   turn after approval (`d16`). Interview order, re-asking settled ground, and the digest's form
   need a scripted second turn the harness does not run, so they are out of scope.

@@ -7,16 +7,18 @@
 # <out-json>  result path relative to claude-plugins/manifest-dev, e.g.
 #             evals/results/hillclimb-define/v2/aggregate-result.json
 #
-# Example, one hill-climb round (plugin arm only, the define suite's opus judge):
-#   scripts/evals/run_eval.sh define-hc-v2 evals/results/hillclimb-define/v2/aggregate-result.json \
-#     --tag define --ablation none --judge-model sonnet
+# Example, one case of a hill-climb round (plugin arm only, three runs; the suite README's
+# *Hill-climbing a prompt against a suite* loops it over the climb set):
+#   scripts/evals/run_eval.sh hc-v2-d05 evals/results/hillclimb-define/v2/d05-conflicting-goals.json \
+#     --case d05-conflicting-goals --tag define --ablation none --runs 3 --judge-model sonnet \
+#     --scaffold --max-cost-usd 6
 #
 # Why a container: on macOS every eval child raises a "Keychain Not Found" dialog (see
 # evals/README.md), and a detached container survives the launching session ending. The
 # working tree is mounted live, so leave the prompts under test untouched until it exits.
 set -euo pipefail
 
-[[ $# -ge 2 ]] || { sed -n '2,13p' "$0"; exit 2; }
+[[ $# -ge 2 ]] || { sed -n '2,15p' "$0"; exit 2; }
 name=$1 out=$2
 shift 2
 

@@ -276,3 +276,16 @@ def test_every_documented_run_uses_the_agreed_judge() -> None:
         if model != JUDGE and not model.startswith("<")
     }
     assert not found, f"commands naming another judge: {sorted(found)}"
+
+
+def test_every_documented_run_carries_a_cost_ceiling() -> None:
+    # A documented command copied without `--max-cost-usd` runs a whole suite with no stop.
+    bare = [
+        f"{doc.relative_to(ROOT)}: {command.strip()[:80]}"
+        for doc in JUDGE_DOCS
+        for command in re.sub(
+            r"\\\n#?\s*", " ", doc.read_text(encoding="utf-8")
+        ).splitlines()
+        if "--judge-model" in command and "--max-cost-usd" not in command
+    ]
+    assert not bare, f"documented eval runs with no cost ceiling: {bare}"

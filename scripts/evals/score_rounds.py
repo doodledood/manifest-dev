@@ -9,7 +9,11 @@ scored, so a run made with ``--ablation none`` compares directly to the plugin a
 a full baseline.
 
     python3 scripts/evals/score_rounds.py --state <flow>/_state.json \\
-        baseline=<path>/aggregate-result.json v1=<flow>/v1/aggregate-result.json
+        v0=<flow>/v0 v1=<flow>/v1
+
+Each run is one ``aggregate-result.json`` or a directory whose ``*.json`` results are
+merged, for a round run one case per invocation. Only the cases every run carries are
+compared, and a grader is counted only where every run scores it.
 
 ``_state.json`` needs ``train_ids`` and ``test_ids`` (case names). Cases in neither
 list are reported under ``other``.
@@ -27,10 +31,37 @@ POOLED = "case-graders"
 
 
 def load(path: Path) -> dict[str, Any]:
-    data: dict[str, Any] = json.loads(path.read_text())
-    if data.get("partial"):
-        raise SystemExit(f"{path}: partial run; finish or rerun it before scoring")
-    return data
+    """One result file, or every ``*.json`` result in a directory merged into one."""
+    paths = sorted(path.glob("*.json")) if path.is_dir() else [path]
+    if not paths:
+        raise SystemExit(f"{path}: no result files")
+    cases: list[dict[str, Any]] = []
+    for each in paths:
+        data = json.loads(each.read_text())
+        if data.get("partial"):
+            raise SystemExit(f"{each}: partial run; finish or rerun it before scoring")
+        cases.extend(data["cases"])
+    names = Counter(c["name"] for c in cases)
+    if repeated := sorted(n for n, k in names.items() if k > 1):
+        raise SystemExit(f"{path}: cases in more than one result: {', '.join(repeated)}")
+    return {"cases": cases}
+
+
+def unscored(datas: list[dict[str, Any]]) -> set[tuple[str, str]]:
+    """(case, grader) pairs some run leaves out of its score.
+
+    Under ``--ablation with-without`` the CLI leaves graders marked with-only out of the
+    score; under ``none`` it scores them. Counting a grader only where every compared run
+    scores it keeps a plugin-arm round comparable with a full baseline.
+    """
+    return {
+        (case["name"], grader["name"])
+        for data in datas
+        for case in data["cases"]
+        for run in case["arms"]["with"]
+        for grader in run["graders"]
+        if not grader["scored"]
+    }
 
 
 def shared_graders(runs: list[dict[str, Any]]) -> set[str]:
@@ -64,16 +95,22 @@ def plugin_fired(case: dict[str, Any]) -> set[str]:
 
 
 def tally(
-    data: dict[str, Any], state: dict[str, Any], shared: set[str]
+    data: dict[str, Any],
+    state: dict[str, Any],
+    shared: set[str],
+    cases: set[str],
+    dropped: set[tuple[str, str]],
 ) -> tuple[dict[tuple[str, str], list[int]], dict[str, float], dict[str, float], int]:
     counts: dict[tuple[str, str], list[int]] = defaultdict(lambda: [0, 0])
     per_case: dict[str, float] = {}
     cost = {"agent": 0.0, "judge": 0.0}
     errors = 0
     for case in data["cases"]:
+        if case["name"] not in cases:
+            continue
         runs = case["arms"]["with"]
         split = split_of(case["name"], state)
-        skip = plugin_fired(case)
+        skip = plugin_fired(case) | {g for c, g in dropped if c == case["name"]}
         scores = []
         for run in runs:
             # costUsd already includes the judge's share.
@@ -81,7 +118,7 @@ def tally(
             cost["agent"] += run["costUsd"] - judge
             cost["judge"] += judge
             errors += bool(run.get("error"))
-            kept = [g for g in run["graders"] if g["scored"] and g["name"] not in skip]
+            kept = [g for g in run["graders"] if g["name"] not in skip]
             weight = sum(g["weight"] for g in kept)
             if weight:
                 scores.append(sum(g["weight"] * g["passed"] for g in kept) / weight)
@@ -105,7 +142,15 @@ def main(argv: list[str] | None = None) -> int:
     datas = {label: load(Path(path)) for label, path in labelled}
     fired = {n for d in datas.values() for c in d["cases"] for n in plugin_fired(c)}
     shared = shared_graders(list(datas.values())) - fired
-    results = {label: tally(d, state, shared) for label, d in datas.items()}
+    carried = [{c["name"] for c in d["cases"]} for d in datas.values()]
+    common = set.intersection(*carried)
+    if left_out := sorted(set.union(*carried) - common):
+        print(f"Compared on the {len(common)} cases every run carries; left out: "
+              f"{', '.join(left_out)}\n")
+    dropped = unscored(list(datas.values()))
+    results = {
+        label: tally(d, state, shared, common, dropped) for label, d in datas.items()
+    }
     labels = list(results)
 
     print("| grader | split | " + " | ".join(labels) + " |")

@@ -35,7 +35,7 @@ the source tree it copies. It also fails when a shipped file points to a section
 `claude-plugins/manifest-dev/evals/` holds behavioral eval suites for `figure-out` and, under
 `evals/define/` with its own README, for `define`. Each run is many model sessions, so the
 owner runs a suite, or an agent runs one after asking and naming the cases and why; it runs with
-`claude plugin eval . --tag <figure-out|define> --ablation with-without --allow-tools Write Bash --scaffold` with the judge model each README names (on macOS, inside the container `evals/Dockerfile` defines — `scripts/evals/run_eval.sh` starts it; its `README.md` also covers hill-climbing a prompt with the scripts beside it)
+`claude plugin eval . --tag <figure-out|define> --ablation with-without --allow-tools Write Bash --scaffold` with the judge model and cost ceiling each README names (on macOS, inside the container `evals/Dockerfile` defines — `scripts/evals/run_eval.sh` starts it; its `README.md` also covers hill-climbing a prompt with the scripts beside it)
 from the plugin directory. It measures **uplift** — every case runs with the plugin and without
 it, and the headline number is Δ, not pass rate — so a case both arms pass teaches nothing and is
 removed. `tests/` is a property suite that must stay green; the eval suite is a measurement whose
