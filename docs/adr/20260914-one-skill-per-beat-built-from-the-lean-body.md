@@ -1,7 +1,7 @@
 # ADR: One skill per beat, built up from the lean body
 
 ## Status
-Accepted
+Accepted — narrowed by 20261015-do-states-the-goal-and-its-conventions-and-leaves-method-to-the-run: `/do` keeps the goal and the conventions it carries and drops the lines on how to verify, including the inherited diff-base and local-changes floor
 
 ## Area
 Prompt architecture

@@ -1,55 +1,44 @@
 # /do: execution logging
 
-Keeps an append-only execution log — on by default for every /do run (`--no-log` opts out) — continuity that survives context loss in long runs: what was implemented, where execution deviated from the Initial Approach or the Deliverable order and why, which Process Guidance was departed from, which fixes were tried and abandoned, and where each gate stands. Execution history lives here, never in the manifest — the manifest stays the acceptance contract.
-
-This log is not a transcript, a handoff, an ADR (a deviation that proves genuinely architectural is promoted to an ADR through a figure-out session), or the manifest itself — it is the chronological execution line, append-only and portable by path.
+The execution log is what lets a run survive context loss and lets a later session audit it.
+Execution history lives here, never in the Manifest, which stays the acceptance contract.
 
 ## Path
 
-Resolve the active log path before execution starts and surface it immediately. The log's first line is a title naming the Manifest's topic, and the next names the repository it is about — its remote URL, or its path when it has none — so a later session's recall can match logs by repository and topic and skip the rest.
+Use the path `SKILL.md` names, resolved before execution starts and surfaced at once. Create the
+directory (`~` = `$HOME` / `%USERPROFILE%`), and fall back to a writable temp path only when the
+home directory is not writable. The first line is a title naming the Manifest's topic, and the
+next names the repository it is about — its remote URL, or its path when it has none — so a later
+session's recall can match logs by repository and topic.
 
-Use the path `SKILL.md` names, which is keyed to the Manifest so every launch on it reopens the same log. Create the directory (`~` = `$HOME` / `%USERPROFILE%`), and fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory is not writable.
+When a caller supplies a journal path (for example, the default `/babysit-pr` journal), that
+caller-supplied journal *is* the log — no second file. When the caller reinvokes `/do` on it for
+a new run, append a `Run initialized` boundary and start an empty ledger:
+prior gate verdicts remain historical and are not carried into the new run.
 
-**Caller-supplied journal.** When a caller supplies a journal/log path (for example, the default `/babysit-pr` journal), that path *is* the log — no second file.
+## Discipline
 
-## Append Discipline
+Append only; correct an old entry with a new one. Read the log before deciding a retry in a
+resumed run, and append after meaningful events, not play-by-play. Credentials, tokens and
+personal data never enter it — it outlives the run and travels by path — so record where a secret
+lives, never its value.
 
-Append only. Never rewrite, reorder, compress, or delete prior entries. If an old entry was wrong, append a correction.
+## What a resumed run needs from it
 
-Read the log before deciding retries and comment judgments in a resumed or long-lived run; append after acting. Append after meaningful events — a deliverable implemented, a deviation from the Initial Approach or the Deliverable order, a Process Guidance departure, a fix attempt abandoned, a gate verdict or staleness change, an operational step (retrigger, wait), an escalation. Skip play-by-play narration.
+Record what the finished state will not reconstruct on its own:
 
-Credentials, tokens, and personal data never enter the log — it outlives the run and travels by path. When evidence involves a secret, record where it lives (an env var name, a vault path) rather than its value, and quote from command output only the lines that carry the signal.
-
-A launch on a Manifest that already has a log resumes from it. A caller-supplied journal can hold more than one run: when the caller reinvokes `/do` on it for a new run, append a `Run initialized` boundary and start an empty active ledger; prior gate verdicts remain historical and are not carried into the new run.
-
-## Content
-
-Record what completed state won't reconstruct on its own:
-
-- **Autonomous decisions** — material choices and assumptions, their rationale, and any prospective Appetite revision with its benefit and added complexity or maintenance. List the user's calls, as `SKILL.md` defines them, first, each with the alternative not taken and what decided it.
-- **Blocker notices** — the affected obligation, evidence and intervention needed, independent work continued, and whether the blocker cleared or remained for terminal escalation.
-- **Deviations from the Initial Approach or the Deliverable order** — what changed and why, including a resequencing and what forced it. Both are soft; the record of leaving them is not.
-- **Process Guidance departures** — which item was set aside and why.
-- **Dead-end memory** — fixes tried and reverted, approaches considered and rejected that left no commit.
-- **Operational notes** — retriggers, waits, environment actions, so those decisions survive context compaction.
-- **Gate-ledger updates** — verdicts, evidence provenance, staleness marks, re-verification outcomes.
-- **Ratchet state, per Judgment Gate** (a gate declaring the judgment kind, which reads the whole change once and delta-checks after) — whether it has taken its full look yet; the artifact state that look read (for repository work, the head SHA); the findings it issued there; and which of those repairs have since been verified. This is what a later round scopes its evaluation against, so it has to be readable without the context that produced it: a session resuming after compaction must be able to tell, for each Judgment Gate, whether it owes a full look or only a delta re-check, and against which base. Write it so that reader can.
-- **Amendments** — what the amendment changed, the gates whose verification identity moved, and the digest of what it assumed (the new or changed `(auto)`/`ASM-*` entries), so a user who steered and left can audit on return.
-- **Sub-threshold findings** — what a gate reported below its own threshold and was handed over rather than repaired, and any pre-existing issue met along the way and left as unrelated to the change.
-- **Threshold questions** — a gate whose bar the run read as suspect, and how it settled: amended, affirmed by the user, or recorded with no user to ask. An affirmation settles it for the run, so the record is what keeps it from being raised again after context compaction.
-
-## Entry Shape
-
-Use Markdown. Keep entries concise and factual.
-
-```md
-## {UTC timestamp} — {short title}
-
-**Event:** {what happened — deliverable, deviation, dead end, gate change, operational step, amendment}
-**Why / evidence:** {rationale or verifier output reference}
-**Gate ledger:** {verdict/staleness changes; omit if none}
-**Ratchet:** {per Judgment Gate touched — full look taken or owed, the artifact state it read, findings issued, repairs verified; omit if none moved}
-**Next:** {what execution does next; omit if obvious}
-```
-
-The shape is a default, not a form to pad. Omit empty fields.
+- **Decisions** — material autonomous choices with their rationale, the user's calls first (as
+  `SKILL.md` defines them), each with the alternative not taken and what decided it; any
+  Appetite revision with its benefit and added complexity.
+- **Blockers** — the obligation, the evidence, the intervention needed, and whether it cleared.
+- **Departures** — from the Initial Approach, the Deliverable order or a Process Guidance item,
+  and why.
+- **Dead ends** — fixes tried and reverted, approaches rejected that left no commit.
+- **Gate state** — verdicts and their evidence, staleness, and for each judgment gate whether it
+  has taken its full look, the artifact state that look read (for repository work, the head
+  SHA), the findings it issued and which repairs are verified, so a session resuming after
+  compaction knows whether each one owes a full look or a delta check, and against what.
+- **Amendments** — what changed, which gates it unverified, and the assumptions it added.
+- **Handed over** — findings below a gate's bar, pre-existing issues left as unrelated, and a gate
+  bar the run read as suspect with how that settled.
+- **Operational steps** — retriggers, waits and environment actions.

@@ -15,7 +15,7 @@ per gate, and material autonomous decisions with their rationale.
 
 ## Autonomous execution
 
-Assume the user is AFK for the entire run. Make authorized decisions without asking questions or waiting for approval; carry this posture into every skill you invoke. A user message supplies steering, not a promise to stay for a conversation. Discover missing facts where possible, otherwise choose a defensible assumption within your authority and report material decisions and their rationale on every terminal path and in the execution log when kept.
+Assume the user is AFK for the entire run, and carry that into every skill you invoke: decide what your authority covers without asking or waiting, and read a user message as steering, not the start of a conversation. Report material decisions and their rationale, and any Process Guidance you departed from, on every terminal path, and in the execution log when kept.
 
 **The user's call.** A decision is the user's call when two careful people with
 the same evidence could reasonably decide it differently, and the difference
@@ -31,11 +31,9 @@ followed, or that no entry applied.
 
 **Taste on reversal.** When a steering message reverses a call the run made and states why, and the reason is a preference another user could want the opposite of — not a behavior every session owes — draft a Taste entry in three parts: the preference, naming the kind of call it covers; the rationale, built on the reason the user stated, never one you inferred; and when it should yield. Carry it verbatim in the terminal report, with the memory file it would go in and the question whether it is standing or for this case only; "this case only" is a no. Write nothing: only the user's explicit yes to that text writes it, inside that file's `## Taste` section. When an existing entry decided the reversed call, report the clash instead, with any proposed revision or removal shown verbatim for the user's yes. Make no other offer.
 
-Choose solutions that make the requested outcome durable and subsequent work easier to do correctly. Address recurring friction and opportunities for error at their source when the benefit justifies the added complexity. The initial plan is yours to change. Appetite — the size of change the problem is worth — may be revised through the authoring skill before broader work starts when the benefit to this outcome justifies the added complexity and maintenance. Explicit Out of bounds exclusions, binding requirements, and permissions remain fixed unless the user changes them; absence from an exclusion list does not authorize unrelated improvements. Never revise Appetite to excuse excess already produced or use it to lower a gate's bar.
+Choose solutions that make the outcome durable and the next change easier to get right; the initial plan is yours to change. Appetite — the size of change the problem is worth — may be revised through the authoring skill before broader work starts, when the benefit to this outcome justifies the added complexity and maintenance, never to excuse excess already produced or to lower a gate's bar. Out of bounds exclusions, binding requirements and permissions stay fixed unless the user changes them, and absence from an exclusion list authorizes nothing unrelated.
 
-A blocked obligation has no viable authorized path after investigating credible alternatives: proceeding requires unavailable knowledge or access, new authority, or a change to a binding requirement. A failed approach or difficult decision calls for investigation and redesign, not automatically for escalation. Stop repeating attempts that yield no new evidence or progress; identify the missing intervention when viable recovery paths are exhausted.
-
-Surface an established blocker promptly with its evidence and the intervention needed, then continue useful independent work that does not depend on guessing the blocked decision. A blocker notice is not a terminal escalation. Every route to `/escalate` in this skill applies only when no useful independent work remains; invoke it then with the unresolved blockers. An external process still progressing is a wait, governed by the run's waiting policy, never successful completion.
+An obligation is blocked only when no authorized path remains after trying credible alternatives: it needs knowledge, access or authority the run lacks, or a change to a binding requirement. A failed approach is yours to redesign. Surface a blocker promptly with its evidence and the intervention it needs, then continue useful independent work that does not guess the blocked decision; invoke `/escalate` with the unresolved blockers only when no useful independent work remains. An external process still running is a wait, never completion.
 
 ## Amendments
 
@@ -96,26 +94,19 @@ project work: it keeps the recipes whose paths it touches and runs them as
 
 ## What holds for every gate
 
-A gate declares `judgment` or `deterministic`; an undeclared kind is invalid, never
-inferred. Read a gate from the Manifest by ID, never from a copy. For repository
-work, compare against the repository's actual remote-tracking default branch,
-unless the gate names another subject. Include relevant staged, unstaged, and
-untracked work when the artifact being judged includes local changes. A judgment gate reads the full change once, then only
-prior findings' repairs and the delta; a deterministic gate re-runs in full. A finding
-below a gate's bar is recorded — in the execution log when kept — and left
-unrepaired, because every repair is a new delta that each judgment gate re-reads. A
-pre-existing issue the run meets on its own, rather than one a gate reported, is fixed when
-it is related to the current change and otherwise recorded the same way; `/done` and `/escalate` surface both for the user to
-decide. A bar never moves down on
-the executor's judgment, and a summary claim is not evidence: obtain the missing
-evidence, or report a blocker while continuing useful independent work.
+How you verify is yours; these conventions are not. A gate declares `judgment` or
+`deterministic`; an undeclared kind is invalid, never inferred. Read a gate from the
+Manifest by ID, never from a copy. A judgment gate reads the full change once, then only
+prior findings' repairs and the delta; a deterministic gate re-runs in full. A finding below
+a gate's bar, and a pre-existing issue unrelated to the change, is recorded rather than
+repaired, since every repair is a delta each judgment gate re-reads; `/done` and `/escalate`
+surface them for the user. A bar never moves down on the executor's judgment, and a summary
+claim is not evidence.
 
 ## The execution log
 
 Unless `--no-log`, keep an append-only log at `~/.manifest-dev/logs/do-<name>-<hash>.md`,
 where `<name>` is the Manifest's filename without extension and `<hash>` the first eight
-hex characters of SHA-256 over its absolute path. Fixing the scheme is what reopens the
-same Manifest's log on every launch and keeps two manifests sharing a basename in
-different directories apart. Read it before resuming and append as you go: it is where
-the goal block's checkpoint notes land. `references/LOG.md` holds the entry shape
-and append discipline; the path rule is this one.
+hex characters of SHA-256 over its absolute path, so every launch on this Manifest reopens
+the same log. Read it before resuming and append as you go: the goal block's checkpoint
+notes land there. `references/LOG.md` holds what a resumed run needs from it.
