@@ -22,6 +22,7 @@ Writes self-sufficient Tickets into the project's Ticket store — from a Manife
 Run: `scripts/drive-skill.sh ticket-up verification/prompts/ticket-up-direct-request.md`
 Proves: the summary's files include `tickets/store-config.md` and one `tickets/<effort>/NN-<slug>.md` with the convention's sections. Each Ticket stands alone: a reader with no Manifest knows what to do and how it is checked.
 Check: read
+Workload: varies
 
 ## Gotchas
 

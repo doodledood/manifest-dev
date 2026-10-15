@@ -4,7 +4,8 @@ doctor: scripts/drive-skill.sh preflight
 ---
 - Recipes cover every user-invocable skill in the two plugins (one recipe per skill, named after
   it), the design instruments, the tasks readers bring to the user-facing documents (kind
-  `walk`), and the two behavior suites (kind `eval`). `tests/test_verify.py` runs
+  `walk`), the two behavior suites (kind `eval`), and this repository's own checks
+  (`property-suite`, which runs `scripts/check.sh` and is free: run it after every change). `tests/test_verify.py` runs
   `verify check` with the project's tests and fails when a user-invocable skill has no recipe.
 - Every run starts from a checkout at the commit under test with the virtual environment active
   (`source .venv/bin/activate`; `scripts/setup.sh` creates it). `scripts/verify` needs Node 22.18

@@ -20,11 +20,13 @@ citing each note it used.
 ### direct
 Run: `scripts/agent-session --plugin plugin --prompt '/summarize "Quarterly plan"'`
 Proves: the reply is a brief citing `Quarterly plan` and no other note.
+Workload: varies
 Check: read
 
 ### empty
 Run: `scripts/agent-session --plugin plugin --prompt '/summarize volcano'`
 Proves: the reply says no note matched and offers no summary.
+Workload: varies
 Check: read
 
 ## Gotchas

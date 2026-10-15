@@ -160,6 +160,7 @@ from a discipline `SKILL.md` explicitly states.
 | `50-update-moves-v3-into-harness` | docs, repository, plugin arm only | A setup-project run on a v3 project offers moving its feature map and reader tasks into one harness, keeping their content, and nothing v1 to v3 already gave it | unmeasured |
 | `51-setup-offers-harness-for-app` | docs, repository, plugin arm only | A setup-project run on a small app with tests offers one harness — the shipped TypeScript tool by default — that adopts the existing test command, one verification bullet, and no ask-first marks for free runs | unmeasured |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | unmeasured |
+| `53-update-offer-from-v4` | docs, repository, plugin arm only | Offer the setup update for a project on v4 — control commands in place of a fixed port, dropping a run-time-only ask-first mark, the tool and bullet — and nothing v1 to v4 already gave it | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and have never been run. Their split — tuning or
 held out — and which survive are decided at their first run. `30` uses a project set up before
@@ -169,13 +170,15 @@ offering what v1 adds and not a redo. `45` tests the other branch of the recorde
 a project that records the newest version and declined some of its items gets no offer at all.
 `47`, added with v2 on 2026-10-14 and never run, is the third branch: a project one version
 behind, graded on offering only what v2 adds and nothing v1 already gave it. `30`, `31`, `36`,
-`43`, `45`, `46`, `47`, `49`, `50`, `51`, and `52` exist only with the plugin and run on the plugin arm alone, like `27`
+`43`, `45`, `46`, `47`, `49`, `50`, `51`, `52` and `53` exist only with the plugin and run on the plugin arm alone, like `27`
 and `28`. `49`, added with v3 and never run, is a project on v2. `50`, added with v4 on 2026-10-14 and
 never run, is the project one version behind v4: a setup-project run is graded on offering the
 move into one harness and nothing earlier versions gave it. `51`, added the same day, is a
 setup-project run on an app with tests and no surfaces. Cases `32`, `36`, `47`, `49` and `d18`
 were updated the same day for the harness; none had been run. `48`, added on 2026-10-14 and never run, holds the design-time depth and reuse probes: a
-requested service class that would mostly forward to two existing functions.
+requested service class that would mostly forward to two existing functions. `53`, added with v5 on
+2026-10-15 and never run, is the project one version behind v5; `45` moved to v5 and `47`, `49`
+and `50` name v5 as the newest the same day.
 
 **Every recorded number in this file is stale as of 2026-10-14.** The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, and the

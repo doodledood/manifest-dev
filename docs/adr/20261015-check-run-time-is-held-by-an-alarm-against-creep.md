@@ -86,10 +86,12 @@ every crossing run rewrite shared test code would have those agents collide.
 - A frozen overshoot leaves the suite slower until its Ticket is paid.
 
 ## Enforced by
-not yet — `tests/test_verify.py` cases that evidence records duration and machine, that a
-fixed-workload scenario over its line shows in the recipe's status until it is paid, raised or
-frozen by a Ticket, that a raise without a recorded reason is refused, and that a frozen
-overshoot fails a run only once time passes the frozen level.
+`tests/test_verify.py`: `test_evidence_records_duration_and_machine`,
+`test_one_run_over_the_line_is_noise_until_a_second_confirms_it` (over the line until paid back
+under it), `test_a_raise_without_a_reason_is_refused`, and
+`test_a_frozen_overshoot_fails_a_run_only_past_the_frozen_level`; also
+`test_the_first_run_on_a_kind_of_machine_sets_its_line_there` and
+`test_lines_live_only_in_evidence`. Whether a raise's reason is true stays judgment.
 
 ## Source
 - Session: figure-out investigation of the verification harness's control, speed and

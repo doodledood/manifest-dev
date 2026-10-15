@@ -53,3 +53,7 @@ known-first-party = ["hook_utils"]
 [tool.black]
 line-length = 88
 target-version = ["py310"]
+
+[tool.pytest.ini_options]
+# Every test is independent of the others, so the suite runs on every CPU (pytest-xdist).
+addopts = "-n auto"

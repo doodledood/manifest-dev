@@ -18,6 +18,7 @@ A reader comes to these documents to review a change outside a run, and should e
 Run: `scripts/walk.sh 'Review a change outside a run. End able to pick the review skill for code, prose, or a design, or check a pull request’s readiness, and invoke it directly. The sections to rely on: claude-plugins/manifest-dev/README.md → Review and verification.' claude-plugins/manifest-dev/README.md`
 Proves: the reader ends able to pick the review skill for code, prose, or a design, or check a pull request's readiness, and invoke it directly, and names nothing it had to guess that blocks the task.
 Check: read
+Workload: varies
 
 ## Gotchas
 

@@ -20,16 +20,19 @@ Reviews a change along exactly one quality dimension and returns PASS, FAIL or B
 Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-review.md`
 Proves: a report naming the dimension, findings with severity and evidence, and one verdict. Every finding points at a line inside the change.
 Check: read
+Workload: varies
 
 ### project-rule
 Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-project-rule.md`
 Proves: with a context file naming a convention a dimension would flag (a shared module-level instance) and a change following it, there is no finding on the convention; the report names the rule applied.
 Check: read
+Workload: varies
 
 ### project-rule-critical
 Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-project-rule-critical.md`
 Proves: with a rule whose result is a Critical finding (logging a login body with its password), the Critical finding is still reported, naming the rule that produced it.
 Check: read
+Workload: varies
 
 ## Gotchas
 

@@ -18,6 +18,7 @@ A reader comes to these documents to get design direction for an artifact, and s
 Run: `scripts/walk.sh 'Get design direction for an artifact. End able to ask /design for direction on an artifact and know which skill evaluates the result. The sections to rely on: claude-plugins/manifest-dev/README.md → First-principles design.' claude-plugins/manifest-dev/README.md`
 Proves: the reader ends able to ask `/design` for direction on an artifact and know which skill evaluates the result, and names nothing it had to guess that blocks the task.
 Check: read
+Workload: varies
 
 ## Gotchas
 

@@ -20,6 +20,7 @@ Turns a Manifest into one standalone goal of at most 4,000 characters, for pasti
 Run: `scripts/drive-skill.sh manifest-to-goal verification/prompts/manifest-to-goal-convert.md --tools`
 Proves: one goal block in the reply. At most 4,000 characters; every gate's threshold survives; nothing new is invented.
 Check: read
+Workload: varies
 
 ## Gotchas
 

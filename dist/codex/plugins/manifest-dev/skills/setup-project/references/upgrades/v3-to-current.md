@@ -1,7 +1,7 @@
-# Upgrading a project from v3 to v4
+# Upgrading a project from v3 to v5
 
-A project recording v3 gains one change, v4's: one verification harness replaces the
-verification surface, the feature map and the reader-task list.
+A project recording v3 gains v4's change — one verification harness replaces the verification
+surface, the feature map and the reader-task list — in v5's shape, with its control commands.
 
 Offer, each as its own item:
 
@@ -12,7 +12,11 @@ Offer, each as its own item:
    `../VERIFICATION_HARNESS.md` → *What setup creates, and what runs build* instead; its
    ask-first choice and bullet are the items below.
 2. **The ask-first setting** — `ask` by default, or `run`.
-3. **The context-file bullet** — the one verification bullet replacing the verification-surface
+3. **Control commands**, per `../VERIFICATION_HARNESS.md` → *The parts*: `start`, `running`,
+   `logs`, `reset` and `stop` declared in `harness.md` where the project's existing scripts already
+   start, observe or stop what it runs, each on the run's `VERIFY_RUN_ID`; none where the project
+   runs nothing.
+4. **The context-file bullet** — the one verification bullet replacing the verification-surface
    and feature-map bullets v3 carried.
 
-Once every item has an answer, record v4.
+Once every item has an answer, record v5.

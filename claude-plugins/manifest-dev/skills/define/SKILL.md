@@ -115,8 +115,9 @@ That gives a floor that isn't ceremony:
   first Deliverable, ahead of any preparatory slice; unattended runs build it too. A Manifest that touches anything a recipe
   covers, or a path one should cover but does not, carries a gate that each touched recipe is added or
   updated and run, its evidence committed. A recipe marked ask-first is run only where the
-  project's setting or the user allows; otherwise its gate holds that the recipe is updated and
-  that the run it still owes is named in the report.
+  project's setting or the user allows — a user who approves a Manifest whose gate runs it has
+  agreed; otherwise its gate holds that the recipe is updated and that the run it still owes is
+  named in the report.
 - **A recorded check still to be built is built.** Search the project's decision records for
   `Enforced by` lines reading `not yet`. When the work implements or touches such a decision, a
   gate holds that the named check exists, fails when the decision is reversed, and carries a

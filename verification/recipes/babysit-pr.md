@@ -21,6 +21,7 @@ Tends the user's own pull request through CI, review threads, description sync a
 Run: `scripts/drive-skill.sh babysit-pr verification/prompts/babysit-pr-ci-pass.md --tools`
 Proves: one advance in the transcript, then exit; the journal file exists. Every push or reply on the pull request appears in the journal.
 Check: read
+Workload: varies
 
 ## Gotchas
 

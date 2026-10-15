@@ -21,16 +21,19 @@ Reviews prose against the project's writing standards in the register it detects
 Run: `scripts/drive-skill.sh review-writing verification/prompts/review-writing-review.md`
 Proves: a report naming the register it used and findings with severity and a fix. The draft is unchanged.
 Check: read
+Workload: varies
 
 ### user-rule-critical
 Run: `scripts/drive-skill.sh review-writing verification/prompts/review-writing-user-rule-critical.md`
 Proves: a team rule whose result is a CRITICAL (softening a required step to "may") — the CRITICAL is still reported, naming the rule.
 Check: read
+Workload: varies
 
 ### user-rule
 Run: `scripts/drive-skill.sh review-writing verification/prompts/review-writing-user-rule.md`
 Proves: with two team rules the references contradict (Title Case headings, "utilize") and a draft following them, neither raises a finding, and the report says which rules it applied.
 Check: read
+Workload: varies
 
 ## Gotchas
 

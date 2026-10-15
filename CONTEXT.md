@@ -86,7 +86,7 @@ The mark on a Recipe whose run costs something a person should weigh — money o
 _Avoid_: Paid, model-session, slow.
 
 **Fit to Trust**:
-Whether an existing Verification Harness can be relied on for the recipes a change touches, judged by the jobs it does — a cold proof run of one scenario passes and leaves evidence that survives cleanup, health is checkable, runs are isolated, and PASS means the real path — never by whether it has every part or the shipped tooling.
+Whether an existing Verification Harness can be relied on for the recipes a change touches, judged by the jobs it does — a cold proof run of one scenario passes and leaves evidence that survives cleanup, health is checkable, runs are isolated, PASS means the real path, touched checks are fast enough (none over its time line without a reason), what the change touches is controllable through the harness, and a failure explains itself — never by whether it has every part or the shipped tooling.
 _Avoid_: Complete, conformant, healthy.
 
 **Surfaces Version**:

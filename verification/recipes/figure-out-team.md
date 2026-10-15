@@ -20,6 +20,7 @@ Runs a figure-out investigation in a Slack channel or thread with several people
 Run: `scripts/drive-skill.sh figure-out-team verification/prompts/figure-out-team-start.md`
 Proves: a first message appears in the named channel; the local session reports where it posted. Each posted turn carries one ask; nothing posts outside the named channel.
 Check: read
+Workload: varies
 
 ## Gotchas
 

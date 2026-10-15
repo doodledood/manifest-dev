@@ -1,9 +1,9 @@
-# Upgrading a project from v1 to v4
+# Upgrading a project from v1 to v5
 
 A project recording v1 may carry a verification surface in the v1 form (a harness with its
 feature map, an eval suite or a reader-task list, with a README, statuses and a repository
 check). Of what v2 and v3 added, only the ADR conventions change lasts; the feature-map shape v2
-introduced and the bullet wording v3 changed are both replaced by v4, so never offer them. A v1
+introduced and the bullet wording v3 changed are both replaced by v4, so never offer them. The harness arrives in its v5 shape. A v1
 feature map is part of the surface the move below carries into recipes.
 
 Offer, each as its own item:
@@ -19,7 +19,11 @@ Offer, each as its own item:
    `../VERIFICATION_HARNESS.md` → *What setup creates, and what runs build* instead; its
    ask-first choice and bullet are the items below.
 3. **The ask-first setting** — `ask` by default, or `run`.
-4. **The context-file bullet** — the one verification bullet replacing the verification-surface
+4. **Control commands**, per `../VERIFICATION_HARNESS.md` → *The parts*: `start`, `running`,
+   `logs`, `reset` and `stop` declared in `harness.md` where the project's existing scripts already
+   start, observe or stop what it runs, each on the run's `VERIFY_RUN_ID`; none where the project
+   runs nothing.
+5. **The context-file bullet** — the one verification bullet replacing the verification-surface
    bullet v1 carried.
 
-Once every item has an answer, record v4.
+Once every item has an answer, record v5.

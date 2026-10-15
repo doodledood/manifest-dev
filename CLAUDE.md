@@ -13,8 +13,8 @@ Set the bar there and no lower. Incidental working detail is fine and not worth 
 ## Development Commands
 
 ```bash
-# Lint, format, typecheck, test (scripts/verify needs Node 22.18+; `npm --prefix scripts ci` once)
-ruff check --fix claude-plugins/ tests/ && black claude-plugins/ tests/ && mypy && npm --prefix scripts run typecheck && python3 -m pytest tests/
+# Lint and format (fixing), typecheck, test across every CPU; `scripts/setup.sh` once
+scripts/check.sh --fix        # or one group: scripts/check.sh lint|types|tests
 
 # Test plugin locally
 /plugin marketplace add /path/to/manifest-dev
@@ -53,7 +53,7 @@ Read before building plugins:
 
 ## Project Surfaces
 
-<!-- setup-project surfaces v4 -->
+<!-- setup-project surfaces v5 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared ground for every contributor and agent, regardless of tooling.
 
@@ -65,7 +65,7 @@ This project keeps its direction, vocabulary, and decision memory in the repo �
 
 **Writing a decision record is one act, not three** — the record, the restatus, and the index, in one change. Step two is the one that gets dropped, and dropping any of them leaves the corpus asserting something untrue. Open `docs/adr/CONVENTIONS.md` before you start: it carries the bar, the template, and what each step actually requires.
 
-**Verification — `scripts/verify`: how this project checks that its work still does its job.** Run it before saying a change works, when reproducing a reported problem, and when a change touches something one of its recipes covers (`scripts/verify list` shows them); a change that needs a check no recipe has adds one. Recipes marked ask-first cost money, time, shared resources or effects outside the repository: run those only when a person runs them or has agreed — ask first, naming the recipe and why. `scripts/verify --help` gives the rest. The behavior suites its `eval` recipes start cover `figure-out` and `define` only, on purpose; a change to a prompt that a case covers updates that case where the change affects what it tests, and marks it stale or, with the owner's agreement, runs it, as `claude-plugins/manifest-dev/evals/README.md` describes. `scripts/design-evals/` is the harness for the code instruments the `design` skill ships; its README says how to run it and what it does not measure.
+**Verification — `scripts/verify`: how this project checks that its work still does its job.** Run it before saying a change works, when reproducing a reported problem, and when a change touches something one of its recipes covers (`scripts/verify list` shows them); a change that needs a check no recipe has adds one. Every other recipe is free: run it as often as it helps — `property-suite` after every change. Recipes marked ask-first cost money, quota, load on shared systems or effects outside the repository: run those only when a person runs them or has agreed — ask first, naming the recipe and why. `scripts/verify --help` gives the rest. The behavior suites its `eval` recipes start cover `figure-out` and `define` only, on purpose; a change to a prompt that a case covers updates that case where the change affects what it tests, and marks it stale or, with the owner's agreement, runs it, as `claude-plugins/manifest-dev/evals/README.md` describes. `scripts/design-evals/` is the harness for the code instruments the `design` skill ships; its README says how to run it and what it does not measure.
 
 ## Repository Structure
 
@@ -244,8 +244,8 @@ Prefer `cp` and `mv` bash commands over the Write tool when duplicating or movin
 ## Before PR
 
 ```bash
-# Lint, format, typecheck, test (scripts/verify needs Node 22.18+; `npm --prefix scripts ci` once)
-ruff check --fix claude-plugins/ tests/ && black claude-plugins/ tests/ && mypy && npm --prefix scripts run typecheck && python3 -m pytest tests/
+# Lint and format (fixing), typecheck, test across every CPU; `scripts/setup.sh` once
+scripts/check.sh --fix        # or one group: scripts/check.sh lint|types|tests
 ```
 
 Bump plugin version if plugin files changed.

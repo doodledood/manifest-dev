@@ -39,7 +39,7 @@ An agent copies the nearest example and takes the easiest path that passes its c
 - **Design before code.** `/figure-out` sketches the shape of a change — its data, where outside data enters, who owns each piece of state — compares a second shape, and checks both for patterns the next agent would copy. `/define` carries the same check into runs nobody is watching, and puts a behavior-preserving restructuring first when the area resists the change.
 - **Corrections become checks.** When `/do` fixes something a review or a person caught, it adds the type, lint, or test that would have caught it, scoped so it flags real problems, and the decision record names that check.
 - **Debt stays visible.** What a run finds and does not fix is listed when it finishes and in a "Debt left" section of every pull request it opens, where any later run can read it. The next change that passes through that code is offered the fix first.
-- **A way to verify that stays fresh.** Each project keeps one verification command whose `--help` says how to check its result, with a recipe for each feature, skill, document walk or eval suite. Runs build it when it is missing and repair it when it drifts, and checks that cost money, time or shared resources ask first.
+- **A way to verify that stays fresh.** Each project keeps one verification command whose `--help` says how to check its result, with a recipe for each feature, skill, document walk or eval suite. Runs build it when it is missing and repair it when it drifts, and checks that cost money, quota or shared resources ask first; every other check runs as often as it helps. It can start, observe and stop what it checks, flags a check that has slowly grown slower, and keeps what locates a failure.
 - **Earlier work is not lost.** A session working on a repository, whether on a bug, a change, a design, or a decision, starts from what earlier sessions on it ruled and found, and running setup again on a set-up project audits it against the current setup and offers each gap, marking what changed since its version.
 
 ## Install
@@ -145,7 +145,7 @@ Decisions behind the multi-CLI design are indexed in [`docs/adr/`](docs/adr/READ
 ./scripts/setup.sh
 source .venv/bin/activate
 
-ruff check --fix claude-plugins/ tests/ && black claude-plugins/ tests/ && mypy && python3 -m pytest tests/
+scripts/check.sh --fix   # lint and format, typecheck, test
 ```
 
 Run `/sync-tools` after changing plugin components to regenerate `dist/`.

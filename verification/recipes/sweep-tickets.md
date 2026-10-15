@@ -21,6 +21,7 @@ From a scheduled trigger, recovers one interrupted automation-owned Auto Ticket 
 Run: `scripts/drive-skill.sh sweep-tickets verification/prompts/sweep-tickets-sweep.md --max-turns 120`
 Proves: exactly one `run-ticket` invocation in the transcript, then the run stops. No second Ticket was touched.
 Check: read
+Workload: varies
 
 ## Gotchas
 

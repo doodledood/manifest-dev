@@ -20,6 +20,7 @@ Guides creating, updating, reviewing or discussing an LLM prompt, skill or agent
 Run: `scripts/drive-skill.sh prompt-engineering verification/prompts/prompt-engineering-diagnose.md --tools`
 Proves: an answer that traces lines to their source and proposes specific edits. It cites lines from the prompt, not general advice.
 Check: read
+Workload: varies
 
 ## Gotchas
 

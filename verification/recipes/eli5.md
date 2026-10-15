@@ -20,6 +20,7 @@ Explains a topic as a dead-simple picture explainer page: big pictures, few word
 Run: `scripts/drive-skill.sh eli5 verification/prompts/eli5-explain.md --tools`
 Proves: one HTML page, styled through design, whose path or Artifact the reply names. Nothing the topic needs is hidden behind interaction.
 Check: read
+Workload: varies
 
 ## Gotchas
 

@@ -18,6 +18,7 @@ A reader comes to these documents to decide whether manifest-dev is worth trying
 Run: `scripts/walk.sh 'Decide whether manifest-dev is worth trying. End able to say what problem it solves and what it costs them to adopt. The sections to rely on: README.md → The three things, and where they live and What it costs; site/index.html → Intro.' README.md site/index.html`
 Proves: the reader ends able to say what problem it solves and what it costs them to adopt, and names nothing it had to guess that blocks the task.
 Check: read
+Workload: varies
 
 ## Gotchas
 

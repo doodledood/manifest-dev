@@ -18,6 +18,7 @@ A reader comes to these documents to run it unattended, and should end able to s
 Run: `scripts/walk.sh 'Run it unattended. End able to start an unattended run and say where it stops for a person. The sections to rely on: claude-plugins/manifest-dev/README.md → Run it unattended.' claude-plugins/manifest-dev/README.md`
 Proves: the reader ends able to start an unattended run and say where it stops for a person, and names nothing it had to guess that blocks the task.
 Check: read
+Workload: varies
 
 ## Gotchas
 

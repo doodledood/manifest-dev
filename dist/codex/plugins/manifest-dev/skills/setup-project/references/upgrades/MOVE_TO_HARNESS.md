@@ -46,8 +46,8 @@ Keep everything the project wrote; change only its shape:
   DATE`: the summary's time comes from the move, not the run, so without the line it would read
   current. Hand-kept `Status:` lines are then removed, since statuses now come from evidence.
 - **Costly recipes get the `ask-first` mark** with the reason: any scenario that starts an agent
-  session, uses a paid API or cloud resources, runs far longer than the usual tests, loads a
-  shared environment, or has effects outside the repository. Free drives stay unmarked.
+  session, uses a paid API or cloud resources, loads a shared environment, or has effects outside
+  the repository. Run time alone is not a reason. Free drives stay unmarked.
 - **The tool** is copied as `../VERIFICATION_HARNESS.md` → *The parts* says.
 - **The project's customizations stay**: extra sections, its own wording, its own locations. A
   project whose verification lived at a non-default path may keep it there and set the path

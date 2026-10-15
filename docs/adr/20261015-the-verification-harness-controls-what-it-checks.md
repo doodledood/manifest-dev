@@ -63,9 +63,11 @@ agents working at once, which needs runs that cannot touch each other.
 - Projects whose launch fixes a port or a data path have to take the run identity instead.
 
 ## Enforced by
-not yet — `tests/test_verify.py` cases that a declared control command runs through `verify`,
-that an undeclared one is absent from `--help`, that every command a run starts receives the
-run's identity, and that failed evidence keeps or points to the instance's logs.
+`tests/test_verify.py`: `test_a_declared_control_command_runs_through_verify`,
+`test_an_undeclared_control_command_is_absent_from_help`,
+`test_every_command_a_run_starts_receives_its_identity`, and
+`test_failed_evidence_keeps_the_instances_logs`; end to end,
+`test_a_real_instance_is_started_driven_diagnosed_and_stopped`.
 
 ## Source
 - Session: figure-out investigation of the verification harness's control, speed and

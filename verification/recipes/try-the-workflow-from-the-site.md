@@ -18,6 +18,7 @@ A reader comes to these documents to try the workflow from the site, and should 
 Run: `scripts/walk.sh 'Try the workflow from the site. End able to install it and run a first session from the site alone. The sections to rely on: site/index.html → Try it.' site/index.html`
 Proves: the reader ends able to install it and run a first session from the site alone, and names nothing it had to guess that blocks the task.
 Check: read
+Workload: varies
 
 ## Gotchas
 

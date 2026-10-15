@@ -161,6 +161,7 @@ Before submitting your PR:
 - [ ] License is compatible (MIT preferred)
 - [ ] Code follows existing style
 - [ ] Examples work as documented
+- [ ] `scripts/check.sh --fix` passes (lint, format, typecheck, tests)
 
 ## Plugin Quality Guidelines
 

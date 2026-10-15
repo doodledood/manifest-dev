@@ -13,44 +13,57 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 - `/setup-project [--no-mine]`; `--no-mine` installs the wiring and the verification harness without mining history.
 - Phrases its description matches: "set up the project", "bootstrap ADRs", "check whether the setup is sound".
 - figure-out's docs mode offers it: no surfaces at all, a missing or older surfaces version, or a broken surface met on the way.
-- On a project recording an older surfaces version it follows that version's upgrade guide, moving an existing verification surface, feature map and reader tasks into one harness of recipes. A repository with nothing gets the wiring only.
+- On a project recording an older surfaces version it follows that version's upgrade guide: from v4, control commands, the tool update and the ask-first marks narrowed to cost; from earlier, moving an existing verification surface, feature map and reader tasks into one harness of recipes. A repository with nothing gets the wiring only.
 
 ## Scenarios
 
-### update-one-behind
+### update-from-v4
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v4 --max-turns 80`
+Proves: it follows the v4 guide: the tool update shown as a difference from the project's copy, `start`/`stop` (and `logs`) declared over `scripts/serve.sh` and `scripts/stop.sh` on `VERIFY_RUN_ID` in place of port 8000, `full-suite`'s run-time-only ask-first mark offered for removal, the bullet's v5 wording, and the version line at v5. Nothing v1 to v4 gave is offered again.
+Check: read
+Workload: varies
+
+### update-from-v3
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/50-update-moves-v3-into-harness --max-turns 80`
 Proves: the report lists what it offered, applied and declined; the context file ends at the newest version with one verification bullet; the summary's files include `scripts/verify`, `verification/harness.md`, a recipe per former feature-map entry and reader task (the checkout recipe keeps its *Club notes*), the moved evidence, and the removal of `docs/features/` and `docs/reader-tasks/`. Nothing was written that the run did not offer and accept.
 Check: read
+Workload: varies
 
 ### update-from-v1
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/47-update-offer-from-previous-version --max-turns 80`
 Proves: it follows the v1 guide straight to the harness — the loose `verify/` feature map becomes recipes without first taking v2's fixed map shape — and adds the records-in-effect rule.
 Check: read
+Workload: varies
 
 ### app-project
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-install.md --scaffold claude-plugins/manifest-dev/evals/51-setup-offers-harness-for-app --max-turns 80`
 Proves: the harness it seeds runs the existing `python3 -m pytest tests/` and the CLI commands, marks none of them ask-first, and `scripts/verify check` passes; one context-file verification bullet.
 Check: read
+Workload: varies
 
 ### audit-current
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-audit-current.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing --max-turns 80`
 Proves: it offers gaps item by item though the version is current, and backfills `Enforced by` only on records in effect.
 Check: read
+Workload: varies
 
 ### upgrade-this-repository-from-v3
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-upgrade-this-repository.md --scaffold verification/scaffolds/this-repository-at-v3 --max-turns 300`
 Proves: on this repository's last commit at v3, the update offers the move to one harness and applies it: a recipe per skill, walk and eval suite, the evidence moved with an Outcome line, `docs/features/` and `docs/reader-tasks/` removed, the version line at the newest. The run's `scratch.diff` is what the later hand-completed commit started from.
 Check: read
+Workload: varies
 
 ### this-repository
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-this-repository.md --scaffold verification/scaffolds/this-repository --max-turns 200`
 Proves: on this repository, set up at the newest version, the audit offers nothing and writes nothing; the summary shows no files written.
 Check: read
+Workload: varies
 
 ### install
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-install.md --max-turns 80`
 Proves: `docs/adr/CONVENTIONS.md`, `CONTEXT.md`, `NORTH_STAR.md` and `docs/NORTH_STAR_CONVENTIONS.md` exist, and the context file carries the newest version line.
 Check: read
+Workload: varies
 
 ## Gotchas
 

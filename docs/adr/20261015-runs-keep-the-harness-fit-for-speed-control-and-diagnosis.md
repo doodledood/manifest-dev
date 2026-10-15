@@ -57,8 +57,10 @@ Star's hypothesis that a codebase converges when debt is paid on the path of the
 
 ## Enforced by
 partly — the fast-enough job is held by the time line of
-20261015-check-run-time-is-held-by-an-alarm-against-creep once that check exists. Whether a run
-noticed friction and whether a failure explains itself stay judgment.
+20261015-check-run-time-is-held-by-an-alarm-against-creep: `verify drive` exits 5 on a confirmed
+crossing (`test_one_run_over_the_line_is_noise_until_a_second_confirms_it` in
+`tests/test_verify.py`). Whether a run noticed friction and whether a failure explains itself
+stay judgment.
 
 ## Source
 - Session: figure-out investigation of the verification harness's control, speed and

@@ -22,36 +22,43 @@ Turns shared understanding into a Manifest — Problem, Appetite, Deliverables w
 Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d01-layer-cut/prompt.md`
 Proves: the drive's home holds `.manifest-dev/manifests/manifest-<timestamp>.md` and the reply ends with `Manifest complete: <path>`; the three-layer plan comes back re-cut into slices. Every gate in the Manifest ends with `Judgment gate.` or `Deterministic gate.` and the ceiling invariant is present verbatim.
 Check: read
+Workload: varies
 
 ### project-rule-over-default
 Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d21-user-rule-over-default/prompt.md --scaffold claude-plugins/manifest-dev/evals/define/d21-user-rule-over-default`
 Proves: the Manifest checks the fix only through `checks/`, keeps test files out, and records the overridden regression-test Default.
 Check: read
+Workload: varies
 
 ### coding-defaults
 Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d20-preparatory-slice/prompt.md --scaffold claude-plugins/manifest-dev/evals/define/d20-preparatory-slice`
 Proves: the Manifest's guidance carries the CODING Defaults that apply — what could regress silently, no layer without a present case, expected values from stated behavior — and a behavior-preserving slice before the change.
 Check: read
+Workload: varies
 
 ### feature-defaults
 Run: `scripts/drive-skill.sh define verification/prompts/define-feature-defaults.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing`
 Proves: for a feature whose installs upgrade on different days, the Manifest keeps old and new versions working side by side on shared data.
 Check: read
+Workload: varies
 
 ### bounded-growth
 Run: `scripts/drive-skill.sh define verification/prompts/define-bounded-growth.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing`
 Proves: for data that grows for years, the Manifest carries *Bound what grows*: a gate keeps append and per-member query cost tolerable at a stated scale.
 Check: read
+Workload: varies
 
 ### prompting-defaults
 Run: `scripts/drive-skill.sh define verification/prompts/define-prompting-defaults.md`
 Proves: for a prompt change needing an exact count, the Manifest holds the exact count with a check over real runs, not an instruction alone.
 Check: read
+Workload: varies
 
 ### amend
 Run: `scripts/drive-skill.sh define verification/prompts/define-amend.md`
 Proves: only the named items change; IDs of the others are untouched (diff the file).
 Check: read
+Workload: varies
 
 ## Gotchas
 

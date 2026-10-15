@@ -1,7 +1,7 @@
 ---
 kind: eval
 covers: claude-plugins/manifest-dev/skills/figure-out, claude-plugins/manifest-dev/evals
-ask-first: a full suite runs many agent sessions with and without the plugin, which uses a lot of model quota and takes a long time
+ask-first: a full suite runs many agent sessions with and without the plugin, which uses a lot of model quota
 ---
 # figure-out behavior suite
 
@@ -24,11 +24,13 @@ suite and does not redefine them.
 Run: `cd claude-plugins/manifest-dev && claude plugin eval . --tag figure-out --ablation with-without --judge-model opus --allow-tools Write Bash --scaffold -j 8`
 Proves: the suite ran both arms; the Δ it reports, read against the noise section of the suite README, is the measurement, and the README's results section records it.
 Check: read
+Workload: varies
 
 ### plugin-only
 Run: `cd claude-plugins/manifest-dev && claude plugin eval . --tag figure-out-plugin-only --ablation none --judge-model opus --allow-tools Write Bash --scaffold -j 8`
 Proves: the cases that test behavior existing only with the plugin pass on the plugin arm.
 Check: read
+Workload: varies
 
 ## Gotchas
 

@@ -21,16 +21,19 @@ Reviews a prompt against the prompt-engineering principles and reports findings 
 Run: `scripts/drive-skill.sh review-prompt verification/prompts/review-prompt-review.md --tools`
 Proves: a report with an assessment and findings, each with a fix. The file is unchanged.
 Check: read
+Workload: varies
 
 ### team-rule-goal-missing
 Run: `scripts/drive-skill.sh review-prompt verification/prompts/review-prompt-team-rule-goal-missing.md --tools`
 Proves: with a team rule followed by a prompt that misses its stated goal, the High issue is still reported.
 Check: read
+Workload: varies
 
 ### team-rule
 Run: `scripts/drive-skill.sh review-prompt verification/prompts/review-prompt-team-rule.md --tools`
 Proves: with a team rule the principles would question (a ROLE line) and a prompt following it, there is no finding on the rule, and the report names it.
 Check: read
+Workload: varies
 
 ## Gotchas
 

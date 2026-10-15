@@ -21,6 +21,7 @@ Takes one exact Ticket, recovers any earlier attempt, runs it through auto and i
 Run: `scripts/drive-skill.sh run-ticket verification/prompts/run-ticket-run.md --max-turns 120`
 Proves: the Ticket gains `<!-- manifest-dev-run-ticket-attempt -->` and, at the end, a DONE section or `<!-- manifest-dev-run-ticket-escalated -->`. The landing the Ticket asks for is observed, not assumed.
 Check: read
+Workload: varies
 
 ## Gotchas
 

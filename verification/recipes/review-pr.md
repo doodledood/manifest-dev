@@ -21,6 +21,7 @@ Reviews a pull request and posts high-signal comments in the user's voice under 
 Run: `scripts/drive-skill.sh review-pr verification/prompts/review-pr-review.md --tools`
 Proves: one GitHub review whose comments each carry `<!-- manifest-dev:review-pr -->`. No `REQUEST_CHANGES` review; approval only after the user confirmed it.
 Check: read
+Workload: varies
 
 ## Gotchas
 

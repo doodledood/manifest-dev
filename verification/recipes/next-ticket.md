@@ -21,6 +21,7 @@ Reads the Ticket store, picks the one Ticket whose delay would cost the project 
 Run: `scripts/drive-skill.sh next-ticket verification/prompts/next-ticket-select.md`
 Proves: one Ticket presented with a reason; the summary's files show only that Ticket gaining a claim line. Only the chosen Ticket changed, and only by its claim.
 Check: read
+Workload: varies
 
 ## Gotchas
 

@@ -28,6 +28,11 @@ Proves: a draft typed as `Discard me` and cancelled does not appear in the list.
 Run: `scripts/control-notes cli -- notes create --title "CLI note" --body "From terminal" --format json`
 Proves: exit code 0, and stdout holds the new note's ID and title.
 
+### changed-tests
+Run: `scripts/control-notes test --changed-since main`
+Proves: the unit tests for the files this change touched pass; quick enough to run after every edit.
+Workload: varies
+
 ## Gotchas
 
 - Pressing `n` inside a text field types the letter instead of opening an editor.

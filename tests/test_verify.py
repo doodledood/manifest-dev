@@ -15,6 +15,7 @@ import re
 import shutil
 import signal
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -577,12 +578,16 @@ def test_runs_in_one_second_get_their_own_evidence(tmp_path: Path) -> None:
         **_harness(tmp_path, "", "### once\nRun: `true`\n"),
         "VERIFY_STAMP": "20260101T000000Z",
     }
-    for _ in range(2):
-        assert run_verify("drive", "thing", env=env).returncode == 0
+    first = run_verify("drive", "thing", env=env)
+    assert first.returncode == 0 and "20260101T000000Z.md" in first.stdout
+    # The second run takes a name of its own, then replaces the first as the scenario's one
+    # summary.
+    second = run_verify("drive", "thing", env=env)
+    assert second.returncode == 0 and "20260101T000000Z-2.md" in second.stdout
     made = sorted(
         p.name for p in (tmp_path / "verification" / "evidence" / "thing").iterdir()
     )
-    assert made == ["20260101T000000Z-2.md", "20260101T000000Z.md"], made
+    assert made == ["20260101T000000Z-2.md"], made
 
 
 @pytest.mark.parametrize("has_outcome", [True, False])
@@ -1242,7 +1247,7 @@ def test_a_link_to_a_directory_counts_by_its_target_not_its_contents(
 
 def test_a_command_never_outlives_a_killed_tool(tmp_path: Path) -> None:
     marker = tmp_path / "finished"
-    env = _covering(tmp_path, f"sleep 4; touch {marker}", "verification/recipes")
+    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -1255,7 +1260,7 @@ def test_a_command_never_outlives_a_killed_tool(tmp_path: Path) -> None:
     time.sleep(0.5)  # the line prints just before the command starts
     drive.kill()  # SIGKILL: no handler runs, as when a timeout kills the tool
     drive.wait(timeout=10)
-    time.sleep(6)
+    time.sleep(3)
     assert not marker.exists(), "the command kept running after the tool was killed"
 
 
@@ -1351,7 +1356,7 @@ def test_a_killed_tool_stops_its_command_before_anyone_reaps_it(
     tmp_path: Path,
 ) -> None:
     marker = tmp_path / "finished"
-    env = _covering(tmp_path, f"sleep 4; touch {marker}", "verification/recipes")
+    env = _covering(tmp_path, f"sleep 2; touch {marker}", "verification/recipes")
     drive = subprocess.Popen(
         [str(VERIFY), "drive", "thing"],
         env=env,
@@ -1363,7 +1368,7 @@ def test_a_killed_tool_stops_its_command_before_anyone_reaps_it(
     assert drive.stdout.readline().startswith("running [once]")
     time.sleep(0.5)
     os.kill(drive.pid, signal.SIGKILL)  # left a zombie: not waited for until the end
-    time.sleep(6)
+    time.sleep(3)
     assert not marker.exists(), "the command ran on while its tool was a zombie"
     drive.wait(timeout=10)
 
@@ -1473,6 +1478,13 @@ def _start_drive(env: dict[str, str]) -> subprocess.Popen[str]:
     return drive
 
 
+def _short_grace(tmp_path: Path) -> None:
+    # The grace is a setting; half a second keeps the forced kill well ahead of a 2s job.
+    (tmp_path / "verification" / "harness.md").write_text(
+        "---\nask-first: ask\ngrace: 0.5\n---\n", encoding="utf-8"
+    )
+
+
 def _appears(path: Path, within: float) -> bool:
     deadline = time.monotonic() + within
     while not path.exists() and time.monotonic() < deadline:
@@ -1537,9 +1549,10 @@ def test_a_forced_stop_kills_what_ignores_it_after_the_grace(tmp_path: Path) -> 
     marker = tmp_path / "outlived"
     env = _covering(
         tmp_path,
-        f"(trap '' INT TERM; sleep 4; touch {marker}) >/dev/null 2>&1 & trap '' INT; wait",
+        f"(trap '' INT TERM; sleep 2; touch {marker}) >/dev/null 2>&1 & trap '' INT; wait",
         "verification/recipes",
     )
+    _short_grace(tmp_path)
     drive = _start_drive(env)
     drive.send_signal(signal.SIGINT)
     time.sleep(0.2)
@@ -1548,7 +1561,7 @@ def test_a_forced_stop_kills_what_ignores_it_after_the_grace(tmp_path: Path) -> 
         assert drive.wait(timeout=10) == 130
     finally:
         drive.kill()
-    assert not _appears(marker, 6)
+    assert not _appears(marker, 3)
 
 
 def test_a_tool_killed_during_the_grace_still_stops_what_was_left(
@@ -1557,15 +1570,16 @@ def test_a_tool_killed_during_the_grace_still_stops_what_was_left(
     marker = tmp_path / "outlived"
     env = _covering(
         tmp_path,
-        f"(trap '' TERM; sleep 4; touch {marker}) & echo started",
+        f"(trap '' TERM; sleep 2; touch {marker}) & echo started",
         "verification/recipes",
     )
+    _short_grace(tmp_path)
     drive = _start_drive(
         env
     )  # the command has ended; its job ignores the stop's SIGTERM
     drive.kill()
     drive.wait(timeout=10)
-    assert not _appears(marker, 6)
+    assert not _appears(marker, 3)
 
 
 def test_a_run_with_nothing_left_behind_does_not_wait_the_grace(tmp_path: Path) -> None:
@@ -1695,3 +1709,763 @@ def test_the_command_runs_as_the_tools_own_child(tmp_path: Path) -> None:
     )
     assert drive.wait(timeout=10) == 0
     assert marker.read_text(encoding="utf-8").strip() == str(drive.pid)
+
+
+# --- Speed, control and diagnosis -------------------------------------------------------
+# Run time held against creep by lines kept in evidence, one summary per scenario, the stop
+# grace, control commands with a per-run identity, failure logs, and `verify affected`.
+
+MACHINE = "test-machine"
+
+
+def _settings(tmp_path: Path, **values: str) -> None:
+    lines = "".join(f"{key}: {value}\n" for key, value in values.items())
+    (tmp_path / "verification" / "harness.md").write_text(
+        f"---\nask-first: ask\n{lines}---\n", encoding="utf-8"
+    )
+
+
+def _summaries(tmp_path: Path, recipe: str = "thing") -> list[Path]:
+    folder = tmp_path / "verification" / "evidence" / recipe
+    return sorted(p for p in folder.glob("*.md") if re.match(r"\d{8}T", p.name))
+
+
+def _only_summary(tmp_path: Path) -> str:
+    (summary,) = _summaries(tmp_path)
+    return summary.read_text(encoding="utf-8")
+
+
+def _timed(tmp_path: Path, scenarios: str = "") -> dict[str, str]:
+    """A recipe whose one scenario sleeps for whatever the `delay` file says."""
+    (tmp_path / "delay").write_text("0\n", encoding="utf-8")
+    env = _harness(tmp_path, "", scenarios or '### once\nRun: `sleep "$(cat delay)"`\n')
+    return {**env, "VERIFY_MACHINE": MACHINE}
+
+
+def _delay(tmp_path: Path, seconds: float) -> None:
+    (tmp_path / "delay").write_text(f"{seconds}\n", encoding="utf-8")
+
+
+def _line(tmp_path: Path, line: str, duration: float) -> None:
+    """Plant the scenario's latest evidence carrying a line, as an earlier run left it."""
+    _evidence(
+        tmp_path,
+        "20260101T000000Z",
+        f"# thing / once\n\n- **Scenario:** once\n- **Outcome:** verified\n"
+        f"- **Machine:** {MACHINE}\n- **Duration:** {duration:.1f} s\n"
+        f"- **Line:** {MACHINE} {line}\n- **Proves:** it runs.\n\n## Output\n\n(none)\n",
+    )
+
+
+# --- the stop grace --------------------------------------------------------------------
+
+
+def test_the_grace_setting_sets_the_wait_before_the_kill(tmp_path: Path) -> None:
+    # A job ignoring SIGTERM is killed after the configured grace, not the default 2 s.
+    marker = tmp_path / "outlived"
+    env = _covering(
+        tmp_path,
+        f"(trap '' TERM; sleep 1.5; touch {marker}) & echo started",
+        "verification/recipes",
+    )
+    _settings(tmp_path, grace="0.2")
+    began = time.monotonic()
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert time.monotonic() - began < 1.5, "the run waited longer than its grace"
+    time.sleep(2)
+    assert not marker.exists(), "the job outlived the grace"
+
+
+@pytest.mark.parametrize("value", ["soon", "-1", "2s"])
+def test_a_grace_that_is_not_seconds_is_refused(tmp_path: Path, value: str) -> None:
+    env = _harness(tmp_path, "")
+    _settings(tmp_path, grace=value)
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == 1 and "grace must be a number of seconds" in (
+        result.stderr
+    ), result.stderr
+
+
+def test_help_names_the_grace_and_its_setting(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    _settings(tmp_path, grace="0.5")
+    shown = run_verify("--help", env=env).stdout
+    assert "SIGKILL after 0.5 s (`grace:`" in shown, shown
+
+
+# --- kept output -----------------------------------------------------------------------
+
+
+def test_kept_output_carries_no_path_from_the_home_or_temp_directory_wherever_they_are(
+    tmp_path: Path,
+) -> None:
+    # A list of usual places always misses the next one (`/root` was missed); the paths come
+    # from the machine itself. Neither directory needs to exist for its name to be private.
+    home, temp = "/srv/odd-home-for-verify", "/opt/scratch-for-verify"
+    env = {
+        **_harness(tmp_path, "", '### once\nRun: `echo "$HOME/a" "$TMPDIR/b" $HOME`\n'),
+        "HOME": home,
+        "TMPDIR": temp,
+    }
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    text = _only_summary(tmp_path).split("## Output", 1)[1]
+    assert home not in text and temp not in text, text
+    assert text.count("[local path]") == 3, text
+
+
+# --- durations and one summary per scenario -------------------------------------------
+
+
+# Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
+def test_evidence_records_duration_and_machine(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    kept = _only_summary(tmp_path)
+    assert re.search(r"^- \*\*Duration:\*\* \d+\.\d s$", kept, re.M), kept
+    assert f"- **Machine:** {MACHINE}\n" in kept and "- **Run:** " in kept, kept
+    shown = run_verify("help", "thing", env=env).stdout
+    assert f" s on {MACHINE}" in shown, shown
+
+
+def test_without_an_override_the_machine_names_platform_and_cores(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "")
+    env.pop("VERIFY_MACHINE", None)
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    machine = re.search(r"^- \*\*Machine:\*\* (\S+)$", _only_summary(tmp_path), re.M)
+    assert machine and re.fullmatch(
+        rf"{sys.platform}-\w+-\d+cpu", machine.group(1)
+    ), machine
+
+
+def test_evidence_from_before_durations_keeps_its_status(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "- **Scenario:** once\n- **Outcome:** verified\n")
+    assert "verified (2026-01-01)" in run_verify("list", env=env).stdout
+    assert "once: verified" in run_verify("help", "thing", env=env).stdout
+
+
+def test_a_scenario_keeps_one_summary_however_often_it_runs(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    for _ in range(4):
+        assert run_verify("drive", "thing", env=env).returncode == 0
+    assert len(_summaries(tmp_path)) == 1
+    assert "verified (" in run_verify("list", env=env).stdout
+
+
+def test_a_run_never_takes_a_name_that_sorts_before_the_one_it_replaces(
+    tmp_path: Path,
+) -> None:
+    # The second run in a second replaces STAMP.md with STAMP-2.md; a third must not reuse the
+    # freed STAMP.md, which would sort before STAMP-2.md and leave the older run as the latest.
+    env = {**_harness(tmp_path, ""), "VERIFY_STAMP": "20260101T000000Z"}
+    for _ in range(3):
+        assert run_verify("drive", "thing", env=env).returncode == 0
+    assert [p.name for p in _summaries(tmp_path)] == ["20260101T000000Z-3.md"]
+
+
+def test_summaries_from_merged_branches_fold_into_one_on_the_next_run(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "", "### once\nRun: `true`\n\n### other\nRun: `true`\n")
+    for stamp in ("20260101T000000Z", "20260102T000000Z"):  # one from each branch
+        _evidence(tmp_path, stamp, "- **Scenario:** once\n- **Outcome:** verified\n")
+    _evidence(
+        tmp_path, "20260103T000000Z", "- **Scenario:** other\n- **Outcome:** verified\n"
+    )
+    detail = tmp_path / "verification" / "evidence" / "thing" / "transcript.md"
+    detail.write_text("kept beside the summaries\n", encoding="utf-8")
+    assert run_verify("drive", "thing", "once", env=env).returncode == 0
+    scenarios = [
+        re.search(r"^- \*\*Scenario:\*\* (\S+)", p.read_text(encoding="utf-8"), re.M)
+        for p in _summaries(tmp_path)
+    ]
+    assert sorted(m.group(1) for m in scenarios if m) == ["once", "other"]
+    assert detail.exists(), "detail kept beside the summaries was removed"
+
+
+def test_a_new_run_of_a_judged_scenario_needs_judging_again(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### once\nRun: `true`\nCheck: read\n")
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    (first,) = _summaries(tmp_path)
+    assert run_verify("judge", "thing", first.stem, "verified", env=env).returncode == 0
+    assert "verified (" in run_verify("list", env=env).stdout
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    assert "unjudged (" in run_verify("list", env=env).stdout
+    assert not first.exists()
+
+
+# --- lines -----------------------------------------------------------------------------
+
+
+# Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
+def test_the_first_run_on_a_kind_of_machine_sets_its_line_there(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    assert f"- **Line:** {MACHINE} 0.0 s; first run\n" in _only_summary(tmp_path)
+    other = {**env, "VERIFY_MACHINE": "another-machine"}
+    _delay(tmp_path, 1.2)  # over the first machine's line, but never compared with it
+    result = run_verify("drive", "thing", env=other)
+    assert result.returncode == 0 and "over" not in result.stdout, result.stdout
+    kept = _only_summary(tmp_path)
+    assert f"- **Line:** {MACHINE} 0.0 s; first run\n" in kept, kept
+    assert re.search(
+        r"^- \*\*Line:\*\* another-machine 1\.\d s; first run$", kept, re.M
+    )
+
+
+def test_a_scenario_whose_work_varies_gets_no_line(tmp_path: Path) -> None:
+    env = _timed(tmp_path, '### once\nRun: `sleep "$(cat delay)"`\nWorkload: varies\n')
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    assert "- **Line:**" not in _only_summary(tmp_path)
+
+
+# Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
+def test_one_run_over_the_line_is_noise_until_a_second_confirms_it(
+    tmp_path: Path,
+) -> None:
+    env = _timed(tmp_path)
+    _line(tmp_path, "0.0 s; first run", 0.0)
+    _delay(tmp_path, 1.2)
+    once = run_verify("drive", "thing", env=env)
+    assert once.returncode == 0 and "over its line once" in once.stdout, once.stdout
+    assert "verified (" in run_verify("list", env=env).stdout
+    twice = run_verify("drive", "thing", env=env)
+    assert twice.returncode == 5, twice.stdout + twice.stderr
+    listed = run_verify("list", env=env).stdout
+    assert "over its line (" in listed, listed
+    shown = run_verify("help", "thing", env=env).stdout
+    assert "took 1." in shown and "2 run(s) over" in shown, shown
+    # Back under the line: the crossing clears.
+    _delay(tmp_path, 0)
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    assert "verified (" in run_verify("list", env=env).stdout
+
+
+def test_a_run_back_under_the_line_resets_a_single_crossing(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    _line(tmp_path, "0.0 s; first run; over 1", 1.3)
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    assert "over 1" not in _only_summary(tmp_path)
+
+
+def test_a_run_faster_by_more_than_the_headroom_lowers_the_line(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    _line(tmp_path, "5.0 s; first run", 5.0)
+    result = run_verify("drive", "thing", env=env)
+    assert "line lowered from 5.0 s" in result.stdout, result.stdout
+    assert f"- **Line:** {MACHINE} 0.0 s; lowered\n" in _only_summary(tmp_path)
+
+
+def test_a_run_within_the_headroom_keeps_the_line(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    _line(tmp_path, "0.6 s; first run", 0.6)  # 0.0 s is within 1 s of 0.6 s
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    assert f"- **Line:** {MACHINE} 0.6 s; first run\n" in _only_summary(tmp_path)
+
+
+def test_the_headroom_is_a_setting(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    _settings(tmp_path, headroom="300%")
+    _line(tmp_path, "1.0 s; first run; over 1", 1.0)
+    _delay(tmp_path, 2.2)  # over 1 s + the 1 s floor, under 1 s + 300%
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    _settings(tmp_path, headroom="lots")
+    result = run_verify("list", env=env)
+    assert result.returncode == 1 and "headroom must be a percentage" in result.stderr
+
+
+# Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
+def test_a_raise_without_a_reason_is_refused(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    _line(tmp_path, "0.0 s; first run; over 2", 1.3)
+    refused = run_verify("raise", "thing", "once", env=env)
+    assert refused.returncode == 2 and "give the reason" in refused.stderr
+    raised = run_verify(
+        "raise", "thing", "once", "new", "tests", "for", "exports", env=env
+    )
+    assert raised.returncode == 0, raised.stdout + raised.stderr
+    assert (
+        f"- **Line:** {MACHINE} 1.3 s; raised: new tests for exports\n"
+        in _only_summary(tmp_path)
+    )
+    assert "verified (" in run_verify("list", env=env).stdout
+
+
+def test_a_line_not_crossed_has_nothing_to_raise(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    _line(tmp_path, "5.0 s; first run", 5.0)
+    result = run_verify("raise", "thing", "once", "because", env=env)
+    assert result.returncode == 1 and "not over its line" in result.stderr
+
+
+def test_a_project_can_require_a_person_to_raise_a_line(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    (tmp_path / "verification" / "harness.md").write_text(
+        "---\nask-first: ask\nraise: ask\n---\n", encoding="utf-8"
+    )
+    _line(tmp_path, "0.0 s; first run; over 2", 1.3)
+    refused = run_verify("raise", "thing", "once", "earned", env=env)
+    assert refused.returncode == 4 and "needs a person" in refused.stderr
+    agreed = run_verify("raise", "thing", "once", "earned", "--yes", env=env)
+    assert agreed.returncode == 0, agreed.stderr
+
+
+# Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
+def test_a_frozen_overshoot_fails_a_run_only_past_the_frozen_level(
+    tmp_path: Path,
+) -> None:
+    env = _timed(tmp_path)
+    _line(tmp_path, "0.0 s; first run; over 2", 1.3)
+    assert run_verify("freeze", "thing", "once", env=env).returncode == 2
+    frozen = run_verify("freeze", "thing", "once", "TICKET-7", env=env)
+    assert frozen.returncode == 0, frozen.stdout + frozen.stderr
+    assert "frozen at 1.3 s by TICKET-7" in _only_summary(tmp_path)
+    assert "verified (" in run_verify("list", env=env).stdout
+    # Up to the frozen level (with headroom) other runs are not held up.
+    _delay(tmp_path, 1.2)
+    held = run_verify("drive", "thing", env=env)
+    assert held.returncode == 0 and "over" not in held.stdout, held.stdout
+    assert "frozen at 1.3 s by TICKET-7" in _only_summary(tmp_path)
+    # Past it is new creep, paid by whoever causes it.
+    _delay(tmp_path, 2.5)
+    past = run_verify("drive", "thing", env=env)
+    assert "over its line once" in past.stdout, past.stdout
+
+
+def test_a_run_back_under_the_original_line_pays_a_frozen_overshoot_down(
+    tmp_path: Path,
+) -> None:
+    env = _timed(tmp_path)
+    _line(tmp_path, "0.0 s; first run; frozen at 3.0 s by TICKET-7", 3.0)
+    result = run_verify("drive", "thing", env=env)
+    assert "is paid down" in result.stdout, result.stdout
+    assert f"- **Line:** {MACHINE} 0.0 s; paid down\n" in _only_summary(tmp_path)
+
+
+# Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
+def test_lines_live_only_in_evidence(tmp_path: Path) -> None:
+    # Many runs side by side never conflict over a shared file: nothing but the scenario's own
+    # evidence changes when a line is set, crossed, raised or frozen.
+    env = _timed(tmp_path)
+    shared = [
+        tmp_path / "verification" / "harness.md",
+        tmp_path / "verification" / "recipes" / "thing.md",
+    ]
+    _settings(tmp_path)
+    before = [p.read_bytes() for p in shared]
+    _line(tmp_path, "0.0 s; first run; over 1", 1.3)
+    _delay(tmp_path, 1.2)
+    assert run_verify("drive", "thing", env=env).returncode == 5
+    assert run_verify("raise", "thing", "once", "earned", env=env).returncode == 0
+    assert [p.read_bytes() for p in shared] == before
+
+
+def test_a_failed_run_leaves_the_line_as_it_was(tmp_path: Path) -> None:
+    env = _timed(tmp_path, '### once\nRun: `sleep "$(cat delay)"; exit 1`\n')
+    _line(tmp_path, "0.0 s; first run; over 1", 1.3)
+    _delay(tmp_path, 1.2)
+    assert run_verify("drive", "thing", env=env).returncode == 1
+    assert f"- **Line:** {MACHINE} 0.0 s; first run; over 1\n" in _only_summary(
+        tmp_path
+    )
+
+
+# --- control and run identity ----------------------------------------------------------
+
+CONTROL = ("start", "running", "logs", "reset", "stop")
+
+
+def _record(tmp_path: Path, name: str) -> str:
+    return f'echo "$VERIFY_RUN_ID" >> {tmp_path / name}'
+
+
+# Holds the decision in docs/adr/20261015-the-verification-harness-controls-what-it-checks.md.
+def test_a_declared_control_command_runs_through_verify(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    _settings(tmp_path, start="echo starting; exit 7", stop=_record(tmp_path, "stops"))
+    started = run_verify("start", env=env)
+    assert started.returncode == 7 and "starting" in started.stdout, started
+    stopped = run_verify("stop", "--run", "run-one", env=env)
+    assert stopped.returncode == 0, stopped.stderr
+    assert (tmp_path / "stops").read_text(encoding="utf-8") == "run-one\n"
+
+
+# Holds the decision in docs/adr/20261015-the-verification-harness-controls-what-it-checks.md.
+def test_an_undeclared_control_command_is_absent_from_help(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    _settings(tmp_path, logs="true")
+    shown = run_verify("--help", env=env).stdout
+    assert re.search(r"^  verify logs \[--run ID\]", shown, re.M), shown
+    for name in set(CONTROL) - {"logs"}:
+        assert not re.search(rf"^  verify {name}\b", shown, re.M), name
+        refused = run_verify(name, env=env)
+        assert refused.returncode == 2, refused.stderr
+        assert f"no `{name}:` command" in refused.stderr, refused.stderr
+
+
+def test_a_project_declaring_no_control_has_no_control_section(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    shown = run_verify("--help", env=env).stdout
+    assert "Control (" not in shown
+
+
+# Holds the decision in docs/adr/20261015-the-verification-harness-controls-what-it-checks.md.
+def test_every_command_a_run_starts_receives_its_identity(tmp_path: Path) -> None:
+    env = _harness(
+        tmp_path,
+        "",
+        f"### one\nRun: `{_record(tmp_path, 'scenarios')}`\n\n"
+        f"### two\nRun: `{_record(tmp_path, 'scenarios')}`\n",
+    )
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8").replace(
+            "kind: feature\n", "kind: feature\ndry-run: honored\n"
+        ),
+        encoding="utf-8",
+    )
+    _settings(
+        tmp_path,
+        doctor=_record(tmp_path, "doctor"),
+        running=_record(tmp_path, "running"),
+    )
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    ids = (tmp_path / "scenarios").read_text(encoding="utf-8").split()
+    assert len(ids) == 2 and ids[0] == ids[1] and ids[0], ids  # one run, one identity
+    assert run_verify("drive", "thing", "--dry-run", env=env).returncode == 0
+    dry = (tmp_path / "scenarios").read_text(encoding="utf-8").split()[2:]
+    assert len(dry) == 2 and dry[0] and dry[0] != ids[0], dry
+    for command, file in (("doctor", "doctor"), ("running", "running")):
+        assert run_verify(command, env=env).returncode == 0
+        assert (tmp_path / file).read_text(encoding="utf-8").strip(), command
+    inherited = {**env, "VERIFY_RUN_ID": "outer-run"}
+    assert run_verify("running", env=inherited).returncode == 0
+    assert (tmp_path / "running").read_text(encoding="utf-8").split()[-1] == "outer-run"
+
+
+def test_runs_started_at_once_get_different_identities(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", f"### once\nRun: `{_record(tmp_path, 'ids')}`\n")
+    drives = [
+        subprocess.Popen(
+            [str(VERIFY), "drive", "thing"],
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+        for _ in range(4)
+    ]
+    outputs = [d.communicate(timeout=30)[0] for d in drives]
+    assert [d.returncode for d in drives] == [0] * 4, outputs
+    ids = (tmp_path / "ids").read_text(encoding="utf-8").split()
+    assert len(set(ids)) == 4, ids
+
+
+def test_a_run_id_that_is_not_a_plain_name_is_refused(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "")
+    _settings(tmp_path, stop="true")
+    for bad in ("../other", "a b", ""):
+        result = run_verify("stop", "--run", bad, env=env)
+        assert result.returncode == 2, (bad, result.stderr)
+
+
+# Holds the decision in docs/adr/20261015-the-verification-harness-controls-what-it-checks.md.
+def test_failed_evidence_keeps_the_instances_logs(tmp_path: Path) -> None:
+    logs = tmp_path / "logs"
+    logs.mkdir()
+    env = _harness(
+        tmp_path,
+        "",
+        f'### good\nRun: `echo "served $VERIFY_RUN_ID" > {logs}/"$VERIFY_RUN_ID"`\n\n'
+        f'### bad\nRun: `echo "boom in $VERIFY_RUN_ID" > {logs}/"$VERIFY_RUN_ID"; exit 1`\n',
+    )
+    _settings(tmp_path, logs=f'cat {logs}/"$VERIFY_RUN_ID"')
+    assert run_verify("drive", "thing", "good", env=env).returncode == 0
+    good = _only_summary(tmp_path)
+    assert "## Logs" not in good, good
+    assert run_verify("drive", "thing", "bad", env=env).returncode == 1
+    bad = next(
+        p.read_text(encoding="utf-8")
+        for p in _summaries(tmp_path)
+        if "- **Scenario:** bad" in p.read_text(encoding="utf-8")
+    )
+    run = re.search(r"^- \*\*Run:\*\* (\S+)$", bad, re.M)
+    assert run and "## Logs\n\nFrom `cat [local path]" in bad, bad
+    assert f"boom in {run.group(1)}" in bad.split("## Logs", 1)[1], bad
+
+
+def test_a_failing_logs_command_is_reported_and_the_run_stays_failed(
+    tmp_path: Path,
+) -> None:
+    env = _harness(tmp_path, "", "### bad\nRun: `exit 1`\n")
+    _settings(tmp_path, logs="echo no instance; exit 4")
+    assert run_verify("drive", "thing", env=env).returncode == 1
+    kept = _only_summary(tmp_path)
+    assert "- **Outcome:** failed\n" in kept
+    assert "exited 4; what it printed:\n\nno instance" in kept, kept
+
+
+# --- the shipped example ---------------------------------------------------------------
+
+# What the tool sets for the commands it starts (VERIFY_COMMAND is its own plumbing).
+TOOL_SETS = {"VERIFY_RUN_ID", "VERIFY_DRY_RUN"}
+
+
+def _example_texts(harness: Path) -> dict[str, str]:
+    files = [harness / "harness.md", *sorted((harness / "recipes").glob("*.md"))]
+    return {p.name: p.read_text(encoding="utf-8") for p in files}
+
+
+def _example_problems(harness: Path) -> list[str]:
+    problems = []
+    for name, text in _example_texts(harness).items():
+        defined = set(re.findall(r"\b([A-Z_][A-Z0-9_]*)=", text))
+        for var in set(re.findall(r"\$\{?([A-Z_][A-Z0-9_]*)", text)):
+            if var not in TOOL_SETS | defined:
+                problems.append(f"{name} uses ${var}, which nothing sets")
+        for port in re.findall(
+            r"(?:127\.0\.0\.1|localhost|--port[ =]):?(\d{2,5})", text
+        ):
+            problems.append(f"{name} names the fixed port {port}")
+    return problems
+
+
+def test_the_shipped_example_uses_only_what_the_tool_provides_and_no_fixed_port() -> (
+    None
+):
+    # The class behind `$RUN_ID`, which the example used and the tool never set, and the
+    # fixed port every run shared.
+    assert not _example_problems(SHIPPED_HARNESS), _example_problems(SHIPPED_HARNESS)
+
+
+def test_the_example_check_catches_an_unset_variable_and_a_fixed_port(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "recipes").mkdir()
+    (tmp_path / "harness.md").write_text(
+        "- Runs start from `serve --data-dir /tmp/x-$RUN_ID` at "
+        "`http://127.0.0.1:4173`.\n",
+        encoding="utf-8",
+    )
+    found = _example_problems(tmp_path)
+    assert any("$RUN_ID" in p for p in found) and any("4173" in p for p in found)
+
+
+# --- end to end: a real instance -------------------------------------------------------
+
+SERVER = """\
+import http.server, os, sys
+home = sys.argv[1]
+class Handler(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200 if self.path == "/ok" else 500)
+        self.end_headers()
+        self.wfile.write(os.path.basename(home).encode())
+    def log_message(self, fmt, *args):
+        with open(os.path.join(home, "log"), "a") as log:
+            log.write("request %s\\n" % self.path)
+server = http.server.HTTPServer(("127.0.0.1", 0), Handler)
+with open(os.path.join(home, "pid"), "w") as f:
+    f.write(str(os.getpid()))
+with open(os.path.join(home, "port.tmp"), "w") as f:
+    f.write(str(server.server_address[1]))
+os.rename(os.path.join(home, "port.tmp"), os.path.join(home, "port"))
+server.serve_forever()
+"""
+
+CONTROL_SCRIPT = """\
+#!/bin/sh
+# One instance per run: its data directory and port come from the run's identity.
+home="runs/$VERIFY_RUN_ID"
+case "$1" in
+  start)
+    mkdir -p "$home" && rm -f "$home/port"
+    python3 server.py "$home" </dev/null >/dev/null 2>&1 &
+    i=0; while [ ! -f "$home/port" ] && [ $i -lt 100 ]; do sleep 0.05; i=$((i+1)); done
+    [ -f "$home/port" ] && echo "started $VERIFY_RUN_ID on port $(cat "$home/port")" ;;
+  probe)
+    python3 -c "import sys, urllib.request
+port = open('$home/port').read()
+try:
+    body = urllib.request.urlopen('http://127.0.0.1:%s%s' % (port, sys.argv[1])).read()
+    print(body.decode())
+except Exception as error:
+    print(error); sys.exit(1)" "$2" ;;
+  logs) cat "$home/log" ;;
+  stop) [ -f "$home/pid" ] && kill "$(cat "$home/pid")" && rm -f "$home/pid" ;;
+esac
+"""
+
+
+def _instance_project(tmp_path: Path) -> dict[str, str]:
+    (tmp_path / "server.py").write_text(SERVER, encoding="utf-8")
+    control = tmp_path / "control"
+    control.write_text(CONTROL_SCRIPT, encoding="utf-8")
+    control.chmod(0o755)
+    probe = "./control start >/dev/null && ./control probe {path}; s=$?; ./control stop; exit $s"
+    env = _harness(
+        tmp_path,
+        "",
+        f"### serves\nRun: `{probe.format(path='/ok')}`\n\n"
+        f"### fails\nRun: `{probe.format(path='/missing')}`\n",
+    )
+    _settings(
+        tmp_path,
+        start="./control start",
+        logs="./control logs",
+        stop="./control stop",
+    )
+    return env
+
+
+def _alive(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    return True
+
+
+def _left_running(tmp_path: Path) -> list[int]:
+    pids = [int(p.read_text()) for p in (tmp_path / "runs").glob("*/pid")]
+    return [pid for pid in pids if _alive(pid)]
+
+
+# Holds the decision in docs/adr/20261015-the-verification-harness-controls-what-it-checks.md.
+def test_a_real_instance_is_started_driven_diagnosed_and_stopped(
+    tmp_path: Path,
+) -> None:
+    env = _instance_project(tmp_path)
+    drives = [
+        subprocess.Popen(
+            [str(VERIFY), "drive", "thing"],
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+        for _ in range(2)
+    ]
+    outputs = [d.communicate(timeout=60)[0] for d in drives]
+    assert [d.returncode for d in drives] == [1, 1], outputs  # `fails` fails in each
+    ids = {m for out in outputs for m in re.findall(r"as run (\S+):", out)}
+    assert len(ids) == 2, outputs
+    # Each run reached only its own instance: the server answers with its run's directory.
+    for out in outputs:
+        (mine,) = set(re.findall(r"as run (\S+):", out))
+        assert re.search(rf"^{re.escape(mine)}$", out, re.M), out
+    summaries = {p: p.read_text(encoding="utf-8") for p in _summaries(tmp_path)}
+    failed = [t for t in summaries.values() if "- **Scenario:** fails" in t]
+    assert failed, summaries
+    for text in failed:
+        assert "request /missing" in text.split("## Logs", 1)[1], text
+    assert any(
+        "- **Scenario:** serves" in t and "- **Outcome:** verified" in t
+        for t in summaries.values()
+    )
+    assert not _left_running(tmp_path)
+
+
+def test_an_instance_started_by_one_invocation_is_stopped_by_another(
+    tmp_path: Path,
+) -> None:
+    env = _instance_project(tmp_path)
+    one = run_verify("start", "--run", "e2e-one", env=env)
+    two = run_verify("start", "--run", "e2e-two", env=env)
+    assert one.returncode == 0 and "started e2e-one on port" in one.stdout, one
+    assert two.returncode == 0, two
+    try:
+        assert run_verify("stop", "--run", "e2e-one", env=env).returncode == 0
+        pid_two = int((tmp_path / "runs" / "e2e-two" / "pid").read_text())
+        assert not (tmp_path / "runs" / "e2e-one" / "pid").exists()
+        assert _alive(pid_two), "stopping one instance stopped another run's"
+    finally:
+        run_verify("stop", "--run", "e2e-two", env=env)
+    deadline = time.monotonic() + 5
+    while _left_running(tmp_path) and time.monotonic() < deadline:
+        time.sleep(0.1)
+    assert not _left_running(tmp_path)
+
+
+# --- affected --------------------------------------------------------------------------
+
+
+def _affected_project(tmp_path: Path) -> dict[str, str]:
+    env = _harness(tmp_path, "")
+    recipes = tmp_path / "verification" / "recipes"
+    for name, covers in (
+        ("api", "src/api"),
+        ("docs", "docs, README.md"),
+        ("idle", "lib"),
+    ):
+        (recipes / f"{name}.md").write_text(
+            f"---\nkind: feature\ncovers: {covers}\n---\n# {name}\n\n## Scenarios\n\n"
+            "### once\nRun: `true`\n",
+            encoding="utf-8",
+        )
+    for path in (
+        "src/api/a.py",
+        "src/api/gone.py",
+        "src/api/old.py",
+        "docs/guide.md",
+        "lib/l.py",
+        "other.txt",
+    ):
+        (tmp_path / path).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / path).write_text(f"{path}\n", encoding="utf-8")
+    _git(tmp_path, "init", "-q", "-b", "main")
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-q", "-m", "base")
+    return env
+
+
+def test_affected_lists_the_touched_recipes_and_what_nothing_covers(
+    tmp_path: Path,
+) -> None:
+    env = _affected_project(tmp_path)
+    _git(tmp_path, "tag", "base")
+    (tmp_path / "other.txt").write_text("changed and committed\n", encoding="utf-8")
+    _git(tmp_path, "commit", "-qam", "edit", when="2026-01-03T00:00:00Z")
+    (tmp_path / "README.md").write_text("staged\n", encoding="utf-8")
+    _git(tmp_path, "add", "README.md")
+    (tmp_path / "src/api/gone.py").unlink()
+    _git(tmp_path, "mv", "src/api/old.py", "moved.py")
+    (tmp_path / "new.txt").write_text("untracked\n", encoding="utf-8")
+    _evidence(tmp_path, "20260101T000000Z", "- **Outcome:** verified\n")
+    result = run_verify("affected", "base", env=env)
+    assert result.returncode == 0, result.stderr
+    touched = result.stdout.split("Recipes these changes touch:")[1].split("Changed")[0]
+    assert re.findall(r"^  (\S+)", touched, re.M) == ["api", "docs"], result.stdout
+    uncovered = result.stdout.split("Changed paths no recipe covers:")[1]
+    assert re.findall(r"^  (\S+)", uncovered, re.M) == [
+        "moved.py",
+        "new.txt",
+        "other.txt",
+    ], result.stdout
+    assert "verification/evidence" not in result.stdout
+
+
+def test_a_changed_recipe_counts_as_touching_itself(tmp_path: Path) -> None:
+    env = _affected_project(tmp_path)
+    recipe = tmp_path / "verification" / "recipes" / "idle.md"
+    recipe.write_text(recipe.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+    result = run_verify("affected", "HEAD", env=env)
+    assert "  idle  feature" in result.stdout, result.stdout
+    assert "no recipe covers" not in result.stdout
+
+
+def test_affected_without_a_base_says_what_it_compared_with(tmp_path: Path) -> None:
+    env = _affected_project(tmp_path)
+    (tmp_path / "lib/l.py").write_text("edited\n", encoding="utf-8")
+    result = run_verify("affected", env=env)
+    assert result.returncode == 0, result.stderr
+    assert "since the last commit (no origin/HEAD" in result.stdout, result.stdout
+    assert "  idle  feature" in result.stdout
+
+
+def test_affected_refuses_a_base_that_is_not_a_commit(tmp_path: Path) -> None:
+    env = _affected_project(tmp_path)
+    result = run_verify("affected", "no-such-branch", env=env)
+    assert result.returncode == 2 and "is not a commit here" in result.stderr

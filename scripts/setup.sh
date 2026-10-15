@@ -62,7 +62,7 @@ fi
 
 # Install dev dependencies into the venv
 info "Installing dev dependencies..."
-uv pip install --python .venv/bin/python ruff black mypy pytest
+uv pip install --python .venv/bin/python ruff black mypy pytest pytest-xdist pyyaml
 
 # Node runs scripts/verify; its type check needs the dev dependencies in scripts/
 info "Checking Node (22.18+, or 23.6+ on Node 23, runs scripts/verify)..."
@@ -79,6 +79,7 @@ info "Verifying installations..."
 .venv/bin/black --version
 .venv/bin/mypy --version
 .venv/bin/pytest --version
+.venv/bin/python -c "import xdist, yaml"
 
 echo ""
 info "Setup complete!"
@@ -87,8 +88,5 @@ echo "To activate the virtual environment:"
 echo "  source .venv/bin/activate"
 echo ""
 echo "Development commands:"
-echo "  ruff check --fix claude-plugins/ tests/   # Lint"
-echo "  black claude-plugins/ tests/              # Format"
-echo "  mypy                                      # Type check"
-echo "  npm --prefix scripts run typecheck        # Type check scripts/verify.mts"
-echo "  python3 -m pytest tests/                  # Run tests"
+echo "  scripts/check.sh --fix          # Lint and format (fixing), type check, test"
+echo "  scripts/check.sh lint|types|tests   # One group; without --fix lint only reports"

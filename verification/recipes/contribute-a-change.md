@@ -18,6 +18,7 @@ A reader comes to these documents to contribute a change, and should end able to
 Run: `scripts/walk.sh 'Contribute a change. End able to run the checks a pull request needs and open one. The sections to rely on: CONTRIBUTING.md → Pull Request Process; README.md → Development.' CONTRIBUTING.md README.md`
 Proves: the reader ends able to run the checks a pull request needs and open one, and names nothing it had to guess that blocks the task.
 Check: read
+Workload: varies
 
 ## Gotchas
 
