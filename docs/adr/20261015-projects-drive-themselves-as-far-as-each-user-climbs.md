@@ -80,7 +80,7 @@ none — positions the owner ruled; the North Star informs and never binds.
 
 ## Source
 - Session: discussion of whether the North Star still matched the owner's direction, held while
-  adding a manifest-explain skill.
+  adding a manifest-dev-help skill.
 - Related: amends 20261013-the-promise-includes-a-codebase-that-gets-easier-to-change
 - Related: amends 20260821-positioning-drops-the-conversion-funnel
 - Related: amends 20260821-winning-is-our-own-projects-running-the-full-loop

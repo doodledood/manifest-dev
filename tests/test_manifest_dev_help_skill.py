@@ -1,9 +1,9 @@
-"""manifest-explain answers questions about manifest-dev, close to ASD-STE100.
+"""manifest-dev-help answers questions about manifest-dev, close to ASD-STE100.
 
 It restates the glossary in a second register for users, so its term set is held level with
 CONTEXT.md and its skill list with the plugin; their meaning stays a review judgment. The owner
 asked for about 90% ASD-STE100, so its counted limits are held here and the rest is judged. See
-docs/adr/20261015-manifest-explain-answers-questions-about-manifest-dev-in-simplified-english.md.
+docs/adr/20261015-manifest-dev-help-answers-questions-about-manifest-dev-in-simplified-english.md.
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from tests.test_entry_points import user_invocable
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = (
-    REPO_ROOT / "claude-plugins" / "manifest-dev" / "skills" / "manifest-explain"
+    REPO_ROOT / "claude-plugins" / "manifest-dev" / "skills" / "manifest-dev-help"
 )
 GLOSSARY = SKILL_DIR / "references" / "GLOSSARY.md"
 CONTEXT = REPO_ROOT / "CONTEXT.md"
@@ -41,10 +41,10 @@ DESCRIPTIVE_MAX = 25
 PARAGRAPH_MAX = 6
 
 CONTEXT_TERM = re.compile(r"^\*\*([^*]+)\*\*:\s*$", re.MULTILINE)
-EXPLAIN_TERM = re.compile(r"^### (.+?)\s*$", re.MULTILINE)
-# Each manifest-explain entry records the fingerprint of the CONTEXT.md entry it was written from, so a
-# reworded definition fails until someone rereads the manifest-explain entry and records the new value.
-EXPLAIN_FINGERPRINT = re.compile(
+HELP_TERM = re.compile(r"^### (.+?)\s*$", re.MULTILINE)
+# Each manifest-dev-help entry records the fingerprint of the CONTEXT.md entry it was written from, so a
+# reworded definition fails until someone rereads the manifest-dev-help entry and records the new value.
+HELP_FINGERPRINT = re.compile(
     r"^### (.+?)\s*\n<!-- context: ([0-9a-f]{12}) -->$", re.MULTILINE
 )
 FENCE = re.compile(r"^```.*?^```\s*$", re.MULTILINE | re.DOTALL)
@@ -78,11 +78,11 @@ def fingerprint(entry: str) -> str:
     return hashlib.sha256(entry.encode("utf-8")).hexdigest()[:12]
 
 
-def explain_terms() -> set[str]:
-    return set(EXPLAIN_TERM.findall(GLOSSARY.read_text(encoding="utf-8")))
+def help_terms() -> set[str]:
+    return set(HELP_TERM.findall(GLOSSARY.read_text(encoding="utf-8")))
 
 
-def explain_files() -> list[Path]:
+def help_files() -> list[Path]:
     files = sorted(SKILL_DIR.rglob("*.md"))
     assert SKILL_DIR / "SKILL.md" in files and GLOSSARY in files, files
     return files
@@ -154,11 +154,9 @@ def ste_problems(text: str) -> list[str]:
     return problems
 
 
-def test_every_glossary_term_has_an_explain_entry_and_explain_defines_no_other() -> (
-    None
-):
+def test_every_glossary_term_has_a_help_entry_and_help_defines_no_other() -> None:
     expected = context_terms() - MAINTAINER_TERMS
-    actual = explain_terms()
+    actual = help_terms()
     assert not MAINTAINER_TERMS - context_terms(), (
         f"maintainer terms no longer in CONTEXT.md: {sorted(MAINTAINER_TERMS - context_terms())};"
         " remove them from MAINTAINER_TERMS"
@@ -171,19 +169,19 @@ def test_every_glossary_term_has_an_explain_entry_and_explain_defines_no_other()
     )
 
 
-def test_explain_names_every_user_invocable_skill() -> None:
+def test_help_names_every_user_invocable_skill() -> None:
     text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
     missing = sorted(s for s in user_invocable("manifest-dev") if f"`/{s}`" not in text)
     assert not missing, (
-        f"manifest-explain/SKILL.md does not name {missing}: add each as `/name` with when a user reaches"
+        f"manifest-dev-help/SKILL.md does not name {missing}: add each as `/name` with when a user reaches"
         " for it."
     )
 
 
-def test_explain_keeps_the_counted_ste_rules() -> None:
+def test_help_keeps_the_counted_ste_rules() -> None:
     problems = [
         f"{path.relative_to(REPO_ROOT)}: {problem}"
-        for path in explain_files()
+        for path in help_files()
         for problem in ste_problems(path.read_text(encoding="utf-8"))
     ]
     assert not problems, "ASD-STE100:\n" + "\n".join(problems)
@@ -202,15 +200,15 @@ def test_the_ste_counter_catches_each_rule() -> None:
     assert ste_problems("The run is starting.") == []
 
 
-def test_every_explain_entry_was_written_from_the_current_context_entry() -> None:
-    recorded = dict(EXPLAIN_FINGERPRINT.findall(GLOSSARY.read_text(encoding="utf-8")))
+def test_every_help_entry_was_written_from_the_current_context_entry() -> None:
+    recorded = dict(HELP_FINGERPRINT.findall(GLOSSARY.read_text(encoding="utf-8")))
     entries = context_entries()
     problems = []
-    for term in sorted(explain_terms() & set(entries)):
+    for term in sorted(help_terms() & set(entries)):
         current = fingerprint(entries[term])
         if recorded.get(term) != current:
             problems.append(
-                f"{term}: CONTEXT.md's entry changed since its manifest-explain entry was written. Reread"
+                f"{term}: CONTEXT.md's entry changed since its manifest-dev-help entry was written. Reread"
                 f" `### {term}` in {GLOSSARY.relative_to(REPO_ROOT)}, make it agree, then set the"
                 f" line under its heading to <!-- context: {current} -->"
             )

@@ -93,11 +93,11 @@ These shape where a session's answers land:
 | `/figure-out-team` | Runs the same deliberation in a Slack channel or thread, for people who can't all sit in one session. |
 | `poll-slack` | Reports what's new in a channel or thread since a cursor. Called by `/figure-out-team` rather than invoked by hand. |
 
-## Explain
+## Help
 
 | Skill | What it does |
 |-------|--------------|
-| `/manifest-explain` | Explains manifest-dev in plain, simplified English: what it is for, the workflow, the autonomy ladder from one skill to unattended runs, every term you meet with why it exists, and good practice. Ask it what a recipe, a gate or a Lock is, or point it at a Manifest or a pull request and ask what something means. |
+| `/manifest-dev-help` | Explains manifest-dev in plain, simplified English: what it is for, the workflow, the autonomy ladder from one skill to unattended runs, every term you meet with why it exists, and good practice. Ask it what a recipe, a gate or a Lock is, or point it at a Manifest or a pull request and ask what something means. |
 
 ## How it fits together
 

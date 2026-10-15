@@ -1,4 +1,4 @@
-# ADR: manifest-explain answers questions about manifest-dev in Simplified Technical English, held level with the glossary
+# ADR: manifest-dev-help answers questions about manifest-dev in Simplified Technical English, held level with the glossary
 
 ## Status
 Accepted
@@ -19,7 +19,7 @@ each exists. Adding a user-invocable skill is a decision under
 20261013-new-capabilities-live-inside-the-four-workflow-entry-points.
 
 ## Decision
-- The core plugin ships `manifest-explain`, a user-invocable skill that answers any question about
+- The core plugin ships `manifest-dev-help`, a user-invocable skill that answers any question about
   manifest-dev, with the why: what it is for, its workflow, the autonomy ladder and how to climb it, every product term with why it
   exists, how the parts relate, the practices the skills encode, and what an artifact the workflow wrote
   means. Where its own text does not carry an answer, it reads the skill that owns the behavior and
@@ -37,8 +37,9 @@ each exists. Adding a user-invocable skill is a decision under
 - It is kept in step with `CONTEXT.md` on every change to it: each of its entries records a
   fingerprint of the `CONTEXT.md` entry it was written from.
 - The terms maintainers use only about the prompts stay out of it.
-- The name is `manifest-explain`. It names what the skill is about, and no host command takes it.
-  A person who needs it is the one least likely to know a plugin-qualified name.
+- The name is `manifest-dev-help`. It keeps the word a lost user reaches for, names the product it
+  covers, and no host command takes it. A person who needs it is the one least likely to know a
+  plugin-qualified name.
 
 ## Alternatives Considered
 - **Link `CONTEXT.md` from the skill**: no installed skill can reach it, and a user's own
@@ -51,6 +52,8 @@ each exists. Adding a user-invocable skill is a decision under
   skill exists.
 - **`explain`**: short, but the skill covers manifest-dev only, and a bare verb draws requests to
   explain anything.
+- **`manifest-explain`**: no clash, but it names one act, and a user who is lost looks for help
+  rather than an explanation.
 
 ## Consequences
 
@@ -66,11 +69,11 @@ each exists. Adding a user-invocable skill is a decision under
   judgment.
 
 ## Enforced by
-partly — `tests/test_manifest_explain_skill.py` fails when a `CONTEXT.md` term outside the
+partly — `tests/test_manifest_dev_help_skill.py` fails when a `CONTEXT.md` term outside the
 maintainer set has no entry in the skill or the skill defines a term `CONTEXT.md` lacks, when a
 `CONTEXT.md` entry changes without the fingerprint in its entry, when a user-invocable core skill
 is not named in the skill, and when the skill breaks STE's counted limits;
-`tests/test_entry_points.py` holds the declared set with `manifest-explain` in it. Whether the
+`tests/test_entry_points.py` holds the declared set with `manifest-dev-help` in it. Whether the
 meaning agrees with `CONTEXT.md` stays judgment.
 
 ## Source
