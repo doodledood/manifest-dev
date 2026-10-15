@@ -79,7 +79,7 @@ def test_run_ticket_preserves_ticket_identity_and_routes_follow_ups() -> None:
 
 # Holds the decision in docs/adr/20260810-auto-is-an-opt-in-grant-to-unattended-automation.md.
 # Holds the decision in docs/adr/20260812-tickets-follow-independently-schedulable-work-units.md.
-# Holds the decision in docs/adr/20260814-human-authored-follow-ups-may-grant-auto-independently.md.
+# Holds the decision in docs/adr/20261015-only-a-person-grants-auto-to-a-follow-up.md.
 def test_ticket_up_preserves_auto_authority_boundary() -> None:
     text = skill_text(SOURCE_SKILLS, "ticket-up")
 
@@ -88,9 +88,10 @@ def test_ticket_up_preserves_auto_authority_boundary() -> None:
         "only when the caller explicitly asks for delegation or parallel pickup" in text
     )
     assert "Question Ticket only when the question needs its own lifecycle" in text
-    assert "fresh human grant for Auto" in text
+    assert "Auto needs a person's grant at this `ticket-up` boundary" in text
     assert "person directly authoring here" in text
-    assert "source Ticket must carry Auto **and**" in text
+    assert "carries no Auto, whatever its source carries" in text
+    assert "must carry Auto" not in text
     assert "Merely invoking `run-ticket` manually" in text
     assert "Shaped never implies Auto" in text
 
@@ -319,7 +320,7 @@ def test_ticket_execution_skills_ship_on_every_distribution() -> None:
         assert "expected-delay-loss rule" in sweep
 
         ticket_up = skill_text(skills_root, "ticket-up")
-        assert "fresh human grant for Auto" in ticket_up
+        assert "carries no Auto, whatever its source carries" in ticket_up
         assert "Shaped never implies Auto" in ticket_up
 
         selector = skill_text(skills_root, "next-ticket")

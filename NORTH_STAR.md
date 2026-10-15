@@ -189,9 +189,9 @@ how many of our own projects are running all three tiers at once.
   the project fits inside teams and codebases where most colleagues do not use it; what
   setup adds to a shared context file has not yet been checked against it. The same day the
   owner ruled that cost is judged per unit of merged work once runs go unattended, and that
-  agents never grant themselves work; `ticket-up` still passes Auto from a granted source
-  Ticket to a qualifying follow-up, and has not yet been changed to match — see
-  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. The traction
+  agents never grant themselves work, which `ticket-up` carries out — see
+  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md and
+  docs/adr/20261015-only-a-person-grants-auto-to-a-follow-up.md. The traction
   rule lives in the repository's contributor instructions. Only the owner moves these.
 
 ## Open

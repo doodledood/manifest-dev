@@ -50,7 +50,7 @@ A position changes only by the owner's ruling.
 - **Make the self-driving system the product's identity**: it would read as a requirement to
   adopt every level, which contradicts the standalone shape and excludes a user who works alone
   inside a team that does not use the workflow.
-- **Let an Auto source pass Auto to a qualifying follow-up, as `ticket-up` does today**: the
+- **Let an Auto source pass Auto to a qualifying follow-up, as `ticket-up` did before this ruling**: the
   queue could then grow on work no person chose, which is the low-value growth the brake exists
   to stop.
 - **Ship an orchestrator**: it ties the project to one host and adds the user-facing complexity
@@ -71,8 +71,6 @@ A position changes only by the owner's ruling.
 ### Negative
 - The Promise grows by a part no project has yet met at volume.
 - What setup writes into a shared context file has not yet been checked against the new Never.
-- `ticket-up` still passes Auto from a granted source Ticket to a follow-up that meets the grant
-  criterion; it changes to require a person's grant in its own change.
 - Unattended cost is harder to read than a per-run figure: it needs the share of runs that land.
 
 ## Enforced by
@@ -85,3 +83,5 @@ none — positions the owner ruled; the North Star informs and never binds.
 - Related: amends 20260821-positioning-drops-the-conversion-funnel
 - Related: amends 20260821-winning-is-our-own-projects-running-the-full-loop
 - Related: 20261015-verification-speed-binds-like-cost-second-to-quality
+- Related: 20261015-only-a-person-grants-auto-to-a-follow-up (carries out the Never on agents
+  granting themselves work)

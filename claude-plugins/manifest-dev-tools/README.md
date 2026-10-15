@@ -24,8 +24,6 @@ Three more ship for `/review-pr` to call rather than for you to invoke — each 
 | `review-pr-holistic` | Prune, deduplicate, and bound a cycle's findings into the comments that get posted. |
 | `review-pr-judgment` | Ask the non-binding premise questions — necessity, pain, proportionality — once per pull request. |
 
-PR review retains justified defect-remediation findings through consolidation, including Low-severity findings, while keeping unrelated debt and unrelated later changes outside their scope.
-
 ## Prompts
 
 Write and review prompts, or turn a Manifest into a standalone goal:
@@ -34,7 +32,7 @@ Write and review prompts, or turn a Manifest into a standalone goal:
 |-------|--------------|
 | `/prompt-engineering` | Writes, revises, or discusses a prompt — a system prompt, a skill, or an agent. |
 | `/manifest-to-goal <manifest-path>` | Prints one standalone definition of done in a copyable goal paragraph of at most 4,000 characters, preserving purpose, acceptance conditions, constraints and required evidence without a file reference. |
-| `review-prompt` | Reviews a prompt against those principles and reports what it finds without editing anything. |
+| `/review-prompt` | Reviews a prompt against the prompt-engineering principles and reports what it finds without editing anything. |
 
 ## People and sessions
 

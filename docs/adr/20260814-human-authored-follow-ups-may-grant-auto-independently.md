@@ -1,7 +1,7 @@
 # ADR: Human-authored follow-ups may grant Auto independently of their source
 
 ## Status
-Accepted
+Superseded by 20261015-only-a-person-grants-auto-to-a-follow-up
 
 ## Area
 Ticketing

@@ -99,7 +99,7 @@
 | 2026-08-12 | [Tickets follow independently schedulable work units](20260812-tickets-follow-independently-schedulable-work-units.md) | Accepted — narrowed by [20260823-split-tickets-are-exercisable-end-to-end](20260823-split-tickets-are-exercisable-end-to-end.md) | Ticketing |
 | 2026-08-12 | [Trigger adapters enforce single-flight per Ticket](20260812-trigger-adapters-enforce-per-ticket-single-flight.md) | Accepted | Ticketing |
 | 2026-08-12 | [Trigger adapters hand off exhausted runner failures](20260812-trigger-adapters-hand-off-exhausted-runner-failures.md) | Accepted | Ticketing |
-| 2026-08-14 | [Human-authored follow-ups may grant Auto independently of their source](20260814-human-authored-follow-ups-may-grant-auto-independently.md) | Accepted | Ticketing |
+| 2026-08-14 | [Human-authored follow-ups may grant Auto independently of their source](20260814-human-authored-follow-ups-may-grant-auto-independently.md) | Superseded by [20261015-only-a-person-grants-auto-to-a-follow-up](20261015-only-a-person-grants-auto-to-a-follow-up.md) | Ticketing |
 | 2026-08-14 | [Run-visible prompt surfaces carry no comparative framing about options the run did not select](20260814-run-visible-surfaces-carry-no-cross-option-framing.md) | Accepted | Prompt architecture |
 | 2026-08-14 | [Ticket selection minimizes delay loss across the available executors](20260814-ticket-selection-minimizes-delay-loss-across-available-executors.md) | Accepted | Ticketing |
 | 2026-08-16 | [An invocation is the signal to review a head again](20260816-an-invocation-is-the-signal-to-review-again.md) | Accepted; amended by [20260905-review-loops-checkpoint-completed-verification](20260905-review-loops-checkpoint-completed-verification.md): loop wakes may use invocation-local completed-verification checkpoints; cross-actor coordination stays in PR state and fresh invocations still verify | PR lifecycle |
@@ -182,6 +182,7 @@
 | 2026-10-15 | [A check's run time is held by an alarm against creep, set from measurement and moved only on purpose](20261015-check-run-time-is-held-by-an-alarm-against-creep.md) | Accepted | define / do |
 | 2026-10-15 | [`/do` states the goal and its conventions, and leaves method to the run](20261015-do-states-the-goal-and-its-conventions-and-leaves-method-to-the-run.md) | Accepted | Prompt architecture |
 | 2026-10-15 | [manifest-dev-help answers questions about manifest-dev in Simplified Technical English, held level with the glossary](20261015-manifest-dev-help-answers-questions-about-manifest-dev-in-simplified-english.md) | Accepted | Positioning |
+| 2026-10-15 | [Only a person grants Auto to a follow-up](20261015-only-a-person-grants-auto-to-a-follow-up.md) | Accepted | Ticketing |
 | 2026-10-15 | [Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it](20261015-projects-drive-themselves-as-far-as-each-user-climbs.md) | Accepted | North Star |
 | 2026-10-15 | [Runs keep the harness fit to trust for speed, control and diagnosis, through one list](20261015-runs-keep-the-harness-fit-for-speed-control-and-diagnosis.md) | Accepted | define / do |
 | 2026-10-15 | [The shipped verification harness is a default shape a project adapts](20261015-the-shipped-harness-is-a-default-shape-a-project-adapts.md) | Accepted | define / do |

@@ -39,9 +39,7 @@ an attempt does not remove and reapply it. Open state, claim ownership, and depe
 whether a granted Ticket is runnable. A person directly invoking `run-ticket` on an ungranted
 Ticket supplies authority for that supervised run; that does not grant later unattended work.
 
-A follow-up authored without a fresh human Auto grant at its own `ticket-up` boundary receives Auto only when its source carries Auto and the follow-up independently passes the granting test above. This keeps unattended and nested execution from widening its own authority. A person merely invoking `run-ticket` on an ungranted source does not change that rule for follow-ups discovered inside the run.
-
-A person directly authoring the follow-up through `ticket-up`, or explicitly reviewing and authorizing Auto at that authoring boundary, may grant the new Ticket independently of source Auto after it passes the same granting test. The person still chooses whether to grant; Shaped never implies Auto.
+A follow-up receives Auto only when a person grants it at its own `ticket-up` boundary — directly authoring it, or explicitly reviewing and authorizing Auto there — after it passes the granting test above. Without that grant it carries no Auto, whatever its source carries: an agent never grants Auto to work it found, so unattended execution cannot widen its own authority or grow the queue on work no person chose. A person merely invoking `run-ticket` on a source is not that grant. The person still chooses whether to grant; Shaped never implies Auto.
 
 ## Type
 

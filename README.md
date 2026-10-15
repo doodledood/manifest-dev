@@ -34,12 +34,12 @@ Each one makes the next decidable. You can't judge what's worth doing without kn
 
 ## The codebase gets easier to change, run by run
 
-An agent copies the nearest example and takes the easiest path that passes its checks. So the workflow works on the path itself, inside the same four commands, with nothing extra to run:
+An agent copies the nearest example and takes the easiest path that passes its checks. So the workflow works on the path itself, inside the same commands, with nothing extra to run:
 
 - **Design before code.** `/figure-out` sketches the shape of a change — its data, where outside data enters, who owns each piece of state — compares a second shape, and checks both for patterns the next agent would copy. `/define` carries the same check into runs nobody is watching, and puts a behavior-preserving restructuring first when the area resists the change.
 - **Corrections become checks.** When `/do` fixes something a review or a person caught, it adds the type, lint, or test that would have caught it, scoped so it flags real problems, and the decision record names that check.
 - **Debt stays visible.** What a run finds and does not fix is listed when it finishes and in a "Debt left" section of every pull request it opens, where any later run can read it. The next change that passes through that code is offered the fix first.
-- **A way to verify that stays fresh.** Each project keeps one verification command whose `--help` says how to check its result, with a recipe for each feature, skill, document walk or eval suite. Runs build it when it is missing and repair it when it drifts, and checks that cost money, quota or shared resources ask first; every other check runs as often as it helps. It can start, observe and stop what it checks, flags a check that has slowly grown slower, and keeps what locates a failure.
+- **A way to verify that stays fresh.** Each project keeps one verification command whose `--help` says how to check its result, with a recipe for each feature, skill, document walk or eval suite. Runs build it when it is missing and repair it when it drifts. Checks that cost money, quota, load on shared systems or effects outside the repository ask first; every other check runs as often as it helps. It can start, observe, reset and stop what it checks, lists the recipes a change touches, flags a check that has slowly grown slower, and keeps enough of a failed run to explain it. The shipped command is a default shape each project adapts to fit itself.
 - **Earlier work is not lost.** A session working on a repository, whether on a bug, a change, a design, or a decision, starts from what earlier sessions on it ruled and found, and running setup again on a set-up project audits it against the current setup and offers each gap, marking what changed since its version.
 
 ## Install
@@ -69,11 +69,9 @@ Three skills, run in order, though each is useful alone:
 /do <manifest-path>          # build it, then verify every criterion
 ```
 
-`/figure-out` carries the investigation forward until it needs your knowledge, judgment, or authority, or can give a supported conclusion. Short progress messages do not require acknowledgment to continue.
+`/figure-out` carries the investigation forward until it needs your knowledge, judgment, or authority, or can give a supported conclusion.
 
 `/define` turns understanding into a Manifest: the deliverables, the criteria each one has to meet, and the rules that hold across all of them. It calls `/figure-out` first if the conversation hasn't reached understanding yet.
-
-The default is durable work that makes subsequent changes easier to do correctly. Quality reviews require proportionate improvements to the work being done, respect explicit scope limits, and accept sound existing structure. Defect repairs must prevent the demonstrated mechanism when a concrete, proportionate boundary is available, or justify a weaker remedy.
 
 `/do` implements against that Manifest and can't report completion until every criterion has evidence behind it, so "it's done" is a finding rather than a claim.
 
@@ -112,6 +110,16 @@ Work under the Manifest at /workspace/manifests/search.md until every Acceptance
 More tokens and more work up front than prompting directly. What you get back is a first pass that lands closer to done and a result you can check rather than take on trust. Writing acceptance criteria also keeps you engaged with your own code, which matters more the more of it the agent writes.
 
 Resist jumping in mid-`/do`. It won't get everything first try — that's what the verify loop is for.
+
+## How far to take it
+
+Each level works without the ones above it, and nobody else on your team has to use any of it:
+
+1. **One skill** on its own, such as `/figure-out` on a question.
+2. **One piece of work** understood, defined and verified: `/figure-out`, `/define` and `/do`, or `/auto`.
+3. **A project that remembers**: `/setup-project` once, and every session starts from its direction, vocabulary, decisions and checks.
+4. **A shared queue**: `/ticket-up` writes work into a Ticket store and `/next-ticket` picks what to do now.
+5. **Unattended runs**: a scheduler or orchestrator you run starts `/run-ticket` or `/sweep-tickets` on Tickets a person granted Auto, and you step in only for a blocker, a judgment, a taste or an authority.
 
 ## What's in it
 

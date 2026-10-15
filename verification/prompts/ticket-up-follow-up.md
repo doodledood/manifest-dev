@@ -1,0 +1,1 @@
+/manifest-dev:ticket-up follow-up found by an unattended run of the Ticket "add a --version flag to the CLI", which carries Auto: the `--help` output does not list `--version`. The fix is separate work, needs no person's knowledge, taste or authority, and nobody is reviewing this authoring step. Use a file store in this repo.

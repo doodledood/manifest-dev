@@ -414,6 +414,9 @@ gives it when they write the Ticket. Without Auto, automation does not touch the
 gives it only when the work needs no knowledge, taste or authority of a person. The same must be
 true of the decision that the work is done.
 
+An agent never gives Auto to a Ticket that it writes. A follow-up gets Auto only when a person
+gives it. Thus the queue grows only on work that a person thinks is worth doing.
+
 ### Ticket Type
 <!-- context: 162eaa73bbc9 -->
 A Ticket Type is an optional name for the main kind of a Ticket. An operator uses it to select which

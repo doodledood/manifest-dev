@@ -303,7 +303,7 @@ _Avoid_: Batch runner, label pulse, dependency controller.
 - Trigger adapters serialize **Run Ticket** by canonical Ticket identity, bound infrastructure retries, and assign a person with run evidence after retry exhaustion; claims and labels do not duplicate host liveness state.
 - The **Auto** grant requires that neither doing a **Ticket** nor judging it done needs any human's knowledge, taste, or authority — necessary but never sufficient: the author still chooses to grant.
 - A **Ticket** remains the identity of its work across execution attempts: a successful attempt closes it, while an escalated attempt records its evidence and releases the same open **Ticket**'s claim under an **Escalation Mark**; a follow-up **Ticket** represents only separate work.
-- A follow-up **Ticket** receives **Auto** only when its source **Ticket** carries **Auto** and the follow-up independently meets the grant criterion; an ungranted source can create only ungranted follow-ups.
+- A follow-up **Ticket** receives **Auto** only when a person grants it at its `ticket-up` boundary after it meets the grant criterion; whatever its source carries, an agent never grants **Auto** to work it found.
 - Absence of **Auto** is one fence covering untrusted **Tickets**, **Tickets** with a designed-in human step, and venue items never written as **Tickets** at all.
 - **Auto** says whether automation may touch a **Ticket** at all and is the author's call; a **Ticket Type** says which granted work an operator runs today and is the query's — keeping rollout schedule out of the grant, whose silence already carries three meanings.
 - Every venue a **Ticket Store** runs on has a **Venue Reference**.

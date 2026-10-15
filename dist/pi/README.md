@@ -23,7 +23,7 @@ Two source plugins contribute skills:
 | `manifest-dev` | `auto`, `check-pr`, `define`, `design`, `do`, `done`, `escalate`, `figure-out`, `figure-out-team`, `manifest-dev-help`, `next-ticket`, `poll-slack`, `review-code`, `review-design`, `review-writing`, `run-ticket`, `setup-project`, `sweep-tickets`, `ticket-up` |
 | `manifest-dev-tools` | `babysit-pr`, `eli5`, `handoff`, `manifest-to-goal`, `prompt-engineering`, `review-pr`, `review-pr-holistic`, `review-pr-judgment`, `review-pr-thread-verify`, `review-prompt`, `teach-me`, `walk-pr` |
 
-Six of these are dependencies other skills invoke rather than entry points: `done`, `escalate`, and `poll-slack` are called by the ticket workflows, and the three `review-pr-*` skills are called by `review-pr`. They ship so the calling skill resolves on every host; they are not meant to be invoked by hand.
+Six of these are dependencies other skills invoke rather than entry points: `done` and `escalate` are called by `do`, `poll-slack` by `figure-out-team`, and the three `review-pr-*` skills by `review-pr`. They ship so the calling skill resolves on every host; they are not meant to be invoked by hand.
 
 Start with `figure-out` on a problem you already have; the rest of the workflow follows from it. The [repository README](https://github.com/doodledood/manifest-dev) covers what each part is for.
 
