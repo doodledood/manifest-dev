@@ -1,7 +1,8 @@
 # Upgrading a project from v4 to v5
 
 A project recording v4 already has a verification harness, which it may keep or set aside for its
-own way of verifying. v5 makes a kept harness control what it checks, hold check run time against
+own way of verifying; set aside, its files stay or go as the user says, since the own-way bullet,
+not the files, records the choice. v5 makes a kept harness control what it checks, hold check run time against
 creep, keep one summary per scenario, find what a diff touches, and narrow the ask-first mark to
 cost.
 

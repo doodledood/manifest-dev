@@ -239,10 +239,10 @@ The skills find it by detection, not by a fixed name. It connects each session t
 Surfaces.
 
 ### Project Surfaces
-<!-- context: dbbdfe9aaef1 -->
+<!-- context: dd25da0ae56a -->
 The Project Surfaces are the files that a project keeps for each session and each contributor. They
-are its North Star, its Glossary, its Decision Records with their ADR Conventions, and its
-Verification Harness. A section of the Project Context File points each session to them and records
+are its North Star, its Glossary and its Decision Records with their ADR Conventions. A project can
+also select a Verification Harness. A section of the Project Context File points each session to them and records
 the Surfaces Version. `/setup-project` installs them, and normal runs keep them current. They exist
 so that the direction, the words and the decisions of the project live in the repository, not in the
 memory of one person.
@@ -314,6 +314,9 @@ nobody runs becomes stale.
 A harness is optional. A project can keep its own way to examine its work. The verification line of
 the Project Context File records the choice. When a project keeps a harness, normal runs repair it
 where their work touches it. When a project keeps its own way, runs use that way and do not add a
+harness.
+
+When a project did not record a choice, runs use the checks that it has. Their reports offer a
 harness.
 
 The shape that `/setup-project` ships is a default, and you can change it to fit

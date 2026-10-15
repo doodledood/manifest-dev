@@ -23,11 +23,12 @@ CONDITIONS = {
     ),
     "do/SKILL.md": (
         "names a verification harness and the work needs a part it lacks",
-        "project's own way of verifying, or names none, verify through what the project keeps",
+        "project's own way of verifying, verify through the means it names; where it names none, "
+        "through what the project keeps",
     ),
     "do/references/VERIFICATION.md": (
-        "this file applies only where the project-surfaces section of the context file names a "
-        "verification harness",
+        "Only where the project-surfaces section of the context file names that harness, build "
+        "what the change needs that it lacks",
         "the project's choice and never the run's",
     ),
     "figure-out/SKILL.md": (
@@ -35,8 +36,7 @@ CONDITIONS = {
         "or the project's own commands and steps",
     ),
     "figure-out/tasks/CODING.md": (
-        "A harness is the project's choice, offered at setup or in a report, never built as part "
-        "of the work",
+        "Where the project chose the harness, a touched path with no recipe",
         "the project verifies its own way, or never chose",
     ),
     "setup-project/SKILL.md": (

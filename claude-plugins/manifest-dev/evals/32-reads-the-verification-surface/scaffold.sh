@@ -1638,3 +1638,14 @@ cat > verification/evidence/export/20260811T090000Z.md <<'EOF'
 
 Judged: the output matched what the scenario proves.
 EOF
+
+cat > CLAUDE.md <<'CLAUDE_EOF'
+# Shelfnote
+
+## Project surfaces
+
+- **Verification** — `scripts/verify`: how this project checks that its work still does its job.
+  Run `scripts/verify --help` before saying a change works; a change to something a recipe covers
+  updates that recipe and runs it, and a change with no recipe adds one. Ask before running a
+  recipe marked ask-first.
+CLAUDE_EOF

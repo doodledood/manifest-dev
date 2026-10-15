@@ -23,8 +23,8 @@ decline it. The choice lives in one place: the verification bullet of the contex
 project-surfaces section, in its harness form or its own-way form (`NORTH_STAR_FORMAT.md` beside
 this file → *The project-surfaces section*). Every run reads it there:
 
-- **Harness form:** runs use the harness, build its missing parts and keep it fit, as this file
-  describes.
+- **Harness form:** runs use the harness, build the parts the work needs that it lacks and keep it
+  fit, as this file describes.
 - **Own-way form:** runs verify through the means the bullet names, add any check a change needs in
   that same form, and never build, repair, gate on or offer a harness.
 - **No bullet yet:** runs verify through what the project already has, add only the check a change

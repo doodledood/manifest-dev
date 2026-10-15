@@ -74,7 +74,7 @@ A session with no project behind its topic — a chat with no workspace, a home 
 _Avoid_: No repo (a project need not be a git repository).
 
 **Project Surfaces**:
-The files a project keeps for every session and contributor — its North Star, Glossary, Decision Records under its ADR Conventions, and Verification Harness — plus the project-surfaces section of the Project Context File that points sessions at them and records the Surfaces Version. `/setup-project` installs them; normal runs keep them current where their work touches them.
+The files a project keeps for every session and contributor — its North Star, Glossary, Decision Records under its ADR Conventions, and, where it chose one, Verification Harness — plus the project-surfaces section of the Project Context File that points sessions at them and records the Surfaces Version. `/setup-project` installs them; normal runs keep them current where their work touches them.
 _Avoid_: Setup files, scaffolding.
 
 **Glossary**:

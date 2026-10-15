@@ -48,7 +48,7 @@ These keep what the project is becoming and what is worth doing next:
 
 | Skill | What it does |
 |-------|--------------|
-| `/setup-project` | Sets a repository up with a North Star, a glossary, decision-record conventions, and a verification harness, plus the wiring that makes every session read them. Seeds them from the project's own history where there is any, and run again on a set-up project audits the whole setup and offers each gap for you to accept or decline, marking what changed since the surfaces version it records in your context file. `/figure-out` offers it when the version is behind or a surface is broken, so you rarely type it. |
+| `/setup-project` | Sets a repository up with a North Star, a glossary, decision-record conventions, and, if you want one, a verification harness, plus the wiring that makes every session read them. Seeds them from the project's own history where there is any, and run again on a set-up project audits the whole setup and offers each gap for you to accept or decline, marking what changed since the surfaces version it records in your context file. `/figure-out` offers it when the version is behind or a surface is broken, so you rarely type it. |
 | `/ticket-up` | Writes work into your ticket store — from a finished Manifest, a direct request, an open question, or findings from other work. A follow-up carries Auto only when a person grants it here. |
 | `/next-ticket` | Reads the store, picks the one to work on now, claims it, and says why it leads. |
 | `/run-ticket` | Takes one specific ticket end to end and records the outcome back on it. |

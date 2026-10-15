@@ -18,8 +18,8 @@ This project keeps its direction, vocabulary, and decision memory in the repo. R
 - **docs/adr/** — why decisions went the way they did. Write new records per
   `docs/adr/CONVENTIONS.md`.
 - **Verification** — how this project checks that its work still does its job: run each
-  `python src/shelfnote.py` command the README lists on a copy of `data/loans.json` and compare
-  its output with the README. Run them before saying a change works and when reproducing a
+  `python -m shelfnote` command the README lists on a copy of `data/loans.json` and check that
+  the loans it reads and writes are the ones the command names. Run them before saying a change works and when reproducing a
   reported problem; a change that needs a check none of them has adds one in the same form. This
   project verifies its own way by choice: add no separate verification tool to it.
 EOF
