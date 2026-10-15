@@ -50,6 +50,9 @@ One recurring implementation change is clear: all six original-package samples u
 - Small-sample visual judgments and browser checks do not establish audience comprehension, recall, conversion, or reliable causal effects of prompt edits.
 - More judgment remains with the generating model; fewer prescribed fields make some procedural omissions less mechanically visible.
 
+## Enforced by
+partly — `tests/test_design_check.py` — `test_figure_note_does_not_require_retired_task_model_field` fails if the shipped checker demands the retired fixed encoding line again; the experience-led core, the removed catalogs and the representation choices stay judgment.
+
 ## Source
 
 - Apple's [Design principles](https://developer.apple.com/design/human-interface-guidelines/design-principles), especially Simplicity, supports keeping useful detail rather than treating minimalism as the goal. [The 2017 design-principles session](https://developer.apple.com/videos/play/wwdc2017/802/) illustrates grouping, mapping, and the trade-offs of visibility. These are sources for Apple's recommendations, not independent proof of universal usability or prompt effectiveness.

@@ -154,7 +154,9 @@ def test_modern_background_is_unknown_not_transparent(tmp_path: Path) -> None:
     assert "transparent on both" not in output
 
 
-# Holds the decision in docs/adr/20260902-design-chooses-an-encoding-per-claim-figures-are-information-not-decoration.md.
+# Holds the decision in docs/adr/20260902-design-chooses-an-encoding-per-claim-figures-are-information-not-decoration.md
+# and the retirement of its fixed encoding line in
+# docs/adr/20260915-design-keeps-experience-goals-and-conditional-constraints.md.
 def test_figure_note_does_not_require_retired_task_model_field(
     tmp_path: Path,
 ) -> None:
