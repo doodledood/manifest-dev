@@ -11,8 +11,8 @@ The user
 
 ## Context
 20261014-one-verification-harness-per-project made the tool's subcommands "the contract", and
-20261015-the-verification-harness-controls-what-it-checks first wrote control commands into that
-contract. Read that way, the harness text tells every project what it must contain, down to
+20261015-the-verification-harness-controls-what-it-checks adds control commands to the harness.
+Read as a contract, the harness text tells every project what it must contain, down to
 `reset`, the run-identity variable, the evidence layout and the settings keys. Projects differ in
 their stacks, their teams and the checks they already trust. A harness built to a specification
 that does not fit them gets worked around or abandoned, and the work it was meant to protect goes

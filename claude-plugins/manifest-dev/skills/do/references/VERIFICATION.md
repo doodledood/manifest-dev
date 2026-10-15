@@ -30,11 +30,12 @@ its own `--help`.
   (`../../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), repair it within
   scope, and report the rest as debt.
 - **Over its line:** when a check the work touches is over its time line, find where the time
-  went from the runner's own timings. Pay it down before the run is done when the time came from
-  what the change added or the fix lies in code the change already touches. When the fix needs
-  shared code the change does not touch, or a broad refactor, open or join one debt Ticket,
-  freeze the overshoot with it, and report it as debt. Raise the line only when the new time is
-  in new tests for new behavior and the existing tests are no slower, with that reason on the
-  raise and one line in the pull request.
+  went from the runner's own timings. Pay it down before the run is done when growth did not earn
+  the time — it came from what the change added, such as a slow new test or a sleep — or when the
+  fix lies in code the change already touches. When the fix needs shared code the change does not
+  touch, or a broad refactor, open or join one debt Ticket, freeze the overshoot with it, and
+  report it as debt. Raise the line only when the new time is in new tests for new behavior, the
+  existing tests are no slower, and no cheap waste remains, with that reason on the raise and one
+  line in the pull request.
 - **Never weaken a check** to make it pass or run faster. A run that fails because the product
   is broken is reported as debt with its evidence.
