@@ -61,7 +61,7 @@ project better off than moving faster without them.
 
   — hypothesis: the self-driving part of the direction rests on it; our own runs land work
   on gate evidence, but no project has yet run unattended work at volume and compared it
-  with reviewed work. See docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. 2026-10
+  with reviewed work. See docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. 2026-10-15
 
 ## Who it's for
 
@@ -191,12 +191,12 @@ how many of our own projects are running all three tiers at once.
   and its definition of done in these surfaces. 2026-08
 - Which count tracks the self-driving part of winning — the share of merged work that
   needed a person only for judgment, taste or authority, or another? What would fill it:
-  the owner's choice, once our own projects run unattended work. 2026-10
+  the owner's choice, once our own projects run unattended work. 2026-10-15
 - Does the cost boundary stay per run, or become cost per unit of merged value once many
   agents run at once? What would fill it: the owner's ruling, grounded in the spend of a
-  stretch of unattended runs. 2026-10
+  stretch of unattended runs. 2026-10-15
 - What keeps a self-feeding queue from growing on low-value work that agents ticket up?
   What would fill it: a measured run of agent-authored tickets done unattended, judged on
-  whether they were worth doing. 2026-10
+  whether they were worth doing. 2026-10-15
 - Does manifest-dev ship the orchestrator that starts unattended runs, or stay the
-  protocol any orchestrator drives? What would fill it: the owner's ruling. 2026-10
+  protocol any orchestrator drives? What would fill it: the owner's ruling. 2026-10-15

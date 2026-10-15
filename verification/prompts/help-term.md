@@ -1,3 +1,3 @@
 /manifest-dev:help
 
-What is a recipe, and what is the verification harness? Why does my project have one, and why did /do ask me before it ran one of them?
+What is a recipe, and what is the verification harness? Why does my project have one, and why did /do ask me before it ran one of them? And what is the difference between an Acceptance Criterion and a Global Invariant?
