@@ -6,6 +6,14 @@ run instead of each run working out again how to launch, drive and observe the r
 or a person learns everything about verifying the project from one command, `verify --help`. A
 harness that is wrong is worse than none, so every status it shows comes from evidence.
 
+What follows is a default shape, not a specification. It is what setup seeds and what this
+workflow's skills expect when a project says nothing else, and it is worth converging on where it
+fits. A project's harness should fit the project and the people who work on it, so adopt each part
+where it fits, and adapt or replace it where it does not. Whatever its shape, every harness owes the
+same few things: one place a newcomer learns how to verify the project, statuses that come from
+evidence rather than anyone's say-so, the ask-first mark following cost, and the jobs in *Fit to
+trust*. It is judged by those, never by how closely it matches this file.
+
 ## When a project gets one
 
 Give a project a harness when it holds something future runs will change. One-shot work — a
@@ -23,13 +31,15 @@ cases, and living documents are all recipes in the same harness.
   Seed this default without asking and say so in the offer. The user may override it, at setup
   or later: a project that wants another language, or whose environments cannot run Node, ports
   the tool and keeps the `verify` entry, so nothing that calls it changes. A machine that merely
-  lacks Node is not a reason to port: the entry's exit-3 message goes in the report. Its subcommands are the contract: `--help` (the whole picture), `list` (every recipe, its kind,
+  lacks Node is not a reason to port: the entry's exit-3 message goes in the report. Its subcommands
+  are what this workflow's skills call: `--help` (the whole picture), `list` (every recipe, its kind,
   status and ask-first mark), `help <recipe>`, `drive <recipe> [scenario]` (with `walk` and
   `eval` as the same for those kinds), `judge` (record the verdict on evidence that needed
   reading), `doctor` (prerequisites, free), `check` (every recipe parses and names only paths
   that exist), `affected [BASE]` (the recipes a diff touches and the changed paths no recipe
-  covers), and `raise` and `freeze` (move or hold a time line, below). A port keeps these
-  subcommands and what they print.
+  covers), and `raise` and `freeze` (move or hold a time line, below). A port that keeps these
+  subcommands and what they print keeps every skill's instructions working unchanged; one that
+  departs from them says so in its own `--help`.
 - **Recipes.** One Markdown file per thing a user reaches or a reader relies on, in the recipes
   directory (`verification/recipes/` by default). Front matter: `kind` (a free label — feature,
   skill, walk, eval, …), `covers` (the paths whose change makes its evidence stale), `ask-first`
@@ -51,8 +61,9 @@ cases, and living documents are all recipes in the same harness.
   browser-and-CLI feature, an ask-first agent skill, and an ask-first document walk.
 - **Control.** `verify start` (an isolated instance in a known state), `running`, `logs`, `reset`
   and `stop` each run a command the project declares under that key in `harness.md`, as `doctor:`
-  does. A project declares only the ones that apply, and `--help` lists only those; a project
-  with nothing to run, such as documents only, declares none. The tool stays a thin runner over
+  does. They are offered where they fit, never required: a project declares only the ones that
+  apply, and `--help` lists only those; a project with nothing to run, such as documents only,
+  declares none. The tool stays a thin runner over
   the project's own commands.
 - **Run identity.** Every command the tool starts — scenarios, control, doctor, dry runs —
   receives `VERIFY_RUN_ID`, one per invocation, so data directories, ports and containers can be
@@ -181,7 +192,7 @@ gaps, as long as one command still tells a newcomer how to verify.
 
 ## What setup creates, and what runs build
 
-Setup seeds the harness: it copies and adapts the tool in the language *The parts* sets, asks the
+Setup seeds the harness in this default shape, fitted to what the project already has: it copies and adapts the tool in the language *The parts* sets, asks the
 ask-first choice (default `ask`) and writes it to `harness.md`, declares the control commands
 the project's existing scripts already provide (and none where nothing runs), adopts existing
 assets as recipes that delegate to them, catalogs recipes

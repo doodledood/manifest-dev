@@ -6,7 +6,8 @@ check). Of what v2 and v3 added, only the ADR conventions change lasts; the feat
 introduced and the bullet wording v3 changed are both replaced by v4, so never offer them. The harness arrives in its v5 shape. A v1
 feature map is part of the surface the move below carries into recipes.
 
-Offer, each as its own item:
+Offer, each as its own item and as a default the project may adapt or decline where its own way
+already does the job:
 
 1. **The ADR conventions' records-in-effect rule** (from v2), by comparison per the update pass:
    only an `Accepted` record is in effect, and backfilling `Enforced by`, building a `not yet`

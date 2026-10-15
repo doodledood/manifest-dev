@@ -27,7 +27,8 @@ how to improve what it is changing, not only that a check failed. The owner also
 agents working at once, which needs runs that cannot touch each other.
 
 ## Decision
-- Control is part of the harness contract. `verify` gains commands to start an isolated instance
+- Control is part of the harness's default shape
+  (20261015-the-shipped-harness-is-a-default-shape-a-project-adapts). `verify` gains commands to start an isolated instance
   in a known state, say what is running, show its logs and traces, reset it, and stop what the
   run started. Each one delegates to a command the project declares in the harness settings, the
   way `doctor:` works today. A project declares only the commands that apply, and `--help` shows

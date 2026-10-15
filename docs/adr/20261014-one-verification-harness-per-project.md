@@ -1,7 +1,7 @@
 # ADR: One verification harness per project — a self-describing CLI reading recipe files, with ask-first runs
 
 ## Status
-Accepted — amended by 20261015-the-verification-harness-controls-what-it-checks: control commands the project declares join the contract, every run gets its own identity, and failed evidence keeps the instance's logs; amended by 20261015-ask-first-marks-cost-not-slowness: run time alone is no longer a reason for the ask-first mark
+Accepted — amended by 20261015-the-verification-harness-controls-what-it-checks: control commands the project declares join the default shape, every run gets its own identity, and failed evidence keeps the instance's logs; amended by 20261015-ask-first-marks-cost-not-slowness: run time alone is no longer a reason for the ask-first mark; amended by 20261015-the-shipped-harness-is-a-default-shape-a-project-adapts: the tool, its subcommands and its layout are the default a project adapts, not a contract it must keep
 
 ## Area
 define / do

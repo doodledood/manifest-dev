@@ -2,10 +2,11 @@
 
 setup-project copies or emits a few files into every project it sets up. A project records
 the surfaces version it carries in its context file, and a later update offers only the
-changes listed in `CHANGES.md` after that version. So an edit to an emitted file that does
+changes listed for the versions after it: `CHANGES.md` holds one line per version, and each
+version's items live in its own file under `changes/`, so an update reads only what it offers. So an edit to an emitted file that does
 not add a version leaves every installed project unable to learn about it.
 
-This test pins a digest of the emitted text to the latest version in `CHANGES.md`. HTML
+This test pins a digest of the emitted text to the latest version's file. HTML
 comments are left out of the digest: they are maintainer notes the copy drops, and the
 template's own version comment would otherwise make the digest depend on itself.
 """
@@ -20,6 +21,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "skills"
 SETUP = SKILLS / "setup-project" / "references"
 CHANGES = SETUP / "CHANGES.md"
+CHANGES_DIR = SETUP / "changes"
 NORTH_STAR_FORMAT = SETUP / "NORTH_STAR_FORMAT.md"
 EVALS = REPO_ROOT / "claude-plugins" / "manifest-dev" / "evals"
 UPGRADES = SETUP / "upgrades"
@@ -37,7 +39,8 @@ EMITTED = (
 )
 
 HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
-VERSION_HEADING = re.compile(r"^## v(\d+)\s*$", re.MULTILINE)
+INDEX_LINE = re.compile(r"^- v(\d+) — `changes/v\1\.md`: \S", re.MULTILINE)
+VERSION_FILE = re.compile(r"^v(\d+)\.md$")
 DIGEST_LINE = re.compile(r"^Digest: ([0-9a-f]{64})\s*$", re.MULTILINE)
 TEMPLATE_VERSION = re.compile(r"<!-- setup-project surfaces v(\d+) -->")
 
@@ -54,25 +57,46 @@ def emitted_digest() -> str:
 
 
 def versions() -> list[tuple[int, str, str]]:
-    """Each `CHANGES.md` entry as (version, body, digest), in file order."""
-    text = CHANGES.read_text(encoding="utf-8")
-    headings = list(VERSION_HEADING.finditer(text))
-    assert headings, f"{CHANGES} lists no `## vN` entries"
+    """Each version as (version, body, digest), in the order `CHANGES.md` lists them."""
+    listed = [int(m.group(1)) for m in INDEX_LINE.finditer(CHANGES.read_text("utf-8"))]
+    assert listed, f"{CHANGES} lists no `- vN — `changes/vN.md`: …` lines"
     entries = []
-    for index, heading in enumerate(headings):
-        end = headings[index + 1].start() if index + 1 < len(headings) else len(text)
-        body = text[heading.end() : end]
+    for number in listed:
+        path = CHANGES_DIR / f"v{number}.md"
+        assert path.is_file(), f"{CHANGES} lists v{number}, but {path} does not exist"
+        body = path.read_text(encoding="utf-8")
         digest = DIGEST_LINE.search(body)
-        assert digest, f"{CHANGES} entry v{heading.group(1)} has no `Digest:` line"
-        entries.append((int(heading.group(1)), body, digest.group(1)))
+        assert digest, f"{path} has no `Digest:` line"
+        entries.append((number, body, digest.group(1)))
     return entries
+
+
+def test_every_version_file_is_listed_and_every_listed_version_has_a_file() -> None:
+    # The index and the files are one list read two ways; a reader finds the newest version in
+    # the index, so a file it does not list would never be offered.
+    files = sorted(
+        int(m.group(1))
+        for p in CHANGES_DIR.iterdir()
+        if (m := VERSION_FILE.match(p.name))
+    )
+    listed = sorted(number for number, _, _ in versions())
+    assert files == listed, (
+        f"{CHANGES_DIR.relative_to(REPO_ROOT)} holds versions {files}, but "
+        f"{CHANGES.relative_to(REPO_ROOT)} lists {listed}: add the missing line or file"
+    )
+    stray = sorted(
+        p.name for p in CHANGES_DIR.iterdir() if not VERSION_FILE.match(p.name)
+    )
+    assert (
+        not stray
+    ), f"{CHANGES_DIR.relative_to(REPO_ROOT)} holds non-version files: {stray}"
 
 
 def test_versions_count_up_from_one() -> None:
     numbers = [number for number, _, _ in versions()]
     assert numbers == list(
         range(1, len(numbers) + 1)
-    ), f"{CHANGES} versions must run 1, 2, 3, … in order; found {numbers}"
+    ), f"{CHANGES} must list versions 1, 2, 3, … in order; found {numbers}"
 
 
 # Holds the decision in docs/adr/20261013-set-up-projects-receive-updates-through-a-version-marker.md.
@@ -80,7 +104,7 @@ def test_every_version_says_what_projects_gain() -> None:
     for number, body, _ in versions():
         assert re.search(
             r"^- \S", body, re.MULTILINE
-        ), f"{CHANGES} entry v{number} lists nothing an installed project gains"
+        ), f"{CHANGES_DIR}/v{number}.md lists nothing an installed project gains"
 
 
 # Holds the decision in docs/adr/20261013-runs-build-and-maintain-a-project-verification-surface.md.
@@ -91,8 +115,9 @@ def test_latest_version_matches_what_setup_project_emits() -> None:
     current = emitted_digest()
     assert latest_digest == current, (
         f"A file setup-project emits into projects changed since surfaces v{latest_number}. "
-        f"Add `## v{latest_number + 1}` to {CHANGES.relative_to(REPO_ROOT)} listing what an "
-        f"installed project gains, with `Digest: {current}`, and set the version comment "
+        f"Add {CHANGES_DIR.relative_to(REPO_ROOT)}/v{latest_number + 1}.md listing what an "
+        f"installed project gains, with `Digest: {current}`, its line in "
+        f"{CHANGES.relative_to(REPO_ROOT)}, and set the version comment "
         f"in {NORTH_STAR_FORMAT.relative_to(REPO_ROOT)}'s surfaces template to "
         f"v{latest_number + 1}."
     )

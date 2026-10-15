@@ -14,5 +14,7 @@ stop: scripts/control-notes stop --data-dir .runs/$VERIFY_RUN_ID
 - Browser steps reach controls by role and accessible name, never by CSS selector or position.
 - `verify doctor` checks the instance is up, on the expected build, with this run's data directory.
 - A failed run's evidence keeps the instance's server log, through `logs:`.
+- This file shows the default shape: keep the control commands and notes this project needs, and
+  drop or reshape the rest.
 - Agent-session recipes need a credential for the agent CLI in the environment; they are ask-first
   because each run uses model quota.

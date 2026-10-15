@@ -3,7 +3,8 @@
 A project recording v3 gains v4's change — one verification harness replaces the verification
 surface, the feature map and the reader-task list — in v5's shape, with its control commands.
 
-Offer, each as its own item:
+Offer, each as its own item and as a default the project may adapt or decline where its own way
+already does the job:
 
 1. **The harness**, per `MOVE_TO_HARNESS.md` beside this file: the tool, `harness.md`, a recipe
    for each feature-map entry and reader task with its content and evidence, the `ask-first`

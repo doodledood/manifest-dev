@@ -208,7 +208,7 @@ cat > scripts/verify.mts <<'VERIFY_TOOL_EOF'
 
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
-import { existsSync, lstatSync, mkdirSync, mkdtempSync, openSync, closeSync, readdirSync, readFileSync, readlinkSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, fstatSync, lstatSync, mkdirSync, mkdtempSync, openSync, closeSync, readdirSync, readFileSync, readSync, readlinkSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { arch, availableParallelism, constants, homedir, platform, tmpdir } from "node:os";
 import { isAbsolute, join, relative, resolve } from "node:path";
 
@@ -256,10 +256,12 @@ const LINE_ENTRY = /^- \*\*Line:\*\* (\S+) (\d+(?:\.\d+)?) s; (.*)$/gm;
 const CONFIRMING_RUNS = 2;
 /** However short a scenario, its line sits at least this many seconds above what it measured. */
 const MIN_HEADROOM_SECONDS = 1;
-/** How long a failed run waits on the project's `logs:` command before giving up on it. */
 // The default branches `affected` tries, in order, after origin/HEAD when given no base.
 const DEFAULT_BRANCHES = ["origin/main", "origin/master", "main", "master"];
+/** How long a failed run waits on the project's `logs:` command before giving up on it. */
 const LOGS_TIMEOUT_SECONDS = 60;
+/** How much a `logs:` command may print before it is stopped, so it cannot fill the disk. */
+const LOGS_MAX_BYTES = 64 * 1024 * 1024;
 // A failure's logs keep their end, where the failure is, and say where they were cut.
 const LOGS_TAIL_LINES = 200;
 const LOGS_TAIL_CHARS = 64 * 1024;
@@ -731,7 +733,8 @@ function allowance(line: Line, headroom: number): number {
 /** A crossing confirmed on the machine the evidence ran on: what the status should say. */
 function crossing(evidence: Evidence, headroom: number): string {
   const line = evidence.lines.get(evidence.machine);
-  if (!line || line.over < CONFIRMING_RUNS || evidence.duration === undefined) return "";
+  // Only a verified run measured the check; any other carries the line on without crossing it.
+  if (evidence.outcome !== "verified" || !line || line.over < CONFIRMING_RUNS || evidence.duration === undefined) return "";
   const against = line.frozen ? `the ${seconds(line.frozen.level)} its Ticket ${line.frozen.ticket} froze` : `its ${seconds(line.base)} line`;
   return `${evidence.scenario || "the recipe"} took ${seconds(evidence.duration)} against ${against} (with headroom ${seconds(allowance(line, headroom))}) on ${evidence.machine}`;
 }
@@ -799,7 +802,9 @@ work still does its job.
 
 Every check is a recipe: a Markdown file in {recipes} naming what it covers, how a user
 reaches it, the scenarios that exercise it (each a command and what it proves), and its traps.
-This tool lists them, runs them, keeps their evidence, and works out their status.
+This tool lists them, runs them, keeps their evidence, and works out their status. It is a
+default shape for a harness: adapt it, its settings or its recipes wherever this project is
+better served another way, and say so here.
 
 Commands:
   verify list [KIND]          every recipe with its kind, status and ask-first mark
@@ -865,7 +870,8 @@ moves up only by \`verify raise\` with its reason{raisePolicy}, or is held by \`
 debt Ticket pays the overshoot down; a run past the frozen level is new creep. A scenario whose
 work varies — the affected tests, an agent session — says \`Workload: varies\` and gets no line.
 Lines live in each scenario's latest evidence, per kind of machine (set VERIFY_MACHINE to name
-one, such as a CI runner label); no file is edited by every run. When merged branches leave two
+one, such as a CI runner label); no file is edited by every run. VERIFY_DURATION stands in for
+every measured time, for the tool's own tests; leave it unset. When merged branches leave two
 summaries, the next run keeps the line allowing the most, so a raise or freeze survives.
 
 Evidence: each run writes {evidence}/RECIPE/STAMP.md (command, exit code, outcome, run identity,
@@ -1197,40 +1203,74 @@ function replaceOlder(recipe: Recipe, scenario: string, kept: Evidence): void {
   }
 }
 
+/** The last `bytes` of an open file, how many lines the whole file holds, and whether it held more. */
+function tailOf(fd: number, bytes: number): [string, number, boolean] {
+  const size = fstatSync(fd).size;
+  const chunk = Buffer.alloc(1024 * 1024);
+  let lines = 0;
+  for (let at = 0; at < size; ) {
+    const read = readSync(fd, chunk, 0, chunk.length, at);
+    if (read <= 0) break;
+    for (let k = 0; k < read; k++) if (chunk[k] === 0x0a) lines++;
+    at += read;
+  }
+  const start = Math.max(0, size - bytes);
+  const tail = Buffer.alloc(size - start);
+  if (tail.length) readSync(fd, tail, 0, tail.length, start);
+  return [tail.toString("utf8"), lines, start > 0];
+}
+
 /**
  * The project's `logs:` output for a run, for evidence that has to explain a failure. It goes
  * to a file rather than a pipe, so a process the command leaves running cannot hold the run
- * open; the command runs in its own process group, killed when it ends or times out.
+ * open; the command runs in its own process group, killed when it ends, times out, prints more
+ * than the cap, or the tool is asked to stop. Only the file's end is read back.
  */
 async function logsFor(command: string, id: string, scrub: RegExp): Promise<string> {
   const folder = mkdtempSync(join(tmpdir(), "verify-logs-"));
   const file = join(folder, "output");
-  const fd = openSync(file, "w");
+  const fd = openSync(file, "w+");
   let printed: string;
+  let total: number;
+  let partial: boolean;
   let ended: string;
   try {
     const child = spawn(command, { shell: true, cwd: ROOT, env: withRun(id), stdio: ["ignore", fd, fd], detached: true });
-    let timedOut = false;
-    const timer = setTimeout(() => {
-      timedOut = true;
+    let why = "";
+    const kill = (reason: string): void => {
+      why ||= reason;
       if (child.pid !== undefined) signalGroup(child.pid, "SIGKILL");
-    }, LOGS_TIMEOUT_SECONDS * 1000);
-    const [code, signal] = await new Promise<[number | null, NodeJS.Signals | null]>((done, fail) => {
-      child.once("error", fail);
-      child.once("exit", (c, s) => done([c, s]));
-    });
-    clearTimeout(timer);
-    if (child.pid !== undefined) signalGroup(child.pid, "SIGKILL"); // whatever it left running
-    ended = timedOut ? `did not finish within ${LOGS_TIMEOUT_SECONDS} s` : code === 0 ? "" : `exited ${code ?? signal}`;
-    printed = readFileSync(file, "utf8");
+    };
+    const timer = setTimeout(() => kill(`did not finish within ${LOGS_TIMEOUT_SECONDS} s`), LOGS_TIMEOUT_SECONDS * 1000);
+    const watch = setInterval(() => {
+      if (fstatSync(fd).size > LOGS_MAX_BYTES) kill(`printed more than ${LOGS_MAX_BYTES / 1024 / 1024} MB and was stopped`);
+    }, 250);
+    // The command has a process group of its own, so a stop asked of the tool has to reach it here.
+    const onStop = (): void => kill("was stopped with the run");
+    for (const signal of STOP_SIGNALS) process.on(signal, onStop);
+    try {
+      const [code, signal] = await new Promise<[number | null, NodeJS.Signals | null]>((done, fail) => {
+        child.once("error", fail);
+        child.once("exit", (c, s) => done([c, s]));
+      });
+      ended = why || (code === 0 ? "" : `exited ${code ?? signal}`);
+    } finally {
+      clearTimeout(timer);
+      clearInterval(watch);
+      for (const signal of STOP_SIGNALS) process.off(signal, onStop);
+      if (child.pid !== undefined) signalGroup(child.pid, "SIGKILL"); // whatever it left running
+    }
+    [printed, total, partial] = tailOf(fd, LOGS_TAIL_CHARS * 4);
   } finally {
     closeSync(fd);
     rmSync(folder, { recursive: true, force: true });
   }
-  const all = printed.trim().split("\n");
-  let tail = all.slice(-LOGS_TAIL_LINES).join("\n");
+  const whole = printed.trim();
+  let tail = whole.split("\n").slice(-LOGS_TAIL_LINES).join("\n");
   if (tail.length > LOGS_TAIL_CHARS) tail = tail.slice(-LOGS_TAIL_CHARS);
-  const cut = tail.length < printed.trim().length ? ` (its last ${tail.split("\n").length} of ${all.length} lines)` : "";
+  const shown = tail.split("\n").length;
+  const all = Math.max(total + (printed.endsWith("\n") ? 0 : 1), shown);
+  const cut = partial || tail.length < whole.length ? ` (its last ${shown} of ${all} lines)` : "";
   const output = tail.replace(scrub, "[local path]") || "(none)";
   const said = ended ? `The logs command \`${command}\` ${ended}; what it printed${cut}:` : `From \`${command}\`${cut}:`;
   return `## Logs\n\n${said.replace(scrub, "[local path]")}\n\n${output}\n`;
@@ -1298,6 +1338,10 @@ async function cmdDrive(
             ? nextLines(carried, machine, took, conf.headroom)
             : [scenario.timed ? carried : new Map<string, Line>(), ""];
         const logs = !passed && conf.control.logs ? `\n${await logsFor(conf.control.logs, id, scrub)}` : "";
+        if (interrupts.interrupted) {
+          console.error(`interrupted: no evidence kept for [${scenario.name}]`);
+          return 130;
+        }
         writeWhole(
           path,
           `# ${recipe.name} / ${scenario.name} — ${stamp}\n\n` +

@@ -4,7 +4,8 @@ A project recording v2 carries the v2 feature-map shape and the v2 context-file 
 changed only the feature-map bullet's wording, and v4 replaces that bullet and the map itself, so
 the upgrade goes straight to v5's shape: never offer the v3 bullet.
 
-Offer, each as its own item:
+Offer, each as its own item and as a default the project may adapt or decline where its own way
+already does the job:
 
 1. **The harness**, per `MOVE_TO_HARNESS.md` beside this file: the tool, `harness.md`, a recipe
    for each feature-map entry and reader task with its content and evidence, the `ask-first`

@@ -4,7 +4,8 @@ A project recording v4 already has a verification harness. v5 makes it control w
 hold check run time against creep, keep one summary per scenario, find what a diff touches, and
 narrow the ask-first mark to cost.
 
-Offer, each as its own item:
+Offer, each as its own item and as a default the project may adapt or decline where its own way
+already does the job:
 
 1. **The tool update** — the shipped `../harness/verify.mts` (and `verify` entry) shown as a
    difference from the project's own copy, so its customizations stay visible; a ported tool gets

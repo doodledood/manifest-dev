@@ -1588,7 +1588,9 @@ def test_a_tool_killed_during_the_grace_still_stops_what_was_left(
         env
     )  # the command has ended; its job ignores the stop's SIGTERM
     assert _appears(job, 2)
+    deadline = time.monotonic() + 5
     while not job.read_text(encoding="utf-8").strip():  # created before it is written
+        assert time.monotonic() < deadline, "the job never wrote its pid"
         time.sleep(0.05)
     os.kill(
         int(job.read_text(encoding="utf-8")), 0
@@ -1844,6 +1846,24 @@ def test_evidence_records_duration_and_machine(tmp_path: Path) -> None:
     assert f" s on {MACHINE}" in shown, shown
 
 
+# Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
+def test_a_real_run_is_timed_by_the_clock_and_crosses_its_line(tmp_path: Path) -> None:
+    # The one line test that plants no duration: the tool's own clock times a real sleep, and
+    # that measured time is what crosses the line.
+    env = _harness(tmp_path, "", "### once\nRun: `sleep 1.2`\n")
+    env["VERIFY_MACHINE"] = MACHINE
+    env.pop("VERIFY_DURATION", None)
+    _line(tmp_path, "0.0 s; first run", 0.0)
+    result = run_verify("drive", "thing", env=env)
+    assert (
+        result.returncode == 0 and "over its line once" in result.stdout
+    ), result.stdout
+    kept = _only_summary(tmp_path)
+    took = re.search(r"^- \*\*Duration:\*\* (\d+\.\d) s$", kept, re.M)
+    assert took and float(took.group(1)) >= 1.0, kept
+    assert f"{MACHINE} 0.0 s; first run; over 1\n" in kept, kept
+
+
 def test_without_an_override_the_machine_names_platform_and_cores(
     tmp_path: Path,
 ) -> None:
@@ -1940,6 +1960,18 @@ def test_a_run_needing_a_verdict_moves_its_line_only_once_judged_verified(
     judged = run_verify("judge", "thing", second.stem, "verified", env=env)
     assert "over its line once" in judged.stdout, judged.stdout
     assert f"{MACHINE} 0.0 s; first run; over 1\n" in second.read_text(encoding="utf-8")
+
+
+def test_a_run_that_measured_nothing_never_reports_a_crossing(tmp_path: Path) -> None:
+    # A confirmed crossing is carried on by an unjudged or failed run, which measured nothing,
+    # so neither exits as over its line.
+    env = _timed(tmp_path, "### once\nRun: `true`\nCheck: read\n")
+    _line(tmp_path, "0.0 s; first run; over 2", 1.3)
+    drove = run_verify("drive", "thing", env=env)
+    assert drove.returncode == 0, drove.stdout + drove.stderr
+    (kept,) = _summaries(tmp_path)
+    judged = run_verify("judge", "thing", kept.stem, "failed", "wrong output", env=env)
+    assert judged.returncode == 0, judged.stdout + judged.stderr
 
 
 def test_a_line_moves_only_from_a_verified_run(tmp_path: Path) -> None:
@@ -2353,6 +2385,42 @@ def test_failed_evidence_keeps_the_end_of_long_logs_and_says_where_they_were_cut
     assert "\n300\n" not in logs
 
 
+def test_a_logs_command_that_never_stops_printing_is_cut_off(tmp_path: Path) -> None:
+    # Only the end of its output is read back, and it is stopped before it fills the disk.
+    env = _harness(tmp_path, "", "### bad\nRun: `exit 1`\n")
+    _settings(tmp_path, logs="yes the-log-line")
+    began = time.monotonic()
+    result = run_verify("drive", "thing", env=env)
+    assert result.returncode == 1, result.stderr
+    assert time.monotonic() - began < 30
+    logs = _only_summary(tmp_path).split("## Logs", 1)[1]
+    assert "printed more than 64 MB and was stopped" in logs, logs[:300]
+    assert re.search(r"\(its last \d+ of \d+ lines\)", logs), logs[:300]
+    assert len(logs) < 70 * 1024
+
+
+def test_ctrl_c_while_the_logs_command_runs_stops_the_run(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### bad\nRun: `exit 1`\n")
+    _settings(tmp_path, logs="echo started >&2; sleep 15")
+    drive = subprocess.Popen(
+        [str(VERIFY), "drive", "thing"],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        start_new_session=True,
+    )
+    assert drive.stdout is not None
+    assert drive.stdout.readline().startswith("running [bad]")
+    time.sleep(1)  # the scenario has failed and the logs command is running
+    began = time.monotonic()
+    os.killpg(drive.pid, signal.SIGINT)
+    _, err = drive.communicate(timeout=10)
+    assert drive.returncode == 130, err
+    assert time.monotonic() - began < 5
+    assert not _summaries(tmp_path), "an interrupted run left evidence behind"
+
+
 def test_a_process_the_logs_command_leaves_running_does_not_hold_the_run(
     tmp_path: Path,
 ) -> None:
@@ -2720,19 +2788,42 @@ def test_a_recipe_covering_the_whole_project_is_touched_by_any_change(
     assert "no recipe covers" not in result.stdout
 
 
+@pytest.mark.parametrize("in_repo", [True, False])
 def test_a_recipe_covering_the_whole_project_stays_verified_by_its_own_evidence(
-    tmp_path: Path,
+    tmp_path: Path, in_repo: bool
 ) -> None:
-    # Its evidence sits under what it covers; recording a run must not make it stale.
+    # Its evidence sits under what it covers; recording a run must not make it stale. In a
+    # repository the covered files come from git, which lists the new evidence too.
     env = _covering(tmp_path, "true", ".")
     recipe = tmp_path / "verification" / "recipes" / "thing.md"
     recipe.write_text(
         recipe.read_text(encoding="utf-8") + "\n### twice\nRun: `true`\n", "utf-8"
     )
+    if in_repo:
+        _git(tmp_path, "init", "-q")
+        _git(tmp_path, "add", "-A")
+        _git(tmp_path, "commit", "-q", "-m", "base")
     assert run_verify("drive", "thing", "once", env=env).returncode == 0
     assert run_verify("drive", "thing", "twice", env=env).returncode == 0
     listed = run_verify("list", env=env).stdout
     assert "verified (" in listed, listed
+
+
+def test_affected_in_a_project_inside_a_larger_repository(tmp_path: Path) -> None:
+    # Paths git reports from the repository's top are read relative to the project.
+    project = tmp_path / "proj"
+    env = _affected_project(project)
+    shutil.rmtree(project / ".git")
+    (tmp_path / "beside.txt").write_text("outside the project\n", encoding="utf-8")
+    _git(tmp_path, "init", "-q", "-b", "main")
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "-q", "-m", "base")
+    (project / "src/api/a.py").write_text("changed\n", encoding="utf-8")
+    (tmp_path / "beside.txt").write_text("changed outside\n", encoding="utf-8")
+    result = run_verify("affected", "HEAD", env=env)
+    assert result.returncode == 0, result.stderr
+    assert re.search(r"^\s*api\b", result.stdout, re.M), result.stdout
+    assert "beside.txt" not in result.stdout and "docs" not in result.stdout
 
 
 def test_affected_refuses_a_base_that_is_not_a_commit(tmp_path: Path) -> None:
