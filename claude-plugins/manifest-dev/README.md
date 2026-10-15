@@ -2,7 +2,7 @@
 
 The workflow: understand the problem, write down what you'd accept, then build and verify against it. Plus the surfaces that keep a project's direction and its queue of work out of any one person's head.
 
-[See it explained →](https://doodledood.github.io/manifest-dev/)
+[See it explained →](https://doodledood.github.io/manifest-dev/) Each part works on its own, and nobody else on your team has to use it; the repository README shows [how far to take it](../../README.md#how-far-to-take-it).
 
 ```bash
 /plugin install manifest-dev@manifest-dev
@@ -39,20 +39,20 @@ Nothing new to remember: the same commands move a codebase toward one the workfl
 - **Design before code** — figure-out sketches the shape of a change, compares a second one, and screens both for patterns the next agent would copy; define puts a behavior-preserving restructuring first when the area resists the change.
 - **Corrections become checks** — `/do` turns a caught mistake into a scoped type, lint, or test, and the decision record names it.
 - **Debt in `done` and in pull requests** — what a run leaves unfixed is listed at the end and in a "Debt left" section of each pull request; the next change on that path is offered the fix.
-- **One verification harness kept fresh by runs** — a command whose `--help` says how to check the project, with a recipe per feature, skill, document walk or eval suite, built when missing and repaired when drifting. It can control what it checks, lists the recipes a change touches, holds each check's run time against creep, and keeps enough of a failed run to explain it; checks that cost money, quota, shared load or effects outside the repository ask first. The shipped shape is a default each project adapts.
+- **One verification harness kept fresh by runs** — one command that can start, drive and check what runs change, with a recipe per feature, skill, document walk or eval suite and its results kept as evidence. Runs build it when missing and repair it when it drifts; a check that costs money, quota or effects outside the repository asks first. The shipped shape is a default each project adapts.
 - **Recall and update offers** — sessions working on a repository, whether on a bug, a change, a design, or a decision, start from earlier work on it, and set-up projects are offered what changed since their recorded surfaces version.
 
-## Project surfaces
+## The project and its queue
 
-These set up and feed the two longer-lived tiers:
+These keep what the project is becoming and what is worth doing next:
 
 | Skill | What it does |
 |-------|--------------|
 | `/setup-project` | Sets a repository up with a North Star, a glossary, decision-record conventions, and a verification harness, plus the wiring that makes every session read them. Seeds them from the project's own history where there is any, and run again on a set-up project audits the whole setup and offers each gap for you to accept or decline, marking what changed since the surfaces version it records in your context file. `/figure-out` offers it when the version is behind or a surface is broken, so you rarely type it. |
-| `/ticket-up` | Writes work into your ticket store — from a finished Manifest, a direct request, an open question, or findings from other work. |
+| `/ticket-up` | Writes work into your ticket store — from a finished Manifest, a direct request, an open question, or findings from other work. A follow-up carries Auto only when a person grants it here. |
 | `/next-ticket` | Reads the store, picks the one to work on now, claims it, and says why it leads. |
 | `/run-ticket` | Takes one specific ticket end to end and records the outcome back on it. |
-| `/sweep-tickets` | Resumes or starts a single ticket granted Auto, for scheduled runs. |
+| `/sweep-tickets` | Resumes or starts a single ticket a person granted Auto, for the scheduler you already run. |
 
 ## Review and verification
 

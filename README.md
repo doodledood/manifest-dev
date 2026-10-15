@@ -20,28 +20,6 @@ Start with one command, in any repository:
 
 It reads your code first, then comes back with the question that decides the work. Nothing gets built until you both know what "right" means here.
 
-## The three things, and where they live
-
-Each one makes the next decidable. You can't judge what's worth doing without knowing what the project is for, and you can't judge a diff without knowing what done means:
-
-| What it answers | Where it lives | Lifetime |
-|-----------------|----------------|----------|
-| What is this project becoming? | A North Star, in the repo | Stands until you change it |
-| What's worth doing next? | A Ticket, in your tracker or in files | As long as that piece of work |
-| What does done mean here? | A Manifest, written per run | Resets every run |
-
-`/setup-project` sets up the first of these, along with a glossary, decision-record conventions, and a way to verify the project between runs, seeding them from the project's own history where there is any. `/ticket-up` writes the second. `/define` writes the third, and `/do` executes against it.
-
-## The codebase gets easier to change, run by run
-
-An agent copies the nearest example and takes the easiest path that passes its checks. So the workflow works on the path itself, inside the same commands, with nothing extra to run:
-
-- **Design before code.** `/figure-out` sketches the shape of a change — its data, where outside data enters, who owns each piece of state — compares a second shape, and checks both for patterns the next agent would copy. `/define` carries the same check into runs nobody is watching, and puts a behavior-preserving restructuring first when the area resists the change.
-- **Corrections become checks.** When `/do` fixes something a review or a person caught, it adds the type, lint, or test that would have caught it, scoped so it flags real problems, and the decision record names that check.
-- **Debt stays visible.** What a run finds and does not fix is listed when it finishes and in a "Debt left" section of every pull request it opens, where any later run can read it. The next change that passes through that code is offered the fix first.
-- **A way to verify that stays fresh.** Each project keeps one verification command whose `--help` says how to check its result, with a recipe for each feature, skill, document walk or eval suite. Runs build it when it is missing and repair it when it drifts. Checks that cost money, quota, load on shared systems or effects outside the repository ask first; every other check runs as often as it helps. It can start, observe, reset and stop what it checks, lists the recipes a change touches, flags a check that has slowly grown slower, and keeps enough of a failed run to explain it. The shipped command is a default shape each project adapts to fit itself.
-- **Earlier work is not lost.** A session working on a repository, whether on a bug, a change, a design, or a decision, starts from what earlier sessions on it ruled and found, and running setup again on a set-up project audits it against the current setup and offers each gap, marking what changed since its version.
-
 ## Install
 
 Claude Code is the primary target. Inside a Claude Code session, run:
@@ -51,7 +29,7 @@ Claude Code is the primary target. Inside a Claude Code session, run:
 /plugin install manifest-dev@manifest-dev
 ```
 
-Then start a session in the repository you want to work on and type `/figure-out <topic>`. When a term or a file the workflow leaves behind is unclear, ask `/manifest-dev-help` or simply ask what it means.
+Then start a session in the repository you want to work on and type `/figure-out <topic>`. When a term, a step or a file the workflow leaves behind is unclear, ask `/manifest-dev-help`: it answers any question about manifest-dev in plain, simple English, with the reason behind each part.
 
 Every skill also works on its own. If you only want the one from the top of this page:
 
@@ -59,7 +37,9 @@ Every skill also works on its own. If you only want the one from the top of this
 npx skills add doodledood/manifest-dev --skill figure-out
 ```
 
-## The workflow
+[Other CLIs](#other-clis) are below.
+
+## One piece of work
 
 Three skills, run in order, though each is useful alone:
 
@@ -95,31 +75,49 @@ flowchart TD
 
 `/auto` chains all three without stopping for approval between them.
 
-`/do` assumes you are away: it makes decisions without asking follow-up questions, including after a steering message. It may revise the planned size of the change before doing broader work when that produces a better long-term solution to your requested outcome. Explicit exclusions and binding requirements stay fixed. It reports material choices afterward, surfaces blockers promptly, and continues useful independent work before escalating.
+`/do` assumes you are away. It decides without asking follow-up questions, reports its material choices afterward, surfaces a blocker as soon as it finds one, and keeps on with work that does not depend on the answer before it escalates. It may grow the planned change when that serves your outcome better in the long run; your explicit exclusions and binding requirements stay fixed. Before it implements, it sets the host's goal-setting or continuation capability on the Manifest, or prints the same completion contract for you to apply where the host has neither, so an interrupted run resumes against the same file.
 
-For an unattended run, `/do` sets a host-native goal-setting or continuation contract before implementation, with the Manifest’s absolute path included. Where a host offers neither capability, the executor prints the same contract for you to apply manually. `/auto` leaves this to the executor: understanding and definition have no continuation goal, so an interruption there needs a restart.
+## Beyond one run: three things the project keeps
 
-An executor’s goal names the resolved file directly, for example:
+Each one makes the next decidable: you can't judge what's worth doing without knowing what the project is for, and you can't judge a diff without knowing what done means.
 
-```text
-Work under the Manifest at /workspace/manifests/search.md until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Read this file before resuming execution.
-```
+| What it answers | Where it lives | Lifetime |
+|-----------------|----------------|----------|
+| What is this project becoming? | A North Star, in the repo | Stands until you change it |
+| What's worth doing next? | A Ticket, in your tracker or in files | As long as that piece of work |
+| What does done mean here? | A Manifest, written per run | Resets every run |
 
-## What it costs
+`/setup-project` sets up the first of these, along with a glossary, decision-record conventions, and a way to verify the project between runs, seeding them from the project's own history where there is any. `/ticket-up` writes the second. `/define` writes the third, and `/do` executes against it.
 
-More tokens and more work up front than prompting directly. What you get back is a first pass that lands closer to done and a result you can check rather than take on trust. Writing acceptance criteria also keeps you engaged with your own code, which matters more the more of it the agent writes.
+## The codebase gets easier to change, run by run
 
-Resist jumping in mid-`/do`. It won't get everything first try — that's what the verify loop is for.
+An agent copies the nearest example and takes the easiest path that passes its checks. So the workflow works on the path itself, inside the same commands, with nothing extra to run:
+
+- **Design before code.** `/figure-out` sketches the shape of a change — its data, where outside data enters, who owns each piece of state — compares a second shape, and checks both for patterns the next agent would copy. `/define` carries the same check into runs nobody is watching, and puts a behavior-preserving restructuring first when the area resists the change.
+- **Corrections become checks.** When `/do` fixes something a review or a person caught, it adds the type, lint, or test that would have caught it, scoped so it flags real problems, and the decision record names that check.
+- **Debt stays visible.** What a run finds and does not fix is listed when it finishes and in a "Debt left" section of every pull request it opens. The next change that passes through that code is offered the fix first.
+- **One way to check the project works.** Each project keeps one command that can start, drive and check what runs change, with a recipe for each feature or document and its results kept as evidence. Runs build it when it is missing and repair it when it drifts. A check that costs money, quota or effects outside the repository asks first; every other check runs as often as it helps.
+- **Earlier work is not lost.** A session starts from what earlier sessions on the repository ruled and found, and running `/setup-project` again on a set-up project audits it and offers each gap.
 
 ## How far to take it
 
-Each level works without the ones above it, and nobody else on your team has to use any of it:
+Each level works without the ones above it, and nobody else on your team has to use any of it. What it adds to a shared repository is plain files and plain instructions; a colleague who doesn't use manifest-dev works as before.
 
 1. **One skill** on its own, such as `/figure-out` on a question.
 2. **One piece of work** understood, defined and verified: `/figure-out`, `/define` and `/do`, or `/auto`.
 3. **A project that remembers**: `/setup-project` once, and every session starts from its direction, vocabulary, decisions and checks.
 4. **A shared queue**: `/ticket-up` writes work into a Ticket store and `/next-ticket` picks what to do now.
-5. **Unattended runs**: a scheduler or orchestrator you run starts `/run-ticket` or `/sweep-tickets` on Tickets a person granted Auto, and you step in only for a blocker, a judgment, a taste or an authority.
+5. **Unattended runs**: a scheduler or orchestrator you already run starts `/sweep-tickets` or `/run-ticket` on Tickets a person granted Auto. The project moves forward on its own, and asks you only when it is blocked or needs your judgment, taste or authority.
+
+Only a person grants Auto. When an unattended run finds more work, it writes a Ticket that waits for someone to grant it, so the queue grows only on work a person judged worth doing.
+
+## What it costs, and who it is for
+
+More tokens and more work up front than prompting directly. What you get back is a first pass that lands closer to done and a result you can check rather than take on trust. Writing acceptance criteria also keeps you engaged with your own code, which matters more the more of it the agent writes.
+
+It's for experienced developers who already work with a coding agent and would rather put the effort in before building than review afterwards, on a project of their own or inside a team of any size. If shipping fastest is all that matters, a plain agent fits better.
+
+Resist jumping in mid-`/do`. It won't get everything first try — that's what the verify loop is for.
 
 ## What's in it
 
@@ -156,7 +154,7 @@ source .venv/bin/activate
 scripts/check.sh --fix   # lint and format, typecheck, test
 ```
 
-Run `/sync-tools` after changing plugin components to regenerate `dist/`.
+Run `python3 scripts/sync_dist.py` after changing plugin components; the test suite fails when a generated copy drifts.
 
 ## Contributing
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>manifest-dev — done, with evidence</title>
-<meta name="description" content="Open-source skills for coding agents. The agent investigates first, you agree in writing what done means, and nothing is called finished until every criterion has evidence.">
+<meta name="description" content="Open-source skills for coding agents. The agent investigates first, you agree in writing what done means, and nothing is called finished until every criterion has evidence. Each run leaves the project knowing where it is going, what is next and what done means.">
 <meta property="og:title" content="manifest-dev — done, with evidence">
 <meta property="og:description" content="Every coding agent says done. manifest-dev makes it show you why: understand first, write down what done means, verify every gate.">
 <meta property="og:type" content="website">
@@ -177,6 +177,16 @@ a{color:var(--cool);text-decoration:none;border-bottom:1px solid rgba(127,216,25
 #rw b{position:absolute;top:70px;right:5vw;font:600 12.5px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#ffc2d6;text-shadow:0 0 18px rgba(255,61,127,.8);animation:blink 1.2s steps(2) infinite}
 @keyframes blink{50%{opacity:.3}}
 .card.cta{max-width:560px}
+.card.wide{max-width:520px}
+.ladder{list-style:none;margin-top:18px;display:flex;flex-direction:column-reverse;position:relative}
+.ladder::before{content:'';position:absolute;left:10px;top:16px;bottom:16px;width:2px;border-radius:2px;background:linear-gradient(to top,rgba(77,255,160,.12),rgba(77,255,160,.85))}
+.ladder li{position:relative;display:grid;grid-template-columns:22px 1fr;gap:14px;padding:8px 0;align-items:start}
+.ladder .n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:500 11px/1 'JetBrains Mono',monospace;color:var(--mint);
+  background:#07110d;border:1.5px solid rgba(77,255,160,calc(.3 + var(--k) * .17));box-shadow:0 0 calc(var(--k) * 4px) rgba(77,255,160,.55);position:relative;z-index:1}
+.ladder .t{display:block;color:var(--ink);font-weight:600;font-size:15px;line-height:1.35}
+.ladder .d{display:block;color:#c3cbdb;font-size:14px;line-height:1.45;margin-top:2px;text-wrap:pretty}
+.ladder .tag{font:500 10px/1 'JetBrains Mono',monospace;font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:var(--mint);
+  border:1px solid rgba(77,255,160,.4);border-radius:99px;padding:3px 7px;margin-left:8px;vertical-align:2px;white-space:nowrap}
 .card .feel{font-family:'Instrument Serif',serif;font-style:italic;font-size:21px;line-height:1.3;color:var(--ink);margin-top:14px}
 .card .note{margin-top:14px;font-size:12.5px;color:var(--faint)}
 .bars{margin:22px auto 6px;max-width:560px;text-align:left;font:500 11px/1 'JetBrains Mono',monospace;color:var(--dim)}
@@ -227,6 +237,7 @@ a{color:var(--cool);text-decoration:none;border-bottom:1px solid rgba(127,216,25
   #links{right:4vw;top:14px} #links a{padding:8px 10px;font-size:11.5px} #links a.gh{display:none}
   #brand{top:22px}
   .bars .bar span{font-size:9.5px;padding:0 5px}
+  .ladder{margin-top:12px} .ladder li{padding:6px 0} .ladder .d{font-size:13.5px}
 }
 .nogl #gl{display:none} .nogl body,.nogl{background:radial-gradient(ellipse at 70% 30%,#132040,#04060c 70%) fixed}
 @media (prefers-reduced-motion:reduce){.grain{animation:none}.hint span{animation:none}.rv{animation:none}#rw b{animation:none}.ask.idle{animation:none}}
@@ -335,7 +346,7 @@ a{color:var(--cool);text-decoration:none;border-bottom:1px solid rgba(127,216,25
     </div></div>
     <div class="step"><div class="card">
       <h2>The same bug Run 1 shipped. <span class="red">This time it's caught.</span></h2>
-      <p>AC-2.1 fails: the retried timeout still comes back "ok", the exact failure under Run 1's check mark. <code>/do</code> fixes it and checks again from scratch. The agent still makes mistakes. This time a gate was waiting for this one.</p>
+      <p>AC-2.1 fails: the retried timeout still comes back "ok", the exact failure under Run 1's check mark. <code>/do</code> fixes it and runs the check again. The agent still makes mistakes. This time a gate was waiting for this one.</p>
     </div></div>
     <div class="step"><div class="card">
       <h2>Then the rules that cover everything.</h2>
@@ -344,7 +355,7 @@ a{color:var(--cool);text-decoration:none;border-bottom:1px solid rgba(127,216,25
     <div class="step"><div class="card">
       <h2>Done is a <span class="mint">finding</span>, not a claim.</h2>
       <p class="feel">You don't have to take its word for it.</p>
-      <p><code>/do</code> can't say done until every gate passes with evidence attached: a command's output, or a separate review against the gate's own text. If it's stuck, it stops and shows you why.</p>
+      <p><code>/do</code> can't say done until every gate passes with evidence attached: a command's output, or a judgment against the gate's own text, quoting the work it rests on. When it's blocked, it tells you what it needs, keeps on with work that doesn't depend on the answer, and stops only when none is left.</p>
     </div></div>
   </section>
 
@@ -367,39 +378,56 @@ a{color:var(--cool);text-decoration:none;border-bottom:1px solid rgba(127,216,25
     </div></div>
   </section>
 
-  <!-- 6 · WEEKS LATER -->
-  <section data-ch="6" data-name="Weeks later">
+  <!-- 6 · THE PROJECT -->
+  <section data-ch="6" data-name="The project">
     <div class="step"><div class="card">
       <div class="chip amber"><i></i>Beyond one run</div>
-      <h2>What one run learns, the next one reads.</h2>
-      <p>It's written down where every session looks, so the next one starts from what was decided, not from zero:</p>
+      <h2>Weeks later, the project still knows where it's going.</h2>
+      <p>Run 1's next session started from zero. Here, what each run settles goes into plain files that every session reads first:</p>
       <ul class="tiers">
-        <li><i style="background:var(--amber);box-shadow:0 0 10px var(--amber)"></i><span><b>North Star</b>: what the project is becoming.</span></li>
-        <li><i style="background:#ffd9a0"></i><span><b>Tickets</b>: what's worth doing next.</span></li>
+        <li><i style="background:var(--amber);box-shadow:0 0 10px var(--amber)"></i><span><b>North Star</b>: what the project is becoming, who it's for, and what it never does.</span></li>
+        <li><i style="background:#ffd9a0"></i><span><b>Tickets</b>: what's worth doing next, each one enough for a stranger to pick up.</span></li>
         <li><i style="background:var(--mint);box-shadow:0 0 10px var(--mint)"></i><span><b>Manifests</b>: what done meant, run by run.</span></li>
       </ul>
-      <p style="margin-top:18px">And in the repository and its pull requests, so the right path is the easy one for the next agent:</p>
+      <p class="feel">The next session starts from what was decided, not from a guess.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h2>And the code gets easier to change, not harder.</h2>
+      <p>Each run leaves the right path a little easier for whoever comes next, person or agent:</p>
       <ul class="tiers">
-        <li><i style="background:var(--cool);box-shadow:0 0 10px var(--cool)"></i><span><b>Checks</b>: a correction that names a kind of mistake becomes a type, lint or test.</span></li>
-        <li><i style="background:#bfe9ff"></i><span><b>Decisions</b>: each new record names what enforces it, or why nothing can.</span></li>
-        <li><i style="background:transparent;border:1.5px solid var(--cool);box-sizing:border-box"></i><span><b>A way to verify</b>: runs that use it keep it fresh.</span></li>
-        <li><i style="background:var(--hot);opacity:.75"></i><span><b>Debt</b>: what a run leaves unfixed, listed in its pull request and offered to the next change that passes through that code.</span></li>
+        <li><i style="background:var(--cool);box-shadow:0 0 10px var(--cool)"></i><span><b>Fixed once, fixed for good</b>: a correction becomes a type, lint rule or test, so the same kind of mistake fails for everyone after.</span></li>
+        <li><i style="background:#bfe9ff"></i><span><b>Decisions keep their why</b>: each record names the check that holds it, so nobody undoes it without meeting the reason.</span></li>
+        <li><i style="background:transparent;border:1.5px solid var(--cool);box-sizing:border-box"></i><span><b>One way to check it works</b>: a single command that starts, drives and checks the project, keeping its results as evidence.</span></li>
+        <li><i style="background:var(--hot);opacity:.75"></i><span><b>Debt in the open</b>: what a run leaves unfixed is listed in its pull request and offered to the next change that passes that way.</span></li>
       </ul>
     </div></div>
-      </section>
+    <div class="step"><div class="card wide">
+      <div class="chip mint"><i></i>At your pace</div>
+      <h2>Climb as far as you choose.</h2>
+      <p>Every rung works on its own, without the ones above it and without anyone else on your team using any of it.</p>
+      <ol class="ladder">
+        <li style="--k:0"><b class="n">1</b><span><span class="t">One skill <em class="tag">start here</em></span><span class="d"><code>/figure-out</code> on a real question. Nothing is added to the project.</span></span></li>
+        <li style="--k:1"><b class="n">2</b><span><span class="t">One task, done with evidence</span><span class="d"><code>/figure-out</code>, <code>/define</code>, <code>/do</code>, or <code>/auto</code> for all three.</span></span></li>
+        <li style="--k:2"><b class="n">3</b><span><span class="t">A project with a memory</span><span class="d"><code>/setup-project</code> once, and every session reads the project's direction, decisions and checks.</span></span></li>
+        <li style="--k:3"><b class="n">4</b><span><span class="t">A shared queue</span><span class="d"><code>/ticket-up</code> writes work down, <code>/next-ticket</code> picks what's next.</span></span></li>
+        <li style="--k:4"><b class="n">5</b><span><span class="t">It moves while you're away</span><span class="d">Your scheduler runs <code>/sweep-tickets</code> on Tickets a person marked Auto. It asks you only for judgment, taste or authority.</span></span></li>
+      </ol>
+      <p class="note">Only a person marks a Ticket Auto. Work an agent finds is written down and waits until someone does.</p>
+    </div></div>
+  </section>
 
   <!-- 7 · TRADE -->
   <section data-ch="7" data-name="The trade">
     <div class="step center"><div class="card">
       <div class="chip amber"><i></i>The honest part</div>
       <h2>The trade, stated plainly.</h2>
-      <p>It spends more tokens and more time up front than prompting directly. It's for developers who'd rather put the effort in before building than review afterwards. If shipping fastest is all that matters, a plain agent fits better.</p>
+      <p>It spends more tokens and more time up front than prompting directly. It's for experienced developers who'd rather put the effort in before building than review afterwards, on a project of their own or in a team where nobody else uses it: what it adds to the repository is plain files a colleague can ignore. If shipping fastest is all that matters, a plain agent fits better.</p>
       <div class="bars" aria-label="Where the time goes">
         <div class="row"><div class="nm">Plain agent</div><div class="bar"><span class="b" style="flex:2.2">build</span><span class="r" style="flex:2.6">review · rework</span></div></div>
         <div class="row"><div class="nm">manifest-dev</div><div class="bar"><span class="u" style="flex:1.8">understand</span><span class="d" style="flex:1.2">define</span><span class="b" style="flex:2.2">build</span><span class="v" style="flex:1.1">verify</span><span class="t" style="flex:.7">review</span></div></div>
         <div class="cap">Where the time goes, not how much of it. Illustrative.</div>
       </div>
-      <p>The bet: time spent understanding and verifying leaves a project better off. It rests on daily use on our own projects, not a measured study.</p>
+      <p>The bet: spending more up front, on understanding, on what's worth doing next and on what done means, leaves a project better off than moving faster without it. It rests on daily use on our own projects, not a measured study.</p>
     </div></div>
   </section>
 
@@ -411,15 +439,16 @@ a{color:var(--cool);text-decoration:none;border-bottom:1px solid rgba(127,216,25
       <p>Each ring is a gate you approved before any code existed, checked against the finished work. The agent still does the building. <b>Done now means what you agreed it means</b>, and you can see why.</p>
     </div></div>
     <div class="step"><div class="card cta">
-      <div class="chip mint"><i></i>Try it on your next task</div>
+      <div class="chip mint"><i></i>Start at the bottom rung</div>
       <h2>Make your next <span class="mint">✓</span> mean something.</h2>
       <div class="stepn"><span>1</span>Install</div>
       <div class="tabs" id="tabs"><button class="on" data-tab="cc">Claude Code</button><button data-tab="cx">Codex</button><button data-tab="pi">Pi</button><button data-tab="oc">OpenCode</button></div>
       <div class="cmd inst"><span id="instTxt"></span><button class="copy" id="instCopy">copy</button></div>
       <div class="stepn"><span>2</span>Ask about something real</div>
       <label class="ask idle"><span class="p" id="askP">/figure-out</span><input id="ask" placeholder="why do my jobs silently stall?" spellcheck="false" autocomplete="off"><button class="copy" id="askCopy">copy</button></label>
-      <p class="small">Type the bug you keep putting off. It reads your code, then asks the question that decides the work. Nothing gets built until you agree on what "right" means.</p>
-      <p class="small">Want it without the approval stops? <code id="autoHint">/auto &lt;task&gt;</code> chains all three on its own.</p>
+      <p class="small">Type the bug you keep putting off. It reads your code, then asks the question that decides the work. Want it without the approval stops? <code id="autoHint">/auto &lt;task&gt;</code> runs all three on its own.</p>
+      <div class="stepn"><span>3</span>Ask when something is unclear</div>
+      <p class="small"><code id="helpHint">/manifest-dev-help</code> answers any question about manifest-dev in plain, simple English: a term, a rung, a file it wrote, and why it works that way.</p>
       <p class="small"><a href="https://github.com/doodledood/manifest-dev" target="_blank" rel="noopener">github.com/doodledood/manifest-dev</a> · just one skill: <code>npx skills add doodledood/manifest-dev --skill figure-out</code></p>
     </div></div>
   </section>
@@ -434,9 +463,9 @@ const INST = {
   pi: 'pi install git:github.com/doodledood/manifest-dev@main',
   oc: 'git clone https://github.com/doodledood/manifest-dev\n# then add <clone>/dist/opencode/plugin to "plugin"\n# in ~/.config/opencode/opencode.json',
 };
-const ASKP = { cc: '/figure-out', cx: '$figure-out', pi: '/skill:figure-out', oc: '/figure-out' }, AUTOP = { cc: '/auto', cx: '$auto', pi: '/auto', oc: '/auto' };
+const ASKP = { cc: '/figure-out', cx: '$figure-out', pi: '/skill:figure-out', oc: '/figure-out' }, AUTOP = { cc: '/auto', cx: '$auto', pi: '/auto', oc: '/auto' }, HELPP = { cc: '/manifest-dev-help', cx: '$manifest-dev-help', pi: '/skill:manifest-dev-help', oc: '/manifest-dev-help' };
 let tab = 'cc'; const instTxt = document.querySelector('#instTxt');
-const setTab = k => { tab = k; instTxt.textContent = INST[k]; document.querySelector('#askP').textContent = ASKP[k]; document.querySelector('#autoHint').textContent = AUTOP[k] + ' <task>'; document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === k)); };
+const setTab = k => { tab = k; instTxt.textContent = INST[k]; document.querySelector('#askP').textContent = ASKP[k]; document.querySelector('#autoHint').textContent = AUTOP[k] + ' <task>'; document.querySelector('#helpHint').textContent = HELPP[k]; document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === k)); };
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => setTab(b.dataset.tab)); setTab('cc');
 const flash = b => { const o = b.textContent; b.textContent = 'copied'; b.classList.add('hit'); setTimeout(() => { b.textContent = o; b.classList.remove('hit'); }, 1300); dispatchEvent(new Event('md:burst')); };
 document.querySelector('#instCopy').onclick = e => { e.preventDefault(); navigator.clipboard?.writeText(INST[tab]); flash(e.currentTarget); };

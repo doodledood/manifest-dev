@@ -10,12 +10,12 @@ A reader comes to these documents to know what persists between runs, and should
 
 ## How a user reaches it
 
-`README.md` → *The codebase gets easier to change, run by run*; `claude-plugins/manifest-dev/README.md` → *What the workflow maintains*; `site/index.html` → *Weeks later*
+`README.md` → *The codebase gets easier to change, run by run*; `claude-plugins/manifest-dev/README.md` → *What the workflow maintains*; `site/index.html` → *The project*
 
 ## Scenarios
 
 ### fresh-reader
-Run: `scripts/walk.sh 'Know what persists between runs. End able to name what a later run inherits from an earlier one, and where each piece lives. The sections to rely on: README.md → The codebase gets easier to change, run by run; claude-plugins/manifest-dev/README.md → What the workflow maintains; site/index.html → Weeks later.' README.md claude-plugins/manifest-dev/README.md site/index.html`
+Run: `scripts/walk.sh 'Know what persists between runs. End able to name what a later run inherits from an earlier one, and where each piece lives. The sections to rely on: README.md → The codebase gets easier to change, run by run; claude-plugins/manifest-dev/README.md → What the workflow maintains; site/index.html → The project.' README.md claude-plugins/manifest-dev/README.md site/index.html`
 Proves: the reader ends able to name what a later run inherits from an earlier one, and where each piece lives, and names nothing it had to guess that blocks the task.
 Check: read
 Workload: varies
