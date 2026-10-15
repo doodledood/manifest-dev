@@ -151,12 +151,13 @@ from a discipline `SKILL.md` explicitly states.
 | `42-one-line-fix` | negative, repository | No design ceremony for a typo | unmeasured |
 | `43-recalls-earlier-work` | autonomous, repository, plugin arm only | Bring in this repository's earlier ruling as a dated lead; ignore another repository's log | unmeasured |
 | `44-debt-on-the-path` | autonomous, repository | Offer recorded debt on the change's path as a behavior-preserving first step | unmeasured |
-| `45-current-setup-offers-nothing` | docs, repository, plugin arm only | Offer no setup update to a project that records the newest surfaces version, and do not re-offer the items it declined | unmeasured |
+| `45-current-setup-offers-nothing` | docs, repository, plugin arm only | Offer no setup update to a project that records the newest surfaces version and verifies its own way, and do not re-offer the harness or the other items it declined | unmeasured |
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | unmeasured |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | unmeasured |
 | `53-update-offer-from-v4` | docs, repository, plugin arm only | Offer the setup update for a project on v4 — control commands in place of a fixed port, dropping a run-time-only ask-first mark, the tool and bullet — and nothing v1 to v4 already gave it | unmeasured |
 | `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | unmeasured |
+| `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, and no harness is built | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14; none has been run. Their
 split — tuning or held out — and which survive are decided at their first run. The setup-update
@@ -169,11 +170,14 @@ when two cases sit behind the newest. `48` holds the design-time depth and reuse
 requested service class that would mostly forward to two existing functions. `54`, added with v5
 on 2026-10-15, holds the *Fit to trust* jobs v5 added: a touched recipe that cannot be started,
 observed and stopped per run, or whose failure explains nothing, is repaired as part of the work.
+`55`, added the same day, holds the other half of that rule for a project with no harness: a
+touched check of the project's own that cannot be relied on is repaired in its own form.
 
-**Every recorded number in this file is stale as of 2026-10-14.** The 2026-10-13 change edited
-figure-out's spine, its docs-mode and autonomous references, and its task files, and the
-2026-10-14 change moved its verification wording to one harness, so no earlier result measures
-the skill as it ships now. The next baseline replaces them.
+**Every recorded number in this file is stale as of 2026-10-15.** The 2026-10-13 change edited
+figure-out's spine, its docs-mode and autonomous references, and its task files, the
+2026-10-14 change moved its verification wording to one harness, and the 2026-10-15 change made
+that harness optional and the project's own checks a run's to repair, so no earlier result
+measures the skill as it ships now. The next baseline replaces them.
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.
@@ -249,13 +253,14 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `52` | first run decides | Plugin arm only; a declared guard: the no-plugin arm passes by construction |
 | `53` | keep | Plugin arm only; the one-behind branch, which the version test requires |
 | `54` | first run decides | New on 2026-10-15: the *Fit to trust* jobs v5 added |
+| `55` | first run decides | New on 2026-10-15: repairing a project's own check in its own form, the rule every run owes with or without a harness; the base model likely writes a new test beside the broken one |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
 check moved to `30`'s grader), `50` and `51` (setup-project runs, outside this suite's scope; their
 scaffolds live on under `verification/scaffolds/` for the setup-project recipe). `53` was added
 with v5 as the one-behind case they leave, and `54` and `define/d23` are the two cases this
-change adds for its own disciplines.
+change adds for its own disciplines; `55` and `define/d24` are the pair added when the harness became optional.
 
 ## First-run plan
 
@@ -270,7 +275,7 @@ $36; a plugin-arm-only case is 12 runs, about $18.
 
 | Order | Cases | Runs | ≈ $ | Why here |
 |---|---|---|---|---|
-| 1 | `54` | 24 | 36 | Covers what this change shipped; the base model likely plans around the broken recipe |
+| 1 | `54`, `55` | 48 | 72 | Cover what this change shipped; the base model likely plans around the broken recipe and leaves the broken test |
 | 2 | `17` | 24 | 36 | Single turn; headroom likely |
 | 3 | `22` | 24 | 36 | Single turn; the base model tends to settle a look in prose |
 | 4 | `19` | 24 | 36 | The base model likely designs the display as asked |
@@ -295,11 +300,11 @@ $36; a plugin-arm-only case is 12 runs, about $18.
 | 23 | `36` (plugin arm) | 12 | 18 | |
 | 24 | `52` (plugin arm) | 12 | 18 | Guard; status only |
 
-All of it is about 708 runs, about $1,060. A full baseline also re-measures the 13 kept both-arm
+All of it is about 732 runs, about $1,100. A full baseline also re-measures the 13 kept both-arm
 cases (`01`–`16`), another 312 runs, about $470, since every recorded number is stale.
 
-**A smaller budget** runs rows 1 to 7 first: 192 runs, about $290. A cheaper triage runs every row
-at 6 runs per arm, about $530: six runs show a case both arms pass every time, which is the retire
+**A smaller budget** runs rows 1 to 7 first: 216 runs, about $325. A cheaper triage runs every row
+at 6 runs per arm, about $550: six runs show a case both arms pass every time, which is the retire
 signal, but are too few to measure Δ. What each result decides:
 
 - both arms pass every case grader on every run, and the case is not a declared guard → retire it;
@@ -312,7 +317,7 @@ signal, but are too few to measure Δ. What each result decides:
 
 **Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`,
 `15-persona-seat-doc`, `16-underdetermined-billing`, `24-ruled-position-holds`, and
-`28-universal-not-taste`.** Seven of forty-seven cases. Their scores
+`28-universal-not-taste`.** Seven of forty-eight cases. Their scores
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
 them. Tuning happens on the others; the split of cases `30` onward is settled at their first run.
 

@@ -81,8 +81,9 @@ rather than more.
 partly — `tests/test_harness_optional.py` fails when define's, do's, figure-out's or
 setup-project's shipped text loses the condition that harness work applies only where the project
 chose it, stops naming the project's own way as the other path, or drops the duty to repair a
-touched check in the project's own form; whether each sentence behaves
-right on each kind of project stays judgment.
+touched check in the project's own form; the eval cases `55-own-check-not-fit` and
+`define/d24-own-check-repaired-first` measure that repair on a project with no harness, once run;
+whether each sentence behaves right on each kind of project stays judgment.
 
 ## Source
 - Session: the owner's steering during the surfaces v5 change, 2026-10-15

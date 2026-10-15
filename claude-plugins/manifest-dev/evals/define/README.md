@@ -12,7 +12,7 @@ cases and why. A prompt change marks the cases it covers stale rather than runni
 claude plugin eval . --tag define --ablation with-without --judge-model opus --allow-tools Write Bash --scaffold -j 8
 ```
 
-`--scaffold` runs the `scaffold.sh` that `d16` and `d19`–`d23` declare in their `case.yaml`: a
+`--scaffold` runs the `scaffold.sh` that `d16` and `d19`–`d24` declare in their `case.yaml`: a
 saved Manifest beside a small repository for `d16`, a small project for the others. Without it,
 those cases run against an empty directory and measure nothing. Only pass it for case files from this
 repository: a scaffold is bash that runs as you.
@@ -38,12 +38,14 @@ repeated with a cheaper judge.
 | `d20-preparatory-slice` | When the touched area resists the change, a behavior-preserving restructuring comes first |
 | `d21-user-rule-over-default` | A rule the project states overrides a conflicting task-file Default, and the adjustment is recorded |
 | `d23-unfit-recipe-repaired-first` | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — cuts repairing that recipe as the first Deliverable, and gates that the touched recipe is updated and run. It carries `d18-map-gate`'s grader: same prompt and project, so `d18` was retired into it on 2026-10-15 |
+| `d24-own-check-repaired-first` | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in pytest form by the first Deliverable, and no harness is built. The project-own twin of `d23`, and the define half of figure-out's `55` |
 | `d22-projectless-manifest-builds-no-harness` | A one-off script outside any project gets a Manifest whose gates check its output, with no harness, recipe, decision record or setup. A guard: the no-plugin arm is expected to pass it, so a Δ of zero is no reason to remove it |
 
 These have never been run; the first both-arm run decides which stay. **Every number below is stale
-as of 2026-10-14**: the 2026-10-13 change edited define's spine and its task files, and the
-2026-10-14 change moved its verification wording to one harness, so the next baseline replaces
-them. A single 2026-10-14 drive of `d01` (not a measurement) found define keeping the
+as of 2026-10-15**: the 2026-10-13 change edited define's spine and its task files, the
+2026-10-14 change moved its verification wording to one harness, and the 2026-10-15 change made
+that harness optional and the project's own checks a run's to repair, so the next baseline
+replaces them. A single 2026-10-14 drive of `d01` (not a measurement) found define keeping the
 requested layer cut as a user's call; define's slicing rule now says a requested cut is never one,
 and a re-drive came back re-cut (`verification/evidence/define/`).
 
@@ -355,6 +357,7 @@ a duplicate, an out-of-scope skill, or an undeclared floor in both arms retires 
 | `d21` | first run decides | The only case for a project rule overriding a Default |
 | `d22` | keep | Declared guard: the no-plugin arm is expected to pass; run once for status |
 | `d23` | first run decides | New on 2026-10-15: define's rule that an unfit touched recipe is repaired first, plus the touched-recipe gate `d18` held |
+| `d24` | first run decides | New on 2026-10-15: the same rule for a check of the project's own, with no harness |
 
 Retired on 2026-10-15: `d18-map-gate`, folded into `d23`, which has the same prompt and project
 and now carries its grader.
@@ -367,13 +370,14 @@ per arm, about $18.
 | Order | Case | Runs | ≈ $ | Why here |
 |---|---|---|---|---|
 | 1 | `d23` | 12 | 18 | Covers what this change shipped, on two graders |
-| 2 | `d19` | 12 | 18 | Headroom likely |
-| 3 | `d20` | 12 | 18 | Headroom likely |
-| 4 | `d21` | 12 | 18 | |
-| 5 | `d22` | 12 | 18 | Guard; status only |
+| 2 | `d24` | 12 | 18 | The same rule with no harness; the base model likely adds a test beside the broken one |
+| 3 | `d19` | 12 | 18 | Headroom likely |
+| 4 | `d20` | 12 | 18 | Headroom likely |
+| 5 | `d21` | 12 | 18 | |
+| 6 | `d22` | 12 | 18 | Guard; status only |
 
-All of it is 60 runs, about $91. A full baseline also re-measures the 12 kept cases, another 144
-runs, about $219, since every recorded number is stale. **A smaller budget** runs `d23` and `d19`
+All of it is 72 runs, about $109. A full baseline also re-measures the 12 kept cases, another 144
+runs, about $219, since every recorded number is stale. **A smaller budget** runs `d23` and `d24`
 first: 24 runs, about $36. A case whose own graders pass in both arms on every run is retired, as
 `d11`–`d14` were; a plugin-arm failure on a case grader is a hill; separation on a case grader
 keeps it as uplift.
@@ -387,7 +391,7 @@ negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the 
 
 - **A case gets files only through its scaffold.** Most prompts describe the codebase inline and
   say it is unavailable. `d16` seeds a Manifest and a small repository with `scaffold.sh`, and
-  `d19`–`d23` a small project. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
+  `d19`–`d24` a small project. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
 - **One turn of the interview.** The suite measures unattended encoding, plus one interactive
   turn after approval (`d16`). Interview order, re-asking settled ground, and the digest's form
   need a scripted second turn the harness does not run, so they are out of scope.
@@ -408,8 +412,9 @@ negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the 
   work (logs, Manifests, open Tickets, pull requests' debt) before encoding, and noting an old
   surfaces version, which needs fixtures of earlier sessions (figure-out's `43` and `46` cover
   recall); an approved Manifest whose gate runs an ask-first recipe carrying the agreement to run
-  it, which needs an approval a grader can see; building a missing harness as the first
-  Deliverable (`d23` covers the unfit one, figure-out's `33` the missing one); a criterion pinned
+  it, which needs an approval a grader can see; a project with nothing that can check the work
+  getting a first Deliverable that adds such a check in its own form, never a harness it did not
+  choose (figure-out's `33` covers the read); a criterion pinned
   by reacting to something concrete becoming a gate; an `Enforced by: not yet` check on the
   work's path getting built; and the *fast enough* job of *Trust the check*, a touched check over
   its time line repaired first, which needs evidence carrying a recorded line (figure-out's

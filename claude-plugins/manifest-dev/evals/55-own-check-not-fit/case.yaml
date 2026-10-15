@@ -1,0 +1,5 @@
+# Holds the decision in docs/adr/20261015-the-verification-harness-is-optional.md — that record's Enforced by line names this case; weakening or removing it means updating that line in the same change.
+schema_version: "1.0"
+name: 55-own-check-not-fit
+context:
+  scaffold_script: scaffold.sh
