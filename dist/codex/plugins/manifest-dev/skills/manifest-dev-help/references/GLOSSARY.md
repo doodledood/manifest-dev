@@ -302,15 +302,21 @@ the `/setup-project` setup the project has. When the number is older than the ne
 ## Verification
 
 ### Verification Harness
-<!-- context: fcaf16cc7465 -->
+<!-- context: 067ffcafd0fe -->
 The Verification Harness is the one command in a project that agents and people use to find if the
 work still does its job. Its `--help` says all about it. It reads one Recipe for each feature,
 skill, document walk or eval suite. It calculates each status from Evidence in the repository, not
 from a list that a person keeps. It can also start, observe, reset and stop what it examines.
 
 It exists because without it each session must find again how to test the project, and a test that
-nobody runs becomes stale. Normal runs build it when the project has none, and repair it where their
-work touches it. The shape that `/setup-project` ships is a default, and you can change it to fit
+nobody runs becomes stale.
+
+A harness is optional. A project can keep its own way to examine its work. The verification line of
+the Project Context File records the choice. When a project keeps a harness, normal runs repair it
+where their work touches it. When a project keeps its own way, runs use that way and do not add a
+harness.
+
+The shape that `/setup-project` ships is a default, and you can change it to fit
 your project. Each harness must give one place to learn how to examine the project. Each harness
 must also give statuses from Evidence, an ask-first mark that follows cost, and the Fit to Trust
 jobs.
@@ -378,10 +384,9 @@ through. It has a declared scope. When it finds existing violations that the run
 run reports them as Debt.
 
 ### Debt
-<!-- context: eab4ccb6b0a1 -->
+<!-- context: b6fe5e7cd832 -->
 Debt is what a run found and did not fix. Examples are existing violations of a Lock, a comment
 about a workaround, and a new suppression. A product regression that the harness found is also Debt.
-A new harness that you can remove is also Debt.
 
 A run names its Debt in its report, in a "Debt left" section of each pull request, and on its
 Ticket. A later run that changes the same code offers to fix it. Thus nobody forgets the Debt.

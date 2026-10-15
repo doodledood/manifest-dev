@@ -7,7 +7,10 @@ introduced and the bullet wording v3 changed are both replaced by v4, so never o
 feature map is part of the surface the move below carries into recipes.
 
 Offer, each as its own item and as a default the project may adapt or decline where its own way
-already does the job:
+already does the job. The project may also decline the harness whole and keep its own way of
+verifying: then offer none of the harness items, and offer instead the own-way form of the
+verification bullet from `../NORTH_STAR_FORMAT.md` → *The project-surfaces section*, naming its
+commands and steps, so no later run builds or offers a harness:
 
 1. **The ADR conventions' records-in-effect rule** (from v2), by comparison per the update pass:
    only an `Accepted` record is in effect, and backfilling `Enforced by`, building a `not yet`

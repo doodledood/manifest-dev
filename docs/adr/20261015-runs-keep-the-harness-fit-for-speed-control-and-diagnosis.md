@@ -35,7 +35,8 @@ Star's hypothesis that a codebase converges when debt is paid on the path of the
   jobs.
 - Friction becomes a harness command, beside "a correction becomes a lock". When a run had to
   start something by hand, add a print to see its state, or wait on something slow, it leaves
-  the harness able to do that within scope, or names the gap as debt.
+  the harness able to do that within scope — or the project's own scripts, where it verifies its
+  own way (20261015-the-verification-harness-is-optional) — or names the gap as debt.
 
 ## Alternatives Considered
 - **A rule in each skill**: the same rule in several prompts, read on every run and free to

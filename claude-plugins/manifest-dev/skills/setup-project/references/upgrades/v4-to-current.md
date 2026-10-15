@@ -1,11 +1,15 @@
 # Upgrading a project from v4 to v5
 
-A project recording v4 already has a verification harness. v5 makes it control what it checks,
-hold check run time against creep, keep one summary per scenario, find what a diff touches, and
-narrow the ask-first mark to cost.
+A project recording v4 already has a verification harness, which it may keep or set aside for its
+own way of verifying. v5 makes a kept harness control what it checks, hold check run time against
+creep, keep one summary per scenario, find what a diff touches, and narrow the ask-first mark to
+cost.
 
 Offer, each as its own item and as a default the project may adapt or decline where its own way
-already does the job:
+already does the job. The project may also decline the harness whole and keep its own way of
+verifying: then offer none of the harness items, and offer instead the own-way form of the
+verification bullet from `../NORTH_STAR_FORMAT.md` → *The project-surfaces section*, naming its
+commands and steps, so no later run builds or offers a harness:
 
 1. **The tool update** — the shipped `../harness/verify.mts` (and `verify` entry) shown as a
    difference from the project's own copy, so its customizations stay visible; a ported tool gets

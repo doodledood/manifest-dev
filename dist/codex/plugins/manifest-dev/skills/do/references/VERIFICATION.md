@@ -4,17 +4,11 @@ What a harness is, what it owes and what shape it takes by default are in
 `../../setup-project/references/VERIFICATION_HARNESS.md`; how to use this project's harness is in
 its own `--help`.
 
-- **Missing harness:** only in a project, as `SKILL.md` defines it. When the context file's
-  project-surfaces section names none, look among the verification assets the project keeps,
-  and build one from what is found, or from nothing, scoped to what the change touches, as
+- **Missing parts:** this file applies only where the project-surfaces section of the context file
+  names a verification harness, which is the project's choice and never the run's. Build what the
+  change needs that the harness lacks, scoped to what the change touches, as
   `../../setup-project/references/VERIFICATION_HARNESS.md` → *What setup creates, and what runs build*
-  describes. Record it with the verification bullet of the surfaces template in
-  `../../setup-project/references/NORTH_STAR_FORMAT.md` → *The project-surfaces section*, in the
-  project-surfaces section of the project-level context file the detected host reads, resolved
-  per `../../review-code/references/context-file-adherence.md`; create the file or the section,
-  holding only that bullet, where it is missing. Build it unattended too: it is verification for
-  the change, like a regression test. Name it in the completion report as a new project surface
-  the user can remove.
+  describes, unattended too: it is verification for the change, like a regression test.
 - **Touched recipes:** `verify affected` lists the recipes the change touches and the changed
   paths no recipe covers; an uncovered path a user reaches gets a recipe. Update each touched
   recipe to match the change, run it, and commit its evidence. A recipe marked ask-first runs

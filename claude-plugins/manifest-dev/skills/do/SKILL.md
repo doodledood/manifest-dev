@@ -81,8 +81,12 @@ Load `references/HARVEST.md` before the run reports, and earlier as soon as it r
 fixes a defect, receives a correction or touches a comment that explains a workaround or claims a
 constraint: a correction becomes a lock where a check can hold it, such a comment becomes a refactor flag or
 an encoding offer, and the debt the run leaves goes into its report and into every pull request it opens or updates. When the
-Manifest gates a verification recipe, or the work needs a harness the project lacks or
-touches a path no recipe covers, load `references/VERIFICATION.md`. A harness belongs to a project:
+Manifest gates a verification recipe, or the project-surfaces section of the context file names a
+verification harness and the work needs a part it lacks or touches a path no recipe covers, load
+`references/VERIFICATION.md`. The harness is the project's choice: where that section names the
+project's own way of verifying, or names none, verify through what the project keeps, add any check
+the change needs in its own form, build no harness, and where none is named offer one in the
+report. A harness belongs to a project:
 a repository or working folder
 holding, or about to hold, work later sessions will change — a new one the user is starting
 counts — which this work concerns. A chat with no workspace, a home or scratch folder, a folder

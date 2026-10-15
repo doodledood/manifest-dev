@@ -24,10 +24,10 @@ mistake fails for every later contributor, with or without this workflow.
   ships with it.
 - **The record:** where a decision record's decision is what the lock holds, update the record's
   `Enforced by` line, and give the check a comment citing the record.
-- **Friction becomes a harness command:** where the run had to start something by hand, add a
-  print to see its state, or wait on something slow, leave the verification harness able to do
-  that — a control command, a `logs:` command, a faster check — within the change's scope, or
-  name the gap as debt.
+- **Friction becomes a command:** where the run had to start something by hand, add a print to
+  see its state, or wait on something slow, leave the project's verification able to do that — in
+  its harness a control command, a `logs:` command or a faster check, or the same in its own
+  scripts — within the change's scope, or name the gap as debt.
 - **Suppressions:** a new suppression of a lock carries its reason on the suppressing line and is
   reported as debt. It needs no approval to land.
 
@@ -44,7 +44,7 @@ mistake fails for every later contributor, with or without this workflow.
 
 Debt is what the run found and did not fix: unfixed lock hits; refactor flags; constraint
 comments awaiting encoding; new suppressions; reshapes outside the change's scope; product
-regressions the verification harness exposed; a new verification harness the user may remove; ask-first recipes the change touched and did not run; a time-line overshoot frozen under a debt Ticket; harness friction left unfixed.
+regressions the verification harness exposed; ask-first recipes the change touched and did not run; a time-line overshoot frozen under a debt Ticket; harness friction left unfixed.
 
 - Record each item in the execution log as it is found.
 - Hand the list to `/done` or `/escalate`, which name it with the ticket-up offer.

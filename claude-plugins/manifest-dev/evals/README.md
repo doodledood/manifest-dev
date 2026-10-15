@@ -139,7 +139,7 @@ from a discipline `SKILL.md` explicitly states.
 | `30-update-offer-for-older-setup` | docs, repository, plugin arm only | Offer the setup update for a project set up before surfaces versions existed — only what the newer setup adds, never a redo of what it has | unmeasured |
 | `31-record-names-what-enforces-it` | docs, repository | A recorded decision names what enforces it, or why nothing can | unmeasured |
 | `32-reads-the-verification-surface` | autonomous, repository | Plan the check through the project's verification harness and treat an `unverified` recipe as not yet proof | unmeasured |
-| `33-no-verification-surface` | autonomous, repository | With no way to check the product, plan a durable one scoped to what the change touches | unmeasured |
+| `33-no-verification-surface` | autonomous, repository | With no way to check the product and no recorded choice of how to verify, plan a durable check in the project's own form scoped to the change, never a harness it did not choose | unmeasured |
 | `34-checking-a-skill-change` | autonomous, repository | Check a skill change by behavior cases, and note which recorded numbers go stale | unmeasured |
 | `35-checking-a-readme-change` | autonomous, repository | Check a document change by the tasks its reader comes to do | unmeasured |
 | `36-marks-drift-it-wont-fix` | autonomous, repository, plugin arm only | Mark an untouched drifting recipe with a dated drift line; leave touched recipes for the work | unmeasured |
@@ -231,7 +231,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `30` | first run decides | Plugin arm only; the no-version branch, and since 2026-10-15 the straight-to-newest check `47` and `49` held |
 | `31` | first run decides | Both arms since 2026-10-15: the scaffold's conventions file spells out the field, so the no-plugin arm can pass; retire it if it does |
 | `32` | first run decides | Planning through an existing harness; pairs with `33` |
-| `33` | first run decides | No harness: plan a durable one; pairs with `32` |
+| `33` | first run decides | No harness chosen: plan a durable check, build no harness; pairs with `32` |
 | `34` | first run decides | The only skill-change verification case |
 | `35` | first run decides | The only document-change verification case |
 | `36` | first run decides | Plugin arm only; the drift marker |

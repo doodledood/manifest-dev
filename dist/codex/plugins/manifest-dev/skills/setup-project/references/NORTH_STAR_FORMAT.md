@@ -191,10 +191,13 @@ single source of the emitted text. Emit it adapted to what the project actually 
 extend an existing section rather than duplicating one; where the host supports imports,
 the session-start reads become imports. The version comment records which surfaces version
 the project carries, so a later update can tell what changed since; write the current
-version from `CHANGES.md` beside this file. Include the verification entry only where the
-project has a verification harness, naming the command that runs it. It is written for anyone
-who opens the repository, with or without this workflow, so it uses no term `--help` does not
-explain.
+version from `CHANGES.md` beside this file. The verification entry records how the project
+checks its work, in one of two forms: the harness form, naming the command, where the project keeps
+a verification harness; or the own-way form, naming the project's own commands and steps, where the
+project chose to verify its own way instead. That entry is where the choice lives, and every later
+run reads it there. Omit it where the project holds nothing future runs will change. It is written
+for anyone who opens the repository, with or without this workflow, so it uses no term `--help` or
+the entry itself does not explain.
 
 ```markdown
 ## Project surfaces
@@ -227,8 +230,12 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
   Recipes marked ask-first cost money, quota, load on shared systems or effects outside the
   repository: run those only when a person runs them or has agreed. `<command> --help` gives the
   rest. <Where the harness setting is `ask-first: run`,
-  replace the ask-first sentence with "Recipes marked ask-first may run freely here." Omit this
-  bullet where the project has no verification harness.>
+  replace the ask-first sentence with "Recipes marked ask-first may run freely here." Where the
+  project verifies its own way, emit this form of the bullet instead:>
+- **Verification** — how this project checks that its work still does its job: <each command or
+  step, with what it covers>. Run them before saying a change works and when reproducing a reported
+  problem; a change that needs a check none of them has adds one in the same form. This project
+  verifies its own way by choice: add no separate verification tool to it.
 ```
 
 <!-- Fixed boundary: copying resumes at the heading below and runs to the end of the file. -->

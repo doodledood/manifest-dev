@@ -107,17 +107,26 @@ That gives a floor that isn't ceremony:
   tests, and able to land as its own pull request. Recorded debt on the work's path that
   still stands, checked against the current code, joins it — offered to an attended user,
   decided within the caller's delegation when unattended. Debt off the path stays where it is.
-- **Verification comes before the work it checks.** In a project, its verification harness is its
-  one command for checking that its work still does its job, with a recipe per thing it checks,
-  as setup-project's `references/VERIFICATION_HARNESS.md` describes. Find it where the context
-  file's project-surfaces section names it, or among the verification assets the project keeps.
-  Where it is missing, or a recipe the work touches is drifting or not fit to trust (`../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), cut building or repairing it, scoped to what the change touches, as the
-  first Deliverable, ahead of any preparatory slice; unattended runs build it too. A Manifest that touches anything a recipe
-  covers, or a path one should cover but does not, carries a gate that each touched recipe is added or
-  updated and run, its evidence committed. A recipe marked ask-first is run only where the
-  project's setting or the user allows — a user who approves a Manifest whose gate runs it has
-  agreed; otherwise its gate holds that the recipe is updated and that the run it still owes is
-  named in the report.
+- **Verification comes before the work it checks.** In a project, the verification bullet of the
+  context file's project-surfaces section records how the project checks that its work still does
+  its job: its verification harness — one command with a recipe per thing it checks, as
+  setup-project's `references/VERIFICATION_HARNESS.md` describes — or its own way, named there. The
+  harness is the project's choice, never the run's.
+  - **Harness:** where it lacks what the work needs, or a recipe the work touches is drifting or not
+    fit to trust (`../setup-project/references/VERIFICATION_HARNESS.md` → *Fit to trust*), cut
+    building or repairing it, scoped to what the change touches, as the first Deliverable, ahead of
+    any preparatory slice; unattended runs build it too. A Manifest that touches anything a recipe
+    covers, or a path one should cover but does not, carries a gate that each touched recipe is
+    added or updated and run, its evidence committed. A recipe marked ask-first is run only where
+    the project's setting or the user allows — a user who approves a Manifest whose gate runs it has
+    agreed; otherwise its gate holds that the recipe is updated and that the run it still owes is
+    named in the report.
+  - **Its own way, or no bullet yet:** gates verify through the means the bullet names, or with no
+    bullet through the verification assets the project keeps — its tests, scripts and checklists —
+    and no gate or Deliverable builds or repairs a harness the project did not choose. Where none
+    of them can check what the work touches, the first Deliverable adds that check in the project's
+    own form. With no bullet, record the harness as an offer the report carries, as an `ASM-*`,
+    never as work.
 - **A recorded check still to be built is built.** Search the project's decision records for
   `Enforced by` lines reading `not yet`. When the work implements or touches such a decision, a
   gate holds that the named check exists, fails when the decision is reversed, and carries a

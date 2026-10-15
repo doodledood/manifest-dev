@@ -10,4 +10,4 @@ in `upgrades/` says; it records the newest version once the user has answered.
 - v2 — `changes/v2.md`: setup audits the whole setup; surfaces judged fit to trust by their jobs; a fixed feature-map shape.
 - v3 — `changes/v3.md`: the feature-map entry says where its commands live and that a changed feature's entry is updated and driven.
 - v4 — `changes/v4.md`: one verification harness of recipes replaces the surface, map and reader tasks.
-- v5 — `changes/v5.md`: the harness controls what it checks, holds run time against creep, and reads as a default shape.
+- v5 — `changes/v5.md`: the harness is optional, controls what it checks, holds run time against creep, and reads as a default shape.

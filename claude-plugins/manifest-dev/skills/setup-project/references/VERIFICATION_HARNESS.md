@@ -6,9 +6,9 @@ run instead of each run working out again how to launch, drive and observe the r
 or a person learns everything about verifying the project from one command, `verify --help`. A
 harness that is wrong is worse than none, so every status it shows comes from evidence.
 
-What follows is a default shape, not a specification. It is what setup seeds and what this
-workflow's skills expect when a project says nothing else, and it is worth converging on where it
-fits. A project's harness should fit the project and the people who work on it, so adopt each part
+What follows is a default shape, not a specification. It is what setup seeds when a project takes
+a harness and what this workflow's skills expect of one that says nothing else, and it is worth
+converging on where it fits. A project's harness should fit the project and the people who work on it, so adopt each part
 where it fits, and adapt or replace it where it does not. Whatever its shape, every harness owes the
 same few things: one place a newcomer learns how to verify the project, statuses that come from
 evidence rather than anyone's say-so, the ask-first mark following cost, and the jobs in *Fit to
@@ -16,10 +16,22 @@ trust*. It is judged by those, never by how closely it matches this file.
 
 ## When a project gets one
 
-Give a project a harness when it holds something future runs will change. One-shot work — a
-single report, a throwaway script — is checked in its own run and gets none. A project keeps one
-harness, whatever it holds: a product's features, a plugin's skills, prompts with behavior
-cases, and living documents are all recipes in the same harness.
+A harness is offered, never imposed. Offer one when a project holds something future runs will
+change; one-shot work — a single report, a throwaway script — is checked in its own run and gets
+none. A project that already verifies its own way — its own scripts, suites or checklists — may
+decline it. The choice lives in one place: the verification bullet of the context file's
+project-surfaces section, in its harness form or its own-way form (`NORTH_STAR_FORMAT.md` beside
+this file → *The project-surfaces section*). Every run reads it there:
+
+- **Harness form:** runs use the harness, build its missing parts and keep it fit, as this file
+  describes.
+- **Own-way form:** runs verify through the means the bullet names, add any check a change needs in
+  that same form, and never build, repair, gate on or offer a harness.
+- **No bullet yet:** runs verify through what the project already has, add only the check a change
+  needs in the project's own form, build no harness, and offer one in their report.
+
+A project that keeps a harness keeps one, whatever it holds: a product's features, a plugin's
+skills, prompts with behavior cases, and living documents are all recipes in the same harness.
 
 ## The parts
 
@@ -192,7 +204,7 @@ gaps, as long as one command still tells a newcomer how to verify.
 
 ## What setup creates, and what runs build
 
-Setup seeds the harness in this default shape, fitted to what the project already has: it copies and adapts the tool in the language *The parts* sets, asks the
+Where the user accepts the harness, setup seeds it in this default shape, fitted to what the project already has: it copies and adapts the tool in the language *The parts* sets, asks the
 ask-first choice (default `ask`) and writes it to `harness.md`, declares the control commands
 the project's existing scripts already provide (and none where nothing runs), adopts existing
 assets as recipes that delegate to them, catalogs recipes

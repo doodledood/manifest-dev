@@ -1,7 +1,7 @@
 # ADR: Runs build and maintain a verification surface for each artifact that future runs will change
 
 ## Status
-Accepted; narrowed by 20261014-the-feature-map-is-a-navigation-contract-over-what-users-invoke: the feature map covers whatever users invoke in a fixed shape with a proof run, and an unfit surface is repaired where work touches it; amended by 20261014-one-verification-harness-per-project: one harness reading recipe files replaces the per-artifact forms; amended by 20261015-runs-keep-the-harness-fit-for-speed-control-and-diagnosis: what runs keep fit to trust now covers speed, control and diagnosis, not only correctness
+Accepted; narrowed by 20261014-the-feature-map-is-a-navigation-contract-over-what-users-invoke: the feature map covers whatever users invoke in a fixed shape with a proof run, and an unfit surface is repaired where work touches it; amended by 20261014-one-verification-harness-per-project: one harness reading recipe files replaces the per-artifact forms; amended by 20261015-runs-keep-the-harness-fit-for-speed-control-and-diagnosis: what runs keep fit to trust now covers speed, control and diagnosis, not only correctness; amended by 20261015-the-verification-harness-is-optional: runs build or repair a harness only where the project chose one, and otherwise verify through the project's own way and offer the harness in their report
 
 ## Area
 define / do
