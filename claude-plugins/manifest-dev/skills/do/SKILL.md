@@ -84,10 +84,11 @@ an encoding offer, and the debt the run leaves goes into its report and into eve
 Manifest gates a verification recipe, or the project keeps a verification harness — named in the
 project-surfaces section of the context file, or on disk with no verification bullet there, which
 counts as chosen — and the work needs a part it lacks or touches a path no recipe covers, load
-`references/VERIFICATION.md`. The harness is the project's choice: where that section names the
-project's own way of verifying, verify through the means it names; where it names none and no harness
-is on disk, through what the project keeps. Either way add any check the change needs in the project's own form, build
-no harness, and only where none is named recommend one in the report. In every project, harness or
+`references/VERIFICATION.md`; where such a harness has no bullet, the report suggests recording it.
+The harness is the project's choice: where that section names the project's own way of verifying,
+verify through the means it names, and recommend no harness. Where the section records no choice and
+no harness is on disk, verify through what the project keeps, and recommend a harness in the report.
+Either way add any check the change needs in the project's own form and build no harness. In every project, harness or
 not, repair a check the change touches that is broken or not fit to trust in its own form, or
 report it as debt. A harness belongs to a project:
 a repository or working folder
