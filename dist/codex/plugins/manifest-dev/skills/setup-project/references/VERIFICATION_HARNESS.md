@@ -27,7 +27,7 @@ this file → *The project-surfaces section*). Every run reads it there:
 - **Harness form:** runs use the harness, build the parts the work needs that it lacks and keep it
   fit, as this file describes.
 - **Own-way form:** runs verify through the means the bullet names, add any check a change needs in
-  that same form, and never build, gate on or offer a harness.
+  that same form, and never build, gate on or offer a harness; only a setup run offers the upgrade.
 - **No bullet yet:** a harness already on disk counts as chosen — runs treat it as the harness form
   and suggest recording its bullet. Otherwise runs verify through what the project already has, add
   only the check a change needs in the project's own form, build no harness, and recommend one in
@@ -36,7 +36,7 @@ this file → *The project-surfaces section*). Every run reads it there:
 The line is build versus maintain, not harness versus none. No run builds a verification system the
 project did not choose; every run keeps sound the checks the project has, in whatever form — a
 test, a script, a checklist step, a recipe — where its work touches them, by the jobs in *Fit to
-trust*. An opt-out means only that no harness is built or offered.
+trust*. An opt-out means only that no run builds or offers a harness; a setup run, an audit against the recommended setup, still offers the upgrade, adopting the project's checks.
 
 A project that keeps a harness keeps one, whatever it holds: a product's features, a plugin's
 skills, prompts with behavior cases, and living documents are all recipes in the same harness.

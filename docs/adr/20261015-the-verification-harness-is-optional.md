@@ -40,11 +40,15 @@ rather than more.
   the project did not choose, and every run keeps sound the checks the project has, in whatever
   form — a test, a script, a checklist step, a recipe — where its work touches them. The *Fit to
   trust* jobs judge any check, and a touched check that fails one is repaired within scope in its
-  own form or reported as debt. An opt-out means only that no harness is built or offered.
+  own form or reported as debt. An opt-out means only that no workflow run builds or offers a
+  harness.
 - Verification still comes before the work: when nothing the project has can check what a change
   touches, the first step adds such a check, in the project's own form.
 - The harness is recommended, so setup-project installs it by default; the user opts out to keep
-  the project's own way, which writes the own-way bullet, so no later run offers it again. Every
+  the project's own way, which writes the own-way bullet, so no figure-out, define or do run offers
+  it again. A setup-project run is an audit against the recommended setup, so it still offers the
+  upgrade to the harness, even to a project with its own way or a harness of its own making: the
+  upgrade adopts the project's checks by delegation, and a decline leaves them as they are. Every
   skill still does its whole job without a harness. The upgrade guides offer the same choice to installed projects.
 - Evidence stays uniform for every scenario a harness runs. A scenario a CI service also runs gets
   no exception, so the workflow does not depend on CI and carries no second evidence rule.
