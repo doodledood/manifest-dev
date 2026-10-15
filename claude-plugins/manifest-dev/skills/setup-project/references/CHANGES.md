@@ -115,4 +115,4 @@ Digest: 932d17190a24d0fb7e0b99b039d1821ac54a13769d05b56f2b32b2bff7f118e9
 - The shipped example settings declare control commands on a per-run data directory and a free
   port, and its feature recipe shows a `Workload: varies` scenario.
 
-Digest: 80b0d5297e241f10f1aee5c451c19a598e2ec00d285bf978f6df5c6349d9032d
+Digest: 3e55d90cfa0be753e86285d186e6e86d0d7424d4689644c1efe78af0046af8b9

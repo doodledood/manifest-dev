@@ -1752,14 +1752,14 @@ def _only_summary(tmp_path: Path) -> str:
 
 
 def _timed(tmp_path: Path, scenarios: str = "") -> dict[str, str]:
-    """A recipe whose one scenario sleeps for whatever the `delay` file says."""
-    (tmp_path / "delay").write_text("0\n", encoding="utf-8")
-    env = _harness(tmp_path, "", scenarios or '### once\nRun: `sleep "$(cat delay)"`\n')
-    return {**env, "VERIFY_MACHINE": MACHINE}
+    """A recipe whose runs take whatever duration the test plants (0 s to begin with)."""
+    env = _harness(tmp_path, "", scenarios or "### once\nRun: `true`\n")
+    return {**env, "VERIFY_MACHINE": MACHINE, "VERIFY_DURATION": "0"}
 
 
-def _delay(tmp_path: Path, seconds: float) -> None:
-    (tmp_path / "delay").write_text(f"{seconds}\n", encoding="utf-8")
+def _delay(env: dict[str, str], seconds: float) -> None:
+    # Planted rather than slept: the line rules are tested on exact durations, without waiting.
+    env["VERIFY_DURATION"] = f"{seconds}"
 
 
 def _line(tmp_path: Path, line: str, duration: float) -> None:
@@ -1915,7 +1915,7 @@ def test_a_freeze_from_either_merged_branch_survives_the_fold(tmp_path: Path) ->
             f"- **Scenario:** once\n- **Outcome:** verified\n- **Machine:** {MACHINE}\n"
             f"- **Duration:** 0.0 s\n- **Line:** {MACHINE} {line}\n",
         )
-    _delay(tmp_path, 1.3)  # over the bare line, under the frozen level
+    _delay(env, 1.3)  # over the bare line, under the frozen level
     result = run_verify("drive", "thing", env=env)
     assert result.returncode == 0 and "over" not in result.stdout, result.stdout
     assert "frozen at 3.0 s by T-1" in _only_summary(tmp_path)
@@ -1924,9 +1924,9 @@ def test_a_freeze_from_either_merged_branch_survives_the_fold(tmp_path: Path) ->
 def test_a_run_needing_a_verdict_moves_its_line_only_once_judged_verified(
     tmp_path: Path,
 ) -> None:
-    env = _timed(tmp_path, '### once\nRun: `sleep "$(cat delay)"`\nCheck: read\n')
+    env = _timed(tmp_path, "### once\nRun: `true`\nCheck: read\n")
     _line(tmp_path, "0.0 s; first run", 0.0)
-    _delay(tmp_path, 1.3)
+    _delay(env, 1.3)
     result = run_verify("drive", "thing", env=env)
     assert result.returncode == 0 and "over" not in result.stdout, result.stdout
     (first,) = _summaries(tmp_path)
@@ -1945,12 +1945,12 @@ def test_a_run_needing_a_verdict_moves_its_line_only_once_judged_verified(
 def test_a_line_moves_only_from_a_verified_run(tmp_path: Path) -> None:
     env = _timed(
         tmp_path,
-        '### once\nRun: `sleep "$(cat delay)"; exit "$(cat code)"`\n\n'
+        '### once\nRun: `true; exit "$(cat code)"`\n\n'
         "### varies\nRun: `true`\nWorkload: varies\n",
     )
     (tmp_path / "code").write_text("1\n", encoding="utf-8")
     _line(tmp_path, "0.0 s; first run; over 1", 1.3)
-    _delay(tmp_path, 1.3)
+    _delay(env, 1.3)
     assert run_verify("drive", "thing", "once", env=env).returncode == 1
     for how, said in (("raise", "new tests"), ("freeze", "T-9")):
         refused = run_verify(how, "thing", "once", said, env=env)
@@ -1974,31 +1974,22 @@ def test_a_new_run_of_a_judged_scenario_needs_judging_again(tmp_path: Path) -> N
 # --- lines -----------------------------------------------------------------------------
 
 
-def _quick_line(text: str, origin: str) -> bool:
-    # A near-instant run measures 0.0 or 0.1 s depending on load; either is a quick line.
-    return bool(
-        re.search(rf"^- \*\*Line:\*\* {MACHINE} 0\.[01] s; {origin}$", text, re.M)
-    )
-
-
 # Holds the decision in docs/adr/20261015-check-run-time-is-held-by-an-alarm-against-creep.md.
 def test_the_first_run_on_a_kind_of_machine_sets_its_line_there(tmp_path: Path) -> None:
     env = _timed(tmp_path)
     assert run_verify("drive", "thing", env=env).returncode == 0
-    assert _quick_line(_only_summary(tmp_path), "first run")
+    assert f"- **Line:** {MACHINE} 0.0 s; first run\n" in _only_summary(tmp_path)
     other = {**env, "VERIFY_MACHINE": "another-machine"}
-    _delay(tmp_path, 1.2)  # over the first machine's line, but never compared with it
+    _delay(other, 1.2)  # over the first machine's line, but never compared with it
     result = run_verify("drive", "thing", env=other)
     assert result.returncode == 0 and "over" not in result.stdout, result.stdout
     kept = _only_summary(tmp_path)
-    assert _quick_line(kept, "first run"), kept
-    assert re.search(
-        r"^- \*\*Line:\*\* another-machine 1\.\d s; first run$", kept, re.M
-    )
+    assert f"- **Line:** {MACHINE} 0.0 s; first run\n" in kept, kept
+    assert re.search(r"^- \*\*Line:\*\* another-machine 1\.2 s; first run$", kept, re.M)
 
 
 def test_a_scenario_whose_work_varies_gets_no_line(tmp_path: Path) -> None:
-    env = _timed(tmp_path, '### once\nRun: `sleep "$(cat delay)"`\nWorkload: varies\n')
+    env = _timed(tmp_path, "### once\nRun: `true`\nWorkload: varies\n")
     assert run_verify("drive", "thing", env=env).returncode == 0
     assert "- **Line:**" not in _only_summary(tmp_path)
 
@@ -2009,7 +2000,7 @@ def test_one_run_over_the_line_is_noise_until_a_second_confirms_it(
 ) -> None:
     env = _timed(tmp_path)
     _line(tmp_path, "0.0 s; first run", 0.0)
-    _delay(tmp_path, 1.2)
+    _delay(env, 1.2)
     once = run_verify("drive", "thing", env=env)
     assert once.returncode == 0 and "over its line once" in once.stdout, once.stdout
     assert "verified (" in run_verify("list", env=env).stdout
@@ -2020,7 +2011,7 @@ def test_one_run_over_the_line_is_noise_until_a_second_confirms_it(
     shown = run_verify("help", "thing", env=env).stdout
     assert "took 1." in shown and "2 run(s) over" in shown, shown
     # Back under the line: the crossing clears.
-    _delay(tmp_path, 0)
+    _delay(env, 0)
     assert run_verify("drive", "thing", env=env).returncode == 0
     assert "verified (" in run_verify("list", env=env).stdout
 
@@ -2037,7 +2028,7 @@ def test_a_run_faster_by_more_than_the_headroom_lowers_the_line(tmp_path: Path) 
     _line(tmp_path, "5.0 s; first run", 5.0)
     result = run_verify("drive", "thing", env=env)
     assert "line lowered from 5.0 s" in result.stdout, result.stdout
-    assert _quick_line(_only_summary(tmp_path), "lowered")
+    assert f"- **Line:** {MACHINE} 0.0 s; lowered\n" in _only_summary(tmp_path)
 
 
 def test_a_run_within_the_headroom_keeps_the_line(tmp_path: Path) -> None:
@@ -2051,7 +2042,7 @@ def test_the_headroom_is_a_setting(tmp_path: Path) -> None:
     env = _timed(tmp_path)
     _settings(tmp_path, headroom="300%")
     _line(tmp_path, "1.0 s; first run; over 1", 1.0)
-    _delay(tmp_path, 2.2)  # over 1 s + the 1 s floor, under 1 s + 300%
+    _delay(env, 2.2)  # over 1 s + the 1 s floor, under 1 s + 300%
     assert run_verify("drive", "thing", env=env).returncode == 0
     _settings(tmp_path, headroom="lots")
     result = run_verify("list", env=env)
@@ -2073,6 +2064,25 @@ def test_a_raise_without_a_reason_is_refused(tmp_path: Path) -> None:
         in _only_summary(tmp_path)
     )
     assert "verified (" in run_verify("list", env=env).stdout
+
+
+def test_a_reason_cannot_read_back_as_a_line_field(tmp_path: Path) -> None:
+    env = _timed(tmp_path)
+    _line(tmp_path, "0.0 s; first run; over 2", 1.3)
+    assert run_verify("raise", "thing", "once", "a; over 2", env=env).returncode == 0
+    assert "verified (" in run_verify("list", env=env).stdout
+
+
+def test_a_scenarios_output_never_sets_a_field(tmp_path: Path) -> None:
+    env = _timed(
+        tmp_path,
+        f"### once\nRun: `echo '- **Line:** {MACHINE} 99.0 s; first run'`\n",
+    )
+    assert run_verify("drive", "thing", env=env).returncode == 0
+    _delay(env, 1.3)
+    result = run_verify("drive", "thing", env=env)
+    assert "lowered" not in result.stdout, result.stdout
+    assert "over its line once" in result.stdout, result.stdout
 
 
 def test_a_line_not_crossed_has_nothing_to_raise(tmp_path: Path) -> None:
@@ -2106,12 +2116,12 @@ def test_a_frozen_overshoot_fails_a_run_only_past_the_frozen_level(
     assert "frozen at 1.3 s by TICKET-7" in _only_summary(tmp_path)
     assert "verified (" in run_verify("list", env=env).stdout
     # Up to the frozen level (with headroom) other runs are not held up.
-    _delay(tmp_path, 1.2)
+    _delay(env, 1.2)
     held = run_verify("drive", "thing", env=env)
     assert held.returncode == 0 and "over" not in held.stdout, held.stdout
     assert "frozen at 1.3 s by TICKET-7" in _only_summary(tmp_path)
     # Past it is new creep, paid by whoever causes it.
-    _delay(tmp_path, 2.5)
+    _delay(env, 2.5)
     past = run_verify("drive", "thing", env=env)
     assert "over its line once" in past.stdout, past.stdout
 
@@ -2138,16 +2148,16 @@ def test_lines_live_only_in_evidence(tmp_path: Path) -> None:
     _settings(tmp_path)
     before = [p.read_bytes() for p in shared]
     _line(tmp_path, "0.0 s; first run; over 1", 1.3)
-    _delay(tmp_path, 1.2)
+    _delay(env, 1.2)
     assert run_verify("drive", "thing", env=env).returncode == 5
     assert run_verify("raise", "thing", "once", "earned", env=env).returncode == 0
     assert [p.read_bytes() for p in shared] == before
 
 
 def test_a_failed_run_leaves_the_line_as_it_was(tmp_path: Path) -> None:
-    env = _timed(tmp_path, '### once\nRun: `sleep "$(cat delay)"; exit 1`\n')
+    env = _timed(tmp_path, "### once\nRun: `true; exit 1`\n")
     _line(tmp_path, "0.0 s; first run; over 1", 1.3)
-    _delay(tmp_path, 1.2)
+    _delay(env, 1.2)
     assert run_verify("drive", "thing", env=env).returncode == 1
     assert f"- **Line:** {MACHINE} 0.0 s; first run; over 1\n" in _only_summary(
         tmp_path
@@ -2294,6 +2304,22 @@ def test_a_drive_reaches_a_started_instance_by_its_run_id(tmp_path: Path) -> Non
     assert run_verify("drive", "thing", "--run", "inst-1", env=env).returncode == 0
     assert (tmp_path / "seen").read_text(encoding="utf-8").strip() == "inst-1"
     assert "- **Run:** inst-1\n" in _only_summary(tmp_path)
+
+
+def test_the_run_option_takes_an_equals_sign_too(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### once\nRun: `true`\n")
+    assert run_verify("drive", "thing", "--run=inst-2", env=env).returncode == 0
+    assert "- **Run:** inst-2\n" in _only_summary(tmp_path)
+
+
+def test_failed_evidence_keeps_logs_without_local_paths(tmp_path: Path) -> None:
+    env = _harness(tmp_path, "", "### bad\nRun: `exit 1`\n")
+    env["HOME"] = str(tmp_path / "home")
+    _settings(tmp_path, logs='echo "wrote $HOME/server.log"')
+    assert run_verify("drive", "thing", env=env).returncode == 1
+    logs = _only_summary(tmp_path).split("## Logs", 1)[1]
+    assert "wrote [local path]" in logs, logs
+    assert str(tmp_path) not in logs
 
 
 def test_commands_for_an_earlier_instance_need_its_run_id(tmp_path: Path) -> None:
@@ -2677,6 +2703,36 @@ def test_affected_through_a_linked_project_root_sees_its_changes(
     }
     result = run_verify("affected", "HEAD", env=linked)
     assert "1 path(s) changed" in result.stdout, result.stdout
+
+
+def test_a_recipe_covering_the_whole_project_is_touched_by_any_change(
+    tmp_path: Path,
+) -> None:
+    env = _affected_project(tmp_path)
+    (tmp_path / "verification" / "recipes" / "all.md").write_text(
+        "---\nkind: suite\ncovers: .\n---\n# all\n\n## Scenarios\n\n"
+        "### once\nRun: `true`\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "other.txt").write_text("edited\n", encoding="utf-8")
+    result = run_verify("affected", "HEAD", env=env)
+    assert "  all  suite" in result.stdout, result.stdout
+    assert "no recipe covers" not in result.stdout
+
+
+def test_a_recipe_covering_the_whole_project_stays_verified_by_its_own_evidence(
+    tmp_path: Path,
+) -> None:
+    # Its evidence sits under what it covers; recording a run must not make it stale.
+    env = _covering(tmp_path, "true", ".")
+    recipe = tmp_path / "verification" / "recipes" / "thing.md"
+    recipe.write_text(
+        recipe.read_text(encoding="utf-8") + "\n### twice\nRun: `true`\n", "utf-8"
+    )
+    assert run_verify("drive", "thing", "once", env=env).returncode == 0
+    assert run_verify("drive", "thing", "twice", env=env).returncode == 0
+    listed = run_verify("list", env=env).stdout
+    assert "verified (" in listed, listed
 
 
 def test_affected_refuses_a_base_that_is_not_a_commit(tmp_path: Path) -> None:
