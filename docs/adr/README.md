@@ -206,6 +206,7 @@
 | 2026-10-19 | [define searches each new Manifest for a wrong result that passes every gate](20261019-define-searches-each-new-manifest-for-a-wrong-result-that-passes-every-gate.md) | Accepted | define |
 | 2026-10-19 | [Each item waiting on the person carries its recommendation, risk and evidence](20261019-each-item-waiting-on-the-person-carries-its-recommendation-risk-and-evidence.md) | Accepted | Ticketing |
 | 2026-10-19 | [Every way a landing cannot merge relaunches the run or escalates](20261019-every-way-a-landing-cannot-merge-relaunches-or-escalates.md) | Accepted | Ticketing |
+| 2026-10-19 | [figure-out probes decisions and plans whose outcome depends on futures nobody controls, with no default decision rule](20261019-figure-out-probes-decisions-and-plans-under-uncertain-futures.md) | Accepted | Task guidance |
 | 2026-10-19 | [One cause failing several runs pauses the effort once](20261019-one-cause-failing-several-runs-pauses-the-effort-once.md) | Accepted | Ticketing |
 | 2026-10-19 | [Recall reads reverted fixes and review corrections](20261019-recall-reads-reverted-fixes-and-review-corrections.md) | Accepted | define / figure-out |
 | 2026-10-19 | [The comment the venue created first decides each Ticket fact](20261019-the-comment-the-venue-created-first-decides-each-ticket-fact.md) | Accepted | Ticketing |
