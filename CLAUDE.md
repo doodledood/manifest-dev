@@ -41,7 +41,7 @@ session this repository starts — an eval suite, a skill drive (`scripts/drive-
 document walk (`scripts/walk.sh`) — runs the `claude` CLI directly, with no container, the same
 way locally and in a cloud session. It needs only `claude` on PATH and signed in. Each session
 starts from a scratch directory outside the checkout, on a copy of the plugin, without the user's
-settings, installed plugins, or MCP servers, and records the CLI version rather than pinning it.
+settings, installed plugins, MCP servers or — for a drive — `~/.manifest-dev` records, and records the CLI version rather than pinning it.
 Drives and walks run through their recipes (`scripts/verify drive|walk <recipe>`, ask-first). A
 suite runs from the repository root with
 `scripts/evals/run_eval.sh <name> <out-json> --tag <figure-out|define> --ablation with-without --scaffold`

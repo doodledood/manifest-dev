@@ -61,7 +61,6 @@ Derive the scenarios that SHOULD exist from the code's logic, then judge whether
 - **Error triggers** — What inputs cause errors? What happens with invalid types, null/undefined, malformed data?
 - **State-dependent behavior** — If behavior depends on state (auth, feature flags, prior operations), enumerate relevant state combinations.
 - **Transformation correctness** — For data transformations: does the output preserve required properties for representative inputs?
-- **Guarantees across events or inputs** — A guarantee is a property the change promises to keep — at most one delivery, no lost update, a value that survives a round trip — and states (in a docstring, a comment, its description) or evidently relies on, as when it passes an idempotency key so a retry cannot deliver twice. A property merely inferable from the code is not one. Where one depends on the order of events (two writers, a retry, a crash partway through) or claims to hold for every input, ask whether a kept test would fail if a later change broke it. Example tests usually run one uninterrupted path, and the case that breaks such a guarantee is a particular interleaving or input they never reach. Name that case — the sequence of events, or the input — and the cheapest kind of check that reaches it: a test that drives that exact sequence, generated inputs or call sequences (a property-testing library such as Hypothesis or fast-check), or a model of the design. Recommending a technique without naming the case is not a finding.
 
 **Two-pass check against existing tests**:
 
@@ -97,7 +96,7 @@ This dimension owns whether tests EXIST and ACTUALLY VALIDATE the changed code's
 Do NOT report on:
 
 - **Intent-behavior divergence** (does the change achieve its goal?) → belongs to the change-intent dimension
-- **Mechanical code defects** in the code as it stands (a race it has now, a resource leak) → belongs to the code-bugs dimension. Whether a kept test would catch a later change that breaks an order-dependent guarantee stays here
+- **Mechanical code defects** (race conditions, resource leaks) → belongs to the code-bugs dimension
 - **API contract correctness** (wrong params, consumer breakage) → belongs to the contracts dimension
 - **Code organization** (DRY, coupling, consistency) → belongs to the code-maintainability dimension
 - **Over-engineering / complexity** → belongs to the code-simplicity dimension
@@ -111,7 +110,7 @@ Do NOT report on:
 ## Severity calibration
 
 - **High** — Completely untested business logic, missing test files for new modules, or tautological tests on critical paths. Must be fixed before merge.
-- **Medium** — Untested branches/error paths/edge cases on meaningful logic, a guarantee on meaningful logic whose breaking case no kept test reaches, or tautological tests that leave a real behavioral property unverified on non-critical paths.
+- **Medium** — Untested branches/error paths/edge cases on meaningful logic, or tautological tests that leave a real behavioral property unverified on non-critical paths.
 - **Low** — Coverage polish on lower-risk code or weak-oracle tests where the protected behavior is still mostly clear.
 
 **Calibration check**: HIGH findings should be rare — reserved for completely untested business logic, missing test files for new modules, or tautological tests on critical paths. If you're marking multiple items as HIGH, recalibrate.
@@ -125,13 +124,6 @@ For each **coverage gap**, beyond the shared report skeleton, make the missing s
 - **Missing**: positive cases | edge cases | error handling
 - **Scenarios to cover**: each as `input <concrete value> → expected <concrete result>` (or `→ expected error: <specific error>`)
 - **Derivation**: brief explanation of how you identified these scenarios from the code's logic
-
-For each **unreached guarantee**, name:
-
-- **Guarantee**: the property the change promises to keep, quoting where it states or relies on it
-- **Breaking case**: the sequence of events or the input no kept test reaches
-- **Unseen break**: a later change that would break the guarantee while every kept test still passes
-- **Check that reaches it**: the cheapest kind of check that fails on that change
 
 For each **tautological test**, name what isn't being verified:
 

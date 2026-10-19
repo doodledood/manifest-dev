@@ -26,17 +26,17 @@ Judge what the owner would reject against the Manifest's own Intent and the sess
 your taste, and leave out behavior a Known Assumption or Process Guidance entry already names and
 accepts — but an entry that merely accepts what the Intent rejects is itself the hole. Search by
 judgment: take the cheapest or most literal route an executor could take that satisfies every gate,
-and look at what it leaves broken, for this run and for whoever uses the result next. Where the
-session already built a model of the design this Manifest encodes — a model checker's, say, whose
-path you were handed — extend it rather than starting over. Build a model from scratch only when
-the user asks for one; rebuilding one the session only describes is building from scratch. Any
-model you use leaves the implementation free wherever the Manifest is silent, holds it to the
-gates, and checks the owner's intent as its properties, so a violation every gate allows is a hole.
-Report each hole as a finding — the scenario step by step and the gates that still pass it — whose
-fix is a gate or a design decision recorded in the Manifest, and say when that fix would change the
-Intent or the scope; and report as an ambiguity each place where two readings of a gate's text
-change what passes, with the reading the fix writes into the gate. A search that finds nothing is
-no evidence the Manifest is sound: say what it covered, and never offer a model as proof.
+and look at what it leaves broken, for this run and for whoever uses the result next. Where a model
+of the design this Manifest encodes already exists — a model checker's, say, whose path you were
+handed — extend it rather than starting over. Build a model from scratch only when the user asks
+for one; rebuilding one the session only describes is building from scratch. Any model you use
+leaves the implementation free wherever the Manifest is silent, holds it to the gates, and checks
+the owner's intent as its properties, so a violation every gate allows is a hole. Report each hole
+as a finding — the scenario step by step and the gates that still pass it — whose fix is a gate or
+a design decision recorded in the Manifest, and say when that fix would change the Intent or the
+scope; and report as an ambiguity each place where two readings of a gate's text change what
+passes, with the reading the fix writes into the gate. A search that finds nothing is no evidence
+the Manifest is sound: say what it covered, and never offer a model as proof.
 
 Report findings; never edit the Manifest. For each, quote the gate or section, quote the rule or
 session line it conflicts with, or the wrong result it lets through, say what is wrong, and give

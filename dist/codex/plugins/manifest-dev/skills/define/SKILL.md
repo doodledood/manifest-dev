@@ -341,8 +341,8 @@ files this session loaded, the project context file and any loaded memory file
 holding Taste entries, the Manifest, the session record — the figure-out log
 when one exists, and the transcript where the host keeps one the fresh context
 can read, else the conversation passed verbatim — and any model of the design
-built earlier in the session, figure-out's included, so the review can extend
-it. Where no isolated context is
+built earlier in the session or recorded in a figure-out log this work recalled,
+so the review can extend it. Where no isolated context is
 available, review against that brief yourself and say in the digest that the
 review was self-graded. Settle every finding in one pass: fix it, or reject it
 and name it with the reason in the digest (unattended, in an `(auto)` `ASM-*`).

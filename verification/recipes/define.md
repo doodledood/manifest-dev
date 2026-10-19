@@ -81,7 +81,7 @@ Workload: varies
 - Attended, it waits for a yes after the digest; a headless drive needs `--autonomous` or a prompt that says to proceed.
 - A headless drive offers no question-selection capability, so define asks in plain text, one ask per turn; batching its key calls through the capability, the default on a host that offers one, shows only in an interactive session.
 - An old Manifest with a `verify` block is refused, not migrated.
-- `hole-search`'s seen-to-fail check drives the same prompt from a worktree at the commit before define's review searched for holes; repeat it when changing the scenario. Move `~/.manifest-dev` aside for every drive of this scenario: define's recall reads it, and records of work on this change name the holes the drive grades. It drives `d26`'s prompt, which the define suite grades on the self-graded path.
+- `hole-search`'s seen-to-fail check drives the same prompt from a worktree at the commit before define's review searched for holes; repeat it when changing the scenario. It drives `d26`'s prompt, which the define suite grades on the self-graded path.
 - A yes approves the Manifest, not execution: it never runs `/do` itself.
 - "It didn't stop for approval" is define only under `--autonomous` or when called by `auto`; a whole chain that never stopped is the auto entry.
 - The scaffold in the feature-defaults and bounded-growth Run lines is inferred: their earlier drives did not record one. Their replies find no loan period setting, which `d20-preparatory-slice` has, and bounded-growth's cites the storage record's "a few hundred loans", which the set-up shelfnote scaffolds such as `45-current-setup-offers-nothing` carry. The next run of each settles it.

@@ -49,7 +49,9 @@ confidence.
   extends one already built for the design the Manifest encodes, such as the one figure-out builds
   for a design whose correctness depends on the order of events, or the user asks for one. None is built from
   scratch by default, and rebuilding a model the session only describes counts as from scratch.
-  define hands the fresh context the path of any such model so the review can extend it.
+  figure-out saves a model it builds under `~/.manifest-dev/models/` and records the path in its
+  log, and define hands the fresh context the path of any such model, so the review can extend
+  one built in an earlier session too.
 - Each hole is reported with its scenario and the gates that pass it. A hole is a result the
   stated Intent already rejects, so define closes it with a gate or a design decision, attended
   or unattended. Only a fix that would change the Intent or the scope is the user's call: asked
@@ -85,10 +87,7 @@ confidence.
 ### Negative
 - Each new Manifest's review takes longer; the judgment search took about 10 minutes in the one
   experiment.
-- Where no design model exists, long event-sequence holes a model would find still get through;
-  test-quality's question at review
-  (20261019-test-quality-asks-whether-a-kept-test-reaches-the-case-that-breaks-a-guarantee) catches
-  part of them later.
+- Where no design model exists, long event-sequence holes a model would find still get through.
 - The evidence is one Manifest, in the kind of design formal methods suit best.
 
 ## Enforced by
@@ -101,5 +100,4 @@ holes the experiment found; how deep a search goes stays judgment.
 - Session: figure-out and define on formal verification in manifest-dev's workflow, with a
   judgment search and a TLA+ search of one Manifest (2026-10-19).
 - Related: amends 20261018-define-reviews-each-new-manifest-in-a-fresh-context and
-  20261019-verification-asks-whether-a-check-can-reach-the-case-that-breaks; see also
-  20261019-test-quality-asks-whether-a-kept-test-reaches-the-case-that-breaks-a-guarantee
+  20261019-verification-asks-whether-a-check-can-reach-the-case-that-breaks
