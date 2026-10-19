@@ -22,9 +22,10 @@ change brings in.
 20261019-verification-asks-whether-a-check-can-reach-the-case-that-breaks put that question into
 figure-out and define, so a change designed with them plans a check that reaches the case. A
 change that skipped that design step — a small Ticket under orchestrate, or any pull request
-reviewed without a Manifest — gets only the review. When orchestrate lands work, only the
-deterministic gates re-run, so a kept test is what protects a guarantee after the run that made
-it.
+reviewed without a Manifest — gets only the review. When orchestrate lands work on a moved base,
+at most the deterministic gates re-run where the merge left the change as it was
+(`ticket-up/references/AUTOMATED_EXECUTION.md`, step 3), and after the landing nothing from the
+run re-runs, so a kept test is what protects a guarantee after the run that made it.
 
 ## Decision
 - test-quality considers only a guarantee the change states or evidently relies on, never one

@@ -57,7 +57,7 @@ Workload: varies
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.
 - One dimension per call; asking for two gets one.
 - `defect-class` needs a change that fixes a defect, or it reports none found.
-- `test-quality-unreached-guarantee` was seen to fail by driving the same prompt from a worktree at the commit before test-quality asked whether a kept test reaches the case that breaks a guarantee; repeat that when changing the scenario.
+- `test-quality-unreached-guarantee`'s seen-to-fail check drives the same prompt from a worktree at the commit before test-quality asked whether a kept test reaches the case that breaks a guarantee. On 2026-10-19 that base drive reported the same gap through test-quality's contradictory-implementation question, so this scenario does not yet tell the change from its base.
 - No comparison base resolves to BLOCKED.
 - `tests/test_review_scope.py` pins how scope is resolved. No behavior case measures the review.
 - Not yet driven: the description phrases, define's coding gates, review-pr's fleet.
