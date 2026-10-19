@@ -10,6 +10,10 @@ Resolve the active log path before the first question and surface it immediately
 
 Create the log at `~/.manifest-dev/logs/figure-out-log-{timestamp}.md` (create the dir; `~` = `$HOME` / `%USERPROFILE%`) — a durable home so logs from long investigations survive OS temp cleanup. Fall back to a writable temp path (`/tmp`, else the host temp directory) only when the home directory isn't writable. `{timestamp}` is UTC `YYYYMMDD-HHMMSS`.
 
+## Models
+
+When the session builds a model of the design — a model checker's spec, a state machine, a generator of call sequences — save it under `~/.manifest-dev/models/{timestamp}/`, the log's own timestamp, rather than in a temp directory, and record in the next entry its path, what it checks and what it found. It stays out of the project's files, and a later session that finds this log can extend the model instead of rebuilding it from its description.
+
 ## Append Discipline
 
 Append only. Never rewrite, reorder, compress, or delete prior entries. If an old entry was wrong, append a correction with the new evidence.

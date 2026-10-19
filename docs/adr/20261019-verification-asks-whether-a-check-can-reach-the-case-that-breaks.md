@@ -1,7 +1,7 @@
 # ADR: Verification asks whether a check can reach the case that breaks, and names the kind of check
 
 ## Status
-Accepted
+Accepted — amended by 20261019-define-searches-each-new-manifest-for-a-wrong-result-that-passes-every-gate: define's review searches a Manifest for holes, extending a design model that already exists by adding the Manifest's gates; proving a Manifest in a formal language stays rejected
 
 ## Area
 Task guidance

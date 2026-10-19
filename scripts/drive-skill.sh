@@ -24,11 +24,14 @@
 # drive's evidence directory, outside this checkout. It is handed a copy of the plugin, never the
 # checkout's own directory, and started with no user settings and no MCP servers of yours
 # (scripts/lib/claude-cli.sh has the flags), so your settings, hooks and installed plugins do
-# not load. It signs in as you, and what it writes to ~/.manifest-dev lands in yours, recorded
-# against the scratch project.
+# not load. It signs in as you: its home is a directory holding a link to every entry of yours
+# except ~/.manifest-dev, which starts empty, so recall, which reads ~/.manifest-dev, finds none
+# of the Manifests and logs of your own work — records that could name what a scenario grades.
+# It is not a sandbox: your home stays reachable by its real path. The links are removed when
+# the drive ends, so nothing that follows links through the evidence walks into your home.
 #
 # Evidence: the transcript, the scratch project, the plugin copies and whatever the session
-# wrote under ~/.manifest-dev while it ran are kept under
+# wrote under its own ~/.manifest-dev are kept under
 # ${MANIFEST_DEV_FEATURES_EVIDENCE:-$HOME/.local/state/manifest-dev-features}/<feature>/<stamp>/,
 # which must lie outside this checkout. A summary — CLI version, model, loaded plugins and
 # skills, final reply, files written — is printed, which `scripts/verify` keeps as the
@@ -136,7 +139,7 @@ mkdir "$project"
 git -C "$project" init -q
 if [[ -n $scaffold ]]; then
   # The scaffold reads the checkout through DRIVE_CHECKOUT and gets a home of its own: one that
-  # seeds a home directory is an eval case's, and a drive shares yours with the session.
+  # seeds a home directory is an eval case's, and a drive's session links to the rest of yours.
   scaffolded=0 scaffold_home="$out/scaffold-home"
   mkdir "$scaffold_home"
   (cd "$project" && HOME=$scaffold_home DRIVE_CHECKOUT=$root bash "$scaffold/scaffold.sh") \
@@ -152,24 +155,34 @@ fi
 git -C "$project" add -A
 git -C "$project" -c user.email=drive@localhost -c user.name=drive -c commit.gpgsign=false \
   -c core.hooksPath=/dev/null commit -qm scaffold --allow-empty
-touch "$out/started"
+# The session's home: a link to each entry of yours, so it signs in as you, except
+# ~/.manifest-dev, which starts empty. Your own records stay out of what it can read.
+session_home="$out/home"
+mkdir "$session_home"
+for entry in "$HOME"/* "$HOME"/.[!.]* "$HOME"/..?*; do
+  [[ -e $entry || -L $entry ]] || continue
+  [[ ${entry##*/} == .manifest-dev ]] && continue
+  ln -s "$entry" "$session_home/${entry##*/}"
+done
+mkdir "$session_home/.manifest-dev"
+trap 'rm -rf "$session_home"' EXIT
 
 session=0
-(cd "$project" && "${CLAUDE_SESSION_ENV[@]}" claude -p --model "$model" "${CLAUDE_ISOLATION[@]}" \
+(cd "$project" && "${CLAUDE_SESSION_ENV[@]}" HOME="$session_home" claude -p --model "$model" "${CLAUDE_ISOLATION[@]}" \
   "${plugins[@]}" --output-format stream-json --verbose --permission-mode bypassPermissions \
   --max-turns "$max_turns" "$prompt") >"$out/transcript.jsonl" 2>"$out/stderr.log" || session=$?
 
 git -C "$project" status --porcelain >"$out/files-written.txt"
-# What the session wrote under ~/.manifest-dev while it ran, copied beside the rest.
+# What the session wrote under its own ~/.manifest-dev, copied beside the rest.
 : >"$out/manifest-dev-records.txt"
-if [[ -d $HOME/.manifest-dev ]]; then
-  (cd "$HOME/.manifest-dev" && find . -type f -newer "$out/started" | sed 's|^\./||' | sort) \
+if [[ -d $session_home/.manifest-dev ]]; then
+  (cd "$session_home/.manifest-dev" && find . -type f | sed 's|^\./||' | sort) \
     >"$out/manifest-dev-records.txt"
-  while IFS= read -r record; do
-    mkdir -p "$out/manifest-dev/$(dirname "$record")"
-    cp "$HOME/.manifest-dev/$record" "$out/manifest-dev/$record"
-  done <"$out/manifest-dev-records.txt"
 fi
+while IFS= read -r record; do
+  mkdir -p "$out/manifest-dev/$(dirname "$record")"
+  cp "$session_home/.manifest-dev/$record" "$out/manifest-dev/$record"
+done <"$out/manifest-dev-records.txt"
 
 # No transcript means no session ran: the CLI failed before it started, and the skill was never
 # tried.
@@ -277,7 +290,7 @@ summary = f"""# Drive: {feature} — {stamp}
 {files}
 ```
 
-## Written under .manifest-dev in your home while the session ran
+## Written under the session's .manifest-dev
 
 ```
 {records}

@@ -36,7 +36,7 @@ The graders have since been rewritten to classify before judging, which that che
 before acting on a FAIL from a grader that reads the whole Manifest, read the Manifest it failed.
 Numbers judged by different models do not compare.
 
-## Cases added 2026-10-13 to 2026-10-18 — unmeasured
+## Cases added 2026-10-13 to 2026-10-19 — unmeasured
 
 | Case | Discipline under test |
 |---|---|
@@ -46,6 +46,7 @@ Numbers judged by different models do not compare.
 | `d23-unfit-recipe-repaired-first` | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — cuts repairing that recipe as the first Deliverable, and gates that the touched recipe is updated and run. It carries `d18-map-gate`'s grader: same prompt and project, so `d18` was retired into it on 2026-10-15 |
 | `d24-own-check-repaired-first` | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in pytest form by the first Deliverable, and no harness is built. The project-own twin of `d23`, and the define half of figure-out's `55` |
 | `d25-vague-target` | A speed want with no number and no profile ("make the preview fast", about 25 fps today) binds a floor such as faster than the measured baseline, never an invented frame rate; a higher number may appear only as an aim or a recorded assumption. Its own grader is `floor-not-invented-target` |
+| `d26-holes-that-pass-every-gate` | A read of an invoice worker whose design a model already checked still leaves the spec open to wrong results that pass every gate at once: a job marked sent while no invoice was delivered, and an invoice sent twice when the old worker is stopped mid-send during the switch. Its own graders, `no-sent-without-delivery` and `no-double-send-at-switch`, judge whether the spec's gates close those two paths |
 | `d22-projectless-manifest-builds-no-harness` | A one-off script outside any project gets a Manifest whose gates check its output, with no harness, recipe, decision record or setup. A guard: the no-plugin arm is expected to pass it, so a Δ of zero is no reason to remove it |
 
 These have never been run; the first both-arm run decides which stay. **Every number below is stale
@@ -61,12 +62,18 @@ plus an advisory aim — which reaches every case that writes a spec, `d05` and 
 correctness depends on the order of events by a check that can reach it, model it first, ask
 whether a crashing state is legitimate before guarding it, bound a gain by the changed piece's
 share — and a *Fit to trust* job, and had the review name for each gate a plausible wrong result
-it would fail; that reaches every coding case, `d20`, `d23` and `d24` most. The next baseline
-replaces them.
+it would fail; that reaches every coding case, `d20`, `d23` and `d24` most. A second 2026-10-19
+change had the review also search each new Manifest for holes — wrong results that pass every gate
+at once — which reaches every case that writes a spec, and runs inside each case's existing turn
+and time limits. Before trusting the numbers from the first both-arm run after it, check that no
+spec case now ends at one of those limits. The next baseline replaces them.
 
-No case here holds the review's wrong-result question. The review runs in a fresh context, which
-this suite's sessions cannot start, so a case would grade a review that never ran; the `define`
-recipe's `fresh-review` drive checks it instead. The other 2026-10-19 Defaults have their cases in
+The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
+its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
+question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for
+holes on that self-graded path, graded by whether the spec closes two holes the search found in the
+2026-10-19 experiment; the `define` recipe's `hole-search` drive puts the same prompt through the
+fresh-context path. The other 2026-10-19 Defaults have their cases in
 the figure-out suite (`56` to `58`), where the same probes are asked before a Manifest exists, and
 a define case for each would test the same probe twice at twice the runs. The
 headless harness offers no question capability, so the cases measure define's plain-text path. A single 2026-10-14 drive of `d01` (not a measurement) found define keeping the
@@ -383,6 +390,7 @@ a duplicate, an out-of-scope skill, or an undeclared floor in both arms retires 
 | `d23` | first run decides | New on 2026-10-15: define's rule that an unfit touched recipe is repaired first, plus the touched-recipe gate `d18` held |
 | `d24` | first run decides | New on 2026-10-15: the same rule for a check of the project's own, with no harness |
 | `d25` | first run decides | New on 2026-10-18: a vague speed want encoded as a floor plus an aim, the case for define's floor-plus-aim rule. The review runs in a fresh context only where the suite allows one; the `define` recipe's `fresh-review` drive covers that |
+| `d26` | first run decides | New on 2026-10-19: the review's search for holes, on the self-graded path; the `define` recipe's `hole-search` drive covers the fresh-context path |
 
 Retired on 2026-10-15: `d18-map-gate`, folded into `d23`, which has the same prompt and project
 and now carries its grader.
@@ -402,8 +410,9 @@ bounds.
 | 5 | `d21` | 2 | |
 | 6 | `d22` | 2 | Guard; status only |
 | 7 | `d25` | 2 | Covers the floor-plus-aim rule; the base model likely binds an invented frame rate |
+| 8 | `d26` | 2 | Covers the search for holes; define without the hole search left both graded holes open in the 2026-10-19 experiment |
 
-All of it is 14 runs, under $25. A full baseline also re-measures the 12 kept cases, another 24
+All of it is 16 runs, under $25. A full baseline also re-measures the 12 kept cases, another 24
 runs, under $40, since every recorded number is stale. **A smaller budget** runs `d23` and `d24`
 first: 4 runs, under $10. Read the results as `../README.md` → *Reading a result at this depth*
 says: direction comes from the whole suite; a case whose own graders pass in both arms is re-run

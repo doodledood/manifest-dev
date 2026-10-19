@@ -56,9 +56,13 @@ if args == ["--version"]:
     print(os.environ["STANDIN_VERSION"]); sys.exit(0)
 if args[:2] == ["auth", "status"]:
     print(json.dumps({"loggedIn": os.environ.get("STANDIN_LOGGED_IN", "1") == "1"})); sys.exit(0)
+home = pathlib.Path(os.environ.get("HOME", "/nonexistent"))
+links = {p.name: os.readlink(p) if p.is_symlink() else None for p in home.iterdir()} if home.is_dir() else {}
+seen = sorted(str(p.relative_to(home)) for p in (home / ".manifest-dev").rglob("*")) if (home / ".manifest-dev").is_dir() else []
 with open(os.environ["STANDIN_RECORD"], "a", encoding="utf-8") as f:
     f.write(json.dumps({"args": args, "cwd": os.getcwd(), "env": dict(os.environ),
-                        "pid": os.getpid(), "sid": os.getsid(0)}) + "\n")
+                        "pid": os.getpid(), "sid": os.getsid(0), "home": links,
+                        "seen": seen}) + "\n")
 code = int(os.environ.get("STANDIN_EXIT", "0"))
 if "eval" in args:
     release = os.environ.get("STANDIN_RELEASE")
@@ -136,6 +140,8 @@ class Call(TypedDict):
     env: dict[str, str]
     pid: int
     sid: int
+    home: dict[str, str | None]
+    seen: list[str]
 
 
 def calls(tmp_path: Path) -> list[Call]:
@@ -218,7 +224,7 @@ def test_a_drive_runs_the_cli_isolated_on_a_copy_of_the_plugin(
     assert (plugin_dir / ".claude-plugin" / "plugin.json").read_bytes() == (
         PLUGIN / ".claude-plugin" / "plugin.json"
     ).read_bytes()
-    assert call["env"]["HOME"] == env["HOME"]  # the user's own sign-in
+    assert Path(call["env"]["HOME"]).resolve() == out / "home"  # the session's own home
     # The CLI version is recorded, in the summary verify keeps and in the full record.
     assert f"- **CLI version:** {VERSION}" in result.stdout
     assert "- **Other plugins loaded:** none" in result.stdout
@@ -229,28 +235,39 @@ def test_a_drive_runs_the_cli_isolated_on_a_copy_of_the_plugin(
     assert (out / "manifest-dev" / "logs" / "figure-out-log-1.md").exists()
 
 
-def test_a_drive_keeps_only_the_records_its_session_wrote(
+def test_a_drive_session_cannot_read_the_users_own_records(
     tmp_path: Path, toolbox: Path
 ) -> None:
-    # The drive runs on the user's own home, which already holds records from earlier work;
-    # only what this session writes belongs in its evidence.
+    # The user's ~/.manifest-dev holds the Manifests and logs of their own work, which can name
+    # what a scenario grades. The session signs in through links to the rest of the user's home,
+    # and gets an empty ~/.manifest-dev of its own; what it writes stays out of the user's.
     env = setup(
         tmp_path,
         toolbox,
         STANDIN_TRANSCRIPT=lines(GOOD),
         STANDIN_WRITES_RECORD="logs/figure-out-log-1.md",
     )
-    earlier = Path(env["HOME"]) / ".manifest-dev" / "logs" / "earlier.md"
+    home = Path(env["HOME"])
+    earlier = home / ".manifest-dev" / "logs" / "earlier.md"
     earlier.parent.mkdir(parents=True)
     earlier.write_text("an earlier session's log\n", encoding="utf-8")
-    old = time.time() - 3600
-    os.utime(earlier, (old, old))
+    sign_in = home / ".claude.json"
+    sign_in.write_text("{}", encoding="utf-8")
     result = drive(env)
     assert result.returncode == 0, result.stderr
     out = (tmp_path / "store" / "figure-out" / STAMP).resolve()
+    (call,) = calls(tmp_path)
+    assert call["home"][".claude.json"] == str(sign_in)
+    assert (
+        call["home"][".manifest-dev"] is None
+    )  # a folder of its own, not a link to the user's
+    assert call["seen"] == []
+    # The links are gone once the drive ends, so nothing following them walks the user's home.
+    assert not Path(call["env"]["HOME"]).exists()
     summary = json.loads((out / "summary.json").read_text(encoding="utf-8"))
     assert summary["manifest_dev_records"] == ["logs/figure-out-log-1.md"]
-    assert not (out / "manifest-dev" / "logs" / "earlier.md").exists()
+    assert (out / "manifest-dev" / "logs" / "figure-out-log-1.md").exists()
+    assert not (home / ".manifest-dev" / "logs" / "figure-out-log-1.md").exists()
     assert earlier.exists()
 
 
@@ -682,7 +699,7 @@ def test_the_this_repository_scaffold_copies_the_last_commit(
 def test_a_scaffold_that_seeds_a_home_is_not_driven(
     tmp_path: Path, toolbox: Path
 ) -> None:
-    # A drive shares the user's home with its session, so a case that seeds one is an eval's.
+    # A drive's session links to the user's home, so a case that seeds one is an eval's.
     result = drive_scaffold(
         tmp_path,
         toolbox,

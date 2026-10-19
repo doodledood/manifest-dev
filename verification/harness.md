@@ -28,9 +28,12 @@ doctor: scripts/drive-skill.sh preflight
   Whether your personal memory file stays out is not something `claude --help` states. The
   scratch project is built from the matching eval case's `scaffold.sh` where a scenario passes
   `--scaffold`, with the checkout's path in `DRIVE_CHECKOUT`; a scaffold that seeds a home
-  directory is not driven, since the session shares yours. Where a recipe names
-  `~/.manifest-dev/…`, that is your own: the session writes there, recorded against the scratch
-  project, and the drive copies what it wrote into the full evidence and lists it in the
+  directory is not driven, since the session's home links to yours. That home links to every
+  entry of yours except `~/.manifest-dev`, which starts empty. The session signs in as you, and
+  recall, which reads `~/.manifest-dev`, finds none of the Manifests and logs of your own work,
+  which could name what a scenario grades. It is not a sandbox: your home stays reachable by its
+  real path. The links are removed when the drive ends. Where a recipe names `~/.manifest-dev/…`, that is the
+  session's own; the drive copies what it wrote into the full evidence and lists it in the
   summary. Stopping a drive stops its session, which runs in the drive's own process group.
 - Walk recipes run `scripts/walk.sh`: a fresh reader started the same way in an empty scratch
   directory, with no tools and no plugins, given only the named documents; its account is the
