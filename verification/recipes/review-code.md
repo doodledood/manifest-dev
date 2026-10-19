@@ -40,6 +40,12 @@ Proves: test-quality reports the test that asserts the order of `Invoice`'s priv
 Check: read
 Workload: varies
 
+### test-quality-unreached-guarantee
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-test-quality-unreached-guarantee.md`
+Proves: test-quality reports, at Medium or above, that no kept test reaches the case that breaks `send_invoice`'s at-most-once guarantee — a crash after the send and before `mark_sent`, the job reclaimed and sent again — names a later change that would break it with both tests still passing (a fresh key on each attempt, say, since `FakeProvider` ignores the key), and names a kind of check that reaches it, such as a test that drives that sequence against a fake provider that drops a repeated key. It reports no race in the code itself, which keeps the guarantee.
+Check: read
+Workload: varies
+
 ### defect-class-extra-guard
 Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-defect-class-extra-guard.md`
 Proves: defect-class passes the `not loan["returned"]` condition as the repair of the mechanism, and reports the added `None` checks as lines the mechanism does not need.
@@ -51,6 +57,7 @@ Workload: varies
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.
 - One dimension per call; asking for two gets one.
 - `defect-class` needs a change that fixes a defect, or it reports none found.
+- `test-quality-unreached-guarantee` was seen to fail by driving the same prompt from a worktree at the commit before test-quality asked whether a kept test reaches the case that breaks a guarantee; repeat that when changing the scenario.
 - No comparison base resolves to BLOCKED.
 - `tests/test_review_scope.py` pins how scope is resolved. No behavior case measures the review.
 - Not yet driven: the description phrases, define's coding gates, review-pr's fleet.

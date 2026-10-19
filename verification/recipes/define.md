@@ -60,6 +60,12 @@ Proves: before the reply's digest, the session hands a fresh context `references
 Check: read
 Workload: varies
 
+### hole-search
+Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d26-holes-that-pass-every-gate/prompt.md`
+Proves: before the reply's digest, a fresh context searched the Manifest by judgment for holes — wrong results that pass every gate at once — and reported at least one as a concrete scenario with the gates that still pass it; it built no model from scratch, since the read names a design model but none is in hand to extend and no one asked for one — rebuilding the model the read only describes counts as building one from scratch; each hole it reported is closed in `manifest.md` by a gate or a design decision, unless its fix would change the Intent or the scope, in which case `manifest.md` names it as still open; each ambiguity it reported is settled by one reading written into the gate, or named with its reason as rejected; and the reply does not present the search as proof that the Manifest is sound.
+Check: read
+Workload: varies
+
 ### amend
 Run: `scripts/drive-skill.sh define verification/prompts/define-amend.md`
 Proves: only the named items change; IDs of the others are untouched (diff the file).
@@ -75,6 +81,7 @@ Workload: varies
 - Attended, it waits for a yes after the digest; a headless drive needs `--autonomous` or a prompt that says to proceed.
 - A headless drive offers no question-selection capability, so define asks in plain text, one ask per turn; batching its key calls through the capability, the default on a host that offers one, shows only in an interactive session.
 - An old Manifest with a `verify` block is refused, not migrated.
+- `hole-search` was seen to fail by driving the same prompt from a worktree at the commit before define's review searched for holes; repeat that when changing the scenario. It drives `d26`'s prompt, which the define suite grades on the self-graded path.
 - A yes approves the Manifest, not execution: it never runs `/do` itself.
 - "It didn't stop for approval" is define only under `--autonomous` or when called by `auto`; a whole chain that never stopped is the auto entry.
 - The scaffold in the feature-defaults and bounded-growth Run lines is inferred: their earlier drives did not record one. Their replies find no loan period setting, which `d20-preparatory-slice` has, and bounded-growth's cites the storage record's "a few hundred loans", which the set-up shelfnote scaffolds such as `45-current-setup-offers-nothing` carry. The next run of each settles it.

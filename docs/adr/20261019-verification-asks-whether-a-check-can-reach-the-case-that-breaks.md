@@ -1,7 +1,7 @@
 # ADR: Verification asks whether a check can reach the case that breaks, and names the kind of check
 
 ## Status
-Accepted
+Accepted — amended by 20261019-define-searches-each-new-manifest-for-a-wrong-result-that-passes-every-gate: define's review searches a Manifest for holes, and extends an existing design model with its gates to do so, while proving a Manifest stays rejected; and by 20261019-test-quality-asks-whether-a-kept-test-reaches-the-case-that-breaks-a-guarantee: the question also reaches pull-request review through test-quality
 
 ## Area
 Task guidance

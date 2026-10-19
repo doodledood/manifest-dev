@@ -338,18 +338,27 @@ as it meant them, which is how an invented number, a dropped point or two gates
 that cannot both hold survive the reread above. Hand a fresh context the paths of
 `references/REVIEW.md` — its brief — this file, `references/SCHEMA.md`, the task
 files this session loaded, the project context file and any loaded memory file
-holding Taste entries, the Manifest, and the session record: the figure-out log
+holding Taste entries, the Manifest, the session record — the figure-out log
 when one exists, and the transcript where the host keeps one the fresh context
-can read, else the conversation passed verbatim. Where no isolated context is
+can read, else the conversation passed verbatim — and any model of the design
+built earlier in the session, figure-out's included, so the review can extend
+it. Where no isolated context is
 available, review against that brief yourself and say in the digest that the
 review was self-graded. Settle every finding in one pass: fix it, or reject it
 and name it with the reason in the digest (unattended, in an `(auto)` `ASM-*`).
 A fix that changes what the user agreed is a user's call — asked when attended;
 unattended, not applied, so what the user agreed stands and the finding goes in
-an `(auto)` `ASM-*`. No second review follows.
+an `(auto)` `ASM-*`. A hole is a finding the stated Intent already rejects, so
+close each one whose gate or design decision serves that Intent, attended or
+unattended; only a fix that would change the Intent or the scope is the user's
+call, and unattended its `(auto)` `ASM-*` names the hole as still open. An entry
+that merely accepts a hole the Intent rejects does not settle it. Settle each
+ambiguity by writing one reading into the gate. No second review follows.
 
 Give a plain-language digest — the pain, the plan, what gets built, the
-guardrails, how it is verified, and every number a gate holds the work to (each
+guardrails, how it is verified, the holes the review found and how each was
+settled (a search that found none is never offered as proof the Manifest is
+sound), and every number a gate holds the work to (each
 threshold, bound, count or target, in plain words) so the user can veto one
 before execution. No codes, no schema vocabulary; it reads like
 talking to a colleague. The pain matters most, being the one thing only the user
