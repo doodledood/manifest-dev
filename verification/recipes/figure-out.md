@@ -50,6 +50,12 @@ Proves: no question waits for an answer; each self-answered ask appears as a fla
 Check: read
 Workload: varies
 
+### decision
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-decision.md`
+Proves: the transcript shows the session reading `figure-out/tasks/DECISION.md`, and the read judges the three routes against the stated aim of getting people experimenting before money; names the craft-fair demo as the step that cannot be undone and weighs each route from that moment rather than from the decision date; weighs a mix of the routes that removes a route's worst case; and weighs "more glazes later" on every route rather than ranking one down for it.
+Check: read
+Workload: varies
+
 ## Gotchas
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.

@@ -249,7 +249,8 @@ figure-out's spine, its docs-mode and autonomous references, and its task files,
 that harness optional and the project's own checks a run's to repair, the 2026-10-18 change
 made the host's question capability the default way figure-out asks, and the 2026-10-19 change
 added probes to the coding, bug and performance task files and to recall, which reach `10`, `21`,
-`40` and `43` most, so no earlier result measures the skill as it ships now. The next baseline replaces them.
+`40` and `43` most, and a second 2026-10-19 change added a decision task file, which reaches `06`
+most, so no earlier result measures the skill as it ships now. The next baseline replaces them.
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.

@@ -181,6 +181,7 @@ you'd have brought to the user as a flagged assumption on the read.
 
 Load the matching file(s) from `tasks/` for the topic's shape — coding, feature,
 bug, refactor, diagnosis, tech design, research, performance, documents, prompts,
+a decision or plan whose outcome depends on futures nobody controls (`DECISION.md`),
 user-visible artifacts (`UI.md`), human-voiced writing (`WRITING.md`).
 They carry only angles the
 model under-weights by default; fold in what's load-bearing and ignore the rest.

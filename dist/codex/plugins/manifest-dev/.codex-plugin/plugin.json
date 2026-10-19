@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "14.3.0",
+  "version": "14.4.0",
   "description": "Manifest-driven workflows: /define writes a verifiable Manifest, /do executes it, /ticket-up authors coherent Ticket units, /run-ticket works one exact Ticket to a ready pull request, and /orchestrate runs ready Tickets in parallel and lands them one at a time. /design supplies standalone design guidance from first principles: the person, the moment they meet the artifact in, and its subject set the feeling, its strength and the visual material. Implementation stays with the invoking workflow; /review-design owns artifact evaluation and its supporting checks.",
   "skills": "./skills/",
   "keywords": [
