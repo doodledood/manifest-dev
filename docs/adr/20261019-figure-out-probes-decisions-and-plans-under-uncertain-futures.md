@@ -23,11 +23,11 @@ Least regret is one decision rule among several, not a universal one. Savage's m
 - **No default decision rule.** The file asks which rule fits the choice's shape and the person, from an open set (least regret, best average, avoid ruin, good enough, robust, or another), keeps rough odds in view whatever the rule, and leaves how much downside to accept to the person.
 - **Labels are decision-analysis terms of art, each followed by a plain question**, so the named concept brings its body of practice while the question keeps jargon out of what figure-out says to the person.
 - **The probes and where each comes from:**
-  - *Fundamental objectives*, *States of the world* (including the person's own uncertain later plans), *Irreversibility*, *Dominating hybrid* — the four observed misses; the futures map also by the user's request.
+  - *Fundamental objectives*, *States of the world* (including the person's own uncertain later plans), *Irreversibility*, *Dominating hybrid* — the four observed misses; the futures map also by the user's request; objectives before alternatives, and creating better alternatives, from Keeney (1992), *Value-Focused Thinking*.
   - *Decision rule* — the user's ruling for an open set; Savage (1951), Simon (1955 model, 1956 term "satisficing").
   - *Reference class* — Kahneman and Lovallo (1993); Lovallo and Kahneman (2003).
   - *Premortem, then backcast* — Klein (2007), building on Mitchell, Russo and Pennington (1989) on prospective hindsight; Robinson (1982) for backcasting; Duke (2020) for running the premortem first and splitting reasons into decisions and luck.
-  - *Decision versus outcome* — Howard (1988) on decision quality; Howard and Abbas (2016).
+  - *Decision versus outcome* — Howard (1988) on decision quality; Howard and Abbas (2016); Duke's "resulting" for the mistake it guards against.
   - *Signposts and triggers*, *Shaping actions* — Dewar (2002, after Dewar et al. 1993) on Assumption-Based Planning; Haasnoot et al. (2013) on adaptive policy pathways.
   - *Decision stacking* — Duke (2020).
   - *Value of information* — Howard (1966); Duke's happiness test and quit cost for when to stop.
