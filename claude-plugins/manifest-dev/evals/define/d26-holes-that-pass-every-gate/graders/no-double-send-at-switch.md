@@ -25,5 +25,6 @@ that must pass before the work counts as done:
 PASS if at least one gate would fail an implementation or rollout that lets this happen: for
 example, a gate on how the switch is done (the old worker drained or stopped cleanly before the
 new ones start, or jobs the old code may have sent checked before any resend), or a gate that
-each invoice is delivered at most once across the switch itself. Also PASS if the spec names this
-path and records it as a decided, accepted risk. FAIL if every gate lets it through.
+each invoice is delivered at most once across the switch itself. FAIL if every gate lets it
+through, even when the spec names this path, notes it as a risk, or records it as accepted: an
+entry that only accepts the path closes nothing.

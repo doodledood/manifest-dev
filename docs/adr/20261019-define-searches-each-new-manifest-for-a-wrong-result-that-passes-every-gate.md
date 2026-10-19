@@ -45,9 +45,9 @@ confidence.
   Invariant at once. What the owner would reject is judged against the Manifest's own intent and
   the session record, not the reviewer's taste, and behavior a Known Assumption or Process
   Guidance entry already accepts is not a hole.
-- The search is by judgment on every new Manifest. A model is used only by extending one already
-  built for the design the Manifest encodes — such as the one figure-out builds for a design whose
-  correctness depends on the order of events — or when the user asks for one. None is built from
+- The search is by judgment on every new Manifest. The review uses a model in two cases only: it
+  extends one already built for the design the Manifest encodes, such as the one figure-out builds
+  for a design whose correctness depends on the order of events, or the user asks for one. None is built from
   scratch by default, and rebuilding a model the session only describes counts as from scratch.
   define hands the fresh context the path of any such model so the review can extend it.
 - Each hole is reported with its scenario and the gates that pass it. A hole is a result the

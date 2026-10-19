@@ -42,7 +42,7 @@ Workload: varies
 
 ### test-quality-unreached-guarantee
 Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-test-quality-unreached-guarantee.md`
-Proves: test-quality reports, at Medium or above, that no kept test reaches the case that breaks `send_invoice`'s at-most-once guarantee — a crash after the send and before `mark_sent`, the job reclaimed and sent again — names a later change that would break it with both tests still passing (a fresh key on each attempt, say, since `FakeProvider` ignores the key), and names a kind of check that reaches it, such as a test that drives that sequence against a fake provider that drops a repeated key. It reports no race in the code itself, which keeps the guarantee.
+Proves: test-quality reports, at Medium or above, that no kept test reaches the case that breaks the at-most-once guarantee of `send_invoice`: a crash after the send and before `mark_sent`, then the job reclaimed and sent again. It names a later change that would break it with both tests still passing (a fresh key on each attempt, say, since `FakeProvider` ignores the key), and names a kind of check that reaches it, such as a test that drives that sequence against a fake provider that drops a repeated key. It reports no race in the code itself, which keeps the guarantee.
 Check: read
 Workload: varies
 

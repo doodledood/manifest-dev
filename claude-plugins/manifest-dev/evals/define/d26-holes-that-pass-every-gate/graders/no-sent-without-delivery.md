@@ -25,5 +25,6 @@ that must pass before the work counts as done:
 PASS if at least one gate would fail an implementation that behaves this way: for example, a gate
 that a job is marked sent only on a provider answer that confirms delivery, a gate that each kind
 of repeated-key answer maps to a stated outcome, or a required test that drives a retry after a
-failed or unknown send and checks that exactly one invoice is delivered. Also PASS if the spec
-names this path and records it as a decided, accepted risk. FAIL if every gate lets it through.
+failed or unknown send and checks that exactly one invoice is delivered. FAIL if every gate lets it
+through, even when the spec names this path, notes it as a risk, or records it as accepted: an
+entry that only accepts the path closes nothing.

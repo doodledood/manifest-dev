@@ -27,14 +27,14 @@ deterministic gates re-run, so a kept test is what protects a guarantee after th
 it.
 
 ## Decision
-- test-quality asks, for a guarantee the change states or evidently relies on — never one merely
-  inferable from the code — that depends on the order of events (two writers, a retry, a crash
-  partway through) or claims to hold for every input, whether a kept test would fail if a later
-  change broke it. The finding quotes where the change states or relies on it, so reviewers do
+- test-quality considers only a guarantee the change states or evidently relies on, never one
+  merely inferable from the code. For such a guarantee that depends on the order of events (two
+  writers, a retry, a crash partway through) or claims to hold for every input, it asks whether a
+  kept test would fail if a later change broke it. The finding quotes where the change states or relies on it, so reviewers do
   not meet guarantees the author never made.
-- Where none would, the finding names the breaking case — the sequence of events or the input — a
-  later change that would break the guarantee unseen, and the cheapest kind of check that reaches
-  the case: a test that drives that sequence, generated inputs or call sequences, or a model of the
+- Where none would, the finding names three things: the breaking case (the sequence of events or
+  the input), a later change that would break the guarantee unseen, and the cheapest kind of check
+  that reaches the case, such as a test that drives that sequence, generated inputs or call sequences, or a model of the
   design. Tools appear only as examples. A finding that recommends a technique without naming the
   case is not reported.
 - On meaningful logic such a finding is Medium, the same as an untested edge case, so it fails the

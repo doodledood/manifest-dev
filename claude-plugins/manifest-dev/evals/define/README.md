@@ -65,11 +65,11 @@ share — and a *Fit to trust* job, and had the review name for each gate a plau
 it would fail; that reaches every coding case, `d20`, `d23` and `d24` most. A second 2026-10-19
 change had the review also search each new Manifest for holes — wrong results that pass every gate
 at once — which reaches every case that writes a spec, and runs inside each case's existing turn
-and time limits. Part of the owed run is checking that no spec case now ends at one of those limits
-before its numbers are trusted. The next baseline replaces them.
+and time limits. Before trusting the numbers from the first both-arm run after it, check that no
+spec case now ends at one of those limits. The next baseline replaces them.
 
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
-its own Manifest here, says the review was self-graded, and no case holds the per-gate wrong-result
+its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for
 holes on that self-graded path, graded by whether the spec closes two holes the search found in the
 2026-10-19 experiment; the `define` recipe's `hole-search` drive puts the same prompt through the
@@ -410,7 +410,7 @@ bounds.
 | 5 | `d21` | 2 | |
 | 6 | `d22` | 2 | Guard; status only |
 | 7 | `d25` | 2 | Covers the floor-plus-aim rule; the base model likely binds an invented frame rate |
-| 8 | `d26` | 2 | Covers the search for holes; today's define left both graded holes open in the 2026-10-19 experiment |
+| 8 | `d26` | 2 | Covers the search for holes; define without the hole search left both graded holes open in the 2026-10-19 experiment |
 
 All of it is 16 runs, under $25. A full baseline also re-measures the 12 kept cases, another 24
 runs, under $40, since every recorded number is stale. **A smaller budget** runs `d23` and `d24`
