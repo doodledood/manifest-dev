@@ -56,9 +56,13 @@ if args == ["--version"]:
     print(os.environ["STANDIN_VERSION"]); sys.exit(0)
 if args[:2] == ["auth", "status"]:
     print(json.dumps({"loggedIn": os.environ.get("STANDIN_LOGGED_IN", "1") == "1"})); sys.exit(0)
+home = pathlib.Path(os.environ.get("HOME", "/nonexistent"))
+links = {p.name: os.readlink(p) if p.is_symlink() else None for p in home.iterdir()} if home.is_dir() else {}
+seen = sorted(str(p.relative_to(home)) for p in (home / ".manifest-dev").rglob("*")) if (home / ".manifest-dev").is_dir() else []
 with open(os.environ["STANDIN_RECORD"], "a", encoding="utf-8") as f:
     f.write(json.dumps({"args": args, "cwd": os.getcwd(), "env": dict(os.environ),
-                        "pid": os.getpid(), "sid": os.getsid(0)}) + "\n")
+                        "pid": os.getpid(), "sid": os.getsid(0), "home": links,
+                        "seen": seen}) + "\n")
 code = int(os.environ.get("STANDIN_EXIT", "0"))
 if "eval" in args:
     release = os.environ.get("STANDIN_RELEASE")
@@ -136,6 +140,8 @@ class Call(TypedDict):
     env: dict[str, str]
     pid: int
     sid: int
+    home: dict[str, str | None]
+    seen: list[str]
 
 
 def calls(tmp_path: Path) -> list[Call]:
@@ -250,10 +256,14 @@ def test_a_drive_session_cannot_read_the_users_own_records(
     result = drive(env)
     assert result.returncode == 0, result.stderr
     out = (tmp_path / "store" / "figure-out" / STAMP).resolve()
-    session_home = Path(calls(tmp_path)[0]["env"]["HOME"])
-    assert (session_home / ".claude.json").resolve() == sign_in.resolve()
-    assert not (session_home / ".manifest-dev").is_symlink()
-    assert not (session_home / ".manifest-dev" / "logs" / "earlier.md").exists()
+    (call,) = calls(tmp_path)
+    assert call["home"][".claude.json"] == str(sign_in)
+    assert (
+        call["home"][".manifest-dev"] is None
+    )  # a folder of its own, not a link to the user's
+    assert call["seen"] == []
+    # The links are gone once the drive ends, so nothing following them walks the user's home.
+    assert not Path(call["env"]["HOME"]).exists()
     summary = json.loads((out / "summary.json").read_text(encoding="utf-8"))
     assert summary["manifest_dev_records"] == ["logs/figure-out-log-1.md"]
     assert (out / "manifest-dev" / "logs" / "figure-out-log-1.md").exists()

@@ -12,7 +12,7 @@ Create the log at `~/.manifest-dev/logs/figure-out-log-{timestamp}.md` (create t
 
 ## Models
 
-When the session builds a model of the design — a model checker's spec, a state machine, a generator of call sequences — save it under `~/.manifest-dev/models/{timestamp}/`, the log's own timestamp, rather than in a temp directory, and record in the entry its path, what it checks and what it found. It stays out of the project's files, and a later session that finds this log can extend the model instead of rebuilding it from its description.
+When the session builds a model of the design — a model checker's spec, a state machine, a generator of call sequences — save it under `~/.manifest-dev/models/{timestamp}/`, the log's own timestamp, rather than in a temp directory, and record in the next entry its path, what it checks and what it found. It stays out of the project's files, and a later session that finds this log can extend the model instead of rebuilding it from its description.
 
 ## Append Discipline
 

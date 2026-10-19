@@ -24,9 +24,11 @@
 # drive's evidence directory, outside this checkout. It is handed a copy of the plugin, never the
 # checkout's own directory, and started with no user settings and no MCP servers of yours
 # (scripts/lib/claude-cli.sh has the flags), so your settings, hooks and installed plugins do
-# not load. It signs in as you: its home is a directory in the evidence holding a link to every
-# entry of yours except ~/.manifest-dev, which starts empty, so the session cannot read the
-# Manifests and logs of your own work — records that could name what a scenario grades.
+# not load. It signs in as you: its home is a directory holding a link to every entry of yours
+# except ~/.manifest-dev, which starts empty, so recall, which reads ~/.manifest-dev, finds none
+# of the Manifests and logs of your own work — records that could name what a scenario grades.
+# It is not a sandbox: your home stays reachable by its real path. The links are removed when
+# the drive ends, so nothing that follows links through the evidence walks into your home.
 #
 # Evidence: the transcript, the scratch project, the plugin copies and whatever the session
 # wrote under its own ~/.manifest-dev are kept under
@@ -163,7 +165,7 @@ for entry in "$HOME"/* "$HOME"/.[!.]* "$HOME"/..?*; do
   ln -s "$entry" "$session_home/${entry##*/}"
 done
 mkdir "$session_home/.manifest-dev"
-touch "$out/started"
+trap 'rm -rf "$session_home"' EXIT
 
 session=0
 (cd "$project" && "${CLAUDE_SESSION_ENV[@]}" HOME="$session_home" claude -p --model "$model" "${CLAUDE_ISOLATION[@]}" \
@@ -172,8 +174,11 @@ session=0
 
 git -C "$project" status --porcelain >"$out/files-written.txt"
 # What the session wrote under its own ~/.manifest-dev, copied beside the rest.
-(cd "$session_home/.manifest-dev" && find . -type f | sed 's|^\./||' | sort) \
-  >"$out/manifest-dev-records.txt"
+: >"$out/manifest-dev-records.txt"
+if [[ -d $session_home/.manifest-dev ]]; then
+  (cd "$session_home/.manifest-dev" && find . -type f | sed 's|^\./||' | sort) \
+    >"$out/manifest-dev-records.txt"
+fi
 while IFS= read -r record; do
   mkdir -p "$out/manifest-dev/$(dirname "$record")"
   cp "$session_home/.manifest-dev/$record" "$out/manifest-dev/$record"
