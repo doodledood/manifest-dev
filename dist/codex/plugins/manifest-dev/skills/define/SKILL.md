@@ -348,7 +348,7 @@ review was self-graded. Settle every finding in one pass: fix it, or reject it
 and name it with the reason in the digest (unattended, in an `(auto)` `ASM-*`).
 A fix that changes what the user agreed is a user's call — asked when attended;
 unattended, not applied, so what the user agreed stands and the finding goes in
-an `(auto)` `ASM-*`. A hole is a finding the stated Intent already rejects, so
+an `(auto)` `ASM-*`. A hole is a result the stated Intent already rejects, so
 close each one whose gate or design decision serves that Intent, attended or
 unattended; only a fix that would change the Intent or the scope is the user's
 call, and unattended its `(auto)` `ASM-*` names the hole as still open. An entry
