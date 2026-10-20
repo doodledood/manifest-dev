@@ -1,7 +1,7 @@
 # ADR: figure-out probes decisions and plans whose outcome depends on futures nobody controls, with no default decision rule
 
 ## Status
-Accepted; amended by 20261020-figure-out-decision-probes-read-other-parties-name-the-flip-chance-and-look-for-unnamed-aims: the header, States of the world, Value of information and Fundamental objectives gain other parties, the flip chance and unnamed aims; the count stays 13
+Accepted; amended by 20261020-figure-out-decision-probes-read-other-parties-name-the-flip-chance-and-look-for-unnamed-aims: the header, States of the world, Value of information and Fundamental objectives gain other parties, the flip chance and unnamed aims; the count stays 13; amended by 20261020-figure-out-stops-a-decision-only-on-shown-reasons: the Value of information stop clause becomes a question whose answer needs shown reasons
 
 ## Area
 Task guidance

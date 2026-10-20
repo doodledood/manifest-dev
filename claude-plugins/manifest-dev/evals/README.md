@@ -84,7 +84,7 @@ Every case runs once per arm, under a noisy judge. That gives a direction and a 
 where the skills stand, never a verdict on one case. Read a result this way:
 
 - **Direction comes from the whole suite.** One run per case is a coin flip on its own, but across
-  the suite the noise averages out: with about forty both-arm cases, the suite-wide Δ is read to
+  the suite the noise averages out: with forty or more both-arm cases, the suite-wide Δ is read to
   within about ±0.17. A hill-climb round reads the plugin arm pooled over the train cases, and
   separately over the held-out cases.
 - **A single case is a reason to read its output, never a result.** A case that flips, or a gap
@@ -92,7 +92,8 @@ where the skills stand, never a verdict on one case. Read a result this way:
   `16` gap above shows, so read the outputs on both sides before believing it.
 - **Three runs where one case decides something.** Re-run that case with `--case '<name>' --runs 3`
   before retiring it, and retire it only when both arms pass every case grader on every run and it
-  is not a declared guard.
+  is not a declared guard. A case that judges a task-file probe also updates that probe's row in
+  *Coverage* when it retires, so the probe is not left unmeasured without a word.
 - **Hill-climb on the cases that can move, at three runs, plugin arm only.** A case whose plugin
   arm already passes every grader cannot show a gain, so a round spends nothing on it: it re-runs
   the train cases with room to improve and the guards the changed prompt covers, three runs each.
@@ -221,6 +222,28 @@ from a discipline `SKILL.md` explicitly states.
 | `58-gain-beyond-its-share` | autonomous | Bound a claimed speedup by what the changed piece could save, and treat the rest as unexplained | unmeasured |
 | `59-reverted-fix` | autonomous, repository | Find the earlier fix for the same failure that was reverted, and why, before proposing a fix | unmeasured |
 | `60-protocol-in-prompts` | autonomous | Model a protocol that several agents follow in prompt text, across the orders their claims and takeovers can interleave, before the skill ships | unmeasured |
+| `61-decision-routes-and-a-public-act` | autonomous | Judge the routes against the person's aim, score each from the public act that cannot be undone, look for a mix that removes a route's worst case, and weigh an uncertain later plan on every route | unmeasured |
+| `62-decision-rival-answers` | autonomous | Read a rival's answer from its side before putting a chance on it, compare the estimate with the chance at which the choice flips, and re-derive a read nobody will check | unmeasured |
+| `63-decision-close-call-is-not-close` | autonomous | Equal averages over a ruinous downside are not a toss-up: work out what the bad case does before picking, and let avoiding ruin decide | unmeasured |
+| `64-decision-small-and-undoable` | autonomous | A small, returnable choice gets a pick and a short reason, not a decision analysis | unmeasured |
+| `65-decision-plan-before-committing` | autonomous | Before committing to a plan, check how efforts like it went, imagine it failed and then worked, find a small step that can be undone, and weigh waiting against the window | unmeasured |
+| `66-decision-plan-that-holds` | autonomous | Give a decided plan signals to watch with a switch for each, actions that shape the futures, a test of a good decision apart from its outcome, and a standing rule against the habit that sinks it | unmeasured |
+| `67-research-vendor-evidence` | autonomous | Weigh who made each claim, seek the teams that left, find informed critics, and decide between reading more and trying it | unmeasured |
+| `68-research-popular-and-dated` | autonomous | Date each claim, check the issue tracker over the readme, weigh fit over popularity, and decide between breadth and depth | unmeasured |
+| `69-refactor-quirky-untested` | autonomous | Pin today's behaviour before a refactor, name what must not change, and ask why an odd line exists before removing it | unmeasured |
+| `70-refactor-big-cleanup` | autonomous | Define done, keep the change reviewable, land it in steps that each work, and ask whether the one-pull-request plan is a requirement | unmeasured |
+| `71-feature-shape-change-in-flight` | autonomous | For a change to a queued message: the half-done state, what grows per item, old and new code side by side, a step-by-step walk, separating bundled changes, steps left to memory, and degrade or stop | unmeasured |
+| `72-coding-shared-function-change` | autonomous | Say how each consumer of a shared function finds out, what changes while tests still pass, and where to stop testing | unmeasured |
+| `73-coding-rests-on-unbuilt` | autonomous | Name the piece a plan rests on that does not exist yet, settle the decision that would invalidate built work, give status one owner, and say how a failure would be seen and how the flow can be driven | unmeasured |
+| `74-bug-fix-under-pressure` | autonomous | Check for a fix already in flight, prove the cause before deploying, check the shared function's other callers, clean the bad data left behind, and weigh a hotfix against the proper fix | unmeasured |
+| `75-diagnosis-relative-drop` | autonomous | Doubt the dashboard before the product, check when the drop started, list what else differs, keep each claim in the layer its evidence comes from, and explain why one browser | unmeasured |
+| `76-diagnosis-incident-depth` | autonomous | Separate the trigger from what made the outage possible and worse, allow several causes, check what else the leading cause should have broken, propose a controlled contrast, and decide how deep to dig | unmeasured |
+| `77-perf-speedup-claim` | autonomous | Judge a speedup claim: the limiter, run-to-run spread, a fair comparison, a checked harness, like-for-like scenarios, a verdict the evidence supports, and what users feel | unmeasured |
+| `78-document-config-guide` | autonomous | One kind of document or two, link what code owns, catch the second copy, back each claim, and define a term borrowed from elsewhere | unmeasured |
+| `79-prompting-add-a-rule` | autonomous | Resolve a new prompt rule against the one it contradicts elsewhere, put a check where a line cannot hold, and replace the failing line instead of adding beside it | unmeasured |
+| `80-tech-design-migration-doc` | autonomous | Layer a design doc for a non-technical approver and engineers, decide what the sources and visuals are for, show options before writing, place the assets, and decide owners and dates | unmeasured |
+| `81-ui-multistep-form` | autonomous | Cover every state of a long form on poor wifi, serve screen readers, right-to-left and phones concretely, and decide density per surface | unmeasured |
+| `82-writing-post-from-notes` | autonomous | Build the post on the author's own point, back each claim, and pick one sharp point over a survey | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14; none has been run. Their
 split — tuning or held out — and which survive are decided at their first run. The setup-update
@@ -243,6 +266,17 @@ share (`58`), and finding a reverted fix in the repository's history (`59`). The
 `55` a second grader for the *Fit to trust* job it added: a repaired check counts only after it
 was seen to fail.
 
+`61` to `82`, added on 2026-10-20, close the gaps the *Coverage* table below found: before them
+most task-file probes, and every decision probe, had no grader. Each groups the probes of one
+task file that apply naturally to one invented situation, with one grader per probe or
+trade-off, and none of their prompts names a probe or the move the reply should make. `63` and
+`64` are a mirror pair for *Value of information*'s stop: `63` gives two options with equal
+averages and a ruinous downside, so a read that calls it a toss-up and picks fails; `64` gives a
+small choice with free returns and a user who asks not to overthink it, so a read that wraps the
+pick in analysis fails. No constant policy passes both. `62` also holds the independent
+re-derivation of a load-bearing read that nobody will check, and `70` the classification of a
+stated constraint as required or chosen.
+
 **Every recorded number in this file is stale as of 2026-10-20.** The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
 2026-10-14 change moved its verification wording to one harness, the 2026-10-15 change made
@@ -250,8 +284,9 @@ that harness optional and the project's own checks a run's to repair, the 2026-1
 made the host's question capability the default way figure-out asks, and the 2026-10-19 change
 added probes to the coding, bug and performance task files and to recall, which reach `10`, `21`,
 `40` and `43` most, a second 2026-10-19 change added a decision task file, which reaches `06`
-most, and the 2026-10-20 change sharpened three of its probes, which reaches `06` most too,
-so no earlier result measures the skill as it ships now. The next baseline replaces them.
+most, and the 2026-10-20 change sharpened three of its probes, which reaches `06` most too, and
+a second 2026-10-20 change made that file's stop clause ask for shown reasons, which reaches
+`06`, `63` and `64`, so no earlier result measures the skill as it ships now. The next baseline replaces them.
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.
@@ -272,7 +307,7 @@ over-triggering is the first casualty of any "press harder" tuning.
 
 ## Classification
 
-Every case's standing as of 2026-10-19, under this file's selection rules: a case stays for
+Every case's standing as of 2026-10-20, under this file's selection rules: a case stays for
 measured uplift or as a declared guard (a floor, a mirror pair, a negative, a held-out witness);
 an unmeasured case stays until its first run decides; a case is retired when it duplicates a kept
 case's discipline, exercises a skill outside this suite's scope, or floored in both arms without
@@ -333,6 +368,28 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `58` | first run decides | New on 2026-10-19: the only bounded-gain case; the arithmetic is in plain sight, so both arms may pass, and then it retires |
 | `59` | first run decides | New on 2026-10-19: recall from the repository's own history, which `43` (logs) does not cover |
 | `60` | first run decides | New on 2026-10-19: the order-dependent case where the protocol is prompt text rather than code, which `56` does not cover |
+| `61` | first run decides | New on 2026-10-20: The four decision-probe misses ADR 20261019 records, which the `decision` drive checked once |
+| `62` | first run decides | New on 2026-10-20: The other-party and flip-chance clauses, plus the only re-derivation grader |
+| `63` | first run decides | New on 2026-10-20: Mirror of `64`: equal averages hide a ruinous downside; a lazy stop fails it |
+| `64` | first run decides | New on 2026-10-20: Mirror of `63`; it judges form, since needless analysis is the miss |
+| `65` | first run decides | New on 2026-10-20: Plan-before-committing probes; the facts are plain, so both arms may pass some graders |
+| `66` | first run decides | New on 2026-10-20: Plan-after-deciding probes; no other case holds them |
+| `67` | first run decides | New on 2026-10-20: Research probes on vendor evidence; `weighs-who-made-the-claim` may floor |
+| `68` | first run decides | New on 2026-10-20: Research probes on a popular, dated choice |
+| `69` | first run decides | New on 2026-10-20: The only characterization and lost-intent case |
+| `70` | first run decides | New on 2026-10-20: Refactor scope and landing; also the only constraint-classification grader |
+| `71` | first run decides | New on 2026-10-20: The only case for a change to queued or persisted data |
+| `72` | first run decides | New on 2026-10-20: The only shared-function consumer case |
+| `73` | first run decides | New on 2026-10-20: Unbuilt pieces and costly-call ordering, with no other case |
+| `74` | first run decides | New on 2026-10-20: The only bug-under-pressure case; `cleans-the-bad-rows` may floor |
+| `75` | first run decides | New on 2026-10-20: Diagnosis of a relative drop; the promo ending is plain, so some graders may floor |
+| `76` | first run decides | New on 2026-10-20: Incident depth: trigger versus cause and several causes |
+| `77` | first run decides | New on 2026-10-20: Every performance probe but the bounded gain, which `58` holds |
+| `78` | first run decides | New on 2026-10-20: The documentation probes `35` does not hold |
+| `79` | first run decides | New on 2026-10-20: The prompt probes `34` and `60` do not hold |
+| `80` | first run decides | New on 2026-10-20: The only design-doc case |
+| `81` | first run decides | New on 2026-10-20: The UI probes `19` does not hold |
+| `82` | first run decides | New on 2026-10-20: The only human-voice writing case |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -355,38 +412,46 @@ totals below are upper bounds.
 | Order | Cases | Runs | Why here |
 |---|---|---|---|
 | 1 | `54`, `55` | 4 | Cover what the 2026-10-15 change shipped; the base model likely plans around the broken recipe and leaves the broken test |
-| 2 | `56`, `57`, `58`, `59` | 8 | Cover what the 2026-10-19 change shipped; `55`'s new grader rides on row 1 |
-| 3 | `17` | 2 | Single turn; headroom likely |
-| 4 | `22` | 2 | Single turn; the base model tends to settle a look in prose |
-| 5 | `19` | 2 | The base model likely designs the display as asked |
-| 6 | `48` | 2 | Design probes with no other case |
-| 7 | `40` + `42` | 4 | Pair; `42` is the negative guard |
-| 8 | `41` | 2 | |
-| 9 | `44` | 2 | |
-| 10 | `18` | 2 | |
-| 11 | `21` | 2 | |
-| 12 | `23` + `24` | 4 | `24` is `23`'s held-out witness |
-| 13 | `25` + `26` | 4 | Pair |
-| 14 | `32` + `33` | 4 | Same prompt, with and without a harness |
-| 15 | `38` | 2 | |
-| 16 | `34`, `35` | 4 | |
-| 17 | `37` + `39` | 4 | Headroom likely low |
-| 18 | `20` | 2 | Both arms likely pass |
-| 19 | `29` | 2 | Likely a floor |
-| 20 | `31` | 2 | Likely a floor |
-| 21 | `30`, `53`, `45` (plugin arm) | 3 | The version path; `53` and `45` for status |
-| 22 | `43` + `46` (plugin arm) | 2 | Pair |
-| 23 | `27` + `28` (plugin arm) | 2 | Pair |
-| 24 | `36` (plugin arm) | 1 | |
-| 25 | `52` (plugin arm) | 1 | Guard; status only |
+| 2 | `56`, `57`, `58`, `59`, `60` | 10 | Cover what the 2026-10-19 changes shipped; `55`'s new grader rides on row 1 |
+| 3 | `63` + `64` | 4 | Mirror pair for the 2026-10-20 stop clause; each has one drive |
+| 4 | `61`, `62`, `65`, `66` | 8 | Decision probes, which had no case before 2026-10-20 |
+| 5 | `69`–`74` | 12 | Coding, feature, bug and refactor probes with no earlier case |
+| 6 | `75`–`77` | 6 | Diagnosis and performance probes with no earlier case |
+| 7 | `67`, `68`, `78`–`82` | 14 | Research, document, prompt, design-doc, UI and writing probes |
+| 8 | `17` | 2 | Single turn; headroom likely |
+| 9 | `22` | 2 | Single turn; the base model tends to settle a look in prose |
+| 10 | `19` | 2 | The base model likely designs the display as asked |
+| 11 | `48` | 2 | Design probes with no other case |
+| 12 | `40` + `42` | 4 | Pair; `42` is the negative guard |
+| 13 | `41` | 2 | |
+| 14 | `44` | 2 | |
+| 15 | `18` | 2 | |
+| 16 | `21` | 2 | |
+| 17 | `23` + `24` | 4 | `24` is `23`'s held-out witness |
+| 18 | `25` + `26` | 4 | Pair |
+| 19 | `32` + `33` | 4 | Same prompt, with and without a harness |
+| 20 | `38` | 2 | |
+| 21 | `34`, `35` | 4 | |
+| 22 | `37` + `39` | 4 | Headroom likely low |
+| 23 | `20` | 2 | Both arms likely pass |
+| 24 | `29` | 2 | Likely a floor |
+| 25 | `31` | 2 | Likely a floor |
+| 26 | `30`, `53`, `45` (plugin arm) | 3 | The version path; `53` and `45` for status |
+| 27 | `43` + `46` (plugin arm) | 2 | Pair |
+| 28 | `27` + `28` (plugin arm) | 2 | Pair |
+| 29 | `36` (plugin arm) | 1 | |
+| 30 | `52` (plugin arm) | 1 | Guard; status only |
 
-All of it is 69 runs, under $110. A full baseline also re-measures the 13 kept both-arm cases
-(`01`–`16`), another 26 runs, under $40, since every recorded number is stale. **A smaller
-budget** runs rows 1 to 7 first: 24 runs, under $40. The three-run checks under *Reading a
-result at this depth* come on top, at 6 runs a case. What each result decides:
+All of it is 115 runs, under $175. A full baseline also re-measures the 13 kept both-arm cases
+(`01`–`16`), another 26 runs, under $40, since every recorded number is stale: 141 runs, about
+$214 at the per-run bound. That bound counts the judge at the define suite's rate per run; how
+much each extra grader on a case adds to a run's judge cost is assumed small and has not been
+measured. **A smaller budget** runs rows 1 to 4 first: 26 runs, under $40. The three-run checks
+under *Reading a result at this depth* come on top, at 6 runs a case. What each result decides:
 
 - both arms pass every case grader, and the case is not a declared guard → re-run it with three
-  runs per arm, and retire it if both arms pass every run;
+  runs per arm, and retire it if both arms pass every run, updating its *Coverage* row when it
+  judges a task-file probe;
 - the plugin arm fails a case grader traced to a rule the skill states → a candidate hill;
 - the arms separate on a case grader → a candidate for uplift; its standing settles over later
   runs;
@@ -397,7 +462,7 @@ result at this depth* come on top, at 6 runs a case. What each result decides:
 
 **Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`,
 `15-persona-seat-doc`, `16-underdetermined-billing`, `24-ruled-position-holds`, and
-`28-universal-not-taste`.** Seven of forty-eight cases. Their scores
+`28-universal-not-taste`.** Seven of seventy-five cases. Their scores
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
 them. Tuning happens on the others; the split of cases `30` onward is settled at their first run.
 
