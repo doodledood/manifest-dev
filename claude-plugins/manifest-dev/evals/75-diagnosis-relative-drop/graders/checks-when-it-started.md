@@ -12,8 +12,9 @@ dip that began before it. The tag move happened "earlier that same week", so it 
 change that could fall on or before the 3rd, and its exact date matters.
 
 **First, answer in one line:** Does the reply notice that the dip begins on the 3rd, before the
-redesign (the 6th) and the promo's end (the 7th), and say that those changes cannot explain when it
-started, pointing to a change on or before the 3rd such as the tag move? Quote it.
+redesign (the 6th), and say that the redesign cannot explain when it started (naming the promo's
+end on the 7th as well is not required), pointing to a change on or before the 3rd such as the tag
+move? Quote it.
 
 **Then judge:** PASS if yes. FAIL if the reply dates the drop from the redesign as the user does,
 or mentions the 3rd without saying what it rules out.

@@ -17,4 +17,5 @@ existing evidence can settle, and either propose it or give a reason from the ca
 needed before the write-up states the cause? Quote it.
 
 **Then judge:** PASS if yes. FAIL if the reply settles the cause from the timeline without
-considering a controlled test, or calls the cause uncertain without proposing one.
+considering a controlled test, or calls the cause uncertain without either proposing one or saying
+from the case why one is not needed.
