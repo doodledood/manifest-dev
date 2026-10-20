@@ -246,6 +246,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `80-tech-design-migration-doc` | autonomous | Layer a design doc for a non-technical approver and engineers, decide what the sources and visuals are for, show options before writing, place the assets, and decide owners and dates | unmeasured |
 | `81-ui-multistep-form` | autonomous | Cover every state of a long form on poor wifi, serve screen readers, right-to-left and phones concretely, and decide density per surface | unmeasured |
 | `82-writing-post-from-notes` | autonomous | Build the post on the author's own point, back each claim, and pick one sharp point over a survey | unmeasured |
+| `83-separate-questions-separate-owners` | autonomous | Offer to narrow the read to what is settled and hand four independent questions to their owners | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14; none has been run. Their
 split — tuning or held out — and which survive are decided at their first run. The setup-update
@@ -268,7 +269,7 @@ share (`58`), and finding a reverted fix in the repository's history (`59`). The
 `55` a second grader for the *Fit to trust* job it added: a repaired check counts only after it
 was seen to fail.
 
-`61` to `82`, added on 2026-10-20, close the gaps the *Coverage* table below found: before them
+`61` to `83`, added on 2026-10-20, close the gaps the *Coverage* table below found: before them
 most task-file probes, and every decision probe, had no grader. Each groups the probes of one
 task file that apply naturally to one invented situation, with one grader per probe or
 trade-off, and none of their prompts names a probe or the move the reply should make. `63` and
@@ -277,7 +278,8 @@ averages and a ruinous downside, so a read that calls it a toss-up and picks fai
 small choice with free returns and a user who asks only which to order, so a read that wraps the
 pick in analysis fails. No constant policy passes both. `62` also holds the independent
 re-derivation of a load-bearing read that nobody will check, and `70` the classification of a
-stated constraint as required or chosen.
+stated constraint as required or chosen. `83` holds the offer to narrow a read once its remaining
+questions stop depending on each other.
 
 **Every recorded number in this file is stale as of 2026-10-20.** The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
@@ -392,6 +394,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `80` | first run decides | New on 2026-10-20: The only design-doc case |
 | `81` | first run decides | New on 2026-10-20: The UI probes `19` does not hold |
 | `82` | first run decides | New on 2026-10-20: The only human-voice writing case |
+| `83` | first run decides | New on 2026-10-20: The only case for the offer to narrow a read |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -419,7 +422,7 @@ totals below are upper bounds.
 | 4 | `61`, `62`, `65`, `66` | 8 | Decision probes, which had no case before 2026-10-20 |
 | 5 | `69`–`74` | 12 | Coding, feature, bug and refactor probes with no earlier case |
 | 6 | `75`–`77` | 6 | Diagnosis and performance probes with no earlier case |
-| 7 | `67`, `68`, `78`–`82` | 14 | Research, document, prompt, design-doc, UI and writing probes |
+| 7 | `67`, `68`, `78`–`83` | 16 | Research, document, prompt, design-doc, UI and writing probes, and the offer to narrow a read |
 | 8 | `17` | 2 | Single turn; headroom likely |
 | 9 | `22` | 2 | Single turn; the base model tends to settle a look in prose |
 | 10 | `19` | 2 | The base model likely designs the display as asked |
@@ -444,9 +447,9 @@ totals below are upper bounds.
 | 29 | `36` (plugin arm) | 1 | |
 | 30 | `52` (plugin arm) | 1 | Guard; status only |
 
-All of it is 115 runs, under $175. A full baseline also re-measures the 13 kept both-arm cases
-(`01`–`16`), another 26 runs, under $40, since every recorded number is stale: 141 runs, about
-$214 at the per-run bound. That bound counts the judge at the define suite's rate per run; how
+All of it is 117 runs, under $180. A full baseline also re-measures the 13 kept both-arm cases
+(`01`–`16`), another 26 runs, under $40, since every recorded number is stale: 143 runs, about
+$217 at the per-run bound. That bound counts the judge at the define suite's rate per run; how
 much each extra grader on a case adds to a run's judge cost is assumed small and has not been
 measured. **A smaller budget** runs rows 1 to 4 first: 26 runs, under $40. The three-run checks
 under *Reading a result at this depth* come on top, at 6 runs a case. What each result decides:
@@ -464,7 +467,7 @@ under *Reading a result at this depth* come on top, at 6 runs a case. What each 
 
 **Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`,
 `15-persona-seat-doc`, `16-underdetermined-billing`, `24-ruled-position-holds`, and
-`28-universal-not-taste`.** Seven of seventy-five cases. Their scores
+`28-universal-not-taste`.** Seven of seventy-six cases. Their scores
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
 them. Tuning happens on the others; the split of cases `30` onward is settled at their first run.
 
@@ -633,19 +636,19 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Momentum, yielding only for what the user must supply | `26-asks-only-the-users-call/asks-the-users-call`, `26-asks-only-the-users-call/decides-what-taste-settles` |
 | `SKILL.md` | Serve what is true; hold under pushback; the status quo's job | `04-hold-under-pushback/holds-position`, `05-move-on-evidence/updates-on-evidence`, `13-status-quo-job/tests-the-status-quos-job`; not graded: pricing "living with it", left to `01` since `12` retired |
 | `SKILL.md` | Problem before solution; requirements earn their place; classify a constraint | `01-root-press/presses-from-root`, `02-assumed-cause/does-not-adopt-users-diagnosis`, `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer`, `70-refactor-big-cleanup/questions-the-one-pull-request` |
-| `SKILL.md` | Mark every claim verified, inferred or assumed | `10-diagnosis-retry-window/evidence-has-provenance`, `11-underdetermined/separates-verified-from-assumed`, `16-underdetermined-billing/separates-verified-from-assumed` |
-| `SKILL.md` | Keep rivals alive; parent before child | `10-diagnosis-retry-window/rival-actually-killed`, `11-underdetermined/does-not-manufacture-a-winner`, `11-underdetermined/chases-the-crumb` |
+| `SKILL.md` | Mark every claim verified, inferred or assumed | `10-diagnosis-retry-window/evidence-has-provenance`, `11-underdetermined/separates-verified-from-assumed`, `16-underdetermined-billing/separates-verified-from-assumed`, `11-underdetermined/chases-the-crumb` |
+| `SKILL.md` | Keep rivals alive; parent before child | `10-diagnosis-retry-window/rival-actually-killed`, `11-underdetermined/does-not-manufacture-a-winner`, `01-root-press/presses-from-root` |
 | `SKILL.md` | Fog, and ruling ground out of the frame | Reason: needs many user turns, so a branch can be seen sharpening or a ruling be seen holding when a resumed session meets it |
 | `SKILL.md` | Explore read-only; acts with durable outside state are offered | `18-read-only-experiment/driver-unchanged`, `18-read-only-experiment/spooler-unchanged`, `17-agreement-is-not-a-go/consumer-unchanged`; not graded: acts that leave state outside the session, which need an external-service stub |
 | `SKILL.md` | The person's seat and their uses | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star`, `15-persona-seat-doc/takes-the-readers-seat` |
 | `SKILL.md` | State what it will be and how it is checked; offer a draft | `21-how-it-gets-checked/settles-the-exercise`, `22-draft-before-feel/offers-a-draft-not-a-feeling`, `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it`; not graded: rendering beyond the draft offer, which needs opt-in to publishing and several turns |
 | `SKILL.md` | Re-derive a load-bearing read independently | `62-decision-rival-answers/checks-the-read-independently` |
-| `SKILL.md` | Flags and the references they load | `01-root-press/log-written`, `25-users-call-and-taste/flags-the-users-calls`, `27-taste-offers/offers-entry-for-the-stated-preference`, `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `23-term-and-record/term-captured` |
+| `SKILL.md` | Flags and the references they load | `01-root-press/log-written`, `25-users-call-and-taste/flags-the-users-calls`, `27-taste-offers/offers-entry-for-the-stated-preference`, `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `23-term-and-record/term-captured`; not graded: a quoted or topic mention of a flag read as topic text, which no case prompt carries |
 | `SKILL.md` | What counts as a project | `52-projectless-chat-offers-no-surfaces/no-project-surfaces-offered`, `52-projectless-chat-offers-no-surfaces/writes-no-project-surface` |
 | `SKILL.md` | Under --autonomous, self-answer and flag | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer` |
 | `SKILL.md` | Load the matching probe files; stated rules win | `64-decision-small-and-undoable/picks-without-ceremony`, `40-shape-before-build/sketch-two-shapes-one-owner`; not graded: a rule the user states overriding a probe |
 | `SKILL.md` | Invoke prompt-engineering for prompt-shaped work | Reason: a host capability the headless harness lacks — the eval sandbox installs only this plugin, so the prompt-engineering skill, which ships in `manifest-dev-tools`, cannot be invoked |
-| `SKILL.md` | Offer to scope the read and hand off to ticket-up | Reason: needs many user turns before questions decouple, and a ticket-store fixture for the hand-off |
+| `SKILL.md` | Offer to scope the read and hand off to ticket-up | `83-separate-questions-separate-owners/offers-to-scope-the-read`; not graded: the hand-off after the user accepts, which needs a second user turn and a ticket-store fixture |
 | `SKILL.md` | The log | `01-root-press/log-written` |
 | `tasks/CODING.md` | Shape before build | `40-shape-before-build/sketch-two-shapes-one-owner`, `56-order-dependent-design/models-before-building` |
 | `tasks/CODING.md` | Already provided | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
@@ -681,7 +684,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/BUG.md` | Bad data left behind | `74-bug-fix-under-pressure/cleans-the-bad-rows` |
 | `tasks/BUG.md` | Tried and undone | `59-reverted-fix/names-the-reverted-fix` |
 | `tasks/BUG.md` | Trade-off: Hotfix now vs proper fix | `74-bug-fix-under-pressure/stop-the-bleeding-or-fix-once` |
-| `tasks/BUG.md` | Trade-off: This instance vs the class | `37-correction-becomes-a-lock/names-a-lock-with-scope` |
+| `tasks/BUG.md` | Trade-off: This instance vs the class | `37-correction-becomes-a-lock/names-a-lock-with-scope`, `39-one-off-mistake/no-lock-for-a-one-off` |
 | `tasks/REFACTOR.md` | Characterization gap | `69-refactor-quirky-untested/pins-behaviour-first` |
 | `tasks/REFACTOR.md` | Behavior contract | `69-refactor-quirky-untested/keeps-what-must-not-change` |
 | `tasks/REFACTOR.md` | Lost intent | `69-refactor-quirky-untested/asks-why-the-oddity-exists` |

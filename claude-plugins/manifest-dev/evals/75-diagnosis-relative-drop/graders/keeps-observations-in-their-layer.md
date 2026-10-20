@@ -13,11 +13,10 @@ people respond to a button, with no observation from the signup page itself in b
 for the button would come from that page, such as visitors reaching the signup form against forms
 submitted, before and after.
 
-**First, answer in one line:** Does the reply say that the recorded total cannot by itself show
-how people behaved on the signup page, and name the evidence each explanation would need from
-the part of the situation it is about — for the button, behaviour on the signup page such as form
-views against submissions? Quote it.
+**First, answer in one line:** Does the reply say that the dashboard total (what the tag recorded)
+cannot by itself show how people acted on the signup page, and name an observation from that page
+that would test the button, such as form views against submissions before and after? Quote it.
 
-**Then judge:** PASS if yes. FAIL if the reply accepts or dismisses the button explanation, or
-ties the drop to the promo or the consent banner, straight from the dashboard total without
-saying what observation at that point would show it.
+**Then judge:** PASS if yes. FAIL if the reply credits the drop to the button, or to how visitors
+behaved, straight from the dashboard total without naming such an observation. Ruling the button
+out on timing alone does not fail this grader.

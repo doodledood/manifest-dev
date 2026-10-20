@@ -35,10 +35,19 @@ def _section(text: str, heading: str) -> str:
     return match.group(1) if match else ""
 
 
+def _files(folder: Path, suffix: str = "") -> list[Path]:
+    # Editor swap files, lock links and .DS_Store sit beside real files and are never units.
+    return sorted(
+        f
+        for f in folder.iterdir()
+        if f.is_file() and not f.name.startswith(".") and f.name.endswith(suffix)
+    )
+
+
 def expected_units(skill: Path) -> set[tuple[str, str]]:
     """Every (file, unit) the table must cover: probes and trade-offs, and reference files."""
     units: set[tuple[str, str]] = set()
-    for task in sorted((skill / "tasks").glob("*.md")):
+    for task in _files(skill / "tasks", ".md"):
         text = task.read_text(encoding="utf-8")
         name = f"tasks/{task.name}"
         units |= {
@@ -50,8 +59,7 @@ def expected_units(skill: Path) -> set[tuple[str, str]]:
             for line in TRADE_OFF.findall(_section(text, "Forced trade-offs"))
         }
     units |= {
-        (f"references/{ref.name}", WHOLE_FILE)
-        for ref in (skill / "references").glob("*")
+        (f"references/{ref.name}", WHOLE_FILE) for ref in _files(skill / "references")
     }
     return units
 
@@ -143,13 +151,23 @@ def _append(path: Path, text: str) -> None:
     path.write_text(path.read_text(encoding="utf-8") + text, encoding="utf-8")
 
 
+def _after(path: Path, anchor: str, text: str) -> None:
+    body = path.read_text(encoding="utf-8")
+    path.write_text(body.replace(anchor, anchor + text, 1), encoding="utf-8")
+
+
 def _edit_table(readme: Path, old: str, new: str) -> None:
     readme.write_text(GOOD_TABLE.replace(old, new), encoding="utf-8")
 
 
 # Each break a contributor could make, and the text the failure message must carry to name it.
 BREAKS: dict[str, tuple[Callable[[Path, Path, Path], object], str]] = {
-    "new probe": (lambda s, e, r: _append(s / "tasks/X.md", "- **Two** — q?\n"), "Two"),
+    "new probe": (
+        lambda s, e, r: _after(
+            s / "tasks/X.md", "- **One** — q?\n", "- **Two** — q?\n"
+        ),
+        "no row for tasks/X.md · Two",
+    ),
     "new trade-off": (
         lambda s, e, r: _append(s / "tasks/X.md", "- C vs D — which?\n"),
         "C vs D",
@@ -172,6 +190,18 @@ BREAKS: dict[str, tuple[Callable[[Path, Path, Path], object], str]] = {
         ),
         "only display-only graders",
     ),
+    "duplicate row": (
+        lambda s, e, r: _edit_table(
+            r, "| `SKILL.md` |", "| `tasks/X.md` | One | `01-c/g` |\n| `SKILL.md` |"
+        ),
+        "duplicate row for tasks/X.md · One",
+    ),
+    "plain-text cell": (
+        lambda s, e, r: _edit_table(
+            r, "| The log | `01-c/g` |", "| The log | see above |"
+        ),
+        "names no `case/grader`",
+    ),
     "empty reason": (
         lambda s, e, r: _edit_table(
             r, "Reason: needs a service the suite cannot reach", "Reason:"
@@ -183,6 +213,13 @@ BREAKS: dict[str, tuple[Callable[[Path, Path, Path], object], str]] = {
 
 def test_coverage_check_passes_a_sound_table(tmp_path: Path) -> None:
     assert coverage_problems(*_fixture(tmp_path)) == []
+
+
+def test_coverage_check_ignores_hidden_files(tmp_path: Path) -> None:
+    skill, evals, readme = _fixture(tmp_path)
+    (skill / "references/.R.md.swp").write_text("x\n", encoding="utf-8")
+    (skill / "tasks/.#X.md").symlink_to(tmp_path / "gone")
+    assert coverage_problems(skill, evals, readme) == []
 
 
 @pytest.mark.parametrize("name", sorted(BREAKS))

@@ -10,9 +10,11 @@ Dana's unreviewed pull request, "refactor profile caching", rewrites the same fi
 patch would touch. It may already key the cache by customer id, may carry the bad key forward, or
 may collide with a hotfix — none of which anyone has checked.
 
-**First, answer in one line:** Does the reply make reading Dana's pull request a step before writing
-a patch — checking whether it already fixes the key, and if so verifying and shipping that instead
-of a second fix, or how a patch would collide with it? Quote it.
+**First, answer in one line:** Before a new key fix is written or shipped, does the reply check, or
+make it a step to check, whether Dana's pull request already changes the cache key, and say what
+follows either way (verify and ship it instead, or how a new fix and the PR fit together)? Quote
+it.
 
-**Then judge:** PASS if yes. FAIL if the reply writes the key patch without looking at the pull
-request, or mentions it only as a merge to sort out later.
+**Then judge:** PASS if yes. A stopgap shipped first, such as turning the cache off or reverting
+Tuesday's change, does not fail this. FAIL if the reply writes the key patch without asking whether
+the PR already fixes it, or notes only that the two will conflict.

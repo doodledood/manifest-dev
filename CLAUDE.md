@@ -254,7 +254,7 @@ A define task-file item belongs in exactly one type: if you can verify it from t
 2. Update the relevant skill's own inline index in its `SKILL.md` (`define/SKILL.md` and/or `figure-out/SKILL.md`).
 3. If creating a base file, update overlay files to remove content that moved to the base.
 4. Bump plugin version, update READMEs per sync checklist.
-5. For a figure-out probe or trade-off line added, renamed or removed, update its row in the eval README's *Coverage* table — graders in a case, or the reason the suite cannot reach it; `tests/test_figure_out_coverage.py` fails until the row matches.
+5. For a figure-out probe, trade-off line or reference file added, renamed or removed, update its row in the eval README's *Coverage* table — graders in a case, or the reason the suite cannot reach it; `tests/test_figure_out_coverage.py` fails until the row matches.
 
 ## File Operations
 

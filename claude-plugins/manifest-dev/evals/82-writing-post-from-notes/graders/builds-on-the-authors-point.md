@@ -12,10 +12,11 @@ experience: the person on the support rotation picks the next thing to build fro
 complaints, so the rotation replaced planning and the meeting served only those not on support.
 
 **First, answer in two lines:** Does the reply build the angle and outline around the support
-rotation replacing planning, rather than treating it as one point among the generic ones? Quote
-it. Does it avoid inventing experience the notes do not give — anecdotes, results or details of the
-team's story — asking the author for them instead? Quote it, or answer no if it invents some.
+rotation replacing planning, rather than treating it as one point among the generic ones? Quote it.
+Does the reply invent experience the notes do not give, such as anecdotes, results or details of
+the team's story? Quote any invented detail, or answer none. Asking the author for missing details
+is fine.
 
-**Then judge:** PASS if both are yes. FAIL if the plan is a general case against sprint planning
-with the support rotation as one section among many, or if it fills in the team's story with
-invented details.
+**Then judge:** PASS if the first answer is yes and the second is none. FAIL if the plan is a
+general case against sprint planning with the support rotation as one section among many, or if it
+fills in the team's story with invented details.

@@ -11,9 +11,10 @@ observation: staging took the same push without trouble. A small controlled run 
 staging under production-like load, with and without the app's retries, with and without a
 lagging replica — would show which factors produce the outage, where reading the timeline cannot.
 
-**First, answer in one line:** Does the reply propose a controlled test or replay — for example,
-pool size 5 under production-like load in staging, varying the retries or the replica — to settle
-the cause before the write-up states it? Quote it.
+**First, answer in one line:** Does the reply weigh a controlled test or replay (for example pool
+size 5 under production-like load in staging, varying the retries or the replica) against what the
+existing evidence can settle, and either propose it or give a reason from the case why it is not
+needed before the write-up states the cause? Quote it.
 
-**Then judge:** PASS if yes. FAIL if the reply settles the cause from the timeline alone, or
-calls the cause uncertain without proposing a test that could separate the factors.
+**Then judge:** PASS if yes. FAIL if the reply settles the cause from the timeline without
+considering a controlled test, or calls the cause uncertain without proposing one.

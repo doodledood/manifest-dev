@@ -16,5 +16,6 @@ cause — reproducing the overwrite with two such customers, or confirming the a
 a postcode and surname with the customer whose address they got — and shows the patched key stops
 it? Quote it.
 
-**Then judge:** PASS if yes. FAIL if verification is deploying and watching whether reports stop, or
-only running the existing tests.
+**Then judge:** PASS if yes. A stopgap shipped first (cache off, revert) does not fail this when
+the cause is still confirmed before the key fix ships. FAIL if the only verification of the cause
+or the fix is deploying and watching whether reports stop, or running the existing tests.

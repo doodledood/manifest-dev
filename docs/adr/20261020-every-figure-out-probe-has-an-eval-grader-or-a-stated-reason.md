@@ -37,7 +37,7 @@ figure-out's behaviour comes from three places: its `SKILL.md`, the task files u
 - The first full run will show, probe by probe, which angles the plugin draws out and which the base model already raises, so a task file can shrink on evidence.
 
 ### Negative
-- A full first run of both figure-out suites now costs about $214 at the README's per-run bound, against $120 before.
+- A full first run of both figure-out suites now costs about $217 at the README's per-run bound, against about $145 before.
 - The table is long and every task-file edit touches it. A probe rename means a row rename.
 - The test checks that a named grader exists, not that it judges the unit it is listed against; that stays review.
 

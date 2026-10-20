@@ -12,9 +12,10 @@ right to left, so the layout and step order mirror, and Arabic text mixes with l
 content such as amounts, dates and English file names. Phone users at a meeting need large touch
 targets and uploads from the camera or files.
 
-**First, answer in one line:** Does the reply name at least one concrete requirement for each of
-the three — screen readers, right-to-left Arabic (layout direction, not only translated text),
-and phones? Quote it.
+**First, answer in one line:** Does the reply name a concrete requirement for screen-reader users
+(for example, announced step changes, errors or upload progress, or labelled controls) and for
+right-to-left Arabic as layout direction, not only translated text (for example, mirrored layout
+and step order, or mixed-direction amounts, dates or file names)? Quote each.
 
-**Then judge:** PASS if yes, all three. FAIL if any of the three is missing or reduced to a label
-such as "make it accessible", "support Arabic" or "mobile-friendly" with nothing it requires.
+**Then judge:** PASS if both. FAIL if either is missing or reduced to a label such as "make it
+accessible" or "support Arabic".

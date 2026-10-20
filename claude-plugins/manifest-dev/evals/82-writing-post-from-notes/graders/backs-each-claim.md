@@ -10,9 +10,9 @@ The notes carry two numbers with no source in hand: "productivity went up 30%", 
 period or baseline given, and "70% of teams say sprint planning is a waste of time", which the
 author "saw somewhere". Eng leads reading the post will ask what each rests on.
 
-**First, answer in one line:** Before drafting, does the reply ask what backs the 30% figure — what
-was measured, over what period, against what — or the 70% figure — its source — or propose dropping
-or rewording a number unless it can be backed? Quote it.
+**First, answer in one line:** Before drafting, does the reply deal with both numbers, asking what
+backs each (for 30%: what was measured, over what period, against what; for 70%: its source) or
+marking it to be dropped or reworded unless backed? Quote it.
 
-**Then judge:** PASS if yes. FAIL if the outline uses either number as stated, without asking what
-backs it.
+**Then judge:** PASS if both numbers are handled this way, or one is handled and the other is left
+out of the outline. FAIL if the outline uses either number as stated without asking what backs it.
