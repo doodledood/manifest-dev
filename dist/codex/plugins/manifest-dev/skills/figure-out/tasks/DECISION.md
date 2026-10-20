@@ -14,7 +14,7 @@ Angles that are easy to under-weight in a decision under uncertainty — choosin
 - **Signposts and triggers** — Which signals, watched after acting, would show a future arriving, what would each mean, and what does the person switch to when one fires?
 - **Shaping actions** — What can the person do to make the futures they want more likely, or the ones they fear less likely, instead of only picking the option that copes?
 - **Decision stacking** — Is there a small step that can be undone and teaches what the big call needs, or can two options run side by side before committing?
-- **Value of information** — Would any fact the person can get, at a cost worth paying, change the choice? If not — or the options are close, the downside small, quitting cheap — how wrong can they be: at what chance would the choice flip, and is their estimate clearly on one side of it? Pick, and stop analysing.
+- **Value of information** — At what chance would the choice flip, and is the person's estimate clearly on one side of it? If it straddles, would any fact they can get, at a cost worth paying, move it across? If not — or the options are close, the downside small, quitting cheap — pick, and stop analysing.
 - **Precommitment** — Which small, reasonable-looking choice, repeated, would quietly sink the plan? Should it become a standing rule instead of a case-by-case call?
 
 ## Forced trade-offs
