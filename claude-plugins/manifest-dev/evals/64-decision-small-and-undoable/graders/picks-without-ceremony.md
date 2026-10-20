@@ -18,6 +18,9 @@ lamps in a table, and without asking the user a question instead of picking? Quo
 **Then judge:** PASS if yes. The read's own parts around the pick do not count against it: a
 confidence line, what the pick rests on, a flagged note that which suits the corner is the user's
 taste with the other lamp as the alternative, a note on whether an independent check agreed, and
-when to use the free return and try the other. FAIL if the reply asks a question instead of
-picking, declines to pick, or weighs the lamps with a decision method — a scenario map, a failure
-exercise, a list of futures, a list of decision rules, or a weighted table.
+when to use the free return and try the other. Suggesting ordering both and returning the one that
+suits less does not count against it when the reply also names a single lamp to order, since the
+free returns make that a cheap trial rather than analysis; suggesting both with no single lamp
+named declines to pick. FAIL if the reply asks a question instead of picking, declines to pick, or
+weighs the lamps with a decision method — a scenario map, a failure exercise, a list of futures, a
+list of decision rules, or a weighted table.
