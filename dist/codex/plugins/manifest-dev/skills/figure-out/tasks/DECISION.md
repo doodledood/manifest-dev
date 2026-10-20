@@ -1,10 +1,10 @@
 # DECISION — probing fuel
 
-Angles that are easy to under-weight in a decision under uncertainty — choosing between options, or shaping a plan, whose outcome depends on futures nobody controls: a launch, a pricing model, which product bet to build. A choice that external evidence alone can settle is `RESEARCH.md`'s. Considerations, not an agenda — most won't apply. Press the load-bearing ones; priority stays yours.
+Angles that are easy to under-weight in a decision under uncertainty — choosing between options, or shaping a plan, whose outcome depends on futures nobody controls, part of which may be another party's answer to the person's move: a launch, a pricing model, which product bet to build. A choice that external evidence alone can settle is `RESEARCH.md`'s. Considerations, not an agenda — most won't apply. Press the load-bearing ones; priority stays yours.
 
 ## Blind-spot probes
-- **Fundamental objectives** — What is this for, in the person's own words, and which aim wins when two pull apart? Judge the options against that before money, reach or effort.
-- **States of the world** — Which futures could each option meet, the unwelcome ones included — and does the person's own uncertain later plan ("I may do more of these later") weigh on every option, rather than ranking one down or ruling it out? Unlike rival explanations, futures aren't eliminated by evidence; the plan has to live with each of them.
+- **Fundamental objectives** — What is this for, in the person's own words, which aims do they hold but haven't named, and which wins when two pull apart? Judge the options against that before money, reach or effort.
+- **States of the world** — Which futures could each option meet, the unwelcome ones included — and does the person's own uncertain later plan ("I may do more of these later") weigh on every option, rather than ranking one down or ruling it out? Unlike rival explanations, futures aren't eliminated by evidence. Which of them is really another party's move that answers the person's, to be read from their side — what each move gets them, and whether a threat or promise they state would hold when the moment comes — before any chance is put on it?
 - **Decision rule** — Which rule fits this choice's shape and this person: least regret (one-shot, hard to undo), best average (repeatable or reversible), avoid ruin (a bad outcome ends the game), good enough (searching costs more than it gains), robust (acceptable in every future), or another? Formal minimax regret ignores probabilities; choosing least regret here still keeps rough odds in view — the rule sets how much the worst case counts against them. How much downside to accept is the person's call.
 - **Reference class** — How did efforts like this usually turn out, before trusting this plan's own story — and where does this case really differ from them?
 - **Irreversibility** — Which act can't be undone — a first public post, a first payment — and what would quitting each option cost? If that act lands before the planned decision, score each option from it: which has it already closed or narrowed?
@@ -14,7 +14,7 @@ Angles that are easy to under-weight in a decision under uncertainty — choosin
 - **Signposts and triggers** — Which signals, watched after acting, would show a future arriving, what would each mean, and what does the person switch to when one fires?
 - **Shaping actions** — What can the person do to make the futures they want more likely, or the ones they fear less likely, instead of only picking the option that copes?
 - **Decision stacking** — Is there a small step that can be undone and teaches what the big call needs, or can two options run side by side before committing?
-- **Value of information** — Would any fact the person can get, at a cost worth paying, change the choice? If not — or the options are close, the downside small, quitting cheap — how wrong can they be? Pick, and stop analysing.
+- **Value of information** — Would any fact the person can get, at a cost worth paying, change the choice? If not — or the options are close, the downside small, quitting cheap — how wrong can they be: at what chance would the choice flip, and is their estimate clearly on one side of it? Pick, and stop analysing.
 - **Precommitment** — Which small, reasonable-looking choice, repeated, would quietly sink the plan? Should it become a standing rule instead of a case-by-case call?
 
 ## Forced trade-offs
