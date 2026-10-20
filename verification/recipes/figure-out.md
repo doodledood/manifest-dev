@@ -56,6 +56,12 @@ Proves: the transcript shows the session reading `figure-out/tasks/DECISION.md`,
 Check: read
 Workload: varies
 
+### decision-counterparty
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-decision-counterparty.md`
+Proves: the transcript shows the session reading `figure-out/tasks/DECISION.md`; the read treats the regional roaster's price as a choice that answers the user's bid, reasoned from the roaster's incentives and from whether its "beat any price" stance would hold at the user's numbers before any chance on it is relied on — a chance derived from that reasoning, or the user's 40% checked against it, passes, and the 40% taken as given with no look at the roaster's side fails; and the read states the chance at which the choice between the options would flip and compares the user's 40% with it.
+Check: read
+Workload: varies
+
 ## Gotchas
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.
