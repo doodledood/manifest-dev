@@ -62,11 +62,23 @@ Proves: the transcript shows the session reading `figure-out/tasks/DECISION.md`;
 Check: read
 Workload: varies
 
+### decision-close-call
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/63-decision-close-call-is-not-close/prompt.md`
+Proves: the transcript shows the session reading `figure-out/tasks/DECISION.md`, and before it chooses, the read works out what a bad market year does under the loan covenant, or that the 3-in-10 estimate sits right at the chance where the choice flips; and it lets avoiding that outcome decide, rather than calling the options even and picking by habit or taste — the case's two graders, `does-not-call-it-close-and-stop` and `picks-a-rule-for-ruin`, applied to the final reply.
+Check: read
+Workload: varies
+
+### decision-small-choice
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/64-decision-small-and-undoable/prompt.md`
+Proves: the transcript shows the session reading `figure-out/tasks/DECISION.md`, and the final reply names one lamp with a short reason and stops — no map of futures, failure exercise, list of decision rules or weighted table, and no question in place of a pick — the case's grader `picks-without-ceremony` applied to the final reply.
+Check: read
+Workload: varies
+
 ## Gotchas
 
 - The eval cases' `prompt.md` files open with the case's front matter; `scripts/drive-skill.sh` sends only the body below it.
 - A drive's headless session offers no question-selection capability, so the reply asks in plain text, one ask per turn; asking through the capability, the default on a host that offers one, shows only in an interactive session.
-- The reply ends at its one ask. A full read — conclusion, confidence, evidence, what would overturn it — needs the user's answers, which a one-prompt drive does not give; that path is the eval suite's.
+- The reply ends at its one ask. A full read — conclusion, confidence, evidence, what would overturn it — needs the user's answers, which a one-prompt drive does not give; that path is the eval suite's. A prompt that passes `--autonomous`, as the decision cases' prompts do, is the exception: the session answers its own asks and ends at the read.
 - Without the skill named in the prompt it may not fire; the eval README measures how often.
 - A user's agreement is not a go: it never edits code, so "it didn't implement" is the intended outcome, not a failure.
 - Docs mode writes into the project (glossary, records, surfaces line); the drive's scratch project absorbs it.

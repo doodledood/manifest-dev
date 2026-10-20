@@ -11,7 +11,7 @@ says what the script does and how to follow a run):
 
 ```bash
 scripts/evals/run_eval.sh figure-out evals/results/figure-out/aggregate-result.json \
-  --tag figure-out --ablation with-without --judge-model sonnet --scaffold --max-cost-usd 120
+  --tag figure-out --ablation with-without --judge-model sonnet --scaffold --max-cost-usd 205
 ```
 
 `--scaffold` runs each case's `scaffold.sh` (declared in its `case.yaml`) before the agent starts,
@@ -84,7 +84,7 @@ Every case runs once per arm, under a noisy judge. That gives a direction and a 
 where the skills stand, never a verdict on one case. Read a result this way:
 
 - **Direction comes from the whole suite.** One run per case is a coin flip on its own, but across
-  the suite the noise averages out: with about forty both-arm cases, the suite-wide Δ is read to
+  the suite the noise averages out: with forty or more both-arm cases, the suite-wide Δ is read to
   within about ±0.17. A hill-climb round reads the plugin arm pooled over the train cases, and
   separately over the held-out cases.
 - **A single case is a reason to read its output, never a result.** A case that flips, or a gap
@@ -92,7 +92,8 @@ where the skills stand, never a verdict on one case. Read a result this way:
   `16` gap above shows, so read the outputs on both sides before believing it.
 - **Three runs where one case decides something.** Re-run that case with `--case '<name>' --runs 3`
   before retiring it, and retire it only when both arms pass every case grader on every run and it
-  is not a declared guard.
+  is not a declared guard. A case that judges a task-file probe also updates that probe's row in
+  *Coverage* when it retires, so the probe is not left unmeasured without a word.
 - **Hill-climb on the cases that can move, at three runs, plugin arm only.** A case whose plugin
   arm already passes every grader cannot show a gain, so a round spends nothing on it: it re-runs
   the train cases with room to improve and the guards the changed prompt covers, three runs each.
@@ -162,7 +163,9 @@ headroom — the case cannot be climbed. Both arms failing a grader traceable to
 stated rule means the skill is not delivering its stated discipline, and that is the hill.
 
 Cases are therefore selected for headroom: the with-arm currently fails a substance grader derived
-from a discipline `SKILL.md` explicitly states.
+from a discipline `SKILL.md` explicitly states. The exception is coverage: every task-file probe has a
+case under *Coverage* whether or not it shows headroom, so the first run can say which probes the
+base model already covers; such a case leaves only through its probe's *Coverage* row.
 
 ## Cases
 
@@ -221,6 +224,29 @@ from a discipline `SKILL.md` explicitly states.
 | `58-gain-beyond-its-share` | autonomous | Bound a claimed speedup by what the changed piece could save, and treat the rest as unexplained | unmeasured |
 | `59-reverted-fix` | autonomous, repository | Find the earlier fix for the same failure that was reverted, and why, before proposing a fix | unmeasured |
 | `60-protocol-in-prompts` | autonomous | Model a protocol that several agents follow in prompt text, across the orders their claims and takeovers can interleave, before the skill ships | unmeasured |
+| `61-decision-routes-and-a-public-act` | autonomous | Judge the routes against the person's aim, score each from the public act that cannot be undone, look for a mix that removes a route's worst case, and weigh an uncertain later plan on every route | unmeasured |
+| `62-decision-rival-answers` | autonomous | Read a rival's answer from its side before putting a chance on it, compare the estimate with the chance at which the choice flips, and re-derive a read nobody will check | unmeasured |
+| `63-decision-close-call-is-not-close` | autonomous | Equal averages over a ruinous downside are not a toss-up: work out what the bad case does before picking, and let avoiding ruin decide | unmeasured |
+| `64-decision-small-and-undoable` | autonomous | A small, returnable choice gets a pick and a short reason, not a decision analysis | unmeasured |
+| `65-decision-plan-before-committing` | autonomous | Before committing to a plan, check how efforts like it went, imagine it failed and then worked, find a small step that can be undone, and weigh waiting against the window | unmeasured |
+| `66-decision-plan-that-holds` | autonomous | Give a decided plan signals to watch with a switch for each, actions that shape the futures, a test of a good decision apart from its outcome, and a standing rule against the habit that sinks it | unmeasured |
+| `67-research-vendor-evidence` | autonomous | Weigh who made each claim, seek the teams that left, find informed critics, and decide between reading more and trying it | unmeasured |
+| `68-research-popular-and-dated` | autonomous | Date each claim, check the issue tracker over the readme, weigh fit over popularity, and decide between breadth and depth | unmeasured |
+| `69-refactor-quirky-untested` | autonomous | Pin today's behaviour before a refactor, name what must not change, and ask why an odd line exists before removing it | unmeasured |
+| `70-refactor-big-cleanup` | autonomous | Define done, keep the change reviewable, land it in steps that each work, and ask whether the one-pull-request plan is a requirement | unmeasured |
+| `71-feature-shape-change-in-flight` | autonomous | For a change to a queued message: the half-done state, what grows per item, old and new code side by side, a step-by-step walk, separating bundled changes, steps left to memory, and degrade or stop | unmeasured |
+| `72-coding-shared-function-change` | autonomous | Say how each consumer of a shared function finds out, what changes while tests still pass, and where to stop testing | unmeasured |
+| `73-coding-rests-on-unbuilt` | autonomous | Name the piece a plan rests on that does not exist yet, settle the decision that would invalidate built work, give status one owner, and say how a failure would be seen and how the flow can be driven | unmeasured |
+| `74-bug-fix-under-pressure` | autonomous | Check for a fix already in flight, prove the cause before deploying, check the shared function's other callers, clean the bad data left behind, and weigh a hotfix against the proper fix | unmeasured |
+| `75-diagnosis-relative-drop` | autonomous | Doubt the dashboard before the product, check when the drop started, list what else differs, keep each claim in the layer its evidence comes from, and explain why one browser | unmeasured |
+| `76-diagnosis-incident-depth` | autonomous | Separate the trigger from what made the outage possible and worse, allow several causes, check what else the leading cause should have broken, propose a controlled contrast, and decide how deep to dig | unmeasured |
+| `77-perf-speedup-claim` | autonomous | Judge a speedup claim: the limiter, run-to-run spread, a fair comparison, a checked harness, like-for-like scenarios, a verdict the evidence supports, and what users feel | unmeasured |
+| `78-document-config-guide` | autonomous | One kind of document or two, link what code owns, catch the second copy, back each claim, and define a term borrowed from elsewhere | unmeasured |
+| `79-prompting-add-a-rule` | autonomous | Resolve a new prompt rule against the one it contradicts elsewhere, put a check where a line cannot hold, and replace the failing line instead of adding beside it | unmeasured |
+| `80-tech-design-migration-doc` | autonomous | Layer a design doc for a non-technical approver and engineers, decide what the sources and visuals are for, show options before writing, place the assets, and decide owners and dates | unmeasured |
+| `81-ui-multistep-form` | autonomous | Cover every state of a long form on poor wifi, serve screen readers, right-to-left and phones concretely, and decide density per surface | unmeasured |
+| `82-writing-post-from-notes` | autonomous | Build the post on the author's own point, back each claim, and pick one sharp point over a survey | unmeasured |
+| `83-separate-questions-separate-owners` | autonomous | Offer to narrow the read to what is settled and hand four independent questions to their owners | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14; none has been run. Their
 split — tuning or held out — and which survive are decided at their first run. The setup-update
@@ -243,6 +269,18 @@ share (`58`), and finding a reverted fix in the repository's history (`59`). The
 `55` a second grader for the *Fit to trust* job it added: a repaired check counts only after it
 was seen to fail.
 
+`61` to `83`, added on 2026-10-20, close the gaps the *Coverage* table below found: before them
+most task-file probes, and every decision probe, had no grader. Each groups the probes of one
+task file that apply naturally to one invented situation, with one grader per probe or
+trade-off, and none of their prompts names a probe or the move the reply should make. `63` and
+`64` are a mirror pair for *Value of information*'s stop: `63` gives two options with equal
+averages and a ruinous downside, so a read that calls it a toss-up and picks fails; `64` gives a
+small choice with free returns and a user who asks only which to order, so a read that wraps the
+pick in analysis fails. No constant policy passes both. `62` also holds the independent
+re-derivation of a load-bearing read that nobody will check, and `70` the classification of a
+stated constraint as required or chosen. `83` holds the offer to narrow a read once its remaining
+questions stop depending on each other.
+
 **Every recorded number in this file is stale as of 2026-10-20.** The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
 2026-10-14 change moved its verification wording to one harness, the 2026-10-15 change made
@@ -250,8 +288,9 @@ that harness optional and the project's own checks a run's to repair, the 2026-1
 made the host's question capability the default way figure-out asks, and the 2026-10-19 change
 added probes to the coding, bug and performance task files and to recall, which reach `10`, `21`,
 `40` and `43` most, a second 2026-10-19 change added a decision task file, which reaches `06`
-most, and the 2026-10-20 change sharpened three of its probes, which reaches `06` most too,
-so no earlier result measures the skill as it ships now. The next baseline replaces them.
+most, and the 2026-10-20 change sharpened three of its probes, which reaches `06` most too, and
+a second 2026-10-20 change made that file's stop clause ask for shown reasons, which reaches
+`06`, `63` and `64`, so no earlier result measures the skill as it ships now. The next baseline replaces them.
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.
@@ -272,7 +311,7 @@ over-triggering is the first casualty of any "press harder" tuning.
 
 ## Classification
 
-Every case's standing as of 2026-10-19, under this file's selection rules: a case stays for
+Every case's standing as of 2026-10-20, under this file's selection rules: a case stays for
 measured uplift or as a declared guard (a floor, a mirror pair, a negative, a held-out witness);
 an unmeasured case stays until its first run decides; a case is retired when it duplicates a kept
 case's discipline, exercises a skill outside this suite's scope, or floored in both arms without
@@ -333,6 +372,29 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `58` | first run decides | New on 2026-10-19: the only bounded-gain case; the arithmetic is in plain sight, so both arms may pass, and then it retires |
 | `59` | first run decides | New on 2026-10-19: recall from the repository's own history, which `43` (logs) does not cover |
 | `60` | first run decides | New on 2026-10-19: the order-dependent case where the protocol is prompt text rather than code, which `56` does not cover |
+| `61` | first run decides | New on 2026-10-20: The four decision-probe misses ADR 20261019 records, which the `decision` drive checked once |
+| `62` | first run decides | New on 2026-10-20: The other-party and flip-chance clauses, plus the only re-derivation grader |
+| `63` | first run decides | New on 2026-10-20: Mirror of `64`: equal averages hide a ruinous downside; a lazy stop fails it |
+| `64` | first run decides | New on 2026-10-20: Mirror of `63`; it judges form, since needless analysis is the miss |
+| `65` | first run decides | New on 2026-10-20: Plan-before-committing probes; the facts are plain, so both arms may pass some graders |
+| `66` | first run decides | New on 2026-10-20: Plan-after-deciding probes; no other case holds them |
+| `67` | first run decides | New on 2026-10-20: Research probes on vendor evidence; `weighs-who-made-the-claim` may floor |
+| `68` | first run decides | New on 2026-10-20: Research probes on a popular, dated choice |
+| `69` | first run decides | New on 2026-10-20: The only characterization and lost-intent case |
+| `70` | first run decides | New on 2026-10-20: Refactor scope and landing; also the only constraint-classification grader |
+| `71` | first run decides | New on 2026-10-20: The only case for a change to queued or persisted data |
+| `72` | first run decides | New on 2026-10-20: The only shared-function consumer case |
+| `73` | first run decides | New on 2026-10-20: Unbuilt pieces and costly-call ordering, with no other case |
+| `74` | first run decides | New on 2026-10-20: The only bug-under-pressure case; `cleans-the-bad-rows` may floor |
+| `75` | first run decides | New on 2026-10-20: Diagnosis of a relative drop; the promo ending is plain, so some graders may floor |
+| `76` | first run decides | New on 2026-10-20: Incident depth: trigger versus cause and several causes |
+| `77` | first run decides | New on 2026-10-20: Every performance probe but the bounded gain, which `58` holds |
+| `78` | first run decides | New on 2026-10-20: The documentation probes `35` does not hold |
+| `79` | first run decides | New on 2026-10-20: The prompt probes `34` and `60` do not hold |
+| `80` | first run decides | New on 2026-10-20: The only design-doc case |
+| `81` | first run decides | New on 2026-10-20: The UI probes `19` does not hold |
+| `82` | first run decides | New on 2026-10-20: The only human-voice writing case |
+| `83` | first run decides | New on 2026-10-20: The only case for the offer to narrow a read |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -355,38 +417,46 @@ totals below are upper bounds.
 | Order | Cases | Runs | Why here |
 |---|---|---|---|
 | 1 | `54`, `55` | 4 | Cover what the 2026-10-15 change shipped; the base model likely plans around the broken recipe and leaves the broken test |
-| 2 | `56`, `57`, `58`, `59` | 8 | Cover what the 2026-10-19 change shipped; `55`'s new grader rides on row 1 |
-| 3 | `17` | 2 | Single turn; headroom likely |
-| 4 | `22` | 2 | Single turn; the base model tends to settle a look in prose |
-| 5 | `19` | 2 | The base model likely designs the display as asked |
-| 6 | `48` | 2 | Design probes with no other case |
-| 7 | `40` + `42` | 4 | Pair; `42` is the negative guard |
-| 8 | `41` | 2 | |
-| 9 | `44` | 2 | |
-| 10 | `18` | 2 | |
-| 11 | `21` | 2 | |
-| 12 | `23` + `24` | 4 | `24` is `23`'s held-out witness |
-| 13 | `25` + `26` | 4 | Pair |
-| 14 | `32` + `33` | 4 | Same prompt, with and without a harness |
-| 15 | `38` | 2 | |
-| 16 | `34`, `35` | 4 | |
-| 17 | `37` + `39` | 4 | Headroom likely low |
-| 18 | `20` | 2 | Both arms likely pass |
-| 19 | `29` | 2 | Likely a floor |
-| 20 | `31` | 2 | Likely a floor |
-| 21 | `30`, `53`, `45` (plugin arm) | 3 | The version path; `53` and `45` for status |
-| 22 | `43` + `46` (plugin arm) | 2 | Pair |
-| 23 | `27` + `28` (plugin arm) | 2 | Pair |
-| 24 | `36` (plugin arm) | 1 | |
-| 25 | `52` (plugin arm) | 1 | Guard; status only |
+| 2 | `56`, `57`, `58`, `59`, `60` | 10 | Cover what the 2026-10-19 changes shipped; `55`'s new grader rides on row 1 |
+| 3 | `63` + `64` | 4 | Mirror pair for the 2026-10-20 stop clause; each has one drive |
+| 4 | `61`, `62`, `65`, `66` | 8 | Decision probes, which had no case before 2026-10-20 |
+| 5 | `69`–`74` | 12 | Coding, feature, bug and refactor probes with no earlier case |
+| 6 | `75`–`77` | 6 | Diagnosis and performance probes with no earlier case |
+| 7 | `67`, `68`, `78`–`83` | 16 | Research, document, prompt, design-doc, UI and writing probes, and the offer to narrow a read |
+| 8 | `17` | 2 | Single turn; headroom likely |
+| 9 | `22` | 2 | Single turn; the base model tends to settle a look in prose |
+| 10 | `19` | 2 | The base model likely designs the display as asked |
+| 11 | `48` | 2 | Design probes with no other case |
+| 12 | `40` + `42` | 4 | Pair; `42` is the negative guard |
+| 13 | `41` | 2 | |
+| 14 | `44` | 2 | |
+| 15 | `18` | 2 | |
+| 16 | `21` | 2 | |
+| 17 | `23` + `24` | 4 | `24` is `23`'s held-out witness |
+| 18 | `25` + `26` | 4 | Pair |
+| 19 | `32` + `33` | 4 | Same prompt, with and without a harness |
+| 20 | `38` | 2 | |
+| 21 | `34`, `35` | 4 | |
+| 22 | `37` + `39` | 4 | Headroom likely low |
+| 23 | `20` | 2 | Both arms likely pass |
+| 24 | `29` | 2 | Likely a floor |
+| 25 | `31` | 2 | Likely a floor |
+| 26 | `30`, `53`, `45` (plugin arm) | 3 | The version path; `53` and `45` for status |
+| 27 | `43` + `46` (plugin arm) | 2 | Pair |
+| 28 | `27` + `28` (plugin arm) | 2 | Pair |
+| 29 | `36` (plugin arm) | 1 | |
+| 30 | `52` (plugin arm) | 1 | Guard; status only |
 
-All of it is 69 runs, under $110. A full baseline also re-measures the 13 kept both-arm cases
-(`01`–`16`), another 26 runs, under $40, since every recorded number is stale. **A smaller
-budget** runs rows 1 to 7 first: 24 runs, under $40. The three-run checks under *Reading a
-result at this depth* come on top, at 6 runs a case. What each result decides:
+All of it is 117 runs, under $180. A full baseline also re-measures the 13 kept both-arm cases
+(`01`–`16`), another 26 runs, under $40, since every recorded number is stale: 143 runs, about
+$217 at the per-run bound. That bound counts the judge at the define suite's rate per run; how
+much each extra grader on a case adds to a run's judge cost is assumed small and has not been
+measured. **A smaller budget** runs rows 1 to 4 first: 26 runs, under $40. The three-run checks
+under *Reading a result at this depth* come on top, at 6 runs a case. What each result decides:
 
 - both arms pass every case grader, and the case is not a declared guard → re-run it with three
-  runs per arm, and retire it if both arms pass every run;
+  runs per arm, and retire it if both arms pass every run, updating its *Coverage* row when it
+  judges a task-file probe;
 - the plugin arm fails a case grader traced to a rule the skill states → a candidate hill;
 - the arms separate on a case grader → a candidate for uplift; its standing settles over later
   runs;
@@ -397,7 +467,7 @@ result at this depth* come on top, at 6 runs a case. What each result decides:
 
 **Held out from tuning: `05-move-on-evidence`, `08-neg-authorized`, `13-status-quo-job`,
 `15-persona-seat-doc`, `16-underdetermined-billing`, `24-ruled-position-holds`, and
-`28-universal-not-taste`.** Seven of forty-eight cases. Their scores
+`28-universal-not-taste`.** Seven of seventy-six cases. Their scores
 decide whether a change is kept, but no analyzer reads their outputs and no edit is drawn from
 them. Tuning happens on the others; the split of cases `30` onward is settled at their first run.
 
@@ -499,6 +569,10 @@ Read the failing **outputs**, not the scores. A turn that opened "I'm not going 
 yet", held its position, and named the two numbers that would settle it scored 0.00 under a
 rubric that was simply miscalibrated.
 
+**A probe, trade-off line or reference file added to figure-out gets its *Coverage* row in the same
+change** — graders in a case, or a reason the suite cannot reach it — and a renamed or removed one
+has its row renamed or removed. `tests/test_figure_out_coverage.py` fails until it does.
+
 ## Known limits
 
 - **A case gets a repository only through its scaffold.** Cases `01`–`16`, `19`–`22`, and `25`–`28`
@@ -510,27 +584,15 @@ rubric that was simply miscalibrated.
   finds the file.
 - **Earlier turns are written into the prompt.** The harness has no scripted second turn, so a
   case that needs history (`17`, `23`, `27`–`29`) quotes it inline.
-- **Not covered, by choice.** Team mode needs a chat-channel stand-in. Acts that leave state
-  outside the session need an external-service stub. Log safety and resume have shown no failure,
-  and the default log path is outside what a grader reads. Splitting questions into tickets needs
-  a ticket-store fixture. Rendering beyond the draft offer needs operator opt-in to publishing and
-  several turns. Under-firing is excluded because prompts name the skill by design. Asking through a host's question-selection capability has no case: the headless harness
-  offers no such tool, so the default most users get cannot be observed, and every case measures
-  the plain-text path, one ask per turn, which the turn-discipline graders judge. A mechanism
-  that only appears when components interact, and calibrating to the user's expertise, have no
-  case: `10` already floors on reaching a mechanism, and expertise has no observable bar. Offering the cheapest sufficient option before durable
-  machinery, and pricing "living with it" as a real option, are left to `01`: `12`, which priced
-  it, passed in both arms on every recorded run and was retired on 2026-10-15. Held-out
-  witnesses for `19` and `20` were left out to bound cost; add one before keeping a change aimed
-  at either. Build any of these when a miss shows in use.
-- **Disciplines with no case yet**, ranked by what a miss would cost a user, each waiting on a
-  miss seen in use or a budget for one more case (this change held the suite to two new ones):
-  under `--autonomous`, never self-accepting an offer that hands off to setup-project or
-  ticket-up; the *fast enough* job v5 added to *Fit to trust* (a touched check over its time line
-  with no reason), which needs evidence carrying a recorded line; failure visibility and silent
-  regression (`10`'s empty export treated as success is this failure, but no grader asks for it);
-  an independent re-derivation before an unaudited, load-bearing read; and classifying a stated
-  constraint as hard or assumed before it prunes options. setup-project going straight to the
+- **What has no grader is listed in *Coverage*.** Each unit the suite cannot reach carries its
+  reason there, and each part of a unit no grader reaches carries a `not graded:` note: team mode,
+  acts that leave state outside the session, log safety and resume, splitting questions into
+  tickets, rendering beyond the draft offer, asking through a host's question-selection capability,
+  never self-accepting an offer that hands off to setup-project or ticket-up, and the *fast enough*
+  job of *Fit to trust*. Two things sit outside the table because no unit names them on its own:
+  under-firing, excluded because prompts name the skill by design, and calibrating to the user's
+  expertise, which has no observable bar. Held-out witnesses for `19` and `20` were left out to
+  bound cost; add one before keeping a change aimed at either. setup-project going straight to the
   newest shape on an update is held by `30`'s grader and by `tests/test_setup_project_versions.py`;
   its own runs are checked by `verification/recipes/setup-project.md`, outside this suite.
 - **Press cases observe one turn.** Autonomous cases observe a whole investigation, because
@@ -541,6 +603,175 @@ rubric that was simply miscalibrated.
 - **`log-written` is on `01-root-press` only.** It is real value — continuity across context loss —
   and a clean uplift signal, but it passes with-plugin and fails without on every case, so carrying
   it everywhere made a file-existence check dominate the headline number.
+
+## Coverage
+
+Every part of figure-out that shapes its behaviour has a row here: each probe and each forced
+trade-off line in its task files, each file in its references, and each paragraph and bullet of its
+`SKILL.md`. A row names the graders that judge that unit, as `case/grader`, or gives the reason the
+suite cannot reach it. A reason counts only when the unit needs a service the suite cannot reach,
+several sessions, many user turns, or a host capability the headless harness lacks. Anything else
+gets a case. A `not graded:` note after the graders names the part
+of a unit no grader reaches.
+
+`tests/test_figure_out_coverage.py` fails when a probe, trade-off line or reference file has no row,
+when a row names a unit that no longer exists or a case or grader that is not on disk, and when a
+row's only graders are `skill-fired` or `autonomous-flag-passed`, which are never scored. It reads
+the task files and the references directory as data; the `SKILL.md` rows are kept by hand, since a
+paragraph has no stable label to key on. Whether a grader judges the unit it is listed for is
+review, not the test. The rule is recorded in
+`docs/adr/20261020-every-figure-out-probe-has-an-eval-grader-or-a-stated-reason.md`.
+
+When a case that judges a probe passes in both arms on every run and retires, its row says so —
+the base model already covers that angle — which makes the probe a candidate to cut from its task
+file. The row is never deleted while the probe stays.
+
+| File | Unit | Covered by |
+|---|---|---|
+| `SKILL.md` | The read, and investigation not execution | `17-agreement-is-not-a-go/stops-at-the-read`, `17-agreement-is-not-a-go/publisher-unchanged`, `18-read-only-experiment/names-a-read`, `08-neg-authorized/complies-without-reopening` |
+| `SKILL.md` | One claim and one ask per turn, one crux at a time | `01-root-press/turn-discipline`, `06-strategic-open/presses-one-crux`, `06-strategic-open/turn-discipline` |
+| `SKILL.md` | Asking through a question-selection capability | Reason: a host capability the headless harness lacks; the plain-text path it falls back to is judged by the `turn-discipline` graders |
+| `SKILL.md` | Simplified Technical English style | `26-asks-only-the-users-call/plain-writing` |
+| `SKILL.md` | The user's call | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/leaves-the-agents-call`, `25-users-call-and-taste/follows-only-what-bears`, `26-asks-only-the-users-call/decides-what-taste-settles` |
+| `SKILL.md` | Momentum, yielding only for what the user must supply | `26-asks-only-the-users-call/asks-the-users-call`, `26-asks-only-the-users-call/decides-what-taste-settles` |
+| `SKILL.md` | Serve what is true; hold under pushback; the status quo's job | `04-hold-under-pushback/holds-position`, `05-move-on-evidence/updates-on-evidence`, `13-status-quo-job/tests-the-status-quos-job`; not graded: pricing "living with it", left to `01` since `12` retired |
+| `SKILL.md` | Problem before solution; requirements earn their place; classify a constraint | `01-root-press/presses-from-root`, `02-assumed-cause/does-not-adopt-users-diagnosis`, `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer`, `70-refactor-big-cleanup/questions-the-one-pull-request` |
+| `SKILL.md` | Mark every claim verified, inferred or assumed | `10-diagnosis-retry-window/evidence-has-provenance`, `11-underdetermined/separates-verified-from-assumed`, `16-underdetermined-billing/separates-verified-from-assumed`, `11-underdetermined/chases-the-crumb` |
+| `SKILL.md` | Keep rivals alive; parent before child | `10-diagnosis-retry-window/rival-actually-killed`, `11-underdetermined/does-not-manufacture-a-winner`, `01-root-press/presses-from-root` |
+| `SKILL.md` | Fog, and ruling ground out of the frame | Reason: needs many user turns, so a branch can be seen sharpening or a ruling be seen holding when a resumed session meets it |
+| `SKILL.md` | Explore read-only; acts with durable outside state are offered | `18-read-only-experiment/driver-unchanged`, `18-read-only-experiment/spooler-unchanged`, `17-agreement-is-not-a-go/consumer-unchanged`; not graded: acts that leave state outside the session, which need an external-service stub |
+| `SKILL.md` | The person's seat and their uses | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star`, `15-persona-seat-doc/takes-the-readers-seat` |
+| `SKILL.md` | State what it will be and how it is checked; offer a draft | `21-how-it-gets-checked/settles-the-exercise`, `22-draft-before-feel/offers-a-draft-not-a-feeling`, `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it`; not graded: rendering beyond the draft offer, which needs opt-in to publishing and several turns |
+| `SKILL.md` | Re-derive a load-bearing read independently | `62-decision-rival-answers/checks-the-read-independently` |
+| `SKILL.md` | Flags and the references they load | `01-root-press/log-written`, `25-users-call-and-taste/flags-the-users-calls`, `27-taste-offers/offers-entry-for-the-stated-preference`, `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `23-term-and-record/term-captured`; not graded: a quoted or topic mention of a flag read as topic text, which no case prompt carries |
+| `SKILL.md` | What counts as a project | `52-projectless-chat-offers-no-surfaces/no-project-surfaces-offered`, `52-projectless-chat-offers-no-surfaces/writes-no-project-surface`; not graded: the same paragraph's team-mode sentences (no Taste, precedence over `--autonomous`), which need a Slack channel the suite cannot reach |
+| `SKILL.md` | Under --autonomous, self-answer and flag | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer` |
+| `SKILL.md` | Load the matching probe files; stated rules win | `64-decision-small-and-undoable/picks-without-ceremony`, `40-shape-before-build/sketch-two-shapes-one-owner`; not graded: a rule the user states overriding a probe |
+| `SKILL.md` | Invoke prompt-engineering for prompt-shaped work | Reason: a host capability the headless harness lacks — the eval sandbox installs only this plugin, so the prompt-engineering skill, which ships in `manifest-dev-tools`, cannot be invoked |
+| `SKILL.md` | Offer to scope the read and hand off to ticket-up | `83-separate-questions-separate-owners/offers-to-scope-the-read`; not graded: the hand-off after the user accepts, which needs a second user turn and a ticket-store fixture |
+| `SKILL.md` | The log | `01-root-press/log-written` |
+| `tasks/CODING.md` | Shape before build | `40-shape-before-build/sketch-two-shapes-one-owner`, `56-order-dependent-design/models-before-building` |
+| `tasks/CODING.md` | Already provided | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
+| `tasks/CODING.md` | Earned depth | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
+| `tasks/CODING.md` | A second shape | `40-shape-before-build/sketch-two-shapes-one-owner` |
+| `tasks/CODING.md` | What the next agent copies | `41-hand-synced-list/one-list-not-two` |
+| `tasks/CODING.md` | Design discipline | `73-coding-rests-on-unbuilt/one-structure-for-status` |
+| `tasks/CODING.md` | Recorded intent | `57-legitimate-state-before-a-guard/asks-if-the-state-is-legitimate` |
+| `tasks/CODING.md` | Unbuilt solution | `73-coding-rests-on-unbuilt/names-the-unbuilt-piece` |
+| `tasks/CODING.md` | Decisions that invalidate built work | `73-coding-rests-on-unbuilt/settles-the-costly-call-first` |
+| `tasks/CODING.md` | Consumer notification | `72-coding-shared-function-change/how-consumers-find-out` |
+| `tasks/CODING.md` | Silent regression | `72-coding-shared-function-change/what-changes-while-tests-pass` |
+| `tasks/CODING.md` | Failure visibility | `73-coding-rests-on-unbuilt/how-anyone-would-know` |
+| `tasks/CODING.md` | Drivable and debuggable | `73-coding-rests-on-unbuilt/can-an-agent-drive-it` |
+| `tasks/CODING.md` | Verification design | `21-how-it-gets-checked/settles-the-exercise`, `56-order-dependent-design/check-reaches-the-interleaving` |
+| `tasks/CODING.md` | The verification harness | `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it`, `54-touched-recipe-not-fit/folds-the-harness-repair-into-the-work`, `55-own-check-not-fit/repairs-the-own-check`, `55-own-check-not-fit/sees-the-repaired-test-fail`; not graded: the *fast enough* job, which needs evidence carrying a recorded time line |
+| `tasks/CODING.md` | Trade-off: Fix in place vs refactor first | `44-debt-on-the-path/offers-the-on-path-debt` |
+| `tasks/CODING.md` | Trade-off: Test depth vs ship speed | `72-coding-shared-function-change/where-to-stop-testing` |
+| `tasks/FEATURE.md` | Beyond the happy path | `21-how-it-gets-checked/settles-the-exercise` |
+| `tasks/FEATURE.md` | Undiscussed surface | `21-how-it-gets-checked/names-the-seen-surfaces` |
+| `tasks/FEATURE.md` | Their stories, not ours | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star` |
+| `tasks/FEATURE.md` | Partial failure | `71-feature-shape-change-in-flight/partial-failure-state` |
+| `tasks/FEATURE.md` | Orphaned resources | `71-feature-shape-change-in-flight/per-item-growth` |
+| `tasks/FEATURE.md` | Rollback | `71-feature-shape-change-in-flight/old-and-new-side-by-side` |
+| `tasks/FEATURE.md` | Slow-motion walk | `71-feature-shape-change-in-flight/walks-it-step-by-step` |
+| `tasks/FEATURE.md` | Bundled concerns | `71-feature-shape-change-in-flight/separates-the-extras` |
+| `tasks/FEATURE.md` | Remembered steps | `71-feature-shape-change-in-flight/no-step-on-memory` |
+| `tasks/FEATURE.md` | Trade-off: Graceful degradation vs fail-fast | `71-feature-shape-change-in-flight/degrade-or-stop` |
+| `tasks/FEATURE.md` | Trade-off: New abstraction vs inline | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
+| `tasks/BUG.md` | Already being fixed | `74-bug-fix-under-pressure/checks-the-open-fix` |
+| `tasks/BUG.md` | Confirm before deploy | `74-bug-fix-under-pressure/proves-it-before-shipping` |
+| `tasks/BUG.md` | Shared-caller fallout | `74-bug-fix-under-pressure/checks-the-other-callers` |
+| `tasks/BUG.md` | Bad data left behind | `74-bug-fix-under-pressure/cleans-the-bad-rows` |
+| `tasks/BUG.md` | Tried and undone | `59-reverted-fix/names-the-reverted-fix` |
+| `tasks/BUG.md` | Trade-off: Hotfix now vs proper fix | `74-bug-fix-under-pressure/stop-the-bleeding-or-fix-once` |
+| `tasks/BUG.md` | Trade-off: This instance vs the class | `37-correction-becomes-a-lock/names-a-lock-with-scope`, `39-one-off-mistake/no-lock-for-a-one-off` |
+| `tasks/REFACTOR.md` | Characterization gap | `69-refactor-quirky-untested/pins-behaviour-first` |
+| `tasks/REFACTOR.md` | Behavior contract | `69-refactor-quirky-untested/keeps-what-must-not-change` |
+| `tasks/REFACTOR.md` | Lost intent | `69-refactor-quirky-untested/asks-why-the-oddity-exists` |
+| `tasks/REFACTOR.md` | Done definition | `70-refactor-big-cleanup/defines-done` |
+| `tasks/REFACTOR.md` | Reviewability | `70-refactor-big-cleanup/keeps-it-reviewable` |
+| `tasks/REFACTOR.md` | Trade-off: Incremental vs big-bang | `70-refactor-big-cleanup/lands-it-in-chunks` |
+| `tasks/REFACTOR.md` | Trade-off: Refactor now vs feature first | `44-debt-on-the-path/offers-the-on-path-debt` |
+| `tasks/DIAGNOSIS.md` | Symptom reality | `75-diagnosis-relative-drop/doubts-the-dashboard` |
+| `tasks/DIAGNOSIS.md` | Onset | `75-diagnosis-relative-drop/checks-when-it-started` |
+| `tasks/DIAGNOSIS.md` | Comparison frame | `75-diagnosis-relative-drop/lists-what-else-differs` |
+| `tasks/DIAGNOSIS.md` | Evidence layer | `75-diagnosis-relative-drop/keeps-observations-in-their-layer` |
+| `tasks/DIAGNOSIS.md` | Locus vs cause | `75-diagnosis-relative-drop/explains-why-safari` |
+| `tasks/DIAGNOSIS.md` | Mechanism, not shape | `10-diagnosis-retry-window/names-the-mechanism` |
+| `tasks/DIAGNOSIS.md` | First-fit anchoring | `10-diagnosis-retry-window/rival-actually-killed`, `02-assumed-cause/does-not-adopt-users-diagnosis` |
+| `tasks/DIAGNOSIS.md` | Trigger vs root cause | `76-diagnosis-incident-depth/separates-trigger-from-cause` |
+| `tasks/DIAGNOSIS.md` | One symptom, several causes | `76-diagnosis-incident-depth/allows-several-causes` |
+| `tasks/DIAGNOSIS.md` | Predicted collateral | `76-diagnosis-incident-depth/checks-what-else-it-should-have-broken` |
+| `tasks/DIAGNOSIS.md` | Trade-off: Passive evidence vs controlled contrast | `76-diagnosis-incident-depth/proposes-a-controlled-contrast` |
+| `tasks/DIAGNOSIS.md` | Trade-off: Reproduce first vs trace in place | `20-one-failed-repro/non-repro-is-not-exclusion` |
+| `tasks/DIAGNOSIS.md` | Trade-off: Trigger-depth vs root-depth | `76-diagnosis-incident-depth/keeps-digging-past-the-trigger` |
+| `tasks/DECISION.md` | Fundamental objectives | `61-decision-routes-and-a-public-act/judges-routes-against-the-aim` |
+| `tasks/DECISION.md` | States of the world | `61-decision-routes-and-a-public-act/weighs-the-later-plan-on-every-route`, `62-decision-rival-answers/reads-the-rivals-side` |
+| `tasks/DECISION.md` | Decision rule | `63-decision-close-call-is-not-close/picks-a-rule-for-ruin` |
+| `tasks/DECISION.md` | Reference class | `65-decision-plan-before-committing/checks-how-efforts-like-this-went` |
+| `tasks/DECISION.md` | Irreversibility | `61-decision-routes-and-a-public-act/dates-the-irreversible-act` |
+| `tasks/DECISION.md` | Dominating hybrid | `61-decision-routes-and-a-public-act/finds-the-mix` |
+| `tasks/DECISION.md` | Premortem, then backcast | `65-decision-plan-before-committing/imagines-it-failed-then-worked` |
+| `tasks/DECISION.md` | Decision versus outcome | `66-decision-plan-that-holds/sets-what-a-good-decision-means` |
+| `tasks/DECISION.md` | Signposts and triggers | `66-decision-plan-that-holds/names-signals-and-switches` |
+| `tasks/DECISION.md` | Shaping actions | `66-decision-plan-that-holds/shapes-the-futures` |
+| `tasks/DECISION.md` | Decision stacking | `65-decision-plan-before-committing/finds-a-small-step-first` |
+| `tasks/DECISION.md` | Value of information | `62-decision-rival-answers/compares-the-estimate-with-the-flip-chance`, `63-decision-close-call-is-not-close/does-not-call-it-close-and-stop`, `64-decision-small-and-undoable/picks-without-ceremony` |
+| `tasks/DECISION.md` | Precommitment | `66-decision-plan-that-holds/makes-a-standing-rule` |
+| `tasks/DECISION.md` | Trade-off: Wait to learn vs act while the window is open | `65-decision-plan-before-committing/weighs-waiting-against-the-window` |
+| `tasks/RESEARCH.md` | Seller vs operator | `67-research-vendor-evidence/weighs-who-made-the-claim` |
+| `tasks/RESEARCH.md` | Survivorship | `67-research-vendor-evidence/asks-who-left` |
+| `tasks/RESEARCH.md` | Informed dissent | `67-research-vendor-evidence/finds-the-detractors` |
+| `tasks/RESEARCH.md` | Claim decay | `68-research-popular-and-dated/dates-each-claim` |
+| `tasks/RESEARCH.md` | Issue tracker over README | `68-research-popular-and-dated/checks-the-issue-tracker` |
+| `tasks/RESEARCH.md` | Popularity vs fit | `68-research-popular-and-dated/weighs-fit-over-popularity` |
+| `tasks/RESEARCH.md` | Trade-off: Read more vs try it | `67-research-vendor-evidence/weighs-a-trial-against-more-reading` |
+| `tasks/RESEARCH.md` | Trade-off: Breadth vs depth | `68-research-popular-and-dated/chooses-breadth-or-depth` |
+| `tasks/PERF.md` | The limiter | `77-perf-speedup-claim/names-the-limiter` |
+| `tasks/PERF.md` | Noise floor | `77-perf-speedup-claim/asks-the-run-to-run-spread` |
+| `tasks/PERF.md` | A fair comparison | `77-perf-speedup-claim/demands-a-fair-comparison` |
+| `tasks/PERF.md` | The harness first | `77-perf-speedup-claim/trusts-the-harness-first` |
+| `tasks/PERF.md` | Unlike scenarios | `77-perf-speedup-claim/spots-unlike-scenarios` |
+| `tasks/PERF.md` | The verdict | `77-perf-speedup-claim/states-a-proper-verdict` |
+| `tasks/PERF.md` | A bounded gain | `58-gain-beyond-its-share/bounds-the-gain-by-the-share` |
+| `tasks/PERF.md` | Trade-off: End-to-end vs isolated measurement | `77-perf-speedup-claim/measures-what-users-feel` |
+| `tasks/DOCUMENT.md` | One mode | `78-document-config-guide/picks-one-kind-of-document` |
+| `tasks/DOCUMENT.md` | A fact restated | `78-document-config-guide/links-what-code-owns` |
+| `tasks/DOCUMENT.md` | The same fact twice | `78-document-config-guide/spots-the-second-copy` |
+| `tasks/DOCUMENT.md` | Sources in hand | `78-document-config-guide/backs-each-claim` |
+| `tasks/DOCUMENT.md` | Terms from elsewhere | `78-document-config-guide/defines-borrowed-terms` |
+| `tasks/DOCUMENT.md` | How it gets checked | `35-checking-a-readme-change/checks-by-reader-tasks` |
+| `tasks/DOCUMENT.md` | Trade-off: One document per mode vs one combined document | `78-document-config-guide/one-doc-or-two` |
+| `tasks/PROMPTING.md` | A protocol on shared state | `60-protocol-in-prompts/models-the-protocol` |
+| `tasks/PROMPTING.md` | A rule in two files | `79-prompting-add-a-rule/spots-the-rule-elsewhere` |
+| `tasks/PROMPTING.md` | An instruction where a check belongs | `79-prompting-add-a-rule/puts-a-check-where-a-line-would-be` |
+| `tasks/PROMPTING.md` | How it gets checked | `34-checking-a-skill-change/checks-by-behavior-cases` |
+| `tasks/PROMPTING.md` | Trade-off: New line vs replacing an old one | `79-prompting-add-a-rule/replaces-the-vague-line` |
+| `tasks/TECH_DESIGN.md` | Audience layering | `80-tech-design-migration-doc/layers-for-both-readers` |
+| `tasks/TECH_DESIGN.md` | Reference role | `80-tech-design-migration-doc/decides-what-sources-are-for` |
+| `tasks/TECH_DESIGN.md` | Visual policy | `80-tech-design-migration-doc/sets-what-visuals-do` |
+| `tasks/TECH_DESIGN.md` | Taste pinning | `80-tech-design-migration-doc/shows-options-before-writing` |
+| `tasks/TECH_DESIGN.md` | Asset placement | `80-tech-design-migration-doc/places-the-assets` |
+| `tasks/TECH_DESIGN.md` | Ownership and estimates | `80-tech-design-migration-doc/decides-owners-and-dates` |
+| `tasks/TECH_DESIGN.md` | Trade-off: Broad first screen vs deep technical body | `80-tech-design-migration-doc/layers-for-both-readers` |
+| `tasks/TECH_DESIGN.md` | Trade-off: Standalone narrative vs source-cited record | `80-tech-design-migration-doc/decides-what-sources-are-for` |
+| `tasks/TECH_DESIGN.md` | Trade-off: Visuals as primary device vs supporting illustration | `80-tech-design-migration-doc/sets-what-visuals-do` |
+| `tasks/TECH_DESIGN.md` | Trade-off: Owner areas vs precise estimates | `80-tech-design-migration-doc/decides-owners-and-dates` |
+| `tasks/UI.md` | Every state | `81-ui-multistep-form/covers-every-state` |
+| `tasks/UI.md` | Who and where | `81-ui-multistep-form/serves-who-and-where` |
+| `tasks/UI.md` | Honest figures | `19-headline-number/tests-the-number-first` |
+| `tasks/UI.md` | Trade-off: Density vs legibility | `81-ui-multistep-form/dense-or-legible` |
+| `tasks/WRITING.md` | The author's own point | `82-writing-post-from-notes/builds-on-the-authors-point` |
+| `tasks/WRITING.md` | Sources in hand | `82-writing-post-from-notes/backs-each-claim` |
+| `tasks/WRITING.md` | Trade-off: Breadth vs one sharp point | `82-writing-post-from-notes/picks-one-sharp-point` |
+| `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
+| `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
+| `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v6/offers-only-whats-new-since-v6` |
+| `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `31-record-names-what-enforces-it/record-carries-enforced-by` |
+| `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, which needs those skills reachable from the session |
+| `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |
+| `references/slack-mrkdwn.md` | (whole file) | Reason: Slack formatting for team mode, a service the suite cannot reach from its sandbox |
 
 ## The comparison this suite was also used for
 
