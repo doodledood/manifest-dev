@@ -16,8 +16,8 @@ data, and treats the money (a field assistant) and their own papers as aims that
 each lets other labs build on the data — before money or the researcher's own papers, and say
 which aim wins where they pull apart? Quote it.
 
-**Then judge:** PASS if yes; naming an aim the researcher holds but did not state, such as credit
-for the work or a head start on their own papers, and placing it under or beside the stated aim
-also passes. FAIL if the reply ranks the routes mainly on revenue, career payoff or effort, or
-lists "other labs building on it" as one factor weighed equally with the money, so the stated aim
-never orders the choice.
+**Then judge:** PASS if yes. Naming an aim the researcher holds but did not state, such as credit
+for the work or a head start on their own papers, does not change the verdict as long as the stated
+aim still orders the routes. FAIL if the reply ranks the routes mainly on revenue, career payoff or
+effort, or lists "other labs building on it" as one factor weighed equally with the money, so the
+stated aim never orders the choice.

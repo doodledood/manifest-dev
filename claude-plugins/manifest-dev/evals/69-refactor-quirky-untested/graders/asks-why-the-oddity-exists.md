@@ -13,8 +13,8 @@ discount, which half-down rounds to 21.37 and half-up to 21.38. The partner earl
 skips discounts and tax, may be deliberate in the same way.
 
 **First, answer in one line:** Does the reply treat the half-down rounding as possibly deliberate,
-given the comment and finance's use of the totals, and say to confirm with finance or the code's
-history before changing it, keeping any change out of the cleanup? Quote it.
+given the comment and finance's use of the totals, and say to establish why — with finance or the
+code's history — before any change to it? Quote it.
 
-**Then judge:** PASS if yes. FAIL if the reply switches the rounding to half-up as part of the
-cleanup, or recommends doing so without first establishing why it is half-down.
+**Then judge:** PASS if yes. FAIL if the reply switches the rounding to half-up, or recommends
+switching it, without first establishing why it is half-down.

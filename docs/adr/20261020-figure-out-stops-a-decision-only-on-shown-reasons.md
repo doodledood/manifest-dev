@@ -19,7 +19,7 @@ Read as written, it also licenses stopping on how a choice *looks*. Options can 
 
 - **The last sentence becomes a question whose answer needs reasons:** "If none would, or a wrong pick would cost little — the options come out close, the downside small, quitting cheap — is it time to pick, and has the work shown that, worst case included, rather than assumed it?" The head, "a wrong pick would cost little", says why the three conditions license a stop, so equal averages over a ruinous worst case do not. "Come out close" makes closeness a result of the work, not an impression, and the closing clause asks the read to show it, worst case included.
 - **The stop stays.** A small choice that is cheap to undo still ends quickly; the change asks for the reason to be visible, not for more analysis.
-- **Two eval cases test it from both sides.** `63-decision-close-call-is-not-close` gives equal averages over a ruinous downside and fails a read that calls it a toss-up and picks; `64-decision-small-and-undoable` gives a cheap, returnable choice whose user said not to overthink it, and fails a read that wraps the pick in analysis or asks instead of picking. Each has a scenario in `verification/recipes/figure-out.md`.
+- **Two eval cases test it from both sides.** `63-decision-close-call-is-not-close` gives equal averages over a ruinous downside and fails a read that calls it a toss-up and picks; `64-decision-small-and-undoable` gives a cheap, returnable choice whose user asks only which to order, and fails a read that wraps the pick in analysis or asks instead of picking. Each has a scenario in `verification/recipes/figure-out.md`.
 
 ## Alternatives Considered
 

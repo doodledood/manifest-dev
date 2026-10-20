@@ -13,9 +13,10 @@ recording the same way, which shortens the head start that keeping the data or l
 depends on. The talk, not the later choice, is the step that cannot be undone.
 
 **First, answer in one line:** Does the reply name the talk (or what it reveals) as a step that
-cannot be undone and that lands before the planned decision, and then weigh the routes from that
-moment — for example, saying the talk narrows keeping the data to themselves, or advising that the
-choice, or what the talk shows, be settled before Thursday? Quote it.
+cannot be undone and that lands before the planned decision, and then say what it does to each
+route — which it closes or narrows, or why it narrows them little? Quote it.
 
-**Then judge:** PASS if yes. FAIL if the reply treats the talk as neutral or as a chance to gauge
-reaction, and weighs the three routes as if all of them stay equally open until after it.
+**Then judge:** PASS if yes, whichever way it scores the talk's effect, including advising that the
+choice or what the talk shows be settled before Thursday. FAIL if the reply treats the talk only as
+a chance to gauge reaction, or weighs the three routes without asking what the talk itself gives
+away first.

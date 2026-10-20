@@ -274,7 +274,7 @@ task file that apply naturally to one invented situation, with one grader per pr
 trade-off, and none of their prompts names a probe or the move the reply should make. `63` and
 `64` are a mirror pair for *Value of information*'s stop: `63` gives two options with equal
 averages and a ruinous downside, so a read that calls it a toss-up and picks fails; `64` gives a
-small choice with free returns and a user who asks not to overthink it, so a read that wraps the
+small choice with free returns and a user who asks only which to order, so a read that wraps the
 pick in analysis fails. No constant policy passes both. `62` also holds the independent
 re-derivation of a load-bearing read that nobody will check, and `70` the classification of a
 stated constraint as required or chosen.
@@ -643,7 +643,7 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Flags and the references they load | `01-root-press/log-written`, `25-users-call-and-taste/flags-the-users-calls`, `27-taste-offers/offers-entry-for-the-stated-preference`, `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `23-term-and-record/term-captured` |
 | `SKILL.md` | What counts as a project | `52-projectless-chat-offers-no-surfaces/no-project-surfaces-offered`, `52-projectless-chat-offers-no-surfaces/writes-no-project-surface` |
 | `SKILL.md` | Under --autonomous, self-answer and flag | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer` |
-| `SKILL.md` | Load the matching probe files; stated rules win | `64-decision-small-and-undoable/picks-without-ceremony`, `40-shape-before-build/sketch-two-shapes-one-owner` |
+| `SKILL.md` | Load the matching probe files; stated rules win | `64-decision-small-and-undoable/picks-without-ceremony`, `40-shape-before-build/sketch-two-shapes-one-owner`; not graded: a rule the user states overriding a probe |
 | `SKILL.md` | Invoke prompt-engineering for prompt-shaped work | Reason: a host capability the headless harness lacks — the eval sandbox installs only this plugin, so the prompt-engineering skill, which ships in `manifest-dev-tools`, cannot be invoked |
 | `SKILL.md` | Offer to scope the read and hand off to ticket-up | Reason: needs many user turns before questions decouple, and a ticket-store fixture for the hand-off |
 | `SKILL.md` | The log | `01-root-press/log-written` |
