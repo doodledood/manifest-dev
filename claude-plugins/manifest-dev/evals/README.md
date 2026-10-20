@@ -11,7 +11,7 @@ says what the script does and how to follow a run):
 
 ```bash
 scripts/evals/run_eval.sh figure-out evals/results/figure-out/aggregate-result.json \
-  --tag figure-out --ablation with-without --judge-model sonnet --scaffold --max-cost-usd 120
+  --tag figure-out --ablation with-without --judge-model sonnet --scaffold --max-cost-usd 205
 ```
 
 `--scaffold` runs each case's `scaffold.sh` (declared in its `case.yaml`) before the agent starts,
@@ -163,7 +163,9 @@ headroom — the case cannot be climbed. Both arms failing a grader traceable to
 stated rule means the skill is not delivering its stated discipline, and that is the hill.
 
 Cases are therefore selected for headroom: the with-arm currently fails a substance grader derived
-from a discipline `SKILL.md` explicitly states.
+from a discipline `SKILL.md` explicitly states. The exception is coverage: every task-file probe has a
+case under *Coverage* whether or not it shows headroom, so the first run can say which probes the
+base model already covers; such a case leaves only through its probe's *Coverage* row.
 
 ## Cases
 
@@ -564,6 +566,10 @@ Read the failing **outputs**, not the scores. A turn that opened "I'm not going 
 yet", held its position, and named the two numbers that would settle it scored 0.00 under a
 rubric that was simply miscalibrated.
 
+**A probe, trade-off line or reference file added to figure-out gets its *Coverage* row in the same
+change** — graders in a case, or a reason the suite cannot reach it — and a renamed or removed one
+has its row renamed or removed. `tests/test_figure_out_coverage.py` fails until it does.
+
 ## Known limits
 
 - **A case gets a repository only through its scaffold.** Cases `01`–`16`, `19`–`22`, and `25`–`28`
@@ -575,27 +581,15 @@ rubric that was simply miscalibrated.
   finds the file.
 - **Earlier turns are written into the prompt.** The harness has no scripted second turn, so a
   case that needs history (`17`, `23`, `27`–`29`) quotes it inline.
-- **Not covered, by choice.** Team mode needs a chat-channel stand-in. Acts that leave state
-  outside the session need an external-service stub. Log safety and resume have shown no failure,
-  and the default log path is outside what a grader reads. Splitting questions into tickets needs
-  a ticket-store fixture. Rendering beyond the draft offer needs operator opt-in to publishing and
-  several turns. Under-firing is excluded because prompts name the skill by design. Asking through a host's question-selection capability has no case: the headless harness
-  offers no such tool, so the default most users get cannot be observed, and every case measures
-  the plain-text path, one ask per turn, which the turn-discipline graders judge. A mechanism
-  that only appears when components interact, and calibrating to the user's expertise, have no
-  case: `10` already floors on reaching a mechanism, and expertise has no observable bar. Offering the cheapest sufficient option before durable
-  machinery, and pricing "living with it" as a real option, are left to `01`: `12`, which priced
-  it, passed in both arms on every recorded run and was retired on 2026-10-15. Held-out
-  witnesses for `19` and `20` were left out to bound cost; add one before keeping a change aimed
-  at either. Build any of these when a miss shows in use.
-- **Disciplines with no case yet**, ranked by what a miss would cost a user, each waiting on a
-  miss seen in use or a budget for one more case (this change held the suite to two new ones):
-  under `--autonomous`, never self-accepting an offer that hands off to setup-project or
-  ticket-up; the *fast enough* job v5 added to *Fit to trust* (a touched check over its time line
-  with no reason), which needs evidence carrying a recorded line; failure visibility and silent
-  regression (`10`'s empty export treated as success is this failure, but no grader asks for it);
-  an independent re-derivation before an unaudited, load-bearing read; and classifying a stated
-  constraint as hard or assumed before it prunes options. setup-project going straight to the
+- **What has no grader is listed in *Coverage*.** Each unit the suite cannot reach carries its
+  reason there, and each part of a unit no grader reaches carries a `not graded:` note: team mode,
+  acts that leave state outside the session, log safety and resume, splitting questions into
+  tickets, rendering beyond the draft offer, asking through a host's question-selection capability,
+  never self-accepting an offer that hands off to setup-project or ticket-up, and the *fast enough*
+  job of *Fit to trust*. Two things sit outside the table because no unit names them on its own:
+  under-firing, excluded because prompts name the skill by design, and calibrating to the user's
+  expertise, which has no observable bar. Held-out witnesses for `19` and `20` were left out to
+  bound cost; add one before keeping a change aimed at either. setup-project going straight to the
   newest shape on an update is held by `30`'s grader and by `tests/test_setup_project_versions.py`;
   its own runs are checked by `verification/recipes/setup-project.md`, outside this suite.
 - **Press cases observe one turn.** Autonomous cases observe a whole investigation, because
@@ -606,6 +600,175 @@ rubric that was simply miscalibrated.
 - **`log-written` is on `01-root-press` only.** It is real value — continuity across context loss —
   and a clean uplift signal, but it passes with-plugin and fails without on every case, so carrying
   it everywhere made a file-existence check dominate the headline number.
+
+## Coverage
+
+Every part of figure-out that shapes its behaviour has a row here: each probe and each forced
+trade-off line in its task files, each file in its references, and each paragraph and bullet of its
+`SKILL.md`. A row names the graders that judge that unit, as `case/grader`, or gives the reason the
+suite cannot reach it. A reason counts only when the unit needs a service the suite cannot reach,
+several sessions, many user turns, or a host capability the headless harness lacks. Anything else
+gets a case. A `not graded:` note after the graders names the part
+of a unit no grader reaches.
+
+`tests/test_figure_out_coverage.py` fails when a probe, trade-off line or reference file has no row,
+when a row names a unit that no longer exists or a case or grader that is not on disk, and when a
+row's only graders are `skill-fired` or `autonomous-flag-passed`, which are never scored. It reads
+the task files and the references directory as data; the `SKILL.md` rows are kept by hand, since a
+paragraph has no stable label to key on. Whether a grader judges the unit it is listed for is
+review, not the test. The rule is recorded in
+`docs/adr/20261020-every-figure-out-probe-has-an-eval-grader-or-a-stated-reason.md`.
+
+When a case that judges a probe passes in both arms on every run and retires, its row says so —
+the base model already covers that angle — which makes the probe a candidate to cut from its task
+file. The row is never deleted while the probe stays.
+
+| File | Unit | Covered by |
+|---|---|---|
+| `SKILL.md` | The read, and investigation not execution | `17-agreement-is-not-a-go/stops-at-the-read`, `17-agreement-is-not-a-go/publisher-unchanged`, `18-read-only-experiment/names-a-read`, `08-neg-authorized/complies-without-reopening` |
+| `SKILL.md` | One claim and one ask per turn, one crux at a time | `01-root-press/turn-discipline`, `06-strategic-open/presses-one-crux`, `06-strategic-open/turn-discipline` |
+| `SKILL.md` | Asking through a question-selection capability | Reason: a host capability the headless harness lacks; the plain-text path it falls back to is judged by the `turn-discipline` graders |
+| `SKILL.md` | Simplified Technical English style | `26-asks-only-the-users-call/plain-writing` |
+| `SKILL.md` | The user's call | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/leaves-the-agents-call`, `25-users-call-and-taste/follows-only-what-bears`, `26-asks-only-the-users-call/decides-what-taste-settles` |
+| `SKILL.md` | Momentum, yielding only for what the user must supply | `26-asks-only-the-users-call/asks-the-users-call`, `26-asks-only-the-users-call/decides-what-taste-settles` |
+| `SKILL.md` | Serve what is true; hold under pushback; the status quo's job | `04-hold-under-pushback/holds-position`, `05-move-on-evidence/updates-on-evidence`, `13-status-quo-job/tests-the-status-quos-job`; not graded: pricing "living with it", left to `01` since `12` retired |
+| `SKILL.md` | Problem before solution; requirements earn their place; classify a constraint | `01-root-press/presses-from-root`, `02-assumed-cause/does-not-adopt-users-diagnosis`, `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer`, `70-refactor-big-cleanup/questions-the-one-pull-request` |
+| `SKILL.md` | Mark every claim verified, inferred or assumed | `10-diagnosis-retry-window/evidence-has-provenance`, `11-underdetermined/separates-verified-from-assumed`, `16-underdetermined-billing/separates-verified-from-assumed` |
+| `SKILL.md` | Keep rivals alive; parent before child | `10-diagnosis-retry-window/rival-actually-killed`, `11-underdetermined/does-not-manufacture-a-winner`, `11-underdetermined/chases-the-crumb` |
+| `SKILL.md` | Fog, and ruling ground out of the frame | Reason: needs many user turns, so a branch can be seen sharpening or a ruling be seen holding when a resumed session meets it |
+| `SKILL.md` | Explore read-only; acts with durable outside state are offered | `18-read-only-experiment/driver-unchanged`, `18-read-only-experiment/spooler-unchanged`, `17-agreement-is-not-a-go/consumer-unchanged`; not graded: acts that leave state outside the session, which need an external-service stub |
+| `SKILL.md` | The person's seat and their uses | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star`, `15-persona-seat-doc/takes-the-readers-seat` |
+| `SKILL.md` | State what it will be and how it is checked; offer a draft | `21-how-it-gets-checked/settles-the-exercise`, `22-draft-before-feel/offers-a-draft-not-a-feeling`, `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it`; not graded: rendering beyond the draft offer, which needs opt-in to publishing and several turns |
+| `SKILL.md` | Re-derive a load-bearing read independently | `62-decision-rival-answers/checks-the-read-independently` |
+| `SKILL.md` | Flags and the references they load | `01-root-press/log-written`, `25-users-call-and-taste/flags-the-users-calls`, `27-taste-offers/offers-entry-for-the-stated-preference`, `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `23-term-and-record/term-captured` |
+| `SKILL.md` | What counts as a project | `52-projectless-chat-offers-no-surfaces/no-project-surfaces-offered`, `52-projectless-chat-offers-no-surfaces/writes-no-project-surface` |
+| `SKILL.md` | Under --autonomous, self-answer and flag | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer` |
+| `SKILL.md` | Load the matching probe files; stated rules win | `64-decision-small-and-undoable/picks-without-ceremony`, `40-shape-before-build/sketch-two-shapes-one-owner` |
+| `SKILL.md` | Invoke prompt-engineering for prompt-shaped work | Reason: a host capability the headless harness lacks — the eval sandbox installs only this plugin, so the prompt-engineering skill, which ships in `manifest-dev-tools`, cannot be invoked |
+| `SKILL.md` | Offer to scope the read and hand off to ticket-up | Reason: needs many user turns before questions decouple, and a ticket-store fixture for the hand-off |
+| `SKILL.md` | The log | `01-root-press/log-written` |
+| `tasks/CODING.md` | Shape before build | `40-shape-before-build/sketch-two-shapes-one-owner`, `56-order-dependent-design/models-before-building` |
+| `tasks/CODING.md` | Already provided | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
+| `tasks/CODING.md` | Earned depth | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
+| `tasks/CODING.md` | A second shape | `40-shape-before-build/sketch-two-shapes-one-owner` |
+| `tasks/CODING.md` | What the next agent copies | `41-hand-synced-list/one-list-not-two` |
+| `tasks/CODING.md` | Design discipline | `73-coding-rests-on-unbuilt/one-structure-for-status` |
+| `tasks/CODING.md` | Recorded intent | `57-legitimate-state-before-a-guard/asks-if-the-state-is-legitimate` |
+| `tasks/CODING.md` | Unbuilt solution | `73-coding-rests-on-unbuilt/names-the-unbuilt-piece` |
+| `tasks/CODING.md` | Decisions that invalidate built work | `73-coding-rests-on-unbuilt/settles-the-costly-call-first` |
+| `tasks/CODING.md` | Consumer notification | `72-coding-shared-function-change/how-consumers-find-out` |
+| `tasks/CODING.md` | Silent regression | `72-coding-shared-function-change/what-changes-while-tests-pass` |
+| `tasks/CODING.md` | Failure visibility | `73-coding-rests-on-unbuilt/how-anyone-would-know` |
+| `tasks/CODING.md` | Drivable and debuggable | `73-coding-rests-on-unbuilt/can-an-agent-drive-it` |
+| `tasks/CODING.md` | Verification design | `21-how-it-gets-checked/settles-the-exercise`, `56-order-dependent-design/check-reaches-the-interleaving` |
+| `tasks/CODING.md` | The verification harness | `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it`, `54-touched-recipe-not-fit/folds-the-harness-repair-into-the-work`, `55-own-check-not-fit/repairs-the-own-check`, `55-own-check-not-fit/sees-the-repaired-test-fail`; not graded: the *fast enough* job, which needs evidence carrying a recorded time line |
+| `tasks/CODING.md` | Trade-off: Fix in place vs refactor first | `44-debt-on-the-path/offers-the-on-path-debt` |
+| `tasks/CODING.md` | Trade-off: Test depth vs ship speed | `72-coding-shared-function-change/where-to-stop-testing` |
+| `tasks/FEATURE.md` | Beyond the happy path | `21-how-it-gets-checked/settles-the-exercise` |
+| `tasks/FEATURE.md` | Undiscussed surface | `21-how-it-gets-checked/names-the-seen-surfaces` |
+| `tasks/FEATURE.md` | Their stories, not ours | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star` |
+| `tasks/FEATURE.md` | Partial failure | `71-feature-shape-change-in-flight/partial-failure-state` |
+| `tasks/FEATURE.md` | Orphaned resources | `71-feature-shape-change-in-flight/per-item-growth` |
+| `tasks/FEATURE.md` | Rollback | `71-feature-shape-change-in-flight/old-and-new-side-by-side` |
+| `tasks/FEATURE.md` | Slow-motion walk | `71-feature-shape-change-in-flight/walks-it-step-by-step` |
+| `tasks/FEATURE.md` | Bundled concerns | `71-feature-shape-change-in-flight/separates-the-extras` |
+| `tasks/FEATURE.md` | Remembered steps | `71-feature-shape-change-in-flight/no-step-on-memory` |
+| `tasks/FEATURE.md` | Trade-off: Graceful degradation vs fail-fast | `71-feature-shape-change-in-flight/degrade-or-stop` |
+| `tasks/FEATURE.md` | Trade-off: New abstraction vs inline | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
+| `tasks/BUG.md` | Already being fixed | `74-bug-fix-under-pressure/checks-the-open-fix` |
+| `tasks/BUG.md` | Confirm before deploy | `74-bug-fix-under-pressure/proves-it-before-shipping` |
+| `tasks/BUG.md` | Shared-caller fallout | `74-bug-fix-under-pressure/checks-the-other-callers` |
+| `tasks/BUG.md` | Bad data left behind | `74-bug-fix-under-pressure/cleans-the-bad-rows` |
+| `tasks/BUG.md` | Tried and undone | `59-reverted-fix/names-the-reverted-fix` |
+| `tasks/BUG.md` | Trade-off: Hotfix now vs proper fix | `74-bug-fix-under-pressure/stop-the-bleeding-or-fix-once` |
+| `tasks/BUG.md` | Trade-off: This instance vs the class | `37-correction-becomes-a-lock/names-a-lock-with-scope` |
+| `tasks/REFACTOR.md` | Characterization gap | `69-refactor-quirky-untested/pins-behaviour-first` |
+| `tasks/REFACTOR.md` | Behavior contract | `69-refactor-quirky-untested/keeps-what-must-not-change` |
+| `tasks/REFACTOR.md` | Lost intent | `69-refactor-quirky-untested/asks-why-the-oddity-exists` |
+| `tasks/REFACTOR.md` | Done definition | `70-refactor-big-cleanup/defines-done` |
+| `tasks/REFACTOR.md` | Reviewability | `70-refactor-big-cleanup/keeps-it-reviewable` |
+| `tasks/REFACTOR.md` | Trade-off: Incremental vs big-bang | `70-refactor-big-cleanup/lands-it-in-chunks` |
+| `tasks/REFACTOR.md` | Trade-off: Refactor now vs feature first | `44-debt-on-the-path/offers-the-on-path-debt` |
+| `tasks/DIAGNOSIS.md` | Symptom reality | `75-diagnosis-relative-drop/doubts-the-dashboard` |
+| `tasks/DIAGNOSIS.md` | Onset | `75-diagnosis-relative-drop/checks-when-it-started` |
+| `tasks/DIAGNOSIS.md` | Comparison frame | `75-diagnosis-relative-drop/lists-what-else-differs` |
+| `tasks/DIAGNOSIS.md` | Evidence layer | `75-diagnosis-relative-drop/keeps-observations-in-their-layer` |
+| `tasks/DIAGNOSIS.md` | Locus vs cause | `75-diagnosis-relative-drop/explains-why-safari` |
+| `tasks/DIAGNOSIS.md` | Mechanism, not shape | `10-diagnosis-retry-window/names-the-mechanism` |
+| `tasks/DIAGNOSIS.md` | First-fit anchoring | `10-diagnosis-retry-window/rival-actually-killed`, `02-assumed-cause/does-not-adopt-users-diagnosis` |
+| `tasks/DIAGNOSIS.md` | Trigger vs root cause | `76-diagnosis-incident-depth/separates-trigger-from-cause` |
+| `tasks/DIAGNOSIS.md` | One symptom, several causes | `76-diagnosis-incident-depth/allows-several-causes` |
+| `tasks/DIAGNOSIS.md` | Predicted collateral | `76-diagnosis-incident-depth/checks-what-else-it-should-have-broken` |
+| `tasks/DIAGNOSIS.md` | Trade-off: Passive evidence vs controlled contrast | `76-diagnosis-incident-depth/proposes-a-controlled-contrast` |
+| `tasks/DIAGNOSIS.md` | Trade-off: Reproduce first vs trace in place | `20-one-failed-repro/non-repro-is-not-exclusion` |
+| `tasks/DIAGNOSIS.md` | Trade-off: Trigger-depth vs root-depth | `76-diagnosis-incident-depth/keeps-digging-past-the-trigger` |
+| `tasks/DECISION.md` | Fundamental objectives | `61-decision-routes-and-a-public-act/judges-routes-against-the-aim` |
+| `tasks/DECISION.md` | States of the world | `61-decision-routes-and-a-public-act/weighs-the-later-plan-on-every-route`, `62-decision-rival-answers/reads-the-rivals-side` |
+| `tasks/DECISION.md` | Decision rule | `63-decision-close-call-is-not-close/picks-a-rule-for-ruin` |
+| `tasks/DECISION.md` | Reference class | `65-decision-plan-before-committing/checks-how-efforts-like-this-went` |
+| `tasks/DECISION.md` | Irreversibility | `61-decision-routes-and-a-public-act/dates-the-irreversible-act` |
+| `tasks/DECISION.md` | Dominating hybrid | `61-decision-routes-and-a-public-act/finds-the-mix` |
+| `tasks/DECISION.md` | Premortem, then backcast | `65-decision-plan-before-committing/imagines-it-failed-then-worked` |
+| `tasks/DECISION.md` | Decision versus outcome | `66-decision-plan-that-holds/sets-what-a-good-decision-means` |
+| `tasks/DECISION.md` | Signposts and triggers | `66-decision-plan-that-holds/names-signals-and-switches` |
+| `tasks/DECISION.md` | Shaping actions | `66-decision-plan-that-holds/shapes-the-futures` |
+| `tasks/DECISION.md` | Decision stacking | `65-decision-plan-before-committing/finds-a-small-step-first` |
+| `tasks/DECISION.md` | Value of information | `62-decision-rival-answers/compares-the-estimate-with-the-flip-chance`, `63-decision-close-call-is-not-close/does-not-call-it-close-and-stop`, `64-decision-small-and-undoable/picks-without-ceremony` |
+| `tasks/DECISION.md` | Precommitment | `66-decision-plan-that-holds/makes-a-standing-rule` |
+| `tasks/DECISION.md` | Trade-off: Wait to learn vs act while the window is open | `65-decision-plan-before-committing/weighs-waiting-against-the-window` |
+| `tasks/RESEARCH.md` | Seller vs operator | `67-research-vendor-evidence/weighs-who-made-the-claim` |
+| `tasks/RESEARCH.md` | Survivorship | `67-research-vendor-evidence/asks-who-left` |
+| `tasks/RESEARCH.md` | Informed dissent | `67-research-vendor-evidence/finds-the-detractors` |
+| `tasks/RESEARCH.md` | Claim decay | `68-research-popular-and-dated/dates-each-claim` |
+| `tasks/RESEARCH.md` | Issue tracker over README | `68-research-popular-and-dated/checks-the-issue-tracker` |
+| `tasks/RESEARCH.md` | Popularity vs fit | `68-research-popular-and-dated/weighs-fit-over-popularity` |
+| `tasks/RESEARCH.md` | Trade-off: Read more vs try it | `67-research-vendor-evidence/weighs-a-trial-against-more-reading` |
+| `tasks/RESEARCH.md` | Trade-off: Breadth vs depth | `68-research-popular-and-dated/chooses-breadth-or-depth` |
+| `tasks/PERF.md` | The limiter | `77-perf-speedup-claim/names-the-limiter` |
+| `tasks/PERF.md` | Noise floor | `77-perf-speedup-claim/asks-the-run-to-run-spread` |
+| `tasks/PERF.md` | A fair comparison | `77-perf-speedup-claim/demands-a-fair-comparison` |
+| `tasks/PERF.md` | The harness first | `77-perf-speedup-claim/trusts-the-harness-first` |
+| `tasks/PERF.md` | Unlike scenarios | `77-perf-speedup-claim/spots-unlike-scenarios` |
+| `tasks/PERF.md` | The verdict | `77-perf-speedup-claim/states-a-proper-verdict` |
+| `tasks/PERF.md` | A bounded gain | `58-gain-beyond-its-share/bounds-the-gain-by-the-share` |
+| `tasks/PERF.md` | Trade-off: End-to-end vs isolated measurement | `77-perf-speedup-claim/measures-what-users-feel` |
+| `tasks/DOCUMENT.md` | One mode | `78-document-config-guide/picks-one-kind-of-document` |
+| `tasks/DOCUMENT.md` | A fact restated | `78-document-config-guide/links-what-code-owns` |
+| `tasks/DOCUMENT.md` | The same fact twice | `78-document-config-guide/spots-the-second-copy` |
+| `tasks/DOCUMENT.md` | Sources in hand | `78-document-config-guide/backs-each-claim` |
+| `tasks/DOCUMENT.md` | Terms from elsewhere | `78-document-config-guide/defines-borrowed-terms` |
+| `tasks/DOCUMENT.md` | How it gets checked | `35-checking-a-readme-change/checks-by-reader-tasks` |
+| `tasks/DOCUMENT.md` | Trade-off: One document per mode vs one combined document | `78-document-config-guide/one-doc-or-two` |
+| `tasks/PROMPTING.md` | A protocol on shared state | `60-protocol-in-prompts/models-the-protocol` |
+| `tasks/PROMPTING.md` | A rule in two files | `79-prompting-add-a-rule/spots-the-rule-elsewhere` |
+| `tasks/PROMPTING.md` | An instruction where a check belongs | `79-prompting-add-a-rule/puts-a-check-where-a-line-would-be` |
+| `tasks/PROMPTING.md` | How it gets checked | `34-checking-a-skill-change/checks-by-behavior-cases` |
+| `tasks/PROMPTING.md` | Trade-off: New line vs replacing an old one | `79-prompting-add-a-rule/replaces-the-vague-line` |
+| `tasks/TECH_DESIGN.md` | Audience layering | `80-tech-design-migration-doc/layers-for-both-readers` |
+| `tasks/TECH_DESIGN.md` | Reference role | `80-tech-design-migration-doc/decides-what-sources-are-for` |
+| `tasks/TECH_DESIGN.md` | Visual policy | `80-tech-design-migration-doc/sets-what-visuals-do` |
+| `tasks/TECH_DESIGN.md` | Taste pinning | `80-tech-design-migration-doc/shows-options-before-writing` |
+| `tasks/TECH_DESIGN.md` | Asset placement | `80-tech-design-migration-doc/places-the-assets` |
+| `tasks/TECH_DESIGN.md` | Ownership and estimates | `80-tech-design-migration-doc/decides-owners-and-dates` |
+| `tasks/TECH_DESIGN.md` | Trade-off: Broad first screen vs deep technical body | `80-tech-design-migration-doc/layers-for-both-readers` |
+| `tasks/TECH_DESIGN.md` | Trade-off: Standalone narrative vs source-cited record | `80-tech-design-migration-doc/decides-what-sources-are-for` |
+| `tasks/TECH_DESIGN.md` | Trade-off: Visuals as primary device vs supporting illustration | `80-tech-design-migration-doc/sets-what-visuals-do` |
+| `tasks/TECH_DESIGN.md` | Trade-off: Owner areas vs precise estimates | `80-tech-design-migration-doc/decides-owners-and-dates` |
+| `tasks/UI.md` | Every state | `81-ui-multistep-form/covers-every-state` |
+| `tasks/UI.md` | Who and where | `81-ui-multistep-form/serves-who-and-where` |
+| `tasks/UI.md` | Honest figures | `19-headline-number/tests-the-number-first` |
+| `tasks/UI.md` | Trade-off: Density vs legibility | `81-ui-multistep-form/dense-or-legible` |
+| `tasks/WRITING.md` | The author's own point | `82-writing-post-from-notes/builds-on-the-authors-point` |
+| `tasks/WRITING.md` | Sources in hand | `82-writing-post-from-notes/backs-each-claim` |
+| `tasks/WRITING.md` | Trade-off: Breadth vs one sharp point | `82-writing-post-from-notes/picks-one-sharp-point` |
+| `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
+| `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
+| `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v6/offers-only-whats-new-since-v6` |
+| `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `31-record-names-what-enforces-it/record-carries-enforced-by` |
+| `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, which needs those skills reachable from the session |
+| `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |
+| `references/slack-mrkdwn.md` | (whole file) | Reason: Slack formatting for team mode, a service the suite cannot reach from its sandbox |
 
 ## The comparison this suite was also used for
 

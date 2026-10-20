@@ -22,7 +22,7 @@ suite and does not redefine them.
 ## Scenarios
 
 ### with-without
-Run: `scripts/evals/run_eval.sh --wait figure-out-with-without evals/results/figure-out-with-without/aggregate-result.json --tag figure-out --ablation with-without --judge-model sonnet --scaffold --max-cost-usd 120`
+Run: `scripts/evals/run_eval.sh --wait figure-out-with-without evals/results/figure-out-with-without/aggregate-result.json --tag figure-out --ablation with-without --judge-model sonnet --scaffold --max-cost-usd 205`
 Proves: the suite ran both arms; the Δ it reports, read against the noise section of the suite README, is the measurement, and the README's results section records it.
 Check: read
 Workload: varies

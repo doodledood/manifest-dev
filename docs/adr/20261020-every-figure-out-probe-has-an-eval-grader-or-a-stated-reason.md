@@ -15,7 +15,7 @@ figure-out's behaviour comes from three places: its `SKILL.md`, the task files u
 
 ## Decision
 
-- **A coverage table in the eval README maps every unit to the graders that judge it, or to a reason the suite cannot.** A unit is each probe label and each forced trade-off line in every figure-out task file, each file in `figure-out/references/`, and each paragraph and bullet of `SKILL.md`'s body. A reason is accepted only when the unit needs a service the suite cannot reach, several sessions, many user turns, a host capability the headless harness lacks, or a skill outside the copied plugin; anything else gets a case.
+- **A coverage table in the eval README maps every unit to the graders that judge it, or to a reason the suite cannot.** A unit is each probe label and each forced trade-off line in every figure-out task file, each file in `figure-out/references/`, and each paragraph and bullet of `SKILL.md`'s body. A reason is accepted only when the unit needs a service the suite cannot reach, several sessions, many user turns, or a host capability the headless harness lacks; anything else gets a case.
 - **A property test fails when the table is out of step.** It reads the task files and the references directory as data and fails on a unit with no row, a row for a unit that no longer exists, a duplicate row, a row naming a case or grader that is not on disk, a row whose only graders are display-only, and a reason too short to check. `SKILL.md` rows are written by hand and are not derived, because a paragraph has no stable label to key on.
 - **The gaps close with new grouped cases.** Probes that co-apply share one scenario, each with its own grader, numbered from 61. Each runs with and without the plugin like every other case.
 - **A probe whose case passes in both arms is not retired silently.** Its row records that the base model covers the angle, which marks the probe as a candidate to cut from the task file, instead of the case being deleted and the probe left unmeasured.
@@ -23,7 +23,9 @@ figure-out's behaviour comes from three places: its `SKILL.md`, the task files u
 ## Alternatives Considered
 
 - **Cover only the decision probes**: Rejected by the user — "every important part" of figure-out belongs in the suite.
-- **Keep the hand-written *Known limits* list**: Rejected — it had already drifted from the cases on disk, and nothing failed when it did.
+- **One case per area**: Rejected — a single case per task file can make only a few of its probes load-bearing, so most probes would still go unjudged, and a both-arm pass would hide which probe the base model covers.
+- **Leave coverage to the next change that touches each task file**: Rejected — the gap was already the result of that habit, and the first full run, a week away, would have measured the old gap.
+- **A coverage document with no test**: Rejected — the hand-written *Known limits* list was that document, it had already drifted from the cases on disk, and nothing failed when it did.
 - **Pack several probes into one grader to hold cost down**: Rejected — a grader that judges two angles cannot say which one failed, and a both-arm pass on it hides which probe is redundant. The user accepted a full first run of about $220–230 instead.
 - **Two tiers, a cheap core run and a full run**: Not taken — the suite has not had its first full run, so there is no data yet on which cases earn the core.
 - **Derive `SKILL.md` units automatically**: Rejected — paragraphs reflow and have no label, so a derived key would break on every edit; the rows are kept by hand and reviewed with the change that edits the paragraph.

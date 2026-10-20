@@ -11,7 +11,10 @@ reach it, and a row for a unit that no longer exists points at nothing.
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 FIGURE_OUT = ROOT / "claude-plugins/manifest-dev/skills/figure-out"
@@ -38,12 +41,18 @@ def expected_units(skill: Path) -> set[tuple[str, str]]:
     for task in sorted((skill / "tasks").glob("*.md")):
         text = task.read_text(encoding="utf-8")
         name = f"tasks/{task.name}"
-        units |= {(name, label) for label in PROBE.findall(_section(text, "Blind-spot probes"))}
+        units |= {
+            (name, label)
+            for label in PROBE.findall(_section(text, "Blind-spot probes"))
+        }
         units |= {
             (name, f"Trade-off: {line}")
             for line in TRADE_OFF.findall(_section(text, "Forced trade-offs"))
         }
-    units |= {(f"references/{ref.name}", WHOLE_FILE) for ref in (skill / "references").glob("*")}
+    units |= {
+        (f"references/{ref.name}", WHOLE_FILE)
+        for ref in (skill / "references").glob("*")
+    }
     return units
 
 
@@ -54,7 +63,9 @@ def table_rows(readme: Path) -> list[tuple[str, str, str]]:
         cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
         if len(cells) != 3 or not line.lstrip().startswith("|"):
             continue
-        file, unit, covered = (cell.strip("`") if i < 2 else cell for i, cell in enumerate(cells))
+        file, unit, covered = (
+            cell.strip("`") if i < 2 else cell for i, cell in enumerate(cells)
+        )
         if file in ("File", "") or set(file) <= {"-", ":", " "}:
             continue
         rows.append((file, unit, covered))
@@ -65,13 +76,18 @@ def coverage_problems(skill: Path, evals: Path, readme: Path) -> list[str]:
     expected = expected_units(skill)
     rows = table_rows(readme)
     keys = [(file, unit) for file, unit, _ in rows]
-    problems = [f"no row for {file} · {unit}" for file, unit in sorted(expected - set(keys))]
+    problems = [
+        f"no row for {file} · {unit}" for file, unit in sorted(expected - set(keys))
+    ]
     problems += [
         f"row for {file} · {unit}, which no longer exists"
         for file, unit in sorted(set(keys) - expected)
         if file != SKILL_FILE
     ]
-    problems += [f"duplicate row for {k[0]} · {k[1]}" for k in sorted({k for k in keys if keys.count(k) > 1})]
+    problems += [
+        f"duplicate row for {k[0]} · {k[1]}"
+        for k in sorted({k for k in keys if keys.count(k) > 1})
+    ]
     for file, unit, covered in rows:
         where = f"{file} · {unit}"
         if covered.startswith("Reason:"):
@@ -86,7 +102,9 @@ def coverage_problems(skill: Path, evals: Path, readme: Path) -> list[str]:
             if not (evals / case / "graders" / f"{grader}.md").is_file():
                 problems.append(f"{where}: {case}/{grader} does not exist")
         if all(grader in DISPLAY_ONLY for _, grader in refs):
-            problems.append(f"{where}: only display-only graders, which are never scored")
+            problems.append(
+                f"{where}: only display-only graders, which are never scored"
+            )
     return problems
 
 
@@ -95,9 +113,17 @@ def test_every_figure_out_unit_has_a_coverage_row() -> None:
     assert not problems, "coverage table out of step:\n" + "\n".join(problems)
 
 
-def test_coverage_check_catches_each_break(tmp_path: Path) -> None:
-    # The lock is trusted only after it is seen failing on each break it exists to catch.
-    skill, evals = tmp_path / "skill", tmp_path / "evals"
+GOOD_TABLE = (
+    "## Coverage\n\n| File | Unit | Covered by |\n|---|---|---|\n"
+    "| `tasks/X.md` | One | `01-c/g` |\n"
+    "| `tasks/X.md` | Trade-off: A vs B | `01-c/g` |\n"
+    "| `references/R.md` | (whole file) | Reason: needs a service the suite cannot reach |\n"
+    "| `SKILL.md` | The log | `01-c/g` |\n\n## Next\n"
+)
+
+
+def _fixture(root: Path) -> tuple[Path, Path, Path]:
+    skill, evals = root / "skill", root / "evals"
     (skill / "tasks").mkdir(parents=True)
     (skill / "references").mkdir()
     (skill / "tasks/X.md").write_text(
@@ -106,35 +132,64 @@ def test_coverage_check_catches_each_break(tmp_path: Path) -> None:
     )
     (skill / "references/R.md").write_text("r\n", encoding="utf-8")
     (evals / "01-c/graders").mkdir(parents=True)
-    (evals / "01-c/graders/g.md").write_text("g\n", encoding="utf-8")
-    (evals / "01-c/graders/skill-fired.md").write_text("g\n", encoding="utf-8")
+    for grader in ("g", "skill-fired"):
+        (evals / f"01-c/graders/{grader}.md").write_text("g\n", encoding="utf-8")
     readme = evals / "README.md"
-    good = (
-        "## Coverage\n\n| File | Unit | Covered by |\n|---|---|---|\n"
-        "| `tasks/X.md` | One | `01-c/g` |\n"
-        "| `tasks/X.md` | Trade-off: A vs B | `01-c/g` |\n"
-        "| `references/R.md` | (whole file) | Reason: needs a service the suite cannot reach |\n"
-        "| `SKILL.md` | The log | `01-c/g` |\n\n## Next\n"
-    )
-    readme.write_text(good, encoding="utf-8")
-    assert coverage_problems(skill, evals, readme) == []
+    readme.write_text(GOOD_TABLE, encoding="utf-8")
+    return skill, evals, readme
 
-    def problems_after(edit: str, path: Path, text: str) -> list[str]:
-        original = path.read_text(encoding="utf-8") if path.exists() else None
-        path.write_text(text if edit == "write" else original + text, encoding="utf-8")
-        try:
-            return coverage_problems(skill, evals, readme)
-        finally:
-            if original is None:
-                path.unlink()
-            else:
-                path.write_text(original, encoding="utf-8")
 
-    assert any("Two" in p for p in problems_after("append", skill / "tasks/X.md", "- **Two** — q?\n"))
-    tasks = skill / "tasks/X.md"
-    with_trade_off = tasks.read_text(encoding="utf-8") + "- C vs D — which?\n"
-    assert any("C vs D" in p for p in problems_after("write", tasks, with_trade_off))
-    assert any("S.md" in p for p in problems_after("write", skill / "references/S.md", "s\n"))
-    assert any("01-x/g" in p for p in problems_after("write", readme, good.replace("`01-c/g` |\n| `tasks/X.md` | Trade", "`01-x/g` |\n| `tasks/X.md` | Trade")))
-    assert any("no longer exists" in p for p in problems_after("write", readme, good.replace("| Unit | Covered by |\n|---|---|---|\n", "| Unit | Covered by |\n|---|---|---|\n| `tasks/X.md` | Gone | `01-c/g` |\n")))
-    assert any("display-only" in p for p in problems_after("write", readme, good.replace("| `SKILL.md` | The log | `01-c/g` |", "| `SKILL.md` | The log | `01-c/skill-fired` |")))
+def _append(path: Path, text: str) -> None:
+    path.write_text(path.read_text(encoding="utf-8") + text, encoding="utf-8")
+
+
+def _edit_table(readme: Path, old: str, new: str) -> None:
+    readme.write_text(GOOD_TABLE.replace(old, new), encoding="utf-8")
+
+
+# Each break a contributor could make, and the text the failure message must carry to name it.
+BREAKS: dict[str, tuple[Callable[[Path, Path, Path], object], str]] = {
+    "new probe": (lambda s, e, r: _append(s / "tasks/X.md", "- **Two** — q?\n"), "Two"),
+    "new trade-off": (
+        lambda s, e, r: _append(s / "tasks/X.md", "- C vs D — which?\n"),
+        "C vs D",
+    ),
+    "new reference": (
+        lambda s, e, r: (s / "references/S.md").write_text("s\n", encoding="utf-8"),
+        "references/S.md",
+    ),
+    "renamed case": (
+        lambda s, e, r: (e / "01-c").rename(e / "01-x"),
+        "01-c/g does not exist",
+    ),
+    "stale row": (
+        lambda s, e, r: _edit_table(r, "| One |", "| Gone |"),
+        "tasks/X.md · Gone, which no longer exists",
+    ),
+    "display-only row": (
+        lambda s, e, r: _edit_table(
+            r, "| The log | `01-c/g` |", "| The log | `01-c/skill-fired` |"
+        ),
+        "only display-only graders",
+    ),
+    "empty reason": (
+        lambda s, e, r: _edit_table(
+            r, "Reason: needs a service the suite cannot reach", "Reason:"
+        ),
+        "reason too short",
+    ),
+}
+
+
+def test_coverage_check_passes_a_sound_table(tmp_path: Path) -> None:
+    assert coverage_problems(*_fixture(tmp_path)) == []
+
+
+@pytest.mark.parametrize("name", sorted(BREAKS))
+def test_coverage_check_catches_each_break(tmp_path: Path, name: str) -> None:
+    # The lock is trusted only after it is seen failing on each break it exists to catch.
+    skill, evals, readme = _fixture(tmp_path)
+    breaking, expected = BREAKS[name]
+    breaking(skill, evals, readme)
+    problems = coverage_problems(skill, evals, readme)
+    assert any(expected in problem for problem in problems), problems
