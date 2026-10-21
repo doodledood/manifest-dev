@@ -13,13 +13,13 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 - `/setup-project [--no-mine]`; `--no-mine` installs the wiring and the verification harness without mining history.
 - Phrases its description matches: "set up the project", "bootstrap ADRs", "check whether the setup is sound".
 - figure-out's docs mode offers it: no surfaces at all, a missing or older surfaces version, or a broken surface met on the way.
-- On a project recording an older surfaces version it follows that version's upgrade guide: from v7, the North Star reshaped into six sections with each chosen option moved to a decision record on the owner's ruling, and the `Strategy` area in the ADR conventions; from v6, also each time line moved from committed evidence into its recipe, committed evidence removed and its directory ignored, and context-file lines that commit evidence rewritten; from v5, also a recipe for the checks run across the whole tree and one way in; from v4, also control commands, the tool update and the ask-first marks narrowed to cost; from earlier, moving an existing verification surface, feature map and reader tasks into one harness of recipes. A repository with nothing gets the wiring only.
+- On a project recording an older surfaces version it follows that version's upgrade guide: from v8, the North Star's *Purpose* proposed to open with the end the owner names and its measures tested against it, each on the owner's ruling, the `Revisit when` signpost and the outside-Purpose note in the ADR conventions, and the check that rebuilds the index and the strategy list; from v7, also the North Star reshaped into six sections with each chosen option moved to a decision record on the owner's ruling, and the `Strategy` area in the ADR conventions; from v6, also each time line moved from committed evidence into its recipe, committed evidence removed and its directory ignored, and context-file lines that commit evidence rewritten; from v5, also a recipe for the checks run across the whole tree and one way in; from v4, also control commands, the tool update and the ask-first marks narrowed to cost; from earlier, moving an existing verification surface, feature map and reader tasks into one harness of recipes. A repository with nothing gets the wiring only.
 
 ## Scenarios
 
-### update-from-v7
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v7 --max-turns 80`
-Proves: it follows the v7 guide: the `Strategy` area added to the ADR conventions and the North Star line reworded; the reshape shown as a proposed six-section document with a table of the lines that leave it, *How they arrive*'s newsletter channel routed to a decision record — and, since the prompt's blanket acceptance came before the owner saw the lines, `NORTH_STAR.md` left unwritten and the reshape named as waiting on the owner's line-by-line ruling; and the version line at v8. Nothing v1 to v7 gave is offered again.
+### update-from-v8
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v8 --max-turns 80`
+Proves: it follows the v8 guide: the `Revisit when` field and the outside-Purpose note added to the ADR conventions, and the North Star conventions' new *Purpose*, *Goal*, *How we know* and strategy-list spans; the check that rebuilds the index and the strategy list offered beside the project's tests; the end asked of the owner, with a *Purpose* that opens with it, the barrier kept as one thing in its way, and a measure of the end proposed beside the counts of use — and, since the prompt's blanket acceptance came before the owner saw the lines, `NORTH_STAR.md` left unwritten and those lines named as waiting on the owner's ruling, with no `Revisit when` invented for the newsletter record; and the version line at v9. Nothing v1 to v8 gave is offered again.
 Check: read
 Workload: varies
 
@@ -32,6 +32,12 @@ Workload: varies
 ### update-from-v1
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold verification/scaffolds/project-at-v1 --max-turns 80`
 Proves: it follows the v1 guide straight to the harness — the loose `verify/` feature map becomes recipes without first taking v2's fixed map shape — and adds the records-in-effect rule.
+Check: read
+Workload: varies
+
+### seed-from-the-end
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-seed-end.md --scaffold verification/scaffolds/app-without-surfaces --max-turns 80`
+Proves: the seeded `NORTH_STAR.md` opens its *Purpose* with the end the prompt's owner names — every lent book coming back and the club staying a pleasure to run — keeps the README's lost-track barrier as one thing in its way, and its *How we know* holds a measure of that end, `empty` with what would fill it where nothing counts it; the project gets a check that rebuilds the ADR index beside its tests.
 Check: read
 Workload: varies
 

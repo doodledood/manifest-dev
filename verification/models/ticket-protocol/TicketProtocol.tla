@@ -385,6 +385,7 @@ ClosedOnlyWhenLanded == autoClosed => landedNow
 \* Quote ticket-up/references/TICKET_CONVENTION.md: "Unattended dispatch never touches a Ticket carrying the escalation mark"
 NoLandWhileEscalated == ~bad
 
+\* Holds docs/adr/20261021-the-north-star-opens-with-its-end-and-signposts-reopen-choices-and-deferred-work.md.
 \* Property: a deferred Ticket is launched only after its condition reads as met at its source;
 \* unmet or unreadable, it is never claimed.
 \* Quote ticket-up/references/TICKET_CONVENTION.md: "A deferred ticket whose source the picker cannot read is not ready and not out of sight"

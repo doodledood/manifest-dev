@@ -11,6 +11,7 @@ another until it is merged.
 | Store | `tickets/`, one directory per effort: `tickets/<effort-slug>/` |
 | Front file | `tickets/<effort-slug>/README.md`: destination, priority override, context pointers, and the standing automation settings when set (a `Paused:` line, a `Status page:` line). Never a Ticket list or status summary |
 | Ticket | `tickets/<effort-slug>/NN-<ticket-slug>.md`, opening with `Kind:`, `Status:`, `Depends on:` and `Claimed by:` lines, then the anatomy |
+| Revisit when | A `Revisit when: <condition> — read <where>` line among the opening lines, after `Depends on:`, on a deferred Ticket only. A picker reads the condition at that source; nobody but a person edits the line |
 | Auto grant | An `Auto: yes — granted by <grantor>` line, the grantor being the person or `orchestrate --autonomous`. No line means ungranted. A decision to withhold a grant is an `Auto withheld: <who> — <reason>` line, which grants nothing; a grant `orchestrate` asks a person for is `Auto withheld: <person> — asked`, written before it asks. A file holds one `Auto` line: a person's answer replaces the asked line in place, and where an edit leaves two, the first in the file decides. A person withdraws a grant, or declines one, by replacing any `Auto: yes` line with `Auto withheld: <person> — <reason>`, so the decision stays on record |
 | Type | A `Type: <value>` line when one fits; none otherwise |
 | Claimed | The `Claimed by:` line. It records intent for the next reader of this working copy and reaches nobody in another |

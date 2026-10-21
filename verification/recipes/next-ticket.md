@@ -14,12 +14,19 @@ Reads the Ticket store, picks the one Ticket whose delay would cost the project 
 - Phrases its description matches: "what's next", "what should I work on".
 - No other skill calls it; `run-ticket` and `orchestrate` deliberately do not.
 - It ranks open Tickets across efforts.
+- It reads each deferred Ticket's `Revisit when` condition, and each strategy signpost in the North Star, at the source the line names.
 
 ## Scenarios
 
 ### select
 Run: `scripts/drive-skill.sh next-ticket verification/prompts/next-ticket-select.md`
 Proves: one Ticket presented with a reason; the summary's files show only that Ticket gaining a claim line. Only the chosen Ticket changed, and only by its claim.
+Check: read
+Workload: varies
+
+### deferred
+Run: `scripts/drive-skill.sh next-ticket verification/prompts/next-ticket-deferred.md --scaffold verification/scaffolds/deferred-ticket-store`
+Proves: it claims `01` or `02` (`02`'s condition reads as met in `signals/requests.md`), never `03` (unmet in `signals/clubs.md`) or `04`; it names `04` with its source, the mailing provider's dashboard, as unreadable; it reports the newsletter strategy signpost as met (`signals/website-visits.md`) and the monthly-note one as unreadable, and says nothing of the loans one as met; the summary's files show only the chosen Ticket gaining a claim line, and no record, list or `Revisit when` line changed.
 Check: read
 Workload: varies
 

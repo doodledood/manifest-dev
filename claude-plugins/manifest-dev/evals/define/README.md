@@ -68,7 +68,8 @@ at once — which reaches every case that writes a spec, and runs inside each ca
 and time limits. Before trusting the numbers from the first both-arm run after it, check that no
 spec case now ends at one of those limits. The 2026-10-21 change made the North Star a
 values-and-goal document and moved `d23`'s project to surfaces v8, which reaches `d23` only through
-its scaffold. The next baseline replaces them.
+its scaffold; a later change that day shipped v9 and moved it again, the same way. The next
+baseline replaces them.
 
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result

@@ -27,14 +27,20 @@ Check: read
 Workload: varies
 
 ### one-version-behind
-Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v7/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v7`
-Proves: the reply offers the update and names only what v8 adds — the North Star reshaped, with the newsletter channel moved to a decision record on the owner's ruling rather than written by the run, the `Strategy` area in the ADR conventions, and the reworded North Star line — and nothing v1 to v7 gave.
+Run: `scripts/drive-skill.sh figure-out claude-plugins/manifest-dev/evals/53-update-offer-from-v8/prompt.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v8`
+Proves: the reply offers the update and names only what v9 adds — the *Purpose* opening with the end asked of the owner and its measures tested against it, on the owner's ruling rather than written by the run; the `Revisit when` signpost the strategy list shows; the outside-Purpose note in the ADR conventions; the check that rebuilds the index and the list — and nothing v1 to v8 gave.
 Check: read
 Workload: varies
 
 ### from-v1
 Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-from-v1.md --scaffold verification/scaffolds/project-at-v1`
-Proves: the reply offers the update and names only what v2 to v8 add, including the move to one harness and the North Star reshape.
+Proves: the reply offers the update and names only what v2 to v9 add, including the move to one harness, the North Star reshape and its *Purpose* opening with the end.
+Check: read
+Workload: varies
+
+### strategy-signpost
+Run: `scripts/drive-skill.sh figure-out verification/prompts/figure-out-strategy-signpost.md --scaffold verification/scaffolds/deferred-ticket-store`
+Proves: the reply names the newsletter strategy choice's signpost as met — `signals/website-visits.md` shows more than twenty outside visits a month — as a lead for the owner to reopen the choice, and the summary's files show no record, no North Star list and no `Revisit when` line changed.
 Check: read
 Workload: varies
 

@@ -14,6 +14,16 @@ run with no person present to rule, such as an unattended one, puts the reshape 
 one flagged item, with the lines it would move and where, and changes nothing in the North Star,
 its records or their states.
 
+## Ask for the end first
+
+Before mapping any field, ask the owner, in their own words, what the person the project serves
+is after, and of each answer ask "why does that matter?" until there is no deeper answer inside
+the document. That end opens the new *Purpose*. The old *Diagnosis* usually names the barrier
+the project's first feature removes; carried over as the purpose, it makes the purpose only as
+wide as that first means, and every later feature sits outside it. So the *Diagnosis* becomes one
+barrier in the way of the end, beside any others the owner names, never the purpose itself. A run
+with no owner present to answer proposes no end: its flagged item says the end is unasked.
+
 ## Sort every line
 
 Sort each position, each list entry and each provenance note by the test in
@@ -32,7 +42,7 @@ however long it has stood.
 
 | Line | Goes to |
 |---|---|
-| An end | *Purpose* (the problem, then *For* and *Not for*) or *Goal* |
+| An end | *Purpose* (the end, then what is in its way, then *For* and *Not for*) or *Goal* |
 | A measure | *How we know*, one per part of the goal, with its direction and any floor |
 | A principle | *Principles*, phrased as what it rules out |
 | A bet | *What this rests on*, the main bet first |
@@ -45,10 +55,10 @@ The nine fields map to the six sections like this, line by line rather than fiel
 
 | Older field | Its lines go to |
 |---|---|
-| *Diagnosis* | *Purpose* (the problem) and *What this rests on* (its "if this were false" sentence, as the main bet) |
+| *Diagnosis* | *Purpose*, as one barrier in the way of the end the owner named, and *What this rests on* (its "if this were false" sentence, as the main bet) |
 | *Who it's for* | *Purpose*'s *For* and *Not for* |
 | *Promise* | *Goal* |
-| *Winning, and the number watched* | *Goal* (what reaching it means for the project) and *How we know* (its number, as a measure) |
+| *Winning, and the number watched* | *Goal* (what reaching it means for the project) and *How we know* (its number, as a measure); where that number counts use of a feature rather than progress on the end, the end's own measure is added beside it, `empty` with what would fill it |
 | *How they arrive* | *Principles* where the owner holds a line against evidence; the rest are chosen options or readings |
 | *Money — or what it feeds* | *Principles* where the owner holds a line against evidence; the rest are chosen options |
 | *Never* | *Principles* |
@@ -65,6 +75,6 @@ move. Write the result as one act under the project's conventions:
 1. the reshaped document;
 2. a record for each chosen option that has none;
 3. the area `Strategy` on each record that holds a guiding choice;
-4. the *Strategy choices in force* list rebuilt from those records;
+4. the *Strategy choices in force* list rebuilt from those records, with the signpost of each that has one;
 5. one decision record of the reshape itself, naming each line that moved and where;
 6. the index rebuilt.

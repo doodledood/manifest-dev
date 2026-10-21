@@ -103,8 +103,8 @@ pay) or a bet (a belief that, if false, would change the goal or end one part of
 Anything the owner would re-tune when evidence moves is a chosen option, and a chosen option
 never enters the North Star, however strategic it feels: record it through the ADR offer
 above, with the area `Strategy` when it is a guiding choice other decisions derive from — and,
-where the North Star keeps a *Strategy choices in force* list, rebuild that list in the same
-act — while a dated target goes with the work that pursues it: the destination of its effort
+where the North Star keeps a *Strategy choices in force* list, rebuild that list, signposts
+included, in the same act — while a dated target goes with the work that pursues it: the destination of its effort
 (the named body of work) where the project keeps a Ticket store, otherwise the record of the
 choice it serves. Its positions stay as they are. Where a North Star in the older nine-field form
 still states that option as a position — a price under *Money*, a channel under *How they arrive*
@@ -133,16 +133,10 @@ bet, and the branches below apply to it:
   state; the depth goes to an adjacent linked doc, per the conventions' split rule. The
   section stays the authority the depth details — never the other way around.
 
-**At the moment a decision gets recorded**, where the project keeps a North Star, check the
-decision's subject against what the Purpose names (the Diagnosis, in a North Star of the
-older nine-field form), and where the decision sits outside it,
-say so in one line in the record's context — the field the loaded conventions use for what
-motivated the decision. This is the quiet failure: a position drifts out of date without
-anything contradicting it, because every session is locally consistent with the text and
-nobody meets the mismatch. One decision outside the Purpose means nothing, so it is a note
-and never a question put to the user — what makes it actionable is a run of them, which no
-single session can see, and the note is what lets a later reader see the run. Never edit a
-position on this; the asymmetry above is unchanged.
+**A strategy signpost the session's findings show met** — a `Revisit when` condition after a
+title in the North Star's *Strategy choices in force* list — goes to the user as a lead naming
+the record and what showed it met. Change neither the record nor the list: reopening the choice
+is the owner's call, and a new record if they make it.
 
 In self-answered or unattended runs the ruling path is closed: lower states and flag
 contradictions in the session's output, never flip a position. Updates are event-driven —

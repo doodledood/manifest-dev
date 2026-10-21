@@ -249,17 +249,19 @@ so that the direction, the words and the decisions of the project live in the re
 memory of one person.
 
 ### North Star
-<!-- context: 91ed58d6aaa1 -->
+<!-- context: afa0cc97146f -->
 The North Star is a file in the project that says what the project is for. It names the purpose,
-the people the project is for and the goal. It also names the principles that the project keeps when
+the people the project is for and the goal. The purpose starts with the end that these people want.
+Then it names what stops them. It also names the principles that the project keeps when
 evidence says to break them. It says how the project measures progress and which bets the project
 depends on.
 
 The North Star does not hold the choices that the project makes. A Decision Record holds each choice,
-and the North Star lists the titles of the main choices. Each position has a state with a date:
-evidence, hypothesis, ruled or empty. It informs each session but does not bind. Only the owner
-changes a position, and a Decision Record remembers each change. An older North Star has nine fields
-until its project updates it.
+and the North Star lists the titles of the main choices. Each title can have a Signpost.
+
+Each position has a state with a date: evidence, hypothesis, ruled or empty. It informs each
+session but does not bind. Only the owner changes a position, and a Decision Record remembers each
+change. An older North Star has nine fields until its project updates it.
 
 ### Glossary
 <!-- context: 34518718d381 -->
@@ -275,6 +277,20 @@ called an ADR. It gives the context, the alternatives, the results, who decided,
 enforces the decision. After it is published, nobody changes its decision. A newer record replaces
 or amends it, and the old record says so. It exists so that a later session sees why the project
 decided before it decides again.
+
+### Signpost
+<!-- context: afdd90856005 -->
+A Signpost is a `Revisit when` line. It names a condition that you can see in the world, and where
+to read it. On a Decision Record, it names what would open the choice again. A `Strategy` record
+usually has one. On a Ticket that waits, it names what the work waits for.
+
+Each skill that finds a Signpost reads the condition at that source. A Ticket that waits is ready
+only when the condition is true there. When a strategy condition is true, the skill tells the
+owner. When the skill cannot open the source, it shows you the Ticket or the choice. It does not
+hide it. No skill changes the line because of what it read.
+
+Signposts exist so that a condition that becomes true is not forgotten. Text that nobody reads
+cannot do this.
 
 ### ADR Conventions
 <!-- context: 141f2d9e39ab -->
@@ -502,14 +518,15 @@ remove the mark, or `/orchestrate` records the answer and removes it. When the m
 that automation left on the Ticket goes too.
 
 ### Orchestrate
-<!-- context: 84eaa3e4c71b -->
+<!-- context: be69e474e50f -->
 Orchestrate is the step that does the ready Tickets of an effort, or of all the store, at the same
 time. Each Ticket goes to Run Ticket in a session of its own. Orchestrate merges finished work, one
 Ticket at a time. It writes Tickets for the debt that runs find. It keeps a status page and one list
 of what waits for you. The `/orchestrate` skill does it.
 
 By default, it shows you a plan and waits until you approve it. With `--autonomous`, it does not
-wait. It keeps no state of its own: it reads all of it from the Tickets and from git.
+wait. It keeps no state of its own: it reads all of it from the Tickets, from git, and from the
+sources that the Signposts name.
 
 Some work still waits for you. You merge a Ticket without Auto and answer escalations. You plan
 large work. You approve a Ticket whose author cannot write to the repository.
