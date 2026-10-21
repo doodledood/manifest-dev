@@ -20,7 +20,7 @@ Before mapping any field, ask the owner, in their own words, what the person the
 is after, and of each answer ask "why does that matter?" until there is no deeper answer inside
 the document. That end opens the new *Purpose*. The old *Diagnosis* usually names the barrier
 the project's first feature removes; carried over as the purpose, it makes the purpose only as
-wide as that first means, and every later feature sits outside it. So the *Diagnosis* becomes one
+wide as that feature, and every later feature sits outside it. So the *Diagnosis* becomes one
 barrier in the way of the end, beside any others the owner names, never the purpose itself. A run
 with no owner present to answer proposes no end: its flagged item says the end is unasked.
 

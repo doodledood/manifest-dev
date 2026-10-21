@@ -69,7 +69,7 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
      not itself planned; it is deferred and its signpost reads as unmet; it is deferred and its
      signpost's source cannot be read, which also puts it on the list of what waits on the person,
      with that source; the type filter passes it over. Read each deferred Ticket's source at every
-     sort, and never edit its line on the strength of a source you could not read. A Ticket whose open dependencies are all
+     sort, and never edit its line, whatever the source showed or whether you could read it: only a person does. A Ticket whose open dependencies are all
      planned joins the plan behind them.
    - *Running*: its run facts name a live run.
    - *To land*: its record is marked ready to land by a run of yours and no run is live, and the

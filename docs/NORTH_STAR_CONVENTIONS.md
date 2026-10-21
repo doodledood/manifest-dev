@@ -127,7 +127,7 @@ The following table names each section, what it holds, and the trap that most of
 
 | Section | What it holds | The trap |
 |---------|---------------|----------|
-| **Purpose** | The end first: what the person the project serves is after, found by asking "why does that matter?" of each answer until the document has no deeper one. Then what is in the way of it, one barrier or several; then who the project is for — a person with a situation, named narrowly enough to exclude someone — and an explicit not-for | Stating the problem the first means solves, so the purpose is only as wide as the first means; writing the user's complaint instead of the barrier behind it; or a segment so broad it cannot be wrong |
+| **Purpose** | The end first: what the person the project serves is after, found by asking "why does that matter?" of each answer until the document has no deeper one. Then what is in the way of it, one barrier or several; then who the project is for — a person with a situation, named narrowly enough to exclude someone — and an explicit not-for | Stating the problem the project's first feature solves, so the purpose is only as wide as that feature; writing the user's complaint instead of the barrier behind it; or a segment so broad it cannot be wrong |
 | **Goal** | Where the project is headed — what reaching that end looks like — in the sentence that person reads when deciding to rely on it, and what reaching it means for the project itself | A feature list, including features written as outcomes, which reads as a goal while the end they serve goes unstated; or a quality claim nobody can check |
 | **Principles** | The limits and trade-offs held even against evidence — what the project never does, what it never trades away, and what it feeds instead of money where money is not the point — one per entry, each phrased as what it rules out | A tactic phrased as a principle: if evidence would move it, it is a choice |
 | **How we know** | One measure for each part of the goal, the end's own measure among them, with its direction and any floor; a part nothing measures yet is `empty` with what would fill it | One number for a goal with several parts, which lets the unmeasured part drop out of every decision; or counts of how much the features are used standing in for progress on the end, while the end's own measure stays missing |
@@ -142,12 +142,12 @@ derived, never edited alone: it is rebuilt from those records in the same act th
 supersedes or retires one, or edits its signpost, and the record holds the choice and its
 reasons. Following these rules twice produces the same bytes:
 
-- **Lines**: one per record whose Status is `Accepted` and whose `Area` is `Strategy`, in
-  ascending order of filename.
-- **Each line**: `- `, then the record's title (its `# ADR: ` heading without that prefix); where
-  the record has a `Revisit when` field, then ` — revisit when: ` and the field's text, its line
-  breaks replaced by single spaces.
-- **Nothing else** in the section.
+- **Lines**: one per record in effect — its Status begins with `Accepted`, including one a
+  later record narrows or amends — whose `Area` is `Strategy`, in ascending order of filename.
+- **Each line**: `- `, then the record's title, which is its `# ADR: ` heading with that prefix removed; where
+  the record has a `Revisit when` field, then ` — revisit when: ` and the field's text, each of its
+  lines trimmed, blank lines dropped, and the rest joined by single spaces.
+- **Nothing else**: the section holds no other line.
 
 A reader that finds a signpost's condition met brings it to the owner and changes neither the
 record nor the list: reopening a choice is the owner's call, recorded as a new decision.
@@ -222,8 +222,8 @@ each one that matters is seeded as a decision record, or left out, never as a po
 *Purpose* is the section the rest are derived from, so a seed narrower than the project
 propagates into all of them. Open it with the end, never with the barrier: a README usually
 names the barrier its first feature removes, and a Purpose built from that is only as wide as
-the first means. Ask the owner, in their own words, what the person is after, and of each answer
-ask "why does that matter?" until there is no deeper answer inside the document; then compare
+that feature. Ask the owner, in their own words, what the person is after, and of each answer
+ask "why does that matter?" until there is no deeper answer inside the document. Then compare
 that end with the stated barrier, and keep the barrier as one of the things in its way. Read what
 the project does — its practice, its live work — alongside what it says about itself, and where
 the stated purpose and the practice diverge, put both to the owner rather than picking one. The

@@ -32,7 +32,7 @@ Workload: varies
 
 ## Gotchas
 
-- The prompt first has ticket-up file two small Tickets in a file store, then runs `/manifest-dev:next-ticket` in the same session.
+- The `select` prompt first has ticket-up file two small Tickets in a file store, then runs `/manifest-dev:next-ticket` in the same session.
 - It claims at once; a GitHub venue assigns the Issue for real.
 - "It didn't start the work" is intended: execution belongs to `run-ticket` or the person holding the claim.
 - `tests/test_ticket_automation_prompts.py` covers the Ticket skills' boundaries; nothing exercises its ranking.

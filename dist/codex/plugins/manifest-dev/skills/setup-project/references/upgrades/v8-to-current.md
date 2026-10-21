@@ -2,7 +2,7 @@
 
 A project recording v8 keeps its North Star in six sections, and its *Purpose* opens with what is
 in the way. Written from a README, that is usually the barrier the project's first feature removes,
-so the purpose is only as wide as the first means and later work sits outside it. v9 opens the
+so the purpose is only as wide as that feature and later work sits outside it. v9 opens the
 *Purpose* with the end the person is after and tests the *Goal* and its measures against that end.
 It also gives decision records a signpost — a `Revisit when` field the strategy list shows — and
 offers a check that rebuilds the index and the list. A project with no `NORTH_STAR.md` gets items
@@ -13,13 +13,14 @@ conventions items 1 and 2 change:
 
 1. **The ADR conventions** — the spans of `../../../figure-out/references/ADR_FORMAT.md` the
    project's copy lacks, offered section by section per *Compare, then offer* in `../../SKILL.md`:
-   the `Revisit when` section of the template and the paragraph explaining it; `Revisit when`
-   among the fields editable in place; the *Strategy* paragraph's list derived with signposts; the
-   one-act write rebuilding that list, signposts included; and the paragraph on *Context*: where a
-   decision's subject sits outside what the North Star's *Purpose* names, the record says so in
-   one line.
+   - the `Revisit when` section of the template, and the paragraph explaining it;
+   - `Revisit when` among the fields editable in place;
+   - the *Strategy* paragraph's list, derived with signposts;
+   - the one-act write that rebuilds that list, signposts included;
+   - the paragraph on *Context*: where a decision's subject sits outside what the North Star's
+     *Purpose* names, the record says so in one line.
 2. **The North Star conventions** — where the project keeps a North Star conventions file, the
-   spans its v8 copy lacks, offered the same way: the *Purpose*, *Goal* and *How we know* rows,
+   spans its v8 copy lacks, offered the same way: the *Purpose*, *Goal*, and *How we know* rows,
    the rebuild rule for *Strategy choices in force*, the skeleton's lines for those sections, and
    the paragraph of *Produce it honestly* that asks for the end.
 3. **The index-and-list check** — where the project keeps automated checks and nothing rebuilds
@@ -34,7 +35,8 @@ conventions items 1 and 2 change:
    propose the end's own measure, `empty` with what would fill it where nothing counts it yet.
    Show each proposed line beside the current one; the owner rules each, and only what the owner
    ruled is written, with a decision record remembering why it moved. A run with no person present
-   to rule flags this item in its report, names the lines it would propose, and writes nothing.
+   to answer proposes no end: it flags this item in its report as the end unasked, and writes
+   nothing.
 5. **Signposts on the strategy choices** — for each `Strategy` record in effect, ask the owner
    whether an observable condition would reopen it, and where it is read; write a `Revisit when`
    only from the owner's answer, never one inferred, then rebuild the list. A run with no person

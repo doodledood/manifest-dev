@@ -27,7 +27,7 @@ EXTENDS Integers, Sequences
 
 CONSTANTS Orchs,     \* the orchestrators sharing the automation identity
           Env,       \* the world events this configuration allows, each at most once
-          PreFix,    \* TRUE restores the three old behaviors described above
+          PreFix,    \* TRUE restores the four old behaviors described above
           MaxRuns,   \* launches per orchestrator, a bound for TLC; no run reaches it
           Signpost   \* "none" (not deferred), or how its condition reads at the start: "met", "unmet" or "unreadable"
 

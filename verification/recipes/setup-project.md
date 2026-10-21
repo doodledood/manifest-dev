@@ -19,7 +19,7 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 
 ### update-from-v8
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v8 --max-turns 80`
-Proves: it follows the v8 guide: the `Revisit when` field and the outside-Purpose note added to the ADR conventions, and the North Star conventions' new *Purpose*, *Goal*, *How we know* and strategy-list spans; the check that rebuilds the index and the strategy list offered beside the project's tests; the end asked of the owner, with a *Purpose* that opens with it, the barrier kept as one thing in its way, and a measure of the end proposed beside the counts of use — and, since the prompt's blanket acceptance came before the owner saw the lines, `NORTH_STAR.md` left unwritten and those lines named as waiting on the owner's ruling, with no `Revisit when` invented for the newsletter record; and the version line at v9. Nothing v1 to v8 gave is offered again.
+Proves: it follows the v8 guide: the `Revisit when` field and the outside-Purpose note added to the ADR conventions; the check that rebuilds the index and the strategy list offered beside the project's tests; the end asked of the owner and, with no answer in the prompt, flagged as unasked, with no *Purpose*, *Goal* or measure proposed or written — the prompt's blanket acceptance came before the owner saw any line, so `NORTH_STAR.md` is left unwritten, with no `Revisit when` invented for the newsletter record; and the version line at v9. Nothing v1 to v8 gave is offered again.
 Check: read
 Workload: varies
 
@@ -37,7 +37,7 @@ Workload: varies
 
 ### seed-from-the-end
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-seed-end.md --scaffold verification/scaffolds/app-without-surfaces --max-turns 80`
-Proves: the seeded `NORTH_STAR.md` opens its *Purpose* with the end the prompt's owner names — every lent book coming back and the club staying a pleasure to run — keeps the README's lost-track barrier as one thing in its way, and its *How we know* holds a measure of that end, `empty` with what would fill it where nothing counts it; the project gets a check that rebuilds the ADR index beside its tests.
+Proves: the seeded `NORTH_STAR.md` opens its *Purpose* with the end the prompt's owner names — every lent book coming back and the club staying a pleasure to run — keeps any barrier the README or the prompt names as one thing in its way rather than as the purpose, and its *How we know* holds a measure of that end, `empty` with what would fill it where nothing counts it; the project gets a check that rebuilds the ADR index beside its tests.
 Check: read
 Workload: varies
 

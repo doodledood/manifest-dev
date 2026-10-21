@@ -2,7 +2,7 @@
 # A Shelfnote project whose file store holds deferred Tickets and whose North Star lists strategy
 # choices with signposts: one ready Ticket, and one deferred Ticket and one strategy signpost each
 # whose source shows its condition met, shows it unmet, or cannot be read. The next-ticket and
-# orchestrate recipes' deferred scenarios.
+# orchestrate recipes' deferred scenarios and the figure-out recipe's strategy-signpost scenario.
 set -euo pipefail
 mkdir -p tickets/club docs/adr signals src
 cat > CLAUDE.md <<'EOF'

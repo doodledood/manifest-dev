@@ -94,7 +94,7 @@ One file (an ADR) recording a decision with downstream impact — its context, t
 _Avoid_: Design doc, meeting notes.
 
 **Signpost**:
-A `Revisit when` line — an observable condition in the world and where it is read. On a decision record it names what would reopen the choice, and a `Strategy` record is expected to carry one; on a deferred Ticket it names what the work waits for. Every reader that meets one reads the condition at that source: a deferred Ticket is ready only once it reads as met there, a met one on a strategy choice goes to the owner, and a source the reader cannot open puts the Ticket or the choice in front of the person rather than out of sight. No reader edits the line on the strength of what it read.
+A `Revisit when` line — an observable condition in the world and where it is read. On a decision record it names what would reopen the choice, and a `Strategy` record is expected to carry one; on a deferred Ticket it names what the work waits for. Every reader that meets one reads the condition at that source. A deferred Ticket is ready only once its condition reads as met there. A met condition on a `Strategy` record goes to the owner. A source the reader cannot open puts the Ticket or the choice in front of the person rather than out of sight. No reader edits the line on the strength of what it read.
 _Avoid_: Reminder, trigger, reopen condition kept in prose.
 
 **Verification Harness**:

@@ -279,7 +279,7 @@ or amends it, and the old record says so. It exists so that a later session sees
 decided before it decides again.
 
 ### Signpost
-<!-- context: afdd90856005 -->
+<!-- context: c0a971c9029a -->
 A Signpost is a `Revisit when` line. It names a condition that you can see in the world, and where
 to read it. On a Decision Record, it names what would open the choice again. A `Strategy` record
 usually has one. On a Ticket that waits, it names what the work waits for.
@@ -525,7 +525,7 @@ Ticket at a time. It writes Tickets for the debt that runs find. It keeps a stat
 of what waits for you. The `/orchestrate` skill does it.
 
 By default, it shows you a plan and waits until you approve it. With `--autonomous`, it does not
-wait. It keeps no state of its own: it reads all of it from the Tickets, from git, and from the
+wait. It keeps no state of its own: it reads all of it from the Tickets, from git and from the
 sources that the Signposts name.
 
 Some work still waits for you. You merge a Ticket without Auto and answer escalations. You plan

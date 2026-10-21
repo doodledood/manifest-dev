@@ -52,8 +52,7 @@ Line: 2.5 s on linux-x64-4cpu; raised: the person configuration explores a perso
 ### deferred
 Run: `verification/models/ticket-protocol/check.sh deferred && verification/models/ticket-protocol/check.sh deferred-unreadable`
 Proves: two orchestrators never claim a deferred Ticket until its signpost's condition reads as met
-at its source, claim it once the world makes it met, and never claim one whose source cannot be
-read; the other properties hold meanwhile.
+at its source, and never claim one whose source cannot be read; the other properties hold meanwhile.
 Line: 2.5 s on linux-x64-4cpu
 
 ### prefix
@@ -62,7 +61,7 @@ Proves: the check can fail. With the protocol switched back to its four old beha
 a second attempt record, a landing that stalls, a landing of a Ticket a person marked escalated and
 a claim of a Ticket whose signpost reads as unmet, each with its trace; the scenario fails when any
 is not reported.
-Line: 3.4 s on linux-x64-4cpu; raised: a third configuration, prefix-escalated, shows NoLandWhileEscalated can fail
+Line: 4.5 s on linux-x64-4cpu; raised: a fourth configuration, prefix-deferred, shows LaunchedOnlyWhenMet can fail
 
 ## Gotchas
 
