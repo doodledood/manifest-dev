@@ -6,7 +6,7 @@ dry-run: honored
 ---
 # check-pr
 
-Inspects one GitHub pull request — CI, review threads, description sync, mergeability — and returns PASS or FAIL per gate, with the next action for each wait. It never merges and never writes.
+Inspects one GitHub pull request — CI, review feedback (threads, review bodies, top-level comments), description sync, mergeability — and returns PASS or FAIL per gate, with the next action for each wait. It never merges and never writes.
 
 ## How a user reaches it
 
