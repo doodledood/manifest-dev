@@ -4,8 +4,8 @@ A project recording v7 keeps its North Star in nine fields, and those fields let
 a price, a channel, a launch plan. v8 keeps in the North Star only what decisions are judged
 against — what the project is for and whom it serves, how it measures progress, the principles it
 holds against evidence, and the bets it rests on. It moves each chosen option to a decision record,
-where a later session meets it as a choice it may revisit rather than as the purpose, and each
-target dated for a value to reach to the work that pursues it. A project with no `NORTH_STAR.md`
+where a later session meets it as a choice it may revisit rather than as the purpose. A value to
+reach by a date moves to the work that pursues it. A project with no `NORTH_STAR.md`
 gets item 1 only.
 
 Offer each item on its own. Items 1 to 3 go first, because the reshape in item 4 writes records

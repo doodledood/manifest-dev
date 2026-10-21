@@ -47,7 +47,9 @@ On a project that already carries surfaces, the run is an update, and it aims fo
   |---|---|
   | vN, older than the newest `CHANGES.md` lists | `references/upgrades/vN-to-current.md`, then each later `vM-to-current.md` in that folder |
   | the newest | no guide |
-  | none | no version guide; `references/upgrades/MOVE_TO_HARNESS.md` when the project has a feature map, a reader-task list or a verification-surface README to move; `references/upgrades/RESHAPE_NORTH_STAR.md` when its `NORTH_STAR.md` is in the older nine-field form |
+  | none | no version guide; `references/upgrades/MOVE_TO_HARNESS.md` when the project has a feature map, a reader-task list or a verification-surface README to move |
+
+  Whatever version is recorded, the newest included, also load `references/upgrades/RESHAPE_NORTH_STAR.md` while the project's `NORTH_STAR.md` is still in the older nine-field form, and offer its reshape as one item: an owner who has not yet ruled its lines is offered it again on every run.
 
 - **The conventions, the North Star conventions, and the surfaces section** — by comparison, per *Compare, then offer* below.
 - **The records written under the conventions** — only their editable fields, and only on records in effect, as the conventions' lifecycle defines them. Add `Enforced by` where a check already holds the record's decision: code that cites the record, or a lint or test configuration that pins what it decided — one that would fail if the decision were reversed. Where that check has no comment citing the record, offer one. Leave a record with no check found without the line. Add a missing `Area`. Rebuild the index per the conventions. Never change a record's body.
