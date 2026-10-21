@@ -65,6 +65,9 @@ Accepted
 ## Enforced by
 [The strongest check that holds the decision, and what it pins | partly — <check>; <what stays judgment> | not yet — <the check that would hold it> | none — <why no check can hold it>]
 
+## Revisit when
+[Optional; expected on a `Strategy` record. The observable condition that would reopen this choice, and where it is read.]
+
 ## Source
 - Session: [transcript / conversation reference]
 - Related: [Supersedes / Superseded by / See also]
@@ -72,11 +75,15 @@ Accepted
 
 **Area** is a single short label — reuse an existing one wherever the decision fits it, and mint a new one only when nothing fits. It is read by the index, so keep it stable: renaming a label means editing every record that carries it.
 
-One label is reserved. A record of a guiding choice — one the project pursues its goal through, and that other decisions derive from — carries the area `Strategy`. Where the project's North Star (its standing statement of what it is for, `NORTH_STAR.md`) keeps a *Strategy choices in force* list, that list holds the titles of the `Strategy` records in effect and nothing else, so writing, superseding or retiring such a record rebuilds that list in the same act, as the index is rebuilt. A North Star in an older form without that list gains none from it.
+One label is reserved. A record of a guiding choice — one the project pursues its goal through, and that other decisions derive from — carries the area `Strategy`. Where the project's North Star (its standing statement of what it is for, `NORTH_STAR.md`) keeps a *Strategy choices in force* list, that list is derived from the `Strategy` records in effect — each one's title, with its `Revisit when` where it has one — and holds nothing else, so writing, superseding or retiring such a record, or editing its `Revisit when`, rebuilds that list in the same act, as the index is rebuilt. The exact rebuild rule is in the North Star's own conventions (`docs/NORTH_STAR_CONVENTIONS.md`). A North Star in an older form without that list gains none from it.
 
 **Decided by** names who made the decision, so a later reader can tell a person's ruling from an agent's. Write `The user` when a person decided it or reviewed the record before it was accepted. Write `An agent in an unattended run, with no review` when a run with no person present accepts its own record. When a person later reviews such a record and keeps its decision, change the value to `The user` in place; a person who changes the decision writes a new record instead.
 
+**Context**, where the project keeps a North Star, also carries one check: compare the decision's subject with what the North Star's *Purpose* names (its Diagnosis, in a North Star of the older nine-field form), and where the decision sits outside it, say so in one line of the context. This is how a North Star going stale without contradiction becomes visible: every record is locally consistent with the text, so nobody meets the mismatch. One decision outside the Purpose means nothing, so the line is a note — never a question to the owner, never an edit to the North Star — and what makes it actionable is a run of them across records, which the notes let a later reader see. Every writer of a record applies it, whichever workflow writes the record.
+
 **Enforced by** names what makes the decision hold for contributors who never read the record. Name the strongest rung that applies: a type or structure that makes the wrong code fail to compile; a lint or architecture test that fails the build; an invariant test that states a property; one owning site that every caller goes through. Name the check by file and test or rule, and what it pins. Where a check holds only part of the decision, write `partly —` with the check and the part that stays judgment. Where a check could hold it but none does yet, write `not yet —` with the check that would; the run that implements or touches the decision builds it and replaces the line. Where no check can hold it — metric design, a deliberate non-action, a one-time operational choice — write `none —` with the reason. The check carries a comment citing the record, so someone about to weaken it meets the decision first. The line records current enforcement, not the decision, so it is editable in place.
+
+**Revisit when** is the record's signpost: the observable condition in the world that would reopen the choice, and where it is read — for example, "the second channel brings more than a third of new sign-ups, read on the weekly funnel report". It is optional on any record and expected on a `Strategy` record, since a guiding choice made on today's evidence is the one most worth reopening when the evidence moves. Name a source a reader can open; a condition nobody can read is a reminder, not a signpost. A reader that finds the condition met brings it to the person who owns the choice and changes nothing, since reopening the choice is a new record. The field says when to look again, not what was decided, so it is editable in place.
 
 ## File Naming and Location
 
@@ -103,7 +110,7 @@ Adding a record means doing all three of these in the same change:
 
 1. **Write the new record** per the template above.
 2. **Update every record it changes the standing of** — a superseded decision's Status becomes `Superseded by <filename>`; a decision narrowed, amended, or partly lifted by the new one says so in its own Status line. Retarget or retire the check named in the old record's `Enforced by` so it holds the new decision instead of the old one, and update that line. This is required by the lifecycle above, and it is the step that gets skipped: it means editing a published ADR, which the immutability rule below explicitly permits.
-3. **Refresh the index** per *The index* below — and, for a `Strategy` record where the project's North Star keeps a *Strategy choices in force* list, rebuild that list from the `Strategy` records in effect.
+3. **Refresh the index** per *The index* below — and, for a `Strategy` record where the project's North Star keeps a *Strategy choices in force* list, rebuild that list, signposts included, from the `Strategy` records in effect.
 
 Doing one or two of these leaves the corpus asserting something untrue. Treat them as a single act.
 
@@ -125,6 +132,7 @@ When reality shifts, write a new ADR and update the old one's Status:
 - Adding or correcting the `Area` field
 - Changing `Decided by` to `The user` after a person reviews an unattended record and keeps its decision
 - Updating `Enforced by` when the check that holds the decision changes
+- Adding or updating `Revisit when`
 - Clarifying confusing prose without changing the decision
 
 **NOT editable in place** (requires a new ADR):

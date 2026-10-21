@@ -106,7 +106,8 @@ Unattended automation may lower states or flag, never change a position.
 ## What a line may be
 
 Every position in *Purpose*, *Goal*, *Principles*, *How we know* and *What this rests on* is one
-of four kinds, and nothing else; *Open* holds questions, and the strategy list holds titles:
+of four kinds, and nothing else; *Open* holds questions, and the strategy list holds titles and
+their signposts:
 
 - **An end** — what the project is for, or whom it serves. Asked "why does this matter?", it
   has no deeper answer inside the document.
@@ -143,18 +144,30 @@ The following table names each section, what it holds, and the trap that most of
 
 | Section | What it holds | The trap |
 |---------|---------------|----------|
-| **Purpose** | What is going on and what is in the way, then who the project is for — a person with a situation, named narrowly enough to exclude someone — and an explicit not-for | Writing the user's complaint instead of the barrier behind it, or a segment so broad it cannot be wrong |
-| **Goal** | Where the project is headed, in the sentence that person reads when deciding to rely on it, and what reaching it means for the project itself | A feature list, or a quality claim nobody can check |
+| **Purpose** | The end first: what the person the project serves is after, found by asking "why does that matter?" of each answer until the document has no deeper one. Then what is in the way of it, one barrier or several; then who the project is for — a person with a situation, named narrowly enough to exclude someone — and an explicit not-for | Stating the problem the first means solves, so the purpose is only as wide as the first means; writing the user's complaint instead of the barrier behind it; or a segment so broad it cannot be wrong |
+| **Goal** | Where the project is headed — what reaching that end looks like — in the sentence that person reads when deciding to rely on it, and what reaching it means for the project itself | A feature list, including features written as outcomes, which reads as a goal while the end they serve goes unstated; or a quality claim nobody can check |
 | **Principles** | The limits and trade-offs held even against evidence — what the project never does, what it never trades away, and what it feeds instead of money where money is not the point — one per entry, each phrased as what it rules out | A tactic phrased as a principle: if evidence would move it, it is a choice |
-| **How we know** | One measure for each part of the goal, with its direction and any floor; a part nothing measures yet is `empty` with what would fill it | One number for a goal with several parts, which lets the unmeasured part drop out of every decision |
+| **How we know** | One measure for each part of the goal, the end's own measure among them, with its direction and any floor; a part nothing measures yet is `empty` with what would fill it | One number for a goal with several parts, which lets the unmeasured part drop out of every decision; or counts of how much the features are used standing in for progress on the end, while the end's own measure stays missing |
 | **What this rests on** | A handful of live, falsifiable bets, the main one first: the sentence that changes everything if false | Letting it grow past a handful, or filling it with task facts, which belong in that task's own spec |
 | **Open** | Questions none of the sections above holds, each with what would fill it | Repeating an `empty` position, which already carries its own filling condition |
 
-After the sections comes **Strategy choices in force**: the titles of the decision records in
-effect that carry the area `Strategy` — the few guiding choices the project pursues its goal
-through, which other decisions derive from. The list holds titles only and is rebuilt from
-those records in the same act that writes, supersedes or retires one; the record holds the
-choice and its reasons.
+After the sections comes **Strategy choices in force**: one line for each decision record in
+effect that carries the area `Strategy` — the few guiding choices the project pursues its goal
+through, which other decisions derive from. A record may carry a signpost, its `Revisit when`
+field: the observable condition that would reopen the choice, and where it is read. The list is
+derived, never edited alone: it is rebuilt from those records in the same act that writes,
+supersedes or retires one, or edits its signpost, and the record holds the choice and its
+reasons. Following these rules twice produces the same bytes:
+
+- **Lines**: one per record whose Status is `Accepted` and whose `Area` is `Strategy`, in
+  ascending order of filename.
+- **Each line**: `- `, then the record's title (its `# ADR: ` heading without that prefix); where
+  the record has a `Revisit when` field, then ` — revisit when: ` and the field's text, its line
+  breaks replaced by single spaces.
+- **Nothing else** in the section.
+
+A reader that finds a signpost's condition met brings it to the owner and changes neither the
+record nor the list: reopening a choice is the owner's call, recorded as a new decision.
 
 Belief height decides what may enter *What this rests on*: if this bet turned out false, how
 much dies? The purpose false means pivot or stop; a bet false means one part of the project
@@ -187,7 +200,7 @@ New evidence may lower a position's state. The position text itself changes only
 owner's ruling, and each change is remembered as a decision record.
 
 ## Purpose
-{what is going on and what is in the way; then "For: …" and "Not for: …"}
+{the end the person is after; then what is in the way of it; then "For: …" and "Not for: …"}
 {— state: grounding. date}
 
 ## Goal
@@ -198,7 +211,7 @@ owner's ruling, and each change is remembered as a decision record.
 {one limit or trade-off per entry, held even against evidence}
 
 ## How we know
-{one measure per part of the goal: what is counted, its direction, any floor}
+{one measure per part of the goal, the end's own among them: what is counted, its direction, any floor}
 
 ## What this rests on
 {one bet per entry, the main bet first, each with its own state}
@@ -207,7 +220,7 @@ owner's ruling, and each change is remembered as a decision record.
 {one question per entry, each with what would fill it}
 
 ## Strategy choices in force
-{titles of the decision records in effect with area Strategy — rebuilt from them, never edited alone}
+{one line per decision record in effect with area Strategy: its title, then " — revisit when: " and its signpost where it has one — rebuilt from them, never edited alone}
 ```
 
 <!-- Fixed boundary: copying pauses here. The chapter below is installer-facing and is
@@ -289,9 +302,16 @@ history of a project is full of choices — a price, a launch plan, a chosen int
 each one that matters is seeded as a decision record, or left out, never as a position.
 
 *Purpose* is the section the rest are derived from, so a seed narrower than the project
-propagates into all of them. Read what the project does — its practice, its live work —
-alongside what it says about itself, and where the stated purpose and the practice diverge,
-put both to the owner rather than picking one.
+propagates into all of them. Open it with the end, never with the barrier: a README usually
+names the barrier its first feature removes, and a Purpose built from that is only as wide as
+the first means. Ask the owner, in their own words, what the person is after, and of each answer
+ask "why does that matter?" until there is no deeper answer inside the document; then compare
+that end with the stated barrier, and keep the barrier as one of the things in its way. Read what
+the project does — its practice, its live work — alongside what it says about itself, and where
+the stated purpose and the practice diverge, put both to the owner rather than picking one. The
+same test reaches the *Goal* and its measures: each part of the goal serves the end, and the end
+has a measure of its own — `empty` with what would fill it where nothing counts it yet — rather
+than counts of use standing in for it.
 
 Sections that need working out rather than stating — who it's really for, the goal, the
 measures — are one investigation each, run when the owner chooses. The `empty` and
