@@ -215,4 +215,5 @@
 | 2026-10-20 | [every figure-out probe has an eval grader or a stated reason](20261020-every-figure-out-probe-has-an-eval-grader-or-a-stated-reason.md) | Accepted | figure-out |
 | 2026-10-20 | [figure-out's decision probes read other parties from their side, name the flip chance, and look for unnamed aims](20261020-figure-out-decision-probes-read-other-parties-name-the-flip-chance-and-look-for-unnamed-aims.md) | Accepted | Task guidance |
 | 2026-10-20 | [figure-out stops analysing a decision only on shown reasons](20261020-figure-out-stops-a-decision-only-on-shown-reasons.md) | Accepted | Task guidance |
+| 2026-10-21 | [The Cursor plugin reads the source plugin directories](20261021-cursor-plugin-reads-the-source-plugin-directories.md) | Accepted | Cursor distribution |
 | 2026-10-21 | [The North Star holds what decisions are judged against, and chosen options live in decision records](20261021-the-north-star-holds-what-decisions-are-judged-against.md) | Accepted | North Star |
