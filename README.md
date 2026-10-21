@@ -21,7 +21,7 @@ Claude Code is the primary target. Inside a Claude Code session, run:
 /plugin install manifest-dev@manifest-dev
 ```
 
-Codex, Pi, and OpenCode install it too ([other CLIs](#other-clis)). Every skill also works on its own: `npx skills add doodledood/manifest-dev --skill figure-out` installs just one.
+Codex, Pi, OpenCode, and Cursor (and with it Grok Bot) install it too ([other CLIs](#other-clis)). Every skill also works on its own: `npx skills add doodledood/manifest-dev --skill figure-out` installs just one.
 
 ## Start with one real question
 
@@ -107,7 +107,7 @@ Each plugin's README lists what it ships.
 
 ## Other CLIs
 
-The Claude Code plugins are the source, and the same skill text serves every host: OpenCode and Pi read it from the source tree, and Codex installs a generated copy under `dist/`.
+The Claude Code plugins are the source, and the same skill text serves every host: OpenCode, Pi and Cursor read it from the source tree, and Codex installs a generated copy under `dist/`.
 
 | CLI | Install |
 |-----|---------|
@@ -115,6 +115,7 @@ The Claude Code plugins are the source, and the same skill text serves every hos
 | Codex CLI | `codex plugin marketplace add doodledood/manifest-dev` — [details](dist/codex/README.md) |
 | Pi | `pi install git:github.com/doodledood/manifest-dev@main` — [details](dist/pi/README.md) |
 | OpenCode | clone, then add one path to your config — [details](dist/opencode/README.md) |
+| Cursor, Grok Bot | copy the two plugin folders into `~/.cursor/plugins/local`; from the Cursor Marketplace, and so in Grok Bot, once it is listed — [details](dist/cursor/README.md) |
 
 Individual skills install into many other agents through `npx skills add doodledood/manifest-dev --skill <name>`.
 

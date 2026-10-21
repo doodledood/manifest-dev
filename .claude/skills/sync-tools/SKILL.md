@@ -1,6 +1,6 @@
 ---
 name: sync-tools
-description: 'Regenerate the Codex distribution copy of the plugin skills, and the copies of the shipped verify tool, and check them for drift. Run after changing anything under claude-plugins/*/skills. OpenCode and Pi read the source tree directly and need no sync.'
+description: 'Regenerate the Codex distribution copy of the plugin skills, and the copies of the shipped verify tool, and check them for drift. Run after changing anything under claude-plugins/*/skills. OpenCode, Pi and Cursor read the source tree directly and need no sync.'
 user-invocable: true
 metadata:
   internal: true
@@ -8,7 +8,7 @@ metadata:
 
 # /sync-tools — distribution sync
 
-Every host reads the same skill files. The Claude Code plugins under `claude-plugins/` are the source; OpenCode (`dist/opencode/plugin/index.js`) and Pi (repo-root `package.json`, `pi.skills`) point straight at `claude-plugins/*/skills`. Only Codex needs a copy, because it installs a plugin into its own cache, and that copy is generated:
+Every host reads the same skill files. The Claude Code plugins under `claude-plugins/` are the source; OpenCode (`dist/opencode/plugin/index.js`), Pi (repo-root `package.json`, `pi.skills`) and Cursor (`claude-plugins/*/.cursor-plugin/plugin.json`, whose plugin root is the source plugin directory) point straight at `claude-plugins/*/skills`. Only Codex needs a copy, because it installs a plugin into its own cache, and that copy is generated:
 
 ```bash
 python3 scripts/sync_dist.py          # regenerate dist/codex/plugins/*/skills byte-identically from source
@@ -30,6 +30,7 @@ These are not generated. Edit them when what they describe changes:
 | `dist/opencode/plugin/index.js`, `dist/opencode/plugin/package.json` | OpenCode plugin entry (registers the source skill dirs and slash-command wrappers); `version` tracks `manifest-dev`'s |
 | `dist/opencode/AGENTS.md` | OpenCode instructions file the plugin registers |
 | `dist/pi/prompts/*.md` | Pi prompt-template aliases (`/do`, `/auto`, `/babysit-pr`) |
-| `dist/codex/README.md`, `dist/opencode/README.md`, `dist/pi/README.md` | Per-host install and update instructions |
+| `claude-plugins/*/.cursor-plugin/plugin.json`, `.cursor-plugin/marketplace.json` | Cursor plugin manifests and marketplace; `version` must equal the source plugin's |
+| `dist/codex/README.md`, `dist/opencode/README.md`, `dist/pi/README.md`, `dist/cursor/README.md` | Per-host install and update instructions |
 
 Version bumps follow the repo's Versioning rules; this skill does not bump anything.
