@@ -4,7 +4,7 @@
 Accepted — amended by 20261019-each-item-waiting-on-the-person-carries-its-recommendation-risk-and-evidence: each waiting item carries the recommended answer, its risk and its evidence; and by 20261019-one-cause-failing-several-runs-pauses-the-effort-once: one cause failing several runs pauses the effort once
 
 ## Area
-Ticketing
+Strategy
 
 ## Decided by
 The user

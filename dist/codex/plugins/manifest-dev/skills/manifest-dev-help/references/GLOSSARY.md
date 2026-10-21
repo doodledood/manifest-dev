@@ -249,11 +249,17 @@ so that the direction, the words and the decisions of the project live in the re
 memory of one person.
 
 ### North Star
-<!-- context: bc1fde256fe2 -->
-The North Star is a file in the project that holds its long-term direction. It says why the project
-exists, who it is for, what it promises, what winning means and what it must never do. Each position
-has a state with a date: evidence, hypothesis, ruled or empty. It informs each session but does not
-bind. Only the owner changes a position, and a Decision Record remembers each change.
+<!-- context: 91ed58d6aaa1 -->
+The North Star is a file in the project that says what the project is for. It names the purpose,
+the people the project is for and the goal. It also names the principles that the project keeps when
+evidence says to break them. It says how the project measures progress and which bets the project
+depends on.
+
+The North Star does not hold the choices that the project makes. A Decision Record holds each choice,
+and the North Star lists the titles of the main choices. Each position has a state with a date:
+evidence, hypothesis, ruled or empty. It informs each session but does not bind. Only the owner
+changes a position, and a Decision Record remembers each change. An older North Star has nine fields
+until its project updates it.
 
 ### Glossary
 <!-- context: 34518718d381 -->

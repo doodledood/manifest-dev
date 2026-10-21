@@ -4,7 +4,7 @@
 Accepted — amended by [20261015-projects-drive-themselves-as-far-as-each-user-climbs](20261015-projects-drive-themselves-as-far-as-each-user-climbs.md): How they arrive extends the standalone shape to the autonomy ladder, each level working without the ones above it and without the rest of the team.
 
 ## Area
-Positioning
+Strategy
 
 ## Context
 Four North Star fields described a project pursuing adopters. `How they arrive` named discovery

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-mkdir -p docs/adr src tests scripts verification/recipes verification/evidence/checkout verification/evidence/overdue-page verification/evidence/project-checks
+mkdir -p docs/adr src tests scripts verification/recipes
 cat > CLAUDE.md <<'EOF'
 # Shelfnote
 
@@ -8,7 +8,7 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v6 -->
+<!-- setup-project surfaces v7 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
@@ -27,12 +27,11 @@ This project keeps its direction, vocabulary, and decision memory in the repo. R
   Recipes marked ask-first cost money, quota, load on shared systems or effects outside the
   repository: run those only when a person runs them or has agreed. `scripts/verify --help` gives
   the rest.
-  Commit the evidence each drive writes under `verification/evidence/` with the change it checked.
 
 ## Before merging
 
-Drive `scripts/verify drive project-checks`; every scenario must pass, and its evidence goes in
-the pull request with the change.
+Drive `scripts/verify drive project-checks`; every scenario must pass, and the pull request says
+what the drive found.
 EOF
 cat > CONTEXT.md <<'EOF'
 # Shelfnote
@@ -52,6 +51,19 @@ cat > NORTH_STAR.md <<'EOF'
 Volunteer organizers of small reading clubs.
 
 — hypothesis: from the README. 2026-05
+
+## How they arrive
+
+Through the monthly newsletter of the regional library network: one release note there each
+month, and no website.
+
+— ruled: the owner chose the newsletter over a website. 2026-06
+
+## Never
+
+- It never asks a member for anything but a name.
+
+— ruled: 2026-05
 EOF
 cat > docs/adr/CONVENTIONS.md <<'EOF'
 # ADR Conventions
@@ -1570,6 +1582,7 @@ A member borrows a book from the command line.
 ### cli
 Run: `python3 src/shelfnote.py checkout --member ana --book Middlemarch`
 Proves: exit 0 and the command name is printed.
+Line: 0.4 s on linux-x64-4cpu
 EOF
 cat > verification/recipes/overdue-page.md <<'EOF'
 ---
@@ -1589,6 +1602,7 @@ http://127.0.0.1:8000/ once the page is running.
 ### page
 Run: `curl -sf "$(cat .runs/$VERIFY_RUN_ID/url)"`
 Proves: the page answers with the loans list.
+Line: 0.6 s on linux-x64-4cpu; frozen at 0.9 s by #41
 
 ## Gotchas
 
@@ -1608,72 +1622,10 @@ The checks Shelfnote runs across the whole tree, each calling the project's own 
 ### tests
 Run: `python3 -m pytest tests/`
 Proves: every test passes.
+Line: 3.1 s on linux-x64-4cpu; raised: tests for the CSV export
 
 ### lint
 Run: `ruff check src tests`
 Proves: the linter reports nothing.
-EOF
-cat > verification/evidence/checkout/20261001T090000Z.md <<'EOF'
-# checkout / cli — 20261001T090000Z
-
-- **Scenario:** cli
-- **Command:** `python3 src/shelfnote.py checkout --member ana --book Middlemarch`
-- **Exit code:** 0
-- **Outcome:** verified
-- **Machine:** linux-x64-4cpu
-- **Duration:** 0.4 s
-- **Line:** linux-x64-4cpu 0.4 s; first run
-- **Proves:** exit 0 and the command name is printed.
-
-## Output
-
-checkout
-EOF
-cat > verification/evidence/overdue-page/20261009T141200Z.md <<'EOF'
-# overdue-page / page — 20261009T141200Z
-
-- **Scenario:** page
-- **Command:** `curl -sf "$(cat .runs/$VERIFY_RUN_ID/url)"`
-- **Exit code:** 0
-- **Outcome:** verified
-- **Machine:** linux-x64-4cpu
-- **Duration:** 0.9 s
-- **Line:** linux-x64-4cpu 0.6 s; first run; frozen at 0.9 s by #41
-- **Proves:** the page answers with the loans list.
-
-## Output
-
-[]
-EOF
-cat > verification/evidence/project-checks/20261012T080000Z.md <<'EOF'
-# project-checks / tests — 20261012T080000Z
-
-- **Scenario:** tests
-- **Command:** `python3 -m pytest tests/`
-- **Exit code:** 0
-- **Outcome:** verified
-- **Machine:** linux-x64-4cpu
-- **Duration:** 3.1 s
-- **Line:** linux-x64-4cpu 3.1 s; raised: tests for the CSV export
-- **Proves:** every test passes.
-
-## Output
-
-1 passed
-EOF
-cat > verification/evidence/project-checks/20261012T080005Z.md <<'EOF'
-# project-checks / lint — 20261012T080005Z
-
-- **Scenario:** lint
-- **Command:** `ruff check src tests`
-- **Exit code:** 0
-- **Outcome:** verified
-- **Machine:** linux-x64-4cpu
-- **Duration:** 0.3 s
-- **Line:** linux-x64-4cpu 0.3 s; first run
-- **Proves:** the linter reports nothing.
-
-## Output
-
-All checks passed!
+Line: 0.3 s on linux-x64-4cpu
 EOF

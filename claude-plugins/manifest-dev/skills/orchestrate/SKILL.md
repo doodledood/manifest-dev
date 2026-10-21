@@ -80,8 +80,9 @@ second one, rebuilds the same picture.
    recover or ready, say so, name what waits on the person and what is left alone and why, and
    stop.
 6. **Rank** recovery first, then ready work, by the convention's delay-loss rule; across efforts,
-   weigh each destination against the winning field of the project's North Star where it has one
-   (`NORTH_STAR.md`, or wherever the project context file says it lives).
+   weigh each destination against the goal and measures of the project's North Star where it has
+   one (`NORTH_STAR.md`, or wherever the project context file says it lives): its *Goal* and *How
+   we know* sections, or the `Winning` field of a North Star in the older nine-field form.
 7. **Plan around collisions.** Read each candidate, each Ticket with a live run — *Running*, or left
    alone because another orchestrator's run holds it — and the code they likely touch. Tickets
    likely to touch the same code run one after another, the second starting after the first lands,

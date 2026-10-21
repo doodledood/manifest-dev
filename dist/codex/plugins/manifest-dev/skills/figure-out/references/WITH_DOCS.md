@@ -16,7 +16,7 @@ Everything below is for a project as `SKILL.md` → *Modes and what loads* defin
 
 **Load the ADR conventions first.** Read the project's own `docs/adr/CONVENTIONS.md` when it exists — it governs, and a team that edited it meant to. Read the adjacent `ADR_FORMAT.md` when it does not. Either way the bar for what deserves a record is now in context, which is what lets the per-turn ADR check below run without another load.
 
-**Load the project's `NORTH_STAR.md` when it exists** — the standing strategy surface the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read. Load the project's `docs/NORTH_STAR_CONVENTIONS.md` beside it when one exists: it owns the document's form — fields, states, rendering — and where it or the doc's own header differs from anything remembered here, the project's copy wins; cadence, below, stays this skill's.
+**Load the project's `NORTH_STAR.md` when it exists** — the project's standing statement of what it is for, which the updates section below keeps current. Where the project context file already imports it, it is in context and needs no second read. Load the project's `docs/NORTH_STAR_CONVENTIONS.md` beside it when one exists: it owns the document's form — sections, states, rendering — and where it or the doc's own header differs from anything remembered here, the project's copy wins; cadence, below, stays this skill's.
 
 **No CONTEXT.md and no `docs/adr/` at all** — the project has never been set up. Offer `setup-project`, which installs the conventions file, the glossary and the context-file wiring in one pass, installs a recommended verification harness the project may opt out of — or, where one is already on disk, adopts it and records its bullet — and can seed them from the project's own history. On accept, invoke it and continue from what it produced. On decline, fall through to the minimal path below and don't re-offer.
 
@@ -95,7 +95,24 @@ the one asymmetry the bullets below branch on: **statuses move on evidence, posi
 move only on the owner's explicit ruling.**
 
 After every counterparty response — or, in self-answered runs, every resolved question —
-check whether the session's findings touched a North Star position:
+check whether the session's findings or the owner's rulings bear on the North Star. First sort
+each one. A North Star holds only what decisions are judged against: an end (what the project
+is for, or whom it serves), a measure (what it counts on one part of its goal, which way, and
+any floor), a principle (a limit or trade-off held even when evidence says crossing it would
+pay) or a bet (a belief that, if false, would change the goal or end one part of the project).
+Anything the owner would re-tune when evidence moves is a chosen option, and a chosen option
+never enters the North Star, however strategic it feels: record it through the ADR offer
+above, with the area `Strategy` when it is a guiding choice other decisions derive from — and,
+where the North Star keeps a *Strategy choices in force* list, rebuild that list in the same
+act — while a dated target goes with the work that pursues it: the destination of its effort
+(the named body of work) where the project keeps a Ticket store, otherwise the record of the
+choice it serves. Its positions stay as they are. Where a North Star in the older nine-field form
+still states that option as a position — a price under *Money*, a channel under *How they arrive*
+— name in the output that the position now disagrees with the record, add one line to its
+provenance note naming the record that holds the newer choice, and offer the setup update that
+moves such lines out; never rewrite the position's words. The loaded conventions carry the full
+test where they have it, and this sort applies on a North Star of any form. What remains is an end, a measure, a principle or a
+bet, and the branches below apply to it:
 
 - **A finding contradicts a stated position** → surface the clash as a lead, exactly like a
   glossary clash: *"The North Star says X; this session found Y — which stands?"* Only
@@ -110,18 +127,19 @@ check whether the session's findings touched a North Star position:
   with its date when something happened in the world, `ruled` when the answer is the
   owner's own choice. A `ruled` fill is a position change: offer the decision record
   that remembers it, as on the contradiction branch.
-- **Fog that fits no field** → the doc's `Open` section (with what would fill it), or
-  nowhere — never forced into a field as content.
-- **A resolution too big for its field** → the field keeps the short answer with its
+- **Fog that fits no section** → the doc's `Open` section (with what would fill it), or
+  nowhere — never forced into a section as content.
+- **A resolution too big for its section** → the section keeps the short answer with its
   state; the depth goes to an adjacent linked doc, per the conventions' split rule. The
-  field stays the authority the depth details — never the other way around.
+  section stays the authority the depth details — never the other way around.
 
 **At the moment a decision gets recorded**, where the project keeps a North Star, check the
-decision's subject against what the Diagnosis names, and where the decision sits outside it,
+decision's subject against what the Purpose names (the Diagnosis, in a North Star of the
+older nine-field form), and where the decision sits outside it,
 say so in one line in the record's context — the field the loaded conventions use for what
 motivated the decision. This is the quiet failure: a position drifts out of date without
 anything contradicting it, because every session is locally consistent with the text and
-nobody meets the mismatch. One decision outside the Diagnosis means nothing, so it is a note
+nobody meets the mismatch. One decision outside the Purpose means nothing, so it is a note
 and never a question put to the user — what makes it actionable is a run of them, which no
 single session can see, and the note is what lets a later reader see the run. Never edit a
 position on this; the asymmetry above is unchanged.

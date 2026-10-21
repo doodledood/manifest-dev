@@ -4,7 +4,7 @@
 Accepted
 
 ## Area
-Positioning
+Strategy
 
 ## Context
 The North Star's Diagnosis named a task-level barrier: experienced developers do not trust
