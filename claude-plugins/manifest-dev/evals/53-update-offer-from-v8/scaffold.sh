@@ -8,12 +8,14 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v7 -->
+<!-- setup-project surfaces v8 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
 
-- **NORTH_STAR.md** — why this project exists and who it's for.
+- **NORTH_STAR.md** — what this project is for and for whom, the principles it holds, how it
+  measures progress, and the bets it rests on. The choices made along the way live in `docs/adr/`,
+  never in it.
 - **CONTEXT.md** — what words mean here.
 - **docs/adr/** — why decisions went the way they did. Write new records per
   `docs/adr/CONVENTIONS.md`.
@@ -46,24 +48,49 @@ EOF
 cat > NORTH_STAR.md <<'EOF'
 # North Star — Shelfnote
 
-## Who it's for
+## Purpose
 
-Volunteer organizers of small reading clubs.
+Reading clubs lose track of who has which book, and a volunteer ends up chasing loans by memory.
+
+For: volunteer organizers of small reading clubs.
+Not for: libraries with a catalogue system of their own.
 
 — hypothesis: from the README. 2026-05
 
-## How they arrive
+## Goal
 
-Through the monthly newsletter of the regional library network: one release note there each
-month, and no website.
+An organizer checks books out and back in from the command line, sees what is overdue, and
+exports the loan list for the club's records.
 
-— ruled: the owner chose the newsletter over a website. 2026-06
+— hypothesis: from the README's commands. 2026-06
 
-## Never
+## Principles
 
 - It never asks a member for anything but a name.
 
 — ruled: 2026-05
+
+## How we know
+
+- Checkouts recorded each month — up.
+- Overdue reports run each month — up.
+- Exports made each month — up.
+
+— hypothesis: counted from the organizers' usage logs. 2026-06
+
+## What this rests on
+
+- Organizers will keep a command-line tool running if it saves them the chasing.
+
+— hypothesis: untested beyond the first club. 2026-06
+
+## Open
+
+None yet.
+
+## Strategy choices in force
+
+- New releases reach clubs through the library network's newsletter, not a website
 EOF
 cat > docs/adr/CONVENTIONS.md <<'EOF'
 # ADR Conventions
@@ -93,6 +120,11 @@ the restatus of what it changes, and the index.
 
 Only an `Accepted` record is in effect. Backfilling `Enforced by`, building a `not yet` check,
 and citing a record as a ruling read only records in effect.
+
+One label is reserved. A record of a guiding choice — one the project pursues its goal through,
+and that other decisions derive from — carries the area `Strategy`. The North Star's *Strategy
+choices in force* list holds the titles of the `Strategy` records in effect and nothing else, so
+writing, superseding or retiring such a record rebuilds that list in the same act.
 EOF
 cat > docs/adr/README.md <<'EOF'
 # Architecture Decision Records
@@ -100,6 +132,38 @@ cat > docs/adr/README.md <<'EOF'
 | Date | ADR | Status | Area |
 |------|-----|--------|------|
 | 2026-05-02 | [Loans are stored in one JSON file](20260502-loans-in-one-json-file.md) | Accepted | Storage |
+| 2026-06-01 | [New releases reach clubs through the library network's newsletter, not a website](20260601-releases-reach-clubs-through-the-newsletter.md) | Accepted | Strategy |
+EOF
+cat > docs/adr/20260601-releases-reach-clubs-through-the-newsletter.md <<'EOF'
+# ADR: New releases reach clubs through the library network's newsletter, not a website
+
+## Status
+Accepted
+
+## Area
+Strategy
+
+## Context
+Clubs already read the regional library network's monthly newsletter. Moved here from the North
+Star's old *How they arrive* field when the setup was updated.
+
+## Decision
+One release note in the newsletter each month, and no website.
+
+## Alternatives Considered
+- **A project website**: one more thing for a volunteer to keep current.
+
+## Consequences
+### Positive
+- Reaches every club with no upkeep.
+### Negative
+- A club outside the network does not hear of it.
+
+## Enforced by
+none — a choice of channel, which no check can hold.
+
+## Source
+- Session: (none)
 EOF
 cat > docs/adr/20260502-loans-in-one-json-file.md <<'EOF'
 # ADR: Loans are stored in one JSON file

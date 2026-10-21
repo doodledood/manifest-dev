@@ -1,4 +1,4 @@
 schema_version: "1.0"
-name: 53-update-offer-from-v7
+name: 53-update-offer-from-v8
 context:
   scaffold_script: scaffold.sh

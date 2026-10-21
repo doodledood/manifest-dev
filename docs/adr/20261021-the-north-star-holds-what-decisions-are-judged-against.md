@@ -1,7 +1,7 @@
 # ADR: The North Star holds what decisions are judged against, and chosen options live in decision records
 
 ## Status
-Accepted
+Accepted — amended by 20261021-the-north-star-opens-with-its-end-and-signposts-reopen-choices-and-deferred-work: the *Purpose* opens with the end, and the strategy list shows each title with its signpost
 
 ## Area
 North Star

@@ -216,7 +216,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | unmeasured |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | unmeasured |
-| `53-update-offer-from-v7` | docs, repository, plugin arm only | Offer the setup update for a project on v7 — its North Star reshaped so a chosen option moves to a decision record on the owner's ruling, the `Strategy` area in its ADR conventions, and the reworded North Star line — and nothing v1 to v7 already gave it | unmeasured |
+| `53-update-offer-from-v8` | docs, repository, plugin arm only | Offer the setup update for a project on v8 — its *Purpose* opening with the end asked of the owner and its measures tested against it, on the owner's ruling; the `Revisit when` signpost; the outside-Purpose note; the index-and-list check — and nothing v1 to v8 already gave it | unmeasured |
 | `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | unmeasured |
 | `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | unmeasured |
 | `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | unmeasured |
@@ -294,7 +294,9 @@ most, and the 2026-10-20 change sharpened three of its probes, which reaches `06
 a second 2026-10-20 change made that file's stop clause ask for shown reasons, which reaches
 `06`, `63` and `64`, and the 2026-10-21 change made the North Star a values-and-goal document
 and sorted what figure-out writes into it, which reaches `14`, `15`, `24`, `45` and the update-offer
-case most, so no earlier result measures the skill as it ships now. The next baseline replaces them.
+case most, and a second 2026-10-21 change opened the North Star's *Purpose* with the end, moved the
+outside-Purpose note from docs mode into the ADR conventions and gave docs mode the met strategy
+signpost, which reaches `23`, `45`, `53`, `84` and `85` most, so no earlier result measures the skill as it ships now. The next baseline replaces them.
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.
@@ -368,7 +370,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `46` | first run decides | Plugin arm only; mirror of `43` |
 | `48` | first run decides | Reuse and module depth before code |
 | `52` | first run decides | Plugin arm only; a declared guard: the no-plugin arm passes by construction |
-| `53` | keep | Plugin arm only; the one-behind branch, which the version test requires; moved to v5 on 2026-10-15 when v6 shipped, to v6 on 2026-10-18 when v7 shipped, and to v7 on 2026-10-21 when v8 shipped |
+| `53` | keep | Plugin arm only; the one-behind branch, which the version test requires; moved to v5 on 2026-10-15 when v6 shipped, to v6 on 2026-10-18 when v7 shipped, to v7 on 2026-10-21 when v8 shipped, and to v8 later that day when v9 shipped |
 | `54` | first run decides | New on 2026-10-15: the *Fit to trust* jobs v5 added |
 | `55` | first run decides | New on 2026-10-15: repairing a project's own check in its own form, the rule every run owes with or without a harness; the base model likely writes a new test beside the broken one. Its second grader, added 2026-10-19, holds the seen-to-fail job |
 | `56` | first run decides | New on 2026-10-19: the only order-dependent design case; the base model likely goes from the design to example tests |
@@ -773,7 +775,7 @@ file. The row is never deleted while the probe stays.
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
-| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v7/offers-only-whats-new-since-v7`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v8/offers-only-whats-new-since-v8`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `31-record-names-what-enforces-it/record-carries-enforced-by` |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, which needs those skills reachable from the session |
 | `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |

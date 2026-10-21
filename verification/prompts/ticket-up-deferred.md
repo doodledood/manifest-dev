@@ -1,0 +1,1 @@
+Use the ticket-up skill to file this in a file store in this repo, in an effort named `members`: "add a sign-up form for new members". Ticket it up, but don't start it until the weekly sign-up count passes 50, read on the analytics dashboard.

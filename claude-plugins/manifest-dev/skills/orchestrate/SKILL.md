@@ -14,8 +14,10 @@ effort's README in a file store). Each **run** is one `run-ticket` attempt on on
 own session. This skill plans, launches, lands, and keeps the person informed, in **check-ins**:
 at each one it re-reads the store, gives one finished run its **landing turn** (its merge onto
 the target branch), gathers debt, and fills free run slots. It keeps no state
-of its own: everything it knows it reads from the Tickets and git, so a new orchestrator, or a
-second one, rebuilds the same picture.
+of its own: everything it knows it reads from the Tickets and git, and from the sources the
+signposts it meets name, so a new orchestrator, or a second one, rebuilds the same picture. A
+**signpost** is a `Revisit when` line — a condition in the world and where it is read — on a
+deferred Ticket, or after a title in the North Star's list of strategy choices in force.
 
 ## Arguments
 
@@ -44,7 +46,11 @@ second one, rebuilds the same picture.
    identity, say which account the store config needs and stop before any launch.
 2. **Read the front items.** For each effort in scope, read its front item's destination, its
    priority override, and its standing settings: a `Paused:` line, and a `Status page:` line
-   holding the page's link.
+   holding the page's link. Then read every strategy signpost in the project's North Star
+   (`NORTH_STAR.md`, or wherever the project context file says it lives) at the source it names,
+   whatever the scope: one that reads as met, and one whose source cannot be read, each goes on
+   the list of what waits on the person with its record's title and source. Change neither the
+   record nor the list; reopening a choice is the person's call.
 3. **Read the venue's limits.** A file store gets no parallel runs: claims cannot separate runs
    across working copies, so this orchestrator runs one Ticket at a time inside its own session.
    On a code host, read whether the target branch requires up-to-date branches or a merge queue,
@@ -60,7 +66,10 @@ second one, rebuilds the same picture.
    it is in exactly one.
    - *Left alone*, each with its reason: a person is assigned; its author lacks write access and it
      has no Auto; it is escalated; another orchestrator's run holds it; a dependency is open and
-     not itself planned; the type filter passes it over. A Ticket whose open dependencies are all
+     not itself planned; it is deferred and its signpost reads as unmet; it is deferred and its
+     signpost's source cannot be read, which also puts it on the list of what waits on the person,
+     with that source; the type filter passes it over. Read each deferred Ticket's source at every
+     sort, and never edit its line, whatever the source showed or whether you could read it: only a person does. A Ticket whose open dependencies are all
      planned joins the plan behind them.
    - *Running*: its run facts name a live run.
    - *To land*: its record is marked ready to land by a run of yours and no run is live, and the
@@ -72,8 +81,8 @@ second one, rebuilds the same picture.
      wrote no outcome (*The attempt record* lists them) — a failed launch — or wrote an escalation
      whose mark is now gone, or marked ready a pull request that merged before the Ticket was
      reopened.
-   - *Ready*: open, unclaimed, every dependency closed, no escalation mark, matching any type
-     filter, and either granted Auto or, without it, allowed under the convention's *The Auto
+   - *Ready*: open, unclaimed, every dependency closed, no escalation mark, its signpost read as
+     met at its source when it is deferred, matching any type filter, and either granted Auto or, without it, allowed under the convention's *The Auto
      grant*.
 
    Venue items that are not Tickets are never touched. When nothing is running, to land, to
@@ -103,7 +112,7 @@ second one, rebuilds the same picture.
 For each free slot, take the next Ticket in the plan:
 
 1. **Re-read that one Ticket.** Skip it when it is closed, a person holds it, it carries the
-   escalation mark, a dependency is open, or its run facts name another orchestrator's run whose
+   escalation mark, a dependency is open, it is deferred and its source no longer shows its signpost met, or its run facts name another orchestrator's run whose
    timeout has not passed. When its Auto grant was withdrawn, it is a Ticket without Auto from then
    on.
 2. **Claim it and write the launch facts** as the automation identity, in place of the launch facts
@@ -188,8 +197,9 @@ check-in:
 
 Keep **one list of what waits on the person**, ordered by what waiting costs: held pull requests
 and drafted answers, escalations, Tickets awaiting a grant, Tickets left alone because their author
-lacks write access, a common cause that paused an effort, planning start lines, refactor
-proposals, and the next plan. Give each item its own bullet, never a count standing in for items,
+lacks write access, deferred Tickets whose signpost's source cannot be read, strategy signposts
+that read as met or whose source cannot be read, a common cause that paused an effort, planning
+start lines, refactor proposals, and the next plan. Give each item its own bullet, never a count standing in for items,
 with what the person is asked, the answer you recommend, the risk of taking it, and the evidence
 it rests on — the gates that passed and what they did not check, the failing check, the blocker —
 so the person can decide it without opening the pull request or the Ticket. Show the whole list on

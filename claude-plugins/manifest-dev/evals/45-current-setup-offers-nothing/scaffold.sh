@@ -8,7 +8,7 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v8 -->
+<!-- setup-project surfaces v9 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
@@ -42,7 +42,9 @@ cat > NORTH_STAR.md <<'EOF'
 
 ## Purpose
 
-Reading clubs lose track of who has which book, and a volunteer ends up chasing loans by memory.
+Every book a club lends finds its way back, and running the club stays a pleasure for the
+volunteer who organizes it. In the way: clubs lose track of who has which book, and that
+volunteer ends up chasing loans by memory.
 
 For: volunteer organizers of small reading clubs.
 Not for: libraries with a catalogue system of their own.
@@ -106,7 +108,10 @@ the restatus of what it changes, and the index.
 One label is reserved. A record of a guiding choice — one the project pursues its goal through,
 and that other decisions derive from — carries the area `Strategy`. The North Star's *Strategy
 choices in force* list holds the titles of the `Strategy` records in effect and nothing else, so
-writing, superseding or retiring such a record rebuilds that list in the same act.
+writing, superseding or retiring such a record rebuilds that list in the same act. A record may
+carry a `Revisit when` field — the condition that would reopen it, and where it is read — which
+the list shows after its title. Where a decision sits outside what the North Star's *Purpose*
+names, its record's context says so in one line.
 EOF
 cat > docs/adr/README.md <<'EOF'
 # Architecture Decision Records
