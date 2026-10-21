@@ -8,12 +8,14 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v7 -->
+<!-- setup-project surfaces v8 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
 
-- **NORTH_STAR.md** — why this project exists and who it's for.
+- **NORTH_STAR.md** — what this project is for and for whom, the principles it holds, how it
+  tells progress, and the bets it rests on. The choices made along the way live in `docs/adr/`,
+  never in it.
 - **CONTEXT.md** — what words mean here.
 - **docs/adr/** — why decisions went the way they did. Write new records per
   `docs/adr/CONVENTIONS.md`.
@@ -39,11 +41,42 @@ EOF
 cat > NORTH_STAR.md <<'EOF'
 # North Star — Shelfnote
 
-## Who it's for
+## Purpose
 
-Volunteer organizers of small reading clubs.
+Reading clubs lose track of who has which book, and a volunteer ends up chasing loans by memory.
+
+For: volunteer organizers of small reading clubs.
+Not for: libraries with a catalogue system of their own.
 
 — hypothesis: from the README. 2026-05
+
+## Goal
+
+An organizer knows, at any moment, where every club book is.
+
+— empty: the owner has not stated it. What would fill it: the owner's sentence. 2026-05
+
+## Principles
+
+- It never asks a member for anything but a name.
+
+— ruled: 2026-05
+
+## How we know
+
+— empty: nothing is counted yet. What would fill it: a measure the owner picks. 2026-05
+
+## What this rests on
+
+— empty: no bet stated. What would fill it: the owner's main bet. 2026-05
+
+## Open
+
+None yet.
+
+## Strategy choices in force
+
+None yet.
 EOF
 cat > docs/adr/CONVENTIONS.md <<'EOF'
 # ADR Conventions
@@ -73,6 +106,11 @@ the restatus of what it changes, and the index.
 
 Only an `Accepted` record is in effect. Backfilling `Enforced by`, building a `not yet` check,
 and citing a record as a ruling read only records in effect.
+
+One label is reserved. A record of a guiding choice — one the project pursues its goal through,
+and that other decisions derive from — carries the area `Strategy`. The North Star's *Strategy
+choices in force* list holds the titles of the `Strategy` records in effect and nothing else, so
+writing, superseding or retiring such a record rebuilds that list in the same act.
 EOF
 cat > docs/adr/README.md <<'EOF'
 # Architecture Decision Records

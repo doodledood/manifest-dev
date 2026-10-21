@@ -8,12 +8,19 @@
      comment sits above breaks that copy — change the recipe in setup-project/SKILL.md step 3
      in the same edit. -->
 
-A North Star is a project's standing strategy surface: one short document holding why the
-project exists, who it is for, what it promises, and what winning means. It lives in the
-project's own repository so every session and every contributor — with or without any
-particular tooling — anchors on the same direction. It is the project-level counterpart
-of a task-level spec: a task contract governs one piece of work and resets when it ends;
-the North Star persists across all of them and is edited on purpose.
+A North Star is a project's standing statement of what it is for: one short document holding
+its purpose, its goal, the principles it holds, how it tells progress, and the bets it rests
+on. It lives in the project's own repository so every session and every contributor — with or
+without any particular tooling — starts from the same base when it decides anything a task's
+own contract does not settle. It is the project-level counterpart of a task-level spec: a task
+contract governs one piece of work and resets when it ends; the North Star persists across all
+of them and is edited on purpose.
+
+**It holds what decisions are judged against, never what they chose.** A decision weighs the
+project's ends, measures, principles and bets and picks an option; that chosen option is the
+decision's output, and it lives in the project's decision records. Kept to those inputs, the
+document changes only when the purpose, a principle or a bet changes, and a later session never
+mistakes a tactic for the mission.
 
 **It informs; it never binds.** A boundary that must be enforced on a piece of work is
 encoded in that work's own binding contract (for manifest-dev users: `/define` routes a
@@ -53,12 +60,14 @@ outgrows the page, never pre-emptively.
 
 ## Positions and their states
 
-A **field** is one of the nine sections below. A **position** is one claim carrying one
-state: most fields hold a single position, and a field written as a list holds one per
-entry. Every position carries its state as a dated provenance note — for example,
+A **section** is one of the six below. A **position** is one claim carrying one
+state: a section written as prose holds one position per claim, and a section written as a
+list holds one per entry. Every position carries its state as a dated provenance note — for example,
 `— hypothesis: matches ourselves; no outside user has confirmed it. 2026-08` or
 `— empty: no audience named. What would fill it: a person with a situation. 2026-08`.
 Without the state, a measurement, a guess, and a decision all read as equally settled.
+A provenance note is one line: the state, its date, and the titles of the records behind it.
+How a position came to read as it does is history, and history lives in those records.
 The following table defines the four states:
 
 | State | Means | What moves it |
@@ -93,52 +102,73 @@ remember why it moved. A session that finds a contradiction surfaces it and asks
 never rewrites.
 Unattended automation may lower states or flag, never change a position.
 
-## The nine fields
+## What a line may be
 
-Throughout these fields, *they* is the person the project serves — never the tooling,
+Every line of the document is one of four kinds, and nothing else:
+
+- **An end** — what the project is for, or whom it serves. Asked "why does this matter?", it
+  has no deeper answer inside the document.
+- **A measure** — how the project tells progress on one part of its goal: what is counted,
+  which way it should move, and a floor where the floor itself defines a value ("never worse
+  than what people do by hand today").
+- **A principle** — a limit or a trade-off the owner holds even when evidence says crossing it
+  would pay. That is what separates it from a choice.
+- **A bet** — a belief about the world that, if false, would change the goal or end one part
+  of the project. A bet the owner states is still a `hypothesis` until something tests it.
+
+**The test for any line.** Would the owner re-tune it when evidence moves? Then it is a chosen
+option, not one of the four: it belongs in a decision record, and a dated target — a value a
+measure should reach by a date — belongs in the destination of the effort pursuing it. The
+choices themselves can matter a great deal; they leave because they are outputs of the
+document's inputs, and a copy here would make a later session protect a tactic as if it were
+the purpose. A line that names one example, setting, number or path is nearly always a choice,
+however stable it has been; name the shape it serves instead, and let the provenance note
+point to the record that holds the specifics.
+
+Live readings never enter either: states carry dates, and staleness is read from them.
+
+## The sections
+
+Throughout these sections, *they* is the person the project serves — never the tooling,
 agents, or sessions that operate it. Where a project's users are its own maintainers, the
 machinery is the most visible thing arriving and is still not the audience.
 
-The following table names each field, what it holds, and the trap that most often ruins it:
+The following table names each section, what it holds, and the trap that most often ruins it:
 
-| Field | What it holds | The trap |
-|-------|---------------|----------|
-| **Diagnosis** | What is going on and what is in the way, plus the one sentence that changes everything if false | Writing the user's complaint instead of the barrier behind it |
-| **What this rests on** | The handful of live, falsifiable assumptions under the diagnosis — one line each | Letting it grow past a handful, or filling it with task-level facts, which belong in the task's own spec and reset with it |
-| **Who it's for** | A person with a situation, named narrowly enough to exclude someone, plus an explicit not-for | A segment name so broad it cannot be wrong |
-| **Promise** | The sentence that person reads at the moment they decide to rely on it | A feature list, or a quality claim they cannot check |
-| **How they arrive** | What the person was doing when they got here, not only which channel | Naming channels alone — an offer matched to one arrival and shown to another measures nothing |
-| **Money — or what it feeds** | The mechanism and price; where there is none, what the project compounds instead | Leaving it at "free", which hides what justifies the effort |
-| **Winning, and the number watched** | The destination, and the single count that tracks it — or the owner's ruling that this project carries no number | Treating them as one — a destination with no number is unwatchable; a number with no destination tracks nothing |
-| **Never** | The standing boundaries, in checkable form — trade-off stances included, phrased as the prohibition they imply | Stating a stance and its prohibition as two entries; one rule split in two means only one copy gets read |
-| **Open** | Questions no field holds, each with what would fill it | Duplicating `empty` fields, which already carry their own filling condition |
+| Section | What it holds | The trap |
+|---------|---------------|----------|
+| **Purpose** | What is going on and what is in the way, then who the project is for — a person with a situation, named narrowly enough to exclude someone — and an explicit not-for | Writing the user's complaint instead of the barrier behind it, or a segment so broad it cannot be wrong |
+| **Goal** | The destination, in the sentence that person reads when deciding to rely on it, and what reaching it means for the project itself | A feature list, or a quality claim nobody can check |
+| **Principles** | The limits and trade-offs held even against evidence — what the project never does, what it never trades away, and what keeps it going where money is not the point — one per entry, each phrased as what it rules out | A tactic phrased as a principle: if evidence would move it, it is a choice |
+| **How we know** | One measure for each part of the goal, with its direction and any floor; a part nothing measures yet is `empty` with what would fill it | One number for a goal with several parts, which lets the unmeasured part drop out of every decision |
+| **What this rests on** | A handful of live, falsifiable bets, the main one first: the sentence that changes everything if false | Letting it grow past a handful, or filling it with task facts, which belong in that task's own spec |
+| **Open** | Questions none of the sections above holds, each with what would fill it | Repeating an `empty` position, which already carries its own filling condition |
 
-Belief height decides what may enter the first two fields: if this position turned out
-false, how much dies? The diagnosis false means pivot or stop; an assumption false means
-one lane of the project dies; anything smaller is a task fact and belongs in that task's
-own spec.
+After the sections comes **Strategy choices in force**: the titles of the decision records in
+effect that carry the area `Strategy` — the few guiding choices the project pursues its goal
+through, which other decisions derive from. The list holds titles only and is rebuilt from
+those records in the same act that writes, supersedes or retires one; the record holds the
+choice and its reasons.
 
-## What it anchors, and what it never holds
+Belief height decides what may enter *What this rests on*: if this bet turned out false, how
+much dies? The purpose false means pivot or stop; a bet false means one part of the project
+ends; anything smaller is a task fact and belongs in that task's own spec.
 
-The North Star is what a decision is checked against, never where work is done. Who
-it's for sets who copy is written to — the copy is not in here. The promise bounds what
-marketing may claim — the campaigns are not in here. Live metric readings never enter
-the document: states carry dates, and staleness is read from them.
+## What it anchors
 
-Position text stays at the altitude the document works at: a North Star is an alignment
-surface, so concrete work-level specifics — an example, a name, a number, a path — do
-not belong in a position, however stable or true they are. Name the shape, and let
-provenance notes carry compact pointers to where the specifics live. Such a document
-also churns less as details move, but altitude is the test, not churn.
+The North Star is what a decision is checked against, never where work is done. Who it is for
+sets who copy is written to — the copy is not in here. The goal and the principles bound what
+marketing may claim — the campaigns are not in here. The measures say which way to push — the
+dated targets live with the efforts that pursue them.
 
 ## Document skeleton
 
 ```markdown
 # North Star — {project}
 
-Why this project exists, for whom, and what winning means — the standing answers every
-session and contributor anchors on. This document informs; it never binds: a boundary
-that must be enforced on a piece of work is encoded in that work's own binding contract.
+What this project is for, for whom, and how it tells progress — the base every session and
+contributor decides from. This document informs; it never binds: a boundary that must be
+enforced on a piece of work is encoded in that work's own binding contract.
 
 Every position below carries a state, rendered as a dated provenance note:
 
@@ -150,33 +180,27 @@ Every position below carries a state, rendered as a dated provenance note:
 New evidence may lower a position's state. The position text itself changes only by the
 owner's ruling, and each change is remembered as a decision record.
 
-## Diagnosis
-{what is going on, what is in the way, and the sentence that changes everything if false}
+## Purpose
+{what is going on and what is in the way; then "For: …" and "Not for: …"}
 {— state: grounding. date}
 
+## Goal
+{the destination, in the sentence the person reads when deciding to rely on it}
+
+## Principles
+{one limit or trade-off per entry, held even against evidence}
+
+## How we know
+{one measure per part of the goal: what is counted, its direction, any floor}
+
 ## What this rests on
-{one assumption per entry, each with its own state}
-
-## Who it's for
-{the person this project serves, not the machinery that operates it; plus "Not for: …"}
-
-## Promise
-{what that person gets, in the sentence they read when deciding to rely on it}
-
-## How they arrive
-{what that person was doing at the moment they came to this project}
-
-## Money — or what it feeds
-{the mechanism and price, or what the project compounds where there is neither}
-
-## Winning, and the number watched
-{the destination and the one count that tracks it, or the ruling that there is no number}
-
-## Never
-{one standing boundary per entry, each phrased as the prohibition it implies}
+{one bet per entry, the main bet first, each with its own state}
 
 ## Open
 {one question per entry, each with what would fill it}
+
+## Strategy choices in force
+{titles of the decision records in effect with area Strategy — rebuilt from them, never edited alone}
 ```
 
 <!-- Fixed boundary: copying pauses here. The chapter below is installer-facing and is
@@ -202,16 +226,17 @@ the entry itself does not explain.
 ```markdown
 ## Project surfaces
 
-<!-- setup-project surfaces v7 -->
+<!-- setup-project surfaces v8 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo — shared
 ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.md` and
 `CONTEXT.md` at the start of every session.
 
-- **NORTH_STAR.md** — why this project exists, who it's for, what winning means. Anchor on
-  it scope, priority, outward claims, and any call the work's own contract does not settle —
-  a mid-run pivot, whether to act on a review comment, what to leave alone. Each position
-  carries a dated state
+- **NORTH_STAR.md** — what this project is for and for whom, the principles it holds, how it
+  tells progress, and the bets it rests on. Anchor on it scope, priority, outward claims, and
+  any call the work's own contract does not settle — a mid-run pivot, whether to act on a
+  review comment, what to leave alone. The choices made along the way live in `docs/adr/`,
+  never in it. Each position carries a dated state
   (evidence / hypothesis / ruled / empty): new evidence may lower a state, but a
   position changes only by the owner's call, recorded as a decision record. The full
   form is `docs/NORTH_STAR_CONVENTIONS.md` — it is self-contained.
@@ -246,17 +271,21 @@ ground for every contributor and agent, regardless of tooling. Read `NORTH_STAR.
 ## Produce it honestly
 
 Seed only what the repository's own artifacts evidence — a README's stated audience, a
-pricing page's price, a published tagline. Each seeded position carries `hypothesis` or
+published tagline, a stated principle. Each seeded position carries `hypothesis` or
 `evidence` per its actual grounding, with the artifact named in the provenance note. A
-field no artifact answers stays `empty` with its filling condition; a strategy position
+section no artifact answers stays `empty` with its filling condition; a strategy position
 the artifacts don't support is fiction with a state on it, and inventing it wrongs every
 session that later anchors there.
 
-*Diagnosis* and *Who it's for* are the two fields the rest are derived from, so a seed
-narrower than the project propagates into all of them. Read what the project does — its
-practice, its live work — alongside what it says about itself, and where the stated
-purpose and the practice diverge, put both to the owner rather than picking one.
+Put every candidate line through the test in *What a line may be* before it is seeded. The
+history of a project is full of choices — a price, a launch plan, a chosen integration — and
+each one that matters is seeded as a decision record, or left out, never as a position.
 
-Fields that need working out rather than stating — who it's really for, the promise, the
-money mechanism — are one investigation each, run when the owner chooses. The `empty` and
+*Purpose* is the section the rest are derived from, so a seed narrower than the project
+propagates into all of them. Read what the project does — its practice, its live work —
+alongside what it says about itself, and where the stated purpose and the practice diverge,
+put both to the owner rather than picking one.
+
+Sections that need working out rather than stating — who it's really for, the goal, the
+measures — are one investigation each, run when the owner chooses. The `empty` and
 `hypothesis` positions are the doc's own to-do list.

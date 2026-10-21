@@ -1,9 +1,10 @@
 # North Star — manifest-dev
 
-Why this project exists, for whom, and what winning means — the standing answers every
-session and contributor anchors on. This document informs; it never binds. A boundary that
-must be enforced on a piece of work is encoded in that work's own binding contract (for
-manifest-dev users: `/define` routes an unsafe "never" to a Global Invariant).
+What this project is for, for whom, and how it tells progress — the base every session and
+contributor decides from. This document informs; it never binds: a boundary that must be
+enforced on a piece of work is encoded in that work's own binding contract (for manifest-dev
+users: `/define` routes a principle whose violation would be unsafe or irreversible to a Global
+Invariant). The choices made along the way live in `docs/adr/`, never here.
 
 Every position below carries a state, rendered as a dated provenance note:
 
@@ -13,38 +14,114 @@ Every position below carries a state, rendered as a dated provenance note:
 - **empty** — nobody has answered yet, written with what would fill it.
 
 New evidence may lower a position's state. The position text itself changes only by the
-owner's ruling, and each change is remembered as a decision record in `docs/adr/`. The
-full form — fields, states, maintenance — is `docs/NORTH_STAR_CONVENTIONS.md`, which
-governs and needs no tooling.
+owner's ruling, and each change is remembered as a decision record in `docs/adr/`. The full
+form — sections, states, maintenance — is `docs/NORTH_STAR_CONVENTIONS.md`, which governs and
+needs no tooling.
 
-## Diagnosis
+## Purpose
 
-Agents can write almost anything now, and projects still drift. What the project is
-trying to become, what's worth doing next, and what done means live in whoever happens to
-be working — so every session and every teammate re-derives them from scratch, and the
-agent's speed just multiplies work nobody can tell was worth doing. Understanding and
-verification demo worse than generation, so tools compete on generation and overpromise.
-The one sentence that changes everything if false: spending more tokens and more up-front
-process — on understanding, on what's worth doing next, and on what done means — leaves a
-project better off than moving faster without them.
+Agents can write almost anything, and projects still drift. What a project is becoming, what is
+worth doing next and what done means live in whoever is working, so every session and every
+teammate works them out again, and the agent's speed multiplies work nobody can tell was worth
+doing. manifest-dev keeps that understanding in the project and makes an agent's output
+trustworthy enough to ship with minimal review.
 
-— hypothesis: the unit ruled 2026-08-20, after half of one month's decision records
-  turned out to sit above the single task the previous text named; the bet sentence ruled
-  2026-08-21, moving the stop condition from market adoption to the practice itself.
-  Grounded in our own daily use and the frustration list carried since the first strategy
-  doc; untested beyond ourselves. See
-  docs/adr/20260820-the-project-is-the-unit-not-the-task.md and
-  docs/adr/20260821-the-bet-is-about-the-practice-not-the-market.md.
+— hypothesis: 2026-08-20. Records: The project is the unit the workflows serve, not the single task.
+
+For: quality-first developers — five-plus years of experience, already working with an agentic
+coding CLI, willing to spend tokens and up-front effort for output they can trust — in a team of
+any size, on a project of their own or inside a codebase where most colleagues do not use
+manifest-dev. Secondary: teams standardizing how AI-assisted development is done.
+
+Not for: cost optimizers, speed-first shippers, tinkerers who want to tweak everything, hype
+chasers, and people not using a coding agent at all.
+
+— ruled: 2026-10-15. Records: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it.
+
+## Goal
+
+*"I can give the agent a complex task and trust the output enough to ship it with minimal review
+— and come back to the project weeks later and find it still knows what it's becoming, what's
+next, and what done means — and find the codebase easier to change correctly than when I started
+— and, as far up the autonomy ladder as I choose to go, find the project moving forward on its
+own, taking its next work from its queue and asking me only when it needs my judgment, taste or
+authority."*
+
+— ruled: 2026-10-15. Records: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it; The promise includes a codebase that gets easier to change correctly.
+
+For the project itself: our own projects run end to end on all three tiers — a North Star that
+stands, work pulled from a Ticket store, and execution against a Manifest with gate evidence —
+and drive themselves wherever they can. Outside recognition is welcome as a consequence of that,
+never a target traded against it.
+
+— ruled: 2026-10-15. Records: Winning is our own projects running the full loop; recognition is a consequence.
+
+## Principles
+
+- **Quality decides.** Cost and speed bind second to it: a workflow stays practically affordable
+  on high-end models and its verification fast enough that many agents at once are not held up,
+  and neither is ever bought with quality. A run that keeps verifying and repairing after its
+  gates hold is a defect in the workflow, never a meter the user has to watch.
+
+  — ruled: 2026-10-15. Records: Cost is a binding constraint, second to quality; Verification speed binds like cost, second to quality.
+
+- **Simple to use.** Workflows may be sophisticated inside; the experience stays minimal steps,
+  nothing to memorize — follow along and it works.
+
+  — ruled: since the first strategy doc.
+
+- **Each piece stands alone.** Nothing has to be adopted whole to be useful, each level of the
+  autonomy ladder works without the ones above it, and what a user adds to a shared repository
+  reads as plain files and plain instructions that stop no colleague who does not use
+  manifest-dev from working as they did.
+
+  — ruled: 2026-10-15. Records: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it.
+
+- **Claim only what holds.** No hype register and no superlative promising what models cannot
+  reliably do, on any surface we write; no commentary on this repository's own adoption or
+  popularity.
+
+  — ruled: since the first strategy doc.
+
+- **Free and open.** No monetization intended; the workflows are built for our own projects
+  first, and distribution stays second to getting them right.
+
+  — ruled: since the first strategy doc; reaffirmed 2026-07-28.
+
+## How we know
+
+- **Our own projects running all three tiers at once** — a count; up.
+
+  — ruled: 2026-08-21. Records: Winning is our own projects running the full loop; recognition is a consequence.
+
+- **Merged work that needed a person only for judgment, taste or authority** — a share; up.
+
+  — empty: no count chosen. What would fill it: the owner's choice, once our own projects run unattended work. 2026-10-15
+
+- **Shipped work that had to be reworked** — a rate; down.
+
+  — empty: the trust part of the goal has no measure. What would fill it: the eval baseline or our own projects reporting rework. 2026-10-21
+
+- **Cost per merged change** — down, never at quality's cost; judged per unit of merged work once
+  runs go unattended, so cheap runs that escalate count against it.
+
+  — ruled: 2026-10-15. Records: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it.
 
 ## What this rests on
 
-- Understanding-first workflows — investigate, define what done means, execute and
-  verify every criterion — produce fewer reworked results than direct prompting.
+- **The bet:** spending more tokens and more up-front process — on understanding, on what's
+  worth doing next, and on what done means — leaves a project better off than moving faster
+  without them.
+
+  — hypothesis: 2026-08-21; untested beyond ourselves. Records: The bet is about the practice, not about whether a market adopts it.
+
+- Understanding-first workflows — investigate, define what done means, execute and verify every
+  criterion — produce fewer reworked results than direct prompting.
 
   — hypothesis: strong lived support across our own projects; never measured. 2026-08
 
-- Skills are a durable, harness-agnostic distribution surface: the same prompts serve
-  Claude Code, OpenCode, Codex, and Pi.
+- Skills are a durable, harness-agnostic distribution surface: the same prompts serve Claude
+  Code, OpenCode, Codex, and Pi.
 
   — evidence: shipped and maintained as per-CLI packages under `dist/` since 2026-06.
 
@@ -52,155 +129,28 @@ project better off than moving faster without them.
   becomes a check, debt is paid on the path of the next change, and each long-lived artifact
   keeps a way to verify it that normal runs keep fresh.
 
-  — hypothesis: grounded in a stress test of about 700 review comments from one production
-  codebase and in published practice; unmeasured until the eval baseline and real projects run
-  it. 2026-10
+  — hypothesis: unmeasured until the eval baseline and real projects run it. 2026-10
 
-- Gates that carry evidence can stand in for a person reviewing each change, so work can
-  land unattended wherever it needs no one's judgment, taste or authority.
+- Gates that carry evidence can stand in for a person reviewing each change, so work can land
+  unattended wherever it needs no one's judgment, taste or authority.
 
-  — hypothesis: the self-driving part of the direction rests on it; our own runs land work
-  on gate evidence, but no project has yet run unattended work at volume and compared it
-  with reviewed work. See docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. 2026-10-15
-
-## Who it's for
-
-Quality-first developers: five-plus years of experience, already working with an agentic
-coding CLI, willing to spend tokens and up-front effort for output they can trust — in a
-team of any size, on a project of their own or inside an existing codebase where most of
-their colleagues do not use manifest-dev. Each takes the levels of the autonomy ladder that
-fit their situation. Secondary: teams standardizing how AI-assisted development is done.
-
-Not for: cost optimizers, speed-first shippers, tinkerers who want to tweak everything,
-hype chasers, and people not using a coding agent at all.
-
-— ruled: 2026-10-15, the owner widened the person from solo or small-team to any team,
-  including codebases where colleagues do not use it; the person still matches ourselves,
-  and no user beyond the maintainer has confirmed the segment. See
-  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md.
-
-## Promise
-
-First-principles workflows that make an agent's output trustworthy enough to ship with
-minimal review, on work you can tell was worth doing — invest upfront, ship with
-confidence. Trustworthy output is what gets felt first, and it is not the whole of it: an
-agent can be exactly right about the wrong work. The bar a user should hold us to: *"I can
-give the agent a complex task and trust the output enough to ship it with minimal review —
-and come back to the project weeks later and find it still knows what it's becoming,
-what's next, and what done means — and find the codebase easier to change correctly than
-when I started — and, as far up the autonomy ladder as I choose to go, find the project
-moving forward on its own, taking its next work from its queue and asking me only when it
-needs my judgment, taste or authority."*
-
-— ruled: 2026-10-15, the owner added the part where the project moves forward on its own,
-  as far as each user chooses; the codebase part was ruled 2026-10-13, and the first two
-  parts to stand together 2026-08-21. None of it has been put in front of a stranger as the
-  reason to try the project. See docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md,
-  docs/adr/20261013-the-promise-includes-a-codebase-that-gets-easier-to-change.md and
-  docs/adr/20260821-positioning-drops-the-conversion-funnel.md.
-
-## How they arrive
-
-However they find it. The project is built in public and shared as it is used; no channel
-is worked and no funnel is maintained. Whatever someone meets first stands alone, so
-nothing has to be adopted whole to be useful. The levels form an autonomy ladder — one
-skill used on its own, one piece of work understood, defined and verified, a project that
-keeps its direction, vocabulary, decisions and checks, a shared queue of work, and
-unattended runs that take work from that queue — and each level works without the ones
-above it and without anyone else on the team adopting any of it. manifest-dev ships an
-orchestrating skill, not a scheduler: the user starts it by hand or from a scheduler they
-already run, and every skill it drives still works on its own.
-
-— ruled: 2026-08-21, arrival is not pursued; the standalone shape is kept because it is
-  the honest entry to the method, not because it converts. Extended 2026-10-15 to the
-  autonomy ladder, each level working without the ones above it and without the team.
-  Changed 2026-10-18 from shipping no orchestrator to shipping an orchestrating skill, after
-  the one-Ticket sweep gave too little control and ran too slowly for many agents at once. See
-  docs/adr/20260821-positioning-drops-the-conversion-funnel.md,
-  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md and
-  docs/adr/20261018-an-orchestrating-skill-runs-the-queue-and-replaces-the-sweep.md. Only the owner moves this.
-
-## Money — or what it feeds
-
-Free, open source, no monetization intended. What it feeds instead: these workflows are
-built for our own projects first, so every improvement pays there — and they build
-public credibility for the first-principles approach. Distribution stays secondary to
-getting the workflows right.
-
-— ruled: standing since the first strategy doc; last reaffirmed 2026-07-28. Only the
-  owner moves this.
-
-## Winning, and the number watched
-
-Winning is our own projects running end-to-end on all three tiers — a North Star that
-stands, work pulled from a Ticket store rather than from whoever is at the keyboard, and
-execution against a Manifest with gate evidence — and driving themselves wherever they
-can: agents take work from the store, finish it, and ticket up what they find, while
-people step in only where a run is blocked or needs their judgment, taste or authority.
-Outside recognition is welcome as a
-consequence of that working; it is never a target traded against it. The number watched:
-how many of our own projects are running all three tiers at once.
-
-— ruled: 2026-08-21, the owner's choice between the two candidates the empty field named,
-  grounded in the standing ruling that distribution stays secondary to getting the
-  workflows right. The destination extended 2026-10-15 to projects that drive themselves
-  wherever they can; the number is unchanged, and whether that part needs its own count is
-  Open. See docs/adr/20260821-winning-is-our-own-projects-running-the-full-loop.md and
-  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md.
-  Only the owner moves this.
-
-## Never
-
-- Hype registers on any surface we write: no "revolutionary", "game-changing", "magic",
-  "10x faster", "the only tool you'll ever need", or any superlative promising what
-  LLMs cannot reliably do.
-- Trading quality away for token cost or speed — quality stays the deciding axis. Cost
-  is a binding constraint now, not a non-goal: workflows must stay practically affordable
-  on high-end models. The answer is one lean path per beat rather than a lean variant
-  beside a procedural one — a prompt that states its goal and gets out of the way spends
-  less of the model's attention on being told what it already knows, which measured
-  better as well as cheaper. Speed binds the same way: a run's verification rounds must
-  stay fast enough that many agents working at once are not held up by them. Once runs go
-  unattended, cost is judged per unit of merged work, not per run, so cheap runs that
-  escalate count against it. And the
-  mirror still holds: a run that keeps verifying and repairing past the point its gates
-  are satisfied is a defect in our workflow, never a meter the user should have to watch.
-- Commentary on this repository's own adoption or popularity (stars, usage, traction)
-  anywhere in the repo.
-- User-facing complexity: workflows may be sophisticated inside, but the experience
-  stays minimal steps, nothing to memorize, "just follow along and it works".
-- Requiring anyone else to adopt it: what a user adds to a shared repository reads as
-  plain files and plain instructions, and nothing in it stops a colleague who does not use
-  manifest-dev from working as they did.
-
-— ruled: each enforced in practice today — the messaging boundaries since the first
-  strategy doc, the bounded-not-cheap boundary added 2026-07-28 and revised 2026-08-20
-  (cost promoted from non-goal to binding constraint, second to quality, after high-end
-  model pricing forced leaner execution and verification paths into the suite out of
-  necessity — see docs/adr/20260820-cost-is-a-binding-constraint-second-to-quality.md),
-  and revised again 2026-09-14 when the owner ruled that one lean path per beat replaces
-  the parallel variants, on evidence that the leaner prompt investigated better rather
-  than merely cheaper — see
-  docs/adr/20260914-one-skill-per-beat-built-from-the-lean-body.md — and again 2026-10-15
-  when the owner ruled that verification speed binds like cost, second to quality, so that
-  many agents working at once are not held up by slow rounds — see
-  docs/adr/20261015-verification-speed-binds-like-cost-second-to-quality.md. The boundary
-  against requiring anyone else to adopt it was added 2026-10-15, when the owner ruled that
-  the project fits inside teams and codebases where most colleagues do not use it; what
-  setup adds to a shared context file has not yet been checked against it. The same day the
-  owner ruled that cost is judged per unit of merged work once runs go unattended — see
-  docs/adr/20261015-projects-drive-themselves-as-far-as-each-user-climbs.md. A Never on agents
-  granting themselves work, ruled that day, was removed 2026-10-18, when the owner ruled that
-  `orchestrate --autonomous` grants Auto wherever the grant criterion holds — see
-  docs/adr/20261018-orchestrate-tickets-up-debt-and-grants-auto-where-the-criterion-holds.md. The traction
-  rule lives in the repository's contributor instructions. Only the owner moves these.
+  — hypothesis: no project has yet run unattended work at volume against reviewed work. 2026-10-15
 
 ## Open
 
-- Does the project-level half of the promise hold for anyone but its author? What would
-  fill it: someone who is not the maintainer keeping a project's direction, its queue,
-  and its definition of done in these surfaces. The owner assumes it does; no one else has
-  tried it. 2026-08, owner's assumption 2026-10-15
-- Which count tracks the self-driving part of winning — the share of merged work that
-  needed a person only for judgment, taste or authority, or another? What would fill it:
-  the owner's choice, once our own projects run unattended work. 2026-10-15
+- Does the project-level half of the goal hold for anyone but its author? What would fill it:
+  someone who is not the maintainer keeping a project's direction, its queue, and its definition
+  of done in these surfaces. The owner assumes it does; no one else has tried it. 2026-08,
+  owner's assumption 2026-10-15
+- Does this wording say what the owner means? Every position above was reshaped into this form
+  by an agent on 2026-10-21, from a draft the owner accepted; the states are those of the lines
+  each replaces, and the wording awaits the owner's line-by-line ruling. What would fill it: the
+  owner ruling each line. Records: The North Star holds what decisions are judged against, and chosen options live in decision records.
+
+## Strategy choices in force
+
+- The project is the unit the workflows serve, not the single task
+- Positioning drops the conversion funnel; the standalone shape stays on honest grounds
+- One skill per beat, built up from the lean body
+- An orchestrating skill runs the queue in parallel and replaces the sweep and event triggers
+- orchestrate tickets up the debt runs leave and grants Auto where the criterion holds

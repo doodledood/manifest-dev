@@ -1,7 +1,7 @@
 # ADR: manifest-dev owns a project North Star surface
 
 ## Status
-Accepted
+Accepted — amended by 20261021-the-north-star-holds-what-decisions-are-judged-against: six sections holding only decision inputs replace the nine fields, and chosen options live in decision records
 
 ## Area
 North Star

@@ -216,7 +216,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | unmeasured |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | unmeasured |
-| `53-update-offer-from-v6` | docs, repository, plugin arm only | Offer the setup update for a project on v6 — its time lines moved from committed evidence into its recipes, committed evidence removed and ignored, and the context-file lines that commit evidence rewritten — and nothing v1 to v6 already gave it | unmeasured |
+| `53-update-offer-from-v7` | docs, repository, plugin arm only | Offer the setup update for a project on v7 — its North Star reshaped so a chosen option moves to a decision record on the owner's ruling, the `Strategy` area in its ADR conventions, and the reworded North Star line — and nothing v1 to v7 already gave it | unmeasured |
 | `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | unmeasured |
 | `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | unmeasured |
 | `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | unmeasured |
@@ -247,6 +247,8 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `81-ui-multistep-form` | autonomous | Cover every state of a long form on poor wifi, serve screen readers, right-to-left and phones concretely, and decide density per surface | unmeasured |
 | `82-writing-post-from-notes` | autonomous | Build the post on the author's own point, back each claim, and pick one sharp point over a survey | unmeasured |
 | `83-separate-questions-separate-owners` | autonomous | Offer to narrow the read to what is settled and hand four independent questions to their owners | unmeasured |
+| `84-chosen-option-goes-to-a-record` | autonomous, repository | Record a ruling the owner would re-tune as a decision record and leave the North Star's positions as they are | unmeasured |
+| `85-evidence-against-a-bet` | autonomous, repository | When the repository's evidence goes against a North Star bet, flag the conflict or mark the bet weakened, without rewriting it | unmeasured |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14; none has been run. Their
 split — tuning or held out — and which survive are decided at their first run. The setup-update
@@ -281,7 +283,7 @@ re-derivation of a load-bearing read that nobody will check, and `70` the classi
 stated constraint as required or chosen. `83` holds the offer to narrow a read once its remaining
 questions stop depending on each other.
 
-**Every recorded number in this file is stale as of 2026-10-20.** The 2026-10-13 change edited
+**Every recorded number in this file is stale as of 2026-10-21.** The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
 2026-10-14 change moved its verification wording to one harness, the 2026-10-15 change made
 that harness optional and the project's own checks a run's to repair, the 2026-10-18 change
@@ -290,7 +292,9 @@ added probes to the coding, bug and performance task files and to recall, which 
 `40` and `43` most, a second 2026-10-19 change added a decision task file, which reaches `06`
 most, and the 2026-10-20 change sharpened three of its probes, which reaches `06` most too, and
 a second 2026-10-20 change made that file's stop clause ask for shown reasons, which reaches
-`06`, `63` and `64`, so no earlier result measures the skill as it ships now. The next baseline replaces them.
+`06`, `63` and `64`, and the 2026-10-21 change made the North Star a values-and-goal document
+and sorted what figure-out writes into it, which reaches `14`, `15`, `24`, `45` and the update-offer
+case most, so no earlier result measures the skill as it ships now. The next baseline replaces them.
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.
@@ -311,7 +315,7 @@ over-triggering is the first casualty of any "press harder" tuning.
 
 ## Classification
 
-Every case's standing as of 2026-10-20, under this file's selection rules: a case stays for
+Every case's standing as of 2026-10-21, under this file's selection rules: a case stays for
 measured uplift or as a declared guard (a floor, a mirror pair, a negative, a held-out witness);
 an unmeasured case stays until its first run decides; a case is retired when it duplicates a kept
 case's discipline, exercises a skill outside this suite's scope, or floored in both arms without
@@ -364,7 +368,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `46` | first run decides | Plugin arm only; mirror of `43` |
 | `48` | first run decides | Reuse and module depth before code |
 | `52` | first run decides | Plugin arm only; a declared guard: the no-plugin arm passes by construction |
-| `53` | keep | Plugin arm only; the one-behind branch, which the version test requires; moved to v5 on 2026-10-15 when v6 shipped, and to v6 on 2026-10-18 when v7 shipped |
+| `53` | keep | Plugin arm only; the one-behind branch, which the version test requires; moved to v5 on 2026-10-15 when v6 shipped, to v6 on 2026-10-18 when v7 shipped, and to v7 on 2026-10-21 when v8 shipped |
 | `54` | first run decides | New on 2026-10-15: the *Fit to trust* jobs v5 added |
 | `55` | first run decides | New on 2026-10-15: repairing a project's own check in its own form, the rule every run owes with or without a harness; the base model likely writes a new test beside the broken one. Its second grader, added 2026-10-19, holds the seen-to-fail job |
 | `56` | first run decides | New on 2026-10-19: the only order-dependent design case; the base model likely goes from the design to example tests |
@@ -395,6 +399,8 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `81` | first run decides | New on 2026-10-20: The UI probes `19` does not hold |
 | `82` | first run decides | New on 2026-10-20: The only human-voice writing case |
 | `83` | first run decides | New on 2026-10-20: The only case for the offer to narrow a read |
+| `84` | first run decides | New on 2026-10-21: The only case for a ruling the North Star must not take in |
+| `85` | first run decides | New on 2026-10-21: The only case for evidence against a North Star bet |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -767,7 +773,7 @@ file. The row is never deleted while the probe stays.
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
-| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v6/offers-only-whats-new-since-v6` |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v7/offers-only-whats-new-since-v7`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `31-record-names-what-enforces-it/record-carries-enforced-by` |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, which needs those skills reachable from the session |
 | `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |

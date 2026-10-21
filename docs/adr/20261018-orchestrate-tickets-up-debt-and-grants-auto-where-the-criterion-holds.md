@@ -4,7 +4,7 @@
 Accepted — amended by 20261019-the-first-grant-decision-stands-and-a-persons-decline-removes-the-grant: an orchestrator gathers only the debt of landings it recorded, the first grant decision created decides, and a person's decline removes the grant
 
 ## Area
-Ticketing
+Strategy
 
 ## Decided by
 The user

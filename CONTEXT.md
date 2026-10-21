@@ -225,7 +225,7 @@ _Avoid_: Wedge, funnel.
 The full understanding-first loop (figure-out → define → do) that every Door opens into; the retention engine behind the Doors.
 
 **North Star**:
-The standing project-level strategy surface — a project's diagnosis and the assumptions it rests on, who it is for and not for, its promise, how people arrive, how it makes money or what it feeds, what winning means and the number watched, its standing nevers, and the open questions no field holds — resident in every session and informing rather than binding, every position carrying one of four states (evidence, hypothesis, ruled, or empty with its filling condition), and positions moving only on the owner's ruling.
+A project's standing statement of what it is for — its purpose and who it is for and not for, its goal, the principles it holds even against evidence, one measure for each part of the goal, the bets it rests on, and the open questions no section holds, followed by the titles of its `Strategy` decision records in effect — holding what decisions are judged against and never what they chose, which live in decision records; resident in every session and informing rather than binding, every position carrying one of four states (evidence, hypothesis, ruled, or empty with its filling condition), and positions moving only on the owner's ruling. Projects set up before surfaces version 8 keep the older nine-field form until they update.
 _Avoid_: Steering layer, strategy doc, business context.
 
 **Autonomy Ladder**:
@@ -306,13 +306,14 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - Absence of **Auto** keeps completion and landing with a person: unattended work takes such a **Ticket** only up to a ready pull request, only when its author has write access and no person is assigned, and never touches venue items that were never written as **Tickets**.
 - **Auto** says whether automation may finish a **Ticket** and is the grantor's call; a **Ticket Type** says which work an operator runs today and is the query's — keeping rollout schedule out of the grant.
 - Every venue a **Ticket Store** runs on has a **Venue Reference**.
-- A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them takes the **North Star**'s winning definition, the measure the destinations alone don't supply.
+- A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them takes the **North Star**'s goal and measures, the measure the destinations alone don't supply.
 - Each level of the **Autonomy Ladder** works without the ones above it; at the top, **Orchestrate** runs the queue through **Run Ticket**, and a person steps in at an **Escalation Mark**, a **User's Call** or a **Taste** offer.
 - **Project Surfaces** live in the project and are read by every session through the **Project Context File**; the **Glossary** and the **Decision Records** are two of them, and the **Verification Harness** runs one **Scenario** at a time, writing its **Evidence** locally, while each **Recipe** carries its **Time Lines**.
-- A **North Star** informs every session by residency and never binds; the one binding route is `/define` routing an unsafe or irreversible Never to a **Global Invariant**.
+- A **North Star** informs every session by residency and never binds; the one binding route is `/define` routing a principle whose violation would be unsafe or irreversible to a **Global Invariant**.
 - A project-owned North Star conventions file (emitted by `setup-project` beside the doc) governs the **North Star**'s form wherever it exists, with the plugin's shipped default applying otherwise — the same precedence the **ADR Conventions** carry; cadence stays with figure-out.
+- A chosen option lives in a **Decision Record**, never in the **North Star**; a guiding one carries the area `Strategy`, and the **North Star** lists the titles of those in effect as a **Derived Index** of them.
 - `setup-project` installs and seeds a **North Star**; figure-out's docs mode keeps it current under the update asymmetry — evidence lowers a position's state, only the owner's ruling changes a position, and each position change is remembered as a decision record.
-- `next-ticket` reads the **North Star**'s winning definition for cross-**Effort** comparison and surfaces a candidate that would cross a Never; `/define`'s marketing task file gates outward-facing claims against its Promise and Never.
+- `next-ticket` reads the **North Star**'s goal and measures for cross-**Effort** comparison and surfaces a candidate that would cross one of its principles; `/define`'s marketing task file gates outward-facing claims against its goal and principles.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
 - The **Bearer Test** governs which advisory-tier **Quality Gates** a **Manifest** omits; defect-finding dimensions, deterministic project gates, and safety-critical **Global Invariants** are never eligible.
 - A figure-out **Read** ships with the **Evidence Ledger** it rests on.

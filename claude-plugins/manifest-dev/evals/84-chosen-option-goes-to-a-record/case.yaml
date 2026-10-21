@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 84-chosen-option-goes-to-a-record
+context:
+  scaffold_script: scaffold.sh

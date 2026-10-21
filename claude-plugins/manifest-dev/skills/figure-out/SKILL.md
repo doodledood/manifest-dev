@@ -93,7 +93,8 @@ short messages do not require permission to do the next piece of research.
   rather than done silently, and with no user to offer to it becomes a named
   blocker or a flagged assumption.
 - Whatever the read implies making is for someone: start from the person a
-  project's North Star names under *Who it's for*, where there is one, or find out who, then name
+  project's North Star names as who it is for (under *Purpose*, or *Who it's for* in an older
+  North Star), where there is one, or find out who, then name
   the narrower slice and moment this artifact serves where it has one — a
   pricing page is for someone already comparing prices. Take their seat and
   enumerate every use they would make of it toward their ideal — the niche

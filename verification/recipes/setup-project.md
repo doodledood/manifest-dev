@@ -13,13 +13,13 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 - `/setup-project [--no-mine]`; `--no-mine` installs the wiring and the verification harness without mining history.
 - Phrases its description matches: "set up the project", "bootstrap ADRs", "check whether the setup is sound".
 - figure-out's docs mode offers it: no surfaces at all, a missing or older surfaces version, or a broken surface met on the way.
-- On a project recording an older surfaces version it follows that version's upgrade guide: from v6, each time line moved from committed evidence into its recipe, committed evidence removed and its directory ignored, and context-file lines that commit evidence rewritten; from v5, also a recipe for the checks run across the whole tree and one way in; from v4, also control commands, the tool update and the ask-first marks narrowed to cost; from earlier, moving an existing verification surface, feature map and reader tasks into one harness of recipes. A repository with nothing gets the wiring only.
+- On a project recording an older surfaces version it follows that version's upgrade guide: from v7, the North Star reshaped into six sections with each chosen option moved to a decision record on the owner's ruling, and the `Strategy` area in the ADR conventions; from v6, also each time line moved from committed evidence into its recipe, committed evidence removed and its directory ignored, and context-file lines that commit evidence rewritten; from v5, also a recipe for the checks run across the whole tree and one way in; from v4, also control commands, the tool update and the ask-first marks narrowed to cost; from earlier, moving an existing verification surface, feature map and reader tasks into one harness of recipes. A repository with nothing gets the wiring only.
 
 ## Scenarios
 
-### update-from-v6
-Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v6 --max-turns 80`
-Proves: it follows the v6 guide: each of the three time lines moved into its scenario's recipe as a `Line:` field, the raise's reason and the freeze's `#41` kept, before `verification/evidence/` is removed from the repository and ignored; the two context-file lines that commit evidence rewritten; and the version line at v7. Nothing v1 to v6 gave is offered again.
+### update-from-v7
+Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v7 --max-turns 80`
+Proves: it follows the v7 guide: the `Strategy` area added to the ADR conventions and the North Star line reworded before the reshape; the North Star in the six sections, with *How they arrive*'s newsletter channel moved to a decision record with the area `Strategy`, the *Strategy choices in force* list naming that record, one record of the reshape, and the index rebuilt; and the version line at v8. Nothing v1 to v7 gave is offered again.
 Check: read
 Workload: varies
 
