@@ -102,6 +102,11 @@ never a target traded against it.
 
   — empty: the trust part of the goal has no measure. What would fill it: the eval baseline or our own projects reporting rework. 2026-10-21
 
+- **A codebase that gets easier to change correctly** — corrections that became checks, and debt
+  paid on the path of later changes; up.
+
+  — empty: nothing counts it. What would fill it: real projects reporting the checks and debt their runs leave. 2026-10-21
+
 - **Cost per merged change** — down, never at quality's cost; judged per unit of merged work once
   runs go unattended, so cheap runs that escalate count against it.
 

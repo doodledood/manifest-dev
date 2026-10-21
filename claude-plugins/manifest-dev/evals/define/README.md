@@ -66,7 +66,9 @@ it would fail; that reaches every coding case, `d20`, `d23` and `d24` most. A se
 change had the review also search each new Manifest for holes — wrong results that pass every gate
 at once — which reaches every case that writes a spec, and runs inside each case's existing turn
 and time limits. Before trusting the numbers from the first both-arm run after it, check that no
-spec case now ends at one of those limits. The next baseline replaces them.
+spec case now ends at one of those limits. The 2026-10-21 change made the North Star a
+values-and-goal document and moved `d23`'s project to surfaces v8, which reaches `d23` only through
+its scaffold. The next baseline replaces them.
 
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
