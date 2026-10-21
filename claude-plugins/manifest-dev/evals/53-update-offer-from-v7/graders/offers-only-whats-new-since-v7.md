@@ -24,7 +24,7 @@ file reworded.
 **Then judge.** PASS only if all of these hold:
 
 - It offers to update the setup to v8, naming the North Star reshape, and at least one of: the
-  `Strategy` area in the ADR conventions, and the reworded North Star line in the context file.
+  `Strategy` area in the ADR conventions, or the reworded North Star line in the context file.
 - Where it says what happens to the newsletter channel, it moves it to a decision record or out of
   the North Star, rather than keeping it as a position; and it leaves the reshape for the user to
   rule on rather than presenting it as done or as something it will write without asking.

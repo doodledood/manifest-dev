@@ -7,7 +7,7 @@ Install the project surfaces a repository needs so that every future session —
 
 Three things get installed, and only the first is essential:
 
-- **The wiring** — an ADR conventions file the project owns, a glossary, a North Star (the project's standing statement of what it is for: its purpose and whom it serves, its goal, the principles it holds, how it tells progress, and the bets it rests on), and a project-context-file section that makes sessions read and maintain all three and records the surfaces version the project carries. This runs on every project, including one with no history at all.
+- **The wiring** — an ADR conventions file the project owns, a glossary, a North Star (the project's standing statement of what it is for: its purpose and whom it serves, its goal, the principles it holds, how it measures progress, and the bets it rests on), and a project-context-file section that makes sessions read and maintain all three and records the surfaces version the project carries. This runs on every project, including one with no history at all.
 - **A verification harness, recommended and installed by default** — the project's one command for checking that what future runs will change still does its job, with a recipe per thing it checks, seeded from what the project already has, per `references/VERIFICATION_HARNESS.md`. A project that verifies its own way may opt out; the context file then records that way instead.
 - **A seed** — vocabulary and decision records reconstructed from the project's own history. This runs wherever there is history to read, and it is enrichment on top of the wiring, never a substitute for it.
 
@@ -47,7 +47,7 @@ On a project that already carries surfaces, the run is an update, and it aims fo
   |---|---|
   | vN, older than the newest `CHANGES.md` lists | `references/upgrades/vN-to-current.md`, then each later `vM-to-current.md` in that folder |
   | the newest | no guide |
-  | none | no version guide; `references/upgrades/MOVE_TO_HARNESS.md` when the project has a feature map, a reader-task list or a verification-surface README to move |
+  | none | no version guide; `references/upgrades/MOVE_TO_HARNESS.md` when the project has a feature map, a reader-task list or a verification-surface README to move; `references/upgrades/RESHAPE_NORTH_STAR.md` when its `NORTH_STAR.md` is in the older nine-field form |
 
 - **The conventions, the North Star conventions, and the surfaces section** — by comparison, per *Compare, then offer* below.
 - **The records written under the conventions** — only their editable fields, and only on records in effect, as the conventions' lifecycle defines them. Add `Enforced by` where a check already holds the record's decision: code that cites the record, or a lint or test configuration that pins what it decided — one that would fail if the decision were reversed. Where that check has no comment citing the record, offer one. Leave a record with no check found without the line. Add a missing `Area`. Rebuild the index per the conventions. Never change a record's body.

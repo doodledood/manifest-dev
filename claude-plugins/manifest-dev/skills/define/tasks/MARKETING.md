@@ -15,11 +15,12 @@ those files carry the register and accuracy gates, so this file does not repeat 
 **Claim fidelity** encodes as a gate whose body has the evaluator read the project's
 `NORTH_STAR.md` (root, or wherever the project context file says it lives) and the
 finished deliverable, and check every claim a stranger would take as a promise — what
-the product does, for whom, at what price — against the North Star's *Goal* and
-*Principles* sections, or its `Promise` and `Never` fields where it is in the older
-nine-field form. A price is a choice, so a price stated anywhere in the deliverable must
-match exactly the price a decision record in effect holds, or the older form's `Money`
-field: a different number is a different offer, and a price stated where neither holds one
+the product does, for whom, at what price — against the North Star's *Goal*, *Principles*
+and *Purpose* (whom it serves) sections, or its `Promise`, `Never` and `Who it's for` fields
+where it is in the older nine-field form. A price is a choice, so a price stated anywhere in
+the deliverable must match exactly the price a decision record in effect holds, or the older
+form's `Money` field where no record holds one — a record in effect governs where the two
+disagree: a different number is a different offer, and a price stated where neither holds one
 FAILs until a record or the manifest states the offer. **When the project has no North Star, or the session has no project,
 the gate does not silently pass:** the manifest must itself state the promise the
 deliverable is allowed to make and the claims it must not, and the evaluator checks
@@ -44,7 +45,8 @@ Both are Judgment Gates.
 - **Claims a stranger can check** — prefer the demonstrable over the aspirational; a
   claim the reader can verify from the product converts the skeptical reader a superlative
   loses
-- **Capture durable choices beside the North Star** — where the project keeps one: voice rules, positioning language,
-  and channel learnings this task settles will outlive it; write them to an adjacent doc
-  linked from the North Star field they detail, never into its lines (which stay short
-  answers), so the next outward-facing task starts where this one ended
+- **Capture durable choices as decision records** — where the project keeps them: voice rules, positioning language,
+  and channel learnings this task settles will outlive it; record each as a decision under the
+  project's conventions — with the area `Strategy` where other decisions derive from it — never
+  into the North Star's lines, which hold what decisions are judged against, so the next
+  outward-facing task starts where this one ended

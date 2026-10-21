@@ -19,7 +19,7 @@ Installs a project's surfaces — North Star, glossary, ADR conventions, a verif
 
 ### update-from-v7
 Run: `scripts/drive-skill.sh setup-project verification/prompts/setup-project-update-one-behind.md --scaffold claude-plugins/manifest-dev/evals/53-update-offer-from-v7 --max-turns 80`
-Proves: it follows the v7 guide: the `Strategy` area added to the ADR conventions and the North Star line reworded before the reshape; the North Star in the six sections, with *How they arrive*'s newsletter channel moved to a decision record with the area `Strategy`, the *Strategy choices in force* list naming that record, one record of the reshape, and the index rebuilt; and the version line at v8. Nothing v1 to v7 gave is offered again.
+Proves: it follows the v7 guide: the `Strategy` area added to the ADR conventions and the North Star line reworded; the reshape shown as a proposed six-section document with a table of the lines that leave it, *How they arrive*'s newsletter channel routed to a decision record — and, since the prompt's blanket acceptance came before the owner saw the lines, `NORTH_STAR.md` left unwritten and the reshape named as waiting on the owner's line-by-line ruling; and the version line at v8. Nothing v1 to v7 gave is offered again.
 Check: read
 Workload: varies
 

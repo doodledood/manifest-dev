@@ -34,7 +34,7 @@ EOF
 cat > NORTH_STAR.md <<'EOF'
 # North Star — Loomwork
 
-What this project is for, for whom, and how it tells progress. Every position carries a state:
+What this project is for, for whom, and how it measures progress. Every position carries a state:
 evidence, hypothesis, ruled, or empty. New evidence may lower a state. A position's text changes
 only by the owner's ruling, recorded as a decision record.
 
@@ -143,8 +143,7 @@ The user
 Weavers in the interviews sell a few patterns a month alongside other work.
 
 ## Decision
-The shop earns a fee on each sale. It never charges weavers a monthly subscription. New weavers
-pay no sales fee for their first 180 days.
+The shop earns a fee on each sale. It never charges weavers a monthly subscription.
 
 ## Alternatives Considered
 - A monthly subscription: rejected — most weavers would pay more than they earn in a slow month.
@@ -155,12 +154,40 @@ The shop's income follows weavers' sales.
 ## Source
 - Related: none
 EOF
+cat > docs/adr/20260601-new-weavers-pay-no-fee-at-first.md <<'EOF'
+# ADR: New weavers pay no sales fee for their first 180 days
+
+## Status
+Accepted
+
+## Area
+Pricing
+
+## Decided by
+The user
+
+## Context
+A weaver who has just joined has no sales yet, and a fee on the first few feels like a toll.
+
+## Decision
+New weavers pay no sales fee for their first 180 days.
+
+## Alternatives Considered
+- No fee-free period: rejected — new weavers would leave before their first sale.
+
+## Consequences
+The shop earns nothing from a weaver's first 180 days.
+
+## Source
+- Related: see also 20260512-charge-per-sale-never-per-month
+EOF
 cat > docs/adr/README.md <<'EOF'
 # Architecture Decision Records
 
 | Date | ADR | Status | Area |
 |------|-----|--------|------|
 | 2026-05-12 | [Charge per sale, never per month](20260512-charge-per-sale-never-per-month.md) | Accepted | Strategy |
+| 2026-06-01 | [New weavers pay no sales fee for their first 180 days](20260601-new-weavers-pay-no-fee-at-first.md) | Accepted | Pricing |
 EOF
 cat > data/sales-2026-q3.csv <<'EOF'
 order_id,date,pattern_id,weaver_id,arrived_from

@@ -104,9 +104,14 @@ Anything the owner would re-tune when evidence moves is a chosen option, and a c
 never enters the North Star, however strategic it feels: record it through the ADR offer
 above, with the area `Strategy` when it is a guiding choice other decisions derive from — and,
 where the North Star keeps a *Strategy choices in force* list, rebuild that list in the same
-act — while a dated target goes to the destination of the effort that pursues it. The North
-Star stays as it is. The loaded conventions carry the full test where they have it, and this
-sort applies on a North Star of any form. What remains is an end, a measure, a principle or a
+act — while a dated target goes with the work that pursues it: the destination of its effort
+(the named body of work) where the project keeps a Ticket store, otherwise the record of the
+choice it serves. Its positions stay as they are. Where a North Star in the older nine-field form
+still states that option as a position — a price under *Money*, a channel under *How they arrive*
+— name in the output that the position now disagrees with the record, add one line to its
+provenance note naming the record that holds the newer choice, and offer the setup update that
+moves such lines out; never rewrite the position's words. The loaded conventions carry the full
+test where they have it, and this sort applies on a North Star of any form. What remains is an end, a measure, a principle or a
 bet, and the branches below apply to it:
 
 - **A finding contradicts a stated position** → surface the clash as a lead, exactly like a
@@ -122,11 +127,11 @@ bet, and the branches below apply to it:
   with its date when something happened in the world, `ruled` when the answer is the
   owner's own choice. A `ruled` fill is a position change: offer the decision record
   that remembers it, as on the contradiction branch.
-- **Fog that fits no field** → the doc's `Open` section (with what would fill it), or
-  nowhere — never forced into a field as content.
-- **A resolution too big for its field** → the field keeps the short answer with its
+- **Fog that fits no section** → the doc's `Open` section (with what would fill it), or
+  nowhere — never forced into a section as content.
+- **A resolution too big for its section** → the section keeps the short answer with its
   state; the depth goes to an adjacent linked doc, per the conventions' split rule. The
-  field stays the authority the depth details — never the other way around.
+  section stays the authority the depth details — never the other way around.
 
 **At the moment a decision gets recorded**, where the project keeps a North Star, check the
 decision's subject against what the Purpose names (the Diagnosis, in a North Star of the

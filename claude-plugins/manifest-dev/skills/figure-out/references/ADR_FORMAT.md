@@ -91,7 +91,7 @@ Accepted
 
 **Area** is a single short label — reuse an existing one wherever the decision fits it, and mint a new one only when nothing fits. It is read by the index, so keep it stable: renaming a label means editing every record that carries it.
 
-One label is reserved. A record of a guiding choice — one the project pursues its goal through, and that other decisions derive from — carries the area `Strategy`. Where the project keeps a North Star, its *Strategy choices in force* list holds the titles of the `Strategy` records in effect and nothing else, so writing, superseding or retiring such a record rebuilds that list in the same act, as the index is rebuilt.
+One label is reserved. A record of a guiding choice — one the project pursues its goal through, and that other decisions derive from — carries the area `Strategy`. Where the project's North Star (its standing statement of what it is for, `NORTH_STAR.md`) keeps a *Strategy choices in force* list, that list holds the titles of the `Strategy` records in effect and nothing else, so writing, superseding or retiring such a record rebuilds that list in the same act, as the index is rebuilt. A North Star in an older form without that list gains none from it.
 
 **Decided by** names who made the decision, so a later reader can tell a person's ruling from an agent's. Write `The user` when a person decided it or reviewed the record before it was accepted. Write `An agent in an unattended run, with no review` when a run with no person present accepts its own record. When a person later reviews such a record and keeps its decision, change the value to `The user` in place; a person who changes the decision writes a new record instead.
 
@@ -122,7 +122,7 @@ Adding a record means doing all three of these in the same change:
 
 1. **Write the new record** per the template above.
 2. **Update every record it changes the standing of** — a superseded decision's Status becomes `Superseded by <filename>`; a decision narrowed, amended, or partly lifted by the new one says so in its own Status line. Retarget or retire the check named in the old record's `Enforced by` so it holds the new decision instead of the old one, and update that line. This is required by the lifecycle above, and it is the step that gets skipped: it means editing a published ADR, which the immutability rule below explicitly permits.
-3. **Refresh the index** per *The index* below.
+3. **Refresh the index** per *The index* below — and, for a `Strategy` record where the project's North Star keeps a *Strategy choices in force* list, rebuild that list from the `Strategy` records in effect.
 
 Doing one or two of these leaves the corpus asserting something untrue. Treat them as a single act.
 

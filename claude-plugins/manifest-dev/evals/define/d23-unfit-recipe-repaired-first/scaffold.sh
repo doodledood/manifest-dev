@@ -14,7 +14,7 @@ This project keeps its direction, vocabulary, and decision memory in the repo. R
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
 
 - **NORTH_STAR.md** — what this project is for and for whom, the principles it holds, how it
-  tells progress, and the bets it rests on. The choices made along the way live in `docs/adr/`,
+  measures progress, and the bets it rests on. The choices made along the way live in `docs/adr/`,
   never in it.
 - **CONTEXT.md** — what words mean here.
 - **docs/adr/** — why decisions went the way they did. Write new records per

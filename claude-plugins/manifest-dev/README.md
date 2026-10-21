@@ -42,7 +42,7 @@ One skill sets the project up:
 
 | Skill | What it does |
 |-------|--------------|
-| `/setup-project` | Gives the project a North Star — what it is for and for whom, how it tells progress, and what it never does — plus a glossary, decision-record conventions, and one command that checks the project still works, with the wiring that makes every session read them. It seeds them from the project's history where there is any. Run again on a set-up project, it audits the whole setup and offers each gap. `/figure-out` offers it when the setup is behind, so you rarely type it. |
+| `/setup-project` | Gives the project a North Star — what it is for and for whom, how it measures progress, and what it never does — plus a glossary, decision-record conventions, and one command that checks the project still works, with the wiring that makes every session read them. It seeds them from the project's history where there is any. Run again on a set-up project, it audits the whole setup and offers each gap. `/figure-out` offers it when the setup is behind, so you rarely type it. |
 
 The check command is recommended, not required. A project that verifies its own way opts out, and runs then use the project's own tests and scripts and never add the command. Where it is kept, it reads one recipe — a short file saying how to exercise one thing — per feature, skill, document, eval suite, and the checks run across the whole tree. A check that costs money, quota, or effects outside the repository asks first.
 

@@ -1,7 +1,7 @@
 # North Star Conventions
 
 A North Star is a project's standing statement of what it is for: one short document holding
-its purpose, its goal, the principles it holds, how it tells progress, and the bets it rests
+its purpose, its goal, the principles it holds, how it measures progress, and the bets it rests
 on. It lives in the project's own repository so every session and every contributor — with or
 without any particular tooling — starts from the same base when it decides anything a task's
 own contract does not settle. It is the project-level counterpart of a task-level spec: a task
@@ -9,7 +9,7 @@ contract governs one piece of work and resets when it ends; the North Star persi
 of them and is edited on purpose.
 
 **It holds what decisions are judged against, never what they chose.** A decision weighs the
-project's ends, measures, principles and bets and picks an option; that chosen option is the
+project's ends (what it is for), measures, principles and bets and picks an option; that chosen option is the
 decision's output, and it lives in the project's decision records. Kept to those inputs, the
 document changes only when the purpose, a principle or a bet changes, and a later session never
 mistakes a tactic for the mission.
@@ -49,8 +49,9 @@ list holds one per entry. Every position carries its state as a dated provenance
 `— hypothesis: matches ourselves; no outside user has confirmed it. 2026-08` or
 `— empty: no audience named. What would fill it: a person with a situation. 2026-08`.
 Without the state, a measurement, a guess, and a decision all read as equally settled.
-A provenance note is one line: the state, its date, and the titles of the records behind it.
-How a position came to read as it does is history, and history lives in those records.
+A provenance note is short: the state, its grounding (for an `empty` position, what would fill
+it), its date, and the titles of any records behind it. How a position came to read as it does
+is history, and history lives in those records.
 The following table defines the four states:
 
 | State | Means | What moves it |
@@ -87,13 +88,14 @@ Unattended automation may lower states or flag, never change a position.
 
 ## What a line may be
 
-Every line of the document is one of four kinds, and nothing else:
+Every position in *Purpose*, *Goal*, *Principles*, *How we know* and *What this rests on* is one
+of four kinds, and nothing else; *Open* holds questions, and the strategy list holds titles:
 
 - **An end** — what the project is for, or whom it serves. Asked "why does this matter?", it
   has no deeper answer inside the document.
-- **A measure** — how the project tells progress on one part of its goal: what is counted,
-  which way it should move, and a floor where the floor itself defines a value ("never worse
-  than what people do by hand today").
+- **A measure** — how the project measures progress on one part of its goal: what is counted,
+  which way it should move, and a floor where the floor is itself something the owner holds,
+  such as "never worse than what people do by hand today".
 - **A principle** — a limit or a trade-off the owner holds even when evidence says crossing it
   would pay. That is what separates it from a choice.
 - **A bet** — a belief about the world that, if false, would change the goal or end one part
@@ -101,14 +103,18 @@ Every line of the document is one of four kinds, and nothing else:
 
 **The test for any line.** Would the owner re-tune it when evidence moves? Then it is a chosen
 option, not one of the four: it belongs in a decision record, and a dated target — a value a
-measure should reach by a date — belongs in the destination of the effort pursuing it. The
+measure should reach by a date — belongs with the work pursuing it: the destination of the effort
+(the named body of work) that pursues it, where the project tracks work that way, or else the
+decision record of the choice it serves. A bet differs: evidence tests it and may lower its
+state, but nobody tunes it for a better result, the way a price or a channel is tuned. The
 choices themselves can matter a great deal; they leave because they are outputs of the
 document's inputs, and a copy here would make a later session protect a tactic as if it were
 the purpose. A line that names one example, setting, number or path is nearly always a choice,
 however stable it has been; name the shape it serves instead, and let the provenance note
 point to the record that holds the specifics.
 
-Live readings never enter either: states carry dates, and staleness is read from them.
+Live metric readings never enter the North Star: states carry dates, and staleness is read
+from them.
 
 ## The sections
 
@@ -121,8 +127,8 @@ The following table names each section, what it holds, and the trap that most of
 | Section | What it holds | The trap |
 |---------|---------------|----------|
 | **Purpose** | What is going on and what is in the way, then who the project is for — a person with a situation, named narrowly enough to exclude someone — and an explicit not-for | Writing the user's complaint instead of the barrier behind it, or a segment so broad it cannot be wrong |
-| **Goal** | The destination, in the sentence that person reads when deciding to rely on it, and what reaching it means for the project itself | A feature list, or a quality claim nobody can check |
-| **Principles** | The limits and trade-offs held even against evidence — what the project never does, what it never trades away, and what keeps it going where money is not the point — one per entry, each phrased as what it rules out | A tactic phrased as a principle: if evidence would move it, it is a choice |
+| **Goal** | Where the project is headed, in the sentence that person reads when deciding to rely on it, and what reaching it means for the project itself | A feature list, or a quality claim nobody can check |
+| **Principles** | The limits and trade-offs held even against evidence — what the project never does, what it never trades away, and what it feeds instead of money where money is not the point — one per entry, each phrased as what it rules out | A tactic phrased as a principle: if evidence would move it, it is a choice |
 | **How we know** | One measure for each part of the goal, with its direction and any floor; a part nothing measures yet is `empty` with what would fill it | One number for a goal with several parts, which lets the unmeasured part drop out of every decision |
 | **What this rests on** | A handful of live, falsifiable bets, the main one first: the sentence that changes everything if false | Letting it grow past a handful, or filling it with task facts, which belong in that task's own spec |
 | **Open** | Questions none of the sections above holds, each with what would fill it | Repeating an `empty` position, which already carries its own filling condition |
@@ -142,14 +148,14 @@ ends; anything smaller is a task fact and belongs in that task's own spec.
 The North Star is what a decision is checked against, never where work is done. Who it is for
 sets who copy is written to — the copy is not in here. The goal and the principles bound what
 marketing may claim — the campaigns are not in here. The measures say which way to push — the
-dated targets live with the efforts that pursue them.
+dated targets live with the work that pursues them.
 
 ## Document skeleton
 
 ```markdown
 # North Star — {project}
 
-What this project is for, for whom, and how it tells progress — the base every session and
+What this project is for, for whom, and how it measures progress — the base every session and
 contributor decides from. This document informs; it never binds: a boundary that must be
 enforced on a piece of work is encoded in that work's own binding contract.
 
@@ -168,7 +174,8 @@ owner's ruling, and each change is remembered as a decision record.
 {— state: grounding. date}
 
 ## Goal
-{the destination, in the sentence the person reads when deciding to rely on it}
+{where the project is headed, in the sentence the person reads when deciding to rely on it}
+{what reaching it means for the project itself}
 
 ## Principles
 {one limit or trade-off per entry, held even against evidence}

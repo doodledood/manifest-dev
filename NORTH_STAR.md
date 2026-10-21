@@ -1,6 +1,6 @@
 # North Star — manifest-dev
 
-What this project is for, for whom, and how it tells progress — the base every session and
+What this project is for, for whom, and how it measures progress — the base every session and
 contributor decides from. This document informs; it never binds: a boundary that must be
 enforced on a piece of work is encoded in that work's own binding contract (for manifest-dev
 users: `/define` routes a principle whose violation would be unsafe or irreversible to a Global
@@ -68,12 +68,14 @@ never a target traded against it.
 - **Simple to use.** Workflows may be sophisticated inside; the experience stays minimal steps,
   nothing to memorize — follow along and it works.
 
-  — ruled: since the first strategy doc.
+  — ruled: standing since the project's first strategy document, before 2026-07-28.
 
-- **Each piece stands alone.** Nothing has to be adopted whole to be useful, each level of the
-  autonomy ladder works without the ones above it, and what a user adds to a shared repository
-  reads as plain files and plain instructions that stop no colleague who does not use
-  manifest-dev from working as they did.
+- **Each piece stands alone.** Nothing has to be adopted whole to be useful. The autonomy ladder
+  is the levels a user may adopt — one skill on its own; one piece of work understood, defined
+  and verified; a project that keeps its direction, vocabulary, decisions and checks; a shared
+  queue of Tickets; and unattended runs that take work from that queue — and each level works
+  without the ones above it. What a user adds to a shared repository reads as plain files and
+  plain instructions, so a colleague who does not use manifest-dev keeps working as before.
 
   — ruled: 2026-10-15. Records: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it.
 
@@ -81,12 +83,12 @@ never a target traded against it.
   reliably do, on any surface we write; no commentary on this repository's own adoption or
   popularity.
 
-  — ruled: since the first strategy doc.
+  — ruled: standing since the project's first strategy document, before 2026-07-28.
 
 - **Free and open.** No monetization intended; the workflows are built for our own projects
   first, and distribution stays second to getting them right.
 
-  — ruled: since the first strategy doc; reaffirmed 2026-07-28.
+  — ruled: standing since the project's first strategy document; reaffirmed 2026-07-28.
 
 ## How we know
 
