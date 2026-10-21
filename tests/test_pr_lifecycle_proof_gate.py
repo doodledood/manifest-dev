@@ -78,6 +78,6 @@ def test_dropping_the_lifecycle_gate_leaves_the_proof_gate() -> None:
     text = TASK_FILE.read_text(encoding="utf-8")
     quality_gates = _flat(text.split("## Quality Gates", 1)[1].split("###", 1)[0])
     assert (
-        "A rule or Taste entry about the lifecycle gate — CI, review threads, mergeability — "
+        "A rule or Taste entry about the lifecycle gate — CI, review feedback, mergeability — "
         "does not bear on the proof gate" in quality_gates
     ), f"{TASK_FILE.name} no longer keeps the proof gate apart from the lifecycle gate; see {RECORD}"

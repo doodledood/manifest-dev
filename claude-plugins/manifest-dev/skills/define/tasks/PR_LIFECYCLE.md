@@ -6,7 +6,7 @@ The goal of /do under PR_LIFECYCLE is to drive the PR to a **mergeable** state �
 
 ## Quality Gates
 
-Two gates compose, each as one AC per repo: the lifecycle gate, whose body activates the `check-pr` **skill**, and the proof gate, which judges whether the pull request shows the change working. They are independent. A rule or Taste entry about the lifecycle gate — CI, review threads, mergeability — does not bear on the proof gate, which only a rule or entry naming it drops.
+Two gates compose, each as one AC per repo: the lifecycle gate, whose body activates the `check-pr` **skill**, and the proof gate, which judges whether the pull request shows the change working. They are independent. A rule or Taste entry about the lifecycle gate — CI, review feedback, mergeability — does not bear on the proof gate, which only a rule or entry naming it drops.
 
 | Aspect | Verifier | Threshold |
 |--------|----------|-----------|
@@ -28,9 +28,9 @@ Branch: <branch-name>
 
 Steering: <baseline | user customization>
 
-Subject: the pull request's current state on GitHub — CI conclusions, review threads,
-description, and mergeability — read fresh from GitHub on every evaluation, rather than the
-branch diff `/do` supplies by default.
+Subject: the pull request's current state on GitHub — CI conclusions, review feedback
+(threads, review bodies, and top-level comments), description, and mergeability — read fresh
+from GitHub on every evaluation, rather than the branch diff `/do` supplies by default.
 
 Judgment gate.
 ````
