@@ -1,0 +1,30 @@
+{
+  "name": "manifest-dev",
+  "displayName": "manifest-dev",
+  "version": "14.6.0",
+  "description": "Hand your agent a task, get back work you can trust: figure-out reaches shared understanding, define writes what done means as checkable gates, do works until every gate holds on fresh evidence, and auto chains them. Tickets, parallel orchestration, project setup, and code, design and writing review build on the same workflow.",
+  "author": {
+    "name": "doodledood",
+    "email": "doodledood@github.com"
+  },
+  "homepage": "https://github.com/doodledood/manifest-dev",
+  "repository": "https://github.com/doodledood/manifest-dev",
+  "license": "MIT",
+  "logo": "https://raw.githubusercontent.com/doodledood/manifest-dev/main/assets/logo.png",
+  "keywords": [
+    "manifest",
+    "figure-out",
+    "define",
+    "do",
+    "auto",
+    "verification",
+    "acceptance-criteria",
+    "tickets",
+    "orchestrate",
+    "setup-project",
+    "review-code",
+    "design"
+  ],
+  "category": "developer-tools",
+  "tags": ["workflow", "planning", "verification", "review"]
+}
