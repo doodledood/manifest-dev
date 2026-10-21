@@ -5,7 +5,7 @@ covers: verification/models, claude-plugins/manifest-dev/skills/ticket-up/refere
 # ticket-protocol-model
 
 A TLA+ model of the unattended Ticket protocol — the attempt record, launches, takeovers, the
-landing procedure and the escalation mark, as `orchestrate`, `run-ticket` and ticket-up's
+landing procedure, the escalation mark and a deferred Ticket's signpost, as `orchestrate`, `run-ticket` and ticket-up's
 `AUTOMATED_EXECUTION.md` state them — checked by TLC on fixed configurations. Example runs show the
 protocol working on the orders of events someone thought of; the model checks every order of
 events within its bound. It is a maintainer check: nothing here ships.
@@ -49,11 +49,19 @@ automation to close a Ticket without a landing observed since it was last opened
 the person marked; a Ticket reopened after its merge is launched again rather than landed.
 Line: 2.5 s on linux-x64-4cpu; raised: the person configuration explores a person applying the escalation mark
 
+### deferred
+Run: `verification/models/ticket-protocol/check.sh deferred && verification/models/ticket-protocol/check.sh deferred-unreadable`
+Proves: two orchestrators never claim a deferred Ticket until its signpost's condition reads as met
+at its source, claim it once the world makes it met, and never claim one whose source cannot be
+read; the other properties hold meanwhile.
+Line: 2.5 s on linux-x64-4cpu
+
 ### prefix
-Run: `verification/models/ticket-protocol/check.sh --expect-violation prefix-record && verification/models/ticket-protocol/check.sh --expect-violation prefix-stall && verification/models/ticket-protocol/check.sh --expect-violation prefix-escalated`
-Proves: the check can fail. With the protocol switched back to its three old behaviors, TLC reports
-a second attempt record, a landing that stalls and a landing of a Ticket a person marked escalated,
-each with its trace; the scenario fails when any is not reported.
+Run: `verification/models/ticket-protocol/check.sh --expect-violation prefix-record && verification/models/ticket-protocol/check.sh --expect-violation prefix-stall && verification/models/ticket-protocol/check.sh --expect-violation prefix-escalated && verification/models/ticket-protocol/check.sh --expect-violation prefix-deferred`
+Proves: the check can fail. With the protocol switched back to its four old behaviors, TLC reports
+a second attempt record, a landing that stalls, a landing of a Ticket a person marked escalated and
+a claim of a Ticket whose signpost reads as unmet, each with its trace; the scenario fails when any
+is not reported.
 Line: 3.4 s on linux-x64-4cpu; raised: a third configuration, prefix-escalated, shows NoLandWhileEscalated can fail
 
 ## Gotchas

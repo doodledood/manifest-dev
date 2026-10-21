@@ -48,11 +48,13 @@ A follow-up gets Auto only from one of those grants at this boundary. Without on
 
 Never copy Auto from the source.
 
-## Type and dependencies
+## Type, dependencies and deferral
 
 Give each Ticket one type from the store vocabulary when one fits, otherwise none. For one-Ticket Manifest mode, use the chief nature of the complete work. In explicit split mode, type each Deliverable separately. Type never grants execution authority.
 
 Encode `Depends on:` only when one Ticket's outcome is required to do or judge another. Preferred order is not a dependency. A follow-up that is merely related links to its source without blocking on it; add an edge only when the structural need exists.
+
+When the work is to wait until something holds in the world rather than until another Ticket closes — a number crossing a line, a release shipping, a date passing — write the convention's `Revisit when` line: the condition and where it is read, as the venue maps it. Name a source a picker can read, such as a dashboard, a file, a release page or a date; a condition no picker can read keeps the Ticket in front of the person on every pick. A deferral is never a `Depends on:` entry, and a preferred order is never a deferral.
 
 ## Choose and render the venue
 
@@ -68,7 +70,7 @@ Before outward-facing creation on a venue this project has not used before, show
 
 ## Report
 
-Present what was authored in a short table: ID, title, kind, type, Auto and its grantor, and dependencies, plus where each Ticket landed. In Manifest mode, state whether the default coherent unit or explicit Deliverable split was used. In follow-up mode, include source links and which findings were grouped or deduplicated.
+Present what was authored in a short table: ID, title, kind, type, Auto and its grantor, dependencies, and any `Revisit when` condition, plus where each Ticket landed. In Manifest mode, state whether the default coherent unit or explicit Deliverable split was used. In follow-up mode, include source links and which findings were grouped or deduplicated.
 
 ## Gotchas
 

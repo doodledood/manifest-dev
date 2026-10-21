@@ -14,17 +14,22 @@
    a base branch that moves at most once; each world event at most once. Liveness holds within
    that bound. The three-failed-launches escalation is outside it: one crash at most.
 
-   PreFix = TRUE switches three behaviors back to the protocol as it stood before this model: the
+   A deferred Ticket's signpost is world state: its condition reads as met, unmet or unreadable at
+   the source it names, as Signpost says at the start, and the world may make it read as met once.
+
+   PreFix = TRUE switches four behaviors back to the protocol as it stood before this model: the
    landing check stops with nothing relaunched or escalated when the head, a check or a
    protection fails; a launcher decides from its earlier read whether to create the attempt
-   record; and the lander does not look for the escalation mark. The `prefix` scenario of
-   verification/recipes/ticket-protocol-model.md expects TLC to report all three. *)
+   record; the lander does not look for the escalation mark; and a launcher does not read a
+   deferred Ticket's signpost. The `prefix` scenario of
+   verification/recipes/ticket-protocol-model.md expects TLC to report all four. *)
 EXTENDS Integers, Sequences
 
 CONSTANTS Orchs,     \* the orchestrators sharing the automation identity
           Env,       \* the world events this configuration allows, each at most once
           PreFix,    \* TRUE restores the three old behaviors described above
-          MaxRuns    \* launches per orchestrator, a bound for TLC; no run reaches it
+          MaxRuns,   \* launches per orchestrator, a bound for TLC; no run reaches it
+          Signpost   \* "none" (not deferred), or how its condition reads at the start: "met", "unmet" or "unreadable"
 
 None == <<"", 0>>                       \* no run
 Live == {"start", "work", "prepush", "push", "prewrite"}
@@ -63,6 +68,8 @@ Owner(o) == HasRec /\ TheRec.run[1] = o
 Reopened == merged /\ ~landedNow     \* reopened after its pull request merged
 \* Quote ticket-up/references/AUTOMATED_EXECUTION.md: "The ready mark and the drafted answer name the run that wrote them, and count only while the run facts name that run"
 ReadyValid == HasRec /\ TheRec.ready # None /\ TheRec.ready = TheRec.run
+\* How the signpost's condition reads at its source now.
+CondReads == IF "cond" \in used THEN "met" ELSE Signpost
 
 Init ==
   /\ recs = << >> /\ claim = "none" /\ closed = FALSE /\ autoClosed = FALSE /\ landedNow = FALSE
@@ -80,8 +87,12 @@ Init ==
 \* Quote orchestrate/SKILL.md: "*To recover*: the automation identity holds its claim, no run is live"
 \* Quote orchestrate/SKILL.md: "or marked ready a pull request that merged before the Ticket was reopened"
 \* Quote orchestrate/SKILL.md: "A run that is not yours belongs to another orchestrator until its timeout has passed, live or not; leave its Ticket alone until then."
+\* Quote ticket-up/references/TICKET_CONVENTION.md: "when it is deferred — its `Revisit when` condition reads as met at the source it names"
+\* Quote orchestrate/SKILL.md: "its signpost read as met at its source when it is deferred"
 Takeable(o) ==
   /\ ~closed /\ ~mark /\ claim # "person" /\ ~NamedLive /\ n[o] < MaxRuns
+  \* Pre-fix: the launcher does not read the signpost.
+  /\ PreFix \/ Signpost = "none" \/ CondReads = "met"
   /\ \/ claim = "none"
      \/ claim = "auto" /\ ~HasRec
      \/ claim = "auto" /\ HasRec /\ Owner(o) /\ (~ReadyValid \/ Reopened)
@@ -323,6 +334,11 @@ WTimeout == /\ Event("timeout") /\ HasRec
             /\ UNCHANGED <<claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
                            branch, base, nextC, opc, saw, lview, n, rbase, rlocal, rmerged, bad>>
 
+\* World: the deferred Ticket's condition comes true, or its source becomes readable and shows it met.
+WCond == /\ Event("cond") /\ Signpost \in {"unmet", "unreadable"}
+         /\ UNCHANGED <<recs, claim, closed, autoClosed, landedNow, mark, prOpen, merged, red, review,
+                        branch, base, nextC, opc, saw, lview, n, rpc, rbase, rlocal, rmerged, bad>>
+
 \* Quote orchestrate/SKILL.md: "clearing the mark also clears any automation claim"
 \* Quote ticket-up/references/GITHUB_STORE.md: "removes the `escalated` label and any automation assignee"
 WAnswer == /\ mark /\ mark' = FALSE /\ prOpen' = (prOpen \/ ~merged) /\ claim' = "none"
@@ -334,7 +350,7 @@ Next ==
   \/ \E o \in Orchs : RStart(o) \/ RWork(o) \/ RPrePush(o) \/ RPush(o) \/ RWriteReady(o)
   \/ WPush \/ WBase \/ WRed \/ WReview \/ WApprove \/ WMark \/ WPrClose \/ WMerge \/ WClaim \/ WClose
   \/ WReopen \/ WCrash
-  \/ WTimeout \/ WAnswer
+  \/ WTimeout \/ WAnswer \/ WCond
 
 Fair == \A o \in Orchs :
           /\ WF_vars(ORead(o)) /\ WF_vars(OClaim(o)) /\ WF_vars(OVerify(o)) /\ WF_vars(OLaunch(o))
@@ -368,6 +384,11 @@ ClosedOnlyWhenLanded == autoClosed => landedNow
 \* Property: automation never merges a Ticket that carries the escalation mark.
 \* Quote ticket-up/references/TICKET_CONVENTION.md: "Unattended dispatch never touches a Ticket carrying the escalation mark"
 NoLandWhileEscalated == ~bad
+
+\* Property: a deferred Ticket is launched only after its condition reads as met at its source;
+\* unmet or unreadable, it is never claimed.
+\* Quote ticket-up/references/TICKET_CONVENTION.md: "A deferred ticket whose source the picker cannot read is not ready and not out of sight"
+LaunchedOnlyWhenMet == [][\A o \in Orchs : (opc[o] = "read" /\ opc'[o] = "claim") => (Signpost = "none" \/ CondReads = "met")]_vars
 
 \* Property: every Ticket marked ready to land is landed, handed to a person through an
 \* escalation record, taken by a person (claimed or closed), or held for a review only a person
