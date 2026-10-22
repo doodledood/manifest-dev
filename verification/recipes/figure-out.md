@@ -16,7 +16,7 @@ Presses on a topic with the user until both understand it, and ends with a named
 - On a project, docs mode keeps the glossary, decision-record offers, North Star updates, the setup offer and recipe drift markers current; `--no-docs` and `--no-log` turn the docs and the log off.
 - It reads earlier logs, Manifests, Tickets and pull requests' debt for the same repository, and offers to save a stated steering preference to the user's memory file.
 - It offers a disposable draft and calls design for its look.
-- Its task-file design probes raise what reviewers would flag — reuse, module depth, ownership, hidden contracts — before code; the user's and project's rules win over them.
+- Its task-file design probes raise what reviewers would flag — reuse, module depth, ownership, hidden contracts, plausible changes kept local at a justified cost — before code; the user's and project's rules win over them.
 
 ## Scenarios
 
@@ -91,4 +91,5 @@ Workload: varies
 - The context file's surfaces version is an HTML comment, and the host strips comments from the copy it loads into the session; a run that reports no version without reading the file from disk has hit that, not a missing line.
 - `--team` needs Slack access; without it the team entry point is `unreachable`.
 - Also checked by the figure-out behavior suite, `claude-plugins/manifest-dev/evals/` (tags `figure-out`, `figure-out-plugin-only`), all `unmeasured` or stale per `claude-plugins/manifest-dev/evals/README.md`; `tests/test_eval_cases.py` keeps its case list in step.
+- The revised `40-shape-before-build` input and grader cover a possible overdue-rule change kept with its owner, without adding an unselected grace-period feature. It remains unmeasured; the `design-before-code` drive above does not check that distinction.
 - Not yet driven: the bare slash command, the description phrases, auto, define, figure-out-team.

@@ -1,6 +1,6 @@
 # Code-design review
 
-Audit a change for design fitness — whether the code is the right approach given what already exists in the framework, codebase, and configuration systems. The question for every piece of code: **"Is this the right design given what already exists?"** You are looking for the right answer built the wrong way, responsibilities in the wrong system, code that doesn't build enough, interfaces that won't survive their obvious next use, misused concepts, or changes that don't hold together as a unit.
+Audit a change for design fitness — whether the code is the right approach given what already exists in the framework, codebase, and configuration systems. The question for every piece of code: **"Is this the right design given what already exists?"** You are looking for the right answer built the wrong way, responsibilities in the wrong system, code that doesn't build enough, interfaces that make likely changes needlessly costly, misused concepts, or changes that don't hold together as a unit.
 
 Be comprehensive in analysis, precise in reporting. Examine every file in scope against every applicable category — do not skip areas. But only report findings that clear the Actionability Filter. Thoroughness in looking; discipline in reporting.
 
@@ -57,13 +57,13 @@ Note: This is about **obvious** near-term needs demonstrable from context, not s
 
 ### 5. Interface / Contract Foresight
 
-APIs, function signatures, or data contracts designed for the current call site but that will obviously need breaking changes for near-term use cases. The concern is **durability** — will this interface survive its obvious next use?
+APIs, function signatures, or data contracts that expose decisions likely to change and spread their cost across callers. The concern is **durability** — does the interface keep plausible changes local without speculative machinery?
 
 - **Overly narrow API shape**: Function accepts individual parameters when a config/options object would accommodate obvious extensions. Return type is too specific when callers obviously need more flexibility (returning a boolean when callers will need the reason).
 - **Missing extensibility points**: Public API with no versioning or evolution strategy when the domain is known to change. Data format with no schema version when it's persisted or transmitted.
 - **Leaky contract**: Interface exposes implementation details that will force breaking changes when internals evolve. Callers depending on return order, specific error messages, or internal structure.
 
-Note: This is about **obviously** near-term breaking changes — when the next use case is visible from context (existing callers, documented roadmap, clear growth pattern). Speculative "what if someday" concerns are over-engineering (the code-simplicity dimension's domain). Wrong types or missing type information belongs to the type-safety dimension. Too many parameters belongs to the code-maintainability dimension.
+Ground likely changes in existing callers, change history or documented direction, and name the concrete edit or coordination burden the better interface avoids. A boundary can earn its cost before the change is imminent; weigh that benefit against the concepts and indirection it adds. Extra capability still needs existing or demonstrably imminent demand. Speculative "what if someday" requirements are over-engineering (the code-simplicity dimension's domain). Wrong types or missing type information belongs to the type-safety dimension. Too many parameters belongs to the code-maintainability dimension.
 
 ### 6. Concept Purity / Misuse
 
@@ -118,7 +118,7 @@ Note: This category requires understanding the change as a whole, not just indiv
 
 ## Actionability filter
 
-Before reporting a design issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this approach might be wrong" is not sufficient; "this approach IS wrong because X already provides this / Y should own this / Z will obviously need A" is required.
+Before reporting a design issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this approach might be wrong" is not sufficient; "this approach IS wrong because X already provides this / Y should own this / Z exposes a changing implementation detail to every caller" is required.
 
 1. **In scope** — Two modes:
    - **Diff-based review** (default): Report design issues introduced, worsened, or exposed by a dependency this change adds or extends. Name the changed dependency and concrete burden; unrelated pre-existing debt is out of scope.

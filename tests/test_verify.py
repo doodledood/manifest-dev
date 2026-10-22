@@ -268,7 +268,18 @@ def _git(repo: Path, *args: str, when: str = "2026-01-02T00:00:00Z") -> None:
     # Commit times have one-second resolution; pinning them keeps two commits in one test
     # from sharing a second.
     subprocess.run(
-        ["git", "-C", str(repo), "-c", "user.email=t@t", "-c", "user.name=t", *args],
+        [
+            "git",
+            "-C",
+            str(repo),
+            "-c",
+            "user.email=t@t",
+            "-c",
+            "user.name=t",
+            "-c",
+            "tag.gpgSign=false",
+            *args,
+        ],
         check=True,
         capture_output=True,
         env={**os.environ, "GIT_COMMITTER_DATE": when, "GIT_AUTHOR_DATE": when},
