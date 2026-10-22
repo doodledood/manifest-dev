@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev",
   "displayName": "manifest-dev",
-  "version": "14.7.2",
+  "version": "14.8.0",
   "description": "Hand your agent a task, get back work you can trust: figure-out reaches shared understanding, define writes what done means as checkable gates, do works until every gate holds on fresh evidence, and auto chains them. Tickets, parallel orchestration, project setup, and code, design and writing review build on the same workflow.",
   "author": {
     "name": "doodledood",

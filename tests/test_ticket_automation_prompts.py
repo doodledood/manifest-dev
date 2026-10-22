@@ -898,3 +898,15 @@ def test_each_item_waiting_on_the_person_can_be_decided_from_the_list() -> None:
     assert "report only what changed since the last check-in" in orchestrate
     for field in ("`pick`", "`risk`", "`evidence`"):
         assert field in status_page, f"STATUS_PAGE.md lost the {field} field"
+
+
+def test_the_status_page_explains_each_ticket_in_plain_words() -> None:
+    # A person meets Tickets an agent wrote that they never asked for; the page says what each is.
+    status_page = flat(orchestrate_text(SOURCE_SKILLS, "STATUS_PAGE.md"))
+
+    assert "Always write `summary`" in status_page
+    assert "in plain words a person who never saw the Ticket understands" in status_page
+    assert "rather than inventing it" in status_page
+    assert "`foundWhile` and `note` in plain words" in status_page
+    for field in ("`summary`", "`why`", "`change`", "`done`", "`type`", "`foundWhile`"):
+        assert field in status_page, f"STATUS_PAGE.md lost the {field} field"

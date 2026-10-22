@@ -772,6 +772,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/TECH_DESIGN.md` | Trade-off: Owner areas vs precise estimates | `80-tech-design-migration-doc/decides-owners-and-dates` |
 | `tasks/UI.md` | Every state | `81-ui-multistep-form/covers-every-state` |
 | `tasks/UI.md` | Who and where | `81-ui-multistep-form/serves-who-and-where` |
+| `tasks/UI.md` | First look | `81-ui-multistep-form/orders-the-first-look` |
 | `tasks/UI.md` | Honest figures | `19-headline-number/tests-the-number-first` |
 | `tasks/UI.md` | Trade-off: Density vs legibility | `81-ui-multistep-form/dense-or-legible` |
 | `tasks/WRITING.md` | The author's own point | `82-writing-post-from-notes/builds-on-the-authors-point` |

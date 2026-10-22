@@ -65,7 +65,20 @@ leave it private unless the person shares it.
 - **The graph.** Each Ticket is a card in a column by how many Tickets it waits on: Now, Next, Then,
   Later, After that, then Step 6 and on, with the effort's destination as the Goal at the end. An edge
   is drawn for each dependency, each pair ordered because both touch the same code, and each debt
-  source. Landed and waiting Tickets recede; running Tickets and those that need the person stand out.
+  source. Attention goes to what needs the person: a Ticket that is stuck (`escalated` or `failed`)
+  is a solid red card, one that waits on the person otherwise (`held`, `grant`, `proposal`) a solid
+  orange one; a running Ticket stays calm, its colour only in its dot and bar; waiting and landed
+  Tickets recede, and the Goal is a quiet card. The "Needs you" button turns solid, red while a
+  Ticket is stuck, and the browser tab's title carries the count. A "?" button opens a key to the
+  colours and the line styles.
+- **An open Ticket.** A card opens to its detail, read top to bottom: the title, then `summary`, then
+  a line with the Ticket's link, its type, its pull request (for a held Ticket, in the decision's
+  button instead) and, for a Ticket a run found, the Tickets in its `from`; then, where the Ticket
+  waits on the person, the decision — the ask, the `pick` and the `risk`, one action under them,
+  and the `evidence` folded; then what it solves (`change` as a before and after followed by
+  `why`, or `why` alone), how it came up (`foundWhile`), `done` as a checklist, and last where it
+  stands. With a fine pointer, hovering a card shows its `summary`
+  beside it.
 - **What needs the person.** The `needsYou` list, in the order given, is the "Needs you" panel. An item
   that names a Ticket puts a numbered badge on that Ticket's card, the number being the item's place in
   the list.
@@ -110,6 +123,14 @@ wait on it.
 |---|---|---|---|
 | `id` | string | The Ticket's id as the store shows it, such as `#131`. Unique on the page, and never `goal`. | The Ticket. |
 | `title` | string | The Ticket's title. | The Ticket. |
+| `summary` | string, optional | One plain sentence on what the Ticket changes and for whom, for a person who never saw it. A snapshot from an older orchestrator may lack it; the page then says the Ticket has no summary yet. | Derived from the Ticket's Title and Why, or a question Ticket's question. |
+| `why` | string, optional | The problem the Ticket relieves, in a sentence or two. | The Ticket's Why, or a question Ticket's "why it matters". |
+| `change` | object, optional | What a person would see before and after the Ticket lands: `before` and `after`. | The Ticket's Why and Definition of done, only where they describe a concrete before and after. |
+| `change.before` | string | Today, in a line. | As `change`. |
+| `change.after` | string | After the Ticket lands, in a line. | As `change`. |
+| `done` | list of strings, optional | How anyone can tell it worked, one check per item; shown as met once the Ticket has landed. | The Ticket's Definition of done; for a question Ticket, the question answered with evidence. |
+| `type` | `"bug"`, `"feature"`, `"refactor"`, `"docs"` or `"chore"`, optional | What kind of work it is. | The Ticket's Type. |
+| `foundWhile` | string, optional | For a Ticket a run found, what that run saw that led to it. | The Ticket's source link and Why. |
 | `url` | string, optional | The Ticket's address. Only an `http://` or `https://` address becomes a link. | The Ticket. |
 | `status` | string, one of the statuses below | Where the Ticket stands. | See the statuses below. |
 | `phase` | string, optional | For a `running` or `escalated` Ticket, the step its run is at: `understand`, `define`, `build`, `verify`, `ready` (a ready pull request) or `land` (at its landing turn). | The progress in the Ticket's attempt record: the one marked record where the run keeps its Manifest, its progress and its run facts; `land` is the orchestrator's own, while it takes that Ticket's landing turn. |
@@ -124,6 +145,12 @@ wait on it.
 | `auto` | `false`, optional | Set on a Ticket in the plan that does not carry Auto: it runs until it needs the person, and lands only after the person looks. | The Ticket's Auto grant. |
 
 An id in `dependsOn`, `after` or `from` that is not on the page draws no edge.
+
+Write `summary`, `why`, `change`, `done`, `foundWhile` and `note` in plain words a person who never
+saw the Ticket understands: no gate codes, branch names or workflow terms. Always write `summary`; leave any
+other of them out when the Ticket holds nothing to derive it from, rather than inventing it, and
+give `change` only where the Ticket describes a concrete before and after. A project whose Tickets
+use their own types gives `type` only for these five.
 
 ### Statuses
 

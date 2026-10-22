@@ -35,4 +35,5 @@ Workload: varies
 - The `plan` prompt first has ticket-up file two small Tickets granted Auto in a file store, then runs `/manifest-dev:orchestrate` in default mode, which waits for approval.
 - A file store gets no parallel runs; parallel runs, collisions and landing turns need a hosted tracker, which no drive here uses.
 - A GitHub venue writes to real Issues and merges real pull requests.
+- The status page the skill keeps is rendered by the free `status-page` recipe; no drive here opens it.
 - `tests/test_ticket_automation_prompts.py` checks the plan-and-wait default, the re-read before each launch, merge, close or mark change, collisions, where answers count, debt and grants.

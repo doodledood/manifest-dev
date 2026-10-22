@@ -61,7 +61,7 @@ It also keeps the project's words, decisions, and checks: a glossary of its term
 
 ## The queue runs
 
-**Many Tickets at once, each after the work it depends on.** `/orchestrate` proposes a plan and runs it after you approve: each Ticket in its own session, landed one at a time. Auto Tickets land on their own; the rest stop at a ready pull request for you to land. The debt they leave becomes new Tickets. One status page shows what is running and what waits on you.
+**Many Tickets at once, each after the work it depends on.** `/orchestrate` proposes a plan and runs it after you approve: each Ticket in its own session, landed one at a time. Auto Tickets land on their own; the rest stop at a ready pull request for you to land. The debt they leave becomes new Tickets. One status page shows what is running and what waits on you, and says in plain words what each Ticket is for.
 
 **With `--autonomous`, it keeps going on its own.** A scheduler you already run starts `/orchestrate --autonomous`. It starts a new run whenever one finishes, up to the number it may run at once, until no ready work remains. It gives Auto to Tickets that agents wrote, wherever no one's judgment is needed.
 
