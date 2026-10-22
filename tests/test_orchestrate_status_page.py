@@ -139,7 +139,7 @@ def validate(snapshot: dict[str, Any]) -> bool:
     code = script()
     tables = "\n".join(
         re.search(rf"var {name} = .*?;\n", code, re.S).group(0)  # type: ignore[union-attr]
-        for name in ("PHASES", "TONE")
+        for name in ("PHASES", "TONE", "TYPE_NAME")
     )
     start = code.index("  function strings(")
     end = code.index("  function apply(")
@@ -177,6 +177,16 @@ def test_the_sample_snapshot_is_valid() -> None:
         (("needsYou", 0, "pick"), 1),
         (("needsYou", 0, "risk"), ["low"]),
         (("needsYou", 0, "evidence"), {"gates": 14}),
+        (("tickets", 0, "summary"), 7),
+        (("tickets", 0, "why"), ["a", "b"]),
+        (("tickets", 0, "foundWhile"), {"run": "#132"}),
+        (("tickets", 0, "done"), "it works"),
+        (("tickets", 0, "done"), ["it works", 2]),
+        (("tickets", 0, "change"), "before and after"),
+        (("tickets", 0, "change"), {"before": "a"}),
+        (("tickets", 0, "change"), {"after": "b"}),
+        (("tickets", 0, "change"), {"before": "a", "after": 2}),
+        (("tickets", 0, "type"), "epic"),
     ],
 )
 def test_a_snapshot_outside_the_schema_is_refused(
@@ -203,3 +213,35 @@ def test_a_waiting_item_without_its_recommendation_risk_or_evidence_is_still_val
     ), f"the sample's first waiting item lost `{field}`"
     del snapshot["needsYou"][0][field]
     assert validate(snapshot)
+
+
+NEW_TICKET_FIELDS = ("summary", "why", "change", "done", "type", "foundWhile")
+
+
+@pytest.mark.parametrize("field", NEW_TICKET_FIELDS)
+def test_a_ticket_without_one_explanation_field_is_still_valid(field: str) -> None:
+    # Each field explains the Ticket to a person; an orchestrator with nothing to derive it from
+    # leaves it out, and the page still shows the Ticket.
+    snapshot = sample()
+    carriers = [t for t in snapshot["tickets"] if field in t]
+    assert carriers, f"no Ticket in the sample carries `{field}`"
+    for ticket in carriers:
+        del ticket[field]
+    assert validate(snapshot)
+
+
+def test_a_snapshot_written_before_the_explanation_fields_is_still_valid() -> None:
+    # Orchestrators already running write schema-1 snapshots without these fields.
+    snapshot = sample()
+    for ticket in snapshot["tickets"]:
+        for field in NEW_TICKET_FIELDS:
+            ticket.pop(field, None)
+    assert snapshot["schema"] == 1
+    assert validate(snapshot)
+
+
+def test_the_page_names_every_ticket_type_the_reference_documents() -> None:
+    names = set(re.findall(r"(\w+):", declared("TYPE_NAME", script())))
+    row = re.search(r"^\| `type` \| (.*?) \|", reference(), re.M)
+    assert row, "STATUS_PAGE.md no longer documents `type`"
+    assert names == set(re.findall(r'`"(\w+)"`', row.group(1)))

@@ -35,7 +35,6 @@
   --red-fill: #ff3b30;
   --on-orange: #1d1d1f;
   --solid-red: #d70015;
-  --solid-blue: #0066d6;
   --blue-tint: rgba(0, 122, 255, .10);
   --orange-tint: rgba(255, 149, 0, .14);
   --red-tint: rgba(255, 59, 48, .11);
@@ -68,7 +67,6 @@
     --red-fill: #ff453a;
     --on-orange: #000000;
     --solid-red: #d70015;
-    --solid-blue: #0071e3;
     --blue-tint: rgba(10, 132, 255, .2);
     --orange-tint: rgba(255, 159, 10, .18);
     --red-tint: rgba(255, 69, 58, .18);
@@ -100,7 +98,6 @@
   --red-fill: #ff453a;
   --on-orange: #000000;
   --solid-red: #d70015;
-  --solid-blue: #0071e3;
   --blue-tint: rgba(10, 132, 255, .2);
   --orange-tint: rgba(255, 159, 10, .18);
   --red-tint: rgba(255, 69, 58, .18);
@@ -124,6 +121,7 @@ a { color: var(--blue); text-decoration: none; }
 button { font: inherit; color: inherit; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
 :focus-visible { outline: 2px solid var(--blue-fill); outline-offset: 2px; }
 .sheet .dismiss:focus-visible { outline-offset: -2px; }
+.sheet:focus, .sheet:focus-visible { outline: none; } /* the sheet takes focus only to hold it inside; its controls show their own ring */
 code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
 
 /* ---------- The graph owns the whole viewport ---------- */
@@ -240,19 +238,15 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
 .sheet .dismiss { border: 0; border-radius: 8px; background: none; color: var(--blue); font-weight: 600; font-size: 16px; padding: 8px 6px; margin: -4px -6px -4px 0; cursor: pointer; transition: transform 160ms var(--ease-out); }
 .sheet .dismiss:active { transform: scale(.97); }
 .sheet .body { overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 24px; }
-.sheet h2 { font-size: 20px; line-height: 1.25; letter-spacing: -.015em; margin: 2px 0 4px; }
-.sheet .meta { font-size: 13px; color: var(--text-2); font-variant-numeric: tabular-nums; }
-.sheet .ask { margin: 14px 0 0; padding: 12px 16px; border-radius: 12px; background: var(--orange-tint); }
-.sheet .ask.red { background: var(--red-tint); }
-.sheet .ask p { margin: 0; }
-.sheet .ask p + p { margin-top: 4px; font-size: 13px; color: var(--text-2); }
+.sheet h2 { font-size: 22px; line-height: 1.2; letter-spacing: -.022em; margin: 2px 0 0; font-weight: 700; }
+.sheet .meta { margin-top: 8px; font-size: 12.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.sheet .meta a { font-weight: 500; }
+.sheet .meta b { color: var(--text); font-weight: 600; }
 .sheet .facts { list-style: none; margin: 14px 0 0; padding: 0; font-size: 14px; }
 .sheet .facts li { padding: 10px 0; border-top: .5px solid var(--sep); color: var(--text-2); }
 .sheet .facts li b { color: var(--text); font-weight: 600; }
-.sheet .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .btn { border: 0; border-radius: 11px; padding: 8px 16px; min-height: 36px; font-size: 14.5px; font-weight: 600; cursor: pointer; background: var(--blue-tint); color: var(--blue); transition: transform 160ms var(--ease-out); display: inline-flex; align-items: center; }
 .btn:active { transform: scale(.97); }
-.btn.primary { background: var(--solid-blue); color: #fff; }
 .track { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; margin: 14px 0 4px; }
 .track span { font-size: 10.5px; color: var(--text-2); text-align: center; }
 .track span::before { content: ""; display: block; height: 4px; border-radius: 2px; background: var(--fill); margin-bottom: 5px; }
@@ -272,6 +266,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
 .row .n.red { background: var(--solid-red); color: #fff; }
 .row .w { font-weight: 600; line-height: 1.35; }
 .row .y { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+.row .y.sum { color: var(--text); }
 /* Labels run in at the start of their value, since the values are long and the sheet is narrow. */
 .why { margin: 6px 0 0; font-size: 13px; line-height: 1.4; position: relative; z-index: 1; }
 .why dt { display: inline; margin-right: 6px; color: var(--text-2); font-weight: 600; }
@@ -283,7 +278,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
 .copyline code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; background: var(--fill); border-radius: 9px; padding: 8px 10px; }
 
 @media (min-width: 760px) {
-  .sheet { top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); width: 360px; max-height: calc(100dvh - 32px - 60px - env(safe-area-inset-bottom, 0px)); border-radius: 20px; } /* stops above the dock */
+  .sheet { top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); width: 388px; max-height: calc(100dvh - 32px - 72px - env(safe-area-inset-bottom, 0px)); border-radius: 20px; } /* stops above the dock */
   .scrim { display: none; }
 }
 @media (max-width: 759px) {
@@ -305,6 +300,124 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
   :root { --edge: rgba(60, 60, 67, .7); --sep: rgba(60, 60, 67, .5); }
   .hud, .fbtn, .sheet { background: var(--card); -webkit-backdrop-filter: none; backdrop-filter: none; border: 1px solid var(--sep); }
 }
+
+/* ---------- An open Ticket: what it is, before where it stands ---------- */
+:root { --green-tint: rgba(52, 199, 89, .13); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --green-tint: rgba(48, 209, 88, .16); } }
+:root[data-theme="dark"] { --green-tint: rgba(48, 209, 88, .16); }
+
+.arow { margin-top: 20px; }
+.arow h3, .sec h3 { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--text-2); }
+.arow p { margin: 0; font-size: 15px; line-height: 1.5; }
+.arow p.soft { color: var(--text-2); font-size: 14px; }
+.done { list-style: none; margin: 0; padding: 0; font-size: 15px; line-height: 1.4; }
+.done li { position: relative; padding: 4px 0 4px 26px; }
+.done li::before { content: ""; position: absolute; left: 0; top: 5px; width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid var(--text-3); }
+.done.met li::before { background: var(--green-fill); border-color: var(--green-fill); }
+.done.met li::after { content: ""; position: absolute; left: 6px; top: 8px; width: 3.5px; height: 7px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.ba { display: grid; margin-top: 18px; }
+.ba-card { padding: 10px 14px 12px; border-radius: 13px; }
+.ba-card.before { background: var(--fill); }
+.ba-card.after { background: var(--green-tint); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green-fill) 32%, transparent); }
+.ba-card p { margin: 3px 0 0; font-size: 15px; line-height: 1.42; }
+.ba-card.before p { color: var(--text-2); }
+.ba-k { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-2); }
+.ba-card.after .ba-k { color: var(--green); }
+.ba-arrow { height: 24px; display: grid; place-items: center; }
+.ba-arrow svg { display: block; }
+.sec { margin-top: 24px; padding-top: 16px; border-top: .5px solid var(--sep); }
+.sec .facts { font-size: 13.5px; }
+.sec .facts li { padding: 8px 0; }
+.sec .track { margin-top: 8px; }
+.note-line { margin: 8px 0 0; font-size: 14px; line-height: 1.42; color: var(--text-2); }
+.note-line b { color: var(--text); font-weight: 600; }
+.missing { margin: 6px 0 0; font-size: 14px; color: var(--text-2); font-style: italic; }
+
+/* ---------- Attention, ranked for the person checking in ----------
+   1 stuck (solid red)  2 needs you (solid orange)  3 running (calm, blue only in dot and bar)
+   4 waiting (faded, dashed)  5 landed (faded)  — the goal is a quiet outline, not the brightest block. */
+.edge { stroke-opacity: .5; }
+.edge.k-goal { stroke-opacity: .18; }
+.node.n-run .box { stroke: var(--sep); stroke-width: 1; }
+.node.n-run .t-title { font-weight: 500; }
+.node.n-done .press { opacity: .42; }
+.node.n-idle .press, .node.n-wait .press { opacity: .58; }
+.node.n-you .box { fill: var(--orange-fill); stroke: none; }
+.node.n-stop .box { fill: var(--solid-red); stroke: none; }
+.node.n-you text, .node.n-you .t-id, .node.n-you .t-kind, .node.n-you .t-status { fill: var(--on-orange) !important; }
+.node.n-stop text, .node.n-stop .t-id, .node.n-stop .t-kind, .node.n-stop .t-status { fill: #fff !important; }
+.node.n-you .t-title, .node.n-stop .t-title { font-weight: 700; }
+.node.n-you .dot { fill: var(--on-orange); }
+.node.n-stop .dot { fill: #fff; }
+.node.n-you .bar-bg { stroke: rgba(0, 0, 0, .16); } .node.n-you .bar { stroke: var(--on-orange); }
+.node.n-stop .bar-bg { stroke: rgba(255, 255, 255, .25); } .node.n-stop .bar { stroke: #fff; }
+.node.n-you .badge circle { fill: var(--on-orange); } .node.n-you .badge text { fill: var(--orange-fill) !important; }
+.node.n-stop .badge circle { fill: #fff; } .node.n-stop .badge text { fill: var(--solid-red) !important; }
+.node.n-you .press { filter: drop-shadow(0 6px 16px rgba(255, 149, 0, .32)); }
+.node.n-stop .press { filter: drop-shadow(0 6px 18px rgba(255, 59, 48, .4)); }
+.node.n-you.sel .box, .node.n-stop.sel .box, .node.n-you:focus-visible .box, .node.n-stop:focus-visible .box { stroke: var(--text); stroke-width: 2.5; }
+.goal rect { fill: var(--card); stroke: var(--sep); stroke-width: 1; }
+.goal text { fill: var(--text) !important; }
+.goal .g-k { fill: var(--text-2) !important; opacity: 1; }
+.goal .g-d { fill: var(--text-2) !important; opacity: 1; }
+.fbtn.urgent { background: var(--orange-fill); color: var(--on-orange); height: 48px; border-radius: 24px; padding: 0 18px; font-size: 16px;
+  box-shadow: 0 0 0 .5px rgba(0,0,0,.08), 0 8px 24px rgba(255, 149, 0, .35); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.fbtn.urgent .count { background: var(--on-orange); color: var(--orange-fill); }
+.fbtn.urgent.stop { background: var(--solid-red); color: #fff; box-shadow: 0 0 0 .5px rgba(0,0,0,.08), 0 8px 24px rgba(255, 59, 48, .4); }
+.fbtn.urgent.stop .count { background: #fff; color: var(--solid-red); }
+.dock { align-items: center; }
+
+/* The open Ticket reads top to bottom, one anchor per step: title, one sentence, the decision, the change, status. */
+.lede { margin: 6px 0 0; font-size: 15.5px; line-height: 1.45; font-weight: 400; letter-spacing: -.005em; color: var(--text-2); }
+.decide { margin: 18px 0 4px; padding: 14px 16px 14px; border-radius: 16px; background: var(--orange-tint);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--orange-fill) 45%, transparent); }
+.decide.red { background: var(--red-tint); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red-fill) 50%, transparent); }
+.decide .pill { display: inline-block; padding: 3px 8px; border-radius: 7px; background: var(--orange-fill); color: var(--on-orange); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.decide.red .pill { background: var(--solid-red); color: #fff; }
+.decide .q { margin: 9px 0 0; font-size: 17px; line-height: 1.3; font-weight: 650; letter-spacing: -.012em; color: var(--text); }
+.decide .pick { margin: 10px 0 0; font-size: 15px; line-height: 1.35; }
+.decide .pk-k { color: var(--text-2); }
+.decide .risk { margin: 3px 0 0; font-size: 13.5px; line-height: 1.4; color: var(--text-2); }
+.decide .act { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.btn.go { background: var(--orange-fill); color: var(--on-orange); min-height: 40px; padding: 9px 18px; font-size: 15px; border-radius: 12px; }
+.decide.red .btn.go { background: var(--solid-red); color: #fff; }
+.decide .cost { font-size: 12.5px; color: var(--text-2); }
+.decide .do { flex-basis: 100%; font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--text); padding-left: 10px; border-left: 2.5px solid var(--orange-fill); }
+.decide.red .do { border-left-color: var(--solid-red); }
+.decide .how { margin: 10px 0 0; font-size: 12.5px; line-height: 1.4; color: var(--text-2); }
+.decide .ev { margin-top: 10px; border-top: .5px solid var(--sep); padding-top: 8px; }
+.decide .ev summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-2); list-style: none; }
+.decide .ev summary::-webkit-details-marker { display: none; }
+.decide .ev summary::before { content: "›"; display: inline-block; width: 14px; transition: transform 200ms var(--ease-out); }
+.decide .ev[open] summary::before { transform: rotate(90deg); }
+.decide .ev p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--text); }
+.sheet .body { padding-bottom: 28px; }
+
+/* Hover peek: the gist of a Ticket without opening it, anchored to the card it describes. */
+.peek {
+  position: fixed; z-index: 20; max-width: 290px; padding: 10px 13px 11px; border-radius: 13px; pointer-events: none;
+  background: var(--card); box-shadow: var(--lift); font-size: 14px; line-height: 1.4; opacity: 0; transform: scale(.96);
+  transition: opacity 140ms var(--ease-out), transform 200ms var(--ease-out), left 200ms var(--ease-out), top 200ms var(--ease-out);
+}
+.peek.on { opacity: 1; transform: none; }
+.peek.instant { transition: opacity 140ms var(--ease-out), transform 200ms var(--ease-out); }
+.peek .pk { font-size: 11.5px; font-weight: 600; color: var(--text-2); margin-bottom: 2px; font-variant-numeric: tabular-nums; }
+.peek .ph { font-size: 12px; color: var(--blue); margin-top: 7px; font-weight: 600; }
+
+.fbtn.key { font-size: 18px; font-weight: 600; }
+.legend { list-style: none; margin: 4px 0 0; padding: 0; font-size: 14px; }
+.legend li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; padding: 9px 0; border-top: .5px solid var(--sep); }
+.legend li:first-child { border-top: 0; }
+.legend .sw { display: grid; place-items: center; }
+.legend .sw i { width: 10px; height: 10px; border-radius: 50%; }
+.legend .sw i.ring { background: none !important; border: 1.5px solid var(--text-3); }
+.legend b { font-weight: 600; }
+.legend span.d { color: var(--text-2); }
+.keyp { margin: 4px 0 14px; font-size: 14.5px; line-height: 1.45; }
+.sheet .keyh { margin: 18px 0 4px; font-size: 13px; font-weight: 600; color: var(--text-2); }
+@media (prefers-reduced-motion: reduce) {
+  .peek, .peek.instant { transition: opacity 140ms ease; transform: none; }
+}
 </style>
 </head>
 <body>
@@ -312,10 +425,12 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
 <header class="hud" id="hud"></header>
 <div class="dock" id="dock">
   <button type="button" class="fbtn" id="needsBtn"><span class="lbl">Needs you</span><span class="count" hidden></span></button>
+  <button type="button" class="fbtn icon key" id="keyBtn" aria-label="How to read this page">?</button>
   <button type="button" class="fbtn icon" id="fitBtn" aria-label="Fit the whole graph">
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5V2h4.5M11.5 2H16v4.5M16 11.5V16h-4.5M6.5 16H2v-4.5"/></svg>
   </button>
 </div>
+<div class="peek" id="peek" aria-hidden="true"></div>
 <div class="scrim" id="scrim"></div>
 <aside class="sheet" id="sheet" role="dialog" aria-labelledby="sheetKick" tabindex="-1">
   <div class="grab" aria-hidden="true"></div>
@@ -343,21 +458,69 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
   "nextCheckAt": "2026-10-18T09:46:00Z",
   "maxBatch": 5,
   "tickets": [
-    { "id": "#131", "title": "Remove the second confirmation screen", "url": "https://example.com/acme/shop/issues/131", "status": "landed", "at": "2026-10-18T07:58:00Z", "pr": { "id": "#201", "url": "https://example.com/acme/shop/pull/201" }, "note": "Left no debt." },
-    { "id": "#132", "title": "Keep the cart when a payment fails", "url": "https://example.com/acme/shop/issues/132", "status": "landed", "at": "2026-10-18T09:20:00Z", "pr": { "id": "#203", "url": "https://example.com/acme/shop/pull/203" }, "note": "Left 2 debt items." },
-    { "id": "#133", "title": "Retry a declined card once with 3-D Secure", "url": "https://example.com/acme/shop/issues/133", "status": "running", "phase": "land", "at": "2026-10-18T08:06:00Z", "pr": { "id": "#205", "url": "https://example.com/acme/shop/pull/205" }, "note": "The base moved. Re-running gates before it lands." },
-    { "id": "#138", "title": "Round refunds in the customer's currency", "url": "https://example.com/acme/shop/issues/138", "status": "running", "phase": "define", "at": "2026-10-18T09:02:00Z" },
-    { "id": "#143", "title": "Pay with a saved wallet in one tap", "url": "https://example.com/acme/shop/issues/143", "status": "running", "phase": "verify", "at": "2026-10-18T08:06:00Z", "pr": { "id": "#214", "url": "https://example.com/acme/shop/pull/214" }, "note": "Merged the new base in early." },
-    { "id": "#144", "title": "Email a receipt after a recovered payment", "url": "https://example.com/acme/shop/issues/144", "status": "running", "phase": "build", "at": "2026-10-18T08:40:00Z" },
-    { "id": "#147", "title": "Log every payment state change", "url": "https://example.com/acme/shop/issues/147", "status": "running", "phase": "understand", "at": "2026-10-18T09:31:00Z" },
-    { "id": "#149", "title": "Speed up the payment page on slow phones", "url": "https://example.com/acme/shop/issues/149", "status": "queued", "note": "Starts when a slot frees up." },
-    { "id": "#141", "title": "Show saved cards first at checkout", "url": "https://example.com/acme/shop/issues/141", "status": "waiting", "dependsOn": ["#133"], "auto": false },
+    { "id": "#131", "type": "feature", "title": "Remove the second confirmation screen", "url": "https://example.com/acme/shop/issues/131", "status": "landed", "at": "2026-10-18T07:58:00Z", "pr": { "id": "#201", "url": "https://example.com/acme/shop/pull/201" }, "note": "Left no debt.",
+      "summary": "Customers confirm their order once, not twice.",
+      "why": "One in nine customers left at the second \"Are you sure?\" screen. It asked the same thing as the first one.",
+      "change": { "before": "Pay \u2192 \"Confirm order\" \u2192 \"Are you sure?\" \u2192 paid.", "after": "Pay \u2192 \"Confirm order\" \u2192 paid." },
+      "done": ["The order goes through after one confirmation.", "Checkout tests pass on phone and desktop."] },
+    { "id": "#132", "type": "bug", "title": "Keep the cart when a payment fails", "url": "https://example.com/acme/shop/issues/132", "status": "landed", "at": "2026-10-18T09:20:00Z", "pr": { "id": "#203", "url": "https://example.com/acme/shop/pull/203" }, "note": "Left 2 debt items.",
+      "summary": "A failed card payment no longer empties the customer's cart.",
+      "why": "After a decline, customers had to find and add every item again. Many gave up.",
+      "change": { "before": "The card is declined. The cart is empty.", "after": "The card is declined. The cart is still full, with a \"Try another card\" button." },
+      "done": ["After a decline, every item and quantity is still in the cart.", "A test declines a card and checks the cart."] },
+    { "id": "#133", "type": "feature", "title": "Retry a declined card once with 3-D Secure", "url": "https://example.com/acme/shop/issues/133", "status": "running", "phase": "land", "at": "2026-10-18T08:06:00Z", "pr": { "id": "#205", "url": "https://example.com/acme/shop/pull/205" }, "note": "The base moved. Re-running gates before it lands.",
+      "summary": "When the bank declines a card for a security reason, the shop asks the bank to check the customer once more.",
+      "why": "Many declines are only the bank wanting extra proof. Today those sales are lost.",
+      "change": { "before": "Bank says \"needs extra check\". The shop shows \"Card declined\".", "after": "Bank says \"needs extra check\". The customer approves in their bank app, and the payment goes through." },
+      "done": ["A security decline opens the bank's check one time.", "Other declines still show the decline message."] },
+    { "id": "#138", "type": "bug", "title": "Round refunds in the customer's currency", "url": "https://example.com/acme/shop/issues/138", "status": "running", "phase": "define", "at": "2026-10-18T09:02:00Z",
+      "summary": "Refunds are rounded the way the customer's own currency rounds.",
+      "why": "Refunds in yen and other currencies without cents come out as odd amounts, like \u00a51,999.6. Support then gets questions.",
+      "change": { "before": "A \u00a52,000 order is refunded as \u00a51,999.6.", "after": "A \u00a52,000 order is refunded as \u00a52,000." },
+      "done": ["Refunds in yen, won and euro show amounts the bank accepts.", "A test covers each currency group."] },
+    { "id": "#143", "type": "feature", "title": "Pay with a saved wallet in one tap", "url": "https://example.com/acme/shop/issues/143", "status": "running", "phase": "verify", "at": "2026-10-18T08:06:00Z", "pr": { "id": "#214", "url": "https://example.com/acme/shop/pull/214" }, "note": "Merged the new base in early.",
+      "summary": "Customers with Apple Pay or Google Pay pay with one tap, without typing card details.",
+      "why": "Typing a card on a phone is the slowest step of checkout.",
+      "change": { "before": "Open checkout \u2192 type 16 digits, date and code \u2192 pay.", "after": "Open checkout \u2192 tap \"Pay\" \u2192 paid." },
+      "done": ["The wallet button shows only on devices that support it.", "A test payment goes through with each wallet."] },
+    { "id": "#144", "type": "feature", "title": "Email a receipt after a recovered payment", "url": "https://example.com/acme/shop/issues/144", "status": "escalated", "phase": "build", "at": "2026-10-18T08:40:00Z", "note": "Stopped mid-build. Nothing else waits on it.",
+      "summary": "When a failed payment later succeeds, the customer gets a receipt by email.",
+      "why": "Customers saw the failure, but never saw that it worked in the end. Some paid twice.",
+      "done": ["One receipt email goes out after the recovered payment.", "No email goes out for a payment that still failed."] },
+    { "id": "#147", "type": "chore", "title": "Log every payment state change", "url": "https://example.com/acme/shop/issues/147", "status": "running", "phase": "understand", "at": "2026-10-18T09:31:00Z",
+      "summary": "Every step of a payment \u2014 started, declined, retried, paid \u2014 is written to one log.",
+      "why": "When a payment goes wrong, support cannot see which steps happened.",
+      "done": ["Support can see the full path of any payment from the last 30 days."] },
+    { "id": "#149", "type": "feature", "title": "Speed up the payment page on slow phones", "url": "https://example.com/acme/shop/issues/149", "status": "queued", "note": "Starts when a slot frees up.",
+      "summary": "The payment page appears in under 2 seconds on a slow phone.",
+      "why": "On slow phones the page takes 6 seconds, and many customers leave before it appears.",
+      "change": { "before": "About 6 s until a customer can pay on a slow phone.", "after": "Under 2 s on the same phone." },
+      "done": ["A page-speed test on a slow phone profile shows under 2 s."] },
+    { "id": "#141", "type": "feature", "title": "Show saved cards first at checkout", "url": "https://example.com/acme/shop/issues/141", "status": "waiting", "dependsOn": ["#133"], "auto": false,
+      "summary": "Returning customers see their saved cards at the top of checkout.",
+      "why": "Returning customers scroll past the new-card form to find the card they always use." },
     { "id": "#146", "title": "Remember the last card used", "url": "https://example.com/acme/shop/issues/146", "status": "waiting", "dependsOn": ["#141"] },
-    { "id": "#153", "title": "Refund to the original card", "url": "https://example.com/acme/shop/issues/153", "status": "waiting", "dependsOn": ["#138"] },
-    { "id": "#148", "title": "Show a clear message when a card expires", "url": "https://example.com/acme/shop/issues/148", "status": "waiting", "after": ["#147"], "note": "#147 changes how every payment state is recorded, and this adds a new one." },
-    { "id": "#151", "title": "Hide card numbers in payment logs", "url": "https://example.com/acme/shop/issues/151", "status": "held", "pr": { "id": "#212", "url": "https://example.com/acme/shop/pull/212" }, "auto": false, "note": "No Auto: a person lands it." }
+    { "id": "#153", "type": "bug", "title": "Refund to the original card", "url": "https://example.com/acme/shop/issues/153", "status": "waiting", "dependsOn": ["#138"],
+      "summary": "A refund always goes back to the card that paid, never to a newer saved card." },
+    { "id": "#148", "type": "feature", "title": "Show a clear message when a card expires", "url": "https://example.com/acme/shop/issues/148", "status": "waiting", "after": ["#147"], "note": "#147 changes how every payment state is recorded, and this adds a new one.",
+      "summary": "Customers with an expired card are told so, and asked for a new one.",
+      "why": "Today an expired card shows the same \"Card declined\" message as any other problem.",
+      "change": { "before": "\"Card declined.\"", "after": "\"This card expired in 09/26. Add a new card to continue.\"" } },
+    { "id": "#151", "type": "bug", "title": "Hide card numbers in payment logs", "url": "https://example.com/acme/shop/issues/151", "status": "held", "pr": { "id": "#212", "url": "https://example.com/acme/shop/pull/212" }, "auto": false, "kind": "debt", "from": ["#132"],
+      "foundWhile": "While fixing the empty cart, the run saw full card numbers in the payment error logs.",
+      "summary": "Payment logs show only the last four digits of a card.",
+      "why": "Full card numbers in logs break card-security rules, and anyone with log access can read them.",
+      "change": { "before": "Log line: card 4111 1111 1111 1234 declined.", "after": "Log line: card \u2022\u2022\u2022\u2022 1234 declined." },
+      "done": ["A day of sample logs contains no full card number.", "Support can still see the last four digits."] },
+    { "id": "#155", "type": "refactor", "title": "Move payment retries into one place", "url": "https://example.com/acme/shop/issues/155", "status": "grant", "kind": "debt", "from": ["#132"], "grant": null,
+      "foundWhile": "While fixing the empty cart, the run found the same retry code copied in three places.",
+      "summary": "Retry rules for failed payments live in one place instead of three copies.",
+      "why": "The three copies already disagree. A fix to one leaves the other two wrong.",
+      "done": ["One retry module, used by checkout, subscriptions and refunds.", "Behaviour is unchanged: the existing payment tests pass."] }
   ],
   "needsYou": [
+    { "ticket": "#144", "ask": "Send the receipt to customers who turned off marketing emails?", "detail": "Answer in the orchestrator's conversation; the run continues from where it stopped.", "pick": "Yes: a receipt is not marketing.", "risk": "A few customers may see it as unwanted email.", "evidence": "The privacy page lists receipts as service emails, which the opt-out does not cover.", "cost": "The run is stopped until you answer" },
+    { "ticket": "#155", "ask": "Let automation finish #155 on its own?", "pick": "Yes, grant Auto.", "risk": "It changes code three features use; the existing tests are its only guard.", "evidence": "It changes no behaviour, and the payment tests cover all three copies.", "cost": "Nothing waits on it" },
     { "ticket": "#151", "ask": "Merge #212, which masks card numbers in payment logs?", "pick": "Merge it.", "risk": "Support loses the last four digits in the logs; the change keeps them in the receipt view.", "evidence": "All 14 gates passed at the head, including a test that scans a day of sample logs for full card numbers. Not checked: logs older services write.", "cost": "Nothing waits on it" },
     { "ask": "Plan in depth: how should failed charges be retried?", "detail": "This needs its own session with you. Its Tickets appear here at the next check-in.", "startLine": "/figure-out How should failed charges be retried? Then ticket-up the read into effort \"Checkout v2\"", "cost": "3 Tickets wait on the answer" }
   ]
@@ -372,6 +535,8 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
   var PHASES = [["understand", "Understand"], ["define", "Define"], ["build", "Build"], ["verify", "Verify"], ["ready", "Ready PR"], ["land", "Land"]];
   var LABEL = { held: "Your look", escalated: "Your answer", failed: "Launch failed", grant: "Grant Auto?", proposal: "Your call", queued: "Up next", skipped: "Left alone", proposed: "Proposed" };
   var TONE = { running: "run", landed: "done", held: "you", grant: "you", proposal: "you", escalated: "stop", failed: "stop", queued: "wait", waiting: "idle", skipped: "idle", proposed: "prop" };
+  // The Ticket types the reference documents, and how the page names them.
+  var TYPE_NAME = { bug: "Bug fix", feature: "Feature", refactor: "Refactor", docs: "Docs", chore: "Upkeep" };
   var TONES = ["tone-run", "tone-done", "tone-you", "tone-stop", "tone-wait", "tone-idle", "tone-prop"];
   var POLL_MS = 15000, GRACE_MS = 2 * 60000, MINREAD = 0.72, WIDE = 760;
   // Explanatory motion runs once per check-in, so it may take longer than ordinary UI motion.
@@ -425,7 +590,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
   function rubber(v, lo, hi, dim) { return v < lo ? lo - band(lo - v, dim) : v > hi ? hi + band(v - hi, dim) : v; }
   function phaseIndex(p) { for (var i = 0; i < PHASES.length; i++) if (PHASES[i][0] === p) return i; return 0; }
   function lowerFirst(s) { return s.charAt(0).toLowerCase() + s.slice(1); }
-  function kindName(k) { return k === "debt" ? "Debt" : "Proposal"; }
+  function kindName(k) { return k === "debt" ? "Found by a run" : "Proposal"; }
 
   var mctx = document.createElement("canvas").getContext("2d");
   function measure(text, px, weight) { mctx.font = weight + " " + px + "px " + FONT; return mctx.measureText(text).width; }
@@ -1061,6 +1226,8 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
         if (an && !R && n.status === "landed" && o.status !== "landed" && n.pulse) pulse(o, n.pulse, dl + MS.glide * 0.6);
       }
       o.cx = n.cx; o.cy = n.cy; o.tx = n.x; o.ty = n.y; o.status = n.status;
+      // The whole card carries its tone, so attention can be ranked card by card.
+      if (!n.deco) { ["n-run", "n-done", "n-you", "n-stop", "n-wait", "n-idle", "n-prop"].forEach(function (c) { o.g.classList.remove(c); }); o.g.classList.add("n-" + (TONE[n.status] || "wait")); }
       if (n.label) o.g.setAttribute("aria-label", n.label);
       if (n.deco && n.label) o.g.setAttribute("role", "img");
     });
@@ -1303,7 +1470,8 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     if (d.example) S.hk.appendChild(el("span", { "class": "ex", text: "Example · " }));
     S.hk.appendChild(document.createTextNode("Plan " + d.plan + " · " + (d.mode === "autonomous" ? "--autonomous" : "Default mode")));
     S.ht.textContent = d.effort.name;
-    document.title = d.effort.name + " · orchestrate";
+    var nn = d.needsYou.length;
+    document.title = (nn ? "(" + nn + ") " : "") + d.effort.name + " · orchestrate";
   }
   function liveNow() { return S.real.state === "live"; }
   // Runs every second: the clock line, each running Ticket's elapsed time, and the warnings that follow from the clock.
@@ -1361,6 +1529,9 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     var n = S.d.needsYou.length, nb = $("needsBtn"), lbl = nb.querySelector(".lbl"), cnt = nb.querySelector(".count"), prev = S.needs;
     S.needs = n;
     nb.classList.toggle("quiet", !n);
+    nb.classList.toggle("urgent", !!n);
+    nb.classList.toggle("stop", S.d.needsYou.some(function (a) { var t = a.ticket && S.m && S.m.byId[a.ticket]; return t && (t.status === "escalated" || t.status === "failed"); }));
+    if (anim && prev != null && n > prev && nb.animate && !reduced) nb.animate([{ transform: "scale(1)" }, { transform: "scale(1.08)" }, { transform: "scale(1)" }], { duration: 420, easing: CURVE.out });
     lbl.textContent = n ? "Needs you" : "Nothing needs you";
     nb.setAttribute("aria-label", n ? (n === 1 ? "1 thing needs you" : n + " things need you") : "Nothing needs you");
     if (!n) { cnt.hidden = true; cnt.textContent = ""; return; }
@@ -1382,6 +1553,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
   function sheetSig() {
     var m = S.m;
     if (!m || !S.sheet) return null;
+    if (S.sheet === "key") return "key";
     if (S.sheet === "needs") return "needs|" + JSON.stringify(m.d.needsYou) + "|" + m.d.needsYou.map(function (a) { return a.ticket && m.byId[a.ticket] ? m.byId[a.ticket].status : ""; }).join();
     var t = m.byId[S.sel];
     if (!t) return null;
@@ -1399,7 +1571,9 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     var modal = !!S.sheet && innerWidth < WIDE, sh = $("sheet");
     if (modal) sh.setAttribute("aria-modal", "true"); else sh.removeAttribute("aria-modal");
     ["stage", "hud", "dock"].forEach(function (id) { $(id).toggleAttribute("inert", modal); });
-    if (modal && !sh.contains(document.activeElement)) $("sheetDone").focus({ preventScroll: true });
+    // Focus moves into the modal sheet. A sheet opened by touch or mouse takes focus itself, which shows no ring;
+    // one opened from the keyboard puts it on Done, where the ring shows the person where they are.
+    if (modal && !sh.contains(document.activeElement)) (S.keyOpen ? $("sheetDone") : sh).focus({ preventScroll: true });
   }
   function openSheet(kind, id, refresh, instant) {
     var m = S.m, body = $("sheetBody"), kick = $("sheetKick"), keep = refresh ? body.scrollTop : 0;
@@ -1408,6 +1582,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
       S.opener = a && a !== document.body && !$("sheet").contains(a) ? a : null;
     }
     S.sheet = kind;
+    if (!refresh) S.keyOpen = !!instant;
     if (kind === "detail") S.sel = id;
     body.textContent = "";
     if (kind === "needs") {
@@ -1417,7 +1592,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
       m.d.needsYou.forEach(function (a, i) {
         var t = a.ticket && m.byId[a.ticket], red = t && (t.status === "escalated" || t.status === "failed");
         var ask = t ? el("button", { type: "button", "class": "w open", text: t.id + "  " + a.ask }) : el("div", { "class": "w", text: a.ask });
-        var text = el("div", null, [ask, el("div", { "class": "y", text: t ? a.cost || "" : [a.detail, a.cost].filter(Boolean).join(" · ") })]);
+        var text = el("div", null, [ask, t && t.summary ? el("div", { "class": "y sum", text: t.summary }) : null, el("div", { "class": "y", text: t ? a.cost || "" : [a.detail, a.cost].filter(Boolean).join(" · ") })]);
         var why = reasons(a);
         if (why) text.appendChild(why);
         if (a.startLine) text.appendChild(copyLine(a.startLine));
@@ -1430,44 +1605,88 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
       });
       if (!m.d.needsYou.length) list.appendChild(el("p", { "class": "row", text: "Nothing needs you right now." }));
       body.appendChild(list);
+    } else if (kind === "key") {
+      setSheetTone(null);
+      kick.textContent = "How to read this page";
+      body.appendChild(el("h2", { text: "Each card is one piece of work" }));
+      body.appendChild(el("p", { "class": "keyp", text: "Click a card to see what it does, why, and how we will know it is done. Cards on the left can start now. A card further right waits for the cards its line comes from. Every line ends at the goal." }));
+      body.appendChild(el("h3", { "class": "keyh", text: "Colours" }));
+      var rows = [["var(--solid-red)", "Solid red", "stuck: nothing moves until you answer"], ["var(--orange-fill)", "Solid orange", "waits for you; the number is its place in Needs you"], ["var(--blue-fill)", "Blue dot", "an agent is working on it; nothing for you to do"], ["var(--green-fill)", "Faded, green dot", "done and merged"], ["", "Faded, dashed", "waits for another card, or for a free slot"]];
+      body.appendChild(el("ul", { "class": "legend" }, rows.map(function (r) {
+        return el("li", null, [el("span", { "class": "sw" }, [el("i", r[0] ? { style: "background:" + r[0] } : { "class": "ring" })]), el("span", null, [el("b", { text: r[1] }), el("span", { "class": "d", text: " · " + r[2] })])]);
+      })));
+      body.appendChild(el("h3", { "class": "keyh", text: "Lines" }));
+      body.appendChild(el("ul", { "class": "legend" }, [
+        el("li", null, [el("span", { "class": "sw" }), el("span", null, [el("b", { text: "Solid" }), el("span", { "class": "d", text: " · needs the other card finished first" })])]),
+        el("li", null, [el("span", { "class": "sw" }), el("span", null, [el("b", { text: "Dashed" }), el("span", { "class": "d", text: " · changes the same code, so it goes second" })])]),
+        el("li", null, [el("span", { "class": "sw" }), el("span", null, [el("b", { text: "Dotted" }), el("span", { "class": "d", text: " · a run found this work while doing the other card" })])])
+      ]));
+      var sws = body.querySelectorAll(".legend:last-of-type .sw");
+      ["", "5 4", ".5 4.5"].forEach(function (da, k) {
+        sws[k].innerHTML = '<svg width="36" height="8" viewBox="0 0 36 8"><path d="M1 4H35" stroke="var(--edge)" stroke-width="' + (k === 2 ? 2 : 1.4) + '" stroke-linecap="round"' + (da ? ' stroke-dasharray="' + da + '"' : "") + '/></svg>';
+      });
     } else {
       var t = m.byId[id];
       setSheetTone(tone(t));
       kick.textContent = statusText(m, t);
       body.appendChild(el("h2", { text: t.title }));
-      var meta = [link(t.url, t.id)];
-      if (t.kind) meta.push(t.kind === "debt" ? " · Debt Ticket" : " · Refactor proposal");
-      if (t.status === "running" && !isNaN(Date.parse(t.at))) meta.push(el("span", { "class": "el", "data-since": Date.parse(t.at), "data-pre": " · running ", text: " · running " + stopwatch(now() - Date.parse(t.at)) }));
+      // Eye path: title (what) → one plain sentence → the decision, if any, with its button → the change → done → status.
+      // One anchor per step; everything secondary is lighter, smaller or one click away.
+      var ask = m.ask[id];
+      if (t.summary) body.appendChild(el("p", { "class": "lede", text: t.summary }));
+      else body.appendChild(el("p", { "class": "missing", text: "No summary on this Ticket yet. Open the Ticket to read it." }));
+      var src = t.from && t.from[0] && m.byId[t.from[0]];
+      var meta = [link(t.url, t.id + " ↗")];
+      if (t.type) meta.push(" · " + TYPE_NAME[t.type]);
+      if (t.pr && !ask) meta.push(" · ", link(t.pr.url, "PR " + t.pr.id + " ↗"));
+      if (src) meta.push(el("span", null, [" · Found while doing ", el("b", { text: src.id })]));
+      else if (t.kind) meta.push(t.kind === "debt" ? " · Found by a run" : " · Refactor proposal");
       body.appendChild(el("div", { "class": "meta" }, meta));
+      if (ask) body.appendChild(decisionCard(t, ask.a));
+      // 2. What it solves: the problem in plain words, or the change shown as a before and after.
+      if (t.change) {
+        var arrow = el("div", { "class": "ba-arrow", "aria-hidden": "true" });
+        arrow.innerHTML = '<svg width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M7 1v13M2 9.5 7 14.5 12 9.5"/></svg>';
+        body.appendChild(el("div", { "class": "ba", role: "group", "aria-label": "Before and after" }, [
+          el("div", { "class": "ba-card before" }, [el("span", { "class": "ba-k", text: "Today" }), el("p", { text: t.change.before })]),
+          arrow,
+          el("div", { "class": "ba-card after" }, [el("span", { "class": "ba-k", text: t.status === "landed" ? "Now" : "After this" }), el("p", { text: t.change.after })])
+        ]));
+        if (t.why) body.appendChild(el("div", { "class": "arow" }, [el("h3", { text: "Why it matters" }), el("p", { text: t.why })]));
+      } else if (t.why) {
+        body.appendChild(el("div", { "class": "arow" }, [el("h3", { text: "The problem" }), el("p", { text: t.why })]));
+      }
+      if (t.foundWhile) body.appendChild(el("div", { "class": "arow" }, [el("h3", { text: "How it came up" }), el("p", { "class": "soft", text: t.foundWhile })]));
+      if (t.done && t.done.length) body.appendChild(el("div", { "class": "arow" }, [el("h3", { text: t.status === "landed" ? "Done" : "Done when" }),
+        el("ul", { "class": "done" + (t.status === "landed" ? " met" : "") }, t.done.map(function (x) { return el("li", { text: x }); }))]));
+      // 3. Where it stands: progress, order and authority, below the part that explains it.
+      var sec = el("div", { "class": "sec" }, [el("h3", { text: "Where it stands" })]);
       if (t.status === "running" || t.status === "escalated" || t.status === "held") {
         var pi = t.status === "held" ? 4 : phaseIndex(t.phase);
-        body.appendChild(el("div", { "class": "track", role: "img", "aria-label": "Step " + (pi + 1) + " of " + PHASES.length + ": " + PHASES[pi][1] },
+        sec.appendChild(el("div", { "class": "track", role: "img", "aria-label": "Step " + (pi + 1) + " of " + PHASES.length + ": " + PHASES[pi][1] },
           PHASES.map(function (p, i) { return el("span", { "class": i < pi ? "done" : i === pi ? "now" : "", "aria-hidden": "true", text: p[1] }); })));
       }
-      var ask = m.ask[id];
-      if (ask) body.appendChild(el("div", { "class": "ask" + (tone(t) === "stop" ? " red" : "") }, [el("p", { text: ask.a.ask }), ask.a.detail ? el("p", { text: ask.a.detail }) : null, reasons(ask.a)]));
+      var line = [el("b", { text: statusText(m, t) })];
+      if (t.status === "running" && !isNaN(Date.parse(t.at))) line.push(el("span", { "class": "el", "data-since": Date.parse(t.at), "data-pre": " · running for ", text: " · running for " + stopwatch(now() - Date.parse(t.at)) }));
+      if (t.note) line.push(". " + t.note);
+      sec.appendChild(el("p", { "class": "note-line" }, line));
       var facts = [];
-      if (t.note) facts.push(el("li", { text: t.note }));
       m.edgesOf(t).forEach(function (e) {
         var p = e[0];
-        if (e[1] === "dep") facts.push(el("li", null, ["Depends on ", el("b", { text: p }), " · " + lowerFirst(statusText(m, m.byId[p]))]));
-        if (e[1] === "after") facts.push(el("li", null, ["Runs after ", el("b", { text: p }), ": both touch the same code"]));
-        if (e[1] === "from") facts.push(el("li", null, ["Written from the debt ", el("b", { text: p }), " left"]));
+        if (e[1] === "dep") facts.push(el("li", null, ["Starts after ", el("b", { text: p }), " lands · " + lowerFirst(statusText(m, m.byId[p]))]));
+        if (e[1] === "after") facts.push(el("li", null, ["Waits for ", el("b", { text: p }), ": both change the same code"]));
       });
       (m.kids[id] || []).forEach(function (k) {
         var e = m.edgesOf(m.byId[k]).filter(function (x) { return x[0] === id; })[0];
-        if (e[1] === "dep") facts.push(el("li", null, [el("b", { text: k }), " depends on this"]));
-        if (e[1] === "after") facts.push(el("li", null, [el("b", { text: k }), " runs after this"]));
-        if (e[1] === "from") facts.push(el("li", null, [el("b", { text: k }), " was written from its debt"]));
+        if (e[1] === "dep") facts.push(el("li", null, [el("b", { text: k }), " waits for this one"]));
+        if (e[1] === "after") facts.push(el("li", null, [el("b", { text: k }), " waits for this one: same code"]));
+        if (e[1] === "from") facts.push(el("li", null, [el("b", { text: k }), " was found while doing this one"]));
       });
-      if (t.grant === "never") facts.push(el("li", { text: "Never Auto: its direction is your call." }));
-      else if ("grant" in t) facts.push(el("li", { text: t.grant ? "Auto, granted by " + t.grant + ". Withdraw it on the Ticket; it is re-read before launch." : "No Auto grant yet." }));
-      if (t.auto === false) facts.push(el("li", { text: "No Auto: it runs until it needs your judgment, and lands only after your look." }));
-      if (facts.length) body.appendChild(el("ul", { "class": "facts" }, facts));
-      var actions = [];
-      if (t.pr) actions.push(link(t.pr.url, "Open PR " + t.pr.id, "btn primary"));
-      actions.push(link(t.url, "Open Ticket", "btn"));
-      body.appendChild(el("div", { "class": "actions" }, actions));
+      if (t.grant === "never") facts.push(el("li", { text: "A person decides this one: its direction is your call." }));
+      else if ("grant" in t) facts.push(el("li", { text: t.grant ? "Automation may finish it, granted by " + t.grant + "." : "Automation may not finish it yet: no one has said it can." }));
+      if (t.auto === false) facts.push(el("li", { text: "A person lands this one. Automation stops at a ready pull request." }));
+      if (facts.length) sec.appendChild(el("ul", { "class": "facts" }, facts));
+      body.appendChild(sec);
     }
     S.sheetSig = sheetSig();
     if (refresh) { body.scrollTop = keep; return; }
@@ -1517,6 +1736,24 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     if (!rows.length) return null;
     return el("dl", { "class": "why" }, rows.reduce(function (out, r) { return out.concat([el("dt", { text: r[0] }), el("dd", r[0] === "Recommended" ? { "class": "pick", text: r[1] } : { text: r[1] })]); }, []));
   }
+  // The decision: what to answer, the pick, its risk, and the one button that acts on it. Evidence waits one tap away.
+  function decisionCard(t, a) {
+    var red = tone(t) === "stop";
+    var kids = [el("span", { "class": "pill", text: red ? "Stuck · your answer" : "Needs you" }), el("p", { "class": "q", text: a.ask })];
+    if (a.pick) kids.push(el("p", { "class": "pick" }, [el("span", { "class": "pk-k", text: "We recommend " }), el("b", { text: a.pick })]));
+    if (a.risk) kids.push(el("p", { "class": "risk", text: "Risk: " + a.risk }));
+    // One action per decision. An answer given in conversation has no button: the instruction is the action.
+    var act = el("div", { "class": "act" });
+    if (t.pr && t.status === "held") act.appendChild(link(t.pr.url, "Open PR " + t.pr.id, "btn go"));
+    else if (t.status === "grant") act.appendChild(link(t.url, "Grant on the Ticket", "btn go"));
+    else if (a.detail) act.appendChild(el("span", { "class": "do", text: a.detail }));
+    else act.appendChild(link(t.url, "Open Ticket", "btn go"));
+    if (a.cost) act.appendChild(el("span", { "class": "cost", text: a.cost }));
+    kids.push(act);
+    if (a.detail && (t.pr && t.status === "held" || t.status === "grant")) kids.push(el("p", { "class": "how", text: a.detail }));
+    if (a.evidence) kids.push(el("details", { "class": "ev" }, [el("summary", { text: "What this rests on" }), el("p", { text: a.evidence })]));
+    return el("div", { "class": "decide" + (red ? " red" : "") }, kids);
+  }
   function copyLine(text) {
     var b = el("button", { type: "button", "class": "btn", text: "Copy" });
     b.addEventListener("click", function () {
@@ -1540,6 +1777,41 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
   $("scrim").addEventListener("mousedown", function (e) { e.preventDefault(); });
   $("scrim").addEventListener("click", function () { if (scrimDown) closeSheet(); scrimDown = false; });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && S.sheet) closeSheet(true); });
+  $("keyBtn").addEventListener("click", function (e) { S.sel = null; markSelected(); openSheet("key", null, false, e.detail === 0); });
+  // A hover peek: the one-sentence summary beside the card, so scanning the graph explains it.
+  function initPeek() {
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    var pk = $("peek"), cur = null, hideT = 0, showT = 0, shown = false;
+    function show(g) {
+      var t = S.m && S.m.byId[g.getAttribute("data-id")];
+      if (!t || S.sel === t.id) return hide();
+      pk.textContent = "";
+      pk.appendChild(el("div", { "class": "pk", text: t.id + (t.type ? " · " + TYPE_NAME[t.type] : "") }));
+      pk.appendChild(el("div", { text: t.summary || t.title }));
+      pk.appendChild(el("div", { "class": "ph", text: "Click for details" }));
+      var r = g.getBoundingClientRect(), w = pk.offsetWidth || 290, x = r.right + 10, y = r.top;
+      if (x + w > innerWidth - 12) x = r.left - w - 10;
+      pk.classList.toggle("instant", !shown);
+      pk.style.left = Math.round(x) + "px"; pk.style.top = Math.round(Math.max(12, Math.min(y, innerHeight - pk.offsetHeight - 12))) + "px";
+      pk.style.transformOrigin = (x > r.left ? "left" : "right") + " top";
+      pk.classList.add("on"); shown = true;
+    }
+    function hide() { pk.classList.remove("on"); shown = false; cur = null; }
+    S.board.svg.addEventListener("pointerover", function (e) {
+      var g = e.target.closest && e.target.closest("[data-id]");
+      if (!g || g === cur || S.board.svg.classList.contains("dragging")) return;
+      cur = g; clearTimeout(hideT); clearTimeout(showT);
+      // The first peek waits a beat so passing over the graph is quiet; once one is open, the next follows at once.
+      if (shown) show(g); else showT = setTimeout(function () { if (cur === g) show(g); }, 260);
+    });
+    S.board.svg.addEventListener("pointerout", function (e) {
+      var to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest("[data-id]");
+      if (to) return;
+      clearTimeout(showT); hideT = setTimeout(hide, 80);
+    });
+    S.board.svg.addEventListener("pointerdown", hide);
+    S.board.svg.addEventListener("wheel", hide, { passive: true });
+  }
   window.addEventListener("resize", function () { Sheet.draw(); syncModal(); if (S.board) S.board.contain(); });
 
   /* ================= The one path every snapshot takes ================= */
@@ -1561,6 +1833,9 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
       if (!t || typeof t.id !== "string" || ids[t.id] || t.id === "goal" || typeof t.title !== "string" || typeof t.status !== "string" || !Object.prototype.hasOwnProperty.call(TONE, t.status)) return false;
       ids[t.id] = 1;
       if (!optStr(t.url) || !optStr(t.at) || !optStr(t.note) || !optStr(t.grant)) return false;
+      if (!optStr(t.summary) || !optStr(t.why) || !optStr(t.foundWhile) || !strings(t.done)) return false;
+      if (t.change != null && (typeof t.change !== "object" || typeof t.change.before !== "string" || typeof t.change.after !== "string")) return false;
+      if (t.type != null && !Object.prototype.hasOwnProperty.call(TYPE_NAME, t.type)) return false;
       if ((t.phase != null && !oneOf(t.phase, PHASE_IDS)) || (t.kind != null && !oneOf(t.kind, KINDS)) || (t.auto != null && t.auto !== false)) return false;
       if (t.pr != null && (typeof t.pr !== "object" || typeof t.pr.id !== "string" || !optStr(t.pr.url))) return false;
       return strings(t.dependsOn) && strings(t.after) && strings(t.from);
@@ -1667,6 +1942,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
   /* ================= Start ================= */
   hudInit();
   S.board = makeBoard($("stage"), { label: "The effort's Tickets, ordered by what each waits on", onTap: choose });
+  initPeek();
   Sheet.draw();
   function loop() { tick(); setTimeout(loop, 1000 - (Date.now() % 1000) + 5); }
   loadStatus().then(function (d) {
