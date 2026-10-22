@@ -56,7 +56,7 @@ prompt="You are a reader who has never seen this project. Using only the documen
 Then report: whether you ended able to do it (yes, partly, or no), the steps or facts you relied on, quoted with the section they came from, and every point where you got stuck or had to guess.
 $inline"
 
-scratch=$(mktemp -d)
+scratch=$(mktemp -d "${TMPDIR:-/tmp}/manifest-dev-walk.XXXXXX")
 trap 'rm -rf "$scratch"' EXIT
 echo "CLI: $CLAUDE_CLI_VERSION"
 status=0
