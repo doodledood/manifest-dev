@@ -22,7 +22,7 @@ The person's attention is the budget. At each moment — a first screen, a slide
 - The same ground every time: cream, linen, warm brown or terracotta, or their dark espresso inversion, chosen by habit rather than from the subject.
 - Spectacle before the point for someone arriving cold or working a shift.
 
-It's done when, looking once as that person at each of those moments, they get what they came for, we get what we wanted, it feels the way the moment asks, and nothing is left whose removal they'd miss. Make that look a squint, blurred or shrunk: what the eye lands on first, and the path it follows from there, is what the moment needs from them, with nothing secondary louder. Stop there; further passes are refinement the requester can ask for.
+It's done when, looking once as that person at each of those moments, they get what they came for, we get what we wanted, it feels the way the moment asks, and nothing is left whose removal they'd miss. Take that look as a squint, blurred or shrunk: what the eye lands on first, and the path it follows from there, is what that moment needs, for them and for us, with nothing secondary louder. Stop there; further passes are refinement the requester can ask for.
 
 Establish the intended use, supported claims, available assets, and constraints from the request, conversation, and project. Fill these in where the evidence is clear. State reasonable assumptions for minor gaps and proceed. Choose visual techniques that suit the concept and the constraints.
 

@@ -23,13 +23,15 @@ on the facts a script can decide.
 Run: `node scripts/status-page-check.mjs`
 Proves: exit `0` and a last line `N of N checks held`: the sample is accepted with nothing thrown;
 the cards waiting on the person carry the loud tones and stuck ones the loudest; the "Needs you"
-button is urgent and turns red while a Ticket is stuck; the tab title carries the count; an open
-Ticket reads title, summary, links, then the decision, with where it stands last, its action in
-view at 1440×900 and its evidence folded; a phone tap opens the sheet with no focus ring while the
-keyboard still shows one on Done; a snapshot without the optional fields opens every detail and
-peek; long text wraps; and a malformed snapshot keeps the last good view with its banner and
-warning. The screenshots (normal and blurred, at 1440×900 and 390×844) and `facts.json` go to the
-directory its first output line names.
+button is urgent and turns red while a Ticket is stuck; the tab title carries the count; no card
+text is faded; hovering a card shows its summary; an open Ticket reads title, summary, links, then
+the decision, with where it stands last, its action in view at 1440×900 and its evidence folded;
+a phone tap opens the sheet with no focus ring while the keyboard still shows one on Done; a stuck
+Ticket at a ready pull request still links it; a snapshot without the optional fields opens every
+detail (saying it has no summary) and every peek (showing the title); long text wraps; and a
+malformed snapshot keeps the last good view with its banner and warning. The screenshots (normal
+and blurred, at 1440×900 and 390×844) and `facts.json` go to the directory its first output line
+names: under `verification/evidence/status-page/` in a `verify` run, which git ignores.
 Check: read
 Line: 17.4 s on darwin-arm64-12cpu
 

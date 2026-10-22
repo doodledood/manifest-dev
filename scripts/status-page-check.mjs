@@ -19,10 +19,11 @@ const ROOT = resolve(import.meta.dirname, "..");
 const args = process.argv.slice(2);
 const at = args.indexOf("--template");
 const TEMPLATE = resolve(at >= 0 ? args.splice(at, 2)[1] : join(ROOT, "claude-plugins/manifest-dev/skills/orchestrate/assets/status-page.html"));
-const OUT = resolve(args[0] || mkdtempSync(join(tmpdir(), "status-page-")));
+// Screenshots go where the caller says, else beside the harness's evidence (ignored by git), one folder per run.
+const OUT = resolve(args[0] || (process.env.VERIFY_RUN_ID ? join(ROOT, "verification/evidence/status-page", "shots-" + process.env.VERIFY_RUN_ID) : mkdtempSync(join(tmpdir(), "status-page-"))));
 mkdirSync(OUT, { recursive: true });
 
-// Sizes and blur the session's squint tests used; the visual gates read these screenshots.
+// The sizes and blur the visual review reads: desktop 1440×900, phone 390×844.
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const BLUR_PAGE = "7px";
@@ -84,7 +85,10 @@ async function open(url, { size = DESKTOP, theme = "dark", touch = false } = {})
   return { page, context, log };
 }
 async function settle(page) {
-  await page.waitForFunction(() => !window.__orchestrateStatus.busy(), null, { timeout: 5000 }).catch(() => {});
+  // Motion is reduced, so the page settles in moments; one that never does fails rather than being shot mid-motion.
+  await page.waitForFunction(() => !window.__orchestrateStatus.busy(), null, { timeout: 5000 }).catch(() => {
+    throw new Error("the page was still animating after 5 s");
+  });
   await page.waitForTimeout(150);
 }
 async function shoot(page, name, blurTarget) {
@@ -107,9 +111,13 @@ async function closeSheet(page) {
 function panelFacts(page) {
   return page.evaluate(() => {
     const body = document.getElementById("sheetBody");
-    const order = [...body.children].map((n) => n.tagName === "H2" ? "title" : n.classList.contains("lede") || n.classList.contains("missing") ? "summary"
-      : n.classList.contains("meta") ? "meta" : n.classList.contains("decide") ? "decision" : n.classList.contains("ba") ? "change"
-      : n.classList.contains("sec") ? "status" : n.classList.contains("arow") ? (n.querySelector("h3") || {}).textContent : n.className);
+    const BLOCKS = [["lede", "summary"], ["missing", "summary"], ["meta", "meta"], ["decide", "decision"], ["ba", "change"], ["sec", "status"]];
+    const order = [...body.children].map((n) => {
+      if (n.tagName === "H2") return "title";
+      const hit = BLOCKS.find(([cls]) => n.classList.contains(cls));
+      if (hit) return hit[1];
+      return n.classList.contains("arow") ? (n.querySelector("h3") || {}).textContent : n.className;
+    });
     const act = body.querySelector(".decide .act > *");
     const dock = document.getElementById("needsBtn").getBoundingClientRect();
     const r = act && act.getBoundingClientRect();
@@ -138,6 +146,13 @@ for (const theme of ["dark", "light"]) await section(`graph ${theme}`, async () 
     const btn = await page.evaluate(() => ({ cls: document.getElementById("needsBtn").className, title: document.title }));
     check("Needs you button is urgent, and red while a Ticket is stuck", btn.cls.includes("urgent") && btn.cls.includes("stop") === !!stuck, btn.cls);
     check("tab title carries the count", btn.title.startsWith(`(${sample.needsYou.length}) `), btn.title);
+    // A card recedes through its surface, never by fading its text, which would drop it below readable contrast.
+    const faded = await page.evaluate(() => [...document.querySelectorAll("[data-id] text")].filter((t) => {
+      let o = 1;
+      for (let n = t; n && n.tagName !== "svg"; n = n.parentNode) o *= Number(getComputedStyle(n).opacity);
+      return o < 0.99;
+    }).map((t) => t.closest("[data-id]").getAttribute("data-id") + ": " + t.textContent.slice(0, 24)));
+    check("no card text is faded", !faded.length, [...new Set(faded)].slice(0, 6));
   }
   await shoot(page, `graph-${theme}`, "page");
   if (theme === "dark") {
@@ -149,10 +164,15 @@ for (const theme of ["dark", "light"]) await section(`graph ${theme}`, async () 
       check(`${name}: opens with title, summary, links, then the decision`, want.every((w, i) => f.order[i] === w), f.order);
       check(`${name}: where it stands comes last`, f.order[f.order.length - 1] === "status", f.order);
       check(`${name}: the decision's action is in view`, f.actionInView, f);
-      check(`${name}: the evidence is folded`, await page.evaluate(() => { const d = document.querySelector("#sheetBody .decide details"); return !d || !d.open; }));
+      check(`${name}: the evidence is folded`, await page.evaluate(() => { const d = document.querySelector("#sheetBody .decide details"); return !!d && !d.open; }));
       await shoot(page, name, "panel");
       await closeSheet(page);
     }
+    const peeked = sample.tickets.find((t) => t.summary);
+    await page.hover(`[data-id="${peeked.id}"]`);
+    check("hovering a card shows its summary beside it", await page.waitForFunction((want) => { const p = document.getElementById("peek"); return p.classList.contains("on") && p.textContent.includes(want); }, peeked.summary, { timeout: 1500 }).then(() => true, () => false));
+    await page.mouse.move(2, 880);
+    await page.waitForTimeout(150);
     await page.click("#needsBtn");
     await settle(page);
     const rows = await page.evaluate(() => document.querySelectorAll("#sheetBody .row").length);
@@ -166,7 +186,7 @@ for (const theme of ["dark", "light"]) await section(`graph ${theme}`, async () 
     await closeSheet(page);
     if (landed) {
       await openDetail(page, landed.id);
-      check("a landed Ticket's done list shows as met", await page.evaluate(() => !document.querySelector("#sheetBody .done") || document.querySelector("#sheetBody .done.met") !== null));
+      check("a landed Ticket's done list shows as met", await page.evaluate(() => document.querySelector("#sheetBody .done.met") !== null));
       await closeSheet(page);
     }
   }
@@ -202,17 +222,35 @@ await section("older snapshot", async () => {
   old.tickets.forEach((t) => NEW_FIELDS.forEach((f) => delete t[f]));
   const { page, context, log } = await open(variant("older-snapshot", old));
   check("older snapshot: accepted", !log.warnings.some((w) => w.includes("ignored a snapshot")), log.warnings);
+  const missed = [];
   for (const t of old.tickets) {
     await openDetail(page, t.id);
+    const opened = await page.evaluate((id) => window.__orchestrateStatus.state().sheet === "detail" && window.__orchestrateStatus.state().sel === id
+      && document.querySelector("#sheetBody .missing") !== null, t.id);
     await closeSheet(page);
+    await page.mouse.move(2, 880);
     await page.hover(`[data-id="${t.id}"]`);
-    await page.waitForTimeout(320);
+    const peek = await page.waitForFunction((title) => { const p = document.getElementById("peek"); return p.classList.contains("on") && p.textContent.includes(title); }, t.title, { timeout: 1500 }).then(() => true, () => false);
+    if (!opened || !peek) missed.push({ id: t.id, opened, peek });
   }
-  check("older snapshot: every detail and peek opens without an error", !log.errors.length, log.errors);
+  check("older snapshot: every detail opens saying it has no summary, and every peek shows the title", !missed.length, missed);
+  check("older snapshot: no error", !log.errors.length, log.errors);
   await context.close();
 });
 
-// 4. Long text wraps inside the panel.
+// 4. A stuck Ticket at a ready pull request still links its pull request.
+await section("stuck at a ready pull request", async () => {
+  const snap = structuredClone(sample);
+  const t = snap.tickets.find((x) => STUCK.has(x.status));
+  t.phase = "ready";
+  t.pr = { id: "#299", url: "https://example.com/pull/299" };
+  const { page, context } = await open(variant("stuck-with-pr", snap));
+  await openDetail(page, t.id);
+  check("a stuck Ticket's panel links its pull request", await page.evaluate(() => [...document.querySelectorAll("#sheetBody a")].some((a) => a.textContent.includes("#299"))));
+  await context.close();
+});
+
+// 5. Long text wraps inside the panel.
 await section("long text", async () => {
   const long = structuredClone(sample);
   const t = long.tickets.find((x) => x.id === held?.id) || long.tickets[0];
@@ -228,7 +266,7 @@ await section("long text", async () => {
   await context.close();
 });
 
-// 5. A malformed snapshot after a good one keeps the good view and says so.
+// 6. A malformed snapshot after a good one keeps the good view and says so.
 await section("malformed snapshot", async () => {
   const { page, context, log } = await open(pathToFileURL(TEMPLATE).href);
   const bad = structuredClone(sample);

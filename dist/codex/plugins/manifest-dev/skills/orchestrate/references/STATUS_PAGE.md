@@ -72,11 +72,12 @@ leave it private unless the person shares it.
   Ticket is stuck, and the browser tab's title carries the count. A "?" button opens a key to the
   colours and the line styles.
 - **An open Ticket.** A card opens to its detail, read top to bottom: the title, then `summary`, then
-  a line with the Ticket's link, its type, its pull request and, for a Ticket a run found, the
-  Ticket in its `from`; then, where the Ticket waits on the person, the decision — the ask, the
-  `pick` and the `risk`, one action under them, and the `evidence` folded; then what it solves
-  (`change` as a before and after, else `why`), how it came up (`foundWhile`), `done` as a
-  checklist, and last where it stands. With a fine pointer, hovering a card shows its `summary`
+  a line with the Ticket's link, its type, its pull request (for a held Ticket, in the decision's
+  button instead) and, for a Ticket a run found, the Tickets in its `from`; then, where the Ticket
+  waits on the person, the decision — the ask, the `pick` and the `risk`, one action under them,
+  and the `evidence` folded; then what it solves (`change` as a before and after followed by
+  `why`, or `why` alone), how it came up (`foundWhile`), `done` as a checklist, and last where it
+  stands. With a fine pointer, hovering a card shows its `summary`
   beside it.
 - **What needs the person.** The `needsYou` list, in the order given, is the "Needs you" panel. An item
   that names a Ticket puts a numbered badge on that Ticket's card, the number being the item's place in
@@ -122,13 +123,13 @@ wait on it.
 |---|---|---|---|
 | `id` | string | The Ticket's id as the store shows it, such as `#131`. Unique on the page, and never `goal`. | The Ticket. |
 | `title` | string | The Ticket's title. | The Ticket. |
-| `summary` | string, optional | One plain sentence on what the Ticket changes and for whom, for a person who never saw it. Always write it; a snapshot from an older orchestrator may lack it, and the page then says the Ticket has no summary yet. | Derived from the Ticket's Title and Why, or a question Ticket's question. |
+| `summary` | string, optional | One plain sentence on what the Ticket changes and for whom, for a person who never saw it. A snapshot from an older orchestrator may lack it; the page then says the Ticket has no summary yet. | Derived from the Ticket's Title and Why, or a question Ticket's question. |
 | `why` | string, optional | The problem the Ticket relieves, in a sentence or two. | The Ticket's Why, or a question Ticket's "why it matters". |
 | `change` | object, optional | What a person would see before and after the Ticket lands: `before` and `after`. | The Ticket's Why and Definition of done, only where they describe a concrete before and after. |
 | `change.before` | string | Today, in a line. | As `change`. |
 | `change.after` | string | After the Ticket lands, in a line. | As `change`. |
 | `done` | list of strings, optional | How anyone can tell it worked, one check per item; shown as met once the Ticket has landed. | The Ticket's Definition of done; for a question Ticket, the question answered with evidence. |
-| `type` | `"bug"`, `"feature"`, `"refactor"`, `"docs"` or `"chore"`, optional | What kind of work it is. | The Ticket's Type, when it names one of these. |
+| `type` | `"bug"`, `"feature"`, `"refactor"`, `"docs"` or `"chore"`, optional | What kind of work it is. | The Ticket's Type. |
 | `foundWhile` | string, optional | For a Ticket a run found, what that run saw that led to it. | The Ticket's source link and Why. |
 | `url` | string, optional | The Ticket's address. Only an `http://` or `https://` address becomes a link. | The Ticket. |
 | `status` | string, one of the statuses below | Where the Ticket stands. | See the statuses below. |
@@ -145,8 +146,8 @@ wait on it.
 
 An id in `dependsOn`, `after` or `from` that is not on the page draws no edge.
 
-Write `summary`, `why`, `change`, `done` and `foundWhile` in plain words a person who never saw the
-Ticket understands: no gate codes, branch names or workflow terms. Always write `summary`; leave any
+Write `summary`, `why`, `change`, `done`, `foundWhile` and `note` in plain words a person who never
+saw the Ticket understands: no gate codes, branch names or workflow terms. Always write `summary`; leave any
 other of them out when the Ticket holds nothing to derive it from, rather than inventing it, and
 give `change` only where the Ticket describes a concrete before and after. A project whose Tickets
 use their own types gives `type` only for these five.
