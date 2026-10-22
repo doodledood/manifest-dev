@@ -179,7 +179,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
 /* Waiting and landed cards recede through their surface and marks; their text keeps full contrast. */
 .node.n-done .box, .node.n-idle .box, .node.n-wait .box { stroke-opacity: .5; }
 .node.n-done .dot, .node.n-done .bar, .node.n-done .bar-bg, .node.n-idle .dot, .node.n-wait .dot { opacity: .5; }
-.node.n-done .t-title, .node.n-idle .t-title, .node.n-wait .t-title { fill: var(--text-2); font-weight: 500; }
+.node.n-wait .t-title { fill: var(--text-2); font-weight: 500; }
 .node.n-done .t-status, .node.n-idle .t-status, .node.n-wait .t-status { fill: var(--text-2) !important; font-weight: 500; }
 .tone-done .box { fill: transparent; }
 .tone-done .t-title, .tone-idle .t-title { fill: var(--text-2); font-weight: 500; }
@@ -507,7 +507,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
   "needsYou": [
     { "ticket": "#144", "ask": "Send the receipt to customers who turned off marketing emails?", "detail": "Answer in the orchestrator's conversation; the run continues from where it stopped.", "pick": "Yes: a receipt is not marketing.", "risk": "A few customers may see it as unwanted email.", "evidence": "The privacy page lists receipts as service emails, which the opt-out does not cover.", "cost": "The run is stopped until you answer" },
     { "ticket": "#155", "ask": "Let automation finish #155 on its own?", "pick": "Yes, grant Auto.", "risk": "It changes code three features use; the existing tests are its only guard.", "evidence": "It changes no behaviour, and the payment tests cover all three copies.", "cost": "Nothing waits on it" },
-    { "ticket": "#151", "ask": "Merge #212, which masks card numbers in payment logs?", "pick": "Merge it.", "risk": "Support loses the last four digits in the logs; the change keeps them in the receipt view.", "evidence": "All 14 gates passed at the head, including a test that scans a day of sample logs for full card numbers. Not checked: logs older services write.", "cost": "Nothing waits on it" },
+    { "ticket": "#151", "ask": "Merge #212, which masks card numbers in payment logs?", "pick": "Merge it.", "risk": "Support loses the last four digits in the logs; the change keeps them in the receipt view.", "evidence": "All 14 checks passed on the latest commit, including a test that scans a day of sample logs for full card numbers. Not checked: logs older services write.", "cost": "Nothing waits on it" },
     { "ask": "Plan in depth: how should failed charges be retried?", "detail": "This needs its own session with you. Its Tickets appear here at the next check-in.", "startLine": "/figure-out How should failed charges be retried? Then ticket-up the read into effort \"Checkout v2\"", "cost": "3 Tickets wait on the answer" }
   ]
 }
@@ -1576,7 +1576,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
       kick.textContent = "Needs you · costliest wait first";
       var list = el("div", { "class": "list" });
       m.d.needsYou.forEach(function (a, i) {
-        var t = a.ticket && m.byId[a.ticket], red = t && (t.status === "escalated" || t.status === "failed");
+        var t = a.ticket && m.byId[a.ticket], red = t && tone(t) === "stop";
         var ask = t ? el("button", { type: "button", "class": "w open", text: t.id + "  " + a.ask }) : el("div", { "class": "w", text: a.ask });
         var text = el("div", null, [ask, t && t.summary ? el("div", { "class": "y sum", text: t.summary }) : null, el("div", { "class": "y", text: t ? a.cost || "" : [a.detail, a.cost].filter(Boolean).join(" · ") })]);
         var why = reasons(a);
