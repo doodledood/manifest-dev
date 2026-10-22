@@ -207,7 +207,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `37-correction-becomes-a-lock` | press, repository | Turn a stated invariant into a check with its kind and scope, not a comment | unmeasured |
 | `38-stated-rule-conflicts-with-a-record` | autonomous, repository | Raise a requested rule's conflict with a recorded decision before locking it | unmeasured |
 | `39-one-off-mistake` | negative, repository | Call a one-off a one-off; no check aimed at a single sentence | unmeasured |
-| `40-shape-before-build` | autonomous, repository | Sketch the shape, compare a second one, and settle one owner for shared state | unmeasured |
+| `40-shape-before-build` | autonomous, repository | Sketch the shape, compare a second one, settle one owner for shared state, and keep a plausible overdue-rule change local without adding grace-period capability | unmeasured |
 | `41-hand-synced-list` | autonomous, repository | Derive one list from the other, or check they agree, instead of editing both by hand | unmeasured |
 | `42-one-line-fix` | negative, repository | No design ceremony for a typo | unmeasured |
 | `43-recalls-earlier-work` | autonomous, repository, plugin arm only | Bring in this repository's earlier ruling as a dated lead; ignore another repository's log | unmeasured |
@@ -297,6 +297,11 @@ and sorted what figure-out writes into it, which reaches `14`, `15`, `24`, `45` 
 case most, and a second 2026-10-21 change opened the North Star's *Purpose* with the end, moved the
 outside-Purpose note from docs mode into the ADR conventions and gave docs mode the met strategy
 signpost, which reaches `23`, `45`, `53`, `84` and `85` most, so no earlier result measures the skill as it ships now. The next baseline replaces them.
+
+The 2026-10-22 change sharpened the coding shape-before-build probe to keep plausible changes
+local, weighed against added complexity. `40` now supplies a possible overdue-rule change and
+grades that distinction without asking for grace-period capability. The revised case remains
+unmeasured; it has not been run.
 
 Headroom per case comes from the current baseline, not from this table. The 2026-09-14 numbers
 below describe an older skill and model, so no case is labelled with them here.
@@ -658,7 +663,7 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Invoke prompt-engineering for prompt-shaped work | Reason: a host capability the headless harness lacks — the eval sandbox installs only this plugin, so the prompt-engineering skill, which ships in `manifest-dev-tools`, cannot be invoked |
 | `SKILL.md` | Offer to scope the read and hand off to ticket-up | `83-separate-questions-separate-owners/offers-to-scope-the-read`; not graded: the hand-off after the user accepts, which needs a second user turn and a ticket-store fixture |
 | `SKILL.md` | The log | `01-root-press/log-written` |
-| `tasks/CODING.md` | Shape before build | `40-shape-before-build/sketch-two-shapes-one-owner`, `56-order-dependent-design/models-before-building` |
+| `tasks/CODING.md` | Shape before build | `40-shape-before-build/sketch-two-shapes-one-owner` (including localizing plausible changes without speculative capability), `56-order-dependent-design/models-before-building` |
 | `tasks/CODING.md` | Already provided | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
 | `tasks/CODING.md` | Earned depth | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
 | `tasks/CODING.md` | A second shape | `40-shape-before-build/sketch-two-shapes-one-owner` |

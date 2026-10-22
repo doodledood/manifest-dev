@@ -36,6 +36,10 @@ Proves: the Manifest's guidance carries the CODING Defaults that apply — what 
 Check: read
 Workload: varies
 
+The coding sketch Default also weighs keeping plausible changes local against added
+complexity. This drive does not grade that encoding; figure-out's revised
+`40-shape-before-build` case grades the design distinction and remains unmeasured.
+
 ### feature-defaults
 Run: `scripts/drive-skill.sh define verification/prompts/define-feature-defaults.md --scaffold claude-plugins/manifest-dev/evals/45-current-setup-offers-nothing`
 Proves: for a feature whose installs upgrade on different days, the Manifest keeps old and new versions working side by side on shared data.

@@ -71,6 +71,11 @@ values-and-goal document and moved `d23`'s project to surfaces v8, which reaches
 its scaffold; a later change that day shipped v9 and moved it again, the same way. The next
 baseline replaces them.
 
+The 2026-10-22 change sharpened the coding sketch Default to keep plausible changes local,
+weighed against added complexity. Its encoding is not graded by a define case; figure-out's
+`40-shape-before-build` grades the design distinction before encoding, rather than duplicating
+that scenario here. The affected coding cases remain unmeasured and earlier results stale.
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for
