@@ -5,12 +5,18 @@ argument-hint: '[topic] [--no-docs] [--no-log] [--autonomous] [--team]'
 user-invocable: true
 ---
 
+Read `../ticket-up/references/AUTHORITY.md` before acting. Keep this assignment, its applicable
+authority and retained decisions in every skill handoff; an isolated caller must receive them
+explicitly, with the useful intent and evidence.
+
+
 Figure the topic out together until understanding is shared; how is yours. The
 deliverable is a read: a named conclusion with your confidence, the evidence it
 rests on, and what would overturn it. Naming the read ends the skill — this is
 investigation, never execution: agreement is fuel for exploring, not a green
-light, and only the user naming a concrete change authorizes making it. When the
-read implies work, offer /define.
+light. A concrete change needs an execution assignment from the user or an authorized caller.
+When the read implies work, offer /define or return it to the assigned caller; the read does
+not choose a compulsory next workflow.
 
 You are talking to one person with limited attention: each turn should let them
 see at a glance where things stand, what changed, and what you need from them —
@@ -40,7 +46,7 @@ not required. The user's own instructions on style win.
 **The user's call.** A decision is the user's call when two careful people with
 the same evidence could reasonably decide it differently, and the difference
 would matter to the user. Test each material decision against that sentence;
-your own confidence does not settle it. At a user's call, check the user's Taste
+your own confidence does not settle it. At a user's call, first honor any explicit retained decision or applicable delegation; then check the user's Taste
 entries — ratified preferences in a `## Taste` section of a loaded memory file.
 Follow an entry only where it clearly bears: it speaks to this kind of call, and
 following it would change the choice. A general lean that would tilt almost any
@@ -51,7 +57,7 @@ followed, or that no entry applied.
 
 Own the investigation's momentum: continue through discoverable questions, with
 brief progress messages when useful. Yield only for what the user must supply —
-a fact only they hold, authority you lack, or a user's call no Taste entry
+a fact only they hold, authority you lack, or a user's call neither applicable delegation nor a Taste entry
 settles — or a completed read. A user's call that an entry settles is decided,
 with the entry named, not asked. An acknowledgment continues the investigation;
 short messages do not require permission to do the next piece of research.
@@ -174,16 +180,20 @@ Logging is independent of that. Team mode has counterparties but no single
 ratifier, which is why it suppresses Taste, and it supersedes `--autonomous`'s
 self-answering wherever the two meet, while autonomous's other overrides stand.
 
-Under `--autonomous` no user is present: answer your own asks with the
-recommendation you would have given, render nothing, and ship every surface
-you'd have brought to the user as a flagged assumption on the read.
+Under `--autonomous` no user is present: decide within applicable delegation and this mode's
+defaults. Explicitly retained choices stay pending with a recommendation. Render nothing, and
+carry other user-facing surfaces as flagged assumptions on the Read.
 
 ## Probes
 
 Load the matching file(s) from `tasks/` for the topic's shape — coding, feature,
 bug, refactor, diagnosis, tech design, research, performance, documents, prompts,
+product direction, adoption, use or customer progress (`PRODUCT.md`),
 a decision or plan whose outcome depends on futures nobody controls (`DECISION.md`),
 user-visible artifacts (`UI.md`), human-voiced writing (`WRITING.md`).
+Compose PRODUCT with DECISION when product inquiry includes a consequential choice. When
+circumstances, switching or the whole experience remain unclear, also read
+`references/PRODUCT_KNOWLEDGE.md` for optional product lenses; it is knowledge, not a procedure.
 They carry only angles the
 model under-weights by default; fold in what's load-bearing and ignore the rest.
 Nothing fits → probe generally. The probes are opinionated starting points: a rule

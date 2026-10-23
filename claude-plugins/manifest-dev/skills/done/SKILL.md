@@ -14,7 +14,7 @@ supplies verbatim, with its question for the user's yes.
 **The user's call.** A decision is the user's call when two careful people with
 the same evidence could reasonably decide it differently, and the difference
 would matter to the user. Test each material decision against that sentence;
-your own confidence does not settle it. At a user's call, check the user's Taste
+your own confidence does not settle it. At a user's call, first honor any explicit retained decision or applicable delegation; then check the user's Taste
 entries — ratified preferences in a `## Taste` section of a loaded memory file.
 Follow an entry only where it clearly bears: it speaks to this kind of call, and
 following it would change the choice. A general lean that would tilt almost any

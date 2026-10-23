@@ -94,7 +94,7 @@ One file (an ADR) recording a decision with downstream impact — its context, t
 _Avoid_: Design doc, meeting notes.
 
 **Signpost**:
-A `Revisit when` line — an observable condition in the world and where it is read. On a decision record it names what would reopen the choice, and a `Strategy` record is expected to carry one; on a deferred Ticket it names what the work waits for. Every reader that meets one reads the condition at that source. A deferred Ticket is ready only once its condition reads as met there. A met condition on a `Strategy` record goes to the owner. A source the reader cannot open puts the Ticket or the choice in front of the person rather than out of sight. No reader edits the line on the strength of what it read.
+A `Revisit when` line naming an observable condition and its source, on a decision record or deferred Ticket; readers check it at that source, a deferred Ticket is ready only when its condition holds, and a met or unreadable condition is surfaced for reconsideration under the reader's assignment and authority rather than granting permission to rewrite the choice or its signpost.
 _Avoid_: Reminder, trigger, reopen condition kept in prose.
 
 **Verification Harness**:
@@ -229,11 +229,11 @@ _Avoid_: Wedge, funnel.
 The full understanding-first loop (figure-out → define → do) that every Door opens into; the retention engine behind the Doors.
 
 **North Star**:
-A project's standing statement of what it is for — its purpose, opening with the end the people it serves are after and then what stands in its way, and who it is for and not for, its goal, the principles it holds even against evidence, one measure for each part of the goal, the bets it rests on, and the open questions no section holds, followed by the titles of its `Strategy` decision records in effect, each with its Signpost where it has one — holding what decisions are judged against and never what they chose, which live in decision records; resident in every session and informing rather than binding, every position carrying one of four states (evidence, hypothesis, ruled, or empty with its filling condition), and positions moving only on the owner's ruling. Projects set up before surfaces version 8 keep the older nine-field form until they update.
+A project's standing statement of its purpose, people and circumstances, goal, principles, measures, bets, and open questions, followed by a derived list of its current Strategy decisions and Signposts; it informs decisions without becoming a binding work contract, distinguishes evidence, hypothesis, ruled, and empty positions, and changes positions only through authorized rulings recorded with their decider and any explicit delegation, while owner-retained ends and bounds remain with the owner.
 _Avoid_: Steering layer, strategy doc, business context.
 
 **Autonomy Ladder**:
-The levels at which manifest-dev is adopted, each useful without the ones above it and without anyone else on the team adopting it: one Skill on its own; one piece of work understood, defined and verified; Project Surfaces kept by every run; a shared Ticket Store; and the queue running under Orchestrate — Auto Tickets end to end and others up to a ready pull request, debt ticketed up as it is found — with people stepping in only for a blocker, judgment, taste or authority.
+The adoption choices manifest-dev supports, each useful on its own and inside teams that do not adopt it: one Skill, finite work with acceptance evidence, shared Project Surfaces, a Ticket Store, and optional Orchestrate coordination of a queue or assigned outcome within delegated authority, with retained decisions and missing knowledge or access returned to their owners.
 _Avoid_: Maturity model, adoption funnel, tiers (those are the North Star, Ticket and Manifest).
 
 **Taste**:
@@ -241,7 +241,7 @@ A durable personal steering preference persisted only by offer-and-ratify — ca
 _Avoid_: Preference, style, judgment.
 
 **User's Call**:
-A decision where two careful people with the same evidence could reasonably decide it differently, and the difference would matter to the user; the run's own confidence does not settle it. A run checks the user's Taste entries at one, decides it on the evidence when none bears, and lists it first wherever decisions are reported.
+A decision where two careful people with the same evidence could reasonably differ in a way that matters to the user; the run honors applicable delegation and retained choices, weighs relevant Taste entries, and reports material choices with their rationale rather than treating confidence as authority.
 _Avoid_: Low-confidence decision, judgment call.
 
 **Ticket**:
@@ -249,14 +249,23 @@ A self-sufficient prose work packet holding one independently schedulable lifecy
 _Avoid_: Story, issue, task.
 
 **Shaped Ticket**:
-A Ticket whose decision space is closed — no open question remains whose answer would change what gets built or what done means — ready to execute regardless of which workflow produced it, carrying a plain-prose definition of done.
+A Ticket with no unresolved product decision changing what is built or what done means, ready for its assigned work regardless of how it was produced, possibly still retaining acceptance of the finished artifact.
 
 **Question Ticket**:
-A Ticket whose decision space is still open — however much prior context it carries; done means the question is answered with evidence and recorded.
+A Ticket assigned to answer an open question with evidence and record the answer; proposed implementation from that inquiry needs its own delivery assignment.
 _Avoid_: Spike.
 
+**Assignment**:
+The activity a user or authorized caller asks a skill to perform, distinct from standing permission to decide things within that activity.
+
+**Delegation**:
+Explicit authority to make specified decisions within an assignment and its scope, limited by the caller's authority and current applicable instructions.
+
+**Retained Decision**:
+A choice or acceptance left to a named person or role, with dependent work held until it is resolved; acceptance names the artifact and version, and material changes need renewed acceptance.
+
 **Auto**:
-An opt-in grant on either kind of Ticket permitting unattended automation to take it end to end, landing included — given by a person at the `ticket-up` boundary, or by `orchestrate --autonomous` to a Ticket an agent wrote wherever the grant criterion holds, never by the run that found the work, and naming its grantor. Absent the grant, automation may work the Ticket up to a ready pull request or a drafted answer, when its author has write access and no person is assigned, but never completes or lands it.
+An opt-in grant on either kind of Ticket permitting unattended completion and required landing when all needed decisions are settled or delegated, given by a person at ticket-up or by orchestrate --autonomous under its criterion to agent-written work, never inferred from readiness or creation and never overriding retained decisions or team protections; absent the grant, eligible automation may prepare work but a person accepts or lands it.
 _Avoid_: Autonomous ticket, agent-ready.
 
 **Ticket Type**:
@@ -280,7 +289,7 @@ The single Ticket-authoring boundary: turns a finished Manifest, direct work req
 _Avoid_: Breakdown, sharding.
 
 **Run Ticket**:
-The harness-neutral execution move that receives one exact Ticket, claims or recovers it, invokes `auto` — or resumes the Manifest its attempt record carries — and works it to a ready pull request, keeping the attempt record (its branch, run facts, progress and Manifest) on that same Ticket; it lands only when told to, through the one landing procedure, and leaves its completion record or its escalation record on the Ticket; dispatch and backlog selection stay outside it.
+The execution move receiving one exact Ticket, claiming or recovering its durable attempt, invoking inquiry for a Question or delivery for Shaped work, preserving scope, authority, progress, and any finite Manifest on that same Ticket, and returning its answer or ready artifact for acceptance or authorized landing without choosing backlog work.
 _Avoid_: Auto picker, ticket trigger.
 
 **Escalation Mark**:
@@ -288,7 +297,7 @@ The durable record an escalated attempt leaves on a Ticket saying a person is ne
 _Avoid_: Blocked status, escalated state.
 
 **Orchestrate**:
-The dispatch move that works one effort's ready Tickets, or the whole store's, several at a time: it sorts every Ticket from the store, git and the sources its Signposts name, keeping no state of its own; proposes a plan and waits for approval by default, or acts on its own under `--autonomous`; launches each Ticket through Run Ticket in its own session; lands finished work one Ticket at a time; tickets up the debt runs leave; and keeps a status page and one list of what waits on the person.
+The optional coordinator for one effort or store's finite queue, or an explicitly assigned project outcome: it commissions independently managed inquiry and delivery as Tickets, dispatches through Run Ticket, uses outcome evidence to continue, wait, or finish within authority, and recovers from Tickets, git, and a compact assignment record on the effort item while keeping a derived status page and one attention list.
 _Avoid_: Ticket sweep, batch runner, scheduler.
 
 ## Relationships
@@ -301,23 +310,23 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - **Ticket-up** is the only workflow boundary that authors **Tickets** in a **Ticket Store**. A finished **Manifest** becomes one **Shaped Ticket** by default; explicit delegation may split it on existing **Deliverable** boundaries.
 - A separate **Question Ticket** exists only when its question needs independent assignment, priority, blocking, or closure; related questions sharing one lifecycle stay grouped.
 - `next-ticket` claims and presents the **Ticket** it names, which is what makes several sessions reading one **Ticket Store** get different ones — and it separates them only where the store's venue is a live surface every worker reads, never across separate checkouts of a file store. It never executes the pick.
-- **Run Ticket** receives one exact **Ticket** from a person or dispatcher and invokes `auto` for one attempt; it never selects from the store or enforces **Auto** eligibility at dispatch. For repository work it uses one durable branch and pull request across attempts, and its Ticket closes only once a landing is observed, never on a merely mergeable branch.
+- **Run Ticket** receives one exact **Ticket** from a person or dispatcher and runs inquiry or Shaped delivery for one attempt; it never selects from the store or enforces **Auto** eligibility at dispatch. For repository work it uses one durable branch and pull request across attempts, and its Ticket closes only once a landing is observed, never on a merely mergeable branch.
 - **Orchestrate** passes each **Ticket** it launches to **Run Ticket** in a session of its own, and takes each finished run's landing turn itself, one **Ticket** at a time; a run started by hand stops at its ready pull request the same way. A file store gets no parallel runs: **Orchestrate** runs its **Tickets** one at a time in its own session.
 - A deferred **Ticket** carries a **Signpost**, never a dependency: `next-ticket` and **Orchestrate** read its condition at its source on every sort and take it only once it reads as met, and the strategy list of a **North Star** carries each `Strategy` record's **Signpost**, which both read on every run too.
 - **Orchestrate** never launches a **Ticket** carrying an **Escalation Mark**; a human picker applies no such filter, which is what lets escalated work compete for attention on the ordinary priority rule. A third failed launch in a row hands the **Ticket** to a person through an **Escalation Mark**.
-- The **Auto** grant requires that neither doing a **Ticket** nor judging it done needs any human's knowledge, taste, or authority — necessary but never sufficient: the author still chooses to grant.
+- The **Auto** grant requires that all decisions needed for completion are settled or delegated, with no retained acceptance or unavailable access — necessary but never sufficient: the grantor still chooses.
 - A **Ticket** remains the identity of its work across execution attempts: a successful attempt closes it, while an escalated attempt records its evidence and releases the same open **Ticket**'s claim under an **Escalation Mark**; a follow-up **Ticket** represents only separate work.
 - A follow-up **Ticket** receives **Auto** only through a grant at its own `ticket-up` boundary after it meets the grant criterion — a person's, or `orchestrate --autonomous`'s; whatever its source carries, the run that found the work never grants it.
 - Absence of **Auto** keeps completion and landing with a person: unattended work takes such a **Ticket** only up to a ready pull request, only when its author has write access and no person is assigned, and never touches venue items that were never written as **Tickets**.
 - **Auto** says whether automation may finish a **Ticket** and is the grantor's call; a **Ticket Type** says which work an operator runs today and is the query's — keeping rollout schedule out of the grant.
 - Every venue a **Ticket Store** runs on has a **Venue Reference**.
 - A **Ticket Store** holds one or more **Efforts**, each with its own front file and destination — so the priority rule's "impact" is measured within an **Effort**, and comparing across them takes the **North Star**'s goal and measures, which the destinations alone don't supply.
-- Each level of the **Autonomy Ladder** works without the ones above it; at the top, **Orchestrate** runs the queue through **Run Ticket**, and a person steps in at an **Escalation Mark**, a **User's Call** or a **Taste** offer.
+- Each level of the **Autonomy Ladder** works without the ones above it; with coordination, **Orchestrate** works its assigned queue or outcome through independently managed **Tickets**, while a person resolves retained decisions, knowledge, or access the workers lack.
 - **Project Surfaces** live in the project and are read by every session through the **Project Context File**; the **Glossary** and the **Decision Records** are two of them, and the **Verification Harness** runs one **Scenario** at a time, writing its **Evidence** locally, while each **Recipe** carries its **Time Lines**.
 - A **North Star** informs every session by residency and never binds; the one binding route is `/define` routing a principle whose violation would be unsafe or irreversible to a **Global Invariant**.
 - A project-owned North Star conventions file (emitted by `setup-project` beside the doc) governs the **North Star**'s form wherever it exists, with the plugin's shipped default applying otherwise — the same precedence the **ADR Conventions** carry; cadence stays with figure-out.
 - A chosen option lives in a **Decision Record**, never in the **North Star**; a guiding one carries the area `Strategy`, and the **North Star** lists the titles of those in effect as a **Derived Index** of them.
-- `setup-project` installs and seeds a **North Star**; figure-out's docs mode keeps it current under the update asymmetry — evidence lowers a position's state, only the owner's ruling changes a position, and each position change is remembered as a decision record.
+- `setup-project` installs and seeds a **North Star**; figure-out's docs mode keeps it current under the update asymmetry — evidence may lower a position's state, authorized rulings change positions within explicit scope, and each position change is remembered as a decision record naming its decider and any delegation.
 - `next-ticket` reads the **North Star**'s goal and measures for cross-**Effort** comparison and surfaces a candidate that would cross one of its principles; `/define`'s marketing task file gates outward-facing claims against its goal and principles.
 - A **Default** becomes **Process Guidance** in a **Manifest**, except one whose violation would be unsafe or irreversible, which becomes a **Global Invariant** so it binds.
 - The **Bearer Test** governs which advisory-tier **Quality Gates** a **Manifest** omits; defect-finding dimensions, deterministic project gates, and safety-critical **Global Invariants** are never eligible.

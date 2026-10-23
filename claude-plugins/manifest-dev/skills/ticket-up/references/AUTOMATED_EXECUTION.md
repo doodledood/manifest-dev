@@ -42,8 +42,9 @@ adds a second one. It holds:
 | Branch | The canonical Ticket, its one stable branch, and the recovery purpose | The run, before substantial work |
 | Run facts | The run ID; the session that runs it, where the host names one; when it started; the launch count, counting launches in a row whose run ended without an outcome or that repaired a landing | The launcher — `orchestrate`, or `run-ticket` itself on a hand run — just before the run starts. Where the host names the session only once the run has started, the run records its own session on its first write instead |
 | | The base commit the run's gates last passed against; whether it is ready to land, naming the head commit and the run ID that marked it, or the drafted answer for a Question Ticket, naming the same | The run, at each pushed checkpoint and when it finishes |
+| Assignment and authority | The assigned activity, current authority source and limits, retained decisions, and any accepted artifact/version; a wait carries its resolving condition and continuation | The run, from trusted applicable instructions at start, on steering and on resumption |
 | Progress | The step the run is at — `understand`, `define`, `build`, `verify` or `ready` — the gates passed and at which commit, what remains, the decisions taken, the dead ends | The run, when its step changes and at each pushed checkpoint |
-| Manifest | The run's full Manifest, refreshed when it is amended | The run, as soon as define reports it |
+| Manifest | The run's full Manifest, refreshed when it is amended; absent for inquiry without one | The run, as soon as define reports it |
 
 Each fact has one writer. The ready mark and the drafted answer name the run that wrote them, and
 count only while the run facts name that run; a mark that names no run, written before marks named
@@ -108,6 +109,11 @@ follows it only when its prompt says to land. The lander:
 2. **Checks authority.** An unattended landing needs Auto still present. A Ticket without Auto is
    never landed by automation: only a person lands it. A person who runs `run-ticket` by hand and
    tells it to land supplies the authority for that run.
+   Re-read applicable grants and retained decisions as well as the marker. A withdrawn or
+   narrower instruction governs now. An accepted artifact/version must match the result being
+   landed; a material change returns retained acceptance to waiting. Auto never overrides team
+   protections or a narrower instruction. Record the specific decision needed in the existing
+   escalation record when authority is missing; do not relaunch the unchanged wait.
 3. **Checks the base.** When the base has moved since the base commit the record names, the run
    merges the base in, reads what landed, and checks any cross-cut both ways: a change that alters
    how every instance of something must look, beside one that adds an instance. It extends its work
@@ -145,6 +151,29 @@ follows it only when its prompt says to land. The lander:
 A Question Ticket has nothing to land. With Auto, its run closes it once the answer is recorded.
 Without Auto, the run stops with the answer drafted, and the Ticket closes once a person accepts
 it.
+
+## Waiting and acceptance
+
+Use the existing escalation record and mark for a retained decision that blocks work. Name
+who decides, the recommendation, evidence, risk, artifact/version where relevant, and what
+answer permits continuation. A ready pull request or drafted answer uses its existing held
+state instead; it is never redispatched merely because acceptance has not arrived. Feedback
+continues the same Ticket. When a trusted response asks for revision, re-read the attempt.
+While its run is live, keep the response as trusted Ticket context for that run to consume;
+the launcher does not replace the live run's fields. For a held result with no live run, the
+launcher may record the response with the version it concerns as pending continuation in the
+attempt's progress and invalidate the held marks and acceptance. This is the sole exception
+to run ownership of those fields; the next run resumes ownership. Preserve the earlier
+draft and evidence, but withdraw its current drafted/ready mark and acceptance; it is now a
+prior version, not the current result. A revision request is new authorized work, not a failed
+launch: its next launch starts at count one. Consume that request when the new attempt starts,
+carry it through execution, and record the revised result with a new version. Without a changed
+condition or trusted revision request, the held state stays idle.
+
+Clearing a mark records the actual answer and current authority;
+it neither grants Auto nor accepts a later materially changed result. An evidence wait that
+belongs to an assigned outcome stays in that outcome's coordination record, not in an already
+completed delivery Ticket.
 
 ## Recovery boundary
 

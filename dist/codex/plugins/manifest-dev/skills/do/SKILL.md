@@ -5,6 +5,11 @@ argument-hint: '<manifest-path> [--no-log]'
 user-invocable: true
 ---
 
+Read `../ticket-up/references/AUTHORITY.md` before acting. Keep this assignment, its applicable
+authority and retained decisions in every skill handoff; an isolated caller must receive them
+explicitly, with the useful intent and evidence.
+
+
 No path → halt with usage. Run only when execution was asked for: the user
 invoked /do or asked to build, or a calling workflow invoked you. A user
 approving a plan has not asked for it; say the Manifest is ready, give the /do
@@ -20,7 +25,7 @@ Assume the user is AFK for the entire run, and carry that into every skill you i
 **The user's call.** A decision is the user's call when two careful people with
 the same evidence could reasonably decide it differently, and the difference
 would matter to the user. Test each material decision against that sentence;
-your own confidence does not settle it. At a user's call, check the user's Taste
+your own confidence does not settle it. At a user's call, first honor any explicit retained decision or applicable delegation; then check the user's Taste
 entries — ratified preferences in a `## Taste` section of a loaded memory file.
 Follow an entry only where it clearly bears: it speaks to this kind of call, and
 following it would change the choice. A general lean that would tilt almost any

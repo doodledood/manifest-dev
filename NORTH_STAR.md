@@ -10,23 +10,25 @@ Every position below carries a state, rendered as a dated provenance note:
 
 - **evidence** — something happened in the world, dated; new evidence moves it.
 - **hypothesis** — best current thinking, untested; a test moves it.
-- **ruled** — the owner decided it; only the owner moves it.
+- **ruled** — an authorized choice; its decider and any delegation are named.
 - **empty** — nobody has answered yet, written with what would fill it.
 
-New evidence may lower a position's state. The position text itself changes only by the
-owner's ruling, and each change is remembered as a decision record in `docs/adr/`. The full
+New evidence may lower a position's state. Position changes need an authorized ruling,
+remembered as a decision record in `docs/adr/`. Explicit delegation can cover specified changes
+within an assignment; owner-retained ends and bounds stay with the owner. The full
 form — sections, states, maintenance — is `docs/NORTH_STAR_CONVENTIONS.md`, which governs and
 needs no tooling.
 
 ## Purpose
 
-Agents can write almost anything, and projects still drift. What a project is becoming, what is
-worth doing next and what done means live in whoever is working, so every session and every
-teammate works them out again, and the agent's speed multiplies work nobody can tell was worth
-doing. manifest-dev keeps that understanding in the project and makes an agent's output
-trustworthy enough to ship with minimal review.
+People can make worthwhile progress on their projects without repeatedly restoring context,
+choosing every next step or supervising every action they have already delegated. They can
+trust the work enough to use it, return after a break without starting over, and keep control
+of the choices they retain. In the way: purpose, evidence, and decision boundaries often live
+only in a conversation or one person's head, while faster production can still serve the wrong
+need. manifest-dev keeps that understanding available across inquiry, delivery, and learning.
 
-— hypothesis: 2026-08-20. Records: The project is the unit the workflows serve, not the single task.
+— ruled: 2026-10-23. Records: Projects advance toward assigned outcomes within delegated authority.
 
 For: quality-first developers — five-plus years of experience, already working with an agentic
 coding CLI, willing to spend tokens and up-front effort for output they can trust — in a team of
@@ -40,21 +42,25 @@ chasers, and people not using a coding agent at all.
 
 ## Goal
 
-*"I can give the agent a complex task and trust the output enough to ship it with minimal review
-— and come back to the project weeks later and find it still knows what it's becoming, what's
-next, and what done means — and find the codebase easier to change correctly than when I started
-— and, as far up the autonomy ladder as I choose to go, find the project moving forward on its
-own, taking its next work from its queue and asking me only when it needs my judgment, taste or
-authority."*
+*"My project makes progress that matters to the people it serves. I can use one skill or delegate
+an outcome, keep the decisions I care about, and trust the work enough to use it with minimal
+review. When I return, it still knows what it is for, what the evidence says, and what needs me.
+The code and other project artifacts get easier to change correctly as the work continues."*
 
-— ruled: 2026-10-15. Records: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it; The promise includes a codebase that gets easier to change correctly.
+— ruled: 2026-10-23. Records: Projects advance toward assigned outcomes within delegated authority; The promise includes a codebase that gets easier to change correctly.
 
-For the project itself: our own projects run end to end on all three tiers — a North Star that
-stands, work pulled from a Ticket store, and execution against a Manifest with gate evidence —
-and drive themselves wherever they can. Outside recognition is welcome as a consequence of that,
-never a target traded against it.
+The ambition includes ongoing operation of a business within the authority its owner grants,
+and progress on noncommercial projects. It is optional: a standalone investigation, a finite
+piece of work, or a contribution inside a team is a complete use. This is a destination for the
+workflow, not evidence that an agent can reliably operate a business today.
 
-— ruled: 2026-10-15. Records: Winning is our own projects running the full loop; recognition is a consequence.
+— ruled: 2026-10-23. Records: Projects advance toward assigned outcomes within delegated authority.
+
+For the project itself: our own projects achieve their intended outcomes with less necessary
+human involvement, while preserving quality and the choices their owners retain. Outside
+recognition is welcome as a consequence, never a target traded against those ends.
+
+— ruled: 2026-10-23. Records: Projects advance toward assigned outcomes within delegated authority.
 
 ## Principles
 
@@ -70,14 +76,13 @@ never a target traded against it.
 
   — ruled: standing since the project's first strategy document, before 2026-07-28.
 
-- **Each piece stands alone.** Nothing has to be adopted whole to be useful. The autonomy ladder
-  is the levels a user may adopt — one skill on its own; one piece of work understood, defined
-  and verified; a project that keeps its direction, vocabulary, decisions and checks; a shared
-  queue of Tickets; and unattended runs that take work from that queue — and each level works
-  without the ones above it. What a user adds to a shared repository reads as plain files and
-  plain instructions, so a colleague who does not use manifest-dev keeps working as before.
+- **Each piece stands alone.** Nothing has to be adopted whole to be useful. A person can use
+  one skill, define finite work, share project records, track jobs in a store, or assign outcome
+  coordination. Those are adoption choices, not a required pipeline or a project-wide Manifest.
+  Shared additions remain plain files and instructions, so colleagues who do not use
+  manifest-dev keep working as before. Delegation applies only inside assigned work.
 
-  — ruled: 2026-10-15. Records: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it.
+  — ruled: 2026-10-23. Records: Projects advance toward assigned outcomes within delegated authority; Assignment bounds delegated decisions and retained acceptance.
 
 - **Claim only what holds.** No hype register and no superlative promising what models cannot
   reliably do, on any surface we write; no commentary on this repository's own adoption or
@@ -92,13 +97,15 @@ never a target traded against it.
 
 ## How we know
 
-- **Our own projects running all three tiers at once** — a count; up.
+- **Progress on each project's intended outcome** — observed results for the people it serves;
+  up. Completed Tickets and artifacts are delivery evidence, not a substitute for those results.
 
-  — ruled: 2026-08-21. Records: Winning is our own projects running the full loop; recognition is a consequence.
+  — empty: no common measurement has been chosen or run. What would fill it: designated outcome evidence from our own projects, with each project's success terms. 2026-10-23
 
-- **Merged work that needed a person only for judgment, taste or authority** — a share; up.
+- **Human involvement still needed to achieve that progress** — decisions, interventions and
+  effort that the person has not chosen to retain; down. Chosen involvement is not a failure.
 
-  — empty: no count chosen. What would fill it: the owner's choice, once our own projects run unattended work. 2026-10-15
+  — empty: no count or collection method chosen. What would fill it: actual-use records that distinguish retained choices from avoidable interruptions. 2026-10-23
 
 - **Shipped work that had to be reworked** — a rate; down.
 
@@ -109,10 +116,10 @@ never a target traded against it.
 
   — empty: nothing counts it. What would fill it: real projects reporting the checks and debt their runs leave. 2026-10-21
 
-- **Cost per merged change** — down, never at quality's cost; judged per unit of merged work once
-  runs go unattended, so cheap runs that escalate count against it.
+- **Cost of achieving useful project progress** — down, never at quality's cost; count the
+  investigation, delivery, rework, and human involvement needed, rather than cheap output alone.
 
-  — ruled: 2026-10-15. Records: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it.
+  — empty: no common cost measure chosen. What would fill it: actual-use cost records paired with outcome evidence. 2026-10-23
 
 ## What this rests on
 
@@ -138,10 +145,18 @@ never a target traded against it.
 
   — hypothesis: unmeasured until the eval baseline and real projects run it. 2026-10
 
-- Gates that carry evidence can stand in for a person reviewing each change, so work can land
-  unattended wherever it needs no one's judgment, taste or authority.
+- People will choose this workflow over direct prompting, manual coordination, or existing
+  project tools when preserving intent and bounded delegation saves enough repeated work to
+  justify setup, tokens, and learning. In a team, it must fit existing review and ownership rules.
+  The alternative may be doing less or keeping a task manual, not adopting more automation.
 
-  — hypothesis: no project has yet run unattended work at volume against reviewed work. 2026-10-15
+  — hypothesis: product direction, not demonstrated adoption evidence. 2026-10-23
+
+- Gates and explicit delegation can let useful work proceed without repeated intervention,
+  while evidence about actual use can correct a delivery that met its contract but missed its
+  purpose. Whether this remains reliable over repeated rounds is unmeasured.
+
+  — hypothesis: isolated skill observations can find defects, but cannot establish sustained project outcomes. 2026-10-23
 
 ## Open
 
@@ -149,10 +164,9 @@ never a target traded against it.
   someone who is not the maintainer keeping a project's direction, its queue, and its definition
   of done in these surfaces. The owner assumes it does; no one else has tried it. 2026-08,
   owner's assumption 2026-10-15
-- Does this wording say what the owner means? Every position above was reshaped into this form
-  by an agent on 2026-10-21, from a draft the owner accepted; the states are those of the lines
-  each replaces, and the wording awaits the owner's line-by-line ruling. What would fill it: the
-  owner ruling each line. Records: The North Star holds what decisions are judged against, and chosen options live in decision records.
+- Which circumstances make the workflow worth adopting over the alternatives, and which parts
+  cause people to stop? What would fill it: concrete episodes of choice, switching, and continued
+  use, including cases where a simpler approach served the same progress better. 2026-10-23
 
 ## Strategy choices in force
 
@@ -161,3 +175,4 @@ never a target traded against it.
 - One skill per beat, built up from the lean body
 - An orchestrating skill runs the queue in parallel and replaces the sweep and event triggers
 - orchestrate tickets up the debt runs leave and grants Auto where the criterion holds
+- Projects advance toward assigned outcomes within delegated authority — revisit when: Actual project records repeatedly show that coordinator-owned inquiry misses material opportunities or contrary evidence that a separate review discovers; read the linked coordination records and inquiry results.

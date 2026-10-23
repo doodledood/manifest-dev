@@ -1,7 +1,7 @@
 # ADR: orchestrate tickets up the debt runs leave and grants Auto where the criterion holds
 
 ## Status
-Accepted — amended by 20261019-the-first-grant-decision-stands-and-a-persons-decline-removes-the-grant: an orchestrator gathers only the debt of landings it recorded, the first grant decision created decides, and a person's decline removes the grant
+Accepted — amended by 20261019-the-first-grant-decision-stands-and-a-persons-decline-removes-the-grant: an orchestrator gathers only the debt of landings it recorded, the first grant decision created decides, and a person's decline removes the grant; amended by 20261023-assignment-bounds-delegated-decisions-and-retained-acceptance: assignment scope, delegated decisions and retained acceptance
 
 ## Area
 Strategy

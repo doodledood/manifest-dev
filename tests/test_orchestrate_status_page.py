@@ -245,3 +245,34 @@ def test_the_page_names_every_ticket_type_the_reference_documents() -> None:
     row = re.search(r"^\| `type` \| (.*?) \|", reference(), re.M)
     assert row, "STATUS_PAGE.md no longer documents `type`"
     assert names == set(re.findall(r'`"(\w+)"`', row.group(1)))
+
+
+@pytest.mark.parametrize(
+    "state", ["working", "waiting-evidence", "waiting-decision", "complete", "limit"]
+)
+def test_outcome_state_is_independent_of_a_finished_empty_plan(state: str) -> None:
+    snapshot = sample()
+    snapshot.update(state="finished", tickets=[], needsYou=[])
+    snapshot["coordination"] = {
+        "state": state,
+        "summary": "Delivered; use is not yet observed.",
+        "next": "Read the weekly usage report on Monday.",
+    }
+    assert validate(snapshot)
+
+
+@pytest.mark.parametrize(
+    "coordination",
+    [
+        True,
+        [],
+        {},
+        {"state": "done", "summary": "x", "next": "y"},
+        {"state": "waiting-evidence", "summary": "x"},
+        {"state": "complete", "summary": "x", "next": ""},
+    ],
+)
+def test_incomplete_or_unknown_outcome_state_is_refused(coordination: object) -> None:
+    snapshot = sample()
+    snapshot["coordination"] = coordination
+    assert not validate(snapshot)

@@ -1,6 +1,6 @@
 # manifest-dev
 
-Hand your agent a task. Get back work you can trust. This plugin is the workflow: your agent works out what you mean, writes down what done means, and calls nothing finished until every check passes. Around it sit the parts that let a project keep its direction, hold its work as Tickets, and run that queue while you make the calls only you can make.
+Hand your agent a task. Get back work you can trust. This plugin is the workflow: your agent works out what you mean, writes down what done means, and calls nothing finished until every check passes. Use an individual skill, finish defined work, or coordinate an assigned project outcome within the decisions you delegate.
 
 [See it explained →](https://doodledood.github.io/manifest-dev/) Each part works on its own, and nobody else on your team has to use it.
 
@@ -9,15 +9,15 @@ Hand your agent a task. Get back work you can trust. This plugin is the workflow
 /plugin install manifest-dev@manifest-dev
 ```
 
-## What to run at each level
+## Choose an entry point
 
-Run these to reach each level; the sections below say what each move does:
+Choose what you need; there is no required sequence:
 
-1. **One skill** — install the plugin, then `/figure-out` with a question.
-2. **One piece of work** — `/auto` with a task (or `/figure-out`, `/define`, `/do` one step at a time).
-3. **A project that remembers** — `/setup-project`, once.
-4. **A shared queue** — `/ticket-up` writes work as Tickets; `/next-ticket` picks the next one.
-5. **The queue runs** — `/orchestrate`, then approve its plan; or `/orchestrate --autonomous` from a scheduler you already run. Mark a Ticket Auto when it needs no one's judgment.
+- **Understand a question** — `/figure-out` investigates and recommends. It does not start implementation. Product questions can explore what people are trying to accomplish, what they use today, and what would make them try or keep using a solution.
+- **Finish defined work** — `/define` makes a Manifest, a finite contract stating the work and its acceptance checks; `/do` executes it. `/auto` combines understanding, definition, and execution when that is the assignment.
+- **Prepare a project** — `/setup-project` connects its existing direction, words, decisions, and checks. It resolves coordination settings only when you want them, and starts no work.
+- **Track or work one job** — `/ticket-up` writes a Question Ticket for inquiry or a Shaped Ticket ready for delivery; `/next-ticket` selects one; `/run-ticket` works that exact Ticket. An inquiry can go directly from `/figure-out` to `/ticket-up` without a Manifest.
+- **Coordinate work** — `/orchestrate` proposes a queue plan or pursues an explicitly assigned outcome. `--autonomous` acts within that assignment and its limits.
 
 ## One piece of work
 
@@ -62,20 +62,31 @@ Two skills write and pick the work:
 | `/ticket-up` | Writes work as Tickets — from a finished Manifest, a direct request, an open question, or findings from other work — into GitHub Issues, files in the repository, or a tracker you describe. A Ticket carries everything a person or an agent needs to do one piece of work and know it's done. |
 | `/next-ticket` | Reads the store, picks the Ticket whose wait costs most, claims it, and says why it leads. |
 
-**Auto** marks a Ticket that needs no one's judgment to finish and land. A person grants it. `/orchestrate --autonomous` grants it too, but only to a Ticket an agent wrote that meets that test.
+## Coordinate an outcome or run a queue
 
-**New work is planned with you.** An effort is one goal and its own Tickets. You think it through together with `/figure-out`, and `/ticket-up` turns what you settled into the effort's Tickets.
+`/orchestrate lending` proposes a plan over the lending effort's ready Tickets and waits for approval by default. `--autonomous` runs within the assignment without those plan approvals. A finite queue assignment ends when its work is exhausted; the flag does not turn it into ongoing project operation.
 
-## The queue runs
+For outcome coordination, give the outcome, relevant evidence, and limits. For example:
 
-Two skills run the queue:
+```text
+/orchestrate help readers get the next available book without volunteer chasing.
+Use the lending report and support cases. You may investigate and propose work.
+I retain product direction, final acceptance, sending, and spending. Work this round only.
+```
 
-| Skill | What it does |
-|-------|--------------|
-| `/orchestrate` | Proposes a plan over an effort's ready Tickets and runs it after you approve: each Ticket in its own session, landed one at a time. Auto Tickets land on their own; the rest stop at a ready pull request for you to land. The debt they leave becomes new Tickets, and one status page shows what is running and what waits on you, and says in plain words what each Ticket is for. With `--autonomous`, started by a scheduler you already run, it starts a new run whenever one finishes, up to the number it may run at once, until no ready work remains, and grants Auto where no one's judgment is needed. |
-| `/run-ticket` | Works one Ticket up to a ready pull request, keeping its Manifest and progress on the Ticket so a fresh run can resume it. It lands only when told to. `/orchestrate` starts it for each Ticket; you can run it by hand too. |
+The coordinator can commission inquiry or delivery, read results, and continue, wait, ask, or finish. Every independently managed job gets a Ticket before dispatch. Related source messages can form one case; routine reasoning needs no separate Tickets. Completed code is delivery evidence. Whether people use it and achieve the intended result is a separate question.
 
-What waits for you: landing a Ticket without Auto, a review the repository requires from a person, escalations, Tickets from people without write access, a cause that paused an effort (such as a check failing on the base branch), planning a new effort, and each plan in the default mode. Each item comes with the answer it recommends, the risk of taking it, and the evidence behind it.
+One status page shows progress, evidence waits, and what needs you. A wait names its recommendation, evidence, risk, and next step. Continuation uses an available host wake or a manual resume; manifest-dev adds no scheduler. Missing evidence or access gets a concrete acquisition step or ask.
+
+## Decide what to delegate
+
+An **assignment** says what to do now: investigate, review, build, or coordinate. **Delegation** says which decisions it may make inside that work. Existing skill defaults remain; you only need to state adjustments. `/setup-project` reads existing instructions and shows the exact shared or personal text before saving new choices. Shared rules live in the project's context file or a reachable companion; personal rules stay in your private instructions.
+
+You can delegate visual direction and still retain acceptance of the rendered result. Accepting a version does not accept a materially changed version. Technical delegation also preserves a team's required review. A worker keeps the intent, evidence, and current authority through handoffs and stops dependent work at a retained decision.
+
+**Auto** on a Ticket permits full completion under its grant and repository rules. A Ticket without Auto can still be investigated or prepared up to the retained decision: a Question returns an answer, while implementation can return a ready pull request. Feedback resumes the same job. The flag, a tool, a source message, or a new Ticket never supplies wider authority.
+
+Isolated checks can expose instruction defects; reliable sustained project progress, and autonomous business operation in particular, remain to be established through actual use.
 
 ## Review and verification
 
@@ -120,7 +131,7 @@ One skill answers questions about manifest-dev itself:
 
 | Skill | What it does |
 |-------|--------------|
-| `/manifest-dev-help` | Explains manifest-dev in plain, simplified English: what it is for, the workflow, the autonomy ladder from one skill to unattended runs, every term you meet with why it exists, and good practice. Ask it what a recipe, a gate, or a Lock is, or point it at a Manifest or a pull request and ask what something means. |
+| `/manifest-dev-help` | Explains manifest-dev in plain, simplified English: what it is for, the workflow, the independent paths from one skill to outcome coordination, every term you meet with why it exists, and good practice. Ask it what a recipe, a gate, or a Lock is, or point it at a Manifest or a pull request and ask what something means. |
 
 ## How it fits together
 

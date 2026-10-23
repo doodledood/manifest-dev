@@ -10,12 +10,12 @@ A reader comes to these documents to decide whether manifest-dev is worth trying
 
 ## How a user reaches it
 
-`README.md` → *A project that remembers* and *What to run at each level* and *What it costs*; `site/index.html` → *Intro*
+`README.md` → *A project that remembers* and *Choose an entry point* and *What it costs*; `site/index.html` → *Intro*
 
 ## Scenarios
 
 ### fresh-reader
-Run: `scripts/walk.sh 'Decide whether manifest-dev is worth trying. End able to say what problem it solves and what it costs them to adopt. The sections to rely on: README.md → A project that remembers, What to run at each level, and What it costs; site/index.html → Intro.' README.md site/index.html`
+Run: `scripts/walk.sh 'Decide whether manifest-dev is worth trying. End able to say what problem it solves and what it costs them to adopt. The sections to rely on: README.md → A project that remembers, Choose an entry point, and What it costs; site/index.html → Intro.' README.md site/index.html`
 Proves: the reader ends able to say what problem it solves and what it costs them to adopt, and names nothing it had to guess that blocks the task.
 Check: read
 Workload: varies

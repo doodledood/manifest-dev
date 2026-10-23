@@ -16,6 +16,8 @@ Writes self-sufficient Tickets into the project's Ticket store — from a Manife
 - From a Manifest it splits by Deliverable only when asked for delegation; follow-ups from another Ticket are grouped, and carry Auto only when a person, or `orchestrate --autonomous` under the grant criterion, grants it at that step, whatever the source carries; the run that found the work never does.
 - Venues: a file store, GitHub Issues, or another tracker named in the store config.
 
+Assignments preserve useful intent, evidence, delegated decisions and retained acceptance. The grant criterion requires full completion authority; setup may reuse the store resolver without creating a Ticket.
+
 ## Scenarios
 
 ### direct-request

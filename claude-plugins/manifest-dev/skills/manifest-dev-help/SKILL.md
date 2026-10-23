@@ -35,8 +35,7 @@ promise: you give the agent a complex task, and you trust the result enough to s
 review. Weeks later, the project still knows what it is for, what is next, and what "done" means.
 The code is also easier to change correctly than before.
 
-At the higher levels of the autonomy ladder, the project advances alone. It takes its next work from
-its queue, and it asks you only for a judgment, a taste or an authority.
+You can assign a project outcome within chosen limits. The coordinator can investigate, shape work, deliver it and read the results. You retain the decisions you want to make. Reliable ongoing operation remains an ambition; a completed task does not prove that ambition.
 
 manifest-dev is for developers who want results that they can trust. They agree to spend more tokens
 and more work at the start to get them. They can work alone or in a team of any size, also in a
@@ -45,9 +44,9 @@ fastest or the cheapest result.
 
 | Question | Where the answer is | How long it stays |
 |---|---|---|
-| What is this project for? | The North Star, a file in the project | Until the owner changes it |
+| What is this project for? | The North Star, a file in the project | Until an authorized ruling changes it |
 | What is the next work? | A Ticket, in your tracker or in files | Until that work is done |
-| What does "done" mean for this work? | A Manifest, written for each run | For one run |
+| What does "done" mean for this work? | A finite Manifest where that work needs one | For one run |
 
 ## The workflow
 
@@ -55,13 +54,14 @@ fastest or the cheapest result.
 2. Use `/define` to write a Manifest: what you will accept as done.
 3. Use `/do <manifest-path>` to do the work and show evidence for each gate.
 
-`/auto` does the three steps without a stop between them. Each skill also works alone. `/define`
+`/auto` does the three steps without a stop between them. Each skill also works alone.
+You can take a Read straight to `/ticket-up`, or assign direct work. No sequence is required for every project. `/define`
 starts `/figure-out` first when you and the agent do not yet agree on the problem.
 
 When your tool can show a question as a list of options, `/figure-out` and `/define` ask you that
 way. The first option is the answer that they recommend. You can also answer in your own words.
 
-`/do` works as if you are away. It makes decisions without questions and reports them at the end. A
+`/do` works as if you are away. It makes delegated decisions and reports them. A decision you retain still waits for you. A
 message that you send during `/do` changes the Manifest, and the run continues. It stops only when
 each gate has evidence, or when a person must act.
 
@@ -78,15 +78,23 @@ on your team do not have to use any level. Stop at the level that fits your proj
 |---|---|---|---|
 | 1. One skill | Use one skill alone, for example `/figure-out` on a question. | A better answer or review, with no setup. | Nothing in the project. |
 | 2. One piece of work | Use `/figure-out`, `/define` and `/do`, or `/auto`. | A result with evidence for each gate. | More tokens and time at the start. The Manifest and its log stay outside the repository. |
-| 3. Project Surfaces | Use `/setup-project` one time. | Each session starts from the direction, words, decisions and checks of the project. | Files in the repository that your team can see. |
+| 3. Project Surfaces | Use `/setup-project` one time. | Each session starts from the direction, words, decisions, and checks of the project. | Files in the repository that your team can see. |
 | 4. A shared queue | Write work with `/ticket-up` and take it with `/next-ticket`. | The next work is in a store, not in the head of one person. | A Ticket Store: GitHub Issues, files or your own tracker. |
-| 5. The queue runs | Start `/orchestrate` and approve its plan, or start `/orchestrate --autonomous` from a scheduler that you have. Mark a Ticket Auto when it needs no judgment of a person. | Many Tickets run at the same time. An Auto Ticket goes to the end. Other Tickets stop at a pull request that is ready. You merge a Ticket without Auto, answer escalations and plan large work. You approve each plan in default mode, and Tickets from authors who cannot write to the repository. | Gates that you trust. A scheduler only if you want runs without you. |
+| 5. Coordination | Start `/orchestrate` with a queue or a stated outcome. Approve its plan, or use `--autonomous` within your chosen limits. | Separate inquiry and delivery jobs run as Tickets. Results guide the next move. Retained decisions and missing evidence stay visible. | Authority and evidence sources that fit the assignment. An existing host wake only when you want automatic continuation. |
 
 To climb a level:
 
 1. Use your current level until you trust its results.
 2. Add the next level where the current level does not give enough.
-3. Grant Auto only when the work and its "done" need no judgment, taste or authority of a person.
+3. Grant Auto only when all decisions needed for completion are settled or delegated, with no retained acceptance.
+
+## Assignment and authority
+
+An assignment says what to do. Delegation says which decisions the worker can make within that activity. Standing delegation starts no work, and a mode flag grants no wider scope.
+
+Use `/setup-project` to record needed adjustments in the project instructions. Keep personal rules in private instructions. Setup shows the proposed text before it saves a new choice. It starts no operations.
+
+For example, delegate visual direction but retain acceptance of the rendered result. The worker can build and recommend, then wait at that acceptance. Approval applies to that artifact and version; a material change needs another acceptance.
 
 ## The other skills
 
@@ -95,8 +103,8 @@ To climb a level:
 | `/setup-project` | Give a project its North Star, glossary and decision-record conventions, and add a verification harness unless you opt out. Run it again to find gaps. |
 | `/ticket-up` | Write work into your Ticket Store as Tickets. |
 | `/next-ticket` | Select the next Ticket, claim it, and see why it is first. |
-| `/run-ticket` | Do one Ticket until its pull request is ready, and record the result on the Ticket. |
-| `/orchestrate` | Run ready Tickets at the same time, land them, and keep a list of what waits for you. |
+| `/run-ticket` | Investigate a Question or deliver Shaped work, keeping its result and progress on the same Ticket. |
+| `/orchestrate` | Coordinate a queue or assigned outcome, with a status page and a list of what waits for you. |
 | `/figure-out-team` | Do the work of `/figure-out` with a team in a Slack channel or thread. |
 | `/review-code` | Review a change for one quality dimension. Manifest gates use it. |
 | `/review-writing` | Review text against its style standards. |

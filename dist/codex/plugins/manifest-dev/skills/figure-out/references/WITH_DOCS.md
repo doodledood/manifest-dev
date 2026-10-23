@@ -6,7 +6,7 @@ The loading layer activates this reference only after the investigation is relev
 
 The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal.
 
-When project docs are active, that frame has four explicit exceptions. **Glossary captures, ADR offers, North Star updates, and the drift marker on a verification recipe are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them. For the North Star the carve-out covers exactly what its asymmetry permits: a status change on evidence executes inline, and a position rewrite executes inline only once the owner has explicitly ruled.
+When project docs are active, that frame has four explicit exceptions. **Glossary captures, ADR offers, North Star updates, and the drift marker on a verification recipe are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them. For the North Star the carve-out covers exactly what its asymmetry permits: a status change on evidence executes inline, and a position rewrite executes inline only under an authorized ruling, including an applicable explicit delegation.
 
 (The default figure-out posture still applies to everything else — design proposals, code edits, plan synthesis. Only these four carve out, plus writing the surfaces version line when the user declines a whole update offer, below.)
 
@@ -92,7 +92,7 @@ The two-pass shape exists because per-turn alone misses subtle decisions (the ch
 The loaded doc's own header and the project's conventions file define its states and
 rules — apply them as loaded, not a remembered version. What stays here is cadence, and
 the one asymmetry the bullets below branch on: **statuses move on evidence, positions
-move only on the owner's explicit ruling.**
+move only on an authorized ruling within the assignment and any explicit delegation.** Owner-retained ends and bounds stay with the owner.
 
 After every counterparty response — or, in self-answered runs, every resolved question —
 check whether the session's findings or the owner's rulings bear on the North Star. First sort
@@ -116,16 +116,17 @@ bet, and the branches below apply to it:
 
 - **A finding contradicts a stated position** → surface the clash as a lead, exactly like a
   glossary clash: *"The North Star says X; this session found Y — which stands?"* Only
-  the user's explicit ruling rewrites the position; on that ruling, write the new
-  position inline, set its state, and offer the decision record that remembers why it
-  moved (the ADR machinery above — a position change always clears its bar).
+  an authorized ruling rewrites the position. Use explicit applicable delegation where it
+  already covers that choice; otherwise await the owner's ruling. Then write the new position,
+  set its state and record why it moved under the ADR convention, naming the actual decider and
+  any delegation. A position change always clears the record's bar.
 - **A finding weakens a position without settling it** → lower the state inline, no offer
   needed (evidence → hypothesis), appending one line naming what would settle it. Never
   touch the position's words.
 - **A finding resolves an `empty` or `hypothesis` position** → present the grounds and the
-  filled line; the user's yes writes it with the state its grounding earns — `evidence`
-  with its date when something happened in the world, `ruled` when the answer is the
-  owner's own choice. A `ruled` fill is a position change: offer the decision record
+  filled line. An authorized ruling writes it with the state its grounding earns — `evidence`
+  with its date when something happened in the world, `ruled` for a choice with its actual decider
+  and any applicable delegation named. A `ruled` fill is a position change: offer the decision record
   that remembers it, as on the contradiction branch.
 - **Fog that fits no section** → the doc's `Open` section (with what would fill it), or
   nowhere — never forced into a section as content.
@@ -135,11 +136,12 @@ bet, and the branches below apply to it:
 
 **A strategy signpost the session's findings show met** — a `Revisit when` condition after a
 title in the North Star's *Strategy choices in force* list — goes to the user as a lead naming
-the record and what showed it met. Change neither the record nor the list: reopening the choice
-is the owner's call, and a new record if they make it.
+the record and what showed it met, unless this assignment and explicit delegation already
+cover reconsidering it. In that case use the same evidence, ruling and new-record path. The
+observation alone changes neither the decision nor the signpost.
 
-In self-answered or unattended runs the ruling path is closed: lower states and flag
-contradictions in the session's output, never flip a position. Updates are event-driven —
+In self-answered or unattended runs, use only applicable explicit delegation for position
+changes. Otherwise lower states and flag contradictions; absence of a person grants nothing. Updates are event-driven —
 these checks are the whole trigger; there is no review cadence, and the dated states are what
 keep staleness visible.
 

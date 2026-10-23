@@ -7,12 +7,11 @@ sequence of features. The current form, `../NORTH_STAR_FORMAT.md`, keeps only wh
 judged against and moves each chosen option to a decision record, where a later session meets it
 as a choice it may revisit rather than as the purpose.
 
-This reshape changes positions, and only the owner moves a position, so it is never written
-without the owner's ruling on each line. An acceptance given before the owner has seen the lines
-— "apply everything you offer" — is not a ruling on them: show the proposal and wait for one. A
-run with no person present to rule, such as an unattended one, puts the reshape in its report as
-one flagged item, with the lines it would move and where, and changes nothing in the North Star,
-its records or their states.
+This reshape changes positions. Use an explicit assignment and delegation only for the lines
+it covers; a general "apply everything" is not a grant to invent or replace retained ends. Show
+the proposed lines and destinations for the owner's remaining rulings. An unattended run can
+perform the authorized part and flags the rest with the lines it would move and where; it does
+not invent missing choices or raise their evidence states.
 
 ## Ask for the end first
 
@@ -22,7 +21,8 @@ the document. That end opens the new *Purpose*. The old *Diagnosis* usually name
 the project's first feature removes; carried over as the purpose, it makes the purpose only as
 wide as that feature, and every later feature sits outside it. So the *Diagnosis* becomes one
 barrier in the way of the end, beside any others the owner names, never the purpose itself. A run
-with no owner present to answer proposes no end: its flagged item says the end is unasked.
+with an end already supplied uses it; with no authorized answer it leaves the end unresolved
+and names what the owner must supply.
 
 ## Sort every line
 
@@ -68,9 +68,8 @@ The nine fields map to the six sections like this, line by line rather than fiel
 ## Show it, then write what the owner rules
 
 Show the proposed document beside the current one, with a table of every line that leaves it and
-where it goes. The owner rules each line — keep, move, reword or drop — and only what the owner
-ruled is written. A position keeps its text unless the owner rewords it, and no state rises in the
-move. Write the result as one act under the project's conventions:
+where it goes. Write only lines covered by the owner's rulings or explicit delegation — keep,
+move, reword or drop. The retained lines wait for their owner, and no state rises in the move. Write the result as one act under the project's conventions:
 
 1. the reshaped document;
 2. a record for each chosen option that has none;

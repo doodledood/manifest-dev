@@ -25,11 +25,33 @@ Interpret only top-level options as flags; quoted or code-formatted mentions of 
 
 Read before writing, and never overwrite a surface the project already maintains:
 
+Read applicable project and personal instructions first. `../ticket-up/references/AUTHORITY.md`
+defines assignment, delegated decisions and retained acceptance; use it for any scoped
+adjustments. Setup configures how later assignments run. It does not assign project operation.
+
 - **`docs/adr/CONVENTIONS.md` exists** → the project has its own ADR convention. It governs. Do not replace it, and follow it for anything written this run — then compare it, per *Compare, then offer* below, which covers this file, `docs/NORTH_STAR_CONVENTIONS.md`, and the context file's surfaces section alike.
 - **`CONTEXT.md` exists** (or the context named by a root `CONTEXT-MAP.md`) → load it. Mined vocabulary is proposed as additions to it, never as a replacement.
-- **`NORTH_STAR.md` exists** → load it. Seeded content is proposed as additions or as evidence for positions it already carries — never as a rewrite: its positions change only by the owner's ruling, per the maintenance rules in `references/NORTH_STAR_FORMAT.md`.
+- **`NORTH_STAR.md` exists** → load it. Seeded content is proposed as additions or as evidence for positions it already carries — never as a rewrite: its positions change only by an authorized ruling within explicit delegation, per the maintenance rules in `references/NORTH_STAR_FORMAT.md`.
 - **`docs/adr/` holds records but there is no `CONVENTIONS.md`** → the project has an unwritten convention, and the records are the evidence of it. Infer it from them — naming scheme, which sections they carry, how they cross-reference, what the index looks like — and write the conventions file to describe *that*, adapting the shipped default rather than replacing it. Installing the default unchanged here would declare an existing corpus non-conforming, which is both wrong and the fastest way to get the file ignored. Where the corpus is inconsistent, or where following it would leave the index un-rebuildable, say so and let the user choose; never silently pick.
 - **A project context file already carries some of this wiring** → add the wiring it lacks and leave the rest alone; where its surfaces section is present but differs from the template, compare and offer rather than rewrite, per *Compare, then offer* below.
+
+### Intended use and scoped adjustments
+
+Infer intended use from the request and existing instructions before asking. Project-only setup
+needs no coordinator, work store or notification configuration. For intended coordination, load
+`../ticket-up/references/STORE_CONFIG.md` and resolve the existing store, venue, automation
+identity and escalation recipient through that resolver, without authoring Tickets. Discover
+existing designated evidence and notification sources; ask only material unresolved choices,
+and check available access. Name any missing capability or access that would prevent starting.
+Use existing host continuation facilities when wanted; setup installs no scheduler.
+
+Keep the skills' current defaults. Offer only project-specific adjustments that matter to the
+intended use, stating scope, responsible actor, delegated decisions and retained decisions in
+plain language. For example, direction may be delegated while acceptance of the rendered result
+stays with the user. Show the exact proposed text and destination before persisting a new user
+choice: shared rules in the detected project context file or its reachable companion, personal
+rules in the existing private instruction mechanism. Reuse decisions already supplied; no empty
+policy document or exhaustive permission matrix is required.
 
 ### The surfaces version
 
@@ -93,9 +115,9 @@ Steps 2 to 6 install what a project lacks. On a project that already carries sur
 
 5. **Seed, unless `--no-mine` or the project records a surfaces version** (an update mines only per *The update pass*). Load `references/MINING.md` and follow it. It covers what each source can and cannot yield, how a record says so when the reasoning is gone, and why glossary candidates are ratified rather than written.
 
-6. **Wire the project context file.** Emit the project-surfaces section from `references/NORTH_STAR_FORMAT.md` — its template is the single source of the emitted text; adapt it to what the project has, extend an existing section rather than duplicating one, and add nothing beyond it, because this file is read on every session and every line here is a permanent cost. The template covers the surfaces version, the North Star's residency and maintenance asymmetry, the glossary's residency, the decision-record triggers, the one-act write rule, and the verification entry — the harness command or the project's own way — with when to run it; where the host supports imports, the session-start reads become imports, written as *the project context file*'s imports rather than a specific harness's filename.
+6. **Wire the project context file.** Emit the project-surfaces section from `references/NORTH_STAR_FORMAT.md` — its template is the single source of the emitted text; adapt it to what the project has, extend an existing section rather than duplicating one, and include only accepted scoped adjustments as its optional entry permits, because this file is read on every session and every line here is a permanent cost. The template covers the surfaces version, the North Star's residency and maintenance asymmetry, the glossary's residency, the decision-record triggers, the one-act write rule, and the verification entry — the harness command or the project's own way — with when to run it; where the host supports imports, the session-start reads become imports, written as *the project context file*'s imports rather than a specific harness's filename.
 
-7. **Report what landed** — what was installed, the surfaces version written, what the update offered and what the user chose for each item, whether the project took the harness or kept its own way, and for a harness what it adopted and catalogued, the ask-first choice, and which scenario its proof run drove, and what was seeded. Where seeding ran, the *Reporting* section of `references/MINING.md` specifies what that half must cover. Give the comparison's outcome either way, per *Compare, then offer* above: which sections of which copies differ from what the steps would emit today and what the user chose for each, plainly that the copies were compared and already carry everything the current defaults do, or that there was nothing to compare because none of these surfaces existed yet — an unreported comparison reads exactly like one that never ran, which is the failure this whole step exists to prevent. A run that skipped seeding reports the actual reason: `--no-mine` requested wiring only, or no history was available.
+7. **Report what landed** — the configured scope and retained decisions, any unavailable access/capability and its next step, and that setup has started no operations; then what was installed, the surfaces version written, what the update offered and what the user chose for each item, whether the project took the harness or kept its own way, and for a harness what it adopted and catalogued, the ask-first choice, and which scenario its proof run drove, and what was seeded. Where seeding ran, the *Reporting* section of `references/MINING.md` specifies what that half must cover. Give the comparison's outcome either way, per *Compare, then offer* above: which sections of which copies differ from what the steps would emit today and what the user chose for each, plainly that the copies were compared and already carry everything the current defaults do, or that there was nothing to compare because none of these surfaces existed yet — an unreported comparison reads exactly like one that never ran, which is the failure this whole step exists to prevent. A run that skipped seeding reports the actual reason: `--no-mine` requested wiring only, the project already records a surfaces version, or no history was available.
 
 ## Empty input
 

@@ -5,6 +5,11 @@ argument-hint: '[task] [<manifest-path> to amend] [--babysit <pr-url>]'
 user-invocable: true
 ---
 
+Read `../ticket-up/references/AUTHORITY.md` before acting. Keep this assignment, its applicable
+authority and retained decisions in every skill handoff; an isolated caller must receive them
+explicitly, with the useful intent and evidence.
+
+
 Encode the conversation's shared understanding as a Manifest at
 `~/.manifest-dev/manifests/manifest-<ts>.md` (create the dir; fall back to a
 writable temp path only if home is not writable); how you interview is yours. No
@@ -59,7 +64,7 @@ among the rest.
 **The user's call.** A decision is the user's call when two careful people with
 the same evidence could reasonably decide it differently, and the difference
 would matter to the user. Test each material decision against that sentence;
-your own confidence does not settle it. At a user's call, check the user's Taste
+your own confidence does not settle it. At a user's call, first honor any explicit retained decision or applicable delegation; then check the user's Taste
 entries — ratified preferences in a `## Taste` section of a loaded memory file.
 Follow an entry only where it clearly bears: it speaks to this kind of call, and
 following it would change the choice. A general lean that would tilt almost any
@@ -81,6 +86,10 @@ changing nothing else. When an existing entry decided the reversed call, raise
 the clash instead — has the entry's default moved, or is this an exception? Show
 any revision or removal verbatim, and apply it only on the user's explicit yes
 to that text. An unattended session makes no offer.
+
+Carry the prior Read's useful rationale, intended progress, circumstances, trade-offs and
+uncertainties into Intent, Approach and Assumptions; encode retained decisions and other binding
+authority limits in gates. The Manifest is finite work, not the project's permanent direction record.
 
 The Manifest is the acceptance contract — what the user accepts as "I'd ship the
 outcome of executing this" — and `/do` executes it later with none of this

@@ -1,7 +1,7 @@
 # ADR: The North Star opens with its end, and signposts reopen strategy choices and deferred work
 
 ## Status
-Accepted
+Accepted; amended by 20261023-assignment-bounds-delegated-decisions-and-retained-acceptance: assignment scope, delegated decisions and retained acceptance
 
 ## Area
 North Star

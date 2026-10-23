@@ -6,9 +6,9 @@
 
 Hand your agent a task. Get back work you can trust.
 
-manifest-dev is a set of free, open-source skills for coding agents. With it, your agent works out what you mean, writes down what done means, and calls nothing finished until every check passes. Use one skill, or climb five levels to a queue of work that runs on its own while you make the calls only you can make.
+manifest-dev is a set of free, open-source skills for coding agents. With it, your agent works out what you mean, writes down what done means, and calls nothing finished until every check passes. Use one skill, finish a defined task, or assign a project outcome while keeping the decisions you care about.
 
-**[See it explained →](https://doodledood.github.io/manifest-dev/)** — the five levels, one scene at a time.
+**[See it explained →](https://doodledood.github.io/manifest-dev/)** — the available paths, one scene at a time.
 
 ## Install
 
@@ -53,40 +53,43 @@ It also keeps the project's words, decisions, and checks: a glossary of its term
 
 **Work waits as Tickets anyone can pick up.** A Ticket carries all a person or an agent needs to do one piece of work and know it's done. `/ticket-up` writes them, into GitHub Issues, files in the repository, or a tracker you describe; `/next-ticket` picks the one whose wait costs most.
 
-**Auto** is the mark that says a Ticket needs no one's judgment to finish and land.
+## Coordinate an outcome or run a queue
 
-**New work is planned with you.** An effort is one goal and its own Tickets. You think it through together with `/figure-out`, and `/ticket-up` turns what you settled into the effort's Tickets.
+`/orchestrate lending` proposes a plan over the lending effort's ready Tickets and waits for approval by default. `--autonomous` runs within the assignment without those plan approvals. A finite queue assignment ends when its work is exhausted; the flag does not turn it into ongoing project operation.
 
-## The queue runs
+For outcome coordination, give the outcome, relevant evidence, and limits. For example:
 
-**Many Tickets at once, each after the work it depends on.** `/orchestrate` proposes a plan and runs it after you approve: each Ticket in its own session, landed one at a time. Auto Tickets land on their own; the rest stop at a ready pull request for you to land. The debt they leave becomes new Tickets. One status page shows what is running and what waits on you, and says in plain words what each Ticket is for.
+```text
+/orchestrate help readers get the next available book without volunteer chasing.
+Use the lending report and support cases. You may investigate and propose work.
+I retain product direction, final acceptance, sending, and spending. Work this round only.
+```
 
-**With `--autonomous`, it keeps going on its own.** A scheduler you already run starts `/orchestrate --autonomous`. It starts a new run whenever one finishes, up to the number it may run at once, until no ready work remains. It gives Auto to Tickets that agents wrote, wherever no one's judgment is needed.
+The coordinator can commission inquiry or delivery, read results, and continue, wait, ask, or finish. Every independently managed job gets a Ticket before dispatch. Related source messages can form one case; routine reasoning needs no separate Tickets. Completed code is delivery evidence. Whether people use it and achieve the intended result is a separate question.
 
-The loop keeps turning, and you step in where it needs you — for judgment, taste, or authority:
+One status page shows progress, evidence waits, and what needs you. A wait names its recommendation, evidence, risk, and next step. Continuation uses an available host wake or a manual resume; manifest-dev adds no scheduler. Missing evidence or access gets a concrete acquisition step or ask.
 
-| Runs without you | Waits for you |
-|---|---|
-| Auto Tickets, end to end, including the ones `--autonomous` grants | Landing a Ticket without Auto |
-| Tickets without Auto, up to a ready pull request | Escalations: a question only you can answer |
-| | Tickets from people without write access |
-| | A review the repository requires from a person |
-| | A cause that paused an effort, such as a check failing on the base branch |
-| | Planning a new effort, and each plan in the default mode |
+## Decide what to delegate
 
-Each item that waits for you comes with the answer it recommends, the risk of taking it, and the evidence behind it, so you can decide without opening the pull request.
+An **assignment** says what to do now: investigate, review, build, or coordinate. **Delegation** says which decisions it may make inside that work. Existing skill defaults remain; you only need to state adjustments. `/setup-project` reads existing instructions and shows the exact shared or personal text before saving new choices. Shared rules live in the project's context file or a reachable companion; personal rules stay in your private instructions.
 
-## What to run at each level
+You can delegate visual direction and still retain acceptance of the rendered result. Accepting a version does not accept a materially changed version. Technical delegation also preserves a team's required review. A worker keeps the intent, evidence, and current authority through handoffs and stops dependent work at a retained decision.
 
-Each level works without the ones above it, and without anyone else on your team using manifest-dev. What it adds to a shared repository is plain files and plain instructions. Run these to reach each level:
+**Auto** on a Ticket permits full completion under its grant and repository rules. A Ticket without Auto can still be investigated or prepared up to the retained decision: a Question returns an answer, while implementation can return a ready pull request. Feedback resumes the same job. The flag, a tool, a source message, or a new Ticket never supplies wider authority.
 
-1. **One skill** — install the plugin, then `/figure-out` with a question.
-2. **One piece of work** — `/auto` with a task (or `/figure-out`, `/define`, `/do` one step at a time).
-3. **A project that remembers** — `/setup-project`, once.
-4. **A shared queue** — `/ticket-up` writes work as Tickets; `/next-ticket` picks the next one.
-5. **The queue runs** — `/orchestrate`, then approve its plan; or `/orchestrate --autonomous` from a scheduler you already run. Mark a Ticket Auto when it needs no one's judgment.
+Isolated checks can expose instruction defects; reliable sustained project progress, and autonomous business operation in particular, remain to be established through actual use.
 
-That is everything to remember. The skills handle the rest themselves, and the [plugin README](claude-plugins/manifest-dev/README.md) explains each one.
+## Choose an entry point
+
+Choose what you need; there is no required sequence:
+
+- **Understand a question** — `/figure-out` investigates and recommends. It does not start implementation. Product questions can explore what people are trying to accomplish, what they use today, and what would make them try or keep using a solution.
+- **Finish defined work** — `/define` makes a finite Manifest; `/do` executes it. `/auto` combines understanding, definition, and execution when that is the assignment.
+- **Prepare a project** — `/setup-project` connects its existing direction, words, decisions, and checks. It resolves coordination settings only when you want them, and starts no work.
+- **Track or work one job** — `/ticket-up` writes a Question Ticket for inquiry or a Shaped Ticket ready for delivery; `/next-ticket` selects one; `/run-ticket` works that exact Ticket. An inquiry can go directly from `/figure-out` to `/ticket-up` without a Manifest.
+- **Coordinate work** — `/orchestrate` proposes a queue plan or pursues an explicitly assigned outcome. `--autonomous` acts within that assignment and its limits.
+
+Each choice works on its own, including inside a team that does not use manifest-dev. The [plugin README](claude-plugins/manifest-dev/README.md) explains each skill.
 
 ## What it costs
 
@@ -98,7 +101,7 @@ Two plugins ship from this repository:
 
 | Plugin | What it covers |
 |--------|----------------|
-| [`manifest-dev`](claude-plugins/manifest-dev) | The workflow itself, project setup, ticket authoring and execution, first-principles design with composable guides and optional measurement tools (`/design`), artifact review, and the review skills the criteria call on |
+| [`manifest-dev`](claude-plugins/manifest-dev) | Standalone inquiry, finite work, optional outcome coordination, project setup, ticket authoring and execution, first-principles design with composable guides and optional measurement tools (`/design`), artifact review, and the review skills the criteria call on |
 | [`manifest-dev-tools`](claude-plugins/manifest-dev-tools) | Pull-request collaboration, prompt work, standalone goals from Manifests (`/manifest-to-goal`), teaching, explaining, and handoff between sessions |
 
 Each plugin's README lists what it ships.

@@ -1,6 +1,9 @@
 # Default mode: propose and wait
 
-Nothing starts before the person approves a plan.
+Nothing starts before the person approves a plan, unless applicable explicit delegation
+already settles that planning decision. Use that scope without asking for the same decision
+again. Otherwise the propose-and-wait default below stands; standing delegation alone assigns
+no work, and approving a plan is not an Auto grant.
 
 ## Propose
 
@@ -31,6 +34,9 @@ When the person asks for new work during the plan, plan it as `../SKILL.md` → 
 says: a quick Ticket now, or a start line for deep planning. Either one joins the next plan.
 
 ## When the plan ends
+
+For an assigned outcome, inspect the resulting evidence under `OUTCOME.md` before proposing more
+work. A wait or a satisfied outcome can be the useful next state; another plan is not required.
 
 A plan ends when every Ticket in it is closed, waiting on the person, left alone, or behind one of
 those, and no run is live. Check in a last time, then propose the next plan the same way, with the grants and the list
