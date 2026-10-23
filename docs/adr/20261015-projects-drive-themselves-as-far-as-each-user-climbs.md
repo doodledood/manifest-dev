@@ -1,7 +1,7 @@
 # ADR: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it
 
 ## Status
-Accepted — amended by 20261018-an-orchestrating-skill-runs-the-queue-and-replaces-the-sweep: manifest-dev ships an orchestrating skill, not a scheduler, in place of shipping no orchestrator; amended by 20261018-orchestrate-tickets-up-debt-and-grants-auto-where-the-criterion-holds: the Never on agents granting themselves work is removed, and `orchestrate --autonomous` grants Auto where the criterion holds
+Accepted — amended by 20261018-an-orchestrating-skill-runs-the-queue-and-replaces-the-sweep: manifest-dev ships an orchestrating skill, not a scheduler, in place of shipping no orchestrator; amended by 20261018-orchestrate-tickets-up-debt-and-grants-auto-where-the-criterion-holds: the Never on agents granting themselves work is removed, and `orchestrate --autonomous` grants Auto where the criterion holds; amended by 20261023-projects-advance-toward-assigned-outcomes-within-delegated-authority: outcome-led progress and independent adoption choices
 
 ## Area
 North Star

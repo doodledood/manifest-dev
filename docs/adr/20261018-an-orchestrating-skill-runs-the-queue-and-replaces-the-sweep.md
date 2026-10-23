@@ -1,7 +1,7 @@
 # ADR: An orchestrating skill runs the queue in parallel and replaces the sweep and event triggers
 
 ## Status
-Accepted — amended by 20261019-each-item-waiting-on-the-person-carries-its-recommendation-risk-and-evidence: each waiting item carries the recommended answer, its risk and its evidence; and by 20261019-one-cause-failing-several-runs-pauses-the-effort-once: one cause failing several runs pauses the effort once
+Accepted — amended by 20261019-each-item-waiting-on-the-person-carries-its-recommendation-risk-and-evidence: each waiting item carries the recommended answer, its risk and its evidence; and by 20261019-one-cause-failing-several-runs-pauses-the-effort-once: one cause failing several runs pauses the effort once; amended by 20261023-projects-advance-toward-assigned-outcomes-within-delegated-authority: outcome-led progress and independent adoption choices
 
 ## Area
 Strategy

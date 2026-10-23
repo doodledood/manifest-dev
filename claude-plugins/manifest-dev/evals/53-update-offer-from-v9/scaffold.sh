@@ -8,7 +8,7 @@ Command-line tool that tracks books a reading club has borrowed.
 
 ## Project surfaces
 
-<!-- setup-project surfaces v8 -->
+<!-- setup-project surfaces v9 -->
 
 This project keeps its direction, vocabulary, and decision memory in the repo. Read
 `NORTH_STAR.md` and `CONTEXT.md` at the start of every session.
@@ -50,7 +50,7 @@ cat > NORTH_STAR.md <<'EOF'
 
 ## Purpose
 
-Reading clubs lose track of who has which book, and a volunteer ends up chasing loans by memory.
+Readers get the books they want without making volunteer organizers chase loans. Lost loan records stand in the way.
 
 For: volunteer organizers of small reading clubs.
 Not for: libraries with a catalogue system of their own.
@@ -59,8 +59,7 @@ Not for: libraries with a catalogue system of their own.
 
 ## Goal
 
-An organizer checks books out and back in from the command line, sees what is overdue, and
-exports the loan list for the club's records.
+Wanted books reach the next reader with less volunteer chasing.
 
 — hypothesis: from the README's commands. 2026-06
 
@@ -72,9 +71,10 @@ exports the loan list for the club's records.
 
 ## How we know
 
-- Checkouts recorded each month — up.
-- Overdue reports run each month — up.
-- Exports made each month — up.
+- Wanted books reaching the next reader — up.
+- Volunteer chasing still needed — down.
+
+— empty: no collection method chosen; actual club records would fill it.
 
 — hypothesis: counted from the organizers' usage logs. 2026-06
 
@@ -108,10 +108,14 @@ Accepted
 ## Area
 [One short label]
 
+## Decided by
+The user
 ## Context
 ## Decision
 ## Alternatives Considered
 ## Consequences
+## Revisit when
+An observable condition and its source.
 ## Source
 ```
 
@@ -123,8 +127,12 @@ and citing a record as a ruling read only records in effect.
 
 One label is reserved. A record of a guiding choice — one the project pursues its goal through,
 and that other decisions derive from — carries the area `Strategy`. The North Star's *Strategy
-choices in force* list holds the titles of the `Strategy` records in effect and nothing else, so
+choices in force* list holds each in-effect `Strategy` title with its `Revisit when` signpost and nothing else, so
 writing, superseding or retiring such a record rebuilds that list in the same act.
+EOF
+cat >> docs/adr/CONVENTIONS.md <<'EOF'
+Where a decision sits outside the North Star Purpose, say so in Context.
+A met signpost goes to the owner; it changes no ruling on its own.
 EOF
 cat > docs/adr/README.md <<'EOF'
 # Architecture Decision Records

@@ -1,7 +1,7 @@
 # ADR: Winning is our own projects running the full loop; recognition is a consequence
 
 ## Status
-Accepted — amended by [20261015-projects-drive-themselves-as-far-as-each-user-climbs](20261015-projects-drive-themselves-as-far-as-each-user-climbs.md): the destination extends to projects that drive themselves wherever they can; the number watched is unchanged.
+Accepted — amended by [20261015-projects-drive-themselves-as-far-as-each-user-climbs](20261015-projects-drive-themselves-as-far-as-each-user-climbs.md): the destination extends to projects that drive themselves wherever they can; the number watched is unchanged.; amended by 20261023-projects-advance-toward-assigned-outcomes-within-delegated-authority: outcome-led progress and independent adoption choices
 
 ## Area
 Positioning

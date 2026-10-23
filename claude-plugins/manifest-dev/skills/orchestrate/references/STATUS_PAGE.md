@@ -104,6 +104,10 @@ may be left out; `null` counts as left out.
 | `effort.destination` | string, optional | One sentence on what done means for the effort, shown as the Goal. | The front item's destination. |
 | `mode` | `"default"` or `"autonomous"` | How this orchestrator runs: proposing each plan and waiting for approval, or acting on its own (`--autonomous`). | This orchestrator's own invocation. |
 | `state` | `"running"`, `"paused"` or `"finished"` | Whether runs are going, the effort is paused, or the plan has ended. | `paused` when the front item carries the pause line; `finished` once the plan has ended, including when the orchestrator stops; `running` otherwise. |
+| `coordination` | object, optional | Present only for an assigned outcome. Plan completion alone never means the outcome was achieved. | The current coordination record on the effort's front item. |
+| `coordination.state` | `"working"`, `"waiting-evidence"`, `"waiting-decision"`, `"complete"` or `"limit"` | What the outcome assignment needs next; shown above the graph even with no Tickets. | The coordinator's evidence-based continuation decision. |
+| `coordination.summary` | nonempty string | A concise account of progress or the unresolved condition; distinguish delivered work from observed use. | The current coordination record. |
+| `coordination.next` | nonempty string | The concrete next action or observation, how to resume, or why no continuation remains. Never invent an automatic wake. | The current coordination record's continuation route. |
 | `plan` | number | Which plan this is, counted from 1 by this orchestrator on this effort. | This orchestrator's count. |
 | `checkedAt` | time | When this check-in read the store. | This check-in. |
 | `nextCheckAt` | time, optional | When the next check-in will happen. Leave it out when none will. | This orchestrator's schedule. |
@@ -116,6 +120,12 @@ that the orchestrator leaves alone, and the Tickets proposed for the next plan. 
 plans drop off, so the page stays the size of one plan. The order of the list is the plan order:
 Tickets are read, and reached with the keyboard, in that order, each followed by the Tickets that
 wait on it.
+
+For an outcome assignment, include `coordination` at every check-in. A finished plan with an empty
+queue can still be `waiting-evidence` or `waiting-decision`. Use `complete` only when the outcome's
+completion terms have evidence, not when delivery ended. Put a retained decision in `needsYou` too,
+with its recommendation and evidence. Keep the summary short; link detailed records from the front
+item. Older queue-only snapshots remain valid without `coordination`.
 
 ### A Ticket
 
@@ -141,8 +151,8 @@ wait on it.
 | `after` | list of ids, optional | Tickets this one runs after because both touch the same code. | This plan's ordering. |
 | `from` | list of ids, optional | Tickets whose debt this one was written from. | The Ticket's source link. |
 | `kind` | `"debt"` or `"refactor"`, optional | A Ticket the orchestrator wrote from debt, or a structural refactor it proposes. | The Ticket's source link and how it was written. |
-| `grant` | string, `null` or `"never"`, optional | For a Ticket an agent wrote: who granted it Auto, the grant that lets automation take it end to end; `null` while no one has; `"never"` for a refactor proposal, whose direction is the person's call. | The grant line on the Ticket. |
-| `auto` | `false`, optional | Set on a Ticket in the plan that does not carry Auto: it runs until it needs the person, and lands only after the person looks. | The Ticket's Auto grant. |
+| `grant` | string, `null` or `"never"`, optional | For a Ticket an agent wrote: who granted it Auto, the grant that lets automation take it end to end; `null` while no one has; `"never"` where the person explicitly retains direction, including a refactor proposal without delegated direction. | The grant line on the Ticket. |
+| `auto` | `false`, optional | Set on a Ticket in the plan that does not carry Auto: it runs to its retained decision or acceptance, which can concern a Read, another artifact or landing a pull request. | The Ticket's Auto grant. |
 
 An id in `dependsOn`, `after` or `from` that is not on the page draws no edge.
 

@@ -17,6 +17,8 @@ on the facts a script can decide.
 - `scripts/verify drive status-page`, or `node scripts/status-page-check.mjs [OUT_DIR]
   [--template PATH]` to check another copy of the page.
 
+A finished empty plan with an unresolved outcome still shows its evidence wait and concrete manual continuation on desktop and phone; unknown outcome states are refused. Older queue snapshots remain valid.
+
 ## Scenarios
 
 ### render

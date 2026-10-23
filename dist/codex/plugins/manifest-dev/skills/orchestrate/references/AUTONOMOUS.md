@@ -1,18 +1,19 @@
-# `--autonomous`: act until no ready work is left
+# `--autonomous`: act within the assignment
 
 No plan waits for approval. Show the plan as the record of what starts, then act on it.
 
 ## Fill slots
 
-At each check-in, rank the ready work again and fill every free slot, up to `--max-batch` live
+At each check-in, rank the ready work again and fill useful authorized slots, up to `--max-batch` live
 runs. Auto Tickets run end to end and land. Tickets without Auto that the convention allows run
 up to a ready pull request, or a drafted answer, and wait on the person; they never land here,
 and a drafted answer is never accepted here.
 
 Whatever needs the person goes on the list of what waits on them, never into a slot: held pull
 requests, escalations, Tickets left alone because their author lacks write access, refactor
-proposals, and start lines for deep planning. A planning session needs the person, so this mode
-never starts one; its start line waits on the list.
+proposals, and retained planning decisions. Assigned inquiry and shaping can run unattended
+within delegated authority; an unassigned expansion or retained decision waits with a recommendation.
+An outcome assignment uses `OUTCOME.md` to commission that inquiry before dispatch.
 
 ## Grant Auto where the criterion holds
 
@@ -25,12 +26,13 @@ person who was asked leaves the grant to that person: list the Ticket as awaitin
 Re-read the Ticket after granting: where two grant decisions now stand,
 `../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record* says which decides and how
 the other is taken back. The run that found the work
-never grants it, and a refactor proposal never receives a grant here. A Ticket granted here joins
-the ready work at once.
+never grants it. A refactor whose direction is retained does not receive a grant here; explicit
+delegation can settle that direction without waiving the rest of the criterion. A Ticket granted
+here becomes a candidate for useful work inside the assignment, not an obligation to dispatch.
 
 ## Stop
 
-Stop when no ready work is left in scope, nothing waits for a landing turn but a pull request held
+For a queue assignment, stop when no ready work is left in scope, nothing waits for a landing turn but a pull request held
 for a person's review, and no run is live.
 Check in a last time, then report what landed, what waits on the person in its order, and the
-page's link.
+page's link. For an outcome assignment, use `OUTCOME.md` to continue, wait, finish or report an operating limit; queue exhaustion alone does not finish that assignment.

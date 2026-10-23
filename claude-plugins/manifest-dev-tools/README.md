@@ -36,6 +36,8 @@ Write and review prompts, or turn a Manifest into a standalone goal:
 
 ## People and sessions
 
+Handoffs preserve the assignment, useful intent, evidence, current delegation and retained decisions, including which artifact version was accepted.
+
 These carry context across a boundary:
 
 | Skill | What it does |

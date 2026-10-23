@@ -5,6 +5,11 @@ argument-hint: '<task>'
 user-invocable: true
 ---
 
+Read `../ticket-up/references/AUTHORITY.md` before acting. Keep this assignment, its applicable
+authority and retained decisions in every skill handoff; an isolated caller must receive them
+explicitly, with the useful intent and evidence.
+
+
 Run the flow for the task given or inferable from the conversation; with
 neither, halt with usage.
 

@@ -208,6 +208,9 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
 .hud .s { font-size: 13.5px; color: var(--text-2); display: flex; align-items: center; flex-wrap: wrap; gap: 0 6px; font-variant-numeric: tabular-nums; }
 .hud .s b { color: var(--text); font-weight: 600; }
 .hud .s i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.hud .outcome { margin: 8px 0 4px; font-size: 13px; line-height: 1.4; max-height: 180px; overflow-y: auto; overflow-wrap: anywhere; }
+.hud .outcome[hidden] { display: none; }
+.hud .outcome p { margin: 4px 0; }
 .hud .c { font-size: 12px; color: var(--text-2); margin-top: 1px; font-variant-numeric: tabular-nums; }
 .hud .src { display: inline-flex; align-items: center; gap: 5px; margin-right: 4px; color: var(--green); font-weight: 600; }
 .hud .src[hidden] { display: none; }
@@ -1445,10 +1448,11 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     S.ht = el("h1", { "class": "t" });
     S.hs = el("div", { "class": "s" });
     S.src = el("span", { "class": "src", hidden: "" }, [el("i", null, [el("b")]), el("span", { text: "Live" })]);
+    S.ho = el("div", { "class": "outcome", hidden: "" });
     S.hcText = el("span");
     S.hc = el("div", { "class": "c" }, [S.src, S.hcText]);
     S.hb = el("div", { "class": "b", hidden: "", role: "status" });
-    [S.hk, S.ht, S.hs, S.hc, S.hb].forEach(function (n) { h.appendChild(n); });
+    [S.hk, S.ht, S.hs, S.ho, S.hc, S.hb].forEach(function (n) { h.appendChild(n); });
   }
   function renderHud() {
     var d = S.d;
@@ -1456,6 +1460,12 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     if (d.example) S.hk.appendChild(el("span", { "class": "ex", text: "Example · " }));
     S.hk.appendChild(document.createTextNode("Plan " + d.plan + " · " + (d.mode === "autonomous" ? "--autonomous" : "Default mode")));
     S.ht.textContent = d.effort.name;
+    S.ho.hidden = !d.coordination;
+    S.ho.textContent = "";
+    if (d.coordination) {
+      S.ho.appendChild(el("p", { text: d.coordination.summary }));
+      S.ho.appendChild(el("p", null, [el("b", { text: "Next: " }), d.coordination.next]));
+    }
     var nn = d.needsYou.length;
     document.title = (nn ? "(" + nn + ") " : "") + d.effort.name + " · orchestrate";
   }
@@ -1464,11 +1474,13 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
   function tick() {
     if (!S.d) return;
     var d = S.d, n = now(), checked = Date.parse(d.checkedAt), next = d.nextCheckAt ? Date.parse(d.nextCheckAt) : NaN;
-    var finished = d.state === "finished", stale = !finished && !isNaN(next) && n - next > GRACE_MS;
+    var finished = d.coordination ? oneOf(d.coordination.state, ["complete", "limit"]) : d.state === "finished", stale = !finished && !isNaN(next) && n - next > GRACE_MS;
     var c = { running: 0, landed: 0 };
     d.tickets.forEach(function (t) { if (t.status in c) c[t.status]++; });
     var word = stale ? "Not checking in" : ({ running: "Running", paused: "Paused", finished: "Plan finished" })[d.state] || d.state;
+    if (d.coordination && !stale && d.state !== "paused") word = ({ working: "Working toward outcome", "waiting-evidence": "Waiting for evidence", "waiting-decision": "Waiting for a decision", complete: "Outcome achieved", limit: "Operating limit reached" })[d.coordination.state];
     var dot = stale ? "var(--red-fill)" : ({ running: "var(--blue-fill)", paused: "var(--text-3)", finished: "var(--green-fill)" })[d.state] || "var(--text-3)";
+    if (d.coordination && !stale && d.state !== "paused") dot = d.coordination.state === "complete" ? "var(--green-fill)" : d.coordination.state === "working" ? "var(--blue-fill)" : "var(--orange-fill)";
     var sKey = word + "|" + c.running + "|" + c.landed + "|" + d.maxBatch;
     if (S.sKey !== sKey) {
       S.sKey = sKey;
@@ -1668,7 +1680,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
       });
       if (t.grant === "never") facts.push(el("li", { text: "A person decides this one: its direction is your call." }));
       else if ("grant" in t) facts.push(el("li", { text: t.grant ? "Automation may finish it, granted by " + t.grant + "." : "Automation may not finish it yet: no one has said it can." }));
-      if (t.auto === false) facts.push(el("li", { text: "A person lands this one. Automation stops at a ready pull request." }));
+      if (t.auto === false) facts.push(el("li", { text: "Completion waits for the retained decision or acceptance. See the recommendation and evidence above." }));
       if (facts.length) sec.appendChild(el("ul", { "class": "facts" }, facts));
       body.appendChild(sec);
     }
@@ -1815,6 +1827,10 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     if (typeof d.plan !== "number" || !isFinite(d.plan)) return false;
     if (d.nextCheckAt != null && isNaN(Date.parse(d.nextCheckAt))) return false;
     if (d.maxBatch != null && typeof d.maxBatch !== "number") return false;
+    if (d.coordination != null && (typeof d.coordination !== "object" ||
+      !oneOf(d.coordination.state, ["working", "waiting-evidence", "waiting-decision", "complete", "limit"]) ||
+      typeof d.coordination.summary !== "string" || !d.coordination.summary.trim() ||
+      typeof d.coordination.next !== "string" || !d.coordination.next.trim())) return false;
     var ids = {};
     var ticketsOk = d.tickets.every(function (t) {
       if (!t || typeof t.id !== "string" || ids[t.id] || t.id === "goal" || typeof t.title !== "string" || typeof t.status !== "string" || !Object.prototype.hasOwnProperty.call(TONE, t.status)) return false;

@@ -16,6 +16,8 @@ Reads the Ticket store, picks the one Ticket whose delay would cost the project 
 - It ranks open Tickets across efforts.
 - It reads each deferred Ticket's `Revisit when` condition, and each strategy signpost in the North Star, at the source the line names.
 
+Selection remains selection only. A met signpost supplies evidence, not an assignment or authority to change strategy.
+
 ## Scenarios
 
 ### select

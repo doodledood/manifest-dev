@@ -19,8 +19,6 @@ encoded in that work's own binding contract (for manifest-dev users: `/define` r
 "never" whose violation would be unsafe or irreversible to a Global Invariant). Keeping
 that line is what stops the document becoming a rulebook nobody reads.
 
-## Ownership
-
 **This file is this project's North Star convention, and it governs.** Everything needed
 to read, fill, and maintain `NORTH_STAR.md` is here — no tool, plugin, or prior knowledge
 required. Tooling that carries its own North Star defaults defers to this file. That
@@ -58,7 +56,7 @@ The following table defines the four states:
 |-------|-------|---------------|
 | `evidence` | Something happened in the world, dated | New evidence |
 | `hypothesis` | Best current thinking, untested | A test |
-| `ruled` | The owner decided it | Only the owner |
+| `ruled` | An authorized choice, naming its decider and any delegation | A new authorized ruling within its scope |
 | `empty` | Nobody has answered — written **with what would fill it** | Whoever answers it |
 
 `ruled` is separate from `evidence` because evidence is about the world and a ruling is
@@ -74,17 +72,20 @@ has left. Divergence is as much staleness as contradiction, and it is quieter: n
 it, because no single session is inconsistent with the text. A session that notices a
 mismatch notes it — a note, never a question — and leaves the position alone; what makes it
 actionable is a run of them, which no one session can see. Treat the accumulation as a signal
-for the owner to weigh, not as something anyone repairs on the spot, and do not answer it with
-a scheduled review.
+for the owner or an explicitly assigned delegate to weigh within their authority. It does not
+itself authorize a change or a scheduled review.
 
 **The update asymmetry — the one rule every maintainer needs:** new evidence may *lower*
 a position's state (an `evidence` position whose grounding stops holding drops to
 `hypothesis`, with one line naming what would settle it). The position text itself
-changes only by the owner's explicit ruling, and each position change is remembered in
-the project's decision records — the North Star states current truth; the records
-remember why it moved. A session that finds a contradiction surfaces it and asks; it
-never rewrites.
-Unattended automation may lower states or flag, never change a position.
+changes only by an authorized ruling, and each position change is remembered in the project's
+decision records — the North Star states current direction; the records remember why it moved.
+The owner may explicitly delegate specified decisions or record maintenance within an assignment.
+The record names the decider, the delegation, and its bounds; it never represents an agent's
+choice as the owner's own ruling. Owner-retained ends and bounds stay with the owner. Reading
+contrary evidence, running unattended, or holding write access grants no authority to change them.
+Without applicable delegation, lower states and flag or ask; with it, make only the assigned
+change. Mechanical maintenance of an index is not a new strategic decision.
 
 ## What a line may be
 
@@ -149,8 +150,10 @@ reasons. Following these rules twice produces the same bytes:
   lines trimmed, blank lines dropped, and the rest joined by single spaces.
 - **Nothing else**: the section holds no other line.
 
-A reader that finds a signpost's condition met brings it to the owner and changes neither the
-record nor the list: reopening a choice is the owner's call, recorded as a new decision.
+A reader that finds a signpost's condition met checks its assignment and authority. Reopen the
+choice only when both cover it; otherwise bring the evidence and a recommendation to its owner.
+A changed choice is a new decision record, followed by the derived list rebuild. The observation
+alone changes neither the old decision nor the signpost.
 
 Belief height decides what may enter *What this rests on*: if this bet turned out false, how
 much dies? The purpose false means pivot or stop; a bet false means one part of the project
@@ -176,11 +179,12 @@ Every position below carries a state, rendered as a dated provenance note:
 
 - **evidence** — something happened in the world, dated; new evidence moves it.
 - **hypothesis** — best current thinking, untested; a test moves it.
-- **ruled** — the owner decided it; only the owner moves it.
+- **ruled** — an authorized choice; its decider and any delegation are named.
 - **empty** — nobody has answered yet, written with what would fill it.
 
-New evidence may lower a position's state. The position text itself changes only by the
-owner's ruling, and each change is remembered as a decision record.
+New evidence may lower a position's state. Position changes need an authorized ruling, remembered
+as a decision record. Explicit delegation can cover specified changes within an assignment;
+owner-retained ends and bounds stay with the owner.
 
 ## Purpose
 {the end the person is after; then what is in the way of it; then "For: …" and "Not for: …"}
@@ -232,5 +236,6 @@ has a measure of its own — `empty` with what would fill it where nothing count
 than counts of use standing in for it.
 
 Sections that need working out rather than stating — who it's really for, the goal, the
-measures — are one investigation each, run when the owner chooses. The `empty` and
+measures — are investigations run when assigned by the owner or an authorized caller. Use
+already supplied direction before asking again; missing retained ends stay unanswered. The `empty` and
 `hypothesis` positions are the doc's own to-do list.

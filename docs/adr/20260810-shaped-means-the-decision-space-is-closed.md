@@ -1,7 +1,7 @@
 # ADR: Shaped means the decision space is closed, not that a workflow produced it
 
 ## Status
-Accepted
+Accepted; amended by 20261023-assignment-bounds-delegated-decisions-and-retained-acceptance: assignment scope, delegated decisions and retained acceptance
 
 ## Area
 Ticketing

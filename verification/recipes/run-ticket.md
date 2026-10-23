@@ -15,6 +15,8 @@ Takes one exact Ticket, recovers any earlier attempt from the Manifest and progr
 - `orchestrate`, which starts it in its own session for each Ticket it runs.
 - It reconciles an earlier attempt's record, branch and pull request; it uses check-pr before marking the work ready; separate findings go to ticket-up as follow-ups.
 
+A Question invokes inquiry only and returns its Read on the same Ticket. A repeated invocation at an unchanged drafted-answer wait does no new work. The implementation scenario below exercises the Shaped route, not the Question route.
+
 ## Scenarios
 
 ### run

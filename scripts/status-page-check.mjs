@@ -280,6 +280,20 @@ await section("malformed snapshot", async () => {
   await context.close();
 });
 
+// A finished empty plan still has an unresolved outcome and an honest continuation.
+for (const size of [DESKTOP, PHONE]) await section(`outcome wait ${size.width}`, async () => {
+  const d = structuredClone(sample);
+  Object.assign(d, { effort: { name: "Lending", destination: "Wanted books reach the next reader without volunteer chasing." }, state: "finished", tickets: [], needsYou: [], nextCheckAt: null,
+    coordination: { state: "waiting-evidence", summary: "The reminder change is delivered. We have not yet observed whether readers need less chasing.", next: "Read Monday's lending report, then resume this assignment manually. No automatic wake is configured." } });
+  const { page, context, log } = await open(variant("outcome-wait-" + size.width, d), { size });
+  const f = await page.evaluate(() => ({ text: document.querySelector(".hud").textContent, overflow: document.body.scrollWidth > innerWidth }));
+  check(`outcome ${size.width}: wait and continuation remain visible`, f.text.includes("Waiting for evidence") && f.text.includes("resume this assignment manually") && !f.text.includes("Outcome achieved") && !f.overflow && !log.errors.length, f);
+  await shoot(page, "outcome-wait-" + size.width);
+  d.coordination.state = "done";
+  check(`outcome ${size.width}: unknown state refused`, await page.evaluate((v) => window.__orchestrateStatus.apply(v) === false, d));
+  await context.close();
+});
+
 await browser.close();
 writeFileSync(join(OUT, "facts.json"), JSON.stringify(facts, null, 2));
 const passed = Object.values(facts).filter((f) => f.ok).length;

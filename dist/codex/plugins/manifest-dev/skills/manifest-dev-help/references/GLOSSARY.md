@@ -151,11 +151,8 @@ is not the end of the work, unless that phase makes the final result. It exists 
 does not give an incomplete result to the next phase.
 
 ### User's Call
-<!-- context: 9628afd01836 -->
-A User's Call is a decision on which two careful people with the same evidence can disagree, when
-the difference is important to you. At such a decision, the skill examines your Taste entries. When
-none applies, it decides on the evidence. It reports your calls first, each with the option that it
-did not take. It exists so that the decisions that are yours are easy to find and to change.
+<!-- context: 41f3fa2ae88a -->
+A User's Call is a decision where careful people with the same evidence could disagree in a way that matters to you. Confidence does not decide who has authority. The run honors Retained Decisions and applicable Delegation, then weighs relevant Taste entries. It reports material choices with their alternatives and reasons.
 
 ### Taste
 <!-- context: fff430ea986a -->
@@ -208,20 +205,16 @@ higher level can make the details unnecessary.
 ## The project
 
 ### Autonomy Ladder
-<!-- context: 466d92751053 -->
-The Autonomy Ladder is the set of levels at which you can use manifest-dev. Each level is useful
-without the levels above it, and without other people on your team. The levels are:
+<!-- context: ab238c3510bd -->
+The Autonomy Ladder describes ways to use manifest-dev. Each part works alone, also inside a team that does not use it.
 
-1. One skill alone, for example `/figure-out` on a question.
-2. One piece of work that you understand, define and verify with a Manifest.
-3. Project Surfaces in the repository, which each run reads and keeps current.
-4. A shared Ticket Store, from which people and agents take the next work.
-5. The queue runs: `/orchestrate` does Auto Tickets from start to end, and other Tickets until
-   their pull request is ready. It writes Tickets for the debt that it finds.
+1. Use one skill on a question or review.
+2. Define and verify a finite piece of work.
+3. Keep shared direction, words, decisions, and checks in Project Surfaces.
+4. Track separate jobs in a Ticket Store.
+5. Assign Orchestrate a queue or an outcome, within your chosen authority limits.
 
-At the top level, a person acts only for a blocker, a judgment, a taste or an authority. You select
-how high you go. The ladder exists so that you can start small inside a team that does not use
-manifest-dev.
+These are choices, not a required sequence. You retain the decisions you want to make. The workflow asks when it lacks a required decision, knowledge, or access.
 
 ### Projectless Session
 <!-- context: 46edcba74847 -->
@@ -249,19 +242,12 @@ so that the direction, the words and the decisions of the project live in the re
 memory of one person.
 
 ### North Star
-<!-- context: afa0cc97146f -->
-The North Star is a file in the project that says what the project is for. It names the purpose,
-the people the project is for and the goal. The purpose starts with the end that these people want.
-Then it names what stops them. It also names the principles that the project keeps when
-evidence says to break them. It says how the project measures progress and which bets the project
-depends on.
+<!-- context: dea968b8ee61 -->
+The North Star says what the project is for and whom it serves. Its purpose starts with the progress those people want. It names the goal, principles, measures, bets, and open questions.
 
-The North Star does not hold the choices that the project makes. A Decision Record holds each choice,
-and the North Star lists the titles of the main choices. Each title can have a Signpost.
+A Decision Record holds each chosen option. The North Star lists the titles of current Strategy choices, with their Signposts.
 
-Each position has a state with a date: evidence, hypothesis, ruled or empty. It informs each
-session but does not bind. Only the owner changes a position, and a Decision Record remembers each
-change. An older North Star has nine fields until its project updates it.
+Each position has a dated state: evidence, hypothesis, ruled, or empty. It informs decisions but is not a binding work contract. An authorized ruling changes a position, and a Decision Record remembers who decided and why. Explicit Delegation can cover specified changes. Ends and bounds that the owner retains stay with the owner.
 
 ### Glossary
 <!-- context: 34518718d381 -->
@@ -279,18 +265,10 @@ or amends it, and the old record says so. It exists so that a later session sees
 decided before it decides again.
 
 ### Signpost
-<!-- context: c0a971c9029a -->
-A Signpost is a `Revisit when` line. It names a condition that you can see in the world, and where
-to read it. On a Decision Record, it names what would open the choice again. A `Strategy` record
-usually has one. On a Ticket that waits, it names what the work waits for.
+<!-- context: ce77f9fca2b1 -->
+A Signpost is a `Revisit when` line. It names an observable condition and where to read it. On a Decision Record, it names what would reopen the choice. On a deferred Ticket, it names what the work waits for.
 
-Each skill that finds a Signpost reads the condition at that source. A Ticket that waits is ready
-only when the condition is true there. When a strategy condition is true, the skill tells the
-owner. When the skill cannot open the source, it shows you the Ticket or the choice. It does not
-hide it. No skill changes the line because of what it read.
-
-Signposts exist so that a condition that becomes true is not forgotten. Text that nobody reads
-cannot do this.
+A reader checks the condition at its source. A deferred Ticket becomes ready only when that condition holds. A met condition is evidence, not permission to change the choice. Reconsideration needs an Assignment and authority covering it. Otherwise, the reader brings a recommendation to the owner. An unreadable source stays visible as a missing input.
 
 ### ADR Conventions
 <!-- context: 141f2d9e39ab -->
@@ -448,30 +426,32 @@ not have to use manifest-dev. Tickets exist so that the next work is in a store,
 a person.
 
 ### Shaped Ticket
-<!-- context: fd1efc475664 -->
-A Shaped Ticket is a Ticket with no open question that would change what to build or what "done"
-means. It is ready to do, and it says what "done" means in plain words. It exists so that a person
-or an agent can do it without a further question.
+<!-- context: f507be3c12f2 -->
+A Shaped Ticket has no open product question that changes what to build or what done means. It states its result in plain words. You may still retain acceptance of the finished artifact. Readiness to work and permission to finish are separate.
 
 ### Question Ticket
-<!-- context: 74442b3a8c7e -->
-A Question Ticket is a Ticket for a question that is still open. It is done when the question has an
-answer with evidence, and that answer is recorded. It exists when a question must have its own
-owner, priority or closure.
+<!-- context: 9975daec2734 -->
+A Question Ticket assigns an inquiry whose answer needs its own owner, priority, or closure. Its result is an answer with evidence, recorded for use or acceptance. An answer that proposes implementation does not assign that implementation.
+
+### Assignment
+<!-- context: 8d778b38c693 -->
+An Assignment is the activity you or an authorized caller ask for, such as inquiry, review, or delivery. Standing permission does not start it. This keeps a discussion from becoming work nobody assigned.
+
+### Delegation
+<!-- context: 10ea7a33cb85 -->
+Delegation gives authority to make specified decisions within an Assignment and its scope. A caller cannot pass on authority it lacks. Current instructions, including withdrawals, govern the work.
+
+### Retained Decision
+<!-- context: ee58a4e0ec0d -->
+A Retained Decision stays with a named person or role. Dependent work waits with a recommendation, evidence, and a way to continue. Acceptance names the artifact and version. Material changes need renewed acceptance.
 
 ### Auto
-<!-- context: a8ffdbab18de -->
-Auto is a grant on a Ticket that lets unattended automation do it from start to end, and merge
-it. Give it only when the work needs no knowledge, taste or authority of a person. The same must be
-true of the decision that the work is done.
+<!-- context: e67cea7f8c61 -->
+Auto lets unattended automation complete a Ticket and perform its required landing. Every decision needed for completion must be settled or delegated. Retained acceptance or missing access keeps the grant off.
 
-A person gives Auto when they write or review the Ticket. `/orchestrate --autonomous` can also give
-it to a Ticket that an agent wrote, when the work agrees with that rule. The run that found the work
-never gives it. Each grant names who gave it, so that you can remove a grant that you do not want.
+A person grants it at Ticket-up. Orchestrate in autonomous mode can grant it to agent-written work under the same rule. The run that found the work never grants it. The grant names its giver, and a withdrawal remains effective.
 
-Without Auto, automation can do the Ticket until its pull request is ready, but a person merges it.
-This occurs only when the author can write to the repository and no person is assigned to the
-Ticket.
+Without Auto, eligible automation can prepare an answer or artifact, but a person accepts or lands it. A grant never overrides team protections or narrower instructions.
 
 ### Ticket Type
 <!-- context: fc28de71e25e -->
@@ -502,13 +482,10 @@ finished Manifest, a direct request, an open question or a follow-up. A Manifest
 Ticket by default. It becomes one Ticket for each Deliverable only when you ask for that.
 
 ### Run Ticket
-<!-- context: c44e6129f57b -->
-Run Ticket is the step that takes one exact Ticket, claims it and does it with `/auto`. It stops
-when the pull request is ready. It merges only when you tell it to. It leaves a completion record or
-an escalation record on that Ticket. The `/run-ticket` skill does it. It does not select work from the store.
+<!-- context: 979a935fa02f -->
+Run Ticket receives one exact Ticket and claims or recovers it. A Question Ticket goes to inquiry. Shaped work goes to delivery, using its finite Manifest where one exists. It records progress, authority, and results on the same Ticket.
 
-Run Ticket keeps a record on the Ticket: the branch, the progress and the Manifest. Thus a later run
-can continue the work.
+A later attempt resumes those records. The run returns an answer or ready artifact, and lands only when authorized and told to. It does not choose work from the store.
 
 ### Escalation Mark
 <!-- context: 47eef5f47d48 -->
@@ -518,22 +495,12 @@ remove the mark, or `/orchestrate` records the answer and removes it. When the m
 that automation left on the Ticket goes too.
 
 ### Orchestrate
-<!-- context: be69e474e50f -->
-Orchestrate is the step that does the ready Tickets of an effort, or of all the store, at the same
-time. Each Ticket goes to Run Ticket in a session of its own. Orchestrate merges finished work, one
-Ticket at a time. It writes Tickets for the debt that runs find. It keeps a status page and one list
-of what waits for you. The `/orchestrate` skill does it.
+<!-- context: bf7edea1a93b -->
+Orchestrate coordinates a finite queue or an explicitly assigned outcome. It dispatches separate jobs through Run Ticket and lands eligible work one Ticket at a time. An outcome assignment can also commission inquiry and shaping, then use results to choose the next useful move.
 
-By default, it shows you a plan and waits until you approve it. With `--autonomous`, it does not
-wait. It keeps no state of its own: it reads all of it from the Tickets, from git and from the
-sources that the Signposts name.
+By default it proposes a plan and waits. Autonomous mode acts within the assignment. Neither mode grants a broader assignment. An empty queue ends queue work, but does not prove an outcome was achieved.
 
-Some work still waits for you. You merge a Ticket without Auto and answer escalations. You plan
-large work. You approve a Ticket whose author cannot write to the repository.
-
-You also give a review that the repository requires from a person. You fix a cause that stopped
-an effort, for example a check that fails on the base branch too. Each item tells you the answer
-that it recommends, the risk, and the evidence.
+Tickets, git, and a compact coordination record hold recovery state. The status page is a view of those records. It shows progress, evidence waits, retained decisions, and the next step. Automatic continuation needs a capability the host already offers; manifest-dev adds no scheduler.
 
 ## Pull requests
 

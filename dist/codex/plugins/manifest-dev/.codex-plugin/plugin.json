@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev",
-  "version": "14.8.0",
-  "description": "Manifest-driven workflows: /define writes a verifiable Manifest, /do executes it, /ticket-up authors coherent Ticket units, /run-ticket works one exact Ticket to a ready pull request, and /orchestrate runs ready Tickets in parallel and lands them one at a time. /design supplies standalone design guidance from first principles: the person, the moment they meet the artifact in, and its subject set the feeling, its strength and the visual material. Implementation stays with the invoking workflow; /review-design owns artifact evaluation and its supporting checks.",
+  "version": "14.9.0",
+  "description": "Skills for inquiry, finite delivery, and optional coordination toward an assigned project outcome. Define checkable work, execute it on fresh evidence, and coordinate Tickets within scoped delegation while preserving retained decisions and final acceptance. Setup, product inquiry, and code, design, and writing review support standalone and coordinated use; sustained outcome effectiveness remains unmeasured.",
   "skills": "./skills/",
   "keywords": [
     "manifest-dev",
@@ -13,6 +13,9 @@
     "project-context",
     "glossary",
     "bootstrap",
-    "design"
+    "design",
+    "outcome-coordination",
+    "scoped-delegation",
+    "product-inquiry"
   ]
 }

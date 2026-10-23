@@ -70,6 +70,10 @@ Reconcile the farthest durable state first:
   mark, and work it on the same branch through a new pull request.
   If the merge exists without a completion record, re-verify the Ticket's definition of done, as
   *Execute* says, before recording it and closing.
+- A trusted revision request continues the same Ticket under
+  `../ticket-up/references/AUTOMATED_EXECUTION.md` → *Waiting and acceptance*. Preserve the
+  previous result as evidence and resume *Execute* with the recorded feedback, rather than
+  treating that previous draft as current completion.
 - A record marked ready to land, by this run or an earlier one, is finished work, and there is
   nothing to redo only when the pull request's head is the head the record names and the base has
   not moved. When the base has moved since the base commit it names, take landing step 3 in
@@ -78,7 +82,7 @@ Reconcile the farthest durable state first:
   after the head the record names, or a required check fails, they are new work: re-run every gate
   on them before marking it ready. Either way, the ready mark names this run. Otherwise go to
   *Finish at a ready pull request*.
-- A record holding a drafted answer waits for a person to accept it: tell whoever started the run
+- A record holding a drafted answer with no pending revision waits for a person to accept it: tell whoever started the run
   — the person on a hand run, the launcher otherwise — that the answer waits on them and where it
   is recorded, then stop.
 - An escalation record whose mark a person has cleared carries their continuation context; resume
@@ -89,6 +93,20 @@ A branch is unnecessary when the Ticket's durable result is only an answer or an
 non-repository artifact; record that fact rather than inventing one.
 
 ## Execute
+
+Re-read applicable assignment and authority before resumption and consequential actions. Pass
+those values and the Ticket's useful intent, trade-offs and evidence to each invoked skill.
+An earlier approval applies only to its recorded artifact/version, not a materially changed result.
+
+**A Question Ticket** commissions inquiry. Invoke `figure-out` with its question, evidence,
+completion terms and applicable authority, using `--autonomous` for unattended inquiry. Return
+the Read — the conclusion, evidence, confidence and overturn conditions — to this same Ticket.
+Do not invoke `auto`, `define` or `do` merely because the answer proposes implementation. If a
+retained decision blocks the inquiry, use this Ticket's escalation path. Otherwise finish its
+answer as described below. Preserve inquiry progress in the attempt record so a later attempt
+can resume from it without repeating settled research.
+
+**A Shaped Ticket** commissions its defined work. Follow the Manifest path below when it exists.
 
 When the attempt record carries a Manifest, write it to a local file where define keeps Manifests
 and invoke `do` with that path, giving it the progress record and any continuation context. Where
@@ -116,13 +134,13 @@ unattended run — when the escalation mark is on. A push can still be rejected:
 a stale run stops it, and the run the record names merges what is there and pushes again.
 Uncommitted work and commits not pushed to the stable branch may be lost after a runner failure.
 
-Only `/done` or `/escalate` from the autonomous chain can advance toward a terminal Ticket outcome.
+For Shaped work, only `/done` or `/escalate` from the autonomous chain can advance toward a terminal Ticket outcome; a Question Ticket instead requires its completed Read or evidenced escalation.
 An ordinary assistant response, partial implementation, waiting check, runner failure, or process
 exit does not. Fix agent-resolvable failures inside the autonomous chain; reserve Ticket escalation
 for a blocker that genuinely needs a person.
 
-**A Ticket without Auto.** It needs a person's judgment somewhere, so the run asks rather than
-decides. Where the work reaches a decision the Ticket leaves to a person, or one needing judgment,
+**A Ticket without Auto.** It retains completion with a person, while the worker may still hold
+specific delegated decisions. Decide within that authority, not by treating all judgment as retained. Where the work reaches a decision the Ticket leaves to a person, or one needing judgment,
 taste or authority the run does not have, escalate with the progress recorded; a later run resumes
 once the person has answered. An unattended run on such a Ticket ends at a ready pull request for
 a person to land, and never lands it, whatever its prompt says.
@@ -172,7 +190,7 @@ once it is merged, running this skill on the Ticket again records the landing an
 **The user's call.** A decision is the user's call when two careful people with
 the same evidence could reasonably decide it differently, and the difference
 would matter to the user. Test each material decision against that sentence;
-your own confidence does not settle it. At a user's call, check the user's Taste
+your own confidence does not settle it. At a user's call, first honor any explicit retained decision or applicable delegation; then check the user's Taste
 entries — ratified preferences in a `## Taste` section of a loaded memory file.
 Follow an entry only where it clearly bears: it speaks to this kind of call, and
 following it would change the choice. A general lean that would tilt almost any

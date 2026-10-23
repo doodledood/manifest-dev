@@ -16,6 +16,8 @@ Runs an effort's ready Tickets, or the whole store's, each through run-ticket in
 - With no ready Ticket it says so and stops.
 - It reads each deferred Ticket's `Revisit when` condition, and each strategy signpost in the North Star, at the source the line names.
 
+An explicitly assigned outcome additionally uses the outcome reference: commission independently managed inquiry through Tickets, distinguish delivery from outcome evidence, and preserve waits and a real continuation route in the effort record. The queue scenarios below remain finite queue checks; they do not establish sustained outcome coordination.
+
 ## Scenarios
 
 ### plan

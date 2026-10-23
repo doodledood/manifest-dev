@@ -216,7 +216,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `46-general-question-skips-recall` | autonomous, repository, plugin arm only | Open no earlier session log for a general question the repository's history cannot bear on | unmeasured |
 | `48-reuse-and-shallow-layer` | autonomous, repository | Before any code, reuse the utilities the codebase already has and question a proposed class that would only forward to them | unmeasured |
 | `52-projectless-chat-offers-no-surfaces` | autonomous, not a project, plugin arm only | For a one-off script in a folder that is not a project, say how it behaves and how to check it, offering no setup, harness, decision record, glossary or North Star | unmeasured |
-| `53-update-offer-from-v8` | docs, repository, plugin arm only | Offer the setup update for a project on v8 — its *Purpose* opening with the end asked of the owner and its measures tested against it, on the owner's ruling; the `Revisit when` signpost; the outside-Purpose note; the index-and-list check — and nothing v1 to v8 already gave it | unmeasured |
+| `53-update-offer-from-v9` | docs, repository, plugin arm only | Offer scoped instructions and bounded delegated maintenance without inventing authority or starting operation; keep coordination preparation optional | unmeasured |
 | `54-touched-recipe-not-fit` | autonomous, repository | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — makes repairing that recipe part of the work | unmeasured |
 | `55-own-check-not-fit` | autonomous, repository | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in its own form as part of the work, seen failing on a scratch break before it counts, and no harness is built | unmeasured |
 | `56-order-dependent-design` | autonomous | Model a design whose correctness depends on the order of events before building it, and pick a check that can reach the breaking interleaving | unmeasured |
@@ -721,6 +721,15 @@ file. The row is never deleted while the probe stays.
 | `tasks/DECISION.md` | Fundamental objectives | `61-decision-routes-and-a-public-act/judges-routes-against-the-aim` |
 | `tasks/DECISION.md` | States of the world | `61-decision-routes-and-a-public-act/weighs-the-later-plan-on-every-route`, `62-decision-rival-answers/reads-the-rivals-side` |
 | `tasks/DECISION.md` | Decision rule | `63-decision-close-call-is-not-close/picks-a-rule-for-ruin` |
+| `tasks/PRODUCT.md` | Progress in a circumstance | `65-decision-plan-before-committing/customer-progress-and-alternatives` |
+| `tasks/PRODUCT.md` | Actual competition | `65-decision-plan-before-committing/customer-progress-and-alternatives` |
+| `tasks/PRODUCT.md` | Observed choice | `65-decision-plan-before-committing/customer-progress-and-alternatives` |
+| `tasks/PRODUCT.md` | Trade-off: Serve the same progress more completely vs pursue a different job | `65-decision-plan-before-committing/customer-progress-and-alternatives` |
+| `tasks/PRODUCT.md` | Adoption versus use | `66-decision-plan-that-holds/adoption-use-and-experience` |
+| `tasks/PRODUCT.md` | Whole experience | `66-decision-plan-that-holds/adoption-use-and-experience` |
+| `tasks/PRODUCT.md` | Measures that can mislead | `66-decision-plan-that-holds/adoption-use-and-experience` |
+| `tasks/PRODUCT.md` | Trade-off: Deepen a promising direction vs search for one worth pursuing | `66-decision-plan-that-holds/adoption-use-and-experience` |
+| `references/PRODUCT_KNOWLEDGE.md` | (whole file) | `65-decision-plan-before-committing/customer-progress-and-alternatives`, `66-decision-plan-that-holds/adoption-use-and-experience` |
 | `tasks/DECISION.md` | Reference class | `65-decision-plan-before-committing/checks-how-efforts-like-this-went` |
 | `tasks/DECISION.md` | Irreversibility | `61-decision-routes-and-a-public-act/dates-the-irreversible-act` |
 | `tasks/DECISION.md` | Dominating hybrid | `61-decision-routes-and-a-public-act/finds-the-mix` |
@@ -781,7 +790,7 @@ file. The row is never deleted while the probe stays.
 | `references/LOG.md` | (whole file) | `01-root-press/log-written`; not graded: log safety and resuming from the log, which have shown no failure and sit outside what a grader reads |
 | `references/RECALL.md` | (whole file) | `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `44-debt-on-the-path/offers-the-on-path-debt`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `59-reverted-fix/names-the-reverted-fix` |
 | `references/TASTE.md` | (whole file) | `27-taste-offers/offers-entry-for-the-stated-preference`, `27-taste-offers/offers-entry-for-the-reversal`, `28-universal-not-taste/no-offer-for-a-universal-rule`, `29-ratified-entry-lands/entry-inside-taste-section` |
-| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v8/offers-only-whats-new-since-v8`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
+| `references/WITH_DOCS.md` | (whole file) | `23-term-and-record/term-captured`, `23-term-and-record/record-written`, `24-ruled-position-holds/position-text-unchanged`, `30-update-offer-for-older-setup/offers-only-whats-new`, `36-marks-drift-it-wont-fix/export-entry-marked-stale`, `45-current-setup-offers-nothing/offers-no-setup-update`, `53-update-offer-from-v9/offers-only-whats-new-since-v9`, `84-chosen-option-goes-to-a-record/ruling-recorded`, `84-chosen-option-goes-to-a-record/north-star-unchanged`, `85-evidence-against-a-bet/bet-challenged`, `85-evidence-against-a-bet/bet-text-kept` |
 | `references/ADR_FORMAT.md` | (whole file) | `23-term-and-record/old-record-restatused`, `23-term-and-record/index-rebuilt`, `24-ruled-position-holds/unattended-record-marked`, `31-record-names-what-enforces-it/record-carries-enforced-by` |
 | `references/autonomous.md` | (whole file) | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer`, `24-ruled-position-holds/unattended-record-marked`; not graded: never self-accepting an offer that hands off to setup-project or ticket-up, which needs those skills reachable from the session |
 | `references/team.md` | (whole file) | Reason: team mode runs in a Slack channel, a service the suite cannot reach from its sandbox |
@@ -1233,3 +1242,5 @@ sd was 0.378 across 180 runs, putting the standard error of a seven-case mean at
 `runs: 3`. A move smaller than that is not evidence of anything. Resolving a ~0.08 effect takes
 roughly **26 runs per case per arm**, which this suite does not buy: at one run per arm it reads
 direction from the whole suite only, as *Reading a result at this depth* says.
+
+The PRODUCT probes and optional knowledge reference extend cases 65 and 66 in this revision. Their added criteria remain unmeasured; earlier scores do not measure these changed prompts.

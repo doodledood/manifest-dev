@@ -9,6 +9,11 @@ Produce a self-contained context payload that lets a fresh agent continue this w
 
 Capture what's hard-won — anything the new session would have to re-do otherwise. For each item that travels, carry the grounding with it, so the receiver inherits the working state rather than just the conclusion. *Examples (illustrative, not required):* a settled decision travels with the alternatives considered and why this won; a verified fact travels with how it was verified (file:line, command output, doc URL); an open thread travels with what would close it. If a particular handoff isn't structured around decisions, facts, or threads, capture whatever the goal requires — with its grounding.
 
+Carry the next session's assigned activity and scope, the source and limits of delegated
+choices, retained decisions, and any accepted artifact/version. Preserve current withdrawals
+and wait conditions with the route to resume. The handoff grants no more authority than its
+caller holds; a proposal for later work remains a proposal.
+
 Reference other artifacts (PRDs, manifests, ADRs, issues, PRs, commits, diffs) by path or URL — don't restate their content.
 
 Name the skills the next agent should invoke when the work ahead maps to them — the receiver may not know the toolbox it's inheriting.

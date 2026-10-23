@@ -12,7 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <title>manifest-dev</title>
-<meta name="description" content="Free, open-source skills for coding agents. The agent works out what you mean, writes down what done means, and calls nothing finished until every check passes; level by level, your project's queue of work runs on its own while you step in where it needs you.">
+<meta name="description" content="Free, open-source skills for coding agents. The agent works out what you mean, writes down what done means, and calls nothing finished until every check passes; use one skill, finish defined work, or coordinate an assigned outcome within your delegation.">
 <meta property="og:title" content="manifest-dev: work you can trust from your coding agent">
 <meta property="og:description" content="Your coding agent works out what you mean, writes down what done means, and calls nothing finished until every check passes. Free and open source.">
 <meta property="og:type" content="website">
@@ -312,7 +312,7 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
       <p class="eyebrow">Free, open-source skills for coding agents</p>
       <h1>Hand your agent a task. Get back work you can trust.</h1>
       <p>With manifest-dev, your agent works out what you mean, writes down what done means, and calls nothing finished until every check passes.</p>
-      <p>Use one skill, or climb five levels to a queue of work that runs on its own while you make the calls only you can make.</p>
+      <p>Use one skill, finish a defined task, or assign a project outcome while keeping the decisions you care about.</p>
       <p class="meta"><span>Claude Code · Codex · OpenCode · Pi</span><a href="#try">Install <span>↓</span></a></p>
       <svg class="still" viewBox="0 0 360 200" role="img" aria-label="A loose cloud of dots: a task with many ways to read it">
         <g fill="var(--think)" opacity=".75" data-dots="haze"></g>
@@ -324,8 +324,8 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
   <section class="ch" data-name="Figure out" data-lv="1" style="--h:140">
     <article class="card">
       <p class="eyebrow"><code>/figure-out</code></p>
-      <h2>First, it works out what you mean.</h2>
-      <p>It reads your code, finds the question that decides the work, and asks you only what the code can't answer, with its recommended answer first.</p>
+      <h2>Start by understanding the question.</h2>
+      <p>It reads the available evidence and finds the question that decides the work. For a product, that includes what people want to accomplish, what they use today, and why they might switch. Inquiry does not start implementation.</p>
       <svg class="still" viewBox="0 0 360 200" role="img" aria-label="The cloud of dots has condensed into one solid shape, what you mean; amber rings travel out from it toward you: it asks you">
         <g fill="var(--think)" opacity=".4" data-dots="read"></g>
         <rect x="128" y="62" width="60" height="60" rx="12" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.5"/>
@@ -339,7 +339,7 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
   <section class="ch" data-name="Define" data-lv="2" style="--h:140">
     <article class="card">
       <p class="eyebrow"><code>/define</code></p>
-      <h2>Then you agree what done means.</h2>
+      <h2>For defined work, agree what done means.</h2>
       <p>It writes a Manifest: the pieces of work (Deliverables), a check each one must pass (Acceptance Criteria), and rules that hold across all of them (Global Invariants).</p>
       <svg class="still" viewBox="0 0 360 210" role="img" aria-label="A blueprint sheet labelled Manifest holding three pieces of work, each with two rings ahead of it, all inside one large ring">
         <rect x="14" y="14" width="332" height="182" rx="12" fill="none" stroke="var(--think)" stroke-opacity=".5" stroke-dasharray="4 5"/>
@@ -393,7 +393,7 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
     <article class="card">
       <p class="eyebrow"><code>/setup-project</code></p>
       <h2>Your project keeps a North Star.</h2>
-      <p>One file that says what the project is becoming, who it's for, what winning means and what it never does. Every session reads it before it decides what's worth doing.</p>
+      <p>One file says what progress the project serves, for whom, and how it would know. Setup reads existing rules and shows concrete adjustments before saving them. Shared rules and personal preferences keep their own homes.</p>
       <svg class="still" viewBox="0 0 360 210" role="img" aria-label="A four-pointed star above the work, its points labelled what it's becoming, who it's for, what it never does and what winning means, with a beam of light down to the work">
         <path d="M180 26 L192 78 L244 90 L192 102 L180 154 L168 102 L116 90 L168 78 Z" fill="var(--card)" stroke="var(--think)" stroke-width="1.5"/>
         <line x1="180" y1="154" x2="180" y2="182" stroke="var(--think)" stroke-opacity=".6" stroke-width="2"/>
@@ -409,8 +409,8 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
   <section class="ch" data-name="The project" data-lv="3" style="--h:170">
     <article class="card">
       <p class="eyebrow"><code>/setup-project</code></p>
-      <h2>It remembers its words, decisions and checks.</h2>
-      <p>A glossary of the project's terms, a record of each decision and why it was made, and one command that checks the project still works. Every run keeps them current where its work touches them.</p>
+      <h2>It remembers its words, decisions, and checks.</h2>
+      <p>Its glossary, decision records, and checks keep context available. If you want coordination, setup also resolves the existing work store and evidence sources, and names missing access. Setup starts no operation.</p>
       <svg class="still" viewBox="0 0 360 200" role="img" aria-label="The work sits on a platform; under it, three glowing layers: glossary, decisions and checks; the star above">
         <path d="M70 18 L76 42 L100 48 L76 54 L70 78 L64 54 L40 48 L64 42 Z" fill="var(--card)" stroke="var(--think)" stroke-width="1.5"/>
         <rect x="90" y="76" width="180" height="22" rx="8" fill="var(--bg-2)" stroke="var(--line-2)"/>
@@ -424,7 +424,7 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
     <article class="card">
       <p class="eyebrow"><code>/ticket-up</code><span class="sep">·</span><code>/next-ticket</code></p>
       <h2>Work waits as Tickets anyone can pick up.</h2>
-      <p>A Ticket carries all a person or an agent needs to do one piece of work and know it's done. They line up by what waiting on each costs, and <code>/next-ticket</code> picks the one at the front. Auto, the green mark, says a Ticket needs no one's judgment to finish and land.</p>
+      <p>A Ticket carries all a person or an agent needs to do one piece of work and know it's done. They line up by what waiting on each costs, and <code>/next-ticket</code> picks the one at the front. Auto, the green mark, permits full completion within its grant. Other Tickets can advance to the decisions you retain.</p>
       <svg class="still" viewBox="0 0 360 200" role="img" aria-label="A row of Tickets as standing cards, tallest first: the cost of waiting on each; some carry a green mark for Auto">
         <g fill="var(--card)" stroke="var(--line-2)" stroke-width="1.5">
           <rect x="30" y="50" width="24" height="120" rx="5"/><rect x="66" y="62" width="24" height="108" rx="5"/><rect x="102" y="78" width="24" height="92" rx="5"/><rect x="138" y="90" width="24" height="80" rx="5"/><rect x="174" y="106" width="24" height="64" rx="5"/><rect x="210" y="118" width="24" height="52" rx="5"/><rect x="246" y="130" width="24" height="40" rx="5"/>
@@ -439,8 +439,8 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
   <section class="ch" data-name="Planning" data-lv="4" style="--h:170">
     <article class="card">
       <p class="eyebrow">Planning<span class="sep">·</span><code>/figure-out</code><span class="sep">·</span><code>/ticket-up</code></p>
-      <h2>New work is planned with you.</h2>
-      <p>An effort is one goal and its own Tickets. You think it through together with <code>/figure-out</code>, and <code>/ticket-up</code> turns what you settled into the effort's Tickets.</p>
+      <h2>Investigate, then choose the next useful work.</h2>
+      <p>Use <code>/figure-out</code> on its own or hand its result to <code>/ticket-up</code>. A Question Ticket returns an inquiry; Shaped work is ready to build. Useful intent and evidence travel with the job. No Manifest is required for every route.</p>
       <svg class="still" viewBox="0 0 360 200" role="img" aria-label="The North Star points at a cloud of new work; thought through with you, it becomes one shape, then four new Tickets that drop into the queue">
         <path d="M40 16 L46 38 L68 44 L46 50 L40 72 L34 50 L12 44 L34 38 Z" fill="var(--card)" stroke="var(--think)" stroke-width="1.5"/>
         <line x1="62" y1="52" x2="150" y2="86" stroke="var(--think)" stroke-opacity=".55" stroke-width="2"/>
@@ -458,7 +458,7 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
     <article class="card">
       <p class="eyebrow"><code>/orchestrate</code></p>
       <h2>Many Tickets at once, each waiting for the ones it needs.</h2>
-      <p>It proposes a plan and runs it once you approve: each Ticket in its own session, landed one at a time. Auto Tickets land on their own; the rest stop at a ready pull request for you to land. The debt they leave becomes new Tickets.</p>
+      <p>By default it proposes a queue plan and waits for approval. Each independently managed job has a Ticket. It works within current grants and stops dependent work at a retained decision, with its recommendation and evidence.</p>
       <svg class="still" viewBox="0 0 420 320" role="img" aria-label="Tickets on parallel tracks toward the main branch: one landed, one waiting for the Ticket before it, one stopped to ask you, one without Auto waiting at a ready pull request for you, and a new Ticket written from the debt the first one left">
         <g stroke="var(--line-2)" stroke-width="2"><line x1="24" y1="70" x2="374" y2="70"/><line x1="24" y1="126" x2="374" y2="126"/><line x1="24" y1="182" x2="374" y2="182"/><line x1="24" y1="238" x2="374" y2="238"/><line x1="24" y1="294" x2="374" y2="294"/></g>
         <rect x="376" y="42" width="12" height="266" rx="6" fill="var(--bg-2)" stroke="var(--line-2)"/>
@@ -475,8 +475,8 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
   <section class="ch" data-name="Autonomous" data-lv="5" style="--h:200">
     <article class="card">
       <p class="eyebrow"><code>/orchestrate --autonomous</code></p>
-      <h2>With <code>--autonomous</code>, it keeps going on its own.</h2>
-      <p>A scheduler you already run starts it. It starts new runs as others finish, while work remains, and gives Auto to Tickets that agents wrote, wherever no one's judgment is needed.</p>
+      <h2>Assign an outcome, with room to decide.</h2>
+      <p>An assignment says what to do; delegation says which decisions it may make. Ask it to pursue an outcome using named evidence and limits. <code>--autonomous</code> acts within those bounds. A queue assignment stays a queue assignment.</p>
       <svg class="still" viewBox="0 0 360 200" role="img" aria-label="A clock, your scheduler, starts the run; a Ticket an agent wrote receives the green Auto mark; tracks fill again">
         <circle cx="60" cy="92" r="34" fill="none" stroke="var(--ink-3)" stroke-width="2"/><line x1="60" y1="92" x2="60" y2="68" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="92" x2="76" y2="100" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
         <path d="M100 92 h40" stroke="var(--think)" stroke-width="2" stroke-linecap="round"/>
@@ -490,13 +490,13 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
 
   <section class="ch" data-name="The loop" data-lv="6" style="--h:240">
     <article class="card">
-      <p class="eyebrow">All five levels</p>
-      <h2>The loop keeps turning. You step in where it needs you.</h2>
-      <p>For judgment, taste or authority: a question it escalates, a pull request to land, a plan to approve, an effort to plan. One status page shows what is running and what waits on you.</p>
-      <svg class="still" viewBox="0 0 360 210" role="img" aria-label="A closed loop: plan, Tickets, runs, landed work and new debt Tickets, back to the queue; three amber points mark where a person steps in">
+      <p class="eyebrow">Optional outcome coordination</p>
+      <h2>Delivered work is not yet an achieved outcome.</h2>
+      <p>The coordinator reads results, then continues, waits for evidence, asks for a retained choice, or finishes. The status page names what comes next. Resume manually or through an available host wake; no scheduler is installed.</p>
+      <svg class="still" viewBox="0 0 360 210" role="img" aria-label="A closed loop: plan, Tickets, runs, results, and outcome evidence inform the next plan; three amber points mark where a person steps in">
         <ellipse cx="180" cy="106" rx="140" ry="72" fill="none" stroke="var(--think)" stroke-opacity=".5" stroke-width="2.5"/>
         <g fill="var(--card)" stroke="var(--line-2)"><rect x="140" y="22" width="80" height="24" rx="12"/><rect x="262" y="60" width="80" height="24" rx="12"/><rect x="262" y="128" width="80" height="24" rx="12"/><rect x="134" y="166" width="92" height="24" rx="12"/><rect x="18" y="94" width="80" height="24" rx="12"/></g>
-        <g class="tk" text-anchor="middle"><text x="180" y="38">plan</text><text x="302" y="76">Tickets</text><text x="302" y="144">runs</text><text x="180" y="182">landed + debt</text><text x="58" y="110">queue</text></g>
+        <g class="tk" text-anchor="middle"><text x="180" y="38">plan</text><text x="302" y="76">Tickets</text><text x="302" y="144">runs</text><text x="180" y="182">results</text><text x="58" y="110">evidence</text></g>
         <g fill="var(--you)"><circle cx="228" cy="34" r="6"/><circle cx="346" cy="140" r="6"/><circle cx="262" cy="166" r="6"/></g>
         <text x="238" y="18" style="fill:var(--you)">you step in</text>
       </svg>
@@ -514,7 +514,7 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
     <div class="blk" id="try">
       <p class="eyebrow">Try it</p>
       <h2>Start with one real question.</h2>
-      <p>Each level works without the ones above it, and without anyone else on your team using manifest-dev.</p>
+      <p>Choose an entry point. Each works on its own, including in a team that does not use manifest-dev.</p>
       <p class="step-n"><i>1</i>Install</p>
       <div class="tabs" role="group" aria-label="Your coding agent">
         <button type="button" data-k="cc" aria-pressed="true">Claude Code</button>
@@ -527,17 +527,19 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
       <div class="cmd"><span id="ask"></span><button type="button" class="copy-btn" data-copy="ask">Copy</button></div>
       <p class="small">An example. Ask about the bug you keep putting off.</p>
 
-      <h3 style="margin-top:48px">What to run at each level</h3>
+      <p>For example: <code data-c="orchestrate">/orchestrate</code> reduce volunteer chasing using the lending report. Investigate and propose work; I retain direction and final acceptance. Work this round only.</p>
+      <p>Isolated checks help find defects; sustained project effectiveness and autonomous business operation remain unproven.</p>
+      <h3 style="margin-top:48px">Choose an entry point</h3>
       <ol class="levels" id="levels">
         <li><b>One skill</b><span>install the plugin, then <code data-c="figure-out">/figure-out</code> with a question.</span></li>
         <li><b>One piece of work</b><span><code data-c="auto">/auto</code> with a task (or <code data-c="figure-out">/figure-out</code>, <code data-c="define">/define</code>, <code data-c="do">/do</code> one step at a time).</span></li>
         <li><b>A project that remembers</b><span><code data-c="setup-project">/setup-project</code>, once.</span></li>
         <li><b>A shared queue</b><span><code data-c="ticket-up">/ticket-up</code> writes work as Tickets; <code data-c="next-ticket">/next-ticket</code> picks the next one.</span></li>
-        <li><b>The queue runs</b><span><code data-c="orchestrate">/orchestrate</code>, then approve its plan; or <code data-c="orchestrate" data-f=" --autonomous">/orchestrate --autonomous</code> from a scheduler you already run. Mark a Ticket Auto when it needs no one's judgment.</span></li>
+        <li><b>Coordinate an outcome or queue</b><span><code data-c="orchestrate">/orchestrate</code> with an outcome, evidence, and limits, or an effort to run. Add <code>--autonomous</code> to act within that assignment without plan approvals.</span></li>
       </ol>
       <div class="who">
-        <div><h3><i style="background:var(--pass)"></i>Runs without you</h3><p>Auto Tickets, end to end, including the ones <code>--autonomous</code> grants. Tickets without Auto, up to a ready pull request.</p></div>
-        <div><h3><i style="background:var(--you)"></i>Waits for you</h3><p>Landing a Ticket without Auto, a review the repository requires from a person, escalations, Tickets from people without write access, a cause that paused an effort, planning a new effort, and each plan in the default mode. Each item comes with the answer it recommends, its risk and its evidence.</p></div>
+        <div><h3><i style="background:var(--pass)"></i>Runs without you</h3><p>Authorized investigation, shaping, and delivery. A completed artifact is checked against the outcome evidence; an empty queue alone means no success.</p></div>
+        <div><h3><i style="background:var(--you)"></i>Waits for you</h3><p>The decisions you retain and the reviews your team requires. You may delegate visual direction and still accept the rendered version yourself. Each wait carries a recommendation, risk, evidence, and continuation.</p></div>
       </div>
       <p class="small">Ask <code id="help">/manifest-dev-help</code> whenever a term or a step is unclear.</p>
     </div>
@@ -579,7 +581,7 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
     lines("inst", INST[k]);
     lines("ask", cmd(k, "figure-out") + Q);
     document.getElementById("help").textContent = cmd(k, "manifest-dev-help");
-    document.querySelectorAll("#levels code[data-c]").forEach(function (c) { c.textContent = cmd(k, c.dataset.c) + (c.dataset.f || ""); });
+    document.querySelectorAll("#try code[data-c]").forEach(function (c) { c.textContent = cmd(k, c.dataset.c) + (c.dataset.f || ""); });
     document.querySelectorAll(".tabs button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.k === k)); });
   }
   document.querySelectorAll(".tabs button").forEach(function (b) { b.addEventListener("click", function () { set(b.dataset.k); }); });
@@ -673,7 +675,7 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
   // Chrome
   var bar = document.getElementById("bar"), hud = document.getElementById("hud"), hudT = document.getElementById("hud-t");
   var segs = Array.prototype.slice.call(hud.querySelectorAll(".lv i"));
-  var LV = ["", "One skill", "One piece of work", "A project that remembers", "A shared queue", "The queue runs", ""];
+  var LV = ["", "One skill", "One piece of work", "A project that remembers", "A shared queue", "Outcome or queue", ""];
   var rail = document.getElementById("rail");
   var stops = secs.concat([fin]);
   var btns = stops.map(function (s, k) {
@@ -700,7 +702,7 @@ footer { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 40px 0 calc(48p
     if (lv !== lastLv) {
       lastLv = lv;
       hud.classList.toggle("on", lv > 0);
-      if (lv > 0) hudT.innerHTML = lv === 6 ? "<b>All five levels</b>" : '<span class="n">Level ' + lv + "</span> · <b>" + LV[lv] + "</b>";
+      if (lv > 0) hudT.innerHTML = lv === 6 ? "<b>Optional outcome coordination</b>" : '<span class="n">Level ' + lv + "</span> · <b>" + LV[lv] + "</b>";
       segs.forEach(function (g, i) { g.className = lv === 6 ? "now" : i + 1 < lv ? "done" : i + 1 === lv ? "now" : ""; });
     }
     var on = atEnd ? secs.length : c;

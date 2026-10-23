@@ -1,7 +1,7 @@
 # ADR: North Star lines carry four states, and positions move only on the owner's ruling
 
 ## Status
-Accepted
+Accepted; amended by 20261023-assignment-bounds-delegated-decisions-and-retained-acceptance: assignment scope, delegated decisions and retained acceptance
 
 ## Area
 North Star

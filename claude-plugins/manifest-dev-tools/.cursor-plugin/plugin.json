@@ -1,7 +1,7 @@
 {
   "name": "manifest-dev-tools",
   "displayName": "manifest-dev-tools",
-  "version": "6.6.0",
+  "version": "6.7.0",
   "description": "Tools for prompts and pull requests alongside the manifest-dev workflow: gap-calibrated prompt engineering and prompt review, autonomous and collaborative PR review, PR babysitting toward green and mergeable, goals distilled from Manifests, context handoff, incremental teaching, and an eli5 explainer.",
   "author": {
     "name": "doodledood",
@@ -22,5 +22,9 @@
     "manifest"
   ],
   "category": "developer-tools",
-  "tags": ["prompts", "review", "pull-requests"]
+  "tags": [
+    "prompts",
+    "review",
+    "pull-requests"
+  ]
 }

@@ -336,18 +336,23 @@ def test_orchestrate_proposes_and_waits_by_default() -> None:
     default = flat(orchestrate_text(SOURCE_SKILLS, "PROPOSE_AND_WAIT.md"))
     autonomous = flat(orchestrate_text(SOURCE_SKILLS, "AUTONOMOUS.md"))
 
-    assert "Without it, propose a plan and wait." in text
+    assert "Without it, propose each plan and wait for approval." in text
     assert "| `references/PROPOSE_AND_WAIT.md` | by default |" in text
     assert "| `references/AUTONOMOUS.md` | `--autonomous` |" in text
     assert "10 when unset, and `none` removes the limit" in text
-    assert "Nothing starts before the person approves a plan." in default
+    assert (
+        "Nothing starts before the person approves a plan, unless applicable explicit delegation"
+        in default
+    )
     assert "propose the next plan the same way" in default
     assert "No answer means stop" in default
     assert "Approving a plan is not an Auto grant." in default
     # Autonomous runs take Auto Tickets end to end and fill slots until nothing is left.
     assert "Auto Tickets run end to end and land." in autonomous
-    assert "fill every free slot" in autonomous
-    assert "Stop when no ready work is left in scope" in autonomous
+    assert "fill useful authorized slots" in autonomous
+    assert (
+        "For a queue assignment, stop when no ready work is left in scope" in autonomous
+    )
 
 
 # Holds the decision in docs/adr/20261018-an-orchestrating-skill-runs-the-queue-and-replaces-the-sweep.md.
@@ -362,8 +367,11 @@ def test_orchestrate_selects_recovers_first_and_leaves_paused_work_alone() -> No
         "*To recover*: the automation identity holds its claim, no run is live" in text
     )
     assert "*Left alone*, each with its reason: a person is assigned" in text
-    assert "Venue items that are not Tickets are never touched." in text
-    assert "When nothing is running, to land, to recover or ready, say so" in text
+    assert (
+        "Venue items that are not Tickets are never touched as executable work." in text
+    )
+    assert "a queue assignment reports what waits or was left alone and stops" in text
+    assert "An outcome assignment takes the continue/wait/finish decision" in text
     assert "**Rank** recovery first, then ready work" in text
 
 
@@ -446,7 +454,8 @@ def test_orchestrate_tickets_up_debt_and_grants_only_where_it_may() -> None:
     assert "skip what an open Ticket already covers" in text
     assert "through `ticket-up`, each linked to its source" in text
     assert "When debt in one area has come from three or more runs" in text
-    assert "the proposal never carries Auto from this skill" in text
+    assert "unless the current assignment and delegation cover that direction" in text
+    assert "finding a hotspot does not itself authorize the refactor" in text
     # Grants: under the criterion in --autonomous, asked in default mode, never by the finder.
     assert "apply the convention's grant criterion" in autonomous
     assert "naming `orchestrate --autonomous` as the grantor" in autonomous
@@ -626,7 +635,7 @@ def test_ticket_execution_skills_ship_on_every_distribution() -> None:
         assert not (skills_root / "sweep-tickets").exists()
         orchestrate = flat(skill_text(skills_root, "orchestrate"))
         assert "name: orchestrate" in orchestrate
-        assert "Without it, propose a plan and wait." in orchestrate
+        assert "Without it, propose each plan and wait for approval." in orchestrate
         assert "**Re-read that one Ticket.**" in orchestrate
         for reference in ("PROPOSE_AND_WAIT.md", "AUTONOMOUS.md"):
             assert (skills_root / "orchestrate" / "references" / reference).is_file()
@@ -670,15 +679,16 @@ def test_a_runs_outcomes_are_defined_once_and_a_drafted_answer_waits_on_the_pers
             assert "a drafted answer, an escalation" not in text, path
 
     orchestrate = flat(orchestrate_text(SOURCE_SKILLS))
-    assert "*Answered*: its record holds a drafted answer and no run is live." in (
-        orchestrate
+    assert (
+        "*Answered*: its record holds a drafted answer, no trusted revision is pending and no run is live."
+        in (orchestrate)
     )
     assert "its last run wrote no outcome (*The attempt record* lists them)" in (
         orchestrate
     )
     run_ticket = flat(skill_text(SOURCE_SKILLS, "run-ticket"))
     assert (
-        "A record holding a drafted answer waits for a person to accept it: tell whoever "
+        "A record holding a drafted answer with no pending revision waits for a person to accept it: tell whoever "
         "started the run" in (run_ticket)
     )
 
@@ -910,3 +920,64 @@ def test_the_status_page_explains_each_ticket_in_plain_words() -> None:
     assert "`foundWhile` and `note` in plain words" in status_page
     for field in ("`summary`", "`why`", "`change`", "`done`", "`type`", "`foundWhile`"):
         assert field in status_page, f"STATUS_PAGE.md lost the {field} field"
+
+
+# Holds the decisions in docs/adr/20261023-assignment-bounds-delegated-decisions-and-retained-acceptance.md
+# and docs/adr/20261023-projects-advance-toward-assigned-outcomes-within-delegated-authority.md.
+def test_question_dispatch_and_outcome_continuation_share_authority_and_waits() -> None:
+    run = flat(skill_text(SOURCE_SKILLS, "run-ticket"))
+    outcome = flat(orchestrate_text(SOURCE_SKILLS, "OUTCOME.md"))
+    authority = flat(ticket_ref(SOURCE_SKILLS, "AUTHORITY.md"))
+    protocol = flat(automation_text(SOURCE_SKILLS))
+    assert "**A Question Ticket**" in run
+    assert "Invoke `figure-out`" in run
+    assert (
+        "Do not invoke `auto`, `define` or `do` merely because the answer proposes implementation"
+        in run
+    )
+    assert "**A Shaped Ticket**" in run
+    assert "Before dispatching independently assigned or resumable work" in outcome
+    assert "invoke `ticket-up`" in outcome
+    assert (
+        "An unchanged wait generates neither repeated asks nor duplicate dispatch"
+        in outcome
+    )
+    assert "A new candidate Ticket does not itself justify spending capacity" in outcome
+    assert "manual continuation" in outcome
+    assert "source changes since recorded cursors" in outcome
+    assert "## The coordination record" in orchestrate_text(SOURCE_SKILLS, "OUTCOME.md")
+    assert "## The coordination record" not in automation_text(SOURCE_SKILLS)
+    assert "artifact" in authority and "version" in authority
+    assert "withdraw" in authority and "retained" in protocol
+    for name in ("figure-out", "define", "do", "auto"):
+        assert "AUTHORITY.md" in skill_text(SOURCE_SKILLS, name)
+    assert "AUTHORITY.md" in convention_text(SOURCE_SKILLS)
+
+
+def test_file_store_trusts_only_target_branch_or_explicit_same_session_work() -> None:
+    files = flat(ticket_ref(SOURCE_SKILLS, "FILE_STORE.md"))
+    assert "A Ticket file on the target branch" in files
+    assert (
+        "this session just authored under an explicit trusted assignment to author and dispatch it"
+        in files
+    )
+    assert "in this same working copy" in files
+    assert (
+        "An arbitrary local file, other branch or unmerged contribution supplies no such provenance"
+        in files
+    )
+
+
+def test_trusted_feedback_resumes_the_same_ticket_without_counting_as_failure() -> None:
+    protocol = flat(section(automation_text(SOURCE_SKILLS), "Waiting and acceptance"))
+    run = flat(skill_text(SOURCE_SKILLS, "run-ticket"))
+    coordinator = flat(orchestrate_text(SOURCE_SKILLS))
+    assert "withdraw its current drafted/ready mark and acceptance" in protocol
+    assert "next launch starts at count one" in protocol
+    assert "Consume that request when the new attempt starts" in protocol
+    assert "launcher does not replace the live run's fields" in protocol
+    assert "For a held result with no live run" in protocol
+    assert "the next run resumes ownership" in protocol
+    assert "A trusted revision request continues the same Ticket" in run
+    assert "or a trusted revision request is pending" in coordinator
+    assert "one for a trusted revision request" in coordinator

@@ -32,6 +32,10 @@ Whether to split is one question; where the cut falls is another, and the second
 
 ## Translate knowledge, not machinery
 
+Preserve the assignment and authority with the useful product intent: whose progress matters,
+in what circumstances, the alternatives and trade-offs, and what is observed versus assumed.
+Do not reduce an inquiry's answer or a Manifest to a list of tasks and checks.
+
 A Ticket is a contract with a stranger who may not have manifest-dev. Rewrite the source into the convention's anatomy rather than excerpting it. Could a competent stranger holding only this Ticket understand why the work exists, know its bounds, avoid its traps, and judge it done? Manifest-dev vocabulary in an emitted Ticket fails that test.
 
 For Manifest input, translate the full coherent outcome into one Ticket. Problem and Goal become Why; Appetite and Out of bounds become Scope; all applicable Global Invariants become plain Rules that must hold; risks and assumptions become Watch out for; the Initial Approach remains optional advice; every Deliverable and gate contributes to one plain-prose Definition of done. Gate kinds, codes, and evaluator instructions stay behind.
@@ -40,7 +44,10 @@ In explicit split mode, apply the same translation to each Deliverable and copy 
 
 ## Auto grant
 
-Grant Auto only when neither doing the work nor judging it done needs human knowledge, taste, or authority, and the grantor chooses to trust unattended execution. When in doubt, withhold.
+Apply the convention's Auto criterion: every decision needed for this assignment's completion
+is settled or delegated, and the grantor chooses to trust unattended execution. A retained
+acceptance keeps Auto off even when direction and implementation decisions are delegated.
+When in doubt, withhold.
 
 Two grantors exist. A person grants: directly authoring here, or explicitly reviewing and authorizing Auto for the Ticket here. `orchestrate --autonomous` grants too: it invokes this skill for a Ticket an agent wrote — a debt Ticket it authored, or a follow-up a run wrote — and grants only where the criterion above holds. Record the grantor with the grant, as the venue renders it, so a person can tell an `orchestrate` grant from their own and withdraw it.
 
@@ -58,15 +65,9 @@ When the work is to wait until something holds in the world rather than until an
 
 ## Choose and render the venue
 
-Read `tickets/store-config.md` first. A project context file may name another fixed location. When neither does, ask once and recommend the project's shared tracker; GitHub Issues is the recommendation when the project has a reachable GitHub remote and no other tracker is in play. Recommend files only where no shared tracker exists or nobody else will pick work, and explain that claims do not cross clones, worktrees, or branches. Record the answer at `tickets/store-config.md`.
-
-**Files.** Read `references/FILE_STORE.md` and follow its mapping.
-
-**GitHub Issues.** Read `references/GITHUB_STORE.md` and follow its mapping.
-
-**Any other tracker.** Read `references/GITHUB_STORE.md` for the required mapping rows, ask what supplies each capability, and write `tickets/<venue>-store.md`. Have `tickets/store-config.md` name the venue and reference that file. An unsupported tracker needs a venue reference, not a refusal.
-
-Before outward-facing creation on a venue this project has not used before, show the planned Tickets, labels, tracking item, and relations and get confirmation. A configured venue already records that choice.
+Read `references/STORE_CONFIG.md` and resolve the venue, reusing existing choices. Then read
+its venue reference and render the Tickets through that mapping. Configuration alone creates
+no work; this invocation's authoring assignment supplies the scope.
 
 ## Report
 
