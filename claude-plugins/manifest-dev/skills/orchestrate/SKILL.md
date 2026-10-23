@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: 'Coordinate an assigned project outcome or run ready Tickets from one effort, or the whole store, in parallel — each through run-ticket in its own session — land finished work one Ticket at a time, ticket up the debt runs leave, and keep a status page and one list of what waits on the person. By default it proposes a plan and waits for approval; with --autonomous it acts within the assignment. Use when pursuing a project outcome, choosing useful work from evidence, or when the user wants to work through the queue, run many Tickets at once, or start unattended work from a scheduler.'
+description: 'Coordinate an assigned project outcome or run ready Tickets from one effort, or the whole store, in parallel — each through run-ticket in its own session — land finished work one Ticket at a time, ticket up the debt runs leave, and keep a status page and one list of what waits on the person. By default it proposes each plan and waits for approval; with --autonomous it executes successive plans within the assignment without asking for plan approval. Use when pursuing a project outcome, choosing useful work from evidence, or when the user wants to work through the queue, run many Tickets at once, or start unattended work from a scheduler.'
 argument-hint: '[<effort> or outcome assignment] [--autonomous] [--max-batch <n|none>] [--type <type>[,<type>...]]'
 user-invocable: true
 ---
@@ -24,7 +24,9 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
 
 - `<effort>` — the effort to work. With none named, the whole store: every effort with open
   Tickets.
-- `--autonomous` — act without waiting for approval. Without it, propose a plan and wait.
+- `--autonomous` — continue planning and executing within the assignment without asking for
+  approval of each successive plan. Retained decisions still wait. Without it, propose each plan
+  and wait for approval.
 - `--max-batch <n>` — how many runs may be live at once; 10 when unset, and `none` removes the
   limit.
 - `--type <type>[,<type>...]` — work only Tickets carrying one of these Ticket Types. A Ticket

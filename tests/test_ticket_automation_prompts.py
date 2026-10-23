@@ -336,7 +336,7 @@ def test_orchestrate_proposes_and_waits_by_default() -> None:
     default = flat(orchestrate_text(SOURCE_SKILLS, "PROPOSE_AND_WAIT.md"))
     autonomous = flat(orchestrate_text(SOURCE_SKILLS, "AUTONOMOUS.md"))
 
-    assert "Without it, propose a plan and wait." in text
+    assert "Without it, propose each plan and wait for approval." in text
     assert "| `references/PROPOSE_AND_WAIT.md` | by default |" in text
     assert "| `references/AUTONOMOUS.md` | `--autonomous` |" in text
     assert "10 when unset, and `none` removes the limit" in text
@@ -635,7 +635,7 @@ def test_ticket_execution_skills_ship_on_every_distribution() -> None:
         assert not (skills_root / "sweep-tickets").exists()
         orchestrate = flat(skill_text(skills_root, "orchestrate"))
         assert "name: orchestrate" in orchestrate
-        assert "Without it, propose a plan and wait." in orchestrate
+        assert "Without it, propose each plan and wait for approval." in orchestrate
         assert "**Re-read that one Ticket.**" in orchestrate
         for reference in ("PROPOSE_AND_WAIT.md", "AUTONOMOUS.md"):
             assert (skills_root / "orchestrate" / "references" / reference).is_file()
