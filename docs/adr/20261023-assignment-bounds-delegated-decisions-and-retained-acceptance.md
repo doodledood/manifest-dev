@@ -1,7 +1,7 @@
 # ADR: Assignment bounds delegated decisions and retained acceptance
 
 ## Status
-Accepted
+Accepted — amended by [20261024-absence-is-not-acceptance-of-optional-authority-offers](20261024-absence-is-not-acceptance-of-optional-authority-offers.md): absence is not acceptance of optional authority-surface offers; an authorized setup assignment covers mechanical items, not those offers
 
 ## Area
 Ticketing
@@ -35,7 +35,7 @@ Use the existing project instructions, Ticket convention, and execution records.
 - Acceptance and current authority must be checked again after material changes or interruption.
 
 ## Enforced by
-partly — `tests/test_ticket_automation_prompts.py` pins inquiry-only Question dispatch and authority/acceptance propagation; `tests/test_shared_blocks.py` keeps the user-call blocks aligned; setup-version, glossary, and conventions-fork checks hold the distributed contract. The existing Ticket protocol model covers claims, retries, landing, and deferred work, not general delegated decisions. Actual judgment remains outside those checks.
+partly — `tests/test_ticket_automation_prompts.py` pins inquiry-only Question dispatch and authority/acceptance propagation; `tests/test_shared_blocks.py` keeps the user-call blocks aligned; setup-version, glossary, and conventions-fork checks hold the distributed contract; `tests/test_owner_judgment_offers.py` pins the amendment that absence is not acceptance of optional authority-surface offers. The existing Ticket protocol model covers claims, retries, landing, and deferred work, not general delegated decisions. Actual judgment remains outside those checks.
 
 ## Source
 - Amends 20260810-shaped-means-the-decision-space-is-closed
