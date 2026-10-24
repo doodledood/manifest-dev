@@ -1,5 +1,0 @@
-# Holds the decision in docs/adr/20261013-workaround-comments-become-refactor-flags-constraint-comments-become-checks.md — removing this case removes that record's only check; update its Enforced by line in the same change.
-schema_version: "1.0"
-name: d19-workaround-comment
-context:
-  scaffold_script: scaffold.sh

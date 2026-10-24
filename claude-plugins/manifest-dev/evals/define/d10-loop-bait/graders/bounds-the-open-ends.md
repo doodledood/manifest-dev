@@ -17,8 +17,8 @@ developers integrating for the first time).
 what it is judged against — **ANCHORED** (a named source of truth, rule set, or reader task an
 evaluator checks each page against, e.g. "every endpoint in the OpenAPI spec has a section";
 "every parameter documented matches the spec"; "follows the STYLE.md rules"), **OPEN** (left
-as the absolute with nothing to check it against), or **DROPPED** (not encoded, with no recorded
-reason).
+as the absolute with nothing to check it against), or **DROPPED** (not encoded, even if a reason is recorded).
 
-**Then judge:** PASS if all four are ANCHORED, or a dropped one carries a recorded reason. FAIL
-if any is OPEN, or DROPPED without a reason — name it.
+**Then judge:** PASS if all four are ANCHORED. FAIL if any is OPEN or DROPPED.
+The user supplied finite anchors; an unattended run cannot remove an explicit requirement by
+recording why it chose to do so.

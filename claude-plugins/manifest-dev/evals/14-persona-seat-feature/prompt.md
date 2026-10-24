@@ -6,7 +6,7 @@ allowed_tools: [Skill, Read, Glob, Grep, Write, Bash]
 model: opus
 runs: 1
 ---
-use the figure-out skill for this. i'm afk, dont ask me anything - work it out and come back with what you land on.
+use the figure-out skill with --autonomous for this. i'm afk, dont ask me anything - work it out and come back with what you land on.
 
 we're adding a CSV export of the missing-ingredients list to Pantry. figure out what the export
 needs - the columns, the file naming, where the file lands, and how it gets triggered from the

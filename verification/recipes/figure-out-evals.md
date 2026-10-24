@@ -35,9 +35,9 @@ Workload: varies
 
 ## Gotchas
 
-- Read the suite README's noise section before using a Δ to justify a prompt change; a case both arms pass teaches nothing and is removed.
-- `--scaffold` is required, and `run_eval.sh` always passes `--allow-tools Write Bash`; without them file graders fail in both arms and scaffolded cases run against an empty directory.
+- Read the suite README's noise section before using a Δ to justify a prompt change; saturated non-guards are retirement candidates after repeated evidence; meaningful negative guards stay.
+- `--scaffold` is required, and `run_eval.sh` always passes `--allow-tools Write Edit Bash Agent`; without them file graders fail in both arms and scaffolded cases run against an empty directory.
 - Judge with `sonnet` at one run per arm, as the suite README says, and read a result as its *Reading a result at this depth* says; numbers judged by different models do not compare.
-- `--max-cost-usd` is a hard stop at the suite README's cost estimate; a run it cuts short exits 2 with a partial result, which is rerun, never scored.
+- `--max-cost-usd` stops new scheduling; up to eight in-flight trials can finish above it. A cut-short result exits 2 and is rejected by the scorer.
 - On macOS each eval child may raise a keychain dialog; run suites in a cloud session where you can.
 - `tests/test_eval_cases.py` fails when a case directory and the README's case table disagree.

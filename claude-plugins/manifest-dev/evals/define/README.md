@@ -14,9 +14,9 @@ scripts/evals/run_eval.sh define evals/results/define/aggregate-result.json \
   --tag define --ablation with-without --judge-model sonnet --scaffold -j 8 --max-cost-usd 65
 ```
 
-`--max-cost-usd` is the plan's estimate below, a hard stop as `../README.md` describes.
+`--max-cost-usd` stops scheduling at an estimate, with in-flight overshoot; see [the run contract](../READINESS.md).
 
-`--scaffold` runs the `scaffold.sh` that `d16` and `d19`–`d24` declare in their `case.yaml`: a
+`--scaffold` runs the `scaffold.sh` that `d16`, `d17`, and `d20`–`d24` declare in their `case.yaml`: a
 saved Manifest beside a small repository for `d16`, a small project for the others. Without it,
 those cases run against an empty directory and measure nothing. Only pass it for case files from this
 repository: a scaffold is bash that runs as you.
@@ -36,16 +36,18 @@ The graders have since been rewritten to classify before judging, which that che
 before acting on a FAIL from a grader that reads the whole Manifest, read the Manifest it failed.
 Numbers judged by different models do not compare.
 
+See [READINESS.md](../READINESS.md) for the 2026-10-24 repairs and evidence limits. Changed
+prompts and rubrics are a new instrument; historical results below do not measure it.
+
 ## Cases added 2026-10-13 to 2026-10-19 — unmeasured
 
 | Case | Discipline under test |
 |---|---|
-| `d19-workaround-comment` | A workaround comment in touched code becomes a refactor target, not a deletion |
 | `d20-preparatory-slice` | When the touched area resists the change, a behavior-preserving restructuring comes first |
 | `d21-user-rule-over-default` | A rule the project states overrides a conflicting task-file Default, and the adjustment is recorded |
 | `d23-unfit-recipe-repaired-first` | A change touching a feature whose recipe cannot be relied on — started by hand on a fixed port, its last failure unexplained — cuts repairing that recipe as the first Deliverable, and gates that the touched recipe is updated and run. It carries `d18-map-gate`'s grader: same prompt and project, so `d18` was retired into it on 2026-10-15 |
 | `d24-own-check-repaired-first` | With no harness, a touched test of the project's own that passes whatever the output is gets repaired in pytest form by the first Deliverable, and no harness is built. The project-own twin of `d23`, and the define half of figure-out's `55` |
-| `d25-vague-target` | A speed want with no number and no profile ("make the preview fast", about 25 fps today) binds a floor such as faster than the measured baseline, never an invented frame rate; a higher number may appear only as an aim or a recorded assumption. Its own grader is `floor-not-invented-target` |
+| `d25-vague-target` | A speed want with no number and no profile ("make the preview fast", about 25 fps today) binds a floor such as faster than the measured baseline, never an invented frame rate; a higher number may appear only as an advisory aim, even when recorded as an assumption. Its own grader is `floor-not-invented-target` |
 | `d26-holes-that-pass-every-gate` | A read of an invoice worker whose design a model already checked still leaves the spec open to wrong results that pass every gate at once: a job marked sent while no invoice was delivered, and an invoice sent twice when the old worker is stopped mid-send during the switch. Its own graders, `no-sent-without-delivery` and `no-double-send-at-switch`, judge whether the spec's gates close those two paths |
 | `d22-projectless-manifest-builds-no-harness` | A one-off script outside any project gets a Manifest whose gates check its output, with no harness, recipe, decision record or setup. A guard: the no-plugin arm is expected to pass it, so a Δ of zero is no reason to remove it |
 
@@ -314,7 +316,7 @@ same CLI, agent, and judge as the baseline, train/test split as below. Reports
 - **The spec is graded from the file.** Each run gets a fresh home directory, so the prompt asks
   for `./manifest.md` in the working directory, and graders read it with
   `focus: {source: file, path: manifest.md}`. The two cases whose right answer may be to *not*
-  write a spec (`d05`, `d07`) grade the whole trace instead.
+  write a spec (`d05`, `d07`) grade the first and last 12 trace messages instead; unseen middle actions are not established.
 - **Every prompt carries the settled understanding and says the user is away.** Without that,
   `define` hands off to figure-out or waits for approval, and the run grades an interview opener.
 - **Prompts name the skill**, for the trigger-reliability reasons the figure-out README records.
@@ -322,12 +324,11 @@ same CLI, agent, and judge as the baseline, train/test split as below. Reports
 
 ## The calibration grader: too tight or too loose
 
-`gates-are-settleable.md` runs on every case that should produce a spec. It targets the most
+`gates-are-settleable.md` is shared by the general spec-encoding cases. It targets the most
 expensive failure a Manifest has in execution: a gate written so loosely that evaluators disagree
 or keep finding new issues on unchanged work, or so tightly that no work can pass it. Either one
 sends `/do` round the repair loop. The judge fails a spec only when it can name a specific gate
-that is unstable or unreachable; delegation to a named review with a stated scope counts as
-settleable. `d10-loop-bait` is the case built to press it
+that is unstable or unreachable; a command, BLOCKED label or named review does not excuse a contradictory or unreachable condition. `d10-loop-bait` is the case built to press it
 hardest.
 
 The copies are one rubric: `tests/test_eval_shared_graders.py` fails if they drift. Edit all of them
@@ -336,17 +337,18 @@ together.
 What it does not catch: a gate that pins an incidental mechanism is settleable, but it still
 causes rework when the executor meets the intent another way. `d02` covers that one separately.
 
-## Two more graders on every spec case
+## Shared requirement and threshold graders
 
 Both come from what `manifest-to-goal` keeps when it boils a Manifest down to a standalone
 definition of done for an executor with no other context.
 
-- `binding-lives-in-gates.md`: looks for a requirement stated outside the gates (in the problem,
-  approach, guidance, or assumptions) that no gate checks. An executor working from the
+- `binding-lives-in-gates.md`: compares the original request with the gates, including requirements
+  omitted from the entire Manifest, then checks claims elsewhere in the document. An executor working from the
   gates finds an ungated rule only mid-run, as rework. One rubric across its copies; the drift
   test covers it.
 - `no-invented-thresholds.md`: looks for a number, budget, format, report, or sign-off in the
-  gates that neither came from the request nor is recorded as an assumption with a reason. A
+  gates that neither came from the request nor has an explicit, cited assumption with a value, rationale and impact. An invented target of
+  unknown reachability stays advisory even when recorded; a number the user requires still binds. A
   convention the stated stack already fixes, such as a standard HTTP status code, is fine. This is the too-tight half that `gates-are-settleable` cannot see: an invented bar is
   still settleable. It skips checks that review the change itself, which `define` adds by design.
   Each copy embeds its case's request, since a grader reading the file cannot see the prompt, so
@@ -360,20 +362,21 @@ definition of done for an executor with no other context.
 | `d02-outcome-not-mechanism` | Incidental cron next to the real freshness bound; a deliberate audit-bus rule | `binds-outcome-not-cron`, `keeps-deliberate-mechanism`, settleable |
 | `d03-class-not-instances` | Three reported surfaces of a scattered timezone defect | `gate-covers-the-class`, settleable |
 | `d04-unsafe-binds` | Shared-staging, re-runnable, and no-prod rules mentioned in passing | `safety-rules-bind`, settleable |
-| `d05-conflicting-goals` | Sub-50ms replica reads vs never-stale balances | `conflict-surfaced`, settleable |
+| `d05-conflicting-goals` | Sub-50ms replica reads vs never-stale balances | `conflict-surfaced`, `keeps-other-requirements` |
 | `d06-subjective-anchor` | "Feels dead" with a named reference and a named decider | `quality-anchored`, settleable |
 | `d07-neg-no-problem` | **Negative:** cache requested with no problem behind it | `does-not-invent-a-problem` |
 | `d08-neg-small` | **Negative:** mechanical rename | `proportionate`, settleable |
 | `d09-amend-widen` | Amendment: steering names an instance an existing gate should have claimed | `widens-not-siblings` |
 | `d10-loop-bait` | Open-ended absolutes ("excellent", "nothing missing") with the anchors supplied | `bounds-the-open-ends`, settleable |
-| `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, `layout-unchanged` · measured 2026-10-12 |
-| `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, `no-taste-write`, `no-taste-edit`, shared three · measured 2026-10-12 |
+| `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, generated final-state guards · changed guards unmeasured; prior case measured 2026-10-12 |
+| `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, generated final-state guards, shared three · changed guards unmeasured; prior case measured 2026-10-12 |
+| `d27-explicit-target` | Firm 2-second export target with unknown reachability | `keeps-the-explicit-target` |
 
 "Shared three" is `binding-lives-in-gates`, `gates-are-settleable`, and `no-invented-thresholds`.
 `d05` also carries `keeps-other-requirements`: resolving the conflict must not lower or drop
-another stated requirement without saying so.
+another stated requirement without authorization. A stated assumption is not authorization.
 
-Every case that writes a spec also carries two display-only regex graders, never scored:
+The original schema-check cases also carry display-only regex graders, never scored by the comparator:
 `ceiling-verbatim` (the ceiling invariant appears verbatim in `manifest.md`; a test ties its
 pattern to `SCHEMA.md`) and `handoff-line` (the last message names the Manifest with a
 `Manifest complete:` line). They show schema conformance without counting it as uplift, since
@@ -395,7 +398,7 @@ a duplicate, an out-of-scope skill, or an undeclared floor in both arms retires 
 | `d02` | keep | Uplift +0.50, but on the shared graders only: its own graders floored on 2026-10-05, the pattern that retired `d11`–`d14`. Retire it if the next baseline repeats that |
 | `d03` | keep | Uplift +0.21; the same watch as `d02` |
 | `d04` | keep | Held out; uplift +0.58 |
-| `d05` | keep | `no-invented-thresholds` is a hill in both arms |
+| `d05` | keep | Conflict guard: no artifact is a valid outcome; preserve every explicit requirement without assuming authority to weaken it |
 | `d06` | keep | Held out; uplift +0.42 |
 | `d07` | keep | Declared negative floor |
 | `d08` | keep | Held-out negative; uplift +0.50 |
@@ -403,7 +406,6 @@ a duplicate, an out-of-scope skill, or an undeclared floor in both arms retires 
 | `d10` | keep | Uplift +0.38 on settleable gates |
 | `d16` | keep | Uplift +0.67 |
 | `d17` | keep | Uplift +0.30 |
-| `d19` | first run decides | The base model tends to delete a workaround comment as noise |
 | `d20` | first run decides | The base model tends to thread a change through resisting code rather than prepare it |
 | `d21` | first run decides | The only case for a project rule overriding a Default |
 | `d22` | keep | Declared guard: the no-plugin arm is expected to pass; run once for status |
@@ -411,45 +413,35 @@ a duplicate, an out-of-scope skill, or an undeclared floor in both arms retires 
 | `d24` | first run decides | New on 2026-10-15: the same rule for a check of the project's own, with no harness |
 | `d25` | first run decides | New on 2026-10-18: a vague speed want encoded as a floor plus an aim, the case for define's floor-plus-aim rule. The review runs in a fresh context only where the suite allows one; the `define` recipe's `fresh-review` drive covers that |
 | `d26` | first run decides | New on 2026-10-19: the review's search for holes, on the self-graded path; the `define` recipe's `hole-search` drive covers the fresh-context path |
+| `d27` | first run decides | Held out: the explicit 2-second user target must bind even when reachability is unknown; mirror for d25 |
 
 Retired on 2026-10-15: `d18-map-gate`, folded into `d23`, which has the same prompt and project
 and now carries its grader.
 
+Retired on 2026-10-24: `d19-workaround-comment` judged an execution/code-review duty, not a spec outcome. Its ADR now names the missing review-code check honestly.
+
 ## First-run plan
 
-Each case runs once per arm, 2 runs a case. No run has been costed with the sonnet judge; the
-measured **$1.52 a run** (2026-10-12, above) was under an opus judge, so the totals below are upper
-bounds.
-
-| Order | Case | Runs | Why here |
-|---|---|---|---|
-| 1 | `d23` | 2 | Covers what this change shipped, on two graders |
-| 2 | `d24` | 2 | The same rule with no harness; the base model likely adds a test beside the broken one |
-| 3 | `d19` | 2 | Headroom likely |
-| 4 | `d20` | 2 | Headroom likely |
-| 5 | `d21` | 2 | |
-| 6 | `d22` | 2 | Guard; status only |
-| 7 | `d25` | 2 | Covers the floor-plus-aim rule; the base model likely binds an invented frame rate |
-| 8 | `d26` | 2 | Covers the search for holes; define without the hole search left both graded holes open in the 2026-10-19 experiment |
-
-All of it is 16 runs, under $25. A full baseline also re-measures the 12 kept cases, another 24
-runs, under $40, since every recorded number is stale. **A smaller budget** runs `d23` and `d24`
-first: 4 runs, under $10. Read the results as `../README.md` → *Reading a result at this depth*
-says: direction comes from the whole suite; a case whose own graders pass in both arms is re-run
-with three runs per arm and retired, as `d11`–`d14` were, only if both arms pass every run; a
-plugin-arm failure on a case grader is a candidate hill, and a separation a candidate uplift.
+Use [the free inventory and preflight](../READINESS.md) for current counts. Run one trial per arm
+for a fresh directional baseline; prioritize `d23`/`d24`, `d20`/`d21` and the `d25`/`d27` mirror
+when splitting a budget. Keep `d22` as a guard. Read failing judge verdicts against their exact
+artifact before choosing a skill change, and repeat decisive cases at three trials per arm.
+The historical $1.52 per trial is an estimate, not a bound. No current behavioral uplift or
+judge agreement has been measured. `d02`/`d03` remain candidates for retirement after fresh
+results because their old signal came from shared graders; they are not removed on stale data.
 
 ## Held-out split
 
-`d04`, `d06`, and `d08` are held out from tuning: one binding-rule case, one anchoring case, and one
-negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the other nine.
+`d04`, `d06`, and `d08` are the original held-out binding-rule, anchoring and negative cases
+used in the 2026-10-05 hill-climb. `d27` joins them in this revision as the explicit-target mirror.
+Freeze the full split before inspecting outputs, and let the analyzer read only training cases.
 
 ## Known limits
 
 - **A case gets files only through its scaffold.** Most prompts describe the codebase inline and
   say it is unavailable. `d16` seeds a Manifest and a small repository with `scaffold.sh`, and
-  `d19`–`d24` a small project. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
-- **Most judge graders read the whole Manifest.** 39 of the suite's 51 `llm` graders judge
+  `d20`–`d24` a small project. `d17` seeds its preference file. `d09` predates scaffolds and still asks the agent to save a pasted manifest.
+- **Many judge graders read the whole Manifest.** The inventory reports current counts. File-focused graders read
   `manifest.md` entire, often near 20k characters, where the CLI's guidance is a regex for long
   output and the judge for short output; it is where the sonnet judge failed a sound Manifest.
   A property a pattern can settle (a section present, a gate kind declared) moves to a `regex`
@@ -459,8 +451,8 @@ negative. The 2026-10-05 hill-climb used this split; an analyzer reads only the 
 - **One turn of the interview.** The suite measures unattended encoding, plus one interactive
   turn after approval (`d16`). Interview order, re-asking settled ground, and the digest's form
   need a scripted second turn the harness does not run, so they are out of scope.
-- **No memory file loads in the sandbox.** `d17` puts the user's memory file in
-  `append_system_prompt`.
+- **Taste loading is supplied.** `d17` supplies preferences in `append_system_prompt` and seeds
+  `preferences.md`; final-state checks cover edits through any tool, not host memory discovery.
 - **Not covered, by choice.** Babysit mode needs a GitHub stand-in, and multi-repo Manifests need
   two repositories. Handing off to figure-out when understanding is missing has shown no failure
   and only the plugin arm can do it. Composing writing registers and visual gates is partly

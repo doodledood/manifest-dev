@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run a plugin eval suite with the claude CLI, detached, writing its JSON result.
 #
-#   scripts/evals/run_eval.sh [--wait] <name> <out-json> [extra `claude plugin eval` flags...]
+#   scripts/evals/run_eval.sh [--wait|--preflight] <name> <out-json> [eval flags...]
 #
 # <name>      names the run; it lives in
 #             ${MANIFEST_DEV_EVAL_RUNS:-$HOME/.local/state/manifest-dev-evals}/<name>/<stamp>/
@@ -9,6 +9,8 @@
 #             evals/results/hillclimb-define/v2/aggregate-result.json
 # --wait      waits for the run to end and exits with its status; the run still survives this
 #             shell ending while it waits.
+# --preflight validates through the native CLI at a zero-dollar ceiling, records the selected
+#             instrument and reports its workload; launches no agent, judge or scaffold.
 #
 # Example, one case of a hill-climb round (plugin arm only, three runs; the suite README's
 # *Hill-climbing a prompt against a suite* loops it over the climb set):
@@ -24,7 +26,7 @@
 # exit-code, written when it ends. Exit 2 from the suite means --max-cost-usd stopped it with a
 # partial result.
 #
-# Needs: the claude CLI on PATH and signed in, and python3; exits 3 without them, and when it
+# Needs: the claude CLI on PATH and signed in, Node.js, and the repository Python dependencies; exits 3 without them, and when it
 # cannot copy the plugin into its run directory. A suite is many
 # sessions on your sign-in. On macOS each eval child may raise a keychain dialog (evals/README.md).
 set -euo pipefail
@@ -32,14 +34,23 @@ set -euo pipefail
 usage() { sed -n '2,17p' "$0"; exit 2; }
 die() { echo "run_eval: $*" >&2; exit 1; }
 
-wait_for=0
-if [[ ${1:-} == --wait ]]; then wait_for=1; shift; fi
+wait_for=0 preflight_only=0
+while [[ ${1:-} == --wait || ${1:-} == --preflight ]]; do
+  [[ $1 != --wait ]] || wait_for=1
+  [[ $1 != --preflight ]] || preflight_only=1
+  shift
+done
 [[ $# -ge 2 ]] || usage
 name=$1 out=$2
 shift 2
 case $name in
   "" | */* | .*) echo "run_eval: the run name '$name' must be one plain word, with no / and no leading dot" >&2; exit 2 ;;
 esac
+
+[[ $out == *.json ]] || die "result path must end in .json: $out"
+for arg in "$@"; do
+  case $arg in --json|--json=*) die "pass the result path as <out-json>, not --json" ;; esac
+done
 
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 root=$(cd "$root" && pwd -P)
@@ -48,6 +59,13 @@ source "$root/scripts/lib/claude-cli.sh"
 case $out in /*) ;; *) out=$root/claude-plugins/manifest-dev/$out ;; esac
 
 claude_cli_ready run_eval
+python=python3
+[[ ! -x $root/.venv/bin/python ]] || python=$root/.venv/bin/python
+"$python" -c 'import yaml' 2>/dev/null || {
+  echo 'run_eval: install development dependencies with scripts/setup.sh (PyYAML is needed for the instrument inventory)' >&2
+  exit 3
+}
+[[ ! -e $out && ! -e ${out%.json}.instrument.json ]] || die "result or launch contract already exists: $out; choose a fresh path"
 
 store=${MANIFEST_DEV_EVAL_RUNS:-$HOME/.local/state/manifest-dev-evals}
 store=$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$store")
@@ -65,17 +83,43 @@ done
 mkdir -p "$(dirname "$out")" 2>/dev/null || die "cannot create the directory for $out; name a writable result path"
 
 target=$(copy_plugin manifest-dev "$run") || exit 3
+cp "$root/scripts/evals/eval_contract.py" "$run/eval_contract.py"
 log=$run/eval.log status_file=$run/exit-code
 echo "CLI: $CLAUDE_CLI_VERSION" >"$log"
+
+# The native parser owns the schema. Zero is an accepted cost ceiling, checked BEFORE any
+# model/scaffold launch. A load error can coexist with exit 2, so inspect its log as well.
+preflight_code=0
+"${CLAUDE_SESSION_ENV[@]}" claude "${CLAUDE_ISOLATION[@]}" plugin eval "$target" \
+  --allow-tools Write Edit Bash Agent --no-publish --trust-plugin --judge-model sonnet "$@" \
+  --no-scaffold --max-cost-usd 0 --output-dir "$run/preflight" --json "$run/preflight.json" \
+  >"$run/preflight.log" 2>&1 || preflight_code=$?
+"$python" "$root/scripts/evals/eval_contract.py" preflight-check \
+  "$run/preflight.json" "$run/preflight.log" "$preflight_code" || {
+    cat "$run/preflight.log" >&2
+    exit 1
+  }
+cli_version=$("$python" -c 'import json,sys; print(json.load(open(sys.argv[1]))["claudeVersion"])' "$run/preflight.json")
+instrument=${out%.json}.instrument.json
+((preflight_only == 0)) || instrument=$run/preflight.instrument.json
+"$python" "$root/scripts/evals/eval_contract.py" inventory "$target" \
+  --out "$instrument" --cli-version "$cli_version" -- \
+  --allow-tools Write Edit Bash Agent -j 8 --no-publish --trust-plugin --judge-model sonnet --json "$out" "$@"
+if ((preflight_only == 1)); then
+  echo "run_eval: preflight only; instrument: $instrument; native log: $run/preflight.log"
+  exit 0
+fi
 
 # setsid puts the run in a session of its own, so neither this shell ending nor its terminal
 # closing stops it; exit-code is written by rename, so a reader never sees it half written.
 cd "$run"
 python3 -c 'import os, sys; os.setsid(); os.execvp(sys.argv[1], sys.argv[1:])' \
-  bash -c 'log=$1 status=$2; shift 2; code=0; "$@" >>"$log" 2>&1 || code=$?
+  bash -c 'log=$1 status=$2 python=$3 contract=$4 result=$5; shift 5; code=0; "$@" >>"$log" 2>&1 || code=$?
+           "$python" "$contract" validate "$result" >>"$log" 2>&1 || { ((code != 0)) || code=1; }
            echo "$code" >"$status.tmp" && mv "$status.tmp" "$status"' run_eval "$log" "$status_file" \
+  "$python" "$run/eval_contract.py" "$out" \
   "${CLAUDE_SESSION_ENV[@]}" claude "${CLAUDE_ISOLATION[@]}" plugin eval "$target" \
-  --allow-tools Write Bash -j 8 --no-publish --trust-plugin --json "$out" "$@" \
+  --allow-tools Write Edit Bash Agent -j 8 --no-publish --trust-plugin --judge-model sonnet --json "$out" "$@" \
   </dev/null >/dev/null 2>&1 &
 pid=$!
 

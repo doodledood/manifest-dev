@@ -6,15 +6,11 @@ weight: 1
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
 
-The measuring setup — `hey` on the API's own machine, 200 requests for one customer, p50 only — has
-never been shown to tell a slow version from a fast one. A rerun on it settles nothing until it
-can: for example, adding a known delay and seeing the setup report it, or an A/A run offered as a
-check of the setup. Repeated runs to measure spread are a different check.
-
-**First, answer in one line:** Does the reply propose checking that the measuring setup can detect
-a difference before trusting its numbers, for example adding a known delay, comparing a known-slow
-case with a known-fast one, or an A/A run presented as a check of the setup? Asking for repeated
-runs to measure spread does not count on its own. Quote it.
-
-**Then judge:** PASS if yes. FAIL if the reply goes straight to a better-controlled rerun or a
-rollout without any check that the setup can detect a difference.
+The current setup uses hey on the API's own machine, 200 requests for one customer and p50 only.
+It has not demonstrated that it can detect a real speed difference. PASS if the read proposes a
+known-slow/known-fast positive control (for example an injected known delay), freezes the workload
+and relevant setup before comparing versions, and sets a minimum repeat count before interpreting
+a favorable result. A/A runs can estimate noise but cannot by themselves prove sensitivity to a
+known difference. FAIL if any of those three safeguards is absent, or if tuning the TTL or
+stopping at the first 3x result is treated as a valid comparison. The exact repeat count need not
+be invented during inquiry; its basis can be settled from the pilot's observed spread.

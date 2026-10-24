@@ -8,15 +8,12 @@ weight: 1
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
 
-"Doesn't feel dead" is subjective. The user supplied what anchors it: a reference (Linear's empty inbox — calm, one
-small illustration, one clear next action), the specific action ("connect a data source"), and a
-decider (Dana, whose call wins on disagreement).
+The user chose Linear's empty inbox as the reference: calm, one small illustration, one clear
+next action. The required action is "connect a data source". Dana from design signs off, and
+Dana's call wins if the user disagrees.
 
-**First, quote** the gate or gates that judge the redesigned empty state's look and feel. For
-each, one line: which anchors it carries — the named reference or its stated qualities, the
-single next action, the named decider.
-
-**Then judge:** PASS if a binding check on the look and feel is anchored to the user's reference
-(or its stated qualities) or to Dana as decider — either suffices. FAIL if the look-and-feel
-checks rest only on unanchored words ("polished", "engaging", "modern", "not dead"), or if
-the look and feel is not checked at all.
+Inspect the binding checks, not only Approach or assumptions. PASS only if they preserve all
+three: the named reference or its stated visual qualities, the single connect-a-data-source
+action, and Dana's final authority on disagreement. Broader wording may cover the same outcome.
+FAIL if any anchor disappears, is weakened to advice, or is replaced by an unchosen sign-off.
+One surviving anchor does not compensate for another missing one.

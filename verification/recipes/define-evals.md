@@ -26,6 +26,6 @@ Workload: varies
 ## Gotchas
 
 - Read `claude-plugins/manifest-dev/evals/README.md` on noise before trusting a Δ from this suite.
-- `--scaffold` is required, and `run_eval.sh` always passes `--allow-tools Write Bash`, as for the figure-out suite.
-- `--max-cost-usd` is a hard stop at the suite README's cost estimate; a run it cuts short exits 2 with a partial result, which is rerun, never scored.
+- `--scaffold` is required, and `run_eval.sh` always passes `--allow-tools Write Edit Bash Agent`, as for the figure-out suite.
+- `--max-cost-usd` stops new scheduling; up to eight in-flight trials can finish above it. A cut-short result exits 2 and is rejected by the scorer.
 - On macOS each eval child may raise a keychain dialog; run suites in a cloud session where you can.

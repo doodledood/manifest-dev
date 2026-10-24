@@ -12,8 +12,10 @@ a full baseline.
         v0=<flow>/v0 v1=<flow>/v1
 
 Each run is one ``aggregate-result.json`` or a directory whose ``*.json`` results are
-merged, for a round run one case per invocation. Only the cases every run carries are
-compared, and a grader is counted only where every run scores it.
+merged, for a round run one case per invocation. Each needs the launch-time
+``*.instrument.json`` written by run_eval.sh. Every requested case must be present;
+the measurement instrument must match across rounds. Repetitions may differ when
+each run fulfills its own launch contract. Diagnostics never count as quality.
 
 ``_state.json`` needs ``train_ids`` and ``test_ids`` (case names). Cases in neither
 list are reported under ``other``.
@@ -27,41 +29,46 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
+from eval_contract import InvalidRunError, diagnostic, load_result
+
 POOLED = "case-graders"
 
 
 def load(path: Path) -> dict[str, Any]:
     """One result file, or every ``*.json`` result in a directory merged into one."""
-    paths = sorted(path.glob("*.json")) if path.is_dir() else [path]
+    paths = (
+        sorted(
+            p for p in path.glob("*.json") if not p.name.endswith(".instrument.json")
+        )
+        if path.is_dir()
+        else [path]
+    )
     if not paths:
         raise SystemExit(f"{path}: no result files")
     cases: list[dict[str, Any]] = []
+    contracts: dict[str, Any] = {}
     for each in paths:
-        data = json.loads(each.read_text())
-        if data.get("partial"):
-            raise SystemExit(f"{each}: partial run; finish or rerun it before scoring")
+        data, contract = load_result(each)
         cases.extend(data["cases"])
+        for case in contract["cases"]:
+            contracts[case["name"]] = {
+                "case": {k: v for k, v in case.items() if k != "runs"},
+                **{
+                    k: contract[k]
+                    for k in (
+                        "cliVersion",
+                        "judgeModel",
+                        "sharedInstrumentHash",
+                        "behaviorOptions",
+                    )
+                },
+            }
     names = Counter(c["name"] for c in cases)
     if repeated := sorted(n for n, k in names.items() if k > 1):
-        raise SystemExit(f"{path}: cases in more than one result: {', '.join(repeated)}")
-    return {"cases": cases}
-
-
-def unscored(datas: list[dict[str, Any]]) -> set[tuple[str, str]]:
-    """(case, grader) pairs some run leaves out of its score.
-
-    Under ``--ablation with-without`` the CLI leaves graders marked with-only out of the
-    score; under ``none`` it scores them. Counting a grader only where every compared run
-    scores it keeps a plugin-arm round comparable with a full baseline.
-    """
-    return {
-        (case["name"], grader["name"])
-        for data in datas
-        for case in data["cases"]
-        for run in case["arms"]["with"]
-        for grader in run["graders"]
-        if not grader["scored"]
-    }
+        raise SystemExit(
+            f"{path}: cases in more than one result: {', '.join(repeated)}"
+        )
+    return {"cases": cases, "contracts": contracts}
 
 
 def shared_graders(runs: list[dict[str, Any]]) -> set[str]:
@@ -87,11 +94,7 @@ def plugin_fired(case: dict[str, Any]) -> set[str]:
     Under ``--ablation with-without`` the CLI leaves them out of the score; under
     ``none`` it scores them. Dropping them in both modes keeps rounds comparable.
     """
-    return {
-        g["name"]
-        for g in case["graders"]
-        if g["type"] == "tool_used" and (g.get("config") or {}).get("tool") == "Skill"
-    }
+    return {g["name"] for g in case["graders"] if diagnostic(g)}
 
 
 def tally(
@@ -99,7 +102,6 @@ def tally(
     state: dict[str, Any],
     shared: set[str],
     cases: set[str],
-    dropped: set[tuple[str, str]],
 ) -> tuple[dict[tuple[str, str], list[int]], dict[str, float], dict[str, float], int]:
     counts: dict[tuple[str, str], list[int]] = defaultdict(lambda: [0, 0])
     per_case: dict[str, float] = {}
@@ -110,7 +112,7 @@ def tally(
             continue
         runs = case["arms"]["with"]
         split = split_of(case["name"], state)
-        skip = plugin_fired(case) | {g for c, g in dropped if c == case["name"]}
+        skip = plugin_fired(case)
         scores = []
         for run in runs:
             # costUsd already includes the judge's share.
@@ -120,8 +122,9 @@ def tally(
             errors += bool(run.get("error"))
             kept = [g for g in run["graders"] if g["name"] not in skip]
             weight = sum(g["weight"] for g in kept)
-            if weight:
-                scores.append(sum(g["weight"] * g["passed"] for g in kept) / weight)
+            if not weight:
+                raise InvalidRunError(f"{case['name']}: no quality graders")
+            scores.append(sum(g["weight"] * g["passed"] for g in kept) / weight)
             for grader in kept:
                 key = grader["name"] if grader["name"] in shared else POOLED
                 for bucket in ((split, key), ("all", key)):
@@ -134,23 +137,47 @@ def tally(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--state", type=Path, required=True)
+    parser.add_argument(
+        "--cases",
+        nargs="+",
+        help="Explicit subset; default is every train/test case in state",
+    )
     parser.add_argument("runs", nargs="+", help="label=path/to/aggregate-result.json")
     args = parser.parse_args(argv)
 
     state = json.loads(args.state.read_text())
+    train, test = state["train_ids"], state["test_ids"]
+    if len(set(train + test)) != len(train + test):
+        raise InvalidRunError("train/test IDs overlap or repeat")
     labelled = [r.split("=", 1) for r in args.runs]
+    if any(len(r) != 2 for r in labelled) or len({r[0] for r in labelled}) != len(
+        labelled
+    ):
+        raise InvalidRunError("runs need distinct label=path arguments")
     datas = {label: load(Path(path)) for label, path in labelled}
     fired = {n for d in datas.values() for c in d["cases"] for n in plugin_fired(c)}
     shared = shared_graders(list(datas.values())) - fired
     carried = [{c["name"] for c in d["cases"]} for d in datas.values()]
-    common = set.intersection(*carried)
+    common = set(args.cases if args.cases else train + test)
+    if not common or common - set(train + test):
+        raise InvalidRunError(
+            "requested cases must be a nonempty subset of the frozen train/test split"
+        )
+    for (label, _data), names in zip(datas.items(), carried, strict=True):
+        if missing := common - names:
+            raise InvalidRunError(
+                f"{label}: missing requested cases: {', '.join(sorted(missing))}"
+            )
+    reference = next(iter(datas.values()))
+    for label, data in datas.items():
+        for name in common:
+            if data["contracts"][name] != reference["contracts"][name]:
+                raise InvalidRunError(
+                    f"{label}/{name}: measurement instrument or runtime changed"
+                )
     if left_out := sorted(set.union(*carried) - common):
-        print(f"Compared on the {len(common)} cases every run carries; left out: "
-              f"{', '.join(left_out)}\n")
-    dropped = unscored(list(datas.values()))
-    results = {
-        label: tally(d, state, shared, common, dropped) for label, d in datas.items()
-    }
+        print(f"Explicit comparison subset; not scored: {', '.join(left_out)}\n")
+    results = {label: tally(d, state, shared, common) for label, d in datas.items()}
     labels = list(results)
 
     print("| grader | split | " + " | ".join(labels) + " |")
@@ -186,4 +213,7 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except (InvalidRunError, OSError, ValueError, KeyError, TypeError) as error:
+        raise SystemExit(f"score_rounds: {error}") from error

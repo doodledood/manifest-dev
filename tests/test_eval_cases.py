@@ -101,6 +101,19 @@ def test_graders_use_only_their_types_keys(case: Path) -> None:
         unknown = set(data) - COMMON_GRADER_KEYS - GRADER_KEYS[kind]
         assert not unknown, f"{grader.name}: keys {sorted(unknown)} not taken by {kind}"
         assert data.get("arm") in (None, "with-only", "both"), grader.name
+        for key in ("focus", "target"):
+            if key in data:
+                value = data[key]
+                assert (
+                    isinstance(value, str)
+                    and value in {"trace", "last_message", "files", "mock_calls"}
+                ) or (
+                    isinstance(value, dict)
+                    and set(value) == {"source", "path"}
+                    and value["source"] == "file"
+                    and isinstance(value["path"], str)
+                    and value["path"]
+                ), f"{grader}: invalid {key} {value!r}; use {{source: file, path: ...}} for content"
         if kind == "llm":
             assert body.strip(), f"{grader.name}: empty rubric"
         if kind == "tool_used" and "max" in data:
@@ -142,6 +155,38 @@ def test_ceiling_grader_matches_the_schemas_ceiling() -> None:
     assert copies
     pattern = str(_frontmatter(copies[0])[0]["pattern"])
     assert re.search(pattern, SCHEMA.read_text(encoding="utf-8"))
+
+
+def test_ceiling_check_rejects_missing_or_changed_binding_text() -> None:
+    pattern = str(
+        _frontmatter(next(EVALS.glob("define/*/graders/ceiling-verbatim.md")))[0][
+            "pattern"
+        ]
+    )
+    canonical = SCHEMA.read_text().split("````markdown\n")[-1].split("\n````")[0]
+    mutations = [
+        canonical.replace("nothing beyond", "anything beyond"),
+        canonical.replace("Judgment gate.", ""),
+        re.sub(
+            r"Required although no criterion names it:.*?changed rule into every copy and surface that holds it\.\n",
+            "",
+            canonical,
+            flags=re.S,
+        ),
+    ]
+    for mutation in mutations:
+        assert mutation != canonical
+        assert not re.search(pattern, mutation)
+
+
+def test_generated_graders_are_current() -> None:
+    result = subprocess.run(
+        ["python3", str(ROOT / "scripts/evals/sync_graders.py"), "--check"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def test_rubrics_quote_their_cases_current_request() -> None:
@@ -286,6 +331,8 @@ def test_every_documented_run_carries_a_cost_ceiling() -> None:
         for command in re.sub(
             r"\\\n#?\s*", " ", doc.read_text(encoding="utf-8")
         ).splitlines()
-        if "--judge-model" in command and "--max-cost-usd" not in command
+        if "--judge-model" in command
+        and "--max-cost-usd" not in command
+        and (doc.suffix != ".sh" or command.lstrip().startswith("#"))
     ]
     assert not bare, f"documented eval runs with no cost ceiling: {bare}"

@@ -25,6 +25,9 @@ Accepted
 ## Decision
 ## Alternatives Considered
 ## Consequences
+## Enforced by
+[The check that holds the decision; not yet — the intended check; or none — the reason]
+
 ## Source
 - Related: [Supersedes / Superseded by / See also]
 ```
@@ -34,7 +37,8 @@ review` when a run with no person present accepts its own record.
 
 ## Files
 
-`docs/adr/YYYYMMDD-kebab-case-title.md`, dated today.
+The next record ID is reserved as `docs/adr/20261024-weekly-cutoff.md`. If a decision
+needs a record, use that path and its reserved date rather than the wall-clock date.
 
 ## Writing a record is one act
 

@@ -1,17 +1,11 @@
 ---
 type: llm
-focus: files
+focus:
+  source: file
+  path: docs/adr/20261024-new-weavers-pay-no-fee-for-90-days.md
 weight: 1
 ---
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
 
-The owner ruled that new weavers get their first 90 days with no sales fee, down from 180, and
-asked that the project remember it. The project keeps decision records under docs/adr/.
-
-**First, answer in one line:** Is there a decision record under docs/adr/ (a file whose first line
-starts "# ADR:") that states the 90-day fee-free period — a new record, which may supersede the
-existing 180-day record?
-
-**Then judge:** PASS if such a record states the 90-day period as the decision. FAIL if the
-90-day period is recorded nowhere under docs/adr/.
+PASS only if this artifact is a new decision record with the owner's 90-day fee-free ruling, credits the owner for the decision, states the trade-off, names the prior 180-day record in Supersedes, and has an honest Enforced by entry (a concrete check, or not yet plus a check to add). A mention of 90 days outside the decision or a record claiming an agent made the owner's ruling fails.

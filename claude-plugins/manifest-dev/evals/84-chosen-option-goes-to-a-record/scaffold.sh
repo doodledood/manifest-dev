@@ -106,13 +106,16 @@ Accepted
 ## Decision
 ## Alternatives Considered
 ## Consequences
+## Enforced by
+[A concrete check, or not yet plus the check to add.]
 ## Source
 - Related: [Supersedes / Superseded by / See also]
 ```
 
 ## Files
 
-`docs/adr/YYYYMMDD-kebab-case-title.md`, dated today.
+The next record ID is reserved as `docs/adr/20261024-new-weavers-pay-no-fee-for-90-days.md`. If a decision
+needs a record, use that path and its reserved date rather than the wall-clock date.
 
 ## Writing a record is one act
 

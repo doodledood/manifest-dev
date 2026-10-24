@@ -34,7 +34,8 @@ review` when a run with no person present accepts its own record.
 
 ## Files
 
-`docs/adr/YYYYMMDD-kebab-case-title.md`, dated today.
+The next record ID is reserved as `docs/adr/20261024-refund-lookup.md`. A reserved draft at that path is not an accepted record. If a decision
+needs a record, replace the draft at that path and its reserved date rather than the wall-clock date.
 
 ## Writing a record is one act
 
@@ -82,4 +83,9 @@ payment and has to be reversed.
 
 Each ticket purchase stores: sailing, fare, card token, last four digits, and the phone number or
 email the rider gave. The receipt email or SMS carries a booking reference.
+EOF
+
+# A reserved draft lets the content judge distinguish no record from an accepted record.
+cat > docs/adr/20261024-refund-lookup.md <<'EOF'
+<!-- Reserved record slot. No decision record has been written. -->
 EOF

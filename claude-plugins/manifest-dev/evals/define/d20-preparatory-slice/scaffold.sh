@@ -1,38 +1,56 @@
 #!/usr/bin/env bash
 set -euo pipefail
-mkdir -p src tests
+mkdir -p src tests data
 cat > README.md <<'EOF'
 # Shelfnote
 
-Command-line tool that tracks books a reading club has borrowed.
+Overdue reminders for a reading club. Run `python3 src/shelfnote.py overdue`.
+The current club-wide loan length is 21 days. Each member's `loan_days` is already stored,
+but reminder generation does not use it yet.
 
-    python3 src/shelfnote.py checkout --member ana --book "Middlemarch"
-    python3 src/shelfnote.py return --book "Middlemarch"
-    python3 src/shelfnote.py overdue
-    python3 src/shelfnote.py export --format csv
+Verification: `python3 -m unittest discover -s tests`.
+EOF
+cat > data/loans.json <<'EOF'
+[{"book": "Middlemarch", "member": "ana"}]
+EOF
+cat > data/members.json <<'EOF'
+{"ana": {"loan_days": 28}}
 EOF
 cat > src/shelfnote.py <<'EOF'
-import argparse, json, pathlib, sys
-DATA = pathlib.Path("data/loans.json")
-def load():
-    return json.loads(DATA.read_text()) if DATA.exists() else []
-def main(argv=None):
-    p = argparse.ArgumentParser(prog="shelfnote")
-    sub = p.add_subparsers(dest="cmd", required=True)
-    c = sub.add_parser("checkout"); c.add_argument("--member"); c.add_argument("--book")
-    r = sub.add_parser("return"); r.add_argument("--book")
-    sub.add_parser("overdue")
-    e = sub.add_parser("export"); e.add_argument("--format", choices=["csv", "json"])
-    args = p.parse_args(argv)
-    print(args.cmd)
+import argparse
+import json
+from pathlib import Path
+from reminders import cli
+
+
+def main():
+    parser = argparse.ArgumentParser(prog="shelfnote")
+    parser.add_argument("command", choices=["overdue"])
+    parser.parse_args()
+    loans = json.loads(Path("data/loans.json").read_text())
+    print("\n".join(cli(loans)))
+
+
 if __name__ == "__main__":
     main()
 EOF
-
 cat > src/reminders.py <<'EOF'
 LOAN_DAYS = 21
+
 def cli(loans, days=21): return scheduler(loans, days)
-def scheduler(loans, days): return [reminder(l, days) for l in loans]
+def scheduler(loans, days): return [reminder(loan, days) for loan in loans]
 def reminder(loan, days): return format_line(loan, days or LOAN_DAYS)
 def format_line(loan, days): return f"{loan['book']} due in {days or LOAN_DAYS} days"
+EOF
+cat > tests/test_reminders.py <<'EOF'
+import subprocess
+import sys
+import unittest
+
+
+class ExistingReminderBehavior(unittest.TestCase):
+    def test_cli_uses_club_wide_loan_length(self):
+        result = subprocess.run([sys.executable, "src/shelfnote.py", "overdue"],
+                                text=True, capture_output=True, check=True)
+        self.assertEqual(result.stdout, "Middlemarch due in 21 days\n")
 EOF

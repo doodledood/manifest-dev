@@ -8,23 +8,13 @@ weight: 1
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
 
-The requester asked for the preview to be "fast", gave today's figure (about 25 fps on
-levels/harbor.lvl), said they have no target number, and said nobody has profiled it. So no one
-knows how fast it can get.
+The requester asked for the preview to be fast, reported about 25 fps today, gave no target,
+and said nobody has profiled it. The achievable frame rate is unknown.
 
-Find every gate — acceptance criterion, invariant, or other check that must pass before the work
-counts as done — that binds the preview's speed. For each, classify the bar it binds:
-
-- **FLOOR** — a bar the request supports: faster than the measured 25 fps baseline, a measurable
-  improvement measured the same way, or a verdict that states faster, slower, or inconclusive
-  with what limits the number.
-- **RECORDED** — a specific frame rate the gate binds that the spec records as an assumption or
-  proposed default with its reason, so the requester can veto it.
-- **INVENTED** — a specific frame rate (30, 60, 144…) or other speed number bound as a pass bar
-  with no recorded reason.
-
-A higher target that appears only as an aim in guidance, advice, or the approach — not as a pass
-bar — is fine.
-
-PASS if every speed gate is FLOOR or RECORDED and at least one speed gate exists. FAIL if any is
-INVENTED, or if no gate binds speed at all.
+Inspect every binding speed gate. PASS only if at least one requires measured improvement over
+a comparable measured baseline, and any higher hoped-for frame rate remains advisory. The
+rough 25 fps report can motivate the work; it is not a substitute for a comparable baseline.
+FAIL if an unestablished higher FPS value becomes a required pass bar, even when recorded as an
+assumption or justified by a preference for smoothness. A verdict saying faster, slower or
+inconclusive without requiring improvement does not satisfy the requested outcome.
+A useful floor may be behavioral and need not invent a numeric target.

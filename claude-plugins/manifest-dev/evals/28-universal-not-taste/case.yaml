@@ -1,0 +1,4 @@
+schema_version: "1.0"
+name: 28-universal-not-taste
+context:
+  scaffold_script: scaffold.sh

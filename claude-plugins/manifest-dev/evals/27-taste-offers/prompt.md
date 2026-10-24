@@ -6,7 +6,7 @@ allowed_tools: [Skill, Read, Glob, Grep, Write, Edit, Bash]
 model: opus
 runs: 1
 append_system_prompt: |
-  The user's memory file (~/.claude/CLAUDE.md, user-level, loaded in every session) contains:
+  The user's preference file (./preferences.md, loaded in this session) contains:
 
   ## Taste
 

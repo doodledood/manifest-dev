@@ -6,7 +6,7 @@ allowed_tools: [Skill, Read, Glob, Grep, Write, Bash]
 model: opus
 runs: 1
 ---
-use the figure-out skill for this. i'm afk, dont ask me anything - work it out and come back with what you land on.
+use the figure-out skill with --autonomous for this. i'm afk, dont ask me anything - work it out and come back with what you land on.
 
 we need a getting-started guide for Tally. figure out its structure - the sections, what goes in
 each, roughly how long, and where it lives (in-app, web page, PDF). i want to hand the structure
