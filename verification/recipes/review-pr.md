@@ -30,4 +30,5 @@ Workload: varies
 - Posting is public and does not undo. Never drive it on someone else's pull request to test it.
 - A drive through `scripts/drive-skill.sh` runs as you, with whatever GitHub access the driving machine has, so drive it only with a prompt naming a throwaway repository the run owns; where `gh` is not signed in, its GitHub entry points are `unreachable`.
 - Manifest mode needs the checkout at the pull request's head.
+- Continued Manifest-mode loop wakes pass the applicable checkpoint and reporting scope to each evaluator. A fresh explicit invocation retains its requested independent review scope. This handoff remains unmeasured by a live review drive.
 - `tests/test_dist_skill_references.py` checks its markers, Manifest mode and fleet references. No behavior case.

@@ -107,14 +107,30 @@ project work: it keeps the recipes whose paths it touches and runs them as
 
 ## What holds for every gate
 
-How you verify is yours; these conventions are not. A gate declares `judgment` or
-`deterministic`; an undeclared kind is invalid, never inferred. Read a gate from the
-Manifest by ID, never from a copy. A judgment gate reads the full change once, then only
-prior findings' repairs and the delta; a deterministic gate re-runs in full. A finding below
+How you verify is yours; these conventions are not. Understand each gate before making the
+choices it constrains, including the applicable standards it delegates to a skill or reference.
+Use those standards during construction and evaluation, with their thresholds, exceptions, and
+trade-offs. This requires neither a preliminary review nor a fixed evaluation order.
+
+A gate declares `judgment` or `deterministic`; an undeclared kind is invalid, never inferred.
+Read a gate from the Manifest by ID, never from a copy. Keep track of the criteria and subject
+each piece of evidence assessed. Changes to either, or new external evidence, invalidate the
+affected evidence; retain what still applies. The subject includes relevant local work and
+external state, not just a commit identifier.
+
+A judgment gate reads the full change once, then checks outstanding findings and failures
+introduced or exposed by the changes since that evaluation; a deterministic gate re-runs in full.
+Give an invoked evaluator that reporting scope, the assessed state, prior findings, verified
+repairs, and the intervening changes. Recover missing context rather than silently requesting
+another full look. Contextual reading may be wide; touching an old line alone does not make an
+old issue new. A fresh standalone review keeps the scope its caller requested. A finding below
 a gate's bar, and a pre-existing issue unrelated to the change, is recorded rather than
 repaired, since every repair is a delta each judgment gate re-reads; `/done` and `/escalate`
 surface them for the user. A bar never moves down on the executor's judgment, and a summary
 claim is not evidence.
+
+When external review feedback arrives, directly or through `check-pr`, load
+`references/EXTERNAL_REVIEW.md` before acting on it.
 
 ## The execution log
 
