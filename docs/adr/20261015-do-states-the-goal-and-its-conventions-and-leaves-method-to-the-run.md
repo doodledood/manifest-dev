@@ -1,7 +1,7 @@
 # ADR: `/do` states the goal and its conventions, and leaves method to the run
 
 ## Status
-Accepted
+Accepted — clarified by 20261024-gate-criteria-and-evidence-travel-with-execution: delegated standards and applicable evidence travel with execution as shared conventions, while method and evaluation order remain free
 
 ## Area
 Prompt architecture

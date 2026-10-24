@@ -13,8 +13,9 @@ session's recall can match logs by repository and topic.
 
 When a caller supplies a journal path (for example, the default `/babysit-pr` journal), that
 caller-supplied journal *is* the log — no second file. When the caller reinvokes `/do` on it for
-a new run, append a `Run initialized` boundary and start an empty ledger:
-prior gate verdicts remain historical and are not carried into the new run.
+a new run, append a `Run initialized` boundary. Recheck the applicability of prior evidence
+against the current criteria and subject before carrying it forward. Preserve supported finding
+dispositions and verified repairs; a new invocation alone does not erase them.
 
 ## Discipline
 
@@ -34,10 +35,11 @@ Record what the finished state will not reconstruct on its own:
 - **Departures** — from the Initial Approach, the Deliverable order or a Process Guidance item,
   and why.
 - **Dead ends** — fixes tried and reverted, approaches rejected that left no commit.
-- **Gate state** — verdicts and their evidence, staleness, and for each judgment gate whether it
-  has taken its full look, the artifact state that look read (for repository work, the head
-  SHA), the findings it issued and which repairs are verified, so a session resuming after
-  compaction knows whether each one owes a full look or a delta check, and against what.
+- **Gate state** — assessed criteria and subject, verdicts and their evidence, staleness, and
+  whether each judgment gate has taken its full look. Identify relevant local work and external
+  observations as well as the repository head. Keep the findings, their dispositions and support,
+  and which repairs are verified, so a resumed run can determine what evidence still applies and
+  what each continued evaluation must check.
 - **Amendments** — what changed, which gates it unverified, and the assumptions it added.
 - **Handed over** — findings below a gate's bar, pre-existing issues left as unrelated, and a gate
   bar the run read as suspect with how that settled.

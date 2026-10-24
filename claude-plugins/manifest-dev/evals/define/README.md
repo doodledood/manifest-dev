@@ -76,6 +76,12 @@ weighed against added complexity. Its encoding is not graded by a define case; f
 `40-shape-before-build` grades the design distinction before encoding, rather than duplicating
 that scenario here. The affected coding cases remain unmeasured and earlier results stale.
 
+The 2026-10-24 change removed the task file's stale claim of mandatory late advisory review and
+allowed reasoned declines of correct but optional PR comments. These affect executor guidance;
+the define suite does not measure repeated review or external-feedback convergence. The `do`,
+`review-code`, `check-pr`, and `babysit-pr` recipes carry unmeasured scenarios for those behaviors.
+Earlier define measurements remain stale, and unmeasured cases remain unmeasured.
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for

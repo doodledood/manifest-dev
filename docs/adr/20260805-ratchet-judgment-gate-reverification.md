@@ -1,7 +1,7 @@
 # ADR: Judgment Gates re-verify by Ratchet, not by re-sampling
 
 ## Status
-Accepted — narrowed by 20260816-an-invocation-is-the-signal-to-review-again, which keeps review-pr's ratchet at the pull request boundary on loop wakes but not on a fresh invocation; narrowed again by 20260914-one-skill-per-beat-built-from-the-lean-body, which retired `--exhaustive-verification` so the Ratchet is now `/do`'s only judgment-gate re-read behavior rather than a default with an opt-out
+Accepted — narrowed by 20260816-an-invocation-is-the-signal-to-review-again, which keeps review-pr's ratchet at the pull request boundary on loop wakes but not on a fresh invocation; narrowed again by 20260914-one-skill-per-beat-built-from-the-lean-body, which retired `--exhaustive-verification` so the Ratchet is now `/do`'s only judgment-gate re-read behavior rather than a default with an opt-out; amended by 20261024-gate-criteria-and-evidence-travel-with-execution, which replaces the mandatory late advisory sweep with criterion-informed construction and evidence handoffs; clarified by 20261024-external-review-feedback-needs-an-adoption-decision, which preserves assessment of independently supplied failure evidence
 
 ## Area
 define / do

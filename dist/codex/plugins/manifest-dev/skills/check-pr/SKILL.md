@@ -216,5 +216,5 @@ These are invariants. They hold regardless of steering or context.
 
 ## Gotchas
 
-- **Bot comments repeat after push.** Bots re-scan after every commit and emit new comment IDs for the same finding. Track recurring *thread* suggestions by content fingerprint, not comment ID, to avoid loops. Unthreaded GitHub-App IssueComments are not this gate. `review-pr`'s own comments carry a hidden `<!-- manifest-dev:review-pr -->` marker (in manifest mode, with the criterion id) — an inbox signal for this gate, even when posted under a human's account, not a skip.
+- **Bot comments repeat after push.** Bots can emit new comment IDs for the same finding. Report every outstanding item's current state and action target; the caller tracks substantive dispositions across IDs. A prior disposition does not by itself address a new thread or satisfy a required check or approval. Unthreaded GitHub-App IssueComments are not this gate. `review-pr`'s own comments carry a hidden `<!-- manifest-dev:review-pr -->` marker (in manifest mode, with the criterion id) — an inbox signal for this gate, even when posted under a human's account, not a skip.
 - **Resolution needs evidence.** Leave a thread open when the addressing signal is ambiguous. GitHub supports reopening a resolved thread, but this inspector only reports state; any correction belongs to the authorized caller.

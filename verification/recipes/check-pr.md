@@ -23,12 +23,18 @@ Proves: one PASS or FAIL report with a line per gate; the report's mergeability 
 Check: read
 Workload: varies
 
+### feedback-snapshot
+Run: `scripts/drive-skill.sh check-pr verification/prompts/check-pr-feedback-snapshot.md --scaffold verification/fixtures/pr-feedback`
+Proves: the inspector reports the current unresolved thread IDs and outstanding required approval, even where a thread repeats an older claim. It reports action targets without judging the claims' validity or composing replies. No outbound action is recorded while the inspector is active. Its verdict remains FAIL; prior dispositions cannot clear current remote state.
+Check: read
+Workload: varies
+
 ## Gotchas
 
 - The prompt file carries the placeholder `THROWAWAY_PR_URL`; replace it with a throwaway pull request the run may read before driving.
 - Needs `gh auth status` to succeed in the session and a pull request the run may read.
-- Without GitHub access every entry point is `unreachable`.
+- The live inspect scenario is unreachable without GitHub access. The feedback-snapshot scenario uses complete local observations instead and does not establish live transport or mutation behavior.
 - A drive through `scripts/drive-skill.sh` runs as you, with whatever GitHub access the driving machine has, so drive it only with a prompt naming a throwaway repository the run owns; where `gh` is not signed in, its GitHub entry points are `unreachable`.
 - GitHub's `UNKNOWN` merge state is a wait, not a PASS.
 - PASS means mergeable, not authorized to merge.
-- `tests/test_skill_frontmatter.py` and `tests/test_entry_points.py` hold that the skill parses and stays in the declared set. No behavior case measures it. define's pull-request lifecycle task file names it as a gate.
+- `tests/test_skill_frontmatter.py` and `tests/test_entry_points.py` hold that the skill parses and stays in the declared set. The feedback-snapshot drive is unmeasured. define's pull-request lifecycle task file names it as a gate.

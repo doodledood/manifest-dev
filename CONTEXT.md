@@ -186,7 +186,7 @@ A gate whose verdict comes from a command or check that returns the same outcome
 _Avoid_: Binary gate.
 
 **Ratchet**:
-A re-verification discipline for Judgment Gates where the first evaluation reads the full change and every later evaluation judges only the prior findings' repairs and the changed delta, closing the finding space after the first full look.
+A re-verification discipline for Judgment Gates where the first evaluation reads the full change and later evaluations check outstanding findings and failures introduced or exposed by subsequent changes. Applicable criteria, subject state, and finding dispositions travel with the evaluation. This bounds repeat searches without suppressing independently supplied evidence of a relevant failure.
 _Avoid_: Round cap, round limit.
 
 **Skill**:

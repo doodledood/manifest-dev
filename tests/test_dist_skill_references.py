@@ -679,7 +679,8 @@ def test_self_independence_detector_catches_semantic_variants() -> None:
         assert not claims_self_verification_is_independent(claim), claim
 
 
-# Holds the decision in docs/adr/20260709-do-keeps-default-execution-log-manifest-stays-contract.md.
+# Holds the log contract, amended by
+# docs/adr/20261024-gate-criteria-and-evidence-travel-with-execution.md.
 def test_do_log_prompts_preserve_journal_boundaries() -> None:
     log_files = [
         ROOT / "claude-plugins/manifest-dev/skills/do/references/LOG.md",
@@ -690,8 +691,11 @@ def test_do_log_prompts_preserve_journal_boundaries() -> None:
         assert "Use the path `SKILL.md` names" in text, path
         assert "caller-supplied journal" in text, path
         assert "append a `Run initialized` boundary" in text, path
-        assert "prior gate verdicts remain historical" in text, path
-        assert "not carried into the new run" in text, path
+        assert "Recheck the applicability of prior evidence" in text, path
+        assert "current criteria and subject" in text, path
+        assert "Preserve supported finding" in text, path
+        assert "dispositions and verified repairs" in text, path
+        assert "start an empty ledger" not in text, path
 
     babysit_files = [
         ROOT / "claude-plugins/manifest-dev-tools/skills/babysit-pr/SKILL.md",
@@ -700,8 +704,13 @@ def test_do_log_prompts_preserve_journal_boundaries() -> None:
     for path in babysit_files:
         text = path.read_text(encoding="utf-8")
         assert "appends a new run boundary" in text, path
-        assert "prior verdicts remain historical" in text, path
-        assert "not carried into the active run" in text, path
+        assert (
+            "prior evidence, finding dispositions, and verified repairs" in text
+        ), path
+        assert (
+            "applicability checking against current criteria and PR state" in text
+        ), path
+        assert "not carried into the active run" not in text, path
 
     define_files = [
         ROOT / "claude-plugins/manifest-dev/skills/define/SKILL.md",
@@ -800,7 +809,9 @@ def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
             "told to read the gate's text from the file rather than receiving a "
             "copy of it" in text
         )
-        assert "regardless of which `/do --verification` mode" in text
+        assert "regardless of how the author verified the branch" in text
+        assert "`/do --verification`" not in text
+        assert "On a continued loop wake, pass each evaluator" in text
         assert "model choice is not manifest data" in text
         # Manifest mode validates against the same current schema `/do` enforces.
         assert (

@@ -46,11 +46,23 @@ Proves: defect-class passes the `not loan["returned"]` condition as the repair o
 Check: read
 Workload: varies
 
+### follow-up
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-follow-up.md --scaffold verification/fixtures/review-continuity`
+Proves: the report closes F1 because private notes no longer leak, retains F2 because the last line is still missing from the total, and reports the repair's conversion of identifier strings to integers. It does not add a finding about the unchanged sorting of line SKUs. The report names the prior reviewed state and current scope; broad contextual reading is allowed.
+Check: read
+Workload: varies
+
+### fresh
+Run: `scripts/drive-skill.sh review-code verification/prompts/review-code-fresh.md --scaffold verification/fixtures/review-continuity`
+Proves: this new explicit full review reports the input-order violation from sorting SKUs, as well as the identifier and total defects. Historical review files do not silently narrow the requested scope. The fixture is the same as follow-up, so the requested review scope explains the different eligible findings.
+Check: read
+Workload: varies
+
 ## Gotchas
 
 - Each prompt builds its own scratch repository state: a commit on a branch ahead of its default branch.
 - One dimension per call; asking for two gets one.
 - `defect-class` needs a change that fixes a defect, or it reports none found.
 - No comparison base resolves to BLOCKED.
-- `tests/test_review_scope.py` pins how scope is resolved. No behavior case measures the review.
+- `tests/test_review_scope.py` exercises the scope commands; `tests/test_drive_scripts.py` checks convergence fixtures. The follow-up and fresh drives are unmeasured; fixture checks do not measure review behavior.
 - Not yet driven: the description phrases, define's coding gates, review-pr's fleet.

@@ -12,6 +12,10 @@ Audit a change along **one** review dimension and report findings. Load only tha
 
 `$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. A manifest gate's body activates this skill with the dimension under `/do`'s selected evaluator; the gate names the dimension and this skill owns the threshold. If no dimension is given, list the available dimensions and ask which one — one invocation, one dimension.
 
+A caller requesting a follow-up also supplies the prior assessed state and criteria, findings,
+verified repairs, and changes since that evaluation. A new standalone review remains fresh even
+when an earlier report exists.
+
 ## Dimensions and thresholds
 
 Load `references/<dimension>.md` for the requested dimension and follow it. Its standards are opinionated defaults: where a rule the user stated, in the session or a context file, or a convention the project states or documents (not a pattern its code merely repeats) differs, that rule governs, a change following it raises no finding, and the report names the rule applied — except a Critical finding on the ladder below, which is still reported, naming the rule that produced it. The threshold is the bar a change must clear to PASS on that dimension:
@@ -38,6 +42,14 @@ The split is structural: **defect-finders** report only divergences/defects/cont
 **Some dimensions are conditional**, and the caller decides whether they apply before requesting them: `contracts` where the change touches API surfaces or durable data contracts, `type-safety` on typed code, and `defect-class` where the change **fixes a defect**. `defect-class` is the one dimension that takes a defect as input rather than producing one as output — it judges the repair's protection against the demonstrated mechanism and accounts for affected sites, so on a change that fixes nothing it has no input and nothing to judge. Requesting it anyway is not an error; it reports PASS and says no fix was found in scope.
 
 ## Determining scope (shared across dimensions)
+
+For a requested follow-up, use the caller's applicable prior state. Report outstanding findings
+and failures introduced or exposed by the intervening changes, with evidence for which prior
+findings are repaired. Read context as widely as needed; an old issue on a touched line is not
+new merely because the line changed. If the needed prior state is missing, recover it or report
+BLOCKED with what is missing, rather than silently reviewing the complete change again.
+
+For a fresh review, resolve its scope as follows:
 
 1. **Caller specifies files/paths** → review exactly those.
 2. **Otherwise** → review the complete change. Resolve the comparison base from the PR target or the repository's remote default branch; ask only if neither can be established. Inspect committed changes with `git diff <base>...HEAD`, staged changes with `git diff --cached`, unstaged changes with `git diff`, and relevant new files from `git ls-files --others --exclude-standard`. Read each new file's contents; a path listing alone is not its diff.
@@ -67,6 +79,9 @@ Each dimension's reference refines these with domain-specific calibration — de
 **Threshold**: no LOW+ | no MEDIUM+
 **Status**: PASS | FAIL
 **Files analyzed**: [...]
+
+## Prior findings (follow-ups only)
+- [prior finding]: repaired | unresolved — [evidence]
 
 ## Findings
 ### Finding #1: [title]

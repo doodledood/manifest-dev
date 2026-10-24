@@ -175,15 +175,189 @@ def assert_isolated(call: Call) -> None:
 
 
 def drive(
-    env: dict[str, str], *args: str, prompt: Path | None = None
+    env: dict[str, str],
+    *args: str,
+    prompt: Path | None = None,
+    feature: str = "figure-out",
 ) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        [str(DRIVE), "figure-out", str(prompt or RECIPES / "figure-out.md"), *args],
+        [str(DRIVE), feature, str(prompt or RECIPES / "figure-out.md"), *args],
         env=env,
         capture_output=True,
         text=True,
         timeout=60,
     )
+
+
+def convergence_project(
+    tmp_path: Path, toolbox: Path, fixture: str, prompt: str, feature: str = "do"
+) -> Path:
+    """Exercise the real scaffold boundary with a CLI stand-in, never a paid model."""
+    env = setup(
+        tmp_path,
+        toolbox,
+        STANDIN_TRANSCRIPT=lines(GOOD).replace(
+            "manifest-dev:figure-out", f"manifest-dev:{feature}"
+        ),
+    )
+    result = drive(
+        env,
+        "--scaffold",
+        str(REPO_ROOT / "verification/fixtures" / fixture),
+        prompt=REPO_ROOT / "verification/prompts" / prompt,
+        feature=feature,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    call = calls(tmp_path)[0]
+    assert_isolated(call)
+    assert "Proves:" not in call["args"][-1]
+    return Path(call["cwd"])
+
+
+def test_criterion_scaffold_hides_the_standard_from_the_initial_prompt(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path, toolbox, "criterion-discovery", "do-criterion-discovery.md"
+    )
+    records = json.loads((project / "customers.json").read_text())
+    assert [record["id"] for record in records] == ["003", "010"]
+    assert records[0]["note"] == "" and "note" not in records[1]
+    assert "leading zeros" in (project / "interchange.md").read_text()
+    assert "leading zeros" not in calls(tmp_path)[0]["args"][-1]
+    assert not (project / "customers-export.json").exists()
+
+
+# Holds the fixture evidence for 20261024-gate-criteria-and-evidence-travel-with-execution.
+def test_review_fixture_has_repair_regression_and_unchanged_findings(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path,
+        toolbox,
+        "review-continuity",
+        "review-code-follow-up.md",
+        "review-code",
+    )
+    prior = (project / "prior-review.md").read_text()
+    reviewed = prior.split("Reviewed commit: `", 1)[1].split("`", 1)[0]
+    source = subprocess.check_output(
+        ["git", "show", f"{reviewed}:order_export.py"], cwd=project, text=True
+    )
+    (project / "initial-export.py").write_text(source)
+    result = subprocess.check_output(
+        [
+            "python3",
+            "-c",
+            "import json, runpy; "
+            "order={'id':'003','private_note':'internal','lines':"
+            "[{'sku':'B','quantity':2,'unit_price':5},"
+            "{'sku':'A','quantity':1,'unit_price':7}]}; "
+            "print(json.dumps([runpy.run_path(p)['export_order'](order) "
+            "for p in ['initial-export.py','order_export.py']]))",
+        ],
+        cwd=project,
+        text=True,
+    )
+    initial, repaired = json.loads(result)
+    assert initial["private_note"] == "internal" and "private_note" not in repaired
+    assert initial["total"] == repaired["total"] == 10  # Contract total is 17.
+    assert initial["id"] == "003" and repaired["id"] == 3
+    assert initial["items"] == repaired["items"] == ["A", "B"]  # Input order is B, A.
+    assert "F1:" in prior and "F2:" in prior
+    assert "identifier" not in prior and "sort" not in prior
+
+
+def test_resume_fixture_changes_criteria_and_uncommitted_data_but_not_receipt(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path, toolbox, "evidence-resume", "do-evidence-resume.md"
+    )
+    receipt = (project / "receipt.txt").read_bytes()
+    old_manifest = (project / "manifest.md").read_text()
+    for pending in (project / "resumed-inputs").iterdir():
+        shutil.copyfile(pending, project / pending.name)
+    assert "includes a header" not in old_manifest
+    assert "includes a header" in (project / "manifest.md").read_text()
+    assert json.loads((project / "orders.json").read_text()) == [
+        {"id": "003", "quantity": 2}
+    ]
+    diff = subprocess.check_output(["git", "diff"], cwd=project, text=True)
+    assert "orders.json" in diff and "format.md" in diff and "manifest.md" in diff
+    assert (project / "receipt.txt").read_bytes() == receipt
+    assert (project / "report.tsv").read_text() == "3,1\n"
+    assert (project / "quantity.txt").read_text() == "1\n"
+    assert (
+        old_manifest.split("#### AC-1.4", 1)[1]
+        == (project / "manifest.md").read_text().split("#### AC-1.4", 1)[1]
+    )
+    assert "AC-1.4: PASS" in (project / "execution-log.md").read_text()
+
+
+# Holds fixture evidence for 20261024-external-review-feedback-needs-an-adoption-decision.
+@pytest.mark.parametrize("fixture,total", [("pr-feedback", 10), ("pr-nits", 17)])
+def test_feedback_snapshots_bind_to_the_runner_head_and_preserve_the_code_case(
+    tmp_path: Path, toolbox: Path, fixture: str, total: int
+) -> None:
+    project = convergence_project(tmp_path, toolbox, fixture, "do-external-feedback.md")
+    subprocess.run(["python3", "prepare-snapshots.py"], cwd=project, check=True)
+    head = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=project, text=True
+    ).strip()
+    for name in ("pr-state.json", "pr-nits-1.json", "pr-nits-2.json"):
+        state = json.loads((project / name).read_text())["pullRequest"]
+        assert state["headRefOid"] == head
+        assert all(check["headSha"] == head for check in state["statusCheckRollup"])
+        assert state["reviewDecision"] == "REVIEW_REQUIRED"
+        assert all(
+            not thread["isResolved"] for thread in state["reviewThreads"]["nodes"]
+        )
+    result = subprocess.check_output(
+        [
+            "python3",
+            "-c",
+            "from order_export import export_order; "
+            "print(export_order({'id':'003','lines':"
+            "[{'sku':'B','quantity':2,'unit_price':5},"
+            "{'sku':'A','quantity':1,'unit_price':7}]})['total'])",
+        ],
+        cwd=project,
+        text=True,
+    )
+    assert int(result) == total
+    assert not (project / "remote-actions.jsonl").exists()
+
+
+def test_nit_wave_transition_preserves_prior_observations_code_and_journal(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(tmp_path, toolbox, "pr-nits", "do-distinct-nits.md")
+    subprocess.run(["python3", "prepare-snapshots.py"], cwd=project, check=True)
+    first = (project / "pr-nits-1.json").read_bytes()
+    old_head = json.loads(first)["pullRequest"]["headRefOid"]
+    code = (project / "order_export.py").read_bytes()
+    journal = (
+        project / "execution-log.md"
+    ).read_bytes() + b"\nFirst advance disposition.\n"
+    (project / "execution-log.md").write_bytes(journal)
+    subprocess.run(["git", "add", "execution-log.md"], cwd=project, check=True)
+    subprocess.run(
+        ["python3", "prepare-snapshots.py", "--next-nits"], cwd=project, check=True
+    )
+    second = json.loads((project / "pr-nits-2.json").read_text())["pullRequest"]
+    new_head = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=project, text=True
+    ).strip()
+    assert new_head != old_head and second["headRefOid"] == new_head
+    assert all(check["headSha"] == new_head for check in second["statusCheckRollup"])
+    assert (project / "pr-nits-1.json").read_bytes() == first
+    assert (project / "order_export.py").read_bytes() == code
+    assert (project / "execution-log.md").read_bytes() == journal
+    changed = subprocess.check_output(
+        ["git", "diff", "--name-only", old_head, new_head], cwd=project, text=True
+    )
+    assert changed.splitlines() == ["fixture-push.txt"]
 
 
 def test_the_scripts_parse() -> None:
