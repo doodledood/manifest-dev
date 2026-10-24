@@ -813,8 +813,8 @@ def test_operational_guidance_has_no_stale_per_gate_topology() -> None:
     assert not RETIRED_GATE_FIELDS.search(example)
 
 
-# Holds the decision in docs/adr/20261024-pr-review-consolidation-can-use-the-current-context.md.
-def test_review_pr_consolidation_does_not_require_another_context() -> None:
+# Holds the decision in docs/adr/20261024-pr-review-chooses-its-internal-contexts.md.
+def test_review_pr_required_inspections_keep_context_choice() -> None:
     for root in (
         ROOT / "claude-plugins/manifest-dev-tools/skills",
         DIST / "codex/plugins/manifest-dev-tools/skills",
@@ -825,7 +825,18 @@ def test_review_pr_consolidation_does_not_require_another_context() -> None:
         )[0]
         assert "Invoke the `review-pr-holistic` skill" in consolidation
         assert "After every required inspection has returned" in consolidation
-        assert "in this session, or in an isolated context when useful" in consolidation
+        assert "Run the required inspections in this session or delegate" in text
+        assert "related work may share a context" in text
+        assert "Honor an explicit request for independent review" in text
+        assert "report the context actually used" in text
+        assert "invoke the `review-pr-thread-verify` skill" in text
+        assert "Activate the `review-code` skill for each required dimension" in text
+        assert "Activate the `review-pr-judgment` skill as its own assessment" in text
+        assert "the author's explanation or success report" in text.lower()
+        assert "**Narrow-lens reviewers.**" not in text
+        assert "one isolated execution context per dimension" not in text
+        assert "own isolated execution context" not in text
+        assert "launch an isolated execution context" not in text
         assert (
             "consolidation cannot turn an incomplete evaluation into a clean result"
             in (consolidation)
@@ -834,8 +845,11 @@ def test_review_pr_consolidation_does_not_require_another_context() -> None:
         assert "where no isolated context is available" not in consolidation
 
 
-# Holds the decision in docs/adr/20260619-manifest-aware-review-pr.md.
-def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
+# Holds the decisions in docs/adr/20260619-manifest-aware-review-pr.md and
+# docs/adr/20261024-pr-review-chooses-its-internal-contexts.md.
+def test_review_pr_manifest_mode_keeps_per_gate_results_without_forced_contexts() -> (
+    None
+):
     references = [
         ROOT
         / "claude-plugins/manifest-dev-tools/skills/review-pr/references/MANIFEST_MODE.md",
@@ -844,16 +858,21 @@ def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
     ]
     for path in references:
         text = path.read_text(encoding="utf-8")
-        assert (
-            "one fresh independent verifier execution per Acceptance Criterion" in text
-        )
+        assert "assess every Acceptance Criterion and Global Invariant" in text
+        assert "related gates may share a context" in text
+        assert "each retains its own verdict and evidence" in text
+        assert "Each gate returns PASS, FAIL, or BLOCKED" in text
+        assert "one fresh independent verifier execution" not in text
+        assert "that is a weaker review" not in text
+        assert "own isolated execution context" not in text
+        assert "State the actual review context and model" in text
         # The reviewer reads the canonical gate text from the manifest rather than
         # a copy handed to it — the guarantee the retired `verify.instructions`
         # verbatim-pass rule used to carry.
-        assert "each pointed at that gate by ID" in text
+        assert "Each assessment is pointed at that gate by ID" in text
         assert (
-            "told to read the gate's text from the file rather than receiving a "
-            "copy of it" in text
+            "reads the gate's text from the file rather than receiving a copy of it"
+            in text
         )
         assert "regardless of how the author verified the branch" in text
         assert "`/do --verification`" not in text

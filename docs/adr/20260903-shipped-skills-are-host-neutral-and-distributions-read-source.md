@@ -1,7 +1,7 @@
 # ADR: Shipped skill text is host-neutral; distributions read the source tree instead of rewriting it
 
 ## Status
-Accepted
+Accepted; clarified by 20261024-pr-review-chooses-its-internal-contexts: PR review may activate its helper skills in the current session or delegate when useful; host-neutral wording and inline availability remain
 
 ## Area
 Repo layout

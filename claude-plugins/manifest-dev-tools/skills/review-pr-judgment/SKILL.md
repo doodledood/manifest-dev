@@ -10,7 +10,7 @@ The reviewer-fleet dimensions find defects inside a change whose intent is taken
 
 **The single question:** *Does this change — its existence, its approach, and its footprint — earn its keep against the pain it solves, and is anything the pain requires missing?*
 
-It runs as a **wide-context pass**. **Receives:** the PR description, the PR conversation, the codebase direction, the **full PR-head diff** (`base..head`, the whole PR), and, in manifest mode, the manifest's Intent as the stated pain — context the narrow-lens defect reviewers never see. It is **non-blocking**: every finding is a question the author answers, never a gate. The caller decides where this runs and gates fresh generation to once per PR; this skill only judges and returns.
+It runs as a **wide-context pass**. **Receives:** the PR description, the PR conversation, the codebase direction, the **full PR-head diff** (`base..head`, the whole PR), and, in manifest mode, the manifest's Intent as the stated pain. It is **non-blocking**: every finding is a question the author answers, never a gate. The caller decides where this runs and gates fresh generation to once per PR; this skill only judges and returns.
 
 ## Altitude — whole-PR only
 

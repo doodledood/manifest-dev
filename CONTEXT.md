@@ -345,7 +345,7 @@ _Avoid_: Ticket sweep, batch runner, scheduler.
 - A **Host Continuation Backstop** is an outer guard for unattended runs; it does not replace the **Do/Verify Loop**.
 - A **Phase Checkpoint** can protect a handoff between workflow phases, while terminal completion stays tied to the final deliverable's acceptance evidence.
 - **Babysit PR** and **Review PR** can run asynchronously on the same pull request: **Review PR** applies quality pressure, while **Babysit PR** drives the author-side lifecycle toward green and mergeable.
-- **Review PR** in manifest mode independently re-verifies a **Manifest** against the pull request head.
+- **Review PR** in manifest mode re-verifies a **Manifest** against the pull request head.
 - The **Judgment Layer** runs inside **Review PR** (both modes) as non-binding questions, kept distinct from a **Manifest**'s binding **Acceptance Criteria** and from the defect fleet.
 - A **Steering Message** is encoded by autonomous amendment, with judgment calls audited as Known Assumptions and pivots recorded in the **Execution Log**.
 - `/do` keeps an **Execution Log** keyed to the **Manifest**, which is what lets a relaunch reopen the same file.

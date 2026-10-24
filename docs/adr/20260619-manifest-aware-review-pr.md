@@ -1,7 +1,7 @@
 # ADR: Manifest-aware review-pr instead of a standalone GitHub verification plugin
 
 ## Status
-Accepted
+Accepted; amended by 20261024-pr-review-chooses-its-internal-contexts: complete per-gate review remains; context placement is the reviewer's choice
 
 ## Area
 PR review
@@ -44,7 +44,7 @@ Operationally, the desired "execution + independent verification collaborate ove
 - Cross-model AC re-execution may have low marginal value if in-session fresh-context AC subagents already catch most same-model misreads; the durable win then concentrates in the encoded `review-code` invariant rather than AC re-running.
 
 ## Enforced by
-partly — `tests/test_dist_skill_references.py` — `test_review_pr_manifest_mode_remains_independently_per_gate` fails if `review-pr` loses its manifest mode or its per-gate independent verification; skipping the generic fleet when a Manifest is present is judgment.
+partly — `tests/test_dist_skill_references.py::test_review_pr_manifest_mode_keeps_per_gate_results_without_forced_contexts` preserves complete per-gate results, canonical text reads, and current schema validation while permitting shared contexts; skipping the generic fleet when a Manifest is present is judgment.
 
 ## Source
 - Governs behavior of the `review-pr`, `define`, `do`, and `babysit-pr` skills.
