@@ -71,7 +71,7 @@ One status page shows progress, evidence waits, and what needs you. A wait names
 
 ## Decide what to delegate
 
-An **assignment** says what to do now: investigate, review, build, or coordinate. **Delegation** says which decisions it may make inside that work. Existing skill defaults remain; you only need to state adjustments. `/setup-project` reads existing instructions and shows the exact shared or personal text before saving new choices. Shared rules live in the project's context file or a reachable companion; personal rules stay in your private instructions.
+An **assignment** says what to do now: investigate, review, build, or coordinate. **Delegation** says which decisions it may make inside that work. Existing skill defaults remain; you only need to state adjustments. `/setup-project` reads existing instructions and shows the exact shared or personal text before saving new choices. When you accept coordination, it asks which decisions you keep. A run with no person present flags those offers and writes nothing. Shared rules live in the project's context file or a reachable companion; personal rules stay in your private instructions.
 
 You can delegate visual direction and still retain acceptance of the rendered result. Accepting a version does not accept a materially changed version. Technical delegation also preserves a team's required review. A worker keeps the intent, evidence, and current authority through handoffs and stops dependent work at a retained decision.
 
