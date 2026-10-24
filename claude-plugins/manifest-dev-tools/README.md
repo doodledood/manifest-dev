@@ -16,7 +16,7 @@ Three skills cover the two sides of a review:
 | `/babysit-pr` | The author's side: tends a pull request through checks, review threads, and mergeability. CI one-shot runs report pending once only waiting remains. Never presses merge. |
 | `/walk-pr` | Walks a large diff with you, one piece at a time. |
 
-Three more ship for `/review-pr` to call rather than for you to invoke — each runs in its own execution context where the host offers one, and inline where it does not:
+Three more ship for `/review-pr` to call rather than for you to invoke — the reviewer chooses whether to run them in its current context or delegate when useful:
 
 | Skill | Called by `/review-pr` to |
 |-------|--------------------------|

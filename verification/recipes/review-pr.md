@@ -1,6 +1,6 @@
 ---
 kind: skill
-covers: claude-plugins/manifest-dev-tools/skills/review-pr, claude-plugins/manifest-dev-tools/skills/review-pr-holistic
+covers: claude-plugins/manifest-dev-tools/skills/review-pr, claude-plugins/manifest-dev-tools/skills/review-pr-holistic, claude-plugins/manifest-dev-tools/skills/review-pr-judgment, claude-plugins/manifest-dev-tools/skills/review-pr-thread-verify
 ask-first: starts an agent session per scenario, which uses model quota
 dry-run: honored
 ---
@@ -37,6 +37,6 @@ Workload: varies
 - A drive through `scripts/drive-skill.sh` runs as you, with whatever GitHub access the driving machine has, so drive it only with a prompt naming a throwaway repository the run owns; where `gh` is not signed in, its GitHub entry points are `unreachable`.
 - Manifest mode needs the checkout at the pull request's head.
 - Continued Manifest-mode loop wakes pass the applicable checkpoint and reporting scope to each evaluator. A fresh explicit invocation retains its requested independent review scope. This handoff remains unmeasured by a live review drive.
-- Consolidation may run in the caller's context or an isolated context when useful. The other independent inspections retain their existing context requirements.
+- The reviewer chooses context placement for thread assessments, dimensions, premise checks, consolidation, and Manifest gates. Required results and evidence remain per item; reporting names the actual context used.
 - `consolidation` stops before posting and uses only a local snapshot. It does not establish live GitHub transport, the fleet's finding accuracy, or the quality difference between context choices. It is **unmeasured** until driven; the free cold fixture test only checks its inputs and runner wiring.
-- `tests/test_dist_skill_references.py` checks its markers, Manifest mode, fleet references, and consolidation placement. `tests/test_drive_scripts.py::test_consolidation_fixture_preserves_review_state_and_reproducible_findings` exercises the consolidation scaffold with a CLI stand-in.
+- `tests/test_dist_skill_references.py` checks its markers, Manifest mode, dimension references, context choice, and complete per-gate results. `tests/test_drive_scripts.py::test_consolidation_fixture_preserves_review_state_and_reproducible_findings` exercises the consolidation scaffold with a CLI stand-in.

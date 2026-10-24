@@ -1,7 +1,7 @@
 # ADR: PR-review consolidation can use the current context
 
 ## Status
-Accepted
+Accepted; extended by 20261024-pr-review-chooses-its-internal-contexts: the same placement choice now covers the other PR-review inspections
 
 ## Area
 PR review
@@ -50,7 +50,7 @@ the findings worth posting nor posting and approval authority.
   provides repeatable inputs; fixture checks do not establish model behavior.
 
 ## Enforced by
-partly — `tests/test_dist_skill_references.py::test_review_pr_consolidation_does_not_require_another_context`
+partly — `tests/test_dist_skill_references.py::test_review_pr_required_inspections_keep_context_choice`
 pins the caller's choice and blocker rule in source and distribution. The `review-pr` recipe's
 `consolidation` scenario checks retained findings and context use; its model run remains unmeasured.
 

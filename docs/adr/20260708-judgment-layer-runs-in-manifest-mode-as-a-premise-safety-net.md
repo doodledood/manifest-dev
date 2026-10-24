@@ -1,7 +1,7 @@
 # ADR: The judgment layer runs in review-pr's manifest mode, not only no-manifest mode
 
 ## Status
-Accepted
+Accepted; clarified by 20261024-pr-review-chooses-its-internal-contexts: the premise check remains in both modes and non-blocking; a separate context is optional unless explicitly requested
 
 ## Area
 PR review
