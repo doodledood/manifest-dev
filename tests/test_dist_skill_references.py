@@ -580,6 +580,31 @@ def test_manifest_schema_stays_topology_neutral() -> None:
         assert not (refs / "exhaustive-verification.md").exists(), path
 
 
+# Holds the decision in docs/adr/20261024-research-delegation-follows-the-inquiry.md.
+def test_research_delegation_follows_the_inquiry_in_one_owning_default() -> None:
+    for root in (
+        ROOT / "claude-plugins/manifest-dev/skills/define/tasks/research",
+        DIST / "codex/plugins/manifest-dev/skills/define/tasks/research",
+    ):
+        base = (root / "RESEARCH.md").read_text(encoding="utf-8")
+        assert "when another context helps" in base
+        assert "may inspect sources directly" in base
+        assert "keeps tightly coupled reasoning together" in base
+        assert "independent checks" in base
+        for path in root.rglob("*.md"):
+            text = path.read_text(encoding="utf-8")
+            for retired in (
+                "never researches directly",
+                "never searches directly",
+                "one per source type",
+                "Parallel verification over serial",
+                "Delegated web research",
+            ):
+                assert retired not in text, path
+        web = (root / "sources/SOURCE_WEB.md").read_text(encoding="utf-8")
+        assert "execution contexts" not in web  # Delegation belongs to the base.
+
+
 # Holds the decision in docs/adr/20260807-a-gate-is-one-text-not-two.md.
 def test_every_operative_manifest_example_uses_the_current_gate_schema() -> None:
     """Every shipped gate example is written in the current gate schema.

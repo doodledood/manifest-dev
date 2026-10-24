@@ -82,6 +82,12 @@ the define suite does not measure repeated review or external-feedback convergen
 `review-code`, `check-pr`, and `babysit-pr` recipes carry unmeasured scenarios for those behaviors.
 Earlier define measurements remain stale, and unmeasured cases remain unmeasured.
 
+The 2026-10-24 research change makes delegation conditional on the inquiry, permits direct
+source inspection by the coordinator, and removes the web overlay's duplicate prescription.
+No case in this suite grades that research guidance. The `define` recipe's `research-delegation`
+drive covers its encoding and remains **unmeasured**; its fixture check does not establish model
+behavior or research quality. Existing stale results and unmeasured case statuses are unchanged.
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for

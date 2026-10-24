@@ -1,0 +1,9 @@
+{
+  "run": "migration-7",
+  "api_version": "2",
+  "mapping_file": "mapping.csv",
+  "requests": [
+    {"customer_ref": "3", "status": 404},
+    {"customer_ref": "014", "status": 200}
+  ]
+}
