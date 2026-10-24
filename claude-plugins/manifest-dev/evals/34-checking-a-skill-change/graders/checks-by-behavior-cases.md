@@ -13,5 +13,5 @@ run against the skill (new or existing cases in evals/, judged on what the run p
 and note that the recorded results go stale once the skill changes? Quote it.
 
 **Then judge:** PASS if the reply plans behavior cases for the five-line rule and its
-exception. FAIL if it plans no way to check the skill's behavior, or only rereads the
-prompt text.
+exception AND says existing recorded results become stale when the skill changes. FAIL if
+either is absent, if it plans only a text reread, or if it treats old scores as current evidence.

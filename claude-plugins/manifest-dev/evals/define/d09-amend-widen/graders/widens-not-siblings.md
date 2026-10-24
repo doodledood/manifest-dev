@@ -21,7 +21,10 @@ cover the reports page's exports, keeping its ID.
 3. Do AC-1.1, AC-1.3, INV-G1 and INV-G2 keep their IDs, and are they unchanged apart from
    edits the widening needed? YES or NO.
 
-**Then judge:** PASS if 1 is YES, 2 is NONE, and 3 is YES. FAIL otherwise.
+4. Do Problem, Appetite, Initial Approach and Deliverable description now include the export
+   surface, without retaining the rule that downloads stay in UTC? YES or NO.
+
+**Then judge:** PASS if 1, 3 and 4 are YES and 2 is NONE. FAIL otherwise.
 
 A new gate is fine if it covers something AC-1.2 never claimed (e.g. a test proving the export
 path). Only a sibling that duplicates AC-1.2's class for one instance fails question 2.

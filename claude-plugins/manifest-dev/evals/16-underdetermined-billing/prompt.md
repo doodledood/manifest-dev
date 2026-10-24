@@ -6,7 +6,7 @@ allowed_tools: [Skill, Read, Glob, Grep, Write, Bash]
 model: opus
 runs: 1
 ---
-use the figure-out skill for this. i'm afk, dont ask me anything - work out what's causing this and come back with what you land on.
+use the figure-out skill with --autonomous for this. i'm afk, dont ask me anything - work out what's causing this and come back with what you land on.
 
 some customers are getting charged twice for the same invoice. about 0.3% of charges, started roughly two weeks ago. finance is refunding by hand and wants it stopped.
 

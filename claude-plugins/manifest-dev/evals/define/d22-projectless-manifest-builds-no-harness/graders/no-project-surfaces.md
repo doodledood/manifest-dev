@@ -1,6 +1,8 @@
 ---
 type: llm
-focus: manifest.md
+focus:
+  source: file
+  path: manifest.md
 weight: 1
 ---
 Work through the steps below privately, without writing them out. Your entire reply is one word:

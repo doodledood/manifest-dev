@@ -10,14 +10,13 @@ EVALS = Path(__file__).parent.parent / "claude-plugins/manifest-dev/evals"
 SHARED = [
     "define/*/graders/gates-are-settleable.md",
     "define/*/graders/binding-lives-in-gates.md",
+    "define/*/graders/no-invented-thresholds.md",
     "*/graders/turn-discipline.md",
     "*/graders/autonomous-flag-passed.md",
     "**/graders/skill-fired.md",
     "define/*/graders/ceiling-verbatim.md",
     "define/*/graders/handoff-line.md",
     "**/graders/no-taste-offer.md",
-    "**/graders/no-taste-write.md",
-    "**/graders/no-taste-edit.md",
 ]
 
 
@@ -28,7 +27,21 @@ def test_shared_grader_copies_are_identical(pattern: str) -> None:
         len(copies) >= 2
     ), f"expected several copies of {pattern}, found {len(copies)}"
     reference = copies[0].read_text()
-    drifted = [str(c.relative_to(EVALS)) for c in copies if c.read_text() != reference]
+    if any(n in pattern for n in ("binding-lives-in-gates", "no-invented-thresholds")):
+        reference = reference.split("\nThe request:\n", 1)[0]
+    drifted = [
+        str(c.relative_to(EVALS))
+        for c in copies
+        if (
+            c.read_text().split("\nThe request:\n", 1)[0]
+            if any(
+                n in pattern
+                for n in ("binding-lives-in-gates", "no-invented-thresholds")
+            )
+            else c.read_text()
+        )
+        != reference
+    ]
     assert (
         not drifted
     ), f"{pattern} drifted from {copies[0].relative_to(EVALS)}: {drifted}"

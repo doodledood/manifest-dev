@@ -57,6 +57,14 @@ if args == ["--version"]:
     print(os.environ["STANDIN_VERSION"]); sys.exit(0)
 if args[:2] == ["auth", "status"]:
     print(json.dumps({"loggedIn": os.environ.get("STANDIN_LOGGED_IN", "1") == "1"})); sys.exit(0)
+if "eval" in args and "--max-cost-usd" in args and args[len(args)-args[::-1].index("--max-cost-usd")] == "0":
+    out = pathlib.Path(args[len(args)-args[::-1].index("--json")])
+    out.write_text(json.dumps({"claudeVersion": "9.9.9", "costUsd": 0, "partial": True,
+                               "partialReason": "cost_ceiling", "cases": []}))
+    pathlib.Path(os.environ["STANDIN_RECORD"] + ".preflight").write_text(json.dumps(args))
+    if os.environ.get("STANDIN_PREFLIGHT_INVALID"):
+        print("1 case file(s) failed to load", file=sys.stderr)
+    sys.exit(2)
 home = pathlib.Path(os.environ.get("HOME", "/nonexistent"))
 links = {p.name: os.readlink(p) if p.is_symlink() else None for p in home.iterdir()} if home.is_dir() else {}
 seen = sorted(str(p.relative_to(home)) for p in (home / ".manifest-dev").rglob("*")) if (home / ".manifest-dev").is_dir() else []
@@ -72,7 +80,24 @@ if "eval" in args:
         time.sleep(0.05)
     if os.environ.get("STANDIN_WRITES_RESULT", "1") == "1":
         out = pathlib.Path(args[args.index("--json") + 1])
-        out.write_text(json.dumps({"cliVersion": "9.9.9"}), encoding="utf-8")
+        contract = json.loads(out.with_suffix(".instrument.json").read_text())
+        cases = []
+        for case in contract["cases"]:
+            arms = {}
+            for arm in (["with", "without"] if contract["ablation"] == "with-without" else ["with"]):
+                graders = []
+                for g in case["graders"]:
+                    diagnostic = g["config"].get("arm") == "with-only" or (g["type"] == "tool_used" and g["config"].get("tool") == "Skill")
+                    if arm == "without" and diagnostic:
+                        continue
+                    graders.append({"name": g["name"], "passed": True, "weight": g["weight"],
+                                    "scored": not diagnostic or contract["ablation"] == "none",
+                                    "judgeVotes": [True, True, True]})
+                arms[arm] = [{"costUsd": 0, "tracePath": f"/stub/{case['name']}/{arm}/{i}/trace.jsonl", "graders": graders} for i in range(case["runs"])]
+            cases.append({"name": case["name"], "promptMarkdown": case["prompt"], "graders": case["graders"], "arms": arms,
+                          "model": case["sourceModel"], "maxTurns": case["maxTurns"], "timeoutSeconds": case["timeoutSeconds"]})
+        out.write_text(json.dumps({"claudeVersion": "9.9.9", "suite": {"ablation": contract["ablation"],
+                       "judgeModel": contract["judgeModel"]}, "cases": cases}), encoding="utf-8")
     sys.exit(code)
 record = os.environ.get("STANDIN_WRITES_RECORD")
 if record:
@@ -100,6 +125,11 @@ def toolbox(tmp_path_factory: pytest.TempPathFactory) -> Path:
             target = box / entry.name
             if not target.exists() and os.access(entry.path, os.X_OK):
                 target.symlink_to(entry.path)
+    # The eval inventory compiles patterns with the same JS RegExp language as Claude.
+    if not (box / "node").exists():
+        node = shutil.which("node")
+        assert node, "scripts/setup.sh requires Node"
+        (box / "node").symlink_to(node)
     return box
 
 
@@ -642,7 +672,7 @@ def test_an_eval_run_outlives_the_shell_that_started_it(
     assert after(args, "--json") == str(out) and after(args, "--tag") == "define"
     release.touch()
     assert wait_for(out)
-    assert json.loads(out.read_text(encoding="utf-8")) == {"cliVersion": "9.9.9"}
+    assert json.loads(out.read_text(encoding="utf-8"))["claudeVersion"] == "9.9.9"
     exit_code = target.parent / "exit-code"
     assert wait_for(exit_code) and exit_code.read_text().strip() == "0"
     log = (target.parent / "eval.log").read_text(encoding="utf-8")
@@ -661,6 +691,45 @@ def test_an_eval_run_waited_on_exits_with_the_suites_status(
     assert out.exists()
 
 
+def test_native_preflight_load_error_starts_no_paid_suite(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    env = setup(tmp_path, toolbox, STANDIN_PREFLIGHT_INVALID="1")
+    out = tmp_path / "results/invalid.json"
+    result = run_eval(env, out, "--wait")
+    assert result.returncode != 0
+    assert "case file(s) failed to load" in result.stderr
+    assert calls(tmp_path) == []
+    assert not out.exists()
+    assert not out.with_suffix(".instrument.json").exists()
+
+
+def test_preflight_only_records_instrument_without_starting_a_suite(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    env = setup(tmp_path, toolbox)
+    out = tmp_path / "results/plan.json"
+    result = subprocess.run(
+        [str(RUN_EVAL), "--preflight", "inventory", str(out), "--tag", "define"],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert result.returncode == 0, result.stderr
+    assert calls(tmp_path) == []
+    assert not out.exists()
+    assert not out.with_suffix(".instrument.json").exists()
+    instrument = next(
+        (tmp_path / "runs" / "inventory").glob("*/preflight.instrument.json")
+    )
+    contract = json.loads(instrument.read_text())
+    assert contract["cases"] and contract["cliVersion"] == "9.9.9"
+    assert all(
+        c["files"] and c["graders"] and c["runs"] == 1 for c in contract["cases"]
+    )
+
+
 def test_an_eval_result_path_is_relative_to_the_plugin_by_default(
     tmp_path: Path, toolbox: Path
 ) -> None:
@@ -668,18 +737,22 @@ def test_an_eval_result_path_is_relative_to_the_plugin_by_default(
     # the stand-in writes no result: the test leaves the checkout as it found it, so a test
     # copying the plugin at the same moment never meets a file appearing or vanishing.
     env = setup(tmp_path, toolbox, STANDIN_WRITES_RESULT="0")
-    result = subprocess.run(
-        [str(RUN_EVAL), "--wait", "suite", "evals/x.json"],
-        env=env,
-        capture_output=True,
-        text=True,
-        timeout=60,
-    )
-    assert result.returncode == 0, result.stderr
-    (call,) = calls(tmp_path)
-    expected = PLUGIN / "evals" / "x.json"
-    assert after(call["args"], "--json") == str(expected)
-    assert not expected.exists()
+    relative = f"evals/results/test-{uuid.uuid4().hex}.json"
+    expected = PLUGIN / relative
+    try:
+        result = subprocess.run(
+            [str(RUN_EVAL), "--wait", "suite", relative],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        assert result.returncode == 1, result.stderr  # no result is not success
+        (call,) = calls(tmp_path)
+        assert after(call["args"], "--json") == str(expected)
+        assert not expected.exists()
+    finally:
+        expected.with_suffix(".instrument.json").unlink(missing_ok=True)
 
 
 @pytest.mark.parametrize(
@@ -1058,3 +1131,22 @@ def _alive(pid: int) -> bool:
     except ProcessLookupError:
         return False
     return True
+
+
+@pytest.mark.parametrize(
+    "out_name, flags", [("result.txt", []), ("result.json", ["--json", "other.json"])]
+)
+def test_eval_result_path_cannot_be_overridden_before_preflight(
+    tmp_path: Path, toolbox: Path, out_name: str, flags: list[str]
+) -> None:
+    env = setup(tmp_path, toolbox)
+    result = subprocess.run(
+        [str(RUN_EVAL), "--wait", "suite", str(tmp_path / out_name), *flags],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert result.returncode != 0
+    assert calls(tmp_path) == []
+    assert not (tmp_path / "runs").exists()

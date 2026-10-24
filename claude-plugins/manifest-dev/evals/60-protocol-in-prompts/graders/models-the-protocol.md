@@ -6,15 +6,11 @@ weight: 1
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
 
-The skill's rules are a protocol several agents follow on shared state: two agents can claim the
-same issue at the same moment, and a takeover can race an agent that was only slow. No single run
-of one agent shows those orders of events.
-
-**First, answer in one line:** Does the reply propose checking the rules themselves across the
-orders in which several agents' claims, takeovers and merges can interleave — a throwaway model
-checked by a model checker, or an equivalent exhaustive exploration — before the skill ships, and
-say what it would check (for example, no issue worked by two agents at once, no claimed issue left
-stuck)? Quote it.
-
-**Then judge:** PASS if yes. FAIL if the reply goes from the rules straight to writing the skill
-and trying it, or mentions modeling only as an optional afterthought with nothing it would check.
+The proposed claim/takeover rules coordinate several agents on shared issue state. Two claims
+may race, and takeover may race a slow original owner. PASS if the read explicitly reasons about
+these states and orders before shipping the rules, and proposes a check capable of reaching the
+bad orders or demonstrates a concrete counterexample that changes the design. Controlled
+schedules, a small simulation or a model checker may qualify. A sound conclusion that comments
+alone cannot ensure exclusive ownership is admissible; it need not pretend a stronger guarantee
+is feasible. FAIL for a single happy-path drive, a generic test promise, or model-checker name
+dropping without a property or schedule. Require an adequate check, not one preferred tool.

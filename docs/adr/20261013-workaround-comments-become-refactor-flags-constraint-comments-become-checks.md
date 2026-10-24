@@ -33,7 +33,7 @@ Agents copy what they find, including workarounds that a comment explains, and t
 - Telling a comment about an external constraint from one about the project's own code takes judgment.
 
 ## Enforced by
-partly — eval case `d19-workaround-comment` measures it once run; telling an external constraint from the project's own stays judgment.
+not yet — a review-code behavior check must show that the prose-value review reports a workaround as debt while retaining its explanation. The former define case `d19` asked definition to perform an execution-time review and was retired before measurement; telling an external constraint from the project's own stays judgment.
 
 ## Source
 - Session: figure-out investigation of steering agents toward maintainable first versions.

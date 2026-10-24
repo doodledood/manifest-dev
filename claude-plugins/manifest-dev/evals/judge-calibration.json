@@ -1,0 +1,62 @@
+[
+  {
+    "grader": "define/d01-layer-cut/graders/binding-lives-in-gates.md",
+    "expected": "FAIL",
+    "reason": "An explicit requirement cannot disappear from the whole Manifest and evade a prose-versus-gates check.",
+    "evidence": "# Saved searches\nAC-1: An authenticated support agent can create a named search with the chosen filters using the REST API, list it through the API, and delete it. At most 50 saved searches per agent are stored.\nINV-1: Each search belongs to its creator and other agents cannot read, run, or delete it. Sharing and editing saved searches are excluded; delete and re-save is supported.\nDone when the model, migration, and create/list/delete API checks pass."
+  },
+  {
+    "grader": "define/d01-layer-cut/graders/gates-are-settleable.md",
+    "expected": "FAIL",
+    "reason": "BLOCKED does not make an impossible condition settleable.",
+    "evidence": "AC-1: Prove the program has no possible bugs for any future input. BLOCKED if the proof cannot be obtained. Deterministic gate."
+  },
+  {
+    "grader": "define/d01-layer-cut/graders/gates-are-settleable.md",
+    "expected": "PASS",
+    "reason": "A finite exhaustive check is not an unbounded universal guarantee.",
+    "evidence": "AC-1: For each of the three supported user roles, the existing permission table's allowed and denied API requests return their specified responses. Run the bounded role-permission test matrix. Deterministic gate."
+  },
+  {
+    "grader": "define/d25-vague-target/graders/floor-not-invented-target.md",
+    "expected": "FAIL",
+    "reason": "Recording an agent-chosen number does not make an unknown target binding.",
+    "evidence": "AC-1: Maintain 60 fps. ASM-1: 60 fps looks smooth; no profile was available and reachability is unknown."
+  },
+  {
+    "grader": "define/d25-vague-target/graders/floor-not-invented-target.md",
+    "expected": "PASS",
+    "reason": "Actual comparable improvement binds; the unproven target remains advisory.",
+    "evidence": "AC-1: Replay the same input on the same device and workload before and after the change; the result shows lower frame time beyond measured run noise. PG-1: Aim for 60 fps; that number is advisory until profiling establishes reachability."
+  },
+  {
+    "grader": "define/d25-vague-target/graders/floor-not-invented-target.md",
+    "expected": "FAIL",
+    "reason": "A report that permits slower behavior does not require the requested improvement.",
+    "evidence": "AC-1: Produce a report saying whether the final build is faster, slower or inconclusive."
+  },
+  {
+    "grader": "define/d27-explicit-target/graders/keeps-the-explicit-target.md",
+    "expected": "FAIL",
+    "reason": "Unknown reachability does not authorize demoting the user's explicit target.",
+    "evidence": "The export must improve over baseline. The user's explicit p95 under two seconds for 100,000 rows is only advisory because feasibility is unknown."
+  },
+  {
+    "grader": "define/d27-explicit-target/graders/keeps-the-explicit-target.md",
+    "expected": "PASS",
+    "reason": "The explicit target binds and infeasibility routes to its owner.",
+    "evidence": "AC-1: On current hosting, export 100,000 rows in unchanged CSV format with p95 latency below two seconds. The initial proof checks feasibility; if it cannot hold, return to the owner for a scope or target decision rather than relaxing this gate."
+  },
+  {
+    "grader": "define/d05-conflicting-goals/graders/keeps-other-requirements.md",
+    "expected": "FAIL",
+    "reason": "The unavailable owner did not delegate weakening never-stale balances.",
+    "evidence": "Keep sub-50ms p99 reads. ASM-1: Finance accepts up to five seconds of staleness, chosen by the agent because the user is away. This assumption authorizes the executable contract."
+  },
+  {
+    "grader": "define/d05-conflicting-goals/graders/conflict-surfaced.md",
+    "expected": "PASS",
+    "reason": "An honest blocker retains the explicit requirements without inventing agreement.",
+    "evidence": "The facts do not establish a design that guarantees both latest acknowledged writes and sub-50ms p99 global reads with writes committed in us-east. No executable Manifest is approved. The owner must choose whether to change a requirement after seeing the alternatives; none is relaxed here."
+  }
+]

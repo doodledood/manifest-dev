@@ -8,19 +8,17 @@ weight: 1
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
 
-Scan the gates — every acceptance criterion, invariant, or other check the spec says must pass
-before the work counts as done — for a specific gate that would send an executor round a repair
-loop:
+Inspect every acceptance criterion, invariant and other must-pass check. FAIL if you can name
+a gate whose threshold or evidence cannot settle whether the work is done:
 
-- **UNSTABLE** — it states no threshold, procedure, reference, bound, or named decider, so two
-  evaluators on unchanged work could disagree or keep finding new issues: "the code is clean",
-  "docs are high quality", "find and fix all issues", "well tested".
-- **UNREACHABLE** — no finite work satisfies it or nothing could check it: "zero bugs", "works for
-  every possible input", exhaustive evidence where only sampling is feasible, or a contradiction
-  with another gate.
+- UNSTABLE: no defined threshold, procedure, reference, coverage or decider (for example
+  "find and fix every issue" without a closed review procedure).
+- UNREACHABLE: mutually contradictory demands, an unbounded guarantee unsupported by a
+  finite check or applicable proof, or evidence that cannot establish the claimed property.
 
-These are settleable, so skip them: a gate that hands judgment to a named skill or review and says
-what it covers; a gate that lists what to check or names the command to run; a gate with a BLOCKED
-exit for when it cannot be checked; a subjective gate anchored to a named reference or decider.
-
-FAIL only if you can name a specific gate that is UNSTABLE or UNREACHABLE. Otherwise PASS.
+A named command, reviewer or skill is sufficient only for the bounded property it can judge;
+it does not make an impossible guarantee achievable. BLOCKED is valid for an external wait,
+not a way to make an impossible completion bar pass. Universal properties may be settleable
+by finite enumeration or an applicable proof; do not fail them merely for saying "every".
+PASS if no concrete unstable or unreachable gate remains. A subjective gate can settle through
+a named reference and decider; it need not be converted into a made-up number.

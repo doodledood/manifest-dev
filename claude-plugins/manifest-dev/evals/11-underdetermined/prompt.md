@@ -6,7 +6,7 @@ allowed_tools: [Skill, Read, Glob, Grep, Write, Bash]
 model: opus
 runs: 1
 ---
-use the figure-out skill for this. i'm afk, dont ask me anything - work out what's causing this and come back with what you land on.
+use the figure-out skill with --autonomous for this. i'm afk, dont ask me anything - work out what's causing this and come back with what you land on.
 
 the search api returns 502 for a few minutes, two or three times a day, no pattern anyone can see. started about three weeks ago. we shipped a lot in that window.
 

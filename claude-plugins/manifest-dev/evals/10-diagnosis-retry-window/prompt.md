@@ -8,7 +8,7 @@ runs: 1
 ---
 the nightly shipment export writes zero rows maybe once or twice a week and nobody can work out why. the rows are definitely in the db. finance has been reconciling by hand for a month.
 
-use the figure-out skill for this. i'm afk for the next few hours - dont ask me anything, work it out on your own and come back with what you land on, how sure you are, what its based on, and what would change your mind.
+use the figure-out skill with --autonomous for this. i'm afk for the next few hours - dont ask me anything, work it out on your own and come back with what you land on, how sure you are, what its based on, and what would change your mind.
 
 everything i can give you is below.
 

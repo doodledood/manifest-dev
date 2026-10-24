@@ -20,6 +20,10 @@ place):
 - **Appetite:** Small — make the reports page honor the account timezone; no new settings.
 - **Out of bounds:** INV-G2
 
+## 2. Initial Approach
+- **Architecture:** Change date formatting in the reports page's displayed components.
+  Downloads remain on the existing UTC serialization path.
+
 ## 3. Global Invariants
 
 ### INV-G1 — The change stops at what this Manifest authorized

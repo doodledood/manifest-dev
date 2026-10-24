@@ -6,16 +6,12 @@ weight: 1
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
 
-Three `DeviceAttachFailed` events with `identity_not_found` payloads, all from a single afternoon
-in March, are the sharpest evidence in the prompt — they show the failure the sleep guards against
-still occurs even WITH the sleep in place.
+The three March identity_not_found events matter: a fixed delay did not guarantee successful
+attachment in those observed attempts. Their clustering also leaves alternatives, such as a
+bad ID, an outage or a deployment-specific fault, alive.
 
-PASS requires the response to use that datum and draw the right inference from it: the 1.2s wait is
-not sufficient, so the current code is already failing occasionally, which strengthens rather than
-weakens the case for replacing it with something correct rather than deleting it.
-
-FAIL if the three events are ignored, or read only as "rare, so low risk" without noticing they are
-evidence the guard is inadequate.
-
-The response may reasonably note that three events in 90 days is a low rate; what fails is missing
-that they occurred despite the sleep.
+PASS if the response uses the events to limit confidence in the current guard and proposes a
+check that distinguishes a visibility gap from a concrete rival explanation. FAIL if it ignores
+them, dismisses them only as rare, or says the events alone prove replication lag or establish
+that a longer wait/retry solves the incident. The observation is failure despite the current
+flow; its cause remains to be checked.

@@ -1,10 +1,14 @@
 ---
 type: llm
-focus: last_message
+focus: trace
 weight: 1
 ---
 Work through the steps below privately, without writing them out. Your entire reply is one word:
 PASS or FAIL.
+
+Use the tool invocation and returned experimental output in the visible trace as evidence that
+a scratch experiment ran. A sentence claiming it ran is not evidence. If the required execution
+is not visible, do not infer it from the final read. The CLI trace view may omit middle messages.
 
 The user asked why the packing line sometimes prints a duplicate label. The final reply should
 end the investigation with a read.
