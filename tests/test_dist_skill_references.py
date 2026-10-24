@@ -788,6 +788,27 @@ def test_operational_guidance_has_no_stale_per_gate_topology() -> None:
     assert not RETIRED_GATE_FIELDS.search(example)
 
 
+# Holds the decision in docs/adr/20261024-pr-review-consolidation-can-use-the-current-context.md.
+def test_review_pr_consolidation_does_not_require_another_context() -> None:
+    for root in (
+        ROOT / "claude-plugins/manifest-dev-tools/skills",
+        DIST / "codex/plugins/manifest-dev-tools/skills",
+    ):
+        text = (root / "review-pr/SKILL.md").read_text(encoding="utf-8")
+        consolidation = text.split("**Holistic coherence pass.**", 1)[1].split(
+            "**Judgment pass", 1
+        )[0]
+        assert "Invoke the `review-pr-holistic` skill" in consolidation
+        assert "After every required inspection has returned" in consolidation
+        assert "in this session, or in an isolated context when useful" in consolidation
+        assert (
+            "consolidation cannot turn an incomplete evaluation into a clean result"
+            in (consolidation)
+        )
+        assert "then launch one isolated execution context" not in consolidation
+        assert "where no isolated context is available" not in consolidation
+
+
 # Holds the decision in docs/adr/20260619-manifest-aware-review-pr.md.
 def test_review_pr_manifest_mode_remains_independently_per_gate() -> None:
     references = [

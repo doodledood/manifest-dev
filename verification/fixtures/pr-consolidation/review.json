@@ -1,0 +1,90 @@
+{
+  "description": "Remove private notes from the order export while preserving the existing public contract.",
+  "contract": "contract.md",
+  "history": [
+    {
+      "thread": "privacy",
+      "finding": "The export includes private_note.",
+      "status": "resolved",
+      "author_reply": "Removed the private field in the current change.",
+      "verification": "Current output contains only id, items and total."
+    },
+    {
+      "thread": "quantity",
+      "finding": "The total ignores item quantities.",
+      "status": "open",
+      "author_reply": "Still outstanding; a separate correction is needed."
+    },
+    {
+      "thread": "ordering",
+      "finding": "Sort items alphabetically for stable output.",
+      "status": "resolved",
+      "author_reply": "contract.md deliberately preserves input order.",
+      "reviewer_reply": "Agreed; the input order is part of the contract."
+    }
+  ],
+  "linked_prs": [],
+  "truncation": null,
+  "packets": [
+    {
+      "name": "follow-up",
+      "findings": [
+        {
+          "id": "R1",
+          "dimension": "code-bugs",
+          "severity": "High",
+          "anchor": "order_export.py:3",
+          "body": "Converting the order identifier with int drops leading zeroes: 003 becomes 3."
+        },
+        {
+          "id": "R2",
+          "dimension": "contracts",
+          "severity": "High",
+          "anchor": "order_export.py:3",
+          "body": "The id field is now numeric, although the contract requires the original string."
+        },
+        {
+          "id": "R3",
+          "dimension": "code-bugs",
+          "severity": "High",
+          "anchor": "order_export.py:2",
+          "body": "The export still exposes private_note from the input."
+        },
+        {
+          "id": "R4",
+          "dimension": "code-bugs",
+          "severity": "Medium",
+          "anchor": "order_export.py:5",
+          "body": "An order with no lines crashes while computing its total."
+        },
+        {
+          "id": "R5",
+          "dimension": "code-maintainability",
+          "severity": "Medium",
+          "anchor": "order_export.py:4",
+          "body": "Sort item SKUs alphabetically so the export always has stable ordering."
+        },
+        {
+          "id": "R6",
+          "dimension": "code-bugs",
+          "severity": "High",
+          "anchor": "order_export.py:5",
+          "body": "Quantity is ignored in the total calculation."
+        }
+      ],
+      "judgment_findings": [],
+      "blocked_evaluations": []
+    },
+    {
+      "name": "waiting-for-evidence",
+      "findings": [],
+      "judgment_findings": [],
+      "blocked_evaluations": [
+        {
+          "dimension": "operational-readiness",
+          "reason": "The deployment configuration needed to assess the export consumer is unavailable."
+        }
+      ]
+    }
+  ]
+}
