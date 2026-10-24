@@ -228,6 +228,80 @@ def test_criterion_scaffold_hides_the_standard_from_the_initial_prompt(
     assert not (project / "customers-export.json").exists()
 
 
+def test_consolidation_fixture_preserves_review_state_and_reproducible_findings(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    transcript: list[dict[str, object]] = [
+        {
+            "type": "system",
+            "subtype": "init",
+            "model": "m",
+            "plugins": [
+                {"name": "manifest-dev"},
+                {"name": "manifest-dev-tools"},
+            ],
+            "skills": ["manifest-dev-tools:review-pr"],
+        },
+        GOOD[1],
+    ]
+    result = drive(
+        setup(tmp_path, toolbox, STANDIN_TRANSCRIPT=lines(transcript)),
+        "--tools",
+        "--scaffold",
+        str(REPO_ROOT / "verification/fixtures/pr-consolidation"),
+        prompt=REPO_ROOT / "verification/prompts/review-pr-consolidation.md",
+        feature="review-pr",
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    (call,) = calls(tmp_path)
+    assert_isolated(call)
+    project = Path(call["cwd"])
+    packet = json.loads((project / "review.json").read_text())
+    previous = subprocess.check_output(
+        ["git", "show", f"{packet['reviewed_commit']}:order_export.py"],
+        cwd=project,
+        text=True,
+    )
+    (project / "previous.py").write_text(previous)
+    result_json = subprocess.check_output(
+        [
+            "python3",
+            "-c",
+            "import json, runpy; "
+            "order={'id':'003','private_note':'internal','lines':"
+            "[{'sku':'B','quantity':2,'unit_price':5},"
+            "{'sku':'A','quantity':1,'unit_price':7}]}; "
+            "before=runpy.run_path('previous.py')['export_order']; "
+            "after=runpy.run_path('order_export.py')['export_order']; "
+            "print(json.dumps([before(order),after(order),"
+            "after({'id':'003','lines':[]})]))",
+        ],
+        cwd=project,
+        text=True,
+    )
+    before, after, empty = json.loads(result_json)
+    assert before["id"] == "003" and after["id"] == 3  # New regression.
+    assert "private_note" in before and "private_note" not in after  # Verified repair.
+    assert after["items"] == ["B", "A"] and empty["total"] == 0
+    assert after["total"] == 12  # Quantity defect is already tracked in an open thread.
+    assert {item["id"] for item in packet["packets"][0]["findings"]} == {
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6",
+    }
+    assert packet["packets"][1]["blocked_evaluations"]
+    assert packet["reviewed_range"] == (
+        f"{packet['reviewed_commit']}..{packet['current_commit']}"
+    )
+    assert "Proves:" not in call["args"][-1]
+    assert not (project / "consolidation.md").exists()
+    assert not (project / "README.md").exists()  # Rubric stays outside the subject.
+    assert "review-pr" in result.stdout  # Runner retained a summary after cleanup.
+
+
 # Holds the fixture evidence for 20261024-gate-criteria-and-evidence-travel-with-execution.
 def test_review_fixture_has_repair_regression_and_unchanged_findings(
     tmp_path: Path, toolbox: Path
