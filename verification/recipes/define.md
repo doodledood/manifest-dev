@@ -59,6 +59,12 @@ Proves: for a prompt change needing an exact count, the Manifest holds the exact
 Check: read
 Workload: varies
 
+### research-delegation
+Run: `scripts/drive-skill.sh define verification/prompts/define-research-delegation.md --scaffold verification/fixtures/research-delegation`
+Proves: the Manifest allows direct source inspection by the coordinator and makes delegation conditional on the inquiry. Its guidance keeps the incident, mapping, and API evidence available for joint reasoning, while allowing the archive-format question, substantial reading, or independent checks to use another context when useful. It requires neither a context per source type nor a separate parallel-verification phase. Research-quality gates remain applicable, including source credibility, traceability, contradictory evidence, and honest gaps; the synthetic API snapshot cannot become a real citation. The transcript shows define loading both the research base and its web overlay.
+Check: read
+Workload: varies
+
 ### fresh-review
 Run: `scripts/drive-skill.sh define claude-plugins/manifest-dev/evals/define/d25-vague-target/prompt.md`
 Proves: before the reply's digest, the session hands a fresh context `references/REVIEW.md` with the Manifest and the session record, and settles its findings in one pass — each fixed in the Manifest or named with its reason as rejected; the review reports as a finding any gate that no plausible wrong result fails, naming the wrong result it lets through; the digest lists every number a gate binds; the Manifest's speed gate binds a floor such as faster than the measured baseline, and any frame rate appears only as an aim or a recorded assumption.
@@ -92,3 +98,4 @@ Workload: varies
 - The scaffold in the feature-defaults and bounded-growth Run lines is inferred: their earlier drives did not record one. Their replies find no loan period setting, which `d20-preparatory-slice` has, and bounded-growth's cites the storage record's "a few hundred loans", which the set-up shelfnote scaffolds such as `45-current-setup-offers-nothing` carry. The next run of each settles it.
 - Also checked by the define behavior suite, `claude-plugins/manifest-dev/evals/define/` (tag `define`), statuses in `claude-plugins/manifest-dev/evals/define/README.md`; `tests/test_shared_blocks.py` and `tests/test_goal_contract_blocks.py` pin the blocks its handoff carries.
 - Not yet driven: the bare slash command, the description phrases, auto, do's amendments, babysit-pr, figure-out's offer.
+- `research-delegation` is **unmeasured** until driven. Its free cold fixture check verifies source relationships and the isolated runner setup; it does not measure Manifest encoding, research quality, or the quality or performance difference between context choices. The scenario plans research and does not execute it.

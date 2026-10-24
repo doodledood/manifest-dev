@@ -12,6 +12,7 @@ PATH, so a script that still reached for a container would fail.
 
 from __future__ import annotations
 
+import csv
 import json
 import os
 import shutil
@@ -226,6 +227,37 @@ def test_criterion_scaffold_hides_the_standard_from_the_initial_prompt(
     assert "leading zeros" in (project / "interchange.md").read_text()
     assert "leading zeros" not in calls(tmp_path)[0]["args"][-1]
     assert not (project / "customers-export.json").exists()
+
+
+def test_research_fixture_supplies_coupled_evidence_and_a_separable_question(
+    tmp_path: Path, toolbox: Path
+) -> None:
+    project = convergence_project(
+        tmp_path,
+        toolbox,
+        "research-delegation",
+        "define-research-delegation.md",
+        feature="define",
+    )
+    sources = project / "sources"
+    incident = json.loads((sources / "incident.json").read_text())
+    with (sources / incident["mapping_file"]).open() as stream:
+        mapping = list(csv.DictReader(stream))
+    assert [row["customer_ref"] for row in mapping] == [
+        request["customer_ref"] for request in incident["requests"]
+    ]
+    assert mapping == [
+        {"source_id": "003", "customer_ref": "3"},
+        {"source_id": "014", "customer_ref": "014"},
+    ]
+    assert [request["status"] for request in incident["requests"]] == [404, 200]
+    api = (sources / "api-snapshot.md").read_text()
+    assert "v2" in api and incident["api_version"] == "2"
+    assert "`003` and `014`" in api and "Leading zeroes are significant" in api
+    archive = (sources / "archive-requirements.md").read_text()
+    assert "CSV and JSON Lines" in archive and "nested metadata" in archive
+    assert not (project / "manifest.md").exists()  # Subject must create the result.
+    assert not (project / "README.md").exists()  # Rubric stays outside the subject.
 
 
 def test_consolidation_fixture_preserves_review_state_and_reproducible_findings(

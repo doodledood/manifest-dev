@@ -225,3 +225,4 @@
 | 2026-10-24 | [External review feedback needs an adoption decision](20261024-external-review-feedback-needs-an-adoption-decision.md) | Accepted | PR lifecycle |
 | 2026-10-24 | [Gate criteria and evidence travel with execution](20261024-gate-criteria-and-evidence-travel-with-execution.md) | Accepted | define / do |
 | 2026-10-24 | [PR-review consolidation can use the current context](20261024-pr-review-consolidation-can-use-the-current-context.md) | Accepted | PR review |
+| 2026-10-24 | [Research delegation follows the inquiry](20261024-research-delegation-follows-the-inquiry.md) | Accepted | Task guidance |

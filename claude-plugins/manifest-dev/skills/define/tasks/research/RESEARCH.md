@@ -94,8 +94,7 @@ When no source file exists for a relevant source type, the general quality gates
 
 *Domain best practices for this task type.*
 
-- **Delegated research** — For multi-facet research, delegate orthogonal sub-topics to parallel isolated execution contexts, one per source type (each gets assigned AND excluded scope); where no isolated context is available, work the sub-topics one at a time inline, each as a fresh pass. The coordinating session decomposes, coordinates, and synthesizes — never researches directly
-- **Parallel verification over serial** — Multiple agents independently checking the same claims, not serial chains where each builds on the last
+- **Research delegation** — Delegate separable questions, substantial source reading, or independent checks when another context helps. Give each delegated part its question, assigned and excluded scope, and needed evidence. The coordinating session may inspect sources directly and keeps tightly coupled reasoning together; when delegation is unavailable or adds no value, work inline
 - **Sycophancy-aware framing** — Frame research questions to avoid implying expected findings. Include explicit counter-hypothesis: "research X, including evidence X does NOT hold"
 - **Rigor-task fit** — Formal rigor for novel, uncertain, or multi-source synthesis. Simpler heuristics for well-structured, single-source tasks
 - **Niche-topic vigilance** — Enhanced verification for less-documented topics where AI fabrication rates are higher
