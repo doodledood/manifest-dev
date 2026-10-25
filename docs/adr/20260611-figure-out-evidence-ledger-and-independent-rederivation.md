@@ -1,7 +1,7 @@
 # ADR: figure-out reads ship an Evidence Ledger and earn their terminals; the independent re-derivation pass is un-deferred
 
 ## Status
-Accepted
+Accepted; amended by 20261025-figure-out-re-derives-only-reads-that-are-costly-to-get-wrong: autonomous mode states this record's load-bearing condition for the re-derivation, and applies it to the fresh-context classification too
 
 ## Area
 figure-out

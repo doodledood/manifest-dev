@@ -294,6 +294,13 @@ crux sentence now names parent before child first, the draft offer is its own bu
 autonomous mode names the draft offer and the re-derivation by their current names, and the
 document probe's check names a walk recipe. It reaches `01`, `06`, `22`, `25` and `35` most.
 
+A second change after that baseline made autonomous mode re-derive and re-classify only reads that
+are costly or hard to undo, and added the *Drivers across branches* probe to `DECISION.md`. It
+reaches every case whose prompt passes `--autonomous` — `10`, `11`, `14`–`16`, `18`–`21`, `24`,
+`25`, `32`–`36`, `38`, `40`, `41`, `43`, `44`, `46`, `48`, `52`, `54`–`63` and `65`–`85` — and the
+interactive decision cases `06`, `26` and `29`. `42` and `64` were re-measured on the changed
+skill (*Hill-climb on proportionate re-checks*, below); `86` is new and unmeasured.
+
 Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
 2026-10-14 change moved its verification wording to one harness, the 2026-10-15 change made
