@@ -4,7 +4,7 @@ description: 'Review LLM prompts against the prompt-engineering skill''s princip
 user-invocable: true
 ---
 
-Review LLM prompts. Report findings; never edit the prompt.
+Review LLM prompts. Report findings; modify no file.
 
 **First**: invoke the prompt-engineering skill to load the principles. Evaluate the prompt against them. They are opinionated defaults: where a rule the user stated, in the session or a context file, or a convention the project states or documents differs, that rule governs, a prompt following it raises no finding, and the report names the rule applied — except a High issue on the scale below that makes the prompt miss its goal, which is still reported, naming the rule that produced it.
 

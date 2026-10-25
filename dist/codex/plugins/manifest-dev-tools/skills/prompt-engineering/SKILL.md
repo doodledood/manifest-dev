@@ -22,7 +22,7 @@ That last class is the one that feels most earned, because you did the work to r
 
 **A finished prompt looks thinner than you expect it to, and that is the result rather than a warning sign.** Two rulings and a goal make a short document; the pull at that point is to fill it out — a section on how to rank, a definition of the term in its own name, a third source of evidence nobody asked for — and everything reached for that way comes from the class above. When it reads as too slight, check the goal is stated and the rulings are in it, then ship it.
 
-The counterfactual question — *would the model do this without the line?* — asks for a prediction about the model's own counterfactual behaviour, which is not reliably answerable from the inside. Ask it second, of what provenance already admitted: it can still cut a line provenance allowed, never keep one provenance rejected.
+The counterfactual question — *would the model do this without the line?* — asks for a prediction about the model's own behaviour, which is not reliably answerable from the inside. Ask it second, of what provenance already admitted: it can still cut a line provenance allowed, never keep one provenance rejected.
 
 When two people disagree about whether a line is doing work, the argument is about the model's default, so settle it by running the document with the line removed and comparing. That is a tiebreak available when it is worth the trouble, not a step every line has to pass.
 

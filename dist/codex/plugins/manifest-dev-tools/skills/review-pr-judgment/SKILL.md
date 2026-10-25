@@ -77,6 +77,6 @@ Every judgment finding is posted as an author-answerable question through the ex
 
 - **never** blocks a merge, submits `request_changes`, or auto-`approve`s;
 - adds **no** new posting path — findings ride the existing single batched review and hidden self-marker;
-- in **manifest mode**, is strictly additive — the manifest contract's PASS/FAIL is computed exactly as without the pass, untouched by any judgment finding.
+- in **manifest mode**, is strictly additive — the manifest contract's PASS/FAIL is computed exactly as it would be without the pass, untouched by any judgment finding.
 
 If nothing clears the evidence bar, the pass stays silent. Silence is the expected default on a sound change.
