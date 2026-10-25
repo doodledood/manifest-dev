@@ -46,25 +46,25 @@ When they reach for it: four situations so far.
   cost more rework than the tokens to get it right. Today they prompt directly and review
   after, do it by hand, or do less.
 
-  — hypothesis: the maintainer's own use; no outside user has described it. Records: Name the situations people reach for manifest-dev in. 2026-10-25
+  — hypothesis: the maintainer's own use; no outside user has described it. 2026-10-25. Records: Name the situations people reach for manifest-dev in.
 
 - **Coming back.** They return to a project after a break and need what it is for, what was
   decided and what needs them, without rereading old conversations. Today they rely on memory,
   notes or the history, or start over.
 
-  — hypothesis: the maintainer's own use; no outside user has described it. Records: Name the situations people reach for manifest-dev in. 2026-10-25
+  — hypothesis: the maintainer's own use; no outside user has described it. 2026-10-25. Records: Name the situations people reach for manifest-dev in.
 
 - **Away from the desk.** They want work to move toward an outcome while they are elsewhere,
   and to be asked only about the choices they kept. Today they wait until they are back, watch
   every step, or do not hand the work off.
 
-  — hypothesis: the maintainer's own use; no outside user has described it. Records: Name the situations people reach for manifest-dev in. 2026-10-25
+  — hypothesis: the maintainer's own use; no outside user has described it. 2026-10-25. Records: Name the situations people reach for manifest-dev in.
 
 - **Thinking it through.** They face a decision or problem they cannot yet state well, and want
   it pressed until it is clear, before anything gets built. Today they use a plain chat, ask a
   colleague, or think it through alone.
 
-  — hypothesis: the maintainer's own use; no outside user has described it. Records: Name the situations people reach for manifest-dev in. 2026-10-25
+  — hypothesis: the maintainer's own use; no outside user has described it. 2026-10-25. Records: Name the situations people reach for manifest-dev in.
 
 ## Goal
 

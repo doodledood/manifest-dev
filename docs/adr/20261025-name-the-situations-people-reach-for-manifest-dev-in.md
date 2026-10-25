@@ -13,19 +13,21 @@ The user
 
 The North Star's *Purpose* names who manifest-dev is for by their traits: quality-first
 developers with five-plus years of experience, already using an agentic coding CLI, willing to
-spend tokens and up-front effort. It did not say in what situation they reach for it.
+spend tokens and up-front effort. It named the end and the people, and touched on returning after
+a break and on delegation, but did not list the situations in which they reach for it or what they
+use today instead.
 
 Traits describe a person; they do not say when that person chooses this workflow over
 another. *Competing Against Luck* (Christensen, Hall, Dillon and Duncan, 2016) defines a job as
-"the progress that a person is trying to make in a particular circumstance" (p. 34), and calls
-customer characteristics "insufficient, and therefore not predictive" as a basis for what people
-choose (p. 35). The same developer prompts directly for a small fix and wants a defined,
+"the progress that a person is trying to make in a particular circumstance", and calls the usual
+organizing principles, customer characteristics among them, "insufficient, and therefore not
+predictive" as a basis for what people choose (both in chapter 2, "Progress, Not Products"). The same developer prompts directly for a small fix and wants a defined,
 verified run for a change that would be costly to get wrong.
 
-The North Star's bet already names the rivals in general: direct prompting, manual
-coordination, existing project tools, and doing less. Its *Open* section already asks which
-circumstances make the workflow worth adopting. Neither said which moments the workflow
-serves today.
+One of the North Star's bets, that people will choose this workflow over the alternatives,
+already names the rivals in general: direct prompting, manual coordination, existing project
+tools, and doing less. Its *Open* section already asks which circumstances make the workflow
+worth adopting. Neither listed the moments the workflow serves today.
 
 ## Decision
 
@@ -41,7 +43,8 @@ today instead:
 4. **Thinking it through** — a decision or problem not yet stated well, pressed until it is
    clear before anything is built.
 
-*For* and *Not for* stay as they are. The *Open* question on circumstances stays: these are
+The owner ruled to add them; each stays a `hypothesis` because it is a claim about when people
+reach for the workflow, which outside use can disprove. *For* and *Not for* stay as they are. The *Open* question on circumstances stays: these are
 the maintainer's situations, and outside episodes of choice, switching and continued use are
 what would test them.
 
@@ -50,13 +53,15 @@ what would test them.
 - **Keep the trait-based *For* alone, and wait for outside episodes.** Honest about the
   evidence, but later work would still be judged against traits, not against the moment it
   serves.
-- **Fewer situations.** All four were offered; all four were chosen.
+- **Fewer situations.** Each names a distinct moment with a distinct rival, so dropping one
+  would leave work aimed at that moment with nothing named to check it against.
 
 ## Consequences
 
 ### Positive
 - A proposed skill or change can be checked against a named moment and against what people
-  do in that moment today, doing nothing included.
+  do in that moment today, doing nothing included. figure-out's seat-taking already reads
+  *Purpose* and narrows to the moment an artifact serves, so it meets these situations there.
 - The four situations give the *Open* question something concrete to confirm or overturn.
 
 ### Negative
@@ -66,8 +71,8 @@ what would test them.
   still decides which one it serves.
 
 ## Enforced by
-none — a statement of who the project serves; work is checked against it by judgment
+partly — figure-out's seat-taking reads *Purpose* and narrows to a moment; the rest is judgment
 
 ## Source
 - Session: figure-out on applying *Competing Against Luck* to the North Star, 2026-10-25. Offered four situations; the owner chose all four.
-- Related: see also 20261015-projects-drive-themselves-as-far-as-each-user-climbs, 20261023-projects-advance-toward-assigned-outcomes-within-delegated-authority
+- Related: see also 20261015-projects-drive-themselves-as-far-as-each-user-climbs, 20261023-projects-advance-toward-assigned-outcomes-within-delegated-authority, 20260914-who-its-for-is-consumed-by-figure-outs-seat-taking
