@@ -993,6 +993,48 @@ from the whole suite, single cases as places to look:
   `36` misses the stale mark on the export entry; `52` offers a project surface where there is no
   project.
 
+## Hill-climb on proportionate re-checks — 2026-10-25, sonnet judge
+
+One round on the climb set `42` and `64`, the two cases the 2026-10-25 baseline names as the
+plugin arm's biggest loss. `v0` is the skill at `962f09bd`, the merge base; `v1` is the skill at
+`9ca7e52d`, whose `references/autonomous.md` and `tasks/DECISION.md` are the files this change
+merges: autonomous mode runs the independent re-derivation and the fresh-context classification
+only where the read is costly or hard to undo, and `DECISION.md` gains *Drivers across branches*.
+Plugin arm only, three runs per case, CLI 2.1.310, agent `model: opus` as the cases set it (the
+CLI records no resolved ID; the baseline above, on the same CLI, recorded it as
+`claude-opus-5-5`), judge `sonnet` with three votes per LLM grader, agent effort left at the CLI
+default rather than the baseline's `medium`. Each case ran as one invocation:
+
+```bash
+scripts/evals/run_eval.sh hc-v0b-<case> <dir>/v0/<case>.json --case <case> --tag figure-out \
+  --ablation none --runs 3 --judge-model sonnet --scaffold --max-cost-usd 6
+python3 scripts/evals/score_rounds.py --state <dir>/_state.json v0=<dir>/v0 v1=<dir>/v1
+```
+
+`_state.json` held both cases as train and none as test. No run errored and none was partial.
+Reported cost $4.35 for the twelve trials, plus $0.09 of judge cost on a first attempt that the
+sandbox refused before any agent ran.
+
+| Case | Grader | v0 | v1 |
+|---|---|---|---|
+| `42-one-line-fix` | `no-sketch-ceremony` | 2/3 | 3/3 |
+| `42-one-line-fix` | `skill-fired`, `autonomous-flag-passed` | 3/3 | 3/3 |
+| `64-decision-small-and-undoable` | `picks-without-ceremony` | 0/3 | 1/3 |
+| `64-decision-small-and-undoable` | `skill-fired`, `autonomous-flag-passed` | 3/3 | 3/3 |
+
+- **The re-check stopped on both small asks.** Four of the six `v0` replies report a second,
+  independent check; none of the six `v1` replies does, and five say they skipped it because a
+  wrong answer is cheap to undo. This is read from the final replies, not from traces.
+- **The score moved by one run on each case**, 2/6 to 4/6 on the quality graders. At three runs
+  that is inside the noise this suite has shown, so it shows the direction and no size.
+- **`64` still fails on the other half of its ceremony.** The two failing `v1` replies keep
+  sections of alternatives and assumptions, or recommend ordering both lamps. The change does
+  not touch that, and this round attributes nothing to it.
+
+Owed: `62-decision-rival-answers`, whose graders hold the re-derivation of a load-bearing read,
+and `86-decision-driver-in-another-branch`, the new case for *Drivers across branches*. Neither
+ran here. A later change to `autonomous.md` or `DECISION.md` makes this table stale.
+
 ## Baseline — 2026-10-06, opus judge
 
 **This baseline predates the change that added cases `17`–`29`.** That change also edited the

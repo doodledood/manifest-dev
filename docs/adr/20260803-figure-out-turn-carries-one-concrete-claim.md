@@ -1,7 +1,7 @@
 # ADR: a figure-out turn carries one concrete claim, in plain words, in a skimmable shape
 
 ## Status
-Accepted — amended by 20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines; amended by 20260905-investigation-messages-do-not-require-acknowledgment: the attention budget applies per message, and evidence-resolvable questions no longer require a user turn; the low-load and existence-first purposes remain; amended by 20261018-figure-out-and-define-ask-through-the-question-capability-by-default: the ask goes through the host's question capability by default where one is offered, and is in prose otherwise
+Accepted — amended by 20260809-figure-out-budgets-the-whole-turn-not-its-bold-lines; amended by 20260905-investigation-messages-do-not-require-acknowledgment: the attention budget applies per message, and evidence-resolvable questions no longer require a user turn; the low-load and existence-first purposes remain; amended by 20261018-figure-out-and-define-ask-through-the-question-capability-by-default: the ask goes through the host's question capability by default where one is offered, and is in prose otherwise; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: concrete-over-abstract and the information-bearing first line are not decided
 
 ## Area
 figure-out

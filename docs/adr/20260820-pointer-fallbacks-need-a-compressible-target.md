@@ -1,7 +1,7 @@
 # ADR: a cross-skill pointer carries a fallback only where the target's discipline compresses
 
 ## Status
-Accepted — its motivating instance, figure-out's chat-surface pointer, is retired by 20260830-rendering-contract-folds-into-figure-out; the rule stands for any future cross-plugin pointer
+Accepted — its motivating instance, figure-out's chat-surface pointer, is retired by 20260830-rendering-contract-folds-into-figure-out; the rule stands for any future cross-plugin pointer; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: figure-out's prompt-engineering pointer has no fallback, not decided
 
 ## Area
 Prompt architecture

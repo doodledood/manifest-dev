@@ -1,7 +1,7 @@
 # ADR: figure-out roots the crux tree above solution-shaped topics
 
 ## Status
-Accepted
+Accepted; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: the silent-when-established clause is not decided
 
 ## Area
 figure-out

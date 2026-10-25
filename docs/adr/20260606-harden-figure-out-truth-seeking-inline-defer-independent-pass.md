@@ -1,7 +1,7 @@
 # ADR: Harden figure-out truth-seeking via inline general-case rigor; defer the independent verification pass
 
 ## Status
-Accepted; deferral lifted by 20260611-figure-out-evidence-ledger-and-independent-rederivation
+Accepted; deferral lifted by 20260611-figure-out-evidence-ledger-and-independent-rederivation; narrowed by 20261025-figure-out-records-what-the-lean-body-rebuild-retired: the outside view is carried for decisions and plans by `tasks/DECISION.md` and is not decided for the spine; rival regeneration is retired; source independence is not decided
 
 ## Area
 figure-out
