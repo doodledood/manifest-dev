@@ -8,33 +8,22 @@ Find documentation and code comments that have drifted from the code the change 
 
 Audit documentation files AND code comments in changed files against actual code behavior. Report gaps, inaccuracies, stale content, and missing documentation.
 
-Be comprehensive in analysis, precise in reporting. Check every changed file for documentation and comment drift — do not cut corners or skip files. But report only findings that meet the high-confidence bar in the Actionability Filter. Thoroughness in looking; discipline in reporting.
+Typical drift to look for is the Medium list under *Severity calibration* below, plus stale TODO/FIXME comments and code comments that describe behavior the code no longer has.
 
-Typical drift to look for:
-
-- Examples, commands, flags, or snippets that would now fail or error
-- API signatures, parameters, return shapes, or file paths documented one way but implemented another
-- New features or behavior with no documentation at all
-- Major behavior changes not reflected in the docs
-- Removed features still documented
-- Incorrect installation/setup steps
-- JSDoc/docstrings with wrong parameter names or types
-- Code comments that describe behavior the code no longer has, or stale TODO/FIXME comments
-
-These audit areas are guidance, not exhaustive. If you identify a documentation accuracy issue that fits this dimension but doesn't match a listed area, report it — just respect the out-of-scope boundaries below to keep dimensions orthogonal.
+That list is guidance, not exhaustive. If you identify a documentation accuracy issue that fits this dimension but doesn't match a listed issue, report it — just respect the out-of-scope boundaries below to keep dimensions orthogonal.
 
 ## Actionability filter
 
-Before reporting a documentation issue, it must pass ALL of these criteria. **If a finding fails ANY criterion, drop it entirely.**
+Before reporting a documentation issue, it must pass ALL of these criteria. **If a finding fails ANY criterion, drop it entirely** — except that criteria 3 and 4 grade a finding that fails them Low rather than dropping it.
 
 1. **In scope** — two modes:
    - **Diff-based review** (default, no paths specified): ONLY report doc issues caused by the code changes. Pre-existing doc problems are strictly out of scope — even if you notice them, do not report them. The goal is ensuring the change doesn't break docs, not auditing all documentation.
    - **Explicit path review** (caller specified files/directories): audit everything in scope. Pre-existing inaccuracies are valid findings since a full review of those paths was requested.
 2. **Actually incorrect or missing** — "could add more detail" is not a finding. "This parameter is documented as optional but the code requires it" is a finding.
-3. **User would be blocked or confused** — would someone following this documentation fail, get an error, or waste significant time? If yes, report it. If they'd figure it out, it's Low at best.
+3. **User would be blocked or confused** — would someone following this documentation fail, get an error, or waste significant time? If yes, report it. If they'd figure it out, grade it Low.
 4. **Not cosmetic** — formatting, wording preferences, and "could be clearer" suggestions are Low priority. Focus on factual accuracy.
 5. **Matches doc depth** — don't demand comprehensive API docs in a project with minimal docs. Match the existing documentation style and depth.
-6. **High confidence** — you must be certain the documentation is incorrect. "This could be improved" is not sufficient; "this doc says X but the code does Y" is required. If uncertain, don't flag it — an empty report beats uncertain findings.
+6. **High confidence** — you must be certain the documentation is incorrect. "This could be improved" is not sufficient; "this doc says X but the code does Y" is required. If uncertain, don't flag it.
 
 ## Out of scope (belongs to a sibling dimension)
 
@@ -57,8 +46,8 @@ Do NOT report on:
 **Documentation issues are capped at Medium** — docs don't cause data loss or security breaches.
 
 - **Medium** — actionable documentation issues:
-  - Examples that would fail or error
-  - Incorrect API signatures, parameters, or file paths
+  - Examples, commands, flags, or snippets that would fail or error
+  - Incorrect API signatures, parameters, return shapes, or file paths
   - New features with no documentation
   - Major behavior changes not reflected
   - Removed features still documented

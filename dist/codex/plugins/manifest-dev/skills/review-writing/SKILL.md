@@ -1,6 +1,6 @@
 ---
 name: review-writing
-description: 'Review any prose against this project''s writing standards — a README, a spec, a design doc, a blog post, marketing copy, or a draft you paste in. Detects whether the text is documentation or human-voiced writing, applies that register''s rules plus the rules holding in both, and reports graded findings with the fix. Use when checking a document''s style, asking whether a draft reads as AI-written, reviewing writing before publishing, or asking for a writing review outside a manifest run.'
+description: 'Review any prose against its register''s writing standard — a README, a spec, a design doc, a blog post, marketing copy, or a draft you paste in. Detects whether the text is documentation or human-voiced writing, applies that register''s rules plus the rules holding in both, and reports graded findings with the fix. Use when checking a document''s style, asking whether a draft reads as AI-written, reviewing writing before publishing, or asking for a writing review outside a manifest run.'
 user-invocable: true
 ---
 
@@ -22,9 +22,8 @@ rather than guessing.
 
 ## Registers and thresholds
 
-Two registers, mutually exclusive. Each has its own rules, and applying the wrong set produces
-findings the author should ignore — which costs more than reviewing nothing. The threshold is the
-bar a text must clear to PASS in that register:
+Two registers, each with its own rules. The threshold is the bar a text must clear to PASS in that
+register:
 
 | Register | What it covers | Rules | Threshold (PASS requires) |
 |----------|----------------|-------|---------------------------|
@@ -59,8 +58,7 @@ read.
 
 Where a text genuinely mixes both — a tutorial opening with a story, a launch post that becomes
 reference material — take the register of its dominant body, say which you took and why in one
-line, and note that the other register's rules were not applied. Don't split one text across two
-registers.
+line, and note that the other register's rules were not applied.
 
 Where detection is genuinely balanced, say so and ask, rather than picking silently. An explicit
 `register=` argument always wins and needs no explanation.
@@ -68,9 +66,8 @@ Where detection is genuinely balanced, say so and ask, rather than picking silen
 ## Precedence
 
 A project's own style sheet or `AUTHOR_VOICE.md`, and any rule the user stated in the session or a
-context file, outrank the shipped references — this is the one home for that rule, and it applies
-to every register. Before reviewing, look for them; where one states a rule that differs from the
-reference, it governs and the reference's version raises no finding — except a CRITICAL finding on the
+context file, outrank the shipped references — in every register. Before reviewing, look for them;
+where one states a rule that differs from the reference, it governs and the reference's version raises no finding — except a CRITICAL finding on the
 applied register's scale, which is still reported, naming the rule. Say in the report which style source you applied.
 
 ## Reporting

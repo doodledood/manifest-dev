@@ -105,4 +105,4 @@ Invoke `node scripts/design-tools.mjs <command> input.json`. JSON/text inputs al
 node scripts/design-tools.mjs compare before.json --other after.json
 ```
 
-Comparison matches object keys and arrays of unique IDs, plus positional numeric arrays. Identity changes, unalignable arrays and nonnumeric changes remain explicit. Keep source reports and use stable named entities. No delta has an inherent good direction; changed state, units, decoder or crop can make a comparison inappropriate. Inspect the artifact before retaining an edit.
+Comparison matches object keys and arrays of unique IDs, plus positional numeric arrays. Identity changes, unalignable arrays and nonnumeric changes remain explicit. Keep source reports and use stable named entities. Changed state, units, decoder or crop can make a comparison inappropriate.
