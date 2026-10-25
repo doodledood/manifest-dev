@@ -82,9 +82,9 @@ A line can earn its place and still break where the prompt actually runs. Check 
 
 Find the gap a line closes before changing anything near it. The best patch usually replaces a line rather than adding one beside it, and a new explicit rule often retires an older vague hedge. Net change can be positive or negative; the target is balance, not direction.
 
-The updated prompt reads as if written today for what it now does. What a line used to say, when or why it changed, and who asked for it go in the commit message or a decision record: in the prompt they cost load on every run and can be followed as instructions. Keep the ruling, not the note that it was ruled.
+The updated prompt reads as if written today for what it now does. What a line used to say, when or why it changed, and who asked for it go in the commit message or a decision record, outside the prompt's file: in the prompt they cost load on every run and can be followed as instructions. Why a rule holds can stay. Keep the ruling, not the note that it was ruled.
 
-After the edit, reread the whole file as a newcomer would, not only the lines you touched: each rule stated once; nothing that contradicts or repeats the new line, or hedges what it now settles; the opening still describing what the prompt does. A prompt a newcomer has to piece together from layered patches has drifted, however sound each patch was.
+After the edit, reread the whole file as a newcomer would, not only the lines you touched: each rule stated once; nothing that contradicts or repeats the new line, or hedges what it now settles; the opening still describing what the prompt does. Remove history notes and the hedges a new rule retires wherever they sit, keeping each ruling: removing them changes no rule, so it is not a choice left to the requester.
 
 Guard against building a wall around a single observed failure. One instance is a fix; a section is over-correction.
 
