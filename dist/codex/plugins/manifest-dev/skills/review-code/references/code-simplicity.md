@@ -6,8 +6,6 @@ Find code where implementation complexity exceeds problem complexity — over-en
 
 ## What to inspect
 
-Be comprehensive in analysis, precise in reporting. Examine every file in scope against every applicable category — do not cut corners or skip areas. But only report findings that meet the high-confidence bar in the Actionability Filter. Thoroughness in looking; discipline in reporting.
-
 These categories are guidance, not exhaustive. If you identify a simplicity issue that fits within this dimension's domain but doesn't match a listed category, report it — just respect the Out of Scope boundaries to maintain orthogonality with sibling dimensions.
 
 ### 1. Over-Engineering
@@ -59,7 +57,7 @@ Before reporting an issue, it must pass ALL of these criteria. **If it fails ANY
 1. **In scope** — Two modes:
    - **Diff-based review** (default): Report complexity introduced, worsened, or exposed by a dependency this change adds or extends. Name that dependency and its concrete burden; unrelated pre-existing complexity is out of scope.
    - **Explicit path review** (caller specified paths): Audit everything in scope. Pre-existing complexity is valid to report.
-2. **Actually unnecessary** — The complexity must provide no value. If there's a legitimate reason (scale, requirements, constraints), it's not over-engineering. Check comments and context for justification before flagging.
+2. **Actually unnecessary** — The complexity must provide no value, or a behavior-preserving reshaping must make it unnecessary (Missed structural simplification). If a legitimate reason (scale, requirements, constraints) needs it under any shape, it's not over-engineering. Check comments and context for justification before flagging.
 3. **Simpler alternative exists** — You must describe a concrete simpler approach that would work. "This is complex" without a better alternative is not actionable.
 4. **Worth the simplification** — Trivial complexity (an extra variable, one level of nesting) isn't worth flagging. Focus on complexity that meaningfully increases cognitive load.
 5. **Matches codebase context** — A startup MVP can be simpler than enterprise software. A one-off script can be simpler than a shared library. Consider scale, maturity, team size, domain, and performance requirements before flagging.
@@ -126,6 +124,6 @@ Beyond the shared report skeleton, each finding for this dimension should make t
 - **Effort**: Quick win (localized change, single file) | Moderate refactor (may affect a few files, backward compatible) | Significant restructuring (may require design discussion)
 - **Simpler Alternative**: a concrete code example of the simpler approach the author could implement directly
 
-The executive summary for this dimension answers: **Is the code complexity proportional to the problem complexity?**
+The Summary for this dimension answers: **Is the code complexity proportional to the problem complexity?**
 
-If no issues pass the filter, the PASS report should state which files/changes were reviewed and affirm that solutions match the problems they solve — clean code with appropriate complexity is a valid and positive outcome. Do not fabricate issues to fill the report.
+If no issues pass the filter, the PASS report should state which files/changes were reviewed and affirm that solutions match the problems they solve.

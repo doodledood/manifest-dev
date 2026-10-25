@@ -24,6 +24,8 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
 
 - `<effort>` — the effort to work. With none named, the whole store: every effort with open
   Tickets.
+- an outcome assignment — a project outcome the caller assigns, in either interaction mode;
+  `references/OUTCOME.md` governs it.
 - `--autonomous` — continue planning and executing within the assignment without asking for
   approval of each successive plan. Retained decisions still wait. Without it, propose each plan
   and wait for approval.
@@ -74,7 +76,7 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
      not itself planned; it is deferred and its signpost reads as unmet; it is deferred and its
      signpost's source cannot be read, which also puts it on the list of what waits on the person,
      with that source; the type filter passes it over. Read each deferred Ticket's source at every
-     sort; sorting never edits its line. A change needs an assignment and explicit authority, not the source observation. A Ticket whose open dependencies are all
+     sort; sorting never edits its line. A Ticket whose open dependencies are all
      planned joins the plan behind them.
    - *Running*: its run facts name a live run.
    - *To land*: its record is marked ready to land by a run of yours and no run is live, and the
@@ -83,9 +85,9 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
    - *Answered*: its record holds a drafted answer, no trusted revision is pending and no run is live. It waits on the person to
      accept it, and is never launched again meanwhile.
    - *To recover*: the automation identity holds its claim, no run is live, and its last run
-     wrote no outcome (*The attempt record* lists them) — a failed launch — or a trusted revision request is pending, or wrote an escalation
+     wrote no outcome (*The attempt record* lists them) — a failed launch — or wrote an escalation
      whose mark is now gone, or marked ready a pull request that merged before the Ticket was
-     reopened.
+     reopened, or a trusted revision request is pending.
    - *Ready*: open, unclaimed, every dependency closed, no escalation mark, its signpost read as
      met at its source when it is deferred, matching any type filter, and either granted Auto or, without it, allowed under the convention's *The Auto
      grant*.
@@ -96,8 +98,8 @@ deferred Ticket, or after a title in the North Star's list of strategy choices i
    takes the continue/wait/finish decision in `references/OUTCOME.md` instead.
 6. **Rank** recovery first, then ready work, by the convention's delay-loss rule; across efforts,
    weigh each destination against the goal and measures of the project's North Star where it has
-   one (`NORTH_STAR.md`, or wherever the project context file says it lives): its *Goal* and *How
-   we know* sections, or the `Winning` field of a North Star in the older nine-field form.
+   one: its *Goal* and *How we know* sections, or the `Winning, and the number watched` field of a
+   North Star in the older nine-field form.
 7. **Plan around collisions.** Read each candidate, each Ticket with a live run — *Running*, or left
    alone because another orchestrator's run holds it — and the code they likely touch. Tickets
    likely to touch the same code run one after another, the second starting after the first lands,
@@ -135,7 +137,7 @@ For each free slot, take the next Ticket in the plan:
    Where the host names the session only after it starts, leave it to the run, which records its
    own session on its first write. Where the host cannot start
    another session, run a batch of one instead: invoke `run-ticket` with that same line in this
-   session, and check in when it returns. A file store always runs this way.
+   session, and check in when it returns.
 
 A launch fails when the host cannot start its session — that failure counts at once — or when
 the session ends or passes its timeout before the run writes an outcome. Stop a run's session where
@@ -203,7 +205,7 @@ check-in:
 7. **Fill free slots** as the mode's reference says. A Ticket waiting on the person holds no slot.
 
 Keep **one list of what waits on the person**, ordered by what waiting costs: held pull requests
-and drafted answers, escalations, Tickets awaiting a grant, Tickets left alone because their author
+and drafted answers, escalations, retained decisions, Tickets awaiting a grant, Tickets left alone because their author
 lacks write access, deferred Tickets whose signpost's source cannot be read, strategy signposts
 that read as met or whose source cannot be read, a common cause that paused an effort, planning
 start lines, refactor proposals, and the next plan. Give each item its own bullet, never a count standing in for items,

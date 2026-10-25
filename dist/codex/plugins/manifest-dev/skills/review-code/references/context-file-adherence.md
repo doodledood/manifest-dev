@@ -47,17 +47,7 @@ Before reporting a violation, it must pass ALL of:
 3. **Explicitly specified** — The naming convention, pattern, or documentation requirement is EXPLICITLY stated in a context file. General best practices belong to other dimensions, not here.
 4. **Introduced by this change** — Flag violations in changed code, not pre-existing violations the change didn't introduce.
 5. **Not silenced** — Skip issues explicitly silenced via comments (e.g., lint ignores) or trade-offs the change consciously documents.
-6. **High confidence** — Only certain violations. An empty report beats uncertain findings.
-
-## What NOT to flag
-
-- **Process instructions** — workflow steps, git practices, verification checklists
-- Subjective code quality concerns not explicitly in a context file
-- Style preferences unless the context file mandates them
-- Potential issues that "might" be problems
-- Pre-existing violations not introduced by the current changes
-- Issues explicitly silenced via comments (e.g., lint ignores)
-- Violations where you cannot quote the exact rule being broken
+6. **High confidence** — Only certain violations.
 
 ## Out of scope (belongs to a sibling dimension)
 
@@ -72,8 +62,6 @@ Do NOT report on:
 - **Documentation accuracy** (not specified in context file) → belongs to the docs dimension
 - **Test coverage** → belongs to the test-quality dimension
 - **Prose value / AI-tells in comments and doc files** (when not explicitly specified as a context-file rule) → belongs to the prose-value dimension
-
-Only flag naming conventions, patterns, or documentation requirements EXPLICITLY specified in context files. General best practices belong to other dimensions.
 
 **Cross-dimension boundary**: If a context file contains rules about code quality (e.g., "all functions must have tests"), only flag violations of the context-file rule itself. The underlying quality concern is owned by the appropriate specialized dimension.
 
@@ -96,4 +84,4 @@ Beyond the shared report skeleton, every finding for this dimension MUST cite th
 - **Impact**: why this matters for the project
 - **Recommended fix**: concrete change that brings the code into compliance
 
-Every issue must reference exact context-file text with its file path — no source citation, no finding. Don't report the same violation under different names; if the PASS report is empty, full compliance is a valid and positive outcome — do not fabricate violations to fill it.
+Don't report the same violation under different names.

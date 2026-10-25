@@ -78,11 +78,11 @@ For changes to configuration files, environment variables, or settings:
 
 ## Actionability filter
 
-Before reporting a divergence, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.** (The shared in-scope rule — diff-based by default, full audit when paths are specified — still applies: in diff-based mode, only report divergences in logic introduced or modified by this change; pre-existing intent-behavior gaps in unchanged code are out of scope, but become valid findings under an explicit-path review.)
+Before reporting a divergence, it must pass ALL of these criteria. **If it fails ANY criterion, drop the finding entirely.** (In scope: in diff-based review (default), only report divergences in logic introduced or modified by this change; pre-existing intent-behavior gaps in unchanged code are out of scope. Under explicit-path review they are valid findings.)
 
 1. **Concrete scenario** — You must describe the specific input, condition, or sequence that triggers the divergence. "This might not work as intended" is not a finding.
 2. **Verifiable against code** — You must trace the specific code path that produces the divergent behavior. Point to file:line references.
-3. **Intent is reconstructable** — If you cannot determine what the change intends (ambiguous purpose, no context), you cannot claim divergence. State that intent is unclear rather than guessing.
+3. **Intent is reconstructable** — If you cannot determine what the change intends from any source (ambiguous purpose, no context), you cannot claim divergence. State that intent is unclear rather than guessing: report "Intent unclear — cannot perform divergence analysis" and suggest the author add context (commit message, comments, or PR description).
 4. **Not intentional** — If the code, comments, or commit messages indicate the author deliberately chose this behavior, it's not a divergence even if you disagree with the choice.
 5. **Author would recognize it** — Would the author say "yes, that's not what I meant to happen" or "no, that's actually what I wanted"? Only report findings where the former is likely.
 
@@ -129,8 +129,6 @@ Severity reflects how far the actual behavior diverges from the intended behavio
 
 - If intent cannot be reconstructed with reasonable confidence, **state the ambiguity** and reduce your confidence level to Medium. Only report divergences you can verify despite the ambiguity.
 - If multiple valid interpretations of intent exist, **note them** and analyze against the most likely interpretation. If divergence only appears under one interpretation, note which.
-- When the change's purpose is genuinely unclear and you cannot determine intent from any source, report "Intent unclear — cannot perform divergence analysis" and suggest the author add context (commit message, comments, or PR description).
-- **An empty report is better than one with speculative divergences.** Where the ambiguity above cannot be resolved, drop the finding.
 
 ## Report expectations (additions to the shared format)
 
@@ -140,4 +138,4 @@ Before the findings list, include a **Reconstructed Intent** section so the verd
 - **Intent sources used**: which sources informed your reconstruction — diff, commits, tests, context, comments.
 - **Confidence**: High | Medium. If Medium, explain what's ambiguous about the intent.
 
-For each finding, frame it as a divergence: state the **Intent** (what the author expects to happen), the **Actual** (what will actually happen), and the **Trigger** (specific condition/input that causes the divergence), alongside the shared location/severity/evidence/fix fields. Every Critical/High divergence MUST have specific file:line references and concrete trigger conditions. Close with a 1–2 sentence assessment: does the change achieve its stated intent, and are the divergences fundamental (rethink needed) or incidental (small fixes)?
+For each finding, frame it as a divergence: state the **Intent** (what the author expects to happen) and the **Actual** (what will actually happen) in the shared **Description**; the shared **Trigger** carries the specific condition or input that causes the divergence. Every Critical/High divergence MUST have specific file:line references and concrete trigger conditions. Close with a 1–2 sentence assessment: does the change achieve its stated intent, and are the divergences fundamental (rethink needed) or incidental (small fixes)?

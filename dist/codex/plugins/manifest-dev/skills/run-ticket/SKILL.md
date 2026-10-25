@@ -9,8 +9,8 @@ user-invocable: true
 
 Work one exact Ticket through one execution attempt. Whoever starts the run chooses the Ticket;
 this skill owns recovery, execution, and the records on the Ticket. It ends at a ready pull
-request: the work pushed, its checks passing, and its completion record on the Ticket marked ready
-to land. It lands only when its prompt says to: `--land`, or the same request in words.
+request: the work pushed, its checks passing, its completion record written and its attempt record
+marked ready to land — or, for a Question Ticket, its answer recorded. It lands only when its prompt says to: `--land`, or the same request in words.
 
 Read `../ticket-up/references/TICKET_CONVENTION.md`, the project's venue reference
 (`../ticket-up/references/GITHUB_STORE.md`, `../ticket-up/references/FILE_STORE.md`, or the one
@@ -151,7 +151,7 @@ Keep work required by the source Ticket on the source Ticket. Finish it there, o
 
 A discovered item earns a follow-up Ticket only when it is genuinely separate work that someone could assign, prioritize, block on, and close independently. Group related findings into one coherent follow-up. Search the effort's open Tickets before authoring to avoid duplicates, then invoke `ticket-up` with the source Ticket, grouped finding, relationship, and execution evidence. Never write a follow-up directly to the venue, and never grant it Auto: the run that found the work never grants it.
 
-Questions that do not need their own lifecycle stay in the completion record. A question that blocks the current definition of done escalates the source Ticket rather than becoming a substitute for it.
+Questions that do not need their own lifecycle stay in the completion record.
 
 ## Finish at a ready pull request
 

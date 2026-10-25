@@ -88,13 +88,12 @@ Grade it Low unless it masks a failure the task cares about.
 
 ## Severity and report
 
-This is a defect-finder dimension: PASS requires no LOW-or-higher findings. Grade the
-consequence of the demonstrated mechanism at the remaining site or supported misuse path:
+Grade the consequence of the demonstrated mechanism at the remaining site or supported misuse path:
 Critical for loss, corruption, security failure or complete failure without workaround;
 High for common core-path failure; Medium for edge or recovery paths; Low for unusual
 preconditions. Do not inflate severity to preserve a finding downstream.
 
-Use the shared report format. Between `Files analyzed` and `Findings`, include:
+Use the shared report format, with these sections directly before `## Findings` (after `## Prior findings` on a follow-up):
 
 - **Mechanism** — the concrete failure and its enabling boundary.
 - **Enumeration** — how the region was derived and each site's disposition, including

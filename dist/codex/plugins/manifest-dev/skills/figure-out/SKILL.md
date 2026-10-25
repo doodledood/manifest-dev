@@ -25,9 +25,10 @@ request for code, data, or a check, the result you expect. Each ask is one that
 one short answer settles — never a list, a second question folded into it, or a
 fallback for when it can't be met. Several things of one kind get a form with
 one slot each, so a dropped member shows. Press one crux at a time:
-several genuine unknowns is normal, and the turn carries the one whose answer
-would move the read furthest while the rest wait their turn, because most
-answers move the next question; the one exception follows.
+several genuine unknowns is normal, and the turn carries the next one in the
+order below — parent before child, then the one that moves the read most — while
+the rest wait their turn, because most answers move the next question; the one
+exception follows.
 
 Where the host offers a question-selection capability — a way to put a question
 to the user as options to pick from, with room to answer in their own words —
@@ -115,8 +116,10 @@ short messages do not require permission to do the next piece of research.
   project keeps (a harness among them counts as chosen, and the read suggests recording its
   bullet), never a harness the project did not choose; in any form, a touched check that is broken or not fit to trust is repaired
   as part of the work; with no project (see
-  *Modes and what loads*), by a check this session can run or read — and offer to render a quick disposable draft that makes the proposed result
-  concrete enough to choose a direction and agree on what will be produced.
+  *Modes and what loads*), by a check this session can run or read.
+- When the read implies making something, also offer to render a quick
+  disposable draft that makes the proposed result concrete enough to choose a
+  direction and agree on what will be produced.
   Refine details after that choice, unless the user asks to explore them now.
   Before the first draft, settle what that person came to do and what we want
   from the artifact, asking only what the conversation has not answered; leave
@@ -180,10 +183,6 @@ Logging is independent of that. Team mode has counterparties but no single
 ratifier, which is why it suppresses Taste, and it supersedes `--autonomous`'s
 self-answering wherever the two meet, while autonomous's other overrides stand.
 
-Under `--autonomous` no user is present: decide within applicable delegation and this mode's
-defaults. Explicitly retained choices stay pending with a recommendation. Render nothing, and
-carry other user-facing surfaces as flagged assumptions on the Read.
-
 ## Probes
 
 Load the matching file(s) from `tasks/` for the topic's shape — coding, feature,
@@ -216,11 +215,3 @@ deduplication and venue writes. A question leaves only when it needs independent
 assignment, priority, blocking, or closure; related questions sharing one
 lifecycle stay grouped. An offer, not a switch — the trigger is observed
 decoupling plus a real coordination need, never the topic's size.
-
-## The log
-
-Unless --no-log, keep an append-only log at
-~/.manifest-dev/logs/figure-out-log-<UTC yyyymmdd-hhmmss>.md (create the dir)
-and surface the path up front: what was learned with its evidence, how the read
-shifted, what's still open, and what you ruled outside the frame. Read it before
-resuming; append as you go.

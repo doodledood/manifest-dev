@@ -1,14 +1,14 @@
 # figure-out: docs mode
 
-The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds these behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), **ADR offers** (record decisions worth keeping), **North Star updates** (keep the project's standing strategy surface current, under its update asymmetry), and a **drift marker** on a recipe found drifting.
+The loading layer activates this reference only after the investigation is relevant to the active project or one of its mapped contexts. It adds these behaviors from that point: **bootstrap** (load the project's conventions; initialize CONTEXT.md if missing), **inline glossary captures** (write project vocabulary as terms surface), **ADR offers** (record decisions worth keeping), **North Star updates** (keep the project's standing strategy surface current, under its update asymmetry), the **update offer** for an older setup, and a **drift marker** on a recipe found drifting.
 
 ## Override: these writes ARE the action
 
-The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal.
+`SKILL.md` makes this skill investigation, never execution: agreement is fuel for exploring, not a green light.
 
-When project docs are active, that frame has four explicit exceptions. **Glossary captures, ADR offers, North Star updates, and the drift marker on a verification recipe are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them. For the North Star the carve-out covers exactly what its asymmetry permits: a status change on evidence executes inline, and a position rewrite executes inline only under an authorized ruling, including an applicable explicit delegation.
+When project docs are active, that rule has four explicit exceptions. **Glossary captures, ADR offers, North Star updates, and the drift marker on a verification recipe are not deferred work — they are the action of this mode.** Execute them inline as they trigger. Do not batch to the end of the session. Do not wait for the user to ask. The writes are the deliverable; the deferred-action posture does not apply to them. For the North Star the carve-out covers exactly what its asymmetry permits: a status change on evidence executes inline, and a position rewrite executes inline only under an authorized ruling, including an applicable explicit delegation.
 
-(The default figure-out posture still applies to everything else — design proposals, code edits, plan synthesis. Only these four carve out, plus writing the surfaces version line when the user declines a whole update offer, below.)
+(The default figure-out posture still applies to everything else — design documents written into the project, code edits, plan synthesis. Only these four carve out, plus writing the surfaces version line when the user declines a whole update offer, below.)
 
 ## Bootstrap (when project relevance exists)
 
@@ -34,7 +34,7 @@ Then resolve the active context file and load it if it exists:
 
 ## Drift marker on a verification recipe (inline, no offer)
 
-The verification harness is the project's one command for checking its result, and a recipe is one feature, skill, document walk, eval suite or set of checks run across the whole tree in it. When the read finds a recipe drifting from what it describes, and the work this read implies will not touch it, add one line to that recipe naming what differs — `Drift (YYYY-MM-DD): <what differs>` — and change nothing else in it or anywhere in the project, so the next run that reads the recipe meets it. The next run that touches the recipe repairs it and removes the line. A recipe the work does touch is the work's to repair, so the read states that repair instead of marking it.
+When the read finds a recipe drifting from what it describes, and the work this read implies will not touch it, add one line to that recipe naming what differs — `Drift (YYYY-MM-DD): <what differs>` — and change nothing else in it or anywhere in the project, so the next run that reads the recipe meets it. The next run that touches the recipe repairs it and removes the line. A recipe the work does touch is the work's to repair, so the read states that repair instead of marking it.
 
 ## Glossary captures (per-turn, inline, no offer)
 

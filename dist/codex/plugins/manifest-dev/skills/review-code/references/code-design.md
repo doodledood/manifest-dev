@@ -2,8 +2,6 @@
 
 Audit a change for design fitness — whether the code is the right approach given what already exists in the framework, codebase, and configuration systems. The question for every piece of code: **"Is this the right design given what already exists?"** You are looking for the right answer built the wrong way, responsibilities in the wrong system, code that doesn't build enough, interfaces that make likely changes needlessly costly, misused concepts, or changes that don't hold together as a unit.
 
-Be comprehensive in analysis, precise in reporting. Examine every file in scope against every applicable category — do not skip areas. But only report findings that clear the Actionability Filter. Thoroughness in looking; discipline in reporting.
-
 The categories below are guidance, not exhaustive. If you spot a design fitness issue that fits this dimension but matches no listed category, report it — just respect the orthogonality boundaries so neighboring dimensions stay clean.
 
 ## Detection categories
@@ -96,7 +94,6 @@ Note: This category requires understanding the change as a whole, not just indiv
 ## Out of scope (belongs to a sibling dimension)
 
 - **Adequacy of a repair against its demonstrated failure mechanism** → the defect-class dimension, including whether proportionate prevention was omitted.
-
 - **Intent-behavior divergence** (does the change achieve its goal?) → the change-intent dimension
 - **Mechanical code defects** (race conditions, resource leaks, null handling) → the code-bugs dimension
 - **API contract correctness** (wrong params, consumer breakage) → the contracts dimension
@@ -127,7 +124,7 @@ Before reporting a design issue, it must pass ALL of these. **If a finding fails
 3. **Matches codebase context** — If the codebase has no configuration system, don't demand one. If the framework version doesn't support the suggested feature, it's not reinventing. Account for project maturity, team size, and domain.
 4. **Substantiated choice** — Evaluate the author's rationale against the demonstrated cost and alternative. Deliberateness alone does not settle design fitness; explicit owner requirements remain authoritative.
 5. **Worth the change** — The design improvement must justify the refactoring cost. A slightly suboptimal approach in non-critical code isn't worth flagging.
-6. **Author would accept** — Would a reasonable author say "good catch, I didn't know that existed / that should be in config / I need to handle that case" or "that's a reasonable approach for our context"?
+6. **Author would accept** — Would a reasonable author say "good catch, I didn't know that existed / that should be in config / I need to handle that case" or "that's a reasonable approach for our context"? Report only where the former is likely.
 
 ## Severity calibration
 
@@ -140,20 +137,15 @@ Before reporting a design issue, it must pass ALL of these. **If a finding fails
 
 **Calibration check**: Critical design issues are rare — they require large-scale reinvention or API shapes that will break many consumers. If you're marking more than one issue as Critical, recalibrate — Critical means "this design choice WILL cause cascading rework, not might."
 
-This dimension is **advisory**: PASS requires no MEDIUM-or-higher finding. LOW findings are could-be-better notes and do not block.
-
 ## Dimension-specific report expectations
 
 - **Lead with the design question.** Frame the assessment around: is the code using the right approach given what already exists in the framework, codebase, and configuration systems?
 - **Tag each finding with its category**: Use Existing | Config Boundary | Responsibility Ownership | Under-engineering | Interface Foresight | Concept Purity | PR Coherence.
 - **Show the alternative.** Every finding's recommended fix must point to the specific existing solution, configuration system, owning layer, or better interface shape — not just "this is wrong."
 - **Include evidence.** A code snippet showing the issue, plus the **Impact** (what rework or problems this design choice causes). Every Critical/High finding MUST have specific `file:line` references and a concrete fix.
-- **Sound design is a valid, positive outcome.** If nothing clears the filter, report PASS — approaches match what the framework and codebase provide, responsibilities are in the right systems, interfaces are durable, and the change is cohesive. Do not fabricate issues.
+- **Sound design passes.** If nothing clears the filter, report PASS — approaches match what the framework and codebase provide, responsibilities are in the right systems, interfaces are durable, and the change is cohesive.
 
 ## Gotchas
 
 - **Search before flagging "Use Existing."** A reinvention finding requires evidence that the capability actually exists — search the framework and codebase first; point to the concrete existing solution.
 - **Consider the author's context.** Not every author knows every framework feature. Frame findings as "this exists and handles your use case," not "you should have known this."
-- **Respect explicit requirements.** Read the rationale for a design choice and test whether it explains the concrete tradeoff; do not substitute taste for evidence.
-- **Be practical.** A slightly suboptimal design in non-critical internal code isn't worth the review noise.
-- **Under-engineering vs over-engineering.** "Should also build X" is only a finding if X is demonstrably imminent; speculative "should also build Y" is over-engineering and belongs to the code-simplicity dimension, not here.
