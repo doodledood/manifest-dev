@@ -12,7 +12,7 @@ Guides creating, updating, reviewing or discussing an LLM prompt, skill or agent
 
 - `/prompt-engineering <request>`.
 - Phrases its description matches: "improve this prompt", "this skill needs work".
-- define and figure-out before prompt-shaped work; review-prompt first; manifest-to-goal.
+- define and figure-out before prompt-shaped work; review-prompt first.
 
 ## Scenarios
 
