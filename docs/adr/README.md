@@ -229,3 +229,4 @@
 | 2026-10-24 | [Research delegation follows the inquiry](20261024-research-delegation-follows-the-inquiry.md) | Accepted | Task guidance |
 | 2026-10-25 | [define writes every Manifest as current state, and reviews every amendment in a fresh context](20261025-define-manifests-read-as-current-state-and-every-amendment-is-reviewed.md) | Accepted | define |
 | 2026-10-25 | [manifest-to-goal lists what the goal owes before drafting, and has the goal read cold](20261025-manifest-to-goal-lists-what-the-goal-owes-and-has-it-read-cold.md) | Accepted | Goal setting |
+| 2026-10-25 | [Name the situations people reach for manifest-dev in](20261025-name-the-situations-people-reach-for-manifest-dev-in.md) | Accepted | North Star |

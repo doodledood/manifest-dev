@@ -40,6 +40,32 @@ chasers, and people not using a coding agent at all.
 
 — ruled: 2026-10-15. Records: Projects drive themselves as far as each user climbs, and manifest-dev fits inside teams that do not use it.
 
+When they reach for it: four situations so far.
+
+- **Too big to prompt.** A change spans several files or decisions, and a wrong result would
+  cost more rework than the tokens to get it right. Today they prompt directly and review
+  after, do it by hand, or do less.
+
+  — hypothesis: the maintainer's own use; no outside user has described it. Records: Name the situations people reach for manifest-dev in. 2026-10-25
+
+- **Coming back.** They return to a project after a break and need what it is for, what was
+  decided and what needs them, without rereading old conversations. Today they rely on memory,
+  notes or the history, or start over.
+
+  — hypothesis: the maintainer's own use; no outside user has described it. Records: Name the situations people reach for manifest-dev in. 2026-10-25
+
+- **Away from the desk.** They want work to move toward an outcome while they are elsewhere,
+  and to be asked only about the choices they kept. Today they wait until they are back, watch
+  every step, or do not hand the work off.
+
+  — hypothesis: the maintainer's own use; no outside user has described it. Records: Name the situations people reach for manifest-dev in. 2026-10-25
+
+- **Thinking it through.** They face a decision or problem they cannot yet state well, and want
+  it pressed until it is clear, before anything gets built. Today they use a plain chat, ask a
+  colleague, or think it through alone.
+
+  — hypothesis: the maintainer's own use; no outside user has described it. Records: Name the situations people reach for manifest-dev in. 2026-10-25
+
 ## Goal
 
 *"My project makes progress that matters to the people it serves. I can use one skill or delegate
