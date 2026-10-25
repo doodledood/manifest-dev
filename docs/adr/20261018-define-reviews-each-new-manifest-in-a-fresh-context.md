@@ -1,7 +1,7 @@
 # ADR: define reviews each new Manifest in a fresh context before the digest
 
 ## Status
-Accepted — amended by 20261019-define-searches-each-new-manifest-for-a-wrong-result-that-passes-every-gate: the review also searches the whole Manifest for wrong results that pass every gate at once, by judgment, and the digest names the holes found
+Accepted — amended by 20261019-define-searches-each-new-manifest-for-a-wrong-result-that-passes-every-gate: the review also searches the whole Manifest for wrong results that pass every gate at once, by judgment, and the digest names the holes found. Further amended by 20261025-define-manifests-read-as-current-state-and-every-amendment-is-reviewed: amendments now get the review too, with a shorter scope, and every Manifest reads as current state
 
 ## Area
 define

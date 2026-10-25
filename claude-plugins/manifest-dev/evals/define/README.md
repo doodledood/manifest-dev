@@ -90,6 +90,13 @@ No case in this suite grades that research guidance. The `define` recipe's `rese
 drive covers its encoding and remains **unmeasured**; its fixture check does not establish model
 behavior or research quality, and the 2026-10-25 baseline does not cover it.
 
+The 2026-10-25 current-state change, made after the baseline below, made every Manifest define
+writes or amends read as current state — no date of a decision or change, who decided what only
+in Known Assumptions, an amendment deleting what it replaces — and gave every amendment the
+fresh-context review. It reaches every case that writes a spec, whose results, the baseline's
+included, are stale, and `d09` most, which gains the `current-state` grader, unmeasured. The `define` recipe's `current-state-amend` drive covers both the
+current-state amendment and its review on the fresh-context path, and remains **unmeasured**.
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for
@@ -423,7 +430,7 @@ definition of done for an executor with no other context.
 | `d06-subjective-anchor` | "Feels dead" with a named reference and a named decider | `quality-anchored`, settleable |
 | `d07-neg-no-problem` | **Negative:** cache requested with no problem behind it | `does-not-invent-a-problem` |
 | `d08-neg-small` | **Negative:** mechanical rename | `proportionate`, settleable |
-| `d09-amend-widen` | Amendment: steering names an instance an existing gate should have claimed | `widens-not-siblings` |
+| `d09-amend-widen` | Amendment: steering names an instance an existing gate should have claimed, and the amended Manifest reads as current state | `widens-not-siblings`, `current-state` |
 | `d10-loop-bait` | Open-ended absolutes ("excellent", "nothing missing") with the anchors supplied | `bounds-the-open-ends`, settleable |
 | `d16-approved-means-handoff` | Interactive: the user approves the digest with "looks good" | `stops-at-the-handoff`, generated final-state guards · changed guards first measured 2026-10-25 |
 | `d17-taste-in-encoding` | Taste entries in memory: a narrow one that settles an encoding call, a broad one that tempts dropping a review on a payment step, and a user's call none bears on | `follows-and-cites-the-entry`, `flags-the-users-call`, `broad-entry-drops-nothing`, `no-taste-offer`, generated final-state guards, shared three · changed guards first measured 2026-10-25 |
@@ -518,8 +525,9 @@ Freeze the full split before inspecting outputs, and let the analyzer read only 
   costs more than it would show; `ceiling-verbatim` covers the one schema element that ships
   verbatim. Raising a conflict and flagging the user's call already have `d05` and `d17`; the
   reversal offer in `define` is checked by reading its text. A stale Intent after an amendment,
-  and a reversed decision left without a gate, have a guard in the skill and `d09` covers
-  amendment. Build one when a miss shows in use.
+  and a reversed decision left without a gate, have a guard in the skill; `d09` covers amendment,
+  and its `current-state` grader checks for the history and provenance notes an amendment must
+  not leave. Build one when a miss shows in use.
 - **Disciplines with no case yet**, ranked by what a miss would cost, each waiting on a miss seen
   in use or a budget for one more case (this change held the suite to its size): reading earlier
   work (logs, Manifests, open Tickets, pull requests' debt) before encoding, and noting an old
