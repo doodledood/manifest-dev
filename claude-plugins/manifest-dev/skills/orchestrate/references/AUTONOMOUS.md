@@ -9,9 +9,8 @@ runs. Auto Tickets run end to end and land. Tickets without Auto that the conven
 up to a ready pull request, or a drafted answer, and wait on the person; they never land here,
 and a drafted answer is never accepted here.
 
-Whatever needs the person goes on the list of what waits on them, never into a slot: held pull
-requests, escalations, Tickets left alone because their author lacks write access, refactor
-proposals, and retained planning decisions. Assigned inquiry and shaping can run unattended
+Whatever needs the person goes on the list of what waits on them (`../SKILL.md` → *Check in*),
+never into a slot. Assigned inquiry and shaping can run unattended
 within delegated authority; an unassigned expansion or retained decision waits with a recommendation.
 An outcome assignment uses `OUTCOME.md` to commission that inquiry before dispatch.
 
@@ -24,7 +23,7 @@ does not, record that Auto was withheld and why, and list the Ticket as awaiting
 Each Ticket is judged once: a grant a person withdrew stays withdrawn, and a withhold naming a
 person who was asked leaves the grant to that person: list the Ticket as awaiting their grant.
 Re-read the Ticket after granting: where two grant decisions now stand,
-`../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record* says which decides and how
+`../../ticket-up/references/AUTOMATED_EXECUTION.md` → *The attempt record* says which decides and how
 the other is taken back. The run that found the work
 never grants it. A refactor whose direction is retained does not receive a grant here; explicit
 delegation can settle that direction without waiving the rest of the criterion. A Ticket granted

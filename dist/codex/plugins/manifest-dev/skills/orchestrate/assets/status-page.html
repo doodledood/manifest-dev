@@ -1726,7 +1726,7 @@ code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, mo
     if (p) requestAnimationFrame(function () { S.board.reveal(p, !viaKey); });
   }
   // What the person needs to decide an item without opening it: the answer recommended, the risk
-  // of taking it, and the evidence it rests on. Each is optional, so older snapshots still show.
+  // of taking it, and the evidence it rests on. Each is optional.
   function reasons(a) {
     var rows = [["Recommended", a.pick], ["Risk", a.risk], ["Evidence", a.evidence]].filter(function (r) { return r[1]; });
     if (!rows.length) return null;

@@ -1,6 +1,6 @@
 # Seeding from a project's history
 
-Reconstruct what the project already decided and what it calls things. The target is a usable starting point, not a complete record — and the difference between a good seed and a harmful one is honesty about which is which.
+Reconstruct what the project already decided and what it calls things.
 
 ## Sources, strongest first
 

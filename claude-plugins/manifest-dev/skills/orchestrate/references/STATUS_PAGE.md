@@ -1,10 +1,7 @@
 # The status page
 
 The status page shows a person where an effort's work stands without asking: the Tickets as a graph of
-the order between them, and a separate list of what waits on the person. An effort is the named body of
-work the orchestrator runs, with one destination and one front item: the effort's front file or issue in
-the Ticket store, where its standing settings live. A check-in is each time the orchestrator reads the
-store again and acts on what changed.
+the order between them, and a separate list of what waits on the person.
 
 One page shows one effort. An orchestrator working several efforts keeps one page for each, every
 page holding only its own effort's Tickets and linked from that effort's front item.
@@ -123,9 +120,8 @@ wait on it.
 
 For an outcome assignment, include `coordination` at every check-in. A finished plan with an empty
 queue can still be `waiting-evidence` or `waiting-decision`. Use `complete` only when the outcome's
-completion terms have evidence, not when delivery ended. Put a retained decision in `needsYou` too,
-with its recommendation and evidence. Keep the summary short; link detailed records from the front
-item. Older queue-only snapshots remain valid without `coordination`.
+completion terms have evidence, not when delivery ended. Keep the summary short; link detailed records from the front
+item.
 
 ### A Ticket
 
@@ -133,7 +129,7 @@ item. Older queue-only snapshots remain valid without `coordination`.
 |---|---|---|---|
 | `id` | string | The Ticket's id as the store shows it, such as `#131`. Unique on the page, and never `goal`. | The Ticket. |
 | `title` | string | The Ticket's title. | The Ticket. |
-| `summary` | string, optional | One plain sentence on what the Ticket changes and for whom, for a person who never saw it. A snapshot from an older orchestrator may lack it; the page then says the Ticket has no summary yet. | Derived from the Ticket's Title and Why, or a question Ticket's question. |
+| `summary` | string, optional | One plain sentence on what the Ticket changes and for whom, for a person who never saw it. Without it, the page says the Ticket has no summary yet. | Derived from the Ticket's Title and Why, or a question Ticket's question. |
 | `why` | string, optional | The problem the Ticket relieves, in a sentence or two. | The Ticket's Why, or a question Ticket's "why it matters". |
 | `change` | object, optional | What a person would see before and after the Ticket lands: `before` and `after`. | The Ticket's Why and Definition of done, only where they describe a concrete before and after. |
 | `change.before` | string | Today, in a line. | As `change`. |
@@ -170,7 +166,7 @@ use their own types gives `type` only for these five.
 | `landed` | Landed, with the time | Its pull request merged and the Ticket closed. |
 | `held` | Your look | It stopped at a ready pull request or a drafted answer that waits for the person: it has no Auto, or its landing needs the person. |
 | `escalated` | Your answer | It carries an escalation mark: the record on the Ticket that says a person is needed. |
-| `failed` | Launch failed | Its session failed to start three times, and it went to a person. |
+| `failed` | Launch failed | Its third launch in a row failed, or a landing repair would have taken its launch count past three (`../SKILL.md` → *Launch*), and it went to a person; shown as `failed` rather than `escalated`. |
 | `grant` | Grant Auto? | An agent wrote it, and in default mode it waits for the person to grant Auto. |
 | `proposal` | Your call | A structural refactor the orchestrator proposes, because one area keeps producing debt. |
 | `queued` | Up next | In the plan and ready, waiting for a free run slot. |
@@ -196,9 +192,7 @@ comes first.
 | `cost` | string, optional | What the wait holds back, such as "#153 depends on it". |
 | `startLine` | string, optional | A line the person copies to start a session, such as the start line for a deep-planning session. The page shows it with a Copy button. |
 
-Every item the orchestrator keeps on its list of what waits on the person is here: held pull
-requests, escalations, launches that went to a person, Tickets awaiting a grant, refactor proposals,
-planning sessions to start, a common cause that paused the effort, and the next plan to approve.
-Each is its own item, never a count standing in for several. Give each the `pick`, `risk` and
+Every item on the orchestrator's list of what waits on the person (`../SKILL.md` → *Check in*)
+is here, each its own item, never a count standing in for several. Give each the `pick`, `risk` and
 `evidence` that let the person decide it from the page; the page shows them under the ask, and in
 the Ticket's detail.

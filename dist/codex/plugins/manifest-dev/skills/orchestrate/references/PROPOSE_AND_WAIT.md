@@ -3,7 +3,7 @@
 Nothing starts before the person approves a plan, unless applicable explicit delegation
 already settles that planning decision. Use that scope without asking for the same decision
 again. Otherwise the propose-and-wait default below stands; standing delegation alone assigns
-no work, and approving a plan is not an Auto grant.
+no work.
 
 ## Propose
 

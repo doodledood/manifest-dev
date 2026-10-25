@@ -47,8 +47,8 @@ adds a second one. It holds:
 | Manifest | The run's full Manifest, refreshed when it is amended; absent for inquiry without one | The run, as soon as define reports it |
 
 Each fact has one writer. The ready mark and the drafted answer name the run that wrote them, and
-count only while the run facts name that run; a mark that names no run, written before marks named
-their run, names the run the run facts name. That binding decides sorting and landing: a relaunched
+count only while the run facts name that run; a mark that names no run counts as naming the run
+the run facts name. That binding decides sorting and landing: a relaunched
 run reads an earlier run's mark as where the work stands. A launcher writes only while no live run
 holds the Ticket, and re-reads the Ticket after writing. A run re-reads the record before each write
 and each push, and stops without writing when the run ID there is not its own. A comment edit
@@ -188,6 +188,4 @@ boundary.
 
 - A claim is not a lock between two runs that write as one identity, and neither are the run facts
   (*The attempt record* says what settles a race).
-- Auto is durable authority, not a launch pulse. Removing and reapplying it to retry erases the
-  difference between authority and delivery.
 - A run that ends without an outcome is a failed launch, not a Ticket outcome. Only the escalation record says a person is needed.

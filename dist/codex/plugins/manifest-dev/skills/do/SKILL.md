@@ -9,14 +9,13 @@ Read `../ticket-up/references/AUTHORITY.md` before acting. Keep this assignment,
 authority and retained decisions in every skill handoff; an isolated caller must receive them
 explicitly, with the useful intent and evidence.
 
-
 No path → halt with usage. Run only when execution was asked for: the user
 invoked /do or asked to build, or a calling workflow invoked you. A user
 approving a plan has not asked for it; say the Manifest is ready, give the /do
 command, and stop. Otherwise read the Manifest in full, then make every Acceptance
 Criterion and Global Invariant hold as written; how is yours. Those bind; Initial
-Approach and Process Guidance advise. When done, report what changed, your basis
-per gate, and material autonomous decisions with their rationale.
+Approach and Process Guidance advise. When done, report what changed and your basis
+per gate.
 
 ## Autonomous execution
 
@@ -36,7 +35,7 @@ followed, or that no entry applied.
 
 **Taste on reversal.** When a steering message reverses a call the run made and states why, and the reason is a preference another user could want the opposite of — not a behavior every session owes — draft a Taste entry in three parts: the preference, naming the kind of call it covers; the rationale, built on the reason the user stated, never one you inferred; and when it should yield. Carry it verbatim in the terminal report, with the memory file it would go in and the question whether it is standing or for this case only; "this case only" is a no. Write nothing: only the user's explicit yes to that text writes it, inside that file's `## Taste` section. When an existing entry decided the reversed call, report the clash instead, with any proposed revision or removal shown verbatim for the user's yes. Make no other offer.
 
-Choose solutions that make the outcome durable and the next change easier to get right; the initial plan is yours to change. Appetite — the size of change the problem is worth — may be revised through the authoring skill before broader work starts, when the benefit to this outcome justifies the added complexity and maintenance, never to excuse excess already produced or to lower a gate's bar. Out of bounds exclusions, binding requirements and permissions stay fixed unless the user changes them, and absence from an exclusion list authorizes nothing unrelated.
+Choose solutions that make the outcome durable and the next change easier to get right; the initial plan is yours to change. Appetite — the size of change the problem is worth — may be revised by amendment (*Amendments*), never to excuse excess already produced or to lower a gate's bar. Out of bounds exclusions, binding requirements and permissions stay fixed unless the user changes them, and absence from an exclusion list authorizes nothing unrelated.
 
 An obligation is blocked only when no authorized path remains after trying credible alternatives: it needs knowledge, access or authority the run lacks, or a change to a binding requirement. A failed approach is yours to redesign rather than repeat; when two repairs that rest on one premise have both failed a gate, test that premise before a third repair. Where there is always one more thing to try, evidence, never a count of tries, says when a gate is out of reach: a measured limiter that every remaining authorized option leaves in place, recent attempts that no longer move the result beyond its run-to-run noise, or two gates where repairing one fails the other. The burden of proof is the run's: the limiter measured rather than guessed, the attempts distinct approaches aimed at it rather than variations of one idea, and every authorized option that could move it tried; until then the gate is not out of reach, and the work goes on. Any of these, so earned, makes it blocked as needing a change to a binding requirement; its blocker names the best result reached, the limiter, the attempts made and the requirement change that would unblock it, and the bar stays as written. Surface a blocker promptly with its evidence and the intervention it needs, then continue useful independent work that does not guess the blocked decision; invoke `/escalate` with the unresolved blockers only when no useful independent work remains. An external process still running is a wait, never completion.
 
@@ -44,11 +43,11 @@ An obligation is blocked only when no authorized path remains after trying credi
 
 Invoke `define` with the Manifest path and the decision to amend the plan,
 settled assumptions, or Appetite within your delegated authority, or to encode
-user steering. Pass the rationale and keep the amendment unattended. An Appetite
-revision names the benefit to the requested outcome and the added complexity and
-maintenance; apply it before broader work starts. Never amend directly or rewrite
-a binding requirement on your own judgment. A false binding premise is a blocker;
-a failed approach is yours to replace.
+user steering. Pass the rationale and keep the amendment unattended. Revise
+Appetite only when the benefit to the requested outcome justifies the added
+complexity and maintenance; the revision names both and applies before broader
+work starts. Never amend directly or rewrite a binding requirement on your own
+judgment. A false binding premise is a blocker.
 
 Wait for active gate evaluations to finish before amending. If an amendment races
 an evaluation, discard that evaluation's verdicts and evaluate the amended file.
@@ -61,14 +60,14 @@ path and record them in the execution log when kept.
 
 Before implementation, including when called by /auto, resolve the absolute Manifest path
 and arm the completion backstop: continue under an active goal identifying this same file,
-or emit the blocks below verbatim, substituting `<manifest-path>` with the absolute Manifest path.
-Where a broader parent workflow backstop is already visible and already requires evidence for every
-gate — a PR-tend contract, say — operate under it: do not set or print a second narrower goal.
-Do not summarize, shorten, reword, or re-punctuate them. Set them through the harness's
-goal-setting, continuation, or durable-completion-condition capability, else print them
-copy-pasteable. Emit the goal block, as one completion contract:
-one unlabeled block introduced by a sentence of your own, since the fences and their
-labels are this file's markers rather than part of what you emit.
+or emit the goal block below verbatim, substituting `<manifest-path>` with the absolute
+Manifest path. Do not summarize, shorten, reword, or re-punctuate it. Set it through the
+harness's goal-setting, continuation, or durable-completion-condition capability, else print it
+copy-pasteable. Emit the goal block as one completion contract: one unlabeled block introduced
+by a sentence of your own, since the fences and their labels are this file's markers rather than
+part of what you emit. Where a broader parent workflow backstop is already visible
+and already requires evidence for every gate — a PR-tend contract, say — operate under it:
+do not set or print a second narrower goal.
 
 ```goal-block
 Work under the Manifest at <manifest-path> until every Acceptance Criterion and Global Invariant in it holds, each with evidence from the artifacts that gate names, and completion has been reported. Read this file before resuming execution.
