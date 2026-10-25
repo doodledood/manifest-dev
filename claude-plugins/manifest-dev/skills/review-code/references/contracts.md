@@ -145,8 +145,6 @@ Beyond the shared report skeleton, for this dimension:
 
 ## Guidelines / gotchas
 
-- **Evidence first**: Always locate documentation or consumer code before asserting a violation. If you can't find evidence, it's not a finding — it's an "Unverified" item.
-- **Search thoroughly**: For internal APIs, search the codebase for route definitions, type exports, and function signatures. For external APIs, try the project's existing documentation references before web search.
 - **Respect versioning**: API behavior may differ by version. Verify which version the code targets before comparing against documentation.
 - **Consider migration context**: If the change is part of a documented migration (v1 → v2, deprecating an endpoint), evaluate against the target state, not the current state.
 - **Outbound takes priority**: When time-constrained, prioritize outbound (API usage) over inbound (consumer impact) — outbound violations cause immediate runtime failures while inbound violations may have delayed impact.

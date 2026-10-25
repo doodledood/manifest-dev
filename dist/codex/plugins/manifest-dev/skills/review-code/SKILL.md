@@ -12,10 +12,6 @@ Audit a change along **one** review dimension and report findings. Load only tha
 
 `$ARGUMENTS` carries the **dimension** plus optional scope, e.g. `dimension=code-bugs` or `code-bugs src/foo.ts`. A manifest gate's body activates this skill with the dimension under `/do`'s selected evaluator; the gate names the dimension and this skill owns the threshold. If no dimension is given, list the available dimensions and ask which one — one invocation, one dimension.
 
-A caller requesting a follow-up also supplies the prior assessed state and criteria, findings,
-verified repairs, and changes since that evaluation. A new standalone review remains fresh even
-when an earlier report exists.
-
 ## Dimensions and thresholds
 
 Load `references/<dimension>.md` for the requested dimension and follow it. Its standards are opinionated defaults: where a rule the user stated, in the session or a context file, or a convention the project states or documents (not a pattern its code merely repeats) differs, that rule governs, a change following it raises no finding, and the report names the rule applied — except a Critical finding on the ladder below, which is still reported, naming the rule that produced it. The threshold is the bar a change must clear to PASS on that dimension:
@@ -43,13 +39,14 @@ The split is structural: **defect-finders** report only divergences/defects/cont
 
 ## Determining scope (shared across dimensions)
 
-For a requested follow-up, use the caller's applicable prior state. Report outstanding findings
+For a requested follow-up, the caller supplies the prior assessed state and criteria, findings,
+verified repairs, and changes since that evaluation; use what applies. Report outstanding findings
 and failures introduced or exposed by the intervening changes, with evidence for which prior
 findings are repaired. Read context as widely as needed; an old issue on a touched line is not
 new merely because the line changed. If the needed prior state is missing, recover it or report
 BLOCKED with what is missing, rather than silently reviewing the complete change again.
 
-For a fresh review, resolve its scope as follows:
+For a fresh review — including a new standalone review when an earlier report exists — resolve its scope as follows:
 
 1. **Caller specifies files/paths** → review exactly those.
 2. **Otherwise** → review the complete change. Resolve the comparison base from the PR target or the repository's remote default branch; ask only if neither can be established. Inspect committed changes with `git diff <base>...HEAD`, staged changes with `git diff --cached`, unstaged changes with `git diff`, and relevant new files from `git ls-files --others --exclude-standard`. Read each new file's contents; a path listing alone is not its diff.
@@ -57,7 +54,7 @@ For a fresh review, resolve its scope as follows:
 
 Stay within scope — never audit the whole project unless explicitly asked. Skip generated files (`*.generated.*`, `generated/`, `dist/`, `build/`), lock files, vendored deps (`vendor/`, `node_modules/`, `third_party/`), and binaries.
 
-**Reading scope ≠ reporting scope.** The diff bounds what you *report* (defaults: only issues introduced or exposed by the change). It does not bound what you *read* — trace mechanisms wherever they lead (existing callers, shared state, upstream writers) so boundary issues between changed and unchanged code stay visible. Read widely; report narrowly.
+**Reading scope ≠ reporting scope.** The diff bounds what you *report* (defaults: only issues introduced or exposed by the change). It does not bound what you *read* — trace mechanisms wherever they lead (existing callers, shared state, upstream writers) so boundary issues between changed and unchanged code stay visible. Read widely; report narrowly. Within the resolved scope, examine every file against every category the loaded reference lists — do not cut corners or skip areas — and report only the findings that clear its bar for reporting (its actionability filter, or for defect-class its acceptance rules).
 
 This skill is **read-only**: never modify repository files; write only to `/tmp/` for analysis artifacts. The author implements fixes from your report.
 
@@ -111,6 +108,6 @@ When invoked as a manifest acceptance gate, end with one verdict:
 
 - **One ref only.** Load exactly the reference for the requested dimension. Loading several defeats progressive disclosure and blurs the orthogonality boundaries each dimension defines against its neighbors.
 - **Respect the role threshold.** Reporting a LOW on an advisory dimension as if it blocks (or dropping a LOW on a defect-finder) miscalibrates the gate.
-- **Reportability is a stated trigger, not a confidence level** (defect-finders). Name the condition under which the defect manifests: "this WILL fail when X", with X written down. Where the defect is static rather than sequential — a contract or signature mismatch that is wrong on every call — the trigger is the call or consumer path that reaches it. A finding that cannot name its trigger is not reportable however strongly you suspect it — "this might be a bug", "this looks fragile", "this could break under load" all fail the test. Someone reading only the finding must be able to tell whether it clears this bar, which is what holds the bar in one place across reviewers rather than moving it with whoever is reading. A stated trigger is necessary rather than sufficient — each dimension's own actionability filter still applies on top of it. An empty report beats false positives.
-- **A Medium is a stated cost, not a strength of feeling** (advisory dimensions). Medium is the blocking grade there, so it carries the same auditability the defect-finders get from a stated trigger: name the cost in the finding — the change made harder, the task defeated, the condition under which behavior degrades — specifically enough that someone reading only the finding can tell the grade is earned. A finding whose case rests on "could be cleaner", "feels off", or "not ideal" has not named one, and sits at Low. This holds the bar in one place across reviewers and across models rather than letting it move with whoever is reading; each dimension's own calibration still applies on top.
+- **Reportability is a stated trigger, not a confidence level** (defect-finders). Name the condition under which the defect manifests: "this WILL fail when X", with X written down. Where the defect is static rather than sequential — a contract or signature mismatch that is wrong on every call — the trigger is the call or consumer path that reaches it. A finding that cannot name its trigger is not reportable however strongly you suspect it — "this might be a bug", "this looks fragile", "this could break under load" all fail the test. Someone reading only the finding must be able to tell whether it clears this bar, which is what holds the bar in one place across reviewers rather than moving it with whoever is reading. A stated trigger is necessary rather than sufficient — each dimension's own bar for reporting (its actionability filter, or for defect-class its acceptance rules) still applies on top of it.
+- **A Medium is a stated cost, not a strength of feeling** (advisory dimensions). Medium is the blocking grade there, so it carries the same auditability the defect-finders get from a stated trigger: name the cost in the finding — the change made harder, the task defeated, the condition under which behavior degrades — specifically enough that someone reading only the finding can tell the grade is earned. A finding whose case rests on "could be cleaner", "feels off", or "not ideal" has not named one, and sits at Low. Each dimension's own calibration still applies on top.
 - **Stay inside the loaded dimension.** Each reference lists what it owns and what belongs to a sibling dimension. A maintainability smell is not a bug; a type hole is not a design critique. Report only what the loaded dimension owns; let the other dimensions' invocations catch the rest.

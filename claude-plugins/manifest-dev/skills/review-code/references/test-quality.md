@@ -2,7 +2,7 @@
 
 Verify that tests for the changed code are both PRESENT (coverage) and VALIDATING (not tautological) — reporting scenarios with no test (coverage gaps) and tests that exist but don't actually validate behavior (tautological tests).
 
-**The question for every test: "Would this test fail on a contradictory implementation?"** If not, it's tautological — the scenario is uncovered even if the test runs.
+**The question for every test — the counter-implementation test: "Would this test fail if the implementation were replaced with one that produces a contradictory result for the same input?"** If not, it's tautological — the scenario is uncovered even if the test runs.
 
 **Then the second imagined edit: change the internals without changing the behavior.** Rename a private helper, reorder calls the contract leaves unordered, inline a step. A test that fails on that edit is pinned to the implementation: it will break on a sound refactor and teach the next editor to update tests rather than trust them. The contract decides what counts as behavior. An outbound payload, a call another system relies on, or a side effect the caller depends on is behavior, and asserting it is right; an assertion that something is never called is valid where not calling it is the contract (no charge on a failed validation). Report the pinned test with the edit that would break it and the behavior it should assert instead.
 
@@ -12,7 +12,7 @@ When the diff modifies only test files (no source changes), audit those tests di
 
 ## What to inspect
 
-Be comprehensive in analysis, precise in reporting. Examine every changed file for test quality — do not cut corners or skip files. But only report findings that pass the Actionability Filter. Thoroughness in looking; discipline in reporting. The categories below are guidance, not exhaustive — if you identify a test-quality concern in this dimension that doesn't match a listed category, report it; just respect the out-of-scope boundaries.
+The categories below are guidance, not exhaustive — if you identify a test-quality concern in this dimension that doesn't match a listed category, report it; just respect the out-of-scope boundaries.
 
 ### Coverage gaps (test absence)
 
@@ -34,8 +34,6 @@ A tautological test passes regardless of whether the implementation is correct. 
 - **Mocks of the system under test**: The very function/class being tested is mocked. The "test" exercises the mock, not the production code. Common when boundaries between SUT and dependencies are unclear.
 - **Trivial or missing assertions**: `assert(true)`, no assertions at all, or only "no error was thrown" — none of which prove behavioral correctness. Setup and teardown without a real check.
 - **Snapshot tests without intent**: A snapshot is captured and compared, but nothing names what behavioral property the snapshot is meant to protect. The snapshot passes on any consistent output, including a wrong one.
-
-**Counter-implementation test**: A test should fail if you replaced the implementation with one that produces a contradictory result for the same input. If the test would still pass against a contradictory implementation, it's tautological.
 
 ### Independent behavioral oracle
 
@@ -65,7 +63,7 @@ Derive the scenarios that SHOULD exist from the code's logic, then judge whether
 **Two-pass check against existing tests**:
 
 - **Absence pass**: Does a test exist for the scenario? If not, report a coverage gap.
-- **Validity pass**: If a test exists, does it actually validate the scenario? Apply the counter-implementation test — would the test fail on a contradictory implementation? If not, report as tautological.
+- **Validity pass**: If a test exists, does it actually validate the scenario? Apply the counter-implementation test; if the test would not fail, report it as tautological.
 
 **Each scenario must be concrete**: Not "test with empty input" but "test with `[]` as items parameter → should return `{ total: 0, items: [] }`". Concrete inputs and expected outputs let the developer write the test immediately.
 
@@ -86,7 +84,6 @@ Before reporting any finding, it must pass ALL criteria. **If it fails ANY crite
 - **No test file exists for changed file** → Flag as highest priority gap; recommend test file creation first.
 - **Pure refactor (no new logic)** → Confirm existing tests still apply and are not tautological; brief note.
 - **Generated/scaffolded code** → Lower priority for coverage; tautology detection still applies if generated tests are present.
-- **Test-only diff** (only test files changed, no source) → Audit those tests directly for tautology. Forward-derivation may not apply, but validity does.
 - **AI-generated tests** → Apply tautology detection rigorously; AI-generated tests are a known source of mirror-implementation patterns.
 
 ## Out of scope (belongs to a sibling dimension)
@@ -113,7 +110,7 @@ Do NOT report on:
 - **Medium** — Untested branches/error paths/edge cases on meaningful logic, or tautological tests that leave a real behavioral property unverified on non-critical paths.
 - **Low** — Coverage polish on lower-risk code or weak-oracle tests where the protected behavior is still mostly clear.
 
-**Calibration check**: HIGH findings should be rare — reserved for completely untested business logic, missing test files for new modules, or tautological tests on critical paths. If you're marking multiple items as HIGH, recalibrate.
+**Calibration check**: HIGH findings should be rare — reserved for the High cases above. If you're marking multiple items as HIGH, recalibrate.
 
 ## Dimension-specific report expectations
 
@@ -132,4 +129,4 @@ For each **tautological test**, name what isn't being verified:
 - **Contradictory implementation that would still pass**: a concrete example of a wrong implementation the test would not catch
 - **What's needed**: the missing assertion or alternative test approach
 
-When coverage is adequate, list covered functions/files concisely (e.g., `<filepath>: <function> — covered (positive, edge, error)`). If no findings, confirm test quality appears adequate with a brief summary of what was verified. Do not fabricate findings — adequate test quality is a valid and positive outcome.
+When coverage is adequate, list covered functions/files concisely (e.g., `<filepath>: <function> — covered (positive, edge, error)`). If no findings, confirm test quality appears adequate with a brief summary of what was verified.
