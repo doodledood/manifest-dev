@@ -251,6 +251,7 @@ base model already covers; such a case leaves only through its probe's *Coverage
 | `83-separate-questions-separate-owners` | autonomous | Offer to narrow the read to what is settled and hand four independent questions to their owners | tuning |
 | `84-chosen-option-goes-to-a-record` | autonomous, repository | Record a ruling the owner would re-tune as a decision record and leave the North Star's positions as they are | tuning |
 | `85-evidence-against-a-bet` | autonomous, repository | When the repository's evidence goes against a North Star bet, flag the conflict or mark the bet weakened, without rewriting it | tuning |
+| `86-decision-driver-in-another-branch` | press, `unmeasured` | Count a factor filed under one aim against every other aim it moves before judging the options on the next | tuning |
 
 Cases `30` to `46` were written on 2026-10-13 and `48` on 2026-10-14. Their first run was the
 2026-10-25 baseline, with the split frozen before it: every case added since 2026-10-13 is tuning
@@ -417,6 +418,7 @@ being declared a guard. `tests/test_eval_cases.py` fails when a case has no row 
 | `83` | first run decides | New on 2026-10-20: The only case for the offer to narrow a read |
 | `84` | first run decides | New on 2026-10-21: The only case for a ruling the North Star must not take in |
 | `85` | first run decides | New on 2026-10-21: The only case for evidence against a North Star bet |
+| `86` | first run decides | New on 2026-10-25: The only case for a driver filed under another branch |
 
 Retired on 2026-10-15: `12` (floored in both arms, not a declared guard), `47` and `49` (each a
 second older-version case beside `53`, which the version rule now forbids; their straight-to-newest
@@ -690,6 +692,7 @@ file. The row is never deleted while the probe stays.
 | `tasks/DIAGNOSIS.md` | Trade-off: Reproduce first vs trace in place | `20-one-failed-repro/non-repro-is-not-exclusion` |
 | `tasks/DIAGNOSIS.md` | Trade-off: Trigger-depth vs root-depth | `76-diagnosis-incident-depth/keeps-digging-past-the-trigger` |
 | `tasks/DECISION.md` | Fundamental objectives | `61-decision-routes-and-a-public-act/judges-routes-against-the-aim` |
+| `tasks/DECISION.md` | Drivers across branches | `86-decision-driver-in-another-branch/counts-the-driver-from-another-branch` |
 | `tasks/DECISION.md` | States of the world | `61-decision-routes-and-a-public-act/weighs-the-later-plan-on-every-route`, `62-decision-rival-answers/reads-the-rivals-side` |
 | `tasks/DECISION.md` | Decision rule | `63-decision-close-call-is-not-close/picks-a-rule-for-ruin` |
 | `tasks/PRODUCT.md` | Progress in a circumstance | `65-decision-plan-before-committing/names-the-progress-in-context` |
