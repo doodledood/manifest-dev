@@ -21,7 +21,7 @@ Every invocation, including non-`--loop`, performs one complete PR-state advance
 2. **Verify the change.** **Manifest mode** (`--manifest`): load `references/MANIFEST_MODE.md` and follow it to verify the manifest contract against the PR head — the generic reviewer fleet is skipped entirely. **No-manifest mode:** run the generic reviewer fleet over the review range — determine that range from durable GitHub state: if we have a prior review on this PR and the head has moved since, use that review's commit/head SHA as the lower bound and review `last-reviewed-by-us..current-head`; otherwise review the full PR diff. Later `--loop` wakes use that invocation's checkpoint instead, per `references/LOOP.md`. In **both** modes, include the judgment pass (below) when its once-per-PR generation rule permits it.
 3. **Post outcomes.** Submit new surviving findings as a single GitHub review with decision `comment`. Thread replies are posted on their existing threads, not as new review comments. End with the cycle summary below.
 
-Each invocation starts from GitHub state and the current checkout. A `--loop` invocation then checkpoints completed verification for its later wakes, per `references/LOOP.md`.
+Each invocation starts from GitHub state and the current checkout.
 
 **An invocation always verifies the change.** Choosing to run review-pr again is the operator's call — often a risky change worth a second read, under a different model — so a fresh invocation reviews the head even when we already reviewed it and nothing has moved since. The review range is then the full PR diff, and the prune below is what keeps the pass to whatever it has new to add: a second read that simply concurs posts nothing.
 
@@ -44,7 +44,7 @@ It returns exactly one disposition, a short reason, and a drafted reply where th
 
 **Evidence and scope.** Keep each dimension focused on its own standard. Use binding requirements, explicit exclusions, and permission limits to judge scope, and give them to defect-class so it can judge authorized remedies. An author's implementation preference is not such a limit. Inspect the code and relevant evidence; the author's explanation or success report does not establish correct behavior. The judgment pass also needs the stated pain and whole-PR context to assess the premise.
 
-**Holistic coherence pass.** After every required inspection has returned, collect their findings (drop Low severity except defect-class findings; keep dimension and severity; judgment findings are a distinct non-severity class, **not** subject to drop-Low). Invoke the `review-pr-holistic` skill. Keep BLOCKED verdicts with their missing evidence or authority in the cycle summary; consolidation cannot turn an incomplete evaluation into a clean result. Supply the retained findings plus:
+**Holistic coherence pass.** After every required inspection has returned, collect their findings (drop Low severity except defect-class findings; keep dimension and severity). Invoke the `review-pr-holistic` skill. Keep BLOCKED verdicts with their missing evidence or authority in the cycle summary; consolidation cannot turn an incomplete evaluation into a clean result. Supply the retained findings plus:
 
 - PR history: all comments and threads on the PR (including our own from any prior review pass), the author's recent commit messages on the branch, the PR description.
 - Bundle context for each linked PR: diff, description, top-level conversation. No inline review comments from linked PRs.
