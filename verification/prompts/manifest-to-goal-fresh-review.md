@@ -48,6 +48,11 @@ Done when the `review-code` skill on the diff reports no finding of High severit
 design or maintainability dimensions.
 Judgment gate.
 
+### INV-G8 — Off until flagged
+Done when the endpoint returns 404 for a workspace without the `usage_export` flag and works for
+one with it, as `pytest tests/usage_export/test_flag.py` asserts.
+Deterministic gate.
+
 ## 4. Process Guidance
 - [PG-1] Write the serializer tests before the handler.
 - [PG-2] Profile the streaming path with a 1-million-row fixture before tuning anything.
@@ -106,6 +111,32 @@ Done when each successful export writes one `usage.export` audit event with the 
 the workspace ID and the range, as `pytest tests/usage_export/test_audit.py` asserts.
 Deterministic gate.
 
+#### AC-1.9 — Large results page
+Done when `pytest tests/usage_export/test_paging.py` passes: a result over 100,000 rows returns
+its first 100,000 and a `Link` header with `rel="next"`, and following every link returns each row
+exactly once.
+Deterministic gate.
+
+#### AC-1.10 — Filter by meter
+Done when `pytest tests/usage_export/test_filter.py` passes: a repeated `meter` parameter limits
+rows to those meters, and an unknown meter name returns 400 naming it.
+Deterministic gate.
+
+#### AC-1.11 — Response headers
+Done when `pytest tests/usage_export/test_headers.py` passes: every 200 carries
+`Content-Type: application/json; charset=utf-8` and `Cache-Control: private, no-store`.
+Deterministic gate.
+
+#### AC-1.12 — Deleted meters still export
+Done when `pytest tests/usage_export/test_deleted.py` passes: rows for a meter deleted inside the
+range still export, under the name the meter had on each day.
+Deterministic gate.
+
+#### AC-1.13 — Fast enough for the dashboard link
+Done when `make bench-export` reports a p95 under 800 ms over 200 requests for a 31-day export
+of the 50-meter bench workspace.
+Deterministic gate.
+
 ### Deliverable 2: The docs page
 
 #### AC-2.1 — An admin can export from the docs alone
@@ -116,6 +147,11 @@ Judgment gate.
 #### AC-2.2 — The page states the limits
 Done when the page states the 366-day range limit, the hourly rate limit of ten exports, and the
 UTC day boundary.
+Judgment gate.
+
+#### AC-2.4 — Copyable examples
+Done when the page carries one `curl` example and one Python example, and each, run exactly as
+shown against a dev server with an admin token, returns a 200.
 Judgment gate.
 
 #### AC-2.3 — The page reads well
@@ -129,6 +165,10 @@ Judgment gate.
 Done when the pull request's description shows the test output on the head commit and a sample
 JSON export from a dev server.
 Judgment gate.
+
+#### AC-3.3 — Changelog
+Done when `CHANGELOG.md` gains one line under `Unreleased` naming the endpoint.
+Deterministic gate.
 
 #### AC-3.2 — Not deployed
 Done when the work stops at a ready pull request: nothing is merged or deployed.
