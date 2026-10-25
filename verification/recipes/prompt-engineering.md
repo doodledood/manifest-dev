@@ -22,6 +22,12 @@ Proves: an answer that traces lines to their source and proposes specific edits.
 Check: read
 Workload: varies
 
+### update-current-state
+Run: `scripts/drive-skill.sh prompt-engineering verification/prompts/prompt-engineering-update-current-state.md --tools`
+Proves: the returned skill reads as current state. It carries the requested one-line summary rule. The "Previously…" note and the dated "Per the maintainer" note are gone, and the grouping and user-visible-effect rules remain. The one-line-entry rule appears once. The vague "short where you can… easy to skim if possible" hedge that the summary rule retires is gone or replaced.
+Check: read
+Workload: varies
+
 ## Gotchas
 
 - It is guidance; it edits only when asked to.
