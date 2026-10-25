@@ -79,15 +79,16 @@ one. It exists so that good practice reaches the run, and the run can still adap
 does not fit. Only Acceptance Criteria and Global Invariants bind.
 
 ### Known Assumption
-<!-- context: c91de8a5848d -->
+<!-- context: 5724e7b179f1 -->
 A Known Assumption is an entry in a Manifest, with an `ASM-` number. It records a decision that the
-skill took with a default instead of a question. It gives the value, the reason and the result if
+Manifest uses. The skill took the decision with a default instead of a question, or it is
+a User's Call (a decision that is yours to make). It gives the value, the reason and the result if
 the decision is wrong. An autonomous choice has the mark `(auto)`, and a User's Call starts with
-that label. Thus you can examine what the skill decided for you.
+the words "User's call:". Thus you can examine what was decided, and who decided it.
 
-The Known Assumptions are the only place in a Manifest that tell who decided what. They have no
-dates. All other parts of the Manifest tell only what is true now, so you can read it without
-its history.
+The Known Assumptions are the only part of a Manifest that tells who decided what. They do not
+tell when a person decided. All other parts of the Manifest tell only what is true now. Thus you
+can read it without knowing how it was changed after it was first written.
 
 ### Appetite
 <!-- context: 78ddd6db6bcb -->

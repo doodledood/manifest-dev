@@ -16,8 +16,10 @@ An amended manifest should read as if written today for the current task.
    (such as "ruled on 2026-…" or "updated 2026-…")? Dates that are task content — a timestamp used
    as test data, a deadline — do not count. YES or NO.
 2. Outside the Known Assumptions section, is there a note of who decided something ("the user
-   ruled…", "per QA", "as requested by…")? YES or NO.
+   ruled…", "per QA", "as requested by…")? An `(auto)` mark after an item's ID is not such a note.
+   YES or NO.
 3. Does any section still state that downloads or exports stay in UTC, or carry text saying that
-   rule changed ("previously…", "no longer…", "updated to…", "was…")? YES or NO.
+   rule changed ("previously…", "no longer…", "updated to…", "was…")? A Problem that describes
+   today's defect does not count; only a rule or plan that keeps exports in UTC does. YES or NO.
 
 **Then judge:** PASS if all three are NO. FAIL otherwise.

@@ -16,8 +16,8 @@ place):
 
 ## 2. Initial Approach
 - **Architecture:** A weekly job reads the member's activity feed for the past seven days and
-  sends one plain-text email through the existing mail relay. Plain text only, per the user's
-  ruling on 2026-10-02.
+  sends one plain-text email (AC-1.2) through the existing mail relay. Plain text only, per the
+  user's ruling on 2026-10-02.
 
 ## 3. Global Invariants
 
@@ -81,6 +81,8 @@ Deterministic gate.
 #### AC-1.2 — The digest is plain text
 
 Done when the sent message has exactly one part, of type text/plain, as AC-1.1's test observes.
+
+Why: the user ruled on 2026-10-02 that the digest is plain text.
 
 Deterministic gate.
 

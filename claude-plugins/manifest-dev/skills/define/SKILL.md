@@ -332,7 +332,9 @@ reading as current state (*Write the current state*, above).
   is renumbered. Items the amendment does not touch keep their text and IDs,
   except that a date recording when something was decided or changed, a note of
   who decided what, or text about what an item used to say is removed wherever it
-  sits: removing it changes no requirement. Then search the Manifest for each
+  sits: removing it changes no requirement. The decision such a note records
+  moves, undated, into Known Assumptions — a `User's call:` entry when the user
+  made it — unless an entry already records it. Then search the Manifest for each
   deleted ID and resolve every reference to it.
 - **Reconcile the frame, not just the leaves.** An amendment that widens scope or
   changes a stated rule leaves Intent, the Architecture, the order rationale and
@@ -380,12 +382,12 @@ review was self-graded. Settle every finding in one pass: fix it, or reject it
 and name it with the reason in the digest. A fix that changes what the user
 agreed — or, on an amendment, the requirement of a gate the amendment did not
 touch — is a user's call: asked when attended; unattended, not applied, so what
-the user agreed stands. An amendment's fixes land in a gate it touched or in
-text that binds nothing: Intent, the Approach, Process Guidance, Known
-Assumptions, a why. Unattended, a new Manifest also records each rejected or
-unapplied finding in an `(auto)` `ASM-*`; an amendment names it in the digest
-only, since Known Assumptions holds each decision or open hole once and never a
-record of how a finding was handled. A hole is a result the stated Intent
+the user agreed stands. Any other fix lands wherever its fault sits. Unattended,
+a new Manifest also records each rejected or unapplied finding in an `(auto)`
+`ASM-*`. An amendment adds no Known Assumption for how its own review's findings
+were handled, so such entries do not pile up with each amendment; its digest
+lists each rejected or unapplied finding as an open item, for the caller to name
+in its own report. A hole is a result the stated Intent
 already rejects, so close each one whose gate or design decision serves that
 Intent, attended or unattended; only a fix that would change the Intent or the
 scope is the user's call, and unattended one `(auto)` `ASM-*` names the hole as

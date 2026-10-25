@@ -28,7 +28,7 @@ An advisory recommendation on HOW to work during execution, weighed by `/do` rat
 _Avoid_: Constraint, requirement, gate.
 
 **Known Assumption**:
-A Manifest entry (`ASM-*`) recording a decision taken with a default instead of a question — its value, its reason and the impact if wrong. An autonomous choice is marked `(auto)` and a User's Call opens with that label, so a reader can review what was decided for them. Known Assumptions is the Manifest's one place for who decided what, stated without dates; the rest of a Manifest states only what holds now.
+A Manifest entry (`ASM-*`) recording a decision the Manifest rests on — a default taken instead of a question, or a user's call — with its value, its reason and the impact if wrong. An autonomous choice is marked `(auto)` and a User's Call opens with that label, so a reader can review what was decided and by whom. Known Assumptions is the Manifest's one place for who decided what, with no date of when it was decided; the rest of a Manifest states only what holds now.
 _Avoid_: Note, caveat.
 
 **Quality Gate**:

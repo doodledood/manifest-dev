@@ -93,9 +93,9 @@ behavior or research quality. Existing stale results and unmeasured case statuse
 The 2026-10-25 change made every Manifest define writes or amends read as current state — no date
 of a decision or change, who decided what only in Known Assumptions, an amendment deleting what
 it replaces — and gave every amendment the fresh-context review. It reaches every case that
-writes a spec, and `d09` most, which gains the `current-state` grader; `d09`'s earlier results
-are stale and the new grader is unmeasured. The `define` recipe's `current-state-amend` drive
-covers the amendment review on the fresh-context path and remains **unmeasured**.
+writes a spec, whose earlier results are stale, and `d09` most, which gains the `current-state`
+grader, unmeasured. The `define` recipe's `current-state-amend` drive covers both the
+current-state amendment and its review on the fresh-context path, and remains **unmeasured**.
 
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
@@ -469,7 +469,8 @@ Freeze the full split before inspecting outputs, and let the analyzer read only 
   verbatim. Raising a conflict and flagging the user's call already have `d05` and `d17`; the
   reversal offer in `define` is checked by reading its text. A stale Intent after an amendment,
   and a reversed decision left without a gate, have a guard in the skill; `d09` covers amendment,
-  and its `current-state` grader the history and provenance notes an amendment must not leave. Build one when a miss shows in use.
+  and its `current-state` grader checks for the history and provenance notes an amendment must
+  not leave. Build one when a miss shows in use.
 - **Disciplines with no case yet**, ranked by what a miss would cost, each waiting on a miss seen
   in use or a budget for one more case (this change held the suite to its size): reading earlier
   work (logs, Manifests, open Tickets, pull requests' debt) before encoding, and noting an old

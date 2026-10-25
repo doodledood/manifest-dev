@@ -21,8 +21,8 @@ Read the Manifest as a newcomer who was not in the session would, and report as 
 date that records when something was decided or changed; each note of who decided what outside
 Known Assumptions; each text about what an item used to say; each gate that duplicates or
 contradicts another; each gate body that lists instances where its class is the requirement; each
-Known Assumption that only records how a review finding was handled, or that a later one
-supersedes; and each part of Intent, the Approach or Process Guidance that describes a different
+Known Assumption that only records how an amendment's review finding was handled, or that a
+later one supersedes; and each part of Intent, the Approach or Process Guidance that describes a different
 task than the gates do.
 
 For each gate, also name a plausible wrong result — work that misses the intent in a way someone
@@ -48,8 +48,8 @@ passes, with the reading the fix writes into the gate. A search that finds nothi
 the Manifest is sound: say what it covered, and never offer a model as proof.
 
 **An amendment.** When you are handed the Manifest as it stood before the amendment, or a diff of
-the file, and the steering it encodes, the review is shorter: the newcomer read above, over the
-whole file; the wrong-result question for each gate the amendment touched, and no other; and a
+the file, and the steering it encodes, the review is shorter: the rules check above, over what the
+amendment changed; the newcomer read above, over the whole file; the wrong-result question for each gate the amendment touched, and no other; and a
 check against the steering that nothing the amendment replaced survives anywhere in the file. The
 comparison with the session record and the search for holes ran when the Manifest was first
 written, so leave them out.
