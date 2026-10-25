@@ -1,10 +1,10 @@
 # Canvas Mode — the walk as a picture, not a document
 
-The canvas **is** the walkthrough, and it is a picture: one persistent, PR-specific system map that the whole walk plays out on. It exists to serve the attention contract (see SKILL.md): the reviewer orients visually, meets one idea at a time, and digs into text, rationale, or code only when they choose to. Every earlier instinct toward a document — prose sections, cards, summaries stacked on summaries — was tried and overloaded real reviewers. Do not regress toward it.
+The canvas **is** the walkthrough, and it is a picture: one persistent, PR-specific system map that the whole walk plays out on. It exists to serve the attention contract (see SKILL.md): the reviewer orients visually, meets one idea at a time, and digs into text, rationale, or code only when they choose to. Prose sections, cards and summaries stacked on summaries overload the reviewer, so none of them carries the walk.
 
 ## Reader model
 
-The reviewer **lives in the repo** (knows the modules, idioms, naming conventions) but has **zero context on this PR**. Codebase vocabulary is shared ground; vocabulary this PR introduces is not. There is no prose primer: the map itself and the first story steps carry all orientation — the intro caption states the problem in one line, map labels establish the cast, and early steps introduce new concepts as the story reaches them. Element blurbs (behind a tap) hold definitions for whoever wants them. Name things by their real codebase identifiers, never invented abstractions.
+SKILL.md's reader model holds. There is no prose primer: the map itself and the first story steps carry all orientation — the intro caption states the problem in one line, map labels establish the cast, and early steps introduce new concepts as the story reaches them. Element blurbs (behind a tap) hold definitions for whoever wants them. Name things by their real codebase identifiers, never invented abstractions.
 
 ## Activation gate
 
@@ -56,7 +56,7 @@ Any canvas-related failure is **non-blocking**:
 - File write fails → warn once, fall back to chat-only walkthrough.
 - Opening fails → use another available delivery surface or provide an accessible file link; if the user cannot receive the interactive page, fall back to chat.
 - Clipboard write fails → the artifact pre-selects the bundle in a visible block (the shell already does this).
-- PR-post failure → keep the drafted plan, surface the API error inline, offer retry.
+- PR-post failure → keep the drafted comments, surface the API error inline, offer retry.
 
 ## Anti-patterns
 
