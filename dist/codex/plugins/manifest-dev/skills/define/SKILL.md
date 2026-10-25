@@ -9,7 +9,6 @@ Read `../ticket-up/references/AUTHORITY.md` before acting. Keep this assignment,
 authority and retained decisions in every skill handoff; an isolated caller must receive them
 explicitly, with the useful intent and evidence.
 
-
 Encode the conversation's shared understanding as a Manifest at
 `~/.manifest-dev/manifests/manifest-<ts>.md` (create the dir; fall back to a
 writable temp path only if home is not writable); how you interview is yours. No
@@ -46,20 +45,8 @@ as few turns as they allow; a call whose answer would change another's goes
 first, and the other waits for it. Without that capability, or once the user has
 asked you to ask in prose, write the ask in plain text, one ask per turn. An
 unattended caller is asked nothing: decide each call within its delegation and
-record it as below.
-
-An amendment from an unattended executor is unattended: self-answer within the
-caller's delegation, ask no questions, and wait for no approval. Validate a
-delegated Appetite revision before applying it: the broader work serves the
-requested outcome, its benefit justifies the added complexity and maintenance,
-it has not already been done as excess, and it crosses no explicit exclusion or
-binding requirement. Preserve those requirements unless user steering explicitly
-changes them. A request outside that delegation returns an evidenced blocker
-without changing the Manifest. Record material autonomous decisions as `(auto)`
-items with matching `ASM-*` entries naming the rationale and impact if wrong. An
-`ASM-*` entry that records a user's call starts its text with `User's call:` and
-names the alternative not taken and what decided it, so the user can find it
-among the rest.
+record each material one as an `(auto)` item whose `ASM-*` names the rationale
+and impact if wrong.
 
 **The user's call.** A decision is the user's call when two careful people with
 the same evidence could reasonably decide it differently, and the difference
@@ -95,10 +82,6 @@ authority limits in gates. The Manifest is finite work, not the project's perman
 The Manifest is the acceptance contract — what the user accepts as "I'd ship the
 outcome of executing this" — and `/do` executes it later with none of this
 conversation's context, so everything binding lives in the gate texts themselves.
-For work others will use or extend, include ease of doing that correctly in the
-existing quality gates or relevant Acceptance Criteria. Judge concrete burdens
-the work creates or perpetuates, proportionate to its useful life and explicit
-bounds; sound existing structure needs no redesign.
 That gives a floor that isn't ceremony:
 
 - Follow the schema in `references/SCHEMA.md` exactly — it is what the executor
@@ -110,7 +93,8 @@ That gives a floor that isn't ceremony:
   nothing about what an item used to say. A why may name the requirement a value comes from,
   never who decided it or when. Who decided what — a user's call or an `(auto)` choice, the
   alternative not taken and the reason — is stated once, in Known Assumptions, without those
-  dates; the `(auto)` mark after an item's ID is the one pointer to it. What changed, when and
+  dates; the `(auto)` mark after an item's ID is the one pointer to it, and an entry recording a
+  user's call opens `User's call:` so the user can find it among the rest. What changed, when and
   why belongs in the figure-out log and `/do`'s Execution Log, never in the Manifest.
 - Open Intent with the **Problem**: one specific story of what breaks or grates
   today, the baseline everything else is pitched against. A session that cannot
@@ -139,7 +123,7 @@ That gives a floor that isn't ceremony:
 - **Verification comes before the work it checks.** In a project, the verification bullet of the
   context file's project-surfaces section records how the project checks that its work still does
   its job: its verification harness — one command with a recipe per thing it checks, as
-  setup-project's `references/VERIFICATION_HARNESS.md` describes — or its own way, named there; a
+  `../setup-project/references/VERIFICATION_HARNESS.md` describes — or its own way, named there; a
   harness already on disk with no bullet counts as chosen, and an `ASM-*` suggests recording its
   bullet. The harness is the project's choice,
   never the run's. Building is the choice's; keeping sound is every run's: in any form, a check the
@@ -201,6 +185,10 @@ That gives a floor that isn't ceremony:
   erosion this discipline exists to prevent. Make that choosing legible — in the
   gate's why where nothing else shows it — so a later reader can tell a
   deliberate mechanism from an incidental one.
+- For work others will use or extend, include ease of doing that correctly in the
+  existing quality gates or relevant Acceptance Criteria. Judge concrete burdens
+  the work creates or perpetuates, proportionate to its useful life and explicit
+  bounds; sound existing structure needs no redesign.
 - Write a gate so it ranges over its **region**, not an inventory: where the
   criterion is *no X anywhere in R*, the body makes the evaluator enumerate R and
   derive the instances, so tomorrow's instance is caught too. Make the procedure
@@ -236,9 +224,8 @@ That gives a floor that isn't ceremony:
   gap now, as a gate where it must not be departed from or as Initial Approach
   direction where it is guidance. Left as an assumption it surfaces mid-run,
   where a stalled unattended execution costs far more.
-- A criterion nothing can check is sharpened or dropped with a recorded
-  assumption; only gates bind. Nothing deliberately chosen as the thing that must
-  hold may be dropped.
+- A criterion nothing can check is sharpened or dropped as
+  `references/SCHEMA.md` → *Verdicts* states; only gates bind.
 
 Before writing gate bodies, invoke the prompt-engineering skill for its
 calibration if it is available; a body is a prompt the moment an evaluator
@@ -330,9 +317,8 @@ reading as current state (*Write the current state*, above).
   it beside the new text, and replace a Known Assumption it supersedes rather
   than adding a second. A deleted item's ID is retired, never reused, and nothing
   is renumbered. Items the amendment does not touch keep their text and IDs,
-  except that a date recording when something was decided or changed, a note of
-  who decided what, or text about what an item used to say is removed wherever it
-  sits: removing it changes no requirement. The decision such a note records,
+  except that anything *Write the current state* excludes is removed wherever it
+  sits: removing it changes no requirement. The decision such text records,
   where it still holds, moves, undated, into Known Assumptions — a `User's call:` entry when the user
   made it — unless an entry already records it. Then search the Manifest for each
   deleted ID and resolve every reference to it.
@@ -352,6 +338,15 @@ reading as current state (*Write the current state*, above).
   reversing a rule the system already states are different amendments; the second
   needs its own Acceptance Criterion. Edited prose notes a decision but checks
   nothing.
+
+An amendment from an unattended executor is unattended: self-answer within the
+caller's delegation, ask no questions, and wait for no approval. Validate a
+delegated Appetite revision before applying it: the broader work serves the
+requested outcome, its benefit justifies the added complexity and maintenance,
+it has not already been done as excess, and it crosses no explicit exclusion or
+binding requirement. Preserve those requirements unless user steering explicitly
+changes them. A request outside that delegation returns an evidenced blocker
+without changing the Manifest.
 
 ## What else loads
 

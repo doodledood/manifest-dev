@@ -11,8 +11,8 @@ and a rule in this file is never contradicted by either.
 **Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference; the
 `review-writing` skill applies that rule and is its one home.
 
-**Not for `/define` interviews** — lookup data for gate evaluation. The task file
-(`tasks/PROSE_FLOOR.md`) carries the compressed gate text.
+**Not loaded by `/define`** — the `review-writing` skill applies this file under either register;
+`../tasks/PROSE_FLOOR.md` gates only what a style reviewer cannot settle.
 
 ---
 
