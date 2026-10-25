@@ -6,7 +6,7 @@ dry-run: honored
 ---
 # run-ticket
 
-Takes one exact Ticket, recovers any earlier attempt from the Manifest and progress its attempt record carries, runs it to a ready pull request, and writes its completion record, marked ready to land, or an escalation back on that same Ticket. It lands only when told to.
+Takes one exact Ticket, recovers any earlier attempt from the Manifest and progress its attempt record carries, runs it to a ready pull request, and writes its completion record with its attempt record marked ready to land, or an escalation, back on that same Ticket. It lands only when told to.
 
 ## How a user reaches it
 
@@ -21,7 +21,7 @@ A Question invokes inquiry only and returns its Read on the same Ticket. A repea
 
 ### run
 Run: `scripts/drive-skill.sh run-ticket verification/prompts/run-ticket-run.md --max-turns 120`
-Proves: the Ticket gains `<!-- manifest-dev-run-ticket-attempt -->` carrying the run's Manifest and progress, and, at the end, `<!-- manifest-dev-run-ticket-completion -->` marked ready to land or `<!-- manifest-dev-run-ticket-escalated -->`. Nothing is merged, since the prompt does not say to land.
+Proves: the Ticket gains `<!-- manifest-dev-run-ticket-attempt -->` carrying the run's Manifest and progress, and, at the end, `<!-- manifest-dev-run-ticket-completion -->`, with the attempt record's run facts marked ready to land, or `<!-- manifest-dev-run-ticket-escalated -->`. Nothing is merged, since the prompt does not say to land.
 Check: read
 Workload: varies
 

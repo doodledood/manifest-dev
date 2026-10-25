@@ -38,7 +38,7 @@ required landing, with nobody watching. For repository work, end to end includes
 the repository's normal protections before the Ticket closes.
 
 - **Granting.** Grant only when all decisions needed to do and complete this assignment are already settled or delegated to its worker: no done-judgment resting on someone's unstated criteria, no retained approval, no access an unattended worker won't have, no irreversible act that requires separate human authority beyond the Auto grant, no decision deferred to mid-flight input. Ordinary landing through the repository's declared protections is within Auto; a repository policy that requires human approval is not. A judgment is not human-only by category, but an agent cannot delegate authority it lacks. That bar is necessary but never sufficient: whoever grants still chooses, and withheld trust alone is reason enough to withhold. When in doubt, don't grant.
-- **Who grants.** A person grants: the ticket's author, or someone reviewing it, at the `ticket-up` boundary. `orchestrate --autonomous` also grants, to a ticket an agent wrote, wherever the bar above holds. The run that found the work never grants it. Every grant names its grantor on the ticket, so a person can tell an `orchestrate` grant from their own and withdraw it.
+- **Who grants.** A person grants: the ticket's author, or someone reviewing it, at the `ticket-up` boundary. `orchestrate --autonomous` also grants, to a ticket an agent wrote, wherever the bar above holds. The run that found the work never grants it. A follow-up — separate work a run found — gets Auto only through such a grant at its own `ticket-up` boundary, after it passes the granting test above; without one it carries no Auto, whatever its source carries, and a person merely invoking `run-ticket` on the source is not that grant. Every grant names its grantor on the ticket, so a person can tell an `orchestrate` grant from their own and withdraw it. Shaped never implies Auto.
 - **Absence means a person finishes it.** A ticket without the grant may still be worked by automation, but never completed or landed by it. Unattended work takes it up only when its author has write access to the repository and no person is assigned to it; the run asks for the person's judgment through the escalation mark wherever it needs it, and stops at a ready pull request — or, for a question ticket, with its answer drafted — for a person to land or accept. A ticket whose author lacks write access is never worked unattended, until a person with write access grants it Auto or approves a plan that includes it. Items in a shared venue that were never tickets stay untouched. Nothing is ever marked "not auto" to keep automation off; silence already says it. A person may also hand an ungranted ticket to an agent and watch — that is the person working the ticket.
 - **Surprises don't revoke.** A granted ticket's worker can still hit an unexpected blocker; it stops and surfaces rather than deciding what only a person can. That is the exception path working, not evidence the grant was wrong — only a step known at write time to need a person keeps the grant off.
 
@@ -46,8 +46,6 @@ Auto is durable authority, not mutable queue state. Claiming, retrying, completi
 an attempt does not remove and reapply it. Open state, claim ownership, and dependencies determine
 whether a granted Ticket is runnable. A person directly invoking `run-ticket` on an ungranted
 Ticket supplies authority for that supervised run; that does not grant later unattended work.
-
-A follow-up — separate work a run found — receives Auto only through a grant at its own `ticket-up` boundary, after it passes the granting test above: a person's, or `orchestrate --autonomous`'s. Without that grant it carries no Auto, whatever its source carries, and the run that found the work never grants it. A person merely invoking `run-ticket` on a source is not that grant. Whoever grants still chooses; Shaped never implies Auto.
 
 ## Type
 
@@ -116,7 +114,7 @@ finished work one Ticket at a time. A person may still run `run-ticket` by hand 
 Unattended dispatch never touches a Ticket carrying the escalation mark, and tests for it where it
 decides: releasing the claim leaves an escalated Ticket looking like ordinary ready work, so a
 skipped test restarts the attempt the escalation ended. Closing one Ticket makes a dependent ready
-for the next check-in; no ready label or label pulse is needed.
+for the next check-in.
 
 The attempt record, the completion record and the one landing procedure are in
 `AUTOMATED_EXECUTION.md`. They live on the Ticket, not in Ticket fields a person edits.
