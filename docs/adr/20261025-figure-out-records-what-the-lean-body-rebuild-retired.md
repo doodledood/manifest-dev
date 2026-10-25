@@ -29,9 +29,9 @@ The evidence for the rulings:
 
 - The 2026-10-25 eval baseline and the v0/v1 round on `42` and `64` (suite README, *Baseline —
   2026-10-25* and *Hill-climb on proportionate re-checks*).
-- In-session simulations of the skill at `962f09bd`, with a restored line and without it. Each
-  simulation produced two replies per variant, and two graders per batch graded them blind. These
-  are not eval-suite results, and the batches are kept outside the repository.
+- In-session simulations of the skill at `962f09bd`, with a restored line and without it. Most
+  simulations produced two replies per variant; the cost choice produced four. Two graders per
+  batch graded them blind. These are not eval-suite results, and the batches are kept outside the repository.
 
 ## Decision
 

@@ -23,8 +23,8 @@ person raised it.
 The change was tested in in-session simulations of a fictional decision of that shape, with
 parties A, B and C, and of a product choice. Eval case `86` restates the decision with a
 fictional border region. Most variants produced two replies; on the product case, the unchanged
-prompt and the spine line produced four each. Two graders per batch graded them blind. These are
-not eval-suite results. Two kinds of line were tried, both asking what drives an aim: a causal-model line in `SKILL.md`'s spine, and the *Drivers across branches*
+prompt and the spine line (below) produced four each. Two graders per batch graded them blind.
+These are not eval-suite results. Two kinds of line were tried, both asking what drives an aim: a causal-model line in `SKILL.md`'s spine, and the *Drivers across branches*
 probe in `tasks/DECISION.md` that this record adds.
 
 - Vote case: with neither line, no reply counted the economic effects of the settlement
