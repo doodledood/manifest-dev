@@ -4,7 +4,7 @@ description: 'Review LLM prompts against the prompt-engineering skill''s princip
 user-invocable: true
 ---
 
-Review LLM prompts. Report findings without modifying files — this skill diagnoses; it never edits the prompt.
+Review LLM prompts. Report findings; modify no file.
 
 **First**: invoke the prompt-engineering skill to load the principles. Evaluate the prompt against them. They are opinionated defaults: where a rule the user stated, in the session or a context file, or a convention the project states or documents differs, that rule governs, a prompt following it raises no finding, and the report names the rule applied — except a High issue on the scale below that makes the prompt miss its goal, which is still reported, naming the rule that produced it.
 
@@ -29,6 +29,6 @@ Report format:
 **Severity**:
 - **High** — the prompt actively misbehaves or breaks a contract. Examples: contradiction between two rules that can't both hold; missing the goal entirely; absolute used on a judgment call that observably misfires; the agent declares a need for a tool it doesn't have, or omits a tool it actually uses.
 - **Medium** — the prompt works but drifts toward known failure modes. Examples: vague directive that produces inconsistent behavior across runs; restated model default adding noise the model has to wade through; a line whose only provenance is the author's own reading; a real gap left unclosed; text recording the prompt's own history — what a line used to say, when or why a rule changed, who asked for it; arbitrary numbers without a rubric; boundary failures — naming a harness-bound primitive, a rule-scope qualifier that silently excludes valid cases, mechanism stated as the only path, or one principle split across multiple places.
-- **Low** — minor friction with no functional impact. Examples: duplication that doesn't change behavior; awkward phrasing where the meaning is still unambiguous; stylistic-only cleanup.
+- **Low** — minor friction with no functional impact. Examples: duplication that doesn't change behavior; phrasing that slows a reader though the meaning is unambiguous.
 
 Only flag high-confidence issues. Low-confidence findings are noise — skip style preferences, minor wording, and unverified hunches.
