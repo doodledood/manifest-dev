@@ -18,7 +18,7 @@ me: security, the economy, and religion-and-state. the economy matters most — 
 
 you: security first, then. what does each party propose on security, as far as you know?
 
-me: A wants to expand settlements in the territories and annex parts of them, and a harder line on gaza. B wants to freeze settlement building and go back to negotiations. C says keep the status quo and stay strong militarily. honestly settlements matter less to me than being safe from rockets.
+me: A wants to expand settlements in the border region and annex parts of it, and a harder line at the border. B wants to freeze settlement building and go back to negotiations. C says keep the status quo and stay strong militarily. honestly settlements matter less to me than being safe from rockets.
 
 you: so on security you weigh protection from rockets above the settlement question. on that measure you lean toward A or C, and B is weaker for you. i mark security as: A or C, settlements a low weight. next: the economy or religion-and-state?
 

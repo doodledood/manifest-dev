@@ -14,12 +14,14 @@ The user
 figure-out presses one branch at a time, parent before child. In a decision, that order also
 fences factors off: a factor judged under one aim is not carried to another aim it moves.
 
-In an observed session on how to vote, the user said the economy mattered most and took
-security first. figure-out marked the parties' settlement and annexation positions as a low
-weight under security, then judged the economy on the tax and housing platforms alone. It never
-counted what settlement building and annexation cost the economy until the user raised it.
+In a decision between three parties, the person named the economy as the aim that mattered
+most and took security first. figure-out gave the parties' settlement and annexation
+positions a low weight under security, then judged the economy on the tax and housing platforms
+alone. It did not count what settlement building and annexation cost the economy until the
+person raised it.
 
-The change was tested in in-session simulations of that conversation and of a product choice.
+The change was tested in in-session simulations of a fictional decision of that shape, with
+parties A, B and C, which eval case `86` reconstructs, and of a product choice.
 Each variant produced two replies, and two graders per batch graded them blind. These are not
 eval-suite results. The line under test is the *Drivers across branches* probe this record adds,
 tried in several places:
