@@ -24,15 +24,13 @@ The person's attention is the budget. At each moment — a first screen, a slide
 
 It's done when, looking once as that person at each of those moments, they get what they came for, we get what we wanted, it feels the way the moment asks, and nothing is left whose removal they'd miss. Take that look as a squint, blurred or shrunk: what the eye lands on first, and the path it follows from there, is what that moment needs, for them and for us, with nothing secondary louder. Stop there; further passes are refinement the requester can ask for.
 
-Establish the intended use, supported claims, available assets, and constraints from the request, conversation, and project. Fill these in where the evidence is clear. State reasonable assumptions for minor gaps and proceed. Choose visual techniques that suit the concept and the constraints.
+Establish the intended use, supported claims, available assets, and constraints from the request, conversation, and project. Fill these in where the evidence is clear. Ask focused questions when missing information or unresolved alternatives would materially change the design, offering concrete options for creative choices; wait for those answers before committing to affected choices, and proceed with the rest. State reasonable assumptions for minor gaps and proceed. Choose visual techniques that suit the concept and the constraints.
 
-Explicit requirements and an existing design system outrank this. Make any proposed departure explicit. When refining existing work, keep what works and change what the feedback names.
+Explicit requirements and an existing design system outrank this. Make any proposed departure explicit. When refining existing work, keep what works and change what the feedback names; keep a narrow refinement within its existing direction, reading only guidance bearing on the change.
 
 ## Choose before composing
 
 Before composing a new artifact or substantially redesigning one, identify its uses and choose the creative direction or combination that serves its goal. Infer these choices from the request and context, honoring explicit preferences. Use the indexes to select and read only the relevant guides. For substantial work, briefly state the chosen approach and why.
-
-Ask focused questions when missing information or unresolved alternatives would materially change the design. For creative choices, offer concrete options. Wait for those answers before committing to affected choices; otherwise proceed. Keep narrow refinements within their existing direction, reading only guidance bearing on the change.
 
 | Question | Index |
 |---|---|

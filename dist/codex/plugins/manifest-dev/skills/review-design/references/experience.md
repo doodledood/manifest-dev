@@ -21,4 +21,4 @@ Make consequential effects, recipients and disclosure clear before commitment. P
 
 For multi-page journeys, test deep-link arrival, finding the right object, backtracking and handoffs as well as the happy path. For interactive or temporal work, test control, repetition and return; a still frame cannot verify what unfolds over time.
 
-Record the host, format, input and states actually covered. Model role-play and screenshot critique are not audience research.
+Record the host, format, input and states actually covered.
