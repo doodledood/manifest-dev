@@ -47,13 +47,10 @@ In explicit split mode, apply the same translation to each Deliverable and copy 
 Apply the convention's Auto criterion: every decision needed for this assignment's completion
 is settled or delegated, and the grantor chooses to trust unattended execution. A retained
 acceptance keeps Auto off even when direction and implementation decisions are delegated.
-When in doubt, withhold.
 
 Two grantors exist. A person grants: directly authoring here, or explicitly reviewing and authorizing Auto for the Ticket here. `orchestrate --autonomous` grants too: it invokes this skill for a Ticket an agent wrote — a debt Ticket it authored, or a follow-up a run wrote — and grants only where the criterion above holds. Record the grantor with the grant, as the venue renders it, so a person can tell an `orchestrate` grant from their own and withdraw it.
 
 A follow-up gets Auto only from one of those grants at this boundary. Without one it carries no Auto, whatever its source carries. The run that found the work never grants it, and merely invoking `run-ticket` manually on a source is not a grant for follow-ups discovered inside that run. Shaped never implies Auto.
-
-Never copy Auto from the source.
 
 ## Type, dependencies and deferral
 
@@ -77,5 +74,3 @@ Present what was authored in a short table: ID, title, kind, type, Auto and its 
 
 - A gate may name evaluator machinery a stranger cannot use. Translate its substance into observable done prose.
 - A list of small questions is not automatically a list of Question Tickets. The lifecycle test comes first.
-- A discovered defect inside the current definition of done is unfinished source work, not a follow-up that makes the source closable.
-- A follow-up carries Auto only when a person, or `orchestrate --autonomous` under the criterion, grants it at this `ticket-up` boundary; its source's Auto never carries over.

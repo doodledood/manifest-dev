@@ -7,8 +7,7 @@ user-invocable: false
 Receive the manifest path from `/do`, along with the basis on which each Acceptance Criterion and Global Invariant was judged to hold.
 
 Include material autonomous decisions and their rationale, including any Appetite
-revision and why its benefit justified the added complexity and maintenance, even
-when already recorded in the execution log. Carry any drafted Taste entry `/do`
+revision and why its benefit justified the added complexity and maintenance. Carry any drafted Taste entry `/do`
 supplies verbatim, with its question for the user's yes.
 
 **The user's call.** A decision is the user's call when two careful people with

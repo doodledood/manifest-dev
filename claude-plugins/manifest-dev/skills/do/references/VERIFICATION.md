@@ -5,9 +5,7 @@ What a harness is, what it owes and what shape it takes by default are in
 its own `--help`.
 
 - **Missing parts:** this file applies where the project keeps a verification harness, which is
-  the project's choice and never the run's: named in the project-surfaces section of the context
-  file, or on disk with no verification bullet there, which counts as chosen, and the report then
-  suggests recording its bullet. Build what the change needs that the harness lacks, scoped to what the change touches, as
+  the project's choice and never the run's, as `../SKILL.md` says. Build what the change needs that the harness lacks, scoped to what the change touches, as
   `../../setup-project/references/VERIFICATION_HARNESS.md` → *What setup creates, and what runs build*
   describes, unattended too: it is verification for the change, like a regression test.
 - **Touched recipes:** `verify affected` lists the recipes the change touches and the changed
