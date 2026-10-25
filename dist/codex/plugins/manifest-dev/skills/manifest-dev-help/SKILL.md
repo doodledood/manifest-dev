@@ -35,7 +35,7 @@ promise: you give the agent a complex task, and you trust the result enough to s
 review. Weeks later, the project still knows what it is for, what is next, and what "done" means.
 The code is also easier to change correctly than before.
 
-You can assign a project outcome within chosen limits. The coordinator can investigate, shape work, deliver it and read the results. You retain the decisions you want to make. Reliable ongoing operation remains an ambition; a completed task does not prove that ambition.
+You can assign a project outcome within chosen limits. `/orchestrate` can investigate, shape work, deliver it and read the results. You retain the decisions you want to make. Reliable ongoing operation remains an ambition; a completed task does not prove that ambition.
 
 manifest-dev is for developers who want results that they can trust. They agree to spend more tokens
 and more work at the start to get them. They can work alone or in a team of any size, also in a
@@ -54,9 +54,9 @@ fastest or the cheapest result.
 2. Use `/define` to write a Manifest: what you will accept as done.
 3. Use `/do <manifest-path>` to do the work and show evidence for each gate.
 
-`/auto` does the three steps without a stop between them. Each skill also works alone.
-You can take a Read straight to `/ticket-up`, or assign direct work. No sequence is required for every project. `/define`
-starts `/figure-out` first when you and the agent do not yet agree on the problem.
+`/auto` does the three steps without a stop between them. Each skill also works alone, and no
+project needs this sequence. You can take a Read straight to `/ticket-up`, or assign direct work.
+`/define` starts `/figure-out` first when you and the agent do not yet agree on the problem.
 
 When your tool can show a question as a list of options, `/figure-out` and `/define` ask you that
 way. The first option is the answer that they recommend. You can also answer in your own words.
@@ -86,7 +86,7 @@ To climb a level:
 
 1. Use your current level until you trust its results.
 2. Add the next level where the current level does not give enough.
-3. Grant Auto only when all decisions needed for completion are settled or delegated, with no retained acceptance.
+3. Grant Auto only when all needed decisions are settled or delegated, with no retained acceptance or missing access.
 
 ## Assignment and authority
 
@@ -155,11 +155,10 @@ or `/skill:name`.
 - Let `/do` find and repair small problems. Do not stop it for them.
 - Send a change of direction as a message to `/do`, so that it goes into the Manifest. Do not
   change the code yourself during the run.
-- Trust evidence, not a summary. A gate passes only with evidence.
+- Trust evidence, not a summary.
 - Agree to a costly check before it runs. A recipe with the ask-first mark costs money, quota or
   load on shared systems.
-- Run `/setup-project` one time to install the Project Surfaces. Normal runs keep them current,
-  and a new run of `/setup-project` finds the gaps.
+- Run `/setup-project` one time to install the Project Surfaces.
 - Make each correction a check, so that the same mistake fails for each later person.
 - Read the "Debt left" section of each pull request. Fix the Debt when your next change touches that code.
 - Expect more tokens and more work at the start. In return, you get a result that you can

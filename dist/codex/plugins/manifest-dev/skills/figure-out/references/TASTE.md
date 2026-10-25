@@ -6,7 +6,7 @@ Taste is a durable personal steering preference persisted only by offer-and-rati
 
 ## Override: a ratified write is the action
 
-The master frame in `SKILL.md` says answers and agreement feed exploration, not action — don't leap to the implied move, not the edit, not even the proposal. **A ratified taste write is an exception: it is the action of this capture, not deferred work.** The user's yes is the authorization; execute the write inline when it lands. Nothing here licenses acting on the *content* of the preference — only writing the entry.
+`SKILL.md` makes this skill investigation, never execution: agreement is fuel for exploring, not a green light. **A ratified taste write is an exception: it is the action of this capture, not deferred work.** The user's yes is the authorization; execute the write inline when it lands. Nothing here licenses acting on the *content* of the preference — only writing the entry.
 
 ## Detection gate
 
@@ -19,7 +19,7 @@ Watch for directional preferences the user steers by, not one-off situational ca
 
 Passing the gate makes a candidate eligible, not offered — an offer must also repay its interruption. When a preference is real but too minor for future sessions to meaningfully profit from, don't stop the session for it: let it ride the session-end sweep, where batching amortizes the cost, or leave it unoffered.
 
-**Per-turn:** when the signal is unmistakable — the same pushback has recurred, the user states a standing preference in so many words, or the user reverses a call and says why — and the entry is consequential enough to repay the interruption, offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (for figure-out, before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. Anything below the gate: keep working, don't offer.
+**Per-turn:** when the signal is unmistakable — the same pushback has recurred, the user states a standing preference in so many words, or the user reverses a call and says why — and the entry is consequential enough to repay the interruption, offer immediately, while the instance is concrete. **Session-end sweep:** before the session closes (before naming the read), review for candidates that accumulated without individually clearing the per-turn bar; batch any that now clear the gate into one offer. Anything below the gate: keep working, don't offer.
 
 ## Drafting (boundary form)
 
