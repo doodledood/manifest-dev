@@ -78,4 +78,5 @@ partly — `62-decision-rival-answers` (`independent-check-called`, `checks-the-
 - Session: a figure-out investigation and `/auto` run on figure-out's question quality, 2026-10-25; simulation batches and blind keys kept outside the repository.
 - Related: 20260611-figure-out-evidence-ledger-and-independent-rederivation
 - Related: 20260714-figure-out-scales-read-depth-with-stakes-and-reversibility
+- Related: 20261012-unattended-runs-flag-the-users-calls-by-disagreement-not-confidence
 - Related: 20261025-figure-out-records-what-the-lean-body-rebuild-retired

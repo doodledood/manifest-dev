@@ -21,20 +21,20 @@ alone. It did not count what settlement building and annexation cost the economy
 person raised it.
 
 The change was tested in in-session simulations of a fictional decision of that shape, with
-parties A, B and C, which eval case `86` reconstructs, and of a product choice.
-Each variant produced two replies, and two graders per batch graded them blind. These are not
-eval-suite results. The line under test is the *Drivers across branches* probe this record adds,
-tried in several places:
+parties A, B and C, and of a product choice. Eval case `86` restates the decision with a
+fictional border region. Each variant produced two replies, and two graders per batch graded
+them blind. These are not eval-suite results. Two kinds of line were tried, both asking what
+drives an aim: a causal-model line in `SKILL.md`'s spine, and the *Drivers across branches*
+probe in `tasks/DECISION.md` that this record adds.
 
-- Vote case: without the probe, no reply counted the economic effects of the settlement
-  positions (0 of 6). With it, in every place tried, every reply did (8 of 8). The 8 include
-  the 2 replies with it in `tasks/DECISION.md`.
+- Vote case: with neither line, no reply counted the economic effects of the settlement
+  positions (0 of 4). With one of them, every reply did (6 of 6), including both replies with
+  the probe.
 - Product case (support's warning that users would not find how to connect data, against the
-  activation goal of connecting data): with the probe, 8 of 8 replies linked the two; without
-  it, 3 of 4.
-- Small decision (`64`): with the probe in `DECISION.md`, 1 of 2 replies passed the
-  repository's rubric, against 2 of 2 without it. With a similar line in `SKILL.md`'s spine
-  instead, replies to small asks also grew heavier.
+  activation goal of connecting data): with one of the lines, 8 of 8 replies linked the two,
+  including both replies with the probe; with neither, 3 of 4.
+- Small decision (`64`): with the probe, 1 of 2 replies passed the repository's rubric, against
+  2 of 2 without it. With the spine line instead, replies to small asks also grew heavier.
 
 ## Decision
 
