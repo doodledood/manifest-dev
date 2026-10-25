@@ -12,15 +12,14 @@ Research tasks may span multiple data sources. Each source type has its own cred
 
 When no source file exists for a relevant source type, the general quality gates below still apply — the LLM probes source-specific failure cases adaptively using the abstract principles.
 
-**Source file note**: Quality gates below reference abstract principles (credibility, cross-referencing, fabrication, etc.). Source files instantiate these for their source type with specific hierarchies, techniques, and rates. Load applicable source files for specifics.
+**Source file note**: Quality gates below reference abstract principles (credibility, cross-referencing, fabrication, etc.). Source files instantiate these for their source type with specific hierarchies, techniques, and rates.
 
 ## Quality Gates
 
 ### Baselines (always enforced)
 
 **Source Rigor**
-- **Source credibility** — Key findings backed by credible, identifiable sources, weighted by authority level and claim stakes. Higher-stakes claims demand higher-authority sources. When relying below the level the claim demands, flag it
-- **Source authority assessment** — Source authority assessed per source type — each data source has its own credibility hierarchy. Higher-stakes claims demand higher-authority sources within the relevant source type
+- **Source credibility** — Key findings backed by credible, identifiable sources, with authority assessed against the source type's own credibility hierarchy. Higher-stakes claims demand higher-authority sources within that type; when relying below the level the claim demands, flag it
 - **Cross-referencing** — Key claims corroborated across independent sources, depth proportional to claim importance. Independence means different organizations, methodologies, and data sources — not multiple citations of the same upstream source
 - **Evidence traceability** — Key claims traceable to specific sources; the chain from raw evidence to conclusion is walkable
 - **Source coverage** — Coverage verified across the source's retrieval mechanisms — single-pass queries risk missing relevant content
@@ -100,4 +99,3 @@ When no source file exists for a relevant source type, the general quality gates
 - **Niche-topic vigilance** — Enhanced verification for less-documented topics where AI fabrication rates are higher
 - **Genuine quality over performative rigor** — Quality measures must reflect genuine quality, not checklist compliance. Process without substance is worse than no process
 - **Preserve genuine disagreement** — Open questions stay open. Don't force false consensus when genuine uncertainty exists. Disagreement is a valid finding
-- **Calibrated confidence** — Don't water down well-supported conclusions through excessive hedging. Adversarial review should make research more accurate, not less decisive

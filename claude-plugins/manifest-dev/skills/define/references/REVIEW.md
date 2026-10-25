@@ -18,8 +18,7 @@ Check it against two things, both handed to you:
   criterion the user pinned by reacting to something concrete; the rest is yours to find.
 
 Read the Manifest as a newcomer who was not in the session would, and report as a finding each
-date that records when something was decided or changed; each note of who decided what outside
-Known Assumptions; each text about what an item used to say; each gate that duplicates or
+text `SKILL.md`'s *Write the current state* excludes; each gate that duplicates or
 contradicts another; each gate body that lists instances where its class is the requirement; each
 Known Assumption that a later one supersedes, or that an amendment added — visible against the
 earlier version or diff — only to record how a review finding was handled; and each part of

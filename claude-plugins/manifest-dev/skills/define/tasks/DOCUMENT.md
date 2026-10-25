@@ -18,8 +18,8 @@ is never a finding here.
 | Scope clarity | — | What's covered and what's not stated explicitly |
 
 The style gate encodes as a gate body that activates the `review-writing` skill with
-`register=docs` under `/do`'s selected evaluator. Name the skill and the register and stop — the
-skill owns the threshold and loads its own references, and `register=docs` brings the shared prose
+`register=docs` under `/do`'s selected evaluator. Name the skill and the register and stop, as `SKILL.md` → *Specialized gates activate a skill* says.
+The skill loads its own references, and `register=docs` brings the shared prose
 floor with it, so the bar in the table above orients the author rather than being copied into the
 gate. It is a Judgment Gate, which is what tells `/do` how it re-verifies.
 

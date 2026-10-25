@@ -13,8 +13,8 @@ registers live in `PROSE-FLOOR-REFERENCE.md` and are not repeated in this file.
 **Precedence.** A project's own style sheet or `AUTHOR_VOICE.md` outranks this reference; the
 `review-writing` skill applies that rule and is its one home.
 
-**Not for `/define` interviews** — this file is lookup data for gate evaluation. The task files
-(`tasks/DOCUMENT.md`, `tasks/TECH_DESIGN.md`) carry the compressed gate text.
+**Not loaded by `/define`** — the `review-writing` skill applies this file for `register=docs`,
+which the style gate in `../tasks/DOCUMENT.md` activates.
 
 ---
 
@@ -80,7 +80,7 @@ where the reader is the actor and passive voice hides that from them.
 
 - Use **sentence case** everywhere: headings, page titles, table headers, table cells, list items, captions, and glossary definitions. Capitalize only the first word, the first word after a colon, and proper nouns.
 - Don't end a heading with a period. Don't put links or code items in a heading, and don't number headings to indicate sequence.
-- One top-level heading per document; don't skip heading levels, and don't pick a level for its visual weight.
+- One top-level heading per document; don't pick a level for its visual weight.
 - Write task headings as a bare imperative ("Create an instance"), and conceptual headings as noun phrases ("Migration to the new API"). Avoid opening a heading with an -ing verb.
 - Avoid unnecessary capitalization in body text. Don't capitalize a common noun to signal that it matters.
 - Keep articles in headings: "Create a VM instance", not "Create VM instance".
@@ -94,7 +94,6 @@ where the reader is the actor and passive voice hides that from them.
 - One action per procedure step, with the step's first sentence carrying an imperative verb. State where the action happens before the action itself, and state the result in the same step rather than as a step of its own.
 - Prefix an optional step or section with "Optional:".
 - Don't repeat a procedure documented elsewhere; link to it.
-- Don't use directional language — "above", "below", "the box on the right". Use "preceding", "following", or the name of the thing.
 
 ## Numbers, dates, and units
 
@@ -124,7 +123,7 @@ where the reader is the actor and passive voice hides that from them.
 - Don't use "i.e." or "e.g." — write "that is" and "for example". Avoid "etc." and "and so on".
 - Don't use "and/or" outside space-constrained contexts like a table cell.
 - Don't abbreviate with slashes ("w/", "c/o") or substitute symbols for words ("10x" → "10 times", "&" → "and" outside official names).
-- Expand an acronym on first use, then use the acronym. Don't use periods in acronyms. If the first mention falls in a heading, expand it in the following paragraph instead.
+- After its expanded first use, write the acronym. Don't use periods in acronyms. If an acronym's first mention falls in a heading, expand it in the following paragraph instead.
 - Write around jargon where plain language exists. Where a term must appear, define it briefly on first use or link to a definition.
 
 ## Timeless product documentation
@@ -157,9 +156,8 @@ These rules govern ongoing instructions and reference material for an available 
 ## Accessibility and inclusive language
 
 Both floors bind every register, so they live in `PROSE-FLOOR-REFERENCE.md` and are evaluated
-from there. Two documentation-specific applications of the accessibility floor are stated in this
-file where they arise: table structure under **Lists and procedures** and link text under
-**Links and cross-references**.
+from there. One documentation-specific application of the accessibility floor is stated in this
+file where it arises: link text under **Links and cross-references**.
 
 ---
 

@@ -1,6 +1,6 @@
 # Multi-Repo Manifest Workflow
 
-Canonical reference for tasks whose changeset spans multiple repositories. Single-repo manifests are unaffected.
+Canonical reference for tasks whose changeset spans multiple repositories.
 
 A shared canonical manifest is the default: one manifest captures shared intent, every deliverable tagged with its repo, shared invariants. Splitting per repo is a legitimate user choice when work is loosely coupled — that case is just N independent single-repo manifests with no special rules. The manifest is **internal** (a working document for user and agent); PR descriptions stay summary-only. It lives at the durable manifests home `/define` chose at synthesis (emitted in the `Manifest complete:` line) with no primary repo owning it; if the file is ever lost, re-run /define against the same task and in-flight PRs continue under the new path. Multi-repo amendments use the single shared manifest — last-writer-wins on concurrent edits; collision rate is low, recovery is the writer noticing missing content and re-triggering. No file locking. /do reads `Repos:` and uses absolute paths when working in a non-cwd repo; user invokes /do once globally (agent navigates between repos) within one conversational session.
 
@@ -18,7 +18,7 @@ Multi-repo manifests extend the standard schema with two optional fields. Single
       - frontend: /home/user/projects/web
   ```
 
-- **Branch:** single string naming the branch used in every repo. By default, all repos use the same branch name (matches the existing harness pattern). Divergent per-repo branch names not supported in this version; future extension could replace `Branch: <string>` with `Branches: [name → branch]`.
+- **Branch:** single string naming the branch every repo uses; per-repo branch names are not supported.
 
   ```markdown
   - **Branch:** claude/sso-integration
@@ -65,7 +65,7 @@ When the manifest declares `Repos:`, `/do` keeps the cross-repo path map in view
 Available repos: backend=/home/user/projects/api, frontend=/home/user/projects/web
 ```
 
-The map is wrapper context, never part of a gate's own text — it travels with the run like the eligible-gate set and the framing line, and changes no gate's threshold. Single-repo manifests get no map.
+The map is wrapper context, never part of a gate's own text, and changes no gate's threshold.
 
 ## /done and /auto for multi-repo
 

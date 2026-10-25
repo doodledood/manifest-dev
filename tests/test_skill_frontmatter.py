@@ -700,15 +700,13 @@ def test_detector_accepts_valid_shapes() -> None:
 # picker installs the plugin copies — so a word one harness uses for a capability
 # every harness has makes the text wrong everywhere else. These rules hold over
 # every shipped markdown file. Exempt: HTML comments (runtime literals matched
-# across hosts, never prose a reader resolves) and the research digests under
-# references/research/, which describe other systems in their own words.
+# across hosts, never prose a reader resolves).
 
 SHIPPED_SKILL_ROOTS = (
     ROOT / "claude-plugins" / "manifest-dev" / "skills",
     ROOT / "claude-plugins" / "manifest-dev-tools" / "skills",
 )
 HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
-RESEARCH_DIGEST = "references/research/"
 PLUGIN_QUALIFIER = re.compile(r"manifest-dev(?:-tools)?:(?=[a-z])")
 HOST_TOOL_NAMES = re.compile(
     r"\b(?:WebFetch|WebSearch|AskUserQuestion|TodoWrite)\b"
@@ -735,10 +733,6 @@ def shipped_markdown() -> list[Path]:
     ]
     assert files, "no shipped markdown found"
     return files
-
-
-def in_research_digest(path: Path) -> bool:
-    return RESEARCH_DIGEST in path.as_posix()
 
 
 def outside_html_comments(text: str) -> str:
@@ -783,11 +777,9 @@ def test_shipped_text_names_the_context_file_only_where_it_detects_or_compares()
 ):
     """`CLAUDE.md` is one harness's instance of the project context file. A file may
     name it only as one of several (a detection table or a comparison also naming
-    `AGENTS.md`) or inside a research digest."""
+    `AGENTS.md`)."""
     problems = []
     for path in shipped_markdown():
-        if in_research_digest(path):
-            continue
         text = path.read_text(encoding="utf-8")
         if CONTEXT_FILE_NAME in text and OTHER_CONTEXT_FILE_NAME not in text:
             for number, line in enumerate(text.splitlines(), 1):
@@ -799,11 +791,9 @@ def test_shipped_text_names_the_context_file_only_where_it_detects_or_compares()
 
 
 # Holds the decision in docs/adr/20260903-shipped-skills-are-host-neutral-and-distributions-read-source.md.
-def test_shipped_text_never_names_a_subagent_outside_research_digests() -> None:
+def test_shipped_text_never_names_a_subagent() -> None:
     problems = []
     for path in shipped_markdown():
-        if in_research_digest(path):
-            continue
         text = path.read_text(encoding="utf-8")
         for number in line_hits(text, LAUNCH_VERB):
             problems.append(f"{path.relative_to(ROOT)}:{number}: names a subagent")
@@ -814,8 +804,6 @@ def test_shipped_text_never_names_a_subagent_outside_research_digests() -> None:
 def test_every_delegation_site_carries_an_inline_fallback() -> None:
     problems = []
     for path in shipped_markdown():
-        if in_research_digest(path):
-            continue
         text = path.read_text(encoding="utf-8")
         for paragraph in re.split(r"\n[ \t]*\n", text):
             if DELEGATION.search(paragraph) and not FALLBACK.search(paragraph):

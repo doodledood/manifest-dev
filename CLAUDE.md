@@ -26,8 +26,8 @@ scripts/verify drive property-suite
 `tests/` asserts properties of the shipped prompts themselves — that gate examples use the current
 schema, and two host-neutrality invariants over every
 shipped Markdown file: no file names a host primitive (a plugin qualifier outside an HTML comment,
-a Claude Code tool name, `CLAUDE.md` outside a detection or comparison, "subagent" outside a
-research digest), and every skill a shipped skill names ships beside it — never marked
+a Claude Code tool name, `CLAUDE.md` outside a detection or comparison, the word
+"subagent"), and every skill a shipped skill names ships beside it — never marked
 `metadata.internal`, and `user-invocable: false` when it exists only to be called. Adding a skill,
 a dimension, or a delegation site can therefore turn the suite red without any Python changing,
 and that red is the signal working as intended. The same suite fails when `dist/codex` drifts from

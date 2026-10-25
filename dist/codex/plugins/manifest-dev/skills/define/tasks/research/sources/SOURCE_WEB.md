@@ -4,10 +4,6 @@ Web-specific quality gates, search techniques, and failure modes for research ta
 
 Composes with `RESEARCH.md` (base for all research tasks). This file provides web-specific instantiations of the general research framework.
 
-## Compressed Awareness
-
-**Search coverage** — Simple keyword searches miss 60-72% of relevant content; multiple semantically distinct query formulations are essential.
-
 ## Quality Gates
 
 ### Web Source Rigor
@@ -17,7 +13,7 @@ Instantiates RESEARCH.md's abstract source rigor gates for web sources:
 - **Web source authority hierarchy** — Primary sources (official docs, specs, peer-reviewed research) over secondary (established publications, reputable analysis) over tertiary (blogs, forums, outdated material). Claims on tertiary alone are unsubstantiated unless no higher-authority source exists (flagged as gap)
 - **Lateral reading** — Sources underpinning key claims evaluated by external reputation (what do independent authorities say about this source?), not just by content. Vertical evaluation (assessing a source by its own self-presentation) is insufficient — 71% improvement in unreliable source detection when using lateral reading (RCT, n=499)
 - **Web search coverage** — Simple keyword searches miss 60-72% of relevant content. Multiple semantically distinct query formulations used per research facet, not single-query passes
-- **Citation fabrication rates** — Citation fabrication rates of 6-29% even in frontier models, inversely correlated with topic familiarity — niche topics demand more aggressive checking. Fabrication rates 28-29% for niche vs 6% for well-known topics
+- **Citation fabrication rates** — Citation fabrication rates run from 6% for well-known topics to 28-29% for niche ones, even in frontier models — niche topics demand more aggressive checking
 
 ### Selectable Gates
 
@@ -43,6 +39,5 @@ Instantiates RESEARCH.md's abstract source rigor gates for web sources:
 
 *Domain best practices for web research.*
 
-- **Multi-query coverage** — Multiple semantically distinct query formulations per research facet. Single-query passes miss 60-72% of relevant content
 - **Iterative reformulation** — Terminology from found sources seeds follow-up searches (pearl growing)
 - **Vocabulary expansion** — Synonym variants, alternative phrasings, and domain-specific terminology to overcome vocabulary mismatch barriers

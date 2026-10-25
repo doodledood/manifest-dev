@@ -3,12 +3,10 @@
 Base guidance for every prose deliverable, in either register. Carries only what holds for
 documentation and human-voiced writing alike; the register overlays add the rest.
 
-**Composition.** Two register overlays compose onto this base and are mutually exclusive:
-`WRITING.md` for human-voiced prose (articles, copy, social, creative), and `DOCUMENT.md` for
-documentation (specs, proposals, reports, formal docs). A deliverable takes one register, never
-both — the rules they carry contradict each other by design, and that is why they don't share a
-base. The register overlay carries the style gate; this base carries what a style reviewer cannot
-settle.
+**Composition.** One register overlay composes onto this base, never both, as `SKILL.md` →
+*Task files* states: `WRITING.md` for human-voiced prose (articles, copy, social, creative), or
+`DOCUMENT.md` for documentation (specs, proposals, reports, formal docs). Each overlay carries its
+own style gate; this base carries what a style reviewer cannot settle.
 
 ## Quality Gates
 

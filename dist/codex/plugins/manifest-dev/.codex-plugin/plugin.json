@@ -1,6 +1,6 @@
 {
   "name": "manifest-dev",
-  "version": "14.11.5",
+  "version": "14.11.6",
   "description": "Skills for inquiry, finite delivery, and optional coordination toward an assigned project outcome. Define checkable work, execute it on fresh evidence, and coordinate Tickets within scoped delegation while preserving retained decisions and final acceptance. Setup, product inquiry, and code, design, and writing review support standalone and coordinated use; sustained outcome effectiveness remains unmeasured.",
   "skills": "./skills/",
   "keywords": [

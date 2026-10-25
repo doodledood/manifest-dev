@@ -97,6 +97,13 @@ fresh-context review. It reaches every case that writes a spec, whose results, t
 included, are stale, and `d09` most, which gains the `current-state` grader, unmeasured. The `define` recipe's `current-state-amend` drive covers both the
 current-state amendment and its review on the fresh-context path, and remains **unmeasured**.
 
+A second 2026-10-25 change restated define's own text as current state without changing what it
+asks: the unattended-amendment rules moved into *Amendment*, the `User's call:` label into *Write
+the current state*, rules stated twice now point to one statement, and research notes nothing
+loaded left the skill. It reaches every case that writes a spec, `d09` and `d17` most, and
+changes no case or grader. **Every recorded number in this file, the 2026-10-25 baseline's included, is stale as
+of 2026-10-25.**
+
 The review runs in a fresh context, which this suite's sessions cannot start, so define reviews
 its own Manifest here and says the review was self-graded. No case holds the per-gate wrong-result
 question; the `define` recipe's `fresh-review` drive checks it instead. `d26` holds the search for
