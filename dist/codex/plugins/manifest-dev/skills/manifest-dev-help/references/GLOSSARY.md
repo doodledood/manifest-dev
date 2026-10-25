@@ -323,17 +323,13 @@ It exists because without it each session must find again how to test the projec
 nobody runs becomes stale.
 
 A harness is optional, but we recommend it. `/setup-project` adds it unless you opt out. A project
-can keep its own way to examine its work. The verification line of
-the Project Context File records the choice. When a project keeps a harness, normal runs repair it
-where their work touches it. When a project keeps its own way, runs use that way and do not add a
-harness.
+can keep its own way to examine its work. The verification line of the Project Context File records
+the choice. A harness that is already in the project counts as a choice.
 
-When a project did not record a choice, runs use the checks that it has. Their reports offer a
-harness. A harness that is already in the project counts as a choice.
-
-Runs never add a harness that the project did not select. But runs always repair the checks that
-the project has, when the work touches them. A broken test gets a repair, and so does a broken
-recipe.
+When a project keeps its own way, runs use that way. When a project did not record a choice, runs
+use the checks that it has, and their reports offer a harness. Runs never add a harness that the
+project did not select. But runs always repair the checks that the project has, when the work
+touches them. A broken test gets a repair, and so does a broken recipe.
 
 The shape that `/setup-project` ships is a default, and you can change it to fit
 your project. Each harness must give one place to learn how to examine the project. Each harness
@@ -403,7 +399,7 @@ decide it, not the parts that it has. The jobs are:
 - The check failed when you made the thing that it checks wrong on purpose, and then you removed
   that change.
 
-When a check is not fit to trust, the run repairs it first.
+When a check that the change touches is not fit to trust, the run repairs it first.
 
 ### Lock
 <!-- context: ad749d95a942 -->

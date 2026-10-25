@@ -1,6 +1,6 @@
 # figure-out: team mode
 
-The counterparty is a Slack channel or thread: the operator launches in the local chat session; the team deliberates in Slack. Team mode supersedes autonomous self-answering — self-answering is incoherent when the counterparty is the team.
+The counterparty is a Slack channel or thread: the operator launches in the local chat session; the team deliberates in Slack.
 
 ## What changes
 
@@ -20,6 +20,6 @@ The counterparty is a Slack channel or thread: the operator launches in the loca
 
 **Terminal contract, team-shaped.** When the deliberation lands, stop its recurring poll or subscription, post a wrap-up synthesis to Slack so the team sees what was decided, then return control to the operator in the local chat session. Stop polling on cancellation or terminal failure too; if cleanup fails, report the active handle and failure to the operator. The team's decision — however unanimous — is shared understanding, not authorization to execute. The `/define` offer goes to the operator in chat, never to Slack.
 
-**Docs mode is read-only and relevance-gated.** Only when docs are enabled (no `--no-docs`) and the topic is relevant to the active project/context, resolve the active context map-first: follow `CONTEXT-MAP.md` to the relevant context's `CONTEXT.md` when the map exists; otherwise load the repo-root `CONTEXT.md`. Otherwise do not load project context docs. Use loaded vocabulary and relationships to recognize project terms in Slack messages, reference prior decisions when relevant, and avoid re-asking what is already canonicalized. Do NOT write `CONTEXT.md` captures, do NOT propose initialization if docs are missing, and do NOT offer or write ADRs from the Slack thread — Slack is too multi-voice and noisy for inline doc capture; the team's docs capture happens through other channels (manual edits, or figure-out docs mode in chat where a single trusted operator owns the writes). Docs mode only enriches the agent's context in team mode, never the docs themselves.
+**Project context is read-only and relevance-gated.** Only when docs are enabled (no `--no-docs`) and the topic is relevant to the active project/context, resolve the active context map-first: follow `CONTEXT-MAP.md` to the relevant context's `CONTEXT.md` when the map exists; otherwise load the repo-root `CONTEXT.md`. Otherwise do not load project context docs. Use loaded vocabulary and relationships to recognize project terms in Slack messages, reference prior decisions when relevant, and avoid re-asking what is already canonicalized. Do NOT write `CONTEXT.md` captures, do NOT propose initialization if docs are missing, and do NOT offer or write ADRs from the Slack thread — Slack is too multi-voice and noisy for inline doc capture; the team's docs capture happens through other channels (manual edits, or figure-out docs mode in chat where a single trusted operator owns the writes). Project docs only enrich the agent's context in team mode, never the docs themselves.
 
 **Logging is local-only.** The investigation log is a local file artifact; do not post it to Slack or send it as a Slack message.

@@ -286,7 +286,14 @@ re-derivation of a load-bearing read that nobody will check, and `70` the classi
 stated constraint as required or chosen. `83` holds the offer to narrow a read once its remaining
 questions stop depending on each other.
 
-**Every recorded number in this file is stale as of 2026-10-21.** The 2026-10-13 change edited
+**Every recorded number in this file is stale as of 2026-10-25, including the 2026-10-25 baseline.**
+A change after that baseline removed drift from figure-out without adding or dropping a rule: the
+crux sentence now names parent before child first, the draft offer is its own bullet, the
+`--autonomous` paragraph and the log section left `SKILL.md` for the references that hold them,
+autonomous mode names the draft offer and the re-derivation by their current names, and the
+document probe's check names a walk recipe. It reaches `01`, `06`, `22`, `25` and `35` most.
+
+Every recorded number before that baseline was already stale as of 2026-10-21. The 2026-10-13 change edited
 figure-out's spine, its docs-mode and autonomous references, and its task files, the
 2026-10-14 change moved its verification wording to one harness, the 2026-10-15 change made
 that harness optional and the project's own checks a run's to repair, the 2026-10-18 change
@@ -619,15 +626,14 @@ file. The row is never deleted while the probe stays.
 | `SKILL.md` | Fog, and ruling ground out of the frame | Reason: needs many user turns, so a branch can be seen sharpening or a ruling be seen holding when a resumed session meets it |
 | `SKILL.md` | Explore read-only; acts with durable outside state are offered | `18-read-only-experiment/state-labelhub--labelhub--driver-py`, `18-read-only-experiment/state-labelhub--labelhub--spooler-py`, `17-agreement-is-not-a-go/state-gatekeeper--app--consumer-py`; not graded: acts that leave state outside the session, which need an external-service stub |
 | `SKILL.md` | The person's seat and their uses | `14-persona-seat-feature/takes-the-persona-seat`, `14-persona-seat-feature/persona-from-north-star`, `15-persona-seat-doc/takes-the-readers-seat` |
-| `SKILL.md` | State what it will be and how it is checked; offer a draft | `21-how-it-gets-checked/settles-the-exercise`, `22-draft-before-feel/offers-a-draft-not-a-feeling`, `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it`; not graded: rendering beyond the draft offer, which needs opt-in to publishing and several turns |
+| `SKILL.md` | State what it will be and how it is checked | `21-how-it-gets-checked/settles-the-exercise`, `32-reads-the-verification-surface/plans-to-exercise-the-touched-entry`, `33-no-verification-surface/plans-a-way-to-check-it` |
+| `SKILL.md` | Offer a draft | `22-draft-before-feel/offers-a-draft-not-a-feeling`; not graded: rendering beyond the draft offer, which needs opt-in to publishing and several turns |
 | `SKILL.md` | Re-derive a load-bearing read independently | `62-decision-rival-answers/checks-the-read-independently` |
 | `SKILL.md` | Flags and the references they load | `01-root-press/log-written`, `25-users-call-and-taste/flags-the-users-calls`, `27-taste-offers/offers-entry-for-the-stated-preference`, `43-recalls-earlier-work/carries-the-earlier-ruling-as-a-lead`, `46-general-question-skips-recall/no-recall-for-a-general-question`, `23-term-and-record/term-captured`; not graded: a quoted or topic mention of a flag read as topic text, which no case prompt carries |
 | `SKILL.md` | What counts as a project | `52-projectless-chat-offers-no-surfaces/no-project-surfaces-offered`, `52-projectless-chat-offers-no-surfaces/state-no-extra-files`; not graded: the same paragraph's team-mode sentences (no Taste, precedence over `--autonomous`), which need a Slack channel the suite cannot reach |
-| `SKILL.md` | Under --autonomous, self-answer and flag | `25-users-call-and-taste/flags-the-users-calls`, `25-users-call-and-taste/no-taste-offer` |
 | `SKILL.md` | Load the matching probe files; stated rules win | `64-decision-small-and-undoable/picks-without-ceremony`, `40-shape-before-build/sketch-two-shapes-one-owner`; not graded: a rule the user states overriding a probe |
 | `SKILL.md` | Invoke prompt-engineering for prompt-shaped work | Reason: a host capability the headless harness lacks — the eval sandbox installs only this plugin, so the prompt-engineering skill, which ships in `manifest-dev-tools`, cannot be invoked |
 | `SKILL.md` | Offer to scope the read and hand off to ticket-up | `83-separate-questions-separate-owners/offers-to-scope-the-read`; not graded: the hand-off after the user accepts, which needs a second user turn and a ticket-store fixture |
-| `SKILL.md` | The log | `01-root-press/log-written` |
 | `tasks/CODING.md` | Shape before build | `40-shape-before-build/sketch-two-shapes-one-owner` (including localizing plausible changes without speculative capability), `56-order-dependent-design/models-before-building` |
 | `tasks/CODING.md` | Already provided | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
 | `tasks/CODING.md` | Earned depth | `48-reuse-and-shallow-layer/reuses-existing-and-drops-shallow-layer` |
