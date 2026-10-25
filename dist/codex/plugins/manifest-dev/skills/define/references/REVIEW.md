@@ -21,9 +21,9 @@ Read the Manifest as a newcomer who was not in the session would, and report as 
 date that records when something was decided or changed; each note of who decided what outside
 Known Assumptions; each text about what an item used to say; each gate that duplicates or
 contradicts another; each gate body that lists instances where its class is the requirement; each
-Known Assumption that a later one supersedes, or that an amendment added — visible in the diff —
-only to record how a review finding was handled; and each part of Intent, the Approach or Process
-Guidance that describes a different task than the gates do.
+Known Assumption that a later one supersedes, or that an amendment added — visible against the
+earlier version or diff — only to record how a review finding was handled; and each part of
+Intent, the Approach or Process Guidance that describes a different task than the gates do.
 
 For each gate, also name a plausible wrong result — work that misses the intent in a way someone
 could actually ship — that the gate would fail. A gate that no plausible wrong result fails passes

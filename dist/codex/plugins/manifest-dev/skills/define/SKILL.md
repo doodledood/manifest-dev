@@ -382,8 +382,9 @@ review was self-graded. Settle every finding in one pass: fix it, or reject it
 and name it with the reason in the digest. A fix that changes what the user
 agreed — or, on an amendment, the requirement of a gate the amendment did not
 touch — is a user's call: asked when attended; unattended, not applied, so what
-the user agreed stands. Any other fix changes no requirement, such as removing a note, and lands
-wherever its fault sits. Unattended,
+the user agreed stands. Any other fix lands wherever its fault sits: in a touched gate, in
+non-binding text, or — where it changes no requirement, such as removing a
+note — in an untouched gate. Unattended,
 a new Manifest also records each rejected or unapplied finding in an `(auto)`
 `ASM-*`. An amendment adds no Known Assumption that only records how a review finding
 was handled, so such entries do not pile up with each amendment; its digest
