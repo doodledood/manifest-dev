@@ -12,8 +12,6 @@ Skip ordinary application logic unless it changes one of those operational surfa
 
 ## What to inspect
 
-Be comprehensive in analysis, precise in reporting. Inspect every operational surface in scope, but report only concrete risks that pass the Actionability Filter.
-
 ### Deployment & Environment Wiring
 
 - Required environment variables, secrets, feature flags, permissions, or config entries missing from one or more runtime environments
@@ -77,10 +75,10 @@ Do NOT report on:
 
 ## Severity calibration
 
-- **Critical** — Will block deploy, expose private functionality/data, corrupt durable data, or make rollback impossible for a primary runtime path. Must be fixed before shipping.
-- **High** — Likely production or CI failure under normal rollout, retry, scale, or environment conditions. Must be fixed before merge.
-- **Medium** — Operational fragility under plausible but narrower conditions: duplicate delivery, one environment missing config, noisy observability, slow CI path, non-critical cleanup gap. Should be fixed soon.
-- **Low** — Minor operational polish with concrete value: clearer runbook note, more useful log field, small CI targeting improvement. Can be follow-up.
+- **Critical** — Will block deploy, expose private functionality/data, corrupt durable data, or make rollback impossible for a primary runtime path.
+- **High** — Likely production or CI failure under normal rollout, retry, scale, or environment conditions.
+- **Medium** — Operational fragility under plausible but narrower conditions: duplicate delivery, one environment missing config, noisy observability, slow CI path, non-critical cleanup gap.
+- **Low** — Minor operational polish with concrete value: clearer runbook note, more useful log field, small CI targeting improvement.
 
 **Calibration check**: High/Critical findings require a specific runtime sequence. If you cannot describe the sequence, downgrade or drop.
 

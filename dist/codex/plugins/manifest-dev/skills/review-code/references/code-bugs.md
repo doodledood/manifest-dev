@@ -9,11 +9,11 @@ Two reasoning modes are required, both applied to every review:
 - **Pattern-matching** — walks the categories below, flagging code whose shape matches a known defect pattern (race, leak, unhandled rejection, dangerous default). Fast. Catches bugs visible in isolated snippets.
 - **Mechanism tracing** — follows specific values through specific code paths. For every value the diff writes or reads, ask: who else writes it, who else reads it, what does each closure capture vs. re-read, and what sequence of calls or captures could produce a wrong value? For every new caller of an existing function, hook, context, or callback, enumerate the existing callers and compare assumptions about call order, captured state, and freshness. Catches composition bugs that pattern-matching cannot see — because the bug lives in the *interaction* between changed and unchanged code, not in either snippet alone.
 
-Categories drive pattern-matching. Mechanism tracing is driven by value-following and caller-enumeration. Both modes run. A finding from either mode passes through the same Actionability Filter below.
+A finding from either mode passes through the same Actionability Filter below.
 
 ## Bug detection categories
 
-Categories prompt pattern-matching; mechanism tracing runs in parallel (per Reasoning Discipline above). Walk the categories as failure-mode lenses, not as a checklist — a finding in one category does not stop analysis of others, and a bug that fits this dimension but matches no listed category is still reportable. Respect the Out of Scope boundaries to maintain orthogonality. For large diffs, batch related files (same directory, same module) to manage analysis context.
+Walk the categories as failure-mode lenses, not as a checklist — a finding in one category does not stop analysis of others, and a bug that fits this dimension but matches no listed category is still reportable. Respect the Out of Scope boundaries to maintain orthogonality. For large diffs, batch related files (same directory, same module) to manage analysis context.
 
 The items listed under each category are examples of the pattern, not a closed set. If a defect matches the category's spirit but isn't bulleted, it still counts. Thoroughness in looking; discipline in reporting — the Actionability Filter decides what ships to the report.
 
@@ -89,10 +89,10 @@ Before reporting a bug, it must pass ALL of these criteria. **If it fails ANY cr
    - **Diff-based review** (default): Report bugs introduced or exposed by the change, including failures in unchanged code newly reached by it. Name the changed trigger; unrelated pre-existing bugs remain out of scope.
    - **Explicit path review** (caller specified): Audit everything in scope. Pre-existing bugs are valid findings.
 2. **Discrete and actionable** — One clear issue with one clear fix. Not "this whole approach is wrong."
-3. **Provably affects code — at mechanism level** — You must identify the specific code path that breaks as a concrete mechanism, not a category label. The finding must name the variable, location, value (vs. expected), and sequence of events that produces the wrong behavior. "Race condition possible on userId" is a shape — reject. "useEffect at line 42 reads `userIdRef.current` after the cleanup at line 58 clears it; second fire produces `undefined`" is a mechanism — accept. The same test as /define's bug-convergence: can you answer *"at line X, variable Y holds value Z because sequence M"*? If not, you have a hypothesis, not a finding — keep tracing or drop it.
+3. **Provably affects code — at mechanism level** — You must identify the specific code path that breaks as a concrete mechanism, not a category label. The finding must name the variable, location, value (vs. expected), and sequence of events that produces the wrong behavior. "Race condition possible on userId" is a shape — reject. "useEffect at line 42 reads `userIdRef.current` after the cleanup at line 58 clears it; second fire produces `undefined`" is a mechanism — accept. The test: can you answer *"at line X, variable Y holds value Z because sequence M"*? If not, you have a hypothesis, not a finding — keep tracing or drop it.
 4. **Concrete failure, not optional hardening** — Missing error handling or validation must produce the traced failure above. Similar omissions nearby do not establish that the failure was knowingly accepted; only evidence of that accepted tradeoff can exclude it.
 5. **Not intentional** — If the change clearly shows the author meant to do this, it's not a bug (even if you disagree with the decision).
-6. **Unambiguous unintended behavior** — Would the bug cause behavior the author clearly did not intend? If intent is unclear, drop the finding.
+6. **Unambiguous unintended behavior** — Would the bug cause behavior the author clearly did not intend? If intent is unclear, if the code's behavior is unclear, or if several interpretations exist and you cannot determine which is correct, drop the finding.
 
 ## Out of scope (orthogonality boundaries)
 
@@ -133,11 +133,4 @@ Severity reflects operational impact, not technical complexity. Refining the sha
 
 ## Report expectations (this dimension)
 
-Beyond the shared report format: use the **Type** field to name the category from the detection list above. Every Critical/High bug MUST have specific `file:line` references. Where a code snippet showing the bug clarifies the finding, include it. The shared format's required **Trigger** field carries the conditions that produce the failure. An empty report (Status: PASS) is a valid outcome — do not fabricate bugs to fill the report.
-
-## Handling ambiguity
-
-- If code behavior is unclear, **do not report it**.
-- If you need more context about intended behavior and cannot determine it, drop the finding.
-- When multiple interpretations exist and you cannot determine which is correct, drop the finding.
-- **An empty report is better than one with false positives.** Where the ambiguity above cannot be resolved, drop the finding.
+Beyond the shared report format: add a **Category** field naming the category from the detection list above. Every Critical/High bug MUST have specific `file:line` references. Where a code snippet showing the bug clarifies the finding, include it. The shared format's required **Trigger** field carries the conditions that produce the failure.

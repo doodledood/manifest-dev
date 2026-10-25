@@ -1,17 +1,15 @@
 # Code-maintainability review
 
-Audit the change for maintainability: code organization, DRY violations, coupling, cohesion, consistency, dead code, and architectural boundaries. Advisory dimension — PASS requires no MEDIUM-or-higher findings.
+Audit the change for maintainability: code organization, DRY violations, coupling, cohesion, consistency, dead code, and architectural boundaries.
 
 ## What this dimension covers
-
-**Be comprehensive in analysis, precise in reporting.** Examine every file in scope against every applicable category — do not cut corners or skip areas. But only report findings that clear the Actionability Filter below. Thoroughness in looking; discipline in reporting.
 
 These categories are guidance, not exhaustive. If you spot a maintainability issue that fits this dimension but matches no listed category, report it — just respect the orthogonality boundaries so this dimension stays distinct from its neighbors.
 
 - **DRY violations**: Duplicate functions, copy-pasted logic blocks, redundant type definitions, repeated validation patterns, and similar code that should be abstracted.
 - **Structural complexity**: Mixed concerns in single units (e.g., HTTP handling + business logic + persistence in one file).
-- **Conditional accretion / spaghetti growth**: New ad-hoc branches, one-off flags, nullable modes, or scattered feature checks inserted into unrelated flows. Report only when the branching has a concrete cleaner owner (state model, policy object, dispatcher, helper, or module) and makes future changes easier to miss.
-- **Large-file decomposition triggers**: When a diff pushes a non-generated source file from below roughly 1000 lines to above roughly 1000 lines, inspect whether the added code forms separable concerns. Crossing the threshold is not itself a finding; report only when decomposition would materially reduce coupling, scan cost, or change amplification.
+- **Conditional accretion / spaghetti growth**: New ad-hoc branches, one-off flags, nullable modes, or scattered feature checks inserted into unrelated flows. Report only when the finding names a concrete cleaner owner (state model, policy object, dispatcher, helper, or module) and why leaving the branching in place makes future changes easier to miss.
+- **Large-file decomposition triggers**: When a diff pushes a non-generated source file from below roughly 1000 lines to above roughly 1000 lines, inspect whether the added code forms separable concerns. Crossing the threshold is not itself a finding; report only when the finding identifies separable concerns the diff introduced and decomposition would materially reduce coupling, scan cost, or change amplification.
 - **Dead code**: Unused functions, unreferenced imports, orphaned exports, commented-out code blocks, unreachable branches, and vestigial parameters.
 - **Consistency issues**: Inconsistent error handling patterns, mixed API styles, naming convention violations, and divergent approaches to similar problems.
 - **Concept & Contract Drift**: The same domain concept represented in multiple incompatible ways across modules/layers (different names, shapes, formats, or conventions), leading to glue code, brittle invariants, and hard-to-change systems. Look for: duplicated serialization/formatting/normalization logic across components, multiple names/structures for the same artifact across layers without a clear mapping boundary, "parity drift" between producer/consumer subsystems that should share contracts, and similar-looking identifiers with unclear semantics (e.g., `XText` vs `XDocs` vs `XPayload`).
@@ -31,10 +29,9 @@ These categories are guidance, not exhaustive. If you spot a maintainability iss
 
 ## Out of scope (belongs to other dimensions)
 
-- **Adequacy of a repair against its demonstrated failure mechanism** → the defect-class dimension, including whether proportionate prevention was omitted.
-
 Do NOT report on these — they belong elsewhere:
 
+- **Adequacy of a repair against its demonstrated failure mechanism** → the defect-class dimension, including whether proportionate prevention was omitted.
 - **Intent-behavior divergence** (does the change achieve its goal?) → the change-intent dimension.
 - **Over-engineering / YAGNI** → the code-simplicity dimension.
 - **Cognitive complexity** → the code-simplicity dimension.
@@ -54,13 +51,11 @@ Do NOT report on these — they belong elsewhere:
 
 For deleted files in the diff: skip reviewing deleted file contents, but search for imports/references to the deleted file paths across the codebase and report any remaining references as potential orphaned code.
 
-Follow dependencies as far as the evidence for an in-scope maintainability finding requires. The shared reading/reporting scope applies; dependency depth does not change what findings belong in the report.
-
-High-churn files deserve extra scrutiny since issues there have outsized impact. Files that always change together with files outside scope may indicate coupling — note in "Related Concerns".
+High-churn files deserve extra scrutiny since issues there have outsized impact. Files that always change together with files outside scope may indicate coupling — note it in the report's `Summary`.
 
 ## Actionability filter
 
-Before reporting an issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this might be a problem" is not sufficient; "this WILL cause X problem because Y" is required. Style-consistency findings are the exception this dimension owns: a divergent form imposes reader cost rather than a failure, so name the divergence and the surfaces it splits across, per criterion 5.
+Before reporting an issue, it must pass ALL of these. **If a finding fails ANY criterion, drop it entirely.** Only report issues you are CERTAIN about — "this might be a problem" is not sufficient; "this WILL cause X problem because Y" is required.
 
 1. **In scope** — Two modes:
    - **Diff-based review** (default, no paths specified): ONLY report issues introduced or meaningfully worsened by this change. "Meaningfully worsened" means the change added significant new duplication to a pre-existing issue, added a new instance of an already-problematic pattern (e.g., third copy of duplicate code), or changed a single-file fix into a multi-file change. Also include an existing obligation this change newly relies on or extends when its concrete future-change burden is evidenced. Unrelated pre-existing debt stays out of scope.
@@ -68,10 +63,8 @@ Before reporting an issue, it must pass ALL of these. **If a finding fails ANY c
 2. **Worth the churn** — Compare the concrete burden on subsequent work with added concepts, coupling, migration risk and coordination cost. Removing independent obligations can justify added lines; fewer lines alone establish no benefit.
 3. **Matches codebase patterns** — Don't demand abstractions absent elsewhere. If the codebase doesn't use dependency injection, don't flag its absence.
 4. **Substantiated tradeoff** — Evaluate the reason for duplication or another burden against its actual benefit (such as test isolation or avoiding coupling). Repetition establishes prevalence, not justification; an author's rationale is evidence, while explicit owner requirements bind.
-5. **Concrete impact** — "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible." Style-consistency findings under Consistency state their impact as reader cost — the scan or learning tax a divergent form imposes on someone working across both — and land at Low. That is the whole severity they are entitled to; they never rise above it.
+5. **Concrete impact** — "Could be cleaner" isn't a finding. Articulate specific consequences: "Will cause shotgun surgery when X changes" or "Makes testing Y impossible." Style-consistency findings under Consistency are the exception to this bar and to the lead-in's "this WILL cause X problem" bar: name the divergence and the surfaces it splits across, and state the impact as reader cost — the scan or learning tax a divergent form imposes on someone working across both — and land at Low. That is the whole severity they are entitled to; they never rise above it.
 6. **Grade the consequence** — Use the concrete future-change burden below, not the author's willingness to defer it. Explicit task limits constrain the remedy, not the evidence or severity.
-
-For conditional accretion, the finding must name the cleaner owner for the logic and why leaving the branch in place creates forgettability risk. For large-file growth, line count alone is never enough; the finding must identify separable concerns introduced by the diff and why extracting them would reduce review or future-change risk.
 
 ## Context adaptation
 
@@ -102,7 +95,7 @@ The shared severity ladder applies; this dimension refines it as follows.
 - Near-duplicate logic with minor variations.
 - Abstraction layers that increase coupling without enabling reuse.
 - Indirection that violates architectural boundaries.
-- Inconsistent API patterns within the same module.
+- Inconsistent API patterns within the same module that force callers or later changes to handle each form separately (a form-only divergence is Low, per criterion 5).
 - Inconsistent naming/shapes for the same concept across modules causing repeated mapping/translation code.
 - Migration debt (dual paths, deprecated wrappers) without a concrete removal plan.
 - Low module cohesion: single file handling concerns from multiple core architectural layers (HTTP/transport, business/domain logic, data access/persistence, external service integration). Supporting concerns (logging, configuration, error handling) don't count as separate layers when mixed with one core layer.
@@ -118,7 +111,7 @@ The shared severity ladder applies; this dimension refines it as follows.
 **Medium** — degrades code quality but doesn't cause immediate problems:
 
 - Minor duplication that could be extracted.
-- Small consistency deviations.
+- Small consistency deviations that carry a future-change burden beyond reader cost (a form-only divergence is Low, per criterion 5).
 - Suppression comments without explanation (add comment explaining why).
 - Broad `eslint-disable` without specific rule (should target specific rule).
 - Minor boundary violations (one layer leaking into another).
@@ -158,8 +151,6 @@ Use the shared report format. In addition, this dimension expects:
   - **Moderate refactor**: few files, backward compatible.
   - **Significant restructuring**: architectural change, may require coordination.
 - A short **Summary Statistics** section: total issues by category, total by severity, and the top 3 priority fixes.
-
-A clean review is a valid outcome — do not fabricate issues to fill the report.
 
 ### Worked finding examples
 

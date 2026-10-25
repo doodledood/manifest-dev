@@ -22,14 +22,10 @@ The only surfaces this dimension reads for findings:
 - Commit messages
 - Pull request descriptions
 - Issue text, code review comments, external comments, chat transcripts, or any external surface
-- Test prose surfaces inside test files: `describe`/`it`/`test` titles and assertion messages (test-prose conventions differ — comments inside test files remain in scope per Audit targets above)
+- Test prose surfaces inside test files: `describe`/`it`/`test` titles and assertion messages (test-prose conventions differ)
 - Generated files, lock files, vendored dependencies
 
-This dimension's surface is repo-resident text in code files and doc files. Everything else is out of scope by design.
-
 ## What to inspect
-
-Be comprehensive in analysis, precise in reporting. Examine every audited file in scope against every applicable category — do not cut corners. But only report findings that meet the high-confidence bar in the Actionability Filter. Thoroughness in looking; discipline in reporting.
 
 These categories are guidance, not exhaustive. If you identify a prose-value issue that fits within this dimension but doesn't match a listed category, report it — just respect the out-of-scope boundaries to maintain orthogonality.
 
@@ -88,7 +84,7 @@ Before reporting a finding, it must pass ALL of these criteria. **If it fails AN
 2. **Removing the prose loses nothing** — For comments: would a future reader, encountering the code without this comment, lose understanding? For doc prose: does this paragraph carry information that's not elsewhere in the doc? If removal is lossless, flag.
 3. **Specific tell, not vibe** — "This feels AI-flavored" is not a finding. Name the exact tell (em-dash count, the specific empty buzzword, the WHAT-restatement, the rhetorical pattern). If you can't name it, drop it.
 4. **No alternative load-bearing reading** — Before flagging a comment as WHAT-restatement, consider whether it might encode a non-obvious invariant or constraint. When in doubt, do not flag.
-5. **Project conventions respected** — If the project uses formal documentation tone or requires verbose comments by policy, calibrate down. Convention overrides default heuristics.
+5. **Project conventions respected** — If the project uses formal documentation tone, requires verbose comments by policy, or documents intentional prose conventions (an AUTHOR_VOICE.md or style guide), calibrate down. Convention overrides default heuristics.
 
 ## Out of scope (belongs to a sibling dimension)
 
@@ -103,8 +99,6 @@ Do NOT report on:
 
 ## Special cases / handling ambiguity
 
-- **Empty findings**: A clean PR with no prose-value issues is a valid and positive outcome. Do not fabricate findings.
-- **AUTHOR_VOICE.md or style guide present**: If the project documents intentional prose conventions, respect them — the style guide overrides default heuristics.
 - **Generated docs**: If a doc file is clearly auto-generated (e.g., from code), lower priority and note as generated.
 
 ## Severity calibration
@@ -132,4 +126,4 @@ Focus on WHICH comment or paragraph fails the bar and WHY, with the specific tel
 
 For clean files, list them concisely: `[CLEAN] <filepath> — N comments / M doc paragraphs reviewed, no findings`.
 
-If no findings, confirm prose appears load-bearing with a summary of what was verified (which surfaces, how many comments / doc paragraphs reviewed). A diff with no prose-value issues is a positive outcome — say so plainly. Do not fabricate findings.
+If no findings, confirm prose appears load-bearing with a summary of what was verified (which surfaces, how many comments / doc paragraphs reviewed).

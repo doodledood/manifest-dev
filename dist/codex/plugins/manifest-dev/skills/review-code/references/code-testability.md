@@ -22,8 +22,6 @@ Code becomes hard to test when you can't verify its behavior without complex set
 
 ## Detection categories
 
-**Be comprehensive in analysis, precise in reporting.** Examine every file in scope against every applicable category — do not cut corners or skip areas. Only report findings that meet the high-confidence bar in the Actionability Filter. Thoroughness in looking; discipline in reporting.
-
 These categories are guidance, not exhaustive. If you identify a testability issue that fits this dimension but doesn't match a listed category, report it — just respect the Out of Scope boundaries to maintain orthogonality.
 
 **High test friction (Critical/High severity)**
@@ -54,7 +52,7 @@ Before flagging issues, observe existing project patterns:
 
 ## Actionability filter
 
-Before reporting an issue, it must pass ALL criteria. **If it fails ANY, drop it entirely.** Only report issues you are CERTAIN about.
+Before reporting an issue, it must pass ALL criteria. **If it fails ANY, drop it entirely.**
 
 1. **In scope** — Only report issues in changed/specified code. (Note: tests are expected to have mocks — skip test files.)
 2. **Significant friction** — Not just normal orchestration-level mocking.
@@ -74,8 +72,6 @@ Do NOT report on (owned by other dimensions):
 - **API contract correctness** (wrong params, consumer breakage) → the contracts dimension
 - **Documentation** (stale comments) → the docs dimension
 - **Context file compliance** → the context-file-adherence dimension
-
-**Key distinction from test-quality:** this dimension owns the *design that makes testing hard* (mock friction, IO-buried logic, non-determinism, tight coupling). The test-quality dimension owns the *tests themselves* (coverage gaps, assertion quality). Focus exclusively on whether code is **designed** to be testable, not whether tests exist or how good they are.
 
 ## Severity calibration (this dimension)
 
@@ -113,15 +109,14 @@ data it needs as parameters. The pure function can be tested exhaustively with s
 inputs. The shell function fetches data and calls the pure function.
 ```
 
-When no issues clear the bar, that is a valid, positive outcome — the code in scope has acceptable testability, with business logic already testable in isolation or test friction proportionate to complexity. Do not fabricate issues to fill the report.
+When no issues clear the bar, the code in scope has acceptable testability: business logic is already testable in isolation, or test friction is proportionate to complexity.
 
 ## Guidelines
 
 - **Ground issues in impact**: explain WHY the friction matters for THIS code.
 - **Suggest, don't mandate**: offer ways to improve; acknowledge when tradeoffs are acceptable.
-- **Prefer pure functions where the risk is in the rule**: favor extracting them when the logic at risk is the rule itself; where the risk is in the wiring, extraction relocates it into an untested shell, so prefer concentrating the wiring behind one interface and testing through it. Acknowledge alternatives that fit the project's patterns.
 - **Adapt to the codebase**: what's excessive in one project may be normal in another. Calibrate to local norms.
-- **Shell code gets a pass on doing IO**: controller/orchestration code is expected to do it — focus on whether important logic is extractable. The pass covers the IO, not the wiring: where the risk is in which value the shell assembles, from where, at what freshness, that is the case above and stays in scope.
+- **Shell code gets a pass on doing IO**: controller/orchestration code is expected to do it — focus on whether important logic is extractable. The pass covers the IO, not the wiring: where the risk is in which value the shell assembles, from where, at what freshness, that is the wiring case under **Suggestion** above and stays in scope.
 - **Every Critical/High issue must explain why the logic is important to test.**
 - Statistics must match detailed findings.
 
@@ -129,4 +124,3 @@ When no issues clear the bar, that is a valid, positive outcome — the code in 
 
 - If you can't tell whether logic is important enough to matter when it breaks, lean toward not reporting.
 - If the friction is proportionate to the code's genuine complexity, it isn't a finding.
-- **The bar for reporting is certainty, not suspicion.** An empty report is better than one with false positives.
